@@ -28,7 +28,6 @@
  */
 package agentgui.core.gui.projectwindow;
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -40,7 +39,6 @@ import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -56,6 +54,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.OntologieSelector;
 import agentgui.core.ontologies.OntologyClass;
 import agentgui.core.ontologies.OntologyClassTreeObject;
@@ -69,8 +68,6 @@ import agentgui.core.project.Project;
 public class OntologyTab extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
-	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private Project currProject;
 	private JSplitPane ontoSplitPane = null;
@@ -283,7 +280,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			jButtonAddOntology = new JButton();
 			jButtonAddOntology.setPreferredSize(new Dimension(45, 26));
 			jButtonAddOntology.setActionCommand("OntologieAdd");
-			jButtonAddOntology.setIcon(new ImageIcon( this.getClass().getResource( PathImage + "ListPlus.png")));
+			jButtonAddOntology.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonAddOntology.setToolTipText("Add Ontologie...");
 			jButtonAddOntology.addActionListener(this);
 		}
@@ -299,7 +296,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			jButtonRemoveOntology = new JButton();
 			jButtonRemoveOntology.setPreferredSize(new Dimension(45, 26));
 			jButtonRemoveOntology.setActionCommand("OntologieRemove");
-			jButtonRemoveOntology.setIcon(new ImageIcon( this.getClass().getResource( PathImage + "ListMinus.png")));
+			jButtonRemoveOntology.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
 			jButtonRemoveOntology.setToolTipText("Remove Ontology");
 			jButtonRemoveOntology.addActionListener(this);
 		}

@@ -40,7 +40,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -49,6 +48,7 @@ import javax.swing.JScrollPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
@@ -63,7 +63,7 @@ import agentgui.core.project.Project;
 public class JadeSetupServices extends JPanel implements ActionListener, Observer {
 
 	private static final long serialVersionUID = -7016775471452161527L;
-	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
+	
 	private Project currProject = null;
 
 	private JPanel jPanelServiceLists = null;
@@ -285,7 +285,7 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 	private JButton getJButtonDefaultJadeConfig() {
 		if (jButtonDefaultJadeConfig == null) {
 			jButtonDefaultJadeConfig = new JButton();
-			jButtonDefaultJadeConfig.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonDefaultJadeConfig.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonDefaultJadeConfig.setPreferredSize(new Dimension(45, 26));
 			jButtonDefaultJadeConfig.setToolTipText("Standardkonfiguration verwenden");
 			jButtonDefaultJadeConfig.addActionListener(this);
@@ -299,7 +299,7 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 	private JButton getJButtonAdd() {
 		if (jButtonServiceAdd == null) {
 			jButtonServiceAdd = new JButton();
-			jButtonServiceAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowLeft.png")));
+			jButtonServiceAdd.setIcon(GlobalInfo.getInternalImageIcon("ArrowLeft.png"));
 			jButtonServiceAdd.setPreferredSize(new Dimension(45, 27));
 			jButtonServiceAdd.setToolTipText("Service hinzufügen");
 			jButtonServiceAdd.addActionListener(this);
@@ -313,7 +313,7 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 	private JButton getJButtonRemove() {
 		if (jButtonServiceRemove == null) {
 			jButtonServiceRemove = new JButton();
-			jButtonServiceRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowRight.png")));
+			jButtonServiceRemove.setIcon(GlobalInfo.getInternalImageIcon("ArrowRight.png"));
 			jButtonServiceRemove.setPreferredSize(new Dimension(45, 27));
 			jButtonServiceRemove.setToolTipText("Service entfernen");
 			jButtonServiceRemove.addActionListener(this);

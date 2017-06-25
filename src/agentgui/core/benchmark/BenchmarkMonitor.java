@@ -38,7 +38,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -50,6 +49,7 @@ import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 /**
  * This JDialog is used to display the progress of the benchmark during its runtime.<br>
@@ -62,9 +62,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	private Image imageAgentGUI = GlobalInfo.getInternalImage("AgentGUI.png");
 
 	private JPanel jContentPane = null;
 	private JPanel jPanelBottomRight = null;
@@ -125,7 +123,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.getGlobalInfo().getAppLnF();
+		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

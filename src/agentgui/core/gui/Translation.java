@@ -37,7 +37,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -60,8 +59,8 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -72,12 +71,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.RowSorter.SortKey;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -89,10 +89,8 @@ import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.JHyperLink;
-
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
 
 
 /**
@@ -105,10 +103,7 @@ public class Translation extends JDialog implements ActionListener {
 private static final long serialVersionUID = 1L;
 	
 	private final String appName = Application.getGlobalInfo().getApplicationTitle();  //  @jve:decl-index=0:
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
-	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private Image image = imageIcon.getImage();
-	
+
 	private Vector<Object> currDataSet = null;
 	private DefaultTableModel dictData = null;
 	private DefaultComboBoxModel<LanguageListElement> langSelectionModelSource = new DefaultComboBoxModel<LanguageListElement>();
@@ -214,7 +209,7 @@ private static final long serialVersionUID = 1L;
 		this.setSize(1000, 550);
 		
 		this.setTitle(appName + ": " + "Wörterbuch");
-		this.setIconImage( image );
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
@@ -892,7 +887,7 @@ private static final long serialVersionUID = 1L;
 		if (jButtonImportCSV == null) {
 			jButtonImportCSV = new JButton();
 			jButtonImportCSV.setToolTipText(Language.translate("'.csv'-Version des Wörterbuchs übernehmen ..."));
-			jButtonImportCSV .setIcon(new ImageIcon(getClass().getResource(PathImage + "MBtransImport.png")));
+			jButtonImportCSV.setIcon(GlobalInfo.getInternalImageIcon("MBtransImport.png"));
 			jButtonImportCSV.setPreferredSize(new Dimension(26, 26));
 			jButtonImportCSV.addActionListener(this);
 		}
@@ -1039,7 +1034,7 @@ private static final long serialVersionUID = 1L;
 			jButtonNextDS = new JButton();
 			jButtonNextDS.setPreferredSize(new Dimension(26, 26));
 			jButtonNextDS.setToolTipText("Nächster Datensatz (STRG+DOWN)");
-			jButtonNextDS.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowDown.png")));
+			jButtonNextDS.setIcon(GlobalInfo.getInternalImageIcon("ArrowDown.png"));
 			jButtonNextDS.addActionListener(this);
 		}
 		return jButtonNextDS;
@@ -1053,7 +1048,7 @@ private static final long serialVersionUID = 1L;
 			jButtonPreviousDS = new JButton();
 			jButtonPreviousDS.setPreferredSize(new Dimension(26, 26));
 			jButtonPreviousDS.setToolTipText("Voriger Datensatz (STRG+UP)");
-			jButtonPreviousDS.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowUp.png")));
+			jButtonPreviousDS.setIcon(GlobalInfo.getInternalImageIcon("ArrowUp.png"));
 			jButtonPreviousDS.addActionListener(this);
 		}
 		return jButtonPreviousDS;
@@ -1067,7 +1062,7 @@ private static final long serialVersionUID = 1L;
 			jButtonDelete = new JButton();
 			jButtonDelete.setPreferredSize(new Dimension(26, 26));
 			jButtonDelete.setToolTipText("Datensatz löschen (STRG+DELETE)");
-			jButtonDelete.setIcon(new ImageIcon(getClass().getResource(PathImage + "Delete.png")));
+			jButtonDelete.setIcon(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonDelete.addActionListener(this);
 		}
 		return jButtonDelete;
@@ -1081,7 +1076,7 @@ private static final long serialVersionUID = 1L;
 			jButtonSave = new JButton();
 			jButtonSave.setPreferredSize(new Dimension(26, 26));
 			jButtonSave.setToolTipText("Übersetzung speichern (STRG+S)");
-			jButtonSave.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBsave.png")));
+			jButtonSave.setIcon(GlobalInfo.getInternalImageIcon("MBsave.png"));
 			jButtonSave.addActionListener(this);
 		}
 		return jButtonSave;
@@ -1095,7 +1090,7 @@ private static final long serialVersionUID = 1L;
 			jButtonFindGap = new JButton();
 			jButtonFindGap.setPreferredSize(new Dimension(26, 26));
 			jButtonFindGap.setToolTipText("Suche nach der nächsten fehlenden Übersetzung (STRG+F)");
-			jButtonFindGap.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonFindGap.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
 			jButtonFindGap.addActionListener(this);
 		}
 		return jButtonFindGap;
@@ -1123,7 +1118,7 @@ private static final long serialVersionUID = 1L;
 			jButtonGoogleTake = new JButton();
 			jButtonGoogleTake.setPreferredSize(new Dimension(26, 26));
 			jButtonGoogleTake.setToolTipText("Google-Übersetzung übernehmen (STRG+G)");
-			jButtonGoogleTake.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBgoogle.png")));
+			jButtonGoogleTake.setIcon(GlobalInfo.getInternalImageIcon("MBgoogle.png"));
 			jButtonGoogleTake.addActionListener(this);
 		}
 		return jButtonGoogleTake;

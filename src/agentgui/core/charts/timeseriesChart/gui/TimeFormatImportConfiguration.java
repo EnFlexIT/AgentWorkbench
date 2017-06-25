@@ -35,7 +35,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -57,7 +56,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -79,6 +77,7 @@ import javax.swing.event.ChangeListener;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.ExceptionHandling;
+import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.time.TimeFormatSelection;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
@@ -95,10 +94,6 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 
 	private static final long serialVersionUID = -7271198574951719361L;
 	
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
-
 	public static final String PROP_CsvTimeFormat = "CSV_IMPORT_TIMEFORMAT";  //  @jve:decl-index=0:
 	public static final String PROP_TimeOffSet = "TIME_OFFSET";  //  @jve:decl-index=0:
 	public static final String PROP_TimeOffSetSimulationSetup = "TIME_OFFSET_SIMULATION_SETUP";  //  @jve:decl-index=0:
@@ -165,7 +160,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 
 		this.setSize(600, 400);
 		this.setTitle(Language.translate("CSV-File", Language.EN) + " Import: " + Language.translate("Time Format and Offset", Language.EN));
-		this.setIconImage(imageAgentGUI);
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		
 		this.setModal(true);
 		this.setResizable(false);
@@ -195,8 +190,8 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isRunningAsServer()==true) {
-			if (Application.getGlobalInfo().getAppLnF()!=null) {
-				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
+			if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
+				this.setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
 			}
 		}
 
@@ -227,17 +222,19 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 */
 	private void setLookAndFeel(String newLnF) {
  
-		if (newLnF==null) return;		
-		Application.getGlobalInfo().setAppLnf(newLnF);
+		if (newLnF==null) return;
+		
+		Application.getGlobalInfo().setAppLnfClassName(newLnF);
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnF();
-			if (lnfClassname == null)
+			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
+			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);
+			}
+			UIManager.setLookAndFeel(lnfClassname);
+			SwingUtilities.updateComponentTreeUI(this);
 				
 		} catch (Exception e) {
-			System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF() + " on this platform:" + e.getMessage());
+			System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName() + " on this platform:" + e.getMessage());
 		}
 		
 	}

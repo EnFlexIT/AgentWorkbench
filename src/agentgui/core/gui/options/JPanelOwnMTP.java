@@ -39,7 +39,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -49,8 +48,8 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.network.NetworkAddresses;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
@@ -63,7 +62,7 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionListener {
 
 	private static final long serialVersionUID = -7016775471452161527L;
-	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();
+	
 	private JRadioButton jRadioButtonMtpAutoConfig;
 	private JRadioButton jRadioButtonMtpIP;
 	
@@ -242,7 +241,7 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 			jButtonIPedit = new JButton();
 			jButtonIPedit.setToolTipText("IP auswählen");
 			jButtonIPedit.setPreferredSize(new Dimension(45, 26));
-			jButtonIPedit.setIcon(new ImageIcon(getClass().getResource(pathImage + "edit.png")));
+			jButtonIPedit.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonIPedit.addActionListener(this);
 		}
 		return jButtonIPedit;
@@ -299,7 +298,7 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 			jButtonSetPortMTPDefault.setToolTipText("Standard verwenden");
 			jButtonSetPortMTPDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonSetPortMTPDefault.setActionCommand("SetPortDefault");
-			jButtonSetPortMTPDefault.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
+			jButtonSetPortMTPDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonSetPortMTPDefault.addActionListener(this);
 		}
 		return jButtonSetPortMTPDefault;

@@ -36,7 +36,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -47,24 +46,24 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Calendar;
 
-import javax.swing.ImageIcon;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.components.JHyperLink;
-import javax.swing.JTabbedPane;
-import javax.swing.BorderFactory;
-import javax.swing.border.EtchedBorder;
-import javax.swing.SwingConstants;
 
 /**
  * The GUI of the AboutDialog.
@@ -74,10 +73,6 @@ import javax.swing.SwingConstants;
 public class AboutDialog extends JDialog implements ActionListener{
 
 	private static final long serialVersionUID = -5882844235988801425L;
-	
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	
 	private JPanel jContentPane = null;
 
@@ -136,7 +131,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 					"</CENTER></HTML></BODY>";
 
 		this.setSize(550, 480);
-		this.setIconImage(imageAgentGUI);
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		
 		this.setModal(true);
 		this.setResizable(false);
@@ -146,8 +141,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 		// --- Set the Look and Feel of the Dialog ------------------
 		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
 		if (Application.isRunningAsServer()==true ||  execMode==ExecutionMode.DEVICE_SYSTEM) {
-			if (Application.getGlobalInfo().getAppLnF()!=null) {
-				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
+			if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
+				setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
 			}
 		}
 
@@ -221,7 +216,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 			
 			jLabelIcon = new JLabel();
 			jLabelIcon.setText(" ");
-			jLabelIcon.setIcon(new ImageIcon(getClass().getResource(PathImage + "AgentGUI.png")));
+			jLabelIcon.setIcon(GlobalInfo.getInternalImageIcon("AgentGUI.png"));
 			
 			jLabelTitle = new JLabel();
 			jLabelTitle.setText("Agent.GUI");
@@ -269,16 +264,16 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private void setLookAndFeel( String newLnF ) {
  
 		if (newLnF==null) return;		
-		Application.getGlobalInfo().setAppLnf(newLnF);
+		Application.getGlobalInfo().setAppLnfClassName(newLnF);
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnF();
+			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
 			if (lnfClassname == null)
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 				UIManager.setLookAndFeel(lnfClassname);
 				SwingUtilities.updateComponentTreeUI(this);
 				
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF() + " on this platform:" + e.getMessage());
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName() + " on this platform:" + e.getMessage());
 		}
 		
 	}

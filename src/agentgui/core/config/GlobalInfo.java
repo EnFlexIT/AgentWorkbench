@@ -33,6 +33,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Image;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
@@ -42,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.apache.commons.codec.binary.Base64;
@@ -105,7 +107,8 @@ public class GlobalInfo {
 	// --- Variables --------------------------------------------------------
 	private static ExecutionEnvironment localExecutionEnvironment = ExecutionEnvironment.ExecutedOverIDE;
 	
-	private static String localAppLnF = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
+	private static String localAppLnF = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+	private static Class<?> localAppLnFClass;
 	
 	private static String localBaseDir = "";
 	private static String localPathAgentGUI	 = "bin";
@@ -472,21 +475,28 @@ public class GlobalInfo {
 	 * @return the class reference for the current look and feel 
 	 * or null, if the class could not be found
 	 */
-	public String getAppLnF() {
-		try {
-			ClassLoadServiceUtility.forName(localAppLnF);
-			return localAppLnF;
-		} catch (ClassNotFoundException cnfEx) {
-			//cnfEx.printStackTrace();
+	public String getAppLnFClassName() {
+		if (localAppLnFClass==null) {
+			try {
+				// --- Check current Look and Feel class --
+				localAppLnFClass = ClassLoadServiceUtility.forName(localAppLnF);
+			} catch (ClassNotFoundException cnfEx) {
+				//cnfEx.printStackTrace();
+			}
+		}
+		if (localAppLnFClass!=null) {
+			return localAppLnFClass.getName();
 		}
 		return null;
-	};
+	}
 	/**
-	 * Set the current Look and Feel (LnF) for Java Swing by using its class reference
+	 * Set the current Look and Feel (LnF) for Java Swing by using its class reference.
+	 * @param newLnF the new Swing - Look and Feel 
 	 */
-	public void setAppLnf( String NewLnF ) {
-		localAppLnF = NewLnF;
-	};
+	public void setAppLnfClassName(String newLnF) {
+		localAppLnF = newLnF;
+		localAppLnFClass = null;
+	}
 	// -------------------------------
 
 	/**
@@ -626,7 +636,7 @@ public class GlobalInfo {
 	 * Returns the list of project folders, which are located in the root project folder
 	 * @return Array of project folders
 	 */
-	public String[] getProjectSubDirectories( ){		
+	public String[] getProjectSubDirectories(){		
 		// --- Search for sub folders ---
 		String[] localProjects = null;
 		File maindir = new File(this.getPathProjects(true)) ;
@@ -647,14 +657,6 @@ public class GlobalInfo {
 		return localProjects;		
 	}	
 	
-	/**
-	 * Returns the path to the internal img-folder of Agent.GUI (agentgui.core.gui.img)
-	 * @return path to the images, which are located in our project
-	 */
-	public String getPathImageIntern( ){
-		return localPathImageIntern;
-	}
-
 	/**
 	 * Here the local root folder for the download-server can be get. In this folder 
 	 * sources will be stored, which can be loaded to remote containers in order to 
@@ -1934,7 +1936,30 @@ public class GlobalInfo {
 		return dialogFound;
 	}
 	
-	
+	/**
+	 * Returns the path to the internal image-package of Agent.GUI (agentgui.core.gui.img)
+	 * @return path to the images, which are located in our project
+	 */
+	public static String getPathImageIntern(){
+		return localPathImageIntern;
+	}
+	/**
+	 * Returns one of the internal images as ImageIcon, specified by its file name.
+	 * @param imageFileName the image file name
+	 * @return the internal image icon
+	 */
+	public static ImageIcon getInternalImageIcon(String imageFileName) {
+		return new ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
+	}
+	/**
+	 * Returns one of the internal images specified by its file name.
+	 * @param imageFileName the image file name
+	 * @return the internal image
+	 */
+	public static Image getInternalImage(String imageFileName) {
+		ImageIcon imageIcon = new ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
+		return imageIcon.getImage();
+	}
 	/**
 	 * Returns the specified bytes in a human readable byte count.
 	 *

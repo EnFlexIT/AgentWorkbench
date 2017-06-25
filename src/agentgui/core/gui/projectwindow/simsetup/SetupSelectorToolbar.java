@@ -39,7 +39,6 @@ import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -48,10 +47,11 @@ import javax.swing.JToolBar;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.sim.setup.SimulationSetupNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 
 /**
  * The Class SetupSelectorToolbar is used in the main toolbar of the application
@@ -61,8 +61,6 @@ import agentgui.core.sim.setup.SimulationSetupNotification;
  */
 public class SetupSelectorToolbar implements ActionListener {
 
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	
 	private final Integer SETUP_add = 1;
 	private final Integer SETUP_rename = 2;
 	private final Integer SETUP_copy = 3;
@@ -191,7 +189,7 @@ public class SetupSelectorToolbar implements ActionListener {
 		if (jButtonSetupRename == null) {
 			jButtonSetupRename = new JButton();
 			jButtonSetupRename.setPreferredSize(new Dimension(26, 26));
-			jButtonSetupRename.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rename.gif")));
+			jButtonSetupRename.setIcon(GlobalInfo.getInternalImageIcon("Rename.gif"));
 			jButtonSetupRename.setToolTipText("Setup umbenennen");
 			jButtonSetupRename.addActionListener(this);
 
@@ -207,7 +205,7 @@ public class SetupSelectorToolbar implements ActionListener {
 		if (jButtonSetupCopy == null) {
 			jButtonSetupCopy = new JButton();
 			jButtonSetupCopy.setPreferredSize(new Dimension(26, 26));
-			jButtonSetupCopy.setIcon(new ImageIcon(getClass().getResource(pathImage + "Copy.png")));
+			jButtonSetupCopy.setIcon(GlobalInfo.getInternalImageIcon("Copy.png"));
 			jButtonSetupCopy.setToolTipText("Setup kopieren");
 			jButtonSetupCopy.addActionListener(this);
 
@@ -224,7 +222,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			jButtonSetupNew = new JButton();
 			jButtonSetupNew.setPreferredSize(new Dimension(26, 26));
 			jButtonSetupNew.setToolTipText("Setup hinzufügen");
-			jButtonSetupNew.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
+			jButtonSetupNew.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonSetupNew.addActionListener(this);
 		}
 		return jButtonSetupNew;
@@ -239,7 +237,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			jButtonSetupDelete = new JButton();
 			jButtonSetupDelete.setPreferredSize(new Dimension(26, 26));
 			jButtonSetupDelete.setToolTipText("Setup löschen");
-			jButtonSetupDelete.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
+			jButtonSetupDelete.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
 			jButtonSetupDelete.addActionListener(this);
 		}
 		return jButtonSetupDelete;

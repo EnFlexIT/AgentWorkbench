@@ -39,7 +39,6 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,8 +49,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 /**
  * The Class DynFormText displays the XML documents of the current ontology instances.
@@ -61,7 +60,6 @@ import agentgui.core.application.Language;
 public class DynFormText extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -4693640456081655952L;
-	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private DynForm dynForm = null;
 	
@@ -215,7 +213,7 @@ public class DynFormText extends JPanel implements ActionListener {
 		if (jButtonSearchForward == null) {
 			jButtonSearchForward = new JButton();
 			jButtonSearchForward.setPreferredSize(new Dimension(26, 26));
-			jButtonSearchForward.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowRight.png")));
+			jButtonSearchForward.setIcon(GlobalInfo.getInternalImageIcon("ArrowRight.png"));
 			jButtonSearchForward.setToolTipText(Language.translate("Suche vorwärts"));
 			jButtonSearchForward.addActionListener(this);
 		}
@@ -229,7 +227,7 @@ public class DynFormText extends JPanel implements ActionListener {
 		if (jButtonSearchBackwards == null) {
 			jButtonSearchBackwards = new JButton();
 			jButtonSearchBackwards.setPreferredSize(new Dimension(26, 26));
-			jButtonSearchBackwards.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowLeft.png")));
+			jButtonSearchBackwards.setIcon(GlobalInfo.getInternalImageIcon("ArrowLeft.png"));
 			jButtonSearchBackwards.setToolTipText(Language.translate("Suche rückwärts"));
 			jButtonSearchBackwards.addActionListener(this);
 		}
@@ -243,7 +241,7 @@ public class DynFormText extends JPanel implements ActionListener {
 		if (jButtonSearchDelete == null) {
 			jButtonSearchDelete = new JButton();
 			jButtonSearchDelete.setPreferredSize(new Dimension(26, 26));
-			jButtonSearchDelete.setIcon(new ImageIcon(getClass().getResource(pathImage + "Delete.png")));
+			jButtonSearchDelete.setIcon(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonSearchDelete.setToolTipText(Language.translate("Suche löschen"));
 			jButtonSearchDelete.addActionListener(this);
 		}

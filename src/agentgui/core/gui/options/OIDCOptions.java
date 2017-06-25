@@ -38,7 +38,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -58,8 +57,6 @@ import agentgui.core.config.GlobalInfo;
 public class OIDCOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
-	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private JPanel jPanelOIDCIssuerURI;
 	private JPanel jPanelDummy;
@@ -224,7 +221,7 @@ public class OIDCOptions extends AbstractOptionTab implements ActionListener {
 		if (jButtonOIDCIssuerURIDefault == null) {
 			jButtonOIDCIssuerURIDefault = new JButton();
 			jButtonOIDCIssuerURIDefault.setToolTipText(Language.translate("Standard verwenden"));
-			jButtonOIDCIssuerURIDefault.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
+			jButtonOIDCIssuerURIDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonOIDCIssuerURIDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonOIDCIssuerURIDefault.addActionListener(this);
 		}

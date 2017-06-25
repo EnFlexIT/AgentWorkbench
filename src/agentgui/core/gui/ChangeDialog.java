@@ -35,7 +35,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -55,7 +54,6 @@ import java.util.jar.JarInputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -73,6 +71,7 @@ import javax.swing.event.HyperlinkListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 
 /**
@@ -83,9 +82,6 @@ import agentgui.core.application.Language;
 public class ChangeDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final Image imageAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") ).getImage();  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
 	private JScrollPane jScrollPane = null;
@@ -120,7 +116,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 		title += Application.getGlobalInfo().getVersionInfo().getFullVersionInfo(true, null);
 		this.setTitle(title);
 		
-		this.setIconImage(imageAgentGUI);
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setSize(850, 550);
 		this.setModal(true);
 		this.setResizable(true);
@@ -129,8 +125,8 @@ public class ChangeDialog extends JDialog implements ActionListener {
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isRunningAsServer()==true) {
-			if (Application.getGlobalInfo().getAppLnF()!=null) {
-				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
+			if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
+				setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
 			}
 		}
 
@@ -182,16 +178,16 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	private void setLookAndFeel(String newLnF) {
  
 		if (newLnF==null) return;	
-		Application.getGlobalInfo().setAppLnf(newLnF);
+		Application.getGlobalInfo().setAppLnfClassName(newLnF);
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnF();
+			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
 			if (lnfClassname == null)
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 				UIManager.setLookAndFeel(lnfClassname);
 				SwingUtilities.updateComponentTreeUI(this);
 				
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF() + " on this platform:" + e.getMessage());
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName() + " on this platform:" + e.getMessage());
 		}
 		
 	}

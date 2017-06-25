@@ -46,7 +46,6 @@ import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.DesktopManager;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
@@ -71,6 +70,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.gui.projectwindow.MaximizedTab;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
@@ -87,7 +87,6 @@ import agentgui.core.project.Project;
 public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	private static final long serialVersionUID = -1462483441246136949L;
-	private static final String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private Project currProject;
 	
@@ -285,7 +284,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		if (jMenueItemDefineAsProjectStartTab==null) {
 			jMenueItemDefineAsProjectStartTab = new JMenuItem();
 			jMenueItemDefineAsProjectStartTab.setText(Language.translate("Als Projekt Start-Tab verwenden"));
-			jMenueItemDefineAsProjectStartTab.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowRight.png")));
+			jMenueItemDefineAsProjectStartTab.setIcon(GlobalInfo.getInternalImageIcon("ArrowRight.png"));
 			jMenueItemDefineAsProjectStartTab.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {

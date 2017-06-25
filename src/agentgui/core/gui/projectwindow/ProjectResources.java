@@ -43,7 +43,6 @@ import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -56,6 +55,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.plugin.PlugIn;
@@ -74,7 +74,6 @@ public class ProjectResources extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	private Project currProject;
 	
 	private JPanel jPanelSimulationEnvironment;
@@ -311,7 +310,7 @@ public class ProjectResources extends JPanel implements Observer {
 		if (jButtonResourcesAdd == null) {
 			jButtonResourcesAdd = new JButton();
 			jButtonResourcesAdd.setPreferredSize(new Dimension(45, 26));
-			jButtonResourcesAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
+			jButtonResourcesAdd.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonResourcesAdd.setToolTipText("Add");
 			jButtonResourcesAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -349,7 +348,7 @@ public class ProjectResources extends JPanel implements Observer {
 	private JButton getJButtonRemove() {
 		if (jButtonResourcesRemove == null) {
 			jButtonResourcesRemove = new JButton();
-			jButtonResourcesRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
+			jButtonResourcesRemove.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
 			jButtonResourcesRemove.setPreferredSize(new Dimension(45, 26));
 			jButtonResourcesRemove.setToolTipText("Remove");
 			jButtonResourcesRemove.addActionListener(new ActionListener() {
@@ -380,7 +379,7 @@ public class ProjectResources extends JPanel implements Observer {
 	private JButton getJButtonRefresh() {
 		if (jButtonRecourcesRefresh == null) {
 			jButtonRecourcesRefresh = new JButton();
-			jButtonRecourcesRefresh.setIcon(new ImageIcon(getClass().getResource(PathImage + "Refresh.png")));
+			jButtonRecourcesRefresh.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
 			jButtonRecourcesRefresh.setPreferredSize(new Dimension(45, 26));
 			jButtonRecourcesRefresh.setToolTipText("Refresh");
 			jButtonRecourcesRefresh.addActionListener(new ActionListener() {
@@ -511,7 +510,7 @@ public class ProjectResources extends JPanel implements Observer {
 		if (jButtonAddPlugIns == null) {
 			jButtonAddPlugIns = new JButton();
 			jButtonAddPlugIns.setPreferredSize(new Dimension(45, 26));
-			jButtonAddPlugIns.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
+			jButtonAddPlugIns.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonAddPlugIns.setToolTipText("Add");
 			jButtonAddPlugIns.addActionListener(new ActionListener() {
 				@Override
@@ -553,7 +552,7 @@ public class ProjectResources extends JPanel implements Observer {
 	private JButton getJButtonRemovePlugIns() {
 		if (jButtonRemovePlugIns == null) {
 			jButtonRemovePlugIns = new JButton();
-			jButtonRemovePlugIns.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
+			jButtonRemovePlugIns.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
 			jButtonRemovePlugIns.setPreferredSize(new Dimension(45, 26));
 			jButtonRemovePlugIns.setToolTipText("Remove");
 			jButtonRemovePlugIns.addActionListener(new ActionListener() {
@@ -584,7 +583,7 @@ public class ProjectResources extends JPanel implements Observer {
 	private JButton getJButtonRefreshPlugIns() {
 		if (jButtonRefreshPlugIns == null) {
 			jButtonRefreshPlugIns = new JButton();
-			jButtonRefreshPlugIns.setIcon(new ImageIcon(getClass().getResource(PathImage + "Refresh.png")));
+			jButtonRefreshPlugIns.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
 			jButtonRefreshPlugIns.setPreferredSize(new Dimension(45, 26));
 			jButtonRefreshPlugIns.setToolTipText("Refresh");
 			jButtonRefreshPlugIns.addActionListener(new ActionListener() {
@@ -720,7 +719,7 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonDefaultTimeModel = new JButton();
 			jButtonDefaultTimeModel.setPreferredSize(new Dimension(45, 26));
 			jButtonDefaultTimeModel.setBounds(new Rectangle(120, 121, 80, 26));
-			jButtonDefaultTimeModel.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonDefaultTimeModel.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonDefaultTimeModel.setToolTipText("Agent.GUI - Standard verwenden");
 			jButtonDefaultTimeModel.setToolTipText(Language.translate(jButtonDefaultTimeModel.getToolTipText()));
 			jButtonDefaultTimeModel.addActionListener(new ActionListener() {
@@ -740,7 +739,7 @@ public class ProjectResources extends JPanel implements Observer {
 		if (jButtonSelectTimeModel == null) {
 			jButtonSelectTimeModel = new JButton();
 			jButtonSelectTimeModel.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectTimeModel.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonSelectTimeModel.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
 			jButtonSelectTimeModel.setToolTipText("Klasse auswählen");
 			jButtonSelectTimeModel.setToolTipText(Language.translate(jButtonSelectTimeModel.getToolTipText()));
 			jButtonSelectTimeModel.addActionListener(new ActionListener() {

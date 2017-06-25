@@ -42,7 +42,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -55,6 +54,7 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 /**
  * This JPanel allows the user to : 
@@ -116,9 +116,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private JFileChooser jFileChooserOpen;
 	private JFileChooser jFileChooserSave;
 	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconSave = new ImageIcon( this.getClass().getResource( pathImage + "MBsave.png") );
-	private final ImageIcon iconOpen = new ImageIcon( this.getClass().getResource( pathImage + "MBopen.png") );
 	private final Dimension fieldSize = new Dimension(120, 26);
 	private Set<String> ISO_COUNTRIES = new HashSet<String>(Arrays.asList(Locale.getISOCountries()));
 
@@ -638,7 +635,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 			jButtonApplyKeyStore.setForeground(new Color(0, 0, 255));
 			jButtonApplyKeyStore.setVerticalAlignment(SwingConstants.TOP);
 			jButtonApplyKeyStore.setPreferredSize(new Dimension(26, 26));
-			jButtonApplyKeyStore.setIcon(iconSave);
+			jButtonApplyKeyStore.setIcon(GlobalInfo.getInternalImageIcon("MBsave.png"));
 			jButtonApplyKeyStore.addActionListener(this);
 		}
 		return jButtonApplyKeyStore;
@@ -725,7 +722,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		if (jButtonCertificatePath == null) {
 			jButtonCertificatePath = new JButton("");
 			jButtonCertificatePath.setPreferredSize(new Dimension(26, 26));
-			jButtonCertificatePath.setIcon(iconOpen);
+			jButtonCertificatePath.setIcon(GlobalInfo.getInternalImageIcon("MBopen.png"));
 			jButtonCertificatePath.addActionListener(this);
 		}
 		return jButtonCertificatePath;

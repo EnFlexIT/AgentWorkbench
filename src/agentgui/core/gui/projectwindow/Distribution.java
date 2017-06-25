@@ -43,7 +43,6 @@ import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -61,6 +60,7 @@ import javax.swing.text.Document;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.KeyAdapter4Numbers;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;
@@ -87,8 +87,6 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private final static int DYNAMIC_BALANCING_CLASS = 2;
 	private final static int THRESHOLD_LEVEL = 3;
 
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
-	
 	private Project currProject;
 	private DistributionSetup currDistributionSetup; 
 	private LoadThresholdLevels currUserThresholds;
@@ -540,7 +538,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JButton getJButtonRemoteDefault() {
 		if (jButtonRemoteDefault == null) {
 			jButtonRemoteDefault = new JButton();
-			jButtonRemoteDefault.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
+			jButtonRemoteDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonRemoteDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonRemoteDefault.setToolTipText("Standard verwenden");
 			jButtonRemoteDefault.addActionListener(this);
@@ -903,7 +901,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonDefaultClassStatic.setToolTipText("Agent.GUI - Standard verwenden");			
 			jButtonDefaultClassStatic.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClassStatic.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClassStatic.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
+			jButtonDefaultClassStatic.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonDefaultClassStatic.setActionCommand("StatLoadBalancingDefault");
 			jButtonDefaultClassStatic.addActionListener(this);
 		}
@@ -919,7 +917,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonSelectStaticClass = new JButton();
 			jButtonSelectStaticClass.setToolTipText("Klasse auswählen");
 			jButtonSelectStaticClass.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectStaticClass.setIcon(new ImageIcon(getClass().getResource(pathImage + "Search.png")));
+			jButtonSelectStaticClass.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
 			jButtonSelectStaticClass.setActionCommand("StatLoadBalancingCheck");
 			jButtonSelectStaticClass.addActionListener(this);
 		}
@@ -987,7 +985,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonDefaultClassDynamic.setToolTipText("Agent.GUI - Standard verwenden");
 			jButtonDefaultClassDynamic.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClassDynamic.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClassDynamic.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
+			jButtonDefaultClassDynamic.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonDefaultClassDynamic.setActionCommand("DynLoadBalancingDefault");
 			jButtonDefaultClassDynamic.addActionListener(this);
 		}
@@ -1002,7 +1000,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonSelectDynamicClass = new JButton();
 			jButtonSelectDynamicClass.setToolTipText("Klasse auswählen");
 			jButtonSelectDynamicClass.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectDynamicClass.setIcon(new ImageIcon(getClass().getResource(pathImage + "Search.png")));
+			jButtonSelectDynamicClass.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
 			jButtonSelectDynamicClass.setActionCommand("DynLoadBalancingCheck");
 			jButtonSelectDynamicClass.addActionListener(this);
 		}

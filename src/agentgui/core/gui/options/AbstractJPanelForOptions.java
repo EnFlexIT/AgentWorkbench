@@ -73,13 +73,6 @@ public abstract class AbstractJPanelForOptions extends JPanel {
 		}
 		return globalInfo;
 	}
-	/**
-	 * Gets the path image.
-	 * @return the path image
-	 */
-	protected String getPathImage() {
-		return this.getGlobalInfo().getPathImageIntern();
-	}
 	
 	/**
 	 * This method has to set the data from the global area to the current Form.

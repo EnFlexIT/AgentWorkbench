@@ -34,14 +34,12 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
@@ -65,9 +63,6 @@ import agentgui.core.config.GlobalInfo;
  */
 public class ProgressMonitor implements ActionListener {
 
-	private ImageIcon imageIconAgentGUI;
-	private Image imageAgentGUI;
-	
 	private Container progressMonitorContainer = null;
 	
 	private JPanel jContentPane = null;
@@ -117,7 +112,7 @@ public class ProgressMonitor implements ActionListener {
 			jDialog.setAlwaysOnTop(true);
 			
 			jDialog.setTitle(this.windowTitle);
-			jDialog.setIconImage(this.getImageAgentGUI());	
+			jDialog.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));	
 			jDialog.setContentPane(this.getJContentPane());
 			jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			
@@ -133,7 +128,7 @@ public class ProgressMonitor implements ActionListener {
 			jInternalFrame.setResizable(false);
 			
 			jInternalFrame.setTitle(this.windowTitle);
-			jInternalFrame.setFrameIcon(this.getImageIconAgentGUI());	
+			jInternalFrame.setFrameIcon(GlobalInfo.getInternalImageIcon("AgentGUI.png"));	
 			jInternalFrame.setContentPane(this.getJContentPane());
 			jInternalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			
@@ -142,47 +137,6 @@ public class ProgressMonitor implements ActionListener {
 		
 	}
 
-	/**
-	 * Returns the current instance of the {@link GlobalInfo}.
-	 * @return the global info
-	 */
-	private GlobalInfo getGlobalInfo() {
-		GlobalInfo gInfo = null;
-		try {
-			gInfo = Application.getGlobalInfo();
-		} catch (Exception ex) {
-//			ex.printStackTrace();
-		}
-		return gInfo;
-	}
-	
-	private String getPathImageIntern() {
-		String imagePathIntern=null;
-		GlobalInfo gInfo = this.getGlobalInfo();
-		if (gInfo!=null) {
-			imagePathIntern = gInfo.getPathImageIntern();
-		}
-		return imagePathIntern;
-	}
-	private ImageIcon getImageIconAgentGUI() {
-		if (imageIconAgentGUI==null) {
-			String pathImage = this.getPathImageIntern();
-			if (pathImage!=null) {
-				imageIconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
-			}
-		}
-		return imageIconAgentGUI;
-	}
-	private Image getImageAgentGUI(){
-		if (imageAgentGUI==null) {
-			ImageIcon iIcon = getImageIconAgentGUI();
-			if (iIcon!=null) {
-				imageAgentGUI = iIcon.getImage();
-			}
-		}
-		return imageAgentGUI;
-	}
-	
 	/**
 	 * Sets the progress dialog visible.
 	 * @param visible the new visible
@@ -312,20 +266,17 @@ public class ProgressMonitor implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		GlobalInfo gInfo = this.getGlobalInfo(); 
-		if (gInfo!=null) {
-			String lnfClassname = gInfo.getAppLnF();
-			try {
-				if (lnfClassname == null) {
-					lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				}	
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this.progressMonitorContainer);				
-			
-			} catch (Exception e) {
-				System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
+		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
+		try {
+			if (lnfClassname == null) {
+				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}	
-		}
+			UIManager.setLookAndFeel(lnfClassname);
+			SwingUtilities.updateComponentTreeUI(this.progressMonitorContainer);				
+		
+		} catch (Exception e) {
+			System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
+		}	
 	}
 	
 	/**

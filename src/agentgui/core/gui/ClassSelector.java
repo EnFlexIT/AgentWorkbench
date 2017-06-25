@@ -28,10 +28,6 @@
  */
 package agentgui.core.gui;
 
-import jade.content.onto.Ontology;
-import jade.core.Agent;
-import jade.core.BaseService;
-
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -39,7 +35,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -52,7 +47,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.ImageIcon;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -60,18 +55,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+import javax.swing.border.EtchedBorder;
 
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.gui.components.JListWithProgressBar;
 import agentgui.core.jade.ClassSearcherSingle;
-
-import javax.swing.BorderFactory;
-import javax.swing.border.EtchedBorder;
+import jade.content.onto.Ontology;
+import jade.core.Agent;
+import jade.core.BaseService;
 
 /**
  * The GUI to select a class, which extends a given super class
@@ -81,10 +78,6 @@ import javax.swing.border.EtchedBorder;
 public class ClassSelector extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
-	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
 	private JLabel jLabelCustomize = null;
@@ -314,7 +307,7 @@ public class ClassSelector extends JDialog {
 		this.setSize(730, 606);
 		this.setContentPane(getJContentPane());
 		this.setTitle("Agent.GUI: Class-Selector");
-		this.setIconImage(image);
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setModal(true);		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
@@ -464,7 +457,7 @@ public class ClassSelector extends JDialog {
 			jButtonDefaultClass.setToolTipText(Language.translate("Zurücksetzen"));
 			jButtonDefaultClass.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClass.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonDefaultClass.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonDefaultClass.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -486,7 +479,7 @@ public class ClassSelector extends JDialog {
 			jButtonSetNull.setToolTipText(Language.translate("Löschen"));
 			jButtonSetNull.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonSetNull.setPreferredSize(new Dimension(45, 26));
-			jButtonSetNull.setIcon(new ImageIcon(getClass().getResource(PathImage + "Delete.png")));
+			jButtonSetNull.setIcon(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonSetNull.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -507,7 +500,7 @@ public class ClassSelector extends JDialog {
 			jButtonCheckClass = new JButton();
 			jButtonCheckClass.setToolTipText(Language.translate("Klassenangabe überprüfen"));
 			jButtonCheckClass.setPreferredSize(new Dimension(45, 26));
-			jButtonCheckClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			jButtonCheckClass.setIcon(GlobalInfo.getInternalImageIcon("MBcheckGreen.png"));
 			jButtonCheckClass.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -530,11 +523,11 @@ public class ClassSelector extends JDialog {
 		String className = jTextField.getText().trim();
 		if (this.class2Search4DefaultValue==null && className.equals("")) {
 			// --- If no default value is configured, an empty text field is allowed -----
-			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckGreen.png"));
 			this.setValidClass(true);
 			return true;
 		} else if (isAllowNull()==true && className.equals("")) {
-			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckGreen.png"));
 			this.setValidClass(true);
 			return true;
 			
@@ -542,13 +535,13 @@ public class ClassSelector extends JDialog {
 			// --- If a default value is configured, there should be a valid class ------ 
 			try {
 				ClassLoadServiceUtility.forName(className);
-				jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+				jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckGreen.png"));
 				this.setValidClass(true);
 				return true;
 				
 			} catch (ClassNotFoundException e) {
 				//e.printStackTrace();
-				jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckRed.png")));
+				jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckRed.png"));
 			}
 		}
 		this.setValidClass(false);
@@ -682,7 +675,7 @@ public class ClassSelector extends JDialog {
 			jButtonTakeSelected = new JButton();
 			jButtonTakeSelected.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonTakeSelected.setPreferredSize(new Dimension(45, 26));
-			jButtonTakeSelected.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowUp.png")));
+			jButtonTakeSelected.setIcon(GlobalInfo.getInternalImageIcon("ArrowUp.png"));
 			jButtonTakeSelected.setToolTipText(Language.translate("Ausgewählte Klasse übernehmen!"));
 			jButtonTakeSelected.addActionListener(new ActionListener() {
 				@Override

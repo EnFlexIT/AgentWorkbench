@@ -47,7 +47,6 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -68,6 +67,7 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.gui.TimeFormatImportConfiguration;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
 import agentgui.core.common.csv.CsvFileWriter;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.imaging.ConfigurableFileFilter;
 import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImagePreview;
@@ -88,7 +88,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	private static final Integer DEFAULT_ImageWidth = 1600; 
 	private static final Integer DEFAULT_ImageHeight = 900;
 	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern(); 
     private final Dimension jButtonSize = new Dimension(26, 26); 
      
 	// Swing components
@@ -189,7 +188,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JButton getJButtonCsvImport() {
 		if (jButtonCsvImport == null) {
 			jButtonCsvImport = new JButton("");
-			jButtonCsvImport.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBtransImport.png")));
+			jButtonCsvImport.setIcon(GlobalInfo.getInternalImageIcon("MBtransImport.png"));
 			jButtonCsvImport.setPreferredSize(jButtonSize);
 			jButtonCsvImport.setToolTipText(Language.translate("Neue Datenreihe(n) importieren"));
 			jButtonCsvImport.addActionListener(this);
@@ -204,7 +203,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
     protected JButton getJButtonSaveAsImage() {
 		if (jButtonSaveAsImage == null) {
 			jButtonSaveAsImage = new JButton();
-			jButtonSaveAsImage.setIcon(new ImageIcon(getClass().getResource(pathImage  + "SaveAsImage.png")));
+			jButtonSaveAsImage.setIcon(GlobalInfo.getInternalImageIcon("SaveAsImage.png"));
 			jButtonSaveAsImage.setPreferredSize(jButtonSize);
 			jButtonSaveAsImage.setToolTipText(Language.translate("Als Bild exportieren"));
 			jButtonSaveAsImage.addActionListener(this);
@@ -285,7 +284,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JButton getJButtonCsvExport() {
 		if (jButtonCsvExport == null) {
 			jButtonCsvExport = new JButton("");
-			jButtonCsvExport.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBtransExport.png")));
+			jButtonCsvExport.setIcon(GlobalInfo.getInternalImageIcon("MBtransExport.png"));
 			jButtonCsvExport.setToolTipText("Export data to CSV");
 			jButtonCsvExport.addActionListener(this);
 		}

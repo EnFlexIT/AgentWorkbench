@@ -31,7 +31,6 @@ package agentgui.simulationService.load.gui;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -39,6 +38,7 @@ import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 
 /**
@@ -52,9 +52,6 @@ import agentgui.simulationService.agents.LoadMeasureAgent;
 public class SystemLoadDialog extends JFrame {
 
 	private static final long serialVersionUID = 3170514914879967107L;
-
-	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
 
 	private LoadMeasureAgent loadMeasureAgent;
 	private SystemLoadPanel systemLoadPanel;
@@ -76,7 +73,7 @@ public class SystemLoadDialog extends JFrame {
 	private void initialize() {
 		
 		this.setSize(620, 120);
-		this.setIconImage(this.iconAgentGUI.getImage());
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Load Monitor"));
 		this.setLookAndFeel();
 		this.setContentPane(this.getSystemLoadPanel());		
@@ -107,7 +104,7 @@ public class SystemLoadDialog extends JFrame {
 	 */
 	private void setLookAndFeel() {
  
-		String lnfClassname = Application.getGlobalInfo().getAppLnF();
+		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

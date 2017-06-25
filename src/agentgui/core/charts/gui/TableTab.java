@@ -33,7 +33,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -42,9 +41,9 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionListener;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
+import agentgui.core.config.GlobalInfo;
 
 /**
  * Generic superclass for a Swing component showing the table representation of chart data and 
@@ -55,9 +54,6 @@ import agentgui.core.charts.DataModel;
 public abstract class TableTab extends JPanel implements ActionListener, ListSelectionListener {
 
 	private static final long serialVersionUID = -8682335989453677658L;
-
-	/** The path for icon images */
-	protected final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 
 	private JScrollPane scrollPane;
 	private JToolBar toolBar;
@@ -139,7 +135,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	protected JButton getBtnAddRow() {
 		if (btnAddRow == null) {
 			btnAddRow = new JButton();
-			btnAddRow.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "AddRow.png")));
+			btnAddRow.setIcon(GlobalInfo.getInternalImageIcon("AddRow.png"));
 			btnAddRow.setToolTipText(Language.translate("Zeile hinzufügen"));
 			btnAddRow.addActionListener(this);
 		}
@@ -148,7 +144,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	protected JButton getBtnAddColumn() {
 		if (btnAddColumn == null) {
 			btnAddColumn = new JButton();
-			btnAddColumn.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "AddCol.png")));
+			btnAddColumn.setIcon(GlobalInfo.getInternalImageIcon("AddCol.png"));
 			btnAddColumn.setToolTipText(Language.translate("Spalte hinzufügen"));
 			btnAddColumn.addActionListener(this);
 		}
@@ -157,7 +153,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	protected JButton getBtnRemoveRow() {
 		if (btnRemoveRow == null) {
 			btnRemoveRow = new JButton();
-			btnRemoveRow.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "RemoveRow.png")));
+			btnRemoveRow.setIcon(GlobalInfo.getInternalImageIcon("RemoveRow.png"));
 			btnRemoveRow.setToolTipText(Language.translate("Zeile entfernen"));
 			btnRemoveRow.setEnabled(false);
 			btnRemoveRow.addActionListener(this);
@@ -167,7 +163,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	protected JButton getBtnRemoveColumn() {
 		if (btnRemoveColumn == null) {
 			btnRemoveColumn = new JButton();
-			btnRemoveColumn.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "RemoveCol.png")));
+			btnRemoveColumn.setIcon(GlobalInfo.getInternalImageIcon("RemoveCol.png"));
 			btnRemoveColumn.setToolTipText(Language.translate("Spalte entfernen"));
 			btnRemoveColumn.setEnabled(false);
 			btnRemoveColumn.addActionListener(this);

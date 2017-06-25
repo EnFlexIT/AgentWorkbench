@@ -41,19 +41,20 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Arrays;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 /**
  * This JPanel allows the user to : 
@@ -114,10 +115,6 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	private JFileChooser jFileChooser;
 	private JFileChooser jFileChooserFile;
 
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconSave = new ImageIcon( this.getClass().getResource( pathImage + "MBsave.png") );
-	private final ImageIcon iconAdd = new ImageIcon( this.getClass().getResource( pathImage + "ListPlus.png") );
-	private final ImageIcon iconRemove = new ImageIcon( this.getClass().getResource( pathImage + "ListMinus.png") );
 	private final Dimension fieldSize = new Dimension(120, 26);
 
 	/**
@@ -634,7 +631,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 			jButtonApplyTrustStore.setForeground(new Color(0, 0, 255));
 			jButtonApplyTrustStore.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonApplyTrustStore.setPreferredSize(new Dimension(26, 26));
-			jButtonApplyTrustStore.setIcon(iconSave);
+			jButtonApplyTrustStore.setIcon(GlobalInfo.getInternalImageIcon("MBsave.png"));
 			jButtonApplyTrustStore.addActionListener(this);
 		}
 		return jButtonApplyTrustStore;
@@ -648,7 +645,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 			jButtonAddCertificate.setToolTipText(Language.translate("Add Certificate",Language.EN));
 			jButtonAddCertificate.setPreferredSize(new Dimension(35, 26));
 			jButtonAddCertificate.setFont(new Font("SansSerif", Font.BOLD, 15));
-			jButtonAddCertificate.setIcon(iconAdd);
+			jButtonAddCertificate.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonAddCertificate.addActionListener(this);
 		}
 		return jButtonAddCertificate;
@@ -662,7 +659,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 			jButtonRemoveCertificate.setToolTipText(Language.translate("Remove Certificate",Language.EN));
 			jButtonRemoveCertificate.setPreferredSize(new Dimension(35, 26));
 			jButtonRemoveCertificate.setFont(new Font("SansSerif", Font.BOLD, 15));
-			jButtonRemoveCertificate.setIcon(iconRemove);
+			jButtonRemoveCertificate.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
 			jButtonRemoveCertificate.addActionListener(this);
 		}
 		return jButtonRemoveCertificate;

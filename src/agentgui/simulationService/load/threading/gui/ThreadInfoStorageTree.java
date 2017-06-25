@@ -55,7 +55,7 @@ import javax.swing.tree.TreePath;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.load.threading.ThreadDetailProperties;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
@@ -76,47 +76,29 @@ import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachin
  */
 public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5311458634217524061L;
 	
-	/** The filtered root. */
 	private DefaultMutableTreeNode filteredRoot;	
-	
-	/** The filtered text root. */
 	private DefaultMutableTreeNode filteredTextRoot;
-	
-	/** The right click menu. */
-	private JPopupMenu rightClickMenu;
-	
-	/** The view single. */
-	private JMenuItem viewSingle;
-	
-	/** The view agent class. */
-	private JMenuItem viewAgentClass;
-	
-	/** The last node. */
 	private DefaultMutableTreeNode lastNode;
 	
-	/** The leaf selected. */
+	private JPopupMenu rightClickMenu;
+	private JMenuItem viewSingle;
+	private JMenuItem viewAgentClass;
+
 	private HashMap<String, Boolean> leafSelected;
-	
-	/** The thread info storage. */
 	private ThreadInfoStorage threadInfoStorage;
 	
-	/** The Thread info storage XY series charts total. */
 	private XYSeriesCollection seriesChartsTotal;
-	
-	/** The Thread info storage XY series charts delta. */
 	private XYSeriesCollection seriesChartsDelta;
 	
-	/** The expansion state. */
 	private String expansionState;
 	
+	
 	/**
- * Instantiates a new thread info storage tree.
- *
- * @param threadInfoStorage the thread info storage
- */
+	 * Instantiates a new thread info storage tree.
+	 * @param threadInfoStorage the thread info storage
+	 */
 	public ThreadInfoStorageTree(ThreadInfoStorage threadInfoStorage){
 		super(threadInfoStorage.getModel());
 		this.threadInfoStorage = threadInfoStorage;
@@ -693,6 +675,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	class MyTreeCellRenderer extends DefaultTreeCellRenderer {
 		
 	    private static final long serialVersionUID = 967937360839244309L;
+	    
 	    private boolean isSelected;
 	    private Icon activeIcon;
 	    private Icon inActiveIcon;
@@ -704,11 +687,10 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
     	 */
     	public MyTreeCellRenderer(){
     		isSelected = false;
-	    	final String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	    	this.activeIcon = new ImageIcon(getClass().getResource(PathImage + "StatGreen.png"));
-	    	this.inActiveIcon = new ImageIcon(getClass().getResource(PathImage + "StatRed.png"));
-	    	this.agentActiveIcon= new ImageIcon(((new ImageIcon(getClass().getResource(PathImage + "AgentGUIGreen.png"))).getImage()).getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
-	    	this.agentInActiveIcon= new ImageIcon(((new ImageIcon(getClass().getResource(PathImage + "AgentGUI.png"))).getImage()).getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+	    	this.activeIcon = GlobalInfo.getInternalImageIcon("StatGreen.png");
+	    	this.inActiveIcon = GlobalInfo.getInternalImageIcon("StatRed.png");
+	    	this.agentActiveIcon= new ImageIcon(((GlobalInfo.getInternalImageIcon("AgentGUIGreen.png")).getImage()).getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+	    	this.agentInActiveIcon= new ImageIcon(((GlobalInfo.getInternalImageIcon("AgentGUI.png")).getImage()).getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
 	    }
 
 	    /* (non-Javadoc)

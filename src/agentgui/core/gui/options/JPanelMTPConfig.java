@@ -28,24 +28,23 @@
  */
 package agentgui.core.gui.options;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Dimension;
-import java.awt.Font;
 
-import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.ImageIcon;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import agentgui.core.gui.options.https.HttpsConfigWindow;
@@ -61,8 +60,8 @@ import agentgui.core.gui.options.https.HttpsConfigWindow;
 public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionListener, ItemListener {
 
 	private static final long serialVersionUID = -7016775471452161527L;
-	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private HttpsConfigWindow httpsConfigWindow ;
+
+	private HttpsConfigWindow httpsConfigWindow;
 	
 	private JLabel jLabelKeystorePath;
 	private JLabel jLabelTruststorePath;
@@ -177,7 +176,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 			jButtonEditMTP = new JButton();
 			jButtonEditMTP.setFont(new Font("Dialog", Font.BOLD, 11));
 			jButtonEditMTP.setPreferredSize(new Dimension(45, 26));
-			jButtonEditMTP.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonEditMTP.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonEditMTP.addActionListener(this);
 		}
 		return jButtonEditMTP;

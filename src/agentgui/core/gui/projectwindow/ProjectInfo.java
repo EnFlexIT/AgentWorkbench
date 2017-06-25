@@ -40,7 +40,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,7 +52,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
@@ -67,8 +65,6 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	
 	private Project currProject;
 	
 	private JLabel jLableTitleProject = null;
@@ -459,7 +455,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jButtonEditVersion == null) {
 			jButtonEditVersion = new JButton();
 			jButtonEditVersion.setToolTipText(Language.translate("Versionnummer bearbeiten"));
-			jButtonEditVersion.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonEditVersion.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonEditVersion.setPreferredSize(new Dimension(45, 26));
 			jButtonEditVersion.addActionListener(this);
 		}
@@ -524,7 +520,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jButtonUpdateSiteDefault == null) {
 			jButtonUpdateSiteDefault = new JButton();
 			jButtonUpdateSiteDefault.setToolTipText(Language.translate("Standard verwenden"));
-			jButtonUpdateSiteDefault.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonUpdateSiteDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonUpdateSiteDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonUpdateSiteDefault.addActionListener(this);
 		}
@@ -534,7 +530,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jButtonSearchForUpdate == null) {
 			jButtonSearchForUpdate = new JButton();
 			jButtonSearchForUpdate.setToolTipText(Language.translate("Nach Update suchen ..."));
-			jButtonSearchForUpdate.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonSearchForUpdate.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
 			jButtonSearchForUpdate.setPreferredSize(new Dimension(45, 26));
 			jButtonSearchForUpdate.addActionListener(this);
 		}

@@ -28,39 +28,38 @@
  */
 package agentgui.core.gui.options.https;
 
-import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 /**
  * This class allows the user to configure the HTTPS Message Transport protocol.
@@ -113,10 +112,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 	public static final String KEYSTORE_FILENAME = "KeyStore.jks";
 	public static final String TRUSTSTORE_FILENAME = "TrustStore.jks";
-
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private ImageIcon imageIcon = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
-	private Image image = imageIcon.getImage();
 
 	private boolean canceled;
 
@@ -185,7 +180,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 */
 	private void initialize() {
 		this.setTitle(Language.translate("Agent.GUI: HTTPS Configuration", Language.EN));
-		this.setIconImage(image);
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setBounds(100, 100, 820, 590);
 		this.setLocationRelativeTo(null);
 		this.setModal(true);

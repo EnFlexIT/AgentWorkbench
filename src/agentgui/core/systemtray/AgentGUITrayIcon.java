@@ -38,6 +38,7 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 
 /**
  * This class will show the tray icon and will prepare its context menu, if it is supported by the OS. 
@@ -57,14 +58,12 @@ public class AgentGUITrayIcon implements ActionListener {
 	}
 	private TrayUsage trayIconUsage = TrayUsage.Automatic;
 	
-	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	private TrayIcon trayIcon;
 	
-	private ImageIcon imageIconRed = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
+	private ImageIcon imageIconRed = GlobalInfo.getInternalImageIcon("AgentGUI.png");
 	private Image     imageRed = imageIconRed.getImage();
-	
-	private ImageIcon imageIconGreen = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUIGreen.png"));
+
+	private ImageIcon imageIconGreen = GlobalInfo.getInternalImageIcon("AgentGUIGreen.png");
 	private Image     imageGreen = imageIconGreen.getImage();
 	
 	private AgentGUITrayPopUp trayPopUp;

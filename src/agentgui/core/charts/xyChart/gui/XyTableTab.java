@@ -36,7 +36,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -44,8 +43,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import javax.swing.SortOrder;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableRowSorter;
@@ -59,6 +58,7 @@ import agentgui.core.charts.gui.TableTab;
 import agentgui.core.charts.xyChart.XyDataModel;
 import agentgui.core.charts.xyChart.XyOntologyModel;
 import agentgui.core.charts.xyChart.XyTableModel;
+import agentgui.core.config.GlobalInfo;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyDataSeries;
@@ -124,7 +124,7 @@ public class XyTableTab extends TableTab {
 	private JButton getBtnSeriesSettings() {
 		if (btnSeriesSettings == null) {
 			btnSeriesSettings = new JButton();
-			btnSeriesSettings.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "Properties.png")));
+			btnSeriesSettings.setIcon(GlobalInfo.getInternalImageIcon("Properties.png"));
 			btnSeriesSettings.setToolTipText(Language.translate("Eigenschaften"));
 			btnSeriesSettings.addActionListener(this);
 		}
@@ -133,7 +133,7 @@ public class XyTableTab extends TableTab {
 	private JButton getBtnPrevSeries() {
 		if (btnPrevSeries == null) {
 			btnPrevSeries = new JButton();
-			btnPrevSeries.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ArrowLeft.png")));
+			btnPrevSeries.setIcon(GlobalInfo.getInternalImageIcon("ArrowLeft.png"));
 			btnPrevSeries.setPreferredSize(new Dimension(26, 26));
 			btnPrevSeries.setToolTipText(Language.translate("Vorherige Datenreihe"));
 			btnPrevSeries.addActionListener(this);
@@ -143,7 +143,7 @@ public class XyTableTab extends TableTab {
 	private JButton getBtnNextSeries() {
 		if (btnNextSeries == null) {
 			btnNextSeries = new JButton();
-			btnNextSeries.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ArrowRight.png")));
+			btnNextSeries.setIcon(GlobalInfo.getInternalImageIcon("ArrowRight.png"));
 			btnNextSeries.setPreferredSize(new Dimension(26, 26));
 			btnNextSeries.setToolTipText(Language.translate("Nächste Datenreihe"));
 			btnNextSeries.addActionListener(this);
@@ -153,7 +153,7 @@ public class XyTableTab extends TableTab {
 	private JButton getBtnMoveUp() {
 		if (btnMoveUp == null) {
 			btnMoveUp = new JButton();
-			btnMoveUp.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ArrowUp.png")));
+			btnMoveUp.setIcon(GlobalInfo.getInternalImageIcon("ArrowUp.png"));
 			btnMoveUp.setPreferredSize(new Dimension(26, 26));
 			btnMoveUp.setToolTipText(Language.translate("Nach oben verschieben"));
 			btnMoveUp.addActionListener(this);
@@ -163,7 +163,7 @@ public class XyTableTab extends TableTab {
 	private JButton getBtnMoveDown() {
 		if (btnMoveDown == null) {
 			btnMoveDown = new JButton();
-			btnMoveDown.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ArrowDown.png")));
+			btnMoveDown.setIcon(GlobalInfo.getInternalImageIcon("ArrowDown.png"));
 			btnMoveDown.setPreferredSize(new Dimension(26, 26));
 			btnMoveDown.setToolTipText(Language.translate("Nach unten verschieben"));
 			btnMoveDown.addActionListener(this);

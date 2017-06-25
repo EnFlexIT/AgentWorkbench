@@ -37,7 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,8 +44,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.JComboBoxWide;
 import agentgui.core.gui.components.JPanelForActions;
 
@@ -60,8 +59,6 @@ import agentgui.core.gui.components.JPanelForActions;
 public class TimeFormatSelection extends JPanelForActions {
 
 	private static final long serialVersionUID = 1L;
-	
-	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private boolean showLable = false;
 	private String defaultTimeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;  //  @jve:decl-index=0:
@@ -197,7 +194,7 @@ public class TimeFormatSelection extends JPanelForActions {
 			jButtonTimeFormatDefault = new JButton();
 			jButtonTimeFormatDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonTimeFormatDefault.setBounds(new Rectangle(120, 121, 80, 26));
-			jButtonTimeFormatDefault.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonTimeFormatDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonTimeFormatDefault.setToolTipText("Agent.GUI - Standard verwenden");
 			jButtonTimeFormatDefault.setToolTipText(Language.translate(jButtonTimeFormatDefault.getToolTipText()));
 			jButtonTimeFormatDefault.addActionListener(new ActionListener() {

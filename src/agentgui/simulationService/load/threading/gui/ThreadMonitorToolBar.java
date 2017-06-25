@@ -33,16 +33,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.TimeSelection;
 import agentgui.simulationService.agents.LoadMeasureAgent;
-
 
 /**
  * The Class ThreadMonitorToolBar.
@@ -52,8 +50,6 @@ import agentgui.simulationService.agents.LoadMeasureAgent;
 public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 
 	private static final long serialVersionUID = 7052789869732559092L;
-	
-	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private LoadMeasureAgent myAgent;
 	
@@ -106,7 +102,7 @@ public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 			jButtonMeasureRefresh = new JButton();
 			jButtonMeasureRefresh.setToolTipText(Language.translate("Refresh Thread Measurement", Language.EN));
 			jButtonMeasureRefresh.setPreferredSize(new Dimension(26,26));
-			jButtonMeasureRefresh.setIcon(new ImageIcon( this.getClass().getResource( pathImage + "Refresh.png" )));
+			jButtonMeasureRefresh.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png" ));
 			jButtonMeasureRefresh.addActionListener(this);	
 		}
 		return jButtonMeasureRefresh;
@@ -122,7 +118,7 @@ public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 			jButtonMeasureStart = new JButton();
 			jButtonMeasureStart.setToolTipText(Language.translate("Start Thread Measurement", Language.EN));
 			jButtonMeasureStart.setPreferredSize(new Dimension(26,26));
-			jButtonMeasureStart.setIcon(new ImageIcon( this.getClass().getResource( pathImage + "MBLoadPlay.png" )));
+			jButtonMeasureStart.setIcon(GlobalInfo.getInternalImageIcon("MBLoadPlay.png" ));
 			jButtonMeasureStart.addActionListener(this);	
 		}
 		return jButtonMeasureStart;
@@ -138,7 +134,7 @@ public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 			jButtonMeasurePause = new JButton();
 			jButtonMeasurePause.setToolTipText(Language.translate("Pause Thread Measurement", Language.EN));
 			jButtonMeasurePause.setPreferredSize(new Dimension(26,26));
-			jButtonMeasurePause.setIcon(new ImageIcon( this.getClass().getResource( pathImage + "MBLoadPause.png" )));
+			jButtonMeasurePause.setIcon(GlobalInfo.getInternalImageIcon("MBLoadPause.png"));
 			jButtonMeasurePause.addActionListener(this);	
 		}
 		return jButtonMeasurePause;

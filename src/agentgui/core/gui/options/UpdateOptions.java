@@ -41,8 +41,8 @@ import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -52,8 +52,6 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-
-import javax.swing.JCheckBox;
 
 
 /**
@@ -65,8 +63,6 @@ import javax.swing.JCheckBox;
 public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
-	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private JPanel jPanelUpdateLink;
 	private JPanel jPanelDummy;
@@ -313,7 +309,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jButtonUpdateSiteDefault == null) {
 			jButtonUpdateSiteDefault = new JButton();
 			jButtonUpdateSiteDefault.setToolTipText(Language.translate("Standard verwenden"));
-			jButtonUpdateSiteDefault.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
+			jButtonUpdateSiteDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonUpdateSiteDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonUpdateSiteDefault.addActionListener(this);
 		}

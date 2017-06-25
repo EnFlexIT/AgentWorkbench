@@ -39,20 +39,18 @@ import java.text.NumberFormat;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.TimeSelection;
 import agentgui.simulationService.agents.LoadMeasureAgent;
-
-import javax.swing.JTextField;
 
 /**
  * This panel will display all occurring elements of the type {@link SystemLoadSingle}
@@ -66,7 +64,7 @@ import javax.swing.JTextField;
 public class SystemLoadPanel extends JPanel {
 
 	private static final long serialVersionUID = -6077963388508346438L;
-	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
+//	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private LoadMeasureAgent myAgent;
 	private boolean isRecording = false;
@@ -388,9 +386,7 @@ public class SystemLoadPanel extends JPanel {
 
 			if (imgName!=null) {
 				try {
-					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( pathImage + imgName ), text);
-					this.setIcon(ButtIcon);
-					
+					this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
 				} catch (Exception err) {
 					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
 				}				

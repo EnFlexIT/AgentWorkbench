@@ -40,7 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
-import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
@@ -57,9 +57,8 @@ public class SystemLoadSingle extends JPanel {
 
 	public static final int loadPanelHeight = 85;
 	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconGreen = new ImageIcon(this.getClass().getResource(pathImage + "StatGreen.png"));  //  @jve:decl-index=0:
-	private final ImageIcon iconRed = new ImageIcon(this.getClass().getResource(pathImage + "StatRed.png"));  //  @jve:decl-index=0:
+	private final ImageIcon iconGreen = GlobalInfo.getInternalImageIcon("StatGreen.png");
+	private final ImageIcon iconRed = GlobalInfo.getInternalImageIcon("StatRed.png");
 
 	private JLabel jLabelThreshold = null;
 	private JProgressBar jLoadCPU = null;

@@ -28,7 +28,6 @@
  */
 package agentgui.core.gui.projectwindow.simsetup;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -46,13 +45,14 @@ import java.util.Observer;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
@@ -65,16 +65,14 @@ import agentgui.core.agents.AgentClassElement;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.AgentSelector;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetupNotification;
-
-import javax.swing.JSplitPane;
-import javax.swing.JComboBox;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Agent-Start' 
@@ -86,18 +84,11 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private static final long serialVersionUID = -3929823093128900880L;
 	
 	private String newLine = Application.getGlobalInfo().getNewLineSeparator();  
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon imageSave = new ImageIcon(getClass().getResource(pathImage + "MBsave.png"));
-	
-	@SuppressWarnings("unused")
-	private final ImageIcon iconRed =   new ImageIcon(this.getClass().getResource( pathImage + "StatRed.png"));
-	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource(pathImage + "StatGreen.png") );
-	
-	
+
 	private Project currProject;
-	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
-	private AgentClassElement4SimStart agentSelected = null;  //  @jve:decl-index=0:
-	private AgentClassElement4SimStart agentSelectedLast = null;  //  @jve:decl-index=0:
+	private SimulationSetup currSimSetup; 
+	private AgentClassElement4SimStart agentSelected;
+	private AgentClassElement4SimStart agentSelectedLast;
 	
 	private DefaultListModel<AgentClassElement4SimStart> jListModelAgents2Start = new DefaultListModel<AgentClassElement4SimStart>();
 	
@@ -335,7 +326,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 					jlab.setToolTipText( agentInfo.getAgentClassReference() );
 					jlab.setOpaque(true);
 
-					jlab.setIcon(iconGreen);	
+					jlab.setIcon(GlobalInfo.getInternalImageIcon("StatGreen.png"));	
 					
 					if (isSelected) {
 						jlab.setForeground(Color.white);
@@ -409,7 +400,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonAgentAdd == null) {
 			jButtonAgentAdd = new JButton();
 			jButtonAgentAdd.setPreferredSize(new Dimension(45, 26));
-			jButtonAgentAdd.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
+			jButtonAgentAdd.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonAgentAdd.setToolTipText("Agenten hinzufügen");
 			jButtonAgentAdd.setActionCommand("AgentAdd");
 			jButtonAgentAdd.addActionListener(this);
@@ -425,7 +416,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonAgentRemove == null) {
 			jButtonAgentRemove = new JButton();
 			jButtonAgentRemove.setPreferredSize(new Dimension(45, 26));
-			jButtonAgentRemove.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
+			jButtonAgentRemove.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
 			jButtonAgentRemove.setToolTipText("Agenten entfernen");
 			jButtonAgentRemove.setActionCommand("AgentRemove");
 			jButtonAgentRemove.addActionListener(this);
@@ -440,7 +431,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonMoveUp() {
 		if (jButtonMoveUp == null) {
 			jButtonMoveUp = new JButton();
-			jButtonMoveUp.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowUp.png")));
+			jButtonMoveUp.setIcon(GlobalInfo.getInternalImageIcon("ArrowUp.png"));
 			jButtonMoveUp.setToolTipText("Agent nach oben verschieben");
 			jButtonMoveUp.setPreferredSize(new Dimension(45, 26));
 			jButtonMoveUp.setActionCommand("AgentUp");
@@ -459,7 +450,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jButtonMoveDown = new JButton();
 			jButtonMoveDown.setPreferredSize(new Dimension(45, 26));
 			jButtonMoveDown.setToolTipText("Agent nach unten verschieben");
-			jButtonMoveDown.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowDown.png")));
+			jButtonMoveDown.setIcon(GlobalInfo.getInternalImageIcon("ArrowDown.png"));
 			jButtonMoveDown.setActionCommand("AgentDown");
 			jButtonMoveDown.addActionListener(this);
 		}
@@ -572,7 +563,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jButtonStartOK.setPreferredSize(new Dimension(45, 26));
 			jButtonStartOK.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonStartOK.setToolTipText(Language.translate("Speichern"));
-			jButtonStartOK.setIcon(imageSave);			
+			jButtonStartOK.setIcon(GlobalInfo.getInternalImageIcon("MBsave.png"));			
 			jButtonStartOK.setActionCommand("Save");
 			jButtonStartOK.addActionListener(this);
 		}

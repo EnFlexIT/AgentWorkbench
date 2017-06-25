@@ -34,7 +34,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -44,7 +43,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -54,6 +52,7 @@ import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
 
@@ -67,11 +66,6 @@ public class AgentSelector extends JDialog implements ActionListener {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	
-	/** The Path image. */
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
-	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private Image image = imageIcon.getImage();
 	
 	/** The selected agent classes. */
 	private Object[] selectedAgentClasses = null; 
@@ -112,7 +106,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 	private void initialize() {
 		this.setSize(721, 500);
 		this.setTitle("Auswahl - Agenten");
-		this.setIconImage( image );
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setModal(true);
 		this.setContentPane(getJContentPane());
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

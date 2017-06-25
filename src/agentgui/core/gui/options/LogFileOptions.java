@@ -39,7 +39,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -62,8 +61,6 @@ import agentgui.core.config.GlobalInfo.ExecutionMode;
 public class LogFileOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
-	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();  
 	
 	private JPanel jPanelLoggingBasePath;
 	private JLabel jLabelLoggingDirectory;	
@@ -241,7 +238,7 @@ public class LogFileOptions extends AbstractOptionTab implements ActionListener 
 		if (jButtonDefault == null) {
 			jButtonDefault = new JButton();
 			jButtonDefault.setToolTipText(Language.translate("Standard verwenden"));
-			jButtonDefault.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
+			jButtonDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonDefault.addActionListener(this);
 		}

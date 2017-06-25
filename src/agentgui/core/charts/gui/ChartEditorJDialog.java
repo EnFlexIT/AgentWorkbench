@@ -38,13 +38,12 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.ontologies.gui.DynForm;
 /**
  * Abstract super class for dialogs for chart viewing and editing. 
@@ -59,13 +58,9 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 
 	private static final long serialVersionUID = 1820851101239120387L;
 	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	private Image imageAgentGUI = GlobalInfo.getInternalImage("AgentGUI.png");
 	
-	/**
-	 * The Dialog is just a container for a ChartEditorJPanel implementation that "does the work"
-	 */
+	/** The Dialog is just a container for a ChartEditorJPanel implementation that "does the work" */
 	protected ChartEditorJPanel contentPane;
 	
 	// Swing components

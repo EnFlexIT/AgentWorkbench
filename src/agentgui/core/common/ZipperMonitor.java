@@ -28,17 +28,17 @@
  */
 package agentgui.core.common;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -51,9 +51,6 @@ import javax.swing.WindowConstants;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-
-import java.awt.Color;
-import java.io.File;
 
 /**
  * The ZipperMonitor class will be used within the Zipper-class of this package.<br>
@@ -68,9 +65,6 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private ImageIcon imageIconAgentGUI;
-	private Image imageAgentGUI;
-	
 	private JPanel jContentPane = null;
 	
 	private JLabel jLabelProcess = null;
@@ -91,10 +85,8 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		super(owner);
 		initialize();
 	}
-
 	/**
 	 * This method initialises this
-	 * @return void
 	 */
 	private void initialize() {
 		
@@ -107,7 +99,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		} else {
 			this.setTitle("Zip-Monitor");
 		}
-		this.setIconImage(this.getImageAgentGUI());
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setLookAndFeel();
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -133,51 +125,21 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		}
 		return gInfo;
 	}
-	private String getPathImageIntern() {
-		String imagePathIntern=null;
-		GlobalInfo gInfo = this.getGlobalInfo();
-		if (gInfo!=null) {
-			imagePathIntern = gInfo.getPathImageIntern();
-		}
-		return imagePathIntern;
-	}
-	private ImageIcon getImageIconAgentGUI() {
-		if (imageIconAgentGUI==null) {
-			String pathImage = this.getPathImageIntern();
-			if (pathImage!=null) {
-				imageIconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
-			}
-		}
-		return imageIconAgentGUI;
-	}
-	private Image getImageAgentGUI(){
-		if (imageAgentGUI==null) {
-			ImageIcon iIcon = getImageIconAgentGUI();
-			if (iIcon!=null) {
-				imageAgentGUI = iIcon.getImage();
-			}
-		}
-		return imageAgentGUI;
-	}
 	/**
 	 * Sets the look and feel of the dialog similar to the core application window
 	 */
 	private void setLookAndFeel() {
 		
-		GlobalInfo gInfo = this.getGlobalInfo();
-		if (gInfo!=null) {
-			String lnfClassname = gInfo.getAppLnF();
-			try {
-				if (lnfClassname == null) {
-					lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				}	
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);				
-			} 
-			catch (Exception e) {
-				System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
+		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
+		try {
+			if (lnfClassname == null) {
+				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}	
-		}
+			UIManager.setLookAndFeel(lnfClassname);
+			SwingUtilities.updateComponentTreeUI(this);				
+		}  catch (Exception e) {
+			System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
+		}	
 	}
 	
 	/**

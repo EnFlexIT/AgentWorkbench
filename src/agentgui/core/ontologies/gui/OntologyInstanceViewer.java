@@ -39,7 +39,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,6 +52,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.project.AgentStartConfiguration;
@@ -66,9 +66,6 @@ import agentgui.core.project.AgentStartConfiguration;
 public class OntologyInstanceViewer extends JTabbedPane {
 
 	private static final long serialVersionUID = 6748263753769300242L;
-	
-	final static String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
-	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(pathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:
 	
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
 	private AgentStartConfiguration agentStartConfiguration = null;
@@ -527,7 +524,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		if (jLabelTitleEnlarge == null) {
 			jLabelTitleEnlarge = new JLabel();
 			jLabelTitleEnlarge.setText(" Vergrößern");
-			jLabelTitleEnlarge.setIcon(imageEnlarge);
+			jLabelTitleEnlarge.setIcon(GlobalInfo.getInternalImageIcon("MBFullScreen.png"));
 		}
 		return jLabelTitleEnlarge;
 	}

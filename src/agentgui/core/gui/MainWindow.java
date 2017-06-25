@@ -37,7 +37,6 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -76,6 +75,7 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
 import agentgui.core.update.AgentGuiUpdater;
@@ -93,15 +93,10 @@ public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
-	
-	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( pathImage + "StatGreen.png") );
-	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( pathImage + "StatRed.png") );
-	private final ImageIcon iconClose = new ImageIcon( this.getClass().getResource( pathImage + "MBclose.png") );
-	private final ImageIcon iconCloseDummy = new ImageIcon( this.getClass().getResource( pathImage + "MBdummy.png") );
+	private final ImageIcon iconGreen = GlobalInfo.getInternalImageIcon("StatGreen.png");
+	private final ImageIcon iconRed = GlobalInfo.getInternalImageIcon("StatRed.png");
+	private final ImageIcon iconClose = GlobalInfo.getInternalImageIcon("MBclose.png");
+	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 	
 	private static JLabel statusBar;	
 	private JLabel statusJade;
@@ -149,11 +144,11 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 		
 		// --- Set the IconImage ----------------------------------
-		this.setIconImage(imageAgentGUI);
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		
 		// --- Set the Look and Feel of the Application -----------
-		if (Application.getGlobalInfo().getAppLnF()!=null) {
-			this.setLookAndFeel(Application.getGlobalInfo().getAppLnF());
+		if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
+			this.setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
 		}
 		
 		// --- Create the Main-Elements of the Application --------
@@ -343,9 +338,9 @@ public class MainWindow extends JFrame {
 	public void setLookAndFeel(String newLnF) {
 
 		if (newLnF==null) return;		
-		Application.getGlobalInfo().setAppLnf(newLnF);
+		Application.getGlobalInfo().setAppLnfClassName(newLnF);
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnF();
+			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
@@ -353,15 +348,15 @@ public class MainWindow extends JFrame {
 			SwingUtilities.updateComponentTreeUI(this);
 			
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF() + " on this platform:" + e.getMessage());
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName() + " on this platform:" + e.getMessage());
 		}
 		if (jMenuExtraLnF!=null){
 			jMenuExtraLnF.removeAll();
-			setjMenuExtraLnF();
+			this.setJMenuExtraLnF();
 		}
 		if (jMenuExtraLang!=null) {
 			jMenuExtraLang.removeAll();
-			setjMenuExtraLang();
+			this.setjMenuExtraLang();
 		}
 		if (Application.getProjectFocused()!=null) {
 			Application.getProjectFocused().setMaximized();
@@ -749,7 +744,7 @@ public class MainWindow extends JFrame {
 			// --- Menue 'LnF' -------
 			jMenuExtraLnF = new JMenu();
 			jMenuExtraLnF.setText("Look and Feel");
-			this.setjMenuExtraLnF();
+			this.setJMenuExtraLnF();
 			jMenuExtra.add( jMenuExtraLnF );
 			
 			jMenuExtra.addSeparator();
@@ -832,58 +827,50 @@ public class MainWindow extends JFrame {
 		// --- Look and Feel ------------------------------------------
 		// ------------------------------------------------------------
 		/**
-		 * Setj menu extra ln f.
+		 * Set the JMenue for the look and feel.
 		 */
-		private void setjMenuExtraLnF() {
+		private void setJMenuExtraLnF() {
 
-			boolean setBold = false;
-			UIManager.LookAndFeelInfo plaf[] = UIManager.getInstalledLookAndFeels();
-			
-			for (int i = 0, n = plaf.length; i < n; i++) {
-				if ( plaf[i].getClassName() == Application.getGlobalInfo().getAppLnF() )
-					setBold = true;
-				else
-					setBold = false;
-					jMenuExtraLnF.add( new JMenuItmenLnF(plaf[i].getName(), plaf[i].getClassName(), setBold) );
-			    };			
+			UIManager.LookAndFeelInfo installedLnF[] = UIManager.getInstalledLookAndFeels();
+			for (int i = 0, n = installedLnF.length; i < n; i++) {
+				boolean setBold = installedLnF[i].getClassName().equals(Application.getGlobalInfo().getAppLnFClassName()); 
+				jMenuExtraLnF.add(new JMenuItmenLnF(installedLnF[i].getName(), installedLnF[i].getClassName(), setBold));
+			}
 		}
 		
 		// ------------------------------------------------
 		// --- Sub class for the Look and Feel Menu -------
 		// ------------------------------------------------
 		/**
-		 * The Class JMenuItmenLnF.
+		 * The Class JMenuItmenLnF provides a container for single Look and Feel descriptions.
 		 */
 		private class JMenuItmenLnF extends JMenuItem  {
 	 
-			/** The Constant serialVersionUID. */
 			private static final long serialVersionUID = 1L;
-			
-			/** The Ln f path. */
-			private String LnFPath; 
+			private String LnFClass; 
 			
 			/**
-			 * Instantiates a new j menu itmen ln f.
+			 * Instantiates a new JMenuItmen for a single Look and Feel entry.
 			 *
-			 * @param LnFName the ln f name
-			 * @param LnFClass the ln f class
+			 * @param LnFName the name of the look and feel
+			 * @param LnFClass the class of the look and feel
 			 * @param setBold the set bold
 			 */
-			private JMenuItmenLnF( String LnFName, String LnFClass, boolean setBold  ) {
-				LnFPath = LnFClass;	
-				this.setText( LnFName );
-				if ( setBold ) {
+			private JMenuItmenLnF(String LnFName, String LnFClass, boolean setBold) {
+				
+				this.LnFClass = LnFClass;	
+				this.setText(LnFName);
+				if (setBold==true) {
 					Font cfont = this.getFont();
-					if ( cfont.isBold() ) {
-						this.setForeground( Application.getGlobalInfo().ColorMenuHighLight() );	
-					}
-					else {
-						this.setFont( cfont.deriveFont(Font.BOLD) );
+					if (cfont.isBold()) {
+						this.setForeground(Application.getGlobalInfo().ColorMenuHighLight());	
+					} else {
+						this.setFont( cfont.deriveFont(Font.BOLD));
 					}
 				}
-				this.addActionListener( new ActionListener() {
+				this.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						Application.setLookAndFeel( LnFPath );							
+						Application.setLookAndFeel(JMenuItmenLnF.this.LnFClass);							
 					}
 				});		
 			}
@@ -992,9 +979,8 @@ public class MainWindow extends JFrame {
 			this.setText(Text);
 			if ( imgName != null ) {
 				try {
-					this.setIcon( new ImageIcon( this.getClass().getResource( pathImage + imgName ) ) );
-				}
-				catch (Exception err) {
+					this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
+				} catch (Exception err) {
 					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
 				}				
 			}
@@ -1285,19 +1271,16 @@ public class MainWindow extends JFrame {
 			this.setToolTipText(toolTipText);
 			this.setSize(36, 36);
 			
-			if ( imgName != null ) {
-				this.setPreferredSize( new Dimension(26,26) );
-			}
-			else {
-				this.setPreferredSize( null );	
+			if (imgName!=null) {
+				this.setPreferredSize(new Dimension(26,26));
+			} else {
+				this.setPreferredSize(null);	
 			}
 
-			if ( imgName != null ) {
+			if (imgName!=null) {
 				try {
-					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( pathImage + imgName ), altText);
-					this.setIcon(ButtIcon);
-				}
-				catch (Exception err) {
+					this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
+				} catch (Exception err) {
 					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
 				}				
 			}

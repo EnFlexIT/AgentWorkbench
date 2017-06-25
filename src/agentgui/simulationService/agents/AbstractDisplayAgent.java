@@ -28,21 +28,18 @@
  */
 package agentgui.simulationService.agents;
 
-import jade.core.ServiceException;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -53,6 +50,7 @@ import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelBaseExecutionElements;
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelContinuousExecutionElements;
+import jade.core.ServiceException;
 
 /**
  * The Class VisualisationAgent can be used in order to build agents
@@ -72,8 +70,6 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 
 	private static final long serialVersionUID = -6499021588257662334L;
 	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-
 	protected boolean isPausedSimulation = true;
 	private boolean isAgentGuiEmbedded = false;
 	private EnvironmentController myEnvironmentController;
@@ -324,9 +320,6 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	protected JFrame getJFrameStandalone() {
 		if (this.jFrameStandalone==null) {
 			
-			ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
-			Image imageAgentGUI = iconAgentGUI.getImage();
-
 			// --- Define the content pane ----------
 			JPanel jContentPane = new JPanel();
 			jContentPane.setLayout(new BorderLayout());
@@ -336,7 +329,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			this.jFrameStandalone.setContentPane(jContentPane);
 			this.jFrameStandalone.setSize(1150, 640);
 			this.jFrameStandalone.setTitle("DisplayAgent: " + getLocalName());
-			this.jFrameStandalone.setIconImage(imageAgentGUI);		
+			this.jFrameStandalone.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 			this.jFrameStandalone.setLocationRelativeTo(null);
 			this.jFrameStandalone.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent we) {

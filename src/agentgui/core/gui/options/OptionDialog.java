@@ -35,7 +35,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -48,7 +47,6 @@ import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -72,6 +70,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 
 /**
@@ -84,11 +83,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern(); 
-	
-	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
-	private Image image = imageIcon.getImage();  
-	
 	private Frame owner = null;
 	
 	private JSplitPane jSplitPaneMain = null;
@@ -124,8 +118,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		// --- Set the Look and Feel of the Dialog ------------------
 		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
 		if (Application.isRunningAsServer()==true ||  execMode==ExecutionMode.DEVICE_SYSTEM) {
-			if (Application.getGlobalInfo().getAppLnF()!=null) {
-				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
+			if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
+				setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
 			}
 		}
 		
@@ -161,8 +155,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		}
 
 		this.setTitle("Agent.GUI: Optionen");
-		this.setIconImage(image);
-		
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setContentPane(this.getJPanelBase());
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -206,9 +199,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private void setLookAndFeel( String NewLnF ) {
 		// --- Look and fell einstellen --------------- 
 		if ( NewLnF == null ) return;		
-		Application.getGlobalInfo().setAppLnf( NewLnF );
+		Application.getGlobalInfo().setAppLnfClassName( NewLnF );
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnF();
+			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
@@ -216,7 +209,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			SwingUtilities.updateComponentTreeUI(this);
 			
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName()
 					+ " on this platform:" + e.getMessage());
 		}
 	}		

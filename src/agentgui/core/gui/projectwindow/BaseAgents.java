@@ -28,8 +28,6 @@
  */
 package agentgui.core.gui.projectwindow;
 
-import jade.core.Agent;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -45,7 +43,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -68,6 +65,7 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.ClassSearcher.ClassSearcherProcess;
@@ -75,6 +73,7 @@ import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.gui.OntologyInstanceDialog;
 import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.Project;
+import jade.core.Agent;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Agents'
@@ -84,7 +83,6 @@ import agentgui.core.project.Project;
 public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private Project currProject;
 	private OntologyClassTreeObject currOntoObject;
@@ -380,7 +378,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonAgentListRefresh() {
 		if (jButtonAgentListRefresh == null) {
 			jButtonAgentListRefresh = new JButton();
-			jButtonAgentListRefresh.setIcon(new ImageIcon(getClass().getResource(PathImage + "Refresh.png")));
+			jButtonAgentListRefresh.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
 			jButtonAgentListRefresh.setPreferredSize(new Dimension(39, 26));
 			jButtonAgentListRefresh.setToolTipText("Agentenliste aktualisieren");
 			jButtonAgentListRefresh.setActionCommand("AgentsRefresh");
@@ -496,7 +494,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if (jButtonMoveUp == null) {
 			jButtonMoveUp = new JButton();
 			jButtonMoveUp.setPreferredSize(new Dimension(15, 15));
-			jButtonMoveUp.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowUp.png")));
+			jButtonMoveUp.setIcon(GlobalInfo.getInternalImageIcon("ArrowUp.png"));
 			jButtonMoveUp.setToolTipText("Objekt nach oben");
 			jButtonMoveUp.setActionCommand("OntoObjectUp");
 			jButtonMoveUp.addActionListener(this);
@@ -511,7 +509,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonMoveDown() {
 		if (jButtonMoveDown == null) {
 			jButtonMoveDown = new JButton();
-			jButtonMoveDown.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowDown.png")));
+			jButtonMoveDown.setIcon(GlobalInfo.getInternalImageIcon("ArrowDown.png"));
 			jButtonMoveDown.setPreferredSize(new Dimension(15, 15));
 			jButtonMoveDown.setToolTipText("Objekt nach unten");
 			jButtonMoveDown.setActionCommand("OntoObjectDown");
@@ -527,7 +525,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonRename() {
 		if (jButtonRename == null) {
 			jButtonRename = new JButton();
-			jButtonRename.setIcon(new ImageIcon(getClass().getResource(PathImage + "Rename.gif")));
+			jButtonRename.setIcon(GlobalInfo.getInternalImageIcon("Rename.gif"));
 			jButtonRename.setPreferredSize(new Dimension(15, 15));
 			jButtonRename.setToolTipText("Ontologie Referenz benennen");
 			jButtonRename.setActionCommand("OntoRename");
@@ -543,7 +541,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonRemoveAll() {
 		if (jButtonRemoveAll == null) {
 			jButtonRemoveAll = new JButton();
-			jButtonRemoveAll.setIcon(new ImageIcon(getClass().getResource(PathImage + "Delete.png")));
+			jButtonRemoveAll.setIcon(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonRemoveAll.setPreferredSize(new Dimension(15, 15));
 			jButtonRemoveAll.setToolTipText("Alle Objekte löschen");
 			jButtonRemoveAll.setActionCommand("OntoObjectsRemoveAll");
@@ -559,7 +557,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonReferencesAdd() {
 		if (jButtonReferencesAdd == null) {
 			jButtonReferencesAdd = new JButton();
-			jButtonReferencesAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowUp.png")));
+			jButtonReferencesAdd.setIcon(GlobalInfo.getInternalImageIcon("ArrowUp.png"));
 			jButtonReferencesAdd.setSize(15, 15);
 			jButtonReferencesAdd.setToolTipText("Objekt hinzufügen");
 			jButtonReferencesAdd.setActionCommand("OntoObjectAdd");
@@ -575,7 +573,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonReferencesRemove() {
 		if (jButtonReferencesRemove == null) {
 			jButtonReferencesRemove = new JButton();
-			jButtonReferencesRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowDown.png")));
+			jButtonReferencesRemove.setIcon(GlobalInfo.getInternalImageIcon("ArrowDown.png"));
 			jButtonReferencesRemove.setSize(15, 15);
 			jButtonReferencesRemove.setToolTipText("Objekt entfernen");
 			jButtonReferencesRemove.setActionCommand("OntoObjectRemsove");

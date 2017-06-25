@@ -43,7 +43,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -68,8 +67,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = -5837814050254569584L;
 	
-	private GlobalInfo globalInfo = Application.getGlobalInfo();
-	private String pathImage = globalInfo.getPathImageIntern();
 	private OptionDialog optionDialog;
 
 	private JPanel jPanelTop;
@@ -392,7 +389,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		if (jButtonUseDefaults == null) {
 			jButtonUseDefaults = new JButton();
 			jButtonUseDefaults.setPreferredSize(new Dimension(45, 26));
-			jButtonUseDefaults.setIcon(new ImageIcon(getClass().getResource(this.pathImage + "MBreset.png")));
+			jButtonUseDefaults.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonUseDefaults.setToolTipText(Language.translate("Standard verwenden"));
 			jButtonUseDefaults.setActionCommand("resetSettings");
 			jButtonUseDefaults.addActionListener(this);
@@ -583,7 +580,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	private void setGlobalData2Form(){
 		
-		switch (globalInfo.getExecutionMode()) {
+		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			this.getJRadioButtonRunAsApplication().setSelected(true);
 			this.getJRadioButtonRunAsServer().setSelected(false);
@@ -617,12 +614,16 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	private void setFormData2Global() {
 		
+		ExecutionMode newMode = null;
 		if (this.jRadioButtonRunAsApplication.isSelected()) {
-			this.globalInfo.setExecutionMode(ExecutionMode.APPLICATION);
+			newMode = ExecutionMode.APPLICATION;
 		} else if (this.jRadioButtonRunAsServer.isSelected()) {
-			this.globalInfo.setExecutionMode(ExecutionMode.SERVER);
+			newMode = ExecutionMode.SERVER;
 		} else if (this.jRadioButtonRunAsDeviceService.isSelected()) {
-			this.globalInfo.setExecutionMode(ExecutionMode.DEVICE_SYSTEM);
+			newMode = ExecutionMode.DEVICE_SYSTEM;
+		}
+		if (newMode!=null) {
+			Application.getGlobalInfo().setExecutionMode(newMode);
 		}
 		
 		// --- Do the same action in the option panels ----

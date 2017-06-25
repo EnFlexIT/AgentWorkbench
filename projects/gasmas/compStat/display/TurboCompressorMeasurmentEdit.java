@@ -28,8 +28,6 @@
  */
 package gasmas.compStat.display;
 
-import gasmas.ontology.ValueType;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -44,7 +42,6 @@ import java.awt.event.KeyEvent;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -55,7 +52,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
+import gasmas.ontology.ValueType;
 
 
 /**
@@ -67,9 +65,7 @@ public class TurboCompressorMeasurmentEdit extends JDialog implements ParameterL
 	
 	public static final String rowHeaderSettleline = "Settleline";
 	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
-	private final ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	private Image imageAgentGUI = GlobalInfo.getInternalImage("AgentGUI.png");
 	
 	private Dimension valueTypeDimension = new Dimension(120, 26);
 	private Dimension buttonDimension = new Dimension(80, 26);

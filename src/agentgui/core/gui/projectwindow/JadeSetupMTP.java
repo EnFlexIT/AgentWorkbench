@@ -42,17 +42,19 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import agentgui.core.gui.options.https.HttpsConfigWindow;
@@ -60,8 +62,6 @@ import agentgui.core.network.NetworkAddresses;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.core.project.Project;
-import javax.swing.JSeparator;
-import javax.swing.JCheckBox;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'JADE-Configuration'
@@ -71,7 +71,7 @@ import javax.swing.JCheckBox;
 public class JadeSetupMTP extends JPanel implements ActionListener, Observer, ItemListener {
 
 	private static final long serialVersionUID = -7016775471452161527L;
-	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
+
 	private Project currProject = null;
 	private HttpsConfigWindow httpsConfigWindow ;
 
@@ -455,7 +455,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JButton getJButtonSetPort() {
 		if (jButtonSetPort == null) {
 			jButtonSetPort = new JButton();
-			jButtonSetPort.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonSetPort.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonSetPort.setPreferredSize(new Dimension(45, 26));
 			jButtonSetPort.setToolTipText("JADE-Port bearbeiten");
 			jButtonSetPort.setActionCommand("SetPort");
@@ -470,7 +470,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JButton getJButtonSetPortDefault() {
 		if (jButtonSetPortDefault == null) {
 			jButtonSetPortDefault = new JButton();
-			jButtonSetPortDefault.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonSetPortDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonSetPortDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonSetPortDefault.setToolTipText("Standard verwenden");
 			jButtonSetPortDefault.setActionCommand("SetPortDefault");
@@ -548,7 +548,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jButtonIPedit = new JButton();
 			jButtonIPedit.setToolTipText("IP auswählen");
 			jButtonIPedit.setPreferredSize(new Dimension(45, 26));
-			jButtonIPedit.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonIPedit.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonIPedit.addActionListener(this);
 		}
 		return jButtonIPedit;
@@ -589,7 +589,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jButtonSetPortMTP = new JButton();
 			jButtonSetPortMTP.setToolTipText("JADE-Port bearbeiten");
 			jButtonSetPortMTP.setPreferredSize(new Dimension(45, 26));
-			jButtonSetPortMTP.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonSetPortMTP.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonSetPortMTP.setActionCommand("SetPortMTP");
 			jButtonSetPortMTP.addActionListener(this);
 		}
@@ -605,7 +605,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jButtonSetPortMTPDefault.setToolTipText("Standard verwenden");
 			jButtonSetPortMTPDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonSetPortMTPDefault.setActionCommand("SetPortDefault");
-			jButtonSetPortMTPDefault.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonSetPortMTPDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonSetPortMTPDefault.addActionListener(this);
 		}
 		return jButtonSetPortMTPDefault;
@@ -674,7 +674,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JButton getJButtonEditMtpProtocol() {
 		if (jButtonEditMtpProtocol == null) {
 			jButtonEditMtpProtocol = new JButton();
-			jButtonEditMtpProtocol.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonEditMtpProtocol.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonEditMtpProtocol.setPreferredSize(new Dimension(45, 26));
 			jButtonEditMtpProtocol.addActionListener(this);
 		}

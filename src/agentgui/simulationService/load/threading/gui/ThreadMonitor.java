@@ -28,20 +28,19 @@
  */
 package agentgui.simulationService.load.threading.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import java.awt.BorderLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
@@ -57,31 +56,16 @@ public class ThreadMonitor extends JFrame {
 
 	private static final long serialVersionUID = -5535823475614083190L;
 	
-	/** The Constant pathImage. */
-	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	
-	/** The my agent. */
 	private LoadMeasureAgent myAgent;
 	
-	/** The tabbed pane. */
 	private JTabbedPane tabbedPane;
-	
-	/** The thread protocol vector. */
 	private ThreadProtocolVector threadProtocolVector;
-	
-	/** The thread info storage. */
 	private ThreadInfoStorage threadInfoStorage;
 	
-	/** The j panel measure protocol. */
 	private ThreadMonitorProtocolTableTab jPanelMeasureProtocol;
-	
-	/** The j panel measure tree detail. */
 	private ThreadMonitorDetailTreeTab jPanelMeasureTreeDetail;
-	
-	/** The j panel measure metrics. */
 	private ThreadMonitorMetricsTableTab jPanelMeasureMetrics;
-	
-	/** The tool bar. */
+
 	private ThreadMonitorToolBar toolBar;
 
 	
@@ -105,7 +89,7 @@ public class ThreadMonitor extends JFrame {
 		
 		this.setSize(800, 600);
 		
-		this.setIconImage(new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png")).getImage());
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Thread Monitor"));
 		
 		// --- Add a WindowsListener --------------------------------

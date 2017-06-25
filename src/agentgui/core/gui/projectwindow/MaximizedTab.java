@@ -39,7 +39,6 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyVetoException;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
@@ -51,6 +50,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.ProjectWindow;
 
 /**
@@ -60,9 +60,6 @@ public class MaximizedTab extends JInternalFrame {
 	
 	private static final long serialVersionUID = 6120229084857901290L;
 
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconRestore = new ImageIcon( this.getClass().getResource( pathImage + "RestoreView.png") );
-	
 	private ComponentListener myComponentListenerOfMainWindow = null;
 	
 	private ProjectWindow projectWindow = null;
@@ -176,7 +173,7 @@ public class MaximizedTab extends JInternalFrame {
     public JButton getJButtonRestore4MainToolBar() {
     	if (jButtonRestore4MainToolBar==null) {
     		jButtonRestore4MainToolBar = new JButton();
-    		jButtonRestore4MainToolBar.setIcon(this.iconRestore);
+    		jButtonRestore4MainToolBar.setIcon(GlobalInfo.getInternalImageIcon("RestoreView.png"));
     		jButtonRestore4MainToolBar.setText(" " + Language.translate("Ansicht wiederherstellen"));
     		jButtonRestore4MainToolBar.setToolTipText(jButtonRestore4MainToolBar.getText() + " [ESC]");
     		jButtonRestore4MainToolBar.setFont(new Font("Dialog", Font.BOLD, 12));

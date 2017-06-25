@@ -40,7 +40,6 @@ import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -51,6 +50,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -321,7 +321,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			jButtonSelectAgentClass = new JButton();
 			jButtonSelectAgentClass.setToolTipText(Language.translate("Agenten auswählen"));
 			jButtonSelectAgentClass.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectAgentClass.setIcon(new ImageIcon(getClass().getResource(getPathImage() + "Search.png")));
+			jButtonSelectAgentClass.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
 			jButtonSelectAgentClass.setActionCommand("esaSelectAgent");
 			jButtonSelectAgentClass.addActionListener(this);
 		}

@@ -28,27 +28,25 @@
  */
 package agentgui.core.gui.projectwindow;
 
-import javax.swing.JPanel;
-
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
-import agentgui.core.common.KeyAdapter4Numbers;
-import agentgui.core.project.Project;
-import agentgui.core.update.VersionInformation;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import agentgui.core.application.Language;
+import agentgui.core.common.KeyAdapter4Numbers;
+import agentgui.core.config.GlobalInfo;
+import agentgui.core.project.Project;
+import agentgui.core.update.VersionInformation;
 
 /**
  * The Class ProjectInfoVersionPanel can be used in order to edit the current {@link VersionInformation}.
@@ -58,7 +56,6 @@ import javax.swing.SwingConstants;
 public class ProjectInfoVersionPanel extends JPanel {
 
 	private static final long serialVersionUID = -2572793810709664030L;
-	private static final String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private ProjectInfo projectInfo;
 	private Project currProject;
@@ -174,7 +171,7 @@ public class ProjectInfoVersionPanel extends JPanel {
 		if (jButtonEditVersion == null) {
 			jButtonEditVersion = new JButton();
 			jButtonEditVersion.setToolTipText(Language.translate("Versionnummer speichern"));
-			jButtonEditVersion.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBsave.png")));
+			jButtonEditVersion.setIcon(GlobalInfo.getInternalImageIcon("MBsave.png"));
 			jButtonEditVersion.setPreferredSize(new Dimension(45, 26));
 			jButtonEditVersion.addActionListener(new ActionListener() {
 				@Override
