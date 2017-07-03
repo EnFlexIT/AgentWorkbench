@@ -369,7 +369,7 @@ public abstract class PlugIn implements Observer {
 	 * @param updateObject the update object
 	 */
 	@Override
-	public void update(Observable observable, Object updateObject) {
+	public final void update(Observable observable, Object updateObject) {
 		
 		try {
 

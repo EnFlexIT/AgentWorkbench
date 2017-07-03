@@ -50,11 +50,9 @@ import javax.swing.plaf.ListUI;
 import javax.swing.text.Position.Bias;
 
 /**
- * This JPanel inherits a JList and a progress bar in order to indicate
- * that the list content can be further filled by a search process.
+ * This JPanel contains a JList and a progress bar in order to indicate
+ * that the list content can further be  filled by a search process.
  *
- * @see JListClassSearcher
- * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class JListWithProgressBar<E> extends JPanel {
@@ -65,90 +63,83 @@ public class JListWithProgressBar<E> extends JPanel {
 	private JProgressBar jProgressBarLoading;
 	private JScrollPane jScrollPane;
 	
+	
 	/**
 	 * These are the default constructors, which are similar
 	 * with the jList constructors.
 	 */
 	public JListWithProgressBar() {
 		super();
-		jListLoading  = new JList<E>();
 		initialize();
 	}
-	
 	/**
 	 * Instantiates a new j list with progress bar.
-	 *
 	 * @param listModel the list model
 	 */
 	public JListWithProgressBar(ListModel<E> listModel) {
 		super();
-		jListLoading  = new JList<E>(listModel);
-		initialize();
+		this.setJListLoading(new JList<E>(listModel));
+		this.initialize();
 	}
-	
 	/**
 	 * Instantiates a new j list with progress bar.
-	 *
 	 * @param listData the list data
 	 */
 	public JListWithProgressBar(E[] listData) {
 		super();
-		jListLoading  = new JList<E>(listData);
-		initialize();
+		this.setJListLoading(new JList<E>(listData));
+		this.initialize();
 	}
-	
 	/**
 	 * Instantiates a new j list with progress bar.
-	 *
 	 * @param listData the list data
 	 */
 	public JListWithProgressBar(Vector<E> listData) {
 		super();
-		jListLoading  = new JList<E>(listData);
-		initialize();
+		this.setJListLoading(new JList<E>(listData));
+		this.initialize();
 	}
-	
 	/**
-	 * This method initializes this.
-	 *
-	 * @return void
+	 * Initializes this panel.
 	 */
 	private void initialize() {
-		
 		this.setLayout(new BorderLayout());
 		this.setSize(new Dimension(150, 75));
-		this.add(getJScrollPane(), BorderLayout.CENTER);
-		this.add(getJProgressBarLoading(), BorderLayout.SOUTH);
+		this.add(this.getJScrollPane(), BorderLayout.CENTER);
+		this.add(this.getJProgressBarLoading(), BorderLayout.SOUTH);
 	}
 	
 	/**
 	 * This method initializes jScrollPane.
-	 *
-	 * @return javax.swing.JScrollPane
+	 * @return the j scroll pane
 	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
-			jScrollPane.setViewportView(getjListLoading());
+			jScrollPane.setViewportView(this.getJListLoading());
 		}
 		return jScrollPane;
 	}
-	
 	/**
 	 * Gets the j list loading.
-	 *
 	 * @return the j list loading
 	 */
-	private JList<E> getjListLoading() {
+	private JList<E> getJListLoading() {
 		if (jListLoading==null) {
 			jListLoading = new JList<E>();
 		}
 		return jListLoading;
 	}
+	/**
+	 * Sets the j list loading.
+	 * @param newJList the new j list loading
+	 */
+	private void setJListLoading(JList<E> newJList) {
+		jListLoading = newJList;
+	}
 	
 	/**
 	 * This method initializes jProgressBar.
-	 *
 	 * @return javax.swing.JProgressBar
 	 */
 	private JProgressBar getJProgressBarLoading() {
@@ -168,10 +159,10 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param busy the new busy
 	 */
 	public void setBusy(boolean busy) {
-		if (busy==true) {
-			jProgressBarLoading.setVisible(true);
-		} else {
-			jProgressBarLoading.setVisible(false);
+		if (busy!=this.getJProgressBarLoading().isVisible()) {
+			this.getJProgressBarLoading().setVisible(busy);
+			this.validate();
+			this.repaint();
 		}
 	}
 	
@@ -183,9 +174,8 @@ public class JListWithProgressBar<E> extends JPanel {
 	 *
 	 * @param listener the listener
 	 */
-	
 	public void addListSelectionListener(ListSelectionListener listener) {
-		jListLoading.addListSelectionListener(listener);		
+		this.getJListLoading().addListSelectionListener(listener);		
 	}
 	
 	/**
@@ -195,14 +185,14 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param lead the lead
 	 */
 	public void addSelectionInterval(int anchor, int lead) {
-		jListLoading.addSelectionInterval(anchor, lead);		
+		this.getJListLoading().addSelectionInterval(anchor, lead);		
 	}
 	
 	/**
 	 * Clear selection.
 	 */
 	public void clearSelection() {
-		jListLoading.clearSelection();		
+		this.getJListLoading().clearSelection();		
 	}
 	
 	/**
@@ -211,7 +201,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param index the index
 	 */
 	public void ensureIndexIsVisible(int index) {
-		jListLoading.ensureIndexIsVisible(index);
+		this.getJListLoading().ensureIndexIsVisible(index);
 	}
 	
 	/**
@@ -220,7 +210,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the anchor selection index
 	 */
 	public int getAnchorSelectionIndex() {
-		return jListLoading.getAnchorSelectionIndex();
+		return this.getJListLoading().getAnchorSelectionIndex();
 	}
 	
 	/**
@@ -231,7 +221,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the cell bounds
 	 */
 	public Rectangle getCellBounds(int index0, int index1) {
-		return jListLoading.getCellBounds(index0, index1);
+		return this.getJListLoading().getCellBounds(index0, index1);
 	}
 	
 	/**
@@ -239,7 +229,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the cell renderer
 	 */
 	public ListCellRenderer<? super E> getCellRenderer() {
-		return jListLoading.getCellRenderer();
+		return this.getJListLoading().getCellRenderer();
 	}
 	
 	/**
@@ -247,7 +237,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the drag enabled
 	 */
 	public boolean getDragEnabled() {
-		return jListLoading.getDragEnabled();
+		return this.getJListLoading().getDragEnabled();
 	}
 	
 	/**
@@ -255,7 +245,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the drop location
 	 */
 	public DropLocation getDropLocation() {
-		return jListLoading.getDropLocation();
+		return this.getJListLoading().getDropLocation();
 	}
 	
 	/**
@@ -263,7 +253,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the drop mode
 	 */
 	public DropMode getDropMode() {
-		return jListLoading.getDropMode();
+		return this.getJListLoading().getDropMode();
 	}
 	
 	/**
@@ -271,7 +261,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the first visible index
 	 */
 	public int getFirstVisibleIndex() {
-		return jListLoading.getFirstVisibleIndex();
+		return this.getJListLoading().getFirstVisibleIndex();
 	}
 	
 	/**
@@ -279,7 +269,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the fixed cell height
 	 */
 	public int getFixedCellHeight() {
-		return jListLoading.getFixedCellHeight();
+		return this.getJListLoading().getFixedCellHeight();
 	}
 	
 	/**
@@ -287,7 +277,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the fixed cell width
 	 */
 	public int getFixedCellWidth() {
-		return jListLoading.getFixedCellWidth();
+		return this.getJListLoading().getFixedCellWidth();
 	}
 	
 	/**
@@ -295,7 +285,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the last visible index
 	 */
 	public int getLastVisibleIndex() {
-		return jListLoading.getLastVisibleIndex();
+		return this.getJListLoading().getLastVisibleIndex();
 	}
 	
 	/**
@@ -303,7 +293,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the layout orientation
 	 */
 	public int getLayoutOrientation() {
-		return jListLoading.getLayoutOrientation();
+		return this.getJListLoading().getLayoutOrientation();
 	}
 	
 	/**
@@ -311,7 +301,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the lead selection index
 	 */
 	public int getLeadSelectionIndex() {
-		return jListLoading.getLeadSelectionIndex();
+		return this.getJListLoading().getLeadSelectionIndex();
 	}
 	
 	/**
@@ -319,7 +309,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the list selection listeners
 	 */
 	public ListSelectionListener[] getListSelectionListeners() {
-		return jListLoading.getListSelectionListeners();
+		return this.getJListLoading().getListSelectionListeners();
 	}
 	
 	/**
@@ -327,7 +317,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the max selection index
 	 */
 	public int getMaxSelectionIndex() {
-		return jListLoading.getMaxSelectionIndex();
+		return this.getJListLoading().getMaxSelectionIndex();
 	}
 	
 	/**
@@ -335,7 +325,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the min selection index
 	 */
 	public int getMinSelectionIndex() {
-		return jListLoading.getMinSelectionIndex();
+		return this.getJListLoading().getMinSelectionIndex();
 	}
 	
 	/**
@@ -343,7 +333,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the model
 	 */
 	public ListModel<E> getModel() {
-		return jListLoading.getModel();
+		return this.getJListLoading().getModel();
 	}
 	
 	/**
@@ -355,7 +345,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the next match
 	 */
 	public int getNextMatch(String prefix, int startIndex, Bias bias) {
-		return jListLoading.getNextMatch(prefix, startIndex, bias);
+		return this.getJListLoading().getNextMatch(prefix, startIndex, bias);
 	}
 	
 	/**
@@ -363,7 +353,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the preferred scrollable viewport size
 	 */
 	public Dimension getPreferredScrollableViewportSize() {
-		return jListLoading.getPreferredScrollableViewportSize();
+		return this.getJListLoading().getPreferredScrollableViewportSize();
 	}
 	
 	/**
@@ -371,7 +361,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the prototype cell value
 	 */
 	public Object getPrototypeCellValue() {
-		return jListLoading.getPrototypeCellValue();
+		return this.getJListLoading().getPrototypeCellValue();
 	}
 	
 	/**
@@ -383,7 +373,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the scrollable block increment
 	 */
 	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return jListLoading.getScrollableBlockIncrement(visibleRect, orientation, direction);
+		return this.getJListLoading().getScrollableBlockIncrement(visibleRect, orientation, direction);
 	}
 	
 	/**
@@ -392,7 +382,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the scrollable tracks viewport height
 	 */
 	public boolean getScrollableTracksViewportHeight() {
-		return jListLoading.getScrollableTracksViewportHeight();
+		return this.getJListLoading().getScrollableTracksViewportHeight();
 	}
 	
 	/**
@@ -400,7 +390,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the scrollable tracks viewport width
 	 */
 	public boolean getScrollableTracksViewportWidth() {
-		return jListLoading.getScrollableTracksViewportWidth();
+		return this.getJListLoading().getScrollableTracksViewportWidth();
 	}
 	
 	/**
@@ -412,7 +402,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the scrollable unit increment
 	 */
 	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return jListLoading.getScrollableUnitIncrement(visibleRect, orientation, direction);
+		return this.getJListLoading().getScrollableUnitIncrement(visibleRect, orientation, direction);
 	}
 	
 	/**
@@ -420,7 +410,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selected index
 	 */
 	public int getSelectedIndex() {
-		return jListLoading.getSelectedIndex();
+		return this.getJListLoading().getSelectedIndex();
 	}
 	
 	/**
@@ -428,7 +418,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selected indices
 	 */
 	public int[] getSelectedIndices() {
-		return jListLoading.getSelectedIndices();
+		return this.getJListLoading().getSelectedIndices();
 	}
 	
 	/**
@@ -436,7 +426,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selected value
 	 */
 	public Object getSelectedValue() {
-		return jListLoading.getSelectedValue();
+		return this.getJListLoading().getSelectedValue();
 	}
 	
 	/**
@@ -444,7 +434,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selected values
 	 */
 	public List<E> getSelectedValuesList() {
-		return jListLoading.getSelectedValuesList();
+		return this.getJListLoading().getSelectedValuesList();
 	}
 	
 	/**
@@ -452,7 +442,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selection background
 	 */
 	public Color getSelectionBackground() {
-		return jListLoading.getSelectionBackground();
+		return this.getJListLoading().getSelectionBackground();
 	}
 	
 	/**
@@ -460,7 +450,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selection foreground
 	 */
 	public Color getSelectionForeground() {
-		return jListLoading.getSelectionForeground();
+		return this.getJListLoading().getSelectionForeground();
 	}
 	
 	/**
@@ -468,7 +458,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selection mode
 	 */
 	public int getSelectionMode() {
-		return jListLoading.getSelectionMode();
+		return this.getJListLoading().getSelectionMode();
 	}
 	
 	/**
@@ -476,7 +466,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the selection model
 	 */
 	public ListSelectionModel getSelectionModel() {
-		return jListLoading.getSelectionModel();
+		return this.getJListLoading().getSelectionModel();
 	}
 	
 	/**
@@ -484,7 +474,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the value is adjusting
 	 */
 	public boolean getValueIsAdjusting() {
-		return jListLoading.getValueIsAdjusting();
+		return this.getJListLoading().getValueIsAdjusting();
 	}
 	
 	/**
@@ -492,7 +482,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the visible row count
 	 */
 	public int getVisibleRowCount() {
-		return jListLoading.getVisibleRowCount();
+		return this.getJListLoading().getVisibleRowCount();
 	}
 	
 	/**
@@ -502,7 +492,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the point
 	 */
 	public Point indexToLocation(int index) {
-		return jListLoading.indexToLocation(index);
+		return this.getJListLoading().indexToLocation(index);
 	}
 	
 	/**
@@ -512,7 +502,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return true, if is selected index
 	 */
 	public boolean isSelectedIndex(int index) {
-		return jListLoading.isSelectedIndex(index);
+		return this.getJListLoading().isSelectedIndex(index);
 	}
 	
 	/**
@@ -521,7 +511,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return true, if is selection empty
 	 */
 	public boolean isSelectionEmpty() {
-		return jListLoading.isSelectionEmpty();
+		return this.getJListLoading().isSelectionEmpty();
 	}
 	
 	/**
@@ -531,7 +521,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @return the int
 	 */
 	public int locationToIndex(Point location) {
-		return jListLoading.locationToIndex(location);
+		return this.getJListLoading().locationToIndex(location);
 	}
 	
 	/**
@@ -539,7 +529,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param listener the listener
 	 */
 	public void removeListSelectionListener(ListSelectionListener listener) {
-		jListLoading.removeListSelectionListener(listener);
+		this.getJListLoading().removeListSelectionListener(listener);
 	}
 	
 	/**
@@ -549,7 +539,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param index1 the index1
 	 */
 	public void removeSelectionInterval(int index0, int index1) {
-		jListLoading.removeSelectionInterval(index0, index1);
+		this.getJListLoading().removeSelectionInterval(index0, index1);
 	}
 	
 	/**
@@ -557,7 +547,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param cellRenderer the new cell renderer
 	 */
 	public void setCellRenderer(ListCellRenderer<E> cellRenderer) {
-		jListLoading.setCellRenderer(cellRenderer);
+		this.getJListLoading().setCellRenderer(cellRenderer);
 	}
 	
 	/**
@@ -565,7 +555,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param b the new drag enabled
 	 */
 	public void setDragEnabled(boolean b) {
-		jListLoading.setDragEnabled(b);		
+		this.getJListLoading().setDragEnabled(b);		
 	}
 	
 	/**
@@ -573,7 +563,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param dropMode the new drop mode
 	 */
 	public void setDropMode(DropMode dropMode) {
-		jListLoading.setDropMode(dropMode);
+		this.getJListLoading().setDropMode(dropMode);
 	}
 	
 	/**
@@ -581,7 +571,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param height the new fixed cell height
 	 */
 	public void setFixedCellHeight(int height) {
-		jListLoading.setFixedCellHeight(height);
+		this.getJListLoading().setFixedCellHeight(height);
 	}
 	
 	/**
@@ -589,7 +579,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param width the new fixed cell width
 	 */
 	public void setFixedCellWidth(int width) {
-		jListLoading.setFixedCellWidth(width);
+		this.getJListLoading().setFixedCellWidth(width);
 	}
 	
 	/**
@@ -597,7 +587,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param layoutOrientation the new layout orientation
 	 */
 	public void setLayoutOrientation(int layoutOrientation) {
-		jListLoading.setLayoutOrientation(layoutOrientation);
+		this.getJListLoading().setLayoutOrientation(layoutOrientation);
 	}
 	
 	/**
@@ -605,7 +595,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param listData the new list data
 	 */
 	public void setListData(E[] listData) {
-		jListLoading.setListData(listData);
+		this.getJListLoading().setListData(listData);
 	}
 	
 	/**
@@ -613,7 +603,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param listData the new list data
 	 */
 	public void setListData(Vector<E> listData) {
-		jListLoading.setListData(listData);		
+		this.getJListLoading().setListData(listData);		
 	}
 	
 	/**
@@ -621,7 +611,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param model the new model
 	 */
 	public void setModel(ListModel<E> model) {
-		jListLoading.setModel(model);		
+		this.getJListLoading().setModel(model);		
 	}
 	
 	/**
@@ -629,7 +619,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param prototypeCellValue the new prototype cell value
 	 */
 	public void setPrototypeCellValue(E prototypeCellValue) {
-		jListLoading.setPrototypeCellValue(prototypeCellValue);
+		this.getJListLoading().setPrototypeCellValue(prototypeCellValue);
 	}
 	
 	/**
@@ -637,7 +627,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param index the new selected index
 	 */
 	public void setSelectedIndex(int index) {
-		jListLoading.setSelectedIndex(index);		
+		this.getJListLoading().setSelectedIndex(index);		
 	}
 	
 	/**
@@ -645,7 +635,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param indices the new selected indices
 	 */
 	public void setSelectedIndices(int[] indices) {
-		jListLoading.setSelectedIndices(indices);		
+		this.getJListLoading().setSelectedIndices(indices);		
 	}
 	
 	/**
@@ -655,7 +645,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param shouldScroll the should scroll
 	 */
 	public void setSelectedValue(Object anObject, boolean shouldScroll) {
-		jListLoading.setSelectedValue(anObject, shouldScroll);
+		this.getJListLoading().setSelectedValue(anObject, shouldScroll);
 	}
 	
 	/**
@@ -663,7 +653,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param selectionBackground the new selection background
 	 */
 	public void setSelectionBackground(Color selectionBackground) {
-		jListLoading.setSelectionBackground(selectionBackground);
+		this.getJListLoading().setSelectionBackground(selectionBackground);
 	}
 	
 	/**
@@ -671,7 +661,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param selectionForeground the new selection foreground
 	 */
 	public void setSelectionForeground(Color selectionForeground) {
-		jListLoading.setSelectionForeground(selectionForeground);
+		this.getJListLoading().setSelectionForeground(selectionForeground);
 	}
 	
 	/**
@@ -681,7 +671,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param lead the lead
 	 */
 	public void setSelectionInterval(int anchor, int lead) {
-		jListLoading.setSelectionInterval(anchor, lead);		
+		this.getJListLoading().setSelectionInterval(anchor, lead);		
 	}
 	
 	/**
@@ -689,7 +679,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param selectionMode the new selection mode
 	 */
 	public void setSelectionMode(int selectionMode) {
-		jListLoading.setSelectionMode(selectionMode);		
+		this.getJListLoading().setSelectionMode(selectionMode);		
 	}
 	
 	/**
@@ -697,7 +687,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param selectionModel the new selection model
 	 */
 	public void setSelectionModel(ListSelectionModel selectionModel) {
-		jListLoading.setSelectionModel(selectionModel);
+		this.getJListLoading().setSelectionModel(selectionModel);
 	}
 	
 	/**
@@ -705,7 +695,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param ui the new uI
 	 */
 	public void setUI(ListUI ui) {
-		jListLoading.setUI(ui);
+		this.getJListLoading().setUI(ui);
 	}
 	
 	/**
@@ -713,7 +703,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param b the new value is adjusting
 	 */
 	public void setValueIsAdjusting(boolean b) {
-		jListLoading.setValueIsAdjusting(b);
+		this.getJListLoading().setValueIsAdjusting(b);
 	}
 	
 	/**
@@ -721,7 +711,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param visibleRowCount the new visible row count
 	 */
 	public void setVisibleRowCount(int visibleRowCount) {
-		jListLoading.setVisibleRowCount(visibleRowCount);		
+		this.getJListLoading().setVisibleRowCount(visibleRowCount);		
 	}
 
 } 
