@@ -1,0 +1,1200 @@
+; Fri Feb 20 13:43:36 CET 2004
+; 
+;+ (version "2.0.1")
+;+ (build "Build 168")
+
+([BROWSER_SLOT_NAMES] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_72]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_73]))
+
+([CLSES_TAB] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.ClsesTab")
+	(property_list [ProjectKB_7094_00005])
+	(label "Classes")
+	(is_hidden FALSE))
+
+([FORMS_TAB] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.FormsTab")
+	(property_list [ProjectKB_7094_00034])
+	(label "Forms")
+	(is_hidden FALSE))
+
+([INSTANCES_TAB] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.InstancesTab")
+	(property_list [ProjectKB_7094_00037])
+	(label "Instances")
+	(is_hidden FALSE))
+
+([KB_883944_Instance_0] of Property_List
+	(properties
+		[KB_883944_Instance_1]
+		[KB_883944_Instance_2]
+		[KB_883944_Instance_3]
+		[KB_883944_Instance_4]
+		[KB_883944_Instance_5]
+		[KB_883944_Instance_6]
+		[KB_883944_Instance_7]
+		[KB_883944_Instance_8]
+		[KB_883944_Instance_9]
+		[KB_883944_Instance_10])
+	(name "class widget properties"))
+
+([KB_883944_Instance_1] of Widget
+	(x 400)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.ConstraintsWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_Instance_43])
+	(label "Constraints")
+	(name ":SLOT-CONSTRAINTS")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_10] of Property_List
+	(properties [KB_883944_Instance_11])
+	(name "layout properties"))
+
+([KB_883944_Instance_11] of String
+	(name "vertical_stretcher")
+	(string_value ":DIRECT-TEMPLATE-SLOTS"))
+
+([KB_883944_Instance_12] of Property_List
+	(properties
+		[KB_883944_Instance_13]
+		[KB_883944_Instance_14]
+		[KB_883944_Instance_15]
+		[KB_883944_Instance_16]
+		[KB_883944_Instance_17]
+		[KB_883944_Instance_18]
+		[KB_883944_Instance_19]
+		[KB_883944_Instance_20]
+		[KB_883944_Instance_21]
+		[KB_883944_Instance_22]
+		[KB_883944_Instance_23]
+		[KB_883944_Instance_24]
+		[KB_883944_Instance_25]
+		[KB_883944_Instance_26]
+		[KB_883944_Instance_27]
+		[KB_883944_Instance_28])
+	(name "slot widget properties"))
+
+([KB_883944_Instance_13] of Widget
+	(x 200)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.MinimumCardinalityWidget")
+	(label "Cardinality")
+	(name ":SLOT-MINIMUM-CARDINALITY")
+	(width 200)
+	(y 120))
+
+([KB_883944_Instance_14] of Widget
+	(x 200)
+	(height 35)
+	(widget_class_name "edu.stanford.smi.protege.widget.MaximumCardinalityWidget")
+	(name ":SLOT-MAXIMUM-CARDINALITY")
+	(width 200)
+	(y 175))
+
+([KB_883944_Instance_15] of Widget
+	(name ":SLOT-CONSTRAINTS"))
+
+([KB_883944_Instance_16] of Widget
+	(name ":DIRECT-TYPE"))
+
+([KB_883944_Instance_17] of Widget
+	(name ":DIRECT-DOMAIN"))
+
+([KB_883944_Instance_18] of Widget
+	(x 400)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.SlotValuesWidget")
+	(label "Template Values")
+	(name ":SLOT-VALUES")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_19] of Widget
+	(name ":DIRECT-SUPERSLOTS"))
+
+([KB_883944_Instance_2] of Widget
+	(name ":DIRECT-INSTANCES"))
+
+([KB_883944_Instance_20] of Widget
+	(name ":DIRECT-SUBSLOTS"))
+
+([KB_883944_Instance_21] of Widget
+	(x 400)
+	(height 150)
+	(widget_class_name "edu.stanford.smi.protege.widget.DefaultValuesWidget")
+	(label "Default")
+	(name ":SLOT-DEFAULTS")
+	(width 200)
+	(y 120))
+
+([KB_883944_Instance_22] of Widget
+	(x 200)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.DocumentationWidget")
+	(label "Documentation")
+	(name ":DOCUMENTATION")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_23] of Widget
+	(x 100)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.NumericMaximumWidget")
+	(label "Maximum")
+	(name ":SLOT-NUMERIC-MAXIMUM")
+	(width 100)
+	(y 210))
+
+([KB_883944_Instance_24] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.NumericMinimumWidget")
+	(label "Minimum")
+	(name ":SLOT-NUMERIC-MINIMUM")
+	(width 100)
+	(y 210))
+
+([KB_883944_Instance_25] of Widget
+	(name ":ASSOCIATED-FACET"))
+
+([KB_883944_Instance_26] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InstanceNameWidget")
+	(label "Name")
+	(name ":NAME")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_27] of Widget
+	(x 200)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InverseSlotWidget")
+	(label "Inverse Slot")
+	(name ":SLOT-INVERSE")
+	(width 200)
+	(y 210))
+
+([KB_883944_Instance_28] of Widget
+	(x 0)
+	(height 150)
+	(widget_class_name "edu.stanford.smi.protege.widget.ValueTypeWidget")
+	(label "Value Type")
+	(name ":SLOT-VALUE-TYPE")
+	(width 200)
+	(y 60))
+
+([KB_883944_Instance_29] of Property_List
+	(properties
+		[KB_883944_Instance_30]
+		[KB_883944_Instance_31]
+		[KB_883944_Instance_32])
+	(name "facet widget properties"))
+
+([KB_883944_Instance_3] of Widget
+	(name ":DIRECT-SUBCLASSES"))
+
+([KB_883944_Instance_30] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InstanceNameWidget")
+	(label "Name")
+	(name ":NAME")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_31] of Widget
+	(x 200)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.DocumentationWidget")
+	(label "Documentation")
+	(name ":DOCUMENTATION")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_32] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InstanceFieldWidget")
+	(label "Associated Slot")
+	(name ":ASSOCIATED-SLOT")
+	(width 200)
+	(y 60))
+
+([KB_883944_Instance_33] of Property_List
+	(properties
+		[KB_883944_Instance_34]
+		[KB_883944_Instance_35]
+		[KB_883944_Instance_36]
+		[KB_883944_Instance_37]))
+
+([KB_883944_Instance_34] of Widget
+	(name ":ANNOTATED-INSTANCE"))
+
+([KB_883944_Instance_35] of Widget
+	(name ":CREATOR"))
+
+([KB_883944_Instance_36] of Widget
+	(name ":CREATION-TIMESTAMP"))
+
+([KB_883944_Instance_37] of Widget
+	(x 0)
+	(height 100)
+	(widget_class_name "edu.stanford.smi.protege.widget.YellowStickyWidget")
+	(name ":ANNOTATION-TEXT")
+	(width 200)
+	(is_hidden FALSE)
+	(y 0))
+
+([KB_883944_Instance_38] of Property_List
+	(properties
+		[KB_883944_Instance_39]
+		[KB_883944_Instance_40]
+		[KB_883944_Instance_41]
+		[KB_883944_Instance_42]))
+
+([KB_883944_Instance_39] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(label "Name")
+	(name ":PAL-NAME")
+	(width 275)
+	(is_hidden FALSE)
+	(y 0))
+
+([KB_883944_Instance_4] of Widget
+	(name ":DIRECT-SUPERCLASSES"))
+
+([KB_883944_Instance_40] of Widget
+	(x 275)
+	(height 180)
+	(widget_class_name "edu.stanford.smi.protegex.widget.pal.constraint.PalRangeWidget")
+	(label "Range")
+	(name ":PAL-RANGE")
+	(width 250)
+	(is_hidden FALSE)
+	(y 180))
+
+([KB_883944_Instance_41] of Widget
+	(x 275)
+	(height 180)
+	(widget_class_name "edu.stanford.smi.protege.widget.TextAreaWidget")
+	(label "Description")
+	(name ":PAL-DESCRIPTION")
+	(width 250)
+	(is_hidden FALSE)
+	(y 0))
+
+([KB_883944_Instance_42] of Widget
+	(x 0)
+	(height 300)
+	(widget_class_name "edu.stanford.smi.protegex.widget.pal.constraint.PalConstraintWidget")
+	(label "Statement")
+	(name ":PAL-STATEMENT")
+	(width 275)
+	(is_hidden FALSE)
+	(y 60))
+
+([KB_883944_Instance_5] of Widget
+	(x 200)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.DocumentationWidget")
+	(label "Documentation")
+	(name ":DOCUMENTATION")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_6] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InstanceNameWidget")
+	(label "Name")
+	(name ":NAME")
+	(width 200)
+	(y 0))
+
+([KB_883944_Instance_7] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.RoleWidget")
+	(label "Role")
+	(name ":ROLE")
+	(width 200)
+	(y 60))
+
+([KB_883944_Instance_8] of Widget
+	(name ":DIRECT-TYPE"))
+
+([KB_883944_Instance_9] of Widget
+	(x 0)
+	(height 150)
+	(widget_class_name "edu.stanford.smi.protege.widget.TemplateSlotsWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_Instance_50])
+	(label "Template Slots")
+	(name ":DIRECT-TEMPLATE-SLOTS")
+	(width 600)
+	(y 120))
+
+([PAL_FORM_WIDGET] of Widget
+	(x 0)
+	(height 476)
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(property_list [KB_883944_Instance_38])
+	(name ":PAL-CONSTRAINT")
+	(width 603)
+	(is_hidden FALSE)
+	(y 0))
+
+([PROJECT] of Project
+	(property_map [SimpleJADEAbstractOntology_ProjectKB_00214])
+	(default_cls_metaclass ":STANDARD-CLASS")
+	(customized_instance_widgets
+		[STANDARD_SLOT_FORM_WIDGET]
+		[STANDARD_CLASS_FORM_WIDGET]
+		[SimpleJADEAbstractOntology_ProjectKB_00503]
+		[SimpleJADEAbstractOntology_ProjectKB_00109]
+		[SimpleJADEAbstractOntology_ProjectKB_00104]
+		[SimpleJADEAbstractOntology_ProjectKB_00303]
+		[PAL_FORM_WIDGET])
+	(default_slot_metaclass ":STANDARD-SLOT")
+	(sources [SOURCES])
+	(browser_slot_names [BROWSER_SLOT_NAMES])
+	(next_frame_number 0)
+	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(options [ProjectKB_7094_00006])
+	(default_facet_metaclass ":STANDARD-FACET")
+	(tabs
+		[CLSES_TAB]
+		[SLOTS_TAB]
+		[FORMS_TAB]
+		[INSTANCES_TAB]
+		[QUERIES_TAB]
+		[ProjectKB_7094_00001]
+		[ProjectKB_7094_00003]
+		[SimpleJADEAbstractOntology_ProjectKB_00115]))
+
+([ProjectKB_7094_00000] of String
+	(name "factory_class_name")
+	(string_value "edu.stanford.smi.protege.storage.clips.ClipsKnowledgeBaseFactory"))
+
+([ProjectKB_7094_00001] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.KAToolTab")
+	(property_list [ProjectKB_7094_00002])
+	(is_hidden TRUE))
+
+([ProjectKB_7094_00002] of Property_List)
+
+([ProjectKB_7094_00003] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.ClsesAndInstancesTab")
+	(property_list [ProjectKB_7094_00004])
+	(label "Classes & Instances")
+	(is_hidden FALSE))
+
+([ProjectKB_7094_00004] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_01178]
+		[SimpleJADEAbstractOntology_ProjectKB_01179]
+		[SimpleJADEAbstractOntology_ProjectKB_01180]))
+
+([ProjectKB_7094_00005] of Property_List
+	(properties
+		[prova_ProjectKB_00041]
+		[prova_ProjectKB_00042]))
+
+([ProjectKB_7094_00006] of Options
+	(display_multi_parent_class_icon TRUE)
+	(display_abstract_class_icon TRUE)
+	(is_readonly FALSE)
+	(update_modification_slots FALSE)
+	(display_hidden_classes TRUE)
+	(confirm_on_remove FALSE))
+
+([ProjectKB_7094_00022] of Property_List
+	(properties
+		[prova_ProjectKB_00043]
+		[prova_ProjectKB_00044]))
+
+([ProjectKB_7094_00034] of Property_List
+	(properties [prova_ProjectKB_00045]))
+
+([ProjectKB_7094_00037] of Property_List
+	(properties
+		[prova_ProjectKB_00046]
+		[prova_ProjectKB_00047]))
+
+([ProjectKB_7094_00038] of Property_List
+	(properties [prova_ProjectKB_00048]))
+
+([ProjectKB_7094_00039] of String
+	(name "classes_file_name")
+	(string_value "SimpleJADEAbstractOntology.pont"))
+
+([ProjectKB_7094_00040] of String
+	(name "instances_file_name")
+	(string_value "SimpleJADEAbstractOntology.pins"))
+
+([prova_ProjectKB_00041] of Integer
+	(name "ClsesTab.left_right")
+	(integer_value 271))
+
+([prova_ProjectKB_00042] of Integer
+	(name "ClsesTab.left.top_bottom")
+	(integer_value 394))
+
+([prova_ProjectKB_00043] of Integer
+	(name "SlotsTab.left_right")
+	(integer_value 229))
+
+([prova_ProjectKB_00044] of Integer
+	(name "SlotTab.left.top_bottom")
+	(integer_value 369))
+
+([prova_ProjectKB_00045] of Integer
+	(name "FormsTab.left_right")
+	(integer_value 274))
+
+([prova_ProjectKB_00046] of Integer
+	(name "InstancesTab.left_right")
+	(integer_value 277))
+
+([prova_ProjectKB_00047] of Integer
+	(name "InstancesTab.right.left_right")
+	(integer_value 260))
+
+([prova_ProjectKB_00048] of String
+	(name "SearchTab_Query"))
+
+([QUERIES_TAB] of Widget
+	(widget_class_name "edu.stanford.smi.protegex.queries_tab.QueriesTab")
+	(property_list [ProjectKB_7094_00038])
+	(label "Queries")
+	(is_hidden FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00101] of Widget
+	(widget_class_name "edu.stanford.smi.protegex.pal.tab.grape.PALTabTwo")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00201])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00104] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(property_list [KB_883944_Instance_29])
+	(name ":STANDARD-FACET")
+	(is_hidden FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00109] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(property_list [KB_883944_Instance_33])
+	(name ":INSTANCE-ANNOTATION")
+	(is_hidden FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00115] of Widget
+	(widget_class_name "nl.uva.psy.swi.beangenerator.OntologyBeanGeneratorTab")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00116])
+	(label "Ontology Bean Generator")
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00116] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_00201] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_00214] of Map)
+
+([SimpleJADEAbstractOntology_ProjectKB_00303] of Widget
+	(x 0)
+	(height 600)
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00403])
+	(name ":JADE-CLASS")
+	(width 699)
+	(is_hidden FALSE)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00403] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_00404]
+		[SimpleJADEAbstractOntology_ProjectKB_00412]
+		[SimpleJADEAbstractOntology_ProjectKB_00413]
+		[SimpleJADEAbstractOntology_ProjectKB_00414]
+		[SimpleJADEAbstractOntology_ProjectKB_00415]
+		[SimpleJADEAbstractOntology_ProjectKB_00416]
+		[SimpleJADEAbstractOntology_ProjectKB_00417]
+		[SimpleJADEAbstractOntology_ProjectKB_00418]
+		[SimpleJADEAbstractOntology_ProjectKB_00419]
+		[SimpleJADEAbstractOntology_ProjectKB_00429]
+		[SimpleJADEAbstractOntology_ProjectKB_01123]
+		[SimpleJADEAbstractOntology_ProjectKB_01174]
+		[SimpleJADEAbstractOntology_ProjectKB_01176]
+		[SimpleJADEAbstractOntology_ProjectKB_00706])
+	(name "class widget properties"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00404] of Widget
+	(x 400)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.ConstraintsWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00405])
+	(label "Constraints")
+	(name ":SLOT-CONSTRAINTS")
+	(width 200)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00405] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_00406]
+		[SimpleJADEAbstractOntology_ProjectKB_00407]
+		[SimpleJADEAbstractOntology_ProjectKB_00408]
+		[SimpleJADEAbstractOntology_ProjectKB_00409]
+		[SimpleJADEAbstractOntology_ProjectKB_00410]
+		[SimpleJADEAbstractOntology_ProjectKB_00411]))
+
+([SimpleJADEAbstractOntology_ProjectKB_00406] of Boolean
+	(name "ButtonDisplayed-View Selected Instances")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00407] of Boolean
+	(name "ButtonDisplayed-Create Instance")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00408] of Boolean
+	(name "ButtonDisplayed-References")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00409] of Boolean
+	(name "ButtonDisplayed-Add")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00410] of Boolean
+	(name "ButtonDisplayed-Remove")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00411] of Boolean
+	(name "ButtonDisplayed-Delete Selected Instances")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00412] of Widget
+	(name ":DIRECT-INSTANCES"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00413] of Widget
+	(name ":DIRECT-SUBCLASSES"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00414] of Widget
+	(name ":DIRECT-SUPERCLASSES"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00415] of Widget
+	(x 200)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.DocumentationWidget")
+	(label "Documentation")
+	(name ":DOCUMENTATION")
+	(width 200)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00416] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InstanceNameWidget")
+	(label "Name")
+	(name ":NAME")
+	(width 200)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00417] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.RoleWidget")
+	(label "Role")
+	(name ":ROLE")
+	(width 200)
+	(y 60))
+
+([SimpleJADEAbstractOntology_ProjectKB_00418] of Widget
+	(name ":DIRECT-TYPE"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00419] of Widget
+	(x 0)
+	(height 300)
+	(widget_class_name "edu.stanford.smi.protege.widget.TemplateSlotsWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00420])
+	(label "Template Slots")
+	(name ":DIRECT-TEMPLATE-SLOTS")
+	(width 600)
+	(y 120))
+
+([SimpleJADEAbstractOntology_ProjectKB_00420] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_00421]
+		[SimpleJADEAbstractOntology_ProjectKB_00422]
+		[SimpleJADEAbstractOntology_ProjectKB_00423]
+		[SimpleJADEAbstractOntology_ProjectKB_00424]
+		[SimpleJADEAbstractOntology_ProjectKB_00425]
+		[SimpleJADEAbstractOntology_ProjectKB_00426]
+		[SimpleJADEAbstractOntology_ProjectKB_00427]
+		[SimpleJADEAbstractOntology_ProjectKB_00428]
+		[SimpleJADEAbstractOntology_ProjectKB_01108]
+		[SimpleJADEAbstractOntology_ProjectKB_01109]
+		[SimpleJADEAbstractOntology_ProjectKB_01110]
+		[SimpleJADEAbstractOntology_ProjectKB_01111]
+		[SimpleJADEAbstractOntology_ProjectKB_01112]
+		[SimpleJADEAbstractOntology_ProjectKB_01113]
+		[SimpleJADEAbstractOntology_ProjectKB_01114]
+		[SimpleJADEAbstractOntology_ProjectKB_01115]))
+
+([SimpleJADEAbstractOntology_ProjectKB_00421] of Boolean
+	(name "ButtonDisplayed-View selected slots")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00422] of Boolean
+	(name "ButtonDisplayed-View selected slots at class")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00423] of Boolean
+	(name "ButtonDisplayed-Create slot and attach to class")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00424] of Boolean
+	(name "ButtonDisplayed-Remove overrides from selected slots")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00425] of Boolean
+	(name "ButtonDisplayed-Add")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00426] of Boolean
+	(name "ButtonDisplayed-Remove")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00427] of Boolean
+	(name "ButtonDisplayed-Move up")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00428] of Boolean
+	(name "ButtonDisplayed-Move down")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00429] of Property_List
+	(properties [SimpleJADEAbstractOntology_ProjectKB_00430])
+	(name "layout properties"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00430] of String
+	(name "vertical_stretcher")
+	(string_value ":DIRECT-TEMPLATE-SLOTS"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00503] of Widget
+	(x 0)
+	(height 578)
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00908])
+	(name ":JADE-SLOT")
+	(width 714)
+	(is_hidden FALSE)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00603] of Widget
+	(widget_class_name "nl.acklin.latexgen.LatexGenTab")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00703])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00703] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_00704] of Widget
+	(widget_class_name "protegex.prologtab.gnuprolog.GNUPrologJavaTab")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00705])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00705] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_00706] of Widget
+	(x 0)
+	(height 40)
+	(widget_class_name "edu.stanford.smi.protege.widget.CheckBoxWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00707])
+	(label "ignore")
+	(name ":JADE-IGNORE")
+	(width 70)
+	(is_hidden FALSE)
+	(y 440))
+
+([SimpleJADEAbstractOntology_ProjectKB_00707] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_00807] of Widget
+	(widget_class_name "edu.stanford.smi.protegex.xml.tab.XMLTab")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00907])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00907] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_00908] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_00909]
+		[SimpleJADEAbstractOntology_ProjectKB_00910]
+		[SimpleJADEAbstractOntology_ProjectKB_00911]
+		[SimpleJADEAbstractOntology_ProjectKB_00912]
+		[SimpleJADEAbstractOntology_ProjectKB_00913]
+		[SimpleJADEAbstractOntology_ProjectKB_00919]
+		[SimpleJADEAbstractOntology_ProjectKB_00920]
+		[SimpleJADEAbstractOntology_ProjectKB_00921]
+		[SimpleJADEAbstractOntology_ProjectKB_00927]
+		[SimpleJADEAbstractOntology_ProjectKB_00928]
+		[SimpleJADEAbstractOntology_ProjectKB_00929]
+		[SimpleJADEAbstractOntology_ProjectKB_00930]
+		[SimpleJADEAbstractOntology_ProjectKB_00931]
+		[SimpleJADEAbstractOntology_ProjectKB_00932]
+		[SimpleJADEAbstractOntology_ProjectKB_00933]
+		[SimpleJADEAbstractOntology_ProjectKB_00934]
+		[SimpleJADEAbstractOntology_ProjectKB_00935]
+		[SimpleJADEAbstractOntology_ProjectKB_00937]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_59])
+	(name "slot widget properties"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00909] of Widget
+	(x 200)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.MinimumCardinalityWidget")
+	(label "Cardinality")
+	(name ":SLOT-MINIMUM-CARDINALITY")
+	(width 200)
+	(y 120))
+
+([SimpleJADEAbstractOntology_ProjectKB_00910] of Widget
+	(x 200)
+	(height 35)
+	(widget_class_name "edu.stanford.smi.protege.widget.MaximumCardinalityWidget")
+	(name ":SLOT-MAXIMUM-CARDINALITY")
+	(width 200)
+	(y 175))
+
+([SimpleJADEAbstractOntology_ProjectKB_00911] of Widget
+	(name ":SLOT-CONSTRAINTS"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00912] of Widget
+	(name ":DIRECT-TYPE"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00913] of Widget
+	(x 400)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.SlotValuesWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00914])
+	(label "Values")
+	(name ":SLOT-VALUES")
+	(width 200)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00914] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_00915]
+		[SimpleJADEAbstractOntology_ProjectKB_00916]
+		[SimpleJADEAbstractOntology_ProjectKB_00917]
+		[SimpleJADEAbstractOntology_ProjectKB_00918]))
+
+([SimpleJADEAbstractOntology_ProjectKB_00915] of Boolean
+	(name "ButtonDisplayed-View the selected value")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00916] of Boolean
+	(name "ButtonDisplayed-Add")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00917] of Boolean
+	(name "ButtonDisplayed-Create a new value")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00918] of Boolean
+	(name "ButtonDisplayed-Remove")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00919] of Widget
+	(name ":DIRECT-SUPERSLOTS"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00920] of Widget
+	(name ":DIRECT-SUBSLOTS"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00921] of Widget
+	(x 400)
+	(height 150)
+	(widget_class_name "edu.stanford.smi.protege.widget.DefaultValuesWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00922])
+	(label "Default")
+	(name ":SLOT-DEFAULTS")
+	(width 200)
+	(y 120))
+
+([SimpleJADEAbstractOntology_ProjectKB_00922] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_00923]
+		[SimpleJADEAbstractOntology_ProjectKB_00924]
+		[SimpleJADEAbstractOntology_ProjectKB_00925]
+		[SimpleJADEAbstractOntology_ProjectKB_00926]))
+
+([SimpleJADEAbstractOntology_ProjectKB_00923] of Boolean
+	(name "ButtonDisplayed-View the selected value")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00924] of Boolean
+	(name "ButtonDisplayed-Add")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00925] of Boolean
+	(name "ButtonDisplayed-Create a new value")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00926] of Boolean
+	(name "ButtonDisplayed-Remove")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_00927] of Widget
+	(x 200)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.DocumentationWidget")
+	(label "Documentation")
+	(name ":DOCUMENTATION")
+	(width 200)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00928] of Widget
+	(x 100)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.NumericMaximumWidget")
+	(label "Maximum")
+	(name ":SLOT-NUMERIC-MAXIMUM")
+	(width 100)
+	(y 210))
+
+([SimpleJADEAbstractOntology_ProjectKB_00929] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.NumericMinimumWidget")
+	(label "Minimum")
+	(name ":SLOT-NUMERIC-MINIMUM")
+	(width 100)
+	(y 210))
+
+([SimpleJADEAbstractOntology_ProjectKB_00930] of Widget
+	(name ":ASSOCIATED-FACET"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00931] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InstanceNameWidget")
+	(label "Name")
+	(name ":NAME")
+	(width 200)
+	(y 0))
+
+([SimpleJADEAbstractOntology_ProjectKB_00932] of Widget
+	(x 200)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.InverseSlotWidget")
+	(label "Inverse Slot")
+	(name ":SLOT-INVERSE")
+	(width 200)
+	(y 210))
+
+([SimpleJADEAbstractOntology_ProjectKB_00933] of Widget
+	(x 0)
+	(height 150)
+	(widget_class_name "edu.stanford.smi.protege.widget.ValueTypeWidget")
+	(label "Value Type")
+	(name ":SLOT-VALUE-TYPE")
+	(width 200)
+	(y 60))
+
+([SimpleJADEAbstractOntology_ProjectKB_00934] of Property_List
+	(name "layout properties"))
+
+([SimpleJADEAbstractOntology_ProjectKB_00935] of Widget
+	(x 0)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00936])
+	(label "JADE Name")
+	(name ":JADE-NAME")
+	(width 250)
+	(is_hidden FALSE)
+	(y 270))
+
+([SimpleJADEAbstractOntology_ProjectKB_00936] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_00937] of Widget
+	(x 260)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.CheckBoxWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_00938])
+	(label "Anonymous")
+	(name ":JADE-UNNAMED-SLOT")
+	(width 125)
+	(is_hidden FALSE)
+	(y 280))
+
+([SimpleJADEAbstractOntology_ProjectKB_00938] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_01009] of Widget
+	(widget_class_name "dfki.protege.ontoviz_tab.OntovizTab")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_01210])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_01108] of String
+	(name "ButtonDescription-View selected slots")
+	(string_value "View selected slots"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01109] of String
+	(name "ButtonDescription-View selected slots at class")
+	(string_value "View selected slots at class"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01110] of String
+	(name "ButtonDescription-Create slot and attach to class")
+	(string_value "Create slot and attach to class"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01111] of String
+	(name "ButtonDescription-Remove overrides from selected slots")
+	(string_value "Remove overrides from selected slots"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01112] of String
+	(name "ButtonDescription-Add")
+	(string_value "Attach slots to class"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01113] of String
+	(name "ButtonDescription-Remove")
+	(string_value "Remove selected slots from class"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01114] of String
+	(name "ButtonDescription-Move up")
+	(string_value "Move selected slot up"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01115] of String
+	(name "ButtonDescription-Move down")
+	(string_value "Move selected slot down"))
+
+([SimpleJADEAbstractOntology_ProjectKB_01123] of Widget
+	(x 350)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_01124])
+	(label "Java super-class")
+	(name ":JADE-JAVA-BASE-CLASS")
+	(width 250)
+	(is_hidden FALSE)
+	(y 420))
+
+([SimpleJADEAbstractOntology_ProjectKB_01124] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_01174] of Widget
+	(x 0)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.TextAreaWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_01175])
+	(label "Additional Java Code")
+	(name ":JADE-JAVA-CODE")
+	(width 600)
+	(is_hidden FALSE)
+	(y 480))
+
+([SimpleJADEAbstractOntology_ProjectKB_01175] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_01176] of Widget
+	(x 80)
+	(height 60)
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_01177])
+	(label "JADE Name")
+	(name ":JADE-NAME")
+	(width 250)
+	(is_hidden FALSE)
+	(y 420))
+
+([SimpleJADEAbstractOntology_ProjectKB_01177] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_01178] of Integer
+	(name "ClsesAndInstancesTab.left_right")
+	(integer_value 250))
+
+([SimpleJADEAbstractOntology_ProjectKB_01179] of Integer
+	(name "ClsesAndInstancesTab.left, top_bottom")
+	(integer_value 400))
+
+([SimpleJADEAbstractOntology_ProjectKB_01180] of Integer
+	(name "ClsesAndInstancesTab.right.left_right")
+	(integer_value 200))
+
+([SimpleJADEAbstractOntology_ProjectKB_01210] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_01310] of Widget
+	(widget_class_name "DataGenieTab.DataGenieTab")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_01311])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_01311] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_01312] of Widget
+	(widget_class_name "edu.stanford.smi.protegex.pal.tab.blueberry.PALTabOne")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_01313])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_01313] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_01314] of Widget
+	(widget_class_name "ca.uvic.csr.shrimp.protegeTab.JambalayaTab")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_01315])
+	(is_hidden TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_01315] of Property_List)
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_43] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_44]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_45]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_46]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_47]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_48]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_49]))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_44] of Boolean
+	(name "ButtonDisplayed-View Selected Instances")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_45] of Boolean
+	(name "ButtonDisplayed-Create Instance")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_46] of Boolean
+	(name "ButtonDisplayed-References")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_47] of Boolean
+	(name "ButtonDisplayed-Add")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_48] of Boolean
+	(name "ButtonDisplayed-Remove")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_49] of Boolean
+	(name "ButtonDisplayed-Delete Selected Instances")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_50] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_51]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_52]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_53]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_54]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_55]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_56]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_57]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_58]))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_51] of Boolean
+	(name "ButtonDisplayed-View selected slots")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_52] of Boolean
+	(name "ButtonDisplayed-View selected slots at class")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_53] of Boolean
+	(name "ButtonDisplayed-Create slot and attach to class")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_54] of Boolean
+	(name "ButtonDisplayed-Remove overrides from selected slots")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_55] of Boolean
+	(name "ButtonDisplayed-Add")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_56] of Boolean
+	(name "ButtonDisplayed-Remove")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_57] of Boolean
+	(name "ButtonDisplayed-Move up")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_58] of Boolean
+	(name "ButtonDisplayed-Move down")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_59] of Widget
+	(x 0)
+	(height 120)
+	(widget_class_name "edu.stanford.smi.protege.widget.InstanceListWidget")
+	(property_list [SimpleJADEAbstractOntology_ProjectKB_Instance_60])
+	(name ":DIRECT-DOMAIN")
+	(width 250)
+	(is_hidden FALSE)
+	(y 340))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_60] of Property_List
+	(properties
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_61]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_62]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_63]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_64]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_65]
+		[SimpleJADEAbstractOntology_ProjectKB_Instance_66]))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_61] of Boolean
+	(name "ButtonDisplayed-View Selected Instances")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_62] of Boolean
+	(name "ButtonDisplayed-Create Instance")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_63] of Boolean
+	(name "ButtonDisplayed-References")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_64] of Boolean
+	(name "ButtonDisplayed-Add")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_65] of Boolean
+	(name "ButtonDisplayed-Remove")
+	(boolean_value TRUE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_66] of Boolean
+	(name "ButtonDisplayed-Delete Selected Instances")
+	(boolean_value FALSE))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_72] of String
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([SimpleJADEAbstractOntology_ProjectKB_Instance_73] of String
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([SLOTS_TAB] of Widget
+	(widget_class_name "edu.stanford.smi.protege.widget.SlotsTab")
+	(property_list [ProjectKB_7094_00022])
+	(label "Slots")
+	(is_hidden FALSE))
+
+([SOURCES] of Property_List
+	(properties
+		[ProjectKB_7094_00000]
+		[ProjectKB_7094_00039]
+		[ProjectKB_7094_00040]))
+
+([STANDARD_CLASS_FORM_WIDGET] of Widget
+	(x 0)
+	(height 578)
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(property_list [KB_883944_Instance_0])
+	(name ":STANDARD-CLASS")
+	(width 714)
+	(y 0))
+
+([STANDARD_SLOT_FORM_WIDGET] of Widget
+	(x 0)
+	(height 578)
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
+	(property_list [KB_883944_Instance_12])
+	(name ":STANDARD-SLOT")
+	(width 714)
+	(y 0))
