@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.agentgui.project.plugin" name="org.agentgui.project.plugin" schema="schema/org.agentgui.project.plugin.exsd"/>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.agentgui.PlugInApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RCP Perspective"
+            class="org.agentgui.Perspective"
+            id="org.agentgui.perspective">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.agentgui.application"
+            name="Agent.GUI">
+         <property
+               name="windowImages"
+               value="icons/eclipse16.png,icons/eclipse32.png,icons/eclipse48.png,icons/eclipse64.png, icons/eclipse128.png,icons/eclipse256.png">
+         </property>
+         <property
+               name="appName"
+               value="Agent.GUI">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="5,275,445,15">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="org.agentgui.Preferences"
+         name="Preferences"
+         point="org.eclipse.equinox.preferences.preferences">
+      <initializer
+            class="org.agentgui.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

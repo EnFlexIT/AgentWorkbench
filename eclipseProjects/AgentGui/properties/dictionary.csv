@@ -1,4 +1,6 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
+de;! MyTab Single !;;;;
+de;! MyTab with SubTabs !;;;;
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
@@ -475,6 +477,7 @@ de;Objekt-Typ;Object type
 de;Objekt;Object
 de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
+de;Observer-Output;;;;
 de;Ontologie Referenz benennen;Name ontology reference ;;;
 de;Ontologie Referenz maskieren;Mask ontology reference;;;
 de;Ontologie hinzufügen;Add ontology

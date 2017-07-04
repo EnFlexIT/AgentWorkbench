@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GoogleTranslateAPI
+Bundle-SymbolicName: org.agentgui.lib.googleTranslate
+Bundle-Version: 0.97
+Bundle-ClassPath: google-api-translate-java-0.97.jar,
+ json-20090211.jar
+Export-Package: com.google.api,
+ com.google.api.detect,
+ com.google.api.translate,
+ com.tecnick.htmlutils.htmlentities,
+ org.json
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
+ JavaSE-1.8

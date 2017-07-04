@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project>
+    <projectName>Agent.GUI PlugIn Example</projectName>
+    <environmentModel>none</environmentModel>
+    <projectResources>
+        <projectResource>\jar\PlugInExample.jar</projectResource>
+    </projectResources>
+    <plugins>
+        <className>agentproject.PlugInExample</className>
+    </plugins>
+    <subOntologies/>
+    <jadeConfiguration>
+        <useLocalPort>1099</useLocalPort>
+        <serviceList>
+            <service>agentgui.simulationService.LoadService</service>
+            <service>jade.core.event.NotificationService</service>
+            <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.core.mobility.AgentMobilityService</service>
+        </serviceList>
+    </jadeConfiguration>
+    <distributionSetup>
+        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+        <doStaticLoadBalancing>false</doStaticLoadBalancing>
+        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <numberOfAgents>0</numberOfAgents>
+        <numberOfContainer>0</numberOfContainer>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
+        <useUserThresholds>false</useUserThresholds>
+        <userThresholds>
+            <thCpuH>80</thCpuH>
+            <thCpuL>5</thCpuL>
+            <thMemoH>80</thMemoH>
+            <thMemoL>5</thMemoL>
+            <thNoThreadsH>500</thNoThreadsH>
+            <thNoThreadsL>5</thNoThreadsL>
+        </userThresholds>
+    </distributionSetup>
+    <remoteContainerConfiguration>
+        <jvmMemAllocInitial>32m</jvmMemAllocInitial>
+        <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>
+        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
+        <showJADErmaGUI>true</showJADErmaGUI>
+    </remoteContainerConfiguration>
+    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetups>
+        <entry>
+            <key>default</key>
+            <value>default.xml</value>
+        </entry>
+    </simulationSetups>
+    <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
+    <unsaved>true</unsaved>
+</project>
