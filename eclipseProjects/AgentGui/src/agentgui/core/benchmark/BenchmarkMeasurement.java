@@ -98,9 +98,6 @@ public class BenchmarkMeasurement extends Thread {
 		if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
 			// --- Start search for Agents, Ontologies and BaseServices -----------
 			Application.setBenchmarkRunning(false);
-			if (this.isHeadlessOperation==false) {
-				Application.getClassSearcher();
-			}
 			return;
 		}  
 		
@@ -196,11 +193,6 @@ public class BenchmarkMeasurement extends Thread {
 			this.closeGUI();
 		}
 		Application.setBenchmarkRunning(false);
-		
-		// --- Start search for Agents, Ontologies and BaseServices -----------
-		if (this.isHeadlessOperation==false) {
-			Application.getClassSearcher();			
-		}
 		
 	}
 	

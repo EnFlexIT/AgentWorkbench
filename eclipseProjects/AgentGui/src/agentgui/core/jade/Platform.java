@@ -36,8 +36,6 @@ import java.util.Hashtable;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
-import agentgui.core.agents.UtilityAgent;
-import agentgui.core.agents.UtilityAgent.UtilityAgentJob;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
@@ -45,6 +43,8 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
+import agentgui.core.utillity.UtilityAgent;
+import agentgui.core.utillity.UtilityAgent.UtilityAgentJob;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.logging.DebugService;
 import agentgui.simulationService.LoadService;
@@ -597,7 +597,7 @@ public class Platform extends Object {
 	public void startUtilityAgent(UtilityAgentJob utilityAgentJob) {
 		Object[] agentArgs = new Object[1];
 		agentArgs[0] = utilityAgentJob;
-		startAgent("utility", agentgui.core.agents.UtilityAgent.class.getName(), agentArgs);
+		startAgent("utility", agentgui.core.utillity.UtilityAgent.class.getName(), agentArgs);
 	}
 	
 	/**

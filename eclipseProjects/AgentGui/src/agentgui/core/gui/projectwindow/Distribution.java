@@ -57,11 +57,12 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
+import org.agentgui.bundle.classSelection.ClassSelector;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;

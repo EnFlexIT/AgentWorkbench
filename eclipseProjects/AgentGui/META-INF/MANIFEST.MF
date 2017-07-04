@@ -5,9 +5,10 @@ Bundle-SymbolicName: org.agentgui;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.osgi.services;bundle-version="3.5.100",
  org.eclipse.e4.core.di;bundle-version="1.6.1",
+ org.eclipse.ui,
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
  org.agentgui.lib.oidc;bundle-version="5.17.1",
  org.agentgui.lib.scimark;bundle-version="2.0.0",
@@ -17,14 +18,11 @@ Require-Bundle: org.eclipse.ui,
  org.agentgui.lib.jFreeChart;bundle-version="1.0.15",
  org.agentgui.lib.jep;bundle-version="2.3.1",
  org.agentgui.lib.jung;bundle-version="2.0.1",
- org.agentgui.lib.mySQL;bundle-version="5.0.8",
- org.eclipse.osgi.services;bundle-version="3.5.100"
+ org.agentgui.lib.mySQL;bundle-version="5.0.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
  JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: agentgui.core.agents;uses:="jade.core",
- agentgui.core.agents.behaviour;uses:="jade.core.behaviours",
- agentgui.core.application;
+Export-Package: agentgui.core.application;
   uses:="agentgui.core.config,
    agentgui.core.jade,
    agentgui.core.database,
@@ -184,6 +182,7 @@ Export-Package: agentgui.core.agents;uses:="jade.core",
  agentgui.core.sim.setup;uses:="agentgui.core.project,javax.swing",
  agentgui.core.systemtray;uses:="javax.swing",
  agentgui.core.update;uses:="agentgui.core.config",
+ agentgui.core.utillity;uses:="jade.core",
  agentgui.core.webserver;uses:="agentgui.core.project",
  agentgui.envModel.graph;uses:="edu.uci.ics.jung.graph,javax.swing",
  agentgui.envModel.graph.commands;
@@ -354,6 +353,7 @@ Export-Package: agentgui.core.agents;uses:="jade.core",
    org.eclipse.core.runtime.preferences,
    org.eclipse.ui.plugin",
  org.agentgui.bundle,
+ org.agentgui.bundle.classSelection,
  org.agentgui.bundle.evaluation;uses:="org.osgi.framework",
  org.agentgui.classLoadService,
  org.agentgui.extensions

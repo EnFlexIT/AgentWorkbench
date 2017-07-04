@@ -49,13 +49,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.agentgui.bundle.classSelection.ClassSelector;
+import org.agentgui.bundle.classSelection.JListClassSearcher;
+
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.gui.ClassSelector;
-import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.project.Project;
 import jade.core.Agent;
 

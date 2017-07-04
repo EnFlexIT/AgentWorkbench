@@ -39,7 +39,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.agentgui.bundle.evaluation.AbstractBundleClassFilter;
+import org.agentgui.bundle.evaluation.BundleEvaluator;
+
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import jade.content.onto.Ontology;
 
 /**
  * This class is used for the management of the used ontologies inside a project.
@@ -239,13 +244,22 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	 */
 	public Vector<Class<?>> getAllNoneUsedOntologies() {
 		
-		Vector<Class<?>> allOntos = Application.getClassSearcher().getOntologieClasse(false);
+		AbstractBundleClassFilter ontologyFilter = BundleEvaluator.getInstance().getBundleClassFilterByClass(Ontology.class);
+		Vector<String> ontoClassVector = ontologyFilter.getClassesFound();
+
 		Vector<Class<?>> filteredOntos = new Vector<Class<?>>();
-		for (int i =0; i<allOntos.size(); i++) {
-			Class<?> currClass = allOntos.get(i);
-			String currClassName = currClass.getName();
-			if ( this.get(currClassName)==null && currClassName.endsWith(Application.getGlobalInfo().getFileNameProjectOntology())==false ) {
-				filteredOntos.add(currClass);
+		for (int i =0; i<ontoClassVector.size(); i++) {
+			String ontoClassName = ontoClassVector.get(i);
+			if ( this.get(ontoClassName)==null && ontoClassName.endsWith(Application.getGlobalInfo().getFileNameProjectOntology())==false ) {
+				Class<?> ontoClass = null;
+				try {
+					ontoClass = ClassLoadServiceUtility.forName(ontoClassName);
+				} catch (ClassNotFoundException cnfEx) {
+					cnfEx.printStackTrace();
+				}
+				if (ontoClass!=null) {
+					filteredOntos.add(ontoClass);
+				}
 			}
 		}
 		return filteredOntos;

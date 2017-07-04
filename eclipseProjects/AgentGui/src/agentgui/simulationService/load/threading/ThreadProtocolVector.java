@@ -35,9 +35,9 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
+import agentgui.core.sim.setup.AgentClassElement4SimStart;
 import agentgui.core.sim.setup.SimulationSetup;
 
 

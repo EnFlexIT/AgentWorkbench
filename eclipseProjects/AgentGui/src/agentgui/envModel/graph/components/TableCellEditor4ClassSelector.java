@@ -38,7 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import agentgui.core.gui.ClassSelector;
+import org.agentgui.bundle.classSelection.ClassSelector;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for displaying agent classes.

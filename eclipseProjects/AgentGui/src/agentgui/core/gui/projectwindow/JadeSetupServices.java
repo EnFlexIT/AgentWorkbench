@@ -46,14 +46,15 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.agentgui.bundle.classSelection.ClassElement2Display;
+import org.agentgui.bundle.classSelection.JListClassSearcher;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.ClassElement2Display;
-import agentgui.core.gui.components.JListClassSearcher;
-import agentgui.core.jade.ClassSearcher;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
+import jade.core.BaseService;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'JADE-Services'
@@ -235,8 +236,7 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 	 */
 	private JListClassSearcher getJListServicesAvailable() {
 		if (jListServicesAvailable == null) {
-			jListServicesAvailable = new JListClassSearcher(ClassSearcher.CLASSES_BASESERVICE);
-			//jListServicesAvailable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			jListServicesAvailable = new JListClassSearcher(BaseService.class);
 		}
 		return jListServicesAvailable;
 	}

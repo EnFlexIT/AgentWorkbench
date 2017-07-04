@@ -62,13 +62,12 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import agentgui.core.agents.AgentClassElement;
+import org.agentgui.bundle.classSelection.ClassElement2Display;
+import org.agentgui.bundle.classSelection.JListClassSearcher;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.JListClassSearcher;
-import agentgui.core.jade.ClassSearcher;
-import agentgui.core.jade.ClassSearcher.ClassSearcherProcess;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.gui.OntologyInstanceDialog;
 import agentgui.core.project.AgentStartArgument;
@@ -673,7 +672,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	private JListClassSearcher getJAgentList() {
 		if (jAgentList == null) {
-			jAgentList = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS, currProject);
+			jAgentList = new JListClassSearcher(Agent.class, currProject);
 			jAgentList.setToolTipText(Language.translate("Agenten in diesem Projekt"));
 			jAgentList.setPreferredSize(new Dimension(333, 300));
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -749,8 +748,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 		if (trigger==jButtonAgentListRefresh) {
 			// --- Refresh agent list -------------------------------
-			Application.getClassSearcher().reStartSearch(currProject, ClassSearcherProcess.AGENT_SEARCH);
-			
+			// TODO ?
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);
 			jListReferences.setListData(new Vector<AgentStartArgument>());
@@ -759,29 +757,24 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// ------------------------------------------------------
 			// --- Start the selected agent -------------------------
 			// ------------------------------------------------------
-			AgentClassElement selectedValue			  = null;
-			Class<? extends Agent> selectedAgentClass = null;
-			String selectedAgentReference 			  = null;
-			String selectedAgentName				  = null;
-			
-			selectedValue = (AgentClassElement)jAgentList.getSelectedValue();
-			if (selectedValue==null) {
+			ClassElement2Display selection = (ClassElement2Display)jAgentList.getSelectedValue();
+			if (selection==null) {
 				String head = Language.translate("Agent auswählen!");
 				String msg  = Language.translate("Bitte wählen Sie den Agenten aus, den Sie starten wollen.");
 				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			selectedAgentClass		= selectedValue.getElementClass();
-			selectedAgentReference 	= selectedAgentClass.getName();
-			selectedAgentName		= jTextAgentStartAs.getText();
 			
-			if (selectedAgentName.length()!=0 && selectedAgentClass != null) {
+			String agentClassName = selection.getClassElement();
+			String agentClassNameSimple = selection.getClassElementSimpleName();
+			String agentName = jTextAgentStartAs.getText();
+			if (agentName.length()!=0 && agentClassName!=null) {
 				Object [] startArgs = null;
-				Vector<AgentStartArgument> startArgsConfigured = this.currProject.getAgentStartConfiguration().get(selectedAgentReference);
+				Vector<AgentStartArgument> startArgsConfigured = this.currProject.getAgentStartConfiguration().get(agentClassName);
 				if (startArgsConfigured!=null) {
 					// --- If start-arguments are set, get them now -----
-					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getEnvironmentController(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), selectedAgentReference);
-					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + selectedAgentName + "' (" + selectedAgentClass.getSimpleName() + ")");
+					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getEnvironmentController(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), agentClassName);
+					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + agentName + "' (" + agentClassNameSimple + ")");
 					oid.setVisible(true);
 					// --- Wait ---
 					if (oid.isCancelled()) return;
@@ -791,7 +784,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				}
 				
 				// --- Start the Agent now --------------------------
-				Application.getJadePlatform().startAgent(jTextAgentStartAs.getText(), selectedAgentClass, startArgs, currProject.getProjectFolder());	
+				Application.getJadePlatform().startAgent(agentName, agentClassName, startArgs, currProject.getProjectFolder());	
 				jTextAgent.setText(null);
 				jTextAgentStartAs.setText(null);
 				jAgentList.clearSelection();

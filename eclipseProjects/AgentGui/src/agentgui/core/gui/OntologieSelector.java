@@ -38,10 +38,10 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.agentgui.bundle.classSelection.ClassElement2Display;
+import org.agentgui.bundle.classSelection.JListClassSearcher;
+
 import agentgui.core.application.Language;
-import agentgui.core.gui.components.ClassElement2Display;
-import agentgui.core.gui.components.JListClassSearcher;
-import agentgui.core.jade.ClassSearcher;
 
 /**
  * This GUI allows the selection of a class, which extend the 'jade.content.onto.Ontology'
@@ -54,21 +54,22 @@ import agentgui.core.jade.ClassSearcher;
 public class OntologieSelector extends JDialog implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
-	private Boolean canceled = false;  //  @jve:decl-index=0:
-	private String ontologySelected = null;
 	
-	private JPanel jContentPane = null;
-	private JListClassSearcher jListOntologies = null;
-	private JButton jButtonSelect = null;
-	private JButton jButtonCancel = null;
-	private JLabel jLabelOntoList = null;
-	private JPanel jPanelShowOptions = null;
-	private ButtonGroup buttonGroup = null;  //  @jve:decl-index=0:
-	private JRadioButton jRadioButtonShowAll = null;	
-	private JRadioButton jRadioButtonShowNoneJade = null;
+	private Boolean canceled = false;
+	private String ontologySelected;
 	
-	private JLabel jLabelShow = null;
-	private JTextField jTextFieldSearch = null;
+	private JPanel jContentPane;
+	private JListClassSearcher jListOntologies;
+	private JButton jButtonSelect;
+	private JButton jButtonCancel;
+	private JLabel jLabelOntoList;
+	private JPanel jPanelShowOptions;
+	private ButtonGroup buttonGroup;
+	private JRadioButton jRadioButtonShowAll;	
+	private JRadioButton jRadioButtonShowNoneJade;
+	
+	private JLabel jLabelShow;
+	private JTextField jTextFieldSearch;
 
 	/**
 	 * Constructor equal to JDialog plus the current instance of project 
@@ -194,7 +195,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	 */
 	private JListClassSearcher getJListOntologies() {
 		if (jListOntologies == null) {
-			jListOntologies = new JListClassSearcher(ClassSearcher.CLASSES_ONTOLOGIES);
+			jListOntologies = new JListClassSearcher(Ontology.class);
 			jListOntologies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jListOntologies.getModel().addListDataListener(new ListDataListener() {
 				@Override
@@ -210,9 +211,9 @@ public class OntologieSelector extends JDialog implements ActionListener{
 					filterOntology();
 				}
 			});
-			jListOntologies.jListLoading.addMouseListener( new MouseAdapter() {
+			jListOntologies.jListLoading.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent me) {
-					if (me.getClickCount() == 2 ) {
+					if (me.getClickCount()==2 ) {
 						jButtonSelect.doClick();	
 					}
 				}
@@ -228,8 +229,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	 */
 	private void filterOntology() {
 		
-		String actCMD = buttonGroup.getSelection().getActionCommand();
-		if (actCMD.equals("NoneJadeOntologiesOnly")) {
+		if (this.getJRadioButtonShowNoneJade().isSelected()==true) {
 			jButtonSelect.setEnabled(true);
 			jListOntologies.setModelFiltered(jTextFieldSearch.getText(), "jade.");	
 		} else {
@@ -264,7 +264,6 @@ public class OntologieSelector extends JDialog implements ActionListener{
 			jButtonSelect.setText("Hinzufügen");
 			jButtonSelect.setForeground(new Color(0, 153, 0));
 			jButtonSelect.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSelect.setActionCommand("AddOntology");
 			jButtonSelect.setPreferredSize(new Dimension(100, 26));
 			jButtonSelect.addActionListener(this);
 		}
@@ -281,7 +280,6 @@ public class OntologieSelector extends JDialog implements ActionListener{
 			jButtonCancel.setText("Abbrechen");
 			jButtonCancel.setForeground(new Color(153, 0, 0));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setActionCommand("Cancel");
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.addActionListener(this);
 		}
@@ -351,7 +349,6 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		if (jRadioButtonShowAll == null) {
 			jRadioButtonShowAll = new JRadioButton();
 			jRadioButtonShowAll.setText("Alle Ontologien");
-			jRadioButtonShowAll.setActionCommand("AllOntologies");
 			jRadioButtonShowAll.setMnemonic(KeyEvent.VK_UNDEFINED);
 			jRadioButtonShowAll.addActionListener(this);
 		}
@@ -365,7 +362,6 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		if (jRadioButtonShowNoneJade == null) {
 			jRadioButtonShowNoneJade = new JRadioButton();
 			jRadioButtonShowNoneJade.setText("Nur Nicht-JADE-Ontologien");
-			jRadioButtonShowNoneJade.setActionCommand("NoneJadeOntologiesOnly");
 			jRadioButtonShowNoneJade.setSelected(true);
 			jRadioButtonShowNoneJade.addActionListener(this);
 		}
@@ -378,30 +374,30 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		String ActCMD = ae.getActionCommand();
-		String MsgHead, MsgText;
-		
-		if ( ActCMD == "AddOntology" ) {
+		if (ae.getSource()==this.getJButtonSelect()) {
+			// --- AddOntology ----------------------------
 			if ( jListOntologies.getSelectedValue()!=null ) {
 				ClassElement2Display classSelected = (ClassElement2Display) jListOntologies.getSelectedValue();
-				ontologySelected = classSelected.toString();
+				ontologySelected = classSelected.getClassElement();
 				this.setVisible(false);
 			} else {
-				MsgHead = Language.translate("Fehlende Ontologie-Auswahl !");
-				MsgText = Language.translate("Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !");			
-				JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.WARNING_MESSAGE);
+				String title = Language.translate("Fehlende Ontologie-Auswahl !");
+				String msg = Language.translate("Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !");			
+				JOptionPane.showInternalMessageDialog(this.getContentPane(), msg, title, JOptionPane.WARNING_MESSAGE);
 			}
-		} else if ( ActCMD == "Cancel" ) {
+			
+		} else if (ae.getSource()==this.getJButtonCancel()) {
+			// --- Cancel ---------------------------------
 			this.canceled = true;
 			this.setVisible(false);
-		} else if ( ActCMD == "AllOntologies" ) {
+			
+		} else if (ae.getSource()==this.getJRadioButtonShowAll()) {
+			// --- AllOntologies --------------------------
 			this.filterOntology();
-		} else if ( ActCMD == "NoneJadeOntologiesOnly" ) {
+		} else if (ae.getSource()==this.getJRadioButtonShowNoneJade()) {
+			// --- NoneJadeOntologiesOnly -----------------
 			this.filterOntology();
-		} else {
-			System.out.println( "Unknown ActionCommand: " + ActCMD );
-		};
+		}
 	}
 
-	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 

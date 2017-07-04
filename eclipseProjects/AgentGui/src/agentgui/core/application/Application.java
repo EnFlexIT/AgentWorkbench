@@ -56,8 +56,6 @@ import agentgui.core.gui.ChangeDialog;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
-import agentgui.core.jade.ClassSearcher;
-import agentgui.core.jade.ClassSearcher.ClassSearcherProcess;
 import agentgui.core.jade.Platform;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
@@ -91,13 +89,6 @@ public class Application {
 	private static boolean doSystemExitOnQuit = true;
 	/** The quit application. */
 	private static boolean quitJVM = false;
-	
-	/**
-	 * This ClassDetector is used in order to search for agent classe's, ontology's and BaseService'.
-	 * If a project was newly opened, the search process will restart in order to determine the integrated
-	 * classes of the project. 
-	 */
-	private static ClassSearcher classSearcher;
 	
 	/** The instance of this singleton class */
 	private static Application thisApp = new Application();
@@ -228,28 +219,6 @@ public class Application {
 			shutdownThread.stopObserving();
 		}
 		shutdownThread = newShutdownThread;
-	}
-	
-	
-	/**
-	 * Sets the current {@link ClassSearcher}.
-	 * @param newClassSearcher the new class searcher
-	 */
-	public static void setClassSearcher(ClassSearcher newClassSearcher) {
-		if (classSearcher!=null) {
-			classSearcher.stopSearch(ClassSearcherProcess.ALL_SEARCH_PROCESSES);	
-		}
-		classSearcher = newClassSearcher;
-	}
-	/**
-	 * Returns the current {@link ClassSearcher}.
-	 * @return the class searcher
-	 */
-	public static ClassSearcher getClassSearcher() {
-		if (classSearcher==null) {
-			classSearcher = new ClassSearcher();
-		}
-		return classSearcher;
 	}
 	
 	/**

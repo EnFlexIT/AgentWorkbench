@@ -38,8 +38,8 @@ import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 
-import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.project.Project;
+import agentgui.core.sim.setup.AgentClassElement4SimStart;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.simulationService.SimulationService;

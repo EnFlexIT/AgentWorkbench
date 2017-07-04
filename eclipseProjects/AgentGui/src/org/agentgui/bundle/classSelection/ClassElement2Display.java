@@ -121,6 +121,14 @@ public class ClassElement2Display implements Comparable<ClassElement2Display> {
 	public void setClassElement(String className) {
 		this.className = className;
 	}
+	/**
+	 * Returns the simple class name of the class found.
+	 * @return the class element simple name
+	 */
+	public String getClassElementSimpleName() {
+		int cutAt = this.getClassElement().lastIndexOf(".");
+		return this.getClassElement().substring(cutAt+1);
+	}
 	
 	/**
 	 * Returns the bundle name of the current class.
@@ -151,5 +159,6 @@ public class ClassElement2Display implements Comparable<ClassElement2Display> {
 	public String getAdditionalText() {
 		return additionalText;
 	}
+	
 	
 }

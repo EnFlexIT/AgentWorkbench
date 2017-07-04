@@ -62,7 +62,7 @@ public class OSGIClassLoadServiceUtility extends DefaultClassLoadServiceUtility 
 		// --- Check all available ClassLoadServices ---------------- 
 		for (ClassLoadService cls : this.getClassLoadServiceVector()) {
 			if (this.isRequiredClassLoadService(cls, className)==true) {
-				this.getClassLoadServicesByClassName().put(className, clsFound);
+				this.getClassLoadServicesByClassName().put(className, cls);
 				clsFound = cls;
 				break;
 			}

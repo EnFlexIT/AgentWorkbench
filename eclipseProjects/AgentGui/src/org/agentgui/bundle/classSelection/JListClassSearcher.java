@@ -154,7 +154,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 				bundleClassFilter = new AbstractBundleClassFilter() {
 					@Override
 					public boolean isInFilterScope(Class<?> clazz) {
-						return getClass2SearchFor().isAssignableFrom(clazz);
+						return getClass2SearchFor().isAssignableFrom(clazz) && getClass2SearchFor().equals(clazz)==false;
 					}
 					@Override
 					public boolean isFilterCriteria(Class<?> clazz) {
@@ -275,8 +275,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * Re sets the list model.
 	 */
 	public void reSetListModel() {
-		// TODO 
-		System.err.println("Research list");
+		System.err.println(this.getClass().getName() + "[reSetListModel]: Research list (TODO)");
 	}
 
 	

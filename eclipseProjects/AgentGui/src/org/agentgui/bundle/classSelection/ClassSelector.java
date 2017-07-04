@@ -57,12 +57,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.ClassElement2Display;
 
 
 /**
@@ -668,9 +666,6 @@ public class ClassSelector extends JDialog {
 						if (selectedValue instanceof ClassElement2Display) {
 							ClassElement2Display ce2d = (ClassElement2Display) selectedValue;
 							jTextFieldCustomizeClass.setText(ce2d.toString());	
-						} else if (selectedValue instanceof AgentClassElement) {
-							AgentClassElement ace = (AgentClassElement) selectedValue;
-							jTextFieldCustomizeClass.setText(ace.toString());
 						}
 						jButtonCheckClass.doClick();
 					}

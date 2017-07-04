@@ -128,7 +128,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 				}
 				
 			} else {
-				System.err.println("Reflect classes in '" + this.searchInPackage + "': Could not find " + directoryFile);
+				System.err.println(this.getClass().getSimpleName() +": Reflection of classes in '" + this.searchInPackage + "' failed - Could not find " + directoryFile);
 			}
 			
 			// --- Add classes found, if any ------------------------ 

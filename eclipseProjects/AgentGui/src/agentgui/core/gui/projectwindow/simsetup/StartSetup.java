@@ -61,14 +61,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
-import agentgui.core.agents.AgentClassElement;
-import agentgui.core.agents.AgentClassElement4SimStart;
+import org.agentgui.bundle.classSelection.ClassElement2Display;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.AgentSelector;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
+import agentgui.core.sim.setup.AgentClassElement4SimStart;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
@@ -641,7 +642,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			Object[] agentsSelected = agentSelector.getSelectedAgentClasses();
 			for (int i = 0; i < agentsSelected.length; i++) {
 				
-				AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart((AgentClassElement) agentsSelected[i], SimulationSetup.AGENT_LIST_ManualConfiguration); 
+				AgentClassElement4SimStart ac4s = new AgentClassElement4SimStart((ClassElement2Display) agentsSelected[i], SimulationSetup.AGENT_LIST_ManualConfiguration); 
 				// --- Set the order number -------------------------
 				ac4s.setPostionNo(startCounter);
 				startCounter++;

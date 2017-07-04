@@ -85,7 +85,6 @@ import agentgui.core.gui.projectwindow.TabForSubPanels;
 import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.jade.ClassSearcher;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
@@ -93,8 +92,8 @@ import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.resources.VectorOfProjectResources;
 import agentgui.core.sim.setup.SimulationSetupNotification;
-import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.core.webserver.JarFileCreator;
@@ -1529,10 +1528,7 @@ import agentgui.core.webserver.JarFileCreator;
 			this.getProjectResources().setSuffixText(jarFile4Display, suffixText);
 			
 		}
-		
-		// --- Search for Agent-, Ontology- and BaseService - Classes ----
-		Application.setClassSearcher(new ClassSearcher(this));
-		
+
 		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
 	/**

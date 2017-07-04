@@ -50,11 +50,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import org.agentgui.bundle.classSelection.JListClassSearcher;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.JListClassSearcher;
-import agentgui.core.jade.ClassSearcher;
+import jade.core.Agent;
 
 /**
  * The Class AgentSelector provides a GUI in order to select an agent 
@@ -202,7 +203,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 	 */
 	private JListClassSearcher getJListAgents() {
 		if (jListAgents == null) {
-			jListAgents = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS);
+			jListAgents = new JListClassSearcher(Agent.class);
 			jListAgents.jListLoading.addMouseListener( new MouseAdapter() {
 				public void mouseClicked(MouseEvent me) {
 					if (me.getClickCount() == 2 ) {

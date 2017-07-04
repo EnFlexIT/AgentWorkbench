@@ -53,11 +53,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.agentgui.bundle.classSelection.ClassSelector;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentType;
-import agentgui.core.gui.ClassSelector;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;

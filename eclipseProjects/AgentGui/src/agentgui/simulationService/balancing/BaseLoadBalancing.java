@@ -33,15 +33,15 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import agentgui.core.agents.AgentClassElement4SimStart;
-import agentgui.core.agents.UtilityAgent.UtilityAgentJob;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
+import agentgui.core.sim.setup.AgentClassElement4SimStart;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.utillity.UtilityAgent.UtilityAgentJob;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.SimulationService;

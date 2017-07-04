@@ -30,7 +30,7 @@ public class FilterForBaseService extends AbstractBundleClassFilter {
 	 */
 	@Override
 	public boolean isInFilterScope(Class<?> clazz) {
-		return BaseService.class.isAssignableFrom(clazz);
+		return BaseService.class.isAssignableFrom(clazz) && BaseService.class.equals(clazz)==false;
 	}
 
 	

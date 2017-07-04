@@ -34,13 +34,13 @@ import jade.core.ServiceException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.RemoteContainerConfiguration;
+import agentgui.core.sim.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 

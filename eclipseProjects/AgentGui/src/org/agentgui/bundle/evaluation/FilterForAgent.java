@@ -30,7 +30,7 @@ public class FilterForAgent extends AbstractBundleClassFilter {
 	 */
 	@Override
 	public boolean isInFilterScope(Class<?> clazz) {
-		return Agent.class.isAssignableFrom(clazz);
+		return Agent.class.isAssignableFrom(clazz) && Agent.class.equals(clazz)==false;
 	}
 
 

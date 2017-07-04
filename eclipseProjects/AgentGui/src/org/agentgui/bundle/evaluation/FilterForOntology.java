@@ -30,7 +30,7 @@ public class FilterForOntology extends AbstractBundleClassFilter {
 	 */
 	@Override
 	public boolean isInFilterScope(Class<?> clazz) {
-		return Ontology.class.isAssignableFrom(clazz);
+		return Ontology.class.isAssignableFrom(clazz) && Ontology.class.equals(clazz)==false;
 	}
 
 	
