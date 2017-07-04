@@ -1,0 +1,11 @@
+/bin/
+/exec/
+/server/
+/download/
+/build/
+/doc/api
+.settings/
+/properties/agentgui.ini
+APDescription.txt
+AgentGUINode.bin
+MTPs-Main-Container.txt
