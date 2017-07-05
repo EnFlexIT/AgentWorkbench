@@ -16,6 +16,9 @@
         <className>agentproject.PlugInExample</className>
     </plugins>
     <subOntologies/>
+    <agentStartConfiguration>
+        <agentVector/>
+    </agentStartConfiguration>
     <jadeConfiguration>
         <skipUserRequestForJadeStart>false</skipUserRequestForJadeStart>
         <useLocalPort>1099</useLocalPort>
@@ -55,6 +58,16 @@
         </userThresholds>
     </distributionSetup>
     <agentClassLoadMetricsTable>
+        <agentClassMetricDescriptionVector>
+            <agentClass>
+                <className>agent.class.UNKNOWN-AGENT-CLASS</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>6.782751380888364</realMetricAverage>
+                <realMetricMax>6.782751380888362</realMetricMax>
+                <realMetricMin>6.782751380888362</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+        </agentClassMetricDescriptionVector>
         <useRealLoadMetric>false</useRealLoadMetric>
     </agentClassLoadMetricsTable>
     <remoteContainerConfiguration>

@@ -48,6 +48,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -73,6 +74,9 @@ public class ClassSelector extends JDialog {
 
 	private static final long serialVersionUID = 1674830519185536173L;
 
+	private final ImageIcon imageIconCheckGreen = GlobalInfo.getInternalImageIcon("MBcheckGreen.png");
+	private final ImageIcon imageIconCheckRed   = GlobalInfo.getInternalImageIcon("MBcheckRed.png");
+	
 	private JPanel jContentPane;
 	private JLabel jLabelCustomize;
 	private JTextField jTextFieldCustomizeClass;
@@ -396,7 +400,7 @@ public class ClassSelector extends JDialog {
 			jContentPane.add(jLabelCustomize, gridBagConstraints42);
 			jContentPane.add(getJTextFieldCustomizeClass(), gridBagConstraints31);
 			jContentPane.add(getJButtonDefaultClass(), gridBagConstraints52);
-			jContentPane.add(getJButtonDefaultClassCustomize(), gridBagConstraints28);
+			jContentPane.add(getJButtonCheckClass(), gridBagConstraints28);
 			jContentPane.add(getJPanelProceed(), gridBagConstraints);
 			jContentPane.add(getJListClassesFound(), gridBagConstraints11);
 			jContentPane.add(jLabelSearchCaption, gridBagConstraints21);
@@ -421,7 +425,7 @@ public class ClassSelector extends JDialog {
 				@Override
 				public void keyReleased(KeyEvent kR) {
 					super.keyReleased(kR);
-					isValidClass(jTextFieldCustomizeClass, jButtonCheckClass);
+					isValidClass(jTextFieldCustomizeClass);
 				}
 			});
 		}
@@ -473,10 +477,10 @@ public class ClassSelector extends JDialog {
 	}
 	
 	/**
-	 * This method initializes jButtonDefaultClassCustomize.
+	 * Returns the JButton to check the currently selected class.
 	 * @return javax.swing.JButton
 	 */
-	private JButton getJButtonDefaultClassCustomize() {
+	private JButton getJButtonCheckClass() {
 		if (jButtonCheckClass == null) {
 			jButtonCheckClass = new JButton();
 			jButtonCheckClass.setToolTipText(Language.translate("Klassenangabe überprüfen"));
@@ -485,7 +489,7 @@ public class ClassSelector extends JDialog {
 			jButtonCheckClass.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					isValidClass(jTextFieldCustomizeClass, jButtonCheckClass);
+					isValidClass(jTextFieldCustomizeClass);
 				}
 			});
 		}
@@ -494,39 +498,42 @@ public class ClassSelector extends JDialog {
 	
 	/**
 	 * This method checks if a given class reference is valid.
-	 *
+	 * 
 	 * @param jTextField the j text field
-	 * @param jButton the j button
 	 * @return true, if is valid class
 	 */
-	private boolean isValidClass(JTextField jTextField, JButton jButton) {
+	private boolean isValidClass(JTextField jTextField) {
 		
+		boolean isValidClass = false;
 		String className = jTextField.getText().trim();
 		if (this.class2Search4DefaultValue==null && className.equals("")) {
-			// --- If no default value is configured, an empty text field is allowed -----
-			jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckGreen.png"));
-			this.setValidClass(true);
-			return true;
+			// --- If no default value is configured, an empty text field is OK ---------
+			isValidClass = true;
 		} else if (isAllowNull()==true && className.equals("")) {
-			jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckGreen.png"));
-			this.setValidClass(true);
-			return true;
-			
+			isValidClass = true;
 		} else {
-			// --- If a default value is configured, there should be a valid class ------ 
 			try {
 				ClassLoadServiceUtility.forName(className);
-				jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckGreen.png"));
-				this.setValidClass(true);
-				return true;
-				
+				isValidClass = true;
 			} catch (ClassNotFoundException e) {
 				//e.printStackTrace();
-				jButton.setIcon(GlobalInfo.getInternalImageIcon("MBcheckRed.png"));
+				isValidClass = false;
 			}
 		}
-		this.setValidClass(false);
-		return false;
+		
+		// --- Set the appearance of the check button -----------------------------------
+		String toolTipText = Language.translate("Klassenangabe überprüfen") + ": ";
+		if (isValidClass==true) {
+			this.getJButtonCheckClass().setIcon(this.imageIconCheckGreen);
+			toolTipText += "The selcted class is valid"; 
+		} else {
+			this.getJButtonCheckClass().setIcon(this.imageIconCheckRed);
+			toolTipText += "Invalid class !";
+		}
+		this.getJButtonCheckClass().setToolTipText(toolTipText);
+		this.setValidClass(isValidClass);
+		
+		return isValidClass;
 	}
 
 	/**
@@ -588,7 +595,7 @@ public class ClassSelector extends JDialog {
 	 * This method is called by the jButtonOK's ActionListener.
 	 */
 	public void handleOkClick(){
-		if (isValidClass(jTextFieldCustomizeClass, jButtonCheckClass)) {
+		if (this.isValidClass(jTextFieldCustomizeClass)) {
 			setClassSelected(jTextFieldCustomizeClass.getText().trim());
 			setCanceled(false);
 			setVisible(false);

@@ -1111,7 +1111,8 @@ public class GlobalInfo {
 	 * @return the default logging base path
 	 */
 	public static String getLoggingBasePathDefault() {
-		String defaultLoggingBasePath = "./log";
+		String basePath = Application.getGlobalInfo().getPathBaseDir();
+		String defaultLoggingBasePath = basePath + "log";
 		String os = System.getProperty("os.name");
 		if (os.toLowerCase().contains("windows")==true) {
 			// --- nothing to do here ---
