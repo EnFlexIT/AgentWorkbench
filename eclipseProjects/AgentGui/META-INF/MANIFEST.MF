@@ -154,7 +154,6 @@ Export-Package: agentgui.core.application;
    jade.content.onto,
    agentgui.core.ontologies,
    javax.swing",
- agentgui.core.ontologies.reflection,
  agentgui.core.plugin;
   uses:="jade.core,
    agentgui.core.project,

@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package org.agentgui.bundle.evaluation;
 
 import java.io.File;
@@ -89,6 +117,26 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("org.agentgui.lib.scimark");
 		}
 		return bundleExcludeHashSet;
+	}
+	/**
+	 * Checks if the specified symbolic bundle name belongs to the list of excluded bundles.
+	 *
+	 * @param symbolicBundleName the symbolic bundle name
+	 * @return true, if is excluded
+	 */
+	private boolean isExcludedBundle(String symbolicBundleName) {
+	
+		boolean excluded = false;
+		
+		String[] nameParts = symbolicBundleName.split("\\.");
+		String name2Check = nameParts[0]; 
+		for (int i=0; i<nameParts.length; i++) {
+			// --- Check if the part is already part of the exclude list ------
+			if (this.getBundleExcludeHashSet().contains(name2Check)==true) return true;
+			if ((i+1)>=nameParts.length) break;
+			name2Check += "." + nameParts[i+1];
+		}
+		return excluded;
 	}
 	
 	/**
@@ -216,7 +264,11 @@ public class BundleEvaluator {
 		Thread searchThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				evaluateBundle(bundle, bundleClassFilterToUse);
+				try {
+					evaluateBundle(bundle, bundleClassFilterToUse);
+				} catch (Exception ex) {
+					System.err.println(Thread.currentThread().getName() + ": " + ex.getMessage());
+				}
 			}
 		});
 		searchThread.setName("BundleSearch_" + bundle.getSymbolicName());
@@ -305,52 +357,119 @@ public class BundleEvaluator {
 	}
 	
 	/**
-	 * Returns the classes of the specified bundle.
-	 *
-	 * @param bundle the bundle
+	 * Returns the class references of the specified bundle (maybe quite time consuming).
+	 * @param bundle the bundle to evaluate
 	 * @return the list of classes
 	 */
 	public List<Class<?>> getClasses(Bundle bundle) {
+		return this.getClasses(bundle, null);
+	}
+	/**
+	 * Returns the class references of the specified bundle (maybe quite time consuming, especially without package filter).
+	 * 
+	 * @param bundle the bundle to evaluate 
+	 * @param packageFilter the package filter; maybe <code>null</code>, which will return all classes from the bundle
+	 * @return the list of classes
+	 */
+	public List<Class<?>> getClasses(Bundle bundle, String packageFilter) {
 
-		List<Class<?>> classesOfCurrentBundle = new ArrayList<Class<?>>();
+		// --- Define the result list -------------------------------
+		List<Class<?>> bundleClasses = new ArrayList<Class<?>>();
+		
+		// --- Adjust the package filter ----------------------------
+		String packagePath = "/";
+		if (packageFilter!=null) {
+			packagePath = packageFilter.replace(".", "/");
+			if (packagePath.startsWith("/")==false) packagePath = "/" + packagePath;
+			if (packagePath.endsWith("/")==false) packagePath = packagePath + "/";
+		}
 		
 		// --- Checking class files ---------------------------------
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		Collection<String> resources = bundleWiring.listResources("/", "*.class", BundleWiring.LISTRESOURCES_RECURSE);
+		Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", BundleWiring.LISTRESOURCES_RECURSE);
 		for (String resource : resources) {
 
-			URL localResource = bundle.getEntry(resource);
-		    if (localResource!=null) {
-		        String className = resource.replaceAll("/", ".");
-		        // --- For the development environment --------------
-		        if (className.startsWith("bin.")==true) {
-		        	className = className.substring(4, className.length());
-		        }
-		        // --- Cut file extension ---------------------------
-		        if (className.endsWith(".class")==true) {
-		        	className = className.substring(0, className.length()-6);
-		        }
-		        // ---- Try to load the class into the bundle ------- 
-		        try {
+			// --- Get a suitable class name ------------------------
+			String className = this.getClassNameOfBundleResource(resource);
+			if (className!=null) {
+				
+				try {
+					// ---- Try to load the class into the bundle ----------- 
 					Class<?> clazz = bundle.loadClass(className);
-					classesOfCurrentBundle.add(clazz);
+					bundleClasses.add(clazz);
 					
 				} catch (ClassNotFoundException cnfEx) {
-					System.err.println("Could not find class '" + className + "'");
-					//cnfEx.printStackTrace();
+					//System.err.println("ClassNotFoundException for '" + className + "': " + cnfEx.getMessage() );
+					//ex.printStackTrace();
+				} catch (NoClassDefFoundError ncDefEx) {
+					//System.err.println("NoClassDefFoundError for '" + className + "': " + ncDefEx.getMessage() );
+					//ex.printStackTrace();
+				} catch (IllegalAccessError iae) {
+					//System.err.println("IllegalAccessError for '" + className + "': " + iae.getMessage() );
+					//ex.printStackTrace();
 				}
-		    }
+			}
 		}
 		
 		// --- Load JADE classes? -----------------------------------
 		if (bundle.getSymbolicName().equals(JADE_BUNDLE_NAME)==true && this.findClass(bundle, Agent.class.getName())!=null) {
 			List<Class<?>> jadeClasses = this.getJadeClasses(bundle);
 			if (jadeClasses!=null && jadeClasses.size()>0) {
-				classesOfCurrentBundle.addAll(jadeClasses);
+				bundleClasses.addAll(jadeClasses);
 			}
 		}
-		return classesOfCurrentBundle;
+		return bundleClasses;
 	}
+	
+	/**
+	 * Gets the class name of a bundle resource returned by the bundle wiring.
+	 *
+	 * @param resource the resource
+	 * @return the class name of bundle resource
+	 */
+	private String getClassNameOfBundleResource(String resource) {
+		
+		if (resource.contains("$")) return null;
+		
+		String className = resource.replaceAll("/", ".");
+        // --- For the development environment --------------
+        if (className.startsWith("bin.")==true) {
+        	className = className.substring(4, className.length());
+        }
+        // --- Cut file extension ---------------------------
+        if (className.endsWith(".class")==true) {
+        	className = className.substring(0, className.length()-6);
+        }
+		return className;
+	}
+	
+	/**
+	 * Returns the class references of the specified bundle (maybe quite time consuming).
+	 * @param bundle the bundle
+	 * @return the list of class references
+	 */
+	public List<String> getClassReferences(Bundle bundle) {
+		return this.getClassReferences(bundle, null);
+	}
+	/**
+	 * Returns the class references of the specified bundle (maybe quite time consuming, especially without package filter).
+	 * @param bundle the bundle
+	 * @param packageFilter the package filter; maybe <code>null</code>, which will return all classes from the bundle
+	 * @return the list of class references
+	 */
+	public List<String> getClassReferences(Bundle bundle, String packageFilter) {
+		
+		List<String> classReferencesFound = new ArrayList<String>();
+		List<Class<?>> classesFound = this.getClasses(bundle, packageFilter);
+		for (int i = 0; i < classesFound.size(); i++) {
+			Class<?> classFound = classesFound.get(i);
+			if (classesFound!=null) {
+				classReferencesFound.add(classFound.getName());
+			}
+		}
+		return classReferencesFound;
+	}
+	
 	
 	/**
 	 * Loads and returns the jade classes that are part of the jade.jar or the migration.jar into the specified bundle.
@@ -479,11 +598,20 @@ public class BundleEvaluator {
 
 	
 	/**
-	 * Tries to find the specified class in the bundle.
+	 * Returns the bundle that loaded the specified class.
+	 * @param clazz the class instance 
+	 * @return the bundle from class
+	 */
+	public Bundle getBundleOfClass(Class<?> clazz) {
+		return FrameworkUtil.getBundle(clazz);
+	}
+	
+	/**
+	 * Tries to find the specified class in the bundle. If the class could not be found, the method returns <code>null</code>.
 	 *
-	 * @param bundle the bundle in which the class is located
+	 * @param bundle the bundle in which the class should be located
 	 * @param className the class name
-	 * @return the class
+	 * @return the class or <code>null</code>
 	 */
 	public Class<?> findClass(Bundle bundle, String className) {
 	    if (bundle!=null) {
@@ -500,47 +628,5 @@ public class BundleEvaluator {
 	    return null;
 	}
 	
-	/**
-	 * Returns the class references of the specified bundle.
-	 *
-	 * @param bundle the bundle
-	 * @return the list of class references
-	 */
-	public List<String> getClassReferences(Bundle bundle) {
-		
-		List<String> classNamesOfCurrentBundle = new ArrayList<String>();
-
-		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		Collection<String> resources = bundleWiring.listResources("/", "*.class", BundleWiring.LISTRESOURCES_RECURSE);
-		for (String resource : resources) {
-		    URL localResource = bundle.getEntry(resource);
-		    if (localResource != null) {
-		        String className = resource.replaceAll("/", ".");
-		        classNamesOfCurrentBundle.add(className);
-		    }
-		}
-		return classNamesOfCurrentBundle;
-	}
-	
-	/**
-	 * Checks if the specified symbolic bundle name belongs to the list of excluded bundles.
-	 *
-	 * @param symbolicBundleName the symbolic bundle name
-	 * @return true, if is excluded
-	 */
-	private boolean isExcludedBundle(String symbolicBundleName) {
-	
-		boolean excluded = false;
-		
-		String[] nameParts = symbolicBundleName.split("\\.");
-		String name2Check = nameParts[0]; 
-		for (int i=0; i<nameParts.length; i++) {
-			// --- Check if the part is already part of the exclude list ------
-			if (this.getBundleExcludeHashSet().contains(name2Check)==true) return true;
-			if ((i+1)>=nameParts.length) break;
-			name2Check += "." + nameParts[i+1];
-		}
-		return excluded;
-	}
 	
 }

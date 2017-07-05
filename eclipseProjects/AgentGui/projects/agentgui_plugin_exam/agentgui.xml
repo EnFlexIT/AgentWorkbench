@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Agent.GUI PlugIn Example</projectName>
+    <versionInformation>
+        <build>1</build>
+        <majorRevision>0</majorRevision>
+        <minorRevision>1</minorRevision>
+    </versionInformation>
+    <updateAutoConfiguration>0</updateAutoConfiguration>
+    <updateSite>http://update.agentgui.org</updateSite>
     <environmentModel>none</environmentModel>
     <projectResources>
         <projectResource>\jar\PlugInExample.jar</projectResource>
@@ -10,7 +17,12 @@
     </plugins>
     <subOntologies/>
     <jadeConfiguration>
+        <skipUserRequestForJadeStart>false</skipUserRequestForJadeStart>
         <useLocalPort>1099</useLocalPort>
+        <mtpCreation>ConfiguredByJADE</mtpCreation>
+        <mtpIpAddress>Auto-Configuration</mtpIpAddress>
+        <mtpProtocol>HTTP</mtpProtocol>
+        <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -19,11 +31,18 @@
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <evenDistribution>false</evenDistribution>
+        <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
+        <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>0</numberOfAgents>
         <numberOfContainer>0</numberOfContainer>
+        <remoteOnly>true</remoteOnly>
+        <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
+        <showThreadMonitorAtPlatformStart>true</showThreadMonitorAtPlatformStart>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -35,6 +54,9 @@
             <thNoThreadsL>5</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
+    <agentClassLoadMetricsTable>
+        <useRealLoadMetric>false</useRealLoadMetric>
+    </agentClassLoadMetricsTable>
     <remoteContainerConfiguration>
         <jvmMemAllocInitial>32m</jvmMemAllocInitial>
         <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>

@@ -35,9 +35,8 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
+import agentgui.core.ontologies.ReflectClass.Slot;
 import agentgui.core.ontologies.gui.Sorter;
-import agentgui.core.ontologies.reflection.ReflectClass;
-import agentgui.core.ontologies.reflection.ReflectClass.Slot;
 
 
 /**

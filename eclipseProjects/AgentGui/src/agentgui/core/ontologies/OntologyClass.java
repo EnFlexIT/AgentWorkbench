@@ -43,15 +43,17 @@ import jade.content.onto.Ontology;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class OntologyClass extends Object implements Serializable {
+public class OntologyClass implements Serializable {
 
 	private static final long serialVersionUID = 1142137843893954757L;
 
-	private String currOntologySrcPackage = null;
-	private String currOntologyMainClass  = null;
-	private String currOntologyName 	  = null;
+	private Class<? extends Ontology> ontologyClass;
 	
-	public OntologyClassTree projectOntologieTree = null;
+	private String currOntologySrcPackage;
+	private String currOntologyMainClass;
+	private String currOntologyName;
+	
+	public OntologyClassTree projectOntologieTree;
 	public OntologyClassVocabulary ontologieVocabulary;
 	public List<String> ontologyConceptNames;
 	public List<String> ontologyAgentActionNames;
@@ -70,21 +72,22 @@ public class OntologyClass extends Object implements Serializable {
 	 * @param ontologyReference the ontology reference
 	 */
 	public OntologyClass(String ontologyReference) {
-
+		
+		this.currOntologyMainClass = ontologyReference;
+		
 		// --------------------------------------------------------------------
 		// --- Is this the Reference to the Main-class of the ontology? -------
-		if (this.isClassReference(ontologyReference)==true) {
+		if (this.getOntologyClass(this.currOntologyMainClass)!=null) {
 			// --- Yes, it is -------------------------
-			currOntologyMainClass  = ontologyReference;
-			currOntologySrcPackage = currOntologyMainClass.substring(0, currOntologyMainClass.lastIndexOf("."));
+			this.currOntologySrcPackage = this.currOntologyMainClass.substring(0, this.currOntologyMainClass.lastIndexOf("."));
 		} else {
 			// --- No it isn't ------------------------
-			currOntologyMainClass  = null;
-			currOntologySrcPackage = ontologyReference;
+			this.currOntologyMainClass = null;
+			this.currOntologySrcPackage = ontologyReference;
 		}
 		// --------------------------------------------------------------------
 		// --- Build the TreeModel for this ontology --------------------------
-		this.setCorrectTreeBuild(this.setOntologyTree());;
+		this.setCorrectTreeBuild(this.setOntologyTree());
  
 		// --------------------------------------------------------------------
 		// --- Set Informations for Concepts, AgentActions and Predicates -----
@@ -106,26 +109,40 @@ public class OntologyClass extends Object implements Serializable {
 		this.correctTreeBuild = correctTreeBuild;
 	}
 	
+	
 	/**
-	 * Checks if the given Ontology is a class or not.
-	 *
-	 * @param ontologyReference the ontology reference
-	 * @return true, if the reference is a valid class
+	 * Returns the ontology class, if the specified ontology reference is valid.
+	 * @return the ontology class
 	 */
-	private boolean isClassReference(String ontologyReference) {
-		
-		try {
-			ClassLoadServiceUtility.forName(ontologyReference);
-			return true;
-			
-		} catch (ClassNotFoundException e) {
-			//e.printStackTrace();
+	public Class<? extends Ontology> getOntologyClass() {
+		if (ontologyClass==null) {
+			ontologyClass = this.getOntologyClass(this.getOntologyMainClass());
 		}
-		return false;
+		return ontologyClass;
+	}
+	/**
+	 * Returns the ontology class, if the specified ontology reference is valid.
+	 * @param ontologyReference the ontology reference
+	 * @return the ontology class
+	 */
+	@SuppressWarnings("unchecked")
+	private Class<? extends Ontology> getOntologyClass(String ontologyReference) {
+		Class<? extends Ontology> ontoClass = null;
+		if (ontologyReference!=null && ontologyReference.equals("")==false) {
+			try {
+				Class<?> classLoded = ClassLoadServiceUtility.forName(ontologyReference);
+				ontoClass = (Class<? extends Ontology>) classLoded;
+				
+			} catch (ClassNotFoundException e) {
+				//e.printStackTrace();
+			}	
+		}
+		return ontoClass;
 	}
 	
 	/**
 	 * Creates the OntologyTree of the current Ontology given it's Main-Class.
+	 * @return true, if successful
 	 */
 	private boolean setOntologyTree() {
 		OntologyClassTreeObject octo = new OntologyClassTreeObject(this, "Root");

@@ -36,9 +36,10 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.agentgui.bundle.evaluation.PackageClasses;
+
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.ontologies.reflection.ReflectClassFiles;
 
 /**
  * This class represents the DefaultTreeModel for a single 
@@ -148,25 +149,26 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	 */
 	private void addOntologyNodes() {
 	
-		int clazzListIndex = 0, LastClLiIndexResetAtSize = -1;
+		int clazzListIndex = 0; 
+		int lastClLiIndexResetAtSize = -1;
 
 		// --- Get the class-files from the package ---------------------------
-		ArrayList<String> projectOntologyClassList = new ReflectClassFiles(this.searchInPackage);
-		while (projectOntologyClassList.size()>0) {
+		ArrayList<String> ontologyClassList = new PackageClasses(this.currOntoClass.getOntologyClass());
+		while (ontologyClassList.size()>0) {
 	    	
-	    	if (clazzListIndex > projectOntologyClassList.size()-1 ) {
+	    	if (clazzListIndex > ontologyClassList.size()-1 ) {
 	    		clazzListIndex=0;
 	    	}
 
 	    	// ----------------------------------------------------------------
 	    	// --- Work on the current class and its description --------------
-	    	String currentClass = projectOntologyClassList.get(clazzListIndex);
+	    	String currentClass = ontologyClassList.get(clazzListIndex);
 	    	OntologyClassTreeObject ontoClassTreeObj = this.getNewTreeNodeUserObject(currentClass);
 
 	    	// ----------------------------------------------------------------
 	    	// --- Work on the OntologyClassTreeObject, if available ---------- 
 	    	if (ontoClassTreeObj==null) {
-				projectOntologyClassList.remove(currentClass);
+				ontologyClassList.remove(currentClass);
 			
 			} else {
 				// --- Add a new node to the ontology tree --------------------
@@ -190,15 +192,15 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 			        		rootNode.setUserObject(octo);  
 		        		}
 	        		}
-	        		projectOntologyClassList.remove(currentClass);
+	        		ontologyClassList.remove(currentClass);
 	        		
 	        	} else if (ontoClassTreeObj.isConcept()==true) {
 		    		conceptNode.add(currentNode);
-		    		projectOntologyClassList.remove(currentClass);
+		    		ontologyClassList.remove(currentClass);
 		    		
 	        	} else if (ontoClassTreeObj.isAgentAction()==true){
 	        		aActionNode.add(currentNode);
-	        		projectOntologyClassList.remove(currentClass);
+	        		ontologyClassList.remove(currentClass);
 	        		
 	        	} else if (ontoClassTreeObj.isAID()==true){
 	        		// --- Remind the parent Node -----------------------------
@@ -207,11 +209,11 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
         			currentNode.setUserObject(ontoClassTreeObj);
         			// --- Add to the parent node -----------------------------
         			aidNode.add(currentNode);
-	        		projectOntologyClassList.remove(currentClass);
+	        		ontologyClassList.remove(currentClass);
 	        		
 	        	} else if (ontoClassTreeObj.isPredicate()==true){
 	        		predicateNode.add( currentNode );
-	        		projectOntologyClassList.remove(currentClass);
+	        		ontologyClassList.remove(currentClass);
 	        		
 	        	} else {
 			    	// --- Get parent node Object ---------------------------
@@ -226,23 +228,23 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	        			currentNode.setUserObject(ontoClassTreeObj);
 	        			// --- Add to the parent node -----------------------
 	        			parentNode.add( currentNode );
-	        			projectOntologyClassList.remove(currentClass);
+	        			ontologyClassList.remove(currentClass);
 	        			
 	        		} else {
 	        			// --------------------------------------------------
 	        			// --- If no parent node was found, it was maybe ----
 	        			// --- not yet be created => Queue at the end    ----
 	        			// --------------------------------------------------
-	        			projectOntologyClassList.remove(currentClass);
-	        			projectOntologyClassList.add(currentClass);	        	
+	        			ontologyClassList.remove(currentClass);
+	        			ontologyClassList.add(currentClass);	        	
 	        			
 	        			clazzListIndex++;
-	        			if ( clazzListIndex>0 && projectOntologyClassList.size()==clazzListIndex ) {
+	        			if ( clazzListIndex>0 && ontologyClassList.size()==clazzListIndex ) {
 	        				clazzListIndex = 0;
-	        				if (projectOntologyClassList.size()==LastClLiIndexResetAtSize) {
+	        				if (ontologyClassList.size()==lastClLiIndexResetAtSize) {
 	        					break;
 	        				}		        				
-	        				LastClLiIndexResetAtSize = projectOntologyClassList.size();
+	        				lastClLiIndexResetAtSize = ontologyClassList.size();
 	        			}
 	        		}
 	        		// ------------------------------------------------------

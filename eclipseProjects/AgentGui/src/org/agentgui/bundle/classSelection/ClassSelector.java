@@ -665,7 +665,7 @@ public class ClassSelector extends JDialog {
 						Object selectedValue = jListClassesFound.getSelectedValue();
 						if (selectedValue instanceof ClassElement2Display) {
 							ClassElement2Display ce2d = (ClassElement2Display) selectedValue;
-							jTextFieldCustomizeClass.setText(ce2d.toString());	
+							jTextFieldCustomizeClass.setText(ce2d.getClassElement());	
 						}
 						jButtonCheckClass.doClick();
 					}
