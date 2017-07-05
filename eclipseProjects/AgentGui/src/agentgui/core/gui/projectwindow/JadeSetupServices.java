@@ -321,13 +321,17 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 		return jButtonServiceRemove;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable observable, Object updateObject) {
-		if (updateObject==Project.CHANGED_ProjectResources ) {
-			this.getJListServicesAvailable().reSetListModel();
-		}
+		// --- Nothing to do here yet -----------
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
@@ -337,7 +341,7 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 				Object[] selections = jListServicesAvailable.getSelectedValuesList().toArray();
 				for (int i = 0; i < selections.length; i++) {
 					ClassElement2Display serviceElement = (ClassElement2Display) selections[i];
-					currProject.getJadeConfiguration().addService(serviceElement.toString());	
+					currProject.getJadeConfiguration().addService(serviceElement.getClassElement());	
 				}
 			}
 			

@@ -39,7 +39,9 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.gui.components.JListWithProgressBar;
 import agentgui.core.gui.components.SortedListModel;
+import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
+import jade.core.BaseService;
 
 /**
  * This class can be use like a JList, but it will show a progress, if
@@ -186,14 +188,28 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 */
 	@Override
 	public void addClassFound(String className, String symbolicBundleName) {
+		
+		ClassElement2Display ce2d = new ClassElement2Display(className, symbolicBundleName);
+		
+		// ----------------------------------------------------------
+		// --- Check if we have to displays additional text --------- 
+		// ----------------------------------------------------------
+		// --- For a BaseService ----------------
+		if (this.getBundleClassFilter().isFilterCriteria(BaseService.class)==true) {
+			if (PlatformJadeConfig.isAutoService(className)==true) {
+				ce2d.setAdditionalText(PlatformJadeConfig.getAutoServiceTextAddition());
+			}
+		}
+		// ----------------------------------------------------------
+		
 		if (this.getProject()==null) {
 			// --- Simply add the class found in the list model ----- 
-			this.getListModel().addElement(new ClassElement2Display(className, symbolicBundleName));
+			this.getListModel().addElement(ce2d);
 		} else {
 			// --- Check, if the class is part of the project -------
 			for (String projectPackage : this.getProjectPackages()) {
 				if (className.startsWith(projectPackage)) {
-					this.getListModel().addElement(new ClassElement2Display(className, symbolicBundleName));
+					this.getListModel().addElement(ce2d);
 				}
 			}
 		}
@@ -271,12 +287,4 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 	}
 
-	/**
-	 * Re sets the list model.
-	 */
-	public void reSetListModel() {
-		System.err.println(this.getClass().getName() + "[reSetListModel]: Research list (TODO)");
-	}
-
-	
 } 

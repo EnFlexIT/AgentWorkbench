@@ -313,6 +313,8 @@ public class BundleEvaluator {
 				// --------------------------------------------------
 				// --- Check single class ---------------------------
 				Class<?> clazz = classes.get(i);
+				if (this.getSourceBundleOfClass(clazz)!=bundle) continue;
+				
 				if (bundleClassFilterToUse==null) {
 					// ----------------------------------------------
 					// --- Use all known filter ---------------------
@@ -598,11 +600,11 @@ public class BundleEvaluator {
 
 	
 	/**
-	 * Returns the bundle that loaded the specified class.
+	 * Returns the source bundle that loaded the specified class.
 	 * @param clazz the class instance 
 	 * @return the bundle from class
 	 */
-	public Bundle getBundleOfClass(Class<?> clazz) {
+	public Bundle getSourceBundleOfClass(Class<?> clazz) {
 		return FrameworkUtil.getBundle(clazz);
 	}
 	

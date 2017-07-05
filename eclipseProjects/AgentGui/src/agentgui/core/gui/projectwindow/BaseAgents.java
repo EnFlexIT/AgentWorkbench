@@ -894,9 +894,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			this.jTreeOntology.setModel( currProject.getOntologyVisualisationHelper().getOntologyTree() );
 			this.OntoTreeExpand2Level(3, true);
 		
-		} else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectResources ) ) {
-			this.getJAgentList().reSetListModel();
-			
 		} else {
 			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);
 		}

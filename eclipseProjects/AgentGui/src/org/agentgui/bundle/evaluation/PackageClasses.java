@@ -78,7 +78,7 @@ public class PackageClasses extends ArrayList<String> {
 		// ------------------------------------------------
 		if (this.classInPackage!=null) {
 			// --- Find the required bundle ---------------
-			Bundle bundle = be.getBundleOfClass(this.classInPackage);
+			Bundle bundle = be.getSourceBundleOfClass(this.classInPackage);
 			// --- Get class list of the package ----------
 			List<String> classesFound = be.getClassReferences(bundle, this.searchInPackage);
 			this.addAll(classesFound);

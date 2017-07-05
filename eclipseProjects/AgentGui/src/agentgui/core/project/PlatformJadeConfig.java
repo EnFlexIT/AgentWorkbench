@@ -381,9 +381,8 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void addService(String serviceClassReference) {
 		
-		if (this.isUsingService(serviceClassReference)==false && serviceClassReference.contains(getAutoServiceTextAddition())==false) {
-			
-			// --- add to the local HashSet -------------------------
+		if (this.isUsingService(serviceClassReference)==false && isAutoService(serviceClassReference)==false) {
+			// --- Add to the local HashSet -------------------------
 			this.useServiceList.add(serviceClassReference);
 			// --- add to the DefaultListModel ----------------------
 			this.getListModelServices().addElement(serviceClassReference);
