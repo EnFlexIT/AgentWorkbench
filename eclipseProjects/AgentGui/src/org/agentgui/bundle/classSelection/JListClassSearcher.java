@@ -207,9 +207,12 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 			this.getListModel().addElement(ce2d);
 		} else {
 			// --- Check, if the class is part of the project -------
-			for (String projectPackage : this.getProjectPackages()) {
-				if (className.startsWith(projectPackage)) {
-					this.getListModel().addElement(ce2d);
+			Vector<String> projectPackages = this.getProjectPackages();
+			if (projectPackages!=null) {
+				for (String projectPackage : this.getProjectPackages()) {
+					if (className.startsWith(projectPackage)) {
+						this.getListModel().addElement(ce2d);
+					}
 				}
 			}
 		}
