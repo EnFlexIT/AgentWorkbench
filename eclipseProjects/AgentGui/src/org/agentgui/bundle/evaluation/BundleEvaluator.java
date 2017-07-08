@@ -413,6 +413,16 @@ public class BundleEvaluator {
 			}
 		}
 		
+		// --- Check which jars are available in the bundle ---------
+		if (bundle.getSymbolicName().equals("org.agentgui.lib.jade")) {
+			Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
+			while (bundleJars.hasMoreElements()) {
+				URL url = (URL) bundleJars.nextElement();
+				System.out.println("Jarfile: " + url.toString());
+				bundleClasses.addAll(this.getJarClasses(bundle, url));
+			}
+		}
+		
 		// --- Load JADE classes? -----------------------------------
 		if (bundle.getSymbolicName().equals(JADE_BUNDLE_NAME)==true && this.findClass(bundle, Agent.class.getName())!=null) {
 			List<Class<?>> jadeClasses = this.getJadeClasses(bundle);
@@ -540,31 +550,53 @@ public class BundleEvaluator {
 	private List<Class<?>> getJarClasses(Bundle bundle, File file) {
 		
 		if (file.exists()==false) return null; 
+
+		try {
+			// --- Define the URL of the file -------------
+			String canonicalPath = file.getCanonicalPath();
+			if (canonicalPath.startsWith("/")==false) {
+				canonicalPath = "/"+canonicalPath;
+			}
+			URL jarFileURL = new URL("file:" + canonicalPath);
+			jarFileURL = new URL("jar:" + jarFileURL.toExternalForm() + "!/");
+			// --- Return the regulars method results -----
+			return this.getJarClasses(bundle, jarFileURL);
+			
+		} catch (MalformedURLException mUrlEx) {
+			mUrlEx.printStackTrace();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		} 
+		// --- Return empty list in case of an error ------
+		return new ArrayList<>();
+	}
+	/**
+	 * Loads and returns the classes from a jar file into the specified bundle.
+	 *
+	 * @param bundle the bundle
+	 * @param file the file
+	 * @return the jar classes
+	 */
+	private List<Class<?>> getJarClasses(Bundle bundle, URL jarFileURL) {
 		
 		// --- Define the result list -------------------------------
 		List<Class<?>> classesOfJarFile = new ArrayList<Class<?>>();
 			
 		// --- Establish connection to jar file --------------------- 
-		URL jarFileURL = null;
 		JarFile jarFile = null;
 		try {
 			
-			String canonicalPath = file.getCanonicalPath();
-			if (canonicalPath.startsWith("/")==false) {
-				canonicalPath = "/"+canonicalPath;
-			}
-
-			jarFileURL = new URL("file:" + canonicalPath);
-			jarFileURL = new URL("jar:" + jarFileURL.toExternalForm() + "!/");
-			
 			URLConnection urlConnection = jarFileURL.openConnection();
+//			if (urlConnection instanceof BundleURLConnection) {
+//				
+//			}
 			JarURLConnection conn = (JarURLConnection) urlConnection;
 			jarFile = conn.getJarFile();
 
-		} catch (MalformedURLException mUrlEx) {
-			mUrlEx.printStackTrace();
 		} catch (IOException ioEx) {
 			ioEx.printStackTrace();
+		} catch (ClassCastException ccEx) {
+			ccEx.printStackTrace();
 		}
 		
 		// --- Read classes from jar file ---------------------------
