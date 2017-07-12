@@ -139,6 +139,29 @@ public class BundleEvaluator {
 		return excluded;
 	}
 	
+	// --------------------------------------------------------------
+	// --- Methods to inform that bundles were added/removed --------
+	// --------------------------------------------------------------
+	/**
+	 * Sets that the specified bundle was added.
+	 * @param bundle the new bundle added
+	 */
+	public void setBundleAdded(Bundle bundle) {
+		this.evaluateBundleInThread(bundle, null);
+	}
+	/**
+	 * Sets that the specified bundle was removed.
+	 * @param bundle the new bundle removed
+	 */
+	public void setBundleRemoved(Bundle bundle) {
+		this.removeEvaluationFilterResults(bundle);
+	}
+	// --------------------------------------------------------------
+	
+	
+	// --------------------------------------------------------------
+	// --- Methods to provide access to the search results ---------- 
+	// --------------------------------------------------------------
 	/**
 	 * Returns the filter and the filter results of the bundle evaluation.
 	 * @return the bundle class filters
@@ -192,7 +215,12 @@ public class BundleEvaluator {
 	public ClassLocaton getClassLocation(String className)  {
 		return this.getEvaluationFilterResults().getClassLocation(className);
 	}
-		
+	// --------------------------------------------------------------
+	
+	
+	// --------------------------------------------------------------
+	// --- Methods to declare the search process as busy ------------ 
+	// --------------------------------------------------------------
 	/**
 	 * Adds the specified busy marker to all filter.
 	 * @param busyMarker the busy marker
@@ -211,7 +239,12 @@ public class BundleEvaluator {
 			filter.removeBusyMarker(busyMarker);
 		}
 	}
+	// --------------------------------------------------------------
 	
+	
+	// --------------------------------------------------------------
+	// --- Methods to access the current BundleContext --------------
+	// --------------------------------------------------------------
 	/**
 	 * Returns the current bundle context.
 	 * @return the bundle context
@@ -226,7 +259,12 @@ public class BundleEvaluator {
 	public Bundle[] getBundles() {
 		return this.getBundleContext().getBundles();
 	}
+	// --------------------------------------------------------------	
 	
+	
+	// --------------------------------------------------------------
+	// --- Methods to evaluate bundles, jars and other start here ---  
+	// --------------------------------------------------------------
 	/**
 	 * Searches in all current bundles with all class filters defined in {@link #evaluationFilterResults}.
 	 */
@@ -377,6 +415,7 @@ public class BundleEvaluator {
 
 		// --- Define the result list -------------------------------
 		List<Class<?>> bundleClasses = new ArrayList<Class<?>>();
+		if (bundle==null) return bundleClasses;
 		
 		// --- Adjust the package filter ----------------------------
 		String packagePath = "/";
@@ -392,7 +431,7 @@ public class BundleEvaluator {
 		for (String resource : resources) {
 
 			// --- Get a suitable class name ------------------------
-			String className = this.getClassNameOfBundleResource(resource);
+			String className = this.getClassName(resource);
 			if (className!=null) {
 				
 				try {
@@ -414,17 +453,18 @@ public class BundleEvaluator {
 		}
 		
 		// --- Check which jars are available in the bundle ---------
-		if (bundle.getSymbolicName().equals("org.agentgui.lib.jade")) {
-			Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
-			while (bundleJars.hasMoreElements()) {
-				URL url = (URL) bundleJars.nextElement();
-				System.out.println("Jarfile: " + url.toString());
-				bundleClasses.addAll(this.getJarClasses(bundle, url));
-			}
-		}
-		
-		// --- Load JADE classes? -----------------------------------
-		if (bundle.getSymbolicName().equals(JADE_BUNDLE_NAME)==true && this.findClass(bundle, Agent.class.getName())!=null) {
+		// TODO: Handle jar files within a bundle
+//		if (bundle.getSymbolicName().equals("org.agentgui.lib.jade")) {
+//			Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
+//			while (bundleJars.hasMoreElements()) {
+//				URL url = (URL) bundleJars.nextElement();
+//				System.out.println("Jarfile: " + url.toString());
+//				bundleClasses.addAll(this.getJarClasses(bundle, url));
+//			}
+//		}
+//		
+		// ---  Additionally, load JADE classes? --------------------
+		if (bundle.getSymbolicName()!=null && bundle.getSymbolicName().equals(JADE_BUNDLE_NAME)==true && this.findClass(bundle, Agent.class.getName())!=null) {
 			List<Class<?>> jadeClasses = this.getJadeClasses(bundle);
 			if (jadeClasses!=null && jadeClasses.size()>0) {
 				bundleClasses.addAll(jadeClasses);
@@ -434,12 +474,11 @@ public class BundleEvaluator {
 	}
 	
 	/**
-	 * Gets the class name of a bundle resource returned by the bundle wiring.
-	 *
-	 * @param resource the resource
+	 * Returns the class name of a bundle resource returned by the bundle wiring.
+	 * @param resource the resource string
 	 * @return the class name of bundle resource
 	 */
-	private String getClassNameOfBundleResource(String resource) {
+	private String getClassName(String resource) {
 		
 		if (resource.contains("$")) return null;
 		
@@ -480,6 +519,25 @@ public class BundleEvaluator {
 			}
 		}
 		return classReferencesFound;
+	}
+	/**
+	 * Returns the package names of the specified bundle.
+	 * @param bundle the bundle
+	 * @return the packages
+	 */
+	public List<String> getPackages(Bundle bundle) {
+		List<String> packagesFound = new ArrayList<String>();
+		List<Class<?>> classesFound = this.getClasses(bundle);
+		for (int i = 0; i < classesFound.size(); i++) {
+			Class<?> classFound = classesFound.get(i);
+			if (classesFound!=null) {
+				String packageName = classFound.getPackage().getName();
+				if (packagesFound.contains(packageName)==false) {
+					packagesFound.add(packageName);
+				}
+			}
+		}
+		return packagesFound;
 	}
 	
 	

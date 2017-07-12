@@ -41,8 +41,6 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -61,10 +59,11 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.agentgui.bundle.BundleLoader;
+import org.osgi.framework.Bundle;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.ClassLoaderUtil;
-import agentgui.core.common.PathHandling;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
@@ -96,7 +95,6 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
-import agentgui.core.webserver.JarFileCreator;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br> 
@@ -150,6 +148,9 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
 	@XmlTransient private final String[] defaultSubFolders = {defaultSubFolder4Setups, defaultSubFolderEnvSetups};
 	
+
+	/** The OSGI-bundle of the current project */  
+	@XmlTransient private BundleLoader bundleLoader;
 	
 	/** This is the 'view' in the context of the mentioned MVC pattern */
 	@XmlTransient private ProjectWindow projectWindow;
@@ -570,6 +571,27 @@ import agentgui.core.webserver.JarFileCreator;
 		return true;
 	}
 
+	
+	/**
+	 * Returns the projects {@link BundleLoader}.
+	 * @return the bundle loader
+	 */
+	private BundleLoader getBundleLoader() {
+		if (bundleLoader==null) {
+			bundleLoader = new BundleLoader(this);
+		}
+		return bundleLoader;
+	}
+	/**
+	 * Returns the projects OSGI-bundle.
+	 * @return the bundle
+	 */
+	@XmlTransient
+	public Bundle getBundle() {
+		return this.getBundleLoader().getBundle();
+	}
+	
+	
 	/**
 	 * Sets the the Project configuration to be saved or unsaved.
 	 * @param isUnsaved the new unsaved
@@ -1438,96 +1460,99 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void resourcesLoad() {
 
-		for (int i=0; i<this.getProjectResources().size(); i++) {
-			
-			String jarFile4Display = this.getProjectResources().get(i);
-			jarFile4Display = PathHandling.getPathName4LocalSystem(jarFile4Display);
-			
-			String prefixText = null;
-			String suffixText = null;
-			try {
-				
-				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile4Display, this.getProjectFolderFullPath());
-				File file = new File(jarFileCorrected);
-				if (file.exists()==false && jarFileCorrected.toLowerCase().endsWith("jar")==false) {
-					// --- Try to find / retrieve bin resource ------ 
-					String jarFileCorrectedNew = this.retrievBinResourceFromPath(jarFileCorrected);
-					if (jarFileCorrectedNew.equals(jarFileCorrected)==false) {
-						// --- Found new bin resource ---------------
-						System.out.println("=> Retrieved new location for resource path '" + jarFileCorrected + "'");
-						System.out.println("=> Corrected it to '" + jarFileCorrectedNew + "'");
-						this.getProjectResources().set(i, jarFileCorrectedNew);
-						
-						jarFile4Display = jarFileCorrectedNew;
-						jarFileCorrected = jarFileCorrectedNew;
-						file = new File(jarFileCorrected);	
-					}
-				}
-				
-				if (file.exists()==false) {
-					// --- Definitely no file found -----------------
-					prefixText = "ERROR";
-					suffixText = Language.translate("Datei nicht gefunden!");
-					
-				} else if (file.isDirectory()) {
-					// --- Folder found: Build a temporary *.jar ----
-					prefixText = "";
-					suffixText = "proceeding started";
-					
-					// --- Prepare the path variables -----
-					String pathBin = file.getAbsolutePath();
-					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
-					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
-					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
-					
-					// --- Create the jar-file ------------
-					JarFileCreator jarCreator = new JarFileCreator(pathBin);
-					File jarArchiveFile = new File(jarArchivePath);
-					jarCreator.createJarArchive(jarArchiveFile);
-					jarArchiveFile.deleteOnExit();
-					
-					// --- Add to the class loader --------
-//					URL url = new URL("file:/" + jarArchiveFile.getAbsolutePath());
-//					this.getProjectClassLoader().addURL(url);
-					
-					ClassLoaderUtil.addFile(jarArchiveFile.getAbsoluteFile());
-					ClassLoaderUtil.addJarToClassPath(jarArchivePath);
-					
-					// --- prepare the notification -------
-					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-					String dateText = dateFormat.format(new Date());
-					
-					prefixText = "OK";
-					suffixText = Language.translate("Verzeichnis gepackt zu") + " '" + File.separator + "~tmp" + File.separator + jarArchiveFileName + "' " + Language.translate("um") + " " + dateText;
-					
-				} else {
-					// --- Load the given jar-file ------------------
-//					URL url = new URL("file:/" + jarFile4Display);
-//					this.getProjectClassLoader().addURL(url);
+		this.getBundleLoader().installAndStartBundle();
+		
+//		// TODO
+//		for (int i=0; i<this.getProjectResources().size(); i++) {
+//			
+//			String jarFile4Display = this.getProjectResources().get(i);
+//			jarFile4Display = PathHandling.getPathName4LocalSystem(jarFile4Display);
+//			
+//			String prefixText = null;
+//			String suffixText = null;
+//			try {
+//				
+//				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile4Display, this.getProjectFolderFullPath());
+//				File file = new File(jarFileCorrected);
+//				if (file.exists()==false && jarFileCorrected.toLowerCase().endsWith("jar")==false) {
+//					// --- Try to find / retrieve bin resource ------ 
+//					String jarFileCorrectedNew = this.retrievBinResourceFromPath(jarFileCorrected);
+//					if (jarFileCorrectedNew.equals(jarFileCorrected)==false) {
+//						// --- Found new bin resource ---------------
+//						System.out.println("=> Retrieved new location for resource path '" + jarFileCorrected + "'");
+//						System.out.println("=> Corrected it to '" + jarFileCorrectedNew + "'");
+//						this.getProjectResources().set(i, jarFileCorrectedNew);
+//						
+//						jarFile4Display = jarFileCorrectedNew;
+//						jarFileCorrected = jarFileCorrectedNew;
+//						file = new File(jarFileCorrected);	
+//					}
+//				}
+//				
+//				if (file.exists()==false) {
+//					// --- Definitely no file found -----------------
+//					prefixText = "ERROR";
+//					suffixText = Language.translate("Datei nicht gefunden!");
 //					
-					ClassLoaderUtil.addFile(file.getAbsoluteFile());
-					ClassLoaderUtil.addJarToClassPath(jarFileCorrected);
-					
-					prefixText = "OK";
-					suffixText = null;
-					
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				prefixText = "ERROR";
-				suffixText = e.getMessage();
-			}
-			
-			// --- On Error print it to console -----------
-			if (prefixText.equals("ERROR")==true) {
-				System.err.println("=> " + suffixText + " - " + jarFile4Display);
-			}
-			// --- Set the additional text ----------------
-			this.getProjectResources().setPrefixText(jarFile4Display, prefixText);
-			this.getProjectResources().setSuffixText(jarFile4Display, suffixText);
-			
-		}
+//				} else if (file.isDirectory()) {
+//					// --- Folder found: Build a temporary *.jar ----
+//					prefixText = "";
+//					suffixText = "proceeding started";
+//					
+//					// --- Prepare the path variables -----
+//					String pathBin = file.getAbsolutePath();
+//					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
+//					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
+//					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
+//					
+//					// --- Create the jar-file ------------
+//					JarFileCreator jarCreator = new JarFileCreator(pathBin);
+//					File jarArchiveFile = new File(jarArchivePath);
+//					jarCreator.createJarArchive(jarArchiveFile);
+//					jarArchiveFile.deleteOnExit();
+//					
+//					// --- Add to the class loader --------
+////					URL url = new URL("file:/" + jarArchiveFile.getAbsolutePath());
+////					this.getProjectClassLoader().addURL(url);
+//					
+//					ClassLoaderUtil.addFile(jarArchiveFile.getAbsoluteFile());
+//					ClassLoaderUtil.addJarToClassPath(jarArchivePath);
+//					
+//					// --- prepare the notification -------
+//					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+//					String dateText = dateFormat.format(new Date());
+//					
+//					prefixText = "OK";
+//					suffixText = Language.translate("Verzeichnis gepackt zu") + " '" + File.separator + "~tmp" + File.separator + jarArchiveFileName + "' " + Language.translate("um") + " " + dateText;
+//					
+//				} else {
+//					// --- Load the given jar-file ------------------
+////					URL url = new URL("file:/" + jarFile4Display);
+////					this.getProjectClassLoader().addURL(url);
+////					
+//					ClassLoaderUtil.addFile(file.getAbsoluteFile());
+//					ClassLoaderUtil.addJarToClassPath(jarFileCorrected);
+//					
+//					prefixText = "OK";
+//					suffixText = null;
+//					
+//				}
+//				
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//				prefixText = "ERROR";
+//				suffixText = e.getMessage();
+//			}
+//			
+//			// --- On Error print it to console -----------
+//			if (prefixText.equals("ERROR")==true) {
+//				System.err.println("=> " + suffixText + " - " + jarFile4Display);
+//			}
+//			// --- Set the additional text ----------------
+//			this.getProjectResources().setPrefixText(jarFile4Display, prefixText);
+//			this.getProjectResources().setSuffixText(jarFile4Display, suffixText);
+//			
+//		}
 
 		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
@@ -1544,36 +1569,38 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void resourcesRemove() {
 		
-		for(String jarFile : getProjectResources()) {
-			
-			try {
-				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile, this.getProjectFolderFullPath());
-				File file = new File(jarFileCorrected);
-				if (file.isDirectory()) {
-					// --- Prepare the path variables -----
-					String pathBin = file.getAbsolutePath();
-					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
-					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
-					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
-					
-					ClassLoaderUtil.removeFile(jarArchivePath);
-
-					File jarArchiveFile = new File(jarArchivePath);
-					jarArchiveFile.delete();
-					
-				} else {
-					ClassLoaderUtil.removeFile(jarFileCorrected);
-					
-				}
-				
-			} catch (RuntimeException e1) {
-				e1.printStackTrace();
-			} catch (NoSuchFieldException e1) {
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			}
-		}
+		this.getBundleLoader().stopAndUninstallProjectBundle();
+		
+//		for(String jarFile : getProjectResources()) {
+//			
+//			try {
+//				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile, this.getProjectFolderFullPath());
+//				File file = new File(jarFileCorrected);
+//				if (file.isDirectory()) {
+//					// --- Prepare the path variables -----
+//					String pathBin = file.getAbsolutePath();
+//					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
+//					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
+//					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
+//					
+//					ClassLoaderUtil.removeFile(jarArchivePath);
+//
+//					File jarArchiveFile = new File(jarArchivePath);
+//					jarArchiveFile.delete();
+//					
+//				} else {
+//					ClassLoaderUtil.removeFile(jarFileCorrected);
+//					
+//				}
+//				
+//			} catch (RuntimeException e1) {
+//				e1.printStackTrace();
+//			} catch (NoSuchFieldException e1) {
+//				e1.printStackTrace();
+//			} catch (IllegalAccessException e1) {
+//				e1.printStackTrace();
+//			}
+//		}
 		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
 
@@ -1775,5 +1802,6 @@ import agentgui.core.webserver.JarFileCreator;
 	public void doProjectUpdate() {
 		// TODO Auto-generated method stub
 	}
+
 
 }

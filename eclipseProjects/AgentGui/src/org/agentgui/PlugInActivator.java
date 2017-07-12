@@ -73,13 +73,13 @@ public class PlugInActivator extends AbstractUIPlugin implements BundleListener 
 		if (bundle.getSymbolicName().equals(PLUGIN_ID)==false) {
 			switch (event.getType()) {
 			case BundleEvent.STARTED:
-				// --- Start searching for specific classes with the BundleEvaluator ---- 
-				BundleEvaluator.getInstance().evaluateBundleInThread(bundle, null);
+				// --- Start searching for specific classes with the BundleEvaluator ----
+				BundleEvaluator.getInstance().setBundleAdded(bundle);
 				break;
 				
 			case BundleEvent.STOPPED:
-				// --- Remove search results from the BundleEvaluator ------------------- 
-				BundleEvaluator.getInstance().removeEvaluationFilterResults(bundle);
+				// --- Remove search results from the BundleEvaluator -------------------
+				BundleEvaluator.getInstance().setBundleRemoved(bundle);
 				break;
 
 			default:

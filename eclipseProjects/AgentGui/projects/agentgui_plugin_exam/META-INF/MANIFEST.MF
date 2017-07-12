@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: projects.agentgui_plugin_exam
+Bundle-Name: Project
+Bundle-ManifestVersion: 2
+

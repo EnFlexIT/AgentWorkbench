@@ -28,6 +28,7 @@
  */
 package org.agentgui.bundle.classSelection;
 
+import java.util.List;
 import java.util.Vector;
 
 import org.agentgui.bundle.evaluation.AbstractBundleClassFilter;
@@ -35,7 +36,6 @@ import org.agentgui.bundle.evaluation.BundleClassFilterListener;
 import org.agentgui.bundle.evaluation.BundleEvaluator;
 
 import agentgui.core.application.Application;
-import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.gui.components.JListWithProgressBar;
 import agentgui.core.gui.components.SortedListModel;
@@ -124,13 +124,19 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 			} 
 			// --- If we have external resources --------------------
 			if (this.getProject().getProjectResources()!=null && this.getProject().getProjectResources().size()>0) {
-				Vector<String> extResources = this.getProject().getProjectResources();
-				String absProPath = this.getProject().getProjectFolderFullPath();
-				try {
-					currProjectPackages.addAll(ClassLoaderUtil.getPackageNames(extResources, absProPath)) ;
-				} catch (Exception exc) {
-					exc.printStackTrace();
-				}
+				// TODO
+				// --- Old approach ---------------------------------
+//				Vector<String> extResources = this.getProject().getProjectResources();
+//				String absProPath = this.getProject().getProjectFolderFullPath();
+//				try {
+//					currProjectPackages.addAll(ClassLoaderUtil.getPackageNames(extResources, absProPath)) ;
+//				} catch (Exception exc) {
+//					exc.printStackTrace();
+//				}
+				// --- New approach ---------------------------------
+				List<String> packages = BundleEvaluator.getInstance().getPackages(this.getProject().getBundle());
+				currProjectPackages.addAll(packages);
+				
 			}
 			// --- Reset package info if nothing was found ----------
 			if (currProjectPackages.size()==0) {
