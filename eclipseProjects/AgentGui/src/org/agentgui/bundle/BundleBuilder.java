@@ -181,12 +181,12 @@ public class BundleBuilder {
 			if (metaInfDir.exists()==false) {
 				metaInfDir.mkdirs();
 			}
+
+			// --- Search for relevant files ------------------------ 
+			ArrayList<File> filesFound = this.findFiles(this.getBundleDirectory());
 			
 			// --- Create MANIFEST file -----------------------------
 			fOut = new FileOutputStream(manifestFile);
-			
-			ArrayList<File> filesFound = this.findFiles(this.getBundleDirectory());
-			
 			
 			Manifest manifest = new Manifest();
 			Attributes att = manifest.getMainAttributes();

@@ -155,6 +155,7 @@ public class BundleLoader {
 	 * @return true, if successful
 	 */
 	public boolean installAndStartBundle() {
+		
 		boolean bundleLoaded = false;
 		if (this.getBundleDirectory()!=null) {
 			try {
@@ -166,7 +167,7 @@ public class BundleLoader {
 					
 				}
 				// --- Load the bundle ------------------------------
-				String projectPath = "file:" + this.getBundleDirectory();
+				String projectPath = "reference:file:" + this.getBundleDirectory();
 				this.installAndStartBundle(projectPath);
 				bundleLoaded = true;
 				

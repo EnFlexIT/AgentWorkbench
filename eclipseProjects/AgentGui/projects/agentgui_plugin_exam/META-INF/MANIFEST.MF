@@ -2,4 +2,12 @@ Manifest-Version: 1.0
 Bundle-SymbolicName: projects.agentgui_plugin_exam
 Bundle-Name: Project
 Bundle-ManifestVersion: 2
-
+Bundle-ClassPath: jar/ClassLoadService.jar,
+ jar/PlugInExample.jar
+Export-Package: agentproject,
+ agentgui.core.project,
+ agentgui.core.plugin,
+ javax.swing"
+Service-Component: classLoadService.xml
+Require-Bundle: org.agentgui;bundle-version="2.0.0",
+ org.agentgui.lib.jade;bundle-version="4.4.0"

@@ -45,13 +45,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.agentgui.PlugInActivator;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
-
-import jade.core.Agent;
-import jade.core.migration.InterPlatformMobilityService;
 
 
 /**
@@ -437,7 +437,9 @@ public class BundleEvaluator {
 				try {
 					// ---- Try to load the class into the bundle ----------- 
 					Class<?> clazz = bundle.loadClass(className);
-					bundleClasses.add(clazz);
+					if (this.getSourceBundleOfClass(clazz)==bundle) {
+						bundleClasses.add(clazz);
+					}
 					
 				} catch (ClassNotFoundException cnfEx) {
 					//System.err.println("ClassNotFoundException for '" + className + "': " + cnfEx.getMessage() );
@@ -453,23 +455,16 @@ public class BundleEvaluator {
 		}
 		
 		// --- Check which jars are available in the bundle ---------
-		// TODO: Handle jar files within a bundle
-//		if (bundle.getSymbolicName().equals("org.agentgui.lib.jade")) {
-//			Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
-//			while (bundleJars.hasMoreElements()) {
-//				URL url = (URL) bundleJars.nextElement();
-//				System.out.println("Jarfile: " + url.toString());
-//				bundleClasses.addAll(this.getJarClasses(bundle, url));
-//			}
-//		}
-//		
-		// ---  Additionally, load JADE classes? --------------------
-		if (bundle.getSymbolicName()!=null && bundle.getSymbolicName().equals(JADE_BUNDLE_NAME)==true && this.findClass(bundle, Agent.class.getName())!=null) {
-			List<Class<?>> jadeClasses = this.getJadeClasses(bundle);
-			if (jadeClasses!=null && jadeClasses.size()>0) {
-				bundleClasses.addAll(jadeClasses);
+ 		if (bundle.getSymbolicName().equals(PlugInActivator.PLUGIN_ID)==false) {
+			Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
+			if (bundleJars!=null) {
+				while (bundleJars.hasMoreElements()) {
+					URL url = (URL) bundleJars.nextElement();
+					bundleClasses.addAll(this.getJarClasses(bundle, url));
+				}
 			}
 		}
+		
 		return bundleClasses;
 	}
 	
@@ -531,46 +526,25 @@ public class BundleEvaluator {
 		for (int i = 0; i < classesFound.size(); i++) {
 			Class<?> classFound = classesFound.get(i);
 			if (classesFound!=null) {
-				String packageName = classFound.getPackage().getName();
-				if (packagesFound.contains(packageName)==false) {
-					packagesFound.add(packageName);
+				if (classFound.getPackage()!=null) {
+					String packageName = classFound.getPackage().getName();
+					if (packagesFound.contains(packageName)==false) {
+						packagesFound.add(packageName);
+					}	
 				}
 			}
 		}
 		return packagesFound;
 	}
 	
-	
 	/**
-	 * Loads and returns the jade classes that are part of the jade.jar or the migration.jar into the specified bundle.
-	 *
-	 * @param bundle the bundle
-	 * @return the jade classes
-	 */
-	private List<Class<?>> getJadeClasses(Bundle bundle) {
-		
-		List<Class<?>> classesOfCurrentBundle = new ArrayList<Class<?>>();
-		// --- Load classes from jade.jar ---------------------------
-		List<Class<?>> jadeJarClasses = this.getJarClassesByClassInstance(bundle, Agent.class);
-		if (jadeJarClasses!=null && jadeJarClasses.size()>0) {
-			classesOfCurrentBundle.addAll(jadeJarClasses);
-		}
-		// --- Load classes from migration.jar ----------------------
-		List<Class<?>> impsJarClasses = this.getJarClassesByClassInstance(bundle, InterPlatformMobilityService.class);
-		if (impsJarClasses!=null && impsJarClasses.size()>0) {
-			classesOfCurrentBundle.addAll(impsJarClasses);
-		}
-		return classesOfCurrentBundle;
-	}
-	
-	/**
-	 * Loads and return the classes of the jar file that contains the specified class.
+	 * Loads and return the classes of a jar file that contains the specified class.
 	 *
 	 * @param bundle the bundle
 	 * @param classInstance the instance
 	 * @return the jar classes by object instance
 	 */
-	private List<Class<?>> getJarClassesByClassInstance(Bundle bundle, Class<?> classInstance) {
+	public List<Class<?>> getJarClassesByClassInstance(Bundle bundle, Class<?> classInstance) {
 		
 		if (classInstance==null) return null;
 		if (bundle==null) return null;
@@ -581,7 +555,7 @@ public class BundleEvaluator {
 		File jarFile = new File(classInstance.getProtectionDomain().getCodeSource().getLocation().getPath());
 		if (jarFile.getAbsolutePath().contains("%20")==true) {
 			try {
-				jarFile = new File(Agent.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+				jarFile = new File(classInstance.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
 			} catch (URISyntaxException uriEx) {
 				uriEx.printStackTrace();
 			}
@@ -637,17 +611,37 @@ public class BundleEvaluator {
 	 */
 	private List<Class<?>> getJarClasses(Bundle bundle, URL jarFileURL) {
 		
+		boolean debug = false;
+		
 		// --- Define the result list -------------------------------
 		List<Class<?>> classesOfJarFile = new ArrayList<Class<?>>();
-			
+		
+		// ----------------------------------------------------------
 		// --- Establish connection to jar file --------------------- 
+		// ----------------------------------------------------------
 		JarFile jarFile = null;
 		try {
 			
+			// --- Get the file description of the URL --------------
+			String jarFilePath = jarFileURL.getFile();
+			jarFilePath = jarFilePath.replaceAll("file:", "");
+			jarFilePath = jarFilePath.replaceAll("!/", "");
+			if (debug) System.out.println("=> Check: " + jarFilePath);
+			
+			// --- Check, if this file is available -----------------
+			File checkFile = new File(jarFilePath);
+			if (checkFile.exists()==false) {
+				// --- Rebuild URL with the bundle location ---------
+				String bundleDirectory = this.getBundleDirectory(bundle);
+				jarFilePath = bundleDirectory + jarFilePath;
+				jarFilePath = jarFilePath.replaceAll("//", "/");
+				// --- Create new URL -------------------------------
+				jarFileURL = new URL("jar:file:" + jarFilePath + "!/");
+				if (debug) System.out.println("=> ...corrected to: " + jarFileURL);
+			}
+			
+			// --- Establish connection to the JarFile -------------- 
 			URLConnection urlConnection = jarFileURL.openConnection();
-//			if (urlConnection instanceof BundleURLConnection) {
-//				
-//			}
 			JarURLConnection conn = (JarURLConnection) urlConnection;
 			jarFile = conn.getJarFile();
 
@@ -657,7 +651,9 @@ public class BundleEvaluator {
 			ccEx.printStackTrace();
 		}
 		
+		// ----------------------------------------------------------
 		// --- Read classes from jar file ---------------------------
+		// ----------------------------------------------------------
 		if (jarFile!=null && jarFileURL!=null) {
 			// --- Check the jar file entries -----------------------
 			Enumeration<JarEntry> e = jarFile.entries();
@@ -678,8 +674,8 @@ public class BundleEvaluator {
 						Class<?> classFound = bundle.loadClass(classname);
 						classesOfJarFile.add(classFound);
 						
-					} catch (ClassNotFoundException e1) {
-						e1.printStackTrace();
+					} catch (ClassNotFoundException cnfEx) {
+						cnfEx.printStackTrace();
 					}
 				}
 				
@@ -688,6 +684,36 @@ public class BundleEvaluator {
 		return classesOfJarFile;
 	}
 
+	/**
+	 * Return the bundle directory.
+	 *
+	 * @param bundle the bundle
+	 * @return the bundle directory
+	 */
+	public String getBundleDirectory(Bundle bundle) {
+		
+		if (bundle == null) return null;
+
+		// --- Get File URL of bundle --------------------- 
+		URL pluginURL = null;
+		try {
+			pluginURL = FileLocator.resolve(bundle.getEntry("/"));
+		} catch (IOException e) {
+			throw new RuntimeException("Could not get installation directory of the plugin: " + bundle.getSymbolicName());
+		}
+		
+		// --- Clean up the directory path ----------------
+		String pluginInstallDir = pluginURL.getPath().trim();
+		if (pluginInstallDir.length()==0) {
+			throw new RuntimeException("Could not get installation directory of the plugin: " + bundle.getSymbolicName());
+		}
+
+		// --- Corrections, if we are under windows -------
+		if (Platform.getOS().compareTo(Platform.OS_WIN32) == 0) {
+			pluginInstallDir = pluginInstallDir.substring(1);
+		}
+		return pluginInstallDir;
+	}
 	
 	/**
 	 * Returns the source bundle that loaded the specified class.

@@ -124,25 +124,14 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 			} 
 			// --- If we have external resources --------------------
 			if (this.getProject().getProjectResources()!=null && this.getProject().getProjectResources().size()>0) {
-				// TODO
-				// --- Old approach ---------------------------------
-//				Vector<String> extResources = this.getProject().getProjectResources();
-//				String absProPath = this.getProject().getProjectFolderFullPath();
-//				try {
-//					currProjectPackages.addAll(ClassLoaderUtil.getPackageNames(extResources, absProPath)) ;
-//				} catch (Exception exc) {
-//					exc.printStackTrace();
-//				}
-				// --- New approach ---------------------------------
+				// --- Get list of packages within the bundle -------
 				List<String> packages = BundleEvaluator.getInstance().getPackages(this.getProject().getBundle());
 				currProjectPackages.addAll(packages);
-				
 			}
 			// --- Reset package info if nothing was found ----------
 			if (currProjectPackages.size()==0) {
 				currProjectPackages=null;
 			}
-			
 		}
 		// ----------------------------------------------------------
 		return currProjectPackages;
