@@ -54,7 +54,6 @@ import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
 import agentgui.core.charts.xyChart.XyChartVisualisation;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
@@ -98,8 +97,6 @@ public class GlobalInfo {
 	private final static Color localColorMenuHighLight =  new Color(0, 0, 192);
 	
 	
-	// --- JADE-Variables ---------------------------------------------------
-	private static String localFileJade = "jade.jar";
 	private Integer localeJadeLocalPort = 1099;
 	private Integer localeJadeLocalPortMTP = 7778;
 	private JadeUrlConfiguration urlConfigurationForMaster;
@@ -293,10 +290,6 @@ public class GlobalInfo {
 					String agentGuiJarPath = agentGuiJar.getAbsolutePath(); 
 					int cutAt = agentGuiJarPath.lastIndexOf(File.separator) + 1;
 					GlobalInfo.localBaseDir = agentGuiJarPath.substring(0, cutAt);	
-					
-					// --- Include jade.jar by the ClassLoaderUtility ---------
-					String jadeJar = this.getPathJade(true) + File.separator + GlobalInfo.localFileJade;
-					ClassLoaderUtil.addJarToClassPath(jadeJar);
 				}
 			}
 			// ----------------------------------------------------------------

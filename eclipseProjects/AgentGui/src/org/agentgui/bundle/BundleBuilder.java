@@ -1,11 +1,39 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package org.agentgui.bundle;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -13,9 +41,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import org.osgi.framework.Constants;
-
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
 
 /**
  * The Class BundleBuilder is able to create OSGI bundles that can be loaded by the {@link BundleLoader}.<br><br>
@@ -41,97 +66,41 @@ public class BundleBuilder {
 	
 	private ArrayList<String> allowedFileSuffixes;
 	
-	private Vector<File> filesOrDirectoriesToBundle;
-	
 	private String symbolicBundleName;
 	private File bundleDirectory;
+	
 	
 	/**
 	 * Instantiates a new bundle builder.
 	 *
-	 * @param filesOrDirectoriesToBundle the folder or directory to bundle.
-	 * @param symbolicBbundleName the symbolic bundle name
+	 * @param directoryToBundle the directory to bundle
+	 * @param symbolicBundleName the symbolic bundle name
 	 */
-	public BundleBuilder(File fileOrDirectoryToBundle, String symbolicBundleName) {
+	public BundleBuilder(File directoryToBundle, String symbolicBundleName) {
 		// --- Check the arguments first --------
-		if (fileOrDirectoryToBundle==null) {
+		if (directoryToBundle==null) {
 			throw new IllegalArgumentException("No file or directory was specified for the bundle build process!");
 		} else if (symbolicBundleName==null || symbolicBundleName.equals("")) {
 			throw new IllegalArgumentException("No symbolic bundle name was specified for the bundle build process!");
 		}
 		// --- Remind the file to bundle --------
-		this.getFilesOrDirectoriesToBundle().add(fileOrDirectoryToBundle);
-		this.symbolicBundleName = symbolicBundleName;
-	}
-	/**
-	 * Instantiates a new bundle builder.
-	 *
-	 * @param filesOrDirectoriesToBundle the folders or directories to bundle.
-	 * @param symbolicBbundleName the symbolic bundle name
-	 */
-	public BundleBuilder(Vector<File> filesOrDirectoriesToBundle, String symbolicBundleName) {
-		// --- Check the argument first ---------
-		if (filesOrDirectoriesToBundle==null || filesOrDirectoriesToBundle.size()==0) {
-			throw new IllegalArgumentException("No files or directories were specified for the bundle build process!");
-		} else if (symbolicBundleName==null || symbolicBundleName.equals("")) {
-			throw new IllegalArgumentException("No symbolic bundle name was specified for the bundle build process!");
-		}
-		// --- Remind the file to bundle --------
-		this.filesOrDirectoriesToBundle = filesOrDirectoriesToBundle;
-		this.symbolicBundleName = symbolicBundleName;
+		this.setBundleDirectory(directoryToBundle);
+		this.setSymbolicBundleName(symbolicBundleName);
 	}
 
-	/**
-	 * Returns the files or directories to bundle.
-	 * @return the files or directories to bundle
-	 */
-	public Vector<File> getFilesOrDirectoriesToBundle() {
-		if (filesOrDirectoriesToBundle==null) {
-			filesOrDirectoriesToBundle = new Vector<>();
-		}
-		return filesOrDirectoriesToBundle;
-	}
-	/**
-	 * Adds the file or directory to bundle.
-	 * @param fileOrDirectoryToBundle the file or directory to bundle
-	 */
-	public void addFileOrDirectoryToBundle(File fileOrDirectoryToBundle) {
-		if (fileOrDirectoryToBundle!=null) {
-			this.getFilesOrDirectoriesToBundle().add(fileOrDirectoryToBundle);
-		} else {
-			this.printError("#addFileOrDirectoryToBundle(File): specified file was null!");
-		}
-	}
-	
 	/**
 	 * Returns the bundle directory.
 	 * @return the bundle directory
 	 */
 	public File getBundleDirectory() {
-		if (bundleDirectory==null) {
-			//TODO
-			String bundlePath = ""; 
-			Project project = Application.getProjectFocused();
-			if (project==null) {
-				bundlePath = Application.getGlobalInfo().getPathWebServer();
-			} else {
-				bundlePath = project.getProjectTempFolderFullPath();
-			}
-			bundleDirectory = new File(bundlePath);
-		}
 		return bundleDirectory;
 	}
 	/**
-	 * Sets the current bundle directory, if this was not already set. Thus, it can only 
-	 * be used once ahead the build process. Otherwise, the use of this method has no effect.
-	 * @param bundleDirectory the new bundle file
+	 * Sets the current bundle directory.
+	 * @param bundleFile the new bundle directory
 	 */
 	public void setBundleDirectory(File bundleFile) {
-		if (this.bundleDirectory==null) {
-			this.bundleDirectory = bundleFile;
-		} else {
-			this.printError("#setBundleDirectory(File): Invocation has no effect, since bundle directory was already set.");
-		}
+		this.bundleDirectory = bundleFile;
 	}
 	
 	/**
@@ -154,45 +123,95 @@ public class BundleBuilder {
 	 */
 	public void build() {
 		
-		// --- Create the bundle first ------------------------------
-		if (this.createBundle()==false) return;
+		// --- Create the manifest first ----------------------------
+		if (this.createdManifest()==false) return;
 		
-		// --- Identify, which build strategy has to be considered --
-		for (int i = 0; i < this.getFilesOrDirectoriesToBundle().size(); i++) {
-			
-			File file2Bundle = this.getFilesOrDirectoriesToBundle().get(i);
-			switch (getFileType(file2Bundle)) {
-			case FILE_NOT_FOUND:
-			case NON_JAR_FILE:
-			case OSGI_BUNDLE:
-				// +++ Nothing to do here +++++++++++++++++++++++++++++++
-				break;
+//		// --- Identify, which build strategy has to be considered --
+//		for (int i = 0; i < this.getFilesOrDirectoriesToBundle().size(); i++) {
+//			
+//			File file2Bundle = this.getFilesOrDirectoriesToBundle().get(i);
+//			switch (this.getFileType(file2Bundle)) {
+//			case FILE_NOT_FOUND:
+//			case NON_JAR_FILE:
+//			case OSGI_BUNDLE:
+//				// +++ Nothing to do here +++++++++++++++++++++++++++++++
+//				break;
+//
+//			case DIRECTORY:
+//				// --- A bin folder has to be bundled -------------------
+//				this.createJarArchive(file2Bundle);
+//				break;
+//				
+//			case JAR_FILE:
+//				// --- A single jar has to be bundled -------------------
+//				
+//				break;
+//			}
+//		}
 
-			case DIRECTORY:
-				// --- A bin folder has to be bundled -------------------
-				this.createJarArchive(file2Bundle);
-				break;
-				
-			case JAR_FILE:
-				// --- A single jar has to be bundled -------------------
-				
-				break;
-			}
-		}
 	}
 	
 	/**
-	 * Creates the bundle structure first.
-	 * @return true, if successful
+	 * Returns the manifest location, based on the specified bundle directory.
+	 * @return the manifest location
 	 */
-	private boolean createBundle() {
+	public String getManifestLocation() {
+		String manifestLocation = this.getBundleDirectory().getAbsolutePath() + File.separator + "META-INF" + File.separator + "MANIFEST.MF"; 
+		return manifestLocation;
+	}
+
+	/**
+	 * Checks, if the MANIFEST file is available. If not, it will be created.
+	 * @return true, if the file is available or if it could successfully be created
+	 */
+	private boolean createdManifest() {
 		
 		boolean created = false;
-		//TODO
-//		File bundleDirectory = this.getBundleDirectory();
 		
+		// --- Check if MANIFEST already exists ---------------------
+		File manifestFile = new File(this.getManifestLocation());
+		if (manifestFile.exists()==true) return true;
 		
-		
+		// --- MANIFEST does not exists yet -------------------------
+		FileOutputStream fOut = null;
+		try {
+			
+			// --- Create directory, if not already there -----------
+			File metaInfDir = manifestFile.getParentFile();
+			if (metaInfDir.exists()==false) {
+				metaInfDir.mkdirs();
+			}
+
+			// --- Search for relevant files ------------------------ 
+			ArrayList<File> filesFound = this.findFiles(this.getBundleDirectory());
+			
+			// --- Create MANIFEST file -----------------------------
+			fOut = new FileOutputStream(manifestFile);
+			
+			Manifest manifest = new Manifest();
+			Attributes att = manifest.getMainAttributes();
+			att.putValue("Manifest-Version", "1.0");
+			att.putValue(Constants.BUNDLE_MANIFESTVERSION, "2");
+			att.putValue(Constants.BUNDLE_NAME, "Project");
+			att.putValue(Constants.BUNDLE_SYMBOLICNAME, this.getSymbolicBundleName());
+			
+			
+			manifest.write(fOut);
+			created = true;
+					
+		} catch (FileNotFoundException fnfEx) {
+			fnfEx.printStackTrace();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		} finally {
+			try {
+				if (fOut!=null) {
+					fOut.close();
+				}
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
+		}
 		return created;
 	}
 	
@@ -319,6 +338,7 @@ public class BundleBuilder {
 	private ArrayList<String> getAllowedFileSuffixes() {
 		if (allowedFileSuffixes==null) {
 			allowedFileSuffixes = new ArrayList<String>();
+			allowedFileSuffixes.add(".jar");
 			allowedFileSuffixes.add(".class");
 			allowedFileSuffixes.add(".png");
 			allowedFileSuffixes.add(".bmp");

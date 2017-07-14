@@ -28,19 +28,13 @@
  */
 package org.agentgui.bundle.classSelection;
 
-import java.util.Vector;
-
 import org.agentgui.bundle.evaluation.AbstractBundleClassFilter;
 import org.agentgui.bundle.evaluation.BundleClassFilterListener;
 import org.agentgui.bundle.evaluation.BundleEvaluator;
 
-import agentgui.core.application.Application;
-import agentgui.core.common.ClassLoaderUtil;
-import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.gui.components.JListWithProgressBar;
 import agentgui.core.gui.components.SortedListModel;
 import agentgui.core.project.PlatformJadeConfig;
-import agentgui.core.project.Project;
 import jade.core.BaseService;
 
 /**
@@ -54,10 +48,8 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	private static final long serialVersionUID = 6613469481292382381L;
 
 	private Class<?> class2Search4;
-	private Project currProject;
+	private String exclusiveBundleName;
 
-	private Vector<String> currProjectPackages;
-	
 	private AbstractBundleClassFilter bundleClassFilter;
 	private SortedListModel<ClassElement2Display> currListModel;
 	
@@ -81,14 +73,16 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		this(class2Search4, null);
 	}
 	/**
-	 * Constructor for this class in case that we NEED project-specific
-	 * Classes. Needs constants from the class 'ClassSearcher'
-	 * @param searchFor
+	 * Constructor for this class in case that we need specific
+	 * bundle classes only. 
+	 *
+	 * @param searchFor the search for
+	 * @param exclusiveBundleName the exclusive bundle name to use for this component
 	 */
-	public JListClassSearcher(Class<?> searchFor, Project project) {
+	public JListClassSearcher(Class<?> searchFor, String exclusiveBundleName) {
 		super();
 		this.class2Search4 = searchFor;
-		this.currProject = project;
+		this.exclusiveBundleName = exclusiveBundleName;
 		this.setModel(this.getListModel());
 	}
 	
@@ -99,48 +93,13 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	public Class<?> getClass2SearchFor() {
 		return this.class2Search4;
 	}
-	/**
-	 * Returns the current {@link Project}.
-	 * @return the project
-	 */
-	public Project getProject() {
-		return this.currProject;
-	}
-	/**
-	 * Returns the packages in the current project.
-	 * @return the packages in project or null if no project is defined
-	 */
-	private Vector<String> getProjectPackages() {
-		
-		if (this.getProject()!=null && this.currProjectPackages==null) {
-			// ------------------------------------------------------
-			// --- Search for packages in project -------------------
-			// ------------------------------------------------------
-			currProjectPackages = new Vector<>();
-			
-			// --- Are we using our IDE in the moment ---------------
-			if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
-				currProjectPackages.addElement(this.getProject().getProjectFolder());
-			} 
-			// --- If we have external resources --------------------
-			if (this.getProject().getProjectResources()!=null && this.getProject().getProjectResources().size()>0) {
-				Vector<String> extResources = this.getProject().getProjectResources();
-				String absProPath = this.getProject().getProjectFolderFullPath();
-				try {
-					currProjectPackages.addAll(ClassLoaderUtil.getPackageNames(extResources, absProPath)) ;
-				} catch (Exception exc) {
-					exc.printStackTrace();
-				}
-			}
-			// --- Reset package info if nothing was found ----------
-			if (currProjectPackages.size()==0) {
-				currProjectPackages=null;
-			}
-			
-		}
-		// ----------------------------------------------------------
-		return currProjectPackages;
-	}
+//	/**
+//	 * Returns the current {@link Project}.
+//	 * @return the project
+//	 */
+//	public Project getProject() {
+//		return this.currProject;
+//	}
 	
 	/**
 	 * Returns the bundle class filter for the current class to search for.
@@ -202,18 +161,13 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 		// ----------------------------------------------------------
 		
-		if (this.getProject()==null) {
+		if (this.exclusiveBundleName==null || this.exclusiveBundleName.equals("")==true) {
 			// --- Simply add the class found in the list model ----- 
 			this.getListModel().addElement(ce2d);
 		} else {
-			// --- Check, if the class is part of the project -------
-			Vector<String> projectPackages = this.getProjectPackages();
-			if (projectPackages!=null) {
-				for (String projectPackage : this.getProjectPackages()) {
-					if (className.startsWith(projectPackage)) {
-						this.getListModel().addElement(ce2d);
-					}
-				}
+			// --- Check, if the class is part of the project bundle -------
+			if (symbolicBundleName.equals(this.exclusiveBundleName)) {
+				this.getListModel().addElement(ce2d);
 			}
 		}
 	}
