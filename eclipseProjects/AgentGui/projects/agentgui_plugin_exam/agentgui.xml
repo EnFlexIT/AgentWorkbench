@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Agent.GUI PlugIn Example</projectName>
+    <projectStartTab>1|0</projectStartTab>
     <versionInformation>
         <build>1</build>
         <majorRevision>0</majorRevision>
@@ -87,5 +88,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

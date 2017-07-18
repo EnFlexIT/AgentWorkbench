@@ -304,6 +304,8 @@ public class BundleEvaluator {
 			public void run() {
 				try {
 					evaluateBundle(bundle, bundleClassFilterToUse);
+				} catch (IllegalStateException isEx) {
+					System.err.println(Thread.currentThread().getName() + ": " + isEx.getMessage());
 				} catch (Exception ex) {
 					System.err.println(Thread.currentThread().getName() + ": " + ex.getMessage());
 				}
@@ -441,6 +443,9 @@ public class BundleEvaluator {
 						bundleClasses.add(clazz);
 					}
 					
+				} catch (IllegalStateException isfEx) {
+					//System.err.println("IllegalStateException for '" + className + "': " + isfEx.getMessage() );
+					//ex.printStackTrace();
 				} catch (ClassNotFoundException cnfEx) {
 					//System.err.println("ClassNotFoundException for '" + className + "': " + cnfEx.getMessage() );
 					//ex.printStackTrace();
@@ -521,11 +526,19 @@ public class BundleEvaluator {
 	 * @return the packages
 	 */
 	public List<String> getPackages(Bundle bundle) {
+		return this.getPackages(this.getClasses(bundle));
+	}
+	/**
+	 * Return the packages from the specified class list.
+	 *
+	 * @param classList the class list
+	 * @return the packages
+	 */
+	public List<String> getPackages(List<Class<?>> classesList) {
 		List<String> packagesFound = new ArrayList<String>();
-		List<Class<?>> classesFound = this.getClasses(bundle);
-		for (int i = 0; i < classesFound.size(); i++) {
-			Class<?> classFound = classesFound.get(i);
-			if (classesFound!=null) {
+		for (int i = 0; i < classesList.size(); i++) {
+			Class<?> classFound = classesList.get(i);
+			if (classFound!=null) {
 				if (classFound.getPackage()!=null) {
 					String packageName = classFound.getPackage().getName();
 					if (packagesFound.contains(packageName)==false) {
@@ -536,7 +549,30 @@ public class BundleEvaluator {
 		}
 		return packagesFound;
 	}
-	
+	/**
+	 * Return the packages from the specified class name list.
+	 *
+	 * @param classList the class list
+	 * @return the packages
+	 */
+	public List<String> getPackagesOfClassNames(List<String> classNameList) {
+		List<String> packagesFound = new ArrayList<String>();
+		for (int i = 0; i < classNameList.size(); i++) {
+			String classNameFound = classNameList.get(i);
+			if (classNameList!=null) {
+				int dotIndex = classNameFound.lastIndexOf(".");
+				if (dotIndex>-1) {
+					String packageName = classNameFound.substring(0, dotIndex);
+					if (packagesFound.contains(packageName)==false) {
+						packagesFound.add(packageName);
+					}	
+
+				}
+				
+			}
+		}
+		return packagesFound;
+	}
 	/**
 	 * Loads and return the classes of a jar file that contains the specified class.
 	 *
@@ -570,7 +606,7 @@ public class BundleEvaluator {
 		}
 		return classesFound;
 	}
-	
+
 	
 	/**
 	 * Loads and returns the classes from a jar file into the specified bundle.
@@ -579,26 +615,16 @@ public class BundleEvaluator {
 	 * @param file the file
 	 * @return the jar classes
 	 */
-	private List<Class<?>> getJarClasses(Bundle bundle, File file) {
+	public List<Class<?>> getJarClasses(Bundle bundle, File file) {
 		
 		if (file.exists()==false) return null; 
 
-		try {
-			// --- Define the URL of the file -------------
-			String canonicalPath = file.getCanonicalPath();
-			if (canonicalPath.startsWith("/")==false) {
-				canonicalPath = "/"+canonicalPath;
-			}
-			URL jarFileURL = new URL("file:" + canonicalPath);
-			jarFileURL = new URL("jar:" + jarFileURL.toExternalForm() + "!/");
+		// --- Define the URL of the file -----------------
+		URL jarFileURL = this.getUrlFromFile(file);
+		if (jarFileURL!=null) {
 			// --- Return the regulars method results -----
 			return this.getJarClasses(bundle, jarFileURL);
-			
-		} catch (MalformedURLException mUrlEx) {
-			mUrlEx.printStackTrace();
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		} 
+		}
 		// --- Return empty list in case of an error ------
 		return new ArrayList<>();
 	}
@@ -609,12 +635,56 @@ public class BundleEvaluator {
 	 * @param file the file
 	 * @return the jar classes
 	 */
-	private List<Class<?>> getJarClasses(Bundle bundle, URL jarFileURL) {
+	public List<Class<?>> getJarClasses(Bundle bundle, URL jarFileURL) {
+		List<Class<?>> classesOfJarFile = new ArrayList<Class<?>>();
+		if (bundle!=null) {
+			List<String> classNames = this.getJarClassReferences(bundle, jarFileURL);
+			for (int i = 0; i < classNames.size(); i++) {
+				String className = classNames.get(i);
+				try {
+					Class<?> classFound = bundle.loadClass(className);
+					classesOfJarFile.add(classFound);
+				} catch (ClassNotFoundException cnfEx) {
+					cnfEx.printStackTrace();
+				}
+			}
+		}
+		
+		return classesOfJarFile;
+	}
+	/**
+	 * Loads and returns the class references from a jar file into the specified bundle.
+	 *
+	 * @param bundle the bundle
+	 * @param file the file
+	 * @return the jar classes
+	 */
+	public List<String> getJarClassReferences(Bundle bundle, File file) {
+		
+		if (file.exists()==false) return null;
+		
+		// --- Define the URL of the file -----------------
+		URL jarFileURL = this.getUrlFromFile(file);
+		if (jarFileURL!=null) {
+			// --- Return the regulars method results -----
+			return this.getJarClassReferences(bundle, jarFileURL);
+		}
+		// --- Return empty list in case of an error ------
+		return new ArrayList<>();
+	}
+	/**
+	 * Loads and returns the class references from a jar file into the specified bundle.
+	 *
+	 * @param bundle the bundle
+	 * @param file the file
+	 * @return the jar classes
+	 */
+	public List<String> getJarClassReferences(Bundle bundle, URL jarFileURL) {
 		
 		boolean debug = false;
 		
 		// --- Define the result list -------------------------------
-		List<Class<?>> classesOfJarFile = new ArrayList<Class<?>>();
+		List<String> classesOfJarFile = new ArrayList<String>();
 		
 		// ----------------------------------------------------------
 		// --- Establish connection to jar file --------------------- 
@@ -630,7 +700,7 @@ public class BundleEvaluator {
 			
 			// --- Check, if this file is available -----------------
 			File checkFile = new File(jarFilePath);
-			if (checkFile.exists()==false) {
+			if (checkFile.exists()==false && bundle!=null) {
 				// --- Rebuild URL with the bundle location ---------
 				String bundleDirectory = this.getBundleDirectory(bundle);
 				jarFilePath = bundleDirectory + jarFilePath;
@@ -660,30 +730,51 @@ public class BundleEvaluator {
 			while (e.hasMoreElements()) {
 				
 				JarEntry entry = (JarEntry)e.nextElement();
-				String classname = entry.getName();
-				if (entry.isDirectory()==false && classname.endsWith(".class") && classname.contains("$")==false) {
+				String className = entry.getName();
+				if (entry.isDirectory()==false && className.endsWith(".class") && className.contains("$")==false) {
 					// --- Correct the class name -------------------
-					classname = classname.substring(0, classname.length()-6);
-					if (classname.startsWith("/")) {
-						classname = classname.substring(1);
+					className = className.substring(0, className.length()-6);
+					if (className.startsWith("/")) {
+						className = className.substring(1);
 					}
-					classname = classname.replace('/', '.');
-					
-					// --- Try to load the class into the bundle ----
-					try {
-						Class<?> classFound = bundle.loadClass(classname);
-						classesOfJarFile.add(classFound);
-						
-					} catch (ClassNotFoundException cnfEx) {
-						cnfEx.printStackTrace();
-					}
+					className = className.replace('/', '.');
+					classesOfJarFile.add(className);
 				}
-				
 			} // end while
+
+			// --- Close the jar file -------------------------------
+			try {
+				jarFile.close();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
 		}
 		return classesOfJarFile;
 	}
-
+	/**
+	 * Returns the URL from the specified file.
+	 *
+	 * @param file the file
+	 * @return the URL from file
+	 */
+	private URL getUrlFromFile(File file) {
+		
+		try {
+			// --- Define the URL of the file -------------
+			String canonicalPath = file.getCanonicalPath();
+			if (canonicalPath.startsWith("/")==false) {
+				canonicalPath = "/"+canonicalPath;
+			}
+			URL jarFileURL = new URL("file:" + canonicalPath);
+			return jarFileURL = new URL("jar:" + jarFileURL.toExternalForm() + "!/");
+			
+		} catch (MalformedURLException mUrlEx) {
+			mUrlEx.printStackTrace();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+		return null;
+	}
 	/**
 	 * Return the bundle directory.
 	 *

@@ -28,6 +28,8 @@
  */
 package org.agentgui.bundle.classSelection;
 
+import java.util.Vector;
+
 import org.agentgui.bundle.evaluation.AbstractBundleClassFilter;
 import org.agentgui.bundle.evaluation.BundleClassFilterListener;
 import org.agentgui.bundle.evaluation.BundleEvaluator;
@@ -48,7 +50,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	private static final long serialVersionUID = 6613469481292382381L;
 
 	private Class<?> class2Search4;
-	private String exclusiveBundleName;
+	private Vector<String> exclusiveBundleNames;
 
 	private AbstractBundleClassFilter bundleClassFilter;
 	private SortedListModel<ClassElement2Display> currListModel;
@@ -65,24 +67,38 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	}
 	
 	/**
-	 * Constructor for this class in case that we DON'T NEED project-specific
-	 * Classes. Needs constants from the class 'ClassSearcher'
-	 * @param class2Search4
+	 * Instantiates a new JList that presents or searches for specific classes.
+	 * @param class2Search4 the class to search for
 	 */
-	public JListClassSearcher(Class<?> class2Search4) {
-		this(class2Search4, null);
-	}
-	/**
-	 * Constructor for this class in case that we need specific
-	 * bundle classes only. 
-	 *
-	 * @param searchFor the search for
-	 * @param exclusiveBundleName the exclusive bundle name to use for this component
-	 */
-	public JListClassSearcher(Class<?> searchFor, String exclusiveBundleName) {
+	public JListClassSearcher(Class<?> classToSearchFor) {
 		super();
-		this.class2Search4 = searchFor;
-		this.exclusiveBundleName = exclusiveBundleName;
+		this.class2Search4 = classToSearchFor;
+		this.setModel(this.getListModel());
+	}
+//	/**
+//	 * Instantiates a new JList that presents or searches for specific classes.
+//	 *
+//	 * @param classToSearchFor the class to search for
+//	 * @param exclusiveBundleName the exclusive bundle name to take search results from
+//	 */
+//	public JListClassSearcher(Class<?> classToSearchFor, String exclusiveBundleName) {
+//		super();
+//		this.class2Search4 = classToSearchFor;
+//		if (exclusiveBundleName!=null && exclusiveBundleName.trim().equals("")==false) {
+//			this.getExclusiveBundleNames().add(exclusiveBundleName.trim());
+//		}
+//		this.setModel(this.getListModel());
+//	}
+	/**
+	 * Instantiates a new JList that presents or searches for specific classes.
+	 *
+	 * @param classToSearchFor the class to search for
+	 * @param exclusiveBundleName the vectr of exclusive bundle names to take search results from
+	 */
+	public JListClassSearcher(Class<?> classToSearchFor, Vector<String> exclusiveBundleNames) {
+		super();
+		this.class2Search4 = classToSearchFor;
+		this.exclusiveBundleNames = exclusiveBundleNames;
 		this.setModel(this.getListModel());
 	}
 	
@@ -93,13 +109,17 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	public Class<?> getClass2SearchFor() {
 		return this.class2Search4;
 	}
-//	/**
-//	 * Returns the current {@link Project}.
-//	 * @return the project
-//	 */
-//	public Project getProject() {
-//		return this.currProject;
-//	}
+	
+	/**
+	 * Returns the exclusive bundle names, if any.
+	 * @return the exclusive bundle names
+	 */
+	private Vector<String> getExclusiveBundleNames() {
+		if (exclusiveBundleNames==null) {
+			exclusiveBundleNames = new Vector<>();
+		}
+		return exclusiveBundleNames;
+	}
 	
 	/**
 	 * Returns the bundle class filter for the current class to search for.
@@ -161,13 +181,18 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 		// ----------------------------------------------------------
 		
-		if (this.exclusiveBundleName==null || this.exclusiveBundleName.equals("")==true) {
+		if (this.getExclusiveBundleNames().size()==0) {
 			// --- Simply add the class found in the list model ----- 
 			this.getListModel().addElement(ce2d);
 		} else {
-			// --- Check, if the class is part of the project bundle -------
-			if (symbolicBundleName.equals(this.exclusiveBundleName)) {
-				this.getListModel().addElement(ce2d);
+			// --- Check, if the class is out of the exclusive bundle -------
+			for (int i = 0; i < this.getExclusiveBundleNames().size(); i++) {
+				String exBundleName = this.getExclusiveBundleNames().get(i);
+				if (exBundleName!=null && exBundleName.trim().equals("")==false) {
+					if (symbolicBundleName.equals(exBundleName)) {
+						this.getListModel().addElement(ce2d);
+					}
+				}
 			}
 		}
 	}

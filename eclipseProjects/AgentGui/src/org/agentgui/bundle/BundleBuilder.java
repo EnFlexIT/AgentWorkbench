@@ -34,16 +34,25 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+import org.agentgui.bundle.evaluation.BundleEvaluator;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.ComponentConstants;
+
+import agentgui.core.application.Application;
+import agentgui.core.common.FileCopier;
+import agentgui.core.project.ProjectBundleLoader;
 
 /**
- * The Class BundleBuilder is able to create OSGI bundles that can be loaded by the {@link BundleLoader}.<br><br>
+ * The Class BundleBuilder is able to create OSGI bundles that can be loaded by the {@link ProjectBundleLoader}.<br><br>
  * Therefore, several use cases were considered for the builder:<br>
  * - the case that the a bin folder of a Java project will be linked as external resource<br>    
  * - the inclusion of external jar files (also in combination with the above case) or<br> 
@@ -53,9 +62,7 @@ import org.osgi.framework.Constants;
  */
 public class BundleBuilder {
 
-	/**
-	 * This Enumeration is used as return type for the method {@link BundleBuilder#getFileType(File)}.
-	 */
+	/** This Enumeration is used as return type for the method {@link BundleBuilder#getFileType(File)}. */
 	private enum FileType {
 		FILE_NOT_FOUND,
 		DIRECTORY,
@@ -64,11 +71,19 @@ public class BundleBuilder {
 		OSGI_BUNDLE
 	}
 	
+	public static final String MANIFEST_MF = "MANIFEST.MF";
+	public static final String CLASS_LOAD_SERVICE_JAR = "ClassLoadService.jar";
+	public static final String CLASS_LOAD_SERVICE_XML = "classLoadService.xml";
+	public static final String ALLWOED_BUNDLE_PREFIX = "org.agentgui";
+	
 	private ArrayList<String> allowedFileSuffixes;
 	
 	private String symbolicBundleName;
 	private File bundleDirectory;
 	
+	private ArrayList<File> bundleJars;
+	private ArrayList<File> regularJars;
+	private HashMap<File, List<String>> regularJarsPackagesHashMap; 
 	
 	/**
 	 * Instantiates a new bundle builder.
@@ -77,15 +92,16 @@ public class BundleBuilder {
 	 * @param symbolicBundleName the symbolic bundle name
 	 */
 	public BundleBuilder(File directoryToBundle, String symbolicBundleName) {
-		// --- Check the arguments first --------
+		// --- Check the arguments first ------------------
 		if (directoryToBundle==null) {
 			throw new IllegalArgumentException("No file or directory was specified for the bundle build process!");
 		} else if (symbolicBundleName==null || symbolicBundleName.equals("")) {
 			throw new IllegalArgumentException("No symbolic bundle name was specified for the bundle build process!");
 		}
-		// --- Remind the file to bundle --------
 		this.setBundleDirectory(directoryToBundle);
 		this.setSymbolicBundleName(symbolicBundleName);
+		// --- Evaluate the files to be bundled -----------
+		this.evaluateDirectory();
 	}
 
 	/**
@@ -118,53 +134,161 @@ public class BundleBuilder {
 		this.symbolicBundleName = symbolicBundleName;
 	}
 	
+	// ----------------------------------------------------
+	// --- Methods for the directory evaluation -----------
+	// ----------------------------------------------------
 	/**
-	 * Builds the specified bundle.
+	 * Evaluates the specified directory.
 	 */
-	public void build() {
+	public void evaluateDirectory() {
 		
-		// --- Create the manifest first ----------------------------
-		if (this.createdManifest()==false) return;
-		
-//		// --- Identify, which build strategy has to be considered --
-//		for (int i = 0; i < this.getFilesOrDirectoriesToBundle().size(); i++) {
-//			
-//			File file2Bundle = this.getFilesOrDirectoriesToBundle().get(i);
-//			switch (this.getFileType(file2Bundle)) {
-//			case FILE_NOT_FOUND:
-//			case NON_JAR_FILE:
-//			case OSGI_BUNDLE:
-//				// +++ Nothing to do here +++++++++++++++++++++++++++++++
-//				break;
-//
-//			case DIRECTORY:
-//				// --- A bin folder has to be bundled -------------------
-//				this.createJarArchive(file2Bundle);
-//				break;
-//				
-//			case JAR_FILE:
-//				// --- A single jar has to be bundled -------------------
-//				
-//				break;
-//			}
-//		}
+		// --- Search for relevant files ------------------ 
+		ArrayList<File> filesFound = this.findFiles(this.getBundleDirectory());
 
+		// --- Filter for jar-files first -----------------
+		ArrayList<File> jarFilesFound = this.filterForFileTypes(filesFound, "jar");
+		ArrayList<File> regularJarFilesFound = new ArrayList<>(); 
+		ArrayList<File> bundleJarFilesFound = new ArrayList<>();
+		
+		for (File file2Check : jarFilesFound) {
+			// --- Check the file type --------------------
+			FileType fileType= this.getFileType(file2Check);
+			switch (fileType) {
+			case JAR_FILE:
+				regularJarFilesFound.add(file2Check);
+				break;
+			case OSGI_BUNDLE:
+				bundleJarFilesFound.add(file2Check);
+				break;
+			default:
+				break;
+			}
+		}
+		
+		// --- Assign regular jars that were found --------
+		if (regularJarFilesFound.size()>0) {
+			this.regularJars = regularJarFilesFound;
+		} else {
+			this.regularJars = null;	
+		}
+		// --- Assign bundle jars that were found --------		
+		if (bundleJarFilesFound.size()>0) {
+			this.bundleJars = bundleJarFilesFound;
+		} else {
+			this.bundleJars = null;
+		}
+		
+		// --- Remind packages in regular jars ------------
+		this.getRegularJarsPackagesHashMap().clear();
+		BundleEvaluator be = BundleEvaluator.getInstance();
+		for (int i = 0; i < this.regularJars.size(); i++) {
+			// --- Get the 
+			File jarFile = this.regularJars.get(i);
+			List<String> classesInJar = be.getJarClassReferences(null, jarFile);
+			List<String> packages = be.getPackagesOfClassNames(classesInJar);
+			// --- Remind packages for export -------------
+			this.getRegularJarsPackagesHashMap().put(jarFile, packages);
+		}
+		
+	}
+	/**
+	 * Returns the bundle jars.
+	 * @return the bundle jars
+	 */
+	public ArrayList<File> getBundleJars() {
+		return bundleJars;
+	}
+	/**
+	 * Gets the regular jars.
+	 * @return the regular jars
+	 */
+	public ArrayList<File> getRegularJars() {
+		return regularJars;
+	}
+	/**
+	 * Returns the reminder HashMap for packages in regular jars .
+	 * @return the regular jars packages
+	 */
+	private HashMap<File, List<String>> getRegularJarsPackagesHashMap() {
+		if (regularJarsPackagesHashMap==null) {
+			regularJarsPackagesHashMap = new HashMap<>();
+		}
+		return regularJarsPackagesHashMap;
 	}
 	
+	/**
+	 * Filters the specified file list for the specified file type.
+	 *
+	 * @param fileListToFilter the file list to filter
+	 * @param fileType the file type
+	 * @return the array list
+	 */
+	private ArrayList<File> filterForFileTypes(ArrayList<File> fileListToFilter, String fileType){
+		
+		ArrayList<File> filteredList = new ArrayList<>();
+		for (int i = 0; i < fileListToFilter.size(); i++) {
+			File fileToCheck = fileListToFilter.get(i);
+			if (this.getFileExtension(fileToCheck).equals(fileType)) {
+				filteredList.add(fileToCheck);
+			}
+		}
+		
+		if (filteredList.size()==0) {
+			filteredList = null;
+		}
+		return filteredList;
+	}
+	/**
+	 * Returns the file extension of the file.
+	 *
+	 * @param file the file
+	 * @return the file extension
+	 */
+	private String getFileExtension(File file) {
+		
+		if (file==null) return null;
+		if (file.isDirectory()==true) return null;
+		
+		String fileExtension = null;
+		String fileName = file.getName();
+
+		int i = fileName.lastIndexOf('.');
+		if (i>0) {
+			fileExtension = fileName.substring(i+1);
+		}
+		return fileExtension;
+	}
+	// ----------------------------------------------------
+	// --- Methods for the directory evaluation -----------
+	// ----------------------------------------------------
+	
+	// ----------------------------------------------------
+	// --- Methods for the MANIFEST file ------------------
+	// ----------------------------------------------------
 	/**
 	 * Returns the manifest location, based on the specified bundle directory.
 	 * @return the manifest location
 	 */
 	public String getManifestLocation() {
-		String manifestLocation = this.getBundleDirectory().getAbsolutePath() + File.separator + "META-INF" + File.separator + "MANIFEST.MF"; 
+		String manifestLocation = this.getBundleDirectory().getAbsolutePath() + File.separator + "META-INF" + File.separator + MANIFEST_MF; 
 		return manifestLocation;
+	}
+	/**
+	 * Checks if is available manifest.
+	 *
+	 * @param directory the directory
+	 * @return true, if is available manifest
+	 */
+	public boolean isAvailableManifest() {
+		File manifestFile = new File(this.getManifestLocation()); 
+		return manifestFile.exists();
 	}
 
 	/**
 	 * Checks, if the MANIFEST file is available. If not, it will be created.
 	 * @return true, if the file is available or if it could successfully be created
 	 */
-	private boolean createdManifest() {
+	public boolean createManifest() {
 		
 		boolean created = false;
 		
@@ -176,26 +300,75 @@ public class BundleBuilder {
 		FileOutputStream fOut = null;
 		try {
 			
+			// ------------------------------------------------------
 			// --- Create directory, if not already there -----------
+			// ------------------------------------------------------
 			File metaInfDir = manifestFile.getParentFile();
 			if (metaInfDir.exists()==false) {
 				metaInfDir.mkdirs();
 			}
-
-			// --- Search for relevant files ------------------------ 
-			ArrayList<File> filesFound = this.findFiles(this.getBundleDirectory());
 			
-			// --- Create MANIFEST file -----------------------------
-			fOut = new FileOutputStream(manifestFile);
-			
+			// ------------------------------------------------------
+			// --- Define Manifest ---------------------------------- 
+			// ------------------------------------------------------
 			Manifest manifest = new Manifest();
 			Attributes att = manifest.getMainAttributes();
 			att.putValue("Manifest-Version", "1.0");
 			att.putValue(Constants.BUNDLE_MANIFESTVERSION, "2");
-			att.putValue(Constants.BUNDLE_NAME, "Project");
+			att.putValue(Constants.BUNDLE_NAME, this.getSymbolicBundleName());
 			att.putValue(Constants.BUNDLE_SYMBOLICNAME, this.getSymbolicBundleName());
 			
+			// --- Define the required bundles ----------------------
+			String requireBundleString = "";
+			Bundle[] bundles = BundleEvaluator.getInstance().getBundles();
+			for (int i = 0; i < bundles.length; i++) {
+				Bundle bundle = bundles[i];
+				if (bundle.getSymbolicName().startsWith(ALLWOED_BUNDLE_PREFIX)) {
+					String bundleDescription = bundle.getSymbolicName() + ";bundle-version=\"" + bundle.getVersion().toString() + "\"";
+					if (requireBundleString.length()==0) {
+						requireBundleString = bundleDescription;
+					} else {
+						requireBundleString += "," + bundleDescription;
+					}					
+				}
+			}
+			att.putValue(Constants.REQUIRE_BUNDLE, requireBundleString);
 			
+			// --- Define jar files to be included ------------------
+			String bundleClassPathString = "";
+			for (File jarFile : this.getRegularJars()) {
+				String jarFilePath = this.getRequiredBundleEntry(jarFile);
+				if (bundleClassPathString.length()==0) {
+					bundleClassPathString = jarFilePath;
+				} else {
+					bundleClassPathString += "," + jarFilePath;
+				}
+			}
+			att.putValue(Constants.BUNDLE_CLASSPATH, bundleClassPathString);
+			
+			// --- Define export packages --------------------------
+			String exportPackageString = "";
+			for (File jarFile : this.getRegularJars()) {
+				// --- Get packages for each jar-file ---------------
+				List<String> packageNames = this.getRegularJarsPackagesHashMap().get(jarFile);
+				for (int i = 0; i < packageNames.size(); i++) {
+					String packageName = packageNames.get(i);
+					if (exportPackageString.length()==0) {
+						exportPackageString = packageName;
+					} else {
+						exportPackageString += "," + packageName;
+					}
+				} 
+			}
+			att.putValue(Constants.EXPORT_PACKAGE, exportPackageString);
+			
+			// --- Define xml-file of ClassLoadService --------------
+			att.putValue(ComponentConstants.SERVICE_COMPONENT, "classLoadService.xml");
+			
+			// ------------------------------------------------------
+			// --- Write the  MANIFEST file -------------------------
+			// ------------------------------------------------------
+			fOut = new FileOutputStream(manifestFile);
 			manifest.write(fOut);
 			created = true;
 					
@@ -214,6 +387,175 @@ public class BundleBuilder {
 		}
 		return created;
 	}
+	
+	/**
+	 * Returns a required bundle entry for the Manifest.mf.
+	 *
+	 * @param jarFile the jar file
+	 * @return the required bundle entry
+	 */
+	private String getRequiredBundleEntry(File jarFile) {
+		String jarFilePath = jarFile.getAbsolutePath().substring(this.getBundleDirectory().getAbsolutePath().length());
+		while(jarFilePath.startsWith(File.separator)) {
+			jarFilePath = jarFilePath.substring(1);	
+		}
+		return jarFilePath;
+	}
+	
+	// ----------------------------------------------------
+	// --- Methods for the MANIFEST file ------------------
+	// ----------------------------------------------------
+	
+	// ----------------------------------------------------
+	// --- Methods for the search of files ----------------
+	// ----------------------------------------------------
+	/**
+	 * This method will find all available files specified by the find String.
+	 *
+	 * @param directory the directory
+	 * @param allowedFileSuffixes the allowed file suffixes
+	 */
+	private ArrayList<File> findFiles(File directory) {
+
+		File[] files = directory.listFiles();
+		ArrayList<File> matches = new ArrayList<File> ();
+		if (files != null) {
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					// --- Search sub-directories ---------
+					matches.addAll(this.findFiles(files[i])); 
+				} else {
+					// --- filter single file for 'find' ------
+					int lastDotPos = files[i].getName().lastIndexOf('.');
+					if (lastDotPos>0) {
+						String fileSuffix = files[i].getName().substring(lastDotPos);
+					    if (this.getAllowedFileSuffixes().contains(fileSuffix)) {
+					    	matches.add(files[i]);
+					    }
+					}
+				}
+			}
+		}
+		return matches;
+	}
+	/**
+	 * Returns the allowed file suffixes for a *.jar-file to be created.
+	 * @return the positive file suffixes
+	 */
+	private ArrayList<String> getAllowedFileSuffixes() {
+		if (allowedFileSuffixes==null) {
+			allowedFileSuffixes = new ArrayList<String>();
+			allowedFileSuffixes.add(".jar");
+			allowedFileSuffixes.add(".class");
+			allowedFileSuffixes.add(".png");
+			allowedFileSuffixes.add(".bmp");
+			allowedFileSuffixes.add(".jpg");
+			allowedFileSuffixes.add(".jepg");
+			allowedFileSuffixes.add(".gif");
+		}
+		return allowedFileSuffixes;
+	}
+	
+	/**
+	 * Returns the {@link FileType} of the specified file object. If the specified 
+	 * file object is null the method also return null. Otherwise, it checks and returns 
+	 * the {@link FileType} of the specified file.
+	 *
+	 * @param file2Check the file object to check
+	 * @return the file type
+	 */
+	private FileType getFileType(File file2Check) {
+		
+		if (file2Check==null) {
+			return null;
+		} else if(file2Check.exists()==false) {
+			return FileType.FILE_NOT_FOUND;
+		} else if (file2Check.isDirectory()==true) {
+			return FileType.DIRECTORY;
+		} 
+		
+		// --- Try to open the jar file -------------------------
+		FileType fileType = FileType.NON_JAR_FILE;
+		JarFile jar = null;
+		try {
+			jar = new JarFile(file2Check);
+			Manifest manifest = jar.getManifest();
+			if (manifest!=null) {
+				// --- At least we found a jar file -------------
+				fileType = FileType.JAR_FILE;
+
+				// --- Check for an OSGI bundle -----------------
+				Attributes mainAttributes = manifest.getMainAttributes();
+				String symbolicName = (String) mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
+				if (symbolicName!=null && symbolicName.equals("")==false)  {
+					fileType = FileType.OSGI_BUNDLE;
+				}
+			}
+			
+		} catch (IOException ioe) {
+			//ioe.printStackTrace();
+			this.printError("#getFileType(File): " + ioe.getMessage());
+			
+		} finally {
+			// --- Make sure that the file will be closed -------
+			try {
+				if (jar!=null) jar.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
+		return fileType;
+	}
+	// ----------------------------------------------------
+	// --- Methods for the search of files ----------------
+	// ----------------------------------------------------
+
+	// ----------------------------------------------------
+	// --- Methods for moving files of ClassLoadService ---
+	// ----------------------------------------------------
+	/**
+	 * Move class load service files.
+	 */
+	public void moveClassLoadServiceFiles() {
+		
+		String pathProps = Application.getGlobalInfo().getPathProperty(true);
+		
+		File sourceCLSjar = new File(pathProps + File.separator + CLASS_LOAD_SERVICE_JAR);
+		File sourceCLSxml = new File(pathProps + File.separator + CLASS_LOAD_SERVICE_XML);
+		
+		File destinCLSjar = new File(this.getBundleDirectory() + File.separator + CLASS_LOAD_SERVICE_JAR);
+		File destinCLSxml = new File(this.getBundleDirectory() + File.separator + CLASS_LOAD_SERVICE_XML);
+		
+		// --- Move the jar file --------------------------
+		if (sourceCLSjar.exists()==true) {
+			if (destinCLSjar.exists()==true) {
+				destinCLSjar.delete();
+			}
+			new FileCopier().copyFile(sourceCLSjar.getAbsolutePath(), destinCLSjar.getAbsolutePath());
+			if (this.getRegularJars().contains(destinCLSjar)==false) {
+				this.getRegularJars().add(destinCLSjar);
+			}
+			
+		} else {
+			throw new RuntimeException("ClassLoadService-Files: Could not find file '" + sourceCLSjar + "'.");
+		}
+		
+		// --- Move the xml file --------------------------
+		if (sourceCLSxml.exists()==true) {
+			if (destinCLSxml.exists()==true) {
+				destinCLSxml.delete();
+			}
+			new FileCopier().copyFile(sourceCLSxml.getAbsolutePath(), destinCLSxml.getAbsolutePath());
+			
+		} else {
+			throw new RuntimeException("ClassLoadService-Files: Could not find file '" + sourceCLSxml + "'.");
+		}
+		
+	}
+	// ----------------------------------------------------
+	// --- Methods for moving files of ClassLoadService ---
+	// ----------------------------------------------------
+
 	
 	/**
 	 * Creates a jar archive from the specified directory.
@@ -302,104 +644,6 @@ public class BundleBuilder {
 		}
 	}
 	
-	/**
-	 * This method will find all available files specified by the find String.
-	 *
-	 * @param directory the directory
-	 * @param allowedFileSuffixes the allowed file suffixes
-	 */
-	private ArrayList<File> findFiles(File directory) {
-
-		File[] files = directory.listFiles();
-		ArrayList<File> matches = new ArrayList<File> ();
-		if (files != null) {
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					// --- Search sub-directories ---------
-					matches.addAll(this.findFiles(files[i])); 
-				} else {
-					// --- filter single file for 'find' ------
-					int lastDotPos = files[i].getName().lastIndexOf('.');
-					if (lastDotPos>0) {
-						String fileSuffix = files[i].getName().substring(lastDotPos);
-					    if (this.getAllowedFileSuffixes().contains(fileSuffix)) {
-					    	matches.add(files[i]);
-					    }
-					}
-				}
-			}
-		}
-		return matches;
-	}
-	/**
-	 * Returns the allowed file suffixes for a *.jar-file to be created.
-	 * @return the positive file suffixes
-	 */
-	private ArrayList<String> getAllowedFileSuffixes() {
-		if (allowedFileSuffixes==null) {
-			allowedFileSuffixes = new ArrayList<String>();
-			allowedFileSuffixes.add(".jar");
-			allowedFileSuffixes.add(".class");
-			allowedFileSuffixes.add(".png");
-			allowedFileSuffixes.add(".bmp");
-			allowedFileSuffixes.add(".jpg");
-			allowedFileSuffixes.add(".jepg");
-			allowedFileSuffixes.add(".gif");
-		}
-		return allowedFileSuffixes;
-	}
-	
-	/**
-	 * Returns the {@link FileType} of the specified file object. If the specified 
-	 * file object is null the method also return null. Otherwise, it checks and returns 
-	 * the {@link FileType} of the specified file.
-	 *
-	 * @param file2Check the file object to check
-	 * @return the file type
-	 */
-	private FileType getFileType(File file2Check) {
-		
-		if (file2Check==null) {
-			return null;
-		} else if(file2Check.exists()==false) {
-			return FileType.FILE_NOT_FOUND;
-		} else if (file2Check.isDirectory()==true) {
-			return FileType.DIRECTORY;
-		} 
-		
-		// --- Try to open the jar file -------------------------
-		FileType fileType = FileType.NON_JAR_FILE;
-		JarFile jar = null;
-		try {
-			jar = new JarFile(file2Check);
-			Manifest manifest = jar.getManifest();
-			if (manifest!=null) {
-				// --- At least we found a jar file -------------
-				fileType = FileType.JAR_FILE;
-
-				// --- Check for an OSGI bundle -----------------
-				Attributes mainAttributes = manifest.getMainAttributes();
-				String symbolicName = (String) mainAttributes.get(Constants.BUNDLE_SYMBOLICNAME);
-				if (symbolicName!=null && symbolicName.equals("")==false)  {
-					fileType = FileType.OSGI_BUNDLE;
-				}
-			}
-			
-		} catch (IOException ioe) {
-			//ioe.printStackTrace();
-			this.printError("#getFileType(File): " + ioe.getMessage());
-			
-		} finally {
-			// --- Make sure that the file will be closed -------
-			try {
-				if (jar!=null) jar.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-		}
-		return fileType;
-	}
-
 	/**
 	 * Prints the specified message as error.
 	 * @param message the message

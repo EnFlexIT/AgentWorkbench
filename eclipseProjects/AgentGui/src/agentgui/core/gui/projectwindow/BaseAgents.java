@@ -672,7 +672,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	private JListClassSearcher getJAgentList() {
 		if (jAgentList == null) {
-			jAgentList = new JListClassSearcher(Agent.class, this.currProject.getBundle().getSymbolicName());
+			jAgentList = new JListClassSearcher(Agent.class, this.currProject.getBundleNames());
 			jAgentList.setToolTipText(Language.translate("Agenten in diesem Projekt"));
 			jAgentList.setPreferredSize(new Dimension(333, 300));
 			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

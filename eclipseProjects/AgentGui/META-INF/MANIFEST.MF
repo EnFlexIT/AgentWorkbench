@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AgentGui
-Bundle-SymbolicName: org.agentgui;singleton:=true
+Bundle-SymbolicName: org.agentgui.core;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT

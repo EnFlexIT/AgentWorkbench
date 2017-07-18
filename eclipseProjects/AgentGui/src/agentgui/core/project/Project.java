@@ -59,7 +59,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.agentgui.bundle.BundleLoader;
 import org.osgi.framework.Bundle;
 
 import agentgui.core.application.Application;
@@ -150,7 +149,7 @@ import agentgui.core.webserver.DownloadServer;
 	
 
 	/** The OSGI-bundle of the current project */  
-	@XmlTransient private BundleLoader bundleLoader;
+	@XmlTransient private ProjectBundleLoader projectBundleLoader;
 	
 	/** This is the 'view' in the context of the mentioned MVC pattern */
 	@XmlTransient private ProjectWindow projectWindow;
@@ -570,27 +569,38 @@ import agentgui.core.webserver.DownloadServer;
 		Application.setStatusBar("");
 		return true;
 	}
-
 	
 	/**
-	 * Returns the projects {@link BundleLoader}.
+	 * Returns the projects {@link ProjectBundleLoader}.
 	 * @return the bundle loader
 	 */
-	private BundleLoader getBundleLoader() {
-		if (bundleLoader==null) {
-			bundleLoader = new BundleLoader(this);
+	private ProjectBundleLoader getProjectBundleLoader() {
+		if (projectBundleLoader==null) {
+			projectBundleLoader = new ProjectBundleLoader(this);
 		}
-		return bundleLoader;
+		return projectBundleLoader;
 	}
 	/**
-	 * Returns the projects OSGI-bundle.
-	 * @return the bundle
+	 * Returns the vector of bundles that belong to this project.
+	 * @return the bundles of the current project
 	 */
-	@XmlTransient
-	public Bundle getBundle() {
-		return this.getBundleLoader().getBundle();
+	public Vector<Bundle> getBundles() {
+		return this.getProjectBundleLoader().getBundleVector();
 	}
-	
+	/**
+	 * Returns the bundle names that belong to the this project.
+	 * @return the bundle names
+	 */
+	public Vector<String> getBundleNames() {
+		Vector<String> bundleNames = new Vector<>();
+		for (Bundle bundle : this.getBundles()) {
+			bundleNames.add(bundle.getSymbolicName());
+		}
+		if (bundleNames.size()==0) {
+			bundleNames=null;
+		}
+		return bundleNames;
+	}
 	
 	/**
 	 * Sets the the Project configuration to be saved or unsaved.
@@ -1460,7 +1470,11 @@ import agentgui.core.webserver.DownloadServer;
 	 */
 	public void resourcesLoad() {
 
-		this.getBundleLoader().installAndStartBundle();
+		try {
+			this.getProjectBundleLoader().installAndStartBundles();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		
 //		// TODO
 //		for (int i=0; i<this.getProjectResources().size(); i++) {
@@ -1569,7 +1583,7 @@ import agentgui.core.webserver.DownloadServer;
 	 */
 	public void resourcesRemove() {
 		
-		this.getBundleLoader().stopAndUninstallProjectBundle();
+		this.getProjectBundleLoader().stopAndUninstallBundles();
 		
 //		for(String jarFile : getProjectResources()) {
 //			

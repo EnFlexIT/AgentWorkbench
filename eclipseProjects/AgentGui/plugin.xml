@@ -24,7 +24,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.agentgui.application"
+            application="org.agentgui.core.application"
             name="Agent.GUI">
          <property
                name="windowImages"
@@ -51,6 +51,30 @@
       <initializer
             class="org.agentgui.PreferenceInitializer">
       </initializer>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.agentgui.core.application"
+            name="Agent.GUI">
+         <property
+               name="windowImages"
+               value="icons/eclipse16.png,icons/eclipse32.png,icons/eclipse48.png,icons/eclipse64.png, icons/eclipse128.png,icons/eclipse256.png">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="5,275,445,15">
+         </property>
+         <property
+               name="appName"
+               value="Agent.GUI">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+      </product>
    </extension>
 
 </plugin>

@@ -527,7 +527,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private ClassSelector getClassSelector4ProjectAgents(Project project) {
 		String currAgentClass = this.getJTextFieldAgentClass().getText();
 		if (this.esaClassSelector==null) {
-			JListClassSearcher jListClassSearcher = new JListClassSearcher(Agent.class, project.getBundle().getSymbolicName());
+			JListClassSearcher jListClassSearcher = new JListClassSearcher(Agent.class, project.getBundleNames());
 			this.esaClassSelector = new ClassSelector(this.optionDialog, jListClassSearcher, currAgentClass, null, Language.translate("Bitte wählen Sie den Agenten aus, der gestartet werden soll"), false);
 		} 
 		this.esaClassSelector.setClass2Search4CurrentValue(currAgentClass);

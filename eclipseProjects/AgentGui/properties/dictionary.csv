@@ -52,6 +52,7 @@ de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
 de;Allgemein;General;;;
 de;Als Bild exportieren;Export as image;;;
+de;Als Projekt Start-Tab verwenden;;;;
 de;Alter Wert:;Old value:
 de;An Fenster anpassen;Fit to window;;;
 de;Ansicht wiederherstellen;Restore View;;;
@@ -663,6 +664,7 @@ de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
 de;Version;Version;;;
 de;Versionnummer bearbeiten;Edit Version Number;;;
+de;Versionnummer speichern;;;;
 de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;

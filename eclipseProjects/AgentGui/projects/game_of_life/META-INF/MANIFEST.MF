@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: agentProject.agentgui_plugin_exam
-Export-Package: agentproject
-Bundle-Name: agentProject.agentgui_plugin_exam
-Bundle-ClassPath: ClassLoadService.jar,jar\PlugInExample.jar
+Bundle-SymbolicName: agentProject.game_of_life
+Export-Package: gol.acl.agents,gol.acl.balancing,gol.acl.gui,gol.envir
+ onment,gol.plugin,gol.SimService.agents,gol.SimService.balancing
+Bundle-Name: agentProject.game_of_life
+Bundle-ClassPath: ClassLoadService.jar,~tmp\BIN_DUMP_495248449.jar
 Require-Bundle: org.agentgui.lib.jung;bundle-version="2.0.1",org.agent
  gui.core;bundle-version="2.0.0.qualifier",org.agentgui.lib.oidc;bundl
  e-version="5.17.1",org.agentgui.lib.jFreeChart;bundle-version="1.0.15

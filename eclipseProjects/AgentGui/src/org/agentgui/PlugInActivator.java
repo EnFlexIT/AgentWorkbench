@@ -18,7 +18,7 @@ import agentgui.core.classLoadService.ClassLoadServiceUtility;
  */
 public class PlugInActivator extends AbstractUIPlugin implements BundleListener {
 
-	public static final String PLUGIN_ID = "org.agentgui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.agentgui.core"; //$NON-NLS-1$
 	private boolean debug = false;
 
 	private static PlugInActivator thisActivator;

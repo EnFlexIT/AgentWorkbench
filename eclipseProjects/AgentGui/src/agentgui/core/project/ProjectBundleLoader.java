@@ -26,75 +26,44 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.bundle;
+package agentgui.core.project;
 
 import java.io.File;
+import java.util.Vector;
 
+import org.agentgui.bundle.BundleBuilder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 
 import agentgui.core.application.Application;
-import agentgui.core.project.Project;
 
 /**
- * The Class BundleLoader.
+ * The Class ProjectBundleLoader.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class BundleLoader {
+public class ProjectBundleLoader {
 
-	private String bundleDirectory;
-	private Bundle bundle;
-
-	/**
-	 * Instantiates a new bundle loader.
-	 * @param bundleDirectory the bundle directory
-	 */
-	public BundleLoader(String bundleDirectory) {
-		this.bundleDirectory = bundleDirectory;
-	}
-	/**
-	 * Instantiates a new bundle loader.
-	 * @param project the project to be handled as a bundle
-	 */
-	public BundleLoader(Project project) {
-		this(project.getProjectFolderFullPath());
-	}
+	private Project project;
+	
+	private BundleBuilder bundleBuilder;
+	private Vector<Bundle> bundleVector;
 	
 	/**
-	 * Sets the current bundle directory.
-	 * @param bundleDirectory the new bundle directory
+	 * Instantiates a new bundle loader.
+	 * @param project the project
 	 */
-	public void setBundleDirectory(String bundleDirectory) {
-		this.bundleDirectory = bundleDirectory;
+	public ProjectBundleLoader(Project project) {
+		this.project = project;
 	}
 	/**
 	 * Returns the bundle directory.
 	 * @return the bundle directory
 	 */
 	public String getBundleDirectory() {
-		return bundleDirectory;
-	}
-	
-	/**
-	 * Returns the manifest location, based on the specified bundle directory.
-	 * @return the manifest location
-	 */
-	public String getManifestLocation() {
-		String manifestLocation = this.getBundleDirectory() + "META-INF" + File.separator + "MANIFEST.MF";
-		return manifestLocation;
-	}
-	/**
-	 * Checks if is available manifest.
-	 *
-	 * @param directory the directory
-	 * @return true, if is available manifest
-	 */
-	private boolean isAvailableManifest() {
-		File manifestFile = new File(this.getManifestLocation()); 
-		return manifestFile.exists();
+		return this.project.getProjectFolderFullPath();
 	}
 	
 	/**
@@ -103,29 +72,38 @@ public class BundleLoader {
 	 */
 	private String getSymbolicBundleName() {
 		
-		if (this.getBundle()!=null) return this.getBundle().getSymbolicName();
+		// --- Return the first bundle name -------------------------
+		if (this.getBundleVector().size()>0 && this.getBundleVector().get(0)!=null) {
+			return this.getBundleVector().get(0).getSymbolicName();
+		}
 		
-		// --- Bundle was not yet loaded - create a proposal -------- 
+		// --- Bundle was not yet loaded - create name proposal ----- 
 		String bundleName = this.getBundleDirectory();
 		String appPath = Application.getGlobalInfo().getPathBaseDir();
 		if (bundleName.contains(appPath)==true) {
 			// --- Get path difference ------------------------------
 			bundleName = bundleName.substring(appPath.length());
+			String[] pathParts = bundleName.split("\\" + File.separator);
+			bundleName = pathParts[pathParts.length-1];
 			
 		} else {
 			// --- Take the last two sub folder --------------------- 
 			String[] pathParts = bundleName.split("\\" + File.separator);
-			if (pathParts.length>=2) {
-				bundleName = pathParts[pathParts.length-2] + "." + pathParts[pathParts.length-1];
+			if (pathParts.length>1) {
+				bundleName = pathParts[pathParts.length-1];
 			} else if (pathParts.length==1) {
-				bundleName = "tmp.bundle." + pathParts[pathParts.length-1];
+				bundleName = pathParts[0];
 			} else {
-				bundleName = "tmp.bundle.dir" + bundleName.hashCode();
+				bundleName = "tmp" + bundleName.hashCode();
 			}
 		}
+		// --- Add a suffix to the bundle name ----------------------
+		bundleName = "agentProject." + bundleName;
 		
 		// --- Do some final adjustments ----------------------------
-		bundleName = bundleName.replace("\\", ".");
+		while (bundleName.contains("..")) {
+			bundleName = bundleName.replace("..", ".");
+		}
 		while (bundleName.startsWith(".")) {
 			bundleName = bundleName.substring(1);
 		}
@@ -136,39 +114,60 @@ public class BundleLoader {
 	}
 	
 	/**
-	 * Sets the current bundle.
-	 * @param bundle the new bundle
+	 * Gets the bundle builder.
+	 *
+	 * @return the bundle builder
 	 */
-	private void setBundle(Bundle bundle) {
-		this.bundle = bundle;
+	private BundleBuilder getBundleBuilder() {
+		if (bundleBuilder==null) {
+			bundleBuilder = new BundleBuilder(new File(this.getBundleDirectory()), this.getSymbolicBundleName());
+		}
+		return bundleBuilder;
 	}
+	
 	/**
-	 * Returns the current bundle.
 	 * @return the bundle
 	 */
-	public Bundle getBundle() {
-		return this.bundle;
+	public Vector<Bundle> getBundleVector() {
+		if (bundleVector==null) {
+			bundleVector = new Vector<>();
+		}
+		return bundleVector;
 	}
 	
 	/**
 	 * Load the bundle of the current project.
 	 * @return true, if successful
 	 */
-	public boolean installAndStartBundle() {
+	public boolean installAndStartBundles() {
 		
 		boolean bundleLoaded = false;
 		if (this.getBundleDirectory()!=null) {
+
 			try {
-				// --- Check if the manifest file is available ------
-				if (this.isAvailableManifest()==false) {
-					// --- Create the MANIFEST.MF file --------------
-					BundleBuilder bBuilder = new BundleBuilder(new File(this.getBundleDirectory()), this.getSymbolicBundleName());
-					bBuilder.build();
+				// --- Load the directory bundle ------------------------------
+				if (this.getBundleBuilder().getRegularJars()!=null) {
 					
+					// --- Check if the manifest file is available ------------
+					if (this.getBundleBuilder().isAvailableManifest()==false) {
+						
+						// --- Check for files of the ClassLoadService --------
+						this.getBundleBuilder().moveClassLoadServiceFiles();
+						
+						// --- Create the MANIFEST.MF file --------------------
+						if (this.getBundleBuilder().createManifest()==false) {
+							throw new RuntimeException("The file " + BundleBuilder.MANIFEST_MF + " could not be created!");
+						}
+					}
+					this.installAndStartBundle("reference:file:" + this.getBundleDirectory());
 				}
-				// --- Load the bundle ------------------------------
-				String projectPath = "reference:file:" + this.getBundleDirectory();
-				this.installAndStartBundle(projectPath);
+				
+				// --- Load the independent bundles found ---------------------
+				if (this.getBundleBuilder().getBundleJars()!=null) {
+					for (File bundleFile : this.getBundleBuilder().getBundleJars()) {
+						this.installAndStartBundle("reference:file:" + bundleFile.getAbsolutePath());
+					}
+				}
 				bundleLoaded = true;
 				
 			} catch (BundleException bEx) {
@@ -178,6 +177,7 @@ public class BundleLoader {
 		}
 		return bundleLoaded;
 	}
+	
 	/**
 	 * Install and start bundle.
 	 *
@@ -185,32 +185,29 @@ public class BundleLoader {
 	 * @throws BundleException the bundle exception
 	 */
 	public void installAndStartBundle(String locationID) throws BundleException {
-//		Bundle b = bundleContext.installBundle("reference:file:./test.ServiceA");
+
+		// --- Install and start bundle ---------
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-		this.bundle = bundleContext.installBundle(locationID);
-		this.bundle.start();
+		Bundle bundle = bundleContext.installBundle(locationID);
+		bundle.start();
 		
-	}
-	
-	/**
-	 * Stop and uninstalls the current project bundle.
-	 */
-	public void stopAndUninstallProjectBundle() {
-		try {
-			this.stopAndUninstallBundle();
-		} catch (BundleException e) {
-			e.printStackTrace();
-		}
+		// --- Remind this bundle ---------------
+		this.getBundleVector().addElement(bundle);
+		
 	}
 	/**
 	 * Stops and uninstalls the current bundle.
-	 * @throws BundleException 
 	 */
-	public void stopAndUninstallBundle() throws BundleException {
-		if (this.getBundle()!=null) {
-			this.getBundle().stop();
-			this.getBundle().uninstall();
-			this.setBundle(null);
+	public void stopAndUninstallBundles() {
+		Vector<Bundle> bundlesToRemove = new Vector<>(this.getBundleVector());
+		for (Bundle bundle: bundlesToRemove) {
+			try {
+				bundle.stop();
+				bundle.uninstall();
+				this.getBundleVector().remove(bundle);
+			} catch (BundleException bEx) {
+				bEx.printStackTrace();
+			}
 		}
 	}
 	
