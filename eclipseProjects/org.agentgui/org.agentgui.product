@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent.GUI" uid="org.agentgui.product" id="org.agentgui.core.product" application="org.agentgui.core.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
-
+<product name="Agent.GUI" uid="org.agentgui.product" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -25,7 +24,6 @@
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -113,7 +111,7 @@
    </plugins>
 
    <features>
-      <feature id="org.agentgui" version="2.0.0.qualifier"/>
+      <feature id="org.agentgui.feature" version="2.0.0.qualifier"/>
    </features>
 
    <configurations>
