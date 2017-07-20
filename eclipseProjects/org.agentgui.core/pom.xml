@@ -5,7 +5,7 @@
 	<artifactId>org.agentgui.core</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
 	
-	<packaging>eclipse-plugin</packaging>
+	<packaging>pom</packaging>
 
 	<properties>
 		<tycho-version>1.0.0</tycho-version>
@@ -50,4 +50,16 @@
 		</plugins>
 	</build>
 
+	<modules>
+		<module>../org.agentgui.lib.bouncyCastle</module>
+		<module>../org.agentgui.lib.googleTranslate</module>
+		<module>../org.agentgui.lib.hypericSigar</module>
+		<module>../org.agentgui.lib.jFreeChart</module>
+		<module>../org.agentgui.lib.jade</module>
+		<module>../org.agentgui.lib.jep</module>
+		<module>../org.agentgui.lib.jung</module>
+		<module>../org.agentgui.lib.mySQL</module>
+		<module>../org.agentgui.lib.oidc</module>
+		<module>../org.agentgui.lib.scimark</module>
+	</modules>
 </project>

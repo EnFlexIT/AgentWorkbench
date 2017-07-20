@@ -5,7 +5,7 @@
 	<artifactId>org.agentgui.lib.oidc</artifactId>
 	<version>5.17.1-SNAPSHOT</version>
 
-	<packaging>eclipse-plugin</packaging>
+	<packaging>pom</packaging>
 
 	<properties>
 		<tycho-version>1.0.0</tycho-version>
@@ -40,4 +40,10 @@
 		</plugins>
 	</build>
 
+	<parent>
+		<groupId>agentgui.core</groupId>
+		<artifactId>org.agentgui.core</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../org.agentgui.core</relativePath>
+	</parent>
 </project>

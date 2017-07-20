@@ -3,8 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>agentgui.scimark</groupId>
 	<artifactId>org.agentgui.lib.scimark</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
-	<packaging>eclipse-plugin</packaging>
+	<packaging>pom</packaging>
 
 	<properties>
 		<tycho-version>1.0.0</tycho-version>
@@ -38,4 +37,10 @@
 			</plugin>
 		</plugins>
 	</build>
+	<parent>
+		<groupId>agentgui.core</groupId>
+		<artifactId>org.agentgui.core</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../org.agentgui.core</relativePath>
+	</parent>
 </project>
