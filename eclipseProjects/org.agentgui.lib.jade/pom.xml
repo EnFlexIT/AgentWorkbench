@@ -5,44 +5,13 @@
 	<artifactId>org.agentgui.lib.jade</artifactId>
 	<version>4.4.0-SNAPSHOT</version>
 
-	<packaging>pom</packaging>
+		<packaging>eclipse-plugin</packaging>
 
-	<properties>
-		<tycho-version>1.0.0</tycho-version>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>eclipse-neon</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/neon</url>
-		</repository>
-	</repositories>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-		</plugins>
-	</build>
 	<parent>
-		<groupId>agentgui.core</groupId>
-		<artifactId>org.agentgui.core</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
-		<relativePath>../org.agentgui.core</relativePath>
+		<groupId>agentgui.buildGlobals</groupId>
+		<artifactId>org.agentgui.buildGlobals</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../org.agentgui.buildGlobals</relativePath>
 	</parent>
+	
 </project>
