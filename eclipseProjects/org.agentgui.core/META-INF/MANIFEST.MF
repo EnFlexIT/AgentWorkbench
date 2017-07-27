@@ -6,8 +6,8 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.osgi.services;bundle-version="3.5.100",
- org.eclipse.e4.core.di;bundle-version="1.6.1",
+ org.eclipse.osgi.services,
+ org.eclipse.e4.core.di,
  org.eclipse.ui,
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
  org.agentgui.lib.oidc;bundle-version="5.17.1",

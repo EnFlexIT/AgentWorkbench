@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="org.agentgui" sequenceNumber="12">
+<?pde version="3.8"?><target name="org.agentgui" sequenceNumber="15">
 <locations>
+<location id="org.agentgui.feature" path="${project_loc}\.." type="Feature"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.12.0.v20170209-1843"/>
 <unit id="org.eclipse.rcp.feature.group" version="4.6.3.v20170301-0400"/>
@@ -8,7 +9,6 @@
 <unit id="org.eclipse.platform.sdk" version="4.6.3.M20170301-0400"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.6"/>
 </location>
-<location id="org.agentgui" path="${project_loc}\.." type="Feature"/>
 </locations>
 <includeBundles>
 <plugin id="com.ibm.icu"/>
