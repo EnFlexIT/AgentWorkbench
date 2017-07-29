@@ -181,7 +181,7 @@ public class ProjectBundleLoader {
 	/**
 	 * Install and start bundle.
 	 *
-	 * @param bundleName the bundle name
+	 * @param locationID the location ID
 	 * @throws BundleException the bundle exception
 	 */
 	public void installAndStartBundle(String locationID) throws BundleException {
@@ -196,7 +196,7 @@ public class ProjectBundleLoader {
 		
 	}
 	/**
-	 * Stops and uninstalls the current bundle.
+	 * Stops and un-installs the current bundle.
 	 */
 	public void stopAndUninstallBundles() {
 		Vector<Bundle> bundlesToRemove = new Vector<>(this.getBundleVector());

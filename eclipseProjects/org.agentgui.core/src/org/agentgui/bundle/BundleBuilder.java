@@ -85,6 +85,7 @@ public class BundleBuilder {
 	private ArrayList<File> regularJars;
 	private HashMap<File, List<String>> regularJarsPackagesHashMap; 
 	
+	
 	/**
 	 * Instantiates a new bundle builder.
 	 *

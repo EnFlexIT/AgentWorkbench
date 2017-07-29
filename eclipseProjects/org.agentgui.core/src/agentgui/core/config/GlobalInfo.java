@@ -130,6 +130,9 @@ public class GlobalInfo {
 	// --- Known OntologyClassVisualisation's of Agent.GUI ------------------
 	private Vector<OntologyClassVisualisation> knownOntologyClassVisualisation = null;
 	
+	// --- PropertyContentProvider ------------------------------------------
+	private PropertyContentProvider propertyContentProvider;
+	
 	// --- File-Properties --------------------------------------------------
 	private ExecutionMode fileExecutionMode;
 	private String processID;
@@ -570,6 +573,13 @@ public class GlobalInfo {
 	}
 	
 	/**
+	 * Returns the relative path to the properties. For a more sophisticated method use {@link #getPathProperty(boolean)} !
+	 * @return the path property
+	 */
+	public static String getPathProperty(){
+		return localPathProperty;
+	}
+	/**
 	 * This method can be invoked in order to get the path to the property folder 'properties\'.
 	 * @param absolute set true if you want to get the full path to this 
 	 * @return the path reference to the property folder
@@ -577,20 +587,48 @@ public class GlobalInfo {
 	public String getPathProperty(boolean absolute){
 		String propPath = null;
 		if (absolute==true) { 
-			propPath =  getFilePathAbsolute(localPathProperty);
+			propPath =  this.getFilePathAbsolute(localPathProperty);
 		} else {
 			propPath = localPathProperty;	
 		}
+		// --- Create directory, if not already there -----
 		this.createDirectoryIfRequired(propPath);
+		// --- Do check with PropertyContentProvider ------
+		this.getPropertyContentProvider(propPath);
+
 		return propPath;
 	}
+	/**
+	 * Returns the property content provider.
+	 * @param pathToProperties the path to properties. May be <code>null</code> in case that PropertyContentProvider is already initiated. 
+	 * @return the property content provider
+	 */
+	private PropertyContentProvider getPropertyContentProvider(String pathToProperties) {
+		if (propertyContentProvider==null) {
+			propertyContentProvider = new PropertyContentProvider(new File(pathToProperties));
+			propertyContentProvider.checkAndProvideFullPropertyContent();
+		}
+		return propertyContentProvider;
+	}
+	/**
+	 * Returns the property content provider.
+	 * @return the property content provider
+	 */
+	public PropertyContentProvider getPropertyContentProvider() {
+		if (propertyContentProvider==null) {
+			String pathToProperties = this.getPathProperty(true);
+			propertyContentProvider = this.getPropertyContentProvider(pathToProperties);
+		}
+		return propertyContentProvider;
+	}
+	
 	/**
 	 * This method will return the concrete path to the property file 'agentgui.ini' relatively or absolute
 	 * @param absolute set true if you want to get the full path to this
 	 * @return the path reference to the property file agentgui.ini
 	 */
 	public String getPathConfigFile(boolean absolute) {
-		return getPathProperty(absolute) + localFileProperties;
+		return this.getPathProperty(absolute) + localFileProperties;
 	}
 	
 	/**
