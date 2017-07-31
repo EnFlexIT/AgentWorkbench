@@ -71,6 +71,7 @@ public class PropertyContentProvider {
 		}
 	}
 	
+	private boolean debug = false;
 	private String propertyDirectoryInBundle;
 	private File propertyDirectory;
 	
@@ -117,6 +118,17 @@ public class PropertyContentProvider {
 			}
 		});
 		
+		// --- Some debug output --------------------------
+		if (this.debug) {
+			if (fileFound==null || fileFound.length==0) {
+				System.out.println("Could not find file " + fileNameToMatch + " in " + this.propertyDirectory.getAbsolutePath() + " => File is to be extracted");	
+			} else {
+				for (int i = 0; i < fileFound.length; i++) {
+					System.out.println("Found file " + fileFound[i].getAbsolutePath());	
+				}
+			}
+		}
+		
 		// --- Could the file be found? -------------------
 		if (fileFound==null || fileFound.length==0) {
 			// --- File not found => extract from bundle --
@@ -133,6 +145,10 @@ public class PropertyContentProvider {
 		String fileName = fileToProvide.toString();
 		String pathProperties = Application.getGlobalInfo().getPathProperty(true);
 		String newfilePath = pathProperties + fileName;
+		
+		if (this.debug) {
+			System.out.println("Extract '" + fileName + "' to " + newfilePath);
+		}
 		
 		InputStream is = null;
 		FileOutputStream fos = null;
