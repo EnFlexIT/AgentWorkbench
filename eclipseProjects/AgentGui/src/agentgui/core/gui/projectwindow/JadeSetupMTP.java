@@ -917,6 +917,9 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable observable, Object updateObject) {
 		
@@ -924,7 +927,9 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			this.refreshDataView();
 		}
 	}
-
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 

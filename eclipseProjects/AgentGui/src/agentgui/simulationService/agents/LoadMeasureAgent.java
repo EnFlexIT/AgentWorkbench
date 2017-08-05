@@ -223,7 +223,6 @@ public class LoadMeasureAgent extends Agent {
 		}
 		if (loadDialog!=null) {
 			this.getSystemLoadDialog().setVisible(false);
-			this.getSystemLoadDialog().dispose();
 			this.setSystemLoadDialog(null);	
 		}
 		if (threadDialog!=null) {
