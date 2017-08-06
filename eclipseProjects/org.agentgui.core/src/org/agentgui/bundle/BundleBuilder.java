@@ -42,10 +42,24 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.agentgui.bundle.evaluation.BundleEvaluator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import agentgui.core.application.Application;
 import agentgui.core.common.FileCopier;
@@ -72,8 +86,9 @@ public class BundleBuilder {
 	}
 	
 	public static final String MANIFEST_MF = "MANIFEST.MF";
-	public static final String CLASS_LOAD_SERVICE_JAR = "ClassLoadService.jar";
+	public static final String CLASS_LOAD_SERVICE_JAR = "classLoadService.jar";
 	public static final String CLASS_LOAD_SERVICE_XML = "classLoadService.xml";
+	public static final String CLASS_LOAD_SERVICE_NAME = "ClassLoadServiceImpl";
 	public static final String ALLWOED_BUNDLE_PREFIX = "org.agentgui";
 	
 	private ArrayList<String> allowedFileSuffixes;
@@ -352,6 +367,8 @@ public class BundleBuilder {
 			for (File jarFile : this.getRegularJars()) {
 				// --- Get packages for each jar-file ---------------
 				List<String> packageNames = this.getRegularJarsPackagesHashMap().get(jarFile);
+				if (packageNames==null) continue;
+				
 				for (int i = 0; i < packageNames.size(); i++) {
 					String packageName = packageNames.get(i);
 					if (exportPackageString.length()==0) {
@@ -516,6 +533,7 @@ public class BundleBuilder {
 	// ----------------------------------------------------
 	/**
 	 * Move class load service files.
+	 * @param serviceName the service name for the ClassLoadService
 	 */
 	public void moveClassLoadServiceFiles() {
 		
@@ -527,7 +545,7 @@ public class BundleBuilder {
 		File destinCLSjar = new File(this.getBundleDirectory() + File.separator + CLASS_LOAD_SERVICE_JAR);
 		File destinCLSxml = new File(this.getBundleDirectory() + File.separator + CLASS_LOAD_SERVICE_XML);
 		
-		// --- Move the jar file --------------------------
+		// --- Move the jar file ------------------------------------
 		if (sourceCLSjar.exists()==true) {
 			if (destinCLSjar.exists()==true) {
 				destinCLSjar.delete();
@@ -541,15 +559,59 @@ public class BundleBuilder {
 			throw new RuntimeException("ClassLoadService-Files: Could not find file '" + sourceCLSjar + "'.");
 		}
 		
-		// --- Move the xml file --------------------------
+		// --- Move the xml file ------------------------------------
 		if (sourceCLSxml.exists()==true) {
 			if (destinCLSxml.exists()==true) {
 				destinCLSxml.delete();
 			}
 			new FileCopier().copyFile(sourceCLSxml.getAbsolutePath(), destinCLSxml.getAbsolutePath());
+			// --- Edit the destination service description --------- 
+			this.setServiceDescriptionName(destinCLSxml);
 			
 		} else {
 			throw new RuntimeException("ClassLoadService-Files: Could not find file '" + sourceCLSxml + "'.");
+		}
+		
+	}
+	/**
+	 * Sets the service description name.
+	 *
+	 * @param serviceDescriptionFile the service description file
+	 * @param serviceName the service name
+	 */
+	private void setServiceDescriptionName(File serviceDescriptionFile) {
+		
+		String newServiceName = this.getSymbolicBundleName() + "." + CLASS_LOAD_SERVICE_NAME;
+		
+		try {
+			// --- Open the XML document ------------------
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(serviceDescriptionFile);
+			
+			// --- Get the XML root/component element -----
+			Node component = doc.getFirstChild();
+			NamedNodeMap componentAttr = component.getAttributes();
+			Node nameAttr = componentAttr.getNamedItem("name");
+			nameAttr.setTextContent(newServiceName);
+			
+			// --- Save document in XML file --------------	
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(serviceDescriptionFile);
+			transformer.transform(source, result);
+			
+		} catch (ParserConfigurationException pcEx) {
+			pcEx.printStackTrace();
+		} catch (SAXException saxEx) {
+			saxEx.printStackTrace();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		} catch (TransformerConfigurationException tcEx) {
+			tcEx.printStackTrace();
+		} catch (TransformerException tEx) {
+			tEx.printStackTrace();
 		}
 		
 	}

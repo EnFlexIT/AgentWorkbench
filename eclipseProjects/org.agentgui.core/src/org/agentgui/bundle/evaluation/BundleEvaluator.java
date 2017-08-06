@@ -407,7 +407,7 @@ public class BundleEvaluator {
 		return this.getClasses(bundle, null);
 	}
 	/**
-	 * Returns the class references of the specified bundle (maybe quite time consuming, especially without package filter).
+	 * Returns the class references of the specified bundle (may be quite time consuming, especially without package filter).
 	 * 
 	 * @param bundle the bundle to evaluate 
 	 * @param packageFilter the package filter; maybe <code>null</code>, which will return all classes from the bundle
@@ -424,52 +424,52 @@ public class BundleEvaluator {
 		if (packageFilter!=null) {
 			packagePath = packageFilter.replace(".", "/");
 			if (packagePath.startsWith("/")==false) packagePath = "/" + packagePath;
-			if (packagePath.endsWith("/")==false) packagePath = packagePath + "/";
+			if (packagePath.endsWith("/")  ==false) packagePath = packagePath + "/";
 		}
 		
 		// --- Checking class files ---------------------------------
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", BundleWiring.LISTRESOURCES_RECURSE);
-		for (String resource : resources) {
-
-			// --- Get a suitable class name ------------------------
-			String className = this.getClassName(resource);
-			if (className!=null) {
-				
-				try {
-					// ---- Try to load the class into the bundle ----------- 
-					Class<?> clazz = bundle.loadClass(className);
-					if (this.getSourceBundleOfClass(clazz)==bundle) {
-						bundleClasses.add(clazz);
-					}
+		if (bundleWiring!=null) {
+			Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", BundleWiring.LISTRESOURCES_RECURSE);
+			for (String resource : resources) {
+				// --- Get a suitable class name --------------------
+				String className = this.getClassName(resource);
+				if (className!=null) {
 					
-				} catch (IllegalStateException isfEx) {
-					//System.err.println("IllegalStateException for '" + className + "': " + isfEx.getMessage() );
-					//ex.printStackTrace();
-				} catch (ClassNotFoundException cnfEx) {
-					//System.err.println("ClassNotFoundException for '" + className + "': " + cnfEx.getMessage() );
-					//ex.printStackTrace();
-				} catch (NoClassDefFoundError ncDefEx) {
-					//System.err.println("NoClassDefFoundError for '" + className + "': " + ncDefEx.getMessage() );
-					//ex.printStackTrace();
-				} catch (IllegalAccessError iae) {
-					//System.err.println("IllegalAccessError for '" + className + "': " + iae.getMessage() );
-					//ex.printStackTrace();
+					try {
+						// ---- Load the class into the bundle ------ 
+						Class<?> clazz = bundle.loadClass(className);
+						if (this.getSourceBundleOfClass(clazz)==bundle) {
+							bundleClasses.add(clazz);
+						}
+						
+					} catch (ClassNotFoundException cnfEx) {
+						//ex.printStackTrace();
+					} catch (NoClassDefFoundError ncDefEx) {
+						//ex.printStackTrace();
+					} catch (IllegalStateException isfEx) {
+						//ex.printStackTrace();
+					} catch (IllegalAccessError iae) {
+						//ex.printStackTrace();
+					}
 				}
 			}
-		}
-		
-		// --- Check which jars are available in the bundle ---------
- 		if (bundle.getSymbolicName().equals(PlugInActivator.PLUGIN_ID)==false) {
-			Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
-			if (bundleJars!=null) {
-				while (bundleJars.hasMoreElements()) {
-					URL url = (URL) bundleJars.nextElement();
-					bundleClasses.addAll(this.getJarClasses(bundle, url));
+			
+			// ------------------------------------------------------
+			// --- If the bundle wiring worked, check for jars ------ 
+			// ------------------------------------------------------			
+	 		if (bundle.getSymbolicName().equals(PlugInActivator.PLUGIN_ID)==false) {
+				// --- Check for available jars in the bundle--------
+				Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
+				if (bundleJars!=null) {
+					while (bundleJars.hasMoreElements()) {
+						URL url = (URL) bundleJars.nextElement();
+						bundleClasses.addAll(this.getJarClasses(bundle, url));
+					}
 				}
 			}
+			
 		}
-		
 		return bundleClasses;
 	}
 	

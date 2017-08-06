@@ -3,7 +3,7 @@ package org.agentgui.bundle.evaluation;
 
 /**
  * The Class ClassLocaton is used to describe the bundle location 
- * and the filter that found the call.
+ * and the filter that found the class.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
