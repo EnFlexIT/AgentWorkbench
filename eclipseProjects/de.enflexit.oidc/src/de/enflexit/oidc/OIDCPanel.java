@@ -74,15 +74,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private JLabel jLabelResult;
 
 	/**
-	 * Instantiates a new OIDC panel.
-	 * @param owner the owner
-	 */
-	public OIDCPanel(OIDCAuthorization owner) {
-		this();
-		this.owner = owner;
-	}
-
-	/**
 	 * Sets the parent.
 	 *
 	 * @param parent the parent
@@ -96,8 +87,9 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	/**
 	 * Instantiates a new OIDC panel.
 	 */
-	private OIDCPanel() {
+	public OIDCPanel(OIDCAuthorization owner) {
 		super();
+		this.owner = owner;
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
 
