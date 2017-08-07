@@ -10,9 +10,7 @@
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateSite>http://update.agentgui.org</updateSite>
     <environmentModel>none</environmentModel>
-    <projectResources>
-        <projectResource>\jar\PlugInExample.jar</projectResource>
-    </projectResources>
+    <projectResources/>
     <plugins>
         <className>agentproject.PlugInExample</className>
     </plugins>

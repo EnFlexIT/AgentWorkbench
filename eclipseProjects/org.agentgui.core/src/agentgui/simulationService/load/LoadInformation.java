@@ -98,15 +98,15 @@ public class LoadInformation  {
 	 */
 	public double getAvgCycleTime() {
 		
-		if (this.cycleTimeVector.size()==0) {
-			return 0;
-		}
+		if (this.cycleTimeVector.size()==0) return 0;
 		
 		long cycleTimeSum = 0;
 		Long[] currentCycleTimeArray = new Long[cycleTimeVector.size()];
 		currentCycleTimeArray = cycleTimeVector.toArray(currentCycleTimeArray);
 		for (int i = 0; i < currentCycleTimeArray.length; i++) {
-			cycleTimeSum += currentCycleTimeArray[i];
+			if (currentCycleTimeArray[i]!=null) {
+				cycleTimeSum += currentCycleTimeArray[i];
+			}
 		}		
 		return (double)cycleTimeSum/(double)currentCycleTimeArray.length;
 	}

@@ -67,8 +67,11 @@ public class ProjectBundleLoader {
 	}
 	
 	/**
-	 * Returns the symbolic bundle name to be loaded or already loaded.
-	 * @return the symbolic bundle name
+	 * Returns the symbolic bundle name for the current project. In case that the
+	 * bundle was not loaded yet, the method return a name suggestion. In case that
+	 * the bundle was already loaded, the method returns its name.
+	 *  
+	 * @return the symbolic bundle name of the projects bundle
 	 */
 	private String getSymbolicBundleName() {
 		
@@ -114,8 +117,7 @@ public class ProjectBundleLoader {
 	}
 	
 	/**
-	 * Gets the bundle builder.
-	 *
+	 * Returns the instance of the {@link BundleBuilder} for this project.
 	 * @return the bundle builder
 	 */
 	private BundleBuilder getBundleBuilder() {
@@ -126,7 +128,8 @@ public class ProjectBundleLoader {
 	}
 	
 	/**
-	 * @return the bundle
+	 * Returns the bundle vector that contains all bundles loaded by the current project. 
+	 * @return the bundle vector
 	 */
 	public Vector<Bundle> getBundleVector() {
 		if (bundleVector==null) {
@@ -202,9 +205,13 @@ public class ProjectBundleLoader {
 		Vector<Bundle> bundlesToRemove = new Vector<>(this.getBundleVector());
 		for (Bundle bundle: bundlesToRemove) {
 			try {
-				bundle.stop();
-				bundle.uninstall();
+				
+				if (bundle.getState()==Bundle.ACTIVE) {
+					bundle.stop();
+					bundle.uninstall();
+				}
 				this.getBundleVector().remove(bundle);
+				
 			} catch (BundleException bEx) {
 				bEx.printStackTrace();
 			}
