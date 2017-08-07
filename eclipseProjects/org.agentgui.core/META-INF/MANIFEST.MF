@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.core.di,
  org.eclipse.ui,
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
- org.agentgui.lib.oidc;bundle-version="5.17.1",
  org.agentgui.lib.scimark;bundle-version="2.0.0",
  org.agentgui.lib.hypericSigar;bundle-version="1.6.4",
  org.agentgui.lib.jade;bundle-version="4.4.0",
@@ -18,7 +17,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.agentgui.lib.jFreeChart;bundle-version="1.0.15",
  org.agentgui.lib.jep;bundle-version="2.3.1",
  org.agentgui.lib.jung;bundle-version="2.0.1",
- org.agentgui.lib.mySQL;bundle-version="5.0.8"
+ org.agentgui.lib.mySQL;bundle-version="5.0.8",
+ de.enflexit.oidc;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
  JavaSE-1.8
 Bundle-ActivationPolicy: lazy
@@ -89,15 +89,7 @@ Export-Package: agentgui.core.application;
    agentgui.core.project,
    agentgui.core.environment,
    agentgui.simulationService.ontology,
-   javax.swing",
- agentgui.core.config.auth;
-  uses:="com.nimbusds.jwt,
-   com.nimbusds.openid.connect.sdk.op,
-   net.minidev.json,
-   com.nimbusds.oauth2.sdk.token,
-   com.nimbusds.oauth2.sdk.id,
-   javax.net.ssl,
-   javax.swing",
+   javax.swing";
  agentgui.core.database;uses:="com.mysql.jdbc",
  agentgui.core.environment;
   uses:="agentgui.core.project,
@@ -357,3 +349,5 @@ Export-Package: agentgui.core.application;
  org.agentgui.classLoadService,
  org.agentgui.extensions
 Service-Component: classLoadService.xml 
+Import-Package: de.enflexit.oidc,
+ de.enflexit.api

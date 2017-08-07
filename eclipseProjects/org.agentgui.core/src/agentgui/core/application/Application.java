@@ -47,9 +47,6 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.config.auth.OIDCAuthorization;
-import agentgui.core.config.auth.OIDCPanel;
-import agentgui.core.config.auth.Trust;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.ChangeDialog;
@@ -67,6 +64,11 @@ import agentgui.logging.components.JPanelConsole;
 import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
+import de.enflexit.oidc.OIDCAuthorization;
+import de.enflexit.oidc.OIDCPanel;
+import de.enflexit.oidc.OIDCResourceAvailabilityHandler;
+import de.enflexit.oidc.Trust;
+import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 
 /**
  * This is the main class of the application containing the main-method for the program execution.<br> 
@@ -850,7 +852,22 @@ public class Application {
 	 */
 	public static void showAuthenticationDialog() {
 		try {
+			Application.getInstance();
+			OIDCAuthorization.getInstance().setIssuerURI(Application.getGlobalInfo().getOIDCIssuerURI());
+			OIDCAuthorization.getInstance().setTranslator(Language.getInstance());
 			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
+			OIDCAuthorization.getInstance().setAvailabilityHandler( new OIDCResourceAvailabilityHandler() {
+				@Override
+				public void onResourceAvailable(URLProcessor urlProcessor) {
+					Application.getInstance();
+					Application.getGlobalInfo().setOIDCUsername(OIDCAuthorization.getInstance().getLastSuccessfulUser());
+				}
+				
+				@Override
+				public boolean onAuthorizationNecessary(OIDCAuthorization oidcAuthorization) {
+					return true; // show the login panel
+				}
+			});
 			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), mainWindow);
 		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
 //			e.printStackTrace();

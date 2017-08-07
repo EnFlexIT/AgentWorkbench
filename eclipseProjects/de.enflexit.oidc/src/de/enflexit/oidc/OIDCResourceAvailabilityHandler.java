@@ -26,22 +26,28 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.config.auth;
+package de.enflexit.oidc;
 
-import agentgui.core.config.auth.OIDCAuthorization.URLProcessor;
+import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 
 /**
  * Implement this interface e.g. anonymously on the fly to react on the availability (after login) of a resource protected by OIDC to realize a two-step process.
- * Pass it to @see {@link agentgui.core.config.auth.OIDCAuthorization#setAvailabilityHandler(OIDCResourceAvailabilityHandler)}
+ * Pass it to @see {@link de.enflexit.oidc.OIDCAuthorization#setAvailabilityHandler(OIDCResourceAvailabilityHandler)}
  */
 public interface OIDCResourceAvailabilityHandler {
 	
 	/**
-	 * This method is called by the @see {@link agentgui.core.config.auth.OIDCAuthorization#authorizeByUserAndPW(String, String)} method, as soon as the resource becomes available (directly or after login etc.). It has to be implemented by a descendant class.
+	 * This method is called by the @see {@link de.enflexit.oidc.OIDCAuthorization#authorizeByUserAndPW(String, String)} method, as soon as the resource becomes available (directly or after login etc.). It has to be implemented by a descendant class.
 	 *
 	 * @param urlProcessor the URLProcessor which was used to establish the connection and from where the return values can be acquired.
 	 */
 	public void onResourceAvailable(URLProcessor urlProcessor);
 
-	public void onAuthorizationNecessary(OIDCAuthorization oidcAuthorization);
+	/**
+	 * This method is called by the @see {@link de.enflexit.oidc.OIDCAuthorization#authorizeByUserAndPW(String, String)} method, if the resource is not available without authorization.
+	 *
+	 * @param oidcAuthorization the OIDCAuthorization object from where the return values can be acquired.
+	 * @return standard handling defines, whether the authorization should be handled via the default method, i.e. showing a login panel
+	 */
+	public boolean onAuthorizationNecessary(OIDCAuthorization oidcAuthorization);
 }

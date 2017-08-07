@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.config.auth;
+package de.enflexit.oidc;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -48,9 +48,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 
 /**
  * The Class OIDCPanel.
@@ -76,7 +73,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private JButton jButtonConnect;
 	private JLabel jLabelResult;
 
-	
 	/**
 	 * Instantiates a new OIDC panel.
 	 * @param owner the owner
@@ -166,7 +162,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		if (jLabelHeader==null) {
 			jLabelHeader = new JLabel();
 			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelHeader.setText("Agent.GUI & EOM: " + Language.translate("Web Service Authentifizierung"));
+			jLabelHeader.setText("Agent.GUI & EOM: " + owner.translate(this, "Web Service Authentifizierung"));
 		}
 		return jLabelHeader;
 	}
@@ -176,7 +172,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelUsername() {
 		if (jLabelUsername == null) {
-			jLabelUsername = new JLabel(Language.translate("Benutzername"));
+			jLabelUsername = new JLabel(owner.translate(this, "Benutzername"));
 			jLabelUsername.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelUsername;
@@ -200,7 +196,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelPassword() {
 		if (jLabelPassword == null) {
-			jLabelPassword = new JLabel(Language.translate("Passwort"));
+			jLabelPassword = new JLabel(owner.translate(this, "Passwort"));
 			jLabelPassword.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelPassword;
@@ -224,7 +220,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 */
 	private JButton getJButtonConnect() {
 		if (jButtonConnect == null) {
-			jButtonConnect = new JButton(Language.translate("Verbinden"));
+			jButtonConnect = new JButton(owner.translate(this, "Verbinden"));
 			jButtonConnect.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonConnect.setForeground(new Color(0, 0, 153));
 			jButtonConnect.setActionCommand(COMMAND_CONNECT);
@@ -249,15 +245,16 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 * Display result.
 	 * 
 	 * @param successful the successful
+	 * @param userName 
 	 */
-	public void displayResult(boolean successful, String message) {
+	public void displayResult(boolean successful, String message, String userName) {
 		this.getJLabelResult().setVisible(true);
 		if (successful) {
-			this.getJLabelResult().setText(Language.translate("Erfolgreich"));
+			this.getJLabelResult().setText(owner.translate(this, "Erfolgreich"));
 			this.getJLabelResult().setForeground(new Color(0, 153, 0));
 			this.getParent().getParent().getParent().setVisible(false);
 		} else {
-			this.getJLabelResult().setText(Language.translate("Fehlgeschlagen")+": "+message);
+			this.getJLabelResult().setText(owner.translate(this, "Fehlgeschlagen")+": "+message);
 			this.getJLabelResult().setForeground(new Color(153, 0, 0));
 		}
 	}
@@ -272,11 +269,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		if (actCMD.equalsIgnoreCase(COMMAND_CONNECT)) {
 			char[] pswd = getJPasswordField().getPassword();
 			String userName = getJTextFieldUsername().getText().trim();
-			Application.getGlobalInfo().setOIDCUsername(userName);
 			try {
-				displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)),null);
+				displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)),null, userName);
 			} catch (URISyntaxException | IOException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
-				displayResult(false, e.getLocalizedMessage());
+				displayResult(false, e.getLocalizedMessage(), null);
 				e.printStackTrace();
 			}
 

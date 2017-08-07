@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.config.auth;
+package de.enflexit.oidc;
 
 import java.io.File;
 import java.io.FileInputStream;

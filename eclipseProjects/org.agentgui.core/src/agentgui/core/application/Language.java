@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
+import de.enflexit.api.Translator;
 
 import agentgui.core.config.GlobalInfo;
 
@@ -67,7 +68,7 @@ import agentgui.core.config.GlobalInfo;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class Language {
+public class Language implements Translator {
 
 	private static Language thisSingleton = new Language(); 
 	private static GlobalInfo globalInfo;
@@ -635,7 +636,9 @@ public class Language {
 		return dictFileLocation;
 	}
 	
-
-	
+	@Override
+	public String dynamicTranslate(String input) {
+		return translate(input);
+	}
 	
 }

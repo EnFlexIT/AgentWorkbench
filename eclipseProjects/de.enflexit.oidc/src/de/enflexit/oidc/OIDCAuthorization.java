@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.config.auth;
+package de.enflexit.oidc;
 
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -53,7 +53,7 @@ import javax.swing.JDialog;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 
-import agentgui.core.application.Application;
+import de.enflexit.api.Translator;
 
 /**
  * This class provides a simple interface to the OpenID Connect authorisation.
@@ -74,7 +74,7 @@ public class OIDCAuthorization {
 	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
 
 	/** The URI of the OIDC provider/issuer. */
-	private String issuerURI = Application.getGlobalInfo().getOIDCIssuerURI();
+	private String issuerURI = "";
 
 	/** The availability handler called when the resource is available. */
 	private OIDCResourceAvailabilityHandler availabilityHandler;
@@ -88,8 +88,14 @@ public class OIDCAuthorization {
 	private String presetUsername;
 
 	private Frame ownerFrame;
-
+	
 	private boolean inited = false;
+
+	Translator translator;
+
+	private File truststoreFile;
+
+	private String lastSuccessfulUser = null;
 
 	/**
 	 * Instantiates a new OIDC authorization.
@@ -149,6 +155,7 @@ public class OIDCAuthorization {
 	 * @throws URISyntaxException
 	 */
 	public void setTrustStore(File truststoreFile) throws URISyntaxException {
+		this.truststoreFile=truststoreFile;
 		getOIDCClient();
 		oidcClient.setTrustStore(truststoreFile);
 	}
@@ -342,6 +349,7 @@ public class OIDCAuthorization {
 
 		authRedirection = urlProcessor.prepare(oidcClient.getRedirectURI().toURL()).process();
 		if (authRedirection == null) { 	// authenticated
+			lastSuccessfulUser = username;
 			if (availabilityHandler != null) {
 				availabilityHandler.onResourceAvailable(urlProcessor);
 			}
@@ -377,9 +385,11 @@ public class OIDCAuthorization {
 			} catch (ParseException e) {
 				throw new IOException("OIDC ParseException");
 			}
+			boolean showDialog = true;
 			if (availabilityHandler != null) {
-				availabilityHandler.onAuthorizationNecessary(this);
-			} else {
+				showDialog = availabilityHandler.onAuthorizationNecessary(this);
+			} 
+			if(showDialog){
 				getDialog(presetUsername, ownerFrame).setVisible(true);
 			}
 			return false;
@@ -406,6 +416,21 @@ public class OIDCAuthorization {
 		this.ownerFrame = ownerFrame;
 
 		return accessResource();
+	}
+
+	public void setTranslator(Translator translator) {
+		this.translator = translator;
+	}
+
+	String translate(OIDCPanel oidcPanel, String input){
+		if(translator!=null){
+			return translator.dynamicTranslate(input);
+		}
+		return input;
+	}
+
+	public String getLastSuccessfulUser() {
+		return lastSuccessfulUser;
 	}
 
 	/**
@@ -520,7 +545,7 @@ public class OIDCAuthorization {
 
 			connection = (HttpsURLConnection) requestURL.openConnection();
 			connection.setInstanceFollowRedirects(false);
-			Trust.trustSpecific(connection, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
+			Trust.trustSpecific(connection, truststoreFile);
 
 			connection.setRequestMethod("GET");
 			if (accessToken != null) {
