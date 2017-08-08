@@ -92,6 +92,8 @@
 		<module>../org.agentgui.lib.mySQL</module>
 		<module>../org.agentgui.lib.oidc</module>
 		<module>../org.agentgui.lib.scimark</module>
+		<module>../de.enflexit.api</module>
+		<module>../de.enflexit.oidc</module>
 	</modules>
 	
 </project>

@@ -636,6 +636,9 @@ public class Language implements Translator {
 		return dictFileLocation;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String)
+	 */
 	@Override
 	public String dynamicTranslate(String input) {
 		return translate(input);
