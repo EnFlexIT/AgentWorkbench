@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OIDC
-Bundle-SymbolicName: org.agentgui.lib.oidc
+Bundle-SymbolicName: de.enflexit.oidc.libs
 Bundle-Version: 5.17.1
 Bundle-ClassPath: activation-1.1.jar,
  commons-collections4-4.1.jar,
