@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.core.runtime,
  de.enflexit.oidc;bundle-version="1.0.0",
  org.agentgui.lib.mySQL;bundle-version="5.0.8",
  org.agentgui.lib.jep;bundle-version="2.3.1",
- org.agentgui.lib.googleTranslate;bundle-version="0.97.0"
+ org.agentgui.lib.googleTranslate;bundle-version="0.97.0",
+ de.enflexit.common;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
  JavaSE-1.8
 Bundle-ActivationPolicy: lazy
@@ -81,7 +82,6 @@ Export-Package: agentgui.core.application;
    agentgui.core.charts.xyChart,
    javax.swing",
  agentgui.core.classLoadService,
- agentgui.core.common;uses:="javax.swing",
  agentgui.core.common.csv;uses:="javax.swing.table,javax.swing",
  agentgui.core.config;
   uses:="agentgui.core.ontologies.gui,
