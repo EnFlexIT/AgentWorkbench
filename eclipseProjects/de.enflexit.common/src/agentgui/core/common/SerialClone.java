@@ -64,7 +64,7 @@ public class SerialClone {
 			throw new IllegalArgumentException(e);
 		} catch (StackOverflowError e) {
 			throw new IllegalArgumentException(e);
-		} 
+		}
 	}
 
 	/**

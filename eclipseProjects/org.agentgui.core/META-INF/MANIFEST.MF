@@ -10,17 +10,17 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.core.di,
  org.eclipse.ui,
  de.enflexit.api;bundle-version="1.0.0",
+ de.enflexit.common;bundle-version="1.0.0",
+ de.enflexit.oidc;bundle-version="1.0.0",
  org.agentgui.lib.scimark;bundle-version="2.0.0",
  org.agentgui.lib.hypericSigar;bundle-version="1.6.4",
  org.agentgui.lib.jade;bundle-version="4.4.0",
  org.agentgui.lib.jFreeChart;bundle-version="1.0.15",
  org.agentgui.lib.jung;bundle-version="2.0.1",
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
- de.enflexit.oidc;bundle-version="1.0.0",
  org.agentgui.lib.mySQL;bundle-version="5.0.8",
  org.agentgui.lib.jep;bundle-version="2.3.1",
- org.agentgui.lib.googleTranslate;bundle-version="0.97.0",
- de.enflexit.common;bundle-version="1.0.0"
+ org.agentgui.lib.googleTranslate;bundle-version="0.97.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
  JavaSE-1.8
 Bundle-ActivationPolicy: lazy

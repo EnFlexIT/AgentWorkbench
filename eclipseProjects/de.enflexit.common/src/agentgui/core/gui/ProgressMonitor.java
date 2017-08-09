@@ -51,9 +51,6 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
 
 /**
  * The Class ProgressMonitor can be used in order to display the progress of 
@@ -63,21 +60,21 @@ import agentgui.core.config.GlobalInfo;
  */
 public class ProgressMonitor implements ActionListener {
 
-	private Container progressMonitorContainer = null;
-	
-	private JPanel jContentPane = null;
-	private JLabel jLabelHeader = null;
-	private JPanel jPanelDummy = null;
-	
-	private JLabel jLabelProgress = null;
-	private JProgressBar jProgressBarDownload = null;
-	private JButton jButtonCancel = null;
+	private Frame owner;
 
-	private Frame owner=null;
+	private Container progressMonitorContainer;
+
+	private JPanel jContentPane;
+	private JLabel jLabelHeader;
+	private JPanel jPanelDummy;
 	
-	private String windowTitle = "Agent.GUI - Progress";  //  @jve:decl-index=0:
+	private JLabel jLabelProgress;
+	private JProgressBar jProgressBarDownload;
+	private JButton jButtonCancel;
+
+	private String windowTitle = "Agent.GUI - Progress";
 	private String headerText = "Agent.GUI - Progress";
-	private String progressText = "Download";  //  @jve:decl-index=0:
+	private String progressText = "Download";
 	
 	private boolean allow2Cancel = true;
 	private boolean canceled = false;
@@ -356,8 +353,7 @@ public class ProgressMonitor implements ActionListener {
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
-			jButtonCancel.setText("Abbruch");
-			jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
+			jButtonCancel.setText(Language.translate("Abbruch"));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.addActionListener(this);

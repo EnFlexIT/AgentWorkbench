@@ -34,6 +34,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,10 +49,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
-
 /**
  * The ZipperMonitor class will be used within the Zipper-class of this package.<br>
  * It will show the progress of zipping or unzipping a folder structure and will<br>
@@ -65,25 +62,33 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private JPanel jContentPane = null;
+	private String appName;
+	private Image iconImage;
 	
-	private JLabel jLabelProcess = null;
-	private JProgressBar jProgressBarProcess = null;
+	private JPanel jContentPane;
 	
-	private JLabel jLabelSingleFile = null;
-	private JButton jButtonCancel = null;
+	private JLabel jLabelProcess;
+	private JProgressBar jProgressBarProcess;
+	
+	private JLabel jLabelSingleFile;
+	private JButton jButtonCancel;
 	private boolean canceled = false;
 	
-	private JLabel jLabelDummy = null;
+	private JLabel jLabelDummy;
 	
 
 	/**
-	 * Constructor of this class
+	 * Constructor of this class.
+	 *
 	 * @param owner the Frame from which the dialog is displayed
+	 * @param applicationName the current application name
+	 * @param iconImage the icon image that can be used as a decorator for the ZipperMonitor
 	 */
-	public ZipperMonitor(Frame owner) {
+	public ZipperMonitor(Frame owner, String applicationName, Image iconImage) {
 		super(owner);
-		initialize();
+		this.appName = applicationName;
+		this.iconImage = iconImage;
+		this.initialize();
 	}
 	/**
 	 * This method initialises this
@@ -93,13 +98,12 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		this.setSize(542, 194);
 		this.setContentPane(getJContentPane());
 		
-		GlobalInfo gInfo = this.getGlobalInfo();
-		if (gInfo!=null) {
-			this.setTitle(gInfo.getApplicationTitle() + ": Zip-Monitor");	
+		if (this.appName!=null) {
+			this.setTitle(this.appName + ": Zip-Monitor");	
 		} else {
 			this.setTitle("Zip-Monitor");
 		}
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(this.iconImage);
 		this.setLookAndFeel();
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -111,20 +115,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		this.getJButtonCancel().setText(Language.translate("Abbruch"));
 		
 	}
-
-	/**
-	 * Returns the current instance of the {@link GlobalInfo}.
-	 * @return the global info
-	 */
-	private GlobalInfo getGlobalInfo() {
-		GlobalInfo gInfo = null;
-		try {
-			gInfo = Application.getGlobalInfo();
-		} catch (Exception ex) {
-//			ex.printStackTrace();
-		}
-		return gInfo;
-	}
+	
 	/**
 	 * Sets the look and feel of the dialog similar to the core application window
 	 */
@@ -300,4 +291,4 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	}
 
 	
-}  //  @jve:decl-index=0:visual-constraint="59,16"
+} 

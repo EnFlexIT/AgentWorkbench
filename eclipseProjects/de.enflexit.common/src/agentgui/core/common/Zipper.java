@@ -42,8 +42,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.SwingUtilities;
 
-import agentgui.core.application.Application;
-
 /**
  * This class can be used in order zip or unzip a folder structure.<br><br>
  * Example of the usage for zipping:<br>
