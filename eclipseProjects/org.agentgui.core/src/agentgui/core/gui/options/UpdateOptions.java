@@ -106,14 +106,14 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractOptionTab#getTitleAddition()
+	 * @see de.enflexit.common.swing.options.AbstractOptionTab#getTitleAddition()
 	 */
 	@Override
 	public String getTitle() {
 		return Language.translate("Update-Konfiguration");
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractOptionTab#getTabToolTipText()
+	 * @see de.enflexit.common.swing.options.AbstractOptionTab#getTabToolTipText()
 	 */
 	@Override
 	public String getTabToolTipText() {

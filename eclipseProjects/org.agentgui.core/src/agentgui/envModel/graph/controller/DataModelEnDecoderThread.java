@@ -36,12 +36,13 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.gui.ProgressMonitor;
+import agentgui.core.common.CommonComponentFactory;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
+import de.enflexit.common.swing.ProgressMonitor;
 
 /**
  * The Class DataModelEnDecoderThread encodes or decodes the data model 
@@ -314,7 +315,7 @@ public class DataModelEnDecoderThread extends Thread {
 			}
 	    	
 			// --- Initiate ProgressMonitor ----------------------------- 
-			progressMonitor = new ProgressMonitor(title, header, progress);
+			progressMonitor = CommonComponentFactory.getNewProgressMonitor(title, header, progress);
 			progressMonitor.setAllow2Cancel(false);
 		}
 		return progressMonitor;

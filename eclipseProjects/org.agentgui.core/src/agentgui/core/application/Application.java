@@ -28,7 +28,6 @@
  */
 package agentgui.core.application;
 
-import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -38,7 +37,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Vector;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -64,11 +62,12 @@ import agentgui.logging.components.JPanelConsole;
 import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.oidc.OIDCAuthorization;
+import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 import de.enflexit.oidc.OIDCPanel;
 import de.enflexit.oidc.OIDCResourceAvailabilityHandler;
 import de.enflexit.oidc.Trust;
-import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 
 /**
  * This is the main class of the application containing the main-method for the program execution.<br> 
@@ -165,19 +164,7 @@ public class Application {
 	 */
 	public static boolean isOperatingHeadless() {
 		if (headlessOperation==null) {
-			// --- Do headless check ----------------------
-			JDialog jDialog;
-			try {
-				jDialog = new JDialog();
-				jDialog.validate();
-				jDialog.dispose();
-				jDialog = null;
-				headlessOperation = false;
-				
-			} catch (HeadlessException he) {
-				System.out.println("Headless Execution Mode ...");
-				headlessOperation = true;
-			}
+			headlessOperation = SystemEnvironmentHelper.isHeadlessOperation();
 		}
 		return headlessOperation;
 	}
@@ -1145,7 +1132,6 @@ public class Application {
 	public static Project getProjectFocused() {
 		return projectFocused;
 	}
-
 	
 } // --- End Class ---
 

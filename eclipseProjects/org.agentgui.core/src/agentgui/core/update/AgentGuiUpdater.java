@@ -35,14 +35,15 @@ import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.Zipper;
+import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.config.VersionInfo;
-import agentgui.core.gui.ProgressMonitor;
-import agentgui.simulationService.distribution.Download;
-import agentgui.simulationService.distribution.DownloadThread;
+import de.enflexit.common.swing.ProgressMonitor;
+import de.enflexit.common.transfer.Download;
+import de.enflexit.common.transfer.DownloadThread;
+import de.enflexit.common.transfer.Zipper;
 
 /**
  * The Class AgentGuiUpdater.
@@ -532,7 +533,7 @@ public class AgentGuiUpdater extends Thread {
 
 			String extractFolder = zipFolderFile.getParent() + File.separator + this.localUpdateExtractedFolder;
 			
-			Zipper zipper = new Zipper();
+			Zipper zipper = CommonComponentFactory.getNewZipper();
 			zipper.setHeadlessOperation(visualizeUnzipping);
 			zipper.setUnzipZipFolder(this.localUpdateZipFile);
 			zipper.setUnzipDestinationFolder(extractFolder);
@@ -583,8 +584,8 @@ public class AgentGuiUpdater extends Thread {
 					System.out.println("100 %");
 					
 				} else {
-					// --- Operating with user interface ------------ 
-					ProgressMonitor progressMonitor = new ProgressMonitor("Agent.GUI - Update", "Agent.GUI - Update", "Download");
+					// --- Operating with user interface ------------
+					ProgressMonitor progressMonitor = CommonComponentFactory.getNewProgressMonitor("Agent.GUI - Update", "Agent.GUI - Update", "Download");
 					if (this.askBeforeDownload==true) {
 						progressMonitor.setVisible(true);	
 					}

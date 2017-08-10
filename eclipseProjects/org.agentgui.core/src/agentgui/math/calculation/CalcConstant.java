@@ -61,7 +61,7 @@ public class CalcConstant extends CalcExpression {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.calculation.CalcExpression#getValue()
+	 * @see de.enflexit.common.swing.calculation.CalcExpression#getValue()
 	 */
 	@Override
 	public double getValue() {

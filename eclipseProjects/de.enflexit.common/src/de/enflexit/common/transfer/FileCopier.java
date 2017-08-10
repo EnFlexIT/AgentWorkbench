@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.common;
+package de.enflexit.common.transfer;
 
 import java.io.File;
 import java.io.FileInputStream;

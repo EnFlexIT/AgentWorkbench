@@ -1,4 +1,4 @@
-package agentgui.core.charts.gui;
+package de.enflexit.common.swing;
 
 import java.awt.*;
 import javax.swing.JScrollPane;
@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 *  Taken from https://tips4java.wordpress.com/2008/11/06/wrap-layout/
 */
 public class WrappedFlowLayout extends FlowLayout{
+	
 	private static final long serialVersionUID = 3601912206325698080L;
 
 	/**

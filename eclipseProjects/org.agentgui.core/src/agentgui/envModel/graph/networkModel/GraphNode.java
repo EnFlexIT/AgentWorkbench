@@ -31,7 +31,7 @@ package agentgui.envModel.graph.networkModel;
 import java.awt.geom.Point2D;
 import java.util.Vector;
 
-import agentgui.core.common.SerialClone;
+import de.enflexit.common.SerialClone;
 
 /**
  * This class represents a graph node in an environment model of the type graph / network

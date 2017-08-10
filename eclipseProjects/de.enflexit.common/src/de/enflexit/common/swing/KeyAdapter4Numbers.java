@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.common;
+package de.enflexit.common.swing;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

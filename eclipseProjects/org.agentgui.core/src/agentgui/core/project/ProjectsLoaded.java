@@ -40,13 +40,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.Zipper;
+import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectNewOpen.DialogAction;
+import de.enflexit.common.transfer.Zipper;
 
 /**
  * This class holds the list of the projects, that are currently open
@@ -445,12 +447,12 @@ public class ProjectsLoaded {
 			String zipFolder = projectFile.getAbsolutePath();
 			
 			// --- Import project file as a new project ---
-			Zipper zipper = new Zipper(Application.getMainWindow());
+			Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
 			zipper.setUnzipZipFolder(zipFolder);
 			zipper.setUnzipDestinationFolder(destFolder);
 			
 			// --- Error-Handling -------------------------
-			String rootFolder2Extract = zipper.getRootFolder2Extract();
+			final String rootFolder2Extract = zipper.getRootFolder2Extract();
 			String testFolder = destFolder + rootFolder2Extract;
 			File testFile = new File(testFolder);
 			if (testFile.exists()) {
@@ -461,8 +463,21 @@ public class ProjectsLoaded {
 				return;
 			}
 			
+			// --- Define task after the unzip action -----
+			Runnable afterJobTask = new Runnable() {
+				@Override
+				public void run() {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							Application.getProjectsLoaded().add(rootFolder2Extract);
+						}
+					});
+				}
+			};
+			zipper.setAfterJobTask(afterJobTask);
+			
 			// --- Finally unzip --------------------------
-			zipper.doUnzipProject(rootFolder2Extract);
+			zipper.doUnzipFolder();
 			zipper = null;
 			
 		}		
@@ -563,7 +578,7 @@ public class ProjectsLoaded {
 		String srcFolder = Application.getGlobalInfo().getPathProjects(true) + projectFolder;
 		String zipFolder = projectFile.getAbsolutePath();
 		
-		Zipper zipper = new Zipper(Application.getMainWindow());
+		Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
 		zipper.setExcludePattern(".svn");
 		zipper.setZipFolder(zipFolder);
 		zipper.setZipSourceFolder(srcFolder);

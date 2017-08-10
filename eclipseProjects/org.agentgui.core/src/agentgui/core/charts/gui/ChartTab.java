@@ -60,6 +60,7 @@ import org.jfree.data.general.Series;
 import agentgui.core.charts.ChartModel;
 import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.ChartSettingModel.ChartSettingsUpdateNotification;
+import de.enflexit.common.swing.WrappedFlowLayout;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 

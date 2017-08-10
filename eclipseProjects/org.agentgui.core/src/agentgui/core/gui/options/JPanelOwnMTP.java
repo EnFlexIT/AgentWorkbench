@@ -316,7 +316,7 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setGlobalData2Form()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#setGlobalData2Form()
 	 */
 	@Override
 	public void setGlobalData2Form() {
@@ -338,7 +338,7 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setFormData2Global()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#setFormData2Global()
 	 */
 	@Override
 	public void setFormData2Global() {
@@ -350,7 +350,7 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#refreshView()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#refreshView()
 	 */
 	@Override
 	public void refreshView() {
@@ -379,7 +379,7 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#errorFound()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#errorFound()
 	 */
 	@Override
 	public boolean errorFound() {

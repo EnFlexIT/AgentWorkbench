@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.distribution;
+package de.enflexit.common.transfer;
 
 /**
  * The Class DownloadThread uses the class {@link Download} to ensure 

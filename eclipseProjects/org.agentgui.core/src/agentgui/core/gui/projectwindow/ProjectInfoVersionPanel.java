@@ -43,10 +43,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import agentgui.core.application.Language;
-import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
 import agentgui.core.update.VersionInformation;
+import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
  * The Class ProjectInfoVersionPanel can be used in order to edit the current {@link VersionInformation}.

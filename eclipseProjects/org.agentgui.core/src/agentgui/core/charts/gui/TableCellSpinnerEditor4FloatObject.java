@@ -34,9 +34,10 @@ import java.text.ParseException;
 
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.DefaultEditor;
-import javax.swing.SpinnerNumberModel;
 
-import agentgui.core.common.KeyAdapter4Numbers;
+import de.enflexit.common.swing.KeyAdapter4Numbers;
+
+import javax.swing.SpinnerNumberModel;
 /**
  * JSpinner-based table cell editor for Float objects
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen

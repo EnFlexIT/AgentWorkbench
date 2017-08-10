@@ -1968,7 +1968,7 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * Returns the path to the internal image-package of Agent.GUI (agentgui.core.gui.img)
+	 * Returns the path to the internal image-package of Agent.GUI (de.enflexit.common.swing.img)
 	 * @return path to the images, which are located in our project
 	 */
 	public static String getPathImageIntern(){

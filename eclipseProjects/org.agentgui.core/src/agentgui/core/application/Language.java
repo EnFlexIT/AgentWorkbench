@@ -70,24 +70,6 @@ import agentgui.core.config.GlobalInfo;
  */
 public class Language implements Translator {
 
-	private static Language thisSingleton = new Language(); 
-	private static GlobalInfo globalInfo;
-	
-	/** This is the separator used in the dictionary file */
-	public static final String seperator = ";";
-	
-	private static String newLine;
-	private static String newLineReplacer;
-
-	private static String dictFileLocation64;
-	private static String dictFileLocation;
-
-	private static List<String> dictLineList64 = new ArrayList<String>();
-	private static List<String> dictLineListCSV = new ArrayList<String>();
-	private static Hashtable<String, Integer> dictHash64 = new Hashtable<String, Integer>(); 
-	
-	/** The header for the first column (index=0) of the dictionary */
-	public static final String SOURCE_LANG = "SOURCE_LANGUAGE";	
 	/** Constant for German */
 	public static final String DE = "DE";
 	/** Constant for English */
@@ -98,9 +80,28 @@ public class Language implements Translator {
 	public static final String ES = "ES";
 	/** Constant for French */
 	public static final String FR = "FR";
-	
+
+	/** This is the separator used in the dictionary file */
+	public static final String seperator = ";";
+
+	/** The header for the first column (index=0) of the dictionary */
+	public static final String SOURCE_LANG = "SOURCE_LANGUAGE";	
 	private static final String dictLangHeaderDefault = SOURCE_LANG + seperator + DE + seperator + EN + seperator + IT + seperator + ES + seperator + FR;
 	private static String[] dictLangHeaderArray;
+	
+
+	private static Language thisSingleton = new Language(); 
+	private static GlobalInfo globalInfo;
+	
+	private static String newLine;
+	private static String newLineReplacer;
+
+	private static String dictFileLocation64;
+	private static String dictFileLocation;
+
+	private static List<String> dictLineList64 = new ArrayList<String>();
+	private static List<String> dictLineListCSV = new ArrayList<String>();
+	private static Hashtable<String, Integer> dictHash64 = new Hashtable<String, Integer>(); 
 	
 	/** The currently selected language index of the dictionary-file, which is used in the application */
 	public static Integer currLanguageIndex;
@@ -148,6 +149,22 @@ public class Language implements Translator {
 	public static void useCSVDictionaryFile() {
 		dictLineList64 = dictLineListCSV;
 		proceedLoadedDictionaryLines();
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String)
+	 */
+	@Override
+	public String dynamicTranslate(String expression) {
+		return translate(expression, Language.DE);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String dynamicTranslate(String expression, SourceLangugae sourceLanguage) {
+		return translate(expression, sourceLanguage.toString());
 	}
 	
 	/**
@@ -206,6 +223,7 @@ public class Language implements Translator {
 		}
 		return translationExp; 
 	}
+	
 	
 	/**
 	 * This method will return a new dictionary line for the dictionary.
@@ -634,14 +652,6 @@ public class Language implements Translator {
 			}
 		}
 		return dictFileLocation;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String)
-	 */
-	@Override
-	public String dynamicTranslate(String input) {
-		return translate(input);
 	}
 	
 }

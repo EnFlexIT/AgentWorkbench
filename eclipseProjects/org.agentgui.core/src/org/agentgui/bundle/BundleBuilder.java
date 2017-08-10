@@ -62,8 +62,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import agentgui.core.application.Application;
-import agentgui.core.common.FileCopier;
 import agentgui.core.project.ProjectBundleLoader;
+import de.enflexit.common.transfer.FileCopier;
 
 /**
  * The Class BundleBuilder is able to create OSGI bundles that can be loaded by the {@link ProjectBundleLoader}.<br><br>

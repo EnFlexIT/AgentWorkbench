@@ -4,7 +4,7 @@ Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: agentgui.core.charts.gui,
- agentgui.core.common,
- agentgui.core.gui,
- agentgui.simulationService.distribution
+Export-Package: de.enflexit.common,
+ de.enflexit.common.swing,
+ de.enflexit.common.transfer
+Require-Bundle: de.enflexit.api

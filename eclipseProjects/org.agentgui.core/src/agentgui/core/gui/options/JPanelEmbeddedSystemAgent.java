@@ -639,7 +639,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#refreshView()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#refreshView()
 	 */
 	@Override
 	public void refreshView() {
@@ -672,7 +672,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		}
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setGlobalData2Form()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#setGlobalData2Form()
 	 */
 	@Override
 	public void setGlobalData2Form() {
@@ -715,7 +715,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setFromData2Global()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#setFromData2Global()
 	 */
 	@Override
 	public void setFormData2Global() {
@@ -737,7 +737,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#errorFound()
+	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#errorFound()
 	 */
 	@Override
 	public boolean errorFound() {

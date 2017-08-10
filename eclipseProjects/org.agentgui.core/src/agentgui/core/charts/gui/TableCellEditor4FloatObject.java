@@ -31,7 +31,7 @@ package agentgui.core.charts.gui;
 import java.awt.Component;
 import javax.swing.JTextField;
 
-import agentgui.core.common.KeyAdapter4Numbers;
+import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
  * JTextField-based table cell editor for Float objects.

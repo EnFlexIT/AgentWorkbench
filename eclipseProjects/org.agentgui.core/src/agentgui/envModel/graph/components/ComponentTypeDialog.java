@@ -95,6 +95,7 @@ import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.EdgeShape;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
+
 import javax.swing.JComboBox;
 
 /**

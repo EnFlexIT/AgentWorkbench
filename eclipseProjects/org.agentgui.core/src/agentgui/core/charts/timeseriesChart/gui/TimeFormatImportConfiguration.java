@@ -76,11 +76,11 @@ import javax.swing.event.ChangeListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.ExceptionHandling;
 import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.time.TimeFormatSelection;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.common.ExceptionHandling;
 
 /**
  * The Dialog TimeFormatImportConfiguration is used to set the 

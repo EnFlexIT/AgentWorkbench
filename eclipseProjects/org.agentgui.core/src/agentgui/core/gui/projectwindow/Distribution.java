@@ -61,7 +61,6 @@ import org.agentgui.bundle.classSelection.ClassSelector;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;
@@ -73,6 +72,7 @@ import agentgui.simulationService.balancing.StaticLoadBalancing;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.distribution.JadeRemoteStart;
 import agentgui.simulationService.load.LoadThresholdLevels;
+import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
  * Represents the JPanel/Tab to configure the Distribution mechanisms for

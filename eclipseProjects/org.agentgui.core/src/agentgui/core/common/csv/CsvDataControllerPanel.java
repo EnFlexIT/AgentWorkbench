@@ -53,6 +53,7 @@ import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+
 import java.awt.Font;
 
 /**

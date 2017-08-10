@@ -48,9 +48,9 @@ import javax.xml.bind.Unmarshaller;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.FileCopier;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.common.transfer.FileCopier;
 
 /**
  * This class represents the list of setups available in a {@link Project}.

@@ -26,9 +26,10 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.common;
+package de.enflexit.common.transfer;
 
 import java.awt.Frame;
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,7 +41,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.swing.SwingUtilities;
+import de.enflexit.api.Translator;
+import de.enflexit.common.PathHandling;
 
 /**
  * This class can be used in order zip or unzip a folder structure.<br><br>
@@ -65,7 +67,14 @@ import javax.swing.SwingUtilities;
  */
 public class Zipper extends Thread {
 
-	private Frame owner = null;
+	private Frame owner;
+	
+	private Translator translator;
+	private String applicationName;
+	private Image iconImage;
+	private String lookAndFeelClassReference;
+	
+	private Runnable afterJobTask;
 	
 	private boolean done = false;
 	
@@ -84,38 +93,29 @@ public class Zipper extends Thread {
 	private String unzipZipFolder;
 	private String unzipDestinationFolder;
 	
-	private String projectFolder2Open;
-	
 	
 	/**
 	 * Instantiates a new Zipper.
 	 */
 	public Zipper() {
-		this.initialize();	
+		this(null);	
 	}
 	/**
-	 * Constructor of this class.
-	 * @param owner the owner
+	 * Instantiates a new Zipper.
+	 * @param owner the owner frame of the zipper
 	 */
 	public Zipper(Frame owner) {
 		this.owner = owner;
-		this.initialize();
-	}
-	
-	/**
-	 * Initialize.
-	 */
-	private void initialize() {
 		this.setName("Zipper");
 	}
 	
 	/**
-	 * Return the {@link ZipperMonitor}.
-	 * @return the {@link ZipperMonitor}
+	 * Returns the monitoring visualization.
+	 * @return the monitoring visualization
 	 */
 	private ZipperMonitor getZipperMonitor() {
 		if (this.zipMonitor==null && this.isHeadlessOperation()==false) {
-			this.zipMonitor = new ZipperMonitor(this.owner);	
+			this.zipMonitor = new ZipperMonitor(this.owner, this.getApplicationName(), this.getIconImage(), this.getTranslator(), this.getLookAndFeelClassReference());	
 		}
 		return this.zipMonitor;
 	}
@@ -158,15 +158,86 @@ public class Zipper extends Thread {
 			this.getZipperMonitor().setVisible(false);	
 		}
 		
-		// --- if specified open extracted project ----
-		if (this.projectFolder2Open!=null) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					Application.getProjectsLoaded().add(projectFolder2Open);
-				}
-			});
+		// --- Do the specified after job task ----
+		if (this.getAfterJobTask()!=null) {
+			this.getAfterJobTask().run();
 		}
 		
+	}
+	
+	/**
+	 * Sets the translator.
+	 * @param translator the new translator
+	 */
+	public void setTranslator(Translator translator) {
+		this.translator = translator;
+	}
+	/**
+	 * Returns the translator.
+	 * @return the translator
+	 */
+	protected Translator getTranslator() {
+		return translator;
+	}
+	
+	/**
+	 * Sets the application name.
+	 * @param applicationName the new application name
+	 */
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+	/**
+	 * Gets the application name.
+	 * @return the application name
+	 */
+	private String getApplicationName() {
+		return applicationName;
+	}
+
+	/**
+	 * Sets the icon image for the visualization of the zip progress.
+	 * @param iconImage the new icon image
+	 */
+	public void setIconImage(Image iconImage) {
+		this.iconImage = iconImage;
+	}
+	/**
+	 * Returns the icon image for the visualization of the zip progress.
+	 * @return the icon image
+	 */
+	public Image getIconImage() {
+		return iconImage;
+	}
+	
+	/**
+	 * Sets the look and feel class reference.
+	 * @param lookAndFeelClassReference the new look and feel class reference
+	 */
+	public void setLookAndFeelClassReference(String lookAndFeelClassReference) {
+		this.lookAndFeelClassReference = lookAndFeelClassReference;
+	}
+	/**
+	 * Returns the look and feel class reference.
+	 * @return the look and feel class reference
+	 */
+	public String getLookAndFeelClassReference() {
+		return lookAndFeelClassReference;
+	}
+	
+	/**
+	 * Sets the after job task.
+	 * @param afterJobTask the new after job task
+	 */
+	public void setAfterJobTask(Runnable afterJobTask) {
+		this.afterJobTask = afterJobTask;
+	}
+	/**
+	 * Returns the after job task.
+	 * @return the after job task
+	 */
+	private Runnable getAfterJobTask() {
+		return afterJobTask;
 	}
 	
 	/**
@@ -248,21 +319,6 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * Specify the project-folder here, which has to be opened later on 
-	 * @return the projectFolder2Open
-	 */
-	public String getProjectFolder2Open() {
-		return projectFolder2Open;
-	}
-	/**
-	 * Get the current project folder here, which has to be opened later on.
-	 * @param projectFolder2Open the projectFolder2Open to set
-	 */
-	public void setProjectFolder2Open(String projectFolder2Open) {
-		this.projectFolder2Open = projectFolder2Open;
-	}
-
-	/**
 	 * Sets the zip monitor visible or not.
 	 * @param isHeadlessOperation the flag for headless operation or not
 	 */
@@ -293,6 +349,7 @@ public class Zipper extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		if (this.unzipZipFolder!=null && this.unzipDestinationFolder!=null) {
 			
 			String zipRootFolder = null;
@@ -337,16 +394,6 @@ public class Zipper extends Thread {
 			return null;
 		}
 		
-	}
-	
-	/**
-	 * Will do the unzipping of the previously specified zip-file.
-	 * Afterwards the specified project will be opened.
-	 * @param projectFolder
-	 */
-	public void doUnzipProject(String projectFolder) {
-		this.setProjectFolder2Open(projectFolder);
-		this.doUnzipFolder();
 	}
 	
 	/**
@@ -408,7 +455,6 @@ public class Zipper extends Thread {
 						this.getZipperMonitor().setCurrentJobFile(newfilePath);
 						if (this.getZipperMonitor().isCanceled()) {
 							// --- Cancel extraction ----------
-							this.setProjectFolder2Open(null);
 							zf.close();
 							File destFile = new File(destFolder + this.getRootFolder2Extract() + File.separator);
 							if (destFile.isDirectory()) {

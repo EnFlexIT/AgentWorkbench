@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
-import agentgui.core.common.SerialClone;
+import de.enflexit.common.SerialClone;
 
 /**
  * The Class ClusterNetworkComponent.

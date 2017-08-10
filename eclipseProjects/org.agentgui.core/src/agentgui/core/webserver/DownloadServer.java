@@ -33,11 +33,11 @@ import java.net.*;
 import java.util.*;
 
 import agentgui.core.application.Application;
-import agentgui.core.common.FileCopier;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.network.PortChecker;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
+import de.enflexit.common.transfer.FileCopier;
 
 /**
  * This class provides the main class of the <b>Agent.GUI</b> web server for the

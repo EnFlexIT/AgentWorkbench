@@ -45,9 +45,9 @@ import javax.swing.UIManager;
 import edu.uci.ics.jung.graph.Graph;
 
 import agentgui.core.application.Application;
-import agentgui.core.common.PathHandling;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import de.enflexit.common.PathHandling;
 
 /**
  * The Class Globals for global constant values of the Graph or Network model.

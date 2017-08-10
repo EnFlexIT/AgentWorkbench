@@ -36,11 +36,11 @@ import javax.swing.JComponent;
 import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.common.ExceptionHandling;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import de.enflexit.common.ExceptionHandling;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;

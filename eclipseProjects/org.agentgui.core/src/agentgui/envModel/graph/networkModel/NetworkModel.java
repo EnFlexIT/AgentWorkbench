@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.Vector;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.common.SerialClone;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.prototypes.ClusterGraphElement;
@@ -49,6 +48,7 @@ import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.StarGraphElement;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
+import de.enflexit.common.SerialClone;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;

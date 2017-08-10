@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.common;
+package de.enflexit.common.transfer;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -49,6 +49,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import de.enflexit.api.Translator;
+
 /**
  * The ZipperMonitor class will be used within the Zipper-class of this package.<br>
  * It will show the progress of zipping or unzipping a folder structure and will<br>
@@ -62,9 +64,11 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private Translator translator;
 	private String appName;
 	private Image iconImage;
-	
+	private String lnfClassReference;
+
 	private JPanel jContentPane;
 	
 	private JLabel jLabelProcess;
@@ -83,11 +87,15 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 * @param owner the Frame from which the dialog is displayed
 	 * @param applicationName the current application name
 	 * @param iconImage the icon image that can be used as a decorator for the ZipperMonitor
+	 * @param translator the translator
+	 * @param lookAndFeelClassReference the look and feel class reference
 	 */
-	public ZipperMonitor(Frame owner, String applicationName, Image iconImage) {
+	public ZipperMonitor(Frame owner, String applicationName, Image iconImage, Translator translator, String lookAndFeelClassReference) {
 		super(owner);
 		this.appName = applicationName;
 		this.iconImage = iconImage;
+		this.translator = translator;
+		this.lnfClassReference = lookAndFeelClassReference;
 		this.initialize();
 	}
 	/**
@@ -112,7 +120,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		this.setAlwaysOnTop(true);
 		
 		// --- Translate ----
-		this.getJButtonCancel().setText(Language.translate("Abbruch"));
+		this.getJButtonCancel().setText(this.translate("Abbruch"));
 		
 	}
 	
@@ -121,7 +129,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
+		String lnfClassname = this.lnfClassReference;
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
@@ -234,9 +242,9 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		}
 
 		if (zip==true) {
-			jLabelProcess.setText(Language.translate("Packe") + shortNameOfFileOrFolder);
+			jLabelProcess.setText(this.translate("Packe") + shortNameOfFileOrFolder);
 		} else {
-			jLabelProcess.setText(Language.translate("Entpacke") + shortNameOfFileOrFolder);
+			jLabelProcess.setText(this.translate("Entpacke") + shortNameOfFileOrFolder);
 		}
 	}
 	/**
@@ -245,7 +253,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 */
 	public void setCurrentJobFile(String fileName) {
 		File file = new File(fileName);
-		jLabelSingleFile.setText(Language.translate("Datei:") + " '" + file.getName() + "':");
+		jLabelSingleFile.setText(this.translate("Datei:") + " '" + file.getName() + "':");
 	}
 	
 	/**
@@ -276,6 +284,20 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 */
 	public boolean isCanceled() {
 		return canceled;
+	}
+
+	/**
+	 * Translate the specified expression.
+	 *
+	 * @param expression the expression
+	 * @return the string
+	 */
+	private String translate(String expression) {
+		String translation = expression;
+		if (this.translator!=null) {
+			translation = this.translator.dynamicTranslate(expression);
+		}
+		return translation;
 	}
 	
 	/**

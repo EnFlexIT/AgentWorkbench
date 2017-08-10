@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
-import agentgui.core.common.SerialClone;
+import de.enflexit.common.SerialClone;
 
 /**
  * This class represents a component of the modelled network. It contains its' ontology representation, its' GraphElementPrototype, the nodes and edges representing it in the environment graph and an

@@ -38,6 +38,7 @@ import java.util.Scanner;
 import agentgui.core.application.Application;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import de.enflexit.common.transfer.Download;
 
 /**
  * This class is only used by the {@link ServerSlaveAgent} of the background

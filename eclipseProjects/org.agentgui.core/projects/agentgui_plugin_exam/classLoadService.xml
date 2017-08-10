@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="org.agentgui.classLoadService" name="ClassLoadServiceImpl">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="org.agentgui.classLoadService" name="agentProject.agentgui_plugin_exam.ClassLoadServiceImpl">
    <implementation class="ClassLoadServiceImpl"/>
    <service>
       <provide interface="org.agentgui.classLoadService.ClassLoadService"/>

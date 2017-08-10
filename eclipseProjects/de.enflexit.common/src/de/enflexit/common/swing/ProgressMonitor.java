@@ -1,37 +1,8 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
-package agentgui.core.gui;
+package de.enflexit.common.swing;
 
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -40,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
@@ -51,6 +23,9 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import de.enflexit.api.Translator;
+import de.enflexit.api.Translator.SourceLangugae;
+
 
 /**
  * The Class ProgressMonitor can be used in order to display the progress of 
@@ -60,10 +35,19 @@ import javax.swing.UIManager;
  */
 public class ProgressMonitor implements ActionListener {
 
-	private Frame owner;
-
+	private JDesktopPane parentDesktopPane;
+	
+	private String windowTitle = "Progress";
+	private String headerText = "Progress";
+	private String progressText = "Download";
+	
+	private ImageIcon iconImage;
+	private String lookAndFeelClassReference;
+	
 	private Container progressMonitorContainer;
 
+	private Translator translator;
+	
 	private JPanel jContentPane;
 	private JLabel jLabelHeader;
 	private JPanel jPanelDummy;
@@ -72,89 +56,91 @@ public class ProgressMonitor implements ActionListener {
 	private JProgressBar jProgressBarDownload;
 	private JButton jButtonCancel;
 
-	private String windowTitle = "Agent.GUI - Progress";
-	private String headerText = "Agent.GUI - Progress";
-	private String progressText = "Download";
-	
 	private boolean allow2Cancel = true;
 	private boolean canceled = false;
 	
 	
 	/**
-	 * Instantiates a new progress monitor.
+	 * Instantiates a new progress monitor. In case that no parent desktop pane is specified, the
+	 * class will use a JDialog to display the progress. Otherwise a JInternalFrame will be used. 
 	 *
-	 * @param windowTitle the window title
-	 * @param headerText the header text
-	 * @param progressText the progress text
+	 * @param windowTitle the window title - may be <code>null</code>
+	 * @param headerText the header text - may be <code>null</code>
+	 * @param progressText the progress text - may be <code>null</code>
+	 * @param iconImage the icon image - may be <code>null</code>
+	 * @param parentDesktopPane the parent desktop pane - may be <code>null</code>
+	 * @param lookAndFeelClassReference the look and feel class reference - may be <code>null</code>
 	 */
-	public ProgressMonitor(String windowTitle, String headerText, String progressText) {
-		this.owner = Application.getMainWindow();
-		this.windowTitle = windowTitle;
-		this.headerText = headerText;
-		this.progressText = progressText;
-		initialize();
-	}
-	
-	/**
-	 * This method initializes this.
-	 * @return void
-	 */
-	private void initialize() {
-		
-		Dimension defaultSize = new Dimension(570, 188);
-		if (this.owner==null) {
-			JDialog jDialog = new JDialog();	
-			jDialog.setSize(defaultSize);
-			jDialog.setResizable(false);
-			jDialog.setAlwaysOnTop(true);
-			
-			jDialog.setTitle(this.windowTitle);
-			jDialog.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));	
-			jDialog.setContentPane(this.getJContentPane());
-			jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			
-			this.progressMonitorContainer = jDialog; 
-			
-			if (this.owner==null) {
-				this.setLookAndFeel();	
-			}
-				
-		} else {
-			JInternalFrame jInternalFrame = new JInternalFrame();
-			jInternalFrame.setSize(defaultSize);
-			jInternalFrame.setResizable(false);
-			
-			jInternalFrame.setTitle(this.windowTitle);
-			jInternalFrame.setFrameIcon(GlobalInfo.getInternalImageIcon("AgentGUI.png"));	
-			jInternalFrame.setContentPane(this.getJContentPane());
-			jInternalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			
-			this.progressMonitorContainer = jInternalFrame;
-		}
-		
+	public ProgressMonitor(String windowTitle, String headerText, String progressText, ImageIcon iconImage, JDesktopPane parentDesktopPane, String lookAndFeelClassReference) {
+		if (windowTitle!=null)  this.windowTitle = windowTitle;
+		if (headerText!=null)   this.headerText = headerText;
+		if (progressText!=null) this.progressText = progressText;
+		this.iconImage = iconImage;
 	}
 
+	/**
+	 * Returns the progress monitor container that is either a JDialog or a JInternFrame.
+	 * @return the progress monitor container
+	 */
+	private Container getProgressMonitorContainer() {
+		if (progressMonitorContainer==null) {
+			
+			Dimension defaultSize = new Dimension(570, 188);
+			if (this.parentDesktopPane==null) {
+				JDialog jDialog = new JDialog();	
+				jDialog.setSize(defaultSize);
+				jDialog.setResizable(false);
+				jDialog.setAlwaysOnTop(true);
+				
+				jDialog.setTitle(this.windowTitle);
+				if (this.iconImage!=null) {
+					jDialog.setIconImage(this.iconImage.getImage());	
+				}
+				jDialog.setContentPane(this.getJContentPane());
+				jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				
+				this.progressMonitorContainer = jDialog; 
+				this.setLookAndFeel();	
+					
+			} else {
+				JInternalFrame jInternalFrame = new JInternalFrame();
+				jInternalFrame.setSize(defaultSize);
+				jInternalFrame.setResizable(false);
+				
+				jInternalFrame.setTitle(this.windowTitle);
+				if (this.iconImage!=null) {
+					jInternalFrame.setFrameIcon(this.iconImage);	
+				}
+				jInternalFrame.setContentPane(this.getJContentPane());
+				jInternalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				
+				this.progressMonitorContainer = jInternalFrame;
+			}
+			
+		}
+		return progressMonitorContainer;
+	}
+	
 	/**
 	 * Sets the progress dialog visible.
 	 * @param visible the new visible
 	 */
 	public void setVisible(boolean visible) {
-		if (this.progressMonitorContainer instanceof JDialog) {
-			((JDialog) this.progressMonitorContainer).setVisible(visible);
+		if (this.getProgressMonitorContainer() instanceof JDialog) {
+			((JDialog) this.getProgressMonitorContainer()).setVisible(visible);
 			// --- Centre dialog ----------------
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-			int top = (screenSize.height - this.progressMonitorContainer.getHeight()) / 2; 
-		    int left = (screenSize.width - this.progressMonitorContainer.getWidth()) / 2; 
-		    this.progressMonitorContainer.setLocation(left, top);
+			int top = (screenSize.height - this.getProgressMonitorContainer().getHeight()) / 2; 
+		    int left = (screenSize.width - this.getProgressMonitorContainer().getWidth()) / 2; 
+		    this.getProgressMonitorContainer().setLocation(left, top);
 		    
-		} else if (this.progressMonitorContainer instanceof JInternalFrame) {
-			JInternalFrame internalFrame = ((JInternalFrame) this.progressMonitorContainer);
+		} else if (this.getProgressMonitorContainer() instanceof JInternalFrame) {
+			JInternalFrame internalFrame = ((JInternalFrame) this.getProgressMonitorContainer());
 			if (visible==true) {
-				JDesktopPane desktop = Application.getMainWindow().getJDesktopPane4Projects(); 
-				desktop.add(internalFrame, JDesktopPane.POPUP_LAYER);
-				// --- Centre dialog ------------				
-				int top = (desktop.getHeight() - internalFrame.getHeight()) / 2; 
-			    int left = (desktop.getWidth() - internalFrame.getWidth()) / 2; 
+				this.parentDesktopPane.add(internalFrame, JDesktopPane.POPUP_LAYER);
+				// --- Center dialog ------------				
+				int top = (this.parentDesktopPane.getHeight() - internalFrame.getHeight()) / 2; 
+			    int left = (this.parentDesktopPane.getWidth() - internalFrame.getWidth()) / 2; 
 			    internalFrame.setLocation(left, top);
 			    try {
 			    	internalFrame.moveToFront();
@@ -172,26 +158,26 @@ public class ProgressMonitor implements ActionListener {
 	 * @return true, if is visible
 	 */
 	public boolean isVisible() {
-		return this.progressMonitorContainer.isVisible();
+		return this.getProgressMonitorContainer().isVisible();
 	}
 	/**
 	 * Validate the progress monitor.
 	 */
 	public void validate() {
-		this.progressMonitorContainer.validate();
+		this.getProgressMonitorContainer().validate();
 	}
 	/**
 	 * Repaint the progress monitor.
 	 */
 	public void repaint() {
-		this.progressMonitorContainer.repaint();
+		this.getProgressMonitorContainer().repaint();
 	}
 	/**
 	 * Dispose the progress monitor.
 	 */
 	public void dispose() {
-		if (this.progressMonitorContainer instanceof JDialog) {
-			((JDialog) this.progressMonitorContainer).dispose();
+		if (this.getProgressMonitorContainer() instanceof JDialog) {
+			((JDialog) this.getProgressMonitorContainer()).dispose();
 		}
 	}
 	
@@ -220,7 +206,7 @@ public class ProgressMonitor implements ActionListener {
 		this.jLabelProgress.setText(progressText);
 	}
 	/**
-	 * Can be used to set the progress in percent.
+	 * Can be used to set the progress in percent (0 - 100).
 	 * @param progress the new progress in percent
 	 */
 	public void setProgress(int progress) {
@@ -232,10 +218,11 @@ public class ProgressMonitor implements ActionListener {
 	 * @param title the new title
 	 */
 	private void setTitle(String title) {
-		if (this.progressMonitorContainer instanceof JDialog) {
-			((JDialog) this.progressMonitorContainer).setTitle(title);
-		} else if (this.progressMonitorContainer instanceof JInternalFrame) {
-			((JInternalFrame) this.progressMonitorContainer).setTitle(title);
+		Container progressCont = this.getProgressMonitorContainer();
+		if (progressCont instanceof JDialog) {
+			((JDialog) progressCont).setTitle(title);
+		} else if (progressCont instanceof JInternalFrame) {
+			((JInternalFrame) progressCont).setTitle(title);
 		}
 	}
 
@@ -263,16 +250,16 @@ public class ProgressMonitor implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
+		String lnfClassName = this.lookAndFeelClassReference;
 		try {
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
+			if (lnfClassName==null) {
+				lnfClassName = UIManager.getCrossPlatformLookAndFeelClassName();
 			}	
-			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this.progressMonitorContainer);				
-		
+			UIManager.setLookAndFeel(lnfClassName);
+			SwingUtilities.updateComponentTreeUI(this.getProgressMonitorContainer());				
+			
 		} catch (Exception e) {
-			System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
+			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
 		}	
 	}
 	
@@ -353,7 +340,7 @@ public class ProgressMonitor implements ActionListener {
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
-			jButtonCancel.setText(Language.translate("Abbruch"));
+			jButtonCancel.setText(this.translate("Abbruch"));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.addActionListener(this);
@@ -373,6 +360,35 @@ public class ProgressMonitor implements ActionListener {
 		return jPanelDummy;
 	}
 	
+	/**
+	 * Sets the translator.
+	 * @param translator the new translator
+	 */
+	public void setTranslator(Translator translator) {
+		this.translator = translator;
+	}
+	/**
+	 * Returns the current translator.
+	 * @return the translator
+	 */
+	public Translator getTranslator() {
+		return translator;
+	}
+	/**
+	 * Translate the .
+	 *
+	 * @param expression the expression
+	 * @param sourceLanguage the source language
+	 * @return the string
+	 */
+	public String translate(String expression) {
+		String translation = expression;
+		if (this.getTranslator()!=null) {
+			translation = this.getTranslator().dynamicTranslate(expression, SourceLangugae.DE);
+		}
+		return translation;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -386,4 +402,6 @@ public class ProgressMonitor implements ActionListener {
 		
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+	
+
+}  
