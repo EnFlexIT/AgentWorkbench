@@ -34,8 +34,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -89,9 +91,9 @@ public class BundleBuilder {
 	public static final String CLASS_LOAD_SERVICE_JAR = "classLoadService.jar";
 	public static final String CLASS_LOAD_SERVICE_XML = "classLoadService.xml";
 	public static final String CLASS_LOAD_SERVICE_NAME = "ClassLoadServiceImpl";
-	public static final String ALLWOED_BUNDLE_PREFIX = "org.agentgui";
 	
 	private ArrayList<String> allowedFileSuffixes;
+	private ArrayList<String> allowedManifestBundlePrefixes;
 	
 	private String symbolicBundleName;
 	private File bundleDirectory;
@@ -335,19 +337,24 @@ public class BundleBuilder {
 			att.putValue(Constants.BUNDLE_SYMBOLICNAME, this.getSymbolicBundleName());
 			
 			// --- Define the required bundles ----------------------
-			String requireBundleString = "";
+			Vector<String> bundleDescriptionVector = new Vector<>();
 			Bundle[] bundles = BundleEvaluator.getInstance().getBundles();
 			for (int i = 0; i < bundles.length; i++) {
 				Bundle bundle = bundles[i];
-				if (bundle.getSymbolicName().startsWith(ALLWOED_BUNDLE_PREFIX)) {
-					String bundleDescription = bundle.getSymbolicName() + ";bundle-version=\"" + bundle.getVersion().toString() + "\"";
-					if (requireBundleString.length()==0) {
-						requireBundleString = bundleDescription;
-					} else {
-						requireBundleString += "," + bundleDescription;
-					}					
+				if (this.isAllowedManifestBundlesPrefix(bundle.getSymbolicName())) {
+					bundleDescriptionVector.add(bundle.getSymbolicName() + ";bundle-version=\"" + bundle.getVersion().toString() + "\"");
 				}
 			}
+			Collections.sort(bundleDescriptionVector);
+			// --- Merge vector to MANIFEST entry -------------------
+			String requireBundleString = "";
+			for (int i = 0; i < bundleDescriptionVector.size(); i++) {
+				if (requireBundleString.length()==0) {
+					requireBundleString = bundleDescriptionVector.get(i);
+				} else {
+					requireBundleString += "," + bundleDescriptionVector.get(i);
+				}	
+			} 
 			att.putValue(Constants.REQUIRE_BUNDLE, requireBundleString);
 			
 			// --- Define jar files to be included ------------------
@@ -472,6 +479,33 @@ public class BundleBuilder {
 			allowedFileSuffixes.add(".gif");
 		}
 		return allowedFileSuffixes;
+	}
+	/**
+	 * Returns the allowed bundle prefixes for the MANIFEST.MF
+	 * @return the positive file suffixes
+	 */
+	private ArrayList<String> getAllowedManifestBundlesPrefixex() {
+		if (allowedManifestBundlePrefixes==null) {
+			allowedManifestBundlePrefixes = new ArrayList<String>();
+			allowedManifestBundlePrefixes.add("org.agentgui");
+			allowedManifestBundlePrefixes.add("de.enflexit");
+		}
+		return allowedManifestBundlePrefixes;
+	}
+	/**
+	 * Checks if the specified symbolic bundle name has an allowed prefix.
+	 *
+	 * @param symbolicBundleName the symbolic bundle name
+	 * @return true, if is allowed manifest bundles prefix
+	 */
+	public boolean isAllowedManifestBundlesPrefix(String symbolicBundleName) {
+		for (int i = 0; i < this.getAllowedManifestBundlesPrefixex().size(); i++) {
+			String allowedPrefix = this.getAllowedManifestBundlesPrefixex().get(i);
+			if (symbolicBundleName.startsWith(allowedPrefix)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

@@ -1470,11 +1470,7 @@ import agentgui.core.webserver.DownloadServer;
 	 */
 	public void resourcesLoad() {
 
-		try {
-			this.getProjectBundleLoader().installAndStartBundles();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		this.getProjectBundleLoader().installAndStartBundles();
 		
 //		// TODO
 //		for (int i=0; i<this.getProjectResources().size(); i++) {
@@ -1526,8 +1522,8 @@ import agentgui.core.webserver.DownloadServer;
 //					jarArchiveFile.deleteOnExit();
 //					
 //					// --- Add to the class loader --------
-////					URL url = new URL("file:/" + jarArchiveFile.getAbsolutePath());
-////					this.getProjectClassLoader().addURL(url);
+//					URL url = new URL("file:/" + jarArchiveFile.getAbsolutePath());
+//					this.getProjectClassLoader().addURL(url);
 //					
 //					ClassLoaderUtil.addFile(jarArchiveFile.getAbsoluteFile());
 //					ClassLoaderUtil.addJarToClassPath(jarArchivePath);
@@ -1541,9 +1537,9 @@ import agentgui.core.webserver.DownloadServer;
 //					
 //				} else {
 //					// --- Load the given jar-file ------------------
-////					URL url = new URL("file:/" + jarFile4Display);
-////					this.getProjectClassLoader().addURL(url);
-////					
+//					URL url = new URL("file:/" + jarFile4Display);
+//					this.getProjectClassLoader().addURL(url);
+//					
 //					ClassLoaderUtil.addFile(file.getAbsoluteFile());
 //					ClassLoaderUtil.addJarToClassPath(jarFileCorrected);
 //					

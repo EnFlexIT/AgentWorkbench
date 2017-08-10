@@ -3,14 +3,17 @@ Bundle-SymbolicName: agentProject.agentgui_plugin_exam
 Export-Package: agentproject
 Bundle-Name: agentProject.agentgui_plugin_exam
 Bundle-ClassPath: classLoadService.jar,jar\PlugInExample.jar
-Require-Bundle: org.agentgui.lib.scimark;bundle-version="2.0.0",org.ag
- entgui.lib.jade;bundle-version="4.4.0",org.agentgui.core;bundle-versi
- on="2.0.0.qualifier",org.agentgui.lib.jFreeChart;bundle-version="1.0.
- 15",org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",org.agentgui
- .lib.googleTranslate;bundle-version="0.97.0",org.agentgui.lib.jep;bun
- dle-version="2.3.1",org.agentgui.lib.jung;bundle-version="2.0.1",org.
- agentgui.lib.hypericSigar;bundle-version="1.6.4",org.agentgui.lib.myS
- QL;bundle-version="5.0.8"
+Require-Bundle: org.agentgui.lib.googleTranslate;bundle-version="0.97.
+ 0",org.agentgui.lib.jFreeChart;bundle-version="1.0.15",org.agentgui.l
+ ib.mySQL;bundle-version="5.0.8",de.enflexit.common;bundle-version="1.
+ 0.0.qualifier",de.enflexit.oidc.libs;bundle-version="5.17.1",de.enfle
+ xit.api;bundle-version="1.0.0.qualifier",org.agentgui.lib.jep;bundle-
+ version="2.3.1",org.agentgui.lib.hypericSigar;bundle-version="1.6.4",
+ org.agentgui.lib.jung;bundle-version="2.0.1",org.agentgui.lib.jade;bu
+ ndle-version="4.4.0",org.agentgui.lib.scimark;bundle-version="2.0.0",
+ org.agentgui.core;bundle-version="2.0.0.qualifier",de.enflexit.oidc;b
+ undle-version="1.0.0.qualifier",org.agentgui.lib.bouncyCastle;bundle-
+ version="1.5.5"
 Bundle-ManifestVersion: 2
 Service-Component: classLoadService.xml
 
