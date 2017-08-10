@@ -1,5 +1,8 @@
 package de.enflexit.api;
 
+/**
+ * The Interface for Translator.
+ */
 public interface Translator {
 	
 	/**

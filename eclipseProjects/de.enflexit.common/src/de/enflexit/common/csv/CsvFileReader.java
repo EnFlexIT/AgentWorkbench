@@ -1,4 +1,4 @@
-package agentgui.core.common.csv;
+package de.enflexit.common.csv;
 
 import java.io.BufferedReader;
 import java.io.File;

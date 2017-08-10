@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.common.csv;
+package de.enflexit.common.csv;
 
 import java.io.BufferedReader;
 import java.io.File;

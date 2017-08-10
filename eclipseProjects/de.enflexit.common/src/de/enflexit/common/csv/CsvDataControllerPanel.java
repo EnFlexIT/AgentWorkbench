@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.common.csv;
+package de.enflexit.common.csv;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -51,8 +51,9 @@ import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.api.LastSelectedFolderReminder;
+import de.enflexit.api.Translator;
+import de.enflexit.api.Translator.SourceLangugae;
 
 import java.awt.Font;
 
@@ -64,6 +65,9 @@ import java.awt.Font;
 public class CsvDataControllerPanel extends JPanel implements ActionListener, Observer{
 
 	private static final long serialVersionUID = -8553767098312965499L;
+	
+	private Translator translator;
+	private LastSelectedFolderReminder folderReminder;
 	
 	private JToolBar jToolBarCsvHandling;
 	
@@ -96,7 +100,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 	 * Initialize.
 	 */
 	private void initialize() {
-		setLayout(new BorderLayout(0, 0));
+		this.setLayout(new BorderLayout(0, 0));
 		this.add(this.getJToolBarCsvHandling(), BorderLayout.NORTH);
 		this.add(this.getJScrollPaneTable(), BorderLayout.CENTER);
 	}
@@ -105,13 +109,13 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if (jToolBarCsvHandling == null) {
 			jToolBarCsvHandling = new JToolBar();
 			jToolBarCsvHandling.setFloatable(false);
-			jToolBarCsvHandling.add(getJButtonImport());
-			jToolBarCsvHandling.add(getJButtonExport());
+			jToolBarCsvHandling.add(this.getJButtonImport());
+			jToolBarCsvHandling.add(this.getJButtonExport());
 			jToolBarCsvHandling.addSeparator();
-			jToolBarCsvHandling.add(getJLabelSeparator());
-			jToolBarCsvHandling.add(getJComboBoxSeparator());
+			jToolBarCsvHandling.add(this.getJLabelSeparator());
+			jToolBarCsvHandling.add(this.getJComboBoxSeparator());
 			jToolBarCsvHandling.addSeparator();
-			jToolBarCsvHandling.add(getJCheckBoxHasHeadlines());
+			jToolBarCsvHandling.add(this.getJCheckBoxHasHeadlines());
 		}
 		return jToolBarCsvHandling;
 	}
@@ -135,7 +139,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if (jButtonImport == null) {
 			jButtonImport = new JButton();
 			jButtonImport.setToolTipText("Import");
-			jButtonImport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/import.png")));
+			// TODO
+			jButtonImport.setIcon(new ImageIcon(this.getClass().getResource("/agentgui/core/gui/img/import.png")));
 			jButtonImport.addActionListener(this);
 		}
 		return jButtonImport;
@@ -144,7 +149,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if (jButtonExport == null) {
 			jButtonExport = new JButton();
 			jButtonExport.setToolTipText("Export");
-			jButtonExport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/export.png")));
+			// TODO
+			jButtonExport.setIcon(new ImageIcon(this.getClass().getResource("/agentgui/core/gui/img/export.png")));
 			jButtonExport.addActionListener(this);
 		}
 		return jButtonExport;
@@ -162,7 +168,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 
 	private JLabel getJLabelSeparator() {
 		if (jLabelSeparator == null) {
-			jLabelSeparator = new JLabel(Language.translate("Separator:", Language.EN));
+			jLabelSeparator = new JLabel(this.translate("Separator:", SourceLangugae.EN));
 			jLabelSeparator.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelSeparator;
@@ -170,7 +176,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 
 	private JCheckBox getJCheckBoxHasHeadlines() {
 		if (jCheckBoxHasHeadlines == null) {
-			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Column Headers:", Language.EN));
+			jCheckBoxHasHeadlines = new JCheckBox(this.translate("Column Headers:", SourceLangugae.EN));
 			jCheckBoxHasHeadlines.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jCheckBoxHasHeadlines.setSelected(this.getCsvDataController().hasHeadlines());
 			jCheckBoxHasHeadlines.addActionListener(this);
@@ -183,24 +189,88 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 	 * @return The {@link CsvDataController} instance
 	 */
 	public CsvDataController getCsvDataController() {
-		if(this.csvDataController == null){
+		if (this.csvDataController == null) {
 			this.csvDataController = new CsvDataController();
 			this.csvDataController.addObserver(this);
 		}
 		return this.csvDataController;
 	}
+	
+	
+	/**
+	 * Sets the last selected folder reminder.
+	 * @param folderReminder the new last selected folder reminder
+	 */
+	public void setLastSelectedFolderReminder(LastSelectedFolderReminder folderReminder) {
+		this.folderReminder = folderReminder;
+	}
+	/**
+	 * Returns the last selected folder.
+	 * @return the last selected folder
+	 */
+	private File getLastSelectedFolder() {
+		if (this.folderReminder!=null) {
+			return this.folderReminder.getLastSelectedFolder();
+		}
+		return null;
+	}
+	/**
+	 * Reminds the last selected folder.
+	 * @param lastSelectedFolder the new last selected folder
+	 */
+	private void setLastSelectedFolder(File lastSelectedFolder) {
+		if (this.folderReminder!=null) {
+			this.folderReminder.setLastSelectedFolder(lastSelectedFolder);
+		}
+	}
+	
+	
+	
+	/**
+	 * Sets the translator.
+	 * @param translator the new translator
+	 */
+	public void setTranslator(Translator translator) {
+		this.translator = translator;
+	}
+	/**
+	 * Translate the specified expression from German.
+	 *
+	 * @param expression the expression
+	 * @return the string
+	 */
+	private String translate(String expression) {
+		return this.translate(expression, SourceLangugae.DE);
+	}
+	/**
+	 * Translate the specified expression.
+	 *
+	 * @param expression the expression
+	 * @return the string
+	 */
+	private String translate(String expression, SourceLangugae sourceLangugae) {
+		String translation = expression;
+		if (this.translator!=null) {
+			translation = this.translator.dynamicTranslate(expression, sourceLangugae);
+		}
+		return translation;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
 		if(ae.getSource() == this.getJButtonImport()) {
-			
 			// --- Import data from CSV
-			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
-			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Dateien"), "csv"));
-			jFileChooserImportCSV.setDialogTitle(Language.translate("CSV-Datei importieren"));
+			JFileChooser jFileChooserImportCSV = new JFileChooser(this.getLastSelectedFolder());
+			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(this.translate("CSV-Dateien"), "csv"));
+			jFileChooserImportCSV.setDialogTitle(this.translate("CSV-Datei importieren"));
 			
 			if(jFileChooserImportCSV.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-				Application.getGlobalInfo().setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
+				this.setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
 				File csvFile = jFileChooserImportCSV.getSelectedFile();
 				
 				this.getCsvDataController().setHeadline(this.getJCheckBoxHasHeadlines().isSelected());
@@ -210,14 +280,13 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 			}
 			
 		} else if(ae.getSource() == this.getJButtonExport()) {
-			
 			// --- Export data to CSV
-			JFileChooser jFileChooserExportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
-			jFileChooserExportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Dateien"), "csv"));
-			jFileChooserExportCSV.setDialogTitle(Language.translate("CSV-Datei exportieren"));
+			JFileChooser jFileChooserExportCSV = new JFileChooser(this.getLastSelectedFolder());
+			jFileChooserExportCSV.setFileFilter(new FileNameExtensionFilter(this.translate("CSV-Dateien"), "csv"));
+			jFileChooserExportCSV.setDialogTitle(this.translate("CSV-Datei exportieren"));
 			
 			if(jFileChooserExportCSV.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
-				Application.getGlobalInfo().setLastSelectedFolder(jFileChooserExportCSV.getCurrentDirectory());
+				this.setLastSelectedFolder(jFileChooserExportCSV.getCurrentDirectory());
 				File csvFile = jFileChooserExportCSV.getSelectedFile();
 				if(csvFile.getPath().endsWith(".csv") == false){
 					csvFile = new File(csvFile.getPath().concat(".csv"));
@@ -225,22 +294,22 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 				this.getCsvDataController().setFile(csvFile);
 				this.getCsvDataController().doExport();
 			}
-		} else if(ae.getSource() == this.getJComboBoxSeparator()) {
 			
+		} else if(ae.getSource() == this.getJComboBoxSeparator()) {
 			// Handle separator changes
 			this.getCsvDataController().setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
-			
 			// If the model was loaded already, reload it
 			if(this.getCsvDataController().getDataModel() != null){
 				 this.getCsvDataController().doImport();
 			}
+			
 		} else if (ae.getSource() == this.getJCheckBoxHasHeadlines()){
 			this.getCsvDataController().setHeadline(this.getJCheckBoxHasHeadlines().isSelected());
-			
 			// If the model was loaded already, reload it
 			if(this.getCsvDataController().getDataModel() != null){
 				 this.getCsvDataController().doImport();
 			}
+			
 		}
 	}
 	
@@ -255,6 +324,10 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		frame.setSize(600, 450);
 		frame.setVisible(true);
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o instanceof CsvDataController && arg.equals(CsvDataController.EVENT_TABLE_MODEL_REPLACED)){
@@ -264,4 +337,5 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 			 }
 		}
 	}
+	
 }

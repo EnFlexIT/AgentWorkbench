@@ -36,6 +36,7 @@ import javax.swing.JDesktopPane;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.csv.CsvDataControllerPanel;
 import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.Zipper;
 
@@ -99,6 +100,17 @@ public class CommonComponentFactory {
 		zipper.setLookAndFeelClassReference(Application.getGlobalInfo().getAppLnFClassName());
 		zipper.setApplicationName(Application.getGlobalInfo().getApplicationTitle());
 		return zipper;
+	}
+	
+	/**
+	 * Returns a new pre-configured {@link CsvDataControllerPanel}.
+	 * @return the new {@link CsvDataControllerPanel}
+	 */
+	public static CsvDataControllerPanel getNewCsvDataControllerPanel() {
+		CsvDataControllerPanel csvPanel = new CsvDataControllerPanel();
+		csvPanel.setTranslator(Language.getInstance());
+		csvPanel.setLastSelectedFolderReminder(Application.getGlobalInfo());
+		return csvPanel;
 	}
 	
 }

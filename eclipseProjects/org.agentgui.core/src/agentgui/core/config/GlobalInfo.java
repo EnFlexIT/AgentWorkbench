@@ -64,6 +64,7 @@ import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
+import de.enflexit.api.LastSelectedFolderReminder;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -77,7 +78,7 @@ import jade.wrapper.AgentContainer;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class GlobalInfo {
+public class GlobalInfo implements LastSelectedFolderReminder {
 
 	// --- Constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
@@ -1400,6 +1401,7 @@ public class GlobalInfo {
 	 * in which a file was selected (e. g. while using a JFileChooser) 
 	 * @param lastSelectedFolder the lastSelectedFolder to set
 	 */
+	@Override
 	public void setLastSelectedFolder(File lastSelectedFolder) {
 		this.lastSelectedFolder = lastSelectedFolder;
 	}
@@ -1407,6 +1409,7 @@ public class GlobalInfo {
 	 * Returns the reminder value of the last selected folder as File object 
 	 * @return the lastSelectedFolder
 	 */
+	@Override
 	public File getLastSelectedFolder() {
 		if (lastSelectedFolder==null) {
 			lastSelectedFolder = new File(this.getPathBaseDir());
