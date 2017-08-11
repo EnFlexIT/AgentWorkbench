@@ -232,15 +232,6 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		this.translator = translator;
 	}
 	/**
-	 * Translate the specified expression from German.
-	 *
-	 * @param expression the expression
-	 * @return the string
-	 */
-	private String translate(String expression) {
-		return this.translate(expression, SourceLangugae.DE);
-	}
-	/**
 	 * Translate the specified expression.
 	 *
 	 * @param expression the expression
@@ -264,8 +255,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if(ae.getSource() == this.getJButtonImport()) {
 			// --- Import data from CSV
 			JFileChooser jFileChooserImportCSV = new JFileChooser(this.getLastSelectedFolder());
-			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(this.translate("CSV-Dateien"), "csv"));
-			jFileChooserImportCSV.setDialogTitle(this.translate("CSV-Datei importieren"));
+			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(this.translate("CSV-Files", SourceLangugae.EN), "csv"));
+			jFileChooserImportCSV.setDialogTitle(this.translate("Import CSV File", SourceLangugae.EN));
 			
 			if(jFileChooserImportCSV.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				this.setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
@@ -280,8 +271,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		} else if(ae.getSource() == this.getJButtonExport()) {
 			// --- Export data to CSV
 			JFileChooser jFileChooserExportCSV = new JFileChooser(this.getLastSelectedFolder());
-			jFileChooserExportCSV.setFileFilter(new FileNameExtensionFilter(this.translate("CSV-Dateien"), "csv"));
-			jFileChooserExportCSV.setDialogTitle(this.translate("CSV-Datei exportieren"));
+			jFileChooserExportCSV.setFileFilter(new FileNameExtensionFilter(this.translate("CSV-Files", SourceLangugae.EN), "csv"));
+			jFileChooserExportCSV.setDialogTitle(this.translate("Import CSV File", SourceLangugae.EN));
 			
 			if(jFileChooserExportCSV.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
 				this.setLastSelectedFolder(jFileChooserExportCSV.getCurrentDirectory());
