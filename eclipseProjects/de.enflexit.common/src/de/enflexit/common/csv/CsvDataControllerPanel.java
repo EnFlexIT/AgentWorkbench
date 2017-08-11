@@ -30,6 +30,7 @@ package de.enflexit.common.csv;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -37,7 +38,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -54,8 +54,8 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.api.Translator;
 import de.enflexit.api.Translator.SourceLangugae;
-
-import java.awt.Font;
+import de.enflexit.common.images.ImageProvider;
+import de.enflexit.common.images.ImageProvider.ImageFile;
 
 /**
  * The CSV Controller Panel that can be used with a customised CSV-Importer 
@@ -139,8 +139,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if (jButtonImport == null) {
 			jButtonImport = new JButton();
 			jButtonImport.setToolTipText("Import");
-			// TODO
-			jButtonImport.setIcon(new ImageIcon(this.getClass().getResource("/agentgui/core/gui/img/import.png")));
+			jButtonImport.setIcon(ImageProvider.getImageIcon(ImageFile.MB_Import_PNG));
 			jButtonImport.addActionListener(this);
 		}
 		return jButtonImport;
@@ -149,8 +148,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if (jButtonExport == null) {
 			jButtonExport = new JButton();
 			jButtonExport.setToolTipText("Export");
-			// TODO
-			jButtonExport.setIcon(new ImageIcon(this.getClass().getResource("/agentgui/core/gui/img/export.png")));
+			jButtonExport.setIcon(ImageProvider.getImageIcon(ImageFile.MB_Export_PNG));
 			jButtonExport.addActionListener(this);
 		}
 		return jButtonExport;
