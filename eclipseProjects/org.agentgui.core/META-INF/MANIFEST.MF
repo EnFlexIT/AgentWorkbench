@@ -340,3 +340,4 @@ Export-Package: agentgui.core.application;
  org.agentgui.bundle.evaluation;uses:="org.osgi.framework",
  org.agentgui.extensions;uses:="org.eclipse.core.runtime"
 Service-Component: classLoadService.xml 
+Import-Package: javax.inject;version="1.0.0"

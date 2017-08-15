@@ -83,7 +83,7 @@
    <extension
          point="com.opcoach.e4.preferences.e4PreferencePages">
       <page
-            class="org.agentgui.core.pages.PreferencePageProgramStart"
+            class="org.agentgui.preferences.pages.PreferencePageProgramStart"
             id="org.agentgui.core.page.programstart"
             name="Program Start">
       </page>

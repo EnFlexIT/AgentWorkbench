@@ -12,6 +12,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.opcoach.e4.preferences.E4PreferenceRegistry;
 
+/**
+ * Handler class for the Preferences command
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+ */
 public class PreferencesHandler {
 	@Execute
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, E4PreferenceRegistry prefReg) {

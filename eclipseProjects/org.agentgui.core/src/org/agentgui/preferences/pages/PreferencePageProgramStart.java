@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.core.pages;
+package org.agentgui.preferences.pages;
 
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -78,7 +78,7 @@ public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 	private RadioGroupFieldEditor getExecutionModeFieldEditor(){
 		
 		if(this.executionModeFieldEditor == null){
-			String preferenceName = "org.agentgui.programstart.executionmode";
+			String preferenceName = "programstart.executionmode";
 			String preferenceLabel = "Start Agent Workbench as:";
 			String[][] labelsAndValues = {
 					{"Application", "runAsApplication"},
@@ -93,7 +93,7 @@ public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 	
 	private ComboFieldEditor getProtocolFieldEditor(){
 		if(this.protocolFieldEditor == null){
-			String preferenceName = "org.agentgui.programstart.protocol";
+			String preferenceName = "programstart.mainServerProtocol";
 			String preferenceLabel = "Protocol";
 			String[][] entriesAndValues = {{"HTTP", "http"}, {"HTTPS", "https"}};
 			
@@ -104,7 +104,7 @@ public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 
 	private StringFieldEditor getUrlFieldEditor() {
 		if(urlFieldEditor == null){
-			String preferenceName = "org.agentgui.programstart.mainServerUrl";
+			String preferenceName = "programstart.mainServerUrl";
 			String preferenceLabel = "URL / IP";
 			
 			urlFieldEditor = new StringFieldEditor(preferenceName, preferenceLabel, getFieldEditorParent());
@@ -114,7 +114,7 @@ public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 
 	private StringFieldEditor getJadePortFieldEditor() {
 		if(jadePortFieldEditor == null){
-			String preferenceName = "org.agentgui.programstart.mainServerJadePort";
+			String preferenceName = "programstart.mainServerJadePort";
 			String preferenceLabel = "JADE Port";
 			
 			jadePortFieldEditor = new StringFieldEditor(preferenceName, preferenceLabel, getFieldEditorParent());
@@ -124,7 +124,7 @@ public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 
 	private StringFieldEditor getMtpPortFieldEditor() {
 		if(mtpPortFieldEditor == null){
-			String preferenceName = "org.agentgui.programstart.mainServerMtpPort";
+			String preferenceName = "programstart.mainServerMtpPort";
 			String preferenceLabel = "MTP Port";
 			
 			mtpPortFieldEditor = new StringFieldEditor(preferenceName, preferenceLabel, getFieldEditorParent());
