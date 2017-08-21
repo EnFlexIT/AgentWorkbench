@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.options.https;
+package de.enflexit.common.crypto;
 
 import java.awt.Dialog;
 import java.io.ByteArrayInputStream;
@@ -50,7 +50,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import agentgui.core.application.Language;
+import de.enflexit.api.Translator;
 
 /**
  * This class allows the user to manage a TrustStore.
@@ -97,6 +97,7 @@ public class TrustStoreController {
 
 	private Dialog ownerDialog;
 	private boolean initialized = false;
+	private Translator translator;
 
 	/*
 	 * generates a blank controller, which still needs to initialize the trustStore
@@ -356,9 +357,9 @@ public class TrustStoreController {
 		if (tableModel == null) {
 			// ---- Create header for the TableModel -----------------
 			Vector<String> header = new Vector<String>();
-			header.add(Language.translate("Zertifikats-Alias"));
-			header.add(Language.translate("Zertifikatsbesitzer"));
-			header.add(Language.translate("Ablaufdatum"));
+			header.add(translate("Zertifikats-Alias"));
+			header.add(translate("Zertifikatsbesitzer"));
+			header.add(translate("Ablaufdatum"));
 
 			tableModel = new DefaultTableModel(null, header) {
 				private static final long serialVersionUID = 1L;
@@ -472,4 +473,15 @@ public class TrustStoreController {
 		return initialized ;
 	}
 
+	public void setTranslator(Translator translator) {
+		this.translator = translator;
+	}
+
+	String translate(String input){
+		if(translator!=null){
+			return translator.dynamicTranslate(input);
+		}
+		return input;
+	}
+	
 }

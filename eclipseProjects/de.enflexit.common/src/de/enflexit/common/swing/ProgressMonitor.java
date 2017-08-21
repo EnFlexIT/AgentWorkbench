@@ -24,7 +24,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import de.enflexit.api.Translator;
-import de.enflexit.api.Translator.SourceLangugae;
+import de.enflexit.api.Translator.SourceLanguage;
 
 
 /**
@@ -384,7 +384,7 @@ public class ProgressMonitor implements ActionListener {
 	public String translate(String expression) {
 		String translation = expression;
 		if (this.getTranslator()!=null) {
-			translation = this.getTranslator().dynamicTranslate(expression, SourceLangugae.DE);
+			translation = this.getTranslator().dynamicTranslate(expression, SourceLanguage.DE);
 		}
 		return translation;
 	}

@@ -8,7 +8,7 @@ public interface Translator {
 	/**
 	 * The enumeration that describes possible source languages.
 	 */
-	public enum SourceLangugae {
+	public enum SourceLanguage {
 		DE("DE"),
 		EN("EN"),
 		IT("IT"),
@@ -17,7 +17,7 @@ public interface Translator {
 		
 		private final String languageIndicator;
 		
-		private SourceLangugae(final String languageIndicator) {
+		private SourceLanguage(final String languageIndicator) {
 			this.languageIndicator = languageIndicator;
 		}
 		/* (non-Javadoc)
@@ -45,6 +45,6 @@ public interface Translator {
 	 * @param sourceLanguage the source language
 	 * @return the string
 	 */
-	String dynamicTranslate(String expression, SourceLangugae sourceLanguage);
+	String dynamicTranslate(String expression, SourceLanguage sourceLanguage);
 	
 }

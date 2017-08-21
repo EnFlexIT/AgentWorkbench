@@ -60,6 +60,8 @@ import javax.swing.event.AncestorListener;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.crypto.CertificateProperties;
+import de.enflexit.common.crypto.KeyStoreController;
 
 /**
  * This class allows the user to configure the HTTPS Message Transport protocol.

@@ -55,6 +55,8 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.crypto.CertificateProperties;
+import de.enflexit.common.crypto.TrustStoreController;
 
 /**
  * This JPanel allows the user to : 
@@ -535,6 +537,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	protected TrustStoreController getTrustStoreController() {
 		if (trustStoreController == null) {
 			trustStoreController = new TrustStoreController(Application.getGlobalInfo().getOwnerDialogForComponent(this));
+			trustStoreController.setTranslator(Language.getInstance());
 		}
 		return trustStoreController;
 	}

@@ -55,6 +55,8 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.crypto.CertificateProperties;
+import de.enflexit.common.crypto.KeyStoreController;
 
 /**
  * This JPanel allows the user to : 
@@ -380,6 +382,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	protected KeyStoreController getKeyStoreController() {
 		if (keyStoreController == null) {
 			keyStoreController = new KeyStoreController(Application.getGlobalInfo().getOwnerDialogForComponent(this));
+			keyStoreController.setTranslator(Language.getInstance());
 		}
 		return keyStoreController;
 	}

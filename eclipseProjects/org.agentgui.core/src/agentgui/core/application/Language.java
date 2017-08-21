@@ -163,7 +163,7 @@ public class Language implements Translator {
 	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String dynamicTranslate(String expression, SourceLangugae sourceLanguage) {
+	public String dynamicTranslate(String expression, SourceLanguage sourceLanguage) {
 		return translate(expression, sourceLanguage.toString());
 	}
 	

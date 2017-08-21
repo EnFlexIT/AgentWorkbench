@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.options.https;
+package de.enflexit.common.crypto;
 
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
