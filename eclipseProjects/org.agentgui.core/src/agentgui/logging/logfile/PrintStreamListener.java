@@ -40,8 +40,6 @@ import java.io.PrintStream;
  * the printStream event occurs, that object's appropriate
  * method is invoked.
  *
- * @see PrintStreamEvent
- * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class PrintStreamListener extends PrintStream {
@@ -57,11 +55,13 @@ public class PrintStreamListener extends PrintStream {
 	private SysOutScanner sos = null;
 	private PrintStreamListenerType listenerType;
 	
+	
 	/**
-	 * Constructor for remote outputs
-	 * @param outputStream
-	 * @param scanner
-	 * @param prefix
+	 * Constructor for remote outputs.
+	 *
+	 * @param outputStream the output stream
+	 * @param scanner the scanner
+	 * @param listenerType the listener type
 	 */
 	public PrintStreamListener(OutputStream outputStream, SysOutScanner scanner, PrintStreamListenerType listenerType) {
 		super(outputStream);

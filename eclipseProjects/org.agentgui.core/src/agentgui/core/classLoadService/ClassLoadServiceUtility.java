@@ -53,9 +53,7 @@ public class ClassLoadServiceUtility {
 	
 	/**
 	 * Returns the current class load service utility.
-	 *
 	 * @param newClassLoadServiceUtility the new ClassLoadServiceUtility
-	 * @return the class load service utility
 	 */
 	public static void setClassLoadServiceUtility(AbstractClassLoadServiceUtility newClassLoadServiceUtility) {
 		classLoadServiceUtility = newClassLoadServiceUtility;
@@ -202,7 +200,7 @@ public class ClassLoadServiceUtility {
 	/**
 	 * Returns an instance of a static load balancing to use by the specified agent.
 	 *
-	 * @param balacingClassName the balancing class name
+	 * @param balancingClassName the balancing class name
 	 * @param executingAgent the executing agent
 	 * @return the static load balancing
 	 * @throws ClassNotFoundException the class not found exception
@@ -220,7 +218,7 @@ public class ClassLoadServiceUtility {
 	/**
 	 * Returns an instance of a dynamic load balancing to use by the specified agent.
 	 *
-	 * @param balacingClassName the balancing class name
+	 * @param balancingClassName the balancing class name
 	 * @param executingAgent the executing agent
 	 * @return the dynamic load balancing
 	 * @throws ClassNotFoundException the class not found exception

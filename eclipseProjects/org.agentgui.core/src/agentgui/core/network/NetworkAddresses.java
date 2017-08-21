@@ -66,6 +66,7 @@ public class NetworkAddresses {
 
 	private boolean debug = false;
 	private Vector<NetworkAddress> networkAddressVector;
+	private Vector<NetworkAddress> networkAddressVectorLoopBack;
 	private JPopupMenu jPopupMenuNetworkAddresses;
 	
 	
@@ -75,7 +76,6 @@ public class NetworkAddresses {
 	public NetworkAddresses() {
 		this.getNetworkAddressVector();
 	}
-	
 	/**
 	 * Gets the network address vector.
 	 * @return the network address vector
@@ -89,6 +89,17 @@ public class NetworkAddresses {
 		return networkAddressVector;
 	}
 	/**
+	 * Gets the network address vector.
+	 * @return the network address vector
+	 */
+	public Vector<NetworkAddress> getNetworkAddressVectorLoopBack() {
+		if (networkAddressVectorLoopBack==null) {
+			networkAddressVectorLoopBack = new Vector<NetworkAddresses.NetworkAddress>();
+		}
+		return networkAddressVectorLoopBack;
+	}
+
+	/**
 	 * Starts the evaluation of the Ip addresses locally available.
 	 */
 	private void fillNetworkAddressVector() {
@@ -96,15 +107,19 @@ public class NetworkAddresses {
 	    try {
 	    	Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 	        while (interfaces.hasMoreElements()) {
-	            NetworkInterface iface = interfaces.nextElement();
-	            // filters out 127.0.0.1 and inactive interfaces
-	            if (iface.isLoopback() || !iface.isUp())
-	                continue;
+
+	        	NetworkInterface iface = interfaces.nextElement();
+	            // --- filter inactive interfaces -------------------
+	            if (!iface.isUp()) continue;
 
 	            Enumeration<InetAddress> addresses = iface.getInetAddresses();
 	            while(addresses.hasMoreElements()) {
 	                InetAddress addr = addresses.nextElement();
-	                this.getNetworkAddressVector().addElement(new NetworkAddress(iface, addr));
+	                if (iface.isLoopback()==true) {
+	                	this.getNetworkAddressVectorLoopBack().addElement(new NetworkAddress(iface, addr));
+	                } else {
+	                	this.getNetworkAddressVector().addElement(new NetworkAddress(iface, addr));
+	                }
 	            }
 	        }
 	        
@@ -221,32 +236,58 @@ public class NetworkAddresses {
 	
 	
 	/**
+	 * Gets the network address vector.
+	 *
+	 * @param inetAddressType the filter for the {@link InetAddressType}e
+	 * @param getLoopBackAddressesOnly the parameter to get loop back addresses only
+	 * @return the network address vector
+	 */
+	private Vector<NetworkAddress> getNetworkAddressVector(InetAddressType inetAddressType, boolean getLoopBackAddressesOnly) {
+		
+		Vector<NetworkAddress> searchVector = null;
+		if (getLoopBackAddressesOnly==false) {
+			searchVector = this.getNetworkAddressVector();
+		} else {
+			searchVector = this.getNetworkAddressVectorLoopBack();
+		}
+		// --- Search the vector ------------------------------------
+		Vector<NetworkAddress> resultVector = new Vector<NetworkAddresses.NetworkAddress>();
+		for (NetworkAddress nwa : searchVector) {
+			if (nwa.getInetAddressType()==inetAddressType) {
+				resultVector.add(nwa);
+			}
+		}
+		this.sortNetworkAddressVectorBySelectionPriority(resultVector);
+		return resultVector; 
+		
+	}
+	/**
 	 * Returns the {@link Inet4Address} addresses.
 	 * @return the inet4 addresses
 	 */
 	public Vector<NetworkAddress> getInet4Addresses() {
-		Vector<NetworkAddress> inet4Vector = new Vector<NetworkAddresses.NetworkAddress>();
-		for (NetworkAddress nwa : this.getNetworkAddressVector()) {
-			if (nwa.getInetAddressType()==InetAddressType.Inet4Address) {
-				inet4Vector.add(nwa);
-			}
-		}
-		this.sortNetworkAddressVectorBySelectionPriority(inet4Vector);
-		return inet4Vector; 
+		return this.getNetworkAddressVector(InetAddressType.Inet4Address, false); 
+	}
+	/**
+	 * Returns the loopback {@link Inet4Address} addresses.
+	 * @return the inet4 addresses
+	 */
+	public Vector<NetworkAddress> getInet4AddressesLoopBack() {
+		return this.getNetworkAddressVector(InetAddressType.Inet4Address, true); 
 	}
 	/**
 	 * Returns the {@link Inet6Address} addresses.
 	 * @return the inet6 addresses
 	 */
 	public Vector<NetworkAddress> getInet6Addresses() {
-		Vector<NetworkAddress> inet6Vector = new Vector<NetworkAddresses.NetworkAddress>();
-		for (NetworkAddress nwa : this.getNetworkAddressVector()) {
-			if (nwa.getInetAddressType()==InetAddressType.Inet6Address) {
-				inet6Vector.add(nwa);
-			}
-		}
-		this.sortNetworkAddressVectorBySelectionPriority(inet6Vector);
-		return inet6Vector; 
+		return this.getNetworkAddressVector(InetAddressType.Inet6Address, false);
+	}
+	/**
+	 * Returns the loopback {@link Inet6Address} addresses.
+	 * @return the inet6 addresses
+	 */
+	public Vector<NetworkAddress> getInet6AddressesLoopBack() {
+		return this.getNetworkAddressVector(InetAddressType.Inet6Address, true);
 	}
 
 	

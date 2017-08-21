@@ -52,6 +52,8 @@ import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.Platform;
+import agentgui.core.network.NetworkAddresses;
+import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
@@ -177,6 +179,19 @@ public class Application {
 			System.out.println("Headless Execution Mode ...");
 		}
 		Application.headlessOperation = headlessOperation;
+	}
+	
+	/**
+	 * Checks if the application is connected to a network.
+	 * @return true, if so. 
+	 */
+	public static boolean isNetworkConnected() {
+		NetworkAddresses na = new NetworkAddresses();
+		Vector<NetworkAddress> addressVector =  na.getNetworkAddressVector();
+		if (addressVector.size()==0) {
+			return false;
+		}
+		return true;
 	}
 	
 	
@@ -740,15 +755,17 @@ public class Application {
 	/**
 	 * This methods stops Agent.GUI, running in application or server mode, which 
 	 * depends on the configuration in 'properties/agentgui.ini'.<br>
-	 * Inverse method to {@link #startAgentGUI()} 
+	 * Inverse method to {@link #startAgentGUI()}
+	 *
+	 * @return true, if everything was stopped successfully
 	 */
-	public static void stopAgentGUI() {
+	public static boolean stopAgentGUI() {
 		
 		// --- Shutdown JADE --------------------
 		getJadePlatform().stop();
 
 		// --- Close open projects --------------
-		if (getProjectsLoaded().closeAll()==false) return;	
+		if (getProjectsLoaded().closeAll()==false) return false;	
 
 		// --- Close visualisation --------------
 		setMainWindow(null);
@@ -762,6 +779,7 @@ public class Application {
 		// --- Remove TrayIcon ------------------
 		setTrayIcon(null);	
 		
+		return true;
 	}
 	/**
 	 * Quits Agent.GUI (Application | Server | Service & Embedded System Agent)
@@ -769,7 +787,7 @@ public class Application {
 	public static void quit() {
 
 		// --- Stop Agent.GUI -------------------
-		stopAgentGUI();
+		if (stopAgentGUI()==false) return;
 		System.out.println(Language.translate("Programmende... ") );
 		
 		// --- Stop LogFileWriter ---------------
@@ -1006,7 +1024,7 @@ public class Application {
 		}
 		
 		// --- Stop Agent.GUI ---------------------------------------
-		stopAgentGUI();
+		if (stopAgentGUI()==false) return;
 		// --- Switch Language --------------------------------------
 		System.out.println("=> " + Language.translate("Sprachumstellung zu") + " '" + newLang + "'.");
 		Language.changeApplicationLanguageTo(newLang);

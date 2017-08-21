@@ -46,8 +46,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.network.NetworkAddresses;
+import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.network.PortChecker;
 
 /**
@@ -245,104 +247,100 @@ public class PlatformJadeConfig implements Serializable {
 	 * @param profile the new profile local port mtp
 	 */
 	private void setProfileLocalPortMTP(ProfileImpl profile) {
+
+		GlobalInfo globalInfo = Application.getGlobalInfo();
+		ExecutionMode execMode = globalInfo.getExecutionMode();
 		
 		// --------------------------------------------------------------------
-		// --- Check MTP settings if a project is defined ---------------------
+		// --- Get MTP-settings from global info as default -------------------
 		// --------------------------------------------------------------------
+		MTP_Creation mtpCreation = globalInfo.getOwnMtpCreation();
+		String mtpIpAddress = globalInfo.getOwnMtpIP();
+		Integer mtpPort = globalInfo.getOwnMtpPort();
+		MtpProtocol mtpProtocol = globalInfo.getMtpProtocol();
+		String keyStoreFile = globalInfo.getKeyStoreFile();
+		String keyStorePassword = globalInfo.getKeyStorePassword();
+		String trustStoreFile = globalInfo.getTrustStoreFile();
+		String trustStorePassword = globalInfo.getTrustStorePassword();
+		
+		// --- Replace configuration by project settings? ---------------------
 		if (this.currProject!=null) {
-			// ----------------------------------------------------------------
-			// --- Use the project settings for the MTP configuration ---------
-			// ----------------------------------------------------------------
-			if (this.getMtpCreation()==MTP_Creation.ConfiguredByIPandPort) {
-				// --- Determine the IP address to use ------------------------
-				String ipAddress = null;
-				if (this.getMtpIpAddress()==null || this.getMtpIpAddress().equals("") || this.getMtpIpAddress().equals(MTP_IP_AUTO_Config)) {
-					// --- Auto configuration of the IP address ---------------
-					NetworkAddresses networkAddresses = new NetworkAddresses();
-					InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
-					if (inetAddress!=null) {
-						ipAddress = inetAddress.getHostAddress();
-					}
-				} else {
-					// --- Use configured IP address --------------------------
-					ipAddress = this.getMtpIpAddress();
-				}
-				// --- Set the MTP address ------------------------------------ 
-				if (ipAddress!=null) {
-					Integer freePort = new PortChecker(this.getLocalPortMTP(), ipAddress).getFreePort();
-					if (this.getMtpProtocol()==MtpProtocol.HTTP) {
-						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
-					} else {
-						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
-						profile.setParameter("jade_mtp_http_https_keyStoreFile", this.getKeyStoreFile());
-						profile.setParameter("jade_mtp_http_https_keyStorePass", this.getKeyStorePassword());
-						profile.setParameter("jade_mtp_http_https_trustManagerClass","jade.mtp.http.https.FriendListAuthentication");
-						profile.setParameter("jade_mtp_http_https_friendListFile", this.getTrustStoreFile());
-						profile.setParameter("jade_mtp_http_https_friendListFilePass", this.getTrustStorePassword());
-					}
-					profile.setParameter(Profile.LOCAL_HOST, ipAddress);
-				}
-			}
-			
-		} else {
-			// ----------------------------------------------------------------
-			// --- Use the global settings for the MTP configuration ----------
-			// ----------------------------------------------------------------
-			GlobalInfo globalInfo = Application.getGlobalInfo();
-			MTP_Creation mtpCreation = globalInfo.getOwnMtpCreation();
-			String mtpIpAddress = globalInfo.getOwnMtpIP();
-			Integer mtpPort = globalInfo.getOwnMtpPort();
-			
-			if (mtpCreation==MTP_Creation.ConfiguredByIPandPort) {
-				String ipAddress = null;
-				if (mtpIpAddress==null || mtpIpAddress.equals("") || mtpIpAddress.equals(MTP_IP_AUTO_Config)) {
-					// --- Auto configuration of the IP address ---------------
-					NetworkAddresses networkAddresses = new NetworkAddresses();
-					InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
-					if (inetAddress!=null) {
-						ipAddress = inetAddress.getHostAddress();
-					}
-				} else {
-					// --- Use configured IP address --------------------------
-					ipAddress = mtpIpAddress;
-				}	
-				// --- Set the MTP address ------------------------------------ 
-				if (ipAddress!=null) {
-					Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
-					if (globalInfo.getMtpProtocol()==MtpProtocol.HTTP) {
-						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
-					} else {
-						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
-						profile.setParameter("jade_mtp_http_https_keyStoreFile", globalInfo.getKeyStoreFile());
-						profile.setParameter("jade_mtp_http_https_keyStorePass", globalInfo.getKeyStorePassword());
-						profile.setParameter("jade_mtp_http_https_trustManagerClass","jade.mtp.http.https.FriendListAuthentication");
-						profile.setParameter("jade_mtp_http_https_friendListFile", globalInfo.getTrustStoreFile());
-						profile.setParameter("jade_mtp_http_https_friendListFilePass", globalInfo.getTrustStorePassword());
-					}
-					profile.setParameter(Profile.LOCAL_HOST, ipAddress);
-				}
-			}
-			
-			if (globalInfo.getJadeUrlConfigurationForMaster().isLocalhost()) {
-				// --- Set MTP port in case of SERVER on local machines -------
-				switch (globalInfo.getExecutionMode()) {
-				case SERVER:
-				case SERVER_MASTER:
-				case SERVER_SLAVE:
-					// --------------------------------------------------------
-					// --- See if the configure port for MTP is free ----------
-					// --- May happen if a slave is executed, while ----------- 
-					// --- a master is already running ------------------------
-					// --------------------------------------------------------
-					Integer freePort = new PortChecker(globalInfo.getServerMasterPort4MTP(), globalInfo.getServerMasterURL()).getFreePort();
-					profile.setParameter("jade_mtp_http_port", freePort.toString());	
-					break;
+			mtpCreation = this.getMtpCreation();
+			mtpIpAddress = this.getMtpIpAddress();
+			mtpPort = this.getLocalPortMTP();
+			mtpProtocol = this.getMtpProtocol();
+			keyStoreFile = this.getKeyStoreFile();
+			keyStorePassword = this.getKeyStorePassword();
+			trustStoreFile = this.getTrustStoreFile();
+			trustStorePassword = this.getTrustStorePassword();
+		}
+		
+		
+		// --------------------------------------------------------------------
+		// --- Apply MTP-settings to profile ----------------------------------
+		// --------------------------------------------------------------------
+		if (mtpCreation==MTP_Creation.ConfiguredByIPandPort) {
 
-				default:
-					break;
-				}	
+			String ipAddress = null;
+			if (mtpIpAddress==null || mtpIpAddress.equals("") || mtpIpAddress.equals(MTP_IP_AUTO_Config)) {
+				// --- Auto configuration of the IP address -------------------
+				NetworkAddresses networkAddresses = new NetworkAddresses();
+				InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
+				if (inetAddress==null || Application.isNetworkConnected()==false) {
+					// --- No network connection, take loopback address -------
+					Vector<NetworkAddress> loopBackAddresses = networkAddresses.getInet4AddressesLoopBack();
+					if (loopBackAddresses!=null && loopBackAddresses.size()>0) {
+						ipAddress = loopBackAddresses.get(0).getInetAddress().getHostAddress(); 
+					}
+					
+				} else {
+					// --- Take the preferred IP address ----------------------
+					ipAddress = inetAddress.getHostAddress();
+				}
+			} else {
+				// --- Use configured IP address ------------------------------
+				ipAddress = mtpIpAddress;
+			}	
+			// --- Set the MTP address ----------------------------------------
+			if (ipAddress!=null) {
+				Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
+				if (mtpProtocol==MtpProtocol.HTTP) {
+					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
+				} else {
+					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
+					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile);
+					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
+					profile.setParameter("jade_mtp_http_https_trustManagerClass","jade.mtp.http.https.FriendListAuthentication");
+					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
+					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
+				}
+				profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 			}
 		}
+		
+		// --------------------------------------------------------------------
+		// --- Consider SERVER execution mode --------------------------------- 
+		// --------------------------------------------------------------------
+		if (this.currProject==null && globalInfo.getJadeUrlConfigurationForMaster().isLocalhost()) {
+			// --- Set MTP port in case of SERVER on local machines -------
+			switch (execMode) {
+			case SERVER:
+			case SERVER_MASTER:
+			case SERVER_SLAVE:
+				// --------------------------------------------------------
+				// --- See if the configure port for MTP is free ----------
+				// --- May happen if a slave is executed, while ----------- 
+				// --- a master is already running ------------------------
+				// --------------------------------------------------------
+				Integer freePort = new PortChecker(globalInfo.getServerMasterPort4MTP(), globalInfo.getServerMasterURL()).getFreePort();
+				profile.setParameter("jade_mtp_http_port", freePort.toString());	
+				break;
+
+			default:
+				break;
+			}	
+		}
+		
 	}
 	/**
 	 * Adds the local configured SERVICES to the input instance of Profile.
@@ -381,8 +379,9 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void addService(String serviceClassReference) {
 		
-		if (this.isUsingService(serviceClassReference)==false && isAutoService(serviceClassReference)==false) {
-			// --- Add to the local HashSet -------------------------
+		if (this.isUsingService(serviceClassReference)==false && serviceClassReference.contains(getAutoServiceTextAddition())==false) {
+			
+			// --- add to the local HashSet -------------------------
 			this.useServiceList.add(serviceClassReference);
 			// --- add to the DefaultListModel ----------------------
 			this.getListModelServices().addElement(serviceClassReference);
