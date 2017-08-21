@@ -108,6 +108,7 @@ public class ClassSelector extends JDialog {
 	/**
 	 * Default constructor.
 	 * @param owner the owner
+	 * @wbp.parser.constructor
 	 */
 	public ClassSelector(Frame owner) {
 		super(owner);
