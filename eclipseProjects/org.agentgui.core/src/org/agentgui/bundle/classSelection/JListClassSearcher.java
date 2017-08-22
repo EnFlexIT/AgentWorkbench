@@ -30,13 +30,12 @@ package org.agentgui.bundle.classSelection;
 
 import java.util.Vector;
 
-import org.agentgui.bundle.evaluation.AbstractBundleClassFilter;
-import org.agentgui.bundle.evaluation.BundleClassFilterListener;
-import org.agentgui.bundle.evaluation.BundleEvaluator;
-
 import agentgui.core.gui.components.JListWithProgressBar;
 import agentgui.core.gui.components.SortedListModel;
 import agentgui.core.project.PlatformJadeConfig;
+import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
+import de.enflexit.common.bundleEvaluation.BundleClassFilterListener;
+import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import jade.core.BaseService;
 
 /**
@@ -163,7 +162,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		return currListModel;
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.bundle.evaluation.BundleClassFilterListener#addClassFound(java.lang.String, java.lang.String)
+	 * @see de.enflexit.common.bundleEvaluation.BundleClassFilterListener#addClassFound(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void addClassFound(String className, String symbolicBundleName) {
@@ -197,7 +196,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.bundle.evaluation.BundleClassFilterListener#removeClassFound(java.lang.String, java.lang.String)
+	 * @see de.enflexit.common.bundleEvaluation.BundleClassFilterListener#removeClassFound(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void removeClassFound(String className, String symbolicBundleName) {

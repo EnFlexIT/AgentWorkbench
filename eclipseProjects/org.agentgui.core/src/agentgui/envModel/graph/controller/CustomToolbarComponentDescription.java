@@ -31,9 +31,9 @@ package agentgui.envModel.graph.controller;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.envModel.graph.controller.BasicGraphGui.ToolBarSurrounding;
 import agentgui.envModel.graph.controller.BasicGraphGui.ToolBarType;
+import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
 
 
 /**

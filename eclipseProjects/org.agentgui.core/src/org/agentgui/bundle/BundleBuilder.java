@@ -54,7 +54,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.agentgui.bundle.evaluation.BundleEvaluator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentConstants;
@@ -65,6 +64,7 @@ import org.xml.sax.SAXException;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.ProjectBundleLoader;
+import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.transfer.FileCopier;
 
 /**

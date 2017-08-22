@@ -53,7 +53,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	private ClassLoadService classLoadService;
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getClassLoadService(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getClassLoadService(java.lang.String)
 	 */
 	@Override
 	protected ClassLoadService getClassLoadService(String className) {
@@ -64,7 +64,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getClass(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getClass(java.lang.String)
 	 */
 	@Override
 	public Class<?> forName(String className) throws ClassNotFoundException {
@@ -72,7 +72,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#newInstance(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#newInstance(java.lang.String)
 	 */
 	@Override
 	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -80,7 +80,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getAgentClass(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getAgentClass(java.lang.String)
 	 */
 	@Override
 	public Class<? extends Agent> getAgentClass(String agentClassName) throws NoClassDefFoundError, ClassNotFoundException {
@@ -88,7 +88,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getTimeModelInstance(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getTimeModelInstance(java.lang.String)
 	 */
 	@Override
 	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException {
@@ -96,7 +96,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getPlugInInstance(java.lang.String, agentgui.core.project.Project)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getPlugInInstance(java.lang.String, agentgui.core.project.Project)
 	 */
 	@Override
 	public PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -104,7 +104,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getOntologyInstance(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getOntologyInstance(java.lang.String)
 	 */
 	@Override
 	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
@@ -112,14 +112,14 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getOntologyClassVisualisationInstance(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getOntologyClassVisualisationInstance(java.lang.String)
 	 */
 	@Override
 	public OntologyClassVisualisation getOntologyClassVisualisationInstance(String ontologyClassVisualisationClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SecurityException {
 		return this.getClassLoadService(ontologyClassVisualisationClassName).getOntologyClassVisualisationInstance(ontologyClassVisualisationClassName);
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getNetworkComponentAdapterInstance(java.lang.String, agentgui.envModel.graph.controller.GraphEnvironmentController)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getNetworkComponentAdapterInstance(java.lang.String, agentgui.envModel.graph.controller.GraphEnvironmentController)
 	 */
 	@Override
 	public NetworkComponentAdapter getNetworkComponentAdapterInstance(String adapterClassname, GraphEnvironmentController graphController) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -127,7 +127,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getStaticLoadBalancing(java.lang.String, jade.core.Agent)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getStaticLoadBalancing(java.lang.String, jade.core.Agent)
 	 */
 	@Override
 	public StaticLoadBalancingBase getStaticLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -135,7 +135,7 @@ public class DefaultClassLoadServiceUtility extends AbstractClassLoadServiceUtil
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.AbstractClassLoadServiceUtility#getDynamicLoadBalancing(java.lang.String, jade.core.Agent)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getDynamicLoadBalancing(java.lang.String, jade.core.Agent)
 	 */
 	@Override
 	public DynamicLoadBalancingBase getDynamicLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {

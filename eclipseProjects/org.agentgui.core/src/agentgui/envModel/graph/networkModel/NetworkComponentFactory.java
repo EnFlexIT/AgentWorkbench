@@ -34,9 +34,9 @@ import java.util.HashSet;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.StarGraphElement;
+import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
 
 
 /**

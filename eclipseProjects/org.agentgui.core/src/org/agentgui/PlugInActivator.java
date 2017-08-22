@@ -1,7 +1,5 @@
 package org.agentgui;
 
-import org.agentgui.bundle.evaluation.BundleEvaluator;
-import org.agentgui.classLoadService.OSGIClassLoadServiceUtility;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -10,6 +8,8 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.classLoadService.OSGIClassLoadServiceUtility;
+import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
 /**
  * The activator class controls the plug-in life cycle

@@ -1,5 +1,6 @@
 package org.agentgui.bundle.evaluation;
 
+import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 import jade.content.onto.Ontology;
 
 /**
@@ -10,7 +11,7 @@ import jade.content.onto.Ontology;
 public class FilterForOntology extends AbstractBundleClassFilter {
 
 	/* (non-Javadoc)
-	 * @see org.agentgui.bundle.evaluation.AbstractBundleClassFilter#getFilterScope()
+	 * @see de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter#getFilterScope()
 	 */
 	@Override
 	public String getFilterScope() {
@@ -18,7 +19,7 @@ public class FilterForOntology extends AbstractBundleClassFilter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.bundle.evaluation.AbstractBundleClassFilter#isFilterCriteria(java.lang.Class)
+	 * @see de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter#isFilterCriteria(java.lang.Class)
 	 */
 	@Override
 	public boolean isFilterCriteria(Class<?> clazz) {
@@ -26,7 +27,7 @@ public class FilterForOntology extends AbstractBundleClassFilter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.bundle.evaluation.AbstractBundleClassFilter#isInFilterScope(java.lang.Class)
+	 * @see de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter#isInFilterScope(java.lang.Class)
 	 */
 	@Override
 	public boolean isInFilterScope(Class<?> clazz) {

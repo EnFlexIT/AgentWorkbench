@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.bundle.evaluation;
+package de.enflexit.common.bundleEvaluation;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.agentgui.PlugInActivator;
+//import org.agentgui.PlugInActivator;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
@@ -61,8 +61,6 @@ import org.osgi.framework.wiring.BundleWiring;
  */
 public class BundleEvaluator {
 	
-	public static final String JADE_BUNDLE_NAME = "org.agentgui.lib.jade";
-	
 	private boolean debug = false;
 	
 	private HashSet<String> bundleExcludeHashSet;
@@ -75,10 +73,6 @@ public class BundleEvaluator {
 	 * Private, singleton constructor. 
 	 */
 	private BundleEvaluator() {
-		this.getEvaluationFilterResults().add(new FilterForAgent(), false);
-		this.getEvaluationFilterResults().add(new FilterForOntology(), false);
-		this.getEvaluationFilterResults().add(new FilterForBaseService(), false);
-		this.evaluateAllBundles();
 	}
 	/**
 	 * Gets the single instance of BundleEvaluator.
@@ -181,6 +175,17 @@ public class BundleEvaluator {
 	public boolean addBundleClassFilter(AbstractBundleClassFilter bundleClassFilter) {
 		return this.getEvaluationFilterResults().add(bundleClassFilter);
 	}
+	/**
+	 * Adds the specified bundle class filter and executes the needed, filter-specific search.
+	 *
+	 * @param bundleClassFilter the bundle class filter
+	 * @param doBundleEvaluation set true, if you want to directly evaluate all bundles with the current filter
+	 * @return true, if successful
+	 */
+	public boolean addBundleClassFilter(AbstractBundleClassFilter bundleClassFilter, boolean doBundleEvaluation) {
+		return this.getEvaluationFilterResults().add(bundleClassFilter, doBundleEvaluation);
+	}
+
 	/**
 	 * Removes the specified bundle class filter.
 	 *
@@ -458,7 +463,8 @@ public class BundleEvaluator {
 			// ------------------------------------------------------
 			// --- If the bundle wiring worked, check for jars ------ 
 			// ------------------------------------------------------			
-	 		if (bundle.getSymbolicName().equals(PlugInActivator.PLUGIN_ID)==false) {
+//	 		if (bundle.getSymbolicName().equals(PlugInActivator.PLUGIN_ID)==false) {
+			// TODO
 				// --- Check for available jars in the bundle--------
 				Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
 				if (bundleJars!=null) {
@@ -467,7 +473,7 @@ public class BundleEvaluator {
 						bundleClasses.addAll(this.getJarClasses(bundle, url));
 					}
 				}
-			}
+//			}
 			
 		}
 		return bundleClasses;

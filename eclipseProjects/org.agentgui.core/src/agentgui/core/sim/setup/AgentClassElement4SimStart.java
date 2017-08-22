@@ -42,6 +42,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 
+
 /**
  * Provides a container instance in order to configure an agents 
  * start configuration. This class is used in the simulation setup

@@ -26,14 +26,14 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.bundle.evaluation;
+package de.enflexit.common.bundleEvaluation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
 
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
 
 /**
  * The Class PackageClasses extends an ArrayList and 

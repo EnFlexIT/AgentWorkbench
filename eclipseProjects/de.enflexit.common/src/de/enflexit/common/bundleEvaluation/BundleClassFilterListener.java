@@ -1,4 +1,4 @@
-package org.agentgui.bundle.evaluation;
+package de.enflexit.common.bundleEvaluation;
 
 /**
  * The listener interface for receiving bundleClassFilter events.

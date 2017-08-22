@@ -1,4 +1,4 @@
-package org.agentgui.bundle.evaluation;
+package de.enflexit.common.bundleEvaluation;
 
 import java.rmi.server.UID;
 import java.util.Collections;

@@ -45,7 +45,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
@@ -55,6 +54,7 @@ import agentgui.core.project.AgentStartConfiguration;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.common.ExceptionHandling;
+import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;

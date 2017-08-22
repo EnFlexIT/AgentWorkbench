@@ -39,7 +39,7 @@ import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.ResultSet;

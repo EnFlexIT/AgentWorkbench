@@ -1,4 +1,4 @@
-package org.agentgui.classLoadService;
+package agentgui.core.classLoadService;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -10,8 +10,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 
-import agentgui.core.classLoadService.ClassLoadService;
-import agentgui.core.classLoadService.DefaultClassLoadServiceUtility;
 
 /**
  * The Class ClassLoadServiceUtility extends the {@link DefaultClassLoadServiceUtility} 
@@ -31,7 +29,7 @@ public class OSGIClassLoadServiceUtility extends DefaultClassLoadServiceUtility 
 	private HashMap<String, ClassLoadService> clServicesByClassName;
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.DefaultClassLoadServiceUtility#getClassLoadService(java.lang.String)
+	 * @see de.enflexit.common.classLoadService.DefaultClassLoadServiceUtility#getClassLoadService(java.lang.String)
 	 */
 	@Override
 	protected ClassLoadService getClassLoadService(String className) {
