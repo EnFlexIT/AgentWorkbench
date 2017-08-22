@@ -40,9 +40,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
-import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
 import jade.content.onto.Ontology;
 
 /**

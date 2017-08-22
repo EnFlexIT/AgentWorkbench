@@ -37,8 +37,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.common.bundleEvaluation.PackageClasses;
-import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
 
 /**
  * This class represents the DefaultTreeModel for a single 

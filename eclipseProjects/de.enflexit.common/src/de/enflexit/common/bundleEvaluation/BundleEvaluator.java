@@ -37,10 +37,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.server.UID;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -50,6 +52,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
@@ -463,21 +466,49 @@ public class BundleEvaluator {
 			// ------------------------------------------------------
 			// --- If the bundle wiring worked, check for jars ------ 
 			// ------------------------------------------------------			
-//	 		if (bundle.getSymbolicName().equals(PlugInActivator.PLUGIN_ID)==false) {
-			// TODO
+			// --- Does the bundle has a "Bundle-ClassPath" entry ---
+			Vector<String> bundleClassPathEntries  = this.getBundleClassPathEntries(bundle);
+			if (bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
 				// --- Check for available jars in the bundle--------
 				Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
 				if (bundleJars!=null) {
 					while (bundleJars.hasMoreElements()) {
 						URL url = (URL) bundleJars.nextElement();
-						bundleClasses.addAll(this.getJarClasses(bundle, url));
+						String debugText = "Found jar-File of '" + bundle.getSymbolicName() + "' (" + url.getPath() + ")";
+						if (bundleClassPathEntries.contains(url.getPath())) {
+							debugText += "\t=> Will be checked ... ";
+							bundleClasses.addAll(this.getJarClasses(bundle, url));
+							debugText += "Done!";
+						}
+						if (debug) System.out.println(debugText); 
+						
 					}
-				}
-//			}
+				}	
+			}
 			
 		}
 		return bundleClasses;
 	}
+	/**
+	 * Returns the bundle class path entries conform to the URL pattern (starting with a slash).
+	 * @param bundle the bundle
+	 * @return the bundle class path entries
+	 */
+	private Vector<String> getBundleClassPathEntries(Bundle bundle) {
+		
+		String bundleClassPath = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
+		if (bundleClassPath==null) return null;
+		
+		Vector<String> bundleClassPathEntries = new Vector<>(Arrays.asList(bundleClassPath .split(",")));
+		for (int i = 0; i < bundleClassPathEntries.size(); i++) {
+			String bundleClassPathEntry = bundleClassPathEntries.get(i);
+			if (bundleClassPathEntry.startsWith("/")==false) {
+				bundleClassPathEntries.set(i, "/" + bundleClassPathEntry);
+			}
+		}
+		return bundleClassPathEntries;
+	}
+	
 	
 	/**
 	 * Returns the class name of a bundle resource returned by the bundle wiring.
@@ -646,8 +677,8 @@ public class BundleEvaluator {
 		if (bundle!=null) {
 			List<String> classNames = this.getJarClassReferences(bundle, jarFileURL);
 			for (int i = 0; i < classNames.size(); i++) {
-				String className = classNames.get(i);
 				try {
+					String className = classNames.get(i);
 					Class<?> classFound = bundle.loadClass(className);
 					classesOfJarFile.add(classFound);
 				} catch (ClassNotFoundException cnfEx) {
