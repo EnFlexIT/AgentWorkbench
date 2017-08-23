@@ -7,8 +7,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.classLoadService.OSGIClassLoadServiceUtility;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
 /**
@@ -36,8 +34,6 @@ public class PlugInActivator extends AbstractUIPlugin implements BundleListener 
 		super.start(context);
 		thisActivator = this;
 		context.addBundleListener(this);
-		// --- Set the Agent.GUI DefaultClassLoadServiceUtility to the OSGIClassLoadServiceUtility ----------
-		ClassLoadServiceUtility.setClassLoadServiceUtility(new OSGIClassLoadServiceUtility());
 	}
 	/*
 	 * (non-Javadoc)

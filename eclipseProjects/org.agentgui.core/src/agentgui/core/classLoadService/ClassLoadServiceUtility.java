@@ -64,7 +64,7 @@ public class ClassLoadServiceUtility {
 	 */
 	public static AbstractClassLoadServiceUtility getClassLoadServiceUtility() {
 		if (classLoadServiceUtility==null) {
-			classLoadServiceUtility = new DefaultClassLoadServiceUtility();
+			classLoadServiceUtility = new ClassLoadServiceUtilityImpl();
 		}
 		return classLoadServiceUtility;
 	}
