@@ -33,8 +33,6 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 
-import de.enflexit.common.classLoadService.ClassLoadServiceUtility;
-
 /**
  * The Class PackageClasses extends an ArrayList and 
  * will determine all classes within a package.
@@ -98,22 +96,5 @@ public class PackageClasses extends ArrayList<String> {
 		}
 	}
 	
-	/**
-	 * Returns the actual classes of the search result.
-	 * @return the classes of result
-	 */
-	public ArrayList<Class<?>> getClassesOfResult() {
-		ArrayList<Class<?>> classesFound = new ArrayList<>();
-		for (int i = 0; i < this.size(); i++) {
-			String className = this.get(i);
-			try {
-				Class<?> classFound = ClassLoadServiceUtility.forName(className);
-				classesFound.add(classFound);
-			} catch (ClassNotFoundException cnfe) {
-				//cnfe.printStackTrace();
-			}
-		}
-		return classesFound;
-	}
 	
 }

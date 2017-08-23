@@ -47,26 +47,27 @@ import jade.core.Agent;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ClassLoadServiceUtility {
+
+	public static final String SERVICE_REFERENCE_FILTER = "(component.factory=org.agentgui.classLoadService)";
 	
-	private static AbstractClassLoadServiceUtility classLoadServiceUtility; 
+	private static ClassLoadServiceUtilityImpl classLoadServiceUtility; 
 	
-	
-	/**
-	 * Returns the current class load service utility.
-	 * @param newClassLoadServiceUtility the new ClassLoadServiceUtility
-	 */
-	public static void setClassLoadServiceUtility(AbstractClassLoadServiceUtility newClassLoadServiceUtility) {
-		classLoadServiceUtility = newClassLoadServiceUtility;
-	}
 	/**
 	 * Return the current ClassLoadServiceUtility.
 	 * @return the class load service utility
 	 */
-	public static AbstractClassLoadServiceUtility getClassLoadServiceUtility() {
+	public static ClassLoadServiceUtilityImpl getClassLoadServiceUtility() {
 		if (classLoadServiceUtility==null) {
 			classLoadServiceUtility = new ClassLoadServiceUtilityImpl();
 		}
 		return classLoadServiceUtility;
+	}
+	/**
+	 * Returns the current class load service utility.
+	 * @param newClassLoadServiceUtility the new ClassLoadServiceUtility
+	 */
+	public static void setClassLoadServiceUtility(ClassLoadServiceUtilityImpl newClassLoadServiceUtility) {
+		classLoadServiceUtility = newClassLoadServiceUtility;
 	}
 	
 	
@@ -232,5 +233,5 @@ public class ClassLoadServiceUtility {
 	public static DynamicLoadBalancingBase getDynamicLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException , NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		return getClassLoadServiceUtility().getDynamicLoadBalancing(balancingClassName, executingAgent);
 	}
-	
+
 }

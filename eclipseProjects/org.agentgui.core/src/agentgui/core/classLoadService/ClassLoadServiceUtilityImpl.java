@@ -57,7 +57,7 @@ import jade.core.Agent;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility {
+public class ClassLoadServiceUtilityImpl implements ClassLoadService {
 
 	private boolean debug = false;
 	
@@ -70,10 +70,13 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	
 	private HashMap<String, ClassLoadService> clServicesByClassName;
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.DefaultClassLoadServiceUtility#getClassLoadService(java.lang.String)
+	
+	/**
+	 * Gets the class load service.
+	 *
+	 * @param className the class name
+	 * @return the class load service
 	 */
-	@Override
 	protected ClassLoadService getClassLoadService(String className) {
 
 		// ----------------------------------------------------------
@@ -201,7 +204,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	/**
 	 * Updates the currently registered {@link ClassLoadService}'s (Takes also into account that services can be removed dynamically).
 	 */
-	public void updateClassLoadServices() {
+	private void updateClassLoadServices() {
 		
 		Vector<String> deleteCandidatesComponentFactoryName = new Vector<>(this.getClassLoadServicesByComponentFactory().keySet()); 
 		Vector<String> deleteCandidatesSymbolicBundleName = new Vector<>(this.getClassLoadServicesBySymbolicBundleName().keySet());
@@ -211,7 +214,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 		// ------------------------------------------------------------------------------
 		try {
 			// --- Check for the ServiceReference --------------------------------------- 
-			ServiceReference<?>[] serviceReferences = this.getBundleContext().getServiceReferences(ComponentFactory.class.getName(), "(component.factory=org.agentgui.classLoadService)");
+			ServiceReference<?>[] serviceReferences = this.getBundleContext().getServiceReferences(ComponentFactory.class.getName(), ClassLoadServiceUtility.SERVICE_REFERENCE_FILTER);
 			for (int i = 0; i < serviceReferences.length; i++) {
 				
 				// --- Get the component factory and its name ---------------------------

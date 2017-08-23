@@ -49,7 +49,6 @@ import jade.core.Agent;
  */
 public interface ClassLoadService {
 
-	
 	/**
 	 * Has to return the class for the specified class name or reference.
 	 *
