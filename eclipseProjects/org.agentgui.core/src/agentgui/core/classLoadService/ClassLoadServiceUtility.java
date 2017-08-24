@@ -39,7 +39,7 @@ import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
-import de.enflexit.common.classLoadService.BaseClassLoadServiceUtilityImpl;
+import de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl;
 import de.enflexit.common.classLoadService.ClassLoadServiceUtilityImplManager;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
@@ -56,16 +56,15 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * Return the current BaseClassLoadServiceUtility.
 	 * @return the class load service utility
 	 */
-	public static ClassLoadServiceUtilityImpl getClassLoadServiceUtility() {
+	private static ClassLoadServiceUtilityImpl getClassLoadServiceUtilityImpl() {
 		ClassLoadServiceUtilityImplManager clsu = ClassLoadServiceUtilityImplManager.getInstance();
-		BaseClassLoadServiceUtilityImpl<?> cls = clsu.getClassLoadServiceUtilityImpl(ClassLoadService.class);
+		AbstractClassLoadServiceUtilityImpl<?> cls = clsu.getClassLoadServiceUtilityImpl(ClassLoadService.class);
 		if (cls==null || !(cls instanceof ClassLoadService)) {
 			cls = new ClassLoadServiceUtilityImpl();
 			clsu.registerClassLoadServiceUtilityImpl(ClassLoadService.class, cls);
 		}
 		return (ClassLoadServiceUtilityImpl) cls;
 	}
-	
 	
 	/**
 	 * Returns the class load service that provides the actual implementations.
@@ -74,29 +73,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @return the class load service
 	 */
 	public static ClassLoadService getClassLoadService(String className) {
-		return getClassLoadServiceUtility().getClassLoadService(className);
-	}
-	
-	/**
-	 * Returns the class for the specified class name or reference.
-	 *
-	 * @param className the class name
-	 * @return the class
-	 * @throws ClassNotFoundException the class not found exception
-	 */
-	public static Class<?> forName(String className) throws ClassNotFoundException {
-		return getClassLoadServiceUtility().forName(className);
-	}
-	
-	/**
-	 * Returns a new instance of the specified class.
-	 *
-	 * @param className the class name
-	 * @return the object
-	 * @throws ClassNotFoundException the class not found exception
-	 */
-	public static Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return getClassLoadServiceUtility().newInstance(className);
+		return getClassLoadServiceUtilityImpl().getClassLoadService(className);
 	}
 	
 	/**
@@ -108,7 +85,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws ClassNotFoundException the class not found exception
 	 */
 	public static Class<? extends Agent> getAgentClass(String agentClassName) throws NoClassDefFoundError, ClassNotFoundException {
-		return getClassLoadServiceUtility().getAgentClass(agentClassName);
+		return getClassLoadServiceUtilityImpl().getAgentClass(agentClassName);
 	}
 
 	/**
@@ -123,7 +100,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws SecurityException the security exception
 	 */
 	public static TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException {
-		return getClassLoadServiceUtility().getTimeModelInstance(className); 
+		return getClassLoadServiceUtilityImpl().getTimeModelInstance(className); 
 	}
 
 	/**
@@ -141,7 +118,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws InvocationTargetException the invocation target exception
 	 */
 	public static PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException , NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return getClassLoadServiceUtility().getPlugInInstance(pluginClassName, project);
+		return getClassLoadServiceUtilityImpl().getPlugInInstance(pluginClassName, project);
 	}
 	
 	/**
@@ -157,7 +134,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws InvocationTargetException the invocation target exception
 	 */
 	public static Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-		return getClassLoadServiceUtility().getOntologyInstance(ontologyClassName);
+		return getClassLoadServiceUtilityImpl().getOntologyInstance(ontologyClassName);
 	}
 
 	/**
@@ -173,7 +150,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws InvocationTargetException the invocation target exception
 	 */
 	public static OntologyClassVisualisation getOntologyClassVisualisationInstance(String ontologyClassVisualisationClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SecurityException {
-		return getClassLoadServiceUtility().getOntologyClassVisualisationInstance(ontologyClassVisualisationClassName);
+		return getClassLoadServiceUtilityImpl().getOntologyClassVisualisationInstance(ontologyClassVisualisationClassName);
 	}
 	
 	/**
@@ -191,7 +168,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws InvocationTargetException the invocation target exception
 	 */
 	public static NetworkComponentAdapter getNetworkComponentAdapterInstance(String adapterClassName, GraphEnvironmentController graphController) throws ClassNotFoundException, SecurityException , NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return getClassLoadServiceUtility().getNetworkComponentAdapterInstance(adapterClassName, graphController);
+		return getClassLoadServiceUtilityImpl().getNetworkComponentAdapterInstance(adapterClassName, graphController);
 	}
 	
 	/**
@@ -209,7 +186,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws InvocationTargetException the invocation target exception
 	 */
 	public static StaticLoadBalancingBase getStaticLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException , NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return getClassLoadServiceUtility().getStaticLoadBalancing(balancingClassName, executingAgent);
+		return getClassLoadServiceUtilityImpl().getStaticLoadBalancing(balancingClassName, executingAgent);
 	}
 	
 	/**
@@ -227,7 +204,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws InvocationTargetException the invocation target exception
 	 */
 	public static DynamicLoadBalancingBase getDynamicLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException , NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return getClassLoadServiceUtility().getDynamicLoadBalancing(balancingClassName, executingAgent);
+		return getClassLoadServiceUtilityImpl().getDynamicLoadBalancing(balancingClassName, executingAgent);
 	}
 
 }

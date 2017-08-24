@@ -50,11 +50,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import org.agentgui.bundle.classSelection.JListClassSearcher;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.classSelection.JListClassSearcher;
 import jade.core.Agent;
 
 /**

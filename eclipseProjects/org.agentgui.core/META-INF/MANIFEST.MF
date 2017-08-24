@@ -347,11 +347,6 @@ Export-Package: agentgui.core.application;
    org.eclipse.core.runtime.preferences,
    org.eclipse.ui.plugin",
  org.agentgui.bundle,
- org.agentgui.bundle.classSelection;
-  uses:="org.osgi.framework,
-   agentgui.core.gui.components,
-   org.agentgui.bundle.evaluation,
-   javax.swing",
  org.agentgui.bundle.evaluation;uses:="org.osgi.framework",
  org.agentgui.extensions;uses:="org.eclipse.core.runtime"
 Service-Component: classLoadService.xml 

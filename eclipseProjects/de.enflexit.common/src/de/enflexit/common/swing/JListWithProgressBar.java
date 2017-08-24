@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.components;
+package de.enflexit.common.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -159,11 +159,9 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param busy the new busy
 	 */
 	public void setBusy(boolean busy) {
-		if (busy!=this.getJProgressBarLoading().isVisible()) {
-			this.getJProgressBarLoading().setVisible(busy);
-			this.validate();
-			this.repaint();
-		}
+		this.getJProgressBarLoading().setVisible(busy);
+		this.validate();
+		this.repaint();
 	}
 	
 	// ----------------------------------------------------------------------------------

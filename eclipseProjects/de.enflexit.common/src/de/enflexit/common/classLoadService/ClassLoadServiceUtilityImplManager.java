@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class ClassLoadServiceUtilityImplManager {
 	
 	private static ClassLoadServiceUtilityImplManager thisInstance;
-	private HashMap<Class<? extends BaseClassLoadService>, BaseClassLoadServiceUtilityImpl<? extends BaseClassLoadService>> clsUtilityImplHashMap;
+	private HashMap<Class<? extends BaseClassLoadService>, AbstractClassLoadServiceUtilityImpl<? extends BaseClassLoadService>> clsUtilityImplHashMap;
 
 	
 	/** Private singleton constructor. */
@@ -28,38 +28,38 @@ public class ClassLoadServiceUtilityImplManager {
 	
 	
 	/**
-	 * Returns the HashMap of BaseClassLoadServiceUtilityImpl.
+	 * Returns the HashMap of AbstractClassLoadServiceUtilityImpl.
 	 * @return the HashMap 
 	 */
-	private HashMap<Class<? extends BaseClassLoadService>, BaseClassLoadServiceUtilityImpl<? extends BaseClassLoadService>> getClassLoadServiceUtilityImplHashMap() {
+	private HashMap<Class<? extends BaseClassLoadService>, AbstractClassLoadServiceUtilityImpl<? extends BaseClassLoadService>> getClassLoadServiceUtilityImplHashMap() {
 		if (clsUtilityImplHashMap==null) {
 			clsUtilityImplHashMap = new HashMap<>();
 		}
 		return clsUtilityImplHashMap;
 	}
 	/**
-	 * Register a BaseClassLoadServiceUtilityImpl for the specified BaseClassLoadService.
+	 * Register a AbstractClassLoadServiceUtilityImpl for the specified BaseClassLoadService.
 	 *
 	 * @param clsClass the class of the extended BaseClassLoadService
-	 * @param clsUtilityImpl the actual BaseClassLoadServiceUtilityImpl for the BaseClassLoadService 
+	 * @param clsUtilityImpl the actual AbstractClassLoadServiceUtilityImpl for the BaseClassLoadService 
 	 */
-	public void registerClassLoadServiceUtilityImpl(Class<? extends BaseClassLoadService> clsClass, BaseClassLoadServiceUtilityImpl<? extends BaseClassLoadService> clsUtilityImpl) {
+	public void registerClassLoadServiceUtilityImpl(Class<? extends BaseClassLoadService> clsClass, AbstractClassLoadServiceUtilityImpl<? extends BaseClassLoadService> clsUtilityImpl) {
 		getClassLoadServiceUtilityImplHashMap().put(clsClass, clsUtilityImpl);
 	}
 	/**
-	 * Returns the extended and registered {@link BaseClassLoadServiceUtilityImpl} for the specified extended {@link BaseClassLoadService}.
+	 * Returns the extended and registered {@link AbstractClassLoadServiceUtilityImpl} for the specified extended {@link BaseClassLoadService}.
 	 *
 	 * @param clsClass the actual BaseClassLoadService as description
 	 * @return the class load service utility
 	 */
-	public BaseClassLoadServiceUtilityImpl<? extends BaseClassLoadService> getClassLoadServiceUtilityImpl(Class<? extends BaseClassLoadService> clsClass) {
+	public AbstractClassLoadServiceUtilityImpl<? extends BaseClassLoadService> getClassLoadServiceUtilityImpl(Class<? extends BaseClassLoadService> clsClass) {
 		return getClassLoadServiceUtilityImplHashMap().get(clsClass);
 	}
 	/**
-	 * Removes a BaseClassLoadServiceUtilityImpl for the specified BaseClassLoadService.
+	 * Removes a AbstractClassLoadServiceUtilityImpl for the specified BaseClassLoadService.
 	 *
 	 * @param clsClass the class of the extended BaseClassLoadService
-	 * @param clsUtilityImpl the actual BaseClassLoadServiceUtilityImpl for the BaseClassLoadService 
+	 * @param clsUtilityImpl the actual AbstractClassLoadServiceUtilityImpl for the BaseClassLoadService 
 	 */
 	public void removeClassLoadServiceUtilityImpl(Class<? extends BaseClassLoadService> clsClass) {
 		getClassLoadServiceUtilityImplHashMap().remove(clsClass);

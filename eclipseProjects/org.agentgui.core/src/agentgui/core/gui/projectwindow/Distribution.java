@@ -57,8 +57,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import org.agentgui.bundle.classSelection.ClassSelector;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -72,6 +70,7 @@ import agentgui.simulationService.balancing.StaticLoadBalancing;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.distribution.JadeRemoteStart;
 import agentgui.simulationService.load.LoadThresholdLevels;
+import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
@@ -1618,7 +1617,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			break;
 		}
 		
-		ClassSelector cs = new ClassSelector(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
+		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 		cs.setVisible(true);
 		// --- act in the dialog ... --------------------
 		if (cs.isCanceled()==true) return;

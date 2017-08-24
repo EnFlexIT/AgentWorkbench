@@ -61,8 +61,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
-import org.agentgui.bundle.classSelection.ClassElement2Display;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -73,6 +71,7 @@ import agentgui.core.sim.setup.AgentClassElement4SimStart;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.common.classSelection.ClassElement2Display;
 import agentgui.core.sim.setup.SimulationSetups;
 
 /**

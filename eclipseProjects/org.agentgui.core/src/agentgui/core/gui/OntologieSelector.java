@@ -38,10 +38,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.agentgui.bundle.classSelection.ClassElement2Display;
-import org.agentgui.bundle.classSelection.JListClassSearcher;
-
 import agentgui.core.application.Language;
+import de.enflexit.common.classSelection.ClassElement2Display;
+import de.enflexit.common.classSelection.JListClassSearcher;
 
 /**
  * This GUI allows the selection of a class, which extend the 'jade.content.onto.Ontology'

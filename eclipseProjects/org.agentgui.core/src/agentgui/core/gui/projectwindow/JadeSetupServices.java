@@ -46,14 +46,14 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.agentgui.bundle.classSelection.ClassElement2Display;
-import org.agentgui.bundle.classSelection.JListClassSearcher;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
+import de.enflexit.common.classSelection.ClassElement2Display;
+import de.enflexit.common.classSelection.JListClassSearcher;
+import de.enflexit.common.classSelection.JListClassSearcherListener;
 import jade.core.BaseService;
 
 /**
@@ -237,6 +237,17 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 	private JListClassSearcher getJListServicesAvailable() {
 		if (jListServicesAvailable == null) {
 			jListServicesAvailable = new JListClassSearcher(BaseService.class);
+			jListServicesAvailable.addClassSearcherListListener(new JListClassSearcherListener() {
+				@Override
+				public void addClassFound(ClassElement2Display ce2d) {
+					if (PlatformJadeConfig.isAutoService(ce2d.getClassElement())==true) {
+						ce2d.setAdditionalText(PlatformJadeConfig.getAutoServiceTextAddition());
+					}
+				}
+				@Override
+				public void removeClassFound(ClassElement2Display ce2d) {
+				}
+			});
 		}
 		return jListServicesAvailable;
 	}

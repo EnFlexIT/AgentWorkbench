@@ -38,7 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import org.agentgui.bundle.classSelection.ClassSelector;
+import de.enflexit.common.classSelection.ClassSelectionDialog;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for displaying agent classes.
@@ -49,7 +49,7 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 	
 	private static final long serialVersionUID = -445634898566639002L;
 	
-	private ClassSelector classSelector = null;
+	private ClassSelectionDialog classSelector = null;
 	private String currentClass = null;
 
 
@@ -64,7 +64,7 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 	 */
 	public TableCellEditor4ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull){
 		
-		classSelector = new ClassSelector(owner, clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
+		classSelector = new ClassSelectionDialog(owner, clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
 		
 		JButton btnOk = classSelector.getJButtonOK(); 
 		btnOk.removeActionListener(btnOk.getActionListeners()[0]);

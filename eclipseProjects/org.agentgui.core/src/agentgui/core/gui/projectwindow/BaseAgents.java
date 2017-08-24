@@ -61,9 +61,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.agentgui.bundle.classSelection.ClassElement2Display;
-import org.agentgui.bundle.classSelection.JListClassSearcher;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -71,6 +68,8 @@ import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.gui.OntologyInstanceDialog;
 import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.Project;
+import de.enflexit.common.classSelection.ClassElement2Display;
+import de.enflexit.common.classSelection.JListClassSearcher;
 import jade.core.Agent;
 
 /**

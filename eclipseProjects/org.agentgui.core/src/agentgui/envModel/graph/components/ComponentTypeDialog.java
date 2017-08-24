@@ -1275,7 +1275,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * Returns the ClassSelector cell editor for Agent classes.
+	 * Returns the ClassSelectionDialog cell editor for Agent classes.
 	 * @return cell editor for the class selection
 	 */
 	private TableCellEditor4ClassSelector getAgentClassesCellEditor(){
@@ -1285,7 +1285,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return agentClassesCellEditor;
 	}
 	/**
-	 * Returns the ClassSelector cell editor for NetworkComponentAdapter classes.
+	 * Returns the ClassSelectionDialog cell editor for NetworkComponentAdapter classes.
 	 * @return cell editor for the class selection
 	 */
 	private TableCellEditor4ClassSelector getAdapterClassesCellEditor(){
@@ -1295,7 +1295,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return adapterClassesCellEditor;
 	}
 	/**
-	 * Returns the ClassSelector cell editor for classes of GraphElementPrototype.
+	 * Returns the ClassSelectionDialog cell editor for classes of GraphElementPrototype.
 	 * @return cell editor for the class selection
 	 */
 	private TableCellEditor4ClassSelector getPrototypeClassesCellEditor(){

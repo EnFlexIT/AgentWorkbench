@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.bundle.classSelection;
+package de.enflexit.common.classSelection;
 
 import org.osgi.framework.Bundle;
 

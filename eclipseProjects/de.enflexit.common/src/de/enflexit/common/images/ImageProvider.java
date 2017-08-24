@@ -20,8 +20,17 @@ public class ImageProvider {
 	 */
 	public enum ImageFile {
 		
+		ARRAOW_Down_PNG("ArrowDown.png"),
+		ARRAOW_Left_PNG("ArrowLeft.png"),
+		ARRAOW_Right_PNG("ArrowRight.png"),
+		ARRAOW_Up_PNG("ArrowUp.png"),
+		MB_Delete_PNG("MB_Delete.png"),
+		MB_CheckGreen_PNG("MB_CheckGreen.png"),
+		MB_CheckRed_PNG("MB_CheckRed.png"),
 		MB_Export_PNG("MB_Export.png"),
-		MB_Import_PNG("MB_Import.png");
+		MB_Import_PNG("MB_Import.png"),
+		MB_Reset_PNG("MB_Reset.png");
+		
 		
 		private final String imageFileName;
 		private ImageFile(final String imageFileName) {

@@ -37,10 +37,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.agentgui.bundle.classSelection.ClassElement2Display;
 import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.common.classSelection.ClassElement2Display;
 
 
 /**

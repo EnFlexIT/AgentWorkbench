@@ -39,7 +39,7 @@ import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.classLoadService.BaseClassLoadService;
-import de.enflexit.common.classLoadService.BaseClassLoadServiceUtilityImpl;
+import de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
 
@@ -50,14 +50,14 @@ import jade.core.Agent;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ClassLoadServiceUtilityImpl extends BaseClassLoadServiceUtilityImpl<ClassLoadService> implements ClassLoadService {
+public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtilityImpl<ClassLoadService> implements ClassLoadService {
 
 	public static final String SERVICE_REFERENCE_FILTER = "(component.factory=org.agentgui.classLoadService)";
 	
 	private ClassLoadService localClassLoadService;
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.BaseClassLoadServiceUtilityImpl#getServiceReferenceFilter()
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl#getServiceReferenceFilter()
 	 */
 	@Override
 	public String getServiceReferenceFilter() {
@@ -65,7 +65,7 @@ public class ClassLoadServiceUtilityImpl extends BaseClassLoadServiceUtilityImpl
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.BaseClassLoadServiceUtilityImpl#getLocalClassLoadService()
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl#getLocalClassLoadService()
 	 */
 	@Override
 	public ClassLoadService getLocalClassLoadService() {

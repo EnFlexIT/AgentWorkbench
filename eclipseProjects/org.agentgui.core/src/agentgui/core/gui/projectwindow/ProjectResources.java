@@ -53,8 +53,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.agentgui.bundle.classSelection.ClassSelector;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -65,6 +63,7 @@ import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.project.Project;
 import agentgui.core.resources.Resources2Display;
 import agentgui.simulationService.time.TimeModel;
+import de.enflexit.common.classSelection.ClassSelectionDialog;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Resources'
@@ -522,7 +521,7 @@ public class ProjectResources extends JPanel implements Observer {
 					String 	 search4DefaultValue = null;
 					String   search4Description = Language.translate("PlugIn für Agent.GUI");
 					
-					ClassSelector cs = new ClassSelector(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
+					ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 					cs.setVisible(true);
 					// --- act in the dialog ... --------------------
 					if (cs.isCanceled()==true) return;
@@ -770,7 +769,7 @@ public class ProjectResources extends JPanel implements Observer {
 		search4DefaultValue = null;
 		search4Description = jLabelTimeModelClass.getText();
 
-		ClassSelector cs = new ClassSelector(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
+		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 		cs.setVisible(true);
 		// --- act in the dialog ... --------------------
 		if (cs.isCanceled()==false) {

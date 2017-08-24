@@ -26,17 +26,16 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.bundle.classSelection;
+package de.enflexit.common.classSelection;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
-import agentgui.core.gui.components.JListWithProgressBar;
-import agentgui.core.gui.components.SortedListModel;
-import agentgui.core.project.PlatformJadeConfig;
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 import de.enflexit.common.bundleEvaluation.BundleClassFilterListener;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
-import jade.core.BaseService;
+import de.enflexit.common.swing.JListWithProgressBar;
+import de.enflexit.common.swing.SortedListModel;
 
 /**
  * This class can be use like a JList, but it will show a progress, if
@@ -54,8 +53,11 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	private AbstractBundleClassFilter bundleClassFilter;
 	private SortedListModel<ClassElement2Display> currListModel;
 	
+	private ArrayList<JListClassSearcherListener> listenerList;
+	
 	private String textSearchFor;
 	private String textExcludePackage;
+	
 	
 	/**
 	 * This constructor was only build to enable the use of the Visual Editor  
@@ -70,29 +72,13 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * @param class2Search4 the class to search for
 	 */
 	public JListClassSearcher(Class<?> classToSearchFor) {
-		super();
-		this.class2Search4 = classToSearchFor;
-		this.setModel(this.getListModel());
+		this(classToSearchFor, null);
 	}
-//	/**
-//	 * Instantiates a new JList that presents or searches for specific classes.
-//	 *
-//	 * @param classToSearchFor the class to search for
-//	 * @param exclusiveBundleName the exclusive bundle name to take search results from
-//	 */
-//	public JListClassSearcher(Class<?> classToSearchFor, String exclusiveBundleName) {
-//		super();
-//		this.class2Search4 = classToSearchFor;
-//		if (exclusiveBundleName!=null && exclusiveBundleName.trim().equals("")==false) {
-//			this.getExclusiveBundleNames().add(exclusiveBundleName.trim());
-//		}
-//		this.setModel(this.getListModel());
-//	}
 	/**
 	 * Instantiates a new JList that presents or searches for specific classes.
-	 *
 	 * @param classToSearchFor the class to search for
-	 * @param exclusiveBundleName the vectr of exclusive bundle names to take search results from
+	 * @param exclusiveBundleNames the exclusive bundle names
+	 * @param listener the listener for the classes found
 	 */
 	public JListClassSearcher(Class<?> classToSearchFor, Vector<String> exclusiveBundleNames) {
 		super();
@@ -124,7 +110,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * Returns the bundle class filter for the current class to search for.
 	 * @return the bundle class filter
 	 */
-	private AbstractBundleClassFilter getBundleClassFilter() {
+	public AbstractBundleClassFilter getBundleClassFilter() {
 		if (bundleClassFilter==null) {
 			// --- Get bundle evaluator and try to find the corresponding filter --------
 			BundleEvaluator bEvaluator = BundleEvaluator.getInstance();
@@ -161,6 +147,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 		return currListModel;
 	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.bundleEvaluation.BundleClassFilterListener#addClassFound(java.lang.String, java.lang.String)
 	 */
@@ -168,21 +155,12 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	public void addClassFound(String className, String symbolicBundleName) {
 		
 		ClassElement2Display ce2d = new ClassElement2Display(className, symbolicBundleName);
-		
-		// ----------------------------------------------------------
-		// --- Check if we have to displays additional text --------- 
-		// ----------------------------------------------------------
-		// --- For a BaseService ----------------
-		if (this.getBundleClassFilter().isFilterCriteria(BaseService.class)==true) {
-			if (PlatformJadeConfig.isAutoService(className)==true) {
-				ce2d.setAdditionalText(PlatformJadeConfig.getAutoServiceTextAddition());
-			}
-		}
-		// ----------------------------------------------------------
+		boolean isInformListener = false;
 		
 		if (this.getExclusiveBundleNames().size()==0) {
 			// --- Simply add the class found in the list model ----- 
 			this.getListModel().addElement(ce2d);
+			isInformListener = true;
 		} else {
 			// --- Check, if the class is out of the exclusive bundle -------
 			for (int i = 0; i < this.getExclusiveBundleNames().size(); i++) {
@@ -190,8 +168,15 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 				if (exBundleName!=null && exBundleName.trim().equals("")==false) {
 					if (symbolicBundleName.equals(exBundleName)) {
 						this.getListModel().addElement(ce2d);
+						isInformListener = true;
 					}
 				}
+			}
+		}
+		// --- Inform listener --------------------------------------
+		if (isInformListener==true) {
+			for (JListClassSearcherListener listener : this.getListenerList()) {
+				listener.addClassFound(ce2d);
 			}
 		}
 	}
@@ -200,9 +185,21 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 */
 	@Override
 	public void removeClassFound(String className, String symbolicBundleName) {
-		this.getListModel().removeElement(new ClassElement2Display(className, symbolicBundleName));
+		ClassElement2Display ce2d = new ClassElement2Display(className, symbolicBundleName);
+		this.getListModel().removeElement(ce2d);
+		// --- Inform listener -------------------------------------- 
+		for (JListClassSearcherListener listener : this.getListenerList()) {
+			listener.removeClassFound(ce2d);
+		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.swing.JListWithProgressBar#setBusy(boolean)
+	 */
+	@Override
+	public void setBusy(boolean busy) {
+		super.setBusy(busy);
+	}
 	
 	/**
 	 * Filters the displayed list, depending on the search String.
@@ -268,4 +265,43 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 	}
 
+	
+	/**
+	 * Returns the listener list.
+	 * @return the listener list
+	 */
+	private ArrayList<JListClassSearcherListener> getListenerList() {
+		if (listenerList==null) {
+			listenerList = new ArrayList<>();
+		}
+		return listenerList;
+	}
+	/**
+	 * Adds the specified JListClassSearcherListener to the list of listener
+	 * @param listener the listener to add
+	 */
+	public boolean addClassSearcherListListener(JListClassSearcherListener listener) {
+		if (listener!=null && this.getListenerList().contains(listener)==false) {
+			boolean added = this.getListenerList().add(listener);
+			if (added==true) {
+				synchronized (this.getListModel()) {
+					// --- Inform listener about results already available --------
+					for (int i = 0; i < this.getListModel().getSize(); i++) {
+						listener.addClassFound(this.getListModel().get(i));
+					}
+				}
+			}
+			return added;
+		}
+		return false;
+	}
+	/**
+	 * removes the specified JListClassSearcherListener to the list of listener
+	 * @param listener the listener to remove
+	 */
+	public boolean removeClassSearcherListListener(JListClassSearcherListener listener) {
+		if (listener==null) return false;
+		return this.getListenerList().remove(listener);
+	}
+	
 } 

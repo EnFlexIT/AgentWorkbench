@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<networkComponentList>
+    <componentList>
+        <entry>
+            <key>n0</key>
+            <value>
+                <agentClassName>agentproject.MyExampleAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP0</graphElementIDs>
+                <id>n0</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Test</type>
+            </value>
+        </entry>
+    </componentList>
+</networkComponentList>

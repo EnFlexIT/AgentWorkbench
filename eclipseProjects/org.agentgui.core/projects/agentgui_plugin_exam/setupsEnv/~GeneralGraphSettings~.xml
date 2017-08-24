@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<generalGraphSettings4MAS>
+    <currentCTS>
+        <entry>
+            <key>Test</key>
+            <value>
+                <agentClass>agentproject.MyExampleAgent</agentClass>
+                <color>-10053376</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+    </currentCTS>
+    <domainSettings>
+        <entry>
+            <key>Default Domain</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <showLabel>true</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+    </domainSettings>
+    <edgeShape>Line</edgeShape>
+    <snap2Grid>true</snap2Grid>
+    <snapRaster>5.0</snapRaster>
+</generalGraphSettings4MAS>

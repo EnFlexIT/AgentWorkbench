@@ -49,15 +49,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import org.agentgui.bundle.classSelection.ClassSelector;
-import org.agentgui.bundle.classSelection.JListClassSearcher;
-
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.project.Project;
+import de.enflexit.common.classSelection.ClassSelectionDialog;
+import de.enflexit.common.classSelection.JListClassSearcher;
 import jade.core.Agent;
 
 /**
@@ -89,7 +88,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JLabel jLabelAgent;
 	private JTextField jTextFieldAgentClass;;
 	private JButton jButtonSelectAgentClass;
-	private ClassSelector esaClassSelector;
+	private ClassSelectionDialog esaClassSelector;
 	
 	private JLabel jLabelVisConfig;
 	private JRadioButton jRadioButtonVisNon;
@@ -524,11 +523,11 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	 * @param project the project
 	 * @return the class selector for project agents
 	 */
-	private ClassSelector getClassSelector4ProjectAgents(Project project) {
+	private ClassSelectionDialog getClassSelector4ProjectAgents(Project project) {
 		String currAgentClass = this.getJTextFieldAgentClass().getText();
 		if (this.esaClassSelector==null) {
 			JListClassSearcher jListClassSearcher = new JListClassSearcher(Agent.class, project.getBundleNames());
-			this.esaClassSelector = new ClassSelector(this.optionDialog, jListClassSearcher, currAgentClass, null, Language.translate("Bitte wählen Sie den Agenten aus, der gestartet werden soll"), false);
+			this.esaClassSelector = new ClassSelectionDialog(this.optionDialog, jListClassSearcher, currAgentClass, null, Language.translate("Bitte wählen Sie den Agenten aus, der gestartet werden soll"), false);
 		} 
 		this.esaClassSelector.setClass2Search4CurrentValue(currAgentClass);
 		return this.esaClassSelector;
@@ -547,7 +546,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			return;
 		}
 		// --- Open search dialog for agents --------------
-		ClassSelector cs = this.getClassSelector4ProjectAgents(this.esaProjectSelected);
+		ClassSelectionDialog cs = this.getClassSelector4ProjectAgents(this.esaProjectSelected);
 		cs.setVisible(true);
 		// --- act in the dialog ... ----------------------
 		if (cs.isCanceled()==true) return;
