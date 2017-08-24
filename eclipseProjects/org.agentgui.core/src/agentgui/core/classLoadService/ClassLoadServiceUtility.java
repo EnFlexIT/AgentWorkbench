@@ -38,6 +38,9 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
+import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
+import de.enflexit.common.classLoadService.BaseClassLoadServiceUtilityImpl;
+import de.enflexit.common.classLoadService.ClassLoadServiceUtilityImplManager;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
 
@@ -46,28 +49,21 @@ import jade.core.Agent;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ClassLoadServiceUtility {
+public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 
-	public static final String SERVICE_REFERENCE_FILTER = "(component.factory=org.agentgui.classLoadService)";
-	
-	private static ClassLoadServiceUtilityImpl classLoadServiceUtility; 
 	
 	/**
 	 * Return the current BaseClassLoadServiceUtility.
 	 * @return the class load service utility
 	 */
 	public static ClassLoadServiceUtilityImpl getClassLoadServiceUtility() {
-		if (classLoadServiceUtility==null) {
-			classLoadServiceUtility = new ClassLoadServiceUtilityImpl();
+		ClassLoadServiceUtilityImplManager clsu = ClassLoadServiceUtilityImplManager.getInstance();
+		BaseClassLoadServiceUtilityImpl<?> cls = clsu.getClassLoadServiceUtilityImpl(ClassLoadService.class);
+		if (cls==null || !(cls instanceof ClassLoadService)) {
+			cls = new ClassLoadServiceUtilityImpl();
+			clsu.registerClassLoadServiceUtilityImpl(ClassLoadService.class, cls);
 		}
-		return classLoadServiceUtility;
-	}
-	/**
-	 * Returns the current class load service utility.
-	 * @param newClassLoadServiceUtility the new BaseClassLoadServiceUtility
-	 */
-	public static void setClassLoadServiceUtility(ClassLoadServiceUtilityImpl newClassLoadServiceUtility) {
-		classLoadServiceUtility = newClassLoadServiceUtility;
+		return (ClassLoadServiceUtilityImpl) cls;
 	}
 	
 	

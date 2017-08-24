@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Agent.GUI PlugIn Example</projectName>
-    <projectStartTab>0</projectStartTab>
+    <projectStartTab>1|2</projectStartTab>
     <versionInformation>
         <build>1</build>
         <majorRevision>0</majorRevision>
@@ -14,9 +14,19 @@
     <plugins>
         <className>agentproject.PlugInExample</className>
     </plugins>
-    <subOntologies/>
+    <subOntologies>
+        <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
+        <subOntology>agentgui.simulationService.ontology.AgentGUI_DistributionOntology</subOntology>
+    </subOntologies>
     <agentStartConfiguration>
-        <agentVector/>
+        <agentVector>
+            <agent agentReference="(agentProject.agentgui_plugin_exam) agentproject.MyExampleAgent">
+                <startArgumentVector>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Integer"/>
+                </startArgumentVector>
+            </agent>
+        </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
         <skipUserRequestForJadeStart>false</skipUserRequestForJadeStart>

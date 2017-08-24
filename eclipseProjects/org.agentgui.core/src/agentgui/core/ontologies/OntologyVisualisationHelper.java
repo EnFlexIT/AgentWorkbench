@@ -138,7 +138,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	private void buildOntologyTree() {
 		
 		// --- get Root-Node for the whole project ontology -----
-		OntologyClassTreeObject root4ProjektOntology = new OntologyClassTreeObject(null, "Project ontology");
+		OntologyClassTreeObject root4ProjektOntology = new OntologyClassTreeObject(null, "Project Ontology");
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode( root4ProjektOntology );
 		
 		// --- Create Tree-Object with it -----------------------

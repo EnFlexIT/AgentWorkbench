@@ -78,7 +78,7 @@ public class AgentStartConfiguration implements Serializable {
 	public AgentStartArguments getAgentStartArguments(String agentReference) {
 		if (agentReference!=null) {
 			for (AgentStartArguments agentArguments:this.getAgentStartArguments()) {
-	 			if (agentArguments.getAgentReference().equals(agentReference)) {
+	 			if (agentArguments.getAgentReference().equals(agentReference) || agentArguments.getAgentReference().endsWith(agentReference)) {
 	 				return agentArguments;
 	 			}
 			}	

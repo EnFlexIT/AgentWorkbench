@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.agentgui.sample.plugIn;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.agentgui.sample.plugin.Activator
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.12.0",
+ de.enflexit.common;bundle-version="1.0.0",
  org.agentgui.core;bundle-version="2.0.0",
  org.agentgui.lib.jade;bundle-version="4.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7,

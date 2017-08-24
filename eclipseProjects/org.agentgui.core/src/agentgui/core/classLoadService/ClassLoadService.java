@@ -38,6 +38,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
+import de.enflexit.common.classLoadService.BaseClassLoadService;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
 
@@ -47,25 +48,8 @@ import jade.core.Agent;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface ClassLoadService {
+public interface ClassLoadService extends BaseClassLoadService {
 
-	/**
-	 * Has to return the class for the specified class name or reference.
-	 *
-	 * @param className the class name
-	 * @return the class
-	 * @throws ClassNotFoundException the class not found exception
-	 */
-	public Class<?> forName(String className) throws ClassNotFoundException;
-
-	/**
-	 * Has to return a new instance of the specified class.
-	 *
-	 * @param className the class name
-	 * @return the object
-	 * @throws ClassNotFoundException the class not found exception
-	 */
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException;
 	
 	/**
 	 * Has to returns the agent class for the specified agent class name.
