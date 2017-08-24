@@ -90,7 +90,7 @@ public class BundleBuilder {
 	public static final String MANIFEST_MF = "MANIFEST.MF";
 	public static final String CLASS_LOAD_SERVICE_JAR = "classLoadService.jar";
 	public static final String CLASS_LOAD_SERVICE_XML = "classLoadService.xml";
-	public static final String CLASS_LOAD_SERVICE_NAME = "ClassLoadServiceImpl";
+	public static final String CLASS_LOAD_SERVICE_NAME = "BaseClassLoadServiceImpl";
 	
 	private ArrayList<String> allowedFileSuffixes;
 	private ArrayList<String> allowedManifestBundlePrefixes;
@@ -387,7 +387,7 @@ public class BundleBuilder {
 			}
 			att.putValue(Constants.EXPORT_PACKAGE, exportPackageString);
 			
-			// --- Define xml-file of ClassLoadService --------------
+			// --- Define xml-file of BaseClassLoadService --------------
 			att.putValue(ComponentConstants.SERVICE_COMPONENT, "classLoadService.xml");
 			
 			// ------------------------------------------------------
@@ -563,11 +563,11 @@ public class BundleBuilder {
 	// ----------------------------------------------------
 
 	// ----------------------------------------------------
-	// --- Methods for moving files of ClassLoadService ---
+	// --- Methods for moving files of BaseClassLoadService ---
 	// ----------------------------------------------------
 	/**
 	 * Move class load service files.
-	 * @param serviceName the service name for the ClassLoadService
+	 * @param serviceName the service name for the BaseClassLoadService
 	 */
 	public void moveClassLoadServiceFiles() {
 		
@@ -590,7 +590,7 @@ public class BundleBuilder {
 			}
 			
 		} else {
-			throw new RuntimeException("ClassLoadService-Files: Could not find file '" + sourceCLSjar + "'.");
+			throw new RuntimeException("BaseClassLoadService-Files: Could not find file '" + sourceCLSjar + "'.");
 		}
 		
 		// --- Move the xml file ------------------------------------
@@ -603,7 +603,7 @@ public class BundleBuilder {
 			this.setServiceDescriptionName(destinCLSxml);
 			
 		} else {
-			throw new RuntimeException("ClassLoadService-Files: Could not find file '" + sourceCLSxml + "'.");
+			throw new RuntimeException("BaseClassLoadService-Files: Could not find file '" + sourceCLSxml + "'.");
 		}
 		
 	}
@@ -650,7 +650,7 @@ public class BundleBuilder {
 		
 	}
 	// ----------------------------------------------------
-	// --- Methods for moving files of ClassLoadService ---
+	// --- Methods for moving files of BaseClassLoadService ---
 	// ----------------------------------------------------
 
 	

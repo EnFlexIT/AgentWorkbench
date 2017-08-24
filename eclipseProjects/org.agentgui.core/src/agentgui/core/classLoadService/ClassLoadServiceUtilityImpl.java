@@ -52,8 +52,8 @@ import jade.core.Agent;
 
 
 /**
- * The Class ClassLoadServiceUtility extends the {@link DefaultClassLoadServiceUtility} 
- * and prepares the access to the {@link ClassLoadService} depending on the OSGI bundle.
+ * The Class BaseClassLoadServiceUtility extends the {@link DefaultClassLoadServiceUtility} 
+ * and prepares the access to the {@link BaseClassLoadService} depending on the OSGI bundle.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -80,17 +80,17 @@ public class ClassLoadServiceUtilityImpl implements ClassLoadService {
 	protected ClassLoadService getClassLoadService(String className) {
 
 		// ----------------------------------------------------------
-		// --- Default: Use the already known ClassLoadService ------ 
+		// --- Default: Use the already known BaseClassLoadService ------ 
 		// ----------------------------------------------------------
 		ClassLoadService clsFound = this.getClassLoadServicesByClassName().get(className);
 		if (clsFound!=null) {
 			return clsFound;
 		} else {
-			// --- As backup, use the local ClassLoadService first --
+			// --- As backup, use the local BaseClassLoadService first --
 			clsFound = this.getLocalClassLoadService(className);
 		}
 		
-		// --- Check if this is the required ClassLoadService -------
+		// --- Check if this is the required BaseClassLoadService -------
 		if (this.isRequiredClassLoadService(clsFound, className)==true) {
 			// --- Remind this service for later calls --------------
 			this.getClassLoadServicesByClassName().put(className, clsFound);
@@ -98,7 +98,7 @@ public class ClassLoadServiceUtilityImpl implements ClassLoadService {
 		} 
 		
 		// ----------------------------------------------------------
-		// --- Try to find the required ClassLoadService ------------
+		// --- Try to find the required BaseClassLoadService ------------
 		// ----------------------------------------------------------
 		// --- Update the list of available ClassLoadServices -------
 		this.updateClassLoadServices();
@@ -126,9 +126,9 @@ public class ClassLoadServiceUtilityImpl implements ClassLoadService {
 	}
 	
 	/**
-	 * Checks if the specified {@link ClassLoadService} is the required one for the specified class.
+	 * Checks if the specified {@link BaseClassLoadService} is the required one for the specified class.
 	 *
-	 * @param clsToCheck the ClassLoadService found
+	 * @param clsToCheck the BaseClassLoadService found
 	 * @param className the class name
 	 * @return true, if is required class load service
 	 */
@@ -164,7 +164,7 @@ public class ClassLoadServiceUtilityImpl implements ClassLoadService {
 		return bundleContext;
 	}
 	/**
-	 * Returns the HashMap of {@link ClassLoadService}'s, where the key is given by the ComponentFactory name.
+	 * Returns the HashMap of {@link BaseClassLoadService}'s, where the key is given by the ComponentFactory name.
 	 * @return the HashMap of available services
 	 */
 	private HashMap<String, ClassLoadService> getClassLoadServicesByComponentFactory() {
@@ -194,7 +194,7 @@ public class ClassLoadServiceUtilityImpl implements ClassLoadService {
 		return clServicesByClassName;
 	}
 	/**
-	 * Returns all ClassLoadService's as a vector.
+	 * Returns all BaseClassLoadService's as a vector.
 	 * @return the class load service vector
 	 */
 	private Vector<ClassLoadService> getClassLoadServiceVector() {
@@ -202,7 +202,7 @@ public class ClassLoadServiceUtilityImpl implements ClassLoadService {
 	}
 	
 	/**
-	 * Updates the currently registered {@link ClassLoadService}'s (Takes also into account that services can be removed dynamically).
+	 * Updates the currently registered {@link BaseClassLoadService}'s (Takes also into account that services can be removed dynamically).
 	 */
 	private void updateClassLoadServices() {
 		

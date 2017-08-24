@@ -424,7 +424,7 @@ public abstract class DynFormBase {
 //			if (ontologyClassName.contains(".impl.Default")==true) {
 //				// --- OntologyBeanGenerator for Protege 3.4 -------------
 //				ontologyClassName = ontologyClassName.replace(".impl.Default", ".");
-//				Class<?> ontologyClass = ClassLoadServiceUtility.forName(ontologyClassName);
+//				Class<?> ontologyClass = BaseClassLoadServiceUtility.forName(ontologyClassName);
 //			}
 			// --- OntologyBeanGenerator for Protege 3.3.1 ---------------
 			xmlRepresentation = codec.encodeObject(ontology, ontologyObject, true);

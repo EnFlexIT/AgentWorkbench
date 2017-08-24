@@ -42,7 +42,7 @@ import jade.content.onto.Ontology;
 import jade.core.Agent;
 
 /**
- * The Class ClassLoadServiceUtility provides static access to load classes or to initialize them.
+ * The Class BaseClassLoadServiceUtility provides static access to load classes or to initialize them.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -53,7 +53,7 @@ public class ClassLoadServiceUtility {
 	private static ClassLoadServiceUtilityImpl classLoadServiceUtility; 
 	
 	/**
-	 * Return the current ClassLoadServiceUtility.
+	 * Return the current BaseClassLoadServiceUtility.
 	 * @return the class load service utility
 	 */
 	public static ClassLoadServiceUtilityImpl getClassLoadServiceUtility() {
@@ -64,7 +64,7 @@ public class ClassLoadServiceUtility {
 	}
 	/**
 	 * Returns the current class load service utility.
-	 * @param newClassLoadServiceUtility the new ClassLoadServiceUtility
+	 * @param newClassLoadServiceUtility the new BaseClassLoadServiceUtility
 	 */
 	public static void setClassLoadServiceUtility(ClassLoadServiceUtilityImpl newClassLoadServiceUtility) {
 		classLoadServiceUtility = newClassLoadServiceUtility;

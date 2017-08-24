@@ -43,7 +43,7 @@ import jade.core.Agent;
 
 
 /**
- * The Interface for the ClassLoadService within an OSGI-bundle.
+ * The Interface for the BaseClassLoadService within an OSGI-bundle.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

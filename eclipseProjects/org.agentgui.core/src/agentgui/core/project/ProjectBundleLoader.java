@@ -154,7 +154,7 @@ public class ProjectBundleLoader {
 					// --- Check if the manifest file is available ------------
 					if (this.getBundleBuilder().isAvailableManifest()==false) {
 						
-						// --- Check for files of the ClassLoadService --------
+						// --- Check for files of the BaseClassLoadService --------
 						this.getBundleBuilder().moveClassLoadServiceFiles();
 						
 						// --- Create the MANIFEST.MF file --------------------
