@@ -41,7 +41,6 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -51,15 +50,12 @@ import org.apache.commons.codec.binary.Base64;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.benchmark.BenchmarkMeasurement;
-import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
-import agentgui.core.charts.xyChart.XyChartVisualisation;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.network.JadeUrlConfiguration;
-import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -123,13 +119,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localXML_FilePostfix = ".xml";
 	private static String localBIN_FilePostfix = ".bin";
 	private static String localFileEndProjectZip = "agui";
-	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
 	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
 	private EnvironmentTypes knownEnvironmentTypes =  new EnvironmentTypes();
-	
-	// --- Known OntologyClassVisualisation's of Agent.GUI ------------------
-	private Vector<OntologyClassVisualisation> knownOntologyClassVisualisation = null;
 	
 	// --- PropertyContentProvider ------------------------------------------
 	private PropertyContentProvider propertyContentProvider;
@@ -332,16 +324,10 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
-		
-		// --------------------------------------------------------------------
-		// --- Add the known OntologyClassVisualisation's of Agent.GUI --------
-		this.registerOntologyClassVisualisation(TimeSeriesVisualisation.class.getName());
-		this.registerOntologyClassVisualisation(XyChartVisualisation.class.getName());
-		
 	}
 	
 	/**
-	 * Initialises this class by reading the file properties and the current version information.
+	 * Initializes this class by reading the file properties and the current version information.
 	 */
 	public void initialize() {
 		try {
@@ -843,15 +829,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public String getFileEndProjectZip(){
 		return localFileEndProjectZip;
 	}
-	/**
-	 * This method will return the name of the predefined ontology, which can be used in order 
-	 * to merge different ontology's to a single one. ('AgentGUIProjectOntology')
-	 * @return name of the predefined meta ontology   
-	 */
-	public String getFileNameProjectOntology() {
-		return localFileNameProjectOntology;
-	}
-
 
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
@@ -1476,131 +1453,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		this.removeEnvironmentType(envType);
 	}
 	
-	// -------------------------------------------------------------------------
-	// ---- Methods for OntologyClassVisualisations ----------------------------
-	// -------------------------------------------------------------------------
-	/**
-	 * Register an OntologyClassVisualisation.
-	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
-	 */
-	public OntologyClassVisualisation registerOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
-		
-		OntologyClassVisualisation ontoClassVisualisation = null;
-		try {
-			if (this.isOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==false) {
-				ontoClassVisualisation = ClassLoadServiceUtility.getOntologyClassVisualisationInstance(classNameOfOntologyClassVisualisation);
-				this.getKnownOntologyClassVisualisations().add(ontoClassVisualisation);	
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return ontoClassVisualisation;
-	}
-	/**
-	 * Unregister an OntologyClassVisualisation.
-	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
-	 */
-	public void unregisterOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
-		if (this.isOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==true) {
-			OntologyClassVisualisation ontoClassVisualisation=getOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
-			this.getKnownOntologyClassVisualisations().add(ontoClassVisualisation);	
-		}
-	}
-	/**
-	 * Unregister an OntologyClassVisualisation.
-	 * @param ontologyClassVisualisation the OntologyClassVisualisation to unregister
-	 */
-	public void unregisterOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
-		if (this.isOntologyClassVisualisation(ontologyClassVisualisation)==true) {
-			this.getKnownOntologyClassVisualisations().add(ontologyClassVisualisation);	
-		}
-	}
-	
-	/**
-	 * Returns the known ontology class visualisations.
-	 * @return the Vector of known ontology class visualisations
-	 */
-	public Vector<OntologyClassVisualisation> getKnownOntologyClassVisualisations() {
-		if (knownOntologyClassVisualisation==null) {
-			knownOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
-		}
-		return knownOntologyClassVisualisation;
-	}
-	
-	/**
-	 * Checks if a given object can be visualized by a special OntologyClassVisualisation.
-	 *
-	 * @param checkObject the object to check
-	 * @return true, if the given Object is ontology class visualisation
-	 */
-	public boolean isOntologyClassVisualisation(Object checkObject) {
-		if (checkObject==null) return false;
-		return this.isOntologyClassVisualisation(checkObject.getClass());
-	}
-	/**
-	 * Checks if a given class can be visualized by a special OntologyClassVisualisation.
-	 *
-	 * @param checkClass the class to check
-	 * @return true, if the given Object is ontology class visualisation
-	 */
-	public boolean isOntologyClassVisualisation(Class<?> checkClass) {
-		if (checkClass==null) return false;
-		return this.isOntologyClassVisualisation(checkClass.getName());
-	}
-	/**
-	 * Checks class, given by its name, can be visualized by a special OntologyClassVisualisation.
-	 *
-	 * @param className the object to check
-	 * @return true, if the given className is ontology class visualisation
-	 */
-	public boolean isOntologyClassVisualisation(String className) {
-		
-		boolean isVisClass = false;
-		
-		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
-		for (int i=0; i<ontoClassViss.size(); i++) {
-			OntologyClassVisualisation ontoClassVis = ontoClassViss.get(i);
-			String visClassName = ontoClassVis.getOntologyClass().getName();
-			if (visClassName.equals(className)) {
-				isVisClass=true;
-				break;
-			}
-		}
-		return isVisClass;
-	}
-	
-	/**
-	 * Returns the OntologyClassVisualisation for a given object.
-	 *
-	 * @param checkObject the check object
-	 * @return the ontology class visualisation
-	 */
-	public OntologyClassVisualisation getOntologyClassVisualisation(Class<?> checkObject) {
-		return this.getOntologyClassVisualisation(checkObject.getName());
-	}
-	/**
-	 * Returns the OntologyClassVisualisation for a given class, specified by its name.
-	 *
-	 * @param className the class name
-	 * @return the OntologyClassVisualisation
-	 */
-	public OntologyClassVisualisation getOntologyClassVisualisation(String className) {
-		
-		OntologyClassVisualisation ontoClassVisFound = null;
-		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
-		for (int i=0; i<ontoClassViss.size(); i++) {
-			OntologyClassVisualisation ontoClassVis = ontoClassViss.get(i);
-			String compareWith = ontoClassVis.getOntologyClass().getName();
-			if (compareWith.equals(className)==true) {
-				ontoClassVisFound=ontoClassVis;
-				break;
-			}
-		}
-		return ontoClassVisFound;
-	}
-	
-
 	// -------------------------------------------------------------------------
 	// ---- Methods for the API Key for the Google Translation -----------------
 	// -------------------------------------------------------------------------

@@ -11,10 +11,21 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.crypto,
  de.enflexit.common.csv;uses:="javax.swing.table,javax.swing",
  de.enflexit.common.images,
+ de.enflexit.common.ontology;uses:="javax.swing.table,javax.swing.tree,jade.content.onto",
+ de.enflexit.common.ontology.gui;
+  uses:="agentgui.core.project,
+   javax.swing.table,
+   agentgui.core.environment,
+   javax.swing.tree,
+   jade.content.onto,
+   agentgui.core.ontologies,
+   de.enflexit.common.swing,
+   javax.swing",
  de.enflexit.common.swing,
  de.enflexit.common.transfer
 Require-Bundle: de.enflexit.api,
  org.eclipse.osgi.services;bundle-version="3.5.100",
  org.eclipse.core.runtime;bundle-version="3.12.0",
- org.agentgui.lib.bouncyCastle;bundle-version="1.5.5"
+ org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
+ org.agentgui.lib.jade;bundle-version="4.4.0"
 Bundle-ActivationPolicy: lazy

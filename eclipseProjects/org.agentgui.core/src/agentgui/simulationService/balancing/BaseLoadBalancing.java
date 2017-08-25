@@ -36,7 +36,6 @@ import java.util.Vector;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.AgentClassElement4SimStart;
@@ -52,6 +51,7 @@ import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 import jade.core.Agent;
 import jade.core.Location;
 import jade.core.ServiceException;
@@ -181,7 +181,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		if (ace4SimStart.getStartArguments()!=null) {
 			
 			String selectedAgentReference = ace4SimStart.getElementClass().getName();
-			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getEnvironmentController(), currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), selectedAgentReference);
+			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), selectedAgentReference);
 			oiv.setConfigurationXML(ace4SimStart.getStartArguments());
 			
 			Object[] startArgs = oiv.getConfigurationInstances();

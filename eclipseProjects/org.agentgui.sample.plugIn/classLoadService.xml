@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="org.agentgui.classLoadService" name="org.agentgui.sample.plugin.ClassLoadServiceImpl">
    <implementation class="org.agentgui.sample.plugin.ClassLoadServiceImpl"/>
    <service>
-      <provide interface="org.agentgui.classLoadService.ClassLoadService"/>
+      <provide interface="agentgui.core.classLoadService.ClassLoadService"/>
    </service>
 </scr:component>

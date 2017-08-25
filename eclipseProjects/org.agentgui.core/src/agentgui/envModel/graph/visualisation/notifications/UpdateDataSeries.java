@@ -30,10 +30,10 @@ package agentgui.envModel.graph.visualisation.notifications;
 
 import java.util.HashSet;
 
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 /**
  * The abstract Class UpdateDataSeries.

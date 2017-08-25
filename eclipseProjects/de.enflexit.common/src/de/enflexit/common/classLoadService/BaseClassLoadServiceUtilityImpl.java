@@ -1,5 +1,9 @@
 package de.enflexit.common.classLoadService;
 
+import java.lang.reflect.InvocationTargetException;
+
+import jade.content.onto.Ontology;
+
 /**
  * The Class ClassLoadServiceUtilityImplManager extends the {@link DefaultClassLoadServiceUtility} 
  * and prepares the access to the {@link BaseClassLoadService} depending on the OSGI bundle.
@@ -47,5 +51,12 @@ public class BaseClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUti
 		return this.getClassLoadService(className).newInstance(className);
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getOntologyInstance(java.lang.String)
+	 */
+	@Override
+	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
+		return this.getClassLoadService(ontologyClassName).getOntologyInstance(ontologyClassName);
+	}
+
 }

@@ -1,5 +1,8 @@
 package de.enflexit.common.classLoadService;
 
+import java.lang.reflect.InvocationTargetException;
+
+import jade.content.onto.Ontology;
 
 /**
  * The Class BaseClassLoadServiceUtility provides static access to load classes or to initialize them.
@@ -52,6 +55,22 @@ public class BaseClassLoadServiceUtility {
 	 */
 	public static Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return getBaseClassLoadServiceUtility().newInstance(className);
+	}
+	
+	/**
+	 * Returns the ontology instance from the specified ontology class name.
+	 *
+	 * @param ontologyClassName the ontology class name
+	 * @return the ontology instance
+	 * @throws ClassNotFoundException the class not found exception
+	 * @throws IllegalAccessException the illegal access exception
+	 * @throws SecurityException the security exception
+	 * @throws NoSuchMethodException the no such method exception
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws InvocationTargetException the invocation target exception
+	 */
+	public static Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
+		return getBaseClassLoadServiceUtility().getOntologyInstance(ontologyClassName);
 	}
 	
 }

@@ -40,8 +40,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import agentgui.core.ontologies.OntologyClassTreeObject;
-
+import de.enflexit.common.ontology.OntologyClassTreeObject;
 
 import java.awt.Font;
 

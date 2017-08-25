@@ -50,7 +50,6 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import agentgui.core.application.Language;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -61,6 +60,7 @@ import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeriesException;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 import jade.core.AID;
 
 /**

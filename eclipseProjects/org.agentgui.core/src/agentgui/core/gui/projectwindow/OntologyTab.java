@@ -56,9 +56,9 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.OntologieSelector;
-import agentgui.core.ontologies.OntologyClass;
-import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.project.Project;
+import de.enflexit.common.ontology.OntologyClass;
+import de.enflexit.common.ontology.OntologyClassTreeObject;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Ontologies'

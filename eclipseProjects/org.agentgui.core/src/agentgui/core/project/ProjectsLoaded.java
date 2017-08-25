@@ -155,7 +155,7 @@ public class ProjectsLoaded {
 
 		if (addNew==true) {			
 			// --- Create default project structure -------
-			newProject.createDefaultProjectStructure();
+			newProject.checkAndCreateProjectsDirectoryStructure();
 			
 		} else {
 			// --- Get data model from file ---------------

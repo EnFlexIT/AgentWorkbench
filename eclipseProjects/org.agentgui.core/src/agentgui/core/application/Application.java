@@ -41,6 +41,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
+import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
+import agentgui.core.charts.xyChart.XyChartVisualisation;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
@@ -65,6 +67,7 @@ import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 import de.enflexit.oidc.OIDCPanel;
@@ -601,6 +604,9 @@ public class Application {
 
 			startMainWindow();
 			getMainWindow().setStatusBar(Language.translate("Fertig"));
+			
+			setOntologyVisualisationConfigurationToCommonBundle();
+			
 			doBenchmark(false);
 			waitForBenchmark();
 			
@@ -1152,5 +1158,21 @@ public class Application {
 		return projectFocused;
 	}
 	
-} // --- End Class ---
+	/**
+	 * Sets the actual configuration for the ontology visualization.
+	 */
+	public static void setOntologyVisualisationConfigurationToCommonBundle() {
+		
+		// --- Add the known OntologyClassVisualisation's of Agent.GUI --------
+		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(TimeSeriesVisualisation.class.getName());
+		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(XyChartVisualisation.class.getName());
+		
+		// --- Set the current main window ------------------------------------
+		OntologyVisualisationConfiguration.setApplicationTitle(Application.getGlobalInfo().getApplicationTitle());
+		OntologyVisualisationConfiguration.setOwnerWindow(Application.getMainWindow());
+		OntologyVisualisationConfiguration.setApplicationIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+	}
+
+	
+} 
 

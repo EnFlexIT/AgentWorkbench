@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GameOfLife
+Bundle-SymbolicName: org.agentgui.sample.GameOfLife
+Bundle-Version: 2.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.agentgui.core;bundle-version="2.0.0",
+ org.agentgui.lib.jade;bundle-version="4.4.0",
+ de.enflexit.common;bundle-version="1.0.0"

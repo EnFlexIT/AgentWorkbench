@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="org.agentgui.classLoadService" name="gol.plugin.ClassLoadServiceImpl">
+   <implementation class="gol.plugin.ClassLoadServiceImpl"/>
+   <service>
+      <provide interface="agentgui.core.classLoadService.ClassLoadService"/>
+   </service>
+</scr:component>

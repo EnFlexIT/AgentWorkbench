@@ -64,12 +64,12 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.ontologies.OntologyClassTreeObject;
-import agentgui.core.ontologies.gui.OntologyInstanceDialog;
-import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.Project;
 import de.enflexit.common.classSelection.ClassElement2Display;
 import de.enflexit.common.classSelection.JListClassSearcher;
+import de.enflexit.common.ontology.AgentStartArgument;
+import de.enflexit.common.ontology.OntologyClassTreeObject;
+import de.enflexit.common.ontology.gui.OntologyInstanceDialog;
 import jade.core.Agent;
 
 /**
@@ -750,7 +750,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 				Vector<AgentStartArgument> startArgsConfigured = this.currProject.getAgentStartConfiguration().get(agentClassName);
 				if (startArgsConfigured!=null) {
 					// --- If start-arguments are set, get them now -----
-					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getEnvironmentController(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), agentClassName);
+					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), agentClassName);
 					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + agentName + "' (" + agentClassNameSimple + ")");
 					oid.setVisible(true);
 					// --- Wait ---

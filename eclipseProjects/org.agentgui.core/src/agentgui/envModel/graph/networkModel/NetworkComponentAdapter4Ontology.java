@@ -36,11 +36,11 @@ import javax.swing.JComponent;
 import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.ontologies.OntologyClassTreeObject;
-import agentgui.core.ontologies.OntologyVisualisationHelper;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import de.enflexit.common.ExceptionHandling;
+import de.enflexit.common.ontology.OntologyClassTreeObject;
+import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
@@ -124,7 +124,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 			if (this.getOntologyClassReferences()==null) {
 				throw new NullPointerException("The references to the classes out of the configured ontologies are not set!");
 			} else {
-				this.oiv = new OntologyInstanceViewer(this.getGraphEnvironmentController(), this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
+				this.oiv = new OntologyInstanceViewer(this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
 				this.oiv.setAllowViewEnlargement(false);	
 			}
 		}
@@ -195,10 +195,10 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	// --- From here, conversion from XML64 to instances --------------------------------
 	// ----------------------------------------------------------------------------------
 	/**
-	 * Gets the instances from xm l64.
+	 * Gets the instances from XML 64.
 	 *
-	 * @param ontoXML64Vector the onto xm l64 vector
-	 * @return the instances from xm l64
+	 * @param ontoXML64Vector the onto XML 64 vector
+	 * @return the instances from XML 64
 	 */
 	private Object[] getInstancesFromXML64(Vector<String> ontoXML64Vector) {
 		

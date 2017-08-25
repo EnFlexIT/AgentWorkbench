@@ -38,8 +38,8 @@ import javax.swing.JToolBar;
 import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
-import agentgui.core.ontologies.gui.DynForm;
 import agentgui.ontology.Chart;
+import de.enflexit.common.ontology.gui.DynForm;
 
 /**
  * Implementation of OntologyClassEditorJPanel for TimeSeriesChart
@@ -76,7 +76,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
+	 * @see de.enflexit.common.ontology.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
 	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
@@ -88,7 +88,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
+	 * @see de.enflexit.common.ontology.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
 	 */
 	@Override
 	public Object getOntologyClassInstance() {
@@ -159,7 +159,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
+	 * @see de.enflexit.common.ontology.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
 	 */
 	@Override
 	public JToolBar getJToolBarUserFunctions() {

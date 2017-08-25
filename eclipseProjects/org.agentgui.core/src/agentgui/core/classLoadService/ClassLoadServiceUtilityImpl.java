@@ -30,7 +30,6 @@ package agentgui.core.classLoadService;
 
 import java.lang.reflect.InvocationTargetException;
 
-import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -40,7 +39,6 @@ import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.classLoadService.BaseClassLoadService;
 import de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl;
-import jade.content.onto.Ontology;
 import jade.core.Agent;
 
 
@@ -99,21 +97,6 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 		return this.getClassLoadService(pluginClassName).getPlugInInstance(pluginClassName, project);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getOntologyInstance(java.lang.String)
-	 */
-	@Override
-	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-		return this.getClassLoadService(ontologyClassName).getOntologyInstance(ontologyClassName);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getOntologyClassVisualisationInstance(java.lang.String)
-	 */
-	@Override
-	public OntologyClassVisualisation getOntologyClassVisualisationInstance(String ontologyClassVisualisationClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SecurityException {
-		return this.getClassLoadService(ontologyClassVisualisationClassName).getOntologyClassVisualisationInstance(ontologyClassVisualisationClassName);
-	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getNetworkComponentAdapterInstance(java.lang.String, agentgui.envModel.graph.controller.GraphEnvironmentController)
 	 */

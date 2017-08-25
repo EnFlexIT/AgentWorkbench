@@ -44,7 +44,7 @@ import javax.swing.JPanel;
 
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.ontologies.gui.DynForm;
+import de.enflexit.common.ontology.gui.DynForm;
 /**
  * Abstract super class for dialogs for chart viewing and editing. 
  * ChartEditorDialogs are containers for ChartEditorJPanel implementations for 

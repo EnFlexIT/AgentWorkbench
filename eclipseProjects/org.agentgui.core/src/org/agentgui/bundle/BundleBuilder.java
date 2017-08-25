@@ -168,18 +168,20 @@ public class BundleBuilder {
 		ArrayList<File> regularJarFilesFound = new ArrayList<>(); 
 		ArrayList<File> bundleJarFilesFound = new ArrayList<>();
 		
-		for (File file2Check : jarFilesFound) {
-			// --- Check the file type --------------------
-			FileType fileType= this.getFileType(file2Check);
-			switch (fileType) {
-			case JAR_FILE:
-				regularJarFilesFound.add(file2Check);
-				break;
-			case OSGI_BUNDLE:
-				bundleJarFilesFound.add(file2Check);
-				break;
-			default:
-				break;
+		if (jarFilesFound!=null) {
+			for (File file2Check : jarFilesFound) {
+				// --- Check the file type ----------------
+				FileType fileType= this.getFileType(file2Check);
+				switch (fileType) {
+				case JAR_FILE:
+					regularJarFilesFound.add(file2Check);
+					break;
+				case OSGI_BUNDLE:
+					bundleJarFilesFound.add(file2Check);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 		
@@ -189,23 +191,26 @@ public class BundleBuilder {
 		} else {
 			this.regularJars = null;	
 		}
-		// --- Assign bundle jars that were found --------		
+		// --- Assign bundle jars that were found ---------
 		if (bundleJarFilesFound.size()>0) {
 			this.bundleJars = bundleJarFilesFound;
 		} else {
 			this.bundleJars = null;
 		}
 		
-		// --- Remind packages in regular jars ------------
+		// --- Reset reminder of jar packages -------------
 		this.getRegularJarsPackagesHashMap().clear();
-		BundleEvaluator be = BundleEvaluator.getInstance();
-		for (int i = 0; i < this.regularJars.size(); i++) {
-			// --- Get the 
-			File jarFile = this.regularJars.get(i);
-			List<String> classesInJar = be.getJarClassReferences(null, jarFile);
-			List<String> packages = be.getPackagesOfClassNames(classesInJar);
-			// --- Remind packages for export -------------
-			this.getRegularJarsPackagesHashMap().put(jarFile, packages);
+		if (this.regularJars!=null) {
+			// --- Remind packages in regular jars --------
+			BundleEvaluator be = BundleEvaluator.getInstance();
+			for (int i = 0; i < this.regularJars.size(); i++) {
+				// --- Get the 
+				File jarFile = this.regularJars.get(i);
+				List<String> classesInJar = be.getJarClassReferences(null, jarFile);
+				List<String> packages = be.getPackagesOfClassNames(classesInJar);
+				// --- Remind packages for export ---------
+				this.getRegularJarsPackagesHashMap().put(jarFile, packages);
+			}
 		}
 		
 	}

@@ -33,7 +33,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import agentgui.core.classLoadService.ClassLoadService;
-import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -118,15 +117,6 @@ public class ClassLoadServiceImpl implements ClassLoadService {
 		Class<?> currOntoClass = Class.forName(ontologyClassName);
 		Method method = currOntoClass.getMethod("getInstance", new Class[0]);
 		return (Ontology) method.invoke(currOntoClass, new Object[0]);
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.ClassLoadService#getOntologyClassVisualisationInstance(java.lang.String)
-	 */
-	@Override
-	public OntologyClassVisualisation getOntologyClassVisualisationInstance(String ontologyClassVisualisationClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SecurityException {
-		Class<?> clazz = Class.forName(ontologyClassVisualisationClassName);
-		return (OntologyClassVisualisation) clazz.newInstance();
 	}
 
 	/* (non-Javadoc)

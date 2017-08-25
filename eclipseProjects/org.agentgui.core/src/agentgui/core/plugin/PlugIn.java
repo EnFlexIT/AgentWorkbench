@@ -42,13 +42,14 @@ import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
-import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
-import agentgui.core.ontologies.gui.OntologyClassVisualisation;
-import agentgui.core.ontologies.gui.OntologyClassWidget;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
+import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
+import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
+import de.enflexit.common.ontology.gui.OntologyClassVisualisation;
+import de.enflexit.common.ontology.gui.OntologyClassWidget;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 /**
  * This abstract class is the root for customized plug-in's, which can
@@ -243,8 +244,8 @@ public abstract class PlugIn implements Observer {
 	
 	/**
 	 * Adds a OntologyClassVisualisation to the global settings. The idea of such an object is
-	 * that you are able to mask / visualise a specified class of your Ontology in order to allow 
-	 * a more common or simplified access its data.
+	 * that you are able to mask / visualize a specified class of your Ontology in order to allow 
+	 * a more common or simplified access to its data.
 	 * 
 	 * @see OntologyClassVisualisation
 	 * @see OntologyClassWidget
@@ -259,7 +260,7 @@ public abstract class PlugIn implements Observer {
 	 */
 	protected void addOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
 		if (classNameOfOntologyClassVisualisation!=null) {
-			OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().registerOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
+			OntologyClassVisualisation ontoClassVis = OntologyVisualisationConfiguration.registerOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
 			if (ontoClassVis!=null) {
 				this.customOntologyClassVisualisation.add(ontoClassVis);
 			}
@@ -303,7 +304,7 @@ public abstract class PlugIn implements Observer {
 		// --- remove custom Ontolo environment types -----
 		for (int i = customOntologyClassVisualisation.size()-1; i>-1; i--) {
 			OntologyClassVisualisation ontoClVis = customOntologyClassVisualisation.get(i);
-			Application.getGlobalInfo().unregisterOntologyClassVisualisation(ontoClVis);
+			OntologyVisualisationConfiguration.unregisterOntologyClassVisualisation(ontoClVis);
 		}
 		customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
 		

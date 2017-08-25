@@ -2,7 +2,7 @@ package agentgui.core.charts.timeseriesChart.gui;
 
 import agentgui.core.charts.gui.ChartEditorJDialog;
 import agentgui.core.charts.gui.ChartEditorJPanel;
-import agentgui.core.ontologies.gui.DynForm;
+import de.enflexit.common.ontology.gui.DynForm;
 
 /**
  * OntologyClassEditorJDialog implementation for time series charts.

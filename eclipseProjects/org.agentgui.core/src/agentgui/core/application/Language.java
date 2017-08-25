@@ -109,6 +109,7 @@ public class Language implements Translator {
 
 	// --- Singleton-Constructor ---
 	private Language() {
+		de.enflexit.common.Language.setTranslator(this);
 	}
 	/**
 	 * Returns the instance of this Singleton-Class
@@ -259,7 +260,7 @@ public class Language implements Translator {
 	 * List all available Language-Headers from the 
 	 * Dictionary file as String-Array
 	 */
-	public static String[] getLanguages () {
+	public static String[] getLanguages() {
 		return getLanguages(false);	
 	}
 	/**

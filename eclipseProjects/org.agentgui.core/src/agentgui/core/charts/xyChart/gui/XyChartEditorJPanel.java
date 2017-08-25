@@ -34,8 +34,8 @@ import javax.swing.JToolBar;
 import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.xyChart.XyDataModel;
 import agentgui.core.charts.xyChart.XyOntologyModel;
-import agentgui.core.ontologies.gui.DynForm;
 import agentgui.ontology.XyChart;
+import de.enflexit.common.ontology.gui.DynForm;
 
 /**
  * Implementation of OntologyClassEditorJPanel for XyCharts
@@ -71,7 +71,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 		return this.dataModel;
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
+	 * @see de.enflexit.common.ontology.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
 	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
@@ -86,7 +86,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 		
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
+	 * @see de.enflexit.common.ontology.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
 	 */
 	@Override
 	public Object getOntologyClassInstance() {
@@ -149,7 +149,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
+	 * @see de.enflexit.common.ontology.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
 	 */
 	@Override
 	public JToolBar getJToolBarUserFunctions() {

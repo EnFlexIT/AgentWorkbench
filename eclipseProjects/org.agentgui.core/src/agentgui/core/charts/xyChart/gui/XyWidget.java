@@ -40,9 +40,9 @@ import javax.swing.JButton;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
-import agentgui.core.ontologies.gui.DynForm;
-import agentgui.core.ontologies.gui.OntologyClassWidget;
 import agentgui.ontology.XyChart;
+import de.enflexit.common.ontology.gui.DynForm;
+import de.enflexit.common.ontology.gui.OntologyClassWidget;
 
 public class XyWidget extends OntologyClassWidget implements ActionListener {
 

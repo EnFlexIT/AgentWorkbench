@@ -36,9 +36,6 @@ import agentgui.core.charts.xyChart.XyDataModel;
 import agentgui.core.charts.xyChart.XySeriesHelper;
 import agentgui.core.charts.xyChart.gui.XyChartEditorJPanel;
 import agentgui.core.charts.xyChart.gui.XyWidget;
-
-import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
@@ -48,6 +45,8 @@ import agentgui.envModel.graph.visualisation.DisplayAgent;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
+import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 /**
  * The Class UpdateXySeries can be used in order to send 
@@ -330,7 +329,7 @@ public class UpdateXySeries extends UpdateDataSeries {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries#applyToOntologyInstanceViewer(agentgui.core.ontologies.gui.OntologyInstanceViewer)
+	 * @see agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries#applyToOntologyInstanceViewer(de.enflexit.common.ontology.gui.OntologyInstanceViewer)
 	 */
 	@Override
 	public void applyToOntologyInstanceViewer(OntologyInstanceViewer ontologyInstanceViewer) throws UpdateDataSeriesException {

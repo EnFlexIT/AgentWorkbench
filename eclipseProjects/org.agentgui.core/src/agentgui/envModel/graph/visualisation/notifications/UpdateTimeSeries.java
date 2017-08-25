@@ -36,8 +36,6 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesHelper;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
-import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
@@ -50,6 +48,8 @@ import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
+import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 /**
  * The Class UpdateTimeSeries can be used in order to send 
@@ -400,7 +400,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries#applyToOntologyInstanceViewer(agentgui.core.ontologies.gui.OntologyInstanceViewer)
+	 * @see agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries#applyToOntologyInstanceViewer(de.enflexit.common.ontology.gui.OntologyInstanceViewer)
 	 */
 	@Override
 	public void applyToOntologyInstanceViewer(OntologyInstanceViewer ontologyInstanceViewer) throws UpdateDataSeriesException {

@@ -30,7 +30,6 @@ package agentgui.core.classLoadService;
 
 import java.lang.reflect.InvocationTargetException;
 
-import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -39,7 +38,6 @@ import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.classLoadService.BaseClassLoadService;
-import jade.content.onto.Ontology;
 import jade.core.Agent;
 
 
@@ -89,34 +87,6 @@ public interface ClassLoadService extends BaseClassLoadService {
 	 * @throws InvocationTargetException the invocation target exception
 	 */
 	public PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException;
-	
-	/**
-	 * Has to return the ontology instance from the specified ontology class name.
-	 *
-	 * @param ontologyClassName the ontology class name
-	 * @return the ontology instance
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws SecurityException the security exception
-	 * @throws NoSuchMethodException the no such method exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws InvocationTargetException the invocation target exception
-	 */
-	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException;
-
-	/**
-	 * Has to return the instance of the specified {@link OntologyClassVisualisation}.
-	 *
-	 * @param ontologyClassVisualisationClassName the ontology class visualisation class name
-	 * @return the ontology class visualisation instance
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws SecurityException the security exception
-	 * @throws NoSuchMethodException the no such method exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws InvocationTargetException the invocation target exception
-	 */
-	public OntologyClassVisualisation getOntologyClassVisualisationInstance(String ontologyClassVisualisationClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SecurityException;
 	
 	/**
 	 * Has to returns the {@link NetworkComponentAdapter} instance from the specified class name..

@@ -1,5 +1,6 @@
 package de.enflexit.common.classLoadService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -9,6 +10,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
+
+import jade.content.onto.Ontology;
 
 
 /**
@@ -240,4 +243,12 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		return this.getClassLoadService(className).newInstance(className);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getOntologyInstance(java.lang.String)
+	 */
+	@Override
+	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
+		return this.getClassLoadService(ontologyClassName).getOntologyInstance(ontologyClassName);
+	}
+
 }

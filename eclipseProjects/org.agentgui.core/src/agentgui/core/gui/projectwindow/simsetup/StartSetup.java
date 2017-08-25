@@ -65,7 +65,6 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.AgentSelector;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.core.project.setup.SimulationSetup;
@@ -73,6 +72,7 @@ import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.classSelection.ClassElement2Display;
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Agent-Start' 
@@ -364,7 +364,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 							jTextFieldStartAs.setText(agentSelected.getStartAsName());
 
 							// --- Show OntologyInstanceViewer for this agent -
-							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getEnvironmentController(), currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), agentSelected.getAgentClassReference());
+							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), agentSelected.getAgentClassReference());
 							oiv.setConfigurationXML(agentSelected.getStartArguments());
 							setOntologyInstView(oiv);
 
@@ -388,7 +388,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private void setJListStartListEmptySelection() {
 		this.agentSelectedLast = null;
 		this.jListStartList.setSelectedValue(null, false);
-		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getEnvironmentController() , currProject.getOntologyVisualisationHelper());
+		OntologyInstanceViewer oiv = new OntologyInstanceViewer( currProject.getOntologyVisualisationHelper());
 		setOntologyInstView(oiv);
 	}
 
@@ -711,7 +711,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		agentSelectedLast = null;
 
 		jTextFieldStartAs.setText(null);
-		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getEnvironmentController(), currProject.getOntologyVisualisationHelper());
+		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper());
 		this.setOntologyInstView(oiv);
 		
 	}

@@ -83,7 +83,6 @@ import agentgui.core.gui.projectwindow.TabForSubPanels;
 import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
@@ -93,6 +92,8 @@ import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
+import de.enflexit.common.ontology.AgentStartConfiguration;
+import de.enflexit.common.ontology.OntologyVisualisationHelper;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br> 
@@ -389,7 +390,7 @@ import agentgui.core.webserver.DownloadServer;
 		
 		// --- check/create default folders -----------
 		project.setProjectFolder(projectSubDirectory);
-		project.checkCreateSubFolders();
+		project.checkAndCreateProjectsDirectoryStructure();
 		
 		// --- Load additional jar-resources ----------
 		if (loadResources == true) {
@@ -795,19 +796,10 @@ import agentgui.core.webserver.DownloadServer;
 	}
 
 	/**
-	 * This Procedure creates the default Project-Structure  for a new project. It creates the 
-	 * default folders ('agents' 'ontology' 'envSetups' 'resources') and creates default files
-	 * like the project ontology main class 'AgentGUIProjectOntology'
-	 */
-	public void createDefaultProjectStructure() {
-		// --- create default folders --------------------- 
-		this.checkCreateSubFolders();
-	}
-	/**
 	 * Controls and/or creates whether the sub-folder-Structure exists 
 	 * @return boolean true or false :-)
 	 */	
-	public boolean checkCreateSubFolders() {
+	public boolean checkAndCreateProjectsDirectoryStructure() {
 		
 		String newDirName = null;
 		File file = null;

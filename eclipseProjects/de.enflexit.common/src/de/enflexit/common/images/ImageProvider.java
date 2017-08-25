@@ -28,6 +28,7 @@ public class ImageProvider {
 		MB_CheckGreen_PNG("MB_CheckGreen.png"),
 		MB_CheckRed_PNG("MB_CheckRed.png"),
 		MB_Export_PNG("MB_Export.png"),
+		MB_FullScreen_PNG("MB_FullScreen.png"),
 		MB_Import_PNG("MB_Import.png"),
 		MB_Reset_PNG("MB_Reset.png");
 		

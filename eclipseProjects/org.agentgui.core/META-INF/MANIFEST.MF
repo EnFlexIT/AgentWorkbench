@@ -139,16 +139,6 @@ Export-Package: agentgui.core.application;
  agentgui.core.gui.projectwindow.simsetup;uses:="agentgui.core.project,agentgui.simulationService.time,javax.swing",
  agentgui.core.jade;uses:="jade.core,agentgui.core.utillity,jade.wrapper",
  agentgui.core.network;uses:="javax.swing",
- agentgui.core.ontologies;uses:="javax.swing.table,javax.swing.tree,jade.content.onto",
- agentgui.core.ontologies.gui;
-  uses:="agentgui.core.project,
-   javax.swing.table,
-   agentgui.core.environment,
-   javax.swing.tree,
-   jade.content.onto,
-   agentgui.core.ontologies,
-   de.enflexit.common.swing,
-   javax.swing",
  agentgui.core.plugin;
   uses:="jade.core,
    agentgui.core.project,
