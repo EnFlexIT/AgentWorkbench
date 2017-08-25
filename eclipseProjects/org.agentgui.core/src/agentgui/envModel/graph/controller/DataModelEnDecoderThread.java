@@ -94,7 +94,7 @@ public class DataModelEnDecoderThread extends Thread {
 	
 	
 	/**
-	 * Instantiates a new organiser thread for the data model encoding or decoding .
+	 * Instantiates a new organizer thread for the data model encoding or decoding .
 	 *
 	 * @param graphController the graph controller
 	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_DECODE_64} or {@link OrganizerAction#ORGANIZE_ENCODE_64}
@@ -112,7 +112,7 @@ public class DataModelEnDecoderThread extends Thread {
 	/**
 	 * Instantiates a new sub thread for the data model encoding or decoding.
 	 *
-	 * @param organizerThread the parent organiser thread
+	 * @param organizerThread the parent organizer thread
 	 * @param graphController the graph controller
 	 * @param componentsToWorkOn the components to work on
 	 * @param action the action
@@ -137,7 +137,7 @@ public class DataModelEnDecoderThread extends Thread {
 	public void run() {
 
 		try {
-			// --- Organiser action -----------------------
+			// --- Organizer action -----------------------
 			if (this.organizerAction!=null) {
 				switch (this.organizerAction) {
 				case ORGANIZE_DECODE_64:
@@ -173,12 +173,12 @@ public class DataModelEnDecoderThread extends Thread {
 		this.firstDisplayTime = System.currentTimeMillis() + this.firstDisplayWaitTime;
     	this.nextGraphRendering = System.currentTimeMillis() + nextGraphRenderingInterval;
 
-		// --- Summarise NetworkComponent's and GraphNode's --------- 
+		// --- Summarize NetworkComponent's and GraphNode's --------- 
 		Vector<Object> sumCompVector = new Vector<Object>(Arrays.asList(this.graphController.getNetworkModel().getNetworkComponents().values().toArray()));
 		sumCompVector.addAll(new Vector<Object>(Arrays.asList(this.graphController.getNetworkModel().getGraph().getVertices().toArray())));
 		this.elementsToConvert = sumCompVector.size();
 		
-		// --- Summarise the file sizes -----------------------------
+		// --- Summarize the file sizes -----------------------------
 		long fileSizeXML = this.graphController.getFileXML().length();
 		long fileSizeGraphML = this.graphController.getFileGraphML().length();
 		long fileSize = fileSizeXML + fileSizeGraphML; 

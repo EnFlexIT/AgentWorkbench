@@ -72,7 +72,7 @@ public class Zipper extends Thread {
 	private Translator translator;
 	private String applicationName;
 	private Image iconImage;
-	private String lookAndFeelClassReference;
+	private String lookAndFeelClassName;
 	
 	private Runnable afterJobTask;
 	
@@ -115,7 +115,7 @@ public class Zipper extends Thread {
 	 */
 	private ZipperMonitor getZipperMonitor() {
 		if (this.zipMonitor==null && this.isHeadlessOperation()==false) {
-			this.zipMonitor = new ZipperMonitor(this.owner, this.getApplicationName(), this.getIconImage(), this.getTranslator(), this.getLookAndFeelClassReference());	
+			this.zipMonitor = new ZipperMonitor(this.owner, this.getApplicationName(), this.getIconImage(), this.getTranslator(), this.getLookAndFeelClassName());	
 		}
 		return this.zipMonitor;
 	}
@@ -212,17 +212,17 @@ public class Zipper extends Thread {
 	
 	/**
 	 * Sets the look and feel class reference.
-	 * @param lookAndFeelClassReference the new look and feel class reference
+	 * @param lookAndFeelClassName the new look and feel class reference
 	 */
-	public void setLookAndFeelClassReference(String lookAndFeelClassReference) {
-		this.lookAndFeelClassReference = lookAndFeelClassReference;
+	public void setLookAndFeelClassName(String lookAndFeelClassReference) {
+		this.lookAndFeelClassName = lookAndFeelClassReference;
 	}
 	/**
 	 * Returns the look and feel class reference.
 	 * @return the look and feel class reference
 	 */
-	public String getLookAndFeelClassReference() {
-		return lookAndFeelClassReference;
+	public String getLookAndFeelClassName() {
+		return lookAndFeelClassName;
 	}
 	
 	/**

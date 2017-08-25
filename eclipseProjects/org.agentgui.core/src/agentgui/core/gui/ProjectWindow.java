@@ -944,16 +944,16 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 * This method adds a ProjectWindowTab to the window and does the check for an {@link EnvironmentController} and it's visualisation .
 	 *
 	 * @param pwt the ProjectWindowTab to add
-	 * @param displayPanel the display panel
+	 * @param envControllerClass the env controller class
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode addProjectTabInternalCheckVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentController> envController) {
+	private DefaultMutableTreeNode addProjectTabInternalCheckVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentController> envControllerClass) {
 		
 		DefaultMutableTreeNode newNode = null;
 		if (pwt.getDisplayType()==ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION) {
 			// --- Show Visualisation-Tab only in case of  ----------
 			// --- an available defined Visualisation-Panel ---------
-			if (envController!=null) {
+			if (envControllerClass!=null) {
 				newNode = this.addProjectTabInternal(pwt);
 			}
 		} else {

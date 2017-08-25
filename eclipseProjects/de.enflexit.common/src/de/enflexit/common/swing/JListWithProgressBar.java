@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.JList.DropLocation;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.ListUI;
@@ -609,7 +610,12 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * @param model the new model
 	 */
 	public void setModel(ListModel<E> model) {
-		this.getJListLoading().setModel(model);		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getJListLoading().setModel(model);		
+			}
+		});
 	}
 	
 	/**

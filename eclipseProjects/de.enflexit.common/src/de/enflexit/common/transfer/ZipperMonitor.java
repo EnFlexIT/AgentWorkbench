@@ -67,7 +67,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	private Translator translator;
 	private String appName;
 	private Image iconImage;
-	private String lnfClassReference;
+	private String lookAndFeelClassName;
 
 	private JPanel jContentPane;
 	
@@ -88,14 +88,14 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 * @param applicationName the current application name
 	 * @param iconImage the icon image that can be used as a decorator for the ZipperMonitor
 	 * @param translator the translator
-	 * @param lookAndFeelClassReference the look and feel class reference
+	 * @param lookAndFeelClassName the look and feel class name or reference
 	 */
-	public ZipperMonitor(Frame owner, String applicationName, Image iconImage, Translator translator, String lookAndFeelClassReference) {
+	public ZipperMonitor(Frame owner, String applicationName, Image iconImage, Translator translator, String lookAndFeelClassName) {
 		super(owner);
 		this.appName = applicationName;
 		this.iconImage = iconImage;
 		this.translator = translator;
-		this.lnfClassReference = lookAndFeelClassReference;
+		this.lookAndFeelClassName = lookAndFeelClassName;
 		this.initialize();
 	}
 	/**
@@ -129,15 +129,18 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = this.lnfClassReference;
+		// --- Some exit options --------------------------
+		if (this.lookAndFeelClassName==null) return;
+		
+		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (this.lookAndFeelClassName.equals(currLookAndFeelClassName)==true) return;
+
+		// --- Try to set the look and feel ---------------
 		try {
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-			}	
-			UIManager.setLookAndFeel(lnfClassname);
+			UIManager.setLookAndFeel(this.lookAndFeelClassName);
 			SwingUtilities.updateComponentTreeUI(this);				
-		}  catch (Exception e) {
-			System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
+		} catch (Exception ex) {
+			System.err.println("Cannot install " + this.lookAndFeelClassName + " on this platform:" + ex.getMessage());
 		}	
 	}
 	

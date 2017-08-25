@@ -37,12 +37,12 @@ public class ProgressMonitor implements ActionListener {
 
 	private JDesktopPane parentDesktopPane;
 	
-	private String windowTitle = "Progress";
+	private String windowTitle = "Progress Monitor";
 	private String headerText = "Progress";
 	private String progressText = "Download";
 	
 	private ImageIcon iconImage;
-	private String lookAndFeelClassReference;
+	private String lookAndFeelClassName;
 	
 	private Container progressMonitorContainer;
 
@@ -69,12 +69,13 @@ public class ProgressMonitor implements ActionListener {
 	 * @param progressText the progress text - may be <code>null</code>
 	 * @param iconImage the icon image - may be <code>null</code>
 	 * @param parentDesktopPane the parent desktop pane - may be <code>null</code>
-	 * @param lookAndFeelClassReference the look and feel class reference - may be <code>null</code>
+	 * @param lookAndFeelClassName the look and feel class reference - may be <code>null</code>
 	 */
-	public ProgressMonitor(String windowTitle, String headerText, String progressText, ImageIcon iconImage, JDesktopPane parentDesktopPane, String lookAndFeelClassReference) {
+	public ProgressMonitor(String windowTitle, String headerText, String progressText, ImageIcon iconImage, JDesktopPane parentDesktopPane, String lookAndFeelClassName) {
 		if (windowTitle!=null)  this.windowTitle = windowTitle;
 		if (headerText!=null)   this.headerText = headerText;
 		if (progressText!=null) this.progressText = progressText;
+		this.lookAndFeelClassName = lookAndFeelClassName;
 		this.iconImage = iconImage;
 	}
 
@@ -249,17 +250,19 @@ public class ProgressMonitor implements ActionListener {
 	 * Sets the look and feel of the dialog similar to the current application window
 	 */
 	private void setLookAndFeel() {
+
+		// --- Some exit options --------------------------
+		if (this.lookAndFeelClassName==null) return;
 		
-		String lnfClassName = this.lookAndFeelClassReference;
+		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (this.lookAndFeelClassName.equals(currLookAndFeelClassName)==true) return;
+
+		// --- Try to set the look and feel ---------------
 		try {
-			if (lnfClassName==null) {
-				lnfClassName = UIManager.getCrossPlatformLookAndFeelClassName();
-			}	
-			UIManager.setLookAndFeel(lnfClassName);
+			UIManager.setLookAndFeel(this.lookAndFeelClassName);
 			SwingUtilities.updateComponentTreeUI(this.getProgressMonitorContainer());				
-			
-		} catch (Exception e) {
-			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
+		} catch (Exception ex) {
+			System.err.println("Cannot install " + this.lookAndFeelClassName + " on this platform:" + ex.getMessage());
 		}	
 	}
 	

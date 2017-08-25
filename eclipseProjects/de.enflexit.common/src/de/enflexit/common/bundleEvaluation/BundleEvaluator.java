@@ -47,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-//import org.agentgui.PlugInActivator;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
@@ -468,11 +467,11 @@ public class BundleEvaluator {
 			// ------------------------------------------------------			
 			// --- Does the bundle has a "Bundle-ClassPath" entry ---
 			Vector<String> bundleClassPathEntries  = this.getBundleClassPathEntries(bundle);
-			if (bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
+			if (bundle.getState()==Bundle.ACTIVE && bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
 				// --- Check for available jars in the bundle--------
 				Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
 				if (bundleJars!=null) {
-					while (bundleJars.hasMoreElements()) {
+					while (bundle.getState()==Bundle.ACTIVE && bundleJars.hasMoreElements()) {
 						URL url = (URL) bundleJars.nextElement();
 						String debugText = "Found jar-File of '" + bundle.getSymbolicName() + "' (" + url.getPath() + ")";
 						if (bundleClassPathEntries.contains(url.getPath())) {
@@ -763,10 +762,10 @@ public class BundleEvaluator {
 		// ----------------------------------------------------------
 		if (jarFile!=null && jarFileURL!=null) {
 			// --- Check the jar file entries -----------------------
-			Enumeration<JarEntry> e = jarFile.entries();
-			while (e.hasMoreElements()) {
+			Enumeration<JarEntry> jarFileEntries = jarFile.entries();
+			while (jarFileEntries.hasMoreElements()) {
 				
-				JarEntry entry = (JarEntry)e.nextElement();
+				JarEntry entry = (JarEntry)jarFileEntries.nextElement();
 				String className = entry.getName();
 				if (entry.isDirectory()==false && className.endsWith(".class") && className.contains("$")==false) {
 					// --- Correct the class name -------------------

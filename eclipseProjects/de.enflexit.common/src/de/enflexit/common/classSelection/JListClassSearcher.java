@@ -31,6 +31,8 @@ package de.enflexit.common.classSelection;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.SwingUtilities;
+
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 import de.enflexit.common.bundleEvaluation.BundleClassFilterListener;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
@@ -137,15 +139,40 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 		return bundleClassFilter;
 	}
+	
 	/**
 	 * Sets the DefaultListModel for the current JList to display
 	 */
-	public SortedListModel<ClassElement2Display> getListModel() {
+	public synchronized SortedListModel<ClassElement2Display> getListModel() {
 		if (currListModel==null) {
 			currListModel = new SortedListModel<>();
 			this.getBundleClassFilter().addBundleClassFilterListener(this);			
 		}
 		return currListModel;
+	}
+	/**
+	 * Adds the specified element to the list model considering the Swing environment.
+	 * @param ce2d the ClassElement2Display to add
+	 */
+	private void addToListModel(ClassElement2Display ce2d) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getListModel().add(ce2d);
+			}
+		});
+	}
+	/**
+	 * Removes the specified element to the list model considering the Swing environment.
+	 * @param ce2d the ClassElement2Display to add
+	 */
+	private void removefromListModel(ClassElement2Display ce2d) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getListModel().add(ce2d);
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -159,7 +186,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		
 		if (this.getExclusiveBundleNames().size()==0) {
 			// --- Simply add the class found in the list model ----- 
-			this.getListModel().addElement(ce2d);
+			this.addToListModel(ce2d);
 			isInformListener = true;
 		} else {
 			// --- Check, if the class is out of the exclusive bundle -------
@@ -167,7 +194,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 				String exBundleName = this.getExclusiveBundleNames().get(i);
 				if (exBundleName!=null && exBundleName.trim().equals("")==false) {
 					if (symbolicBundleName.equals(exBundleName)) {
-						this.getListModel().addElement(ce2d);
+						this.addToListModel(ce2d);
 						isInformListener = true;
 					}
 				}
@@ -186,19 +213,11 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	@Override
 	public void removeClassFound(String className, String symbolicBundleName) {
 		ClassElement2Display ce2d = new ClassElement2Display(className, symbolicBundleName);
-		this.getListModel().removeElement(ce2d);
+		this.removefromListModel(ce2d);
 		// --- Inform listener -------------------------------------- 
 		for (JListClassSearcherListener listener : this.getListenerList()) {
 			listener.removeClassFound(ce2d);
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.common.swing.JListWithProgressBar#setBusy(boolean)
-	 */
-	@Override
-	public void setBusy(boolean busy) {
-		super.setBusy(busy);
 	}
 	
 	/**
@@ -265,7 +284,9 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 	}
 
-	
+	// ------------------------------------------------------------------------
+	// --- From here, listener to the list will be handled --------------------
+	// ------------------------------------------------------------------------	
 	/**
 	 * Returns the listener list.
 	 * @return the listener list
@@ -284,11 +305,9 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		if (listener!=null && this.getListenerList().contains(listener)==false) {
 			boolean added = this.getListenerList().add(listener);
 			if (added==true) {
-				synchronized (this.getListModel()) {
-					// --- Inform listener about results already available --------
-					for (int i = 0; i < this.getListModel().getSize(); i++) {
-						listener.addClassFound(this.getListModel().get(i));
-					}
+				// --- Provide already known results to the new listener ------
+				for (int i = 0; i < this.getListModel().getSize(); i++) {
+					listener.addClassFound(this.getListModel().get(i));
 				}
 			}
 			return added;
@@ -303,5 +322,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		if (listener==null) return false;
 		return this.getListenerList().remove(listener);
 	}
+	// ------------------------------------------------------------------------
+	
 	
 } 

@@ -97,7 +97,7 @@ public class CommonComponentFactory {
 		Zipper zipper = new Zipper(owner);
 		zipper.setTranslator(Language.getInstance());
 		zipper.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
-		zipper.setLookAndFeelClassReference(Application.getGlobalInfo().getAppLnFClassName());
+		zipper.setLookAndFeelClassName(Application.getGlobalInfo().getAppLnFClassName());
 		zipper.setApplicationName(Application.getGlobalInfo().getApplicationTitle());
 		return zipper;
 	}

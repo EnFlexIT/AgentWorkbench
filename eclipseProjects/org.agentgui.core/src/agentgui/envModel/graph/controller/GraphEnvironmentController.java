@@ -382,7 +382,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     		Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
     	}
     	
-		if (fileName != null) {
+		if (fileName!=null) {
 	
 		    // --- register the list of agents, which has to be started with the environment ------
 		    this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
@@ -516,12 +516,11 @@ public class GraphEnvironmentController extends EnvironmentController {
     @Override
     public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
 		try {
-		    if (displaytEnvironmentModel == null) {
+		    if (displaytEnvironmentModel==null) {
 		    	this.setNetworkModel(null);
 		    } else {
 		    	this.setNetworkModel((NetworkModel) displaytEnvironmentModel);
 		    }
-	
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		}
