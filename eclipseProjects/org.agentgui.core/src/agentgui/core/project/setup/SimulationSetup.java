@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.sim.setup;
+package agentgui.core.project.setup;
 
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 
 /**
  * This is the model class for a simulation setup.

@@ -123,17 +123,18 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
+		String lnfClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		if (lnfClassName==null) return;
+		
+		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (lnfClassName.equals(currLookAndFeelClassName)==true) return;
+		
 		try {
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-			}	
-			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this);				
-		} 
-		catch (Exception e) {
-				System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
-		}		
+			UIManager.setLookAndFeel(lnfClassName);
+			SwingUtilities.updateComponentTreeUI(this);
+		} catch (Exception e) {
+			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
+		}	
 	}
 	
 	/**

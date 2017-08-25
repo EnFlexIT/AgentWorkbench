@@ -49,7 +49,7 @@ import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.project.setup.SimulationSetup;
 import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;

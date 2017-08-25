@@ -141,8 +141,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 		// --- Set the Look and Feel of the Dialog ------------------
 		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
 		if (Application.isRunningAsServer()==true ||  execMode==ExecutionMode.DEVICE_SYSTEM) {
-			if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
-				setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
+			if (Application.getGlobalInfo().getAppLookAndFeelClassName()!=null) {
+				this.setLookAndFeel();
 			}
 		}
 
@@ -261,19 +261,19 @@ public class AboutDialog extends JDialog implements ActionListener{
 	 * This method set the Look and Feel of this Dialog.
 	 * @param newLnF the new look and feel
 	 */
-	private void setLookAndFeel( String newLnF ) {
+	private void setLookAndFeel() {
  
-		if (newLnF==null) return;		
-		Application.getGlobalInfo().setAppLnfClassName(newLnF);
+		String lnfClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		if (lnfClassName==null) return;
+
+		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (lnfClassName.equals(currLookAndFeelClassName)==true) return;
+
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
-			if (lnfClassname == null)
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);
-				
+			UIManager.setLookAndFeel(lnfClassName);
+			SwingUtilities.updateComponentTreeUI(this);
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName() + " on this platform:" + e.getMessage());
+			System.err.println("Cannot install " + lnfClassName + " on this platform: " + e.getMessage());
 		}
 		
 	}

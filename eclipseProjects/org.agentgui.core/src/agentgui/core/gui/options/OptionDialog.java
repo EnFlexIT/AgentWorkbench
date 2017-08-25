@@ -95,7 +95,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private DefaultTreeModel optionTreeModel;
 	private DefaultMutableTreeNode rootNode;
 	
-	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
+	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();
 	
 	private StartOptions startOptions;
 	private LogFileOptions logFileOptions;
@@ -118,8 +118,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		// --- Set the Look and Feel of the Dialog ------------------
 		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
 		if (Application.isRunningAsServer()==true ||  execMode==ExecutionMode.DEVICE_SYSTEM) {
-			if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
-				setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
+			if (Application.getGlobalInfo().getAppLookAndFeelClassName()!=null) {
+				this.setLookAndFeel();
 			}
 		}
 		
@@ -193,24 +193,21 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	/**
 	 * This method set the Look and Feel of this Dialog.
-	 *
 	 * @param NewLnF the new look and feel
 	 */
-	private void setLookAndFeel( String NewLnF ) {
-		// --- Look and fell einstellen --------------- 
-		if ( NewLnF == null ) return;		
-		Application.getGlobalInfo().setAppLnfClassName( NewLnF );
+	private void setLookAndFeel() {
+ 
+		String lnfClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		if (lnfClassName==null) return;
+		
+		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (lnfClassName.equals(currLookAndFeelClassName)==true) return;
+		
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-			}
-			UIManager.setLookAndFeel(lnfClassname);
+			UIManager.setLookAndFeel(lnfClassName);
 			SwingUtilities.updateComponentTreeUI(this);
-			
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName()
-					+ " on this platform:" + e.getMessage());
+			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
 		}
 	}		
 

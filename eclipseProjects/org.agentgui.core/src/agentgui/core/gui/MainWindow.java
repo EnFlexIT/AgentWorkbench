@@ -147,9 +147,7 @@ public class MainWindow extends JFrame {
 		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		
 		// --- Set the Look and Feel of the Application -----------
-		if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
-			this.setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
-		}
+		this.setLookAndFeel();
 		
 		// --- Create the Main-Elements of the Application --------
 		this.initComponents();
@@ -335,21 +333,22 @@ public class MainWindow extends JFrame {
 	 * Here the 'look and feel' LnF of java Swing can be set.
 	 * @param newLnF the new look and feel
 	 */
-	public void setLookAndFeel(String newLnF) {
+	public void setLookAndFeel() {
 
-		if (newLnF==null) return;		
-		Application.getGlobalInfo().setAppLnfClassName(newLnF);
+		String lnfClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		if (lnfClassName==null) return;
+		
+		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (lnfClassName.equals(currLookAndFeelClassName)==true) return;
+		
 		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-			}
-			UIManager.setLookAndFeel(lnfClassname);
+			UIManager.setLookAndFeel(lnfClassName);
 			SwingUtilities.updateComponentTreeUI(this);
-			
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName() + " on this platform:" + e.getMessage());
+			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
 		}
+		
+		
 		if (jMenuExtraLnF!=null){
 			jMenuExtraLnF.removeAll();
 			this.setJMenuExtraLnF();
@@ -833,7 +832,7 @@ public class MainWindow extends JFrame {
 
 			UIManager.LookAndFeelInfo installedLnF[] = UIManager.getInstalledLookAndFeels();
 			for (int i = 0, n = installedLnF.length; i < n; i++) {
-				boolean setBold = installedLnF[i].getClassName().equals(Application.getGlobalInfo().getAppLnFClassName()); 
+				boolean setBold = installedLnF[i].getClassName().equals(Application.getGlobalInfo().getAppLookAndFeelClassName()); 
 				jMenuExtraLnF.add(new JMenuItmenLnF(installedLnF[i].getName(), installedLnF[i].getClassName(), setBold));
 			}
 		}

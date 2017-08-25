@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.resources;
+package agentgui.core.project;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,8 +35,6 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.xml.bind.annotation.XmlTransient;
 
-import agentgui.core.project.Project;
-
 /**
  * This extended Vector<String> is used as a data model for project resources.
  * As an extension its provides a DefaultListModel, which is synchronised with
@@ -44,21 +42,21 @@ import agentgui.core.project.Project;
  * 
  * @see Project
  * @see DefaultListModel
- * @see Resources2Display
+ * @see ProjectResource2Display
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class VectorOfProjectResources extends Vector<String> {
+public class ProjectResourceVector extends Vector<String> {
 
 	private static final long serialVersionUID = -6728505277548001391L;
 	
 	@XmlTransient 
-	private DefaultListModel<Resources2Display> resourcesListModel = new DefaultListModel<Resources2Display>();
+	private DefaultListModel<ProjectResource2Display> resourcesListModel = new DefaultListModel<ProjectResource2Display>();
 	
 	/**
 	 * Instantiates a new project resources.
 	 */
-	public VectorOfProjectResources() {
+	public ProjectResourceVector() {
 		super();
 	}
 
@@ -176,7 +174,7 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * Sets the resources list model.
 	 * @param resourcesListModel the resourcesListModel to set
 	 */
-	public void setResourcesListModel(DefaultListModel<Resources2Display> resourcesListModel) {
+	public void setResourcesListModel(DefaultListModel<ProjectResource2Display> resourcesListModel) {
 		this.resourcesListModel = resourcesListModel;
 	}
 	
@@ -185,9 +183,9 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * @return the resourcesListModel
 	 */
 	@XmlTransient 
-	public DefaultListModel<Resources2Display> getResourcesListModel() {
+	public DefaultListModel<ProjectResource2Display> getResourcesListModel() {
 		if (resourcesListModel==null) {
-			resourcesListModel = new DefaultListModel<Resources2Display>();
+			resourcesListModel = new DefaultListModel<ProjectResource2Display>();
 			for (int i = 0; i < this.size(); i++) {
 				this.add2DefaultListModel(this.get(i));
 			}
@@ -209,7 +207,7 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * @param resource the resource
 	 */
 	private void add2DefaultListModel(int index, String resource) {
-		Resources2Display r2d = new Resources2Display(resource);
+		ProjectResource2Display r2d = new ProjectResource2Display(resource);
 		this.resourcesListModel.add(index, r2d);
 	}
 	
@@ -220,7 +218,7 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * @param resource the resource
 	 */
 	private void set2DefaultListModel(int index, String resource) {
-		Resources2Display r2d = new Resources2Display(resource);
+		ProjectResource2Display r2d = new ProjectResource2Display(resource);
 		this.resourcesListModel.set(index, r2d);
 	}
 	
@@ -245,7 +243,7 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * @param prefixText the prefix text
 	 */
 	public void setPrefixText(String resource, String prefixText){
-		Resources2Display r2d = this.getDefaultListModelElement(resource);
+		ProjectResource2Display r2d = this.getDefaultListModelElement(resource);
 		if (r2d!=null) {
 			r2d.setPrefixText(prefixText);	
 		}
@@ -258,7 +256,7 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * @param suffixText the additional text
 	 */
 	public void setSuffixText(String resource, String suffixText){
-		Resources2Display r2d = this.getDefaultListModelElement(resource);
+		ProjectResource2Display r2d = this.getDefaultListModelElement(resource);
 		if (r2d!=null) {
 			r2d.setSuffixText(suffixText);	
 		}
@@ -270,9 +268,9 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * @param resource the resource
 	 * @return the default list model element
 	 */
-	public Resources2Display getDefaultListModelElement(String resource) {
+	public ProjectResource2Display getDefaultListModelElement(String resource) {
 		for (int i = 0; i < resourcesListModel.size(); i++) {
-			Resources2Display r2d = (Resources2Display) resourcesListModel.get(i);
+			ProjectResource2Display r2d = (ProjectResource2Display) resourcesListModel.get(i);
 			if (r2d.getFileOrFolderResource().equals(resource)){
 				return r2d;
 			}

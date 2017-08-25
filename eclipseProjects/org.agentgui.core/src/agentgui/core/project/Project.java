@@ -88,10 +88,9 @@ import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
-import agentgui.core.resources.VectorOfProjectResources;
-import agentgui.core.sim.setup.SimulationSetupNotification;
-import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
-import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.project.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetups;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
 
@@ -184,7 +183,7 @@ import agentgui.core.webserver.DownloadServer;
 	 */
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
-	private VectorOfProjectResources projectResources;
+	private ProjectResourceVector projectResources;
 	
 	/**
 	 * This Vector handles the list of resources which should be loadable in case of 
@@ -1404,7 +1403,7 @@ import agentgui.core.webserver.DownloadServer;
 	 * Sets the project resources.
 	 * @param projectResources the projectResources to set
 	 */
-	public void setProjectResources(VectorOfProjectResources projectResources) {
+	public void setProjectResources(ProjectResourceVector projectResources) {
 		this.projectResources = projectResources;
 	}
 	/**
@@ -1412,9 +1411,9 @@ import agentgui.core.webserver.DownloadServer;
 	 * @return the projectResources
 	 */
 	@XmlTransient
-	public VectorOfProjectResources getProjectResources() {
+	public ProjectResourceVector getProjectResources() {
 		if (this.projectResources==null) {
-			this.projectResources = new VectorOfProjectResources();
+			this.projectResources = new ProjectResourceVector();
 		}
 		return projectResources;
 	}

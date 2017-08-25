@@ -56,7 +56,7 @@ import agentgui.core.network.NetworkAddresses;
 import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
-import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.core.webserver.DownloadServer;
@@ -985,7 +985,8 @@ public class Application {
 	 * @param newLnF
 	 */
 	public static void setLookAndFeel(String newLnF) {
-		getMainWindow().setLookAndFeel(newLnF);
+		getGlobalInfo().setAppLookAndFeelClassName(newLnF);
+		getMainWindow().setLookAndFeel();
 		getProjectsLoaded().setProjectView();
 	}	
 	

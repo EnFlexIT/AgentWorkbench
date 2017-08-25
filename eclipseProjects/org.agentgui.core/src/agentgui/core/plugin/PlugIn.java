@@ -47,8 +47,8 @@ import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.ontologies.gui.OntologyClassWidget;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetup;
+import agentgui.core.project.setup.SimulationSetupNotification;
 
 /**
  * This abstract class is the root for customized plug-in's, which can

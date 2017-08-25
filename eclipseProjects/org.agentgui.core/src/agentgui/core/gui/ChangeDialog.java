@@ -124,11 +124,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 		this.registerEscapeKeyStroke();
 		
 		// --- Set the Look and Feel of the Dialog ------------------
-		if (Application.isRunningAsServer()==true) {
-			if (Application.getGlobalInfo().getAppLnFClassName()!=null) {
-				setLookAndFeel(Application.getGlobalInfo().getAppLnFClassName());
-			}
-		}
+		this.setLookAndFeel();
 
 		// --- Center dialog ----------------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
@@ -173,23 +169,21 @@ public class ChangeDialog extends JDialog implements ActionListener {
     
     /**
 	 * This method set the Look and Feel of this Dialog.
-	 * @param newLnF the new look and feel
 	 */
-	private void setLookAndFeel(String newLnF) {
+	private void setLookAndFeel() {
  
-		if (newLnF==null) return;	
-		Application.getGlobalInfo().setAppLnfClassName(newLnF);
-		try {
-			String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
-			if (lnfClassname == null)
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);
-				
-		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnFClassName() + " on this platform:" + e.getMessage());
-		}
+		String lnfClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		if (lnfClassName==null) return;
 		
+		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (lnfClassName.equals(currLookAndFeelClassName)==true) return;
+		
+		try {
+			UIManager.setLookAndFeel(lnfClassName);
+			SwingUtilities.updateComponentTreeUI(this);
+		} catch (Exception e) {
+			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
+		}
 	}
 	
 	/**

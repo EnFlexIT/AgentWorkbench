@@ -67,12 +67,12 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.AgentSelector;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.AgentClassElement4SimStart;
-import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetupNotification;
-import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.core.project.setup.AgentClassElement4SimStart;
+import agentgui.core.project.setup.SimulationSetup;
+import agentgui.core.project.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetups;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.classSelection.ClassElement2Display;
-import agentgui.core.sim.setup.SimulationSetups;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Agent-Start' 

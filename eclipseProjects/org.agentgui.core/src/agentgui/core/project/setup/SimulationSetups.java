@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.sim.setup;
+package agentgui.core.project.setup;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +49,7 @@ import javax.xml.bind.Unmarshaller;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.transfer.FileCopier;
 
 /**

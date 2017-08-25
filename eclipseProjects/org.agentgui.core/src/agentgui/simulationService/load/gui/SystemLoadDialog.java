@@ -104,7 +104,7 @@ public class SystemLoadDialog extends JFrame {
 	 */
 	private void setLookAndFeel() {
  
-		String lnfClassname = Application.getGlobalInfo().getAppLnFClassName();
+		String lnfClassname = Application.getGlobalInfo().getAppLookAndFeelClassName();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

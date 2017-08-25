@@ -67,7 +67,7 @@ public class CommonComponentFactory {
 		// --- Get the image icon for the progress monitor ----------
 		ImageIcon imageIcon = GlobalInfo.getInternalImageIcon("AgentGUI.png");
 		// --- Get the look and feel --------------------------------
-		String lookAndFeelClassName = Application.getGlobalInfo().getAppLnFClassName();
+		String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
 		
 		// --- Initiate new ProgressMonitor ------------------------- 
 		ProgressMonitor pm = new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);
@@ -97,7 +97,7 @@ public class CommonComponentFactory {
 		Zipper zipper = new Zipper(owner);
 		zipper.setTranslator(Language.getInstance());
 		zipper.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
-		zipper.setLookAndFeelClassName(Application.getGlobalInfo().getAppLnFClassName());
+		zipper.setLookAndFeelClassName(Application.getGlobalInfo().getAppLookAndFeelClassName());
 		zipper.setApplicationName(Application.getGlobalInfo().getApplicationTitle());
 		return zipper;
 	}

@@ -61,7 +61,7 @@ import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.project.Project;
-import agentgui.core.resources.Resources2Display;
+import agentgui.core.project.ProjectResource2Display;
 import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 
@@ -85,7 +85,7 @@ public class ProjectResources extends JPanel implements Observer {
 	private JScrollPane jScrollPane;
 	private JScrollPane jScrollPanePlugIns;
 	
-	private JList<Resources2Display> jListResources;
+	private JList<ProjectResource2Display> jListResources;
 	private JList<PlugInListElement> jListPlugIns;
 	private DefaultListModel<PlugInListElement> plugInsListModel = new DefaultListModel<PlugInListElement>();
 	
@@ -295,9 +295,9 @@ public class ProjectResources extends JPanel implements Observer {
 	 * This method initializes jListResources	
 	 * @return javax.swing.JList	
 	 */
-	private JList<Resources2Display> getJListResources() {
+	private JList<ProjectResource2Display> getJListResources() {
 		if (jListResources == null) {
-			jListResources = new JList<Resources2Display>();
+			jListResources = new JList<ProjectResource2Display>();
 		}
 		return jListResources;
 	}
@@ -358,7 +358,7 @@ public class ProjectResources extends JPanel implements Observer {
 								// --- Remove from the ClassPath ----
 								Vector<String> selection = new Vector<String>();
 								for (Object fileR2DObject : jListResources.getSelectedValuesList()) {
-									Resources2Display fileR2D = (Resources2Display) fileR2DObject;
+									ProjectResource2Display fileR2D = (ProjectResource2Display) fileR2DObject;
 									selection.add(fileR2D.getFileOrFolderResource());
 								}
 								if (selection.size()>0) {

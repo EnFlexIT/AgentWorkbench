@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.AgentClassElement4SimStart;
-import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.project.setup.AgentClassElement4SimStart;
+import agentgui.core.project.setup.SimulationSetup;
 
 
 /**

@@ -40,7 +40,7 @@ import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.RemoteContainerConfiguration;
-import agentgui.core.sim.setup.AgentClassElement4SimStart;
+import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 

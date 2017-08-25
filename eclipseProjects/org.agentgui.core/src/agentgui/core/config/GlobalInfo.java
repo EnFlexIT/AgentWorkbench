@@ -472,7 +472,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the class reference for the current look and feel 
 	 * or null, if the class could not be found
 	 */
-	public String getAppLnFClassName() {
+	public String getAppLookAndFeelClassName() {
 		if (localAppLnFClass==null) {
 			try {
 				// --- Check current Look and Feel class --
@@ -490,7 +490,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * Set the current Look and Feel (LnF) for Java Swing by using its class reference.
 	 * @param newLnF the new Swing - Look and Feel 
 	 */
-	public void setAppLnfClassName(String newLnF) {
+	public void setAppLookAndFeelClassName(String newLnF) {
 		localAppLnF = newLnF;
 		localAppLnFClass = null;
 	}

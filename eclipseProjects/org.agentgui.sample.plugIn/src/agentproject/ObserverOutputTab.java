@@ -22,7 +22,7 @@ import agentgui.core.application.Application;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetupNotification;
 
 
 /**

@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.gui.projectwindow.Distribution;
-import agentgui.core.sim.setup.AgentClassElement4SimStart;
+import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
 /**

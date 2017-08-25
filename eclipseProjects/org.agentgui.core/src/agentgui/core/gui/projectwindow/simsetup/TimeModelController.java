@@ -40,8 +40,8 @@ import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetup;
+import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
 

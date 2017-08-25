@@ -41,7 +41,7 @@ import java.util.Vector;
 
 import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.core.project.AgentClassMetricDescription;
-import agentgui.core.sim.setup.AgentClassElement4SimStart;
+import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;

@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.sim.setup;
+package agentgui.core.project.setup;
 
 import jade.core.Agent;
 
@@ -48,7 +48,7 @@ import de.enflexit.common.classSelection.ClassElement2Display;
  * start configuration. This class is used in the simulation setup
  * of <b>Agent.GUI</b>
  *   
- * @see agentgui.core.sim.setup.SimulationSetup
+ * @see agentgui.core.project.setup.SimulationSetup
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen 
  */
@@ -248,7 +248,7 @@ public class AgentClassElement4SimStart {
 	 * store this configuration also in the SimulationSetup
 	 *   
 	 * @return the startInstances
-	 * @see agentgui.core.sim.setup.SimulationSetup
+	 * @see agentgui.core.project.setup.SimulationSetup
 	 */
 	@XmlTransient
 	public String[] getStartArguments() {
@@ -274,7 +274,7 @@ public class AgentClassElement4SimStart {
 	 * store this configuration also in the SimulationSetup
 	 *  
 	 * @param startArguments the startInstances to set for the agent start up
-	 * @see agentgui.core.sim.setup.SimulationSetup
+	 * @see agentgui.core.project.setup.SimulationSetup
 	 */
 	public void setStartArguments(String[] startArguments) {
 		

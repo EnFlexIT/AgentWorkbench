@@ -26,14 +26,14 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.resources;
+package agentgui.core.project;
 
 /**
  * This class is used for displaying external resources in the project tab 'Configuration' - 'Resources'.
  *   
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class Resources2Display {
+public class ProjectResource2Display {
 
 	private String fileOrFolderResource = null;
 	private String suffixText = null;
@@ -44,7 +44,7 @@ public class Resources2Display {
 	 *
 	 * @param fileOrFolderResource the file or folder resource
 	 */
-	public Resources2Display(String fileOrFolderResource) {
+	public ProjectResource2Display(String fileOrFolderResource) {
 		this.fileOrFolderResource = fileOrFolderResource;
 		this.suffixText = null;
 	}
@@ -55,7 +55,7 @@ public class Resources2Display {
 	 * @param fileOrFolderResource the file or folder resource
 	 * @param additionalText the additional text
 	 */
-	public Resources2Display(String fileOrFolderResource, String additionalText) {
+	public ProjectResource2Display(String fileOrFolderResource, String additionalText) {
 		this.fileOrFolderResource = fileOrFolderResource;
 		this.suffixText = additionalText;
 	}
@@ -81,8 +81,8 @@ public class Resources2Display {
 	@Override
 	public boolean equals(Object object2Compare) {
 		
-		if (object2Compare instanceof Resources2Display) {
-			Resources2Display r2dCompare = (Resources2Display) object2Compare;
+		if (object2Compare instanceof ProjectResource2Display) {
+			ProjectResource2Display r2dCompare = (ProjectResource2Display) object2Compare;
 			if (r2dCompare.getFileOrFolderResource().equals(this.getFileOrFolderResource())) {
 				return true;
 			} else {
