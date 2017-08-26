@@ -13,16 +13,6 @@ import jade.content.onto.Ontology;
 public class BaseClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtilityImpl<BaseClassLoadService> implements BaseClassLoadService {
 
 	private BaseClassLoadService localClassLoadService;
-	
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl#getServiceReferenceFilter()
-	 */
-	@Override
-	public String getServiceReferenceFilter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl#getLocalClassLoadService()

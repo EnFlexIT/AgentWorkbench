@@ -22,6 +22,8 @@ import jade.content.onto.Ontology;
  */
 public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoadService> implements BaseClassLoadService {
 
+	public static final String SERVICE_REFERENCE_FILTER = "(component.factory=de.enflexit.common.classLoadService)";
+	
 	private boolean debug = false;
 	
 	private BundleContext bundleContext;
@@ -32,12 +34,6 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	private HashMap<String, T> clServicesByClassName;
 	
 	
-	
-	/**
-	 * Has to return the specific service reference filter.
-	 * @return the service reference filter
-	 */
-	public abstract String getServiceReferenceFilter();
 	
 	/**
 	 * Has to return the specific local class load service.
@@ -176,30 +172,32 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		// --- Check the current service references -------------------------------------
 		// ------------------------------------------------------------------------------
 		try {
-			// --- Check for the ServiceReference --------------------------------------- 
-			ServiceReference<?>[] serviceReferences = this.getBundleContext().getServiceReferences(ComponentFactory.class.getName(), this.getServiceReferenceFilter());
-			for (int i = 0; i < serviceReferences.length; i++) {
-				
-				// --- Get the component factory and its name ---------------------------
-				ComponentFactory compFactory = (ComponentFactory) this.getBundleContext().getService(serviceReferences[i]);
-				String compFactoryName = compFactory.toString();
-				String sourceBundleName = serviceReferences[i].getBundle().getSymbolicName();
-				
-				// --- Check if service is already available ----------------------------
-				if (this.getClassLoadServicesByComponentFactory().get(compFactoryName)==null) {
-					// --- Create ComponentInstance and the actual implementation -------
-					ComponentInstance compInstance = compFactory.newInstance(null);
-					if (compInstance.getInstance() instanceof BaseClassLoadService) {
-						@SuppressWarnings("unchecked")
-						T cls = (T) compInstance.getInstance();
-						this.getClassLoadServicesByComponentFactory().put(compFactoryName, cls);
-						this.getClassLoadServicesBySymbolicBundleName().put(sourceBundleName, cls);
-					}
+			// --- Check for the ServiceReference ---------------------------------------
+			ServiceReference<?>[] serviceReferences = this.getBundleContext().getServiceReferences(ComponentFactory.class.getName(), SERVICE_REFERENCE_FILTER);
+			if (serviceReferences!=null) {
+				for (int i = 0; i < serviceReferences.length; i++) {
 					
-				} else {
-					// --- Remove from the list f delete candidates ---------------------
-					deleteCandidatesComponentFactoryName.remove(compFactoryName);
-					deleteCandidatesSymbolicBundleName.remove(sourceBundleName);
+					// --- Get the component factory and its name -----------------------
+					ComponentFactory compFactory = (ComponentFactory) this.getBundleContext().getService(serviceReferences[i]);
+					String compFactoryName = compFactory.toString();
+					String sourceBundleName = serviceReferences[i].getBundle().getSymbolicName();
+					
+					// --- Check if service is already available ------------------------
+					if (this.getClassLoadServicesByComponentFactory().get(compFactoryName)==null) {
+						// --- Create ComponentInstance and the actual implementation ---
+						ComponentInstance compInstance = compFactory.newInstance(null);
+						if (compInstance.getInstance() instanceof BaseClassLoadService) {
+							@SuppressWarnings("unchecked")
+							T cls = (T) compInstance.getInstance();
+							this.getClassLoadServicesByComponentFactory().put(compFactoryName, cls);
+							this.getClassLoadServicesBySymbolicBundleName().put(sourceBundleName, cls);
+						}
+						
+					} else {
+						// --- Remove from the list f delete candidates -----------------
+						deleteCandidatesComponentFactoryName.remove(compFactoryName);
+						deleteCandidatesSymbolicBundleName.remove(sourceBundleName);
+					}
 				}
 			}
 			

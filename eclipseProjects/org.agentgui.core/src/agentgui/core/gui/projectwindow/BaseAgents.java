@@ -137,9 +137,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		jButtonReferencesAdd.setToolTipText(Language.translate("Objekt hinzufügen"));
 		jButtonReferencesRemove.setToolTipText(Language.translate("Objekt entfernen"));
 		
-		// --- Basis-Verzeichnisse im OntoTree anzeigen ---
 		this.OntoTreeExpand2Level(3, true);
-
 	}
 
 	/**
@@ -159,7 +157,6 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		this.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		this.setDividerSize(3);
 		this.setResizeWeight(0.5);
-//		this.setDividerLocation(300);
 		this.setSize(new Dimension(1003, 568));
 		this.setLeftComponent(this.getJPanelWest());
 		this.setRightComponent(this.getJPanelEast());
@@ -264,7 +261,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 			jSplitEast.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			jSplitEast.setDividerSize(1);
 			jSplitEast.setResizeWeight(0.0D);
-			jSplitEast.setDividerLocation(160);
+			jSplitEast.setDividerLocation(180);
 			jSplitEast.setBottomComponent(getJSplitOntologie());
 			jSplitEast.setTopComponent(getJPanelReferences());
 		}
@@ -388,20 +385,20 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 			gridBagConstraints15.gridy = 0;
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 1;
-			gridBagConstraints12.insets = new Insets(5, 5, 0, 5);
+			gridBagConstraints12.insets = new Insets(5, 5, 5, 5);
 			gridBagConstraints12.anchor = GridBagConstraints.WEST;
 			gridBagConstraints12.weightx = 1.0;
 			gridBagConstraints12.gridy = 4;
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.gridx = 0;
 			gridBagConstraints11.anchor = GridBagConstraints.EAST;
-			gridBagConstraints11.insets = new Insets(5, 0, 0, 5);
+			gridBagConstraints11.insets = new Insets(5, 0, 5, 5);
 			gridBagConstraints11.ipadx = 0;
 			gridBagConstraints11.weightx = 1.0;
 			gridBagConstraints11.gridy = 4;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.gridx = 2;
-			gridBagConstraints10.insets = new Insets(5, 0, 0, 5);
+			gridBagConstraints10.insets = new Insets(5, 0, 5, 5);
 			gridBagConstraints10.anchor = GridBagConstraints.SOUTH;
 			gridBagConstraints10.gridy = 4;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
@@ -475,8 +472,8 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	private JButton getJButtonMoveUp() {
 		if (jButtonMoveUp == null) {
 			jButtonMoveUp = new JButton();
-			jButtonMoveUp.setPreferredSize(new Dimension(15, 15));
 			jButtonMoveUp.setIcon(GlobalInfo.getInternalImageIcon("ArrowUp.png"));
+			jButtonMoveUp.setPreferredSize(new Dimension(50, 26));
 			jButtonMoveUp.setToolTipText("Objekt nach oben");
 			jButtonMoveUp.setActionCommand("OntoObjectUp");
 			jButtonMoveUp.addActionListener(this);
@@ -492,7 +489,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		if (jButtonMoveDown == null) {
 			jButtonMoveDown = new JButton();
 			jButtonMoveDown.setIcon(GlobalInfo.getInternalImageIcon("ArrowDown.png"));
-			jButtonMoveDown.setPreferredSize(new Dimension(15, 15));
+			jButtonMoveDown.setPreferredSize(new Dimension(50, 26));
 			jButtonMoveDown.setToolTipText("Objekt nach unten");
 			jButtonMoveDown.setActionCommand("OntoObjectDown");
 			jButtonMoveDown.addActionListener(this);
@@ -524,7 +521,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		if (jButtonRemoveAll == null) {
 			jButtonRemoveAll = new JButton();
 			jButtonRemoveAll.setIcon(GlobalInfo.getInternalImageIcon("Delete.png"));
-			jButtonRemoveAll.setPreferredSize(new Dimension(15, 15));
+			jButtonRemoveAll.setPreferredSize(new Dimension(50, 26));
 			jButtonRemoveAll.setToolTipText("Alle Objekte löschen");
 			jButtonRemoveAll.setActionCommand("OntoObjectsRemoveAll");
 			jButtonRemoveAll.addActionListener(this);

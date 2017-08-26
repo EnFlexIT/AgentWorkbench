@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
+ JavaSE-1.8
 Export-Package: de.enflexit.common,
  de.enflexit.common.bundleEvaluation,
  de.enflexit.common.classLoadService,
@@ -29,3 +30,4 @@ Require-Bundle: de.enflexit.api,
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
  org.agentgui.lib.jade;bundle-version="4.4.0"
 Bundle-ActivationPolicy: lazy
+Service-Component: classLoadService.xml 

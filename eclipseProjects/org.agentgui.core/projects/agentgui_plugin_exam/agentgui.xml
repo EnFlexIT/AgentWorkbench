@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Agent.GUI PlugIn Example</projectName>
-    <projectStartTab>1|0</projectStartTab>
+    <projectStartTab>1|2</projectStartTab>
     <versionInformation>
         <build>1</build>
         <majorRevision>0</majorRevision>
@@ -24,6 +24,15 @@
                 <startArgumentVector>
                     <startArgument position="1" ontologyReference="agentgui.ontology.Simple_Boolean"/>
                     <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Integer"/>
+                </startArgumentVector>
+            </agent>
+            <agent agentReference="(org.agentgui.sample.plugIn) agentproject.MyExampleAgent">
+                <startArgumentVector>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Integer"/>
+                    <startArgument position="3" ontologyReference="agentgui.ontology.Simple_Long"/>
+                    <startArgument position="4" ontologyReference="agentgui.ontology.Simple_Float"/>
+                    <startArgument position="5" ontologyReference="agentgui.ontology.Simple_String"/>
                 </startArgumentVector>
             </agent>
         </agentVector>

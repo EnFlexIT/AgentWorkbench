@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="org.agentgui.classLoadService" name="org.agentgui.sample.plugin.ClassLoadServiceImpl">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="de.enflexit.common.classLoadService" name="org.agentgui.sample.plugin.ClassLoadServiceImpl">
    <implementation class="org.agentgui.sample.plugin.ClassLoadServiceImpl"/>
    <service>
+      <provide interface="de.enflexit.common.classLoadService.BaseClassLoadService"/>
       <provide interface="agentgui.core.classLoadService.ClassLoadService"/>
    </service>
 </scr:component>

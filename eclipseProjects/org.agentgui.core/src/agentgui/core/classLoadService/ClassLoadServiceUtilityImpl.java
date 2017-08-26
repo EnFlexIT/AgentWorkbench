@@ -41,7 +41,6 @@ import de.enflexit.common.classLoadService.BaseClassLoadService;
 import de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl;
 import jade.core.Agent;
 
-
 /**
  * The Class BaseClassLoadServiceUtility extends the {@link DefaultClassLoadServiceUtility} 
  * and prepares the access to the {@link BaseClassLoadService} depending on the OSGI bundle.
@@ -50,17 +49,7 @@ import jade.core.Agent;
  */
 public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtilityImpl<ClassLoadService> implements ClassLoadService {
 
-	public static final String SERVICE_REFERENCE_FILTER = "(component.factory=org.agentgui.classLoadService)";
-	
 	private ClassLoadService localClassLoadService;
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl#getServiceReferenceFilter()
-	 */
-	@Override
-	public String getServiceReferenceFilter() {
-		return SERVICE_REFERENCE_FILTER;
-	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl#getLocalClassLoadService()
