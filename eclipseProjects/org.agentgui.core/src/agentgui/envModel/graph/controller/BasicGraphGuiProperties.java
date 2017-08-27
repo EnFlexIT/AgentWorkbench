@@ -61,6 +61,7 @@ import agentgui.envModel.graph.visualisation.notifications.DataModelNotification
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeriesException;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
+import de.enflexit.eom.api.EomVisualizationHostContainer;
 import jade.core.AID;
 
 /**
@@ -82,7 +83,7 @@ import jade.core.AID;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame implements ActionListener {
+public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame implements EomVisualizationHostContainer, ActionListener {
 
 	private static final long serialVersionUID = -868257113588339559L;
 
@@ -267,10 +268,11 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		}
 		return this.adapter4DataModel;
 	}
-	/**
-	 * Exchanges the JPanel with the content.
-	 * @param newJPanelContent the new JPanel with the content 
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.api.EomHostContainer#exchangeJPanelContent(javax.swing.JPanel)
 	 */
+	@Override
 	public void exchangeJPanelContent(JPanel newJPanelContent) {
 
 		if (newJPanelContent==null) return;

@@ -81,19 +81,19 @@ public abstract class NetworkComponentAdapter4DataModel {
 
 	
 	/**
-	 * Returns the JComponent for the visualisation of the data model.
-	 * @return the visualisation component
+	 * Returns the JComponent for the visualization of the data model.
+	 * @return the visualization component
 	 */
 	public abstract JComponent getVisualisationComponent();
 	
 	/**
-	 * Returns the default size for the visualisation of the data model.
+	 * Returns the default size for the visualization of the data model.
 	 * Override this method in order to get control over the window size 
-	 * of your own, customised visualisation. 
+	 * of your own, customized visualization. 
 	 * By default this method just returns null.
 	 *
-	 * @param graphDesktop the current desktop instance that will be the host of the visualisation 
-	 * @return the Dimension of the visualisation
+	 * @param graphDesktop the current desktop instance that will be the host of the visualization 
+	 * @return the Dimension of the visualization
 	 */
 	public Dimension getSizeOfVisualisation(BasicGraphGuiJDesktopPane graphDesktop) {
 		return null;
@@ -101,7 +101,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	
 	
 	/**
-	 * Save the current settings in the visualisation component.
+	 * Save the current settings in the visualization component.
 	 */
 	public abstract void save();
 	
@@ -131,13 +131,13 @@ public abstract class NetworkComponentAdapter4DataModel {
 	}
 	
 	/**
-	 * Sets the data model to the visualisation component and will refresh the visualisation.
+	 * Has to set the data model to the visualization component (and refresh it).
 	 * @param dataModel the new data model
 	 */
 	public abstract void setDataModel(Object dataModel);
 	
 	/**
-	 * Returns the data model from the visualisation component.
+	 * Returns the data model from the visualization component.
 	 * @return the data model
 	 */
 	public abstract Object getDataModel();

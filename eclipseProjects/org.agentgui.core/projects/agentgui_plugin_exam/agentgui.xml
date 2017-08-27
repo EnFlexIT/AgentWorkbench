@@ -19,23 +19,7 @@
         <subOntology>agentgui.simulationService.ontology.AgentGUI_DistributionOntology</subOntology>
     </subOntologies>
     <agentStartConfiguration>
-        <agentVector>
-            <agent agentReference="(agentProject.agentgui_plugin_exam) agentproject.MyExampleAgent">
-                <startArgumentVector>
-                    <startArgument position="1" ontologyReference="agentgui.ontology.Simple_Boolean"/>
-                    <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Integer"/>
-                </startArgumentVector>
-            </agent>
-            <agent agentReference="(org.agentgui.sample.plugIn) agentproject.MyExampleAgent">
-                <startArgumentVector>
-                    <startArgument position="1" ontologyReference="agentgui.ontology.Simple_Boolean"/>
-                    <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Integer"/>
-                    <startArgument position="3" ontologyReference="agentgui.ontology.Simple_Long"/>
-                    <startArgument position="4" ontologyReference="agentgui.ontology.Simple_Float"/>
-                    <startArgument position="5" ontologyReference="agentgui.ontology.Simple_String"/>
-                </startArgumentVector>
-            </agent>
-        </agentVector>
+        <agentVector/>
     </agentStartConfiguration>
     <jadeConfiguration>
         <skipUserRequestForJadeStart>false</skipUserRequestForJadeStart>

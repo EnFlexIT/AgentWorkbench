@@ -418,17 +418,32 @@ public class OIDCAuthorization {
 		return accessResource();
 	}
 
+	/**
+	 * Sets the translator.
+	 * @param translator the new translator
+	 */
 	public void setTranslator(Translator translator) {
 		this.translator = translator;
 	}
 
+	/**
+	 * Translate.
+	 *
+	 * @param oidcPanel the oidc panel
+	 * @param input the input
+	 * @return the string
+	 */
 	String translate(OIDCPanel oidcPanel, String input){
-		if(translator!=null){
+		if (translator!=null) {
 			return translator.dynamicTranslate(input);
 		}
 		return input;
 	}
 
+	/**
+	 * Returns the last successful user name.
+	 * @return the last successful user
+	 */
 	public String getLastSuccessfulUser() {
 		return lastSuccessfulUser;
 	}

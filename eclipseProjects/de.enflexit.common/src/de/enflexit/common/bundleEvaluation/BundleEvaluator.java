@@ -172,7 +172,7 @@ public class BundleEvaluator {
 	 * Adds the specified bundle class filter and executes the needed, filter-specific search.
 	 *
 	 * @param bundleClassFilter the bundle class filter
-	 * @return true, if successful
+	 * @return true, if the filter was added<br> false, if a filter with the same filter scope was already available. 
 	 */
 	public boolean addBundleClassFilter(AbstractBundleClassFilter bundleClassFilter) {
 		return this.getEvaluationFilterResults().add(bundleClassFilter);
@@ -182,7 +182,7 @@ public class BundleEvaluator {
 	 *
 	 * @param bundleClassFilter the bundle class filter
 	 * @param doBundleEvaluation set true, if you want to directly evaluate all bundles with the current filter
-	 * @return true, if successful
+	 * @return true, if the filter was added<br> false, if a filter with the same filter scope was already available.
 	 */
 	public boolean addBundleClassFilter(AbstractBundleClassFilter bundleClassFilter, boolean doBundleEvaluation) {
 		return this.getEvaluationFilterResults().add(bundleClassFilter, doBundleEvaluation);
@@ -843,7 +843,7 @@ public class BundleEvaluator {
 	}
 	
 	/**
-	 * Returns the source bundle that loaded the specified class.
+	 * Returns the source bundle that loaded the specified class by using <code>FrameworkUtil.getBundle(clazz);</code>.
 	 * @param clazz the class instance 
 	 * @return the bundle from class
 	 */

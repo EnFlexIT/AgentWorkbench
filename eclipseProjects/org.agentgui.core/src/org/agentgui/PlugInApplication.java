@@ -131,8 +131,8 @@ public class PlugInApplication implements IApplication {
 		// --- Evaluate the already loaded bundles ------------------
 		BundleEvaluator be = BundleEvaluator.getInstance(); 
 		be.addBundleClassFilter(new FilterForAgent(), false);
-		be.addBundleClassFilter(new FilterForOntology(), false);
 		be.addBundleClassFilter(new FilterForBaseService(), false);
+		be.addBundleClassFilter(new FilterForOntology(), false);
 		be.evaluateAllBundles();
 	}
 	

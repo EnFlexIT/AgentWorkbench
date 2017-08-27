@@ -34,7 +34,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.csv.CsvDataControllerPanel;
 import de.enflexit.common.swing.ProgressMonitor;
@@ -71,8 +70,6 @@ public class CommonComponentFactory {
 		
 		// --- Initiate new ProgressMonitor ------------------------- 
 		ProgressMonitor pm = new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);
-		// --- Finally set translator -------------------------------
-		pm.setTranslator(Language.getInstance());
 		
 		return pm;
 	}
@@ -95,7 +92,6 @@ public class CommonComponentFactory {
 	public static Zipper getNewZipper(Frame owner) {
 		
 		Zipper zipper = new Zipper(owner);
-		zipper.setTranslator(Language.getInstance());
 		zipper.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		zipper.setLookAndFeelClassName(Application.getGlobalInfo().getAppLookAndFeelClassName());
 		zipper.setApplicationName(Application.getGlobalInfo().getApplicationTitle());
@@ -108,7 +104,6 @@ public class CommonComponentFactory {
 	 */
 	public static CsvDataControllerPanel getNewCsvDataControllerPanel() {
 		CsvDataControllerPanel csvPanel = new CsvDataControllerPanel();
-		csvPanel.setTranslator(Language.getInstance());
 		csvPanel.setLastSelectedFolderReminder(Application.getGlobalInfo());
 		return csvPanel;
 	}

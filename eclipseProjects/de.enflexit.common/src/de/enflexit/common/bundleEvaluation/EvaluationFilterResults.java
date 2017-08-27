@@ -44,7 +44,7 @@ class EvaluationFilterResults extends Vector<AbstractBundleClassFilter> {
 	 *
 	 * @param bundleClassFilter the bundle class filter
 	 * @param doBundleEvaluation set true, if you want to directly evaluate all bundles with the current filter
-	 * @return true, if successful
+	 * @return true, if the filter was added<br> false, if a filter with the same filter scope was already available.
 	 */
 	public synchronized boolean add(AbstractBundleClassFilter bundleClassFilter, boolean doBundleEvaluation) {
 		boolean added = false;

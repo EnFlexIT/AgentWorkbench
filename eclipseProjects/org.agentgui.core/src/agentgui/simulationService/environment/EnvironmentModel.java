@@ -50,9 +50,9 @@ public class EnvironmentModel implements Serializable {
 
 	private static final long serialVersionUID = -2845036237763599630L;
 	
-	private TimeModel timeModel = null;
-	private AbstractEnvironmentModel abstractEnvironment = null;
-	private DisplaytEnvironmentModel displayEnvironment	= null;	
+	private TimeModel timeModel;
+	private AbstractEnvironmentModel abstractEnvironment;
+	private DisplaytEnvironmentModel displayEnvironment;	
 
 	
 	/**

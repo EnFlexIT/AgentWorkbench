@@ -382,7 +382,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	protected KeyStoreController getKeyStoreController() {
 		if (keyStoreController == null) {
 			keyStoreController = new KeyStoreController(Application.getGlobalInfo().getOwnerDialogForComponent(this));
-			keyStoreController.setTranslator(Language.getInstance());
 		}
 		return keyStoreController;
 	}

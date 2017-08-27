@@ -537,7 +537,6 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	protected TrustStoreController getTrustStoreController() {
 		if (trustStoreController == null) {
 			trustStoreController = new TrustStoreController(Application.getGlobalInfo().getOwnerDialogForComponent(this));
-			trustStoreController.setTranslator(Language.getInstance());
 		}
 		return trustStoreController;
 	}

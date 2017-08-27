@@ -23,8 +23,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import de.enflexit.api.Translator;
-import de.enflexit.api.Translator.SourceLanguage;
+import de.enflexit.common.Language;
 
 
 /**
@@ -46,8 +45,6 @@ public class ProgressMonitor implements ActionListener {
 	
 	private Container progressMonitorContainer;
 
-	private Translator translator;
-	
 	private JPanel jContentPane;
 	private JLabel jLabelHeader;
 	private JPanel jPanelDummy;
@@ -343,7 +340,7 @@ public class ProgressMonitor implements ActionListener {
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
-			jButtonCancel.setText(this.translate("Abbruch"));
+			jButtonCancel.setText(Language.translate("Abbruch"));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.addActionListener(this);
@@ -363,34 +360,6 @@ public class ProgressMonitor implements ActionListener {
 		return jPanelDummy;
 	}
 	
-	/**
-	 * Sets the translator.
-	 * @param translator the new translator
-	 */
-	public void setTranslator(Translator translator) {
-		this.translator = translator;
-	}
-	/**
-	 * Returns the current translator.
-	 * @return the translator
-	 */
-	public Translator getTranslator() {
-		return translator;
-	}
-	/**
-	 * Translate the .
-	 *
-	 * @param expression the expression
-	 * @param sourceLanguage the source language
-	 * @return the string
-	 */
-	public String translate(String expression) {
-		String translation = expression;
-		if (this.getTranslator()!=null) {
-			translation = this.getTranslator().dynamicTranslate(expression, SourceLanguage.DE);
-		}
-		return translation;
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)

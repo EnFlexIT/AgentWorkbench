@@ -50,7 +50,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import de.enflexit.api.Translator;
+import de.enflexit.common.Language;
 
 /**
  * This class allows the user to manage a TrustStore.
@@ -97,7 +97,6 @@ public class TrustStoreController {
 
 	private Dialog ownerDialog;
 	private boolean initialized = false;
-	private Translator translator;
 
 	/*
 	 * generates a blank controller, which still needs to initialize the trustStore
@@ -357,9 +356,9 @@ public class TrustStoreController {
 		if (tableModel == null) {
 			// ---- Create header for the TableModel -----------------
 			Vector<String> header = new Vector<String>();
-			header.add(translate("Zertifikats-Alias"));
-			header.add(translate("Zertifikatsbesitzer"));
-			header.add(translate("Ablaufdatum"));
+			header.add(Language.translate("Zertifikats-Alias"));
+			header.add(Language.translate("Zertifikatsbesitzer"));
+			header.add(Language.translate("Ablaufdatum"));
 
 			tableModel = new DefaultTableModel(null, header) {
 				private static final long serialVersionUID = 1L;
@@ -471,17 +470,6 @@ public class TrustStoreController {
 	 */
 	public boolean isInitialized(){
 		return initialized ;
-	}
-
-	public void setTranslator(Translator translator) {
-		this.translator = translator;
-	}
-
-	String translate(String input){
-		if(translator!=null){
-			return translator.dynamicTranslate(input);
-		}
-		return input;
 	}
 	
 }

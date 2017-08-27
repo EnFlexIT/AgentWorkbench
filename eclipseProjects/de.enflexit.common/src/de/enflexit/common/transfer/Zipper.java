@@ -41,7 +41,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import de.enflexit.api.Translator;
 import de.enflexit.common.PathHandling;
 
 /**
@@ -69,7 +68,6 @@ public class Zipper extends Thread {
 
 	private Frame owner;
 	
-	private Translator translator;
 	private String applicationName;
 	private Image iconImage;
 	private String lookAndFeelClassName;
@@ -115,7 +113,7 @@ public class Zipper extends Thread {
 	 */
 	private ZipperMonitor getZipperMonitor() {
 		if (this.zipMonitor==null && this.isHeadlessOperation()==false) {
-			this.zipMonitor = new ZipperMonitor(this.owner, this.getApplicationName(), this.getIconImage(), this.getTranslator(), this.getLookAndFeelClassName());	
+			this.zipMonitor = new ZipperMonitor(this.owner, this.getApplicationName(), this.getIconImage(), this.getLookAndFeelClassName());	
 		}
 		return this.zipMonitor;
 	}
@@ -163,21 +161,6 @@ public class Zipper extends Thread {
 			this.getAfterJobTask().run();
 		}
 		
-	}
-	
-	/**
-	 * Sets the translator.
-	 * @param translator the new translator
-	 */
-	public void setTranslator(Translator translator) {
-		this.translator = translator;
-	}
-	/**
-	 * Returns the translator.
-	 * @return the translator
-	 */
-	protected Translator getTranslator() {
-		return translator;
 	}
 	
 	/**

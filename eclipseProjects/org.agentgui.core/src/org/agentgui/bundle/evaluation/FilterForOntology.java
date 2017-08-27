@@ -34,6 +34,4 @@ public class FilterForOntology extends AbstractBundleClassFilter {
 		return Ontology.class.isAssignableFrom(clazz) && Ontology.class.equals(clazz)==false;
 	}
 
-	
-
 }

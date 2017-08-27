@@ -76,7 +76,7 @@ public abstract class NetworkComponentAdapter {
 	
 	/**
 	 * Returns the data model adapter for the {@link NetworkComponent}.
-	 * @return the adapter visualisation
+	 * @return the adapter visualization
 	 */
 	public abstract NetworkComponentAdapter4DataModel getNewDataModelAdapter();
 	
@@ -180,8 +180,8 @@ public abstract class NetworkComponentAdapter {
 	}
 
 	/**
-	 * Checks if the current view is the runtime visualisation.
-	 * @return true, if is runtime visualisation
+	 * Checks if the current view is the runtime visualization.
+	 * @return true, if is runtime visualization
 	 */
 	protected boolean isRuntimeVisualization(){
 		return (this.graphController.getProject()==null);

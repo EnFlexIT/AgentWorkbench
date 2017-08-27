@@ -4,4 +4,5 @@ Bundle-Name: Api
 Bundle-SymbolicName: de.enflexit.api
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.enflexit.api
+Export-Package: de.enflexit.api,
+ de.enflexit.eom.api
