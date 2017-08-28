@@ -140,10 +140,17 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 
 	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#setVisualizationComponent(javax.swing.JComponent)
+	 */
+	@Override
+	public final void setVisualizationComponent(JComponent visualizationComponent) {
+		// --- Nothing to do in case of an Ontology -------
+	}
+	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getVisualisationComponent()
 	 */
 	@Override
-	public JComponent getVisualisationComponent() {
+	public JComponent getVisualizationComponent() {
 		return this.getOntologyInstanceViewer();
 	}
 	

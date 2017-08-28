@@ -84,7 +84,13 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the JComponent for the visualization of the data model.
 	 * @return the visualization component
 	 */
-	public abstract JComponent getVisualisationComponent();
+	public abstract JComponent getVisualizationComponent();
+	
+	/**
+	 * Sets the visualization component.
+	 * @param visualizationComponent the new visualization component
+	 */
+	public abstract void setVisualizationComponent(JComponent visualizationComponent);
 	
 	/**
 	 * Returns the default size for the visualization of the data model.

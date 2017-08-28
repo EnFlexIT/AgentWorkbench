@@ -277,9 +277,12 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 
 		if (newJPanelContent==null) return;
 		
-		// --- Remove the old content -----------
+		// --- Set visualization component to NetworkComponentAdapter --------- 
+		this.getNetworkComponentAdapter4DataModel().setVisualizationComponent(newJPanelContent);
+		
+		// --- Remove the old content -----------------------------------------
 		this.getJContentPane().remove(this.getJPanelContent());
-		// --- Add the new content --------------		
+		// --- Add the new content --------------------------------------------
 		this.jComponentContent = newJPanelContent;
 		this.getJContentPane().add(newJPanelContent, BorderLayout.CENTER);
 		this.validate();
@@ -359,7 +362,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					this.setDataModelBase64InitialHashCodes(dataModelBase64);
 
 					// --- Get the visualisation component -------------------------
-					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualisationComponent();
+					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualizationComponent();
 					if (visualisation instanceof OntologyInstanceViewer) {
 						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJJToolBarBarNorth());
 					}
@@ -695,7 +698,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (applyUpdate==true) {
 			try {
 				// --- Update the view --------------------
-				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.getNetworkComponentAdapter4DataModel().getVisualisationComponent();
+				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.getNetworkComponentAdapter4DataModel().getVisualizationComponent();
 				uds.applyToOntologyInstanceViewer(ontoViewer);
 				
 			} catch (UpdateDataSeriesException udse) {
