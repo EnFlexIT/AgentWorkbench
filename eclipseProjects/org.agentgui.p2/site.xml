@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.agentgui_2.0.0.201708081751.jar" id="org.agentgui" version="2.0.0.201708081751" os="linux,macosx,win32">
+      <category name="org.agentgui"/>
+   </feature>
+   <category-def name="org.agentgui" label="Agent.GUI - Workbench"/>
+</site>
