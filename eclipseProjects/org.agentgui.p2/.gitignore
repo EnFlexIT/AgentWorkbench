@@ -1,1 +1,6 @@
 /target/
+/features/*.jar
+/plugins/*.jar
+artifacts.jar
+content.jar
+site.xml
