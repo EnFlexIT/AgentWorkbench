@@ -32,7 +32,6 @@ import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 	
@@ -43,22 +42,7 @@ public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 	private StringFieldEditor mtpPortFieldEditor;
 
 	public PreferencePageProgramStart() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public PreferencePageProgramStart(int style) {
-		super(style);
-		// TODO Auto-generated constructor stub
-	}
-
-	public PreferencePageProgramStart(String title, int style) {
-		super(title, style);
-		// TODO Auto-generated constructor stub
-	}
-
-	public PreferencePageProgramStart(String title, ImageDescriptor image, int style) {
-		super(title, image, style);
-		// TODO Auto-generated constructor stub
+		super(GRID);
 	}
 
 	@Override

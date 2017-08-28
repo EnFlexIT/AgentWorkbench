@@ -19,7 +19,7 @@
         <children xsi:type="menu:MenuSeparator" xmi:id="_JZHfQH6AEeeSPpFWfRBHVA" elementId="org.agentgui.core.menuseparator.2"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_JzMzMH6AEeeSPpFWfRBHVA" elementId="org.agentgui.core.menu.project.delete" label="Delete Project" command="_-sojoIGOEeeI1dq59ubV8g"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_Lwg0cH6AEeeSPpFWfRBHVA" elementId="org.agentgui.core.menuseparator.3"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_MicAoH6AEeeSPpFWfRBHVA" elementId="org.agentgui.core.menu.project.quit" label="Quit" command="_AvelIIGPEeeI1dq59ubV8g"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_MicAoH6AEeeSPpFWfRBHVA" elementId="org.agentgui.core.menu.project.exit" label="Exit" command="_AvelIIGPEeeI1dq59ubV8g"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_R3zNsH5-EeeSPpFWfRBHVA" elementId="org.agentgui.core.menu.view" label="View"/>
       <children xsi:type="menu:Menu" xmi:id="_VPjzsH5-EeeSPpFWfRBHVA" elementId="org.agentgui.core.menu.jade" label="JADE"/>

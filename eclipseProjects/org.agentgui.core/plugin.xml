@@ -13,14 +13,6 @@
       </application>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="RCP Perspective"
-            class="org.agentgui.Perspective"
-            id="org.agentgui.perspective">
-      </perspective>
-   </extension>
-   <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
@@ -49,14 +41,6 @@
       </product>
    </extension>
    <extension
-         id="org.agentgui.Preferences"
-         name="Preferences"
-         point="org.eclipse.equinox.preferences.preferences">
-      <initializer
-            class="org.agentgui.PreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
@@ -82,6 +66,11 @@
    </extension>
    <extension
          point="com.opcoach.e4.preferences.e4PreferencePages">
+      <page
+            class="org.agentgui.preferences.pages.DummyPage"
+            id="org.agentgui.core.page.dummypage"
+            name="DummyPage">
+      </page>
       <page
             class="org.agentgui.preferences.pages.PreferencePageProgramStart"
             id="org.agentgui.core.page.programstart"
