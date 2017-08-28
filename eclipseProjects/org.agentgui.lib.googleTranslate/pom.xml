@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.agentgui.lib.googleTranslate</groupId>
 	<artifactId>org.agentgui.lib.googleTranslate</artifactId>
-	<version>0.97</version>
+	<version>0.97.0</version>
 
 	<packaging>eclipse-plugin</packaging>
 
