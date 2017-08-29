@@ -415,12 +415,24 @@ public class BundleEvaluator {
 	}
 	/**
 	 * Returns the class references of the specified bundle (may be quite time consuming, especially without package filter).
-	 * 
-	 * @param bundle the bundle to evaluate 
+	 *
+	 * @param bundle the bundle to evaluate
 	 * @param packageFilter the package filter; maybe <code>null</code>, which will return all classes from the bundle
+	 * @param options the options according to the {@link BundleWiring} that are {@link BundleWiring#LISTRESOURCES_RECURSE}, {@link BundleWiring#LISTRESOURCES_LOCAL} or {@link BundleWiring#FINDENTRIES_RECURSE}
 	 * @return the list of classes
 	 */
 	public List<Class<?>> getClasses(Bundle bundle, String packageFilter) {
+		return getClasses(bundle, packageFilter, BundleWiring.LISTRESOURCES_RECURSE);
+	}
+	/**
+	 * Returns the class references of the specified bundle (may be quite time consuming, especially without package filter).
+	 *
+	 * @param bundle the bundle to evaluate
+	 * @param packageFilter the package filter; maybe <code>null</code>, which will return all classes from the bundle
+	 * @param options the options according to the {@link BundleWiring} that are {@link BundleWiring#LISTRESOURCES_RECURSE}, {@link BundleWiring#LISTRESOURCES_LOCAL} or {@link BundleWiring#FINDENTRIES_RECURSE}
+	 * @return the list of classes
+	 */
+	public List<Class<?>> getClasses(Bundle bundle, String packageFilter, int options) {
 
 		// --- Define the result list -------------------------------
 		List<Class<?>> bundleClasses = new ArrayList<Class<?>>();
@@ -437,7 +449,7 @@ public class BundleEvaluator {
 		// --- Checking class files ---------------------------------
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 		if (bundleWiring!=null) {
-			Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", BundleWiring.LISTRESOURCES_RECURSE);
+			Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", options);
 			for (String resource : resources) {
 				// --- Get a suitable class name --------------------
 				String className = this.getClassName(resource);
