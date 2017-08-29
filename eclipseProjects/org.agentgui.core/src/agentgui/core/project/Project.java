@@ -308,7 +308,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * @return the project
 	 */
 	public static Project load(String projectSubDirectory) {
-		String projectFolder = Application.getGlobalInfo().getPathProjects(true) + projectSubDirectory + File.separator;
+		String projectFolder = Application.getGlobalInfo().getPathProjects() + projectSubDirectory + File.separator;
 		return load(new File(projectFolder));
 	}
 	
@@ -321,7 +321,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * @return the project
 	 */
 	public static Project load(String projectSubDirectory, boolean loadResources) {
-		String projectFolder = Application.getGlobalInfo().getPathProjects(true) + projectSubDirectory + File.separator;
+		String projectFolder = Application.getGlobalInfo().getPathProjects() + projectSubDirectory + File.separator;
 		return load(new File(projectFolder), loadResources);
 	}
 	/**
@@ -967,7 +967,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 */
 	public String getProjectFolderFullPath() {
 		if (projectFolderFullPath==null) {
-			projectFolderFullPath = Application.getGlobalInfo().getPathProjects(true) + projectFolder + File.separator;
+			projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + projectFolder + File.separator;
 		}
 		return projectFolderFullPath;
 	}

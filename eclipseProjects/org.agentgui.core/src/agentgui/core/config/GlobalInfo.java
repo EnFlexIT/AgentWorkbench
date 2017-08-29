@@ -105,7 +105,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localPathAgentGUI	 = "bin";
 	private static String localPathJade		 = "lib" + File.separator + "jade" +  File.separator + "lib";
 	private static String localPathProperty  = "properties" + File.separator;
-	private static String localPathProjects  = "projects" + File.separator;
 	private static String localPathWebServer = "server" + File.separator;
 	private static String localPathDownloads = "download" + File.separator;
 	
@@ -126,6 +125,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- File-Properties --------------------------------------------------
 	private ExecutionMode fileExecutionMode;
 	private String processID;
+	
+	private String filePropProjectsDirectory;
 	
 	private float filePropBenchValue = 0;
 	private String filePropBenchExecOn;
@@ -596,38 +597,60 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return this.getPathProperty(absolute) + localFileProperties;
 	}
 	
-	/**
-	 * This method will return the path to the project folder ('project\').
-	 * If the path does not exists, the path will be created.
-	 * @param absolute set true if you want to get the full path to this
-	 * @return the path to the project folder
-	 */
-	public String getPathProjects(boolean absolute){
-		return this.getPathProjects(absolute, true);
-	}
 	
 	/**
-	 * This method will return the path to the project folder ('./project').
+	 * Sets the 'projects' directory.
+	 * @param newProectsDirectory the new path projects
+	 */
+	public void setPathProjects(String newProjectsDirectory) {
+		this.filePropProjectsDirectory = newProjectsDirectory;
+	}
+	/**
+	 * This method will return the absolute path to the projects directory ('projects\').
+	 * If the path does not exists, the path will be created.
+	 * @return the path to the project folder
+	 */
+	public String getPathProjects(){
+		return this.getPathProjects(true);
+	}
+	/**
+	 * This method will return the path to the project folder ('./projects').
 	 *
 	 * @param absolute set true if you want to get the full path to this
 	 * @param forcePathCreation if true, the path will be created if it not already exists
 	 * @return the path to the project folder
 	 */
-	public String getPathProjects(boolean absolute, boolean forcePathCreation){
-		String returnPath = null;
-		if (absolute == true) { 
-			returnPath = getFilePathAbsolute(localPathProjects);
-		} else {
-			returnPath = localPathProjects;	
+	public String getPathProjects(boolean forcePathCreation) {
+
+		if (filePropProjectsDirectory==null) {
+			filePropProjectsDirectory = this.getDefaultProjectsDirectory();
 		}
-		// --- See if the folder exists. If not create it, if -------
-		// --- the parameter forcePathCreation allows that ----------
+		if (filePropProjectsDirectory.endsWith(File.separator)==false) {
+			filePropProjectsDirectory += File.separator;
+		}
 		if (forcePathCreation==true) {
-			this.createDirectoryIfRequired(returnPath);
+			this.createDirectoryIfRequired(filePropProjectsDirectory);
 		}
-		return returnPath;
+		
+		// --- Do a final check if the directory exists ---
+		File projectsDir = new File(filePropProjectsDirectory);
+		if (projectsDir.exists()==false) {
+			// --- Switch to default location -------------
+			System.err.println("[projects directory] Could not find directory '" + filePropProjectsDirectory + "'");
+			filePropProjectsDirectory = this.getDefaultProjectsDirectory();
+			this.createDirectoryIfRequired(filePropProjectsDirectory);
+			System.err.println("[projects directory] => Switched to default location '" + filePropProjectsDirectory + "'");
+		}
+		return filePropProjectsDirectory;
 	}
-	
+	/**
+	 * Returns the default projects directory.
+	 * @return the default projects directory
+	 */
+	public String getDefaultProjectsDirectory() {
+		return this.getPathBaseDir() + "projects" + File.separator;
+	}
+
 	/**
 	 * Returns the list of project folders, which are located in the root project folder
 	 * @return Array of project folders
@@ -635,7 +658,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public String[] getProjectSubDirectories(){		
 		// --- Search for sub folders ---
 		String[] localProjects = null;
-		File maindir = new File(this.getPathProjects(true)) ;
+		File maindir = new File(this.getPathProjects()) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory() && !files[i].getName().substring(0, 1).equals(".") ) {

@@ -70,6 +70,7 @@ public class FileProperties extends Properties {
 	private String configFile = null;
 	private String configFileDefaultComment = "";
 
+	private final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
 	private final String DEF_RUNAS = "01_RUNAS";
 	private final String DEF_RUNAS_Application = "Application";
 	private final String DEF_RUNAS_Server = "Server";
@@ -128,7 +129,8 @@ public class FileProperties extends Properties {
 	private final String DEF_OIDC_USERNAME = "60_OIDC_USERNAME";
 	private final String DEF_OIDC_ISSUER_URI = "61_OIDC_ISSUER_URI";
 
-	private String[] mandatoryProps = {	this.DEF_RUNAS,
+	private String[] mandatoryProps = {	this.DEF_PROJECTS_DIRECTORY,
+										this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
 										this.DEF_BENCH_EXEC_ON,
 										this.DEF_BENCH_SKIP_ALLWAYS,
@@ -231,6 +233,15 @@ public class FileProperties extends Properties {
 	private void setConfig2Global() {
 		
 		String propValue = "";
+		
+		// --- this.DEF_PROJECT_DIRECTORY ------------
+		propValue = this.getProperty(this.DEF_PROJECTS_DIRECTORY).trim();
+		if (propValue!=null && propValue.equalsIgnoreCase("")==true) {
+			this.globalInfo.setPathProjects(this.globalInfo.getDefaultProjectsDirectory());
+		} else {
+			this.globalInfo.setPathProjects(propValue);
+		}
+		
 		
 		// --- this.DEF_RUNAS ------------------------
 		propValue = this.getProperty(this.DEF_RUNAS).trim();
@@ -548,6 +559,10 @@ public class FileProperties extends Properties {
 	 */
 	private void setGlobal2Config() {
 		
+		
+		// --- this.DEF_PROJECT_DIRECTORY ------------
+		this.setProperty(this.DEF_PROJECTS_DIRECTORY, this.globalInfo.getPathProjects());
+		
 		// --- this.DEF_RUNAS ------------------------
 		switch (this.globalInfo.getExecutionMode()) {
 		case APPLICATION:
@@ -776,7 +791,11 @@ public class FileProperties extends Properties {
 			this.setProperty( mandatoryProps[i], "" );
 
 			// --- Here some special mandatory properties ----------- 
-			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_LANGUAGE) ) {				
+			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_PROJECTS_DIRECTORY) ) {				
+				this.setProperty(this.DEF_PROJECTS_DIRECTORY, this.globalInfo.getDefaultProjectsDirectory());
+			
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_LANGUAGE) ) {				
 				this.setProperty(this.DEF_LANGUAGE, Language.EN);
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT) ) {				
@@ -833,7 +852,6 @@ public class FileProperties extends Properties {
 				this.setProperty(this.DEF_TRUSTSTORE_PASSWORD, "0");
 			}
 			
-			
 		} // end for
 		
 	}
@@ -853,7 +871,9 @@ public class FileProperties extends Properties {
 				// --- Mandatory property is NOT there ----
 				// --- => Set default valid value      ----
 				// ----------------------------------------
-				if (mandatoryProps[i].equals(this.DEF_LANGUAGE)) {
+				if ( mandatoryProps[i].equals(this.DEF_PROJECTS_DIRECTORY) ) {				
+					this.setProperty(mandatoryProps[i], this.globalInfo.getDefaultProjectsDirectory());
+				} else if (mandatoryProps[i].equals(this.DEF_LANGUAGE)) {
 					this.setProperty(mandatoryProps[i], Language.EN);
 				} else if (mandatoryProps[i].equals(this.DEF_AUTOSTART)) {
 					this.setProperty(mandatoryProps[i], "true");

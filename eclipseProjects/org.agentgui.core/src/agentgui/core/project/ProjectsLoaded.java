@@ -443,7 +443,7 @@ public class ProjectsLoaded {
 		File projectFile = chooser.getSelectedFile();
 		if (projectFile!=null && projectFile.exists()) {
 
-			String destFolder = Application.getGlobalInfo().getPathProjects(true);
+			String destFolder = Application.getGlobalInfo().getPathProjects();
 			String zipFolder = projectFile.getAbsolutePath();
 			
 			// --- Import project file as a new project ---
@@ -575,7 +575,7 @@ public class ProjectsLoaded {
 		}
 		
 		// --- Export project file as a new project -------------
-		String srcFolder = Application.getGlobalInfo().getPathProjects(true) + projectFolder;
+		String srcFolder = Application.getGlobalInfo().getPathProjects() + projectFolder;
 		String zipFolder = projectFile.getAbsolutePath();
 		
 		Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
@@ -657,7 +657,7 @@ public class ProjectsLoaded {
 		
 		// ----------------------------------------------------------
 		// --- Delete the folders of the project --------------------
-		projectFolderFullPath = Application.getGlobalInfo().getPathProjects(true) + projectFolder;
+		projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + projectFolder;
 		System.out.println(Language.translate("Lösche Verzeichnis") +": " + projectFolderFullPath);
 
 		// --- Get the files and folders in the project folder ------

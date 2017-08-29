@@ -781,7 +781,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (url!=null) return url;
 		
 		// --- Prepare folder for projects --------------------------
-		String projectsFolder = Application.getGlobalInfo().getPathProjects(true, false);
+		String projectsFolder = Application.getGlobalInfo().getPathProjects();
 		projectsFolder = projectsFolder.replace("\\", "/");
 		
 		// --- Resource by file, in projects, absolute --------------
