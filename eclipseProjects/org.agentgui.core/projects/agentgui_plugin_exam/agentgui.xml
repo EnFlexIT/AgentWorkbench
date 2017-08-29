@@ -30,6 +30,7 @@
         <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
+            <service>jade.core.event.NotificationService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
@@ -63,9 +64,9 @@
             <agentClass>
                 <className>agent.class.UNKNOWN-AGENT-CLASS</className>
                 <realMetric>1.0</realMetric>
-                <realMetricAverage>6.782751380888364</realMetricAverage>
-                <realMetricMax>6.782751380888362</realMetricMax>
-                <realMetricMin>6.782751380888362</realMetricMin>
+                <realMetricAverage>4.632387518417798</realMetricAverage>
+                <realMetricMax>4.6323875184178025</realMetricMax>
+                <realMetricMin>4.6323875184178025</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
         </agentClassMetricDescriptionVector>

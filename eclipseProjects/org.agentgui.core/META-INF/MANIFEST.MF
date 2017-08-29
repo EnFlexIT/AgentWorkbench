@@ -337,4 +337,4 @@ Export-Package: agentgui.core.application;
  org.agentgui.bundle,
  org.agentgui.bundle.evaluation;uses:="org.osgi.framework",
  org.agentgui.extensions;uses:="org.eclipse.core.runtime"
-Service-Component: classLoadService.xml 
+Service-Component: OSGI-INF/classLoadService.xml 

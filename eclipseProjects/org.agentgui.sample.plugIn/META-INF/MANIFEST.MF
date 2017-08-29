@@ -11,5 +11,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
  JavaSE-1.8
 Export-Package: agentproject,
  org.agentgui.sample.plugin
-Service-Component: classLoadService.xml 
+Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-ActivationPolicy: lazy
