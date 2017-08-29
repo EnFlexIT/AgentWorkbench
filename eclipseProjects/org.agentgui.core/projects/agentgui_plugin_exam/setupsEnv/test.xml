@@ -4,6 +4,10 @@
         <entry>
             <key>n0</key>
             <value>
+                <dataModelsBase64>
+                    <dataModelBase64>TechnicalSystem</dataModelBase64>
+                    <dataModelBase64>rO0ABXNyACJlbmVyZ3kub3B0aW9uTW9kZWwuVGVjaG5pY2FsU3lzdGVtAAAALuSgEsoCAAdMABBjYWxjdWxhdGlvbkNsYXNzdAASTGphdmEvbGFuZy9TdHJpbmc7TAASZXZhbHVhdGlvblNldHRpbmdzdAAnTGVuZXJneS9vcHRpb25Nb2RlbC9FdmFsdWF0aW9uU2V0dGluZ3M7TAANZ2VvQ29vcmRpbmF0ZXQAKkxlbmVyZ3kvb3B0aW9uTW9kZWwvQWJzdHJhY3RHZW9Db29yZGluYXRlO0wAF2ludGVyZmFjZUNvbmZpZ3VyYXRpb25zdAAQTGphdmEvdXRpbC9MaXN0O0wAEXN5c3RlbURlc2NyaXB0aW9ucQB+AAFMAAhzeXN0ZW1JRHEAfgABTAAPc3lzdGVtVmFyaWFibGVzcQB+AAR4cHBzcgAlZW5lcmd5Lm9wdGlvbk1vZGVsLkV2YWx1YXRpb25TZXR0aW5ncwAAAC7koBLKAgAHTAAJY29zdE1vZGVsdAAeTGVuZXJneS9vcHRpb25Nb2RlbC9Db3N0TW9kZWw7TAAOZGF0YVJlcGV0aXRpb250ACNMZW5lcmd5L29wdGlvbk1vZGVsL0RhdGFSZXBldGl0aW9uO0wAD2V2YWx1YXRpb25DbGFzc3EAfgABTAARZXZhbHVhdGlvbkNsYXNzZXNxAH4ABEwAE2V2YWx1YXRpb25TdGF0ZUxpc3RxAH4ABEwAEWlucHV0TWVhc3VyZW1lbnRzcQB+AARMAAp0aW1lRm9ybWF0cQB+AAF4cHB+cgAhZW5lcmd5Lm9wdGlvbk1vZGVsLkRhdGFSZXBldGl0aW9uAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAETk9ORXBwc3IAE2phdmEudXRpbC5BcnJheUxpc3R4gdIdmcdhnQMAAUkABHNpemV4cAAAAAB3BAAAAAB4c3EAfgAOAAAAAHcEAAAAAHh0ABFkZC5NTS55eSBISDptbTpzc3BzcQB+AA4AAAAAdwQAAAAAeHB0ABROZXcgVGVjaG5pY2FsIFN5c3RlbXNxAH4ADgAAAAB3BAAAAAB4</dataModelBase64>
+                </dataModelsBase64>
                 <agentClassName>agentproject.MyExampleAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP0</graphElementIDs>

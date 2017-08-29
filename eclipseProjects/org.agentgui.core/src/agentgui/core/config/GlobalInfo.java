@@ -79,15 +79,12 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
 	
-	private final static String localFileRunnableJar = "AgentGui.jar";
 	private final static String localFileRunnableUpdater = "AgentGuiUpdate.jar";
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
 	
 	public static final String DEFAULT_UPDATE_SITE = "http://update.agentgui.org";
 	public static final String DEFAULT_OIDC_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 
-	private final static String eomJar = "eom4AgentGui.jar";
-	
 	private final static String newLineSeparator = System.getProperty("line.separator");
 	private final static String newLineSeparatorReplacer = "<br>";
 	
@@ -194,8 +191,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public enum ExecutionEnvironment {
 		ExecutedOverIDE,
-		ExecutedOverAgentGuiJar,
-		ExecutedOverOSGI,
+		ExecutedOverProduct
 	}
 
 	/**
@@ -258,37 +254,19 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			// --- Examine the path reference found --------------------------
 			// ----------------------------------------------------------------
 			String pathFound = thisFile.getAbsolutePath(); 
-			if (pathFound.endsWith(".jar") && pathFound.endsWith(GlobalInfo.localFileRunnableJar)==false && pathFound.contains(File.separator + "plugins" + File.separator)) {
+			if (pathFound.endsWith(".jar") && pathFound.contains(File.separator + "plugins" + File.separator)) {
 				// --- OSGI environment ---------------------------------------
-				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverOSGI);
+				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverProduct);
 				int cutAt = pathFound.indexOf("plugins" + File.separator);
 				GlobalInfo.localBaseDir = pathFound.substring(0, cutAt);
 				
 			} else {
-				// --- IDE or AgentGui.jar case -------------------------------
+				// --- IDE environment ----------------------------------------
 				GlobalInfo.localBaseDir = thisFile + File.separator;
 				if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
 					GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
 				}
 			}
-			
-			// ----------------------------------------------------------------
-			// --- Check the Class-Path settings for AgentGui.jar -------------
-			// ----------------------------------------------------------------
-			String[] classPathFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-			for (int i=0; i<classPathFiles.length; i++) {
-				// --- Correct parameter, if executed by AgentGui.jar ---------
-				if (classPathFiles[i].endsWith(GlobalInfo.localFileRunnableJar)==true & classPathFiles[i].endsWith(GlobalInfo.eomJar)==false) {
-					// --- Set the application executed from AgentGui.jar -----
-					this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverAgentGuiJar);
-					
-					File agentGuiJar = new File(classPathFiles[i]);
-					String agentGuiJarPath = agentGuiJar.getAbsolutePath(); 
-					int cutAt = agentGuiJarPath.lastIndexOf(File.separator) + 1;
-					GlobalInfo.localBaseDir = agentGuiJarPath.substring(0, cutAt);	
-				}
-			}
-			// ----------------------------------------------------------------
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -749,27 +727,14 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public String getFileRunnableJar(boolean absolute){
 		
-		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverAgentGuiJar) {
-			// --- The current instance was executed over an AgentGui.jar -----
-			if (absolute==true && localFileRunnableJar!=null) { 
-				return this.getFilePathAbsolute(localFileRunnableJar);
-			} else {
-				return localFileRunnableJar;	
-			}	
-		} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverOSGI) {
+		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			// TODO
-			System.err.println("Runnable jar for OSGI is not defined yet.");
-			return null;
-		} else {
-			// --- The current instance was executed by using the IDE ---------
-			String path2Jar = "exec" + File.separator + "AgentGUI" + File.separator + localFileRunnableJar; 
-			if (absolute == true) { 
-				return getFilePathAbsolute(path2Jar);
-			} else {
-				return path2Jar;	
-			}
-		}
-		
+			System.err.println("TODO: Runnable jar for IDE is not defined yet.");
+		} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
+			// TODO
+			System.err.println("TODO: Runnable jar for OSGI is not defined yet.");
+		} 
+		return null;
 	}
 	/**
 	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 

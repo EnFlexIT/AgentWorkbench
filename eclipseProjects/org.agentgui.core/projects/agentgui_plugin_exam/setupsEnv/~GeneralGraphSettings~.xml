@@ -4,6 +4,7 @@
         <entry>
             <key>Test</key>
             <value>
+                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
                 <agentClass>agentproject.MyExampleAgent</agentClass>
                 <color>-10053376</color>
                 <domain>Default Domain</domain>
