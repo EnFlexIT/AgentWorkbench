@@ -154,7 +154,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * Adds the specified element to the list model considering the Swing environment.
 	 * @param ce2d the ClassElement2Display to add
 	 */
-	private void addToListModel(ClassElement2Display ce2d) {
+	private void addToListModel(final ClassElement2Display ce2d) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -166,7 +166,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * Removes the specified element to the list model considering the Swing environment.
 	 * @param ce2d the ClassElement2Display to add
 	 */
-	private void removefromListModel(ClassElement2Display ce2d) {
+	private void removefromListModel(final ClassElement2Display ce2d) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

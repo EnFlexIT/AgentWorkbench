@@ -609,7 +609,7 @@ public class JListWithProgressBar<E> extends JPanel {
 	 * Sets the model.
 	 * @param model the new model
 	 */
-	public void setModel(ListModel<E> model) {
+	public void setModel(final ListModel<E> model) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

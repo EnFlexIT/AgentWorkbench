@@ -2,16 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jade
 Bundle-SymbolicName: org.agentgui.lib.jade;singleton:=true
-Bundle-Version: 4.4.0
+Bundle-Version: 4.5.0
 Bundle-ClassPath: jade.jar,
  XMLCodec.jar,
  migration.jar,
  commons-codec/commons-codec-1.3.jar
 Export-Package: FIPA,
- accs.client,
- fipa.api,
- fipa.jade.compat,
- fipa.launcher,
  jade,
  jade.content,
  jade.content.abs,
@@ -29,19 +25,12 @@ Export-Package: FIPA,
  jade.core.behaviours,
  jade.core.event,
  jade.core.faultRecovery,
- jade.core.launcher,
  jade.core.management,
  jade.core.messaging,
  jade.core.migration,
  jade.core.migration.analysis,
  jade.core.migration.code,
  jade.core.migration.ontology,
- jade.core.migration.ontology.ftp,
- jade.core.migration.ontology.odtp,
- jade.core.migration.ontology.pctp,
- jade.core.migration.ontology.ptp,
- jade.core.migration.protocols,
- jade.core.migration.util,
  jade.core.mobility,
  jade.core.nodeMonitoring,
  jade.core.replication,

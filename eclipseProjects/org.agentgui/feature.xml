@@ -28,25 +28,35 @@
    </requires>
 
    <plugin
-         id="org.agentgui.lib.jung"
+         id="org.agentgui.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="org.agentgui.lib.oidc"
+         id="de.enflexit.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="org.agentgui.lib.jFreeChart"
+         id="de.enflexit.common"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="org.agentgui.lib.scimark"
+         id="de.enflexit.oidc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.oidc.libs"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
@@ -64,19 +74,19 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.agentgui.lib.jade"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.agentgui.lib.hypericSigar"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="org.agentgui.lib.mySQL"
+         id="org.agentgui.lib.jFreeChart"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.agentgui.lib.jade"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
@@ -88,24 +98,21 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.agentgui.core"
+         id="org.agentgui.lib.jung"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
-         id="de.enflexit.api"
+         id="org.agentgui.lib.mySQL"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
-         id="de.enflexit.oidc"
+         id="org.agentgui.lib.scimark"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

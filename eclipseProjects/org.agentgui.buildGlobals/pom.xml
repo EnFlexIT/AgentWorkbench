@@ -14,7 +14,7 @@
 
 	<repositories>
 		<repository>
-			<id>eclipse-neon</id>
+			<id>eclipse-oxygen</id>
 			<url>http://download.eclipse.org/releases/neon</url>
 			<layout>p2</layout>
 		</repository>
@@ -78,8 +78,11 @@
 	</build>
 
 	<modules>
+		<module>../de.enflexit.api</module>
+		<module>../de.enflexit.common</module>
+		<module>../de.enflexit.oidc</module>
+		<module>../de.enflexit.oidc.libs</module>
 		<module>../org.agentgui</module>
-		<module>../org.agentgui.p2</module>
 		<module>../org.agentgui.buildProduct</module>
 		<module>../org.agentgui.core</module>
 		<module>../org.agentgui.lib.bouncyCastle</module>
@@ -90,11 +93,8 @@
 		<module>../org.agentgui.lib.jep</module>
 		<module>../org.agentgui.lib.jung</module>
 		<module>../org.agentgui.lib.mySQL</module>
-		
 		<module>../org.agentgui.lib.scimark</module>
-		<module>../de.enflexit.api</module>
-		<module>../de.enflexit.oidc</module>
-		<module>../de.enflexit.common</module>
+		<module>../org.agentgui.p2</module>
 	</modules>
 	
 </project>
