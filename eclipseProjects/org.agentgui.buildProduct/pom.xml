@@ -36,6 +36,15 @@
 					</execution>
 				</executions>
 				<configuration>
+					<products>
+						<product>
+							<id>org.agentgui</id>
+							<rootFolder>agentgui</rootFolder>
+							<rootFolders>
+								<mac>AgentGui.app</mac>
+							</rootFolders>
+						</product>
+					</products>
 					<formats>
 						<win32>zip</win32>
 						<linux>tar.gz</linux>
