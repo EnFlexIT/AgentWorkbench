@@ -18,8 +18,7 @@
    <splash
       location="org.agentgui.core"
       startupProgressRect="5,275,445,15" />
-   <launcher name="AgentGui">
-      <solaris/>
+   <launcher>
       <win useIco="false">
          <bmp/>
       </win>
@@ -144,7 +143,7 @@
 
    <features>
       <feature id="org.agentgui" version="2.0.0.qualifier"/>
-      <feature id="org.eclipse.e4.rcp" version="1.5.3.v20170228-0512"/>
+      <feature id="org.eclipse.e4.rcp" version="1.6.0.v20170612-1255"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>
    </features>

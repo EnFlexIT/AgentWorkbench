@@ -9,7 +9,7 @@
     </versionInformation>
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateSite>http://update.agentgui.org</updateSite>
-    <environmentModel>gridEnvironment</environmentModel>
+    <environmentModel>none</environmentModel>
     <projectResources/>
     <plugins>
         <className>agentproject.PlugInExample</className>

@@ -15,7 +15,7 @@
 	<repositories>
 		<repository>
 			<id>eclipse-oxygen</id>
-			<url>http://download.eclipse.org/releases/neon</url>
+			<url>http://download.eclipse.org/releases/oxygen</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
