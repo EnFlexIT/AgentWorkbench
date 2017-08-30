@@ -40,7 +40,6 @@
 					<profileProperties>
 						<macosx-bundled>true</macosx-bundled>
 					</profileProperties>
-					
 					<products>
 						<product>
 							<id>org.agentgui</id>
