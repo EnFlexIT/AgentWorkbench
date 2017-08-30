@@ -1,0 +1,34 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.agentgui</groupId>
+    <artifactId>org.agentgui.bundles</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.agentgui</groupId>
+        <artifactId>org.agentgui.root</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+        <module>de.enflexit.api</module>
+		<module>de.enflexit.common</module>
+		<module>de.enflexit.oidc</module>
+		<module>de.enflexit.oidc.libs</module>
+		<module>org.agentgui.core</module>
+		<module>org.agentgui.lib.bouncyCastle</module>
+		<module>org.agentgui.lib.googleTranslate</module>
+		<module>org.agentgui.lib.hypericSigar</module>
+		<module>org.agentgui.lib.jFreeChart</module>
+		<module>org.agentgui.lib.jade</module>
+		<module>org.agentgui.lib.jep</module>
+		<module>org.agentgui.lib.jung</module>
+		<module>org.agentgui.lib.mySQL</module>
+		<module>org.agentgui.lib.scimark</module>
+
+		<module>org.agentgui.sample.GameOfLife</module>
+		<module>org.agentgui.sample.plugIn</module>
+
+    </modules>
+</project>
