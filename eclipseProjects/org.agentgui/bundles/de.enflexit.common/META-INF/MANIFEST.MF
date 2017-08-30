@@ -25,8 +25,8 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.swing,
  de.enflexit.common.transfer
 Require-Bundle: de.enflexit.api,
- org.eclipse.osgi.services;bundle-version="3.5.100",
- org.eclipse.core.runtime;bundle-version="3.12.0",
+ org.eclipse.osgi.services,
+ org.eclipse.core.runtime,
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
  org.agentgui.lib.jade;bundle-version="4.4.0"
 Bundle-ActivationPolicy: lazy
