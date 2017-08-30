@@ -1,16 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.agentgui.p2</groupId>
-  <artifactId>org.agentgui.p2</artifactId>
+  <groupId>org.agentgui</groupId>
+  <artifactId>org.agentgui.update</artifactId>
   <version>2.0.0-SNAPSHOT</version>
   
   <packaging>eclipse-repository</packaging>
   
   <parent>
-  	<groupId>org.agentgui.buildGlobals</groupId>
-  	<artifactId>org.agentgui.buildGlobals</artifactId>
+  	<groupId>org.agentgui</groupId>
+  	<artifactId>org.agentgui.releng</artifactId>
   	<version>1.0.0-SNAPSHOT</version>
-  	<relativePath>../org.agentgui.buildGlobals</relativePath>
   </parent>
   
 </project>

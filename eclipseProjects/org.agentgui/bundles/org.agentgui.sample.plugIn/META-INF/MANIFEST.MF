@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PlugIn
 Bundle-SymbolicName: org.agentgui.sample.plugIn;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.12.0",
+Require-Bundle: org.eclipse.core.runtime,
  de.enflexit.common;bundle-version="1.0.0",
  org.agentgui.core;bundle-version="2.0.0",
  org.agentgui.lib.jade;bundle-version="4.4.0"

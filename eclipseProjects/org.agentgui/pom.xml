@@ -17,3 +17,9 @@
         <module>releng</module> 
  </modules>
 </project>
+
+	<properties>
+		<tycho-version>1.0.0</tycho-version >
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+</project>

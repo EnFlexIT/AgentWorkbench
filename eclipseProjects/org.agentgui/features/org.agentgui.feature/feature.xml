@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.agentgui"
+      id="org.agentgui.feature"
       label="Agent.GUI"
       version="2.0.0.qualifier"
       provider-name="EnFlex.IT"
@@ -21,10 +21,25 @@
    </license>
 
    <requires>
+      <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.scimark" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.hypericSigar" version="1.6.4" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.jade" version="4.4.0" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.jFreeChart" version="1.0.15" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.jung" version="2.0.1" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.bouncyCastle" version="1.5.5" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.mySQL" version="5.0.8" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.jep" version="2.3.1" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.googleTranslate" version="0.97.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.oidc.libs" version="5.17.1" match="greaterOrEqual"/>
+      <import feature="org.eclipse.e4.rcp" version="1.6.0.v20170612-1255"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.osgi.services" version="3.5.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.e4.core.di" version="1.6.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.eclipse.e4.core.di"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.osgi.services" version="3.5.100" match="greaterOrEqual"/>
    </requires>
 
    <plugin
