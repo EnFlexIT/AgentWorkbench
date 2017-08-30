@@ -1,17 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.agentgui</groupId>
-	<artifactId>org.agentgui.configuration</artifactId>
+	<groupId>org.agentgui.buildGlobals</groupId>
+	<artifactId>org.agentgui.buildGlobals</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
-	 <properties>
-	  <tycho-version>1.0.0</tycho-version>
-	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	 </properties>
+	<properties>
+		<tycho-version>1.0.0</tycho-version >
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
+	<repositories>
+		<repository>
+			<id>eclipse-oxygen</id>
+			<url>http://download.eclipse.org/releases/neon</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>org.agentgui</id>
+			<url>file:../org.agentgui.p2</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -32,14 +45,6 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-				     <target> 
-
-        <artifact>
-            <groupId>org.agentgui</groupId>
-            <artifactId>org.agentgui.target</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </artifact>
-    </target>
 					<environments>
 						<environment>
 							<os>linux</os>
@@ -72,4 +77,24 @@
 		</plugins>
 	</build>
 
+	<modules>
+		<module>../de.enflexit.api</module>
+		<module>../de.enflexit.common</module>
+		<module>../de.enflexit.oidc</module>
+		<module>../de.enflexit.oidc.libs</module>
+		<module>../org.agentgui</module>
+		<module>../org.agentgui.buildProduct</module>
+		<module>../org.agentgui.core</module>
+		<module>../org.agentgui.lib.bouncyCastle</module>
+		<module>../org.agentgui.lib.googleTranslate</module>
+		<module>../org.agentgui.lib.hypericSigar</module>
+		<module>../org.agentgui.lib.jFreeChart</module>
+		<module>../org.agentgui.lib.jade</module>
+		<module>../org.agentgui.lib.jep</module>
+		<module>../org.agentgui.lib.jung</module>
+		<module>../org.agentgui.lib.mySQL</module>
+		<module>../org.agentgui.lib.scimark</module>
+		<module>../org.agentgui.p2</module>
+	</modules>
+	
 </project>
