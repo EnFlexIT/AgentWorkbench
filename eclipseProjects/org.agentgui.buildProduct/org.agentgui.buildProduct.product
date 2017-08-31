@@ -18,7 +18,7 @@
    <splash
       location="org.agentgui.core"
       startupProgressRect="5,275,445,15" />
-   <launcher>
+   <launcher name="AgentGui">
       <win useIco="false">
          <bmp/>
       </win>

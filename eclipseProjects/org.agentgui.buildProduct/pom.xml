@@ -40,7 +40,6 @@
 					<profileProperties>
 						<macosx-bundled>true</macosx-bundled>
 					</profileProperties>
-					<!-- 
 					<products>
 						<product>
 							<id>org.agentgui</id>
@@ -50,7 +49,6 @@
 							</rootFolders>
 						</product>
 					</products>
-					 -->
 					<formats>
 						<win32>zip</win32>
 						<linux>tar.gz</linux>
