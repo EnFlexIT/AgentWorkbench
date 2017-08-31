@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.agentgui.feature_2.0.0.qualifier.jar" id="org.agentgui.feature" version="2.0.0.qualifier" os="linux,macosx,win32" arch="x86,x86_64">
+      <category name="org.agentgui"/>
+   </feature>
+   <category-def name="org.agentgui" label="AgentGUI"/>
+</site>

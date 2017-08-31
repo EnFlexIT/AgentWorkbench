@@ -34,12 +34,10 @@
       <import plugin="org.agentgui.lib.jep" version="2.3.1" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.googleTranslate" version="0.97.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.oidc.libs" version="5.17.1" match="greaterOrEqual"/>
-      <import feature="org.eclipse.e4.rcp" version="1.6.0.v20170612-1255"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.e4.core.di"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.osgi.services" version="3.5.100" match="greaterOrEqual"/>
    </requires>
 
    <plugin
