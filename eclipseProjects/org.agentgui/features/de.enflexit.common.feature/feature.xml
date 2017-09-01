@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.enflexit.common.feature"
+      label="EnFlex.IT common interfaces and classes"
+      version="2.0.0.qualifier"
+      provider-name="EnFlex.IT"
+      os="linux,macosx,win32"
+      arch="x86,x86_64">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.agentgui.lib.bouncyCastle" version="1.5.5" match="greaterOrEqual"/>
+      <import plugin="org.agentgui.lib.jade" version="4.4.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.oidc.libs" version="5.17.1" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="de.enflexit.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.oidc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.oidc.libs"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
