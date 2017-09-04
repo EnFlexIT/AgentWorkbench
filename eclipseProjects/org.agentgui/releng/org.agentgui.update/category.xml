@@ -3,5 +3,11 @@
    <feature url="features/org.agentgui.feature_2.0.0.qualifier.jar" id="org.agentgui.feature" version="2.0.0.qualifier" os="linux,macosx,win32" arch="x86,x86_64">
       <category name="org.agentgui"/>
    </feature>
+   <feature url="features/de.enflexit.common.feature_2.0.0.qualifier.jar" id="de.enflexit.common.feature" version="2.0.0.qualifier" os="linux,macosx,win32" arch="x86,x86_64">
+      <category name="org.agentgui"/>
+   </feature>
+   <feature url="features/org.agentgui.samples.feature_2.0.0.qualifier.jar" id="org.agentgui.samples.feature" version="2.0.0.qualifier" os="linux,macosx,win32" arch="x86,x86_64">
+      <category name="org.agentgui"/>
+   </feature>
    <category-def name="org.agentgui" label="Agent.GUI"/>
 </site>
