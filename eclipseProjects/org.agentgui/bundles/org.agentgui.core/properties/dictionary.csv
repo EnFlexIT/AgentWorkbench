@@ -1,14 +1,14 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
+de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
 de;! MyTab Single !;;;;
 de;! MyTab with SubTabs !;;;;
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
-de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
-de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
-de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
@@ -73,7 +73,7 @@ de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
 de;Auslastungs-Monitor bei JADE-Start anzeigen;Show Load-Monitor on Jade startup;;;
-de;Auslastungs-Monitor öffnen;Open Load Monitor;null;null;null
+de;Auslastungs-Monitor öffnen;Open Load Monitor;;;
 de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
@@ -124,13 +124,7 @@ de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
 de;DF anzeigen;Show DF GUI
-de;Das Anwenden der neuen Datenreiheneigenschaften 
-kann dazu führen, dass Daten verloren gehen.
-
-Möchten Sie fortfahren?;Applying the new data series properties 
-can lead to data loss. 
-
-Would you like to continue?;;;
+de;Das Anwenden der neuen Datenreiheneigenschaften <br>kann dazu führen, dass Daten verloren gehen.<br><br>Möchten Sie fortfahren?;Applying the new data series properties <br>can lead to data loss. <br><br>Would you like to continue?;;;
 de;Das Editor-Panel für die Klasse ist nicht definiert!;The editor panel of this class is not defined!;;;
 de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
 de;Das Projekt wird nun geschlossen!;The project will be closed now!;;;
@@ -175,15 +169,11 @@ de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be re
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
-de;Dieser Eintrag ist ein notwendiger Systemparameter, der 
-nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which
-can not be deleted or renamed!;;;
+de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which<br>can not be deleted or renamed!;;;
 de;Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.;Incremental discrete-time model with start and stop time.;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Doppelte X-Werte nicht zulässig!;Duplicate x values are not allowed!;;;
-de;Doppelte X-Werte sind derzeit nicht zulässig!
-Die Aktion wird rückgängig gemacht.;Duplicate x values ​​are currently not allowed!
-The action will be canceled.;;;
+de;Doppelte X-Werte sind derzeit nicht zulässig!<br>Die Aktion wird rückgängig gemacht.;Duplicate x values ​​are currently not allowed!<br>The action will be canceled.;;;
 de;Doppelte X-Werte zulassen;Allow duplicate X-Values;;;
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
@@ -275,7 +265,7 @@ de;Graph-Prototypen;Graph-prototypes
 de;GraphML-Dateien;GraphML-Files
 de;Grenzwerte;Thresholds
 de;Größe;Size
-de;Hauptserver (server.master);Main Server (server.master);null;null;null
+de;Hauptserver (server.master);Main Server (server.master);;;
 de;Hilfe;Help
 de;Hilfs-Raster;Guide Grid;;;
 de;Hintergrundsystem (Master / Slave);Background System (Master / Slave);;;
@@ -356,7 +346,7 @@ de;Komponenten-Eigenschaften bearbeiten ...;Edit Component Properties;;;
 de;Komponenten-Eigenschaften bearbeiten;Edit Component Properties;;;
 de;Komponenten-Einstellungen;Component settings
 de;Komponenten-Typen;Component-Types
-de;Komponententyp-Definition;Component-Type Definition;null;null;null
+de;Komponententyp-Definition;Component-Type Definition;;;
 de;Komponentenverbindung trennen;Disconnect components;;;
 de;Konfiguration des;Configuration of
 de;Konfiguration;Configuration
@@ -376,7 +366,7 @@ de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediate
 de;Laufzeit-Visualisierung;Runtime Visualisation;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
-de;Load Monitor öffnen;Open Load Monitor;null;null;null
+de;Load Monitor öffnen;Open Load Monitor;;;
 de;Load Monitor;Load Monitor
 de;Log Datei;Log File;;;
 de;Log-Datei Einstellungen;Log-File - Configuration;;;
@@ -452,7 +442,7 @@ de;Neues Projekt anlegen;Create new project
 de;Neues Projekt;New project
 de;Neues Setup anlegen ...;Create new setup ...
 de;Neuinitialsierung des Anwendungsfensters ...;Re-initialization of the application window ...;;;
-de;Neustart des Server-Dienstes;Restart server;null;null;null
+de;Neustart des Server-Dienstes;Restart server;;;
 de;Neustart;Restart;;;
 de;Nicht definiert;Not defined
 de;Nicht eindeutige Komponentenauswahl !;Non-unique component selection !;;;
@@ -517,7 +507,7 @@ de;Projekt-Desktop;Project Desktop
 de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
 de;Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern;Rebuild project MANIFEST.MF when opening the project;;;
-de;Projekt-Ontologie;Project Ontology;null;null;null
+de;Projekt-Ontologie;Project Ontology;;;
 de;Projekt-PlugIns;Project - Plugins;;;
 de;Projekt-Ressourcen;Project Resources
 de;Projekt;Project;;;
@@ -703,7 +693,7 @@ de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
-de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project .;null;null;null
+de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project.;;;
 de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!
 de;Zähler;Counter;;;
@@ -859,15 +849,11 @@ en;Cluster-Form;Cluster shape;;;
 en;Das Kennwort und seine bestätigen sind nicht das Gleiche!;The password and its confirm are not the same!;;;
 en;Daten;Data;;;
 en;Der Komponentename existiert bereits! <br> Bitte wählen Sie einen anderen.;The component name already exists!<br>Choose a different one.;;;
-en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente
-vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of
-the type 'DistributionNode'. This is only allowed once at one node!;;;
+en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente<br>vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;Der ausgewählte Knoten sollte zumindest zwischen zwei Komponenten liegen !;The select Vertex should be at least between two components !;;;
 en;Der ausgewählte Knoten sollte zwischen zwei Komponenten liegen !;The select Vertex should be between two components !;;;
 en;Diagramm bearbeiten;Edit Chart;;;
-en;Die Komponente ist bereits vorhanden!
-  Bitte wählen Sie einen anderen Namen.;The component name already exists!
- Choose a different one.;;;
+en;Die Komponente ist bereits vorhanden!<br>  Bitte wählen Sie einen anderen Namen.;The component name already exists!<br> Choose a different one.;;;
 en;Die aktuelle Auswahl im Graphen stellt bereits eine Komponente vom <br>Typ 'DistributionNode' dar. Dies ist an einem Knoten nur einmalig zulässigt!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;Diese ID wird bereits verwendet. Bitte geben Sie eine andere Kennung (ID) an!;The ID is already in use. Please specify another identifier!;;;
 en;Drücken Sie die Umschalttaste und wählen Sie mindesten zwei Knoten!;Use Shift and click on two vertices at least!;;;
@@ -884,9 +870,7 @@ en;Externer Typ;External Type;;;
 en;Farbe (Auswahl);Color picked;;;
 en;Farbe;Color;;;
 en;Fehler beim Parsen der Zeitinformation!;Error while parsing the time information!;;;
-en;Fehler beim Parsen des Zeitstempels! 
-Möchten Sie trotzdem fortfahren?;An error occurred while parsing the given time String!
-Do you want to proceed anyway?;;;
+en;Fehler beim Parsen des Zeitstempels! <br>Möchten Sie trotzdem fortfahren?;An error occurred while parsing the given time String!<br>Do you want to proceed anyway?;;;
 en;Fehler;Error;;;
 en;Formatiert als;Formatted as;;;
 en;Geben Sie einen gültigen Namen an;Enter a valid name;;;
@@ -906,18 +890,8 @@ en;Initiiere Netzwerkkomponenten;Initiating network components;;;
 en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
 en;Kein Filter!;No Filter!;;;
-en;Kein NetworkComponentAdapter
-definiert für die
- Netzwerkkomponente
-;No NetworkComponentAdapter
-was defined for the
- NetworkComponent;;;
-en;Kein NetworkComponentAdapter
-definiert für die
- die Knoten der Domain
-;No NetworkComponentAdapter
-was defined for
- the GraphNodes of the Domain;;;
+en;Kein NetworkComponentAdapter<br>definiert für die<br> Netzwerkkomponente<br>;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
+en;Kein NetworkComponentAdapter<br>definiert für die<br> die Knoten der Domain<br>;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
 en;Kennwort bestätigen;Confirm Password;;;
 en;Kennwort;Password;;;
 en;KeyStore Datei:;KeyStore File:;;;

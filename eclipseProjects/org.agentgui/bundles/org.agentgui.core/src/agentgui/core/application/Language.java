@@ -384,7 +384,8 @@ public class Language implements Translator {
 			File fileCSV = new File(getDictFileLocation());
 			if (fileCSV.exists()==true) {
 				in = new BufferedReader(new InputStreamReader(new FileInputStream(fileCSV)));
-				while ((line = in.readLine()) != null) {   
+				while ((line = in.readLine()) != null) { 
+					line = line.replace(getNewLineReplacer(), getNewLine());
 					dictLineListCSV.add(line);
 				}
 			}
@@ -500,7 +501,10 @@ public class Language implements Translator {
 				String line = dictSorted.get(i);
 				if (line.trim().equals(getEmptyLine())==false) {
 					// --- TXT-Version of the dictionary ----------------------
-					bw.write(line);
+					String txtLine = line.replace(getNewLine(), getNewLineReplacer());
+					txtLine = txtLine.replace("\n", getNewLineReplacer());
+					txtLine = txtLine.replace("\r", getNewLineReplacer());
+					bw.write(txtLine);
 			    	bw.newLine();
 			    	// --- Base64 encoded version of the dictionary -----------
 			    	String encodedLine = new String(Base64.encodeBase64(line.getBytes("UTF8")));
@@ -617,6 +621,8 @@ public class Language implements Translator {
 			GlobalInfo gInfo = getGlobalInfo();
 			if (gInfo!=null) {
 				newLine = gInfo.getNewLineSeparator();
+			} else {
+				newLine = System.getProperty("line.separator");
 			}
 		}
 		return newLine;
@@ -630,6 +636,8 @@ public class Language implements Translator {
 			GlobalInfo gInfo = getGlobalInfo();
 			if (gInfo!=null) {
 				newLineReplacer = gInfo.getNewLineSeparatorReplacer();
+			} else {
+				newLineReplacer = "<br>";
 			}
 		}
 		return newLineReplacer;

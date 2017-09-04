@@ -44,14 +44,15 @@ import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -64,8 +65,6 @@ import agentgui.core.project.Project;
 import agentgui.core.project.ProjectResource2Display;
 import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
-import javax.swing.JCheckBox;
-import javax.swing.JSeparator;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Resources'
