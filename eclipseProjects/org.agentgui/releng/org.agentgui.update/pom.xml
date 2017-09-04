@@ -12,4 +12,60 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
+	<build>
+		<extensions>
+			<!-- Enabling the use of FTP -->
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh-external</artifactId>
+				<version>3.0.0</version>
+			</extension>
+		</extensions>
+	</build>
+
+	<profiles>
+		<!-- This profile is used to upload the repo, use it via 'mvn install -P 
+			p2Deploy' -->
+		<profile>
+			<id>p2Deploy</id>
+
+			<build>
+				<plugins>
+					<!-- Upload the repo to the server -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>1.0</version>
+						<executions>
+							<execution>
+								<id>upload-repo</id>
+								<phase>install</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<fromDir>${project.build.directory}/repository/</fromDir>
+									<includes>**</includes>
+									<toDir>/subDomains/p2.enflex.it/</toDir>
+									<url>scpexe://enflex.it</url>
+									<serverId>update-site-enflexit</serverId>
+									<!-- Points to your ~/.m2/settings.xml where the connection settings 
+										are stored as shown below -->
+									<!-- <server> -->
+									<!-- <id>update-site-enflexit</id> -->
+									<!-- <username>admin.enflex.it</username> -->
+									<!-- <privateKey>${user.home}/.ssh/id_YOURKEY</privateKey> -->
+									<!-- </server> -->
+									<!-- also see https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html, 
+										https://maven.apache.org/settings.html#Servers, https://stackoverflow.com/questions/2733447/can-maven-wagon-plugin-use-a-private-key-for-scp -->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
 </project>
