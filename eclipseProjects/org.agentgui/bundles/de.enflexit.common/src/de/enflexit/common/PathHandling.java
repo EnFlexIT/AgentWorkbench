@@ -41,7 +41,7 @@ public class PathHandling {
 	 * @param fileName the file name
 	 * @return the path name for local system
 	 */
-	public static String getPathName4LocalSystem(String fileName) {
+	public static String getPathName4LocalOS(String fileName) {
 		
 		String corrected = "";
 		for (int i = 0; i < fileName.length(); i++) {

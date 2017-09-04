@@ -2,22 +2,22 @@ package org.agentgui.bundle.evaluation;
 
 import java.lang.reflect.Modifier;
 
+import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
-import jade.core.BaseService;
 
 /**
- * The Filter for BasseService classes.
+ * The Filter For TimeModel classes.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class FilterForBaseService extends AbstractBundleClassFilter {
+public class FilterForTimeModel extends AbstractBundleClassFilter {
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter#getFilterScope()
 	 */
 	@Override
 	public String getFilterScope() {
-		return jade.core.BaseService.class.getName();
+		return TimeModel.class.getName();
 	}
 
 	/* (non-Javadoc)
@@ -25,7 +25,7 @@ public class FilterForBaseService extends AbstractBundleClassFilter {
 	 */
 	@Override
 	public boolean isFilterCriteria(Class<?> clazz) {
-		return (clazz==BaseService.class);
+		return (clazz==TimeModel.class);
 	}
 	
 	/* (non-Javadoc)
@@ -33,7 +33,7 @@ public class FilterForBaseService extends AbstractBundleClassFilter {
 	 */
 	@Override
 	public boolean isInFilterScope(Class<?> clazz) {
-		return BaseService.class.isAssignableFrom(clazz) && BaseService.class.equals(clazz)==false && Modifier.isAbstract(clazz.getModifiers())==false;
+		return TimeModel.class.isAssignableFrom(clazz) && TimeModel.class.equals(clazz)==false && Modifier.isAbstract(clazz.getModifiers())==false;
 	}
 
 }

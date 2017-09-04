@@ -31,6 +31,7 @@ package org.agentgui;
 import org.agentgui.bundle.evaluation.FilterForAgent;
 import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
+import org.agentgui.bundle.evaluation.FilterForTimeModel;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -133,6 +134,7 @@ public class PlugInApplication implements IApplication {
 		be.addBundleClassFilter(new FilterForAgent(), false);
 		be.addBundleClassFilter(new FilterForBaseService(), false);
 		be.addBundleClassFilter(new FilterForOntology(), false);
+		be.addBundleClassFilter(new FilterForTimeModel(), false);
 		be.evaluateAllBundles();
 	}
 	

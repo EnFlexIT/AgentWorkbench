@@ -64,41 +64,48 @@ import agentgui.core.project.Project;
 import agentgui.core.project.ProjectResource2Display;
 import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
+import javax.swing.JCheckBox;
+import javax.swing.JSeparator;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Resources'
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectResources extends JPanel implements Observer {
+public class ProjectResources extends JScrollPane implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	
+	private Dimension preferredListSizeSmall = new Dimension(180, 100);
+	private Dimension preferredListSizeLarge = new Dimension(180, 140);
+	
 	private Project currProject;
 	
+	private JPanel jPanelContent;
+	
 	private JPanel jPanelSimulationEnvironment;
-	private JPanel jPanelRightPlugIns;
-	private JPanel jPanelRight;
+	private JPanel jPanelPlugInButtons;
+	private JPanel jPanelBinResourceButton;
 	
 	private JComboBox<EnvironmentType> jComboBoxEnvironmentModelSelector;
 
-	private JScrollPane jScrollPane;
+	private JScrollPane jScrollPaneBinResources;
 	private JScrollPane jScrollPanePlugIns;
 	
-	private JList<ProjectResource2Display> jListResources;
+	private JList<ProjectResource2Display> jListBinResources;
 	private JList<PlugInListElement> jListPlugIns;
 	private DefaultListModel<PlugInListElement> plugInsListModel = new DefaultListModel<PlugInListElement>();
 	
-	private JButton jButtonResourcesAdd;
-	private JButton jButtonResourcesRemove;
-	private JButton jButtonRecourcesRefresh;
+	private JButton jButtonBinResourcesAdd;
+	private JButton jButtonBinResourcesRemove;
+	private JButton jButtonBinRecourcesRefresh;
 
 	private JButton jButtonAddPlugIns;
 	private JButton jButtonRemovePlugIns;
 	private JButton jButtonRefreshPlugIns;
 
 	private JLabel jLabelEnvTyp;
-	private JLabel jLabelResources;
+	private JLabel jLabelBinResources;
 	private JLabel jLabelPlugIns;
 
 	private JPanel jPanelTimeModelSelection;
@@ -106,10 +113,22 @@ public class ProjectResources extends JPanel implements Observer {
 	private JTextField jTextFieldTimeModelClass;
 	private JButton jButtonDefaultTimeModel;
 	private JButton jButtonSelectTimeModel;
+	private JCheckBox jCheckboxManifest;
+	private JPanel jPanelJarResourcen;
+	private JScrollPane jScrollPanePlainJars;
+	private JList<String> jListJarResources;
+	private JScrollPane jScrollPaneBundelJars;
+	private JList<String> jListBundleJars;
+	private JLabel jLabelJarResources;
+	private JLabel jLabelBundleResources;
+	private JPanel jPanelJarFileHeader;
+	private JSeparator jSeparatorBottom;
+	private JSeparator jSeparatorTop;
 	
 	
 	/**
-	 * This is the default constructor
+	 * Instantiates a new visual representation for the project resources.
+	 * @param project the current project
 	 */
 	public ProjectResources(Project project) {
 		super();
@@ -119,292 +138,386 @@ public class ProjectResources extends JPanel implements Observer {
 		this.initialize();
 		
 		// --- Fill the list model for the external resources -------
-		jListResources.setModel(currProject.getProjectResources().getResourcesListModel());
-		
+		this.getJListBinResources().setModel(currProject.getProjectResources().getResourcesListModel());
 		// --- Display the current TimeModel class ------------------
-		jTextFieldTimeModelClass.setText(this.currProject.getTimeModelClass());
+		this.getJTextFieldTimeModelClass().setText(this.currProject.getTimeModelClass());
+
 		
 		// --- Set the translations ---------------------------------
+		this.getJCheckboxManifest().setText(Language.translate("Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern"));
+		
 		jLabelEnvTyp.setText(Language.translate("Umgebungstyp bzw. -modell für Simulation und Visualisierung"));
-		jLabelResources.setText(Language.translate("Externe jar-Ressourcen"));
-		jLabelPlugIns.setText(Language.translate("Plug-Ins"));
+		jLabelBinResources.setText(Language.translate("Externe bin-Ressourcen"));
+		jLabelPlugIns.setText(Language.translate("Projekt-PlugIns"));
 		
-		jButtonResourcesAdd.setToolTipText(Language.translate("Hinzufügen"));
-		jButtonResourcesRemove.setToolTipText(Language.translate("Entfernen"));
-		jButtonRecourcesRefresh.setToolTipText(Language.translate("Neu laden"));
+		this.getJLabelJarResources().setText(Language.translate("Einfache jar-Dateien"));
 		
-		jButtonAddPlugIns.setToolTipText(Language.translate("Hinzufügen"));
-		jButtonRemovePlugIns.setToolTipText(Language.translate("Entfernen"));
-		jButtonRefreshPlugIns.setToolTipText(Language.translate("Neu laden"));
+		this.getJButtonBinResourcesAdd().setToolTipText(Language.translate("Hinzufügen"));
+		this.getJButtonBinResourcesRemove().setToolTipText(Language.translate("Entfernen"));
+		this.getJButtonBinResourcesRefresh().setToolTipText(Language.translate("Neu laden"));
 		
-	}
-
-	/**
-	 * Adjust string.
-	 * @param path the path
-	 * @return the string
-	 */
-	private String adjustString(String path) {
-		final String projectFolder = currProject.getProjectFolderFullPath();
-		if (path.startsWith(projectFolder)) {
-			int cut = projectFolder.length();
-			String returnPath = path.substring(cut - 1); 
-			return returnPath;
-		}
-		return path;
-	}
-	/**
-	 * Already there.
-	 * @param path the path
-	 * @return true, if successful
-	 */
-	private boolean alreadyThere(String path) {
-		return currProject.getProjectResources().contains(path);
-	}
-	/**
-	 * Adjust paths.
-	 * @param files the files
-	 * @return the vector
-	 */
-	private Vector<String> adjustPaths(File[] files) {
+		this.getJButtonAddPlugIns().setToolTipText(Language.translate("Hinzufügen"));
+		this.getJButtonRemovePlugIns().setToolTipText(Language.translate("Entfernen"));
+		this.getJButtonRefreshPlugIns().setToolTipText(Language.translate("Neu laden"));
 		
-		Vector<String> result = new Vector<String>();
-		if (files != null) {
-
-			for (File file : files) {
-				
-				String path = file.getAbsolutePath();
-				if (!path.contains(".jar")) {
-					// --- If this is a folder ------------					
-					Vector<String> directoryFiles = handleDirectories(file);
-					for (String foreignJar : directoryFiles) {
-						String resourcCheck = this.adjustString(foreignJar);
-						if (!alreadyThere(resourcCheck)) {
-							result.add(this.adjustString(foreignJar)); // Use relative paths within projects
-						}
-					}
-
-				} else	{
-					// --- If this is a jar-file ----------
-					String resourcCheck = this.adjustString(path);
-					if (!alreadyThere(resourcCheck)) {
-						result.add(this.adjustString(path)); // Use absolut within projects
-					}
-				}
-
-			}
-		}
-		return result;
-	}
-	/**
-	 * Handle directories.
-	 * @param dir the dir
-	 * @return the vector
-	 */
-	private Vector<String> handleDirectories(File dir) {
-		Vector<String> result = new Vector<String>();
-		try {
-			result.add(dir.getAbsolutePath());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
 	}
 	
 	/**
 	 * Initialize this JPanel.
 	 */
 	private void initialize() {
-		
-		GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
-		gridBagConstraints34.gridx = 0;
-		gridBagConstraints34.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints34.insets = new Insets(10, 10, 0, 5);
-		gridBagConstraints34.gridy = 2;
-		GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
-		gridBagConstraints31.gridx = 1;
-		gridBagConstraints31.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints31.insets = new Insets(5, 5, 5, 10);
-		gridBagConstraints31.gridy = 6;
-		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
-		gridBagConstraints22.fill = GridBagConstraints.BOTH;
-		gridBagConstraints22.gridy = 6;
-		gridBagConstraints22.weightx = 1.0;
-		gridBagConstraints22.weighty = 0.5;
-		gridBagConstraints22.insets = new Insets(5, 10, 0, 5);
-		gridBagConstraints22.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints22.gridx = 0;
-		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-		gridBagConstraints13.gridx = 0;
-		gridBagConstraints13.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints13.anchor = GridBagConstraints.WEST;
-		gridBagConstraints13.gridy = 5;
-		GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
-		gridBagConstraints32.gridx = 0;
-		gridBagConstraints32.anchor = GridBagConstraints.WEST;
-		gridBagConstraints32.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints32.gridy = 3;
-		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.gridx = 0;
-		gridBagConstraints21.insets = new Insets(10, 10, 0, 5);
-		gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints21.gridy = 1;
-		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.fill = GridBagConstraints.BOTH;
-		gridBagConstraints11.weighty = 0.5;
-		gridBagConstraints11.gridx = 0;
-		gridBagConstraints11.gridy = 4;
-		gridBagConstraints11.insets = new Insets(5, 10, 0, 5);
-		gridBagConstraints11.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints11.weightx = 1.0;
-		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-		gridBagConstraints12.gridx = 1;
-		gridBagConstraints12.fill = GridBagConstraints.NONE;
-		gridBagConstraints12.insets = new Insets(5, 5, 5, 10);
-		gridBagConstraints12.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints12.gridy = 4;
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.fill = GridBagConstraints.BOTH;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new Insets(10, 10, 5, 10);
-		gridBagConstraints.gridx = 0;
-		
-		jLabelPlugIns = new JLabel();
-		jLabelPlugIns.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelPlugIns.setText("PlugIns");
-		jLabelResources = new JLabel();
-		jLabelResources.setText("Externe jar-Ressourcen");
-		jLabelResources.setFont(new Font("Dialog", Font.BOLD, 12));
-		
-		this.setSize(727, 392);
-		this.setLayout(new GridBagLayout());
-		this.add(getJPanelRight(), gridBagConstraints12);
-		this.add(getJScrollPane(), gridBagConstraints11);
-		this.add(getJPanelSimulationEnvironment(), gridBagConstraints21);
-		this.add(jLabelResources, gridBagConstraints32);
-		this.add(jLabelPlugIns, gridBagConstraints13);
-		this.add(getJScrollPanePlugIns(), gridBagConstraints22);
-		this.add(getJPanelRightPlugIns(), gridBagConstraints31);
-		this.add(getJPanelTimeModelSelection(), gridBagConstraints34);
+		this.setViewportView(this.getjPanelContent());
 	}
-
+	/**
+	 * Returns the JPanel for the content.
+	 * @return the j panel content
+	 */
+	private JPanel getjPanelContent() {
+		if (jPanelContent==null) {
+			
+			GridBagLayout gridBagLayout = new GridBagLayout();
+			gridBagLayout.columnWidths = new int[]{0, 0, 0};
+			gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			
+			GridBagConstraints gbcjCheckboxManifest = new GridBagConstraints();
+			gbcjCheckboxManifest.anchor = GridBagConstraints.WEST;
+			gbcjCheckboxManifest.insets = new Insets(10, 10, 0, 0);
+			gbcjCheckboxManifest.gridx = 0;
+			gbcjCheckboxManifest.gridy = 0;
+			GridBagConstraints gbcJLabelResources = new GridBagConstraints();
+			gbcJLabelResources.gridx = 0;
+			gbcJLabelResources.anchor = GridBagConstraints.WEST;
+			gbcJLabelResources.insets = new Insets(10, 15, 0, 0);
+			gbcJLabelResources.gridy = 1;
+			GridBagConstraints gbc_jScrollPaneBinResources = new GridBagConstraints();
+			gbc_jScrollPaneBinResources.fill = GridBagConstraints.BOTH;
+			gbc_jScrollPaneBinResources.gridx = 0;
+			gbc_jScrollPaneBinResources.gridy = 2;
+			gbc_jScrollPaneBinResources.insets = new Insets(5, 10, 0, 0);
+			GridBagConstraints gbc_jPanelBinResourceButton = new GridBagConstraints();
+			gbc_jPanelBinResourceButton.fill = GridBagConstraints.VERTICAL;
+			gbc_jPanelBinResourceButton.gridx = 1;
+			gbc_jPanelBinResourceButton.insets = new Insets(5, 5, 0, 10);
+			gbc_jPanelBinResourceButton.gridy = 2;
+			GridBagConstraints gbc_jPanelJarFileHeader = new GridBagConstraints();
+			gbc_jPanelJarFileHeader.insets = new Insets(10, 10, 0, 0);
+			gbc_jPanelJarFileHeader.fill = GridBagConstraints.BOTH;
+			gbc_jPanelJarFileHeader.gridx = 0;
+			gbc_jPanelJarFileHeader.gridy = 3;
+			GridBagConstraints gbc_jPanelJarResourcen = new GridBagConstraints();
+			gbc_jPanelJarResourcen.insets = new Insets(5, 10, 0, 0);
+			gbc_jPanelJarResourcen.fill = GridBagConstraints.BOTH;
+			gbc_jPanelJarResourcen.gridx = 0;
+			gbc_jPanelJarResourcen.gridy = 4;
+			GridBagConstraints gbc_jSeparatorTop = new GridBagConstraints();
+			gbc_jSeparatorTop.gridwidth = 2;
+			gbc_jSeparatorTop.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparatorTop.insets = new Insets(10, 10, 0, 10);
+			gbc_jSeparatorTop.gridx = 0;
+			gbc_jSeparatorTop.gridy = 5;
+			GridBagConstraints gbcJLabelPlugins = new GridBagConstraints();
+			gbcJLabelPlugins.gridx = 0;
+			gbcJLabelPlugins.insets = new Insets(10, 15, 0, 0);
+			gbcJLabelPlugins.anchor = GridBagConstraints.WEST;
+			gbcJLabelPlugins.gridy = 6;
+			GridBagConstraints gbcJScrollPanePlugIns = new GridBagConstraints();
+			gbcJScrollPanePlugIns.fill = GridBagConstraints.BOTH;
+			gbcJScrollPanePlugIns.gridx = 0;
+			gbcJScrollPanePlugIns.insets = new Insets(5, 10, 0, 0);
+			gbcJScrollPanePlugIns.gridy = 7;
+			GridBagConstraints gbcJPanelPlugInButtons = new GridBagConstraints();
+			gbcJPanelPlugInButtons.fill = GridBagConstraints.VERTICAL;
+			gbcJPanelPlugInButtons.gridx = 1;
+			gbcJPanelPlugInButtons.insets = new Insets(5, 5, 0, 10);
+			gbcJPanelPlugInButtons.gridy = 7;
+			GridBagConstraints gbc_jSeparatorBottom = new GridBagConstraints();
+			gbc_jSeparatorBottom.gridwidth = 2;
+			gbc_jSeparatorBottom.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparatorBottom.insets = new Insets(10, 10, 0, 10);
+			gbc_jSeparatorBottom.gridx = 0;
+			gbc_jSeparatorBottom.gridy = 8;
+			GridBagConstraints gbcJPanelSimulationEnvironment = new GridBagConstraints();
+			gbcJPanelSimulationEnvironment.fill = GridBagConstraints.HORIZONTAL;
+			gbcJPanelSimulationEnvironment.anchor = GridBagConstraints.NORTH;
+			gbcJPanelSimulationEnvironment.gridx = 0;
+			gbcJPanelSimulationEnvironment.insets = new Insets(10, 10, 5, 5);
+			gbcJPanelSimulationEnvironment.gridy = 9;
+			GridBagConstraints gbcJPanelTimeModelSelection = new GridBagConstraints();
+			gbcJPanelTimeModelSelection.fill = GridBagConstraints.HORIZONTAL;
+			gbcJPanelTimeModelSelection.anchor = GridBagConstraints.NORTH;
+			gbcJPanelTimeModelSelection.gridx = 0;
+			gbcJPanelTimeModelSelection.insets = new Insets(10, 10, 30, 5);
+			gbcJPanelTimeModelSelection.gridy = 10;
+			
+			jPanelContent = new JPanel();
+			jPanelContent.setLayout(gridBagLayout);
+			jPanelContent.add(getJCheckboxManifest(), gbcjCheckboxManifest);
+			jPanelContent.add(getJScrollPaneBinResources(), gbc_jScrollPaneBinResources);
+			jPanelContent.add(getJPanelBinResourceButton(), gbc_jPanelBinResourceButton);
+			jPanelContent.add(getJLabelBinResources(), gbcJLabelResources);
+			jPanelContent.add(getJPanelJarFileHeader(), gbc_jPanelJarFileHeader);
+			jPanelContent.add(getJPanelJarResourcen(), gbc_jPanelJarResourcen);
+			jPanelContent.add(getJSeparatorTop(), gbc_jSeparatorTop);
+			jPanelContent.add(getJLabelPlugIns(), gbcJLabelPlugins);
+			jPanelContent.add(getJScrollPanePlugIns(), gbcJScrollPanePlugIns);
+			jPanelContent.add(getJPanelPlugInButtons(), gbcJPanelPlugInButtons);
+			jPanelContent.add(getJSeparatorBottom(), gbc_jSeparatorBottom);
+			jPanelContent.add(getJPanelSimulationEnvironment(), gbcJPanelSimulationEnvironment);
+			jPanelContent.add(getJPanelTimeModelSelection(), gbcJPanelTimeModelSelection);
+			
+		}
+		return jPanelContent;
+	}
+	
+	
+	private JCheckBox getJCheckboxManifest() {
+		if (jCheckboxManifest == null) {
+			jCheckboxManifest = new JCheckBox("Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern");
+			jCheckboxManifest.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckboxManifest.setSelected(this.currProject.isReCreateProjectManifest());
+			jCheckboxManifest.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					currProject.setReCreateProjectManifest(getJCheckboxManifest().isSelected());
+				}
+			});
+		}
+		return jCheckboxManifest;
+	}
+	
+	private JLabel getJLabelBinResources() {
+		if (jLabelBinResources==null) {
+			jLabelBinResources = new JLabel();
+			jLabelBinResources.setText("Externe bin-Ressourcen");
+			jLabelBinResources.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelBinResources;
+	}
+	/**
+	 * This method initializes jScrollPane	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPaneBinResources() {
+		if (jScrollPaneBinResources == null) {
+			jScrollPaneBinResources = new JScrollPane();
+			jScrollPaneBinResources.setPreferredSize(this.preferredListSizeSmall);
+			jScrollPaneBinResources.setViewportView(this.getJListBinResources());
+		}
+		return jScrollPaneBinResources;
+	}
 	/**
 	 * This method initializes jListResources	
 	 * @return javax.swing.JList	
 	 */
-	private JList<ProjectResource2Display> getJListResources() {
-		if (jListResources == null) {
-			jListResources = new JList<ProjectResource2Display>();
+	private JList<ProjectResource2Display> getJListBinResources() {
+		if (jListBinResources == null) {
+			jListBinResources = new JList<ProjectResource2Display>();
+			jListBinResources.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
-		return jListResources;
+		return jListBinResources;
 	}
 
 	/**
 	 * This method initializes jButtonAdd	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonAdd() {
-		if (jButtonResourcesAdd == null) {
-			jButtonResourcesAdd = new JButton();
-			jButtonResourcesAdd.setPreferredSize(new Dimension(45, 26));
-			jButtonResourcesAdd.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
-			jButtonResourcesAdd.setToolTipText("Add");
-			jButtonResourcesAdd.addActionListener(new ActionListener() {
+	private JButton getJButtonBinResourcesAdd() {
+		if (jButtonBinResourcesAdd == null) {
+			jButtonBinResourcesAdd = new JButton();
+			jButtonBinResourcesAdd.setPreferredSize(new Dimension(45, 26));
+			jButtonBinResourcesAdd.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
+			jButtonBinResourcesAdd.setToolTipText("Add");
+			jButtonBinResourcesAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
 					if (Application.getJadePlatform().stopAskUserBefore()==true) {
 						
-						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar", "JAR");
-						
 						JFileChooser chooser = new JFileChooser();
-						chooser.setFileFilter(filter);
+						chooser.setDialogTitle(Language.translate("Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien)"));
+						chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 						chooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
-						chooser.setMultiSelectionEnabled(true);
-						chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-						chooser.setAcceptAllFileFilterUsed(false);
+						chooser.setMultiSelectionEnabled(false);
 						
-						int answerChooser = chooser.showDialog(jButtonResourcesAdd, Language.translate("Dateien einbinden"));
+						int answerChooser = chooser.showDialog(ProjectResources.this, Language.translate("Verzeichnis einbinden"));
 						if (answerChooser==JFileChooser.CANCEL_OPTION) return;
 						Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());
 						
 						Vector<String> names = adjustPaths(chooser.getSelectedFiles());
 						currProject.getProjectResources().addAll(names);
 						currProject.resourcesReLoad();
-						jListResources.updateUI();
+						jListBinResources.updateUI();
 					}
 				} // end actionPerformed
 			}); // end addActionListener
 		}
-		return jButtonResourcesAdd;
+		return jButtonBinResourcesAdd;
 	}
 
 	/**
 	 * This method initializes jButtonRemove	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonRemove() {
-		if (jButtonResourcesRemove == null) {
-			jButtonResourcesRemove = new JButton();
-			jButtonResourcesRemove.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
-			jButtonResourcesRemove.setPreferredSize(new Dimension(45, 26));
-			jButtonResourcesRemove.setToolTipText("Remove");
-			jButtonResourcesRemove.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
+	private JButton getJButtonBinResourcesRemove() {
+		if (jButtonBinResourcesRemove == null) {
+			jButtonBinResourcesRemove = new JButton();
+			jButtonBinResourcesRemove.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
+			jButtonBinResourcesRemove.setPreferredSize(new Dimension(45, 26));
+			jButtonBinResourcesRemove.setToolTipText("Remove");
+			jButtonBinResourcesRemove.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
 
-							if (Application.getJadePlatform().stopAskUserBefore()==true) {
-								// --- Remove from the ClassPath ----
-								Vector<String> selection = new Vector<String>();
-								for (Object fileR2DObject : jListResources.getSelectedValuesList()) {
-									ProjectResource2Display fileR2D = (ProjectResource2Display) fileR2DObject;
-									selection.add(fileR2D.getFileOrFolderResource());
-								}
-								if (selection.size()>0) {
-									currProject.getProjectResources().removeAll(selection);
-									currProject.resourcesReLoad();
-								}
-							}
+					if (Application.getJadePlatform().stopAskUserBefore()==true) {
+						// --- Remove from the ClassPath ----
+						Vector<String> selection = new Vector<String>();
+						for (Object fileR2DObject : jListBinResources.getSelectedValuesList()) {
+							ProjectResource2Display fileR2D = (ProjectResource2Display) fileR2DObject;
+							selection.add(fileR2D.getFileOrFolderResource());
 						}
-					});
+						if (selection.size()>0) {
+							currProject.getProjectResources().removeAll(selection);
+							currProject.resourcesReLoad();
+						}
+					}
+				}
+			});
 		}
-		return jButtonResourcesRemove;
+		return jButtonBinResourcesRemove;
 	}
 
 	/**
 	 * This method initializes jButtonRefresh	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonRefresh() {
-		if (jButtonRecourcesRefresh == null) {
-			jButtonRecourcesRefresh = new JButton();
-			jButtonRecourcesRefresh.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
-			jButtonRecourcesRefresh.setPreferredSize(new Dimension(45, 26));
-			jButtonRecourcesRefresh.setToolTipText("Refresh");
-			jButtonRecourcesRefresh.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							
-							if (Application.getJadePlatform().stopAskUserBefore()) {
-								Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-								currProject.resourcesReLoad();
-								Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-							}
-						}
-					});
+	private JButton getJButtonBinResourcesRefresh() {
+		if (jButtonBinRecourcesRefresh == null) {
+			jButtonBinRecourcesRefresh = new JButton();
+			jButtonBinRecourcesRefresh.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
+			jButtonBinRecourcesRefresh.setPreferredSize(new Dimension(45, 26));
+			jButtonBinRecourcesRefresh.setToolTipText("Refresh");
+			jButtonBinRecourcesRefresh.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					if (Application.getJadePlatform().stopAskUserBefore()) {
+						Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						currProject.resourcesReLoad();
+						Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					}
+				}
+			});
 		}
-		return jButtonRecourcesRefresh;
+		return jButtonBinRecourcesRefresh;
 	}
 
+	
+	private JPanel getJPanelJarFileHeader() {
+		if (jPanelJarFileHeader == null) {
+			jPanelJarFileHeader = new JPanel();
+			GridBagLayout gbl_jPanelJarFileHeader = new GridBagLayout();
+			gbl_jPanelJarFileHeader.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelJarFileHeader.rowHeights = new int[]{0, 0};
+			gbl_jPanelJarFileHeader.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelJarFileHeader.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelJarFileHeader.setLayout(gbl_jPanelJarFileHeader);
+			GridBagConstraints gbc_jLabelJarResources = new GridBagConstraints();
+			gbc_jLabelJarResources.anchor = GridBagConstraints.WEST;
+			gbc_jLabelJarResources.insets = new Insets(0, 5, 0, 0);
+			gbc_jLabelJarResources.gridx = 0;
+			gbc_jLabelJarResources.gridy = 0;
+			jPanelJarFileHeader.add(getJLabelJarResources(), gbc_jLabelJarResources);
+			GridBagConstraints gbc_jLabelBundleResources = new GridBagConstraints();
+			gbc_jLabelBundleResources.anchor = GridBagConstraints.WEST;
+			gbc_jLabelBundleResources.gridx = 1;
+			gbc_jLabelBundleResources.gridy = 0;
+			jPanelJarFileHeader.add(getJLabelBundleResources(), gbc_jLabelBundleResources);
+		}
+		return jPanelJarFileHeader;
+	}
+	private JLabel getJLabelJarResources() {
+		if (jLabelJarResources == null) {
+			jLabelJarResources = new JLabel("Einfache jar-Dateien");
+			jLabelJarResources.setPreferredSize(new Dimension(120, 18));
+			jLabelJarResources.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelJarResources;
+	}
+	private JLabel getJLabelBundleResources() {
+		if (jLabelBundleResources == null) {
+			jLabelBundleResources = new JLabel("OSGI-Bundles");
+			jLabelBundleResources.setPreferredSize(new Dimension(120, 18));
+			jLabelBundleResources.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelBundleResources;
+	}
+	
+	private JPanel getJPanelJarResourcen() {
+		if (jPanelJarResourcen == null) {
+			jPanelJarResourcen = new JPanel();
+			GridBagLayout gbl_jPanelJarResourcen = new GridBagLayout();
+			gbl_jPanelJarResourcen.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelJarResourcen.rowHeights = new int[]{0, 0};
+			gbl_jPanelJarResourcen.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelJarResourcen.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelJarResourcen.setLayout(gbl_jPanelJarResourcen);
+			GridBagConstraints gbc_jScrollPanePlainJars = new GridBagConstraints();
+			gbc_jScrollPanePlainJars.fill = GridBagConstraints.BOTH;
+			gbc_jScrollPanePlainJars.insets = new Insets(0, 0, 0, 5);
+			gbc_jScrollPanePlainJars.gridx = 0;
+			gbc_jScrollPanePlainJars.gridy = 0;
+			jPanelJarResourcen.add(getJScrollPanePlainJars(), gbc_jScrollPanePlainJars);
+			GridBagConstraints gbc_jScrollPaneBundelJars = new GridBagConstraints();
+			gbc_jScrollPaneBundelJars.fill = GridBagConstraints.BOTH;
+			gbc_jScrollPaneBundelJars.gridx = 1;
+			gbc_jScrollPaneBundelJars.gridy = 0;
+			jPanelJarResourcen.add(getJScrollPaneBundelJars(), gbc_jScrollPaneBundelJars);
+		}
+		return jPanelJarResourcen;
+	}
+	private JScrollPane getJScrollPanePlainJars() {
+		if (jScrollPanePlainJars == null) {
+			jScrollPanePlainJars = new JScrollPane();
+			jScrollPanePlainJars.setPreferredSize(this.preferredListSizeLarge);
+			jScrollPanePlainJars.setViewportView(getJListJarResources());
+		}
+		return jScrollPanePlainJars;
+	}
+	private JList<String> getJListJarResources() {
+		if (jListJarResources == null) {
+			jListJarResources = new JList<String>(this.currProject.getProjectBundleLoader().getRegularJarsListModel());
+			jListJarResources.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jListJarResources;
+	}
+	private JScrollPane getJScrollPaneBundelJars() {
+		if (jScrollPaneBundelJars == null) {
+			jScrollPaneBundelJars = new JScrollPane();
+			jScrollPaneBundelJars.setPreferredSize(this.preferredListSizeLarge);
+			jScrollPaneBundelJars.setViewportView(getJListBundleJars());
+		}
+		return jScrollPaneBundelJars;
+	}
+	private JList<String> getJListBundleJars() {
+		if (jListBundleJars == null) {
+			jListBundleJars = new JList<String>(this.currProject.getProjectBundleLoader().getBundleJarsListModel());
+			jListBundleJars.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jListBundleJars;
+	}
+	
 	/**
 	 * This method initializes jPanelRight	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelRight() {
-		if (jPanelRight == null) {
+	private JPanel getJPanelBinResourceButton() {
+		if (jPanelBinResourceButton == null) {
+			GridBagLayout gbl_jPanelBinResourceButton = new GridBagLayout();
+			gbl_jPanelBinResourceButton.rowWeights = new double[]{0.0, 0.0, 1.0};
+
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.anchor = GridBagConstraints.SOUTH;
 			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.insets = new Insets(20, 0, 0, 0);
+			gridBagConstraints3.insets = new Insets(10, 0, 0, 0);
 			gridBagConstraints3.gridy = 2;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 0;
@@ -413,80 +526,14 @@ public class ProjectResources extends JPanel implements Observer {
 			gridBagConstraints1.gridx = -1;
 			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
 			gridBagConstraints1.gridy = -1;
-			jPanelRight = new JPanel();
-			jPanelRight.setLayout(new GridBagLayout());
-			jPanelRight.add(getJButtonAdd(), gridBagConstraints1);
-			jPanelRight.add(getJButtonRemove(), gridBagConstraints2);
-			jPanelRight.add(getJButtonRefresh(), gridBagConstraints3);
+			
+			jPanelBinResourceButton = new JPanel();
+			jPanelBinResourceButton.setLayout(gbl_jPanelBinResourceButton);
+			jPanelBinResourceButton.add(getJButtonBinResourcesAdd(), gridBagConstraints1);
+			jPanelBinResourceButton.add(getJButtonBinResourcesRemove(), gridBagConstraints2);
+			jPanelBinResourceButton.add(getJButtonBinResourcesRefresh(), gridBagConstraints3);
 		}
-		return jPanelRight;
-	}
-
-	/**
-	 * This method initializes jScrollPane	
-	 * @return javax.swing.JScrollPane	
-	 */
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setPreferredSize(new Dimension(260, 120));
-			jScrollPane.setViewportView(this.getJListResources());
-		}
-		return jScrollPane;
-	}
-
-	/**
-	 * This method initializes jPanelSimulationEnvironment	
-	 * 
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelSimulationEnvironment() {
-		if (jPanelSimulationEnvironment == null) {
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.gridx = 0;
-			gridBagConstraints5.anchor = GridBagConstraints.WEST;
-			gridBagConstraints5.insets = new Insets(0, 0, 0, 0);
-			gridBagConstraints5.gridy = 0;
-			jLabelEnvTyp = new JLabel();
-			jLabelEnvTyp.setText("Umgebungstyp bzw. -modell für Simulation und Visualisierung");
-			jLabelEnvTyp.setFont(new Font("Dialog", Font.BOLD, 12));
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
-			gridBagConstraints4.gridy = 1;
-			gridBagConstraints4.anchor = GridBagConstraints.WEST;
-			gridBagConstraints4.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints4.weightx = 1.0;
-			jPanelSimulationEnvironment = new JPanel();
-			jPanelSimulationEnvironment.setLayout(new GridBagLayout());
-			jPanelSimulationEnvironment.add(getJComboBoxEnvironmentModelSelector(), gridBagConstraints4);
-			jPanelSimulationEnvironment.add(jLabelEnvTyp, gridBagConstraints5);
-		}
-		return jPanelSimulationEnvironment;
-	}
-	
-	/**
-	 * This method initialises jComboBoxEnvironmentModelSelector
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox<EnvironmentType> getJComboBoxEnvironmentModelSelector(){
-		if(jComboBoxEnvironmentModelSelector == null){
-			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
-			jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
-			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
-			jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
-			jComboBoxEnvironmentModelSelector.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					EnvironmentType envType = (EnvironmentType) getJComboBoxEnvironmentModelSelector().getSelectedItem();
-					String newEnvModel = envType.getInternalKey();
-					String oldEnvModel = currProject.getEnvironmentModelName();
-					if (newEnvModel.equals(oldEnvModel)==false) {
-						currProject.setEnvironmentModelName(newEnvModel);
-					}
-				}
-			});
-		}
-		return jComboBoxEnvironmentModelSelector;
+		return jPanelBinResourceButton;
 	}
 
 	/**
@@ -496,7 +543,7 @@ public class ProjectResources extends JPanel implements Observer {
 	private JScrollPane getJScrollPanePlugIns() {
 		if (jScrollPanePlugIns == null) {
 			jScrollPanePlugIns = new JScrollPane();
-			jScrollPanePlugIns.setPreferredSize(new Dimension(260, 120));
+			jScrollPanePlugIns.setPreferredSize(this.preferredListSizeLarge);
 			jScrollPanePlugIns.setViewportView(getJListPlugIns());
 		}
 		return jScrollPanePlugIns;
@@ -597,14 +644,15 @@ public class ProjectResources extends JPanel implements Observer {
 	}
 	
 	/**
-	 * This method initializes jPanelRightPlugIns
+	 * This method initializes jPanelPlugInButtons
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelRightPlugIns() {
-		if (jPanelRightPlugIns == null) {
+	private JPanel getJPanelPlugInButtons() {
+		if (jPanelPlugInButtons == null) {
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.anchor = GridBagConstraints.SOUTH;
 			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.insets = new Insets(20, 0, 0, 0);
+			gridBagConstraints3.insets = new Insets(10, 0, 0, 0);
 			gridBagConstraints3.gridy = 2;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 0;
@@ -613,13 +661,15 @@ public class ProjectResources extends JPanel implements Observer {
 			gridBagConstraints1.gridx = -1;
 			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
 			gridBagConstraints1.gridy = -1;
-			jPanelRightPlugIns = new JPanel();
-			jPanelRightPlugIns.setLayout(new GridBagLayout());
-			jPanelRightPlugIns.add(getJButtonAddPlugIns(), gridBagConstraints1);
-			jPanelRightPlugIns.add(getJButtonRemovePlugIns(), gridBagConstraints2);
-			jPanelRightPlugIns.add(getJButtonRefreshPlugIns(), gridBagConstraints3);
+			jPanelPlugInButtons = new JPanel();
+			GridBagLayout gbl_jPanelPlugInButtons = new GridBagLayout();
+			gbl_jPanelPlugInButtons.rowWeights = new double[]{0.0, 0.0, 1.0};
+			jPanelPlugInButtons.setLayout(gbl_jPanelPlugInButtons);
+			jPanelPlugInButtons.add(getJButtonAddPlugIns(), gridBagConstraints1);
+			jPanelPlugInButtons.add(getJButtonRemovePlugIns(), gridBagConstraints2);
+			jPanelPlugInButtons.add(getJButtonRefreshPlugIns(), gridBagConstraints3);
 		}
-		return jPanelRightPlugIns;
+		return jPanelPlugInButtons;
 	}
 
 	/**
@@ -629,11 +679,27 @@ public class ProjectResources extends JPanel implements Observer {
 	private JList<PlugInListElement> getJListPlugIns() {
 		if (jListPlugIns == null) {
 			jListPlugIns = new JList<PlugInListElement>();
+			jListPlugIns.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListPlugIns.setModel(plugInsListModel);
 		}
 		return jListPlugIns;
 	}
 	
+	private JSeparator getJSeparatorTop() {
+		if (jSeparatorTop == null) {
+			jSeparatorTop = new JSeparator();
+		}
+		return jSeparatorTop;
+	}	
+	public JLabel getJLabelPlugIns() {
+		if (jLabelPlugIns==null) {
+			jLabelPlugIns = new JLabel();
+			jLabelPlugIns.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelPlugIns.setText("Projekt-PlugIns");
+		}
+		return jLabelPlugIns;
+	}
+
 	/**
 	 * This methods adds a Plugin to the plugInListModel, so that it is displayed 
 	 * @param plugIn
@@ -657,6 +723,68 @@ public class ProjectResources extends JPanel implements Observer {
 		}
 	}
 
+	private JSeparator getJSeparatorBottom() {
+		if (jSeparatorBottom == null) {
+			jSeparatorBottom = new JSeparator();
+		}
+		return jSeparatorBottom;
+	}
+	
+	/**
+	 * This method initializes jPanelSimulationEnvironment	
+	 * 
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelSimulationEnvironment() {
+		if (jPanelSimulationEnvironment == null) {
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.anchor = GridBagConstraints.WEST;
+			gridBagConstraints5.gridx = 0;
+			gridBagConstraints5.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints5.gridy = 0;
+			jLabelEnvTyp = new JLabel();
+			jLabelEnvTyp.setText("Umgebungstyp bzw. -modell für Simulation und Visualisierung");
+			jLabelEnvTyp.setFont(new Font("Dialog", Font.BOLD, 12));
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints4.gridy = 1;
+			gridBagConstraints4.anchor = GridBagConstraints.WEST;
+			gridBagConstraints4.insets = new Insets(5, 0, 0, 0);
+			jPanelSimulationEnvironment = new JPanel();
+			GridBagLayout gbl_jPanelSimulationEnvironment = new GridBagLayout();
+			gbl_jPanelSimulationEnvironment.columnWeights = new double[]{1.0};
+			jPanelSimulationEnvironment.setLayout(gbl_jPanelSimulationEnvironment);
+			jPanelSimulationEnvironment.add(getJComboBoxEnvironmentModelSelector(), gridBagConstraints4);
+			jPanelSimulationEnvironment.add(jLabelEnvTyp, gridBagConstraints5);
+		}
+		return jPanelSimulationEnvironment;
+	}
+	
+	/**
+	 * This method initialises jComboBoxEnvironmentModelSelector
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox<EnvironmentType> getJComboBoxEnvironmentModelSelector(){
+		if(jComboBoxEnvironmentModelSelector == null){
+			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
+			jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
+			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
+			jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
+			jComboBoxEnvironmentModelSelector.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					EnvironmentType envType = (EnvironmentType) getJComboBoxEnvironmentModelSelector().getSelectedItem();
+					String newEnvModel = envType.getInternalKey();
+					String oldEnvModel = currProject.getEnvironmentModelName();
+					if (newEnvModel.equals(oldEnvModel)==false) {
+						currProject.setEnvironmentModelName(newEnvModel);
+					}
+				}
+			});
+		}
+		return jComboBoxEnvironmentModelSelector;
+	}
+	
 	/**
 	 * This method initializes jPanelTimeModelSelection	
 	 * @return javax.swing.JPanel	
@@ -677,10 +805,10 @@ public class ProjectResources extends JPanel implements Observer {
 			gridBagConstraints33.insets = new Insets(5, 0, 0, 0);
 			gridBagConstraints33.gridx = 0;
 			gridBagConstraints33.gridy = 1;
-			gridBagConstraints33.weightx = 1.0;
 			gridBagConstraints33.fill = GridBagConstraints.BOTH;
 			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
-			gridBagConstraints41.anchor = GridBagConstraints.WEST;
+			gridBagConstraints41.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints41.gridwidth = 3;
 			gridBagConstraints41.gridy = 0;
 			gridBagConstraints41.gridx = 0;
 			
@@ -690,7 +818,9 @@ public class ProjectResources extends JPanel implements Observer {
 			jLabelTimeModelClass.setText(Language.translate(jLabelTimeModelClass.getText()));
 			
 			jPanelTimeModelSelection = new JPanel();
-			jPanelTimeModelSelection.setLayout(new GridBagLayout());
+			GridBagLayout gbl_jPanelTimeModelSelection = new GridBagLayout();
+			gbl_jPanelTimeModelSelection.columnWeights = new double[]{1.0, 0.0, 0.0};
+			jPanelTimeModelSelection.setLayout(gbl_jPanelTimeModelSelection);
 			jPanelTimeModelSelection.add(jLabelTimeModelClass, gridBagConstraints41);
 			jPanelTimeModelSelection.add(getJTextFieldTimeModelClass(), gridBagConstraints33);
 			jPanelTimeModelSelection.add(getJButtonDefaultTimeModel(), gridBagConstraints51);
@@ -782,6 +912,79 @@ public class ProjectResources extends JPanel implements Observer {
 		// ----------------------------------------------
 	}
 	
+	/**
+	 * Adjust string.
+	 * @param path the path
+	 * @return the string
+	 */
+	private String adjustString(String path) {
+		final String projectFolder = currProject.getProjectFolderFullPath();
+		if (path.startsWith(projectFolder)) {
+			int cut = projectFolder.length();
+			String returnPath = path.substring(cut - 1); 
+			return returnPath;
+		}
+		return path;
+	}
+	/**
+	 * Already there.
+	 * @param path the path
+	 * @return true, if successful
+	 */
+	private boolean alreadyThere(String path) {
+		return currProject.getProjectResources().contains(path);
+	}
+	/**
+	 * Adjust paths.
+	 * @param files the files
+	 * @return the vector
+	 */
+	private Vector<String> adjustPaths(File[] files) {
+		
+		Vector<String> result = new Vector<String>();
+		if (files != null) {
+
+			for (File file : files) {
+				
+				String path = file.getAbsolutePath();
+				if (!path.contains(".jar")) {
+					// --- If this is a folder ------------					
+					Vector<String> directoryFiles = handleDirectories(file);
+					for (String foreignJar : directoryFiles) {
+						String resourcCheck = this.adjustString(foreignJar);
+						if (!alreadyThere(resourcCheck)) {
+							result.add(this.adjustString(foreignJar)); // Use relative paths within projects
+						}
+					}
+
+				} else	{
+					// --- If this is a jar-file ----------
+					String resourcCheck = this.adjustString(path);
+					if (!alreadyThere(resourcCheck)) {
+						result.add(this.adjustString(path)); // Use absolut within projects
+					}
+				}
+
+			}
+		}
+		return result;
+	}
+	/**
+	 * Handle directories.
+	 * @param dir the dir
+	 * @return the vector
+	 */
+	private Vector<String> handleDirectories(File dir) {
+		Vector<String> result = new Vector<String>();
+		try {
+			result.add(dir.getAbsolutePath());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -812,4 +1015,4 @@ public class ProjectResources extends JPanel implements Observer {
 		
 	}
 	
-} //  @jve:decl-index=0:visual-constraint="-105,-76"
+} 

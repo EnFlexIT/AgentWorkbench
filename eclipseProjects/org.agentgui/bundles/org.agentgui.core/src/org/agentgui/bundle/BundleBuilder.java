@@ -29,7 +29,6 @@
 package org.agentgui.bundle;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,9 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -309,15 +306,17 @@ public class BundleBuilder {
 
 	/**
 	 * Checks, if the MANIFEST file is available. If not, it will be created.
+	 *
+	 * @param overwriteExistingManifest set true, if the existing manifest has to be overwritten
 	 * @return true, if the file is available or if it could successfully be created
 	 */
-	public boolean createManifest() {
+	public boolean createManifest(boolean overwriteExistingManifest) {
 		
 		boolean created = false;
 		
 		// --- Check if MANIFEST already exists ---------------------
 		File manifestFile = new File(this.getManifestLocation());
-		if (manifestFile.exists()==true) return true;
+		if (overwriteExistingManifest==false && manifestFile.exists()==true) return true;
 		
 		// --- MANIFEST does not exists yet -------------------------
 		FileOutputStream fOut = null;
@@ -551,7 +550,7 @@ public class BundleBuilder {
 			
 		} catch (IOException ioe) {
 			//ioe.printStackTrace();
-			this.printError("#getFileType(File): " + ioe.getMessage());
+			System.err.println(this.getClass().getSimpleName() + "#getFileType(File): " + ioe.getMessage());
 			
 		} finally {
 			// --- Make sure that the file will be closed -------
@@ -568,7 +567,7 @@ public class BundleBuilder {
 	// ----------------------------------------------------
 
 	// ----------------------------------------------------
-	// --- Methods for moving files of BaseClassLoadService ---
+	// --- Methods for moving files of ClassLoadService ---
 	// ----------------------------------------------------
 	/**
 	 * Move class load service files.
@@ -655,103 +654,12 @@ public class BundleBuilder {
 		
 	}
 	// ----------------------------------------------------
-	// --- Methods for moving files of BaseClassLoadService ---
+	// --- Methods for moving files of ClassLoadService ---
 	// ----------------------------------------------------
 
 	
-	/**
-	 * Creates a jar archive from the specified directory.
-	 * @param searchDirectory the archive file
-	 */
-	private void createJarArchive(File searchDirectory) {
-		
-		if (searchDirectory==null || searchDirectory.isDirectory()==false) {
-			this.printError("#createJarArchive(File): the speciied file object was null or not a directory!");
-			return;
-		} 
-		
-		// --- Search Files and convert to array ----------
-		ArrayList<File> fileArrayList = this.findFiles(searchDirectory);
-		File[] fileArray = new File[fileArrayList.size()];
-		fileArray = fileArrayList.toArray(fileArray);
-		
-		// --- Define the jar-file name -------------------  
-		File jarFile = new File("");
-		// --- Create the jar file ------------------------- 
-		this.createJarArchive(searchDirectory, jarFile, fileArray);
-	}
 	
-	/**
-	 * Creates the jar archive.
-	 *
-	 * @param archiveFile the archive file
-	 * @param toBeJared the files that has to be packed
-	 */
-	private void createJarArchive(File searchDirectory, File archiveFile, File[] toBeJared) {
-
-		if (searchDirectory==null || archiveFile==null || toBeJared==null || toBeJared.length==0) return;
-		
-		try {
-			
-			byte buffer[] = new byte[10240];
-			
-			// --- Open archive file ----------------------
-			FileOutputStream stream = new FileOutputStream(archiveFile);
-			JarOutputStream out = new JarOutputStream(stream, new Manifest());
-			String baseDir = searchDirectory.getAbsolutePath();
-
-			for (int i = 0; i < toBeJared.length; i++) {
-				
-				if (toBeJared[i] == null || !toBeJared[i].exists() || toBeJared[i].isDirectory()) {
-					continue; // --- Just in case...
-				}
-					
-				String subfolder = "";
-				if (baseDir!=null) {
-					String elementFolder = toBeJared[i].getParent();
-					subfolder = elementFolder.substring(baseDir.length(), elementFolder.length());
-					subfolder = subfolder.replace(File.separator, "/");
-					if (subfolder.startsWith("/")) {
-						subfolder = subfolder.substring(1);
-					}
-					if (subfolder.endsWith("/")==false) {
-						subfolder += "/";
-					}					
-				}
-				
-				// --- Add archive entry ------------------
-				String jarEntryName = subfolder + toBeJared[i].getName();
-				JarEntry jarAdd = new JarEntry(jarEntryName);
-				jarAdd.setTime(toBeJared[i].lastModified());
-				out.putNextEntry(jarAdd);
-
-				// --- Write file to archive --------------
-				FileInputStream in = new FileInputStream(toBeJared[i]);
-				while (true) {
-					int nRead = in.read(buffer, 0, buffer.length);
-					if (nRead <= 0)
-						break;
-					out.write(buffer, 0, nRead);
-				}
-				in.close();
-			}
-
-			out.close();
-			stream.close();
-			System.out.println("Creating '" + archiveFile.getAbsoluteFile().getName() + "' completed!");
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			this.printError("#createJarArchive(File, File, File[]): " + ex.getMessage());
-		}
-	}
 	
-	/**
-	 * Prints the specified message as error.
-	 * @param message the message
-	 */
-	private void printError(String message) {
-		System.err.println(this.getClass().getSimpleName() + " " + message);
-	}
+	
 	
 }

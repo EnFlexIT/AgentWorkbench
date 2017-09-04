@@ -94,7 +94,6 @@ de;Beschriftungen anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
-de;Bitte geben Sie einen Bezeichner fü-r die Referenz an!;;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
 de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
@@ -114,18 +113,12 @@ de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprech
 de;Bitte wählen Sie einen Agenten;Please select an agent;;;
 de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
+de;Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien);;;;
 de;CPU-Auslastung;CPU-Load
 de;CPU;CPU
 de;CSV-Datei importieren;Import CSV file;;;
 de;CSV-Dateien;CSV files;;;
 de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
-de;Calculate metrics based on agent class data.;;;;
-de;Calculate metrics based on delta integrals.;;;;
-de;Calculate metrics based on individual agent data.;;;;
-de;Calculate metrics based on last total system cpu time.;;;;
-de;Calculate metrics based on total integrals.;;;;
-de;Calculate the real metrics based on recorded chart value selection.;;;;
-de;Calculates the real metrics for each agent based on recorded thread times.;;;;
 de;Class not found:;Class not found:
 de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
@@ -198,6 +191,7 @@ de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Eigene lokale MTP-Adresse;Own local MTP-Address;;;
 de;Eigenschaften;Properties;;;
 de;Einfach zählendes Zeitmodell (z. B. 1 ... 9999);Simple counting time model (e. g. 1 ... 9999);;;
+de;Einfache jar-Dateien;Simple jar-Files;;;
 de;Einheit;Unit
 de;Einmalige Thread-Messung;Single Thread Measurement;;;
 de;Einstellungen;Settings;;;
@@ -220,6 +214,7 @@ de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured 
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
 de;Export:;Export:;;;
+de;Externe bin-Ressourcen;External 'bin' resources;;;
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
 de;Faktor;Factor;;;
@@ -294,7 +289,6 @@ de;IP-Adresse verwenden;Use IP-Address;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
-de;Immer Überspringen;Always Skip;null;null;null
 de;Immer überspringen;Allways Skip;;;
 de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
@@ -522,7 +516,9 @@ de;Projekt-Agenten;Project-Agents
 de;Projekt-Desktop;Project Desktop
 de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
+de;Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern;Rebuild project MANIFEST.MF when opening the project;;;
 de;Projekt-Ontologie;Project Ontology;null;null;null
+de;Projekt-PlugIns;Project - Plugins;;;
 de;Projekt-Ressourcen;Project Resources
 de;Projekt;Project;;;
 de;Projekte;Projects
@@ -673,7 +669,9 @@ de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote
 de;Verteilung;Distribution
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
+de;Verzeichnis einbinden;;;;
 de;Verzeichnis gepackt zu;Folder packed to;;;
+de;Verzeichnis mit *.class-Dateien aus Java Projekt einbinden;;;;
 de;Verzeichnis;Folder
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization

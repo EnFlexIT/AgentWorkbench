@@ -100,7 +100,6 @@ public class Language implements Translator {
 	private static String dictFileLocation;
 
 	private static List<String> dictLineList64 = new ArrayList<String>();
-	private static List<String> dictLineListCSV = new ArrayList<String>();
 	private static Hashtable<String, Integer> dictHash64 = new Hashtable<String, Integer>(); 
 	
 	/** The currently selected language index of the dictionary-file, which is used in the application */
@@ -142,17 +141,6 @@ public class Language implements Translator {
 		currLanguageIndex = getIndexOfLanguage(newLangShort);
 	}
 		
-	/**
-	 * This method can be used in order to change the source dictionary file of the application 
-	 * to the CSV-dictionary file located at '/properties/dictionary.csv'
-	 * The idea is to make the translation also in other applications, as for example in MS Excel
-	 */
-	public static void useCSVDictionaryFile() {
-		dictLineList64 = dictLineListCSV;
-		proceedLoadedDictionaryLines();
-	}
-	
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String)
 	 */
@@ -350,24 +338,13 @@ public class Language implements Translator {
 	 */
 	private static void loadDictionaryFile() {
 		
-		// --- Read the Dictionary-Files --------------------------------------     
-		BufferedReader in = null;
 		BufferedReader in64 = null;
 		try {        
-			// --- Reading the CSV-Version of the dictionary ------------------		
-			String line;
-			File fileCSV = new File(getDictFileLocation());
-			if (fileCSV.exists()==true) {
-				in = new BufferedReader(new InputStreamReader(new FileInputStream(fileCSV)));
-				while ((line = in.readLine()) != null) {   
-					dictLineListCSV.add(line);
-				}
-			}
-
-			// --- Reading the Base64 encoded UTF8-File of the dictionary -----
+			// --- Read Base64 encoded UTF8-File of dictionary ------
 			File file64 = new File(getDictFileLocation64());
 			if (file64.exists()==true) {
 				in64 = new BufferedReader(new InputStreamReader(new FileInputStream(file64), "UTF8"));
+				String line;
 				while ((line = in64.readLine()) != null) {
 					String decodedLine = new String(Base64.decodeBase64(line.getBytes()), "UTF8");
 					dictLineList64.add(decodedLine);
@@ -380,26 +357,54 @@ public class Language implements Translator {
 			
 		} finally {
 			try {            
-				if (in!=null)   in.close();
 				if (in64!=null) in64.close();
-				
 			} catch (IOException ioEx) {            
 				System.err.println("=> Error while closing dictionary file:");
 				ioEx.printStackTrace();
-			} finally {
-				try {
-					if (in64!=null) in64.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-			}
-		}     
-		// ----------------------------------------------------------
-		// --- proceed the loaded data so that they are usable ------
+			} 
+		}
+		
+		// --- proceed data so that they are usable -----------------
 		proceedLoadedDictionaryLines();
 		
 	}
 
+	/**
+	 * This method can be used in order to change the source dictionary file of the application 
+	 * to the CSV-dictionary file located at '/properties/dictionary.csv'
+	 * The idea is to make the translation also in other applications, as for example in MS Excel
+	 */
+	public static void useCSVDictionaryFile() {
+		
+		// --- Read current CSV-Version of the dictionary -----------		
+		List<String> dictLineListCSV = new ArrayList<String>();
+		BufferedReader in = null;
+		try {        
+			String line;
+			File fileCSV = new File(getDictFileLocation());
+			if (fileCSV.exists()==true) {
+				in = new BufferedReader(new InputStreamReader(new FileInputStream(fileCSV)));
+				while ((line = in.readLine()) != null) {   
+					dictLineListCSV.add(line);
+				}
+			}
+			
+		} catch (IOException ioEx) {        
+			System.err.println("=> Error in dictionary file:");
+			ioEx.printStackTrace();
+			
+		} finally {
+			try {            
+				if (in!=null) in.close();
+			} catch (IOException ioEx) {            
+				System.err.println("=> Error while closing dictionary file:");
+				ioEx.printStackTrace();
+			} 
+		}     
+		dictLineList64 = dictLineListCSV;
+		proceedLoadedDictionaryLines();
+	}
+	
 	/**
 	 * This method will work on the just been loaded dictionary lines in order to
 	 * make them usable and quickly accessible for the application
@@ -437,8 +442,10 @@ public class Language implements Translator {
 							// ------------------------------------------------
 							// --- index the expression -----------------------
 							int indexOfExpression = getIndexOfLanguage(valuesArray[0]);
-							String indexExpression = valuesArray[indexOfExpression];
-							dictHash64.put(indexExpression, i); 			
+							if ( !(indexOfExpression==-1 || indexOfExpression-1 > valuesArray.length)) {
+								String indexExpression = valuesArray[indexOfExpression];
+								dictHash64.put(indexExpression, i); 			
+							}
 						}
 						// ----------------------------------------------------
 					}
@@ -456,7 +463,6 @@ public class Language implements Translator {
 			// --- Reload dictionary ------------------------------------------
 			if (saveDictionaryFile()==true) {
 				dictLineList64 = new ArrayList<String>();
-				dictLineListCSV = new ArrayList<String>();
 				dictHash64 = new Hashtable<String, Integer>(); 
 				loadDictionaryFile();
 			}

@@ -1,5 +1,7 @@
 package org.agentgui.bundle.evaluation;
 
+import java.lang.reflect.Modifier;
+
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 import jade.core.Agent;
 
@@ -31,8 +33,7 @@ public class FilterForAgent extends AbstractBundleClassFilter {
 	 */
 	@Override
 	public boolean isInFilterScope(Class<?> clazz) {
-		return Agent.class.isAssignableFrom(clazz) && Agent.class.equals(clazz)==false;
+		return Agent.class.isAssignableFrom(clazz) && Agent.class.equals(clazz)==false && Modifier.isAbstract(clazz.getModifiers())==false;
 	}
-
 
 }

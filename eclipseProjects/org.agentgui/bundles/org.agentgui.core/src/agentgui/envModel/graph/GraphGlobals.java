@@ -130,7 +130,7 @@ public final class GraphGlobals {
 		if (imageIcon==null) {
 			// --- 2a. Try direct folder location -------------------
 	 		path = path2Image;
-	 		imageFile = new File(PathHandling.getPathName4LocalSystem(path));
+	 		imageFile = new File(PathHandling.getPathName4LocalOS(path));
 			if (imageFile.exists()) {
 				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
 			} 
@@ -138,7 +138,7 @@ public final class GraphGlobals {
 		if (imageIcon==null) {
 			// --- 2b. Try sub folder 'project' ---------------------
 			path = "/projects" + path2Image;
-			imageFile = new File(PathHandling.getPathName4LocalSystem(path));
+			imageFile = new File(PathHandling.getPathName4LocalOS(path));
 			if (imageFile.exists()) {
 				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
 			} 
@@ -146,7 +146,7 @@ public final class GraphGlobals {
 		if (imageIcon==null) {
 			// --- 2c. Try absolute folder location ---------------------
 			path = pathRoot + path2Image;
-			imageFile = new File(PathHandling.getPathName4LocalSystem(path));
+			imageFile = new File(PathHandling.getPathName4LocalOS(path));
 			if (imageFile.exists()) {
 				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
 			} 			
@@ -154,7 +154,7 @@ public final class GraphGlobals {
 		if (imageIcon==null) {
 			// --- 2d. Try absolute sub folder 'project' ---------------------
 			path = pathRoot + "/projects" + path2Image;
-			imageFile = new File(PathHandling.getPathName4LocalSystem(path));
+			imageFile = new File(PathHandling.getPathName4LocalOS(path));
 			if (imageFile.exists()) {
 				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
 			} 

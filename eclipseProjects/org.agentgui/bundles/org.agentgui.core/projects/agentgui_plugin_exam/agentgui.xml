@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Agent.GUI PlugIn Example</projectName>
-    <projectStartTab>3|2</projectStartTab>
+    <projectStartTab>1|0</projectStartTab>
     <versionInformation>
         <build>1</build>
         <majorRevision>0</majorRevision>
@@ -11,6 +11,7 @@
     <updateSite>http://update.agentgui.org</updateSite>
     <environmentModel>none</environmentModel>
     <projectResources/>
+    <reCreateProjectManifest>true</reCreateProjectManifest>
     <plugins>
         <className>agentproject.PlugInExample</className>
     </plugins>

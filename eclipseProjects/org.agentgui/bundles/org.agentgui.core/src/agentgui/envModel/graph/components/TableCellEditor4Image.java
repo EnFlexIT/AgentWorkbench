@@ -132,7 +132,7 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	            	// --- If file exists make it selected in the file chosser ----------
 	            	String fileDesc = this.currentImageIcon.getDescription().substring(1).replace(project.getProjectFolder(), "").substring(1);
 	            	String filePath = project.getProjectFolderFullPath() + fileDesc;
-	            	filePath = PathHandling.getPathName4LocalSystem(filePath);
+	            	filePath = PathHandling.getPathName4LocalOS(filePath);
 	            	File testFile = new File(filePath);
 	            	if (testFile.exists()==true) {
 	            		this.getFileChooser().setSelectedFile(testFile);

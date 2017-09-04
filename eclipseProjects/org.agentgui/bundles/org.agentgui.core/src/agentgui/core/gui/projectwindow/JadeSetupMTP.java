@@ -155,10 +155,11 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		
 		GridBagLayout gblMain = new GridBagLayout();
 		gblMain.columnWidths = new int[]{0, 0};
-		gblMain.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gblMain.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gblMain.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gblMain.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gblMain);
+		
 		GridBagConstraints gbc_jCheckBoxSkipUserRequestForJadeStart = new GridBagConstraints();
 		gbc_jCheckBoxSkipUserRequestForJadeStart.anchor = GridBagConstraints.WEST;
 		gbc_jCheckBoxSkipUserRequestForJadeStart.insets = new Insets(15, 10, 5, 10);

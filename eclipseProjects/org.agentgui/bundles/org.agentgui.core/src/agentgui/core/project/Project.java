@@ -185,6 +185,8 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
 	private ProjectResourceVector projectResources;
+	@XmlElement(name="reCreateProjectManifest")
+	private boolean reCreateProjectManifest = true;
 	
 	/**
 	 * This Vector handles the list of resources which should be loadable in case of 
@@ -571,10 +573,26 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	}
 	
 	/**
+	 * Sets the the Project configuration to be saved or unsaved.
+	 * @param isUnsaved the new unsaved
+	 */
+	public void setUnsaved(boolean isUnsaved) {
+		this.isUnsaved = isUnsaved;
+	}
+	/**
+	 * Checks if the Project is unsaved.
+	 * @return true, if is unsaved
+	 */
+	public boolean isUnsaved() {
+		return isUnsaved;
+	}
+
+	// --- Methods for bundles that are loaded with the project ----- 
+	/**
 	 * Returns the projects {@link ProjectBundleLoader}.
 	 * @return the bundle loader
 	 */
-	private ProjectBundleLoader getProjectBundleLoader() {
+	public ProjectBundleLoader getProjectBundleLoader() {
 		if (projectBundleLoader==null) {
 			projectBundleLoader = new ProjectBundleLoader(this);
 		}
@@ -603,52 +621,66 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	}
 	
 	/**
-	 * Sets the the Project configuration to be saved or unsaved.
-	 * @param isUnsaved the new unsaved
+	 * Sets the project resources.
+	 * @param projectResources the projectResources to set
 	 */
-	public void setUnsaved(boolean isUnsaved) {
-		this.isUnsaved = isUnsaved;
+	public void setProjectResources(ProjectResourceVector projectResources) {
+		this.projectResources = projectResources;
 	}
 	/**
-	 * Checks if the Project is unsaved.
-	 * @return true, if is unsaved
-	 */
-	public boolean isUnsaved() {
-		return isUnsaved;
-	}
-
-	/**
-	 * Gets the list of simulation setups.
-	 * @return the simulation setups
-	 */
-	@XmlElementWrapper(name = "simulationSetups")
-	public SimulationSetups getSimulationSetups() {
-		if (this.simulationSetups==null) {
-			this.simulationSetups = new SimulationSetups(this, this.getSimulationSetupCurrent());
-		}
-		return this.simulationSetups;
-	}
-
-	/**
-	 * Sets the simulation setup current.
-	 * @param simulationSetupCurrent the new simulation setup current
-	 */
-	public void setSimulationSetupCurrent(String simulationSetupCurrent) {
-		this.simulationSetupCurrent = simulationSetupCurrent;
-	}
-	/**
-	 * Gets the simulation setup current.
-	 * @return the simulation setup current
+	 * Returns the project resources.
+	 * @return the projectResources
 	 */
 	@XmlTransient
-	public String getSimulationSetupCurrent() {
-		return simulationSetupCurrent;
+	public ProjectResourceVector getProjectResources() {
+		if (this.projectResources==null) {
+			this.projectResources = new ProjectResourceVector();
+		}
+		return projectResources;
 	}
-
+	/**
+	 * This method adds external project resources (*.jar-files) to the CLATHPATH  
+	 */
+	public void resourcesLoad() {
+		this.getProjectBundleLoader().installAndStartBundles();
+		this.setChangedAndNotify(CHANGED_ProjectResources);
+	}
+	/**
+	 * This Method reloads the project resources in the ClassPath
+	 */
+	public void resourcesReLoad() {
+		this.resourcesRemove();
+		this.resourcesLoad();
+	}
+	/**
+	 * This method removes all external project resources (jars) from the ClassPath  
+	 */
+	public void resourcesRemove() {
+		this.getProjectBundleLoader().stopAndUninstallBundles();
+		this.setChangedAndNotify(CHANGED_ProjectResources);
+	}
+	
+	/**
+	 * Indicates if the projects MANIFEST.mf has to be recreated when project is to be opened.
+	 * @return true, if the projects MANIFEST.mf is to be recreated when project is to be opened
+	 */
+	@XmlTransient
+	public boolean isReCreateProjectManifest() {
+		return reCreateProjectManifest;
+	}
+	/**
+	 * Sets to recreate the projects MANIFEST.mf, if the project will be opened.
+	 * @param reCreateProjectManifest the new re create project manifest
+	 */
+	public void setReCreateProjectManifest(boolean reCreateProjectManifest) {
+		if (reCreateProjectManifest!=this.reCreateProjectManifest) {
+			this.reCreateProjectManifest = reCreateProjectManifest;
+			this.setChangedAndNotify(CHANGED_ProjectResources);
+		}
+	}
+	
 	// ----------------------------------------------------------------------------------
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
 	// --- Here we come with methods for (un-) load ProjectPlugIns --- Start ------------ 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ----------------------------------------------------------------------------------	
 	/**
 	 * This method will load the ProjectPlugIns, which are configured for the
@@ -766,12 +798,38 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		return plugInsLoaded;
 	}
 	// ----------------------------------------------------------------------------------
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// --- Here we come with methods for (un-) load ProjectPlugIns --- End --------------
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ----------------------------------------------------------------------------------
 	
+	
+	// --- Methods to access the simulation setup -------------------
+	/**
+	 * Gets the list of simulation setups.
+	 * @return the simulation setups
+	 */
+	@XmlElementWrapper(name = "simulationSetups")
+	public SimulationSetups getSimulationSetups() {
+		if (this.simulationSetups==null) {
+			this.simulationSetups = new SimulationSetups(this, this.getSimulationSetupCurrent());
+		}
+		return this.simulationSetups;
+	}
 
+	/**
+	 * Sets the simulation setup current.
+	 * @param simulationSetupCurrent the new simulation setup current
+	 */
+	public void setSimulationSetupCurrent(String simulationSetupCurrent) {
+		this.simulationSetupCurrent = simulationSetupCurrent;
+	}
+	/**
+	 * Gets the simulation setup current.
+	 * @return the simulation setup current
+	 */
+	@XmlTransient
+	public String getSimulationSetupCurrent() {
+		return simulationSetupCurrent;
+	}
 	/**
 	 * Sets the download resources for this Project. This Vector represents the list of resources that 
 	 * should be downloadable in case of distributed executions. The idea is, that for example external 
@@ -943,7 +1001,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		return projectStartTab;
 	}
 	
-	// ---- The Projects directory information ----------------------
+	// ---- The projects directory information ----------------------
 	/**
 	 * Sets the current project folder.
 	 * @param newProjectFolder the projectFolder to set
@@ -1072,7 +1130,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		return updateDateLastChecked;
 	}
 	
-	// --- Visualisation instances ----------------------------------
+	// --- Visualization instances ----------------------------------
 	/**
 	 * Creates / Returns the project window with all {@link ProjectWindowTab}'s.
 	 * @return the project window for the current project
@@ -1391,220 +1449,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		return timeModelController;
 	}
 
-	/**
-	 * Sets the project resources.
-	 * @param projectResources the projectResources to set
-	 */
-	public void setProjectResources(ProjectResourceVector projectResources) {
-		this.projectResources = projectResources;
-	}
-	/**
-	 * Returns the project resources.
-	 * @return the projectResources
-	 */
-	@XmlTransient
-	public ProjectResourceVector getProjectResources() {
-		if (this.projectResources==null) {
-			this.projectResources = new ProjectResourceVector();
-		}
-		return projectResources;
-	}
 	
-	/**
-	 * Tries to retrieve a bin-folder location given form an external resource to load for a project.
-	 * @param resourcePath the resource path
-	 * @return the same string if nothing is found, otherwise the new resource path
-	 */
-	private String retrievBinResourceFromPath(String resourcePath) {
-		
-		// --- Get Agent.GUI base directory and walk up to parent folders ----
-		File searchDir = new File(Application.getGlobalInfo().getPathBaseDir());
-		for (int i=0; i<2; i++) {
-			if (searchDir!=null) {
-				searchDir = searchDir.getParentFile();
-			} else {
-				break;
-			}
-		}
-		
-		// --- Directory found? -----------------------------------------------
-		if (searchDir!=null) {
-			// --- Set the string for the search path -------------------------
-			String searchPath = searchDir.getAbsolutePath() + File.separator;
-			// --- Examine the give resource path -----------------------------			
-			String checkAddition = null;
-			String[] jarFileCorrectedFragments = resourcePath.split("\\"+File.separator);
-			// --- Try to rebuild the resource path ---------------------------
-			for (int i=(jarFileCorrectedFragments.length-1); i>0; i--) {
-				String fragment = jarFileCorrectedFragments[i];
-				if (fragment.equals("")==false) {
-					if (i==(jarFileCorrectedFragments.length-1)) {
-						checkAddition = fragment;	
-					} else {
-						checkAddition = fragment + File.separator + checkAddition;
-					}
-					 
-					File checkPath = new File(searchPath + checkAddition);	
-					if (checkPath.exists()==true) {
-						// --- Path found ! -----------------------------------
-						return checkPath.getAbsolutePath();
-					}	
-				}
-			}
-		}
-		return resourcePath;
-	}
-	
-	
-	/**
-	 * This method adds external project resources (*.jar-files) to the CLATHPATH  
-	 */
-	public void resourcesLoad() {
-
-		this.getProjectBundleLoader().installAndStartBundles();
-		
-//		// TODO
-//		for (int i=0; i<this.getProjectResources().size(); i++) {
-//			
-//			String jarFile4Display = this.getProjectResources().get(i);
-//			jarFile4Display = PathHandling.getPathName4LocalSystem(jarFile4Display);
-//			
-//			String prefixText = null;
-//			String suffixText = null;
-//			try {
-//				
-//				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile4Display, this.getProjectFolderFullPath());
-//				File file = new File(jarFileCorrected);
-//				if (file.exists()==false && jarFileCorrected.toLowerCase().endsWith("jar")==false) {
-//					// --- Try to find / retrieve bin resource ------ 
-//					String jarFileCorrectedNew = this.retrievBinResourceFromPath(jarFileCorrected);
-//					if (jarFileCorrectedNew.equals(jarFileCorrected)==false) {
-//						// --- Found new bin resource ---------------
-//						System.out.println("=> Retrieved new location for resource path '" + jarFileCorrected + "'");
-//						System.out.println("=> Corrected it to '" + jarFileCorrectedNew + "'");
-//						this.getProjectResources().set(i, jarFileCorrectedNew);
-//						
-//						jarFile4Display = jarFileCorrectedNew;
-//						jarFileCorrected = jarFileCorrectedNew;
-//						file = new File(jarFileCorrected);	
-//					}
-//				}
-//				
-//				if (file.exists()==false) {
-//					// --- Definitely no file found -----------------
-//					prefixText = "ERROR";
-//					suffixText = Language.translate("Datei nicht gefunden!");
-//					
-//				} else if (file.isDirectory()) {
-//					// --- Folder found: Build a temporary *.jar ----
-//					prefixText = "";
-//					suffixText = "proceeding started";
-//					
-//					// --- Prepare the path variables -----
-//					String pathBin = file.getAbsolutePath();
-//					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
-//					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
-//					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
-//					
-//					// --- Create the jar-file ------------
-//					JarFileCreator jarCreator = new JarFileCreator(pathBin);
-//					File jarArchiveFile = new File(jarArchivePath);
-//					jarCreator.createJarArchive(jarArchiveFile);
-//					jarArchiveFile.deleteOnExit();
-//					
-//					// --- Add to the class loader --------
-//					URL url = new URL("file:/" + jarArchiveFile.getAbsolutePath());
-//					this.getProjectClassLoader().addURL(url);
-//					
-//					ClassLoaderUtil.addFile(jarArchiveFile.getAbsoluteFile());
-//					ClassLoaderUtil.addJarToClassPath(jarArchivePath);
-//					
-//					// --- prepare the notification -------
-//					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-//					String dateText = dateFormat.format(new Date());
-//					
-//					prefixText = "OK";
-//					suffixText = Language.translate("Verzeichnis gepackt zu") + " '" + File.separator + "~tmp" + File.separator + jarArchiveFileName + "' " + Language.translate("um") + " " + dateText;
-//					
-//				} else {
-//					// --- Load the given jar-file ------------------
-//					URL url = new URL("file:/" + jarFile4Display);
-//					this.getProjectClassLoader().addURL(url);
-//					
-//					ClassLoaderUtil.addFile(file.getAbsoluteFile());
-//					ClassLoaderUtil.addJarToClassPath(jarFileCorrected);
-//					
-//					prefixText = "OK";
-//					suffixText = null;
-//					
-//				}
-//				
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//				prefixText = "ERROR";
-//				suffixText = e.getMessage();
-//			}
-//			
-//			// --- On Error print it to console -----------
-//			if (prefixText.equals("ERROR")==true) {
-//				System.err.println("=> " + suffixText + " - " + jarFile4Display);
-//			}
-//			// --- Set the additional text ----------------
-//			this.getProjectResources().setPrefixText(jarFile4Display, prefixText);
-//			this.getProjectResources().setSuffixText(jarFile4Display, suffixText);
-//			
-//		}
-
-		this.setChangedAndNotify(CHANGED_ProjectResources);
-	}
-	/**
-	 * This Method reloads the project resources in the ClassPath
-	 */
-	public void resourcesReLoad() {
-		this.resourcesRemove();
-		this.resourcesLoad();
-	}
-	
-	/**
-	 * This method removes all external project resources (jars) from the ClassPath  
-	 */
-	public void resourcesRemove() {
-		
-		this.getProjectBundleLoader().stopAndUninstallBundles();
-		
-//		for(String jarFile : getProjectResources()) {
-//			
-//			try {
-//				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile, this.getProjectFolderFullPath());
-//				File file = new File(jarFileCorrected);
-//				if (file.isDirectory()) {
-//					// --- Prepare the path variables -----
-//					String pathBin = file.getAbsolutePath();
-//					String pathBinHash = ((Integer)pathBin.hashCode()).toString();
-//					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
-//					String jarArchivePath = this.getProjectTempFolderFullPath() + jarArchiveFileName;
-//					
-//					ClassLoaderUtil.removeFile(jarArchivePath);
-//
-//					File jarArchiveFile = new File(jarArchivePath);
-//					jarArchiveFile.delete();
-//					
-//				} else {
-//					ClassLoaderUtil.removeFile(jarFileCorrected);
-//					
-//				}
-//				
-//			} catch (RuntimeException e1) {
-//				e1.printStackTrace();
-//			} catch (NoSuchFieldException e1) {
-//				e1.printStackTrace();
-//			} catch (IllegalAccessException e1) {
-//				e1.printStackTrace();
-//			}
-//		}
-		this.setChangedAndNotify(CHANGED_ProjectResources);
-	}
-
 	/**
 	 * Sets the jade configuration.
 	 * @param jadeConfiguration the new jade configuration
