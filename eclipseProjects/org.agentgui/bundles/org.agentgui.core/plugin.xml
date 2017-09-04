@@ -13,26 +13,22 @@
       </application>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="RCP Perspective"
-            class="org.agentgui.Perspective"
-            id="org.agentgui.perspective">
-      </perspective>
-   </extension>
-   <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
             application="org.agentgui.core.application"
-            name="org.agentgui">
+            name="Agent Workbench">
+         <property
+         		name="applicationXMI"
+         		value="org.agentgui.core/Application.e4xmi">
+         </property>
          <property
                name="windowImages"
                value="icons/eclipse16.png,icons/eclipse32.png,icons/eclipse48.png,icons/eclipse64.png, icons/eclipse128.png,icons/eclipse256.png">
          </property>
          <property
                name="appName"
-               value="org.agentgui">
+               value="Agent Workbench">
          </property>
          <property
                name="startupProgressRect"
@@ -43,14 +39,6 @@
                value="plugin_customization.ini">
          </property>
       </product>
-   </extension>
-   <extension
-         id="org.agentgui.Preferences"
-         name="Preferences"
-         point="org.eclipse.equinox.preferences.preferences">
-      <initializer
-            class="org.agentgui.PreferenceInitializer">
-      </initializer>
    </extension>
    <extension
          id="product"
@@ -75,6 +63,19 @@
                value="plugin_customization.ini">
          </property>
       </product>
+   </extension>
+   <extension
+         point="com.opcoach.e4.preferences.e4PreferencePages">
+      <page
+            class="org.agentgui.preferences.pages.DummyPage"
+            id="org.agentgui.core.page.dummypage"
+            name="DummyPage">
+      </page>
+      <page
+            class="org.agentgui.preferences.pages.PreferencePageProgramStart"
+            id="org.agentgui.core.page.programstart"
+            name="Program Start">
+      </page>
    </extension>
 
 </plugin>

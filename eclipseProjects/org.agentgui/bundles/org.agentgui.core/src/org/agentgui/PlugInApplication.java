@@ -31,8 +31,8 @@ package org.agentgui;
 import org.agentgui.bundle.evaluation.FilterForAgent;
 import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
-import org.agentgui.bundle.evaluation.FilterForTimeModel;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -56,7 +56,7 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	/** Set this variable to switch the visualization */
-	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentGuiSwing;
+	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.EclipseFramework;
 	
 	
 	/* (non-Javadoc)
@@ -91,13 +91,17 @@ public class PlugInApplication implements IApplication {
 			// ------------------------------------------------------
 			Display display = PlatformUI.createDisplay();
 			try {
-				// --- Returns if visualization was closed ---------- 
-				int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
-				if (returnCode == PlatformUI.RETURN_RESTART) {
-					startReturnValue = IApplication.EXIT_RESTART;
-				} else {
-					startReturnValue = IApplication.EXIT_OK;
-				}
+				
+//				// --- Returns if visualization was closed ---------- 
+//				int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+//				if (returnCode == PlatformUI.RETURN_RESTART) {
+//					startReturnValue = IApplication.EXIT_RESTART;
+//				} else {
+//					startReturnValue = IApplication.EXIT_OK;
+//				}
+				
+				E4Application e4application = new E4Application();
+				Object result = e4application.start(context);
 			} finally {
 				display.dispose();
 			}
@@ -134,7 +138,6 @@ public class PlugInApplication implements IApplication {
 		be.addBundleClassFilter(new FilterForAgent(), false);
 		be.addBundleClassFilter(new FilterForBaseService(), false);
 		be.addBundleClassFilter(new FilterForOntology(), false);
-		be.addBundleClassFilter(new FilterForTimeModel(), false);
 		be.evaluateAllBundles();
 	}
 	
