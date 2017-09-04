@@ -24,11 +24,9 @@
 	</build>
 
 	<profiles>
-		<!-- This profile is used to upload the repo, use it via 'mvn install -P 
-			p2Deploy' -->
+		<!-- This profile is used to upload the repo, use it via 'mvn install -P p2Deploy' -->
 		<profile>
 			<id>p2Deploy</id>
-
 			<build>
 				<plugins>
 					<!-- Upload the repo to the server -->
@@ -49,15 +47,26 @@
 									<toDir>/subDomains/p2.enflex.it/</toDir>
 									<url>scpexe://enflex.it</url>
 									<serverId>update-site-enflexit</serverId>
-									<!-- Points to your ~/.m2/settings.xml where the connection settings 
-										are stored as shown below -->
-									<!-- <server> -->
-									<!-- <id>update-site-enflexit</id> -->
-									<!-- <username>admin.enflex.it</username> -->
-									<!-- <privateKey>${user.home}/.ssh/id_YOURKEY</privateKey> -->
-									<!-- </server> -->
-									<!-- also see https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html, 
-										https://maven.apache.org/settings.html#Servers, https://stackoverflow.com/questions/2733447/can-maven-wagon-plugin-use-a-private-key-for-scp -->
+									<!-- 
+										Points to your "~/.m2/settings.xml", where the connection settings are stored as shown below
+										<servers>
+											<server>
+												<id>update-site-enflexit</id>
+												<username>admin.enflex.it</username>
+												<privateKey>${user.home}/.ssh/id_YOURKEY</privateKey>
+												<configuration>
+													<sshExecutable>plink</sshExecutable>
+													<scpExecutable>pscp</scpExecutable>
+													<sshArgs></sshArgs>
+												</configuration>
+											</server>
+										</servers>
+										
+										Also see: 
+										- https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html, 
+										- https://maven.apache.org/settings.html#Servers, 
+										- https://stackoverflow.com/questions/2733447/can-maven-wagon-plugin-use-a-private-key-for-scp 
+									-->
 								</configuration>
 							</execution>
 						</executions>
