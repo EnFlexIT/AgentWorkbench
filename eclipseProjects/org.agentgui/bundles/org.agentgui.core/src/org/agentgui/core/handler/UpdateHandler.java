@@ -22,13 +22,19 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.e4.ui.di.UISynchronize;
 
 public class UpdateHandler {
-
+	
 	private static final String REPOSITORY_LOCATION = "file:///D:/git/AgentWorkbench/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repository";
+//	private static final String REPOSITORY_LOCATION = "file:///D:/bla/blupp";
 	
 	@Execute
 	public void execute(final IProvisioningAgent agent, final Shell shell, final UISynchronize sync, @Optional final IWorkbench workbench) {
 		
 		System.out.println((this.getClass().getSimpleName() + " called"));
+		
+		if(workbench == null) {
+			System.err.println("Workbench injection failed!");
+			return;
+		}
 
 		Job updateJob = new Job("Update Job") {
 			

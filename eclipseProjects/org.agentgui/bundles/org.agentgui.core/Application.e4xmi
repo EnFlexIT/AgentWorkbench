@@ -31,6 +31,7 @@
       <children xsi:type="menu:Menu" xmi:id="_g47OEH5_EeeSPpFWfRBHVA" elementId="org.agentgui.core.menu.window" label="Window"/>
       <children xsi:type="menu:Menu" xmi:id="_iy944H5_EeeSPpFWfRBHVA" elementId="org.agentgui.core.menu.help" label="Help">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_zxOGwH6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.handledmenuitem.about" label="About" command="_Dhn8oIGPEeeI1dq59ubV8g"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_zIMY4JIdEeeP1e_9ka96kQ" elementId="org.agentgui.core.handledmenuitem.help" label="Help" command="_1Oog8JIdEeeP1e_9ka96kQ"/>
       </children>
     </mainMenu>
   </children>
@@ -45,6 +46,7 @@
   <handlers xmi:id="_oXClMIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.about" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.AboutHandler" command="_Dhn8oIGPEeeI1dq59ubV8g"/>
   <handlers xmi:id="_4JXLsH6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.handler.preferences" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.PreferencesHandler" command="_1ZE1YH6gEeeSPpFWfRBHVA"/>
   <handlers xmi:id="_fwfLIJFeEeeV6rJKleJxgw" elementId="org.agentgui.core.handler.update" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.UpdateHandler" command="_a7pjIJFeEeeV6rJKleJxgw"/>
+  <handlers xmi:id="_48-a8JIdEeeP1e_9ka96kQ" elementId="org.agentgui.core.handler.help" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.HelpHandler" command="_1Oog8JIdEeeP1e_9ka96kQ"/>
   <commands xmi:id="_qFjK4IGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.newproject" commandName="New Project" description="Creates a new project"/>
   <commands xmi:id="_vYjVkIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.closeproject" commandName="Close Project" description="Closes the current project"/>
   <commands xmi:id="_z5QgoIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.openproject" commandName="Open Project" description="Opens a saved project"/>
@@ -56,6 +58,7 @@
   <commands xmi:id="_1ZE1YH6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.command.preferences" commandName="Preferences" description="Opens the preferences dialog"/>
   <commands xmi:id="_a7pjIJFeEeeV6rJKleJxgw" elementId="org.agentgui.core.command.update" commandName="Update"/>
   <commands xmi:id="_Dhn8oIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.command.about" commandName="About" description="Shows the about dialog"/>
+  <commands xmi:id="_1Oog8JIdEeeP1e_9ka96kQ" elementId="org.agentgui.core.command.help" commandName="Help"/>
   <addons xmi:id="_Z6jYoX59EeeSPpFWfRBHVA" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_Z6jYon59EeeSPpFWfRBHVA" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_Z6jYo359EeeSPpFWfRBHVA" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
