@@ -15,4 +15,8 @@
 		<module>bundles</module>
 		<module>features</module>
 	</modules>
+
+  <scm>
+    <tag>Agent.GUI-2.0.0</tag>
+  </scm>
 </project>

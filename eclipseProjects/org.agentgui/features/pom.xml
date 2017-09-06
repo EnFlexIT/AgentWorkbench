@@ -17,4 +17,51 @@
 		<module>org.agentgui.feature</module>
 		<module>org.agentgui.samples.feature</module>
 	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<excludes>
+						<plugin id="de.enflexit.oidc.libs" />
+						<plugin id="org.agentgui.lib.bouncyCastle" />
+						<plugin id="org.agentgui.lib.googleTranslate" />
+						<plugin id="org.agentgui.lib.hypericSigar" />
+						<plugin id="org.agentgui.lib.jFreeChart" />
+						<plugin id="org.agentgui.lib.jade" />
+						<plugin id="org.agentgui.lib.jep" />
+						<plugin id="org.agentgui.lib.jung" />
+						<plugin id="org.agentgui.lib.mySQL" />
+						<plugin id="org.agentgui.lib.scimark" />
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attach-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
