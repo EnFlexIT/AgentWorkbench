@@ -89,8 +89,8 @@ public class PlugInApplication implements IApplication {
 			// ------------------------------------------------------
 			// --- Visualization by Eclipse -------------------------
 			// ------------------------------------------------------
-			Display display = PlatformUI.createDisplay();
-			try {
+		//	Display display = PlatformUI.createDisplay();
+			//try {
 /*				
 				// --- Returns if visualization was closed ---------- 
 				int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
@@ -102,9 +102,9 @@ public class PlugInApplication implements IApplication {
 */				
 				E4Application e4application = new E4Application();
 				Object result = e4application.start(context);
-			} finally {
-				display.dispose();
-			}
+		//	} finally {
+				//display.dispose();
+			//}
 			break;
 		}
 		return startReturnValue;
