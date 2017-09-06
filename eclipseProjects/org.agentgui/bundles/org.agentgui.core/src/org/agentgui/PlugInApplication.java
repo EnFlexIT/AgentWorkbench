@@ -91,7 +91,7 @@ public class PlugInApplication implements IApplication {
 			// ------------------------------------------------------
 			Display display = PlatformUI.createDisplay();
 			try {
-				
+/*				
 				// --- Returns if visualization was closed ---------- 
 				int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 				if (returnCode == PlatformUI.RETURN_RESTART) {
@@ -99,9 +99,9 @@ public class PlugInApplication implements IApplication {
 				} else {
 					startReturnValue = IApplication.EXIT_OK;
 				}
-				
-//				E4Application e4application = new E4Application();
-//				Object result = e4application.start(context);
+*/				
+				E4Application e4application = new E4Application();
+				Object result = e4application.start(context);
 			} finally {
 				display.dispose();
 			}

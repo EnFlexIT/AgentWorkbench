@@ -41,30 +41,6 @@
       </product>
    </extension>
    <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="org.agentgui.core.application"
-            name="Agent.GUI">
-         <property
-               name="windowImages"
-               value="icons/eclipse16.png,icons/eclipse32.png,icons/eclipse48.png,icons/eclipse64.png, icons/eclipse128.png,icons/eclipse256.png">
-         </property>
-         <property
-               name="startupProgressRect"
-               value="5,275,445,15">
-         </property>
-         <property
-               name="appName"
-               value="Agent.GUI">
-         </property>
-         <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
-         </property>
-      </product>
-   </extension>
-   <extension
          point="com.opcoach.e4.preferences.e4PreferencePages">
       <page
             class="org.agentgui.preferences.pages.DummyPage"

@@ -18,12 +18,15 @@ import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.di.UISynchronize;
 
 public class UpdateHandler {
 	
-	private static final String REPOSITORY_LOCATION = "file:///D:/git/AgentWorkbench/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repository";
+	private static final String REPOSITORY_LOCATION = "http://p2.enflex.it/";
+//	private static final String REPOSITORY_LOCATION = "file:///mnt/quickdata/git/AgentWorkbench-OSGI/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repository";
+//	private static final String REPOSITORY_LOCATION = "file:///mnt/quickdata/git/AgentWorkbench-OSGI/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repositorydassesnichtgibt";
+//	private static final String REPOSITORY_LOCATION = "file:///D:/git/AgentWorkbench/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repository";
 //	private static final String REPOSITORY_LOCATION = "file:///D:/bla/blupp";
 	
 	@Execute
