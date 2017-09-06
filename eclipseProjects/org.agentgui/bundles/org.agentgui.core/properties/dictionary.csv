@@ -113,7 +113,7 @@ de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprech
 de;Bitte wählen Sie einen Agenten;Please select an agent;;;
 de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
-de;Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien);;;;
+de;Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien);Include build directory from a Java project (directory with * .class files);;;
 de;CPU-Auslastung;CPU-Load
 de;CPU;CPU
 de;CSV-Datei importieren;Import CSV file;;;
@@ -132,6 +132,7 @@ de;Das Seitenverhältnis des exportierten Bildes;The aspect ratio of the image t
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
+de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;;;;
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
