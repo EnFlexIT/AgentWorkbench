@@ -15,6 +15,6 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     
     @Override
 	public String getInitialWindowPerspectiveId() {
-		return null;
+		return PERSPECTIVE_ID;
 	}
 }

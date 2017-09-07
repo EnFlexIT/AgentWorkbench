@@ -115,7 +115,5 @@ public class PreferencePageProgramStart extends FieldEditorPreferencePage {
 		}
 		return mtpPortFieldEditor;
 	}
-	
-	
 
 }

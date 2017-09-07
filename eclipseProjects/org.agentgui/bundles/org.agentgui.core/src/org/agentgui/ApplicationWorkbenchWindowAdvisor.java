@@ -14,14 +14,18 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
     
     @Override
     public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
-        return new ActionBarAdvisor(configurer);
+        return new ApplicationActionBarAdvisor(configurer);
     }
     
     @Override
     public void preWindowOpen() {
-//        IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-//        configurer.setInitialSize(new Point(400, 300));
-//        configurer.setShowCoolBar(false);
-//        configurer.setShowStatusLine(false);
+    	IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+        configurer.setInitialSize(new Point(600, 400));
+        configurer.setShowCoolBar(true);
+
+        // XXX We set the status line and progress indicator so that update
+        // information can be shown there
+        configurer.setShowStatusLine(true);
+        configurer.setShowProgressIndicator(true);
     }
 }

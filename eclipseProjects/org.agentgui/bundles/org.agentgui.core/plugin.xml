@@ -53,5 +53,8 @@
             name="Program Start">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+   </extension>
 
 </plugin>

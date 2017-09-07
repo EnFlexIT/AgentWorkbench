@@ -6,7 +6,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 
-public class DummyPage extends FieldEditorPreferencePage {
+public class DummyPage extends FieldEditorPreferencePage{
 
 	public DummyPage() {
 		super(GRID);
