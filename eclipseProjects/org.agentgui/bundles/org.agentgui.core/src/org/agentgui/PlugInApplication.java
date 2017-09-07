@@ -77,7 +77,9 @@ public class PlugInApplication implements IApplication {
 			// ------------------------------------------------------
 			context.applicationRunning();
 			Application.main(Platform.getApplicationArgs());
-			Application.getMainWindow().toFront();
+			if(Application.getMainWindow()!=null) {
+				Application.getMainWindow().toFront();
+			}
 			Application.setDoSystemExitOnQuit(false);
 			// --- Wait for the end of the Swing application --------
 			while (Application.isQuitJVM()==false) {
