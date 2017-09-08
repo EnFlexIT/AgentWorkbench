@@ -296,5 +296,14 @@ public class AgentClassElement4SimStart {
 		this.startArguments = startArgumentsEncoded;
 	}
 	
+	/**
+	 * This method returns the agent's start arguments in Base64 encoded form.
+	 * @return The Base64 encoded start arguments
+	 */
+	@XmlTransient
+	public String[] getStartArgumentsBase64(){
+		return this.startArguments;
+	}
+	
 	
 }
