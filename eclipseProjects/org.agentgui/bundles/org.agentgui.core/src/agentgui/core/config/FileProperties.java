@@ -64,10 +64,9 @@ public class FileProperties extends Properties {
 
 	private static final long serialVersionUID = 7953205356494195952L;
 	
-	private GlobalInfo globalInfo = null;
-	private VersionInfo versionInfo = null;
+	private GlobalInfo globalInfo;
 	
-	private String configFile = null;
+	private String configFile;
 	private String configFileDefaultComment = "";
 
 	private final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
@@ -159,7 +158,6 @@ public class FileProperties extends Properties {
 	 */
 	public FileProperties(GlobalInfo globalInfo) {
 		this.globalInfo = globalInfo;
-		this.versionInfo = this.globalInfo.getVersionInfo();
 		this.configFile = this.globalInfo.getPathConfigFile(true);
 		this.initialize();
 //		println4SysProps();
@@ -931,7 +929,7 @@ public class FileProperties extends Properties {
 	private void setDefaultComment() {
 
 		String defaultComment = "";		
-		defaultComment = defaultComment + " Configuration of " + globalInfo.getApplicationTitle() + " (Version: " + versionInfo.getFullVersionInfo(false, " ") + ")\n"; 
+		defaultComment = defaultComment + " Configuration of " + globalInfo.getApplicationTitle() + " (Version: " + this.globalInfo.getVersionInfo().getFullVersionInfo(false, " ") + ")\n"; 
 		defaultComment = defaultComment + " by Christian Derksen - DAWIS - ICB - University Duisburg-Essen\n";
 		defaultComment = defaultComment + " Email: christian.derksen@icb.uni-due.de\n";
 		configFileDefaultComment = defaultComment;

@@ -117,7 +117,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileEndProjectZip = "agui";
 	
 	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
-	private EnvironmentTypes knownEnvironmentTypes =  new EnvironmentTypes();
+	private EnvironmentTypes knownEnvironmentTypes = new EnvironmentTypes();
 	
 	// --- PropertyContentProvider ------------------------------------------
 	private PropertyContentProvider propertyContentProvider;
@@ -126,6 +126,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private ExecutionMode fileExecutionMode;
 	private String processID;
 	
+	private String fileRunnableJar;
 	private String filePropProjectsDirectory;
 	
 	private float filePropBenchValue = 0;
@@ -181,6 +182,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private File lastSelectedFolder; 
 	
 	// --- FileProperties and VersionInfo -----------------------------------
+	private BundleProperties bundleProperties;
 	/** Holds the instance of the file properties which are defined in '/properties/agentgui.ini' */
 	private FileProperties fileProperties;
 	/** Can be used in order to access the version information */
@@ -263,6 +265,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 				
 			} else {
 				// --- IDE environment ----------------------------------------
+				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverIDE);
 				GlobalInfo.localBaseDir = thisFile + File.separator;
 				if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
 					GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
@@ -310,8 +313,10 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public void initialize() {
 		try {
+			this.getBundleProperties();
 			this.getFileProperties();
 			this.getVersionInfo();
+			this.getFileRunnableJar(false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -749,7 +754,18 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the path to the executable jar file
 	 */
 	public String getFileRunnableJar(boolean absolute){
-		
+		if (fileRunnableJar==null) {
+			String[] classPathFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+			for (int i=0; i<classPathFiles.length; i++) {
+				String classPathEntry = classPathFiles[i];
+				if (classPathEntry.contains("org.eclipse.equinox.launcher")) {
+					System.out.println("=> Found runnable jar: " + classPathEntry);
+					fileRunnableJar = classPathEntry;
+					break;
+				}
+			}
+		}
+		// --- 		
 		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			// TODO
 			System.err.println("TODO: Runnable jar for IDE is not defined yet.");
@@ -757,7 +773,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			// TODO
 			System.err.println("TODO: Runnable jar for OSGI is not defined yet.");
 		} 
-		return null;
+		return fileRunnableJar;
 	}
 	/**
 	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 
@@ -943,15 +959,26 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		}
 		return this.versionInfo;
 	}
+	
+	/**
+	 * Returns the bundle properties.
+	 * @return the bundle properties
+	 */
+	public BundleProperties getBundleProperties() {
+		if (bundleProperties==null) {
+			bundleProperties = new BundleProperties(this);
+		}
+		return bundleProperties;
+	}
 	/**
 	 * Gets the file properties.
 	 * @return the file properties
 	 */
 	public FileProperties getFileProperties() {
-		if (this.fileProperties==null) {
-			this.fileProperties = new FileProperties(this);
+		if (fileProperties==null) {
+			fileProperties = new FileProperties(this);
 		}
-		return this.fileProperties;
+		return fileProperties;
 	}
 
 	// ---- SciMark 2.0 Benchmark ----------------------------
