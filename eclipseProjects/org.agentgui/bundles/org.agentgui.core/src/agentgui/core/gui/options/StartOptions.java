@@ -676,7 +676,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			// ----------------------------------------------------------------
 		}
 		this.setFormData2Global();
-		Application.getGlobalInfo().getFileProperties().save();
+		Application.getGlobalInfo().doSavePersistedConfiguration();
 		// --------------------------------------------------------------------
 		this.applySettings();
 		// --------------------------------------------------------------------

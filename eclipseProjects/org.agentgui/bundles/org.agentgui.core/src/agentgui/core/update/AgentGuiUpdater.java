@@ -154,7 +154,7 @@ public class AgentGuiUpdater extends Thread {
 				doUpdateProcedure=false;
 			} else {
 				Application.getGlobalInfo().setUpdateDateLastChecked(timeNow);
-				Application.getGlobalInfo().getFileProperties().save();
+				Application.getGlobalInfo().doSavePersistedConfiguration();
 			}
 		}
 		
@@ -515,7 +515,7 @@ public class AgentGuiUpdater extends Thread {
 			return false;	
 		}
 		// --- Save FileProperties --------------
-		this.globalInfo.getFileProperties().save();
+		this.globalInfo.doSavePersistedConfiguration();
 		Language.saveDictionaryFile();
 		return true;
 	}
