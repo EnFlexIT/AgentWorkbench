@@ -777,7 +777,7 @@ public class Application {
 		setMainWindow(null);
 		
 		// --- Save file properties -------------
-		getGlobalInfo().getFileProperties().save();
+		getGlobalInfo().doSavePersistedConfiguration();
 		
 		// --- Save dictionary ------------------
 		Language.saveDictionaryFile();

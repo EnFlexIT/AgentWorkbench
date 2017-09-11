@@ -41,10 +41,9 @@ import agentgui.simulationService.ontology.AgentGuiVersion;
 /**
  * This class manages the version info of Agent.GUI, based on the file located in 
  * the package 'agentgui/version.properties'.
- * The information are accessible during runtime by using Application.Version
  * 
  * @see Application#getGlobalInfo()
- * @see GlobalInfo#getFileProperties()
+ * @see GlobalInfo#getVersionInfo()
  *  
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

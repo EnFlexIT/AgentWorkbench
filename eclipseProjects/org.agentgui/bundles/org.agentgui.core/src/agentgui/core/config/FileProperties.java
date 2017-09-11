@@ -64,10 +64,9 @@ public class FileProperties extends Properties {
 
 	private static final long serialVersionUID = 7953205356494195952L;
 	
-	private GlobalInfo globalInfo = null;
-	private VersionInfo versionInfo = null;
+	private GlobalInfo globalInfo;
 	
-	private String configFile = null;
+	private String configFile;
 	private String configFileDefaultComment = "";
 
 	private final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
@@ -155,43 +154,66 @@ public class FileProperties extends Properties {
 										};
 	
 	/**
-	 * Default constructor of this class. Will use the default config-file 'agentgui.xml'
+	 * Instantiates the file properties and transfers the file properties directly to the {@link GlobalInfo}.
+	 * @param globalInfo the instance of the {@link GlobalInfo}
 	 */
 	public FileProperties(GlobalInfo globalInfo) {
-		this.globalInfo = globalInfo;
-		this.versionInfo = this.globalInfo.getVersionInfo();
-		this.configFile = this.globalInfo.getPathConfigFile(true);
-		this.initialize();
-//		println4SysProps();
-//		println4EnvProps();
+		this(globalInfo, true);
 	}
 	/**
-	 * Initialises the instance of this class
+	 * Instantiates the file properties.
+	 *
+	 * @param globalInfo the instance of the {@link GlobalInfo}
+	 * @param isSetPropertiesToGlobal set <code>true</code> in order to directly set the preferences to the {@link GlobalInfo}
+	 */
+	public FileProperties(GlobalInfo globalInfo, boolean isSetPropertiesToGlobal) {
+		this.globalInfo = globalInfo;
+		this.configFile = this.globalInfo.getPathConfigFile(true);
+		if (isSetPropertiesToGlobal==true) {
+			this.initialize();
+		}
+	}
+
+	/**
+	 * Initializes the instance of this class
 	 */
 	private void initialize() {
 
-		// --- Set the Default-Comment for config file --------------
+		//println4SysProps();
+		//println4EnvProps();
+		
+		// --- Set the Default-Comment for the file -------------
 		this.setDefaultComment();
 		
-		// --- open or create the config file -----------------------
-		FileInputStream fis = null;
+		// --- Does the configFile exists ? ---------------------
+		if (new File(configFile).exists()==true) {
+			// --- configFile found -----------------------------
+			this.load();
+			this.checkDefaultConfigValues();
+		} else {
+			// --- configFile NOT found -------------------------
+			this.setDefaultConfigValues();
+			this.setConfig2Global();
+			this.save();
+		}				
+		// --- Set values of the file to global -----------------
+		this.setConfig2Global();
+	
+	}
+	
+	/**
+	 * Loads the file properties from file to this instance.
+	 */
+	public void load() {
+		
+		FileInputStream fis=null;
 		try {
-			// --- Does the configFile exists ? ---------------------
-			if (new File(configFile).exists()==true) {
-				// --- configFile found -----------------------------
-				fis = new FileInputStream(configFile);
-				this.load(fis);	
-				this.checkDefaultConfigValues();
-			} else {
-				// --- configFile NOT found -------------------------
-				this.setDefaultConfigValues();
-				this.setConfig2Global();
-				this.save();
-			}				
-		} catch (FileNotFoundException fnfe) {
-			fnfe.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			fis = new FileInputStream(configFile);
+			this.load(fis);	
+		} catch (FileNotFoundException fnfEx) {
+			fnfEx.printStackTrace();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
 		} finally {
 			try {
 				if (fis!=null) fis.close();
@@ -199,10 +221,32 @@ public class FileProperties extends Properties {
 				ioe.printStackTrace();
 			}
 		}
-
-		// --- set values of the config-file to global --------------
-		this.setConfig2Global();
+	}
 	
+	/**
+	 * This method saves the current settings to the property file
+	 */
+	public void save() {
+		// --- getting the current values of the mandatory variables -----
+		this.setGlobal2Config();
+		// --- Save the configuration-file -------------------------------
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(configFile);
+			this.store(fos, configFileDefaultComment);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fos!=null) {
+					fos.close();
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
 	}
 	
 	/**
@@ -931,37 +975,12 @@ public class FileProperties extends Properties {
 	private void setDefaultComment() {
 
 		String defaultComment = "";		
-		defaultComment = defaultComment + " Configuration of " + globalInfo.getApplicationTitle() + " (Version: " + versionInfo.getFullVersionInfo(false, " ") + ")\n"; 
+		defaultComment = defaultComment + " Configuration of " + globalInfo.getApplicationTitle() + " (Version: " + this.globalInfo.getVersionInfo().getFullVersionInfo(false, " ") + ")\n"; 
 		defaultComment = defaultComment + " by Christian Derksen - DAWIS - ICB - University Duisburg-Essen\n";
 		defaultComment = defaultComment + " Email: christian.derksen@icb.uni-due.de\n";
 		configFileDefaultComment = defaultComment;
 	}
 	
-	/**
-	 * This method saves the current settings to the property file
-	 */
-	public void save() {
-		// --- getting the current values of the mandatory variables -----
-		this.setGlobal2Config();
-		// --- Save the configuration-file -------------------------------
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(configFile);
-			this.store(fos, configFileDefaultComment);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (fos!=null) {
-					fos.close();
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-		}
-	}
 	
 	/**
 	 * This method prints out every available value of the system properties

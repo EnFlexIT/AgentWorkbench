@@ -117,7 +117,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileEndProjectZip = "agui";
 	
 	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
-	private EnvironmentTypes knownEnvironmentTypes =  new EnvironmentTypes();
+	private EnvironmentTypes knownEnvironmentTypes = new EnvironmentTypes();
 	
 	// --- PropertyContentProvider ------------------------------------------
 	private PropertyContentProvider propertyContentProvider;
@@ -126,6 +126,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private ExecutionMode fileExecutionMode;
 	private String processID;
 	
+	private String fileRunnableJar;
 	private String filePropProjectsDirectory;
 	
 	private float filePropBenchValue = 0;
@@ -181,6 +182,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private File lastSelectedFolder; 
 	
 	// --- FileProperties and VersionInfo -----------------------------------
+	private BundleProperties bundleProperties;
 	/** Holds the instance of the file properties which are defined in '/properties/agentgui.ini' */
 	private FileProperties fileProperties;
 	/** Can be used in order to access the version information */
@@ -263,6 +265,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 				
 			} else {
 				// --- IDE environment ----------------------------------------
+				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverIDE);
 				GlobalInfo.localBaseDir = thisFile + File.separator;
 				if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
 					GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
@@ -310,8 +313,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public void initialize() {
 		try {
-			this.getFileProperties();
+			this.doLoadPersistedConfiguration();
 			this.getVersionInfo();
+			this.getFileRunnableJar(false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -749,7 +753,18 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the path to the executable jar file
 	 */
 	public String getFileRunnableJar(boolean absolute){
-		
+		if (fileRunnableJar==null) {
+			String[] classPathFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+			for (int i=0; i<classPathFiles.length; i++) {
+				String classPathEntry = classPathFiles[i];
+				if (classPathEntry.contains("org.eclipse.equinox.launcher")) {
+					System.out.println("=> Found runnable jar: " + classPathEntry);
+					fileRunnableJar = classPathEntry;
+					break;
+				}
+			}
+		}
+		// --- 		
 		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			// TODO
 			System.err.println("TODO: Runnable jar for IDE is not defined yet.");
@@ -757,7 +772,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			// TODO
 			System.err.println("TODO: Runnable jar for OSGI is not defined yet.");
 		} 
-		return null;
+		return fileRunnableJar;
 	}
 	/**
 	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 
@@ -919,11 +934,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 
 	// ---------------------------------------------------------
-	// --- Farbvariablen ---------------------------------------
+	// --- Visualization stuff ---------------------------------
 	// ---------------------------------------------------------
 	/**
-	 * Due this method the colour for menu highlighting an be get
-	 * @return colour for highlighted menus
+	 * Due this method the color for menu highlighting an be get
+	 * @return color for highlighted menus
 	 */
 	public Color ColorMenuHighLight () {
 		return localColorMenuHighLight;
@@ -943,17 +958,118 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		}
 		return this.versionInfo;
 	}
+	
 	/**
-	 * Gets the file properties.
+	 * Returns the bundle properties that are in fact eclipse preferences.
+	 * @return the bundle properties
+	 */
+	public BundleProperties getBundleProperties() {
+		return this.getBundleProperties(true);
+	}
+	/**
+	 * Returns the bundle properties that are in fact eclipse preferences.
+	 * @param isSetPreferencesToGlobal set <code>true</code> in order to directly set the preferences to the {@link GlobalInfo}
+	 * @return the bundle properties
+	 */
+	public BundleProperties getBundleProperties(boolean isSetPreferencesToGlobal) {
+		if (bundleProperties==null) {
+			bundleProperties = new BundleProperties(this, isSetPreferencesToGlobal);
+		}
+		return bundleProperties;
+	}
+	/**
+	 * Returns the old manage class for the file properties.
 	 * @return the file properties
 	 */
-	public FileProperties getFileProperties() {
-		if (this.fileProperties==null) {
-			this.fileProperties = new FileProperties(this);
-		}
-		return this.fileProperties;
+	private FileProperties getFileProperties() {
+		return this.getFileProperties(true);
 	}
-
+	/**
+	 * Returns the old manage class for the file properties.
+	 * @param isSetPropertiesToGlobal set <code>true</code> in order to directly set the preferences to the {@link GlobalInfo}
+	 * @return the file properties
+	 */
+	private FileProperties getFileProperties(boolean isSetPropertiesToGlobal) {
+		if (fileProperties==null) {
+			fileProperties = new FileProperties(this, isSetPropertiesToGlobal);
+		}
+		return fileProperties;
+	}
+	 
+	/**
+	 * Do load persisted configuration.
+	 */
+	private void doLoadPersistedConfiguration() {
+		
+		File fileProps = new File(this.getPathConfigFile(true));
+		if (fileProps.exists()==true) {
+			// --- In case that the old file properties exists, load them, ... ----------
+			this.getFileProperties();
+			// --- initialize the bundle properties and ... -----------------------------
+			this.getBundleProperties(false);
+			// --- load the global information into the bundle properties ---------------
+			this.getBundleProperties().save();
+			// --- Finally, delete the old file properties ------------------------------
+			fileProps.delete();
+			this.fileProperties = null;
+			
+		} else {
+			this.getBundleProperties();
+		}
+	}
+	/**
+	 * Persist (saves) the current configuration by saving the preferences.
+	 */
+	public void doSavePersistedConfiguration() {
+		this.getBundleProperties().save();
+	}
+	
+	
+	public void putStringToPersistedConfiguration(String key, String value) {
+		this.getBundleProperties().getEclipsePreferences().put(key, value);
+	}
+	public void putBooleanToPersistedConfiguration(String key, boolean value) {
+		this.getBundleProperties().getEclipsePreferences().putBoolean(key, value);
+	}
+	public void putIntToPersistedConfiguration(String key, int value) {
+		this.getBundleProperties().getEclipsePreferences().putInt(key, value);
+	}
+	public void putLongToPersistedConfiguration(String key, long value) {
+		this.getBundleProperties().getEclipsePreferences().putLong(key, value);
+	}
+	public void putFloatToPersistedConfiguration(String key, float value) {
+		this.getBundleProperties().getEclipsePreferences().putFloat(key, value);
+	}
+	public void putDoubleToPersistedConfiguration(String key, double value) {
+		this.getBundleProperties().getEclipsePreferences().putDouble(key, value);
+	}
+	public void putByteArryToPersistedConfiguration(String key, byte[] value) {
+		this.getBundleProperties().getEclipsePreferences().putByteArray(key, value);
+	}
+	
+	public String getStringFromPersistedConfiguration(String key, String defaultValue) {
+		return this.getBundleProperties().getEclipsePreferences().get(key, defaultValue);
+	}
+	public boolean getBooleanFromPersistedConfiguration(String key, boolean defaultValue) {
+		return this.getBundleProperties().getEclipsePreferences().getBoolean(key, defaultValue);
+	}
+	public int getIntFromPersistedConfiguration(String key, int defaultValue) {
+		return this.getBundleProperties().getEclipsePreferences().getInt(key, defaultValue);
+	}
+	public long getLongFromPersistedConfiguration(String key, long defaultValue) {
+		return this.getBundleProperties().getEclipsePreferences().getLong(key, defaultValue);
+	}
+	public float getFloatFromPersistedConfiguration(String key, float defaultValue) {
+		return this.getBundleProperties().getEclipsePreferences().getFloat(key, defaultValue);
+	}
+	public double getDoubleFromPersistedConfiguration(String key, double defaultValue) {
+		return this.getBundleProperties().getEclipsePreferences().getDouble(key, defaultValue);
+	}
+	public byte[] getByteArryFromPersistedConfiguration(String key, byte[] defaultValue) {
+		return this.getBundleProperties().getEclipsePreferences().getByteArray(key, defaultValue);
+	}
+	
+	
 	// ---- SciMark 2.0 Benchmark ----------------------------
 	/**
 	 * Returns the benchmark value of the current execution of Agent.GUI that 
