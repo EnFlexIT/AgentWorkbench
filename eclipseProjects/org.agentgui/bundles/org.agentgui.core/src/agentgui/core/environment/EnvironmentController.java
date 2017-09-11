@@ -28,8 +28,6 @@
  */
 package agentgui.core.environment;
 
-import jade.lang.acl.ACLMessage;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.Observable;
@@ -48,6 +46,7 @@ import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
+import jade.lang.acl.ACLMessage;
 
 /**
  * This class has to be extended if you are writing your own environment model and visualisation.
@@ -59,21 +58,21 @@ import agentgui.simulationService.time.TimeModel;
 public abstract class EnvironmentController extends Observable implements Observer {
 
 	/** The current project */
-	private Project currProject = null;
+	private Project currProject;
 
 	/** The {@link AbstractDisplayAgent} that is currently using this EnvironmentController. */
-	private AbstractDisplayAgent myDisplayAgent = null;
+	private AbstractDisplayAgent myDisplayAgent;
 
 	/** The current environment panel. */
-	private EnvironmentPanel myEnvironmentPanel = null;
+	private EnvironmentPanel myEnvironmentPanel;
 	/** The current TimeModel. */
-	private TimeModel myTimeModel = null;
+	private TimeModel myTimeModel;
 	
 	/**
 	 * The path to the folder where all environment related files are stored.
 	 * (Contains the slash at the end).
 	 */
-	private String envFolderPath = null;
+	private String envFolderPath;
 	/** The list model for the agents, which has to be started with the current environment model */
 	private DefaultListModel<AgentClassElement4SimStart> agents2Start = new DefaultListModel<AgentClassElement4SimStart>();
 
@@ -322,9 +321,9 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	public TimeModel getTimeModel() {
 		if (this.getProject()!=null) {
-			this.myTimeModel = this.getProject().getTimeModelController().getTimeModel();	
+			myTimeModel = this.getProject().getTimeModelController().getTimeModel();
 		}
-		return this.myTimeModel;
+		return myTimeModel;
 	}
 	/**
 	 * Returns the TimeModel copy.

@@ -41,7 +41,7 @@ import java.lang.reflect.InvocationTargetException;
  * 
  * @see GlobalInfo#registerOntologyClassVisualisation(String)
  * @see GlobalInfo#getKnownOntologyClassVisualisations()
- * @see GlobalInfo#isOntologyClassVisualisation(Class)
+ * @see GlobalInfo#isRegisteredOntologyClassVisualisation(Class)
  * @see GlobalInfo#getOntologyClassVisualisation(Class)
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen

@@ -115,8 +115,6 @@ public class BundleBuilder {
 		}
 		this.setBundleDirectory(directoryToBundle);
 		this.setSymbolicBundleName(symbolicBundleName);
-		// --- Evaluate the files to be bundled -----------
-		this.evaluateDirectory();
 	}
 
 	/**

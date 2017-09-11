@@ -31,6 +31,8 @@ package agentgui.simulationService.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
+
 
 /**
  * The Class TimeModelDateBased.
@@ -86,18 +88,18 @@ public abstract class TimeModelDateBased extends TimeModel {
 	 */
 	public void setTimeFormat(String timeFormat) {
 		this.timeFormat = timeFormat;
+		// --- Forward new format to the ontology visualization -----
+		OntologyVisualisationConfiguration.setTimeFormat(timeFormat);
 	}
 	/**
 	 * Gets the time format.
 	 * @return the time format
 	 */
 	public String getTimeFormat() {
-		if (this.timeFormat==null) {
+		if (this.timeFormat==null || this.timeFormat.equals("")==true) {
 			this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
-		} else {
-			if (this.timeFormat.equals("")) {
-				this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
-			}
+			// --- Forward new format to the ontology visualization -----
+			OntologyVisualisationConfiguration.setTimeFormat(timeFormat);
 		}
 		return this.timeFormat;
 	}

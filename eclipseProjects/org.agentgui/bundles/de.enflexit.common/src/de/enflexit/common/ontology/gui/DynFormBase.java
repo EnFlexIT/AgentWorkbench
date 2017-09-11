@@ -266,16 +266,6 @@ public abstract class DynFormBase {
 	}
 	
 	/**
-	 * Returns the default time/date  format.
-	 * @return the default time format
-	 */
-	public String getDefaultTimeFormat() {
-		String defaultTimeModelFormat = "dd.MM.yyyy HH:mm:ss.SSS";
-		System.err.println(this.getClass().getSimpleName() + ": TODO: getter and setter for default time format!");
-		return defaultTimeModelFormat;
-	}
-	
-	/**
 	 * This method can be invoked to generate the instance of the current configuration.
 	 * @param fromForm the from form
 	 */
@@ -362,7 +352,7 @@ public abstract class DynFormBase {
 				if (argumentInstance!=null) {
 					// --- Set the current instance to the form -----
 					this.setFormState(argumentInstance, currNode);
-					if (OntologyVisualisationConfiguration.isOntologyClassVisualisation(className)==true) {
+					if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(className)==true) {
 						OntologyClassWidget widget = this.getOntologyClassWidget(currNode);
 						if (widget!=null) {
 							widget.invokeSetOntologyClassInstance(argumentInstance);	
@@ -474,7 +464,7 @@ public abstract class DynFormBase {
 			
 			// --- Generate instance of this object -----------------
 			Object argumentInstance = null;
-			if (OntologyVisualisationConfiguration.isOntologyClassVisualisation(className)==true) {
+			if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(className)==true) {
 				// --- Get the instance from the widget -------------
 				OntologyClassWidget widget = this.getOntologyClassWidget(currNode);
 				if (widget==null) {
@@ -760,7 +750,7 @@ public abstract class DynFormBase {
 		// --- Capture special classes, which are coming from the ----
 		// --- Agent.GUI Base ontology							  ----
 		// ----------------------------------------------------------->
-		if (OntologyVisualisationConfiguration.isOntologyClassVisualisation(object)) {
+		if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(object)) {
 			JComponent userFormElement = this.getOntologyClassWidgets().get(node);
 			if (userFormElement!=null) {
 				final OntologyClassWidget widget = (OntologyClassWidget) userFormElement;

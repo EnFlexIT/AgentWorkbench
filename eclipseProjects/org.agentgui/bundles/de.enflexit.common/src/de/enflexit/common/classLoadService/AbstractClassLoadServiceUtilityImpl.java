@@ -199,6 +199,11 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 						deleteCandidatesSymbolicBundleName.remove(sourceBundleName);
 					}
 				}
+			} else {
+				System.err.println("=> BaseClassLoadServiceUtillity: Could not find any service for '" + SERVICE_REFERENCE_FILTER + "'.");
+				System.err.println("   Ensure that the following bundles are configured in your start configuration:");
+				System.err.println("   org.eclipse.core.runtime - Start Level=1 - Auto-Start=true");
+				System.err.println("   org.eclipse.equinox.ds   - Start Level=2 - Auto-Start=true");
 			}
 			
 		} catch (InvalidSyntaxException isEx) {

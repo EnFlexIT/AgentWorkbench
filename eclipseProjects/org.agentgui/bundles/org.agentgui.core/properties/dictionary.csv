@@ -68,6 +68,7 @@ de;Arbeitsspeicher für Remote-JVM;Memory for remote JVM;;;
 de;Arbeitsspeicher;Memory
 de;Argument;argument
 de;Art der Darstellung;Type of display;;;
+de;Auktualisierung der Projekt-MANIFEST.MF;Updating the project MANIFEST.MF;;;
 de;Ausführen als;Run as;;;
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
@@ -131,8 +132,7 @@ de;Das Projekt wird nun geschlossen!;The project will be closed now!;;;
 de;Das Seitenverhältnis des exportierten Bildes;The aspect ratio of the image to be exported;;;
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
-de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
-de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;;;;
+de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
@@ -409,7 +409,7 @@ de;Möchten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch
 de;Möchten Sie JADE nun beenden?;Quit JADE now?
 de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
 de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
-de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.
+de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
 de;Möchten Sie die Konfiguration nun vornehmen?;Would you like to configure this now?;;;
 de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
@@ -652,7 +652,7 @@ de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
 de;Version;Version;;;
 de;Versionnummer bearbeiten;Edit Version Number;;;
-de;Versionnummer speichern;;;;
+de;Versionnummer speichern;Save version number;;;
 de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;
@@ -660,9 +660,9 @@ de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote
 de;Verteilung;Distribution
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
-de;Verzeichnis einbinden;;;;
+de;Verzeichnis einbinden;Include Directory;;;
 de;Verzeichnis gepackt zu;Folder packed to;;;
-de;Verzeichnis mit *.class-Dateien aus Java Projekt einbinden;;;;
+de;Verzeichnis mit *.class-Dateien aus Java Projekt einbinden;Include directory with *.class-files from Java project;;;
 de;Verzeichnis;Folder
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
@@ -693,6 +693,7 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
+de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!<br><br>Soll diese Option jetzt aktualisiert werden?;To include external bin resources, an update <br>of the project MANIFEST.MF is required!<br><br>Do you want to update this option?;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project.;;;
 de;Zurücksetzen;Reset

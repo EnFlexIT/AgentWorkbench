@@ -31,6 +31,8 @@ package de.enflexit.common.ontology.gui;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
+
 /**
  * The Class OntologyClassEditorJPanel.
  * 
@@ -128,7 +130,7 @@ public abstract class OntologyClassEditorJPanel extends JPanel {
 	 * @return the default time format
 	 */
 	public String getDefaultTimeFormat() {
-		return this.dynForm.getDefaultTimeFormat();
+		return OntologyVisualisationConfiguration.getTimeFormat();
 	}
 	
 }

@@ -14,6 +14,23 @@
             <startAsName>n0</startAsName>
         </agent>
     </agentSetup>
-    <timeModelSettings/>
+    <timeModelSettings>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss</value>
+        </entry>
+        <entry>
+            <key>AccelerationFactor</key>
+            <value>1.0</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1505167200000</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1505080800000</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>test.graphml</environmentFileName>
 </simulationSetup>

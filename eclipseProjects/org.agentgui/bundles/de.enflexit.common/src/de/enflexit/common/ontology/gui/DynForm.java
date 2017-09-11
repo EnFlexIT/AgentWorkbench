@@ -285,7 +285,7 @@ public class DynForm extends DynFormBase {
 		
 		// ---------------------------------------------------------------------
 		// --- Is the current ontology class a special case of Agent.GUI ? -----
-		if (OntologyVisualisationConfiguration.isOntologyClassVisualisation(startObjectClass)==true) {
+		if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(startObjectClass)==true) {
 			this.createOuterElement4OntologyClassVisualisation(startArgIndex, oscd.getClazz(), parentNode, parentPanel);
 		}
 		// ---------------------------------------------------------------------

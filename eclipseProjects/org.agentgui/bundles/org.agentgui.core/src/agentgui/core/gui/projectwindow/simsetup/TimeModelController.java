@@ -44,6 +44,8 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 
 
 /**
@@ -210,24 +212,28 @@ public class TimeModelController implements Observer {
 	}
 	
 	/**
-	 * Setup load.
+	 * Loads the setup contiguration.
 	 */
 	private void setupLoad() {
 
-		// --- Get the current SimulationSetup ------------
+		// --- Get the current SimulationSetup --------------------------------
 		SimulationSetup simSetup = currProject.getSimulationSetups().getCurrSimSetup();
-		// --- Get the right time model -------------------
+		// --- Get the right time model ---------------------------------------
 		TimeModel timeModel = this.getTimeModel();
 		if (timeModel!=null) {
-			// --- Set the configuration from setup -------
+			// --- Set the configuration from setup ---------------------------
 			HashMap<String, String> configHash = simSetup.getTimeModelSettings();
 			if (configHash!=null) {
 				timeModel.setTimeModelSettings(configHash);
-				// --- Set the TimeModel to the display ---
-				this.setTimeModel(timeModel);	
+				// --- Set the TimeModel to the display -----------------------
+				this.setTimeModel(timeModel);
+				// --- Forward time format to ontology visualization? ---------
+				if (timeModel!=null && timeModel instanceof TimeModelDateBased) {
+					TimeModelDateBased tmDateBased = (TimeModelDateBased) timeModel;
+					OntologyVisualisationConfiguration.setTimeFormat(tmDateBased.getTimeFormat());
+				}
 			}	
 		}
-		
 	}
 	
 	/* (non-Javadoc)
