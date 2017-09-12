@@ -36,6 +36,10 @@
 						<plugin id="org.agentgui.lib.jung" />
 						<plugin id="org.agentgui.lib.mySQL" />
 						<plugin id="org.agentgui.lib.scimark" />
+						<feature id="org.eclipse.e4.rcp" />
+						<feature id="org.eclipse.emf.ecore" />
+						<feature id="org.eclipse.emf.common" />
+						<feature id="org.eclipse.equinox.p2.core.feature" />
 					</excludes>
 				</configuration>
 				<executions>
