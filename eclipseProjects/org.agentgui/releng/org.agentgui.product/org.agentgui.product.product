@@ -19,7 +19,6 @@
       location="org.agentgui.core"
       startupProgressRect="5,275,445,15" />
    <launcher name="AgentGui">
-      <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
@@ -143,7 +142,7 @@
    </plugins>
 
    <features>
-      <feature id="org.agentgui.feature" version="2.0.0.qualifier"/>
+      <feature id="org.agentgui.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>
