@@ -185,7 +185,7 @@ public class PlugInApplication implements IApplication {
 	 * @param postWindowOpenRunnable the post window open runnable
 	 * @return the integer
 	 */
-	private Integer startEclipseUI(Runnable postWindowOpenRunnable) {
+	public Integer startEclipseUI(Runnable postWindowOpenRunnable) {
 		
 		Integer eclipseReturnValue = IApplication.EXIT_OK;
 		Display display = PlatformUI.createDisplay();
@@ -202,8 +202,8 @@ public class PlugInApplication implements IApplication {
 			display.dispose();
 			if (this.getVisualisationPlatform()==ApplicationVisualizationBy.EclipseFramework) {
 				appReturnValue = eclipseReturnValue;
+				Application.setQuitJVM(true);
 			}
-			Application.setQuitJVM(true);
 		}		
 		return eclipseReturnValue;
 	}
@@ -215,7 +215,7 @@ public class PlugInApplication implements IApplication {
 	 * @return the integer
 	 * @throws Exception the exception
 	 */
-	private Integer startSwingMainWindow(Runnable postWindowOpenRunnable) throws Exception {
+	public Integer startSwingMainWindow(Runnable postWindowOpenRunnable) throws Exception {
 		
 		Integer appReturnValue = IApplication.EXIT_OK;
 		if (Application.isOperatingHeadless()==false) {
