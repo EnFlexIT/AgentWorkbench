@@ -199,7 +199,7 @@ public class MainWindow extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent evt) {
-				Application.quit();
+				Application.stop();
 			}
 		});
 		
@@ -701,7 +701,7 @@ public class MainWindow extends JFrame {
 	// --- Menu Simulation ----------------------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method returns the current instance of the menu "Project".
+	 * This method returns the current instance of the menu "MAS".
 	 *
 	 * @return the j menu main simulation
 	 */
@@ -1018,7 +1018,7 @@ public class MainWindow extends JFrame {
 				Application.getProjectsLoaded().projectDelete();
 				
 			} else if ( actionCMD.equalsIgnoreCase("ApplicationQuit") ) {
-				Application.quit();
+				Application.stop();
 			
 			// --- Menu Ansicht / View ------------------------
 			} else if ( actionCMD.equalsIgnoreCase("ViewConsole") ) {
