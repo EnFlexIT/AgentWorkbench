@@ -1164,8 +1164,8 @@ public class Application {
 	public static void setOntologyVisualisationConfigurationToCommonBundle() {
 		
 		// --- Add the known OntologyClassVisualisation's of Agent.GUI --------
-		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(TimeSeriesVisualisation.class.getName());
-		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(XyChartVisualisation.class.getName());
+		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
+		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new XyChartVisualisation());
 		
 		// --- Set the current main window ------------------------------------
 		OntologyVisualisationConfiguration.setApplicationTitle(Application.getGlobalInfo().getApplicationTitle());

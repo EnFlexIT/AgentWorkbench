@@ -94,7 +94,7 @@ public class DynTableDataVector extends Vector<Object> {
 			
 			if (visibleInTableView==true) {
 				// --- Are child slots visible in the table ---
-				if (OntologyVisualisationConfiguration.isOntologyClassVisualisation(dynType.getClassName())) {
+				if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(dynType.getClassName())) {
 					childNodesVisible = false;
 				} else {
 					childNodesVisible = true;

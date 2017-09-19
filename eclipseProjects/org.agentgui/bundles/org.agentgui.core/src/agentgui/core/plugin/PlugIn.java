@@ -253,14 +253,14 @@ public abstract class PlugIn implements Observer {
 	 * 
 	 * @see GlobalInfo
 	 * @see GlobalInfo#registerOntologyClassVisualisation(String)
-	 * @see GlobalInfo#isOntologyClassVisualisation(String)
+	 * @see GlobalInfo#isRegisteredOntologyClassVisualisation(String)
 	 * @see OntologyInstanceViewer
 	 *
 	 * @param classNameOfOntologyClassVisualisation the class name of an OntologyClassVisualisation
 	 */
-	protected void addOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
-		if (classNameOfOntologyClassVisualisation!=null) {
-			OntologyClassVisualisation ontoClassVis = OntologyVisualisationConfiguration.registerOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
+	protected void addOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
+		if (ontologyClassVisualisation!=null) {
+			OntologyClassVisualisation ontoClassVis = OntologyVisualisationConfiguration.registerOntologyClassVisualisation(ontologyClassVisualisation);
 			if (ontoClassVis!=null) {
 				this.customOntologyClassVisualisation.add(ontoClassVis);
 			}
@@ -275,7 +275,7 @@ public abstract class PlugIn implements Observer {
 	 */
 	private void removeCustomElements() {
 		
-		// --- remove custom toolbar/menu elements --------
+		// --- Remove custom toolbar/menu elements --------
 		for (int i = 0; i < customJComponent.size(); i++) {
 			JComponent component = customJComponent.get(i);
 			Container container = component.getParent();
@@ -283,14 +283,14 @@ public abstract class PlugIn implements Observer {
 		}
 		customJComponent = new Vector<JComponent>();
 		
-		// --- remove custom Tab-elements -----------------
+		// --- Remove custom tab elements -----------------
 		for (int i = customProjectWindowTab.size()-1; i>-1; i--) {
 			ProjectWindowTab pwt = customProjectWindowTab.get(i);
 			pwt.remove();
 		}
 		customProjectWindowTab = new Vector<ProjectWindowTab>();
 		
-		// --- remove custom environment types ------------
+		// --- Remove custom environment types ------------
 		for (int i = customEnvironmentTypes.size()-1; i>-1; i--) {
 			EnvironmentType envType = customEnvironmentTypes.get(i);
 			if (envType.equals(this.project.getEnvironmentModelType())) {
@@ -301,14 +301,14 @@ public abstract class PlugIn implements Observer {
 		}
 		customEnvironmentTypes = new Vector<EnvironmentType>();
 		
-		// --- remove custom Ontolo environment types -----
+		// --- Remove custom ontology visualizations ------
 		for (int i = customOntologyClassVisualisation.size()-1; i>-1; i--) {
 			OntologyClassVisualisation ontoClVis = customOntologyClassVisualisation.get(i);
 			OntologyVisualisationConfiguration.unregisterOntologyClassVisualisation(ontoClVis);
 		}
 		customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
 		
-		// --- validate/repaint the main window -----------
+		// --- Refresh the main window --------------------
 		if (Application.getMainWindow()!=null) {
 			Application.getMainWindow().validate();
 			Application.getMainWindow().repaint();

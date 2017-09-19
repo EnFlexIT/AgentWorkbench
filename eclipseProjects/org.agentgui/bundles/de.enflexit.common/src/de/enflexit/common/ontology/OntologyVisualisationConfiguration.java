@@ -12,7 +12,6 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.common.ontology.gui.OntologyClassVisualisation;
 
 /**
@@ -26,6 +25,8 @@ public class OntologyVisualisationConfiguration {
 	private static String applicationTitle = "Ontology Visualization";
 	private static Window ownerWindow;
 	private static Image applicationIconImage;
+	
+	private static String timeFormat;
 	
 	// --- Known OntologyClassVisualisation's of Agent.GUI --------------------
 	private static Vector<OntologyClassVisualisation> knownOntologyClassVisualisation;
@@ -80,6 +81,23 @@ public class OntologyVisualisationConfiguration {
 		OntologyVisualisationConfiguration.applicationIconImage = applicationIconImage;
 	}
 	
+	/**
+	 * Returns the time format for the ontology visualization.
+	 * @return the time format
+	 */
+	public static String getTimeFormat() {
+		if (timeFormat==null) {
+			timeFormat = "dd.MM.yyyy HH:mm:ss.SSS"; 
+		}
+		return timeFormat;
+	}
+	/**
+	 * Sets the time format ontology visualization.
+	 * @param newTimeFormat the new time format
+	 */
+	public static void setTimeFormat(String newDefaultTimeFormat) {
+		timeFormat = newDefaultTimeFormat;
+	}
 	
 	// ------------------------------------------------------------------------
 	// ---- Methods for OntologyClassVisualisations ---------------------------
@@ -88,37 +106,37 @@ public class OntologyVisualisationConfiguration {
 	 * Register an OntologyClassVisualisation.
 	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
 	 */
-	public static OntologyClassVisualisation registerOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
+	public static OntologyClassVisualisation registerOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
 		
-		OntologyClassVisualisation ontoClassVisualisation = null;
+		OntologyClassVisualisation ocvToRegister = null;
 		try {
-			if (isOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==false) {
-				ontoClassVisualisation = (OntologyClassVisualisation) BaseClassLoadServiceUtility.newInstance(classNameOfOntologyClassVisualisation);
-				getKnownOntologyClassVisualisations().add(ontoClassVisualisation);	
+			if (isRegisteredOntologyClassVisualisation(ontologyClassVisualisation)==false) {
+				ocvToRegister = ontologyClassVisualisation;
+				getKnownOntologyClassVisualisations().add(ocvToRegister);	
 			}
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return ontoClassVisualisation;
-	}
-	/**
-	 * Unregister an OntologyClassVisualisation.
-	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
-	 */
-	public static void unregisterOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
-		if (isOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==true) {
-			OntologyClassVisualisation ontoClassVisualisation = getOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
-			getKnownOntologyClassVisualisations().add(ontoClassVisualisation);	
-		}
+		return ocvToRegister;
 	}
 	/**
 	 * Unregister an OntologyClassVisualisation.
 	 * @param ontologyClassVisualisation the OntologyClassVisualisation to unregister
 	 */
 	public static void unregisterOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
-		if (isOntologyClassVisualisation(ontologyClassVisualisation)==true) {
-			getKnownOntologyClassVisualisations().add(ontologyClassVisualisation);	
+		if (isRegisteredOntologyClassVisualisation(ontologyClassVisualisation)==true) {
+			unregisterOntologyClassVisualisation(ontologyClassVisualisation.getClass().getName());
+		}
+	}
+	/**
+	 * Unregister an OntologyClassVisualisation.
+	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
+	 */
+	public static void unregisterOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
+		if (isRegisteredOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==true) {
+			OntologyClassVisualisation ontoClassVisualisation = getOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
+			getKnownOntologyClassVisualisations().remove(ontoClassVisualisation);	
 		}
 	}
 	
@@ -137,11 +155,11 @@ public class OntologyVisualisationConfiguration {
 	 * Checks if a given object can be visualized by a special OntologyClassVisualisation.
 	 *
 	 * @param checkObject the object to check
-	 * @return true, if the given Object is ontology class visualisation
+	 * @return true, if the given Object is ontology class visualization
 	 */
-	public static boolean isOntologyClassVisualisation(Object checkObject) {
+	public static boolean isRegisteredOntologyClassVisualisation(Object checkObject) {
 		if (checkObject==null) return false;
-		return isOntologyClassVisualisation(checkObject.getClass());
+		return isRegisteredOntologyClassVisualisation(checkObject.getClass());
 	}
 	/**
 	 * Checks if a given class can be visualized by a special OntologyClassVisualisation.
@@ -149,9 +167,9 @@ public class OntologyVisualisationConfiguration {
 	 * @param checkClass the class to check
 	 * @return true, if the given Object is ontology class visualisation
 	 */
-	public static boolean isOntologyClassVisualisation(Class<?> checkClass) {
+	public static boolean isRegisteredOntologyClassVisualisation(Class<?> checkClass) {
 		if (checkClass==null) return false;
-		return isOntologyClassVisualisation(checkClass.getName());
+		return isRegisteredOntologyClassVisualisation(checkClass.getName());
 	}
 	/**
 	 * Checks class, given by its name, can be visualized by a special OntologyClassVisualisation.
@@ -159,7 +177,7 @@ public class OntologyVisualisationConfiguration {
 	 * @param className the object to check
 	 * @return true, if the given className is ontology class visualisation
 	 */
-	public static boolean isOntologyClassVisualisation(String className) {
+	public static boolean isRegisteredOntologyClassVisualisation(String className) {
 		
 		boolean isVisClass = false;
 		

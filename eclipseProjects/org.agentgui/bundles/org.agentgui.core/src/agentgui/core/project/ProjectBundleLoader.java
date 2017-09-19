@@ -197,6 +197,9 @@ public class ProjectBundleLoader {
 				// ------------------------------------------------------------
 				this.createTemporaryJarsFromBinResources();
 				
+				// --- Evaluate the directory ---------------------------------
+				this.getBundleBuilder().evaluateDirectory();
+				
 				// --- Load the directory bundle ------------------------------
 				if (this.getBundleBuilder().getRegularJars()!=null) {
 					

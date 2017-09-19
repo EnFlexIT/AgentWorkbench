@@ -215,7 +215,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		
 		} else {
 			// --- Are special classes for visualization ? --------------------
-			if (OntologyVisualisationConfiguration.isOntologyClassVisualisation(this.dynType.getClassName())) {
+			if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(this.dynType.getClassName())) {
 				this.displayComponent = this.getJButtonOntologyClassVisualsation(this.dynType);
 				this.jPanelToDisplay.add(this.displayComponent, BorderLayout.CENTER);
 				this.dynTable.getEditableRowsVector().add(this.rowModel);

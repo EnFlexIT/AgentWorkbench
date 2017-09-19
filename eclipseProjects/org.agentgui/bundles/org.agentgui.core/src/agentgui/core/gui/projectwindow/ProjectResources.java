@@ -49,6 +49,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -332,7 +333,22 @@ public class ProjectResources extends JScrollPane implements Observer {
 				public void actionPerformed(ActionEvent e) {
 
 					if (Application.getJadePlatform().stopAskUserBefore()==true) {
+
+						// --- Check for rebuild of the MANIFEST.MF -----------
+						if (currProject.isReCreateProjectManifest()==false) {
+							String title = Language.translate("Auktualisierung der Projekt-MANIFEST.MF");
+							String msg = "Zum Einbinden von externen bin-Ressourcen, ist\n";
+							msg += "eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!\n\n";
+							msg += "Soll diese Option jetzt aktualisiert werden?";
+							msg = Language.translate(msg);
+							
+							int answer = JOptionPane.showInternalConfirmDialog (getJListBinResources(), msg, title, JOptionPane.YES_NO_OPTION);
+							if (answer!=JOptionPane.YES_OPTION) return;
+							// --- Set rebuild of MANIFEST.MF to 'true' -------
+							currProject.setReCreateProjectManifest(true);
+						}
 						
+						// --- Select the directory ---------------------------
 						JFileChooser chooser = new JFileChooser();
 						chooser.setDialogTitle(Language.translate("Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien)"));
 						chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -343,10 +359,14 @@ public class ProjectResources extends JScrollPane implements Observer {
 						if (answerChooser==JFileChooser.CANCEL_OPTION) return;
 						Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());
 						
-						Vector<String> names = adjustPaths(chooser.getSelectedFiles());
-						currProject.getProjectResources().addAll(names);
-						currProject.resourcesReLoad();
-						jListBinResources.updateUI();
+						// --- Add to bin resources ---------------------------
+						File selectedDirectory = chooser.getSelectedFile();
+						String selectedDirectoryPath = adjustPathAccordngToProjectsDirectory(selectedDirectory.getAbsolutePath());
+						if (isProjectResources(selectedDirectoryPath)==false) {
+							currProject.getProjectResources().add(selectedDirectoryPath);
+							currProject.resourcesReLoad();
+							jListBinResources.updateUI();							
+						}
 					}
 				} // end actionPerformed
 			}); // end addActionListener
@@ -916,12 +936,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * @param path the path
 	 * @return the string
 	 */
-	private String adjustString(String path) {
+	private String adjustPathAccordngToProjectsDirectory(String path) {
 		final String projectFolder = currProject.getProjectFolderFullPath();
 		if (path.startsWith(projectFolder)) {
 			int cut = projectFolder.length();
-			String returnPath = path.substring(cut - 1); 
-			return returnPath;
+			return path.substring(cut - 1);
 		}
 		return path;
 	}
@@ -930,58 +949,18 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * @param path the path
 	 * @return true, if successful
 	 */
-	private boolean alreadyThere(String path) {
+	private boolean isProjectResources(String path) {
 		return currProject.getProjectResources().contains(path);
 	}
+	
 	/**
-	 * Adjust paths.
-	 * @param files the files
-	 * @return the vector
+	 * Sets the view according to the project.
 	 */
-	private Vector<String> adjustPaths(File[] files) {
-		
-		Vector<String> result = new Vector<String>();
-		if (files != null) {
-
-			for (File file : files) {
-				
-				String path = file.getAbsolutePath();
-				if (!path.contains(".jar")) {
-					// --- If this is a folder ------------					
-					Vector<String> directoryFiles = handleDirectories(file);
-					for (String foreignJar : directoryFiles) {
-						String resourcCheck = this.adjustString(foreignJar);
-						if (!alreadyThere(resourcCheck)) {
-							result.add(this.adjustString(foreignJar)); // Use relative paths within projects
-						}
-					}
-
-				} else	{
-					// --- If this is a jar-file ----------
-					String resourcCheck = this.adjustString(path);
-					if (!alreadyThere(resourcCheck)) {
-						result.add(this.adjustString(path)); // Use absolut within projects
-					}
-				}
-
-			}
-		}
-		return result;
-	}
-	/**
-	 * Handle directories.
-	 * @param dir the dir
-	 * @return the vector
-	 */
-	private Vector<String> handleDirectories(File dir) {
-		Vector<String> result = new Vector<String>();
-		try {
-			result.add(dir.getAbsolutePath());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
+	private void setViewAccordingToProject() {
+		this.getJCheckboxManifest().setSelected(this.currProject.isReCreateProjectManifest());
+		this.getJListBinResources().setModel(this.currProject.getProjectResources().getResourcesListModel());
+		this.getJListJarResources().setModel(this.currProject.getProjectBundleLoader().getRegularJarsListModel());
+		this.getJListBundleJars().setModel(this.currProject.getProjectBundleLoader().getBundleJarsListModel());
 	}
 	
 	/* (non-Javadoc)
@@ -1007,6 +986,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 				this.getJComboBoxEnvironmentModelSelector().setSelectedItem(this.currProject.getEnvironmentModelType());	
 			}
 		
+		} else if (updated.equals(Project.CHANGED_ProjectResources)) {
+			this.setViewAccordingToProject();
+			
 		} else if (updated.equals(Project.CHANGED_TimeModelClass)) {
 			this.getJTextFieldTimeModelClass().setText(this.currProject.getTimeModelClass());
 			
