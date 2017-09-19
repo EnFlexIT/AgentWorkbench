@@ -200,7 +200,7 @@ public abstract class AbstractMonitoringTask {
 		// --- Do normal application quit ---------------------------
 		// ----------------------------------------------------------
 		this.setMonitoringState(MonitoringState.FAULTY_PROCESS_EXCUTED_MEASURE);
-		Application.quit();
+		Application.stop();
 
 		// ----------------------------------------------------------
 		// --- In case that executions still arrives here, wait 5s. - 

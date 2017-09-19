@@ -32,7 +32,6 @@ import org.agentgui.bundle.evaluation.FilterForAgent;
 import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
 import org.agentgui.bundle.evaluation.FilterForTimeModel;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -40,6 +39,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
+import agentgui.core.gui.MainWindow;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
 /**
@@ -58,56 +59,65 @@ public class PlugInApplication implements IApplication {
 	/** Set this variable to switch the visualization */
 	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentGuiSwing;
 	
+	private IApplicationContext IApplicationContext;
+	private Integer appReturnValue = IApplication.EXIT_OK;
 	
+	/** This will hold the instance of the Swing application window */
+	private MainWindow mainWindowSwing;
+	
+	
+	/**
+	 * Returns the visualization platform that is either swing or the Eclipse UI.
+	 * @return the visualization by
+	 */
+	public ApplicationVisualizationBy getVisualisationPlatform() {
+		return visualisationBy;
+	}
+	/**
+	 * Returns the current IApplicationContext.
+	 * @return the i application context
+	 */
+	public IApplicationContext getIApplicationContext() {
+		return this.IApplicationContext;
+	}
+	/**
+	 * Sets the application is running.
+	 */
+	public void setApplicationIsRunning() {
+		this.IApplicationContext.applicationRunning();	
+	}
+	
+	
+	/**
+	 * Waits for the termination of the application.
+	 */
+	private void waitForApplicationTermination() throws Exception {
+		// --- Wait for termination of the application ----
+		while (Application.isQuitJVM()==false) {
+			Thread.sleep(250);
+		}
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 
-		// --- Evaluate the already loaded bundles ------------------
-		this.startBundleEvaluation();
+		// --- Remind application context -----------------
+		this.IApplicationContext = context;
 		
-		// --- Case separation UI -----------------------------------
-		Integer startReturnValue = IApplication.EXIT_OK;
-		switch (this.visualisationBy) {
-		case AgentGuiSwing:
-			// ------------------------------------------------------
-			// --- Visualization by Agent.GUI/Swing -----------------
-			// ------------------------------------------------------
-			context.applicationRunning();
-			Application.main(Platform.getApplicationArgs());
-			if(Application.getMainWindow()!=null) {
-				Application.getMainWindow().toFront();
-			}
-			Application.setDoSystemExitOnQuit(false);
-			// --- Wait for the end of the Swing application --------
-			while (Application.isQuitJVM()==false) {
-				Thread.sleep(250);
-			}
-			break;
-			
-		case EclipseFramework:
-			// ------------------------------------------------------
-			// --- Visualization by Eclipse -------------------------
-			// ------------------------------------------------------
-			Display display = PlatformUI.createDisplay();
-			try {
-				// --- Returns if visualization was closed ---------- 
-				int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
-				if (returnCode == PlatformUI.RETURN_RESTART) {
-					startReturnValue = IApplication.EXIT_RESTART;
-				} else {
-					startReturnValue = IApplication.EXIT_OK;
-				}
-			} finally {
-				display.dispose();
-			}
-			break;
-		}
-		return startReturnValue;
+		// --- Start the main Application class -----------
+		Application.start(this);
+		
+		// --- Wait for termination of the application ----
+		this.waitForApplicationTermination();
+		
+		// --- Stop the Application class -----------------
+		System.out.println(Language.translate("Programmende... "));
+		Application.stop();
+		
+		return this.appReturnValue;
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
@@ -128,10 +138,10 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	/**
-	 * Starts the bundle evaluation for the .
+	 * Starts the bundle evaluation for specific classes.
 	 */
 	private void startBundleEvaluation() {
-		// --- Evaluate the already loaded bundles ------------------
+		// --- Evaluate the already loaded bundles --------
 		BundleEvaluator be = BundleEvaluator.getInstance(); 
 		be.addBundleClassFilter(new FilterForAgent(), false);
 		be.addBundleClassFilter(new FilterForBaseService(), false);
@@ -139,5 +149,129 @@ public class PlugInApplication implements IApplication {
 		be.addBundleClassFilter(new FilterForTimeModel(), false);
 		be.evaluateAllBundles();
 	}
+	
+	/**
+	 * Starts the end user application that either based on Swing or SWT.
+	 * @param postWindowOpenRunnable the post window open runnable
+	 * @return the integer
+	 */
+	public Integer startEndUserApplication(Runnable postWindowOpenRunnable) {
+		
+		// --- Evaluate the already loaded bundles --------
+		this.startBundleEvaluation();
+		
+		try {
+			// --- Case separation UI ---------------------
+			switch (this.visualisationBy) {
+			case AgentGuiSwing:
+				// --- Visualization by Agent.GUI/Swing ---
+				this.appReturnValue = this.startSwingMainWindow(postWindowOpenRunnable);
+				break;
+				
+			case EclipseFramework:
+				// --- Visualization by Eclipse -----------
+				this.appReturnValue = this.startEclipseUI(postWindowOpenRunnable);
+				break;
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.appReturnValue;
+	}
+	
+	/**
+	 * Starts the eclipse UI.
+	 * @param postWindowOpenRunnable the post window open runnable
+	 * @return the integer
+	 */
+	private Integer startEclipseUI(Runnable postWindowOpenRunnable) {
+		
+		Integer eclipseReturnValue = IApplication.EXIT_OK;
+		Display display = PlatformUI.createDisplay();
+		try {
+			// --- Returns if visualization was closed ---- 
+			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor(postWindowOpenRunnable));
+			if (returnCode == PlatformUI.RETURN_RESTART) {
+				eclipseReturnValue = IApplication.EXIT_RESTART;
+			} else {
+				eclipseReturnValue = IApplication.EXIT_OK;
+			}
+			
+		} finally {
+			display.dispose();
+			if (this.getVisualisationPlatform()==ApplicationVisualizationBy.EclipseFramework) {
+				appReturnValue = eclipseReturnValue;
+			}
+			Application.setQuitJVM(true);
+		}		
+		return eclipseReturnValue;
+	}
+	
+	/**
+	 * Start swing UI.
+	 *
+	 * @param postWindowOpenRunnable the post window open runnable
+	 * @return the integer
+	 * @throws Exception the exception
+	 */
+	private Integer startSwingMainWindow(Runnable postWindowOpenRunnable) throws Exception {
+		
+		Integer appReturnValue = IApplication.EXIT_OK;
+		if (Application.isOperatingHeadless()==false) {
+			this.setSwingMainWindow(new MainWindow());
+			Application.getProjectsLoaded().setProjectView();
+		}
+		// --- Remove splash screen -----------------------
+		this.setApplicationIsRunning();
+		
+		// --- Execute the post window open runnable ------
+		if (postWindowOpenRunnable!=null) {
+			postWindowOpenRunnable.run();
+		}
+		
+		return appReturnValue;
+	}
+	
+	/**
+	 * Just starts JADE without any further visualization.
+	 *
+	 * @param arguments the command line arguments for the JADE platform 
+	 * @return the integer
+	 */
+	public Integer startJadeStandalone(String[] arguments) {
+		
+		// --- Remove splash screen -----------------------
+		this.setApplicationIsRunning();
+		
+		// --- Boot JADE as from command line ------------- 
+		jade.Boot.main(arguments);
+		jade.core.Runtime.instance().invokeOnTermination(new Runnable() {
+			@Override
+			public void run() {
+				Application.setQuitJVM(true);
+			}
+		});
+		return IApplication.EXIT_OK;
+	}
+
+	/**
+	 * Gets the main window.
+	 * @return the main window
+	 */
+	public MainWindow getSwingMainWindow() {
+		return this.mainWindowSwing;
+	}
+	/**
+	 * Sets the main window.
+	 * @param newMainWindow the new main window
+	 */
+	public void setSwingMainWindow(MainWindow newMainWindow) {
+		if (mainWindowSwing!=null && newMainWindow==null) {
+			mainWindowSwing.dispose();
+		}
+		mainWindowSwing = newMainWindow;	
+	}
+	
 	
 }

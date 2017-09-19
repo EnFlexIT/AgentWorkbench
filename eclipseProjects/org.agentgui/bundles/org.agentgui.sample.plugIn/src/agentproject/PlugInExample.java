@@ -49,6 +49,8 @@ public class PlugInExample extends PlugIn {
 		// ------------------------------------------------		
 		// --- Extending the main application window ------
 		// ------------------------------------------------
+		if (Application.getMainWindow()==null) return;
+		
 		// --- adding a custom Menu -----------------------
 		this.addJMenu(myMenu, 1);
 		
@@ -59,7 +61,7 @@ public class PlugInExample extends PlugIn {
 				System.out.println("Great, you found me! That was the 'Here I am'-action !");
 			}
 		});
-
+		
 		JMenu menu = Application.getMainWindow().getJMenuMainSimulation();
 		this.addJMenuItemComponent(menu, myJMenuItem, 0);
 		
