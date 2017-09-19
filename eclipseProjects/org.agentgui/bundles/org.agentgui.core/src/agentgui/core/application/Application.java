@@ -948,6 +948,18 @@ public class Application {
 	}
 	
 	/**
+	 * Shows the eclipse preferences.
+	 */
+	public static void showEclipsePreferences() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				plugInApplication.startEclipseUI(null);
+			}
+		});
+	}
+	
+	/**
 	 * Adds a supplement to the application title
 	 * @param add2BasicTitel
 	 */
