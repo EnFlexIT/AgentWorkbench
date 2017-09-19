@@ -40,6 +40,8 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.agentgui.PlugInApplication;
+
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
 import agentgui.core.charts.xyChart.XyChartVisualisation;
@@ -91,8 +93,9 @@ public class Application {
 	/** Indicates that the application is running headless */
 	private static Boolean headlessOperation;
 	
-	/** The indicator to do system exit on quit. */
-	private static boolean doSystemExitOnQuit = true;
+	/** The eclipse IApplication */
+	private static PlugInApplication plugInApplication;
+	
 	/** The quit application. */
 	private static boolean quitJVM = false;
 	
@@ -100,8 +103,6 @@ public class Application {
 	private static Application thisApp = new Application();
 	/** This attribute holds the current state of the configurable runtime informations */
 	private static GlobalInfo globalInfo;
-	/** This will hold the instance of the main application window */
-	private static MainWindow mainWindow;
 	/** Here the tray icon of the application can be accessed */
 	private static AgentGUITrayIcon trayIcon;
 	/** This is the instance of the main application window */
@@ -324,26 +325,24 @@ public class Application {
 	 * @return the main window
 	 */
 	public static MainWindow getMainWindow() {
-		return Application.mainWindow;
+		return plugInApplication.getSwingMainWindow();
 	}
 	/**
-	 * Starts the main application window (JFrame)
+	 * Starts the main application window (JFrame).
+	 * @param postWindowOpenRunnable the post window open runnable
 	 */
-	public static void startMainWindow() {
-		if (isOperatingHeadless()==false) {
-			setMainWindow(new MainWindow());
-			getProjectsLoaded().setProjectView();
-		}
+	public static void startMainWindow(Runnable postWindowOpenRunnable) {
+		plugInApplication.startEndUserApplication(postWindowOpenRunnable);
 	}
 	/**
 	 * Sets the main window.
 	 * @param newMainWindow the new main window
 	 */
 	public static void setMainWindow(MainWindow newMainWindow) {
-		if (mainWindow!=null && newMainWindow==null) {
-			mainWindow.dispose();
+		if (plugInApplication.getSwingMainWindow()!=null && newMainWindow==null) {
+			plugInApplication.getSwingMainWindow().dispose();
 		}
-		mainWindow = newMainWindow;	
+		plugInApplication.setSwingMainWindow(newMainWindow);	
 	}
 	
 	
@@ -370,16 +369,18 @@ public class Application {
 		return Application.dbConnection;
 	}
 	
+	
 	/**
-	 * Main method for the start of the application running as end user application or server-tool
-	 * 
-	 * @param args The arguments which can be configured in the command line. 
-	 * -help will print all possible command line arguments 
+	 * Main method for the start of the application running as end user application or server-tool.
+	 * @param piApp the current {@link PlugInApplication} instance 
 	 */
-	public static void main(String[] args) {
+	public static void start(PlugInApplication piApp) {
 
+		// --- Remind the IApplication of the eclipse framework -----
+		plugInApplication = piApp;
+		
 		// --- Read the start arguments and react on it?! -----------
-		String[] remainingArgs = proceedStartArguments(args);
+		String[] remainingArgs = proceedStartArguments(org.eclipse.core.runtime.Platform.getApplicationArgs());
 		
 		// --- Start log file writer, if needed ---------------------
 		if (isOperatingHeadless()==true) startLogFileWriter();
@@ -404,7 +405,7 @@ public class Application {
 			Language.startDictionary();
 
 			System.out.println("Just starting JADE now ...");
-			jade.Boot.main(remainingArgs);
+			plugInApplication.startJadeStandalone(remainingArgs);
 		
 		}
 		
@@ -542,15 +543,16 @@ public class Application {
 			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
 
 			// --- Repaint main window first --------------
-			getMainWindow().validate();
-			getMainWindow().repaint();
+			if (getMainWindow()!=null) {
+				getMainWindow().validate();
+				getMainWindow().repaint();
+			}
 
 			// --- Open the project -----------------------
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					getProjectsLoaded().add(project2OpenAfterStart);
-					//project2OpenAfterStart=null;
 				}
 			});
 			Application.setStatusBar(Language.translate("Fertig"));
@@ -586,7 +588,7 @@ public class Application {
 				msg+= "Please, check the argument '01_RUNAS' in file '" + configFile + "' and set this argument\n";
 				msg+= "either to 'Server' or 'EmbeddedSystemAgent'.";
 				System.err.println(msg);
-				Application.quit();
+				Application.stop();
 			}
 		}
 		
@@ -602,22 +604,27 @@ public class Application {
 			getTrayIcon();
 			getProjectsLoaded();
 
-			startMainWindow();
-			getMainWindow().setStatusBar(Language.translate("Fertig"));
-			
-			setOntologyVisualisationConfigurationToCommonBundle();
-			
-			doBenchmark(false);
-			waitForBenchmark();
-			
-			proceedStartArgumentOpenProject();
-			
-			if (agentGuiWasUpdated==true) {
-				showChangeDialog();
-				agentGuiWasUpdated=false;
-			} else {
-				new AgentGuiUpdater().start();
-			}
+			startMainWindow(new Runnable() {
+				@Override
+				public void run() {
+					setStatusBar(Language.translate("Fertig"));
+					
+					setOntologyVisualisationConfigurationToCommonBundle();
+					
+					doBenchmark(false);
+					waitForBenchmark();
+					
+					proceedStartArgumentOpenProject();
+					
+					if (agentGuiWasUpdated==true) {
+						showChangeDialog();
+						agentGuiWasUpdated=false;
+					} else {
+						new AgentGuiUpdater().start();
+					}
+					
+				}
+			});
 			break;
 			
 		case SERVER:
@@ -626,6 +633,7 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
 			// --- In the Server-Case, start the benchmark now ! ----
+			plugInApplication.setApplicationIsRunning();
 			getTrayIcon();
 			doBenchmark(false);
 			startServer();
@@ -634,6 +642,7 @@ public class Application {
 		case DEVICE_SYSTEM:
 			// ------------------------------------------------------
 			// --- Start Service / Embedded System Agent ------------
+			plugInApplication.setApplicationIsRunning();
 			startServiceOrEmbeddedSystemAgent();
 			
 			if (agentGuiWasUpdated==true) {
@@ -658,9 +667,9 @@ public class Application {
 			waitForBenchmark();
 			boolean jadeStarted = getJadePlatform().start();
 			if (isOperatingHeadless()==true && jadeStarted==false) {
-				Application.quit();
+				Application.stop();
 			}
-			AgentGUITrayIcon trayIcon =  getTrayIcon();
+			AgentGUITrayIcon trayIcon = getTrayIcon();
 			if (trayIcon!=null) {
 				trayIcon.getAgentGUITrayPopUp().refreshView();
 			}
@@ -688,39 +697,44 @@ public class Application {
 				// ----------------------------------------------------------------------
 				getTrayIcon();
 				getProjectsLoaded();
-
-				startMainWindow();
-				if (getMainWindow()!=null) {
-					getMainWindow().setStatusBar(Language.translate("Fertig"));
-				}
-				doBenchmark(false);
-				waitForBenchmark();
-			
-				// --- Execute the simulation setup -------------------------------------
-				SwingUtilities.invokeLater(new Runnable() {
+				
+				startMainWindow(new Runnable() {
 					@Override
 					public void run() {
-						// --- Open the specified project -------------------------------
-						Project projectOpened = getProjectsLoaded().add(projectFolder);
-						if (projectOpened!=null) {
-							// --- Select the specified simulation setup ----------------
-							boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
-							if (setupLoaded==true) {
-								if (getJadePlatform().start(false)==true) {
-									// --- Start Setup ----------------------------------
-									Object[] startWith = new Object[1];
-									startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-									getJadePlatform().startSystemAgent("simstarter", null, startWith);
-								}
-							}
+						
+						if (getMainWindow()!=null) {
+							getMainWindow().setStatusBar(Language.translate("Fertig"));
 						}
-					} // end run method
-				});// end runnable
+						doBenchmark(false);
+						waitForBenchmark();
+					
+						// --- Execute the simulation setup -----------------------------
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								// --- Open the specified project -----------------------
+								Project projectOpened = getProjectsLoaded().add(projectFolder);
+								if (projectOpened!=null) {
+									// --- Select the specified simulation setup --------
+									boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
+									if (setupLoaded==true) {
+										if (getJadePlatform().start(false)==true) {
+											// --- Start Setup --------------------------
+											Object[] startWith = new Object[1];
+											startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
+											getJadePlatform().startSystemAgent("simstarter", null, startWith);
+										}
+									}
+								}
+							} // end run method
+						});// end runnable
+					}
+				});
 				break;
 
 			case AGENT:
 				// ----------------------------------------------------------------------
-				// --- Just execute an agent with limited visualisation -----------------
+				// --- Just execute an agent with limited visualization -----------------
 				// ----------------------------------------------------------------------
 				switch (embSysAgentVis) {
 				case TRAY_ICON:
@@ -788,13 +802,12 @@ public class Application {
 		return true;
 	}
 	/**
-	 * Quits Agent.GUI (Application | Server | Service & Embedded System Agent)
+	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
-	public static void quit() {
+	public static void stop() {
 
 		// --- Stop Agent.GUI -------------------
 		if (stopAgentGUI()==false) return;
-		System.out.println(Language.translate("Programmende... ") );
 		
 		// --- Stop LogFileWriter ---------------
 		setLogFileWriter(null);
@@ -802,27 +815,8 @@ public class Application {
 		// --- ShutdownExecuter -----------------
 		setShutdownThread(null);
 		
-		if (isDoSystemExitOnQuit()==true) {
-			// --- Shutdown JVM -----------------
-			System.exit(0);		
-		} else {
-			// --- Indicate to stop the JVM -----
-			setQuitJVM(true);
-		}
-	}
-	/**
-	 * Sets to do <code>System.exit</code> when calling the {@link #quit()} method.
-	 * @param doSystemExitOnQuit the new do system exit on quit
-	 */
-	public static void setDoSystemExitOnQuit(boolean doSystemExitOnQuit) {
-		Application.doSystemExitOnQuit = doSystemExitOnQuit;
-	}
-	/**
-	 * Checks if is do system exit on quit.
-	 * @return true, if is do system exit on quit
-	 */
-	private static boolean isDoSystemExitOnQuit() {
-		return doSystemExitOnQuit;
+		// --- Indicate to stop the JVM -----
+		setQuitJVM(true);
 	}
 	
 	/**
@@ -836,7 +830,7 @@ public class Application {
 	 * Sets to quit the JVM.
 	 * @param quitJVM the new quit JVM
 	 */
-	private static void setQuitJVM(boolean quitJVM) {
+	public static void setQuitJVM(boolean quitJVM) {
 		Application.quitJVM = quitJVM;
 	}
 	
@@ -879,7 +873,7 @@ public class Application {
 					return true; // show the login panel
 				}
 			});
-			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), mainWindow);
+			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), getMainWindow());
 		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
 //			e.printStackTrace();
 			System.err.println("Authentication failed: "+e.getClass()+": "+e.getMessage());

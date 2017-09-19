@@ -349,7 +349,7 @@ public class AgentGuiUpdater extends Thread {
 								// --- Do installation --------------
 								this.executeAgentGuiUpdater();
 								// --- ShutDown ---------------------
-								Application.quit();
+								Application.stop();
 								return;
 								
 							} else {

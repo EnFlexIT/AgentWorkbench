@@ -252,7 +252,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		} else if ( ActCMD.equalsIgnoreCase("Konsole")) {
 			Application.showOptionDialog(ActCMD);
 		} else if ( ActCMD.equalsIgnoreCase("quit")) {
-			Application.quit();				
+			Application.stop();				
 		} else { 
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
 		};

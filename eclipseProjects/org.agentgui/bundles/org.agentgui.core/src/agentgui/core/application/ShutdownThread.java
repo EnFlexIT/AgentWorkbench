@@ -125,7 +125,7 @@ public class ShutdownThread extends Thread {
 			if (this.shutDownFile.exists()==false) {
 				System.out.println("=> Observed file '" + this.shutDownFile.getName() + "' was deleted!");
 				System.out.println("=> Shutdown " + Application.getGlobalInfo().getApplicationTitle() + " ...");
-				Application.quit();
+				Application.stop();
 				return;
 			}
 			// --- Stop the observation of the file? ------

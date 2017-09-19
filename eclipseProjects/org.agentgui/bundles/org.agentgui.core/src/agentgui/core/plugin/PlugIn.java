@@ -151,7 +151,9 @@ public abstract class PlugIn implements Observer {
 	 * @param indexPosition the index position
 	 */
 	protected void addJMenu(JMenu myMenu, int indexPosition) {
-		Application.getMainWindow().addJMenu(myMenu, indexPosition);
+		if (Application.getMainWindow()!=null) {
+			Application.getMainWindow().addJMenu(myMenu, indexPosition);
+		}
 		customJComponent.add(myMenu);
 	}
 	
@@ -279,7 +281,7 @@ public abstract class PlugIn implements Observer {
 		for (int i = 0; i < customJComponent.size(); i++) {
 			JComponent component = customJComponent.get(i);
 			Container container = component.getParent();
-			container.remove(component);
+			if (container!=null) container.remove(component);
 		}
 		customJComponent = new Vector<JComponent>();
 		
