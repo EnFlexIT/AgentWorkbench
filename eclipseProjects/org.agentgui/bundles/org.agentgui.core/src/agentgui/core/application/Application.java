@@ -589,6 +589,7 @@ public class Application {
 				msg+= "either to 'Server' or 'EmbeddedSystemAgent'.";
 				System.err.println(msg);
 				Application.stop();
+				return;
 			}
 		}
 		
@@ -958,7 +959,7 @@ public class Application {
 	 * Adds a supplement to the application title
 	 * @param add2BasicTitel
 	 */
-	public static void setTitelAddition( String add2BasicTitel ) {
+	public static void setTitelAddition(String add2BasicTitel) {
 		if (getMainWindow()!=null) {
 			getMainWindow().setTitelAddition(add2BasicTitel);
 		}

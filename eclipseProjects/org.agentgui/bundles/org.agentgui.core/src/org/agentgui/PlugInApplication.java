@@ -113,6 +113,7 @@ public class PlugInApplication implements IApplication {
 		
 		// --- Stop the Application class -----------------
 		System.out.println(Language.translate("Programmende... "));
+		this.stop();
 		Application.stop();
 			
 		return this.appReturnValue;
@@ -179,6 +180,20 @@ public class PlugInApplication implements IApplication {
 		return this.appReturnValue;
 	}
 	
+	/**
+	 * Starts the eclipse UI by using a separate thread.
+	 * @param postWindowOpenRunnable the post window open runnable
+	 */
+	public void startEclipseUiThrowThread(final Runnable postWindowOpenRunnable) {
+		Thread eclipsStarter = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				startEclipseUI(postWindowOpenRunnable);
+			}
+		});
+		eclipsStarter.setName("PlatformUI-Starter");
+		eclipsStarter.start();
+	}
 	/**
 	 * Starts the eclipse UI.
 	 * @param postWindowOpenRunnable the post window open runnable
