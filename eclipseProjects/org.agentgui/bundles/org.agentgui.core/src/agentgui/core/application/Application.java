@@ -948,6 +948,13 @@ public class Application {
 	}
 	
 	/**
+	 * Shows the eclipse preferences.
+	 */
+	public static void showEclipsePreferences() {
+		plugInApplication.startEclipseUiThrowThread(null);
+	}
+	
+	/**
 	 * Adds a supplement to the application title
 	 * @param add2BasicTitel
 	 */

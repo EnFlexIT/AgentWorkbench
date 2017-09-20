@@ -125,7 +125,7 @@ public class MainWindow extends JFrame {
 		private JMenu jMenuExtraLnF;
 	private JMenu jMenuMainWindows;
 	private JMenu jMenuMainHelp;
-
+	
 	private JMenuItem jMenuCloseButton;
 	
 	private JToolBar jToolBarApplication;
@@ -908,7 +908,8 @@ public class MainWindow extends JFrame {
 			jMenuMainHelp.add( new CWMenueItem( "HelpChanges", Language.translate("Letzte Änderungen"), null ));
 			jMenuMainHelp.addSeparator();
 			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen") + " !", null ));
-			
+			jMenuMainHelp.addSeparator();
+			jMenuMainHelp.add(new CWMenueItem( "EclipsePreferences", Language.translate("Eclipse Preferences"), null ));
 		}
 		return jMenuMainHelp;
 	}
@@ -1091,6 +1092,9 @@ public class MainWindow extends JFrame {
 			
 			} else if ( actionCMD.equalsIgnoreCase("HelpAbout") ) {
 				Application.showAboutDialog();
+			
+			} else if ( actionCMD.equalsIgnoreCase("EclipsePreferences") ) {
+				Application.showEclipsePreferences();
 			
 			} else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);
