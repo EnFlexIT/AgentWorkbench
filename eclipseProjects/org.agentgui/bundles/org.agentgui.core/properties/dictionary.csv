@@ -178,6 +178,7 @@ de;Doppelte X-Werte sind derzeit nicht zulässig!<br>Die Aktion wird rückgängig g
 de;Doppelte X-Werte zulassen;Allow duplicate X-Values;;;
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
+de;Eclipse Preferences;;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Eigene lokale MTP-Adresse;Own local MTP-Address;;;
 de;Eigenschaften;Properties;;;

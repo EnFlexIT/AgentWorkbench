@@ -1,9 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Oidc
+Bundle-Name: OIDC
 Bundle-SymbolicName: de.enflexit.oidc
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.oidc;uses:="de.enflexit.api,javax.net.ssl,javax.swing"
 Require-Bundle: de.enflexit.api;bundle-version="1.0.0",
  de.enflexit.oidc.libs;bundle-version="5.17.1"
+Bundle-Vendor: EnFlex.IT

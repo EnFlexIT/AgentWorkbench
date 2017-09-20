@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_qgC2IJ44Eee4u7jTJfWu3A">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_LAwQ0J5QEee4u7jTJfWu3A" featurename="handlers" parentElementId="org.agentgui.core.application" positionInList="0">
+    <elements xsi:type="commands:Handler" xmi:id="_WFrGoIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.newproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.NewProjectHandler" command="_qFjK4IGOEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_anEOMIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.closeproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.CloseProjectHandler" command="_vYjVkIGOEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_c7JJoIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.openproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.OpenProjectHandler" command="_z5QgoIGOEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_fbNSoIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.saveproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.SaveProjectHandler" command="_26HpkIGOEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_hS_6sIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.importproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.ImportProjectHandler" command="_5izjEIGOEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_jgXxMIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.exportproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.ExportProjectHandler" command="_7muioIGOEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_lDslIIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.deleteproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.DeleteProjectHandler" command="_-sojoIGOEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_mulZoIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.quit" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.ExitHandler" command="_AvelIIGPEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_oXClMIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.about" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.AboutHandler" command="_Dhn8oIGPEeeI1dq59ubV8g"/>
+    <elements xsi:type="commands:Handler" xmi:id="_4JXLsH6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.handler.preferences" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.PreferencesHandler" command="_1ZE1YH6gEeeSPpFWfRBHVA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_fwfLIJFeEeeV6rJKleJxgw" elementId="org.agentgui.core.handler.update" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.UpdateHandler" command="_a7pjIJFeEeeV6rJKleJxgw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_48-a8JIdEeeP1e_9ka96kQ" elementId="org.agentgui.core.handler.help" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.HelpHandler" command="_1Oog8JIdEeeP1e_9ka96kQ"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_TiqFoJ4-Eee4u7jTJfWu3A" featurename="commands" parentElementId="org.agentgui.core.application">
+    <elements xsi:type="commands:Command" xmi:id="_qFjK4IGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.newproject" commandName="New Project" description="Creates a new project"/>
+    <elements xsi:type="commands:Command" xmi:id="_vYjVkIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.closeproject" commandName="Close Project" description="Closes the current project"/>
+    <elements xsi:type="commands:Command" xmi:id="_z5QgoIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.openproject" commandName="Open Project" description="Opens a saved project"/>
+    <elements xsi:type="commands:Command" xmi:id="_26HpkIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.saveproject" commandName="Save Project" description="Saves the current project"/>
+    <elements xsi:type="commands:Command" xmi:id="_5izjEIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.importproject" commandName="Import Project" description="Imports a project"/>
+    <elements xsi:type="commands:Command" xmi:id="_7muioIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.exportproject" commandName="Export Project" description="Exports the current project"/>
+    <elements xsi:type="commands:Command" xmi:id="_-sojoIGOEeeI1dq59ubV8g" elementId="org.agentgui.core.command.deleteproject" commandName="Delete Project" description="Deletes the current project"/>
+    <elements xsi:type="commands:Command" xmi:id="_AvelIIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.command.quit" commandName="Exit" description="Exits the application"/>
+    <elements xsi:type="commands:Command" xmi:id="_1ZE1YH6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.command.preferences" commandName="Preferences" description="Opens the preferences dialog"/>
+    <elements xsi:type="commands:Command" xmi:id="_a7pjIJFeEeeV6rJKleJxgw" elementId="org.agentgui.core.command.update" commandName="Update"/>
+    <elements xsi:type="commands:Command" xmi:id="_Dhn8oIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.command.about" commandName="About" description="Shows the about dialog"/>
+    <elements xsi:type="commands:Command" xmi:id="_1Oog8JIdEeeP1e_9ka96kQ" elementId="org.agentgui.core.command.help" commandName="Help"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_pYSHYJ45Eee4u7jTJfWu3A" featurename="children" parentElementId="org.eclipse.ui.main.menu">
+    <elements xsi:type="menu:Menu" xmi:id="_qW4BIJ46Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.file" label="Projects">
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_U6QSEJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.handledmenuitem.newproject" label="New Project" command="_qFjK4IGOEeeI1dq59ubV8g"/>
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_XlOqkJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.handledmenuitem.openproject" label="Open Project" command="_z5QgoIGOEeeI1dq59ubV8g"/>
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_bT3fgJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.handledmenuitem.closeproject" label="Close Project" command="_vYjVkIGOEeeI1dq59ubV8g"/>
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_hxOkgJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.handledmenuitem.saveproject" label="Save Project" command="_26HpkIGOEeeI1dq59ubV8g"/>
+    </elements>
+    <elements xsi:type="menu:Menu" xmi:id="_s_LgIJ46Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.edit" label="View"/>
+    <elements xsi:type="menu:Menu" xmi:id="_Job_kJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.jade" label="Jade"/>
+    <elements xsi:type="menu:Menu" xmi:id="_L_gkoJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.mas" label="MAS"/>
+    <elements xsi:type="menu:Menu" xmi:id="_N1DJ8J47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.extra" label="Extra"/>
+    <elements xsi:type="menu:Menu" xmi:id="_QYPfcJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.window" label="Window"/>
+    <elements xsi:type="menu:Menu" xmi:id="_SjpAAJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.help" label="Help"/>
+  </fragments>
+</fragment:ModelFragments>

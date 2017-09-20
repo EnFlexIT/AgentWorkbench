@@ -44,6 +44,9 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
 /**
  * This class controls all aspects of the application's execution
+ * and therefore also the different execution modes.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class PlugInApplication implements IApplication {
 

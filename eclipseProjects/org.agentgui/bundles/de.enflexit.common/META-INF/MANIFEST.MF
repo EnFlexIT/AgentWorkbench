@@ -31,3 +31,4 @@ Require-Bundle: de.enflexit.api,
  org.agentgui.lib.jade;bundle-version="4.4.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
+Bundle-Vendor: EnFlex.IT

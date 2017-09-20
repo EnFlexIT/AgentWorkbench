@@ -40,6 +40,22 @@
          </property>
       </product>
    </extension>
+    <extension id="org.agentgui.MainMenuModelProcessor"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            apply="always"
+            class="org.agentgui.ApplicationModelMainMenuProcessor"
+            beforefragment="true">
+      </processor>
+   </extension>
+   <extension
+         id="org.agentgui.core.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            apply="always"
+            uri="ApplicationMenues.e4xmi">
+      </fragment>
+   </extension>
    <extension
          point="com.opcoach.e4.preferences.e4PreferencePages">
       <page
@@ -53,8 +69,6 @@
             name="Program Start">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-   </extension>
+  
 
 </plugin>
