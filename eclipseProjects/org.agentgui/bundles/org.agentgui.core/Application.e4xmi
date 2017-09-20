@@ -6,7 +6,6 @@
       <children xsi:type="basic:Part" xmi:id="__xGOkH6fEeeSPpFWfRBHVA" elementId="org.agentgui.core.part.part2" label="Part2"/>
       <children xsi:type="basic:Part" xmi:id="_BuaP0H6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.part.part3" label="Part3"/>
     </children>
-    <mainMenu xmi:id="_SFC4oJ9xEeeqz9onJxuSMg" elementId="org.eclipse.ui.main.menu"/>
     <trimBars xmi:id="_DCT4cJ-hEeeqz9onJxuSMg" elementId="org.agentgui.core.trimbar.main">
       <children xsi:type="menu:ToolBar" xmi:id="_XBgx0J-hEeeqz9onJxuSMg" elementId="org.agentgui.core.toolbar.main"/>
     </trimBars>

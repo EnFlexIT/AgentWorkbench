@@ -47,30 +47,23 @@ public class ApplicationModelMainMenuProcessor {
 
 	/** The Constant ID_TRIMMED_WINDOW. */
 	private static final String ID_TRIMMED_WINDOW = "org.agentgui.core.trimmedwindow.agentworkbench.REMOVE_ME";
-//	private static final String ID_TRIMMED_WINDOW = "org.agentgui.core.trimmedwindow.agentworkbench";
 	private static final String ID_MAIN_MENUE_ELEMENT = "org.eclipse.ui.main.menu";
 	
 	@Inject private MApplication application;
-
-	/** The model service. */
 	@Inject private EModelService modelService;
 
 	/**
-	 * Execute.
+	 * Executes the model processor.
 	 */
-	@Execute
-	public void execute() {
+	@Execute public void execute() {
 		MTrimmedWindow window = (MTrimmedWindow) this.modelService.find(ID_TRIMMED_WINDOW, this.application);
-		if (window == null || window.getMainMenu() != null) {
-			//System.err.println("=> " + this.getClass().getName() + ": Trimmed Window NOT found!");
+		if (window==null || window.getMainMenu()!=null) {
 			return;
 		}
 		window.setMainMenu(this.createEmptyMainMenu());
 	}
-
 	/**
 	 * Creates the empty main menu.
-	 *
 	 * @return the m menu
 	 */
 	private MMenu createEmptyMainMenu() {
