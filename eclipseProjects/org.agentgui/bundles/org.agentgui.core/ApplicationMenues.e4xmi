@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_qgC2IJ44Eee4u7jTJfWu3A">
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_LAwQ0J5QEee4u7jTJfWu3A" featurename="handlers" parentElementId="org.agentgui.core.application" positionInList="0">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_LAwQ0J5QEee4u7jTJfWu3A" featurename="handlers" parentElementId="org.agentgui.core.application" positionInList="">
     <elements xsi:type="commands:Handler" xmi:id="_WFrGoIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.newproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.NewProjectHandler" command="_qFjK4IGOEeeI1dq59ubV8g"/>
     <elements xsi:type="commands:Handler" xmi:id="_anEOMIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.closeproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.CloseProjectHandler" command="_vYjVkIGOEeeI1dq59ubV8g"/>
     <elements xsi:type="commands:Handler" xmi:id="_c7JJoIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.openproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.OpenProjectHandler" command="_z5QgoIGOEeeI1dq59ubV8g"/>
@@ -40,6 +40,11 @@
     <elements xsi:type="menu:Menu" xmi:id="_L_gkoJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.mas" label="MAS"/>
     <elements xsi:type="menu:Menu" xmi:id="_N1DJ8J47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.extra" label="Extra"/>
     <elements xsi:type="menu:Menu" xmi:id="_QYPfcJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.window" label="Window"/>
-    <elements xsi:type="menu:Menu" xmi:id="_SjpAAJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.help" label="Help"/>
+    <elements xsi:type="menu:Menu" xmi:id="_SjpAAJ47Eee4u7jTJfWu3A" elementId="org.agentgui.core.menu.help" label="Help">
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_iG0TIJ9xEeeqz9onJxuSMg" elementId="org.agentgui.core.handledmenuitem.about" label="About" command="_Dhn8oIGPEeeI1dq59ubV8g"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_aMA0YJ-gEeeqz9onJxuSMg" featurename="children" parentElementId="org.agentgui.core.toolbar.main">
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_WrykAJ-iEeeqz9onJxuSMg" elementId="org.agentgui.core.handledtoolitem.exit" label="ToolBar: Quit" command="_AvelIIGPEeeI1dq59ubV8g"/>
   </fragments>
 </fragment:ModelFragments>

@@ -11,7 +11,6 @@ import org.eclipse.ui.IWorkbench;
 public class ExitHandler {
 	@Execute
 	public void execute(IWorkbench workbench) {
-		System.err.println("=> Gefunden !!");
 		workbench.close();
 	}
 		

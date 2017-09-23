@@ -69,6 +69,9 @@
             name="Program Start">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+   </extension>
   
 
 </plugin>

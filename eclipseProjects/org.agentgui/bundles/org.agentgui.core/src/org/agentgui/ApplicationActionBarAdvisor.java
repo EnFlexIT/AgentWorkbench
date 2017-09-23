@@ -71,18 +71,18 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	@Override
 	protected void makeActions(IWorkbenchWindow window) {
 	
+		newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
+		register(newWindowAction);
+		
 		exitAction = ActionFactory.QUIT.create(window);
         register(exitAction);
         
+        preferencesAction = ActionFactory.PREFERENCES.create(window);
+        register(preferencesAction);
+
         aboutAction = ActionFactory.ABOUT.create(window);
         register(aboutAction);
         
-        newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
-        register(newWindowAction);
-        
-        //XXX preferences action
-        preferencesAction = ActionFactory.PREFERENCES.create(window);
-        register(preferencesAction);
 	}
 
 
