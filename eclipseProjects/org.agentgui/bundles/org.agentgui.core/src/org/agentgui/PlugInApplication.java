@@ -217,7 +217,9 @@ public class PlugInApplication implements IApplication {
 			
 		} finally {
 			display.dispose();
-			if (this.getVisualisationPlatform()==ApplicationVisualizationBy.EclipseFramework) {
+			// --- Just in case of the Eclipse UI ---------
+			// --- usage or after an update + restart -----
+			if (this.getVisualisationPlatform()==ApplicationVisualizationBy.EclipseFramework || eclipseReturnValue==IApplication.EXIT_RESTART) {
 				appReturnValue = eclipseReturnValue;
 				Application.setQuitJVM(true);
 			}
