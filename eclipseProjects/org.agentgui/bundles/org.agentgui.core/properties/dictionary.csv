@@ -490,6 +490,7 @@ de;Pause;Pause
 de;Plug-Ins;Plug-Ins;;;
 de;PlugIn für Agent.GUI;PlugIn for Agent.GUI
 de;Position;Position
+de;Produktverzeichnis;Porduct Directory;;;
 de;Progamm umschalten auf;Switch progam to
 de;Programmende...;Application shutdown ...
 de;Programmstart...;Starting Program ...
@@ -604,13 +605,10 @@ de;Stop;Stop
 de;Stunde;Hour;;;
 de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
-de;Suche lÃ¶schen;;;;
 de;Suche löschen;Clear Search;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
-de;Suche rÃ¼ckwÃ¤rts;;;;
 de;Suche rückwärts;Search backwards;;;
-de;Suche vorwÃ¤rts;;;;
 de;Suche vorwärts;Search forwards;;;
 de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
@@ -663,8 +661,10 @@ de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Dis
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
+de;Verzeichnis auswählen;Select Directory;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis einbinden;Include Directory;;;
+de;Verzeichnis eines installierten Produkts auswählen;Select directory of installed product;;;
 de;Verzeichnis gepackt zu;Folder packed to;;;
 de;Verzeichnis mit *.class-Dateien aus Java Projekt einbinden;Include directory with *.class-files from Java project;;;
 de;Verzeichnis;Folder

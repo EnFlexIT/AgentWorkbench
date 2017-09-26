@@ -338,7 +338,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 				// --- Happens in the AgentGui.jar ------------------
 				JarInputStream jarFile=null;
 				try {
-					jarFile = new JarInputStream(new FileInputStream(Application.getGlobalInfo().getFileRunnableJar(true)));
+					jarFile = new JarInputStream(new FileInputStream(Application.getGlobalInfo().getFileRunnableJar()));
 					int pathSepPosition = this.changeFilesPackage.indexOf("/");
 					while(true) {
 						JarEntry jarEntry=jarFile.getNextJarEntry ();

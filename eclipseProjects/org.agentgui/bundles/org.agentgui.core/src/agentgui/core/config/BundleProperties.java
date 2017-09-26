@@ -57,8 +57,6 @@ public class BundleProperties {
 	public static final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
 	
 	public static final String DEF_RUNAS = "01_RUNAS";
-//	public static final String DEF_RUNAS_Server = "Server";
-//	public static final String DEF_RUNAS_EmeddedSystemAgent = "EmbeddedSystemAgent";
 	
 	public static final String DEF_BENCH_VALUE = "02_BENCH_VALUE";
 	public static final String DEF_BENCH_EXEC_ON = "03_BENCH_EXEC_ON";
@@ -109,6 +107,7 @@ public class BundleProperties {
 	public static final String DEF_OIDC_USERNAME = "60_OIDC_USERNAME";
 	public static final String DEF_OIDC_ISSUER_URI = "61_OIDC_ISSUER_URI";
 	
+	public static final String DEF_PRODUCT_INSTALLATION_DIRECTORY = "100_PRODUCT_INSTALLATION_DIRECTORY";
 	
 	private GlobalInfo globalInfo;
 	private IEclipsePreferences eclipsePreferences;

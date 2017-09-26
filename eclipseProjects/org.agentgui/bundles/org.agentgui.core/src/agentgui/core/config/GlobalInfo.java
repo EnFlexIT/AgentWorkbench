@@ -35,6 +35,7 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Image;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
@@ -46,6 +47,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.core.runtime.Platform;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -315,7 +317,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		try {
 			this.doLoadPersistedConfiguration();
 			this.getVersionInfo();
-			this.getFileRunnableJar(false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -748,30 +749,59 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	/**
 	 * This method can be used in order to get the applications executable 
-	 * jar-file. (by default it is the file 'AgentGui.jar')
-	 * @param absolute set true if you want to get the full path to this
-	 * @return the path to the executable jar file
+	 * jar-file that is in fact the equinox launcher.
+	 * @return the absolute path to the executable jar file
 	 */
-	public String getFileRunnableJar(boolean absolute){
+	public String getFileRunnableJar(){
 		if (fileRunnableJar==null) {
-			String[] classPathFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-			for (int i=0; i<classPathFiles.length; i++) {
-				String classPathEntry = classPathFiles[i];
-				if (classPathEntry.contains("org.eclipse.equinox.launcher")) {
-					System.out.println("=> Found runnable jar: " + classPathEntry);
-					fileRunnableJar = classPathEntry;
-					break;
-				}
+			
+			// --- Get installation directory -----------------------
+			String instDirPath = null;
+			if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+				instDirPath = getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
+			} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
+				instDirPath = Platform.getLocation().toFile().getAbsolutePath();
 			}
+			if (instDirPath==null || instDirPath.isEmpty()==true) {
+				System.err.println("Could not find an installation directory for " + getApplicationTitle() + ".");
+				return null;
+			}
+
+			// --- Get File object of installation directory --------
+			File instDir = new File(instDirPath);
+			if (instDir==null || instDir.exists()==false) {
+				System.err.println("Could not find the installation directory '" + instDirPath + "'.");
+			}
+			
+			// --- Find the plugins directory -----------------------
+			File[] searchResult =  instDir.listFiles(new FileFilter() {
+				@Override
+				public boolean accept(File file) {
+					if (file.isDirectory() && file.getName().equals("plugins")) return true;
+					return false;
+				}
+			});
+			if (searchResult.length==0) {
+				System.err.println("Could not find sub directory 'plugins'.");
+				return null;
+			}  
+			
+			// --- Find the equinox launcher ------------------------
+			File plugins = searchResult[0];
+			searchResult =  plugins.listFiles(new FileFilter() {
+				@Override
+				public boolean accept(File file) {
+					if (file.isDirectory()==false && file.getName().startsWith("org.eclipse.equinox.launcher")) return true;
+					return false;
+				}
+			});
+			if (searchResult.length==0) {
+				System.err.println("Could not find the equinox launcher within the plubins-directory of the installed product.");
+				return null;
+			}
+
+			fileRunnableJar = searchResult[0].getAbsolutePath();
 		}
-		// --- 		
-		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
-			// TODO
-			System.err.println("TODO: Runnable jar for IDE is not defined yet.");
-		} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
-			// TODO
-			System.err.println("TODO: Runnable jar for OSGI is not defined yet.");
-		} 
 		return fileRunnableJar;
 	}
 	/**
