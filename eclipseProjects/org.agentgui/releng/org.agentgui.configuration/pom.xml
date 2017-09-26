@@ -83,7 +83,28 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<!-- see https://maven.apache.org/plugins/maven-jarsigner-plugin/usage.html -->
+			<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<keystore>/absolute/path/to/the/keystore</keystore>
+					<alias>Alias name</alias>
+					<storepass>Store password</storepass>
+					<keypass>Key password</keypass>
+				</configuration>
+			</plugin>
+			 -->
 		</plugins>
 
 		<pluginManagement>
