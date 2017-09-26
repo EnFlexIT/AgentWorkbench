@@ -17,8 +17,7 @@ import org.eclipse.ui.internal.dialogs.AboutDialog;
 @SuppressWarnings("restriction")
 public class AboutHandler {
 
-	@Execute
-	public void execute(MApplication application, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell, EModelService modelService) {
+	@Execute public void execute(MApplication application, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell, EModelService modelService) {
 		System.out.println((this.getClass().getSimpleName() + " called"));
 		new AboutDialog(shell).open();
 	}

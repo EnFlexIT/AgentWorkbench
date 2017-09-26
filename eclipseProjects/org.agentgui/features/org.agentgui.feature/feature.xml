@@ -61,9 +61,6 @@
          version="0.0.0"/>
 
    <requires>
-      <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.scimark" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.hypericSigar" version="1.6.4" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jade" version="4.4.0" match="greaterOrEqual"/>
@@ -73,11 +70,11 @@
       <import plugin="org.agentgui.lib.mySQL" version="5.0.8" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jep" version="2.3.1" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.googleTranslate" version="0.97.0" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.oidc.libs" version="5.17.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.e4.core.di"/>
       <import plugin="org.eclipse.ui"/>
+      <import feature="de.enflexit.common.feature" version="2.0.0.qualifier"/>
    </requires>
 
    <plugin
@@ -86,33 +83,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="de.enflexit.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.enflexit.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.enflexit.oidc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.enflexit.oidc.libs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="org.agentgui.lib.bouncyCastle"

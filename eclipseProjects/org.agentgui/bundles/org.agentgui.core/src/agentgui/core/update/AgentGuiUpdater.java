@@ -39,11 +39,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.equinox.internal.p2.core.ProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
-import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.operations.ProvisioningJob;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
@@ -77,7 +75,7 @@ public class AgentGuiUpdater extends Thread {
 	public static final String UPDATE_SUB_FOLDER = "updates"; 		// - subfolder in the web server directory -
 	public static final String UPDATE_VERSION_INFO_FILE = "latestVersion.xml";
 	
-	private static final String REPOSITORY_LOCATION = "http://p2.enflex.it/";
+	private static final String P2_REPOSITORY_LOCATION = "http://p2.enflex.it/";
 	
 	private enum UpdateMode {
 		UPDATE_FROM_FILE, UPDATE_FROM_P2_REPOSITORY
@@ -739,29 +737,28 @@ public class AgentGuiUpdater extends Thread {
 	}
 	
 	public static void triggerP2Update() {
+		
 		IStatus updateResult = checkForP2Update(getProvisioningAgent(), getProgressMonitor());
-		//TODO check status, restart if successful
-		if(updateResult.getCode() == UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
-			System.out.println("No uodate found");
-		}else {
-			switch (updateResult.getSeverity()) {
-			case IStatus.OK:
-				System.out.println("Update job return status: OK");
-				break;
-			case IStatus.ERROR:
-				System.out.println("Update job return status: Error");
-				break;
-			case IStatus.INFO:
-				System.out.println("Update job return status: Info");
-				break;
-			case IStatus.CANCEL:
-				System.out.println("Update job return status: Cancel");
-				break;
-			case IStatus.WARNING:
-				System.out.println("Update job return status: Warning");
-				break;
+		//TODO check return status, restart application if successfully updated
+		
+		//TODO debug outputs, remove later
+		switch (updateResult.getSeverity()) {
+		case IStatus.OK:
+			System.out.println("Update job return status: OK");
+			break;
+		case IStatus.ERROR:
+			System.out.println("Update job return status: Error");
+			break;
+		case IStatus.INFO:
+			System.out.println("Update job return status: Info");
+			break;
+		case IStatus.CANCEL:
+			System.out.println("Update job return status: Cancel");
+			break;
+		case IStatus.WARNING:
+			System.out.println("Update job return status: Warning");
+			break;
 
-			}
 		}
 		
 	}
@@ -775,17 +772,7 @@ public class AgentGuiUpdater extends Thread {
 			return null;
 		}
 		
-		IProvisioningAgentProvider agentProvider = (IProvisioningAgentProvider) bundleContext.getService(serviceReference);
-		
-		ProvisioningAgent agent = null;
-		try {
-			 agent = (ProvisioningAgent) agentProvider.createAgent(new URI(REPOSITORY_LOCATION));
-		} catch (ProvisionException | URISyntaxException e) {
-			System.err.println("Error creating provisioning agent!");
-			e.printStackTrace();
-			return null;
-		}
-		
+		IProvisioningAgent agent = (IProvisioningAgent) bundleContext.getService(serviceReference);
 		return agent;
 		
 	}
@@ -805,6 +792,7 @@ public class AgentGuiUpdater extends Thread {
 		 
 		 // --- No updates found ----------------
 		 if(status.getCode() == UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
+			 System.out.println("P2 Update: No update found!");
 			 return status;
 		 }
 		 
@@ -821,11 +809,17 @@ public class AgentGuiUpdater extends Thread {
 	}
 	
 	private static IStatus performP2Update(UpdateOperation operation, IProgressMonitor monitor) {
+		System.out.println("P2 update: Updates found, starting update process...");
 		ProvisioningJob job = operation.getProvisioningJob(null);
+		if (job == null) {
+            System.err.println("Trying to update from the Eclipse IDE? This won't work!");
+            return Status.CANCEL_STATUS;
+        }
 		IStatus status = job.runModal(monitor);
 		if(status.getSeverity() == IStatus.CANCEL) {
 			throw new OperationCanceledException();
 		}
+		System.out.println("P2 update: Update done!");
 		return status;
 	}
 	
@@ -837,7 +831,7 @@ public class AgentGuiUpdater extends Thread {
 		
 		URI uri = null;
 		try {
-			uri = new URI(REPOSITORY_LOCATION);
+			uri = new URI(P2_REPOSITORY_LOCATION);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return null;

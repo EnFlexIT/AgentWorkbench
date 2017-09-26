@@ -359,10 +359,10 @@ public class JadeRemoteStart extends Thread {
 		classPath += ".;";
 		
 		// -----------------------------------------------------
-		// --- Agent.GUI with its integrated libraries ---------
-		String agentGuiJar = Application.getGlobalInfo().getFileRunnableJar(false);
-		agentGuiJar = agentGuiJar.replace("\\", "/");
-		classPath += "./" + agentGuiJar + ";";
+		// --- Get the equinox launcher ------------------------
+		String startJar = Application.getGlobalInfo().getFileRunnableJar();
+		startJar = startJar.replace("\\", "/");
+		classPath += "./" + startJar + ";";
 		
 		// -----------------------------------------------------
 		// --- Configure external jar-files -------------------- 
