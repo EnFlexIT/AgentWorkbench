@@ -116,7 +116,7 @@
 					<configuration>
 						<baselineRepositories>
 							<repository>
-								<url>https://p2.enflex.it/</url>
+								<url>https://p2.enflex.it/workbench/snapshots/</url>
 							</repository>
 						</baselineRepositories>
 					</configuration>

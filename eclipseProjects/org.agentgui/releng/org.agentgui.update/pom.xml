@@ -42,7 +42,7 @@
 								<configuration>
 									<source>
 										<repository>
-											<url>https://p2.enflex.it/</url>
+											<url>https://p2.enflex.it/workbench/snapshots/</url>
 										</repository>
 									</source>
 									<append>true</append>
@@ -67,7 +67,7 @@
 								<configuration>
 									<fromDir>${project.build.directory}/repository/</fromDir>
 									<includes>**</includes>
-									<toDir>/subDomains/p2.enflex.it/</toDir>
+									<toDir>/subDomains/p2.enflex.it/workbench/snapshots/</toDir>
 									<url>scpexe://enflex.it</url>
 									<serverId>update-site-enflexit</serverId>
 									<!-- Points to your "~/.m2/settings.xml", where the connection settings 
@@ -102,7 +102,7 @@
 								<configuration>
 									<fromDir>${project.build.directory}/repository/</fromDir>
 									<includes>**</includes>
-									<toDir>/subDomains/p2.enflex.it/</toDir>
+									<toDir>/subDomains/p2.enflex.it/workbench/snapshots/</toDir>
 									<url>scpexe://enflex.it</url>
 									<serverId>update-site-enflexit</serverId>
 									<!-- Points to your "~/.m2/settings.xml", where the connection settings 

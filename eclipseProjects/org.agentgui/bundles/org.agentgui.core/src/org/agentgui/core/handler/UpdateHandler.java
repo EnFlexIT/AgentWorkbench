@@ -23,7 +23,7 @@ import org.eclipse.e4.ui.di.UISynchronize;
 
 public class UpdateHandler {
 	
-	private static final String REPOSITORY_LOCATION = "http://p2.enflex.it/";
+	private static final String REPOSITORY_LOCATION = "http://p2.enflex.it/workbench/snapshots/";
 //	private static final String REPOSITORY_LOCATION = "file:///mnt/quickdata/git/AgentWorkbench-OSGI/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repository";
 //	private static final String REPOSITORY_LOCATION = "file:///mnt/quickdata/git/AgentWorkbench-OSGI/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repositorydassesnichtgibt";
 //	private static final String REPOSITORY_LOCATION = "file:///D:/git/AgentWorkbench/eclipseProjects/org.agentgui/releng/org.agentgui.update/target/repository";
