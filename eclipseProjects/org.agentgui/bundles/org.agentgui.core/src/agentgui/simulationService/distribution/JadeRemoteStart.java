@@ -250,7 +250,7 @@ public class JadeRemoteStart extends Thread {
 		
 		String java = "";
 		String javaVMArgs = "";
-		String classPath = "";
+		String equinoxLauncherJar = "";
 		String jade = "";
 		String jadeArgs = "";
 		
@@ -263,17 +263,17 @@ public class JadeRemoteStart extends Thread {
 		
 		// --------------------------------------
 		// --- Class-Path configuration ---------
-		classPath = this.getClassPath();
+		equinoxLauncherJar = this.getEquinoxLauncherJar();
 		// +++ Check for operating system +++
 		if (os.toLowerCase().contains("windows")==true) {
 			// --- nothing to do here ---
 		} else if (os.toLowerCase().contains("linux")==true) {
-			classPath = classPath.replaceAll(";", ":");
+			equinoxLauncherJar = equinoxLauncherJar.replaceAll(";", ":");
 		}
 
 		// --------------------------------------
 		// --- Jade configuration ---------------
-		jade += "agentgui.core.application.Application -jade" + " ";
+		jade += "-jade" + " ";
 		if (jadeServices!=null) {
 			jadeArgs += "-services  " + jadeServices + " ";
 		}
@@ -296,7 +296,7 @@ public class JadeRemoteStart extends Thread {
 		
 		// --------------------------------------
 		// --- merge execute statement ----------
-		String execute = java + " " + javaVMArgs + " " + classPath + " " + jade  + " " + jadeArgs;
+		String execute = java + " " + javaVMArgs + " " + equinoxLauncherJar + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
 		System.out.println( "Execute: " + execute);
 		
@@ -346,32 +346,14 @@ public class JadeRemoteStart extends Thread {
 	}
 
 	/**
-	 * This method configures the CLASSPATH for the remote-container.
-	 * @return the new class path
+	 * Returns the command line part for the equinox launcher jar.
+	 * @return the equinox launcher jar
 	 */
-	private String getClassPath() {
-		
-		String classPath = "";
-		
-		// -----------------------------------------------------
-		// --- Basic - Configuration ---------------------------
-		classPath += "-classpath ";
-		classPath += ".;";
-		
-		// -----------------------------------------------------
+	private String getEquinoxLauncherJar() {
 		// --- Get the equinox launcher ------------------------
-		String startJar = Application.getGlobalInfo().getFileRunnableJar();
-		startJar = startJar.replace("\\", "/");
-		classPath += "./" + startJar + ";";
-		
-		// -----------------------------------------------------
-		// --- Configure external jar-files -------------------- 
-		for (int i = 0; i < this.jadeJarIncludeClassPath.size(); i++) {
-			String jar = (String) jadeJarIncludeClassPath.get(i);
-			classPath += jar;
-		}
-
-		return classPath;
+		String execJar = Application.getGlobalInfo().getFileRunnableJar();
+		execJar = execJar.replace("\\", "/");
+		return "-jar " + execJar;
 	}
 	
 	/**

@@ -75,7 +75,8 @@ public class AgentGuiUpdater extends Thread {
 	public static final String UPDATE_SUB_FOLDER = "updates"; 		// - subfolder in the web server directory -
 	public static final String UPDATE_VERSION_INFO_FILE = "latestVersion.xml";
 	
-	private static final String P2_REPOSITORY_LOCATION = "http://p2.enflex.it/";
+	//TODO Get repository locations from the preferences
+	private static final String P2_REPOSITORY_LOCATION = "file:///D:/Builds/V2.0.1/repository";
 	
 	private enum UpdateMode {
 		UPDATE_FROM_FILE, UPDATE_FROM_P2_REPOSITORY
