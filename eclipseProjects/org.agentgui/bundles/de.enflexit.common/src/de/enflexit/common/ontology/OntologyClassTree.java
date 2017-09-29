@@ -268,7 +268,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
     		// --- Return object for Protege 3.3.1 -------------
     		return this.getNewTreeNodeUserObject(clazz);
 	    	
-    	} catch (ClassNotFoundException cnfe) {
+    	} catch (ClassNotFoundException | NoClassDefFoundError cnfe) {
     		cnfe.printStackTrace();
 		}
 		return null;

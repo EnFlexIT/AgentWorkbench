@@ -19,7 +19,7 @@ public interface BaseClassLoadService {
 	 * @return the class
 	 * @throws ClassNotFoundException the class not found exception
 	 */
-	public Class<?> forName(String className) throws ClassNotFoundException;
+	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError;
 
 	/**
 	 * Has to return a new instance of the specified class.

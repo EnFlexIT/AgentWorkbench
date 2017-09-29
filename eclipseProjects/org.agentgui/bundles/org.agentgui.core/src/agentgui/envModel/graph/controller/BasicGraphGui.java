@@ -419,25 +419,26 @@ public class BasicGraphGui extends JPanel implements Observer {
 				String imageRef = node.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
 
 				//TODO only rebuild if changed
-//				shape = shapeMap.get(imageRef);
-				shape = null;
-				if (shape == null) {
-					ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
-					if (imageIcon != null) {
-						Image image = imageIcon.getImage();
-						shape = FourPassImageShaper.getShape(image, 30);
-						if (shape.getBounds().getWidth() > 0 && shape.getBounds().getHeight() > 0) {
-							// don't cache a zero-sized shape, wait for the image to be ready
-							int width = image.getWidth(null);
-							int height = image.getHeight(null);
-							AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
-							shape = transform.createTransformedShape(shape);
-							this.shapeMap.put(imageRef, shape);
-						}
-					} else {
-						System.err.println("Could not find node image '" + imageRef + "'");
+				//shape = shapeMap.get(imageRef);
+				Shape imageShape = null;
+				ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
+				if (imageIcon != null) {
+					Image image = imageIcon.getImage();
+					imageShape = FourPassImageShaper.getShape(image, 30);
+					if (imageShape .getBounds().getWidth() > 0 && imageShape .getBounds().getHeight() > 0) {
+						// don't cache a zero-sized shape, wait for the image to be ready
+						int width = image.getWidth(null);
+						int height = image.getHeight(null);
+						AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
+						imageShape = transform.createTransformedShape(imageShape );
+						this.shapeMap.put(imageRef, imageShape );
 					}
+				
+				} else {
+					System.err.println("Could not find node image '" + imageRef + "'");
 				}
+				
+				if (imageShape!=null) shape = imageShape;
 				
 			}
 			return shape;

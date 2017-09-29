@@ -174,6 +174,7 @@ public class SimulationSetup {
 		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);
+		    	
 		    } catch(IOException ex) {
 		    	ex.printStackTrace();
 		    	saved = false;
