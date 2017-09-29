@@ -33,7 +33,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +49,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.transfer.FileCopier;
 
 /**
@@ -376,10 +376,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 		if (userObjectFile.exists()==true) {
 			Serializable userObject = null;
 			FileInputStream fis = null;
-			ObjectInputStream in = null;
+			ObjectInputStreamForClassLoadService in = null;
 			try {
 				fis = new FileInputStream(userObjectFileName);
-				in = new ObjectInputStream(fis);
+				in = new ObjectInputStreamForClassLoadService(fis);
 				userObject = (Serializable)in.readObject();
 				in.close();
 				this.currSimSetup.setUserRuntimeObject(userObject);

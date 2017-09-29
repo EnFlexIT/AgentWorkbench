@@ -95,7 +95,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		try {
 			clsToCheck.forName(className);
 			return true;
-		} catch (ClassNotFoundException cnfe) {
+		} catch (ClassNotFoundException | NoClassDefFoundError cnfe) {
 			//cnfe.printStackTrace();
 		}
 		return false;
@@ -234,7 +234,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @see energy.classLoadService.AbstractClassLoadServiceUtility#getClass(java.lang.String)
 	 */
 	@Override
-	public Class<?> forName(String className) throws ClassNotFoundException {
+	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError {
 		return this.getClassLoadService(className).forName(className);
 	}
 	

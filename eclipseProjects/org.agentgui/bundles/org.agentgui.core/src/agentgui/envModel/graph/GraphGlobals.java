@@ -79,7 +79,6 @@ public final class GraphGlobals {
  	public static ImageIcon getImageIcon(String path2Image) {
 	    
  		String path = null;
- 		String pathRoot = null;
  		File imageFile = null;
  		ImageIcon imageIcon = null;
  		
@@ -97,12 +96,11 @@ public final class GraphGlobals {
 //			//e.printStackTrace();
 //		}
  		// --- New approach to the above mentioned problem ----------
- 		pathRoot = Application.getGlobalInfo().getPathBaseDir();
  		
  		// ----------------------------------------------------------
 		// --- 1. Search in the loaded packages ---------------------
  		// ----------------------------------------------------------
-		// --- 1b. Try the direct way -------------------------------
+		// --- 1a. Try the direct way -------------------------------
 		try {
 			URL url = GraphGlobals.class.getResource(path2Image);
 			imageIcon = new ImageIcon(url);
@@ -144,16 +142,8 @@ public final class GraphGlobals {
 			} 
 		}
 		if (imageIcon==null) {
-			// --- 2c. Try absolute folder location ---------------------
-			path = pathRoot + path2Image;
-			imageFile = new File(PathHandling.getPathName4LocalOS(path));
-			if (imageFile.exists()) {
-				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
-			} 			
-		}
-		if (imageIcon==null) {
-			// --- 2d. Try absolute sub folder 'project' ---------------------
-			path = pathRoot + "/projects" + path2Image;
+			// --- 2c. Try absolute sub folder 'project' ---------------------
+			path = Application.getGlobalInfo().getPathProjects() + path2Image;
 			imageFile = new File(PathHandling.getPathName4LocalOS(path));
 			if (imageFile.exists()) {
 				imageIcon = new ImageIcon(imageFile.getAbsolutePath());

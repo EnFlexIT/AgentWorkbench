@@ -54,7 +54,7 @@ public class ClassLoadServiceImpl implements ClassLoadService {
 	 * @see de.enflexit.common.classLoadService.BaseClassLoadService#getClass(java.lang.String)
 	 */
 	@Override
-	public Class<?> forName(String className) throws ClassNotFoundException {
+	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError {
 		return Class.forName(className);
 	}
 	

@@ -35,7 +35,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.Writer;
@@ -88,10 +87,11 @@ import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification;
-import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
+import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationHelper;
 
@@ -405,10 +405,10 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		if (userObjectFile.exists()) {
 			
 			FileInputStream fis = null;
-			ObjectInputStream inStream = null;
+			ObjectInputStreamForClassLoadService inStream = null;
 			try {
 				fis = new FileInputStream(userObjectFileName);
-				inStream = new ObjectInputStream(fis);
+				inStream = new ObjectInputStreamForClassLoadService(fis);
 				Serializable userObject = (Serializable) inStream.readObject();
 				project.setUserRuntimeObject(userObject);
 				

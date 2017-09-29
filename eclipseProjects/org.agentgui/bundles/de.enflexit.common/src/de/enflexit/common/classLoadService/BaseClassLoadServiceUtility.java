@@ -42,7 +42,7 @@ public class BaseClassLoadServiceUtility {
 	 * @return the class
 	 * @throws ClassNotFoundException the class not found exception
 	 */
-	public static Class<?> forName(String className) throws ClassNotFoundException {
+	public static Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError {
 		return getBaseClassLoadServiceUtility().forName(className);
 	}
 	

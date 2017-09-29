@@ -474,6 +474,10 @@ public class BundleEvaluator {
 				}
 			}
 			
+			// --- If bundle is packed in a jar, we're done ---------
+			if (this.isJarBundle(bundle)==true) return bundleClasses;
+			
+			
 			// ------------------------------------------------------
 			// --- If the bundle wiring worked, check for jars ------ 
 			// ------------------------------------------------------			
@@ -688,12 +692,13 @@ public class BundleEvaluator {
 		if (bundle!=null) {
 			List<String> classNames = this.getJarClassReferences(bundle, jarFileURL);
 			for (int i = 0; i < classNames.size(); i++) {
+				String className = classNames.get(i);
 				try {
-					String className = classNames.get(i);
 					Class<?> classFound = bundle.loadClass(className);
 					classesOfJarFile.add(classFound);
-				} catch (ClassNotFoundException cnfEx) {
-					cnfEx.printStackTrace();
+				} catch (ClassNotFoundException | NoClassDefFoundError cnfEx) {
+					// No print of the stack trace here
+					// cnfEx.printStackTrace();
 				}
 			}
 		}
@@ -728,7 +733,7 @@ public class BundleEvaluator {
 	 * @return the jar classes
 	 */
 	public List<String> getJarClassReferences(Bundle bundle, URL jarFileURL) {
-		
+
 		boolean debug = false;
 		
 		// --- Define the result list -------------------------------
@@ -739,11 +744,8 @@ public class BundleEvaluator {
 		// ----------------------------------------------------------
 		JarFile jarFile = null;
 		try {
-			
 			// --- Get the file description of the URL --------------
-			String jarFilePath = jarFileURL.getFile();
-			jarFilePath = jarFilePath.replaceAll("file:", "");
-			jarFilePath = jarFilePath.replaceAll("!/", "");
+			String jarFilePath = this.getFilePathFromURL(jarFileURL);
 			if (debug) System.out.println("=> Check: " + jarFilePath);
 			
 			// --- Check, if this file is available -----------------
@@ -823,6 +825,59 @@ public class BundleEvaluator {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the file path from the URL.
+	 * @param url the URL
+	 * @return the file path from URL
+	 */
+	public String getFilePathFromURL(URL url) {
+		
+		if (url==null) return null;
+
+		String jarFilePath = url.getFile();
+		jarFilePath = jarFilePath.replaceAll("file:", "");
+		jarFilePath = jarFilePath.replaceAll("!/", "");
+		return jarFilePath;
+	}
+	
+	
+	/**
+	 * Returns the bundle URL resolved by the {@link FileLocator}.
+	 * @param bundle the bundle
+	 * @return the bundle URL
+	 */
+	public URL getBundleURL(Bundle bundle) {
+		URL bundleURL = null;
+		try {
+			bundleURL = FileLocator.resolve(bundle.getEntry("/"));
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+		return bundleURL;
+	}
+	/**
+	 * Checks if the specified {@link Bundle} is packed in a jar.
+	 * @param bundle the bundle
+	 * @return true, if is jar bundle
+	 */
+	public boolean isJarBundle(Bundle bundle) {
+		
+		URL pluginURL = this.getBundleURL(bundle);
+		if (pluginURL==null) return false;
+		
+		String filePath = this.getFilePathFromURL(pluginURL);
+		File pluginfile = new File(filePath);
+		if (pluginfile.exists()) {
+			if (pluginfile.isDirectory()) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return pluginURL.getFile().endsWith(".jar");
+	}
+	
 	/**
 	 * Return the bundle directory.
 	 *
@@ -842,14 +897,14 @@ public class BundleEvaluator {
 		}
 		
 		// --- Clean up the directory path ----------------
-		String pluginInstallDir = pluginURL.getPath().trim();
+		String pluginInstallDir = pluginURL.getFile().trim();
 		if (pluginInstallDir.length()==0) {
 			throw new RuntimeException("Could not get installation directory of the plugin: " + bundle.getSymbolicName());
 		}
 
 		// --- Corrections, if we are under windows -------
 		if (Platform.getOS().compareTo(Platform.OS_WIN32) == 0) {
-			pluginInstallDir = pluginInstallDir.substring(1);
+			//pluginInstallDir = pluginInstallDir.substring(1);
 		}
 		return pluginInstallDir;
 	}

@@ -29,7 +29,7 @@ public class BaseClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUti
 	 * @see energy.classLoadService.AbstractClassLoadServiceUtility#getClass(java.lang.String)
 	 */
 	@Override
-	public Class<?> forName(String className) throws ClassNotFoundException {
+	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError {
 		return this.getClassLoadService(className).forName(className);
 	}
 	

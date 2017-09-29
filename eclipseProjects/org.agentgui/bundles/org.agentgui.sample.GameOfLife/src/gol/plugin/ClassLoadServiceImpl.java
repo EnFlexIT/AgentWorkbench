@@ -55,7 +55,7 @@ public class ClassLoadServiceImpl implements ClassLoadService {
 	 * @see agentgui.core.classLoadService.ClassLoadService#getClass(java.lang.String)
 	 */
 	@Override
-	public Class<?> forName(String className) throws ClassNotFoundException {
+	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError {
 		return Class.forName(className);
 	}
 	
