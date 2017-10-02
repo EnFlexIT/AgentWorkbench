@@ -147,8 +147,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	 */
 	private JTree getOntoTree() {
 		if (ontoTree == null) {
-			//OntoTree = new JTree( CurrProject.Ontology.getOntologyTree() );
-			ontoTree = new JTree( currProject.getOntologyVisualisationHelper().getOntologyTree() );
+			ontoTree = new JTree(this.currProject.getOntologyVisualisationHelper().getOntologyTree());
 			ontoTree.setName("OntoTree");
 			ontoTree.setShowsRootHandles(false);
 			ontoTree.setRootVisible(true);

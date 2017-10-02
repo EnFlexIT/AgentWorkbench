@@ -1372,9 +1372,9 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	public void subOntologyRemove(String subOntology2Remove) {
 		this.getSubOntologies().remove(subOntology2Remove);
 		this.getOntologyVisualisationHelper().removeSubOntology(subOntology2Remove);
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_ProjectOntology);
+		this.setUnsaved(true);
+		this.setChanged();
+		this.notifyObservers(CHANGED_ProjectOntology);
 	}
 	
 	/**

@@ -389,30 +389,31 @@ public class ProjectBundleLoader {
 	 * @throws BundleException the bundle exception
 	 */
 	public void installAndStartBundle(String locationID) throws BundleException {
-
+		
 		// --- Install and start bundle ---------
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		Bundle bundle = bundleContext.installBundle(locationID);
 		bundle.start();
-		
 		// --- Remind this bundle ---------------
 		this.getBundleVector().addElement(bundle);
-		
 	}
 	/**
 	 * Stops and un-installs the current bundle.
 	 */
 	public void stopAndUninstallBundles() {
+		
+		// --- Get a copy of loaded bundles -----
 		Vector<Bundle> bundlesToRemove = new Vector<>(this.getBundleVector());
 		for (Bundle bundle: bundlesToRemove) {
 			try {
-				
+				// --- Remove, if active --------
 				if (bundle.getState()==Bundle.ACTIVE) {
 					bundle.stop();
 					bundle.uninstall();
 				}
+				// --- Remove from vector -------
 				this.getBundleVector().remove(bundle);
-				
+
 			} catch (BundleException bEx) {
 				bEx.printStackTrace();
 			}

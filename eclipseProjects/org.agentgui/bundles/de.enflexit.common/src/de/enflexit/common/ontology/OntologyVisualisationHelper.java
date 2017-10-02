@@ -262,7 +262,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 				}
 			}
 			// --- Nothing found? By, by... ------------------------------
-			if ( onCla == null ) {
+			if (onCla==null ) {
 				return null;
 			}	
 		}
