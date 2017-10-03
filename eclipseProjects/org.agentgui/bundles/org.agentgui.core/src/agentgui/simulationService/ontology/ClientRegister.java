@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2016/04/11, 16:51:02
+* @version 2017/10/3, 16:12:22
 */
 public class ClientRegister implements AgentAction {
-
-   /**
-* Protege name: clientPerformance
-   */
-   private PlatformPerformance clientPerformance;
-   public void setClientPerformance(PlatformPerformance value) { 
-    this.clientPerformance=value;
-   }
-   public PlatformPerformance getClientPerformance() {
-     return this.clientPerformance;
-   }
 
    /**
 * Protege name: clientTime
@@ -35,14 +24,25 @@ public class ClientRegister implements AgentAction {
    }
 
    /**
-* Protege name: clientVersion
+* Protege name: clientOS
    */
-   private AgentGuiVersion clientVersion;
-   public void setClientVersion(AgentGuiVersion value) { 
-    this.clientVersion=value;
+   private OSInfo clientOS;
+   public void setClientOS(OSInfo value) { 
+    this.clientOS=value;
    }
-   public AgentGuiVersion getClientVersion() {
-     return this.clientVersion;
+   public OSInfo getClientOS() {
+     return this.clientOS;
+   }
+
+   /**
+* Protege name: clientPerformance
+   */
+   private PlatformPerformance clientPerformance;
+   public void setClientPerformance(PlatformPerformance value) { 
+    this.clientPerformance=value;
+   }
+   public PlatformPerformance getClientPerformance() {
+     return this.clientPerformance;
    }
 
    /**
@@ -57,14 +57,14 @@ public class ClientRegister implements AgentAction {
    }
 
    /**
-* Protege name: clientOS
+* Protege name: clientVersion
    */
-   private OSInfo clientOS;
-   public void setClientOS(OSInfo value) { 
-    this.clientOS=value;
+   private AgentGuiVersion clientVersion;
+   public void setClientVersion(AgentGuiVersion value) { 
+    this.clientVersion=value;
    }
-   public OSInfo getClientOS() {
-     return this.clientOS;
+   public AgentGuiVersion getClientVersion() {
+     return this.clientVersion;
    }
 
 }

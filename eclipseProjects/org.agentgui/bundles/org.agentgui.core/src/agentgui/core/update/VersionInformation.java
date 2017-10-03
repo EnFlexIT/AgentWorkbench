@@ -30,7 +30,8 @@ package agentgui.core.update;
 
 import java.io.Serializable;
 
-import agentgui.core.config.VersionInfo;
+import de.enflexit.common.VersionInfo;
+
 
 /**
  * The Class VersionInformation contains the general information about the major, minor and the build number.
@@ -74,7 +75,7 @@ public class VersionInformation implements Serializable {
 	 * @return true, if this instance describes a newer version
 	 */
 	public boolean isNewerVersion(VersionInfo versionInfo) {
-		return this.isNewerVersion(versionInfo.getVersionMajor(), versionInfo.getVersionMinor(), versionInfo.getVersionBuild());
+		return this.isNewerVersion(versionInfo.getVersionMajor(), versionInfo.getVersionMinor(), versionInfo.getVersionMicro());
 	}
 	/**
 	 * Checks if this version is a newer version than the specified version.

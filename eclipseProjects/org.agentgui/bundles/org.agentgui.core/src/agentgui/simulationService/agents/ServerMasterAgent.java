@@ -449,7 +449,7 @@ public class ServerMasterAgent extends Agent {
 		 * @return true, if is up to date
 		 */
 		private boolean isAgentGuiVersionUpToDate(AgentGuiVersion foreignVersion) {
-			return Application.getGlobalInfo().getVersionInfo().isUpToDate(foreignVersion);
+			return Application.getGlobalInfo().getVersionInfo().isUpToDate(foreignVersion.getMajorRevision(), foreignVersion.getMinorRevision(), foreignVersion.getMicroRevision());
 		}
 		
 		/**
@@ -625,7 +625,7 @@ public class ServerMasterAgent extends Agent {
 							"http4mtp = '" + platform.getHttp4mtp() + "'," +
 							"vers_major = " + version.getMajorRevision() + "," +
 							"vers_minor = " + version.getMinorRevision() + "," +
-							"vers_build = " + version.getBuildNo() + "," +
+							"vers_build = " + version.getMicroRevision() + "," +
 							"os_name = '" + os.getOs_name() + "'," +
 							"os_version = '" + os.getOs_version() + "'," +
 							"os_arch = '" + os.getOs_arch() + "'," +
@@ -654,7 +654,7 @@ public class ServerMasterAgent extends Agent {
 							"http4mtp = '" + platform.getHttp4mtp() + "'," +
 							"vers_major = " + version.getMajorRevision() + "," +
 							"vers_minor = " + version.getMinorRevision() + "," +
-							"vers_build = " + version.getBuildNo() + "," +
+							"vers_build = " + version.getMicroRevision() + "," +
 							"os_name = '" + os.getOs_name() + "'," +
 							"os_version = '" + os.getOs_version() + "'," +
 							"os_arch = '" + os.getOs_arch() + "'," +
@@ -972,7 +972,7 @@ public class ServerMasterAgent extends Agent {
 					AgentGuiVersion aguiVersion = new AgentGuiVersion();
 					aguiVersion.setMajorRevision(res.getInt("vers_major"));
 					aguiVersion.setMinorRevision(res.getInt("vers_minor"));
-					aguiVersion.setBuildNo(res.getInt("vers_build"));
+					aguiVersion.setMicroRevision(res.getInt("vers_build"));
 					
 					PlatformPerformance plPerf = new PlatformPerformance();
 					plPerf.setCpu_vendor(res.getString("cpu_vendor"));

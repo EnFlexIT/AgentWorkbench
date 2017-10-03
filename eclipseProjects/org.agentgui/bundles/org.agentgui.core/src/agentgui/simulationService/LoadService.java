@@ -40,7 +40,6 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.config.VersionInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
@@ -66,6 +65,7 @@ import agentgui.simulationService.ontology.PlatformAddress;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import de.enflexit.common.VersionInfo;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
@@ -1653,7 +1653,7 @@ public class LoadService extends BaseService {
 			AgentGuiVersion version = new AgentGuiVersion();
 			version.setMajorRevision(versionInfo.getVersionMajor());
 			version.setMinorRevision(versionInfo.getVersionMinor());
-			version.setBuildNo(versionInfo.getVersionBuild());
+			version.setMicroRevision(versionInfo.getVersionMicro());
 			
 			// --- Finally define this local description ------
 			myCRCReply = new ClientRemoteContainerReply();

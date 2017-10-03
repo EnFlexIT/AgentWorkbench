@@ -54,6 +54,8 @@ public class BundleProperties {
 
 	private boolean debug = false;
 	
+	public static final String PLUGIN_ID = PlugInActivator.PLUGIN_ID;
+	
 	public static final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
 	
 	public static final String DEF_RUNAS = "01_RUNAS";

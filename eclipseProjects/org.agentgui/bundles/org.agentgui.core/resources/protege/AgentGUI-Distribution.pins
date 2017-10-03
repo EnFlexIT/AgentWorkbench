@@ -1,4 +1,4 @@
-; Mon Apr 11 17:08:48 CEST 2016
+; Tue Oct 03 16:12:24 CEST 2017
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -69,7 +69,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\10 Java Projects\\AgentGUI\\src")
+	(%3ALOCATION "D:\\20 GIT\\01_AgentGui-OSGI\\eclipseProjects\\org.agentgui\\bundles\\org.agentgui.core\\src")
 	(%3AONTOLOGYNAME "AgentGUI-Distribution")
 	(%3APACKAGE "agentgui.simulationService.ontology")
 	(%3ASUPPORT "j2se"))

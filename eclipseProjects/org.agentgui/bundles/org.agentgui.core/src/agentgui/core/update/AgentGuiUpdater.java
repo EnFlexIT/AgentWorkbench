@@ -55,7 +55,7 @@ import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.config.VersionInfo;
+import de.enflexit.common.VersionInfo;
 import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.Download;
 import de.enflexit.common.transfer.DownloadThread;

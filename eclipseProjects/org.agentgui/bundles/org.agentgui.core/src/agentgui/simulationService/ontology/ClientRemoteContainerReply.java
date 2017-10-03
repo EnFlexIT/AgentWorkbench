@@ -8,41 +8,19 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2016/04/11, 16:51:02
+* @version 2017/10/3, 16:12:22
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
    /**
-* Protege name: remoteContainerName
+* Protege name: remoteAgentGuiVersion
    */
-   private String remoteContainerName;
-   public void setRemoteContainerName(String value) { 
-    this.remoteContainerName=value;
+   private AgentGuiVersion remoteAgentGuiVersion;
+   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
+    this.remoteAgentGuiVersion=value;
    }
-   public String getRemoteContainerName() {
-     return this.remoteContainerName;
-   }
-
-   /**
-* Protege name: remotePerformance
-   */
-   private PlatformPerformance remotePerformance;
-   public void setRemotePerformance(PlatformPerformance value) { 
-    this.remotePerformance=value;
-   }
-   public PlatformPerformance getRemotePerformance() {
-     return this.remotePerformance;
-   }
-
-   /**
-* Protege name: remotePID
-   */
-   private String remotePID;
-   public void setRemotePID(String value) { 
-    this.remotePID=value;
-   }
-   public String getRemotePID() {
-     return this.remotePID;
+   public AgentGuiVersion getRemoteAgentGuiVersion() {
+     return this.remoteAgentGuiVersion;
    }
 
    /**
@@ -68,6 +46,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
+* Protege name: remotePerformance
+   */
+   private PlatformPerformance remotePerformance;
+   public void setRemotePerformance(PlatformPerformance value) { 
+    this.remotePerformance=value;
+   }
+   public PlatformPerformance getRemotePerformance() {
+     return this.remotePerformance;
+   }
+
+   /**
 * Protege name: remoteBenchmarkResult
    */
    private BenchmarkResult remoteBenchmarkResult;
@@ -79,14 +68,25 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteAgentGuiVersion
+* Protege name: remotePID
    */
-   private AgentGuiVersion remoteAgentGuiVersion;
-   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
-    this.remoteAgentGuiVersion=value;
+   private String remotePID;
+   public void setRemotePID(String value) { 
+    this.remotePID=value;
    }
-   public AgentGuiVersion getRemoteAgentGuiVersion() {
-     return this.remoteAgentGuiVersion;
+   public String getRemotePID() {
+     return this.remotePID;
+   }
+
+   /**
+* Protege name: remoteContainerName
+   */
+   private String remoteContainerName;
+   public void setRemoteContainerName(String value) { 
+    this.remoteContainerName=value;
+   }
+   public String getRemoteContainerName() {
+     return this.remoteContainerName;
    }
 
 }

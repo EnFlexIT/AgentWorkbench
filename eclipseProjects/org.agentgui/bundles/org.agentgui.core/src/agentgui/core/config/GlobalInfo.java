@@ -63,6 +63,7 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
 import de.enflexit.api.LastSelectedFolderReminder;
+import de.enflexit.common.VersionInfo;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -315,8 +316,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public void initialize() {
 		try {
-			this.doLoadPersistedConfiguration();
 			this.getVersionInfo();
+			this.doLoadPersistedConfiguration();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -983,7 +984,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public VersionInfo getVersionInfo() {
 		if (this.versionInfo==null) {
-			this.versionInfo = new VersionInfo();
+			this.versionInfo = new VersionInfo(BundleProperties.PLUGIN_ID, this.getApplicationTitle());
 		}
 		return this.versionInfo;
 	}

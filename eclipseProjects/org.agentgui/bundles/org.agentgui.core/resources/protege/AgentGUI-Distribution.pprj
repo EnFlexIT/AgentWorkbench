@@ -1,4 +1,4 @@
-; Mon Apr 11 17:08:48 CEST 2016
+; Tue Oct 03 16:12:24 CEST 2017
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -22,33 +22,33 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_10137] of  Property_List
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_10163] of  String
+([AgentGUI-Distribution_ProjectKB_Instance_10158] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10164] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10159] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10165] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10160] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10166] of  Map
+([AgentGUI-Distribution_ProjectKB_Instance_10161] of  Map
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_10167] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10162] of  Map_Entry
 
 	(key "InstanceDisplay.yellow_stickies")
 	(key_class "java.lang.String")
-	(value "AgentGUI-Distribution_ProjectKB_Instance_10166")
+	(value "AgentGUI-Distribution_ProjectKB_Instance_10161")
 	(value_class "java.util.Map"))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_133] of  Widget
@@ -385,10 +385,10 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_224] of  Map
 
 	(entries
-		[AgentGUI-Distribution_ProjectKB_Instance_10164]
-		[AgentGUI-Distribution_ProjectKB_Instance_10165]
-		[AgentGUI-Distribution_ProjectKB_Instance_10167])
-	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_10166]))
+		[AgentGUI-Distribution_ProjectKB_Instance_10159]
+		[AgentGUI-Distribution_ProjectKB_Instance_10160]
+		[AgentGUI-Distribution_ProjectKB_Instance_10162])
+	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_10161]))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_98] of  String
 
@@ -411,7 +411,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [AgentGUI-Distribution_ProjectKB_Instance_10163]))
+	(properties [AgentGUI-Distribution_ProjectKB_Instance_10158]))
 
 ([CLSES_TAB] of  Widget
 
