@@ -610,6 +610,7 @@ public class OIDCAuthorization {
 		 * @throws IOException
 		 */
 		public void injectUpload() throws IOException {
+			
 			String charset = CHARSET_UTF_8;
 			String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
 

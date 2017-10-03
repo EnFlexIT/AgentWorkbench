@@ -41,7 +41,8 @@ import org.osgi.framework.FrameworkUtil;
 import agentgui.core.application.Application;
 
 /**
- * The Class PropertyContentProvider.
+ * The Class PropertyContentProvider unpacks required files from 
+ * the bundle into the local file system.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

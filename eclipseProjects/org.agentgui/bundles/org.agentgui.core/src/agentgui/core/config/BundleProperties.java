@@ -52,7 +52,7 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
  */
 public class BundleProperties {
 
-	private boolean debug = true;
+	private boolean debug = false;
 	
 	public static final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
 	
@@ -165,8 +165,6 @@ public class BundleProperties {
 							//TODO if the preference dialog was set to SWT!
 						}
 					}
-					
-					
 				}
 			};
 		}
