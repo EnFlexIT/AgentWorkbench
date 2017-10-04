@@ -31,8 +31,6 @@ package agentgui.core.update;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-
 import javax.swing.JOptionPane;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,7 +70,7 @@ import de.enflexit.common.transfer.Zipper;
 public class AgentGuiUpdater extends Thread {
 
 	// --- For the debugging of this class set true -------------
-	private boolean debuggingInIDE = true;
+	private boolean debuggingInIDE = false;
 	
 	public static final long UPDATE_CHECK_PERIOD = 1000*60*60*24; 	// - once a day -
 	public static final String UPDATE_SUB_FOLDER = "updates"; 		// - subfolder in the web server directory -
@@ -746,26 +744,10 @@ public class AgentGuiUpdater extends Thread {
 	public static void triggerP2Update() {
 		
 		IStatus updateResult = checkForP2Update(getProvisioningAgent(), getProgressMonitor());
-		//TODO check return status, restart application if successfully updated
 		
-		//TODO debug outputs, remove later
-		switch (updateResult.getSeverity()) {
-		case IStatus.OK:
-			System.out.println("Update job return status: OK");
-			break;
-		case IStatus.ERROR:
-			System.out.println("Update job return status: Error");
-			break;
-		case IStatus.INFO:
-			System.out.println("Update job return status: Info");
-			break;
-		case IStatus.CANCEL:
-			System.out.println("Update job return status: Cancel");
-			break;
-		case IStatus.WARNING:
-			System.out.println("Update job return status: Warning");
-			break;
-
+		if(updateResult.getSeverity() == IStatus.OK) {
+			System.out.println("Updates installed, application should be restarted");
+			//TODO restart application
 		}
 		
 	}
