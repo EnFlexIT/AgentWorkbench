@@ -42,9 +42,12 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.ProvisioningContext;
 import org.eclipse.equinox.p2.operations.ProvisioningJob;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
+import org.eclipse.equinox.p2.operations.RepositoryTracker;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -69,14 +72,14 @@ import de.enflexit.common.transfer.Zipper;
 public class AgentGuiUpdater extends Thread {
 
 	// --- For the debugging of this class set true -------------
-	private boolean debuggingInIDE = false;
+	private boolean debuggingInIDE = true;
 	
 	public static final long UPDATE_CHECK_PERIOD = 1000*60*60*24; 	// - once a day -
 	public static final String UPDATE_SUB_FOLDER = "updates"; 		// - subfolder in the web server directory -
 	public static final String UPDATE_VERSION_INFO_FILE = "latestVersion.xml";
 	
 	//TODO Get repository locations from the preferences
-	private static final String P2_REPOSITORY_LOCATION = "file:///D:/Builds/V2.0.1/repository";
+//	private static final String P2_REPOSITORY_LOCATION = "file:///D:/Builds/V2.0.1/repository";
 	
 	private enum UpdateMode {
 		UPDATE_FROM_FILE, UPDATE_FROM_P2_REPOSITORY
@@ -737,6 +740,9 @@ public class AgentGuiUpdater extends Thread {
 		}
 	}
 	
+	/**
+	 * Triggers the p2-based update process
+	 */
 	public static void triggerP2Update() {
 		
 		IStatus updateResult = checkForP2Update(getProvisioningAgent(), getProgressMonitor());
@@ -764,6 +770,10 @@ public class AgentGuiUpdater extends Thread {
 		
 	}
 	
+	/**
+	 * Gets the provisioning agent for the update process
+	 * @return The provisioning agent
+	 */
 	private static IProvisioningAgent getProvisioningAgent() {
 		
 		BundleContext bundleContext = FrameworkUtil.getBundle(AgentGuiUpdater.class).getBundleContext();
@@ -778,11 +788,21 @@ public class AgentGuiUpdater extends Thread {
 		
 	}
 	
+	/**
+	 * Gets a progress monitor to be used for the update process
+	 * @return The progress monitor
+	 */
 	private static IProgressMonitor getProgressMonitor() {
 		//TODO Add a case for non-headless execution providing a progress visualization
 		return new NullProgressMonitor();
 	}
 	
+	/**
+	 * Checks for available p2 updates, if successful triggers the update installation
+	 * @param agent The provisioning agent to be used for the update process
+	 * @param monitor The progress monitor to be used to keep track of the update process 
+	 * @return The update result status
+	 */
 	private static IStatus checkForP2Update(IProvisioningAgent agent, IProgressMonitor monitor) {
 		
 		 ProvisioningSession session = new ProvisioningSession(agent);
@@ -802,6 +822,7 @@ public class AgentGuiUpdater extends Thread {
 			 throw new OperationCanceledException();
 		 }
 		 
+		 // --- Everything fie, start updating ------
 		 if(status.getSeverity() != IStatus.ERROR) {
 			 performP2Update(operation, subMonitor.newChild(100));
 		 }
@@ -809,13 +830,23 @@ public class AgentGuiUpdater extends Thread {
 		return status;
 	}
 	
+	/**
+	 * Performs the update.
+	 * @param operation the {@link UpdateOperation} to be used
+	 * @param monitor the monitor The progress monitor to be used
+	 * @return the return status
+	 */
 	private static IStatus performP2Update(UpdateOperation operation, IProgressMonitor monitor) {
 		System.out.println("P2 update: Updates found, starting update process...");
+		
+		// --- Initialize the provisioning job -------
 		ProvisioningJob job = operation.getProvisioningJob(null);
 		if (job == null) {
             System.err.println("Trying to update from the Eclipse IDE? This won't work!");
             return Status.CANCEL_STATUS;
         }
+		
+		// --- Run the update job --------------
 		IStatus status = job.runModal(monitor);
 		if(status.getSeverity() == IStatus.CANCEL) {
 			throw new OperationCanceledException();
@@ -824,22 +855,22 @@ public class AgentGuiUpdater extends Thread {
 		return status;
 	}
 	
+	/**
+	 * Create and initialize the {@link UpdateOperation}
+	 * @param session the {@link ProvisioningSession} for this {@link UpdateOperation}
+	 * @return The {@link UpdateOperation}
+	 */
 	private static UpdateOperation getUpdateOperation(ProvisioningSession session) {
 		
 		UpdateOperation operation = new UpdateOperation(session);
-		//TODO Get location from the preferences
-		//TODO Allow multiple repositories
 		
-		URI uri = null;
-		try {
-			uri = new URI(P2_REPOSITORY_LOCATION);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			return null;
-		}
+		RepositoryTracker repoTracker = ProvisioningUI.getDefaultUI().getRepositoryTracker();
+		URI[] repos = repoTracker.getKnownRepositories(session);
 		
-		operation.getProvisioningContext().setArtifactRepositories(new URI[] {uri});
-		operation.getProvisioningContext().setMetadataRepositories(new URI[] {uri});
+		ProvisioningContext pc = operation.getProvisioningContext();
+		
+		pc.setArtifactRepositories(repos);
+		pc.setMetadataRepositories(repos);
 		
 		return operation;
 	}
