@@ -287,7 +287,7 @@ public class AgentGuiUpdater extends Thread {
 		if(updateMode == UpdateMode.UPDATE_FROM_P2_REPOSITORY) {
 			
 			// --- P2-based headless update ---------------
-			triggerP2Update();
+			checkForP2Updates();
 			
 		}else {
 			
@@ -738,18 +738,94 @@ public class AgentGuiUpdater extends Thread {
 		}
 	}
 	
+	// ------------------------------------
+	// --- p2-based update ----------------
+	// ------------------------------------
+	
 	/**
-	 * Triggers the p2-based update process
+	 * Checks for available p2 updates, starts the update process if found.
 	 */
-	public static void triggerP2Update() {
+	public static void checkForP2Updates() {
 		
-		IStatus updateResult = checkForP2Update(getProvisioningAgent(), getProgressMonitor());
-		
-		if(updateResult.getSeverity() == IStatus.OK) {
-			System.out.println("Updates installed, application should be restarted");
-			//TODO restart application
+		// --- Some initializations -----------
+		UpdateOperation operation = getUpdateOperation();
+		SubMonitor subMonitor = SubMonitor.convert(getProgressMonitor(), "Checking for Updates...", 200);
+
+		// --- Check for available updates -------
+		IStatus status = operation.resolveModal(subMonitor.newChild(100));
+		 
+		if(status.getSeverity() != IStatus.ERROR) {
+
+			if(status.getCode() == UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
+				// --- No updates found --------------
+				System.out.println("P2 Update: No updates found!");
+			}else{
+				// --- Updates found, proceed --------
+				System.out.println("P2 Update: Updates available.");
+				performP2Update(operation, subMonitor);
+			}
 		}
+	}
+	
+	
+	/**
+	 * Checks if the updates should be installed, triggers the actual installation if so
+	 * @param operation the {@link UpdateOperation} to be used
+	 * @param subMonitor the {@link SubMonitor} to be used
+	 */
+	private static void performP2Update(UpdateOperation operation, SubMonitor subMonitor) {
 		
+		// --- Check if the update should be installed -----------
+		boolean installUpdates = false;
+		if(Application.isOperatingHeadless()) {
+			// --- Operating headless - install without request --
+			installUpdates = true;
+		}else{
+			// --- Operating with GUI -  ask the user ------------
+			int userAnswer = JOptionPane.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), "Agent.GUI Update", JOptionPane.YES_NO_OPTION);
+			if(userAnswer == JOptionPane.YES_OPTION) {
+				installUpdates = true;
+			}
+		}
+
+		
+		if(installUpdates == true) {
+
+			// --- Install updates ------------------
+			IStatus updateResult = installP2Updates(operation, subMonitor.newChild(100));
+			
+			if(updateResult.getSeverity() == IStatus.OK) {
+				System.out.println("P2 Update: Updates sucessfully installed, restarting...");
+				Application.restart();
+			}else {
+				System.err.println("P2 Update: Error installing updates...");
+			}
+			
+		}
+	}
+	
+	/**
+	 * Installs the updates.
+	 * @param operation the {@link UpdateOperation} to be used
+	 * @param monitor the monitor The progress monitor to be used
+	 * @return the return status
+	 */
+	private static IStatus installP2Updates(UpdateOperation operation, IProgressMonitor monitor) {
+		System.out.println("P2 update: Installing updates...");
+		
+		// --- Initialize the provisioning job -------
+		ProvisioningJob job = operation.getProvisioningJob(null);
+		if (job == null) {
+	        System.err.println("Trying to update from the Eclipse IDE? This won't work!");
+	        return Status.CANCEL_STATUS;
+	    }
+		
+		// --- Run the update job --------------
+		IStatus status = job.runModal(monitor);
+		if(status.getSeverity() == IStatus.CANCEL) {
+			throw new OperationCanceledException();
+		}
+		return status;
 	}
 	
 	/**
@@ -780,74 +856,19 @@ public class AgentGuiUpdater extends Thread {
 	}
 	
 	/**
-	 * Checks for available p2 updates, if successful triggers the update installation
-	 * @param agent The provisioning agent to be used for the update process
-	 * @param monitor The progress monitor to be used to keep track of the update process 
-	 * @return The update result status
-	 */
-	private static IStatus checkForP2Update(IProvisioningAgent agent, IProgressMonitor monitor) {
-		
-		 ProvisioningSession session = new ProvisioningSession(agent);
-		 UpdateOperation operation = getUpdateOperation(session);
-		 
-		 SubMonitor subMonitor = SubMonitor.convert(monitor, "Checking for Updates...", 200);
-		 IStatus status = operation.resolveModal(subMonitor.newChild(100));
-		 
-		 // --- No updates found ----------------
-		 if(status.getCode() == UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
-			 System.out.println("P2 Update: No update found!");
-			 return status;
-		 }
-		 
-		 // --- Update canceled -----------------
-		 if(status.getSeverity() == IStatus.CANCEL) {
-			 throw new OperationCanceledException();
-		 }
-		 
-		 // --- Everything fie, start updating ------
-		 if(status.getSeverity() != IStatus.ERROR) {
-			 performP2Update(operation, subMonitor.newChild(100));
-		 }
-		
-		return status;
-	}
-	
-	/**
-	 * Performs the update.
-	 * @param operation the {@link UpdateOperation} to be used
-	 * @param monitor the monitor The progress monitor to be used
-	 * @return the return status
-	 */
-	private static IStatus performP2Update(UpdateOperation operation, IProgressMonitor monitor) {
-		System.out.println("P2 update: Updates found, starting update process...");
-		
-		// --- Initialize the provisioning job -------
-		ProvisioningJob job = operation.getProvisioningJob(null);
-		if (job == null) {
-            System.err.println("Trying to update from the Eclipse IDE? This won't work!");
-            return Status.CANCEL_STATUS;
-        }
-		
-		// --- Run the update job --------------
-		IStatus status = job.runModal(monitor);
-		if(status.getSeverity() == IStatus.CANCEL) {
-			throw new OperationCanceledException();
-		}
-		System.out.println("P2 update: Update done!");
-		return status;
-	}
-	
-	/**
 	 * Create and initialize the {@link UpdateOperation}
 	 * @param session the {@link ProvisioningSession} for this {@link UpdateOperation}
 	 * @return The {@link UpdateOperation}
 	 */
-	private static UpdateOperation getUpdateOperation(ProvisioningSession session) {
+	private static UpdateOperation getUpdateOperation() {
 		
-		UpdateOperation operation = new UpdateOperation(session);
+		IProvisioningAgent provisioningAgent = getProvisioningAgent();
+		ProvisioningSession provisioningSession = new ProvisioningSession(provisioningAgent);
+		
+		UpdateOperation operation = new UpdateOperation(provisioningSession);
 		
 		RepositoryTracker repoTracker = ProvisioningUI.getDefaultUI().getRepositoryTracker();
-		URI[] repos = repoTracker.getKnownRepositories(session);
+		URI[] repos = repoTracker.getKnownRepositories(provisioningSession);
 		
 		ProvisioningContext pc = operation.getProvisioningContext();
 		
