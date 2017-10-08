@@ -588,7 +588,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private PropertyContentProvider getPropertyContentProvider(String pathToProperties) {
 		if (propertyContentProvider==null) {
 			propertyContentProvider = new PropertyContentProvider(new File(pathToProperties));
-			propertyContentProvider.checkAndProvideFullPropertyContent();
+			try {
+				propertyContentProvider.checkAndProvideFullPropertyContent();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		return propertyContentProvider;
 	}
