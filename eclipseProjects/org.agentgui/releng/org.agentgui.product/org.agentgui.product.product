@@ -3,6 +3,7 @@
 
 <product name="Agent Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -13,7 +14,7 @@
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="icons/eclipse16.png" i32="icons/eclipse32.png" i48="icons/eclipse48.png" i64="icons/eclipse64.png" i128=" icons/eclipse128.png" i256="icons/eclipse256.png"/>
+   <windowImages i16="icons/awb16.png" i32="icons/awb32.png" i48="icons/awb48.png" i64="icons/awb64.png" i128="icons/awb128.png" i256="icons/awb256.png"/>
 
    <splash
       location="org.agentgui.core"
@@ -23,6 +24,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>

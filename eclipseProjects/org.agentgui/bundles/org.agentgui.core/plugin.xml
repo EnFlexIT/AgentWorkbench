@@ -24,7 +24,7 @@
          </property>
          <property
                name="windowImages"
-               value="icons/eclipse16.png,icons/eclipse32.png,icons/eclipse48.png,icons/eclipse64.png, icons/eclipse128.png,icons/eclipse256.png">
+               value="icons/awb16.png,icons/awb32.png,icons/awb48.png,icons/awb64.png, icons/awb128.png,icons/awb256.png">
          </property>
          <property
                name="appName"
