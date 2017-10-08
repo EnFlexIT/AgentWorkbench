@@ -803,6 +803,14 @@ public class Application {
 		return true;
 	}
 	/**
+	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent), sets a return value
+	 * @param returnValue the return value
+	 */
+	public static void restart() {
+		stopAgentGUI();
+		startAgentGUI();
+	}
+	/**
 	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void stop() {
