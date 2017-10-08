@@ -10,7 +10,6 @@
     <elements xsi:type="commands:Handler" xmi:id="_lDslIIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.deleteproject" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.DeleteProjectHandler" command="_-sojoIGOEeeI1dq59ubV8g"/>
     <elements xsi:type="commands:Handler" xmi:id="_mulZoIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.quit" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.ExitHandler" command="_AvelIIGPEeeI1dq59ubV8g"/>
     <elements xsi:type="commands:Handler" xmi:id="_oXClMIGPEeeI1dq59ubV8g" elementId="org.agentgui.core.handler.about" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.AboutHandler" command="_Dhn8oIGPEeeI1dq59ubV8g"/>
-    <elements xsi:type="commands:Handler" xmi:id="_4JXLsH6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.handler.preferences" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.PreferencesHandler" command="_1ZE1YH6gEeeSPpFWfRBHVA"/>
     <elements xsi:type="commands:Handler" xmi:id="_fwfLIJFeEeeV6rJKleJxgw" elementId="org.agentgui.core.handler.update" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.UpdateHandler" command="_a7pjIJFeEeeV6rJKleJxgw"/>
     <elements xsi:type="commands:Handler" xmi:id="_48-a8JIdEeeP1e_9ka96kQ" elementId="org.agentgui.core.handler.help" contributionURI="bundleclass://org.agentgui.core/org.agentgui.core.handler.HelpHandler" command="_1Oog8JIdEeeP1e_9ka96kQ"/>
   </fragments>
