@@ -492,7 +492,20 @@ public class BundleEvaluator {
 						String debugText = "Found jar-File of '" + bundle.getSymbolicName() + "' (" + url.getPath() + ")";
 						if (bundleClassPathEntries.contains(url.getPath())) {
 							debugText += "\t=> Will be checked ... ";
-							bundleClasses.addAll(this.getJarClasses(bundle, url));
+							List<Class<?>> jarClasses = this.getJarClasses(bundle, url);
+							if (packageFilter==null) {
+								// --- Add all classes found  -------
+								bundleClasses.addAll(jarClasses);
+							} else {
+								// --- Check if the in package ------
+								for (int i = 0; i < jarClasses.size(); i++) {
+									Class<?> classFound = jarClasses.get(i);
+									String className = classFound.getName();
+									if (className.startsWith(packageFilter)) {
+										bundleClasses.add(classFound);		
+									}
+								}
+							}
 							debugText += "Done!";
 						}
 						if (debug) System.out.println(debugText); 
