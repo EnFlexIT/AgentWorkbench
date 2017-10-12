@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
@@ -55,7 +56,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
-
 /**
  * The singleton class BundleEvaluator provides help methods to check bundle contents.
  * 
@@ -68,6 +68,9 @@ public class BundleEvaluator {
 	private HashSet<String> bundleExcludeHashSet;
 	private EvaluationFilterResults evaluationFilterResults;
 
+	private HashMap<String, ClassRequest> classRequestHash;
+	private long requestMaxStayTime = 1000 * 10; // 10 seconds
+	
 	
 	/** The singleton bundle evaluator instance. */
 	private static BundleEvaluator bundleEvaluatorInstance;
@@ -438,6 +441,18 @@ public class BundleEvaluator {
 		List<Class<?>> bundleClasses = new ArrayList<Class<?>>();
 		if (bundle==null) return bundleClasses;
 		
+		// ----------------------------------------------------------
+		// --- Define request reminder ------------------------------
+		// ----------------------------------------------------------
+		String classRequestID = bundle.getSymbolicName() + "@" + packageFilter + "@" + options;
+		ClassRequest classRequest = this.getOrAddNewClassRequest(classRequestID);
+		if (classRequest.getResult()!=null) {
+			// --- Just return the result already there -------------
+			return classRequest.getResult();
+		}
+		// ----------------------------------------------------------
+
+		
 		// --- Adjust the package filter ----------------------------
 		String packagePath = "/";
 		if (packageFilter!=null) {
@@ -513,8 +528,16 @@ public class BundleEvaluator {
 					}
 				}	
 			}
-			
 		}
+		
+		// ----------------------------------------------------------
+		// --- Remind the result of the search ----------------------
+		// ----------------------------------------------------------
+		classRequest.setResult(bundleClasses);
+		classRequest.setInProgress(false);
+		this.cleanClassRequests();
+		// ----------------------------------------------------------
+		
 		return bundleClasses;
 	}
 	/**
@@ -953,5 +976,122 @@ public class BundleEvaluator {
 	    return null;
 	}
 	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, methods for storing class search results can be found --- 
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the class request HashMap.
+	 * @return the class request HashMap
+	 */
+	private HashMap<String, ClassRequest> getClassRequestHash() {
+		if (classRequestHash==null) {
+			classRequestHash = new HashMap<>();
+		}
+		return classRequestHash;
+	}
+	/**
+	 * Returns or creates a new {@link ClassRequest} for the specified classRequestID.
+	 *
+	 * @param classRequestID the class request ID
+	 * @return the class request
+	 */
+	private ClassRequest getOrAddNewClassRequest(String classRequestID) {
+
+		// --- Get request from the stored requests -----------------
+		ClassRequest crFound = this.getClassRequestHash().get(classRequestID);
+		if (crFound==null) {
+			// --- Create a new class request -----------------------
+			crFound = new ClassRequest(classRequestID, System.currentTimeMillis(), true);
+			this.getClassRequestHash().put(classRequestID, crFound);
+			
+		} else {
+			// --- Check the class request --------------------------
+			while (crFound.isInProgress()) {
+				try {
+					Thread.sleep(30);
+				} catch (InterruptedException iEx) {
+					iEx.printStackTrace();
+				}
+			}
+			// --- Not busy (anymore) -------------------------------
+			
+			// --- Check if the request is too old ------------------
+			if (System.currentTimeMillis()>=crFound.getRequestTime() + this.requestMaxStayTime) {
+				// --- Overwrite old request ------------------------
+				crFound = new ClassRequest(classRequestID, System.currentTimeMillis(), true);
+				this.getClassRequestHash().put(classRequestID, crFound);
+			}
+			
+		}
+		return crFound;
+	}
+	/**
+	 * Cleans the reminded {@link ClassRequest}s.
+	 */
+	private void cleanClassRequests() {
+		Vector<ClassRequest> classRequests = new Vector<>(this.getClassRequestHash().values());
+		for (int i = 0; i < classRequests.size(); i++) {
+			ClassRequest classRequest = classRequests.get(i);
+			if (System.currentTimeMillis()>=classRequest.getRequestTime() + this.requestMaxStayTime) {
+				this.getClassRequestHash().remove(classRequest.getRequestID());
+			}
+		}
+	}
+	
+	/**
+	 * The Class ClassRequest stores information about a request about classes within a bundle.
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+	 */
+	private class ClassRequest {
+		
+		private String requestID;
+		private long requestTime;
+		private Boolean inProgress;
+		private List<Class<?>> result;
+
+		/**
+		 * Instantiates a new class request.
+		 *
+		 * @param requestID the request ID
+		 * @param requestTime the request time
+		 * @param isBusy the is busy
+		 */
+		public ClassRequest(String requestID, long requestTime, boolean isBusy) {
+			this.setRequestID(requestID);
+			this.setRequestTime(requestTime);
+			this.setInProgress(isBusy);
+		}
+		
+		public String getRequestID() {
+			return requestID;
+		}
+		public void setRequestID(String requestID) {
+			this.requestID = requestID;
+		}
+		
+		public long getRequestTime() {
+			return requestTime;
+		}
+		public void setRequestTime(long requestTime) {
+			this.requestTime = requestTime;
+		}
+		
+		public Boolean isInProgress() {
+			return inProgress;
+		}
+		public void setInProgress(boolean inProgress) {
+			this.inProgress = inProgress;
+		}
+		
+		public List<Class<?>> getResult() {
+			return result;
+		}
+		public void setResult(List<Class<?>> result) {
+			this.result = result;
+		}
+	}
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 	
 }
