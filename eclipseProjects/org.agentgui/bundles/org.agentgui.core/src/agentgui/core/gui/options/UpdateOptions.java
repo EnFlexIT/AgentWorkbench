@@ -46,12 +46,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
 
 
 /**
@@ -64,20 +62,17 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private JPanel jPanelUpdateLink;
+	public static final int UPDATE_MODE_AUTOMATIC = 0;
+	public static final int UPDATE_MODE_ASK = 1;
+	public static final int UPDATE_MODE_DISABLED = 2;
 	private JPanel jPanelDummy;
 	
 	private JRadioButton jRadioButtonUpdateAutomated;
 	private JRadioButton jRadioButtonUpdateDownloadAndAsk;
 	private JRadioButton jRadioButtonUpdateDisabled;
-	
-	private JLabel jLabelUpdateSiteLable;
 	private JLabel jLabelUpdateTitle;
 	
-	private JTextField jTextFieldUpdateSite;
-	
 	private JButton jButtonUpdateSiteApply;
-	private JButton jButtonUpdateSiteDefault;
 
 	private JLabel jLabelUpdateDictionary;
 
@@ -94,7 +89,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		
 		// --- Configure translation ----------------------
 		this.getJButtonUpdateSiteApply().setText(Language.translate("Speichern"));
-		this.getJButtonUpdateSiteDefault().setToolTipText(Language.translate("Standard verwenden"));
 		
 		this.getJRadioButtonUpdateAutomated().setText(Language.translate("Updates automatisch installieren"));
 		this.getJRadioButtonUpdateDownloadAndAsk().setText(Language.translate("Update automatisch herunterladen, Installationszeitpunkt manuell festlegen"));
@@ -128,13 +122,13 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
 		gridBagConstraints22.gridx = 0;
 		gridBagConstraints22.anchor = GridBagConstraints.WEST;
-		gridBagConstraints22.insets = new Insets(5, 20, 0, 0);
-		gridBagConstraints22.gridy = 6;
+		gridBagConstraints22.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints22.gridy = 5;
 		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 		gridBagConstraints12.gridx = 0;
 		gridBagConstraints12.anchor = GridBagConstraints.WEST;
-		gridBagConstraints12.insets = new Insets(10, 20, 0, 0);
-		gridBagConstraints12.gridy = 5;
+		gridBagConstraints12.insets = new Insets(10, 20, 5, 0);
+		gridBagConstraints12.gridy = 4;
 		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 		gridBagConstraints21.gridx = 0;
 		gridBagConstraints21.insets = new Insets(0, 20, 20, 20);
@@ -145,29 +139,23 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 0;
 		gridBagConstraints11.anchor = GridBagConstraints.WEST;
-		gridBagConstraints11.insets = new Insets(10, 20, 0, 0);
-		gridBagConstraints11.gridy = 1;
-		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-		gridBagConstraints4.gridx = 0;
-		gridBagConstraints4.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints4.insets = new Insets(20, 20, 10, 20);
-		gridBagConstraints4.weightx = 1.0;
-		gridBagConstraints4.gridy = 0;
+		gridBagConstraints11.insets = new Insets(10, 20, 5, 0);
+		gridBagConstraints11.gridy = 0;
 		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 		gridBagConstraints2.gridx = 0;
 		gridBagConstraints2.anchor = GridBagConstraints.WEST;
-		gridBagConstraints2.insets = new Insets(5, 20, 0, 0);
-		gridBagConstraints2.gridy = 4;
+		gridBagConstraints2.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints2.gridy = 3;
 		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 		gridBagConstraints1.gridx = 0;
 		gridBagConstraints1.anchor = GridBagConstraints.WEST;
-		gridBagConstraints1.insets = new Insets(5, 20, 0, 0);
-		gridBagConstraints1.gridy = 3;
+		gridBagConstraints1.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints1.gridy = 2;
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(5, 20, 0, 0);
-		gridBagConstraints.gridy = 2;
+		gridBagConstraints.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints.gridy = 1;
 	
 		jLabelUpdateDictionary = new JLabel();
 		jLabelUpdateDictionary.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -179,8 +167,13 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		this.add(getJRadioButtonUpdateAutomated(), gridBagConstraints);
 		this.add(getJRadioButtonUpdateDownloadAndAsk(), gridBagConstraints1);
 		this.add(getJRadioButtonUpdateDisabled(), gridBagConstraints2);
-		this.add(getJPanelUpdateLink(), gridBagConstraints4);
 		this.add(getJLabelUpdateTitle(), gridBagConstraints11);
+		GridBagConstraints gbc_jButtonUpdateSiteApply = new GridBagConstraints();
+		gbc_jButtonUpdateSiteApply.anchor = GridBagConstraints.WEST;
+		gbc_jButtonUpdateSiteApply.insets = new Insets(5, 10, 5, 0);
+		gbc_jButtonUpdateSiteApply.gridx = 0;
+		gbc_jButtonUpdateSiteApply.gridy = 6;
+		add(getJButtonUpdateSiteApply(), gbc_jButtonUpdateSiteApply);
 		this.add(getJPanelDummy(), gridBagConstraints21);
 		this.add(jLabelUpdateDictionary, gridBagConstraints12);
 		this.add(getJCheckBoxUpdateKeepDictionary(), gridBagConstraints22);
@@ -211,7 +204,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jRadioButtonUpdateAutomated == null) {
 			jRadioButtonUpdateAutomated = new JRadioButton();
 			jRadioButtonUpdateAutomated.setText("Updates automatisch installieren");
-			jRadioButtonUpdateAutomated.setActionCommand("0");
+			jRadioButtonUpdateAutomated.setActionCommand("" + UPDATE_MODE_AUTOMATIC);
 		}
 		return jRadioButtonUpdateAutomated;
 	}
@@ -223,7 +216,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jRadioButtonUpdateDownloadAndAsk == null) {
 			jRadioButtonUpdateDownloadAndAsk = new JRadioButton();
 			jRadioButtonUpdateDownloadAndAsk.setText("Update automatisch herunterladen, Installationszeitpunkt manuell festlegen");
-			jRadioButtonUpdateDownloadAndAsk.setActionCommand("1");
+			jRadioButtonUpdateDownloadAndAsk.setActionCommand("" + UPDATE_MODE_ASK);
 		}
 		return jRadioButtonUpdateDownloadAndAsk;
 	}
@@ -235,56 +228,9 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jRadioButtonUpdateDisabled == null) {
 			jRadioButtonUpdateDisabled = new JRadioButton();
 			jRadioButtonUpdateDisabled.setText("Updates nicht automatisch herunterladen oder installieren");
-			jRadioButtonUpdateDisabled.setActionCommand("2");
+			jRadioButtonUpdateDisabled.setActionCommand("" + UPDATE_MODE_DISABLED);
 		}
 		return jRadioButtonUpdateDisabled;
-	}
-	/**
-	 * This method initializes jPanelUpdateLink	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelUpdateLink() {
-		if (jPanelUpdateLink == null) {
-			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.gridx = 3;
-			gridBagConstraints7.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints7.gridy = 0;
-			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			gridBagConstraints6.gridx = 2;
-			gridBagConstraints6.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints6.gridy = 0;
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.fill = GridBagConstraints.BOTH;
-			gridBagConstraints5.gridy = 0;
-			gridBagConstraints5.weightx = 1.0;
-			gridBagConstraints5.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints5.gridx = 1;
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.gridx = -1;
-			gridBagConstraints3.gridy = -1;
-			
-			jLabelUpdateSiteLable = new JLabel();
-			jLabelUpdateSiteLable.setText("Update-Site:");
-			jLabelUpdateSiteLable.setFont(new Font("Dialog", Font.BOLD, 12));
-			
-			jPanelUpdateLink = new JPanel();
-			jPanelUpdateLink.setLayout(new GridBagLayout());
-			jPanelUpdateLink.add(jLabelUpdateSiteLable, gridBagConstraints3);
-			jPanelUpdateLink.add(getJTextFieldUpdateSite(), gridBagConstraints5);
-			jPanelUpdateLink.add(getJButtonUpdateSiteApply(), gridBagConstraints6);
-			jPanelUpdateLink.add(getJButtonUpdateSiteDefault(), gridBagConstraints7);
-		}
-		return jPanelUpdateLink;
-	}
-	/**
-	 * This method initializes jTextFieldUpdateSite	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldUpdateSite() {
-		if (jTextFieldUpdateSite == null) {
-			jTextFieldUpdateSite = new JTextField();
-		}
-		return jTextFieldUpdateSite;
 	}
 	/**
 	 * This method initializes jButtonUpdateSiteApply	
@@ -302,20 +248,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		return jButtonUpdateSiteApply;
 	}
 	/**
-	 * This method initializes jButtonUpdateSiteDefault	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonUpdateSiteDefault() {
-		if (jButtonUpdateSiteDefault == null) {
-			jButtonUpdateSiteDefault = new JButton();
-			jButtonUpdateSiteDefault.setToolTipText(Language.translate("Standard verwenden"));
-			jButtonUpdateSiteDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
-			jButtonUpdateSiteDefault.setPreferredSize(new Dimension(45, 26));
-			jButtonUpdateSiteDefault.addActionListener(this);
-		}
-		return jButtonUpdateSiteDefault;
-	}
-	/**
 	 * This method initializes jCheckBoxUpdateKeepDictionary	
 	 * @return javax.swing.JCheckBox	
 	 */
@@ -323,6 +255,8 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jCheckBoxUpdateKeepDictionary == null) {
 			jCheckBoxUpdateKeepDictionary = new JCheckBox();
 			jCheckBoxUpdateKeepDictionary.setText("Im Falle eines Updates, eigenes Wörterbuch beibehalten.");
+			jCheckBoxUpdateKeepDictionary.setEnabled(false);
+			jCheckBoxUpdateKeepDictionary.setToolTipText("Temporary disabled, until figured out how to exclude the dictionary from the bundle update");
 		}
 		return jCheckBoxUpdateKeepDictionary;
 	}
@@ -347,11 +281,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		Object actionFrom = ae.getSource();
 		if (actionFrom==getJButtonUpdateSiteApply()) {
 			this.setFormData2Global();
-			
-		} else if (actionFrom==getJButtonUpdateSiteDefault()) {
-			this.getJTextFieldUpdateSite().setText(GlobalInfo.DEFAULT_UPDATE_SITE);
-			this.getJRadioButtonUpdateAutomated().setSelected(true);
-			this.getJCheckBoxUpdateKeepDictionary().setSelected(true);
 		}
 		
 	}
@@ -360,8 +289,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	 * Sets the form data2 global.
 	 */
 	private void setFormData2Global() {
-		
-		Application.getGlobalInfo().setUpdateSite(this.getJTextFieldUpdateSite().getText().trim());
 		
 		String option = null;
 		if (this.getJRadioButtonUpdateAutomated().isSelected()) {
@@ -385,9 +312,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	 * Sets the global data2 form.
 	 */
 	private void setGlobalData2Form() {
-
-		// --- Set link to update site ------------------------------
-		this.getJTextFieldUpdateSite().setText(Application.getGlobalInfo().getUpdateSite());
 		
 		// --- Set update configuration -----------------------------
 		int autoConfiguration = Application.getGlobalInfo().getUpdateAutoConfiguration();
