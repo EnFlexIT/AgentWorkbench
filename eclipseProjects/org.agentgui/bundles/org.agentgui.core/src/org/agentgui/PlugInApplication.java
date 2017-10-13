@@ -33,6 +33,7 @@ import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.osgi.service.runnable.ApplicationLauncher;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -121,12 +122,25 @@ public class PlugInApplication implements IApplication {
 			
 		return this.appReturnValue;
 	}
+	
+	/**
+	 * Stop the IApplication with a specific return value
+	 * @param returnValue The return value
+	 */
+	public void stop(Integer returnValue) {
+		this.appReturnValue = returnValue;
+		this.stop();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	@Override
 	public void stop() {
+		
+		if(visualisationBy == ApplicationVisualizationBy.AgentGuiSwing) {
+			Application.stop();
+		}
 		
 		if (!PlatformUI.isWorkbenchRunning()) return;
 		
@@ -139,6 +153,7 @@ public class PlugInApplication implements IApplication {
 				}
 			}
 		});
+		
 	}
 	
 	/**
