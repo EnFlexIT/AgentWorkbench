@@ -156,13 +156,19 @@ public class PropertyContentProvider {
 		try {
 			Bundle bundle = FrameworkUtil.getBundle(this.getClass());
 			URL fileURL = bundle.getResource(this.getPropertyDirectoryInBundle() + fileName);
-
-			is = fileURL.openStream();
-			fos = new FileOutputStream(newfilePath);
-			byte[] buffer = new byte[1024];
-			int len;
-			while ((len = is.read(buffer)) != -1) {
-				fos.write(buffer, 0, len);
+			if (fileURL!=null) {
+				// --- Write file to directory ------------
+				is = fileURL.openStream();
+				fos = new FileOutputStream(newfilePath);
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = is.read(buffer)) != -1) {
+					fos.write(buffer, 0, len);
+				}
+				
+			} else {
+				// --- Could not find fileURL -------------
+				System.err.println(this.getClass().getSimpleName() + " could not find resource for '" + fileName + "'");
 			}
 			
 		} catch (IOException ioEx) {

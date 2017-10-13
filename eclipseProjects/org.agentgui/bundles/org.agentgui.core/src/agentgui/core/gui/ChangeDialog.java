@@ -40,17 +40,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -69,8 +66,13 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.wiring.BundleWiring;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.BundleProperties;
 import agentgui.core.config.GlobalInfo;
 
 
@@ -315,59 +317,25 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	 */
 	private DefaultComboBoxModel<String> getComboBoxModel() {
 
+		// --- Set default combo box model --------------------------
 		DefaultComboBoxModel<String> cbm = new DefaultComboBoxModel<String>();
-		Vector<String> versionNumbers = new Vector<String>(); 
 
 		// --- Find all files in the package 'agentgui/ -------------
-		Vector<String> fileNameFound = new Vector<String>();
-		URL changeFilesURL = getClass().getClassLoader().getResource(this.changeFilesPackage);
-		if (changeFilesURL!=null) {
-			if (changeFilesURL.getProtocol().equals("file")) {
-				// --- Happens in the IDE ---------------------------
-				try {
-					String[] tmpFileNameFound = new File(changeFilesURL.toURI()).list();
-					for (int i = 0; i < tmpFileNameFound.length; i++) {
-						fileNameFound.add(tmpFileNameFound[i]);
-					}
-					
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}	
-			
-			} else if(changeFilesURL.getProtocol().equals("jar")) {
-				// --- Happens in the AgentGui.jar ------------------
-				JarInputStream jarFile=null;
-				try {
-					jarFile = new JarInputStream(new FileInputStream(Application.getGlobalInfo().getFileRunnableJar()));
-					int pathSepPosition = this.changeFilesPackage.indexOf("/");
-					while(true) {
-						JarEntry jarEntry=jarFile.getNextJarEntry ();
-						if(jarEntry==null) break;
+		Vector<String> versionSites = new Vector<String>();
 
-						String jarEntryName = jarEntry.getName();
-						if((jarEntryName.startsWith(this.changeFilesPackage)) && jarEntryName.lastIndexOf("/")<=pathSepPosition) {
-							fileNameFound.add(jarEntryName);
-						}
-					}
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					// --- Ensure that the file will be closed again ---
-					try {
-						jarFile.close();
-					} catch (IOException e) {
-					}	
-				}
-			}
-			
-		} 
+		// --- Use BundleWiring to get the html-changes sites ------- 
+		Bundle bundle = Platform.getBundle(BundleProperties.PLUGIN_ID);
+		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+		if (bundleWiring!=null) {
+			Collection<String> sitesFound = bundleWiring.listResources(this.changeFilesPackage, "*.html", BundleWiring.LISTRESOURCES_LOCAL);
+			versionSites.addAll(sitesFound);
+		}
 		
-		if (fileNameFound!=null) {
+		if (versionSites!=null) {
 			// --- Files found - get the version files -------------- 
-			versionNumbers = new Vector<String>();
-			for (int i = 0; i < fileNameFound.size(); i++) {
-				String fileName = fileNameFound.get(i);
+			Vector<String> versionNumbers = new Vector<String>();
+			for (int i = 0; i < versionSites.size(); i++) {
+				String fileName = versionSites.get(i);
 				if (fileName.endsWith(".html")) {
 					int cut1 = fileName.indexOf("build") + 6;
 					int cut2 = fileName.indexOf("changes") - 1;
