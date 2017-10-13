@@ -33,7 +33,6 @@ import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.osgi.service.runnable.ApplicationLauncher;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -138,8 +137,15 @@ public class PlugInApplication implements IApplication {
 	@Override
 	public void stop() {
 		
-		if(visualisationBy == ApplicationVisualizationBy.AgentGuiSwing) {
-			Application.stop();
+		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
+			// --- Check for open projects ------
+			if (Application.stopAgentGUI()==false) return;
+			// --- Stop LogFileWriter -----------
+			Application.setLogFileWriter(null);
+			// --- ShutdownExecuter -------------
+			Application.setShutdownThread(null);
+			// --- Indicate to stop the JVM -----
+			Application.setQuitJVM(true);
 		}
 		
 		if (!PlatformUI.isWorkbenchRunning()) return;

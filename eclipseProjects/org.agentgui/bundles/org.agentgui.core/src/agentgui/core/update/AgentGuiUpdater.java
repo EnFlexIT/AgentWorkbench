@@ -789,12 +789,12 @@ public class AgentGuiUpdater extends Thread {
 		}
 
 		
-		if(installUpdates == true) {
+		if (installUpdates==true) {
 
 			// --- Install updates ------------------
 			IStatus updateResult = installP2Updates(operation, subMonitor.newChild(100));
 			
-			if(updateResult.getSeverity() == IStatus.OK) {
+			if (updateResult.getSeverity() == IStatus.OK) {
 				System.out.println("P2 Update: Updates sucessfully installed, restarting...");
 				Application.restart();
 			}else {
