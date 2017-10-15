@@ -121,12 +121,32 @@ public class PlugInApplication implements IApplication {
 			
 		return this.appReturnValue;
 	}
+	
+	/**
+	 * Stop the IApplication with a specific return value
+	 * @param returnValue The return value
+	 */
+	public void stop(Integer returnValue) {
+		this.appReturnValue = returnValue;
+		this.stop();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	@Override
 	public void stop() {
+		
+		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
+			// --- Check for open projects ------
+			if (Application.stopAgentGUI()==false) return;
+			// --- Stop LogFileWriter -----------
+			Application.setLogFileWriter(null);
+			// --- ShutdownExecuter -------------
+			Application.setShutdownThread(null);
+			// --- Indicate to stop the JVM -----
+			Application.setQuitJVM(true);
+		}
 		
 		if (!PlatformUI.isWorkbenchRunning()) return;
 		
@@ -139,6 +159,7 @@ public class PlugInApplication implements IApplication {
 				}
 			}
 		});
+		
 	}
 	
 	/**

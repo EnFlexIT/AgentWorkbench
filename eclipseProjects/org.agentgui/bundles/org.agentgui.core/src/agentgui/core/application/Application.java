@@ -41,6 +41,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.agentgui.PlugInApplication;
+import org.eclipse.equinox.app.IApplication;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
@@ -803,14 +804,6 @@ public class Application {
 		return true;
 	}
 	/**
-	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent), sets a return value
-	 * @param returnValue the return value
-	 */
-	public static void restart() {
-		stopAgentGUI();
-		startAgentGUI();
-	}
-	/**
 	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void stop() {
@@ -828,6 +821,13 @@ public class Application {
 		setQuitJVM(true);
 	}
 	
+	/**
+	 * Restarts Agent.GUI (Application | Server | Service & Embedded System Agent)
+	 * @param returnValue the return value
+	 */
+	public static void restart() {
+		plugInApplication.stop(IApplication.EXIT_RESTART);
+	}
 	/**
 	 * Checks if is quit JVM.
 	 * @return true, if is quit JVM

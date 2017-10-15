@@ -49,7 +49,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @return the class load service
 	 */
 	public T getClassLoadService(String className) {
-
+		
 		// ----------------------------------------------------------
 		// --- Default: Use the already known BaseClassLoadService ------ 
 		// ----------------------------------------------------------
