@@ -24,7 +24,7 @@ public class SystemEnvironmentHelper {
 		try {
 			jDialog = new JDialog();
 			jDialog.validate();
-			jDialog.dispose();
+//			jDialog.dispose();
 			jDialog = null;
 			headlessOperation = false;
 			

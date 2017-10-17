@@ -34,7 +34,6 @@ import org.agentgui.bundle.evaluation.FilterForOntology;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
@@ -102,24 +101,7 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	private void ensureSWTisFirstThread() {
-		
-		Display display = new Display();
-	    
-		Shell shell = new Shell(display);
-	    shell.setText("Shell");
-	    shell.setSize(200, 200);
-	    shell.setVisible(false);
-	    shell.open();
-//	    Shell dialog = new Shell(shell);
-//	    dialog.setText("Dialog");
-//	    dialog.setSize(200, 200);
-//	    dialog.open();
-//	    while (!shell.isDisposed()) {
-//	      if (!display.readAndDispatch())
-//	        display.sleep();
-//	    }
-	    display.dispose();
-		
+		Display.getDefault();
 	}
 	
 	/* (non-Javadoc)
@@ -132,7 +114,7 @@ public class PlugInApplication implements IApplication {
 		this.IApplicationContext = context;
 		
 		// --- Ensure that SWT thread was started ---------
-//		this.ensureSWTisFirstThread();
+		this.ensureSWTisFirstThread();
 		
 		// --- Start the main Application class -----------
 		Application.start(this);
