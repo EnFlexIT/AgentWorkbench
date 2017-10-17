@@ -63,6 +63,7 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
 import de.enflexit.api.LastSelectedFolderReminder;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
@@ -1259,7 +1260,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public static String getLoggingBasePathDefault() {
 		String basePath = Application.getGlobalInfo().getPathBaseDir();
 		String defaultLoggingBasePath = basePath + "log";
-		String os = System.getProperty("os.name");
+		String os = SystemEnvironmentHelper.getOperatingSystem();
 		if (os.toLowerCase().contains("windows")==true) {
 			// --- nothing to do here ---
 		} else if (os.toLowerCase().contains("linux")==true) {

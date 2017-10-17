@@ -12,6 +12,30 @@ import javax.swing.JDialog;
  */
 public class SystemEnvironmentHelper {
 
+	
+	/**
+	 * Returns the operating system by calling <code>System.getProperty("os.name")</code>.
+	 * @return the operating system
+	 */
+	public static String getOperatingSystem() {
+		return System.getProperty("os.name");
+	}
+	/**
+	 * Return the version of the operating systems by calling <code>System.getProperty("os.version")</code>.
+	 * @return the operating systems version
+	 */
+	public static String getOperatingSystemsVersion() {
+		return System.getProperty("os.version");
+	}
+	/**
+	 * Return the architecture of the operating systems by calling <code>System.getProperty("os.arch")</code>.
+	 * @return the operating systems version
+	 */
+	public static String getOperatingSystemsArchitecture() {
+		return System.getProperty("os.arch");
+	}
+	
+	
 	/**
 	 * Checks if the current system environment is executed headless (without any GUI).
 	 * @return true, if is headless operation

@@ -65,6 +65,7 @@ import agentgui.simulationService.ontology.PlatformAddress;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
@@ -1620,9 +1621,9 @@ public class LoadService extends BaseService {
 			
 			// --- Set OS-Informations ------------------------
 			OSInfo myOS = new OSInfo();
-			myOS.setOs_name(System.getProperty("os.name"));
-			myOS.setOs_version(System.getProperty("os.version"));
-			myOS.setOs_arch(System.getProperty("os.arch"));
+			myOS.setOs_name(SystemEnvironmentHelper.getOperatingSystem());
+			myOS.setOs_version(SystemEnvironmentHelper.getOperatingSystemsVersion());
+			myOS.setOs_arch(SystemEnvironmentHelper.getOperatingSystemsArchitecture());
 			
 			// --- Set the Performance of machine -------------
 			LoadMeasureSigar sys = LoadMeasureThread.getLoadCurrent();

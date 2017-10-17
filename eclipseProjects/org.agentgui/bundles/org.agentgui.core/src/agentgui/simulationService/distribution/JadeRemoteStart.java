@@ -38,6 +38,7 @@ import java.util.Scanner;
 import agentgui.core.application.Application;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.transfer.Download;
 
 /**
@@ -246,7 +247,7 @@ public class JadeRemoteStart extends Thread {
 	 */
 	public void startJade() {
 		
-		String os = System.getProperty("os.name");
+		String os = SystemEnvironmentHelper.getOperatingSystem();
 		
 		String java = "";
 		String javaVMArgs = "";

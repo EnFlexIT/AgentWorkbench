@@ -40,6 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.MainWindow;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
 /**
@@ -99,11 +100,6 @@ public class PlugInApplication implements IApplication {
 			Thread.sleep(250);
 		}
 	}
-	
-	private void ensureSWTisFirstThread() {
-		Display.getDefault();
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
@@ -113,8 +109,10 @@ public class PlugInApplication implements IApplication {
 		// --- Remind application context -----------------
 		this.IApplicationContext = context;
 		
-		// --- Ensure that SWT thread was started ---------
-		this.ensureSWTisFirstThread();
+		// --- Ensure that SWT is in the first thread -----
+		if (SystemEnvironmentHelper.getOperatingSystem().startsWith("mac")) {
+			Display.getDefault();
+		}
 		
 		// --- Start the main Application class -----------
 		Application.start(this);
@@ -217,6 +215,7 @@ public class PlugInApplication implements IApplication {
 	 * @param postWindowOpenRunnable the post window open runnable
 	 */
 	public void startEclipseUiThrowThread(final Runnable postWindowOpenRunnable) {
+
 		Thread eclipsStarter = new Thread(new Runnable() {
 			@Override
 			public void run() {
