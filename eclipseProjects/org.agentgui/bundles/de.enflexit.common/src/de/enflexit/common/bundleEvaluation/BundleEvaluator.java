@@ -490,43 +490,42 @@ public class BundleEvaluator {
 			}
 			
 			// --- If bundle is packed in a jar, we're done ---------
-			if (this.isJarBundle(bundle)==true) return bundleClasses;
-			
-			
-			// ------------------------------------------------------
-			// --- If the bundle wiring worked, check for jars ------ 
-			// ------------------------------------------------------			
-			// --- Does the bundle has a "Bundle-ClassPath" entry ---
-			Vector<String> bundleClassPathEntries  = this.getBundleClassPathEntries(bundle);
-			if (bundle.getState()==Bundle.ACTIVE && bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
-				// --- Check for available jars in the bundle--------
-				Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
-				if (bundleJars!=null) {
-					while (bundle.getState()==Bundle.ACTIVE && bundleJars.hasMoreElements()) {
-						URL url = (URL) bundleJars.nextElement();
-						String debugText = "Found jar-File of '" + bundle.getSymbolicName() + "' (" + url.getPath() + ")";
-						if (bundleClassPathEntries.contains(url.getPath())) {
-							debugText += "\t=> Will be checked ... ";
-							List<Class<?>> jarClasses = this.getJarClasses(bundle, url);
-							if (packageFilter==null) {
-								// --- Add all classes found  -------
-								bundleClasses.addAll(jarClasses);
-							} else {
-								// --- Check if the in package ------
-								for (int i = 0; i < jarClasses.size(); i++) {
-									Class<?> classFound = jarClasses.get(i);
-									String className = classFound.getName();
-									if (className.startsWith(packageFilter)) {
-										bundleClasses.add(classFound);		
+			if (this.isJarBundle(bundle)==false) {
+				// ------------------------------------------------------
+				// --- If the bundle wiring worked, check for jars ------ 
+				// ------------------------------------------------------			
+				// --- Does the bundle has a "Bundle-ClassPath" entry ---
+				Vector<String> bundleClassPathEntries  = this.getBundleClassPathEntries(bundle);
+				if (bundle.getState()==Bundle.ACTIVE && bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
+					// --- Check for available jars in the bundle--------
+					Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
+					if (bundleJars!=null) {
+						while (bundle.getState()==Bundle.ACTIVE && bundleJars.hasMoreElements()) {
+							URL url = (URL) bundleJars.nextElement();
+							String debugText = "Found jar-File of '" + bundle.getSymbolicName() + "' (" + url.getPath() + ")";
+							if (bundleClassPathEntries.contains(url.getPath())) {
+								debugText += "\t=> Will be checked ... ";
+								List<Class<?>> jarClasses = this.getJarClasses(bundle, url);
+								if (packageFilter==null) {
+									// --- Add all classes found  -------
+									bundleClasses.addAll(jarClasses);
+								} else {
+									// --- Check if the in package ------
+									for (int i = 0; i < jarClasses.size(); i++) {
+										Class<?> classFound = jarClasses.get(i);
+										String className = classFound.getName();
+										if (className.startsWith(packageFilter)) {
+											bundleClasses.add(classFound);		
+										}
 									}
 								}
+								debugText += "Done!";
 							}
-							debugText += "Done!";
+							if (debug) System.out.println(debugText); 
+							
 						}
-						if (debug) System.out.println(debugText); 
-						
-					}
-				}	
+					}	
+				}
 			}
 		}
 		
