@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -83,7 +84,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
 	
-	private final static String localFileRunnableUpdater = "AgentGuiUpdate.jar";
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
 	
 	public static final String DEFAULT_UPDATE_SITE = "http://update.agentgui.org";
@@ -130,7 +130,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private ExecutionMode fileExecutionMode;
 	private String processID;
 	
-	private String fileRunnableJar;
+//	private String fileRunnableJar;
 	private String filePropProjectsDirectory;
 	
 	private float filePropBenchValue = 0;
@@ -260,21 +260,26 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			// ----------------------------------------------------------------
 			// --- Examine the path reference found --------------------------
 			// ----------------------------------------------------------------
-			String pathFound = thisFile.getAbsolutePath(); 
+			String pathFound = thisFile.getAbsolutePath();
+			String baseDir = null;
 			if (pathFound.endsWith(".jar") && pathFound.contains(File.separator + "plugins" + File.separator)) {
 				// --- OSGI environment ---------------------------------------
 				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverProduct);
 				int cutAt = pathFound.indexOf("plugins" + File.separator);
-				GlobalInfo.localBaseDir = pathFound.substring(0, cutAt);
+				baseDir = pathFound.substring(0, cutAt);
 				
 			} else {
 				// --- IDE environment ----------------------------------------
 				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverIDE);
-				GlobalInfo.localBaseDir = thisFile + File.separator;
+				baseDir = thisFile + File.separator;
 				if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
-					GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
+					baseDir = thisFile.getParent() + File.separator;
 				}
 			}
+			
+			// --- Convert path to a canonical one ----------------------------
+			File baseDirFile = new File(baseDir);
+			GlobalInfo.localBaseDir = baseDirFile.getCanonicalPath() + File.separator;
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -540,6 +545,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private void createDirectoryIfRequired(String path) {
 		// --- Check, if the folder exists. If not create -----------
 		File testDirectory = new File(path);
+		//System.err.println(testDirectory.getAbsolutePath());
 		if (testDirectory.exists()==false) {
 			testDirectory.mkdir();
 		}
@@ -752,30 +758,57 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		}
 		
 	}
+	
 	/**
 	 * This method can be used in order to get the applications executable 
 	 * jar-file that is in fact the equinox launcher.
 	 * @return the absolute path to the executable jar file
 	 */
 	public String getFileRunnableJar(){
-		if (fileRunnableJar==null) {
+		return this.getFileRunnableJar(null, null);
+	}
+	
+	/**
+	 * This method can be used in order to get the applications executable jar-file that is in fact the equinox launcher.
+	 * Set the installation path parameter to <code>null</code> to receive the executable for this application. Set this 
+	 * parameter to a specific one, in order to check any directory for an installation.  
+	 *
+	 * @param installationPath an initial installation path that allows to check any directory
+	 * @param statusMessageList define an ArrayList here to receive the errors found by the method 
+	 * @return the absolute path to the executable jar file
+	 */
+	public String getFileRunnableJar(String installationPath, ArrayList<String> statusMessageList){
+		
+		String execJarFile = null;
+		try {
+
+			Language.translate("Could not find directory for an executable installation.", Language.EN);
+			Language.translate("Could not find the installation directory", Language.EN);
+			Language.translate("Could not find sub directory 'plugins'.", Language.EN);
+			Language.translate("Could not find the equinox launcher within the plugins-directory of the installed product.", Language.EN);
+			
 			
 			// --- Get installation directory -----------------------
 			String instDirPath = null;
-			if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
-				instDirPath = getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
-			} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
-				instDirPath = Platform.getLocation().toFile().getAbsolutePath();
+			if (installationPath!=null) {
+				instDirPath = installationPath;
+			} else {
+				if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+					instDirPath = getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
+				} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
+					instDirPath = Platform.getLocation().toFile().getAbsolutePath();
+				}
 			}
 			if (instDirPath==null || instDirPath.isEmpty()==true) {
-				System.err.println("Could not find an installation directory for " + getApplicationTitle() + ".");
+				this.setErrorMessage(Language.translate("Could not find directory for an executable installation.", Language.EN), statusMessageList);
 				return null;
 			}
 
 			// --- Get File object of installation directory --------
 			File instDir = new File(instDirPath);
 			if (instDir==null || instDir.exists()==false) {
-				System.err.println("Could not find the installation directory '" + instDirPath + "'.");
+				this.setErrorMessage(Language.translate("Could not find the installation directory", Language.EN) + " '" + instDirPath + "'.", statusMessageList);
+				return null;
 			}
 			
 			// --- Find the plugins directory -----------------------
@@ -787,7 +820,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 				}
 			});
 			if (searchResult.length==0) {
-				System.err.println("Could not find sub directory 'plugins'.");
+				this.setErrorMessage(Language.translate("Could not find sub directory 'plugins'.", Language.EN), statusMessageList);
 				return null;
 			}  
 			
@@ -801,14 +834,32 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 				}
 			});
 			if (searchResult.length==0) {
-				System.err.println("Could not find the equinox launcher within the plubins-directory of the installed product.");
+				this.setErrorMessage(Language.translate("Could not find the equinox launcher within the plugins-directory of the installed product.", Language.EN), statusMessageList);
 				return null;
 			}
-
-			fileRunnableJar = searchResult[0].getAbsolutePath();
+			execJarFile = searchResult[0].getAbsolutePath(); 
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		return fileRunnableJar;
+		return execJarFile;
 	}
+	/**
+	 * Sets or prints an error message (used in the above method).
+	 * @param message the message
+	 * @param statusMessageList the status message list
+	 * @see #getFileRunnableJar(String, ArrayList)
+	 */
+	private void setErrorMessage(String message, ArrayList<String> statusMessageList) {
+		if (message!=null && message.equals("")==false) {
+			if (statusMessageList==null) {
+				System.err.println(message);
+			} else {
+				statusMessageList.add(message);
+			}
+		}
+	}
+	
 	/**
 	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 
 	 * 
@@ -828,20 +879,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			fileName = getPathProperty(absolute) + localFileDictionary + ".csv";
 		}
 		return fileName;
-	}
-	
-	
-	/**
-	 * Gets the file name of the updater (AgentGuiUpdate.jar).
-	 * @param absolute the absolute
-	 * @return the file updater
-	 */
-	public String getFileNameUpdater(boolean absolute) {
-		if (absolute == true) { 
-			return getFilePathAbsolute(localFileRunnableUpdater);
-		} else {
-			return localFileRunnableUpdater;	
-		}
 	}
 	
 	/**
@@ -1228,9 +1265,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @param newLoggingbasePath the new logging base path
 	 */
 	public void setLoggingBasePath(String newLoggingbasePath) {
-		if (newLoggingbasePath!=null && newLoggingbasePath.trim().equals("")==false) {
-			this.filePropLoggingBasePath = newLoggingbasePath;
-		}
+		this.filePropLoggingBasePath = newLoggingbasePath;
 	}
 	/**
 	 * Returns the relative logging base path. If not set differently, the method will return the default path.

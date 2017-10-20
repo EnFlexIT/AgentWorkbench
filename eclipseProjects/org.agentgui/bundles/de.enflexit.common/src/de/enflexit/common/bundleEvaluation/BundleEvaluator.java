@@ -885,7 +885,9 @@ public class BundleEvaluator {
 	public URL getBundleURL(Bundle bundle) {
 		URL bundleURL = null;
 		try {
-			bundleURL = FileLocator.resolve(bundle.getEntry("/"));
+			if (bundle.getState()==Bundle.ACTIVE) {
+				bundleURL = FileLocator.resolve(bundle.getEntry("/"));
+			}
 		} catch (IOException ioEx) {
 			ioEx.printStackTrace();
 		}

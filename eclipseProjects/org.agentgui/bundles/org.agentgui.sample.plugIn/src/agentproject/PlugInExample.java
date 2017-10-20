@@ -10,7 +10,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+//import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.gui.projectwindow.TabForSubPanels;
@@ -118,9 +118,7 @@ public class PlugInExample extends PlugIn {
 		// ------------------------------------------------
 		// --- 1.Add a Tab without Sub-Tabs ---------------
 		// ------------------------------------------------
-		ProjectWindowTab pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_END_USER, 
-				   Language.translate("! MyTab Single !"), null, null, 
-				   new ObserverOutputTab(this.project), null);
+		ProjectWindowTab pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_END_USER, "! MyTab Single !", null, null, new ObserverOutputTab(this.project), null);
 		this.addProjectWindowTab(pwt, 2);
 		// ------------------------------------------------
 		// --- 2.Add a Tab where Sub-Tabs can be added ----
@@ -128,17 +126,14 @@ public class PlugInExample extends PlugIn {
 
 		// --- The class to use ! ---------------
 		String tabPane4SubPanesTitle = "! MyTab with SubTabs !";
+		//String tabPane4SubPanesTitle = Language.translate("! MyTab with SubTabs !", Language.DE);
 		
 		// --- Add the main Tab -----------------
-		pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-				   Language.translate(tabPane4SubPanesTitle), null, null, 
-				   new TabForSubPanels(project), null);
+		pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_DEVELOPER, tabPane4SubPanesTitle, null, null, new TabForSubPanels(project), null);
 		this.addProjectWindowTab(pwt, 4);
 		
 			// --- Add a Sub-Tab ----------------
-			pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("Observer-Output"), null, null, 
-					   new ObserverOutputTab(this.project), Language.translate(tabPane4SubPanesTitle));
+			pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_DEVELOPER, "Observer-Output", null, null, new ObserverOutputTab(this.project), tabPane4SubPanesTitle);
 			this.addProjectWindowTab(pwt);
 		
 		// ------------------------------------------------
@@ -146,9 +141,7 @@ public class PlugInExample extends PlugIn {
 		// ------------------------------------------------
 		ProjectWindowTab parentPWT = this.project.getProjectWindow().getTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup);
 		
-		pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_END_USER, 
-				   "! My Setup-Tab!", "This is my tip text for a Simulation-Setup-Tab!", null, 
-				   new JPanel(), parentPWT.getTitle());
+		pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_END_USER,"! My Setup-Tab!", "This is my tip text for a Simulation-Setup-Tab!", null, new JPanel(), parentPWT.getTitle());
 		this.addProjectWindowTab(pwt, 1);
 			
 	}

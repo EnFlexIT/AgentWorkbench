@@ -909,7 +909,7 @@ public class MainWindow extends JFrame {
 			jMenuMainHelp.addSeparator();
 			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen") + " !", null ));
 			jMenuMainHelp.addSeparator();
-			jMenuMainHelp.add(new CWMenueItem( "EclipsePreferences", Language.translate("Eclipse Preferences"), null ));
+			jMenuMainHelp.add(new CWMenueItem( "EclipsePreferences", "Eclipse Preferences", null ));
 		}
 		return jMenuMainHelp;
 	}
