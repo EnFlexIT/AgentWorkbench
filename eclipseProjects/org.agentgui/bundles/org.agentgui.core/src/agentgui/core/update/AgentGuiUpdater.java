@@ -278,6 +278,9 @@ public class AgentGuiUpdater extends Thread {
 			if(status.getCode() == UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
 				// --- No updates found --------------
 				System.out.println("P2 Update: No updates found!");
+				if(Application.isOperatingHeadless()==false && this.manualyExecutedByUser == true) {
+					JOptionPane.showMessageDialog(null, Language.translate("Keine Updates gefunden"), Language.translate("Keine Updates gefunden"), JOptionPane.INFORMATION_MESSAGE);
+				}
 			}else{
 				// --- Updates found, proceed --------
 				System.out.println("P2 Update: Updates available.");
