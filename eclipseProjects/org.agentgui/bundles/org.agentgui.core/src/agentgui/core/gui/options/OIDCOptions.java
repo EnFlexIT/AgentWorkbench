@@ -85,14 +85,14 @@ public class OIDCOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	@Override
 	public String getTitle() {
-		return Language.translate("OpenID Connect-Konfiguration");
+		return "OpenID Connect";
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.swing.options.AbstractOptionTab#getTabToolTipText()
 	 */
 	@Override
 	public String getTabToolTipText() {
-		return Language.translate("OpenID Connect-Konfiguration");
+		return "OpenID Connect";
 	}
 
 	/**

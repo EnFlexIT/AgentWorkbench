@@ -83,7 +83,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
 	
-	private final static String localFileRunnableUpdater = "AgentGuiUpdate.jar";
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
 	
 	public static final String DEFAULT_UPDATE_SITE = "http://update.agentgui.org";
@@ -260,21 +259,26 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			// ----------------------------------------------------------------
 			// --- Examine the path reference found --------------------------
 			// ----------------------------------------------------------------
-			String pathFound = thisFile.getAbsolutePath(); 
+			String pathFound = thisFile.getAbsolutePath();
+			String baseDir = null;
 			if (pathFound.endsWith(".jar") && pathFound.contains(File.separator + "plugins" + File.separator)) {
 				// --- OSGI environment ---------------------------------------
 				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverProduct);
 				int cutAt = pathFound.indexOf("plugins" + File.separator);
-				GlobalInfo.localBaseDir = pathFound.substring(0, cutAt);
+				baseDir = pathFound.substring(0, cutAt);
 				
 			} else {
 				// --- IDE environment ----------------------------------------
 				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverIDE);
-				GlobalInfo.localBaseDir = thisFile + File.separator;
+				baseDir = thisFile + File.separator;
 				if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
-					GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
+					baseDir = thisFile.getParent() + File.separator;
 				}
 			}
+			
+			// --- Convert path to a canonical one ----------------------------
+			File baseDirFile = new File(baseDir);
+			GlobalInfo.localBaseDir = baseDirFile.getCanonicalPath() + File.separator;
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -540,6 +544,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private void createDirectoryIfRequired(String path) {
 		// --- Check, if the folder exists. If not create -----------
 		File testDirectory = new File(path);
+		//System.err.println(testDirectory.getAbsolutePath());
 		if (testDirectory.exists()==false) {
 			testDirectory.mkdir();
 		}
@@ -828,20 +833,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			fileName = getPathProperty(absolute) + localFileDictionary + ".csv";
 		}
 		return fileName;
-	}
-	
-	
-	/**
-	 * Gets the file name of the updater (AgentGuiUpdate.jar).
-	 * @param absolute the absolute
-	 * @return the file updater
-	 */
-	public String getFileNameUpdater(boolean absolute) {
-		if (absolute == true) { 
-			return getFilePathAbsolute(localFileRunnableUpdater);
-		} else {
-			return localFileRunnableUpdater;	
-		}
 	}
 	
 	/**
@@ -1228,9 +1219,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @param newLoggingbasePath the new logging base path
 	 */
 	public void setLoggingBasePath(String newLoggingbasePath) {
-		if (newLoggingbasePath!=null && newLoggingbasePath.trim().equals("")==false) {
-			this.filePropLoggingBasePath = newLoggingbasePath;
-		}
+		this.filePropLoggingBasePath = newLoggingbasePath;
 	}
 	/**
 	 * Returns the relative logging base path. If not set differently, the method will return the default path.

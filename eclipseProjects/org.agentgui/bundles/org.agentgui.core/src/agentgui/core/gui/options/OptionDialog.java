@@ -71,7 +71,6 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 
 /**
@@ -102,7 +101,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private LogFileOptions logFileOptions;
 	private UpdateOptions updateOptions;
 	private OIDCOptions oidcOptions;
-	private ExecutableDirectoryOption exeDirOption;
+	private DirectoryOptions exeDirOption;
 	
 	/**
 	 * Instantiates a new option dialog.
@@ -132,12 +131,10 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    
 	    // --- Integrate sub panels ---------------------------------
 	    this.addOptionTab(this.getStartOptions(), null);
+	    this.addOptionTab(this.getDirectoryOptions(), null);
 	    this.addOptionTab(this.getUpdateOptions(), null);
 	    this.addOptionTab(this.getOIDCOptions(), null);
 	    this.addOptionTab(this.getLogFileOptions(), null);
-	    if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
-		    this.addOptionTab(this.getExecDirOption(), null);
-	    }
 	    
 	    if (Application.isRunningAsServer()==true || execMode==ExecutionMode.DEVICE_SYSTEM) {
 	    	String tabTitle = Language.translate("Konsole");
@@ -226,6 +223,16 @@ public class OptionDialog extends JDialog implements ActionListener {
 		return startOptions;
 	}
 	/**
+	 * Return the directory options.
+	 * @return the executable directory option
+	 */
+	private DirectoryOptions getDirectoryOptions() {
+		if (exeDirOption==null) {
+			exeDirOption = new DirectoryOptions();
+		}
+		return exeDirOption;
+	}
+	/**
 	 * Gets the log file options.
 	 * @return the log file options
 	 */
@@ -255,17 +262,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		}
 		return oidcOptions;
 	}
-	/**
-	 * Gets the executable directory option for the IDE environment, the 
-	 * directory, where the product launcher is located.
-	 * @return the executable directory option
-	 */
-	private ExecutableDirectoryOption getExecDirOption() {
-		if (exeDirOption==null) {
-			exeDirOption = new ExecutableDirectoryOption();
-		}
-		return exeDirOption;
-	}
+	
 	
 	/**
 	 * This method initializes jSplitPaneMain.

@@ -28,6 +28,7 @@
  */
 package agentgui.core.project;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,7 +60,18 @@ import de.enflexit.common.transfer.Zipper;
 public class ProjectsLoaded {
 
 	// --- Listing of the open projects -------------------
-	private ArrayList<Project> projectsOpen = new ArrayList<Project>();
+	private ArrayList<Project> projectsOpen;
+	
+	/**
+	 * Returns the list of currently open projects.
+	 * @return the projects open
+	 */
+	public ArrayList<Project> getProjectsOpen() {
+		if (projectsOpen==null) {
+			projectsOpen = new ArrayList<>();
+		}
+		return projectsOpen;
+	}
 	
 	/**
 	 * Adding (Creating or Opening) a new Project to the Application
@@ -145,7 +157,7 @@ public class ProjectsLoaded {
 		}
 
 		// --- ClassLoader unload -------------------------
-		if (this.projectsOpen.size()!=0) {
+		if (this.count()!=0) {
 			Application.getProjectFocused().resourcesRemove();
 		}
 		
@@ -186,7 +198,7 @@ public class ProjectsLoaded {
 		newProject.getEnvironmentController();
 		
 		// --- add project to the project-listing -----------------------------
-		projectsOpen.add(newProject);
+		this.getProjectsOpen().add(newProject);
 		Application.setProjectFocused(newProject);
 
 		// --- Configure the project view in the main application -------------
@@ -214,12 +226,22 @@ public class ProjectsLoaded {
 	}
 
 	/**
-	 * This method will try to close all open projects
+	 * This method will try to close all open projects.
+	 *
+	 * @param parentComponent the parent component
 	 * @return Returns true on success
 	 */
-	public boolean closeAll() {		
+	public boolean closeAll() {
+		return this.closeAll(null);
+	}
+	/**
+	 * This method will try to close all open projects.
+	 * @param parentComponent the parent component (for messages by using the {@link JOptionPane})
+	 * @return Returns true on success
+	 */
+	public boolean closeAll(Component parentComponent) {		
 		while (Application.getProjectFocused()!=null) {
-			if (Application.getProjectFocused().close()==false) {
+			if (Application.getProjectFocused().close(parentComponent)==false) {
 				return false;
 			}
 		}
@@ -244,7 +266,7 @@ public class ProjectsLoaded {
 	 * @return A Project instance
 	 */
 	public Project get(int indexOfProject) {
-		return projectsOpen.get(indexOfProject);
+		return this.getProjectsOpen().get(indexOfProject);
 	}
 
 	/**
@@ -252,8 +274,8 @@ public class ProjectsLoaded {
 	 * @param project2Remove
 	 */
 	public void remove(Project project2Remove) {
-		projectsOpen.remove(project2Remove);
-		if (projectsOpen.size()==0) {
+		this.getProjectsOpen().remove(project2Remove);
+		if (this.getProjectsOpen().size()==0) {
 			Application.setProjectFocused(null);
 		}
 		this.setProjectView();
@@ -262,7 +284,7 @@ public class ProjectsLoaded {
 	 * Removes all Projects from the (Array) ProjectList
 	 */
 	public void removeAll() {
-		projectsOpen.clear();
+		this.getProjectsOpen().clear();
 		Application.setProjectFocused(null);
 		Application.getProjectsLoaded().setProjectView();		
 	}
@@ -273,14 +295,14 @@ public class ProjectsLoaded {
 	 * @return The index position of a project 
 	 */
 	public int getIndexByName(String projectName) {
-		int Index = -1;
+		int index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( projectsOpen.get(i).getProjectName().equalsIgnoreCase(projectName) ) {
-				Index = i;
+			if (this.getProjectsOpen().get(i).getProjectName().equalsIgnoreCase(projectName) ) {
+				index = i;
 				break;
 			}	
 		}
-		return Index;
+		return index;
 	}
 	/**
 	 * Identifies a Project by its Root-Folder-Name and returns the Array-/Window-Index
@@ -290,7 +312,7 @@ public class ProjectsLoaded {
 	public int getIndexByFolderName(String projectFolderName) {
 		int index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( projectsOpen.get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( projectFolderName.toLowerCase() ) ) {
+			if (this.getProjectsOpen().get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( projectFolderName.toLowerCase() ) ) {
 				index = i;
 				break;
 			}	
@@ -301,7 +323,7 @@ public class ProjectsLoaded {
 	 * Counts the actual open projects
 	 */
 	public int count() {
-		return projectsOpen.size();		
+		return this.getProjectsOpen().size();		
 	}
 
 	/**
@@ -363,7 +385,7 @@ public class ProjectsLoaded {
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
 		} else {
 			for(int i=0; i<this.count(); i++) {
-				String ProjectName = projectsOpen.get(i).getProjectName();
+				String ProjectName = this.getProjectsOpen().get(i).getProjectName();
 				if ( ProjectName.equalsIgnoreCase( Application.getProjectFocused().getProjectName() ) ) 
 					setFontBold = true;
 				else 

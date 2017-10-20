@@ -28,6 +28,7 @@
  */
 package agentgui.core.project;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -502,6 +503,14 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * @return Returns true if saving was successful
 	 */
 	public boolean close() {
+		return this.close(null);
+	}
+	/**
+	 * This method closes the current project. If necessary it will try to save the before.
+	 * @param parentComponent the parent component
+	 * @return Returns true if saving was successful
+	 */
+	public boolean close(Component parentComponent) {
 		
 		// --- Close project? -----------------------------
 		String msgHead = null;
@@ -518,7 +527,10 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 			msgText = msgText.replace( "'@'", "'" + projectName + "'");
 			
 			if (Application.getMainWindow()!=null) {
-				msgAnswer = JOptionPane.showInternalConfirmDialog (Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
+				if (parentComponent==null) {
+					parentComponent = Application.getMainWindow().getContentPane(); 
+				}
+				msgAnswer = JOptionPane.showConfirmDialog(parentComponent, msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
 				if (msgAnswer == JOptionPane.CANCEL_OPTION) {
 					return false;
 				} else if (msgAnswer == JOptionPane.YES_OPTION) {
@@ -528,7 +540,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 				if (this.save()==false) return false;
 			}
 		}
-		// --- ggf. noch Jade beenden ---------------------
+		// --- Shutdown Jade ? ----------------------------
 		if (Application.getJadePlatform().stopAskUserBefore()==false) {
 			return false;
 		}

@@ -133,6 +133,7 @@ de;Das Seitenverhältnis des exportierten Bildes;The aspect ratio of the image to
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
+de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>Möchten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br>Do you want to create the directory now?;;;
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
@@ -253,6 +254,7 @@ de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
 de;Geräte-Agent;Embedded System Agent;;;
+de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
 de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
 de;Google - Übersetzung;Google translation;;;
 de;Google-Übersetzung verwenden;Use Google Translate;;;
@@ -286,6 +288,7 @@ de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
+de;Installationspakete;Installation Package Directory;;;
 de;Introspector-Agent starten;Start Introspector agent
 de;Italienisch;Italian
 de;JADE direkt starten ohne nachzufragen.;Directly start JADE without further confirmation.;;;
@@ -476,9 +479,6 @@ de;Ontologie-Referenz auswählen!;Select an ontology reference!;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
-de;OpenID Connect-Autorisierung;OpenID Connect-Authorization;;;
-de;OpenID Connect-Konfiguration;OpenID Connect - Configuration;;;
-de;OpenID Connect;;;;
 de;Optionen;Options
 de;Organisation;Organization;;;
 de;Organisationseinheit;Organizational Unit;;;
@@ -490,14 +490,16 @@ de;Pause;Pause
 de;Plug-Ins;Plug-Ins;;;
 de;PlugIn für Agent.GUI;PlugIn for Agent.GUI
 de;Position;Position
-de;Produktverzeichnis;Porduct Directory;;;
+de;Produktinstallation;Installed Product Directory;;;
 de;Progamm umschalten auf;Switch progam to
 de;Programmende...;Application shutdown ...
 de;Programmstart...;Starting Program ...
 de;Programmstart;Program Start
 de;Projekt '@' speichern?;Save Project '@'?
+de;Projekt - Basisverzeichnis;Projects Root Directory;;;
 de;Projekt exportieren;Export Project
 de;Projekt exportieren?;Export project?
+de;Projekt geöffnet!;Open Project!;;;
 de;Projekt importieren;Import Project
 de;Projekt löschen;Delete Project;;;
 de;Projekt schließen;Close Project
@@ -506,6 +508,7 @@ de;Projekt speichern?;Save Project?
 de;Projekt zum Export auswählen;Select a project to export
 de;Projekt öffnen;Open Project
 de;Projekt-Agenten;Project-Agents
+de;Projekt-Basisverzeichnis nicht gefunden!;Project base directory not found!;;;
 de;Projekt-Desktop;Project Desktop
 de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
@@ -671,6 +674,7 @@ de;Verzeichnis eines installierten Produkts auswählen;Select directory of instal
 de;Verzeichnis gepackt zu;Folder packed to;;;
 de;Verzeichnis mit *.class-Dateien aus Java Projekt einbinden;Include directory with *.class-files from Java project;;;
 de;Verzeichnis;Folder
+de;Verzeichnisse;Directories;;;
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
 de;Vollständiger Name;Full Name;;;

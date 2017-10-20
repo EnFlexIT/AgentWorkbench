@@ -85,8 +85,6 @@ import de.enflexit.oidc.Trust;
  */
 public class Application {
 	
-	/** True, if Agent.GUI was updated */
-	private static boolean agentGuiWasUpdated = false;
 	/** True, if a remote container has to be started (see start arguments) */
 	private static boolean justStartJade = false;
 	/** Indicates if the benchmark is currently running */
@@ -448,12 +446,6 @@ public class Application {
 						System.err.println("Argument -project: Could not find project specification!");
 					}
 					
-				} else if (args[i].equalsIgnoreCase("-updated")) {
-					// --------------------------------------------------------
-					// --- AgentGui.jar updated, remove AgentGuiUpdate.jar ----
-					remainingArgsVector.removeElement(args[i]);
-					agentGuiWasUpdated = true;
-					
 				} else if (args[i].equalsIgnoreCase("-jade")) {
 					// --------------------------------------------------------
 					// --- JADE has to be started as remote container ---------	
@@ -568,16 +560,6 @@ public class Application {
 	 */
 	public static void startAgentGUI() {
 		
-		// ----------------------------------------------------------		
-		// --- Delete the updater file ------------------------------
-		if (agentGuiWasUpdated==true) {
-			String updaterPath = getGlobalInfo().getFileNameUpdater(true);
-			File updater = new File(updaterPath);
-			if (updater.exists()==true) {
-				updater.delete();
-			}
-		}
-		
 		// ----------------------------------------------------------
 		// --- Check if Agent.GUI is operated headless --------------
 		// ----------------------------------------------------------
@@ -617,13 +599,7 @@ public class Application {
 					waitForBenchmark();
 					
 					proceedStartArgumentOpenProject();
-					
-					if (agentGuiWasUpdated==true) {
-						showChangeDialog();
-						agentGuiWasUpdated=false;
-					} else {
-						new AgentGuiUpdater().start();
-					}
+					new AgentGuiUpdater().start();
 					
 				}
 			});
@@ -646,13 +622,7 @@ public class Application {
 			// --- Start Service / Embedded System Agent ------------
 			plugInApplication.setApplicationIsRunning();
 			startServiceOrEmbeddedSystemAgent();
-			
-			if (agentGuiWasUpdated==true) {
-				showChangeDialog();
-				agentGuiWasUpdated=false;
-			} else {
-				new AgentGuiUpdater().start();
-			}
+			new AgentGuiUpdater().start();
 			break;
 		}
 		
