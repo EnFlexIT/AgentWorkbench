@@ -14,11 +14,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 
-public class ProjectExportPanel extends JPanel implements ActionListener{
+public class ProjectExportDialog extends JDialog implements ActionListener{
 	
 	private static final long serialVersionUID = 7642101726572826993L;
 	private JLabel jLabelHeader;
@@ -34,15 +35,12 @@ public class ProjectExportPanel extends JPanel implements ActionListener{
 	
 	private Project project;
 	private ProjectExportSettings exportSettings;
-	public ProjectExportPanel() {
-		this.initialize();
-	}
 	
-	public ProjectExportSettings getExportSettings() {
-		if(exportSettings == null) {
-			exportSettings = new ProjectExportSettings();
-		}
-		return exportSettings;
+	private boolean canceled = false;
+	
+	
+	public ProjectExportDialog() {
+		this.initialize();
 	}
 	
 	private void initialize() {
@@ -95,6 +93,9 @@ public class ProjectExportPanel extends JPanel implements ActionListener{
 		gbc_jPanelConfirmCancel.gridx = 0;
 		gbc_jPanelConfirmCancel.gridy = 4;
 		add(getJPanelConfirmCancel(), gbc_jPanelConfirmCancel);
+		
+		this.pack();
+		this.setModal(true);
 	}
 	
 	private JLabel getJLabelHeader() {
@@ -175,10 +176,6 @@ public class ProjectExportPanel extends JPanel implements ActionListener{
 		return jButtonCancel;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-	}
-	
 	private JList<String> getJListSetupSelection() {
 		if (jListSetupSelection == null) {
 			jListSetupSelection = new JList<String>();
@@ -187,7 +184,7 @@ public class ProjectExportPanel extends JPanel implements ActionListener{
 		}
 		return jListSetupSelection;
 	}
-	
+
 	private DefaultListModel<String> getListModel() {
 		if(listModel == null) {
 			listModel = new DefaultListModel<>();
@@ -196,5 +193,34 @@ public class ProjectExportPanel extends JPanel implements ActionListener{
 			}
 		}
 		return listModel;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if(ae.getSource() == this.getJButtonOk()) {
+			this.canceled = false;
+			this.dispose();
+		}else if(ae.getSource() == this.getJButtonCancel()) {
+			this.canceled = true;
+			this.dispose();
+		}
+	}
+	
+	public ProjectExportSettings getExportSettings() {
+		if(exportSettings == null) {
+			exportSettings = new ProjectExportSettings();
+		}
+		return exportSettings;
+	}
+
+	/**
+	 * @return the canceled
+	 */
+	public boolean isCanceled() {
+		return canceled;
+	}
+	
+	public void showProjectExportDialog() {
+		
 	}
 }
