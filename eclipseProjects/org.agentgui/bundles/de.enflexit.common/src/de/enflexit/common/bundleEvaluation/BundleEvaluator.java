@@ -1031,6 +1031,7 @@ public class BundleEvaluator {
 	 * Cleans the reminded {@link ClassRequest}s.
 	 */
 	private void cleanClassRequests() {
+		if (this.getClassRequestHash().size()<=0) return;
 		Vector<ClassRequest> classRequests = new Vector<>(this.getClassRequestHash().values());
 		for (int i = 0; i < classRequests.size(); i++) {
 			ClassRequest classRequest = classRequests.get(i);
