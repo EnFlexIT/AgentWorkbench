@@ -131,7 +131,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private ExecutionMode fileExecutionMode;
 	private String processID;
 	
-//	private String fileRunnableJar;
 	private String filePropProjectsDirectory;
 	
 	private float filePropBenchValue = 0;
@@ -638,7 +637,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the path to the project folder
 	 */
 	public String getPathProjects(boolean forcePathCreation) {
-
 		if (filePropProjectsDirectory==null) {
 			filePropProjectsDirectory = this.getDefaultProjectsDirectory();
 		}
@@ -663,6 +661,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			try {
 				projectsDir = projectsDir.getCanonicalFile();
 				filePropProjectsDirectory = projectsDir.getAbsolutePath();
+				if (filePropProjectsDirectory.endsWith(File.separator)==false) {
+					filePropProjectsDirectory += File.separator;
+				}
 			} catch (IOException ioEx) {
 				ioEx.printStackTrace();
 			}

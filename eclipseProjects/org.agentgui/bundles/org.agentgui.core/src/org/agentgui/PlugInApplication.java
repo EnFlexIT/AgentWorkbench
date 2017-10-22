@@ -110,11 +110,25 @@ public class PlugInApplication implements IApplication {
 		this.IApplicationContext = context;
 		
 		// --- Ensure that SWT is in the first thread -----
-		if (SystemEnvironmentHelper.getOperatingSystem().startsWith("mac")) {
-			Display.getDefault();
-		}
+//		if (SystemEnvironmentHelper.isMacOperatingSystem()) {
+//			Display.getDefault();
+//		}
 		
 		// --- Start the main Application class -----------
+//		Application.isOperatingHeadless();
+//		Thread thread = new Thread() {
+//			@Override
+//			public void run() {
+//				SwingUtilities.invokeLater(new Runnable() {
+//					@Override
+//					public void run() {
+//						Application.start(PlugInApplication.this);
+//					}
+//				});
+//			}
+//		};
+//		thread.setName("Start_Worker");
+//		thread.start();
 		Application.start(this);
 		
 		// --- Wait for termination of the application ----

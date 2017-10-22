@@ -153,7 +153,6 @@ public class MainWindow extends JFrame {
 		this.initComponents();
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.setLocationRelativeTo(null);
-		this.pack();	
 		
 		// --- configure console ---------------------------------- 
 		this.oldDividerLocation = this.jSplitPane4ProjectDesktop.getHeight() * 3 / 4; 
@@ -166,11 +165,11 @@ public class MainWindow extends JFrame {
 		// --- Finalize the display of the application ------------
 		this.setTitelAddition("");
 		this.setCloseButtonPosition(false);
+
 		this.pack();		
-		
-		this.setVisible(true);
 		this.validate();
 		this.repaint();
+		this.setVisible(true);
 		
 	}
 	

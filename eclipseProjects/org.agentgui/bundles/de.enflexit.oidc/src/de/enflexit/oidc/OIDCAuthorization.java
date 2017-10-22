@@ -123,7 +123,7 @@ public class OIDCAuthorization {
 	public SimpleOIDCClient getOIDCClient() throws URISyntaxException {
 		if (oidcClient == null) {
 			oidcClient = new SimpleOIDCClient();
-			oidcClient.setIssuerURI(getIssuerURI());
+			oidcClient.setIssuerURI(issuerURI);
 		}
 		return oidcClient;
 	}
@@ -172,16 +172,13 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the issuer URI.
-	 * 
 	 * @return the issuer URI
 	 */
 	public String getIssuerURI() {
 		return issuerURI;
 	}
-
 	/**
 	 * Sets the issuer URI.
-	 *
 	 * @param issuerURI the new issuer URI
 	 */
 	public void setIssuerURI(String issuerURI) {
@@ -190,17 +187,13 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the resource URI.
-	 * 
 	 * @return the resource URI
 	 */
 	public String getResourceURI() {
-
 		return resourceURI;
 	}
-
 	/**
 	 * Sets the resource URI.
-	 *
 	 * @param resourceURI the new resource URI
 	 */
 	public void setResourceURI(String resourceURI) {
@@ -209,7 +202,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the client id.
-	 * 
 	 * @return the client id
 	 */
 	public String getClientID() {
@@ -218,7 +210,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the client secret.
-	 * 
 	 * @return the client secret
 	 */
 	public String getClientSecret() {
@@ -227,7 +218,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the authorization dialog (with null defaults).
-	 *
 	 * @return the dialog
 	 */
 	public JDialog getDialog() {
