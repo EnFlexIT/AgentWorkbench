@@ -36,6 +36,7 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
@@ -656,6 +657,15 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			filePropProjectsDirectory = this.getDefaultProjectsDirectory();
 			this.createDirectoryIfRequired(filePropProjectsDirectory);
 			System.err.println("[projects directory] => Switched to default location '" + filePropProjectsDirectory + "'");
+			
+		} else {
+			// --- Convert to canonical file object -------
+			try {
+				projectsDir = projectsDir.getCanonicalFile();
+				filePropProjectsDirectory = projectsDir.getAbsolutePath();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
 		}
 		return filePropProjectsDirectory;
 	}
