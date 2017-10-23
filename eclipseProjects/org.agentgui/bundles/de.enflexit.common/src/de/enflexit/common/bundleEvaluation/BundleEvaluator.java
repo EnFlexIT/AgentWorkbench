@@ -885,7 +885,9 @@ public class BundleEvaluator {
 	public URL getBundleURL(Bundle bundle) {
 		URL bundleURL = null;
 		try {
-			bundleURL = FileLocator.resolve(bundle.getEntry("/"));
+			if (bundle.getState()==Bundle.ACTIVE) {
+				bundleURL = FileLocator.resolve(bundle.getEntry("/"));
+			}
 		} catch (IOException ioEx) {
 			ioEx.printStackTrace();
 		}
@@ -1029,6 +1031,7 @@ public class BundleEvaluator {
 	 * Cleans the reminded {@link ClassRequest}s.
 	 */
 	private void cleanClassRequests() {
+		if (this.getClassRequestHash().size()<=0) return;
 		Vector<ClassRequest> classRequests = new Vector<>(this.getClassRequestHash().values());
 		for (int i = 0; i < classRequests.size(); i++) {
 			ClassRequest classRequest = classRequests.get(i);

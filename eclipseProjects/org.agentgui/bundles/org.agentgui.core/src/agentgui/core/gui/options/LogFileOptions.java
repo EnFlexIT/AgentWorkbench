@@ -247,7 +247,7 @@ public class LogFileOptions extends AbstractOptionTab implements ActionListener 
 	
 	private JLabel getJLabelDefaultLogLocation() {
 		if (jLabelDefaultLogLocation == null) {
-			String displayText = Language.translate("Standard Log-Verzeichnis:") + " '" + GlobalInfo.getLoggingBasePathDefault() + File.separator + "[MONTH]'";
+			String displayText = "<html><b>" + Language.translate("Standard Log-Verzeichnis:") + ":</b> '" + GlobalInfo.getLoggingBasePathDefault() + File.separator + "[MONTH]'</html>";
 			jLabelDefaultLogLocation = new JLabel(displayText);
 			jLabelDefaultLogLocation.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}

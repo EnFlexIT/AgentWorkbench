@@ -300,7 +300,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JLabel getLabelStartTab() {
 		if (jLabelStartTab == null) {
 			jLabelStartTab = new JLabel();
-			jLabelStartTab.setText(Language.translate("Start-Tab"));
+			jLabelStartTab.setText("Start-Tab");
 			jLabelStartTab.setFont(new Font("Dialog", Font.BOLD, 14));
 		}
 		return jLabelStartTab;

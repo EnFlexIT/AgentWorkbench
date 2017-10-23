@@ -787,12 +787,10 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 				projectError = true;
 			}
 			// --- Check project file -------------------------------
-			if ( projectError==false ) {				
-				String XMLFileName = Application.getGlobalInfo().getPathProjects() + 
-									 projectFolder + File.separator +
-									 Application.getGlobalInfo().getFileNameProject();
-				File f = new File( XMLFileName );
-				if ( f.isFile() == false ) {
+			if ( projectError==false ) {		
+				String xmlLFileName = Application.getGlobalInfo().getPathProjects() + projectFolder + File.separator + Application.getGlobalInfo().getFileNameProject();
+				File f = new File(xmlLFileName);
+				if (f.isFile()==false) {
 					projectErrorSource = "ProFolderAgentGUIxml";
 					projectError = true;
 				}
@@ -801,17 +799,17 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ----------------------------------------------------
 			// --- Show Error-Msg, if an error occurs -------------
 			if (projectError==true) {
-				if ( projectErrorSource == "ProFolder" ) {
+				if (projectErrorSource.equals("ProFolder")) {
 					msgTitle = Language.translate("Fehler - Projektauswahl !");
 					msgText = Language.translate("Bitte wählen Sie das gewünschte Projekt aus!");			
-				}
-				else if ( projectErrorSource == "ProFolderAgentGUIxml" ) {
+				
+				} else if (projectErrorSource.equals("ProFolderAgentGUIxml")) {
 					msgTitle = Language.translate("Fehler - '@'");
 					msgText = Language.translate("Die Datei '@' wurde nicht gefunden!");	
 					msgTitle = msgTitle.replace("@", Application.getGlobalInfo().getFileNameProject() );
 					msgText = msgText.replace("@", Application.getGlobalInfo().getFileNameProject() );					
 				}				
-				JOptionPane.showInternalMessageDialog( this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showInternalMessageDialog(this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
