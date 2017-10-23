@@ -48,6 +48,7 @@ import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectNewOpen.DialogAction;
+import agentgui.core.project.transfer.ProjectExporter;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -488,7 +489,9 @@ public class ProjectsLoaded {
 	 * Exports a project to a Agent.GUI project file (*.agui)
 	 */
 	public void projectExport() {
-		this.projectExport(null);
+//		this.projectExport(null);
+		ProjectExporter pe = new ProjectExporter();
+		pe.exportProject(Application.getProjectFocused());
 	}
 	
 	/**

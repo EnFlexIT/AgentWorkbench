@@ -2,6 +2,7 @@ package agentgui.core.project.transfer.gui;
 
 import javax.swing.JPanel;
 
+import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.project.transfer.ProjectExportSettings.ProductVersion;
@@ -15,9 +16,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 public class ProjectExportDialog extends JDialog implements ActionListener{
 	
@@ -37,19 +40,24 @@ public class ProjectExportDialog extends JDialog implements ActionListener{
 	private ProjectExportSettings exportSettings;
 	
 	private boolean canceled = false;
+	private JScrollPane scrollPane;
 	
 	
-	public ProjectExportDialog() {
+	public ProjectExportDialog(Project project) {
+		this.project = project;
 		this.initialize();
 	}
 	
 	private void initialize() {
+		
+		this.setTitle(Language.translate("Projekt exportieren"));
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		getContentPane().setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
@@ -57,42 +65,42 @@ public class ProjectExportDialog extends JDialog implements ActionListener{
 		gbc_jLabelHeader.insets = new Insets(5, 10, 5, 10);
 		gbc_jLabelHeader.gridx = 0;
 		gbc_jLabelHeader.gridy = 0;
-		add(getJLabelHeader(), gbc_jLabelHeader);
+		getContentPane().add(getJLabelHeader(), gbc_jLabelHeader);
 		
 		GridBagConstraints gbc_jCheckBoxIncludeProduct = new GridBagConstraints();
 		gbc_jCheckBoxIncludeProduct.insets = new Insets(5, 10, 5, 10);
 		gbc_jCheckBoxIncludeProduct.anchor = GridBagConstraints.WEST;
 		gbc_jCheckBoxIncludeProduct.gridx = 0;
 		gbc_jCheckBoxIncludeProduct.gridy = 1;
-		add(getJCheckBoxIncludeProduct(), gbc_jCheckBoxIncludeProduct);
-		GridBagConstraints gbc_jListSetupSelection = new GridBagConstraints();
-		gbc_jListSetupSelection.gridheight = 3;
-		gbc_jListSetupSelection.insets = new Insets(0, 0, 5, 0);
-		gbc_jListSetupSelection.fill = GridBagConstraints.BOTH;
-		gbc_jListSetupSelection.gridx = 1;
-		gbc_jListSetupSelection.gridy = 1;
-		add(getJListSetupSelection(), gbc_jListSetupSelection);
+		getContentPane().add(getJCheckBoxIncludeProduct(), gbc_jCheckBoxIncludeProduct);
 		
 		GridBagConstraints gbc_jComboBoxSelectOS = new GridBagConstraints();
+		gbc_jComboBoxSelectOS.anchor = GridBagConstraints.WEST;
 		gbc_jComboBoxSelectOS.insets = new Insets(5, 10, 5, 10);
-		gbc_jComboBoxSelectOS.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jComboBoxSelectOS.gridx = 0;
-		gbc_jComboBoxSelectOS.gridy = 2;
-		add(getJComboBoxSelectOS(), gbc_jComboBoxSelectOS);
+		gbc_jComboBoxSelectOS.gridx = 1;
+		gbc_jComboBoxSelectOS.gridy = 1;
+		getContentPane().add(getJComboBoxSelectOS(), gbc_jComboBoxSelectOS);
 		
 		GridBagConstraints gbc_jCheckBoxIncludeAllSetups = new GridBagConstraints();
 		gbc_jCheckBoxIncludeAllSetups.insets = new Insets(5, 10, 5, 10);
 		gbc_jCheckBoxIncludeAllSetups.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jCheckBoxIncludeAllSetups.gridx = 0;
-		gbc_jCheckBoxIncludeAllSetups.gridy = 3;
-		add(getJCheckBoxIncludeAllSetups(), gbc_jCheckBoxIncludeAllSetups);
+		gbc_jCheckBoxIncludeAllSetups.gridy = 2;
+		getContentPane().add(getJCheckBoxIncludeAllSetups(), gbc_jCheckBoxIncludeAllSetups);
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.gridwidth = 2;
+		gbc_scrollPane.insets = new Insets(5, 10, 5, 10);
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 3;
+		getContentPane().add(getScrollPane(), gbc_scrollPane);
 		
 		GridBagConstraints gbc_jPanelConfirmCancel = new GridBagConstraints();
 		gbc_jPanelConfirmCancel.gridwidth = 2;
 		gbc_jPanelConfirmCancel.fill = GridBagConstraints.BOTH;
 		gbc_jPanelConfirmCancel.gridx = 0;
 		gbc_jPanelConfirmCancel.gridy = 4;
-		add(getJPanelConfirmCancel(), gbc_jPanelConfirmCancel);
+		getContentPane().add(getJPanelConfirmCancel(), gbc_jPanelConfirmCancel);
 		
 		this.pack();
 		this.setModal(true);
@@ -116,6 +124,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener{
 	private JComboBox<ProductVersion> getJComboBoxSelectOS() {
 		if (jComboBoxSelectOS == null) {
 			jComboBoxSelectOS = new JComboBox<ProductVersion>();
+			jComboBoxSelectOS.setModel(new DefaultComboBoxModel<>(ProjectExportSettings.ProductVersion.values()));
 			jComboBoxSelectOS.setEnabled(false);
 		}
 		return jComboBoxSelectOS;
@@ -181,8 +190,18 @@ public class ProjectExportDialog extends JDialog implements ActionListener{
 			jListSetupSelection = new JList<String>();
 			jListSetupSelection.setEnabled(false);
 			jListSetupSelection.setModel(this.getListModel());
+			jListSetupSelection.setCellRenderer(new CheckBoxListCellRenderer());
+			this.selectAllListElements(jListSetupSelection);
 		}
 		return jListSetupSelection;
+	}
+	
+	private void selectAllListElements(JList list) {
+		int[] selectedIndices = new int[list.getModel().getSize()];
+		for(int i=0; i<selectedIndices.length; i++) {
+			selectedIndices[i] = i;
+		}
+		list.setSelectedIndices(selectedIndices);
 	}
 
 	private DefaultListModel<String> getListModel() {
@@ -197,10 +216,27 @@ public class ProjectExportDialog extends JDialog implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if(ae.getSource() == this.getJButtonOk()) {
+		if (ae.getSource() == this.getJCheckBoxIncludeProduct()) {
+			boolean selectionState = this.getJCheckBoxIncludeProduct().isSelected();
+			this.getExportSettings().setIncludeProduct(selectionState);
+			this.getJComboBoxSelectOS().setEnabled(selectionState);
+		} else if (ae.getSource() == this.getJCheckBoxIncludeAllSetups()) {
+			boolean selectionState = this.getJCheckBoxIncludeAllSetups().isSelected();
+			this.getExportSettings().setIncludeAllSetups(selectionState);
+			this.getJListSetupSelection().setEnabled(!selectionState);
+			if(selectionState == true) {
+				this.selectAllListElements(getJListSetupSelection());
+			}else {
+				this.getJListSetupSelection().clearSelection();
+			}
+		}
+			
+		if (ae.getSource() == this.getJButtonOk()) {
 			this.canceled = false;
 			this.dispose();
-		}else if(ae.getSource() == this.getJButtonCancel()) {
+		}else
+			
+		if (ae.getSource() == this.getJButtonCancel()) {
 			this.canceled = true;
 			this.dispose();
 		}
@@ -221,6 +257,13 @@ public class ProjectExportDialog extends JDialog implements ActionListener{
 	}
 	
 	public void showProjectExportDialog() {
-		
+		this.setVisible(true);
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setViewportView(getJListSetupSelection());
+		}
+		return scrollPane;
 	}
 }
