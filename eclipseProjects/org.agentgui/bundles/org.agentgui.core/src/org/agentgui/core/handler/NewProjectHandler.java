@@ -3,6 +3,8 @@ package org.agentgui.core.handler;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 
+import agentgui.core.application.Application;
+
 /**
  * Handler class for the New Project command
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
@@ -10,8 +12,6 @@ import org.eclipse.e4.core.di.annotations.Execute;
 public class NewProjectHandler {
 	@Execute
 	public void execute() {
-		//TODO Placeholder method, replace with actual implementation
-		System.out.println((this.getClass().getSimpleName() + " called"));
+		Application.getProjectsLoaded().add(true);
 	}
-		
 }

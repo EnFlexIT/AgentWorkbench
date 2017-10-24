@@ -44,11 +44,13 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.agentgui.gui.ProjectNewOpenDialog;
+import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.agentgui.gui.UiBridge;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
-import agentgui.core.gui.ProjectNewOpen;
-import agentgui.core.gui.ProjectNewOpen.DialogAction;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -98,7 +100,7 @@ public class ProjectsLoaded {
 	 */
 	private Project add(boolean addNew, String selectedProjectFolder) {
 
-		DialogAction action = null;
+		ProjectAction action = null;
 		String actionTitel = null;
 		String projectNameTest = null;
 		String projectFolderTest = null;
@@ -111,7 +113,7 @@ public class ProjectsLoaded {
 		// --- Start argument for "New" oder "Open" -------
 		if (addNew == true){
 			// --- New Project ----------------------------
-			action = DialogAction.NewProject;
+			action = ProjectAction.NewProject;
 			actionTitel = Language.translate("Neues Projekt anlegen");
 			
 			// --- Define an initial project name ---------		
@@ -128,26 +130,26 @@ public class ProjectsLoaded {
 		
 		} else {
 			// --- Open existing project ------------------
-			action = DialogAction.OpenProject;
+			action = ProjectAction.OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
 		Application.setStatusBar(actionTitel + " ...");
 		
 		if (selectedProjectFolder==null) {
 			// --- Open user dialog -----------------------
-			ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
+			ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 			newProDia.setProjectName(projectNameTest);
-			newProDia.setProjectFolder(projectFolderTest);
+			newProDia.setProjectDirectory(projectFolderTest);
 			newProDia.setVisible(true);
 			// === Wait for user here =====================
-			if (newProDia.isCanceled()==true) {
+			if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
 				Application.setStatusBar(Language.translate("Fertig"));
 				return null;
 			} else {
 				localTmpProjectName = newProDia.getProjectName();
-				localTmpProjectFolder = newProDia.getProjectFolder(); 
+				localTmpProjectFolder = newProDia.getProjectDirectory(); 
 			}
-			newProDia.dispose();
+			newProDia.close();
 			newProDia = null;	
 			
 		} else {
@@ -540,15 +542,14 @@ public class ProjectsLoaded {
 			// --- If no projectFolder is specified yet ----------------- 
 			if (projectFolder==null) {
 				// --- Select the project to export ---------------------
-				ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, DialogAction.OpenProject);
-				newProDia.setOkButtonText("Export");
+				ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.ExportProject);
 				newProDia.setVisible(true);
 				// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 				if (newProDia.isCanceled()==true) {
 					return false;
 				}
-				projectFolder = newProDia.getProjectFolder(); 
-				newProDia.dispose();
+				projectFolder = newProDia.getProjectDirectory(); 
+				newProDia.close();
 				newProDia = null;
 			}
 		}
@@ -627,17 +628,17 @@ public class ProjectsLoaded {
 		
 		// ----------------------------------------------------------
 		// --- Open project selection dialog ------------------------
-		ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, DialogAction.DeleteProject);
+		ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.DeleteProject);
 		newProDia.setVisible(true);
 		// === Waiting for closing dialog ===
-		if ( newProDia.isCanceled() == true ) {
+		if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
 			Application.setStatusBar(Language.translate("Fertig"));
 			return;
 		} else {
 			exportBeforeDelete = newProDia.isExportBeforeDelete();
-			projectFolder = newProDia.getProjectFolder();
+			projectFolder = newProDia.getProjectDirectory();
 		}
-		newProDia.dispose();
+		newProDia.close();
 		newProDia = null;	
 	
 		// ----------------------------------------------------------

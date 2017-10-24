@@ -396,7 +396,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		project.checkAndCreateProjectsDirectoryStructure();
 		
 		// --- Load additional jar-resources ----------
-		if (loadResources == true) {
+		if (loadResources==true) {
 			project.resourcesLoad();
 		}
 		

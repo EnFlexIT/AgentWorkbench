@@ -33,7 +33,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.Image;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -45,9 +44,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.ImageIcon;
+//import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import org.agentgui.gui.swt.SWTResourceManager;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.Platform;
 
@@ -2019,18 +2019,28 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @param imageFileName the image file name
 	 * @return the internal image icon
 	 */
-	public static ImageIcon getInternalImageIcon(String imageFileName) {
-		return new ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
+	public static javax.swing.ImageIcon getInternalImageIcon(String imageFileName) {
+		return new javax.swing.ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
 	}
 	/**
 	 * Returns one of the internal images specified by its file name.
 	 * @param imageFileName the image file name
 	 * @return the internal image
 	 */
-	public static Image getInternalImage(String imageFileName) {
-		ImageIcon imageIcon = new ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
+	public static java.awt.Image getInternalImage(String imageFileName) {
+		javax.swing.ImageIcon imageIcon = new javax.swing.ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
 		return imageIcon.getImage();
 	}
+	/**
+	 * Returns one of the internal images as an´SWT image instance.
+	 *
+	 * @param imageFileName the image file name
+	 * @return the internal SWT image
+	 */
+	public static org.eclipse.swt.graphics.Image getInternalSWTImage(String imageFileName) {
+		return SWTResourceManager.getImage(GlobalInfo.class, getPathImageIntern() + imageFileName);
+	}
+	
 	/**
 	 * Returns the specified bytes in a human readable byte count.
 	 *

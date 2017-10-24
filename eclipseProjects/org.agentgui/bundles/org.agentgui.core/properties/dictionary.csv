@@ -94,6 +94,7 @@ de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
+de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
 de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
 de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
@@ -133,6 +134,7 @@ de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is n
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
 de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>Möchten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br>Do you want to create the directory now?;;;
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
+de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;;;;
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
 de;Datei überschreiben?;Overwrite file?;;;
@@ -204,6 +206,7 @@ de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured 
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
 de;Export:;Export:;;;
+de;Exportieren;;;;
 de;Externe bin-Ressourcen;External 'bin' resources;;;
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
@@ -221,6 +224,7 @@ de;Fehlendes Simulations-Setup!;Missing Simulation Setup!;;;
 de;Fehler - '@';Error – '@'
 de;Fehler - PlugIn:;Error - PlugIn:
 de;Fehler - Projektauswahl !;Error - project selection!
+de;Fehler - Projektname !;;;;
 de;Fehler - Projektverzeichnis !;Error - project folder !
 de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
 de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
