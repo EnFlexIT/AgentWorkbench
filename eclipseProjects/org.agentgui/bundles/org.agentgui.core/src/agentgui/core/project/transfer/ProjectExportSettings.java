@@ -28,7 +28,10 @@
  */
 package agentgui.core.project.transfer;
 
+import java.io.File;
 import java.util.List;
+
+import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 
 /**
  * The Class ProjectExportSettings.
@@ -44,13 +47,13 @@ public class ProjectExportSettings {
 	}
 	
 	/** The target path. */
-	private String targetPath;
+	private File targetFile;
 	
 	/** The include product. */
 	private boolean includeProduct;
 	
 	/** The product version. */
-	private ProductVersion productVersion;
+	private InstallationPackageDescription installationPackage;
 	
 	/** Indicates if all simulation setups should be exported */
 	private boolean includeAllSetups;
@@ -63,8 +66,8 @@ public class ProjectExportSettings {
 	 *
 	 * @return the target path
 	 */
-	public String getTargetPath() {
-		return targetPath;
+	public File getTargetFile() {
+		return targetFile;
 	}
 	
 	/**
@@ -72,8 +75,8 @@ public class ProjectExportSettings {
 	 *
 	 * @param targetPath the new target path
 	 */
-	public void setTargetPath(String targetPath) {
-		this.targetPath = targetPath;
+	public void setTargetFile(File targetPath) {
+		this.targetFile = targetPath;
 	}
 	
 	/**
@@ -99,8 +102,8 @@ public class ProjectExportSettings {
 	 *
 	 * @return the product version
 	 */
-	public ProductVersion getProductVersion() {
-		return productVersion;
+	public InstallationPackageDescription getInstallationPackage() {
+		return installationPackage;
 	}
 	
 	/**
@@ -108,8 +111,8 @@ public class ProjectExportSettings {
 	 *
 	 * @param productVersion the new product version
 	 */
-	public void setProductVersion(ProductVersion productVersion) {
-		this.productVersion = productVersion;
+	public void setInstallationPackage(InstallationPackageDescription productVersion) {
+		this.installationPackage = productVersion;
 	}
 	
 	/**

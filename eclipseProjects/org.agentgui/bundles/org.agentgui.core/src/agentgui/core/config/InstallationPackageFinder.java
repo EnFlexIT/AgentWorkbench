@@ -30,8 +30,7 @@ package agentgui.core.config;
 
 import java.io.File;
 import java.io.FileFilter;
-
-import javax.swing.DefaultListModel;
+import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -56,7 +55,7 @@ public class InstallationPackageFinder {
 	
 	private String searchResultDescription;
 	
-	private DefaultListModel<InstallationPackageDescription> installationPackageListModel;
+	private Vector<InstallationPackageDescription> installationPackageVector;
 	
 	/**
 	 * Instantiates a new installation package finder that uses the setting
@@ -92,7 +91,7 @@ public class InstallationPackageFinder {
 		if (this.searchDirectory==null || searchDirectory.equals(this.searchDirectory)==false) {
 			this.setSearchResultDescription(null);
 			this.searchDirectory = searchDirectory;
-			this.getInstallationPackageListModel().clear();
+			this.getInstallationPackageVector().clear();
 			this.startSearch();
 		}
 	}
@@ -153,12 +152,12 @@ public class InstallationPackageFinder {
 					this.installationPackageWindows64 = instPack;
 					fileInfo += Language.translate("Found installation package for Windows 64-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageListModel().addElement(new InstallationPackageDescription(instPack, "Installation package for Windows 64-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Windows 64-Bit"));
 				} else {
 					this.installationPackageWindows32 = instPack;
 					fileInfo += Language.translate("Found installation package for Windows 32-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageListModel().addElement(new InstallationPackageDescription(instPack, "Installation package for Windows 32-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Windows 32-Bit"));
 				}
 				
 			} else if (instPackName.contains("-linux")) {
@@ -167,12 +166,12 @@ public class InstallationPackageFinder {
 					this.installationPackageLinux64 = instPack;
 					fileInfo += Language.translate("Found installation package for Linux 64-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageListModel().addElement(new InstallationPackageDescription(instPack, "Installation package for Linux 64-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Linux 64-Bit"));
 				} else {
 					this.installationPackageLinux32 = instPack;
 					fileInfo += Language.translate("Found installation package for Linux 32-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageListModel().addElement(new InstallationPackageDescription(instPack, "Installation package for Linux 32-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Linux 32-Bit"));
 				}
 				
 			} else if (instPackName.contains("-mac")) {
@@ -180,7 +179,7 @@ public class InstallationPackageFinder {
 				this.installationPackageMacOS = instPack;
 				fileInfo += Language.translate("Found installation package for macOS", Language.EN);
 				fileInfo += " (" + instPackName + ")\n";
-				this.getInstallationPackageListModel().addElement(new InstallationPackageDescription(instPack, "Installation package for macOS"));
+				this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for macOS"));
 			}
 		}
 		
@@ -254,11 +253,11 @@ public class InstallationPackageFinder {
 	 * Returns the available installation packages as list model.
 	 * @return the installation package list model
 	 */
-	public DefaultListModel<InstallationPackageDescription> getInstallationPackageListModel() {
-		if (installationPackageListModel==null) {
-			installationPackageListModel = new DefaultListModel<>();
+	public Vector<InstallationPackageDescription> getInstallationPackageVector() {
+		if (installationPackageVector==null) {
+			installationPackageVector = new Vector<>();
 		}
-		return installationPackageListModel;
+		return installationPackageVector;
 	}
 	/**
 	 * The Class InstallationPackageDescription can be used within list model.

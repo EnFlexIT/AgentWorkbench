@@ -37,6 +37,7 @@ import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.csv.CsvDataControllerPanel;
 import de.enflexit.common.swing.ProgressMonitor;
+import de.enflexit.common.transfer.RecursiveFolderCopier;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -106,6 +107,14 @@ public class CommonComponentFactory {
 		CsvDataControllerPanel csvPanel = new CsvDataControllerPanel();
 		csvPanel.setLastSelectedFolderReminder(Application.getGlobalInfo());
 		return csvPanel;
+	}
+	
+	/**
+	 * Returns a new {@link RecursiveFolderCopier}
+	 * @return the new {@link RecursiveFolderCopier}
+	 */
+	public static RecursiveFolderCopier getNewRecursiveFolderCopier() {
+		return new RecursiveFolderCopier();
 	}
 	
 }
