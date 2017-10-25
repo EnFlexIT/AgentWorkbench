@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui;
+package org.agentgui.gui.swing.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -64,6 +64,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.agentgui.gui.ProjectNewOpenDialog;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
@@ -79,17 +81,11 @@ import javax.swing.JCheckBox;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectNewOpen extends JDialog implements ActionListener {
+public class ProjectNewOpen extends JDialog implements ProjectNewOpenDialog, ActionListener {
 	
 	private static final long serialVersionUID = 4979849463130057295L;
 
-	public enum DialogAction {
-		NewProject,
-		OpenProject,
-		DeleteProject
-	}
-	
-	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
+	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();  
 	
 	private JPanel jContentPane = null;
 	private JPanel jPanelButtons = null;
@@ -99,7 +95,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	private JLabel jLabelDummy = null;
 	private JLabel jLabelLineHorizontal = null;
 	private JTextField jTextFieldProjectName = null;
-	private JTextField jTextFieldProjectFolder = null;
+	private JTextField jTextFieldProjectDirectory = null;
 	
 	private JScrollPane jScrollTree = null;
 	private JTree projectTree = null;
@@ -112,7 +108,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
 	
-	private DialogAction currDialogAction;
+	private ProjectAction currDialogAction;
 	private boolean Canceled = false;
 	private boolean exportBeforeDelete = true;
 
@@ -121,11 +117,11 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	 * Constructor of this class.
 	 *
 	 * @param owner the owner
-	 * @param titel the titel
+	 * @param title the title
 	 * @param currentAction the current action
 	 */
-	public ProjectNewOpen(Frame owner, String titel, DialogAction currentAction ) {
-		super(owner, titel);
+	public ProjectNewOpen(Frame owner, String title, ProjectAction currentAction ) {
+		super(owner, title);
 		this.currDialogAction = currentAction;
 		
 		//--- Get TreeModel -----------------------------------------
@@ -134,28 +130,32 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		this.projectTreeModel = new DefaultTreeModel(rootNode);	
 		this.initialize();
 
-		// --- Dialog zentrieren ------------------------------------
+		// --- Center Dialog ----------------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
 	    int left = (screenSize.width - this.getWidth()) / 2; 
 	    this.setLocation(left, top);	
 
-	    // --- Fallunterscheidung "Neues Projekt?" ------------------
 	    switch (currentAction) {
 	    case NewProject:
 	    	jButtonOK.setText("OK");
 	    	jTextFieldProjectName.setEnabled(true);
-	    	jTextFieldProjectFolder.setEnabled(true);
+	    	jTextFieldProjectDirectory.setEnabled(true);
 	    	break;
 	    case OpenProject:
 	    	jButtonOK.setText("Öffnen");
 	    	jTextFieldProjectName.setEnabled(false);
-	    	jTextFieldProjectFolder.setEnabled(false);	    
+	    	jTextFieldProjectDirectory.setEnabled(false);	    
+	    	break;
+	    case ExportProject:
+	    	jButtonOK.setText("Exportieren");
+	    	jTextFieldProjectName.setEnabled(false);
+	    	jTextFieldProjectDirectory.setEnabled(false);	    
 	    	break;
 	    case DeleteProject:
 	    	jButtonOK.setText("Löschen");
 	    	jTextFieldProjectName.setEnabled(false);
-	    	jTextFieldProjectFolder.setEnabled(false);	    
+	    	jTextFieldProjectDirectory.setEnabled(false);	    
 	    	break;
 	    }
 	    jButtonOK.setText(Language.translate(jButtonOK.getText()));
@@ -179,7 +179,15 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			}
 		});
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.ProjectNewOpenDialog#close()
+	 */
+	@Override
+	public boolean close() {
+		this.dispose();
+		return true;
+	}
 	 /**
      * Registers the escape key stroke in order to close this dialog.
      */
@@ -311,7 +319,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			jContentPane.add(getJTextFieldProjectFolder(), gridBagConstraints6);
 			jContentPane.add(getJScrollTree(), gridBagConstraints7);
 			jContentPane.add(getJPanelButtons(), gridBagConstraints11);
-			if (this.currDialogAction==DialogAction.DeleteProject) {
+			if (this.currDialogAction==ProjectAction.DeleteProject) {
 				jContentPane.add(getJCheckBoxExportBefore(), gridBagConstraints21);	
 			}
 			
@@ -354,17 +362,17 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 				@Override
 				public void removeUpdate(DocumentEvent e) {
 					this.getCurrText(e);
-					jTextFieldProjectFolder.setText( getSuggestProjectFolder() );
+					jTextFieldProjectDirectory.setText( getSuggestProjectFolder() );
 				}
 				@Override
 				public void insertUpdate(DocumentEvent e) {
 					this.getCurrText(e);
-					jTextFieldProjectFolder.setText( getSuggestProjectFolder() );
+					jTextFieldProjectDirectory.setText( getSuggestProjectFolder() );
 				}
 				@Override
 				public void changedUpdate(DocumentEvent e) {
 					this.getCurrText(e);
-					jTextFieldProjectFolder.setText( getSuggestProjectFolder() );					
+					jTextFieldProjectDirectory.setText( getSuggestProjectFolder() );					
 				}
 				private String getCurrText(DocumentEvent e) {
 					try {
@@ -418,14 +426,14 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldProjectFolder() {
-		if (jTextFieldProjectFolder == null) {
-			jTextFieldProjectFolder = new JTextField();
-			jTextFieldProjectFolder.setName("ProjectFolder");
-			jTextFieldProjectFolder.setFont(new Font("Dialog", Font.PLAIN, 12));		
-			jTextFieldProjectFolder.setPreferredSize(new Dimension(50, 26));
-			jTextFieldProjectFolder.addActionListener(this);
+		if (jTextFieldProjectDirectory == null) {
+			jTextFieldProjectDirectory = new JTextField();
+			jTextFieldProjectDirectory.setName("ProjectFolder");
+			jTextFieldProjectDirectory.setFont(new Font("Dialog", Font.PLAIN, 12));		
+			jTextFieldProjectDirectory.setPreferredSize(new Dimension(50, 26));
+			jTextFieldProjectDirectory.addActionListener(this);
 		}
-		return jTextFieldProjectFolder;
+		return jTextFieldProjectDirectory;
 	}
 
 	/**
@@ -465,7 +473,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			projectTree.expandPath( TreePathRoot );	
 			
 			// --- In case that a project has to be opened - START --
-			if (currDialogAction!=DialogAction.NewProject) {
+			if (currDialogAction!=ProjectAction.NewProject) {
 				projectTree.addTreeSelectionListener(new TreeSelectionListener() {
 					@Override
 					public void valueChanged(TreeSelectionEvent ts) {
@@ -475,10 +483,10 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 						String EndPath = ts.getPath().getLastPathComponent().toString();
 						
 						if (PathLevel == 2) {
-							setProjectFolder( EndPath );
+							setProjectDirectory( EndPath );
 						}
 						else {
-							setProjectFolder(null);
+							setProjectDirectory(null);
 						}		
 						
 					}
@@ -543,7 +551,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			jButtonOK.setText("OK");
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOK.setForeground(new Color(0, 153, 0));
-			jButtonOK.setActionCommand( "OK" );
+			jButtonOK.setActionCommand("OK");
 			jButtonOK.addActionListener(this);
 		}
 		return jButtonOK;
@@ -580,9 +588,11 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	public void setExportBeforeDelete(boolean exportBeforeDelete) {
 		this.exportBeforeDelete = exportBeforeDelete;
 	}
-	/**
-	 * @return the exportBeforeDelete
+	
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.ProjectNewOpenDialog#isExportBeforeDelete()
 	 */
+	@Override
 	public boolean isExportBeforeDelete() {
 		return exportBeforeDelete;
 	}
@@ -606,15 +616,15 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	 * Sets the var project folder.
 	 * @param text the new var project folder
 	 */
-	public void setProjectFolder(String text) {
-		jTextFieldProjectFolder.setText(text);
+	public void setProjectDirectory(String text) {
+		jTextFieldProjectDirectory.setText(text);
 	}
 	/**
 	 * Gets the var project folder.
 	 * @return the var project folder
 	 */
-	public String getProjectFolder() {
-		return jTextFieldProjectFolder.getText();
+	public String getProjectDirectory() {
+		return jTextFieldProjectDirectory.getText();
 	}
 	
 	/**
@@ -642,7 +652,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			setVisible(false);
 		} else if ( action == jTextFieldProjectName ) {
 			// --- Do Nothing yet
-		} else if ( action == jTextFieldProjectFolder ) {
+		} else if ( action == jTextFieldProjectDirectory ) {
 			jButtonOK.doClick();
 		} else if ( action == jCheckBoxExportBefore) {
 			this.setExportBeforeDelete(jCheckBoxExportBefore.isSelected());
@@ -658,14 +668,14 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	public boolean isProjectError () {
 
 		String projectName = getProjectName();
-		String projectFolder = getProjectFolder();
+		String projectFolder = getProjectDirectory();
 		
 		boolean projectError = false;
 		String projectErrorSource = null;
 		String msgTitle = null;
 		String msgText = null;
 		
-		if (currDialogAction==DialogAction.NewProject) {
+		if (currDialogAction==ProjectAction.NewProject) {
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
 			// +++ Create new Project +++++++++++++++++++++++++++++
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -695,7 +705,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			while ( projectFolder.contains( "__" ) ) {
 				projectFolder = projectFolder.replaceAll("__", "_");	
 			}
-			setProjectFolder(projectFolder);		
+			setProjectDirectory(projectFolder);		
 			// ----------------------------------------------------
 			// --- Check for regular expression -------------------
 			String RegExp = "[a-z_]{3,}";
@@ -815,6 +825,5 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 
 		return projectError;
 	}
-
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}  
