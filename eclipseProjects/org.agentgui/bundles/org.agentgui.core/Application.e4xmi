@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_Z6jYoH59EeeSPpFWfRBHVA" elementId="org.agentgui.core.application">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_ascvoH59EeeSPpFWfRBHVA" elementId="org.agentgui.core.trimmedwindow.agentworkbench" label="Agent Workbench" x="0" y="0" width="1024" height="800">
-    <children xsi:type="basic:PartStack" xmi:id="_92pUEH6fEeeSPpFWfRBHVA" elementId="org.agentgui.core.partstack.0">
-      <children xsi:type="basic:Part" xmi:id="_-rQA0H6fEeeSPpFWfRBHVA" elementId="org.agentgui.core.part.part1" label="Part1"/>
-      <children xsi:type="basic:Part" xmi:id="__xGOkH6fEeeSPpFWfRBHVA" elementId="org.agentgui.core.part.part2" label="Part2"/>
-      <children xsi:type="basic:Part" xmi:id="_BuaP0H6gEeeSPpFWfRBHVA" elementId="org.agentgui.core.part.part3" label="Part3"/>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_Z6jYoH59EeeSPpFWfRBHVA" elementId="org.agentgui.core.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_ascvoH59EeeSPpFWfRBHVA" elementId="" label="Agent Workbench" x="0" y="0" width="1024" height="800">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_2WOAYLm3Eee7X_3op2efPQ" elementId="org.agentgui.core.perspectivestack" accessibilityPhrase="Workbench Perspectives" selectedElement="_W8B08Lm4Eee7X_3op2efPQ">
+      <children xsi:type="advanced:Perspective" xmi:id="_W8B08Lm4Eee7X_3op2efPQ" elementId="org.agentgui.core.perspective.main" accessibilityPhrase="Main Perspective" selectedElement="_FYAaALm3Eee7X_3op2efPQ" label="Main Perspective" tooltip="Main Perspective">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_FYAaALm3Eee7X_3op2efPQ" elementId="org.agentgui.core.partsashcontainer.0" containerData="">
+          <children xsi:type="basic:PartStack" xmi:id="_92pUEH6fEeeSPpFWfRBHVA" elementId="org.agentgui.core.partstack.0" containerData=""/>
+          <children xsi:type="advanced:Area" xmi:id="_37SHcLm8Eee7X_3op2efPQ" elementId="org.agentgui.core.area.0" containerData="" label="Console Area" tooltip="Console Area"/>
+        </children>
+      </children>
     </children>
     <trimBars xmi:id="_DCT4cJ-hEeeqz9onJxuSMg" elementId="org.agentgui.core.trimbar.main">
       <children xsi:type="menu:ToolBar" xmi:id="_XBgx0J-hEeeqz9onJxuSMg" elementId="org.agentgui.core.toolbar.main"/>
