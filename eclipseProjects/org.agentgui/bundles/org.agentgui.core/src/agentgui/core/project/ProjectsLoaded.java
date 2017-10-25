@@ -511,7 +511,10 @@ public class ProjectsLoaded {
 	 * Exports a project to a Agent.GUI project file (*.agui)
 	 */
 	public void projectExport() {
+		// --- The old export function ------
 		this.projectExport(null);
+		
+		// --- The new export function ------
 //		ProjectExporter pe = new ProjectExporter();
 //		pe.exportProject(Application.getProjectFocused());
 	}

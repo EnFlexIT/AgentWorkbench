@@ -39,26 +39,10 @@ import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescrip
  */
 public class ProjectExportSettings {
 	
-	/**
-	 * The Enum ProductVersion.
-	 */
-	public enum ProductVersion{
-		Win32, Win64, Linux, MacOs;
-	}
-	
-	/** The target path. */
 	private File targetFile;
-	
-	/** The include product. */
-	private boolean includeProduct;
-	
-	/** The product version. */
+	private boolean includeInstallationPackage;
 	private InstallationPackageDescription installationPackage;
-	
-	/** Indicates if all simulation setups should be exported */
 	private boolean includeAllSetups;
-	
-	/** List of simulation setups to be exported. If includeAllSetups == true, this list will be ignored. */
 	private List<String> simSetups;
 	
 	/**
@@ -84,8 +68,8 @@ public class ProjectExportSettings {
 	 *
 	 * @return true, if is include product
 	 */
-	public boolean isIncludeProduct() {
-		return includeProduct;
+	public boolean isIncludeInstallationPackage() {
+		return includeInstallationPackage;
 	}
 	
 	/**
@@ -94,7 +78,7 @@ public class ProjectExportSettings {
 	 * @param includeProduct the new include product
 	 */
 	public void setIncludeProduct(boolean includeProduct) {
-		this.includeProduct = includeProduct;
+		this.includeInstallationPackage = includeProduct;
 	}
 	
 	/**

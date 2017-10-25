@@ -1315,8 +1315,21 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath(){
-		return this.getProjectFolderFullPath() + defaultSubFolderEnvSetups;
-	}		
+		return this.getEnvSetupPath(true);
+	}
+	
+	/**
+	 * Gets the subfolder for setup environment files
+	 * @param fullPath If true, the absolute path is returned, otherwise relative to the project folder
+	 * @return The subfolder for setup environment files
+	 */
+	public String getEnvSetupPath(boolean fullPath) {
+		if (fullPath == true) {
+			return this.getProjectFolderFullPath() + defaultSubFolderEnvSetups;
+		} else {
+			return defaultSubFolderEnvSetups;
+		}
+	}
 	
 	/**
 	 * @param newSubFolder4Setups the defaultSubFolderOntology to set
