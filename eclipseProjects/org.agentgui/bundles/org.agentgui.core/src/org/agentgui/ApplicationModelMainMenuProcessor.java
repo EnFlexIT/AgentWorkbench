@@ -46,7 +46,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 public class ApplicationModelMainMenuProcessor {
 
 	/** The Constant ID_TRIMMED_WINDOW. */
-	private static final String ID_TRIMMED_WINDOW = "org.agentgui.core.trimmedwindow.agentworkbench.REMOVE_ME";
+	private static final String ID_TRIMMED_WINDOW = "org.agentgui.core.trimmedwindow.agentworkbench";
 	private static final String ID_MAIN_MENUE_ELEMENT = "org.eclipse.ui.main.menu";
 	
 	@Inject private MApplication application;

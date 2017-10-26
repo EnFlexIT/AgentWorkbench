@@ -28,8 +28,6 @@
  */
 package org.agentgui;
 
-import org.eclipse.ui.application.ActionBarAdvisor;
-import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
@@ -51,14 +49,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
     public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer, Runnable postWindowOpenRunnable) {
         super(configurer);
         this.postWindowOpenRunnable = postWindowOpenRunnable;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#createActionBarAdvisor(org.eclipse.ui.application.IActionBarConfigurer)
-     */
-    @Override
-    public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
-        return new ApplicationActionBarAdvisor(configurer);
     }
     
     /* (non-Javadoc)

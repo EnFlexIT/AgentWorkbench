@@ -5,10 +5,13 @@
       <children xsi:type="advanced:Perspective" xmi:id="_W8B08Lm4Eee7X_3op2efPQ" elementId="org.agentgui.core.perspective.main" accessibilityPhrase="Main Perspective" selectedElement="_FYAaALm3Eee7X_3op2efPQ" label="Main Perspective" tooltip="Main Perspective">
         <children xsi:type="basic:PartSashContainer" xmi:id="_FYAaALm3Eee7X_3op2efPQ" elementId="org.agentgui.core.partsashcontainer.0" containerData="">
           <children xsi:type="basic:PartStack" xmi:id="_92pUEH6fEeeSPpFWfRBHVA" elementId="org.agentgui.core.partstack.0" containerData=""/>
-          <children xsi:type="advanced:Area" xmi:id="_37SHcLm8Eee7X_3op2efPQ" elementId="org.agentgui.core.area.0" containerData="" label="Console Area" tooltip="Console Area"/>
+          <children xsi:type="advanced:Placeholder" xmi:id="_kBo9sLojEee7X_3op2efPQ" elementId="org.agentgui.core.placeholder.console" accessibilityPhrase="Console Area" ref="_1JTCMLojEee7X_3op2efPQ" closeable="true"/>
         </children>
       </children>
     </children>
+    <mainMenu xmi:id="_vQVB4LpeEeeqqsE_fxRcnA" elementId="org.eclipse.ui.main.menu"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="__dKesLojEee7X_3op2efPQ" elementId="org.agentgui.core.part.projectPart" contributionURI="bundleclass://org.agentgui.core/org.agentgui.gui.swt.parts.ProjectEditor" label="Project" tooltip="Project Window"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_1JTCMLojEee7X_3op2efPQ" elementId="org.agentgui.core.part.console" contributionURI="bundleclass://org.agentgui.core/org.agentgui.gui.swt.parts.ConsoleView" label="Console" tooltip="Console" closeable="true"/>
     <trimBars xmi:id="_DCT4cJ-hEeeqz9onJxuSMg" elementId="org.agentgui.core.trimbar.main">
       <children xsi:type="menu:ToolBar" xmi:id="_XBgx0J-hEeeqz9onJxuSMg" elementId="org.agentgui.core.toolbar.main"/>
     </trimBars>

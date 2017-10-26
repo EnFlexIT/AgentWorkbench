@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -2020,7 +2021,12 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the internal image icon
 	 */
 	public static javax.swing.ImageIcon getInternalImageIcon(String imageFileName) {
-		return new javax.swing.ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
+		String imagePath = getPathImageIntern() + imageFileName;
+		URL imageURL = GlobalInfo.class.getResource(imagePath);
+		if (imageURL!=null) {
+			return new javax.swing.ImageIcon(imageURL);
+		}
+		return null;
 	}
 	/**
 	 * Returns one of the internal images specified by its file name.
@@ -2028,8 +2034,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the internal image
 	 */
 	public static java.awt.Image getInternalImage(String imageFileName) {
-		javax.swing.ImageIcon imageIcon = new javax.swing.ImageIcon(GlobalInfo.class.getResource(getPathImageIntern() + imageFileName));
-		return imageIcon.getImage();
+		javax.swing.ImageIcon imageIcon = getInternalImageIcon(imageFileName);
+		if (imageIcon!=null) {
+			return imageIcon.getImage();
+		}
+		return null;
 	}
 	/**
 	 * Returns one of the internal images as an´SWT image instance.
