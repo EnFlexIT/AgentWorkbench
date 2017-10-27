@@ -809,9 +809,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 			// ----- Create KeyStore --------------------------------------
 			if (this.httpsConfigWindow.getKeyStoreButtonPressed() == "CreateKeyStore") {
 				// ---- Verify if all the fields are filled ---------------
-				if (this.getJTextFieldKeyStoreName().getText().equals("") || this.getJTextFieldAlias().getText().equals("") || this.getJTextFieldCity().getText().equals("") || this.getJTextFieldCountryCode().getText().equals("")
-						|| this.getJTextFieldFullName().getText().equals("") || this.getJTextFieldOrganization().getText().equals("") || this.getJTextFieldOrganizationalUnit().getText().equals("") || this.getJTextFieldState().getText().equals("")
-						|| this.getJTextFieldValidity().getText().equals("") || this.getJPasswordField().getPassword().equals("") || this.getJPasswordConfirmPassword().getPassword().equals("")) {
+				if (this.getJTextFieldKeyStoreName().getText().isEmpty() || this.getJTextFieldAlias().getText().isEmpty() || this.getJTextFieldCity().getText().isEmpty() || this.getJTextFieldCountryCode().getText().isEmpty()
+						|| this.getJTextFieldFullName().getText().isEmpty() || this.getJTextFieldOrganization().getText().isEmpty() || this.getJTextFieldOrganizationalUnit().getText().isEmpty() || this.getJTextFieldState().getText().isEmpty()
+						|| this.getJTextFieldValidity().getText().isEmpty() || this.getJPasswordField().getPassword().length==0 || this.getJPasswordConfirmPassword().getPassword().length==0) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
@@ -896,7 +896,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 			} else if (this.httpsConfigWindow.getKeyStoreButtonPressed() == "UpdateKeyStore") {
 				// ---- Update KeyStore ---------------------------
 				// ---- Verify if all the fields are filled -------
-				if (this.getJTextFieldAlias().getText().equals("") || this.getJPasswordField().getPassword().equals("") || this.getJPasswordConfirmPassword().getPassword().equals("")) {
+				if (this.getJTextFieldAlias().getText().equals("") || this.getJPasswordField().getPassword().length==0 || this.getJPasswordConfirmPassword().getPassword().length==0) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);

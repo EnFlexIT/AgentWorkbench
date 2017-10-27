@@ -29,7 +29,6 @@
 package de.enflexit.oidc;
 
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +86,7 @@ public class OIDCAuthorization {
 
 	private String presetUsername;
 
-	private Frame ownerFrame;
+	private Window owner;
 	
 	private boolean inited = false;
 
@@ -124,7 +123,7 @@ public class OIDCAuthorization {
 	public SimpleOIDCClient getOIDCClient() throws URISyntaxException {
 		if (oidcClient == null) {
 			oidcClient = new SimpleOIDCClient();
-			oidcClient.setIssuerURI(getIssuerURI());
+			oidcClient.setIssuerURI(issuerURI);
 		}
 		return oidcClient;
 	}
@@ -173,16 +172,13 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the issuer URI.
-	 * 
 	 * @return the issuer URI
 	 */
 	public String getIssuerURI() {
 		return issuerURI;
 	}
-
 	/**
 	 * Sets the issuer URI.
-	 *
 	 * @param issuerURI the new issuer URI
 	 */
 	public void setIssuerURI(String issuerURI) {
@@ -191,17 +187,13 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the resource URI.
-	 * 
 	 * @return the resource URI
 	 */
 	public String getResourceURI() {
-
 		return resourceURI;
 	}
-
 	/**
 	 * Sets the resource URI.
-	 *
 	 * @param resourceURI the new resource URI
 	 */
 	public void setResourceURI(String resourceURI) {
@@ -210,7 +202,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the client id.
-	 * 
 	 * @return the client id
 	 */
 	public String getClientID() {
@@ -219,7 +210,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the client secret.
-	 * 
 	 * @return the client secret
 	 */
 	public String getClientSecret() {
@@ -228,7 +218,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the authorization dialog (with null defaults).
-	 *
 	 * @return the dialog
 	 */
 	public JDialog getDialog() {
@@ -390,18 +379,18 @@ public class OIDCAuthorization {
 				showDialog = availabilityHandler.onAuthorizationNecessary(this);
 			} 
 			if(showDialog){
-				getDialog(presetUsername, ownerFrame).setVisible(true);
+				getDialog(presetUsername, owner).setVisible(true);
 			}
 			return false;
 		}
 	}
-
+	
 	/**
-	 * Access some resource like {@link #accessResource()}, but also provide the URL and presetUsername/ownerFrame for the dialog.
+	 * Access some resource like {@link #accessResource()}, but also provide the presetUsername/owner for the dialog.
 	 *
 	 * @param url the url
 	 * @param presetUsername the preset username
-	 * @param ownerFrame the owner frame
+	 * @param owner the owner frame
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 * @throws ParseException
@@ -410,12 +399,31 @@ public class OIDCAuthorization {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyManagementException 
 	 */
-	public boolean accessResource(String url, String presetUsername, Frame ownerFrame) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
-		setResourceURI(url);
+	public boolean accessResource(String presetUsername, Window owner) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		this.presetUsername = presetUsername;
-		this.ownerFrame = ownerFrame;
+		this.owner = owner;
 
 		return accessResource();
+	}
+
+	/**
+	 * Access some resource like {@link #accessResource()}, but also provide the URL and presetUsername/owner for the dialog.
+	 *
+	 * @param url the url
+	 * @param presetUsername the preset username
+	 * @param owner the owner frame
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
+	 */
+	public boolean accessResource(String url, String presetUsername, Window owner) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+		setResourceURI(url);
+
+		return accessResource(presetUsername, owner);
 	}
 
 	/**

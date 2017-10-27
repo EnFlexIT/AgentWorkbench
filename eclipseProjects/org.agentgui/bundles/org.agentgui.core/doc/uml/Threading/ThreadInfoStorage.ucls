@@ -2,8 +2,8 @@
 <class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachine" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageMachine.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageMachine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="767" y="981"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -13,8 +13,8 @@
     </display>  
   </class>  
   <class id="2" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorageContainer" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageContainer.java" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageContainer.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1578" y="960"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -24,8 +24,8 @@
     </display>  
   </class>  
   <class id="3" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorageXYSeries" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageXYSeries.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageXYSeries.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1424" y="1417"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -34,14 +34,14 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <package id="4" language="java" name="agentgui.simulationService.load.threading.storage" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/storage" binary="false" corner="BOTTOM_RIGHT">    
+  <package id="4" language="java" name="agentgui.simulationService.load.threading.storage" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage" binary="false" corner="BOTTOM_RIGHT">    
     <position height="48" width="1878" x="519" y="-196"/>    
     <display autosize="false" stereotype="true" sort-features="false" accessors="true"/>  
   </package>  
   <class id="5" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorageCluster" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageCluster.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageCluster.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1060" y="958"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -51,8 +51,8 @@
     </display>  
   </class>  
   <class id="6" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgentClass" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageAgentClass.java" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageAgentClass.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2197" y="1125"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -62,7 +62,7 @@
     </display>  
   </class>  
   <class id="7" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorageJVM" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageJVM.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageJVM.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1325" y="958"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -72,7 +72,7 @@
     </display>  
   </class>  
   <class id="8" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorage" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorage.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorage.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1425" y="331"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -82,8 +82,8 @@
     </display>  
   </class>  
   <class id="9" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageAgent.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorageAgent.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1855" y="1061"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

@@ -39,7 +39,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
@@ -90,7 +89,7 @@ public class ThreadMonitor extends JFrame {
 		this.setSize(800, 600);
 		
 		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
-	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Thread Monitor"));
+	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Thread Monitor");
 		
 		// --- Add a WindowsListener --------------------------------
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

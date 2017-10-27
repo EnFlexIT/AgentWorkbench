@@ -299,5 +299,4 @@ Export-Package: com.nimbusds.jose;
  org.apache.commons.lang3.text.translate,
  org.apache.commons.lang3.time,
  org.apache.commons.lang3.tuple
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

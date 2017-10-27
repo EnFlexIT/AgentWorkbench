@@ -27,5 +27,4 @@ Export-Package: org.lsmp.djep.djep,
  org.nfunk.jep.evaluation,
  org.nfunk.jep.function,
  org.nfunk.jep.type
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

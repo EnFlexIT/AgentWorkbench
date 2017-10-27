@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.4" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="false" realizations="false" associations="false" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="agentgui.math.calculation.CalcExpression" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/math/calculation/CalcExpression.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="agentgui.math.calculation.CalcExpression" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/math/calculation/CalcExpression.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="528" y="92" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" accessors="true" 
       visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.math.calculation.CalcFormulary" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/math/calculation/CalcFormulary.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="agentgui.math.calculation.CalcFormulary" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/math/calculation/CalcFormulary.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="201" y="433" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" accessors="true" 
       visibility="true">      
@@ -19,8 +19,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="agentgui.math.calculation.CalcFormula" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/math/calculation/CalcFormula.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="agentgui.math.calculation.CalcFormula" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/math/calculation/CalcFormula.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="201" y="241" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" accessors="true" 
       visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="agentgui.math.calculation.CalcConstant" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/math/calculation/CalcConstant.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="agentgui.math.calculation.CalcConstant" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/math/calculation/CalcConstant.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="774" y="241" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" accessors="true" 
       visibility="true">      
@@ -37,8 +37,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="agentgui.math.calculation.CalcParameter" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/math/calculation/CalcParameter.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="5" language="java" name="agentgui.math.calculation.CalcParameter" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/math/calculation/CalcParameter.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="528" y="397" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" accessors="true" 
       visibility="true">      
@@ -46,8 +46,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="6" language="java" name="agentgui.math.calculation.CalcParameter.ExpressionType" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/math/calculation/CalcParameter.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="6" language="java" name="agentgui.math.calculation.CalcParameter.ExpressionType" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/math/calculation/CalcParameter.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="773" y="397" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" accessors="true" 
       visibility="true">      

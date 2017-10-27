@@ -37,8 +37,7 @@ Export-Package: org.apache.log4j,
  org.hyperic.sigar.vmware,
  org.hyperic.sigar.win32,
  org.hyperic.sigar.win32.test
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-NativeCode: 
  /sigar-bin/lib/libsigar-amd64-freebsd-6.so;
  /sigar-bin/lib/libsigar-amd64-linux.so;

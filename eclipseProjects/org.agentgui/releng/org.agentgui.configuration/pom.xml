@@ -27,14 +27,47 @@
 				<artifactId>tycho-versions-plugin</artifactId>
 				<version>${tycho-version}</version>
 			</plugin>
+
 			<plugin>
-				<!-- Target platform definition -->
+				<!-- Entry for e(fx)clipse plugins -->
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<extraClasspathElements>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx</artifactId>
+							<version>8.0.0-SNAPSHOT</version>
+							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+					</extraClasspathElements>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+				
+			<!-- Target platform definition -->
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
 					<target>
-
 						<artifact>
 							<groupId>org.agentgui</groupId>
 							<artifactId>org.agentgui.target</artifactId>
@@ -70,19 +103,7 @@
 					</environments>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
-					<execution>
-						<id>plugin-source</id>
-						<goals>
-							<goal>plugin-source</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+			
 			<!-- see https://maven.apache.org/plugins/maven-jarsigner-plugin/usage.html -->
 			<!-- 
 			<plugin>

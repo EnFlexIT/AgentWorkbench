@@ -28,6 +28,7 @@
  */
 package agentgui.core.project;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -395,7 +396,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		project.checkAndCreateProjectsDirectoryStructure();
 		
 		// --- Load additional jar-resources ----------
-		if (loadResources == true) {
+		if (loadResources==true) {
 			project.resourcesLoad();
 		}
 		
@@ -502,6 +503,14 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * @return Returns true if saving was successful
 	 */
 	public boolean close() {
+		return this.close(null);
+	}
+	/**
+	 * This method closes the current project. If necessary it will try to save the before.
+	 * @param parentComponent the parent component
+	 * @return Returns true if saving was successful
+	 */
+	public boolean close(Component parentComponent) {
 		
 		// --- Close project? -----------------------------
 		String msgHead = null;
@@ -518,7 +527,10 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 			msgText = msgText.replace( "'@'", "'" + projectName + "'");
 			
 			if (Application.getMainWindow()!=null) {
-				msgAnswer = JOptionPane.showInternalConfirmDialog (Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
+				if (parentComponent==null) {
+					parentComponent = Application.getMainWindow().getContentPane(); 
+				}
+				msgAnswer = JOptionPane.showConfirmDialog(parentComponent, msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
 				if (msgAnswer == JOptionPane.CANCEL_OPTION) {
 					return false;
 				} else if (msgAnswer == JOptionPane.YES_OPTION) {
@@ -528,7 +540,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 				if (this.save()==false) return false;
 			}
 		}
-		// --- ggf. noch Jade beenden ---------------------
+		// --- Shutdown Jade ? ----------------------------
 		if (Application.getJadePlatform().stopAskUserBefore()==false) {
 			return false;
 		}
@@ -1162,10 +1174,10 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this), Language.translate("Konfiguration"));
 				pwt.add();
 				// --- JADE-Services --------------------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Services"), null, null, new JadeSetupServices(this), Language.translate("Konfiguration"));
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Services", null, null, new JadeSetupServices(this), Language.translate("Konfiguration"));
 				pwt.add();
 				// --- JADE-MTP configuration -----------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Settings"), null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Settings", null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
 				pwt.add();
 				// --- Distribution + Thresholds --------------
 				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this), Language.translate("Konfiguration"));
@@ -1303,8 +1315,21 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath(){
-		return this.getProjectFolderFullPath() + defaultSubFolderEnvSetups;
-	}		
+		return this.getEnvSetupPath(true);
+	}
+	
+	/**
+	 * Gets the subfolder for setup environment files
+	 * @param fullPath If true, the absolute path is returned, otherwise relative to the project folder
+	 * @return The subfolder for setup environment files
+	 */
+	public String getEnvSetupPath(boolean fullPath) {
+		if (fullPath == true) {
+			return this.getProjectFolderFullPath() + defaultSubFolderEnvSetups;
+		} else {
+			return defaultSubFolderEnvSetups;
+		}
+	}
 	
 	/**
 	 * @param newSubFolder4Setups the defaultSubFolderOntology to set

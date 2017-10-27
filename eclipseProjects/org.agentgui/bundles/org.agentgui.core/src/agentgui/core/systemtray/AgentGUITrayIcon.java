@@ -60,11 +60,11 @@ public class AgentGUITrayIcon implements ActionListener {
 	
 	private TrayIcon trayIcon;
 	
-	private ImageIcon imageIconRed = GlobalInfo.getInternalImageIcon("AgentGUI.png");
-	private Image     imageRed = imageIconRed.getImage();
+	private ImageIcon imageIconRed;
+	private Image     imageRed;
 
-	private ImageIcon imageIconGreen = GlobalInfo.getInternalImageIcon("AgentGUIGreen.png");
-	private Image     imageGreen = imageIconGreen.getImage();
+	private ImageIcon imageIconGreen;
+	private Image     imageGreen;
 	
 	private AgentGUITrayPopUp trayPopUp;
 	private AgentGUITrayDialog trayDialog;
@@ -196,14 +196,20 @@ public class AgentGUITrayIcon implements ActionListener {
 	 * @return the red image icon
 	 */
 	public ImageIcon getImageIconRed() {
-		return this.imageIconRed;
+		if (imageIconRed==null) {
+			imageIconRed = GlobalInfo.getInternalImageIcon("AgentGUI.png");
+		}
+		return imageIconRed;
 	}
 	/**
 	 * Gets the red image of the Agent.GUI TrayIcon.
 	 * @return the red image 
 	 */
 	public Image getImageRed() {
-		return this.imageRed;
+		if (imageRed==null && this.getImageIconRed()!=null) {
+			imageRed = this.getImageIconRed().getImage();
+		}
+		return imageRed;
 	}
 	
 	/**
@@ -211,14 +217,20 @@ public class AgentGUITrayIcon implements ActionListener {
 	 * @return the image icon green
 	 */
 	public ImageIcon getImageIconGreen() {
-		return this.imageIconGreen;
+		if (imageIconGreen==null ) {
+			imageIconGreen = GlobalInfo.getInternalImageIcon("AgentGUIGreen.png");
+		}
+		return imageIconGreen;
 	}
 	/**
 	 * Gets the green image of the Agent.GUI TrayIcon.
 	 * @return the image green
 	 */
 	public Image getImageGreen() {
-		return this.imageGreen;
+		if (imageGreen==null && this.getImageIconGreen()!=null) {
+			imageGreen = this.getImageIconGreen().getImage();
+		}
+		return imageGreen;
 	}
 	
 	/**

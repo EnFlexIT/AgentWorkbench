@@ -309,7 +309,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     	
 		// --- Set column titles --------------------------------
 	    Vector<String> titles = new Vector<String>();
-	    titles.add(Language.translate("ID"));
+	    titles.add("ID");
 	    titles.add(Language.translate("Typ"));
 	    titles.add(Language.translate("Edit", Language.EN));
 

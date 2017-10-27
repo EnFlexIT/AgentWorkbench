@@ -28,6 +28,7 @@
  */
 package agentgui.core.project;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,11 +44,14 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.agentgui.gui.ProjectNewOpenDialog;
+import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.agentgui.gui.UiBridge;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
-import agentgui.core.gui.ProjectNewOpen;
-import agentgui.core.gui.ProjectNewOpen.DialogAction;
+import agentgui.core.project.transfer.ProjectExporter;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -59,7 +63,18 @@ import de.enflexit.common.transfer.Zipper;
 public class ProjectsLoaded {
 
 	// --- Listing of the open projects -------------------
-	private ArrayList<Project> projectsOpen = new ArrayList<Project>();
+	private ArrayList<Project> projectsOpen;
+	
+	/**
+	 * Returns the list of currently open projects.
+	 * @return the projects open
+	 */
+	public ArrayList<Project> getProjectsOpen() {
+		if (projectsOpen==null) {
+			projectsOpen = new ArrayList<>();
+		}
+		return projectsOpen;
+	}
 	
 	/**
 	 * Adding (Creating or Opening) a new Project to the Application
@@ -86,7 +101,7 @@ public class ProjectsLoaded {
 	 */
 	private Project add(boolean addNew, String selectedProjectFolder) {
 
-		DialogAction action = null;
+		ProjectAction action = null;
 		String actionTitel = null;
 		String projectNameTest = null;
 		String projectFolderTest = null;
@@ -99,7 +114,7 @@ public class ProjectsLoaded {
 		// --- Start argument for "New" oder "Open" -------
 		if (addNew == true){
 			// --- New Project ----------------------------
-			action = DialogAction.NewProject;
+			action = ProjectAction.NewProject;
 			actionTitel = Language.translate("Neues Projekt anlegen");
 			
 			// --- Define an initial project name ---------		
@@ -116,26 +131,26 @@ public class ProjectsLoaded {
 		
 		} else {
 			// --- Open existing project ------------------
-			action = DialogAction.OpenProject;
+			action = ProjectAction.OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
 		Application.setStatusBar(actionTitel + " ...");
 		
 		if (selectedProjectFolder==null) {
 			// --- Open user dialog -----------------------
-			ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
+			ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 			newProDia.setProjectName(projectNameTest);
-			newProDia.setProjectFolder(projectFolderTest);
+			newProDia.setProjectDirectory(projectFolderTest);
 			newProDia.setVisible(true);
 			// === Wait for user here =====================
-			if (newProDia.isCanceled()==true) {
+			if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
 				Application.setStatusBar(Language.translate("Fertig"));
 				return null;
 			} else {
 				localTmpProjectName = newProDia.getProjectName();
-				localTmpProjectFolder = newProDia.getProjectFolder(); 
+				localTmpProjectFolder = newProDia.getProjectDirectory(); 
 			}
-			newProDia.dispose();
+			newProDia.close();
 			newProDia = null;	
 			
 		} else {
@@ -145,7 +160,7 @@ public class ProjectsLoaded {
 		}
 
 		// --- ClassLoader unload -------------------------
-		if (this.projectsOpen.size()!=0) {
+		if (this.count()!=0) {
 			Application.getProjectFocused().resourcesRemove();
 		}
 		
@@ -186,7 +201,7 @@ public class ProjectsLoaded {
 		newProject.getEnvironmentController();
 		
 		// --- add project to the project-listing -----------------------------
-		projectsOpen.add(newProject);
+		this.getProjectsOpen().add(newProject);
 		Application.setProjectFocused(newProject);
 
 		// --- Configure the project view in the main application -------------
@@ -214,12 +229,22 @@ public class ProjectsLoaded {
 	}
 
 	/**
-	 * This method will try to close all open projects
+	 * This method will try to close all open projects.
+	 *
+	 * @param parentComponent the parent component
 	 * @return Returns true on success
 	 */
-	public boolean closeAll() {		
+	public boolean closeAll() {
+		return this.closeAll(null);
+	}
+	/**
+	 * This method will try to close all open projects.
+	 * @param parentComponent the parent component (for messages by using the {@link JOptionPane})
+	 * @return Returns true on success
+	 */
+	public boolean closeAll(Component parentComponent) {		
 		while (Application.getProjectFocused()!=null) {
-			if (Application.getProjectFocused().close()==false) {
+			if (Application.getProjectFocused().close(parentComponent)==false) {
 				return false;
 			}
 		}
@@ -244,7 +269,7 @@ public class ProjectsLoaded {
 	 * @return A Project instance
 	 */
 	public Project get(int indexOfProject) {
-		return projectsOpen.get(indexOfProject);
+		return this.getProjectsOpen().get(indexOfProject);
 	}
 
 	/**
@@ -252,8 +277,8 @@ public class ProjectsLoaded {
 	 * @param project2Remove
 	 */
 	public void remove(Project project2Remove) {
-		projectsOpen.remove(project2Remove);
-		if (projectsOpen.size()==0) {
+		this.getProjectsOpen().remove(project2Remove);
+		if (this.getProjectsOpen().size()==0) {
 			Application.setProjectFocused(null);
 		}
 		this.setProjectView();
@@ -262,7 +287,7 @@ public class ProjectsLoaded {
 	 * Removes all Projects from the (Array) ProjectList
 	 */
 	public void removeAll() {
-		projectsOpen.clear();
+		this.getProjectsOpen().clear();
 		Application.setProjectFocused(null);
 		Application.getProjectsLoaded().setProjectView();		
 	}
@@ -273,14 +298,14 @@ public class ProjectsLoaded {
 	 * @return The index position of a project 
 	 */
 	public int getIndexByName(String projectName) {
-		int Index = -1;
+		int index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( projectsOpen.get(i).getProjectName().equalsIgnoreCase(projectName) ) {
-				Index = i;
+			if (this.getProjectsOpen().get(i).getProjectName().equalsIgnoreCase(projectName) ) {
+				index = i;
 				break;
 			}	
 		}
-		return Index;
+		return index;
 	}
 	/**
 	 * Identifies a Project by its Root-Folder-Name and returns the Array-/Window-Index
@@ -290,7 +315,7 @@ public class ProjectsLoaded {
 	public int getIndexByFolderName(String projectFolderName) {
 		int index = -1;
 		for(int i=0; i<this.count(); i++) {
-			if( projectsOpen.get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( projectFolderName.toLowerCase() ) ) {
+			if (this.getProjectsOpen().get(i).getProjectFolder().toLowerCase().equalsIgnoreCase( projectFolderName.toLowerCase() ) ) {
 				index = i;
 				break;
 			}	
@@ -301,7 +326,7 @@ public class ProjectsLoaded {
 	 * Counts the actual open projects
 	 */
 	public int count() {
-		return projectsOpen.size();		
+		return this.getProjectsOpen().size();		
 	}
 
 	/**
@@ -363,7 +388,7 @@ public class ProjectsLoaded {
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
 		} else {
 			for(int i=0; i<this.count(); i++) {
-				String ProjectName = projectsOpen.get(i).getProjectName();
+				String ProjectName = this.getProjectsOpen().get(i).getProjectName();
 				if ( ProjectName.equalsIgnoreCase( Application.getProjectFocused().getProjectName() ) ) 
 					setFontBold = true;
 				else 
@@ -488,7 +513,12 @@ public class ProjectsLoaded {
 	 * Exports a project to a Agent.GUI project file (*.agui)
 	 */
 	public void projectExport() {
+		// --- The old export function ------
 		this.projectExport(null);
+		
+		// --- The new export function ------
+//		ProjectExporter pe = new ProjectExporter();
+//		pe.exportProject(Application.getProjectFocused());
 	}
 	
 	/**
@@ -518,15 +548,14 @@ public class ProjectsLoaded {
 			// --- If no projectFolder is specified yet ----------------- 
 			if (projectFolder==null) {
 				// --- Select the project to export ---------------------
-				ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, DialogAction.OpenProject);
-				newProDia.setOkButtonText("Export");
+				ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.ExportProject);
 				newProDia.setVisible(true);
 				// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 				if (newProDia.isCanceled()==true) {
 					return false;
 				}
-				projectFolder = newProDia.getProjectFolder(); 
-				newProDia.dispose();
+				projectFolder = newProDia.getProjectDirectory(); 
+				newProDia.close();
 				newProDia = null;
 			}
 		}
@@ -605,17 +634,17 @@ public class ProjectsLoaded {
 		
 		// ----------------------------------------------------------
 		// --- Open project selection dialog ------------------------
-		ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, DialogAction.DeleteProject);
+		ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.DeleteProject);
 		newProDia.setVisible(true);
 		// === Waiting for closing dialog ===
-		if ( newProDia.isCanceled() == true ) {
+		if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
 			Application.setStatusBar(Language.translate("Fertig"));
 			return;
 		} else {
 			exportBeforeDelete = newProDia.isExportBeforeDelete();
-			projectFolder = newProDia.getProjectFolder();
+			projectFolder = newProDia.getProjectDirectory();
 		}
-		newProDia.dispose();
+		newProDia.close();
 		newProDia = null;	
 	
 		// ----------------------------------------------------------

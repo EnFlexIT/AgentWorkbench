@@ -59,7 +59,7 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	/** Set this variable to switch the visualization */
-	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentGuiSwing;
+	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.EclipseFramework;
 	
 	private IApplicationContext IApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
@@ -108,7 +108,26 @@ public class PlugInApplication implements IApplication {
 		// --- Remind application context -----------------
 		this.IApplicationContext = context;
 		
+		// --- Ensure that SWT is in the first thread -----
+//		if (SystemEnvironmentHelper.isMacOperatingSystem()) {
+//			Display.getDefault();
+//		}
+		
 		// --- Start the main Application class -----------
+//		Application.isOperatingHeadless();
+//		Thread thread = new Thread() {
+//			@Override
+//			public void run() {
+//				SwingUtilities.invokeLater(new Runnable() {
+//					@Override
+//					public void run() {
+//						Application.start(PlugInApplication.this);
+//					}
+//				});
+//			}
+//		};
+//		thread.setName("Start_Worker");
+//		thread.start();
 		Application.start(this);
 		
 		// --- Wait for termination of the application ----
@@ -209,6 +228,7 @@ public class PlugInApplication implements IApplication {
 	 * @param postWindowOpenRunnable the post window open runnable
 	 */
 	public void startEclipseUiThrowThread(final Runnable postWindowOpenRunnable) {
+
 		Thread eclipsStarter = new Thread(new Runnable() {
 			@Override
 			public void run() {

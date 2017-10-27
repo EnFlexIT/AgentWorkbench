@@ -226,7 +226,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	}
 	protected JLabel getLblRendererType() {
 		if (lblRendererType == null) {
-			lblRendererType = new JLabel(Language.translate("Renderer"));
+			lblRendererType = new JLabel("Renderer");
 		}
 		return lblRendererType;
 	}

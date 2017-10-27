@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="agentgui.simulationService.environment.EnvironmentModel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/environment/EnvironmentModel.java" binary="false" 
+  <class id="1" language="java" name="agentgui.simulationService.environment.EnvironmentModel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/environment/EnvironmentModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="346" y="346"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -11,8 +11,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.core.environment.EnvironmentType" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/environment/EnvironmentType.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="agentgui.core.environment.EnvironmentType" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/environment/EnvironmentType.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="424" y="189"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -20,8 +20,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="agentgui.core.environment.EnvironmentController" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/environment/EnvironmentController.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="agentgui.core.environment.EnvironmentController" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/environment/EnvironmentController.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="823" y="189"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -29,8 +29,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="agentgui.core.environment.EnvironmentPanel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/environment/EnvironmentPanel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="agentgui.core.environment.EnvironmentPanel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/environment/EnvironmentPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1112" y="189"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -38,8 +38,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentController" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentController.java" binary="false" 
+  <class id="5" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentController" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/GraphEnvironmentController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="823" y="346"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -49,7 +49,7 @@
     </display>  
   </class>  
   <class id="6" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentControllerGUI.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/controller/GraphEnvironmentControllerGUI.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1112" y="346"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -58,8 +58,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="agentgui.envModel.graph.networkModel.NetworkModel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="7" language="java" name="agentgui.envModel.graph.networkModel.NetworkModel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/networkModel/NetworkModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="825" y="554"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -67,8 +67,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="agentgui.core.project.Project" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/project/Project.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="agentgui.core.project.Project" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/project/Project.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="819" y="43"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -77,7 +77,7 @@
     </display>  
   </class>  
   <class id="9" language="java" name="agentgui.simulationService.environment.AbstractEnvironmentModel" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/environment/AbstractEnvironmentModel.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/environment/AbstractEnvironmentModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="346" y="554"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -87,7 +87,7 @@
     </display>  
   </class>  
   <class id="10" language="java" name="agentgui.simulationService.environment.DisplaytEnvironmentModel" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/environment/DisplaytEnvironmentModel.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/environment/DisplaytEnvironmentModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="579" y="554"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -96,8 +96,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="agentgui.simulationService.time.TimeModel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/TimeModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="11" language="java" name="agentgui.simulationService.time.TimeModel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/TimeModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="579" y="346"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

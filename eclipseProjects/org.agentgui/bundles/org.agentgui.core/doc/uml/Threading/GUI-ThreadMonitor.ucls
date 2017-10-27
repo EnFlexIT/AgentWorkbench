@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <package id="1" language="java" name="agentgui.simulationService.load.threading.gui" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui" binary="false" corner="BOTTOM_RIGHT">    
+  <package id="1" language="java" name="agentgui.simulationService.load.threading.gui" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui" binary="false" corner="BOTTOM_RIGHT">    
     <position height="102" width="2114" x="127" y="-315"/>    
     <display autosize="false" stereotype="true" sort-features="false" accessors="true"/>  
   </package>  
   <class id="2" language="java" 
     name="agentgui.simulationService.load.threading.gui.ThreadInfoStorageScrollPane.CollectionSeriesChangeListener" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageScrollPane.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageScrollPane.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2109" y="1739"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -19,8 +19,8 @@
     </display>  
   </class>  
   <class id="3" language="java" 
-    name="agentgui.simulationService.load.threading.gui.ThreadInfoStorageTree.MyMouseListener" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageTree.java" binary="false" 
+    name="agentgui.simulationService.load.threading.gui.ThreadInfoStorageTree.MyMouseListener" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageTree.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2125" y="1182"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -30,8 +30,8 @@
     </display>  
   </class>  
   <class id="4" language="java" name="agentgui.simulationService.load.threading.gui.ThreadMonitorProtocolTableTab" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadMonitorProtocolTableTab.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadMonitorProtocolTableTab.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="275" y="444"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -41,8 +41,8 @@
     </display>  
   </class>  
   <class id="5" language="java" name="agentgui.simulationService.load.threading.gui.ThreadInfoStorageScrollPane" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageScrollPane.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageScrollPane.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1670" y="1506"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -52,8 +52,8 @@
     </display>  
   </class>  
   <class id="6" language="java" 
-    name="agentgui.simulationService.load.threading.gui.ThreadInfoStorageTree.MyTreeCellRenderer" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageTree.java" binary="false" 
+    name="agentgui.simulationService.load.threading.gui.ThreadInfoStorageTree.MyTreeCellRenderer" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageTree.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2513" y="1134"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -63,7 +63,7 @@
     </display>  
   </class>  
   <class id="7" language="java" name="agentgui.simulationService.load.threading.gui.ThreadMonitorToolBar" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadMonitorToolBar.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadMonitorToolBar.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="768" y="472"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -72,8 +72,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="agentgui.simulationService.load.threading.gui.ThreadMonitor" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadMonitor.java" binary="false" 
+  <class id="8" language="java" name="agentgui.simulationService.load.threading.gui.ThreadMonitor" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadMonitor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1197" y="-48"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -84,8 +84,8 @@
   </class>  
   <class id="9" language="java" 
     name="agentgui.simulationService.load.threading.gui.ThreadMonitorDetailTreeTab.MyTreeModelListener" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadMonitorDetailTreeTab.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadMonitorDetailTreeTab.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1815" y="896"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -95,8 +95,8 @@
     </display>  
   </class>  
   <class id="10" language="java" name="agentgui.simulationService.load.threading.gui.ThreadMonitorMetricsTableTab" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadMonitorMetricsTableTab.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadMonitorMetricsTableTab.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1187" y="580"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -106,8 +106,8 @@
     </display>  
   </class>  
   <class id="11" language="java" name="agentgui.simulationService.load.threading.gui.ThreadMonitorDetailTreeTab" 
-    project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadMonitorDetailTreeTab.java" binary="false" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadMonitorDetailTreeTab.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1532" y="501"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -117,7 +117,7 @@
     </display>  
   </class>  
   <class id="12" language="java" name="agentgui.simulationService.load.threading.gui.ThreadInfoStorageTree" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageTree.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/gui/ThreadInfoStorageTree.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2174" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

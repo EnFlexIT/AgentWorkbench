@@ -32,6 +32,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -186,51 +187,41 @@ public class ProjectBundleLoader {
 	 * Load the bundle of the current project.
 	 * @return true, if successful
 	 */
-	public boolean installAndStartBundles() {
+	public void installAndStartBundles() {
 		
-		boolean bundleLoaded = false;
-		if (this.getBundleDirectory()!=null) {
-
-			try {
-				// ------------------------------------------------------------
-				// --- 1. Check configured project resources for bin folder ---
-				// ------------------------------------------------------------
-				this.createTemporaryJarsFromBinResources();
+		if (this.getBundleDirectory()==null) return;
+			
+		// --- Check configured project resources for bin folder ----
+		this.createTemporaryJarsFromBinResources();
+		
+		// --- Evaluate the directory -------------------------------
+		this.getBundleBuilder().evaluateDirectory();
+		
+		// --- Load the directory bundle ----------------------------
+		if (this.getBundleBuilder().getRegularJars()!=null) {
+			
+			// --- Check if the manifest file is available ----------
+			if (this.project.isReCreateProjectManifest()==true || this.getBundleBuilder().isAvailableManifest()==false) {
 				
-				// --- Evaluate the directory ---------------------------------
-				this.getBundleBuilder().evaluateDirectory();
+				// --- Check for files of the ClassLoadService ------
+				this.getBundleBuilder().moveClassLoadServiceFiles();
 				
-				// --- Load the directory bundle ------------------------------
-				if (this.getBundleBuilder().getRegularJars()!=null) {
-					
-					// --- Check if the manifest file is available ------------
-					if (this.project.isReCreateProjectManifest()==true || this.getBundleBuilder().isAvailableManifest()==false) {
-						
-						// --- Check for files of the ClassLoadService --------
-						this.getBundleBuilder().moveClassLoadServiceFiles();
-						
-						// --- Create the MANIFEST.MF file --------------------
-						if (this.getBundleBuilder().createManifest(this.project.isReCreateProjectManifest())==false) {
-							throw new RuntimeException("The file " + BundleBuilder.MANIFEST_MF + " could not be created!");
-						}
-					}
-					this.installAndStartBundle("reference:file:" + this.getBundleDirectory());
+				// --- Create the MANIFEST.MF file ------------------
+				if (this.getBundleBuilder().createManifest(this.project.isReCreateProjectManifest())==false) {
+					throw new RuntimeException("The file " + BundleBuilder.MANIFEST_MF + " could not be created!");
 				}
-				
-				// --- Load the independent bundles found ---------------------
-				if (this.getBundleBuilder().getBundleJars()!=null) {
-					for (File bundleFile : this.getBundleBuilder().getBundleJars()) {
-						this.installAndStartBundle("reference:file:" + bundleFile.getAbsolutePath());
-					}
-				}
-				bundleLoaded = true;
-				
-			} catch (BundleException bEx) {
-				bEx.printStackTrace();
-				bundleLoaded = false;
 			}
+			this.installBundle("reference:file:" + this.getBundleDirectory());
 		}
-		return bundleLoaded;
+		
+		// --- Install the independent bundles found ----------------
+		if (this.getBundleBuilder().getBundleJars()!=null) {
+			this.installBundles(this.getBundleBuilder().getBundleJars());
+		}
+		
+		// --- Finally, start all known bundles ---------------------
+		this.startBundles(this.getBundleVector());
+		
 	}
 	
 	/**
@@ -380,23 +371,69 @@ public class ProjectBundleLoader {
 		}
 		return resourcePath;
 	}
-		
-		
+	
 	/**
-	 * Install and start bundle.
-	 *
-	 * @param locationID the location ID
-	 * @throws BundleException the bundle exception
+	 * Installs the specified list of jar bundled and adds their bundle instances to the local bundle vector {@link #getBundleVector()}.
+	 * @param bundleJarFile the bundle jar file
 	 */
-	public void installAndStartBundle(String locationID) throws BundleException {
-		
-		// --- Install and start bundle ---------
-		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-		Bundle bundle = bundleContext.installBundle(locationID);
-		bundle.start();
-		// --- Remind this bundle ---------------
-		this.getBundleVector().addElement(bundle);
+	public void installBundles(List<File> fileList) {
+		for (int i = 0; i < fileList.size(); i++) {
+			this.installBundle(fileList.get(i));
+		}
 	}
+	/**
+	 * Installs the specified jar bundle and adds the Bundle instance to the local bundle vector {@link #getBundleVector()}.
+	 * @param bundleJarFile the bundle jar file
+	 */
+	public void installBundle(File bundleJarFile) {
+		this.installBundle("reference:file:" + bundleJarFile.getAbsolutePath());
+	}
+	/**
+	 * Installs the specified jar bundle and adds the Bundle instance to the local bundle vector {@link #getBundleVector()}.
+	 * @param bundleJarFilePath the bundle jar file path
+	 */
+	public void installBundle(String bundleJarFilePath) {
+		Bundle bundle = null;
+		try {
+			BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+			bundle = bundleContext.installBundle(bundleJarFilePath);
+		} catch (BundleException bEx) {
+			bEx.printStackTrace();
+		}
+		// --- Remind this bundle ---------------
+		if (bundle!=null) this.getBundleVector().addElement(bundle);
+	}
+	
+	
+	/**
+	 * Tries to start all specified bundles.
+	 * @param bundleVector the bundle vector
+	 */
+	public void startBundles(Vector<Bundle> bundleVector) {
+		for (int i = 0; i < bundleVector.size(); i++) {
+			this.startBundle(bundleVector.get(i));
+		}
+	}
+	/**
+	 * Starts the specified bundle and return true if successful.
+	 *
+	 * @param bundle the bundle
+	 * @return true, if successful
+	 */
+	public boolean startBundle(Bundle bundle) {
+		boolean bundleStarted = false;
+		try {
+			bundle.start();
+			bundleStarted = true;
+			//System.out.println("Started Bundle " + bundle.getSymbolicName() + " " + bundle.getVersion());
+			
+		} catch (BundleException bEx) {
+			bEx.printStackTrace();
+		}
+		return bundleStarted;
+	}
+	
+	
 	/**
 	 * Stops and un-installs the current bundle.
 	 */

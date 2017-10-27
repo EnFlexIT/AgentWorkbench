@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="agentgui.core.application.Application" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/application/Application.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="agentgui.core.application.Application" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/application/Application.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="310" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.core.application.Language" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/application/Language.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="agentgui.core.application.Language" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/application/Language.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="699" y="439"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -19,8 +19,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="agentgui.core.project.Project" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/project/Project.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="agentgui.core.project.Project" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/project/Project.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="310" y="234"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="agentgui.core.project.ProjectsLoaded" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/project/ProjectsLoaded.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="agentgui.core.project.ProjectsLoaded" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/project/ProjectsLoaded.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="127" y="234"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -37,8 +37,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="agentgui.core.config.GlobalInfo" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/GlobalInfo.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="5" language="java" name="agentgui.core.config.GlobalInfo" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/config/GlobalInfo.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="511" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -46,8 +46,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="6" language="java" name="agentgui.core.config.GlobalInfo.ExecutionMode" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/GlobalInfo.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="6" language="java" name="agentgui.core.config.GlobalInfo.ExecutionMode" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/config/GlobalInfo.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="512" y="234"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -55,8 +55,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="7" language="java" name="agentgui.core.config.FileProperties" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/FileProperties.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="7" language="java" name="agentgui.core.config.FileProperties" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/config/FileProperties.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="700" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -64,8 +64,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="agentgui.core.config.VersionInfo" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/VersionInfo.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="agentgui.core.config.VersionInfo" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/config/VersionInfo.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="700" y="234"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -73,8 +73,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="agentgui.core.sim.setup.SimulationSetups" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/sim/setup/SimulationSetups.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="9" language="java" name="agentgui.core.sim.setup.SimulationSetups" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/sim/setup/SimulationSetups.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="310" y="351"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -82,8 +82,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="10" language="java" name="agentgui.core.sim.setup.SimulationSetup.CHANGED" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/sim/setup/SimulationSetup.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="10" language="java" name="agentgui.core.sim.setup.SimulationSetup.CHANGED" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/sim/setup/SimulationSetup.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="481" y="439"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -91,8 +91,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="11" language="java" name="agentgui.core.sim.setup.SimulationSetup" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/sim/setup/SimulationSetup.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="11" language="java" name="agentgui.core.sim.setup.SimulationSetup" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/sim/setup/SimulationSetup.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="481" y="351"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -100,8 +100,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="agentgui.core.jade.Platform" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/jade/Platform.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="12" language="java" name="agentgui.core.jade.Platform" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/jade/Platform.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="310" y="50"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -109,8 +109,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="agentgui.core.project.DistributionSetup" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/project/DistributionSetup.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="13" language="java" name="agentgui.core.project.DistributionSetup" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/project/DistributionSetup.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="127" y="351"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -118,8 +118,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="agentgui.core.project.RemoteContainerConfiguration" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/project/RemoteContainerConfiguration.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="14" language="java" name="agentgui.core.project.RemoteContainerConfiguration" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/project/RemoteContainerConfiguration.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="126" y="439"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -127,8 +127,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="agentgui.core.webserver.DownloadServer" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/webserver/DownloadServer.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="15" language="java" name="agentgui.core.webserver.DownloadServer" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/webserver/DownloadServer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="511" y="50"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -136,8 +136,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="agentgui.core.database.DBConnection.Error" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/database/DBConnection.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="16" language="java" name="agentgui.core.database.DBConnection.Error" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/database/DBConnection.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="126" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -145,8 +145,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="17" language="java" name="agentgui.core.database.DBConnection" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/database/DBConnection.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="17" language="java" name="agentgui.core.database.DBConnection" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/database/DBConnection.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="126" y="50"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -154,8 +154,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="18" language="java" name="agentgui.core.benchmark.BenchmarkMeasurement" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/benchmark/BenchmarkMeasurement.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="18" language="java" name="agentgui.core.benchmark.BenchmarkMeasurement" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/benchmark/BenchmarkMeasurement.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="700" y="50"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -163,8 +163,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="19" language="java" name="agentgui.core.update.AgentGuiUpdater" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/update/AgentGuiUpdater.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="19" language="java" name="agentgui.core.update.AgentGuiUpdater" project="org.agentgui.core" 
+    file="/org.agantgui.core/src/agentgui/core/update/AgentGuiUpdater.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="700" y="351"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

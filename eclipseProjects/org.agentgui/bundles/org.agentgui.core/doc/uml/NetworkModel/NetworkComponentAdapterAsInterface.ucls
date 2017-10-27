@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponent" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponent.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponent" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/networkModel/NetworkComponent.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="189" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponentAdapter" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter.java" binary="false" 
+  <class id="2" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponentAdapter" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="608" y="40"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -21,7 +21,7 @@
     </display>  
   </class>  
   <class id="3" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter4DataModel.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter4DataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="609" y="253"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -31,7 +31,7 @@
     </display>  
   </class>  
   <class id="4" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter4Ontology.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter4Ontology.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="609" y="339"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -40,8 +40,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="agentgui.envModel.graph.networkModel.NetworkModel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="5" language="java" name="agentgui.envModel.graph.networkModel.NetworkModel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/networkModel/NetworkModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="189" y="40"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -49,8 +49,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" binary="false" 
+  <class id="6" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="609" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

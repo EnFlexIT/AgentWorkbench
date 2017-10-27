@@ -722,7 +722,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 			// ----- Create TrustStore ------------------------------------
 			if (this.httpsConfigWindow.getTrustStoreButtonPressed() == "CreateTrustStore") {
 				// ---- Verify if all the fields are filled ---------------
-				if (this.getJTextFieldTrustStoreName().getText().equals("")  || this.getJPasswordFieldPassword().getPassword().equals("") || this.getJPasswordFieldConfirmPassword().getPassword().equals("")) {
+				if (this.getJTextFieldTrustStoreName().getText().equals("")  || this.getJPasswordFieldPassword().getPassword().length==0 || this.getJPasswordFieldConfirmPassword().getPassword().length==0) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
@@ -774,7 +774,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 
 			} else if (this.httpsConfigWindow.getTrustStoreButtonPressed() == "EditTrustStore") {
 				// ---- Verify if all the fields are filled ----------
-				if (this.getJTextFieldTrustStoreName().getText().equals("") || this.getJPasswordFieldPassword().getPassword().equals("") || this.getJPasswordFieldConfirmPassword().getPassword().equals("")) {
+				if (this.getJTextFieldTrustStoreName().getText().equals("") || this.getJPasswordFieldPassword().getPassword().length==0 || this.getJPasswordFieldConfirmPassword().getPassword().length==0) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);

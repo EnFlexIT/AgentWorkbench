@@ -2,8 +2,8 @@
 <class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
   router="FAN">  
-  <class id="1" language="java" name="de.enflexit.oidc.OIDCAuthorization" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="de.enflexit.oidc.OIDCAuthorization" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="239" width="395" x="796" y="-455"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -11,8 +11,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="de.enflexit.oidc.OIDCPanel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/auth/OIDCPanel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="de.enflexit.oidc.OIDCPanel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="167" width="208" x="796" y="-662"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -20,8 +20,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="de.enflexit.oidc.Trust" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/auth/Trust.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="de.enflexit.oidc.Trust" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/config/auth/Trust.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="113" width="240" x="1066" y="-662"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -29,8 +29,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="de.enflexit.oidc.SimpleOIDCClient" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/auth/SimpleOIDCClient.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="de.enflexit.oidc.SimpleOIDCClient" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/config/auth/SimpleOIDCClient.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="581" width="312" x="245" y="-166"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -39,7 +39,7 @@
     </display>  
   </class>  
   <class id="5" language="java" name="de.enflexit.oidc.OIDCAuthorization.OIDCProblemException" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="77" width="159" x="597" y="-166"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -48,8 +48,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="de.enflexit.oidc.OIDCAuthorization.URLProcessor" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="6" language="java" name="de.enflexit.oidc.OIDCAuthorization.URLProcessor" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="203" width="259" x="796" y="-166"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -57,8 +57,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="7" language="java" name="de.enflexit.oidc.OIDCResourceAvailabilityHandler" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/config/auth/OIDCResourceAvailabilityHandler.java" binary="false" 
+  <interface id="7" language="java" name="de.enflexit.oidc.OIDCResourceAvailabilityHandler" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCResourceAvailabilityHandler.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="77" width="233" x="1095" y="-166"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

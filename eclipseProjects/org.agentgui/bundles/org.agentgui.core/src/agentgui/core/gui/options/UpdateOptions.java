@@ -119,15 +119,22 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	 * @return void
 	 */
 	private void initialize() {
+		
+		GridBagConstraints gbc_jButtonUpdateSiteApply = new GridBagConstraints();
+		gbc_jButtonUpdateSiteApply.anchor = GridBagConstraints.WEST;
+		gbc_jButtonUpdateSiteApply.insets = new Insets(20, 0, 0, 20);
+		gbc_jButtonUpdateSiteApply.gridx = 1;
+		gbc_jButtonUpdateSiteApply.gridy = 0;
+		
 		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
 		gridBagConstraints22.gridx = 0;
 		gridBagConstraints22.anchor = GridBagConstraints.WEST;
-		gridBagConstraints22.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints22.insets = new Insets(5, 20, 0, 5);
 		gridBagConstraints22.gridy = 5;
 		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 		gridBagConstraints12.gridx = 0;
 		gridBagConstraints12.anchor = GridBagConstraints.WEST;
-		gridBagConstraints12.insets = new Insets(10, 20, 5, 0);
+		gridBagConstraints12.insets = new Insets(10, 20, 0, 5);
 		gridBagConstraints12.gridy = 4;
 		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 		gridBagConstraints21.gridx = 0;
@@ -135,45 +142,46 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		gridBagConstraints21.fill = GridBagConstraints.BOTH;
 		gridBagConstraints21.weightx = 1.0;
 		gridBagConstraints21.weighty = 1.0;
-		gridBagConstraints21.gridy = 7;
+		gridBagConstraints21.gridy = 6;
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 0;
 		gridBagConstraints11.anchor = GridBagConstraints.WEST;
-		gridBagConstraints11.insets = new Insets(10, 20, 5, 0);
+		gridBagConstraints11.insets = new Insets(20, 20, 0, 10);
 		gridBagConstraints11.gridy = 0;
 		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+		gridBagConstraints2.gridwidth = 2;
 		gridBagConstraints2.gridx = 0;
 		gridBagConstraints2.anchor = GridBagConstraints.WEST;
-		gridBagConstraints2.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints2.insets = new Insets(5, 20, 0, 20);
 		gridBagConstraints2.gridy = 3;
 		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.gridwidth = 2;
 		gridBagConstraints1.gridx = 0;
 		gridBagConstraints1.anchor = GridBagConstraints.WEST;
-		gridBagConstraints1.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints1.insets = new Insets(5, 20, 0, 20);
 		gridBagConstraints1.gridy = 2;
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.gridx = 0;
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(5, 20, 5, 0);
+		gridBagConstraints.gridwidth = 2;
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.insets = new Insets(5, 20, 0, 20);
 		gridBagConstraints.gridy = 1;
 	
 		jLabelUpdateDictionary = new JLabel();
 		jLabelUpdateDictionary.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelUpdateDictionary.setText("Wörterbuch");
 		
-		this.setSize(555, 307);
+		this.setSize(631, 307);
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		this.setLayout(new GridBagLayout());
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+		this.setLayout(gridBagLayout);
+		
+		this.add(getJButtonUpdateSiteApply(), gbc_jButtonUpdateSiteApply);
 		this.add(getJRadioButtonUpdateAutomated(), gridBagConstraints);
 		this.add(getJRadioButtonUpdateDownloadAndAsk(), gridBagConstraints1);
 		this.add(getJRadioButtonUpdateDisabled(), gridBagConstraints2);
 		this.add(getJLabelUpdateTitle(), gridBagConstraints11);
-		GridBagConstraints gbc_jButtonUpdateSiteApply = new GridBagConstraints();
-		gbc_jButtonUpdateSiteApply.anchor = GridBagConstraints.WEST;
-		gbc_jButtonUpdateSiteApply.insets = new Insets(5, 10, 5, 0);
-		gbc_jButtonUpdateSiteApply.gridx = 0;
-		gbc_jButtonUpdateSiteApply.gridy = 6;
-		add(getJButtonUpdateSiteApply(), gbc_jButtonUpdateSiteApply);
 		this.add(getJPanelDummy(), gridBagConstraints21);
 		this.add(jLabelUpdateDictionary, gridBagConstraints12);
 		this.add(getJCheckBoxUpdateKeepDictionary(), gridBagConstraints22);
