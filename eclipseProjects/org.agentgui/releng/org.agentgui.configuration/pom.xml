@@ -27,6 +27,49 @@
 				<artifactId>tycho-versions-plugin</artifactId>
 				<version>${tycho-version}</version>
 			</plugin>
+
+			<!-- Entries for e(fx)clipse plugins - Start -->
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<extraClasspathElements>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx</artifactId>
+							<version>8.0.0-SNAPSHOT</version>
+							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+					</extraClasspathElements>
+				</configuration>
+			</plugin>
+			<!--  
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<id>source-feature</id>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<plugin id="org.eclipse.fx.core" />
+								<feature id="org.eclipse.fx.target.rcp4.feature"/>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			 -->
+			<!-- Entries for e(fx)clipse plugins - End -->
+						
 			<plugin>
 				<!-- Target platform definition -->
 				<groupId>org.eclipse.tycho</groupId>
@@ -34,7 +77,6 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<target>
-
 						<artifact>
 							<groupId>org.agentgui</groupId>
 							<artifactId>org.agentgui.target</artifactId>
