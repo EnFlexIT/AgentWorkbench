@@ -7,8 +7,7 @@ Require-Bundle: org.eclipse.core.runtime,
  de.enflexit.common;bundle-version="1.0.0",
  org.agentgui.core;bundle-version="2.0.0",
  org.agentgui.lib.jade;bundle-version="4.4.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: agentproject,
  org.agentgui.sample.plugin
 Service-Component: OSGI-INF/classLoadService.xml 

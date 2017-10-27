@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="agentgui.simulationService.time.TimeModel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/TimeModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="agentgui.simulationService.time.TimeModel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/TimeModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="487" y="107" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.simulationService.time.TimeModelContinuous" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/TimeModelContinuous.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="agentgui.simulationService.time.TimeModelContinuous" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/TimeModelContinuous.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="660" y="586" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -19,8 +19,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="agentgui.simulationService.time.TimeModelDiscrete" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/TimeModelDiscrete.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="agentgui.simulationService.time.TimeModelDiscrete" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/TimeModelDiscrete.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="319" y="559" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="agentgui.simulationService.time.TimeModelStroke" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/TimeModelStroke.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="agentgui.simulationService.time.TimeModelStroke" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/TimeModelStroke.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="117" y="322" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -37,8 +37,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="agentgui.simulationService.time.StopWatch" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/StopWatch.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="5" language="java" name="agentgui.simulationService.time.StopWatch" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/StopWatch.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="856" y="107" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -46,8 +46,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="agentgui.simulationService.time.TimeModelDateBased" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/TimeModelDateBased.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="6" language="java" name="agentgui.simulationService.time.TimeModelDateBased" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/TimeModelDateBased.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="487" y="329" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

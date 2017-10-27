@@ -85,7 +85,6 @@ Export-Package: FIPA,
  org.apache.commons.codec.net,
  samples,
  samples.mobilegui
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EnFlex.IT
 DynamicImport-Package: *

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="agentgui.simulationService.environment.EnvironmentModel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/environment/EnvironmentModel.java" binary="false" 
+  <class id="1" language="java" name="agentgui.simulationService.environment.EnvironmentModel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/environment/EnvironmentModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position x="496" y="233" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -12,7 +12,7 @@
     </display>  
   </class>  
   <class id="2" language="java" name="agentgui.simulationService.environment.AbstractEnvironmentModel" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/environment/AbstractEnvironmentModel.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/environment/AbstractEnvironmentModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position x="803" y="360" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -22,7 +22,7 @@
     </display>  
   </class>  
   <class id="3" language="java" name="agentgui.simulationService.environment.DisplaytEnvironmentModel" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/environment/DisplaytEnvironmentModel.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/environment/DisplaytEnvironmentModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position x="499" y="360" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -31,8 +31,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="agentgui.simulationService.time.TimeModel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/time/TimeModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="agentgui.simulationService.time.TimeModel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/time/TimeModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="203" y="360" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

@@ -14,5 +14,4 @@ Export-Package: com.mysql.jdbc,
  com.mysql.jdbc.profiler,
  com.mysql.jdbc.util,
  org.gjt.mm.mysql
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

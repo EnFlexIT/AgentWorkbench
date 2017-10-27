@@ -1,14 +1,14 @@
 <class-diagram version="1.0.11" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.OntologyInstanceViewer" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyInstanceViewer.java" binary="false">    
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/ontologies/gui/OntologyInstanceViewer.java" binary="false">    
     <position x="410" y="124" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="2" corner="BOTTOM_RIGHT" language="java" name="javax.swing.JTabbedPane" project="AgentGUI" 
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="javax.swing.JTabbedPane" project="org.agentgui.core" 
     file="C:/Programme/Java/jdk1.6.0_14/jre/lib/rt.jar" binary="true">    
     <position x="410" y="35" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -17,23 +17,23 @@
     </display>  
   </class>  
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynForm.NumberWatcher" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/DynForm.java" binary="false">    
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/ontologies/gui/DynForm.java" binary="false">    
     <position x="278" y="407" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynForm" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/ontologies/gui/DynForm.java" binary="false">    
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynForm" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/ontologies/gui/DynForm.java" binary="false">    
     <position x="278" y="226" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="5" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynTable" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/ontologies/gui/DynTable.java" binary="false">    
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynTable" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/ontologies/gui/DynTable.java" binary="false">    
     <position x="526" y="315" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -41,7 +41,7 @@
     </display>  
   </class>  
   <class id="6" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynTableJPanel" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/DynTableJPanel.java" binary="false">    
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/ontologies/gui/DynTableJPanel.java" binary="false">    
     <position x="526" y="225" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -49,7 +49,7 @@
     </display>  
   </class>  
   <class id="7" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynTableCellRenderEditor" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/DynTableCellRenderEditor.java" binary="false">    
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/ontologies/gui/DynTableCellRenderEditor.java" binary="false">    
     <position x="525" y="407" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -57,7 +57,7 @@
     </display>  
   </class>  
   <class id="8" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.OntologyClassVisualisation" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyClassVisualisation.java" binary="false">    
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/ontologies/gui/OntologyClassVisualisation.java" binary="false">    
     <position x="105" y="35" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -65,7 +65,7 @@
     </display>  
   </class>  
   <class id="9" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.DynTreeViewer" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/DynTreeViewer.java" binary="false">    
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/ontologies/gui/DynTreeViewer.java" binary="false">    
     <position x="76" y="226" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -73,7 +73,7 @@
     </display>  
   </class>  
   <class id="10" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.OntologyInstanceDialog" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyInstanceDialog.java" binary="false">    
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/ontologies/gui/OntologyInstanceDialog.java" binary="false">    
     <position x="724" y="124" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      

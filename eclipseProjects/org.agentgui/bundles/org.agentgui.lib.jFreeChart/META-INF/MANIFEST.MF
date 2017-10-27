@@ -84,5 +84,4 @@ Export-Package: com.keypoint,
  org.jfree.ui.action,
  org.jfree.ui.tabbedui,
  org.jfree.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

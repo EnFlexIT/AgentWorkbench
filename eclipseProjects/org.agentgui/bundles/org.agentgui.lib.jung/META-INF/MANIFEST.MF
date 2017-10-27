@@ -127,5 +127,4 @@ Export-Package: EDU.oswego.cs.dl.util.concurrent,
  org.codehaus.stax2.io,
  org.codehaus.stax2.ri,
  org.codehaus.stax2.validation
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

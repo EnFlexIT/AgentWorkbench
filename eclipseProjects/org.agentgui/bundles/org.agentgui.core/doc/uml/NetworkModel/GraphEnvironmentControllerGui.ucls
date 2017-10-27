@@ -2,7 +2,7 @@
 <class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentControllerGUI.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/controller/GraphEnvironmentControllerGUI.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="757" y="157"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -11,8 +11,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentController" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentController.java" binary="false" 
+  <class id="2" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentController" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/GraphEnvironmentController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="156" y="157"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -21,8 +21,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="agentgui.core.environment.EnvironmentController" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/environment/EnvironmentController.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="agentgui.core.environment.EnvironmentController" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/environment/EnvironmentController.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="157" y="56"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -30,8 +30,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="agentgui.core.environment.EnvironmentPanel" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/environment/EnvironmentPanel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="agentgui.core.environment.EnvironmentPanel" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/environment/EnvironmentPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="756" y="56"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -39,8 +39,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiRootJSplitPane" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiRootJSplitPane.java" binary="false" 
+  <class id="5" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiRootJSplitPane" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGuiRootJSplitPane.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="459" y="252"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -50,7 +50,7 @@
     </display>  
   </class>  
   <class id="6" language="java" name="agentgui.envModel.graph.controller.BasicGraphGui.VertexShapeSizeAspect" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="158" y="475"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -59,8 +59,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="agentgui.envModel.graph.controller.BasicGraphGui" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="7" language="java" name="agentgui.envModel.graph.controller.BasicGraphGui" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="158" y="375"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -68,8 +68,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiTools" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiTools.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiTools" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGuiTools.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="459" y="375"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -77,8 +77,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentMousePlugin" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentMousePlugin.java" binary="false" 
+  <class id="9" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentMousePlugin" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/GraphEnvironmentMousePlugin.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="438" y="588"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -88,7 +88,7 @@
     </display>  
   </class>  
   <class id="10" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentPopupPlugin" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentPopupPlugin.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/controller/GraphEnvironmentPopupPlugin.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="438" y="475"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -99,7 +99,7 @@
   </class>  
   <class id="11" language="java" 
     name="agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane.BasicGraphGuiGraphWorkspaceDesktopManager" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiJDesktopPane.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGuiJDesktopPane.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="758" y="475"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -108,8 +108,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiJDesktopPane.java" binary="false" 
+  <class id="12" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGuiJDesktopPane.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="758" y="375"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -118,8 +118,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" binary="false" 
+  <class id="13" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1000" y="252"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -129,7 +129,7 @@
     </display>  
   </class>  
   <class id="14" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties.JToolBarButton" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" 
+    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="999" y="375"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
