@@ -60,10 +60,6 @@
          id="org.eclipse.equinox.p2.core.feature"
          version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.fx.target.rcp4.feature"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.agentgui.lib.scimark" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.hypericSigar" version="1.6.4" match="greaterOrEqual"/>
@@ -141,12 +137,5 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.fx.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>

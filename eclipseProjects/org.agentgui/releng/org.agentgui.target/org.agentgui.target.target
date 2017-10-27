@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="org.agentgui.target" sequenceNumber="52">
+<?pde version="3.8"?><target name="org.agentgui.target" sequenceNumber="55">
 <locations>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.equinox.p2.sdk.feature.group" version="3.10.1.v20170928-1405"/>
+<unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.1.v20170928-1405"/>
+<unit id="org.eclipse.rcp.feature.group" version="4.7.1.v20171009-0410"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.7"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.fx.target.rcp4.feature.feature.group" version="3.0.0.201706050601"/>
 <repository location="http://download.eclipse.org/efxclipse/runtime-released/3.0.0/site"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.p2.sdk.feature.group" version="3.10.0.v20170524-1345"/>
-<unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.0.v20170531-1133"/>
-<unit id="org.eclipse.rcp.feature.group" version="4.7.0.v20170612-1255"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.7"/>
 </location>
 </locations>
 </target>
