@@ -63,7 +63,6 @@ import org.osgi.framework.Bundle;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
@@ -1119,7 +1118,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	@XmlTransient
 	public String getUpdateSite() {
 		if (updateSite==null) {
-			updateSite = GlobalInfo.DEFAULT_UPDATE_SITE;
+			updateSite = "?";
 		}
 		return updateSite;
 	}

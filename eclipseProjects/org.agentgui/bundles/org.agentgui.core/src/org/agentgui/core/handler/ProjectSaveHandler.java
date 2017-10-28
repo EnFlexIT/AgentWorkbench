@@ -26,28 +26,31 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
- 
 package org.agentgui.core.handler;
 
 import org.eclipse.e4.core.di.annotations.Execute;
+
+import agentgui.core.application.Application;
+import agentgui.core.project.Project;
+
 import org.eclipse.e4.core.di.annotations.CanExecute;
 
 /**
- * Handler class for the Delete Project command
+ * Handler class for saving a focused project 
+ * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class DeleteProjectHandler {
+public class ProjectSaveHandler {
+
 	@Execute
 	public void execute() {
-		//TODO Placeholder method, replace with actual implementation
-		System.out.println((this.getClass().getSimpleName() + " called"));
+		Project currProject = Application.getProjectFocused();
+		if (currProject!=null) currProject.save();
 	}
-	
-	
 	@CanExecute
 	public boolean canExecute() {
-		//TODO Check if a project is loaded
-		return true;
+		return Application.getProjectsLoaded().count()>0;
 	}
 		
 }

@@ -26,19 +26,21 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
+ 
 package org.agentgui.core.handler;
 
 import org.eclipse.e4.core.di.annotations.Execute;
+
 import agentgui.core.application.Application;
 
 /**
- * Handler class for the New Project command
- * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+ * Handler class to delete projects
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class NewProjectHandler {
-	
+public class ProjectDeleteHandler {
 	@Execute
 	public void execute() {
-		Application.getProjectsLoaded().add(true);
+		Application.getProjectsLoaded().projectDelete();
 	}
 }

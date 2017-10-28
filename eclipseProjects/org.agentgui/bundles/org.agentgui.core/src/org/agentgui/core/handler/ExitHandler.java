@@ -31,9 +31,11 @@ package org.agentgui.core.handler;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.ui.IWorkbench;
 
+import agentgui.core.application.Application;
+
 /**
- * Handler class for the Exit command
- * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+ * Handler class for the exit of the application
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ExitHandler {
 	
@@ -42,7 +44,7 @@ public class ExitHandler {
 	 * @param workbench the workbench
 	 */
 	@Execute public void execute(IWorkbench workbench) {
-		workbench.close();
+		Application.stop();
 	}
 		
 }

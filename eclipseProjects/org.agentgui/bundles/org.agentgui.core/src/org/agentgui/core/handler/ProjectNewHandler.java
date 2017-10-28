@@ -29,24 +29,16 @@
 package org.agentgui.core.handler;
 
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.di.annotations.CanExecute;
+import agentgui.core.application.Application;
 
 /**
- * Handler class for the Save Project command
+ * Handler class for the New Project command
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  */
-public class SaveProjectHandler {
+public class ProjectNewHandler {
+	
 	@Execute
 	public void execute() {
-		//TODO Placeholder method, replace with actual implementation
-		System.out.println((this.getClass().getSimpleName() + " called"));
+		Application.getProjectsLoaded().add(true);
 	}
-	
-	
-	@CanExecute
-	public boolean canExecute() {
-		//TODO Check if a project is loaded (and changed?)
-		return true;
-	}
-		
 }

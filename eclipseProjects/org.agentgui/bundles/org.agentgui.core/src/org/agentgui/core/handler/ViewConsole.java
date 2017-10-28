@@ -29,22 +29,47 @@
  
 package org.agentgui.core.handler;
 
-import javax.inject.Named;
-
+import org.agentgui.gui.AppModelId;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
- * Handler class for the About command
- * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+ * Handler class to show / hide the console view.
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ViewConsole {
 
-	@Execute public void execute(MApplication application, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell, EModelService modelService) {
-		System.out.println((this.getClass().getSimpleName() + " called"));
+	@Execute 
+	public void execute() {
+		
+		try {
+			// --- Show or hide the console view ----------
+			IWorkbenchPage wbPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IViewPart viewConsole = wbPage.findView(AppModelId.PART_ORG_AGENTGUI_CORE_PART_CONSOLE);
+			if (viewConsole==null) {
+				// --- Open console view ------------------
+				wbPage.showView(AppModelId.PART_ORG_AGENTGUI_CORE_PART_CONSOLE);
+				
+			} else {
+				// --- Close console view -----------------
+				int currentState = wbPage.getPartState(wbPage.getReference(viewConsole));
+				if (currentState==IWorkbenchPage.STATE_MAXIMIZED) {
+					wbPage.activate(viewConsole);
+					wbPage.setPartState(wbPage.getReference(viewConsole), IWorkbenchPage.STATE_RESTORED);
+					// --- To be progressed! --------------
+					wbPage.resetPerspective(); 
+				}
+				wbPage.hideView(viewConsole);
+				
+			}
+			
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 }
