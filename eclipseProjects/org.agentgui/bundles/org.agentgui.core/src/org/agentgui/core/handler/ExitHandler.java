@@ -43,7 +43,8 @@ public class ExitHandler {
 	 * Executes the handler.
 	 * @param workbench the workbench
 	 */
-	@Execute public void execute(IWorkbench workbench) {
+	@Execute 
+	public void execute(IWorkbench workbench) {
 		Application.stop();
 	}
 		

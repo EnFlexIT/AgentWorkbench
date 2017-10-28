@@ -777,18 +777,7 @@ public class Application {
 	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void stop() {
-
-		// --- Stop Agent.GUI -------------------
-		if (stopAgentGUI()==false) return;
-		
-		// --- Stop LogFileWriter ---------------
-		setLogFileWriter(null);
-		
-		// --- ShutdownExecuter -----------------
-		setShutdownThread(null);
-		
-		// --- Indicate to stop the JVM -----
-		setQuitJVM(true);
+		plugInApplication.stop();
 	}
 	
 	/**
