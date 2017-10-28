@@ -86,9 +86,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
 	
-	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
+	private final static String localPathImageIntern = "/icons/core/";
 	
-	public static final String DEFAULT_UPDATE_SITE = "http://update.agentgui.org";
 	public static final String DEFAULT_OIDC_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 
 	private final static String newLineSeparator = System.getProperty("line.separator");
@@ -2025,6 +2024,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		URL imageURL = GlobalInfo.class.getResource(imagePath);
 		if (imageURL!=null) {
 			return new javax.swing.ImageIcon(imageURL);
+		} else {
+			System.err.println(GlobalInfo.class.getSimpleName() + ": Could not find ImageIcon '" + imageURL + "'");
 		}
 		return null;
 	}

@@ -31,15 +31,17 @@ package org.agentgui.core.handler;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 
+import agentgui.core.application.Application;
+
+
 /**
- * Handler class for the Import Project command
- * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+ * Handler class for the Export Project command
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ImportProjectHandler {
+public class ProjectExportHandler {
+	
 	@Execute
 	public void execute() {
-		//TODO Placeholder method, replace with actual implementation
-		System.out.println((this.getClass().getSimpleName() + " called"));
+		Application.getProjectsLoaded().projectExport();
 	}
-		
 }

@@ -664,8 +664,8 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			this.switchJPanelVersion();
 			
 		} else if (ae.getSource()==this.getJButtonUpdateSiteDefault()) {
-			this.getJTextFieldUpdateSite().setText(GlobalInfo.DEFAULT_UPDATE_SITE);
-			this.currProject.setUpdateSite(GlobalInfo.DEFAULT_UPDATE_SITE);
+			this.getJTextFieldUpdateSite().setText("?");
+			this.currProject.setUpdateSite("?");
 			
 		} else if (ae.getSource()==this.getJButtonSearchForUpdate()) {
 			this.currProject.doProjectUpdate();

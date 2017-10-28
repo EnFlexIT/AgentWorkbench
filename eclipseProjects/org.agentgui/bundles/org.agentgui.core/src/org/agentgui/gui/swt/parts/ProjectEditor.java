@@ -11,7 +11,7 @@ import org.eclipse.ui.part.EditorPart;
 
 public class ProjectEditor extends EditorPart {
 
-	public static final String ID = "org.agentgui.gui.swt.parts.ProjectPart2"; //$NON-NLS-1$
+	public static final String ID = "org.agentgui.core.part.projectEditor"; //$NON-NLS-1$
 
 	public ProjectEditor() {
 	}

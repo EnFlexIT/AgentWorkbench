@@ -26,28 +26,20 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
- 
 package org.agentgui.core.handler;
 
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.di.annotations.CanExecute;
+
+import agentgui.core.application.Application;
 
 /**
- * Handler class for the Export Project command
+ * Handler class for the Open Project command
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ExportProjectHandler {
+public class ProjectOpenHandler {
 	@Execute
 	public void execute() {
-		//TODO Placeholder method, replace with actual implementation
-		System.out.println((this.getClass().getSimpleName() + " called"));
-	}
-	
-	
-	@CanExecute
-	public boolean canExecute() {
-		//TODO Check if a project is loaded
-		return true;
+		Application.getProjectsLoaded().add(false);
 	}
 		
 }

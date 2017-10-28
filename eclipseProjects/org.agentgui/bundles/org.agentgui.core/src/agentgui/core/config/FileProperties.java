@@ -872,7 +872,7 @@ public class FileProperties extends Properties {
 				this.setProperty(this.DEF_OWN_MTP_PROTOCOL, this.globalInfo.getMtpProtocol().toString());
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
-				this.setProperty(this.DEF_UPDATE_SITE, GlobalInfo.DEFAULT_UPDATE_SITE);
+				this.setProperty(this.DEF_UPDATE_SITE, null);
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_AUTOCONFIG) ) {				
 				this.setProperty(this.DEF_UPDATE_AUTOCONFIG, "0");
@@ -928,7 +928,7 @@ public class FileProperties extends Properties {
 				} else if (mandatoryProps[i].equals(this.DEF_BENCH_SKIP_ALLWAYS)) {
 					this.setProperty(mandatoryProps[i], "true");
 				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {
-					this.setProperty(mandatoryProps[i], GlobalInfo.DEFAULT_UPDATE_SITE);
+					this.setProperty(mandatoryProps[i], null);
 				} else {
 					this.setProperty(mandatoryProps[i], "");	
 				}
@@ -949,11 +949,6 @@ public class FileProperties extends Properties {
 				} else if (mandatoryProps[i].equals(this.DEF_BENCH_SKIP_ALLWAYS)) {
 					if (value.equals("")) {
 						this.setProperty(mandatoryProps[i], "true");
-						somethingMissed = true;
-					}
-				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {
-					if (value.equals("")) {
-						this.setProperty(mandatoryProps[i], GlobalInfo.DEFAULT_UPDATE_SITE);
 						somethingMissed = true;
 					}
 				}

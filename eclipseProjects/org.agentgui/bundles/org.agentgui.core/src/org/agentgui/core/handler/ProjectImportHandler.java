@@ -26,6 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
+ 
 package org.agentgui.core.handler;
 
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -33,13 +34,14 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import agentgui.core.application.Application;
 
 /**
- * Handler class for the Open Project command
- * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+ * Handler class for the Import Project command
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class OpenProjectHandler {
+public class ProjectImportHandler {
+	
 	@Execute
 	public void execute() {
-		Application.getProjectsLoaded().add(false);
+		Application.getProjectsLoaded().projectImport();
 	}
 		
 }
