@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -25,6 +26,8 @@ import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.gui.ProjectExportDialog;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
+import de.enflexit.common.transfer.RecursiveFolderDeleter;
+import de.enflexit.common.transfer.Zipper;
 
 /**
  * This class is responsible for exporting projects from AgentWorkbench
@@ -62,6 +65,20 @@ public class ProjectExporter {
 			
 			if(chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION){
 				File targetFile = chooser.getSelectedFile();
+				
+				// --- Some Error-Handlings -----------------------------
+				// --- File already there? ----------
+				if (targetFile.exists()==true) {
+					String optionTitle = targetFile.getName() + ": " + Language.translate("Datei überschreiben?");
+					String optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
+					int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
+					if (answer==JOptionPane.YES_OPTION) {
+						targetFile.delete();
+					} else {
+						return;
+					}
+				}
+				
 				this.exportSettings.setTargetFile(targetFile);
 				
 				boolean success = this.copyProjectDataToTempFolder(targetFile);
@@ -85,14 +102,48 @@ public class ProjectExporter {
 						// --- Integrate the project into the installation package ------
 						//TODO implement
 					} else {
-						// --- Zip the temp folder to an agui file --------
-						//TODO implement / reuse from ProjectsLoaded
+						
+						// --- Create a zipped file --------------------
+						Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
+						zipper.setZipFolder(targetFile.getAbsolutePath());
+						zipper.setZipSourceFolder(tempFolderPath.toFile().getAbsolutePath());
+						zipper.doZipFolder();
+						
+						// --- Wait until the zipper is done --------------
+						while(zipper.isDone() == false) {
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								// --- Nothing to do here --------------
+							}
+						}
+						
+						zipper = null;
+						
+						try {
+							// --- Remove the temporary export folder -------------
+							RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
+							folderDeleter.deleteFolder(tempFolderPath);
+						} catch (IOException e) {
+							System.err.println("Error exporting temoprary export folder");
+							e.printStackTrace();
+						}
+						
+					}
+					
+					if(success == true) {
+						System.out.println("Project " + project.getProjectName() + " export successful!");
+						JOptionPane.showMessageDialog(null, Language.translate("Projekt erfolgreich exportiert!"), Language.translate("Projekt export"), JOptionPane.INFORMATION_MESSAGE);
+					}else {
+						System.err.println("Project " + project.getProjectName() + " export failed!");
+						JOptionPane.showMessageDialog(null, Language.translate("Export fehlgeschlagen!"), Language.translate("Projekt export"), JOptionPane.ERROR_MESSAGE);
+						//TODO implement some cleanup
 					}
 				}
-				System.out.println("Project " + project.getProjectName() + " successfully exported!");
 			}
 				
 		}
+		
 		
 	}
 	

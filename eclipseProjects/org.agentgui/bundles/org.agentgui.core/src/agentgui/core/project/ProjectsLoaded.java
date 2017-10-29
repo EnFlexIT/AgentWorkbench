@@ -514,11 +514,11 @@ public class ProjectsLoaded {
 	 */
 	public void projectExport() {
 		// --- The old export function ------
-		this.projectExport(null);
+//		this.projectExport(null);
 		
 		// --- The new export function ------
-//		ProjectExporter pe = new ProjectExporter();
-//		pe.exportProject(Application.getProjectFocused());
+		ProjectExporter pe = new ProjectExporter();
+		pe.exportProject(Application.getProjectFocused());
 	}
 	
 	/**
