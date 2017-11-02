@@ -56,6 +56,14 @@
             uri="ApplicationMenues.e4xmi">
       </fragment>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.agentgui.gui.swt.parts.ProjectPart"
+            id="org.agentgui.gui.swt.parts.ProjectEditor"
+            name="ProjectEditor">
+      </editor>
+   </extension>
   
 
 </plugin>
