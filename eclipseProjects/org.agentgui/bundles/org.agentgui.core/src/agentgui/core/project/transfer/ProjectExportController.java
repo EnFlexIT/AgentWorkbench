@@ -19,6 +19,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.agentgui.gui.ProjectNewOpenDialog;
+import org.agentgui.gui.UiBridge;
+import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
@@ -33,28 +37,53 @@ import de.enflexit.common.transfer.Zipper;
  * This class is responsible for exporting projects from AgentWorkbench
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectExporter {
+public class ProjectExportController {
 	
 	private ProjectExportDialog projectExportDialog;
 	
 	private Project project;
 	private ProjectExportSettings exportSettings;
 	
-	private Path tempFolderPath;
+	private Path tempExportFolderPath;
 	
-	public void exportProject(Project project) {
-		
+	/**
+	 * Constructor
+	 * @param project The project to be exported
+	 */
+	public ProjectExportController(Project project) {
 		this.project = project;
+	}
+	
+	/**
+	 * Exports the current project
+	 */
+	public void exportProject() {
 		
+		// --- If the current project is not set, select the project to be exported -------- 
+		if(this.project == null) {
+			this.project = selectProjectForExport();
+
+			// --- Return if the project selection was canceled ---------
+			if (this.project == null) {
+				return;
+			}
+		}
+		
+		// --- Show a dialog to configure the export ----------------
 		this.projectExportDialog = new ProjectExportDialog(project);
+		
 		if(projectExportDialog.isCanceled() == false) {
+			
+			// --- Get the export settings from the dialog -----------------
 			this.exportSettings = projectExportDialog.getExportSettings();
 			
+			// --- Create file name suggestion -----------------------------
 			String fileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
 			String proposedFileName = Application.getGlobalInfo().getLastSelectedFolderAsString() + project.getProjectFolder() + "." + fileSuffix ;
 			File proposedFile = new File(proposedFileName );
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileSuffix + ")", fileSuffix);
 			
+			// --- Prepare a JFileChooser for selecting the export destination -------
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileFilter(filter);
 			chooser.setSelectedFile(proposedFile);
@@ -66,8 +95,7 @@ public class ProjectExporter {
 			if(chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION){
 				File targetFile = chooser.getSelectedFile();
 				
-				// --- Some Error-Handlings -----------------------------
-				// --- File already there? ----------
+				// --- Check if the file already exists ----------
 				if (targetFile.exists()==true) {
 					String optionTitle = targetFile.getName() + ": " + Language.translate("Datei überschreiben?");
 					String optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
@@ -79,21 +107,23 @@ public class ProjectExporter {
 					}
 				}
 				
+				// --- Set the target file ---------------
 				this.exportSettings.setTargetFile(targetFile);
 				
-				boolean success = this.copyProjectDataToTempFolder(targetFile);
+				// --- Copy the required data to a temporary folder -------------
+				boolean success = this.copyProjectDataToTempFolder();
 				
 				if(success == true) {
 					
 					// --- Handle export of simulation setups if necessary ---------
 					if(this.exportSettings.isIncludeAllSetups() == false) {
 						
-						// --- Copy files ----------------
+						// --- Copy the required files for the selected setups -----------
 						success = this.copySelectedSimSetups();
 						
-						// --- Edit setup list -----------
+						// --- Remove the non-exported setups from the list --------------
 						if (success == true) {
-							this.editSetupList();
+							this.removeUnexportedSetupsFromList();
 						}
 						
 					}
@@ -106,10 +136,10 @@ public class ProjectExporter {
 						// --- Create a zipped file --------------------
 						Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
 						zipper.setZipFolder(targetFile.getAbsolutePath());
-						zipper.setZipSourceFolder(tempFolderPath.toFile().getAbsolutePath());
+						zipper.setZipSourceFolder(tempExportFolderPath.toFile().getAbsolutePath());
 						zipper.doZipFolder();
 						
-						// --- Wait until the zipper is done --------------
+						// --- Wait for the zipper --------------
 						while(zipper.isDone() == false) {
 							try {
 								Thread.sleep(500);
@@ -123,7 +153,7 @@ public class ProjectExporter {
 						try {
 							// --- Remove the temporary export folder -------------
 							RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
-							folderDeleter.deleteFolder(tempFolderPath);
+							folderDeleter.deleteFolder(tempExportFolderPath);
 						} catch (IOException e) {
 							System.err.println("Error exporting temoprary export folder");
 							e.printStackTrace();
@@ -131,12 +161,16 @@ public class ProjectExporter {
 						
 					}
 					
+					// --- Show a feedback message to the user --------------------
 					if(success == true) {
 						System.out.println("Project " + project.getProjectName() + " export successful!");
-						JOptionPane.showMessageDialog(null, Language.translate("Projekt erfolgreich exportiert!"), Language.translate("Projekt export"), JOptionPane.INFORMATION_MESSAGE);
+						String messageTitle = Language.translate("Export erfolgreich");
+						String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
+						JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
 					}else {
 						System.err.println("Project " + project.getProjectName() + " export failed!");
-						JOptionPane.showMessageDialog(null, Language.translate("Export fehlgeschlagen!"), Language.translate("Projekt export"), JOptionPane.ERROR_MESSAGE);
+						String message = Language.translate("Export fehlgeschlagen");
+						JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
 						//TODO implement some cleanup
 					}
 				}
@@ -147,35 +181,67 @@ public class ProjectExporter {
 		
 	}
 	
-	private boolean copyProjectDataToTempFolder(File targetFile) {
+	/**
+	 * Shows a dialog for project selection, loads the selected project
+	 * @return the selected project
+	 */
+	private Project selectProjectForExport() {
+		String actionTitle = Language.translate("Projekt zum Export auswählen");
+		ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitle, ProjectAction.ExportProject);
+		newProDia.setVisible(true);
+		if (newProDia.isCanceled() == true) {
+			return null;
+		} else {
+			String projectSubFolder = newProDia.getProjectDirectory(); 
+			newProDia.close();
+			newProDia = null;
+			
+			String projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + projectSubFolder;
+			return Project.load(new File(projectFolderFullPath), false);
+		}
+	}
+
+	/**
+	 * Copies all required project data to a temporary folder next to the selected 
+	 * @return Copying successful?
+	 */
+	private boolean copyProjectDataToTempFolder() {
 		
+		// --- Determine the source path --------------
 		Path sourcePath = new File(project.getProjectFolderFullPath()).toPath();
 		
 		// --- Specify folders that should not be copied ------
 		List<Path> skipList = new ArrayList<>();
 		skipList.add(sourcePath.resolve("~tmp"));
 		if(this.exportSettings.isIncludeAllSetups() == false) {
+			// --- If only selected setups should be exported, copying setup data is done in a separate step -----------
 			skipList.add(sourcePath.resolve("setups"));
 			skipList.add(sourcePath.resolve("setupsEnv"));
 		}
 		
+		// --- Copy the required files to the temporary folder --------
 		try {
-			Files.createDirectories(this.getTempFolderPath());
+			Files.createDirectories(this.getTempExportFolderPath());
 			RecursiveFolderCopier rfc = CommonComponentFactory.getNewRecursiveFolderCopier();
-			rfc.copyFolder(sourcePath, this.getTempFolderPath(), skipList);
+			rfc.copyFolder(sourcePath, this.getTempExportFolderPath(), skipList);
 		} catch (IOException e) {
 			System.err.println("Error copying project data!");
 			e.printStackTrace();
 			return false;
 		}
+		
 		return true;
 	}
 	
+	/**
+	 * Copies the files for the selected simulation setups to the temporary export folder
+	 * @return Copying successful?
+	 */
 	private boolean copySelectedSimSetups() {
 		
 		// --- Create folders ------------
-		Path setupsSubFolderTargetPath = this.getTempFolderPath().resolve(project.getSubFolder4Setups(false));
-		Path setupEnvironmentsSubFolderTargetPath = this.getTempFolderPath().resolve(project.getEnvSetupPath(false));
+		Path setupsSubFolderTargetPath = this.getTempExportFolderPath().resolve(project.getSubFolder4Setups(false));
+		Path setupEnvironmentsSubFolderTargetPath = this.getTempExportFolderPath().resolve(project.getEnvSetupPath(false));
 		
 		try {
 			if(setupsSubFolderTargetPath.toFile().exists() == false) {
@@ -190,28 +256,34 @@ public class ProjectExporter {
 			return false;
 		}
 		
+		// --- Determine source folders -----------------
 		Path setupsSubFolderSourcePath = new File(project.getSubFolder4Setups(true)).toPath();
 		Path setupEnvironmentsSubFolderSourcePath = new File(project.getProjectFolder()).toPath().resolve(project.getEnvSetupPath());
 		
+		// --- Iterate over the selected setups ----------------
 		for(String setupName : this.exportSettings.getSimSetups()) {
+			
+			// --- Determine the setup file path ----------
 			String setupFileName = this.project.getSimulationSetups().get(setupName);
 			String setupFileFullPath = this.project.getSubFolder4Setups(true) + File.separator + setupFileName;
 			File setupFile = new File(setupFileFullPath);
 			
+			// --- Load the setup -------------
 			JAXBContext pc;
 			SimulationSetup simSetup = null;
-				try {
-					pc = JAXBContext.newInstance(this.project.getSimulationSetups().getCurrSimSetup().getClass());
-					Unmarshaller um = pc.createUnmarshaller();
-					FileReader fr = new FileReader(setupFile);
-					simSetup = (SimulationSetup) um.unmarshal(fr);
-					fr.close();
-				} catch (JAXBException | IOException e) {
-					System.err.println("Error loading simulation setup data!");
-					e.printStackTrace();
-					return false;
-				}
+			try {
+				pc = JAXBContext.newInstance(this.project.getSimulationSetups().getCurrSimSetup().getClass());
+				Unmarshaller um = pc.createUnmarshaller();
+				FileReader fr = new FileReader(setupFile);
+				simSetup = (SimulationSetup) um.unmarshal(fr);
+				fr.close();
+			} catch (JAXBException | IOException e) {
+				System.err.println("Error loading simulation setup data!");
+				e.printStackTrace();
+				return false;
+			}
 			
+			// --- Copy setup and environment files ----------------	
 			if(simSetup != null) {
 
 				try {
@@ -241,11 +313,15 @@ public class ProjectExporter {
 				}
 			}
 		}
+		
 		return true;
 	}
 	
-	private void editSetupList() {
-		Project exportedProject = Project.load(this.tempFolderPath.toFile(), false);
+	/**
+	 * Removes all setups that are not selected for export from the setup list
+	 */
+	private void removeUnexportedSetupsFromList() {
+		Project exportedProject = Project.load(this.tempExportFolderPath.toFile(), false);
 		Set<String> setupNames = new HashSet<>(exportedProject.getSimulationSetups().keySet());
 		
 		for(String setupName : setupNames) {
@@ -254,19 +330,25 @@ public class ProjectExporter {
 			}
 		}
 		
-		exportedProject.save(this.tempFolderPath.toFile(), false);
+		exportedProject.save(this.tempExportFolderPath.toFile(), false);
 	}
 	
-	private Path getTempFolderPath() {
-		if(tempFolderPath == null) {
+	/**
+	 * Gets the temporary export folder
+	 * @return the temporary export folder
+	 */
+	private Path getTempExportFolderPath() {
+		
+		if(tempExportFolderPath == null) {
+
+			// --- Determine the path for the temporary export folder, based on the selected target file -------------- 
 			File targetFile = this.exportSettings.getTargetFile();
 			String targetFileBaseName = targetFile.getName().substring(0, targetFile.getName().lastIndexOf("."));
-			
-			// --- Create a temporary folder, copy everything there
 			Path containingFolder = targetFile.getParentFile().toPath();
-			tempFolderPath = containingFolder.resolve(targetFileBaseName);	
+			tempExportFolderPath = containingFolder.resolve(targetFileBaseName);	
 		}
-		return this.tempFolderPath;
+		
+		return this.tempExportFolderPath;
 	}
 	
 }
