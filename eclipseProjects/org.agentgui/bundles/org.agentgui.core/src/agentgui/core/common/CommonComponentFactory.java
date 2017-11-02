@@ -38,6 +38,7 @@ import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.csv.CsvDataControllerPanel;
 import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
+import de.enflexit.common.transfer.RecursiveFolderDeleter;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -115,6 +116,14 @@ public class CommonComponentFactory {
 	 */
 	public static RecursiveFolderCopier getNewRecursiveFolderCopier() {
 		return new RecursiveFolderCopier();
+	}
+	
+	/**
+	 * Returns a new {@link RecursiveFolderDeleter}
+	 * @return the new {@link RecursiveFolderDeleter}
+	 */
+	public static RecursiveFolderDeleter getNewRecursiveFolderDeleter() {
+		return new RecursiveFolderDeleter();
 	}
 	
 }

@@ -74,7 +74,7 @@ public class RecursiveFolderCopier {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void copyFolder(Path sourcePath, Path destPath, List<Path> skipList) throws IOException {
-		Files.walkFileTree(sourcePath, new CopyDirectoryVisitor(sourcePath, destPath, this.copyOption, skipList));
+		Files.walkFileTree(sourcePath, new CopyFolderVisitor(sourcePath, destPath, this.copyOption, skipList));
 	}
 	
 	
@@ -86,7 +86,7 @@ public class RecursiveFolderCopier {
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
 	 *
 	 */
-	private class CopyDirectoryVisitor extends SimpleFileVisitor<Path>{
+	private class CopyFolderVisitor extends SimpleFileVisitor<Path>{
 		
 		private Path fromPath;
     	private Path toPath;
@@ -94,14 +94,14 @@ public class RecursiveFolderCopier {
     	private List<Path> skipList;
 	    
 	    /**
-    	 * Creates a new {@link CopyDirectoryVisitor} that recursively copies sourcePath to destPath, excluding the {@link Path}s in skipList.
+    	 * Creates a new {@link CopyFolderVisitor} that recursively copies sourcePath to destPath, excluding the {@link Path}s in skipList.
     	 *
     	 * @param sourcePath The source directory
     	 * @param destPath The target directory
     	 * @param copyOption The {@link StandardCopyOption}
     	 * @param skipList List of {@link Path}s to exclude
     	 */
-	    public CopyDirectoryVisitor(Path sourcePath, Path destPath, StandardCopyOption copyOption, List<Path> skipList) {
+	    public CopyFolderVisitor(Path sourcePath, Path destPath, StandardCopyOption copyOption, List<Path> skipList) {
 	    	this.fromPath = sourcePath;
 	    	this.toPath = destPath;
 	    	this.copyOption = copyOption;

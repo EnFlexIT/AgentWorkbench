@@ -51,7 +51,7 @@ import org.agentgui.gui.UiBridge;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
-import agentgui.core.project.transfer.ProjectExporter;
+import agentgui.core.project.transfer.ProjectExportController;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -514,11 +514,11 @@ public class ProjectsLoaded {
 	 */
 	public void projectExport() {
 		// --- The old export function ------
-		this.projectExport(null);
+//		this.projectExport(null);
 		
 		// --- The new export function ------
-//		ProjectExporter pe = new ProjectExporter();
-//		pe.exportProject(Application.getProjectFocused());
+		ProjectExportController pe = new ProjectExportController(Application.getProjectFocused());
+		pe.exportProject();
 	}
 	
 	/**
