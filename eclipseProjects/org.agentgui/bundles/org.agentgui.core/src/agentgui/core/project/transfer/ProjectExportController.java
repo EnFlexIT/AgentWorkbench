@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -77,6 +76,11 @@ public class ProjectExportController {
 			// --- Get the export settings from the dialog -----------------
 			this.exportSettings = projectExportDialog.getExportSettings();
 			
+			if (this.exportSettings.isIncludeInstallationPackage()) {
+				JOptionPane.showMessageDialog(null, "Exporting of installation packages is not implemented yet", "Under Construction", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
 			// --- Create file name suggestion -----------------------------
 			String fileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
 			String proposedFileName = Application.getGlobalInfo().getLastSelectedFolderAsString() + project.getProjectFolder() + "." + fileSuffix ;
@@ -119,7 +123,7 @@ public class ProjectExportController {
 					if(this.exportSettings.isIncludeAllSetups() == false) {
 						
 						// --- Copy the required files for the selected setups -----------
-						success = this.copySelectedSimSetups();
+						success = this.copyRequiredSimulationSetupFiles();
 						
 						// --- Remove the non-exported setups from the list --------------
 						if (success == true) {
@@ -129,8 +133,11 @@ public class ProjectExportController {
 					}
 					
 					if (this.exportSettings.isIncludeInstallationPackage()) {
+
 						// --- Integrate the project into the installation package ------
+						
 						//TODO implement
+						
 					} else {
 						
 						// --- Create a zipped file --------------------
@@ -233,16 +240,15 @@ public class ProjectExportController {
 		return true;
 	}
 	
-	/**
-	 * Copies the files for the selected simulation setups to the temporary export folder
-	 * @return Copying successful?
-	 */
-	private boolean copySelectedSimSetups() {
+	private boolean copyRequiredSimulationSetupFiles() {
 		
-		// --- Create folders ------------
+		// --- Determine source folders -----------------
+		Path setupsSubFolderSourcePath = new File(project.getSubFolder4Setups(true)).toPath();
+		Path setupEnvironmentsSubFolderSourcePath = new File(project.getProjectFolder()).toPath().resolve(project.getEnvSetupPath());
+		
+		// --- Create target folders --------------------
 		Path setupsSubFolderTargetPath = this.getTempExportFolderPath().resolve(project.getSubFolder4Setups(false));
 		Path setupEnvironmentsSubFolderTargetPath = this.getTempExportFolderPath().resolve(project.getEnvSetupPath(false));
-		
 		try {
 			if(setupsSubFolderTargetPath.toFile().exists() == false) {
 					Files.createDirectory(setupsSubFolderTargetPath);
@@ -256,80 +262,119 @@ public class ProjectExportController {
 			return false;
 		}
 		
-		// --- Determine source folders -----------------
-		Path setupsSubFolderSourcePath = new File(project.getSubFolder4Setups(true)).toPath();
-		Path setupEnvironmentsSubFolderSourcePath = new File(project.getProjectFolder()).toPath().resolve(project.getEnvSetupPath());
+		// --- Create a list of setups not to be exported --------------
+		List<String> setupsNegativeList = new ArrayList<>(this.project.getSimulationSetups().keySet());
+		setupsNegativeList.removeAll(this.exportSettings.getSimSetups());
 		
-		// --- Iterate over the selected setups ----------------
-		for(String setupName : this.exportSettings.getSimSetups()) {
-			
-			// --- Determine the setup file path ----------
-			String setupFileName = this.project.getSimulationSetups().get(setupName);
-			String setupFileFullPath = this.project.getSubFolder4Setups(true) + File.separator + setupFileName;
-			File setupFile = new File(setupFileFullPath);
+		// --- Prepare negative lists for setup and environment files ---
+		List<String> setupFilesNegativeList = new ArrayList<>();
+		List<String> environmentFilesNegativeList = new ArrayList<>();
+		
+		// --- Add the file base names (without suffix) of the undesired setups to the negative lists -----------
+		for (String excludedSetupName : setupsNegativeList) {
 			
 			// --- Load the setup -------------
-			JAXBContext pc;
-			SimulationSetup simSetup = null;
+			SimulationSetup excludedSetup = null;
 			try {
-				pc = JAXBContext.newInstance(this.project.getSimulationSetups().getCurrSimSetup().getClass());
-				Unmarshaller um = pc.createUnmarshaller();
-				FileReader fr = new FileReader(setupFile);
-				simSetup = (SimulationSetup) um.unmarshal(fr);
-				fr.close();
+				excludedSetup = this.loadSimSetup(excludedSetupName);
 			} catch (JAXBException | IOException e) {
 				System.err.println("Error loading simulation setup data!");
 				e.printStackTrace();
 				return false;
 			}
 			
-			// --- Copy setup and environment files ----------------	
-			if(simSetup != null) {
-
-				try {
-					
-					// --- Copy simulation setup files --------------
-					String setupFileBaseName = setupFileName.substring(0, setupFileName.lastIndexOf('.'));
-					DirectoryStream<Path> stream1;
-					stream1 = Files.newDirectoryStream(setupsSubFolderSourcePath, setupFileBaseName + ".*");
-					for(Path sourcePath : stream1) {
-						Path targetPath = setupsSubFolderTargetPath.resolve(sourcePath.getFileName());
-						Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-					}
-					
-					// --- Copy setup environment files --------------
-					String envFileName = simSetup.getEnvironmentFileName();
-					String setupEnvironmentFileBaseName = envFileName.substring(0, envFileName.lastIndexOf('.'));
-					DirectoryStream<Path> stream2 = Files.newDirectoryStream(setupEnvironmentsSubFolderSourcePath, setupEnvironmentFileBaseName + ".*");
-					for(Path sourcePath : stream2) {
-						Path targetPath = setupEnvironmentsSubFolderTargetPath.resolve(sourcePath.getFileName());
-						Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-					}
-					
-				} catch (IOException e) {
-					System.err.println("Error copying simulation setup files!");
-					e.printStackTrace();
-					return false;
-				}
+			// --- Add the setup's files to the negative lists ----------
+			if (excludedSetup != null) {
+				
+				// --- Setup files ------------
+				String setupFileName = this.project.getSimulationSetups().get(excludedSetupName);
+				String setupFileBaseName = setupFileName.substring(0, setupFileName.lastIndexOf('.'));
+				setupFilesNegativeList.add(setupFileBaseName);
+				
+				// --- Environment files --------------
+				String envFileName = excludedSetup.getEnvironmentFileName();
+				String setupEnvironmentFileBaseName = envFileName.substring(0, envFileName.lastIndexOf('.'));
+				environmentFilesNegativeList.add(setupEnvironmentFileBaseName);
+				
 			}
+			
+		}
+		
+		try {
+			
+			// --- Copy the required setup files to the export folder ---------------
+			FileBaseNameNegativeListFilter setupFilesNegativeListFilter = new FileBaseNameNegativeListFilter(setupFilesNegativeList);
+			DirectoryStream<Path> setupDirectoryStream = Files.newDirectoryStream(setupsSubFolderSourcePath, setupFilesNegativeListFilter);
+			for (Path sourcePath : setupDirectoryStream) {
+				Path targetPath = setupsSubFolderTargetPath.resolve(sourcePath.getFileName());
+				Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+			}
+			
+			// --- Copy the required environment files to the export folder -----------
+			FileBaseNameNegativeListFilter environmentFIlesNegativeListFilter = new FileBaseNameNegativeListFilter(environmentFilesNegativeList);
+			DirectoryStream<Path> setupEnvironmentDirectoryStream = Files.newDirectoryStream(setupEnvironmentsSubFolderSourcePath, environmentFIlesNegativeListFilter);
+			for (Path sourcePath : setupEnvironmentDirectoryStream) {
+				Path targetPath = setupEnvironmentsSubFolderTargetPath.resolve(sourcePath.getFileName());
+				Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+			}
+			
+		} catch (IOException e) {
+			System.err.println("Error copying simulation setup files");
+			e.printStackTrace();
+			return false;
 		}
 		
 		return true;
 	}
 	
 	/**
+	 * Loads the simulation setup with the specified name
+	 * @param setupName The setup to be loaded
+	 * @return The setup
+	 * @throws JAXBException Parsing the setup file failed
+	 * @throws IOException Reading the setup file failed
+	 */
+	private SimulationSetup loadSimSetup(String setupName) throws JAXBException, IOException {
+		// --- Determine the setup file path ----------
+		String setupFileName = this.project.getSimulationSetups().get(setupName);
+		String setupFileFullPath = this.project.getSubFolder4Setups(true) + File.separator + setupFileName;
+		File setupFile = new File(setupFileFullPath);
+		
+		// --- Load the setup -------------
+		JAXBContext pc;
+		SimulationSetup simSetup = null;
+		pc = JAXBContext.newInstance(this.project.getSimulationSetups().getCurrSimSetup().getClass());
+		Unmarshaller um = pc.createUnmarshaller();
+		FileReader fr = new FileReader(setupFile);
+		simSetup = (SimulationSetup) um.unmarshal(fr);
+		fr.close();
+		
+		return simSetup;
+		
+	}
+	
+	/**
 	 * Removes all setups that are not selected for export from the setup list
 	 */
 	private void removeUnexportedSetupsFromList() {
+		
+		// --- Get the list of setups from the project file --------------
 		Project exportedProject = Project.load(this.tempExportFolderPath.toFile(), false);
 		Set<String> setupNames = new HashSet<>(exportedProject.getSimulationSetups().keySet());
 		
+		// --- Remove all setups that are not exported --------------------
 		for(String setupName : setupNames) {
 			if (exportSettings.getSimSetups().contains(setupName) == false) {
 				exportedProject.getSimulationSetups().remove(setupName);
 			}
 		}
 		
+		// --- If the currently selected setup is not exported, set the first exported setup as selected instead -----
+		if (this.exportSettings.getSimSetups().contains(exportedProject.getSimulationSetupCurrent()) == false) {
+			exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+		}
+		
+		// --- Save the changes ------------
 		exportedProject.save(this.tempExportFolderPath.toFile(), false);
 	}
 	
@@ -349,6 +394,40 @@ public class ProjectExportController {
 		}
 		
 		return this.tempExportFolderPath;
+	}
+	
+	/**
+	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file
+	 * base name (without extension) is not contained in a negative list.
+	 *  
+	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+	 */
+	private class FileBaseNameNegativeListFilter implements DirectoryStream.Filter<Path>{
+		
+		private List<String> negativeList;
+		
+		/**
+		 * Constructor
+		 * @param negativeList the negative list
+		 */
+		public FileBaseNameNegativeListFilter(List<String> negativeList) {
+			this.negativeList = negativeList;
+		}
+
+		@Override
+		public boolean accept(Path entry) throws IOException {
+			
+			// --- Get the file base name (without suffix) -------------
+			String fileBaseName = entry.toFile().getName().substring(0, entry.toFile().getName().lastIndexOf('.'));
+			
+			// --- Check if the negative list contains this file's base name -------
+			if(negativeList.contains(fileBaseName)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		
 	}
 	
 }
