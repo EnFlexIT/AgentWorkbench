@@ -463,7 +463,7 @@ public class BundleEvaluator {
 		
 		// --- Checking class files ---------------------------------
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		if (bundleWiring!=null) {
+		if (bundle.getState()==Bundle.ACTIVE && bundleWiring!=null) {
 			Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", options);
 			for (String resource : resources) {
 				// --- Get a suitable class name --------------------

@@ -1,4 +1,4 @@
-package org.agentgui.preferences.pages;
+package org.agentgui.gui.swt.preferences.pages;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;

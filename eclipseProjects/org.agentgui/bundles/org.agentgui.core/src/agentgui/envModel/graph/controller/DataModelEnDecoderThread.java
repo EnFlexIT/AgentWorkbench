@@ -28,6 +28,7 @@
  */
 package agentgui.envModel.graph.controller;
 
+import java.awt.Cursor;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
@@ -70,7 +71,7 @@ public class DataModelEnDecoderThread extends Thread {
 	// --- Variables for all ------------------------------
 	private GraphEnvironmentController graphController;
 
-	// --- Variables for the organiser --------------------
+	// --- Variables for the organizer --------------------
 	private DataModelEnDecoderThread organizerThread;
 	private OrganizerAction organizerAction;
 	private int elementsToConvert;
@@ -80,7 +81,7 @@ public class DataModelEnDecoderThread extends Thread {
 	
 	private boolean isHeadlessOperation = Application.isOperatingHeadless();
 	private ProgressMonitor progressMonitor;
-	private long firstDisplayWaitTime = 1000;		// ms
+	private long firstDisplayWaitTime = 0;			// ms
 	private long firstDisplayTime;
 	private long nextGraphRenderingInterval = 500; 	// ms
 	private long nextGraphRendering;
@@ -243,6 +244,8 @@ public class DataModelEnDecoderThread extends Thread {
     		    	getProgressMonitor().setVisible(false);
     		    	getProgressMonitor().dispose();
     		    	graphController.setBasicGraphGuiVisViewerActionOnTop(false);
+					Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
+					Application.setStatusBar(Language.translate("Fertig"));
     			}
     		});    		
     	}

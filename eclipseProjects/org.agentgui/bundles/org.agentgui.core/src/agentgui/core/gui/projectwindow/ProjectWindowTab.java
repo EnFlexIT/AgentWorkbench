@@ -55,6 +55,7 @@ public class ProjectWindowTab {
 	
 	
 	private Project currProject;
+	private ProjectWindow currProjectWindow;
 	
 	private String title;
 	private String tipText;
@@ -110,9 +111,11 @@ public class ProjectWindowTab {
 	 * @return the project window
 	 */
 	public ProjectWindow getProjectWindow() {
-		return this.currProject.getProjectWindow();
+		if (currProjectWindow==null) {
+			currProjectWindow = this.currProject.getProjectWindow();
+		}
+		return currProjectWindow;
 	}
-	
 	/**
 	 * Adds the current Tab-object to the project window.
 	 */

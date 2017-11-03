@@ -117,7 +117,9 @@ public class UiBridge {
 		return Application.getMainWindow();
 	}
 	
-	
+	// --------------------------------------------------------------
+	// --- Methods for accessing the required UI element ------------
+	// --------------------------------------------------------------
 	/**
 	 * Returns the project new open dialog (Swing or SWT).
 	 *
@@ -136,6 +138,24 @@ public class UiBridge {
 		}
 		return projectDialog;
 	}
+	
+	
+	/**
+	 * Returns the project window (Swing or SWT).
+	 * @return the project window
+	 */
+	public ProjectWindow getProjectWindow() {
+		ProjectWindow projectWindow = null;
+		if (this.isWorkbenchRunning()==true) {
+			// --- SWT dialog -------------------
+//			projectDialog = new org.agentgui.gui.swt.dialogs.ProjectNewOpen(this.getActiveWorkbenchWindowShell(), title, currentAction);
+		} else {
+			// --- Swing dialog -----------------
+//			projectDialog = new org.agentgui.gui.swing.dialogs.ProjectNewOpen(this.getSwingMainWindow(), title, currentAction);
+		}
+		return projectWindow;
+	}
+	
 	
 	
 	

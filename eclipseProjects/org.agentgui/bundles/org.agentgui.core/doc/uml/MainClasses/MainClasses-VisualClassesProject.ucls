@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
-  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+<class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
+  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="agentgui.core.gui.ProjectWindow" project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/core/gui/ProjectWindow.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="496" y="362"/>    
@@ -20,7 +20,8 @@
     </display>  
   </class>  
   <class id="3" language="java" name="agentgui.core.gui.projectwindow.ProjectWindowTab" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/ProjectWindowTab.java" binary="false" corner="BOTTOM_RIGHT">    
+    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/ProjectWindowTab.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="124" y="362"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -29,7 +30,8 @@
     </display>  
   </class>  
   <class id="4" language="java" name="agentgui.core.gui.projectwindow.TabForSubPanels" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/TabForSubPanels.java" binary="false" corner="BOTTOM_RIGHT">    
+    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/TabForSubPanels.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="262" y="204"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -47,7 +49,8 @@
     </display>  
   </class>  
   <class id="6" language="java" name="agentgui.core.gui.projectwindow.ProjectResources" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/ProjectResources.java" binary="false" corner="BOTTOM_RIGHT">    
+    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/ProjectResources.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="743" y="113"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -92,7 +95,8 @@
     </display>  
   </class>  
   <class id="11" language="java" name="agentgui.core.gui.projectwindow.ProjectDesktop" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/ProjectDesktop.java" binary="false" corner="BOTTOM_RIGHT">    
+    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/ProjectDesktop.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="743" y="492"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -101,7 +105,8 @@
     </display>  
   </class>  
   <class id="12" language="java" name="agentgui.core.gui.projectwindow.simsetup.StartSetup" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/simsetup/StartSetup.java" binary="false" corner="BOTTOM_RIGHT">    
+    file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/simsetup/StartSetup.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="723" y="426"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -109,7 +114,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="agentgui.core.gui.projectwindow.simsetup.TimeModelController" project="org.agentgui.core" 
+  <class id="13" language="java" name="agentgui.core.gui.projectwindow.simsetup.TimeModelController" 
+    project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/core/gui/projectwindow/simsetup/TimeModelController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="124" y="50"/>    
@@ -120,7 +126,8 @@
     </display>  
   </class>  
   <class id="14" language="java" name="agentgui.core.environment.EnvironmentController" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/environment/EnvironmentController.java" binary="false" corner="BOTTOM_RIGHT">    
+    file="/org.agentgui.core/src/agentgui/core/environment/EnvironmentController.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="496" y="50"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -129,7 +136,7 @@
     </display>  
   </class>  
   <association id="15">    
-    <end type="SOURCE" refId="8" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="4" navigable="false" variant="ASSOCIATION">      
       <attribute id="16" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -141,7 +148,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="18">    
-    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
       <attribute id="19" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -153,71 +160,71 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="21">    
-    <end type="SOURCE" refId="7" navigable="false" variant="ASSOCIATION">      
-      <attribute id="22" name="currProject">        
+    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
+      <attribute id="22" name="timeModelController">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="23" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="13" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="24">    
-    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="25" name="environmentController">        
+    <end type="SOURCE" refId="9" navigable="false" variant="ASSOCIATION">      
+      <attribute id="25" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="26" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="27">    
-    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
-      <attribute id="28" name="pwt">        
+    <end type="SOURCE" refId="3" navigable="false" variant="ASSOCIATION">      
+      <attribute id="28" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="29" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="30">    
-    <end type="SOURCE" refId="3" navigable="false" variant="ASSOCIATION">      
-      <attribute id="31" name="currProject">        
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="31" name="maxProjectWindowTab">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="32" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="33">    
-    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="34" name="projectWindow">        
-        <position height="15" width="80" x="417" y="364"/>      
+    <end type="SOURCE" refId="11" navigable="false" variant="ASSOCIATION">      
+      <attribute id="34" name="currProject">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="35" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="36">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="37" name="tab4SubPanel">        
+    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
+      <attribute id="37" name="pwt">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="38" minimum="0" maximum="2147483647">        
+      <multiplicity id="38" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
@@ -225,19 +232,19 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="39">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="40" name="maxProjectWindowTab">        
+    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
+      <attribute id="40" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="41" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="42">    
-    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="10" navigable="false" variant="ASSOCIATION">      
       <attribute id="43" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -249,19 +256,19 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="45">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="46" name="tabVector">        
-        <position height="0" width="0" x="0" y="0"/>      
+    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
+      <attribute id="46" name="projectWindow">        
+        <position height="15" width="80" x="417" y="364"/>      
       </attribute>      
-      <multiplicity id="47" minimum="0" maximum="2147483647">        
+      <multiplicity id="47" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="48">    
-    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
       <attribute id="49" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -273,7 +280,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="51">    
-    <end type="SOURCE" refId="10" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="7" navigable="false" variant="ASSOCIATION">      
       <attribute id="52" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -285,7 +292,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="54">    
-    <end type="SOURCE" refId="11" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="8" navigable="false" variant="ASSOCIATION">      
       <attribute id="55" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -297,7 +304,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="57">    
-    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
       <attribute id="58" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -309,7 +316,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="60">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
       <attribute id="61" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -321,51 +328,51 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="63">    
-    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
-      <attribute id="64" name="currProject">        
+    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
+      <attribute id="64" name="environmentController">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="65" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="14" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="66">    
-    <end type="SOURCE" refId="4" navigable="false" variant="ASSOCIATION">      
-      <attribute id="67" name="currProject">        
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="67" name="tab4SubPanel">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="68" minimum="0" maximum="1">        
+      <multiplicity id="68" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="69">    
-    <end type="SOURCE" refId="9" navigable="false" variant="ASSOCIATION">      
-      <attribute id="70" name="currProject">        
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="70" name="tabVector">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="71" minimum="0" maximum="1">        
+      <multiplicity id="71" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="72">    
-    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="73" name="timeModelController">        
+    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
+      <attribute id="73" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="74" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="13" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

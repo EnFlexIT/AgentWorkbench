@@ -68,19 +68,7 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.components.JPanel4Visualisation;
-import agentgui.core.gui.projectwindow.AgentClassLoadMetricsPanel;
-import agentgui.core.gui.projectwindow.BaseAgents;
-import agentgui.core.gui.projectwindow.Distribution;
-import agentgui.core.gui.projectwindow.JadeSetupMTP;
-import agentgui.core.gui.projectwindow.JadeSetupServices;
-import agentgui.core.gui.projectwindow.OntologyTab;
-import agentgui.core.gui.projectwindow.ProjectDesktop;
-import agentgui.core.gui.projectwindow.ProjectInfo;
-import agentgui.core.gui.projectwindow.ProjectResources;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
-import agentgui.core.gui.projectwindow.TabForSubPanels;
-import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
-import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
@@ -1150,69 +1138,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	public ProjectWindow getProjectWindow() {
 		if (this.projectWindow==null) {
 			this.projectWindow = new ProjectWindow(this);
-			
-			ProjectWindowTab pwt = null;
-			// ------------------------------------------------
-			// --- General Informations -----------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this), null);
-			pwt.add();
-			
-			// ------------------------------------------------
-			// --- Configuration ------------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this), null);
-			pwt.add();
-			this.projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
-			
-				// --- External Resources ---------------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this), Language.translate("Konfiguration"));
-				pwt.add();
-				// --- Used Ontologies ------------------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this), Language.translate("Konfiguration"));
-				pwt.add();
-				// --- Project Agents -------------------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this), Language.translate("Konfiguration"));
-				pwt.add();
-				// --- JADE-Services --------------------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Services", null, null, new JadeSetupServices(this), Language.translate("Konfiguration"));
-				pwt.add();
-				// --- JADE-MTP configuration -----------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Settings", null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
-				pwt.add();
-				// --- Distribution + Thresholds --------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this), Language.translate("Konfiguration"));
-				pwt.add();
-				// --- Agent Load Metrics ---------------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this), Language.translate("Konfiguration"));
-				pwt.add();
-			
-				
-			// ------------------------------------------------
-			// --- Simulations-Setup --------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this), null);
-			pwt.add();
-			this.projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
-			
-				// --- start configuration for agents ---------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
-				pwt.add();
-				// --- simulation environment -----------------
-				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
-				pwt.add();
-				
-
-			// ------------------------------------------------
-			// --- Visualisation ------------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, this.getVisualisationTab4SetupExecution(), null);
-			pwt.add();
-			
-			// ------------------------------------------------
-			// --- Project Desktop ----------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this), null);
-			pwt.add();
-			
-			// --- Expand the tree view -----------------------
-			this.projectWindow.projectTreeExpand2Level(3, true);
-			
+			this.projectWindow.addDefaultProjectWindowTabs();
 		}
 		return projectWindow;
 	}
@@ -1585,10 +1511,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 
 			EnvironmentType envType = this.getEnvironmentModelType();
 			Class<? extends EnvironmentController> envControllerClass = envType.getEnvironmentControllerClass();
-			if (envControllerClass==null) {
-				// --- If NO environment is specified -------------------
-				return null;
-			} 
+			if (envControllerClass==null) return null;
 
 			// --- If an environment IS specified -----------------------
 			try {

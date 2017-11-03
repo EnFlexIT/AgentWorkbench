@@ -60,7 +60,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.agentgui.gui.swt.parts.ProjectPart"
-            id="org.agentgui.gui.swt.parts.ProjectEditor"
+            id="org.agentgui.gui.swt.project.ProjectEditor"
             name="ProjectEditor">
       </editor>
    </extension>

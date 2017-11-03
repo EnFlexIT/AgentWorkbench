@@ -72,8 +72,20 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.gui.projectwindow.AgentClassLoadMetricsPanel;
+import agentgui.core.gui.projectwindow.BaseAgents;
+import agentgui.core.gui.projectwindow.Distribution;
+import agentgui.core.gui.projectwindow.JadeSetupMTP;
+import agentgui.core.gui.projectwindow.JadeSetupServices;
 import agentgui.core.gui.projectwindow.MaximizedTab;
+import agentgui.core.gui.projectwindow.OntologyTab;
+import agentgui.core.gui.projectwindow.ProjectDesktop;
+import agentgui.core.gui.projectwindow.ProjectInfo;
+import agentgui.core.gui.projectwindow.ProjectResources;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
+import agentgui.core.gui.projectwindow.TabForSubPanels;
+import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
+import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.project.Project;
 
 /**
@@ -142,6 +154,74 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.setBorder(null);
 		this.setFocusable(true);
 		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+	}
+
+	/**
+	 * Adds the default project window tabs.
+	 */
+	public void addDefaultProjectWindowTabs() {
+		
+		ProjectWindowTab pwt = null;
+		// ------------------------------------------------
+		// --- General Informations -----------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this.currProject), null);
+		pwt.add();
+		
+		// ------------------------------------------------
+		// --- Configuration ------------------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this.currProject), null);
+		pwt.add();
+		this.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
+		
+			// --- External Resources ---------------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this.currProject), Language.translate("Konfiguration"));
+			pwt.add();
+			// --- Used Ontologies ------------------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this.currProject), Language.translate("Konfiguration"));
+			pwt.add();
+			// --- Project Agents -------------------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this.currProject), Language.translate("Konfiguration"));
+			pwt.add();
+			// --- JADE-Services --------------------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Services", null, null, new JadeSetupServices(this.currProject), Language.translate("Konfiguration"));
+			pwt.add();
+			// --- JADE-MTP configuration -----------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Settings", null, null, new JadeSetupMTP(this.currProject), Language.translate("Konfiguration"));
+			pwt.add();
+			// --- Distribution + Thresholds --------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this.currProject), Language.translate("Konfiguration"));
+			pwt.add();
+			// --- Agent Load Metrics ---------------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this.currProject), Language.translate("Konfiguration"));
+			pwt.add();
+		
+			
+		// ------------------------------------------------
+		// --- Simulations-Setup --------------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this.currProject), null);
+		pwt.add();
+		this.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
+		
+			// --- start configuration for agents ---------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+			pwt.add();
+			// --- simulation environment -----------------
+			pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+			pwt.add();
+			
+
+		// ------------------------------------------------
+		// --- Visualisation ------------------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, this.currProject.getVisualisationTab4SetupExecution(), null);
+		pwt.add();
+		
+		// ------------------------------------------------
+		// --- Project Desktop ----------------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this.currProject), null);
+		pwt.add();
+	
+
+		this.projectTreeExpand2Level(3, true);
 		
 		this.setVisible(true);
 		this.moveToFront();	
@@ -150,9 +230,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		if (Application.getMainWindow()!=null) {
 			Application.getMainWindow().getJDesktopPane4Projects().add(this);	
 		}
-				
 	}
-
+	
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.JInternalFrame#dispose()
 	 */

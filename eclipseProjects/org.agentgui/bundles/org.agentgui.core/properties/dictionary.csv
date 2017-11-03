@@ -735,6 +735,10 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;Alias:;;;
+en;;Depending on delta watts (percent);;;
+en;;Depending on watts (absolute);;;
+en;;MTP Protocol:;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;Number of changes;;;
 en;;Operating mode:;;;

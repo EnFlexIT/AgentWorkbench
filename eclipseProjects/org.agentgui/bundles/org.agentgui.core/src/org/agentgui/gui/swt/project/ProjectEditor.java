@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.gui.swt.parts;
+package org.agentgui.gui.swt.project;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -50,6 +50,9 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * The ProjectEditor.
@@ -73,6 +76,7 @@ public class ProjectEditor extends EditorPart {
 	private CTabFolder tabFolder_1;
 	private Section sctnNewSection;
 	private Section sctnNewSection_1;
+	private CTabItem tabItem_3;
 
 	
 	public ProjectEditor() {
@@ -112,12 +116,10 @@ public class ProjectEditor extends EditorPart {
 				form2.setText("First Page: Eclipse Forms API Example");
 				form2.getBody().setLayout(new GridLayout(1, false));
 		
-				SectionPart sectionPart = new SectionPart(form2.getBody(), this.toolkit, Section.TWISTIE | Section.TITLE_BAR);
-				this.sctnNewSection = sectionPart.getSection();
-//				this.sctnNewSection = this.toolkit.createSection(form2.getBody(), Section.TWISTIE | Section.TITLE_BAR);
+				this.sctnNewSection = this.toolkit.createSection(form2.getBody(), Section.TWISTIE | Section.TITLE_BAR);
 				this.sctnNewSection.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
 				this.toolkit.paintBordersFor(this.sctnNewSection);
-//				this.sctnNewSection.setText("New Section");
+				this.sctnNewSection.setText("New Section");
 				
 				this.sctnNewSection_1 = this.toolkit.createSection(form2.getBody(), Section.TWISTIE | Section.TITLE_BAR);
 				this.sctnNewSection_1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, true, 1, 1));
@@ -137,6 +139,9 @@ public class ProjectEditor extends EditorPart {
 						form.getBody().setLayout(new GridLayout(1, false));
 						
 								this.btnNewButton = toolkit.createButton(form.getBody(), "New Button", SWT.NONE);
+								
+								this.tabItem_3 = new CTabItem(this.tabFolder, SWT.NONE);
+								this.tabItem_3.setText("New Item");
 								
 								this.tbtmNewItem = new CTabItem(this.tabFolder, SWT.NONE);
 								this.tbtmNewItem.setText("New Item");
@@ -158,6 +163,7 @@ public class ProjectEditor extends EditorPart {
 														
 														
 		this.sashForm.setWeights(new int[] { 3, 10 });	
+		parent.setTabList(new Control[]{this.sashForm});
 	}
 
 	@Override

@@ -210,7 +210,7 @@ public class ProjectsLoaded {
 			// --- Instantiate project-window and the default tabs ----------------		
 			newProject.setMaximized();
 			
-			Application.getProjectsLoaded().setProjectView();
+			this.setProjectView();
 			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);
 			newProject.plugInVectorInformSetupLoaded();
 			Application.getMainWindow().setCloseButtonPosition(true);

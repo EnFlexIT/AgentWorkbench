@@ -122,11 +122,16 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 */
 	@Override
 	protected void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D)g;
-		if (this.isActionOnTop()==true) {
-			g2d.drawImage(offscreen, null, 0, 0);
-		} else {
-			super.paintComponent(g);
+		try {
+			Graphics2D g2d = (Graphics2D)g;
+			if (this.isActionOnTop()==true) {
+				g2d.drawImage(offscreen, null, 0, 0);
+			} else {
+				super.paintComponent(g);
+			}
+		} catch (Exception ex) {
+			System.err.println("Error in the " + this.getClass().getSimpleName() + "[" + this.getClass().getName() + "]");
+			ex.printStackTrace();
 		}
 	}
 	

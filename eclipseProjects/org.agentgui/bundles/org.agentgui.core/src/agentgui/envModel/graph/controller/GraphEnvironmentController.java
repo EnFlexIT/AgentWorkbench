@@ -377,85 +377,90 @@ public class GraphEnvironmentController extends EnvironmentController {
 
     	NetworkModel networkModel = new NetworkModel();
     	String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
-    	if (Application.getMainWindow()!=null) {
-    		Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    		Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
-    	}
-    	
 		if (fileName!=null) {
 	
-		    // --- register the list of agents, which has to be started with the environment ------
-		    this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
-		    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-	
-		    // --- Load the graph topology from the graph file ------------------------------------
-		    File graphFile = new File(getEnvFolderPath() + fileName);
-		    if (graphFile.exists()) {
-		    	baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
-		    	FileReader fileReader = null;
-				try {
-				    // Load graph topology
-					fileReader = new FileReader(graphFile);
-					networkModel.setGraph(this.getGraphMLReader(fileReader).readGraph());
-		
-				} catch (FileNotFoundException e) {
-				    e.printStackTrace();
-				} catch (GraphIOException e) {
-				    e.printStackTrace();
-				} finally {
-					try {
-						if (fileReader!=null) fileReader.close();
-					} catch (IOException ioe) {
-						ioe.printStackTrace();
+			Thread envLoader = new Thread(new Runnable() {
+				@Override
+				public void run() {
+
+			    	if (Application.getMainWindow()!=null) {
+			    		Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			    		Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
+			    	}
+					
+				    // --- register the list of agents, which has to be started with the environment ------
+				    GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
+				    GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+			
+				    // --- Load the graph topology from the graph file ------------------------------------
+				    File graphFile = new File(getEnvFolderPath() + fileName);
+				    if (graphFile.exists()) {
+				    	baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
+				    	FileReader fileReader = null;
+						try {
+						    // Load graph topology
+							fileReader = new FileReader(graphFile);
+							networkModel.setGraph(GraphEnvironmentController.this.getGraphMLReader(fileReader).readGraph());
+				
+						} catch (FileNotFoundException e) {
+						    e.printStackTrace();
+						} catch (GraphIOException e) {
+						    e.printStackTrace();
+						} finally {
+							try {
+								if (fileReader!=null) fileReader.close();
+							} catch (IOException ioe) {
+								ioe.printStackTrace();
+							}
+						}
+				    }
+			
+				    // --- Load the component definitions from the component file -------------------------
+				    File componentFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
+				    if (componentFile.exists()) {
+						try {
+						    FileReader componentReader = new FileReader(componentFile);
+				
+						    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+						    Unmarshaller unmarsh = context.createUnmarshaller();
+						    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
+						    networkModel.setNetworkComponents(compList.getComponentList());
+				
+						    componentReader.close();
+				
+						} catch (JAXBException e) {
+						    e.printStackTrace();
+						} catch (FileNotFoundException e) {
+						    e.printStackTrace();
+						} catch (IOException e) {
+						    e.printStackTrace();
+						}
+				    }
+				
+					// --- Load component type settings from file ---------------------------------------------
+					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
+					// --- Remind the list of custom toolbar elements -----------------------------------------		
+					if (GraphEnvironmentController.this.getNetworkModel()!=null) {
+						ggs4MAS.setCustomToolbarComponentDescriptions(GraphEnvironmentController.this.getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions());
 					}
-				}
-		    }
-	
-		    // --- Load the component definitions from the component file -------------------------
-		    File componentFile = new File(this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
-		    if (componentFile.exists()) {
-				try {
-				    FileReader componentReader = new FileReader(componentFile);
-		
-				    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-				    Unmarshaller unmarsh = context.createUnmarshaller();
-				    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
-				    networkModel.setNetworkComponents(compList.getComponentList());
-		
-				    componentReader.close();
-		
-				} catch (JAXBException e) {
-				    e.printStackTrace();
-				} catch (FileNotFoundException e) {
-				    e.printStackTrace();
-				} catch (IOException e) {
-				    e.printStackTrace();
-				}
-		    }
-		}
-	
-		// --- Load component type settings from file ---------------------------------------------
-		GeneralGraphSettings4MAS ggs4MAS = this.loadGeneralGraphSettings();
-		// --- Remind the list of custom toolbar elements -----------------------------------------		
-		if (this.getNetworkModel()!=null) {
-			ggs4MAS.setCustomToolbarComponentDescriptions(this.getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions());
-		}
-		// --- Assign settings to the NetworkModel ------------------------------------------------ 
-		networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
-		
-		// --- Use the local method in order to inform the observer -------------------------------
-		this.setDisplayEnvironmentModel(networkModel);
+					// --- Assign settings to the NetworkModel ------------------------------------------------ 
+					networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
 
-		// --- Decode the data models that are Base64 encoded in the moment -----------------------  
-		this.setNetworkComponentDataModelBase64Decoded();
-		
+					// --- Use the local method in order to inform the observer -------------------------------
+					GraphEnvironmentController.this.setDisplayEnvironmentModel(networkModel);
+					
+					// --- Decode the data models that are Base64 encoded in the moment -----------------------
+					GraphEnvironmentController.this.setNetworkComponentDataModelBase64Decoded();
+
+				}
+			});
+			envLoader.setName("GraphEnvrionmentLoader");
+			envLoader.start();
+			
+		}
+
 		// --- Reset Undo-Manager -----------------------------------------------------------------
-		this.getNetworkModelAdapter().getUndoManager().discardAllEdits();
-
-		if (Application.getMainWindow()!=null) {
-			Application.setStatusBar(Language.translate("Fertig"));
-			Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
+		GraphEnvironmentController.this.getNetworkModelAdapter().getUndoManager().discardAllEdits();
 		
     }
 
