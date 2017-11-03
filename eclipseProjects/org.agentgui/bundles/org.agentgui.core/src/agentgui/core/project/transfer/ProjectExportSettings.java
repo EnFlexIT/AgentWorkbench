@@ -77,7 +77,7 @@ public class ProjectExportSettings {
 	 *
 	 * @param includeProduct the new include product
 	 */
-	public void setIncludeProduct(boolean includeProduct) {
+	public void setIncludeInstallationPackage(boolean includeProduct) {
 		this.includeInstallationPackage = includeProduct;
 	}
 	

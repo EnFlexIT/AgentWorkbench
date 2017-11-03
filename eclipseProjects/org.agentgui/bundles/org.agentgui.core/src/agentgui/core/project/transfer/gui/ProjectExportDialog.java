@@ -55,9 +55,6 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Component;
@@ -65,7 +62,7 @@ import java.awt.Component;
 /**
  * The Class ProjectExportDialog.
  */
-public class ProjectExportDialog extends JDialog implements ActionListener, ListSelectionListener{
+public class ProjectExportDialog extends JDialog implements ActionListener {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7642101726572826993L;
@@ -331,7 +328,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, List
 			jListSetupSelection.setModel(this.getSimulationSetupListModel());
 			jListSetupSelection.setCellRenderer(new CheckBoxListCellRenderer());
 			jListSetupSelection.setSelectionModel(new ListSelectionModelForJCheckBox());
-			jListSetupSelection.addListSelectionListener(this);
 			
 			// --- Initially select all entries ----------------
 			this.selectAllListEntries(jListSetupSelection);
@@ -367,6 +363,24 @@ public class ProjectExportDialog extends JDialog implements ActionListener, List
 		list.setSelectedIndices(selectedIndices);
 	}
 	
+	/**
+	 * Sets the export settings according to the form
+	 */
+	private void getSettingsFromForm() {
+		this.getExportSettings().setIncludeAllSetups(this.getJCheckBoxIncludeAllSetups().isSelected());
+		if (this.getExportSettings().isIncludeAllSetups() == false) {
+			this.getExportSettings().setSimSetups(this.getJListSetupSelection().getSelectedValuesList());
+		} else {
+			this.getExportSettings().setSimSetups(null);
+		}
+		this.getExportSettings().setIncludeInstallationPackage(this.getJCheckBoxIncludeInstallationPackage().isSelected());
+		if (this.getExportSettings().isIncludeInstallationPackage() == true) {
+			this.getExportSettings().setInstallationPackage((InstallationPackageDescription) this.getJComboBoxSelectInstallationPackage().getSelectedItem());
+		} else {
+			this.getExportSettings().setInstallationPackage(null);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -376,7 +390,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, List
 		if (ae.getSource() == this.getJCheckBoxIncludeInstallationPackage()) {
 			
 			boolean selectionState = this.getJCheckBoxIncludeInstallationPackage().isSelected();
-			this.getExportSettings().setIncludeProduct(selectionState);
+			this.getExportSettings().setIncludeInstallationPackage(selectionState);
 			this.getJComboBoxSelectInstallationPackage().setEnabled(selectionState);
 			if (selectionState == true) {
 				this.getExportSettings().setInstallationPackage((InstallationPackageDescription) this.getJComboBoxSelectInstallationPackage().getSelectedItem());
@@ -395,12 +409,11 @@ public class ProjectExportDialog extends JDialog implements ActionListener, List
 				this.getJListSetupSelection().clearSelection();
 			}
 			
-		} else if (ae.getSource() == this.getJComboBoxSelectInstallationPackage()) {
-			this.getExportSettings().setInstallationPackage((InstallationPackageDescription) this.getJComboBoxSelectInstallationPackage().getSelectedItem());
 		}
 		
 		else if (ae.getSource() == this.getJButtonOk()) {
 			
+			this.getSettingsFromForm();
 			this.canceled = false;
 			this.dispose();
 			
@@ -489,13 +502,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, List
 			} else {
 				super.addSelectionInterval(index0, index1);
 			}
-		}
-	}
-
-	@Override
-	public void valueChanged(ListSelectionEvent lse) {
-		if(lse.getSource().equals(this.getJListSetupSelection())) {
-			this.getExportSettings().setSimSetups(this.getJListSetupSelection().getSelectedValuesList());
 		}
 	}
 	
