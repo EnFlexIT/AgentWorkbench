@@ -46,6 +46,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.agentgui.gui.ProjectNewOpenDialog;
 import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.agentgui.gui.UiBridge;
 
 import agentgui.core.application.Application;
@@ -82,24 +85,28 @@ public class ProjectsLoaded {
 	 * @return The Project-instance that was added here
 	 */
 	public Project add(boolean addNew) {
-		return this.add(addNew, null);
+		return this.add(addNew, null, null, null, null);
 	}
 	/**
 	 * Open a project corresponding to specified project folder
 	 * @param selectedProjectFolder
-	 * @return The Project-instance that was added here
+	 * @return the Project-instance that was added here
 	 */
 	public Project add(String selectedProjectFolder) {
-		return this.add(false, selectedProjectFolder);
+		return this.add(false, selectedProjectFolder, null, null, null);
 	}
 	
 	/**
-	 * Adding (Creating or Opening) a new Project to the Application
-	 * @param addNew
-	 * @param selectedProjectFolder
+	 * Adding (Creating or Opening) a new Project to the Application.
+	 *
+	 * @param addNew the add new
+	 * @param selectedProjectFolder the selected project folder
+	 * @param mApplication the eclipse MApplication
+	 * @param ePartService the eclipse EPpartService
+	 * @param eModelService the eclipse EMmodelService
 	 * @return The Project-instance that was added here
 	 */
-	private Project add(boolean addNew, String selectedProjectFolder) {
+	public Project add(boolean addNew, String selectedProjectFolder, MApplication mApplication, EPartService ePartService, EModelService eModelService) {
 
 		ProjectAction action = null;
 		String actionTitel = null;
@@ -108,16 +115,13 @@ public class ProjectsLoaded {
 		String localTmpProjectName = null;
 		String localTmpProjectFolder = null;
 		
-		// --- Define a new Project-Instance -------------- 
-		Project newProject = new Project();
-		
-		// --- Start argument for "New" oder "Open" -------
+		// --- Start argument for "New" oder "Open" ---------------------------
 		if (addNew == true){
-			// --- New Project ----------------------------
+			// --- New Project ------------------------------------------------
 			action = ProjectAction.NewProject;
 			actionTitel = Language.translate("Neues Projekt anlegen");
 			
-			// --- Define an initial project name ---------		
+			// --- Define an initial project name -----------------------------
 			String ProjectNamePrefix = Language.translate("Neues Projekt");
 			projectNameTest = ProjectNamePrefix;
 			int index = Application.getProjectsLoaded().getIndexByName(projectNameTest);
@@ -130,19 +134,19 @@ public class ProjectsLoaded {
 			projectFolderTest = projectNameTest.toLowerCase().replace(" ", "_");
 		
 		} else {
-			// --- Open existing project ------------------
+			// --- Open existing project --------------------------------------
 			action = ProjectAction.OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
 		Application.setStatusBar(actionTitel + " ...");
 		
 		if (selectedProjectFolder==null) {
-			// --- Open user dialog -----------------------
+			// --- Open user dialog -------------------------------------------
 			ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 			newProDia.setProjectName(projectNameTest);
 			newProDia.setProjectDirectory(projectFolderTest);
 			newProDia.setVisible(true);
-			// === Wait for user here =====================
+			// === Wait for user here =========================================
 			if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
 				Application.setStatusBar(Language.translate("Fertig"));
 				return null;
@@ -154,31 +158,36 @@ public class ProjectsLoaded {
 			newProDia = null;	
 			
 		} else {
-			// --- project folder from start argument -----
+			// --- take project folder from start argument --------------------
 			localTmpProjectName = null;
 			localTmpProjectFolder = selectedProjectFolder;
 		}
 
-		// --- ClassLoader unload -------------------------
-		if (this.count()!=0) {
-			Application.getProjectFocused().resourcesRemove();
-		}
-		
-		// --- Set project variables ----------------------
-		newProject.setProjectName(localTmpProjectName);
-		newProject.setProjectFolder(localTmpProjectFolder);
-
+		// --------------------------------------------------------------------
+		// --- Define the project instance ------------------------------------
+		// --------------------------------------------------------------------
+		Project newProject = null;
 		if (addNew==true) {			
-			// --- Create default project structure -------
+			// --- Set project variables --------------------------------------
+			newProject = new Project();
+			newProject.setProjectName(localTmpProjectName);
+			newProject.setProjectFolder(localTmpProjectFolder);
+			// --- Create default project structure ---------------------------
 			newProject.checkAndCreateProjectsDirectoryStructure();
 			
 		} else {
-			// --- Get data model from file ---------------
+			// --- Get data model from file -----------------------------------
 			newProject = Project.load(localTmpProjectFolder);
 			if (newProject==null) {
 				return null;
 			}
 		}
+		
+		// --------------------------------------------------------------------
+		// --- Set required Eclipse instances ---------------------------------
+		newProject.setEclipseMApplication(mApplication);
+		newProject.setEclipseEPartService(ePartService);
+		newProject.setEclipseEModelService(eModelService);
 		
 		// --- Maybe take over Agent.GUI default JADE configuration -----------
 		if (addNew==true) {
@@ -204,10 +213,10 @@ public class ProjectsLoaded {
 		this.getProjectsOpen().add(newProject);
 		Application.setProjectFocused(newProject);
 
-		// --- Configure the project view in the main application -------------
+		// --- Configure the project in the main window -----------------------
 		if (Application.getMainWindow()!=null) {
 
-			// --- Instantiate project-window and the default tabs ----------------		
+			// --- Instantiate project-window and the default tabs ------------		
 			newProject.setMaximized();
 			
 			this.setProjectView();
@@ -215,7 +224,7 @@ public class ProjectsLoaded {
 			newProject.plugInVectorInformSetupLoaded();
 			Application.getMainWindow().setCloseButtonPosition(true);
 			Application.setTitelAddition(newProject.getProjectName());
-			Application.setStatusBar(Language.translate("Fertig"));	
+			Application.setStatusBar(Language.translate("Fertig"));
 		}
 		
 		if (addNew==true) {
@@ -370,7 +379,7 @@ public class ProjectsLoaded {
 				viewEndUser.setSelected(false);
 				viewDeveloper.setSelected(true);
 			}
-			Application.getProjectFocused().getProjectWindow().setView();
+			Application.getProjectFocused().getProjectEditorWindow().setViewForDeveloperOrEndUser();
 		}
 	}
 	

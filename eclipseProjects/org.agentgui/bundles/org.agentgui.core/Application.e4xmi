@@ -12,12 +12,12 @@
       </children>
     </children>
     <mainMenu xmi:id="_vQVB4LpeEeeqqsE_fxRcnA" elementId="org.eclipse.ui.main.menu"/>
-    <sharedElements xsi:type="basic:Part" xmi:id="__dKesLojEee7X_3op2efPQ" elementId="org.agentgui.core.part.projectEditor" contributionURI="bundleclass://org.agentgui.core/org.agentgui.gui.swt.project.ProjectEditoror" label="Project" tooltip="Project Window"/>
     <sharedElements xsi:type="basic:Part" xmi:id="_1JTCMLojEee7X_3op2efPQ" elementId="org.agentgui.core.part.console" contributionURI="bundleclass://org.agentgui.core/org.agentgui.gui.swt.parts.ConsoleView" label="Console" tooltip="Console" closeable="true"/>
     <trimBars xmi:id="_DCT4cJ-hEeeqz9onJxuSMg" elementId="org.agentgui.core.trimbar.main">
       <children xsi:type="menu:ToolBar" xmi:id="_XBgx0J-hEeeqz9onJxuSMg" elementId="org.agentgui.core.toolbar.main"/>
     </trimBars>
   </children>
+  <descriptors xmi:id="_9y4ykMGUEeefRs6i8TeWIg" elementId="org.agentgui.core.partdescriptor.agentproject" label="Agent Project" iconURI="platform:/plugin/org.agentgui.core/icons/core/AgentGUIGreen16.png" tooltip="Project: " allowMultiple="true" category="AgentProject" closeable="true" dirtyable="true" contributionURI="bundleclass://org.agentgui.core/org.agentgui.gui.swt.project.ProjectEditor"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

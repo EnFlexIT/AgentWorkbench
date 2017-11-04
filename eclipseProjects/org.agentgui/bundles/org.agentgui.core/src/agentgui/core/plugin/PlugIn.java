@@ -38,10 +38,11 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 
+import org.agentgui.gui.swing.project.ProjectWindowTab;
+
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentType;
-import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;

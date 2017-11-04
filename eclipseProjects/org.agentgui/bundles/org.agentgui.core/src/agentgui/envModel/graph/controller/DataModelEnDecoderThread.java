@@ -244,7 +244,9 @@ public class DataModelEnDecoderThread extends Thread {
     		    	getProgressMonitor().setVisible(false);
     		    	getProgressMonitor().dispose();
     		    	graphController.setBasicGraphGuiVisViewerActionOnTop(false);
-					Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
+    		    	if (Application.getMainWindow()!=null) {
+    		    		Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
+    		    	}
 					Application.setStatusBar(Language.translate("Fertig"));
     			}
     		});    		

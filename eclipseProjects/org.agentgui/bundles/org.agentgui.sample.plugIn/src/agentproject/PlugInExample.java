@@ -9,11 +9,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import org.agentgui.gui.swing.project.ProjectWindowTab;
+import org.agentgui.gui.swing.project.TabForSubPanels;
+
 import agentgui.core.application.Application;
 //import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.projectwindow.ProjectWindowTab;
-import agentgui.core.gui.projectwindow.TabForSubPanels;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
 import jade.core.ProfileImpl;
@@ -139,7 +140,7 @@ public class PlugInExample extends PlugIn {
 		// ------------------------------------------------
 		// --- 3.Add Tab to the Agent.GUI SimulationSetup -
 		// ------------------------------------------------
-		ProjectWindowTab parentPWT = this.project.getProjectWindow().getTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup);
+		ProjectWindowTab parentPWT = this.project.getProjectEditorWindow().getTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup);
 		
 		pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_END_USER,"! My Setup-Tab!", "This is my tip text for a Simulation-Setup-Tab!", null, new JPanel(), parentPWT.getTitle());
 		this.addProjectWindowTab(pwt, 1);

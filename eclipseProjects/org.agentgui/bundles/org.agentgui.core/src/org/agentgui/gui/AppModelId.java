@@ -13,6 +13,7 @@ public class AppModelId {
 	public static final String ADDON_ORG_ECLIPSE_E4_UI_WORKBENCH_CONTEXTS_MODEL = "org.eclipse.e4.ui.workbench.contexts.model";
 	public static final String APPLICATION_ORG_AGENTGUI_CORE_APPLICATION = "org.agentgui.core.application";
 	public static final String MENU_ORG_ECLIPSE_UI_MAIN_MENU = "org.eclipse.ui.main.menu";
+	public static final String PARTDESCRIPTOR_ORG_AGENTGUI_CORE_PARTDESCRIPTOR_AGENTPROJECT = "org.agentgui.core.partdescriptor.agentproject";
 	public static final String PARTSASHCONTAINER_ORG_AGENTGUI_CORE_PARTSASHCONTAINER_MAIN = "org.agentgui.core.partsashcontainer.main";
 	public static final String PARTSTACK_ORG_AGENTGUI_CORE_PARTSTACK_EDITOR = "org.agentgui.core.partstack.editor";
 	public static final String PARTSTACK_ORG_AGENTGUI_CORE_PARTSTACK_INFORM = "org.agentgui.core.partstack.inform";

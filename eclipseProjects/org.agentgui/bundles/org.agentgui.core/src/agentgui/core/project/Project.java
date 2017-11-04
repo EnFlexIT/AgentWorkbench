@@ -45,11 +45,8 @@ import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DesktopManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -59,6 +56,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.agentgui.gui.ProjectEditorWindow;
+import org.agentgui.gui.UiBridge;
+import org.agentgui.gui.swing.project.ProjectWindow;
+import org.agentgui.gui.swing.project.ProjectWindowTab;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.osgi.framework.Bundle;
 
 import agentgui.core.application.Application;
@@ -66,9 +70,7 @@ import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
-import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.components.JPanel4Visualisation;
-import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
@@ -140,7 +142,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	@XmlTransient private ProjectBundleLoader projectBundleLoader;
 	
 	/** This is the 'view' in the context of the mentioned MVC pattern */
-	@XmlTransient private ProjectWindow projectWindow;
+	@XmlTransient private ProjectEditorWindow projectEditorWindow;
 	/** This panel holds the instance of environment model display */
 	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
@@ -240,13 +242,12 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * This field can be used in order to provide customised objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
-	@XmlTransient 
-	private Serializable userRuntimeObject;
+	@XmlTransient private Serializable userRuntimeObject;
 	
 	/**
 	 * This attribute holds the instance of the currently selected SimulationSetup
 	 */
-	@XmlElement(name="simulationSetupCurrent")
+	@XmlElement(name="simulationSetupCurrent") 
 	private String simulationSetupCurrent;
 	/**
 	 * This extended HashTable is used in order to store the SimulationsSetup's names 
@@ -258,20 +259,20 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * This model contains all known environment types of the application 
 	 * and can be also used for tailored environment models / types
 	 */
-	@XmlTransient
-	private DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel;
+	@XmlTransient private DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel;
 	
 	/** The EnvironmentController of the project. */
-	@XmlTransient 
-	private EnvironmentController environmentController;
+	@XmlTransient private EnvironmentController environmentController;
 	
 	/** Configuration settings for the TimeModel used in this Project */
-	@XmlElement(name="timeModelClass")
-	private String timeModelClass = null;
+	@XmlElement(name="timeModelClass") 	private String timeModelClass = null;
 	/** The TimeModelController controls the display of the selected TimModel. */
-	@XmlTransient
-	private TimeModelController timeModelController;
+	@XmlTransient private TimeModelController timeModelController;
 	
+	
+	@XmlTransient private MApplication eclipseMApplication;
+	@XmlTransient private EPartService eclipseEPartService;
+	@XmlTransient private EModelService eclipseEModelService;
 	
 	
 	/**
@@ -550,7 +551,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		ProjectsLoaded loadedProjects = Application.getProjectsLoaded();
 		int Index = loadedProjects.getIndexByName(projectName); // --- Merker Index ---	
 		if(Application.isOperatingHeadless() == false){
-			getProjectWindow().dispose();
+			getProjectEditorWindow().dispose();
 		}
 		loadedProjects.remove(this);
 		
@@ -736,18 +737,15 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 */
 	public boolean plugInLoad(String pluginReference, boolean add2PlugInReferenceVector) {
 		
-		String MsgHead = "";
-		String MsgText = "";
-			
 		try {
-			if (getPlugInsLoaded().isLoaded(pluginReference)==true) {
+			if (this.getPlugInsLoaded().isLoaded(pluginReference)==true) {
 				// --- PlugIn can't be loaded because it's already there ------
 				PlugIn ppi = getPlugInsLoaded().getPlugIn(pluginReference);
 				
-				MsgHead = Language.translate("Fehler - PlugIn: ") + " " + ppi.getClassReference() + " !" ;
-				MsgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
+				String msgHead = Language.translate("Fehler - PlugIn: ") + " " + ppi.getClassReference() + " !" ;
+				String msgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
 						"und kann deshalb nicht erneut hinzugefügt werden!");
-				JOptionPane.showInternalMessageDialog( this.getProjectWindow(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
+				this.getProjectEditorWindow().showErrorMessage(msgText, msgHead);
 				return false;
 				
 			} else {
@@ -914,7 +912,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 			this.resourcesRemove();
 		}
 		
-		this.getProjectWindow().moveToFront();
+		this.getProjectEditorWindow().moveToFront();
 		Application.setTitelAddition(projectName);
 		Application.setProjectFocused(this);
 		Application.getProjectsLoaded().setProjectView();
@@ -926,21 +924,12 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		}
 	}
 	/**
-	 * Maximise the Project-Window within the AgenGUI-Application
+	 * Maximizes the ProjectEditorWindow within the Application
 	 */
 	public void setMaximized() {
-		if (Application.getMainWindow()!=null) {
-			// --- Validate the main application window -----------------
-			Application.getMainWindow().validate();
-			// --- Be sure that everything is there as needed ----------- 
-			if (this.getProjectWindow()!=null && this.getProjectWindow().getParent()!=null) {
-				// --- Maximise now -------------------------------------
-				((BasicInternalFrameUI) getProjectWindow().getUI()).setNorthPane(null);
-				DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
-				if (dtm!=null) {
-					dtm.maximizeFrame(getProjectWindow());	
-				}
-			}
+		ProjectEditorWindow pew = this.getProjectEditorWindow();
+		if (pew!=null) {
+			pew.setMaximized();
 		}
 	}
 	
@@ -1131,16 +1120,18 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	
 	// --- Visualization instances ----------------------------------
 	/**
-	 * Creates / Returns the project window with all {@link ProjectWindowTab}'s.
-	 * @return the project window for the current project
+	 * Creates / Returns the project editor window (Swing or SWT).
+	 * @return the project editor window for the current project
 	 */
 	@XmlTransient
-	public ProjectWindow getProjectWindow() {
-		if (this.projectWindow==null) {
-			this.projectWindow = new ProjectWindow(this);
-			this.projectWindow.addDefaultProjectWindowTabs();
+	public synchronized ProjectEditorWindow getProjectEditorWindow() {
+		if (this.projectEditorWindow==null) {
+			this.projectEditorWindow = UiBridge.getInstance().getProjectEditorWindow(this);
+			if (this.projectEditorWindow!=null) {
+				this.projectEditorWindow.addDefaultTabs();
+			}
 		}
-		return projectWindow;
+		return projectEditorWindow;
 	}
 
 	/**
@@ -1167,17 +1158,15 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 */
 	@XmlTransient
 	public void setProjectView(String newProjectView) {
-		if (newProjectView.equals(this.projectView)==false) {
-			// --- Remind the start tab for the project ---
-			DefaultMutableTreeNode oldStartNode = this.getProjectWindow().getStartTabNode();
+		ProjectEditorWindow pew = this.getProjectEditorWindow();
+		if (pew!=null && newProjectView.equals(this.projectView)==false) {
+			
 			// --- Change view ----------------------------
 			this.projectView = newProjectView;
 			setUnsaved(true);
 			setChanged();
 			notifyObservers(CHANGED_ProjectView);	
-			// --- Find and set the new start tab ---------
-			DefaultMutableTreeNode newStartNode = this.getProjectWindow().getTreeNode(oldStartNode.getUserObject().toString());
-			this.getProjectWindow().setStartTabNode(newStartNode);
+			pew.validateStartTab();
 		}
 	}
 	/**
@@ -1596,5 +1585,54 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		// TODO Auto-generated method stub
 	}
 
+	
+	/**
+	 * Sets the eclipse MApplication.
+	 * @param eclipseMApplication the current eclipse M application
+	 */
+	public void setEclipseMApplication(MApplication eclipseMApplication) {
+		this.eclipseMApplication = eclipseMApplication;
+	}
+	/**
+	 * Gets the eclipse MApplication.
+	 * @return the eclipse MApplication
+	 */
+	@XmlTransient
+	public MApplication getEclipseMApplication() {
+		return eclipseMApplication;
+	}
+
+	/**
+	* Sets the eclipse EPartService.
+	* @param eclipseEPartService the current eclipse EPartService
+	*/
+	public void setEclipseEPartService(EPartService eclipseEPartService) {
+		this.eclipseEPartService = eclipseEPartService;
+	}
+	/**
+	 * Gets the eclipse EPartService.
+	 * @return the eclipse EPartService
+	 */
+	@XmlTransient
+	public EPartService getEclipseEPartService() {
+		return eclipseEPartService;
+	}
+
+	/**
+	 * Sets the eclipse EModelService.
+	 * @param eclipseEModelService the current eclipse EModelService
+	 */
+	public void setEclipseEModelService(EModelService eclipseEModelService) {
+		this.eclipseEModelService = eclipseEModelService;
+	}
+	/**
+	 * Gets the eclipse EModelService.
+	 * @return the eclipse EModelService
+	 */
+	@XmlTransient
+	public EModelService getEclipseEModelService() {
+		return eclipseEModelService;
+	}
+	
 
 }

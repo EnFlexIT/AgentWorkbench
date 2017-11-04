@@ -30,7 +30,12 @@ package org.agentgui.gui;
 
 import java.awt.Frame;
 
+import javax.inject.Inject;
+
 import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -38,6 +43,7 @@ import org.eclipse.ui.PlatformUI;
 
 import agentgui.core.application.Application;
 import agentgui.core.gui.MainWindow;
+import agentgui.core.project.Project;
 
 
 /**
@@ -139,24 +145,37 @@ public class UiBridge {
 		return projectDialog;
 	}
 	
-	
 	/**
 	 * Returns the project window (Swing or SWT).
+	 *
+	 * @param project the project
 	 * @return the project window
 	 */
-	public ProjectWindow getProjectWindow() {
-		ProjectWindow projectWindow = null;
+	@Inject
+	public ProjectEditorWindow getProjectEditorWindow(Project project) {
+		
+		ProjectEditorWindow projectEditorWindow = null;
 		if (this.isWorkbenchRunning()==true) {
-			// --- SWT dialog -------------------
-//			projectDialog = new org.agentgui.gui.swt.dialogs.ProjectNewOpen(this.getActiveWorkbenchWindowShell(), title, currentAction);
+			// --- SWT editor -------------------
+			MPartStack editorStack = (MPartStack) project.getEclipseEModelService().find(AppModelId.PARTSTACK_ORG_AGENTGUI_CORE_PARTSTACK_EDITOR, project.getEclipseMApplication());
+			MPart editorPart = project.getEclipseEPartService().createPart(AppModelId.PARTDESCRIPTOR_ORG_AGENTGUI_CORE_PARTDESCRIPTOR_AGENTPROJECT);
+			if (editorPart!=null) {
+				editorPart.setLabel(project.getProjectName());
+				editorPart.setTooltip(project.getProjectName());
+				editorPart.setVisible(true); 
+				editorStack.getChildren().add(editorPart);
+				project.getEclipseEPartService().showPart(editorPart, PartState.VISIBLE);
+
+				projectEditorWindow = (ProjectEditorWindow) editorPart.getObject();
+			}
+			
 		} else {
-			// --- Swing dialog -----------------
-//			projectDialog = new org.agentgui.gui.swing.dialogs.ProjectNewOpen(this.getSwingMainWindow(), title, currentAction);
+			// --- Swing editor -----------------
+			projectEditorWindow = new org.agentgui.gui.swing.project.ProjectWindow(project);
 		}
-		return projectWindow;
+		return projectEditorWindow;
 	}
 	
 	
-	
-	
+
 }

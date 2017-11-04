@@ -70,7 +70,7 @@ public class JPanel4Visualisation extends JPanel {
 	 */
 	@Override
 	public Component add(Component comp) {
-		currProject.getProjectWindow().setFocus2Tab(this.tabName);
+		currProject.getProjectEditorWindow().setFocus2Tab(this.tabName);
 		return super.add(comp);
 	}
 	
@@ -79,7 +79,7 @@ public class JPanel4Visualisation extends JPanel {
 	 */
 	@Override
 	public Component add(Component comp, int index) {
-		currProject.getProjectWindow().setFocus2Tab(this.tabName);
+		currProject.getProjectEditorWindow().setFocus2Tab(this.tabName);
 		return super.add(comp, index);
 	}
 	
@@ -88,7 +88,7 @@ public class JPanel4Visualisation extends JPanel {
 	 */
 	@Override
 	public void add(Component comp, Object constraints) {
-		currProject.getProjectWindow().setFocus2Tab(this.tabName);
+		currProject.getProjectEditorWindow().setFocus2Tab(this.tabName);
 		super.add(comp, constraints);
 	}
 	
@@ -97,7 +97,7 @@ public class JPanel4Visualisation extends JPanel {
 	 */
 	@Override
 	public void add(Component comp, Object constraints, int index) {
-		currProject.getProjectWindow().setFocus2Tab(this.tabName);
+		currProject.getProjectEditorWindow().setFocus2Tab(this.tabName);
 		super.add(comp, constraints, index);
 	}
 	
@@ -106,7 +106,7 @@ public class JPanel4Visualisation extends JPanel {
 	 */
 	@Override
 	public Component add(String name, Component comp) {
-		currProject.getProjectWindow().setFocus2Tab(this.tabName);
+		currProject.getProjectEditorWindow().setFocus2Tab(this.tabName);
 		return super.add(name, comp);
 	}
 	

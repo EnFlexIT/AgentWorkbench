@@ -34,11 +34,12 @@ import jade.core.ServiceException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.agentgui.gui.swing.project.ProjectWindowTab;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
-import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.RemoteContainerConfiguration;
 import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
@@ -194,7 +195,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				
 				// --- Set the focus on Visualisation-Tab ---------------------
-				currProject.getProjectWindow().setFocus2Tab(Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION));
+				currProject.getProjectEditorWindow().setFocus2Tab(Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION));
 			}
 			// ----------------------------------------------------------------
 		}

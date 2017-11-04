@@ -34,7 +34,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import agentgui.core.gui.projectwindow.Distribution;
+import org.agentgui.gui.swing.project.Distribution;
+
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;

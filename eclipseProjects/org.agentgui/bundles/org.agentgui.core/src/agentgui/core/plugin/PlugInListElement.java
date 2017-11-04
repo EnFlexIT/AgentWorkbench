@@ -28,7 +28,7 @@
  */
 package agentgui.core.plugin;
 
-import agentgui.core.gui.projectwindow.ProjectResources;
+import org.agentgui.gui.swing.project.ProjectResources;
 
 /**
  * This class is used as a displayable element in JLists, as for example

@@ -28,61 +28,61 @@
  */
 package org.agentgui.gui.swt.project;
 
+import javax.annotation.PostConstruct;
+
+import org.agentgui.gui.AppModelId;
+import org.agentgui.gui.ProjectEditorWindow;
+import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.EditorPart;
 
 import agentgui.core.config.GlobalInfo;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.widgets.Control;
 
 /**
- * The ProjectEditor.
+ * The ProjectEditor is used as project editor within the SWT environment.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectEditor extends EditorPart {
+public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 
-	public static final String ID = "org.agentgui.core.part.projectEditor"; //$NON-NLS-1$
+	public static final String ID = AppModelId.PART_ORG_AGENTGUI_CORE_PART_PROJECTEDITOR;
 	
-	private FormToolkit toolkit;
-		
 	private SashForm sashForm;
+	
 	private Tree tree;
 	private TreeViewer treeViewer;
-	private Button btnNewButton;
 	private CTabFolder tabFolder;
 	private CTabItem tabItem;
 	private CTabItem tabItem_1;
-	private CTabItem tbtmNewItem;
-	private Composite composite;
-	private CTabItem tabItem_2;
-	private CTabFolder tabFolder_1;
-	private Section sctnNewSection;
-	private Section sctnNewSection_1;
-	private CTabItem tabItem_3;
 
 	
+	/**
+	 * Instantiates a new project editor.
+	 */
 	public ProjectEditor() {
-		setContentDescription("The project editor enables to edit projects");
 		setPartName("Project Editor");
+		setContentDescription("The project editor enables to edit projects");
 		setTitleImage(GlobalInfo.getInternalSWTImage("AgentGUIGreen16.png"));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 */
+	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		// TODO Initialize the editor part
+		// --- Try to get the current project instance ---- 
 	}
 
 	/**
@@ -90,109 +90,123 @@ public class ProjectEditor extends EditorPart {
 	 * @param parent
 	 */
 	@Override
+	@PostConstruct
 	public void createPartControl(Composite parent) {
 		
-		this.toolkit = new FormToolkit(parent.getDisplay());
-
 		this.sashForm = new SashForm(parent, SWT.NONE);
-		
 		
 		this.treeViewer = new TreeViewer(this.sashForm, SWT.BORDER);
 		this.tree = this.treeViewer.getTree();
 		
 		this.tabFolder = new CTabFolder(this.sashForm, SWT.BORDER);
 		this.tabFolder.setTabPosition(SWT.BOTTOM);
-		this.toolkit.adapt(this.tabFolder);
-		this.toolkit.paintBordersFor(this.tabFolder);
 		this.tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
 		this.tabItem = new CTabItem(this.tabFolder, SWT.NONE);
 		this.tabItem.setText("New Item");
-
-			ScrolledForm form2 = this.toolkit.createScrolledForm(this.tabFolder);
-			this.tabItem.setControl(form2);
-			this.toolkit.decorateFormHeading(form2.getForm());
-			
-				form2.setText("First Page: Eclipse Forms API Example");
-				form2.getBody().setLayout(new GridLayout(1, false));
-		
-				this.sctnNewSection = this.toolkit.createSection(form2.getBody(), Section.TWISTIE | Section.TITLE_BAR);
-				this.sctnNewSection.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
-				this.toolkit.paintBordersFor(this.sctnNewSection);
-				this.sctnNewSection.setText("New Section");
-				
-				this.sctnNewSection_1 = this.toolkit.createSection(form2.getBody(), Section.TWISTIE | Section.TITLE_BAR);
-				this.sctnNewSection_1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, true, 1, 1));
-				this.toolkit.paintBordersFor(this.sctnNewSection_1);
-				this.sctnNewSection_1.setText("New Section");
-				
-		
 		
 		this.tabItem_1 = new CTabItem(this.tabFolder, SWT.NONE);
 		this.tabItem_1.setText("New Item");
+														
+		this.sashForm.setWeights(new int[] { 3, 10 });
 		
-				ScrolledForm form = this.toolkit.createScrolledForm(this.tabFolder);
-				this.tabItem_1.setControl(form);
-				this.toolkit.decorateFormHeading(form.getForm());
-				
-						form.setText("Second Page: Eclipse Forms API Example");
-						form.getBody().setLayout(new GridLayout(1, false));
-						
-								this.btnNewButton = toolkit.createButton(form.getBody(), "New Button", SWT.NONE);
-								
-								this.tabItem_3 = new CTabItem(this.tabFolder, SWT.NONE);
-								this.tabItem_3.setText("New Item");
-								
-								this.tbtmNewItem = new CTabItem(this.tabFolder, SWT.NONE);
-								this.tbtmNewItem.setText("New Item");
-								
-								this.composite = new Composite(this.tabFolder, SWT.NONE);
-								this.tbtmNewItem.setControl(this.composite);
-								this.toolkit.paintBordersFor(this.composite);
-								this.composite.setLayout(new GridLayout(1, false));
-								
-								this.tabItem_2 = new CTabItem(this.tabFolder, SWT.NONE);
-								this.tabItem_2.setText("New Item");
-								
-								this.tabFolder_1 = new CTabFolder(this.tabFolder, SWT.BORDER);
-								this.tabItem_2.setControl(this.tabFolder_1);
-								this.toolkit.paintBordersFor(this.tabFolder_1);
-								this.tabFolder_1.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-
-														
-														
-														
-		this.sashForm.setWeights(new int[] { 3, 10 });	
-		parent.setTabList(new Control[]{this.sashForm});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+	 */
 	@Override
 	public void setFocus() {
-		// Set the focus
+		this.setFocus();
 	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// Do the Save operation
+		// TODO the Save operation
 	}
-
-	@Override
-	public void doSaveAs() {
-		// Do the Save As operation
-	}
-
-	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		// Initialize the editor part
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#isDirty()
+	 */
 	@Override
 	public boolean isDirty() {
+		// TODO 
 		return false;
 	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
+	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
+	 */
+	@Override
+	public void doSaveAs() {
+		// Nothing to do here !
+	}
+	
+	
+	@Override
+	public void addDefaultTabs() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void moveToFront() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setMaximized() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setFocus2Tab(String tabName) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setViewForDeveloperOrEndUser() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public ProjectWindowTab getTabForSubPanels(String superPanelName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void validateStartTab() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void showErrorMessage(String msgText, String msgHead) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void addProjectTab(ProjectWindowTab projectWindowTab) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPosition) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeProjectTab(ProjectWindowTab projectWindowTab) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

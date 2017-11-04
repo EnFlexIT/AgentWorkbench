@@ -34,7 +34,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import agentgui.core.gui.projectwindow.Distribution;
+import org.agentgui.gui.swing.project.Distribution;
+
 import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 

@@ -30,7 +30,8 @@ package agentgui.core.project;
 
 import java.io.Serializable;
 
-import agentgui.core.gui.projectwindow.Distribution;
+import org.agentgui.gui.swing.project.Distribution;
+
 import agentgui.simulationService.load.LoadThresholdLevels;
 
 /**
