@@ -59,7 +59,7 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	/** Set this variable to switch the visualization */
-	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.EclipseFramework;
+	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentGuiSwing;
 	
 	private IApplicationContext IApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
