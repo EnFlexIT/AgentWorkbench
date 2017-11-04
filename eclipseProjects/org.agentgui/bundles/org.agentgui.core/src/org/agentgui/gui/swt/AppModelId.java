@@ -1,4 +1,4 @@
-package org.agentgui.gui;
+package org.agentgui.gui.swt;
 
 public class AppModelId {
 	public static final String ADDON_CLEANUP_ADDON = "Cleanup Addon";

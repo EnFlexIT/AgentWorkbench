@@ -29,7 +29,7 @@
  
 package org.agentgui.gui.swt.handler;
 
-import org.agentgui.gui.AppModelId;
+import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;

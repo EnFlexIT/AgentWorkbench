@@ -223,7 +223,7 @@ public class MainWindow extends JFrame {
 				}
 				if (Application.getProjectsLoaded().count()!= 0) {
 					Application.getProjectFocused().setMaximized();
-					setCloseButtonPosition( true );
+					setCloseButtonPosition(true);
 				} else {
 					setCloseButtonPosition(false);
 				}

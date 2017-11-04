@@ -33,6 +33,7 @@ import java.awt.Frame;
 import javax.inject.Inject;
 
 import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;

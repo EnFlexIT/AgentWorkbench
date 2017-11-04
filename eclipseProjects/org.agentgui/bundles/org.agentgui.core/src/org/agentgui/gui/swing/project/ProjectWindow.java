@@ -491,18 +491,19 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	 */
 	public void setMaximized() {
 		
-		if (Application.getMainWindow()!=null) {
+		MainWindow mainWindow = Application.getMainWindow(); 
+		if (mainWindow!=null) {
 			// --- Validate the main application window -----------------
-			Application.getMainWindow().validate();
+			mainWindow.validate();
 			// --- Be sure that everything is there as needed ----------- 
 			if (this.getParent()!=null) {
-				// --- Maximise now -------------------------------------
 				((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
-				DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
+				DesktopManager dtm = mainWindow.getJDesktopPane4Projects().getDesktopManager();
 				if (dtm!=null) {
 					dtm.maximizeFrame(this);	
 				}
 			}
+			mainWindow.setCloseButtonPosition(true);
 		}
 	}
 	

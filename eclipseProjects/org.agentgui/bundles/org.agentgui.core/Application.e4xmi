@@ -12,7 +12,7 @@
       </children>
     </children>
     <mainMenu xmi:id="_vQVB4LpeEeeqqsE_fxRcnA" elementId="org.eclipse.ui.main.menu"/>
-    <sharedElements xsi:type="basic:Part" xmi:id="_1JTCMLojEee7X_3op2efPQ" elementId="org.agentgui.core.part.console" contributionURI="bundleclass://org.agentgui.core/org.agentgui.gui.swt.parts.ConsoleView" label="Console" tooltip="Console" closeable="true"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_1JTCMLojEee7X_3op2efPQ" elementId="org.agentgui.core.part.console" contributionURI="bundleclass://org.agentgui.core/org.agentgui.gui.swt.parts.ConsoleView" label="Console" tooltip="Console"/>
     <trimBars xmi:id="_DCT4cJ-hEeeqz9onJxuSMg" elementId="org.agentgui.core.trimbar.main">
       <children xsi:type="menu:ToolBar" xmi:id="_XBgx0J-hEeeqz9onJxuSMg" elementId="org.agentgui.core.toolbar.main"/>
     </trimBars>

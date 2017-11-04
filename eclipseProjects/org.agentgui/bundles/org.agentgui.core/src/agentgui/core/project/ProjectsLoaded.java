@@ -214,7 +214,7 @@ public class ProjectsLoaded {
 		Application.setProjectFocused(newProject);
 
 		// --- Configure the project in the main window -----------------------
-		if (Application.getMainWindow()!=null) {
+		if (Application.getMainWindow()!=null || UiBridge.getInstance().isWorkbenchRunning()==true) {
 
 			// --- Instantiate project-window and the default tabs ------------		
 			newProject.setMaximized();
@@ -222,7 +222,6 @@ public class ProjectsLoaded {
 			this.setProjectView();
 			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);
 			newProject.plugInVectorInformSetupLoaded();
-			Application.getMainWindow().setCloseButtonPosition(true);
 			Application.setTitelAddition(newProject.getProjectName());
 			Application.setStatusBar(Language.translate("Fertig"));
 		}

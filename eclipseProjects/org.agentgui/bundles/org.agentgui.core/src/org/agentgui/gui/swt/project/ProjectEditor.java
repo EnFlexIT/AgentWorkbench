@@ -30,9 +30,9 @@ package org.agentgui.gui.swt.project;
 
 import javax.annotation.PostConstruct;
 
-import org.agentgui.gui.AppModelId;
 import org.agentgui.gui.ProjectEditorWindow;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
+import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
