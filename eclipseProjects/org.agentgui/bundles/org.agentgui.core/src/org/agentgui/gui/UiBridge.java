@@ -161,9 +161,8 @@ public class UiBridge {
 			MPartStack editorStack = (MPartStack) project.getEclipseEModelService().find(AppModelId.PARTSTACK_ORG_AGENTGUI_CORE_PARTSTACK_EDITOR, project.getEclipseMApplication());
 			MPart editorPart = project.getEclipseEPartService().createPart(AppModelId.PARTDESCRIPTOR_ORG_AGENTGUI_CORE_PARTDESCRIPTOR_AGENTPROJECT);
 			if (editorPart!=null) {
-				editorPart.setLabel(project.getProjectName());
-				editorPart.setTooltip(project.getProjectName());
-				editorPart.setVisible(true); 
+				editorPart.getTransientData().put(Project.class.getName(), project);
+				editorPart.setVisible(true);
 				editorStack.getChildren().add(editorPart);
 				project.getEclipseEPartService().showPart(editorPart, PartState.VISIBLE);
 

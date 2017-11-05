@@ -29,11 +29,14 @@
 package org.agentgui.gui.swt.project;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.agentgui.gui.ProjectEditorWindow;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -41,13 +44,16 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
+import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.project.Project;
 
 /**
  * The ProjectEditor is used as project editor within the SWT environment.
@@ -57,6 +63,10 @@ import agentgui.core.config.GlobalInfo;
 public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 
 	public static final String ID = AppModelId.PART_ORG_AGENTGUI_CORE_PART_PROJECTEDITOR;
+	
+	private Shell currShell;
+	private MPart currMPart;
+	private Project currProject;
 	
 	private SashForm sashForm;
 	
@@ -69,11 +79,22 @@ public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 	
 	/**
 	 * Instantiates a new project editor.
+	 *
+	 * @param mPart the MPart that uses the current ProjectEditor as 'Object'
+	 * @param shell the current shell
 	 */
-	public ProjectEditor() {
-		setPartName("Project Editor");
-		setContentDescription("The project editor enables to edit projects");
-		setTitleImage(GlobalInfo.getInternalSWTImage("AgentGUIGreen16.png"));
+	@Inject
+	public ProjectEditor(MPart mPart, Shell shell) {
+		if (mPart!=null) {
+			this.currMPart = mPart;
+			this.currShell = shell;
+			this.currProject = (Project) this.currMPart.getTransientData().get(Project.class.getName());
+			this.currMPart.setLabel(this.currProject.getProjectName());
+			this.currMPart.setTooltip(this.currProject.getProjectName());
+		}
+		this.setPartName("Project Editor");
+		this.setContentDescription("The project editor enables to edit projects");
+		this.setTitleImage(GlobalInfo.getInternalSWTImage("AgentGUIGreen16.png"));
 	}
 	
 	/* (non-Javadoc)
@@ -82,7 +103,6 @@ public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		// TODO Initialize the editor part
-		// --- Try to get the current project instance ---- 
 	}
 
 	/**
@@ -131,8 +151,7 @@ public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 	 */
 	@Override
 	public boolean isDirty() {
-		// TODO 
-		return false;
+		return this.getProject().isUnsaved();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
@@ -147,6 +166,42 @@ public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 	@Override
 	public void doSaveAs() {
 		// Nothing to do here !
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.ProjectEditorWindow#getProject()
+	 */
+	@Override
+	public Project getProject() {
+		return this.currProject;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.ProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText) {
+		
+		ProjectCloseUserFeedback userFeedback = null;
+		
+		String answerYES = Language.translate("Yes", Language.EN);
+		String answerNO = Language.translate("No", Language.EN);
+		String answerCANCEL = Language.translate("Cancel", Language.EN);
+		int result = MessageDialog.open(MessageDialog.QUESTION_WITH_CANCEL, this.currShell, msgTitle, msgText, SWT.NONE, new String[] {answerYES, answerNO, answerCANCEL});
+		switch (result) {
+		case 0:
+			userFeedback = ProjectCloseUserFeedback.SaveProject;
+			break;
+		case 1:
+			userFeedback = ProjectCloseUserFeedback.DoNotSaveProject;
+			break;
+		case 2:
+			userFeedback = ProjectCloseUserFeedback.CancelCloseAction;
+			break;
+		}
+		System.out.println("=> " + userFeedback.toString());
+		return userFeedback;
 	}
 	
 	
@@ -194,19 +249,16 @@ public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 	@Override
 	public void addProjectTab(ProjectWindowTab projectWindowTab) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPosition) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void removeProjectTab(ProjectWindowTab projectWindowTab) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 }

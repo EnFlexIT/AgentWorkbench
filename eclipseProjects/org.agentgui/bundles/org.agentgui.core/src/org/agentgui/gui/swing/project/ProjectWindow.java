@@ -132,6 +132,14 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 		this.initialize();		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.ProjectEditorWindow#getProject()
+	 */
+	@Override
+	public Project getProject() {
+		return this.currProject;
+	}
+	
 	/**
 	 * This method initializes this.
 	 */
@@ -236,6 +244,25 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 		}
 		super.dispose();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.ProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText) {
+		
+		ProjectCloseUserFeedback userFeedback = null;
+		int msgAnswer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msgText, msgTitle, JOptionPane.YES_NO_CANCEL_OPTION);
+		if (msgAnswer==JOptionPane.CANCEL_OPTION) {
+			userFeedback = ProjectCloseUserFeedback.CancelCloseAction;
+		} else if (msgAnswer==JOptionPane.YES_OPTION) {
+			userFeedback = ProjectCloseUserFeedback.SaveProject;
+		} else if (msgAnswer==JOptionPane.NO_OPTION) {
+			userFeedback = ProjectCloseUserFeedback.DoNotSaveProject;
+		}
+		return userFeedback;
+	}
+	
 	/**
 	 * This method initializes ProjectViewSplit.
 	 * @return javax.swing.JSplitPane
@@ -1129,5 +1156,5 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	public void showErrorMessage(String msgText, String msgHead) {
 		JOptionPane.showInternalMessageDialog( this, msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 	}
-	
+
 }  

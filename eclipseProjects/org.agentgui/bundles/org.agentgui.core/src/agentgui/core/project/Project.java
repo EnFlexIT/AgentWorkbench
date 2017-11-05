@@ -57,6 +57,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.agentgui.gui.ProjectEditorWindow;
+import org.agentgui.gui.ProjectEditorWindow.ProjectCloseUserFeedback;
 import org.agentgui.gui.UiBridge;
 import org.agentgui.gui.swing.project.ProjectWindow;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
@@ -487,7 +488,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	}
 	
 	/**
-	 * This method closes the current project. If necessary it will try to save the before.
+	 * This method closes the current project. If necessary it will try to save it before.
 	 * @return Returns true if saving was successful
 	 */
 	public boolean close() {
@@ -503,28 +504,33 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		// --- Close project? -----------------------------
 		String msgHead = null;
 		String msgText = null;
-		Integer msgAnswer = 0;
 		
 		Application.setStatusBar(Language.translate("Projekt schließen") + " ...");
 		if (this.isUnsaved()==true) {
-			msgHead = Language.translate("Projekt '@' speichern?");
-			msgHead = msgHead.replace( "'@'", "'" + projectName + "'");			
-			msgText = Language.translate(
+			
+			if (Application.isOperatingHeadless()==false) {
+				// --- Operation with an UI ---------------
+				msgHead = Language.translate("Projekt '@' speichern?");
+				msgHead = msgHead.replace("'@'", "'" + projectName + "'");			
+				msgText = Language.translate(
 						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + Application.getGlobalInfo().getNewLineSeparator() + 
 						"Möchten Sie es nun speichern ?");
-			msgText = msgText.replace( "'@'", "'" + projectName + "'");
-			
-			if (Application.getMainWindow()!=null) {
-				if (parentComponent==null) {
-					parentComponent = Application.getMainWindow().getContentPane(); 
-				}
-				msgAnswer = JOptionPane.showConfirmDialog(parentComponent, msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
-				if (msgAnswer == JOptionPane.CANCEL_OPTION) {
+				msgText = msgText.replace("'@'", "'" + projectName + "'");
+				
+				ProjectCloseUserFeedback userAnswer = this.getProjectEditorWindow().getUserFeedbackForClosingProject(msgHead, msgText);
+				switch (userAnswer) {
+				case CancelCloseAction:
 					return false;
-				} else if (msgAnswer == JOptionPane.YES_OPTION) {
+				case SaveProject:
 					if (this.save()==false) return false;
+					break;
+				case DoNotSaveProject:
+					// --- Nothing to do here ---
+					break;
 				}
+				
 			} else {
+				// --- Headless operation -----------------
 				if (this.save()==false) return false;
 			}
 		}
@@ -544,23 +550,23 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		
 		// --- Clear PlugIns ------------------------------
 		this.plugInVectorRemove();
-		// --- Clear ClassPath ----------------------------
+		// --- Remove external resources ------------------
 		this.resourcesRemove();
 		
 		// --- Close Project ------------------------------
 		ProjectsLoaded loadedProjects = Application.getProjectsLoaded();
-		int Index = loadedProjects.getIndexByName(projectName); // --- Merker Index ---	
-		if(Application.isOperatingHeadless() == false){
+		int projectIndex = loadedProjects.getIndexByName(this.projectName); 	
+		if (Application.isOperatingHeadless()==false){
 			getProjectEditorWindow().dispose();
 		}
 		loadedProjects.remove(this);
 		
 		int nProjects = loadedProjects.count();
 		if (nProjects > 0) {
-			if ( Index+1 > nProjects ) Index = nProjects-1;  
-			Application.setProjectFocused(loadedProjects.get(Index));
+			if (projectIndex+1>nProjects ) projectIndex=nProjects-1;  
+			Application.setProjectFocused(loadedProjects.get(projectIndex));
 			Application.getProjectFocused().setFocus(true);
-			Application.setTitelAddition( Application.getProjectFocused().projectName );
+			Application.setTitelAddition(Application.getProjectFocused().getProjectName());
 		} else {
 			Application.setProjectFocused(null);
 			Application.setTitelAddition("");
