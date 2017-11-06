@@ -1,6 +1,8 @@
 package agentgui.core.project.transfer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -21,7 +23,13 @@ import javax.xml.bind.Unmarshaller;
 import org.agentgui.gui.ProjectNewOpenDialog;
 import org.agentgui.gui.UiBridge;
 import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
-
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
@@ -76,10 +84,10 @@ public class ProjectExportController {
 			// --- Get the export settings from the dialog -----------------
 			this.exportSettings = projectExportDialog.getExportSettings();
 			
-			if (this.exportSettings.isIncludeInstallationPackage()) {
-				JOptionPane.showMessageDialog(null, "Exporting of installation packages is not implemented yet", "Under Construction", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+//			if (this.exportSettings.isIncludeInstallationPackage()) {
+//				JOptionPane.showMessageDialog(null, "Exporting of installation packages is not implemented yet", "Under Construction", JOptionPane.WARNING_MESSAGE);
+//				return;
+//			}
 			
 			// --- Create file name suggestion -----------------------------
 			String fileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
@@ -98,6 +106,8 @@ public class ProjectExportController {
 			
 			if(chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION){
 				File targetFile = chooser.getSelectedFile();
+				
+				Application.getGlobalInfo().setLastSelectedFolder(targetFile.getParentFile());
 				
 				// --- Check if the file already exists ----------
 				if (targetFile.exists()==true) {
@@ -136,9 +146,10 @@ public class ProjectExportController {
 
 						// --- Integrate the project into the installation package ------
 						
-						//TODO implement
+						this.addProjectToInstallationPackage();
 						
 					} else {
+						
 						
 						// --- Create a zipped file --------------------
 						Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
@@ -394,6 +405,65 @@ public class ProjectExportController {
 		}
 		
 		return this.tempExportFolderPath;
+	}
+	
+	private boolean addProjectToInstallationPackage() {
+		
+		ArchiveInputStream zais = null;
+		ArchiveOutputStream aos = null;
+		try {
+			File installationPackageFile = this.exportSettings.getInstallationPackage().getPacakgeFile();
+			String packageFileName = installationPackageFile.getName();
+			Path copyTargetPath = this.getTempExportFolderPath().resolve("..").resolve(packageFileName);
+			Files.copy(installationPackageFile.toPath(), copyTargetPath, StandardCopyOption.REPLACE_EXISTING);
+			
+			aos = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, new FileOutputStream(copyTargetPath.toFile()));
+			zais = (ZipArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP, new FileInputStream(installationPackageFile));
+
+			ArchiveEntry entry;
+			
+			byte[] buffer = new byte[1024];
+			while((entry = zais.getNextEntry()) != null) {
+				aos.putArchiveEntry(entry);
+				int bytesRead;
+				while((bytesRead = zais.read(buffer)) >0 ) {
+					aos.write(buffer, 0, bytesRead);
+				}
+				aos.closeArchiveEntry();
+			}
+			
+			
+			Path testFile = getTempExportFolderPath().resolve("..").resolve("test.txt");
+			byte[] data = Files.readAllBytes(testFile);
+			
+			
+			ZipArchiveEntry archiveEntry = new ZipArchiveEntry("agentgui/projects/hygrid/test.txt");
+			archiveEntry.setSize(data.length);
+			
+			aos.putArchiveEntry(archiveEntry);
+			aos.write(data);
+			aos.closeArchiveEntry();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ArchiveException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if(aos != null) {
+						aos.close();
+				}
+				if(zais != null) {
+					zais.close();
+				}
+			} catch (IOException e) {
+				System.err.println("Error closing streams!");
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
 	/**
