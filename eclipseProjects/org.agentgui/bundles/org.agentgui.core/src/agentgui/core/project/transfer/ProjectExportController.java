@@ -23,22 +23,15 @@ import javax.xml.bind.Unmarshaller;
 import org.agentgui.gui.ProjectNewOpenDialog;
 import org.agentgui.gui.UiBridge;
 import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.gui.ProjectExportDialog;
+import de.enflexit.common.transfer.NewZipper;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
-import de.enflexit.common.transfer.Zipper;
 
 /**
  * This class is responsible for exporting projects from AgentWorkbench
@@ -52,6 +45,8 @@ public class ProjectExportController {
 	private ProjectExportSettings exportSettings;
 	
 	private Path tempExportFolderPath;
+	
+	private JFileChooser jFileChooser;
 	
 	/**
 	 * Constructor
@@ -84,26 +79,13 @@ public class ProjectExportController {
 			// --- Get the export settings from the dialog -----------------
 			this.exportSettings = projectExportDialog.getExportSettings();
 			
-//			if (this.exportSettings.isIncludeInstallationPackage()) {
-//				JOptionPane.showMessageDialog(null, "Exporting of installation packages is not implemented yet", "Under Construction", JOptionPane.WARNING_MESSAGE);
-//				return;
-//			}
+			if (this.exportSettings.isIncludeInstallationPackage()) {
+				JOptionPane.showMessageDialog(null, "Exporting of installation packages is not implemented yet", "Under Construction", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 			
-			// --- Create file name suggestion -----------------------------
-			String fileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
-			String proposedFileName = Application.getGlobalInfo().getLastSelectedFolderAsString() + project.getProjectFolder() + "." + fileSuffix ;
-			File proposedFile = new File(proposedFileName );
-			FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileSuffix + ")", fileSuffix);
-			
-			// --- Prepare a JFileChooser for selecting the export destination -------
-			JFileChooser chooser = new JFileChooser();
-			chooser.setFileFilter(filter);
-			chooser.setSelectedFile(proposedFile);
-			chooser.setCurrentDirectory(proposedFile);
-			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			chooser.setMultiSelectionEnabled(false);
-			chooser.setAcceptAllFileFilterUsed(false);
-			
+			// --- Select the export destination -------
+			JFileChooser chooser = this.getJFileChooser();
 			if(chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION){
 				File targetFile = chooser.getSelectedFile();
 				
@@ -146,36 +128,10 @@ public class ProjectExportController {
 
 						// --- Integrate the project into the installation package ------
 						
-						this.addProjectToInstallationPackage();
 						
 					} else {
 						
-						
-						// --- Create a zipped file --------------------
-						Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
-						zipper.setZipFolder(targetFile.getAbsolutePath());
-						zipper.setZipSourceFolder(tempExportFolderPath.toFile().getAbsolutePath());
-						zipper.doZipFolder();
-						
-						// --- Wait for the zipper --------------
-						while(zipper.isDone() == false) {
-							try {
-								Thread.sleep(500);
-							} catch (InterruptedException e) {
-								// --- Nothing to do here --------------
-							}
-						}
-						
-						zipper = null;
-						
-						try {
-							// --- Remove the temporary export folder -------------
-							RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
-							folderDeleter.deleteFolder(tempExportFolderPath);
-						} catch (IOException e) {
-							System.err.println("Error exporting temoprary export folder");
-							e.printStackTrace();
-						}
+						success = this.zipTempFolder(targetFile);
 						
 					}
 					
@@ -217,6 +173,28 @@ public class ProjectExportController {
 			String projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + projectSubFolder;
 			return Project.load(new File(projectFolderFullPath), false);
 		}
+	}
+
+	private JFileChooser getJFileChooser() {
+		
+		if (jFileChooser == null) {
+			// --- Create file name suggestion -----------------------------
+			String fileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
+			String proposedFileName = Application.getGlobalInfo().getLastSelectedFolderAsString() + project.getProjectFolder() + "." + fileSuffix ;
+			File proposedFile = new File(proposedFileName );
+			FileNameExtensionFilter aguiFilter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileSuffix + ")", fileSuffix);
+			
+			// --- Prepare a JFileChooser for selecting the export destination -------
+			jFileChooser = new JFileChooser();
+			jFileChooser.setFileFilter(aguiFilter);
+			jFileChooser.setSelectedFile(proposedFile);
+			jFileChooser.setCurrentDirectory(proposedFile);
+			jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			jFileChooser.setMultiSelectionEnabled(false);
+			jFileChooser.setAcceptAllFileFilterUsed(false);
+		}
+		
+		return jFileChooser;
 	}
 
 	/**
@@ -389,6 +367,40 @@ public class ProjectExportController {
 		exportedProject.save(this.tempExportFolderPath.toFile(), false);
 	}
 	
+	private boolean zipTempFolder(File targetFile) {
+		
+//		// --- Create a zipped file --------------------
+//		Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
+//		zipper.setZipFolder(targetFile.getAbsolutePath());
+//		zipper.setZipSourceFolder(tempExportFolderPath.toFile().getAbsolutePath());
+//		zipper.doZipFolder();
+//		
+//		// --- Wait for the zipper --------------
+//		while(zipper.isDone() == false) {
+//			try {
+//				Thread.sleep(500);
+//			} catch (InterruptedException e) {
+//				// --- Nothing to do here --------------
+//			}
+//		}
+//		
+//		zipper = null;
+		
+		NewZipper newZipper = new NewZipper();
+		newZipper.compressFolder(tempExportFolderPath.toFile(), targetFile);
+		
+		try {
+			// --- Remove the temporary export folder -------------
+			RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
+			folderDeleter.deleteFolder(tempExportFolderPath);
+		} catch (IOException e) {
+			System.err.println("Error exporting temoprary export folder");
+			e.printStackTrace();
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * Gets the temporary export folder
 	 * @return the temporary export folder
@@ -399,7 +411,7 @@ public class ProjectExportController {
 
 			// --- Determine the path for the temporary export folder, based on the selected target file -------------- 
 			File targetFile = this.exportSettings.getTargetFile();
-			String targetFileBaseName = targetFile.getName().substring(0, targetFile.getName().lastIndexOf("."));
+			String targetFileBaseName = targetFile.getName().substring(0, targetFile.getName().indexOf("."));
 			Path containingFolder = targetFile.getParentFile().toPath();
 			tempExportFolderPath = containingFolder.resolve(targetFileBaseName);	
 		}
@@ -407,64 +419,6 @@ public class ProjectExportController {
 		return this.tempExportFolderPath;
 	}
 	
-	private boolean addProjectToInstallationPackage() {
-		
-		ArchiveInputStream zais = null;
-		ArchiveOutputStream aos = null;
-		try {
-			File installationPackageFile = this.exportSettings.getInstallationPackage().getPacakgeFile();
-			String packageFileName = installationPackageFile.getName();
-			Path copyTargetPath = this.getTempExportFolderPath().resolve("..").resolve(packageFileName);
-			Files.copy(installationPackageFile.toPath(), copyTargetPath, StandardCopyOption.REPLACE_EXISTING);
-			
-			aos = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, new FileOutputStream(copyTargetPath.toFile()));
-			zais = (ZipArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP, new FileInputStream(installationPackageFile));
-
-			ArchiveEntry entry;
-			
-			byte[] buffer = new byte[1024];
-			while((entry = zais.getNextEntry()) != null) {
-				aos.putArchiveEntry(entry);
-				int bytesRead;
-				while((bytesRead = zais.read(buffer)) >0 ) {
-					aos.write(buffer, 0, bytesRead);
-				}
-				aos.closeArchiveEntry();
-			}
-			
-			
-			Path testFile = getTempExportFolderPath().resolve("..").resolve("test.txt");
-			byte[] data = Files.readAllBytes(testFile);
-			
-			
-			ZipArchiveEntry archiveEntry = new ZipArchiveEntry("agentgui/projects/hygrid/test.txt");
-			archiveEntry.setSize(data.length);
-			
-			aos.putArchiveEntry(archiveEntry);
-			aos.write(data);
-			aos.closeArchiveEntry();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ArchiveException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if(aos != null) {
-						aos.close();
-				}
-				if(zais != null) {
-					zais.close();
-				}
-			} catch (IOException e) {
-				System.err.println("Error closing streams!");
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
 	
 	/**
 	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file

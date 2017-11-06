@@ -27,8 +27,7 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.osgi.services,
  org.eclipse.core.runtime,
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
- org.agentgui.lib.jade;bundle-version="4.4.0",
- org.agentgui.lib.compress
+ org.agentgui.lib.jade;bundle-version="4.4.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-Vendor: EnFlex.IT

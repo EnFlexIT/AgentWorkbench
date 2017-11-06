@@ -357,6 +357,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/classLoadService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
- javax.inject;version="1.0.0",
- org.apache.commons.compress.archivers,
- org.apache.commons.compress.archivers.zip
+ javax.inject;version="1.0.0"
