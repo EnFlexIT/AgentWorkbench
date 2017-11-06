@@ -39,6 +39,40 @@ import agentgui.core.project.Project;
  */
 public interface ProjectEditorWindow {
 
+	
+	/**
+	 * The Enumeration ProjectCloseUserFeedback.
+	 */
+	public enum ProjectCloseUserFeedback {
+		SaveProject,
+		DoNotSaveProject,
+		CancelCloseAction
+	}
+	
+	
+	/**
+	 * Has to return the current project.
+	 * @return the project
+	 */
+	public Project getProject();
+	
+	/**
+	 * Checks, how the user wants to proceed, if unsaved projects has to be closed.
+	 *
+	 * @param msgTitle the message title
+	 * @param msgText the message text
+	 * @return true, if is user allowed to close project
+	 */
+	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText); 
+	
+	/**
+	 * Has to show an error message.
+	 *
+	 * @param msgText the message text
+	 * @param msgHead the message header
+	 */
+	public void showErrorMessage(String msgText, String msgHead);
+	
 	/**
 	 * Adds the default tabs.
 	 */
@@ -106,14 +140,6 @@ public interface ProjectEditorWindow {
 	 * changed, if the view was changed from developer to end user view.
 	 */
 	public void validateStartTab();
-
-	/**
-	 * Has to show an error message.
-	 *
-	 * @param msgText the message text
-	 * @param msgHead the message header
-	 */
-	public void showErrorMessage(String msgText, String msgHead);
 
 
 }

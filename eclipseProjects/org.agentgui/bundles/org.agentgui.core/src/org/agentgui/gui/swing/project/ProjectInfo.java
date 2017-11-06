@@ -67,18 +67,19 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 
 	private Project currProject;
 	
-	private JLabel jLableTitleProject = null;
-	private JTextField jTextFieldProjectName = null;
+	private JLabel jLableTitleProject;
+	private JTextField jTextFieldProjectName;
 	
-	private JLabel jLableDescription = null;
-	private JScrollPane jScrollPane = null;
-	private JTextArea jTextAreaProjectDescription = null;
+	private JLabel jLableDescription;
+	private JScrollPane jScrollPane;
+	private JTextArea jTextAreaProjectDescription;
+	private boolean isPauseProjectDescriptionDocumentListener;
 	
 	private JLabel jLabelStartTab;
 	private JTextField jTextFieldStartTab;
 	
-	private JLabel jLableProjectFolder = null;
-	private JTextField jTextFieldProjectFolder = null;
+	private JLabel jLableProjectFolder;
+	private JTextField jTextFieldProjectFolder;
 	
 	private JSeparator jSeparatorHorizontal;
 	private JPanel jPanelUpdateOptions;
@@ -265,13 +266,18 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			jTextAreaProjectDescription.setCaretPosition(0);
 			jTextAreaProjectDescription.getDocument().addDocumentListener(new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
-					currProject.setProjectDescription( jTextAreaProjectDescription.getText() );
+					this.setProjectDescription();
 				}
 				public void insertUpdate(DocumentEvent e) {
-					currProject.setProjectDescription( jTextAreaProjectDescription.getText() );
+					this.setProjectDescription();
 				}
 				public void changedUpdate(DocumentEvent e) {
-					currProject.setProjectDescription( jTextAreaProjectDescription.getText() );
+					this.setProjectDescription();
+				}
+				private void setProjectDescription() {
+					if (isPauseProjectDescriptionDocumentListener==false) {
+						ProjectInfo.this.currProject.setProjectDescription(getJTextAreaProjectDescription().getText());
+					}
 				}
 			});
 		}
@@ -644,7 +650,9 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		} else if (updateAction.equalsIgnoreCase(Project.CHANGED_ProjectDescription) ) {
 			// --- Display change of the project description --------
 			if (this.getJTextAreaProjectDescription().isFocusOwner()==false ) {
+				this.isPauseProjectDescriptionDocumentListener = true;
 				this.getJTextAreaProjectDescription().setText(this.currProject.getProjectDescription());
+				this.isPauseProjectDescriptionDocumentListener = false;
 			}
 			
 		} else if (updateAction.equalsIgnoreCase(Project.CHANGED_ProjectView) ) {
