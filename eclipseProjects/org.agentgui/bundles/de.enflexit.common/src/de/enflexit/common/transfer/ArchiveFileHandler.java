@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -110,7 +112,7 @@ public class ArchiveFileHandler {
 	 * @param targetFolder the target folder
 	 * @return true, if successful
 	 */
-	public boolean decompressFolder(File archiveFile, String targetFolder) {
+	public boolean decompressFolder(File archiveFile, File targetFolder) {
 		ArchiveFormat archiveFormat = this.determineArchiveFormat(archiveFile);
 		if (archiveFormat != null) {
 			return this.decompressFolder(archiveFile, targetFolder, this.determineArchiveFormat(archiveFile));
@@ -121,17 +123,77 @@ public class ArchiveFileHandler {
 	}
 
 	/**
-	 * Decompresses an archive.
+	 * Decompresses an archive file to the specified target folder.
 	 *
 	 * @param archiveFile the archive file
 	 * @param targetFolder the target folder
 	 * @param archiveFormat the archive format
 	 * @return true, if successful
 	 */
-	public boolean decompressFolder(File archiveFile, String targetFolder, ArchiveFormat archiveFormat) {
+	public boolean decompressFolder(File archiveFile, File targetFolder, ArchiveFormat archiveFormat) {
+
+		// TODO test
+
 		this.archiveFormat = archiveFormat;
-		// TODO implement
-		return false;
+		boolean success;
+
+		ArchiveInputStream inputStream = null;
+		try {
+
+			// --- Get an input stream for the current archive format
+			inputStream = this.createArchiveInputStream(archiveFile);
+
+			// --- Handle the archive entries -----------
+			ArchiveEntry entry;
+			while ((entry = inputStream.getNextEntry()) != null) {
+				Path targetPath = targetFolder.toPath().resolve(entry.getName());
+
+				if (entry.isDirectory() == true) {
+
+					// --- Folders ---------------
+					Files.createDirectories(targetPath);
+
+				} else {
+
+					// --- Files ---------------
+					int count;
+					byte data[] = new byte[this.bufferSize];
+
+					FileOutputStream fileOutputStream = new FileOutputStream(targetPath.toFile());
+					BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, this.bufferSize);
+
+					while ((count = inputStream.read(data, 0, this.bufferSize)) != -1) {
+						bufferedOutputStream.write(data, 0, count);
+					}
+
+					bufferedOutputStream.close();
+
+				}
+
+			}
+
+			success = true;
+
+		} catch (IOException e) {
+
+			System.err.println("Error extracting archive file " + archiveFile.getName() + " to " + targetFolder);
+			e.printStackTrace();
+			success = false;
+
+		} finally {
+
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					System.err.println("Error closing input stream!");
+					e.printStackTrace();
+				}
+
+			}
+		}
+
+		return success;
 	}
 
 	/**
@@ -180,19 +242,35 @@ public class ArchiveFileHandler {
 
 		this.archiveFormat = archiveFormat;
 
-		ArchiveOutputStream outputStream;
+		boolean success;
+		ArchiveOutputStream outputStream = null;
 		try {
+
 			outputStream = this.createArchiveOutputStream(targetFile);
 			this.copyArchiveContents(archiveFile, outputStream);
 			this.addFileToArchive(folder, folder, pathInsideArchive, outputStream);
-			outputStream.close();
+			success = true;
+
 		} catch (IOException e) {
+
 			System.err.println("Error appending folder " + folder.getName() + " to archive " + archiveFile.getName());
 			e.printStackTrace();
-			return false;
+			success = false;
+
+		} finally {
+
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					System.err.println("Error closing output stream");
+					e.printStackTrace();
+				}
+			}
+
 		}
 
-		return true;
+		return success;
 	}
 
 	/**
