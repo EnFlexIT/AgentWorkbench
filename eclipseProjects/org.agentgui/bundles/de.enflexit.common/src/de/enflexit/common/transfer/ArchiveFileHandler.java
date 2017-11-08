@@ -38,10 +38,7 @@ public class ArchiveFileHandler {
 		ZIP, TAR_GZ;
 	}
 
-	/** The archive format. */
 	private ArchiveFormat archiveFormat;
-
-	/** The buffer size. */
 	private int bufferSize = 2048;
 
 	/**
@@ -132,8 +129,6 @@ public class ArchiveFileHandler {
 	 */
 	public boolean decompressFolder(File archiveFile, File targetFolder, ArchiveFormat archiveFormat) {
 
-		// TODO test
-
 		this.archiveFormat = archiveFormat;
 		boolean success;
 
@@ -145,6 +140,7 @@ public class ArchiveFileHandler {
 
 			// --- Handle the archive entries -----------
 			ArchiveEntry entry;
+
 			while ((entry = inputStream.getNextEntry()) != null) {
 				Path targetPath = targetFolder.toPath().resolve(entry.getName());
 
@@ -371,6 +367,10 @@ public class ArchiveFileHandler {
 	private void addFileToArchive(File baseDir, File file, String pathInsideArchive, ArchiveOutputStream archiveOutputStream) throws IOException {
 
 		if (file.isDirectory() == true) {
+
+			ArchiveEntry archiveEntry = this.createArchiveEntry(baseDir, file, pathInsideArchive);
+			archiveOutputStream.putArchiveEntry(archiveEntry);
+			archiveOutputStream.closeArchiveEntry();
 
 			// --- If it is a folder, add all the contents to the archive ---------
 
