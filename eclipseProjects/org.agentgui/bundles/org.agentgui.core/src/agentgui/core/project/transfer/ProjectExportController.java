@@ -112,7 +112,7 @@ public class ProjectExportController {
 		if (projectExportDialog.isCanceled() == false) {
 
 			// --- Get the export settings from the dialog -----------------
-			ProjectExportSettings exportSettings = projectExportDialog.getExportSettings();
+			this.exportSettings = projectExportDialog.getExportSettings();
 
 			// --- Select the export destination -------
 			JFileChooser chooser = this.getJFileChooser();
