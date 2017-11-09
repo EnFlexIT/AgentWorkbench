@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.project.transfer;
 
 import java.io.File;
@@ -36,7 +64,7 @@ import de.enflexit.common.transfer.RecursiveFolderCopier;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
 
 /**
- * This class is responsible for exporting projects from AgentWorkbench
+ * This class is responsible for exporting projects from AgentWorkbench.
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -63,7 +91,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Exports the current project
+	 * Exports the current project. The export settings are requested from the user.
 	 */
 	public void exportProject() {
 
@@ -84,7 +112,7 @@ public class ProjectExportController {
 		if (projectExportDialog.isCanceled() == false) {
 
 			// --- Get the export settings from the dialog -----------------
-			this.exportSettings = projectExportDialog.getExportSettings();
+			ProjectExportSettings exportSettings = projectExportDialog.getExportSettings();
 
 			// --- Select the export destination -------
 			JFileChooser chooser = this.getJFileChooser();
@@ -108,13 +136,23 @@ public class ProjectExportController {
 				// --- Set the target file ---------------
 				this.exportSettings.setTargetFile(targetFile);
 
-				ProjectExportThread exportThread = new ProjectExportThread();
-				exportThread.start();
+				this.exportProject(exportSettings);
 
 			}
 
 		}
 
+	}
+
+	/**
+	 * Exports the current project using the provided {@link ProjectExportSettings}
+	 * 
+	 * @param exportSettings The {@link ProjectExportSettings}
+	 */
+	public void exportProject(ProjectExportSettings exportSettings) {
+		this.exportSettings = exportSettings;
+		ProjectExportThread exportThread = new ProjectExportThread();
+		exportThread.start();
 	}
 
 	/**
@@ -413,6 +451,11 @@ public class ProjectExportController {
 		return true;
 	}
 
+	/**
+	 * Gets the progress monitor.
+	 *
+	 * @return the progress monitor
+	 */
 	private ProgressMonitor getProgressMonitor() {
 		if (this.progressMonitor == null) {
 			String title = Language.translate("Projekt-Export");
@@ -423,12 +466,17 @@ public class ProjectExportController {
 		return this.progressMonitor;
 	}
 
-	private void setProgress(int progress) {
+	/**
+	 * Updates the progress monitor.
+	 *
+	 * @param currentProgress the current progress
+	 */
+	private void updateProgressMonitor(int currentProgress) {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
-				getProgressMonitor().setProgress(progress);
+				getProgressMonitor().setProgress(currentProgress);
 				// --- Show progress monitor if not visible -----
 				if (getProgressMonitor().isVisible() == false) {
 					getProgressMonitor().setVisible(true);
@@ -439,6 +487,9 @@ public class ProjectExportController {
 		});
 	}
 
+	/**
+	 * Disposes the progress monitor.
+	 */
 	private void disposeProgressMonitor() {
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -486,6 +537,11 @@ public class ProjectExportController {
 
 	}
 
+	/**
+	 * This Thread does the actual export.
+	 * 
+	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+	 */
 	private class ProjectExportThread extends Thread {
 
 		/*
@@ -495,12 +551,12 @@ public class ProjectExportController {
 		 */
 		@Override
 		public void run() {
-			ProjectExportController.this.setProgress(0);
+			ProjectExportController.this.updateProgressMonitor(0);
 
 			// --- Copy the required data to a temporary folder -------------
 			boolean success = ProjectExportController.this.copyProjectDataToTempFolder();
 
-			ProjectExportController.this.setProgress(10);
+			ProjectExportController.this.updateProgressMonitor(10);
 
 			if (success == true) {
 
@@ -517,7 +573,7 @@ public class ProjectExportController {
 
 				}
 
-				ProjectExportController.this.setProgress(30);
+				ProjectExportController.this.updateProgressMonitor(30);
 
 				if (ProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
 					// --- Integrate the project into the installation package ------
@@ -529,7 +585,7 @@ public class ProjectExportController {
 
 				}
 
-				ProjectExportController.this.setProgress(80);
+				ProjectExportController.this.updateProgressMonitor(80);
 
 				// --- Remove the temporary export folder -------------
 				try {
@@ -540,7 +596,7 @@ public class ProjectExportController {
 					e.printStackTrace();
 				}
 
-				ProjectExportController.this.setProgress(100);
+				ProjectExportController.this.updateProgressMonitor(100);
 				ProjectExportController.this.disposeProgressMonitor();
 
 				// --- Show a feedback message to the user --------------------
@@ -553,7 +609,6 @@ public class ProjectExportController {
 					System.err.println("Project " + project.getProjectName() + " export failed!");
 					String message = Language.translate("Export fehlgeschlagen");
 					JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
-					// TODO implement some cleanup
 				}
 			}
 		}
