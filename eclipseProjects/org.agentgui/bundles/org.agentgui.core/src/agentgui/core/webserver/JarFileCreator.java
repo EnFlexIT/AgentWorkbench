@@ -40,8 +40,6 @@ import java.util.jar.Manifest;
  * With this class file-resources (e. g. a bin folder created by Eclipse) can be 
  * packed and transfered to a specified destination folder.
  * 
- * @see DownloadServer
- * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class JarFileCreator {

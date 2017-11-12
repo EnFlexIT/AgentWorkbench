@@ -61,24 +61,23 @@ import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
 /**
- * This class manages the interaction between AgentGUI and JADE.<br>
- * It contains the methods to start / stop JADE, as well as methods<br>
- * for starting new container or agents <br>
+ * This class manages the interaction between Agent.GUI and JADE.
+ * It provides methods to start / stop JADE, as well as methods
+ * for starting new container or agents.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class Platform extends Object {
+public class Platform {
 
 	private static final String BackgroundSystemAgentApplication = "server.client";
 	private static final String BackgroundSystemAgentServerMaster = "server.master";
 	private static final String BackgroundSystemAgentServerSlave = "server.slave";
-
-	private final String newLine = Application.getGlobalInfo().getNewLineSeparator();
-
+	private static final String BackgroundSystemAgentFileManger = "file.manager";
 	
 	private AgentContainer jadeMainContainer;
 	private ArrayList<AgentContainer> agentContainerList;
 	
+	private Project fileMangerProject;
 	
 	/**
 	 * Constructor of this class.
@@ -181,17 +180,28 @@ public class Platform extends Object {
 		// ----------------------------------------------------------
 		// --- Differentiation of the Application-Case --------------
 		// ----------------------------------------------------------
+		String newLine = Application.getGlobalInfo().getNewLineSeparator();
 		String applicationTitle = Application.getGlobalInfo().getApplicationTitle();
 		String executionModeDescription = Application.getGlobalInfo().getExecutionModeDescription();
 		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
-			if (isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
-				startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+			if (this.isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
+				this.startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+			}
+			if (this.fileMangerProject!=null && this.isAgentRunningInMainContainer(BackgroundSystemAgentFileManger)==false) {
+				// --- Move required resources to server directory -- 
+				Object[] fileMangerArguments = new Object[1];
+				String webserverPath = Application.getGlobalInfo().getPathWebServer();
+				fileMangerArguments[0] = this.fileMangerProject.moveProjectLibrariesToDestinationDirectory(webserverPath);
+				// --- Start the file manager agent -----------------
+				if (fileMangerArguments[0]!=null) {
+					this.startAgent(BackgroundSystemAgentFileManger, jade.misc.FileManagerAgent.class.getName(), fileMangerArguments);	
+				}
 			}
 			// --- Start RMA ('Remote Monitoring Agent') -----------
 			if (showRMA==true) {
-				startSystemAgent("rma", null);	
+				this.startSystemAgent("rma", null);	
 			}
 			break;
 		
@@ -479,6 +489,8 @@ public class Platform extends Object {
 			boolean ideExecuted = Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE;
 			if (currProject.getProjectResources().size()>0 || ideExecuted==true) {
 				if (currProject.getDistributionSetup().isDoStaticLoadBalancing()==true || currProject.getDistributionSetup().isDoDynamicLoadBalancing()==true){
+					// --- Set marker to start the FileManagerAgent ---------
+					this.fileMangerProject = currProject;
 					// --- Start Download-Server for project-resources ------
 					DownloadServer webServer = Application.startDownloadServer();			
 					webServer.setProjectDownloadResources(currProject);

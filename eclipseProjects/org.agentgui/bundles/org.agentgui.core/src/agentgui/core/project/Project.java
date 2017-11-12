@@ -625,6 +625,15 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 		}
 		return bundleNames;
 	}
+	/**
+	 * Move project libraries to the specified destination directory.
+	 *
+	 * @param destinationDirectoryRootPath the destination directory root path
+	 * @return the actual path of the resources for the file manager
+	 */
+	public String moveProjectLibrariesToDestinationDirectory(String destinationDirectoryRootPath) {
+		return this.getProjectBundleLoader().moveProjectLibrariesToDestinationDirectory(destinationDirectoryRootPath);
+	}
 	
 	/**
 	 * Sets the project resources.
@@ -1639,6 +1648,5 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	public EModelService getEclipseEModelService() {
 		return eclipseEModelService;
 	}
-	
 
 }

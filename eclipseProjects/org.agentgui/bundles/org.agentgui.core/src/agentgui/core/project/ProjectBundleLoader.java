@@ -29,6 +29,7 @@
 package agentgui.core.project;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -433,7 +434,6 @@ public class ProjectBundleLoader {
 		return bundleStarted;
 	}
 	
-	
 	/**
 	 * Stops and un-installs the current bundle.
 	 */
@@ -455,6 +455,37 @@ public class ProjectBundleLoader {
 				bEx.printStackTrace();
 			}
 		}
+	}
+	
+	
+	/**
+	 * Move project libraries to the specified destination directory.
+	 *
+	 * @param destinationDirectoryRootPath the destination directory root path
+	 * @return the string
+	 */
+	public String moveProjectLibrariesToDestinationDirectory(String destinationDirectoryRootPath) {
+		
+		// --- Define / create destination directory ----------------
+		File destinationDir = new File(destinationDirectoryRootPath + this.project.getProjectFolder());
+		if (destinationDir.exists()==false) {
+			destinationDir.mkdirs();
+		}
+		
+		// --- 
+		File sourceDir = new File(this.project.getProjectFolderFullPath());
+		
+		
+		
+		
+		// --- Prepare return value ---------------------------------
+		String destinationDirPath = null;
+		try {
+			destinationDirPath = destinationDir.getCanonicalPath();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+		return destinationDirPath;
 	}
 	
 	
