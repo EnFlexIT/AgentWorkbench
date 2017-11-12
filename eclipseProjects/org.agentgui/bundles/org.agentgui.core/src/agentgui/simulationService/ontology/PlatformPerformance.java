@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2017/10/3, 16:12:22
+* @version 2017/11/12, 21:16:28
 */
 public class PlatformPerformance implements Concept {
 
@@ -24,14 +24,14 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
-* Protege name: cpu_speedMhz
+* Protege name: memory_totalMB
    */
-   private int cpu_speedMhz;
-   public void setCpu_speedMhz(int value) { 
-    this.cpu_speedMhz=value;
+   private int memory_totalMB;
+   public void setMemory_totalMB(int value) { 
+    this.memory_totalMB=value;
    }
-   public int getCpu_speedMhz() {
-     return this.cpu_speedMhz;
+   public int getMemory_totalMB() {
+     return this.memory_totalMB;
    }
 
    /**
@@ -46,6 +46,17 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
+* Protege name: cpu_speedMhz
+   */
+   private int cpu_speedMhz;
+   public void setCpu_speedMhz(int value) { 
+    this.cpu_speedMhz=value;
+   }
+   public int getCpu_speedMhz() {
+     return this.cpu_speedMhz;
+   }
+
+   /**
 * Protege name: cpu_numberOf
    */
    private int cpu_numberOf;
@@ -54,17 +65,6 @@ public class PlatformPerformance implements Concept {
    }
    public int getCpu_numberOf() {
      return this.cpu_numberOf;
-   }
-
-   /**
-* Protege name: memory_totalMB
-   */
-   private int memory_totalMB;
-   public void setMemory_totalMB(int value) { 
-    this.memory_totalMB=value;
-   }
-   public int getMemory_totalMB() {
-     return this.memory_totalMB;
    }
 
 }

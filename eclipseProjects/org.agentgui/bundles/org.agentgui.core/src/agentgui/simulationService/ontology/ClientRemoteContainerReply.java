@@ -8,19 +8,30 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2017/10/3, 16:12:22
+* @version 2017/11/12, 21:16:28
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
    /**
-* Protege name: remoteAgentGuiVersion
+* Protege name: remoteContainerName
    */
-   private AgentGuiVersion remoteAgentGuiVersion;
-   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
-    this.remoteAgentGuiVersion=value;
+   private String remoteContainerName;
+   public void setRemoteContainerName(String value) { 
+    this.remoteContainerName=value;
    }
-   public AgentGuiVersion getRemoteAgentGuiVersion() {
-     return this.remoteAgentGuiVersion;
+   public String getRemoteContainerName() {
+     return this.remoteContainerName;
+   }
+
+   /**
+* Protege name: remoteBenchmarkResult
+   */
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
+   }
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
    }
 
    /**
@@ -32,6 +43,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public PlatformAddress getRemoteAddress() {
      return this.remoteAddress;
+   }
+
+   /**
+* Protege name: remotePID
+   */
+   private String remotePID;
+   public void setRemotePID(String value) { 
+    this.remotePID=value;
+   }
+   public String getRemotePID() {
+     return this.remotePID;
    }
 
    /**
@@ -57,36 +79,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteBenchmarkResult
+* Protege name: remoteAgentGuiVersion
    */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
+   private AgentGuiVersion remoteAgentGuiVersion;
+   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
+    this.remoteAgentGuiVersion=value;
    }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
-   }
-
-   /**
-* Protege name: remotePID
-   */
-   private String remotePID;
-   public void setRemotePID(String value) { 
-    this.remotePID=value;
-   }
-   public String getRemotePID() {
-     return this.remotePID;
-   }
-
-   /**
-* Protege name: remoteContainerName
-   */
-   private String remoteContainerName;
-   public void setRemoteContainerName(String value) { 
-    this.remoteContainerName=value;
-   }
-   public String getRemoteContainerName() {
-     return this.remoteContainerName;
+   public AgentGuiVersion getRemoteAgentGuiVersion() {
+     return this.remoteAgentGuiVersion;
    }
 
 }

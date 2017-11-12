@@ -8,94 +8,19 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2017/10/3, 16:12:22
+* @version 2017/11/12, 21:16:27
 */
 public class RemoteContainerConfig implements Concept {
 
    /**
-* Protege name: jvmMemAllocMaximum
+* Protege name: jadeIsRemoteContainer
    */
-   private String jvmMemAllocMaximum;
-   public void setJvmMemAllocMaximum(String value) { 
-    this.jvmMemAllocMaximum=value;
+   private boolean jadeIsRemoteContainer;
+   public void setJadeIsRemoteContainer(boolean value) { 
+    this.jadeIsRemoteContainer=value;
    }
-   public String getJvmMemAllocMaximum() {
-     return this.jvmMemAllocMaximum;
-   }
-
-   /**
-* Protege name: jadePort
-   */
-   private String jadePort;
-   public void setJadePort(String value) { 
-    this.jadePort=value;
-   }
-   public String getJadePort() {
-     return this.jadePort;
-   }
-
-   /**
-* Protege name: jvmMemAllocInitial
-   */
-   private String jvmMemAllocInitial;
-   public void setJvmMemAllocInitial(String value) { 
-    this.jvmMemAllocInitial=value;
-   }
-   public String getJvmMemAllocInitial() {
-     return this.jvmMemAllocInitial;
-   }
-
-   /**
-* Protege name: hostExcludeIP
-   */
-   private List hostExcludeIP = new ArrayList();
-   public void addHostExcludeIP(String elem) { 
-     List oldList = this.hostExcludeIP;
-     hostExcludeIP.add(elem);
-   }
-   public boolean removeHostExcludeIP(String elem) {
-     List oldList = this.hostExcludeIP;
-     boolean result = hostExcludeIP.remove(elem);
-     return result;
-   }
-   public void clearAllHostExcludeIP() {
-     List oldList = this.hostExcludeIP;
-     hostExcludeIP.clear();
-   }
-   public Iterator getAllHostExcludeIP() {return hostExcludeIP.iterator(); }
-   public List getHostExcludeIP() {return hostExcludeIP; }
-   public void setHostExcludeIP(List l) {hostExcludeIP = l; }
-
-   /**
-* Protege name: jadeJarIncludeList
-   */
-   private List jadeJarIncludeList = new ArrayList();
-   public void addJadeJarIncludeList(String elem) { 
-     List oldList = this.jadeJarIncludeList;
-     jadeJarIncludeList.add(elem);
-   }
-   public boolean removeJadeJarIncludeList(String elem) {
-     List oldList = this.jadeJarIncludeList;
-     boolean result = jadeJarIncludeList.remove(elem);
-     return result;
-   }
-   public void clearAllJadeJarIncludeList() {
-     List oldList = this.jadeJarIncludeList;
-     jadeJarIncludeList.clear();
-   }
-   public Iterator getAllJadeJarIncludeList() {return jadeJarIncludeList.iterator(); }
-   public List getJadeJarIncludeList() {return jadeJarIncludeList; }
-   public void setJadeJarIncludeList(List l) {jadeJarIncludeList = l; }
-
-   /**
-* Protege name: jadeShowGUI
-   */
-   private boolean jadeShowGUI;
-   public void setJadeShowGUI(boolean value) { 
-    this.jadeShowGUI=value;
-   }
-   public boolean getJadeShowGUI() {
-     return this.jadeShowGUI;
+   public boolean getJadeIsRemoteContainer() {
+     return this.jadeIsRemoteContainer;
    }
 
    /**
@@ -121,14 +46,14 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: preventUsageOfUsedComputer
+* Protege name: fileManagerAgent
    */
-   private boolean preventUsageOfUsedComputer;
-   public void setPreventUsageOfUsedComputer(boolean value) { 
-    this.preventUsageOfUsedComputer=value;
+   private AID fileManagerAgent;
+   public void setFileManagerAgent(AID value) { 
+    this.fileManagerAgent=value;
    }
-   public boolean getPreventUsageOfUsedComputer() {
-     return this.preventUsageOfUsedComputer;
+   public AID getFileManagerAgent() {
+     return this.fileManagerAgent;
    }
 
    /**
@@ -143,14 +68,100 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jadeIsRemoteContainer
+* Protege name: preventUsageOfUsedComputer
    */
-   private boolean jadeIsRemoteContainer;
-   public void setJadeIsRemoteContainer(boolean value) { 
-    this.jadeIsRemoteContainer=value;
+   private boolean preventUsageOfUsedComputer;
+   public void setPreventUsageOfUsedComputer(boolean value) { 
+    this.preventUsageOfUsedComputer=value;
    }
-   public boolean getJadeIsRemoteContainer() {
-     return this.jadeIsRemoteContainer;
+   public boolean getPreventUsageOfUsedComputer() {
+     return this.preventUsageOfUsedComputer;
    }
+
+   /**
+* Protege name: jadeJarIncludeList
+   */
+   private List jadeJarIncludeList = new ArrayList();
+   public void addJadeJarIncludeList(String elem) { 
+     List oldList = this.jadeJarIncludeList;
+     jadeJarIncludeList.add(elem);
+   }
+   public boolean removeJadeJarIncludeList(String elem) {
+     List oldList = this.jadeJarIncludeList;
+     boolean result = jadeJarIncludeList.remove(elem);
+     return result;
+   }
+   public void clearAllJadeJarIncludeList() {
+     List oldList = this.jadeJarIncludeList;
+     jadeJarIncludeList.clear();
+   }
+   public Iterator getAllJadeJarIncludeList() {return jadeJarIncludeList.iterator(); }
+   public List getJadeJarIncludeList() {return jadeJarIncludeList; }
+   public void setJadeJarIncludeList(List l) {jadeJarIncludeList = l; }
+
+   /**
+* Protege name: jvmMemAllocInitial
+   */
+   private String jvmMemAllocInitial;
+   public void setJvmMemAllocInitial(String value) { 
+    this.jvmMemAllocInitial=value;
+   }
+   public String getJvmMemAllocInitial() {
+     return this.jvmMemAllocInitial;
+   }
+
+   /**
+* Protege name: jvmMemAllocMaximum
+   */
+   private String jvmMemAllocMaximum;
+   public void setJvmMemAllocMaximum(String value) { 
+    this.jvmMemAllocMaximum=value;
+   }
+   public String getJvmMemAllocMaximum() {
+     return this.jvmMemAllocMaximum;
+   }
+
+   /**
+* Protege name: jadeShowGUI
+   */
+   private boolean jadeShowGUI;
+   public void setJadeShowGUI(boolean value) { 
+    this.jadeShowGUI=value;
+   }
+   public boolean getJadeShowGUI() {
+     return this.jadeShowGUI;
+   }
+
+   /**
+* Protege name: jadePort
+   */
+   private String jadePort;
+   public void setJadePort(String value) { 
+    this.jadePort=value;
+   }
+   public String getJadePort() {
+     return this.jadePort;
+   }
+
+   /**
+* Protege name: hostExcludeIP
+   */
+   private List hostExcludeIP = new ArrayList();
+   public void addHostExcludeIP(String elem) { 
+     List oldList = this.hostExcludeIP;
+     hostExcludeIP.add(elem);
+   }
+   public boolean removeHostExcludeIP(String elem) {
+     List oldList = this.hostExcludeIP;
+     boolean result = hostExcludeIP.remove(elem);
+     return result;
+   }
+   public void clearAllHostExcludeIP() {
+     List oldList = this.hostExcludeIP;
+     hostExcludeIP.clear();
+   }
+   public Iterator getAllHostExcludeIP() {return hostExcludeIP.iterator(); }
+   public List getHostExcludeIP() {return hostExcludeIP; }
+   public void setHostExcludeIP(List l) {hostExcludeIP = l; }
 
 }

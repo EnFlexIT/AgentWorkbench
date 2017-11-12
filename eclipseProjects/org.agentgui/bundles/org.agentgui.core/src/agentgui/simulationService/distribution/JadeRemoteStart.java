@@ -28,11 +28,12 @@
  */
 package agentgui.simulationService.distribution;
 
-import jade.core.Profile;
-import jade.util.leap.ArrayList;
-
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.Scanner;
 
 import agentgui.core.application.Application;
@@ -40,6 +41,12 @@ import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.transfer.Download;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.Profile;
+import jade.misc.FileInfo;
+import jade.misc.FileManagerClient;
+import jade.util.leap.ArrayList;
 
 /**
  * This class is only used by the {@link ServerSlaveAgent} of the background
@@ -101,9 +108,10 @@ public class JadeRemoteStart extends Thread {
 	/**
 	 * Default constructor.
 	 *
+	 * @param myAgent the my agent
 	 * @param reCoCo the RemoteContainerConfig
 	 */
-	public JadeRemoteStart(RemoteContainerConfig reCoCo) {
+	public JadeRemoteStart(Agent myAgent, RemoteContainerConfig reCoCo) {
 		
 		if (debug) System.out.println("Class '" + this.getClass().getName() + "' in debug modue ...");
 		
@@ -131,11 +139,78 @@ public class JadeRemoteStart extends Thread {
 		if (reCoCo.getJadeContainerName()!=null) {
 			this.jadeContainerName = reCoCo.getJadeContainerName();	
 		}
+
+		// --- Download project files -----------
+		this.downloadFilesFromFileManagerAgent(reCoCo.getFileManagerAgent(), myAgent);
 		if (reCoCo.getJadeJarIncludeList()!=null) {
 			this.jadeJarInclude = (ArrayList) reCoCo.getJadeJarIncludeList();	
 			this.handelExternalJars();
 		}
 	}	
+	
+	/**
+	 * Downloads the provided files from the file manager agent.
+	 * @param fileMangerAID the file manger AID
+	 * @param myAgent the my agent
+	 */
+	private void downloadFilesFromFileManagerAgent(AID fileMangerAID, Agent myAgent) {
+		
+		if (fileMangerAID==null) return;
+		
+		// -- Initiate a FileManagerClient ---------------- 
+		FileManagerClient fmClient = new FileManagerClient(fileMangerAID, myAgent);
+		try {
+			// --- List the available files ---------------
+			List<FileInfo> fileInfoList = fmClient.listFiles(null);
+			if (fileInfoList!=null && fileInfoList.size()>0) {
+				
+				List<String> pathList = new java.util.ArrayList<>();
+				for (int i = 0; i < fileInfoList.size(); i++) {
+					FileInfo fInfo = fileInfoList.get(i);
+					pathList.add(fInfo.getPath());
+				}
+
+				// --- Download files ---------------------
+				String downLoadFileName = "DownloadFile.zip";
+				File downloadFile = new File(Application.getGlobalInfo().getPathDownloads() + downLoadFileName);
+				InputStream inputStream = fmClient.downloadMultiple(pathList);
+				OutputStream outputStream = null;
+				try {
+
+					outputStream = new FileOutputStream(downloadFile);
+					int read = 0;
+					byte[] bytes = new byte[1024];
+					while ((read=inputStream.read(bytes))!=-1) {
+						outputStream.write(bytes, 0, read);
+					}
+
+				} catch (IOException ioEx) {
+					ioEx.printStackTrace();
+				} finally {
+					if (inputStream!=null) {
+						try {
+							inputStream.close();
+						} catch (IOException ioEx) {
+							ioEx.printStackTrace();
+						}
+					}
+					if (outputStream!=null) {
+						try {
+							//outputStream.flush();
+							outputStream.close();
+						} catch (IOException ioEx) {
+							ioEx.printStackTrace();
+						}
+					}
+				}
+				
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+	}
 	
 	/**
 	 * If the request of a remote container contains external jars, download

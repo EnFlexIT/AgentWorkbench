@@ -8,53 +8,9 @@ import jade.core.*;
 /**
 * Protege name: MachineDescription
 * @author ontology bean generator
-* @version 2017/10/3, 16:12:22
+* @version 2017/11/12, 21:16:27
 */
 public class MachineDescription implements Concept {
-
-   /**
-* Protege name: performance
-   */
-   private PlatformPerformance performance;
-   public void setPerformance(PlatformPerformance value) { 
-    this.performance=value;
-   }
-   public PlatformPerformance getPerformance() {
-     return this.performance;
-   }
-
-   /**
-* Protege name: isThresholdExceeded
-   */
-   private boolean isThresholdExceeded;
-   public void setIsThresholdExceeded(boolean value) { 
-    this.isThresholdExceeded=value;
-   }
-   public boolean getIsThresholdExceeded() {
-     return this.isThresholdExceeded;
-   }
-
-   /**
-* Protege name: platformAddress
-   */
-   private PlatformAddress platformAddress;
-   public void setPlatformAddress(PlatformAddress value) { 
-    this.platformAddress=value;
-   }
-   public PlatformAddress getPlatformAddress() {
-     return this.platformAddress;
-   }
-
-   /**
-* Protege name: isAvailable
-   */
-   private boolean isAvailable;
-   public void setIsAvailable(boolean value) { 
-    this.isAvailable=value;
-   }
-   public boolean getIsAvailable() {
-     return this.isAvailable;
-   }
 
    /**
 * Protege name: agentGuiVersion
@@ -65,6 +21,17 @@ public class MachineDescription implements Concept {
    }
    public AgentGuiVersion getAgentGuiVersion() {
      return this.agentGuiVersion;
+   }
+
+   /**
+* Protege name: benchmarkResult
+   */
+   private BenchmarkResult benchmarkResult;
+   public void setBenchmarkResult(BenchmarkResult value) { 
+    this.benchmarkResult=value;
+   }
+   public BenchmarkResult getBenchmarkResult() {
+     return this.benchmarkResult;
    }
 
    /**
@@ -79,14 +46,14 @@ public class MachineDescription implements Concept {
    }
 
    /**
-* Protege name: remoteOS
+* Protege name: isAvailable
    */
-   private OSInfo remoteOS;
-   public void setRemoteOS(OSInfo value) { 
-    this.remoteOS=value;
+   private boolean isAvailable;
+   public void setIsAvailable(boolean value) { 
+    this.isAvailable=value;
    }
-   public OSInfo getRemoteOS() {
-     return this.remoteOS;
+   public boolean getIsAvailable() {
+     return this.isAvailable;
    }
 
    /**
@@ -101,14 +68,47 @@ public class MachineDescription implements Concept {
    }
 
    /**
-* Protege name: benchmarkResult
+* Protege name: performance
    */
-   private BenchmarkResult benchmarkResult;
-   public void setBenchmarkResult(BenchmarkResult value) { 
-    this.benchmarkResult=value;
+   private PlatformPerformance performance;
+   public void setPerformance(PlatformPerformance value) { 
+    this.performance=value;
    }
-   public BenchmarkResult getBenchmarkResult() {
-     return this.benchmarkResult;
+   public PlatformPerformance getPerformance() {
+     return this.performance;
+   }
+
+   /**
+* Protege name: remoteOS
+   */
+   private OSInfo remoteOS;
+   public void setRemoteOS(OSInfo value) { 
+    this.remoteOS=value;
+   }
+   public OSInfo getRemoteOS() {
+     return this.remoteOS;
+   }
+
+   /**
+* Protege name: platformAddress
+   */
+   private PlatformAddress platformAddress;
+   public void setPlatformAddress(PlatformAddress value) { 
+    this.platformAddress=value;
+   }
+   public PlatformAddress getPlatformAddress() {
+     return this.platformAddress;
+   }
+
+   /**
+* Protege name: isThresholdExceeded
+   */
+   private boolean isThresholdExceeded;
+   public void setIsThresholdExceeded(boolean value) { 
+    this.isThresholdExceeded=value;
+   }
+   public boolean getIsThresholdExceeded() {
+     return this.isThresholdExceeded;
    }
 
 }

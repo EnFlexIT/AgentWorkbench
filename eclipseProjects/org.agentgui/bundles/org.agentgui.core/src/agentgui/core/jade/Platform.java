@@ -69,10 +69,10 @@ import jade.wrapper.StaleProxyException;
  */
 public class Platform {
 
-	private static final String BackgroundSystemAgentApplication = "server.client";
-	private static final String BackgroundSystemAgentServerMaster = "server.master";
-	private static final String BackgroundSystemAgentServerSlave = "server.slave";
-	private static final String BackgroundSystemAgentFileManger = "file.manager";
+	public static final String BackgroundSystemAgentApplication = "server.client";
+	public static final String BackgroundSystemAgentServerMaster = "server.master";
+	public static final String BackgroundSystemAgentServerSlave = "server.slave";
+	public static final String BackgroundSystemAgentFileManger = "file.manager";
 	
 	private AgentContainer jadeMainContainer;
 	private ArrayList<AgentContainer> agentContainerList;
@@ -140,7 +140,7 @@ public class Platform {
 							Application.getMainWindow().setSimulationReady2Start();
 						}
 						// --- Notify plugins for termination -------
-						notifyPluginsForTerminatedMAS();
+						Platform.this.notifyPluginsForTerminatedMAS();
 					}
 				});
 				// --- Start MainContainer --------------------------
@@ -186,19 +186,23 @@ public class Platform {
 		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
+			// --- Start "server.client" agent ----------------------
 			if (this.isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
 				this.startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 			}
+			
+			// --- Start "file.manager" agent -----------------------
 			if (this.fileMangerProject!=null && this.isAgentRunningInMainContainer(BackgroundSystemAgentFileManger)==false) {
 				// --- Move required resources to server directory -- 
 				Object[] fileMangerArguments = new Object[1];
-				String webserverPath = Application.getGlobalInfo().getPathWebServer();
-				fileMangerArguments[0] = this.fileMangerProject.moveProjectLibrariesToDestinationDirectory(webserverPath);
+				String fileMangerPath = Application.getGlobalInfo().getPathWebServer();
+				fileMangerArguments[0] = this.fileMangerProject.moveProjectLibrariesToDestinationDirectory(fileMangerPath);
 				// --- Start the file manager agent -----------------
 				if (fileMangerArguments[0]!=null) {
 					this.startAgent(BackgroundSystemAgentFileManger, jade.misc.FileManagerAgent.class.getName(), fileMangerArguments);	
 				}
 			}
+			
 			// --- Start RMA ('Remote Monitoring Agent') -----------
 			if (showRMA==true) {
 				this.startSystemAgent("rma", null);	
@@ -206,10 +210,10 @@ public class Platform {
 			break;
 		
 		case SERVER_MASTER:
-			// -------------------------------------------------
-			// --- This is a Master-Server-Platform ------------
-			// -------------------------------------------------
-			// --- Connecting to Database ----------------------
+			// ------------------------------------------------------
+			// --- This is a Master-Server-Platform -----------------
+			// ------------------------------------------------------
+			// --- Connecting to Database ---------------------------
 			if (Application.getDatabaseConnection(true).hasErrors()==true ) {
 				
 				this.stop();
@@ -238,16 +242,16 @@ public class Platform {
 				return false;
 				
 			}
-			// --- Starting 'Server.Master'-Agent --------------				
+			// --- Start 'server.master' agent ----------------------		
 			if (isAgentRunningInMainContainer(BackgroundSystemAgentServerMaster)==false) {
 				this.startAgent(BackgroundSystemAgentServerMaster, agentgui.simulationService.agents.ServerMasterAgent.class.getName());	
 			}
 			break;
 			
 		case SERVER_SLAVE:
-			// -------------------------------------------------
-			// --- This is a Slave-Server-Platform -------------
-			// -------------------------------------------------
+			// ------------------------------------------------------
+			// --- This is a Slave-Server-Platform ------------------
+			// ------------------------------------------------------
 			if (Application.getGlobalInfo().getServerMasterURL()==null ||
 				Application.getGlobalInfo().getServerMasterURL().equalsIgnoreCase("")==true ||
 				Application.getGlobalInfo().getServerMasterPort().equals(0)==true ||
@@ -280,18 +284,18 @@ public class Platform {
 				return false;
 				
 			} 
-			// --- Starting 'Server.Slave'-Agent ---------------
+			// --- Start 'server.slave' agent -----------------------
 			if (isAgentRunningInMainContainer(BackgroundSystemAgentServerSlave)==false) {			
 				this.startAgent(BackgroundSystemAgentServerSlave, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
 			}
 			break;
 		
 		case DEVICE_SYSTEM:
-			// -------------------------------------------------
-			// --- Run as Service / Embedded System Agent ------
-			// -------------------------------------------------
+			// ------------------------------------------------------
+			// --- Run as Service / Embedded System Agent -----------
+			// ------------------------------------------------------
 			
-			// --- Make sure that the project was loaded -------
+			// --- Make sure that the project was loaded ------------
 			while (Application.getProjectFocused()==null) {
 				try {
 					Thread.sleep(200);
@@ -311,7 +315,6 @@ public class Platform {
 				// --- nothing to do here yet ---
 				break;
 			}
-			
 			break;
 			
 		default:

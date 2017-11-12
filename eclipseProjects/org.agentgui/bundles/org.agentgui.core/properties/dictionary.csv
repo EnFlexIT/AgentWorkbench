@@ -738,6 +738,7 @@ de;Überspringen;Skip
 en;;Alias:;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
+en;;Discrete squares environment;;;
 en;;MTP Protocol:;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;Number of changes;;;

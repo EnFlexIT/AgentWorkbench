@@ -723,7 +723,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return Local path to the folder, where downloads will be saved ('/AgentGUI/download/')
 	 */
 	public String getPathDownloads() {
-		String returnPath = this.getFilePathAbsolute(localPathDownloads);;
+		String returnPath = this.getFilePathAbsolute(localPathDownloads);
 		this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}

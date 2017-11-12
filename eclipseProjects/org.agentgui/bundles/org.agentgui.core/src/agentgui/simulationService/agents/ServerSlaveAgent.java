@@ -407,9 +407,8 @@ public class ServerSlaveAgent extends Agent {
 	 * @param remoteContainerConfig the remote container configuration
 	 */
 	private void startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {
-		
 		System.out.println("Starting remote container ... ");
-		new JadeRemoteStart(remoteContainerConfig).start();		
+		new JadeRemoteStart(this, remoteContainerConfig).start();		
 		
 	}
 	

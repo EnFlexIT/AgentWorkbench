@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: PlatformLoad
 * @author ontology bean generator
-* @version 2017/10/3, 16:12:22
+* @version 2017/11/12, 21:16:27
 */
 public class PlatformLoad implements Concept {
 
@@ -24,6 +24,17 @@ public class PlatformLoad implements Concept {
    }
 
    /**
+* Protege name: loadCPU
+   */
+   private float loadCPU;
+   public void setLoadCPU(float value) { 
+    this.loadCPU=value;
+   }
+   public float getLoadCPU() {
+     return this.loadCPU;
+   }
+
+   /**
 * Protege name: loadMemorySystem
    */
    private float loadMemorySystem;
@@ -32,17 +43,6 @@ public class PlatformLoad implements Concept {
    }
    public float getLoadMemorySystem() {
      return this.loadMemorySystem;
-   }
-
-   /**
-* Protege name: available
-   */
-   private boolean available;
-   public void setAvailable(boolean value) { 
-    this.available=value;
-   }
-   public boolean getAvailable() {
-     return this.available;
    }
 
    /**
@@ -57,17 +57,6 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadCPU
-   */
-   private float loadCPU;
-   public void setLoadCPU(float value) { 
-    this.loadCPU=value;
-   }
-   public float getLoadCPU() {
-     return this.loadCPU;
-   }
-
-   /**
 * Protege name: loadExceeded
    */
    private int loadExceeded;
@@ -76,6 +65,17 @@ public class PlatformLoad implements Concept {
    }
    public int getLoadExceeded() {
      return this.loadExceeded;
+   }
+
+   /**
+* Protege name: available
+   */
+   private boolean available;
+   public void setAvailable(boolean value) { 
+    this.available=value;
+   }
+   public boolean getAvailable() {
+     return this.available;
    }
 
 }

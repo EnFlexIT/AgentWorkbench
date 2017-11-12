@@ -40,6 +40,7 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.jade.Platform;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
@@ -1115,7 +1116,7 @@ public class LoadService extends BaseService {
 		 *
 		 * @param remoteConfig the remote config
 		 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
-		 * @return the string
+		 * @return the container name
 		 */
 		private String startRemoteContainer(RemoteContainerConfig remoteConfig) {
 			return sendMsgRemoteContainerRequest(remoteConfig);
@@ -1481,7 +1482,7 @@ public class LoadService extends BaseService {
 			}
 		}
 		
-		// --- Find machines, which should be excluded for a remote start -----
+		// --- Get machines to be excluded for remote start ---------
 		jade.util.leap.List hostExcludeIP = null;
 		for (String containerName : loadInfo.containerDescription.keySet()) {
 			
@@ -1493,15 +1494,21 @@ public class LoadService extends BaseService {
 			hostExcludeIP.add(ip);
 		}
 		
+		// --- Get the AID of the file manager agent ----------------
+		AID fileManagerAgent = new AID(Platform.BackgroundSystemAgentFileManger +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
+		
 		// --- For the Jade-Logger with love ;-) --------------------
 		if (myLogger.isLoggable(Logger.FINE)) {
 			myLogger.log(Logger.FINE, "-- Infos to start the remote container ------------");
 			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
 			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
 			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
+			myLogger.log(Logger.FINE, "=> FileManagerAgent: " + fileManagerAgent.toString());
 		}
 		
+		// ----------------------------------------------------------
 		// --- Define the 'RemoteContainerConfig' - Object ----------
+		// ----------------------------------------------------------
 		RemoteContainerConfig remConf = new RemoteContainerConfig();
 		remConf.setJadeServices(myServices);
 		remConf.setJadeIsRemoteContainer(true);
@@ -1510,6 +1517,7 @@ public class LoadService extends BaseService {
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeShowGUI(true);
 		remConf.setJadeJarIncludeList(extJars);
+		remConf.setFileManagerAgent(fileManagerAgent);
 		
 		// --- Apply defaults, if set -------------------------------
 		if (this.defaults4RemoteContainerConfig!=null) {
@@ -1532,9 +1540,6 @@ public class LoadService extends BaseService {
 	 */
 	private String sendMsgRemoteContainerRequest(RemoteContainerConfig remConf) {
 		
-		// --- Get the local Address of JADE ------------------------
-		String myPlatformAddress = myContainer.getPlatformID();
-		
 		// --- If the remote-configuration is null configure it now -
 		if (remConf==null) {
 			remConf = this.getRemoteContainerConfigAuto();
@@ -1549,8 +1554,7 @@ public class LoadService extends BaseService {
 		act.setAction(req);
 
 		// --- Define receiver of the Message ----------------------- 
-		AID agentGUIAgent = new AID("server.client" + "@" + myPlatformAddress, AID.ISGUID );
-		//mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
+		AID agentGUIAgent = new AID(Platform.BackgroundSystemAgentApplication +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
 		
 		// --- Build Message ----------------------------------------
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
