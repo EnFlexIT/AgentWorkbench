@@ -494,44 +494,35 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	protected void saveEnvironment() {
+
 		this.validateNetworkComponentAndAgents2Start();
 		this.saveGeneralGraphSettings();
-		this.saveEnvironment(this.getNetworkModel(), this.getFileGraphML(), this.getFileXML());
-	}
-
-	/**
-	 * Saves a {@link NetworkModel} to the specified files.
-	 *
-	 * @param networkModel the network model
-	 * @param graphFile the graph file
-	 * @param componentsFile the components file
-	 */
-	public void saveEnvironment(NetworkModel networkModel, File graphFile, File componentsFile) {
-
-		if (networkModel != null && networkModel.getGraph() != null) {
+		if (this.getNetworkModel() != null && this.getNetworkModel().getGraph() != null) {
 
 			FileWriter fw = null;
 			PrintWriter pw = null;
 			FileWriter componentFileWriter = null;
 			try {
 				// Save the graph topology
-				if (!graphFile.exists()) {
-					graphFile.createNewFile();
+				File file = this.getFileGraphML();
+				if (!file.exists()) {
+					file.createNewFile();
 				}
-				fw = new FileWriter(graphFile);
+				fw = new FileWriter(file);
 				pw = new PrintWriter(fw);
-				getGraphMLWriter().save(networkModel.getGraph(), pw);
+				getGraphMLWriter().save(this.getNetworkModel().getGraph(), pw);
 
 				// Save the network component definitions
-				if (!componentsFile.exists()) {
-					componentsFile.createNewFile();
+				File componentFile = this.getFileXML();
+				if (!componentFile.exists()) {
+					componentFile.createNewFile();
 				}
-				componentFileWriter = new FileWriter(componentsFile);
+				componentFileWriter = new FileWriter(componentFile);
 				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 				Marshaller marsh = context.createMarshaller();
 				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-				marsh.marshal(new NetworkComponentList(networkModel.getNetworkComponents()), componentFileWriter);
+				marsh.marshal(new NetworkComponentList(this.getNetworkModel().getNetworkComponents()), componentFileWriter);
 
 			} catch (IOException e) {
 				e.printStackTrace();
