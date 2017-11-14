@@ -487,6 +487,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
+	 */
 	@Override
 	protected void saveEnvironment() {
 		this.validateNetworkComponentAndAgents2Start();
@@ -494,12 +499,14 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.saveEnvironment(this.getNetworkModel(), this.getFileGraphML(), this.getFileXML());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
+	/**
+	 * Saves a {@link NetworkModel} to the specified files.
+	 *
+	 * @param networkModel the network model
+	 * @param graphFile the graph file
+	 * @param componentsFile the components file
 	 */
-	public void saveEnvironment(NetworkModel networkModel, File file, File componentsFile) {
+	public void saveEnvironment(NetworkModel networkModel, File graphFile, File componentsFile) {
 
 		if (networkModel != null && networkModel.getGraph() != null) {
 
@@ -508,10 +515,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 			FileWriter componentFileWriter = null;
 			try {
 				// Save the graph topology
-				if (!file.exists()) {
-					file.createNewFile();
+				if (!graphFile.exists()) {
+					graphFile.createNewFile();
 				}
-				fw = new FileWriter(file);
+				fw = new FileWriter(graphFile);
 				pw = new PrintWriter(fw);
 				getGraphMLWriter().save(networkModel.getGraph(), pw);
 
