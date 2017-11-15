@@ -174,7 +174,7 @@ public class JadeRemoteStart extends Thread {
 						} else {
 							filePathName = fileInfo.getPath() + fileInfo.getName();
 						}
-						if (debug==true) System.out.println("Download Fiel: " + filePathName + " 	" + fileInfo.toString());
+						if (debug==true) System.out.println("Download File: " + filePathName + " 	" + fileInfo.toString());
 						pathList.add(filePathName);
 					}
 				}

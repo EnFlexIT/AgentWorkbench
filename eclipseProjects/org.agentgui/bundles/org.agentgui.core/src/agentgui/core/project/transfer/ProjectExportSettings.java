@@ -29,6 +29,7 @@
 package agentgui.core.project.transfer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
@@ -40,23 +41,23 @@ import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescrip
 public class ProjectExportSettings {
 	
 	private File targetFile;
+	
 	private boolean includeInstallationPackage;
 	private InstallationPackageDescription installationPackage;
+	
 	private boolean includeAllSetups;
 	private List<String> simSetups;
 	
+	
 	/**
-	 * Gets the target path.
-	 *
+	 * Returns the target file.
 	 * @return the target path
 	 */
 	public File getTargetFile() {
 		return targetFile;
 	}
-	
 	/**
-	 * Sets the target path.
-	 *
+	 * Sets the target file.
 	 * @param targetPath the new target path
 	 */
 	public void setTargetFile(File targetPath) {
@@ -65,16 +66,13 @@ public class ProjectExportSettings {
 	
 	/**
 	 * Checks if is include product.
-	 *
 	 * @return true, if is include product
 	 */
 	public boolean isIncludeInstallationPackage() {
 		return includeInstallationPackage;
 	}
-	
 	/**
 	 * Sets the include product.
-	 *
 	 * @param includeProduct the new include product
 	 */
 	public void setIncludeInstallationPackage(boolean includeProduct) {
@@ -82,18 +80,15 @@ public class ProjectExportSettings {
 	}
 	
 	/**
-	 * Gets the product version.
-	 *
-	 * @return the product version
+	 * Returns the installation package.
+	 * @return the installation package
 	 */
 	public InstallationPackageDescription getInstallationPackage() {
 		return installationPackage;
 	}
-	
 	/**
-	 * Sets the product version.
-	 *
-	 * @param productVersion the new product version
+	 * Sets the installation package.
+	 * @param productVersion the new installation package
 	 */
 	public void setInstallationPackage(InstallationPackageDescription productVersion) {
 		this.installationPackage = productVersion;
@@ -101,16 +96,13 @@ public class ProjectExportSettings {
 	
 	/**
 	 * Checks if is include all setups.
-	 *
 	 * @return true, if is include all setups
 	 */
 	public boolean isIncludeAllSetups() {
 		return includeAllSetups;
 	}
-	
 	/**
 	 * Sets the include all setups.
-	 *
 	 * @param includeAllSetups the new include all setups
 	 */
 	public void setIncludeAllSetups(boolean includeAllSetups) {
@@ -118,18 +110,18 @@ public class ProjectExportSettings {
 	}
 	
 	/**
-	 * Gets the sim setups.
-	 *
-	 * @return the sim setups
+	 * Returns the simulation setup names.
+	 * @return the simulation setup names
 	 */
 	public List<String> getSimSetups() {
+		if (simSetups==null) {
+			simSetups = new ArrayList<>();
+		}
 		return simSetups;
 	}
-	
 	/**
-	 * Sets the sim setups.
-	 *
-	 * @param simSetups the new sim setups
+	 * Sets the simulation setup name to exports.
+	 * @param simSetups the new simulation setup names 
 	 */
 	public void setSimSetups(List<String> simSetups) {
 		this.simSetups = simSetups;

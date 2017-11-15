@@ -205,7 +205,10 @@ de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for th
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
+de;Export erfolgreich;;;;
 de;Export:;Export:;;;
+de;Exportiere Projekt;;;;
+de;Exportiere;;;;
 de;Exportieren;Export;;;
 de;Externe bin-Ressourcen;External 'bin' resources;;;
 de;Externe jar-Ressourcen;External jar resources;;;
@@ -506,6 +509,7 @@ de;Projekt-Agenten;Project-Agents
 de;Projekt-Basisverzeichnis auswählen;Selection of the projects root directory;;;
 de;Projekt-Basisverzeichnis nicht gefunden!;Project base directory not found!;;;
 de;Projekt-Desktop;Project Desktop
+de;Projekt-Export;;;;
 de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
 de;Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern;Rebuild project MANIFEST.MF when opening the project;;;
@@ -704,6 +708,7 @@ de;Zyklisch !;Cyclic!
 de;Zähler;Counter;;;
 de;auf;to;;;
 de;bereit;ready
+de;erfolgreich exportiert!;;;;
 de;für das Setup;for the setup
 de;in Datei;In file
 de;liegt außerhalb von Playground;is outside of playground

@@ -80,6 +80,8 @@ import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.setup.SimulationSetups;
+import agentgui.core.project.transfer.ProjectExportController;
+import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
@@ -631,8 +633,33 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * @param destinationDirectoryRootPath the destination directory root path
 	 * @return the actual path of the resources for the file manager
 	 */
-	public String moveProjectLibrariesToDestinationDirectory(String destinationDirectoryRootPath) {
-		return this.getProjectBundleLoader().moveProjectLibrariesToDestinationDirectory(destinationDirectoryRootPath);
+	public String exportProjectRessurcesToDestinationDirectory(String destinationDirectoryRootPath) {
+		
+		// --- Define / create destination directory ----------------
+		File destinationDir = new File(destinationDirectoryRootPath);
+		if (destinationDir.exists()==false) destinationDir.mkdirs();
+
+		// --- Define the target file -------------------------------
+		File projectExportFile = new File(destinationDir.getAbsolutePath() + File.separator + this.getProjectFolder() + ".agui");
+		
+		// --- Define the export settings ---------------------------
+		ProjectExportSettings pExSet = new ProjectExportSettings();
+		pExSet.setTargetFile(projectExportFile);
+		pExSet.setIncludeAllSetups(false);
+		pExSet.setIncludeInstallationPackage(false);
+		
+		// --- Do the export ---------------------------------------- 
+		ProjectExportController pExCon = new ProjectExportController(this);
+		pExCon.exportProject(pExSet, false, false);
+		
+		// --- Return the root path for the file manager ------------ 
+		String destinationDirPath = null;
+		try {
+			destinationDirPath = destinationDir.getCanonicalPath();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+		return destinationDirPath;
 	}
 	
 	/**

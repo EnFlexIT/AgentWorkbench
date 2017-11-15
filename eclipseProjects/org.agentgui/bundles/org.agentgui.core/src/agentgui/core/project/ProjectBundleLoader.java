@@ -29,7 +29,6 @@
 package agentgui.core.project;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,7 +47,6 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.webserver.JarFileCreator;
 import de.enflexit.common.PathHandling;
-import de.enflexit.common.transfer.RecursiveFolderCopier;
 
 /**
  * The Class ProjectBundleLoader.
@@ -374,44 +372,7 @@ public class ProjectBundleLoader {
 		return resourcePath;
 	}
 	
-	/**
-	 * Move project libraries to the specified destination directory.
-	 *
-	 * @param destinationDirectoryRootPath the destination directory root path
-	 * @return the string
-	 */
-	public String moveProjectLibrariesToDestinationDirectory(String destinationDirectoryRootPath) {
-		
-		// --- Define / create destination directory ----------------
-		File destinationDir = new File(destinationDirectoryRootPath + this.project.getProjectFolder());
-		if (destinationDir.exists()==false) {
-			destinationDir.mkdirs();
-		}
-		
-		// --- Define exclude list for the project copy -------------
-		String[] excludePaths = new String[2];
-		excludePaths[0] = this.project.getSubFolder4Setups(true);
-		excludePaths[1] = this.project.getEnvSetupPath();
-		
-		// --- Recursively copy files to destination ----------------
-		try {
-			RecursiveFolderCopier rfc = new RecursiveFolderCopier();
-			rfc.copyFolder(this.project.getProjectFolderFullPath(), destinationDir.getAbsolutePath(), excludePaths);
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		}
-		
-		// --- Prepare return value ---------------------------------
-		String destinationDirPath = null;
-		try {
-			destinationDirPath = destinationDir.getCanonicalPath();
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		}
-		return destinationDirPath;
-	}
-	
-	
+
 	/**
 	 * Installs the specified list of jar bundled and adds their bundle instances to the local bundle vector {@link #getBundleVector()}.
 	 * @param bundleJarFile the bundle jar file

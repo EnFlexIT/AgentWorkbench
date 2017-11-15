@@ -72,19 +72,18 @@ public class ProjectExportController {
 
 	private static final String FILE_NAME_FOR_INSTALLATION_PACKAGE = "agentgui";
 
-	private ProjectExportDialog projectExportDialog;
-
 	private Project project;
 	private ProjectExportSettings exportSettings;
-
+	private boolean isShowUserDialogs=true;
+	
 	private Path tempExportFolderPath;
 
 	private ProgressMonitor progressMonitor;
 
+
 	/**
-	 * Constructor
-	 * 
-	 * @param project The project to be exported
+	 * Instantiates a new project export controller.
+	 * @param project The project to be exported. Maybe <code>null</code> also.
 	 */
 	public ProjectExportController(Project project) {
 		this.project = project;
@@ -95,33 +94,29 @@ public class ProjectExportController {
 	 */
 	public void exportProject() {
 
-		// --- If the current project is not set, select the project to be exported
-		// --------
+		// --- If the project is not set, select the project first --
 		if (this.project == null) {
-			this.project = selectProjectForExport();
-
-			// --- Return if the project selection was canceled ---------
-			if (this.project == null) {
-				return;
-			}
+			this.project = this.selectProjectForExport();
+			// --- Return if the project selection was canceled -----
+			if (this.project==null) return;
 		}
 
 		// --- Show a dialog to configure the export ----------------
-		this.projectExportDialog = new ProjectExportDialog(project);
+		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
 
 		if (projectExportDialog.isCanceled() == false) {
 
-			// --- Get the export settings from the dialog -----------------
+			// --- Get the export settings from the dialog ----------
 			this.exportSettings = projectExportDialog.getExportSettings();
 
-			// --- Select the export destination -------
+			// --- Select the export destination --------------------
 			JFileChooser chooser = this.getJFileChooser();
 			if (chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION) {
+				
 				File targetFile = chooser.getSelectedFile();
-
 				Application.getGlobalInfo().setLastSelectedFolder(targetFile.getParentFile());
 
-				// --- Check if the file already exists ----------
+				// --- Check if the file already exists -------------
 				if (targetFile.exists() == true) {
 					String optionTitle = targetFile.getName() + ": " + Language.translate("Datei überschreiben?");
 					String optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
@@ -133,26 +128,38 @@ public class ProjectExportController {
 					}
 				}
 
-				// --- Set the target file ---------------
+				// --- Set the target file --------------------------
 				this.exportSettings.setTargetFile(targetFile);
-
+				// --- Do the export --------------------------------
 				this.exportProject(exportSettings);
-
 			}
-
 		}
-
 	}
 
 	/**
-	 * Exports the current project using the provided {@link ProjectExportSettings}
-	 * 
+	 * Exports the current project using the provided {@link ProjectExportSettings} 
+	 * and showing the user dialogs, if necessary.
 	 * @param exportSettings The {@link ProjectExportSettings}
 	 */
 	public void exportProject(ProjectExportSettings exportSettings) {
+		this.exportProject(exportSettings, true, true);
+	}
+	/**
+	 * Exports the current project using the provided {@link ProjectExportSettings}.
+	 *
+	 * @param exportSettings The {@link ProjectExportSettings}
+	 * @param isShowUserDialogs the is show user dialogs
+	 * @param useConcurrentThread set true, if you want to export the project by a concurrent thread
+	 */
+	public void exportProject(ProjectExportSettings exportSettings, boolean isShowUserDialogs, boolean useConcurrentThread) {
 		this.exportSettings = exportSettings;
-		ProjectExportThread exportThread = new ProjectExportThread();
-		exportThread.start();
+		this.isShowUserDialogs = isShowUserDialogs;
+		if (useConcurrentThread==true) {
+			ProjectExportThread exportThread = new ProjectExportThread();
+			exportThread.start();
+		} else {
+			this.doProjectExport();
+		}
 	}
 
 	/**
@@ -177,8 +184,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Creates and initialized a {@link JFileChooser} for selecting the export
-	 * target
+	 * Creates and initialized a {@link JFileChooser} for selecting the export target
 	 * 
 	 * @return the {@link JFileChooser}
 	 */
@@ -266,9 +272,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Copies the required files for the selected simulation setups. Based on a
-	 * negative list approach, i.e. all files from the setup folders except those of
-	 * the setups not being exported will be copied.
+	 * Copies the required files for the selected simulation setups. Based on a negative list approach, i.e. all files from the setup folders except those of the setups not being exported will be copied.
 	 * 
 	 * @return Copying successful?
 	 */
@@ -403,10 +407,13 @@ public class ProjectExportController {
 			}
 		}
 
-		// --- If the currently selected setup is not exported, set the first exported
-		// setup as selected instead -----
+		// --- If the currently selected setup is not exported, set the first exported setup as selected instead -----
 		if (this.exportSettings.getSimSetups().contains(exportedProject.getSimulationSetupCurrent()) == false) {
-			exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+			if (exportedProject.getSimulationSetups().size() > 0) {
+				exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+			} else {
+				exportedProject.setSimulationSetupCurrent(null);
+			}
 		}
 
 		// --- Save the changes ------------
@@ -502,9 +509,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * This {@link DirectoryStream.Filter} implementation matches all directory
-	 * entries whose file base name (without extension) is not contained in a
-	 * negative list.
+	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file base name (without extension) is not contained in a negative list.
 	 * 
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 */
@@ -537,82 +542,85 @@ public class ProjectExportController {
 
 	}
 
+	
 	/**
 	 * This Thread does the actual export.
 	 * 
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class ProjectExportThread extends Thread {
-
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.lang.Thread#run()
 		 */
 		@Override
 		public void run() {
-			ProjectExportController.this.updateProgressMonitor(0);
+			doProjectExport();
+		}
+	}
+	/**
+	 * Does the actual project export.
+	 */
+	private void doProjectExport() {
+		
+		this.updateProgressMonitor(0);
+		
+		// --- Copy the required data to a temporary folder -------------------
+		boolean success = ProjectExportController.this.copyProjectDataToTempFolder();
+		this.updateProgressMonitor(10);
 
-			// --- Copy the required data to a temporary folder -------------
-			boolean success = ProjectExportController.this.copyProjectDataToTempFolder();
+		if (success==true) {
 
-			ProjectExportController.this.updateProgressMonitor(10);
-
-			if (success == true) {
-
-				// --- Handle export of simulation setups if necessary ---------
-				if (ProjectExportController.this.exportSettings.isIncludeAllSetups() == false) {
-
-					// --- Copy the required files for the selected setups -----------
+			// --- Handle export of simulation setups if necessary ------------
+			if (ProjectExportController.this.exportSettings.isIncludeAllSetups() == false) {
+				// --- Copy the required files for the selected setups --------
+				if (ProjectExportController.this.exportSettings.getSimSetups().size() > 0) {
 					success = ProjectExportController.this.copyRequiredSimulationSetupFiles();
-
-					// --- Remove the non-exported setups from the list --------------
-					if (success == true) {
-						ProjectExportController.this.removeUnexportedSetupsFromList();
-					}
-
 				}
-
-				ProjectExportController.this.updateProgressMonitor(30);
-
-				if (ProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
-					// --- Integrate the project into the installation package ------
-					success = ProjectExportController.this.integrateProjectIntoInstallationPackage();
-				} else {
-					// --- Zip the temporary folder --------------
-					ArchiveFileHandler newZipper = new ArchiveFileHandler();
-					success = newZipper.compressFolder(tempExportFolderPath.toFile(), ProjectExportController.this.exportSettings.getTargetFile());
-
+				// --- Remove the non-exported setups from the list -----------
+				if (success==true) {
+					ProjectExportController.this.removeUnexportedSetupsFromList();
 				}
+			}
+			this.updateProgressMonitor(30);
 
-				ProjectExportController.this.updateProgressMonitor(80);
+			if (ProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
+				// --- Integrate the project into the installation package ------
+				success = ProjectExportController.this.integrateProjectIntoInstallationPackage();
+			} else {
+				// --- Zip the temporary folder --------------
+				ArchiveFileHandler newZipper = new ArchiveFileHandler();
+				success = newZipper.compressFolder(tempExportFolderPath.toFile(), ProjectExportController.this.exportSettings.getTargetFile());
+			}
+			this.updateProgressMonitor(80);
 
-				// --- Remove the temporary export folder -------------
-				try {
-					RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
-					folderDeleter.deleteFolder(tempExportFolderPath);
-				} catch (IOException e) {
-					System.err.println("Error deleting temoprary export folder");
-					e.printStackTrace();
-				}
+			// --- Remove the temporary export folder -------------
+			try {
+				RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
+				folderDeleter.deleteFolder(tempExportFolderPath);
+			} catch (IOException e) {
+				System.err.println("Error deleting temoprary export folder");
+				e.printStackTrace();
+			}
+			this.updateProgressMonitor(100);
+			this.disposeProgressMonitor();
 
-				ProjectExportController.this.updateProgressMonitor(100);
-				ProjectExportController.this.disposeProgressMonitor();
-
-				// --- Show a feedback message to the user --------------------
-				if (success == true) {
-					System.out.println("Project " + project.getProjectName() + " export successful!");
+			// --- Show a feedback message to the user --------------------
+			if (success == true) {
+				System.out.println("Project '" + project.getProjectName() + "' export successful!");
+				if (this.isShowUserDialogs==true) {
 					String messageTitle = Language.translate("Export erfolgreich");
 					String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
 					JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					System.err.println("Project " + project.getProjectName() + " export failed!");
+				}
+			} else {
+				System.err.println("Project '" + project.getProjectName() + "' export failed!");
+				if (this.isShowUserDialogs==true) {
 					String message = Language.translate("Export fehlgeschlagen");
 					JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
-
 	}
-
+	
 }

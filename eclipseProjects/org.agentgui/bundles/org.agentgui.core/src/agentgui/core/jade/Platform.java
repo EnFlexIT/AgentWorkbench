@@ -196,7 +196,7 @@ public class Platform {
 				// --- Move required resources to server directory -- 
 				Object[] fileMangerArguments = new Object[1];
 				String fileMangerPath = Application.getGlobalInfo().getPathWebServer();
-				fileMangerArguments[0] = this.fileMangerProject.moveProjectLibrariesToDestinationDirectory(fileMangerPath);
+				fileMangerArguments[0] = this.fileMangerProject.exportProjectRessurcesToDestinationDirectory(fileMangerPath);
 				// --- Start the file manager agent -----------------
 				if (fileMangerArguments[0]!=null) {
 					this.startAgent(BackgroundSystemAgentFileManger, jade.misc.FileManagerAgent.class.getName(), fileMangerArguments);	
