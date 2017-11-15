@@ -94,6 +94,7 @@ import jade.core.management.AgentManagementSlice;
 import jade.core.messaging.MessagingSlice;
 import jade.core.mobility.AgentMobilityHelper;
 import jade.lang.acl.ACLMessage;
+import jade.mtp.MTPDescriptor;
 import jade.security.JADESecurityException;
 import jade.util.Logger;
 import jade.util.ObjectManager;
@@ -1495,7 +1496,31 @@ public class LoadService extends BaseService {
 		}
 		
 		// --- Get the AID of the file manager agent ----------------
-		AID fileManagerAgent = new AID(Platform.BackgroundSystemAgentFileManger +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
+		AID fileManagerAID = null;
+		try {
+			AID[] agentAIDs = myMainContainer.agentNames();
+			for (int i = 0; i < agentAIDs.length; i++) {
+				if (agentAIDs[i].getLocalName().equals(Platform.BackgroundSystemAgentFileManger)==true) {
+					fileManagerAID = agentAIDs[i]; 
+					break;
+				}
+			} 
+			// --- Add the know MTP addresses -----------------------
+			if (fileManagerAID!=null) {
+				ContainerID containerID = myMainContainer.getContainerID(fileManagerAID);
+				jade.util.leap.List mtps = myMainContainer.containerMTPs(containerID);
+				for (int i = 0; i < mtps.size(); i++) {
+					MTPDescriptor mtpDescriptors = (MTPDescriptor) mtps.get(i);
+					for (int j = 0; j < mtpDescriptors.getAddresses().length; j++) {
+						fileManagerAID.addAddresses(mtpDescriptors.getAddresses()[j]);
+					}
+				}
+			}
+			
+		} catch (NotFoundException nfEx) {
+			nfEx.printStackTrace();
+		}
+		
 		
 		// --- For the Jade-Logger with love ;-) --------------------
 		if (myLogger.isLoggable(Logger.FINE)) {
@@ -1503,7 +1528,7 @@ public class LoadService extends BaseService {
 			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
 			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
 			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
-			myLogger.log(Logger.FINE, "=> FileManagerAgent: " + fileManagerAgent.toString());
+			myLogger.log(Logger.FINE, "=> FileManagerAgent: " + fileManagerAID.toString());
 		}
 		
 		// ----------------------------------------------------------
@@ -1517,7 +1542,7 @@ public class LoadService extends BaseService {
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeShowGUI(true);
 		remConf.setJadeJarIncludeList(extJars);
-		remConf.setFileManagerAgent(fileManagerAgent);
+		remConf.setFileManagerAgent(fileManagerAID);
 		
 		// --- Apply defaults, if set -------------------------------
 		if (this.defaults4RemoteContainerConfig!=null) {

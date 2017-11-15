@@ -276,14 +276,17 @@ public class DebugService extends BaseService {
 		}
 		String sliceName = null;
 		try {
-			DebugServiceSlice slice = (DebugServiceSlice) getSlice(MAIN_SLICE);
-			sliceName = slice.getNode().getName();
-			if (myLogger.isLoggable(Logger.FINER)) {
-				myLogger.log(Logger.FINER, "Try to send console output to " + sliceName);
+			if (BaseService.MAIN_SLICE==null) return;
+			DebugServiceSlice slice = (DebugServiceSlice) this.getSlice(BaseService.MAIN_SLICE);
+			if (slice!=null) {
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to send console output to " + sliceName);
+				}
+				slice.sendLocalConsoleOutput2Main(localSlice.getNode().getName(), lines2transfer);
 			}
-			slice.sendLocalConsoleOutput2Main(localSlice.getNode().getName(), lines2transfer);
-		}
-		catch(Throwable t) {
+			
+		} catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while trying to send console output to " + sliceName, t);
 		}

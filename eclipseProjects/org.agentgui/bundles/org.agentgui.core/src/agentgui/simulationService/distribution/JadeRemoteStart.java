@@ -166,8 +166,17 @@ public class JadeRemoteStart extends Thread {
 				
 				List<String> pathList = new java.util.ArrayList<>();
 				for (int i = 0; i < fileInfoList.size(); i++) {
-					FileInfo fInfo = fileInfoList.get(i);
-					pathList.add(fInfo.getPath());
+					FileInfo fileInfo = fileInfoList.get(i);
+					String filePathName = null;
+					if (fileInfo.isDirectory()==false) {
+						if (fileInfo.getPath().equals(".")==true) {
+							filePathName = fileInfo.getName();
+						} else {
+							filePathName = fileInfo.getPath() + fileInfo.getName();
+						}
+						if (debug==true) System.out.println("Download Fiel: " + filePathName + " 	" + fileInfo.toString());
+						pathList.add(filePathName);
+					}
 				}
 
 				// --- Download files ---------------------
@@ -203,6 +212,9 @@ public class JadeRemoteStart extends Thread {
 						}
 					}
 				}
+				
+				// --- Extract the zip file ---------------
+				//TODO
 				
 			}
 			
