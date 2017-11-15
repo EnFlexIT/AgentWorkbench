@@ -177,8 +177,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Creates and initialized a {@link JFileChooser} for selecting the export
-	 * target
+	 * Creates and initialized a {@link JFileChooser} for selecting the export target
 	 * 
 	 * @return the {@link JFileChooser}
 	 */
@@ -266,9 +265,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Copies the required files for the selected simulation setups. Based on a
-	 * negative list approach, i.e. all files from the setup folders except those of
-	 * the setups not being exported will be copied.
+	 * Copies the required files for the selected simulation setups. Based on a negative list approach, i.e. all files from the setup folders except those of the setups not being exported will be copied.
 	 * 
 	 * @return Copying successful?
 	 */
@@ -403,10 +400,13 @@ public class ProjectExportController {
 			}
 		}
 
-		// --- If the currently selected setup is not exported, set the first exported
-		// setup as selected instead -----
+		// --- If the currently selected setup is not exported, set the first exported setup as selected instead -----
 		if (this.exportSettings.getSimSetups().contains(exportedProject.getSimulationSetupCurrent()) == false) {
-			exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+			if (exportedProject.getSimulationSetups().size() > 0) {
+				exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+			} else {
+				exportedProject.setSimulationSetupCurrent(null);
+			}
 		}
 
 		// --- Save the changes ------------
@@ -502,9 +502,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * This {@link DirectoryStream.Filter} implementation matches all directory
-	 * entries whose file base name (without extension) is not contained in a
-	 * negative list.
+	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file base name (without extension) is not contained in a negative list.
 	 * 
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 */
@@ -563,8 +561,10 @@ public class ProjectExportController {
 				// --- Handle export of simulation setups if necessary ---------
 				if (ProjectExportController.this.exportSettings.isIncludeAllSetups() == false) {
 
-					// --- Copy the required files for the selected setups -----------
-					success = ProjectExportController.this.copyRequiredSimulationSetupFiles();
+					if (ProjectExportController.this.exportSettings.getSimSetups().size() > 0) {
+						// --- Copy the required files for the selected setups -----------
+						success = ProjectExportController.this.copyRequiredSimulationSetupFiles();
+					}
 
 					// --- Remove the non-exported setups from the list --------------
 					if (success == true) {
