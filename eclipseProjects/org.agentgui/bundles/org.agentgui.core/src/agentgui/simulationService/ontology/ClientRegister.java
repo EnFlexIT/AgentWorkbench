@@ -8,9 +8,31 @@ import jade.core.*;
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2017/11/12, 21:16:28
+* @version 2017/11/16, 10:27:58
 */
 public class ClientRegister implements AgentAction {
+
+   /**
+* Protege name: clientOS
+   */
+   private OSInfo clientOS;
+   public void setClientOS(OSInfo value) { 
+    this.clientOS=value;
+   }
+   public OSInfo getClientOS() {
+     return this.clientOS;
+   }
+
+   /**
+* Protege name: clientPerformance
+   */
+   private PlatformPerformance clientPerformance;
+   public void setClientPerformance(PlatformPerformance value) { 
+    this.clientPerformance=value;
+   }
+   public PlatformPerformance getClientPerformance() {
+     return this.clientPerformance;
+   }
 
    /**
 * Protege name: clientAddress
@@ -43,28 +65,6 @@ public class ClientRegister implements AgentAction {
    }
    public AgentGuiVersion getClientVersion() {
      return this.clientVersion;
-   }
-
-   /**
-* Protege name: clientOS
-   */
-   private OSInfo clientOS;
-   public void setClientOS(OSInfo value) { 
-    this.clientOS=value;
-   }
-   public OSInfo getClientOS() {
-     return this.clientOS;
-   }
-
-   /**
-* Protege name: clientPerformance
-   */
-   private PlatformPerformance clientPerformance;
-   public void setClientPerformance(PlatformPerformance value) { 
-    this.clientPerformance=value;
-   }
-   public PlatformPerformance getClientPerformance() {
-     return this.clientPerformance;
    }
 
 }

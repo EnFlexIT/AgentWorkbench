@@ -28,35 +28,16 @@
  */
 package agentgui.simulationService.agents;
 
-import jade.content.Concept;
-import jade.content.lang.Codec;
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.Ontology;
-import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
-import jade.content.onto.basic.Action;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.ParallelBehaviour;
-import jade.core.behaviours.TickerBehaviour;
-import jade.core.behaviours.WakerBehaviour;
-import jade.lang.acl.ACLMessage;
-import jade.util.leap.ArrayList;
-
-import java.io.File;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Vector;
+
+import com.mysql.jdbc.ResultSet;
 
 import agentgui.core.application.Application;
 import agentgui.core.database.DBConnection;
 import agentgui.core.update.AgentGuiUpdater;
-import agentgui.core.update.UpdateInformation;
-import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
@@ -79,8 +60,22 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
 import agentgui.simulationService.ontology.SlaveRegister;
 import agentgui.simulationService.ontology.SlaveTrigger;
 import agentgui.simulationService.ontology.SlaveUnregister;
-
-import com.mysql.jdbc.ResultSet;
+import jade.content.Concept;
+import jade.content.lang.Codec;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
+import jade.content.onto.basic.Action;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ParallelBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.WakerBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.util.leap.ArrayList;
 
 /**
  * This agent is part of the <b>Agent.GUI</b> background-system and collects the
@@ -211,46 +206,6 @@ public class ServerMasterAgent extends Agent {
 	// -----------------------------------------------------
 
 	
-	// -----------------------------------------------------
-	// --- Run Webserver-Behaviour --- S T A R T -----------
-	// -----------------------------------------------------
-	private class WebserverControllerBehaviour extends WakerBehaviour {
-
-		private static final long serialVersionUID = 1691633119254093555L;
-		
-		/**
-		 * Instantiates a new webserver controller behaviour.
-		 *
-		 * @param agent the agent
-		 * @param wakeupDate the wakeup date
-		 */
-		public WebserverControllerBehaviour(Agent agent, Date wakeupDate) {
-			super(agent, wakeupDate);
-			Application.startDownloadServer();
-		}
-		
-		/* (non-Javadoc)
-		 * @see jade.core.behaviours.WakerBehaviour#onWake()
-		 */
-		@Override
-		protected void onWake() {
-			super.onWake();
-			Application.stopDownloadServer();
-		}
-		
-		/**
-		 * Returns the instance of the download server.
-		 * @return the downloadServer
-		 */
-		public DownloadServer getDownloadServer() {
-			return Application.getDownloadServer();
-		}
-
-	}
-	// -----------------------------------------------------
-	// --- Run Webserver-Behaviour --- E N D E -------------
-	// -----------------------------------------------------
-
 
 	// -----------------------------------------------------
 	// --- CleanUp-Behaviour --- S T A R T -----------------
@@ -297,8 +252,6 @@ public class ServerMasterAgent extends Agent {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
-		private WebserverControllerBehaviour webserverControllerBehaviour = null;
-		
 		/* (non-Javadoc)
 		 * @see jade.core.behaviours.Behaviour#action()
 		 */
@@ -359,7 +312,7 @@ public class ServerMasterAgent extends Agent {
 							sendReply(reply, rr);
 						} else {
 							// --- Prepare for update of client or slave ------
-							this.prepareForClientOrSlaveUpdate(msg);
+							this.replyUpdateAdvice(msg);
 						}
 						
 					} else if (agentAction instanceof ClientRegister) {
@@ -383,7 +336,7 @@ public class ServerMasterAgent extends Agent {
 							sendReply(reply, rr);
 						} else {
 							// --- Prepare for update of client or slave ------
-							this.prepareForClientOrSlaveUpdate(msg);
+							this.replyUpdateAdvice(msg);
 						}
 
 					} else if (agentAction instanceof SlaveTrigger) {
@@ -456,128 +409,11 @@ public class ServerMasterAgent extends Agent {
 		 * Sets and prepares the updates for the client or slave.
 		 * @param msg 
 		 */
-		private void prepareForClientOrSlaveUpdate(ACLMessage msg) {
-
-			// --- Start or reset download server for 10 minutes --------------
-			Long timeToStopLong = System.currentTimeMillis() + (1000*60*10); 
-			Date timeToStopDate = new Date(timeToStopLong);
-			if (this.webserverControllerBehaviour==null) {
-				this.webserverControllerBehaviour = new WebserverControllerBehaviour(this.myAgent, timeToStopDate);
-				parBehaiv.addSubBehaviour(this.webserverControllerBehaviour);
-			} else {
-				this.webserverControllerBehaviour.reset(timeToStopDate);
-			}
-			
-			// --- Waiting for the start of the download server ---------------
-			while (this.webserverControllerBehaviour.getDownloadServer()==null) {
-				block(200);
-			}
-			
-			// --- Checking 'updates' folder configure 'latestVersion.xml' ----
-			String updateURL = this.checkUpdateFolderAndUpdateLatestVersionXML(this.webserverControllerBehaviour.getDownloadServer());
-			
+		private void replyUpdateAdvice(ACLMessage msg) {
 			// --- Notify that an update is needed ----------------------------
 			MasterUpdateNote mun = new MasterUpdateNote();
-			mun.setUpdateInfoURL(updateURL);
 			ACLMessage reply = msg.createReply();
 			sendReply(reply, mun);
-
-		}
-		
-		/**
-		 * Check update folder and update latest version XML.
-		 * @return the URL as string, where the infoFile can be found.
-		 */
-		private String checkUpdateFolderAndUpdateLatestVersionXML(DownloadServer downloadServer) {
-			
-			String urlUpdateDir = downloadServer.getHTTPAddress() + "/" + AgentGuiUpdater.UPDATE_SUB_FOLDER + "/";
-			String localUpdateDir = downloadServer.getRoot().getAbsolutePath() + File.separator + AgentGuiUpdater.UPDATE_SUB_FOLDER;
-			String localVersionInfo = localUpdateDir + File.separator + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
-
-			File localUpdateDirFile = new File(localUpdateDir);
-			File localVersionInfoFile = new File(localVersionInfo);
-			if (localVersionInfoFile.exists()==true) {
-				// --- File 'latestVersion.xml' is available ------------------ 
-				UpdateInformation updateInformation = new UpdateInformation();
-				updateInformation.loadUpdateInformation(localVersionInfoFile);
-				// --- Search for the zip of the update -----------------------
-				String updateZip = localUpdateDir + File.separator + updateInformation.getDownloadFile();
-				File updateZipFile = new File(updateZip);
-				if (updateZipFile.exists()) {
-					// --- Configure info File --------------------------------
-					updateInformation.setDownloadLink(urlUpdateDir + updateInformation.getDownloadFile());
-					updateInformation.setDownloadSize(((Long)updateZipFile.length()).intValue());
-					updateInformation.saveUpdateInformation(localVersionInfoFile);
-					
-					// --- Cleanup update directory ---------------------------
-					Vector<File> keepFiles = new Vector<File>();
-					keepFiles.add(localVersionInfoFile);
-					keepFiles.add(updateZipFile);
-					this.cleanUpUpdateFolder(localUpdateDirFile, keepFiles);
-
-					// --- Return Link to 'lastVersion.xml' -------------------
-					return urlUpdateDir + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
-					
-				} else {
-					// --- Cleanup update directory ---------------------------
-					this.cleanUpUpdateFolder(localUpdateDirFile, null);
-					
-				}
-				
-			} else {
-				// --- Cleanup update directory -------------------------------
-				if (localUpdateDirFile.exists()) {
-					this.cleanUpUpdateFolder(localUpdateDirFile, null);
-				}
-				
-			}
-			return null;
-		}
-		
-		
-		/**
-		 * Clean up update folder.
-		 * @param file the file
-		 * @param exceptFiles the except files
-		 */
-		private void cleanUpUpdateFolder(File file, Vector<File> exceptFiles) {
-			if (file==null) return;
-			File[] files = file.listFiles();
-			if (files==null) return;
-			for (int i=0; i < files.length; i++) {
-				if (exceptFiles==null) {
-					this.deleteFileOrFolder(files[i]);	
-					
-				} else {
-					boolean keepFile = false;
-					for (File exceptedFile : exceptFiles) {
-						if (exceptedFile.equals(files[i])==true) {
-							keepFile = true;
-						}						
-					}
-					if (keepFile==false) {
-						this.deleteFileOrFolder(files[i]);
-					}
-					
-				}
-			}// end for
-		}
-		
-		/**
-		 * Delete file or folder.
-		 * @param file the file
-		 */
-		private void deleteFileOrFolder(File file) {
-			if (file.isFile()) {
-				file.delete();	
-			} else {
-				File[] files = file.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					File deleteFile = files[i];
-					this.deleteFileOrFolder(deleteFile);
-				}
-				file.delete();
-			}
 		}
 		
 	}

@@ -8,31 +8,9 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2017/11/12, 21:16:28
+* @version 2017/11/16, 10:27:58
 */
 public class PlatformPerformance implements Concept {
-
-   /**
-* Protege name: cpu_model
-   */
-   private String cpu_model;
-   public void setCpu_model(String value) { 
-    this.cpu_model=value;
-   }
-   public String getCpu_model() {
-     return this.cpu_model;
-   }
-
-   /**
-* Protege name: memory_totalMB
-   */
-   private int memory_totalMB;
-   public void setMemory_totalMB(int value) { 
-    this.memory_totalMB=value;
-   }
-   public int getMemory_totalMB() {
-     return this.memory_totalMB;
-   }
 
    /**
 * Protege name: cpu_vendor
@@ -57,6 +35,17 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
+* Protege name: memory_totalMB
+   */
+   private int memory_totalMB;
+   public void setMemory_totalMB(int value) { 
+    this.memory_totalMB=value;
+   }
+   public int getMemory_totalMB() {
+     return this.memory_totalMB;
+   }
+
+   /**
 * Protege name: cpu_numberOf
    */
    private int cpu_numberOf;
@@ -65,6 +54,17 @@ public class PlatformPerformance implements Concept {
    }
    public int getCpu_numberOf() {
      return this.cpu_numberOf;
+   }
+
+   /**
+* Protege name: cpu_model
+   */
+   private String cpu_model;
+   public void setCpu_model(String value) { 
+    this.cpu_model=value;
+   }
+   public String getCpu_model() {
+     return this.cpu_model;
    }
 
 }

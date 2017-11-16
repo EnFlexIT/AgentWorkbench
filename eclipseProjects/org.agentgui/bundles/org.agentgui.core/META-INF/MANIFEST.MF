@@ -143,7 +143,6 @@ Export-Package: agentgui.core.application;
  agentgui.core.systemtray;uses:="javax.swing",
  agentgui.core.update;uses:="agentgui.core.config",
  agentgui.core.utillity;uses:="jade.core.behaviours,jade.core",
- agentgui.core.webserver;uses:="agentgui.core.project",
  agentgui.envModel.graph;uses:="edu.uci.ics.jung.graph,javax.swing",
  agentgui.envModel.graph.commands;
   uses:="agentgui.envModel.graph.controller,

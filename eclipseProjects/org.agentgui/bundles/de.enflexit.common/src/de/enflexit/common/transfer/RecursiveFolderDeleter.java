@@ -40,7 +40,7 @@ public class RecursiveFolderDeleter {
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
 	 *
 	 */
-	private class DeleteFolderVisitor  extends SimpleFileVisitor<Path> {
+	private class DeleteFolderVisitor extends SimpleFileVisitor<Path> {
 
 	    @Override
 	    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -50,7 +50,7 @@ public class RecursiveFolderDeleter {
 
 	    @Override
 	    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-	        if(exc == null){
+	        if (exc==null) {
 	            Files.delete(dir);
 	            return FileVisitResult.CONTINUE;
 	        }

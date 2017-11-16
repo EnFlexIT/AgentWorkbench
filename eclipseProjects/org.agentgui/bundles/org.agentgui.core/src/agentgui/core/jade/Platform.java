@@ -28,6 +28,8 @@
  */
 package agentgui.core.jade;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -45,11 +47,11 @@ import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
 import agentgui.core.utillity.UtilityAgent;
 import agentgui.core.utillity.UtilityAgent.UtilityAgentJob;
-import agentgui.core.webserver.DownloadServer;
 import agentgui.logging.DebugService;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.load.LoadMeasureThread;
+import de.enflexit.common.transfer.RecursiveFolderDeleter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Profile;
@@ -192,15 +194,8 @@ public class Platform {
 			}
 			
 			// --- Start "file.manager" agent -----------------------
-			if (this.fileMangerProject!=null && this.isAgentRunningInMainContainer(BackgroundSystemAgentFileManger)==false) {
-				// --- Move required resources to server directory -- 
-				Object[] fileMangerArguments = new Object[1];
-				String fileMangerPath = Application.getGlobalInfo().getPathWebServer();
-				fileMangerArguments[0] = this.fileMangerProject.exportProjectRessurcesToDestinationDirectory(fileMangerPath);
-				// --- Start the file manager agent -----------------
-				if (fileMangerArguments[0]!=null) {
-					this.startAgent(BackgroundSystemAgentFileManger, jade.misc.FileManagerAgent.class.getName(), fileMangerArguments);	
-				}
+			if (this.fileMangerProject!=null) {
+				this.startFileMangerAgent();
 			}
 			
 			// --- Start RMA ('Remote Monitoring Agent') -----------
@@ -308,6 +303,10 @@ public class Platform {
 			case SETUP:
 				if (isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
 					startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+				}
+				// --- Start "file.manager" agent -----------------------
+				if (this.fileMangerProject!=null) {
+					this.startFileMangerAgent();
 				}
 				break;
 
@@ -424,8 +423,6 @@ public class Platform {
 		
 		// --- Remove the Agent.GUI services ------------------------
 		Profile jadeProfile = this.getContainerProfile();
-		// --- Stop the DownloadServer again ------------------------
-		Application.stopDownloadServer();
 
 		// --- Remove Agent.GUI services ----------------------------
 		String servicesNew = "";
@@ -494,9 +491,6 @@ public class Platform {
 				if (currProject.getDistributionSetup().isDoStaticLoadBalancing()==true || currProject.getDistributionSetup().isDoDynamicLoadBalancing()==true){
 					// --- Set marker to start the FileManagerAgent ---------
 					this.fileMangerProject = currProject;
-					// --- Start Download-Server for project-resources ------
-					DownloadServer webServer = Application.startDownloadServer();			
-					webServer.setProjectDownloadResources(currProject);
 				}
 			}
 			
@@ -536,7 +530,7 @@ public class Platform {
 		// ------------------------------------------------
 
 		// --- Stop Download-Server -----------------------
-		Application.stopDownloadServer();
+		this.removeFileTransferDirectories();
 		
 		// --- Reset runtime-variables -------------------- 
 		this.getAgentContainerList().clear();
@@ -779,6 +773,23 @@ public class Platform {
 			}
 		}
 	}	
+	
+	/**
+	 * Starts the file manger agent.
+	 */
+	private void startFileMangerAgent() {
+		
+		if (this.isAgentRunningInMainContainer(BackgroundSystemAgentFileManger)==true) return;
+		
+		// --- Move required resources to server directory -- 
+		Object[] fileMangerArguments = new Object[1];
+		String fileMangerPath = Application.getGlobalInfo().getFileManagerServerPath(true);
+		fileMangerArguments[0] = this.fileMangerProject.exportProjectRessurcesToDestinationDirectory(fileMangerPath);
+		// --- Start the file manager agent -----------------
+		if (fileMangerArguments[0]!=null) {
+			this.startAgent(BackgroundSystemAgentFileManger, jade.misc.FileManagerAgent.class.getName(), fileMangerArguments);	
+		}
+	}
 	
 	/**
 	 * Will find a new suffix number for the name of an agent.
@@ -1099,6 +1110,33 @@ public class Platform {
 			ex.printStackTrace();
 		}		
 	}
-	
 
+	/**
+	 * Removes the file transfer directories that are only used if JADE is running.
+	 */
+	private void removeFileTransferDirectories() {
+		
+		// --- Delete 'server' directory ------------------
+		try {
+			String serverPath = Application.getGlobalInfo().getFileManagerServerPath(false);
+			if (new File(serverPath).exists()==true) {
+				RecursiveFolderDeleter killer = new RecursiveFolderDeleter();
+				killer.deleteFolder(serverPath);
+			}
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+
+		// --- Delete 'download' directory ----------------
+		try {
+			String downloadPath = Application.getGlobalInfo().getFileManagerDownloadPath(false);
+			if (new File(downloadPath).exists()==true) {
+				RecursiveFolderDeleter killer = new RecursiveFolderDeleter();
+				killer.deleteFolder(downloadPath);
+			}
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+	}
+	
 }

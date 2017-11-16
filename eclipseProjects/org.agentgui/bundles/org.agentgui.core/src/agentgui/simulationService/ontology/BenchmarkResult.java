@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: BenchmarkResult
 * @author ontology bean generator
-* @version 2017/11/12, 21:16:27
+* @version 2017/11/16, 10:27:58
 */
 public class BenchmarkResult implements Concept {
 

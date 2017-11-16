@@ -40,13 +40,11 @@ import agentgui.core.application.Application;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 import de.enflexit.common.SystemEnvironmentHelper;
-import de.enflexit.common.transfer.Download;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Profile;
 import jade.misc.FileInfo;
 import jade.misc.FileManagerClient;
-import jade.util.leap.ArrayList;
 
 /**
  * This class is only used by the {@link ServerSlaveAgent} of the background
@@ -98,8 +96,6 @@ public class JadeRemoteStart extends Thread {
 	private String jadePort = Application.getGlobalInfo().getJadeLocalPort().toString();
 	private String jadeContainerName = "remote";
 	
-	private ArrayList jadeJarInclude = null;
-	private ArrayList jadeJarIncludeClassPath = new ArrayList();
 	private File extJarFolder = null; 
 	
 	private final String pathBaseDir = Application.getGlobalInfo().getPathBaseDir();
@@ -142,10 +138,7 @@ public class JadeRemoteStart extends Thread {
 
 		// --- Download project files -----------
 		this.downloadFilesFromFileManagerAgent(reCoCo.getFileManagerAgent(), myAgent);
-		if (reCoCo.getJadeJarIncludeList()!=null) {
-			this.jadeJarInclude = (ArrayList) reCoCo.getJadeJarIncludeList();	
-			this.handelExternalJars();
-		}
+		
 	}	
 	
 	/**
@@ -174,14 +167,14 @@ public class JadeRemoteStart extends Thread {
 						} else {
 							filePathName = fileInfo.getPath() + fileInfo.getName();
 						}
-						if (debug==true) System.out.println("Download File: " + filePathName + " 	" + fileInfo.toString());
+						if (debug==true || true) System.out.println("Download File: " + filePathName + " 	" + fileInfo.toString());
 						pathList.add(filePathName);
 					}
 				}
 
 				// --- Download files ---------------------
 				String downLoadFileName = "DownloadFile.zip";
-				File downloadFile = new File(Application.getGlobalInfo().getPathDownloads() + downLoadFileName);
+				File downloadFile = new File(Application.getGlobalInfo().getFileManagerDownloadPath(true) + downLoadFileName);
 				InputStream inputStream = fmClient.downloadMultiple(pathList);
 				OutputStream outputStream = null;
 				try {
@@ -224,88 +217,6 @@ public class JadeRemoteStart extends Thread {
 		
 	}
 	
-	/**
-	 * If the request of a remote container contains external jars, download
-	 * them and include them in the current CLASSPATH.
-	 */
-	private void handelExternalJars() {
-		
-		String localDirectoryDownLoad = Application.getGlobalInfo().getPathDownloads();
-		String subDirectoryDownloads = Application.getGlobalInfo().getSubFolder4Downloads();
-		String projectSubFolder = null;
-		String downloadProtocol = "";
-		
-		if (debug) {
-			System.out.println("method handelExternalJars()");
-			System.out.println("=> localDirectoryDownLoad=" + localDirectoryDownLoad);
-			System.out.println("=> subDirectoryDownloads=" + subDirectoryDownloads);
-		}
-		
-		for (int i = 0; i < jadeJarInclude.size(); i++) {
-			
-			String httpJarFile = (String) jadeJarInclude.get(i);
-			if (debug) System.out.println("=> httpJarFile=" + httpJarFile);
-			if (projectSubFolder==null) {
-				
-				// --- Find sub-folder -------------------------
-				projectSubFolder = httpJarFile.replace("http://", "");
-				if (debug) System.out.println("=> projectSubFolder(1)=" + projectSubFolder);
-
-				int cut = projectSubFolder.indexOf("/")+1;
-				projectSubFolder = projectSubFolder.substring(cut, projectSubFolder.length());
-				if (debug) System.out.println("=> projectSubFolder(2)=" + projectSubFolder);
-				
-				cut = projectSubFolder.indexOf("/");
-				projectSubFolder = projectSubFolder.substring(0, cut);
-				projectSubFolder+= File.separator;
-				if (debug) System.out.println("=> projectSubFolder(3)=" + projectSubFolder);
-				
-				// --- Correct the Path for the download -------
-				localDirectoryDownLoad = localDirectoryDownLoad + projectSubFolder;
-				if (debug) System.out.println("=> localDirectoryDownLoad=" + localDirectoryDownLoad);
-				
-				// --- Check if this Folder exists -------------
-				extJarFolder = new File(localDirectoryDownLoad);
-				if (extJarFolder.exists()) {
-					if (debug) System.out.println("=> Try to delete download direcotory first ...");
-					this.deleteFolder(extJarFolder);
-					extJarFolder.delete();
-				}
-				if (debug) System.out.println("=> Try to create download direcotory .../n");
-				extJarFolder.mkdir();
-			}
-			
-			// --- Define Destination-File ---------------------
-			File remoteFile = new File(httpJarFile);
-			String destinFile = localDirectoryDownLoad + remoteFile.getAbsoluteFile().getName();
-			if (debug) {
-				System.out.println("=> httpJarFile=" + httpJarFile);
-				System.out.println("=> destinFile=" + destinFile);
-				System.out.println("=> Starting download !");
-			}
-			
-			// --- Start the download --------------------------
-			new Download(httpJarFile, destinFile).startDownload();
-
-			// --- Set reminder for the ClassPath --------------
-			String classPathEntry = destinFile.substring(destinFile.indexOf(subDirectoryDownloads));
-			classPathEntry = "./" + classPathEntry.replace(File.separator, "/") + ";";
-			jadeJarIncludeClassPath.add(classPathEntry);
-			
-			// --- Download-Protocol ---------------------------
-			if (downloadProtocol.equals("")==false) {
-				downloadProtocol += "|";
-			}
-			downloadProtocol += remoteFile.getAbsoluteFile().getName();
-			
-		} // --- end for
-		
-		if (downloadProtocol.equals("")==false) {
-			downloadProtocol = "Download to '" + localDirectoryDownLoad + "': " + downloadProtocol + "";
-			System.out.println(downloadProtocol);
-		}
-	}
-	 
  	/**
  	 * Deletes a folder and all sub elements.
  	 *

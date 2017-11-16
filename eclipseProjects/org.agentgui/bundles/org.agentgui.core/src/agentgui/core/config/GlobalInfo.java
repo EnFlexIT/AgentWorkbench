@@ -110,8 +110,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localPathAgentGUI	 = "bin";
 	private static String localPathJade		 = "lib" + File.separator + "jade" +  File.separator + "lib";
 	private static String localPathProperty  = "properties" + File.separator;
-	private static String localPathWebServer = "server" + File.separator;
-	private static String localPathDownloads = "download" + File.separator;
 	
 	private static String localFileDictionary  = "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
@@ -162,7 +160,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private String googleKey4API;
 	private String googleHTTPref;
 	
-	private String updateSite;
 	private Integer updateAutoConfiguration = 0;
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
@@ -704,35 +701,31 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}	
 	
 	/**
-	 * Here the local root folder for the download-server can be get. In this folder 
-	 * sources will be stored, which can be loaded to remote containers in order to 
-	 * add them to the ClassPath.   
-	 * If the folder doesn't exists, it will be created.
-	 * @return Local path to the download server of Agent.GUI ('/AgentGUI/server/')
+	 * Defines the local root directory that is used by the file.manager to provide file content. 
+	 * In this folder sources will be stored, which can be loaded to remote containers in order to 
+	 * enable a distributed execution of a MAS. If the folder doesn't exists, it will be created.
+	 *
+	 * @param forceDirectoryCreation set true, if the directory should be created 
+	 * @return path to the folder, where possible downloads will be stored ('/AgentGUI/fmServer[PID]/')
 	 */
-	public String getPathWebServer() {
-		String returnPath = this.getFilePathAbsolute(localPathWebServer);
-		this.createDirectoryIfRequired(returnPath);
-		return returnPath;
-	}
-	
-	/**
-	 * This method returns the folder, where downloaded files, coming from the applications
-	 * web-server (server.client) can be stored locally.
-	 * If the folder doesn't exists, it will be created.
-	 * @return Local path to the folder, where downloads will be saved ('/AgentGUI/download/')
-	 */
-	public String getPathDownloads() {
-		String returnPath = this.getFilePathAbsolute(localPathDownloads);
-		this.createDirectoryIfRequired(returnPath);
+	public String getFileManagerServerPath(boolean forceDirectoryCreation) {
+		String pathServer = "fmServer_" + this.getProcessID() + File.separator;
+		String returnPath = this.getFilePathAbsolute(pathServer);
+		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
 	/**
-	 * Returns the sub folder String for downloads.
-	 * @return the sub folder4 downloads
+	 * This method returns the folder, where download files, coming from an applications (server.client) 
+	 * can be stored locally. If the folder doesn't exists, it will be created.
+	 *
+	 * @param forceDirectoryCreation set true, if the directory should be created
+	 * @return path to the folder, where downloads will be saved ('/AgentGUI/fmDownload[PID]/')
 	 */
-	public String getSubFolder4Downloads() {
-		return localPathDownloads;
+	public String getFileManagerDownloadPath(boolean forceDirectoryCreation) {
+		String pathDownload = "fmDownload_" + this.getProcessID() + File.separator;
+		String returnPath = this.getFilePathAbsolute(pathDownload);
+		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
+		return returnPath;
 	}
 	
 	/**
@@ -1670,22 +1663,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		this.googleHTTPref = httpRef;
 	}
 
-	/**
-	 * Sets the update site.
-	 * @param updateSite the new update site
-	 */
-	public void setUpdateSite(String updateSite) {
-		this.updateSite = updateSite;
-	}
-	
-	/**
-	 * Returns the update site.
-	 * @return the update site
-	 */
-	public String getUpdateSite() {
-		return updateSite;
-	}
-	
+
 	/**
 	 * Sets the OIDC issuer URI.
 	 * @param OIDCIssuerURI the new OIDC issuer URI

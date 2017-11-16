@@ -104,7 +104,6 @@ public class FileProperties extends Properties {
 	private final String DEF_GOOGLE_API_KEY  = "30_GOOGLE_API_KEY";
 	private final String DEF_GOOGLE_HTTP_REF = "31_GOOGLE_HTTP_REF";
 	
-	private final String DEF_UPDATE_SITE = "35_UPDATE_SITE";
 	private final String DEF_UPDATE_AUTOCONFIG = "36_UPDATE_AUTOCONFIG";
 	private final String DEF_UPDATE_KEEP_DICTIONARY = "37_UPDATE_KEEP_DICTIONARY";
 	private final String DEF_UPDATE_DATE_LAST_CHECKED = "38_UPDATE_DATE_LAST_CHECKED";
@@ -143,7 +142,6 @@ public class FileProperties extends Properties {
 										this.DEF_OWN_MTP_PROTOCOL,
 										this.DEF_OWN_MTP_IP,
 										this.DEF_OWN_MTP_PORT,
-										this.DEF_UPDATE_SITE,
 										this.DEF_UPDATE_AUTOCONFIG,
 										this.DEF_UPDATE_KEEP_DICTIONARY,
 										this.DEF_UPDATE_DATE_LAST_CHECKED,
@@ -469,13 +467,6 @@ public class FileProperties extends Properties {
 		}
 		
 		
-		// --- this.DEF_UPDATE_SITE ------------------
-		propValue = this.getProperty(this.DEF_UPDATE_SITE);
-		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
-			this.globalInfo.setUpdateSite(propValue.trim());
-		} else {
-			this.globalInfo.setUpdateSite(null);
-		}
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		propValue = this.getProperty(this.DEF_UPDATE_AUTOCONFIG);
 		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
@@ -730,12 +721,6 @@ public class FileProperties extends Properties {
 		}
 		
 		
-		// --- this.DEF_UPDATE_SITE ------------------
-		if (this.globalInfo.getUpdateSite() == null) {
-			this.setProperty(this.DEF_UPDATE_SITE, "");
-		} else {
-			this.setProperty(this.DEF_UPDATE_SITE, this.globalInfo.getUpdateSite());	
-		}
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		this.setProperty(this.DEF_UPDATE_AUTOCONFIG, this.globalInfo.getUpdateAutoConfiguration().toString());	
 		// --- this.DEF_UPDATE_KEEP_DICTIONAR ---------		
@@ -871,9 +856,6 @@ public class FileProperties extends Properties {
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_OWN_MTP_PROTOCOL) ) {
 				this.setProperty(this.DEF_OWN_MTP_PROTOCOL, this.globalInfo.getMtpProtocol().toString());
 				
-			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
-				this.setProperty(this.DEF_UPDATE_SITE, null);
-				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_AUTOCONFIG) ) {				
 				this.setProperty(this.DEF_UPDATE_AUTOCONFIG, "0");
 				
@@ -927,8 +909,6 @@ public class FileProperties extends Properties {
 					this.setProperty(mandatoryProps[i], PlatformJadeConfig.MTP_IP_AUTO_Config);
 				} else if (mandatoryProps[i].equals(this.DEF_BENCH_SKIP_ALLWAYS)) {
 					this.setProperty(mandatoryProps[i], "true");
-				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {
-					this.setProperty(mandatoryProps[i], null);
 				} else {
 					this.setProperty(mandatoryProps[i], "");	
 				}

@@ -440,31 +440,30 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Integrate project into installation package.
+	 * @return true, if successful
 	 */
 	private boolean integrateProjectIntoInstallationPackage() {
-		File installationPackageFile = this.exportSettings.getInstallationPackage().getPacakgeFile();
 
+		File installationPackageFile = this.exportSettings.getInstallationPackage().getPacakgeFile();
 		try {
 			ArchiveFileHandler newZipper = new ArchiveFileHandler();
 			newZipper.appendFolderToArchive(tempExportFolderPath.toFile(), installationPackageFile, exportSettings.getTargetFile(), "agentgui/projects");
-		} catch (IOException e) {
+			
+		} catch (IOException ioEx) {
 			System.err.println("Error integrating project into installation package!");
-			e.printStackTrace();
+			ioEx.printStackTrace();
 			return false;
 		}
-
 		return true;
 	}
 
 	/**
 	 * Gets the progress monitor.
-	 *
 	 * @return the progress monitor
 	 */
 	private ProgressMonitor getProgressMonitor() {
-		if (this.progressMonitor == null) {
+		if (this.progressMonitor==null && this.isShowUserDialogs==true) {
 			String title = Language.translate("Projekt-Export");
 			String header = Language.translate("Exportiere Projekt") + " " + project.getProjectName();
 			String progress = Language.translate("Exportiere") + "...";
@@ -472,38 +471,41 @@ public class ProjectExportController {
 		}
 		return this.progressMonitor;
 	}
-
 	/**
 	 * Updates the progress monitor.
-	 *
 	 * @param currentProgress the current progress
 	 */
 	private void updateProgressMonitor(int currentProgress) {
-		SwingUtilities.invokeLater(new Runnable() {
 
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				getProgressMonitor().setProgress(currentProgress);
-				// --- Show progress monitor if not visible -----
-				if (getProgressMonitor().isVisible() == false) {
-					getProgressMonitor().setVisible(true);
-					getProgressMonitor().validate();
-					getProgressMonitor().repaint();
+				
+				ProgressMonitor pm = getProgressMonitor();
+				if (pm==null) return;
+				// --- Show progress monitor if not visible ---------
+				if (pm.isVisible()==false) {
+					pm.setVisible(true);
+					pm.validate();
+					pm.repaint();
 				}
+				// --- Set progress ---------------------------------
+				pm.setProgress(currentProgress);
 			}
 		});
+		
 	}
-
 	/**
 	 * Disposes the progress monitor.
 	 */
 	private void disposeProgressMonitor() {
 		SwingUtilities.invokeLater(new Runnable() {
-
 			@Override
 			public void run() {
-				getProgressMonitor().setVisible(false);
-				getProgressMonitor().dispose();
+				ProgressMonitor pm = getProgressMonitor();
+				if (pm==null) return;
+				pm.setVisible(false);
+				pm.dispose();
 			}
 		});
 	}
@@ -549,10 +551,6 @@ public class ProjectExportController {
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class ProjectExportThread extends Thread {
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Thread#run()
-		 */
 		@Override
 		public void run() {
 			doProjectExport();

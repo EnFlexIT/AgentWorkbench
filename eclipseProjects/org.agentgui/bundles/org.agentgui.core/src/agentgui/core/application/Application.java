@@ -64,7 +64,6 @@ import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
-import agentgui.core.webserver.DownloadServer;
 import agentgui.logging.components.JPanelConsole;
 import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
@@ -118,8 +117,6 @@ public class Application {
 	private static Platform jadePlatform;
 	/** The ODBC connection to the database */
 	private static DBConnection dbConnection;
-	/** Simple web-server that can be used for larger data transfer. */
-	private static DownloadServer downloadServer;
 	
 
 	/** The project that has to be opened after application start. Received from program parameter.*/
@@ -1047,43 +1044,6 @@ public class Application {
 			}
 		}
 		Application.setStatusBar(Language.translate("Fertig"));
-	}
-	
-	/**
-	 * Starts the Web-Server, so that a remote server.slave is able 
-	 * to download the additional jar-resources of a project
-	 */
-	public static DownloadServer startDownloadServer() {
-		if (downloadServer==null) {
-			downloadServer = new DownloadServer();
-			downloadServer.setRoot(getGlobalInfo().getPathWebServer());
-			new Thread(downloadServer).start();
-		}
-		return downloadServer;
-	}
-	/**
-	 * Stops the Web-Server for the resources download of an external server.slave
-	 */
-	public static void stopDownloadServer() {
-		if (downloadServer!=null) {
-			synchronized (downloadServer) {
-				downloadServer.stop();
-			}
-			downloadServer = null;
-		}
-	}
-	/**
-	 * Returns the current SownloadServer instance.
-	 * @return the download server
-	 */
-	public static DownloadServer getDownloadServer() {
-		if (downloadServer==null) {
-			return downloadServer;
-		} else {
-			synchronized (downloadServer) {
-				return downloadServer;
-			}	
-		}
 	}
 	
 	/**

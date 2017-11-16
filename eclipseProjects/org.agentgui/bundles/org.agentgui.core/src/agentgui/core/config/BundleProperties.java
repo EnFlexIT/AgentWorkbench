@@ -89,7 +89,6 @@ public class BundleProperties {
 	public static final String DEF_GOOGLE_API_KEY  = "30_GOOGLE_API_KEY";
 	public static final String DEF_GOOGLE_HTTP_REF = "31_GOOGLE_HTTP_REF";
 	
-	public static final String DEF_UPDATE_SITE = "35_UPDATE_SITE";
 	public static final String DEF_UPDATE_AUTOCONFIG = "36_UPDATE_AUTOCONFIG";
 	public static final String DEF_UPDATE_KEEP_DICTIONARY = "37_UPDATE_KEEP_DICTIONARY";
 	public static final String DEF_UPDATE_DATE_LAST_CHECKED = "38_UPDATE_DATE_LAST_CHECKED";
@@ -302,9 +301,6 @@ public class BundleProperties {
 		this.globalInfo.setGoogleHttpRef(stringPrefValue.trim());
 		
 		
-		// --- this.DEF_UPDATE_SITE ------------------
-		stringPrefValue = eclipsePreferences.get(DEF_UPDATE_SITE, "");
-		this.globalInfo.setUpdateSite(stringPrefValue.trim());
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		integerPrefValue = eclipsePreferences.getInt(DEF_UPDATE_AUTOCONFIG, 0);
 		this.globalInfo.setUpdateAutoConfiguration(integerPrefValue);
@@ -436,8 +432,6 @@ public class BundleProperties {
 		if (this.globalInfo.getGoogleHttpRef()!=null) eclipsePreferences.put(DEF_GOOGLE_HTTP_REF, this.globalInfo.getGoogleHttpRef());	
 		
 		
-		// --- this.DEF_UPDATE_SITE ------------------
-		if (this.globalInfo.getUpdateSite()!=null) eclipsePreferences.put(DEF_UPDATE_SITE, this.globalInfo.getUpdateSite());	
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		eclipsePreferences.putInt(DEF_UPDATE_AUTOCONFIG, this.globalInfo.getUpdateAutoConfiguration());	
 		// --- this.DEF_UPDATE_KEEP_DICTIONAR ---------		

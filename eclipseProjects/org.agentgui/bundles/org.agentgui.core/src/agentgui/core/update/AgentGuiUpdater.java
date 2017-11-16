@@ -76,12 +76,11 @@ public class AgentGuiUpdater extends Thread {
 	private Integer updateAutoConfiguration;
 	private long updateDateLastChecked = 0;
 	
-	
-	private String alternativeInfoLink;
-	
 	private boolean manualyExecutedByUser = false;
 	private boolean doUpdateProcedure = true;
 	private boolean askBeforeDownload = false;
+
+	
 	/**
 	 * Instantiates a new Agent.GUI updater process.
 	 */
@@ -96,16 +95,6 @@ public class AgentGuiUpdater extends Thread {
 		this.manualyExecutedByUser = userExecuted;
 		this.initialize();
 	}
-	/**
-	 * Instantiates a new Agent.GUI updater process.
-	 * @param userExecuted indicates that execution was manually chosen by user
-	 * @param alternativeInfoLink the alternative download link for the update
-	 */
-	public AgentGuiUpdater(boolean userExecuted, String alternativeInfoLink) {
-		this.manualyExecutedByUser = userExecuted;
-		this.alternativeInfoLink = alternativeInfoLink;
-		this.initialize();
-	}
 	
 	/**
 	 * Initialize and set needed local variables.
@@ -115,17 +104,9 @@ public class AgentGuiUpdater extends Thread {
 		this.setName("Agent.GUI-Updater");
 		
 		this.globalInfo = Application.getGlobalInfo();
-		this.globalInfo.getVersionInfo();
 		this.executionMode = this.globalInfo.getExecutionMode();
-
-		this.globalInfo.getUpdateSite();
 		this.updateAutoConfiguration = this.globalInfo.getUpdateAutoConfiguration();
-		this.globalInfo.getUpdateKeepDictionary();
 		this.updateDateLastChecked = this.globalInfo.getUpdateDateLastChecked();
-		
-		this.globalInfo.getPathDownloads();
-		this.globalInfo.getPathWebServer();
-		this.globalInfo.getPathProperty(true);
 		
 		this.setUpdateConfiguration();
 	}
@@ -135,7 +116,7 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private void setUpdateConfiguration() {
 		
-		if (this.alternativeInfoLink==null && this.manualyExecutedByUser==false) {
+		if (this.manualyExecutedByUser==false) {
 			long timeNow = System.currentTimeMillis();
 			long time4NextCheck = this.updateDateLastChecked + AgentGuiUpdater.UPDATE_CHECK_PERIOD;
 			if (timeNow<time4NextCheck) {

@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2017/11/12, 21:16:28
+* @version 2017/11/16, 10:27:58
 */
 public class ClientRemoteContainerReply implements AgentAction {
+
+   /**
+* Protege name: remotePerformance
+   */
+   private PlatformPerformance remotePerformance;
+   public void setRemotePerformance(PlatformPerformance value) { 
+    this.remotePerformance=value;
+   }
+   public PlatformPerformance getRemotePerformance() {
+     return this.remotePerformance;
+   }
 
    /**
 * Protege name: remoteContainerName
@@ -24,14 +35,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteBenchmarkResult
+* Protege name: remoteOS
    */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
+   private OSInfo remoteOS;
+   public void setRemoteOS(OSInfo value) { 
+    this.remoteOS=value;
    }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
+   public OSInfo getRemoteOS() {
+     return this.remoteOS;
    }
 
    /**
@@ -57,28 +68,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteOS
-   */
-   private OSInfo remoteOS;
-   public void setRemoteOS(OSInfo value) { 
-    this.remoteOS=value;
-   }
-   public OSInfo getRemoteOS() {
-     return this.remoteOS;
-   }
-
-   /**
-* Protege name: remotePerformance
-   */
-   private PlatformPerformance remotePerformance;
-   public void setRemotePerformance(PlatformPerformance value) { 
-    this.remotePerformance=value;
-   }
-   public PlatformPerformance getRemotePerformance() {
-     return this.remotePerformance;
-   }
-
-   /**
 * Protege name: remoteAgentGuiVersion
    */
    private AgentGuiVersion remoteAgentGuiVersion;
@@ -87,6 +76,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public AgentGuiVersion getRemoteAgentGuiVersion() {
      return this.remoteAgentGuiVersion;
+   }
+
+   /**
+* Protege name: remoteBenchmarkResult
+   */
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
+   }
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
    }
 
 }

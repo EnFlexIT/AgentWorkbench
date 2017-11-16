@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ShowThreadGUI
 * @author ontology bean generator
-* @version 2017/11/12, 21:16:28
+* @version 2017/11/16, 10:27:58
 */
 public class ShowThreadGUI implements AgentAction {
 

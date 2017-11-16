@@ -320,8 +320,6 @@ public class ServerSlaveAgent extends Agent {
 			
 			Action act = null;
 			Concept agentAction = null; 
-			@SuppressWarnings("unused")
-			AID senderAID = null;
 
 			ACLMessage msg = myAgent.receive();			
 			if (msg!=null) {
@@ -358,16 +356,11 @@ public class ServerSlaveAgent extends Agent {
 						e.printStackTrace();
 					}
 				}
+				
 				if (act!=null) {
-					
+					// -- Check the AgentAction -------------------------------
 					agentAction = act.getAction();
-					senderAID = act.getActor();
-					
-					// ------------------------------------------------------------------
-					// --- Fallunterscheidung AgentAction --- S T A R T -----------------
-					// ------------------------------------------------------------------
 					if (agentAction instanceof ClientRemoteContainerRequest) {
-						
 						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
 						startRemoteContainer(crcr.getRemoteConfig());
 					
@@ -379,21 +372,16 @@ public class ServerSlaveAgent extends Agent {
 						
 					} else if (agentAction instanceof MasterUpdateNote) {
 						System.out.println( "Server.Master (re)connected, but call for an update!" );
+						@SuppressWarnings("unused")
 						MasterUpdateNote masterUpdateNote = (MasterUpdateNote) agentAction;
-						String updateInfoURL = masterUpdateNote.getUpdateInfoURL();
-						System.out.println( "Download Update-Information: " + updateInfoURL);
 						// --- Start update process ---------------------------
-						new AgentGuiUpdater(false, updateInfoURL).start();
+						new AgentGuiUpdater(false).start();
 						
 					}
-					
-					// ------------------------------------------------------------------
-					// --- Fallunterscheidung AgentAction --- E N D E -------------------
-					// ------------------------------------------------------------------
 				}
-			}
-			else {
-				block();
+				
+			} else {
+				this.block();
 			}			
 		}
 	}

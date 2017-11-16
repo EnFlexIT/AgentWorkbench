@@ -45,7 +45,6 @@ import org.osgi.framework.FrameworkUtil;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.webserver.JarFileCreator;
 import de.enflexit.common.PathHandling;
 
 /**

@@ -392,12 +392,10 @@ public class ServerClientAgent extends Agent {
 						
 					} else if (agentAction instanceof MasterUpdateNote) {
 						System.out.println( "Server.Master (re)connected, but call for an update!" );
+						@SuppressWarnings("unused")
 						MasterUpdateNote masterUpdateNote = (MasterUpdateNote) agentAction;
-						String updateInfoURL = masterUpdateNote.getUpdateInfoURL();
-						System.out.println( "Download Update-Information: " + updateInfoURL);
 						// --- Start update process ---------------------------
-						new AgentGuiUpdater(false, updateInfoURL).start();
-					
+						new AgentGuiUpdater(false).start();
 						
 					} else if (agentAction instanceof ClientRemoteContainerRequest) {
 						// --- Forward to Server.Master -----------------------

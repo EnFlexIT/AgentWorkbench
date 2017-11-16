@@ -83,7 +83,6 @@ import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.update.VersionInformation;
-import agentgui.core.webserver.DownloadServer;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationHelper;
@@ -874,7 +873,6 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 * should be downloadable in case of distributed executions. The idea is, that for example external 
 	 * jar-files can distributed to a remote location, where such jar-files will be added automatically
 	 * to the ClassPath of the starting JVM.
-	 * @see DownloadServer#setProjectDownloadResources(Project)
 	 * @param downloadResources the new download resources
 	 */
 	public void setDownloadResources(Vector<String> downloadResources) {
