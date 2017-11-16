@@ -36,15 +36,15 @@ import javax.swing.JDesktopPane;
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.csv.CsvDataControllerPanel;
+import de.enflexit.common.p2.P2OperationsHandler;
 import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
 import de.enflexit.common.transfer.Zipper;
 
 /**
- * A factory for creating common components that are based  
- * in the bundle de.enflexit.common and their sub packages.
- *  
+ * A factory for creating common components that are based in the bundle de.enflexit.common and their sub packages.
+ * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class CommonComponentFactory {
@@ -58,21 +58,21 @@ public class CommonComponentFactory {
 	 * @return the new progress monitor
 	 */
 	public static ProgressMonitor getNewProgressMonitor(String windowTitle, String headerText, String progressText) {
-		
+
 		// --- Try to get a JDesktopPane ----------------------------
 		JDesktopPane desktop = null;
-		if (Application.getMainWindow()!=null) {
+		if (Application.getMainWindow() != null) {
 			desktop = Application.getMainWindow().getJDesktopPane4Projects();
 		}
-		
+
 		// --- Get the image icon for the progress monitor ----------
 		ImageIcon imageIcon = GlobalInfo.getInternalImageIcon("AgentGUI.png");
 		// --- Get the look and feel --------------------------------
 		String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
-		
-		// --- Initiate new ProgressMonitor ------------------------- 
+
+		// --- Initiate new ProgressMonitor -------------------------
 		ProgressMonitor pm = new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);
-		
+
 		return pm;
 	}
 
@@ -85,6 +85,7 @@ public class CommonComponentFactory {
 	public static Zipper getNewZipper() {
 		return getNewZipper(null);
 	}
+
 	/**
 	 * Returns a new pre-configured {@link Zipper}.
 	 *
@@ -92,16 +93,17 @@ public class CommonComponentFactory {
 	 * @return the new {@link Zipper} instance
 	 */
 	public static Zipper getNewZipper(Frame owner) {
-		
+
 		Zipper zipper = new Zipper(owner);
 		zipper.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		zipper.setLookAndFeelClassName(Application.getGlobalInfo().getAppLookAndFeelClassName());
 		zipper.setApplicationName(Application.getGlobalInfo().getApplicationTitle());
 		return zipper;
 	}
-	
+
 	/**
 	 * Returns a new pre-configured {@link CsvDataControllerPanel}.
+	 * 
 	 * @return the new {@link CsvDataControllerPanel}
 	 */
 	public static CsvDataControllerPanel getNewCsvDataControllerPanel() {
@@ -109,21 +111,27 @@ public class CommonComponentFactory {
 		csvPanel.setLastSelectedFolderReminder(Application.getGlobalInfo());
 		return csvPanel;
 	}
-	
+
 	/**
 	 * Returns a new {@link RecursiveFolderCopier}
+	 * 
 	 * @return the new {@link RecursiveFolderCopier}
 	 */
 	public static RecursiveFolderCopier getNewRecursiveFolderCopier() {
 		return new RecursiveFolderCopier();
 	}
-	
+
 	/**
 	 * Returns a new {@link RecursiveFolderDeleter}
+	 * 
 	 * @return the new {@link RecursiveFolderDeleter}
 	 */
 	public static RecursiveFolderDeleter getNewRecursiveFolderDeleter() {
 		return new RecursiveFolderDeleter();
 	}
-	
+
+	public static P2OperationsHandler getNewP2OperationsHandler() {
+		return new P2OperationsHandler();
+	}
+
 }
