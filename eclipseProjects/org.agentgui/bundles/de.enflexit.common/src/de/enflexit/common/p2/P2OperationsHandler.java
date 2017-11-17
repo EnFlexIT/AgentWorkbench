@@ -20,6 +20,7 @@ import org.eclipse.equinox.p2.operations.UpdateOperation;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
@@ -39,6 +40,9 @@ public class P2OperationsHandler {
 	private IProvisioningAgent provisioningAgent;
 
 	private UpdateOperation updateOperation;
+
+	private IMetadataRepositoryManager metadataRepositoryManager;
+	private IArtifactRepositoryManager artifactRepositoryManager;
 
 	/**
 	 * Gets the provisioning session.
@@ -92,6 +96,30 @@ public class P2OperationsHandler {
 	}
 
 	/**
+	 * Gets the metadata repository manager.
+	 *
+	 * @return the metadata repository manager
+	 */
+	private IMetadataRepositoryManager getMetadataRepositoryManager() {
+		if (metadataRepositoryManager == null) {
+			metadataRepositoryManager = (IMetadataRepositoryManager) this.getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME);
+		}
+		return metadataRepositoryManager;
+	}
+
+	/**
+	 * Gets the artifact repository manager.
+	 *
+	 * @return the artifact repository manager
+	 */
+	private IArtifactRepositoryManager getArtifactRepositoryManager() {
+		if (artifactRepositoryManager == null) {
+			artifactRepositoryManager = (IArtifactRepositoryManager) this.getProvisioningAgent().getService(IArtifactRepositoryManager.SERVICE_NAME);
+		}
+		return artifactRepositoryManager;
+	}
+
+	/**
 	 * Checks if a specific {@link IInstallableUnit} (IU) is installed
 	 * 
 	 * @param installableUnitID The ID of the IU of interest
@@ -114,10 +142,21 @@ public class P2OperationsHandler {
 	 * @param repositoryURI the {@link URI} of the repository to add
 	 */
 	public void addRepository(URI repositoryURI) {
-		IMetadataRepositoryManager metadataRepositoryManager = (IMetadataRepositoryManager) this.getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME);
-		metadataRepositoryManager.addRepository(repositoryURI);
-		IArtifactRepositoryManager artifactRepositoryManager = (IArtifactRepositoryManager) this.getProvisioningAgent().getService(IArtifactRepositoryManager.SERVICE_NAME);
-		artifactRepositoryManager.addRepository(repositoryURI);
+		this.addRepository(repositoryURI, null);
+	}
+
+	/**
+	 * Adds a new p2 repository.
+	 *
+	 * @param repositoryURI the repository URI
+	 * @param repositoryName the repository name
+	 */
+	public void addRepository(URI repositoryURI, String repositoryName) {
+		this.getMetadataRepositoryManager().addRepository(repositoryURI);
+		this.getArtifactRepositoryManager().addRepository(repositoryURI);
+		if (repositoryName != null) {
+			this.getMetadataRepositoryManager().setRepositoryProperty(repositoryURI, IRepository.PROP_NICKNAME, repositoryName);
+		}
 	}
 
 	/**
@@ -132,37 +171,23 @@ public class P2OperationsHandler {
 		// --- Make sure the repository is known and enabled ---------
 		this.addRepository(repositoryURI);
 
-		IMetadataRepository metadataRepository = null;
-		try {
-			IMetadataRepositoryManager metadataRepositoryManager = (IMetadataRepositoryManager) this.getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME);
-			metadataRepository = metadataRepositoryManager.loadRepository(repositoryURI, this.getProgressMonitor());
+		// --- Query the repository for the IU of interest -----------
+		IQueryResult<IInstallableUnit> queryResult = this.queryRepositoryForInstallableUnit(repositoryURI, installableUnitID);
 
-		} catch (ProvisionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (OperationCanceledException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
+		if (queryResult.isEmpty() == false) {
 
-		if (metadataRepository != null) {
-			IQueryResult<IInstallableUnit> queryResult = metadataRepository.query(QueryUtil.createIUQuery(installableUnitID), this.getProgressMonitor());
-
-			if (queryResult.isEmpty() == true) {
-				String errorMessage = "Installable unit " + installableUnitID + " could not be found in the repositoty " + repositoryURI;
-				System.err.println(errorMessage);
-				return false;
-			}
-
+			// --- If found, trigger an InstallOperation ---------------
 			InstallOperation installOperation = new InstallOperation(this.getProvisioningSession(), queryResult.toSet());
 			IStatus result = this.performOperation(installOperation);
-
 			return result.isOK();
 
 		} else {
+
+			// --- If not, print an error message -----------------------
+			String errorMessage = "Installable unit " + installableUnitID + " could not be found in the repositoty " + repositoryURI;
+			System.err.println(errorMessage);
 			return false;
+
 		}
 
 	}
@@ -210,6 +235,65 @@ public class P2OperationsHandler {
 		}
 
 		return provisioningJob.runModal(this.getProgressMonitor());
+	}
+
+	/**
+	 * Gets the repository for the {@link IInstallableUnit} (IU) with the given ID.
+	 *
+	 * @param installableUnitID the ID of the IU of interest
+	 * @return the repository, null if no known repository contains the IU
+	 */
+	public URI getRepositoryForInstallableUnit(String installableUnitID) {
+
+		// --- Get a list of all known repositories ---------------
+		IMetadataRepositoryManager metadataRepositoryManager = (IMetadataRepositoryManager) this.getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME);
+		URI[] knownRepositories = metadataRepositoryManager.getKnownRepositories(IMetadataRepositoryManager.REPOSITORIES_ALL);
+
+		// --- Check if the repository contains an IU with the requested ID ------
+		for (URI repository : knownRepositories) {
+			IQueryResult<IInstallableUnit> queryResult = this.queryRepositoryForInstallableUnit(repository, installableUnitID);
+			if (queryResult != null && queryResult.isEmpty() == false) {
+				return repository;
+			}
+		}
+
+		// --- No repository containing the IU could be found ------------
+		return null;
+	}
+
+	/**
+	 * Queries a repository for a specific {@link IInstallableUnit} (IU).
+	 *
+	 * @param repositoryURI the repository URI
+	 * @param installableUnitID the ID of the IU
+	 * @return the {@link IQueryResult}
+	 */
+	private IQueryResult<IInstallableUnit> queryRepositoryForInstallableUnit(URI repositoryURI, String installableUnitID) {
+
+		// --- Load the repository ------------
+		IQueryResult<IInstallableUnit> queryResult = null;
+		try {
+			IMetadataRepository metadataRepository = this.getMetadataRepositoryManager().loadRepository(repositoryURI, this.getProgressMonitor());
+			// --- Query for the IU of interest -----
+			if (metadataRepository != null) {
+				queryResult = metadataRepository.query(QueryUtil.createIUQuery(installableUnitID), this.getProgressMonitor());
+			}
+		} catch (ProvisionException | OperationCanceledException e) {
+			System.err.println("Error loading the repository at " + repositoryURI);
+			e.printStackTrace();
+		}
+
+		return queryResult;
+	}
+
+	/**
+	 * Gets the repository name.
+	 *
+	 * @param repositoryURI the repository URI
+	 * @return the repository name
+	 */
+	public String getRepositoryName(URI repositoryURI) {
+		return this.getMetadataRepositoryManager().getRepositoryProperty(repositoryURI, IRepository.PROP_NICKNAME);
 	}
 
 }
