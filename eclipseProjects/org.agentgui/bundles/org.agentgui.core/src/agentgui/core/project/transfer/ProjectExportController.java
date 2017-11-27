@@ -475,7 +475,7 @@ public class ProjectExportController {
 	 * Updates the progress monitor.
 	 * @param currentProgress the current progress
 	 */
-	private void updateProgressMonitor(int currentProgress) {
+	private void updateProgressMonitor(final int currentProgress) {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
