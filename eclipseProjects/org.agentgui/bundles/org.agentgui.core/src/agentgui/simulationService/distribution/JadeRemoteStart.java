@@ -28,6 +28,8 @@
  */
 package agentgui.simulationService.distribution;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +37,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Scanner;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import agentgui.core.application.Application;
 import agentgui.simulationService.agents.ServerSlaveAgent;
@@ -55,7 +60,7 @@ import jade.misc.FileManagerClient;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JadeRemoteStart extends Thread {
+public class JadeRemoteStart {
 
 	/** Constant for a memory of 16 MB. */
 	public static final String jvmMemo16MB 	= "16m";
@@ -102,16 +107,18 @@ public class JadeRemoteStart extends Thread {
 	
 	
 	/**
-	 * Default constructor.
+	 * Instantiates a new jade remote start.
 	 *
 	 * @param myAgent the my agent
 	 * @param reCoCo the RemoteContainerConfig
 	 */
 	public JadeRemoteStart(Agent myAgent, RemoteContainerConfig reCoCo) {
 		
-		if (debug) System.out.println("Class '" + this.getClass().getName() + "' in debug modue ...");
+		if (this.debug) {
+			System.out.println("Class '" + this.getClass().getName() + "' in debug modue ...");
+		}
 		
-		jadeIsRemoteContainer = reCoCo.getJadeIsRemoteContainer();
+		this.jadeIsRemoteContainer = reCoCo.getJadeIsRemoteContainer();
 		if (reCoCo.getJvmMemAllocInitial()==null && reCoCo.getJvmMemAllocMaximum()==null) {
 			this.jvmMemAllocUseDefaults = true;	
 			this.jvmMemAllocInitial = JadeRemoteStart.jvmMemo32MB;
@@ -140,106 +147,7 @@ public class JadeRemoteStart extends Thread {
 		this.downloadFilesFromFileManagerAgent(reCoCo.getFileManagerAgent(), myAgent);
 		
 	}	
-	
-	/**
-	 * Downloads the provided files from the file manager agent.
-	 * @param fileMangerAID the file manger AID
-	 * @param myAgent the my agent
-	 */
-	private void downloadFilesFromFileManagerAgent(AID fileMangerAID, Agent myAgent) {
-		
-		if (fileMangerAID==null) return;
-		
-		// -- Initiate a FileManagerClient ---------------- 
-		FileManagerClient fmClient = new FileManagerClient(fileMangerAID, myAgent);
-		try {
-			// --- List the available files ---------------
-			List<FileInfo> fileInfoList = fmClient.listFiles(null);
-			if (fileInfoList!=null && fileInfoList.size()>0) {
-				
-				List<String> pathList = new java.util.ArrayList<>();
-				for (int i = 0; i < fileInfoList.size(); i++) {
-					FileInfo fileInfo = fileInfoList.get(i);
-					String filePathName = null;
-					if (fileInfo.isDirectory()==false) {
-						if (fileInfo.getPath().equals(".")==true) {
-							filePathName = fileInfo.getName();
-						} else {
-							filePathName = fileInfo.getPath() + fileInfo.getName();
-						}
-						if (debug==true || true) System.out.println("Download File: " + filePathName + " 	" + fileInfo.toString());
-						pathList.add(filePathName);
-					}
-				}
-
-				// --- Download files ---------------------
-				String downLoadFileName = "DownloadFile.zip";
-				File downloadFile = new File(Application.getGlobalInfo().getFileManagerDownloadPath(true) + downLoadFileName);
-				InputStream inputStream = fmClient.downloadMultiple(pathList);
-				OutputStream outputStream = null;
-				try {
-
-					outputStream = new FileOutputStream(downloadFile);
-					int read = 0;
-					byte[] bytes = new byte[1024];
-					while ((read=inputStream.read(bytes))!=-1) {
-						outputStream.write(bytes, 0, read);
-					}
-
-				} catch (IOException ioEx) {
-					ioEx.printStackTrace();
-				} finally {
-					if (inputStream!=null) {
-						try {
-							inputStream.close();
-						} catch (IOException ioEx) {
-							ioEx.printStackTrace();
-						}
-					}
-					if (outputStream!=null) {
-						try {
-							//outputStream.flush();
-							outputStream.close();
-						} catch (IOException ioEx) {
-							ioEx.printStackTrace();
-						}
-					}
-				}
-				
-				// --- Extract the zip file ---------------
-				//TODO
-				
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-	}
-	
- 	/**
- 	 * Deletes a folder and all sub elements.
- 	 *
- 	 * @param directory the directory
- 	 */
-    private void deleteFolder(File directory) {
-    	
-    	for (File file : directory.listFiles()) {
-    		if (file.isDirectory()) {
-	    		deleteFolder(file);
-	    	}
-	    	file.delete();
-		}
-    }
     
-	/**
-	 * Action for the Thread-Start. Starts a new JVM with a new Jade-Instance
-	 */
-	@Override
-	public void run() {
-		this.startJade();
-	}
-	
 	/**
 	 * This Method starts a Jade-Platform within a new Java Virtual Machine.
 	 */
@@ -327,7 +235,9 @@ public class JadeRemoteStart extends Thread {
 			}
 			System.out.println("Killed Container [" + jadeContainerName + "]");
 		    
+			// ------------------------------------------------------
 			// --- Remove external jars from the download-folder ----
+			// ------------------------------------------------------
 			if (extJarFolder!=null ) {
         		if (extJarFolder.exists()==true) {
         			deleteFolder(extJarFolder);
@@ -487,6 +397,266 @@ public class JadeRemoteStart extends Thread {
 	 */
 	public String getJADEServices() {
 		return jadeServices;
+	}
+	
+	
+	/**
+ 	 * Deletes a folder and all sub elements.
+ 	 * @param directory the directory
+ 	 */
+    private void deleteFolder(File directory) {
+    	for (File file : directory.listFiles()) {
+    		if (file.isDirectory()) {
+	    		deleteFolder(file);
+	    	}
+	    	file.delete();
+		}
+    }
+	
+	// ------------------------------------------------------------------------
+	// --- From here, methods for the file download can be found --------------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Downloads the provided files from the file manager agent.
+	 * @param fileMangerAID the file manger AID
+	 * @param myAgent the my agent
+	 */
+	private void downloadFilesFromFileManagerAgent(AID fileMangerAID, Agent myAgent) {
+		
+		if (fileMangerAID==null) return;
+		
+		// -- Initiate a FileManagerClient --------------------------
+		FileManagerClient fmClient = new FileManagerClient(fileMangerAID, myAgent);
+		try {
+			// --- List the available files -------------------------
+			List<FileInfo> fileInfoList = this.getFileListFromFileManager(fmClient, null, null);
+			if (fileInfoList!=null && fileInfoList.size()>0) {
+				// --- Convert to list of path names ----------------
+				List<String> pathList = this.convertToDirPathNameList(fileInfoList);
+				// --- Download the files ---------------------------
+				File downloadFile = this.doZipDownload(fmClient, pathList);
+				// --- Extract the zip file -------------------------
+				this.doZipExtraction(downloadFile, fileInfoList);
+				// --- Delete the zip file --------------------------
+				downloadFile.delete();
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+	}
+
+	/**
+	 * Returns the FileInfo list that can be provided by the file manager.
+	 *
+	 * @param fmClient the fm client
+	 * @param initialFileList the initial file list
+	 * @param subDirectory the sub directory
+	 * @return the file list from file manager
+	 */
+	private List<FileInfo> getFileListFromFileManager(FileManagerClient fmClient, List<FileInfo> initialFileList, String subDirectory) {
+		
+		List<FileInfo> fileList = null;
+		if (initialFileList!=null) {
+			fileList = initialFileList;
+		} else {
+			fileList = new java.util.ArrayList<>();
+		}
+		
+		try {
+			List<FileInfo> fileInfoList = fmClient.listFiles(subDirectory);
+			if (fileInfoList!=null && fileInfoList.size()>0) {
+				for (int i = 0; i < fileInfoList.size(); i++) {
+					FileInfo fileInfo = fileInfoList.get(i);
+					// --- Create the file description ------------------------
+					String dirPathName = this.convertToDirPathName(fileInfo);
+					if (fileInfo.isDirectory()) {
+						this.getFileListFromFileManager(fmClient, fileList, dirPathName);
+					} else {
+						fileList.add(fileInfo);
+					}
+				}
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return fileList;
+	}
+	/**
+	 * Converts the specified FileInfo to a directory path name.
+	 *
+	 * @param currSubDirPath the current sub directory path
+	 * @param fileInfo the file info
+	 * @return the string
+	 */
+	private String convertToDirPathName(FileInfo fileInfo) {
+		String dirPathName = fileInfo.getPath() + "/" + fileInfo.getName();
+		while (dirPathName.startsWith(".")) {
+			dirPathName = dirPathName.substring(1);
+		}
+		return dirPathName;
+	}
+	/**
+	 * Converts the specified list with FileInfo's to a list of path names.
+	 *
+	 * @param fileInfoList the file info list
+	 * @return the list with path names
+	 */
+	private List<String> convertToDirPathNameList(List<FileInfo> fileInfoList) {
+		
+		if (fileInfoList==null || fileInfoList.size()==0) return null;
+		
+		List<String> pathList = new java.util.ArrayList<>();
+		for (int i = 0; i < fileInfoList.size(); i++) {
+			String filePathName = this.convertToDirPathName(fileInfoList.get(i));
+			pathList.add(filePathName);
+		}
+		return pathList;
+	}
+	
+	/**
+	 * Does the actual download of the specified file list.
+	 *
+	 * @param fmClient the current FileManagerClient
+	 * @param pathList the path list
+	 * @return the file
+	 * @throws Exception 
+	 */
+	private File doZipDownload(FileManagerClient fmClient, List<String> pathList) throws Exception {
+		
+		// --- Download the file that is either compressed or a single file -----
+		String downLoadFileName = "rcsaDownload.zip";
+		File downloadFile = new File(Application.getGlobalInfo().getFileManagerDownloadPath(true) + downLoadFileName);
+		// --- Request the InputStream  for the download ------------------------
+		InputStream inputStream = fmClient.downloadMultiple(pathList);
+		OutputStream outputStream = null;
+		try {
+			
+			// --- Download the file --------------------------------------------
+			outputStream = new FileOutputStream(downloadFile);
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			while ((read=inputStream.read(bytes))!=-1) {
+				outputStream.write(bytes, 0, read);
+			}
+
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		} finally {
+			if (inputStream!=null) {
+				try {
+					inputStream.close();
+				} catch (IOException ioEx) {
+					ioEx.printStackTrace();
+				}
+			}
+			if (outputStream!=null) {
+				try {
+					//outputStream.flush();
+					outputStream.close();
+				} catch (IOException ioEx) {
+					ioEx.printStackTrace();
+				}
+			}
+		}
+		return downloadFile;
+	}
+	
+	/**
+	 * Does the download extraction.
+	 *
+	 * @param archiveFile the archive file (zip)
+	 * @param downloadFileList the download file list
+	 */
+	private void doZipExtraction(File archiveFile, List<FileInfo> downloadFileList) {
+		
+		ZipFile zipFile = null;
+		try {
+			// --- Access jar file ----------------------------------
+			zipFile = new JarFile(archiveFile);
+			String basePath = Application.getGlobalInfo().getFileManagerDownloadPath(true);
+			
+			for (int i = 0; i < downloadFileList.size(); i++) {
+				
+				FileInfo fi = downloadFileList.get(i);
+				String destinationFilePath = basePath + this.convertToDirPathName(fi);
+				// --- Define destination file ----------------------
+				File destinationFile = new File(destinationFilePath);
+				// --- Check destination directory ------------------
+				File destinationDir = destinationFile.getParentFile();
+				if (destinationDir.exists()==false) {
+					destinationDir.mkdirs();
+				}
+				// --- Ensure to overwrite the files ---------------- 
+				if (destinationFile.exists()==true) {
+					destinationFile.delete();
+				}
+				
+				// --- Get zip entry and extract it -----------------
+				ZipEntry zEntry = zipFile.getEntry(fi.getName());
+				if (zEntry!=null) {
+					this.doZipFileExtract(zipFile, zEntry, destinationFile);
+				}
+			}
+			
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		} finally {
+			if (zipFile!=null) {
+				try {
+					zipFile.close();
+				} catch (IOException ioEx) {
+					ioEx.printStackTrace();
+				}
+			}
+		}
+		
+	}
+	/**
+	 * Extracts the specified file from a zip file.
+	 *
+	 * @param zipFile the jar
+	 * @param zipEntry the specific zip entry
+	 * @param destinationFile the destination file
+	 */
+	private void doZipFileExtract(ZipFile zipFile, ZipEntry zipEntry, File destinationFile) {
+		
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			in = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+			out = new BufferedOutputStream(new FileOutputStream(destinationFile));
+			byte[] buffer = new byte[2048];
+			for (;;) {
+				int nBytes = in.read(buffer);
+				if (nBytes <= 0)
+					break;
+				out.write(buffer, 0, nBytes);
+			}
+			out.flush();
+			out.close();
+			in.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (in!=null) {
+				try {
+					in.close();
+				} catch (IOException ioEx) {
+					ioEx.printStackTrace();
+				}
+			}
+			if (out!=null) {
+				try {
+					out.close();
+				} catch (IOException ioEx) {
+					ioEx.printStackTrace();
+				}
+			}
+		}
 	}
 	
 }

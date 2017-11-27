@@ -44,14 +44,24 @@ public class RecursiveFolderDeleter {
 
 	    @Override
 	    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-	        Files.delete(file);
+	        try {
+	        	Files.delete(file);
+	        } catch (IOException ioEx) {
+	        	System.err.println(RecursiveFolderDeleter.this.getClass().getSimpleName() + " - Error deleteing file: " + file.getFileName());
+	        	throw ioEx;
+	        }
 	        return FileVisitResult.CONTINUE;
 	    }
 
 	    @Override
 	    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 	        if (exc==null) {
-	            Files.delete(dir);
+	        	try {
+	        		Files.delete(dir);
+				} catch (IOException ioEx) {
+					System.err.println(RecursiveFolderDeleter.this.getClass().getSimpleName() + " - Error deleteing diretory: " + dir.getFileName());
+					throw ioEx;
+				}
 	            return FileVisitResult.CONTINUE;
 	        }
 	        throw exc;

@@ -743,7 +743,7 @@ public class Platform {
 			}
 			if (msgAnswer==0) {
 				// --- YES - Start another agent of this kind --------
-				startSystemAgent(rootAgentName, newSuffixNo(rootAgentName), openArgs);
+				startSystemAgent(rootAgentName, getSuffixNoForAgentName(rootAgentName), openArgs);
 			}
 			
 		} else {
@@ -792,17 +792,17 @@ public class Platform {
 	}
 	
 	/**
-	 * Will find a new suffix number for the name of an agent.
+	 * Returns a new suffix number for the specified name of an agent.
 	 *
 	 * @param agentName the agent name
 	 * @return the integer
 	 */
-	private int newSuffixNo(String agentName) {
+	public int getSuffixNoForAgentName(String agentName) {
 
 		String newAgentName = agentName;
 		Integer i = 0;
 		
-		while (isAgentRunningInMainContainer(newAgentName)==true) {
+		while (this.isAgentRunningInMainContainer(newAgentName)==true) {
 			i++;
 			newAgentName = agentName + i.toString();			
 		}			
