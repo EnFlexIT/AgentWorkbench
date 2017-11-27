@@ -72,7 +72,9 @@ public class CsvFileWriter {
 			for(int i=0; i<data.length; i++){
 				for (int j=0; j<data[i].length; j++){
 					// --- Append next data field
-					fileWriter.append(data[i][j].toString());
+					if(data[i][j]!=null){
+						fileWriter.append(data[i][j].toString());
+					}
 					// --- Append field or line separator -----
 					if (j<(data[i].length-1)){
 						fileWriter.append(this.separator);

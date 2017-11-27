@@ -249,7 +249,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 			// --- Export data to CSV
 			JFileChooser jFileChooserExportCSV = new JFileChooser(this.getLastSelectedFolder());
 			jFileChooserExportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Files", SourceLanguage.EN), "csv"));
-			jFileChooserExportCSV.setDialogTitle(Language.translate("Import CSV File", SourceLanguage.EN));
+			jFileChooserExportCSV.setDialogTitle(Language.translate("Export CSV File", SourceLanguage.EN));
 			
 			if(jFileChooserExportCSV.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
 				this.setLastSelectedFolder(jFileChooserExportCSV.getCurrentDirectory());
