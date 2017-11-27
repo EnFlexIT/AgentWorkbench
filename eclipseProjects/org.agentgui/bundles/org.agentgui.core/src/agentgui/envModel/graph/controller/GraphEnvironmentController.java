@@ -397,8 +397,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	protected void loadEnvironment() {
 
-		NetworkModel networkModel = new NetworkModel();
-		String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
+		final NetworkModel networkModel = new NetworkModel();
+		final String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
 		if (fileName != null) {
 
 			Thread envLoader = new Thread(new Runnable() {
