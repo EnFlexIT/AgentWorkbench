@@ -34,10 +34,10 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -45,7 +45,6 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -53,19 +52,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
+
+import org.agentgui.gui.swing.dialogs.FeatureSelectionDialog;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.environment.EnvironmentType;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectResource2Display;
-import agentgui.simulationService.time.TimeModel;
+import agentgui.core.project.transfer.FeatureInfo;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
+import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Resources'
@@ -75,27 +77,26 @@ import de.enflexit.common.classSelection.ClassSelectionDialog;
 public class ProjectResources extends JScrollPane implements Observer {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Dimension preferredListSizeSmall = new Dimension(180, 100);
 	private Dimension preferredListSizeLarge = new Dimension(180, 140);
-	
+
 	private Project currProject;
-	
+
 	private JPanel jPanelContent;
-	
-	private JPanel jPanelSimulationEnvironment;
 	private JPanel jPanelPlugInButtons;
 	private JPanel jPanelBinResourceButton;
-	
-	private JComboBox<EnvironmentType> jComboBoxEnvironmentModelSelector;
 
 	private JScrollPane jScrollPaneBinResources;
 	private JScrollPane jScrollPanePlugIns;
-	
+
 	private JList<ProjectResource2Display> jListBinResources;
 	private JList<PlugInListElement> jListPlugIns;
 	private DefaultListModel<PlugInListElement> plugInsListModel = new DefaultListModel<PlugInListElement>();
-	
+
+	private JList<FeatureInfo> jListFeatures;
+	private DefaultListModel<FeatureInfo> featuresListModel;
+
 	private JButton jButtonBinResourcesAdd;
 	private JButton jButtonBinResourcesRemove;
 	private JButton jButtonBinRecourcesRefresh;
@@ -103,16 +104,8 @@ public class ProjectResources extends JScrollPane implements Observer {
 	private JButton jButtonAddPlugIns;
 	private JButton jButtonRemovePlugIns;
 	private JButton jButtonRefreshPlugIns;
-
-	private JLabel jLabelEnvTyp;
 	private JLabel jLabelBinResources;
 	private JLabel jLabelPlugIns;
-
-	private JPanel jPanelTimeModelSelection;
-	private JLabel jLabelTimeModelClass;
-	private JTextField jTextFieldTimeModelClass;
-	private JButton jButtonDefaultTimeModel;
-	private JButton jButtonSelectTimeModel;
 	private JCheckBox jCheckboxManifest;
 	private JPanel jPanelJarResourcen;
 	private JScrollPane jScrollPanePlainJars;
@@ -124,63 +117,66 @@ public class ProjectResources extends JScrollPane implements Observer {
 	private JPanel jPanelJarFileHeader;
 	private JSeparator jSeparatorBottom;
 	private JSeparator jSeparatorTop;
-	
-	
+	private JLabel jLabelFeatures;
+	private JScrollPane jScrollPaneFeatures;
+	private JPanel jPanelFeatureButtons;
+	private JButton jButtonAddFeatures;
+	private JButton jButtonRemoveFeatures;
+	private JButton jButtonRefreshFeatures;
+
 	/**
 	 * Instantiates a new visual representation for the project resources.
+	 * 
 	 * @param project the current project
 	 */
 	public ProjectResources(Project project) {
 		super();
 		this.currProject = project;
 		this.currProject.addObserver(this);
-		
+
 		this.initialize();
-		
+
 		// --- Fill the list model for the external resources -------
 		this.getJListBinResources().setModel(currProject.getProjectResources().getResourcesListModel());
-		// --- Display the current TimeModel class ------------------
-		this.getJTextFieldTimeModelClass().setText(this.currProject.getTimeModelClass());
 
-		
 		// --- Set the translations ---------------------------------
 		this.getJCheckboxManifest().setText(Language.translate("Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern"));
-		
-		jLabelEnvTyp.setText(Language.translate("Umgebungstyp bzw. -modell für Simulation und Visualisierung"));
 		jLabelBinResources.setText(Language.translate("Externe bin-Ressourcen"));
 		jLabelPlugIns.setText(Language.translate("Projekt-PlugIns"));
-		
+
 		this.getJLabelJarResources().setText(Language.translate("Einfache jar-Dateien"));
-		
+
 		this.getJButtonBinResourcesAdd().setToolTipText(Language.translate("Hinzufügen"));
 		this.getJButtonBinResourcesRemove().setToolTipText(Language.translate("Entfernen"));
 		this.getJButtonBinResourcesRefresh().setToolTipText(Language.translate("Neu laden"));
-		
+
 		this.getJButtonAddPlugIns().setToolTipText(Language.translate("Hinzufügen"));
 		this.getJButtonRemovePlugIns().setToolTipText(Language.translate("Entfernen"));
 		this.getJButtonRefreshPlugIns().setToolTipText(Language.translate("Neu laden"));
-		
+
 	}
-	
+
 	/**
 	 * Initialize this JPanel.
 	 */
 	private void initialize() {
 		this.setViewportView(this.getjPanelContent());
 	}
+
 	/**
 	 * Returns the JPanel for the content.
+	 * 
 	 * @return the j panel content
 	 */
 	private JPanel getjPanelContent() {
-		if (jPanelContent==null) {
-			
+		if (jPanelContent == null) {
+
 			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[]{0, 0, 0};
-			gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-			gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-			
+			gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
+			gridBagLayout.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
+			gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+
 			GridBagConstraints gbcjCheckboxManifest = new GridBagConstraints();
 			gbcjCheckboxManifest.anchor = GridBagConstraints.WEST;
 			gbcjCheckboxManifest.insets = new Insets(10, 10, 0, 0);
@@ -221,36 +217,39 @@ public class ProjectResources extends JScrollPane implements Observer {
 			gbcJLabelPlugins.gridx = 0;
 			gbcJLabelPlugins.insets = new Insets(10, 15, 0, 0);
 			gbcJLabelPlugins.anchor = GridBagConstraints.WEST;
-			gbcJLabelPlugins.gridy = 6;
+			gbcJLabelPlugins.gridy = 9;
 			GridBagConstraints gbcJScrollPanePlugIns = new GridBagConstraints();
 			gbcJScrollPanePlugIns.fill = GridBagConstraints.BOTH;
 			gbcJScrollPanePlugIns.gridx = 0;
 			gbcJScrollPanePlugIns.insets = new Insets(5, 10, 0, 0);
-			gbcJScrollPanePlugIns.gridy = 7;
+			gbcJScrollPanePlugIns.gridy = 10;
 			GridBagConstraints gbcJPanelPlugInButtons = new GridBagConstraints();
 			gbcJPanelPlugInButtons.fill = GridBagConstraints.VERTICAL;
 			gbcJPanelPlugInButtons.gridx = 1;
+			gbcJPanelPlugInButtons.gridy = 10;
 			gbcJPanelPlugInButtons.insets = new Insets(5, 5, 0, 10);
-			gbcJPanelPlugInButtons.gridy = 7;
 			GridBagConstraints gbc_jSeparatorBottom = new GridBagConstraints();
 			gbc_jSeparatorBottom.gridwidth = 2;
 			gbc_jSeparatorBottom.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSeparatorBottom.insets = new Insets(10, 10, 0, 10);
 			gbc_jSeparatorBottom.gridx = 0;
 			gbc_jSeparatorBottom.gridy = 8;
-			GridBagConstraints gbcJPanelSimulationEnvironment = new GridBagConstraints();
-			gbcJPanelSimulationEnvironment.fill = GridBagConstraints.HORIZONTAL;
-			gbcJPanelSimulationEnvironment.anchor = GridBagConstraints.NORTH;
-			gbcJPanelSimulationEnvironment.gridx = 0;
-			gbcJPanelSimulationEnvironment.insets = new Insets(10, 10, 5, 5);
-			gbcJPanelSimulationEnvironment.gridy = 9;
-			GridBagConstraints gbcJPanelTimeModelSelection = new GridBagConstraints();
-			gbcJPanelTimeModelSelection.fill = GridBagConstraints.HORIZONTAL;
-			gbcJPanelTimeModelSelection.anchor = GridBagConstraints.NORTH;
-			gbcJPanelTimeModelSelection.gridx = 0;
-			gbcJPanelTimeModelSelection.insets = new Insets(10, 10, 30, 5);
-			gbcJPanelTimeModelSelection.gridy = 10;
-			
+			GridBagConstraints gbcJLabelFeatures = new GridBagConstraints();
+			gbcJLabelFeatures.gridx = 0;
+			gbcJLabelFeatures.insets = new Insets(10, 15, 0, 0);
+			gbcJLabelFeatures.anchor = GridBagConstraints.WEST;
+			gbcJLabelFeatures.gridy = 6;
+			GridBagConstraints gbcJScrollPaneFeatures = new GridBagConstraints();
+			gbcJScrollPaneFeatures.fill = GridBagConstraints.BOTH;
+			gbcJScrollPaneFeatures.gridx = 0;
+			gbcJScrollPaneFeatures.insets = new Insets(5, 10, 10, 0);
+			gbcJScrollPaneFeatures.gridy = 7;
+			GridBagConstraints gbcJPanelFeatureButtons = new GridBagConstraints();
+			gbcJPanelFeatureButtons.gridx = 1;
+			gbcJPanelFeatureButtons.gridy = 7;
+			gbcJPanelFeatureButtons.fill = GridBagConstraints.VERTICAL;
+			gbcJPanelFeatureButtons.insets = new Insets(5, 5, 10, 10);
+
 			jPanelContent = new JPanel();
 			jPanelContent.setLayout(gridBagLayout);
 			jPanelContent.add(getJCheckboxManifest(), gbcjCheckboxManifest);
@@ -264,14 +263,14 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jPanelContent.add(getJScrollPanePlugIns(), gbcJScrollPanePlugIns);
 			jPanelContent.add(getJPanelPlugInButtons(), gbcJPanelPlugInButtons);
 			jPanelContent.add(getJSeparatorBottom(), gbc_jSeparatorBottom);
-			jPanelContent.add(getJPanelSimulationEnvironment(), gbcJPanelSimulationEnvironment);
-			jPanelContent.add(getJPanelTimeModelSelection(), gbcJPanelTimeModelSelection);
-			
+			jPanelContent.add(getJLabelFeatures(), gbcJLabelFeatures);
+			jPanelContent.add(getJScrollPaneFeatures(), gbcJScrollPaneFeatures);
+			jPanelContent.add(getJPanelFeatureButtons(), gbcJPanelFeatureButtons);
+
 		}
 		return jPanelContent;
 	}
-	
-	
+
 	private JCheckBox getJCheckboxManifest() {
 		if (jCheckboxManifest == null) {
 			jCheckboxManifest = new JCheckBox("Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern");
@@ -286,18 +285,20 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jCheckboxManifest;
 	}
-	
+
 	private JLabel getJLabelBinResources() {
-		if (jLabelBinResources==null) {
+		if (jLabelBinResources == null) {
 			jLabelBinResources = new JLabel();
 			jLabelBinResources.setText("Externe bin-Ressourcen");
 			jLabelBinResources.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelBinResources;
 	}
+
 	/**
-	 * This method initializes jScrollPane	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPane
+	 * 
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneBinResources() {
 		if (jScrollPaneBinResources == null) {
@@ -307,9 +308,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jScrollPaneBinResources;
 	}
+
 	/**
-	 * This method initializes jListResources	
-	 * @return javax.swing.JList	
+	 * This method initializes jListResources
+	 * 
+	 * @return javax.swing.JList
 	 */
 	private JList<ProjectResource2Display> getJListBinResources() {
 		if (jListBinResources == null) {
@@ -320,8 +323,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 	}
 
 	/**
-	 * This method initializes jButtonAdd	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonAdd
+	 * 
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonBinResourcesAdd() {
 		if (jButtonBinResourcesAdd == null) {
@@ -332,40 +336,42 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jButtonBinResourcesAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					if (Application.getJadePlatform().stopAskUserBefore()==true) {
+					if (Application.getJadePlatform().stopAskUserBefore() == true) {
 
 						// --- Check for rebuild of the MANIFEST.MF -----------
-						if (currProject.isReCreateProjectManifest()==false) {
+						if (currProject.isReCreateProjectManifest() == false) {
 							String title = Language.translate("Auktualisierung der Projekt-MANIFEST.MF");
 							String msg = "Zum Einbinden von externen bin-Ressourcen, ist\n";
 							msg += "eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!\n\n";
 							msg += "Soll diese Option jetzt aktualisiert werden?";
 							msg = Language.translate(msg);
-							
-							int answer = JOptionPane.showInternalConfirmDialog (getJListBinResources(), msg, title, JOptionPane.YES_NO_OPTION);
-							if (answer!=JOptionPane.YES_OPTION) return;
+
+							int answer = JOptionPane.showInternalConfirmDialog(getJListBinResources(), msg, title, JOptionPane.YES_NO_OPTION);
+							if (answer != JOptionPane.YES_OPTION)
+								return;
 							// --- Set rebuild of MANIFEST.MF to 'true' -------
 							currProject.setReCreateProjectManifest(true);
 						}
-						
+
 						// --- Select the directory ---------------------------
 						JFileChooser chooser = new JFileChooser();
 						chooser.setDialogTitle(Language.translate("Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien)"));
 						chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 						chooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 						chooser.setMultiSelectionEnabled(false);
-						
+
 						int answerChooser = chooser.showDialog(ProjectResources.this, Language.translate("Verzeichnis einbinden"));
-						if (answerChooser==JFileChooser.CANCEL_OPTION) return;
+						if (answerChooser == JFileChooser.CANCEL_OPTION)
+							return;
 						Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());
-						
+
 						// --- Add to bin resources ---------------------------
 						File selectedDirectory = chooser.getSelectedFile();
 						String selectedDirectoryPath = adjustPathAccordngToProjectsDirectory(selectedDirectory.getAbsolutePath());
-						if (isProjectResources(selectedDirectoryPath)==false) {
+						if (isProjectResources(selectedDirectoryPath) == false) {
 							currProject.getProjectResources().add(selectedDirectoryPath);
 							currProject.resourcesReLoad();
-							jListBinResources.updateUI();							
+							jListBinResources.updateUI();
 						}
 					}
 				} // end actionPerformed
@@ -375,8 +381,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 	}
 
 	/**
-	 * This method initializes jButtonRemove	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonRemove
+	 * 
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonBinResourcesRemove() {
 		if (jButtonBinResourcesRemove == null) {
@@ -387,14 +394,14 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jButtonBinResourcesRemove.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					if (Application.getJadePlatform().stopAskUserBefore()==true) {
+					if (Application.getJadePlatform().stopAskUserBefore() == true) {
 						// --- Remove from the ClassPath ----
 						Vector<String> selection = new Vector<String>();
 						for (Object fileR2DObject : jListBinResources.getSelectedValuesList()) {
 							ProjectResource2Display fileR2D = (ProjectResource2Display) fileR2DObject;
 							selection.add(fileR2D.getFileOrFolderResource());
 						}
-						if (selection.size()>0) {
+						if (selection.size() > 0) {
 							currProject.getProjectResources().removeAll(selection);
 							currProject.resourcesReLoad();
 						}
@@ -406,8 +413,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 	}
 
 	/**
-	 * This method initializes jButtonRefresh	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonRefresh
+	 * 
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonBinResourcesRefresh() {
 		if (jButtonBinRecourcesRefresh == null) {
@@ -417,7 +425,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jButtonBinRecourcesRefresh.setToolTipText("Refresh");
 			jButtonBinRecourcesRefresh.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 					if (Application.getJadePlatform().stopAskUserBefore()) {
 						Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						currProject.resourcesReLoad();
@@ -429,15 +437,14 @@ public class ProjectResources extends JScrollPane implements Observer {
 		return jButtonBinRecourcesRefresh;
 	}
 
-	
 	private JPanel getJPanelJarFileHeader() {
 		if (jPanelJarFileHeader == null) {
 			jPanelJarFileHeader = new JPanel();
 			GridBagLayout gbl_jPanelJarFileHeader = new GridBagLayout();
-			gbl_jPanelJarFileHeader.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelJarFileHeader.rowHeights = new int[]{0, 0};
-			gbl_jPanelJarFileHeader.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-			gbl_jPanelJarFileHeader.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_jPanelJarFileHeader.columnWidths = new int[] { 0, 0, 0 };
+			gbl_jPanelJarFileHeader.rowHeights = new int[] { 0, 0 };
+			gbl_jPanelJarFileHeader.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
+			gbl_jPanelJarFileHeader.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 			jPanelJarFileHeader.setLayout(gbl_jPanelJarFileHeader);
 			GridBagConstraints gbc_jLabelJarResources = new GridBagConstraints();
 			gbc_jLabelJarResources.anchor = GridBagConstraints.WEST;
@@ -453,6 +460,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jPanelJarFileHeader;
 	}
+
 	private JLabel getJLabelJarResources() {
 		if (jLabelJarResources == null) {
 			jLabelJarResources = new JLabel("Einfache jar-Dateien");
@@ -461,6 +469,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jLabelJarResources;
 	}
+
 	private JLabel getJLabelBundleResources() {
 		if (jLabelBundleResources == null) {
 			jLabelBundleResources = new JLabel("OSGI-Bundles");
@@ -469,15 +478,15 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jLabelBundleResources;
 	}
-	
+
 	private JPanel getJPanelJarResourcen() {
 		if (jPanelJarResourcen == null) {
 			jPanelJarResourcen = new JPanel();
 			GridBagLayout gbl_jPanelJarResourcen = new GridBagLayout();
-			gbl_jPanelJarResourcen.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelJarResourcen.rowHeights = new int[]{0, 0};
-			gbl_jPanelJarResourcen.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-			gbl_jPanelJarResourcen.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_jPanelJarResourcen.columnWidths = new int[] { 0, 0, 0 };
+			gbl_jPanelJarResourcen.rowHeights = new int[] { 0, 0 };
+			gbl_jPanelJarResourcen.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
+			gbl_jPanelJarResourcen.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 			jPanelJarResourcen.setLayout(gbl_jPanelJarResourcen);
 			GridBagConstraints gbc_jScrollPanePlainJars = new GridBagConstraints();
 			gbc_jScrollPanePlainJars.fill = GridBagConstraints.BOTH;
@@ -493,6 +502,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jPanelJarResourcen;
 	}
+
 	private JScrollPane getJScrollPanePlainJars() {
 		if (jScrollPanePlainJars == null) {
 			jScrollPanePlainJars = new JScrollPane();
@@ -501,6 +511,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jScrollPanePlainJars;
 	}
+
 	private JList<String> getJListJarResources() {
 		if (jListJarResources == null) {
 			jListJarResources = new JList<String>(this.currProject.getProjectBundleLoader().getRegularJarsListModel());
@@ -508,6 +519,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jListJarResources;
 	}
+
 	private JScrollPane getJScrollPaneBundelJars() {
 		if (jScrollPaneBundelJars == null) {
 			jScrollPaneBundelJars = new JScrollPane();
@@ -516,6 +528,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jScrollPaneBundelJars;
 	}
+
 	private JList<String> getJListBundleJars() {
 		if (jListBundleJars == null) {
 			jListBundleJars = new JList<String>(this.currProject.getProjectBundleLoader().getBundleJarsListModel());
@@ -523,15 +536,16 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jListBundleJars;
 	}
-	
+
 	/**
-	 * This method initializes jPanelRight	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelRight
+	 * 
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelBinResourceButton() {
 		if (jPanelBinResourceButton == null) {
 			GridBagLayout gbl_jPanelBinResourceButton = new GridBagLayout();
-			gbl_jPanelBinResourceButton.rowWeights = new double[]{0.0, 0.0, 1.0};
+			gbl_jPanelBinResourceButton.rowWeights = new double[] { 0.0, 0.0, 1.0 };
 
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.anchor = GridBagConstraints.SOUTH;
@@ -545,7 +559,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 			gridBagConstraints1.gridx = -1;
 			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
 			gridBagConstraints1.gridy = -1;
-			
+
 			jPanelBinResourceButton = new JPanel();
 			jPanelBinResourceButton.setLayout(gbl_jPanelBinResourceButton);
 			jPanelBinResourceButton.add(getJButtonBinResourcesAdd(), gridBagConstraints1);
@@ -556,8 +570,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 	}
 
 	/**
-	 * This method initializes jScrollPanePlugIns	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPanePlugIns
+	 * 
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPanePlugIns() {
 		if (jScrollPanePlugIns == null) {
@@ -567,10 +582,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jScrollPanePlugIns;
 	}
-	
+
 	/**
-	 * This method initializes jButtonAdd	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonAdd
+	 * 
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonAddPlugIns() {
 		if (jButtonAddPlugIns == null) {
@@ -581,39 +597,41 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jButtonAddPlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
+
 					Class<?> search4Class = PlugIn.class;
-					String 	 search4CurrentValue = null;
-					String 	 search4DefaultValue = null;
-					String   search4Description = Language.translate("PlugIn für Agent.GUI");
-					
+					String search4CurrentValue = null;
+					String search4DefaultValue = null;
+					String search4Description = Language.translate("PlugIn für Agent.GUI");
+
 					ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 					cs.setVisible(true);
 					// --- act in the dialog ... --------------------
-					if (cs.isCanceled()==true) return;
-					
+					if (cs.isCanceled() == true)
+						return;
+
 					// ----------------------------------------------
 					// --- Class was selected. Proceed it -----------
 					String classSelected = cs.getClassSelected();
 					cs.dispose();
 					cs = null;
 					// ----------------------------------------------
-					
-					if (classSelected.equals("")==false) {
+
+					if (classSelected.equals("") == false) {
 						// --- add the class to the project PlugIns -
 						currProject.plugInLoad(classSelected, true);
 						currProject.setUnsaved(true);
 					}
-					
+
 				}
-			});					
+			});
 		}
 		return jButtonAddPlugIns;
 	}
 
 	/**
-	 * This method initializes jButtonRemove	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonRemove
+	 * 
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonRemovePlugIns() {
 		if (jButtonRemovePlugIns == null) {
@@ -624,27 +642,29 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jButtonRemovePlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
+
 					PlugInListElement pile = (PlugInListElement) jListPlugIns.getSelectedValue();
-					if (pile==null) return;
-					
+					if (pile == null)
+						return;
+
 					// --- Get the PlugIn -----------------
 					PlugIn pi = currProject.getPlugInsLoaded().getPlugIn(pile.getPlugInName());
 
 					// --- Remove the PlugIn --------------
 					currProject.plugInRemove(pi, true);
 					currProject.setUnsaved(true);
-					
+
 				}
-			}); 
+			});
 
 		}
 		return jButtonRemovePlugIns;
 	}
 
 	/**
-	 * This method initializes jButtonRefresh	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonRefresh
+	 * 
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonRefreshPlugIns() {
 		if (jButtonRefreshPlugIns == null) {
@@ -661,10 +681,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jButtonRefreshPlugIns;
 	}
-	
+
 	/**
 	 * This method initializes jPanelPlugInButtons
-	 * @return javax.swing.JPanel	
+	 * 
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelPlugInButtons() {
 		if (jPanelPlugInButtons == null) {
@@ -682,7 +703,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 			gridBagConstraints1.gridy = -1;
 			jPanelPlugInButtons = new JPanel();
 			GridBagLayout gbl_jPanelPlugInButtons = new GridBagLayout();
-			gbl_jPanelPlugInButtons.rowWeights = new double[]{0.0, 0.0, 1.0};
+			gbl_jPanelPlugInButtons.rowWeights = new double[] { 0.0, 0.0, 1.0 };
 			jPanelPlugInButtons.setLayout(gbl_jPanelPlugInButtons);
 			jPanelPlugInButtons.add(getJButtonAddPlugIns(), gridBagConstraints1);
 			jPanelPlugInButtons.add(getJButtonRemovePlugIns(), gridBagConstraints2);
@@ -692,8 +713,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 	}
 
 	/**
-	 * This method initializes jListPlugIns	
-	 * @return javax.swing.JList	
+	 * This method initializes jListPlugIns
+	 * 
+	 * @return javax.swing.JList
 	 */
 	private JList<PlugInListElement> getJListPlugIns() {
 		if (jListPlugIns == null) {
@@ -703,15 +725,16 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jListPlugIns;
 	}
-	
+
 	private JSeparator getJSeparatorTop() {
 		if (jSeparatorTop == null) {
 			jSeparatorTop = new JSeparator();
 		}
 		return jSeparatorTop;
-	}	
+	}
+
 	public JLabel getJLabelPlugIns() {
-		if (jLabelPlugIns==null) {
+		if (jLabelPlugIns == null) {
 			jLabelPlugIns = new JLabel();
 			jLabelPlugIns.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelPlugIns.setText("Projekt-PlugIns");
@@ -720,21 +743,24 @@ public class ProjectResources extends JScrollPane implements Observer {
 	}
 
 	/**
-	 * This methods adds a Plugin to the plugInListModel, so that it is displayed 
+	 * This methods adds a Plugin to the plugInListModel, so that it is displayed
+	 * 
 	 * @param plugIn
 	 */
 	private void addPlugInElement2List(PlugIn plugIn) {
 		PlugInListElement pile = new PlugInListElement(plugIn.getName(), plugIn.getClassReference());
 		this.plugInsListModel.addElement(pile);
 	}
+
 	/**
-	 * This methods removes a Plugin from the plugInListModel 
+	 * This methods removes a Plugin from the plugInListModel
+	 * 
 	 * @param plugIn
 	 */
 	private void removePlugInElement2List(PlugIn plugIn) {
 		String plugInRef = plugIn.getClassReference();
 		for (int i = 0; i < plugInsListModel.size(); i++) {
-			PlugInListElement pile =  (PlugInListElement) plugInsListModel.get(i);
+			PlugInListElement pile = (PlugInListElement) plugInsListModel.get(i);
 			if (pile.getPlugInClassReference().equals(plugInRef)) {
 				plugInsListModel.remove(i);
 				return;
@@ -748,191 +774,10 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jSeparatorBottom;
 	}
-	
-	/**
-	 * This method initializes jPanelSimulationEnvironment	
-	 * 
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelSimulationEnvironment() {
-		if (jPanelSimulationEnvironment == null) {
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.anchor = GridBagConstraints.WEST;
-			gridBagConstraints5.gridx = 0;
-			gridBagConstraints5.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints5.gridy = 0;
-			jLabelEnvTyp = new JLabel();
-			jLabelEnvTyp.setText("Umgebungstyp bzw. -modell für Simulation und Visualisierung");
-			jLabelEnvTyp.setFont(new Font("Dialog", Font.BOLD, 12));
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
-			gridBagConstraints4.gridy = 1;
-			gridBagConstraints4.anchor = GridBagConstraints.WEST;
-			gridBagConstraints4.insets = new Insets(5, 0, 0, 0);
-			jPanelSimulationEnvironment = new JPanel();
-			GridBagLayout gbl_jPanelSimulationEnvironment = new GridBagLayout();
-			gbl_jPanelSimulationEnvironment.columnWeights = new double[]{1.0};
-			jPanelSimulationEnvironment.setLayout(gbl_jPanelSimulationEnvironment);
-			jPanelSimulationEnvironment.add(getJComboBoxEnvironmentModelSelector(), gridBagConstraints4);
-			jPanelSimulationEnvironment.add(jLabelEnvTyp, gridBagConstraints5);
-		}
-		return jPanelSimulationEnvironment;
-	}
-	
-	/**
-	 * This method initialises jComboBoxEnvironmentModelSelector
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox<EnvironmentType> getJComboBoxEnvironmentModelSelector(){
-		if(jComboBoxEnvironmentModelSelector == null){
-			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
-			jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
-			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
-			jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
-			jComboBoxEnvironmentModelSelector.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					EnvironmentType envType = (EnvironmentType) getJComboBoxEnvironmentModelSelector().getSelectedItem();
-					String newEnvModel = envType.getInternalKey();
-					String oldEnvModel = currProject.getEnvironmentModelName();
-					if (newEnvModel.equals(oldEnvModel)==false) {
-						currProject.setEnvironmentModelName(newEnvModel);
-					}
-				}
-			});
-		}
-		return jComboBoxEnvironmentModelSelector;
-	}
-	
-	/**
-	 * This method initializes jPanelTimeModelSelection	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelTimeModelSelection() {
-		if (jPanelTimeModelSelection == null) {
-			GridBagConstraints gridBagConstraints29 = new GridBagConstraints();
-			gridBagConstraints29.insets = new Insets(5, 5, 0, 0);
-			gridBagConstraints29.gridy = 1;
-			gridBagConstraints29.gridx = 1;
-			GridBagConstraints gridBagConstraints51 = new GridBagConstraints();
-			gridBagConstraints51.fill = GridBagConstraints.NONE;
-			gridBagConstraints51.gridx = 2;
-			gridBagConstraints51.gridy = 1;
-			gridBagConstraints51.insets = new Insets(5, 5, 0, 0);
-			GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
-			gridBagConstraints33.anchor = GridBagConstraints.WEST;
-			gridBagConstraints33.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints33.gridx = 0;
-			gridBagConstraints33.gridy = 1;
-			gridBagConstraints33.fill = GridBagConstraints.BOTH;
-			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
-			gridBagConstraints41.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints41.gridwidth = 3;
-			gridBagConstraints41.gridy = 0;
-			gridBagConstraints41.gridx = 0;
-			
-			jLabelTimeModelClass = new JLabel();
-			jLabelTimeModelClass.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelTimeModelClass.setText("Zeitmodell");
-			jLabelTimeModelClass.setText(Language.translate(jLabelTimeModelClass.getText()));
-			
-			jPanelTimeModelSelection = new JPanel();
-			GridBagLayout gbl_jPanelTimeModelSelection = new GridBagLayout();
-			gbl_jPanelTimeModelSelection.columnWeights = new double[]{1.0, 0.0, 0.0};
-			jPanelTimeModelSelection.setLayout(gbl_jPanelTimeModelSelection);
-			jPanelTimeModelSelection.add(jLabelTimeModelClass, gridBagConstraints41);
-			jPanelTimeModelSelection.add(getJTextFieldTimeModelClass(), gridBagConstraints33);
-			jPanelTimeModelSelection.add(getJButtonDefaultTimeModel(), gridBagConstraints51);
-			jPanelTimeModelSelection.add(getJButtonSelectTimeModel(), gridBagConstraints29);
-		}
-		return jPanelTimeModelSelection;
-	}
-	/**
-	 * This method initializes jTextFieldTimeModelClass	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldTimeModelClass() {
-		if (jTextFieldTimeModelClass == null) {
-			jTextFieldTimeModelClass = new JTextField();
-			jTextFieldTimeModelClass.setPreferredSize(new Dimension(400, 26));
-			jTextFieldTimeModelClass.setEditable(false);
-		}
-		return jTextFieldTimeModelClass;
-	}
-	/**
-	 * This method initializes jButtonDefaultTimeModel	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonDefaultTimeModel() {
-		if (jButtonDefaultTimeModel == null) {
-			jButtonDefaultTimeModel = new JButton();
-			jButtonDefaultTimeModel.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultTimeModel.setBounds(new Rectangle(120, 121, 80, 26));
-			jButtonDefaultTimeModel.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
-			jButtonDefaultTimeModel.setToolTipText("Agent.GUI - Standard verwenden");
-			jButtonDefaultTimeModel.setToolTipText(Language.translate(jButtonDefaultTimeModel.getToolTipText()));
-			jButtonDefaultTimeModel.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					currProject.setTimeModelClass(null);
-				}
-			});
-		}
-		return jButtonDefaultTimeModel;
-	}
-	/**
-	 * This method initializes jButtonSelectTimeModel	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonSelectTimeModel() {
-		if (jButtonSelectTimeModel == null) {
-			jButtonSelectTimeModel = new JButton();
-			jButtonSelectTimeModel.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectTimeModel.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
-			jButtonSelectTimeModel.setToolTipText("Klasse auswählen");
-			jButtonSelectTimeModel.setToolTipText(Language.translate(jButtonSelectTimeModel.getToolTipText()));
-			jButtonSelectTimeModel.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					selectTimeModelClass();
-				}
-			});
-			
-		}
-		return jButtonSelectTimeModel;
-	}
 
-	/**
-	 * Select the TimeModel class for this Project.
-	 * @return the selected TimeModel class 
-	 */
-	private void selectTimeModelClass() {
-		
-		Class<?> search4Class = null;
-		String 	 search4CurrentValue = null;
-		String 	 search4DefaultValue = null;
-		String   search4Description = null;
-
-		search4Class = TimeModel.class;
-		search4CurrentValue = this.currProject.getTimeModelClass();
-		search4DefaultValue = null;
-		search4Description = jLabelTimeModelClass.getText();
-
-		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
-		cs.setVisible(true);
-		// --- act in the dialog ... --------------------
-		if (cs.isCanceled()==false) {
-			if (cs.getClassSelected()!=null && cs.getClassSelected().length()!=0) {
-				this.currProject.setTimeModelClass(cs.getClassSelected());	
-			}
-		}
-		cs.dispose();
-		cs = null;
-		// ----------------------------------------------
-	}
-	
 	/**
 	 * Adjust string.
+	 * 
 	 * @param path the path
 	 * @return the string
 	 */
@@ -944,15 +789,17 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return path;
 	}
+
 	/**
 	 * Already there.
+	 * 
 	 * @param path the path
 	 * @return true, if successful
 	 */
 	private boolean isProjectResources(String path) {
 		return currProject.getProjectResources().contains(path);
 	}
-	
+
 	/**
 	 * Sets the view according to the project.
 	 */
@@ -962,38 +809,172 @@ public class ProjectResources extends JScrollPane implements Observer {
 		this.getJListJarResources().setModel(this.currProject.getProjectBundleLoader().getRegularJarsListModel());
 		this.getJListBundleJars().setModel(this.currProject.getProjectBundleLoader().getBundleJarsListModel());
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void update(Observable o, Object updated) {
-		
+
 		if (updated.toString().equals(PlugIn.CHANGED)) {
 			// --- Something happend with a plugIn --------
 			PlugInNotification pin = (PlugInNotification) updated;
 			int updateReason = pin.getUpdateReason();
-			if (updateReason==PlugIn.ADDED) {
+			if (updateReason == PlugIn.ADDED) {
 				this.addPlugInElement2List(pin.getPlugIn());
-			} else if (updateReason==PlugIn.REMOVED) {
+			} else if (updateReason == PlugIn.REMOVED) {
 				this.removePlugInElement2List(pin.getPlugIn());
 			}
-			
-		} else if (updated.equals(Project.CHANGED_EnvironmentModelType)) {
-			EnvironmentType envTypeOld = (EnvironmentType) this.getJComboBoxEnvironmentModelSelector().getSelectedItem();
-			EnvironmentType envTypeNew = this.currProject.getEnvironmentModelType();
-			if (envTypeOld.equals(envTypeNew)==false) {
-				this.getJComboBoxEnvironmentModelSelector().setSelectedItem(this.currProject.getEnvironmentModelType());	
-			}
-		
+
 		} else if (updated.equals(Project.CHANGED_ProjectResources)) {
 			this.setViewAccordingToProject();
-			
-		} else if (updated.equals(Project.CHANGED_TimeModelClass)) {
-			this.getJTextFieldTimeModelClass().setText(this.currProject.getTimeModelClass());
-			
-		} 
-		
+		}
+
 	}
-	
-} 
+
+	private JLabel getJLabelFeatures() {
+		if (jLabelFeatures == null) {
+			jLabelFeatures = new JLabel("Projekt-Features");
+			jLabelFeatures.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelFeatures;
+	}
+
+	private JScrollPane getJScrollPaneFeatures() {
+		if (jScrollPaneFeatures == null) {
+			jScrollPaneFeatures = new JScrollPane();
+			jScrollPaneFeatures.setPreferredSize(this.preferredListSizeLarge);
+			jScrollPaneFeatures.setViewportView(this.getjListFeatures());
+		}
+		return jScrollPaneFeatures;
+	}
+
+	private JList<FeatureInfo> getjListFeatures() {
+		if (jListFeatures == null) {
+			jListFeatures = new JList<FeatureInfo>();
+			jListFeatures.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jListFeatures.setModel(getFeaturesListModel());
+		}
+		return jListFeatures;
+	}
+
+	private DefaultListModel<FeatureInfo> getFeaturesListModel() {
+		if (featuresListModel == null) {
+			featuresListModel = new DefaultListModel<FeatureInfo>();
+		}
+		return featuresListModel;
+	}
+
+	private JPanel getJPanelFeatureButtons() {
+		if (jPanelFeatureButtons == null) {
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.anchor = GridBagConstraints.SOUTH;
+			gridBagConstraints3.gridx = 0;
+			gridBagConstraints3.insets = new Insets(10, 0, 0, 0);
+			gridBagConstraints3.gridy = 2;
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.gridy = 1;
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.gridx = -1;
+			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
+			gridBagConstraints1.gridy = -1;
+			jPanelFeatureButtons = new JPanel();
+			GridBagLayout gbl_jPanelFeatureButtons = new GridBagLayout();
+			gbl_jPanelFeatureButtons.rowWeights = new double[] { 0.0, 0.0, 1.0 };
+			jPanelFeatureButtons.setLayout(gbl_jPanelFeatureButtons);
+			jPanelFeatureButtons.add(getJButtonAddFeatures(), gridBagConstraints1);
+			jPanelFeatureButtons.add(getJButtonRemoveFeatures(), gridBagConstraints2);
+			jPanelFeatureButtons.add(getJButtonRefreshFeatures(), gridBagConstraints3);
+		}
+		return jPanelFeatureButtons;
+	}
+
+	/**
+	 * This method initializes jButtonAdd
+	 * 
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonAddFeatures() {
+		if (jButtonAddFeatures == null) {
+			jButtonAddFeatures = new JButton();
+			jButtonAddFeatures.setPreferredSize(new Dimension(45, 26));
+			jButtonAddFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
+			jButtonAddFeatures.setToolTipText("Add");
+			jButtonAddFeatures.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					// --- Get a list of available features -------
+					P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
+					List<IInstallableUnit> availableFeatures = null;
+					try {
+						availableFeatures = p2handler.getInstalledFeatures();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error accessing p2 profile", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					// --- Show a feature selection dialog --------
+					FeatureSelectionDialog fsd = new FeatureSelectionDialog(availableFeatures);
+
+					// --- Add the selected features to the list --
+					if (fsd.isCanceled() == false) {
+						ProjectResources.this.getFeaturesListModel().clear();
+						List<IInstallableUnit> selectedFeatures = fsd.getSelectedFeatures();
+						for (IInstallableUnit feature : selectedFeatures) {
+							FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(feature, p2handler);
+							ProjectResources.this.getFeaturesListModel().addElement(featureInfo);
+						}
+					}
+				}
+			});
+		}
+		return jButtonAddFeatures;
+	}
+
+	/**
+	 * This method initializes jButtonRemove
+	 * 
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonRemoveFeatures() {
+		if (jButtonRemoveFeatures == null) {
+			jButtonRemoveFeatures = new JButton();
+			jButtonRemoveFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
+			jButtonRemoveFeatures.setPreferredSize(new Dimension(45, 26));
+			jButtonRemoveFeatures.setToolTipText("Remove");
+			jButtonRemoveFeatures.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO implement
+				}
+			});
+
+		}
+		return jButtonRemoveFeatures;
+	}
+
+	/**
+	 * This method initializes jButtonRefresh
+	 * 
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonRefreshFeatures() {
+		if (jButtonRefreshFeatures == null) {
+			jButtonRefreshFeatures = new JButton();
+			jButtonRefreshFeatures.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
+			jButtonRefreshFeatures.setPreferredSize(new Dimension(45, 26));
+			jButtonRefreshFeatures.setToolTipText("Refresh");
+			jButtonRefreshFeatures.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO implement
+				}
+			});
+		}
+		return jButtonRefreshFeatures;
+	}
+}

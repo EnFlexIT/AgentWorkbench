@@ -1,6 +1,8 @@
 package de.enflexit.common.p2;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -295,5 +297,64 @@ public class P2OperationsHandler {
 	public String getRepositoryName(URI repositoryURI) {
 		return this.getMetadataRepositoryManager().getRepositoryProperty(repositoryURI, IRepository.PROP_NICKNAME);
 	}
+
+	public List<IInstallableUnit> getInstalledFeatures() throws Exception {
+
+		List<IInstallableUnit> featuresList = new ArrayList<IInstallableUnit>();
+
+		IProvisioningAgent provisioningAgent = this.getProvisioningAgent();
+
+		String profileId = IProfileRegistry.SELF; // the profile id for the currently running system
+
+		IProfileRegistry profileRegistry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
+		IProfile profile = profileRegistry.getProfile(profileId);
+		if (profile == null) {
+			throw new Exception("Unable to access p2 profile - This is not possible when starting the application from the IDE!");
+		}
+		IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
+		IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
+
+		for (IInstallableUnit feature : queryResult) {
+			if (QueryUtil.isProduct(feature) == false) {
+				featuresList.add(feature);
+			}
+		}
+		return featuresList;
+	}
+
+	// Requires the (deprecated) bundle org.eclipse.update.configurator to work properly
+//	public void getInstalledFeaturesOldStyle() {
+//		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+//		if (providers.length == 0) {
+//			System.out.println("No BundleGroupProviders found!");
+//		} else {
+//
+//			for (IBundleGroupProvider provider : providers) {
+//
+//				System.out.println("BGP: " + provider.getName());
+//				IBundleGroup[] groups = provider.getBundleGroups();
+//
+//				if (groups.length == 0) {
+//					System.out.println("- No BundleGroups found!");
+//				} else {
+//
+//					for (IBundleGroup group : groups) {
+//
+//						System.out.println("-BG: " + group.getName());
+//						Bundle[] bundles = group.getBundles();
+//
+//						if (bundles.length == 0) {
+//							System.out.println("  - No Bundles found");
+//						} else {
+//							for (Bundle bundle : bundles) {
+//								System.out.println("--B: " + bundle.getSymbolicName());
+//							}
+//						}
+//
+//					}
+//				}
+//			}
+//		}
+//	}
 
 }
