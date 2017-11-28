@@ -48,7 +48,7 @@ import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
-import agentgui.simulationService.distribution.JadeRemoteStart;
+import agentgui.simulationService.distribution.JadeRemoteStartAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
@@ -77,7 +77,7 @@ import agentgui.simulationService.ontology.SlaveUnregister;
  * @see ServerMasterAgent
  * @see ServerClientAgent
  * 
- * @see JadeRemoteStart
+ * @see JadeRemoteStartAgent
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -204,23 +204,23 @@ public class ServerSlaveAgent extends Agent {
 	 * @return true, if successful
 	 */
 	private boolean sendMessage2MainServer(Concept agentAction) {
-		if(mainPlatformAgent==null){
-			return false;
-		}
+		
+		if (mainPlatformAgent==null) return false;
+		
 		try {
-			// --- Definition einer neuen 'Action' --------
+			// --- Define the 'Action' --------------------
 			Action act = new Action();
 			act.setActor(getAID());
 			act.setAction(agentAction);
 
-			// --- Nachricht zusammenbauen und ... --------
+			// --- Configure message and ... --------------
 			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 			msg.setSender(getAID());
 			msg.addReceiver(mainPlatformAgent);
 			msg.setLanguage(codec.getName());
 			msg.setOntology(ontology.getName());
 
-			// --- ... versenden --------------------------
+			// --- ... send -------------------------------
 			getContentManager().fillContent(msg, act);
 			send(msg);			
 			return true;
@@ -395,9 +395,7 @@ public class ServerSlaveAgent extends Agent {
 	 * @param remoteContainerConfig the remote container configuration
 	 */
 	private void startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {
-		System.out.println("Starting remote container ... ");
-		new JadeRemoteStart(this, remoteContainerConfig).start();		
-		
+		Application.getJadePlatform().startAgent("rcsa", JadeRemoteStartAgent.class.getName(), new Object[] {remoteContainerConfig});
 	}
 	
 	// -----------------------------------------------------

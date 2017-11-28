@@ -155,9 +155,8 @@ public class JadeUrlConfiguration {
 	 * @return true, if the jade platform configuration is equal
 	 */
 	public boolean isEqualJadePlatform(JadeUrlConfiguration jucToCompare) {
-		if(hasErrors()){
-			return false;
-		}
+
+		if (hasErrors()==true) return false;
 		if (jucToCompare.getHostIP().equals(this.getHostIP())==true) {
 			if (jucToCompare.getPort()==this.getPort()) {
 				return true;

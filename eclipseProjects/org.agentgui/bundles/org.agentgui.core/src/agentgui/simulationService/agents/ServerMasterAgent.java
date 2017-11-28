@@ -66,7 +66,6 @@ import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
@@ -268,18 +267,15 @@ public class ServerMasterAgent extends Agent {
 				if (msg.getPerformative()==ACLMessage.FAILURE) {
 					// --- No Ontology-specific Message -------------
 					act = null;
-					System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent() );
+					System.out.println( "ACLMessage.FAILURE from " + msg.getSender().getName() + ": " + msg.getContent());
 
 				} else {
 					// --- Ontology-specific Message ----------------
 					try {
 						act = (Action) getContentManager().extractContent(msg);
-					} catch (UngroundedException e) {
-						e.printStackTrace();
-					} catch (CodecException e) {
-						e.printStackTrace();
-					} catch (OntologyException e) {
-						e.printStackTrace();
+					} catch (CodecException | OntologyException ex) {
+						System.err.println("Error extracting message from " + msg.getSender().getName() + ": " + msg.getContent());
+						ex.printStackTrace();
 					}
 				}
 				
@@ -716,18 +712,14 @@ public class ServerMasterAgent extends Agent {
 		try {
 			this.getContentManager().fillContent(reply, act);
 			this.send(reply);
-		} catch (CodecException e) {
-			e.printStackTrace();
-			return false;
-		} catch (OntologyException e) {
-			e.printStackTrace();
+			
+		} catch (CodecException | OntologyException ex) {
+			ex.printStackTrace();
 			return false;
 		}
 		
 		// --- If the SQL-statement had no results, exit here -----------------
-		if (exitRequest==true) {
-			return true;
-		}
+		if (exitRequest==true) return true;
 			
 			
 		// -------------------------------------------------------------------- 
@@ -755,11 +747,9 @@ public class ServerMasterAgent extends Agent {
 		try {
 			this.getContentManager().fillContent(msg, act);
 			this.send(msg);
-		} catch (CodecException e) {
-			e.printStackTrace();
-			return false;
-		} catch (OntologyException e) {
-			e.printStackTrace();
+			
+		} catch (CodecException | OntologyException ex) {
+			ex.printStackTrace();
 			return false;
 		}		
 		return true;		
