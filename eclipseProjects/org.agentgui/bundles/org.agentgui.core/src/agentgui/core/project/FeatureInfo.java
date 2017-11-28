@@ -26,12 +26,11 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.project.transfer;
+package agentgui.core.project;
 
 import java.net.URI;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.Version;
 
 import agentgui.core.common.CommonComponentFactory;
 import de.enflexit.common.p2.P2OperationsHandler;
@@ -46,7 +45,7 @@ public class FeatureInfo {
 
 	private String featureName;
 	private String featureID;
-	private Version featureVersion;
+//	private Version featureVersion;
 	private URI repositoryURI;
 	private String repositoryName;
 
@@ -62,7 +61,7 @@ public class FeatureInfo {
 
 		featureInfo.setFeatureID(featureIU.getId());
 		featureInfo.setFeatureName(featureIU.getProperty(IInstallableUnit.PROP_NAME));
-		featureInfo.setFeatureVersion(featureIU.getVersion());
+//		featureInfo.setFeatureVersion(featureIU.getVersion());
 
 		if (p2handler == null) {
 			p2handler = CommonComponentFactory.getNewP2OperationsHandler();
@@ -112,23 +111,23 @@ public class FeatureInfo {
 		this.featureID = featureID;
 	}
 
-	/**
-	 * Gets the feature version.
-	 *
-	 * @return the feature version
-	 */
-	public Version getFeatureVersion() {
-		return featureVersion;
-	}
+//	/**
+//	 * Gets the feature version.
+//	 *
+//	 * @return the feature version
+//	 */
+//	public Version getFeatureVersion() {
+//		return featureVersion;
+//	}
 
-	/**
-	 * Sets the feature version.
-	 *
-	 * @param featureVersion the new feature version
-	 */
-	public void setFeatureVersion(Version featureVersion) {
-		this.featureVersion = featureVersion;
-	}
+//	/**
+//	 * Sets the feature version.
+//	 *
+//	 * @param featureVersion the new feature version
+//	 */
+//	public void setFeatureVersion(Version featureVersion) {
+//		this.featureVersion = featureVersion;
+//	}
 
 	/**
 	 * Gets the repository URI.

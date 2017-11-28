@@ -25,7 +25,7 @@ import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.Language;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 
-public class EnvironmentAndTimeModel extends JPanel implements Observer {
+public class EnvironmentModel extends JPanel implements Observer {
 	private static final long serialVersionUID = 7115612858197530835L;
 
 	private Project currProject;
@@ -38,7 +38,7 @@ public class EnvironmentAndTimeModel extends JPanel implements Observer {
 	private JButton jButtonDefaultTimeModel;
 	private JButton jButtonSelectTimeModel;
 
-	public EnvironmentAndTimeModel(Project project) {
+	public EnvironmentModel(Project project) {
 		this.currProject = project;
 		this.currProject.addObserver(this);
 		this.initialize();

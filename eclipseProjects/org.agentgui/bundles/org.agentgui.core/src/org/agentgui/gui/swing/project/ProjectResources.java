@@ -37,6 +37,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -63,9 +64,9 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;
+import agentgui.core.project.FeatureInfo;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectResource2Display;
-import agentgui.core.project.transfer.FeatureInfo;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.p2.P2OperationsHandler;
 
@@ -834,6 +835,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 
 	}
 
+	/**
+	 * Gets the j label features.
+	 *
+	 * @return the j label features
+	 */
 	private JLabel getJLabelFeatures() {
 		if (jLabelFeatures == null) {
 			jLabelFeatures = new JLabel("Projekt-Features");
@@ -842,6 +848,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 		return jLabelFeatures;
 	}
 
+	/**
+	 * Gets the j scroll pane features.
+	 *
+	 * @return the j scroll pane features
+	 */
 	private JScrollPane getJScrollPaneFeatures() {
 		if (jScrollPaneFeatures == null) {
 			jScrollPaneFeatures = new JScrollPane();
@@ -851,6 +862,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 		return jScrollPaneFeatures;
 	}
 
+	/**
+	 * Gets the {@link JList} for managing the required features.
+	 *
+	 * @return the j list features
+	 */
 	private JList<FeatureInfo> getjListFeatures() {
 		if (jListFeatures == null) {
 			jListFeatures = new JList<FeatureInfo>();
@@ -860,13 +876,29 @@ public class ProjectResources extends JScrollPane implements Observer {
 		return jListFeatures;
 	}
 
+	/**
+	 * Gets the features list model.
+	 *
+	 * @return the features list model
+	 */
 	private DefaultListModel<FeatureInfo> getFeaturesListModel() {
 		if (featuresListModel == null) {
 			featuresListModel = new DefaultListModel<FeatureInfo>();
+			Vector<FeatureInfo> projectFeatures = currProject.getProjectFeatures();
+			if (projectFeatures.isEmpty() == false) {
+				for (FeatureInfo feature : projectFeatures) {
+					featuresListModel.addElement(feature);
+				}
+			}
 		}
 		return featuresListModel;
 	}
 
+	/**
+	 * Gets the j panel feature buttons.
+	 *
+	 * @return the j panel feature buttons
+	 */
 	private JPanel getJPanelFeatureButtons() {
 		if (jPanelFeatureButtons == null) {
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
@@ -918,16 +950,19 @@ public class ProjectResources extends JScrollPane implements Observer {
 					}
 
 					// --- Show a feature selection dialog --------
-					FeatureSelectionDialog fsd = new FeatureSelectionDialog(availableFeatures);
+					FeatureSelectionDialog fsd = new FeatureSelectionDialog(availableFeatures, currProject);
 
 					// --- Add the selected features to the list --
 					if (fsd.isCanceled() == false) {
 						ProjectResources.this.getFeaturesListModel().clear();
 						List<IInstallableUnit> selectedFeatures = fsd.getSelectedFeatures();
+						List<FeatureInfo> featuresList = new ArrayList<FeatureInfo>();
 						for (IInstallableUnit feature : selectedFeatures) {
 							FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(feature, p2handler);
 							ProjectResources.this.getFeaturesListModel().addElement(featureInfo);
+							featuresList.add(featureInfo);
 						}
+						currProject.addAllProjectFeatures(featuresList, true);
 					}
 				}
 			});

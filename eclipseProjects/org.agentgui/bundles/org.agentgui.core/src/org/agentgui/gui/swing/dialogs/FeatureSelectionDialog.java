@@ -53,6 +53,8 @@ import javax.swing.ListSelectionModel;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 import agentgui.core.application.Language;
+import agentgui.core.project.FeatureInfo;
+import agentgui.core.project.Project;
 
 /**
  * The Class FeatureSelectionDialog.
@@ -72,13 +74,16 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 
 	private boolean canceled;
 
+	private Project project;
+
 	/**
 	 * Instantiates a new feature selection dialog.
 	 *
 	 * @param availableFeatures the available features
 	 */
-	public FeatureSelectionDialog(List<IInstallableUnit> availableFeatures) {
+	public FeatureSelectionDialog(List<IInstallableUnit> availableFeatures, Project project) {
 		this.availableFeatures = availableFeatures;
+		this.project = project;
 		this.initialize();
 	}
 
@@ -209,6 +214,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 			jListFeatures.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			jListFeatures.setCellRenderer(new CheckBoxListCellRenderer());
 			jListFeatures.setSelectionModel(new ListSelectionModelForJCheckBox());
+			this.setFeatureSelection(this.project.getProjectFeatures());
 		}
 		return jListFeatures;
 	}
@@ -226,6 +232,42 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 			}
 		}
 		return listModelFeatures;
+	}
+
+	/**
+	 * Sets the selection in the {@link JList} according to the given list of features
+	 * 
+	 * @param activeFeatures the list of features
+	 */
+	private void setFeatureSelection(List<FeatureInfo> activeFeatures) {
+		if (activeFeatures.isEmpty() == false) {
+			int[] selectedIndices = new int[activeFeatures.size()];
+			int currIndex = 0;
+			for (int i = 0; i < this.getListModelFeatures().size(); i++) {
+				String featureID = this.getListModelFeatures().getElementAt(i).getId();
+				if (this.isFeatureInList(activeFeatures, featureID)) {
+					selectedIndices[currIndex++] = i;
+				}
+			}
+
+			this.getJListFeatures().setSelectedIndices(selectedIndices);
+		}
+	}
+
+	/**
+	 * Checks if the feature with the given ID is in the list
+	 * 
+	 * @param featuresList The list
+	 * @param featureID The ID
+	 * @return
+	 */
+	private boolean isFeatureInList(List<FeatureInfo> featuresList, String featureID) {
+		for (FeatureInfo feature : featuresList) {
+			if (feature.getFeatureID().equals(featureID)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
