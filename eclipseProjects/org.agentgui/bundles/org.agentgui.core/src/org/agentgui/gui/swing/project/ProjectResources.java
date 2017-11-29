@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -809,6 +810,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		this.getJListBinResources().setModel(this.currProject.getProjectResources().getResourcesListModel());
 		this.getJListJarResources().setModel(this.currProject.getProjectBundleLoader().getRegularJarsListModel());
 		this.getJListBundleJars().setModel(this.currProject.getProjectBundleLoader().getBundleJarsListModel());
+		this.getjListFeatures().setModel(this.getFeaturesListModel(true));
 	}
 
 	/*
@@ -882,9 +884,20 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * @return the features list model
 	 */
 	private DefaultListModel<FeatureInfo> getFeaturesListModel() {
-		if (featuresListModel == null) {
+		return this.getFeaturesListModel(false);
+	}
+
+	/**
+	 * Gets the features list model.
+	 *
+	 * @param rebuild if true, an existing model will be replaced
+	 * @return the features list model
+	 */
+	private DefaultListModel<FeatureInfo> getFeaturesListModel(boolean rebuild) {
+		if (featuresListModel == null || rebuild == true) {
 			featuresListModel = new DefaultListModel<FeatureInfo>();
 			Vector<FeatureInfo> projectFeatures = currProject.getProjectFeatures();
+			Collections.sort(projectFeatures);
 			if (projectFeatures.isEmpty() == false) {
 				for (FeatureInfo feature : projectFeatures) {
 					featuresListModel.addElement(feature);
@@ -954,14 +967,19 @@ public class ProjectResources extends JScrollPane implements Observer {
 
 					// --- Add the selected features to the list --
 					if (fsd.isCanceled() == false) {
-						ProjectResources.this.getFeaturesListModel().clear();
+
+						// --- Get the selected IUs from the dialog --------
 						List<IInstallableUnit> selectedFeatures = fsd.getSelectedFeatures();
+
+						// --- Create FeatureInfo objects for all selected IUs ----
 						List<FeatureInfo> featuresList = new ArrayList<FeatureInfo>();
 						for (IInstallableUnit feature : selectedFeatures) {
 							FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(feature, p2handler);
 							ProjectResources.this.getFeaturesListModel().addElement(featureInfo);
 							featuresList.add(featureInfo);
 						}
+
+						// --- Add the FeatureInfo objects to the project ---------
 						currProject.addAllProjectFeatures(featuresList, true);
 					}
 				}
@@ -984,7 +1002,10 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jButtonRemoveFeatures.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO implement
+					FeatureInfo selectedFeature = ProjectResources.this.getjListFeatures().getSelectedValue();
+					if (selectedFeature != null) {
+						ProjectResources.this.currProject.removeProjectFeature(selectedFeature);
+					}
 				}
 			});
 

@@ -41,11 +41,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  *
  */
-public class FeatureInfo {
+public class FeatureInfo implements Comparable<FeatureInfo> {
 
 	private String featureName;
 	private String featureID;
-//	private Version featureVersion;
+	private String featureVersion;
 	private URI repositoryURI;
 	private String repositoryName;
 
@@ -61,7 +61,7 @@ public class FeatureInfo {
 
 		featureInfo.setFeatureID(featureIU.getId());
 		featureInfo.setFeatureName(featureIU.getProperty(IInstallableUnit.PROP_NAME));
-//		featureInfo.setFeatureVersion(featureIU.getVersion());
+		featureInfo.setFeatureVersion(featureIU.getVersion().toString());
 
 		if (p2handler == null) {
 			p2handler = CommonComponentFactory.getNewP2OperationsHandler();
@@ -111,23 +111,23 @@ public class FeatureInfo {
 		this.featureID = featureID;
 	}
 
-//	/**
-//	 * Gets the feature version.
-//	 *
-//	 * @return the feature version
-//	 */
-//	public Version getFeatureVersion() {
-//		return featureVersion;
-//	}
+	/**
+	 * Gets the feature version.
+	 *
+	 * @return the feature version
+	 */
+	public String getFeatureVersion() {
+		return featureVersion;
+	}
 
-//	/**
-//	 * Sets the feature version.
-//	 *
-//	 * @param featureVersion the new feature version
-//	 */
-//	public void setFeatureVersion(Version featureVersion) {
-//		this.featureVersion = featureVersion;
-//	}
+	/**
+	 * Sets the feature version.
+	 *
+	 * @param featureVersion the new feature version
+	 */
+	public void setFeatureVersion(String featureVersion) {
+		this.featureVersion = featureVersion;
+	}
 
 	/**
 	 * Gets the repository URI.
@@ -179,6 +179,16 @@ public class FeatureInfo {
 			// --- Return the feature name --------------------------
 			return this.featureName;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(FeatureInfo o) {
+		return this.toString().compareTo(o.toString());
 	}
 
 }

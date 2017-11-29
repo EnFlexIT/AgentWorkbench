@@ -36,6 +36,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -227,6 +229,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	private DefaultListModel<IInstallableUnit> getListModelFeatures() {
 		if (listModelFeatures == null) {
 			listModelFeatures = new DefaultListModel<IInstallableUnit>();
+			Collections.sort(this.availableFeatures, new IUComparator());
 			for (IInstallableUnit feature : this.availableFeatures) {
 				listModelFeatures.addElement(feature);
 			}
@@ -330,12 +333,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 		 */
 		@Override
 		public Component getListCellRendererComponent(JList<? extends IInstallableUnit> list, IInstallableUnit iu, int index, boolean isSelected, boolean cellHasFocus) {
-			String displayText = iu.getProperty(IInstallableUnit.PROP_NAME);
-			if (displayText.equals("%featureName")) {
-				// --- Name not defined, use id instead ----------
-				displayText = iu.getId();
-			}
-			this.setText(displayText);
+			this.setText(FeatureSelectionDialog.this.getDisplayTextForInstallableUnit(iu));
 			this.setSelected(isSelected);
 			this.setEnabled(list.isEnabled());
 			return this;
@@ -366,6 +364,40 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 				super.addSelectionInterval(index0, index1);
 			}
 		}
+	}
+
+	/**
+	 * A {@link Comparator} class that compares {@link IInstallableUnit}s by their name or ID
+	 * 
+	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+	 *
+	 */
+	private class IUComparator implements Comparator<IInstallableUnit> {
+
+		@Override
+		public int compare(IInstallableUnit iu1, IInstallableUnit iu2) {
+			String displayText1 = FeatureSelectionDialog.this.getDisplayTextForInstallableUnit(iu1);
+			String displayText2 = FeatureSelectionDialog.this.getDisplayTextForInstallableUnit(iu2);
+			return displayText1.compareTo(displayText2);
+		}
+
+	}
+
+	/**
+	 * Gets the display text for an {@link IInstallableUnit}, which is either the name or the ID.
+	 *
+	 * @param installableUnit the installable unit
+	 * @return the display text for the installable unit
+	 */
+	private String getDisplayTextForInstallableUnit(IInstallableUnit installableUnit) {
+		// --- Get the IU's name property --------------
+		String displalyText = installableUnit.getProperty(IInstallableUnit.PROP_NAME);
+
+		// --- If not set, use the ID instead ----------
+		if (displalyText == null || displalyText.equals("%featureName")) {
+			displalyText = installableUnit.getId();
+		}
+		return displalyText;
 	}
 
 }
