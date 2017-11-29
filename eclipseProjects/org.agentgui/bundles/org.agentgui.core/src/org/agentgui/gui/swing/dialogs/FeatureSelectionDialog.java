@@ -367,7 +367,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * A {@link Comparator} class that compares {@link IInstallableUnit}s by their name or ID
+	 * A {@link Comparator} implementation that compares {@link IInstallableUnit}s by their name or ID
 	 * 
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 *

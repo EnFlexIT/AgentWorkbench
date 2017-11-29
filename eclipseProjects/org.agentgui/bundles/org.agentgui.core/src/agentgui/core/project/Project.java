@@ -69,6 +69,8 @@ import org.osgi.framework.Bundle;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.common.CommonComponentFactory;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
@@ -87,6 +89,7 @@ import agentgui.core.update.VersionInformation;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br>
@@ -443,9 +446,22 @@ public class Project extends Observable {
 			}
 		}
 
-		// --- check/create default folders -----------
-		project.setProjectFolder(projectSubDirectory);
-		project.checkAndCreateProjectsDirectoryStructure();
+		// --- Check if the project requires specific features, install if necessary ------------
+
+		// --- Feature installation via p2 is only possible if running via product --------------
+		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverProduct) {
+			// --- check/create default folders -----------
+			project.setProjectFolder(projectSubDirectory);
+			project.checkAndCreateProjectsDirectoryStructure();
+
+			// --- Check if the project requires specific features, install if necessary --------
+			boolean installedNewFeature = installRequiredFeatures(project);
+
+			// --- If new features have been installed, restart the application -----------------
+			if (installedNewFeature == true) {
+				Application.restart();
+			}
+		}
 
 		// --- Load additional jar-resources ----------
 		if (loadResources == true) {
@@ -486,6 +502,26 @@ public class Project extends Observable {
 		}
 
 		return project;
+	}
+
+	/**
+	 * Check
+	 * 
+	 * @param project
+	 * @return
+	 */
+	private static boolean installRequiredFeatures(Project project) {
+		boolean installedSomething = false;
+		;
+
+		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
+		for (FeatureInfo feature : project.getProjectFeatures()) {
+			if (p2handler.checkIfInstalled(feature.getFeatureID()) == false) {
+				p2handler.installIU(feature.getFeatureID(), feature.getRepositoryURI());
+				installedSomething = true;
+			}
+		}
+		return installedSomething;
 	}
 
 	/**
