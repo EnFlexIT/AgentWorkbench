@@ -32,7 +32,7 @@ public class BaseClassLoadServiceUtility {
 	 * @return the class load service
 	 */
 	public static BaseClassLoadService getBaseClassLoadService(String className) {
-		return getBaseClassLoadServiceUtility().getClassLoadService(className);
+		return getBaseClassLoadServiceUtility().getClassLoadService(className, BaseClassLoadService.class);
 	}
 	
 	/**

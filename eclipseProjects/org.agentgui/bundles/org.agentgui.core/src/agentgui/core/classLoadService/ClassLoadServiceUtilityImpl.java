@@ -67,7 +67,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	 */
 	@Override
 	public Class<? extends Agent> getAgentClass(String agentClassName) throws NoClassDefFoundError, ClassNotFoundException {
-		return this.getClassLoadService(agentClassName).getAgentClass(agentClassName);
+		return this.getClassLoadService(agentClassName, ClassLoadService.class).getAgentClass(agentClassName);
 	}
 
 	/* (non-Javadoc)
@@ -75,7 +75,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	 */
 	@Override
 	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException {
-		return this.getClassLoadService(className).getTimeModelInstance(className);
+		return this.getClassLoadService(className, ClassLoadService.class).getTimeModelInstance(className);
 	}
 
 	/* (non-Javadoc)
@@ -83,7 +83,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	 */
 	@Override
 	public PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return this.getClassLoadService(pluginClassName).getPlugInInstance(pluginClassName, project);
+		return this.getClassLoadService(pluginClassName, ClassLoadService.class).getPlugInInstance(pluginClassName, project);
 	}
 
 	/* (non-Javadoc)
@@ -91,7 +91,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	 */
 	@Override
 	public NetworkComponentAdapter getNetworkComponentAdapterInstance(String adapterClassname, GraphEnvironmentController graphController) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return this.getClassLoadService(adapterClassname).getNetworkComponentAdapterInstance(adapterClassname, graphController);
+		return this.getClassLoadService(adapterClassname, ClassLoadService.class).getNetworkComponentAdapterInstance(adapterClassname, graphController);
 	}
 
 	/* (non-Javadoc)
@@ -99,7 +99,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	 */
 	@Override
 	public StaticLoadBalancingBase getStaticLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return this.getClassLoadService(balancingClassName).getStaticLoadBalancing(balancingClassName, executingAgent);
+		return this.getClassLoadService(balancingClassName, ClassLoadService.class).getStaticLoadBalancing(balancingClassName, executingAgent);
 	}
 
 	/* (non-Javadoc)
@@ -107,7 +107,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	 */
 	@Override
 	public DynamicLoadBalancingBase getDynamicLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return this.getClassLoadService(balancingClassName).getDynamicLoadBalancing(balancingClassName, executingAgent);
+		return this.getClassLoadService(balancingClassName, ClassLoadService.class).getDynamicLoadBalancing(balancingClassName, executingAgent);
 	}
 	
 }

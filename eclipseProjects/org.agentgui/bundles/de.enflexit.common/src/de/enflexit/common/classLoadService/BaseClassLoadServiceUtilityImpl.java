@@ -30,7 +30,7 @@ public class BaseClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUti
 	 */
 	@Override
 	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError {
-		return this.getClassLoadService(className).forName(className);
+		return this.getClassLoadService(className, BaseClassLoadService.class).forName(className);
 	}
 	
 	/* (non-Javadoc)
@@ -38,7 +38,7 @@ public class BaseClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUti
 	 */
 	@Override
 	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return this.getClassLoadService(className).newInstance(className);
+		return this.getClassLoadService(className, BaseClassLoadService.class).newInstance(className);
 	}
 
 	/* (non-Javadoc)
@@ -46,7 +46,7 @@ public class BaseClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUti
 	 */
 	@Override
 	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-		return this.getClassLoadService(ontologyClassName).getOntologyInstance(ontologyClassName);
+		return this.getClassLoadService(ontologyClassName, BaseClassLoadService.class).getOntologyInstance(ontologyClassName);
 	}
 
 }
