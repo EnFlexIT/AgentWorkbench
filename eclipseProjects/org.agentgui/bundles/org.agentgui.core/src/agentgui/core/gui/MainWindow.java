@@ -49,9 +49,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -77,7 +74,6 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
@@ -86,7 +82,6 @@ import agentgui.logging.components.JPanelConsole;
 import agentgui.logging.components.JTabbedPane4Consoles;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
-import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
  * This class represents the main user-interface of the application AgentGUI.
@@ -752,10 +747,6 @@ public class MainWindow extends JFrame {
 			jMenuExtra.add(new CWMenueItem("ExtraOptions", Language.translate("Optionen"), null));
 			jMenuExtra.add(new CWMenueItem("Authentication", Language.translate("Web Service Authentifizierung"), null));
 
-			// TODO for testing, remove later
-			jMenuExtra.addSeparator();
-			jMenuExtra.add(new CWMenueItem("InstallEOM", "Install EOM", null));
-
 		}
 		return jMenuExtra;
 	}
@@ -1105,57 +1096,9 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("EclipsePreferences")) {
 				Application.showEclipsePreferences();
 
-			} else if (actionCMD.equalsIgnoreCase("InstallEOM")) {
-
-				this.p2test();
-
 			} else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);
 			}
-		}
-
-		// TODO remove
-		/**
-		 * Just for testing and learning
-		 */
-		private void p2test() {
-
-			P2OperationsHandler p2Handler = CommonComponentFactory.getNewP2OperationsHandler();
-			try {
-				p2Handler.getInstalledFeatures();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			String eomFeatureID = "de.enflexit.eom.feature.feature.group";
-			String eomRepositoryURI = "https://p2.enflex.it/eom/snapshots/";
-			String repositoryName = "Enflex.it EOM Update Site";
-
-			URI repoUri = null;
-			try {
-				repoUri = new URI(eomRepositoryURI);
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if (repoUri != null) {
-
-				if (p2Handler.checkIfInstalled(eomFeatureID) == true) {
-					p2Handler = CommonComponentFactory.getNewP2OperationsHandler();
-					repoUri = p2Handler.getRepositoryForInstallableUnit(eomFeatureID);
-//					System.out.println(repoUri);
-//					System.out.println(p2Handler.getRepositoryName(repoUri));
-					return;
-				}
-
-				p2Handler.addRepository(repoUri, repositoryName);
-				boolean success = p2Handler.installIU(eomFeatureID, repoUri);
-				if (success == true) {
-					Application.restart();
-				}
-			}
-
 		}
 
 	}

@@ -266,7 +266,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	 */
 	private boolean isFeatureInList(List<FeatureInfo> featuresList, String featureID) {
 		for (FeatureInfo feature : featuresList) {
-			if (feature.getFeatureID().equals(featureID)) {
+			if (feature.getId().equals(featureID)) {
 				return true;
 			}
 		}

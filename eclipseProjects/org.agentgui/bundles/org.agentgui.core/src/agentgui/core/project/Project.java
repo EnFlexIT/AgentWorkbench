@@ -438,13 +438,13 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			
 			for(FeatureInfo feature : project.getProjectFeatures()) {
 				
-				if(p2handler.checkIfInstalled(feature.getFeatureID()) == false) {
+				if(p2handler.checkIfInstalled(feature.getId()) == false) {
 				
-					boolean success = p2handler.installIU(feature.getFeatureID(), feature.getRepositoryURI());
+					boolean success = p2handler.installIU(feature.getId(), feature.getRepositoryURI());
 					if (success == true) {
 						installedNewFeatures = true;
 					} else {
-						System.err.println("Unnable to install required feature " + feature.getFeatureID());
+						System.err.println("Unnable to install required feature " + feature.getId());
 						//TODO Figure out how to handle this
 					}
 					

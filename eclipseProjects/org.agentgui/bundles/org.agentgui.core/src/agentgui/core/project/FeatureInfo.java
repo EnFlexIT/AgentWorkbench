@@ -43,9 +43,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
  */
 public class FeatureInfo implements Comparable<FeatureInfo> {
 
-	private String featureName;
-	private String featureID;
-	private String featureVersion;
+	private String name;
+	private String id;
+	private String version;
 	private URI repositoryURI;
 	private String repositoryName;
 
@@ -59,15 +59,15 @@ public class FeatureInfo implements Comparable<FeatureInfo> {
 	public static FeatureInfo createFeatureInfoFromIU(IInstallableUnit featureIU, P2OperationsHandler p2handler) {
 		FeatureInfo featureInfo = new FeatureInfo();
 
-		featureInfo.setFeatureID(featureIU.getId());
-		featureInfo.setFeatureName(featureIU.getProperty(IInstallableUnit.PROP_NAME));
-		featureInfo.setFeatureVersion(featureIU.getVersion().toString());
+		featureInfo.setId(featureIU.getId());
+		featureInfo.setName(featureIU.getProperty(IInstallableUnit.PROP_NAME));
+		featureInfo.setVersion(featureIU.getVersion().toString());
 
 		if (p2handler == null) {
 			p2handler = CommonComponentFactory.getNewP2OperationsHandler();
 		}
 
-		featureInfo.setRepositoryURI(p2handler.getRepositoryForInstallableUnit(featureInfo.getFeatureID()));
+		featureInfo.setRepositoryURI(p2handler.getRepositoryForInstallableUnit(featureInfo.getId()));
 		if (featureInfo.getRepositoryURI() != null) {
 			featureInfo.setRepositoryName(p2handler.getRepositoryName(featureInfo.getRepositoryURI()));
 		}
@@ -80,17 +80,17 @@ public class FeatureInfo implements Comparable<FeatureInfo> {
 	 *
 	 * @return the feature name
 	 */
-	public String getFeatureName() {
-		return featureName;
+	public String getName() {
+		return name;
 	}
 
 	/**
 	 * Sets the feature name.
 	 *
-	 * @param featureName the new feature name
+	 * @param name the new feature name
 	 */
-	public void setFeatureName(String featureName) {
-		this.featureName = featureName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -98,17 +98,17 @@ public class FeatureInfo implements Comparable<FeatureInfo> {
 	 *
 	 * @return the feature ID
 	 */
-	public String getFeatureID() {
-		return featureID;
+	public String getId() {
+		return id;
 	}
 
 	/**
 	 * Sets the feature ID.
 	 *
-	 * @param featureID the new feature ID
+	 * @param id the new feature ID
 	 */
-	public void setFeatureID(String featureID) {
-		this.featureID = featureID;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
@@ -116,17 +116,17 @@ public class FeatureInfo implements Comparable<FeatureInfo> {
 	 *
 	 * @return the feature version
 	 */
-	public String getFeatureVersion() {
-		return featureVersion;
+	public String getVersion() {
+		return version;
 	}
 
 	/**
 	 * Sets the feature version.
 	 *
-	 * @param featureVersion the new feature version
+	 * @param version the new feature version
 	 */
-	public void setFeatureVersion(String featureVersion) {
-		this.featureVersion = featureVersion;
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 	/**
@@ -172,12 +172,12 @@ public class FeatureInfo implements Comparable<FeatureInfo> {
 	 */
 	@Override
 	public String toString() {
-		if (this.featureName.equals("%featureName")) {
+		if (this.name.equals("%featureName")) {
 			// --- Feature name not defined, return ID instead ------
-			return this.featureID;
+			return this.id;
 		} else {
 			// --- Return the feature name --------------------------
-			return this.featureName;
+			return this.name;
 		}
 	}
 
