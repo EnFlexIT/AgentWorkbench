@@ -278,10 +278,9 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	
 	
 	/**
-	 * Default constructor for Project
+	 * Instantiates a new project.
 	 */
 	public Project() {
-	
 		// ----------------------------------------------------------
 		// --- Fill the projects ComboBoxModel for environments ----- 
 		Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
@@ -290,8 +289,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 			this.getEnvironmentsComboBoxModel().addElement(envType);
 		}
 		// ----------------------------------------------------------
-		
-	};
+	}
 	
 	/**
 	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and agentgui.bin).
@@ -338,34 +336,60 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 	 */
 	public static Project load(File projectPath, boolean loadResources) {
 		
+		String projectSubDirectory = projectPath.getParentFile().toPath().relativize(projectPath.toPath()).toString();
+
+		// --- Load the XML file of the project ----------
+		Project project = loadProjectXml(projectPath);
+		
+		// --- Check/create default folders ---------------
+		project.setProjectFolder(projectSubDirectory);
+		project.checkAndCreateProjectsDirectoryStructure();
+		
+		// --- Load additional jar-resources --------------
+		if (loadResources==true) {
+			project.resourcesLoad();
+		}
+		
+		// --- Load user data model -----------------------
+		loadProjectUserDataModel(projectPath, project);
+		
+		return project;
+	}
+	
+	/**
+	 * Loads the projects XML file.
+	 *
+	 * @param projectPath the project path
+	 * @return the project
+	 */
+	public static Project loadProjectXml(File projectPath) {
+		
 		Project project = null;
 		
 		// --- Get data model from file ---------------
-		String XMLFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFileNameProject();	
-		String userObjectFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject();
-		String projectSubDirectory = projectPath.getParentFile().toPath().relativize(projectPath.toPath()).toString();
+		String xmlFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFileNameProject();	
 		
 		// --- Does the file exists -------------------
-		File xmlFile = new File(XMLFileName);
+		File xmlFile = new File(xmlFileName);
 		if (xmlFile.exists()==false) {
 			
-			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
+			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + xmlFileName);
 			Application.setStatusBar(Language.translate("Fertig"));
 			
 			String title = Language.translate("Projekt-Ladefehler!");
 			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
-			message += XMLFileName;
+			message += xmlFileName;
 			JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
 			return null;
 		}
 		
 		// --- Read file 'agentgui.xml' ---------------
-		FileReader fr = null;
+		FileReader fileReader = null;
 		try {
-			fr = new FileReader(XMLFileName);
+			fileReader = new FileReader(xmlFileName);
 			JAXBContext pc = JAXBContext.newInstance(Project.class);
 			Unmarshaller um = pc.createUnmarshaller();
-			project = (Project) um.unmarshal(fr);
+			project = (Project) um.unmarshal(fileReader);
 			
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
@@ -375,23 +399,24 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 			return null;
 		} finally {
 			try {
-				if (fr!=null) fr.close();
+				if (fileReader!=null) fileReader.close();
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
 		}
+		return project;
+	}
+	
+	/**
+	 * Load the projects user data model that is stored in the file 'agentgui.bin'.
+	 *
+	 * @param projectPath the project path
+	 * @param project the project
+	 */
+	private static void loadProjectUserDataModel(File projectPath, Project project) {
 		
-		// --- check/create default folders -----------
-		project.setProjectFolder(projectSubDirectory);
-		project.checkAndCreateProjectsDirectoryStructure();
+		String userObjectFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject();
 		
-		// --- Load additional jar-resources ----------
-		if (loadResources==true) {
-			project.resourcesLoad();
-		}
-		
-		// --- Reading the serializable user object of - 
-		// --- the Project from the 'agentgui.bin' -----
 		File userObjectFile = new File(userObjectFileName);
 		if (userObjectFile.exists()) {
 			
@@ -419,9 +444,7 @@ import de.enflexit.common.ontology.OntologyVisualisationHelper;
 					ioe.printStackTrace();
 				}
 			}
-		}
-		
-		return project;
+		}		
 	}
 	
 	/**
