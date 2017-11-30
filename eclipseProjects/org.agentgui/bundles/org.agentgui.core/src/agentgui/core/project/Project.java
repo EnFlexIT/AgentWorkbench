@@ -99,7 +99,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 @XmlRootElement public class Project extends Observable {
-
+	
 	// --- public statics --------------------------------------
 	@XmlTransient public static final String PREPARE_FOR_SAVING = "ProjectPrepare4Saving";
 	@XmlTransient public static final String SAVED = "ProjectSaved";
@@ -455,7 +455,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		}
 		
 		if(installedNewFeatures == true) {
-			Application.restart();
+			String projectLoadArgument = "-project " + project.getProjectFolder();
+			Application.relaunch(projectLoadArgument);
 		}
 		
 		return true;
