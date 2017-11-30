@@ -98,133 +98,83 @@ import de.enflexit.common.p2.P2OperationsHandler;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-@XmlRootElement
-public class Project extends Observable {
+@XmlRootElement public class Project extends Observable {
 
 	// --- public statics --------------------------------------
-	@XmlTransient
-	public static final String PREPARE_FOR_SAVING = "ProjectPrepare4Saving";
-	@XmlTransient
-	public static final String SAVED = "ProjectSaved";
-	@XmlTransient
-	public static final String CHANGED_ProjectName = "ProjectName";
-	@XmlTransient
-	public static final String CHANGED_ProjectDescription = "ProjectDescription";
-	@XmlTransient
-	public static final String CHANGED_ProjectView = "ProjectView";
-	@XmlTransient
-	public static final String CHANGED_ProjectStartTab = "ProjectStartTab";
-	@XmlTransient
-	public static final String CHANGED_ProjectFolder = "ProjectFolder";
+	@XmlTransient public static final String PREPARE_FOR_SAVING = "ProjectPrepare4Saving";
+	@XmlTransient public static final String SAVED = "ProjectSaved";
+	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
+	@XmlTransient public static final String CHANGED_ProjectDescription = "ProjectDescription";
+	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
+	@XmlTransient public static final String CHANGED_ProjectStartTab = "ProjectStartTab";
+	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
 
-	@XmlTransient
-	public static final String CHANGED_VersionInformation = "VersionInformation";
-	@XmlTransient
-	public static final String CHANGED_UpdateAutoConfiguration = "UpdateAutoConfiguration";
-	@XmlTransient
-	public static final String CHANGED_UpdateSite = "UpdateSite";
-	@XmlTransient
-	public static final String CHANGED_UpdateDateLastChecked = "UpdateDateLastChecked";
+	@XmlTransient public static final String CHANGED_VersionInformation= "VersionInformation";
+	@XmlTransient public static final String CHANGED_UpdateAutoConfiguration= "UpdateAutoConfiguration";
+	@XmlTransient public static final String CHANGED_UpdateSite = "UpdateSite";
+	@XmlTransient public static final String CHANGED_UpdateDateLastChecked= "UpdateDateLastChecked";
 
-	@XmlTransient
-	public static final String CHANGED_EnvironmentModelType = "EnvironmentModelType";
-	@XmlTransient
-	public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
-	@XmlTransient
-	public static final String CHANGED_TimeModelClass = "TimeModelConfiguration";
-	@XmlTransient
-	public static final String CHANGED_ProjectOntology = "ProjectOntology";
-	@XmlTransient
-	public static final String CHANGED_ProjectResources = "ProjectResources";
-	@XmlTransient
-	public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
-	@XmlTransient
-	public static final String CHANGED_DistributionSetup = "DistributionSetup";
-	@XmlTransient
-	public static final String CHANGED_RemoteContainerConfiguration = "RemoteContainerConfiguration";
-	@XmlTransient
-	public static final String CHANGED_UserRuntimeObject = "UserRuntimeObject";
+	@XmlTransient public static final String CHANGED_EnvironmentModelType= "EnvironmentModelType";
+	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
+	@XmlTransient public static final String CHANGED_TimeModelClass = "TimeModelConfiguration";
+	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
+	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
+	@XmlTransient public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
+	@XmlTransient public static final String CHANGED_DistributionSetup = "DistributionSetup";
+	@XmlTransient public static final String CHANGED_RemoteContainerConfiguration = "RemoteContainerConfiguration";
+	@XmlTransient public static final String CHANGED_UserRuntimeObject = "UserRuntimeObject";
 
 	// --- Constant value in order to set the project view ----------
-	@XmlTransient
-	public static final String VIEW_Developer = "Developer";
-	@XmlTransient
-	public static final String VIEW_User = "User";
-	@XmlTransient
-	public static final String VIEW_Maximize = "MaximizeView";
-	@XmlTransient
-	public static final String VIEW_Restore = "RestoreView";
-	@XmlTransient
-	public static final String VIEW_TabsLoaded = "TabsLoaded";
+	@XmlTransient public static final String VIEW_Developer = "Developer";
+	@XmlTransient public static final String VIEW_User = "User";
+	@XmlTransient public static final String VIEW_Maximize = "MaximizeView";
+	@XmlTransient public static final String VIEW_Restore = "RestoreView";
+	@XmlTransient public static final String VIEW_TabsLoaded = "TabsLoaded";
 
 	// --- Constants for the the agent distribution metric ----------
-	@XmlTransient
-	public static final String AGENT_METRIC_Reset = "AgentMetric_Reset";
-	@XmlTransient
-	public static final String AGENT_METRIC_ChangedDataSource = "AgentMetric_ChangedDataSource";
-	@XmlTransient
-	public static final String AGENT_METRIC_AgentDescriptionAdded = "AgentMetric_AgentDescriptionAdded";
-	@XmlTransient
-	public static final String AGENT_METRIC_AgentDescriptionEdited = "AgentMetric_AgentDescriptionEdited";
-	@XmlTransient
-	public static final String AGENT_METRIC_AgentDescriptionRemoved = "AgentMetric_AgentDescriptionRemoved";
+	@XmlTransient public static final String AGENT_METRIC_Reset = "AgentMetric_Reset";
+	@XmlTransient public static final String AGENT_METRIC_ChangedDataSource = "AgentMetric_ChangedDataSource";
+	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionAdded = "AgentMetric_AgentDescriptionAdded";
+	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionEdited = "AgentMetric_AgentDescriptionEdited";
+	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionRemoved = "AgentMetric_AgentDescriptionRemoved";
 
 	// --- Constants -------------------------------------------
-	@XmlTransient
-	private String defaultSubFolder4Setups = "setups";
-	@XmlTransient
-	private String defaultSubFolderEnvSetups = "setupsEnv";
-	@XmlTransient
-	private final String[] defaultSubFolders = { defaultSubFolder4Setups, defaultSubFolderEnvSetups };
+	@XmlTransient private String defaultSubFolder4Setups   = "setups";
+	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
+	@XmlTransient private final String[] defaultSubFolders = {defaultSubFolder4Setups, defaultSubFolderEnvSetups};
 
 	/** The OSGI-bundle of the current project */
-	@XmlTransient
-	private ProjectBundleLoader projectBundleLoader;
+	@XmlTransient private ProjectBundleLoader projectBundleLoader;
 
 	/** This is the 'view' in the context of the mentioned MVC pattern */
-	@XmlTransient
-	private ProjectEditorWindow projectEditorWindow;
+	@XmlTransient private ProjectEditorWindow projectEditorWindow;
 	/** This panel holds the instance of environment model display */
-	@XmlTransient
-	private JPanel4Visualisation visualisationTab4SetupExecution;
+	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
-	@XmlTransient
-	private JDesktopPane projectDesktop;
+	@XmlTransient private JDesktopPane projectDesktop;
 
 	/** Indicates that the project is unsaved or not */
-	@XmlTransient
-	private boolean isUnsaved = false;
+	@XmlTransient private boolean isUnsaved = false;
 
-	@XmlTransient
-	private String projectFolder;
-	@XmlTransient
-	private String projectFolderFullPath;
+	@XmlTransient private String projectFolder;
+	@XmlTransient private String projectFolderFullPath;
 
 	// --- Variables saved within the project file -------------
-	@XmlElement(name = "projectName")
-	private String projectName;
-	@XmlElement(name = "projectDescription")
-	private String projectDescription;
-	@XmlElement(name = "projectStartTab")
-	private String projectStartTab;
-	@XmlElement(name = "projectView")
-	private String projectView; // --- View for developer or end-user ---
+	@XmlElement(name="projectName")				private String projectName;
+	@XmlElement(name="projectDescription")		private String projectDescription;
+	@XmlElement(name="projectStartTab")			private String projectStartTab;	
+	@XmlElement(name="projectView")				private String projectView;			// --- View for developer or end-user ---
 
-	@XmlElement(name = "versionInformation")
-	private VersionInformation versionInformation;
-	@XmlElement(name = "updateAutoConfiguration")
-	private Integer updateAutoConfiguration;
-	@XmlElement(name = "updateSite")
-	private String updateSite;
-	@XmlElement(name = "updateDateLastChecked")
-	private Long updateDateLastChecked;
+	@XmlElement(name="versionInformation")		private VersionInformation versionInformation;
+	@XmlElement(name="updateAutoConfiguration")	private Integer updateAutoConfiguration;
+	@XmlElement(name="updateSite")				private String updateSite;
+	@XmlElement(name="updateDateLastChecked")	private Long updateDateLastChecked;
 
-	@XmlElement(name = "environmentModel")
-	private String environmentModelName;
+	@XmlElement(name="environmentModel")		private String environmentModelName;	
 
 	/**
-	 * This Vector holds the additional resources which are used for the current project (external jar files or the binary
-	 * folder of a development project)
+	 * This Vector holds the additional resources which are used for the current project 
+	 * (external jar files or the binary folder of a development project)  
 	 */
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name = "projectResource")
@@ -233,12 +183,12 @@ public class Project extends Observable {
 	private boolean reCreateProjectManifest = true;
 
 	/**
-	 * This Vector handles the list of resources which should be loadable in case of distributed simulations. The idea is,
-	 * that for example external jar-files can be distributed to a remote location, where such jar-files will be added
-	 * automatically to the ClassPath of the starting JVM.
+	 * This Vector handles the list of resources which should be loadable in case of 
+	 * distributed simulations. The idea is, that for example external jar-files can
+	 * be distributed to a remote location, where such jar-files will be added automatically 
+	 * to the ClassPath of the starting JVM.         
 	 */
-	@XmlTransient
-	private Vector<String> downloadResources = new Vector<String>();
+	@XmlTransient private Vector<String> downloadResources = new Vector<String>();
 
 	/**
 	 * This Vector will store the class names of the PlugIns which are used within the project
@@ -249,16 +199,14 @@ public class Project extends Observable {
 	/**
 	 * This extended Vector will hold the concrete instances of the PLugIns loaded in this project
 	 */
-	@XmlTransient
-	private PlugInsLoaded plugInsLoaded = new PlugInsLoaded();
-	@XmlTransient
-	private boolean plugInVectorLoaded = false;
+	@XmlTransient private PlugInsLoaded plugInsLoaded = new PlugInsLoaded();
+	@XmlTransient private boolean plugInVectorLoaded = false;
 
 	/**
-	 * This class is used for the management of the used Ontology's inside a project. It handles the concrete instances.
+	 * This class is used for the management of the used Ontology's inside a project.
+	 * It handles the concrete instances.
 	 */
-	@XmlTransient
-	private OntologyVisualisationHelper ontologyVisualisationHelper;
+	@XmlTransient private OntologyVisualisationHelper ontologyVisualisationHelper;
 
 	/**
 	 * This Vector is used in order to store the class names of the used ontology's in the project file
@@ -268,8 +216,8 @@ public class Project extends Observable {
 	private Vector<String> subOntologies = new Vector<String>();
 
 	/**
-	 * This extended HashTable is used in order to save the relationship between an agent (agents class name) and the
-	 * classes (also class names) which can be used as start-argument for the agents
+	 * This extended HashTable is used in order to save the relationship between an agent (agents class name)
+	 * and the classes (also class names) which can be used as start-argument for the agents   
 	 */
 	@XmlElement(name = "agentStartConfiguration")
 	private AgentStartConfiguration agentStartConfiguration;
@@ -295,11 +243,10 @@ public class Project extends Observable {
 	private RemoteContainerConfiguration remoteContainerConfiguration = new RemoteContainerConfiguration();
 
 	/**
-	 * This field can be used in order to provide customised objects during the runtime of a project. This will be not
-	 * stored within the file 'agentgui.xml'
+	 * This field can be used in order to provide customised objects during
+	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
-	@XmlTransient
-	private Serializable userRuntimeObject;
+	@XmlTransient private Serializable userRuntimeObject;
 
 	/**
 	 * This attribute holds the instance of the currently selected SimulationSetup
@@ -307,41 +254,41 @@ public class Project extends Observable {
 	@XmlElement(name = "simulationSetupCurrent")
 	private String simulationSetupCurrent;
 	/**
-	 * This extended HashTable is used in order to store the SimulationsSetup's names and their file names
+	 * This extended HashTable is used in order to store the SimulationsSetup's names 
+	 * and their file names 
 	 */
 	private SimulationSetups simulationSetups;
 
 	/**
-	 * This model contains all known environment types of the application and can be also used for tailored environment
-	 * models / types
+	 * This model contains all known environment types of the application 
+	 * and can be also used for tailored environment models / types
 	 */
-	@XmlTransient
-	private DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel;
+	@XmlTransient private DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel;
 
 	/** The EnvironmentController of the project. */
-	@XmlTransient
-	private EnvironmentController environmentController;
+	@XmlTransient private EnvironmentController environmentController;
 
 	/** Configuration settings for the TimeModel used in this Project */
-	@XmlElement(name = "timeModelClass")
-	private String timeModelClass = null;
+	@XmlElement(name="timeModelClass") 	private String timeModelClass = null;
 	/** The TimeModelController controls the display of the selected TimModel. */
-	@XmlTransient
-	private TimeModelController timeModelController;
+	@XmlTransient private TimeModelController timeModelController;
 
+
+	@XmlTransient private MApplication eclipseMApplication;
+	@XmlTransient private EPartService eclipseEPartService;
+	@XmlTransient private EModelService eclipseEModelService;
+	
+	/**
+	 * This Vector is used in order to store the class names of the used ontology's in the project file
+	 */
 	@XmlElementWrapper(name = "projectFeatures")
 	@XmlElement(name = "projectFeature")
 	private Vector<FeatureInfo> projectFeatures = new Vector<FeatureInfo>();
-
-	@XmlTransient
-	private MApplication eclipseMApplication;
-	@XmlTransient
-	private EPartService eclipseEPartService;
-	@XmlTransient
-	private EModelService eclipseEModelService;
+	
+	
 
 	/**
-	 * Default constructor for Project
+	 * Instantiates a new project.
 	 */
 	public Project() {
 
@@ -353,12 +300,11 @@ public class Project extends Observable {
 			this.getEnvironmentsComboBoxModel().addElement(envType);
 		}
 		// ----------------------------------------------------------
-
-	};
+	}
 
 	/**
-	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and
-	 * agentgui.bin). By loading, this method will also load external jar-resources by using the ClassLoader.
+	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * By loading, this method will also load external jar-resources by using the ClassLoader.
 	 *
 	 * @param projectSubDirectory the project sub directory
 	 * @return the project
@@ -369,8 +315,8 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and
-	 * agentgui.bin). External jar resources will optionally be loaded.
+	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * External jar resources will optionally be loaded.
 	 *
 	 * @param projectSubDirectory the project sub directory
 	 * @param loadResources load external jar resources?
@@ -382,8 +328,8 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * Loads and returns the project from the specified directory. Both files will be loaded (agentgui.xml and
-	 * agentgui.bin). By loading, this method will also load external jar-resources by using the ClassLoader.
+	 * Loads and returns the project from the specified directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * By loading, this method will also load external jar-resources by using the ClassLoader.
 	 *
 	 * @param projectPath the project path
 	 * @return the project
@@ -393,8 +339,8 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * Loads and returns the project from the specified directory. Both files will be loaded (agentgui.xml and
-	 * agentgui.bin). External jar resources will optionally be loaded.
+	 * Loads and returns the project from the specified directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * External jar resources will optionally be loaded.
 	 *
 	 * @param projectPath the project path
 	 * @param loadResources load external jar resources?
@@ -402,34 +348,66 @@ public class Project extends Observable {
 	 */
 	public static Project load(File projectPath, boolean loadResources) {
 
+		String projectSubDirectory = projectPath.getParentFile().toPath().relativize(projectPath.toPath()).toString();
+
+		// --- Load the XML file of the project ----------
+		Project project = loadProjectXml(projectPath);
+		
+		// --- Check/create default folders ---------------
+		project.setProjectFolder(projectSubDirectory);
+		project.checkAndCreateProjectsDirectoryStructure();
+		
+		// --- Install required features if necessary -----
+		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverProduct) {
+			// --- Only possible if not running from the IDE --
+			loadRequiredFeatures(project);
+		}
+		
+		// --- Load additional jar-resources --------------
+		if (loadResources==true) {
+			project.resourcesLoad();
+		}
+		
+		// --- Load user data model -----------------------
+		loadProjectUserDataModel(projectPath, project);
+		
+		return project;
+	}
+	
+	/**
+	 * Loads the projects XML file.
+	 *
+	 * @param projectPath the project path
+	 * @return the project
+	 */
+	public static Project loadProjectXml(File projectPath) {
+		
 		Project project = null;
 
 		// --- Get data model from file ---------------
-		String XMLFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFileNameProject();
-		String userObjectFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject();
-		String projectSubDirectory = projectPath.getParentFile().toPath().relativize(projectPath.toPath()).toString();
+		String xmlFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFileNameProject();	
 
 		// --- Does the file exists -------------------
-		File xmlFile = new File(XMLFileName);
+		File xmlFile = new File(xmlFileName);
 		if (xmlFile.exists() == false) {
 
-			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
+			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + xmlFileName);
 			Application.setStatusBar(Language.translate("Fertig"));
 
 			String title = Language.translate("Projekt-Ladefehler!");
 			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
-			message += XMLFileName;
+			message += xmlFileName;
 			JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
 			return null;
 		}
 
 		// --- Read file 'agentgui.xml' ---------------
-		FileReader fr = null;
+		FileReader fileReader = null;
 		try {
-			fr = new FileReader(XMLFileName);
+			fileReader = new FileReader(xmlFileName);
 			JAXBContext pc = JAXBContext.newInstance(Project.class);
 			Unmarshaller um = pc.createUnmarshaller();
-			project = (Project) um.unmarshal(fr);
+			project = (Project) um.unmarshal(fileReader);
 
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
@@ -439,37 +417,56 @@ public class Project extends Observable {
 			return null;
 		} finally {
 			try {
-				if (fr != null)
-					fr.close();
+				if (fileReader!=null) fileReader.close();
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
 		}
-
-		// --- Check if the project requires specific features, install if necessary ------------
-
+		return project;
+	}
+	
+	/**
+	 * Loads features required by the project from the p2 repository if necessary.
+	 *
+	 * @param project the project
+	 */
+	private static void loadRequiredFeatures(Project project) {
 		// --- Feature installation via p2 is only possible if running via product --------------
 		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverProduct) {
-			// --- check/create default folders -----------
-			project.setProjectFolder(projectSubDirectory);
-			project.checkAndCreateProjectsDirectoryStructure();
-
-			// --- Check if the project requires specific features, install if necessary --------
-			boolean installedNewFeature = installRequiredFeatures(project);
-
-			// --- If new features have been installed, restart the application -----------------
-			if (installedNewFeature == true) {
+			P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
+			boolean installedNewFeatures = false;
+			
+			for(FeatureInfo feature : project.getProjectFeatures()) {
+				
+				if(p2handler.checkIfInstalled(feature.getFeatureID()) == false) {
+				
+					boolean success = p2handler.installIU(feature.getFeatureID(), feature.getRepositoryURI());
+					if (success == true) {
+						installedNewFeatures = true;
+					} else {
+						System.err.println("Unnable to install required feature " + feature.getFeatureID());
+						//TODO Figure out how to handle this
+					}
+					
+				}
+			}
+			
+			if(installedNewFeatures == true) {
 				Application.restart();
 			}
 		}
+	}
 
-		// --- Load additional jar-resources ----------
-		if (loadResources == true) {
-			project.resourcesLoad();
-		}
+	/**
+	 * Load the projects user data model that is stored in the file 'agentgui.bin'.
+	 *
+	 * @param projectPath the project path
+	 * @param project the project
+	 */
+	private static void loadProjectUserDataModel(File projectPath, Project project) {
 
-		// --- Reading the serializable user object of -
-		// --- the Project from the 'agentgui.bin' -----
+		String userObjectFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject();
+
 		File userObjectFile = new File(userObjectFileName);
 		if (userObjectFile.exists()) {
 
@@ -487,46 +484,21 @@ public class Project extends Observable {
 				ex.printStackTrace();
 			} finally {
 				try {
-					if (inStream != null)
-						inStream.close();
+					if (inStream!=null) inStream.close();
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
 				try {
-					if (fis != null)
-						fis.close();
+					if (fis!=null) fis.close();
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
 			}
 		}
-
-		return project;
-	}
-
-	/**
-	 * Check
-	 * 
-	 * @param project
-	 * @return
-	 */
-	private static boolean installRequiredFeatures(Project project) {
-		boolean installedSomething = false;
-		;
-
-		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
-		for (FeatureInfo feature : project.getProjectFeatures()) {
-			if (p2handler.checkIfInstalled(feature.getFeatureID()) == false) {
-				p2handler.installIU(feature.getFeatureID(), feature.getRepositoryURI());
-				installedSomething = true;
-			}
-		}
-		return installedSomething;
 	}
 
 	/**
 	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
-	 * 
 	 * @return true, if successful
 	 */
 	public boolean save() {
@@ -535,7 +507,6 @@ public class Project extends Observable {
 
 	/**
 	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
-	 * 
 	 * @param projectPath the project path where the files have to be stored
 	 * @return true, if successful
 	 */
@@ -569,10 +540,8 @@ public class Project extends Observable {
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			} finally {
-				if (out != null)
-					out.close();
-				if (fos != null)
-					fos.close();
+		    	if (out!=null) out.close();
+		    	if (fos!=null) fos.close();
 			}
 
 			// --- Save the current SimulationSetup -------
@@ -595,7 +564,6 @@ public class Project extends Observable {
 
 	/**
 	 * This method closes the current project. If necessary it will try to save it before.
-	 * 
 	 * @return Returns true if saving was successful
 	 */
 	public boolean close() {
@@ -604,7 +572,6 @@ public class Project extends Observable {
 
 	/**
 	 * This method closes the current project. If necessary it will try to save the before.
-	 * 
 	 * @param parentComponent the parent component
 	 * @return Returns true if saving was successful
 	 */
@@ -621,7 +588,9 @@ public class Project extends Observable {
 				// --- Operation with an UI ---------------
 				msgHead = Language.translate("Projekt '@' speichern?");
 				msgHead = msgHead.replace("'@'", "'" + projectName + "'");
-				msgText = Language.translate("Das aktuelle Projekt '@' ist noch nicht gespeichert!" + Application.getGlobalInfo().getNewLineSeparator() + "Möchten Sie es nun speichern ?");
+				msgText = Language.translate(
+						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + Application.getGlobalInfo().getNewLineSeparator() + 
+						"Möchten Sie es nun speichern ?");
 				msgText = msgText.replace("'@'", "'" + projectName + "'");
 
 				ProjectCloseUserFeedback userAnswer = this.getProjectEditorWindow().getUserFeedbackForClosingProject(msgHead, msgText);
@@ -629,8 +598,7 @@ public class Project extends Observable {
 				case CancelCloseAction:
 					return false;
 				case SaveProject:
-					if (this.save() == false)
-						return false;
+					if (this.save()==false) return false;
 					break;
 				case DoNotSaveProject:
 					// --- Nothing to do here ---
@@ -639,8 +607,7 @@ public class Project extends Observable {
 
 			} else {
 				// --- Headless operation -----------------
-				if (this.save() == false)
-					return false;
+				if (this.save()==false) return false;
 			}
 		}
 		// --- Shutdown Jade ? ----------------------------
@@ -672,8 +639,7 @@ public class Project extends Observable {
 
 		int nProjects = loadedProjects.count();
 		if (nProjects > 0) {
-			if (projectIndex + 1 > nProjects)
-				projectIndex = nProjects - 1;
+			if (projectIndex+1>nProjects ) projectIndex=nProjects-1;  
 			Application.setProjectFocused(loadedProjects.get(projectIndex));
 			Application.getProjectFocused().setFocus(true);
 			Application.setTitelAddition(Application.getProjectFocused().getProjectName());
@@ -690,7 +656,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the the Project configuration to be saved or unsaved.
-	 * 
 	 * @param isUnsaved the new unsaved
 	 */
 	public void setUnsaved(boolean isUnsaved) {
@@ -699,7 +664,6 @@ public class Project extends Observable {
 
 	/**
 	 * Checks if the Project is unsaved.
-	 * 
 	 * @return true, if is unsaved
 	 */
 	public boolean isUnsaved() {
@@ -709,7 +673,6 @@ public class Project extends Observable {
 	// --- Methods for bundles that are loaded with the project -----
 	/**
 	 * Returns the projects {@link ProjectBundleLoader}.
-	 * 
 	 * @return the bundle loader
 	 */
 	public ProjectBundleLoader getProjectBundleLoader() {
@@ -721,7 +684,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the vector of bundles that belong to this project.
-	 * 
 	 * @return the bundles of the current project
 	 */
 	public Vector<Bundle> getBundles() {
@@ -730,7 +692,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the bundle names that belong to the this project.
-	 * 
 	 * @return the bundle names
 	 */
 	public Vector<String> getBundleNames() {
@@ -754,8 +715,7 @@ public class Project extends Observable {
 
 		// --- Define / create destination directory ----------------
 		File destinationDir = new File(destinationDirectoryRootPath);
-		if (destinationDir.exists() == false)
-			destinationDir.mkdirs();
+		if (destinationDir.exists()==false) destinationDir.mkdirs();
 
 		// --- Define the target file -------------------------------
 		File projectExportFile = new File(destinationDir.getAbsolutePath() + File.separator + this.getProjectFolder() + ".agui");
@@ -782,7 +742,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the project resources.
-	 * 
 	 * @param projectResources the projectResources to set
 	 */
 	public void setProjectResources(ProjectResourceVector projectResources) {
@@ -791,7 +750,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the project resources.
-	 * 
 	 * @return the projectResources
 	 */
 	@XmlTransient
@@ -828,7 +786,6 @@ public class Project extends Observable {
 
 	/**
 	 * Indicates if the projects MANIFEST.mf has to be recreated when project is to be opened.
-	 * 
 	 * @return true, if the projects MANIFEST.mf is to be recreated when project is to be opened
 	 */
 	@XmlTransient
@@ -838,7 +795,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets to recreate the projects MANIFEST.mf, if the project will be opened.
-	 * 
 	 * @param reCreateProjectManifest the new re create project manifest
 	 */
 	public void setReCreateProjectManifest(boolean reCreateProjectManifest) {
@@ -852,9 +808,10 @@ public class Project extends Observable {
 	// --- Here we come with methods for (un-) load ProjectPlugIns --- Start ------------
 	// ----------------------------------------------------------------------------------
 	/**
-	 * This method will load the ProjectPlugIns, which are configured for the current project (plugins_Classes). It will be
-	 * executed only one time during the 'ProjectsLoaded.add()' execution. After this no further functionality can be
-	 * expected.
+	 * This method will load the ProjectPlugIns, which are configured for the
+	 * current project (plugins_Classes). It will be executed only one time during 
+	 * the 'ProjectsLoaded.add()' execution. After this no further functionality 
+	 * can be expected. 
 	 */
 	public void plugInVectorLoad() {
 		if (this.plugInVectorLoaded == false) {
@@ -870,7 +827,8 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * This method will remove/unload the plugins in descending order of the Vector 'plugins_Loaded'.
+	 * This method will remove/unload the plugins in 
+	 * descending order of the Vector 'plugins_Loaded'.  
 	 */
 	private void plugInVectorRemove() {
 		// --- unload/remove all plugins configured in 'plugIns_Loaded' -----------
@@ -904,7 +862,6 @@ public class Project extends Observable {
 
 	/**
 	 * This method loads a single PlugIn, given by its class reference
-	 * 
 	 * @param pluginReference
 	 */
 	public boolean plugInLoad(String pluginReference, boolean add2PlugInReferenceVector) {
@@ -915,7 +872,8 @@ public class Project extends Observable {
 				PlugIn ppi = getPlugInsLoaded().getPlugIn(pluginReference);
 
 				String msgHead = Language.translate("Fehler - PlugIn: ") + " " + ppi.getClassReference() + " !";
-				String msgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " + "und kann deshalb nicht erneut hinzugefügt werden!");
+				String msgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
+						"und kann deshalb nicht erneut hinzugefügt werden!");
 				this.getProjectEditorWindow().showErrorMessage(msgText, msgHead);
 				return false;
 
@@ -936,8 +894,9 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * This method will unload and remove a single PlugIn. If removeFromProjectReferenceVector is set to true, the
-	 * PlugIn-reference will be also removed from the list of PlugIns', which has to be loaded with the project.
+	 * This method will unload and remove a single PlugIn. If removeFromProjectReferenceVector is set
+	 * to true, the PlugIn-reference will be also removed from the list of PlugIns', which has to be 
+	 * loaded with the project.
 	 * 
 	 * @param plugIn The PlugIn instance to be removed
 	 * @param removeFromProjectReferenceVector
@@ -952,7 +911,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets PlugInsLoaded, a Vector<PlugIn> that describes, which PlugIn's has to loaded.
-	 * 
 	 * @param plugInsLoaded the PlugInsLoaded
 	 */
 	public void setPlugInsLoaded(PlugInsLoaded plugInsLoaded) {
@@ -961,7 +919,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns PlugInsLoaded, a Vector<PlugIn> that describes, which PlugIn's were loaded.
-	 * 
 	 * @return the PlugInsLoaded
 	 */
 	@XmlTransient
@@ -975,7 +932,6 @@ public class Project extends Observable {
 	// --- Methods to access the simulation setup -------------------
 	/**
 	 * Gets the list of simulation setups.
-	 * 
 	 * @return the simulation setups
 	 */
 	@XmlElementWrapper(name = "simulationSetups")
@@ -988,7 +944,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the simulation setup current.
-	 * 
 	 * @param simulationSetupCurrent the new simulation setup current
 	 */
 	public void setSimulationSetupCurrent(String simulationSetupCurrent) {
@@ -997,7 +952,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the simulation setup current.
-	 * 
 	 * @return the simulation setup current
 	 */
 	@XmlTransient
@@ -1006,10 +960,10 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * Sets the download resources for this Project. This Vector represents the list of resources that should be
-	 * downloadable in case of distributed executions. The idea is, that for example external jar-files can distributed to a
-	 * remote location, where such jar-files will be added automatically to the ClassPath of the starting JVM.
-	 * 
+	 * Sets the download resources for this Project. This Vector represents the list of resources that 
+	 * should be downloadable in case of distributed executions. The idea is, that for example external 
+	 * jar-files can distributed to a remote location, where such jar-files will be added automatically
+	 * to the ClassPath of the starting JVM.
 	 * @param downloadResources the new download resources
 	 */
 	public void setDownloadResources(Vector<String> downloadResources) {
@@ -1017,9 +971,10 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * Returns the download resources for the project. This Vector represents the list of resources that should be
-	 * downloadable in case of distributed executions. The idea is, that for example external jar-files can distributed to a
-	 * remote location, where such jar-files will be added automatically to the ClassPath of the starting JVM.
+	 * Returns the download resources for the project. This Vector represents the list of resources that 
+	 * should be downloadable in case of distributed executions. The idea is, that for example external 
+	 * jar-files can distributed to a remote location, where such jar-files will be added automatically
+	 * to the ClassPath of the starting JVM.
 	 *
 	 * @return the download resources
 	 */
@@ -1029,7 +984,6 @@ public class Project extends Observable {
 
 	/**
 	 * Controls and/or creates whether the sub-folder-Structure exists
-	 * 
 	 * @return boolean true or false :-)
 	 */
 	public boolean checkAndCreateProjectsDirectoryStructure() {
@@ -1048,8 +1002,7 @@ public class Project extends Observable {
 					error = true;
 				}
 			}
-		}
-		;
+		};
 
 		// --- Indicate if successful or not --------------
 		if (error == true) {
@@ -1061,7 +1014,6 @@ public class Project extends Observable {
 
 	/**
 	 * Allow change notifications within the observer pattern without necessarily saving such changes
-	 * 
 	 * @param reason
 	 */
 	public void setNotChangedButNotify(Object reason) {
@@ -1071,7 +1023,6 @@ public class Project extends Observable {
 
 	/**
 	 * To prevent the closing of the project without saving
-	 * 
 	 * @param reason
 	 */
 	public void setChangedAndNotify(Object reason) {
@@ -1118,7 +1069,6 @@ public class Project extends Observable {
 
 	/**
 	 * Set method for the project name
-	 * 
 	 * @param newProjectName the projectName to set
 	 */
 	public void setProjectName(String newProjectName) {
@@ -1130,7 +1080,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the project name.
-	 * 
 	 * @return the projectName
 	 */
 	@XmlTransient
@@ -1140,7 +1089,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the project description.
-	 * 
 	 * @param newProjectDescription the projectDescription to set
 	 */
 	public void setProjectDescription(String newProjectDescription) {
@@ -1160,7 +1108,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the project start tab.
-	 * 
 	 * @param projectStartTab the new project start tab
 	 */
 	public void setProjectStartTab(String projectStartTab) {
@@ -1172,7 +1119,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the project start tab.
-	 * 
 	 * @return the project start tab
 	 */
 	@XmlTransient
@@ -1183,7 +1129,6 @@ public class Project extends Observable {
 	// ---- The projects directory information ----------------------
 	/**
 	 * Sets the current project folder.
-	 * 
 	 * @param newProjectFolder the projectFolder to set
 	 */
 	@XmlTransient
@@ -1195,7 +1140,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the current project folder that is one sub-directory name of the Agent.GUI's project directory.
-	 * 
 	 * @return the projectFolder
 	 */
 	public String getProjectFolder() {
@@ -1204,7 +1148,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the absolute location of project directory as full path.
-	 * 
 	 * @return the ProjectFolderFullPath
 	 */
 	public String getProjectFolderFullPath() {
@@ -1216,7 +1159,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the projects temporary folder.
-	 * 
 	 * @return the projects temporary folder
 	 */
 	public String getProjectTempFolderFullPath() {
@@ -1232,7 +1174,6 @@ public class Project extends Observable {
 	// --- Version and Update information ---------------------------
 	/**
 	 * Sets the projects {@link VersionInformation}.
-	 * 
 	 * @param versionInformation the new project version information
 	 */
 	public void setVersionInformation(VersionInformation versionInformation) {
@@ -1244,7 +1185,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the projects {@link VersionInformation}.
-	 * 
 	 * @return the project version information
 	 */
 	@XmlTransient
@@ -1260,7 +1200,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the update auto configuration (1-3).
-	 * 
 	 * @param updateAutoConfiguration the new update auto configuration
 	 */
 	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
@@ -1273,7 +1212,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the current auto-update configuration.
-	 * 
 	 * @return the auto-update configuration
 	 */
 	@XmlTransient
@@ -1286,7 +1224,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the update site.
-	 * 
 	 * @param updateSite the new update site
 	 */
 	public void setUpdateSite(String updateSite) {
@@ -1298,7 +1235,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the update site.
-	 * 
 	 * @return the update site
 	 */
 	@XmlTransient
@@ -1311,7 +1247,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the date of the last update check.
-	 * 
 	 * @param updateDateLastChecked the new date for the last update check
 	 */
 	public void setUpdateDateLastChecked(Long updateDateLastChecked) {
@@ -1323,7 +1258,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the date of the last update check.
-	 * 
 	 * @return the date of the last update check
 	 */
 	@XmlTransient
@@ -1334,7 +1268,6 @@ public class Project extends Observable {
 	// --- Visualization instances ----------------------------------
 	/**
 	 * Creates / Returns the project editor window (Swing or SWT).
-	 * 
 	 * @return the project editor window for the current project
 	 */
 	@XmlTransient
@@ -1350,7 +1283,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the project desktop in the ProjectWindow.
-	 * 
 	 * @param projectDesktop the JDesktopPane usable as project desktop
 	 */
 	public void setProjectDesktop(JDesktopPane projectDesktop) {
@@ -1358,10 +1290,9 @@ public class Project extends Observable {
 	}
 
 	/**
-	 * Returns the project desktop for the current project. This JDesktopPane can be used in order to allow further user
-	 * interactions within the project by using individual JInternalFrames. If frames are added to this desktop, the focus
-	 * will be set to it.
-	 * 
+	 * Returns the project desktop for the current project. This JDesktopPane can be used in order 
+	 * to allow further user interactions within the project by using individual JInternalFrames. 
+	 * If frames are added to this desktop, the focus will be set to it.
 	 * @return the project desktop
 	 */
 	@XmlTransient
@@ -1371,7 +1302,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the new project view that is either {@link Project#VIEW_Developer} or {@link Project#VIEW_User}.
-	 * 
 	 * @param newProjectView the new project view to set
 	 */
 	@XmlTransient
@@ -1401,7 +1331,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the new environment model name.
-	 * 
 	 * @param newEnvironmentModelName the new environment model name
 	 */
 	@XmlTransient
@@ -1448,7 +1377,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the default environment setup folder
-	 * 
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath() {
@@ -1457,7 +1385,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the subfolder for setup environment files
-	 * 
 	 * @param fullPath If true, the absolute path is returned, otherwise relative to the project folder
 	 * @return The subfolder for setup environment files
 	 */
@@ -1503,7 +1430,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the reference Vector for the sub ontologies.
-	 * 
 	 * @param subOntologies the new sub ontologies
 	 */
 	public void setSubOntologies(Vector<String> subOntologies) {
@@ -1512,7 +1438,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the Vector of references to the used sub ontologies.
-	 * 
 	 * @return the sub ontologies
 	 */
 	@XmlTransient
@@ -1522,7 +1447,6 @@ public class Project extends Observable {
 
 	/**
 	 * Adds a new sub ontology to the current project
-	 * 
 	 * @param newSubOntology
 	 */
 	public void subOntologyAdd(String newSubOntology) {
@@ -1537,7 +1461,6 @@ public class Project extends Observable {
 
 	/**
 	 * Removes a new sub ontology from the current project ontology
-	 * 
 	 * @param subOntology2Remove
 	 */
 	public void subOntologyRemove(String subOntology2Remove) {
@@ -1550,7 +1473,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the ontology visualisation helper for this project.
-	 * 
 	 * @return the OntologyVisualisationHelper
 	 */
 	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
@@ -1563,7 +1485,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the agent configuration.
-	 * 
 	 * @param agentStartConfiguration the new agent configuration
 	 */
 	public void setAgentStartConfiguration(AgentStartConfiguration agentStartConfiguration) {
@@ -1573,7 +1494,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the agent configuration.
-	 * 
 	 * @return the agent configuration
 	 */
 	@XmlTransient
@@ -1596,7 +1516,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the time model class and configuration for this project.
-	 * 
 	 * @param timeModelClass the new time model class
 	 */
 	public void setTimeModelClass(String timeModelClass) {
@@ -1608,7 +1527,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the time model class and configuration for this Project.
-	 * 
 	 * @return the time model class
 	 */
 	@XmlTransient
@@ -1618,7 +1536,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the TimeModelController of this Project.
-	 * 
 	 * @return the TimeModelController
 	 */
 	@XmlTransient
@@ -1631,7 +1548,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the jade configuration.
-	 * 
 	 * @param jadeConfiguration the new jade configuration
 	 */
 	public void setJadeConfiguration(PlatformJadeConfig jadeConfiguration) {
@@ -1640,7 +1556,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the jade configuration.
-	 * 
 	 * @return the jade configuration
 	 */
 	@XmlTransient
@@ -1656,7 +1571,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the distribution setup.
-	 * 
 	 * @return the distributionSetup
 	 */
 	@XmlTransient
@@ -1669,7 +1583,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the distribution setup.
-	 * 
 	 * @param distributionSetup the distributionSetup to set
 	 */
 	public void setDistributionSetup(DistributionSetup distributionSetup) {
@@ -1697,7 +1610,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the agent class load metrics.
-	 * 
 	 * @return the agent class load metrics
 	 */
 	@XmlTransient
@@ -1713,7 +1625,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the agent load metrics.
-	 * 
 	 * @param agentClassLoadMetricsTable the new agent load metrics
 	 */
 	public void setAgentClassLoadMetrics(AgentClassLoadMetricsTable agentClassLoadMetricsTable) {
@@ -1723,7 +1634,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the user runtime object.
-	 * 
 	 * @return the userRuntimeObject, any kind of serializable object
 	 */
 	@XmlTransient
@@ -1733,7 +1643,6 @@ public class Project extends Observable {
 
 	/**
 	 * Can be used in order to set any kind of runtime object that it is serializable by Java.
-	 * 
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
@@ -1745,7 +1654,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the EnvironmentController of the project - an extended class of {@link EnvironmentController}.
-	 * 
 	 * @return the current environment controller
 	 */
 	@XmlTransient
@@ -1754,8 +1662,7 @@ public class Project extends Observable {
 
 			EnvironmentType envType = this.getEnvironmentModelType();
 			Class<? extends EnvironmentController> envControllerClass = envType.getEnvironmentControllerClass();
-			if (envControllerClass == null)
-				return null;
+			if (envControllerClass==null) return null;
 
 			// --- If an environment IS specified -----------------------
 			try {
@@ -1797,7 +1704,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the current ComboBoxModel for environment types.
-	 * 
 	 * @return the environmentsComboBoxModel
 	 */
 	@XmlTransient
@@ -1810,7 +1716,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the ComboBoxModel for environment types.
-	 * 
 	 * @param environmentsComboBoxModel the environmentsComboBoxModel to set
 	 */
 	public void setEnvironmentsComboBoxModel(DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel) {
@@ -1819,7 +1724,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the visualisation tab of the {@link ProjectWindow} for an executed setup.
-	 * 
 	 * @param visualisationTab4SetupExecution the new visualisation tab4 setup execution
 	 */
 	public void setVisualisationTab4SetupExecution(JPanel4Visualisation visualisationTab4SetupExecution) {
@@ -1828,7 +1732,6 @@ public class Project extends Observable {
 
 	/**
 	 * Returns the visualisation tab of the {@link ProjectWindow} for an executed setup.
-	 * 
 	 * @return the visualisation tab4 setup execution
 	 */
 	@XmlTransient
@@ -1848,7 +1751,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the eclipse MApplication.
-	 * 
 	 * @param eclipseMApplication the current eclipse M application
 	 */
 	public void setEclipseMApplication(MApplication eclipseMApplication) {
@@ -1857,7 +1759,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the eclipse MApplication.
-	 * 
 	 * @return the eclipse MApplication
 	 */
 	@XmlTransient
@@ -1867,7 +1768,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the eclipse EPartService.
-	 * 
 	 * @param eclipseEPartService the current eclipse EPartService
 	 */
 	public void setEclipseEPartService(EPartService eclipseEPartService) {
@@ -1876,7 +1776,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the eclipse EPartService.
-	 * 
 	 * @return the eclipse EPartService
 	 */
 	@XmlTransient
@@ -1886,7 +1785,6 @@ public class Project extends Observable {
 
 	/**
 	 * Sets the eclipse EModelService.
-	 * 
 	 * @param eclipseEModelService the current eclipse EModelService
 	 */
 	public void setEclipseEModelService(EModelService eclipseEModelService) {
@@ -1895,7 +1793,6 @@ public class Project extends Observable {
 
 	/**
 	 * Gets the eclipse EModelService.
-	 * 
 	 * @return the eclipse EModelService
 	 */
 	@XmlTransient

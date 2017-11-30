@@ -43,43 +43,46 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	
 	
 	/**
-	 * Gets the class load service.
+	 * Return the class load service for the specified class.
 	 *
 	 * @param className the class name
+	 * @param serviceBaseInterface the type of the service, specified by the interface 
 	 * @return the class load service
 	 */
-	public T getClassLoadService(String className) {
+	public T getClassLoadService(String className, Class<?> serviceBaseInterface) {
 		
 		// ----------------------------------------------------------
-		// --- Default: Use the already known BaseClassLoadService ------ 
+		// --- Default: Use the already known BaseClassLoadService -- 
 		// ----------------------------------------------------------
 		T clsFound = this.getClassLoadServicesByClassName().get(className);
 		if (clsFound!=null) {
 			return clsFound;
 		} else {
-			// --- As backup, use the local BaseClassLoadService first --
+			// --- As backup, use local BaseClassLoadService first --
 			clsFound = (T) this.getLocalClassLoadService();
 		}
 		
-		// --- Check if this is the required BaseClassLoadService -------
-		if (this.isRequiredClassLoadService(clsFound, className)==true) {
+		// --- Check if this is the required BaseClassLoadService ---
+		if (this.isRequiredClassLoadService(serviceBaseInterface, clsFound, className)==true) {
 			// --- Remind this service for later calls --------------
 			this.getClassLoadServicesByClassName().put(className, clsFound);
 			return clsFound;
 		} 
 		
 		// ----------------------------------------------------------
-		// --- Try to find the required BaseClassLoadService ------------
+		// --- Try to find the required BaseClassLoadService --------
 		// ----------------------------------------------------------
 		// --- Update the list of available ClassLoadServices -------
 		this.updateClassLoadServices();
 		// --- Check all available ClassLoadServices ---------------- 
 		for (T cls : this.getClassLoadServiceVector()) {
-			if (this.isRequiredClassLoadService(cls, className)==true) {
+			// --- Filter from right filter type --------------------
+			if (this.isRequiredClassLoadService(serviceBaseInterface, cls, className)==true) {
 				this.getClassLoadServicesByClassName().put(className, cls);
 				clsFound = cls;
 				break;
-			}
+			}	
+			
 		}
 		return clsFound;
 	}
@@ -87,16 +90,19 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	/**
 	 * Checks if the specified {@link BaseClassLoadService} is the required one for the specified class.
 	 *
+	 * @param serviceBaseInterface the type of the service, specified by the interface
 	 * @param clsToCheck the BaseClassLoadService found
 	 * @param className the class name
 	 * @return true, if is required class load service
 	 */
-	private boolean isRequiredClassLoadService(T clsToCheck, String className) {
-		try {
-			clsToCheck.forName(className);
-			return true;
-		} catch (ClassNotFoundException | NoClassDefFoundError cnfe) {
-			//cnfe.printStackTrace();
+	private boolean isRequiredClassLoadService(Class<?> serviceBaseInterface, T clsToCheck, String className) {
+		if (serviceBaseInterface.isInstance(clsToCheck)==true) {
+			try {
+				clsToCheck.forName(className);
+				return true;
+			} catch (ClassNotFoundException | NoClassDefFoundError cnfe) {
+				//cnfe.printStackTrace();
+			}
 		}
 		return false;
 	}
@@ -235,7 +241,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 */
 	@Override
 	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError {
-		return this.getClassLoadService(className).forName(className);
+		return this.getClassLoadService(className, BaseClassLoadService.class).forName(className);
 	}
 	
 	/* (non-Javadoc)
@@ -243,7 +249,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 */
 	@Override
 	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return this.getClassLoadService(className).newInstance(className);
+		return this.getClassLoadService(className, BaseClassLoadService.class).newInstance(className);
 	}
 	
 	/* (non-Javadoc)
@@ -251,7 +257,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 */
 	@Override
 	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-		return this.getClassLoadService(ontologyClassName).getOntologyInstance(ontologyClassName);
+		return this.getClassLoadService(ontologyClassName, BaseClassLoadService.class).getOntologyInstance(ontologyClassName);
 	}
 
 }

@@ -400,6 +400,11 @@ public class Application {
 			getGlobalInfo();
 			Language.startDictionary();
 
+			// --- Load project resources ? -------------------------
+			if (project2OpenAfterStart!=null) {
+				// TODO --- Load project resources ---
+			}
+			
 			System.out.println("Just starting JADE now ...");
 			plugInApplication.startJadeStandalone(remainingArgs);
 		

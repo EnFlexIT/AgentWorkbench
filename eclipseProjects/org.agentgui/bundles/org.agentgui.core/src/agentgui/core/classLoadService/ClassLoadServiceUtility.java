@@ -71,7 +71,7 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @return the class load service
 	 */
 	public static ClassLoadService getClassLoadService(String className) {
-		return getClassLoadServiceUtilityImpl().getClassLoadService(className);
+		return getClassLoadServiceUtilityImpl().getClassLoadService(className, ClassLoadService.class);
 	}
 	
 	/**

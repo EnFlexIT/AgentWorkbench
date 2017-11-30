@@ -217,12 +217,12 @@ public class JadeRemoteStart {
 			proBui.redirectErrorStream(true);
 			proBui.directory(new File(pathBaseDir));
 			
-			Process p = proBui.start();
+			Process process = proBui.start();
 			
-			in = new Scanner(p.getInputStream());
+			in = new Scanner(process.getInputStream());
 			in.useDelimiter("\\Z");
 			
-			err = new Scanner(p.getErrorStream());
+			err = new Scanner(process.getErrorStream());
 			err.useDelimiter("\\Z");
 			
 			while (in.hasNextLine() || err.hasNextLine() ) {
