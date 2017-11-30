@@ -360,7 +360,12 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		// --- Install required features if necessary -----
 		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverProduct) {
 			// --- Only possible if not running from the IDE --
-			loadRequiredFeatures(project);
+			boolean featuresAvailable = installRequiredFeatures(project);
+			if (featuresAvailable == false) {
+				// --- Required features could not be installed -> cannot load project ----
+				JOptionPane.showConfirmDialog(null, Language.translate("Benötigte Features konnten nicht geladen werden!"), Language.translate("Fehler"), JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 		}
 		
 		// --- Load additional jar-resources --------------
@@ -430,31 +435,30 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 *
 	 * @param project the project
 	 */
-	private static void loadRequiredFeatures(Project project) {
-		// --- Feature installation via p2 is only possible if running via product --------------
-		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverProduct) {
-			P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
-			boolean installedNewFeatures = false;
+	private static boolean installRequiredFeatures(Project project) {
+		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
+		boolean installedNewFeatures = false;
+		
+		for(FeatureInfo feature : project.getProjectFeatures()) {
 			
-			for(FeatureInfo feature : project.getProjectFeatures()) {
-				
-				if(p2handler.checkIfInstalled(feature.getId()) == false) {
-				
-					boolean success = p2handler.installIU(feature.getId(), feature.getRepositoryURI());
-					if (success == true) {
-						installedNewFeatures = true;
-					} else {
-						System.err.println("Unnable to install required feature " + feature.getId());
-						//TODO Figure out how to handle this
-					}
-					
+			if(p2handler.checkIfInstalled(feature.getId()) == false) {
+			
+				boolean success = p2handler.installIU(feature.getId(), feature.getRepositoryURI());
+				if (success == true) {
+					installedNewFeatures = true;
+				} else {
+					System.err.println("Unnable to install required feature " + feature.getId());
+					return false;
 				}
-			}
-			
-			if(installedNewFeatures == true) {
-				Application.restart();
+				
 			}
 		}
+		
+		if(installedNewFeatures == true) {
+			Application.restart();
+		}
+		
+		return true;
 	}
 
 	/**
