@@ -32,9 +32,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Scanner;
 import java.util.jar.JarFile;
@@ -42,9 +45,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import agentgui.core.application.Application;
+import agentgui.core.project.Project;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.transfer.ArchiveFileHandler;
+import de.enflexit.common.transfer.ArchiveFileHandler.ArchiveFormat;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Profile;
@@ -87,11 +93,15 @@ public class JadeRemoteStart {
 	/** Constant for a memory of 32768 MB. */
 	public static final String jvmMemo32GB 	= "32g";
 	
+	
 	private boolean debug = false;
+	
+	private Agent myAgent;
+	private RemoteContainerConfig reCoCo;
 	
 	private boolean jvmMemAllocUseDefaults = true;
 	private String jvmMemAllocInitial = JadeRemoteStart.jvmMemo128MB;
-	private String jvmMemAllocMaximum = JadeRemoteStart.jvmMemo512MB;
+	private String jvmMemAllocMaximum = JadeRemoteStart.jvmMemo2GB;
 	
 	private boolean jadeIsRemoteContainer = true; 
 	private boolean jadeShowGUI = true; 
@@ -101,53 +111,74 @@ public class JadeRemoteStart {
 	private String jadePort = Application.getGlobalInfo().getJadeLocalPort().toString();
 	private String jadeContainerName = "remote";
 	
-	private File extJarFolder = null; 
-	
-	private final String pathBaseDir = Application.getGlobalInfo().getPathBaseDir();
+	private File rcProjectDirectory = null; 
 	
 	
 	/**
 	 * Instantiates a new jade remote start.
 	 *
-	 * @param myAgent the my agent
-	 * @param reCoCo the RemoteContainerConfig
+	 * @param myAgent the current agent that uses this class
+	 * @param remoteContainerConfig the RemoteContainerConfig
 	 */
-	public JadeRemoteStart(Agent myAgent, RemoteContainerConfig reCoCo) {
+	public JadeRemoteStart(Agent myAgent, RemoteContainerConfig remoteContainerConfig) {
+		
+		this.myAgent = myAgent;
+		this.reCoCo = remoteContainerConfig;
 		
 		if (this.debug) {
 			System.out.println("Class '" + this.getClass().getName() + "' in debug modue ...");
 		}
 		
-		this.jadeIsRemoteContainer = reCoCo.getJadeIsRemoteContainer();
-		if (reCoCo.getJvmMemAllocInitial()==null && reCoCo.getJvmMemAllocMaximum()==null) {
+		this.jadeIsRemoteContainer = this.reCoCo.getJadeIsRemoteContainer();
+		if (this.reCoCo.getJvmMemAllocInitial()==null && this.reCoCo.getJvmMemAllocMaximum()==null) {
 			this.jvmMemAllocUseDefaults = true;	
 			this.jvmMemAllocInitial = JadeRemoteStart.jvmMemo32MB;
 			this.jvmMemAllocMaximum = JadeRemoteStart.jvmMemo128MB;
 		} else {
 			this.jvmMemAllocUseDefaults = false;
-			this.jvmMemAllocInitial = reCoCo.getJvmMemAllocInitial();
-			this.jvmMemAllocMaximum = reCoCo.getJvmMemAllocMaximum();
+			this.jvmMemAllocInitial = this.reCoCo.getJvmMemAllocInitial();
+			this.jvmMemAllocMaximum = this.reCoCo.getJvmMemAllocMaximum();
 		}
-		this.jadeShowGUI = reCoCo.getJadeShowGUI();	
+		this.jadeShowGUI = this.reCoCo.getJadeShowGUI();	
 		
-		if (reCoCo.getJadeServices()!=null) {
-			this.jadeServices = reCoCo.getJadeServices();
+		if (this.reCoCo.getJadeServices()!=null) {
+			this.jadeServices = this.reCoCo.getJadeServices();
 		}
-		if (reCoCo.getJadeHost()!=null) {
-			this.jadeHost = reCoCo.getJadeHost();	
+		if (this.reCoCo.getJadeHost()!=null) {
+			this.jadeHost = this.reCoCo.getJadeHost();	
 		}
-		if (reCoCo.getJadePort()!=null) {
-			this.jadePort = reCoCo.getJadePort();	
+		if (this.reCoCo.getJadePort()!=null) {
+			this.jadePort = this.reCoCo.getJadePort();	
 		}
-		if (reCoCo.getJadeContainerName()!=null) {
-			this.jadeContainerName = reCoCo.getJadeContainerName();	
+		if (this.reCoCo.getJadeContainerName()!=null) {
+			this.jadeContainerName = this.reCoCo.getJadeContainerName();	
 		}
-
-		// --- Download project files -----------
-		this.downloadFilesFromFileManagerAgent(reCoCo.getFileManagerAgent(), myAgent);
-		
 	}	
     
+	/**
+	 * Checks if the download, the movement to the project directory and check for 
+	 * for required features was successful.
+	 *
+	 * @return true, if is prepared for jade start
+	 */
+	public boolean isPreparedForJadeStart() {
+		
+		// --- Download project files -----------------------------------------
+		this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
+		if (this.rcProjectDirectory!=null) {
+			// --- Check if a feature installation is required ----------------
+			Project projectReceived = Project.loadProjectXml(this.rcProjectDirectory);
+			if (projectReceived.requiresFeatureInstallation()==true) {
+				// --- Do the installation of the required features -----------
+				// TODO will not return true here, since the installation will restart 
+				return projectReceived.installRequiredFeatures();
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * This Method starts a Jade-Platform within a new Java Virtual Machine.
 	 */
@@ -215,7 +246,7 @@ public class JadeRemoteStart {
 			String[] arg = execute.split(" ");
 			ProcessBuilder proBui = new ProcessBuilder(arg);
 			proBui.redirectErrorStream(true);
-			proBui.directory(new File(pathBaseDir));
+			proBui.directory(new File(Application.getGlobalInfo().getPathBaseDir()));
 			
 			Process process = proBui.start();
 			
@@ -236,14 +267,9 @@ public class JadeRemoteStart {
 			System.out.println("Killed Container [" + jadeContainerName + "]");
 		    
 			// ------------------------------------------------------
-			// --- Remove external jars from the download-folder ----
+			// --- Remove the 'rc-*' project directory --------------
 			// ------------------------------------------------------
-			if (extJarFolder!=null ) {
-        		if (extJarFolder.exists()==true) {
-        			deleteFolder(extJarFolder);
-            		extJarFolder.delete();	
-        		}
-        	}
+			Application.getProjectsLoaded().projectDelete(this.rcProjectDirectory);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -398,33 +424,23 @@ public class JadeRemoteStart {
 	public String getJADEServices() {
 		return jadeServices;
 	}
-	
-	
-	/**
- 	 * Deletes a folder and all sub elements.
- 	 * @param directory the directory
- 	 */
-    private void deleteFolder(File directory) {
-    	for (File file : directory.listFiles()) {
-    		if (file.isDirectory()) {
-	    		deleteFolder(file);
-	    	}
-	    	file.delete();
-		}
-    }
+
 	
 	// ------------------------------------------------------------------------
-	// --- From here, methods for the file download can be found --------------
-	// ------------------------------------------------------------------------	
+	// --- From here, methods for the file download and ----------------------- 
+	// --- the handling of project files can be found -------------------------
+	// ------------------------------------------------------------------------
 	/**
-	 * Downloads the provided files from the file manager agent.
+	 * Downloads the provided files from the file manager agent (coming from a client application), installs 
+	 * the received project in the project directory and returns the actual project directory as file,
+	 * 
 	 * @param fileMangerAID the file manger AID
-	 * @param myAgent the my agent
+	 * @param myAgent the current agent that uses this class
 	 */
-	private void downloadFilesFromFileManagerAgent(AID fileMangerAID, Agent myAgent) {
-		
-		if (fileMangerAID==null) return;
-		
+	private File downloadFilesFromFileManagerAgent(AID fileMangerAID, Agent myAgent) {
+
+		if (fileMangerAID==null) return null;
+
 		// -- Initiate a FileManagerClient --------------------------
 		FileManagerClient fmClient = new FileManagerClient(fileMangerAID, myAgent);
 		try {
@@ -444,7 +460,51 @@ public class JadeRemoteStart {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
+		// --- Extract the *.agui file to the projects directory ----
+		File targetProjectDirectory = null;
+		String dirPathProjects = Application.getGlobalInfo().getPathProjects();
+		String dirPathDownload = Application.getGlobalInfo().getFileManagerDownloadPath(true);
+		File dirDownload = new File(dirPathDownload);
+		if (dirDownload.exists()==true) {
+			
+			// --- Get the *.agui file ------------------------------ 
+			File fileProjectTransfer = this.getProjectTransferFile(dirDownload);
+			
+			// --- Get the regular projects sub directory name ------
+			String projectSubDirectoryPath = fileProjectTransfer.getName();
+			int pos = projectSubDirectoryPath.lastIndexOf(".");
+			if (pos > 0) {
+				projectSubDirectoryPath = projectSubDirectoryPath.substring(0, pos);
+			}
+			
+			// --- Define target directory --------------------------
+			Integer prefixCounter = 1;
+			while (targetProjectDirectory==null || targetProjectDirectory.exists()==true) {
+				String projectPrefix = "rc" + String.format("%02d", prefixCounter) + "-";
+				targetProjectDirectory = new File(dirPathProjects + projectPrefix + projectSubDirectoryPath);
+				prefixCounter++;
+			}
+			
+			// --- Extract project file into download directory -----
+			ArchiveFileHandler extractor = new ArchiveFileHandler();
+			extractor.decompressFolder(fileProjectTransfer, dirDownload, ArchiveFormat.ZIP);
+			
+			// --- Move extracted to project directory --------------
+			try {
+				File dirExtracted = new File(dirPathDownload + projectSubDirectoryPath);
+				Files.move(dirExtracted.toPath(), targetProjectDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
+			
+			// --- Remove project file ------------------------------
+			if (fileProjectTransfer.delete()==false) {
+				fileProjectTransfer.deleteOnExit();
+			}
+			
+		}
+		return targetProjectDirectory;
 	}
 
 	/**
@@ -657,6 +717,32 @@ public class JadeRemoteStart {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns the project transfer file that can be found in the specified directory.
+	 *
+	 * @param searchDirectory the search directory
+	 * @return the project transfer file
+	 */
+	private File getProjectTransferFile(File searchDirectory) {
+		
+		if (searchDirectory==null) return null;
+	
+		// --- Search for a packed project file ---------------------
+		File[] filesFound =  searchDirectory.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith("." + Application.getGlobalInfo().getFileEndProjectZip());
+			}
+		});
+		
+		File aguiFile = null;
+		if (filesFound.length>0) {
+			// --- Take first , since only one file is expected ------
+			aguiFile = filesFound[0];
+		}
+		return aguiFile;
 	}
 	
 }

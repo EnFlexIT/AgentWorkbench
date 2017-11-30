@@ -11,6 +11,7 @@
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateSite>http://update.agentgui.org</updateSite>
     <environmentModel>Squared</environmentModel>
+    <projectFeatures/>
     <projectResources/>
     <reCreateProjectManifest>true</reCreateProjectManifest>
     <plugins>
@@ -129,12 +130,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>0032 Agents</key>
-            <value>0032_agents.xml</value>
-        </entry>
-        <entry>
             <key>1800 Agents</key>
             <value>1800_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0032 Agents</key>
+            <value>0032_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>

@@ -261,7 +261,7 @@ public class ServerMasterAgent extends Agent {
 			Concept agentAction = null; 
 			AID senderAID = null;
 			
-			ACLMessage msg = myAgent.receive();			
+			ACLMessage msg = myAgent.receive();
 			if (msg!=null) {
 				
 				if (msg.getPerformative()==ACLMessage.FAILURE) {

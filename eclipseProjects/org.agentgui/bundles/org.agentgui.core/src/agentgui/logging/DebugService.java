@@ -28,6 +28,17 @@
  */
 package agentgui.logging;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
+
+import agentgui.core.application.Application;
+import agentgui.logging.components.JFrame4Consoles;
+import agentgui.logging.components.JPanelConsole;
+import agentgui.logging.components.JTabbedPane4Consoles;
+import agentgui.logging.components.PrintStreamListener;
+import agentgui.logging.components.SysOutBoard;
+import agentgui.logging.components.SysOutScanner;
 import jade.core.Agent;
 import jade.core.AgentContainer;
 import jade.core.BaseService;
@@ -44,19 +55,6 @@ import jade.core.ServiceHelper;
 import jade.core.VerticalCommand;
 import jade.core.management.AgentManagementSlice;
 import jade.util.Logger;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Vector;
-
-import agentgui.core.application.Application;
-import agentgui.logging.components.JFrame4Consoles;
-import agentgui.logging.components.JPanelConsole;
-import agentgui.logging.components.JTabbedPane4Consoles;
-import agentgui.logging.components.PrintStreamListener;
-import agentgui.logging.components.SysOutBoard;
-import agentgui.logging.components.SysOutScanner;
 
 
 /**
@@ -180,9 +178,9 @@ public class DebugService extends BaseService {
 			// --- If there are old consoles, remove them from tab ------------
 			HashMap<String, JPanelConsole> consoleHash = SysOutBoard.getHashMapJPanelConsoles();
 			if (consoleHash!=null && consoleHash.size()>0) {
-				Set<String> consoleKeys = consoleHash.keySet();
-				for (Iterator<String> iterator = consoleKeys.iterator(); iterator.hasNext();) {
-					String consoleKey = (String) iterator.next();
+				ArrayList<String> consoleKeys = new ArrayList<>(consoleHash.keySet());
+				for (int i = 0; i < consoleKeys.size(); i++) {
+					String consoleKey = consoleKeys.get(i);
 					JPanelConsole currConsole = consoleHash.get(consoleKey);
 					if (currConsole.isLocalConsole()==false) {
 						tp4c.remove(consoleHash.get(consoleKey));

@@ -179,7 +179,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- Environment and time model -------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModel(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agentenumgebung"), null, null, new EnvironmentModel(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- Used Ontologies ------------------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this.currProject), Language.translate("Konfiguration"));

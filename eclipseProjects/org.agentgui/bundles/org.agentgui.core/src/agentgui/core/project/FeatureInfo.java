@@ -39,7 +39,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
  * This class stores the relevant information about a feature.
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
- *
  */
 public class FeatureInfo implements Comparable<FeatureInfo> {
 

@@ -173,6 +173,13 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlElement(name="environmentModel")		private String environmentModelName;	
 
 	/**
+	 * This Vector is used in order to store information about features required by the current project
+	 */
+	@XmlElementWrapper(name = "projectFeatures")
+	@XmlElement(name = "projectFeature")
+	private Vector<FeatureInfo> projectFeatures = new Vector<FeatureInfo>();
+	
+	/**
 	 * This Vector holds the additional resources which are used for the current project 
 	 * (external jar files or the binary folder of a development project)  
 	 */
@@ -278,13 +285,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient private EPartService eclipseEPartService;
 	@XmlTransient private EModelService eclipseEModelService;
 	
-	/**
-	 * This Vector is used in order to store the class names of the used ontology's in the project file
-	 */
-	@XmlElementWrapper(name = "projectFeatures")
-	@XmlElement(name = "projectFeature")
-	private Vector<FeatureInfo> projectFeatures = new Vector<FeatureInfo>();
-	
 	
 
 	/**
@@ -358,9 +358,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		project.checkAndCreateProjectsDirectoryStructure();
 		
 		// --- Install required features if necessary -----
-		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverProduct) {
+		if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
 			// --- Only possible if not running from the IDE --
-			boolean featuresAvailable = installRequiredFeatures(project);
+			boolean featuresAvailable = project.installRequiredFeatures();
 			if (featuresAvailable == false) {
 				// --- Required features could not be installed -> cannot load project ----
 				JOptionPane.showConfirmDialog(null, Language.translate("Benötigte Features konnten nicht geladen werden!"), Language.translate("Fehler"), JOptionPane.ERROR_MESSAGE);
@@ -430,37 +430,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		return project;
 	}
 	
-	/**
-	 * Loads features required by the project from the p2 repository if necessary.
-	 *
-	 * @param project the project
-	 */
-	private static boolean installRequiredFeatures(Project project) {
-		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
-		boolean installedNewFeatures = false;
-		
-		for(FeatureInfo feature : project.getProjectFeatures()) {
-			
-			if(p2handler.checkIfInstalled(feature.getId()) == false) {
-			
-				boolean success = p2handler.installIU(feature.getId(), feature.getRepositoryURI());
-				if (success == true) {
-					installedNewFeatures = true;
-				} else {
-					System.err.println("Unnable to install required feature " + feature.getId());
-					return false;
-				}
-				
-			}
-		}
-		
-		if(installedNewFeatures == true) {
-			Application.restart();
-		}
-		
-		return true;
-	}
-
 	/**
 	 * Load the projects user data model that is stored in the file 'agentgui.bin'.
 	 *
@@ -709,6 +678,103 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		return bundleNames;
 	}
 
+	/**
+	 * Gets the project features.
+	 * @return the project features
+	 */
+	@XmlTransient
+	public Vector<FeatureInfo> getProjectFeatures() {
+		return projectFeatures;
+	}
+	/**
+	 * Sets the project features.
+	 * @param projectFeatures the new project features
+	 */
+	public void setProjectFeatures(Vector<FeatureInfo> projectFeatures) {
+		this.projectFeatures = projectFeatures;
+	}
+	/**
+	 * Check project features availability.
+	 * @return true, if all required features are available
+	 */
+	public boolean requiresFeatureInstallation() {
+		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
+		for (FeatureInfo feature : this.getProjectFeatures()) {
+			if (p2handler.checkIfInstalled(feature.getId())==false) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Loads the features required by the project from the p2 repository if necessary.
+	 * @return true, if successful
+	 */
+	public boolean installRequiredFeatures() {
+
+		boolean installedNewFeatures = false;
+
+		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
+		for (FeatureInfo feature : this.getProjectFeatures()) {
+			// --- Check if feature is installed ---------- 
+			if (p2handler.checkIfInstalled(feature.getId())==false) {
+				// --- Install single feature -------------
+				boolean success = p2handler.installIU(feature.getId(), feature.getRepositoryURI());
+				if (success == true) {
+					installedNewFeatures = true;
+				} else {
+					System.err.println("Unnable to install required feature " + feature.getId());
+					return false;
+				}
+			}
+		}
+		
+		if (installedNewFeatures==true) {
+			Application.restart();
+		}
+		return true;
+	}
+	/**
+	 * Adds a project feature.
+	 * @param projectFeature the project feature to add
+	 */
+	public void addProjectFeature(FeatureInfo projectFeature) {
+		if (this.projectFeatures.contains(projectFeature) == false) {
+			this.projectFeatures.add(projectFeature);
+			this.setUnsaved(true);
+			this.setChanged();
+			this.notifyObservers(CHANGED_ProjectResources);
+		}
+	}
+	/**
+	 * Removes a project feature.
+	 * @param projectFeature the project feature to remove
+	 */
+	public void removeProjectFeature(FeatureInfo projectFeature) {
+		this.projectFeatures.remove(projectFeature);
+		this.setUnsaved(true);
+		this.setChanged();
+		this.notifyObservers(CHANGED_ProjectResources);
+	}
+	/**
+	 * Adds a list of features to the project, optionally clears the list before.
+	 *
+	 * @param projectFeatures the features to be added
+	 * @param clear the clear if true, the feature list will be cleared before adding the features
+	 */
+	public void addAllProjectFeatures(List<FeatureInfo> projectFeatures, boolean clear) {
+		if (clear == true) {
+			this.projectFeatures.clear();
+		}
+		for (FeatureInfo feature : projectFeatures) {
+			this.projectFeatures.addElement(feature);
+		}
+		this.setUnsaved(true);
+		this.setChanged();
+		this.notifyObservers(CHANGED_ProjectResources);
+	}
+	
 	/**
 	 * Move project libraries to the specified destination directory.
 	 *
@@ -1804,67 +1870,5 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		return eclipseEModelService;
 	}
 
-	/**
-	 * Gets the project features.
-	 *
-	 * @return the project features
-	 */
-	@XmlTransient
-	public Vector<FeatureInfo> getProjectFeatures() {
-		return projectFeatures;
-	}
-
-	/**
-	 * Sets the project features.
-	 *
-	 * @param projectFeatures the new project features
-	 */
-	public void setProjectFeatures(Vector<FeatureInfo> projectFeatures) {
-		this.projectFeatures = projectFeatures;
-	}
-
-	/**
-	 * Adds a project feature.
-	 *
-	 * @param projectFeature the project feature to add
-	 */
-	public void addProjectFeature(FeatureInfo projectFeature) {
-		if (this.projectFeatures.contains(projectFeature) == false) {
-			this.projectFeatures.add(projectFeature);
-			this.setUnsaved(true);
-			this.setChanged();
-			this.notifyObservers(CHANGED_ProjectResources);
-		}
-	}
-
-	/**
-	 * Removes a project feature.
-	 *
-	 * @param projectFeature the project feature to remove
-	 */
-	public void removeProjectFeature(FeatureInfo projectFeature) {
-		this.projectFeatures.remove(projectFeature);
-		this.setUnsaved(true);
-		this.setChanged();
-		this.notifyObservers(CHANGED_ProjectResources);
-	}
-
-	/**
-	 * Adds a list of features to the project, optionally clears the list before.
-	 *
-	 * @param projectFeatures the features to be added
-	 * @param clear the clear if true, the feature list will be cleared before adding the features
-	 */
-	public void addAllProjectFeatures(List<FeatureInfo> projectFeatures, boolean clear) {
-		if (clear == true) {
-			this.projectFeatures.clear();
-		}
-		for (FeatureInfo feature : projectFeatures) {
-			this.projectFeatures.addElement(feature);
-		}
-		this.setUnsaved(true);
-		this.setChanged();
-		this.notifyObservers(CHANGED_ProjectResources);
-	}
 
 }

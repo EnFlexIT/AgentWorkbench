@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package org.agentgui.gui.swing.project;
 
 import java.awt.Dimension;
@@ -25,7 +53,13 @@ import agentgui.simulationService.time.TimeModel;
 import de.enflexit.common.Language;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 
+/**
+ * The Class EnvironmentModel.
+ * 
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class EnvironmentModel extends JPanel implements Observer {
+	
 	private static final long serialVersionUID = 7115612858197530835L;
 
 	private Project currProject;
@@ -38,12 +72,19 @@ public class EnvironmentModel extends JPanel implements Observer {
 	private JButton jButtonDefaultTimeModel;
 	private JButton jButtonSelectTimeModel;
 
+	
+	/**
+	 * Instantiates a new environment model.
+	 * @param project the project
+	 */
 	public EnvironmentModel(Project project) {
 		this.currProject = project;
 		this.currProject.addObserver(this);
 		this.initialize();
 	}
-
+	/**
+	 * Initialize.
+	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
@@ -68,6 +109,10 @@ public class EnvironmentModel extends JPanel implements Observer {
 
 	}
 
+	/**
+	 * Gets the j panel simulation environment.
+	 * @return the j panel simulation environment
+	 */
 	private JPanel getJPanelSimulationEnvironment() {
 		if (jPanelSimulationEnvironment == null) {
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
@@ -93,6 +138,10 @@ public class EnvironmentModel extends JPanel implements Observer {
 		return jPanelSimulationEnvironment;
 	}
 
+	/**
+	 * Gets the j combo box environment model selector.
+	 * @return the j combo box environment model selector
+	 */
 	private JComboBox<EnvironmentType> getJComboBoxEnvironmentModelSelector() {
 		if (jComboBoxEnvironmentModelSelector == null) {
 			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
@@ -114,6 +163,10 @@ public class EnvironmentModel extends JPanel implements Observer {
 		return jComboBoxEnvironmentModelSelector;
 	}
 
+	/**
+	 * Gets the j panel time model selection.
+	 * @return the j panel time model selection
+	 */
 	private JPanel getJPanelTimeModelSelection() {
 		if (jPanelTimeModelSelection == null) {
 			GridBagConstraints gridBagConstraints29 = new GridBagConstraints();
@@ -155,7 +208,6 @@ public class EnvironmentModel extends JPanel implements Observer {
 
 	/**
 	 * This method initializes jTextFieldTimeModelClass
-	 * 
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldTimeModelClass() {
@@ -171,7 +223,6 @@ public class EnvironmentModel extends JPanel implements Observer {
 
 	/**
 	 * This method initializes jButtonDefaultTimeModel
-	 * 
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonDefaultTimeModel() {
@@ -194,7 +245,6 @@ public class EnvironmentModel extends JPanel implements Observer {
 
 	/**
 	 * This method initializes jButtonSelectTimeModel
-	 * 
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonSelectTimeModel() {
@@ -217,7 +267,6 @@ public class EnvironmentModel extends JPanel implements Observer {
 
 	/**
 	 * Select the TimeModel class for this Project.
-	 * 
 	 * @return the selected TimeModel class
 	 */
 	private void selectTimeModelClass() {
@@ -245,6 +294,9 @@ public class EnvironmentModel extends JPanel implements Observer {
 		// ----------------------------------------------
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable arg0, Object updated) {
 		if (updated.equals(Project.CHANGED_EnvironmentModelType)) {
@@ -259,4 +311,5 @@ public class EnvironmentModel extends JPanel implements Observer {
 
 		}
 	}
+	
 }

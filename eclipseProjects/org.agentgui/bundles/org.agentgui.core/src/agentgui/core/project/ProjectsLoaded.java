@@ -525,6 +525,7 @@ public class ProjectsLoaded {
 //		this.projectExport(null);
 		
 		// --- The new export function ------
+		// TODO An export should also be possible, if no project is focused (see method below)  
 		ProjectExportController pe = new ProjectExportController(Application.getProjectFocused());
 		pe.exportProject();
 	}
@@ -634,7 +635,6 @@ public class ProjectsLoaded {
 		String optionMsg = null;
 		String optionTitle = null;
 		String projectFolder = null;
-		String projectFolderFullPath = null;
 		boolean exportBeforeDelete = false;
 		
 		String actionTitel = Language.translate("Projekt löschen");
@@ -693,24 +693,38 @@ public class ProjectsLoaded {
 		}
 		
 		// ----------------------------------------------------------
-		// --- Delete the folders of the project --------------------
-		projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + projectFolder;
-		System.out.println(Language.translate("Lösche Verzeichnis") +": " + projectFolderFullPath);
+		// --- Delete the folder of the project ---------------------
+		this.projectDelete(projectFolder);
+		Application.setStatusBar(Language.translate("Fertig"));
+
+	}
+	/**
+	 * Deletes the specified project sub directory (the last element in the path in enough).
+	 * @param projectSubDirectory the project sub directory
+	 */
+	public void projectDelete(String projectSubDirectory) {
+		String projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + projectSubDirectory;
+		this.projectDelete(new File(projectFolderFullPath));
+	}
+	/**
+	 * Deletes the specified project sub directory 
+	 * @param projectSubDirectory the project sub directory
+	 */
+	public void projectDelete(File projectSubDirectory) {
+
+		if (projectSubDirectory==null) return;
 
 		// --- Get the files and folders in the project folder ------
-		Vector<File> files = this.getFilesAndFolders(projectFolderFullPath);
+		System.out.println(Language.translate("Lösche Verzeichnis") +": " + projectSubDirectory.getAbsolutePath());
+		Vector<File> files = this.getFilesAndFolders(projectSubDirectory.getAbsolutePath());
 		for (int i = files.size()-1; i>-1 ; i--) {
 			File file = files.get(i);
 			file.delete();
 		}
-
-		// --- Delete the project folder itself ---------------------
-		File file = new File(projectFolderFullPath);
-		file.delete();
-		
-		Application.setStatusBar(Language.translate("Fertig"));
+		// --- Delete the project directory itself ------------------
+		projectSubDirectory.delete();
 	}
-	
+
 	/**
 	 * This method will evaluate the given folder and it's sub-folder recursively.
 	 * The containing File objects will be returned in the Vector.
@@ -725,7 +739,6 @@ public class ProjectsLoaded {
 		File folder = new File(srcFolder);
 		String listOfFiles[] = folder.list();
 		for (int i = 0; i < listOfFiles.length; i++) {
-			
 			// --- If the current file should be included -----------
 			File sngFileObject = new File(srcFolder + File.separator + listOfFiles[i]);
 			filesFound.add(sngFileObject);
