@@ -785,10 +785,33 @@ public class Application {
 	
 	/**
 	 * Restarts Agent.GUI (Application | Server | Service & Embedded System Agent)
-	 * @param returnValue the return value
 	 */
 	public static void restart() {
 		plugInApplication.stop(IApplication.EXIT_RESTART);
+	}
+	/**
+	 * Relaunches the Agent.GUI (Application | Server | Service & Embedded System Agent) 
+	 */
+	public static void relaunch(String additionalArguments) {
+		
+		//TODO Implement more sophisticated handling of additional arguments, i.e. replace instead of append if already specified 
+		
+		// --- Get the original command -----------------
+		String propCommands = System.getProperty("eclipse.commands");
+		StringBuilder exitData = new StringBuilder();
+		exitData.append(propCommands);
+		exitData.append("\n");
+		
+		// --- Append additional arguments ------------------ 
+		String[] addArgs = additionalArguments.split(" ");
+		for(String addArg : addArgs) {
+			exitData.append(addArg);
+			exitData.append("\n");
+		}
+
+		// --- Relaunch the application with the additional arguments ---- 
+		System.setProperty("eclipse.exitdata", exitData.toString());
+		plugInApplication.stop(IApplication.EXIT_RELAUNCH);
 	}
 	/**
 	 * Checks if is quit JVM.
