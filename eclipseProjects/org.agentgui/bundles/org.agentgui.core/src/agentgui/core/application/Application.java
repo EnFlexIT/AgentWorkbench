@@ -84,6 +84,12 @@ import de.enflexit.oidc.Trust;
  */
 public class Application {
 	
+	private static final String CMD_VMARGS = "-vmargs";
+	private static final String NEW_LINE = "\n";
+	private static final String PROP_VM = "eclipse.vm";
+	private static final String PROP_VMARGS = "eclipse.vmargs";
+	private static final String PROP_COMMANDS = "eclipse.commands";
+	
 	/** True, if a remote container has to be started (see start arguments) */
 	private static boolean justStartJade = false;
 	/** Indicates if the benchmark is currently running */
@@ -798,24 +804,102 @@ public class Application {
 	 */
 	public static void relaunch(String additionalArguments) {
 		
-		//TODO Implement more sophisticated handling of additional arguments, i.e. replace instead of append if already specified 
-		
-		// --- Get the original command -----------------
-		String propCommands = System.getProperty("eclipse.commands");
-		StringBuilder exitData = new StringBuilder();
-		exitData.append(propCommands);
-		exitData.append("\n");
-		
-		// --- Append additional arguments ------------------ 
-		String[] addArgs = additionalArguments.split(" ");
-		for(String addArg : addArgs) {
-			exitData.append(addArg);
-			exitData.append("\n");
-		}
+		String exitData = buildExitDataString(additionalArguments);
 
 		// --- Relaunch the application with the additional arguments ---- 
-		System.setProperty("eclipse.exitdata", exitData.toString());
+		System.setProperty("eclipse.exitdata", exitData);
 		plugInApplication.stop(IApplication.EXIT_RELAUNCH);
+	}
+	
+	/**
+	 * Builds the eclipse.exitdata property for the application relaunch
+	 * @param additionalArguments additional arguments for the relaunch
+	 * @return
+	 */
+	private static String buildExitDataString(String additionalArguments) {
+
+		// ---  Extract the single arguments from the string
+		String[] addArgs = null;
+		if(additionalArguments != null) {
+			addArgs = additionalArguments.split(" ");
+		}
+		
+		StringBuilder result = new StringBuilder(512);
+
+		// --- Append the eclipse.vm property -----------
+		String property = System.getProperty(PROP_VM);
+		result.append(property);
+		result.append(NEW_LINE);
+
+		// --- Append the eclipse.vmargs property --------
+		String vmargs = System.getProperty(PROP_VMARGS);
+		if (vmargs != null) {
+			result.append(vmargs);
+			if(vmargs.endsWith(NEW_LINE) == false) {
+				result.append(NEW_LINE);
+			}
+		}
+
+		// --- Append the regular arguments ----------------
+		String propCommands = System.getProperty(PROP_COMMANDS);
+		
+		// --- If no arguments were specified before, just append the additional arguments
+		if (propCommands == null) {
+			for(String arg : addArgs) {
+				result.append(arg);
+				result.append(NEW_LINE);
+			}
+			
+			
+		} else {
+
+			// --- Append the arguments from the last start --------
+			result.append(propCommands);
+			result.append(NEW_LINE);
+			
+			// --- Append the additional arguments if not already specified ---
+			int i=0;
+			while(i<addArgs.length) {
+				
+				// --- Determine the next argument and, if existing, its value -----
+				String key = null;
+				String val = null;
+				key = addArgs[i];
+				i++;
+				if(i<addArgs.length && addArgs[i].startsWith("-") == false) {
+					val = addArgs[i];
+					i++;
+				}
+				
+				// --- Check if the argument is already specified ----------
+				if(propCommands.indexOf(key) == -1) {
+					
+					//TODO implement replacement of existing argument values
+					
+					// --- If not, append it -------------------------------
+					result.append(key);
+					result.append(NEW_LINE);
+					if(val != null) {
+						result.append(val);
+						result.append(NEW_LINE);
+					}
+				}
+				
+			}
+			
+		}
+
+		// --- Append the vmargs at the end of the string ------
+		if (vmargs != null) {
+			if (result.charAt(result.length() - 1) != '\n') {
+				result.append('\n');
+			}
+			result.append(CMD_VMARGS);
+			result.append(NEW_LINE);
+			result.append(vmargs);
+		}
+
+		return result.toString();
 	}
 	/**
 	 * Checks if is quit JVM.
