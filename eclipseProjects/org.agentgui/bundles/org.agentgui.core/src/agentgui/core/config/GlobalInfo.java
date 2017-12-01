@@ -51,7 +51,6 @@ import javax.swing.JComponent;
 
 import org.agentgui.gui.swt.SWTResourceManager;
 import org.apache.commons.codec.binary.Base64;
-import org.eclipse.core.runtime.Platform;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -241,7 +240,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public GlobalInfo() {
 
-		boolean debug=true;
+		boolean debug=false;
 		try {
 			// ----------------------------------------------------------------			
 			// --- Get initial base directory by checking this class location -
@@ -843,13 +842,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		
 		String execJarFile = null;
 		try {
-
-			Language.translate("Could not find directory for an executable installation.", Language.EN);
-			Language.translate("Could not find the installation directory", Language.EN);
-			Language.translate("Could not find sub directory 'plugins'.", Language.EN);
-			Language.translate("Could not find the equinox launcher within the plugins-directory of the installed product.", Language.EN);
-			
-			
 			// --- Get installation directory -----------------------
 			String instDirPath = null;
 			if (installationPath!=null) {
@@ -858,7 +850,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 				if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 					instDirPath = getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
 				} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
-					instDirPath = Platform.getLocation().toFile().getAbsolutePath();
+					File launcherfile = new File(System.getProperty("eclipse.launcher"));
+					instDirPath = launcherfile.getParentFile().getAbsolutePath();
 				}
 			}
 			if (instDirPath==null || instDirPath.isEmpty()==true) {

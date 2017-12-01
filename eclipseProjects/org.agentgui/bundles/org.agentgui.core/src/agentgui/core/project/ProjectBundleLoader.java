@@ -54,6 +54,8 @@ import de.enflexit.common.PathHandling;
  */
 public class ProjectBundleLoader {
 
+	private boolean debug = false;
+	
 	private Project project;
 	
 	private BundleBuilder bundleBuilder;
@@ -397,6 +399,8 @@ public class ProjectBundleLoader {
 		try {
 			BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 			bundle = bundleContext.installBundle(bundleJarFilePath);
+			if (this.debug) System.out.println("=> + " + bundle.getSymbolicName() + " installed.");
+			
 		} catch (BundleException bEx) {
 			bEx.printStackTrace();
 		}
@@ -425,6 +429,8 @@ public class ProjectBundleLoader {
 		try {
 			bundle.start();
 			bundleStarted = true;
+			if (this.debug) System.out.println("=> ! " + bundle.getSymbolicName() + " started");
+			
 		} catch (BundleException bEx) {
 			bEx.printStackTrace();
 		}
@@ -447,7 +453,8 @@ public class ProjectBundleLoader {
 				}
 				// --- Remove from vector -------
 				this.getBundleVector().remove(bundle);
-
+				if (this.debug) System.out.println("=> - " + bundle.getSymbolicName() + " stoped & uninstalled");
+				
 			} catch (BundleException bEx) {
 				bEx.printStackTrace();
 			}

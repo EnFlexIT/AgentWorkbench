@@ -10,3 +10,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.agentgui.lib.jade;bundle-version="4.4.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
+Export-Package: gol.acl.agents,
+ gol.acl.balancing,
+ gol.acl.gui,
+ gol.environment,
+ gol.plugin,
+ gol.SimService.agents,
+ gol.SimService.balancing

@@ -45,7 +45,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import agentgui.core.application.Application;
-import agentgui.core.project.Project;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -162,19 +161,10 @@ public class JadeRemoteStart {
 	 * @return true, if is prepared for jade start
 	 */
 	public boolean isPreparedForJadeStart() {
-		
 		// --- Download project files -----------------------------------------
 		this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
 		if (this.rcProjectDirectory!=null) {
-			// --- Check if a feature installation is required ----------------
-			Project projectReceived = Project.loadProjectXml(this.rcProjectDirectory);
-			if (projectReceived.requiresFeatureInstallation()==true) {
-				// --- Do the installation of the required features -----------
-				// TODO will not return true here, since the installation will restart 
-				return projectReceived.installRequiredFeatures();
-			} else {
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
