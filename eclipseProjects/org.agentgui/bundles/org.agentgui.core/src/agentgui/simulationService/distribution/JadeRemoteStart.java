@@ -189,6 +189,7 @@ public class JadeRemoteStart {
 		String java = "";
 		String javaVMArgs = "";
 		String equinoxLauncherJar = "";
+		String project = "";
 		String jade = "";
 		String jadeArgs = "";
 		
@@ -210,10 +211,16 @@ public class JadeRemoteStart {
 		}
 
 		// --------------------------------------
+		// --- The project to open --------------
+		if (rcProjectDirectory!=null) {
+			project += "-project " + rcProjectDirectory.getName();
+		}
+		
+		// --------------------------------------
 		// --- Jade configuration ---------------
 		jade += "-jade" + " ";
 		if (jadeServices!=null) {
-			jadeArgs += "-services  " + jadeServices + " ";
+			jadeArgs += "-services " + jadeServices + " ";
 		}
 		if (jadeIsRemoteContainer) {
 			jadeArgs += "-container ";
@@ -234,7 +241,7 @@ public class JadeRemoteStart {
 		
 		// --------------------------------------
 		// --- merge execute statement ----------
-		String execute = java + " " + javaVMArgs + " " + equinoxLauncherJar + " " + jade  + " " + jadeArgs;
+		String execute = java + " " + javaVMArgs + " " + equinoxLauncherJar +  " " + project + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
 		System.out.println( "Execute: " + execute);
 		

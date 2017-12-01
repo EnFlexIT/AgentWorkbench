@@ -819,12 +819,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			File[] searchResult =  instDir.listFiles(new FileFilter() {
 				@Override
 				public boolean accept(File file) {
-					if (file.isDirectory() && file.getName().equals("plugins")) return true;
-					return false;
+					return (file.isDirectory() && file.getName().equals("plugins"));
 				}
 			});
 			if (searchResult.length==0) {
-				this.setErrorMessage(Language.translate("Could not find sub directory 'plugins'.", Language.EN), statusMessageList);
+				this.setErrorMessage(Language.translate("Could not find sub directory 'plugins'.", Language.EN) + " (in " +  instDir.getAbsolutePath() + ")", statusMessageList);
 				return null;
 			}  
 			

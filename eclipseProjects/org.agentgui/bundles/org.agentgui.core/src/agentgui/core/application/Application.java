@@ -402,11 +402,15 @@ public class Application {
 
 			// --- Load project resources ? -------------------------
 			if (project2OpenAfterStart!=null) {
-				// TODO --- Load project resources ---
-				
+				try {
+					System.out.println("Load project '" + project2OpenAfterStart + "' ...");
+					Project.load(project2OpenAfterStart);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 			
-			System.out.println("Just starting JADE now ...");
+			System.out.println("Starting JADE ...");
 			plugInApplication.startJadeStandalone(remainingArgs);
 		
 		}

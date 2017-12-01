@@ -731,7 +731,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		}
 		
 		if (installedNewFeatures==true) {
-			Application.restart();
+			Application.relaunch("-project " + this.getProjectFolder());
 		}
 		return true;
 	}
