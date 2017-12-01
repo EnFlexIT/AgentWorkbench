@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -956,37 +955,4 @@ public class FileProperties extends Properties {
 		configFileDefaultComment = defaultComment;
 	}
 	
-	
-	/**
-	 * This method prints out every available value of the system properties
-	 */
-	public void println4SysProps() {
-
-		Properties sysprops = System.getProperties();
-		System.out.println();
-		System.out.println("------------------------------------");  
-		System.out.println("------- System Properties: ---------");  
-		System.out.println("------------------------------------");
-		Enumeration<?> names = sysprops.propertyNames();  
-		while (names.hasMoreElements()) {  
-			String tmp = names.nextElement().toString();  
-			System.out.println(tmp + "=" + sysprops.getProperty(tmp));  
-		}  
-	}
-
-	/**
-	 * This method prints out every available value of the system environment
-	 */
-	public void println4EnvProps() {
-		
-		System.out.println();
-		System.out.println("------------------------------------");  
-		System.out.println("-------  System Environment: -------"); 
-		System.out.println("------------------------------------");
-		Map<String, String> env = System.getenv();  
-		for (String str : env.keySet()) {  
-			System.out.println(str + "=" + System.getenv(str));  
-		} 
-	}
-
 }

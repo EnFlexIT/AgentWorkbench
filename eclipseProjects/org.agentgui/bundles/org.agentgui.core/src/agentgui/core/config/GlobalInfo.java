@@ -43,9 +43,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
-//import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.agentgui.gui.swt.SWTResourceManager;
@@ -240,7 +241,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public GlobalInfo() {
 
-		boolean debug=false;
+		boolean debug=true;
 		try {
 			// ----------------------------------------------------------------			
 			// --- Get initial base directory by checking this class location -
@@ -312,6 +313,10 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
+		if (debug==true) {
+			GlobalInfo.println4SysProps();
+			GlobalInfo.println4EnvProps();
+		}
 	}
 	
 	/**
@@ -325,6 +330,59 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			ex.printStackTrace();
 		}
 	}
+	
+	/**
+	 * This method prints out every available value of the system properties
+	 */
+	public static void println4SysProps() {
+
+		System.out.println();
+		System.out.println("------------------------------------");  
+		System.out.println("------- System Properties: ---------");  
+		System.out.println("------------------------------------");
+
+		ArrayList<Object> propertiesKeys = new ArrayList<>(System.getProperties().keySet());
+		Collections.sort(propertiesKeys, new Comparator<Object>() {
+			@Override
+			public int compare(Object prop1, Object prop2) {
+				return prop1.toString().compareTo(prop2.toString());
+			}
+		});
+
+		for (int i = 0; i < propertiesKeys.size(); i++) {
+			String property = (String) propertiesKeys.get(i);
+			String propertyValue = System.getProperty(property);
+			if (propertyValue!=null) propertyValue = propertyValue.replace("\n", " ");
+			System.out.println(property + " = \t" + propertyValue);
+		}
+	}
+	/**
+	 * This method prints out every available value of the system environment
+	 */
+	public static void println4EnvProps() {
+		
+		System.out.println();
+		System.out.println("------------------------------------");  
+		System.out.println("-------  System Environment: -------"); 
+		System.out.println("------------------------------------");
+		
+		ArrayList<Object> propertiesKeys = new ArrayList<>(System.getenv().keySet());
+		Collections.sort(propertiesKeys, new Comparator<Object>() {
+			@Override
+			public int compare(Object prop1, Object prop2) {
+				return prop1.toString().compareTo(prop2.toString());
+			}
+		});
+		
+		
+		for (int i = 0; i < propertiesKeys.size(); i++) {
+			String property = (String) propertiesKeys.get(i);
+			String propertyValue = System.getenv(property);
+			if (propertyValue!=null) propertyValue = propertyValue.replace("\n", " ");
+			System.out.println(property + " = \t" + propertyValue);  
+		} 
+	}
+	
 	
 	/**
 	 * Sets the execution mode.
