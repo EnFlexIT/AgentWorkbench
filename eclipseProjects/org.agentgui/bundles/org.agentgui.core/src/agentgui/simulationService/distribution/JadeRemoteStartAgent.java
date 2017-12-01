@@ -54,7 +54,6 @@ public class JadeRemoteStartAgent extends Agent {
 		if (startArg.length>0) {
 			this.remoteContainerConfig = (RemoteContainerConfig) startArg[0];
 		}
-		System.out.println("Starting remote container ... ");
 		this.addBehaviour(new JadeRemoteStartBehaviour(this));
 	}
 	
@@ -77,15 +76,12 @@ public class JadeRemoteStartAgent extends Agent {
 		 */
 		@Override
 		public void action() {
+			System.out.println("Starting remote container ... ");
 			// --- Initiate the starter -----------------------------
 			JadeRemoteStart jrs = new JadeRemoteStart(this.getAgent(), remoteContainerConfig);
-			// --- Check if the starter is prepared for start -------
-			if (jrs.isPreparedForJadeStart()==true) {
-				// --- Start the remote container -------------------
-				jrs.startJade();
-				// --- Returns here after container shutdown --------
-			}
-			// --- Shutdown the current agent -----------------------
+			// --- Start the remote container -----------------------
+			jrs.startJade();
+			// +++ Returns here after container shutdown ++++++++++++
 			this.getAgent().doDelete();
 		}
 	}

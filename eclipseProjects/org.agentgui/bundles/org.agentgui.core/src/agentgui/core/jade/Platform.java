@@ -486,12 +486,12 @@ public class Platform {
 			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			
 			// --- If the current project has external resources ---- 
+			boolean hasBundelJars = currProject.getProjectBundleLoader().getBundleJarsListModel().size()>0;
+			boolean hasRegularJars = currProject.getProjectBundleLoader().getRegularJarsListModel().size()>0;
 			boolean ideExecuted = Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE;
-			if (currProject.getProjectResources().size()>0 || ideExecuted==true) {
-				if (currProject.getDistributionSetup().isDoStaticLoadBalancing()==true || currProject.getDistributionSetup().isDoDynamicLoadBalancing()==true){
-					// --- Set marker to start the FileManagerAgent ---------
-					this.fileMangerProject = currProject;
-				}
+			if (hasBundelJars==true || hasRegularJars==true || ideExecuted==true) {
+				// --- Set marker to start the FileManagerAgent ---------
+				this.fileMangerProject = currProject;
 			}
 			
 		}		

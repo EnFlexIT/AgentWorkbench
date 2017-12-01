@@ -128,7 +128,7 @@ public class JadeRemoteStart {
 			System.out.println("Class '" + this.getClass().getName() + "' in debug modue ...");
 		}
 		
-		this.jadeIsRemoteContainer = this.reCoCo.getJadeIsRemoteContainer();
+		// --- Configure JVM arguments ------------------------------
 		if (this.reCoCo.getJvmMemAllocInitial()==null && this.reCoCo.getJvmMemAllocMaximum()==null) {
 			this.jvmMemAllocUseDefaults = true;	
 			this.jvmMemAllocInitial = JadeRemoteStart.jvmMemo32MB;
@@ -138,6 +138,9 @@ public class JadeRemoteStart {
 			this.jvmMemAllocInitial = this.reCoCo.getJvmMemAllocInitial();
 			this.jvmMemAllocMaximum = this.reCoCo.getJvmMemAllocMaximum();
 		}
+
+		// --- Configure Jade settings ------------------------------
+		this.jadeIsRemoteContainer = this.reCoCo.getJadeIsRemoteContainer();
 		this.jadeShowGUI = this.reCoCo.getJadeShowGUI();	
 		
 		if (this.reCoCo.getJadeServices()!=null) {
@@ -152,22 +155,10 @@ public class JadeRemoteStart {
 		if (this.reCoCo.getJadeContainerName()!=null) {
 			this.jadeContainerName = this.reCoCo.getJadeContainerName();	
 		}
-	}	
-    
-	/**
-	 * Checks if the download, the movement to the project directory and check for 
-	 * for required features was successful.
-	 *
-	 * @return true, if is prepared for jade start
-	 */
-	public boolean isPreparedForJadeStart() {
+
 		// --- Download project files -----------------------------------------
 		this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
-		if (this.rcProjectDirectory!=null) {
-			return true;
-		}
-		return false;
-	}
+	}	
 	
 	/**
 	 * This Method starts a Jade-Platform within a new Java Virtual Machine.

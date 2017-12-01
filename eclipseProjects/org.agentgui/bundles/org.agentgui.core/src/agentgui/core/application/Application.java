@@ -800,7 +800,7 @@ public class Application {
 		plugInApplication.stop(IApplication.EXIT_RESTART);
 	}
 	/**
-	 * Relaunches the Agent.GUI (Application | Server | Service & Embedded System Agent) 
+	 * Relaunches the application (Application | Server (Master|Slave) | Service & Embedded System Agent) 
 	 */
 	public static void relaunch(String additionalArguments) {
 		
@@ -820,7 +820,7 @@ public class Application {
 
 		// ---  Extract the single arguments from the string
 		String[] addArgs = null;
-		if(additionalArguments != null) {
+		if (additionalArguments!=null) {
 			addArgs = additionalArguments.split(" ");
 		}
 		
@@ -833,9 +833,9 @@ public class Application {
 
 		// --- Append the eclipse.vmargs property --------
 		String vmargs = System.getProperty(PROP_VMARGS);
-		if (vmargs != null) {
+		if (vmargs!=null) {
 			result.append(vmargs);
-			if(vmargs.endsWith(NEW_LINE) == false) {
+			if (vmargs.endsWith(NEW_LINE)==false) {
 				result.append(NEW_LINE);
 			}
 		}
@@ -844,12 +844,11 @@ public class Application {
 		String propCommands = System.getProperty(PROP_COMMANDS);
 		
 		// --- If no arguments were specified before, just append the additional arguments
-		if (propCommands == null) {
+		if (propCommands==null) {
 			for(String arg : addArgs) {
 				result.append(arg);
 				result.append(NEW_LINE);
 			}
-			
 			
 		} else {
 
@@ -859,21 +858,21 @@ public class Application {
 			
 			// --- Append the additional arguments if not already specified ---
 			int i=0;
-			while(i<addArgs.length) {
+			while (i<addArgs.length) {
 				
 				// --- Determine the next argument and, if existing, its value -----
 				String key = null;
 				String val = null;
 				key = addArgs[i];
 				i++;
-				if(i<addArgs.length && addArgs[i].startsWith("-") == false) {
+				if (i<addArgs.length && addArgs[i].startsWith("-")==false) {
 					val = addArgs[i];
 					i++;
 				}
 				
 				// --- Check if the argument is already specified ----------
-				if(propCommands.indexOf(key) == -1) {
-					
+				if (propCommands.indexOf(key)==-1) {
+
 					//TODO implement replacement of existing argument values
 					
 					// --- If not, append it -------------------------------
@@ -885,13 +884,13 @@ public class Application {
 					}
 				}
 				
-			}
+			} // end while
 			
 		}
 
 		// --- Append the vmargs at the end of the string ------
-		if (vmargs != null) {
-			if (result.charAt(result.length() - 1) != '\n') {
+		if (vmargs!=null) {
+			if (result.charAt(result.length()-1)!='\n') {
 				result.append('\n');
 			}
 			result.append(CMD_VMARGS);
