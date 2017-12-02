@@ -29,6 +29,7 @@
 package agentgui.core.gui;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -85,26 +86,31 @@ public class AgentSelector extends JDialog implements ActionListener {
 	 */
 	public AgentSelector() {
 		super(Application.getMainWindow());
-		initialize();
+		this.initialize();
 	}
-	
 	/**
 	 * Instantiates a new agent selector.
-	 *
-	 * @param owner the owner
+	 * @param ownerFrame the owner
 	 */
-	public AgentSelector(Frame owner) {
-		super(owner);
-		initialize();
+	public AgentSelector(Frame ownerFrame) {
+		super(ownerFrame);
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new agent selector.
+	 * @param ownerDialog the owner dialog
+	 */
+	public AgentSelector(Dialog ownerDialog) {
+		super(ownerDialog);
+		this.initialize();
 	}
 
 	/**
 	 * This method initializes this.
-	 *
-	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(721, 500);
+		
+		this.setSize(720, 500);
 		this.setTitle("Auswahl - Agenten");
 		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setModal(true);
@@ -176,10 +182,8 @@ public class AgentSelector extends JDialog implements ActionListener {
 		}
 		return jContentPane;
 	}
-
 	/**
 	 * This method initializes jTextFieldSearch.
-	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldSearch() {
@@ -188,24 +192,22 @@ public class AgentSelector extends JDialog implements ActionListener {
 			jTextFieldSearch.setPreferredSize(new Dimension(250, 26));
 			jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
 				public void keyReleased(java.awt.event.KeyEvent e) {
-					filterAgentList( jTextFieldSearch.getText());
+					filterAgentList(jTextFieldSearch.getText());
 				}
 			});
 		}
 		return jTextFieldSearch;
 	}
-	
 	/**
 	 * This method initializes jListAgents.
-	 *
 	 * @return javax.swing.JList
 	 */
 	private JListClassSearcher getJListAgents() {
 		if (jListAgents == null) {
 			jListAgents = new JListClassSearcher(Agent.class);
-			jListAgents.jListLoading.addMouseListener( new MouseAdapter() {
+			jListAgents.jListLoading.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent me) {
-					if (me.getClickCount() == 2 ) {
+					if (me.getClickCount()==2) {
 						jButtonOk.doClick();	
 					}
 				}
@@ -241,10 +243,8 @@ public class AgentSelector extends JDialog implements ActionListener {
 		}
 		return jButtonOk;
 	}
-
 	/**
 	 * This method initializes jButtonCancel.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
@@ -259,10 +259,8 @@ public class AgentSelector extends JDialog implements ActionListener {
 		}
 		return jButtonCancel;
 	}
-
 	/**
 	 * This method initializes jPanelBottom.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelBottom() {
@@ -287,8 +285,15 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 
 	/**
+	 * Sets the selection mode for the agent list.
+	 * @param selectionMode the new selection mode
+	 */
+	public void setSelectionMode(int selectionMode) {
+		this.jListAgents.setSelectionMode(selectionMode);
+	}
+	
+	/**
 	 * Checks if is canceled.
-	 *
 	 * @return the canceled
 	 */
 	public boolean isCanceled() {
@@ -296,8 +301,17 @@ public class AgentSelector extends JDialog implements ActionListener {
 	}
 	
 	/**
+	 * Gets the selected agent class.
+	 * @return the selected agent class
+	 */
+	public Object getSelectedAgentClass() {
+		if (this.getSelectedAgentClasses()!=null && this.getSelectedAgentClasses().length>0) {
+			return this.getSelectedAgentClasses()[0];
+		}
+		return null; 
+	}
+	/**
 	 * Gets the selected agent classes.
-	 *
 	 * @return the selectedAgentClasses
 	 */
 	public Object[] getSelectedAgentClasses() {
@@ -320,11 +334,8 @@ public class AgentSelector extends JDialog implements ActionListener {
 		}
 	}
 	
-	
-	/**
-	 * This manages the incomming Action-Calls.
-	 *
-	 * @param ae the ae
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
@@ -341,4 +352,4 @@ public class AgentSelector extends JDialog implements ActionListener {
 		};
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}

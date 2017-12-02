@@ -72,6 +72,8 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
+import org.agentgui.gui.swing.dialogs.StartAgentDialog;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -679,6 +681,8 @@ public class MainWindow extends JFrame {
 			jMenuMainJade.add(new CWMenueItem("JadeStart", Language.translate("JADE starten"), "MBJadeOn.png"));
 			jMenuMainJade.add(new CWMenueItem("JadeStop", Language.translate("JADE stoppen"), "MBJadeOff.png"));
 			jMenuMainJade.addSeparator();
+			jMenuMainJade.add(new CWMenueItem("StartAgent", Language.translate("Starte Agenten"), "MBstartAgent.png"));
+			jMenuMainJade.addSeparator();
 			jMenuMainJade.add(new CWMenueItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
 			jMenuMainJade.add(new CWMenueItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
 			jMenuMainJade.add(new CWMenueItem("PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif"));
@@ -1032,6 +1036,9 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("JadeStop")) {
 				Application.getJadePlatform().stop();
 
+			} else if (actionCMD.equalsIgnoreCase("StartAgent")) {
+				MainWindow.this.startAgent();
+				
 			} else if (actionCMD.equalsIgnoreCase("PopRMAStart")) {
 				Application.getJadePlatform().startSystemAgent("rma", null);
 
@@ -1109,6 +1116,16 @@ public class MainWindow extends JFrame {
 	// --- Menu definition - END ----------------------------------
 	// ------------------------------------------------------------
 
+	private void startAgent() {
+		StartAgentDialog sad = new StartAgentDialog(MainWindow.this);
+		sad.setVisible(true);
+		// --- Wait here ----
+		if (sad.isCanceled()==false && sad.hasErrors()==false) {
+			Application.getJadePlatform().startAgent(sad.getAgentName(), sad.getAgentClass(), sad.getAgentStartArguments(), sad.getAgentContainer());
+		}
+	}
+	
+	
 	// ------------------------------------------------------------
 	// --- Create Toolbar - START ---------------------------------
 	// ------------------------------------------------------------
@@ -1148,6 +1165,7 @@ public class MainWindow extends JFrame {
 			jToolBarApplication.add(new JToolBarButton("JadeStop", Language.translate("JADE stoppen"), null, "MBJadeOff.png"));
 			jToolBarApplication.addSeparator();
 
+			jToolBarApplication.add(new JToolBarButton("StartAgent", Language.translate("Starte Agenten"), null, "MBstartAgent.png"));
 			jButtonJadeTools = new JToolBarButton("JadeTools", Language.translate("JADE-Tools..."), null, "MBJadeTools.png");
 			jButtonJadeTools.addMouseListener(new MouseAdapter() {
 				@Override
@@ -1300,7 +1318,7 @@ public class MainWindow extends JFrame {
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		public void actionPerformed(ActionEvent ae) {
-			// --- Fallunterscheidung 'cmd' einbauen ---
+			
 			String ActCMD = ae.getActionCommand();
 			// ------------------------------------------------
 			if (ActCMD.equalsIgnoreCase("New")) {
@@ -1324,6 +1342,9 @@ public class MainWindow extends JFrame {
 
 			} else if (ActCMD.equalsIgnoreCase("JadeStop")) {
 				Application.getJadePlatform().stop();
+
+			} else if (ActCMD.equalsIgnoreCase("StartAgent")) {
+				MainWindow.this.startAgent();
 
 			} else if (ActCMD.equalsIgnoreCase("JadeTools")) {
 				showJPopupMenuJadeTools();

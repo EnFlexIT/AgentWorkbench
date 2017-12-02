@@ -77,6 +77,7 @@ public class Platform {
 	public static final String BackgroundSystemAgentFileManger = "file.manager";
 	
 	private AgentContainer jadeMainContainer;
+	private final String mainContainerName = jade.core.AgentContainer.MAIN_CONTAINER_NAME;
 	private ArrayList<AgentContainer> agentContainerList;
 	
 	private Project fileMangerProject;
@@ -960,26 +961,25 @@ public class Platform {
 			return null;
 		}
 		// --- Searching for the 'Main-Container'? -------------
-		if (containerNameSearch==this.jadeMainContainer.getName()) {
+		if (containerNameSearch.equals(this.mainContainerName)==true) {
 			return this.jadeMainContainer;
 		}	
 		
 		// --- Get the right container ------------------------- 
-		AgentContainer agentContainer = null;
 		for (int i=0; i < this.getAgentContainerList().size(); i++) {
 			
-			agentContainer = this.getAgentContainerList().get(i);
-			String agentContainerName = null;
+			AgentContainer agentContainer = this.getAgentContainerList().get(i);
 			try {
-				agentContainerName = agentContainer.getContainerName();
+				String acName = agentContainer.getContainerName();
+				if (acName!=null && acName.equalsIgnoreCase(containerNameSearch)==true) {
+					return agentContainer;
+				}
+			
 			} catch (ControllerException ex) {
 				ex.printStackTrace();
 			}
-			if (agentContainerName!=null && agentContainerName.equalsIgnoreCase(containerNameSearch)==true) {
-				break;
-			}
 		}		
-		return agentContainer;
+		return null;
 	}
 	
 	/**
@@ -1006,8 +1006,7 @@ public class Platform {
 	 * @param agentClassName the agent class name
 	 */
 	public void startAgent(String newAgentName, String agentClassName) {
-		String MainContainerName = jadeMainContainer.getName();
-		this.startAgent(newAgentName, agentClassName, null, MainContainerName) ;
+		this.startAgent(newAgentName, agentClassName, null, this.mainContainerName) ;
 	}
 	
 	/**
@@ -1029,8 +1028,7 @@ public class Platform {
 	 * @param startArguments the start arguments for the agent
 	 */
 	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments ) {
-		String MainContainerName = jadeMainContainer.getName();
-		this.startAgent(newAgentName, agentClassName, startArguments, MainContainerName);
+		this.startAgent(newAgentName, agentClassName, startArguments, this.mainContainerName);
 	}
 	
 	/**
@@ -1078,7 +1076,7 @@ public class Platform {
 		// --- Get the AgentContainer -------------------------------
 		AgentContainer agentContainer = this.getContainer(inContainer);
 		if (agentContainer==null) {
-			agentContainer = createAgentContainer(inContainer);
+			agentContainer = this.createAgentContainer(inContainer);
 		}
 		
 		// --- Check if the agent name is already used --------------

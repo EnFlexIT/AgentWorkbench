@@ -7,8 +7,8 @@ de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;;;;
-de;<br>Kann der Name aus der Liste der Setups entfernt werden?;;;;
+de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
@@ -122,6 +122,12 @@ de;CPU;CPU
 de;CSV-Datei importieren;Import CSV file;;;
 de;CSV-Dateien;CSV files;;;
 de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
+de;Calculate metrics based on agent class data.;;;;
+de;Calculate metrics based on delta integrals.;;;;
+de;Calculate metrics based on individual agent data.;;;;
+de;Calculate metrics based on last total system cpu time.;;;;
+de;Calculate metrics based on total integrals.;;;;
+de;Calculate the real metrics based on recorded chart value selection.;;;;
 de;Class not found:;Class not found:
 de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
@@ -170,7 +176,7 @@ de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
@@ -209,10 +215,10 @@ de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for th
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
-de;Export erfolgreich;;;;
+de;Export erfolgreich;Export successful;;;
 de;Export:;Export:;;;
-de;Exportiere Projekt;;;;
-de;Exportiere;;;;
+de;Exportiere Projekt;Export Project;;;
+de;Exportiere;Export;;;
 de;Exportieren;Export;;;
 de;Externe bin-Ressourcen;External 'bin' resources;;;
 de;Externe jar-Ressourcen;External jar resources;;;
@@ -513,7 +519,7 @@ de;Projekt-Agenten;Project-Agents
 de;Projekt-Basisverzeichnis auswählen;Selection of the projects root directory;;;
 de;Projekt-Basisverzeichnis nicht gefunden!;Project base directory not found!;;;
 de;Projekt-Desktop;Project Desktop
-de;Projekt-Export;;;;
+de;Projekt-Export;Project Export;;;
 de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
 de;Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern;Rebuild project MANIFEST.MF when opening the project;;;
@@ -595,6 +601,7 @@ de;Start;Start
 de;Startargument definieren für Agent;Define start argument for agent;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
+de;Starte Agenten;Start an Agent;;;
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
 de;Starte Messung der Systemauslastung;Start measuring the system load
 de;Starten als:;Start as:
@@ -712,7 +719,7 @@ de;Zyklisch !;Cyclic!
 de;Zähler;Counter;;;
 de;auf;to;;;
 de;bereit;ready
-de;erfolgreich exportiert!;;;;
+de;erfolgreich exportiert!;successfully exported!;;;
 de;für das Setup;for the setup
 de;in Datei;In file
 de;liegt außerhalb von Playground;is outside of playground
@@ -745,11 +752,16 @@ de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;Alias:;;;
+en;;Configuration Error;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
 en;;Discrete squares environment;;;
 en;;MTP Protocol:;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
+en;;No agent class was specified.;;;
+en;;No agent name was specified.;;;
+en;;No container for the agent was specified.;;;
+en;;No specified agent class could not be found.;;;
 en;;Number of changes;;;
 en;;Operating mode:;;;
 en;;Organization:;;;

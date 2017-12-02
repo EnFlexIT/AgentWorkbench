@@ -564,7 +564,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 
 		// --- If wanted, filter the Main-Container out ------------------
 		if (filterMainContainer == true) {
-			newContainerLocations.remove("Main-Container");
+			newContainerLocations.remove(jade.core.AgentContainer.MAIN_CONTAINER_NAME);
 			if (newContainerLocations.size()==0) {
 				newContainerLocations = null;
 			}

@@ -134,7 +134,7 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 		Location loc = null;
 		try {
 			
-			loc = loadHelper.getContainerLocation("Main-Container");
+			loc = loadHelper.getContainerLocation(jade.core.AgentContainer.MAIN_CONTAINER_NAME);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
