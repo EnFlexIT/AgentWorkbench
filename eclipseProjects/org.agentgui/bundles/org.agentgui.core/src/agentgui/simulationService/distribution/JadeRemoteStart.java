@@ -45,6 +45,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import agentgui.core.application.Application;
+import agentgui.core.project.Project;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -116,12 +117,22 @@ public class JadeRemoteStart {
 	/**
 	 * Instantiates a new jade remote start.
 	 *
-	 * @param myAgent the current agent that uses this class
+	 * @param agent the current agent that uses this class
+	 * @param remoteStartConfiguration the remote start configuration
+	 */
+	public JadeRemoteStart(Agent agent, JadeRemoteStartConfiguration remoteStartConfiguration) {
+		this(agent, remoteStartConfiguration.getRemoteContainerConfig());
+		this.rcProjectDirectory = remoteStartConfiguration.getProjectPath();
+	}
+	/**
+	 * Instantiates a new jade remote start.
+	 *
+	 * @param agent the current agent that uses this class
 	 * @param remoteContainerConfig the RemoteContainerConfig
 	 */
-	public JadeRemoteStart(Agent myAgent, RemoteContainerConfig remoteContainerConfig) {
+	public JadeRemoteStart(Agent agent, RemoteContainerConfig remoteContainerConfig) {
 		
-		this.myAgent = myAgent;
+		this.myAgent = agent;
 		this.reCoCo = remoteContainerConfig;
 		
 		if (this.debug) {
@@ -155,10 +166,45 @@ public class JadeRemoteStart {
 		if (this.reCoCo.getJadeContainerName()!=null) {
 			this.jadeContainerName = this.reCoCo.getJadeContainerName();	
 		}
-
-		// --- Download project files -----------------------------------------
-		this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
 	}	
+	
+	/**
+	 * Checks if is ready to start remote container.
+	 * @return true, if is ready to start remote container
+	 */
+	public boolean isReadyToStartRemoteContainer() {
+		
+		// --- Download project files -------------------------------
+		if (this.rcProjectDirectory==null) {
+			this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
+		}
+		if (this.rcProjectDirectory!=null) {
+			System.out.println(this.getClass().getSimpleName() + ": Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
+			// --- Load project and check for required features -----
+			Project remoteProject = Project.loadProjectXml(this.rcProjectDirectory);
+			if (remoteProject.requiresFeatureInstallation()==true) {
+				// --- Remind the start configuration ---------------
+				String configFilePath = JadeRemoteStartConfiguration.getDefaultConfigurationFile().getAbsolutePath();
+				boolean isSavedConfig = JadeRemoteStartConfiguration.saveRemoteStartConfiguration(new JadeRemoteStartConfiguration(this.rcProjectDirectory, this.reCoCo));
+				if (isSavedConfig==true) {
+					System.out.println(this.getClass().getSimpleName() + ": Saved remote start configuration to " + configFilePath);
+				} else {
+					System.err.println(this.getClass().getSimpleName() + ": Configuration file was NOT saved to " + configFilePath);
+				}
+				// --- Install the required features ---------------- 
+				System.out.println(this.getClass().getSimpleName() + ": Install required project features ...");
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						remoteProject.installRequiredFeatures();
+					}
+				}).start();
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * This Method starts a Jade-Platform within a new Java Virtual Machine.
@@ -732,5 +778,6 @@ public class JadeRemoteStart {
 		}
 		return aguiFile;
 	}
+	
 	
 }

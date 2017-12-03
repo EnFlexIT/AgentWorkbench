@@ -28,27 +28,13 @@
  */
 package agentgui.simulationService.agents;
 
-import jade.content.Concept;
-import jade.content.lang.Codec;
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.Ontology;
-import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
-import jade.content.onto.basic.Action;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.ServiceException;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.ParallelBehaviour;
-import jade.core.behaviours.TickerBehaviour;
-import jade.lang.acl.ACLMessage;
 import agentgui.core.application.Application;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.distribution.JadeRemoteStartAgent;
+import agentgui.simulationService.distribution.JadeRemoteStartConfiguration;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
@@ -66,6 +52,21 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
 import agentgui.simulationService.ontology.SlaveRegister;
 import agentgui.simulationService.ontology.SlaveTrigger;
 import agentgui.simulationService.ontology.SlaveUnregister;
+import jade.content.Concept;
+import jade.content.lang.Codec;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
+import jade.content.onto.basic.Action;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ParallelBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.lang.acl.ACLMessage;
 
 /**
  * This agent is part of the <b>Agent.GUI</b> background-system and waits for a 
@@ -129,7 +130,6 @@ public class ServerSlaveAgent extends Agent {
 			simHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
 			// --- get the local systems-informations ---------
 			myCRCreply = simHelper.getLocalCRCReply();
-
 			// --- Define Platform-Info -----------------------
 			myPlatform = myCRCreply.getRemoteAddress();
 			// --- Set the Performance of machine -------------
@@ -167,16 +167,30 @@ public class ServerSlaveAgent extends Agent {
 		myRegistration.setSlaveVersion(myVersion);
 		this.sendMessage2MainServer(myRegistration);
 		
-		// --- Add Main-Behaiviours -----------------------
+		// --- Add Main-Behaviors -------------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
+		parBehaiv.addSubBehaviour(new MessageReceiveBehaviour());
 		trigger = new TriggerBehaiviour(this,triggerTime);
-		parBehaiv.addSubBehaviour( trigger );
+		parBehaiv.addSubBehaviour(trigger);
 		sndBehaiv = new SaveNodeDescriptionBehaviour(this,500);
-		parBehaiv.addSubBehaviour( sndBehaiv );
+		parBehaiv.addSubBehaviour(sndBehaiv);
 		
-		// --- Add Parallel Behaiviour --------------------
+		// --- Add Parallel Behaviour ---------------------
 		this.addBehaviour(parBehaiv);
+
+		// --- Check for a remote start configuration -----  
+		try {
+			JadeRemoteStartConfiguration startConfig = JadeRemoteStartConfiguration.loadRemoteStartConfiguration();
+			if (startConfig!=null) {
+				System.out.println("[" + this.getLocalName() + "] Found remote container start configuration.");
+				JadeRemoteStartConfiguration.deleteRemoteStartConfiguration();
+				this.startRemoteContainer(startConfig);
+			} else {
+				System.out.println("[" + this.getLocalName() + "] No start configuration for a remote container was found.");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		
 	}
 	
@@ -300,8 +314,6 @@ public class ServerSlaveAgent extends Agent {
 		}
 	}
 
-	
-	
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaiviour --- S T A R T --------
 	// -----------------------------------------------------
@@ -391,11 +403,17 @@ public class ServerSlaveAgent extends Agent {
 
 	/**
 	 * Starts a Remote-Container for given RemoteContainerConfig-Instance.
-	 *
 	 * @param remoteContainerConfig the remote container configuration
 	 */
 	private void startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {
 		Application.getJadePlatform().startAgent("rcsa", JadeRemoteStartAgent.class.getName(), new Object[] {remoteContainerConfig});
+	}
+	/**
+	 * Starts a Remote-Container based on the given {@link JadeRemoteStartConfiguration}.
+	 * @param startConfiguration the start configuration
+	 */
+	private void startRemoteContainer(JadeRemoteStartConfiguration startConfiguration) {
+		Application.getJadePlatform().startAgent("rcsa", JadeRemoteStartAgent.class.getName(), new Object[] {startConfiguration});
 	}
 	
 	// -----------------------------------------------------
