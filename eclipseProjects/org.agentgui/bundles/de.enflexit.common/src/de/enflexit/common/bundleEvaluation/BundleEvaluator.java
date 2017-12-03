@@ -63,7 +63,7 @@ import org.osgi.framework.wiring.BundleWiring;
  */
 public class BundleEvaluator {
 	
-	private boolean debug = false;
+		private boolean debug = false;
 	
 	private HashSet<String> bundleExcludeHashSet;
 	private EvaluationFilterResults evaluationFilterResults;
@@ -98,12 +98,15 @@ public class BundleEvaluator {
 		if (bundleExcludeHashSet==null) {
 			bundleExcludeHashSet = new HashSet<>();
 			bundleExcludeHashSet.add("com.ibm.icu");
+			bundleExcludeHashSet.add("javax.annotation");
 			bundleExcludeHashSet.add("javax.inject");
 			bundleExcludeHashSet.add("javax.servlet");
 			bundleExcludeHashSet.add("javax.xml");
-			bundleExcludeHashSet.add("org.eclipse");
-			bundleExcludeHashSet.add("org.w3c");
 			bundleExcludeHashSet.add("org.apache");
+			bundleExcludeHashSet.add("org.eclipse");
+			bundleExcludeHashSet.add("org.sat4j");
+			bundleExcludeHashSet.add("org.tukaani");
+			bundleExcludeHashSet.add("org.w3c");
 			
 			bundleExcludeHashSet.add("org.agentgui.lib.bouncyCastle");
 			bundleExcludeHashSet.add("org.agentgui.lib.googleTranslate");
@@ -267,7 +270,9 @@ public class BundleEvaluator {
 	 * @return the bundle array
 	 */
 	public Bundle[] getBundles() {
-		return this.getBundleContext().getBundles();
+		BundleContext bc = this.getBundleContext(); 
+		if (bc==null) return null;
+		return bc.getBundles();
 	}
 	// --------------------------------------------------------------	
 	
@@ -342,7 +347,11 @@ public class BundleEvaluator {
 		
 		long starTime = System.nanoTime(); 
 		if (this.debug==true) {
-			System.out.println("Evaluate bundle " + bundle.getSymbolicName());
+			String sbn = bundle.getSymbolicName();
+			System.out.println("Evaluate bundle " + sbn);
+			if (sbn.equals("org.agentgui.lib.jade")==true || sbn.equals("bundle.getSymbolicName()")==true) {
+				System.out.println("Stop here - found '" + sbn + "'");
+			}
 		}
 
 		// ----------------------------------------------------------
@@ -463,7 +472,7 @@ public class BundleEvaluator {
 		
 		// --- Checking class files ---------------------------------
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		if (bundle.getState()==Bundle.ACTIVE && bundleWiring!=null) {
+		if (bundleWiring!=null && this.isBundleResolvedOrActive(bundle)==true) {
 			Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", options);
 			for (String resource : resources) {
 				// --- Get a suitable class name --------------------
@@ -496,11 +505,11 @@ public class BundleEvaluator {
 				// ------------------------------------------------------			
 				// --- Does the bundle has a "Bundle-ClassPath" entry ---
 				Vector<String> bundleClassPathEntries  = this.getBundleClassPathEntries(bundle);
-				if (bundle.getState()==Bundle.ACTIVE && bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
+				if (this.isBundleResolvedOrActive(bundle)==true && bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
 					// --- Check for available jars in the bundle--------
 					Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
 					if (bundleJars!=null) {
-						while (bundle.getState()==Bundle.ACTIVE && bundleJars.hasMoreElements()) {
+						while (this.isBundleResolvedOrActive(bundle)==true && bundleJars.hasMoreElements()) {
 							URL url = (URL) bundleJars.nextElement();
 							String debugText = "Found jar-File of '" + bundle.getSymbolicName() + "' (" + url.getPath() + ")";
 							if (bundleClassPathEntries.contains(url.getPath())) {
@@ -558,7 +567,16 @@ public class BundleEvaluator {
 		}
 		return bundleClassPathEntries;
 	}
-	
+
+	/**
+	 * Checks if the specified bundle is resolved or active.
+	 *
+	 * @param bundle the bundle
+	 * @return true, if the bundle is resolved or active
+	 */
+	private boolean isBundleResolvedOrActive(Bundle bundle) {
+		return (bundle.getState()==Bundle.RESOLVED || bundle.getState()==Bundle.ACTIVE); 
+	}
 	
 	/**
 	 * Returns the class name of a bundle resource returned by the bundle wiring.
@@ -885,7 +903,7 @@ public class BundleEvaluator {
 	public URL getBundleURL(Bundle bundle) {
 		URL bundleURL = null;
 		try {
-			if (bundle.getState()==Bundle.ACTIVE) {
+			if (this.isBundleResolvedOrActive(bundle)==true) {
 				bundleURL = FileLocator.resolve(bundle.getEntry("/"));
 			}
 		} catch (IOException ioEx) {

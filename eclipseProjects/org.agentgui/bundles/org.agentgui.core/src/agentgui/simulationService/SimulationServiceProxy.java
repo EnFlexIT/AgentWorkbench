@@ -72,8 +72,8 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 				}
 			}
 			return (Long) result;
-		}
-		catch(ServiceException se) {
+			
+		} catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}

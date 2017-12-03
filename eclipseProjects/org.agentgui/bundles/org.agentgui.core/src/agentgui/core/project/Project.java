@@ -720,12 +720,13 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			// --- Check if feature is installed ---------- 
 			if (p2handler.checkIfInstalled(feature.getId())==false) {
 				// --- Install single feature -------------
-				System.out.println("Project '" + this.getProjectName() + "': Install '" + feature.getName()  + "' (" + feature.getId() + ") from " + feature.getRepositoryURI());
+				System.out.print("=> Project '" + this.getProjectName() + "': Install '" + feature.getName()  + "' (" + feature.getId() + ") from " + feature.getRepositoryURI() + " ... ");
 				boolean success = p2handler.installIU(feature.getId(), feature.getRepositoryURI());
 				if (success==true) {
 					installedNewFeatures = true;
+					System.out.print("DONE!\n");
 				} else {
-					System.err.println("Project '" + this.getProjectName() + "': Unnable to install required feature " + feature.getId());
+					System.err.println("=> Project '" + this.getProjectName() + "': Unnable to install feature " + feature.getId());
 					return false;
 				}
 			}

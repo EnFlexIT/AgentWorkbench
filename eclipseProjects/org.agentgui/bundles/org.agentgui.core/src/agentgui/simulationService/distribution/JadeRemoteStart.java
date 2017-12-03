@@ -174,13 +174,14 @@ public class JadeRemoteStart {
 	 */
 	public boolean isReadyToStartRemoteContainer() {
 		
-		// --- Download project files -------------------------------
+		// --- If not already available, download project files -----
 		if (this.rcProjectDirectory==null) {
 			this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
 		}
+		// --- If a remote container project can be found ----------- 
 		if (this.rcProjectDirectory!=null) {
 			System.out.println(this.getClass().getSimpleName() + ": Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
-			// --- Load project and check for required features -----
+			// --- Load project XML and check required features -----
 			Project remoteProject = Project.loadProjectXml(this.rcProjectDirectory);
 			if (remoteProject.requiresFeatureInstallation()==true) {
 				// --- Remind the start configuration ---------------
@@ -188,8 +189,6 @@ public class JadeRemoteStart {
 				boolean isSavedConfig = JadeRemoteStartConfiguration.saveRemoteStartConfiguration(new JadeRemoteStartConfiguration(this.rcProjectDirectory, this.reCoCo));
 				if (isSavedConfig==true) {
 					System.out.println(this.getClass().getSimpleName() + ": Saved remote start configuration to " + configFilePath);
-				} else {
-					System.err.println(this.getClass().getSimpleName() + ": Configuration file was NOT saved to " + configFilePath);
 				}
 				// --- Install the required features ---------------- 
 				System.out.println(this.getClass().getSimpleName() + ": Install required project features ...");

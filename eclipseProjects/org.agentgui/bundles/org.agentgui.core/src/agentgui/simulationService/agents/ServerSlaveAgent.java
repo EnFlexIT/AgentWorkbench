@@ -185,8 +185,6 @@ public class ServerSlaveAgent extends Agent {
 				System.out.println("[" + this.getLocalName() + "] Found remote container start configuration.");
 				JadeRemoteStartConfiguration.deleteRemoteStartConfiguration();
 				this.startRemoteContainer(startConfig);
-			} else {
-				System.out.println("[" + this.getLocalName() + "] No start configuration for a remote container was found.");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

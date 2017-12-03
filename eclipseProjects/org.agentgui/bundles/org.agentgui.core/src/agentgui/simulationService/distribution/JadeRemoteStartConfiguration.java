@@ -102,7 +102,9 @@ public class JadeRemoteStartConfiguration implements Serializable {
 		this.reCoCo = reCoCo;
 	}
 	
-	
+	// ------------------------------------------------------------------------
+	// --- From here, static help methods for the file handling can be found --
+	// ------------------------------------------------------------------------	
 	/**
 	 * Returns the default configuration file name.
 	 * @return the default configuration file name
