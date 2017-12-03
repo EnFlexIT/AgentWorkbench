@@ -42,6 +42,7 @@ public class JadeRemoteStartAgent extends Agent {
 	private static final long serialVersionUID = -880859677817836126L;
 
 	private RemoteContainerConfig remoteContainerConfig;
+	private JadeRemoteStartConfiguration remoteStartConfiguration;
 	
 	
 	/* (non-Javadoc)
@@ -52,20 +53,30 @@ public class JadeRemoteStartAgent extends Agent {
 
 		Object[] startArg = this.getArguments();
 		if (startArg.length>0) {
-			this.remoteContainerConfig = (RemoteContainerConfig) startArg[0];
+			if (startArg[0] instanceof RemoteContainerConfig) {
+				// --- Start the remote container ---------
+				this.remoteContainerConfig = (RemoteContainerConfig) startArg[0];
+				this.addBehaviour(new JadeRemoteStartBehaviour(this));
+
+			} else if (startArg[0] instanceof JadeRemoteStartConfiguration) {
+				// --- Retry to start remote container ----
+				this.remoteStartConfiguration = (JadeRemoteStartConfiguration) startArg[0];
+				this.addBehaviour(new JadeRemoteReStartBehaviour(this));
+			}
 		}
-		this.addBehaviour(new JadeRemoteStartBehaviour(this));
 	}
 	
 	/**
-	 * The Class JadeRemoteStartBehaviour.
+	 * The Class JadeRemoteStartBehaviour is used in case that a remote container
+	 * start was requested. It will organize the download of the required resources
+	 * and starts the container if everything  was done successfully.
 	 */
 	private class JadeRemoteStartBehaviour extends OneShotBehaviour {
 
 		private static final long serialVersionUID = 5986902939912984745L;
 
 		/**
-		 * Instantiates a new jade remote starter.
+		 * Instantiates a new jade remote start.
 		 * @param myAgent the my agent
 		 */
 		public JadeRemoteStartBehaviour(Agent myAgent) {
@@ -76,14 +87,52 @@ public class JadeRemoteStartAgent extends Agent {
 		 */
 		@Override
 		public void action() {
-			System.out.println("Starting remote container ... ");
+			System.out.println("Prepare for remote container start ... ");
 			// --- Initiate the starter -----------------------------
 			JadeRemoteStart jrs = new JadeRemoteStart(this.getAgent(), remoteContainerConfig);
-			// --- Start the remote container -----------------------
-			jrs.startJade();
+			if (jrs.isReadyToStartRemoteContainer()==true) {
+				// --- Start the remote container -------------------
+				System.out.println("Starting remote container ... ");
+				jrs.startJade();
+			}
 			// +++ Returns here after container shutdown ++++++++++++
 			this.getAgent().doDelete();
 		}
 	}
+
+	/**
+	 * The Class JadeRemoteStartBehaviour is used in case that a remote container
+	 * start was requested. It will organize the download of the required resources
+	 * and starts the container if everything  was done successfully.
+	 */
+	private class JadeRemoteReStartBehaviour extends OneShotBehaviour {
+
+		private static final long serialVersionUID = 5986902939912984745L;
+
+		/**
+		 * Instantiates a new jade remote restart.
+		 * @param myAgent the my agent
+		 */
+		public JadeRemoteReStartBehaviour(Agent myAgent) {
+			this.setAgent(myAgent);
+		}
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
+		@Override
+		public void action() {
+			System.out.println("Re-Prepare for remote container start ... ");
+			// --- Initiate the starter -----------------------------
+			JadeRemoteStart jrs = new JadeRemoteStart(this.getAgent(), remoteStartConfiguration);
+			if (jrs.isReadyToStartRemoteContainer()==true) {
+				// --- Start the remote container -------------------
+				System.out.println("Starting remote container ... ");
+				jrs.startJade();
+			}
+			// +++ Returns here after container shutdown ++++++++++++
+			this.getAgent().doDelete();
+		}
+	}
+
 	
 }
