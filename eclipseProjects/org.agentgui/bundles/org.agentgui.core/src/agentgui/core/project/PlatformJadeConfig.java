@@ -30,6 +30,7 @@ package agentgui.core.project;
 
 import jade.core.Profile;
 import jade.core.ProfileImpl;
+import jade.mtp.http.ProxiedMTP;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -275,7 +276,6 @@ public class PlatformJadeConfig implements Serializable {
 			trustStorePassword = this.getTrustStorePassword();
 		}
 		
-		
 		// --------------------------------------------------------------------
 		// --- Apply MTP-settings to profile ----------------------------------
 		// --------------------------------------------------------------------
@@ -305,14 +305,19 @@ public class PlatformJadeConfig implements Serializable {
 			if (ipAddress!=null) {
 				Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
 				if (mtpProtocol==MtpProtocol.HTTP) {
-					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
-				} else {
-					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
+					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName()+"(http://" + ipAddress + ":" + freePort + "/acc)");
+				} else if(mtpProtocol==MtpProtocol.HTTPS) {
+					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName()+"(https://" + ipAddress + ":" + freePort + "/acc)");
 					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile);
 					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
-					profile.setParameter("jade_mtp_http_https_trustManagerClass","jade.mtp.http.https.FriendListAuthentication");
+					profile.setParameter("jade_mtp_http_https_trustManagerClass",jade.mtp.http.https.FriendListAuthentication.class.getName()+"");
 					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
+				}
+				else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS){
+					profile.setParameter(Profile.MTPS, ProxiedMTP.class.getName());
+					
+					//TODO we need parameters for private address/port, public address/port and private path (acc) 
 				}
 				profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 			}

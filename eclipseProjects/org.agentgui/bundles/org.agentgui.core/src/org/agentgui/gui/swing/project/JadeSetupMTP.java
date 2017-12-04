@@ -779,6 +779,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 				this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
 				this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
 				this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
+				this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTPS);
 			} 
 		} else if (this.action == "COMBO") {
 			
@@ -804,6 +805,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 					this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
 					this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
 					this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
+					this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTPS);
 				} else {
 					// ---- If the Button Cancel is pressed -------------------------
 					this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
@@ -854,8 +856,9 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		this.getJTextFieldDefaultPortMTP().setText(currPortMTP.toString());
 		
 		MtpProtocol mtpProtocol = this.currProject.getJadeConfiguration().getMtpProtocol();
+		this.getJcomboBoxMtpProtocol().setSelectedProtocol(mtpProtocol);
+
 		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
-			this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setHttpsComponentsEnabledState(true);
 			this.setKeyStore(new File(this.currProject.getJadeConfiguration().getKeyStoreFile()));
 			this.setTrustStore(new File(this.currProject.getJadeConfiguration().getTrustStoreFile()));
@@ -864,7 +867,6 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
 			this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
 		} else {
-			this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 			this.setHttpsComponentsEnabledState(false);
 		}
 		
@@ -1001,12 +1003,12 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 				this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTP);
 				this.getJTextFieldKeyStoreFile().setText(null);
 				this.getJTextFieldTrustStoreFile().setText(null);
-				this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTP);
 			} else if (this.getJcomboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTPS) {
 				// ---- switch from HTTP to HTTPS ------------------------------
 				this.setHttpsComponentsEnabledState(true);
 				this.editHTTPSsettings();
-//				this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTPS);
+			} else if(this.getJcomboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.PROXIEDHTTPS){
+				this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.PROXIEDHTTPS);
 			}
 		}
 	}

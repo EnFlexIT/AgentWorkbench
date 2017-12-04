@@ -389,18 +389,14 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	@Override
 	public void setGlobalData2Form() {
 		MtpProtocol mtpProtocol = this.getGlobalInfo().getMtpProtocol();
+		this.getJComboBoxMtpProtocol().setSelectedProtocol(mtpProtocol);
 		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setKeyStore(new File(this.getGlobalInfo().getKeyStoreFile()));
 			this.setTrustStore(new File(this.getGlobalInfo().getTrustStoreFile()));
 			this.setKeyStorePassword(this.getGlobalInfo().getKeyStorePassword());
 			this.setTrustStorePassword(this.getGlobalInfo().getTrustStorePassword());
 			this.getJTextFieldKeyStorePath().setText(this.getKeyStore().getAbsolutePath());
 			this.getJTextFieldTrustStorePath().setText(this.getTrustStore().getAbsolutePath());
-		} else if(mtpProtocol.equals(MtpProtocol.PROXIEDHTTPS)){
-			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.PROXIEDHTTPS);
-		} else {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 		}
 	}
 
@@ -409,14 +405,12 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	@Override
 	public void setFormData2Global() {
+		this.getGlobalInfo().setMtpProtocol(this.getJComboBoxMtpProtocol().getSelectedProtocol());
 		if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTPS) {
-			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTPS);
 			this.getGlobalInfo().setKeyStoreFile(this.getKeyStore().getAbsolutePath());
 			this.getGlobalInfo().setTrustStoreFile(this.getTrustStore().getAbsolutePath());
 			this.getGlobalInfo().setKeyStorePassword(this.getKeyStorePassword());
 			this.getGlobalInfo().setTrustStorePassword(this.getTrustStorePassword());
-		} else if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTP) {
-			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTP);
 		}
 	}
 
@@ -434,11 +428,10 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	@Override
 	public void refreshView() {
 		MtpProtocol mtpProtocol = this.getGlobalInfo().getMtpProtocol();
+		this.getJComboBoxMtpProtocol().setSelectedProtocol(mtpProtocol);
 		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.showCertificateSettings();
 		} else {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 			this.hideCertificateSettings();
 		}
 	}
