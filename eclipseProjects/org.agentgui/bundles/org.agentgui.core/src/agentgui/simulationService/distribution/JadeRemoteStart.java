@@ -182,7 +182,7 @@ public class JadeRemoteStart {
 		if (this.rcProjectDirectory!=null) {
 			System.out.println(this.getClass().getSimpleName() + ": Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
 			// --- Load project XML and check required features -----
-			Project remoteProject = Project.loadProjectXml(this.rcProjectDirectory);
+			final Project remoteProject = Project.loadProjectXml(this.rcProjectDirectory);
 			if (remoteProject.requiresFeatureInstallation()==true) {
 				// --- Remind the start configuration ---------------
 				String configFilePath = JadeRemoteStartConfiguration.getDefaultConfigurationFile().getAbsolutePath();

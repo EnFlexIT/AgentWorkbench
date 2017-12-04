@@ -365,7 +365,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		System.out.println("-------  System Environment: -------"); 
 		System.out.println("------------------------------------");
 		
-		ArrayList<Object> propertiesKeys = new ArrayList<>(System.getenv().keySet());
+		ArrayList<String> propertiesKeys = new ArrayList<>(System.getenv().keySet());
 		Collections.sort(propertiesKeys, new Comparator<Object>() {
 			@Override
 			public int compare(Object prop1, Object prop2) {
