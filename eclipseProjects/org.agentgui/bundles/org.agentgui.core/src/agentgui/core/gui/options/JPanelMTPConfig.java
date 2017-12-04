@@ -77,7 +77,6 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	private String keyStorePassword;
 	private File trustStore;
 	private String trustStorePassword;
-	private String currentMTP;
 	private String action;
 	
 	/**
@@ -279,24 +278,11 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	private void setTrustStorePassword(String trustStorePassword) {
 		this.trustStorePassword = trustStorePassword;
 	}
-	/**
-	 * Gets the currentMTP.
-	 * @return the currentMTP
-	 */
-	private String getCurrentMTP(){
-		return currentMTP;
-	}
-	/**
-	 * Sets the currentMTP.
-	 * @param currMTP the new currentMTP
-	 */
-	private void setCurrentMTP(String currMTP){
-		this.currentMTP = currMTP;
-	}
+
 	/**
 	 * Sets JLabels and JTextFields visible true in case choosing HTTPS MTP.
 	 */
-	private void setVisibleTrue(){
+	private void showCertificateSettings(){
 		this.getJLabelKeystorePath().setVisible(true);
 		this.getJLabelTruststorePath().setVisible(true);
 		this.getJTextFieldKeyStorePath().setVisible(true);
@@ -306,7 +292,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	/**
 	 * Sets JLabels and JTextFields visible false in case choosing HTTP MTP.
 	 */
-	protected void setVisibleFalse(){
+	protected void hideCertificateSettings(){
 		this.getJLabelKeystorePath().setVisible(false);
 		this.getJLabelTruststorePath().setVisible(false);
 		this.getJTextFieldTrustStorePath().setVisible(false);
@@ -346,7 +332,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 			} else {
 				// ---- Button Cancel is pressed -------------------------------
 				getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
-				this.setVisibleFalse();
+				this.hideCertificateSettings();
 			}
 		}
 	}
@@ -357,18 +343,18 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		if ( event.getSource() == this.getJComboBoxMtpProtocol()){
+			MtpProtocol currentMTP = this.getJComboBoxMtpProtocol().getSelectedProtocol();
 			this.action = "COMBO";
-			if (this.getCurrentMTP() == MtpProtocol.HTTPS.toString()) {
+			if (currentMTP == MtpProtocol.HTTP) {
 				// ---- switch from HTTPS to HTTP ----------------------------------
-				this.setVisibleFalse();
-				this.setCurrentMTP("HTTP");
-			} else if (this.getCurrentMTP() == MtpProtocol.HTTP.toString()) {
+				this.hideCertificateSettings();
+			} else if (currentMTP == MtpProtocol.HTTPS) {
 				// ---- switch between HTTP and HTTPS ------------------------------
 				if (event.getStateChange() == ItemEvent.SELECTED) {
 					Object item = event.getItem();
 					if (item.equals(MtpProtocol.HTTPS)) {
 						// ---- If the user choose HTTPS ---------------------------
-						this.setVisibleTrue();
+						this.showCertificateSettings();
 						
 						// --- If the stores are not defined or do not exist, open the configuration dialog ----------
 						if(this.keyStore == null || this.trustStore == null || this.keyStore.exists() == false || this.trustStore.exists() == false){
@@ -376,9 +362,11 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 						}
 					} else {
 						// ---- If the user choose HTTP ----------------------------
-						this.setVisibleFalse();
+						this.hideCertificateSettings();
 					}
 				}
+			} else if (currentMTP == MtpProtocol.PROXIEDHTTPS){
+				System.err.println("NOT YET IMPLEMENTED");
 			}
 		}
 	}
@@ -409,10 +397,10 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 			this.setTrustStorePassword(this.getGlobalInfo().getTrustStorePassword());
 			this.getJTextFieldKeyStorePath().setText(this.getKeyStore().getAbsolutePath());
 			this.getJTextFieldTrustStorePath().setText(this.getTrustStore().getAbsolutePath());
-			this.setCurrentMTP(MtpProtocol.HTTPS.toString());
+		} else if(mtpProtocol.equals(MtpProtocol.PROXIEDHTTPS)){
+			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.PROXIEDHTTPS);
 		} else {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
-			this.setCurrentMTP(MtpProtocol.HTTP.toString());
 		}
 	}
 
@@ -448,10 +436,10 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 		MtpProtocol mtpProtocol = this.getGlobalInfo().getMtpProtocol();
 		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
-			this.setVisibleTrue();
+			this.showCertificateSettings();
 		} else {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
-			this.setVisibleFalse();
+			this.hideCertificateSettings();
 		}
 	}
 }
