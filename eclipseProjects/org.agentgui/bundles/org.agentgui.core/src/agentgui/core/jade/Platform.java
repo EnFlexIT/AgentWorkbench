@@ -1042,7 +1042,7 @@ public class Platform {
 	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments, String inContainer ) {
 		try {
 			Class<? extends Agent> clazz = ClassLoadServiceUtility.getAgentClass(agentClassName);
-			this.startAgent(newAgentName, clazz, startArguments, inContainer );
+			this.startAgent(newAgentName, clazz, startArguments, inContainer);
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
