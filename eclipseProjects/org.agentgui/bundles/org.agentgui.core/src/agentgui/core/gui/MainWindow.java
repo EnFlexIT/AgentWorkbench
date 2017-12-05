@@ -148,25 +148,28 @@ public class MainWindow extends JFrame {
 
 		// --- Set the Look and Feel of the Application -----------
 		this.setLookAndFeel();
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
+		// --- Configure console and divider position -------------
+		double windowHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 100;
+		if (Application.getGlobalInfo().isMaximzeMainWindow()==false) {
+			windowHeight = this.getSizeRelatedToScreenSize().getHeight() - 100;
+		}
+		this.oldDividerLocation = (int) windowHeight * 3/4; 
+	
 		// --- Create the Main-Elements of the Application --------
 		this.initComponents();
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		this.setLocationRelativeTo(null);
-
-		// --- configure console ----------------------------------
-		this.oldDividerLocation = this.jSplitPane4ProjectDesktop.getHeight() * 3 / 4;
-		this.jSplitPane4ProjectDesktop.setDividerLocation(this.oldDividerLocation);
-		this.setConsoleVisible(false);
 
 		// --- Set the JTabbedPan for remote console output -------
 		SysOutBoard.setJTabbedPane4Consoles(this.getJTabbedPane4Console());
+		this.getJTabbedPane4Console().setVisible(false);
 
 		// --- Finalize the display of the application ------------
 		this.setTitelAddition("");
 		this.setCloseButtonPosition(false);
 
-		this.pack();
+		this.setLocationRelativeTo(null);
+		
 		this.validate();
 		this.repaint();
 		this.setVisible(true);
@@ -180,9 +183,9 @@ public class MainWindow extends JFrame {
 
 		this.setJMenuBar(this.getJMenuBarBase());
 
-		this.add(getJToolBarApplication(), BorderLayout.NORTH);
-		this.add(getStatusBar(), BorderLayout.SOUTH);
-		this.add(getMainSplitpane());
+		this.add(this.getJToolBarApplication(), BorderLayout.NORTH);
+		this.add(this.getStatusBar(), BorderLayout.SOUTH);
+		this.add(this.getJSplit4ProjectDesktop());
 
 		Dimension frameSize = this.getSizeRelatedToScreenSize();
 		this.setPreferredSize(frameSize);
@@ -218,7 +221,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void componentResized(ComponentEvent ce) {
 				if (consoleIsVisible() == false) {
-					jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());
+					getJSplit4ProjectDesktop().setDividerLocation(getJSplit4ProjectDesktop().getHeight());
 				}
 				if (Application.getProjectsLoaded().count() != 0) {
 					Application.getProjectFocused().setMaximized();
@@ -253,7 +256,6 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * Gets the status bar.
-	 * 
 	 * @return the status bar
 	 */
 	private JPanel getStatusBar() {
@@ -295,7 +297,6 @@ public class MainWindow extends JFrame {
 		} else {
 			statusBar.setText("  " + message);
 		}
-		;
 		statusBar.validate();
 		statusBar.repaint();
 	}
@@ -370,7 +371,7 @@ public class MainWindow extends JFrame {
 	 * @return true, if successful
 	 */
 	public boolean consoleIsVisible() {
-		if (jSplitPane4ProjectDesktop.getDividerSize() == 0) {
+		if (this.getJSplit4ProjectDesktop().getDividerSize()==0) {
 			return false;
 		} else {
 			return true;
@@ -381,7 +382,7 @@ public class MainWindow extends JFrame {
 	 * Do switch console.
 	 */
 	private void doSwitchConsole() {
-		if (jSplitPane4ProjectDesktop.getDividerSize() > 0) {
+		if (this.getJSplit4ProjectDesktop().getDividerSize()>0) {
 			this.setConsoleVisible(false);
 		} else {
 			this.setConsoleVisible(true);
@@ -394,18 +395,15 @@ public class MainWindow extends JFrame {
 	 * @param show the new console visible
 	 */
 	private void setConsoleVisible(boolean show) {
-
-		if (show == true) {
-			// --- System.out.println("Console einblenden ...");
-			jSplitPane4ProjectDesktop.setDividerLocation(oldDividerLocation);
-			jSplitPane4ProjectDesktop.setDividerSize(10);
-
+		if (show==true) {
+			this.getJSplit4ProjectDesktop().setDividerSize(10);
+			this.getJSplit4ProjectDesktop().setDividerLocation(this.oldDividerLocation);
 		} else {
-			// --- System.out.println("Console ausblenden ...");
-			oldDividerLocation = jSplitPane4ProjectDesktop.getDividerLocation();
-			jSplitPane4ProjectDesktop.setDividerSize(0);
-			jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());
+			oldDividerLocation = this.getJSplit4ProjectDesktop().getDividerLocation();
+			this.getJSplit4ProjectDesktop().setDividerSize(0);
+			this.getJSplit4ProjectDesktop().setDividerLocation(this.getJSplit4ProjectDesktop().getHeight());
 		}
+		this.getJTabbedPane4Console().setVisible(show);
 		this.validate();
 		if (Application.getProjectsLoaded().count() != 0) {
 			Application.getProjectFocused().setMaximized();
@@ -425,25 +423,22 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * Gets the main splitpane.
-	 * 
 	 * @return the main splitpane
 	 */
-	private JSplitPane getMainSplitpane() {
+	private JSplitPane getJSplit4ProjectDesktop() {
 		if (jSplitPane4ProjectDesktop == null) {
-
 			jSplitPane4ProjectDesktop = new JSplitPane();
 			jSplitPane4ProjectDesktop.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			jSplitPane4ProjectDesktop.setDividerSize(10);
-			jSplitPane4ProjectDesktop.setResizeWeight(1);
 			jSplitPane4ProjectDesktop.setOneTouchExpandable(true);
-			jSplitPane4ProjectDesktop.setTopComponent(getJDesktopPane4Projects());
-			jSplitPane4ProjectDesktop.setBottomComponent(getJTabbedPane4Console());
+			jSplitPane4ProjectDesktop.setTopComponent(this.getJDesktopPane4Projects());
+			jSplitPane4ProjectDesktop.setBottomComponent(this.getJTabbedPane4Console());
+			jSplitPane4ProjectDesktop.setDividerSize(0);
+			jSplitPane4ProjectDesktop.setResizeWeight(0.8);
 			jSplitPane4ProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
 				@Override
-				public void propertyChange(PropertyChangeEvent EventSource) {
-					// --- Deviderpositionierung abfangen ---
-					if (EventSource.getPropertyName() == "lastDividerLocation") {
-						if (Application.getProjectsLoaded().count() != 0) {
+				public void propertyChange(PropertyChangeEvent eventSource) {
+					if (eventSource.getPropertyName().equals("lastDividerLocation")) {
+						if (Application.getProjectsLoaded().count()>0) {
 							if (allowProjectMaximization == true) {
 								allowProjectMaximization = false;
 								Application.getProjectFocused().setMaximized();
@@ -456,27 +451,14 @@ public class MainWindow extends JFrame {
 		}
 		return jSplitPane4ProjectDesktop;
 	}
-
-	/**
-	 * This method returns the JTabbedPane for console windows.
-	 *
-	 * @return the j tabbed pane4 console
-	 */
 	public JTabbedPane4Consoles getJTabbedPane4Console() {
-
 		if (jTabbedPane4Console == null) {
-			// --- Get the TabPane for Console-Tabs ---------------
 			jTabbedPane4Console = new JTabbedPane4Consoles();
 			jTabbedPane4Console.add(Language.translate("Lokal"), this.jPanelConsoleLocal);
+			jTabbedPane4Console.setVisible(false);
 		}
 		return jTabbedPane4Console;
 	}
-
-	/**
-	 * This method returns the JDesktopPane, where the JInternalFrame's of the project will be placed.
-	 *
-	 * @return the j desktop pane4 projects
-	 */
 	public JDesktopPane getJDesktopPane4Projects() {
 		if (jDesktopPane4Projects == null) {
 			jDesktopPane4Projects = new JDesktopPane();

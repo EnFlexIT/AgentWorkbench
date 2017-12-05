@@ -63,7 +63,8 @@ import org.osgi.framework.wiring.BundleWiring;
  */
 public class BundleEvaluator {
 	
-		private boolean debug = false;
+	private boolean debug = false;
+	private HashMap<Bundle, Boolean> debugDetailsInBundel;
 	
 	private HashSet<String> bundleExcludeHashSet;
 	private EvaluationFilterResults evaluationFilterResults;
@@ -331,6 +332,17 @@ public class BundleEvaluator {
 	}
 	
 	/**
+	 * Gets the debug detail.
+	 * @return the debug detail
+	 */
+	public HashMap<Bundle, Boolean> getDebugDetailsInBundle() {
+		if (debugDetailsInBundel==null) {
+			debugDetailsInBundel = new HashMap<>();
+		}
+		return debugDetailsInBundel;
+	}
+	
+	/**
 	 * Searches / filters in the specified bundle for specific classes.<br> 
 	 * If the the parameter <code>bundleClassFilterToUse</code> is specified, only this 
 	 * filter will be used. If this parameter is <code>null</code>, all class filters
@@ -349,7 +361,8 @@ public class BundleEvaluator {
 		if (this.debug==true) {
 			String sbn = bundle.getSymbolicName();
 			System.out.println("Evaluate bundle " + sbn);
-			if (sbn.equals("org.agentgui.lib.jade")==true || sbn.equals("bundle.getSymbolicName()")==true) {
+			if (sbn.equals("org.agentgui.lib.jade")==true) {
+				this.getDebugDetailsInBundle().put(bundle, true);
 				System.out.println("Stop here - found '" + sbn + "'");
 			}
 		}
@@ -472,7 +485,7 @@ public class BundleEvaluator {
 		
 		// --- Checking class files ---------------------------------
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		if (bundleWiring!=null && this.isBundleResolvedOrActive(bundle)==true) {
+		if (bundleWiring!=null && this.isBundleStartingResolvedOrActive(bundle)==true) {
 			Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", options);
 			for (String resource : resources) {
 				// --- Get a suitable class name --------------------
@@ -505,11 +518,11 @@ public class BundleEvaluator {
 				// ------------------------------------------------------			
 				// --- Does the bundle has a "Bundle-ClassPath" entry ---
 				Vector<String> bundleClassPathEntries  = this.getBundleClassPathEntries(bundle);
-				if (this.isBundleResolvedOrActive(bundle)==true && bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
+				if (this.isBundleStartingResolvedOrActive(bundle)==true && bundleClassPathEntries!=null && bundleClassPathEntries.size()>0) {
 					// --- Check for available jars in the bundle--------
 					Enumeration<URL> bundleJars = bundle.findEntries("", "*.jar", true);
 					if (bundleJars!=null) {
-						while (this.isBundleResolvedOrActive(bundle)==true && bundleJars.hasMoreElements()) {
+						while (this.isBundleStartingResolvedOrActive(bundle)==true && bundleJars.hasMoreElements()) {
 							URL url = (URL) bundleJars.nextElement();
 							String debugText = "Found jar-File of '" + bundle.getSymbolicName() + "' (" + url.getPath() + ")";
 							if (bundleClassPathEntries.contains(url.getPath())) {
@@ -530,7 +543,9 @@ public class BundleEvaluator {
 								}
 								debugText += "Done!";
 							}
-							if (debug) System.out.println(debugText); 
+							if (this.getDebugDetailsInBundle().get(bundle)!=null && this.getDebugDetailsInBundle().get(bundle)==true) {
+								System.out.println(debugText); 
+							}
 							
 						}
 					}	
@@ -574,8 +589,8 @@ public class BundleEvaluator {
 	 * @param bundle the bundle
 	 * @return true, if the bundle is resolved or active
 	 */
-	private boolean isBundleResolvedOrActive(Bundle bundle) {
-		return (bundle.getState()==Bundle.RESOLVED || bundle.getState()==Bundle.ACTIVE); 
+	private boolean isBundleStartingResolvedOrActive(Bundle bundle) {
+		return (bundle.getState()==Bundle.STARTING || bundle.getState()==Bundle.RESOLVED || bundle.getState()==Bundle.ACTIVE); 
 	}
 	
 	/**
@@ -903,7 +918,7 @@ public class BundleEvaluator {
 	public URL getBundleURL(Bundle bundle) {
 		URL bundleURL = null;
 		try {
-			if (this.isBundleResolvedOrActive(bundle)==true) {
+			if (this.isBundleStartingResolvedOrActive(bundle)==true) {
 				bundleURL = FileLocator.resolve(bundle.getEntry("/"));
 			}
 		} catch (IOException ioEx) {
