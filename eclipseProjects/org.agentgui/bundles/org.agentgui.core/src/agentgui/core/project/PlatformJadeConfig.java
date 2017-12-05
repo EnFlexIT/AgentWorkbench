@@ -303,6 +303,7 @@ public class PlatformJadeConfig implements Serializable {
 			}	
 			// --- Set the MTP address ----------------------------------------
 			if (ipAddress!=null) {
+				profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 				Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
 				if (mtpProtocol==MtpProtocol.HTTP) {
 					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName()+"(http://" + ipAddress + ":" + freePort + "/acc)");
@@ -317,9 +318,26 @@ public class PlatformJadeConfig implements Serializable {
 				else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS){
 					profile.setParameter(Profile.MTPS, ProxiedMTP.class.getName());
 					
-					//TODO we need parameters for private address/port, public address/port and private path (acc) 
+					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_PROTOCOL, ProxiedMTP.PROTOCOL_HTTPS);
+					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_ADDRESS, ProxiedMTP.LOOPBACK_ADDRESS);
+					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_PORT, ProxiedMTP.DEFAULT_PRIVATEPORT+"");
+					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_PATH, ProxiedMTP.DEFAULT_PATH);
+					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_PROTOCOL, ProxiedMTP.PROTOCOL_HTTPS);
+					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_ADDRESS, ipAddress);
+					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_PORT, mtpPort+"");
+					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_PATH, "/agentgui");
+					
+					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile);
+					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
+					profile.setParameter("jade_mtp_http_https_trustManagerClass",jade.mtp.http.https.FriendListAuthentication.class.getName()+"");
+					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
+					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
+					
+					profile.setParameter(Profile.LOCAL_HOST, ProxiedMTP.LOOPBACK_ADDRESS);
+					profile.setParameter(Profile.PLATFORM_ID, "agentgui");
+
+
 				}
-				profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 			}
 		}
 		
