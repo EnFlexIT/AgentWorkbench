@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2017/11/16, 10:27:58
+* @version 2017/12/6, 09:15:27
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
@@ -24,14 +24,25 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteContainerName
+* Protege name: remoteAddress
    */
-   private String remoteContainerName;
-   public void setRemoteContainerName(String value) { 
-    this.remoteContainerName=value;
+   private PlatformAddress remoteAddress;
+   public void setRemoteAddress(PlatformAddress value) { 
+    this.remoteAddress=value;
    }
-   public String getRemoteContainerName() {
-     return this.remoteContainerName;
+   public PlatformAddress getRemoteAddress() {
+     return this.remoteAddress;
+   }
+
+   /**
+* Protege name: remoteAgentGuiVersion
+   */
+   private AgentGuiVersion remoteAgentGuiVersion;
+   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
+    this.remoteAgentGuiVersion=value;
+   }
+   public AgentGuiVersion getRemoteAgentGuiVersion() {
+     return this.remoteAgentGuiVersion;
    }
 
    /**
@@ -46,17 +57,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteAddress
-   */
-   private PlatformAddress remoteAddress;
-   public void setRemoteAddress(PlatformAddress value) { 
-    this.remoteAddress=value;
-   }
-   public PlatformAddress getRemoteAddress() {
-     return this.remoteAddress;
-   }
-
-   /**
 * Protege name: remotePID
    */
    private String remotePID;
@@ -68,14 +68,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteAgentGuiVersion
+* Protege name: remoteContainerName
    */
-   private AgentGuiVersion remoteAgentGuiVersion;
-   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
-    this.remoteAgentGuiVersion=value;
+   private String remoteContainerName;
+   public void setRemoteContainerName(String value) { 
+    this.remoteContainerName=value;
    }
-   public AgentGuiVersion getRemoteAgentGuiVersion() {
-     return this.remoteAgentGuiVersion;
+   public String getRemoteContainerName() {
+     return this.remoteContainerName;
    }
 
    /**

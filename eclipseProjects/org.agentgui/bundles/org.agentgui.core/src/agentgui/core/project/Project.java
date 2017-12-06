@@ -190,14 +190,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	private boolean reCreateProjectManifest = true;
 
 	/**
-	 * This Vector handles the list of resources which should be loadable in case of 
-	 * distributed simulations. The idea is, that for example external jar-files can
-	 * be distributed to a remote location, where such jar-files will be added automatically 
-	 * to the ClassPath of the starting JVM.         
-	 */
-	@XmlTransient private Vector<String> downloadResources = new Vector<String>();
-
-	/**
 	 * This Vector will store the class names of the PlugIns which are used within the project
 	 */
 	@XmlElementWrapper(name = "plugins")
@@ -1029,29 +1021,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient
 	public String getSimulationSetupCurrent() {
 		return simulationSetupCurrent;
-	}
-
-	/**
-	 * Sets the download resources for this Project. This Vector represents the list of resources that 
-	 * should be downloadable in case of distributed executions. The idea is, that for example external 
-	 * jar-files can distributed to a remote location, where such jar-files will be added automatically
-	 * to the ClassPath of the starting JVM.
-	 * @param downloadResources the new download resources
-	 */
-	public void setDownloadResources(Vector<String> downloadResources) {
-		this.downloadResources = downloadResources;
-	}
-
-	/**
-	 * Returns the download resources for the project. This Vector represents the list of resources that 
-	 * should be downloadable in case of distributed executions. The idea is, that for example external 
-	 * jar-files can distributed to a remote location, where such jar-files will be added automatically
-	 * to the ClassPath of the starting JVM.
-	 *
-	 * @return the download resources
-	 */
-	public Vector<String> getDownloadResources() {
-		return downloadResources;
 	}
 
 	/**

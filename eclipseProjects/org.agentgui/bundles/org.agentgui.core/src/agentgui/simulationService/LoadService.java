@@ -1472,17 +1472,6 @@ public class LoadService extends BaseService {
 		newContainerNo++;
 		newContainerName = newContainerPrefix + newContainerNo;
 		
-		// --- If defined, find external jar-Files for ClassPath ----
-		jade.util.leap.List extJars = null;
-		if (Application.getProjectFocused()!=null) {
-			for (String link : Application.getProjectFocused().getDownloadResources()) {
-				if (extJars == null) {
-					extJars = new ArrayList();
-				}
-				extJars.add(link);
-			}
-		}
-		
 		// --- Get machines to be excluded for remote start ---------
 		jade.util.leap.List hostExcludeIP = null;
 		for (String containerName : loadInfo.containerDescription.keySet()) {
@@ -1535,14 +1524,13 @@ public class LoadService extends BaseService {
 		// --- Define the 'RemoteContainerConfig' - Object ----------
 		// ----------------------------------------------------------
 		RemoteContainerConfig remConf = new RemoteContainerConfig();
-		remConf.setJadeServices(myServices);
+		remConf.setJadeShowGUI(true);
+		remConf.setFileManagerAgent(fileManagerAID);
 		remConf.setJadeIsRemoteContainer(true);
+		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeHost(myIP);
 		remConf.setJadePort(myPort);
-		remConf.setJadeContainerName(newContainerName);
-		remConf.setJadeShowGUI(true);
-		remConf.setJadeJarIncludeList(extJars);
-		remConf.setFileManagerAgent(fileManagerAID);
+		remConf.setJadeServices(myServices);
 		
 		// --- Apply defaults, if set -------------------------------
 		if (this.defaults4RemoteContainerConfig!=null) {

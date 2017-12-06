@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: SlaveTrigger
 * @author ontology bean generator
-* @version 2017/11/16, 10:27:58
+* @version 2017/12/6, 09:15:27
 */
 public class SlaveTrigger implements AgentAction {
-
-   /**
-* Protege name: triggerTime
-   */
-   private PlatformTime triggerTime;
-   public void setTriggerTime(PlatformTime value) { 
-    this.triggerTime=value;
-   }
-   public PlatformTime getTriggerTime() {
-     return this.triggerTime;
-   }
 
    /**
 * Protege name: slaveBenchmarkValue
@@ -43,6 +32,17 @@ public class SlaveTrigger implements AgentAction {
    }
    public PlatformLoad getSlaveLoad() {
      return this.slaveLoad;
+   }
+
+   /**
+* Protege name: triggerTime
+   */
+   private PlatformTime triggerTime;
+   public void setTriggerTime(PlatformTime value) { 
+    this.triggerTime=value;
+   }
+   public PlatformTime getTriggerTime() {
+     return this.triggerTime;
    }
 
 }

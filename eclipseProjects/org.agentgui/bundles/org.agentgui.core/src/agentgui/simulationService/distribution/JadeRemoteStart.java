@@ -176,7 +176,13 @@ public class JadeRemoteStart {
 		
 		// --- If not already available, download project files -----
 		if (this.rcProjectDirectory==null) {
-			this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
+			if (this.reCoCo.getFileManagerAgent()==null) {
+				// --- No project for download ----------------------
+				return true;
+			} else {
+				// --- Download project resources -------------------
+				this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
+			}
 		}
 		// --- If a remote container project can be found ----------- 
 		if (this.rcProjectDirectory!=null) {
@@ -222,8 +228,8 @@ public class JadeRemoteStart {
 		// --------------------------------------
 		// --- Java-Config ----------------------
 		java = "java";
-		if (jvmMemAllocUseDefaults==false) {
-			javaVMArgs = "-Xms" + jvmMemAllocInitial + " -Xmx" + jvmMemAllocMaximum;
+		if (this.jvmMemAllocUseDefaults==false) {
+			javaVMArgs = "-Xms" + this.jvmMemAllocInitial + " -Xmx" + this.jvmMemAllocMaximum;
 		} 
 		
 		// --------------------------------------
@@ -238,30 +244,30 @@ public class JadeRemoteStart {
 
 		// --------------------------------------
 		// --- The project to open --------------
-		if (rcProjectDirectory!=null) {
-			project += "-project " + rcProjectDirectory.getName();
+		if (this.rcProjectDirectory!=null) {
+			project += "-project " + this.rcProjectDirectory.getName();
 		}
 		
 		// --------------------------------------
 		// --- Jade configuration ---------------
 		jade += "-jade" + " ";
-		if (jadeServices!=null) {
-			jadeArgs += "-services " + jadeServices + " ";
+		if (this.jadeServices!=null) {
+			jadeArgs += "-services " + this.jadeServices + " ";
 		}
-		if (jadeIsRemoteContainer) {
+		if (this.jadeIsRemoteContainer) {
 			jadeArgs += "-container ";
-			jadeArgs += "-container-name " + jadeContainerName + " ";
+			jadeArgs += "-container-name " + this.jadeContainerName + " ";
 		} 
-		jadeArgs += "-host " + jadeHost + " ";
-		jadeArgs += "-port " + jadePort + " ";
+		jadeArgs += "-host " + this.jadeHost + " ";
+		jadeArgs += "-port " + this.jadePort + " ";
 		// -- Configure -local-host -------------
 		String localHost = Application.getGlobalInfo().getJadeDefaultProfile().getProperties().getProperty(Profile.LOCAL_HOST);
 		if (localHost!=null && localHost.equals("")==false) {
 			jadeArgs += "-local-host " + localHost + " ";	
 		}
 		// --- Show GUI? ------------------------
-		if (jadeShowGUI) {
-			jadeArgs += jadeShowGUIAgentName + jadeContainerName + ":jade.tools.rma.rma ";
+		if (this.jadeShowGUI==true) {
+			jadeArgs += this.jadeShowGUIAgentName + this.jadeContainerName + ":jade.tools.rma.rma ";
 		}		
 		jadeArgs = jadeArgs.trim();
 		
@@ -291,13 +297,13 @@ public class JadeRemoteStart {
 			
 			while (in.hasNextLine() || err.hasNextLine() ) {
 				if (in.hasNextLine()) {
-					System.out.println("[" + jadeContainerName + "]: " + in.nextLine());	
+					System.out.println("[" + this.jadeContainerName + "]: " + in.nextLine());	
 				}
 				if (err.hasNextLine()){
-					System.err.println("[" + jadeContainerName + "]: " + err.nextLine());	
+					System.err.println("[" + this.jadeContainerName + "]: " + err.nextLine());	
 				}
 			}
-			System.out.println("Killed Container [" + jadeContainerName + "]");
+			System.out.println("Killed Container [" + this.jadeContainerName + "]");
 		    
 			// ------------------------------------------------------
 			// --- Remove the 'rc-*' project directory --------------

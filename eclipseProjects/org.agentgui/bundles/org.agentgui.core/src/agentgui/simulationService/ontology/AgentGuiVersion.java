@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: AgentGuiVersion
 * @author ontology bean generator
-* @version 2017/11/16, 10:27:58
+* @version 2017/12/6, 09:15:27
 */
 public class AgentGuiVersion implements Concept {
-
-   /**
-* Protege name: qualifier
-   */
-   private String qualifier;
-   public void setQualifier(String value) { 
-    this.qualifier=value;
-   }
-   public String getQualifier() {
-     return this.qualifier;
-   }
 
    /**
 * Protege name: minorRevision
@@ -43,6 +32,17 @@ public class AgentGuiVersion implements Concept {
    }
    public int getMicroRevision() {
      return this.microRevision;
+   }
+
+   /**
+* Protege name: qualifier
+   */
+   private String qualifier;
+   public void setQualifier(String value) { 
+    this.qualifier=value;
+   }
+   public String getQualifier() {
+     return this.qualifier;
    }
 
    /**
