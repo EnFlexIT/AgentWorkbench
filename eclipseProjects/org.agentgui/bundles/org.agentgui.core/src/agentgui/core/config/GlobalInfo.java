@@ -68,6 +68,7 @@ import agentgui.envModel.graph.visualisation.DisplayAgent;
 import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
+import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -316,6 +317,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			GlobalInfo.println4SysProps();
 			GlobalInfo.println4EnvProps();
 		}
+		FeatureEvaluator.printListOfFeaturesAndBundles();
 	}
 	
 	/**
