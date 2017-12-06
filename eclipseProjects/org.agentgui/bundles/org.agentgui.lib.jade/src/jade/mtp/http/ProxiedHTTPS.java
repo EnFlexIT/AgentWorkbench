@@ -1,5 +1,6 @@
 package jade.mtp.http;
 
+import java.lang.reflect.Field;
 import java.net.URL;
 
 import jade.core.Profile;
@@ -10,7 +11,7 @@ import jade.mtp.http.HTTPAddress;
 import jade.mtp.http.HTTPSocketFactory;
 import jade.mtp.http.MessageTransportProtocol;
 
-public class ProxiedMTP extends MessageTransportProtocol {
+public class ProxiedHTTPS extends MessageTransportProtocol {
 	public static final String PROFILE_PREFIX = "jade_mtp_proxiedhttps_";
 	public static final String PROFILE_PRIVATE_PROTOCOL = PROFILE_PREFIX + "privateProtocol";
 	public static final String PROFILE_PRIVATE_ADDRESS = PROFILE_PREFIX + "privateAddress";
@@ -69,23 +70,25 @@ public class ProxiedMTP extends MessageTransportProtocol {
 	}
 
 	// called if NO mtp_http parameters are given
-	public TransportAddress activate(InChannel.Dispatcher disp, Profile p) throws MTPException {
+	public TransportAddress activate(InChannel.Dispatcher disp, Profile p) {
 
 		try {
 			parseParameters(p);
 
+			resetHTTPS();
+			
 			// open listening socket only on localhost/private/loopback address
 			privateMTPAddress = new HTTPAddress(new URL(privateProtocol, privateAddress, privatePort, privatePath));
+
 			super.activate(disp, privateMTPAddress, p);
-			System.out.println("Activated MTP at private address " + privateMTPAddress);
+			System.out.println("Activated ProxiedHTTPS at private address " + privateMTPAddress);
 
 			// use provided parameters for public address (JADE thinks, it is running the MTP on this address and reports it in outgoing messages)
 			publicMTPAddress = new HTTPAddress(new URL(publicProtocol, publicAddress, publicPort, publicPath));
 			System.out.println("But reporting public address " + publicMTPAddress);
 
-			// use public address with protocol for outgoing connections like usual, because the nginx in front of the opposite party JADE is expecting it (e.g. https)
+			// use public address with https for outgoing connections like usual, because the nginx in front of the opposite party JADE is expecting it
 			HTTPSocketFactory.getInstance().configure(p, (HTTPAddress) publicMTPAddress);
-
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -93,12 +96,29 @@ public class ProxiedMTP extends MessageTransportProtocol {
 		return publicMTPAddress;
 	}
 
+	// DIRTY FIX because _usingHttps in the HTTPSocketFactory is not resetable otherwise:
+	protected void resetHTTPS() {
+
+		// won't work:
+//		HTTPSocketFactory.getInstance().configure(p, (HTTPAddress) privateMTPAddress);
+
+		HTTPSocketFactory factoryObject = HTTPSocketFactory.getInstance();
+		try {
+			Field httpsField = factoryObject.getClass().getDeclaredField("_usingHttps");
+			httpsField.setAccessible(true);
+			httpsField.setBoolean(factoryObject, false);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+	// DIRTY FIX
+
 	@Override
 	public void deactivate(TransportAddress ta) throws MTPException {
 		if (ta.toString().equals(publicMTPAddress.toString())) {
 			super.deactivate(privateMTPAddress);
 		} else {
-			System.err.println("Deactivating ProxiedMTP failed for " + ta + " (original publicMTPAddress=" + publicMTPAddress + " privateMTPAddress=" + privateMTPAddress);
+			System.err.println("Deactivating ProxiedHTTPS failed for " + ta + " (original publicMTPAddress=" + publicMTPAddress + " privateMTPAddress=" + privateMTPAddress);
 			super.deactivate(ta);
 		}
 	}
@@ -107,7 +127,7 @@ public class ProxiedMTP extends MessageTransportProtocol {
 	public void activate(InChannel.Dispatcher disp, TransportAddress ta, Profile p) throws MTPException {
 		// Do not call this method! It cannot work.
 		// Because the return is void, the address in the calling method cannot be overwritten and so it's old (the provided) address will be in use (which is not, what we want)
-		System.err.println("ProxiedMTP failed: Do not provide explicit mtp_http parameters.");
+		System.err.println("ProxiedHTTPS failed: Do not provide explicit mtp parameters (no address in brackets).");
 	}
 
 	public String[] getSupportedProtocols() {

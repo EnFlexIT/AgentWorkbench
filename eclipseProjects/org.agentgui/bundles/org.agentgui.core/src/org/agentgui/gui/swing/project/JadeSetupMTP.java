@@ -35,6 +35,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -68,7 +70,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JadeSetupMTP extends JPanel implements ActionListener, Observer, ItemListener {
+public class JadeSetupMTP extends JPanel implements ActionListener, Observer, ItemListener, FocusListener {
 
 	private static final long serialVersionUID = -7016775471452161527L;
 
@@ -534,6 +536,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jTextFieldIPAddress = new JTextField();
 			jTextFieldIPAddress.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldIPAddress.setPreferredSize(new Dimension(400, 26));
+			jTextFieldIPAddress.addFocusListener(this);
 		}
 		return jTextFieldIPAddress;
 	}
@@ -1014,6 +1017,18 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 				this.editHTTPSsettings(event.getSource(), MtpProtocol.PROXIEDHTTPS);
 			}
 		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent focusEvent) {
+	}
+
+	@Override
+	public void focusLost(FocusEvent focusEvent) {
+		if(focusEvent.getSource() == jTextFieldIPAddress){
+			currProject.getJadeConfiguration().setMtpIpAddress(getJTextFieldIPAddress().getText());
+		}
+		
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

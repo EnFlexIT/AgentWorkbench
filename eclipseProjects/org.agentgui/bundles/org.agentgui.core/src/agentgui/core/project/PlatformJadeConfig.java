@@ -30,7 +30,7 @@ package agentgui.core.project;
 
 import jade.core.Profile;
 import jade.core.ProfileImpl;
-import jade.mtp.http.ProxiedMTP;
+import jade.mtp.http.ProxiedHTTPS;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -316,27 +316,29 @@ public class PlatformJadeConfig implements Serializable {
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
 				}
 				else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS){
-					profile.setParameter(Profile.MTPS, ProxiedMTP.class.getName());
+					profile.setParameter(Profile.MTPS, ProxiedHTTPS.class.getName());
 					
-					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_PROTOCOL, ProxiedMTP.PROTOCOL_HTTPS);
-					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_ADDRESS, ProxiedMTP.LOOPBACK_ADDRESS);
-					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_PORT, ProxiedMTP.DEFAULT_PRIVATEPORT+"");
-					profile.setParameter(ProxiedMTP.PROFILE_PRIVATE_PATH, ProxiedMTP.DEFAULT_PATH);
-					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_PROTOCOL, ProxiedMTP.PROTOCOL_HTTPS);
-					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_ADDRESS, ipAddress);
-					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_PORT, mtpPort+"");
-					profile.setParameter(ProxiedMTP.PROFILE_PUBLIC_PATH, "/agentgui");
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTP);
+//					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_ADDRESS, ProxiedHTTPS.LOOPBACK_ADDRESS);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_ADDRESS, "132.252.61.116");
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PORT, 7778+"");
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PATH, ProxiedHTTPS.DEFAULT_PATH);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTPS);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_ADDRESS, ipAddress);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PORT, mtpPort+"");
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PATH, "/agentgui");
 					
-					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile);
+					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile); // needed as dummy
 					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
 					profile.setParameter("jade_mtp_http_https_trustManagerClass",jade.mtp.http.https.FriendListAuthentication.class.getName()+"");
 					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
 					
-					profile.setParameter(Profile.LOCAL_HOST, ProxiedMTP.LOOPBACK_ADDRESS);
+					// reset LOCAL_HOST and set it to to loopback to not open the RMI ports (1099) on the public interfaces
+					profile.setParameter(Profile.LOCAL_HOST, null);
+					profile.setParameter(Profile.LOCAL_HOST, ProxiedHTTPS.LOOPBACK_ADDRESS);
+//					profile.setParameter(Profile.LOCAL_HOST, "132.252.61.116");
 					profile.setParameter(Profile.PLATFORM_ID, "agentgui");
-
-
 				}
 			}
 		}
