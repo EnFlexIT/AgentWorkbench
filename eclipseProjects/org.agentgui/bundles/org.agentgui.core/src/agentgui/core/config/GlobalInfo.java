@@ -317,7 +317,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			GlobalInfo.println4SysProps();
 			GlobalInfo.println4EnvProps();
 		}
-		FeatureEvaluator.printListOfFeaturesAndBundles();
+		
+		FeatureEvaluator.getInstance().updateFeatureInformation(true);
+		
 	}
 	
 	/**

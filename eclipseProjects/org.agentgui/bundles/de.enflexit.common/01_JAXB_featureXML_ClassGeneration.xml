@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Energy Option Model - Class creation" default="xjc" basedir=".">
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          Properties: Folder structure / ClassPath / Version Info                        
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- Folder information for compiling and packing -->
+	<!-- <property name="jdk.dir" value="C:\Program Files\Java\jdk1.6.0_45" /> -->
+	
+	<property name="pro.dir" value="." />
+	<property name="src.dir" value="${pro.dir}/src" />
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: xjc =>                         
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="xjc" description="....">     
+		
+		<delete>
+			<fileset dir="${pro.dir}\src\de\enflexit\common\featureEvaluation\featureXML">
+				<include name="*.java"/>
+				<exclude name=".html"/>
+			</fileset>
+		</delete>
+		
+	    <java classname="com.sun.tools.internal.xjc.XJCFacade">
+	    	<arg value="-dtd"/>
+	    	<arg value="-d"/>         
+			<arg value="${src.dir}"/>         
+			<arg value="-p"/>        
+			<arg value="de.enflexit.common.featureEvaluation.featureXML"/>         
+			<arg value="${pro.dir}/01_featureXML.dtd"/>
+			    
+		</java>
+			
+	</target> 
+	
+</project>
