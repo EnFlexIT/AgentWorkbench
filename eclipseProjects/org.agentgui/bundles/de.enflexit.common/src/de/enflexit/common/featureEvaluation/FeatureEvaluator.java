@@ -35,7 +35,7 @@ public class FeatureEvaluator {
 	}
 	
 	private boolean isDevelopmentMode = true;
-	private String baseDirectoryPath = "D:\\AgentGui";
+	private String baseDirectoryPath = "";
 	
 	private HashMap<String, Feature> featureMap;
 	private HashMap<String, Plugin> pluginMap;
@@ -267,7 +267,7 @@ public class FeatureEvaluator {
 			baseDirectory = new File(this.baseDirectoryPath);
 		} else {
 			File launcherfile = new File(System.getProperty("eclipse.launcher"));
-			baseDirectory = new File(launcherfile.getParentFile().getAbsolutePath());
+			baseDirectory = launcherfile.getParentFile();
 		}
 		if (baseDirectory.exists()==false) {
 			System.err.println(this.getClass().getSimpleName() + ": Could not find base directory '" + baseDirectory.getAbsolutePath() + "'");
