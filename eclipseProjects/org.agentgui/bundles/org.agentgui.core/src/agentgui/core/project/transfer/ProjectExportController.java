@@ -468,7 +468,7 @@ public class ProjectExportController {
 		ArchiveFileHandler newZipper = new ArchiveFileHandler();
 		HashMap<File, String> foldersToAdd = this.buildFoldersToAddHasmap();
 		//			newZipper.appendFolderToArchive(tempFolderPath.toFile(), installationPackageFile, exportSettings.getTargetFile(), "agentgui/projects");
-		newZipper.appendFoldersToArchive(installationPackageFile, this.exportSettings.getTargetFile(), foldersToAdd);
+		newZipper.appendFoldersToArchive(installationPackageFile, this.exportSettings.getTargetFile(), foldersToAdd, true);
 		return true;
 	}
 
@@ -553,14 +553,6 @@ public class ProjectExportController {
 			}
 			this.updateProgressMonitor(80);
 
-			// --- Remove the temporary export folder -------------
-			try {
-				RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
-				folderDeleter.deleteFolder(tempFolderPath);
-			} catch (IOException e) {
-				System.err.println("Error deleting temoprary export folder");
-				e.printStackTrace();
-			}
 			this.updateProgressMonitor(100);
 			this.disposeProgressMonitor();
 

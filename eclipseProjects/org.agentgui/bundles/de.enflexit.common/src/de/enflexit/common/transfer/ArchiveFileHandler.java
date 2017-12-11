@@ -274,33 +274,43 @@ public class ArchiveFileHandler {
 	 * Appends multiple folders to an existing archive. The archive format is determines from the file extension.
 	 * @param archiveSourceFile The original archive
 	 * @param archiveTargetFile The resulting extended archive
-	 * @param folders Hashmap containing the folders to add as keys and their paths inside the archive as values
+	 * @param folders {@link HashMap} containing the folders to add as keys and their paths inside the archive as values
+	 * @param deleteAfterwards if true, the folders will be deleted after integrating them into the archive
 	 * @return successful?
 	 */
-	public boolean appendFoldersToArchive(File archiveSourceFile, File archiveTargetFile, HashMap<File, String> folders) {
-		return this.appendFoldersToArchive(archiveSourceFile, archiveTargetFile, folders, this.determineArchiveFormat(archiveSourceFile));
+	public boolean appendFoldersToArchive(File archiveSourceFile, File archiveTargetFile, HashMap<File, String> folders, boolean deleteAfterwards) {
+		return this.appendFoldersToArchive(archiveSourceFile, archiveTargetFile, folders, this.determineArchiveFormat(archiveSourceFile), deleteAfterwards);
 	}
 
 	/**
 	 * Appends multiple folders to an existing archive
 	 * @param archiveSourceFile The original archive
 	 * @param archiveTargetFile The resulting extended archive
-	 * @param folders Hashmap containing the folders to add as keys and their paths inside the archive as values
+	 * @param folders {@link HashMap} containing the folders to add as keys and their paths inside the archive as values
 	 * @param archiveFormat The archive format
+	 * @param deleteAfterwards if true, the folders will be deleted after integrating them into the archive
 	 * @return successful?
 	 */
-	public boolean appendFoldersToArchive(File archiveSourceFile, File archiveTargetFile, HashMap<File, String> folders, ArchiveFormat archiveFormat) {
+	public boolean appendFoldersToArchive(File archiveSourceFile, File archiveTargetFile, HashMap<File, String> folders, ArchiveFormat archiveFormat, boolean deleteAfterwards) {
 		this.archiveFormat = archiveFormat;
 
 		boolean success;
 		ArchiveOutputStream outputStream = null;
 		try {
+			
+			RecursiveFolderDeleter deleter = null;
+			if (deleteAfterwards == true) {
+				deleter = new RecursiveFolderDeleter();
+			}
 
 			outputStream = this.createArchiveOutputStream(archiveTargetFile);
 			this.copyArchiveContents(archiveSourceFile, outputStream);
 			for (File folder : folders.keySet()) {
 				String pathInsideArchive = folders.get(folder);
 				this.addFileToArchive(folder, folder, pathInsideArchive, outputStream);
+				if (deleteAfterwards == true) {
+					deleter.deleteFolder(folder.toPath());
+				}
 			}
 			success = true;
 
