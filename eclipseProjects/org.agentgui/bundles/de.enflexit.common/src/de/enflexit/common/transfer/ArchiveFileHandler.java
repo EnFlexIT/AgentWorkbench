@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -250,6 +251,62 @@ public class ArchiveFileHandler {
 		} catch (IOException e) {
 
 			System.err.println("Error appending folder " + folder.getName() + " to archive " + archiveFile.getName());
+			e.printStackTrace();
+			success = false;
+
+		} finally {
+
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					System.err.println("Error closing output stream");
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		return success;
+	}
+
+	/**
+	 * Appends multiple folders to an existing archive. The archive format is determines from the file extension.
+	 * @param archiveSourceFile The original archive
+	 * @param archiveTargetFile The resulting extended archive
+	 * @param folders Hashmap containing the folders to add as keys and their paths inside the archive as values
+	 * @return successful?
+	 */
+	public boolean appendFoldersToArchive(File archiveSourceFile, File archiveTargetFile, HashMap<File, String> folders) {
+		return this.appendFoldersToArchive(archiveSourceFile, archiveTargetFile, folders, this.determineArchiveFormat(archiveSourceFile));
+	}
+
+	/**
+	 * Appends multiple folders to an existing archive
+	 * @param archiveSourceFile The original archive
+	 * @param archiveTargetFile The resulting extended archive
+	 * @param folders Hashmap containing the folders to add as keys and their paths inside the archive as values
+	 * @param archiveFormat The archive format
+	 * @return successful?
+	 */
+	public boolean appendFoldersToArchive(File archiveSourceFile, File archiveTargetFile, HashMap<File, String> folders, ArchiveFormat archiveFormat) {
+		this.archiveFormat = archiveFormat;
+
+		boolean success;
+		ArchiveOutputStream outputStream = null;
+		try {
+
+			outputStream = this.createArchiveOutputStream(archiveTargetFile);
+			this.copyArchiveContents(archiveSourceFile, outputStream);
+			for (File folder : folders.keySet()) {
+				String pathInsideArchive = folders.get(folder);
+				this.addFileToArchive(folder, folder, pathInsideArchive, outputStream);
+			}
+			success = true;
+
+		} catch (IOException e) {
+
+			System.err.println("Error appending folders to archive " + archiveSourceFile.getName());
 			e.printStackTrace();
 			success = false;
 
