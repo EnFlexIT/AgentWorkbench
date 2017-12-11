@@ -41,6 +41,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.MainWindow;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
+import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 
 /**
  * This class controls all aspects of the application's execution
@@ -172,6 +173,8 @@ public class PlugInApplication implements IApplication {
 		be.addBundleClassFilter(new FilterForBaseService(), false);
 		be.addBundleClassFilter(new FilterForOntology(), false);
 		be.evaluateAllBundles();
+		// --- Evaluate the features ----------------------
+		FeatureEvaluator.getInstance().evaluateFeatureInformationInThread();
 	}
 	
 	/**
