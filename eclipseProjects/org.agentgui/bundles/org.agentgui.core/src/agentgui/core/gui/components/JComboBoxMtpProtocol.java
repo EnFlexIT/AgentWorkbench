@@ -61,6 +61,7 @@ public class JComboBoxMtpProtocol extends JComboBox<MtpProtocol> {
 			model = new DefaultComboBoxModel<MtpProtocol>();
 			model.addElement(MtpProtocol.HTTP);
 			model.addElement(MtpProtocol.HTTPS);
+			model.addElement(MtpProtocol.PROXIEDHTTPS);
 		}
 		return model;
 	}

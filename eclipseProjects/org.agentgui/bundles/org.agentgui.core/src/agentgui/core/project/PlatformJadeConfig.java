@@ -30,6 +30,7 @@ package agentgui.core.project;
 
 import jade.core.Profile;
 import jade.core.ProfileImpl;
+import jade.mtp.http.ProxiedHTTPS;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -275,7 +276,6 @@ public class PlatformJadeConfig implements Serializable {
 			trustStorePassword = this.getTrustStorePassword();
 		}
 		
-		
 		// --------------------------------------------------------------------
 		// --- Apply MTP-settings to profile ----------------------------------
 		// --------------------------------------------------------------------
@@ -303,18 +303,43 @@ public class PlatformJadeConfig implements Serializable {
 			}	
 			// --- Set the MTP address ----------------------------------------
 			if (ipAddress!=null) {
+				profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 				Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
 				if (mtpProtocol==MtpProtocol.HTTP) {
-					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
-				} else {
-					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
+					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName()+"(http://" + ipAddress + ":" + freePort + "/acc)");
+				} else if(mtpProtocol==MtpProtocol.HTTPS) {
+					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName()+"(https://" + ipAddress + ":" + freePort + "/acc)");
 					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile);
 					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
-					profile.setParameter("jade_mtp_http_https_trustManagerClass","jade.mtp.http.https.FriendListAuthentication");
+					profile.setParameter("jade_mtp_http_https_trustManagerClass",jade.mtp.http.https.FriendListAuthentication.class.getName()+"");
 					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
 				}
-				profile.setParameter(Profile.LOCAL_HOST, ipAddress);
+				else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS){
+					profile.setParameter(Profile.MTPS, ProxiedHTTPS.class.getName());
+					
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTP);
+//					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_ADDRESS, ProxiedHTTPS.LOOPBACK_ADDRESS);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_ADDRESS, "132.252.61.116");
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PORT, 7778+"");
+					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PATH, ProxiedHTTPS.DEFAULT_PATH);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTPS);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_ADDRESS, ipAddress);
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PORT, mtpPort+"");
+					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PATH, "/agentgui");
+					
+					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile); // needed as dummy
+					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
+					profile.setParameter("jade_mtp_http_https_trustManagerClass",jade.mtp.http.https.FriendListAuthentication.class.getName()+"");
+					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
+					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
+					
+					// reset LOCAL_HOST and set it to to loopback to not open the RMI ports (1099) on the public interfaces
+					profile.setParameter(Profile.LOCAL_HOST, null);
+					profile.setParameter(Profile.LOCAL_HOST, ProxiedHTTPS.LOOPBACK_ADDRESS);
+//					profile.setParameter(Profile.LOCAL_HOST, "132.252.61.116");
+					profile.setParameter(Profile.PLATFORM_ID, "agentgui");
+				}
 			}
 		}
 		

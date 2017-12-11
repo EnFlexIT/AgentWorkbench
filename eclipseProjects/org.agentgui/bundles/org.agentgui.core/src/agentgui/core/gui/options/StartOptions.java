@@ -787,7 +787,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			this.executionModeNew = this.executionModeOld;
 			this.setGlobalData2Form();
 			this.getJPanelMTPConfig().getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
-			this.getJPanelMTPConfig().setVisibleFalse();
+			this.getJPanelMTPConfig().hideCertificateSettings();
 			
 		} else if (actCMD.equalsIgnoreCase("applySettings")) {
 			if(getJPanelMTPConfig().getJComboBoxMtpProtocol().getSelectedProtocol()!= getJPanelMasterConfiguration().getJcomboboxMtpProtocol().getSelectedProtocol()) {

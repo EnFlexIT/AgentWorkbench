@@ -1,5 +1,6 @@
 package de.enflexit.common.p2;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
@@ -30,6 +32,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
+import de.enflexit.common.bundleEvaluation.BundleEvaluator;
+
 /**
  * This class handles p2-based update and install operations.
  * 
@@ -38,6 +42,9 @@ import org.osgi.framework.ServiceReference;
  */
 public class P2OperationsHandler {
 
+	private boolean isDevelopmentMode = false;
+	private File p2Directory;
+	
 	private ProvisioningSession provisioningSession;
 	private IProvisioningAgent provisioningAgent;
 
@@ -46,35 +53,80 @@ public class P2OperationsHandler {
 	private IMetadataRepositoryManager metadataRepositoryManager;
 	private IArtifactRepositoryManager artifactRepositoryManager;
 
+	
+	
+	/**
+	 * Instantiates a new P2OperationsHandler.
+	 */
+	public P2OperationsHandler() { 
+		this(false, null);
+	}
+	/**
+	 * Instantiates a new P2OperationsHandler.
+	 *
+	 * @param isDevelopmentMode set, if the class is used for developments and external p2 locations
+	 * @param p2Directory the p2 directory that should be used for the new instance
+	 */
+	public P2OperationsHandler(boolean isDevelopmentMode, File p2Directory) {
+		if (isDevelopmentMode==true && p2Directory!=null && p2Directory.exists()==true && p2Directory.isDirectory()) {
+			this.isDevelopmentMode = isDevelopmentMode;
+			this.p2Directory = p2Directory;
+		}
+	}
+
+	
 	/**
 	 * Gets the provisioning session.
-	 *
 	 * @return the provisioning session
 	 */
 	private ProvisioningSession getProvisioningSession() {
 		if (provisioningSession == null) {
-			provisioningSession = new ProvisioningSession(getProvisioningAgent());
+			provisioningSession = new ProvisioningSession(this.getProvisioningAgent());
 		}
 		return provisioningSession;
 	}
 
 	/**
 	 * Gets the provisioning agent.
-	 *
 	 * @return the provisioning agent
 	 */
 	private IProvisioningAgent getProvisioningAgent() {
 		if (provisioningAgent == null) {
-			BundleContext bundleContext = FrameworkUtil.getBundle(P2OperationsHandler.class).getBundleContext();
-			ServiceReference<?> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.SERVICE_NAME);
-
-			if (serviceReference != null) {
-				provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
+			
+			// ----------------------------------------------------------------
+			// --- Access external p2 directory for developments ? ------------
+			// ----------------------------------------------------------------
+			if (this.isDevelopmentMode==true && this.p2Directory!=null && this.p2Directory.exists()==true && this.p2Directory.isDirectory()==true) {
+				// --- This should provide the agent for developments -----
+				BundleContext bc = BundleEvaluator.getInstance().getBundleContext();
+				ServiceReference<?> sr = bc.getServiceReference(IProvisioningAgentProvider.SERVICE_NAME);
+				if (sr!=null)  {
+					IProvisioningAgentProvider agentProvider = (IProvisioningAgentProvider) bc.getService(sr);
+					try {
+						provisioningAgent = agentProvider.createAgent(this.p2Directory.toURI());
+					} catch (ProvisionException pOrUriEx) {
+						pOrUriEx.printStackTrace();
+						this.isDevelopmentMode = false;
+					}
+				}
+				
+			} else {
+				this.isDevelopmentMode = false;
 			}
+			
+			if (provisioningAgent==null) {
+				// --- This should provide the agent for product execution ----
+				BundleContext bundleContext = FrameworkUtil.getBundle(P2OperationsHandler.class).getBundleContext();
+				ServiceReference<?> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.SERVICE_NAME);
+				if (serviceReference!=null) {
+					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
+				}	
+			}
+			
 		}
 		return provisioningAgent;
 	}
-
+	
 	/**
 	 * Gets a {@link IProgressMonitor} for p2 operations. Currently always returns a new {@link NullProgressMonitor}.
 	 * 
@@ -298,22 +350,33 @@ public class P2OperationsHandler {
 		return this.getMetadataRepositoryManager().getRepositoryProperty(repositoryURI, IRepository.PROP_NICKNAME);
 	}
 
+	/**
+	 * Returns the installed features.
+	 *
+	 * @return the installed features
+	 * @throws Exception the exception
+	 */
 	public List<IInstallableUnit> getInstalledFeatures() throws Exception {
 
-		List<IInstallableUnit> featuresList = new ArrayList<IInstallableUnit>();
-
 		IProvisioningAgent provisioningAgent = this.getProvisioningAgent();
-
-		String profileId = IProfileRegistry.SELF; // the profile id for the currently running system
-
+		
 		IProfileRegistry profileRegistry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
-		IProfile profile = profileRegistry.getProfile(profileId);
-		if (profile == null) {
+		IProfile profile = null;
+		if (this.isDevelopmentMode==true) {
+			if (profileRegistry.getProfiles().length>0) {
+				profile = profileRegistry.getProfiles()[0];
+			}
+		} else {
+			profileRegistry.getProfile(IProfileRegistry.SELF);
+		}
+		if (profile==null) {
 			throw new Exception("Unable to access p2 profile - This is not possible when starting the application from the IDE!");
 		}
+		
+		List<IInstallableUnit> featuresList = new ArrayList<IInstallableUnit>();
 		IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
 		IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
-
+		
 		for (IInstallableUnit feature : queryResult) {
 			if (QueryUtil.isProduct(feature) == false) {
 				featuresList.add(feature);
@@ -322,39 +385,5 @@ public class P2OperationsHandler {
 		return featuresList;
 	}
 
-	// Requires the (deprecated) bundle org.eclipse.update.configurator to work properly
-//	public void getInstalledFeaturesOldStyle() {
-//		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-//		if (providers.length == 0) {
-//			System.out.println("No BundleGroupProviders found!");
-//		} else {
-//
-//			for (IBundleGroupProvider provider : providers) {
-//
-//				System.out.println("BGP: " + provider.getName());
-//				IBundleGroup[] groups = provider.getBundleGroups();
-//
-//				if (groups.length == 0) {
-//					System.out.println("- No BundleGroups found!");
-//				} else {
-//
-//					for (IBundleGroup group : groups) {
-//
-//						System.out.println("-BG: " + group.getName());
-//						Bundle[] bundles = group.getBundles();
-//
-//						if (bundles.length == 0) {
-//							System.out.println("  - No Bundles found");
-//						} else {
-//							for (Bundle bundle : bundles) {
-//								System.out.println("--B: " + bundle.getSymbolicName());
-//							}
-//						}
-//
-//					}
-//				}
-//			}
-//		}
-//	}
 
 }
