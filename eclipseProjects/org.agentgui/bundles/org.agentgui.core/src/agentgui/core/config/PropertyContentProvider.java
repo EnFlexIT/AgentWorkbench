@@ -103,15 +103,23 @@ public class PropertyContentProvider {
 			this.checkAndProvidePropertyContent(fileToProvide);
 		}
 	}
-	
+
 	/**
 	 * Checks and provides the specified property content.
 	 * @param fileToProvide the {@link FileToProvide}
 	 */
 	public void checkAndProvidePropertyContent(FileToProvide fileToProvide) {
+		this.checkAndProvidePropertyContent(fileToProvide, false);
+	}
+	/**
+	 * Checks and provides the specified property content.
+	 * @param fileToProvide the {@link FileToProvide}
+	 * @param overwriteExistingFile the overwrite existing file
+	 */
+	public void checkAndProvidePropertyContent(FileToProvide fileToProvide, boolean overwriteExistingFile) {
 		
 		// --- Try to find the file in the properties ----- 
-		final String fileNameToMatch = fileToProvide.toString();
+		String fileNameToMatch = fileToProvide.toString();
 		File[] fileFound = this.propertyDirectory.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -131,7 +139,7 @@ public class PropertyContentProvider {
 		}
 		
 		// --- Could the file be found? -------------------
-		if (fileFound==null || fileFound.length==0) {
+		if (overwriteExistingFile==true || fileFound==null || fileFound.length==0) {
 			// --- File not found => extract from bundle --
 			this.extractFromBundle(fileToProvide);
 		}

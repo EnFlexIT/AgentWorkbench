@@ -423,6 +423,7 @@ de;MySQL-Fehler;MySQL-Error
 de;Möchten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?
 de;Möchten Sie JADE nun beenden?;Quit JADE now?
 de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
+de;Möchten Sie das Wörterbuches auf den Stand nach der Erstinstallation zurücksetzen?;Would you like to reset the dictionary to the state after the first installation?;;;
 de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
 de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
@@ -702,6 +703,9 @@ de;Wert;Value;;;
 de;Wiederherstellen;Restore;;;
 de;Wochen;Weeks;;;
 de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the current Setup?
+de;Wörterbuch zurücksetzen.;Reset dictionary.;;;
+de;Wörterbuch zurücksetzen;Reset dictionary;;;
+de;Wörterbuch zurücksetzen?;Reset the dictionary?;;;
 de;Wörterbuch;Dictionary
 de;X Wert;X value;;;
 de;X-Duplikate zulassen;Allow duplicate X-Values;;;

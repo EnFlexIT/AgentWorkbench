@@ -131,6 +131,15 @@ public class Language implements Translator {
 	}
 	
 	/**
+	 * Restarts the dictionary.
+	 */
+	public static void reStartDictionary() {
+		dictLineList64 = new ArrayList<String>();
+		dictHash64 = new Hashtable<String, Integer>();
+		startDictionary();
+	}
+	
+	/**
 	 * Changing the application language to: newLang
 	 * => "DE", "EN", "IT", "ES" or "FR"  
 	 * @param newLang
