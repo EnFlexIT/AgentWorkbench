@@ -152,12 +152,12 @@ public class InstallationPackageFinder {
 					this.installationPackageWindows64 = instPack;
 					fileInfo += Language.translate("Found installation package for Windows 64-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Windows 64-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_WINDOWS_64, instPack, "Installation package for Windows 64-Bit"));
 				} else {
 					this.installationPackageWindows32 = instPack;
 					fileInfo += Language.translate("Found installation package for Windows 32-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Windows 32-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_WINDOWS_32, instPack, "Installation package for Windows 32-Bit"));
 				}
 				
 			} else if (instPackName.contains("-linux")) {
@@ -166,12 +166,12 @@ public class InstallationPackageFinder {
 					this.installationPackageLinux64 = instPack;
 					fileInfo += Language.translate("Found installation package for Linux 64-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Linux 64-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_LINUX_64, instPack, "Installation package for Linux 64-Bit"));
 				} else {
 					this.installationPackageLinux32 = instPack;
 					fileInfo += Language.translate("Found installation package for Linux 32-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for Linux 32-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_LINUX_32, instPack, "Installation package for Linux 32-Bit"));
 				}
 				
 			} else if (instPackName.contains("-mac")) {
@@ -179,7 +179,7 @@ public class InstallationPackageFinder {
 				this.installationPackageMacOS = instPack;
 				fileInfo += Language.translate("Found installation package for macOS", Language.EN);
 				fileInfo += " (" + instPackName + ")\n";
-				this.getInstallationPackageVector().addElement(new InstallationPackageDescription(instPack, "Installation package for macOS"));
+				this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_MAC_OS, instPack, "Installation package for macOS"));
 			}
 		}
 		
@@ -259,12 +259,29 @@ public class InstallationPackageFinder {
 		}
 		return installationPackageVector;
 	}
+	
+	public InstallationPackageDescription getInstallationPackageForOperatingSystem(String operatingSystem) {
+		for(InstallationPackageDescription installationPackage : installationPackageVector) {
+			if(installationPackage.getOperatingSystem().equals(operatingSystem)) {
+				return installationPackage;
+			}
+		}
+		return null;
+	}
 	/**
 	 * The Class InstallationPackageDescription can be used within list model.
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	public class InstallationPackageDescription {
 		
+		public static final String OS_WINDOWS_32 = "win32";
+		public static final String OS_WINDOWS_64 = "win64";
+		public static final String OS_LINUX_32 = "linux32";
+		public static final String OS_LINUX_64 = "linux64";
+		public static final String OS_MAC_OS = "macOs";
+		
+		
+		private String operatingSystem;
 		private File pacakgeFile;
 		private String packageDescription;
 		
@@ -274,11 +291,20 @@ public class InstallationPackageFinder {
 		 * @param packageFile the package file
 		 * @param packageDescription the description
 		 */
-		public InstallationPackageDescription(File packageFile, String packageDescription) {
+		public InstallationPackageDescription(String operatingSystem, File packageFile, String packageDescription) {
+			this.setOperatingSystem(operatingSystem);
 			this.setPacakgeFile(packageFile);
 			this.setPacakgeDescription(packageDescription);
 		}
 		
+		public String getOperatingSystem() {
+			return operatingSystem;
+		}
+
+		public void setOperatingSystem(String operatingSystem) {
+			this.operatingSystem = operatingSystem;
+		}
+
 		public void setPacakgeFile(File pacakgeFile) {
 			this.pacakgeFile = pacakgeFile;
 		}
@@ -299,6 +325,32 @@ public class InstallationPackageFinder {
 		@Override
 		public String toString() {
 			return this.getPacakgeDescription() + " (" + this.getPacakgeFile().getName() + ")";
+		}
+		
+		/**
+		 * Checks if this installation package is for windows.
+		 *
+		 * @return true, if is for windows
+		 */
+		public boolean isForWindows() {
+			return (operatingSystem.equals(OS_WINDOWS_32) || operatingSystem.equals(OS_WINDOWS_64));
+		}
+		
+		/**
+		 * Checks if this installation package is for linux.
+		 *
+		 * @return true, if is for linux
+		 */
+		public boolean isForLinux() {
+			return (operatingSystem.equals(OS_LINUX_32) || operatingSystem.equals(OS_LINUX_64));
+		}
+		
+		/**
+		 * Checks if this installation package is for mac.
+		 * @return true, if is for mac
+		 */
+		public boolean isForMac() {
+			return (operatingSystem.equals(OS_MAC_OS));
 		}
 	}
 

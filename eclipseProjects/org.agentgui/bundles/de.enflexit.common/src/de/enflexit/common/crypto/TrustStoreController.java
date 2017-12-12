@@ -165,7 +165,7 @@ public class TrustStoreController {
 	 * @return true, if successful
 	 */
 	public boolean openTrustStore(File trustStoreFile, String trustStorePassword) {
-		if (trustStoreFile.exists()) {
+		if (trustStoreFile != null && trustStoreFile.exists()) {
 			try {
 				trustStoreInputStream = new FileInputStream(trustStoreFile);
 				init(trustStoreFile, trustStorePassword);

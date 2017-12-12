@@ -244,7 +244,13 @@ public class CertificateProperties {
 			ldapDN = new LdapName(provider);
 			HashMap<String,String> providerParts = new HashMap<String,String>();
 			for(Rdn rdn: ldapDN.getRdns()) {
-				providerParts.put(rdn.getType(), (String) rdn.getValue());
+				if(rdn.getValue() instanceof String){
+					providerParts.put(rdn.getType(), (String) rdn.getValue());
+				} else {
+					// multi-valued RDN
+//					System.err.println(rdn.getType());
+//					System.err.println(rdn.getValue());
+				}
 			}				
 
 	        this.setCommonName(providerParts.get("CN"));

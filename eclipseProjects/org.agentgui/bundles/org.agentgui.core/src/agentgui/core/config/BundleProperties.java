@@ -93,12 +93,12 @@ public class BundleProperties {
 	public static final String DEF_UPDATE_KEEP_DICTIONARY = "37_UPDATE_KEEP_DICTIONARY";
 	public static final String DEF_UPDATE_DATE_LAST_CHECKED = "38_UPDATE_DATE_LAST_CHECKED";
 	
-	public static final String DEF_DeviceServcie_ProjectFolder = "40_DEVICE_SERVICE_PROJECT";
-	public static final String DEF_DeviceServcie_ExecAs = "41_DEVICE_SERVICE_EXEC_AS";
-	public static final String DEF_DeviceServcie_Setup = "42_DEVICE_SERVICE_SETUP";
-	public static final String DEF_DeviceServcie_Agent = "43_DEVICE_SERVICE_AGENT";
-	public static final String DEF_DeviceServcie_AgentName = "44_DEVICE_SERVICE_AGENT_Name";
-	public static final String DEF_DeviceServcie_Vis = "45_DEVICE_SERVICE_VISUALISATION";
+	public static final String DEF_DEVICE_SERVICE_PROJECT_FOLDER = "40_DEVICE_SERVICE_PROJECT";
+	public static final String DEF_DEVICE_SERVICE_EXEC_AS = "41_DEVICE_SERVICE_EXEC_AS";
+	public static final String DEF_DEVICE_SERVICE_SETUP = "42_DEVICE_SERVICE_SETUP";
+	public static final String DEF_DEVICE_SERVICE_AGENT_CLASS = "43_DEVICE_SERVICE_AGENT";
+	public static final String DEF_DEVICE_SERVICE_AGENT_NAME = "44_DEVICE_SERVICE_AGENT_Name";
+	public static final String DEF_DEVICE_SERVICE_VISUALIZATION = "45_DEVICE_SERVICE_VISUALISATION";
 	
 	public static final String DEF_KEYSTORE_FILE = "50_KEY_STORE_FILE";
 	public static final String DEF_KEYSTORE_PASSWORD = "51_KEY_STORE_PASSWORD";
@@ -313,23 +313,23 @@ public class BundleProperties {
 		
 		
 		// --- this.DEF_DeviceServcie_ProjectFolder ---
-		stringPrefValue = eclipsePreferences.get(DEF_DeviceServcie_ProjectFolder, "");
+		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_PROJECT_FOLDER, "");
 		this.globalInfo.setDeviceServiceProjectFolder(stringPrefValue);	
 		// --- this.DEF_DeviceServcie_ExecAs ----------
-		stringPrefValue = eclipsePreferences.get(DEF_DeviceServcie_ExecAs, DeviceSystemExecutionMode.SETUP.toString());
+		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_EXEC_AS, DeviceSystemExecutionMode.SETUP.toString());
 		DeviceSystemExecutionMode dsem = DeviceSystemExecutionMode.valueOf(stringPrefValue);
 		this.globalInfo.setDeviceServiceExecutionMode(dsem);
 		// --- this.DEF_DeviceServcie_Setup -----------
-		stringPrefValue = eclipsePreferences.get(DEF_DeviceServcie_Setup, "");
+		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_SETUP, "");
 		this.globalInfo.setDeviceServiceSetupSelected(stringPrefValue);
 		// --- this.DEF_DeviceServcie_Agent -----------
-		stringPrefValue = eclipsePreferences.get(DEF_DeviceServcie_Agent, "");
+		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_AGENT_CLASS, "");
 		this.globalInfo.setDeviceServiceAgentClassName(stringPrefValue.trim());
 		// --- this.DEF_DeviceServcie_AgentName ------
-		stringPrefValue = eclipsePreferences.get(DEF_DeviceServcie_AgentName, "");
+		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_AGENT_NAME, "");
 		this.globalInfo.setDeviceServiceAgentName(stringPrefValue.trim());
 		// --- this.DEF_DeviceServcie_Vis ------------
-		stringPrefValue = eclipsePreferences.get(DEF_DeviceServcie_Vis, EmbeddedSystemAgentVisualisation.NONE.toString());
+		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_VISUALIZATION, EmbeddedSystemAgentVisualisation.NONE.toString());
 		EmbeddedSystemAgentVisualisation esaVis = EmbeddedSystemAgentVisualisation.valueOf(stringPrefValue);
 		this.globalInfo.setDeviceServiceAgentVisualisation(esaVis);
 		
@@ -451,17 +451,17 @@ public class BundleProperties {
 		
 		
 		// --- this.DEF_DeviceServcie_ProjectFolder ---
-		if (this.globalInfo.getDeviceServiceProjectFolder()!=null) eclipsePreferences.put(DEF_DeviceServcie_ProjectFolder, this.globalInfo.getDeviceServiceProjectFolder());
+		if (this.globalInfo.getDeviceServiceProjectFolder()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_PROJECT_FOLDER, this.globalInfo.getDeviceServiceProjectFolder());
 		// --- this.DEF_DeviceServcie_ExecAs ----------
-		eclipsePreferences.put(DEF_DeviceServcie_ExecAs, this.globalInfo.getDeviceServiceExecutionMode().toString());
+		eclipsePreferences.put(DEF_DEVICE_SERVICE_EXEC_AS, this.globalInfo.getDeviceServiceExecutionMode().toString());
 		// --- this.DEF_DeviceServcie_ProjectFolder ---
-		if (this.globalInfo.getDeviceServiceSetupSelected()!=null) eclipsePreferences.put(DEF_DeviceServcie_Setup, this.globalInfo.getDeviceServiceSetupSelected());
+		if (this.globalInfo.getDeviceServiceSetupSelected()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_SETUP, this.globalInfo.getDeviceServiceSetupSelected());
 		// --- this.DEF_DeviceServcie_Agent -----------
-		if (this.globalInfo.getDeviceServiceAgentClassName()!=null) eclipsePreferences.put(DEF_DeviceServcie_Agent, this.globalInfo.getDeviceServiceAgentClassName());
+		if (this.globalInfo.getDeviceServiceAgentClassName()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_AGENT_CLASS, this.globalInfo.getDeviceServiceAgentClassName());
 		// --- this.DEF_DeviceServcie_AgentName -----------
-		if (this.globalInfo.getDeviceServiceAgentName()!=null) eclipsePreferences.put(DEF_DeviceServcie_AgentName, this.globalInfo.getDeviceServiceAgentName());
+		if (this.globalInfo.getDeviceServiceAgentName()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_AGENT_NAME, this.globalInfo.getDeviceServiceAgentName());
 		// --- this.DEF_DeviceServcie_Vis -------------
-		eclipsePreferences.put(DEF_DeviceServcie_Vis, this.globalInfo.getDeviceServiceAgentVisualisation().toString());
+		eclipsePreferences.put(DEF_DEVICE_SERVICE_VISUALIZATION, this.globalInfo.getDeviceServiceAgentVisualisation().toString());
 		
 		
 		// --- this.DEF_OIDC_ISSUER_URI ------------------

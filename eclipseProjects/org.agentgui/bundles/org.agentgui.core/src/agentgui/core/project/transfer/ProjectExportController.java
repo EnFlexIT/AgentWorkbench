@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,7 +66,6 @@ import de.enflexit.common.transfer.RecursiveFolderDeleter;
 
 /**
  * This class is responsible for exporting projects from AgentWorkbench.
- * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ProjectExportController {
@@ -74,12 +74,11 @@ public class ProjectExportController {
 
 	private Project project;
 	private ProjectExportSettings exportSettings;
-	private boolean isShowUserDialogs=true;
-	
-	private Path tempExportFolderPath;
+	private boolean isShowUserDialogs = true;
+
+	private Path tempFolderPath;
 
 	private ProgressMonitor progressMonitor;
-
 
 	/**
 	 * Instantiates a new project export controller.
@@ -98,7 +97,8 @@ public class ProjectExportController {
 		if (this.project == null) {
 			this.project = this.selectProjectForExport();
 			// --- Return if the project selection was canceled -----
-			if (this.project==null) return;
+			if (this.project == null)
+				return;
 		}
 
 		// --- Show a dialog to configure the export ----------------
@@ -112,7 +112,7 @@ public class ProjectExportController {
 			// --- Select the export destination --------------------
 			JFileChooser chooser = this.getJFileChooser();
 			if (chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION) {
-				
+
 				File targetFile = chooser.getSelectedFile();
 				Application.getGlobalInfo().setLastSelectedFolder(targetFile.getParentFile());
 
@@ -137,16 +137,16 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Exports the current project using the provided {@link ProjectExportSettings} 
-	 * and showing the user dialogs, if necessary.
+	 * Exports the current project using the provided {@link ProjectExportSettings} and showing the user dialogs, if
+	 * necessary.
 	 * @param exportSettings The {@link ProjectExportSettings}
 	 */
 	public void exportProject(ProjectExportSettings exportSettings) {
 		this.exportProject(exportSettings, true, true);
 	}
+
 	/**
 	 * Exports the current project using the provided {@link ProjectExportSettings}.
-	 *
 	 * @param exportSettings The {@link ProjectExportSettings}
 	 * @param isShowUserDialogs the is show user dialogs
 	 * @param useConcurrentThread set true, if you want to export the project by a concurrent thread
@@ -154,17 +154,16 @@ public class ProjectExportController {
 	public void exportProject(ProjectExportSettings exportSettings, boolean isShowUserDialogs, boolean useConcurrentThread) {
 		this.exportSettings = exportSettings;
 		this.isShowUserDialogs = isShowUserDialogs;
-		if (useConcurrentThread==true) {
+		if (useConcurrentThread == true) {
 			ProjectExportThread exportThread = new ProjectExportThread();
 			exportThread.start();
 		} else {
-			this.doProjectExport();
+			this.doExport();
 		}
 	}
 
 	/**
 	 * Shows a dialog for project selection, loads the selected project
-	 * 
 	 * @return the selected project
 	 */
 	private Project selectProjectForExport() {
@@ -185,28 +184,33 @@ public class ProjectExportController {
 
 	/**
 	 * Creates and initialized a {@link JFileChooser} for selecting the export target
-	 * 
 	 * @return the {@link JFileChooser}
 	 */
-	private JFileChooser getJFileChooser() {
-
-		// --- Prepare file type filters -----------------------------
-		String projectFileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
-		FileNameExtensionFilter projectFileFilter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + projectFileSuffix + ")", projectFileSuffix);
-		FileNameExtensionFilter zipFileFilter = new FileNameExtensionFilter(Language.translate("Zip-Datei") + " (*.zip)", "zip");
-		FileNameExtensionFilter tarGzFileFilter = new FileNameExtensionFilter(Language.translate("Tar.gz-Datei") + " (*.tar.gz)", "tar.gz");
+	protected JFileChooser getJFileChooser() {
 
 		// --- Create and initialize the JFileChooser -------
 		JFileChooser jFileChooser = new JFileChooser();
-		jFileChooser.addChoosableFileFilter(projectFileFilter);
-		jFileChooser.addChoosableFileFilter(zipFileFilter);
-		jFileChooser.addChoosableFileFilter(tarGzFileFilter);
+		List<FileNameExtensionFilter> filtersList = this.getFileNameExtensionFilters();
+		for (FileNameExtensionFilter filter : filtersList) {
+			jFileChooser.addChoosableFileFilter(filter);
+		}
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setAcceptAllFileFilterUsed(false);
 
-		// --- Generate a file name proposition based on the export settings
-		// ------------
+		File proposedFile = new File(this.getProposedFileName());
+		jFileChooser.setSelectedFile(proposedFile);
+		jFileChooser.setCurrentDirectory(proposedFile);
+
+		return jFileChooser;
+	}
+
+	/**
+	 * Provides a default file name for the export target.
+	 * @return the default file name
+	 */
+	protected String getProposedFileName() {
+		// --- Generate a file name proposition based on the export settings ---------------
 		StringBuffer proposedFileName = new StringBuffer();
 		proposedFileName.append(Application.getGlobalInfo().getLastSelectedFolderAsString());
 
@@ -216,30 +220,39 @@ public class ProjectExportController {
 			proposedFileName.append(FILE_NAME_FOR_INSTALLATION_PACKAGE);
 			if (this.exportSettings.getInstallationPackage().getPacakgeFile().getName().endsWith(".zip")) {
 				proposedFileName.append(".zip");
-				jFileChooser.setFileFilter(zipFileFilter);
 			} else {
 				proposedFileName.append(".tar.gz");
-				jFileChooser.setFileFilter(tarGzFileFilter);
 			}
 
 		} else {
 
 			// --- Project only -----------------
 			proposedFileName.append(project.getProjectFolder() + '.' + Application.getGlobalInfo().getFileEndProjectZip());
-			jFileChooser.setFileFilter(projectFileFilter);
 
 		}
+		return proposedFileName.toString();
+	}
 
-		File proposedFile = new File(proposedFileName.toString());
-		jFileChooser.setSelectedFile(proposedFile);
-		jFileChooser.setCurrentDirectory(proposedFile);
-
-		return jFileChooser;
+	/**
+	 * Provides a list of {@link FileNameExtensionFilter}s for a {@link JFileChooser} dialog. Can be overridden by
+	 * subclasses to customize the list of available filters.
+	 * @return The list of {@link FileNameExtensionFilter}s
+	 */
+	protected List<FileNameExtensionFilter> getFileNameExtensionFilters() {
+		List<FileNameExtensionFilter> filtersList = new ArrayList<FileNameExtensionFilter>();
+		// --- Prepare file type filters -----------------------------
+		String projectFileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
+		FileNameExtensionFilter projectFileFilter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + projectFileSuffix + ")", projectFileSuffix);
+		filtersList.add(projectFileFilter);
+		FileNameExtensionFilter zipFileFilter = new FileNameExtensionFilter(Language.translate("Zip-Datei") + " (*.zip)", "zip");
+		filtersList.add(zipFileFilter);
+		FileNameExtensionFilter tarGzFileFilter = new FileNameExtensionFilter(Language.translate("Tar.gz-Datei") + " (*.tar.gz)", "tar.gz");
+		filtersList.add(tarGzFileFilter);
+		return filtersList;
 	}
 
 	/**
 	 * Copies all required project data to a temporary folder next to the selected
-	 * 
 	 * @return Copying successful?
 	 */
 	private boolean copyProjectDataToTempFolder() {
@@ -247,21 +260,11 @@ public class ProjectExportController {
 		// --- Determine the source path --------------
 		Path sourcePath = new File(project.getProjectFolderFullPath()).toPath();
 
-		// --- Specify folders that should not be copied ------
-		List<Path> skipList = new ArrayList<>();
-		skipList.add(sourcePath.resolve("~tmp"));
-		if (this.exportSettings.isIncludeAllSetups() == false) {
-			// --- If only selected setups should be exported, copying setup data is done in
-			// a separate step -----------
-			skipList.add(sourcePath.resolve("setups"));
-			skipList.add(sourcePath.resolve("setupsEnv"));
-		}
-
 		// --- Copy the required files to the temporary folder --------
 		try {
 			Files.createDirectories(this.getTempExportFolderPath());
 			RecursiveFolderCopier rfc = CommonComponentFactory.getNewRecursiveFolderCopier();
-			rfc.copyFolder(sourcePath, this.getTempExportFolderPath(), skipList);
+			rfc.copyFolder(sourcePath, this.getTempExportFolderPath(), this.getFolderCopySkipList(sourcePath));
 		} catch (IOException e) {
 			System.err.println("Error copying project data!");
 			e.printStackTrace();
@@ -272,8 +275,26 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Copies the required files for the selected simulation setups. Based on a negative list approach, i.e. all files from the setup folders except those of the setups not being exported will be copied.
-	 * 
+	 * Gets a list of folders and files to be skipped when copying the project directory
+	 * @param sourcePath The source path (project directory)
+	 * @return The skip list
+	 */
+	protected List<Path> getFolderCopySkipList(Path sourcePath) {
+		// --- Specify folders that should not be copied ------
+		List<Path> skipList = new ArrayList<>();
+		skipList.add(sourcePath.resolve("~tmp"));
+		if (this.exportSettings.isIncludeAllSetups() == false) {
+			// --- If only selected setups should be exported, copying setup data is done in
+			// a separate step -----------
+			skipList.add(sourcePath.resolve("setups"));
+			skipList.add(sourcePath.resolve("setupsEnv"));
+		}
+		return skipList;
+	}
+
+	/**
+	 * Copies the required files for the selected simulation setups. Based on a negative list approach, i.e. all files from
+	 * the setup folders except those of the setups not being exported will be copied.
 	 * @return Copying successful?
 	 */
 	private boolean copyRequiredSimulationSetupFiles() {
@@ -366,7 +387,6 @@ public class ProjectExportController {
 
 	/**
 	 * Loads the simulation setup with the specified name
-	 * 
 	 * @param setupName The setup to be loaded
 	 * @return The setup
 	 * @throws JAXBException Parsing the setup file failed
@@ -397,7 +417,7 @@ public class ProjectExportController {
 	private void removeUnexportedSetupsFromList() {
 
 		// --- Get the list of setups from the project file --------------
-		Project exportedProject = Project.load(this.tempExportFolderPath.toFile(), false);
+		Project exportedProject = Project.load(this.tempFolderPath.toFile(), false);
 		Set<String> setupNames = new HashSet<>(exportedProject.getSimulationSetups().keySet());
 
 		// --- Remove all setups that are not exported --------------------
@@ -417,26 +437,25 @@ public class ProjectExportController {
 		}
 
 		// --- Save the changes ------------
-		exportedProject.save(this.tempExportFolderPath.toFile(), false);
+		exportedProject.save(this.tempFolderPath.toFile(), false);
 	}
 
 	/**
 	 * Gets the temporary export folder path
-	 * 
 	 * @return the temporary export folder path
 	 */
 	private Path getTempExportFolderPath() {
 
-		if (tempExportFolderPath == null) {
+		if (tempFolderPath == null) {
 
 			// --- Determine the path for the temporary export folder, based on the selected
 			// target file --------------
 			File targetFile = this.exportSettings.getTargetFile();
 			Path containingFolder = targetFile.getParentFile().toPath();
-			tempExportFolderPath = containingFolder.resolve(project.getProjectFolder());
+			tempFolderPath = containingFolder.resolve(project.getProjectFolder());
 		}
 
-		return this.tempExportFolderPath;
+		return this.tempFolderPath;
 	}
 
 	/**
@@ -446,16 +465,99 @@ public class ProjectExportController {
 	private boolean integrateProjectIntoInstallationPackage() {
 
 		File installationPackageFile = this.exportSettings.getInstallationPackage().getPacakgeFile();
-		try {
-			ArchiveFileHandler newZipper = new ArchiveFileHandler();
-			newZipper.appendFolderToArchive(tempExportFolderPath.toFile(), installationPackageFile, exportSettings.getTargetFile(), "agentgui/projects");
-			
-		} catch (IOException ioEx) {
-			System.err.println("Error integrating project into installation package!");
-			ioEx.printStackTrace();
-			return false;
-		}
+		ArchiveFileHandler newZipper = new ArchiveFileHandler();
+		HashMap<File, String> foldersToAdd = this.buildFoldersToAddHasmap();
+		//			newZipper.appendFolderToArchive(tempFolderPath.toFile(), installationPackageFile, exportSettings.getTargetFile(), "agentgui/projects");
+		newZipper.appendFoldersToArchive(installationPackageFile, this.exportSettings.getTargetFile(), foldersToAdd, true);
 		return true;
+	}
+
+	/**
+	 * Builds a HashMap containing the folders to be added to the installation package archive as keys and their paths inside the archive as values
+	 * @return the HashMap
+	 */
+	protected HashMap<File, String> buildFoldersToAddHasmap() {
+		HashMap<File, String> foldersToAdd = new HashMap<>();
+		// --- Add the project directory ---------------------
+		foldersToAdd.put(this.tempFolderPath.toFile(), "agentgui/projects");
+		return foldersToAdd;
+	}
+
+	/**
+	 * This callback method is called before zipping the exported project. In can be implemented by subclasses to perform
+	 * additional actions.
+	 * @return If false is returned, the export process will be aborted
+	 */
+	protected boolean beforeZip() {
+		return true;
+	}
+
+	/**
+	 * This callback method is called before zipping the exported project. In can be overriden by subclasses to provide
+	 * specific success/failure messages.
+	 */
+	protected void afterZip(boolean success) {
+		// --- Show a feedback message to the user --------------------
+		if (success == true) {
+			System.out.println("Project '" + project.getProjectName() + "' export successful!");
+			if (this.isShowUserDialogs == true) {
+				String messageTitle = Language.translate("Export erfolgreich");
+				String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
+				JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
+			}
+		} else {
+			System.err.println("Project '" + project.getProjectName() + "' export failed!");
+			if (this.isShowUserDialogs == true) {
+				String message = Language.translate("Export fehlgeschlagen");
+				JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	/**
+	 * Does the actual project export.
+	 */
+	private void doExport() {
+
+		this.updateProgressMonitor(0);
+
+		// --- Copy the required data to a temporary folder -------------------
+		boolean success = ProjectExportController.this.copyProjectDataToTempFolder();
+		this.updateProgressMonitor(10);
+
+		if (success == true) {
+
+			// --- Handle export of simulation setups if necessary ------------
+			if (ProjectExportController.this.exportSettings.isIncludeAllSetups() == false) {
+				// --- Copy the required files for the selected setups --------
+				if (ProjectExportController.this.exportSettings.getSimSetups().size() > 0) {
+					success = ProjectExportController.this.copyRequiredSimulationSetupFiles();
+				}
+				// --- Remove the non-exported setups from the list -----------
+				if (success == true) {
+					ProjectExportController.this.removeUnexportedSetupsFromList();
+				}
+			}
+			this.updateProgressMonitor(30);
+
+			// --- Allow additional processing by subclasses ---------
+			this.beforeZip();
+
+			if (ProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
+				// --- Integrate the project into the installation package ------
+				success = ProjectExportController.this.integrateProjectIntoInstallationPackage();
+			} else {
+				// --- Zip the temporary folder --------------
+				ArchiveFileHandler newZipper = new ArchiveFileHandler();
+				success = newZipper.compressFolder(tempFolderPath.toFile(), ProjectExportController.this.exportSettings.getTargetFile());
+			}
+			this.updateProgressMonitor(80);
+
+			this.updateProgressMonitor(100);
+			this.disposeProgressMonitor();
+
+			this.afterZip(success);
+		}
 	}
 
 	/**
@@ -463,7 +565,7 @@ public class ProjectExportController {
 	 * @return the progress monitor
 	 */
 	private ProgressMonitor getProgressMonitor() {
-		if (this.progressMonitor==null && this.isShowUserDialogs==true) {
+		if (this.progressMonitor == null && this.isShowUserDialogs == true) {
 			String title = Language.translate("Projekt-Export");
 			String header = Language.translate("Exportiere Projekt") + " " + project.getProjectName();
 			String progress = Language.translate("Exportiere") + "...";
@@ -471,6 +573,7 @@ public class ProjectExportController {
 		}
 		return this.progressMonitor;
 	}
+
 	/**
 	 * Updates the progress monitor.
 	 * @param currentProgress the current progress
@@ -480,11 +583,12 @@ public class ProjectExportController {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				
+
 				ProgressMonitor pm = getProgressMonitor();
-				if (pm==null) return;
+				if (pm == null)
+					return;
 				// --- Show progress monitor if not visible ---------
-				if (pm.isVisible()==false) {
+				if (pm.isVisible() == false) {
 					pm.setVisible(true);
 					pm.validate();
 					pm.repaint();
@@ -493,8 +597,9 @@ public class ProjectExportController {
 				pm.setProgress(currentProgress);
 			}
 		});
-		
+
 	}
+
 	/**
 	 * Disposes the progress monitor.
 	 */
@@ -503,7 +608,8 @@ public class ProjectExportController {
 			@Override
 			public void run() {
 				ProgressMonitor pm = getProgressMonitor();
-				if (pm==null) return;
+				if (pm == null)
+					return;
 				pm.setVisible(false);
 				pm.dispose();
 			}
@@ -511,8 +617,24 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file base name (without extension) is not contained in a negative list.
-	 * 
+	 * Gets the project.
+	 * @return the project
+	 */
+	protected Project getProject() {
+		return project;
+	}
+
+	/**
+	 * Gets the temp folder path.
+	 * @return the temp folder path
+	 */
+	protected Path getTempFolderPath() {
+		return tempFolderPath;
+	}
+
+	/**
+	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file base name (without
+	 * extension) is not contained in a negative list.
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class FileBaseNameNegativeListFilter implements DirectoryStream.Filter<Path> {
@@ -521,7 +643,6 @@ public class ProjectExportController {
 
 		/**
 		 * Constructor
-		 * 
 		 * @param negativeList the negative list
 		 */
 		public FileBaseNameNegativeListFilter(List<String> negativeList) {
@@ -544,81 +665,15 @@ public class ProjectExportController {
 
 	}
 
-	
 	/**
 	 * This Thread does the actual export.
-	 * 
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class ProjectExportThread extends Thread {
 		@Override
 		public void run() {
-			doProjectExport();
+			doExport();
 		}
 	}
-	/**
-	 * Does the actual project export.
-	 */
-	private void doProjectExport() {
-		
-		this.updateProgressMonitor(0);
-		
-		// --- Copy the required data to a temporary folder -------------------
-		boolean success = ProjectExportController.this.copyProjectDataToTempFolder();
-		this.updateProgressMonitor(10);
 
-		if (success==true) {
-
-			// --- Handle export of simulation setups if necessary ------------
-			if (ProjectExportController.this.exportSettings.isIncludeAllSetups() == false) {
-				// --- Copy the required files for the selected setups --------
-				if (ProjectExportController.this.exportSettings.getSimSetups().size() > 0) {
-					success = ProjectExportController.this.copyRequiredSimulationSetupFiles();
-				}
-				// --- Remove the non-exported setups from the list -----------
-				if (success==true) {
-					ProjectExportController.this.removeUnexportedSetupsFromList();
-				}
-			}
-			this.updateProgressMonitor(30);
-
-			if (ProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
-				// --- Integrate the project into the installation package ------
-				success = ProjectExportController.this.integrateProjectIntoInstallationPackage();
-			} else {
-				// --- Zip the temporary folder --------------
-				ArchiveFileHandler newZipper = new ArchiveFileHandler();
-				success = newZipper.compressFolder(tempExportFolderPath.toFile(), ProjectExportController.this.exportSettings.getTargetFile());
-			}
-			this.updateProgressMonitor(80);
-
-			// --- Remove the temporary export folder -------------
-			try {
-				RecursiveFolderDeleter folderDeleter = CommonComponentFactory.getNewRecursiveFolderDeleter();
-				folderDeleter.deleteFolder(tempExportFolderPath);
-			} catch (IOException e) {
-				System.err.println("Error deleting temoprary export folder");
-				e.printStackTrace();
-			}
-			this.updateProgressMonitor(100);
-			this.disposeProgressMonitor();
-
-			// --- Show a feedback message to the user --------------------
-			if (success == true) {
-				System.out.println("Project '" + project.getProjectName() + "' export successful!");
-				if (this.isShowUserDialogs==true) {
-					String messageTitle = Language.translate("Export erfolgreich");
-					String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
-					JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
-				}
-			} else {
-				System.err.println("Project '" + project.getProjectName() + "' export failed!");
-				if (this.isShowUserDialogs==true) {
-					String message = Language.translate("Export fehlgeschlagen");
-					JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-	}
-	
 }

@@ -232,7 +232,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * for the message exchange between agent platforms/container
 	 */
 	public enum MtpProtocol {
-		HTTP, HTTPS
+		HTTP, HTTPS, PROXIEDHTTPS
 	}
 	
 	/**
