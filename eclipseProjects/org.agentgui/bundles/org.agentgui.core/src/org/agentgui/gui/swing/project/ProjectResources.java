@@ -31,6 +31,7 @@ package org.agentgui.gui.swing.project;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -60,15 +61,15 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;
-import agentgui.core.project.FeatureInfo;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectResource2Display;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
+import de.enflexit.common.featureEvaluation.FeatureEvaluator;
+import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
@@ -261,13 +262,13 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jPanelContent.add(getJPanelJarFileHeader(), gbc_jPanelJarFileHeader);
 			jPanelContent.add(getJPanelJarResourcen(), gbc_jPanelJarResourcen);
 			jPanelContent.add(getJSeparatorTop(), gbc_jSeparatorTop);
+			jPanelContent.add(getJLabelFeatures(), gbcJLabelFeatures);
+			jPanelContent.add(getJScrollPaneFeatures(), gbcJScrollPaneFeatures);
+			jPanelContent.add(getJPanelFeatureButtons(), gbcJPanelFeatureButtons);
 			jPanelContent.add(getJLabelPlugIns(), gbcJLabelPlugins);
 			jPanelContent.add(getJScrollPanePlugIns(), gbcJScrollPanePlugIns);
 			jPanelContent.add(getJPanelPlugInButtons(), gbcJPanelPlugInButtons);
 			jPanelContent.add(getJSeparatorBottom(), gbc_jSeparatorBottom);
-			jPanelContent.add(getJLabelFeatures(), gbcJLabelFeatures);
-			jPanelContent.add(getJScrollPaneFeatures(), gbcJScrollPaneFeatures);
-			jPanelContent.add(getJPanelFeatureButtons(), gbcJPanelFeatureButtons);
 
 		}
 		return jPanelContent;
@@ -735,6 +736,203 @@ public class ProjectResources extends JScrollPane implements Observer {
 		return jSeparatorTop;
 	}
 
+	/**
+	 * Gets the j label features.
+	 * @return the j label features
+	 */
+	private JLabel getJLabelFeatures() {
+		if (jLabelFeatures == null) {
+			jLabelFeatures = new JLabel("Projekt-Features");
+			jLabelFeatures.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelFeatures;
+	}
+	/**
+	 * Gets the j scroll pane features.
+	 * @return the j scroll pane features
+	 */
+	private JScrollPane getJScrollPaneFeatures() {
+		if (jScrollPaneFeatures == null) {
+			jScrollPaneFeatures = new JScrollPane();
+			jScrollPaneFeatures.setPreferredSize(this.preferredListSizeLarge);
+			jScrollPaneFeatures.setViewportView(this.getjListFeatures());
+		}
+		return jScrollPaneFeatures;
+	}
+
+	/**
+	 * Gets the {@link JList} for managing the required features.
+	 *
+	 * @return the j list features
+	 */
+	private JList<FeatureInfo> getjListFeatures() {
+		if (jListFeatures == null) {
+			jListFeatures = new JList<FeatureInfo>();
+			jListFeatures.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jListFeatures.setModel(getFeaturesListModel());
+		}
+		return jListFeatures;
+	}
+
+	/**
+	 * Gets the features list model.
+	 *
+	 * @return the features list model
+	 */
+	private DefaultListModel<FeatureInfo> getFeaturesListModel() {
+		return this.getFeaturesListModel(false);
+	}
+
+	/**
+	 * Gets the features list model.
+	 *
+	 * @param rebuild if true, an existing model will be replaced
+	 * @return the features list model
+	 */
+	private DefaultListModel<FeatureInfo> getFeaturesListModel(boolean rebuild) {
+		if (featuresListModel == null || rebuild == true) {
+			featuresListModel = new DefaultListModel<FeatureInfo>();
+			Vector<FeatureInfo> projectFeatures = currProject.getProjectFeatures();
+			Collections.sort(projectFeatures);
+			if (projectFeatures.isEmpty() == false) {
+				for (FeatureInfo feature : projectFeatures) {
+					featuresListModel.addElement(feature);
+				}
+			}
+		}
+		return featuresListModel;
+	}
+
+	/**
+	 * Gets the j panel feature buttons.
+	 * @return the j panel feature buttons
+	 */
+	private JPanel getJPanelFeatureButtons() {
+		if (jPanelFeatureButtons == null) {
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.anchor = GridBagConstraints.SOUTH;
+			gridBagConstraints3.gridx = 0;
+			gridBagConstraints3.insets = new Insets(10, 0, 0, 0);
+			gridBagConstraints3.gridy = 2;
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.gridy = 1;
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.gridx = -1;
+			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
+			gridBagConstraints1.gridy = -1;
+			jPanelFeatureButtons = new JPanel();
+			GridBagLayout gbl_jPanelFeatureButtons = new GridBagLayout();
+			gbl_jPanelFeatureButtons.rowWeights = new double[] { 0.0, 0.0, 1.0 };
+			jPanelFeatureButtons.setLayout(gbl_jPanelFeatureButtons);
+			jPanelFeatureButtons.add(getJButtonAddFeatures(), gridBagConstraints1);
+			jPanelFeatureButtons.add(getJButtonRemoveFeatures(), gridBagConstraints2);
+			jPanelFeatureButtons.add(getJButtonRefreshFeatures(), gridBagConstraints3);
+		}
+		return jPanelFeatureButtons;
+	}
+	/**
+	 * This method initializes jButtonAdd
+	 * 
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonAddFeatures() {
+		if (jButtonAddFeatures == null) {
+			jButtonAddFeatures = new JButton();
+			jButtonAddFeatures.setPreferredSize(new Dimension(45, 26));
+			jButtonAddFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
+			jButtonAddFeatures.setToolTipText("Select features");
+			jButtonAddFeatures.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					// --- Get a list of available features -------
+					List<IInstallableUnit> availableFeatures = null;
+					try {
+						availableFeatures = P2OperationsHandler.getInstance().getInstalledFeatures();
+					} catch (Exception e1) {
+						Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(ProjectResources.this);
+						JOptionPane.showMessageDialog(owner , e1.getMessage(), "Error accessing p2 profile", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					// --- Show a feature selection dialog --------
+					Frame ownerFrame = Application.getGlobalInfo().getOwnerFrameForComponent(getJButtonAddFeatures());
+					FeatureSelectionDialog fsd = new FeatureSelectionDialog(ownerFrame, currProject, availableFeatures);
+
+					// --- Add the selected features to the list --
+					if (fsd.isCanceled() == false) {
+
+						// --- Get the selected IUs from the dialog --------
+						List<IInstallableUnit> selectedFeatures = fsd.getSelectedFeatures();
+
+						// --- Create FeatureInfo objects for all selected IUs ----
+						List<FeatureInfo> featuresList = new ArrayList<FeatureInfo>();
+						for (IInstallableUnit installableUnit : selectedFeatures) {
+							if (FeatureEvaluator.getInstance().isFeatureOfBaseInstallation(installableUnit)==false) {
+								// --- Create FeatureInfo -------------------------
+								FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(installableUnit);
+								ProjectResources.this.getFeaturesListModel().addElement(featureInfo);
+								featuresList.add(featureInfo);
+							}
+						}
+
+						// --- Add the FeatureInfo objects to the project ---------
+						currProject.addAllProjectFeatures(featuresList, true);
+					}
+				}
+			});
+		}
+		return jButtonAddFeatures;
+	}
+	/**
+	 * This method initializes jButtonRemove
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonRemoveFeatures() {
+		if (jButtonRemoveFeatures == null) {
+			jButtonRemoveFeatures = new JButton();
+			jButtonRemoveFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
+			jButtonRemoveFeatures.setPreferredSize(new Dimension(45, 26));
+			jButtonRemoveFeatures.setToolTipText("Remove feature");
+			jButtonRemoveFeatures.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					FeatureInfo selectedFeature = ProjectResources.this.getjListFeatures().getSelectedValue();
+					if (selectedFeature != null) {
+						ProjectResources.this.currProject.removeProjectFeature(selectedFeature);
+					}
+				}
+			});
+
+		}
+		return jButtonRemoveFeatures;
+	}
+	/**
+	 * This method initializes jButtonRefresh
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonRefreshFeatures() {
+		if (jButtonRefreshFeatures == null) {
+			jButtonRefreshFeatures = new JButton();
+			jButtonRefreshFeatures.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
+			jButtonRefreshFeatures.setPreferredSize(new Dimension(45, 26));
+			jButtonRefreshFeatures.setToolTipText("Determine required features.");
+			jButtonRefreshFeatures.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					currProject.determineRequiredFeatures();
+				}
+			});
+		}
+		return jButtonRefreshFeatures;
+	}
+	
+	
+	/**
+	 * Gets the j label plug ins.
+	 * @return the j label plug ins
+	 */
 	public JLabel getJLabelPlugIns() {
 		if (jLabelPlugIns == null) {
 			jLabelPlugIns = new JLabel();
@@ -743,10 +941,8 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jLabelPlugIns;
 	}
-
 	/**
 	 * This methods adds a Plugin to the plugInListModel, so that it is displayed
-	 * 
 	 * @param plugIn
 	 */
 	private void addPlugInElement2List(PlugIn plugIn) {
@@ -837,200 +1033,4 @@ public class ProjectResources extends JScrollPane implements Observer {
 
 	}
 
-	/**
-	 * Gets the j label features.
-	 *
-	 * @return the j label features
-	 */
-	private JLabel getJLabelFeatures() {
-		if (jLabelFeatures == null) {
-			jLabelFeatures = new JLabel("Projekt-Features");
-			jLabelFeatures.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelFeatures;
-	}
-
-	/**
-	 * Gets the j scroll pane features.
-	 *
-	 * @return the j scroll pane features
-	 */
-	private JScrollPane getJScrollPaneFeatures() {
-		if (jScrollPaneFeatures == null) {
-			jScrollPaneFeatures = new JScrollPane();
-			jScrollPaneFeatures.setPreferredSize(this.preferredListSizeLarge);
-			jScrollPaneFeatures.setViewportView(this.getjListFeatures());
-		}
-		return jScrollPaneFeatures;
-	}
-
-	/**
-	 * Gets the {@link JList} for managing the required features.
-	 *
-	 * @return the j list features
-	 */
-	private JList<FeatureInfo> getjListFeatures() {
-		if (jListFeatures == null) {
-			jListFeatures = new JList<FeatureInfo>();
-			jListFeatures.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jListFeatures.setModel(getFeaturesListModel());
-		}
-		return jListFeatures;
-	}
-
-	/**
-	 * Gets the features list model.
-	 *
-	 * @return the features list model
-	 */
-	private DefaultListModel<FeatureInfo> getFeaturesListModel() {
-		return this.getFeaturesListModel(false);
-	}
-
-	/**
-	 * Gets the features list model.
-	 *
-	 * @param rebuild if true, an existing model will be replaced
-	 * @return the features list model
-	 */
-	private DefaultListModel<FeatureInfo> getFeaturesListModel(boolean rebuild) {
-		if (featuresListModel == null || rebuild == true) {
-			featuresListModel = new DefaultListModel<FeatureInfo>();
-			Vector<FeatureInfo> projectFeatures = currProject.getProjectFeatures();
-			Collections.sort(projectFeatures);
-			if (projectFeatures.isEmpty() == false) {
-				for (FeatureInfo feature : projectFeatures) {
-					featuresListModel.addElement(feature);
-				}
-			}
-		}
-		return featuresListModel;
-	}
-
-	/**
-	 * Gets the j panel feature buttons.
-	 *
-	 * @return the j panel feature buttons
-	 */
-	private JPanel getJPanelFeatureButtons() {
-		if (jPanelFeatureButtons == null) {
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.anchor = GridBagConstraints.SOUTH;
-			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.insets = new Insets(10, 0, 0, 0);
-			gridBagConstraints3.gridy = 2;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 1;
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = -1;
-			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
-			gridBagConstraints1.gridy = -1;
-			jPanelFeatureButtons = new JPanel();
-			GridBagLayout gbl_jPanelFeatureButtons = new GridBagLayout();
-			gbl_jPanelFeatureButtons.rowWeights = new double[] { 0.0, 0.0, 1.0 };
-			jPanelFeatureButtons.setLayout(gbl_jPanelFeatureButtons);
-			jPanelFeatureButtons.add(getJButtonAddFeatures(), gridBagConstraints1);
-			jPanelFeatureButtons.add(getJButtonRemoveFeatures(), gridBagConstraints2);
-			jPanelFeatureButtons.add(getJButtonRefreshFeatures(), gridBagConstraints3);
-		}
-		return jPanelFeatureButtons;
-	}
-
-	/**
-	 * This method initializes jButtonAdd
-	 * 
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonAddFeatures() {
-		if (jButtonAddFeatures == null) {
-			jButtonAddFeatures = new JButton();
-			jButtonAddFeatures.setPreferredSize(new Dimension(45, 26));
-			jButtonAddFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
-			jButtonAddFeatures.setToolTipText("Add");
-			jButtonAddFeatures.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-
-					// --- Get a list of available features -------
-					P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
-					List<IInstallableUnit> availableFeatures = null;
-					try {
-						availableFeatures = p2handler.getInstalledFeatures();
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error accessing p2 profile", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					// --- Show a feature selection dialog --------
-					FeatureSelectionDialog fsd = new FeatureSelectionDialog(availableFeatures, currProject);
-
-					// --- Add the selected features to the list --
-					if (fsd.isCanceled() == false) {
-
-						// --- Get the selected IUs from the dialog --------
-						List<IInstallableUnit> selectedFeatures = fsd.getSelectedFeatures();
-
-						// --- Create FeatureInfo objects for all selected IUs ----
-						List<FeatureInfo> featuresList = new ArrayList<FeatureInfo>();
-						for (IInstallableUnit feature : selectedFeatures) {
-							FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(feature, p2handler);
-							ProjectResources.this.getFeaturesListModel().addElement(featureInfo);
-							featuresList.add(featureInfo);
-						}
-
-						// --- Add the FeatureInfo objects to the project ---------
-						currProject.addAllProjectFeatures(featuresList, true);
-					}
-				}
-			});
-		}
-		return jButtonAddFeatures;
-	}
-
-	/**
-	 * This method initializes jButtonRemove
-	 * 
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonRemoveFeatures() {
-		if (jButtonRemoveFeatures == null) {
-			jButtonRemoveFeatures = new JButton();
-			jButtonRemoveFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
-			jButtonRemoveFeatures.setPreferredSize(new Dimension(45, 26));
-			jButtonRemoveFeatures.setToolTipText("Remove");
-			jButtonRemoveFeatures.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					FeatureInfo selectedFeature = ProjectResources.this.getjListFeatures().getSelectedValue();
-					if (selectedFeature != null) {
-						ProjectResources.this.currProject.removeProjectFeature(selectedFeature);
-					}
-				}
-			});
-
-		}
-		return jButtonRemoveFeatures;
-	}
-
-	/**
-	 * This method initializes jButtonRefresh
-	 * 
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonRefreshFeatures() {
-		if (jButtonRefreshFeatures == null) {
-			jButtonRefreshFeatures = new JButton();
-			jButtonRefreshFeatures.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
-			jButtonRefreshFeatures.setPreferredSize(new Dimension(45, 26));
-			jButtonRefreshFeatures.setToolTipText("Refresh");
-			jButtonRefreshFeatures.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO implement
-				}
-			});
-		}
-		return jButtonRefreshFeatures;
-	}
 }

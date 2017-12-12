@@ -38,13 +38,13 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
  * This class handles p2-based update and install operations.
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
- *
  */
 public class P2OperationsHandler {
 
 	private boolean isDevelopmentMode = false;
-	private File p2Directory;
+	private File p2Directory = null; //new File("D:\\AgentGui\\p2\\");
 	
+
 	private ProvisioningSession provisioningSession;
 	private IProvisioningAgent provisioningAgent;
 
@@ -53,27 +53,29 @@ public class P2OperationsHandler {
 	private IMetadataRepositoryManager metadataRepositoryManager;
 	private IArtifactRepositoryManager artifactRepositoryManager;
 
+	private  List<IInstallableUnit> iuList;
+
 	
-	
+	private static P2OperationsHandler thisInstance;
 	/**
-	 * Instantiates a new P2OperationsHandler.
+	 * Returns the single instance of P2OperationsHandler.
+	 * @return single instance of P2OperationsHandler
 	 */
-	public P2OperationsHandler() { 
-		this(false, null);
+	public static P2OperationsHandler getInstance() {
+		if (thisInstance==null) {
+			thisInstance = new P2OperationsHandler();
+		}
+		return thisInstance;
 	}
 	/**
 	 * Instantiates a new P2OperationsHandler.
-	 *
-	 * @param isDevelopmentMode set, if the class is used for developments and external p2 locations
-	 * @param p2Directory the p2 directory that should be used for the new instance
 	 */
-	public P2OperationsHandler(boolean isDevelopmentMode, File p2Directory) {
-		if (isDevelopmentMode==true && p2Directory!=null && p2Directory.exists()==true && p2Directory.isDirectory()) {
-			this.isDevelopmentMode = isDevelopmentMode;
-			this.p2Directory = p2Directory;
+	private P2OperationsHandler() { 
+		if (this.isDevelopmentMode==true && (this.p2Directory==null || this.p2Directory.exists()==false || p2Directory.isDirectory()==false) ) {
+			this.isDevelopmentMode = false;
+			this.p2Directory = null;
 		}
 	}
-
 	
 	/**
 	 * Gets the provisioning session.
@@ -91,7 +93,7 @@ public class P2OperationsHandler {
 	 * @return the provisioning agent
 	 */
 	private IProvisioningAgent getProvisioningAgent() {
-		if (provisioningAgent == null) {
+		if (provisioningAgent==null) {
 			
 			// ----------------------------------------------------------------
 			// --- Access external p2 directory for developments ? ------------
@@ -299,19 +301,24 @@ public class P2OperationsHandler {
 	 */
 	public URI getRepositoryForInstallableUnit(String installableUnitID) {
 
-		// --- Get a list of all known repositories ---------------
-		IMetadataRepositoryManager metadataRepositoryManager = (IMetadataRepositoryManager) this.getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME);
-		URI[] knownRepositories = metadataRepositoryManager.getKnownRepositories(IMetadataRepositoryManager.REPOSITORIES_ALL);
-
-		// --- Check if the repository contains an IU with the requested ID ------
-		for (URI repository : knownRepositories) {
-			IQueryResult<IInstallableUnit> queryResult = this.queryRepositoryForInstallableUnit(repository, installableUnitID);
-			if (queryResult != null && queryResult.isEmpty() == false) {
-				return repository;
+		try {
+			// --- Get a list of all known repositories ---------------------------------
+			IMetadataRepositoryManager metadataRepositoryManager = (IMetadataRepositoryManager) this.getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME);
+			URI[] knownRepositories = metadataRepositoryManager.getKnownRepositories(IMetadataRepositoryManager.REPOSITORIES_ALL);
+			
+			// --- Check if the repository contains an IU with the requested ID ---------
+			for (URI repository : knownRepositories) {
+				IQueryResult<IInstallableUnit> queryResult = this.queryRepositoryForInstallableUnit(repository, installableUnitID);
+				if (queryResult != null && queryResult.isEmpty() == false) {
+					return repository;
+				}
 			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
-		// --- No repository containing the IU could be found ------------
+		// --- No repository containing the IU could be found ---------------------------
 		return null;
 	}
 
@@ -332,6 +339,7 @@ public class P2OperationsHandler {
 			if (metadataRepository != null) {
 				queryResult = metadataRepository.query(QueryUtil.createIUQuery(installableUnitID), this.getProgressMonitor());
 			}
+			
 		} catch (ProvisionException | OperationCanceledException e) {
 			System.err.println("Error loading the repository at " + repositoryURI);
 			e.printStackTrace();
@@ -357,32 +365,35 @@ public class P2OperationsHandler {
 	 * @throws Exception the exception
 	 */
 	public List<IInstallableUnit> getInstalledFeatures() throws Exception {
-
-		IProvisioningAgent provisioningAgent = this.getProvisioningAgent();
-		
-		IProfileRegistry profileRegistry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
-		IProfile profile = null;
-		if (this.isDevelopmentMode==true) {
-			if (profileRegistry.getProfiles().length>0) {
-				profile = profileRegistry.getProfiles()[0];
+		if (this.iuList==null) {
+			
+			IProfileRegistry profileRegistry = (IProfileRegistry) this.getProvisioningAgent().getService(IProfileRegistry.SERVICE_NAME);
+			IProfile profile = null;
+			if (this.isDevelopmentMode==true) {
+				if (profileRegistry.getProfiles().length>0) {
+					profile = profileRegistry.getProfiles()[0];
+				}
+				
+			} else {
+				profile = profileRegistry.getProfile(IProfileRegistry.SELF);
 			}
-		} else {
-			profileRegistry.getProfile(IProfileRegistry.SELF);
-		}
-		if (profile==null) {
-			throw new Exception("Unable to access p2 profile - This is not possible when starting the application from the IDE!");
-		}
-		
-		List<IInstallableUnit> featuresList = new ArrayList<IInstallableUnit>();
-		IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
-		IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
-		
-		for (IInstallableUnit feature : queryResult) {
-			if (QueryUtil.isProduct(feature) == false) {
-				featuresList.add(feature);
+			if (profile==null) {
+				throw new Exception("Unable to access p2 profile - This is not possible when starting the application from the IDE!");
 			}
+			
+			// --- Create the IU list -------------------------------
+			this.iuList = new ArrayList<IInstallableUnit>();
+			IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
+			IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
+			
+			for (IInstallableUnit feature : queryResult) {
+				if (QueryUtil.isProduct(feature) == false) {
+					iuList.add(feature);
+				}
+			}
+			
 		}
-		return featuresList;
+		return iuList;
 	}
 
 

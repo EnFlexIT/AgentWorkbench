@@ -69,7 +69,6 @@ import org.osgi.framework.Bundle;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
@@ -87,6 +86,7 @@ import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.update.VersionInformation;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
+import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationHelper;
 import de.enflexit.common.p2.P2OperationsHandler;
@@ -685,14 +685,39 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public void setProjectFeatures(Vector<FeatureInfo> projectFeatures) {
 		this.projectFeatures = projectFeatures;
 	}
+	
+	/**
+	 * Automatically determines and refreshes the vector of required features.
+	 */
+	public void determineRequiredFeatures() {
+
+		boolean isChaneged = false;
+		
+		// --- Get the list of required features --------
+		Vector<FeatureInfo> reqFeatures = BundleFeatureMapper.getRequiredFeaturesForProject(this);
+		if (reqFeatures!=null) {
+			for (FeatureInfo fi : reqFeatures) {
+				if (this.getProjectFeatures().contains(fi)==false) {
+					this.getProjectFeatures().add(fi);
+					isChaneged = true;
+				}
+			}
+		}
+
+		if (isChaneged==true) {
+			this.setUnsaved(true);
+			this.setChanged();
+			this.notifyObservers(CHANGED_ProjectResources);
+		}
+	}
+	
 	/**
 	 * Check project features availability.
 	 * @return true, if all required features are available
 	 */
 	public boolean requiresFeatureInstallation() {
-		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
 		for (FeatureInfo feature : this.getProjectFeatures()) {
-			if (p2handler.checkIfInstalled(feature.getId())==false) {
+			if (P2OperationsHandler.getInstance().checkIfInstalled(feature.getId())==false) {
 				return true;
 			}
 		}
@@ -706,14 +731,12 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public boolean installRequiredFeatures() {
 
 		boolean installedNewFeatures = false;
-
-		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
 		for (FeatureInfo feature : this.getProjectFeatures()) {
 			// --- Check if feature is installed ---------- 
-			if (p2handler.checkIfInstalled(feature.getId())==false) {
+			if (P2OperationsHandler.getInstance().checkIfInstalled(feature.getId())==false) {
 				// --- Install single feature -------------
 				System.out.print("=> Project '" + this.getProjectName() + "': Install '" + feature.getName()  + "' (" + feature.getId() + ") from " + feature.getRepositoryURI() + " ... ");
-				boolean success = p2handler.installIU(feature.getId(), feature.getRepositoryURI());
+				boolean success = P2OperationsHandler.getInstance().installIU(feature.getId(), feature.getRepositoryURI());
 				if (success==true) {
 					installedNewFeatures = true;
 					System.out.print("DONE!\n");

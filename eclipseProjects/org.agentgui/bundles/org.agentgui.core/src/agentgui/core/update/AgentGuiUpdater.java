@@ -35,7 +35,6 @@ import org.eclipse.equinox.p2.operations.UpdateOperation;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -237,10 +236,8 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	public void startP2Updates() {
 
-		P2OperationsHandler p2handler = CommonComponentFactory.getNewP2OperationsHandler();
-
 		// --- Check for available updates -------
-		IStatus status = p2handler.checkForUpdates();
+		IStatus status = P2OperationsHandler.getInstance().checkForUpdates();
 
 		if (status.getSeverity() != IStatus.ERROR) {
 
@@ -264,7 +261,7 @@ public class AgentGuiUpdater extends Thread {
 				}
 
 				if (installUpdates == true) {
-					status = p2handler.installAvailableUpdates();
+					status = P2OperationsHandler.getInstance().installAvailableUpdates();
 					if (status.isOK()) {
 						System.out.println("P2 Update: Updates sucessfully installed, restarting...");
 						Application.restart();

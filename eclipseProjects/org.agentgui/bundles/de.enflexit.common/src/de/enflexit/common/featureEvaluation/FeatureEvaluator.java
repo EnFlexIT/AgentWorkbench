@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 import de.enflexit.common.featureEvaluation.featureXML.Feature;
 import de.enflexit.common.featureEvaluation.featureXML.Import;
@@ -34,8 +35,8 @@ public class FeatureEvaluator {
 		Feature
 	}
 	
-	private boolean isDevelopmentMode = true;
-	private String baseDirectoryPath = "";
+	private boolean isDevelopmentMode = false;
+	private String baseDirectoryPath = null;
 	
 	private HashMap<String, Feature> featureMap;
 	private HashMap<String, Plugin> pluginMap;
@@ -561,13 +562,77 @@ public class FeatureEvaluator {
 	 */
 	public boolean isBundleOfBaseInstallation(String bundleID) {
 		if (bundleID!=null && bundleID.isEmpty()==false) {
-			for (String featureID : this.getFeaturesOfBundle(bundleID)) {
-				if (this.isFeatureOfBaseInstallation(featureID)==true) {
-					return true;
+			ArrayList<String> featuresOfBundle = this.getFeaturesOfBundle(bundleID);
+			if (featuresOfBundle!=null && featuresOfBundle.size()>0) {
+				for (String featureID : this.getFeaturesOfBundle(bundleID)) {
+					if (this.isFeatureOfBaseInstallation(featureID)==true) {
+						return true;
+					}
 				}
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Return the feature from the specified installable unit.
+	 *
+	 * @param installableUnit the installable unit
+	 * @return the feature from installable unit
+	 */
+	private Feature getFeatureFromInstallableUnit(IInstallableUnit installableUnit) {
+		
+		// --- Try to find the feature file info ---------- 
+		Feature feature = null;
+		String iuID = installableUnit.getId();
+		while (iuID.contains(".")==true) {
+			// --- try to get the feature -----------------
+			feature = this.getFeatureMap().get(iuID);
+			if (feature!=null) break;
+			// --- Shorten the ID from the end ------------
+			iuID = iuID.substring(0, iuID.lastIndexOf("."));
+		}
+		return feature;
+	}
+	
+	/**
+	 * Checks if the feature, specified by an installable unit, is a feature of the base installation.
+	 *
+	 * @param installableUnit the installable unit
+	 * @return true, if the feature is from the base installation
+	 */
+	public boolean isFeatureOfBaseInstallation(IInstallableUnit installableUnit) {
+		
+		boolean isBaseFeature = false;
+		Feature feature = this.getFeatureFromInstallableUnit(installableUnit);
+		if (feature!=null) {
+			isBaseFeature = this.isFeatureOfBaseInstallation(feature.getId());
+		}
+		return isBaseFeature;
+	}
+	/**
+	 * Returns, based on the available feature descriptions a description for an {@link IInstallableUnit}.
+	 *
+	 * @param installableUnit the installable unit
+	 * @return the description of the installable unit
+	 */
+	public String getIInstallableUnitDescription(IInstallableUnit installableUnit) {
+		
+		if (installableUnit==null) return null;
+		
+		// --- Try to find the feature file info ---------- 
+		String description = "";
+		Feature feature = this.getFeatureFromInstallableUnit(installableUnit);
+		if (feature!=null) {
+			
+			String baseElementMarker = getMarkerForBaseInstallationElement(feature.getId(), ElementType.Feature);
+			String featureLabel = feature.getLabel();
+			if (featureLabel==null || featureLabel.equals("%featureName")==true) {
+				featureLabel = feature.getId();
+			}
+			description += featureLabel + " [" + feature.getId() + " " + feature.getVersion() + "] " + baseElementMarker;
+		}
+		return description.trim();
 	}
 	
 }

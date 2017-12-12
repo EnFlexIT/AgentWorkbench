@@ -36,7 +36,6 @@ import javax.swing.JDesktopPane;
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.csv.CsvDataControllerPanel;
-import de.enflexit.common.p2.P2OperationsHandler;
 import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
@@ -128,10 +127,6 @@ public class CommonComponentFactory {
 	 */
 	public static RecursiveFolderDeleter getNewRecursiveFolderDeleter() {
 		return new RecursiveFolderDeleter();
-	}
-
-	public static P2OperationsHandler getNewP2OperationsHandler() {
-		return new P2OperationsHandler();
 	}
 
 }

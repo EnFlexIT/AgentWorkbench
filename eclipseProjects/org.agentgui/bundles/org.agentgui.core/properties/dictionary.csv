@@ -4,6 +4,7 @@ de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please ente
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
 de;' ist bereits geöffnet!;' is already open!;;;
+de;'#' markiert alle Features, die zur Basisinstallation gehören.;'#' marks all features that belong to the base installation.;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
@@ -227,6 +228,7 @@ de;Faktor;Factor;;;
 de;Falls ausgewählt, wird die Log-Datei in jedem Ausführungsmodus erstellt.;If selected, the log file will be created in every execution mode.;;;
 de;Falls nicht ausgewählt, wird die Log-Datei immer nur im 'Headless-Modus' erstellt (z.B. im Modus ';If not selected, the log file will only be created in 'headless mode' (for example, in ';;;
 de;Farbe;Color;;;
+de;Features auswählen;Select Feature;;;
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
@@ -685,6 +687,7 @@ de;Verzeichnisse;Directories;;;
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
 de;Vollständiger Name;Full Name;;;
+de;Vom Projekt benötigte Features:;Features required by the project:;;;
 de;Vor dem Löschen exportieren!;Export before deleting!;;;
 de;Vorhandene Projektverzeichnisse;Available project folders;;;
 de;Vorherige Datenreihe;Previous Data Series;;;
