@@ -90,6 +90,7 @@ import javax.swing.table.TableRowSorter;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.PropertyContentProvider.FileToProvide;
 import agentgui.core.gui.components.JHyperLink;
 
 
@@ -171,6 +172,7 @@ private static final long serialVersionUID = 1L;
 	private JLabel jLabelGoogleHTTP = null;
 	private JTextField jTextFieldGoogleHTTP = null;
 	private JButton jButtonGoogleKey4API = null;
+	private JButton jButtonResetDictionary;
 
 
 
@@ -832,16 +834,18 @@ private static final long serialVersionUID = 1L;
 	private JPanel getJPanelSouth() {
 		if (jPanelSouth == null) {
 			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
+			gridBagConstraints41.gridx = 3;
+			gridBagConstraints41.gridy = 0;
 			gridBagConstraints41.insets = new Insets(10, 10, 15, 10);
 			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
 			gridBagConstraints31.gridx = 0;
 			gridBagConstraints31.insets = new Insets(10, 10, 15, 10);
 			gridBagConstraints31.gridy = 0;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.gridy = 0;
 			gridBagConstraints.insets = new Insets(10, 10, 15, 10);
 			gridBagConstraints.weightx = 1.0;
-			gridBagConstraints.gridx = 1;
-			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints.gridx = 2;
 			jPanelSouth = new JPanel();
 			jPanelSouth.setLayout(new GridBagLayout());
 			jPanelSouth.add(getJPanelSouthWest(), gridBagConstraints31);
@@ -879,6 +883,29 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonClose;
 	}
+	
+	/**
+	 * This method initializes jPanelSouthWest.
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getJPanelSouthWest() {
+		if (jPanelSouthWest == null) {
+			jPanelSouthWest = new JPanel();
+			jPanelSouthWest.setLayout(new GridBagLayout());
+			GridBagConstraints gbc_jButtonImportCSV = new GridBagConstraints();
+			gbc_jButtonImportCSV.insets = new Insets(0, 0, 5, 0);
+			gbc_jButtonImportCSV.gridx = 0;
+			gbc_jButtonImportCSV.gridy = 0;
+			jPanelSouthWest.add(getJButtonImportCSV(), gbc_jButtonImportCSV);
+			GridBagConstraints gbc_jButtonResetDictionary = new GridBagConstraints();
+			gbc_jButtonResetDictionary.insets = new Insets(0, 10, 5, 0);
+			gbc_jButtonResetDictionary.gridx = 1;
+			gbc_jButtonResetDictionary.gridy = 0;
+			jPanelSouthWest.add(getJButtonResetDictionary(), gbc_jButtonResetDictionary);
+			
+		}
+		return jPanelSouthWest;
+	}
 	/**
 	 * This method initializes jButtonImportCSV.
 	 * @return javax.swing.JButton
@@ -894,18 +921,20 @@ private static final long serialVersionUID = 1L;
 		return jButtonImportCSV;
 	}
 	/**
-	 * This method initializes jPanelSouthWest.
-	 * @return javax.swing.JPanel
+	 * Returns the jButtonResetDictionary.
+	 * @return javax.swing.JButton
 	 */
-	private JPanel getJPanelSouthWest() {
-		if (jPanelSouthWest == null) {
-			jPanelSouthWest = new JPanel();
-			jPanelSouthWest.setLayout(new GridBagLayout());
-			jPanelSouthWest.add(getJButtonImportCSV(), new GridBagConstraints());
-			
+	private JButton getJButtonResetDictionary() {
+		if (jButtonResetDictionary == null) {
+			jButtonResetDictionary = new JButton();
+			jButtonResetDictionary.setToolTipText(Language.translate("Wörterbuch zurücksetzen"));
+			jButtonResetDictionary.setPreferredSize(new Dimension(26, 26));
+			jButtonResetDictionary.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
+			jButtonResetDictionary.addActionListener(this);
 		}
-		return jPanelSouthWest;
+		return jButtonResetDictionary;
 	}
+	
 	/**
 	 * This method initializes jPanelEast.
 	 * @return javax.swing.JPanel
@@ -914,7 +943,7 @@ private static final long serialVersionUID = 1L;
 		if (jPanelEast == null) {
 			jPanelEast = new JPanel();
 			jPanelEast.setLayout(new GridBagLayout());
-			jPanelEast.setPreferredSize(new Dimension(26, 26));
+			jPanelEast.setPreferredSize(new Dimension(62, 26));
 		}
 		return jPanelEast;
 	}
@@ -1432,8 +1461,8 @@ private static final long serialVersionUID = 1L;
 		if (trigger == jButtonClose) {
 			this.setVisible(false);
 			
-		} else if (trigger == jButtonImportCSV) {
-			
+		} else if (trigger == this.getJButtonImportCSV()) {
+			// --- Import csv version of the dictionary -------------
 			String title = Language.translate("CSV-Version des Wörterbuchs übernehmen?");
 			String message = Language.translate("Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?");
 			
@@ -1444,6 +1473,22 @@ private static final long serialVersionUID = 1L;
 				Application.showTranslationDialog();
 				this.forceApplicationRestart = true;
 			}
+			
+		} else if (trigger == this.getJButtonResetDictionary()) {
+			// --- Reset dictionary to the installation version -----
+			String title = Language.translate("Wörterbuch zurücksetzen?");
+			String message = Language.translate("Möchten Sie das Wörterbuches auf den Stand nach der Erstinstallation zurücksetzen?");
+			
+			int answer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
+			if (answer == JOptionPane.YES_OPTION) {
+				this.setVisible(false);
+				Application.getGlobalInfo().getPropertyContentProvider().checkAndProvidePropertyContent(FileToProvide.DICTIONARY_CSV, true);
+				Application.getGlobalInfo().getPropertyContentProvider().checkAndProvidePropertyContent(FileToProvide.DICTIONARY_BIN, true);
+				Language.reStartDictionary();
+				Application.showTranslationDialog();
+				this.forceApplicationRestart = true;
+			}
+			
 			
 		} else if (trigger == jMenuItemEdit) {
 			jTabbedPane.setSelectedComponent(jPanelTranslation);
@@ -1492,4 +1537,4 @@ private static final long serialVersionUID = 1L;
 		
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 
