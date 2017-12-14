@@ -107,8 +107,19 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/** The key string used for saving the ontology representation in the GraphML file */
 	private static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
 	/** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
-	private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
+	private static final String GeneralGraphSettings4MASFile = "~GeneralGraphSettings~";
 
+	
+	/**
+	 * The Enumeration with possible ControllerAction.
+	 */
+	private enum ControllerAction {
+		Initializing
+	}
+	/** The current controller action. */
+	private ControllerAction currControllerAction;
+	
+	
 	/** The base file name used for saving the graph and the components (without suffix) */
 	private String baseFileName;
 	/** The GraphMLWriter used to save the graph */
@@ -126,12 +137,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/** The abstract environment model is just an open slot, where individual things can be placed. */
 	private AbstractEnvironmentModel abstractEnvironmentModel;
 
+	
 	/**
 	 * The constructor for the GraphEnvironmentController for displaying the current environment model during a running simulation. Use {@link #setDisplayEnvironmentModel(DisplaytEnvironmentModel)}, in order to set the current {@link NetworkModel}.
 	 */
 	public GraphEnvironmentController() {
 	}
-
 	/**
 	 * The constructor for the GraphEnvironmentController for configurations within Agent.GUI
 	 * 
@@ -139,8 +150,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	public GraphEnvironmentController(Project project) {
 		super(project);
-		if (this.getProject() != null) {
+		if (this.getProject()!=null) {
+			this.currControllerAction=ControllerAction.Initializing;
 			this.updateGraphFileName();
+			this.currControllerAction=null;;
 			this.loadEnvironment();
 		}
 	}
@@ -397,6 +410,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	protected void loadEnvironment() {
 
+		if (this.currControllerAction==ControllerAction.Initializing) return;
+		
 		final NetworkModel networkModel = new NetworkModel();
 		final String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
 		if (fileName != null) {
@@ -617,7 +632,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Load general graph settings.
 	 */
 	private GeneralGraphSettings4MAS loadGeneralGraphSettings() {
-		File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
+		File componentFile = new File(getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
 		return GeneralGraphSettings4MAS.load(componentFile);
 	}
 
@@ -625,7 +640,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Save general graph settings.
 	 */
 	private void saveGeneralGraphSettings() {
-		File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
+		File componentFile = new File(getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
 		GeneralGraphSettings4MAS.save(componentFile, this.getGeneralGraphSettings4MAS());
 	}
 

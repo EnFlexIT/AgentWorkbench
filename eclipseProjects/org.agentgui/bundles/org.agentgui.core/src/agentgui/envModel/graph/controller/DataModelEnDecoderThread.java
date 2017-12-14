@@ -83,8 +83,6 @@ public class DataModelEnDecoderThread extends Thread {
 	private ProgressMonitor progressMonitor;
 	private long firstDisplayWaitTime = 0;			// ms
 	private long firstDisplayTime;
-	private long nextGraphRenderingInterval = 500; 	// ms
-	private long nextGraphRendering;
 	
 	private long vectorDividerBytesPerThread = 450000; 
 	
@@ -166,13 +164,12 @@ public class DataModelEnDecoderThread extends Thread {
 	}
 	
 	/**
-	 * Organises the en- or decoding.
+	 * Organizes the decoding or the encoding of the Base64 data models.
 	 */
 	private void organizeEnDecoding() {
 		
     	this.finalizer = new Object();
 		this.firstDisplayTime = System.currentTimeMillis() + this.firstDisplayWaitTime;
-    	this.nextGraphRendering = System.currentTimeMillis() + nextGraphRenderingInterval;
 
 		// --- Summarize NetworkComponent's and GraphNode's --------- 
 		Vector<Object> sumCompVector = new Vector<Object>(Arrays.asList(this.graphController.getNetworkModel().getNetworkComponents().values().toArray()));
@@ -212,6 +209,9 @@ public class DataModelEnDecoderThread extends Thread {
 				roundTripIndex=0;
 			}
 		}
+
+		// --- Set progress to 0 ------------------------------------
+		this.setProgressToProgressMonitor(0);
 		
 		// --- Start thread for each element vector -----------------
 		for (int i = 0; i < splitVector.size(); i++) {
@@ -270,33 +270,37 @@ public class DataModelEnDecoderThread extends Thread {
 
 		// --- Calculate Progress -----------------------------------
 		float progressCalc = (float) (((float)this.elementsConverted/(float)this.elementsToConvert) * 100.0);
-		final int percentProgressNew = Math.round(progressCalc);
+		int percentProgressNew = Math.round(progressCalc);
 
 		// --- Only display progress, if procedure is too long ------
-		if (this.isHeadlessOperation==false && System.currentTimeMillis()>this.firstDisplayTime && percentProgressNew!=percentProgressOld) {
-			
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					// --- Set Progress monitor ---------------------
-					getProgressMonitor().setProgress(percentProgressNew);
-					percentProgressOld = percentProgressNew;
-					// --- Show progress monitor if not visible ----- 
-					if (getProgressMonitor().isVisible()==false) {
-						getProgressMonitor().setVisible(true);
-						getProgressMonitor().validate();
-						getProgressMonitor().repaint();
-					}
-					// --- Render/paint graph -----------------------
-					if (System.currentTimeMillis()>=nextGraphRendering) {
-						graphController.setBasicGraphGuiVisViewerActionOnTop(false);
-						graphController.setBasicGraphGuiVisViewerActionOnTop(true);
-						nextGraphRendering = System.currentTimeMillis() + nextGraphRenderingInterval;
-					}
-				}
-			});
+		if (System.currentTimeMillis()>this.firstDisplayTime && percentProgressNew!=percentProgressOld) {
+			this.setProgressToProgressMonitor(percentProgressNew);
 		}
 		
+	}
+	
+	/**
+	 * Sets the specified progress to the progress monitor.
+	 * @param percentProgressNew the new progress to progress monitor
+	 */
+	private void setProgressToProgressMonitor(int percentProgressNew) {
+		
+		if (this.isHeadlessOperation==true) return;
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				// --- Set Progress monitor ---------------------
+				getProgressMonitor().setProgress(percentProgressNew);
+				percentProgressOld = percentProgressNew;
+				// --- Show progress monitor if not visible ----- 
+				if (getProgressMonitor().isVisible()==false) {
+					getProgressMonitor().setVisible(true);
+					getProgressMonitor().validate();
+					getProgressMonitor().repaint();
+				}
+			}
+		});
 	}
 	
 	/**
@@ -309,18 +313,26 @@ public class DataModelEnDecoderThread extends Thread {
 			String title = null;
 			String header = null;
 			String progress = null;
-			if (this.organizerAction==OrganizerAction.ORGANIZE_ENCODE_64) {
+			switch (this.organizerAction) {
+			case ORGANIZE_DECODE_64:
 				title = Language.translate("Initiating network components", Language.EN);
 		    	header = Language.translate("Initiating network components and setting data model", Language.EN);
 		    	progress = Language.translate("Reading", Language.EN) + "...";
-			} else {
-		    	title = Language.translate("Preparing network components", Language.EN);
+				break;
+				
+			case ORGANIZE_ENCODE_64:
+				title = Language.translate("Preparing network components", Language.EN);
 		    	header = Language.translate("Preparing and encoding network components for saving", Language.EN);
 		    	progress = Language.translate("Writing", Language.EN) + "...";
+				break;
+
 			}
 	    	
 			// --- Initiate ProgressMonitor ----------------------------- 
 			progressMonitor = CommonComponentFactory.getNewProgressMonitor(title, header, progress);
+			if (this.isHeadlessOperation==false) {
+				progressMonitor.setOwner(Application.getGlobalInfo().getOwnerFrameForComponent(this.graphController.getGraphEnvironmentControllerGUI()));
+			}
 			progressMonitor.setAllow2Cancel(false);
 		}
 		return progressMonitor;
@@ -334,8 +346,8 @@ public class DataModelEnDecoderThread extends Thread {
 	 */
 	private void decode64() {
 		
-		for (Object objectToWorkOn : this.componentsToWorkOn) {
-			
+		for (int i = 0; i < this.componentsToWorkOn.size(); i++) {
+		
 			try {
 
 				// --- Find the corresponding NetworkComponentAdapter ---------
@@ -343,6 +355,7 @@ public class DataModelEnDecoderThread extends Thread {
 				NetworkComponent netComp = null;
 				GraphNode graphNode = null;
 				
+				Object objectToWorkOn = this.componentsToWorkOn.get(i);
 				if (objectToWorkOn instanceof NetworkComponent) {
 					netComp = (NetworkComponent) objectToWorkOn;		
 					netCompAdapter = this.getNetworkComponentAdapter(this.graphController, netComp);

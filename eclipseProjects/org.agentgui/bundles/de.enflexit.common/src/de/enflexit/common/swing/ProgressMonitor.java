@@ -1,12 +1,15 @@
 package de.enflexit.common.swing;
 
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
@@ -43,6 +46,7 @@ public class ProgressMonitor implements ActionListener {
 	private ImageIcon iconImage;
 	private String lookAndFeelClassName;
 	
+	private Window owner;
 	private Container progressMonitorContainer;
 
 	private JPanel jContentPane;
@@ -77,6 +81,21 @@ public class ProgressMonitor implements ActionListener {
 	}
 
 	/**
+	 * Allows to set the owner frame of JDialog, if used.
+	 * @param ownerFrame the new owner
+	 */
+	public void setOwner(Frame ownerFrame) {
+		this.owner = ownerFrame;
+	}
+	/**
+	 * Allows to set the owner frame of JDialog, if used.
+	 * @param ownerDialog the new owner
+	 */
+	public void setOwner(Dialog ownerDialog) {
+		this.owner = ownerDialog;
+	}
+	
+	/**
 	 * Returns the progress monitor container that is either a JDialog or a JInternFrame.
 	 * @return the progress monitor container
 	 */
@@ -85,11 +104,12 @@ public class ProgressMonitor implements ActionListener {
 			
 			Dimension defaultSize = new Dimension(570, 188);
 			if (this.parentDesktopPane==null) {
-				JDialog jDialog = new JDialog();	
+				JDialog jDialog = new JDialog(this.owner);	
 				jDialog.setSize(defaultSize);
 				jDialog.setResizable(false);
-				jDialog.setAlwaysOnTop(true);
-				
+				if (this.owner==null) {
+					jDialog.setAlwaysOnTop(true);
+				}
 				jDialog.setTitle(this.windowTitle);
 				if (this.iconImage!=null) {
 					jDialog.setIconImage(this.iconImage.getImage());	

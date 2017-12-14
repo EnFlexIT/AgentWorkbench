@@ -36,6 +36,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 
@@ -200,7 +201,7 @@ public class JadeRemoteStartConfiguration implements Serializable {
 			ObjectInputStreamForClassLoadService inStream = null;
 			try {
 				fis = new FileInputStream(configurationFile);
-				inStream = new ObjectInputStreamForClassLoadService(fis);
+				inStream = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
 				reCoCo = (JadeRemoteStartConfiguration) inStream.readObject();
 
 			} catch (IOException ex) {

@@ -69,6 +69,7 @@ import org.osgi.framework.Bundle;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
@@ -439,7 +440,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			ObjectInputStreamForClassLoadService inStream = null;
 			try {
 				fis = new FileInputStream(userObjectFileName);
-				inStream = new ObjectInputStreamForClassLoadService(fis);
+				inStream = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
 				Serializable userObject = (Serializable) inStream.readObject();
 				project.setUserRuntimeObject(userObject);
 

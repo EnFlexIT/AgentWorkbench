@@ -47,6 +47,7 @@ import javax.xml.bind.Unmarshaller;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
@@ -379,7 +380,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 			ObjectInputStreamForClassLoadService in = null;
 			try {
 				fis = new FileInputStream(userObjectFileName);
-				in = new ObjectInputStreamForClassLoadService(fis);
+				in = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
 				userObject = (Serializable)in.readObject();
 				in.close();
 				this.currSimSetup.setUserRuntimeObject(userObject);
