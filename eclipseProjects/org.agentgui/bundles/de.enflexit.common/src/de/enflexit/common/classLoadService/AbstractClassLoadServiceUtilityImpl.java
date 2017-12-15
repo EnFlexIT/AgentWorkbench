@@ -3,6 +3,7 @@ package de.enflexit.common.classLoadService;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 
@@ -30,7 +32,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	public static final String SERVICE_REFERENCE_FILTER = "(component.factory=de.enflexit.common.classLoadService)";
 	
 	private boolean debug = false;
-	private boolean debugDetail = true;
+	private boolean debugDetail = false;
 	
 	private BundleContext bundleContext;
 	
@@ -80,6 +82,14 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	public T getClassLoadService(String className, Class<? extends BaseClassLoadService> serviceBaseInterface) {
 		
 		// ----------------------------------------------------------
+		// --- Nested classes are problematic - use hosting class --- 
+		// ----------------------------------------------------------
+		int dollarPos = className.indexOf("$");
+		if (dollarPos!=-1) {
+			className = className.substring(0, dollarPos);
+		}
+		
+		// ----------------------------------------------------------
 		// --- Default: Use the already known BaseClassLoadService -- 
 		// ----------------------------------------------------------
 		String requestKey = className + "@" + serviceBaseInterface.getName();
@@ -100,27 +110,12 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		// ----------------------------------------------------------
 		// --- Try to find the required BaseClassLoadService --------
 		// ----------------------------------------------------------
-		
-		boolean isDoDetailCheck = false;
-		if (this.debugDetail 
-//			&& serviceBaseInterface.getSimpleName().equals("BaseClassLoadService")==true
-//			&& className.equals("energy.optionModel.TechnicalSystemState$UsageOfInterfaces")==true 
-//			&& this.getClass().getName().equals("de.enflexit.common.classLoadService.BaseClassLoadServiceUtilityImpl")==true
-			&& className.equals("hygrid.agent.photovoltaic.orientationBased.SolarPositionCalculation")==true 
-			) {
-				isDoDetailCheck = true; 
-			}
-		
-
-		// --- Check all available ClassLoadServices ---------------- 
+		// --- Check all available ClassLoadServices ----------------
 		Vector<ClassLoadServiceElement> clsElementsKnown = this.getClassLoadServiceVector(serviceBaseInterface);
 		int nKnown = clsElementsKnown.size();
 		for (ClassLoadServiceElement clsElement : clsElementsKnown) {
 			// --- Filter from right filter type --------------------
-			if (isDoDetailCheck) {
-				System.out.println("Debug now!");
-			}
-			if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement.getClassLoadServiceImpl(), className)==true) {
+			if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement, className)==true) {
 				this.getClassLoadServicesByServiceAndClassName().put(requestKey, clsElement.getClassLoadServiceImpl());
 				clsFound = clsElement.getClassLoadServiceImpl();
 				break;
@@ -134,7 +129,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 			nNew = clsElementsNew.size();
 			for (ClassLoadServiceElement clsElement : clsElementsNew) {
 				// --- Filter from right filter type ----------------
-				if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement.getClassLoadServiceImpl(), className)==true) {
+				if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement, className)==true) {
 					this.getClassLoadServicesByServiceAndClassName().put(requestKey, clsElement.getClassLoadServiceImpl());
 					clsFound = clsElement.getClassLoadServiceImpl();
 					break;
@@ -144,7 +139,9 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		
 		// --- Use default service, even if it throws exceptions ----
 		if (clsFound==null) {
-			if (this.debugDetail) System.err.println("No ClassLoadService found [known: " + nKnown + "| new: " + nNew + "] Searched by: " + this.getClass().getName() + ", Service '" + serviceBaseInterface.getSimpleName() + "' for: " + className + "");
+			if (this.debugDetail) {
+				System.err.println("No ClassLoadService found [known: " + nKnown + "| new: " + nNew + "] Searched by: " + this.getClass().getName() + ", Service '" + serviceBaseInterface.getSimpleName() + "' for: " + className + "");
+			}
 			clsFound = clsFoundDefault;
 		}
 		return clsFound;
@@ -169,6 +166,55 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		}
 		return false;
 	}
+	/**
+	 * Checks if the service, specified within the ClassLoadServiceElement, is the required one for the specified class.
+	 *
+	 * @param serviceBaseInterface the type of the service, specified by the interface
+	 * @param clsElement the ClassLoadServiceElement element
+	 * @param className the class name
+	 * @return true, if is required class load service
+	 */
+	private boolean isRequiredClassLoadService(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className) {
+		if (serviceBaseInterface.isInstance(clsElement.getClassLoadServiceImpl())==true && this.isRequiredBundle(clsElement.getBundle(), className)==true) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Checks if is required bundle.
+	 *
+	 * @param bundle the bundle
+	 * @param className the class name
+	 * @return true, if is required bundle
+	 */
+	private boolean isRequiredBundle(Bundle bundle, String className) {
+		
+		// --- 1. Simply try to load the class ----------------------
+		try {
+			Class<?> classInstance = bundle.loadClass(className);
+			if (classInstance!=null && FrameworkUtil.getBundle(classInstance)==bundle) {
+				return true;
+			}
+		
+		} catch (ClassNotFoundException cnfEx) {
+			//cnfEx.printStackTrace();
+		}
+		
+		// --- 2. Try to check the resources of the bundle ----------
+		String simpleClassName = className.substring(className.lastIndexOf(".")+1);
+		String packagePath = className.substring(0, className.lastIndexOf("."));
+		packagePath = packagePath.replace(".", "/");
+		if (packagePath.startsWith("/")==false) packagePath = "/" + packagePath;
+		if (packagePath.endsWith("/")  ==false) packagePath = packagePath + "/";
+		
+		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+		Collection<String> resources = bundleWiring.listResources(packagePath, simpleClassName + ".class", BundleWiring.LISTRESOURCES_LOCAL);
+		if (resources!=null && resources.size()>0) {
+			return true;
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * Returns the HashMap of {@link ClassLoadServiceElement} vectors, where the key is given by the ComponentFactory name.
@@ -379,6 +425,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	
 	/**
 	 * The Class ClassLoadServiceElement store the important elements belonging to a class load service.
+	 * 
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
 	 */
 	private class ClassLoadServiceElement implements Comparable<ClassLoadServiceElement> {
@@ -428,9 +475,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 			}
 			return affectedInterfaces;
 		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
+		
 		@Override
 		public boolean equals(Object compareObject) {
 		
@@ -452,12 +497,10 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 			}
 			return false;
 		}
-		/* (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
+		
 		@Override
 		public int compareTo(AbstractClassLoadServiceUtilityImpl<T>.ClassLoadServiceElement clsElement) {
-			return clsElement.getComponentFactoryName().compareTo(this.getComponentFactoryName());
+			return this.getComponentFactoryName().compareTo(clsElement.getComponentFactoryName());
 		}
 		
 	}

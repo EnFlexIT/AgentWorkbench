@@ -785,7 +785,9 @@ public class Platform {
 		// --- Move required resources to server directory -- 
 		Object[] fileMangerArguments = new Object[1];
 		String fileMangerPath = Application.getGlobalInfo().getFileManagerServerPath(true);
-		fileMangerArguments[0] = this.fileMangerProject.exportProjectRessurcesToDestinationDirectory(fileMangerPath);
+		String messageSuccess = "[" + this.fileMangerProject.getProjectName() + "] Project resources for remote container execution successfully prepared!";;
+		String messageFailure = "[" + this.fileMangerProject.getProjectName() + "] Provisioning of project resources for remote container execution failed!";
+		fileMangerArguments[0] = this.fileMangerProject.exportProjectRessurcesToDestinationDirectory(fileMangerPath, messageSuccess, messageFailure);
 		// --- Start the file manager agent -----------------
 		if (fileMangerArguments[0]!=null) {
 			this.startAgent(BackgroundSystemAgentFileManger, jade.misc.FileManagerAgent.class.getName(), fileMangerArguments);	

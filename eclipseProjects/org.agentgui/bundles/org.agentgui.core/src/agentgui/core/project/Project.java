@@ -800,6 +800,17 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return the actual path of the resources for the file manager
 	 */
 	public String exportProjectRessurcesToDestinationDirectory(String destinationDirectoryRootPath) {
+		return this.exportProjectRessurcesToDestinationDirectory(destinationDirectoryRootPath, null, null);
+	}
+	/**
+	 * Move project libraries to the specified destination directory.
+	 *
+	 * @param destinationDirectoryRootPath the destination directory root path
+	 * @param messageSuccess the optional message for successful export
+	 * @param messageFailure the optional message, if the export failed
+	 * @return the actual path of the resources for the file manager
+	 */
+	public String exportProjectRessurcesToDestinationDirectory(String destinationDirectoryRootPath, String messageSuccess, String messageFailure) {
 
 		// --- Define / create destination directory ----------------
 		File destinationDir = new File(destinationDirectoryRootPath);
@@ -816,6 +827,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 		// --- Do the export ----------------------------------------
 		ProjectExportController pExCon = new ProjectExportController(this);
+		if (messageSuccess!=null) pExCon.setMessageSuccess(messageSuccess);	
+		if (messageFailure!=null) pExCon.setMessageFailure(messageFailure);
 		pExCon.exportProject(pExSet, false, false);
 
 		// --- Return the root path for the file manager ------------

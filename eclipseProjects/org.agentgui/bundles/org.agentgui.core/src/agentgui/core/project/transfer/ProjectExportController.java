@@ -62,7 +62,6 @@ import agentgui.core.project.transfer.gui.ProjectExportDialog;
 import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.ArchiveFileHandler;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
-import de.enflexit.common.transfer.RecursiveFolderDeleter;
 
 /**
  * This class is responsible for exporting projects from AgentWorkbench.
@@ -74,8 +73,11 @@ public class ProjectExportController {
 
 	private Project project;
 	private ProjectExportSettings exportSettings;
+	
 	private boolean isShowUserDialogs = true;
-
+	private String messageSuccess;
+	private String messageFailure;
+	
 	private Path tempFolderPath;
 
 	private ProgressMonitor progressMonitor;
@@ -499,21 +501,39 @@ public class ProjectExportController {
 	protected void afterZip(boolean success) {
 		// --- Show a feedback message to the user --------------------
 		if (success == true) {
-			System.out.println("Project '" + project.getProjectName() + "' export successful!");
+			if (this.getMessageSuccess().isEmpty()==false) System.out.println(this.getMessageSuccess());
 			if (this.isShowUserDialogs == true) {
 				String messageTitle = Language.translate("Export erfolgreich");
 				String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
 				JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else {
-			System.err.println("Project '" + project.getProjectName() + "' export failed!");
+			if (this.getMessageFailure().isEmpty()==false) System.err.println(this.getMessageFailure());
 			if (this.isShowUserDialogs == true) {
 				String message = Language.translate("Export fehlgeschlagen");
 				JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-
+	public void setMessageSuccess(String newMessageSuccess) {
+		this.messageSuccess = newMessageSuccess;
+	}
+	public String getMessageSuccess() {
+		if (messageSuccess==null) {
+			messageSuccess = "Project '" + project.getProjectName() + "' export successful!";
+		}
+		return messageSuccess;
+	}
+	public void setMessageFailure(String newMessageFailure) {
+		this.messageFailure = newMessageFailure;
+	}
+	public String getMessageFailure() {
+		if (messageFailure==null) {
+			messageFailure = "Project '" + project.getProjectName() + "' export failed!";
+		}
+		return messageFailure;
+	}
+	
 	/**
 	 * Does the actual project export.
 	 */
