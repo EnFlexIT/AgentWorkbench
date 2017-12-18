@@ -119,7 +119,7 @@ public class PropertyContentProvider {
 	public void checkAndProvidePropertyContent(FileToProvide fileToProvide, boolean overwriteExistingFile) {
 		
 		// --- Try to find the file in the properties ----- 
-		String fileNameToMatch = fileToProvide.toString();
+		final String fileNameToMatch = fileToProvide.toString();
 		File[] fileFound = this.propertyDirectory.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
