@@ -42,6 +42,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -60,7 +61,6 @@ import javax.swing.ListSelectionModel;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 import agentgui.core.application.Language;
-import agentgui.core.project.Project;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 
@@ -73,7 +73,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -9120650393031177126L;
 	
-	private Project project;
+	private Vector<FeatureInfo> featureVector;
 
 	private boolean canceled;
 
@@ -93,12 +93,12 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	 * Instantiates a new feature selection dialog.
 	 *
 	 * @param ownerFrame the owner frame
+	 * @param featureVector the feature vector
 	 * @param availableFeatures the available features
-	 * @param project the project
 	 */
-	public FeatureSelectionDialog(Frame ownerFrame, Project project, List<IInstallableUnit> availableFeatures) {
+	public FeatureSelectionDialog(Frame ownerFrame, Vector<FeatureInfo> featureVector, List<IInstallableUnit> availableFeatures) {
 		super(ownerFrame);
-		this.project = project;
+		this.featureVector = featureVector;
 		this.availableFeatures = availableFeatures;
 		this.initialize();
 	}
@@ -196,7 +196,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 			jListFeatures.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			jListFeatures.setCellRenderer(new CheckBoxListCellRenderer());
 			jListFeatures.setSelectionModel(new ListSelectionModelForJCheckBox());
-			this.setFeatureSelection(this.project.getProjectFeatures());
+			this.setFeatureSelection(this.featureVector);
 		}
 		return jListFeatures;
 	}

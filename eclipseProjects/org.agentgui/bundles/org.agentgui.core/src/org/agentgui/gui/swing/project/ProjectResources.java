@@ -31,16 +31,12 @@ package org.agentgui.gui.swing.project;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -56,9 +52,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
-import org.agentgui.gui.swing.dialogs.FeatureSelectionDialog;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -68,9 +61,7 @@ import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectResource2Display;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
-import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
-import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Resources'
@@ -96,20 +87,14 @@ public class ProjectResources extends JScrollPane implements Observer {
 	private JList<ProjectResource2Display> jListBinResources;
 	private JList<PlugInListElement> jListPlugIns;
 	private DefaultListModel<PlugInListElement> plugInsListModel = new DefaultListModel<PlugInListElement>();
+	
+	private JCheckBox jCheckboxManifest;
 
-	private JList<FeatureInfo> jListFeatures;
-	private DefaultListModel<FeatureInfo> featuresListModel;
-
+	private JLabel jLabelBinResources;
 	private JButton jButtonBinResourcesAdd;
 	private JButton jButtonBinResourcesRemove;
 	private JButton jButtonBinRecourcesRefresh;
 
-	private JButton jButtonAddPlugIns;
-	private JButton jButtonRemovePlugIns;
-	private JButton jButtonRefreshPlugIns;
-	private JLabel jLabelBinResources;
-	private JLabel jLabelPlugIns;
-	private JCheckBox jCheckboxManifest;
 	private JPanel jPanelJarResourcen;
 	private JScrollPane jScrollPanePlainJars;
 	private JList<String> jListJarResources;
@@ -118,15 +103,19 @@ public class ProjectResources extends JScrollPane implements Observer {
 	private JLabel jLabelJarResources;
 	private JLabel jLabelBundleResources;
 	private JPanel jPanelJarFileHeader;
-	private JSeparator jSeparatorBottom;
+	
 	private JSeparator jSeparatorTop;
-	private JLabel jLabelFeatures;
-	private JScrollPane jScrollPaneFeatures;
-	private JPanel jPanelFeatureButtons;
-	private JButton jButtonAddFeatures;
-	private JButton jButtonRemoveFeatures;
-	private JButton jButtonRefreshFeatures;
 
+	private JLabel jLabelFeatures;
+	private FeaturePanel fetaurePanel;
+	private JSeparator jSeparatorBottom;
+
+	private JLabel jLabelPlugIns;
+	private JButton jButtonAddPlugIns;
+	private JButton jButtonRemovePlugIns;
+	private JButton jButtonRefreshPlugIns;
+	
+	
 	/**
 	 * Instantiates a new visual representation for the project resources.
 	 * 
@@ -163,7 +152,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * Initialize this JPanel.
 	 */
 	private void initialize() {
-		this.setViewportView(this.getjPanelContent());
+		this.setViewportView(this.getJPanelContent());
 	}
 
 	/**
@@ -171,7 +160,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * 
 	 * @return the j panel content
 	 */
-	private JPanel getjPanelContent() {
+	private JPanel getJPanelContent() {
 		if (jPanelContent == null) {
 
 			GridBagLayout gridBagLayout = new GridBagLayout();
@@ -216,6 +205,23 @@ public class ProjectResources extends JScrollPane implements Observer {
 			gbc_jSeparatorTop.insets = new Insets(10, 10, 0, 10);
 			gbc_jSeparatorTop.gridx = 0;
 			gbc_jSeparatorTop.gridy = 5;
+			GridBagConstraints gbc_jLabelFeatures = new GridBagConstraints();
+			gbc_jLabelFeatures.anchor = GridBagConstraints.WEST;
+			gbc_jLabelFeatures.insets = new Insets(10, 15, 0, 0);
+			gbc_jLabelFeatures.gridx = 0;
+			gbc_jLabelFeatures.gridy = 6;
+			GridBagConstraints gbcJLabelFeatures = new GridBagConstraints();
+			gbcJLabelFeatures.fill = GridBagConstraints.BOTH;
+			gbcJLabelFeatures.gridwidth = 2;
+			gbcJLabelFeatures.gridx = 0;
+			gbcJLabelFeatures.insets = new Insets(5, 10, 0, 10);
+			gbcJLabelFeatures.gridy = 7;
+			GridBagConstraints gbc_jSeparatorBottom = new GridBagConstraints();
+			gbc_jSeparatorBottom.gridwidth = 2;
+			gbc_jSeparatorBottom.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparatorBottom.insets = new Insets(10, 10, 0, 10);
+			gbc_jSeparatorBottom.gridx = 0;
+			gbc_jSeparatorBottom.gridy = 8;
 			GridBagConstraints gbcJLabelPlugins = new GridBagConstraints();
 			gbcJLabelPlugins.gridx = 0;
 			gbcJLabelPlugins.insets = new Insets(10, 15, 0, 0);
@@ -231,27 +237,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 			gbcJPanelPlugInButtons.gridx = 1;
 			gbcJPanelPlugInButtons.gridy = 10;
 			gbcJPanelPlugInButtons.insets = new Insets(5, 5, 0, 10);
-			GridBagConstraints gbc_jSeparatorBottom = new GridBagConstraints();
-			gbc_jSeparatorBottom.gridwidth = 2;
-			gbc_jSeparatorBottom.fill = GridBagConstraints.HORIZONTAL;
-			gbc_jSeparatorBottom.insets = new Insets(10, 10, 0, 10);
-			gbc_jSeparatorBottom.gridx = 0;
-			gbc_jSeparatorBottom.gridy = 8;
-			GridBagConstraints gbcJLabelFeatures = new GridBagConstraints();
-			gbcJLabelFeatures.gridx = 0;
-			gbcJLabelFeatures.insets = new Insets(10, 15, 0, 0);
-			gbcJLabelFeatures.anchor = GridBagConstraints.WEST;
-			gbcJLabelFeatures.gridy = 6;
-			GridBagConstraints gbcJScrollPaneFeatures = new GridBagConstraints();
-			gbcJScrollPaneFeatures.fill = GridBagConstraints.BOTH;
-			gbcJScrollPaneFeatures.gridx = 0;
-			gbcJScrollPaneFeatures.insets = new Insets(5, 10, 10, 0);
-			gbcJScrollPaneFeatures.gridy = 7;
-			GridBagConstraints gbcJPanelFeatureButtons = new GridBagConstraints();
-			gbcJPanelFeatureButtons.gridx = 1;
-			gbcJPanelFeatureButtons.gridy = 7;
-			gbcJPanelFeatureButtons.fill = GridBagConstraints.VERTICAL;
-			gbcJPanelFeatureButtons.insets = new Insets(5, 5, 10, 10);
+			
 
 			jPanelContent = new JPanel();
 			jPanelContent.setLayout(gridBagLayout);
@@ -262,9 +248,8 @@ public class ProjectResources extends JScrollPane implements Observer {
 			jPanelContent.add(getJPanelJarFileHeader(), gbc_jPanelJarFileHeader);
 			jPanelContent.add(getJPanelJarResourcen(), gbc_jPanelJarResourcen);
 			jPanelContent.add(getJSeparatorTop(), gbc_jSeparatorTop);
-			jPanelContent.add(getJLabelFeatures(), gbcJLabelFeatures);
-			jPanelContent.add(getJScrollPaneFeatures(), gbcJScrollPaneFeatures);
-			jPanelContent.add(getJPanelFeatureButtons(), gbcJPanelFeatureButtons);
+			jPanelContent.add(getJLabelFeatures(), gbc_jLabelFeatures);
+			jPanelContent.add(getFeaturePanel(), gbcJLabelFeatures);
 			jPanelContent.add(getJLabelPlugIns(), gbcJLabelPlugins);
 			jPanelContent.add(getJScrollPanePlugIns(), gbcJScrollPanePlugIns);
 			jPanelContent.add(getJPanelPlugInButtons(), gbcJPanelPlugInButtons);
@@ -300,7 +285,6 @@ public class ProjectResources extends JScrollPane implements Observer {
 
 	/**
 	 * This method initializes jScrollPane
-	 * 
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneBinResources() {
@@ -314,7 +298,6 @@ public class ProjectResources extends JScrollPane implements Observer {
 
 	/**
 	 * This method initializes jListResources
-	 * 
 	 * @return javax.swing.JList
 	 */
 	private JList<ProjectResource2Display> getJListBinResources() {
@@ -327,7 +310,6 @@ public class ProjectResources extends JScrollPane implements Observer {
 
 	/**
 	 * This method initializes jButtonAdd
-	 * 
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonBinResourcesAdd() {
@@ -736,198 +718,38 @@ public class ProjectResources extends JScrollPane implements Observer {
 		return jSeparatorTop;
 	}
 
-	/**
-	 * Gets the j label features.
-	 * @return the j label features
-	 */
 	private JLabel getJLabelFeatures() {
 		if (jLabelFeatures == null) {
-			jLabelFeatures = new JLabel("Projekt-Features");
+			jLabelFeatures = new JLabel("Project-Features");
 			jLabelFeatures.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelFeatures;
 	}
 	/**
-	 * Gets the j scroll pane features.
-	 * @return the j scroll pane features
+	 * Returns the feature panel.
+	 * @return the feature panel
 	 */
-	private JScrollPane getJScrollPaneFeatures() {
-		if (jScrollPaneFeatures == null) {
-			jScrollPaneFeatures = new JScrollPane();
-			jScrollPaneFeatures.setPreferredSize(this.preferredListSizeLarge);
-			jScrollPaneFeatures.setViewportView(this.getjListFeatures());
-		}
-		return jScrollPaneFeatures;
-	}
-
-	/**
-	 * Gets the {@link JList} for managing the required features.
-	 *
-	 * @return the j list features
-	 */
-	private JList<FeatureInfo> getjListFeatures() {
-		if (jListFeatures == null) {
-			jListFeatures = new JList<FeatureInfo>();
-			jListFeatures.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jListFeatures.setModel(getFeaturesListModel());
-		}
-		return jListFeatures;
-	}
-
-	/**
-	 * Gets the features list model.
-	 *
-	 * @return the features list model
-	 */
-	private DefaultListModel<FeatureInfo> getFeaturesListModel() {
-		return this.getFeaturesListModel(false);
-	}
-
-	/**
-	 * Gets the features list model.
-	 *
-	 * @param rebuild if true, an existing model will be replaced
-	 * @return the features list model
-	 */
-	private DefaultListModel<FeatureInfo> getFeaturesListModel(boolean rebuild) {
-		if (featuresListModel == null || rebuild == true) {
-			featuresListModel = new DefaultListModel<FeatureInfo>();
-			Vector<FeatureInfo> projectFeatures = currProject.getProjectFeatures();
-			Collections.sort(projectFeatures);
-			if (projectFeatures.isEmpty() == false) {
-				for (FeatureInfo feature : projectFeatures) {
-					featuresListModel.addElement(feature);
-				}
-			}
-		}
-		return featuresListModel;
-	}
-
-	/**
-	 * Gets the j panel feature buttons.
-	 * @return the j panel feature buttons
-	 */
-	private JPanel getJPanelFeatureButtons() {
-		if (jPanelFeatureButtons == null) {
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.anchor = GridBagConstraints.SOUTH;
-			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.insets = new Insets(10, 0, 0, 0);
-			gridBagConstraints3.gridy = 2;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 1;
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = -1;
-			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
-			gridBagConstraints1.gridy = -1;
-			jPanelFeatureButtons = new JPanel();
-			GridBagLayout gbl_jPanelFeatureButtons = new GridBagLayout();
-			gbl_jPanelFeatureButtons.rowWeights = new double[] { 0.0, 0.0, 1.0 };
-			jPanelFeatureButtons.setLayout(gbl_jPanelFeatureButtons);
-			jPanelFeatureButtons.add(getJButtonAddFeatures(), gridBagConstraints1);
-			jPanelFeatureButtons.add(getJButtonRemoveFeatures(), gridBagConstraints2);
-			jPanelFeatureButtons.add(getJButtonRefreshFeatures(), gridBagConstraints3);
-		}
-		return jPanelFeatureButtons;
-	}
-	/**
-	 * This method initializes jButtonAdd
-	 * 
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonAddFeatures() {
-		if (jButtonAddFeatures == null) {
-			jButtonAddFeatures = new JButton();
-			jButtonAddFeatures.setPreferredSize(new Dimension(45, 26));
-			jButtonAddFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
-			jButtonAddFeatures.setToolTipText("Select features");
-			jButtonAddFeatures.addActionListener(new ActionListener() {
+	private FeaturePanel getFeaturePanel() {
+		if (fetaurePanel == null) {
+			fetaurePanel = new FeaturePanel(this.currProject.getProjectFeatures()) {
+				private static final long serialVersionUID = 7544963863606226622L;
 				@Override
-				public void actionPerformed(ActionEvent e) {
-
-					// --- Get a list of available features -------
-					List<IInstallableUnit> availableFeatures = null;
-					try {
-						availableFeatures = P2OperationsHandler.getInstance().getInstalledFeatures();
-					} catch (Exception e1) {
-						Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(ProjectResources.this);
-						JOptionPane.showMessageDialog(owner , e1.getMessage(), "Error accessing p2 profile", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					// --- Show a feature selection dialog --------
-					Frame ownerFrame = Application.getGlobalInfo().getOwnerFrameForComponent(getJButtonAddFeatures());
-					FeatureSelectionDialog fsd = new FeatureSelectionDialog(ownerFrame, currProject, availableFeatures);
-
-					// --- Add the selected features to the list --
-					if (fsd.isCanceled() == false) {
-
-						// --- Get the selected IUs from the dialog --------
-						List<IInstallableUnit> selectedFeatures = fsd.getSelectedFeatures();
-
-						// --- Create FeatureInfo objects for all selected IUs ----
-						List<FeatureInfo> featuresList = new ArrayList<FeatureInfo>();
-						for (IInstallableUnit installableUnit : selectedFeatures) {
-							if (FeatureEvaluator.getInstance().isFeatureOfBaseInstallation(installableUnit)==false) {
-								// --- Create FeatureInfo -------------------------
-								FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(installableUnit);
-								ProjectResources.this.getFeaturesListModel().addElement(featureInfo);
-								featuresList.add(featureInfo);
-							}
-						}
-
-						// --- Add the FeatureInfo objects to the project ---------
-						currProject.addAllProjectFeatures(featuresList, true);
-					}
+				public void addedFeatureInfo(FeatureInfo addedFeatureInfo) {
+					ProjectResources.this.currProject.addProjectFeature(addedFeatureInfo);
 				}
-			});
-		}
-		return jButtonAddFeatures;
-	}
-	/**
-	 * This method initializes jButtonRemove
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonRemoveFeatures() {
-		if (jButtonRemoveFeatures == null) {
-			jButtonRemoveFeatures = new JButton();
-			jButtonRemoveFeatures.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
-			jButtonRemoveFeatures.setPreferredSize(new Dimension(45, 26));
-			jButtonRemoveFeatures.setToolTipText("Remove feature");
-			jButtonRemoveFeatures.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					FeatureInfo selectedFeature = ProjectResources.this.getjListFeatures().getSelectedValue();
-					if (selectedFeature != null) {
-						ProjectResources.this.currProject.removeProjectFeature(selectedFeature);
-					}
+				public void removedFeatureInfo(FeatureInfo removedFeatureInfo) {
+					ProjectResources.this.currProject.removeProjectFeature(removedFeatureInfo);
 				}
-			});
-
-		}
-		return jButtonRemoveFeatures;
-	}
-	/**
-	 * This method initializes jButtonRefresh
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonRefreshFeatures() {
-		if (jButtonRefreshFeatures == null) {
-			jButtonRefreshFeatures = new JButton();
-			jButtonRefreshFeatures.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
-			jButtonRefreshFeatures.setPreferredSize(new Dimension(45, 26));
-			jButtonRefreshFeatures.setToolTipText("Determine required features.");
-			jButtonRefreshFeatures.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					currProject.determineRequiredFeatures();
+				public void updateFeatureInfo() {
+					ProjectResources.this.currProject.determineRequiredFeatures();
 				}
-			});
+			};
+			fetaurePanel.setPreferredSize(this.preferredListSizeLarge);
 		}
-		return jButtonRefreshFeatures;
+		return fetaurePanel;
 	}
-	
 	
 	/**
 	 * Gets the j label plug ins.
@@ -1006,7 +828,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		this.getJListBinResources().setModel(this.currProject.getProjectResources().getResourcesListModel());
 		this.getJListJarResources().setModel(this.currProject.getProjectBundleLoader().getRegularJarsListModel());
 		this.getJListBundleJars().setModel(this.currProject.getProjectBundleLoader().getBundleJarsListModel());
-		this.getjListFeatures().setModel(this.getFeaturesListModel(true));
+		this.getFeaturePanel().setFeatureVector(this.currProject.getProjectFeatures());
 	}
 
 	/*

@@ -758,7 +758,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @param projectFeature the project feature to add
 	 */
 	public void addProjectFeature(FeatureInfo projectFeature) {
-		if (this.projectFeatures.contains(projectFeature) == false) {
+		if (this.projectFeatures.contains(projectFeature)==false) {
 			this.projectFeatures.add(projectFeature);
 			this.setUnsaved(true);
 			this.setChanged();
