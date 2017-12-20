@@ -738,13 +738,18 @@ public class ProjectResources extends JScrollPane implements Observer {
 					ProjectResources.this.currProject.addProjectFeature(addedFeatureInfo);
 				}
 				@Override
+				public void updatedFeatureInfo(FeatureInfo editedFeatureInfo) {
+					ProjectResources.this.currProject.setChangedAndNotify(Project.CHANGED_ProjectResources);
+				}
+				@Override
 				public void removedFeatureInfo(FeatureInfo removedFeatureInfo) {
 					ProjectResources.this.currProject.removeProjectFeature(removedFeatureInfo);
 				}
 				@Override
-				public void updateFeatureInfo() {
+				public void updateFeatureInfos() {
 					ProjectResources.this.currProject.determineRequiredFeatures();
 				}
+				
 			};
 			fetaurePanel.setPreferredSize(this.preferredListSizeLarge);
 		}
@@ -837,10 +842,10 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
-	public void update(Observable o, Object updated) {
+	public void update(Observable observable, Object updated) {
 
 		if (updated.toString().equals(PlugIn.CHANGED)) {
-			// --- Something happend with a plugIn --------
+			// --- Something happened with a plugIn -------
 			PlugInNotification pin = (PlugInNotification) updated;
 			int updateReason = pin.getUpdateReason();
 			if (updateReason == PlugIn.ADDED) {
@@ -850,8 +855,14 @@ public class ProjectResources extends JScrollPane implements Observer {
 			}
 
 		} else if (updated.equals(Project.CHANGED_ProjectResources)) {
+			// --- Changes in the resources ---------------
 			this.setViewAccordingToProject();
-		}
+			
+		} else if (updated.equals(Project.CHANGED_ProjectFeatures)) {
+			// --- Feature changes ------------------------
+			this.getFeaturePanel().setFeatureVector(this.currProject.getProjectFeatures());
+			
+		} 
 
 	}
 

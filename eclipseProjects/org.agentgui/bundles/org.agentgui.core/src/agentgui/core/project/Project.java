@@ -120,6 +120,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String CHANGED_TimeModelClass = "TimeModelConfiguration";
 	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
+	@XmlTransient public static final String CHANGED_ProjectFeatures = "ProjectFeatures";
 	@XmlTransient public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
 	@XmlTransient public static final String CHANGED_DistributionSetup = "DistributionSetup";
 	@XmlTransient public static final String CHANGED_RemoteContainerConfiguration = "RemoteContainerConfiguration";
@@ -720,7 +721,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		if (isChaneged==true) {
 			this.setUnsaved(true);
 			this.setChanged();
-			this.notifyObservers(CHANGED_ProjectResources);
+			this.notifyObservers(CHANGED_ProjectFeatures);
 		}
 	}
 	
@@ -769,7 +770,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			this.projectFeatures.add(projectFeature);
 			this.setUnsaved(true);
 			this.setChanged();
-			this.notifyObservers(CHANGED_ProjectResources);
+			this.notifyObservers(CHANGED_ProjectFeatures);
 		}
 	}
 	/**
@@ -780,7 +781,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		this.projectFeatures.remove(projectFeature);
 		this.setUnsaved(true);
 		this.setChanged();
-		this.notifyObservers(CHANGED_ProjectResources);
+		this.notifyObservers(CHANGED_ProjectFeatures);
 	}
 	/**
 	 * Adds a list of features to the project, optionally clears the list before.
@@ -797,7 +798,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		}
 		this.setUnsaved(true);
 		this.setChanged();
-		this.notifyObservers(CHANGED_ProjectResources);
+		this.notifyObservers(CHANGED_ProjectFeatures);
 	}
 	
 	/**

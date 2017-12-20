@@ -36,6 +36,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
 
@@ -52,6 +56,7 @@ import org.agentgui.gui.swing.dialogs.FeatureSelectionDialog;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
@@ -128,6 +133,17 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 			jTableFeatures.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 			jTableFeatures.getTableHeader().setReorderingAllowed(false);
+			
+			jTableFeatures.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent me) {
+					if (me.getClickCount()==2) {
+						if (me.getSource()==getJTableFeatures()) {
+							getJButtonEditFeature().doClick();
+						}
+					}
+				}
+			});
 			
 			TableColumnModel tcm = jTableFeatures.getColumnModel();
 			tcm.getColumn(0).setWidth(0);
@@ -245,7 +261,7 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 		if (jButtonEditFeature == null) {
 			jButtonEditFeature = new JButton();
 			jButtonEditFeature.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
-			jButtonEditFeature.setToolTipText("Edit feature");
+			jButtonEditFeature.setToolTipText("Edit feature repository");
 			jButtonEditFeature.setPreferredSize(this.buttonSize);
 			jButtonEditFeature.setMinimumSize(this.buttonSize);
 			jButtonEditFeature.addActionListener(this);
@@ -317,11 +333,27 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 			// --- Edit the selected FeatureInfo ------------------------------
 			int tableRowIndex = this.getJTableFeatures().getSelectedRow();
 			if (tableRowIndex!=-1) {
-				FeatureInfo featureInfoToRemove = (FeatureInfo) this.getJTableFeatures().getValueAt(tableRowIndex, 0);
+				// --- Get the feature info to edit ---------------------------
+				FeatureInfo featureInfoToEdit = (FeatureInfo) this.getJTableFeatures().getValueAt(tableRowIndex, 0);
 				
-				// TODO
-				
-				
+				// --- Ask user for the repository ----------------------------
+				String title = Language.translate("Edit feature repository", Language.EN);
+				String message = Language.translate("Please insert a valid repository URI for the feature", Language.EN) + " '" + featureInfoToEdit.getId() + "'!";
+				String newUriString = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE, null, null, featureInfoToEdit.getRepositoryURI() );
+				if (newUriString!=null && newUriString.equalsIgnoreCase(featureInfoToEdit.getRepositoryURI().toString())==false) {
+
+					try {
+						URI newURI = new URI(newUriString);
+						featureInfoToEdit.setRepositoryURI(newURI);
+						this.getJTableFeatures().setValueAt(newURI, tableRowIndex, 5);
+						this.updatedFeatureInfo(featureInfoToEdit);
+						
+					} catch (URISyntaxException uriEx) {
+						JOptionPane.showMessageDialog(this, uriEx.getLocalizedMessage(), title, JOptionPane.ERROR_MESSAGE);
+						//uriEx.printStackTrace();
+					}
+					
+				}
 			}			
 			
 		} else if (ae.getSource()==this.getJButtonRemoveFeatures()) {
@@ -337,27 +369,31 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource()==this.getJButtonRefreshFeatures()) {
 			// --- Automatically set the required features -------------------
-			this.updateFeatureInfo();
+			this.updateFeatureInfos();
 			
 		}
 		
 	}
 
 	/**
-	 * Informs that a FeatureInfo was added.
+	 * Informs that the specified FeatureInfo was added.
 	 * @param addedFeatureInfo the added FeatureInfo
 	 */
 	public abstract void addedFeatureInfo(FeatureInfo addedFeatureInfo);
 	/**
-	 * Informs that a FeatureInfo was removed.
+	 * Informs that the specified FeatureInfo was updates.
+	 * @param updatedFeatureInfo the updated FeatureInfo
+	 */
+	public abstract void updatedFeatureInfo(FeatureInfo updatedFeatureInfo);
+	/**
+	 * Informs that the specified FeatureInfo was removed.
 	 * @param removedFeatureInfo the removed FeatureInfo
 	 */
 	public abstract void removedFeatureInfo(FeatureInfo removedFeatureInfo);
-	
 	/**
-	 * Informs that the FeatureInfos should be set through {@link #setFeatureVector(Vector)}.
+	 * Informs that the FeatureInfos should be updated and set through {@link #setFeatureVector(Vector)}.
 	 */
-	public abstract void updateFeatureInfo();
+	public abstract void updateFeatureInfos();
 	
 	
 	/**
