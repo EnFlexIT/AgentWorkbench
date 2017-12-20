@@ -351,13 +351,25 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		project.checkAndCreateProjectsDirectoryStructure();
 		
 		// --- Install required features if necessary -----
+		// --- Only possible if not running from the IDE --
 		if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
 			// --- Only possible if not running from the IDE --
-			boolean featuresAvailable = project.installRequiredFeatures();
-			if (featuresAvailable == false) {
-				// --- Required features could not be installed -> cannot load project ----
-				JOptionPane.showConfirmDialog(null, Language.translate("Benötigte Features konnten nicht geladen werden!"), Language.translate("Fehler"), JOptionPane.ERROR_MESSAGE);
-				return null;
+			
+			// --- Check if additional features have to be installed for this project -------- 
+			if (project.requiresFeatureInstallation()) {
+				
+				// --- If so, install the required features -------------
+				boolean featuresInstalled = project.installRequiredFeatures();
+				
+				if (featuresInstalled == true) {
+					// --- If successful, relaunch the application. Add an argument to load the current project afterwards ---
+					Application.relaunch("-project " + project.getProjectFolder());
+					return null; // --- Skip the further loading of the project
+				} else {
+					// --- Feature installation failed -------------
+					System.err.println("Not all required features have been installed successfully");
+					//TODO figure out how to handle this
+				}
 			}
 		}
 		
@@ -731,7 +743,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	public boolean installRequiredFeatures() {
 
-		boolean installedNewFeatures = false;
 		for (FeatureInfo feature : this.getProjectFeatures()) {
 			// --- Check if feature is installed ---------- 
 			if (P2OperationsHandler.getInstance().checkIfInstalled(feature.getId())==false) {
@@ -739,7 +750,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				System.out.print("=> Project '" + this.getProjectName() + "': Install '" + feature.getName()  + "' (" + feature.getId() + ") from " + feature.getRepositoryURI() + " ... ");
 				boolean success = P2OperationsHandler.getInstance().installIU(feature.getId(), feature.getRepositoryURI());
 				if (success==true) {
-					installedNewFeatures = true;
 					System.out.print("DONE!\n");
 				} else {
 					System.err.println("=> Project '" + this.getProjectName() + "': Unnable to install feature " + feature.getId());
@@ -748,9 +758,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			}
 		}
 		
-		if (installedNewFeatures==true) {
-			Application.relaunch("-project " + this.getProjectFolder());
-		}
 		return true;
 	}
 	/**
