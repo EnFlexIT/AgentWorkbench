@@ -248,7 +248,7 @@ public class Application {
 	 * @return the log file writer
 	 */
 	public static LogFileWriter startLogFileWriter() {
-		if (logFileWriter==null) {
+		if (Application.getGlobalInfo().isLoggingEnabled() && logFileWriter==null) {
 			logFileWriter = new LogFileWriter();
 		}
 		return logFileWriter;

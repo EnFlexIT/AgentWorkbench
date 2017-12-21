@@ -71,6 +71,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
@@ -347,6 +348,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		// --- Load the XML file of the project ----------
 		Project project = loadProjectXml(projectPath);
 		
+		if(project == null){
+			return null;
+		}
+		
 		// --- Check/create default folders ---------------
 		project.setProjectFolder(projectSubDirectory);
 		project.checkAndCreateProjectsDirectoryStructure();
@@ -452,7 +457,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			String title = Language.translate("Projekt-Ladefehler!");
 			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
 			message += xmlFileName;
-			JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
+			if(Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION){
+				JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
+			}
 			return null;
 		}
 
