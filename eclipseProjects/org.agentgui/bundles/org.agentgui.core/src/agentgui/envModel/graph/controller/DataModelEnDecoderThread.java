@@ -283,7 +283,7 @@ public class DataModelEnDecoderThread extends Thread {
 	 * Sets the specified progress to the progress monitor.
 	 * @param percentProgressNew the new progress to progress monitor
 	 */
-	private void setProgressToProgressMonitor(int percentProgressNew) {
+	private void setProgressToProgressMonitor(final int percentProgressNew) {
 		
 		if (this.isHeadlessOperation==true) return;
 		
