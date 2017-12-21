@@ -54,7 +54,7 @@ public class PlatformShutdownBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 
-		if (simulationServiceIsRunning()) {
+		if (isSimulationServiceRunning()) {
 			// --- Stop all simulation-agents via Simulation Service ----------
 			try {
 				SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
@@ -88,7 +88,7 @@ public class PlatformShutdownBehaviour extends OneShotBehaviour {
 	 * Checks if the {@link SimulationService} is running or not .
 	 * @return true, if the service is running
 	 */
-	private boolean simulationServiceIsRunning() {
+	private boolean isSimulationServiceRunning() {
 		
 		try {
 			@SuppressWarnings("unused")

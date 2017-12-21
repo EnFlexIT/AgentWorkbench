@@ -130,7 +130,7 @@ public class StartAgentDialog extends JDialog implements ActionListener {
 	 */
 	private void initilaize() {
 		
-		this.setTitle("Start new Agent");
+		this.setTitle("Start an Agent");
 		this.setModal(true);
 		this.registerEscapeKeyStroke();
 		this.setSize(600, 230);
