@@ -56,18 +56,19 @@ public interface LoadServiceHelper extends ServiceHelper {
 	/** The name of this service. */
 	public static final String SERVICE_NAME = "agentgui.simulationService.LoadService";
 	
+	
 	// --- Methods for agent and container handling -----------------
 	/**
 	 * Start an agent on a specified location.
 	 *
-	 * @param localName4Agent the local name for the agent
+	 * @param agentName the local name for the agent
 	 * @param agentClassName the class of the agent
 	 * @param args the serializable Object array for the start arguments
 	 * @param containerName the name of the container, where the agent should start
 	 * @return true, if successful
 	 * @throws ServiceException the service exception
 	 */
-	public boolean startAgent(String localName4Agent, String agentClassName, Object[] args, String containerName) throws ServiceException;
+	public boolean startAgent(String agentName, String agentClassName, Object[] args, String containerName) throws ServiceException;
 	
 	/**
 	 * Will start a new remote container.
@@ -111,6 +112,7 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * @see Container2Wait4
 	 */
 	public Container2Wait4 startNewRemoteContainerStaus(String containerName) throws ServiceException;
+	
 	
 	// --- Methods for the load balancing ---------------------------
 	/**

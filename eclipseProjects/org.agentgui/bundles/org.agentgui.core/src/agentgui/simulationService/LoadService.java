@@ -483,30 +483,33 @@ public class LoadService extends BaseService {
 	/**
 	 * This method starts an agent on an designate (remote) container.
 	 *
-	 * @param localName4Agent the nick local Name of the agent
+	 * @param agentName the nick local Name of the agent
 	 * @param agentClassName the agent class name
 	 * @param args the args
 	 * @param containerName the container name
 	 * @return true, if successful
 	 * @throws ServiceException the service exception
 	 */
-	private boolean broadcastStartAgent(String localName4Agent, String agentClassName, Object[] args, String containerName) throws ServiceException {
+	private boolean broadcastStartAgent(String agentName, String agentClassName, Object[] args, String containerName) throws ServiceException {
 			
 		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Try to start agent '" + localName4Agent + "' on container " + containerName + "!");
+			myLogger.log(Logger.CONFIG, "Try to start agent '" + agentName + "' on container '" + containerName + "'!");
 		}
-		String sliceName = null;
 		try {
-			LoadServiceSlice slice = (LoadServiceSlice) getSlice(containerName);
-			sliceName = slice.getNode().getName();
-			if (myLogger.isLoggable(Logger.FINER)) {
-				myLogger.log(Logger.FINER, "Start agent '" + localName4Agent + "' on container " + sliceName + "");
+			LoadServiceSlice slice = (LoadServiceSlice) this.getSlice(containerName);
+			if (slice==null) {
+				myLogger.log(Logger.WARNING, "Could not get access to container '" + containerName + "' for the start of agent '" + agentName + "'!");
+				return false;
 			}
-			return slice.startAgent(localName4Agent, agentClassName, args);
+			// --- Send start agent call to the slice of the container -------- 
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Start agent '" + agentName + "' on container '" + containerName + "'");
+			}
+			return slice.startAgent(agentName, agentClassName, args);
 		
 		} catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
-			myLogger.log(Logger.WARNING, "Error while trying to get the default remote container configuration from " + sliceName, t);
+			myLogger.log(Logger.WARNING, "Error while trying to start agent in container '" + containerName + "':", t);
 		}
 		return false;
 	}
@@ -1074,15 +1077,15 @@ public class LoadService extends BaseService {
 		/**
 		 * Start agent.
 		 *
-		 * @param nickName the nick name
+		 * @param agentName the agent name
 		 * @param agentClassName the agent class name
 		 * @param args the args
 		 * @return true, if successful
 		 */
-		private boolean startAgent(String nickName, String agentClassName, Object[] args) {
+		private boolean startAgent(String agentName, String agentClassName, Object[] args) {
 			
 			AID agentID = new AID();
-			agentID.setLocalName(nickName);
+			agentID.setLocalName(agentName);
 			
 			try {
 				Agent agent = (Agent) ObjectManager.load(agentClassName, ObjectManager.AGENT_TYPE);

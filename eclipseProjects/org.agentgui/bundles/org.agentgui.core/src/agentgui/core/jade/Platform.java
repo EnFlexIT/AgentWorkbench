@@ -597,6 +597,7 @@ public class Platform {
 		return isRunning;
 	}
 	
+	
 	/**
 	 * Starts the Utility-Agent with a job defined in its start argument.
 	 *
@@ -607,8 +608,16 @@ public class Platform {
 	public void startUtilityAgent(UtilityAgentJob utilityAgentJob) {
 		Object[] agentArgs = new Object[1];
 		agentArgs[0] = utilityAgentJob;
-		startAgent("utility", agentgui.core.utillity.UtilityAgent.class.getName(), agentArgs);
+		this.startUtilityAgent(agentArgs);
 	}
+	/**
+	 * Starts the Utility-Agent with the specified start arguments.
+	 * @param utilityAgentStartArguments the utility agent start arguments
+	 */
+	public void startUtilityAgent(Object[] utilityAgentStartArguments) {
+		startAgent("utility", agentgui.core.utillity.UtilityAgent.class.getName(), utilityAgentStartArguments);
+	}
+	
 	
 	/**
 	 * Starts an Agent, if the main-container exists.
@@ -651,7 +660,7 @@ public class Platform {
 		
 		AgentController agentController = null;
 		String agentNameSearch  = rootAgentName.toLowerCase();
-		String agentNameClass = null;
+		String agentClassName = null;
 		String agentNameForStart = rootAgentName;
 		
 		// --- For 'simstarter': is there a project? ----------------
@@ -725,8 +734,8 @@ public class Platform {
 	
 		// ----------------------------------------------------------
 		// --- Can a path to the agent be found? --------------------   
-		agentNameClass = systemAgents.get(agentNameSearch);
-		if (agentNameClass==null) {
+		agentClassName = systemAgents.get(agentNameSearch);
+		if (agentClassName==null) {
 			System.err.println( "jadeSystemAgentOpen: Unknown System-Agent => " + rootAgentName);
 			return;
 		}
@@ -762,14 +771,14 @@ public class Platform {
 					return;
 				} else if (agentNameForStart.equalsIgnoreCase("simstarter")) {
 					String containerName = Application.getProjectFocused().getProjectFolder();
-					this.startAgent(agentNameForStart, agentNameClass, openArgs, containerName);
+					this.startAgent(agentNameForStart, agentClassName, openArgs, containerName);
 				} else {
 					// --- Show a standard jade ToolAgent -----------
-					agentController = jadeMainContainer.createNewAgent(agentNameForStart, agentNameClass, openArgs);
+					agentController = jadeMainContainer.createNewAgent(agentNameForStart, agentClassName, openArgs);
 					agentController.start();
 				}
-			} 
-			catch (StaleProxyException e) {
+				
+			} catch (StaleProxyException e) {
 				e.printStackTrace();
 			}
 		}
@@ -986,7 +995,6 @@ public class Platform {
 	
 	/**
 	 * Kills an AgentContainer to the local platform.
-	 *
 	 * @param containerName the container name
 	 */
 	public void killContainer(String containerName) {
@@ -1004,47 +1012,47 @@ public class Platform {
 	/**
 	 * Adding an Agent to a Container.
 	 *
-	 * @param newAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 */
-	public void startAgent(String newAgentName, String agentClassName) {
-		this.startAgent(newAgentName, agentClassName, null, this.mainContainerName) ;
+	public void startAgent(String agentName, String agentClassName) {
+		this.startAgent(agentName, agentClassName, null, this.mainContainerName) ;
 	}
 	
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param newAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param inContainer the container name
 	 */
-	public void startAgent(String newAgentName, String agentClassName, String inContainer ) {
-		this.startAgent(newAgentName, agentClassName, null, inContainer) ;
+	public void startAgent(String agentName, String agentClassName, String inContainer ) {
+		this.startAgent(agentName, agentClassName, null, inContainer) ;
 	}
 	
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param newAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param startArguments the start arguments for the agent
 	 */
-	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments ) {
-		this.startAgent(newAgentName, agentClassName, startArguments, this.mainContainerName);
+	public void startAgent(String agentName, String agentClassName, Object[] startArguments ) {
+		this.startAgent(agentName, agentClassName, startArguments, this.mainContainerName);
 	}
 	
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param newAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
 	 */
-	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments, String inContainer ) {
+	public void startAgent(String agentName, String agentClassName, Object[] startArguments, String inContainer ) {
 		try {
 			Class<? extends Agent> clazz = ClassLoadServiceUtility.getAgentClass(agentClassName);
-			this.startAgent(newAgentName, clazz, startArguments, inContainer);
+			this.startAgent(agentName, clazz, startArguments, inContainer);
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -1054,12 +1062,12 @@ public class Platform {
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param newAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClass the class of the agent
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
 	 */
-	public void startAgent(String newAgentName, Class<? extends Agent> agentClass, Object[] startArguments, String inContainer ) {
+	public void startAgent(String agentName, Class<? extends Agent> agentClass, Object[] startArguments, String inContainer) {
 		
 		// --- Was the system already started? ----------------------
 		if (this.isMainContainerRunning()==false) {
@@ -1078,24 +1086,27 @@ public class Platform {
 		// --- Get the AgentContainer -------------------------------
 		AgentContainer agentContainer = this.getContainer(inContainer);
 		if (agentContainer==null) {
+			// --- Do we have a remote container of that name? ------
+			if (this.startRemoteAgent(agentName, agentClass, startArguments, inContainer)==true) return;
+			// --- Start a new local container ----------------------
 			agentContainer = this.createAgentContainer(inContainer);
 		}
 		
 		// --- Check if the agent name is already used --------------
 		Integer newAgentNoTmp = 0;
-		String newAgentNameTmp = newAgentName;
+		String newAgentNameTmp = agentName;
 		try {
 			agentContainer.getAgent(newAgentNameTmp, AID.ISLOCALNAME);
 			while (true) {
 				newAgentNoTmp++;
-				newAgentNameTmp = newAgentName + "-" + newAgentNoTmp;
+				newAgentNameTmp = agentName + "-" + newAgentNoTmp;
 				agentContainer.getAgent(newAgentNameTmp, AID.ISLOCALNAME);
 			}
 			
 		} catch (ControllerException ce) {
 			//ce.printStackTrace();
 			if (newAgentNoTmp>0) {
-				newAgentName = newAgentName + "-" + newAgentNoTmp;
+				agentName = agentName + "-" + newAgentNoTmp;
 			}
 		}
 		
@@ -1103,7 +1114,7 @@ public class Platform {
 		try {
 			Agent agent = (Agent) ClassLoadServiceUtility.newInstance(agentClass.getName());
 			agent.setArguments(startArguments);
-			AgentController agentController = agentContainer.acceptNewAgent(newAgentName, agent);
+			AgentController agentController = agentContainer.acceptNewAgent(agentName, agent);
 			agentController.start();
 			
 		} catch (Exception ex) {
@@ -1111,6 +1122,58 @@ public class Platform {
 		}		
 	}
 
+	/**
+	 * Tries to start an agent on a remote container by using the LoadService.
+	 *
+	 * @param agentName the agent name
+	 * @param agentClass the agent class
+	 * @param startArguments the start arguments
+	 * @param inContainer the in container
+	 * @return true, if successful
+	 */
+	private boolean startRemoteAgent(String agentName, Class<? extends Agent> agentClass, Object[] startArguments, String inContainer ) {
+		
+		boolean successful=false;
+		
+		RemoteStartAgentWaiter waiterObject = new RemoteStartAgentWaiter();
+		
+		Object[] UtilityAgentArgs = new Object[6];
+		UtilityAgentArgs[0] = UtilityAgentJob.StartAgent;
+		UtilityAgentArgs[1] = waiterObject;
+		UtilityAgentArgs[2] = agentName;
+		UtilityAgentArgs[3] = agentClass.getName();
+		UtilityAgentArgs[4] = startArguments;
+		UtilityAgentArgs[5] = inContainer;
+		
+		this.startUtilityAgent(UtilityAgentArgs);
+
+		// --- Wait for the finalization of the UtilityAgent -------- 
+		synchronized (waiterObject) {
+			try {
+				waiterObject.wait(2000);
+				successful = waiterObject.isAgentStarted();
+				
+			} catch (InterruptedException iEx) {
+				iEx.printStackTrace();
+			}	
+		}
+		return successful;
+	}
+	/**
+	 * The Class RemoteStartAgentWaiter.
+	 */
+	public class RemoteStartAgentWaiter {
+		
+		private boolean agentStarted;
+
+		public boolean isAgentStarted() {
+			return agentStarted;
+		}
+		public void setAgentStarted(boolean agentStarted) {
+			this.agentStarted = agentStarted;
+		}
+	}
+	
 	/**
 	 * Removes the file transfer directories that are only used if JADE is running.
 	 */

@@ -192,9 +192,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		// --- 1. Simply try to load the class ----------------------
 		try {
 			Class<?> classInstance = bundle.loadClass(className);
-			if (classInstance!=null && FrameworkUtil.getBundle(classInstance)==bundle) {
-				return true;
-			}
+			if (classInstance!=null)  return true;
 		
 		} catch (ClassNotFoundException cnfEx) {
 			//cnfEx.printStackTrace();

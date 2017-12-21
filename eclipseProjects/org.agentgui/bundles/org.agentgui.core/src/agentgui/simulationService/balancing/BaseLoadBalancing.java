@@ -288,7 +288,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			} else {
 				// --------------------------------------------------
 				// --- Is the SimulationServioce running? -----------
-				if (loadServiceIsRunning()==true) {
+				if (isLoadServiceIsRunning()==true) {
 					// ----------------------------------------------
 					// --- START: Start direct on remote-container --
 					// ----------------------------------------------
@@ -421,19 +421,17 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	
 	/**
 	 * Checks if the load service is running or not.
-	 *
 	 * @return true, if the Service is running
 	 */
-	private boolean loadServiceIsRunning() {
-		
+	private boolean isLoadServiceIsRunning() {
 		try {
 			@SuppressWarnings("unused")
 			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 			return true;
 		} catch (ServiceException e) {
 			//e.printStackTrace();
-			return false;
 		}
+		return false;
 	}
 	
 	/**
@@ -529,7 +527,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		Hashtable<String, Location> newContainerLocations = null;
 		
 		// --- Is the simulation service running ? -----------------------
-		if (loadServiceIsRunning()==false) {
+		if (isLoadServiceIsRunning()==false) {
 			System.out.println("Can not start remote container - LoadService is not running!");
 			return null;
 		}
