@@ -316,6 +316,7 @@ Export-Package: agentgui.core.application;
  org.agentgui.extensions;uses:="org.eclipse.core.runtime",
  org.agentgui.gui,
  org.agentgui.gui.swing.dialogs,
+ org.agentgui.gui.swing.logging,
  org.agentgui.gui.swing.project,
  org.agentgui.gui.swt,
  org.agentgui.gui.swt.dialogs,

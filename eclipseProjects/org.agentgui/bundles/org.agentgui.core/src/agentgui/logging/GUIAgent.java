@@ -1,6 +1,7 @@
 package agentgui.logging;
 
-import agentgui.logging.components.JFrame4Consoles;
+import org.agentgui.gui.ConsoleDialog;
+
 import agentgui.logging.components.SysOutBoard;
 import jade.core.Agent;
 
@@ -11,9 +12,9 @@ public class GUIAgent extends Agent {
 	@Override
 	protected void setup() {
 	
-		JFrame4Consoles displayFrame = SysOutBoard.getJFrame4Display();
-		if (displayFrame!=null) {
-			displayFrame.setVisible(true);
+		ConsoleDialog consoleDialog = SysOutBoard.getConsoleDialog();
+		if (consoleDialog!=null) {
+			consoleDialog.setVisible(true);
 		}
 		this.doDelete();
 	}

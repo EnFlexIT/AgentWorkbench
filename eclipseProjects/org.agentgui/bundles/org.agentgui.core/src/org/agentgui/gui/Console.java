@@ -28,76 +28,49 @@
  */
 package org.agentgui.gui;
 
+import java.util.Vector;
 
 /**
- * The Interface ProjectNewOpenDialog defines the required methods for a user dialog
- * that handles (create, open, export and delete) projects.
+ * The Interface Console defines the required methods for a console.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
- * 
- * @see org.agentgui.gui.swing.dialogs.ProjectNewOpen
- * @see org.agentgui.gui.swt.dialogs.ProjectNewOpen
  */
-public interface ProjectNewOpenDialog {
-	
-	/**
-	 * The enumeration describing the ProjectAction.
-	 */
-	public enum ProjectAction {
-		NewProject,
-		OpenProject,
-		ExportProject,
-		DeleteProject
-	}
+public interface Console {
+
 
 	/**
-	 * Sets the dialog visible.
-	 * @param b the new visible
+	 * Return if the current console is a local console (from current JVM).
+	 * @return true, if is local console
 	 */
-	public void setVisible(boolean b);
+	public boolean isLocalConsole();
 	
 	/**
-	 * Checks if is canceled.
-	 * @return true, if is canceled
+	 * Sets if the current console is a local console.
+	 * @param isLocalConsole the new checks if is local console
 	 */
-	public boolean isCanceled();
-
-	/**
-	 * Closes the dialog.
-	 * @return true, if successful
-	 */
-	public boolean close();
+	public void setLocalConsole(boolean isLocalConsole);
 
 	
 	/**
-	 * Sets the project name.
-	 * @param projectName the new project name
+	 * Appends a Vector<String> of lines to this console  .
+	 * @param lines2transfer the lines to print
 	 */
-	public void setProjectName(String projectName);
-	/**
-	 * Returns the project name.
-	 * @return the project name
-	 */
-	public String getProjectName();
-
+	public void appendText(Vector<String> linesToPrint);
 	
 	/**
-	 * Sets the project folder.
-	 * @param projectDirectory the new projects sub-directory
+	 * This method can be used in order to append the console output from a remote container.
+	 * A line may start with '[SysOut]' or '[SysErr]' to indicate the type of output.
+	 * 
+	 * @param text the text to print out
 	 */
-	public void setProjectDirectory(String projectDirectory);
-	/**
-	 * Returns the project folder.
-	 * @return the project folder
-	 */
-	public String getProjectDirectory();
-
+	public void appendText(String text);
 	
 	/**
-	 * Checks if a project is to export before it will be deleted.
-	 * @return true, if is export before delete
+	 * This method can be used in order to append text to the current console
+	 * @param text the text to print
+	 * @param isError specifies if the text is an error or not
 	 */
-	public boolean isExportBeforeDelete();
+	public void appendText(String text, boolean isError);
 	
 	
 }

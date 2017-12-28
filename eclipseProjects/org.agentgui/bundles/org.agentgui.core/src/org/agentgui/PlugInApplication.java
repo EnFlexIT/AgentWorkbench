@@ -31,6 +31,7 @@ package org.agentgui;
 import org.agentgui.bundle.evaluation.FilterForAgent;
 import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
+import org.agentgui.gui.UiBridge;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -60,7 +61,7 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	/** Set this variable to switch the visualization */
-	private ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.EclipseFramework;
+	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.EclipseFramework;
 	
 	private IApplicationContext IApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
@@ -109,6 +110,9 @@ public class PlugInApplication implements IApplication {
 		// --- Remind application context -----------------
 		this.IApplicationContext = context;
 
+		// --- Set the current visualization platform ----- 
+		UiBridge.getInstance().setVisualisationPlatform(this.getVisualisationPlatform());
+		
 		// --- Start the application ----------------------
 		Application.start(this);
 		

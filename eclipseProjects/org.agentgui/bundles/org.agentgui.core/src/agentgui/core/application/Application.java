@@ -41,6 +41,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.agentgui.PlugInApplication;
+import org.agentgui.gui.Console;
+import org.agentgui.gui.UiBridge;
 import org.eclipse.equinox.app.IApplication;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
@@ -64,7 +66,6 @@ import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
-import agentgui.logging.components.JPanelConsole;
 import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -100,8 +101,10 @@ public class Application {
 	/** The eclipse IApplication */
 	private static PlugInApplication plugInApplication;
 	
+	
 	/** The quit application. */
 	private static boolean quitJVM = false;
+	
 	
 	/** The instance of this singleton class */
 	private static Application thisApp = new Application();
@@ -110,7 +113,7 @@ public class Application {
 	/** Here the tray icon of the application can be accessed */
 	private static AgentGUITrayIcon trayIcon;
 	/** This is the instance of the main application window */
-	private static JPanelConsole console;
+	private static Console console;
 	/** In case that a log file has to be written */
 	private static LogFileWriter logFileWriter;
 	/** In case of headless operation */
@@ -232,12 +235,12 @@ public class Application {
 	}
 	
 	/**
-	 * Gets the console.
+	 * Returns the current console panel/element.
 	 * @return the console
 	 */
-	public static JPanelConsole getConsole() {
-		if (Application.console==null && isOperatingHeadless()==false) {
-			Application.console = new JPanelConsole(true);
+	public static Console getConsole() {
+		if (console==null && isOperatingHeadless()==false) {
+			console = UiBridge.getInstance().getConsole(true);
 		}
 		return Application.console;
 	}

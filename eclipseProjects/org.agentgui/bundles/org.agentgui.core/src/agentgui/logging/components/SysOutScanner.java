@@ -33,6 +33,8 @@ import jade.core.ServiceException;
 import java.io.PrintStream;
 import java.util.Vector;
 
+import org.agentgui.gui.Console;
+
 import agentgui.logging.DebugService;
 
 /**
@@ -40,7 +42,7 @@ import agentgui.logging.DebugService;
  * through the console by using System.out and System.err - commands.<br>
  * <br>
  * The received output will be received in the local <code>Vector<String></code> outputStack., which<br>
- * can be accessed by the getStack() - method in a synchronised way.<br>   
+ * can be accessed by the getStack()-method in a synchronized way.<br>   
  * 
  * @see SysOutBoard
  * @see PrintStreamListener
@@ -53,7 +55,7 @@ public class SysOutScanner {
 
 	private Vector<String> outputStack = new Vector<String>(); 
 	private DebugService debugService;
-	private JPanelConsole localConsole;
+	private Console localConsole;
 
 	/**
 	 * Constructor of this class, if running from the DebugService.
@@ -67,7 +69,7 @@ public class SysOutScanner {
 	 * Constructor of this class, if running local in an application.
 	 * @param localConsole the local console
 	 */
-	public SysOutScanner(JPanelConsole localConsole) {
+	public SysOutScanner(Console localConsole) {
 		this.localConsole = localConsole;
 		this.setScanner();
 	}

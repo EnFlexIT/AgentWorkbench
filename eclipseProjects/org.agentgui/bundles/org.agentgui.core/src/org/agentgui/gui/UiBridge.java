@@ -30,8 +30,7 @@ package org.agentgui.gui;
 
 import java.awt.Frame;
 
-import javax.inject.Inject;
-
+import org.agentgui.PlugInApplication.ApplicationVisualizationBy;
 import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
 import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -54,20 +53,40 @@ import agentgui.core.project.Project;
  */
 public class UiBridge {
 
+	private ApplicationVisualizationBy visualisationPlatform;
+	
 	private static UiBridge thisInstance;
 	
 	/**Instantiates a new UiBridge. */
 	private UiBridge() {
 	}
 	/**
-	 * Returns the singletom instance of UiBridge.
-	 * @return single instance of UiBridge
+	 * Returns the singleton instance of the UiBridge.
+	 * @return single instance of the UiBridge
 	 */
 	public static UiBridge getInstance() {
 		if (thisInstance==null) {
 			thisInstance = new UiBridge();
 		}
 		return thisInstance;
+	}
+
+	// --------------------------------------------------------------
+	// --- Helper methods to know the visualization platform --------
+	// --------------------------------------------------------------
+	/**
+	 * Sets the current visualization platform.
+	 * @param visualisationPlatform the new visualization platform
+	 */
+	public void setVisualisationPlatform(ApplicationVisualizationBy visualisationPlatform) {
+		this.visualisationPlatform = visualisationPlatform;
+	}
+	/**
+	 * Returns the current visualization platform.
+	 * @return the visualization platform
+	 */
+	public ApplicationVisualizationBy getVisualisationPlatform() {
+		return visualisationPlatform;
 	}
 	
 	// --------------------------------------------------------------
@@ -127,6 +146,58 @@ public class UiBridge {
 	// --------------------------------------------------------------
 	// --- Methods for accessing the required UI element ------------
 	// --------------------------------------------------------------
+	
+	// ------------------------------------------
+	// --- General UI elements ------------------
+	// ------------------------------------------
+	/**
+	 * Returns a new instance of a console (Swing or SWT).
+	 *
+	 * @param isForLocalConsoleOutput the is for local console output
+	 * @return the console
+	 */
+	public Console getConsole(boolean isForLocalConsoleOutput) {
+		Console console = null;
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
+			// --- SWT console ------------------
+			//TODO
+			break;
+
+		case AgentGuiSwing:
+			// --- Swing console ----------------
+			console = new org.agentgui.gui.swing.logging.JPanelConsole(isForLocalConsoleOutput);
+			break;
+		}
+		if (console!=null) {
+			console.setLocalConsole(isForLocalConsoleOutput);
+		}
+		return console;
+	}
+	
+	/**
+	 * Returns a new instance of a console dialog (Swing or SWT).
+	 * @return the console dialog
+	 */
+	public ConsoleDialog getConsoleDialog() {
+		ConsoleDialog consoleDialog = null;
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
+			// --- SWT console dialog -----------
+			//TODO
+			break;
+
+		case AgentGuiSwing:
+			// --- Swing console dialog ---------
+			consoleDialog = new org.agentgui.gui.swing.logging.JFrame4Consoles();
+			break;
+		}
+		return consoleDialog;
+	}
+	
+	// ------------------------------------------
+	// --- For Projects -------------------------
+	// ------------------------------------------
 	/**
 	 * Returns the project new open dialog (Swing or SWT).
 	 *
@@ -152,7 +223,6 @@ public class UiBridge {
 	 * @param project the project
 	 * @return the project window
 	 */
-	@Inject
 	public ProjectEditorWindow getProjectEditorWindow(Project project) {
 		
 		ProjectEditorWindow projectEditorWindow = null;
@@ -175,7 +245,6 @@ public class UiBridge {
 		}
 		return projectEditorWindow;
 	}
-	
 	
 
 }

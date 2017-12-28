@@ -138,7 +138,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    
 	    if (Application.isRunningAsServer()==true || execMode==ExecutionMode.DEVICE_SYSTEM) {
 	    	String tabTitle = Language.translate("Konsole");
-	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
+	    	this.addOptionTab(tabTitle, null, (JPanel)Application.getConsole(), tabTitle);	
 	    }
 
 	    // --- Expand tree -----------------------------------------

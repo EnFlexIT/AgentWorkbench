@@ -32,10 +32,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.agentgui.gui.Console;
+import org.agentgui.gui.ConsoleDialog;
+import org.agentgui.gui.ConsoleFolder;
+import org.agentgui.gui.UiBridge;
+
 import agentgui.core.application.Application;
-import agentgui.logging.components.JFrame4Consoles;
-import agentgui.logging.components.JPanelConsole;
-import agentgui.logging.components.JTabbedPane4Consoles;
+//import agentgui.logging.components.JFrame4Consoles;
 import agentgui.logging.components.PrintStreamListener;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.logging.components.SysOutScanner;
@@ -135,13 +138,13 @@ public class DebugService extends BaseService {
 				// --- Remove such local consoles because the output ---------- 
 				// --- will come in the local console				 ----------
 				String localSliceName = localSlice.getNode().getName();
-				JPanelConsole jpc = SysOutBoard.getHashMapJPanelConsoles().get(localSliceName);
+				Console jpc = SysOutBoard.getHashMapConsoles().get(localSliceName);
 				if (jpc!=null) {
-					if (SysOutBoard.getJTabbedPane4Consoles()!=null) {
-						SysOutBoard.getJTabbedPane4Consoles().remove(jpc);	
+					if (SysOutBoard.getConsoleFolder()!=null) {
+						SysOutBoard.getConsoleFolder().remove(jpc);	
 					}
-					if (SysOutBoard.getHashMapJPanelConsoles()!=null) {
-						SysOutBoard.getHashMapJPanelConsoles().remove(localSliceName);
+					if (SysOutBoard.getHashMapConsoles()!=null) {
+						SysOutBoard.getHashMapConsoles().remove(localSliceName);
 					}
 				}
 				
@@ -157,42 +160,38 @@ public class DebugService extends BaseService {
 			}
 			
 			// --- Get the JTabbedPane, where the consoles can be shown ------- 
-			JTabbedPane4Consoles tp4c = SysOutBoard.getJTabbedPane4Consoles();
-			if (tp4c==null && Application.isOperatingHeadless()==false) {
+			ConsoleFolder consoleFolder = SysOutBoard.getConsoleFolder();
+			if (consoleFolder==null && Application.isOperatingHeadless()==false) {
 				// --- Create the Frame, where the consoles can be displayed --
-				JFrame4Consoles displayFrame = new JFrame4Consoles();
-				tp4c = displayFrame.getJTabbedPaneRemoteConsoles();
-				SysOutBoard.setJFrame4Display(displayFrame);
-				SysOutBoard.setJTabbedPane4Consoles(tp4c);
+				ConsoleDialog consoleDialog = UiBridge.getInstance().getConsoleDialog();
+				consoleFolder = consoleDialog.getConsoleFolder();
+				SysOutBoard.setConsoleDialog(consoleDialog);
+				SysOutBoard.setConsoleFolder(consoleFolder);
 				
 				// --- Create a console window for the local output -----------
-				JPanelConsole localConsole = new JPanelConsole(true);
-				SysOutBoard.getJTabbedPane4Consoles().addTab("Local", localConsole);
-				SysOutBoard.setHashMapJPanelConsoles(new HashMap<String, JPanelConsole>());
-				SysOutBoard.getHashMapJPanelConsoles().put("Local", localConsole);
+				Console localConsole = UiBridge.getInstance().getConsole(true);
+				SysOutBoard.getConsoleFolder().addTab("Local", localConsole);
+				SysOutBoard.getHashMapConsoles().put("Local", localConsole);
 
 				// --- Show the dialog for the system output ------------------
-				displayFrame.setVisible(true);
+				consoleDialog.setVisible(true);
 			}
 			
 			// --- If there are old consoles, remove them from tab ------------
-			HashMap<String, JPanelConsole> consoleHash = SysOutBoard.getHashMapJPanelConsoles();
+			HashMap<String, Console> consoleHash = SysOutBoard.getHashMapConsoles();
 			if (consoleHash!=null && consoleHash.size()>0) {
 				ArrayList<String> consoleKeys = new ArrayList<>(consoleHash.keySet());
 				for (int i = 0; i < consoleKeys.size(); i++) {
 					String consoleKey = consoleKeys.get(i);
-					JPanelConsole currConsole = consoleHash.get(consoleKey);
+					Console currConsole = consoleHash.get(consoleKey);
 					if (currConsole.isLocalConsole()==false) {
-						tp4c.remove(consoleHash.get(consoleKey));
-						SysOutBoard.getHashMapJPanelConsoles().remove(consoleKey);
+						consoleFolder.remove(consoleHash.get(consoleKey));
+						SysOutBoard.getHashMapConsoles().remove(consoleKey);
 					}
 				}	
 			}
 			
 			// --- Configure the SysOutBoard for the current environment ------
-			if (SysOutBoard.getHashMapJPanelConsoles() ==null) {
-				SysOutBoard.setHashMapJPanelConsoles(new HashMap<String, JPanelConsole>());
-			}
 			SysOutBoard.setIsLocationOfMainContainer(true);
 		}
 	}
@@ -345,21 +344,21 @@ public class DebugService extends BaseService {
 		private void addConsoleLines(String containerName, Vector<String> lines2transfer) {
 
 			// --- If console for container does not exists, create it ----- 
-			JPanelConsole currConsole = SysOutBoard.getHashMapJPanelConsoles().get(containerName);
+			Console currConsole = SysOutBoard.getHashMapConsoles().get(containerName);
 			if (currConsole==null) {
 				
-				currConsole = new JPanelConsole();
-				SysOutBoard.getHashMapJPanelConsoles().put(containerName, currConsole);
+				currConsole = UiBridge.getInstance().getConsole(false);
+				SysOutBoard.getHashMapConsoles().put(containerName, currConsole);
 				
-				JTabbedPane4Consoles tp4c = SysOutBoard.getJTabbedPane4Consoles();
-				if (tp4c!=null) {
+				ConsoleFolder consoleFolder = SysOutBoard.getConsoleFolder();
+				if (consoleFolder!=null) {
 					// --- show JFrame if defined ---------
-					if (SysOutBoard.getJFrame4Display()!=null) {
-						SysOutBoard.getJFrame4Display().setVisible(true);
+					if (SysOutBoard.getConsoleDialog()!=null) {
+						SysOutBoard.getConsoleDialog().setVisible(true);
 					}
-					tp4c.addTab(containerName, currConsole);
+					consoleFolder.addTab(containerName, currConsole);
 					// --- set focus ----------------------
-					tp4c.setSelectedComponent(currConsole);
+					consoleFolder.setSelectedComponent(currConsole);
 				}
 			}
 			currConsole.appendText(lines2transfer);

@@ -73,6 +73,8 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
 import org.agentgui.gui.swing.dialogs.StartAgentDialog;
+import org.agentgui.gui.swing.logging.JPanelConsole;
+import org.agentgui.gui.swing.logging.JTabbedPane4Consoles;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -80,8 +82,6 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
 import agentgui.core.update.AgentGuiUpdater;
-import agentgui.logging.components.JPanelConsole;
-import agentgui.logging.components.JTabbedPane4Consoles;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
@@ -105,7 +105,7 @@ public class MainWindow extends JFrame {
 	private JSplitPane jSplitPane4ProjectDesktop;
 	private JDesktopPane jDesktopPane4Projects;
 	private JTabbedPane4Consoles jTabbedPane4Console;
-	private JPanelConsole jPanelConsoleLocal = Application.getConsole();;
+	private JPanelConsole jPanelConsoleLocal;
 	private int oldDividerLocation;
 	private boolean allowProjectMaximization = true;
 
@@ -161,7 +161,7 @@ public class MainWindow extends JFrame {
 		this.initComponents();
 
 		// --- Set the JTabbedPan for remote console output -------
-		SysOutBoard.setJTabbedPane4Consoles(this.getJTabbedPane4Console());
+		SysOutBoard.setConsoleFolder(this.getJTabbedPane4Console());
 		this.getJTabbedPane4Console().setVisible(false);
 
 		// --- Finalize the display of the application ------------
@@ -454,10 +454,16 @@ public class MainWindow extends JFrame {
 	public JTabbedPane4Consoles getJTabbedPane4Console() {
 		if (jTabbedPane4Console == null) {
 			jTabbedPane4Console = new JTabbedPane4Consoles();
-			jTabbedPane4Console.add(Language.translate("Lokal"), this.jPanelConsoleLocal);
+			jTabbedPane4Console.add(Language.translate("Lokal"), this.getJPanelConsoleLocal());
 			jTabbedPane4Console.setVisible(false);
 		}
 		return jTabbedPane4Console;
+	}
+	private JPanelConsole getJPanelConsoleLocal() {
+		if (jPanelConsoleLocal==null) {
+			jPanelConsoleLocal = (JPanelConsole) Application.getConsole();
+		}
+		return jPanelConsoleLocal;
 	}
 	public JDesktopPane getJDesktopPane4Projects() {
 		if (jDesktopPane4Projects == null) {

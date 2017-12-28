@@ -57,9 +57,15 @@ public class ApplicationModelMainMenuProcessor {
 	 */
 	@Execute public void execute() {
 		MTrimmedWindow window = (MTrimmedWindow) this.modelService.find(ID_TRIMMED_WINDOW, this.application);
-		if (window==null || window.getMainMenu()!=null) {
-			System.err.println(this.getClass().getSimpleName() + ": Could not find Trimmed Wondow '" + ID_TRIMMED_WINDOW + "' - The menus could be missed.");
+		if (window==null) {
+			System.err.println(this.getClass().getSimpleName() + ": Could not find Trimmed Window '" + ID_TRIMMED_WINDOW + "' - The menus could be missed.");
 			return;
+		} else if (window.getMainMenu()!=null) {
+			if (window.getMainMenu().getElementId().equals(ID_MAIN_MENUE_ELEMENT)==false) {
+				System.err.println(this.getClass().getSimpleName() + ": Main menu of window '" + ID_TRIMMED_WINDOW + "' was not '" + ID_MAIN_MENUE_ELEMENT + "'.");
+			} else {
+				return;
+			}
 		}
 		window.setMainMenu(this.createEmptyMainMenu());
 	}

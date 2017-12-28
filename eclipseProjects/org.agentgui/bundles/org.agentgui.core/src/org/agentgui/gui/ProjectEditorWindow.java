@@ -33,7 +33,7 @@ import org.agentgui.gui.swing.project.ProjectWindowTab;
 import agentgui.core.project.Project;
 
 /**
- * The Interface ProjectWindow defines the requires methods for the editor of a project.
+ * The Interface ProjectWindow defines the required methods for the editor of a project.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

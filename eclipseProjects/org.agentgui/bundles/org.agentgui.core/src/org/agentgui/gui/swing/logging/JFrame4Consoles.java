@@ -1,4 +1,4 @@
-package agentgui.logging.components;
+package org.agentgui.gui.swing.logging;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -9,11 +9,13 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class JFrame4Consoles extends JFrame {
+import org.agentgui.gui.ConsoleDialog;
+
+public class JFrame4Consoles extends JFrame implements ConsoleDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
-	private JTabbedPane4Consoles jTabbedPaneRemoteConsoles = null;
+	private JTabbedPane4Consoles consoleFolder = null;
 
 	/**
 	 * This is the default constructor
@@ -31,7 +33,7 @@ public class JFrame4Consoles extends JFrame {
 		
 		this.setSize(800, 300);
 		this.setContentPane(getJContentPane());
-		this.setTitle("JADE - Debugging");
+		this.setTitle("Agent Remote-Debugging");
 		
 		// --- Listener for closing the application ----
 		this.addWindowListener(new WindowAdapter() {
@@ -58,20 +60,20 @@ public class JFrame4Consoles extends JFrame {
 		if (jContentPane == null) {
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new BorderLayout());
-			jContentPane.add(getJTabbedPaneRemoteConsoles(), BorderLayout.CENTER);
+			jContentPane.add(getConsoleFolder(), BorderLayout.CENTER);
 		}
 		return jContentPane;
 	}
 
 	/**
-	 * This method initializes jTabbedPaneRemoteConsoles	
+	 * This method initializes consoleFolder	
 	 * @return javax.swing.JTabbedPane	
 	 */
-	public JTabbedPane4Consoles getJTabbedPaneRemoteConsoles() {
-		if (jTabbedPaneRemoteConsoles == null) {
-			jTabbedPaneRemoteConsoles = new JTabbedPane4Consoles();
+	public JTabbedPane4Consoles getConsoleFolder() {
+		if (consoleFolder == null) {
+			consoleFolder = new JTabbedPane4Consoles();
 		}
-		return jTabbedPaneRemoteConsoles;
+		return consoleFolder;
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 

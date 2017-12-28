@@ -30,6 +30,9 @@ package agentgui.logging.components;
 
 import java.util.HashMap;
 
+import org.agentgui.gui.Console;
+import org.agentgui.gui.ConsoleDialog;
+import org.agentgui.gui.ConsoleFolder;
 
 /**
  * This static class is used in order to identify, if the console output<br>
@@ -45,15 +48,16 @@ import java.util.HashMap;
 public class SysOutBoard {
 
 	/** Reminder for the current output scanner  */
-	private static SysOutScanner sosRunning = null;
+	private static SysOutScanner sosRunning;
 	/** Reminder if the JADE Main-Container is located in the current JVM */
-	private static boolean locationOfMainContainer = false;
-	/** The JFrame which will display the consoles, if needed */
-	private static JFrame4Consoles displayFrame;
+	private static boolean locationOfMainContainer;
+	
+	/** The dialog that will display the consoles, if needed */
+	private static ConsoleDialog consoleDialog;
 	/** Reminder for the location for further console windows */
-	private static JTabbedPane4Consoles location4RemoteConsoles = null;
+	private static ConsoleFolder consoleFolder;
 	/** The Hash of all console windows	*/
-	private static HashMap<String, JPanelConsole> jPanelConsoles;
+	private static HashMap<String, Console> consoleHashMap;
 	
 
 	/**
@@ -98,48 +102,44 @@ public class SysOutBoard {
 	}
 	
 	/**
-	 * Sets the current JFrame4Consoles.
-	 * @param displayFrame the displayFrame to set
+	 * Sets the console dialog.
+	 * @param consoleDialog the new console dialog
 	 */
-	public static void setJFrame4Display(JFrame4Consoles displayFrame) {
-		SysOutBoard.displayFrame = displayFrame;
+	public static void setConsoleDialog(ConsoleDialog consoleDialog) {
+		SysOutBoard.consoleDialog = consoleDialog;
 	}
 	/**
-	 * Returns the current JFrame4Consoles.
-	 * @return the displayFrame
+	 * Gets the console dialog.
+	 * @return the consoleDialog
 	 */
-	public static JFrame4Consoles getJFrame4Display() {
-		return displayFrame;
+	public static ConsoleDialog getConsoleDialog() {
+		return consoleDialog;
 	}
 	
 	/**
-	 * Sets the current JTabbedPane4Consoles.
-	 * @param tabPane4Consoles the new j tabbed pane4 consoles
+	 * Sets the console folder.
+	 * @param consoleFolder the new console folder
 	 */
-	public static void setJTabbedPane4Consoles(JTabbedPane4Consoles tabPane4Consoles) {
-		SysOutBoard.location4RemoteConsoles = tabPane4Consoles;
+	public static void setConsoleFolder(ConsoleFolder consoleFolder) {
+		SysOutBoard.consoleFolder = consoleFolder;
 	}
 	/**
-	 * Returns the current {@link JTabbedPane4Consoles}.
-	 * @return the location4RemoteConsoles
+	 * Gets the console folder.
+	 * @return the console folder
 	 */
-	public static JTabbedPane4Consoles getJTabbedPane4Consoles() {
-		return location4RemoteConsoles;
+	public static ConsoleFolder getConsoleFolder() {
+		return consoleFolder;
 	}
 	
-	/**
-	 * Sets the HashMap for the available JPanelConsole's.
-	 * @param hash the hash
-	 */
-	public static void setHashMapJPanelConsoles(HashMap<String, JPanelConsole> hash) {
-		SysOutBoard.jPanelConsoles = hash;
-	}
 	/**
 	 * Returns the HashMap for the available JPanelConsole's.
-	 * @return the jPanelConsoles
+	 * @return the consoleHashMap
 	 */
-	public static HashMap<String, JPanelConsole> getHashMapJPanelConsoles() {
-		return jPanelConsoles;
+	public static HashMap<String, Console> getHashMapConsoles() {
+		if (consoleHashMap==null) {
+			consoleHashMap = new HashMap<>();
+		}
+		return consoleHashMap;
 	}
 	
 }

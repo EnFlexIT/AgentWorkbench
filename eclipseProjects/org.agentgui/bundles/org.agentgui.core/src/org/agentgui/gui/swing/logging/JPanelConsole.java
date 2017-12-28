@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -25,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.logging.components;
+package org.agentgui.gui.swing.logging;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,13 +44,19 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import org.agentgui.gui.Console;
+
+import agentgui.logging.components.PrintStreamListener;
+import agentgui.logging.components.SysOutBoard;
+import agentgui.logging.components.SysOutScanner;
+
 /**
  * This JPanel is used for the console output of the local and remote nodes 
  * of the JADE platform.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JPanelConsole extends JPanel {
+public class JPanelConsole extends JPanel implements Console {
 
 	private static final long serialVersionUID = 8836132571457271033L;
 	
@@ -59,7 +66,7 @@ public class JPanelConsole extends JPanel {
 	private MutableAttributeSet red;
 	
 	private JEditorPane jEditorPaneOutput;
-	private boolean localConsole = false;
+	private boolean localConsole;
 
 	private JScrollPane jScrollPane;
 
@@ -80,7 +87,7 @@ public class JPanelConsole extends JPanel {
 	 */
 	public JPanelConsole(boolean isLocalConsole) {
 		super();
-		this.localConsole = isLocalConsole;
+		this.setLocalConsole(isLocalConsole);
 		this.initialize();
 	}
 	
@@ -103,7 +110,7 @@ public class JPanelConsole extends JPanel {
 		this.setPreferredSize(new Dimension(400, 100));
 	    this.add(getJScrollPane(),BorderLayout.CENTER);
 		
-		if (localConsole==true) {
+		if (this.isLocalConsole()==true) {
 			// --- listen to local Out/Err-Output ---------
 			SysOutBoard.setSysOutScanner(new SysOutScanner(this));
 		}
@@ -137,11 +144,36 @@ public class JPanelConsole extends JPanel {
 		return jEditorPaneOutput;
 	}
 	
-	/**
-	 * This method can be used in order to append text to the current output
-	 * @param text the text to print
-	 * @param isError specifies if the text is an error
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.Console#appendText(java.util.Vector)
 	 */
+	@Override
+	public void appendText(Vector<String> lines2transfer) {
+		for (int i = 0; i < lines2transfer.size(); i++) {
+			this.appendText(lines2transfer.get(i));
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.Console#appendText(java.lang.String)
+	 */
+	public void appendText(String text) {
+		if (text.startsWith(PrintStreamListener.SystemOutput)) {
+			String newText = text.substring(PrintStreamListener.SystemOutput.length()).trim();
+			this.appendText(newText, false);	
+			
+		} else if (text.startsWith(PrintStreamListener.SystemError)) {
+			String newText = text.substring(PrintStreamListener.SystemError.length()).trim();
+			this.appendText(newText, true);
+			
+		} else {
+			this.appendText(text, false);	
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.Console#appendText(java.lang.String, boolean)
+	 */
+	@Override
 	public void appendText(String text, boolean isError) {
 		
 		// --- Work on the incoming text --------
@@ -211,46 +243,21 @@ public class JPanelConsole extends JPanel {
         this.getJEditorPaneOutput().setCaretPosition(doc.getLength());
 		
 	}
-	/**
-	 * This method can be used in order to append the console output from a remote container
-	 * @param text the text to print out
-	 */
-	public void appendText(String text) {
-		if (text.startsWith(PrintStreamListener.SystemOutput)) {
-			String newText = text.substring(PrintStreamListener.SystemOutput.length()).trim();
-			this.appendText(newText, false);	
-			
-		} else if (text.startsWith(PrintStreamListener.SystemError)) {
-			String newText = text.substring(PrintStreamListener.SystemError.length()).trim();
-			this.appendText(newText, true);
-			
-		} else {
-			this.appendText(text, false);	
-		}
-	}
+	
 
-	/**
-	 * Appends the complete Vector<String> to this console  
-	 * @param lines2transfer
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.Console#setLocalConsole(boolean)
 	 */
-	public void appendText(Vector<String> lines2transfer) {
-		for (int i = 0; i < lines2transfer.size(); i++) {
-			this.appendText(lines2transfer.get(i));
-		}
-	}
-
-	/**
-	 * @param localConsole the localConsole to set
-	 */
+	@Override
 	public void setLocalConsole(boolean localConsole) {
 		this.localConsole = localConsole;
 	}
-	/**
-	 * @return the localConsole
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.Console#isLocalConsole()
 	 */
+	@Override
 	public boolean isLocalConsole() {
 		return localConsole;
 	}
-	
 	
 }
