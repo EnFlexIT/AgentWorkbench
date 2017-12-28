@@ -201,7 +201,13 @@ public class JadeRemoteStart {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						remoteProject.installRequiredFeatures();
+						try {
+							remoteProject.installRequiredFeatures();
+						} catch (Exception e) {
+							System.err.println("Not all required features have been installed successfully:");
+							System.err.println(e.getMessage());
+							//TODO figure out how to handle this
+						}
 					}
 				}).start();
 				return false;
