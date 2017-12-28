@@ -601,7 +601,7 @@ public class Application {
 		case APPLICATION:
 			// ------------------------------------------------------
 			// --- Start Application --------------------------------
-			getTrayIcon();
+//			getTrayIcon(); TODO
 			getProjectsLoaded();
 
 			startMainWindow(new Runnable() {
@@ -612,7 +612,7 @@ public class Application {
 					setOntologyVisualisationConfigurationToCommonBundle();
 					
 					doBenchmark(false);
-					waitForBenchmark();
+//					waitForBenchmark();TODO
 					
 					proceedStartArgumentOpenProject();
 					new AgentGuiUpdater().start();

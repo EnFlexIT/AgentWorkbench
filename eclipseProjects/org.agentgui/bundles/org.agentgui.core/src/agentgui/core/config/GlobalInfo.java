@@ -93,7 +93,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private final static String newLineSeparator = System.getProperty("line.separator");
 	private final static String newLineSeparatorReplacer = "<br>";
 	
-	private final static Color localColorMenuHighLight =  new Color(0, 0, 192);
+	private static Color localColorMenuHighLight;
 	
 	
 	private Integer localeJadeLocalPort = 1099;
@@ -1068,6 +1068,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return color for highlighted menus
 	 */
 	public Color ColorMenuHighLight () {
+		if (localColorMenuHighLight==null) {
+			localColorMenuHighLight =  new Color(0, 0, 192);
+		}
 		return localColorMenuHighLight;
 	}
 
