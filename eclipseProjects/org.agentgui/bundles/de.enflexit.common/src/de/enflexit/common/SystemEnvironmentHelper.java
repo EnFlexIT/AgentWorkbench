@@ -1,8 +1,6 @@
 package de.enflexit.common;
 
-import java.awt.HeadlessException;
-
-import javax.swing.JDialog;
+import java.awt.GraphicsEnvironment;
 
 /**
  * The Class SystemEnvironmentHelper provides some (hopeful) useful methods to information .
@@ -63,20 +61,8 @@ public class SystemEnvironmentHelper {
 	 * @return true, if is headless operation
 	 */
 	public static boolean isHeadlessOperation() {
-
-		boolean headlessOperation=false;
-		// --- Do headless check ----------------------
-		JDialog jDialog;
-		try {
-			jDialog = new JDialog();
-			jDialog.validate();
-//			jDialog.dispose();
-			jDialog = null;
-			headlessOperation = false;
-			
-		} catch (HeadlessException he) {
-			headlessOperation = true;
-		}
+		boolean headlessOperation = GraphicsEnvironment.isHeadless();
+//		headlessOperation = GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadlessInstance();
 		return headlessOperation;
 	}
 	
