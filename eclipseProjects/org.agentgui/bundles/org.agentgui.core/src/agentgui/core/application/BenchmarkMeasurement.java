@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.benchmark;
+package agentgui.core.application;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -44,14 +44,13 @@ import org.agentgui.gui.UiBridge;
 import jnt.scimark2.Constants;
 import jnt.scimark2.Random;
 import jnt.scimark2.kernel;
-import agentgui.core.application.Application;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
  * This thread is doing the actual benchmark measurements, which 
  * results to the capability of a computer system to crunch numbers.<br> 
  * This will be comparable through a benchmark value in 
- * Mflops (Millions of floating point operations per second).<br><br>
+ * Mflops (Million floating point operations per second).<br><br>
  * 
  * The benchmark value can be obtained by using the method<br>  
  * 'Application.RunInfo.getBenchValue();'
@@ -103,7 +102,6 @@ public class BenchmarkMeasurement extends Thread {
 			
 			// --- Criteria to not execute the benchmark ------------
 			if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
-				Application.setBenchmarkRunning(false);
 				return;
 			}  
 			
@@ -162,8 +160,8 @@ public class BenchmarkMeasurement extends Thread {
 			// --- Progress Display --- OFF -------------------------
 			if (this.isHeadlessOperation==false) {
 				this.getMonitor().setBenchmarkValue(result);
-					Thread.sleep(1000);
-					this.closeGUI();
+				Thread.sleep(1000);
+				this.closeGUI();
 			}
 			
 		} catch (Exception ex) {
@@ -172,6 +170,7 @@ public class BenchmarkMeasurement extends Thread {
 			Application.setBenchmarkRunning(false);	
 		}
 	}
+	
 	/**
 	 * Returns the visual BenchmarkMonitor (if the application is not running headless).
 	 * @return the benchmark monitor

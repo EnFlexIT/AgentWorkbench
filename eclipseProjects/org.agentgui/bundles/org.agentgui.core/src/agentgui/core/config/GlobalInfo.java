@@ -53,8 +53,8 @@ import org.agentgui.gui.swt.SWTResourceManager;
 import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.BenchmarkMeasurement;
 import agentgui.core.application.Language;
-import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;

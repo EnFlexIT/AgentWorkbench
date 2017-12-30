@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.benchmark;
+package org.agentgui.gui.swing.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Font;

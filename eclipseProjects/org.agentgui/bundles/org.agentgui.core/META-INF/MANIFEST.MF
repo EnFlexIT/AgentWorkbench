@@ -16,7 +16,6 @@ Export-Package: agentgui.core.application;
    agentgui.logging.components,
    agentgui.core.systemtray,
    agentgui.logging.logfile",
- agentgui.core.benchmark;uses:="javax.swing",
  agentgui.core.charts;
   uses:="jade.util.leap,
    agentgui.ontology,

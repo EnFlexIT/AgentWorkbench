@@ -235,7 +235,7 @@ public class UiBridge {
 
 		case AgentGuiSwing:
 			// --- Swing tray icon --------------
-			monitor = new agentgui.core.benchmark.BenchmarkMonitor(Application.getMainWindow());
+			monitor = new org.agentgui.gui.swing.dialogs.BenchmarkMonitor(Application.getMainWindow());
 			break;
 		}
 		return monitor;

@@ -46,7 +46,6 @@ import org.agentgui.gui.AwbTrayIcon;
 import org.agentgui.gui.UiBridge;
 import org.eclipse.equinox.app.IApplication;
 
-import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
 import agentgui.core.charts.xyChart.XyChartVisualisation;
 import agentgui.core.config.GlobalInfo;
