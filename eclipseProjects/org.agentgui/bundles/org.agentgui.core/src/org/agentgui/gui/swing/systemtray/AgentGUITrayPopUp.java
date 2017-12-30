@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.systemtray;
+package org.agentgui.gui.swing.systemtray;
 
 import java.awt.Font;
 import java.awt.MenuItem;
@@ -36,11 +36,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 
+import org.agentgui.gui.swing.systemtray.AgentGUITrayIcon.TrayUsage;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.systemtray.AgentGUITrayIcon.TrayUsage;
 import agentgui.core.update.AgentGuiUpdater;
 
 /**

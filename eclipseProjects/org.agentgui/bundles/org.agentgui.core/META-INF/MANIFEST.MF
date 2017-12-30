@@ -318,12 +318,14 @@ Export-Package: agentgui.core.application;
  org.agentgui.gui.swing.dialogs,
  org.agentgui.gui.swing.logging,
  org.agentgui.gui.swing.project,
+ org.agentgui.gui.swing.systemtray,
  org.agentgui.gui.swt,
  org.agentgui.gui.swt.dialogs,
  org.agentgui.gui.swt.handler,
  org.agentgui.gui.swt.parts,
  org.agentgui.gui.swt.preferences.pages,
- org.agentgui.gui.swt.project
+ org.agentgui.gui.swt.project,
+ org.agentgui.gui.swt.systemtray
 Require-Bundle: org.eclipse.core.net,
  org.eclipse.core.runtime,
  org.eclipse.osgi.services,

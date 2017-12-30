@@ -162,6 +162,7 @@ public class UiBridge {
 		case EclipseFramework:
 			// --- SWT console ------------------
 			//TODO
+			System.err.println("Console not implemented yet!");
 			break;
 
 		case AgentGuiSwing:
@@ -185,6 +186,7 @@ public class UiBridge {
 		case EclipseFramework:
 			// --- SWT console dialog -----------
 			//TODO
+			System.err.println("Console Dialog not implemented yet!");
 			break;
 
 		case AgentGuiSwing:
@@ -196,7 +198,7 @@ public class UiBridge {
 	}
 	
 	// ------------------------------------------
-	// --- For Projects -------------------------
+	// --- Project UI-Elements ------------------
 	// ------------------------------------------
 	/**
 	 * Returns the project new open dialog (Swing or SWT).

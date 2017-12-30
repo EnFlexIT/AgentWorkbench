@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.systemtray;
+package org.agentgui.gui.swing.systemtray;
 
 import java.awt.AWTException;
 import java.awt.Image;

@@ -65,8 +65,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="agentgui.core.systemtray.AgentGUITrayIcon" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/systemtray/AgentGUITrayIcon.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="org.agentgui.gui.swing.systemtray.AgentGUITrayIconITrayIcon" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/org/agentgui/gui/swing/systemtray/AgentGUITrayIcon.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="84" y="75"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -74,7 +75,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="org.agentgui.gui.swing.logging.JPanelConsoleole" project="org.agentgui.core" 
+  <class id="9" language="java" name="org.agentgui.gui.swing.logging.JPanelConsole" project="org.agentgui.core" 
     file="/org.agentgui.core/src/org/agentgui/gui/swing/logging/JPanelConsole.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="288" y="75"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

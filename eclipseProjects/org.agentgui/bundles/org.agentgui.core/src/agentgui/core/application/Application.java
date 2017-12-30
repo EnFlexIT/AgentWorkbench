@@ -43,6 +43,7 @@ import javax.swing.SwingUtilities;
 import org.agentgui.PlugInApplication;
 import org.agentgui.gui.Console;
 import org.agentgui.gui.UiBridge;
+import org.agentgui.gui.swing.systemtray.AgentGUITrayIcon;
 import org.eclipse.equinox.app.IApplication;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
@@ -64,7 +65,6 @@ import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
-import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
@@ -601,7 +601,7 @@ public class Application {
 		case APPLICATION:
 			// ------------------------------------------------------
 			// --- Start Application --------------------------------
-//			getTrayIcon(); TODO
+			getTrayIcon(); 
 			getProjectsLoaded();
 
 			startMainWindow(new Runnable() {
@@ -612,7 +612,7 @@ public class Application {
 					setOntologyVisualisationConfigurationToCommonBundle();
 					
 					doBenchmark(false);
-//					waitForBenchmark();TODO
+					waitForBenchmark();
 					
 					proceedStartArgumentOpenProject();
 					new AgentGuiUpdater().start();
@@ -1154,7 +1154,7 @@ public class Application {
 	 * Waits for until the end of the benchmark.
 	 */
 	private static void waitForBenchmark() {
-		while (benchmarkRunning==true) {
+		while (Application.isBenchmarkRunning()==true) {
 			Application.setStatusBar(Language.translate("Warte auf das Ende des Benchmarks ..."));
 			try {
 				Thread.sleep(250);
