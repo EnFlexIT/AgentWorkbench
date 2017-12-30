@@ -28,6 +28,8 @@
  */
 package org.agentgui;
 
+import javax.swing.SwingUtilities;
+
 import org.agentgui.bundle.evaluation.FilterForAgent;
 import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
@@ -61,7 +63,7 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	/** Set this variable to switch the visualization */
-	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.EclipseFramework;
+	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentGuiSwing;
 	
 	private IApplicationContext IApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
@@ -88,7 +90,7 @@ public class PlugInApplication implements IApplication {
 	 * Sets the application is running.
 	 */
 	public void setApplicationIsRunning() {
-		this.IApplicationContext.applicationRunning();	
+//		this.IApplicationContext.applicationRunning();	
 	}
 	
 	
@@ -112,6 +114,16 @@ public class PlugInApplication implements IApplication {
 
 		// --- Set the current visualization platform ----- 
 		UiBridge.getInstance().setVisualisationPlatform(this.getVisualisationPlatform());
+		
+		// --- In case of Swing visualization (for MAC) ---
+		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
+			this.startEclipseUI(new Runnable() {
+				@Override
+				public void run() {
+					stopEclipseUI();
+				}
+			});
+		}
 		
 		// --- Start the application ----------------------
 		Application.start(this);
@@ -153,18 +165,25 @@ public class PlugInApplication implements IApplication {
 			Application.setQuitJVM(true);
 		}
 		
+		this.stopEclipseUI();
+		
+	}
+	/**
+	 * Stop Eclipse UI.
+	 */
+	private void stopEclipseUI() {
+		
 		if (PlatformUI.isWorkbenchRunning()==false) return;
 		
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Display display = workbench.getDisplay();
-		display.syncExec(new Runnable() {
+		display.asyncExec(new Runnable() {
 			public void run() {
 				if (!display.isDisposed()) {
 					workbench.close();
 				}
 			}
 		});
-		
 	}
 	
 	/**
@@ -190,7 +209,6 @@ public class PlugInApplication implements IApplication {
 		
 		// --- Evaluate the already loaded bundles --------
 		this.startBundleEvaluation();
-		
 		try {
 			// --- Case separation UI ---------------------
 			switch (this.visualisationBy) {
@@ -215,7 +233,7 @@ public class PlugInApplication implements IApplication {
 	 * Starts the eclipse UI by using a separate thread.
 	 * @param postWindowOpenRunnable the post window open runnable
 	 */
-	public void startEclipseUiThrowThread(final Runnable postWindowOpenRunnable) {
+	public void startEclipseUiThroughThread(final Runnable postWindowOpenRunnable) {
 
 		Thread eclipsStarter = new Thread(new Runnable() {
 			@Override
@@ -223,9 +241,10 @@ public class PlugInApplication implements IApplication {
 				startEclipseUI(postWindowOpenRunnable);
 			}
 		});
-		eclipsStarter.setName("PlatformUI-Starter");
+		eclipsStarter.setName("EclipseUI-Starter");
 		eclipsStarter.start();
 	}
+	
 	/**
 	 * Starts the eclipse UI.
 	 * @param postWindowOpenRunnable the post window open runnable
@@ -267,8 +286,13 @@ public class PlugInApplication implements IApplication {
 		
 		Integer appReturnValue = IApplication.EXIT_OK;
 		if (Application.isOperatingHeadless()==false) {
-			this.setSwingMainWindow(new MainWindow());
-			Application.getProjectsLoaded().setProjectView();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					setSwingMainWindow(new MainWindow());
+					Application.getProjectsLoaded().setProjectView();
+				}
+			}); 
 		}
 		// --- Remove splash screen -----------------------
 		this.setApplicationIsRunning();

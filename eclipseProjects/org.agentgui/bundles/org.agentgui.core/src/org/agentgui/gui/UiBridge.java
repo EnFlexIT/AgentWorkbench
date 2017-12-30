@@ -105,7 +105,7 @@ public class UiBridge {
 	 */
 	public IWorkbench getWorkbench() {
 		if (this.isWorkbenchRunning()==true) {
-			return  PlatformUI.getWorkbench();
+			return PlatformUI.getWorkbench();
 		}
 		return null;
 	}

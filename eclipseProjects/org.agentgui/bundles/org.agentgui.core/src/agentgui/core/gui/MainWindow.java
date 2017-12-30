@@ -1089,7 +1089,7 @@ public class MainWindow extends JFrame {
 				Application.showAboutDialog();
 
 			} else if (actionCMD.equalsIgnoreCase("EclipsePreferences")) {
-				Application.showEclipsePreferences();
+				Application.showEclipseWorkbench();
 
 			} else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);

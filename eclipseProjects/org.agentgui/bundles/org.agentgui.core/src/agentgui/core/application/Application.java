@@ -1030,10 +1030,10 @@ public class Application {
 	}
 	
 	/**
-	 * Shows the eclipse preferences.
+	 * Shows the eclipse workbench.
 	 */
-	public static void showEclipsePreferences() {
-		plugInApplication.startEclipseUiThrowThread(null);
+	public static void showEclipseWorkbench() {
+		plugInApplication.startEclipseUiThroughThread(null);
 	}
 	
 	/**

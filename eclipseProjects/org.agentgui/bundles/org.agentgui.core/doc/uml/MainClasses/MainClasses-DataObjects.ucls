@@ -110,7 +110,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="agentgui.core.application.BenchmarkMeasurementnt" project="org.agentgui.core" 
+  <class id="13" language="java" name="agentgui.core.application.BenchmarkMeasurement" project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/core/application/BenchmarkMeasurement.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="700" y="50"/>    
