@@ -1129,18 +1129,16 @@ public class Application {
 	 */
 	public static void doBenchmark(boolean forceBenchmark) {
 		if (Application.isBenchmarkRunning()==false) {
-			// --- Set marker -----------------------------
-			benchmarkRunning = true;
 			// --- Execute the Benchmark-Thread -----------
 			new BenchmarkMeasurement(forceBenchmark).start();
 		}
 	}
 	/**
 	 * Sets that the benchmark is running or not.
-	 * @param running the new benchmark is running
+	 * @param isRunning the indicator if the benchmark is running
 	 */
-	public static void setBenchmarkRunning(boolean running) {
-		benchmarkRunning = running;
+	public static void setBenchmarkRunning(boolean isRunning) {
+		benchmarkRunning = isRunning;
 	}
 	/**
 	 * Checks if is benchmark is running.

@@ -75,7 +75,6 @@ public class BenchmarkMeasurement extends Thread {
 	private int Sparse_size_nz = Constants.SPARSE_SIZE_nz;
 	private int LU_size = Constants.LU_SIZE;
 
-//	private BenchmarkMonitor monitor;
 	private AwbBenchmarkMonitor monitor;
 	
 	/**
@@ -96,81 +95,82 @@ public class BenchmarkMeasurement extends Thread {
 	@Override
 	public void run() {
 		super.run();
-		this.setName("SciMark2-Benchmark");
-
-		// --- Criteria to not execute the benchmark ------
-		if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
-			// --- Start search for Agents, Ontologies and BaseServices -----------
-			Application.setBenchmarkRunning(false);
-			return;
-		}  
 		
-		// --- Initialize Benchmark-Monitor  --------------
-		if (this.getMonitor()!=null) {
-			this.getMonitor().setVisible(true);
-		} else {
-			System.out.println("Executing Benchmark, please wait ... ");
-		}
-		// ------------------------------------------------
-		
-		
-		// --- Start benchmark tests ----------------------
-		double res[] = new double[6];
-		Random R = new Random(Constants.RANDOM_SEED);
-
-		this.setBenchmarkProgress(1);
-		res[1] = kernel.measureFFT(FFT_size, min_time, R);
-		if (this.isSkipAction()) return;
-		
-		this.setBenchmarkProgress(2);
-		res[2] = kernel.measureSOR(SOR_size, min_time, R);
-		if (this.isSkipAction()) return;
-		
-		this.setBenchmarkProgress(3);
-		res[3] = kernel.measureMonteCarlo(min_time, R);
-		if (this.isSkipAction()) return;
-		
-		this.setBenchmarkProgress(4);
-		res[4] = kernel.measureSparseMatmult(Sparse_size_M, Sparse_size_nz, min_time, R);
-		if (this.isSkipAction()) return;
-		
-		this.setBenchmarkProgress(5);
-		res[5] = kernel.measureLU(LU_size, min_time, R);
-		if (this.isSkipAction()) return;
-
-		this.setBenchmarkProgress(6);
-		res[0] = (res[1] + res[2] + res[3] + res[4] + res[5]) / 5;
-		
-		System.out.println("=> Average Benchmark Result: " + Math.round(res[0]) + " Mflops");
-//		System.out.println("FFT:           " + Math.round(res[1]) + " Mflops");
-//		System.out.println("SOR:           " + Math.round(res[2]) + " Mflops");
-//		System.out.println("MonteCarlo:    " + Math.round(res[3]) + " Mflops");
-//		System.out.println("SparseMatmult: " + Math.round(res[4]) + " Mflops");
-//		System.out.println("LU:            " + Math.round(res[5]) + " Mflops");
-//		System.out.println("A V E R A G E: " + Math.round(res[0]) + " Mflops");
-
-		float result  = (float)Math.round((float)res[0]*100)/100;
-		if (this.isSkipAction()) return;
-
-		// --- Store result in LoadMeasurThread -----------
-		LoadMeasureThread.setCompositeBenchmarkValue(result);
-		Application.getGlobalInfo().setBenchValue(result);
-		Application.getGlobalInfo().setBenchExecOn(this.getLocalSystemIdentifier());
-		Application.getGlobalInfo().setBenchAlwaysSkip(benchAllwaysSkip);
-		Application.getGlobalInfo().doSavePersistedConfiguration();
-		
-		// --- Progress Display --- OFF -------------------
-		if (this.isHeadlessOperation==false) {
-			this.getMonitor().setBenchmarkValue(result);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException sleepE) {
-				sleepE.printStackTrace();
+		try {
+			// --- Name thread / indicate state ---------------------
+			this.setName("SciMark2-Benchmark");
+			Application.setBenchmarkRunning(true);
+			
+			// --- Criteria to not execute the benchmark ------------
+			if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
+				Application.setBenchmarkRunning(false);
+				return;
+			}  
+			
+			// --- Initialize Benchmark-Monitor  --------------------
+			if (this.getMonitor()!=null) {
+				this.getMonitor().setVisible(true);
+			} else {
+				System.out.println("Executing Benchmark, please wait ... ");
 			}
-			this.closeGUI();
+			
+			// --- Start benchmark tests ----------------------------
+			double res[] = new double[6];
+			Random R = new Random(Constants.RANDOM_SEED);
+
+			this.setBenchmarkProgress(1);
+			res[1] = kernel.measureFFT(FFT_size, min_time, R);
+			if (this.isSkipAction()) return;
+			
+			this.setBenchmarkProgress(2);
+			res[2] = kernel.measureSOR(SOR_size, min_time, R);
+			if (this.isSkipAction()) return;
+			
+			this.setBenchmarkProgress(3);
+			res[3] = kernel.measureMonteCarlo(min_time, R);
+			if (this.isSkipAction()) return;
+			
+			this.setBenchmarkProgress(4);
+			res[4] = kernel.measureSparseMatmult(Sparse_size_M, Sparse_size_nz, min_time, R);
+			if (this.isSkipAction()) return;
+			
+			this.setBenchmarkProgress(5);
+			res[5] = kernel.measureLU(LU_size, min_time, R);
+			if (this.isSkipAction()) return;
+
+			this.setBenchmarkProgress(6);
+			res[0] = (res[1] + res[2] + res[3] + res[4] + res[5]) / 5;
+			
+			System.out.println("=> Average Benchmark Result: " + Math.round(res[0]) + " Mflops");
+//			System.out.println("FFT:           " + Math.round(res[1]) + " Mflops");
+//			System.out.println("SOR:           " + Math.round(res[2]) + " Mflops");
+//			System.out.println("MonteCarlo:    " + Math.round(res[3]) + " Mflops");
+//			System.out.println("SparseMatmult: " + Math.round(res[4]) + " Mflops");
+//			System.out.println("LU:            " + Math.round(res[5]) + " Mflops");
+//			System.out.println("A V E R A G E: " + Math.round(res[0]) + " Mflops");
+
+			float result  = (float)Math.round((float)res[0]*100)/100;
+			if (this.isSkipAction()) return;
+
+			// --- Store result in LoadMeasurThread -----------------
+			LoadMeasureThread.setCompositeBenchmarkValue(result);
+			Application.getGlobalInfo().setBenchValue(result);
+			Application.getGlobalInfo().setBenchExecOn(this.getLocalSystemIdentifier());
+			Application.getGlobalInfo().setBenchAlwaysSkip(benchAllwaysSkip);
+			Application.getGlobalInfo().doSavePersistedConfiguration();
+			
+			// --- Progress Display --- OFF -------------------------
+			if (this.isHeadlessOperation==false) {
+				this.getMonitor().setBenchmarkValue(result);
+					Thread.sleep(1000);
+					this.closeGUI();
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			Application.setBenchmarkRunning(false);	
 		}
-		Application.setBenchmarkRunning(false);
-		
 	}
 	/**
 	 * Returns the visual BenchmarkMonitor (if the application is not running headless).
