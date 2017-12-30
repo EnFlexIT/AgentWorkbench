@@ -31,7 +31,7 @@ package org.agentgui.gui;
 import java.awt.Frame;
 
 import org.agentgui.PlugInApplication.ApplicationVisualizationBy;
-import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.agentgui.gui.AwbProjectNewOpenDialog.ProjectAction;
 import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -156,13 +156,13 @@ public class UiBridge {
 	 * @param isForLocalConsoleOutput the is for local console output
 	 * @return the console
 	 */
-	public Console getConsole(boolean isForLocalConsoleOutput) {
-		Console console = null;
+	public AwbConsole getConsole(boolean isForLocalConsoleOutput) {
+		AwbConsole console = null;
 		switch (this.getVisualisationPlatform()) {
 		case EclipseFramework:
 			// --- SWT console ------------------
 			//TODO
-			System.err.println("Console not implemented yet!");
+			System.err.println("SWT Console not implemented yet!");
 			break;
 
 		case AgentGuiSwing:
@@ -180,13 +180,13 @@ public class UiBridge {
 	 * Returns a new instance of a console dialog (Swing or SWT).
 	 * @return the console dialog
 	 */
-	public ConsoleDialog getConsoleDialog() {
-		ConsoleDialog consoleDialog = null;
+	public AwbConsoleDialog getConsoleDialog() {
+		AwbConsoleDialog consoleDialog = null;
 		switch (this.getVisualisationPlatform()) {
 		case EclipseFramework:
 			// --- SWT console dialog -----------
 			//TODO
-			System.err.println("Console Dialog not implemented yet!");
+			System.err.println("SWT Console Dialog not implemented yet!");
 			break;
 
 		case AgentGuiSwing:
@@ -196,6 +196,29 @@ public class UiBridge {
 		}
 		return consoleDialog;
 	}
+	
+	/**
+	 * Returns a new instance of a tray icon (Swing or SWT).
+	 * @return the tray icon 
+	 */
+	public AwbTrayIcon getTrayIcon() {
+		
+		AwbTrayIcon trayIcon = null;
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
+			// --- SWT tray icon ----------------
+			//TODO
+			System.err.println("SWT Tray Icon not implemented yet!");
+			break;
+
+		case AgentGuiSwing:
+			// --- Swing tray icon --------------
+			trayIcon = new org.agentgui.gui.swing.systemtray.AgentGUITrayIcon();
+			break;
+		}
+		return trayIcon;
+	}
+	
 	
 	// ------------------------------------------
 	// --- Project UI-Elements ------------------
@@ -207,8 +230,8 @@ public class UiBridge {
 	 * @param currentAction the current action
 	 * @return the project new open dialog
 	 */
-	public ProjectNewOpenDialog getProjectNewOpenDialog(String title, ProjectAction currentAction ) {
-		ProjectNewOpenDialog projectDialog = null;
+	public AwbProjectNewOpenDialog getProjectNewOpenDialog(String title, ProjectAction currentAction ) {
+		AwbProjectNewOpenDialog projectDialog = null;
 		if (this.isWorkbenchRunning()==true) {
 			// --- SWT dialog -------------------
 			projectDialog = new org.agentgui.gui.swt.dialogs.ProjectNewOpen(this.getActiveWorkbenchWindowShell(), title, currentAction);
@@ -225,9 +248,9 @@ public class UiBridge {
 	 * @param project the project
 	 * @return the project window
 	 */
-	public ProjectEditorWindow getProjectEditorWindow(Project project) {
+	public AwbProjectEditorWindow getProjectEditorWindow(Project project) {
 		
-		ProjectEditorWindow projectEditorWindow = null;
+		AwbProjectEditorWindow projectEditorWindow = null;
 		if (this.isWorkbenchRunning()==true) {
 			// --- SWT editor -------------------
 			MPartStack editorStack = (MPartStack) project.getEclipseEModelService().find(AppModelId.PARTSTACK_ORG_AGENTGUI_CORE_PARTSTACK_EDITOR, project.getEclipseMApplication());
@@ -238,7 +261,7 @@ public class UiBridge {
 				editorStack.getChildren().add(editorPart);
 				project.getEclipseEPartService().showPart(editorPart, PartState.VISIBLE);
 
-				projectEditorWindow = (ProjectEditorWindow) editorPart.getObject();
+				projectEditorWindow = (AwbProjectEditorWindow) editorPart.getObject();
 			}
 			
 		} else {

@@ -37,8 +37,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 
+import org.agentgui.gui.AwbTrayIcon;
+
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
+
 
 /**
  * This class will show the tray icon and will prepare its context menu, if it is supported by the OS. 
@@ -48,7 +51,7 @@ import agentgui.core.config.GlobalInfo;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public class AgentGUITrayIcon implements ActionListener {
+public class AgentGUITrayIcon implements ActionListener, AwbTrayIcon {
 
 	// --- Some test / debugging settings -----------------
 	public enum TrayUsage {
@@ -143,7 +146,14 @@ public class AgentGUITrayIcon implements ActionListener {
 		}
 		return trayPopUp;
 	}
-
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbTrayIcon#refreshView()
+	 */
+	@Override
+	public void refreshView() {
+		this.getAgentGUITrayPopUp().refreshView();
+	}
+	
 	/**
 	 * Returns the AgentGUITrayDialog.
 	 * @return the AgentGUITrayDialog

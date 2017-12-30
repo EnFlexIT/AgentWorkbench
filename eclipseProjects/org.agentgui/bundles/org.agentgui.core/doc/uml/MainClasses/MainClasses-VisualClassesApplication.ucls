@@ -65,7 +65,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.agentgui.gui.swing.systemtray.AgentGUITrayIconITrayIcon" project="org.agentgui.core" 
+  <class id="8" language="java" name="org.agentgui.gui.swing.systemtray.AgentGUITrayIcon" project="org.agentgui.core" 
     file="/org.agentgui.core/src/org/agentgui/gui/swing/systemtray/AgentGUITrayIcon.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="84" y="75"/>    

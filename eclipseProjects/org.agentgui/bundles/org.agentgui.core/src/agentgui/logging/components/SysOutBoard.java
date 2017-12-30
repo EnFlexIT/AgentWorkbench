@@ -30,9 +30,9 @@ package agentgui.logging.components;
 
 import java.util.HashMap;
 
-import org.agentgui.gui.Console;
-import org.agentgui.gui.ConsoleDialog;
-import org.agentgui.gui.ConsoleFolder;
+import org.agentgui.gui.AwbConsole;
+import org.agentgui.gui.AwbConsoleDialog;
+import org.agentgui.gui.AwbConsoleFolder;
 
 /**
  * This static class is used in order to identify, if the console output<br>
@@ -53,11 +53,11 @@ public class SysOutBoard {
 	private static boolean locationOfMainContainer;
 	
 	/** The dialog that will display the consoles, if needed */
-	private static ConsoleDialog consoleDialog;
+	private static AwbConsoleDialog consoleDialog;
 	/** Reminder for the location for further console windows */
-	private static ConsoleFolder consoleFolder;
+	private static AwbConsoleFolder consoleFolder;
 	/** The Hash of all console windows	*/
-	private static HashMap<String, Console> consoleHashMap;
+	private static HashMap<String, AwbConsole> consoleHashMap;
 	
 
 	/**
@@ -105,14 +105,14 @@ public class SysOutBoard {
 	 * Sets the console dialog.
 	 * @param consoleDialog the new console dialog
 	 */
-	public static void setConsoleDialog(ConsoleDialog consoleDialog) {
+	public static void setConsoleDialog(AwbConsoleDialog consoleDialog) {
 		SysOutBoard.consoleDialog = consoleDialog;
 	}
 	/**
 	 * Gets the console dialog.
 	 * @return the consoleDialog
 	 */
-	public static ConsoleDialog getConsoleDialog() {
+	public static AwbConsoleDialog getConsoleDialog() {
 		return consoleDialog;
 	}
 	
@@ -120,14 +120,14 @@ public class SysOutBoard {
 	 * Sets the console folder.
 	 * @param consoleFolder the new console folder
 	 */
-	public static void setConsoleFolder(ConsoleFolder consoleFolder) {
+	public static void setConsoleFolder(AwbConsoleFolder consoleFolder) {
 		SysOutBoard.consoleFolder = consoleFolder;
 	}
 	/**
 	 * Gets the console folder.
 	 * @return the console folder
 	 */
-	public static ConsoleFolder getConsoleFolder() {
+	public static AwbConsoleFolder getConsoleFolder() {
 		return consoleFolder;
 	}
 	
@@ -135,7 +135,7 @@ public class SysOutBoard {
 	 * Returns the HashMap for the available JPanelConsole's.
 	 * @return the consoleHashMap
 	 */
-	public static HashMap<String, Console> getHashMapConsoles() {
+	public static HashMap<String, AwbConsole> getHashMapConsoles() {
 		if (consoleHashMap==null) {
 			consoleHashMap = new HashMap<>();
 		}

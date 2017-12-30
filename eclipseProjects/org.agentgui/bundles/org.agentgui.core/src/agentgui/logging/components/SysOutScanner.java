@@ -33,7 +33,7 @@ import jade.core.ServiceException;
 import java.io.PrintStream;
 import java.util.Vector;
 
-import org.agentgui.gui.Console;
+import org.agentgui.gui.AwbConsole;
 
 import agentgui.logging.DebugService;
 
@@ -55,7 +55,7 @@ public class SysOutScanner {
 
 	private Vector<String> outputStack = new Vector<String>(); 
 	private DebugService debugService;
-	private Console localConsole;
+	private AwbConsole localConsole;
 
 	/**
 	 * Constructor of this class, if running from the DebugService.
@@ -69,7 +69,7 @@ public class SysOutScanner {
 	 * Constructor of this class, if running local in an application.
 	 * @param localConsole the local console
 	 */
-	public SysOutScanner(Console localConsole) {
+	public SysOutScanner(AwbConsole localConsole) {
 		this.localConsole = localConsole;
 		this.setScanner();
 	}
@@ -112,7 +112,7 @@ public class SysOutScanner {
 		}
 		this.outputStack.add(lineOutput);
 		
-		// --- If a local Console window is used --------------------------------------------------
+		// --- If a local AwbConsole window is used --------------------------------------------------
 		if (this.localConsole!=null) {
 			this.localConsole.appendText(this.getStack());		
 		}

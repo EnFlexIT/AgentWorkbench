@@ -64,7 +64,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.agentgui.gui.ProjectNewOpenDialog;
+import org.agentgui.gui.AwbProjectNewOpenDialog;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -81,7 +81,7 @@ import javax.swing.JCheckBox;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectNewOpen extends JDialog implements ProjectNewOpenDialog, ActionListener {
+public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, ActionListener {
 	
 	private static final long serialVersionUID = 4979849463130057295L;
 
@@ -181,7 +181,7 @@ public class ProjectNewOpen extends JDialog implements ProjectNewOpenDialog, Act
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#close()
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#close()
 	 */
 	@Override
 	public boolean close() {
@@ -590,7 +590,7 @@ public class ProjectNewOpen extends JDialog implements ProjectNewOpenDialog, Act
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#isExportBeforeDelete()
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#isExportBeforeDelete()
 	 */
 	@Override
 	public boolean isExportBeforeDelete() {

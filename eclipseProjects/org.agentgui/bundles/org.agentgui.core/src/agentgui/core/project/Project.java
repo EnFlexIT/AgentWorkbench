@@ -57,8 +57,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.agentgui.gui.ProjectEditorWindow;
-import org.agentgui.gui.ProjectEditorWindow.ProjectCloseUserFeedback;
+import org.agentgui.gui.AwbProjectEditorWindow;
+import org.agentgui.gui.AwbProjectEditorWindow.ProjectCloseUserFeedback;
 import org.agentgui.gui.UiBridge;
 import org.agentgui.gui.swing.project.ProjectWindow;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
@@ -150,7 +150,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient private ProjectBundleLoader projectBundleLoader;
 
 	/** This is the 'view' in the context of the mentioned MVC pattern */
-	@XmlTransient private ProjectEditorWindow projectEditorWindow;
+	@XmlTransient private AwbProjectEditorWindow projectEditorWindow;
 	/** This panel holds the instance of environment model display */
 	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
@@ -1161,10 +1161,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Maximizes the ProjectEditorWindow within the Application
+	 * Maximizes the AwbProjectEditorWindow within the Application
 	 */
 	public void setMaximized() {
-		ProjectEditorWindow pew = this.getProjectEditorWindow();
+		AwbProjectEditorWindow pew = this.getProjectEditorWindow();
 		if (pew != null) {
 			pew.setMaximized();
 		}
@@ -1374,7 +1374,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return the project editor window for the current project
 	 */
 	@XmlTransient
-	public synchronized ProjectEditorWindow getProjectEditorWindow() {
+	public synchronized AwbProjectEditorWindow getProjectEditorWindow() {
 		if (this.projectEditorWindow == null) {
 			this.projectEditorWindow = UiBridge.getInstance().getProjectEditorWindow(this);
 			if (this.projectEditorWindow != null) {
@@ -1409,7 +1409,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	@XmlTransient
 	public void setProjectView(String newProjectView) {
-		ProjectEditorWindow pew = this.getProjectEditorWindow();
+		AwbProjectEditorWindow pew = this.getProjectEditorWindow();
 		if (pew != null && newProjectView.equals(this.projectView) == false) {
 
 			// --- Change view ----------------------------

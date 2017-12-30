@@ -41,9 +41,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.agentgui.PlugInApplication;
-import org.agentgui.gui.Console;
+import org.agentgui.gui.AwbConsole;
+import org.agentgui.gui.AwbTrayIcon;
 import org.agentgui.gui.UiBridge;
-import org.agentgui.gui.swing.systemtray.AgentGUITrayIcon;
 import org.eclipse.equinox.app.IApplication;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
@@ -77,6 +77,7 @@ import de.enflexit.oidc.OIDCPanel;
 import de.enflexit.oidc.OIDCResourceAvailabilityHandler;
 import de.enflexit.oidc.Trust;
 
+
 /**
  * This is the main class of the application containing the main-method for the program execution.<br> 
  * This class is designed as singleton class in order to make it accessible from every context of the program. 
@@ -84,12 +85,6 @@ import de.enflexit.oidc.Trust;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class Application {
-	
-	private static final String CMD_VMARGS = "-vmargs";
-	private static final String NEW_LINE = "\n";
-	private static final String PROP_VM = "eclipse.vm";
-	private static final String PROP_VMARGS = "eclipse.vmargs";
-	private static final String PROP_COMMANDS = "eclipse.commands";
 	
 	/** True, if a remote container has to be started (see start arguments) */
 	private static boolean justStartJade = false;
@@ -101,19 +96,17 @@ public class Application {
 	/** The eclipse IApplication */
 	private static PlugInApplication plugInApplication;
 	
-	
 	/** The quit application. */
 	private static boolean quitJVM = false;
-	
 	
 	/** The instance of this singleton class */
 	private static Application thisApp = new Application();
 	/** This attribute holds the current state of the configurable runtime informations */
 	private static GlobalInfo globalInfo;
 	/** Here the tray icon of the application can be accessed */
-	private static AgentGUITrayIcon trayIcon;
+	private static AwbTrayIcon trayIcon;
 	/** This is the instance of the main application window */
-	private static Console console;
+	private static AwbConsole console;
 	/** In case that a log file has to be written */
 	private static LogFileWriter logFileWriter;
 	/** In case of headless operation */
@@ -238,7 +231,7 @@ public class Application {
 	 * Returns the current console panel/element.
 	 * @return the console
 	 */
-	public static Console getConsole() {
+	public static AwbConsole getConsole() {
 		if (console==null && isOperatingHeadless()==false) {
 			console = UiBridge.getInstance().getConsole(true);
 		}
@@ -303,26 +296,25 @@ public class Application {
 		}
 		return jadePlatform;
 	}
+	
 	/**
 	 * Gets the AgentGUI tray icon.
 	 * @return the tray icon
 	 */
-	public static AgentGUITrayIcon getTrayIcon() {
-		if (Application.trayIcon==null && isOperatingHeadless()==false) {
-			Application.trayIcon = new AgentGUITrayIcon();	
+	public static AwbTrayIcon getTrayIcon() {
+		if (trayIcon==null && isOperatingHeadless()==false) {
+			trayIcon = UiBridge.getInstance().getTrayIcon();
 		}
-		return Application.trayIcon;
+		return trayIcon;
 	}
 	/**
-	 * Sets the tray icon. If a tray icon already exists and the parameter 
-	 * is set to <code>null</code>, the current tray icon will be removed. 
-	 * @param newTrayIcon the new tray icon or <code>null</code>
+	 * Removes the tray icon. 
 	 */
-	public static void setTrayIcon(AgentGUITrayIcon newTrayIcon) {
-		if (trayIcon!=null && newTrayIcon==null) {
-			trayIcon.remove();	
+	public static void removeTrayIcon() {
+		if (trayIcon!=null) {
+			trayIcon.remove();
+			trayIcon=null;
 		}
-		trayIcon = newTrayIcon;
 	}
 	
 	/**
@@ -657,9 +649,9 @@ public class Application {
 			if (isOperatingHeadless()==true && jadeStarted==false) {
 				Application.stop();
 			}
-			AgentGUITrayIcon trayIcon = getTrayIcon();
+			AwbTrayIcon trayIcon = getTrayIcon();
 			if (trayIcon!=null) {
-				trayIcon.getAgentGUITrayPopUp().refreshView();
+				trayIcon.refreshView();
 			}
 		}
 	}
@@ -775,7 +767,7 @@ public class Application {
 		// --- Close open projects --------------
 		if (getProjectsLoaded().closeAll()==false) return false;	
 
-		// --- Close visualisation --------------
+		// --- Close visualization --------------
 		setMainWindow(null);
 		
 		// --- Save file properties -------------
@@ -785,7 +777,7 @@ public class Application {
 		Language.saveDictionaryFile();
 		
 		// --- Remove TrayIcon ------------------
-		setTrayIcon(null);	
+		removeTrayIcon();	
 		
 		return true;
 	}
@@ -795,13 +787,13 @@ public class Application {
 	public static void stop() {
 		plugInApplication.stop();
 	}
-	
 	/**
 	 * Restarts Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void restart() {
 		plugInApplication.stop(IApplication.EXIT_RESTART);
 	}
+	
 	/**
 	 * Relaunches the application (Application | Server (Master|Slave) | Service & Embedded System Agent) 
 	 */
@@ -820,6 +812,12 @@ public class Application {
 	 * @return
 	 */
 	private static String buildExitDataString(String additionalArguments) {
+
+		String NEW_LINE = "\n";
+		String CMD_VMARGS = "-vmargs";
+		String PROP_VM = "eclipse.vm";
+		String PROP_VMARGS = "eclipse.vmargs";
+		String PROP_COMMANDS = "eclipse.commands";
 
 		// ---  Extract the single arguments from the string
 		String[] addArgs = null;
@@ -903,6 +901,7 @@ public class Application {
 
 		return result.toString();
 	}
+	
 	/**
 	 * Checks if is quit JVM.
 	 * @return true, if is quit JVM
@@ -1057,7 +1056,7 @@ public class Application {
 			getMainWindow().setStatusJadeRunning(runs);	
 		}
 		if (trayIcon!=null) {
-			trayIcon.getAgentGUITrayPopUp().refreshView();	
+			trayIcon.refreshView();	
 		}
 	}
 	

@@ -28,32 +28,49 @@
  */
 package org.agentgui.gui;
 
+import java.util.Vector;
+
 /**
- * The Interface ConsoleFolder corresponds to a JTabedPane (or similar) that.
- * enables to host several {@link Console} panels or parts.
+ * The Interface AwbConsole defines the required methods for a console.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface ConsoleFolder {
+public interface AwbConsole {
+
 
 	/**
-	 * Has to add the specified console tab.
-	 *
-	 * @param title the title of the tab
-	 * @param console the console
+	 * Return if the current console is a local console (from current JVM).
+	 * @return true, if is local console
 	 */
-	public void addTab(String title, Console console);
+	public boolean isLocalConsole();
 	
 	/**
-	 * Removes the specified console.
-	 * @param console the console
+	 * Sets if the current console is a local console.
+	 * @param isLocalConsole the new checks if is local console
 	 */
-	public void remove(Console console);
+	public void setLocalConsole(boolean isLocalConsole);
+
 	
 	/**
-	 * Sets the selected console component.
-	 * @param console the new selected component
+	 * Appends a Vector<String> of lines to this console  .
+	 * @param lines2transfer the lines to print
 	 */
-	public void setSelectedComponent(Console console);
+	public void appendText(Vector<String> linesToPrint);
+	
+	/**
+	 * This method can be used in order to append the console output from a remote container.
+	 * A line may start with '[SysOut]' or '[SysErr]' to indicate the type of output.
+	 * 
+	 * @param text the text to print out
+	 */
+	public void appendText(String text);
+	
+	/**
+	 * This method can be used in order to append text to the current console
+	 * @param text the text to print
+	 * @param isError specifies if the text is an error or not
+	 */
+	public void appendText(String text, boolean isError);
+	
 	
 }

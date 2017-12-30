@@ -366,7 +366,7 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * Console is visible.
+	 * AwbConsole is visible.
 	 *
 	 * @return true, if successful
 	 */

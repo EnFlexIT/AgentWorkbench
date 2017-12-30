@@ -32,7 +32,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
-import org.agentgui.gui.ProjectEditorWindow;
+import org.agentgui.gui.AwbProjectEditorWindow;
 
 import agentgui.core.project.Project;
 
@@ -110,7 +110,7 @@ public class ProjectWindowTab {
 	 * Returns the current instance of the {@link ProjectWindow}.
 	 * @return the project window
 	 */
-	public ProjectEditorWindow getProjectWindow() {
+	public AwbProjectEditorWindow getProjectWindow() {
 		return this.currProject.getProjectEditorWindow();
 	}
 	/**

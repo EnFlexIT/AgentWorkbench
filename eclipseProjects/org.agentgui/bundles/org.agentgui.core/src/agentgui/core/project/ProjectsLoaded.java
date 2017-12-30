@@ -44,8 +44,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.agentgui.gui.ProjectNewOpenDialog;
-import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.agentgui.gui.AwbProjectNewOpenDialog;
+import org.agentgui.gui.AwbProjectNewOpenDialog.ProjectAction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -142,7 +142,7 @@ public class ProjectsLoaded {
 		
 		if (selectedProjectFolder==null) {
 			// --- Open user dialog -------------------------------------------
-			ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
+			AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 			newProDia.setProjectName(projectNameTest);
 			newProDia.setProjectDirectory(projectFolderTest);
 			newProDia.setVisible(true);
@@ -557,7 +557,7 @@ public class ProjectsLoaded {
 			// --- If no projectFolder is specified yet ----------------- 
 			if (projectFolder==null) {
 				// --- Select the project to export ---------------------
-				ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.ExportProject);
+				AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.ExportProject);
 				newProDia.setVisible(true);
 				// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 				if (newProDia.isCanceled()==true) {
@@ -642,7 +642,7 @@ public class ProjectsLoaded {
 		
 		// ----------------------------------------------------------
 		// --- Open project selection dialog ------------------------
-		ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.DeleteProject);
+		AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.DeleteProject);
 		newProDia.setVisible(true);
 		// === Waiting for closing dialog ===
 		if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {

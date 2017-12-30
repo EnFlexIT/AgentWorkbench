@@ -32,9 +32,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.agentgui.gui.Console;
-import org.agentgui.gui.ConsoleDialog;
-import org.agentgui.gui.ConsoleFolder;
+import org.agentgui.gui.AwbConsole;
+import org.agentgui.gui.AwbConsoleDialog;
+import org.agentgui.gui.AwbConsoleFolder;
 import org.agentgui.gui.UiBridge;
 
 import agentgui.core.application.Application;
@@ -138,7 +138,7 @@ public class DebugService extends BaseService {
 				// --- Remove such local consoles because the output ---------- 
 				// --- will come in the local console				 ----------
 				String localSliceName = localSlice.getNode().getName();
-				Console jpc = SysOutBoard.getHashMapConsoles().get(localSliceName);
+				AwbConsole jpc = SysOutBoard.getHashMapConsoles().get(localSliceName);
 				if (jpc!=null) {
 					if (SysOutBoard.getConsoleFolder()!=null) {
 						SysOutBoard.getConsoleFolder().remove(jpc);	
@@ -160,16 +160,16 @@ public class DebugService extends BaseService {
 			}
 			
 			// --- Get the JTabbedPane, where the consoles can be shown ------- 
-			ConsoleFolder consoleFolder = SysOutBoard.getConsoleFolder();
+			AwbConsoleFolder consoleFolder = SysOutBoard.getConsoleFolder();
 			if (consoleFolder==null && Application.isOperatingHeadless()==false) {
 				// --- Create the Frame, where the consoles can be displayed --
-				ConsoleDialog consoleDialog = UiBridge.getInstance().getConsoleDialog();
+				AwbConsoleDialog consoleDialog = UiBridge.getInstance().getConsoleDialog();
 				consoleFolder = consoleDialog.getConsoleFolder();
 				SysOutBoard.setConsoleDialog(consoleDialog);
 				SysOutBoard.setConsoleFolder(consoleFolder);
 				
 				// --- Create a console window for the local output -----------
-				Console localConsole = UiBridge.getInstance().getConsole(true);
+				AwbConsole localConsole = UiBridge.getInstance().getConsole(true);
 				SysOutBoard.getConsoleFolder().addTab("Local", localConsole);
 				SysOutBoard.getHashMapConsoles().put("Local", localConsole);
 
@@ -178,12 +178,12 @@ public class DebugService extends BaseService {
 			}
 			
 			// --- If there are old consoles, remove them from tab ------------
-			HashMap<String, Console> consoleHash = SysOutBoard.getHashMapConsoles();
+			HashMap<String, AwbConsole> consoleHash = SysOutBoard.getHashMapConsoles();
 			if (consoleHash!=null && consoleHash.size()>0) {
 				ArrayList<String> consoleKeys = new ArrayList<>(consoleHash.keySet());
 				for (int i = 0; i < consoleKeys.size(); i++) {
 					String consoleKey = consoleKeys.get(i);
-					Console currConsole = consoleHash.get(consoleKey);
+					AwbConsole currConsole = consoleHash.get(consoleKey);
 					if (currConsole.isLocalConsole()==false) {
 						consoleFolder.remove(consoleHash.get(consoleKey));
 						SysOutBoard.getHashMapConsoles().remove(consoleKey);
@@ -344,13 +344,13 @@ public class DebugService extends BaseService {
 		private void addConsoleLines(String containerName, Vector<String> lines2transfer) {
 
 			// --- If console for container does not exists, create it ----- 
-			Console currConsole = SysOutBoard.getHashMapConsoles().get(containerName);
+			AwbConsole currConsole = SysOutBoard.getHashMapConsoles().get(containerName);
 			if (currConsole==null) {
 				
 				currConsole = UiBridge.getInstance().getConsole(false);
 				SysOutBoard.getHashMapConsoles().put(containerName, currConsole);
 				
-				ConsoleFolder consoleFolder = SysOutBoard.getConsoleFolder();
+				AwbConsoleFolder consoleFolder = SysOutBoard.getConsoleFolder();
 				if (consoleFolder!=null) {
 					// --- show JFrame if defined ---------
 					if (SysOutBoard.getConsoleDialog()!=null) {

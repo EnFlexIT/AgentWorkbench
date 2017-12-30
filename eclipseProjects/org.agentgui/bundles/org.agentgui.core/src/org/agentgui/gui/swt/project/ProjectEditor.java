@@ -31,7 +31,7 @@ package org.agentgui.gui.swt.project;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.agentgui.gui.ProjectEditorWindow;
+import org.agentgui.gui.AwbProjectEditorWindow;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,7 +60,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
+public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow {
 
 	public static final String ID = AppModelId.PART_ORG_AGENTGUI_CORE_PART_PROJECTEDITOR;
 	
@@ -170,7 +170,7 @@ public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 	
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectEditorWindow#getProject()
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getProject()
 	 */
 	@Override
 	public Project getProject() {
@@ -178,7 +178,7 @@ public class ProjectEditor extends EditorPart implements ProjectEditorWindow {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText) {

@@ -37,7 +37,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface ProjectEditorWindow {
+public interface AwbProjectEditorWindow {
 
 	
 	/**
@@ -102,17 +102,17 @@ public interface ProjectEditorWindow {
 	public void removeProjectTab(ProjectWindowTab projectWindowTab);	
 	
 	/**
-	 * Disposes the ProjectEditorWindow.
+	 * Disposes the AwbProjectEditorWindow.
 	 */
 	public void dispose();
 	
 	/**
-	 * Moves the ProjectEditorWindow to the front.
+	 * Moves the AwbProjectEditorWindow to the front.
 	 */
 	public void moveToFront();
 	
 	/**
-	 * Maximizes the current ProjectEditorWindow.
+	 * Maximizes the current AwbProjectEditorWindow.
 	 */
 	public void setMaximized();
 	
@@ -123,7 +123,7 @@ public interface ProjectEditorWindow {
 	public void setFocus2Tab(String tabName);
 	
 	/**
-	 * Rebuilds the ProjectEditorWindow depending on the selected view that is either {@link Project#VIEW_User}, {@link Project#VIEW_Developer} or <code>null</code>.
+	 * Rebuilds the AwbProjectEditorWindow depending on the selected view that is either {@link Project#VIEW_User}, {@link Project#VIEW_Developer} or <code>null</code>.
 	 */
 	public void setViewForDeveloperOrEndUser();
 

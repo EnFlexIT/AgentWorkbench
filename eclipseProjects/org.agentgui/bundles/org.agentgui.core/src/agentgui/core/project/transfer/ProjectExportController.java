@@ -49,8 +49,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.agentgui.gui.ProjectNewOpenDialog;
-import org.agentgui.gui.ProjectNewOpenDialog.ProjectAction;
+import org.agentgui.gui.AwbProjectNewOpenDialog;
+import org.agentgui.gui.AwbProjectNewOpenDialog.ProjectAction;
 import org.agentgui.gui.UiBridge;
 
 import agentgui.core.application.Application;
@@ -170,7 +170,7 @@ public class ProjectExportController {
 	 */
 	private Project selectProjectForExport() {
 		String actionTitle = Language.translate("Projekt zum Export auswählen");
-		ProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitle, ProjectAction.ExportProject);
+		AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitle, ProjectAction.ExportProject);
 		newProDia.setVisible(true);
 		if (newProDia.isCanceled() == true) {
 			return null;

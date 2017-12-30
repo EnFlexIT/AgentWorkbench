@@ -30,7 +30,7 @@ package org.agentgui.gui;
 
 
 /**
- * The Interface ProjectNewOpenDialog defines the required methods for a user dialog
+ * The Interface AwbProjectNewOpenDialog defines the required methods for a user dialog
  * that handles (create, open, export and delete) projects.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -38,7 +38,7 @@ package org.agentgui.gui;
  * @see org.agentgui.gui.swing.dialogs.ProjectNewOpen
  * @see org.agentgui.gui.swt.dialogs.ProjectNewOpen
  */
-public interface ProjectNewOpenDialog {
+public interface AwbProjectNewOpenDialog {
 	
 	/**
 	 * The enumeration describing the ProjectAction.

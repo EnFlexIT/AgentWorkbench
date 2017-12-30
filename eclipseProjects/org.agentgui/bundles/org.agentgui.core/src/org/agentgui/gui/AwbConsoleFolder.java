@@ -29,22 +29,31 @@
 package org.agentgui.gui;
 
 /**
- * The Interface ConsoleDialog.
+ * The Interface AwbConsoleFolder corresponds to a JTabedPane (or similar) that.
+ * enables to host several {@link AwbConsole} panels or parts.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface ConsoleDialog {
+public interface AwbConsoleFolder {
 
 	/**
-	 * Gets the console folder.
-	 * @return the console folder
+	 * Has to add the specified console tab.
+	 *
+	 * @param title the title of the tab
+	 * @param console the console
 	 */
-	public ConsoleFolder getConsoleFolder();
+	public void addTab(String title, AwbConsole console);
 	
 	/**
-	 * Has to set the console dialog visible or not.
-	 * @param setVisible the new visible
+	 * Removes the specified console.
+	 * @param console the console
 	 */
-	public void setVisible(boolean setVisible);
+	public void remove(AwbConsole console);
+	
+	/**
+	 * Sets the selected console component.
+	 * @param console the new selected component
+	 */
+	public void setSelectedComponent(AwbConsole console);
 	
 }

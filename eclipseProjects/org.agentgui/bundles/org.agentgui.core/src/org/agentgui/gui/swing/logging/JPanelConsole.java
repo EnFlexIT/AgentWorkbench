@@ -44,7 +44,7 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import org.agentgui.gui.Console;
+import org.agentgui.gui.AwbConsole;
 
 import agentgui.logging.components.PrintStreamListener;
 import agentgui.logging.components.SysOutBoard;
@@ -56,7 +56,7 @@ import agentgui.logging.components.SysOutScanner;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JPanelConsole extends JPanel implements Console {
+public class JPanelConsole extends JPanel implements AwbConsole {
 
 	private static final long serialVersionUID = 8836132571457271033L;
 	
@@ -145,7 +145,7 @@ public class JPanelConsole extends JPanel implements Console {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.Console#appendText(java.util.Vector)
+	 * @see org.agentgui.gui.AwbConsole#appendText(java.util.Vector)
 	 */
 	@Override
 	public void appendText(Vector<String> lines2transfer) {
@@ -155,7 +155,7 @@ public class JPanelConsole extends JPanel implements Console {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.Console#appendText(java.lang.String)
+	 * @see org.agentgui.gui.AwbConsole#appendText(java.lang.String)
 	 */
 	public void appendText(String text) {
 		if (text.startsWith(PrintStreamListener.SystemOutput)) {
@@ -171,7 +171,7 @@ public class JPanelConsole extends JPanel implements Console {
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.Console#appendText(java.lang.String, boolean)
+	 * @see org.agentgui.gui.AwbConsole#appendText(java.lang.String, boolean)
 	 */
 	@Override
 	public void appendText(String text, boolean isError) {
@@ -246,14 +246,14 @@ public class JPanelConsole extends JPanel implements Console {
 	
 
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.Console#setLocalConsole(boolean)
+	 * @see org.agentgui.gui.AwbConsole#setLocalConsole(boolean)
 	 */
 	@Override
 	public void setLocalConsole(boolean localConsole) {
 		this.localConsole = localConsole;
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.Console#isLocalConsole()
+	 * @see org.agentgui.gui.AwbConsole#isLocalConsole()
 	 */
 	@Override
 	public boolean isLocalConsole() {

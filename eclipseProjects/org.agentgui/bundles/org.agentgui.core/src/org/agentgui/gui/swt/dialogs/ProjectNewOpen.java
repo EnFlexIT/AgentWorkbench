@@ -30,7 +30,7 @@ package org.agentgui.gui.swt.dialogs;
 
 import java.io.File;
 
-import org.agentgui.gui.ProjectNewOpenDialog;
+import org.agentgui.gui.AwbProjectNewOpenDialog;
 import org.agentgui.gui.swt.SWTResourceManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -65,10 +65,10 @@ import agentgui.core.config.GlobalInfo;
 
 
 /**
- * The Class ProjectNewOpenDialog is used to create, open or delete a projects.
+ * The Class AwbProjectNewOpenDialog is used to create, open or delete a projects.
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectNewOpen extends Dialog implements ProjectNewOpenDialog {
+public class ProjectNewOpen extends Dialog implements AwbProjectNewOpenDialog {
 	
 	private final File projectsRootDir = new File(Application.getGlobalInfo().getPathProjects());
 	
@@ -146,7 +146,7 @@ public class ProjectNewOpen extends Dialog implements ProjectNewOpenDialog {
     }
     
     /* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#setVisible(boolean)
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#setVisible(boolean)
 	 */
 	@Override
 	public void setVisible(boolean isSetVisible) {
@@ -437,7 +437,7 @@ public class ProjectNewOpen extends Dialog implements ProjectNewOpenDialog {
 		super.cancelPressed();
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#isCanceled()
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#isCanceled()
 	 */
 	@Override
 	public boolean isCanceled() {
@@ -452,7 +452,7 @@ public class ProjectNewOpen extends Dialog implements ProjectNewOpenDialog {
 		this.isExportBeforeDelete = isExportBeforeDelete;
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#isExportBeforeDelete()
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#isExportBeforeDelete()
 	 */
 	@Override
 	public boolean isExportBeforeDelete() {
@@ -652,14 +652,14 @@ public class ProjectNewOpen extends Dialog implements ProjectNewOpenDialog {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#setProjectName(java.lang.String)
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#setProjectName(java.lang.String)
 	 */
 	@Override
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#getProjectName()
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#getProjectName()
 	 */
 	@Override
 	public String getProjectName() {
@@ -667,14 +667,14 @@ public class ProjectNewOpen extends Dialog implements ProjectNewOpenDialog {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#setProjectFolder(java.lang.String)
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#setProjectFolder(java.lang.String)
 	 */
 	@Override
 	public void setProjectDirectory(String projectDirectory) {
 		this.projectDirectory = projectDirectory;
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ProjectNewOpenDialog#getProjectFolder()
+	 * @see org.agentgui.gui.AwbProjectNewOpenDialog#getProjectFolder()
 	 */
 	@Override
 	public String getProjectDirectory() {

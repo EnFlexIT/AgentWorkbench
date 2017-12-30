@@ -703,7 +703,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				// --- Background System Modus ----------------------
 				System.out.println("\n" + Language.translate("Neustart des Server-Dienstes") + " ...");
 				Application.getJadePlatform().stop();
-				Application.setTrayIcon(null);
+				Application.removeTrayIcon();
 				Application.startAgentGUI();
 				break;
 				
@@ -715,7 +715,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 					if (Application.getProjectsLoaded().closeAll()==false) return;	
 				}		
 				Application.setMainWindow(null);
-				Application.setTrayIcon(null);	
+				Application.removeTrayIcon();	
 				Application.startAgentGUI();
 				break;
 			}
@@ -743,14 +743,14 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				}		
 				// --- Close main window and TrayIcon ---------------
 				Application.setMainWindow(null);
-				Application.setTrayIcon(null);
+				Application.removeTrayIcon();
 				break;
 
 			case SERVER:
 			case SERVER_MASTER:
 			case SERVER_SLAVE:
 				// --- Background System Modus ----------------------
-				Application.setTrayIcon(null);
+				Application.removeTrayIcon();
 				break;
 				
 			case DEVICE_SYSTEM:
@@ -759,7 +759,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 					if (Application.getProjectsLoaded().closeAll()==false) return;	
 				}		
 				Application.setMainWindow(null);
-				Application.setTrayIcon(null);	
+				Application.removeTrayIcon();	
 				Application.setLogFileWriter(null);
 				break;
 			}

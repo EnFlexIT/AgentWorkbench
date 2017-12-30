@@ -9,9 +9,9 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.agentgui.gui.ConsoleDialog;
+import org.agentgui.gui.AwbConsoleDialog;
 
-public class JFrame4Consoles extends JFrame implements ConsoleDialog {
+public class JFrame4Consoles extends JFrame implements AwbConsoleDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;

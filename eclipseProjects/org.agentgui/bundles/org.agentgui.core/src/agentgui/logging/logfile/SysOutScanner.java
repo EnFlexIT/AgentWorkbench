@@ -97,7 +97,7 @@ public class SysOutScanner {
 		}
 		this.outputStack.add(listenerOutput);
 		
-		// --- If a local Console window is used --------------------------------------------------
+		// --- If a local AwbConsole window is used --------------------------------------------------
 		if (this.logFileWriter!=null) {
 			this.logFileWriter.appendText(this.getStack());		
 		}

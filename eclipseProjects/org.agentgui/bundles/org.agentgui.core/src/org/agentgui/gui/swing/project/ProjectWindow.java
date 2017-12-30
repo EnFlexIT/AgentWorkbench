@@ -69,7 +69,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.agentgui.gui.ProjectEditorWindow;
+import org.agentgui.gui.AwbProjectEditorWindow;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -87,7 +87,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow, Observer {
+public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWindow, Observer {
 
 	private static final long serialVersionUID = -1462483441246136949L;
 
@@ -134,7 +134,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#getProject()
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getProject()
 	 */
 	@Override
 	public Project getProject() {
@@ -250,7 +250,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText) {
@@ -700,7 +700,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#addProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#addProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab)
 	 */
 	@Override
 	public void addProjectTab(ProjectWindowTab projectWindowTab) {
@@ -710,7 +710,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#addProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab, int)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#addProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab, int)
 	 */
 	@Override
 	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPosition) {
@@ -803,7 +803,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#removeProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#removeProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab)
 	 */
 	@Override
 	public void removeProjectTab(ProjectWindowTab projectWindowTab) {
@@ -1021,7 +1021,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#validateStartTab()
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#validateStartTab()
 	 */
 	@Override
 	public void validateStartTab() {
@@ -1033,7 +1033,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#setViewForDeveloperOrEndUser()
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#setViewForDeveloperOrEndUser()
 	 */
 	@Override
 	public void setViewForDeveloperOrEndUser() {
@@ -1138,7 +1138,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#getTabForSubPanels(java.lang.String)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getTabForSubPanels(java.lang.String)
 	 */
 	@Override
 	public ProjectWindowTab getTabForSubPanels(String name) {
@@ -1191,7 +1191,7 @@ public class ProjectWindow extends JInternalFrame implements ProjectEditorWindow
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.agentgui.gui.ProjectEditorWindow#showErrorMessage(java.lang.String, java.lang.String)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#showErrorMessage(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void showErrorMessage(String msgText, String msgHead) {

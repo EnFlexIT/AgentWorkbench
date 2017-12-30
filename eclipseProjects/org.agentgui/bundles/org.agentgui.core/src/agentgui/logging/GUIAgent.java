@@ -1,6 +1,6 @@
 package agentgui.logging;
 
-import org.agentgui.gui.ConsoleDialog;
+import org.agentgui.gui.AwbConsoleDialog;
 
 import agentgui.logging.components.SysOutBoard;
 import jade.core.Agent;
@@ -12,7 +12,7 @@ public class GUIAgent extends Agent {
 	@Override
 	protected void setup() {
 	
-		ConsoleDialog consoleDialog = SysOutBoard.getConsoleDialog();
+		AwbConsoleDialog consoleDialog = SysOutBoard.getConsoleDialog();
 		if (consoleDialog!=null) {
 			consoleDialog.setVisible(true);
 		}

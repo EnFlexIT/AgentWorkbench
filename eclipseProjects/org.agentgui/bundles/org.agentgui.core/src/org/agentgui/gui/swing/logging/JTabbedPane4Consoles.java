@@ -33,10 +33,10 @@ import java.awt.Font;
 
 import javax.swing.JTabbedPane;
 
-import org.agentgui.gui.Console;
-import org.agentgui.gui.ConsoleFolder;
+import org.agentgui.gui.AwbConsole;
+import org.agentgui.gui.AwbConsoleFolder;
 
-public class JTabbedPane4Consoles extends JTabbedPane implements ConsoleFolder {
+public class JTabbedPane4Consoles extends JTabbedPane implements AwbConsoleFolder {
 
 	private static final long serialVersionUID = 1L;
 
@@ -57,26 +57,26 @@ public class JTabbedPane4Consoles extends JTabbedPane implements ConsoleFolder {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ConsoleFolder#addTab(java.lang.String, org.agentgui.gui.Console)
+	 * @see org.agentgui.gui.AwbConsoleFolder#addTab(java.lang.String, org.agentgui.gui.AwbConsole)
 	 */
 	@Override
-	public void addTab(String title, Console console) {
+	public void addTab(String title, AwbConsole console) {
 		this.addTab(title, (Component)console);
 		
 	}
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ConsoleFolder#remove(org.agentgui.gui.Console)
+	 * @see org.agentgui.gui.AwbConsoleFolder#remove(org.agentgui.gui.AwbConsole)
 	 */
 	@Override
-	public void remove(Console console) {
+	public void remove(AwbConsole console) {
 		this.remove((Component)console);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.agentgui.gui.ConsoleFolder#setSelectedComponent(org.agentgui.gui.Console)
+	 * @see org.agentgui.gui.AwbConsoleFolder#setSelectedComponent(org.agentgui.gui.AwbConsole)
 	 */
 	@Override
-	public void setSelectedComponent(Console console) {
+	public void setSelectedComponent(AwbConsole console) {
 		this.setSelectedComponent((Component) console);
 	}
 	

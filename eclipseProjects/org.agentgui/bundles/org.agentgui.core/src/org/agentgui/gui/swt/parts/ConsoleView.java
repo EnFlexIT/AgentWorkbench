@@ -26,7 +26,7 @@ public class ConsoleView {
 		parent.setLayout(new GridLayout(1, false));
 		
 		this.lblConsoleView = new Label(parent, SWT.NONE);
-		this.lblConsoleView.setText("Console View");
+		this.lblConsoleView.setText("AwbConsole View");
 		
 	}
 
