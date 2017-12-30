@@ -224,7 +224,7 @@ public class BundleProperties {
 		this.globalInfo.setBenchExecOn(stringPrefValue);
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
 		booleanPrefValue = eclipsePreferences.getBoolean(DEF_BENCH_SKIP_ALLWAYS, false);
-		this.globalInfo.setBenchAllwaysSkip(booleanPrefValue);
+		this.globalInfo.setBenchAlwaysSkip(booleanPrefValue);
 
 
 		// --- this.DEF_LANGUAGE ---------------------
@@ -377,7 +377,7 @@ public class BundleProperties {
 		// --- this.DEF_BENCH_EXEC_ON ----------------
 		if (this.globalInfo.getBenchExecOn()!=null) eclipsePreferences.put(DEF_BENCH_EXEC_ON, this.globalInfo.getBenchExecOn());	
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
-		eclipsePreferences.putBoolean(DEF_BENCH_SKIP_ALLWAYS, this.globalInfo.isBenchAllwaysSkip());
+		eclipsePreferences.putBoolean(DEF_BENCH_SKIP_ALLWAYS, this.globalInfo.isBenchAlwaysSkip());
 		
 		
 		// --- this.DEF_LANGUAGE ---------------------

@@ -47,6 +47,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import org.agentgui.gui.AwbBenchmarkMonitor;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -57,7 +59,7 @@ import agentgui.core.config.GlobalInfo;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BenchmarkMonitor extends JDialog implements ActionListener {
+public class BenchmarkMonitor extends JDialog implements ActionListener, AwbBenchmarkMonitor {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -75,7 +77,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	public JProgressBar jProgressBarBenchmark = null;
 	
 	public JButton jButtonSkip = null;
-	public JButton jButtonSkipAllways = null;
+	public JButton jButtonSkipAlways = null;
 	
 	public boolean actionSkip = false;
 	public boolean actionSkipAllways = false;
@@ -83,18 +85,14 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	
 	/**
 	 * Constructor of this class.
-	 *
-	 * @param owner The Frame from which the dialog is displayed
+	 * @param owner the owner frame 
 	 */
 	public BenchmarkMonitor(Frame owner) {
 		super(owner);
 		initialize();
 	}
-	
 	/**
-	 * This method initialises class.
-	 *
-	 * @return void
+	 * Initialize.
 	 */
 	private void initialize() {
 		
@@ -114,7 +112,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		jLabelBenchmark.setText(Language.translate("Bitte warten! Der Benchmark wird durchgeführt ..."));
 		jLabelBenchmarkOldCaption.setText(Language.translate("Alter Wert: "));
 		jButtonSkip.setText(Language.translate("Überspringen"));
-		jButtonSkipAllways.setText(Language.translate("Immer überspringen"));
+		jButtonSkipAlways.setText(Language.translate("Immer überspringen"));
 		
 	}
 
@@ -137,20 +135,6 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		}	
 	}
 	
-	/**
-	 * This method is used to display the benchmark value in a provided JLable.
-	 *
-	 * @param benchmarkValue the new benchmark value
-	 */
-	public void setBenchmarkValue(Float benchmarkValue) {
-		jLabelBenchmarkOldValue.setText(benchmarkValue +  " Mflops");
-	}
-	
-	/**
-	 * This method initialises jContentPane.
-	 *
-	 * @return javax.swing.JPanel
-	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
@@ -182,6 +166,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 			gridBagConstraints.gridwidth = 2;
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints.gridy = 1;
+			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
 			jContentPane.add(getJProgressBarBenchmark(), gridBagConstraints);
@@ -192,11 +177,6 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		return jContentPane;
 	}
 
-	/**
-	 * This method initialises jProgressBarBenchmark.
-	 *
-	 * @return javax.swing.JProgressBar
-	 */
 	private JProgressBar getJProgressBarBenchmark() {
 		if (jProgressBarBenchmark == null) {
 			jProgressBarBenchmark = new JProgressBar();
@@ -205,11 +185,6 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		return jProgressBarBenchmark;
 	}
 
-	/**
-	 * This method initialises jPanelBottomLeft.
-	 *
-	 * @return javax.swing.JPanel
-	 */
 	private JPanel getJPanelBottomLeft() {
 		if (jPanelBottomLeft == null) {
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
@@ -231,11 +206,6 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		return jPanelBottomLeft;
 	}
 
-	/**
-	 * This method initialises jButtonSkip.
-	 *
-	 * @return javax.swing.JButton
-	 */
 	private JButton getJButtonSkip() {
 		if (jButtonSkip == null) {
 			jButtonSkip = new JButton();
@@ -246,27 +216,16 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		}
 		return jButtonSkip;
 	}
-
-	/**
-	 * This method initialises jButtonSkipAllways.
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonSkipAllways() {
-		if (jButtonSkipAllways == null) {
-			jButtonSkipAllways = new JButton();
-			jButtonSkipAllways.setText("Immer überspringen");
-			jButtonSkipAllways.setFont(new Font("Dialog", Font.BOLD, 10));
-			jButtonSkipAllways.addActionListener(this);
+	private JButton getJButtonSkipAlways() {
+		if (jButtonSkipAlways == null) {
+			jButtonSkipAlways = new JButton();
+			jButtonSkipAlways.setText("Immer überspringen");
+			jButtonSkipAlways.setFont(new Font("Dialog", Font.BOLD, 10));
+			jButtonSkipAlways.addActionListener(this);
 		}
-		return jButtonSkipAllways;
+		return jButtonSkipAlways;
 	}
 
-	/**
-	 * This method initialises jPanelBottomRight.
-	 *
-	 * @return javax.swing.JPanel
-	 */
 	private JPanel getJPanelBottomRight() {
 		if (jPanelBottomRight == null) {
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
@@ -280,30 +239,85 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 			jPanelBottomRight = new JPanel();
 			jPanelBottomRight.setLayout(new GridBagLayout());
 			jPanelBottomRight.add(getJButtonSkip(), gridBagConstraints4);
-			jPanelBottomRight.add(getJButtonSkipAllways(), gridBagConstraints5);
+			jPanelBottomRight.add(getJButtonSkipAlways(), gridBagConstraints5);
 		}
 		return jPanelBottomRight;
 	}
 
-	/**
-	 * The ActionListener-method for this Dialog.
-	 *
-	 * @param act the act
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent act) {
 
 		Object actor = act.getSource();
-		if (actor.equals(jButtonSkip)) {
+		if (actor.equals(this.getJButtonSkip())) {
 			this.actionSkip = true;
 			jButtonSkip.setEnabled(false);
-			jButtonSkipAllways.setEnabled(false);
-		} else if (actor.equals(jButtonSkipAllways)) {
+			jButtonSkipAlways.setEnabled(false);
+			
+		} else if (actor.equals(this.getJButtonSkipAlways())) {
 			this.actionSkipAllways = true;
 			jButtonSkip.setEnabled(false);
-			jButtonSkipAllways.setEnabled(false);
+			jButtonSkipAlways.setEnabled(false);
 		}
 	}
 
 	
-}  //  @jve:decl-index=0:visual-constraint="59,16"
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#setEnableSkipButton(boolean)
+	 */
+	@Override
+	public void setEnableSkipButton(boolean isEnabled) {
+		this.getJButtonSkip().setEnabled(isEnabled);
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#isSkip()
+	 */
+	@Override
+	public boolean isSkip() {
+		return this.actionSkip;
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#setEnableSkipAlwaysButton(boolean)
+	 */
+	@Override
+	public void setEnableSkipAlwaysButton(boolean isEnabled) {
+		this.getJButtonSkipAlways().setEnabled(isEnabled);
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#isSkipAlways()
+	 */
+	@Override
+	public boolean isSkipAlways() {
+		return this.actionSkipAllways;
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#setProgressMinimum(int)
+	 */
+	@Override
+	public void setProgressMinimum(int pMin) {
+		this.getJProgressBarBenchmark().setMinimum(pMin);
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#setProgressMaximum(int)
+	 */
+	@Override
+	public void setProgressMaximum(int pMax) {
+		this.getJProgressBarBenchmark().setMaximum(pMax);
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#setProgressValue(int)
+	 */
+	@Override
+	public void setProgressValue(int newValue) {
+		this.getJProgressBarBenchmark().setValue(newValue);
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbBenchmarkMonitor#setBenchmarkValue(float)
+	 */
+	public void setBenchmarkValue(float benchmarkValue) {
+		jLabelBenchmarkOldValue.setText(benchmarkValue +  " Mflops");
+	}
+
+}  

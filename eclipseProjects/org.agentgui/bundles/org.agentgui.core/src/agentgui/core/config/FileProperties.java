@@ -312,9 +312,9 @@ public class FileProperties extends Properties {
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
 		propValue = this.getProperty(this.DEF_BENCH_SKIP_ALLWAYS).trim();
 		if ( propValue.equalsIgnoreCase("true") == true ) {
-			this.globalInfo.setBenchAllwaysSkip(true);
+			this.globalInfo.setBenchAlwaysSkip(true);
 		} else {
-			this.globalInfo.setBenchAllwaysSkip(false);
+			this.globalInfo.setBenchAlwaysSkip(false);
 		}
 		
 		// --- this.DEF_LANGUAGE ---------------------
@@ -619,7 +619,7 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_BENCH_EXEC_ON, this.globalInfo.getBenchExecOn());	
 		}
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
-		if ( this.globalInfo.isBenchAllwaysSkip() == true ) {
+		if ( this.globalInfo.isBenchAlwaysSkip() == true ) {
 			this.setProperty(this.DEF_BENCH_SKIP_ALLWAYS,"true");	
 		} else {
 			this.setProperty(this.DEF_BENCH_SKIP_ALLWAYS,"false");

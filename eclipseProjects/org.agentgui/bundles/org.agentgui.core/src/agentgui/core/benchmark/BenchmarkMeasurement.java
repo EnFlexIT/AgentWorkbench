@@ -38,6 +38,9 @@ import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
+import org.agentgui.gui.AwbBenchmarkMonitor;
+import org.agentgui.gui.UiBridge;
+
 import jnt.scimark2.Constants;
 import jnt.scimark2.Random;
 import jnt.scimark2.kernel;
@@ -61,7 +64,7 @@ public class BenchmarkMeasurement extends Thread {
 	private boolean isHeadlessOperation = Application.isOperatingHeadless();
 
 	private float benchValueOld = Application.getGlobalInfo().getBenchValue();
-	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAllwaysSkip();
+	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAlwaysSkip();
 	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
 	private String nowExecOn;
 	
@@ -72,7 +75,8 @@ public class BenchmarkMeasurement extends Thread {
 	private int Sparse_size_nz = Constants.SPARSE_SIZE_nz;
 	private int LU_size = Constants.LU_SIZE;
 
-	private BenchmarkMonitor benchGUI;
+//	private BenchmarkMonitor monitor;
+	private AwbBenchmarkMonitor monitor;
 	
 	/**
 	 * The constructor of this class.<br>
@@ -101,36 +105,9 @@ public class BenchmarkMeasurement extends Thread {
 			return;
 		}  
 		
-		// --- Initialise Benchmark-Monitor  --------------
-		if (this.isHeadlessOperation==false) {
-			// --- Initialise BenchmarkMonitor ------------ 
-			if (Application.getMainWindow()==null) {
-				benchGUI = new BenchmarkMonitor(null);	
-			} else {
-				benchGUI = new BenchmarkMonitor(Application.getMainWindow());	
-			}		
-			
-			// --- Set user buttons -----------------------
-			if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(benchExecOn)) {
-				benchGUI.jButtonSkip.setEnabled(true);
-				if (forceBench==true) {
-					benchGUI.jButtonSkipAllways.setEnabled(false);
-				} else {
-					benchGUI.jButtonSkipAllways.setEnabled(true);
-				}
-			} else {
-				benchGUI.jButtonSkip.setEnabled(false);
-				benchGUI.jButtonSkipAllways.setEnabled(false);
-			}
-			
-			// --- Progress Display --- ON ----------------
-			benchGUI.setBenchmarkValue(this.benchValueOld);
-			benchGUI.jProgressBarBenchmark.setMinimum(0);
-			benchGUI.jProgressBarBenchmark.setMaximum(6);
-			benchGUI.jProgressBarBenchmark.setValue(0);
-			benchGUI.validate();
-			benchGUI.setVisible(true);
-			
+		// --- Initialize Benchmark-Monitor  --------------
+		if (this.getMonitor()!=null) {
+			this.getMonitor().setVisible(true);
 		} else {
 			System.out.println("Executing Benchmark, please wait ... ");
 		}
@@ -179,12 +156,12 @@ public class BenchmarkMeasurement extends Thread {
 		LoadMeasureThread.setCompositeBenchmarkValue(result);
 		Application.getGlobalInfo().setBenchValue(result);
 		Application.getGlobalInfo().setBenchExecOn(this.getLocalSystemIdentifier());
-		Application.getGlobalInfo().setBenchAllwaysSkip(benchAllwaysSkip);
+		Application.getGlobalInfo().setBenchAlwaysSkip(benchAllwaysSkip);
 		Application.getGlobalInfo().doSavePersistedConfiguration();
 		
 		// --- Progress Display --- OFF -------------------
 		if (this.isHeadlessOperation==false) {
-			benchGUI.setBenchmarkValue(result);
+			this.getMonitor().setBenchmarkValue(result);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException sleepE) {
@@ -195,17 +172,47 @@ public class BenchmarkMeasurement extends Thread {
 		Application.setBenchmarkRunning(false);
 		
 	}
+	/**
+	 * Returns the visual BenchmarkMonitor (if the application is not running headless).
+	 * @return the benchmark monitor
+	 */
+	private AwbBenchmarkMonitor getMonitor() {
+		if (monitor==null && this.isHeadlessOperation==false) {
+			// --- Initialize BenchmarkMonitor ------------ 
+			monitor = UiBridge.getInstance().getBenchmarkMonitor();
+			// --- Set user buttons -----------------------
+			if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(benchExecOn)) {
+				monitor.setEnableSkipButton(true);
+				if (forceBench==true) {
+					monitor.setEnableSkipAlwaysButton(false);
+				} else {
+					monitor.setEnableSkipAlwaysButton(true);
+				}
+			} else {
+				monitor.setEnableSkipButton(false);
+				monitor.setEnableSkipAlwaysButton(false);
+			}
+			
+			// --- Progress Display --- ON ----------------
+			monitor.setBenchmarkValue(this.benchValueOld);
+			monitor.setProgressMaximum(0);
+			monitor.setProgressMinimum(6);
+			monitor.setProgressValue(0);
+			
+		}
+		return monitor;
+	}
 	
 	/**
 	 * Sets the benchmark progress.
 	 * @param n the new benchmark progress
 	 */
 	private void setBenchmarkProgress(final int n) {
-		if (this.benchGUI!=null) {
+		if (this.getMonitor()!=null) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					benchGUI.jProgressBarBenchmark.setValue(n);
+					getMonitor().setProgressValue(n);
 				}
 			});	
 		}
@@ -213,18 +220,17 @@ public class BenchmarkMeasurement extends Thread {
 	
 	/**
 	 * This Method checks if a skip-button was pressed on the Monitor-GUI.
-	 *
 	 * @return true, if is skip action
 	 */
 	private boolean isSkipAction() {
-		if (this.benchGUI!=null) {
-			if (this.benchGUI.actionSkipAllways==true) {
-				Application.getGlobalInfo().setBenchAllwaysSkip(true);
+		if (this.getMonitor()!=null) {
+			if (this.getMonitor().isSkipAlways()==true) {
+				Application.getGlobalInfo().setBenchAlwaysSkip(true);
 				this.closeGUI();
 				Application.setBenchmarkRunning(false);
 				return true;
 			}
-			if (this.benchGUI.actionSkip==true) {
+			if (this.getMonitor().isSkip()==true) {
 				this.closeGUI();
 				Application.setBenchmarkRunning(false);
 				return true;
@@ -237,10 +243,10 @@ public class BenchmarkMeasurement extends Thread {
 	 * This method closes the benchmark monitor GUI.
 	 */
 	private void closeGUI() {
-		if (this.benchGUI!=null) {
-			this.benchGUI.setVisible(false);
-			this.benchGUI.dispose();
-			this.benchGUI = null;	
+		if (this.getMonitor()!=null) {
+			this.getMonitor().setVisible(false);
+			this.getMonitor().dispose();
+			this.monitor=null;	
 		}
 	}
 	
@@ -251,7 +257,6 @@ public class BenchmarkMeasurement extends Thread {
 	 * @return an identifier for the local system
 	 */
 	private String getLocalSystemIdentifier() {
-
 		if (nowExecOn==null) {
 			// ----------------------------------------------------------------
 			// --- Try to get the MAC address first ---------------------------

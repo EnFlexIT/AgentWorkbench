@@ -219,6 +219,27 @@ public class UiBridge {
 		return trayIcon;
 	}
 	
+	/**
+	 * Returns the benchmark monitor (Swing or SWT).
+	 * @return the benchmark monitor
+	 */
+	public AwbBenchmarkMonitor getBenchmarkMonitor() {
+		
+		AwbBenchmarkMonitor monitor = null;
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
+			// --- SWT tray icon ----------------
+			//TODO
+			System.err.println("SWT Benchmark Monitor not implemented yet!");
+			break;
+
+		case AgentGuiSwing:
+			// --- Swing tray icon --------------
+			monitor = new agentgui.core.benchmark.BenchmarkMonitor(Application.getMainWindow());
+			break;
+		}
+		return monitor;
+	}
 	
 	// ------------------------------------------
 	// --- Project UI-Elements ------------------

@@ -133,7 +133,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	
 	private float filePropBenchValue = 0;
 	private String filePropBenchExecOn;
-	private boolean filePropBenchAllwaysSkip; 
+	private boolean filePropBenchAlwaysSkip; 
 	
 	private String filePropLanguage;
 	private boolean maximizeMainWindow = false;
@@ -1250,19 +1250,17 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * Returns if the file properties are configured to always skip the benchmark
 	 * @return the filePropBenchAllwaySkip
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
 	 */
-	public boolean isBenchAllwaysSkip() {
-		return filePropBenchAllwaysSkip;
+	public boolean isBenchAlwaysSkip() {
+		return filePropBenchAlwaysSkip;
 	}
 	/**
 	 * Can be used in order to set the file properties to always skip the benchmark
-	 * @param benchAllwaySkip the filePropBenchAllwaySkip to set
+	 * @param benchAlwaysSkip the filePropBenchAlwaySkip to set
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
 	 */
-	public void setBenchAllwaysSkip(boolean benchAllwaySkip) {
-		this.filePropBenchAllwaysSkip = benchAllwaySkip;
+	public void setBenchAlwaysSkip(boolean benchAlwaysSkip) {
+		this.filePropBenchAlwaysSkip = benchAlwaysSkip;
 	}
 
 	// ---- Currently used language ------------------------------------
