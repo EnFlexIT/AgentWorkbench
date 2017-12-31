@@ -65,7 +65,7 @@ public class PlugInApplication implements IApplication {
 	/** Set this variable to switch the visualization */
 	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentGuiSwing;
 	
-	private IApplicationContext IApplicationContext;
+	private IApplicationContext iApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
 	
 	/** This will hold the instance of the Swing application window */
@@ -84,13 +84,13 @@ public class PlugInApplication implements IApplication {
 	 * @return the i application context
 	 */
 	public IApplicationContext getIApplicationContext() {
-		return this.IApplicationContext;
+		return this.iApplicationContext;
 	}
 	/**
 	 * Sets the application is running.
 	 */
 	public void setApplicationIsRunning() {
-//		this.IApplicationContext.applicationRunning();	
+		this.iApplicationContext.applicationRunning();	
 	}
 	
 	
@@ -110,20 +110,20 @@ public class PlugInApplication implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {
 
 		// --- Remind application context -----------------
-		this.IApplicationContext = context;
+		this.iApplicationContext = context;
 
 		// --- Set the current visualization platform ----- 
 		UiBridge.getInstance().setVisualisationPlatform(this.getVisualisationPlatform());
 		
-		// --- In case of Swing visualization (for MAC) ---
-		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
-			this.startEclipseUI(new Runnable() {
-				@Override
-				public void run() {
-					stopEclipseUI();
-				}
-			});
-		}
+//		// --- In case of Swing visualization (for MAC) ---
+//		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
+//			this.startEclipseUI(new Runnable() {
+//				@Override
+//				public void run() {
+////					stopEclipseUI();
+//				}
+//			});
+//		}
 		
 		// --- Start the application ----------------------
 		Application.start(this);
