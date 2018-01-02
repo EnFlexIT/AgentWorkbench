@@ -194,8 +194,8 @@ public class BenchmarkMeasurement extends Thread {
 			
 			// --- Progress Display --- ON ----------------
 			monitor.setBenchmarkValue(this.benchValueOld);
-			monitor.setProgressMaximum(0);
-			monitor.setProgressMinimum(6);
+			monitor.setProgressMinimum(0);
+			monitor.setProgressMaximum(6);
 			monitor.setProgressValue(0);
 			
 		}

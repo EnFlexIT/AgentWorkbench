@@ -53,8 +53,6 @@ import agentgui.core.project.Project;
  */
 public class UiBridge {
 
-	private ApplicationVisualizationBy visualisationPlatform;
-	
 	private static UiBridge thisInstance;
 	
 	/**Instantiates a new UiBridge. */
@@ -75,18 +73,11 @@ public class UiBridge {
 	// --- Helper methods to know the visualization platform --------
 	// --------------------------------------------------------------
 	/**
-	 * Sets the current visualization platform.
-	 * @param visualisationPlatform the new visualization platform
-	 */
-	public void setVisualisationPlatform(ApplicationVisualizationBy visualisationPlatform) {
-		this.visualisationPlatform = visualisationPlatform;
-	}
-	/**
 	 * Returns the current visualization platform.
 	 * @return the visualization platform
 	 */
 	public ApplicationVisualizationBy getVisualisationPlatform() {
-		return visualisationPlatform;
+		return Application.getIApplication().getVisualisationPlatform();
 	}
 	
 	// --------------------------------------------------------------
@@ -253,12 +244,16 @@ public class UiBridge {
 	 */
 	public AwbProjectNewOpenDialog getProjectNewOpenDialog(String title, ProjectAction currentAction ) {
 		AwbProjectNewOpenDialog projectDialog = null;
-		if (this.isWorkbenchRunning()==true) {
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
 			// --- SWT dialog -------------------
 			projectDialog = new org.agentgui.gui.swt.dialogs.ProjectNewOpen(this.getActiveWorkbenchWindowShell(), title, currentAction);
-		} else {
+			break;
+
+		case AgentGuiSwing:
 			// --- Swing dialog -----------------
 			projectDialog = new org.agentgui.gui.swing.dialogs.ProjectNewOpen(this.getSwingMainWindow(), title, currentAction);
+			break;
 		}
 		return projectDialog;
 	}
@@ -272,7 +267,8 @@ public class UiBridge {
 	public AwbProjectEditorWindow getProjectEditorWindow(Project project) {
 		
 		AwbProjectEditorWindow projectEditorWindow = null;
-		if (this.isWorkbenchRunning()==true) {
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
 			// --- SWT editor -------------------
 			MPartStack editorStack = (MPartStack) project.getEclipseEModelService().find(AppModelId.PARTSTACK_ORG_AGENTGUI_CORE_PARTSTACK_EDITOR, project.getEclipseMApplication());
 			MPart editorPart = project.getEclipseEPartService().createPart(AppModelId.PARTDESCRIPTOR_ORG_AGENTGUI_CORE_PARTDESCRIPTOR_AGENTPROJECT);
@@ -284,10 +280,12 @@ public class UiBridge {
 
 				projectEditorWindow = (AwbProjectEditorWindow) editorPart.getObject();
 			}
+			break;
 			
-		} else {
+		case AgentGuiSwing:
 			// --- Swing editor -----------------
 			projectEditorWindow = new org.agentgui.gui.swing.project.ProjectWindow(project);
+			break;
 		}
 		return projectEditorWindow;
 	}

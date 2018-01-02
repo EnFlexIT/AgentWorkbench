@@ -321,24 +321,24 @@ public class Application {
 	 * @return the main window
 	 */
 	public static MainWindow getMainWindow() {
-		return plugInApplication.getSwingMainWindow();
+		return getIApplication().getSwingMainWindow();
 	}
 	/**
 	 * Starts the main application window (JFrame).
 	 * @param postWindowOpenRunnable the post window open runnable
 	 */
 	public static void startMainWindow(Runnable postWindowOpenRunnable) {
-		plugInApplication.startEndUserApplication(postWindowOpenRunnable);
+		getIApplication().startEndUserApplication(postWindowOpenRunnable);
 	}
 	/**
 	 * Sets the main window.
 	 * @param newMainWindow the new main window
 	 */
 	public static void setMainWindow(MainWindow newMainWindow) {
-		if (plugInApplication.getSwingMainWindow()!=null && newMainWindow==null) {
-			plugInApplication.getSwingMainWindow().dispose();
+		if (getIApplication().getSwingMainWindow()!=null && newMainWindow==null) {
+			getIApplication().getSwingMainWindow().dispose();
 		}
-		plugInApplication.setSwingMainWindow(newMainWindow);	
+		getIApplication().setSwingMainWindow(newMainWindow);	
 	}
 	
 	
@@ -365,6 +365,13 @@ public class Application {
 		return Application.dbConnection;
 	}
 	
+	/**
+	 * Returns the lApplication.
+	 * @return the l application
+	 */
+	public static PlugInApplication getIApplication() {
+		return plugInApplication;
+	}
 	
 	/**
 	 * Main method for the start of the application running as end user application or server-tool.
@@ -411,7 +418,7 @@ public class Application {
 			}
 			
 			System.out.println("Starting JADE ...");
-			plugInApplication.startJadeStandalone(remainingArgs);
+			getIApplication().startJadeStandalone(remainingArgs);
 		
 		}
 		
@@ -618,7 +625,7 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
 			// --- In the Server-Case, start the benchmark now ! ----
-			plugInApplication.setApplicationIsRunning();
+			getIApplication().setApplicationIsRunning();
 			getTrayIcon();
 			doBenchmark(false);
 			startServer();
@@ -627,7 +634,7 @@ public class Application {
 		case DEVICE_SYSTEM:
 			// ------------------------------------------------------
 			// --- Start Service / Embedded System Agent ------------
-			plugInApplication.setApplicationIsRunning();
+			getIApplication().setApplicationIsRunning();
 			startServiceOrEmbeddedSystemAgent();
 			new AgentGuiUpdater().start();
 			break;
@@ -784,13 +791,13 @@ public class Application {
 	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void stop() {
-		plugInApplication.stop();
+		getIApplication().stop();
 	}
 	/**
 	 * Restarts Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void restart() {
-		plugInApplication.stop(IApplication.EXIT_RESTART);
+		getIApplication().stop(IApplication.EXIT_RESTART);
 	}
 	
 	/**
@@ -802,7 +809,7 @@ public class Application {
 
 		// --- Relaunch the application with the additional arguments ---- 
 		System.setProperty("eclipse.exitdata", exitData);
-		plugInApplication.stop(IApplication.EXIT_RELAUNCH);
+		getIApplication().stop(IApplication.EXIT_RELAUNCH);
 	}
 	
 	/**
@@ -1033,7 +1040,7 @@ public class Application {
 	 * Shows the eclipse workbench.
 	 */
 	public static void showEclipseWorkbench() {
-		plugInApplication.startEclipseUiThroughThread(null);
+		getIApplication().startEclipseUiThroughThread(null);
 	}
 	
 	/**

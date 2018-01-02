@@ -28,12 +28,9 @@
  */
 package org.agentgui;
 
-import javax.swing.SwingUtilities;
-
 import org.agentgui.bundle.evaluation.FilterForAgent;
 import org.agentgui.bundle.evaluation.FilterForBaseService;
 import org.agentgui.bundle.evaluation.FilterForOntology;
-import org.agentgui.gui.UiBridge;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -43,6 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.MainWindow;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 
@@ -112,31 +110,59 @@ public class PlugInApplication implements IApplication {
 		// --- Remind application context -----------------
 		this.iApplicationContext = context;
 
-		// --- Set the current visualization platform ----- 
-		UiBridge.getInstance().setVisualisationPlatform(this.getVisualisationPlatform());
-		
-//		// --- In case of Swing visualization (for MAC) ---
-//		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
-//			this.startEclipseUI(new Runnable() {
-//				@Override
-//				public void run() {
-////					stopEclipseUI();
-//				}
-//			});
-//		}
-		
-		// --- Start the application ----------------------
-		Application.start(this);
-		
-		// --- Wait for termination of the application ----
-		this.waitForApplicationTermination();
-		
+		// --- In case of Swing visualization (for MAC) ---
+		if (this.isSpecialStartOnMac()) {
+			// +++ Just for MAC and Swing +++++++++++++++++
+			this.startEclipseUI(new Runnable() {
+				@Override
+				public void run() {
+					final IWorkbench workbench = PlatformUI.getWorkbench();
+					final Display display = workbench.getDisplay();
+					display.asyncExec(new Runnable() {
+						public void run() {
+							// --- Minimize display -------
+							if (display!=null) {
+								if (display.getActiveShell()!=null) {
+									display.getActiveShell().setMinimized(true);
+								} else {
+									for (int i = 0; i < display.getShells().length; i++) {
+										display.getShells()[i].setMinimized(true);
+									} 
+								}
+							}
+							// --- Start using swing ------
+							Application.start(PlugInApplication.this);
+						}
+					});
+				}
+			});
+			
+		} else {
+			// +++ All other cases ++++++++++++++++++++++++
+
+			// --- Start the application ------------------
+			Application.start(this);
+			
+			// --- Wait for termination of application ----
+			this.waitForApplicationTermination();
+			
+		}
+
 		// --- Stop the Application class -----------------
 		System.out.println(Language.translate("Programmende... "));
 		this.stop();
-		Application.stop();
-			
+
 		return this.appReturnValue;
+	}
+	
+	/**
+	 * Checks if is the special MAC start is required.
+	 * @return true, if is special start on mac
+	 */
+	private boolean isSpecialStartOnMac() {
+		boolean isMac = SystemEnvironmentHelper.isMacOperatingSystem();
+		boolean isSwingVisualiszation = this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing;
+		return isMac & isSwingVisualiszation;
 	}
 	
 	/**
@@ -164,7 +190,6 @@ public class PlugInApplication implements IApplication {
 			// --- Indicate to stop the JVM -----
 			Application.setQuitJVM(true);
 		}
-		
 		this.stopEclipseUI();
 		
 	}
@@ -210,6 +235,7 @@ public class PlugInApplication implements IApplication {
 		// --- Evaluate the already loaded bundles --------
 		this.startBundleEvaluation();
 		try {
+			
 			// --- Case separation UI ---------------------
 			switch (this.visualisationBy) {
 			case AgentGuiSwing:
@@ -286,13 +312,8 @@ public class PlugInApplication implements IApplication {
 		
 		Integer appReturnValue = IApplication.EXIT_OK;
 		if (Application.isOperatingHeadless()==false) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					setSwingMainWindow(new MainWindow());
-					Application.getProjectsLoaded().setProjectView();
-				}
-			}); 
+			this.setSwingMainWindow(new MainWindow());
+			Application.getProjectsLoaded().setProjectView();
 		}
 		// --- Remove splash screen -----------------------
 		this.setApplicationIsRunning();
