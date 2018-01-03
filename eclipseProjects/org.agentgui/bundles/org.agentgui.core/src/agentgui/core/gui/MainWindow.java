@@ -220,7 +220,7 @@ public class MainWindow extends JFrame {
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent ce) {
-				if (consoleIsVisible() == false) {
+				if (isConsoleVisible() == false) {
 					getJSplit4ProjectDesktop().setDividerLocation(getJSplit4ProjectDesktop().getHeight());
 				}
 				if (Application.getProjectsLoaded().count() != 0) {
@@ -370,7 +370,7 @@ public class MainWindow extends JFrame {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean consoleIsVisible() {
+	public boolean isConsoleVisible() {
 		if (this.getJSplit4ProjectDesktop().getDividerSize()==0) {
 			return false;
 		} else {
@@ -395,6 +395,7 @@ public class MainWindow extends JFrame {
 	 * @param show the new console visible
 	 */
 	private void setConsoleVisible(boolean show) {
+		this.getJTabbedPane4Console().setVisible(show);
 		if (show==true) {
 			this.getJSplit4ProjectDesktop().setDividerSize(10);
 			this.getJSplit4ProjectDesktop().setDividerLocation(this.oldDividerLocation);
@@ -403,9 +404,7 @@ public class MainWindow extends JFrame {
 			this.getJSplit4ProjectDesktop().setDividerSize(0);
 			this.getJSplit4ProjectDesktop().setDividerLocation(this.getJSplit4ProjectDesktop().getHeight());
 		}
-		this.getJTabbedPane4Console().setVisible(show);
-		this.validate();
-		if (Application.getProjectsLoaded().count() != 0) {
+		if (Application.getProjectsLoaded().count()>0) {
 			Application.getProjectFocused().setMaximized();
 		}
 	}
@@ -481,7 +480,6 @@ public class MainWindow extends JFrame {
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the applications menu bar.
-	 *
 	 * @return the j menu bar base
 	 */
 	private JMenuBar getJMenuBarBase() {
@@ -497,7 +495,6 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * This method returns the current instance of the applications menu bar.
-	 *
 	 * @return the j menu bar main
 	 */
 	private JMenuBar getJMenuBarMain() {
@@ -536,7 +533,6 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * This method can be used in order to add an individual menu.
-	 *
 	 * @param myMenu the my menu
 	 */
 	public void addJMenu(JMenu myMenu) {
