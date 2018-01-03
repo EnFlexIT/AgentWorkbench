@@ -1,8 +1,8 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
-de;<br><br>Bitte geben Sie einen anderen Namen für das Setup an.;<br><br> Please enter a different name for the setup.;;;
-de;<br><br>Bitte geben Sie einen längeren Namen für das Setup an.;<br><br> Please enter a longer name for the setup.;;;
-de;<br><br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br><br> If not, a new setup file will be created.;;;
-de;<br><br>Kann der Name aus der Liste der Setups entfernt werden?;<br><br> Can the name be removed from the list of setups?;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
+de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'#' markiert alle Features, die zur Basisinstallation gehören.;'#' marks all features that belong to the base installation.;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
@@ -134,7 +134,7 @@ de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
 de;DF anzeigen;Show DF GUI
-de;Das Anwenden der neuen Datenreiheneigenschaften <br><br>kann dazu führen, dass Daten verloren gehen.<br><br><br><br>Möchten Sie fortfahren?;Applying the new data series properties <br><br>can lead to data loss. <br><br><br><br>Would you like to continue?;;;
+de;Das Anwenden der neuen Datenreiheneigenschaften <br>kann dazu führen, dass Daten verloren gehen.<br><br>Möchten Sie fortfahren?;Applying the new data series properties <br>can lead to data loss. <br><br>Would you like to continue?;;;
 de;Das Editor-Panel für die Klasse ist nicht definiert!;The editor panel of this class is not defined!;;;
 de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
 de;Das Projekt wird nun geschlossen!;The project will be closed now!;;;
@@ -142,8 +142,8 @@ de;Das Seitenverhältnis des exportierten Bildes;The aspect ratio of the image t
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
-de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>Möchten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br><br>Do you want to create the directory now?;;;
-de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br><br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br><br><br> Please select another name for the directory
+de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>Möchten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br>Do you want to create the directory now?;;;
+de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;The selected project directory is already in use!<br><br>Please, choose a different name for your directory.;;;
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
@@ -159,7 +159,7 @@ de;Datum;Date;;;
 de;Datumsformat;Date Format;;;
 de;Der Agent ';The Agent '
 de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
-de;Der Name '@' wird in der Startliste bereits verwendet !<br><br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br><br>Please select another name for the agent.
+de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
 de;Der Name;The name
 de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The port for the MTP address must match a value other than 0!;;;
 de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
@@ -171,22 +171,22 @@ de;Die Breite des exportieren Bildes;The width of the image to be exported;;;
 de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
-de;Die Datenbank für den Server-Master ist nicht vorhanden.<br><br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br><br> Try to create it now?
+de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
 de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br><br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br><br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br><br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br><br>database server. The execution of JADE was therefore interrupted.<br><br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br><br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br><br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br><br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br><br>main server. The execution of JADE was therefore interrupted. <br><br>Please, configure a valid server URL or IP (incl. Port) <br><br>and start the service again.;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
-de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br><br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which<br><br>can not be deleted or renamed!;;;
+de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which<br>can not be deleted or renamed!;;;
 de;Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.;Incremental discrete-time model with start and stop time.;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Doppelte X-Werte nicht zulässig!;Duplicate x values are not allowed!;;;
-de;Doppelte X-Werte sind derzeit nicht zulässig!<br><br>Die Aktion wird rückgängig gemacht.;Duplicate x values ​​are currently not allowed!<br><br>The action will be canceled.;;;
+de;Doppelte X-Werte sind derzeit nicht zulässig!<br>Die Aktion wird rückgängig gemacht.;Duplicate x values ​​are currently not allowed!<br>The action will be canceled.;;;
 de;Doppelte X-Werte zulassen;Allow duplicate X-Values;;;
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
@@ -229,7 +229,7 @@ de;Falls ausgewählt, wird die Log-Datei in jedem Ausführungsmodus erstellt.;If
 de;Falls nicht ausgewählt, wird die Log-Datei immer nur im 'Headless-Modus' erstellt (z.B. im Modus ';If not selected, the log file will only be created in 'headless mode' (for example, in ';;;
 de;Farbe;Color;;;
 de;Features auswählen;Select Feature;;;
-de;Fehlende Angaben über den Datenbank-Host.<br><br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br><br> Please check your database settings!
+de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
@@ -270,7 +270,7 @@ de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
 de;Geräte-Agent;Embedded System Agent;;;
-de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br><br>Close the projects now?;;;
+de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
 de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
 de;Google - Übersetzung;Google translation;;;
 de;Google-Übersetzung verwenden;Use Google Translate;;;
@@ -765,7 +765,7 @@ en;;Depending on watts (absolute);;;
 en;;Discrete squares environment;;;
 en;;Edit feature repository;;;
 en;;MTP Protocol:;;;
-en;;No NetworkComponentAdapter<br><br>was defined for the<br><br> NetworkComponent;;;
+en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;No agent class was specified.;;;
 en;;No agent name was specified.;;;
 en;;No container for the agent was specified.;;;
@@ -885,14 +885,14 @@ en;Das angegebene Verzeichnis konnte nicht gefunden werden.;The specified direct
 en;Daten;Data;;;
 en;Deaktivieren;Disable;;;
 en;Der Equinox Launcher wurde im plugins-Verzeichnis des installierten Produkts nicht gefunden.;Could not find the equinox launcher within the plugins-directory of the installed product.;;;
-en;Der Komponentename existiert bereits! <br><br> Bitte wählen Sie einen anderen.;The component name already exists!<br><br>Choose a different one.;;;
-en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente<br><br>vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of<br><br>the type 'DistributionNode'. This is only allowed once at one node!;;;
+en;Der Komponentename existiert bereits! <br> Bitte wählen Sie einen anderen.;The component name already exists!<br>Choose a different one.;;;
+en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente<br>vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;Der ausgewählte Knoten sollte zumindest zwischen zwei Komponenten liegen !;The select Vertex should be at least between two components !;;;
 en;Der ausgewählte Knoten sollte zwischen zwei Komponenten liegen !;The select Vertex should be between two components !;;;
 en;Diagramm bearbeiten;Edit Chart;;;
-en;Die Komponente ist bereits vorhanden!<br><br>  Bitte wählen Sie einen anderen Namen.;The component name already exists!<br><br> Choose a different one.;;;
+en;Die Komponente ist bereits vorhanden!<br>  Bitte wählen Sie einen anderen Namen.;The component name already exists!<br> Choose a different one.;;;
 en;Die Verzeichnisangabe für Installationspakete ist leer.;Directory for installation packages is empty.;;;
-en;Die aktuelle Auswahl im Graphen stellt bereits eine Komponente vom <br><br>Typ 'DistributionNode' dar. Dies ist an einem Knoten nur einmalig zulässigt!;The selection in the main graph already contains a component of<br><br>the type 'DistributionNode'. This is only allowed once at one node!;;;
+en;Die aktuelle Auswahl im Graphen stellt bereits eine Komponente vom <br>Typ 'DistributionNode' dar. Dies ist an einem Knoten nur einmalig zulässigt!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;Diese ID wird bereits verwendet. Bitte geben Sie eine andere Kennung (ID) an!;The ID is already in use. Please specify another identifier!;;;
 en;Diskretes Zeitmodell;Discrete Time Model;;;
 en;Doppelte Domäne;Duplicate Domain;;;
@@ -900,8 +900,8 @@ en;Doppelter Komponententyp;Duplicate Component Type;;;
 en;Drücken Sie die Umschalttaste und wählen Sie mindesten zwei Knoten!;Use Shift and click on two vertices at least!;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
 en;Eigenschaften schließen;Close Properties;;;
-en;Ein Agent.GUI-Update ist verfügbar.<br><br>Wollen Sie es jetzt herunterladen?;An Agent.GUI-Update is available. Download now?;;;
-en;Ein Agent.GUI-Update wurde heruntergeladen.<br><br>Wollen Sie es jetzt installieren?;Agent.GUI-Update was downloaded. Install now?;;;
+en;Ein Agent.GUI-Update ist verfügbar.<br>Wollen Sie es jetzt herunterladen?;An Agent.GUI-Update is available. Download now?;;;
+en;Ein Agent.GUI-Update wurde heruntergeladen.<br>Wollen Sie es jetzt installieren?;Agent.GUI-Update was downloaded. Install now?;;;
 en;Einstellungen;Settings;;;
 en;Entfernen Zertifikat;Remove Certificate;;;
 en;Erstelle eine neue KeyStore;Create new KeyStore;;;
@@ -915,7 +915,7 @@ en;Externer Typ;External Type;;;
 en;Farbe (Auswahl);Color picked;;;
 en;Farbe;Color;;;
 en;Fehler beim Parsen der Zeitinformation!;Error while parsing the time information!;;;
-en;Fehler beim Parsen des Zeitstempels! <br><br>Möchten Sie trotzdem fortfahren?;An error occurred while parsing the given time String!<br><br>Do you want to proceed anyway?;;;
+en;Fehler beim Parsen des Zeitstempels! <br>Möchten Sie trotzdem fortfahren?;An error occurred while parsing the given time String!<br>Do you want to proceed anyway?;;;
 en;Fehler;Error;;;
 en;Formatiert als;Formatted as;;;
 en;Geben Sie einen gültigen Namen an;Enter a valid name;;;
@@ -942,8 +942,8 @@ en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
 en;Kein Filter!;No Filter!;;;
 en;Kein Graph-Prototyp definiert für;No Graph-Prototype defined for;;;
-en;Kein NetworkComponentAdapter<br><br>definiert für die<br><br> Netzwerkkomponente<br><br>;No NetworkComponentAdapter<br><br>was defined for the<br><br> NetworkComponent;;;
-en;Kein NetworkComponentAdapter<br><br>definiert für die<br><br> die Knoten der Domain<br><br>;No NetworkComponentAdapter<br><br>was defined for<br><br> the GraphNodes of the Domain;;;
+en;Kein NetworkComponentAdapter<br>definiert für die<br> Netzwerkkomponente<br>;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
+en;Kein NetworkComponentAdapter<br>definiert für die<br> die Knoten der Domain<br>;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
 en;Kennwort bestätigen;Confirm Password;;;
 en;Kennwort;Password;;;
 en;KeyStore Datei:;KeyStore File:;;;

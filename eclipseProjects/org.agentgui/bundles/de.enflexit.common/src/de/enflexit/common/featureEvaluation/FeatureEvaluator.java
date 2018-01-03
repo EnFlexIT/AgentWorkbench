@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -265,10 +266,23 @@ public class FeatureEvaluator {
 	private File getBaseDirectory() {
 		File baseDirectory = null;
 		if (this.isDevelopmentMode==true && this.baseDirectoryPath!=null && this.baseDirectoryPath.isEmpty()==false) {
+			// --- This is just a development and debug case --------
 			baseDirectory = new File(this.baseDirectoryPath);
 		} else {
-			File launcherfile = new File(System.getProperty("eclipse.launcher"));
-			baseDirectory = launcherfile.getParentFile();
+			// --- The regular case --------------------------------- 
+			File installDir = null;
+			try {
+				installDir = new File(Platform.getInstallLocation().getURL().toURI());
+			} catch (URISyntaxException uriEx) {
+				//uriEx.printStackTrace();
+				installDir = new File(Platform.getInstallLocation().getURL().getPath());
+			}
+			
+			// --- An older backup solution -------------------------
+			if (installDir!=null && installDir.exists()==false) {
+				installDir = new File(System.getProperty("eclipse.launcher")).getParentFile();
+			}
+			baseDirectory = installDir;	
 		}
 		if (baseDirectory.exists()==false) {
 			System.err.println(this.getClass().getSimpleName() + ": Could not find base directory '" + baseDirectory.getAbsolutePath() + "'");

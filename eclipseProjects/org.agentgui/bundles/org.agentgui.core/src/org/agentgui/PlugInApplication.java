@@ -112,7 +112,10 @@ public class PlugInApplication implements IApplication {
 
 		// --- In case of Swing visualization (for MAC) ---
 		if (this.isSpecialStartOnMac()) {
+			// ++++++++++++++++++++++++++++++++++++++++++++
 			// +++ Just for MAC and Swing +++++++++++++++++
+			// ++++++++++++++++++++++++++++++++++++++++++++
+			// --- Start Eclipse Workbench first ---------
 			this.startEclipseUI(new Runnable() {
 				@Override
 				public void run() {
@@ -130,7 +133,7 @@ public class PlugInApplication implements IApplication {
 									} 
 								}
 							}
-							// --- Start using swing ------
+							// --- Do regular start -------
 							Application.start(PlugInApplication.this);
 						}
 					});
@@ -138,8 +141,9 @@ public class PlugInApplication implements IApplication {
 			});
 			
 		} else {
+			// ++++++++++++++++++++++++++++++++++++++++++++
 			// +++ All other cases ++++++++++++++++++++++++
-
+			// ++++++++++++++++++++++++++++++++++++++++++++
 			// --- Start the application ------------------
 			Application.start(this);
 			
