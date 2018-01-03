@@ -3,12 +3,17 @@
 
 <product name="Agent Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
+   <aboutInfo>
+      <image path="/org.agentgui.core/icons/awb128.png"/>
+      <text>
+         Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and start Agents or Multi-Agent systems in various ways.
+      </text>
+   </aboutInfo>
+
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog
-      </programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
@@ -19,7 +24,9 @@
       location="org.agentgui.core"
       startupProgressRect="5,275,445,15" />
    <launcher name="AgentGui">
-      <win useIco="false">
+      <macosx icon="/org.agentgui.core/icons/awb.icns"/>
+      <win useIco="true">
+         <ico path="/org.agentgui.core/icons/awb.ico"/>
          <bmp/>
       </win>
    </launcher>

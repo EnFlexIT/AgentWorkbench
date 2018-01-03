@@ -24,7 +24,7 @@
          </property>
          <property
                name="windowImages"
-               value="icons/awb16.png,icons/awb32.png,icons/awb48.png,icons/awb64.png, icons/awb128.png,icons/awb256.png">
+               value="icons/awb16.png,icons/awb32.png,icons/awb48.png,icons/awb64.png,icons/awb128.png,icons/awb256.png">
          </property>
          <property
                name="appName"
@@ -37,6 +37,14 @@
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/awb128.png">
+         </property>
+         <property
+               name="aboutText"
+               value="Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and start Agents or Multi-Agent systems in various ways.">
          </property>
       </product>
    </extension>
