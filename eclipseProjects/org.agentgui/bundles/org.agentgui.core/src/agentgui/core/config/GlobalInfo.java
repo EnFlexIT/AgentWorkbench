@@ -51,6 +51,7 @@ import javax.swing.JComponent;
 
 import org.agentgui.gui.swt.SWTResourceManager;
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.core.runtime.Platform;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.BenchmarkMeasurement;
@@ -316,7 +317,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			GlobalInfo.println4SysProps();
 			GlobalInfo.println4EnvProps();
 		}
-		
+
 	}
 	
 	/**
@@ -848,13 +849,31 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			if (installationPath!=null) {
 				instDirPath = installationPath;
 			} else {
+				// --- Case separation IDE / product ----------------
 				if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+					// --- For the IDE environment ------------------
 					instDirPath = getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
+					
 				} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
-					File launcherfile = new File(System.getProperty("eclipse.launcher"));
-					instDirPath = launcherfile.getParentFile().getAbsolutePath();
+					// --- For the product --------------------------
+					File installDir = null;
+					try {
+						installDir = new File(Platform.getInstallLocation().getURL().toURI());
+					} catch (URISyntaxException uriEx) {
+						//uriEx.printStackTrace();
+						installDir = new File(Platform.getInstallLocation().getURL().getPath());
+					}
+					if (installDir==null || installDir.exists()==false) {
+						// --- Backup solution ----------------------
+						File launcherfile = new File(System.getProperty("eclipse.launcher"));
+						instDirPath = launcherfile.getParentFile().getAbsolutePath();
+					} else {
+						instDirPath = installDir.getAbsolutePath();
+					}
 				}
+				
 			}
+
 			if (instDirPath==null || instDirPath.isEmpty()==true) {
 				this.setErrorMessage(Language.translate("Could not find directory for an executable installation.", Language.EN), statusMessageList);
 				return null;
