@@ -24,19 +24,20 @@
       location="org.agentgui.core"
       startupProgressRect="5,275,445,15" />
    <launcher name="AgentGui">
-      <linux icon="/org.agentgui.core/icons/awb.xpm"/>
-      <macosx icon="/org.agentgui.core/icons/awb.icns"/>
+      <linux icon="/icons/awb.xpm"/>
+      <macosx icon="/icons/awb.icns"/>
       <win useIco="false">
          <bmp
-            winSmallHigh="/org.agentgui.core/icons/awb16.bmp"
-            winSmallLow="/org.agentgui.core/icons/awb16-8.bmp"
-            winMediumHigh="/org.agentgui.core/icons/awb32.bmp"
-            winMediumLow="/org.agentgui.core/icons/awb32-8.bmp"
-            winLargeHigh="/org.agentgui.core/icons/awb48.bmp"
-            winLargeLow="/org.agentgui.core/icons/awb48-8.bmp"
-            winExtraLargeHigh="/org.agentgui.core/icons/awb256.bmp"/>
+            winSmallHigh="/icons/awb016.bmp"
+            winSmallLow="/icons/awb016-8.bmp"
+            winMediumHigh="/icons/awb032.bmp"
+            winMediumLow="/icons/awb032-8.bmp"
+            winLargeHigh="/icons/awb048.bmp"
+            winLargeLow="/icons/awb048-8.bmp"
+            winExtraLargeHigh="/icons/awb256.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
