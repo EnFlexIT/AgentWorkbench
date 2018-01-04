@@ -26,18 +26,11 @@
    <launcher name="AgentGui">
       <linux icon="/icons/awb.xpm"/>
       <macosx icon="/icons/awb.icns"/>
-      <win useIco="false">
-         <bmp
-            winSmallHigh="/icons/awb016.bmp"
-            winSmallLow="/icons/awb016-8.bmp"
-            winMediumHigh="/icons/awb032.bmp"
-            winMediumLow="/icons/awb032-8.bmp"
-            winLargeHigh="/icons/awb048.bmp"
-            winLargeLow="/icons/awb048-8.bmp"
-            winExtraLargeHigh="/icons/awb256.bmp"/>
+      <win useIco="true">
+         <ico path="/icons/awb.ico"/>
+         <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
