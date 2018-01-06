@@ -67,7 +67,6 @@ import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.sensoring.ServiceSensorManager;
 import agentgui.simulationService.transaction.EnvironmentManagerDescription;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import agentgui.simulationService.transaction.TransactionMap;
 
 /**
  * This is the SimulationService, which provides a list of functionalities for agent based simulations.
@@ -121,8 +120,6 @@ public class SimulationService extends BaseService {
 	/** --- The List of Agents, which are registered to this service ----------- */ 
 	private Hashtable<String, AID> agentList;
 	
-	/** --- The TransactionMap of the simulation ------------------------------- */
-	private TransactionMap transactionMap;
 	/** --- The current EnvironmentModel --------------------------------------- */
 	private EnvironmentModel environmentModel;
 	/** --- The Actuator for this Service, which can inform registered  
@@ -152,7 +149,6 @@ public class SimulationService extends BaseService {
 		this.displayAgents = new Vector<AbstractDisplayAgent>();
 		this.displayAgentDistribution = new HashMap<String, Integer>();
 		this.agentList = new Hashtable<String, AID>();
-		this.transactionMap = new TransactionMap();
 		this.localServiceActuator4Manager = new ServiceActuatorManager();
 		this.environmentInstanceNextParts = new Hashtable<AID, Object>();
 		this.environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
@@ -190,7 +186,6 @@ public class SimulationService extends BaseService {
 		this.displayAgents = null;
 		this.displayAgentDistribution = null;
 		this.agentList = null;
-		this.transactionMap = null;
 		this.getServiceActuator().shutdown();
 		this.getServiceActuator().interrupt();
 		this.setServiceActuator(null);
@@ -407,9 +402,7 @@ public class SimulationService extends BaseService {
 		 */
 		public void stepSimulation(EnvironmentModel envModel, int answersExpected, boolean aSynchron) throws ServiceException {
 			
-			// --- step forward the transaction map -------
-			transactionMap.put(environmentModel);
-			// --- next step for the simulation -----------
+			// --- Next step for the simulation -----------
 			Service.Slice[] slices = getAllSlices();
 			if (answersExpected!=environmentInstanceNextPartsExpected) {
 				broadcastAnswersExpected(answersExpected, slices);	
