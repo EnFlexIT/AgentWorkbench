@@ -38,6 +38,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 
 import org.agentgui.bundle.BundleBuilder;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -388,6 +389,16 @@ public class ProjectBundleLoader {
 	 * @param bundleJarFile the bundle jar file
 	 */
 	public void installBundle(File bundleJarFile) {
+		
+		// --- Check the symbolic bundle name of the jar to load ----
+		String sbn = this.getBundleBuilder().getBundleJarsSymbolicBundleNames().get(bundleJarFile);
+		if (sbn!=null && sbn.isEmpty()==false) {
+			if (Platform.getBundle(sbn)!=null) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Bundle '" + sbn + "' is already installed, skip installation of jar file!");
+				return;
+			}
+		}
+		// --- INstall the local bundle -----------------------------
 		this.installBundle("reference:file:" + bundleJarFile.getAbsolutePath());
 	}
 	/**

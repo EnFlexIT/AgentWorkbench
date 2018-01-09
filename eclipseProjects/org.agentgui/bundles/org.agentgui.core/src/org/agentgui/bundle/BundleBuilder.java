@@ -98,7 +98,7 @@ public class BundleBuilder {
 	private ArrayList<File> bundleJars;
 	private ArrayList<File> regularJars;
 	private HashMap<File, List<String>> regularJarsPackagesHashMap; 
-	
+	private HashMap<File, String> bundleJarsSymbolicBundleNames;
 	
 	/**
 	 * Instantiates a new bundle builder.
@@ -528,21 +528,23 @@ public class BundleBuilder {
 			return FileType.DIRECTORY;
 		} 
 		
-		// --- Try to open the jar file -------------------------
+		// --- Try to open the jar file -----------------------------
 		FileType fileType = FileType.NON_JAR_FILE;
 		JarFile jar = null;
 		try {
 			jar = new JarFile(file2Check);
 			Manifest manifest = jar.getManifest();
 			if (manifest!=null) {
-				// --- At least we found a jar file -------------
+				// --- At least we found a jar file -----------------
 				fileType = FileType.JAR_FILE;
 
-				// --- Check for an OSGI bundle -----------------
+				// --- Check for an OSGI bundle ---------------------
 				Attributes mainAttributes = manifest.getMainAttributes();
 				String symbolicName = (String) mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
 				if (symbolicName!=null && symbolicName.equals("")==false)  {
 					fileType = FileType.OSGI_BUNDLE;
+					// --- Remind the symbolic bundle name ----------
+					this.getBundleJarsSymbolicBundleNames().put(file2Check, symbolicName);
 				}
 			}
 			
@@ -551,7 +553,7 @@ public class BundleBuilder {
 			System.err.println(this.getClass().getSimpleName() + "#getFileType(File): " + ioe.getMessage());
 			
 		} finally {
-			// --- Make sure that the file will be closed -------
+			// --- Make sure that the file will be closed -----------
 			try {
 				if (jar!=null) jar.close();
 			} catch (IOException ioe) {
@@ -560,6 +562,18 @@ public class BundleBuilder {
 		}
 		return fileType;
 	}
+	
+	/**
+	 * Gets the reminder for bundle jars and their symbolic bundle names.
+	 * @return the bundle jars symbolic bundle names
+	 */
+	public HashMap<File, String> getBundleJarsSymbolicBundleNames() {
+		if (bundleJarsSymbolicBundleNames==null) {
+			bundleJarsSymbolicBundleNames = new HashMap<>();
+		}
+		return bundleJarsSymbolicBundleNames;
+	}
+	
 	// ----------------------------------------------------
 	// --- Methods for the search of files ----------------
 	// ----------------------------------------------------
