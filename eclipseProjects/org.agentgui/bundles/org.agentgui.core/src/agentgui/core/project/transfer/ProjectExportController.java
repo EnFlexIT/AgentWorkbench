@@ -70,6 +70,9 @@ import de.enflexit.common.transfer.RecursiveFolderCopier;
 public class ProjectExportController {
 
 	private static final String FILE_NAME_FOR_INSTALLATION_PACKAGE = "agentgui";
+	
+	private static final String PROJECT_PATH_WINDOWS_LINUX = "agentgui/projects";
+	private static final String PROJECT_PATH_MAC = "agentgui.app/Contents/Eclipse/projects";
 
 	private Project project;
 	private ProjectExportSettings exportSettings;
@@ -220,7 +223,7 @@ public class ProjectExportController {
 
 			// --- Installation package ---------
 			proposedFileName.append(FILE_NAME_FOR_INSTALLATION_PACKAGE);
-			if (this.exportSettings.getInstallationPackage().getPacakgeFile().getName().endsWith(".zip")) {
+			if (this.exportSettings.getInstallationPackage().isForWindows() == true) {
 				proposedFileName.append(".zip");
 			} else {
 				proposedFileName.append(".tar.gz");
@@ -481,7 +484,13 @@ public class ProjectExportController {
 	protected HashMap<File, String> buildFoldersToAddHasmap() {
 		HashMap<File, String> foldersToAdd = new HashMap<>();
 		// --- Add the project directory ---------------------
-		foldersToAdd.put(this.tempFolderPath.toFile(), "agentgui/projects");
+		String pathInArchive;
+		if(this.exportSettings.getInstallationPackage().isForMac() == true) {
+			pathInArchive = PROJECT_PATH_MAC;
+		} else {
+			pathInArchive = PROJECT_PATH_WINDOWS_LINUX;
+		}
+		foldersToAdd.put(this.tempFolderPath.toFile(), pathInArchive);
 		return foldersToAdd;
 	}
 
