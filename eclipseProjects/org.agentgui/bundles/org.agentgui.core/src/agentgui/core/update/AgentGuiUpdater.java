@@ -29,17 +29,20 @@
 package agentgui.core.update;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.options.UpdateOptions;
 import de.enflexit.common.p2.P2OperationsHandler;
+import de.enflexit.common.swing.ProgressMonitor;
 
 /**
  * The Class AgentGuiUpdater.
@@ -65,6 +68,8 @@ public class AgentGuiUpdater extends Thread {
 	private boolean manualyExecutedByUser = false;
 	private boolean doUpdateProcedure = true;
 	private boolean askBeforeDownload = false;
+	
+	private ProgressMonitor progressMonitor;
 
 	
 	/**
@@ -210,12 +215,18 @@ public class AgentGuiUpdater extends Thread {
 		// --- Check for available updates -------
 		System.out.println("P2 Update: Check for updates ...");
 		
+		this.updateProgressMonitor(0);
+		
 		IStatus status = P2OperationsHandler.getInstance().checkForUpdates();
 		if (status.getSeverity()!=IStatus.ERROR) {
 
 			if (status.getCode()==UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
 				// --- No updates found --------------
 				System.out.println("P2 Update: No updates found!");
+				
+				this.updateProgressMonitor(100);
+				this.disposeProgressMonitor();
+				
 				if (Application.isOperatingHeadless()==false && this.manualyExecutedByUser==true) {
 					JOptionPane.showMessageDialog(null, Language.translate("Keine Updates gefunden") + "!", Language.translate("Keine Updates gefunden"), JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -225,15 +236,27 @@ public class AgentGuiUpdater extends Thread {
 				// --- Ask for user confirmation if specified in the settings -------
 				boolean installUpdates = true;
 				if (this.askBeforeDownload==true) {
+					
+					// --- Temporary hide the progress dialog, otherwise the confirmation dialog would not be shown-------- 
+					this.hideProgressMonitor();
+					
+					// --- Show confirmation dialog ----------
 					int userAnswer = JOptionPane.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), "Agent.GUI Update", JOptionPane.YES_NO_OPTION);
 					if (userAnswer == JOptionPane.NO_OPTION) {
 						installUpdates = false;
-					} else {
 						System.out.println("P2 Update: Update canceled by user.");
+						this.disposeProgressMonitor();
 					}
+				}
+				
+				// --- Change progress dialog texts ----------------
+				if (this.executionMode == ExecutionMode.APPLICATION) {
+					this.getProgressMonitor().setHeaderText(Language.translate("Installiere Updates"));
+					this.getProgressMonitor().setProgressText(Language.translate("Installiere") + "...");
 				}
 
 				if (installUpdates==true) {
+					this.updateProgressMonitor(30);
 					status = P2OperationsHandler.getInstance().installAvailableUpdates();
 					if (status.isOK()) {
 						System.out.println("P2 Update: Updates sucessfully installed, restarting...");
@@ -242,8 +265,91 @@ public class AgentGuiUpdater extends Thread {
 						System.err.println("P2 Update: Error installing updates.");
 					}
 				}
+				
+				this.updateProgressMonitor(100);
+				this.disposeProgressMonitor();
 
 			}
+		}
+	}
+	
+	/**
+	 * Gets the progress monitor.
+	 * @return the progress monitor
+	 */
+	private ProgressMonitor getProgressMonitor() {
+		if (this.progressMonitor == null) {
+			String title = Language.translate("Aktualisierung");
+			String header = Language.translate("Suche nach Updates");
+			String progress = Language.translate("Suche") + "...";
+			this.progressMonitor = CommonComponentFactory.getNewProgressMonitor(title, header, progress);
+		}
+		return this.progressMonitor;
+	}
+
+	/**
+	 * Updates the progress monitor.
+	 * @param currentProgress the current progress
+	 */
+	private void updateProgressMonitor(final int currentProgress) {
+		
+		if(this.executionMode == ExecutionMode.APPLICATION) {
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+	
+					ProgressMonitor pm = getProgressMonitor();
+					if (pm == null)
+						return;
+					// --- Show progress monitor if not visible ---------
+					if (pm.isVisible() == false) {
+						pm.setVisible(true);
+						pm.validate();
+						pm.repaint();
+					}
+					// --- Set progress ---------------------------------
+					pm.setProgress(currentProgress);
+				}
+			});
+			
+		}
+
+	}
+
+	/**
+	 * Disposes the progress monitor.
+	 */
+	private void disposeProgressMonitor() {
+		
+		if(this.executionMode == ExecutionMode.APPLICATION) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					ProgressMonitor pm = getProgressMonitor();
+					if (pm == null)
+						return;
+					pm.setVisible(false);
+					pm.dispose();
+				}
+			});
+		}
+	}
+	
+	/**
+	 * Hide the progress monitor.
+	 */
+	private void hideProgressMonitor() {
+		if(this.executionMode == ExecutionMode.APPLICATION) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					ProgressMonitor pm = getProgressMonitor();
+					if (pm == null)
+						return;
+					pm.setVisible(false);
+				}
+			});
 		}
 	}
 
