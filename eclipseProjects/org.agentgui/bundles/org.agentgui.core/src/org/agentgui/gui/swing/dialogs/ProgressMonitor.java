@@ -1,10 +1,36 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package org.agentgui.gui.swing.dialogs;
 
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -82,19 +108,11 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 		this.iconImage = iconImage;
 	}
 
-	/**
-	 * Allows to set the owner frame of JDialog, if used.
-	 * @param ownerFrame the new owner
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProgressMonitor#setOwner(java.awt.Window)
 	 */
-	public void setOwner(Frame ownerFrame) {
-		this.owner = ownerFrame;
-	}
-	/**
-	 * Allows to set the owner frame of JDialog, if used.
-	 * @param ownerDialog the new owner
-	 */
-	public void setOwner(Dialog ownerDialog) {
-		this.owner = ownerDialog;
+	public void setOwner(Window ownerWindow) {
+		this.owner = ownerWindow;
 	}
 	
 	/**

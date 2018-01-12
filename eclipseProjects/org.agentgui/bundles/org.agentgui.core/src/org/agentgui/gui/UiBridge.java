@@ -236,6 +236,43 @@ public class UiBridge {
 		return monitor;
 	}
 	
+	/**
+	 * Gets the progress monitor.
+	 *
+	 * @param windowTitle the window title
+	 * @param headerText the header text
+	 * @param progressText the progress text
+	 * @return the progress monitor
+	 */
+	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
+		AwbProgressMonitor progressMonitor = null;
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
+			// --- SWT progress visualization dialog ----------------
+			//TODO
+			System.err.println("SWT Progress Monitor not implemented yet!");
+			break;
+	
+		case AgentGuiSwing:
+			// --- Swing progress visualization dialog --------------------
+			
+			// --- Try to get a JDesktopPane ----------------------------
+			JDesktopPane desktop = null;
+			if (Application.getMainWindow() != null) {
+				desktop = Application.getMainWindow().getJDesktopPane4Projects();
+			}
+	
+			// --- Get the image icon for the progress monitor ----------
+			ImageIcon imageIcon = GlobalInfo.getInternalImageIcon("AgentGUI.png");
+			// --- Get the look and feel --------------------------------
+			String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+			progressMonitor = new org.agentgui.gui.swing.dialogs.ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);
+			break;
+		}
+		
+		return progressMonitor;
+		
+	}
 	// ------------------------------------------
 	// --- Project UI-Elements ------------------
 	// ------------------------------------------
@@ -292,43 +329,5 @@ public class UiBridge {
 			break;
 		}
 		return projectEditorWindow;
-	}
-	
-	/**
-	 * Gets the progress monitor.
-	 *
-	 * @param windowTitle the window title
-	 * @param headerText the header text
-	 * @param progressText the progress text
-	 * @return the progress monitor
-	 */
-	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
-		AwbProgressMonitor progressMonitor = null;
-		switch (this.getVisualisationPlatform()) {
-		case EclipseFramework:
-			// --- SWT progress visualization dialog ----------------
-			//TODO
-			System.err.println("SWT Progress Monitor not implemented yet!");
-			break;
-
-		case AgentGuiSwing:
-			// --- Swing progress visualization dialog --------------------
-			
-			// --- Try to get a JDesktopPane ----------------------------
-			JDesktopPane desktop = null;
-			if (Application.getMainWindow() != null) {
-				desktop = Application.getMainWindow().getJDesktopPane4Projects();
-			}
-
-			// --- Get the image icon for the progress monitor ----------
-			ImageIcon imageIcon = GlobalInfo.getInternalImageIcon("AgentGUI.png");
-			// --- Get the look and feel --------------------------------
-			String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
-			progressMonitor = new org.agentgui.gui.swing.dialogs.ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);
-			break;
-		}
-		
-		return progressMonitor;
-		
 	}
 }

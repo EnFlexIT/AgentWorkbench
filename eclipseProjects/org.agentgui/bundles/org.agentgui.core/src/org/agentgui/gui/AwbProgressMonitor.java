@@ -1,6 +1,13 @@
 package org.agentgui.gui;
 
+import java.awt.Window;
+
+/**
+ * The Interface AwbProgressMonitor defines the required methods for a visual progress monitor.
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ */
 public interface AwbProgressMonitor {
+
 	/**
 	 * Sets the component visible or invisible.
 	 * @param visible the new visible
@@ -18,6 +25,12 @@ public interface AwbProgressMonitor {
 	 * Disposes the component.
 	 */
 	public void dispose();
+	
+	/**
+	 * Allows to set the owner window of JDialog, if used.
+	 * @param ownerWindow the new owner
+	 */
+	public void setOwner(Window ownerWindow);
 	
 	/**
 	 * Sets the window title.
