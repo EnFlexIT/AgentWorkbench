@@ -30,6 +30,9 @@ package org.agentgui.gui;
 
 import java.awt.Frame;
 
+import javax.swing.ImageIcon;
+import javax.swing.JDesktopPane;
+
 import org.agentgui.PlugInApplication.ApplicationVisualizationBy;
 import org.agentgui.gui.AwbProjectNewOpenDialog.ProjectAction;
 import org.agentgui.gui.swt.AppModelId;
@@ -42,6 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.project.Project;
 
@@ -290,5 +294,41 @@ public class UiBridge {
 		return projectEditorWindow;
 	}
 	
+	/**
+	 * Gets the progress monitor.
+	 *
+	 * @param windowTitle the window title
+	 * @param headerText the header text
+	 * @param progressText the progress text
+	 * @return the progress monitor
+	 */
+	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
+		AwbProgressMonitor progressMonitor = null;
+		switch (this.getVisualisationPlatform()) {
+		case EclipseFramework:
+			// --- SWT progress visualization dialog ----------------
+			//TODO
+			System.err.println("SWT Progress Monitor not implemented yet!");
+			break;
 
+		case AgentGuiSwing:
+			// --- Swing progress visualization dialog --------------------
+			
+			// --- Try to get a JDesktopPane ----------------------------
+			JDesktopPane desktop = null;
+			if (Application.getMainWindow() != null) {
+				desktop = Application.getMainWindow().getJDesktopPane4Projects();
+			}
+
+			// --- Get the image icon for the progress monitor ----------
+			ImageIcon imageIcon = GlobalInfo.getInternalImageIcon("AgentGUI.png");
+			// --- Get the look and feel --------------------------------
+			String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+			progressMonitor = new org.agentgui.gui.swing.dialogs.ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);
+			break;
+		}
+		
+		return progressMonitor;
+		
+	}
 }
