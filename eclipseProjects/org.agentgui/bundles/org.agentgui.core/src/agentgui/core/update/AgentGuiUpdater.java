@@ -214,7 +214,7 @@ public class AgentGuiUpdater extends Thread {
 		// --- Check for available updates -------
 		System.out.println("P2 Update: Check for updates ...");
 		
-		if(this.executionMode == ExecutionMode.APPLICATION) {
+		if (Application.isOperatingHeadless() == false) {
 			this.getProgressMonitor().setVisible(true);
 			this.getProgressMonitor().setProgress(0);
 		}
@@ -226,7 +226,7 @@ public class AgentGuiUpdater extends Thread {
 				// --- No updates found --------------
 				System.out.println("P2 Update: No updates found!");
 				
-				if(this.executionMode == ExecutionMode.APPLICATION) {
+				if (Application.isOperatingHeadless() == false) {
 					this.getProgressMonitor().setProgress(100);
 					this.getProgressMonitor().setVisible(false);
 					this.getProgressMonitor().dispose();
@@ -252,7 +252,7 @@ public class AgentGuiUpdater extends Thread {
 					if (userAnswer == JOptionPane.NO_OPTION) {
 						installUpdates = false;
 						System.out.println("P2 Update: Update canceled by user.");
-						if(this.executionMode == ExecutionMode.APPLICATION) {
+						if(Application.isOperatingHeadless() == false) {
 							this.getProgressMonitor().setVisible(false);
 							this.getProgressMonitor().dispose();
 						}
@@ -262,7 +262,7 @@ public class AgentGuiUpdater extends Thread {
 
 				if (installUpdates==true) {
 					// --- Change progress dialog texts ----------------
-					if (this.executionMode == ExecutionMode.APPLICATION) {
+					if (Application.isOperatingHeadless() == false) {
 						this.getProgressMonitor().setHeaderText(Language.translate("Installiere Updates"));
 						this.getProgressMonitor().setProgressText(Language.translate("Installiere") + "...");
 						this.getProgressMonitor().setVisible(true);
@@ -277,7 +277,7 @@ public class AgentGuiUpdater extends Thread {
 					}
 				}
 				
-				if(this.executionMode == ExecutionMode.APPLICATION) {
+				if (Application.isOperatingHeadless() == false) {
 					this.getProgressMonitor().setProgress(100);
 					this.getProgressMonitor().setVisible(false);
 					this.getProgressMonitor().dispose();
