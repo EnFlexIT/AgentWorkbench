@@ -49,6 +49,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.agentgui.gui.AwbProgressMonitor;
 import org.agentgui.gui.AwbProjectNewOpenDialog;
 import org.agentgui.gui.AwbProjectNewOpenDialog.ProjectAction;
 import org.agentgui.gui.UiBridge;
@@ -59,7 +60,6 @@ import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.gui.ProjectExportDialog;
-import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.ArchiveFileHandler;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
 
@@ -83,7 +83,7 @@ public class ProjectExportController {
 	
 	private Path tempFolderPath;
 
-	private ProgressMonitor progressMonitor;
+	private AwbProgressMonitor progressMonitor;
 
 	/**
 	 * Instantiates a new project export controller.
@@ -593,12 +593,12 @@ public class ProjectExportController {
 	 * Gets the progress monitor.
 	 * @return the progress monitor
 	 */
-	private ProgressMonitor getProgressMonitor() {
+	private AwbProgressMonitor getProgressMonitor() {
 		if (this.progressMonitor == null && this.isShowUserDialogs == true) {
 			String title = Language.translate("Projekt-Export");
 			String header = Language.translate("Exportiere Projekt") + " " + project.getProjectName();
 			String progress = Language.translate("Exportiere") + "...";
-			this.progressMonitor = CommonComponentFactory.getNewProgressMonitor(title, header, progress);
+			this.progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
 		}
 		return this.progressMonitor;
 	}
@@ -613,14 +613,12 @@ public class ProjectExportController {
 			@Override
 			public void run() {
 
-				ProgressMonitor pm = getProgressMonitor();
+				AwbProgressMonitor pm = getProgressMonitor();
 				if (pm == null)
 					return;
 				// --- Show progress monitor if not visible ---------
 				if (pm.isVisible() == false) {
 					pm.setVisible(true);
-					pm.validate();
-					pm.repaint();
 				}
 				// --- Set progress ---------------------------------
 				pm.setProgress(currentProgress);
@@ -636,7 +634,7 @@ public class ProjectExportController {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				ProgressMonitor pm = getProgressMonitor();
+				AwbProgressMonitor pm = getProgressMonitor();
 				if (pm == null)
 					return;
 				pm.setVisible(false);

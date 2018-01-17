@@ -30,13 +30,9 @@ package agentgui.core.common;
 
 import java.awt.Frame;
 
-import javax.swing.ImageIcon;
-import javax.swing.JDesktopPane;
-
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.csv.CsvDataControllerPanel;
-import de.enflexit.common.swing.ProgressMonitor;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
 import de.enflexit.common.transfer.Zipper;
@@ -48,32 +44,6 @@ import de.enflexit.common.transfer.Zipper;
  */
 public class CommonComponentFactory {
 
-	/**
-	 * Return a new pre-configured {@link ProgressMonitor}.
-	 *
-	 * @param windowTitle the window title - may be <code>null</code>
-	 * @param headerText the header text - may be <code>null</code>
-	 * @param progressText the progress text - may be <code>null</code>
-	 * @return the new progress monitor
-	 */
-	public static ProgressMonitor getNewProgressMonitor(String windowTitle, String headerText, String progressText) {
-
-		// --- Try to get a JDesktopPane ----------------------------
-		JDesktopPane desktop = null;
-		if (Application.getMainWindow() != null) {
-			desktop = Application.getMainWindow().getJDesktopPane4Projects();
-		}
-
-		// --- Get the image icon for the progress monitor ----------
-		ImageIcon imageIcon = GlobalInfo.getInternalImageIcon("AgentGUI.png");
-		// --- Get the look and feel --------------------------------
-		String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
-
-		// --- Initiate new ProgressMonitor -------------------------
-		ProgressMonitor pm = new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);
-
-		return pm;
-	}
 
 	/**
 	 * Returns a new pre-configured {@link Zipper}.

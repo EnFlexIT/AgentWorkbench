@@ -30,6 +30,8 @@ package agentgui.core.update;
 
 import javax.swing.JOptionPane;
 
+import org.agentgui.gui.AwbProgressMonitor;
+import org.agentgui.gui.UiBridge;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 
@@ -65,6 +67,8 @@ public class AgentGuiUpdater extends Thread {
 	private boolean manualyExecutedByUser = false;
 	private boolean doUpdateProcedure = true;
 	private boolean askBeforeDownload = false;
+	
+	private AwbProgressMonitor progressMonitor;
 
 	
 	/**
@@ -210,12 +214,24 @@ public class AgentGuiUpdater extends Thread {
 		// --- Check for available updates -------
 		System.out.println("P2 Update: Check for updates ...");
 		
+		if (Application.isOperatingHeadless() == false) {
+			this.getProgressMonitor().setVisible(true);
+			this.getProgressMonitor().setProgress(0);
+		}
+		
 		IStatus status = P2OperationsHandler.getInstance().checkForUpdates();
 		if (status.getSeverity()!=IStatus.ERROR) {
 
 			if (status.getCode()==UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
 				// --- No updates found --------------
 				System.out.println("P2 Update: No updates found!");
+				
+				if (Application.isOperatingHeadless() == false) {
+					this.getProgressMonitor().setProgress(100);
+					this.getProgressMonitor().setVisible(false);
+					this.getProgressMonitor().dispose();
+				}
+				
 				if (Application.isOperatingHeadless()==false && this.manualyExecutedByUser==true) {
 					JOptionPane.showMessageDialog(null, Language.translate("Keine Updates gefunden") + "!", Language.translate("Keine Updates gefunden"), JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -225,15 +241,33 @@ public class AgentGuiUpdater extends Thread {
 				// --- Ask for user confirmation if specified in the settings -------
 				boolean installUpdates = true;
 				if (this.askBeforeDownload==true) {
+					
+					// --- Temporary hide the progress dialog, otherwise the confirmation dialog would not be shown-------- 
+					if(this.executionMode == ExecutionMode.APPLICATION) {
+						this.getProgressMonitor().setVisible(false);
+					}
+					
+					// --- Show confirmation dialog ----------
 					int userAnswer = JOptionPane.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), "Agent.GUI Update", JOptionPane.YES_NO_OPTION);
 					if (userAnswer == JOptionPane.NO_OPTION) {
 						installUpdates = false;
-					} else {
 						System.out.println("P2 Update: Update canceled by user.");
+						if(Application.isOperatingHeadless() == false) {
+							this.getProgressMonitor().setVisible(false);
+							this.getProgressMonitor().dispose();
+						}
 					}
 				}
+				
 
 				if (installUpdates==true) {
+					// --- Change progress dialog texts ----------------
+					if (Application.isOperatingHeadless() == false) {
+						this.getProgressMonitor().setHeaderText(Language.translate("Installiere Updates"));
+						this.getProgressMonitor().setProgressText(Language.translate("Installiere") + "...");
+						this.getProgressMonitor().setVisible(true);
+						this.getProgressMonitor().setProgress(30);
+					}
 					status = P2OperationsHandler.getInstance().installAvailableUpdates();
 					if (status.isOK()) {
 						System.out.println("P2 Update: Updates sucessfully installed, restarting...");
@@ -242,9 +276,29 @@ public class AgentGuiUpdater extends Thread {
 						System.err.println("P2 Update: Error installing updates.");
 					}
 				}
+				
+				if (Application.isOperatingHeadless() == false) {
+					this.getProgressMonitor().setProgress(100);
+					this.getProgressMonitor().setVisible(false);
+					this.getProgressMonitor().dispose();
+				}
 
 			}
 		}
+	}
+	
+	/**
+	 * Gets the progress monitor.
+	 * @return the progress monitor
+	 */
+	private AwbProgressMonitor getProgressMonitor() {
+		if (this.progressMonitor == null) {
+			String title = Language.translate("Aktualisierung");
+			String header = Language.translate("Suche nach Updates");
+			String progress = Language.translate("Suche") + "...";
+			this.progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
+		}
+		return this.progressMonitor;
 	}
 
 }

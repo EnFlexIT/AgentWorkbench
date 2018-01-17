@@ -35,15 +35,16 @@ import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
+import org.agentgui.gui.AwbProgressMonitor;
+import org.agentgui.gui.UiBridge;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.CommonComponentFactory;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
-import de.enflexit.common.swing.ProgressMonitor;
 
 /**
  * The Class DataModelEnDecoderThread encodes or decodes the data model 
@@ -80,7 +81,7 @@ public class DataModelEnDecoderThread extends Thread {
 	private Object finalizer;
 	
 	private boolean isHeadlessOperation = Application.isOperatingHeadless();
-	private ProgressMonitor progressMonitor;
+	private AwbProgressMonitor progressMonitor;
 	private long firstDisplayWaitTime = 0;			// ms
 	private long firstDisplayTime;
 	
@@ -299,8 +300,6 @@ public class DataModelEnDecoderThread extends Thread {
 				// --- Show progress monitor if not visible ----- 
 				if (getProgressMonitor().isVisible()==false) {
 					getProgressMonitor().setVisible(true);
-					getProgressMonitor().validate();
-					getProgressMonitor().repaint();
 				}
 			}
 		});
@@ -310,9 +309,9 @@ public class DataModelEnDecoderThread extends Thread {
 	 * Returns the progress monitor for the current action.
 	 * @return the progress monitor
 	 */
-	private ProgressMonitor getProgressMonitor() {
-		if (progressMonitor==null) {
-			// --- Set title and header for the ProgressMonitor ---------
+	private AwbProgressMonitor getProgressMonitor() {
+		if (progressMonitor==null && this.isHeadlessOperation==false) {
+			// --- Set title and header for the ProgressMonitor -----
 			String title = null;
 			String header = null;
 			String progress = null;
@@ -331,12 +330,11 @@ public class DataModelEnDecoderThread extends Thread {
 
 			}
 	    	
-			// --- Initiate ProgressMonitor ----------------------------- 
-			progressMonitor = CommonComponentFactory.getNewProgressMonitor(title, header, progress);
-			if (this.isHeadlessOperation==false) {
-				progressMonitor.setOwner(Application.getGlobalInfo().getOwnerFrameForComponent(this.graphController.getGraphEnvironmentControllerGUI()));
-			}
+			// --- Initiate ProgressMonitor -------------------------
+			progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
+			progressMonitor.setOwner(Application.getGlobalInfo().getOwnerFrameForComponent(this.graphController.getGraphEnvironmentControllerGUI()));
 			progressMonitor.setAllow2Cancel(false);
+			
 		}
 		return progressMonitor;
 	}
