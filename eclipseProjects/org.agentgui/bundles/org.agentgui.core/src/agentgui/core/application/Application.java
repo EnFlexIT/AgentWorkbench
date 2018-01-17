@@ -98,8 +98,6 @@ public class Application {
 	/** The quit application. */
 	private static boolean quitJVM = false;
 	
-	/** The instance of this singleton class */
-	private static Application thisApp = new Application();
 	/** This attribute holds the current state of the configurable runtime informations */
 	private static GlobalInfo globalInfo;
 	/** Here the tray icon of the application can be accessed */
@@ -129,18 +127,6 @@ public class Application {
 	
 	
 	
-	/**
-	 * Singleton-Constructor: Instantiates a new application.
-	 */
-	private Application() {
-	}	
-	/**
-	 * Will return the instance of this singleton class
-	 * @return The instance of this static class
-	 */
-	public static Application getInstance() {
-		return Application.thisApp;
-	}
 	
 	/**
 	 * If the application was executed as end user application, this will be false.
@@ -945,27 +931,34 @@ public class Application {
 	 * Opens the OpenID Connect dialog 
 	 */
 	public static void showAuthenticationDialog() {
+		
 		try {
-			Application.getInstance();
+		
 			OIDCAuthorization.getInstance().setIssuerURI(Application.getGlobalInfo().getOIDCIssuerURI());
 			OIDCAuthorization.getInstance().setTranslator(Language.getInstance());
 			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 			OIDCAuthorization.getInstance().setAvailabilityHandler( new OIDCResourceAvailabilityHandler() {
+				
+				/* (non-Javadoc)
+				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onResourceAvailable(de.enflexit.oidc.OIDCAuthorization.URLProcessor)
+				 */
 				@Override
 				public void onResourceAvailable(URLProcessor urlProcessor) {
-					Application.getInstance();
 					Application.getGlobalInfo().setOIDCUsername(OIDCAuthorization.getInstance().getLastSuccessfulUser());
 				}
-				
+				/* (non-Javadoc)
+				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onAuthorizationNecessary(de.enflexit.oidc.OIDCAuthorization)
+				 */
 				@Override
 				public boolean onAuthorizationNecessary(OIDCAuthorization oidcAuthorization) {
 					return true; // show the login panel
 				}
 			});
-			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), getMainWindow());
-		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
-//			e.printStackTrace();
-			System.err.println("Authentication failed: "+e.getClass()+": "+e.getMessage());
+			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI, getGlobalInfo().getOIDCUsername(), getMainWindow());
+			
+		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException ex) {
+			//ex.printStackTrace();
+			System.err.println("Authentication failed: "+ex.getClass()+": "+ex.getMessage());
 		}
 	}
 	

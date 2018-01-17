@@ -128,6 +128,7 @@ public class SimpleOIDCClient {
 
 	private File trustStoreFile;
 
+	
 	/**
 	 * Reset.
 	 */
@@ -223,6 +224,7 @@ public class SimpleOIDCClient {
 	 * @throws KeyManagementException
 	 */
 	public void retrieveProviderMetadata() throws IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+		
 		URL providerConfigurationURL = issuerURI.resolve(URLPATH_WELL_KNOWN_OPENID).toURL();
 //		System.out.println(providerConfigurationURL);
 		URLConnection conn = providerConfigurationURL.openConnection();
@@ -256,7 +258,6 @@ public class SimpleOIDCClient {
 	 * @param clientIDString the client ID string
 	 * @param clientSecret the client secret
 	 */
-
 	public void setClientID(String clientIDString, String clientSecret) {
 		clientID = new ClientID(clientIDString);
 		if (this.clientSecret != null && (clientSecret == null || clientSecret.isEmpty())) {
@@ -292,7 +293,6 @@ public class SimpleOIDCClient {
 	/**
 	 * Client registration
 	 * If the provider supports dynamic registration, a new client can be registered using the client registration process:
-	 * *
 	 * 
 	 * @param initialAccessToken the initial access token
 	 * @throws SerializeException the serialize exception
@@ -304,6 +304,7 @@ public class SimpleOIDCClient {
 	 * @throws KeyManagementException
 	 */
 	public void registerClient(BearerAccessToken initialAccessToken) throws SerializeException, IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+
 //		System.out.println("Client metadata");
 //		System.out.println(metadata.toJSONObject());
 
@@ -387,12 +388,10 @@ public class SimpleOIDCClient {
 	 * @throws SerializeException the serialize exception
 	 */
 	public URI buildAuthorizationCodeRequest() throws SerializeException {
-		if (state == null) {
-			state = new State();
-		}
-		if (nonce == null) {
-			nonce = new Nonce();
-		}
+		
+		if (state==null) state = new State();
+		if (nonce==null) nonce = new Nonce();
+		
 		AuthenticationRequest authenticationRequest;
 		// Specify scope
 		Scope scope = Scope.parse("openid");
@@ -404,7 +403,6 @@ public class SimpleOIDCClient {
 				new ResponseType(ResponseType.Value.CODE),
 				scope, clientID, redirectURI, state, nonce);
 		*/
-
 		Builder builder = new AuthenticationRequest.Builder(new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI);
 		builder.endpointURI(authorizationEndpointURI);
 		builder.state(state);
@@ -426,6 +424,7 @@ public class SimpleOIDCClient {
 	 * @param responseURL the response URL
 	 */
 	public void processAuthenticationResponse(String responseURL) {
+		
 		AuthenticationResponse authResp = null;
 		try {
 			authResp = AuthenticationResponseParser.parse(new URI(responseURL));
@@ -442,20 +441,18 @@ public class SimpleOIDCClient {
 			System.err.println(errorResponse);
 			System.err.println(error);
 		} else {
-			AuthenticationSuccessResponse successResponse = (AuthenticationSuccessResponse) authResp;
-
 			/* Don't forget to check the state!
 			 * The state in the received authentication response must match the state
 			 * specified in the previous outgoing authentication request.
-			*/
-			if (!verifyState(successResponse.getState())) {
+			 */
+			AuthenticationSuccessResponse successResponse = (AuthenticationSuccessResponse) authResp;
+			if (!this.verifyState(successResponse.getState())) {
 				System.err.println(this.getClass().getSimpleName() + " - " + "State not valid");
 				return;
 			}
-
 			authCode = successResponse.getAuthorizationCode();
-			System.out.println("Authorization Code:");
-			System.out.println(authCode);
+			System.out.println("Authorization Code: " + authCode);
+			
 		}
 	}
 
@@ -536,7 +533,6 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the access token.
-	 *
 	 * @return the access token
 	 */
 	public AccessToken getAccessToken() {
@@ -645,7 +641,6 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the user info JSON.
-	 * 
 	 * @return the user info JSON
 	 */
 	public JSONObject getUserInfoJSON() {
@@ -654,12 +649,11 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Sets the trust store.
-	 * 
 	 * @param trustStoreFile the new trust store
 	 */
 	public void setTrustStore(File trustStoreFile) {
 		this.trustStoreFile = trustStoreFile;
-//		Trust.trustSpecific(null, trustStoreFile);
+		//Trust.trustSpecific(null, trustStoreFile);
 	}
 
 }

@@ -176,6 +176,9 @@ public class DataModelEnDecoderThread extends Thread {
 		sumCompVector.addAll(new Vector<Object>(Arrays.asList(this.graphController.getNetworkModel().getGraph().getVertices().toArray())));
 		this.elementsToConvert = sumCompVector.size();
 		
+		// --- Exit, if no elements are to convert ------------------
+		if (this.elementsToConvert==0) return;
+		
 		// --- Summarize the file sizes -----------------------------
 		long fileSizeXML = this.graphController.getFileXML().length();
 		long fileSizeGraphML = this.graphController.getFileGraphML().length();

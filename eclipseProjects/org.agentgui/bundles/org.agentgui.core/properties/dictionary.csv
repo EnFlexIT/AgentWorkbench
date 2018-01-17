@@ -759,6 +759,7 @@ de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;Alias:;;;
+en;;Column Headers:;;;
 en;;Configuration Error;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
@@ -793,6 +794,7 @@ en;;Remove Turbo Compressor;;;
 en;;Required fields;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
+en;;Separator:;;;
 en;;Should they be removed too?;;;
 en;;Show Label;;;
 en;;Simulation Interval;;;

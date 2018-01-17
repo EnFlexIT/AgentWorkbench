@@ -65,46 +65,42 @@ public class OIDCAuthorization {
 
 	/** The single instance of this singleton class. */
 	private static OIDCAuthorization instance;
-
 	/** The OIDC client. */
 	private SimpleOIDCClient oidcClient;
 
 	/** The accessed resource URI, initialized with @see OIDCPanel.DEBUG_RESOURCE_URI. */
 	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
-
 	/** The URI of the OIDC provider/issuer. */
 	private String issuerURI = "";
-
+	
 	/** The availability handler called when the resource is available. */
 	private OIDCResourceAvailabilityHandler availabilityHandler;
-
 	/** The URLProcessor used for the network communication. */
 	private URLProcessor urlProcessor;
-
+	
+	
 	/** The authorization dialog. */
+	private Translator translator;
+
 	private JDialog authDialog;
+	private Window owner;
 
 	private String presetUsername;
-
-	private Window owner;
-	
 	private boolean inited = false;
-
-	Translator translator;
 
 	private File truststoreFile;
 
-	private String lastSuccessfulUser = null;
+	private String lastSuccessfulUser;
 
+	
+	
 	/**
 	 * Instantiates a new OIDC authorization.
 	 */
 	private OIDCAuthorization() {
 	}
-
 	/**
 	 * Gets the single instance of OIDCAuthorization.
-	 *
 	 * @return single instance of OIDCAuthorization
 	 */
 	public static OIDCAuthorization getInstance() {
@@ -150,13 +146,12 @@ public class OIDCAuthorization {
 	/**
 	 * Sets the trust store.
 	 *
-	 * @param truststoreFile the new trust store
+	 * @param trustStoreFile the new trust store
 	 * @throws URISyntaxException
 	 */
-	public void setTrustStore(File truststoreFile) throws URISyntaxException {
-		this.truststoreFile=truststoreFile;
-		getOIDCClient();
-		oidcClient.setTrustStore(truststoreFile);
+	public void setTrustStore(File trustStoreFile) throws URISyntaxException {
+		this.truststoreFile = trustStoreFile;
+		getOIDCClient().setTrustStore(trustStoreFile);;
 	}
 
 	/**
@@ -207,7 +202,6 @@ public class OIDCAuthorization {
 	public String getClientID() {
 		return OIDCPanel.DEBUG_CLIENT_ID;
 	}
-
 	/**
 	 * Gets the client secret.
 	 * @return the client secret
@@ -222,11 +216,10 @@ public class OIDCAuthorization {
 	 */
 	public JDialog getDialog() {
 		if (authDialog == null) {
-			authDialog = getDialog("", null);
+			authDialog = this.getDialog("", null);
 		}
 		return authDialog;
 	}
-
 	/**
 	 * Gets the authorization dialog.
 	 *
@@ -293,8 +286,9 @@ public class OIDCAuthorization {
 	 * @throws KeyManagementException 
 	 */
 	public void init() throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
-		getOIDCClient();
-//		oidcClient.reset();
+		
+		this.getOIDCClient();
+		//oidcClient.reset();
 		urlProcessor = new URLProcessor();
 
 		oidcClient.setIssuerURI(getIssuerURI());
@@ -325,10 +319,10 @@ public class OIDCAuthorization {
 	 * @throws KeyManagementException 
 	 */
 	public boolean authorizeByUserAndPW(String username, String password) throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+		
 		String authRedirection = "";
-
 		if (!inited) {
-			init();
+			this.init();
 		}
 
 		oidcClient.setResourceOwnerCredentials(username, password);
@@ -360,7 +354,8 @@ public class OIDCAuthorization {
 	 * @throws KeyManagementException 
 	 */
 	public boolean accessResource() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
-		getUrlProcessor().prepare(new URL(getResourceURI()));
+		
+		this.getUrlProcessor().prepare(new URL(getResourceURI()));
 		String result = urlProcessor.process();
 		if (result == null) {
 			// all good (unlikely on first call)
@@ -368,7 +363,9 @@ public class OIDCAuthorization {
 				availabilityHandler.onResourceAvailable(urlProcessor);
 			}
 			return true;
+			
 		} else {
+			
 			try {
 				getOIDCClient().parseAuthenticationDataFromRedirect(result, false); // don't override clientID
 			} catch (ParseException e) {
@@ -383,6 +380,7 @@ public class OIDCAuthorization {
 			}
 			return false;
 		}
+		
 	}
 	
 	/**
@@ -402,8 +400,7 @@ public class OIDCAuthorization {
 	public boolean accessResource(String presetUsername, Window owner) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		this.presetUsername = presetUsername;
 		this.owner = owner;
-
-		return accessResource();
+		return this.accessResource();
 	}
 
 	/**
@@ -421,8 +418,7 @@ public class OIDCAuthorization {
 	 * @throws KeyManagementException 
 	 */
 	public boolean accessResource(String url, String presetUsername, Window owner) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
-		setResourceURI(url);
-
+		this.setResourceURI(url);
 		return accessResource(presetUsername, owner);
 	}
 
@@ -433,7 +429,6 @@ public class OIDCAuthorization {
 	public void setTranslator(Translator translator) {
 		this.translator = translator;
 	}
-
 	/**
 	 * Translate.
 	 *
@@ -589,8 +584,8 @@ public class OIDCAuthorization {
 		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
 		public String process() throws IOException {
+			
 			connection.connect();
-
 			responseCode = connection.getResponseCode();
 
 			if (responseCode == 200) { //
@@ -601,6 +596,7 @@ public class OIDCAuthorization {
 					System.out.println("redirection to:");
 					System.out.println(redirectionURL);
 				}
+				
 			} else {
 				if (debug) {
 					System.out.println("other response code");
@@ -647,6 +643,7 @@ public class OIDCAuthorization {
 				
 				// End of multipart/form-data
 				writer.append("--" + boundary + "--").append(CRLF).flush();
+				
 			} catch (IllegalStateException | ProtocolException e) {
 				// don't inject file, because http connection was already connected, will usually be overwritten later anyways
 //				e.printStackTrace();
@@ -657,10 +654,9 @@ public class OIDCAuthorization {
 	/**
 	 * The Class OIDCProblemException, indicating a problem in the authorization process.
 	 */
-	class OIDCProblemException extends RuntimeException {
-
+	private class OIDCProblemException extends RuntimeException {
 		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -6015464771451068526L;
-
 	}
+	
 }

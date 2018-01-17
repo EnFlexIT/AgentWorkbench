@@ -50,4 +50,5 @@ public interface OIDCResourceAvailabilityHandler {
 	 * @return standard handling defines, whether the authorization should be handled via the default method, i.e. showing a login panel
 	 */
 	public boolean onAuthorizationNecessary(OIDCAuthorization oidcAuthorization);
+	
 }
