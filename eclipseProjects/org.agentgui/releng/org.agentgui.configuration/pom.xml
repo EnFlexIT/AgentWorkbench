@@ -155,9 +155,9 @@
 	</scm>
 	<organization>
 		<name>Enflex.IT</name>
-		<url>http://enflex.it/</url>
+		<url>http://www.enflex.it/</url>
 	</organization>
-	<name>Agent Workbench</name>
+	<name>Agent.Workbench</name>
 	<url>http://www.agentgui.org/</url>
 	<issueManagement>
 		<system>GitHub Issues</system>
