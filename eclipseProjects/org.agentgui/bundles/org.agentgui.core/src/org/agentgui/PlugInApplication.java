@@ -28,9 +28,6 @@
  */
 package org.agentgui;
 
-import org.agentgui.bundle.evaluation.FilterForAgent;
-import org.agentgui.bundle.evaluation.FilterForBaseService;
-import org.agentgui.bundle.evaluation.FilterForOntology;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -41,8 +38,6 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.MainWindow;
 import de.enflexit.common.SystemEnvironmentHelper;
-import de.enflexit.common.bundleEvaluation.BundleEvaluator;
-import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 
 /**
  * This class controls all aspects of the application's execution
@@ -216,28 +211,12 @@ public class PlugInApplication implements IApplication {
 	}
 	
 	/**
-	 * Starts the bundle evaluation for specific classes.
-	 */
-	private void startBundleEvaluation() {
-		// --- Evaluate the already loaded bundles --------
-		BundleEvaluator be = BundleEvaluator.getInstance(); 
-		be.addBundleClassFilter(new FilterForAgent(), false);
-		be.addBundleClassFilter(new FilterForBaseService(), false);
-		be.addBundleClassFilter(new FilterForOntology(), false);
-		be.evaluateAllBundles();
-		// --- Evaluate the features ----------------------
-		FeatureEvaluator.getInstance().evaluateFeatureInformationInThread();
-	}
-	
-	/**
 	 * Starts the end user application that either based on Swing or SWT.
 	 * @param postWindowOpenRunnable the post window open runnable
 	 * @return the integer
 	 */
 	public Integer startEndUserApplication(Runnable postWindowOpenRunnable) {
 		
-		// --- Evaluate the already loaded bundles --------
-		this.startBundleEvaluation();
 		try {
 			
 			// --- Case separation UI ---------------------

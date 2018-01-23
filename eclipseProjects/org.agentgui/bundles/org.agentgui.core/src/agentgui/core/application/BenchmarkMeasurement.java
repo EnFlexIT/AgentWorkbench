@@ -35,7 +35,6 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import javax.swing.SwingUtilities;
 
 import org.agentgui.gui.AwbBenchmarkMonitor;
@@ -94,6 +93,8 @@ public class BenchmarkMeasurement extends Thread {
 	@Override
 	public void run() {
 		super.run();
+		
+		System.out.println("[BenchmarkMeasurement] Starting benchmark Thread...");
 		
 		try {
 			// --- Name thread / indicate state ---------------------

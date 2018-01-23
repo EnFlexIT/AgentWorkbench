@@ -36,11 +36,13 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Vector;
-
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.agentgui.PlugInApplication;
+import org.agentgui.bundle.evaluation.FilterForAgent;
+import org.agentgui.bundle.evaluation.FilterForBaseService;
+import org.agentgui.bundle.evaluation.FilterForOntology;
 import org.agentgui.gui.AwbConsole;
 import org.agentgui.gui.AwbTrayIcon;
 import org.agentgui.gui.UiBridge;
@@ -69,6 +71,8 @@ import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.bundleEvaluation.BundleEvaluator;
+import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
@@ -124,8 +128,6 @@ public class Application {
 	private static ProjectsLoaded projectsLoaded;
 	/** Holds the reference of the currently focused project */
 	private static Project projectFocused;
-	
-	
 	
 	
 	/**
@@ -597,6 +599,8 @@ public class Application {
 					
 					doBenchmark(false);
 					waitForBenchmark();
+					
+					startBundleEvaluation();
 					
 					proceedStartArgumentOpenProject();
 					new AgentGuiUpdater().start();
@@ -1130,6 +1134,14 @@ public class Application {
 		if (Application.isBenchmarkRunning()==false) {
 			// --- Execute the Benchmark-Thread -----------
 			new BenchmarkMeasurement(forceBenchmark).start();
+			
+			// --- Wait for the benchmark to start properly ---
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	/**
@@ -1160,6 +1172,33 @@ public class Application {
 		}
 		Application.setStatusBar(Language.translate("Fertig"));
 	}
+	
+	/**
+	 * Starts the bundle evaluation for specific classes.
+	 */
+	private static void startBundleEvaluation() {
+		
+		// -- Create a new thread that waits for the end of the benchmark before starting the evaluation threads ----
+		Thread evaluatorThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// --- Evaluate the already loaded bundles --------
+				BundleEvaluator be = BundleEvaluator.getInstance(); 
+				be.addBundleClassFilter(new FilterForAgent(), false);
+				be.addBundleClassFilter(new FilterForBaseService(), false);
+				be.addBundleClassFilter(new FilterForOntology(), false);
+				be.evaluateAllBundles();
+				// --- Evaluate the features ----------------------
+				FeatureEvaluator.getInstance().evaluateFeatureInformationInThread();
+			}
+			
+		});
+		evaluatorThread.start();
+	}
+	
+	
+	
 	
 	/**
 	 * This method can be used in order to change the application title during runtime

@@ -313,6 +313,7 @@ public class BundleEvaluator {
 
 		if (bundle==null) return;
 		if (this.isExcludedBundle(bundle.getSymbolicName())==true) return;
+		if (bundleClassFilterToUse==null && getEvaluationFilterResults().size()==0) return;
 		
 		// --- Define search thread for the bundle ------------------
 		Thread searchThread = new Thread(new Runnable() {
@@ -356,6 +357,7 @@ public class BundleEvaluator {
 
 		if (bundle==null) return;
 		if (this.isExcludedBundle(bundle.getSymbolicName())==true) return;
+		if (bundleClassFilterToUse==null && getEvaluationFilterResults().size()==0) return;
 		
 		long starTime = System.nanoTime(); 
 		if (this.debug==true) {
