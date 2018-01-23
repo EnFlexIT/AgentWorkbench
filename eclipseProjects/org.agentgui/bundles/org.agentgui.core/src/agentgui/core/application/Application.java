@@ -1133,15 +1133,19 @@ public class Application {
 	public static void doBenchmark(boolean forceBenchmark) {
 		if (Application.isBenchmarkRunning()==false) {
 			// --- Execute the Benchmark-Thread -----------
-			new BenchmarkMeasurement(forceBenchmark).start();
 			
-			// --- Wait for the benchmark to start properly ---
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			BenchmarkMeasurement bm = new BenchmarkMeasurement(forceBenchmark);
+			Object synchronizationObject = bm.getSynchronizationObject();
+			bm.start();
+			synchronized (synchronizationObject) {
+				try {
+					synchronizationObject.wait();
+				} catch (InterruptedException e) {
+					System.err.println("[Application]: Waiting for the benchmark to properly start was interrupted");
+					e.printStackTrace();
+				}
 			}
+			
 		}
 	}
 	/**

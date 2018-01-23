@@ -75,6 +75,8 @@ public class BenchmarkMeasurement extends Thread {
 
 	private AwbBenchmarkMonitor monitor;
 	
+	private Object synchronizationObject;
+	
 	/**
 	 * The constructor of this class.<br>
 	 * If <i>forceBenchmark</i> is set to true the benchmark will be executed regardless of
@@ -94,12 +96,13 @@ public class BenchmarkMeasurement extends Thread {
 	public void run() {
 		super.run();
 		
-		System.out.println("[BenchmarkMeasurement] Starting benchmark Thread...");
-		
 		try {
 			// --- Name thread / indicate state ---------------------
-			this.setName("SciMark2-Benchmark");
-			Application.setBenchmarkRunning(true);
+			synchronized (this.getSynchronizationObject()) {
+				this.setName("SciMark2-Benchmark");
+				Application.setBenchmarkRunning(true);
+				this.getSynchronizationObject().notify();
+			}
 			
 			// --- Criteria to not execute the benchmark ------------
 			if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
@@ -302,6 +305,18 @@ public class BenchmarkMeasurement extends Thread {
 			
 		}
 		return nowExecOn;
+	}
+	
+	
+	/**
+	 * Gets the synchronization object, which can be used to wait until the benchmark thread has properly started
+	 * @return the synchronization object
+	 */
+	public Object getSynchronizationObject() {
+		if(synchronizationObject == null) {
+			synchronizationObject = new Object();
+		}
+		return synchronizationObject;
 	}
 	
 }
