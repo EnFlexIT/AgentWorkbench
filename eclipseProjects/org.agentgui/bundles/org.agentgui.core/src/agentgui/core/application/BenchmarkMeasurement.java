@@ -94,8 +94,8 @@ public class BenchmarkMeasurement extends Thread {
 	 */
 	@Override
 	public void run() {
+
 		super.run();
-		
 		try {
 			// --- Name thread / indicate state ---------------------
 			synchronized (this.getSynchronizationObject()) {
@@ -248,7 +248,6 @@ public class BenchmarkMeasurement extends Thread {
 	private void closeGUI() {
 		if (this.getMonitor()!=null) {
 			this.getMonitor().setVisible(false);
-			this.getMonitor().dispose();
 			this.monitor=null;	
 		}
 	}

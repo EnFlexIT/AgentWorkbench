@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.agentgui</groupId>
 	<artifactId>org.agentgui.bundles</artifactId>
@@ -27,9 +28,7 @@
 		<module>org.agentgui.lib.jung</module>
 		<module>org.agentgui.lib.mySQL</module>
 		<module>org.agentgui.lib.scimark</module>
-
 		<module>org.agentgui.sample.GameOfLife</module>
 		<module>org.agentgui.sample.plugIn</module>
-
 	</modules>
 </project>

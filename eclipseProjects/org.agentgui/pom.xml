@@ -11,9 +11,9 @@
 	</parent>
 
 	<modules>
-		<module>releng</module>
 		<module>bundles</module>
 		<module>features</module>
+		<module>releng</module>
 	</modules>
 
 	<scm>
