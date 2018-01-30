@@ -139,6 +139,29 @@ public class ProjectBundleLoader {
 		return bundleBuilder;
 	}
 	/**
+	 * Returns the bundle jars.
+	 * @return the bundle jars
+	 */
+	public ArrayList<File> getBundleJars() {
+		return this.getBundleBuilder().getBundleJars();
+	}
+	/**
+	 * Return the file of the specified project bundle.
+	 * @param bundle the bundle
+	 * @return the bundle file
+	 */
+	public File getBundleFile(Bundle bundle) {
+		return this.getBundleBuilder().getBundleFile(bundle);
+	}
+	/**
+	 * Gets the regular jars.
+	 * @return the regular jars
+	 */
+	public ArrayList<File> getRegularJars() {
+		return this.getBundleBuilder().getRegularJars();
+	}
+	
+	/**
 	 * Returns the regular jar file resources as list model.
 	 * @return the regular jar file resources
 	 */

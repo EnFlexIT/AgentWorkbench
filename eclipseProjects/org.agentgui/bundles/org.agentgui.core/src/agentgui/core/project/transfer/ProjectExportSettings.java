@@ -47,6 +47,7 @@ public class ProjectExportSettings {
 	
 	private boolean includeAllSetups;
 	private List<String> simSetups;
+	private List<File> bundleJarFilesToInclude;
 	
 	
 	/**
@@ -125,6 +126,25 @@ public class ProjectExportSettings {
 	 */
 	public void setSimSetups(List<String> simSetups) {
 		this.simSetups = simSetups;
+	}
+
+	
+	/**
+	 * Gets the bundle jar files to include.
+	 * @return the bundle jar files to include
+	 */
+	public List<File> getBundleJarFilesToInclude() {
+		if (bundleJarFilesToInclude==null) {
+			bundleJarFilesToInclude = new ArrayList<>();
+		}
+		return bundleJarFilesToInclude;
+	}
+	/**
+	 * Sets the bundle jar files to include.
+	 * @param bundleJarFilesToInclude the new bundle jar files to include
+	 */
+	public void setBundleJarFilesToInclude(List<File> bundleJarFilesToInclude) {
+		this.bundleJarFilesToInclude = bundleJarFilesToInclude;
 	}
 	
 }

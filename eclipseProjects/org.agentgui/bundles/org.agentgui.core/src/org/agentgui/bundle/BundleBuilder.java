@@ -217,6 +217,19 @@ public class BundleBuilder {
 		return bundleJars;
 	}
 	/**
+	 * Return the file of the specified project bundle.
+	 *
+	 * @param bundle the bundle
+	 * @return the bundle file
+	 */
+	public File getBundleFile(Bundle bundle) {
+		for (File file : this.getBundleJars()) {
+			String symBundleName = this.getBundleJarsSymbolicBundleNames().get(file);
+			if (symBundleName.equals(bundle.getSymbolicName())) return file;
+		}
+		return null;
+	}
+	/**
 	 * Gets the regular jars.
 	 * @return the regular jars
 	 */
@@ -669,9 +682,6 @@ public class BundleBuilder {
 	// --- Methods for moving files of ClassLoadService ---
 	// ----------------------------------------------------
 
-	
-	
-	
 	
 	
 }
