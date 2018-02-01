@@ -109,7 +109,6 @@ public class JPanelBackgroundSystem extends AbstractJPanelForOptions {
 	 */
 	@Override
 	public void refreshView() {
-		// TODO Auto-generated method stub
 		
 	}
 

@@ -402,9 +402,8 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 						// Nothing to do for other event types
 						break;
 				}
-			} catch (NoSuchSeriesException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (NoSuchSeriesException nosEx) {
+				nosEx.printStackTrace();
 			}
 		}
 	}

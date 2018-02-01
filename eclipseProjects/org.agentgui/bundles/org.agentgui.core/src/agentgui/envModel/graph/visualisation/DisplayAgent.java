@@ -343,7 +343,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 * @return the ACL message forwarding
 	 */
 	private Vector<ACLMessageForwardingListener> getACLMessageForwardingListeners() {
-		if(this.aclMessageForwardingListeners == null){
+		if (this.aclMessageForwardingListeners==null){
 			this.aclMessageForwardingListeners = new Vector<ACLMessageForwardingListener>();
 		}
 		return aclMessageForwardingListeners;
