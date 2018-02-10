@@ -264,16 +264,16 @@ public class SystemLoadSingle extends JPanel {
 				jLabelNoThreads.setText( pL.getLoadNoThreads() + " Threads");
 				jLabelNoAgents.setText(noAg + " Agents");
 				
-				// --- Beschreibung einstellen --------------------
+				// --- Configure description ------------------------
 				String jvmPID = " [" + nD.getJvmPID() + "]";
 				
 				OSInfo os = nD.getOsInfo();
 				String opSys = os.getOs_name() + " " + os.getOs_version() + jvmPID;
 				
 				PlatformPerformance pP = nD.getPlPerformace();
-				String perform = pP.getCpu_vendor() + ": " + pP.getCpu_model();
+				String perform = pP.getCpu_processorName() + ": ";
 				perform = perform.replaceAll("  ", " ");
-				perform+= "<br>" + pP.getCpu_numberOf() + " x "+ pP.getCpu_speedMhz() + "MHz [" + pP.getMemory_totalMB() + " MB RAM]";
+				perform+= "<br>" + pP.getCpu_numberOfLogicalCores() + " (" + pP.getCpu_numberOfPhysicalCores() + ") x "+ pP.getCpu_speedMhz() + "MHz [" + pP.getMemory_totalMB() + " MB RAM]";
 				
 				String bench = benchmarkValue + " Mflops";
 				

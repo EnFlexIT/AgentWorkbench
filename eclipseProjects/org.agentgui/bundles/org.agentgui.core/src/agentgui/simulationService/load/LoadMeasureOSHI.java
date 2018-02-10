@@ -41,20 +41,24 @@ import oshi.hardware.GlobalMemory;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class LoadMeasureSigar implements Cloneable {
+public class LoadMeasureOSHI implements Cloneable {
 	
 	private boolean debug = false;
+	private boolean debugOshiSystemInfoTest = false;
+	
 	private SystemInfo systemInfo;
 	
 	/** +++ The information about the available CPU's. +++ */
-	/** The vendor of the chip set. */
-	private String vendor=null;
+	/** The processorName of the chip set. */
+	private String processorName=null;
 	/** The processor speed. */
 	private long Mhz;
-	/** The model description. */
-	private String model;
 	/** The number of cores on this machine. */
-	private int totalCpu;
+	private int numberPhysicalCPU;
+	private int numberLogicalCPU;
+	
+	/** +++ The CPU usage. +++*/
+	private double cpuUsage;
 	
 	/** +++ The memory usage. +++*/
 	/** A memory information. */
@@ -62,7 +66,7 @@ public class LoadMeasureSigar implements Cloneable {
 	/** A memory information. */
 	private long freeMemory;			// Bytes
 	/** A memory information. */
-	private long useMemory;				// Bytes
+	private long usedMemory;				// Bytes
 	/** A memory information. */
 	private double usedMemoryPercent;	// %
 	
@@ -72,7 +76,7 @@ public class LoadMeasureSigar implements Cloneable {
 	/** A swap memory information. */
 	private long freeMemorySwap;		// Bytes
 	/** A swap memory information. */
-	private long useMemorySwap;			// Bytes
+	private long usedMemorySwap;			// Bytes
 	
 	/** The precision value for calculations. */
 	private int round2 = 4;
@@ -84,13 +88,15 @@ public class LoadMeasureSigar implements Cloneable {
     /**
      * Instantiates this class.
      */
-    public LoadMeasureSigar() {
+    public LoadMeasureOSHI() {
         
         try {
         	// --- Print OSHI example --------------------- 
-        	if (debug) SystemInfoTest.main(null);
+        	if (debugOshiSystemInfoTest)  {
+        		SystemInfoTest.main(null);
+        	}
         	
-     		// --- getting CPU information ----------------
+     		// --- Get CPU information ---------------------
 			this.setProcessorInformation(); 
 			// --- get the first measurements --------------
 			this.measureLoadOfSystem();
@@ -105,9 +111,9 @@ public class LoadMeasureSigar implements Cloneable {
      * @return the copy of the current instance 
      */
     @Override
-    protected LoadMeasureSigar clone() {
+    protected LoadMeasureOSHI clone() {
     	try {
-			return (LoadMeasureSigar) super.clone();
+			return (LoadMeasureOSHI) super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
@@ -130,6 +136,7 @@ public class LoadMeasureSigar implements Cloneable {
 	 * @throws Exception the exception
 	 */
 	public void measureLoadOfSystem() throws Exception {
+		this.setSystemCpuLoad();		// --- processor load -------------
 		this.setMemoryInformation();	// --- memory information ---------
 	}
 
@@ -140,11 +147,11 @@ public class LoadMeasureSigar implements Cloneable {
 	public void setProcessorInformation() {
 		CentralProcessor proc = this.getSystemInfo().getHardware().getProcessor();
 		if (proc!=null ){
-	        this.setVendor(proc.getVendor());
-	        this.setModel(proc.getModel());
+	        this.setProcessorName(proc.getName());
 	        double freqMhz = proc.getVendorFreq() / Math.pow(10, 6);
 	        this.setMhz((long) freqMhz);
-	        this.setTotalCpu(proc.getPhysicalProcessorCount());
+	        this.setNumberOfPhysicalCPU(proc.getPhysicalProcessorCount());
+	        this.setNumberOfLogicalCPU(proc.getLogicalProcessorCount());
 		}
     }
 
@@ -157,29 +164,46 @@ public class LoadMeasureSigar implements Cloneable {
     	GlobalMemory memory =  this.getSystemInfo().getHardware().getMemory();
     	setTotalMemory(memory.getTotal());
     	setFreeMemory(memory.getAvailable());
-    	setUseMemory(this.getTotalMemory()-this.getFreeMemory());
+    	setUsedMemory(this.getTotalMemory()-this.getFreeMemory());
     	
-    	setUsedMemoryPercent( this.doubleRound(((double)this.getUseMemory() / (double)this.getTotalMemory()*100.0)) );
+    	double memoryPercentage = this.doubleRound(((double)this.getUsedMemory() / (double)this.getTotalMemory()*100.0)); 
+    	setUsedMemoryPercent(memoryPercentage);
     	
     	setTotalMemorySwap(memory.getSwapTotal());
-    	setUseMemorySwap(memory.getSwapUsed());
-    	setFreeMemorySwap(this.getTotalMemorySwap()-this.getUseMemorySwap());
+    	setUsedMemorySwap(memory.getSwapUsed());
+    	setFreeMemorySwap(this.getTotalMemorySwap()-this.getUsedMemorySwap());
+
+    	if (debug) {
+    		System.out.println("Total Memory=" + this.getTotalMemory() + " - Available Memory=" + this.getFreeMemory() + " - (" + memoryPercentage + " % usage)");
+    		System.out.println("Swap Memory=" + this.getTotalMemorySwap() + " - Free Swap Memory=" + this.getFreeMemorySwap() + " - (" + memoryPercentage + " % usage)");
+    		System.out.println();
+    	}
     }
 
+    /**
+     * Sets the system CPU load.
+     */
+    private void setSystemCpuLoad() {
+		CentralProcessor proc = this.getSystemInfo().getHardware().getProcessor();
+		if (proc!=null) {
+			this.setCPU_Usage(proc.getSystemCpuLoad()*100);
+		}
+    }
+    
     
 	/**
-	 * Sets the vendor.
-	 * @param vendor the vendor to set
+	 * Sets the processorName.
+	 * @param processorName the processorName to set
 	 */
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
+	public void setProcessorName(String processorName) {
+		this.processorName = processorName;
 	}
 	/**
-	 * Gets the vendor.
-	 * @return the vendor
+	 * Gets the processorName.
+	 * @return the processorName
 	 */
-	public String getVendor() {
-		return vendor;
+	public String getProcessorName() {
+		return processorName;
 	}
 
 	/**
@@ -198,36 +222,52 @@ public class LoadMeasureSigar implements Cloneable {
 	}
 
 	/**
-	 * Sets the model.
-	 * @param model the model to set
+	 * Sets the number of physical CPUs.
+	 * @param totalCpu the new number of physical CPUs
 	 */
-	public void setModel(String model) {
-		this.model = model;
+	public void setNumberOfPhysicalCPU(int totalCpu) {
+		this.numberPhysicalCPU = totalCpu;
 	}
 	/**
-	 * Gets the model.
-	 * @return the model
+	 * Gets the number of physical CPUs.
+	 * @return the number of physical CPUs
 	 */
-	public String getModel() {
-		return model;
+	public int getNumberOfPhysicalCPU() {
+		return numberPhysicalCPU;
 	}
 
 	/**
-	 * Sets the total cpu.
-	 * @param totalCpu the totalCpu to set
+	 * Sets the number of logical CPUs.
+	 * @param totalCpu the new number of logical CPUs
 	 */
-	public void setTotalCpu(int totalCpu) {
-		this.totalCpu = totalCpu;
+	public void setNumberOfLogicalCPU(int totalCpu) {
+		this.numberLogicalCPU = totalCpu;
 	}
 	/**
-	 * Gets the total cpu.
-	 * @return the totalCpu
+	 * Gets the number of logical CPUs.
+	 * @return the number of logical CPUs
 	 */
-	public int getTotalCpu() {
-		return totalCpu;
+	public int getNumberOfLogicalCPU() {
+		return numberLogicalCPU;
 	}
+	
 
-
+	/**
+	 * Sets the CPU usage.
+	 * @param cpuUsage the new CPU usage
+	 */
+	public void setCPU_Usage(double cpuUsage) {
+		this.cpuUsage = cpuUsage;
+	}
+	/**
+	 * Gets the CPU usage.
+	 * @return the CPU usage
+	 */
+	public double getCPU_Usage() {
+		return cpuUsage;
+	}
+	
+	
 	/**
 	 * Sets the total memory.
 	 * @param totalMemory the totalMemory to set
@@ -259,18 +299,18 @@ public class LoadMeasureSigar implements Cloneable {
 	}
 
 	/**
-	 * Sets the use memory.
-	 * @param useMemory the useMemory to set
+	 * Sets the used memory.
+	 * @param usedMemory the usedMemory to set
 	 */
-	public void setUseMemory(long useMemory) {
-		this.useMemory = useMemory;
+	public void setUsedMemory(long usedMemory) {
+		this.usedMemory = usedMemory;
 	}
 	/**
-	 * Gets the use memory.
-	 * @return the useMemory
+	 * Gets the used memory.
+	 * @return the usedMemory
 	 */
-	public long getUseMemory() {
-		return useMemory; //memory in MB
+	public long getUsedMemory() {
+		return usedMemory; //memory in MB
 	}
 
 	/**
@@ -320,17 +360,17 @@ public class LoadMeasureSigar implements Cloneable {
 
 	/**
 	 * Gets the use memory swap.
-	 * @return the useMemorySwap
+	 * @return the usedMemorySwap
 	 */
-	public long getUseMemorySwap() {
-		return useMemorySwap;
+	public long getUsedMemorySwap() {
+		return usedMemorySwap;
 	}
 	/**
 	 * Sets the use memory swap.
-	 * @param useMemorySwap the useMemorySwap to set
+	 * @param usedMemorySwap the usedMemorySwap to set
 	 */
-	public void setUseMemorySwap(long useMemorySwap) {
-		this.useMemorySwap = useMemorySwap;
+	public void setUsedMemorySwap(long usedMemorySwap) {
+		this.usedMemorySwap = usedMemorySwap;
 	}
 	
 	

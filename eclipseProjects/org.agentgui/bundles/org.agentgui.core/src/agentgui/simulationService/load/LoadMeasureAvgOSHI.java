@@ -32,35 +32,35 @@ import java.util.ArrayList;
 
 /**
  * This class calculates the average values of the measurements, done by the 
- * instance of the class {@link LoadMeasureSigar}.
+ * instance of the class {@link LoadMeasureOSHI}.
  * 
- * @see LoadMeasureSigar
+ * @see LoadMeasureOSHI
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class LoadMeasureAvgSigar {
+public class LoadMeasureAvgOSHI {
 
 	/** The used average counter - maximum length of List. */
 	private Integer useAVGCounter = 0;
 	/** The list of measurements. */
-	private ArrayList<LoadMeasureSigar> measureList = new ArrayList<LoadMeasureSigar>();
+	private ArrayList<LoadMeasureOSHI> measureList = new ArrayList<LoadMeasureOSHI>();
 	
-	/** The vendor of the chip set. */
-	private String vendor=null;
+	/** The processorName of the chip set. */
+	private String processorName=null;
 	/** The processor speed. */
 	private long Mhz;
-	/** The model description. */
-	private String model;
 	/** The number of cores on this machine. */
 	private int totalCpu;
 	
+	/** +++ The CPU usage. +++*/
+	private double cpuUsage;
 	
 	/** A memory information. */
 	private long totalMemory;			// Bytes
 	/** A memory information. */
 	private long freeMemory;			// Bytes
 	/** A memory information. */
-	private long useMemory;				// Bytes
+	private long usedMemory;			// Bytes
 	/** A memory information. */
 	private double usedMemoryPercent;	// %
 	
@@ -76,7 +76,7 @@ public class LoadMeasureAvgSigar {
 	 * Instantiates this class.
 	 * @param avgCounter the maximum length of List for building the average
 	 */
-	public LoadMeasureAvgSigar(Integer avgCounter) {
+	public LoadMeasureAvgOSHI(Integer avgCounter) {
 		useAVGCounter = avgCounter;
 	}
 	
@@ -84,14 +84,13 @@ public class LoadMeasureAvgSigar {
 	 * Used to put a new load measurement into this class.
 	 * @param currentLoadMeasure the current load measured
 	 */
-	public void put(LoadMeasureSigar currentLoadMeasure) {
+	public void put(LoadMeasureOSHI currentLoadMeasure) {
         
-		if (vendor==null) {
+		if (processorName==null) {
 			// setting system information once
-			setVendor(currentLoadMeasure.getVendor());
-			setModel(currentLoadMeasure.getModel());
-			setMhz(currentLoadMeasure.getMhz());
-			setTotalCpu(currentLoadMeasure.getTotalCpu());
+			this.setProcessorName(currentLoadMeasure.getProcessorName());
+			this.setMhz(currentLoadMeasure.getMhz());
+			this.setTotalCpu(currentLoadMeasure.getNumberOfPhysicalCPU());
 		}
 
 		// inserting object in a list
@@ -111,6 +110,8 @@ public class LoadMeasureAvgSigar {
       
 		int size = measureList.size();
 		
+		double cpuUsageTemp = 0;
+		
 		long totalMemoryTemp = 0;
 		long freeMemoryTemp = 0;
 		long useMemoryTemp = 0;
@@ -123,21 +124,24 @@ public class LoadMeasureAvgSigar {
 		//calculating cpu and memory average value
 		for (int i = 0; i < size; i++) {
 
+			cpuUsageTemp += measureList.get(i).getCPU_Usage();
+			
 			totalMemoryTemp += measureList.get(i).getTotalMemory();
 			freeMemoryTemp += measureList.get(i).getFreeMemory();
-			useMemoryTemp += measureList.get(i).getUseMemory();
+			useMemoryTemp += measureList.get(i).getUsedMemory();
 			usedMemoryPercentTemp += measureList.get(i).getUsedMemoryPercent();
 
 			totalMemorySwapTemp += measureList.get(i).getTotalMemorySwap(); 
 			freeMemorySwapTemp += measureList.get(i).getFreeMemorySwap(); 
-			useMemorySwapTemp += measureList.get(i).getUseMemorySwap();
+			useMemorySwapTemp += measureList.get(i).getUsedMemorySwap();
 			
 		}	
 		
+		this.setCPU_Usage(cpuUsageTemp/size);
 		
 		this.setTotalMemory(totalMemoryTemp/size);
 		this.setFreeMemory(freeMemoryTemp/size);
-		this.setUseMemory(useMemoryTemp/size);
+		this.setUsedMemory(useMemoryTemp/size);
 		this.setUsedMemoryPercent(usedMemoryPercentTemp/size);
 		
 		this.setTotalMemorySwap(totalMemorySwapTemp/size);
@@ -145,6 +149,22 @@ public class LoadMeasureAvgSigar {
 		this.setUseMemorySwap(useMemorySwapTemp/size);
 	}
 
+	
+	/**
+	 * Sets the CPU usage.
+	 * @param cpuUsage the new CPU usage
+	 */
+	public void setCPU_Usage(double cpuUsage) {
+		this.cpuUsage = cpuUsage;
+	}
+	/**
+	 * Gets the CPU usage.
+	 * @return the CPU usage
+	 */
+	public double getCPU_Usage() {
+		return cpuUsage;
+	}
+	
 	
 	/**
 	 * Sets the total memory.
@@ -178,17 +198,17 @@ public class LoadMeasureAvgSigar {
 
 	/**
 	 * Sets the use memory.
-	 * @param useMemory the useMemory to set
+	 * @param usedMemory the usedMemory to set
 	 */
-	public void setUseMemory(long useMemory) {
-		this.useMemory = useMemory;
+	public void setUsedMemory(long usedMemory) {
+		this.usedMemory = usedMemory;
 	}
 	/**
 	 * Gets the use memory.
-	 * @return the useMemory
+	 * @return the usedMemory
 	 */
-	public long getUseMemory() {
-		return useMemory;
+	public long getUsedMemory() {
+		return usedMemory;
 	}
 	
 	/**
@@ -252,18 +272,18 @@ public class LoadMeasureAvgSigar {
 	}
 
 	/**
-	 * Gets the vendor.
-	 * @return the vendor
+	 * Gets the processorName.
+	 * @return the processorName
 	 */
-	public String getVendor() {
-		return vendor;
+	public String getProcessorName() {
+		return processorName;
 	}
 	/**
-	 * Sets the vendor.
-	 * @param vendor the vendor to set
+	 * Sets the processorName.
+	 * @param processorName the processorName to set
 	 */
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
+	public void setProcessorName(String processorName) {
+		this.processorName = processorName;
 	}
 
 	/**
@@ -279,21 +299,6 @@ public class LoadMeasureAvgSigar {
 	 */
 	public void setMhz(long mhz) {
 		Mhz = mhz;
-	}
-
-	/**
-	 * Gets the model.
-	 * @return the model
-	 */
-	public String getModel() {
-		return model;
-	}
-	/**
-	 * Sets the model.
-	 * @param model the model to set
-	 */
-	public void setModel(String model) {
-		this.model = model;
 	}
 
 	/**

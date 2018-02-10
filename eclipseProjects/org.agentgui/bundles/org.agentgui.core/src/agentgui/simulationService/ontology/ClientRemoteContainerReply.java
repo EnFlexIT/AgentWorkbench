@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2017/12/6, 09:15:27
+* @version 2018/02/10, 18:49:04
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
    /**
-* Protege name: remotePerformance
+* Protege name: remotePID
    */
-   private PlatformPerformance remotePerformance;
-   public void setRemotePerformance(PlatformPerformance value) { 
-    this.remotePerformance=value;
+   private String remotePID;
+   public void setRemotePID(String value) { 
+    this.remotePID=value;
    }
-   public PlatformPerformance getRemotePerformance() {
-     return this.remotePerformance;
+   public String getRemotePID() {
+     return this.remotePID;
    }
 
    /**
@@ -32,6 +32,28 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public PlatformAddress getRemoteAddress() {
      return this.remoteAddress;
+   }
+
+   /**
+* Protege name: remoteBenchmarkResult
+   */
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
+   }
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
+   }
+
+   /**
+* Protege name: remotePerformance
+   */
+   private PlatformPerformance remotePerformance;
+   public void setRemotePerformance(PlatformPerformance value) { 
+    this.remotePerformance=value;
+   }
+   public PlatformPerformance getRemotePerformance() {
+     return this.remotePerformance;
    }
 
    /**
@@ -57,17 +79,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remotePID
-   */
-   private String remotePID;
-   public void setRemotePID(String value) { 
-    this.remotePID=value;
-   }
-   public String getRemotePID() {
-     return this.remotePID;
-   }
-
-   /**
 * Protege name: remoteContainerName
    */
    private String remoteContainerName;
@@ -76,17 +87,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public String getRemoteContainerName() {
      return this.remoteContainerName;
-   }
-
-   /**
-* Protege name: remoteBenchmarkResult
-   */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
-   }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
    }
 
 }

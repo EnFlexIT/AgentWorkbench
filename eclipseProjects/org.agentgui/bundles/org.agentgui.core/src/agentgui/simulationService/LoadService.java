@@ -47,7 +47,7 @@ import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
-import agentgui.simulationService.load.LoadMeasureSigar;
+import agentgui.simulationService.load.LoadMeasureOSHI;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadUnits;
@@ -1220,7 +1220,7 @@ public class LoadService extends BaseService {
 				threadProtocol.setJVMName(jvmName);
 				threadProtocol.setMachineName(machineName);
 				
-				int noOfCPU = crcReply.getRemotePerformance().getCpu_numberOf();
+				int noOfCPU = crcReply.getRemotePerformance().getCpu_numberOfLogicalCores();
 				double mflops = crcReply.getRemoteBenchmarkResult().getBenchmarkValue();
 				threadProtocol.setMflops(mflops * noOfCPU);
 				
@@ -1646,11 +1646,11 @@ public class LoadService extends BaseService {
 			myOS.setOs_arch(SystemEnvironmentHelper.getOperatingSystemsArchitecture());
 			
 			// --- Set the Performance of machine -------------
-			LoadMeasureSigar sys = LoadMeasureThread.getLoadCurrent();
+			LoadMeasureOSHI sys = LoadMeasureThread.getLoadCurrent();
 			PlatformPerformance myPerformance = new PlatformPerformance();
-			myPerformance.setCpu_vendor(sys.getVendor());
-			myPerformance.setCpu_model(sys.getModel());
-			myPerformance.setCpu_numberOf(sys.getTotalCpu());
+			myPerformance.setCpu_processorName(sys.getProcessorName());
+			myPerformance.setCpu_numberOfLogicalCores(sys.getNumberOfLogicalCPU());
+			myPerformance.setCpu_numberOfPhysicalCores(sys.getNumberOfPhysicalCPU());
 			myPerformance.setCpu_speedMhz((int) sys.getMhz());
 			myPerformance.setMemory_totalMB((int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
 			

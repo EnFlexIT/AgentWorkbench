@@ -213,6 +213,7 @@ de;Entwickler-Ansicht;Developer view
 de;Erfolgreich;Successful;;;
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
+de;Erzeuge die Tabelle 'platforms' für den Server-Master ...;;;;
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;

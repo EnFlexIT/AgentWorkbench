@@ -250,7 +250,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				try {
 					containerDesc = loadHelper.getContainerDescription(remoteContainer.getName());
 					
-					Double mflopsBenchmarkValueTotal = (double) containerDesc.getBenchmarkValue().getBenchmarkValue() * containerDesc.getPlPerformace().getCpu_numberOf();
+					Double mflopsBenchmarkValueTotal = (double) containerDesc.getBenchmarkValue().getBenchmarkValue() * containerDesc.getPlPerformace().getCpu_numberOfLogicalCores();
 					mflopsBenchmarkValueTotal = Math.round(mflopsBenchmarkValueTotal*100)/100.0;
 					cpu.put(remoteContainer, mflopsBenchmarkValueTotal);
 					

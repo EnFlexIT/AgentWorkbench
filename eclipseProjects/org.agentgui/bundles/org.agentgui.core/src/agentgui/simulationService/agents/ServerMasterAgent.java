@@ -461,9 +461,9 @@ public class ServerMasterAgent extends Agent {
 							"os_name = '" + os.getOs_name() + "'," +
 							"os_version = '" + os.getOs_version() + "'," +
 							"os_arch = '" + os.getOs_arch() + "'," +
-							"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
-							"cpu_model = '" + performance.getCpu_model() + "'," +
-							"cpu_n = " + performance.getCpu_numberOf() + "," +
+							"cpu_processorName = '" + performance.getCpu_processorName() + "'," +
+							"cpu_nLogical = " + performance.getCpu_numberOfLogicalCores() + "," +
+							"cpu_nPhysical = " + performance.getCpu_numberOfPhysicalCores() + "," +
 							"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
 							"memory_total_mb = " + performance.getMemory_totalMB() + "," +
 							"benchmark_value = 0," +
@@ -490,9 +490,9 @@ public class ServerMasterAgent extends Agent {
 							"os_name = '" + os.getOs_name() + "'," +
 							"os_version = '" + os.getOs_version() + "'," +
 							"os_arch = '" + os.getOs_arch() + "'," +
-							"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
-							"cpu_model = '" + performance.getCpu_model() + "'," +
-							"cpu_n = " + performance.getCpu_numberOf() + "," +
+							"cpu_processorName = '" + performance.getCpu_processorName() + "'," +
+							"cpu_nLogical = " + performance.getCpu_numberOfPhysicalCores() + "," +
+							"cpu_nPhysical = " + performance.getCpu_numberOfLogicalCores() + "," +
 							"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
 							"memory_total_mb = " + performance.getMemory_totalMB() + "," +
 							"benchmark_value = 0," +
@@ -671,9 +671,9 @@ public class ServerMasterAgent extends Agent {
 				plAdd.setHttp4mtp(res.getString("http4mtp"));
 				
 				PlatformPerformance plPerf = new PlatformPerformance();
-				plPerf.setCpu_vendor(res.getString("cpu_vendor"));
-				plPerf.setCpu_model(res.getString("cpu_model"));
-				plPerf.setCpu_numberOf(res.getInt("cpu_n"));
+				plPerf.setCpu_processorName(res.getString("cpu_processorName"));
+				plPerf.setCpu_numberOfLogicalCores(res.getInt("cpu_nLogical"));
+				plPerf.setCpu_numberOfPhysicalCores(res.getInt("cpu_nPhysical"));
 				plPerf.setCpu_speedMhz(res.getInt("cpu_speed_mhz"));
 				plPerf.setMemory_totalMB(res.getInt("memory_total_mb"));
 				
@@ -801,9 +801,9 @@ public class ServerMasterAgent extends Agent {
 					aguiVersion.setMicroRevision(res.getInt("vers_build"));
 					
 					PlatformPerformance plPerf = new PlatformPerformance();
-					plPerf.setCpu_vendor(res.getString("cpu_vendor"));
-					plPerf.setCpu_model(res.getString("cpu_model"));
-					plPerf.setCpu_numberOf(res.getInt("cpu_n"));
+					plPerf.setCpu_processorName(res.getString("cpu_processorName"));
+					plPerf.setCpu_numberOfLogicalCores(res.getInt("cpu_nLogical"));
+					plPerf.setCpu_numberOfPhysicalCores(res.getInt("cpu_nPhysical"));
 					plPerf.setCpu_speedMhz(res.getInt("cpu_speed_mhz"));
 					plPerf.setMemory_totalMB(res.getInt("memory_total_mb"));
 					

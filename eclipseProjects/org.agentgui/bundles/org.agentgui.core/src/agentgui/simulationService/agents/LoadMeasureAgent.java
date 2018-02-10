@@ -760,9 +760,9 @@ public class LoadMeasureAgent extends Agent {
 			String opSys = os.getOs_name() + " " + os.getOs_version();
 			
 			PlatformPerformance pP = nodeDescription.getPlPerformace();
-			String perform = pP.getCpu_vendor() + ": " + pP.getCpu_model();
+			String perform = pP.getCpu_processorName() + ": ";
 			perform = perform.replaceAll("  ", " ");
-			perform+= newLine + pP.getCpu_numberOf() + " x "+ pP.getCpu_speedMhz() + "MHz [" + pP.getMemory_totalMB() + " MB RAM]";
+			perform+= newLine + pP.getCpu_numberOfLogicalCores() + " (" + pP.getCpu_numberOfPhysicalCores() + ") x "+ pP.getCpu_speedMhz() + "MHz [" + pP.getMemory_totalMB() + " MB RAM]";
 			
 			String bench = benchmarkValue + " Mflops";
 			String description = "=>" + containerName + newLine + opSys + newLine + perform + newLine + bench + newLine;

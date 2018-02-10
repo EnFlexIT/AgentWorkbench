@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: SlaveRegister
 * @author ontology bean generator
-* @version 2017/12/6, 09:15:27
+* @version 2018/02/10, 18:49:04
 */
 public class SlaveRegister implements AgentAction {
 
@@ -24,6 +24,17 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
+* Protege name: slaveTime
+   */
+   private PlatformTime slaveTime;
+   public void setSlaveTime(PlatformTime value) { 
+    this.slaveTime=value;
+   }
+   public PlatformTime getSlaveTime() {
+     return this.slaveTime;
+   }
+
+   /**
 * Protege name: slaveOS
    */
    private OSInfo slaveOS;
@@ -32,17 +43,6 @@ public class SlaveRegister implements AgentAction {
    }
    public OSInfo getSlaveOS() {
      return this.slaveOS;
-   }
-
-   /**
-* Protege name: slaveAddress
-   */
-   private PlatformAddress slaveAddress;
-   public void setSlaveAddress(PlatformAddress value) { 
-    this.slaveAddress=value;
-   }
-   public PlatformAddress getSlaveAddress() {
-     return this.slaveAddress;
    }
 
    /**
@@ -57,14 +57,14 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
-* Protege name: slaveTime
+* Protege name: slaveAddress
    */
-   private PlatformTime slaveTime;
-   public void setSlaveTime(PlatformTime value) { 
-    this.slaveTime=value;
+   private PlatformAddress slaveAddress;
+   public void setSlaveAddress(PlatformAddress value) { 
+    this.slaveAddress=value;
    }
-   public PlatformTime getSlaveTime() {
-     return this.slaveTime;
+   public PlatformAddress getSlaveAddress() {
+     return this.slaveAddress;
    }
 
 }

@@ -274,9 +274,9 @@ public class DBConnection {
 				"os_version varchar(50)," +
 				"os_arch varchar(50)," +
 				
-				"cpu_vendor varchar(255)," +
-				"cpu_model varchar(255)," +
-				"cpu_n int(3)," +
+				"cpu_processorName varchar(255)," +
+				"cpu_nLogical int(3)," +
+				"cpu_nPhysical int(3)," +
 				"cpu_speed_mhz int(11)," +
 				
 				"memory_total_mb int(11)," +
@@ -299,7 +299,7 @@ public class DBConnection {
 			   "UNIQUE KEY contact_agent (contact_agent) " +
 			   ") ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Agent.GUI available platforms'";
 		
-		if ( this.getSqlExecuteUpdate(sql) == false ) return false;
+		if (this.getSqlExecuteUpdate(sql)==false) return false;
 		
 		// ---------------------------------------------------------------------------------
 		System.out.println( Language.translate("Erzeuge die Tabelle 'platforms' für den Server-Master ... ") );
@@ -313,27 +313,26 @@ public class DBConnection {
 	 */
 	private boolean isPlatformTableCorrect() {
 
-		boolean isPlatformTableCorrect = true;
 		String sql  = "SELECT " +
 				"id_platform, contact_agent, platform_name, is_server, ip, url, jade_port, http4mtp, " +
 				"vers_major, vers_minor, vers_build, " +
 				"os_name, os_version, os_arch, " +
-				"cpu_vendor, cpu_model, cpu_n, cpu_speed_mhz, memory_total_mb, " +
+				"cpu_vendor, cpu_model, cpu_nLogical, cpu_nPhysical, cpu_speed_mhz, memory_total_mb, " +
 				"benchmark_value, " +
 				"online_since, last_contact_at, local_online_since, local_last_contact_at, " +
 				"currently_available, current_load_cpu, current_load_memory_system, " +
 				"current_load_memory_jvm, current_load_no_threads, " +
 				"current_load_threshold_exceeded " +
 				"FROM platforms";
-		
 		ResultSet res = this.getSqlResult4ExecuteQuery(sql, false);
-		if (res==null) isPlatformTableCorrect = false;
+		if (res==null) return false;
+
 		try {
 			res.close();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return isPlatformTableCorrect;
+		return true;
 	}
 	
 	/**
@@ -342,17 +341,16 @@ public class DBConnection {
 	 */
 	private boolean isPlatformTable() {
 		
-		boolean isPlatformTable = true;
 		String sql  = "SELECT * FROM platforms";
-		
 		ResultSet res = this.getSqlResult4ExecuteQuery(sql);
-		if (res==null) isPlatformTable = false;
+		if (res==null) return false;
+		
 		try {
 			res.close();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return isPlatformTable;
+		return true;
 	}
 	
 	/**

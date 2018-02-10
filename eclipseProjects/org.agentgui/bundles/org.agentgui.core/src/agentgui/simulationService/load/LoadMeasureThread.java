@@ -42,7 +42,7 @@ import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 /**
  * This class represents the Thread, which is permanently running on a system
  * and observes the current system information and its loads. Therefore the classes
- * {@link LoadMeasureSigar}, {@link LoadMeasureAvgSigar}, {@link LoadMeasureJVM} and 
+ * {@link LoadMeasureOSHI}, {@link LoadMeasureAvgOSHI}, {@link LoadMeasureJVM} and 
  * {@link LoadMeasureAvgJVM} are used in detail.<br>
  * Starting this Thread the Thread will give itself the name <i>Agent.GUI - Load Monitoring</i>, 
  * which will prevent to start a second Thread of this kind on one JVM.<br>
@@ -51,8 +51,8 @@ import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
  * The access methods of this Thread are static, in order to allow an access from
  * every point of the application, including a running agent system. 
  *
- * @see LoadMeasureSigar
- * @see LoadMeasureAvgSigar
+ * @see LoadMeasureOSHI
+ * @see LoadMeasureAvgOSHI
  * @see LoadMeasureJVM
  * @see LoadMeasureAvgJVM
  *  
@@ -65,7 +65,7 @@ public class LoadMeasureThread extends Thread {
 	/** Debugging option. */
 	private static boolean debugInterval = false;
 	/** Debugging option. */
-	private static boolean debugSigar = false;
+	private static boolean debugOSHI = false;
 	/** Debugging option. */
 	private static boolean debugJVM = false;
 	/** Debugging option. */
@@ -85,16 +85,16 @@ public class LoadMeasureThread extends Thread {
 	private static boolean thisThreadExecuted = false;
 
 	// --- The measurements, that are read by other same kind instances -------
-	/** The current measurements using Hyperic-SIGAR. */
-	private LoadMeasureSigar measuredMemCpuData = new LoadMeasureSigar();
+	/** The current measurements using OSHI. */
+	private LoadMeasureOSHI measuredMemCpuData;
 	/** The current measurements using the on board utilities of the JVM. */
-	private LoadMeasureJVM measuredJVMData = new LoadMeasureJVM();
+	private LoadMeasureJVM measuredJVMData;
 	
 	// --- Load-Information for reading through getter and setter -------------
-	/** Load instance for values of Hyperic-SIGAR. */
-	private static LoadMeasureSigar loadCurrent;
-	/** Load instance for averaged values of Hyperic-SIGAR. */
-	private static LoadMeasureAvgSigar loadCurrentAvg;
+	/** Load instance for values of OSHI. */
+	private static LoadMeasureOSHI loadCurrent;
+	/** Load instance for averaged values of OSHI. */
+	private static LoadMeasureAvgOSHI loadCurrentAvg;
 	/** Load instance for values of the JVM. */
 	private static LoadMeasureJVM loadCurrentJVM;
 	/** Load instance for average values of the JVM. */
@@ -139,7 +139,7 @@ public class LoadMeasureThread extends Thread {
 	 * Simple constructor of this class.
 	 */
 	public LoadMeasureThread() {
-		loadCurrentAvg = new LoadMeasureAvgSigar(localuseN4AvgCount);
+		loadCurrentAvg = new LoadMeasureAvgOSHI(localuseN4AvgCount);
 		loadCurrentAvgJVM = new LoadMeasureAvgJVM(localuseN4AvgCount);
 	}
 
@@ -153,8 +153,29 @@ public class LoadMeasureThread extends Thread {
 	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
 		localIntervalInMS = msInterval;
 		localuseN4AvgCount = useN4AvgCount;
-		loadCurrentAvg = new LoadMeasureAvgSigar(localuseN4AvgCount);
+		loadCurrentAvg = new LoadMeasureAvgOSHI(localuseN4AvgCount);
 		loadCurrentAvgJVM = new LoadMeasureAvgJVM(localuseN4AvgCount);
+	}
+	
+	/**
+	 * Returns the measured memory and CPU data.
+	 * @return the measured memory and CPU data
+	 */
+	private LoadMeasureOSHI getMeasuredMemoryAndCpuData() {
+		if (measuredMemCpuData==null) {
+			measuredMemCpuData = new LoadMeasureOSHI();
+		}
+		return measuredMemCpuData;
+	}
+	/**
+	 * Returns the measured JVM data.
+	 * @return the measured JVM data
+	 */
+	private LoadMeasureJVM getMeasuredJVMData() {
+		if (measuredJVMData==null) {
+			measuredJVMData = new LoadMeasureJVM();
+		}
+		return measuredJVMData;
 	}
 	
 	/* (non-Javadoc)
@@ -164,11 +185,10 @@ public class LoadMeasureThread extends Thread {
 	public void run() {
 
 		// ------------------------------------------------------
-		// --- Is this class already executed on this Node ? ----
+		// --- Is this thread is already executed in the JVM? ---
 		// ------------------------------------------------------		
-		if (measuredJVMData.threadExists(LoadMeasureThread.threadName) ) {
-			return;
-		}		
+		if (this.getMeasuredJVMData().threadExists(LoadMeasureThread.threadName)==true) return;
+
 		System.out.println("Start measuring the system load !");
 		this.setName(LoadMeasureThread.threadName);
 		// ------------------------------------------------------
@@ -184,45 +204,46 @@ public class LoadMeasureThread extends Thread {
 			timeStart = System.currentTimeMillis();
 			
 			// --- Measure here ---------------------------------
-			this.measuredMemCpuData.measureLoadOfSystem();
-			this.measuredJVMData.measureLoadOfSystem();
-			LoadMeasureThread.setLoadCurrent(measuredMemCpuData);
-			LoadMeasureThread.setLoadCurrentJVM(measuredJVMData);
+			this.getMeasuredMemoryAndCpuData().measureLoadOfSystem();
+			this.getMeasuredJVMData().measureLoadOfSystem();
 			
-			if (debugSigar) {
-				String vendor = measuredMemCpuData.getVendor().trim();
-				String model = measuredMemCpuData.getModel().trim();
-				Integer nCPU = measuredMemCpuData.getTotalCpu();
-				Long cpuMHZ = measuredMemCpuData.getMhz();
+			LoadMeasureThread.setLoadCurrent(this.getMeasuredMemoryAndCpuData().clone());
+			LoadMeasureThread.setLoadCurrentJVM(this.getMeasuredJVMData().clone());
+			
+			if (debugOSHI) {
+				String processorName = this.getMeasuredMemoryAndCpuData().getProcessorName().trim();
+				Integer nPhysicalCPU = this.getMeasuredMemoryAndCpuData().getNumberOfPhysicalCPU();
+				Integer nLogicalCPU = this.getMeasuredMemoryAndCpuData().getNumberOfLogicalCPU();
+				Long cpuMHZ = this.getMeasuredMemoryAndCpuData().getMhz();
 				
-				double tMemory = LoadUnits.bytes2(measuredMemCpuData.getTotalMemory(), debugUnit);
-				double fMemory = LoadUnits.bytes2(measuredMemCpuData.getFreeMemory(), debugUnit);
-				double uMemory = LoadUnits.bytes2(measuredMemCpuData.getUseMemory(), debugUnit);
-				double uMemoryPerc = measuredMemCpuData.getUsedMemoryPercent();
+				double tMemory = LoadUnits.bytes2(this.getMeasuredMemoryAndCpuData().getTotalMemory(), debugUnit);
+				double fMemory = LoadUnits.bytes2(this.getMeasuredMemoryAndCpuData().getFreeMemory(), debugUnit);
+				double uMemory = LoadUnits.bytes2(this.getMeasuredMemoryAndCpuData().getUsedMemory(), debugUnit);
+				double uMemoryPerc = this.getMeasuredMemoryAndCpuData().getUsedMemoryPercent();
 				
-				double tMemorySwap = LoadUnits.bytes2(measuredMemCpuData.getTotalMemorySwap(), debugUnit);
-				double fMemorySwap = LoadUnits.bytes2(measuredMemCpuData.getFreeMemorySwap(), debugUnit);
-				double uMemorySwap = LoadUnits.bytes2(measuredMemCpuData.getUseMemorySwap(), debugUnit);
+				double tMemorySwap = LoadUnits.bytes2(this.getMeasuredMemoryAndCpuData().getTotalMemorySwap(), debugUnit);
+				double fMemorySwap = LoadUnits.bytes2(this.getMeasuredMemoryAndCpuData().getFreeMemorySwap(), debugUnit);
+				double uMemorySwap = LoadUnits.bytes2(this.getMeasuredMemoryAndCpuData().getUsedMemorySwap(), debugUnit);
 				
-				System.out.println("Prozessor-Info:  " + vendor + " [" + model + "] " + nCPU + " " + cpuMHZ + "MHz " );
+				System.out.println("Prozessor-Info:  " + processorName + " - " + nLogicalCPU + "(" + nPhysicalCPU + ") CPU's with " + cpuMHZ + "MHz " );
 				System.out.println("Arbeitsspeicher: " + tMemory + "MB (" + fMemory + "MB+" + uMemory + "MB) = (" + uMemoryPerc + " %)");
-				System.out.println("Swap-Speicher:   " + tMemorySwap + "MB (" + fMemorySwap + "MB+" + uMemorySwap + "MB) ");
+				System.out.println("Swap-Speicher:   " + tMemorySwap + "MB (" + fMemorySwap + "MB + " + uMemorySwap + "MB) ");
 			}
 			
 			if (debugJVM) {
 				
-				String jvmProcessID = measuredJVMData.getJvmPID();
+				String jvmProcessID = this.getMeasuredJVMData().getJvmPID();
 				
-				double jvmMemoFree = LoadUnits.bytes2(measuredJVMData.getJvmMemoFree(), debugUnit); 
-				double jvmMemoTotal = LoadUnits.bytes2(measuredJVMData.getJvmMemoTotal(), debugUnit);
-				double jvmMemoMax = LoadUnits.bytes2(measuredJVMData.getJvmMemoMax(), debugUnit);
+				double jvmMemoFree = LoadUnits.bytes2(this.getMeasuredJVMData().getJvmMemoFree(), debugUnit); 
+				double jvmMemoTotal = LoadUnits.bytes2(this.getMeasuredJVMData().getJvmMemoTotal(), debugUnit);
+				double jvmMemoMax = LoadUnits.bytes2(this.getMeasuredJVMData().getJvmMemoMax(), debugUnit);
 			   
-				double jvmHeapInit = LoadUnits.bytes2(measuredJVMData.getJvmHeapInit(), debugUnit);
-				double jvmHeapMax = LoadUnits.bytes2(measuredJVMData.getJvmHeapMax(), debugUnit);
-				double jvmHeapCommited = LoadUnits.bytes2(measuredJVMData.getJvmHeapCommitted(), debugUnit);
-				double jvmHeapUsed = LoadUnits.bytes2(measuredJVMData.getJvmHeapUsed(), debugUnit);
+				double jvmHeapInit = LoadUnits.bytes2(this.getMeasuredJVMData().getJvmHeapInit(), debugUnit);
+				double jvmHeapMax = LoadUnits.bytes2(this.getMeasuredJVMData().getJvmHeapMax(), debugUnit);
+				double jvmHeapCommited = LoadUnits.bytes2(this.getMeasuredJVMData().getJvmHeapCommitted(), debugUnit);
+				double jvmHeapUsed = LoadUnits.bytes2(this.getMeasuredJVMData().getJvmHeapUsed(), debugUnit);
 			    
-				double jvmThreadCount = measuredJVMData.getJvmThreadCount();
+				double jvmThreadCount = this.getMeasuredJVMData().getJvmThreadCount();
 				
 				System.out.println( "JVM-PID [ProcessID]: " + jvmProcessID);
 			    System.out.println( "JVM-Memo: (" + jvmMemoMax + " - " + jvmMemoTotal + " - " + jvmMemoFree + ") ");
@@ -245,7 +266,7 @@ public class LoadMeasureThread extends Thread {
 			}
 			if (debugInterval) {
 				long timeWork = timeEnd - timeStart;
-				System.out.println("[Load Measurement] Work Time: " + timeWork + "ms + Sleep Time: " + timeSleep + "ms = Interval: " + (timeWork + timeSleep) + "ms");
+				System.out.println("[" + this.getClass().getSimpleName() + "] Work Time: " + timeWork + " ms + Sleep Time: " + timeSleep + " ms = Interval: " + (timeWork + timeSleep) + " ms");
 			}
 			
 		} catch (Exception e) {
@@ -268,11 +289,11 @@ public class LoadMeasureThread extends Thread {
 		thresholdLevelExceededNoThreads = 0;
 		
 		// --- Current percentage "CPU used" --------------
-		loadCPU = (float) loadCurrentAvg.getUsedMemoryPercent();
+		loadCPU = (float) loadCurrentAvg.getCPU_Usage();
 
 		// --- Current percentage "Memory used in System" -
 		long tempTotalMemoryCombined = loadCurrentAvg.getTotalMemory() + loadCurrentAvg.getTotalMemorySwap();
-		long tempUseMemoryCombined = loadCurrentAvg.getUseMemory() + loadCurrentAvg.getUseMemorySwap();
+		long tempUseMemoryCombined = loadCurrentAvg.getUsedMemory() + loadCurrentAvg.getUseMemorySwap();
 		double tempMemoSystem = (double)Math.round(((double)tempUseMemoryCombined / tempTotalMemoryCombined) * 10000)/100;
 		loadMemorySystem = (float) tempMemoSystem;
 		
@@ -357,14 +378,14 @@ public class LoadMeasureThread extends Thread {
 	 * Gets the load current.
 	 * @return the loadCurrent
 	 */
-	public static LoadMeasureSigar getLoadCurrent() {
+	public static LoadMeasureOSHI getLoadCurrent() {
 		return loadCurrent;
 	}
 	/**
 	 * Sets the load current.
 	 * @param loadCurrent2Set the new load current
 	 */
-	public static void setLoadCurrent(LoadMeasureSigar loadCurrent2Set) {
+	public static void setLoadCurrent(LoadMeasureOSHI loadCurrent2Set) {
 		loadCurrent = loadCurrent2Set;
 		loadCurrentAvg.put(loadCurrent);
 	}
@@ -373,14 +394,14 @@ public class LoadMeasureThread extends Thread {
 	 * Gets the load current avg.
 	 * @return the loadAvgMemLoad
 	 */
-	public static LoadMeasureAvgSigar getLoadCurrentAvg() {
+	public static LoadMeasureAvgOSHI getLoadCurrentAvg() {
 		return loadCurrentAvg;
 	}
 	/**
 	 * Sets the load current avg.
 	 * @param loadCurrentAvg2Set the new load current avg
 	 */
-	public static void setLoadCurrentAvg(LoadMeasureAvgSigar loadCurrentAvg2Set) {
+	public static void setLoadCurrentAvg(LoadMeasureAvgOSHI loadCurrentAvg2Set) {
 		loadCurrentAvg = loadCurrentAvg2Set;
 	}
 	

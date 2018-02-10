@@ -8,41 +8,19 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2017/12/6, 09:15:27
+* @version 2018/02/10, 18:49:04
 */
 public class PlatformPerformance implements Concept {
 
    /**
-* Protege name: cpu_vendor
+* Protege name: cpu_numberOfLogicalCores
    */
-   private String cpu_vendor;
-   public void setCpu_vendor(String value) { 
-    this.cpu_vendor=value;
+   private int cpu_numberOfLogicalCores;
+   public void setCpu_numberOfLogicalCores(int value) { 
+    this.cpu_numberOfLogicalCores=value;
    }
-   public String getCpu_vendor() {
-     return this.cpu_vendor;
-   }
-
-   /**
-* Protege name: cpu_numberOf
-   */
-   private int cpu_numberOf;
-   public void setCpu_numberOf(int value) { 
-    this.cpu_numberOf=value;
-   }
-   public int getCpu_numberOf() {
-     return this.cpu_numberOf;
-   }
-
-   /**
-* Protege name: cpu_model
-   */
-   private String cpu_model;
-   public void setCpu_model(String value) { 
-    this.cpu_model=value;
-   }
-   public String getCpu_model() {
-     return this.cpu_model;
+   public int getCpu_numberOfLogicalCores() {
+     return this.cpu_numberOfLogicalCores;
    }
 
    /**
@@ -57,6 +35,17 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
+* Protege name: cpu_numberOfPhysicalCores
+   */
+   private int cpu_numberOfPhysicalCores;
+   public void setCpu_numberOfPhysicalCores(int value) { 
+    this.cpu_numberOfPhysicalCores=value;
+   }
+   public int getCpu_numberOfPhysicalCores() {
+     return this.cpu_numberOfPhysicalCores;
+   }
+
+   /**
 * Protege name: cpu_speedMhz
    */
    private int cpu_speedMhz;
@@ -65,6 +54,17 @@ public class PlatformPerformance implements Concept {
    }
    public int getCpu_speedMhz() {
      return this.cpu_speedMhz;
+   }
+
+   /**
+* Protege name: cpu_processorName
+   */
+   private String cpu_processorName;
+   public void setCpu_processorName(String value) { 
+    this.cpu_processorName=value;
+   }
+   public String getCpu_processorName() {
+     return this.cpu_processorName;
    }
 
 }

@@ -8,53 +8,9 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2017/12/6, 09:15:27
+* @version 2018/02/10, 18:49:04
 */
 public class RemoteContainerConfig implements Concept {
-
-   /**
-* Protege name: jadeIsRemoteContainer
-   */
-   private boolean jadeIsRemoteContainer;
-   public void setJadeIsRemoteContainer(boolean value) { 
-    this.jadeIsRemoteContainer=value;
-   }
-   public boolean getJadeIsRemoteContainer() {
-     return this.jadeIsRemoteContainer;
-   }
-
-   /**
-* Protege name: fileManagerAgent
-   */
-   private AID fileManagerAgent;
-   public void setFileManagerAgent(AID value) { 
-    this.fileManagerAgent=value;
-   }
-   public AID getFileManagerAgent() {
-     return this.fileManagerAgent;
-   }
-
-   /**
-* Protege name: jadeHost
-   */
-   private String jadeHost;
-   public void setJadeHost(String value) { 
-    this.jadeHost=value;
-   }
-   public String getJadeHost() {
-     return this.jadeHost;
-   }
-
-   /**
-* Protege name: jvmMemAllocInitial
-   */
-   private String jvmMemAllocInitial;
-   public void setJvmMemAllocInitial(String value) { 
-    this.jvmMemAllocInitial=value;
-   }
-   public String getJvmMemAllocInitial() {
-     return this.jvmMemAllocInitial;
-   }
 
    /**
 * Protege name: hostExcludeIP
@@ -78,6 +34,17 @@ public class RemoteContainerConfig implements Concept {
    public void setHostExcludeIP(List l) {hostExcludeIP = l; }
 
    /**
+* Protege name: jadeHost
+   */
+   private String jadeHost;
+   public void setJadeHost(String value) { 
+    this.jadeHost=value;
+   }
+   public String getJadeHost() {
+     return this.jadeHost;
+   }
+
+   /**
 * Protege name: preventUsageOfUsedComputer
    */
    private boolean preventUsageOfUsedComputer;
@@ -86,17 +53,6 @@ public class RemoteContainerConfig implements Concept {
    }
    public boolean getPreventUsageOfUsedComputer() {
      return this.preventUsageOfUsedComputer;
-   }
-
-   /**
-* Protege name: jadeContainerName
-   */
-   private String jadeContainerName;
-   public void setJadeContainerName(String value) { 
-    this.jadeContainerName=value;
-   }
-   public String getJadeContainerName() {
-     return this.jadeContainerName;
    }
 
    /**
@@ -119,6 +75,50 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJadePort() {
      return this.jadePort;
+   }
+
+   /**
+* Protege name: jvmMemAllocInitial
+   */
+   private String jvmMemAllocInitial;
+   public void setJvmMemAllocInitial(String value) { 
+    this.jvmMemAllocInitial=value;
+   }
+   public String getJvmMemAllocInitial() {
+     return this.jvmMemAllocInitial;
+   }
+
+   /**
+* Protege name: jadeContainerName
+   */
+   private String jadeContainerName;
+   public void setJadeContainerName(String value) { 
+    this.jadeContainerName=value;
+   }
+   public String getJadeContainerName() {
+     return this.jadeContainerName;
+   }
+
+   /**
+* Protege name: fileManagerAgent
+   */
+   private AID fileManagerAgent;
+   public void setFileManagerAgent(AID value) { 
+    this.fileManagerAgent=value;
+   }
+   public AID getFileManagerAgent() {
+     return this.fileManagerAgent;
+   }
+
+   /**
+* Protege name: jadeIsRemoteContainer
+   */
+   private boolean jadeIsRemoteContainer;
+   public void setJadeIsRemoteContainer(boolean value) { 
+    this.jadeIsRemoteContainer=value;
+   }
+   public boolean getJadeIsRemoteContainer() {
+     return this.jadeIsRemoteContainer;
    }
 
    /**
