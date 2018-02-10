@@ -29,26 +29,24 @@
 
 package agentgui.simulationService.load;
 
-import org.hyperic.sigar.CpuInfo;
-import org.hyperic.sigar.CpuPerc;
-import org.hyperic.sigar.Mem;
-import org.hyperic.sigar.SigarException;
-import org.hyperic.sigar.Swap;
-import org.hyperic.sigar.cmd.SigarCommandBase;
+import de.enflexit.oshi.SystemInfoTest;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.GlobalMemory;
 
 /**
  * This class provides load information for each CPU and the memory found on the 
- * current system - regardless, if it is Windows, UNIX or Linux-system.<br> 
- * Therefore the Hyperic-SIGAR API is used, which can be found
- * <a href="http://www.hyperic.com/support/docs/sigar/" target="_blank">here</a>.
+ * current system - regardless, if it is Windows, UNIX or Linux-system. 
+ * Therefore, the the OSHI library is used that is bundles within de.enflexit.oshi
  * 
- * @author Christopher Nde - DAWIS - ICB - University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
+public class LoadMeasureSigar implements Cloneable {
 	
-	/** The information about the available CPU's. */
-	private CpuInfo[] cpuInfos;
+	private boolean debug = false;
+	private SystemInfo systemInfo;
+	
+	/** +++ The information about the available CPU's. +++ */
 	/** The vendor of the chip set. */
 	private String vendor=null;
 	/** The processor speed. */
@@ -58,21 +56,7 @@ public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
 	/** The number of cores on this machine. */
 	private int totalCpu;
 	
-	/** The calculated percentage load of the CPU using Hyperic-SIGAR. */
-	private CpuPerc cpuPerc;
-	/** A time measurement. */
-	private double cpuSystemTime;
-	/** A time measurement. */
-	private double cpuUserTime;
-	/** A time measurement. */
-	private double cpuIdleTime;
-	/** A time measurement. */
-	private double cpuWaitTime;
-	/** A time measurement. */
-	private double cpuCombinedTime;
-	
-	/** The Hyperic-SIGAR memory. */
-	private Mem memory;
+	/** +++ The memory usage. +++*/
 	/** A memory information. */
 	private long totalMemory;			// Bytes
 	/** A memory information. */
@@ -82,8 +66,7 @@ public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
 	/** A memory information. */
 	private double usedMemoryPercent;	// %
 	
-	/** The Hyperic-SIGAR swap memory. */
-	private Swap swap;
+	/** +++ The swap memory usage . +++ */
 	/** A swap memory information. */
 	private long totalMemorySwap; 		// Bytes
 	/** A swap memory information. */
@@ -102,16 +85,17 @@ public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
      * Instantiates this class.
      */
     public LoadMeasureSigar() {
-        super();
+        
         try {
+        	// --- Print OSHI example --------------------- 
+        	if (debug) SystemInfoTest.main(null);
+        	
      		// --- getting CPU information ----------------
-			this.outputCpu(); 
+			this.setProcessorInformation(); 
 			// --- get the first measurements --------------
 			this.measureLoadOfSystem();
-			
-		} catch (SigarException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
+		
+        } catch (Exception e) {
 			e.printStackTrace();
 		}
     }
@@ -130,28 +114,37 @@ public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
 		return null;
     }
     
+    /**
+     * Gets the system info.
+     * @return the system info
+     */
+    private SystemInfo getSystemInfo() {
+    	if (systemInfo==null) {
+    		systemInfo = new SystemInfo();
+    	}
+    	return systemInfo;
+    }
+    
 	/**
-	 * Measures load of the system, by using the sigar functionalities .
+	 * Measures load of the system, by using the OSHI functionalities.
 	 * @throws Exception the exception
 	 */
 	public void measureLoadOfSystem() throws Exception {
-		outputTimes(); 	// --- timing informations --------
-		outputMem();	// --- memory information ---------
+		this.setMemoryInformation();	// --- memory information ---------
 	}
 
 	/**
 	 * Will set up the CPU information.
 	 * @throws SigarException 
 	 */
-	public void outputCpu() throws SigarException {
-        // --- setting cpu-Information --------------------
-		cpuInfos = this.sigar.getCpuInfoList();
-		if(cpuInfos != null && cpuInfos.length!=0){
-			CpuInfo info = cpuInfos[0];
-	        setVendor(info.getVendor());
-	        setModel(info.getModel());
-	        setMhz(info.getMhz());
-	        setTotalCpu(info.getTotalCores());
+	public void setProcessorInformation() {
+		CentralProcessor proc = this.getSystemInfo().getHardware().getProcessor();
+		if (proc!=null ){
+	        this.setVendor(proc.getVendor());
+	        this.setModel(proc.getModel());
+	        double freqMhz = proc.getVendorFreq() / Math.pow(10, 6);
+	        this.setMhz((long) freqMhz);
+	        this.setTotalCpu(proc.getPhysicalProcessorCount());
 		}
     }
 
@@ -159,42 +152,21 @@ public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
      * Will set up the memory and the swap information.
      * @throws SigarException 
      */
-    private void outputMem() throws SigarException{
-    	// --- setting memory values ----------------------
-    	memory = this.sigar.getMem();
-    	setTotalMemory(memory.getTotal());
-    	setFreeMemory(memory.getFree());
-    	setUseMemory(memory.getUsed());
-    	setUsedMemoryPercent(memory.getUsedPercent());
+    private void setMemoryInformation() {
     	
-    	swap = this.sigar.getSwap();
-    	setTotalMemorySwap(swap.getTotal());
-    	setFreeMemorySwap(swap.getFree());
-    	setUseMemorySwap(swap.getUsed());
+    	GlobalMemory memory =  this.getSystemInfo().getHardware().getMemory();
+    	setTotalMemory(memory.getTotal());
+    	setFreeMemory(memory.getAvailable());
+    	setUseMemory(this.getTotalMemory()-this.getFreeMemory());
+    	
+    	setUsedMemoryPercent( this.doubleRound(((double)this.getUseMemory() / (double)this.getTotalMemory()*100.0)) );
+    	
+    	setTotalMemorySwap(memory.getSwapTotal());
+    	setUseMemorySwap(memory.getSwapUsed());
+    	setFreeMemorySwap(this.getTotalMemorySwap()-this.getUseMemorySwap());
     }
 
-    /**
-     * Will set up the CPU times in percentage format.
-     * @throws SigarException the sigar exception
-     */
-    private void outputTimes() throws SigarException {
-        // --- set cpu load information -------------------
-    	cpuPerc = this.sigar.getCpuPerc();
-    	this.setCpuUserTime(cpuPerc.getUser());
-    	this.setCpuSystemTime(cpuPerc.getSys());
-    	this.setCpuIdleTime(cpuPerc.getIdle());
-    	this.setCpuCombinedTime(cpuPerc.getCombined());
-    	this.setCpuWaitTime(cpuPerc.getWait());
-    }
-
-	/* (non-Javadoc)
-	 * @see org.hyperic.sigar.cmd.SigarCommandBase#output(java.lang.String[])
-	 */
-	@Override
-	public void output(String[] arg0) throws SigarException {
-	}
-	
-	
+    
 	/**
 	 * Sets the vendor.
 	 * @param vendor the vendor to set
@@ -255,115 +227,6 @@ public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
 		return totalCpu;
 	}
 
-	/**
-	 * Sets the cpu system time.
-	 * @param cpuSystemTime the cpuSystemTime to set
-	 */
-	public void setCpuSystemTime(double cpuSystemTime) {
-		this.cpuSystemTime = cpuSystemTime;
-	}
-	/**
-	 * Gets the cpu system time.
-	 * @return the cpuSystemTime
-	 */
-	public double getCpuSystemTime() {
-		return cpuSystemTime;
-	}
-	/**
-	 * Gets the cpu system time rounded.
-	 * @return the cpu system time rounded
-	 */
-	public double getCpuSystemTimeRounded() {
-		return doubleRound(cpuSystemTime);
-	}
-
-	/**
-	 * Sets the cpu user time.
-	 * @param cpuUserTime the cpuUserTime to set
-	 */
-	public void setCpuUserTime(double cpuUserTime) {
-		this.cpuUserTime = cpuUserTime;
-	}
-	/**
-	 * Gets the cpu user time.
-	 * @return the cpuUserTime
-	 */
-	public double getCpuUserTime() {
-		return cpuUserTime;
-	}
-	/**
-	 * Gets the cpu user time rounded.
-	 * @return the cpu user time rounded
-	 */
-	public double getCpuUserTimeRounded() {
-		return doubleRound(cpuUserTime);
-	}
-
-	/**
-	 * Sets the cpu wait time.
-	 * @param cpuWaitTime the cpuWaitTime to set
-	 */
-	public void setCpuWaitTime(double cpuWaitTime) {
-		this.cpuWaitTime = cpuWaitTime;
-	}
-	/**
-	 * Gets the cpu wait time.
-	 * @return the cpuWaitTime
-	 */
-	public double getCpuWaitTime() {
-		return cpuWaitTime;
-	}
-	/**
-	 * Gets the cpu wait time rounded.
-	 * @return the cpu wait time rounded
-	 */
-	public double getCpuWaitTimeRounded() {
-		return doubleRound(cpuWaitTime);
-	}
-
-	/**
-	 * Sets the cpu idle time.
-	 * @param cpuIdleTime the cpuIdleTime to set
-	 */
-	public void setCpuIdleTime(double cpuIdleTime) {
-		this.cpuIdleTime = cpuIdleTime;
-	}
-	/**
-	 * Gets the cpu idle time.
-	 * @return the cpuIdleTime
-	 */
-	public double getCpuIdleTime() {
-		return cpuIdleTime;
-	}
-	/**
-	 * Gets the cpu idle time rounded.
-	 * @return the cpu idle time rounded
-	 */
-	public double getCpuIdleTimeRounded() {
-		return doubleRound(cpuIdleTime);
-	}
-
-	/**
-	 * Sets the cpu combined time.
-	 * @param d the combineTime to set
-	 */
-	public void setCpuCombinedTime(double d) {
-		this.cpuCombinedTime = d;
-	}
-	/**
-	 * Gets the cpu combined time.
-	 * @return the combineTime
-	 */
-	public double getCpuCombinedTime() {
-		return cpuCombinedTime;
-	}
-	/**
-	 * Gets the cpu combine time rounded.
-	 * @return the cpu combine time rounded
-	 */
-	public double getCpuCombineTimeRounded() {
-		return doubleRound(cpuCombinedTime);
-	}
 
 	/**
 	 * Sets the total memory.

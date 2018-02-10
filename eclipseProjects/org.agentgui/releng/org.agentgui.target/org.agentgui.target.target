@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="org.agentgui.target" sequenceNumber="64">
+<?pde version="3.8"?><target name="org.agentgui.target" sequenceNumber="66">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.equinox.p2.sdk.feature.group" version="3.10.2.v20171108-1343"/>
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.2.v20171108-1834"/>
 <unit id="org.eclipse.rcp.feature.group" version="4.7.2.v20171130-0510"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.7"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="ch.qos.logback.classic" version="1.1.2.v20160208-0839"/>
+<unit id="ch.qos.logback.classic.source" version="1.1.2.v20160208-0839"/>
+<unit id="ch.qos.logback.core" version="1.1.2.v20160208-0839"/>
+<unit id="ch.qos.logback.core.source" version="1.1.2.v20160208-0839"/>
+<unit id="ch.qos.logback.slf4j" version="1.1.2.v20160301-0943"/>
+<unit id="ch.qos.logback.slf4j.source" version="1.1.2.v20160301-0943"/>
+<unit id="org.slf4j.api" version="1.7.10.v20170428-1633"/>
+<unit id="org.slf4j.api.source" version="1.7.10.v20170428-1633"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170919201930/repository"/>
 </location>
 </locations>
 </target>

@@ -92,13 +92,13 @@ public class LoadMeasureThread extends Thread {
 	
 	// --- Load-Information for reading through getter and setter -------------
 	/** Load instance for values of Hyperic-SIGAR. */
-	private static LoadMeasureSigar loadCurrent = null;
+	private static LoadMeasureSigar loadCurrent;
 	/** Load instance for averaged values of Hyperic-SIGAR. */
-	private static LoadMeasureAvgSigar loadCurrentAvg = null;
+	private static LoadMeasureAvgSigar loadCurrentAvg;
 	/** Load instance for values of the JVM. */
-	private static LoadMeasureJVM loadCurrentJVM = null;
+	private static LoadMeasureJVM loadCurrentJVM;
 	/** Load instance for average values of the JVM. */
-	private static LoadMeasureAvgJVM loadCurrentAvgJVM = null;
+	private static LoadMeasureAvgJVM loadCurrentAvgJVM;
 	
 	// --- Threshold-Information ----------------------------------------------
 	/** Threshold-Information. */
@@ -195,12 +195,6 @@ public class LoadMeasureThread extends Thread {
 				Integer nCPU = measuredMemCpuData.getTotalCpu();
 				Long cpuMHZ = measuredMemCpuData.getMhz();
 				
-				double timeCombined = measuredMemCpuData.getCpuCombineTimeRounded();
-				double timeIdle = measuredMemCpuData.getCpuIdleTimeRounded();
-				double timeSystem = measuredMemCpuData.getCpuSystemTimeRounded();
-				double timeUser = measuredMemCpuData.getCpuUserTimeRounded();
-				double timeWait = measuredMemCpuData.getCpuWaitTimeRounded();
-
 				double tMemory = LoadUnits.bytes2(measuredMemCpuData.getTotalMemory(), debugUnit);
 				double fMemory = LoadUnits.bytes2(measuredMemCpuData.getFreeMemory(), debugUnit);
 				double uMemory = LoadUnits.bytes2(measuredMemCpuData.getUseMemory(), debugUnit);
@@ -211,7 +205,6 @@ public class LoadMeasureThread extends Thread {
 				double uMemorySwap = LoadUnits.bytes2(measuredMemCpuData.getUseMemorySwap(), debugUnit);
 				
 				System.out.println("Prozessor-Info:  " + vendor + " [" + model + "] " + nCPU + " " + cpuMHZ + "MHz " );
-				System.out.println("Zeiteausnutzung: " + timeCombined + " " + timeIdle + " " + timeSystem + " " + timeUser + " " + timeWait );
 				System.out.println("Arbeitsspeicher: " + tMemory + "MB (" + fMemory + "MB+" + uMemory + "MB) = (" + uMemoryPerc + " %)");
 				System.out.println("Swap-Speicher:   " + tMemorySwap + "MB (" + fMemorySwap + "MB+" + uMemorySwap + "MB) ");
 			}
@@ -275,9 +268,7 @@ public class LoadMeasureThread extends Thread {
 		thresholdLevelExceededNoThreads = 0;
 		
 		// --- Current percentage "CPU used" --------------
-//		double tempCPU  = loadCurrentAvg.getUsedMemoryPercent();
-		double tempCPU  = (double)Math.round((1-loadCurrentAvg.getCpuIdleTime())*10000)/100;
-		loadCPU = (float) tempCPU;
+		loadCPU = (float) loadCurrentAvg.getUsedMemoryPercent();
 
 		// --- Current percentage "Memory used in System" -
 		long tempTotalMemoryCombined = loadCurrentAvg.getTotalMemory() + loadCurrentAvg.getTotalMemorySwap();
@@ -295,21 +286,21 @@ public class LoadMeasureThread extends Thread {
 		
 		if (debugThreshold) {
 			System.out.println( );
-			System.out.println( "CPU used:        " + tempCPU + "% (" + thresholdLevels.getThCpuL() + "/" + thresholdLevels.getThCpuH() + ")" );
+			System.out.println( "CPU used:        " + loadCPU + "% (" + thresholdLevels.getThCpuL() + "/" + thresholdLevels.getThCpuH() + ")" );
 			System.out.println( "Sys-Memory used: " + tempMemoSystem + "% (" + thresholdLevels.getThMemoL() + "/" + thresholdLevels.getThMemoH() + ")" );
 			System.out.println( "JVM-Memory used: " + tempMemoJVM + "% (" + thresholdLevels.getThMemoL() + "/" + thresholdLevels.getThMemoH() + ")" );
 			System.out.println( "N-Threads:       " + tempNoThreads + " (" + thresholdLevels.getThNoThreadsL() + "/" + thresholdLevels.getThNoThreadsH() + ")" );
 		}
 		
 		// --- Check CPU-Usage ----------------------------
-		if ( tempCPU > thresholdLevels.getThCpuH()) {
+		if (loadCPU > thresholdLevels.getThCpuH()) {
 			thresholdLevelExceededCPU = 1;
-		} else if ( tempCPU < thresholdLevels.getThCpuL()) {
+		} else if ( loadCPU < thresholdLevels.getThCpuL()) {
 			thresholdLevelExceededCPU = -1;
 		}
 		
 		// --- Check Memory-Usage SYSTEM ------------------
-		if ( tempMemoSystem > thresholdLevels.getThMemoH()) {
+		if (tempMemoSystem > thresholdLevels.getThMemoH()) {
 			thresholdLevelExceededMemoSystem = 1;
 		} else if ( tempMemoSystem < thresholdLevels.getThMemoL()) {
 			thresholdLevelExceededMemoSystem = -1;

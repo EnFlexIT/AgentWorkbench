@@ -36,7 +36,6 @@ import java.util.ArrayList;
  * 
  * @see LoadMeasureSigar
  * 
- * @author Christopher Nde - DAWIS - ICB - University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class LoadMeasureAvgSigar {
@@ -55,16 +54,6 @@ public class LoadMeasureAvgSigar {
 	/** The number of cores on this machine. */
 	private int totalCpu;
 	
-	/** A time measurement. */
-	private double cpuSystemTime;
-	/** A time measurement. */
-	private double cpuUserTime;
-	/** A time measurement. */
-	private double cpuIdleTime;
-	/** A time measurement. */
-	private double cpuWaitTime;
-	/** A time measurement. */
-	private double cpuCombinedTime;
 	
 	/** A memory information. */
 	private long totalMemory;			// Bytes
@@ -97,7 +86,7 @@ public class LoadMeasureAvgSigar {
 	 */
 	public void put(LoadMeasureSigar currentLoadMeasure) {
         
-		if (vendor == null) {
+		if (vendor==null) {
 			// setting system information once
 			setVendor(currentLoadMeasure.getVendor());
 			setModel(currentLoadMeasure.getModel());
@@ -107,10 +96,10 @@ public class LoadMeasureAvgSigar {
 
 		// inserting object in a list
 		// the objects contains information about cpu and memory.
-		if (measureList.size() >= useAVGCounter) {
-			measureList.remove(0);
+		if (this.measureList.size() >= this.useAVGCounter) {
+			this.measureList.remove(0);
 		}
-		measureList.add(currentLoadMeasure.clone()); // add new object in the list
+		this.measureList.add(currentLoadMeasure.clone()); // add new object in the list
 		this.calculateLoadAverage();
 	}
 	
@@ -122,12 +111,6 @@ public class LoadMeasureAvgSigar {
       
 		int size = measureList.size();
 		
-		double cpuSystemTimeTemp = 0;
-		double cpuUserTimeTemp = 0;
-		double cpuIdleTimeTemp = 0;
-		double cpuWaitTimeTemp = 0;
-		double cpuCombinedTimeTemp = 0;
-
 		long totalMemoryTemp = 0;
 		long freeMemoryTemp = 0;
 		long useMemoryTemp = 0;
@@ -140,12 +123,6 @@ public class LoadMeasureAvgSigar {
 		//calculating cpu and memory average value
 		for (int i = 0; i < size; i++) {
 
-			cpuSystemTimeTemp += measureList.get(i).getCpuSystemTime();
-			cpuUserTimeTemp += measureList.get(i).getCpuUserTime();
-			cpuIdleTimeTemp += measureList.get(i).getCpuIdleTime();
-			cpuWaitTimeTemp += measureList.get(i).getCpuWaitTime();
-			cpuCombinedTimeTemp += measureList.get(i).getCpuCombinedTime();
-
 			totalMemoryTemp += measureList.get(i).getTotalMemory();
 			freeMemoryTemp += measureList.get(i).getFreeMemory();
 			useMemoryTemp += measureList.get(i).getUseMemory();
@@ -157,12 +134,6 @@ public class LoadMeasureAvgSigar {
 			
 		}	
 		
-		//setting the values of memory and cpu
-		this.setCpuIdleTime(cpuIdleTimeTemp/size);
-		this.setCpuSystemTime(cpuSystemTimeTemp/size);
-		this.setCpuWaitTime(cpuWaitTimeTemp/size);
-		this.setCpuUserTime(cpuUserTimeTemp/size);
-		this.setCpuCombinedTime(cpuCombinedTimeTemp/size);
 		
 		this.setTotalMemory(totalMemoryTemp/size);
 		this.setFreeMemory(freeMemoryTemp/size);
@@ -174,81 +145,7 @@ public class LoadMeasureAvgSigar {
 		this.setUseMemorySwap(useMemorySwapTemp/size);
 	}
 
-	/**
-	 * Sets the cpu system time.
-	 * @param cpuSystemTime the cpuSystemTime to set
-	 */
-	public void setCpuSystemTime(double cpuSystemTime) {
-		this.cpuSystemTime = cpuSystemTime;
-	}
-	/**
-	 * Gets the cpu system time.
-	 * @return the cpuSystemTime
-	 */
-	public double getCpuSystemTime() {
-		return cpuSystemTime;
-	}
-
-	/**
-	 * Sets the cpu user time.
-	 * @param cpuUserTime the cpuUserTime to set
-	 */
-	public void setCpuUserTime(double cpuUserTime) {
-		this.cpuUserTime = cpuUserTime;
-	}
-	/**
-	 * Gets the cpu user time.
-	 * @return the cpuUserTime
-	 */
-	public double getCpuUserTime() {
-		return cpuUserTime;
-	}
-
-	/**
-	 * Sets the cpu wait time.
-	 * @param cpuWaitTime the cpuWaitTime to set
-	 */
-	public void setCpuWaitTime(double cpuWaitTime) {
-		this.cpuWaitTime = cpuWaitTime;
-	}
-	/**
-	 * Gets the cpu wait time.
-	 * @return the cpuWaitTime
-	 */
-	public double getCpuWaitTime() {
-		return cpuWaitTime;
-	}
-
-	/**
-	 * Sets the cpu idle time.
-	 * @param cpuIdleTime the cpuIdleTime to set
-	 */
-	public void setCpuIdleTime(double cpuIdleTime) {
-		this.cpuIdleTime = cpuIdleTime;
-	}
-	/**
-	 * Gets the cpu idle time.
-	 * @return the cpuIdleTime
-	 */
-	public double getCpuIdleTime() {
-		return cpuIdleTime;
-	}
-
-	/**
-	 * Sets the cpu combined time.
-	 * @param d the combineTime to set
-	 */
-	public void setCpuCombinedTime(double d) {
-		this.cpuCombinedTime = d;
-	}
-	/**
-	 * Gets the cpu combined time.
-	 * @return the combineTime
-	 */
-	public double getCpuCombinedTime() {
-		return cpuCombinedTime;
-	}
-
+	
 	/**
 	 * Sets the total memory.
 	 * @param totalMemory the totalMemory to set
