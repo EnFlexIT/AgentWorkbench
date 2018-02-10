@@ -1,13 +1,15 @@
 package de.enflexit.oshi;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -18,7 +20,9 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
- * The Class OshiBundleActivator configures the Logging.
+ * The Class OshiBundleActivator basically configures the Logging.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class OshiBundleActivator implements BundleActivator {
 
@@ -32,7 +36,6 @@ public class OshiBundleActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		this.configureLogbackInBundle(context.getBundle());
 	}
-
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
@@ -40,6 +43,7 @@ public class OshiBundleActivator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 	}
 
+	
 	/**
 	 * Configure logback in bundle.
 	 *
@@ -57,25 +61,30 @@ public class OshiBundleActivator implements BundleActivator {
 		// TODO overriding the log directory property programmatically
 		String logDirProperty = null;
 		context.putProperty("LOG_DIR", logDirProperty);
-
-		if (this.isLogbackFileAvailable()==false) {
-			// --- This takes the logback.xml from the bundle root --
-			URL logbackConfigFileUrl = FileLocator.find(bundle, new Path(LOGBACK_CONFIG_FILE_NAME),null);
-			jc.doConfigure(logbackConfigFileUrl.openStream());
-			
-		} else {
-			 // --- Open external logback.xml -----------------------
-		    jc.doConfigure(this.getLobackFile().getAbsolutePath());	
+		
+		// --- Extract internal configuration file ------------------
+		if (this.isExternalLogbackFileAvailable(bundle)==false) {
+			this.extractFromBundle(this.getInternalLogbackFileURL(bundle), this.getExternalLogbackFile(bundle));
 		}
+		
+		// --- Check if configuration file is available now ---------   
+		if (this.isExternalLogbackFileAvailable(bundle)==true) {
+			// --- Open external logback.xml ------------------------
+			jc.doConfigure(this.getExternalLogbackFile(bundle).getAbsolutePath());	
+		} else {
+			// --- This takes the logback.xml from the bundle root --
+			URL logbackConfigFileUrl = this.getInternalLogbackFileURL(bundle);
+			jc.doConfigure(logbackConfigFileUrl.openStream());
+		}
+		
 	}
-
 	
 	/**
 	 * Checks if the external logback configuration file is available.
 	 * @return true, if the file is available
 	 */
-	private boolean isLogbackFileAvailable() {
-		File logbackFile = this.getLobackFile();
+	private boolean isExternalLogbackFileAvailable(Bundle bundle) {
+		File logbackFile = this.getExternalLogbackFile(bundle);
 		return logbackFile.exists();
 	}
 	
@@ -83,19 +92,70 @@ public class OshiBundleActivator implements BundleActivator {
 	 * Gets the logback file.
 	 * @return the logback file
 	 */
-	private File getLobackFile() {
-		return new File(this.getLobackFileLocationPath());
+	private File getExternalLogbackFile(Bundle bundle) {
+		return new File(this.getExternalLogbackFileLocationPath(bundle));
 	}
 	
 	/**
 	 * Returns the logback file location.
 	 * @return the logback file location
 	 */
-	private String getLobackFileLocationPath() {
-		Location configurationLocation = Platform.getConfigurationLocation();
-	    String location = configurationLocation.getURL().getPath() + "/" + LOGBACK_CONFIG_FILE_NAME;
+	private String getExternalLogbackFileLocationPath(Bundle bundle) {
+		IPath configIPath = Platform.getStateLocation(bundle);
+	    String location = configIPath.toFile().getAbsolutePath() + File.separator + LOGBACK_CONFIG_FILE_NAME;
 	    return location;
 	}
 	
+	/**
+	 * Returns the internal logback file URL.
+	 * @param bundle the bundle
+	 * @return the internal logback file URL
+	 */
+	private URL getInternalLogbackFileURL(Bundle bundle) {
+		return FileLocator.find(bundle, new Path(LOGBACK_CONFIG_FILE_NAME),null);
+	}
+	
+	/**
+	 * Extracts an internal file from the bundle to the specified destination.
+	 *
+	 * @param internalFileURL the internal file URL
+	 * @param destinationFile the destination file
+	 */
+	private void extractFromBundle(URL internalFileURL, File destinationFile) {
+
+		InputStream is = null;
+		FileOutputStream fos = null;
+		try {
+			if (internalFileURL!=null) {
+				// --- Write file to directory ------------
+				is = internalFileURL.openStream();
+				fos = new FileOutputStream(destinationFile);
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = is.read(buffer)) != -1) {
+					fos.write(buffer, 0, len);
+				}
+				
+			} else {
+				// --- Could not find fileURL -------------
+				System.err.println(this.getClass().getSimpleName() + ": Internal file URL was not defined.");
+			}
+			
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		} finally {
+			try {
+				if (fos!=null) fos.close();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
+			try {
+				if (is!=null) is.close();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
+		}
+		
+	}
 	
 }

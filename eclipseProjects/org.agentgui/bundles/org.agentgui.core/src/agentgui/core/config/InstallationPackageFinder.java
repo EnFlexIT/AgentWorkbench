@@ -37,7 +37,7 @@ import agentgui.core.application.Language;
 
 /**
  * The Class InstallationPackageFinder can be used to evaluate a directory in order to.
- * find installation packages for Windows, Linux or Mac. Therfore, the class provides
+ * find installation packages for Windows, Linux or Mac. Therefore, the class provides
  * several help functions.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -66,10 +66,8 @@ public class InstallationPackageFinder {
 	public InstallationPackageFinder() {
 		this.setSearchDirectory(Application.getGlobalInfo().getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, null));
 	}
-	
 	/**
 	 * Instantiates a new installation package finder that uses the specified search directory.
-	 *
 	 * @param searchDirectory the search directory
 	 */
 	public InstallationPackageFinder(String searchDirectory) {
@@ -268,6 +266,8 @@ public class InstallationPackageFinder {
 		}
 		return null;
 	}
+	
+	
 	/**
 	 * The Class InstallationPackageDescription can be used within list model.
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -329,25 +329,21 @@ public class InstallationPackageFinder {
 		
 		/**
 		 * Checks if this installation package is for windows.
-		 *
 		 * @return true, if is for windows
 		 */
 		public boolean isForWindows() {
 			return (operatingSystem.equals(OS_WINDOWS_32) || operatingSystem.equals(OS_WINDOWS_64));
 		}
-		
 		/**
-		 * Checks if this installation package is for linux.
-		 *
-		 * @return true, if is for linux
+		 * Checks if this installation package is for Linux.
+		 * @return true, if is for Linux
 		 */
 		public boolean isForLinux() {
 			return (operatingSystem.equals(OS_LINUX_32) || operatingSystem.equals(OS_LINUX_64));
 		}
-		
 		/**
-		 * Checks if this installation package is for mac.
-		 * @return true, if is for mac
+		 * Checks if this installation package is for MAC.
+		 * @return true, if is for MAC
 		 */
 		public boolean isForMac() {
 			return (operatingSystem.equals(OS_MAC_OS));
