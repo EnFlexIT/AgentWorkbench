@@ -62,7 +62,6 @@
 
    <requires>
       <import plugin="org.agentgui.lib.scimark" version="2.0.0" match="greaterOrEqual"/>
-      <import plugin="org.agentgui.lib.hypericSigar" version="1.6.4" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jade" version="4.4.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jFreeChart" version="1.0.15" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jung" version="2.0.1" match="greaterOrEqual"/>
