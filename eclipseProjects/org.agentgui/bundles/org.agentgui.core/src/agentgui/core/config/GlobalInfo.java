@@ -85,7 +85,7 @@ import jade.wrapper.AgentContainer;
 public class GlobalInfo implements LastSelectedFolderReminder {
 
 	// --- Constant values -------------------------------------------------- 
-	private static String localAppTitle = "Agent.GUI";
+	private static String localAppTitle = "Agent.Workbench";
 	
 	private final static String localPathImageIntern = "/icons/core/";
 	

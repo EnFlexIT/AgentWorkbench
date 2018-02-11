@@ -1160,7 +1160,7 @@ public class LoadService extends BaseService {
 		private PlatformLoad measureLoad() {
 			PlatformLoad pl = new PlatformLoad();
 			pl.setLoadCPU(LoadMeasureThread.getLoadCPU());
-			pl.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
+			pl.setLoadMemorySystem(LoadMeasureThread.getLoadRAM());
 			pl.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
 			pl.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
 			pl.setLoadExceeded(LoadMeasureThread.getThresholdLevelExceeded());
@@ -1646,7 +1646,7 @@ public class LoadService extends BaseService {
 			myOS.setOs_arch(SystemEnvironmentHelper.getOperatingSystemsArchitecture());
 			
 			// --- Set the Performance of machine -------------
-			LoadMeasureOSHI sys = LoadMeasureThread.getLoadCurrent();
+			LoadMeasureOSHI sys = LoadMeasureThread.getCurrentLoadMeasureOSHI();
 			PlatformPerformance myPerformance = new PlatformPerformance();
 			myPerformance.setCpu_processorName(sys.getProcessorName());
 			myPerformance.setCpu_numberOfLogicalCores(sys.getNumberOfLogicalCPU());
@@ -1667,7 +1667,7 @@ public class LoadService extends BaseService {
 			bench.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
 			
 			// --- Get the PID of this JVM --------------------
-			String jvmPID = LoadMeasureThread.getLoadCurrentJVM().getJvmPID();
+			String jvmPID = LoadMeasureThread.getCurrentLoadMeasureJVM().getJvmPID();
 			
 			// --- Set Agent.GUI version info -----------------
 			VersionInfo versionInfo = Application.getGlobalInfo().getVersionInfo();

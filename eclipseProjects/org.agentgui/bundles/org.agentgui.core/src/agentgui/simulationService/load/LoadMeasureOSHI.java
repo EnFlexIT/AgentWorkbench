@@ -66,7 +66,7 @@ public class LoadMeasureOSHI implements Cloneable {
 	/** A memory information. */
 	private long freeMemory;			// Bytes
 	/** A memory information. */
-	private long usedMemory;				// Bytes
+	private long usedMemory;			// Bytes
 	/** A memory information. */
 	private double usedMemoryPercent;	// %
 	
@@ -76,11 +76,10 @@ public class LoadMeasureOSHI implements Cloneable {
 	/** A swap memory information. */
 	private long freeMemorySwap;		// Bytes
 	/** A swap memory information. */
-	private long usedMemorySwap;			// Bytes
+	private long usedMemorySwap;		// Bytes
 	
 	/** The precision value for calculations. */
-	private int round2 = 4;
-	
+	private int round2 = 2;
 	/** The round factor for calculations. */
 	private double round2factor = Math.pow(10, round2);
 
@@ -173,9 +172,12 @@ public class LoadMeasureOSHI implements Cloneable {
     	setUsedMemorySwap(memory.getSwapUsed());
     	setFreeMemorySwap(this.getTotalMemorySwap()-this.getUsedMemorySwap());
 
+    	double memoryPercentageSwap = this.doubleRound(((double)this.getUsedMemorySwap() / (double)this.getTotalMemorySwap()*100.0));
+    	
+    	
     	if (debug) {
     		System.out.println("Total Memory=" + this.getTotalMemory() + " - Available Memory=" + this.getFreeMemory() + " - (" + memoryPercentage + " % usage)");
-    		System.out.println("Swap Memory=" + this.getTotalMemorySwap() + " - Free Swap Memory=" + this.getFreeMemorySwap() + " - (" + memoryPercentage + " % usage)");
+    		System.out.println("Swap Memory=" + this.getTotalMemorySwap() + " - Free Swap Memory=" + this.getFreeMemorySwap() + " - (" + memoryPercentageSwap + " % usage)");
     		System.out.println();
     	}
     }
@@ -184,9 +186,18 @@ public class LoadMeasureOSHI implements Cloneable {
      * Sets the system CPU load.
      */
     private void setSystemCpuLoad() {
-		CentralProcessor proc = this.getSystemInfo().getHardware().getProcessor();
-		if (proc!=null) {
-			this.setCPU_Usage(proc.getSystemCpuLoad()*100);
+		CentralProcessor processor = this.getSystemInfo().getHardware().getProcessor();
+		if (processor!=null) {
+			// --- The MX Bean way (requires Oracle VM) -------------
+			double cpuUsageMXBean = this.doubleRound(processor.getSystemCpuLoad() * 100);
+			// --- The tick counting way ----------------------------
+			double cpuUsageBetweenTicks = this.doubleRound(processor.getSystemCpuLoadBetweenTicks() * 100);
+			if (debug) {
+				System.out.println("CPU usage: " + cpuUsageMXBean + " % (MXBeans) - " + cpuUsageBetweenTicks + " % (Between Ticks)");
+			}
+			// --- Set the value of the SPU load --------------------
+			this.setCPU_Usage(cpuUsageBetweenTicks);
+			
 		}
     }
     

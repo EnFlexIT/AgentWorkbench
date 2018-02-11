@@ -498,7 +498,7 @@ public class ServerClientAgent extends Agent {
 				
 				// --- get current Load-Level -----------------------
 				myLoad.setLoadCPU(LoadMeasureThread.getLoadCPU());
-				myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadMemorySystem());
+				myLoad.setLoadMemorySystem(LoadMeasureThread.getLoadRAM());
 				myLoad.setLoadMemoryJVM(LoadMeasureThread.getLoadMemoryJVM());
 				myLoad.setLoadNoThreads(LoadMeasureThread.getLoadNoThreads());
 				myLoad.setLoadExceeded(LoadMeasureThread.getThresholdLevelExceeded());

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.agentgui.feature"
-      label="Agent.GUI"
+      label="Agent.Workbench - Core Feature"
       version="2.0.0.qualifier"
       provider-name="EnFlex.IT"
       plugin="org.agentgui.core"
@@ -92,12 +92,6 @@
 
    <plugin
          id="org.agentgui.lib.googleTranslate"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.agentgui.lib.hypericSigar"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

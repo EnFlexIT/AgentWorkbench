@@ -6,10 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -101,8 +97,7 @@ public class OshiBundleActivator implements BundleActivator {
 	 * @return the logback file location
 	 */
 	private String getExternalLogbackFileLocationPath(Bundle bundle) {
-		IPath configIPath = Platform.getStateLocation(bundle);
-	    String location = configIPath.toFile().getAbsolutePath() + File.separator + LOGBACK_CONFIG_FILE_NAME;
+	    String location = LOGBACK_CONFIG_FILE_NAME;
 	    return location;
 	}
 	
@@ -112,7 +107,7 @@ public class OshiBundleActivator implements BundleActivator {
 	 * @return the internal logback file URL
 	 */
 	private URL getInternalLogbackFileURL(Bundle bundle) {
-		return FileLocator.find(bundle, new Path(LOGBACK_CONFIG_FILE_NAME),null);
+		return bundle.getResource(LOGBACK_CONFIG_FILE_NAME);
 	}
 	
 	/**

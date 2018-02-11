@@ -98,7 +98,7 @@ public class SystemLoadSingle extends JPanel {
 		gridBagConstraints21.anchor = GridBagConstraints.NORTHWEST;
 		gridBagConstraints21.gridy = 1;
 		jLabelMemCaption = new JLabel();
-		jLabelMemCaption.setText("Mem.");
+		jLabelMemCaption.setText("RAM");
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 2;
 		gridBagConstraints11.insets = new Insets(10, 0, 0, 2);
@@ -265,10 +265,10 @@ public class SystemLoadSingle extends JPanel {
 				jLabelNoAgents.setText(noAg + " Agents");
 				
 				// --- Configure description ------------------------
-				String jvmPID = " [" + nD.getJvmPID() + "]";
+				String jvmPID = "[" + nD.getJvmPID() + "]";
 				
 				OSInfo os = nD.getOsInfo();
-				String opSys = os.getOs_name() + " " + os.getOs_version() + jvmPID;
+				String opSys = os.getOs_name() + " (" + os.getOs_version() + ") -  " + jvmPID;
 				
 				PlatformPerformance pP = nD.getPlPerformace();
 				String perform = pP.getCpu_processorName() + ": ";

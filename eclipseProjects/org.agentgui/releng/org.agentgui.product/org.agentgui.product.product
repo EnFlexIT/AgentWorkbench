@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Agent.Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.agentgui.core/icons/awb128.png"/>
@@ -152,10 +152,12 @@
    </plugins>
 
    <features>
-      <feature id="org.agentgui.feature" version="2.0.0.qualifier" installMode="root"/>
+      <feature id="org.agentgui.feature" installMode="root"/>
+      <feature id="de.enflexit.common.feature"/>
    </features>
 
    <configurations>
+      <plugin id="de.enflexit.oshi" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />

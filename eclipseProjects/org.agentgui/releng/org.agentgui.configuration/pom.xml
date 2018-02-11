@@ -163,5 +163,5 @@
 		<url>https://github.com/EnFlexIT/AgentWorkbench/issues</url>
 	</issueManagement>
 	<inceptionYear>2012</inceptionYear>
-	<description>Agent.GUI is a framework, which addresses the utilization of Multi-Agent systems (MAS) and Multi-Agent based simulations (MABS) for end users of different domains than computer science. As the suffix of the name indicates, Agent.GUI provides a predefined Graphical User Interface which can be extended by developers in order to address the needs of engineers, economists or (of course) computer specialists.</description>
+	<description>Agent.Workbench is a framework, which addresses the utilization of Multi-Agent systems (MAS) and Multi-Agent based simulations (MABS) for end users of different domains than computer science. As the suffix of the name indicates, Agent.Workbench provides a predefined Graphical User Interface which can be extended by developers in order to address the needs of engineers, economists or (of course) computer specialists.</description>
 </project>
