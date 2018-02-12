@@ -32,6 +32,7 @@ package agentgui.simulationService.load;
 import de.enflexit.oshi.SystemInfoTest;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
+import oshi.hardware.CentralProcessor.TickType;
 import oshi.hardware.GlobalMemory;
 
 /**
@@ -59,6 +60,7 @@ public class LoadMeasureOSHI implements Cloneable {
 	
 	/** +++ The CPU usage. +++*/
 	private double cpuUsage;
+	private long[] prevTicks;
 	
 	/** +++ The memory usage. +++*/
 	/** A memory information. */
@@ -67,8 +69,6 @@ public class LoadMeasureOSHI implements Cloneable {
 	private long freeMemory;			// Bytes
 	/** A memory information. */
 	private long usedMemory;			// Bytes
-	/** A memory information. */
-	private double usedMemoryPercent;	// %
 	
 	/** +++ The swap memory usage . +++ */
 	/** A swap memory information. */
@@ -91,7 +91,7 @@ public class LoadMeasureOSHI implements Cloneable {
         
         try {
         	// --- Print OSHI example --------------------- 
-        	if (debugOshiSystemInfoTest)  {
+        	if (this.debugOshiSystemInfoTest)  {
         		SystemInfoTest.main(null);
         	}
         	
@@ -165,18 +165,14 @@ public class LoadMeasureOSHI implements Cloneable {
     	setFreeMemory(memory.getAvailable());
     	setUsedMemory(this.getTotalMemory()-this.getFreeMemory());
     	
-    	double memoryPercentage = this.doubleRound(((double)this.getUsedMemory() / (double)this.getTotalMemory()*100.0)); 
-    	setUsedMemoryPercent(memoryPercentage);
-    	
     	setTotalMemorySwap(memory.getSwapTotal());
     	setUsedMemorySwap(memory.getSwapUsed());
     	setFreeMemorySwap(this.getTotalMemorySwap()-this.getUsedMemorySwap());
 
     	double memoryPercentageSwap = this.doubleRound(((double)this.getUsedMemorySwap() / (double)this.getTotalMemorySwap()*100.0));
     	
-    	
-    	if (debug) {
-    		System.out.println("Total Memory=" + this.getTotalMemory() + " - Available Memory=" + this.getFreeMemory() + " - (" + memoryPercentage + " % usage)");
+    	if (this.debug) {
+    		System.out.println("Total Memory=" + this.getTotalMemory() + " - Available Memory=" + this.getFreeMemory() + " - (" + this.getUsedMemoryPercentage() + " % usage)");
     		System.out.println("Swap Memory=" + this.getTotalMemorySwap() + " - Free Swap Memory=" + this.getFreeMemorySwap() + " - (" + memoryPercentageSwap + " % usage)");
     		System.out.println();
     	}
@@ -186,17 +182,44 @@ public class LoadMeasureOSHI implements Cloneable {
      * Sets the system CPU load.
      */
     private void setSystemCpuLoad() {
-		CentralProcessor processor = this.getSystemInfo().getHardware().getProcessor();
+		
+    	CentralProcessor processor = this.getSystemInfo().getHardware().getProcessor();
 		if (processor!=null) {
 			// --- The MX Bean way (requires Oracle VM) -------------
-			double cpuUsageMXBean = this.doubleRound(processor.getSystemCpuLoad() * 100);
-			// --- The tick counting way ----------------------------
-			double cpuUsageBetweenTicks = this.doubleRound(processor.getSystemCpuLoadBetweenTicks() * 100);
-			if (debug) {
-				System.out.println("CPU usage: " + cpuUsageMXBean + " % (MXBeans) - " + cpuUsageBetweenTicks + " % (Between Ticks)");
+			double cpuUsageMXBean = this.doubleRound(processor.getSystemCpuLoad() * 100.0);
+			
+			// --- The OSHI tick counting way -----------------------
+			// --- => NOT recommended => updates once a second ------
+			//double cpuUsageBetweenTicks = this.doubleRound(processor.getSystemCpuLoadBetweenTicks() * 100.0);
+			
+			// --- The own tick counting way ------------------------
+			// --- => see: https://github.com/Leo-G/DevopsWiki/wiki/How-Linux-CPU-Usage-Time-and-Percentage-is-calculated 
+			// ------------------------------------------------------
+			double cpuUsageBetweenTicksOwn = 0;
+			long[] ticks = processor.getSystemCpuLoadTicks();
+			if (this.prevTicks!=null && this.prevTicks.length>0) {
+				// --- Calculate the total CPU delta ---------------- 
+				long user = ticks[TickType.USER.getIndex()] - this.prevTicks[TickType.USER.getIndex()];
+				long nice = ticks[TickType.NICE.getIndex()] - this.prevTicks[TickType.NICE.getIndex()];
+				long sys = ticks[TickType.SYSTEM.getIndex()] - this.prevTicks[TickType.SYSTEM.getIndex()];
+				long idle = ticks[TickType.IDLE.getIndex()] - this.prevTicks[TickType.IDLE.getIndex()];
+				long iowait = ticks[TickType.IOWAIT.getIndex()] - this.prevTicks[TickType.IOWAIT.getIndex()];
+				long irq = ticks[TickType.IRQ.getIndex()] - this.prevTicks[TickType.IRQ.getIndex()];
+				long softirq = ticks[TickType.SOFTIRQ.getIndex()] - this.prevTicks[TickType.SOFTIRQ.getIndex()];
+				long steal = ticks[TickType.STEAL.getIndex()] - this.prevTicks[TickType.STEAL.getIndex()];
+				long totalCpuTimeDelta = user + nice + sys + idle + iowait + irq + softirq + steal;
+				
+				long totalCpuUsageDelta = totalCpuTimeDelta - (idle + iowait);
+				cpuUsageBetweenTicksOwn = this.doubleRound( ((double)totalCpuUsageDelta / (double)totalCpuTimeDelta) * 100.0);
+			}
+			this.prevTicks = ticks;
+			
+			if (this.debug) {
+				double deltaCpuUsage = this.doubleRound(cpuUsageMXBean-cpuUsageBetweenTicksOwn);
+				System.out.println("CPU usage: " + cpuUsageMXBean + " % (MXBeans) - " + cpuUsageBetweenTicksOwn + " % (Between Ticks - Own) - Delta:" + deltaCpuUsage + " %");
 			}
 			// --- Set the value of the SPU load --------------------
-			this.setCPU_Usage(cpuUsageBetweenTicks);
+			this.setCPU_Usage(cpuUsageBetweenTicksOwn);
 			
 		}
     }
@@ -325,19 +348,13 @@ public class LoadMeasureOSHI implements Cloneable {
 	}
 
 	/**
-	 * Sets the used memory percent.
-	 * @param usedMemoryPercent the usedMemoryPercent to set
+	 * Returns the used memory in %.
+	 * @return the used memory percentage
 	 */
-	public void setUsedMemoryPercent(double usedMemoryPercent) {
-		this.usedMemoryPercent = usedMemoryPercent;
+	public double getUsedMemoryPercentage() {
+		return this.doubleRound(((double)this.getUsedMemory() / (double)this.getTotalMemory()*100.0));	
 	}
-	/**
-	 * Gets the used memory percent.
-	 * @return the usedMemoryPercent
-	 */
-	public double getUsedMemoryPercent() {
-		return usedMemoryPercent;
-	}
+	
 
 	/**
 	 * Gets the total memory swap.

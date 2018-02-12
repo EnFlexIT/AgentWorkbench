@@ -188,7 +188,7 @@ public class LoadMeasureThread extends Thread {
 				double tMemory = LoadUnits.bytes2(getCurrentLoadMeasureOSHI().getTotalMemory(), debugUnit);
 				double fMemory = LoadUnits.bytes2(getCurrentLoadMeasureOSHI().getFreeMemory(), debugUnit);
 				double uMemory = LoadUnits.bytes2(getCurrentLoadMeasureOSHI().getUsedMemory(), debugUnit);
-				double uMemoryPerc = getCurrentLoadMeasureOSHI().getUsedMemoryPercent();
+				double uMemoryPerc = getCurrentLoadMeasureOSHI().getUsedMemoryPercentage();
 				
 				double tMemorySwap = LoadUnits.bytes2(getCurrentLoadMeasureOSHI().getTotalMemorySwap(), debugUnit);
 				double fMemorySwap = LoadUnits.bytes2(getCurrentLoadMeasureOSHI().getFreeMemorySwap(), debugUnit);

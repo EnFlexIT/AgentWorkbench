@@ -54,24 +54,27 @@ public class OshiBundleActivator implements BundleActivator {
 		jc.setContext(context);
 		context.reset();
 
-		// TODO overriding the log directory property programmatically
+		// +++ TODO overriding the log directory property programmatically
 		String logDirProperty = null;
 		context.putProperty("LOG_DIR", logDirProperty);
 		
 		// --- Extract internal configuration file ------------------
-		if (this.isExternalLogbackFileAvailable(bundle)==false) {
-			this.extractFromBundle(this.getInternalLogbackFileURL(bundle), this.getExternalLogbackFile(bundle));
-		}
-		
-		// --- Check if configuration file is available now ---------   
-		if (this.isExternalLogbackFileAvailable(bundle)==true) {
-			// --- Open external logback.xml ------------------------
-			jc.doConfigure(this.getExternalLogbackFile(bundle).getAbsolutePath());	
-		} else {
+		// +++
+		// +++ TODO May be reactivated if a decision for the file location has been made
+		// +++
+//		if (this.isExternalLogbackFileAvailable(bundle)==false) {
+//			this.extractFromBundle(this.getInternalLogbackFileURL(bundle), this.getExternalLogbackFile(bundle));
+//		}
+//		
+//		// --- Check if configuration file is available now ---------   
+//		if (this.isExternalLogbackFileAvailable(bundle)==true) {
+//			// --- Open external logback.xml ------------------------
+//			jc.doConfigure(this.getExternalLogbackFile(bundle).getAbsolutePath());	
+//		} else {
 			// --- This takes the logback.xml from the bundle root --
 			URL logbackConfigFileUrl = this.getInternalLogbackFileURL(bundle);
 			jc.doConfigure(logbackConfigFileUrl.openStream());
-		}
+//		}
 		
 	}
 	
@@ -79,6 +82,7 @@ public class OshiBundleActivator implements BundleActivator {
 	 * Checks if the external logback configuration file is available.
 	 * @return true, if the file is available
 	 */
+	@SuppressWarnings("unused")
 	private boolean isExternalLogbackFileAvailable(Bundle bundle) {
 		File logbackFile = this.getExternalLogbackFile(bundle);
 		return logbackFile.exists();
@@ -116,6 +120,7 @@ public class OshiBundleActivator implements BundleActivator {
 	 * @param internalFileURL the internal file URL
 	 * @param destinationFile the destination file
 	 */
+	@SuppressWarnings("unused")
 	private void extractFromBundle(URL internalFileURL, File destinationFile) {
 
 		InputStream is = null;

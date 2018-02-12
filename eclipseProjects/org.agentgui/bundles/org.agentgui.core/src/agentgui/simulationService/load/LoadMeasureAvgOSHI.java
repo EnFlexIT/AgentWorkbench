@@ -61,8 +61,6 @@ public class LoadMeasureAvgOSHI {
 	private long freeMemory;			// Bytes
 	/** A memory information. */
 	private long usedMemory;			// Bytes
-	/** A memory information. */
-	private double usedMemoryPercent;	// %
 	
 	/** A swap memory information. */
 	private long totalMemorySwap; 		// Bytes
@@ -115,7 +113,6 @@ public class LoadMeasureAvgOSHI {
 		long totalMemoryTemp = 0;
 		long freeMemoryTemp = 0;
 		long useMemoryTemp = 0;
-		double usedMemoryPercentTemp = 0;
 		
 		long totalMemorySwapTemp = 0;
 		long freeMemorySwapTemp = 0;
@@ -129,7 +126,6 @@ public class LoadMeasureAvgOSHI {
 			totalMemoryTemp += measureList.get(i).getTotalMemory();
 			freeMemoryTemp += measureList.get(i).getFreeMemory();
 			useMemoryTemp += measureList.get(i).getUsedMemory();
-			usedMemoryPercentTemp += measureList.get(i).getUsedMemoryPercent();
 
 			totalMemorySwapTemp += measureList.get(i).getTotalMemorySwap(); 
 			freeMemorySwapTemp += measureList.get(i).getFreeMemorySwap(); 
@@ -142,7 +138,6 @@ public class LoadMeasureAvgOSHI {
 		this.setTotalMemory(totalMemoryTemp/size);
 		this.setFreeMemory(freeMemoryTemp/size);
 		this.setUsedMemory(useMemoryTemp/size);
-		this.setUsedMemoryPercent(usedMemoryPercentTemp/size);
 		
 		this.setTotalMemorySwap(totalMemorySwapTemp/size);
 		this.setFreeMemorySwap(freeMemorySwapTemp/size);
@@ -211,21 +206,7 @@ public class LoadMeasureAvgOSHI {
 		return usedMemory;
 	}
 	
-	/**
-	 * Gets the used memory percent.
-	 * @return the usedMemoryPercent
-	 */
-	public double getUsedMemoryPercent() {
-		return usedMemoryPercent;
-	}
-	/**
-	 * Sets the used memory percent.
-	 * @param usedMemoryPercent the usedMemoryPercent to set
-	 */
-	public void setUsedMemoryPercent(double usedMemoryPercent) {
-		this.usedMemoryPercent = usedMemoryPercent;
-	}
-
+	
 	/**
 	 * Gets the total memory swap.
 	 * @return the totalMemorySwap
