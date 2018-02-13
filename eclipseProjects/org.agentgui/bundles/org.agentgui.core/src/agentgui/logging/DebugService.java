@@ -307,8 +307,7 @@ public class DebugService extends BaseService {
 		public Node getNode() throws ServiceException {
 			try {
 				return DebugService.this.getLocalNode();
-			}
-			catch(IMTPException imtpe) {
+			} catch(IMTPException imtpe) {
 				throw new ServiceException("Error retrieving local node", imtpe);
 			}
 		}

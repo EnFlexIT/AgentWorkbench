@@ -213,7 +213,7 @@ de;Entwickler-Ansicht;Developer view
 de;Erfolgreich;Successful;;;
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
-de;Erzeuge die Tabelle 'platforms' für den Server-Master ...;;;;
+de;Erzeuge die Tabelle 'platforms' für den Server-Master ...;Create table 'platforms' for the server.master now ...;;;
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
@@ -632,7 +632,7 @@ de;Summe;Sum;;;
 de;Sämtliche visuellen Darstellungen deaktivieren;Disable all visual representations;;;
 de;Tabelle;Table;;;
 de;Tage;Days;;;
-de;Tar.gz-Datei;;;;
+de;Tar.gz-Datei;Tar.gz-File;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
@@ -720,7 +720,7 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
-de;Zip-Datei;;;;
+de;Zip-Datei;Zip-File;;;
 de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!<br><br>Soll diese Option jetzt aktualisiert werden?;To include external bin resources, an update <br>of the project MANIFEST.MF is required!<br><br>Do you want to update this option?;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project.;;;
