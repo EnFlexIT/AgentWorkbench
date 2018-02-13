@@ -26,6 +26,15 @@
       <import plugin="org.agentgui.lib.jade" version="4.4.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.oidc.libs" version="5.17.1" match="greaterOrEqual"/>
+      <import plugin="ch.qos.logback.classic"/>
+      <import plugin="ch.qos.logback.core"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="org.eclipse.equinox.p2.core" version="2.4.101" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.engine" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.metadata" version="2.3.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.operations" version="2.4.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.repository" version="2.3.301" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi"/>
    </requires>
 
    <plugin
@@ -57,6 +66,27 @@
 
    <plugin
          id="de.enflexit.oshi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.qos.logback.classic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.qos.logback.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.slf4j.api"
          download-size="0"
          install-size="0"
          version="0.0.0"
