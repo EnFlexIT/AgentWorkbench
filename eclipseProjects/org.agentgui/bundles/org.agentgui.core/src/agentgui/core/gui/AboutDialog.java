@@ -74,26 +74,28 @@ public class AboutDialog extends JDialog implements ActionListener{
 
 	private static final long serialVersionUID = -5882844235988801425L;
 	
-	private JPanel jContentPane = null;
+	private JPanel jContentPane;
 
-	private JTabbedPane jTabbedPane = null;
-	private JPanel jPanelGeneral = null;
-	private JPanel jPanelMembers = null;
+	private JTabbedPane jTabbedPane;
+	private JPanel jPanelGeneral;
+	private JPanel jPanelMembers;
 
-	private JLabel jLabelTitle = null;
-	private JLabel jLabelIcon = null;
-	private JLabel jLabelVersion = null;
-	private JLabel jLabelCopyright1 = null;
-	private JLabel jLabelCopyright2 = null;
-	private JLabel jLabelCopyright3 = null;
-	private JHyperLink jLabelLink = null;
-	private JHyperLink jLabelLinkDAWIS = null;
-	private JLabel jLabelDummy = null;
+	private JLabel jLabelTitle;
+	private JLabel jLabelIcon;
+	private JLabel jLabelVersion;
+	private JLabel jLabelCopyright1;
+	private JLabel jLabelCopyright2;
+	private JLabel jLabelCopyright3;
 	
-	private JLabel jLabelMembership = null;
-	private String teamMember = "";  //  @jve:decl-index=0:
+	private JHyperLink jLabelLinkAWB;
+	private JHyperLink jLabelLinkAgentGui;
+	private JHyperLink jLabelLinkDAWIS;
+	private JLabel jLabelDummy;
 	
-	private JButton jButtonOk = null;
+	private JLabel jLabelMembership;
+	private String teamMember = "";
+	
+	private JButton jButtonOk;
 	
 	
 	/**
@@ -118,7 +120,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 	 */
 	private void initialize() {
 
-		teamMember = "<HTML><BODY><CENTER><br>Christian Derksen<br>" +
+		teamMember = "<HTML><BODY><CENTER>Christian Derksen<br>" +
 					"Hanno-Felix Wagner<br>" +
 					"Nils Loose<br>" +
 					"Christopher Nde<br>" +
@@ -182,14 +184,14 @@ public class AboutDialog extends JDialog implements ActionListener{
 		if (jContentPane == null) {
 			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
 			gridBagConstraints31.gridx = 0;
-			gridBagConstraints31.insets = new Insets(20, 40, 0, 0);
+			gridBagConstraints31.insets = new Insets(20, 40, 5, 5);
 			gridBagConstraints31.gridy = 0;
 			GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
 			gridBagConstraints22.fill = GridBagConstraints.BOTH;
 			gridBagConstraints22.gridy = 2;
 			gridBagConstraints22.weightx = 1.0;
 			gridBagConstraints22.weighty = 1.0;
-			gridBagConstraints22.insets = new Insets(20, 40, 0, 40);
+			gridBagConstraints22.insets = new Insets(20, 40, 5, 40);
 			gridBagConstraints22.gridwidth = 2;
 			gridBagConstraints22.gridx = 0;
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
@@ -197,16 +199,16 @@ public class AboutDialog extends JDialog implements ActionListener{
 			gridBagConstraints4.anchor = GridBagConstraints.CENTER;
 			gridBagConstraints4.insets = new Insets(20, 0, 30, 0);
 			gridBagConstraints4.gridwidth = 2;
-			gridBagConstraints4.gridy = 11;
+			gridBagConstraints4.gridy = 3;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 1;
 			gridBagConstraints2.anchor = GridBagConstraints.WEST;
-			gridBagConstraints2.insets = new Insets(20, 0, 0, 0);
+			gridBagConstraints2.insets = new Insets(20, 0, 5, 0);
 			gridBagConstraints2.gridy = 0;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.gridx = 1;
 			gridBagConstraints1.anchor = GridBagConstraints.WEST;
-			gridBagConstraints1.insets = new Insets(0, 0, 0, 0);
+			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
 			gridBagConstraints1.gridy = 1;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 0;
@@ -303,41 +305,54 @@ public class AboutDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJPanelGeneral() {
 		if (jPanelGeneral == null) {
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.gridx = 0;
-			gridBagConstraints5.fill = GridBagConstraints.BOTH;
-			gridBagConstraints5.weightx = 1.0;
-			gridBagConstraints5.weighty = 1.0;
-			gridBagConstraints5.insets = new Insets(10, 10, 10, 10);
-			gridBagConstraints5.gridy = 5;
-			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.gridx = 0;
-			gridBagConstraints10.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints10.insets = new Insets(5, 10, 0, 0);
-			gridBagConstraints10.gridy = 4;
-			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints9.gridx = 0;
-			gridBagConstraints9.gridy = 3;
-			gridBagConstraints9.insets = new Insets(15, 10, 0, 0);
-			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints8.gridx = 0;
-			gridBagConstraints8.gridy = 2;
-			gridBagConstraints8.insets = new Insets(5, 10, 0, 0);
-			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints7.gridx = 0;
-			gridBagConstraints7.gridy = 1;
-			gridBagConstraints7.insets = new Insets(5, 10, 0, 0);
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints3.gridx = -1;
-			gridBagConstraints3.gridy = -1;
-			gridBagConstraints3.fill = GridBagConstraints.NONE;
-			gridBagConstraints3.weightx = 0.0;
-			gridBagConstraints3.insets = new Insets(30, 10, 0, 0);
 			
+			GridBagConstraints gridBagConstraintsDummy = new GridBagConstraints();
+			gridBagConstraintsDummy.gridx = 0;
+			gridBagConstraintsDummy.fill = GridBagConstraints.BOTH;
+			gridBagConstraintsDummy.weightx = 1.0;
+			gridBagConstraintsDummy.weighty = 1.0;
+			gridBagConstraintsDummy.insets = new Insets(10, 10, 10, 10);
+			gridBagConstraintsDummy.gridy = 6;
+			
+			GridBagConstraints gridBagConstraintsCopyRight1 = new GridBagConstraints();
+			gridBagConstraintsCopyRight1.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsCopyRight1.gridx = -1;
+			gridBagConstraintsCopyRight1.gridy = -1;
+			gridBagConstraintsCopyRight1.fill = GridBagConstraints.NONE;
+			gridBagConstraintsCopyRight1.weightx = 0.0;
+			gridBagConstraintsCopyRight1.insets = new Insets(30, 10, 0, 0);
+
+			GridBagConstraints gridBagConstraintsCopsRight2 = new GridBagConstraints();
+			gridBagConstraintsCopsRight2.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsCopsRight2.gridx = 0;
+			gridBagConstraintsCopsRight2.gridy = 1;
+			gridBagConstraintsCopsRight2.insets = new Insets(5, 10, 0, 0);
+
+			GridBagConstraints gridBagConstraintsCopyRight3 = new GridBagConstraints();
+			gridBagConstraintsCopyRight3.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsCopyRight3.gridx = 0;
+			gridBagConstraintsCopyRight3.gridy = 2;
+			gridBagConstraintsCopyRight3.insets = new Insets(5, 10, 0, 0);
+
+			GridBagConstraints gridBagConstraintsLinkAWB = new GridBagConstraints();
+			gridBagConstraintsLinkAWB.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsLinkAWB.gridx = 0;
+			gridBagConstraintsLinkAWB.gridy = 3;
+			gridBagConstraintsLinkAWB.insets = new Insets(15, 10, 0, 0);
+			
+			GridBagConstraints gridBagConstraintsLinkAgentGui = new GridBagConstraints();
+			gridBagConstraintsLinkAgentGui.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsLinkAgentGui.gridx = 0;
+			gridBagConstraintsLinkAgentGui.gridy = 4;
+			gridBagConstraintsLinkAgentGui.insets = new Insets(5, 10, 0, 0);
+
+			GridBagConstraints gridBagConstraintsLinkDAWIS = new GridBagConstraints();
+			gridBagConstraintsLinkDAWIS.gridx = 0;
+			gridBagConstraintsLinkDAWIS.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsLinkDAWIS.insets = new Insets(5, 10, 0, 0);
+			gridBagConstraintsLinkDAWIS.gridy = 5;
+
+						
 			jLabelCopyright1 = new JLabel();
 			int year = Calendar.getInstance().get(Calendar.YEAR);
 			jLabelCopyright1.setText("Copyright \u00A9 2009-" + year + " by Christian Derksen");
@@ -350,9 +365,12 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jLabelCopyright3.setToolTipText("");
 			jLabelCopyright3.setFont(new Font("Dialog", Font.PLAIN, 12));
 			
-			jLabelLink = new JHyperLink();
-			jLabelLink.setText("http://www.agentgui.org");
-			jLabelLink.addActionListener(this);
+			jLabelLinkAWB = new JHyperLink();
+			jLabelLinkAWB.setText("https://github.com/EnFlexIT/AgentWorkbench");
+			jLabelLinkAWB.addActionListener(this);
+			jLabelLinkAgentGui = new JHyperLink();
+			jLabelLinkAgentGui.setText("http://www.agentgui.org");
+			jLabelLinkAgentGui.addActionListener(this);
 			jLabelLinkDAWIS = new JHyperLink();
 			jLabelLinkDAWIS.setText("http://dawis.wiwi.uni-due.de");
 			jLabelLinkDAWIS.addActionListener(this);
@@ -363,12 +381,13 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jPanelGeneral = new JPanel();
 			jPanelGeneral.setLayout(new GridBagLayout());
 			jPanelGeneral.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jPanelGeneral.add(jLabelCopyright1, gridBagConstraints3);
-			jPanelGeneral.add(jLabelCopyright2, gridBagConstraints7);
-			jPanelGeneral.add(jLabelCopyright3, gridBagConstraints8);
-			jPanelGeneral.add(jLabelLink, gridBagConstraints9);
-			jPanelGeneral.add(jLabelLinkDAWIS, gridBagConstraints10);
-			jPanelGeneral.add(jLabelDummy, gridBagConstraints5);
+			jPanelGeneral.add(jLabelCopyright1, gridBagConstraintsCopyRight1);
+			jPanelGeneral.add(jLabelCopyright2, gridBagConstraintsCopsRight2);
+			jPanelGeneral.add(jLabelCopyright3, gridBagConstraintsCopyRight3);
+			jPanelGeneral.add(jLabelLinkAWB, gridBagConstraintsLinkAWB);
+			jPanelGeneral.add(jLabelLinkAgentGui, gridBagConstraintsLinkAgentGui);
+			jPanelGeneral.add(jLabelLinkDAWIS, gridBagConstraintsLinkDAWIS);
+			jPanelGeneral.add(jLabelDummy, gridBagConstraintsDummy);
 		}
 		return jPanelGeneral;
 	}
@@ -390,9 +409,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 
 			jLabelMembership = new JLabel();
 			jLabelMembership.setPreferredSize(new Dimension(260, 100));
-			jLabelMembership.setVerticalAlignment(SwingConstants.TOP);
 			jLabelMembership.setHorizontalAlignment(SwingConstants.CENTER);
-			jLabelMembership.setFont(new Font("Dialog", Font.PLAIN, 14));
+			jLabelMembership.setFont(new Font("Dialog", Font.PLAIN, 13));
 			jLabelMembership.setText(teamMember);
 			
 			jPanelMembers = new JPanel();
@@ -410,32 +428,35 @@ public class AboutDialog extends JDialog implements ActionListener{
 	public void actionPerformed(ActionEvent ae) {
 		
 		String actCMD = ae.getActionCommand();
+		if (ae.getSource()==jLabelLinkAWB || ae.getSource()==jLabelLinkAgentGui || ae.getSource()==jLabelLinkDAWIS) {
+			this.followHyperlink(actCMD);
 		
-		// --- Hyperlink abfangen -----------------------------------
-		if (ae.getSource() == jLabelLink ) {
-			try {
-				Desktop.getDesktop().browse(new URI(actCMD));
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		
-		} else if (ae.getSource() == jLabelLinkDAWIS) {
-			try {
-				Desktop.getDesktop().browse(new URI(actCMD));
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		
-		// --- Andere Aktionen abfangen -----------------------------
-		if (actCMD.equalsIgnoreCase("ok")==true) {
+		} else if (ae.getSource()==this.getJButtonOk()) {
 			this.setVisible(false);
 		}
 	}
 	
-}  //  @jve:decl-index=0:visual-constraint="36,11"
+	/**
+	 * Follows the specified hyperlink.
+	 * @param uriString the URI string
+	 */
+	private void followHyperlink(String uriString) {
+		try {
+			this.followHyperlink(new URI(uriString));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Follows the specified hyperlink.
+	 * @param uri the URI
+	 */
+	private void followHyperlink(URI uri) {
+		try {
+			Desktop.getDesktop().browse(uri);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+}
