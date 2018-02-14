@@ -84,7 +84,7 @@ import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.setup.SimulationSetups;
-import agentgui.core.project.transfer.ProjectExportController;
+import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.update.VersionInformation;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
@@ -851,10 +851,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		pExSet.setIncludeInstallationPackage(false);
 
 		// --- Do the export ----------------------------------------
-		ProjectExportController pExCon = new ProjectExportController(this);
+		DefaultProjectExportController pExCon = new DefaultProjectExportController();
 		if (messageSuccess!=null) pExCon.setMessageSuccess(messageSuccess);	
 		if (messageFailure!=null) pExCon.setMessageFailure(messageFailure);
-		pExCon.exportProject(pExSet, false, false);
+		pExCon.exportProject(this, pExSet, false, false);
 
 		// --- Return the root path for the file manager ------------
 		String destinationDirPath = null;

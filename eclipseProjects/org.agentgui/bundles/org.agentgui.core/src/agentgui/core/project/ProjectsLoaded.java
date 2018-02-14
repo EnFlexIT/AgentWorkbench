@@ -55,6 +55,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.project.transfer.ProjectExportController;
+import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -525,106 +526,33 @@ public class ProjectsLoaded {
 //		this.projectExport(null);
 		
 		// --- The new export function ------
-		// TODO An export should also be possible, if no project is focused (see method below)  
-		ProjectExportController pe = new ProjectExportController(Application.getProjectFocused());
-		pe.exportProject();
+		Project project = Application.getProjectFocused();
+		if (project == null) {
+			project = this.selectProjectForExport();
+		}
+		
+		ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
+		projectExportController.exportProject(project);
+		
 	}
 	
 	/**
-	 * Exports a project to a Agent.GUI project file (*.agui)
-	 *
-	 * @param projectFolder the project folder
-	 * @return true, if successful
+	 * Select and load the project to be exported
+	 * @return the project
 	 */
-	public boolean projectExport(String projectFolder) {
-		
-		String optionMsg = null;
-		String optionTitle = null;
-		
-		String actionTitel = Language.translate("Projekt zum Export auswählen");
-		
-		if (projectFolder==null) {
-			// --- If a project is open, ask to export this project -----
-			if (Application.getProjectFocused()!=null) {
-				optionTitle = "" + Application.getProjectFocused().getProjectName() + ": " + Language.translate("Projekt exportieren?");
-				optionMsg = Language.translate("Möchten Sie das aktuelle Projekt exportieren?");
-				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
-				if (answer==JOptionPane.YES_OPTION) {
-					projectFolder = Application.getProjectFocused().getProjectFolder();
-				}
-			}
-			
-			// --- If no projectFolder is specified yet ----------------- 
-			if (projectFolder==null) {
-				// --- Select the project to export ---------------------
-				AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.ExportProject);
-				newProDia.setVisible(true);
-				// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
-				if (newProDia.isCanceled()==true) {
-					return false;
-				}
-				projectFolder = newProDia.getProjectDirectory(); 
-				newProDia.close();
-				newProDia = null;
-			}
-		}
+	private Project selectProjectForExport() {
+		String actionTitle = Language.translate("Projekt zum Export auswählen");
+		AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitle, ProjectAction.ExportProject);
+		newProDia.setVisible(true);
+		if (newProDia.isCanceled() == true) {
+			return null;
+		} else {
+			String projectSubFolder = newProDia.getProjectDirectory();
+			newProDia.close();
+			newProDia = null;
 
-		// --- Select a *.agui file ---------------------------------
-		String fileEnd = Application.getGlobalInfo().getFileEndProjectZip();
-		String proposedFileName = Application.getGlobalInfo().getLastSelectedFolderAsString() + projectFolder + "." + fileEnd ;
-		File proposedFile = new File(proposedFileName );
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileEnd + ")", fileEnd);
-		
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileFilter(filter);
-		chooser.setSelectedFile(proposedFile);
-		chooser.setCurrentDirectory(proposedFile);
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setMultiSelectionEnabled(false);
-		chooser.setAcceptAllFileFilterUsed(false);
-		
-		int answerChooser = chooser.showDialog(Application.getMainWindow(), Language.translate("Projekt exportieren"));
-		if (answerChooser==JFileChooser.CANCEL_OPTION) {
-			return false;
+			return this.add(projectSubFolder);
 		}
-		Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());		
-		
-		File projectFile = chooser.getSelectedFile();
-		if (projectFile==null) {
-			return false;
-		}
-		
-		// --- Make sure that the file end is the correct one ---
-		if (projectFile.getName().endsWith("." + fileEnd)==false) {
-			projectFile = new File(projectFile.getAbsolutePath() + "." + fileEnd);
-		}
-
-		// --- Some Error-Handlings -----------------------------
-		// --- File already there? ----------
-		if (projectFile.exists()==true) {
-			optionTitle = projectFile.getName() + ": " + Language.translate("Datei überschreiben?");
-			optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
-			int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
-			if (answer==JOptionPane.YES_OPTION) {
-				projectFile.delete();
-			} else {
-				return false;
-			}
-		}
-		
-		// --- Export project file as a new project -------------
-		String srcFolder = Application.getGlobalInfo().getPathProjects() + projectFolder;
-		String zipFolder = projectFile.getAbsolutePath();
-		
-		Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
-		zipper.setExcludePattern(".svn");
-		zipper.setZipFolder(zipFolder);
-		zipper.setZipSourceFolder(srcFolder);
-		zipper.doZipFolder();
-		zipper = null;
-		
-		return true;
-		
 	}
 	
 	/**
@@ -654,6 +582,24 @@ public class ProjectsLoaded {
 		}
 		newProDia.close();
 		newProDia = null;	
+
+		// ----------------------------------------------------------
+		// --- Export before delete ? -------------------------------
+		if (exportBeforeDelete==true) {
+			
+			//TODO Check if the selected project is already loaded. If not, load it
+			//TODO Then trigger the export, wait until it is done and delete the project
+			
+//			Project project = this.add(projectFolder);
+//			
+//			ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
+//			projectExportController.exportProject(project);
+//			
+//			if (projectExportController.isExportSuccessful()==false){
+//				Application.setStatusBar(Language.translate("Fertig"));
+//				return;
+//			}
+		}
 	
 		// ----------------------------------------------------------
 		// --- If a project is open, ask to close this project ------
@@ -683,14 +629,6 @@ public class ProjectsLoaded {
 			}
 		}
 		
-		// ----------------------------------------------------------
-		// --- Export before delete ? -------------------------------
-		if (exportBeforeDelete==true) {
-			if (this.projectExport(projectFolder)==false){
-				Application.setStatusBar(Language.translate("Fertig"));
-				return;
-			}
-		}
 		
 		// ----------------------------------------------------------
 		// --- Delete the folder of the project ---------------------
