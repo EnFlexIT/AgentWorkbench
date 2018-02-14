@@ -37,10 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -62,6 +59,7 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.gui.ProjectExportDialog;
 import de.enflexit.common.transfer.ArchiveFileHandler;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
+import de.enflexit.common.transfer.RecursiveFolderDeleter;
 
 /**
  * This class is responsible for exporting projects from AgentWorkbench.
@@ -288,6 +286,7 @@ public class ProjectExportController {
 		// --- Specify folders that should not be copied ------
 		List<Path> skipList = new ArrayList<>();
 		skipList.add(sourcePath.resolve("~tmp"));
+		skipList.add(sourcePath.resolve("ressources"));
 		if (this.exportSettings.isIncludeAllSetups() == false) {
 			// --- If only selected setups should be exported, copying setup data is done in
 			// a separate step -----------
@@ -417,35 +416,6 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Removes all setups that are not selected for export from the setup list
-	 */
-	private void removeUnexportedSetupsFromList() {
-
-		// --- Get the list of setups from the project file --------------
-		Project exportedProject = Project.load(this.tempFolderPath.toFile(), false);
-		Set<String> setupNames = new HashSet<>(exportedProject.getSimulationSetups().keySet());
-
-		// --- Remove all setups that are not exported --------------------
-		for (String setupName : setupNames) {
-			if (exportSettings.getSimSetups().contains(setupName) == false) {
-				exportedProject.getSimulationSetups().remove(setupName);
-			}
-		}
-
-		// --- If the currently selected setup is not exported, set the first exported setup as selected instead -----
-		if (this.exportSettings.getSimSetups().contains(exportedProject.getSimulationSetupCurrent()) == false) {
-			if (exportedProject.getSimulationSetups().size() > 0) {
-				exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
-			} else {
-				exportedProject.setSimulationSetupCurrent(null);
-			}
-		}
-
-		// --- Save the changes ------------
-		exportedProject.save(this.tempFolderPath.toFile(), false);
-	}
-
-	/**
 	 * Gets the temporary export folder path
 	 * @return the temporary export folder path
 	 */
@@ -453,8 +423,7 @@ public class ProjectExportController {
 
 		if (tempFolderPath == null) {
 
-			// --- Determine the path for the temporary export folder, based on the selected
-			// target file --------------
+			// --- Determine the path for the temporary export folder, based on the selected target file --------------
 			File targetFile = this.exportSettings.getTargetFile();
 			Path containingFolder = targetFile.getParentFile().toPath();
 			tempFolderPath = containingFolder.resolve(project.getProjectFolder());
@@ -472,7 +441,6 @@ public class ProjectExportController {
 		File installationPackageFile = this.exportSettings.getInstallationPackage().getPacakgeFile();
 		ArchiveFileHandler newZipper = new ArchiveFileHandler();
 		HashMap<File, String> foldersToAdd = this.buildFoldersToAddHasmap();
-		//			newZipper.appendFolderToArchive(tempFolderPath.toFile(), installationPackageFile, exportSettings.getTargetFile(), "agentgui/projects");
 		newZipper.appendFoldersToArchive(installationPackageFile, this.exportSettings.getTargetFile(), foldersToAdd, true);
 		return true;
 	}
@@ -524,18 +492,38 @@ public class ProjectExportController {
 			}
 		}
 	}
+	
+	/**
+	 * Sets the text for the success message
+	 * @param newMessageSuccess the new text for the success message
+	 */
 	public void setMessageSuccess(String newMessageSuccess) {
 		this.messageSuccess = newMessageSuccess;
 	}
+	
+	/**
+	 * Gets the text for the success message
+	 * @return the text for the success message
+	 */
 	public String getMessageSuccess() {
 		if (messageSuccess==null) {
 			messageSuccess = "Project '" + project.getProjectName() + "' export successful!";
 		}
 		return messageSuccess;
 	}
+	
+	/**
+	 * Sets the text for the failure message.
+	 * @param newMessageFailure the new text for the failure message
+	 */
 	public void setMessageFailure(String newMessageFailure) {
 		this.messageFailure = newMessageFailure;
 	}
+	
+	/**
+	 * Gets the text for the failure message.
+	 * @return the text for the failure message
+	 */
 	public String getMessageFailure() {
 		if (messageFailure==null) {
 			messageFailure = "Project '" + project.getProjectName() + "' export failed!";
@@ -562,10 +550,6 @@ public class ProjectExportController {
 				if (ProjectExportController.this.exportSettings.getSimSetups().size() > 0) {
 					success = ProjectExportController.this.copyRequiredSimulationSetupFiles();
 				}
-				// --- Remove the non-exported setups from the list -----------
-				if (success == true) {
-					ProjectExportController.this.removeUnexportedSetupsFromList();
-				}
 			}
 			this.updateProgressMonitor(30);
 
@@ -579,6 +563,12 @@ public class ProjectExportController {
 				// --- Zip the temporary folder --------------
 				ArchiveFileHandler newZipper = new ArchiveFileHandler();
 				success = newZipper.compressFolder(tempFolderPath.toFile(), ProjectExportController.this.exportSettings.getTargetFile());
+				try {
+					new RecursiveFolderDeleter().deleteFolder(tempFolderPath);
+				} catch (IOException e) {
+					System.err.println("[ProjectExportController]: Error deleting temporary export folder " + tempFolderPath.toFile().getAbsolutePath());
+					e.printStackTrace();
+				}
 			}
 			this.updateProgressMonitor(80);
 

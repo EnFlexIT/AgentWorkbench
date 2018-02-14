@@ -381,10 +381,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		// --- Load additional jar-resources --------------
 		if (loadResources==true) {
 			project.resourcesLoad();
+			// --- Load user data model -----------------------
+			loadProjectUserDataModel(projectPath, project);
 		}
 		
-		// --- Load user data model -----------------------
-		loadProjectUserDataModel(projectPath, project);
 		
 		return project;
 	}
