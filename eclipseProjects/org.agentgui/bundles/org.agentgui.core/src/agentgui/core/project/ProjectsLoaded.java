@@ -54,8 +54,10 @@ import org.agentgui.gui.UiBridge;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
+import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
+import agentgui.core.project.transfer.ProjectExportSettings;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -519,20 +521,24 @@ public class ProjectsLoaded {
 	}
 
 	/**
-	 * Exports a project to a Agent.GUI project file (*.agui)
+	 * Exports a project to a file
 	 */
 	public void projectExport() {
-		// --- The old export function ------
-//		this.projectExport(null);
-		
-		// --- The new export function ------
+
+		// --- If no project is loaded, select a project for export -----------
 		Project project = Application.getProjectFocused();
 		if (project == null) {
 			project = this.selectProjectForExport();
 		}
 		
+		// --- Get the export settings ----------------
 		ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
-		projectExportController.exportProject(project);
+		ProjectExportSettings exportSettings = projectExportController.getProjectExportSettings(project);
+		
+		// --- Do the actual export, if not canceled --------------------------
+		if(exportSettings != null) {
+			projectExportController.exportProject(project, exportSettings);
+		}
 		
 	}
 	
@@ -583,23 +589,6 @@ public class ProjectsLoaded {
 		newProDia.close();
 		newProDia = null;	
 
-		// ----------------------------------------------------------
-		// --- Export before delete ? -------------------------------
-		if (exportBeforeDelete==true) {
-			
-			//TODO Check if the selected project is already loaded. If not, load it
-			//TODO Then trigger the export, wait until it is done and delete the project
-			
-			Project project = Project.load(projectFolder, false);
-			
-			ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
-			projectExportController.exportProject(project);
-			
-//			if (projectExportController.isExportSuccessful()==false){
-//				Application.setStatusBar(Language.translate("Fertig"));
-//				return;
-//			}
-		}
 	
 		// ----------------------------------------------------------
 		// --- If a project is open, ask to close this project ------
@@ -629,15 +618,30 @@ public class ProjectsLoaded {
 			}
 		}
 		
-		
 		// ----------------------------------------------------------
-		// --- Delete the folder of the project ---------------------
-		this.projectDelete(projectFolder);
-		Application.setStatusBar(Language.translate("Fertig"));
+		// --- Export before delete ? -------------------------------
+		if (exportBeforeDelete==true) {
+			
+			Project project = Project.load(projectFolder, false);
+			DefaultProjectExportController exportController = (DefaultProjectExportController) ProjectExportControllerProvider.getProjectExportController();
+			ProjectExportSettings exportSettings = exportController.getProjectExportSettings(project);
+			
+			Thread projectDeleteThread = new ProjectDeleteThread(project, exportController, exportSettings);
+			projectDeleteThread.start();
+		
+		} else {
+
+			// ----------------------------------------------------------
+			// --- Delete the folder of the project ---------------------
+			this.projectDelete(projectFolder);
+			Application.setStatusBar(Language.translate("Fertig"));
+			
+		}
 
 	}
+	
 	/**
-	 * Deletes the specified project sub directory (the last element in the path in enough).
+	 * Deletes the specified project sub directory (the last element in the path is enough).
 	 * @param projectSubDirectory the project sub directory
 	 */
 	public void projectDelete(String projectSubDirectory) {
@@ -685,6 +689,29 @@ public class ProjectsLoaded {
 			}
 		} // end for
 		return filesFound;
+	}
+	
+	private class ProjectDeleteThread extends Thread{
+		private Project project;
+		private DefaultProjectExportController exportController;
+		private ProjectExportSettings exportSettings;
+		
+		public ProjectDeleteThread(Project project, DefaultProjectExportController exportController, ProjectExportSettings exportSettings) {
+			this.project = project;
+			this.exportController = exportController;
+			this.exportSettings = exportSettings;
+		}
+
+		@Override
+		public void run() {
+			if (exportSettings != null) {
+				exportController.exportProject(project, exportSettings, true, false);
+				if(exportController.isExportSuccessful() == true) {
+					ProjectsLoaded.this.projectDelete(project.getProjectFolder());
+				}
+			}
+		}
+		
 	}
 	
 }

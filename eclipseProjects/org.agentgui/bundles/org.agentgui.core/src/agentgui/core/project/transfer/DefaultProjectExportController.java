@@ -73,9 +73,11 @@ public class DefaultProjectExportController implements ProjectExportController{
 	private Project project;
 	private ProjectExportSettings exportSettings;
 	
-	private boolean isShowUserDialogs = true;
+	private boolean showUserDialogs = true;
 	private String messageSuccess;
 	private String messageFailure;
+	
+	private boolean exportSuccessful;
 	
 	private Path tempFolderPath;
 
@@ -85,22 +87,28 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @see agentgui.core.project.transfer.ProjectExportController#exportProject(agentgui.core.project.Project)
 	 */
 	public void exportProject(Project project) {
+		this.exportProject(project, exportSettings, true, true);
+	}
+	
+	
+	@Override
+	public ProjectExportSettings getProjectExportSettings(Project project) {
 		
 		// --- Show a dialog to configure the export ----------------
 		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
-
+		
 		if (projectExportDialog.isCanceled() == false) {
-
+			
 			// --- Get the export settings from the dialog ----------
 			this.exportSettings = projectExportDialog.getExportSettings();
-
+			
 			// --- Select the export destination --------------------
 			JFileChooser chooser = this.getJFileChooser(project);
 			if (chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION) {
-
+				
 				File targetFile = chooser.getSelectedFile();
 				Application.getGlobalInfo().setLastSelectedFolder(targetFile.getParentFile());
-
+				
 				// --- Check if the file already exists -------------
 				if (targetFile.exists() == true) {
 					String optionTitle = targetFile.getName() + ": " + Language.translate("Datei überschreiben?");
@@ -109,22 +117,21 @@ public class DefaultProjectExportController implements ProjectExportController{
 					if (answer == JOptionPane.YES_OPTION) {
 						targetFile.delete();
 					} else {
-						return;
+						return null;
 					}
 				}
-
+				
 				// --- Set the target file --------------------------
 				this.exportSettings.setTargetFile(targetFile);
-				// --- Do the export --------------------------------
-				this.exportProject(project, exportSettings);
 			}
 		}
-		
+		return this.exportSettings;
 	}
 
 	/**
-	 * Exports the current project using the provided {@link ProjectExportSettings} and showing the user dialogs, if
-	 * necessary.
+	 * Exports the current project using the provided {@link ProjectExportSettings},
+	 * and showing the user dialogs if necessary.
+	 * @param the project to be exported
 	 * @param exportSettings The {@link ProjectExportSettings}
 	 */
 	public void exportProject(Project project, ProjectExportSettings exportSettings) {
@@ -133,18 +140,18 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 	/**
 	 * Exports the current project using the provided {@link ProjectExportSettings}.
+	 * @param the project to be exported
 	 * @param exportSettings The {@link ProjectExportSettings}
-	 * @param isShowUserDialogs the is show user dialogs
-	 * @param useConcurrentThread set true, if you want to export the project by a concurrent thread
+	 * @param showUserDialogs specifies if user dialogs are shown
+	 * @param useConcurrentThread specifies if the project should be exported in a concurrent thread
 	 */
-	public void exportProject(Project project, ProjectExportSettings exportSettings, boolean isShowUserDialogs, boolean useConcurrentThread) {
-		
-		//TODO debug output, remove later
+	public void exportProject(Project project, ProjectExportSettings exportSettings, boolean showUserDialogs, boolean useConcurrentThread) {
+
 		System.out.println("Project export: Using class " + this.getClass().getName());
 		
 		this.project = project;
 		this.exportSettings = exportSettings;
-		this.isShowUserDialogs = isShowUserDialogs;
+		this.showUserDialogs = showUserDialogs;
 		if (useConcurrentThread == true) {
 			ProjectExportThread exportThread = new ProjectExportThread();
 			exportThread.start();
@@ -258,12 +265,12 @@ public class DefaultProjectExportController implements ProjectExportController{
 	protected List<Path> getFolderCopySkipList(Path sourcePath) {
 		// --- Specify folders that should not be copied ------
 		List<Path> skipList = new ArrayList<>();
-		skipList.add(sourcePath.resolve(this.project.getDefaultTempFolder()));
+		skipList.add(sourcePath.resolve("~tmp"));
 		if (this.exportSettings.isIncludeAllSetups() == false) {
 			// --- If only selected setups should be exported, copying setup data is done in
 			// a separate step -----------
-			skipList.add(sourcePath.resolve(this.getProject().getSubFolder4Setups(false)));
-			skipList.add(sourcePath.resolve(this.getProject().getSubFolderEnvSetups()));
+			skipList.add(sourcePath.resolve("setups"));
+			skipList.add(sourcePath.resolve("setupsEnv"));
 		}
 		return skipList;
 	}
@@ -451,14 +458,14 @@ public class DefaultProjectExportController implements ProjectExportController{
 		// --- Show a feedback message to the user --------------------
 		if (success == true) {
 			if (this.getMessageSuccess().isEmpty()==false) System.out.println(this.getMessageSuccess());
-			if (this.isShowUserDialogs == true) {
+			if (this.showUserDialogs == true) {
 				String messageTitle = Language.translate("Export erfolgreich");
 				String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
 				JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else {
 			if (this.getMessageFailure().isEmpty()==false) System.err.println(this.getMessageFailure());
-			if (this.isShowUserDialogs == true) {
+			if (this.showUserDialogs == true) {
 				String message = Language.translate("Export fehlgeschlagen");
 				JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
 			}
@@ -550,6 +557,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 			this.afterZip(success);
 		}
 		
+		this.exportSuccessful = success;
 	}
 
 	/**
@@ -557,7 +565,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return the progress monitor
 	 */
 	private AwbProgressMonitor getProgressMonitor() {
-		if (this.progressMonitor == null && this.isShowUserDialogs == true) {
+		if (this.progressMonitor == null && this.showUserDialogs == true) {
 			String title = Language.translate("Projekt-Export");
 			String header = Language.translate("Exportiere Projekt") + " " + project.getProjectName();
 			String progress = Language.translate("Exportiere") + "...";
@@ -631,6 +639,15 @@ public class DefaultProjectExportController implements ProjectExportController{
 		return tempFolderPath;
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.project.transfer.ProjectExportController#isExportSuccessful()
+	 */
+	@Override
+	public boolean isExportSuccessful() {
+		return exportSuccessful;
+	}
+
+
 	/**
 	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file base name (without
 	 * extension) is not contained in a negative list.
@@ -675,4 +692,5 @@ public class DefaultProjectExportController implements ProjectExportController{
 		}
 	}
 
+	
 }

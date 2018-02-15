@@ -41,9 +41,21 @@ import agentgui.core.project.Project;
 public interface ProjectExportController {
 	
 	/**
-	 * Export project.
-	 * @param project the project to export
+	 * Gets the project export settings.
+	 * @return the project export settings
 	 */
-	public void exportProject(Project project);
+	public ProjectExportSettings getProjectExportSettings(Project project);
 	
+	/**
+	 * Export project.
+	 * @param project the project
+	 * @param projectExportSettings the project export settings
+	 */
+	public void exportProject(Project project, ProjectExportSettings projectExportSettings);
+	
+	/**
+	 * Checks if the export was successfully finished
+	 * @return true if successfully finished
+	 */
+	public boolean isExportSuccessful();
 }
