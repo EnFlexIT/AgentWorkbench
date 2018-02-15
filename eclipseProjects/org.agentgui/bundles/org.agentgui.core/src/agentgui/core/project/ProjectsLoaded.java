@@ -590,11 +590,11 @@ public class ProjectsLoaded {
 			//TODO Check if the selected project is already loaded. If not, load it
 			//TODO Then trigger the export, wait until it is done and delete the project
 			
-//			Project project = this.add(projectFolder);
-//			
-//			ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
-//			projectExportController.exportProject(project);
-//			
+			Project project = Project.load(projectFolder, false);
+			
+			ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
+			projectExportController.exportProject(project);
+			
 //			if (projectExportController.isExportSuccessful()==false){
 //				Application.setStatusBar(Language.translate("Fertig"));
 //				return;

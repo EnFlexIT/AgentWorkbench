@@ -46,9 +46,4 @@ public interface ProjectExportController {
 	 */
 	public void exportProject(Project project);
 	
-	/**
-	 * Checks if the export was successfully finished
-	 * @return true if successfully finished
-	 */
-	public boolean isExportSuccessful();
 }

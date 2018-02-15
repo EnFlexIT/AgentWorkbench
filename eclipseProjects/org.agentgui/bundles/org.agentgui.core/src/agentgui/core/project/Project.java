@@ -145,6 +145,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient private String defaultSubFolder4Setups   = "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
 	@XmlTransient private final String[] defaultSubFolders = {defaultSubFolder4Setups, defaultSubFolderEnvSetups};
+	@XmlTransient private String defaultTempFolder = "~tmp";
 
 	/** The OSGI-bundle of the current project */
 	@XmlTransient private ProjectBundleLoader projectBundleLoader;
@@ -1259,13 +1260,32 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		}
 		return projectFolderFullPath;
 	}
+	
+
+	
+
+	/**
+	 * Gets the default temp folder.
+	 * @return the default temp folder
+	 */
+	public String getDefaultTempFolder() {
+		return defaultTempFolder;
+	}
+
+	/**
+	 * Sets the default temp folder.
+	 * @param defaultTempFolder the new default temp folder
+	 */
+	public void setDefaultTempFolder(String defaultTempFolder) {
+		this.defaultTempFolder = defaultTempFolder;
+	}
 
 	/**
 	 * Gets the projects temporary folder.
 	 * @return the projects temporary folder
 	 */
 	public String getProjectTempFolderFullPath() {
-		String tmpFolder = this.getProjectFolderFullPath() + "~tmp" + File.separator;
+		String tmpFolder = this.getProjectFolderFullPath() + this.getDefaultTempFolder() + File.separator;
 		File tmpFile = new File(tmpFolder);
 		if (tmpFile.exists() == false) {
 			tmpFile.mkdir();

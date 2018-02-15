@@ -38,9 +38,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -80,12 +77,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 	private String messageSuccess;
 	private String messageFailure;
 	
-	private boolean exportSuccessful;
-	
-	private ReentrantLock exportLock;
-	
-	private Condition conditionExportFinished;
-	
 	private Path tempFolderPath;
 
 	private AwbProgressMonitor progressMonitor;
@@ -95,8 +86,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 */
 	public void exportProject(Project project) {
 		
-		System.out.println("Project export: Using class " + this.getClass().getName());
-
 		// --- Show a dialog to configure the export ----------------
 		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
 
@@ -149,6 +138,10 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @param useConcurrentThread set true, if you want to export the project by a concurrent thread
 	 */
 	public void exportProject(Project project, ProjectExportSettings exportSettings, boolean isShowUserDialogs, boolean useConcurrentThread) {
+		
+		//TODO debug output, remove later
+		System.out.println("Project export: Using class " + this.getClass().getName());
+		
 		this.project = project;
 		this.exportSettings = exportSettings;
 		this.isShowUserDialogs = isShowUserDialogs;
@@ -265,12 +258,12 @@ public class DefaultProjectExportController implements ProjectExportController{
 	protected List<Path> getFolderCopySkipList(Path sourcePath) {
 		// --- Specify folders that should not be copied ------
 		List<Path> skipList = new ArrayList<>();
-		skipList.add(sourcePath.resolve("~tmp"));
+		skipList.add(sourcePath.resolve(this.project.getDefaultTempFolder()));
 		if (this.exportSettings.isIncludeAllSetups() == false) {
 			// --- If only selected setups should be exported, copying setup data is done in
 			// a separate step -----------
-			skipList.add(sourcePath.resolve("setups"));
-			skipList.add(sourcePath.resolve("setupsEnv"));
+			skipList.add(sourcePath.resolve(this.getProject().getSubFolder4Setups(false)));
+			skipList.add(sourcePath.resolve(this.getProject().getSubFolderEnvSetups()));
 		}
 		return skipList;
 	}
@@ -515,8 +508,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 */
 	private void doExport() {
 		
-		this.getExportLock().lock();
-
 		this.updateProgressMonitor(0);
 
 		// --- Copy the required data to a temporary folder -------------------
@@ -559,9 +550,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 			this.afterZip(success);
 		}
 		
-		this.exportSuccessful = success;
-		this.getConditionExportFinished().signal();
-		this.getExportLock().unlock();
 	}
 
 	/**
@@ -643,40 +631,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 		return tempFolderPath;
 	}
 	
-	protected ReentrantLock getExportLock() {
-		if (exportLock == null) {
-			exportLock = new ReentrantLock();
-		}
-		return exportLock;
-	}
-	
-
-	protected Condition getConditionExportFinished() {
-		if (conditionExportFinished == null) {
-			conditionExportFinished = this.getExportLock().newCondition();
-		}
-		return conditionExportFinished;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.project.transfer.ProjectExportController#isExportSuccessful()
-	 */
-	@Override
-	public boolean isExportSuccessful() {
-		this.getExportLock().lock();
-		try {
-			this.getConditionExportFinished().await();
-		} catch (InterruptedException e) {
-			System.err.println("Waiting for condition interrupted");
-			e.printStackTrace();
-		} finally {
-			this.getExportLock().unlock();
-		}
-		
-		return exportSuccessful;
-	}
-
-
 	/**
 	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file base name (without
 	 * extension) is not contained in a negative list.
