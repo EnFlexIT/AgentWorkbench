@@ -624,6 +624,7 @@ public class ProjectsLoaded {
 			
 			Project project = Project.load(projectFolder, false);
 			DefaultProjectExportController exportController = (DefaultProjectExportController) ProjectExportControllerProvider.getProjectExportController();
+			exportController.setConfirmationDialogDisabled(true);
 			ProjectExportSettings exportSettings = exportController.getProjectExportSettings(project);
 			
 			Thread projectDeleteThread = new ProjectDeleteThread(project, exportController, exportSettings);
@@ -708,6 +709,7 @@ public class ProjectsLoaded {
 				exportController.exportProject(project, exportSettings, true, false);
 				if(exportController.isExportSuccessful() == true) {
 					ProjectsLoaded.this.projectDelete(project.getProjectFolder());
+					Application.setStatusBar(Language.translate("Fertig"));
 				}
 			}
 		}

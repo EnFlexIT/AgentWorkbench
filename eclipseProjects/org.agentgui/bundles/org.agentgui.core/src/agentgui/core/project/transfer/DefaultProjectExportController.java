@@ -82,6 +82,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 	private Path tempFolderPath;
 
 	private AwbProgressMonitor progressMonitor;
+	
+	private boolean confirmationDialogDisabled = false;
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.project.transfer.ProjectExportController#exportProject(agentgui.core.project.Project)
@@ -147,8 +149,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 */
 	public void exportProject(Project project, ProjectExportSettings exportSettings, boolean showUserDialogs, boolean useConcurrentThread) {
 
-		System.out.println("Project export: Using class " + this.getClass().getName());
-		
 		this.project = project;
 		this.exportSettings = exportSettings;
 		this.showUserDialogs = showUserDialogs;
@@ -458,14 +458,14 @@ public class DefaultProjectExportController implements ProjectExportController{
 		// --- Show a feedback message to the user --------------------
 		if (success == true) {
 			if (this.getMessageSuccess().isEmpty()==false) System.out.println(this.getMessageSuccess());
-			if (this.showUserDialogs == true) {
+			if (this.showUserDialogs == true && this.confirmationDialogDisabled == false) {
 				String messageTitle = Language.translate("Export erfolgreich");
 				String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
 				JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else {
 			if (this.getMessageFailure().isEmpty()==false) System.err.println(this.getMessageFailure());
-			if (this.showUserDialogs == true) {
+			if (this.showUserDialogs == true && this.confirmationDialogDisabled == false) {
 				String message = Language.translate("Export fehlgeschlagen");
 				JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
 			}
@@ -646,6 +646,15 @@ public class DefaultProjectExportController implements ProjectExportController{
 	public boolean isExportSuccessful() {
 		return exportSuccessful;
 	}
+	
+	/**
+	 * Allows to disable the confirmation dialog independent of the progress monitor 
+	 * @param confirmationDialogEnabled
+	 */
+	public void setConfirmationDialogDisabled(boolean confirmationDialogEnabled) {
+		this.confirmationDialogDisabled = confirmationDialogEnabled;
+	}
+
 
 
 	/**
