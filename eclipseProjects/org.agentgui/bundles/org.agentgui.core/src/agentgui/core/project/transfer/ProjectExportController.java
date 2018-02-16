@@ -54,8 +54,31 @@ public interface ProjectExportController {
 	public void exportProject(Project project, ProjectExportSettings projectExportSettings);
 	
 	/**
+	 * Exports the current project using the provided {@link ProjectExportSettings}.
+	 * @param the project to be exported
+	 * @param exportSettings The {@link ProjectExportSettings}
+	 * @param showUserDialogs specifies if user dialogs are shown
+	 * @param useConcurrentThread specifies if the project should be exported in a concurrent thread
+	 */
+	public void exportProject(Project project, ProjectExportSettings exportSettings, boolean showUserDialogs, boolean useConcurrentThread);
+	
+	/**
 	 * Checks if the export was successfully finished
 	 * @return true if successfully finished
 	 */
 	public boolean isExportSuccessful();
+
+	/**
+	 * Sets the message for an export success.
+	 * @param messageSuccess the new message success
+	 */
+	public void setMessageSuccess(String messageSuccess);
+
+	/**
+	 * Sets the message for export failures.
+	 * @param messageFailure the new message failure
+	 */
+	public void setMessageFailure(String messageFailure);
+	
+	
 }

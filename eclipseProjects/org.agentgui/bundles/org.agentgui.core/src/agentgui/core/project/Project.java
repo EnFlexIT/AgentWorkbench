@@ -84,7 +84,8 @@ import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.setup.SimulationSetups;
-import agentgui.core.project.transfer.DefaultProjectExportController;
+import agentgui.core.project.transfer.ProjectExportController;
+import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.update.VersionInformation;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
@@ -346,47 +347,45 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 		String projectSubDirectory = projectPath.getParentFile().toPath().relativize(projectPath.toPath()).toString();
 
-		// --- Load the XML file of the project ----------
+		// --- Load the XML file of the project ---------------------
 		Project project = loadProjectXml(projectPath);
 		
 		if(project == null){
 			return null;
 		}
 		
-		// --- Check/create default folders ---------------
+		// --- Check/create default folders -------------------------
 		project.setProjectFolder(projectSubDirectory);
 		project.checkAndCreateProjectsDirectoryStructure();
 		
-		// --- Install required features if necessary -----
+		// --- Install required features if necessary ---------------
 		if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
-			// --- Only possible if not running from the IDE --
+			// --- Only possible if not running from the IDE --------
 
 			boolean newFeaturesInstalled = false;
 			try {
-				// --- Install additional features if necessary ----------------
+				// --- Install additional features if necessary -----
 				newFeaturesInstalled = project.installRequiredFeatures();
-			} catch (Exception e) {
-				System.err.println("Not all required features have been installed successfully:");
-				System.err.println(e.getMessage());
-				//TODO figure out how to handle this
+				
+			} catch (Exception ex) {
+				System.err.println("[" + Project.class.getSimpleName() +  "] Not all required features have been installed successfully:");
+				System.err.println(ex.getMessage());
 			}
 			
-			// --- Restart the application if necessary ---------------------
-			if (newFeaturesInstalled == true) {
+			// --- Restart the application if necessary -------------
+			if (newFeaturesInstalled==true) {
 				Application.relaunch("-project " + project.getProjectFolder());
 				return null; // --- Skip the further loading of the project					
 			}
 			
 		}
 		
-		// --- Load additional jar-resources --------------
+		// --- Load additional jar-resources ------------------------
 		if (loadResources==true) {
 			project.resourcesLoad();
-			// --- Load user data model -----------------------
+			// --- Load user data model -----------------------------
 			loadProjectUserDataModel(projectPath, project);
 		}
-		
-		
 		return project;
 	}
 	
@@ -852,7 +851,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		pExSet.setIncludeInstallationPackage(false);
 
 		// --- Do the export ----------------------------------------
-		DefaultProjectExportController pExCon = new DefaultProjectExportController();
+		ProjectExportController pExCon = ProjectExportControllerProvider.getProjectExportController();
 		if (messageSuccess!=null) pExCon.setMessageSuccess(messageSuccess);	
 		if (messageFailure!=null) pExCon.setMessageFailure(messageFailure);
 		pExCon.exportProject(this, pExSet, false, false);
