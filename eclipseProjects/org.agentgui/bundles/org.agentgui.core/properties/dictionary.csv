@@ -457,7 +457,7 @@ de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
 de;Neues Projekt anlegen;Create new project
-de;Neues Projekt;New project
+de;Neues Projekt;New Project;null;null;null
 de;Neues Setup anlegen ...;Create new setup ...
 de;Neuinitialsierung des Anwendungsfensters ...;Re-initialization of the application window ...;;;
 de;Neustart des Server-Dienstes;Restart server;;;
