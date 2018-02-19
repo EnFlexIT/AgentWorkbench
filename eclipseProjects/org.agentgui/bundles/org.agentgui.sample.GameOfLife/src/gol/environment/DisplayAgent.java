@@ -58,9 +58,12 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		this.getSquaredEnvironmentController().getSquaredEnvironmentGUI().setGeneration(this.generationCounter);
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.sensoring.ServiceSensorInterface#setMigration(jade.core.Location)
+	 */
 	@Override
 	public void setMigration(Location newLocation) {
-		// TODO Auto-generated method stub
+		
 	}
 	
 	/* (non-Javadoc)

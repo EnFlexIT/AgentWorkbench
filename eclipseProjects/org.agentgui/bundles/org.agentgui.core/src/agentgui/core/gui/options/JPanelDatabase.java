@@ -205,8 +205,6 @@ public class JPanelDatabase extends AbstractJPanelForOptions {
 	 */
 	@Override
 	public void refreshView() {
-		// TODO Auto-generated method stub
-		
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.swing.options.AbstractJPanelForOptions#setGlobalData2Form()
