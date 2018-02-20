@@ -303,7 +303,8 @@ public class PlugInApplication implements IApplication {
 		
 		// --- Execute the post window open runnable ------
 		if (postWindowOpenRunnable!=null) {
-			postWindowOpenRunnable.run();
+			new Thread(postWindowOpenRunnable, "PostWindowOpen-Action").start();
+			//postWindowOpenRunnable.run();
 		}
 		
 		return appReturnValue;
