@@ -49,6 +49,10 @@ public class OshiBundleActivator implements BundleActivator {
 	 */
 	private void configureLogbackInBundle(Bundle bundle) throws JoranException, IOException {
 		
+		// --- Introduced due a bug under Mac OS --------------------
+		if (! (LoggerFactory.getILoggerFactory() instanceof LoggerContext)) return;
+		
+		// --- Configure the logger ---------------------------------
 		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 		JoranConfigurator jc = new JoranConfigurator();
 		jc.setContext(context);
