@@ -380,8 +380,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			
 		}
 		
-		// --- Load additional jar-resources ------------------------
 		if (loadResources==true) {
+			// --- Load additional jar-resources ------------------------
 			project.resourcesLoad();
 			// --- Load user data model -----------------------------
 			loadProjectUserDataModel(projectPath, project);
@@ -489,13 +489,26 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public boolean save() {
 		return this.save(new File(this.getProjectFolderFullPath()), true);
 	}
-
+	
 	/**
 	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
 	 * @param projectPath the project path where the files have to be stored
+	 * @param saveSetup set to true if the current simulation setup should be saved
 	 * @return true, if successful
 	 */
 	public boolean save(File projectPath, boolean saveSetup) {
+		return this.save(projectPath, saveSetup, true);
+	}
+
+	
+	/**
+	 * Saves the current Project to the files 'agentgui.xml', and optionally agentgui.bin.
+	 * @param projectPath the project path where the files have to be stored
+	 * @param saveSetup set to true if the current simulation setup should be saved
+	 * @param saveUserDataModel set to true if the user data model (agentgui.bin) should be saved
+	 * @return true, if successful
+	 */
+	public boolean save(File projectPath, boolean saveSetup, boolean saveUserDataModel) {
 		// --- Save the current project -------------------
 		Application.setStatusBar(this.projectName + ": " + Language.translate("speichern") + " ... ");
 		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);
@@ -512,21 +525,25 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			Writer pw = new FileWriter(projectPath + File.separator + Application.getGlobalInfo().getFileNameProject());
 			pm.marshal(this, pw);
 			pw.close();
-
+			
 			// --- Save the userRuntimeObject into a different
 			// --- file as a serializable binary object.
-			FileOutputStream fos = null;
-			ObjectOutputStream out = null;
-			try {
-				fos = new FileOutputStream(projectPath + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject());
-				out = new ObjectOutputStream(fos);
-				out.writeObject(this.userRuntimeObject);
-
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-		    	if (out!=null) out.close();
-		    	if (fos!=null) fos.close();
+			if (saveUserDataModel == true) {
+				
+				FileOutputStream fos = null;
+				ObjectOutputStream out = null;
+				try {
+					fos = new FileOutputStream(projectPath + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject());
+					out = new ObjectOutputStream(fos);
+					out.writeObject(this.userRuntimeObject);
+	
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				} finally {
+			    	if (out!=null) out.close();
+			    	if (fos!=null) fos.close();
+				}
+			
 			}
 
 			// --- Save the current SimulationSetup -------
