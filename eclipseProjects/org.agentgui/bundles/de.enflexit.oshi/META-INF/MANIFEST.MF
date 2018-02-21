@@ -66,3 +66,4 @@ Import-Package: org.osgi.framework;version="1.8.0",
 Require-Bundle: ch.qos.logback.classic,
  ch.qos.logback.core
 Bundle-Activator: de.enflexit.oshi.OshiBundleActivator
+Bundle-ActivationPolicy: lazy
