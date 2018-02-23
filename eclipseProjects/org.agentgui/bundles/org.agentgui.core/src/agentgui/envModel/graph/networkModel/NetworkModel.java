@@ -720,7 +720,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return The NetworkComponent
 	 */
 	public NetworkComponent getNetworkComponent(String id) {
-		if (id==null | id.equals("")) {
+		if (id==null || id.equals("")) {
 			return null;
 		} else {
 			return networkComponents.get(id);	
