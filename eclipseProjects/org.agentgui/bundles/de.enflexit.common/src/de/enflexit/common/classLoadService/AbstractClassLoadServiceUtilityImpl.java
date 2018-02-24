@@ -333,10 +333,12 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 					
 					// --- Create ComponentInstance and the actual implementation -------
 					ComponentInstance compInstance = compFactory.newInstance(null);
-					if (compInstance.getInstance() instanceof BaseClassLoadService) {
+					// --- Create a instance of the service -----------------------------
+					Object serviceInstance = compInstance.getInstance();
+					if (serviceInstance instanceof BaseClassLoadService) {
 						// --- Get the instance of the Class load service impl ----------
 						@SuppressWarnings("unchecked")
-						T cls = (T) compInstance.getInstance();
+						T cls = (T) serviceInstance;
 						// --------------------------------------------------------------
 						// --- Create the reminder object with useful information -------
 						// --------------------------------------------------------------
