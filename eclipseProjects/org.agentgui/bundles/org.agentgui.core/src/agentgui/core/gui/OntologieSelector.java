@@ -70,6 +70,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	private JLabel jLabelShow;
 	private JTextField jTextFieldSearch;
 
+	
 	/**
 	 * Constructor equal to JDialog plus the current instance of project 
 	 * @param owner
@@ -79,19 +80,16 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	public OntologieSelector(Frame owner, String titel, boolean modal) {
 		super(owner, titel, modal);
 		
-		// --- Dialog aufbauen ---------------------------- 
-		initialize();
-		
-		// --- Anzeige einstellen / filtern ---------------
+		this.initialize();
 		this.filterOntology();
 		
-		// --- Dialog zentrieren --------------------------
+		// --- Center Dialog ------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
 	    int left = (screenSize.width - this.getWidth()) / 2; 
 	    this.setLocation(left, top);	
 
-		// --- Anzeigesprache festlegen -------------------
+		// --- Translate ----------------------------------
 		this.setTitle(Language.translate("Auswahl - Ontologien"));
 	    jLabelOntoList.setText(Language.translate("Suche"));
 
@@ -101,6 +99,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	    
 	    jButtonSelect.setText(Language.translate("Hinzufügen"));
 	    jButtonCancel.setText(Language.translate("Abbrechen"));
+	    
 	}
 
 	/**
@@ -229,11 +228,11 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	private void filterOntology() {
 		
 		if (this.getJRadioButtonShowNoneJade().isSelected()==true) {
-			jButtonSelect.setEnabled(true);
-			jListOntologies.setModelFiltered(jTextFieldSearch.getText(), "jade.");	
+			this.getJButtonSelect().setEnabled(true);
+			this.getJListOntologies().setModelFiltered(jTextFieldSearch.getText(), "jade.");
 		} else {
-			jButtonSelect.setEnabled(false);
-			jListOntologies.setModelFiltered(jTextFieldSearch.getText());	
+			this.getJButtonSelect().setEnabled(false);
+			this.getJListOntologies().setModelFiltered(jTextFieldSearch.getText());	
 		}
 	}
 	/**

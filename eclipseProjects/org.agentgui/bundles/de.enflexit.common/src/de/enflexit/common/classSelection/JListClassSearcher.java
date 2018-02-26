@@ -159,6 +159,9 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 			@Override
 			public void run() {
 				getListModel().add(ce2d);
+				if (textSearchFor!=null || textExcludePackage!=null) {
+					setModelFiltered(textSearchFor, textExcludePackage);
+				}
 			}
 		});
 	}
@@ -170,7 +173,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				getListModel().add(ce2d);
+				getListModel().removeElement(ce2d);
 			}
 		});
 	}
@@ -270,17 +273,18 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 					if (addForClassDescription==true) {
 						tmpListModel.addElement(ce2d);
 					}
+					
 				} else {
 					boolean addForPackageExclude = ce2d.getClassElement().startsWith(this.textExcludePackage.toLowerCase())==false;
 					if (addForClassDescription==true && addForPackageExclude==true) {
 						tmpListModel.addElement(ce2d);
 					}
+					
 				}
 				
 			}
 			// --- Set filtered model as current list -----
 			this.setModel(tmpListModel);
-			
 		}
 	}
 
