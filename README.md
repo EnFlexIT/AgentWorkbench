@@ -6,7 +6,7 @@ Why did we start developing such a tool? First reason is that JADE is probably t
 
 Instead of starting an agent system from command line or to start developing an agent-based application from the scratch, we believe that - as others have don before - efforts should be shared.
 
-It provides functionalities for time aspects, agent environment interaction, visualization and load balancing, Furthermore, the included application focuses the usability for end users.
+
 
 ## History
 
