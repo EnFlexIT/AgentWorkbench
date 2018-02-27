@@ -2,7 +2,7 @@
 
 AgentWorkbench is an application toolkit based on the [JADE](http://jade.tilab.com/) framework. It provides functionalities for time aspects, agent environment interaction, visualization and load balancing, Furthermore, the included application focuses the usability for end users.
 
-## 
+## Hi Nils!
 
 ## History
 
