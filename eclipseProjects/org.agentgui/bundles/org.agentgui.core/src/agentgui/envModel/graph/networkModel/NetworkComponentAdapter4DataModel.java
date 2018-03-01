@@ -92,6 +92,17 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 */
 	public abstract void setVisualizationComponent(JComponent visualizationComponent);
 	
+	
+	/**
+	 * May return additional components for the tool bar of the properties dialog.
+	 * For this, overwrite this method in your specific implementation.,
+	 * @return the tool bar elements
+	 */
+	public Vector<JComponent> getToolBarElements() {
+		return null;
+	}
+	
+	
 	/**
 	 * Returns the default size for the visualization of the data model.
 	 * Override this method in order to get control over the window size 

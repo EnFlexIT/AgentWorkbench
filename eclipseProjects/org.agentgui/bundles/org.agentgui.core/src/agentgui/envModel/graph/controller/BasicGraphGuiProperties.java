@@ -99,7 +99,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private NetworkComponentAdapter4DataModel adapter4DataModel;
 	
 	private JPanel jContentPane;  
-	private JToolBar jJToolBarBarNorth;
+	private JToolBar jToolBarProperties;
 	private JToolBarButton jToolBarButtonSave;
 	private JToolBarButton jToolBarButtonSaveAndExit;
 	private JToolBarButton jToolBarButtonDisableRuntimeUpdates;
@@ -355,17 +355,21 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
     					}
 	    			}
 					
-					// --- Set model to visualisation ------------------------------
+					// --- Set model to visualization ------------------------------
 					this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
 
 					// --- Remind initial HashCodes of Base64 data model vector ----
 					this.setDataModelBase64InitialHashCodes(dataModelBase64);
 
-					// --- Get the visualisation component -------------------------
+					// --- Get the visualization component -------------------------
 					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualizationComponent();
 					if (visualisation instanceof OntologyInstanceViewer) {
-						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJJToolBarBarNorth());
+						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJToolBarProperties());
 					}
+					
+					// --- If Available, Add individual tool bar elements ----------
+					this.addCustomToolBarElements();
+					
 					visualisation.validate();
 					this.jComponentContent = visualisation;
 				}
@@ -382,7 +386,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (jContentPane == null) {
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new BorderLayout());
-			jContentPane.add(this.getJJToolBarBarNorth(), BorderLayout.NORTH);
+			jContentPane.add(this.getJToolBarProperties(), BorderLayout.NORTH);
 			JComponent dataContent = this.getJPanelContent();
 			if (dataContent!=null) {
 				jContentPane.add(dataContent, BorderLayout.CENTER);	
@@ -392,25 +396,24 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
-	 * This method initializes jJToolBarBarNorth	
+	 * This method initializes jToolBarProperties	
 	 * @return javax.swing.JToolBar	
 	 */
-	private JToolBar getJJToolBarBarNorth() {
-		if (jJToolBarBarNorth == null) {
-			jJToolBarBarNorth = new JToolBar("Properties Bar");
-			jJToolBarBarNorth.setFloatable(false);
-			jJToolBarBarNorth.setRollover(true);
-			jJToolBarBarNorth.add(this.getJToolBarButtonSave());
-			jJToolBarBarNorth.add(this.getJToolBarButtonSaveAndExit());
-			jJToolBarBarNorth.addSeparator();
+	private JToolBar getJToolBarProperties() {
+		if (jToolBarProperties == null) {
+			jToolBarProperties = new JToolBar("Properties Bar");
+			jToolBarProperties.setFloatable(false);
+			jToolBarProperties.setRollover(true);
+			jToolBarProperties.add(this.getJToolBarButtonSave());
+			jToolBarProperties.add(this.getJToolBarButtonSaveAndExit());
 			if (this.graphController.getProject()==null) {
 				// --- During runtime ---------------------
-				jJToolBarBarNorth.add(this.getJToolBarButtonDisableRuntimeUpdates());
+				jToolBarProperties.addSeparator();
+				jToolBarProperties.add(this.getJToolBarButtonDisableRuntimeUpdates());
 			}
 		}
-		return jJToolBarBarNorth;
+		return jToolBarProperties;
 	}
-	
 	/**
 	 * Returns the JToolBarButton for the save action.
 	 * @return the JToolBarButton for the save action
@@ -440,6 +443,21 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			this.jToolBarButtonDisableRuntimeUpdates=new JToolBarButton("DisableRuntimeUpdates", Language.translate("Disable / Enable runtime updates", Language.EN), null, "Refresh.png", this);
 		}
 		return this.jToolBarButtonDisableRuntimeUpdates;
+	}
+	/**
+	 * Adds the custom tool bar elements, if specified .
+	 */
+	private void addCustomToolBarElements() {
+		
+		if (this.getNetworkComponentAdapter4DataModel()==null || this.getNetworkComponentAdapter4DataModel().getToolBarElements()==null) return;
+		
+		Vector<JComponent> toolBarElements = this.getNetworkComponentAdapter4DataModel().getToolBarElements();
+		for (int i = 0; i < toolBarElements.size(); i++) {
+			JComponent comp = toolBarElements.get(i);
+			if (this.getJToolBarProperties().getComponentIndex(comp)==-1) {
+				this.getJToolBarProperties().add(comp);
+			}
+		}
 	}
 	
 	

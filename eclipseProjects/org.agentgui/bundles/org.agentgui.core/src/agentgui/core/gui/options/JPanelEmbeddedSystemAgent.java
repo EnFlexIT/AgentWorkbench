@@ -72,7 +72,6 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	
 	private JLabel jLabelEmbeddedHeader;
 	private JLabel jLabelProject;
-	private JLabel jLabelProjectHeader;
 	private JComboBox<String> jComboBoxProjectSelector;
 	
 	private JPanel jPanelExecution;
@@ -111,182 +110,164 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	 */
 	private void initialize() {
 		
-		GridBagConstraints gridBagConstraints49 = new GridBagConstraints();
-		gridBagConstraints49.insets = new Insets(0, 0, 0, 5);
-		gridBagConstraints49.gridx = 1;
-		gridBagConstraints49.anchor = GridBagConstraints.WEST;
-		gridBagConstraints49.gridy = 11;
-		GridBagConstraints gridBagConstraints40 = new GridBagConstraints();
-		gridBagConstraints40.gridx = 1;
-		gridBagConstraints40.anchor = GridBagConstraints.WEST;
-		gridBagConstraints40.insets = new Insets(2, 0, 5, 5);
-		gridBagConstraints40.gridy = 10;
-		GridBagConstraints gridBagConstraints48 = new GridBagConstraints();
-		gridBagConstraints48.gridx = 0;
-		gridBagConstraints48.gridwidth = 2;
-		gridBagConstraints48.anchor = GridBagConstraints.WEST;
-		gridBagConstraints48.insets = new Insets(15, 0, 5, 5);
-		gridBagConstraints48.gridy = 4;
-		GridBagConstraints gridBagConstraints47 = new GridBagConstraints();
-		gridBagConstraints47.gridx = 0;
-		gridBagConstraints47.anchor = GridBagConstraints.WEST;
-		gridBagConstraints47.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints47.gridy = 5;
-		GridBagConstraints gridBagConstraints46 = new GridBagConstraints();
-		gridBagConstraints46.fill = GridBagConstraints.VERTICAL;
-		gridBagConstraints46.gridy = 5;
-		gridBagConstraints46.weightx = 1.0;
-		gridBagConstraints46.anchor = GridBagConstraints.WEST;
-		gridBagConstraints46.insets = new Insets(5, 5, 5, 5);
-		gridBagConstraints46.gridx = 1;
-		GridBagConstraints gridBagConstraints45 = new GridBagConstraints();
-		gridBagConstraints45.gridx = 1;
-		gridBagConstraints45.anchor = GridBagConstraints.WEST;
-		gridBagConstraints45.fill = GridBagConstraints.NONE;
-		gridBagConstraints45.insets = new Insets(5, 5, 5, 5);
-		gridBagConstraints45.gridy = 3;
-		GridBagConstraints gridBagConstraints43 = new GridBagConstraints();
-		gridBagConstraints43.anchor = GridBagConstraints.WEST;
-		gridBagConstraints43.gridx = 0;
-		gridBagConstraints43.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints43.gridy = 3;
-		GridBagConstraints gridBagConstraints29 = new GridBagConstraints();
-		gridBagConstraints29.gridx = 0;
-		gridBagConstraints29.anchor = GridBagConstraints.WEST;
-		gridBagConstraints29.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints29.gridwidth = 2;
-		gridBagConstraints29.gridy = 9;
-		GridBagConstraints gridBagConstraints39 = new GridBagConstraints();
-		gridBagConstraints39.gridx = 2;
-		gridBagConstraints39.insets = new Insets(5, 5, 5, 0);
-		gridBagConstraints39.gridy = 7;
-		GridBagConstraints gridBagConstraints38 = new GridBagConstraints();
-		gridBagConstraints38.fill = GridBagConstraints.BOTH;
-		gridBagConstraints38.gridy = 7;
-		gridBagConstraints38.weightx = 1.0;
-		gridBagConstraints38.anchor = GridBagConstraints.WEST;
-		gridBagConstraints38.insets = new Insets(5, 5, 5, 5);
-		gridBagConstraints38.gridx = 1;
-		GridBagConstraints gridBagConstraints37 = new GridBagConstraints();
-		gridBagConstraints37.gridx = 0;
-		gridBagConstraints37.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints37.anchor = GridBagConstraints.WEST;
-		gridBagConstraints37.gridy = 7;
-		GridBagConstraints gridBagConstraints36 = new GridBagConstraints();
-		gridBagConstraints36.gridx = 0;
-		gridBagConstraints36.insets = new Insets(15, 0, 5, 5);
-		gridBagConstraints36.gridwidth = 2;
-		gridBagConstraints36.anchor = GridBagConstraints.WEST;
-		gridBagConstraints36.gridy = 6;
-		GridBagConstraints gridBagConstraints35 = new GridBagConstraints();
-		gridBagConstraints35.gridx = 0;
-		gridBagConstraints35.gridwidth = 2;
-		gridBagConstraints35.anchor = GridBagConstraints.WEST;
-		gridBagConstraints35.insets = new Insets(10, 0, 5, 5);
-		gridBagConstraints35.gridy = 1;
-		GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
-		gridBagConstraints34.fill = GridBagConstraints.NONE;
-		gridBagConstraints34.gridy = 2;
-		gridBagConstraints34.weightx = 0.0;
-		gridBagConstraints34.anchor = GridBagConstraints.WEST;
-		gridBagConstraints34.insets = new Insets(5, 5, 5, 5);
-		gridBagConstraints34.gridx = 1;
-		GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
-		gridBagConstraints33.gridx = 0;
-		gridBagConstraints33.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints33.anchor = GridBagConstraints.WEST;
-		gridBagConstraints33.gridy = 2;
-		GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
-		gridBagConstraints32.insets = new Insets(0, 0, 5, 5);
-		gridBagConstraints32.gridx = 0;
-		gridBagConstraints32.gridwidth = 2;
-		gridBagConstraints32.anchor = GridBagConstraints.WEST;
-		gridBagConstraints32.gridy = 0;
-
-		jLabelEmbeddedHeader = new JLabel();
-		jLabelEmbeddedHeader.setText("Agent.GUI Dienst / Embedded System Agent");
-		jLabelEmbeddedHeader.setText(Language.translate(jLabelEmbeddedHeader.getText()));
-		jLabelEmbeddedHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 		
-		jLabelProjectHeader = new JLabel();
-		jLabelProjectHeader.setText("Bitte wählen Sie ein Projekt aus");
-		jLabelProjectHeader.setText(Language.translate(jLabelProjectHeader.getText()));
-		jLabelProjectHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		this.setPreferredSize(new Dimension(570, 340));
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{82, 430, 45, 0};
+		gridBagLayout.rowHeights = new int[]{16, 26, 23, 16, 26, 16, 26, 26, 16, 24, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		this.setLayout(gridBagLayout);
+		
+		jLabelEmbeddedHeader = new JLabel(this.getGlobalInfo().getApplicationTitle() + " - " + Language.translate("Dienst") + " / Embedded System Agent");
+		jLabelEmbeddedHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		GridBagConstraints gbc_jLabelEmbeddedHeader = new GridBagConstraints();
+		gbc_jLabelEmbeddedHeader.anchor = GridBagConstraints.WEST;
+		gbc_jLabelEmbeddedHeader.insets = new Insets(0, 0, 15, 0);
+		gbc_jLabelEmbeddedHeader.gridwidth = 2;
+		gbc_jLabelEmbeddedHeader.gridx = 0;
+		gbc_jLabelEmbeddedHeader.gridy = 0;
+		this.add(jLabelEmbeddedHeader, gbc_jLabelEmbeddedHeader);
 		
 		jLabelProject = new JLabel();
+		jLabelProject.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelProject.setText("Projekt");
 		jLabelProject.setText(Language.translate(jLabelProject.getText()) + ":");
+		GridBagConstraints gbc_jLabelProject = new GridBagConstraints();
+		gbc_jLabelProject.anchor = GridBagConstraints.WEST;
+		gbc_jLabelProject.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelProject.gridx = 0;
+		gbc_jLabelProject.gridy = 1;
+		this.add(jLabelProject, gbc_jLabelProject);
+		GridBagConstraints gbc_jComboBoxProjectSelector = new GridBagConstraints();
+		gbc_jComboBoxProjectSelector.anchor = GridBagConstraints.WEST;
+		gbc_jComboBoxProjectSelector.insets = new Insets(0, 0, 5, 5);
+		gbc_jComboBoxProjectSelector.gridx = 1;
+		gbc_jComboBoxProjectSelector.gridy = 1;
+		this.add(getJComboBoxProjectSelector(), gbc_jComboBoxProjectSelector);
 		
 		jLabelExecuteAs = new JLabel();
 		jLabelExecuteAs.setText("Ausführen als");
 		jLabelExecuteAs.setText(Language.translate(jLabelExecuteAs.getText()) + ":");
 		jLabelExecuteAs.setFont(new Font("Dialog", Font.BOLD, 12));
+		GridBagConstraints gbc_jLabelExecuteAs = new GridBagConstraints();
+		gbc_jLabelExecuteAs.anchor = GridBagConstraints.WEST;
+		gbc_jLabelExecuteAs.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelExecuteAs.gridx = 0;
+		gbc_jLabelExecuteAs.gridy = 2;
+		this.add(jLabelExecuteAs, gbc_jLabelExecuteAs);
+		GridBagConstraints gbc_jPanelExecution = new GridBagConstraints();
+		gbc_jPanelExecution.anchor = GridBagConstraints.WEST;
+		gbc_jPanelExecution.insets = new Insets(0, 0, 5, 5);
+		gbc_jPanelExecution.gridx = 1;
+		gbc_jPanelExecution.gridy = 2;
+		this.add(getJPanelExecution(), gbc_jPanelExecution);
 		
 		jLabelSetupHeader = new JLabel();
-		jLabelSetupHeader.setText("Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll");
+		jLabelSetupHeader.setText("Dienst");
 		jLabelSetupHeader.setText(Language.translate(jLabelSetupHeader.getText()));
 		jLabelSetupHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		GridBagConstraints gbc_jLabelSetupHeader = new GridBagConstraints();
+		gbc_jLabelSetupHeader.anchor = GridBagConstraints.WEST;
+		gbc_jLabelSetupHeader.insets = new Insets(10, 0, 5, 5);
+		gbc_jLabelSetupHeader.gridx = 0;
+		gbc_jLabelSetupHeader.gridy = 3;
+		this.add(jLabelSetupHeader, gbc_jLabelSetupHeader);
 		
 		jLabelSetup = new JLabel();
-		jLabelSetup.setText("Setup");
+		jLabelSetup.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelSetup.setText("Setup:");
 		jLabelSetup.setText(Language.translate(jLabelSetup.getText()));
+		GridBagConstraints gbc_jLabelSetup = new GridBagConstraints();
+		gbc_jLabelSetup.anchor = GridBagConstraints.WEST;
+		gbc_jLabelSetup.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelSetup.gridx = 0;
+		gbc_jLabelSetup.gridy = 4;
+		this.add(jLabelSetup, gbc_jLabelSetup);
+		GridBagConstraints gbc_jComboBoxSetupSelector = new GridBagConstraints();
+		gbc_jComboBoxSetupSelector.anchor = GridBagConstraints.WEST;
+		gbc_jComboBoxSetupSelector.fill = GridBagConstraints.VERTICAL;
+		gbc_jComboBoxSetupSelector.insets = new Insets(0, 0, 5, 5);
+		gbc_jComboBoxSetupSelector.gridx = 1;
+		gbc_jComboBoxSetupSelector.gridy = 4;
+		this.add(getJComboBoxSetupSelector(), gbc_jComboBoxSetupSelector);
 		
 		jLabelAgentHeader = new JLabel();
-		jLabelAgentHeader.setText("Embedded System Agent: Bitte wählen Sie den Agenten aus, der gestartet werden soll");
+		jLabelAgentHeader.setText("Embedded System Agent");
 		jLabelAgentHeader.setText(Language.translate(jLabelAgentHeader.getText()));
 		jLabelAgentHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		GridBagConstraints gbc_jLabelAgentHeader = new GridBagConstraints();
+		gbc_jLabelAgentHeader.anchor = GridBagConstraints.WEST;
+		gbc_jLabelAgentHeader.insets = new Insets(10, 0, 5, 5);
+		gbc_jLabelAgentHeader.gridwidth = 2;
+		gbc_jLabelAgentHeader.gridx = 0;
+		gbc_jLabelAgentHeader.gridy = 5;
+		this.add(jLabelAgentHeader, gbc_jLabelAgentHeader);
 		
 		jLabelAgent = new JLabel();
+		jLabelAgent.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelAgent.setText("Agent:");
+		GridBagConstraints gbc_jLabelAgent = new GridBagConstraints();
+		gbc_jLabelAgent.anchor = GridBagConstraints.WEST;
+		gbc_jLabelAgent.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelAgent.gridx = 0;
+		gbc_jLabelAgent.gridy = 6;
+		this.add(jLabelAgent, gbc_jLabelAgent);
+		GridBagConstraints gbc_jTextFieldAgentClass = new GridBagConstraints();
+		gbc_jTextFieldAgentClass.fill = GridBagConstraints.BOTH;
+		gbc_jTextFieldAgentClass.insets = new Insets(0, 0, 5, 5);
+		gbc_jTextFieldAgentClass.gridx = 1;
+		gbc_jTextFieldAgentClass.gridy = 6;
+		this.add(getJTextFieldAgentClass(), gbc_jTextFieldAgentClass);
+		GridBagConstraints gbc_jButtonSelectAgentClass = new GridBagConstraints();
+		gbc_jButtonSelectAgentClass.insets = new Insets(0, 0, 5, 0);
+		gbc_jButtonSelectAgentClass.gridx = 2;
+		gbc_jButtonSelectAgentClass.gridy = 6;
+		this.add(getJButtonEsaSelectAgent(), gbc_jButtonSelectAgentClass);
+		
+		jLabelAgentName = new JLabel("Agent Name:");
+		jLabelAgentName.setFont(new Font("Dialog", Font.BOLD, 12));
+		GridBagConstraints gbc_jLabelAgentName = new GridBagConstraints();
+		gbc_jLabelAgentName.anchor = GridBagConstraints.WEST;
+		gbc_jLabelAgentName.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelAgentName.gridx = 0;
+		gbc_jLabelAgentName.gridy = 7;
+		this.add(jLabelAgentName, gbc_jLabelAgentName);
+	
+		GridBagConstraints gbc_jTextFieldAgentName = new GridBagConstraints();
+		gbc_jTextFieldAgentName.fill = GridBagConstraints.BOTH;
+		gbc_jTextFieldAgentName.insets = new Insets(0, 0, 5, 5);
+		gbc_jTextFieldAgentName.gridx = 1;
+		gbc_jTextFieldAgentName.gridy = 7;
+		this.add(getJTextFieldAgentName(), gbc_jTextFieldAgentName);
 		
 		jLabelVisConfig = new JLabel();
 		jLabelVisConfig.setText("Agent.GUI - Anwendungsvisualisierungen");
 		jLabelVisConfig.setText(Language.translate(jLabelVisConfig.getText()));
 		jLabelVisConfig.setFont(new Font("Dialog", Font.BOLD, 12));
-		
-		this.setSize(new Dimension(550, 318));
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0};
-		this.setLayout(gridBagLayout);
-		
-		this.setPreferredSize(new Dimension(572, 392));
-		this.add(jLabelEmbeddedHeader, gridBagConstraints32);
-		this.add(jLabelProject, gridBagConstraints33);
-		this.add(getJComboBoxProjectSelector(), gridBagConstraints34);
-		this.add(jLabelProjectHeader, gridBagConstraints35);
-		this.add(jLabelAgentHeader, gridBagConstraints36);
-		this.add(jLabelAgent, gridBagConstraints37);
-		this.add(getJTextFieldAgentClass(), gridBagConstraints38);
-		this.add(getJButtonEsaSelectAgent(), gridBagConstraints39);
-		{
-			jLabelAgentName = new JLabel("Agent Name:");
-			GridBagConstraints gbc_jLabelAgentName = new GridBagConstraints();
-			gbc_jLabelAgentName.anchor = GridBagConstraints.WEST;
-			gbc_jLabelAgentName.insets = new Insets(5, 0, 5, 5);
-			gbc_jLabelAgentName.gridx = 0;
-			gbc_jLabelAgentName.gridy = 8;
-			add(jLabelAgentName, gbc_jLabelAgentName);
-		}
-		{
-			GridBagConstraints gbc_jTextFieldAgentName = new GridBagConstraints();
-			gbc_jTextFieldAgentName.insets = new Insets(5, 5, 5, 5);
-			gbc_jTextFieldAgentName.fill = GridBagConstraints.BOTH;
-			gbc_jTextFieldAgentName.gridx = 1;
-			gbc_jTextFieldAgentName.gridy = 8;
-			add(getJTextFieldAgentName(), gbc_jTextFieldAgentName);
-		}
-		this.add(jLabelVisConfig, gridBagConstraints29);
-		this.add(jLabelExecuteAs, gridBagConstraints43);
-		this.add(getJPanelExecution(), gridBagConstraints45);
-		this.add(getJComboBoxSetupSelector(), gridBagConstraints46);
-		this.add(jLabelSetup, gridBagConstraints47);
-		this.add(jLabelSetupHeader, gridBagConstraints48);
-		this.add(getJRadioButtonVisNon(), gridBagConstraints40);
-		this.add(getJRadioButtonVisTrayIcon(), gridBagConstraints49);
+		GridBagConstraints gbc_jLabelVisConfig = new GridBagConstraints();
+		gbc_jLabelVisConfig.anchor = GridBagConstraints.WEST;
+		gbc_jLabelVisConfig.insets = new Insets(10, 0, 5, 5);
+		gbc_jLabelVisConfig.gridwidth = 2;
+		gbc_jLabelVisConfig.gridx = 0;
+		gbc_jLabelVisConfig.gridy = 8;
+		this.add(jLabelVisConfig, gbc_jLabelVisConfig);
+		GridBagConstraints gbc_jRadioButtonVisTrayIcon = new GridBagConstraints();
+		gbc_jRadioButtonVisTrayIcon.anchor = GridBagConstraints.WEST;
+		gbc_jRadioButtonVisTrayIcon.insets = new Insets(0, 0, 5, 5);
+		gbc_jRadioButtonVisTrayIcon.gridx = 1;
+		gbc_jRadioButtonVisTrayIcon.gridy = 9;
+		this.add(getJRadioButtonVisTrayIcon(), gbc_jRadioButtonVisTrayIcon);
 		
 		ButtonGroup visAsGroup = new ButtonGroup();
 		visAsGroup.add(getJRadioButtonVisNon());
 		visAsGroup.add(getJRadioButtonVisTrayIcon());
+		GridBagConstraints gbc_jRadioButtonVisNon = new GridBagConstraints();
+		gbc_jRadioButtonVisNon.anchor = GridBagConstraints.WEST;
+		gbc_jRadioButtonVisNon.insets = new Insets(0, 0, 0, 5);
+		gbc_jRadioButtonVisNon.gridx = 1;
+		gbc_jRadioButtonVisNon.gridy = 10;
+		this.add(getJRadioButtonVisNon(), gbc_jRadioButtonVisNon);
 	}
 	
 	
@@ -334,15 +315,20 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JPanel getJPanelExecution() {
 		if (jPanelExecution == null) {
 			GridBagConstraints gridBagConstraints44 = new GridBagConstraints();
+			gridBagConstraints44.anchor = GridBagConstraints.WEST;
 			gridBagConstraints44.gridx = 1;
 			gridBagConstraints44.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints44.gridy = 0;
 			GridBagConstraints gridBagConstraints42 = new GridBagConstraints();
+			gridBagConstraints42.anchor = GridBagConstraints.WEST;
 			gridBagConstraints42.gridx = 0;
 			gridBagConstraints42.gridy = 0;
 			
 			jPanelExecution = new JPanel();
-			jPanelExecution.setLayout(new GridBagLayout());
+			jPanelExecution.setPreferredSize(new Dimension(300, 26));
+			GridBagLayout gbl_jPanelExecution = new GridBagLayout();
+			gbl_jPanelExecution.columnWeights = new double[]{1.0, 1.0};
+			jPanelExecution.setLayout(gbl_jPanelExecution);
 			jPanelExecution.add(getJRadioButtonExecuteAsDeviceAgent(), gridBagConstraints44);
 			jPanelExecution.add(getJRadioButtonExecuteAsService(), gridBagConstraints42);
 			
@@ -360,6 +346,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JRadioButton getJRadioButtonExecuteAsService() {
 		if (jRadioButtonExecuteAsServerService == null) {
 			jRadioButtonExecuteAsServerService = new JRadioButton();
+			jRadioButtonExecuteAsServerService.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonExecuteAsServerService.setText("Dienst");
 			jRadioButtonExecuteAsServerService.setText(Language.translate(jRadioButtonExecuteAsServerService.getText()));
 			jRadioButtonExecuteAsServerService.setActionCommand("esaExecuteAsServerService");
@@ -374,6 +361,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JRadioButton getJRadioButtonExecuteAsDeviceAgent() {
 		if (jRadioButtonExecuteAsDeviceAgent == null) {
 			jRadioButtonExecuteAsDeviceAgent = new JRadioButton();
+			jRadioButtonExecuteAsDeviceAgent.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonExecuteAsDeviceAgent.setText("Embedded System Agent");
 			jRadioButtonExecuteAsDeviceAgent.setText(Language.translate(jRadioButtonExecuteAsDeviceAgent.getText()));
 			jRadioButtonExecuteAsDeviceAgent.setActionCommand("esaExecuteAsDeviceAgent");
@@ -443,6 +431,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JRadioButton getJRadioButtonVisNon() {
 		if (jRadioButtonVisNon == null) {
 			jRadioButtonVisNon = new JRadioButton();
+			jRadioButtonVisNon.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonVisNon.setText("Sämtliche visuellen Darstellungen deaktivieren");
 			jRadioButtonVisNon.setText(Language.translate(jRadioButtonVisNon.getText()));
 			jRadioButtonVisNon.setPreferredSize(new Dimension(300, 24));
@@ -458,6 +447,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JRadioButton getJRadioButtonVisTrayIcon() {
 		if (jRadioButtonVisTrayIcon == null) {
 			jRadioButtonVisTrayIcon = new JRadioButton();
+			jRadioButtonVisTrayIcon.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonVisTrayIcon.setText("Agent.GUI - Tray Icon anzeigen");
 			jRadioButtonVisTrayIcon.setText(Language.translate(jRadioButtonVisTrayIcon.getText()));
 			jRadioButtonVisTrayIcon.setPreferredSize(new Dimension(300, 24));

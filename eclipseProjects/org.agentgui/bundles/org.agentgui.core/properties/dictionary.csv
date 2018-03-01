@@ -1,6 +1,6 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
-de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
-de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please enter a different name for the setup.;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br>Please enter a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
 de;' ist bereits geöffnet!;' is already open!;;;
@@ -13,6 +13,7 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name 
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
+de;Ablaufdatum;;;;
 de;Abtastintervall;Sampling interval;;;
 de;Adressen;Addresses;;;
 de;Agent auswählen!;Select an Agent!;;;
@@ -94,29 +95,28 @@ de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
-de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
-de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
+de;Bitte geben Sie den Namen für das neue Setup an!;Please, enter a name for the new setup!;null;null;null
+de;Bitte geben Sie den neuen Namen für das Setup an!;Please, specify the new name for the setup!;null;null;null
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
-de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
-de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
-de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
-de;Bitte wählen Sie das Projekt aus, das den Agenten enthält;Please select the project that contains the agent;;;
-de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
-de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please select the agent you want to start.;;;
-de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please select the agent that you want to start;;;
-de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
-de;Bitte wählen Sie ein Projekt aus;Please select a project;;;
-de;Bitte wählen Sie ein Simulations-Setup;Please select a simulation setup;;;
-de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
-de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
-de;Bitte wählen Sie einen Agenten aus der Liste.;Please select an agent from the list.;;;
-de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please select an agent and an ontology reference from the corresponding lists.;;;
-de;Bitte wählen Sie einen Agenten;Please select an agent;;;
-de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
-de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
+de;Bitte spezifizieren Sie den Typ des Startarguments!;Please, specify the type of the start argument!;null;null;null
+de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! - The benchmark is running ...;null;null;null
+de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please, repeat the process if required and then confirm with 'Yes'.;null;null;null
+de;Bitte wählen Sie das Projekt aus, das den Agenten enthält;Please, select the project that contains the agent;;;
+de;Bitte wählen Sie das gewünschte Projekt aus!;Please, select the desired project!;null;null;null
+de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please, select the agent that you want to start.;;;
+de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please, select the agent that you want to start;;;
+de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please, select the ontology, which has to be added to your project!;null;null;null
+de;Bitte wählen Sie ein Projekt aus;Please, select a project;;;
+de;Bitte wählen Sie ein Simulations-Setup;Please, select a simulation setup;;;
+de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please, select one of the mapped ontology references from the list.;;;
+de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please, select a single network component!;;;
+de;Bitte wählen Sie einen Agenten aus der Liste.;Please, select an agent from the list.;;;
+de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please, select an agent and an ontology reference from the corresponding lists.;;;
+de;Bitte wählen Sie einen Namen für den Agenten!;Please, choose a name for the agent!;null;null;null
+de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please, check your database settings!;null;null;null
 de;Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien);Include build directory from a Java project (directory with * .class files);;;
 de;CPU-Auslastung;CPU-Load
 de;CPU;CPU
@@ -573,6 +573,7 @@ de;Setup umbenennen;Rename Setup
 de;Setup-Datei nicht gefunden!;Could not find setup file!
 de;Setup-Name wird bereits verwendet!;Setup name is already used!
 de;Setup-Name zu kurz!;Setup name too short!
+de;Setup:;;;;
 de;Setup;Setup;;;
 de;Simulation starten;Start simulation
 de;Simulation-Start;Start simulation
@@ -720,6 +721,8 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
+de;Zertifikats-Alias;;;;
+de;Zertifikatsbesitzer;;;;
 de;Zip-Datei;Zip-File;;;
 de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!<br><br>Soll diese Option jetzt aktualisiert werden?;To include external bin resources, an update <br>of the project MANIFEST.MF is required!<br><br>Do you want to update this option?;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
@@ -878,7 +881,7 @@ en;Bitte wählen Sie mindestens zwei gültige Knoten!;Select at least two valid 
 en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
 en;Bitte wählen Sie zwei gültige Knoten;Select two valid vertices;;;
-en;Bitte, Geben Sie das Kennwort für;Please enter the password for;;;
+en;Bitte, Geben Sie das Kennwort für;Please, enter the password for;;;
 en;Bitte, Geben Sie das Kennwort für;Please, enter the password for;;;
 en;Bitte, geben Sie Zertifikat Alias;Please, enter Certificate's alias;;;
 en;Bitte, wählen Sie die Netzwerk-Komponente aus, die Sie hinzufügen möchten!;Please, select the network component that you would like to add!;;;
