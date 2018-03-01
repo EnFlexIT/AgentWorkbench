@@ -70,7 +70,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
     public void postWindowOpen() {
     	// --- Do the things required after system start --
     	if (this.postWindowOpenRunnable!=null) {
-    		this.postWindowOpenRunnable.run();
+    		try {
+    			this.postWindowOpenRunnable.run();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
     	}
     	this.postWindowOpenRunnable = null;
     }
