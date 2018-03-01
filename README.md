@@ -1,32 +1,12 @@
-# AgentWorkbench
+# Agent.Workbench
 
-AgentWorkbench is an application toolkit based on the [JADE](http://jade.tilab.com/) framework. It provides functionalities for time aspects, agent environment interaction, visualization and load balancing, Furthermore, the included application focuses the usability for end users.
+Agent.Workbench is an [Eclipse](https://www.eclipse.org/) / [OSGI ](https://www.osgi.org/)based application toolkit and framework that utilizes the agent platform [JADE](http://jade.tilab.com/). It enables to develop agent-based end-user oriented applications that should finally enable non-programmers to use agent technologies for their own purposes.
 
-## Features
+Why did we start developing such a tool? First reason is that JADE is probably the most sophisticated, JAVA-based agent platform. It is widlly used in academia and compliant to the [IEEE](https://www.ieee.org) / [FIPA ](http://www.fipa.org/)specifications. Since JADE was designed as middleware, the developer \(Telecom Italia S.p.A. and other\) especially focused on the actual core of the framework - agents and their interaction with their environment \(which includes other agents and thus agent communication\). In turn, that means that - despite of some administrative tools - no effort was spent to address end-user needs, which is the second reason why we started developing Agent.Workbench several years ago.
 
-### End User functionalities
-
-* MAS / MABS are handled as "projects" (designed by developer)
-* In projects, definitions of different simulation setups are possible
-* Agents can be configured by using different start arguments coming from (tailored) ontologies
-* Depending on the selected environment model (e. g. a graph or a continuous two-dimensional model) case-specific environment configurations can be done
-* The JADE agent platform and their tools can be easily controlled with the end user application
-* Simulations can be easily distributed and balanced on different machines, in particular also by non-IT specialists
-* AgentWorkbench provides a Multi-Language application (English, German, French, Spanish, Italian, Polish, …)
-
-### Utilities for developer
-
-* AgentWorkbench provides a console window, which allows to display the system output, even if the output comes from a remote container located on a different machine
-* The view on projects can be switched between a 'Developer view' and an 'End user view', in order to unburden domain experts from superfluous tasks and views
-* One of the predefined environment models can be selected and used for a simulation OR an environment model can be designed and added individually
-* External libraries (.jar files) can be added to a project in order to extend the core program features
-* A customized PlugIn-class can be written in order to extend the application or the project window
-* [Protégé](https://github.com/protegeproject/) designed ontologies can be integrated into projects - AgentWorkbench provides a reflective access to them. For example, in order to define start arguments for agents
-* Needed JADE services can be configured by using the user interface, this includes also extended JADE BaseService classes that have been written individually for a project
-* With the SimulationService, AgentWorkbench provides an efficient way for the agent/environment interaction, also in distributed applications
-* The integrated, so called "Background System" enables an easy distribution of agencies over several machines in a computer network, just by a method invocation out of the running simulation
-* AgentWorkbench provides open interfaces in order to allow individual static and dynamic load balancing solutions. Therefore the system load is permanently measured, also for a distributed agent platform
+Instead of starting an agent system from command line or to start developing an agent-based application from the scratch, we believe that efforts should be reduced.
 
 ## History
 
 The project was formally known as "Agent.GUI", it was moved from [Sourceforge](https://sourceforge.net/projects/agentgui/) July 2017.
+
