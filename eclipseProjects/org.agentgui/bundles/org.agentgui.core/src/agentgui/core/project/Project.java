@@ -412,8 +412,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			String title = Language.translate("Projekt-Ladefehler!");
 			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
 			message += xmlFileName;
-			if(Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION){
-				JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
+			if (Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION){
+				JOptionPane.showInternalMessageDialog(Application.getMainWindow(), message, title, JOptionPane.WARNING_MESSAGE);
 			}
 			return null;
 		}

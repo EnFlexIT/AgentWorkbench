@@ -467,7 +467,7 @@ public class MainWindow extends JFrame {
 	public JDesktopPane getJDesktopPane4Projects() {
 		if (jDesktopPane4Projects == null) {
 			jDesktopPane4Projects = new JDesktopPane();
-			jDesktopPane4Projects.setDoubleBuffered(false);
+//			jDesktopPane4Projects.setDoubleBuffered(false);
 		}
 		return jDesktopPane4Projects;
 	}

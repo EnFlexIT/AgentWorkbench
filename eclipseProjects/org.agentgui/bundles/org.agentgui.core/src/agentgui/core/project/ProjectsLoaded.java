@@ -399,12 +399,13 @@ public class ProjectsLoaded {
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
 		} else {
 			for(int i=0; i<this.count(); i++) {
-				String ProjectName = this.getProjectsOpen().get(i).getProjectName();
-				if ( ProjectName.equalsIgnoreCase( Application.getProjectFocused().getProjectName() ) ) 
+				String projectName = this.getProjectsOpen().get(i).getProjectName();
+				if ( projectName.equalsIgnoreCase( Application.getProjectFocused().getProjectName() ) ) {
 					setFontBold = true;
-				else 
+				} else {
 					setFontBold = false;
-				WindowMenu.add( new JMenuItmen_Window( ProjectName, i, setFontBold) );
+				}
+				WindowMenu.add( new JMenuItmen_Window( projectName, i, setFontBold) );
 			}		
 		}
 	}	
@@ -417,17 +418,17 @@ public class ProjectsLoaded {
  
 		private static final long serialVersionUID = 1L;
 		
-		private JMenuItmen_Window( String ProjectName, int WindowIndex, boolean setBold  ) {
+		private JMenuItmen_Window( String ProjectName, int windowIndex, boolean setBold  ) {
 			
-			final int WinIdx = WindowIndex;
-			int WinNo = WindowIndex + 1;
+			final int winIndex = windowIndex;
+			int winNo = windowIndex + 1;
 			
-			if ( WinNo <= 0 ) {
-				this.setText( ProjectName );
+			if ( winNo <= 0 ) {
+				this.setText(ProjectName);
+			} else {
+				this.setText( winNo + ": " + ProjectName );
 			}
-			else {
-				this.setText( WinNo + ": " + ProjectName );
-			}		
+			
 			if ( setBold ) {
 				Font cfont = this.getFont();
 				if ( cfont.isBold() == true ) {
@@ -439,7 +440,7 @@ public class ProjectsLoaded {
 			}
 			this.addActionListener( new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					Application.getProjectsLoaded().setFocus( WinIdx );							
+					Application.getProjectsLoaded().setFocus( winIndex );							
 				}
 			});		
 		}
