@@ -1504,7 +1504,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 					this.addGraphElementToNetworkComponentRelation(newEdge, component);
 
 					component.getGraphElementIDs().add(newNode.getId());
-					component.getGraphElementIDs().remove(node2SplitAt);
+					component.getGraphElementIDs().remove(node2SplitAt.getId());
 					
 					graphNodeConnections.add(newNode);
 					
