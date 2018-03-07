@@ -349,10 +349,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 		// --- Load the XML file of the project ---------------------
 		Project project = loadProjectXml(projectPath);
-		
-		if(project == null){
-			return null;
-		}
+		if (project==null) return null;
 		
 		// --- Check/create default folders -------------------------
 		project.setProjectFolder(projectSubDirectory);
@@ -361,7 +358,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		// --- Install required features if necessary ---------------
 		if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
 			// --- Only possible if not running from the IDE --------
-
 			boolean newFeaturesInstalled = false;
 			try {
 				// --- Install additional features if necessary -----

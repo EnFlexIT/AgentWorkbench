@@ -13,7 +13,7 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name 
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
-de;Ablaufdatum;;;;
+de;Ablaufdatum;Expiration Date;;;
 de;Abtastintervall;Sampling interval;;;
 de;Adressen;Addresses;;;
 de;Agent auswählen!;Select an Agent!;;;
@@ -95,9 +95,12 @@ de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
+de;Bitte geben Sie Agenten-Namen an;;;;
+de;Bitte geben Sie den Agenten an, der gestartet werden soll;Please specify the agent to be started;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please, enter a name for the new setup!;null;null;null
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please, specify the new name for the setup!;null;null;null
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
+de;Bitte geben Sie einen Agenten-Namen an;;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
@@ -109,12 +112,15 @@ de;Bitte wählen Sie das gewünschte Projekt aus!;Please, select the desired pro
 de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please, select the agent that you want to start.;;;
 de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please, select the agent that you want to start;;;
 de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please, select the ontology, which has to be added to your project!;null;null;null
+de;Bitte wählen Sie die Tabellenzeile, die gelöscht werden soll;Please select the table row to be deleted;;;
+de;Bitte wählen Sie die Zeile, in der ein Agent definiert werden soll;Please select the line in which an agent should be defined;;;
 de;Bitte wählen Sie ein Projekt aus;Please, select a project;;;
 de;Bitte wählen Sie ein Simulations-Setup;Please, select a simulation setup;;;
 de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please, select one of the mapped ontology references from the list.;;;
 de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please, select a single network component!;;;
 de;Bitte wählen Sie einen Agenten aus der Liste.;Please, select an agent from the list.;;;
 de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please, select an agent and an ontology reference from the corresponding lists.;;;
+de;Bitte wählen Sie einen Agenten;Please, select an agent;;;
 de;Bitte wählen Sie einen Namen für den Agenten!;Please, choose a name for the agent!;null;null;null
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please, check your database settings!;null;null;null
 de;Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien);Include build directory from a Java project (directory with * .class files);;;
@@ -234,6 +240,7 @@ de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Date
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
+de;Fehlender Agent Name!;;;;
 de;Fehlender Agent!;Missing Agent!;;;
 de;Fehlendes Projekt!;Missing Project!;;;
 de;Fehlendes Simulations-Setup!;Missing Simulation Setup!;;;
@@ -721,8 +728,8 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
-de;Zertifikats-Alias;;;;
-de;Zertifikatsbesitzer;;;;
+de;Zertifikats-Alias;Certificate Alias;;;
+de;Zertifikatsbesitzer;Certificate Owner;;;
 de;Zip-Datei;Zip-File;;;
 de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!<br><br>Soll diese Option jetzt aktualisiert werden?;To include external bin resources, an update <br>of the project MANIFEST.MF is required!<br><br>Do you want to update this option?;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
