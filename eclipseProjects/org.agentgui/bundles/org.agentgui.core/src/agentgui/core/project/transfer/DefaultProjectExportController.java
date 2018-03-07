@@ -533,29 +533,31 @@ public class DefaultProjectExportController implements ProjectExportController{
 			this.updateProgressMonitor(30);
 
 			// --- Allow additional processing by subclasses ---------
-			this.beforeZip();
+			success  = this.beforeZip();
 
-			if (DefaultProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
-				// --- Integrate the project into the installation package ------
-				success = DefaultProjectExportController.this.integrateProjectIntoInstallationPackage();
-			} else {
-				// --- Zip the temporary folder --------------
-				ArchiveFileHandler newZipper = new ArchiveFileHandler();
-				success = newZipper.compressFolder(tempFolderPath.toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile());
-				try {
-					new RecursiveFolderDeleter().deleteFolder(tempFolderPath);
-				} catch (IOException e) {
-					System.err.println("[ProjectExportController]: Error deleting temporary export folder " + tempFolderPath.toFile().getAbsolutePath());
-					e.printStackTrace();
+			if (success == true) {
+				if (DefaultProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
+					// --- Integrate the project into the installation package ------
+					success = DefaultProjectExportController.this.integrateProjectIntoInstallationPackage();
+				} else {
+					// --- Zip the temporary folder --------------
+					ArchiveFileHandler newZipper = new ArchiveFileHandler();
+					success = newZipper.compressFolder(tempFolderPath.toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile());
+					try {
+						new RecursiveFolderDeleter().deleteFolder(tempFolderPath);
+					} catch (IOException e) {
+						System.err.println("[ProjectExportController]: Error deleting temporary export folder " + tempFolderPath.toFile().getAbsolutePath());
+						e.printStackTrace();
+					}
 				}
+				this.updateProgressMonitor(80);
+	
+				this.updateProgressMonitor(100);
 			}
-			this.updateProgressMonitor(80);
-
-			this.updateProgressMonitor(100);
-			this.disposeProgressMonitor();
 
 			this.afterZip(success);
 		}
+		this.disposeProgressMonitor();
 		
 		this.exportSuccessful = success;
 	}

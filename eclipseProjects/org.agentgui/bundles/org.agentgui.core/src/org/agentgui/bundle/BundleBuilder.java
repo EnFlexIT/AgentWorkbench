@@ -223,9 +223,12 @@ public class BundleBuilder {
 	 * @return the bundle file
 	 */
 	public File getBundleFile(Bundle bundle) {
-		for (File file : this.getBundleJars()) {
-			String symBundleName = this.getBundleJarsSymbolicBundleNames().get(file);
-			if (symBundleName.equals(bundle.getSymbolicName())) return file;
+		if (this.getBundleJars()!=null) {
+			for (int i=0; i<this.getBundleJars().size(); i++) {
+				File file = this.getBundleJars().get(i);
+				String symBundleName = this.getBundleJarsSymbolicBundleNames().get(file);
+				if (symBundleName.equals(bundle.getSymbolicName())) return file;
+			}
 		}
 		return null;
 	}
