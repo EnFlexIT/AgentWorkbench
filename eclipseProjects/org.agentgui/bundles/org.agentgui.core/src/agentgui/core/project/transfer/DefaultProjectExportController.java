@@ -37,7 +37,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -367,6 +370,32 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 		return true;
 	}
+	
+	/**
+	 * Removes all setups that are not selected for export from the setup list
+	 */
+	private void removeUnexportedSetupsFromList() {
+
+		// --- Get the list of setups from the project file --------------
+		Project exportedProject = Project.load(this.getTempExportFolderPath().toFile(), false);
+		Set<String> setupNames = new HashSet<>(exportedProject.getSimulationSetups().keySet());
+
+		// --- Remove all setups that are not exported --------------------
+		for (String setupName : setupNames) {
+			if (exportSettings.getSimSetups().contains(setupName) == false) {
+				exportedProject.getSimulationSetups().remove(setupName);
+			}
+		}
+
+		// --- If the currently selected setup is not exported, set the first exported
+		// setup as selected instead -----
+		if (this.exportSettings.getSimSetups().contains(exportedProject.getSimulationSetupCurrent()) == false) {
+			exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+		}
+
+		// --- Save the changes ------------
+		exportedProject.save(this.getTempExportFolderPath().toFile(), false);
+	}
 
 	/**
 	 * Loads the simulation setup with the specified name
@@ -528,6 +557,9 @@ public class DefaultProjectExportController implements ProjectExportController{
 				// --- Copy the required files for the selected setups --------
 				if (DefaultProjectExportController.this.exportSettings.getSimSetups().size() > 0) {
 					success = DefaultProjectExportController.this.copyRequiredSimulationSetupFiles();
+					if (success == true) {
+						this.removeUnexportedSetupsFromList();
+					}
 				}
 			}
 			this.updateProgressMonitor(30);
@@ -553,11 +585,11 @@ public class DefaultProjectExportController implements ProjectExportController{
 				this.updateProgressMonitor(80);
 	
 				this.updateProgressMonitor(100);
+				this.disposeProgressMonitor();
 			}
 
 			this.afterZip(success);
 		}
-		this.disposeProgressMonitor();
 		
 		this.exportSuccessful = success;
 	}
