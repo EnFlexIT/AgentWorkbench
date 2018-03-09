@@ -97,10 +97,10 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private void initialize() {
 		
 		
-		this.setPreferredSize(new Dimension(570, 397));
+		this.setPreferredSize(new Dimension(570, 375));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{82, 430, 0};
-		gridBagLayout.rowHeights = new int[]{16, 26, 23, 16, 16, 16, 24, 0, 0};
+		gridBagLayout.rowHeights = new int[]{16, 26, 23, 16, 0, 16, 24, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
@@ -320,7 +320,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JPanelEmbeddedSystemAgentTable getJPanelEmbeddedSystemAgentTable() {
 		if (jPanelEmbeddedSystemAgentTable == null) {
 			jPanelEmbeddedSystemAgentTable = new JPanelEmbeddedSystemAgentTable(this.optionDialog, this);
-			jPanelEmbeddedSystemAgentTable.setMinimumSize(new Dimension(300, 150));
+			jPanelEmbeddedSystemAgentTable.setMinimumSize(new Dimension(200, 140));
 		}
 		return jPanelEmbeddedSystemAgentTable;
 	}
@@ -334,7 +334,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			jRadioButtonVisNon.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonVisNon.setText("Sämtliche visuellen Darstellungen deaktivieren");
 			jRadioButtonVisNon.setText(Language.translate(jRadioButtonVisNon.getText()));
-			jRadioButtonVisNon.setPreferredSize(new Dimension(300, 24));
+			jRadioButtonVisNon.setPreferredSize(new Dimension(240, 24));
 			jRadioButtonVisNon.setActionCommand("visNon");
 			jRadioButtonVisNon.addActionListener(this);
 		}
@@ -357,37 +357,54 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		return jRadioButtonVisTrayIcon;
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#doDialogCloseAction()
+	 */
+	@Override
+	public void doDialogCloseAction() {
+		if (this.esaProjectSelected!=null) {
+			this.esaProjectSelected.close(null, true);
+			this.esaProjectSelected = null;
+			this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(null);
+		}
+	}
+	
 	/**
 	 * Loads the project instance of the selected sub folder.
 	 */
 	private void esaLoadSelectedProject() {
 		
 		String projectFolderSelected = (String) this.getJComboBoxProjectSelector().getSelectedItem();
-		if (projectFolderSelected==null || projectFolderSelected.equals("")) {
-			this.esaProjectSelected = null;
+		if (projectFolderSelected==null || projectFolderSelected.isEmpty()==true) {
+			// --- No project was selected ----------------
+			if (this.esaProjectSelected!=null) {
+				this.esaProjectSelected.close(null, true);
+				this.esaProjectSelected = null;
+				this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(null);
+			}
 			this.getJComboBoxSetupSelector().setSelectedItem(null);
 			this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
 			
 		} else {
 			// --- Project was selected -------------------
-			Project selectedProject = Project.load(projectFolderSelected);
 			if (this.esaProjectSelected==null) {
-				this.esaProjectSelected = selectedProject;
+				// --- Simply load the project ------------
+				this.esaProjectSelected = Project.load(projectFolderSelected);
 				this.setComboBoxModelSetup();
 				this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
-				this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(selectedProject);
-				
+				this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(this.esaProjectSelected);
+			
 			} else {
-				// --- Is this still the same project? ----
-				String selectedProjectFolder = selectedProject.getProjectFolder();
-				String currentProjectFolder = this.esaProjectSelected.getProjectFolder();
-				if (selectedProjectFolder.equals(currentProjectFolder)==false) {
-					// --- Reinitialise settings ---------- 
+				// --- Check if open project is equal -----
+				if (projectFolderSelected.equals(this.esaProjectSelected.getProjectFolder())==false) {
+					// --- Close the project --------------
+					this.esaProjectSelected.close(null, true);
+					this.esaProjectSelected = Project.load(projectFolderSelected);
+					// --- Reinitialize settings ---------- 
 					this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
-					this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(selectedProject);
+					this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(this.esaProjectSelected);
 				}
 			}
-			
 		}
 		this.refreshViewDeviceSystem();
 	}
@@ -503,7 +520,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				break;
 			}
 			this.getJComboBoxSetupSelector().setSelectedItem(getGlobalInfo().getDeviceServiceSetupSelected());
-			this.getJPanelEmbeddedSystemAgentTable().setAgentDescriptors(getGlobalInfo().getDeviceServiceAgentName(), getGlobalInfo().getDeviceServiceAgentClassName());
+			this.getJPanelEmbeddedSystemAgentTable().setDeviceServiceAgents(getGlobalInfo().getDeviceServiceAgents());
 			switch (getGlobalInfo().getDeviceServiceAgentVisualisation()) {
 			case NONE:
 				this.getJRadioButtonVisNon().setSelected(true);
@@ -538,8 +555,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			this.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.AGENT);
 		}
 		this.getGlobalInfo().setDeviceServiceSetupSelected((String)this.getJComboBoxSetupSelector().getSelectedItem());
-		this.getGlobalInfo().setDeviceServiceAgentName(this.getJPanelEmbeddedSystemAgentTable().getAgentNames());
-		this.getGlobalInfo().setDeviceServiceAgentClassName(this.getJPanelEmbeddedSystemAgentTable().getAgentClassName());
+		this.getGlobalInfo().setDeviceServiceAgents(this.getJPanelEmbeddedSystemAgentTable().getDeviceServiceAgents());
 		if (this.getJRadioButtonVisNon().isSelected()) {
 			this.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);			
 		} else if (this.getJRadioButtonVisTrayIcon().isSelected()) {
@@ -605,8 +621,10 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		String actCMD = ae.getActionCommand();
 		if (actCMD.equalsIgnoreCase("esaProjectSelected")) {
 			this.esaLoadSelectedProject();
+			
 		} else if (actCMD.equalsIgnoreCase("esaExecuteAsServerService")) {
 			this.refreshViewDeviceSystem();
+			
 		} else if (actCMD.equalsIgnoreCase("esaExecuteAsDeviceAgent")) {
 			this.refreshViewDeviceSystem();
 			

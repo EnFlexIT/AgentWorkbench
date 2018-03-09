@@ -290,14 +290,14 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 * @return the file property for the CSV time format
 	 */
 	private String getFilePropertyCsvTimeFormat() {
-		return Application.getGlobalInfo().getStringFromPersistedConfiguration(PROP_CsvTimeFormat, TimeModelDateBased.DEFAULT_TIME_FORMAT);
+		return Application.getGlobalInfo().getStringFromConfiguration(PROP_CsvTimeFormat, TimeModelDateBased.DEFAULT_TIME_FORMAT);
 	}
 	/**
 	 * Sets the file property of the CSV time format.
 	 * @param newCsvTimeFormat the new file property for the CSV time format
 	 */
 	private void setFilePropertyCsvTimeFormat(String newCsvTimeFormat) {
-		Application.getGlobalInfo().putStringToPersistedConfiguration(PROP_CsvTimeFormat, newCsvTimeFormat);
+		Application.getGlobalInfo().putStringToConfiguration(PROP_CsvTimeFormat, newCsvTimeFormat);
 	}
 	
 	
@@ -313,14 +313,14 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		} else {
 			defaultValue = this.timeStartSimSetup.toString();
 		}
-		return Application.getGlobalInfo().getStringFromPersistedConfiguration(PROP_TimeOffSetManualStartTime, defaultValue);
+		return Application.getGlobalInfo().getStringFromConfiguration(PROP_TimeOffSetManualStartTime, defaultValue);
 	}
 	/**
 	 * Sets the file property for the manual start time for offset.
 	 * @param newStartTimeAsLong the new file property for the manual start time for offset
 	 */
 	private void setFilePropertyManualStartTimeForOffset(String newStartTimeAsLong) {
-		Application.getGlobalInfo().putStringToPersistedConfiguration(PROP_TimeOffSetManualStartTime, newStartTimeAsLong);
+		Application.getGlobalInfo().putStringToConfiguration(PROP_TimeOffSetManualStartTime, newStartTimeAsLong);
 	}
 	
 	
@@ -819,9 +819,9 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 */
 	private void loadCheckBoxConfiguration() {
 		
-		boolean timeOffset = Application.getGlobalInfo().getBooleanFromPersistedConfiguration(PROP_TimeOffSet, false);
-		boolean timeOffsetSimSetup = Application.getGlobalInfo().getBooleanFromPersistedConfiguration(PROP_TimeOffSetSimulationSetup, false);
-		boolean timeOffsetManual = Application.getGlobalInfo().getBooleanFromPersistedConfiguration(PROP_TimeOffSetManual, false);
+		boolean timeOffset = Application.getGlobalInfo().getBooleanFromConfiguration(PROP_TimeOffSet, false);
+		boolean timeOffsetSimSetup = Application.getGlobalInfo().getBooleanFromConfiguration(PROP_TimeOffSetSimulationSetup, false);
+		boolean timeOffsetManual = Application.getGlobalInfo().getBooleanFromConfiguration(PROP_TimeOffSetManual, false);
 		
 		this.getJCheckBoxTimeShiftAdjust().setSelected(timeOffset);
 		this.getJCheckBoxTimeShiftUseSimulationSetup().setSelected(timeOffsetSimSetup);
@@ -872,9 +872,9 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		}
 	
 		// --- Save the current check box settings ----------------------------
-		Application.getGlobalInfo().putBooleanToPersistedConfiguration(PROP_TimeOffSet, this.getJCheckBoxTimeShiftAdjust().isSelected());
-		Application.getGlobalInfo().putBooleanToPersistedConfiguration(PROP_TimeOffSetSimulationSetup, this.getJCheckBoxTimeShiftUseSimulationSetup().isSelected());
-		Application.getGlobalInfo().putBooleanToPersistedConfiguration(PROP_TimeOffSetManual, this.getJCheckBoxTimeShiftAdjustToTime().isSelected());
+		Application.getGlobalInfo().putBooleanToConfiguration(PROP_TimeOffSet, this.getJCheckBoxTimeShiftAdjust().isSelected());
+		Application.getGlobalInfo().putBooleanToConfiguration(PROP_TimeOffSetSimulationSetup, this.getJCheckBoxTimeShiftUseSimulationSetup().isSelected());
+		Application.getGlobalInfo().putBooleanToConfiguration(PROP_TimeOffSetManual, this.getJCheckBoxTimeShiftAdjustToTime().isSelected());
 		
 	}
 	

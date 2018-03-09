@@ -247,16 +247,24 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.agentgui.gui.AwbProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText) {
+	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText, Object parentVisualizationComponent) {
 
 		ProjectCloseUserFeedback userFeedback = null;
-		int msgAnswer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msgText, msgTitle, JOptionPane.YES_NO_CANCEL_OPTION);
+		
+		Component parentComponent = null;
+		if (parentVisualizationComponent==null) {
+			parentComponent = Application.getMainWindow(); // as default
+		} else {
+			if (parentVisualizationComponent instanceof Component) {
+				 parentComponent = (Component) parentVisualizationComponent;
+			}
+		}
+		
+		int msgAnswer = JOptionPane.showConfirmDialog(parentComponent, msgText, msgTitle, JOptionPane.YES_NO_CANCEL_OPTION);
 		if (msgAnswer == JOptionPane.CANCEL_OPTION) {
 			userFeedback = ProjectCloseUserFeedback.CancelCloseAction;
 		} else if (msgAnswer == JOptionPane.YES_OPTION) {

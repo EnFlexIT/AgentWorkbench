@@ -107,7 +107,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		this.setGlobalData2Form();
 		
 		// --- Translate ----------------------------------
-		jLabelRunsAs.setText(Language.translate("Starte Agent.GUI als:"));
+		jLabelRunsAs.setText(Application.getGlobalInfo().getApplicationTitle() + " - " + Language.translate("Starte als:"));
 		
 		jRadioButtonRunAsApplication.setText(Language.translate("Anwendung"));
 		jRadioButtonRunAsServer.setText(Language.translate("Hintergrundsystem (Master / Slave)"));
@@ -296,7 +296,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			gridBagConstraints20.gridx = 0;
 			
 			jLabelRunsAs = new JLabel();
-			jLabelRunsAs.setText("Starte Agent.GUI als:");
+			jLabelRunsAs.setText("starte als:");
 			jLabelRunsAs.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jPanelTop = new JPanel();
@@ -662,21 +662,21 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			// --- between ExecutionModes, but ask the user before ------------
 			// ----------------------------------------------------------------
 			String executionModeTextNew = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew);
-			String MsgHead = "";
-			String MsgText = "";
+			String msgHead = "";
+			String msgText = "";
 			
-			MsgHead += Language.translate("Agent.GUI umschalten ?");
-			MsgText += Language.translate("Progamm umschalten auf") + " '" + executionModeTextNew + "':" + newLine; 	
-			MsgText += Language.translate("Möchten Sie Agent.GUI nun umschalten und neu starten ?");
+			msgHead += Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Anwendung umschalten ?");
+			msgText += Language.translate("Progamm umschalten auf") + " '" + executionModeTextNew + "':" + newLine; 	
+			msgText += Language.translate("Möchten Sie die Anwendung nun umschalten ?");
 
-			Integer MsgAnswer = JOptionPane.showConfirmDialog(this.optionDialog, MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
-			if (MsgAnswer == JOptionPane.NO_OPTION) {
+			int msgAnswer = JOptionPane.showConfirmDialog(this.optionDialog, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+			if (msgAnswer==JOptionPane.NO_OPTION) {
 				return;
 			}
 			// ----------------------------------------------------------------
 		}
 		this.setFormData2Global();
-		Application.getGlobalInfo().doSavePersistedConfiguration();
+		Application.getGlobalInfo().doSaveConfiguration();
 		// --------------------------------------------------------------------
 		this.applySettings();
 		// --------------------------------------------------------------------
@@ -712,7 +712,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				System.out.println("\n" + Language.translate("Neustart") + " " + Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew) + " ...");
 				Application.getJadePlatform().stop();
 				if (Application.getProjectsLoaded()!= null) {
-					if (Application.getProjectsLoaded().closeAll()==false) return;	
+					if (Application.getProjectsLoaded().closeAll(this.optionDialog, true)==false) return;	
 				}		
 				Application.setMainWindow(null);
 				Application.removeTrayIcon();	
@@ -739,7 +739,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			case APPLICATION:
 				// --- Application Modus ----------------------------
 				if (Application.getProjectsLoaded()!= null) {
-					if (Application.getProjectsLoaded().closeAll() == false ) return;	
+					if (Application.getProjectsLoaded().closeAll(this.optionDialog) == false ) return;	
 				}		
 				// --- Close main window and TrayIcon ---------------
 				Application.setMainWindow(null);
@@ -756,7 +756,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			case DEVICE_SYSTEM:
 				// --- Device / Embedded System Agent ---------------
 				if (Application.getProjectsLoaded()!= null) {
-					if (Application.getProjectsLoaded().closeAll()==false) return;	
+					if (Application.getProjectsLoaded().closeAll(this.optionDialog, true)==false) return;	
 				}		
 				Application.setMainWindow(null);
 				Application.removeTrayIcon();	
@@ -782,7 +782,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			} else if (getJRadioButtonRunAsDeviceService().isSelected()) {
 				this.executionModeNew = ExecutionMode.DEVICE_SYSTEM;
 			}
-			this.refreshView();	
+			this.refreshView();
+			
 		} else if (actCMD.equalsIgnoreCase("resetSettings")) {
 			this.executionModeNew = this.executionModeOld;
 			this.setGlobalData2Form();
@@ -790,15 +791,15 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			this.getJPanelMTPConfig().hideCertificateSettings();
 			
 		} else if (actCMD.equalsIgnoreCase("applySettings")) {
-			if(getJPanelMTPConfig().getJComboBoxMtpProtocol().getSelectedProtocol()!= getJPanelMasterConfiguration().getJcomboboxMtpProtocol().getSelectedProtocol()) {
+			if (getJPanelMTPConfig().getJComboBoxMtpProtocol().getSelectedProtocol()!= getJPanelMasterConfiguration().getJcomboboxMtpProtocol().getSelectedProtocol()) {
 				String title = Language.translate("Different MTP-protocols configured!", Language.EN); 
 				String msg = Language.translate("Please, choose the same Protocol for the server.master and the MTP-protocol!", Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
-			}else{
+			} else {
 				this.doOkAction();
 			}
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 		}
 	}
-}  //  @jve:decl-index=0:visual-constraint="-3,8"
+}  

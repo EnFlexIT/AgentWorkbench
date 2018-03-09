@@ -419,7 +419,7 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 		// ---- Projects root folder ------------------------------------------
 		// --------------------------------------------------------------------
 		// --- Check for proper path ending -----------------------------------
-		String projectsPathOld = Application.getGlobalInfo().getStringFromPersistedConfiguration(BundleProperties.DEF_PROJECTS_DIRECTORY, null);
+		String projectsPathOld = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_PROJECTS_DIRECTORY, null);
 		String projectsPathNew = this.getJTextFieldProjectsDirectroy().getText().trim();
 		if (projectsPathNew.isEmpty()==true) {
 			projectsPathNew = projectsPathOld;
@@ -504,11 +504,11 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 		this.getJTextFieldProjectsDirectroy().setText(projectsPath);
 		this.getJTextFieldProjectsDirectroy().setToolTipText(projectsPath);
 		
-		String productPath = Application.getGlobalInfo().getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
+		String productPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
 		this.getJTextFieldInstalledProductDirectory().setText(productPath);
 		this.getJTextFieldInstalledProductDirectory().setToolTipText(productPath);
 		
-		String installationPackagesPath = Application.getGlobalInfo().getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, null);
+		String installationPackagesPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, null);
 		this.getJTextFieldInstallationPackagesDirectroy().setText(installationPackagesPath);
 		this.getJTextFieldInstallationPackagesDirectroy().setToolTipText(installationPackagesPath);
 		this.getJLabelInstallationPackedInfo().setText(this.getInstallationPackageFinder().getSearchResultDescription(true));
@@ -520,10 +520,10 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 	private void setFormData2Global() {
 		String projectsPath = this.getJTextFieldProjectsDirectroy().getText().trim();
 		Application.getGlobalInfo().setPathProjects(projectsPath);
-		Application.getGlobalInfo().putStringToPersistedConfiguration(BundleProperties.DEF_PROJECTS_DIRECTORY, projectsPath);
-		Application.getGlobalInfo().putStringToPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, this.getJTextFieldInstalledProductDirectory().getText().trim());
-		Application.getGlobalInfo().putStringToPersistedConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, this.getJTextFieldInstallationPackagesDirectroy().getText().trim());
-		Application.getGlobalInfo().doSavePersistedConfiguration();
+		Application.getGlobalInfo().putStringToConfiguration(BundleProperties.DEF_PROJECTS_DIRECTORY, projectsPath);
+		Application.getGlobalInfo().putStringToConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, this.getJTextFieldInstalledProductDirectory().getText().trim());
+		Application.getGlobalInfo().putStringToConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, this.getJTextFieldInstallationPackagesDirectroy().getText().trim());
+		Application.getGlobalInfo().doSaveConfiguration();
 	}
 	
 }  

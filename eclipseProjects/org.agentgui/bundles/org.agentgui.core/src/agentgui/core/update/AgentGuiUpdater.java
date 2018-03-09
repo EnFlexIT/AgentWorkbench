@@ -90,7 +90,7 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private void initialize() {
 
-		this.setName("Agent.GUI-Updater");
+		this.setName(Application.getGlobalInfo().getApplicationTitle() + "-Updater");
 
 		this.globalInfo = Application.getGlobalInfo();
 		this.executionMode = this.globalInfo.getExecutionMode();
@@ -112,7 +112,7 @@ public class AgentGuiUpdater extends Thread {
 				doUpdateProcedure = false;
 			} else {
 				Application.getGlobalInfo().setUpdateDateLastChecked(timeNow);
-				Application.getGlobalInfo().doSavePersistedConfiguration();
+				Application.getGlobalInfo().doSaveConfiguration();
 			}
 		}
 
@@ -162,7 +162,7 @@ public class AgentGuiUpdater extends Thread {
 		if (this.globalInfo.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			this.askBeforeDownload = true;
 			this.doUpdateProcedure = false; // set to 'true' for further developments of the AgentGuiUpdater class
-			System.out.println("Agent.GUI-Update: No updates in the IDE environment available.");
+			System.out.println(Application.getGlobalInfo().getApplicationTitle() + "-Update: No updates in the IDE environment available.");
 		}
 
 		// ------------------------------------------------
@@ -248,7 +248,7 @@ public class AgentGuiUpdater extends Thread {
 					}
 					
 					// --- Show confirmation dialog ----------
-					int userAnswer = JOptionPane.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), "Agent.GUI Update", JOptionPane.YES_NO_OPTION);
+					int userAnswer = JOptionPane.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), Application.getGlobalInfo().getApplicationTitle() + " Update", JOptionPane.YES_NO_OPTION);
 					if (userAnswer == JOptionPane.NO_OPTION) {
 						installUpdates = false;
 						System.out.println("P2 Update: Update canceled by user.");

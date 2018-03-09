@@ -34,6 +34,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -41,6 +42,7 @@ import javax.swing.JOptionPane;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.plugin.PlugInsLoaded;
@@ -113,23 +115,21 @@ public class Platform {
 	public boolean start(boolean showRMA, Profile containerProfile) {
 		
 		boolean startSucceed = false;		
-		
-		if (this.isMainContainerRunning()==false) {
+		if (this.isMainContainerRunning()==true) {
+			startSucceed = true;
+			
+		} else {
+			
 			try {
 				// --------------------------------------------------
 				// --- In case of execution as Service, check -------
 				// --- Master-URL and maybe delay the JADE start ----
 				// --------------------------------------------------
 				this.delayHeadlessServerStartByCheckingMasterURL();
-				
 				// --- Notify plugins for agent Start --------------- 
 				this.notifyPluginsForStartMAS();
-				
 				// --- Check for valid plugin preconditions --------- 
-				if (this.hasValidPreconditionsInPlugins()==false) {
-					return false;
-				}
-				
+				if (this.hasValidPreconditionsInPlugins()==false)  return false;
 				// --- Start Platform -------------------------------
 				Runtime jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
@@ -158,9 +158,6 @@ public class Platform {
 				ex.printStackTrace();
 				return false;
 			}
-			
-		} else {
-			System.out.println( "JADE läuft bereits! => " + Runtime.instance().toString() );			
 		}
 
 		// --- Start the Application Background-Agents ---------------
@@ -401,24 +398,32 @@ public class Platform {
 	
 	/**
 	 * Start JADE for a globally specified embedded system agent.
-	 * @return true, if successful
+	 * @return true, if the start was successful for every agent
 	 */
 	public boolean start4EmbeddedSystemAgent() {
-		String agentClassName = Application.getGlobalInfo().getDeviceServiceAgentClassName();
-		String agentName = Application.getGlobalInfo().getDeviceServiceAgentName();
-		if (agentClassName!=null) {
-			return this.start4EmbeddedSystemAgent(agentClassName, agentName);
+		
+		Vector<DeviceAgentDescription> agents = Application.getGlobalInfo().getDeviceServiceAgents();
+		if (agents.size()==0) return false;
+
+		// --- Question is, was everything successful? -------
+		boolean success = true; 
+		for (int i = 0; i < agents.size(); i++) {
+			DeviceAgentDescription dad = agents.get(i);
+			boolean partSuccess = this.start4EmbeddedSystemAgent(dad.getAgentName(), dad.getAgentClass());
+			if (success==true) {
+				success = partSuccess;
+			}
 		}
-		return false;
+		return success;
 	}
 	/**
 	 * Start JADE for a specified embedded system agent.
 	 *
-	 * @param agentClassName the agent class name
 	 * @param agentName the agents name
+	 * @param agentClassName the agent class name
 	 * @return true, if successful
 	 */
-	public boolean start4EmbeddedSystemAgent(String agentClassName, String agentName) {
+	public boolean start4EmbeddedSystemAgent(String agentName, String agentClassName) {
 		
 		boolean jadeStarted = false;
 		
@@ -439,7 +444,7 @@ public class Platform {
 		jadeProfile.setParameter("services", servicesNew);
 		
 		// --- start JADE with this profile -------------------------
-		if (this.start(false, jadeProfile)) {
+		if (this.start(false, jadeProfile)==true) {
 			try {
 				// --- Start the selected Agent ---------------------
 				Class<?> agentClass = ClassLoadServiceUtility.forName(agentClassName);

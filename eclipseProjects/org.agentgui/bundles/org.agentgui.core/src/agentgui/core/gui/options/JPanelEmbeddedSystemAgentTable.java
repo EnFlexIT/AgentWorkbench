@@ -47,6 +47,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.application.Language;
+import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
@@ -59,10 +60,6 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 
 	private OptionDialog optionDialog;
 	private JPanelEmbeddedSystemAgent esaPanel;
-	
-	private String agentNames;
-	private String agentClasses;
-	
 	
 	private JLabel jLabelHeader;
 	private JButton jButtonAddAgent;
@@ -77,8 +74,15 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 	private DefaultTableModel tableModel;
 
 	
+	
 	/**
 	 * Instantiates a new j panel embedded system agent table.
+	 */
+	public JPanelEmbeddedSystemAgentTable() {
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new JPanel for the table of embedded system agents.
 	 *
 	 * @param optionDialog the option dialog
 	 * @param esaPanel the parent JPanelEmbeddedSystemAgent
@@ -96,6 +100,7 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.fill = GridBagConstraints.VERTICAL;
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
@@ -191,7 +196,6 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 		}
 		return jTableAgents;
 	}
-	
 	private DefaultTableModel getTableModel() {
 		if (tableModel==null) {
 			Vector<String> header = new Vector<String>();
@@ -255,34 +259,24 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 	 * @param deviceServiceAgentNames the new agent names
 	 * @param deviceServiceAgentClassNames the device service agent class names
 	 */
-	public void setAgentDescriptors(String deviceServiceAgentNames, String deviceServiceAgentClassNames) {
-		this.agentNames = deviceServiceAgentNames;
-		this.agentClasses = deviceServiceAgentClassNames;
-		// TODO set table and thus the view
+	public void setDeviceServiceAgents(Vector<DeviceAgentDescription> deviceServiceAgents) {
+		for (int i = 0; i < deviceServiceAgents.size(); i++) {
+			DeviceAgentDescription dad = deviceServiceAgents.get(i);
+			this.getTableModel().addRow(new String[] {dad.getAgentName(), dad.getAgentClass()});
+		} 
 	}
 	/**
-	 * Gets the agent names.
-	 * @return the agent names
+	 * Returns the device service agents.
+	 * @return the device service agents
 	 */
-	public String getAgentNames() {
-
-		this.agentNames = null;
+	public Vector<DeviceAgentDescription> getDeviceServiceAgents() {
+		Vector<DeviceAgentDescription> dadVector = new Vector<>();
 		for (int i = 0; i < this.getTableModel().getRowCount(); i++) {
-			
 			String agentName = (String) this.getTableModel().getValueAt(i, 0);
 			String agentClass = (String) this.getTableModel().getValueAt(i, 1);
-			String agentRow = agentName + "(" + agentClass +")";
-			if (this.agentNames==null) {
-				this.agentNames = agentRow;
-			} else {
-				this.agentNames += ", " + agentRow;
-			}
+			dadVector.add(new DeviceAgentDescription(agentName, agentClass));
 		}
-		return agentNames;
-	}
-	public String getAgentClassName() {
-		// TODO read from table
-		return agentClasses;
+		return dadVector;
 	}
 	
 	/**
@@ -313,13 +307,19 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 	 * @return the class selector for project agents
 	 */
 	private ClassSelectionDialog getClassSelector4ProjectAgents(Project project) {
+
 		String currAgentClass = this.getSelectedAgentClass();
-		if (this.esaClassSelector==null || project!=this.esaProject) {
+		if (project==null) {
+			this.esaClassSelector = null;
+			this.esaProject = project;
+		} else if (this.esaClassSelector==null || project!=this.esaProject) {
 			JListClassSearcher jListClassSearcher = new JListClassSearcher(Agent.class, project.getBundleNames());
 			this.esaClassSelector = new ClassSelectionDialog(this.optionDialog, jListClassSearcher, currAgentClass, null, Language.translate("Bitte wählen Sie den Agenten aus, der gestartet werden soll"), false);
 			this.esaProject = project;
-		} 
-		this.esaClassSelector.setClass2Search4CurrentValue(currAgentClass);
+		}
+		if (this.esaClassSelector!=null && currAgentClass!=null) {
+			this.esaClassSelector.setClass2Search4CurrentValue(currAgentClass);
+		}
 		return this.esaClassSelector;
 	}
 	
@@ -349,6 +349,10 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 	 * @return false, if no error was found
 	 */
 	public boolean errorFound() {
+		
+		if (this.getJTableAgents().getCellEditor()!=null) {
+			this.getJTableAgents().getCellEditor().stopCellEditing();
+		}
 		
 		if (this.getTableModel().getRowCount()==0) {
 			// --- No agent was defined ---------

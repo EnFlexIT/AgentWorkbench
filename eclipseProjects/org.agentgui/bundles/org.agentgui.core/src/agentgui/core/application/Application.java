@@ -761,13 +761,17 @@ public class Application {
 		getJadePlatform().stop();
 
 		// --- Close open projects --------------
-		if (getProjectsLoaded().closeAll()==false) return false;	
+		if (getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+			if (getProjectsLoaded().closeAll()==false) return false;	
+		} else {
+			getProjectsLoaded().closeAll(null, true);
+		}
 
 		// --- Close visualization --------------
 		setMainWindow(null);
 		
 		// --- Save file properties -------------
-		getGlobalInfo().doSavePersistedConfiguration();
+		getGlobalInfo().doSaveConfiguration();
 		
 		// --- Save dictionary ------------------
 		Language.saveDictionaryFile();

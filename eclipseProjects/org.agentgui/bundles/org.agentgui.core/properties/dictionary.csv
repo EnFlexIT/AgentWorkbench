@@ -62,6 +62,7 @@ de;Ansicht wiederherstellen;Restore View;;;
 de;Ansicht:;View:
 de;Ansicht;View
 de;Anwenden;Apply;;;
+de;Anwendung umschalten ?;Switch Application ?;;;
 de;Anwendung;Application
 de;Anzahl Agenten (erwartet);Number of agents (expected)
 de;Anzahl Container berechnen;Calculate number of container
@@ -95,12 +96,11 @@ de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
-de;Bitte geben Sie Agenten-Namen an;;;;
 de;Bitte geben Sie den Agenten an, der gestartet werden soll;Please specify the agent to be started;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please, enter a name for the new setup!;null;null;null
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please, specify the new name for the setup!;null;null;null
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
-de;Bitte geben Sie einen Agenten-Namen an;;;;
+de;Bitte geben Sie einen Agenten-Namen an;Please specify an agent name;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
@@ -240,7 +240,7 @@ de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Date
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
-de;Fehlender Agent Name!;;;;
+de;Fehlender Agent Name!;Missing Agent Name!;;;
 de;Fehlender Agent!;Missing Agent!;;;
 de;Fehlendes Projekt!;Missing Project!;;;
 de;Fehlendes Simulations-Setup!;Missing Simulation Setup!;;;
@@ -433,6 +433,7 @@ de;Möchten Sie JADE nun beenden?;Quit JADE now?
 de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
 de;Möchten Sie das Wörterbuches auf den Stand nach der Erstinstallation zurücksetzen?;Would you like to reset the dictionary to the state after the first installation?;;;
 de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
+de;Möchten Sie die Anwendung nun umschalten ?;Would you like to switch the application now ?;;;
 de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
 de;Möchten Sie die Konfiguration nun vornehmen?;Would you like to configure this now?;;;
@@ -616,6 +617,7 @@ de;Starte Agent.GUI als:;Start Agent.GUI as:
 de;Starte Agenten;Start an Agent;;;
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
 de;Starte Messung der Systemauslastung;Start measuring the system load
+de;Starte als:;Start as:;;;
 de;Starten als:;Start as:
 de;Starten als;Start as
 de;Startet automatisch !;Starts automatically !;;;

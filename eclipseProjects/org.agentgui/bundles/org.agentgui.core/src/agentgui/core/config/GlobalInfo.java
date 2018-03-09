@@ -46,6 +46,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.JComponent;
 
@@ -168,8 +169,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private String deviceServiceProjectFolder;
 	private DeviceSystemExecutionMode deviceServiceExecutionMode = DeviceSystemExecutionMode.SETUP;
 	private String deviceServiceSetupSelected;  
-	private String deviceServiceAgentClassName;
-	private String deviceServiceAgentName;
+	private Vector<DeviceAgentDescription> deviceServiceAgents;
 	private EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation = EmbeddedSystemAgentVisualisation.TRAY_ICON;
 	
 	private String filePropKeyStoreFile;
@@ -326,7 +326,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public void initialize() {
 		try {
 			this.getVersionInfo();
-			this.doLoadPersistedConfiguration();
+			this.doLoadConfiguration();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -852,7 +852,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 				// --- Case separation IDE / product ----------------
 				if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 					// --- For the IDE environment ------------------
-					instDirPath = getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
+					instDirPath = getStringFromConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
 					
 				} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
 					// --- For the product --------------------------
@@ -1148,7 +1148,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Do load persisted configuration.
 	 */
-	private void doLoadPersistedConfiguration() {
+	private void doLoadConfiguration() {
 		
 		File fileProps = new File(this.getPathConfigFile(true));
 		if (fileProps.exists()==true) {
@@ -1169,52 +1169,52 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Persist (saves) the current configuration by saving the preferences.
 	 */
-	public void doSavePersistedConfiguration() {
+	public void doSaveConfiguration() {
 		this.getBundleProperties().save();
 	}
 	
 	
-	public void putStringToPersistedConfiguration(String key, String value) {
+	public void putStringToConfiguration(String key, String value) {
 		this.getBundleProperties().getEclipsePreferences().put(key, value);
 	}
-	public void putBooleanToPersistedConfiguration(String key, boolean value) {
+	public void putBooleanToConfiguration(String key, boolean value) {
 		this.getBundleProperties().getEclipsePreferences().putBoolean(key, value);
 	}
-	public void putIntToPersistedConfiguration(String key, int value) {
+	public void putIntToConfiguration(String key, int value) {
 		this.getBundleProperties().getEclipsePreferences().putInt(key, value);
 	}
-	public void putLongToPersistedConfiguration(String key, long value) {
+	public void putLongToConfiguration(String key, long value) {
 		this.getBundleProperties().getEclipsePreferences().putLong(key, value);
 	}
-	public void putFloatToPersistedConfiguration(String key, float value) {
+	public void putFloatToConfiguration(String key, float value) {
 		this.getBundleProperties().getEclipsePreferences().putFloat(key, value);
 	}
-	public void putDoubleToPersistedConfiguration(String key, double value) {
+	public void putDoubleToConfiguration(String key, double value) {
 		this.getBundleProperties().getEclipsePreferences().putDouble(key, value);
 	}
-	public void putByteArryToPersistedConfiguration(String key, byte[] value) {
+	public void putByteArryToConfiguration(String key, byte[] value) {
 		this.getBundleProperties().getEclipsePreferences().putByteArray(key, value);
 	}
 	
-	public String getStringFromPersistedConfiguration(String key, String defaultValue) {
+	public String getStringFromConfiguration(String key, String defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().get(key, defaultValue);
 	}
-	public boolean getBooleanFromPersistedConfiguration(String key, boolean defaultValue) {
+	public boolean getBooleanFromConfiguration(String key, boolean defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().getBoolean(key, defaultValue);
 	}
-	public int getIntFromPersistedConfiguration(String key, int defaultValue) {
+	public int getIntFromConfiguration(String key, int defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().getInt(key, defaultValue);
 	}
-	public long getLongFromPersistedConfiguration(String key, long defaultValue) {
+	public long getLongFromConfiguration(String key, long defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().getLong(key, defaultValue);
 	}
-	public float getFloatFromPersistedConfiguration(String key, float defaultValue) {
+	public float getFloatFromConfiguration(String key, float defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().getFloat(key, defaultValue);
 	}
-	public double getDoubleFromPersistedConfiguration(String key, double defaultValue) {
+	public double getDoubleFromConfiguration(String key, double defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().getDouble(key, defaultValue);
 	}
-	public byte[] getByteArryFromPersistedConfiguration(String key, byte[] defaultValue) {
+	public byte[] getByteArryFromConfiguration(String key, byte[] defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().getByteArray(key, defaultValue);
 	}
 	
@@ -1842,33 +1842,21 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	
 	/**
-	 * Returns the device service agent class name.
-	 * @return the device service agent class name
+	 * Returns the device service agents as Vector.
+	 * @return the device service agents 
 	 */
-	public String getDeviceServiceAgentClassName() {
-		return deviceServiceAgentClassName;
+	public Vector<DeviceAgentDescription> getDeviceServiceAgents() {
+		if (deviceServiceAgents==null) {
+			deviceServiceAgents = new Vector<>();
+		}
+		return deviceServiceAgents;
 	}
 	/**
-	 * Sets the device service agent class name.
-	 * @param deviceServiceAgentClassName the new device service agent class to use
+	 * Sets the device service agents.
+	 * @param deviceServiceAgents the new device service agent name
 	 */
-	public void setDeviceServiceAgentClassName(String deviceServiceAgentClassName) {
-		this.deviceServiceAgentClassName = deviceServiceAgentClassName;
-	}
-	
-	/**
-	 * Returns the device service agent name.
-	 * @return the device service agent name
-	 */
-	public String getDeviceServiceAgentName() {
-		return deviceServiceAgentName;
-	}
-	/**
-	 * Sets the device service agent name.
-	 * @param deviceServiceAgentName the new device service agent name 
-	 */
-	public void setDeviceServiceAgentName(String deviceServiceAgentName) {
-		this.deviceServiceAgentName = deviceServiceAgentName;
+	public void setDeviceServiceAgents(Vector<DeviceAgentDescription> deviceServiceAgents) {
+		this.deviceServiceAgents = deviceServiceAgents;
 	}
 	
 	/**

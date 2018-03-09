@@ -246,16 +246,25 @@ public class ProjectsLoaded {
 	 * @return Returns true on success
 	 */
 	public boolean closeAll() {
-		return this.closeAll(null);
+		return this.closeAll(null, false);
 	}
 	/**
 	 * This method will try to close all open projects.
 	 * @param parentComponent the parent component (for messages by using the {@link JOptionPane})
 	 * @return Returns true on success
 	 */
-	public boolean closeAll(Component parentComponent) {		
+	public boolean closeAll(Component parentComponent) {
+		return closeAll(parentComponent, false);
+	}
+	/**
+	 * This method will try to close all open projects.
+	 * @param parentComponent the parent component (for messages by using the {@link JOptionPane})
+	 * @param isSkipSaving set true, if you want to skip user interactions for saving a project
+	 * @return Returns true on success
+	 */
+	public boolean closeAll(Component parentComponent, boolean isSkipSaving) {		
 		while (Application.getProjectFocused()!=null) {
-			if (Application.getProjectFocused().close(parentComponent)==false) {
+			if (Application.getProjectFocused().close(parentComponent, isSkipSaving)==false) {
 				return false;
 			}
 		}

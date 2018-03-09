@@ -159,7 +159,7 @@ public class BenchmarkMeasurement extends Thread {
 			Application.getGlobalInfo().setBenchValue(result);
 			Application.getGlobalInfo().setBenchExecOn(this.getLocalSystemIdentifier());
 			Application.getGlobalInfo().setBenchAlwaysSkip(benchAllwaysSkip);
-			Application.getGlobalInfo().doSavePersistedConfiguration();
+			Application.getGlobalInfo().doSaveConfiguration();
 			
 			// --- Progress Display --- OFF -------------------------
 			if (this.isHeadlessOperation==false) {
