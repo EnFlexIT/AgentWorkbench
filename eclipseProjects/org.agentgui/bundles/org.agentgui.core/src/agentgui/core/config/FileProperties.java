@@ -112,8 +112,6 @@ public class FileProperties extends Properties {
 	private final String DEF_DeviceServcie_ExecAsService = "Service";
 	private final String DEF_DeviceServcie_ExecAsAgent = "Agent";
 	private final String DEF_DeviceServcie_Setup = "42_DEVICE_SERVICE_SETUP";
-	private final String DEF_DeviceServcie_Agent = "43_DEVICE_SERVICE_AGENT";
-	private final String DEF_DeviceServcie_AgentName = "44_DEVICE_SERVICE_AGENT_Name";
 	private final String DEF_DeviceServcie_Vis = "45_DEVICE_SERVICE_VISUALISATION";
 	private final String DEF_DeviceServcie_Vis_None = "None";
 	private final String DEF_DeviceServcie_Vis_TrayIcon = "TrayIcon";
@@ -518,20 +516,6 @@ public class FileProperties extends Properties {
 		} else {
 			this.globalInfo.setDeviceServiceSetupSelected(propValue);
 		}
-		// --- this.DEF_DeviceServcie_Agent -----------
-		propValue = this.getProperty(this.DEF_DeviceServcie_Agent);
-		if (propValue==null || propValue.equals("")) {
-			this.globalInfo.setDeviceServiceAgentClassName(null);
-		} else {
-			this.globalInfo.setDeviceServiceAgentClassName(propValue);
-		}
-		// --- this.DEF_DeviceServcie_AgentName -----------
-		propValue = this.getProperty(this.DEF_DeviceServcie_AgentName);
-		if (propValue == null || propValue.equals("")) {
-			this.globalInfo.setDeviceServiceAgentName(null);
-		} else {
-			this.globalInfo.setDeviceServiceAgentName(propValue);
-		}
 		// --- this.DEF_DeviceServcie_Vis -------------
 		propValue = this.getProperty(this.DEF_DeviceServcie_Vis);
 		if (propValue==null || propValue.equals("")) {
@@ -771,18 +755,6 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_DeviceServcie_Setup, "");
 		} else {
 			this.setProperty(this.DEF_DeviceServcie_Setup, this.globalInfo.getDeviceServiceSetupSelected());
-		}
-		// --- this.DEF_DeviceServcie_Agent -----------
-		if (this.globalInfo.getDeviceServiceAgentClassName()==null) {
-			this.setProperty(this.DEF_DeviceServcie_Agent, "");
-		} else {
-			this.setProperty(this.DEF_DeviceServcie_Agent, this.globalInfo.getDeviceServiceAgentClassName());
-		}
-		// --- this.DEF_DeviceServcie_AgentName -----------
-		if (this.globalInfo.getDeviceServiceAgentName() == null) {
-			this.setProperty(this.DEF_DeviceServcie_AgentName, "");
-		} else {
-			this.setProperty(this.DEF_DeviceServcie_AgentName, this.globalInfo.getDeviceServiceAgentName());
 		}
 		// --- this.DEF_DeviceServcie_Vis -------------
 		switch (this.globalInfo.getDeviceServiceAgentVisualisation()) {

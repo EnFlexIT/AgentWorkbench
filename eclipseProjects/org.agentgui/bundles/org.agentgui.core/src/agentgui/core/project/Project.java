@@ -349,10 +349,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 		// --- Load the XML file of the project ---------------------
 		Project project = loadProjectXml(projectPath);
-		
-		if(project == null){
-			return null;
-		}
+		if (project==null) return null;
 		
 		// --- Check/create default folders -------------------------
 		project.setProjectFolder(projectSubDirectory);
@@ -361,7 +358,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		// --- Install required features if necessary ---------------
 		if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
 			// --- Only possible if not running from the IDE --------
-
 			boolean newFeaturesInstalled = false;
 			try {
 				// --- Install additional features if necessary -----
@@ -565,28 +561,36 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * This method closes the current project. If necessary it will try to save it before.
+	 * Closes the current project. If necessary it will try to save it before.
 	 * @return Returns true if saving was successful
 	 */
 	public boolean close() {
-		return this.close(null);
+		return this.close(null, false);
 	}
-
 	/**
-	 * This method closes the current project. If necessary it will try to save the before.
+	 * Closes the current project. If necessary it will try to save the before.
 	 * @param parentComponent the parent component
-	 * @return Returns true if saving was successful
+	 * @return true, if successful
 	 */
 	public boolean close(Component parentComponent) {
+		return this.close(parentComponent, false);
+	}
+	/**
+	 * Closes the current project. If necessary it will try to save the before.
+	 * @param parentComponent the parent component
+	 * @param isSkipSaving set true, if you want to skip saving the project
+	 * @return Returns true if saving was successful
+	 */
+	public boolean close(Component parentComponent, boolean isSkipSaving) {
 
 		// --- Close project? -----------------------------
 		String msgHead = null;
 		String msgText = null;
 
 		Application.setStatusBar(Language.translate("Projekt schließen") + " ...");
-		if (this.isUnsaved() == true) {
+		if (isSkipSaving==false && this.isUnsaved()==true) {
 
-			if (Application.isOperatingHeadless() == false) {
+			if (Application.isOperatingHeadless()==false) {
 				// --- Operation with an UI ---------------
 				msgHead = Language.translate("Projekt '@' speichern?");
 				msgHead = msgHead.replace("'@'", "'" + projectName + "'");
@@ -595,12 +599,14 @@ import de.enflexit.common.p2.P2OperationsHandler;
 						"Möchten Sie es nun speichern ?");
 				msgText = msgText.replace("'@'", "'" + projectName + "'");
 
-				ProjectCloseUserFeedback userAnswer = this.getProjectEditorWindow().getUserFeedbackForClosingProject(msgHead, msgText);
+				ProjectCloseUserFeedback userAnswer = this.getProjectEditorWindow().getUserFeedbackForClosingProject(msgHead, msgText, parentComponent);
 				switch (userAnswer) {
 				case CancelCloseAction:
 					return false;
 				case SaveProject:
-					if (this.save()==false) return false;
+					if (this.save()==false) {
+						return false;
+					}
 					break;
 				case DoNotSaveProject:
 					// --- Nothing to do here ---
@@ -613,32 +619,35 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			}
 		}
 		// --- Shutdown Jade ? ----------------------------
-		if (Application.getJadePlatform().stopAskUserBefore() == false) {
+		if (Application.getJadePlatform().stopAskUserBefore()==false) {
 			return false;
 		}
 
 		// --- Clear/Dispose EnvironmentPanel -------------
-		EnvironmentController envController = this.getEnvironmentController();
-		if (envController != null) {
-			EnvironmentPanel envPanel = envController.getEnvironmentPanel();
-			if (envPanel != null) {
-				envPanel.dispose();
+		if (this.isEnvironmentControllerInitiated()==true) {
+			EnvironmentController envController = this.getEnvironmentController();
+			if (envController != null) {
+				EnvironmentPanel envPanel = envController.getEnvironmentPanel();
+				if (envPanel != null) {
+					envPanel.dispose();
+				}
 			}
 		}
+
+		// --- Close Project ------------------------------
+		ProjectsLoaded loadedProjects = Application.getProjectsLoaded();
+		int projectIndex = loadedProjects.getIndexByName(this.projectName);
+		if (Application.isOperatingHeadless()==false && this.isProjectEditorWindowOpen()==true) {
+			this.getProjectEditorWindow().dispose();
+		}
+		loadedProjects.remove(this);
 
 		// --- Clear PlugIns ------------------------------
 		this.plugInVectorRemove();
 		// --- Remove external resources ------------------
 		this.resourcesRemove();
 
-		// --- Close Project ------------------------------
-		ProjectsLoaded loadedProjects = Application.getProjectsLoaded();
-		int projectIndex = loadedProjects.getIndexByName(this.projectName);
-		if (Application.isOperatingHeadless() == false) {
-			getProjectEditorWindow().dispose();
-		}
-		loadedProjects.remove(this);
-
+		
 		int nProjects = loadedProjects.count();
 		if (nProjects > 0) {
 			if (projectIndex+1>nProjects ) projectIndex=nProjects-1;  
@@ -1406,6 +1415,13 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 	// --- Visualization instances ----------------------------------
 	/**
+	 * Checks if the project editor window is open.
+	 * @return true, if the project editor window open
+	 */
+	public boolean isProjectEditorWindowOpen() {
+		return !(this.projectEditorWindow==null);
+	}
+	/**
 	 * Creates / Returns the project editor window (Swing or SWT).
 	 * @return the project editor window for the current project
 	 */
@@ -1792,12 +1808,19 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
+	 * Checks if a environment controller is initiated.
+	 * @return true, if is environment controller initiated
+	 */
+	public boolean isEnvironmentControllerInitiated() {
+		return !(this.environmentController==null);
+	}
+	/**
 	 * Returns the EnvironmentController of the project - an extended class of {@link EnvironmentController}.
 	 * @return the current environment controller
 	 */
 	@XmlTransient
 	public EnvironmentController getEnvironmentController() {
-		if (environmentController == null) {
+		if (environmentController==null) {
 
 			EnvironmentType envType = this.getEnvironmentModelType();
 			Class<? extends EnvironmentController> envControllerClass = envType.getEnvironmentControllerClass();

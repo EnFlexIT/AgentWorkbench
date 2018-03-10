@@ -61,9 +61,10 @@ public interface AwbProjectEditorWindow {
 	 *
 	 * @param msgTitle the message title
 	 * @param msgText the message text
+	 * @param parentVisualizationComponent the parent visualization component
 	 * @return true, if is user allowed to close project
 	 */
-	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText); 
+	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText, Object parentVisualizationComponent); 
 	
 	/**
 	 * Has to show an error message.

@@ -28,6 +28,8 @@
  */
 package agentgui.core.config;
 
+import java.util.Vector;
+
 import org.agentgui.PlugInActivator;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -322,12 +324,9 @@ public class BundleProperties {
 		// --- this.DEF_DeviceServcie_Setup -----------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_SETUP, "");
 		this.globalInfo.setDeviceServiceSetupSelected(stringPrefValue);
-		// --- this.DEF_DeviceServcie_Agent -----------
-		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_AGENT_CLASS, "");
-		this.globalInfo.setDeviceServiceAgentClassName(stringPrefValue.trim());
 		// --- this.DEF_DeviceServcie_AgentName ------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_AGENT_NAME, "");
-		this.globalInfo.setDeviceServiceAgentName(stringPrefValue.trim());
+		this.globalInfo.setDeviceServiceAgents(this.getDeviceAgentsVector(stringPrefValue.trim()));
 		// --- this.DEF_DeviceServcie_Vis ------------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_VISUALIZATION, EmbeddedSystemAgentVisualisation.NONE.toString());
 		EmbeddedSystemAgentVisualisation esaVis = EmbeddedSystemAgentVisualisation.valueOf(stringPrefValue);
@@ -456,10 +455,8 @@ public class BundleProperties {
 		eclipsePreferences.put(DEF_DEVICE_SERVICE_EXEC_AS, this.globalInfo.getDeviceServiceExecutionMode().toString());
 		// --- this.DEF_DeviceServcie_ProjectFolder ---
 		if (this.globalInfo.getDeviceServiceSetupSelected()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_SETUP, this.globalInfo.getDeviceServiceSetupSelected());
-		// --- this.DEF_DeviceServcie_Agent -----------
-		if (this.globalInfo.getDeviceServiceAgentClassName()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_AGENT_CLASS, this.globalInfo.getDeviceServiceAgentClassName());
-		// --- this.DEF_DeviceServcie_AgentName -----------
-		if (this.globalInfo.getDeviceServiceAgentName()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_AGENT_NAME, this.globalInfo.getDeviceServiceAgentName());
+		// --- this.DEF_DeviceServcie_Agents ----------
+		if (this.globalInfo.getDeviceServiceAgents()!=null) eclipsePreferences.put(DEF_DEVICE_SERVICE_AGENT_NAME, this.getDeviceAgentsPropertyValue(this.globalInfo.getDeviceServiceAgents()));
 		// --- this.DEF_DeviceServcie_Vis -------------
 		eclipsePreferences.put(DEF_DEVICE_SERVICE_VISUALIZATION, this.globalInfo.getDeviceServiceAgentVisualisation().toString());
 		
@@ -470,5 +467,47 @@ public class BundleProperties {
 		if (this.globalInfo.getOIDCUsername()!=null) eclipsePreferences.put(DEF_OIDC_USERNAME, this.globalInfo.getOIDCUsername());
 		
 	}	
+
+	/**
+	 * Gets the device agents property value.
+	 *
+	 * @param deviceAgentVector the device agent vector
+	 * @return the device agents property value
+	 */
+	private String getDeviceAgentsPropertyValue(Vector<DeviceAgentDescription> deviceAgentVector) {
+		
+		String propValue = "";
+		for (int i = 0; i < deviceAgentVector.size(); i++) {
+			
+			String singleAgent = deviceAgentVector.get(i).toString();
+			if (propValue==null || propValue.isEmpty()==true) {
+				propValue = singleAgent;
+			} else {
+				propValue += ", " + singleAgent;
+			}
+		}
+		return propValue;
+	}
+	/**
+	 * Return the device agent vector.
+	 *
+	 * @param propValue the prop value
+	 * @return the device agents
+	 */
+	private Vector<DeviceAgentDescription> getDeviceAgentsVector(String propValue) {
+		
+		if (propValue==null || propValue.isEmpty()) return null;
+		
+		Vector<DeviceAgentDescription> deviceAgents = new Vector<>();
+		if (propValue.contains(",")==false) {
+			deviceAgents.add(new DeviceAgentDescription(propValue));
+		} else {
+			String[] agentDesc = propValue.split(",");
+			for (int i = 0; i < agentDesc.length; i++) {
+				deviceAgents.add(new DeviceAgentDescription(agentDesc[i]));
+			}
+		}
+		return deviceAgents;
+	}
 	
 }

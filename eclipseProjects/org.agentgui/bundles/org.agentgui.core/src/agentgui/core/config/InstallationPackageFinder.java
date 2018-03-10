@@ -64,7 +64,7 @@ public class InstallationPackageFinder {
 	 * @see BundleProperties#DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES
 	 */
 	public InstallationPackageFinder() {
-		this.setSearchDirectory(Application.getGlobalInfo().getStringFromPersistedConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, null));
+		this.setSearchDirectory(Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, null));
 	}
 	/**
 	 * Instantiates a new installation package finder that uses the specified search directory.

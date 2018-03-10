@@ -113,8 +113,9 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		// --- Check all available ClassLoadServices ----------------
 		Vector<ClassLoadServiceElement> clsElementsKnown = this.getClassLoadServiceVector(serviceBaseInterface);
 		int nKnown = clsElementsKnown.size();
-		for (ClassLoadServiceElement clsElement : clsElementsKnown) {
+		for (int i=0; i < clsElementsKnown.size(); i++) {
 			// --- Filter from right filter type --------------------
+			ClassLoadServiceElement clsElement = clsElementsKnown.get(i);
 			if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement, className)==true) {
 				this.getClassLoadServicesByServiceAndClassName().put(requestKey, clsElement.getClassLoadServiceImpl());
 				clsFound = clsElement.getClassLoadServiceImpl();
@@ -127,8 +128,9 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		if (clsFound==null) {
 			Vector<ClassLoadServiceElement> clsElementsNew = this.updateClassLoadServices();
 			nNew = clsElementsNew.size();
-			for (ClassLoadServiceElement clsElement : clsElementsNew) {
+			for (int i=0; i < clsElementsNew.size(); i++) {
 				// --- Filter from right filter type ----------------
+				ClassLoadServiceElement clsElement = clsElementsNew.get(i);
 				if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement, className)==true) {
 					this.getClassLoadServicesByServiceAndClassName().put(requestKey, clsElement.getClassLoadServiceImpl());
 					clsFound = clsElement.getClassLoadServiceImpl();
@@ -175,10 +177,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @return true, if is required class load service
 	 */
 	private boolean isRequiredClassLoadService(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className) {
-		if (serviceBaseInterface.isInstance(clsElement.getClassLoadServiceImpl())==true && this.isRequiredBundle(clsElement.getBundle(), className)==true) {
-			return true;
-		}
-		return false;
+		return (serviceBaseInterface.isInstance(clsElement.getClassLoadServiceImpl())==true && this.isRequiredBundle(clsElement.getBundle(), className)==true);
 	}
 	/**
 	 * Checks if is required bundle.
@@ -188,11 +187,15 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @return true, if is required bundle
 	 */
 	private boolean isRequiredBundle(Bundle bundle, String className) {
+
+		// --- Check that bundle is not uninstalled -----------------
+		if (bundle.getState()==Bundle.UNINSTALLED) return false;
 		
 		// --- 1. Simply try to load the class ----------------------
 		try {
+			// --- Check the bundle status --------------------------
 			Class<?> classInstance = bundle.loadClass(className);
-			if (classInstance!=null)  return true;
+			if (classInstance!=null) return true;
 		
 		} catch (ClassNotFoundException cnfEx) {
 			//cnfEx.printStackTrace();

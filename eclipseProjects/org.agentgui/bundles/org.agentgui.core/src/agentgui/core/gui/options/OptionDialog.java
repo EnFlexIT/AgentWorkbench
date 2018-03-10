@@ -44,6 +44,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -103,6 +104,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private OIDCOptions oidcOptions;
 	private DirectoryOptions exeDirOption;
 	
+	private Vector<AbstractJPanelForOptions> optionPanels;
+	
+	
 	/**
 	 * Instantiates a new option dialog.
 	 * @param owner the owner
@@ -112,8 +116,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.owner = owner;
 		
 		// --- Prepare OptionTree -----------------------------------
-		rootNode = new DefaultMutableTreeNode(Language.translate("Optionen"));
-		optionTreeModel = new DefaultTreeModel(rootNode);	
+		this.rootNode = new DefaultMutableTreeNode(Language.translate("Optionen"));
+		this.optionTreeModel = new DefaultTreeModel(rootNode);	
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
@@ -127,7 +131,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 		// --- Translate --------------------------------------------
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Optionen"));
-	    this.jButtonClose.setText(Language.translate("Schließen"));
+	    this.getJButtonClose().setText(Language.translate("Schließen"));
 	    
 	    // --- Integrate sub panels ---------------------------------
 	    this.addOptionTab(this.getStartOptions(), null);
@@ -155,7 +159,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			this.setAlwaysOnTop(true);
 		}
 
-		this.setTitle("Agent.GUI: Optionen");
+		this.setTitle("Optionen");
 		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 		this.setContentPane(this.getJPanelBase());
 		
@@ -403,18 +407,17 @@ public class OptionDialog extends JDialog implements ActionListener {
 			jPanelBase = new JPanel();
 			jPanelBase.setLayout(new GridBagLayout());
 			jPanelBase.add(getJSplitPaneMain(), gridBagConstraints);
-			jPanelBase.add(getJButtonCancel(), gridBagConstraints11);
+			jPanelBase.add(getJButtonClose(), gridBagConstraints11);
 		}
 		return jPanelBase;
 	}
 
 	/**
 	 * This method initializes jButtonCancel.
-	 *
 	 * @return javax.swing.JButton
 	 */
-	private JButton getJButtonCancel() {
-		if (jButtonClose == null) {
+	private JButton getJButtonClose() {
+		if (jButtonClose==null) {
 			jButtonClose = new JButton();
 			jButtonClose.setText("Schließen");
 			jButtonClose.setForeground(new Color(0, 0, 153));
@@ -529,16 +532,16 @@ public class OptionDialog extends JDialog implements ActionListener {
     /**
 	 * Option tree expand2 level.
 	 *
-	 * @param Up2TreeLevel the up2 tree level
+	 * @param up2TreeLevel the up2 tree level
 	 * @param expand the expand
 	 */
-	public void optionTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
+	public void optionTreeExpand2Level(Integer up2TreeLevel, boolean expand ) {
     	
     	Integer CurrNodeLevel = 1;
-    	if ( Up2TreeLevel == null ) 
-    		Up2TreeLevel = 1000;
-
-    	optionTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
+    	if (up2TreeLevel==null) {
+    		up2TreeLevel = 1000;
+    	}
+    	this.optionTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, up2TreeLevel);
     }
 	
 	/**
@@ -570,7 +573,41 @@ public class OptionDialog extends JDialog implements ActionListener {
         }
     }
 	
+	/**
+	 * Gets the option panels.
+	 * @return the option panels
+	 */
+	private Vector<AbstractJPanelForOptions> getOptionPanels() {
+		if (optionPanels==null) {
+			optionPanels = new Vector<>();
+		}
+		return optionPanels;
+	}
+	/**
+	 * Register option panel.
+	 * @param optionPanel the option panel
+	 */
+	public void registerOptionPanel(AbstractJPanelForOptions optionPanel) {
+		if (this.getOptionPanels().contains(optionPanel)==false) {
+			this.getOptionPanels().add(optionPanel);
+		}
+	}
 	
+	/* (non-Javadoc)
+	 * @see java.awt.Dialog#setVisible(boolean)
+	 */
+	@Override
+	public void setVisible(boolean setVisble) {
+		
+		if (setVisble==false) {
+			// --- Inform all interested objects about the close action -------
+			for (int i = 0; i < this.getOptionPanels().size(); i++) {
+				this.getOptionPanels().get(i).doDialogCloseAction();
+			}
+		}
+		// --- do the regular action ------------------------------------------
+		super.setVisible(setVisble);
+	}
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -578,7 +615,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		
 		String actCMD = ae.getActionCommand();
-		if (actCMD.equalsIgnoreCase("Close")) {
+		if (ae.getSource()==this.getJButtonClose()) {
 			this.setVisible(false);
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
@@ -586,5 +623,4 @@ public class OptionDialog extends JDialog implements ActionListener {
 		
 	}
 		
-	
-}  //  @jve:decl-index=0:visual-constraint="33,9"
+} 

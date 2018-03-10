@@ -181,7 +181,7 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 	 * @see org.agentgui.gui.AwbProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText) {
+	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText, Object parentVisualizationComponent) {
 		
 		ProjectCloseUserFeedback userFeedback = null;
 		

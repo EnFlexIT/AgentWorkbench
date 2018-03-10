@@ -16,7 +16,7 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
  */
 public class PlugInActivator extends AbstractUIPlugin implements BundleListener {
 
-	public static final String PLUGIN_ID = "org.agentgui.core"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.agentgui.core";
 	private boolean debug = false;
 
 	private static PlugInActivator thisActivator;

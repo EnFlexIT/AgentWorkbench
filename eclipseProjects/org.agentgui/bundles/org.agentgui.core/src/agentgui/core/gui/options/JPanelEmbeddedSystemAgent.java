@@ -40,24 +40,17 @@ import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.project.Project;
-import de.enflexit.common.classSelection.ClassSelectionDialog;
-import de.enflexit.common.classSelection.JListClassSearcher;
-import jade.core.Agent;
 
 /**
  * The Class JPanelEmbeddedSystemAgent.
@@ -80,20 +73,13 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JRadioButton jRadioButtonExecuteAsDeviceAgent;
 
 	private JLabel jLabelSetupHeader;
-	private JLabel jLabelSetup;
 	private JComboBox<String> jComboBoxSetupSelector;
 
-	private JLabel jLabelAgentHeader;
-	private JLabel jLabelAgent;
-	private JTextField jTextFieldAgentClass;;
-	private JButton jButtonSelectAgentClass;
-	private ClassSelectionDialog esaClassSelector;
-	
+	private JPanelEmbeddedSystemAgentTable jPanelEmbeddedSystemAgentTable;
+
 	private JLabel jLabelVisConfig;
 	private JRadioButton jRadioButtonVisNon;
 	private JRadioButton jRadioButtonVisTrayIcon;
-	private JLabel jLabelAgentName;
-	private JTextField jTextFieldAgentName;
 	
 	
 	/**
@@ -111,12 +97,12 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private void initialize() {
 		
 		
-		this.setPreferredSize(new Dimension(570, 340));
+		this.setPreferredSize(new Dimension(570, 375));
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{82, 430, 45, 0};
-		gridBagLayout.rowHeights = new int[]{16, 26, 23, 16, 26, 16, 26, 26, 16, 24, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{82, 430, 0};
+		gridBagLayout.rowHeights = new int[]{16, 26, 23, 16, 0, 16, 24, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		jLabelEmbeddedHeader = new JLabel(this.getGlobalInfo().getApplicationTitle() + " - " + Language.translate("Dienst") + " / Embedded System Agent");
@@ -141,7 +127,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		this.add(jLabelProject, gbc_jLabelProject);
 		GridBagConstraints gbc_jComboBoxProjectSelector = new GridBagConstraints();
 		gbc_jComboBoxProjectSelector.anchor = GridBagConstraints.WEST;
-		gbc_jComboBoxProjectSelector.insets = new Insets(0, 0, 5, 5);
+		gbc_jComboBoxProjectSelector.insets = new Insets(0, 0, 5, 0);
 		gbc_jComboBoxProjectSelector.gridx = 1;
 		gbc_jComboBoxProjectSelector.gridy = 1;
 		this.add(getJComboBoxProjectSelector(), gbc_jComboBoxProjectSelector);
@@ -158,14 +144,14 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		this.add(jLabelExecuteAs, gbc_jLabelExecuteAs);
 		GridBagConstraints gbc_jPanelExecution = new GridBagConstraints();
 		gbc_jPanelExecution.anchor = GridBagConstraints.WEST;
-		gbc_jPanelExecution.insets = new Insets(0, 0, 5, 5);
+		gbc_jPanelExecution.insets = new Insets(0, 0, 5, 0);
 		gbc_jPanelExecution.gridx = 1;
 		gbc_jPanelExecution.gridy = 2;
 		this.add(getJPanelExecution(), gbc_jPanelExecution);
 		
 		jLabelSetupHeader = new JLabel();
 		jLabelSetupHeader.setText("Dienst");
-		jLabelSetupHeader.setText(Language.translate(jLabelSetupHeader.getText()));
+		jLabelSetupHeader.setText(Language.translate("Dienst") + " - " + Language.translate("Setup") + ":");
 		jLabelSetupHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 		GridBagConstraints gbc_jLabelSetupHeader = new GridBagConstraints();
 		gbc_jLabelSetupHeader.anchor = GridBagConstraints.WEST;
@@ -173,73 +159,20 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		gbc_jLabelSetupHeader.gridx = 0;
 		gbc_jLabelSetupHeader.gridy = 3;
 		this.add(jLabelSetupHeader, gbc_jLabelSetupHeader);
-		
-		jLabelSetup = new JLabel();
-		jLabelSetup.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelSetup.setText("Setup:");
-		jLabelSetup.setText(Language.translate(jLabelSetup.getText()));
-		GridBagConstraints gbc_jLabelSetup = new GridBagConstraints();
-		gbc_jLabelSetup.anchor = GridBagConstraints.WEST;
-		gbc_jLabelSetup.insets = new Insets(0, 0, 5, 5);
-		gbc_jLabelSetup.gridx = 0;
-		gbc_jLabelSetup.gridy = 4;
-		this.add(jLabelSetup, gbc_jLabelSetup);
 		GridBagConstraints gbc_jComboBoxSetupSelector = new GridBagConstraints();
 		gbc_jComboBoxSetupSelector.anchor = GridBagConstraints.WEST;
 		gbc_jComboBoxSetupSelector.fill = GridBagConstraints.VERTICAL;
-		gbc_jComboBoxSetupSelector.insets = new Insets(0, 0, 5, 5);
+		gbc_jComboBoxSetupSelector.insets = new Insets(10, 0, 5, 0);
 		gbc_jComboBoxSetupSelector.gridx = 1;
-		gbc_jComboBoxSetupSelector.gridy = 4;
+		gbc_jComboBoxSetupSelector.gridy = 3;
 		this.add(getJComboBoxSetupSelector(), gbc_jComboBoxSetupSelector);
-		
-		jLabelAgentHeader = new JLabel();
-		jLabelAgentHeader.setText("Embedded System Agent");
-		jLabelAgentHeader.setText(Language.translate(jLabelAgentHeader.getText()));
-		jLabelAgentHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-		GridBagConstraints gbc_jLabelAgentHeader = new GridBagConstraints();
-		gbc_jLabelAgentHeader.anchor = GridBagConstraints.WEST;
-		gbc_jLabelAgentHeader.insets = new Insets(10, 0, 5, 5);
-		gbc_jLabelAgentHeader.gridwidth = 2;
-		gbc_jLabelAgentHeader.gridx = 0;
-		gbc_jLabelAgentHeader.gridy = 5;
-		this.add(jLabelAgentHeader, gbc_jLabelAgentHeader);
-		
-		jLabelAgent = new JLabel();
-		jLabelAgent.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelAgent.setText("Agent:");
-		GridBagConstraints gbc_jLabelAgent = new GridBagConstraints();
-		gbc_jLabelAgent.anchor = GridBagConstraints.WEST;
-		gbc_jLabelAgent.insets = new Insets(0, 0, 5, 5);
-		gbc_jLabelAgent.gridx = 0;
-		gbc_jLabelAgent.gridy = 6;
-		this.add(jLabelAgent, gbc_jLabelAgent);
-		GridBagConstraints gbc_jTextFieldAgentClass = new GridBagConstraints();
-		gbc_jTextFieldAgentClass.fill = GridBagConstraints.BOTH;
-		gbc_jTextFieldAgentClass.insets = new Insets(0, 0, 5, 5);
-		gbc_jTextFieldAgentClass.gridx = 1;
-		gbc_jTextFieldAgentClass.gridy = 6;
-		this.add(getJTextFieldAgentClass(), gbc_jTextFieldAgentClass);
-		GridBagConstraints gbc_jButtonSelectAgentClass = new GridBagConstraints();
-		gbc_jButtonSelectAgentClass.insets = new Insets(0, 0, 5, 0);
-		gbc_jButtonSelectAgentClass.gridx = 2;
-		gbc_jButtonSelectAgentClass.gridy = 6;
-		this.add(getJButtonEsaSelectAgent(), gbc_jButtonSelectAgentClass);
-		
-		jLabelAgentName = new JLabel("Agent Name:");
-		jLabelAgentName.setFont(new Font("Dialog", Font.BOLD, 12));
-		GridBagConstraints gbc_jLabelAgentName = new GridBagConstraints();
-		gbc_jLabelAgentName.anchor = GridBagConstraints.WEST;
-		gbc_jLabelAgentName.insets = new Insets(0, 0, 5, 5);
-		gbc_jLabelAgentName.gridx = 0;
-		gbc_jLabelAgentName.gridy = 7;
-		this.add(jLabelAgentName, gbc_jLabelAgentName);
-	
-		GridBagConstraints gbc_jTextFieldAgentName = new GridBagConstraints();
-		gbc_jTextFieldAgentName.fill = GridBagConstraints.BOTH;
-		gbc_jTextFieldAgentName.insets = new Insets(0, 0, 5, 5);
-		gbc_jTextFieldAgentName.gridx = 1;
-		gbc_jTextFieldAgentName.gridy = 7;
-		this.add(getJTextFieldAgentName(), gbc_jTextFieldAgentName);
+		GridBagConstraints gbc_panelEmbeddedSystemAgentTable = new GridBagConstraints();
+		gbc_panelEmbeddedSystemAgentTable.gridwidth = 2;
+		gbc_panelEmbeddedSystemAgentTable.insets = new Insets(10, 0, 0, 0);
+		gbc_panelEmbeddedSystemAgentTable.fill = GridBagConstraints.BOTH;
+		gbc_panelEmbeddedSystemAgentTable.gridx = 0;
+		gbc_panelEmbeddedSystemAgentTable.gridy = 4;
+		add(getJPanelEmbeddedSystemAgentTable(), gbc_panelEmbeddedSystemAgentTable);
 		
 		jLabelVisConfig = new JLabel();
 		jLabelVisConfig.setText("Agent.GUI - Anwendungsvisualisierungen");
@@ -247,16 +180,16 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		jLabelVisConfig.setFont(new Font("Dialog", Font.BOLD, 12));
 		GridBagConstraints gbc_jLabelVisConfig = new GridBagConstraints();
 		gbc_jLabelVisConfig.anchor = GridBagConstraints.WEST;
-		gbc_jLabelVisConfig.insets = new Insets(10, 0, 5, 5);
+		gbc_jLabelVisConfig.insets = new Insets(10, 0, 5, 0);
 		gbc_jLabelVisConfig.gridwidth = 2;
 		gbc_jLabelVisConfig.gridx = 0;
-		gbc_jLabelVisConfig.gridy = 8;
+		gbc_jLabelVisConfig.gridy = 5;
 		this.add(jLabelVisConfig, gbc_jLabelVisConfig);
 		GridBagConstraints gbc_jRadioButtonVisTrayIcon = new GridBagConstraints();
 		gbc_jRadioButtonVisTrayIcon.anchor = GridBagConstraints.WEST;
-		gbc_jRadioButtonVisTrayIcon.insets = new Insets(0, 0, 5, 5);
+		gbc_jRadioButtonVisTrayIcon.insets = new Insets(0, 0, 5, 0);
 		gbc_jRadioButtonVisTrayIcon.gridx = 1;
-		gbc_jRadioButtonVisTrayIcon.gridy = 9;
+		gbc_jRadioButtonVisTrayIcon.gridy = 6;
 		this.add(getJRadioButtonVisTrayIcon(), gbc_jRadioButtonVisTrayIcon);
 		
 		ButtonGroup visAsGroup = new ButtonGroup();
@@ -264,9 +197,8 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		visAsGroup.add(getJRadioButtonVisTrayIcon());
 		GridBagConstraints gbc_jRadioButtonVisNon = new GridBagConstraints();
 		gbc_jRadioButtonVisNon.anchor = GridBagConstraints.WEST;
-		gbc_jRadioButtonVisNon.insets = new Insets(0, 0, 0, 5);
 		gbc_jRadioButtonVisNon.gridx = 1;
-		gbc_jRadioButtonVisNon.gridy = 10;
+		gbc_jRadioButtonVisNon.gridy = 7;
 		this.add(getJRadioButtonVisNon(), gbc_jRadioButtonVisNon);
 	}
 	
@@ -275,7 +207,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	 * This method initializes jComboBoxProjectSelector	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox<String> getJComboBoxProjectSelector() {
+	JComboBox<String> getJComboBoxProjectSelector() {
 		if (jComboBoxProjectSelector == null) {
 			
 			DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<String>();
@@ -287,26 +219,11 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				}	
 			}
 			jComboBoxProjectSelector = new JComboBox<String>(comboBoxModel);
-			jComboBoxProjectSelector.setPreferredSize(new Dimension(300, 26));
+			jComboBoxProjectSelector.setMinimumSize(new Dimension(300, 26));
 			jComboBoxProjectSelector.setActionCommand("esaProjectSelected");
 			jComboBoxProjectSelector.addActionListener(this);
 		}
 		return jComboBoxProjectSelector;
-	}
-	/**
-	 * This method initializes jButtonDefaultClassStaticCheck	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonEsaSelectAgent() {
-		if (jButtonSelectAgentClass == null) {
-			jButtonSelectAgentClass = new JButton();
-			jButtonSelectAgentClass.setToolTipText(Language.translate("Agenten auswählen"));
-			jButtonSelectAgentClass.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectAgentClass.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
-			jButtonSelectAgentClass.setActionCommand("esaSelectAgent");
-			jButtonSelectAgentClass.addActionListener(this);
-		}
-		return jButtonSelectAgentClass;
 	}
 	/**
 	 * This method initializes jPanelExecution	
@@ -394,35 +311,18 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JComboBox<String> getJComboBoxSetupSelector() {
 		if (jComboBoxSetupSelector == null) {
 			jComboBoxSetupSelector = new JComboBox<String>();
-			jComboBoxSetupSelector.setPreferredSize(new Dimension(300, 26));
+			jComboBoxSetupSelector.setMinimumSize(new Dimension(300, 26));
 			jComboBoxSetupSelector.setActionCommand("esaSetupSelected");
 			jComboBoxSetupSelector.addActionListener(this);
 		}
 		return jComboBoxSetupSelector;
 	}
-	/**
-	 * Gets the j text field agent class.
-	 * @return the j text field agent class
-	 */
-	private JTextField getJTextFieldAgentClass() {
-		if (jTextFieldAgentClass == null) {
-			jTextFieldAgentClass = new JTextField();
-			jTextFieldAgentClass.setPreferredSize(new Dimension(300, 26));
-			jTextFieldAgentClass.setEditable(false);
+	private JPanelEmbeddedSystemAgentTable getJPanelEmbeddedSystemAgentTable() {
+		if (jPanelEmbeddedSystemAgentTable == null) {
+			jPanelEmbeddedSystemAgentTable = new JPanelEmbeddedSystemAgentTable(this.optionDialog, this);
+			jPanelEmbeddedSystemAgentTable.setMinimumSize(new Dimension(200, 140));
 		}
-		return jTextFieldAgentClass;
-	}
-	
-	/**
-	 * Gets the jTextFieldAgentName.
-	 * @return the jTextFieldAgentName
-	 */
-	private JTextField getJTextFieldAgentName(){
-		if( jTextFieldAgentName == null){
-			jTextFieldAgentName = new JTextField();
-			jTextFieldAgentName.setPreferredSize(new Dimension(300, 26));
-		}
-		return jTextFieldAgentName;
+		return jPanelEmbeddedSystemAgentTable;
 	}
 	/**
 	 * This method initializes jRadioButtonVisNon	
@@ -434,7 +334,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			jRadioButtonVisNon.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonVisNon.setText("Sämtliche visuellen Darstellungen deaktivieren");
 			jRadioButtonVisNon.setText(Language.translate(jRadioButtonVisNon.getText()));
-			jRadioButtonVisNon.setPreferredSize(new Dimension(300, 24));
+			jRadioButtonVisNon.setPreferredSize(new Dimension(240, 24));
 			jRadioButtonVisNon.setActionCommand("visNon");
 			jRadioButtonVisNon.addActionListener(this);
 		}
@@ -457,94 +357,58 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		return jRadioButtonVisTrayIcon;
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#doDialogCloseAction()
+	 */
+	@Override
+	public void doDialogCloseAction() {
+		if (this.esaProjectSelected!=null) {
+			this.esaProjectSelected.close(null, true);
+			this.esaProjectSelected = null;
+			this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(null);
+		}
+	}
+	
 	/**
 	 * Loads the project instance of the selected sub folder.
 	 */
 	private void esaLoadSelectedProject() {
 		
 		String projectFolderSelected = (String) this.getJComboBoxProjectSelector().getSelectedItem();
-		if (projectFolderSelected==null || projectFolderSelected.equals("")) {
-			this.esaProjectSelected = null;
-			this.getJComboBoxSetupSelector().setSelectedItem(null);
-			this.getJTextFieldAgentClass().setText(null);
-			this.getJTextFieldAgentName().setText(null);
-			if (this.esaClassSelector!=null) {
-				this.esaClassSelector.dispose();
-				this.esaClassSelector = null;	
+		if (projectFolderSelected==null || projectFolderSelected.isEmpty()==true) {
+			// --- No project was selected ----------------
+			if (this.esaProjectSelected!=null) {
+				this.esaProjectSelected.close(null, true);
+				this.esaProjectSelected = null;
+				this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(null);
 			}
+			this.getJComboBoxSetupSelector().setSelectedItem(null);
+			this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
 			
 		} else {
 			// --- Project was selected -------------------
-			Project selectedProject = Project.load(projectFolderSelected);
 			if (this.esaProjectSelected==null) {
-				this.esaProjectSelected = selectedProject;
+				// --- Simply load the project ------------
+				this.esaProjectSelected = Project.load(projectFolderSelected);
 				this.setComboBoxModelSetup();
-				this.getJTextFieldAgentClass().setText(null);
-				this.getJTextFieldAgentName().setText(null);
-				this.getClassSelector4ProjectAgents(selectedProject);
-				
+				this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
+				this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(this.esaProjectSelected);
+			
 			} else {
-				// --- Is this still the same project? ----
-				String selectedProjectFolder = selectedProject.getProjectFolder();
-				String currentProjectFolder = this.esaProjectSelected.getProjectFolder();
-				if (selectedProjectFolder.equals(currentProjectFolder)==false) {
-					// --- Reinitialise settings ---------- 
-					this.esaProjectSelected = null;
-					this.getJTextFieldAgentClass().setText(null);
-					this.getJTextFieldAgentName().setText(null);
-					this.esaClassSelector.dispose();
-					this.esaClassSelector = null;
-					// --- Now reinitialise ---------------
-					this.esaProjectSelected = selectedProject;
-					this.setComboBoxModelSetup();
-					this.getJTextFieldAgentClass().setText(null);
-					this.getJTextFieldAgentName().setText(null);
-					this.getClassSelector4ProjectAgents(selectedProject);
-
+				// --- Check if open project is equal -----
+				if (projectFolderSelected.equals(this.esaProjectSelected.getProjectFolder())==false) {
+					// --- Close the project --------------
+					this.esaProjectSelected.close(null, true);
+					this.esaProjectSelected = Project.load(projectFolderSelected);
+					// --- Reinitialize settings ---------- 
+					this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
+					this.getJPanelEmbeddedSystemAgentTable().setSelectedProject(this.esaProjectSelected);
 				}
 			}
-			
 		}
 		this.refreshViewDeviceSystem();
 	}
-	
-	/**
-	 * Gets the class selector for project agents.
-	 * @param project the project
-	 * @return the class selector for project agents
-	 */
-	private ClassSelectionDialog getClassSelector4ProjectAgents(Project project) {
-		String currAgentClass = this.getJTextFieldAgentClass().getText();
-		if (this.esaClassSelector==null) {
-			JListClassSearcher jListClassSearcher = new JListClassSearcher(Agent.class, project.getBundleNames());
-			this.esaClassSelector = new ClassSelectionDialog(this.optionDialog, jListClassSearcher, currAgentClass, null, Language.translate("Bitte wählen Sie den Agenten aus, der gestartet werden soll"), false);
-		} 
-		this.esaClassSelector.setClass2Search4CurrentValue(currAgentClass);
-		return this.esaClassSelector;
-	}
-	
-	/**
-	 * Displays a selector for the embedded system agent.
-	 */
-	private void esaSelectAgent(){
-		
-		if (this.esaProjectSelected==null) {
-			String msgHead = Language.translate("Fehlendes Projekt!");
-			String msgText = Language.translate("Bitte wählen Sie ein Projekt aus") + "!";	
-			JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-			this.getJComboBoxProjectSelector().showPopup();
-			return;
-		}
-		// --- Open search dialog for agents --------------
-		ClassSelectionDialog cs = this.getClassSelector4ProjectAgents(this.esaProjectSelected);
-		cs.setVisible(true);
-		// --- act in the dialog ... ----------------------
-		if (cs.isCanceled()==true) return;
-		this.getJTextFieldAgentClass().setText(cs.getClassSelected());
-		this.getJTextFieldAgentName().setText(null);
-	}
-	
-	
+
 	/**
 	 * Refresh the view of the device system configuration.
 	 */
@@ -555,18 +419,12 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			
 			jLabelExecuteAs.setEnabled(false);
 			jLabelSetupHeader.setEnabled(false);
-			jLabelSetup.setEnabled(false);
-			jLabelAgentHeader.setEnabled(false);
-			jLabelAgent.setEnabled(false);
-			jLabelAgentName.setEnabled(false);
 			jLabelVisConfig.setEnabled(false);
 			
 			this.getJRadioButtonExecuteAsService().setEnabled(false);
 			this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(false);
 			this.getJComboBoxSetupSelector().setEnabled(false);
-			this.getJTextFieldAgentClass().setEnabled(false);
-			this.getJTextFieldAgentName().setEnabled(false);
-			this.getJButtonEsaSelectAgent().setEnabled(false);
+			this.getJPanelEmbeddedSystemAgentTable().setEnabled(false);
 			this.getJRadioButtonVisNon().setEnabled(false);
 			this.getJRadioButtonVisTrayIcon().setEnabled(false);
 		
@@ -574,37 +432,27 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 
 			jLabelExecuteAs.setEnabled(true);
 			jLabelSetupHeader.setEnabled(true);
-			jLabelSetup.setEnabled(true);
 			this.getJRadioButtonExecuteAsService().setEnabled(true);
 			this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(true);
 			this.getJComboBoxSetupSelector().setEnabled(true);
 			
 			if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
-				this.getJTextFieldAgentClass().setText(null);
-				this.getJTextFieldAgentName().setText(null);
 				
-				jLabelAgentHeader.setEnabled(false);
-				jLabelAgent.setEnabled(false);
-				jLabelAgentName.setEnabled(false);
-				jLabelVisConfig.setEnabled(false);
+				this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
 
-				this.getJTextFieldAgentClass().setEnabled(false);
-				this.getJTextFieldAgentName().setEnabled(false);
-				this.getJButtonEsaSelectAgent().setEnabled(false);
+				jLabelSetupHeader.setEnabled(false);
+				jLabelVisConfig.setEnabled(false);
+				this.getJPanelEmbeddedSystemAgentTable().setEnabled(false);
 				this.getJRadioButtonVisNon().setEnabled(false);
 				this.getJRadioButtonVisTrayIcon().setEnabled(false);
 				
 			} else if (this.getJRadioButtonExecuteAsService().isSelected()) {
-				this.getJTextFieldAgentClass().setText(null);
-				this.getJTextFieldAgentName().setText(null);
-
-				jLabelAgentHeader.setEnabled(false);
-				jLabelAgent.setEnabled(false);
-				jLabelAgentName.setEnabled(false);
+				
+				this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
+				
+				jLabelSetupHeader.setEnabled(true);
 				jLabelVisConfig.setEnabled(false);
-				this.getJTextFieldAgentClass().setEnabled(false);
-				this.getJTextFieldAgentName().setEnabled(false);
-				this.getJButtonEsaSelectAgent().setEnabled(false);
+				this.getJPanelEmbeddedSystemAgentTable().setEnabled(false);
 				this.getJRadioButtonVisNon().setEnabled(false);
 				this.getJRadioButtonVisTrayIcon().setEnabled(false);
 				
@@ -612,13 +460,9 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 
 			} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
 				
-				jLabelAgentHeader.setEnabled(true);
-				jLabelAgent.setEnabled(true);
-				jLabelAgentName.setEnabled(true);
+				jLabelSetupHeader.setEnabled(false);
 				jLabelVisConfig.setEnabled(true);
-				this.getJTextFieldAgentClass().setEnabled(true);
-				this.getJTextFieldAgentName().setEnabled(true);
-				this.getJButtonEsaSelectAgent().setEnabled(true);
+				this.getJPanelEmbeddedSystemAgentTable().setEnabled(true);
 				this.getJRadioButtonVisNon().setEnabled(true);
 				this.getJRadioButtonVisTrayIcon().setEnabled(true);
 				
@@ -640,18 +484,14 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			// --- Reset DEVICE_SYSTEM variables ----------
 			this.getJComboBoxProjectSelector().setSelectedItem(null);
 			this.getJComboBoxSetupSelector().setSelectedItem(null);
-			this.getJTextFieldAgentClass().setText(null);
-			this.getJTextFieldAgentName().setText(null);
-			this.esaClassSelector = null;
+			this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
 			break;
 
 		case SERVER:
 			// --- Reset DEVICE_SYSTEM variables ----------
 			this.getJComboBoxProjectSelector().setSelectedItem(null);
 			this.getJComboBoxSetupSelector().setSelectedItem(null);
-			this.getJTextFieldAgentClass().setText(null);
-			this.getJTextFieldAgentName().setText(null);
-			this.esaClassSelector = null;
+			this.getJPanelEmbeddedSystemAgentTable().removeTableEntries();
 			break;
 			
 		case DEVICE_SYSTEM:
@@ -680,8 +520,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				break;
 			}
 			this.getJComboBoxSetupSelector().setSelectedItem(getGlobalInfo().getDeviceServiceSetupSelected());
-			this.getJTextFieldAgentClass().setText(getGlobalInfo().getDeviceServiceAgentClassName());
-			this.getJTextFieldAgentName().setText(getGlobalInfo().getDeviceServiceAgentName());
+			this.getJPanelEmbeddedSystemAgentTable().setDeviceServiceAgents(getGlobalInfo().getDeviceServiceAgents());
 			switch (getGlobalInfo().getDeviceServiceAgentVisualisation()) {
 			case NONE:
 				this.getJRadioButtonVisNon().setSelected(true);
@@ -716,8 +555,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			this.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.AGENT);
 		}
 		this.getGlobalInfo().setDeviceServiceSetupSelected((String)this.getJComboBoxSetupSelector().getSelectedItem());
-		this.getGlobalInfo().setDeviceServiceAgentClassName(this.getJTextFieldAgentClass().getText());
-		this.getGlobalInfo().setDeviceServiceAgentName(this.getJTextFieldAgentName().getText());
+		this.getGlobalInfo().setDeviceServiceAgents(this.getJPanelEmbeddedSystemAgentTable().getDeviceServiceAgents());
 		if (this.getJRadioButtonVisNon().isSelected()) {
 			this.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);			
 		} else if (this.getJRadioButtonVisTrayIcon().isSelected()) {
@@ -736,11 +574,11 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		boolean err = false;
 
 		if (this.getSelectedExecutionMode()==ExecutionMode.DEVICE_SYSTEM) {
-			// --------------------------------------------------------------
-			// --- Error Check for Service and Embedded System Agent --------
-			// --------------------------------------------------------------
+			// ----------------------------------------------------------------
+			// --- Error Check for Service and Embedded System Agent ----------
+			// ----------------------------------------------------------------
 			
-			// --- Project selected ? ---------------------------------------
+			// --- Project selected ? -----------------------------------------
 			if (this.getJComboBoxProjectSelector().getSelectedItem()==null || this.getJComboBoxProjectSelector().getSelectedItem().equals("")==true) {
 				msgHead = Language.translate("Fehlendes Projekt!");
 				msgText = Language.translate("Bitte wählen Sie ein Projekt aus") + "!";	
@@ -748,7 +586,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				this.getJComboBoxProjectSelector().showPopup();
 				return true;
 			}
-			// --- Case Service or Embedded System Agent? -------------------
+			// --- Case Service or Embedded System Agent? ---------------------
 			if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
 				msgHead = Language.translate("Ausführungsart nicht festgelegt!");
 				msgText = Language.translate("Bitte legen Sie fest, ob Sie Agent.GUI als Service oder als Embedded System Agent ausführen möchten") + "!";	
@@ -756,7 +594,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				return true;
 				
 			} else if (this.getJRadioButtonExecuteAsService().isSelected()) {
-				// --- Simulation Setup selected? --------------------------- 
+				// --- Simulation Setup selected? ----------------------------- 
 				if (this.getJComboBoxSetupSelector().getSelectedItem()==null || this.getJComboBoxSetupSelector().getSelectedItem().equals("")==true) {
 					msgHead = Language.translate("Fehlendes Simulations-Setup!");
 					msgText = Language.translate("Bitte wählen Sie ein Simulations-Setup") + "!";	
@@ -766,27 +604,8 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				}
 				
 			} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
-				// --- Agent Selected ? -------------------------------------
-				if (this.getJTextFieldAgentClass().getText()==null || this.getJTextFieldAgentClass().getText().equals("")) {
-					msgHead = Language.translate("Fehlender Agent!");
-					msgText = Language.translate("Bitte wählen Sie einen Agenten") + "!";	
-					JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							esaSelectAgent();
-						}
-					});
-					return true;
-				}
-				// --- Agent Name ? -------------------------------------
-				if (this.getJTextFieldAgentName().getText()==null || this.getJTextFieldAgentName().getText().equals("")) {
-					msgHead = Language.translate("Fehlender Agent Name!");
-					msgText = Language.translate("Bitte geben Sie Agenten Name") + "!";	
-					JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-				
+				// --- Agent(s) Selected ? ------------------------------------
+				err = this.getJPanelEmbeddedSystemAgentTable().errorFound();
 			}
 			
 		} 
@@ -802,20 +621,20 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		String actCMD = ae.getActionCommand();
 		if (actCMD.equalsIgnoreCase("esaProjectSelected")) {
 			this.esaLoadSelectedProject();
+			
 		} else if (actCMD.equalsIgnoreCase("esaExecuteAsServerService")) {
 			this.refreshViewDeviceSystem();
+			
 		} else if (actCMD.equalsIgnoreCase("esaExecuteAsDeviceAgent")) {
 			this.refreshViewDeviceSystem();
 			
 		} else if (actCMD.equalsIgnoreCase("esaSetupSelected")) {
 			// --- nothing to do here ---------------------
-		} else if (actCMD.equalsIgnoreCase("esaSelectAgent")) {
-			this.esaSelectAgent();
 		} else if (actCMD.equalsIgnoreCase("visNon")) {
 			// --- nothing to do here ---------------------
 		} else if (actCMD.equalsIgnoreCase("visTrayIcon")) {
 			// --- nothing to do here, yet ----------------
 		}
 	}
-
+	
 }

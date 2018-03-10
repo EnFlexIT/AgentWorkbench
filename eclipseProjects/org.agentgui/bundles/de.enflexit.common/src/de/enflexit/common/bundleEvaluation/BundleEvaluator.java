@@ -38,7 +38,6 @@ import java.net.URLConnection;
 import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -488,28 +487,34 @@ public class BundleEvaluator {
 		// --- Checking class files ---------------------------------
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 		if (bundleWiring!=null && this.isBundleStartingResolvedOrActive(bundle)==true) {
-			Collection<String> resources = bundleWiring.listResources(packagePath, "*.class", options);
-			for (String resource : resources) {
-				// --- Get a suitable class name --------------------
-				String className = this.getClassName(resource);
-				if (className!=null) {
+			
+			try {
+				// --- Try to read the resources --------------------
+				Vector<String> resources = new Vector<>(bundleWiring.listResources(packagePath, "*.class", options));
+				// --- get the classes found ------------------------
+				for (int i=0; i < resources.size(); i++) {
 					
-					try {
-						// ---- Load the class into the bundle ------ 
-						Class<?> clazz = bundle.loadClass(className);
-						if (this.getSourceBundleOfClass(clazz)==bundle) {
-							bundleClasses.add(clazz);
-						}
+					// --- Get a suitable class name ----------------
+					String resource = resources.get(i);
+					String className = this.getClassName(resource);
+					if (className!=null) {
 						
-					} catch (ClassNotFoundException cnfEx) {
-						//ex.printStackTrace();
-					} catch (NoClassDefFoundError ncDefEx) {
-						//ex.printStackTrace();
-					} catch (IllegalStateException isfEx) {
-						//ex.printStackTrace();
-					} catch (IllegalAccessError iae) {
-						//ex.printStackTrace();
+						try {
+							// ---- Load the class into the bundle --
+							Class<?> clazz = bundle.loadClass(className);
+							if (this.getSourceBundleOfClass(clazz)==bundle) {
+								bundleClasses.add(clazz);
+							}
+							
+						} catch (ClassNotFoundException | NoClassDefFoundError | IllegalStateException | IllegalAccessError cnfEx) {
+							//ex.printStackTrace();
+						}
 					}
+				}
+
+			} catch (Exception ex) {
+				if (!(ex instanceof NullPointerException)) {
+					ex.printStackTrace();
 				}
 			}
 			

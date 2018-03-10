@@ -60,6 +60,7 @@ public abstract class AbstractJPanelForOptions extends JPanel {
 	 */
 	public AbstractJPanelForOptions(OptionDialog optionDialog, StartOptions startOptions) {
 		this.optionDialog = optionDialog;
+		this.optionDialog.registerOptionPanel(this);
 		this.startOptions = startOptions;
 	}
 	
@@ -94,6 +95,12 @@ public abstract class AbstractJPanelForOptions extends JPanel {
 	 * Should refresh the view according to the current settings.
 	 */
 	public abstract void refreshView();
+	
+	/**
+	 * Will be invoked, if the dialog is closing. Overwrite this 
+	 * method, if you have to react on this event.
+	 */
+	public void doDialogCloseAction() { }
 	
 	/**
 	 * Gets the selected execution mode.

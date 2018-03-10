@@ -288,7 +288,6 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * Sets a text in the applications status bar.
-	 * 
 	 * @param message the new status bar
 	 */
 	public void setStatusBar(String message) {
@@ -303,7 +302,6 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * This method is used if a project is open. Then the project name is displayed behind the applications title (e.g. 'Agent.GUI: project name'
-	 *
 	 * @param add2BasicTitel the new titel addition
 	 */
 	public void setTitelAddition(String add2BasicTitel) {
@@ -316,7 +314,6 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * Sets the indicator in order to visul inform that JADE is running or not (red or green button in the right corner of the status bar + text).
-	 *
 	 * @param isRunning the new status jade running
 	 */
 	public void setStatusJadeRunning(boolean isRunning) {
@@ -332,7 +329,6 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * Here the 'look and feel' LnF of java Swing can be set.
-	 * 
 	 * @param newLnF the new look and feel
 	 */
 	public void setLookAndFeel() {
