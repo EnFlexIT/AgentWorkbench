@@ -32,6 +32,10 @@ To install Agent.Workbench, navigate to the release section of our repository at
 
 After the benchmark, click _**New Project**_ in the tool bar or by using the menu _**Project **_=&gt; ![](/eclipseProjects/org.agentgui/bundles/org.agentgui.core/icons/core/MBnew.png) _**New Project**_.![](/00_images/01_GettingStarted/03_CreateNewProject.png)
 
+The agent project will be located beside the installation of Agent.Workbench, while the structure of the installation looks as shown in the image below.  
+
+
+
 
 
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
