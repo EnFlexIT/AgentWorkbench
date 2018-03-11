@@ -1,6 +1,6 @@
 # Getting Started
 
-This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI \_plugins \_for your agent projects too. In the course of the text we mixing-up these terms, but their meaning is the same \(plugin = bundle\).
+This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we mixing-up these terms, but their meaning is the same \(plugin = bundle\).
 
 To create an agent application, the following installation, configuration and development tasks have to be done:
 
