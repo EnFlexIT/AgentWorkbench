@@ -12,6 +12,6 @@
   * [Start your agent\(s\)](01_getting-started/start-your-first-setup.md)
 * [Agent.Workbench Features](agentworkbench-features.md)
   * [Projects and Setups](02_agentworkbench-features/projects-and-setups.md)
-* The Project Window
+* [The Project Window](the-project-window.md)
 * [Distributed Execution of Agents](distributed-application.md)
 
