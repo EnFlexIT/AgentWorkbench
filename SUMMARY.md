@@ -13,4 +13,5 @@
 * [Agent.Workbench Features](agentworkbench-features.md)
   * [Projects and Setups](02_agentworkbench-features/projects-and-setups.md)
 * [Distributed Execution of Agents](distributed-application.md)
+* The Project Window
 
