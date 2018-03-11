@@ -3,7 +3,7 @@
 * [Introduction](README.md)
 * [Getting Started](getting-started.md)
   * [Install Agent.Workbench](/getting-started.md#install-agent-workbench)
-  * [Create an Agent Project](01_getting-started/create-new-agent-project.md)
+  * [Create an Agent Project](/getting-started.md#create-an-agent-project)
   * [Install Eclipse IDE](01_getting-started/install-eclipse-ide.md)
   * [Setup your Workspace](01_getting-started/define-your-eclipse-target-platform.md)
   * [Define a Target Platform](01_getting-started/define-a-target-platform.md)
