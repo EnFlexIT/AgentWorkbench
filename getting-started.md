@@ -8,7 +8,7 @@ To create an agent application, the following installation, configuration and de
 
 * [Create an Agent Project](#create-an-agent-project): After installing, start Agent.Workbench. The first start will execute a benchmark that helps us to classify your machine in case of [distributed agent executions](/distributed-application.md). Go to the menu or toolbar and create a ![](/eclipseProjects/org.agentgui/bundles/org.agentgui.core/icons/core/MBnew.png) _**New Project**_. That's it for the moment - simply close Agent.Workbench now.
 
-* [Install the Eclipse IDE](/01_getting-started/install-eclipse-ide.md): We recommend to use the [Eclipse IDE for Java EE Developer](https://www.eclipse.org/downloads/) for your developments.
+* [Install the Eclipse IDE](#install-eclipse-ide): We recommend to use the [Eclipse IDE for Java EE Developer](https://www.eclipse.org/downloads/) for your developments.
 
 * [Setup your Workspace](/01_getting-started/define-your-eclipse-target-platform.md): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
 
@@ -37,6 +37,4 @@ After the benchmark click _**New Project**_ in the tool bar or by using the menu
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
 
 Using and creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer. Simply navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/), download the Eclipse Installer and follow its installation instructions.
-
-
 
