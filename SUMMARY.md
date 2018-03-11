@@ -7,6 +7,8 @@
   * [Install Eclipse IDE](01_getting-started/install-eclipse-ide.md)
   * [Setup your Workspace](01_getting-started/define-your-eclipse-target-platform.md)
   * [Define a Target Platform](01_getting-started/define-a-target-platform.md)
+  * [Create an Agent-Plugin](01_getting-started/create-an-agent-plugin.md)
+  * [Export you Agent Bundle](01_getting-started/export-an-agent-bundle.md)
 * [Agent.Workbench Features](agentworkbench-features.md)
   * [Projects and Setups](02_agentworkbench-features/projects-and-setups.md)
 * [Distributed Execution of Agents](distributed-application.md)

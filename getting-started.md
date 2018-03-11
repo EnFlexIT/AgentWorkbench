@@ -1,6 +1,8 @@
 # Getting Started
 
-This section shortly describes how you can define, develop and start your first agent-based application. For this, the following installation and configuration tasks have to be done:
+This section shortly describes how you can define, develop and start your first agent-based application. 
+
+For this, the following installation and configuration tasks have to be done:
 
 * [Install Agent.Workbench](/01_getting-started/install-agentworkbench.md): Go to our [GitHub-Site](https://github.com/EnFlexIT/AgentWorkbench/releases) and download the latetst release of Agent.Workbench \(for Windows, Linux or MacOS\).Just extract the provided archive and place it at a desired location.
 
@@ -12,9 +14,9 @@ This section shortly describes how you can define, develop and start your first 
 
 * [Define a Target Platform](/01_getting-started/define-a-target-platform.md): Create a Target Platform definition that points to the previously installed Agent.Workbench.
 
-* Create your first agent Plugin-Project:
+* [Create your first agent Plugin-Project](/01_getting-started/create-new-agent-project.md):Create an Eclipse Plugin-Project, your desired package structure and create your first agent class.
 
-* Export your project bundle to the 
+* [Export your agent bundle / Plugin](/01_getting-started/export-an-agent-bundle.md) into the workbench's project directory and start Agent.Workbench again. Open the above defined workbench project and have a look at the tabs  into the
 
 
 
