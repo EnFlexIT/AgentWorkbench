@@ -6,7 +6,7 @@ To create an agent application, the following installation, configuration and de
 
 * [Install Agent.Workbench](#install-agent-workbench): Go to our [GitHub-Site](https://github.com/EnFlexIT/AgentWorkbench/releases) and download the latetst release of Agent.Workbench \(for Windows, Linux or MacOS\).Just extract the provided archive and place it at a desired location.
 
-* [Create an Agent Project](/01_getting-started/create-new-agent-project.md): After installing, start Agent.Workbench. The first start will execute a benchmark that helps us to classify your machine in case of [distributed agent executions](/distributed-application.md). Go to the menu or toolbar and create a ![](/eclipseProjects/org.agentgui/bundles/org.agentgui.core/icons/core/MBnew.png) _**New Project**_. That's it for the moment - simply close Agent.Workbench now.
+* [Create an Agent Project](#create-an-agent-project): After installing, start Agent.Workbench. The first start will execute a benchmark that helps us to classify your machine in case of [distributed agent executions](/distributed-application.md). Go to the menu or toolbar and create a ![](/eclipseProjects/org.agentgui/bundles/org.agentgui.core/icons/core/MBnew.png) _**New Project**_. That's it for the moment - simply close Agent.Workbench now.
 
 * [Install the Eclipse IDE](/01_getting-started/install-eclipse-ide.md): We recommend to use the [Eclipse IDE for Java EE Developer](https://www.eclipse.org/downloads/) for your developments.
 
@@ -26,13 +26,11 @@ To create an agent application, the following installation, configuration and de
 
 To install Agent.Workbench, navigate to the release section of our repository at github under [https://github.com/EnFlexIT/AgentWorkbench/releases](https://github.com/EnFlexIT/AgentWorkbench/releases). Depending on your operating system, select the installation package. Agent.Workbench is available for Windows, Linux and MacOS.
 
-![](/assets/01_installAgentWorkbench.png)Extract Agent.Workbench at a desired location on your file system. Afterwards start the executable of the program \(e.g. AgentGUi.exe, agentgui.app or AgentGui\). After the splash, the main application window appears and will execute the benchmark.Install Agent.Workbench
+![](/assets/01_installAgentWorkbench.png)Extract Agent.Workbench at a desired location on your file system. Afterwards start the executable of the program \(e.g. AgentGUi.exe, agentgui.app or AgentGui\). After the splash, the main application window appears and and the benchmark will be executed.
+
+## Create an Agent Project {#create-an-agent-project}
 
 
-
-
-
-Extract Agent.Workbench at a desired location on your file system. Afterwards start the executable of the program \(e.g. AgentGUi.exe, agentgui.app or AgentGui\). After the splash, the main application window appears and will execute the benchmark.
 
 
 
