@@ -36,6 +36,8 @@ The agent project will be located in the sub-directory **./projects/** beside th
 
 ![](/00_images/01_GettingStarted/04_InstallationStructure.png)
 
+For the time beeing, save the project and close Agent.Workbench. A description 
+
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
 
 Using and creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer. Simply navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/), download the Eclipse Installer and follow its installation instructions.
