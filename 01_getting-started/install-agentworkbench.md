@@ -4,5 +4,5 @@ To install Agent.Workbench, navigate to the release section of our repository at
 
 ![](/assets/01_installAgentWorkbench.png)
 
-Extract Agent.Workbench at a desired location on your file system.
+Extract Agent.Workbench at a desired location on your file system. Afterwards start the executable of the workbench \(e.g. AgentGUi.exe, agentgui.app or AgentGui\). After the splash, the main application window appears and will execute the benchmark.
 
