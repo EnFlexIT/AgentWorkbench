@@ -1,10 +1,6 @@
 # Install Agent.Workbench
 
-To install Agent.Workbench, navigate to the release section of our repository at github under [https://github.com/EnFlexIT/AgentWorkbench/releases](https://github.com/EnFlexIT/AgentWorkbench/releases). Select the installation package depending on your operating system.Agent.Workbench is available for Windows, Linux and MacOS
-
- ![](/assets/01_installAgentWorkbench.png)
-
-![](/assets/01_installAgentWorkbench.png)
+To install Agent.Workbench, navigate to the release section of our repository at github under [https://github.com/EnFlexIT/AgentWorkbench/releases](https://github.com/EnFlexIT/AgentWorkbench/releases). Depending on your operating system, select the installation package. Agent.Workbench is available for Windows, Linux and MacOS.
 
 ![](/assets/01_installAgentWorkbench.png)
 
