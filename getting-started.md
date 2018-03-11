@@ -30,5 +30,13 @@ To install Agent.Workbench, navigate to the release section of our repository at
 
 ## Create an Agent Project {#create-an-agent-project}
 
+After the benchmark click _**New Project**_ in the tool bar or by using the menu Project =&gt; New Project.
+
+=&gt;.TODO
+
+## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
+
+Using and creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer. Simply navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/), download the Eclipse Installer and follow its installation instructions.
+
 
 
