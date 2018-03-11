@@ -36,7 +36,7 @@ The agent project will be located in the sub-directory **./projects/** beside th
 
 ![](/00_images/01_GettingStarted/04_InstallationStructure.png)
 
-For the time beeing, save the project and close Agent.Workbench. A description 
+For the time being, save the project and close Agent.Workbench. A description of the project window structure will be provided in this section \[TODO\]
 
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
 
