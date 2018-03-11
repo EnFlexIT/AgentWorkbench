@@ -12,7 +12,9 @@ This section shortly describes how you can define, develop and start your first 
 
 * [Define a Target Platform](/01_getting-started/define-a-target-platform.md): Create a Target Platform definition that points to the previously installed Agent.Workbench.
 
-* Create a Plugin-Project: 
+* Create your first agent Plugin-Project:
+
+* Export your project bundle to the 
 
 
 
