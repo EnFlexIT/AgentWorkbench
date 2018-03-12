@@ -40,5 +40,5 @@ For the time being, save the project and close Agent.Workbench. [A description o
 
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
 
-Creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/), download the Eclipse Installer and follow its installation instructions.
+Creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/), download the Eclipse Installer and follow its installation instructions. 
 
