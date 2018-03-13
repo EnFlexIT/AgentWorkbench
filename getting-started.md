@@ -40,5 +40,19 @@ For the time being, save the project and close Agent.Workbench. [A description o
 
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
 
-Creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/), download the Eclipse Installer and follow its installation instructions. 
+Creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer that provides this environment, but also a little more. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/) and download the Eclipse Installer.
+
+Since the installer wants to create directories and copy files to it, execute the program as someone who has the right permissions. For example: if you want to install Eclipse under _C:\Program Files\jee-oxygen,_ you should have executed the installer as the administrator of the system. After the installer has started, select the right version of Eclipse and follow the further instructions.
+
+![](/00_images/01_GettingStarted/05_EclipseInstaller.png)
+
+## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
+
+
+
+
+
+
+
+
 
