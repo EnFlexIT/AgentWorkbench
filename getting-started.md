@@ -48,7 +48,9 @@ Since the installer wants to create directories and copy files to it, execute th
 
 ## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
 
+Eclipse organizes Java projects in different, so-called workspaces, While you develop your website code in one workspace, you can develop your agent system in another, which avoids to mix-up things that do not belong to each other. Develop an agent system. For the moment, we recommend the development of an agent system in a dedicated own workspace.
 
+Start your Eclipse IDE 
 
 
 
