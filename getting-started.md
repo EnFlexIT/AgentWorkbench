@@ -1,6 +1,6 @@
 # Getting Started
 
-This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we are mixing-up these terms, but their meaning is the same \(plugin = bundle\). For further reading and an introduction into the modularity concept of OSGI, we recommend this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html) 
+This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we are mixing-up these terms, but their meaning is the same \(plugin = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
 
 To create an agent application, the following installation, configuration and development tasks have to be done:
 
@@ -40,5 +40,15 @@ For the time being, save the project and close Agent.Workbench. [A description o
 
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
 
-Using and creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/), download the Eclipse Installer and follow its installation instructions.
+Creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer that provides this environment, but also a little more. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/) and download the Eclipse Installer.
+
+Since the installer wants to create directories and copy files to it, execute the program as someone who has the right permissions. For example: if you want to install Eclipse under _C:\Program Files\jee-oxygen,_ you should have executed the installer as the administrator of the system. After the installer has started, select the right version of Eclipse and follow the further instructions.
+
+![](/00_images/01_GettingStarted/05_EclipseInstaller.png)
+
+## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
+
+Eclipse organizes Java projects in different, so-called workspaces, While you develop your website code in one workspace, you can develop your agent system in another, which avoids to mix-up things that do not belong to each other. Develop an agent system. For the moment, we recommend the development of an agent system in a dedicated own workspace.
+
+Start your Eclipse IDE. 
 
