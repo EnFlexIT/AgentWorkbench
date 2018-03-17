@@ -70,9 +70,11 @@ Starting your Eclipse IDE the first time, you will be prompted to define a works
 
 ### For Advanced
 
-If you are already using Eclipse for a while, you will be probably aware about switching a workspace. For sake of completeness: Go to menu _**File**_ =&gt; _**Switch Workspace**_ =&gt; _**Other **_and Browse for the desred workspace location.
+If you are already using Eclipse for a while, you will be probably aware about switching a workspace. For sake of completeness: Go to menu _**File**_ =&gt; _**Switch Workspace**_ =&gt; \_**Other **\_and Browse for the desred workspace location.
 
 ![](/00_images/01_GettingStarted/06_Eclipse_SwitchWorkspace.png)
 
-Having defined your workspace, Eclipse will be opend with a welcome page that points to further information and tutorials.
+Having defined your workspace, Eclipse will be opend with a welcome page that points to further information and tutorials. 
+
+As next we have to make sure that we use the same so-called [Perspective](https://www.tutorialspoint.com/eclipse/eclipse_perspectives.htm).
 
