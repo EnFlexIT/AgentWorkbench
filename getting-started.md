@@ -1,6 +1,6 @@
 # Getting Started
 
-This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we are mixing-up these terms, but their meaning is the same \(plugin = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
+This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we are mixing-up these terms, but their meaning is the same \(plugin = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend to read this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
 
 To create an agent application, the following installation, configuration and development tasks have to be done:
 
@@ -10,13 +10,13 @@ To create an agent application, the following installation, configuration and de
 
 * [Install the Eclipse IDE](#install-eclipse-ide): We recommend to use the [Eclipse IDE for Java EE Developer](https://www.eclipse.org/downloads/) for your developments.
 
-* [Setup your Workspace](/01_getting-started/define-your-eclipse-target-platform.md): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
+* [Setup your Workspace](//getting-started.md#setup-the-eclipse-workspace): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
 
-* [Define a Target Platform](/01_getting-started/define-a-target-platform.md): Create a Target Platform definition that points to the previously installed Agent.Workbench.
+* [Define a Target Platform](#define-the-target-platform-for-agent-developments): Create a Target Platform definition that points to the previously installed Agent.Workbench.
 
-* [Create your first agent Plugin-Project](/01_getting-started/create-new-agent-project.md):Create an Eclipse Plugin-Project, your desired package structure and create your first agent class.
+* [Create your first agent Plugin-Project](#create-an-agent-plugin):Create an Eclipse Plugin-Project, your desired package structure and create your first agent class.
 
-* [Export your agent bundle / Plugin](/01_getting-started/export-an-agent-bundle.md) into the workbench's project directory and start Agent.Workbench again. Open the above defined workbench project and have a look at the tabs \[Resources\] and \[Agents\], where you will find your exported bundle and your first agent.
+* Export your agent bundle / plugin into the workbench's project directory and start Agent.Workbench again. Open the above defined workbench project and have a look at the tabs \[Resources\] and \[Agents\], where you will find your exported bundle and your first agent.
 
 * Define a setup and [start your agent application](/01_getting-started/start-your-first-setup.md).
 
@@ -48,7 +48,58 @@ Since the installer wants to create directories and copy files to it, execute th
 
 ## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
 
-Eclipse organizes Java projects in different, so-called workspaces, While you develop your website code in one workspace, you can develop your agent system in another, which avoids to mix-up things that do not belong to each other. Develop an agent system. For the moment, we recommend the development of an agent system in a dedicated own workspace.
+### For Beginners
 
-Start your Eclipse IDE. 
+If you have never worked with Eclipse, you should first take the time to read one of the available beginner tutorials in the web. Some of them are:
+
+* The HTMLHelp Center of Eclipse: 
+  [http://help.eclipse.org/oxygen/index.jsp](http://help.eclipse.org/oxygen/index.jsp)
+  You will recognize the big tree on the left hand site that gives you an impression of the multitude of tools available under Eclipse. The introductory part can be found navigating along _**Workbench User Guide**_ =&gt; _**Getting started**_ =&gt; _**Basic tutorial**_
+* The tutorial site of Lars Vogel \(vogella\) that offers a lot of tutorial in the context of Java, Eclipse, Plugin development and other. The introduction to the Eclipse IDE \(Integrated Development Environment\) can be found here:
+  [http://www.vogella.com/tutorials/Eclipse/article.html](http://www.vogella.com/tutorials/Eclipse/article.html), 
+
+If you prefer a video tutorial, you might like one of these:
+
+* [https://www.youtube.com/watch?v=23tAK5zdQ9c](https://www.youtube.com/watch?v=23tAK5zdQ9c)
+
+* [https://www.youtube.com/watch?v=xO5DpU2j-WE](https://www.youtube.com/watch?v=xO5DpU2j-WE)
+
+... or simply do what most programmers do, if they have a specific question: [ask Google](http://lmgtfy.com/?q=Eclipse+beginner+tutorial)!
+
+Starting your Eclipse IDE the first time, you will be prompted to define a workspace directory. _Background_: Eclipse organizes Java projects in different, so-called workspaces. For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other.
+
+### For Advanced
+
+If you are already using Eclipse for a while, you will be probably aware about switching a workspace. For sake of completeness: Go to menu _**File**_ =&gt; _**Switch Workspace**_ =&gt; _**Other**_** **and Browse for the desred workspace location.
+
+![](/00_images/01_GettingStarted/06_Eclipse_SwitchWorkspace.png)
+
+Having defined your workspace, Eclipse will be opend with a welcome page that points to further information and tutorials.
+
+As next we have to make sure that we use the right [Perspective](https://www.tutorialspoint.com/eclipse/eclipse_perspectives.htm). Select menu _**Window **_=&gt; _**Perspective**_ =&gt; _**Open Perspective**_ =&gt; _**Other**_. and select the perspective for Plug-in Development.
+
+![](/00_images/01_GettingStarted/07_SelectPlug-inPerspective.png)
+
+## Define the Target Platform for Agent Developments {#define-the-target-platform-for-agent-developments}
+
+With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with our own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
+
+To do so, open the Eclipse preferences \(menu _**Window**_ =&gt; _**Preferences**_\) and type the word 'target' into the search text field \(see image\).![](/00_images/01_GettingStarted/08_TargetPlatform_Preferences.png)
+
+Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start with an empty target definition** on the first dialog page and press the _**Next**_ button underneath. In the subsequent dialog
+
+![](/00_images/01_GettingStarted/09_TargetPlatform_AddContent.png)
+
+1. Define the name of the Target Platform definition \(e.g. Agent.Workbench\)
+2. Choose _**Add**_ to select the content \(bundles and / or features\) that define your target platform.
+3. Select _**Installation**_, press _**Next**_ and _**Browse**_ to the installation of Agent.Workbench on your file system.
+4. Again, click _**Next**_ to get a preview of the bundles / plugins to be used for your Target Platform or directly click _**Finish**_.
+
+As a result, the field in the _**Locations**_ tab should point to your Agent.Workbench installation, saying that approx. 131 plugins were found. Click on _**Finish**_**.** The new target platform definition should now also be displayed in the list within the preference dialog. As final step mark this new definition as active \(_**tick the corresponding box**_\) and press _**Apply and Close**_.
+
+Congratulations you are prepared to develop your first agent.
+
+## Create an Agent-Plugin {#create-an-agent-plugin}
+
+Create a new Plugin ...
 
