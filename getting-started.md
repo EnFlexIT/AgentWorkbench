@@ -74,7 +74,7 @@ If you are already using Eclipse for a while, you will be probably aware about s
 
 ![](/00_images/01_GettingStarted/06_Eclipse_SwitchWorkspace.png)
 
-Having defined your workspace, Eclipse will be opend with a welcome page that points to further information and tutorials.
+Having defined your workspace, Eclipse will be opened with a welcome page that points to further information or tutorials - simply close this window.
 
 As next we have to make sure that we use the right [Perspective](https://www.tutorialspoint.com/eclipse/eclipse_perspectives.htm). Select menu _**Window **_=&gt; _**Perspective**_ =&gt; _**Open Perspective**_ =&gt; _**Other**_. and select the perspective for Plug-in Development.
 
