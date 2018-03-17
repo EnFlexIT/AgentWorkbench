@@ -95,7 +95,7 @@ Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start wit
 3. Select _**Installation**_, press _**Next**_ and _**Browse**_ to the installation of Agent.Workbench on your file system.
 4. Again, click _**Next**_ to get a preview of the bundles / plugins to be used for your Target Platform or directly click _**Finish**_.
 
+As a result, the field in the _**Locations**_ tab should point to your Agent.Workbench installation, saying that approx. 131 plugins were found. Click on _**Finish**_**.** The new target platform definition should now also be displayed in the list within the preference dialog. As final step mark this new definition as active \(_**tick the corresponding box**_\) and press _**Apply and Close**_.
 
-
-
+Congratulations you are prepared to develop your first agent. 
 
