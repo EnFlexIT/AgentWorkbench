@@ -394,7 +394,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 		}
 
 		// --- Save the changes ------------
-		exportedProject.save(this.getTempExportFolderPath().toFile(), false);
+		exportedProject.save(this.getTempExportFolderPath().toFile(), false, false);
 	}
 
 	/**
