@@ -80,11 +80,22 @@ As next we have to make sure that we use the right [Perspective](https://www.tut
 
 ![](/00_images/01_GettingStarted/07_SelectPlug-inPerspective.png)
 
-## Define the Target Platform for agent developments {#define-the-target-platform-for-agent-developments}
+## Define the Target Platform for Agent Developments {#define-the-target-platform-for-agent-developments}
 
 With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with our own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
 
-To do so, 
+To do so, open the Eclipse preferences \(menu _**Window**_ =&gt; _**Preferences**_\) and type the word 'target' into the search text field \(see image\).![](/00_images/01_GettingStarted/08_TargetPlatform_Preferences.png)
+
+Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start with an empty target definition** on the first dialog page and press the _**Next**_ button underneath. In the subsequent dialog
+
+![](/00_images/01_GettingStarted/09_TargetPlatform_AddContent.png)
+
+1. Define the name of the Target Platform definition \(e.g. Agent.Workbench\)
+2. Choose _**Add**_ to select the content \(bundles and / or features\) that define your target platform.
+3. Select _**Installation**_, press _**Next**_ and _**Browse**_ to the installation of Agent.Workbench on your file system.
+4. Again, click _**Next**_ to get a preview of the bundles / plugins to be used for your Target Platform or directly click _**Finish**_.
+
+
 
 
 
