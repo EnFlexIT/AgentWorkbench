@@ -76,5 +76,13 @@ If you are already using Eclipse for a while, you will be probably aware about s
 
 Having defined your workspace, Eclipse will be opend with a welcome page that points to further information and tutorials.
 
-As next we have to make sure that we use the right [Perspective](https://www.tutorialspoint.com/eclipse/eclipse_perspectives.htm). Select menu _**Window **_=&gt; _**Perspective**_ =&gt; _**Open Perspective**_ =&gt; _**Other**_. 
+As next we have to make sure that we use the right [Perspective](https://www.tutorialspoint.com/eclipse/eclipse_perspectives.htm). Select menu _**Window **_=&gt; _**Perspective**_ =&gt; _**Open Perspective**_ =&gt; _**Other**_. and select the perspective for Plug-in Development.
+
+![](/00_images/01_GettingStarted/07_SelectPlug-inPerspective.png)
+
+
+
+## Define the Target Platform for agent developments {#define-the-target-platform-for-agent-developments}
+
+With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current system 
 
