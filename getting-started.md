@@ -10,13 +10,13 @@ To create an agent application, the following installation, configuration and de
 
 * [Install the Eclipse IDE](#install-eclipse-ide): We recommend to use the [Eclipse IDE for Java EE Developer](https://www.eclipse.org/downloads/) for your developments.
 
-* [Setup your Workspace](/01_getting-started/define-your-eclipse-target-platform.md): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
+* [Setup your Workspace](//getting-started.md#setup-the-eclipse-workspace): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
 
-* [Define a Target Platform](/01_getting-started/define-a-target-platform.md): Create a Target Platform definition that points to the previously installed Agent.Workbench.
+* [Define a Target Platform](#define-the-target-platform-for-agent-developments): Create a Target Platform definition that points to the previously installed Agent.Workbench.
 
-* [Create your first agent Plugin-Project](/01_getting-started/create-new-agent-project.md):Create an Eclipse Plugin-Project, your desired package structure and create your first agent class.
+* [Create your first agent Plugin-Project](#create-an-agent-plugin):Create an Eclipse Plugin-Project, your desired package structure and create your first agent class.
 
-* [Export your agent bundle / Plugin](/01_getting-started/export-an-agent-bundle.md) into the workbench's project directory and start Agent.Workbench again. Open the above defined workbench project and have a look at the tabs \[Resources\] and \[Agents\], where you will find your exported bundle and your first agent.
+* Export your agent bundle / plugin into the workbench's project directory and start Agent.Workbench again. Open the above defined workbench project and have a look at the tabs \[Resources\] and \[Agents\], where you will find your exported bundle and your first agent.
 
 * Define a setup and [start your agent application](/01_getting-started/start-your-first-setup.md).
 
