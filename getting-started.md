@@ -48,6 +48,8 @@ Since the installer wants to create directories and copy files to it, execute th
 
 ## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
 
+### For Beginners
+
 If you have never worked with Eclipse, you should first take the time to read one of the available beginner tutorials in the web. Some of them are:
 
 * The HTMLHelp Center of Eclipse: 
@@ -64,11 +66,13 @@ If you prefer a video tutorial, you might like one of these:
 
 ... or simply do what most programmers do, if they have a specific question: [ask Google](http://lmgtfy.com/?q=Eclipse+beginner+tutorial)!
 
-Starting your Eclipse IDE the first time, you will be prompted to define a workspace directory. _Background_: Eclipse organizes Java projects in different, so-called workspaces. For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other. 
+Starting your Eclipse IDE the first time, you will be prompted to define a workspace directory. _Background_: Eclipse organizes Java projects in different, so-called workspaces. For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other.
 
-Having defined your workspace Eclipse will be opend with a welcome page that points to further information and tutorials. 
+### For Advanced
 
+If you are already using Eclipse for a while, you will be probably aware about switching a workspace. For sake of completeness: Go to menu File =&gt; Switch Workspace =&gt; Other.  
 
+Having defined your workspace, Eclipse will be opend with a welcome page that points to further information and tutorials.
 
 
 
