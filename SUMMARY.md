@@ -6,7 +6,7 @@
   * [Create an Agent Project](/getting-started.md#create-an-agent-project)
   * [Install Eclipse IDE](getting-started.md#install-eclipse-ide)
   * [Setup your Workspace](/getting-started.md#setup-the-eclipse-workspace)
-  * [Define a Target Platform](01_getting-started/define-a-target-platform.md)
+  * [Define a Target Platform](/getting-started.md#define-the-target-platform-for-agent-developments)
   * [Create an Agent-Plugin](01_getting-started/create-an-agent-plugin.md)
   * [Export you Agent Bundle](01_getting-started/export-an-agent-bundle.md)
   * [Start your agent\(s\)](01_getting-started/start-your-first-setup.md)
