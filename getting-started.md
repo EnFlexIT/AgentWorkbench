@@ -1,6 +1,6 @@
 # Getting Started
 
-This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we are mixing-up these terms, but their meaning is the same \(plugin = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
+This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we are mixing-up these terms, but their meaning is the same \(plugin = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend to read this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
 
 To create an agent application, the following installation, configuration and development tasks have to be done:
 
@@ -48,7 +48,31 @@ Since the installer wants to create directories and copy files to it, execute th
 
 ## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
 
-Eclipse organizes Java projects in different, so-called workspaces, While you develop your website code in one workspace, you can develop your agent system in another, which avoids to mix-up things that do not belong to each other. Develop an agent system. For the moment, we recommend the development of an agent system in a dedicated own workspace.
+If you have never worked with Eclipse, you should first take the time to read one of the available beginner tutorials. Some of them are:
 
-Start your Eclipse IDE. 
+* The HTMLHelp Center of Eclipse:
+  [http://help.eclipse.org/oxygen/index.jsp](http://help.eclipse.org/oxygen/index.jsp)
+  You will recognize the big tree on the left hand site that gives you an impression of the multitude of tools available under Eclipse. The 
+* The tutorial site of Lars Vo
+  [http://www.vogella.com/tutorials/Eclipse/article.html](http://www.vogella.com/tutorials/Eclipse/article.html), 
+* 
+If you prefer a video tutorial, you might like one of these:
+
+* [https://www.youtube.com/watch?v=23tAK5zdQ9c](https://www.youtube.com/watch?v=23tAK5zdQ9c)
+
+Or simply do what most programmers do, if they have a specific question: ask Google! 
+
+Starting your Eclipse IDE the first time, you will be prompted to define a workspace.Background: Eclipse organizes Java projects in different, so-called workspaces, For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other. We recommend the development of an agent system in a dedicated own Java workspace.
+
+
+
+
+
+
+
+
+
+
+
+
 
