@@ -48,31 +48,23 @@ Since the installer wants to create directories and copy files to it, execute th
 
 ## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
 
-If you have never worked with Eclipse, you should first take the time to read one of the available beginner tutorials. Some of them are:
+If you have never worked with Eclipse, you should first take the time to read one of the available beginner tutorials in the web. Some of them are:
 
-* The HTMLHelp Center of Eclipse:
+* The HTMLHelp Center of Eclipse: 
   [http://help.eclipse.org/oxygen/index.jsp](http://help.eclipse.org/oxygen/index.jsp)
-  You will recognize the big tree on the left hand site that gives you an impression of the multitude of tools available under Eclipse. The 
-* The tutorial site of Lars Vo
+  You will recognize the big tree on the left hand site that gives you an impression of the multitude of tools available under Eclipse. The introductory part can be found navigating along **Workbench User Guide** =&gt; **Getting started** =&gt; **Basic tutorial**
+* The tutorial site of Lars Vogel \(vogella\) that offers a lot of tutorial in the context of Java, Eclipse, Plugin development and other. The introduction to the Eclipse IDE \(Integrated Development Environment\) can be found here:
   [http://www.vogella.com/tutorials/Eclipse/article.html](http://www.vogella.com/tutorials/Eclipse/article.html), 
-* 
+
 If you prefer a video tutorial, you might like one of these:
 
 * [https://www.youtube.com/watch?v=23tAK5zdQ9c](https://www.youtube.com/watch?v=23tAK5zdQ9c)
 
-Or simply do what most programmers do, if they have a specific question: ask Google! 
+* [https://www.youtube.com/watch?v=xO5DpU2j-WE](https://www.youtube.com/watch?v=xO5DpU2j-WE)
 
-Starting your Eclipse IDE the first time, you will be prompted to define a workspace.Background: Eclipse organizes Java projects in different, so-called workspaces, For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other. We recommend the development of an agent system in a dedicated own Java workspace.
-
-
+... or simply do what most programmers do, if they have a specific question: [ask Google](http://lmgtfy.com/?q=Eclipse+beginner+tutorial)! 
 
 
 
-
-
-
-
-
-
-
+Starting your Eclipse IDE the first time, you will be prompted to define a workspace directory. Background: Eclipse organizes Java projects in different, so-called workspaces, For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other. We recommend the development of an agent system in a dedicated own Java workspace.
 
