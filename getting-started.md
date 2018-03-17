@@ -62,9 +62,13 @@ If you prefer a video tutorial, you might like one of these:
 
 * [https://www.youtube.com/watch?v=xO5DpU2j-WE](https://www.youtube.com/watch?v=xO5DpU2j-WE)
 
-... or simply do what most programmers do, if they have a specific question: [ask Google](http://lmgtfy.com/?q=Eclipse+beginner+tutorial)! 
+... or simply do what most programmers do, if they have a specific question: [ask Google](http://lmgtfy.com/?q=Eclipse+beginner+tutorial)!
+
+Starting your Eclipse IDE the first time, you will be prompted to define a workspace directory. _Background_: Eclipse organizes Java projects in different, so-called workspaces. For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other. 
+
+Having defined your workspace Eclipse will be opend with a welcome page that points to further information and tutorials. 
 
 
 
-Starting your Eclipse IDE the first time, you will be prompted to define a workspace directory. Background: Eclipse organizes Java projects in different, so-called workspaces, For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other. We recommend the development of an agent system in a dedicated own Java workspace.
+
 
