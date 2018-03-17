@@ -54,7 +54,7 @@ If you have never worked with Eclipse, you should first take the time to read on
 
 * The HTMLHelp Center of Eclipse: 
   [http://help.eclipse.org/oxygen/index.jsp](http://help.eclipse.org/oxygen/index.jsp)
-  You will recognize the big tree on the left hand site that gives you an impression of the multitude of tools available under Eclipse. The introductory part can be found navigating along **Workbench User Guide** =&gt; **Getting started** =&gt; **Basic tutorial**
+  You will recognize the big tree on the left hand site that gives you an impression of the multitude of tools available under Eclipse. The introductory part can be found navigating along _**Workbench User Guide**_ =&gt; _**Getting started**_ =&gt; _**Basic tutorial**_
 * The tutorial site of Lars Vogel \(vogella\) that offers a lot of tutorial in the context of Java, Eclipse, Plugin development and other. The introduction to the Eclipse IDE \(Integrated Development Environment\) can be found here:
   [http://www.vogella.com/tutorials/Eclipse/article.html](http://www.vogella.com/tutorials/Eclipse/article.html), 
 
@@ -70,9 +70,9 @@ Starting your Eclipse IDE the first time, you will be prompted to define a works
 
 ### For Advanced
 
-If you are already using Eclipse for a while, you will be probably aware about switching a workspace. For sake of completeness: Go to menu File =&gt; Switch Workspace =&gt; Other.  
+If you are already using Eclipse for a while, you will be probably aware about switching a workspace. For sake of completeness: Go to menu _**File**_ =&gt; _**Switch Workspace**_ =&gt; _**Other **_and Browse for the desred workspace location.
+
+![](/00_images/01_GettingStarted/06_Eclipse_SwitchWorkspace.png)
 
 Having defined your workspace, Eclipse will be opend with a welcome page that points to further information and tutorials.
-
-
 
