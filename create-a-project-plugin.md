@@ -2,7 +2,9 @@
 
 This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and further user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plug-ins_ for your agent projects too. In the course of the text we are mixing-up these terms from time to time, but their meaning is the same \(plug-in = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend to read this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
 
-Project & Project
+**Eclipse Projects & Agent.Workbench Projects**: We would like to mention here that, in the context of Agent.Workbench and Eclipse, the word "project" is used with two meanings. Since Agent.Workbench handles agents or Multi-Agent Systems \(MAS\) as self-containing projects on one hand site, also Eclipse uses the term "project" for Java or plug-in developments. This, in turn, makes it sometimes misleading, if we speak about an "agent project" in general. More precisely, we have to distinguish these project types to avoid a lingusitic misunderstanding. 
+
+
 
 As a prerequisite, we assume that you have an installed Agent.Workbench and an Eclipse IDE \(**I**ntegrated **D**evelopment **E**nvironment\) that enables you to develop plug-ins \(an IDE that enables Java developments only, wil not be sufficient\). For further details see the [Getting Started](//getting-started.md#getting-started) tutorial.
 
