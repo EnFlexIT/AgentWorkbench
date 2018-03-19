@@ -1,7 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* [Getting Started](getting-started.md)
+* [Getting Started](/getting-started.md#getting-started)
   * [Install Agent.Workbench](/getting-started.md#install-agent-workbench)
   * [Create an Agent Project](/getting-started.md#create-an-agent-project)
   * [Install Eclipse IDE](getting-started.md#install-eclipse-ide)

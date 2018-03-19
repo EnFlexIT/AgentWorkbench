@@ -1,4 +1,4 @@
-# Getting Started
+# Getting Started {#getting-started}
 
 This section describes the required steps, to get started with the Agent.Workbench development environment. For this the following installation and configuration tasks have to be done:
 
