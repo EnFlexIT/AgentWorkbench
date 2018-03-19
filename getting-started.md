@@ -32,7 +32,7 @@ For the time being, save the project and close Agent.Workbench. [A description o
 
 ## Install Eclipse IDE for Java EE Developers {#install-eclipse-ide}
 
-Creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment. For this, we recommend to install the Eclipse IDE for Java EE Developer that provides this environment, but also a little more. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/) and download the Eclipse Installer.
+Creating new OSGI bundles, requires at least to use the Eclipse Plug-in Development Environment \(PDE\). For this, we recommend to install the Eclipse IDE for Java EE Developer that provides this environment, but also a little more. Navigate to [https://www.eclipse.org/downloads/](https://www.eclipse.org/downloads/) and download the Eclipse Installer.
 
 Since the installer wants to create directories and copy files to it, execute the program as someone who has the right permissions. For example: if you want to install Eclipse under _C:\Program Files\jee-oxygen,_ you should have executed the installer as the administrator of the system. After the installer has started, select the right version of Eclipse and follow the further instructions.
 
@@ -44,10 +44,10 @@ Since the installer wants to create directories and copy files to it, execute th
 
 If you have never worked with Eclipse, you should first take the time to read one of the available beginner tutorials in the web. Some of them are:
 
-* The HTMLHelp Center of Eclipse: 
+* the HTMLHelp Center of Eclipse: 
   [http://help.eclipse.org/oxygen/index.jsp](http://help.eclipse.org/oxygen/index.jsp)
   You will recognize the big tree on the left hand site that gives you an impression of the multitude of tools available under Eclipse. The introductory part can be found navigating along _**Workbench User Guide**_ =&gt; _**Getting started**_ =&gt; _**Basic tutorial**_
-* The tutorial site of Lars Vogel \(vogella\) that offers a lot of tutorial in the context of Java, Eclipse, Plugin development and other. The introduction to the Eclipse IDE \(Integrated Development Environment\) can be found here:
+* the tutorial site of Lars Vogel \(vogella\) that offers a lot of tutorial in the context of Java, Eclipse, Plugin development and other. The introduction to the Eclipse IDE \(Integrated Development Environment\) can be found here:
   [http://www.vogella.com/tutorials/Eclipse/article.html](http://www.vogella.com/tutorials/Eclipse/article.html), 
 
 If you prefer a video tutorial, you might like one of these:
@@ -68,26 +68,26 @@ If you are already using Eclipse for a while, you will be probably aware about s
 
 Having defined your workspace, Eclipse will be opened with a welcome page that points to further information or tutorials - simply close this window.
 
-As next we have to make sure that we use the right [Perspective](https://www.tutorialspoint.com/eclipse/eclipse_perspectives.htm). Select menu _**Window **_=&gt; _**Perspective**_ =&gt; _**Open Perspective**_ =&gt; _**Other**_. and select the perspective for Plug-in Development.
+As next, we have to make sure that we use the right [Perspective](https://www.tutorialspoint.com/eclipse/eclipse_perspectives.htm). Select menu _**Window **_=&gt; _**Perspective**_ =&gt; _**Open Perspective**_ =&gt; _**Other**_. and select the perspective for Plug-in Development.
 
 ![](/00_images/01_GettingStarted/07_SelectPlug-inPerspective.png)
 
 ## Define the Target Platform for Agent Developments {#define-the-target-platform-for-agent-developments}
 
-With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with our own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
+With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with your own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
 
 To do so, open the Eclipse preferences \(menu _**Window**_ =&gt; _**Preferences**_\) and type the word 'target' into the search text field \(see image\).![](/00_images/01_GettingStarted/08_TargetPlatform_Preferences.png)
 
-Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start with an empty target definition** on the first dialog page and press the _**Next**_ button underneath. In the subsequent dialog
+Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start with an empty target definition** on the first dialog page and press the _**Next**_ button underneath. In the subsequent dialog:
 
 ![](/00_images/01_GettingStarted/09_TargetPlatform_AddContent.png)
 
 1. Define the name of the Target Platform definition \(e.g. Agent.Workbench\)
 2. Choose _**Add**_ to select the content \(bundles and / or features\) that define your target platform.
-3. Select _**Installation**_, press _**Next**_ and _**Browse**_ to the installation of Agent.Workbench on your file system.
+3. Select _**Installation**_, press _**Next**_ and _**Browse**_ to the installation of Agent.Workbench in your file system.
 4. Again, click _**Next**_ to get a preview of the bundles / plugins to be used for your Target Platform or directly click _**Finish**_.
 
-As a result, the field in the _**Locations**_ tab should point to your Agent.Workbench installation, saying that approx. 131 plugins were found. Click on _**Finish**_**.** The new target platform definition should now also be displayed in the list within the preference dialog. As final step mark this new definition as active \(_**tick the corresponding box**_\) and press _**Apply and Close**_.
+As a result, the field in the _**Locations**_ tab should point to your Agent.Workbench installation, saying that approx. 131 plugins were found. Click on _**Finish**_**.** The new target platform definition should now also be displayed in the list in the preference dialog. As final step mark this new definition as active \(_**tick the corresponding box**_\) and press _**Apply and Close**_.
 
 Congratulations you are prepared to develop your first agent project with Agent.Workbench.
 
