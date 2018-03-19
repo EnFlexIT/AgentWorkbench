@@ -1,6 +1,6 @@
 # Getting Started
 
-This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plugins_ for your agent projects too. In the course of the text we are mixing-up these terms, but their meaning is the same \(plugin = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend to read this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
+
 
 To create an agent application, the following installation, configuration and development tasks have to be done:
 
@@ -12,7 +12,7 @@ To create an agent application, the following installation, configuration and de
 
 * [Setup your Workspace](//getting-started.md#setup-the-eclipse-workspace): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
 
-* [Define a Target Platform](#define-the-target-platform-for-agent-developments): Create a Target Platform definition that points to the previously installed Agent.Workbench.
+* [Define the Target Platform](#define-the-target-platform-for-agent-developments): Create a Target Platform definition that points to the Agent.Workbench installation.
 
 ---
 

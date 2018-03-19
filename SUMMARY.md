@@ -6,13 +6,11 @@
   * [Create an Agent Project](/getting-started.md#create-an-agent-project)
   * [Install Eclipse IDE](getting-started.md#install-eclipse-ide)
   * [Setup your Workspace](/getting-started.md#setup-the-eclipse-workspace)
-  * [Define a Target Platform](/getting-started.md#define-the-target-platform-for-agent-developments)
-* [Create a Project Plugin](create-a-project-plugin.md)
+  * [Define the Target Platform](/getting-started.md#define-the-target-platform-for-agent-developments)
+* [Create a Plugin for Agent Projects](create-a-project-plugin.md)
   * [Create an Agent-Plugin](/getting-started.md#create-an-agent-project)
 * [The Project Window](the-project-window.md)
 * [Agent.Workbench Features](agentworkbench-features.md)
   * [Projects and Setups](02_agentworkbench-features/projects-and-setups.md)
 * [Distributed Execution of Agents](distributed-application.md)
-
-
 
