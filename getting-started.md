@@ -1,8 +1,6 @@
 # Getting Started
 
-
-
-To create an agent application, the following installation, configuration and development tasks have to be done:
+This section describes the required steps, to get started with the Agent.Workbench development environment. For this the following installation and configuration tasks have to be done:
 
 * [Install Agent.Workbench](#install-agent-workbench): Go to our [GitHub-Site](https://github.com/EnFlexIT/AgentWorkbench/releases) and download the latetst release of Agent.Workbench \(for Windows, Linux or MacOS\).Just extract the provided archive and place it at a desired location.
 
