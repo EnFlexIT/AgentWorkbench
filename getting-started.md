@@ -14,12 +14,6 @@ To create an agent application, the following installation, configuration and de
 
 * [Define a Target Platform](#define-the-target-platform-for-agent-developments): Create a Target Platform definition that points to the previously installed Agent.Workbench.
 
-* [Create your first agent Plugin-Project](#create-an-agent-plugin):Create an Eclipse Plugin-Project, your desired package structure and create your first agent class.
-
-* Export your agent bundle / plugin into the workbench's project directory and start Agent.Workbench again. Open the above defined workbench project and have a look at the tabs \[Resources\] and \[Agents\], where you will find your exported bundle and your first agent.
-
-* Define a setup and [start your agent application](/01_getting-started/start-your-first-setup.md).
-
 ---
 
 ## Install Agent.Workbench {#install-agent-workbench}
