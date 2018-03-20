@@ -28,7 +28,11 @@
  */
 package agentgui.core.project.setup;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -43,15 +47,19 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 
 /**
  * This is the model class for a simulation setup.
@@ -138,13 +146,22 @@ public class SimulationSetup {
 			this.currProject.setChangedAndNotify(reason);
 		}
 	}
-
+	
 	/**
-	 * This method saves the current Simulation-Setup.
-	 *
+	 * This method saves the current Simulation-Setup to the default location.
 	 * @return true, if saving was successful
 	 */
 	public boolean save() {
+		File setupXmlFile = new File(this.currProject.getSimulationSetups().getCurrSimXMLFile());
+		return this.save(setupXmlFile, true);
+	}
+
+	/**
+	 * This method saves the current Simulation-Setup to the specified location.
+	 * @param setupXmlFile The setup xml file (other file paths are derived)
+	 * @return true, if saving was successful
+	 */
+	public boolean save(File setupXmlFile, boolean saveUserRuntimeObject) {
 		
 		boolean saved = true;
 		this.mergeListModels();
@@ -158,7 +175,7 @@ public class SimulationSetup {
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 
-			Writer pw = new FileWriter( this.currProject.getSimulationSetups().getCurrSimXMLFile() );
+			Writer pw = new FileWriter( setupXmlFile );
 			pm.marshal(this, pw);
 			pw.close();
 			
@@ -170,7 +187,7 @@ public class SimulationSetup {
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try  {
-		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(this.currProject.getSimulationSetups().getCurrSimXMLFile()); 
+		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(setupXmlFile.getAbsolutePath()); 
 		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);
@@ -192,6 +209,106 @@ public class SimulationSetup {
 		return saved;		
 	}
 	
+	
+	/**
+	 * Loads a {@link SimulationSetup} from the specified XML file.
+	 * @param setupXmlFile the setup xml file
+	 * @return the simulation setup, or null if loading failed
+	 */
+	public static SimulationSetup load(File setupXmlFile, boolean loadUserRuntimeObject) {
+		SimulationSetup simulationSetup = null;
+		try {
+			JAXBContext pc = JAXBContext.newInstance(SimulationSetup.class);
+			Unmarshaller um = pc.createUnmarshaller();
+			FileReader fr = new FileReader(setupXmlFile);
+			simulationSetup = (SimulationSetup) um.unmarshal(fr);
+			fr.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		simulationSetup.setProject(Application.getProjectFocused());
+		
+		// --- Load the user runtime object if specified ----------------------
+		if (loadUserRuntimeObject = true) {
+			String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(setupXmlFile.getAbsolutePath());
+			File userRuntimeObjectFile = new File(userObjectFileName);
+			if (userRuntimeObjectFile.exists()) {
+				simulationSetup.loadUserRuntimeObject(userRuntimeObjectFile);
+			}
+		}
+		
+		// --- Initialize the agent lists -------------------------------------
+		if (simulationSetup.initializeAgentLists() == true ) {
+			return simulationSetup;
+		} else {
+			// --- An exception occurred during initializing the agent lists
+			return null;
+		}
+	}
+	
+	/**
+	 * Loads the {@link SimulationSetup}'s user runtime object from the specified file.
+	 * @param userRuntimeObjectFile the user runtime object file
+	 * @return true, if successful
+	 */
+	public boolean loadUserRuntimeObject(File userRuntimeObjectFile) {
+		Serializable userObject = null;
+		FileInputStream fis = null;
+		ObjectInputStreamForClassLoadService in = null;
+		try {
+			fis = new FileInputStream(userRuntimeObjectFile);
+			in = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
+			userObject = (Serializable)in.readObject();
+			in.close();
+			this.setUserRuntimeObject(userObject);
+			
+		} catch(IOException ex) {
+			ex.printStackTrace();
+			try {
+				in.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			return false;
+			
+		} catch(ClassNotFoundException ex) {
+			ex.printStackTrace();
+			try {
+				in.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean initializeAgentLists() {
+		// --- Create the DefaultListModels for the current agent configuration ---- 
+		this.createHashMap4AgentDefaulListModelsFromAgentList();
+		
+		// --- Set the agent classes in the agentSetup -----------------------------
+		ArrayList<AgentClassElement4SimStart> agentList = this.getAgentList();
+		for (int i = 0; i < agentList.size(); i++) {
+			try {
+				// --- The .toSting method will check if the class exists ----------
+				agentList.get(i).toString();
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return false;
+			}
+		}
+		return true;
+	}
 	/**
 	 * Gets the agent list.
 	 * @return the agentList
