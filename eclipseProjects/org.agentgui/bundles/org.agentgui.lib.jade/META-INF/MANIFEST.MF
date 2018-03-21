@@ -95,3 +95,4 @@ Export-Package: FIPA,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EnFlex.IT
 DynamicImport-Package: *
+Automatic-Module-Name: org.agentgui.lib.jade

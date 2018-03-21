@@ -1,3 +1,4 @@
+Automatic-Module-Name: de.enflexit.api
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Api

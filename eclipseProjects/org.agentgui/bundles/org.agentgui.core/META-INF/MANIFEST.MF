@@ -87,12 +87,12 @@ Require-Bundle: org.eclipse.core.net,
  de.enflexit.common;bundle-version="1.0.0",
  de.enflexit.oidc;bundle-version="0.0.1",
  de.enflexit.oshi;bundle-version="3.4.4",
+ de.enflexit.db.mySQL;bundle-version="5.0.8",
  org.agentgui.lib.scimark;bundle-version="2.0.0",
  org.agentgui.lib.jade;bundle-version="4.4.0",
  org.agentgui.lib.jFreeChart;bundle-version="1.0.15",
  org.agentgui.lib.jung;bundle-version="2.0.1",
  org.agentgui.lib.bouncyCastle;bundle-version="1.5.5",
- org.agentgui.lib.mySQL;bundle-version="5.0.8",
  org.agentgui.lib.jep;bundle-version="2.3.1",
  org.agentgui.lib.googleTranslate;bundle-version="0.97.0",
  org.eclipse.e4.core.di,
@@ -114,3 +114,4 @@ Service-Component: OSGI-INF/classLoadService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0"
+Automatic-Module-Name: org.agentgui.core

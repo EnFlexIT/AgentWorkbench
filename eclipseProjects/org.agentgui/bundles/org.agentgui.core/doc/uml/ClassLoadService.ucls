@@ -2,56 +2,121 @@
 <class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
   router="FAN">  
-  <class id="1" language="java" name="agentgui.core.classLoadService.ClassLoadServiceUtility" project="org.agentgui.core" 
+  <class id="1" language="java" name="agentgui.core.classLoadService.ClassLoadServiceUtility" 
+    project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/core/classLoadService/ClassLoadServiceUtility.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="235" y="120"/>    
+    <position height="-1" width="-1" x="1434" y="349"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.core.classLoadService.DefaultClassLoadServiceUtility" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/classLoadService/DefaultClassLoadServiceUtility.java" binary="false" 
+  <interface id="2" language="java" name="agentgui.core.classLoadService.ClassLoadService" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/classLoadService/ClassLoadService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="220" y="258"/>    
+    <position height="-1" width="-1" x="949" y="350"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="false" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <interface id="3" language="java" name="agentgui.core.classLoadService.ClassLoadService" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/classLoadService/ClassLoadService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="660" y="115"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="4" language="java" name="agentgui.core.classLoadService.ClassLoadServiceImpl" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/classLoadService/ClassLoadServiceImpl.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="657" y="357"/>    
+  <class id="3" language="java" name="agentgui.core.classLoadService.ClassLoadServiceImpl" project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/classLoadService/ClassLoadServiceImpl.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="948" y="609"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <association id="5">    
-    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="6" name="classLoadService"/>      
-      <multiplicity id="7" minimum="0" maximum="1"/>    
+  <class id="4" language="java" name="agentgui.core.classLoadService.ClassLoadServiceUtilityImpl" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/core/classLoadService/ClassLoadServiceUtilityImpl.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="282" y="350"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl" 
+    project="de.enflexit.common" 
+    file="/de.enflexit.common/src/de/enflexit/common/classLoadService/AbstractClassLoadServiceUtilityImpl.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="282" y="136"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="de.enflexit.common.classLoadService.BaseClassLoadServiceUtility" 
+    project="de.enflexit.common" 
+    file="/de.enflexit.common/src/de/enflexit/common/classLoadService/BaseClassLoadServiceUtility.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1434" y="609"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="7" language="java" name="de.enflexit.common.classLoadService.BaseClassLoadService" 
+    project="de.enflexit.common" 
+    file="/de.enflexit.common/src/de/enflexit/common/classLoadService/BaseClassLoadService.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="949" y="136"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <realization id="8">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <realization id="9">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <generalization id="10">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <generalization id="11">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <realization id="12">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="7"/>  
+  </realization>  
+  <generalization id="13">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <association id="14">    
+    <end type="SOURCE" refId="4" navigable="false" variant="ASSOCIATION">      
+      <attribute id="15" name="localClassLoadService"/>      
+      <multiplicity id="16" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="8">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
-  </realization>  
+  <association id="17">    
+    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
+      <attribute id="18" name="clServicesByServiceAndClassName"/>      
+      <multiplicity id="19" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

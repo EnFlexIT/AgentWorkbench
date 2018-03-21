@@ -40,3 +40,4 @@ Service-Component: OSGI-INF/classLoadService.xml
 Bundle-Vendor: EnFlex.IT
 Bundle-ClassPath: lib/commons-compress-1.15.jar,
  .
+Automatic-Module-Name: de.enflexit.common

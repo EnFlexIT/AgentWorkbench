@@ -8,3 +8,4 @@ Export-Package: de.enflexit.oidc;uses:="de.enflexit.api,javax.net.ssl,javax.swin
 Require-Bundle: de.enflexit.api;bundle-version="1.0.0",
  de.enflexit.oidc.libs;bundle-version="5.17.1"
 Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: de.enflexit.oidc

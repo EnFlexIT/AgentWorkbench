@@ -12,3 +12,4 @@ Export-Package: agentproject,
  org.agentgui.sample.plugin
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.agentgui.sample.plugIn

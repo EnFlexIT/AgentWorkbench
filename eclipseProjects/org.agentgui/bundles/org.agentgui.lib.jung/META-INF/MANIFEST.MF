@@ -128,3 +128,4 @@ Export-Package: EDU.oswego.cs.dl.util.concurrent,
  org.codehaus.stax2.ri,
  org.codehaus.stax2.validation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.agentgui.lib.jung

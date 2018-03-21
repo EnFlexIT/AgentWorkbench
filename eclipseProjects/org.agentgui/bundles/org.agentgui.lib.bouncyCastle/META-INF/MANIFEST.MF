@@ -182,3 +182,4 @@ Export-Package: org.bouncycastle,
  org.bouncycastle.x509.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: org.agentgui.lib.bouncyCastle

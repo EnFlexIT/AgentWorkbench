@@ -12,3 +12,4 @@ Export-Package: com.google.api,
  org.json
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: org.agentgui.lib.googleTranslate

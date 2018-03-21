@@ -46,3 +46,4 @@ Export-Package: org.jfree.chart,
  org.jfree.data.xml,
  org.jfree.data.xy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.agentgui.lib.jFreeChart

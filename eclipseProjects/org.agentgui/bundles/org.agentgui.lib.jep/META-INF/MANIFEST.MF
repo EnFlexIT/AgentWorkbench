@@ -28,3 +28,4 @@ Export-Package: org.lsmp.djep.djep,
  org.nfunk.jep.function,
  org.nfunk.jep.type
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.agentgui.lib.jep

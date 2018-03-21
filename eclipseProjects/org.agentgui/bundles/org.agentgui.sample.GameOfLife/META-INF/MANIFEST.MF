@@ -17,3 +17,4 @@ Export-Package: gol.acl.agents,
  gol.plugin,
  gol.SimService.agents,
  gol.SimService.balancing
+Automatic-Module-Name: org.agentgui.sample.GameOfLife

@@ -67,3 +67,4 @@ Require-Bundle: ch.qos.logback.classic,
  ch.qos.logback.core
 Bundle-Activator: de.enflexit.oshi.OshiBundleActivator
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.enflexit.oshi

@@ -8,3 +8,4 @@ Export-Package: jnt.Bench,
  jnt.scimark2
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: org.agentgui.lib.scimark
