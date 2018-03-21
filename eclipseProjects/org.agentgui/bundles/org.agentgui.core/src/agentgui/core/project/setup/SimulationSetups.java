@@ -332,6 +332,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 		File setupXmlFile = new File(currSimXMLFile);
 		if (setupXmlFile.exists()==true) {
 			this.currSimSetup = SimulationSetup.load(setupXmlFile, true);
+			if (this.currSimSetup!=null) {
+				this.currSimSetup.setProject(this.currProject);
+			}
 		} else {
 			String head = Language.translate("Setup-Datei nicht gefunden!");
 			String msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");

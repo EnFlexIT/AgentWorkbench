@@ -612,7 +612,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * Updates the progress monitor.
 	 * @param currentProgress the current progress
 	 */
-	private void updateProgressMonitor(final int currentProgress) {
+	protected void updateProgressMonitor(final int currentProgress) {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

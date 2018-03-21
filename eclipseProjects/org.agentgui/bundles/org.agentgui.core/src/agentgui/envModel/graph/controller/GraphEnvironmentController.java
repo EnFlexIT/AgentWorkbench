@@ -29,13 +29,7 @@
 package agentgui.envModel.graph.controller;
 
 import java.awt.Cursor;
-import java.awt.geom.Point2D;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,13 +37,6 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import org.apache.commons.collections15.Transformer;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
@@ -67,20 +54,10 @@ import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkComponentList;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.io.GraphIOException;
-import edu.uci.ics.jung.io.GraphMLWriter;
-import edu.uci.ics.jung.io.graphml.EdgeMetadata;
-import edu.uci.ics.jung.io.graphml.GraphMLReader2;
-import edu.uci.ics.jung.io.graphml.GraphMetadata;
-import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
-import edu.uci.ics.jung.io.graphml.NodeMetadata;
 import jade.core.Agent;
 
 /**
@@ -98,14 +75,6 @@ import jade.core.Agent;
  */
 public class GraphEnvironmentController extends EnvironmentController {
 
-	/** Separator used for the local graphMLWriter **/
-	private static final String GraphML_NewLine = System.getProperty("line.separator");
-	private static final String GraphML_VectorBrackets = "[conent]";
-
-	/** The key string used for saving the position in the GraphML file */
-	private static final String KEY_POSITION_PROPERTY = "pos";
-	/** The key string used for saving the ontology representation in the GraphML file */
-	private static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
 	/** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
 	private static final String GeneralGraphSettings4MASFile = "~GeneralGraphSettings~";
 
@@ -122,8 +91,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 	
 	/** The base file name used for saving the graph and the components (without suffix) */
 	private String baseFileName;
-	/** The GraphMLWriter used to save the graph */
-	private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter;
 	/** Known adapter for the import of network models */
 	private Vector<NetworkModelFileImporter> importAdapter;
 
@@ -431,49 +398,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 					// --- Load the graph topology from the graph file ------------------------------------
 					File graphFile = new File(getEnvFolderPath() + fileName);
-					if (graphFile.exists()) {
-						baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
-						FileReader fileReader = null;
-						try {
-							// Load graph topology
-							fileReader = new FileReader(graphFile);
-							networkModel.setGraph(GraphEnvironmentController.this.getGraphMLReader(fileReader).readGraph());
-
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (GraphIOException e) {
-							e.printStackTrace();
-						} finally {
-							try {
-								if (fileReader != null)
-									fileReader.close();
-							} catch (IOException ioe) {
-								ioe.printStackTrace();
-							}
-						}
-					}
+					networkModel.loadGraphFile(graphFile);
 
 					// --- Load the component definitions from the component file -------------------------
-					File componentFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
-					if (componentFile.exists()) {
-						try {
-							FileReader componentReader = new FileReader(componentFile);
-
-							JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-							Unmarshaller unmarsh = context.createUnmarshaller();
-							NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
-							networkModel.setNetworkComponents(compList.getComponentList());
-
-							componentReader.close();
-
-						} catch (JAXBException e) {
-							e.printStackTrace();
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
+					File componentsFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
+					networkModel.loadComponentsFile(componentsFile);
 
 					// --- Load component type settings from file ---------------------------------------------
 					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
@@ -513,46 +442,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.validateNetworkComponentAndAgents2Start();
 		this.saveGeneralGraphSettings();
 		if (this.getNetworkModel() != null && this.getNetworkModel().getGraph() != null) {
+			
+			File graphFile = this.getFileGraphML();
+			this.getNetworkModel().saveGraphFile(graphFile);
+			
+			File componentsFile = this.getFileXML();
+			this.getNetworkModel().saveComponentsFile(componentsFile);
 
-			FileWriter fw = null;
-			PrintWriter pw = null;
-			FileWriter componentFileWriter = null;
-			try {
-				// Save the graph topology
-				File file = this.getFileGraphML();
-				if (!file.exists()) {
-					file.createNewFile();
-				}
-				fw = new FileWriter(file);
-				pw = new PrintWriter(fw);
-				getGraphMLWriter().save(this.getNetworkModel().getGraph(), pw);
-
-				// Save the network component definitions
-				File componentFile = this.getFileXML();
-				if (!componentFile.exists()) {
-					componentFile.createNewFile();
-				}
-				componentFileWriter = new FileWriter(componentFile);
-				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-				Marshaller marsh = context.createMarshaller();
-				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-				marsh.marshal(new NetworkComponentList(this.getNetworkModel().getNetworkComponents()), componentFileWriter);
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					if (componentFileWriter != null)
-						componentFileWriter.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-				if (pw != null)
-					pw.close();
-			}
 		}
 	}
 
@@ -861,142 +757,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 			System.err.println("Could not find agent class '" + agentReference + "'");
 		}
 		return agentClass;
-	}
-
-	/**
-	 * Gets the GraphMLWriter, creates and initiates a new instance if null
-	 * 
-	 * @return The GraphMLWriter
-	 */
-	private GraphMLWriter<GraphNode, GraphEdge> getGraphMLWriter() {
-
-		if (graphMLWriter == null) {
-			graphMLWriter = new GraphMLWriter<GraphNode, GraphEdge>();
-			graphMLWriter.setEdgeIDs(new Transformer<GraphEdge, String>() {
-				@Override
-				public String transform(GraphEdge arg0) {
-					return arg0.getId();
-				}
-			});
-			graphMLWriter.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
-				@Override
-				public String transform(GraphEdge graphEdge) {
-					return graphEdge.getComponentType();
-				}
-			});
-			graphMLWriter.setVertexIDs(new Transformer<GraphNode, String>() {
-				@Override
-				public String transform(GraphNode graphNode) {
-					return graphNode.getId();
-				}
-			});
-			graphMLWriter.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {
-				@Override
-				public String transform(GraphNode graphNode) {
-					String pos = graphNode.getPosition().getX() + ":" + graphNode.getPosition().getY();
-					return pos;
-				}
-			});
-			graphMLWriter.addVertexData(KEY_DATA_MODEL_BASE64_PROPERTY, "Base64 encoded individual data model", "", new Transformer<GraphNode, String>() {
-				@Override
-				public String transform(GraphNode graphNode) {
-					String dmBase64StringSave = null;
-					if (graphNode.getDataModelBase64() != null) {
-						for (String dmBase64String : graphNode.getDataModelBase64()) {
-							dmBase64String = GraphML_VectorBrackets.replace("conent", dmBase64String);
-							if (dmBase64StringSave == null) {
-								dmBase64StringSave = dmBase64String;
-							} else {
-								dmBase64StringSave = dmBase64StringSave + GraphML_NewLine + dmBase64String;
-							}
-						}
-					}
-					if (dmBase64StringSave != null) {
-						dmBase64StringSave = GraphML_NewLine + dmBase64StringSave + GraphML_NewLine;
-					}
-					return dmBase64StringSave;
-				}
-			});
-
-		}
-		return graphMLWriter;
-	}
-
-	/**
-	 * Creates a new GraphMLReader2 and initiates it with the GraphML file to be loaded.
-	 *
-	 * @param fileReader the file reader
-	 * @return The GraphMLReader2
-	 * @throws FileNotFoundException the file not found exception
-	 */
-	private GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge> getGraphMLReader(FileReader fileReader) throws FileNotFoundException {
-
-		Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>>() {
-			@Override
-			public SparseGraph<GraphNode, GraphEdge> transform(GraphMetadata gmd) {
-				return new SparseGraph<GraphNode, GraphEdge>();
-			}
-		};
-
-		Transformer<NodeMetadata, GraphNode> nodeTransformer = new Transformer<NodeMetadata, GraphNode>() {
-			@Override
-			public GraphNode transform(NodeMetadata nmd) {
-
-				// --- Create GraphNode instance and set ID ---------
-				GraphNode graphNode = new GraphNode();
-				graphNode.setId(nmd.getId());
-
-				// --- Load the individual data model ---------------
-				String dmBase64StringSaved = nmd.getProperty(KEY_DATA_MODEL_BASE64_PROPERTY);
-				if (dmBase64StringSaved != null) {
-					Vector<String> base64Vector = new Vector<String>();
-					while (dmBase64StringSaved.contains("]")) {
-						int cutAtOpen = dmBase64StringSaved.indexOf("[") + 1;
-						int cutAtClose = dmBase64StringSaved.indexOf("]");
-						String singleString = dmBase64StringSaved.substring(cutAtOpen, cutAtClose);
-						base64Vector.add(singleString);
-						dmBase64StringSaved = dmBase64StringSaved.substring(cutAtClose + 1);
-					}
-					if (base64Vector.size() > 0) {
-						graphNode.setDataModelBase64(base64Vector);
-					}
-				}
-
-				// --- Set the position of the node -----------------
-				Point2D pos = null;
-				String posString = nmd.getProperty(KEY_POSITION_PROPERTY);
-				if (posString != null) {
-					String[] coords = posString.split(":");
-					if (coords.length == 2) {
-						double xPos = Double.parseDouble(coords[0]);
-						double yPos = Double.parseDouble(coords[1]);
-						pos = new Point2D.Double(xPos, yPos);
-					}
-				}
-				if (pos == null) {
-					System.err.println("Keine Position definiert für Knoten " + nmd.getId());
-					pos = new Point2D.Double(0, 0);
-				}
-				graphNode.setPosition(pos);
-				return graphNode;
-			}
-		};
-
-		Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
-			@Override
-			public GraphEdge transform(EdgeMetadata emd) {
-				return new GraphEdge(emd.getId(), emd.getDescription());
-			}
-		};
-
-		Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
-			@Override
-			public GraphEdge transform(HyperEdgeMetadata arg0) {
-				return null;
-			}
-		};
-		return new GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge>(fileReader, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
-
 	}
 
 	/**
