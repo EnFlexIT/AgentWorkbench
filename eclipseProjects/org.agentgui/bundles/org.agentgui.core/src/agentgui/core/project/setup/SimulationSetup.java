@@ -411,6 +411,16 @@ public class SimulationSetup {
 	}
 	
 	/**
+	 * Clear the agent default list models.
+	 */
+	public void clearAgentDefaultListModels() {
+		Vector<String> agentListNames = new Vector<String>(this.hashMap4AgentDefaulListModels.keySet());
+		for (int i=0; i<agentListNames.size(); i++) {
+			this.hashMap4AgentDefaulListModels.get(agentListNames.get(i)).clear();
+		}
+	}
+	
+	/**
 	 * Sets the ComboBoxModel for agent lists.
 	 * @param comboBoxModel4AgentLists the comboBoxModel4AgentLists to set
 	 */
