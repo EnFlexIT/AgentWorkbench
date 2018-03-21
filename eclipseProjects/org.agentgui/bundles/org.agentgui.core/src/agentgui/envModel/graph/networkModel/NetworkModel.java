@@ -30,6 +30,11 @@ package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +43,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.envModel.graph.GraphGlobals;
@@ -52,6 +62,7 @@ import de.enflexit.common.SerialClone;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.io.GraphIOException;
 
 
 /**
@@ -2221,6 +2232,123 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			
 		}
 		return domain;
+	}
+	
+	/**
+	 * Save the network component definitions to an XML file.
+	 * @param componentsXmlFile the component file
+	 * @return true, if successful
+	 */
+	public boolean saveComponentsFile(File componentsXmlFile) {
+		boolean success = false;
+		FileWriter componentFileWriter = null;
+		try {
+			componentFileWriter = new FileWriter(componentsXmlFile);
+			JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+			Marshaller marsh = context.createMarshaller();
+			marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+			marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marsh.marshal(new NetworkComponentList(this.getNetworkComponents()), componentFileWriter);
+			success = true;
+			
+		} catch (IOException | JAXBException e) {
+			System.err.println("Error saving network components!");
+			e.printStackTrace();
+		} finally {
+			if (componentFileWriter!=null) {
+				try {
+					componentFileWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return success;
+	}
+	
+	/**
+	 * Save the network topology to a GraphML file.
+	 * @param graphMlFile the GraphML file
+	 */
+	public boolean saveGraphFile(File graphMlFile) {
+		
+		boolean success = false;
+		FileWriter fw = null;
+		PrintWriter pw = null;
+		try {
+
+			fw = new FileWriter(graphMlFile);
+			pw = new PrintWriter(fw);
+			new GraphModelWriter().save(this.getGraph(), pw);
+			success=true;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			pw.close();
+			try {
+				fw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return success;
+	}
+	
+	/**
+	 * Load the network component definitions from an XML file.
+	 * @param componentsXmlFile the components file
+	 * @return true, if successful
+	 */
+	public boolean loadComponentsFile(File componentsXmlFile) {
+		
+		boolean success = false;
+		if (componentsXmlFile.exists()) {
+		
+			FileReader componentReader = null;
+			try {
+				componentReader = new FileReader(componentsXmlFile);
+
+				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+				Unmarshaller unmarsh = context.createUnmarshaller();
+				NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
+				this.setNetworkComponents(compList.getComponentList());
+				success = true;
+				
+			} catch (JAXBException | IOException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				try {
+					componentReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return success;
+	}
+	
+	/**
+	 * Load the network topology from a GraphML file.
+	 * @param graphMlFile the GraphML file
+	 * @return true, if successful
+	 */
+	public boolean loadGraphFile(File graphMlFile) {
+		boolean success = false;
+		if (graphMlFile.exists()) {
+			try {
+				// Load graph topology
+				GraphModelReader graphModelReader = new GraphModelReader(graphMlFile);
+				this.setGraph(graphModelReader.readGraph());
+				success = true;
+			} catch (GraphIOException e) {
+				e.printStackTrace();
+			}
+		}
+		return success;
 	}
 	
 }

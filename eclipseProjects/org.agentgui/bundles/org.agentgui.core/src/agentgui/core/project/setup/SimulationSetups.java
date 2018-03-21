@@ -29,28 +29,16 @@
 package agentgui.core.project.setup;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
-import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.transfer.FileCopier;
 
 /**
@@ -341,16 +329,13 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	private boolean setupOpen() {
 		
-		boolean done = true;
-		try {
-			JAXBContext pc = JAXBContext.newInstance(currSimSetup.getClass());
-			Unmarshaller um = pc.createUnmarshaller();
-			FileReader fr = new FileReader(currSimXMLFile);
-			this.currSimSetup = (SimulationSetup) um.unmarshal(fr);
-			fr.close();
-			
-		} catch (FileNotFoundException e) {
-
+		File setupXmlFile = new File(currSimXMLFile);
+		if (setupXmlFile.exists()==true) {
+			this.currSimSetup = SimulationSetup.load(setupXmlFile, true);
+			if (this.currSimSetup!=null) {
+				this.currSimSetup.setProject(this.currProject);
+			}
+		} else {
 			String head = Language.translate("Setup-Datei nicht gefunden!");
 			String msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
 			msg += Language.translate("<br>Kann der Name aus der Liste der Setups entfernt werden?");
@@ -358,72 +343,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 			Integer answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
 			if (answer==JOptionPane.YES_OPTION) {
 				this.setupRemove(currSimSetupName);
-			}			
-			
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		// --- Set the project to the simulation setup -----------------------------
-		this.currSimSetup.setProject(currProject);
-		
-		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
-		String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
-		File userObjectFile = new File(userObjectFileName);
-		if (userObjectFile.exists()==true) {
-			Serializable userObject = null;
-			FileInputStream fis = null;
-			ObjectInputStreamForClassLoadService in = null;
-			try {
-				fis = new FileInputStream(userObjectFileName);
-				in = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
-				userObject = (Serializable)in.readObject();
-				in.close();
-				this.currSimSetup.setUserRuntimeObject(userObject);
-				
-			} catch(IOException ex) {
-				ex.printStackTrace();
-				try {
-					in.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-				return false;
-				
-			} catch(ClassNotFoundException ex) {
-				ex.printStackTrace();
-				try {
-					in.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-				return false;
-			
 			}
 		}
 		
-		// --- Create the DefaultListModels for the current agent configuration ---- 
-		this.currSimSetup.createHashMap4AgentDefaulListModelsFromAgentList();
-		
-		// --- Set the agent classes in the agentSetup -----------------------------
-		ArrayList<AgentClassElement4SimStart> agentList = currSimSetup.getAgentList();
-		for (int i = 0; i < agentList.size(); i++) {
-			try {
-				// --- The .toSting method will check if the class exists ----------
-				agentList.get(i).toString();
-				
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				return false;
-			}
-		}
-		this.currSimSetup.setProject(currProject);
-		
-		return done;
+		return this.currSimSetup!=null;
 	}
 
 	/**
