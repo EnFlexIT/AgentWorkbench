@@ -1,8 +1,6 @@
 package agentgui.ontology;
 
-import jade.content.*;
 import jade.util.leap.*;
-import jade.core.*;
 
 /**
    * This class contains all data related to how a chart will be displayed

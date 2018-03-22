@@ -2,8 +2,6 @@ package agentgui.ontology;
 
 
 import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
 
 /**
    * This class represents one data series, containing x and y values

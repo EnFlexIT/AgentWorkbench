@@ -2,8 +2,6 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
 
 /**
 * Protege name: RegisterReceipt

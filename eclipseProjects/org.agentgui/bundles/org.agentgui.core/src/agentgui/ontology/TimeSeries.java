@@ -1,8 +1,6 @@
 package agentgui.ontology;
 
-import jade.content.*;
 import jade.util.leap.*;
-import jade.core.*;
 
 /**
    * This class represents a time series, containing time related data.

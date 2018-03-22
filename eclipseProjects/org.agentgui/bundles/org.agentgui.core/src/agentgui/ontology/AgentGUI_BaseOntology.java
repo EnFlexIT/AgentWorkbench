@@ -3,9 +3,6 @@ package agentgui.ontology;
 
 import jade.content.onto.*;
 import jade.content.schema.*;
-import jade.util.leap.HashMap;
-import jade.content.lang.Codec;
-import jade.core.CaseInsensitiveString;
 
 /** file: AgentGUI_BaseOntology.java
  * @author ontology bean generator

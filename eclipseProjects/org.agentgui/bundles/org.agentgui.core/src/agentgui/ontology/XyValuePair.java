@@ -1,9 +1,5 @@
 package agentgui.ontology;
 
-import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
-
 /**
 * Protege name: XyValuePair
 * @author ontology bean generator
