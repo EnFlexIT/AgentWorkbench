@@ -1,10 +1,13 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: de.enflexit.db.hibernate
 Bundle-ManifestVersion: 2
 Bundle-Name: Hibernate
 Bundle-SymbolicName: de.enflexit.db.hibernate
 Bundle-Version: 5.2.15.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EnFlex.IT
+Bundle-Activator: org.hibernate.osgi.HibernateBundleActivator
+Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: .,
  lib/antlr-2.7.7.jar,
@@ -336,4 +339,3 @@ Export-Package: antlr,
  org.hibernate.usertype,
  org.jboss.jandex,
  org.jboss.logging
-Automatic-Module-Name: de.enflexit.hibernate

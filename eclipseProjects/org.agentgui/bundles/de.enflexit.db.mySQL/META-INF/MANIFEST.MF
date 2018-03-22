@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: de.enflexit.db.mySQL
 Bundle-ManifestVersion: 2
 Bundle-Name: MySQL-ODBC
 Bundle-SymbolicName: de.enflexit.db.mySQL
@@ -15,6 +16,5 @@ Export-Package: com.mysql.jdbc,
  com.mysql.jdbc.util,
  org.gjt.mm.mysql
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Eclipse-RegisterBuddy: de.enflexit.hibernate
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.db.hibernate;bundle-version="5.2.15"
-Automatic-Module-Name: org.agentgui.lib.mySQL
