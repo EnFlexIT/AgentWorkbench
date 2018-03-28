@@ -72,9 +72,17 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
+import org.agentgui.gui.swing.MainWindowExtension;
+import org.agentgui.gui.swing.MainWindowExtension.MainWindowMenu;
+import org.agentgui.gui.swing.MainWindowExtension.MainWindowMenuItem;
+import org.agentgui.gui.swing.MainWindowExtension.MainWindowToolbarComponent;
+import org.agentgui.gui.swing.MainWindowExtension.SeparatorPosition;
 import org.agentgui.gui.swing.dialogs.StartAgentDialog;
 import org.agentgui.gui.swing.logging.JPanelConsole;
 import org.agentgui.gui.swing.logging.JTabbedPane4Consoles;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -94,6 +102,18 @@ public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String MAIN_WINDOW_EXTENSION_ID = "org.awb.swing.mainWindowExtension";
+
+	public enum WorkbenchMenu {
+		MenuProject,
+		MenuView,
+		MenuJade,
+		MenuSimulation,
+		MenuExtra,
+		MenuWindows,
+		MenuHelp
+	}
+	
 	private final ImageIcon iconGreen = GlobalInfo.getInternalImageIcon("StatGreen.png");
 	private final ImageIcon iconRed = GlobalInfo.getInternalImageIcon("StatRed.png");
 	private final ImageIcon iconClose = GlobalInfo.getInternalImageIcon("MBclose.png");
@@ -170,6 +190,9 @@ public class MainWindow extends JFrame {
 
 		this.setLocationRelativeTo(null);
 		
+		// --- Proceed the MainWindow Extensions --------------------
+		this.proceedMainWindowExtensions();
+		
 		this.validate();
 		this.repaint();
 		this.setVisible(true);
@@ -237,6 +260,168 @@ public class MainWindow extends JFrame {
 
 	}
 
+	/**
+	 * Proceeds the main window extensions that are defines 
+	 * by the corresponding extension point.
+	 */
+	private void proceedMainWindowExtensions() {
+		
+		IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(MAIN_WINDOW_EXTENSION_ID);
+		try {
+			for (int i = 0; i < configElements.length; i++) {
+				IConfigurationElement configElement = configElements[i]; 
+				final Object execExt = configElement.createExecutableExtension("class");
+				if (execExt instanceof MainWindowExtension) {
+					MainWindowExtension mwExtension = (MainWindowExtension) execExt;
+					this.proceedMainWindowExtension(mwExtension);
+				}
+			} 
+
+		} catch (CoreException ex) {
+            System.out.println(ex.getMessage());
+        }
+	}
+	
+	/**
+	 * Proceeds a single {@link MainWindowExtension} that was registered as extension point.
+	 * @param mwExtension the MainWindowExtension to proceed
+	 */
+	private void proceedMainWindowExtension(MainWindowExtension mwExtension) {
+		
+		if (mwExtension==null) return;
+
+		// ----------------------------------------------------------
+		// --- Menus ------------------------------------------------
+		// ----------------------------------------------------------
+		try {
+			// --- Call the initialize method first -----------------
+			mwExtension.initialize();
+			
+		} catch (Exception ex) {
+			System.err.println(mwExtension.getClass().getName() + ": Error while initializing the MainWindowExtension.");
+			ex.printStackTrace();
+		}
+		
+		try {
+			// --- Check the vector of new menus --------------------
+			if (mwExtension.getMainWindowMenuVector().size()>0) {
+				for (int i = 0; i < mwExtension.getMainWindowMenuVector().size(); i++) {
+					MainWindowMenu mwMenu = mwExtension.getMainWindowMenuVector().get(i);
+					this.addJMenu(mwMenu.getJMenu(), mwMenu.getIndexPosition());
+				}
+			}
+			
+		} catch (Exception ex) {
+			System.err.println(mwExtension.getClass().getName() + ": Error while adding menu to the MainWindow.");
+			ex.printStackTrace();
+		}
+
+		// ----------------------------------------------------------
+		// --- Menu items -------------------------------------------
+		// ----------------------------------------------------------		
+		try {
+			// --- Check for single MenuItems ---------------------------
+			if (mwExtension.getMainWindowMenuItemVector().size()>0) {
+				// --- Add the specified menu items ----------------- 
+				for (int i = 0; i < mwExtension.getMainWindowMenuItemVector().size(); i++) {
+					// --- Get single element ----------------------- 
+					MainWindowMenuItem mwMenuItem = mwExtension.getMainWindowMenuItemVector().get(i);
+					if (mwMenuItem.getWorkbenchMenu()==null) {
+						System.err.println(mwExtension.getClass().getName() + ": No menu was specified for the menu item.");
+						continue;
+					}
+					// --- Get the right menu for the menu item -----
+					JMenu jMenuToAddTo = this.getJMenuOfWorkbenchMenu(mwMenuItem.getWorkbenchMenu());
+					if (jMenuToAddTo==null) {						
+						System.err.println(mwExtension.getClass().getName() + ": Could not find the specified menu '" + mwMenuItem.getWorkbenchMenu() + "' for the menu item.");
+					} else {
+						// --- Add the menu item to the menu --------
+						if (mwMenuItem.getIndexPosition()!=null) {
+							jMenuToAddTo.add(mwMenuItem.getJMenuItem(), (int)mwMenuItem.getIndexPosition());
+						} else {
+							jMenuToAddTo.add(mwMenuItem.getJMenuItem());
+						}
+						
+						// --- Add a separator also ? --------------- 
+						int indexPosition = jMenuToAddTo.getPopupMenu().getComponentIndex(mwMenuItem.getJMenuItem());
+						if (mwMenuItem.getSeparatorPosition()==SeparatorPosition.SeparatorInFrontOf) {
+							jMenuToAddTo.add(new JPopupMenu.Separator(), indexPosition);
+						} else if (mwMenuItem.getSeparatorPosition()==SeparatorPosition.SeparatorAfter) {
+							jMenuToAddTo.add(new JPopupMenu.Separator(), indexPosition+1);
+						}
+						
+					}
+				} // end for
+			}
+			
+		} catch (Exception ex) {
+			System.err.println(mwExtension.getClass().getName() + ": Error while adding a menu item to the MainWindow.");
+			ex.printStackTrace();
+		}
+		
+		// ----------------------------------------------------------
+		// --- Toolbar elements -------------------------------------
+		// ----------------------------------------------------------		
+		try {
+			// --- Check for tool bar elements ----------------------
+			if (mwExtension.getMainWindowToolBarComponentVector().size()>0) {
+				for (int i = 0; i < mwExtension.getMainWindowToolBarComponentVector().size(); i++) {
+					
+					MainWindowToolbarComponent mwToolbarComp = mwExtension.getMainWindowToolBarComponentVector().get(i);
+					this.addJToolbarComponent(mwToolbarComp.getJComponent(), mwToolbarComp.getIndexPosition());
+					
+					// --- Add a separator also ? --------------- 
+					int indexPosition = this.getJToolBarApplication().getComponentIndex(mwToolbarComp.getJComponent());
+					if (mwToolbarComp.getSeparatorPosition()==SeparatorPosition.SeparatorInFrontOf) {
+						this.addJToolbarComponent(new JToolBar.Separator(), indexPosition);
+					} else if (mwToolbarComp.getSeparatorPosition()==SeparatorPosition.SeparatorAfter) {
+						this.addJToolbarComponent(new JToolBar.Separator(), indexPosition+1);
+					}
+					
+				}
+			}
+			
+		} catch (Exception ex) {
+			System.err.println(mwExtension.getClass().getName() + ": Error while adding a menu item to the MainWindow.");
+			ex.printStackTrace();
+		}
+		
+	}
+
+	/**
+	 * Returns the specified workbench menu as JMenu.
+	 * @param wbMenu the {@link WorkbenchMenu}
+	 * @return the JMenu of workbench menu
+	 */
+	private JMenu getJMenuOfWorkbenchMenu(WorkbenchMenu wbMenu) {
+		
+		JMenu jMenuWorkbench = null;
+		switch (wbMenu) {
+		case MenuProject:
+			jMenuWorkbench = this.getJMenuMainProject();
+			break;
+		case MenuView:
+			jMenuWorkbench = this.getJMenuMainView();
+			break;
+		case MenuJade:
+			jMenuWorkbench = this.getJMenuMainJade();
+			break;
+		case MenuSimulation:
+			jMenuWorkbench = this.getJMenuMainSimulation();
+			break;
+		case MenuExtra:
+			jMenuWorkbench = this.getJMenuMainExtra();
+			break;
+		case MenuWindows:
+			jMenuWorkbench = this.getJMenuMainWindow();
+			break;
+		case MenuHelp:
+			jMenuWorkbench = this.getJMenuMainHelp();
+			break;
+		}
+		return jMenuWorkbench;
+	}
+	
 	/**
 	 * Return the size in relation (scaled) to the screen size.
 	 */
@@ -517,12 +702,12 @@ public class MainWindow extends JFrame {
 	 * @param myMenu the my menu
 	 * @param indexPosition the index position
 	 */
-	public void addJMenu(JMenu myMenu, int indexPosition) {
+	public void addJMenu(JMenu myMenu, Integer indexPosition) {
 		int nElements = jMenuBarMain.getSubElements().length;
-		if (indexPosition > (nElements - 1)) {
+		if (indexPosition==null || indexPosition > (nElements - 1)) {
 			this.addJMenu(myMenu);
 		} else {
-			jMenuBarMain.add(myMenu, indexPosition);
+			jMenuBarMain.add(myMenu, (int)indexPosition);
 			this.validate();
 		}
 	}
@@ -1111,7 +1296,6 @@ public class MainWindow extends JFrame {
 	// ------------------------------------------------------------
 	/**
 	 * Returns the main JToolBar of the application window.
-	 * 
 	 * @return the main JToolBar of the application window
 	 */
 	public JToolBar getJToolBarApplication() {
@@ -1179,7 +1363,6 @@ public class MainWindow extends JFrame {
 			jToolBarApplication.addSeparator();
 
 		}
-		;
 		return jToolBarApplication;
 	}
 
@@ -1212,34 +1395,29 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * This method can be used in order to add an individual menu button a specified index position of the toolbar.
-	 *
-	 * @param myComponent the my component
-	 * @param indexPosition the index position
-	 */
-	public void addJToolbarComponent(JComponent myComponent, int indexPosition) {
-		int nElements = jToolBarApplication.getComponentCount();
-		if (indexPosition > (nElements - 1)) {
-			this.addJToolbarComponent(myComponent);
-		} else {
-			jToolBarApplication.add(myComponent, indexPosition);
-			this.validate();
-		}
-	}
-
-	/**
 	 * This method can be used in order to add an individual menu button to the toolbar.
-	 *
 	 * @param myComponent the my component
 	 */
 	public void addJToolbarComponent(JComponent myComponent) {
-		this.getJToolBarApplication().add(myComponent);
-		this.validate();
+		this.addJToolbarComponent(myComponent, null);
 	}
-
 	/**
-	 * This methode removes a menu button from the toolbar.
-	 * 
+	 * This method can be used in order to add an individual menu button a specified index position of the toolbar.
+	 * @param myComponent the my component
+	 * @param indexPosition the index position
+	 */
+	public void addJToolbarComponent(JComponent myComponent, Integer indexPosition) {
+		int nElements = this.getJToolBarApplication().getComponentCount();
+		if (indexPosition==null || indexPosition > (nElements-1)) {
+			this.getJToolBarApplication().add(myComponent);
+		} else {
+			this.getJToolBarApplication().add(myComponent, (int)indexPosition);
+		}
+		this.getJToolBarApplication().validate();
+		this.getJToolBarApplication().repaint();
+	}
+	/**
+	 * This method removes a menu button from the toolbar.
 	 * @param myComponent the my component
 	 */
 	public void removeJToolbarComponent(JComponent myComponent) {

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.agentgui.project.plugin" name="org.agentgui.project.plugin" schema="schema/org.agentgui.project.plugin.exsd"/>
-
    <extension
          id="application"
          point="org.eclipse.core.runtime.applications">
@@ -67,11 +65,13 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.agentgui.gui.swt.parts.ProjectPart"
+            class="org.agentgui.gui.swt.project.ProjectEditor"
             id="org.agentgui.gui.swt.project.ProjectEditor"
             name="ProjectEditor">
       </editor>
    </extension>
   
+   <extension-point id="org.awb.project.plugin" name="Agent.Workbench Project Plugin" schema="schema/org.awb.projectPlugin.exsd"/>
+   <extension-point id="org.awb.swing.mainWindowExtension" name="Agent.Workbench Main Window Extension" schema="schema/org.awb.swing.mainWindowExtension.exsd"/>
 
 </plugin>

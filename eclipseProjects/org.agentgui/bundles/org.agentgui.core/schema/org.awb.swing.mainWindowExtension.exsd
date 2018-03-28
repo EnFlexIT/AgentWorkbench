@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.agentgui" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.agentgui.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.agentgui" id="Agent.GUI-PlugIn" name="org.agentgui.project.plugin"/>
+         <meta.schema plugin="org.agentgui.core" id="org.awb.swing.mainWindowExtension" name="Agent.Workbench Main Window Extension (Swing)"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point can be used to extend the swing main window with new menus, menu items or toolbar elements
       </documentation>
    </annotation>
 
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
-            <element ref="PlugIn"/>
+            <element ref="mainWindowExtensionClient"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,15 +47,15 @@
       </complexType>
    </element>
 
-   <element name="PlugIn">
+   <element name="mainWindowExtensionClient">
       <complexType>
-         <attribute name="class" type="string" use="required">
+         <attribute name="class" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="agentgui.core.plugin.PlugIn:"/>
+                  <meta.attribute kind="java" basedOn="org.agentgui.gui.swing.MainWindowExtension:"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -67,7 +67,7 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         Available since version 2.1.0 of Agent.Workbench
       </documentation>
    </annotation>
 

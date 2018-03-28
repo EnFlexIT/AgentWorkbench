@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.agentgui.core
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - Core Bundle
 Bundle-SymbolicName: org.agentgui.core;singleton:=true
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.1.0.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT
 Export-Package: agentgui.core.application,
@@ -68,6 +69,7 @@ Export-Package: agentgui.core.application,
  org.agentgui.bundle.evaluation,
  org.agentgui.extensions,
  org.agentgui.gui,
+ org.agentgui.gui.swing,
  org.agentgui.gui.swing.dialogs,
  org.agentgui.gui.swing.logging,
  org.agentgui.gui.swing.project,
@@ -114,4 +116,3 @@ Service-Component: OSGI-INF/classLoadService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0"
-Automatic-Module-Name: org.agentgui.core

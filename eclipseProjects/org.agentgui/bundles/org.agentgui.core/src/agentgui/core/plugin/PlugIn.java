@@ -202,7 +202,7 @@ public abstract class PlugIn implements Observer {
 	 * @param indexPosition the index position
 	 */
 	protected void addJToolbarComponent(JComponent myComponent, int indexPosition) {
-		Application.getMainWindow().addJToolbarComponent(myComponent,indexPosition);
+		Application.getMainWindow().addJToolbarComponent(myComponent, indexPosition);
 		customJComponent.add(myComponent);
 	}
 	
