@@ -56,7 +56,8 @@ public class PropertyContentProvider {
 		CLASS_LOAD_SERVICE_XML("classLoadService.xml"),
 		DICTIONARY_BIN("dictionary.bin"),
 		DICTIONARY_CSV("dictionary.csv"),
-		OIDC_TRUST_STORE_JKS("oidcTrustStore.jks");
+		OIDC_TRUST_STORE_JKS("oidcTrustStore.jks"),
+		LOGBACK_CONFIGURATION("logback.xml");
 		
 		private final String fileName;
 		
@@ -103,7 +104,6 @@ public class PropertyContentProvider {
 			this.checkAndProvidePropertyContent(fileToProvide);
 		}
 	}
-
 	/**
 	 * Checks and provides the specified property content.
 	 * @param fileToProvide the {@link FileToProvide}

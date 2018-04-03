@@ -225,7 +225,6 @@ public class Application {
 		return Application.console;
 	}
 	
-	
 	/**
 	 * Creates the log file writer.
 	 * @return the log file writer

@@ -60,11 +60,7 @@ Export-Package: com.sun.jna,
  oshi.util.platform.unix.freebsd,
  oshi.util.platform.unix.solaris,
  oshi.util.platform.windows
-Import-Package: org.osgi.framework;version="1.8.0",
- org.slf4j;version="1.7.10",
- org.slf4j.spi;version="1.7.10"
-Require-Bundle: ch.qos.logback.classic,
- ch.qos.logback.core
-Bundle-Activator: de.enflexit.oshi.OshiBundleActivator
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: de.enflexit.oshi
+Import-Package: org.slf4j;version="1.7.10"
+Require-Bundle: org.eclipse.osgi

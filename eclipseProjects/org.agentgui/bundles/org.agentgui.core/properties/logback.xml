@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+	
+	<root level="error">
+        <appender-ref ref="STDOUT" />
+    </root>
+    
+	<logger name="de.enflexit.oshi" level="error" />
+	<logger name="de.enflexit.db.hibernate" level="error" />
+	<logger name="de.enflexit.db.mySQL" level="error" />
+
+	<logger name="de.enflexit.eom.database" level="error" />
+
+  	<logger name="org.hibernate" level="error" />
+	<logger name="org.hibernate.SQL" level="error" />
+	<logger name="org.hibernate.type.descriptor.sql" level="error" />
+	<logger name="org.hibernate.pretty" level="error" />
+	<logger name="org.hibernate.cache" level="error" />
+	<logger name="org.hibernate.stat" level="error" />
+	<logger name="org.hibernate.hql.internal.ast.AST" level="error" />
+	<logger name="org.hibernate.tool.hbm2ddl" level="error" />
+
+</configuration>

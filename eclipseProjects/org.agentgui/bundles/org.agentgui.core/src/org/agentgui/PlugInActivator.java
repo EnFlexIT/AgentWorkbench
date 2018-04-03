@@ -48,7 +48,7 @@ public class PlugInActivator extends AbstractUIPlugin implements BundleListener 
 	 * Returns the shared instance
 	 * @return the shared instance
 	 */
-	public static PlugInActivator getDefault() {
+	public static PlugInActivator getInstance() {
 		return thisActivator;
 	}
 
