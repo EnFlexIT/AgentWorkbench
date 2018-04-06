@@ -6,7 +6,6 @@ Bundle-SymbolicName: de.enflexit.db.hibernate
 Bundle-Version: 5.2.16.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EnFlex.IT
-Bundle-Activator: org.hibernate.osgi.HibernateBundleActivator
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: .,
@@ -381,3 +380,5 @@ Export-Package: antlr,
  org.hibernate.usertype,
  org.jboss.jandex,
  org.jboss.logging
+Require-Bundle: org.eclipse.osgi
+Bundle-Activator: org.hibernate.osgi.HibernateBundleActivator

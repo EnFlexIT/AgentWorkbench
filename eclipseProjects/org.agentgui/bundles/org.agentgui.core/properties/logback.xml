@@ -14,6 +14,7 @@
     </root>
     
 	<logger name="de.enflexit.oshi" level="error" />
+	<logger name="de.enflexit.db" level="error" />
 	<logger name="de.enflexit.db.hibernate" level="error" />
 	<logger name="de.enflexit.db.mySQL" level="error" />
 
@@ -24,7 +25,6 @@
 	<logger name="org.hibernate.type.descriptor.sql" level="error" />
 	<logger name="org.hibernate.pretty" level="error" />
 	<logger name="org.hibernate.cache" level="error" />
-	<logger name="org.hibernate.stat" level="error" />
 	<logger name="org.hibernate.hql.internal.ast.AST" level="error" />
 	<logger name="org.hibernate.tool.hbm2ddl" level="error" />
 	
