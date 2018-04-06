@@ -1,16 +1,27 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: de.enflexit.db.mySQL
 Bundle-ManifestVersion: 2
-Bundle-Name: MySQL-ODBC
+Bundle-Name: MySQL - JDBC Connector
 Bundle-SymbolicName: de.enflexit.db.mySQL
-Bundle-Version: 5.0.8
-Bundle-ClassPath: mysql-connector-java-5.0.8-bin.jar
+Bundle-Version: 5.1.46
+Bundle-ClassPath: .,lib/mysql-connector-java-5.1.46.jar
 Bundle-Vendor: EnFlex.IT
-Export-Package: com.mysql.jdbc,
+Export-Package: com.mysql.fabric,
+ com.mysql.fabric.hibernate,
+ com.mysql.fabric.jdbc,
+ com.mysql.fabric.proto.xmlrpc,
+ com.mysql.fabric.xmlrpc,
+ com.mysql.fabric.xmlrpc.base,
+ com.mysql.fabric.xmlrpc.exceptions,
+ com.mysql.jdbc,
+ com.mysql.jdbc.authentication,
  com.mysql.jdbc.exceptions,
+ com.mysql.jdbc.exceptions.jdbc4,
  com.mysql.jdbc.integration.c3p0,
  com.mysql.jdbc.integration.jboss,
+ com.mysql.jdbc.interceptors,
  com.mysql.jdbc.jdbc2.optional,
+ com.mysql.jdbc.jmx,
  com.mysql.jdbc.log,
  com.mysql.jdbc.profiler,
  com.mysql.jdbc.util,

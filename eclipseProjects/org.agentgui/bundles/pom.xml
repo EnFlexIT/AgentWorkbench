@@ -17,6 +17,8 @@
 		<module>de.enflexit.api</module>
 		<module>de.enflexit.common</module>
 		<module>de.enflexit.oidc</module>
+		<module>de.enflexit.db.hibernate</module>
+		<module>de.enflexit.db.mySQL</module>
 		<module>de.enflexit.oidc.libs</module>
 		<module>de.enflexit.oshi</module>
 		<module>org.agentgui.core</module>
@@ -27,7 +29,6 @@
 		<module>org.agentgui.lib.jade</module>
 		<module>org.agentgui.lib.jep</module>
 		<module>org.agentgui.lib.jung</module>
-		<module>org.agentgui.lib.mySQL</module>
 		<module>org.agentgui.lib.scimark</module>
 		<module>org.agentgui.sample.GameOfLife</module>
 		<module>org.agentgui.sample.plugIn</module>

@@ -1,0 +1,418 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='2'>
+  <unit id='de.enflexit.db.hibernate' version='5.2.16.201804062126' singleton='false'>
+    <update id='de.enflexit.db.hibernate' range='[0.0.0,5.2.16.201804062126)' severity='0'/>
+    <properties size='5'>
+      <property name='org.eclipse.equinox.p2.name' value='Hibernate'/>
+      <property name='org.eclipse.equinox.p2.provider' value='EnFlex.IT'/>
+      <property name='maven-groupId' value='org.agentgui'/>
+      <property name='maven-artifactId' value='de.enflexit.db.hibernate'/>
+      <property name='maven-version' value='5.2.16-SNAPSHOT'/>
+    </properties>
+    <provides size='358'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='de.enflexit.db.hibernate' version='5.2.16.201804062126'/>
+      <provided namespace='osgi.bundle' name='de.enflexit.db.hibernate' version='5.2.16.201804062126'/>
+      <provided namespace='java.package' name='antlr' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.ASdebug' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.actions.cpp' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.actions.csharp' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.actions.java' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.actions.python' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.build' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.collections' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.collections.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.debug' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.debug.misc' version='0.0.0'/>
+      <provided namespace='java.package' name='antlr.preprocessor' version='0.0.0'/>
+      <provided namespace='java.package' name='com.fasterxml.classmate' version='0.0.0'/>
+      <provided namespace='java.package' name='com.fasterxml.classmate.members' version='0.0.0'/>
+      <provided namespace='java.package' name='com.fasterxml.classmate.types' version='0.0.0'/>
+      <provided namespace='java.package' name='com.fasterxml.classmate.util' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode.analysis' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode.annotation' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode.stackmap' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.compiler' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.compiler.ast' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.convert' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.expr' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.runtime' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.scopedpool' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools.reflect' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools.rmi' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools.web' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.util' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.util.proxy' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.interceptor' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.persistence' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.persistence.criteria' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.persistence.metamodel' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.persistence.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.transaction' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.transaction.xa' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.agent.builder' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.asm' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.build' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.description' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.description.annotation' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.description.enumeration' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.description.field' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.description.method' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.description.modifier' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.description.type' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.dynamic' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.dynamic.loading' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.dynamic.scaffold' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.dynamic.scaffold.inline' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.dynamic.scaffold.subclass' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.attribute' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.auxiliary' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bind' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bind.annotation' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bytecode' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bytecode.assign' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bytecode.assign.primitive' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bytecode.assign.reference' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bytecode.collection' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bytecode.constant' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.implementation.bytecode.member' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.jar.asm' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.jar.asm.commons' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.jar.asm.signature' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.matcher' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.pool' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.utility' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.utility.privilege' version='0.0.0'/>
+      <provided namespace='java.package' name='net.bytebuddy.utility.visitor' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.bean' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.datatype' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.dom' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.dtd' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.io' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.jaxb' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.rule' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.rule.pattern' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.swing' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.tree' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.xpath' version='0.0.0'/>
+      <provided namespace='java.package' name='org.dom4j.xpp' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.action.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.action.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations.common' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations.common.annotationfactory' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations.common.reflection' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations.common.reflection.java' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations.common.reflection.java.generics' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations.common.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.annotations.common.util.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.archive.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.archive.scan.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.archive.scan.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.archive.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.cfgxml.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.cfgxml.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.jaxb' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.jaxb.cfg.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.jaxb.hbm.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.jaxb.hbm.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.jaxb.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.jaxb.internal.stax' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.jaxb.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.naming' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.process.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.process.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.relational' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.source.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.source.internal.annotations' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.source.internal.hbm' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.model.source.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.registry' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.registry.classloading.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.registry.classloading.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.registry.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.registry.selector' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.registry.selector.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.registry.selector.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.boot.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.enhance.internal.bytebuddy' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.enhance.internal.javassist' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.enhance.internal.tracker' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.enhance.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.enhance.spi.interceptor' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.internal.bytebuddy' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.internal.javassist' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.bytecode.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cache' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cache.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cache.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cache.spi.access' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cache.spi.entry' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cfg' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cfg.annotations' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cfg.annotations.reflection' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.cfg.beanvalidation' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.classic' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.collection.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.collection.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.context' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.context.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.context.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.criterion' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.dialect' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.dialect.function' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.dialect.hint' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.dialect.identity' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.dialect.lock' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.dialect.pagination' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.dialect.unique' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.ejb' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.config.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.config.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.batch.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.batch.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.connections.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.connections.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.cursor.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.cursor.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.dialect.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.dialect.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.env.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.env.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jdbc.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jndi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jndi.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.jndi.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.loading.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.profile' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.query.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.query.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.query.spi.sql' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.transaction.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.transaction.internal.jta' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.transaction.jta.platform.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.transaction.jta.platform.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.engine.transaction.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.event.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.event.service.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.event.service.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.event.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.exception' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.exception.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.exception.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.graph.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.internal.antlr' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.internal.ast' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.internal.ast.exec' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.internal.ast.tree' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.internal.ast.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.internal.classic' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.spi.id' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.spi.id.cte' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.spi.id.global' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.spi.id.inline' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.spi.id.local' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.hql.spi.id.persistent' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.id' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.id.enhanced' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.id.factory' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.id.factory.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.id.factory.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.id.insert' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.id.uuid' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.integrator.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.integrator.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.log' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.beans' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.collections' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.compare' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.config' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.io' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.jndi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.type' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.internal.util.xml' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jdbc' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jmx.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jmx.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.boot.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.boot.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.event.internal.core' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.event.internal.jpa' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.event.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.event.spi.jpa' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.graph.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.internal.enhance' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.internal.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.jpa.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.collection' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.collection.plan' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.criteria' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.custom' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.custom.sql' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.entity' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.entity.plan' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.hql' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.build.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.build.internal.returns' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.build.internal.spaces' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.build.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.exec.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.exec.process.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.exec.process.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.exec.query.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.exec.query.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.exec.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.plan.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.loader.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.lob' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.mapping' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.metadata' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.metamodel.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.metamodel.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.osgi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.param' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.persister.collection' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.persister.entity' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.persister.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.persister.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.persister.walking.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.persister.walking.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.pretty' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.procedure' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.procedure.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.procedure.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.property.access.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.property.access.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.proxy' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.proxy.map' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.proxy.pojo' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.proxy.pojo.bytebuddy' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.proxy.pojo.javassist' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.criteria' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.criteria.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.criteria.internal.compile' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.criteria.internal.expression' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.criteria.internal.expression.function' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.criteria.internal.path' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.criteria.internal.predicate' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.procedure' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.procedure.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.procedure.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.query.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.jdbc' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.jdbc.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.jdbc.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.transaction' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.transaction.backend.jdbc.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.transaction.backend.jdbc.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.transaction.backend.jta.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.transaction.backend.jta.internal.synchronization' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.transaction.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.resource.transaction.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.result' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.result.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.result.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.secure.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.secure.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.service' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.service.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.service.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.sql' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.sql.ordering.antlr' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.stat' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.stat.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.stat.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.enhance' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.hbm2ddl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.instrument.javassist' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.schema' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.schema.extract.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.schema.extract.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.schema.internal' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.schema.internal.exec' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tool.schema.spi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.transform' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tuple' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tuple.component' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.tuple.entity' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.type' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.type.descriptor' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.type.descriptor.converter' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.type.descriptor.java' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.type.descriptor.sql' version='0.0.0'/>
+      <provided namespace='java.package' name='org.hibernate.usertype' version='0.0.0'/>
+      <provided namespace='java.package' name='org.jboss.jandex' version='0.0.0'/>
+      <provided namespace='java.package' name='org.jboss.logging' version='0.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <requires size='1'>
+      <required namespace='java.package' name='org.slf4j' range='1.7.10'/>
+    </requires>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='de.enflexit.db.hibernate' version='5.2.16.201804062126'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: de.enflexit.db.hibernate&#xA;Bundle-Version: 5.2.16.201804062126&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+  <unit id='de.enflexit.db.hibernate.source' version='5.2.16.201804062126' singleton='false'>
+    <update id='de.enflexit.db.hibernate.source' range='[0.0.0,5.2.16.201804062126)' severity='0'/>
+    <properties size='9'>
+      <property name='df_LT.bundleVendor' value='EnFlex.IT'/>
+      <property name='df_LT.bundleName' value='Hibernate Source'/>
+      <property name='org.eclipse.equinox.p2.name' value='%bundleName'/>
+      <property name='org.eclipse.equinox.p2.provider' value='%bundleVendor'/>
+      <property name='org.eclipse.equinox.p2.bundle.localization' value='OSGI-INF/l10n/bundle-src'/>
+      <property name='maven-groupId' value='org.agentgui'/>
+      <property name='maven-artifactId' value='de.enflexit.db.hibernate'/>
+      <property name='maven-version' value='5.2.16-SNAPSHOT'/>
+      <property name='maven-classifier' value='sources'/>
+    </properties>
+    <provides size='4'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='de.enflexit.db.hibernate.source' version='5.2.16.201804062126'/>
+      <provided namespace='osgi.bundle' name='de.enflexit.db.hibernate.source' version='5.2.16.201804062126'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='source' version='1.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+    </provides>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='de.enflexit.db.hibernate.source' version='5.2.16.201804062126'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: de.enflexit.db.hibernate.source&#xA;Bundle-Version: 5.2.16.201804062126&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

@@ -70,10 +70,16 @@ public class LogbackConfigurationReader {
 	 * Do a manual logger configuration as well.
 	 */
 	private static void doManualLoggerConfiguration() {
-		// --- Disable the hibernate logging output ------- 
+
+		// --- Set level of hibernate logging output ------ 
 		@SuppressWarnings("unused")
 		org.jboss.logging.Logger logger = org.jboss.logging.Logger.getLogger("org.hibernate");
-		java.util.logging.Logger.getLogger("org.hibernate").setLevel(java.util.logging.Level.SEVERE); 
+		java.util.logging.Logger.getLogger("org.hibernate").setLevel(java.util.logging.Level.WARNING);
+
+		// --- Set level of C3P0 logging output -----------
+		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+		System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
+		
 	}
 	
 	/**

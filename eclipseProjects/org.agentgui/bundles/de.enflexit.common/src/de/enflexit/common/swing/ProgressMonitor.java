@@ -57,6 +57,7 @@ public class ProgressMonitor implements ActionListener {
 	private JProgressBar jProgressBarDownload;
 	private JButton jButtonCancel;
 
+	private boolean isSetModal;
 	private boolean allow2Cancel = true;
 	private boolean canceled = false;
 	
@@ -96,6 +97,23 @@ public class ProgressMonitor implements ActionListener {
 	}
 	
 	/**
+	 * Sets the progress monitor modal (or not) if possible (applies 
+	 * if a dialog is used as container for the progress monitor). 
+	 * Default is <code>false</code>.
+	 * @param isSetModal the new modal
+	 */
+	public void setModal(boolean isSetModal) {
+		this.isSetModal = isSetModal;
+	}
+	/**
+	 * Checks if the progress monitor should be set modal.
+	 * @return true, if is sets the modal
+	 */
+	public boolean isSetModal() {
+		return isSetModal;
+	}
+	
+	/**
 	 * Returns the progress monitor container that is either a JDialog or a JInternFrame.
 	 * @return the progress monitor container
 	 */
@@ -106,11 +124,12 @@ public class ProgressMonitor implements ActionListener {
 			if (this.parentDesktopPane==null) {
 				JDialog jDialog = new JDialog(this.owner);	
 				jDialog.setSize(defaultSize);
+				jDialog.setModal(this.isSetModal);
 				jDialog.setResizable(false);
+				jDialog.setTitle(this.windowTitle);
 				if (this.owner==null) {
 					jDialog.setAlwaysOnTop(true);
 				}
-				jDialog.setTitle(this.windowTitle);
 				if (this.iconImage!=null) {
 					jDialog.setIconImage(this.iconImage.getImage());	
 				}
@@ -124,7 +143,6 @@ public class ProgressMonitor implements ActionListener {
 				JInternalFrame jInternalFrame = new JInternalFrame();
 				jInternalFrame.setSize(defaultSize);
 				jInternalFrame.setResizable(false);
-				
 				jInternalFrame.setTitle(this.windowTitle);
 				if (this.iconImage!=null) {
 					jInternalFrame.setFrameIcon(this.iconImage);	
@@ -145,12 +163,12 @@ public class ProgressMonitor implements ActionListener {
 	 */
 	public void setVisible(boolean visible) {
 		if (this.getProgressMonitorContainer() instanceof JDialog) {
-			((JDialog) this.getProgressMonitorContainer()).setVisible(visible);
-			// --- Centre dialog ----------------
+			// --- Center dialog ----------------
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 			int top = (screenSize.height - this.getProgressMonitorContainer().getHeight()) / 2; 
 		    int left = (screenSize.width - this.getProgressMonitorContainer().getWidth()) / 2; 
 		    this.getProgressMonitorContainer().setLocation(left, top);
+		    ((JDialog) this.getProgressMonitorContainer()).setVisible(visible);
 		    
 		} else if (this.getProgressMonitorContainer() instanceof JInternalFrame) {
 			JInternalFrame internalFrame = ((JInternalFrame) this.getProgressMonitorContainer());
@@ -394,6 +412,5 @@ public class ProgressMonitor implements ActionListener {
 		
 	}
 
-	
 
 }  

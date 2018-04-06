@@ -27,5 +27,8 @@
 	<logger name="org.hibernate.stat" level="error" />
 	<logger name="org.hibernate.hql.internal.ast.AST" level="error" />
 	<logger name="org.hibernate.tool.hbm2ddl" level="error" />
+	
+	<logger name="com.mchange.v2" level="error" />
+	
 
 </configuration>
