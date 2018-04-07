@@ -278,7 +278,7 @@ public class MainWindow extends JFrame {
 			} 
 
 		} catch (CoreException ex) {
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
         }
 	}
 	
