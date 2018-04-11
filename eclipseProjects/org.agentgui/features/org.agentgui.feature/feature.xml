@@ -65,6 +65,7 @@
          version="0.0.0"/>
 
    <requires>
+      <import feature="de.enflexit.common.feature" version="2.0.0.qualifier" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.scimark" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jade" version="4.4.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jFreeChart" version="1.0.15" match="greaterOrEqual"/>
@@ -72,11 +73,38 @@
       <import plugin="org.agentgui.lib.bouncyCastle" version="1.5.5" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jep" version="2.3.1" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.googleTranslate" version="0.97.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.eclipse.e4.core.di"/>
-      <import plugin="org.eclipse.ui"/>
-      <import feature="de.enflexit.common.feature" version="2.0.0.qualifier"/>
+      <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.oshi" version="3.4.4" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.db.mySQL" version="5.0.8" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.di" version="1.6.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.net" version="1.3.100" match="greaterOrEqual"/>
+      
+      <import plugin="org.eclipse.core.runtime" version="3.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi" version="3.12.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.100.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.model.workbench" version="1.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.services" version="1.2.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench" version="1.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench.swt" version="0.14.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.di" version="1.2.100" match="greaterOrEqual"/>
+      
+      <import plugin="org.eclipse.equinox.p2.core" version="2.4.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.engine" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.metadata.repository" version="1.2.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.operations" version="2.4.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.ui" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.ui.sdk" version="1.0.500" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.ui.sdk.scheduler" version="1.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.metadata" version="2.3.200" match="greaterOrEqual"/>
+      
+      <import plugin="ch.qos.logback.classic" version="1.1.2" match="greaterOrEqual"/>
+      <import plugin="ch.qos.logback.core" version="1.1.2" match="greaterOrEqual"/>
+      <import plugin="javax.inject"/>
+      <import plugin="org.slf4j.api" version="1.7.10" match="greaterOrEqual"/>
    </requires>
 
    <plugin
