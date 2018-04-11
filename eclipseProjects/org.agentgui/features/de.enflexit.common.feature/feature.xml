@@ -32,7 +32,7 @@
       <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.oidc.libs" version="5.17.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="de.enflexit.db.hibernate" version="5.2.15" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
    </requires>
 
    <plugin
