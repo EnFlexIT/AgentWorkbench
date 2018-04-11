@@ -2,7 +2,7 @@
 <feature
       id="org.agentgui.feature"
       label="Agent.Workbench - Core Feature"
-      version="2.0.0.qualifier"
+      version="2.1.0.qualifier"
       provider-name="EnFlex.IT"
       plugin="org.agentgui.core"
       os="linux,macosx,win32"
@@ -22,7 +22,8 @@
 
    <includes
          id="org.eclipse.e4.rcp"
-         version="0.0.0"/>
+         version="0.0.0"
+         search-location="self"/>
 
    <includes
          id="org.eclipse.emf.ecore"
