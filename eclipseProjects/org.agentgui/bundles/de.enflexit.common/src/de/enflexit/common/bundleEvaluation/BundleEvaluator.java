@@ -48,7 +48,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -97,6 +96,10 @@ public class BundleEvaluator {
 	private HashSet<String> getBundleExcludeHashSet() {
 		if (bundleExcludeHashSet==null) {
 			bundleExcludeHashSet = new HashSet<>();
+			
+			bundleExcludeHashSet.add("ch.qos.logback.core");
+			bundleExcludeHashSet.add("ch.qos.logback.classic");
+			bundleExcludeHashSet.add("ch.qos.logback.slf4j");
 			bundleExcludeHashSet.add("com.ibm.icu");
 			bundleExcludeHashSet.add("javax.annotation");
 			bundleExcludeHashSet.add("javax.inject");
@@ -105,8 +108,17 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("org.apache");
 			bundleExcludeHashSet.add("org.eclipse");
 			bundleExcludeHashSet.add("org.sat4j");
+			bundleExcludeHashSet.add("org.slf4j.api");
 			bundleExcludeHashSet.add("org.tukaani");
 			bundleExcludeHashSet.add("org.w3c");
+			
+			bundleExcludeHashSet.add("de.enflexit.api");
+			bundleExcludeHashSet.add("de.enflexit.common");
+			bundleExcludeHashSet.add("de.enflexit.db.hibernate");
+			bundleExcludeHashSet.add("de.enflexit.db.mySQL");
+			bundleExcludeHashSet.add("de.enflexit.oidc");
+			bundleExcludeHashSet.add("de.enflexit.oidc.libs");
+			bundleExcludeHashSet.add("de.enflexit.oshi");
 			
 			bundleExcludeHashSet.add("org.agentgui.lib.bouncyCastle");
 			bundleExcludeHashSet.add("org.agentgui.lib.googleTranslate");
@@ -114,8 +126,6 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("org.agentgui.lib.jep");
 			bundleExcludeHashSet.add("org.agentgui.lib.jFreeChart");
 			bundleExcludeHashSet.add("org.agentgui.lib.jung");
-			bundleExcludeHashSet.add("org.agentgui.lib.mySQL");
-			bundleExcludeHashSet.add("org.agentgui.lib.oidc");
 			bundleExcludeHashSet.add("org.agentgui.lib.scimark");
 		}
 		return bundleExcludeHashSet;
@@ -850,29 +860,39 @@ public class BundleEvaluator {
 		// --- Read classes from jar file ---------------------------
 		// ----------------------------------------------------------
 		if (jarFile!=null && jarFileURL!=null) {
-			// --- Check the jar file entries -----------------------
-			Enumeration<JarEntry> jarFileEntries = jarFile.entries();
-			while (jarFileEntries.hasMoreElements()) {
-				
-				JarEntry entry = (JarEntry)jarFileEntries.nextElement();
-				String className = entry.getName();
-				if (entry.isDirectory()==false && className.endsWith(".class") && className.contains("$")==false) {
-					// --- Correct the class name -------------------
-					className = className.substring(0, className.length()-6);
-					if (className.startsWith("/")) {
-						className = className.substring(1);
-					}
-					className = className.replace('/', '.');
-					classesOfJarFile.add(className);
-				}
-			} // end while
-
-			// --- Close the jar file -------------------------------
 			try {
-				jarFile.close();
-			} catch (IOException ioEx) {
-				ioEx.printStackTrace();
+				// --- Check the jar file entries -------------------
+				Enumeration<JarEntry> jarFileEntries = jarFile.entries();
+				while (jarFileEntries.hasMoreElements()) {
+					
+					JarEntry entry = (JarEntry)jarFileEntries.nextElement();
+					String className = entry.getName();
+					if (entry.isDirectory()==false && className.endsWith(".class") && className.contains("$")==false) {
+						// --- Correct the class name ---------------
+						className = className.substring(0, className.length()-6);
+						if (className.startsWith("/")) {
+							className = className.substring(1);
+						}
+						className = className.replace('/', '.');
+						classesOfJarFile.add(className);
+					}
+				} // end while
+				
+			} catch (Exception ex) {
+				System.err.println(Thread.currentThread().getName() + ": Error while evaluating jar file entries.");
+				ex.printStackTrace();
+				
+			} finally {
+				if (jarFile!=null) {
+					// --- Close the jar file -----------------------
+					try {
+						jarFile.close();
+					} catch (IOException ioEx) {
+						ioEx.printStackTrace();
+					}
+				}
 			}
+		
 		}
 		return classesOfJarFile;
 	}
@@ -977,11 +997,6 @@ public class BundleEvaluator {
 		String pluginInstallDir = pluginURL.getFile().trim();
 		if (pluginInstallDir.length()==0) {
 			throw new RuntimeException("Could not get installation directory of the plugin: " + bundle.getSymbolicName());
-		}
-
-		// --- Corrections, if we are under windows -------
-		if (Platform.getOS().compareTo(Platform.OS_WIN32) == 0) {
-			//pluginInstallDir = pluginInstallDir.substring(1);
 		}
 		return pluginInstallDir;
 	}

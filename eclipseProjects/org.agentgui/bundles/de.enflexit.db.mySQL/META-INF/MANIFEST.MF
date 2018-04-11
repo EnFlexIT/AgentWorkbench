@@ -4,8 +4,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: MySQL - JDBC Connector
 Bundle-SymbolicName: de.enflexit.db.mySQL
 Bundle-Version: 5.1.46
-Bundle-ClassPath: .,lib/mysql-connector-java-5.1.46.jar
 Bundle-Vendor: EnFlex.IT
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate
+Require-Bundle: de.enflexit.db.hibernate;bundle-version="5.2.16"
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/dbService.xml
+Bundle-ClassPath: .,lib/mysql-connector-java-5.1.46.jar
 Export-Package: com.mysql.fabric,
  com.mysql.fabric.hibernate,
  com.mysql.fabric.jdbc,
@@ -25,7 +30,5 @@ Export-Package: com.mysql.fabric,
  com.mysql.jdbc.log,
  com.mysql.jdbc.profiler,
  com.mysql.jdbc.util,
+ de.enflexit.db.mySQL,
  org.gjt.mm.mysql
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Eclipse-RegisterBuddy: de.enflexit.db.hibernate
-Require-Bundle: de.enflexit.db.hibernate;bundle-version="5.2.15"
