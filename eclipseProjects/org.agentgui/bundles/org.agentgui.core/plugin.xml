@@ -15,7 +15,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.agentgui.core.application"
-            name="Agent Workbench">
+            name="Agent.Workbench">
          <property
          		name="applicationXMI"
          		value="org.agentgui.core/Application.e4xmi">
@@ -26,15 +26,11 @@
          </property>
          <property
                name="appName"
-               value="Agent Workbench">
+               value="Agent.Workbench">
          </property>
          <property
                name="startupProgressRect"
                value="5,275,445,15">
-         </property>
-         <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
          </property>
          <property
                name="aboutImage"
@@ -43,6 +39,10 @@
          <property
                name="aboutText"
                value="Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and start Agents or Multi-Agent systems in various ways.">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>
