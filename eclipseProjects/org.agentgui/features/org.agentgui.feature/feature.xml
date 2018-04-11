@@ -22,8 +22,12 @@
 
    <includes
          id="org.eclipse.e4.rcp"
+<<<<<<< HEAD
          version="0.0.0"
          search-location="self"/>
+=======
+         version="0.0.0"/>
+>>>>>>> refs/remotes/origin/master
 
    <includes
          id="org.eclipse.emf.ecore"
