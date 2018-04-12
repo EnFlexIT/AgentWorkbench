@@ -92,7 +92,7 @@ public class LogFileWriter {
 			
 			// --- Check, if the logging directory exists -----
 			File logBasePathFile = new File(logPathByMonth);
-			if (logBasePathFile.exists()==false) {
+			if (logBasePathFile.exists()==false || logBasePathFile.canWrite()==false) {
 				return null;
 			}
 			return logPathByMonth + dayPrefix + "_" + processID + "_AgentGui.log";

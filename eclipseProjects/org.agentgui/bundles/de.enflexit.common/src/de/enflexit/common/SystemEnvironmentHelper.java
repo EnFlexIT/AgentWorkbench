@@ -23,21 +23,21 @@ public class SystemEnvironmentHelper {
 	 * @return true, if is windows operating system
 	 */
 	public static boolean isWindowsOperatingSystem() {
-		return getOperatingSystem().toLowerCase().startsWith("windows");
+		return getOperatingSystem().toLowerCase().contains("windows");
 	}
 	/**
 	 * Checks if the current operating system is Linux.
 	 * @return true, if is Linux operating system
 	 */
 	public static boolean isLinuxOperatingSystem() {
-		return getOperatingSystem().toLowerCase().startsWith("linux");
+		return getOperatingSystem().toLowerCase().contains("linux");
 	}
 	/**
 	 * Checks if the current operating system is Mac OS X.
 	 * @return true, if is Mac OS X operating system
 	 */
 	public static boolean isMacOperatingSystem() {
-		return getOperatingSystem().toLowerCase().startsWith("mac");
+		return getOperatingSystem().toLowerCase().contains("mac");
 	}
 
 	/**

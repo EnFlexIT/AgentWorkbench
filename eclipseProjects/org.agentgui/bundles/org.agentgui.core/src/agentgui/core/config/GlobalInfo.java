@@ -1372,13 +1372,19 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the default logging base path
 	 */
 	public static String getLoggingBasePathDefault() {
+		
 		String basePath = Application.getGlobalInfo().getPathBaseDir();
 		String defaultLoggingBasePath = basePath + "log";
-		String os = SystemEnvironmentHelper.getOperatingSystem();
-		if (os.toLowerCase().contains("windows")==true) {
-			// --- nothing to do here ---
-		} else if (os.toLowerCase().contains("linux")==true) {
-			defaultLoggingBasePath = "/var/log/agentgui";
+		if (SystemEnvironmentHelper.isWindowsOperatingSystem()==true) {
+			// --- Nothing to do here yet -----------------
+		} else if (SystemEnvironmentHelper.isLinuxOperatingSystem()==true) {
+			String linuxLoggingBasePath = "/var/log/agentgui";
+			// --- Check write permission -----------------
+			if (new File(linuxLoggingBasePath).canWrite()==true) {
+				defaultLoggingBasePath = linuxLoggingBasePath;
+			}
+		} else if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			// --- Nothing to do here yet -----------------
 		}
 		return defaultLoggingBasePath.replace("/", File.separator);
 	}
