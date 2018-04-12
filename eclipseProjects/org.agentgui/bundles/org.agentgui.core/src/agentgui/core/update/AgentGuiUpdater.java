@@ -69,6 +69,8 @@ public class AgentGuiUpdater extends Thread {
 	private boolean askBeforeDownload = false;
 	
 	private AwbProgressMonitor progressMonitor;
+	
+	private Object synchronizationObject;
 
 	
 	/**
@@ -89,6 +91,8 @@ public class AgentGuiUpdater extends Thread {
 	 * Initialize and set needed local variables.
 	 */
 	private void initialize() {
+		
+		this.synchronizationObject = new Object();
 
 		this.setName(Application.getGlobalInfo().getApplicationTitle() + "-Updater");
 
@@ -181,12 +185,20 @@ public class AgentGuiUpdater extends Thread {
 	@Override
 	public void run() {
 		super.run();
-		// --- No download, no update ---------------------
-		if (this.doUpdateProcedure==false) return;
-		// --- Wait for the end of the benchmark ----------
-		this.waitForTheEndOfBenchmark();
-		// --- P2-based headless update -------------------
-		this.startP2Updates();
+		synchronized (this.getSynchronizationObject()) {
+			
+			if (this.doUpdateProcedure==true) {
+			
+				// --- Wait for the end of the benchmark -----------
+				this.waitForTheEndOfBenchmark();
+				// --- Perform the update --------------------------
+				this.startP2Updates();
+				
+			}
+			
+			// --- Notify waiting threads ----------------------
+			this.getSynchronizationObject().notify();
+		}
 	}
 
 	/**
@@ -210,7 +222,7 @@ public class AgentGuiUpdater extends Thread {
 	 * Starts a p2-based update procedure
 	 */
 	public void startP2Updates() {
-
+		
 		// --- Check for available updates -------
 		System.out.println("P2 Update: Check for updates ...");
 		
@@ -299,6 +311,36 @@ public class AgentGuiUpdater extends Thread {
 			this.progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
 		}
 		return this.progressMonitor;
+	}
+	
+	/**
+	 * Gets the synchronization object.
+	 * @return the synchronization object
+	 */
+	private Object getSynchronizationObject() {
+		if (this.synchronizationObject==null) {
+			this.synchronizationObject = new Object();
+		}
+		return this.synchronizationObject;
+	}
+	
+	/**
+	 * Wait until the update is done.
+	 */
+	public void waitForUpdate() {
+		synchronized (this.getSynchronizationObject()) {
+			try {
+				
+				//TODO Debug outputs, remove after some time  
+				System.out.println("Waiting for the update");
+				this.getSynchronizationObject().wait();
+				System.out.println("Update done, proceeding");
+				
+			} catch (InterruptedException e) {
+				System.err.println("Waiting for update interrupted");
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

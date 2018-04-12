@@ -582,8 +582,16 @@ public class Application {
 		// ----------------------------------------------------------
 		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		
+		AgentGuiUpdater updater = null;
+		
 		switch (getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
+			
+			// --- Check for updates --------------------------------
+			updater = new AgentGuiUpdater();
+			updater.start();
+			updater.waitForUpdate();
+			
 			// ------------------------------------------------------
 			// --- Start Application --------------------------------
 			getTrayIcon(); 
@@ -621,11 +629,19 @@ public class Application {
 			break;
 
 		case DEVICE_SYSTEM:
+
+			// --- Check for updates --------------------------------
+			updater = new AgentGuiUpdater();
+			updater.start();
+			updater.waitForUpdate();
+
 			// ------------------------------------------------------
 			// --- Start Service / Embedded System Agent ------------
 			getIApplication().setApplicationIsRunning();
+			
+			// --- Start the service / agent ------------------------
+			System.out.println("Starting the service/agent");
 			startServiceOrEmbeddedSystemAgent();
-			new AgentGuiUpdater().start();
 			break;
 		}
 		
