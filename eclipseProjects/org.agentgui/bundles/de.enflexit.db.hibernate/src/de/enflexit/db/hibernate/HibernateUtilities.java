@@ -1,6 +1,9 @@
 package de.enflexit.db.hibernate;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -22,6 +25,7 @@ import org.hibernate.service.ServiceRegistry;
 public class HibernateUtilities {
 
 	public static final String DEFAULT_SESSION_FACTORY_ID = "defaultFactory";
+	public static final String DB_SERVICE_REGISTRATION_ERROR = "NO DATABASE SYSTEM REGISTERD";
 	
 	private static HashMap<String, HibernateDatabaseService> databaseServices;
 	private static HashMap<String, SessionFactory> sessionFactoryHashMap;
@@ -216,22 +220,81 @@ public class HibernateUtilities {
 	 */
 	public static void registerDatabaseService(HibernateDatabaseService databaseService) {
 		
-		if (databaseService==null || databaseService.getDriverClassName()==null || databaseService.getDriverClassName().isEmpty()) return;
+		if (databaseService==null) return;
 		
-		String driverClassName = databaseService.getDriverClassName();
-		HibernateDatabaseService dbService = getDatabaseServices().get(driverClassName);
-		if (dbService!=null) {
-			System.err.println("Overwrite database service for driver '" + driverClassName + "'!");
+		if (isValidHibernateDatabaseService(databaseService)) {
+			String dbSystemName = databaseService.getDatabaseSystemName();
+			HibernateDatabaseService oldDbService = getDatabaseServices().get(dbSystemName);
+			if (oldDbService!=null) {
+				System.err.println("Overwrite service for database system '" + dbSystemName + "'!");
+			}
+			getDatabaseServices().put(dbSystemName, databaseService);
 		}
-		getDatabaseServices().put(driverClassName, databaseService);
+	}
+	/**
+	 * Checks if is valid hibernate database service.
+	 * @param databaseService the database service
+	 * @return true, if is valid hibernate database service
+	 */
+	private static boolean isValidHibernateDatabaseService(HibernateDatabaseService databaseService) {
+		
+		String errMsg = "[" + HibernateUtilities.class.getSimpleName() + "] Invalid database service: ";
+		String serviceClassName = databaseService.getClass().getName();
+		
+		if (databaseService.getDatabaseSystemName()==null || databaseService.getDatabaseSystemName().isEmpty()) {
+			System.err.println(errMsg + "No database system name is returned by '" + serviceClassName + "'!");
+			return false;
+		}
+		if (databaseService.getDriverClassName()==null || databaseService.getDriverClassName().isEmpty()) {
+			System.err.println(errMsg + "No JDBC driver class is returned by '" + serviceClassName + "'!");
+			return false;
+		} else {
+			try {
+				Class.forName(databaseService.getDriverClassName());
+			} catch (ClassNotFoundException e) {
+				System.err.println(errMsg + "Can't load JDBC driver '" + databaseService.getDriverClassName() + "'!");
+				return false;
+			}
+		}
+		Vector<String> jdbcCheckParams = databaseService.getHibernateConfigurationPropertyNamesForDbCheckOnJDBC();
+		if (jdbcCheckParams==null || jdbcCheckParams.size()==0) {
+			System.err.println(errMsg + "No JDBC check parameters are returned by '" + serviceClassName + "'!");
+			return false;
+		}
+		return true;
 	}
 	/**
 	 * Unregisters a {@link HibernateDatabaseService}.
 	 * @param databaseService the database service
 	 */
 	public static void unregisterDatabaseService(HibernateDatabaseService databaseService) {
-		if (databaseService==null || databaseService.getDriverClassName()==null || databaseService.getDriverClassName().isEmpty()) return;
-		getDatabaseServices().remove(databaseService.getDriverClassName());
+		if (databaseService==null || databaseService.getDatabaseSystemName()==null || databaseService.getDatabaseSystemName().isEmpty()) return;
+		getDatabaseServices().remove(databaseService.getDatabaseSystemName());
+	}
+	/**
+	 * Returns a sorted list of known/available database systems that are registered at the {@link HibernateUtilities}.
+	 * @return the database system list
+	 */
+	public static List<String> getDatabaseSystemList() {
+		List<String> dbSystems = new ArrayList<>(getDatabaseServices().keySet());
+		if (dbSystems.isEmpty()==true) {
+			dbSystems.add(DB_SERVICE_REGISTRATION_ERROR);
+		} else {
+			Collections.sort(dbSystems);
+		}
+		return dbSystems;
+	}
+	/**
+	 * Returns the {@link HibernateDatabaseService} for the specified database system.
+	 *
+	 * @param databaseSystemName the database system name
+	 * @return the database service
+	 */
+	public static HibernateDatabaseService getDatabaseService(String databaseSystemName) {
+		if (databaseSystemName!=null) {
+			return getDatabaseServices().get(databaseSystemName);
+		}
+		return null;
 	}
 	
 }

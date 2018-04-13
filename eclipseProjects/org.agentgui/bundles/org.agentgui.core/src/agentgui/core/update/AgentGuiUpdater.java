@@ -330,12 +330,7 @@ public class AgentGuiUpdater extends Thread {
 	public void waitForUpdate() {
 		synchronized (this.getSynchronizationObject()) {
 			try {
-				
-				//TODO Debug outputs, remove after some time  
-				System.out.println("Waiting for the update");
 				this.getSynchronizationObject().wait();
-				System.out.println("Update done, proceeding");
-				
 			} catch (InterruptedException e) {
 				System.err.println("Waiting for update interrupted");
 				e.printStackTrace();
