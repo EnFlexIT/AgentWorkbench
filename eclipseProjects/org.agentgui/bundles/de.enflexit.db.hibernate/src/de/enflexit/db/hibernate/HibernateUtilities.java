@@ -120,7 +120,7 @@ public class HibernateUtilities {
 					
 				} else {
 					if (doSilentConnectionCheck==false) {
-						System.err.println("[" + HibernateUtilities.class.getSimpleName() + "]: No database connection could be established.");
+						System.err.println("[" + HibernateUtilities.class.getSimpleName() + "]: No database connection could be established: " + dbCheckMessage);
 					}
 				}
 				
@@ -171,7 +171,7 @@ public class HibernateUtilities {
 			
 		} else {
 			// --- Get the corresponding database service -----------
-			HibernateDatabaseService dbService = getDatabaseServices().get(driverClassName);
+			HibernateDatabaseService dbService = getDatabaseServiceByDriverClassName(driverClassName);
 			if (dbService==null) {
 				// --- Set error message ----------------------------
 				errMessage = "Could not find the corresponding hibernate database service for the JDBC connection test!";
@@ -179,9 +179,10 @@ public class HibernateUtilities {
 				// --- Extract settings for connection test --------- 
 				Properties jdbcCheckProperties = getPropertiesForConnectionCheckOnJDBC(configuration, dbService.getHibernateConfigurationPropertyNamesForDbCheckOnJDBC());
 				// --- Do the JDBC connection test ------------------
-				boolean isAvailableConnection =  dbService.isDatabaseAccessible(jdbcCheckProperties, doSilentConnectionCheck);
+				Vector<String> userMessages = new Vector<>(); 
+				boolean isAvailableConnection =  dbService.isDatabaseAccessible(jdbcCheckProperties, userMessages, !doSilentConnectionCheck);
 				if (isAvailableConnection==false) {
-					errMessage = "Connection test failed";
+					errMessage = "Connection test failed!";
 				}
 			}
 		}
@@ -293,6 +294,21 @@ public class HibernateUtilities {
 	public static HibernateDatabaseService getDatabaseService(String databaseSystemName) {
 		if (databaseSystemName!=null) {
 			return getDatabaseServices().get(databaseSystemName);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the database service by driver class name.
+	 * @param driverClaName the driver cla name
+	 * @return the database service by driver class name
+	 */
+	private static HibernateDatabaseService getDatabaseServiceByDriverClassName(String driverClaName) {
+		Vector<HibernateDatabaseService> dbServices = new Vector<>(getDatabaseServices().values()); 
+		for (int i = 0; i < dbServices.size(); i++) {
+			if (dbServices.get(i).getDriverClassName().equals(driverClaName)) {
+				return dbServices.get(i);
+			}
 		}
 		return null;
 	}

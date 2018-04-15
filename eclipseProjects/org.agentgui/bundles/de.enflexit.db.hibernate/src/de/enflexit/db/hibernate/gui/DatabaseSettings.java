@@ -67,13 +67,15 @@ public class DatabaseSettings implements Serializable {
 
 		HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(this.getDatabaseSystemName());
 		if (hds!=null) {
-			
+			// -- Extract properties from hibernate configuration ---
 			Properties props = new Properties();
 			Vector<String> propNameVector = hds.getHibernateConfigurationPropertyNamesForDbCheckOnJDBC();
 			for (int i = 0; i < propNameVector.size(); i++) {
 				String propName = propNameVector.get(i);
 				String propValue = configuration.getProperty(propName);
-				props.setProperty(propName, propValue);
+				if (propValue!=null) {
+					props.setProperty(propName, propValue);
+				}
 			}
 			this.setHibernateDatabaseSettings(props);
 		}

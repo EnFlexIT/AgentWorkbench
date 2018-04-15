@@ -2,6 +2,7 @@ package de.enflexit.db.mySQL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.Vector;
@@ -9,7 +10,7 @@ import java.util.Vector;
 import com.mysql.jdbc.Driver;
 
 import de.enflexit.db.hibernate.HibernateDatabaseService;
-import de.enflexit.db.hibernate.gui.DatabaseSettingPanel;
+import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 
 /**
  * The Class MySQLDatabaseService provides the {@link HibernateDatabaseService}.
@@ -70,14 +71,22 @@ public class MySQLDatabaseService implements HibernateDatabaseService {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#isDatabaseAccessible(java.util.Properties)
+	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#isDatabaseAccessible(java.util.Properties, java.util.Vector, boolean)
 	 */
 	@Override
-	public boolean isDatabaseAccessible(Properties hibernateProperties, boolean doSilentConnectionCheck) {
+	public boolean isDatabaseAccessible(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole) {
 
+		String message = null;
+		if (hibernateProperties==null) {
+			message = "[MySQL connection check] no properties were specified for the connection test!";
+			userMessageVector.addElement(message);
+			if (isPrintToConole) System.err.println(message);
+			return false;
+		}
+		
 		String driverClass = hibernateProperties.getProperty(HIBERNATE_PROPERTY_DriverClass); 
-		String db = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Catalog);
 		String url = hibernateProperties.getProperty(HIBERNATE_PROPERTY_URL);
+		String db = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Catalog);
 		String user = hibernateProperties.getProperty(HIBERNATE_PROPERTY_UserName);
 		String pswd = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Password);
 
@@ -90,22 +99,31 @@ public class MySQLDatabaseService implements HibernateDatabaseService {
 				conn.setCatalog(db);
 			}
 			
-			// --- Space for further connection tests ---------------
-			
+			// --- Check if the database exists ---------------------
+			if (this.databaseExists(conn, db)==false) {
+				message = "[MySQL connection check] Database '" + db + "' does not exists (yet)!";
+				userMessageVector.addElement(message);
+				if (isPrintToConole) System.err.println(message);
+			}
 			
 		} catch (NullPointerException npEx) {
 			String configString = "Driver: " + driverClass + ", URL: " + url + ", DB: " + db + ", User: " + user + ", PSWD: " + pswd + "";
-			if (doSilentConnectionCheck==false) System.err.println("[MySQL connection check] Failed throw NullPointerException with config: " + configString);
+			message = "[MySQL connection check] Failed throw NullPointerException with config: " + configString;
+			userMessageVector.addElement(message);
+			if (isPrintToConole) System.err.println(message);
 			return false;
 			
 		} catch (SQLException sqlEx) {
 			String mySQLErr = "[MySQL connection check] Err. Code:" + sqlEx.getErrorCode() + " | State: " + sqlEx.getSQLState() + ": " + sqlEx.getMessage();
-			mySQLErr = mySQLErr.replaceAll("(?m)^[ \t]*\r?\n", ""); // replace empty lines 
-			if (doSilentConnectionCheck==false) System.err.println(mySQLErr);
+			mySQLErr = mySQLErr.replaceAll("(?m)^[ \t]*\r?\n", ""); // replace empty lines
+			userMessageVector.addElement(mySQLErr);
+			if (isPrintToConole) System.err.println(mySQLErr);
 			return false;
 			
 		} catch (ClassNotFoundException cnfEx) {
-			if (doSilentConnectionCheck==false) System.err.println("[MySQL connection check] Failed throw: " + cnfEx.getMessage());
+			message = "[MySQL connection check] Failed throw: " + cnfEx.getMessage();
+			userMessageVector.addElement(message);
+			if (isPrintToConole) System.err.println(message);
 			return false;
 		
 		} finally {
@@ -120,12 +138,47 @@ public class MySQLDatabaseService implements HibernateDatabaseService {
 		return true;
 	}
 
+	/**
+	 * Checks if the specified database exists.
+	 *
+	 * @param connection the connection
+	 * @param dbNameToCheck the db name to check
+	 * @return true, if successful
+	 */
+	private boolean databaseExists(Connection connection, String dbNameToCheck) {
+		
+		boolean dbExists = true;
+		ResultSet resultSet = null;
+		try {
+			resultSet = connection.getMetaData().getCatalogs();
+			while (resultSet.next()) {
+				String databaseName = resultSet.getString(1);
+				if (databaseName.equalsIgnoreCase(dbNameToCheck)) {
+					return true;
+				}
+			}
+			
+		} catch (SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			dbExists = false;
+		} finally {
+			if (resultSet!=null) {
+				try {
+					resultSet.close();
+				} catch (SQLException sqlEx) {
+					sqlEx.printStackTrace();
+				}
+			}
+		}
+		return dbExists;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getHibernateSettingPanel()
 	 */
 	@Override
-	public DatabaseSettingPanel getHibernateSettingPanel() {
-		return new MySQLSettingPanel();
+	public DatabaseSettingsPanel getHibernateSettingsPanel() {
+		return new MySQLSettingsPanel();
 	}
 
 }

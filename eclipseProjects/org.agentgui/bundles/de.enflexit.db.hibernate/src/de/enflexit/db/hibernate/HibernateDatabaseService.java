@@ -3,7 +3,7 @@ package de.enflexit.db.hibernate;
 import java.util.Properties;
 import java.util.Vector;
 
-import de.enflexit.db.hibernate.gui.DatabaseSettingPanel;
+import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 
 /**
  * The Interface HibernateDatabaseService describes the requires methods
@@ -22,7 +22,7 @@ public interface HibernateDatabaseService {
 	
 	/**
 	 * Has to return the driver class as an ID for a hibernate database service.
-	 * @return the driver class
+	 * @return the driver class name
 	 */
 	public String getDriverClassName();
 	
@@ -45,16 +45,17 @@ public interface HibernateDatabaseService {
 	 * Will be called to check if a database is accessible.
 	 *
 	 * @param hibernateProperties the hibernate properties
-	 * @param doSilentConnectionCheck set true, if a silent connection check has to be done
+	 * @param userMessageVector the vector in which messages to users can be stored
+	 * @param isPrintToConole set true, if information should be printed to console
 	 * @return true, if successful
 	 */
-	public boolean isDatabaseAccessible(Properties hibernateProperties, boolean doSilentConnectionCheck);
+	public boolean isDatabaseAccessible(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole);
 
 	/**
 	 * Has to return the hibernate setting panel.
 	 * @return the hibernate setting panel
 	 */
-	public DatabaseSettingPanel getHibernateSettingPanel();
+	public DatabaseSettingsPanel getHibernateSettingsPanel();
 
 	
 }

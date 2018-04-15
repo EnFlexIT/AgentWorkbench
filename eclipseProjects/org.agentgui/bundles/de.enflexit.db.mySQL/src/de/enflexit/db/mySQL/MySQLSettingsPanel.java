@@ -1,48 +1,56 @@
 package de.enflexit.db.mySQL;
 
-import java.util.Properties;
-
-import de.enflexit.db.hibernate.gui.DatabaseSettingPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.Properties;
+
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import com.mysql.jdbc.Driver;
+
+import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 
 /**
- * The Class MySQLSettingPanel enables to configure the 
+ * The Class MySQLSettingsPanel enables to configure the 
  * MySQL connection in a visual way.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class MySQLSettingPanel extends DatabaseSettingPanel {
+public class MySQLSettingsPanel extends DatabaseSettingsPanel {
 	
 	private static final long serialVersionUID = -736276260261466533L;
 	
-	private final Dimension textFieldSize = new Dimension(240, 26);
+	private final Dimension textFieldSize = new Dimension(400, 26);
 
 	private JLabel jLabelHostOrIP;
 	private JLabel jLabelPort;
 	private JLabel jLabelDatabase;
+	private JLabel jLabelAddURLParameter;
+	private JLabel jLabelURL;
 	private JLabel jLabelUserName;
 	private JLabel jLabelPassword;
+
 	private JTextField jTextFieldHostOrIP;
 	private JTextField jTextFieldPort;
 	private JTextField jTextFieldDatabase;
+	private JTextField jTextFieldAddUrlParams;
+	private JTextField jTextFieldResultURL;
 	private JTextField jTextFieldUserName;
 	private JPasswordField jTextFieldPassword;
-	private JLabel jLabelURLParameter;
-	private JTextField jTextFieldAddUrlParams;
 
+	private DocumentListener urlDocumentListener;
 	
 	/**
 	 * Instantiates a new my SQL setting panel.
 	 */
-	public MySQLSettingPanel() {
+	public MySQLSettingsPanel() {
 		this.initialize();
 	}
 	/**
@@ -51,9 +59,9 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{130, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelHostOrIP = new GridBagConstraints();
 		gbc_jLabelHostOrIP.anchor = GridBagConstraints.WEST;
@@ -104,28 +112,41 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 		gbc_jTextFieldAddUrlParams.gridx = 1;
 		gbc_jTextFieldAddUrlParams.gridy = 3;
 		add(getJTextFieldAddUrlParams(), gbc_jTextFieldAddUrlParams);
+		GridBagConstraints gbc_jLabelURL = new GridBagConstraints();
+		gbc_jLabelURL.anchor = GridBagConstraints.WEST;
+		gbc_jLabelURL.insets = new Insets(0, 10, 5, 5);
+		gbc_jLabelURL.gridx = 0;
+		gbc_jLabelURL.gridy = 4;
+		add(getJLabelURL(), gbc_jLabelURL);
+		GridBagConstraints gbc_jLabelResultURL = new GridBagConstraints();
+		gbc_jLabelResultURL.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jLabelResultURL.insets = new Insets(0, 0, 5, 0);
+		gbc_jLabelResultURL.gridx = 1;
+		gbc_jLabelResultURL.gridy = 4;
+		add(getJTextFieldResultURL(), gbc_jLabelResultURL);
 		GridBagConstraints gbc_jLabelUserName = new GridBagConstraints();
 		gbc_jLabelUserName.anchor = GridBagConstraints.WEST;
 		gbc_jLabelUserName.insets = new Insets(0, 10, 5, 5);
 		gbc_jLabelUserName.gridx = 0;
-		gbc_jLabelUserName.gridy = 4;
+		gbc_jLabelUserName.gridy = 5;
 		add(getJLabelUserName(), gbc_jLabelUserName);
 		GridBagConstraints gbc_jTextFieldUserName = new GridBagConstraints();
 		gbc_jTextFieldUserName.insets = new Insets(0, 0, 5, 0);
 		gbc_jTextFieldUserName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldUserName.gridx = 1;
-		gbc_jTextFieldUserName.gridy = 4;
+		gbc_jTextFieldUserName.gridy = 5;
 		add(getJTextFieldUserName(), gbc_jTextFieldUserName);
 		GridBagConstraints gbc_jLabelPassword = new GridBagConstraints();
 		gbc_jLabelPassword.anchor = GridBagConstraints.WEST;
-		gbc_jLabelPassword.insets = new Insets(0, 10, 0, 5);
+		gbc_jLabelPassword.insets = new Insets(0, 10, 5, 5);
 		gbc_jLabelPassword.gridx = 0;
-		gbc_jLabelPassword.gridy = 5;
+		gbc_jLabelPassword.gridy = 6;
 		add(getJLabelPassword(), gbc_jLabelPassword);
 		GridBagConstraints gbc_jTextFieldPassword = new GridBagConstraints();
+		gbc_jTextFieldPassword.insets = new Insets(0, 0, 5, 0);
 		gbc_jTextFieldPassword.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldPassword.gridx = 1;
-		gbc_jTextFieldPassword.gridy = 5;
+		gbc_jTextFieldPassword.gridy = 6;
 		add(getJTextFieldPassword(), gbc_jTextFieldPassword);
 	}
 	
@@ -138,7 +159,7 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 	}
 	private JLabel getJLabelPort() {
 		if (jLabelPort == null) {
-			jLabelPort = new JLabel("Port");
+			jLabelPort = new JLabel("Port (default: 3306)");
 			jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelPort;
@@ -151,12 +172,19 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 		return jLabelDatabase;
 	}
 	private JLabel getJLabelURLParameter() {
-		if (jLabelURLParameter == null) {
-			jLabelURLParameter = new JLabel("Add. URL-Params.");
-			jLabelURLParameter.setToolTipText("Additional URL Parameter");
-			jLabelURLParameter.setFont(new Font("Dialog", Font.BOLD, 12));
+		if (jLabelAddURLParameter == null) {
+			jLabelAddURLParameter = new JLabel("Add. URL-Params.");
+			jLabelAddURLParameter.setToolTipText("Additional URL Parameter");
+			jLabelAddURLParameter.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return jLabelURLParameter;
+		return jLabelAddURLParameter;
+	}
+	private JLabel getJLabelURL() {
+		if (jLabelURL == null) {
+			jLabelURL = new JLabel("Resulting URL");
+			jLabelURL.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelURL;
 	}
 	private JLabel getJLabelUserName() {
 		if (jLabelUserName == null) {
@@ -172,11 +200,13 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 		}
 		return jLabelPassword;
 	}
+	// --- Value fields -----------------------------------
 	private JTextField getJTextFieldHostOrIP() {
 		if (jTextFieldHostOrIP == null) {
 			jTextFieldHostOrIP = new JTextField();
 			jTextFieldHostOrIP.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldHostOrIP.setPreferredSize(this.textFieldSize);
+			jTextFieldHostOrIP.getDocument().addDocumentListener(this.getDocumentListenerForURL());
 		}
 		return jTextFieldHostOrIP;
 	}
@@ -185,6 +215,7 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 			jTextFieldPort = new JTextField();
 			jTextFieldPort.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldPort.setPreferredSize(this.textFieldSize);
+			jTextFieldPort.getDocument().addDocumentListener(this.getDocumentListenerForURL());
 		}
 		return jTextFieldPort;
 	}
@@ -193,6 +224,7 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 			jTextFieldDatabase = new JTextField();
 			jTextFieldDatabase.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldDatabase.setPreferredSize(this.textFieldSize);
+			jTextFieldDatabase.getDocument().addDocumentListener(this.getDocumentListenerForURL());
 		}
 		return jTextFieldDatabase;
 	}
@@ -201,8 +233,20 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 			jTextFieldAddUrlParams = new JTextField();
 			jTextFieldAddUrlParams.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldAddUrlParams.setPreferredSize(this.textFieldSize);
+			jTextFieldAddUrlParams.getDocument().addDocumentListener(this.getDocumentListenerForURL());
 		}
 		return jTextFieldAddUrlParams;
+	}
+	private JTextField getJTextFieldResultURL() {
+		if (jTextFieldResultURL == null) {
+			jTextFieldResultURL = new JTextField("");
+			jTextFieldResultURL.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldResultURL.setPreferredSize(this.textFieldSize);
+			jTextFieldResultURL.setEditable(false);
+			jTextFieldResultURL.setOpaque(true);
+			jTextFieldResultURL.setBackground(this.getBackground());
+		}
+		return jTextFieldResultURL;
 	}
 	private JTextField getJTextFieldUserName() {
 		if (jTextFieldUserName == null) {
@@ -221,13 +265,37 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 		return jTextFieldPassword;
 	}
 	
+	
+	private DocumentListener getDocumentListenerForURL() {
+		if (urlDocumentListener==null) {
+			urlDocumentListener = new DocumentListener() {
+				@Override
+				public void removeUpdate(DocumentEvent de) {
+					this.setURLResult();
+				}
+				@Override
+				public void insertUpdate(DocumentEvent de) {
+					this.setURLResult();
+				}
+				@Override
+				public void changedUpdate(DocumentEvent de) {
+					this.setURLResult();
+				}
+				private void setURLResult() {
+					getJTextFieldResultURL().setText(getUrlConfigured());
+				}
+			};
+		}
+		return urlDocumentListener;
+	}
+	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.hibernate.gui.DatabaseSettingPanel#setHibernateConfigurationProperties(java.util.Properties)
+	 * @see de.enflexit.db.hibernate.gui.DatabaseSettingsPanel#setHibernateConfigurationProperties(java.util.Properties)
 	 */
 	@Override
 	public void setHibernateConfigurationProperties(Properties properties) {
 		
-		String urlProperty = properties.getProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_URL);
+		String urlProperty = properties.getProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_URL, "");
 
 		// --- Remove the prefix of the URL ---------------
 		urlProperty = urlProperty.replace("jdbc:mysql://", "");
@@ -263,14 +331,42 @@ public class MySQLSettingPanel extends DatabaseSettingPanel {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.hibernate.gui.DatabaseSettingPanel#getHibernateConfigurationProperties()
+	 * @see de.enflexit.db.hibernate.gui.DatabaseSettingsPanel#getHibernateConfigurationProperties()
 	 */
 	@Override
 	public Properties getHibernateConfigurationProperties() {
 		
-		// TODO
+		Properties props = new Properties();
+		props.setProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_DriverClass, Driver.class.getName()); 
+		props.setProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_URL, this.getUrlConfigured());
+		props.setProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_Catalog, this.getJTextFieldDatabase().getText());
+		props.setProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_UserName, this.getJTextFieldUserName().getText());
+		props.setProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_Password, new String(this.getJTextFieldPassword().getPassword()));
+		return props;
+	}
+	
+	/**
+	 * Gets the current URL configured.
+	 * @return the URL configured
+	 */
+	private String getUrlConfigured() {
 		
-		return null;
+		String url = "jdbc:mysql://[HostorIP]:[Port]/[Database][additionalParams]";
+		
+		String hostOrIP = this.getJTextFieldHostOrIP().getText().trim();
+		String port = this.getJTextFieldPort().getText().trim();
+		String database = this.getJTextFieldDatabase().getText().trim();
+		String addParams = this.getJTextFieldAddUrlParams().getText().trim();
+		
+		url = url.replace("[HostorIP]", hostOrIP);
+		url = url.replace("[Port]", port);
+		url = url.replace("[Database]", database);
+		if (addParams.isEmpty()==false) {
+			url = url.replace("[additionalParams]", "?" + addParams);
+		} else {
+			url = url.replace("[additionalParams]", "");
+		}
+		return url;
 	}
 	
 }
