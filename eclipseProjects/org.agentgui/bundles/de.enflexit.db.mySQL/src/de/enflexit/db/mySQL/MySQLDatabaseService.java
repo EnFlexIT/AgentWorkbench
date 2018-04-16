@@ -10,7 +10,7 @@ import java.util.Vector;
 import com.mysql.jdbc.Driver;
 
 import de.enflexit.db.hibernate.HibernateDatabaseService;
-import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
+import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
 
 /**
  * The Class MySQLDatabaseService provides the {@link HibernateDatabaseService}.
@@ -177,7 +177,7 @@ public class MySQLDatabaseService implements HibernateDatabaseService {
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getHibernateSettingPanel()
 	 */
 	@Override
-	public DatabaseSettingsPanel getHibernateSettingsPanel() {
+	public AbstractDatabaseSettingsPanel getHibernateSettingsPanel() {
 		return new MySQLSettingsPanel();
 	}
 

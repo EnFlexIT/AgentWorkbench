@@ -15,7 +15,7 @@ import javax.swing.event.DocumentListener;
 
 import com.mysql.jdbc.Driver;
 
-import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
+import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
 
 /**
  * The Class MySQLSettingsPanel enables to configure the 
@@ -23,7 +23,7 @@ import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class MySQLSettingsPanel extends DatabaseSettingsPanel {
+public class MySQLSettingsPanel extends AbstractDatabaseSettingsPanel {
 	
 	private static final long serialVersionUID = -736276260261466533L;
 	
@@ -290,7 +290,7 @@ public class MySQLSettingsPanel extends DatabaseSettingsPanel {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.hibernate.gui.DatabaseSettingsPanel#setHibernateConfigurationProperties(java.util.Properties)
+	 * @see de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel#setHibernateConfigurationProperties(java.util.Properties)
 	 */
 	@Override
 	public void setHibernateConfigurationProperties(Properties properties) {
@@ -331,7 +331,7 @@ public class MySQLSettingsPanel extends DatabaseSettingsPanel {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.hibernate.gui.DatabaseSettingsPanel#getHibernateConfigurationProperties()
+	 * @see de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel#getHibernateConfigurationProperties()
 	 */
 	@Override
 	public Properties getHibernateConfigurationProperties() {

@@ -3,7 +3,7 @@ package de.enflexit.db.hibernate;
 import java.util.Properties;
 import java.util.Vector;
 
-import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
+import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
 
 /**
  * The Interface HibernateDatabaseService describes the requires methods
@@ -52,10 +52,9 @@ public interface HibernateDatabaseService {
 	public boolean isDatabaseAccessible(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole);
 
 	/**
-	 * Has to return the hibernate setting panel.
+	 * Has to return the hibernate setting panel for the specific database system.
 	 * @return the hibernate setting panel
 	 */
-	public DatabaseSettingsPanel getHibernateSettingsPanel();
+	public AbstractDatabaseSettingsPanel getHibernateSettingsPanel();
 
-	
 }

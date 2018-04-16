@@ -10,49 +10,31 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-import javax.swing.border.EtchedBorder;
 
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 
 /**
- * The Class DatabaseSettingsDialog.
+ * The Class DatabaseSettingsDialog can be used to configure the 
+ * connection settings for hibernate.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class DatabaseSettingsDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -5778880894988052682L;
-	
-	private String databaseSystem;
-	private DatabaseSettings databaseSettings;
-	private DatabaseSettingsPanel databaseSettingsPanel;
-	
-	private JLabel jLabelHeader;
-	private JLabel jLabelDatabaseType;
-	private JComboBox<String> jComboBoxDbType;
-	private DefaultComboBoxModel<String> comboBoxModel;
-
-	private JScrollPane jScrollPaneSettings;
 	
 	private JPanel jPanelButtons;
 	private JButton jButtonSave;
@@ -61,6 +43,7 @@ public class DatabaseSettingsDialog extends JDialog implements ActionListener {
 
 	private boolean canceled;
 	private Vector<String> userMessages;
+	private DatabaseSettingsPanel jPanelDbSettings;
 	
 	/**
 	 * Instantiates a new database settings dialog.
@@ -98,43 +81,22 @@ public class DatabaseSettingsDialog extends JDialog implements ActionListener {
 	    
 	    
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
-		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
-		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHeader.gridwidth = 2;
-		gbc_jLabelHeader.insets = new Insets(15, 15, 10, 0);
-		gbc_jLabelHeader.gridx = 0;
-		gbc_jLabelHeader.gridy = 0;
-		getContentPane().add(getJLabelHeader(), gbc_jLabelHeader);
-		GridBagConstraints gbc_jLabelDatabaseType = new GridBagConstraints();
-		gbc_jLabelDatabaseType.insets = new Insets(0, 15, 5, 5);
-		gbc_jLabelDatabaseType.anchor = GridBagConstraints.WEST;
-		gbc_jLabelDatabaseType.gridx = 0;
-		gbc_jLabelDatabaseType.gridy = 1;
-		getContentPane().add(getJLabelDatabaseType(), gbc_jLabelDatabaseType);
-		GridBagConstraints gbc_jComboBoxDbType = new GridBagConstraints();
-		gbc_jComboBoxDbType.anchor = GridBagConstraints.WEST;
-		gbc_jComboBoxDbType.insets = new Insets(0, 5, 5, 0);
-		gbc_jComboBoxDbType.gridx = 1;
-		gbc_jComboBoxDbType.gridy = 1;
-		getContentPane().add(getJComboBoxDbType(), gbc_jComboBoxDbType);
-		GridBagConstraints gbc_jPanelSettings = new GridBagConstraints();
-		gbc_jPanelSettings.gridwidth = 2;
-		gbc_jPanelSettings.insets = new Insets(10, 15, 5, 15);
-		gbc_jPanelSettings.fill = GridBagConstraints.BOTH;
-		gbc_jPanelSettings.gridx = 0;
-		gbc_jPanelSettings.gridy = 2;
-		getContentPane().add(getJScrollPaneSettings(), gbc_jPanelSettings);
+		GridBagConstraints gbc_jPanelDbSettings = new GridBagConstraints();
+		gbc_jPanelDbSettings.insets = new Insets(0, 0, 5, 0);
+		gbc_jPanelDbSettings.fill = GridBagConstraints.BOTH;
+		gbc_jPanelDbSettings.gridx = 0;
+		gbc_jPanelDbSettings.gridy = 0;
+		getContentPane().add(getJPanelDbSettings(), gbc_jPanelDbSettings);
 		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
-		gbc_jPanelButtons.gridwidth = 2;
 		gbc_jPanelButtons.fill = GridBagConstraints.VERTICAL;
 		gbc_jPanelButtons.insets = new Insets(10, 10, 20, 10);
 		gbc_jPanelButtons.gridx = 0;
-		gbc_jPanelButtons.gridy = 3;
+		gbc_jPanelButtons.gridy = 1;
 		getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
 		
 	}
@@ -150,64 +112,21 @@ public class DatabaseSettingsDialog extends JDialog implements ActionListener {
         this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 	
+    private DatabaseSettingsPanel getJPanelDbSettings() {
+		if (jPanelDbSettings == null) {
+			jPanelDbSettings = new DatabaseSettingsPanel(null);
+		}
+		return jPanelDbSettings;
+	}
+    
     /**
      * Sets the header text for the Dialog.
      * @param headerText the new header
      */
     public void setHeaderText(String headerText) {
     	if (headerText!=null && headerText.isEmpty()==false) {
-    		this.getJLabelHeader().setText(headerText);
+    		this.getJPanelDbSettings().setHeaderText(headerText);
     	}
-	}
-	private JLabel getJLabelHeader() {
-		if (jLabelHeader == null) {
-			jLabelHeader = new JLabel("Database Settings");
-			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
-		}
-		return jLabelHeader;
-	}
-	private JLabel getJLabelDatabaseType() {
-		if (jLabelDatabaseType == null) {
-			jLabelDatabaseType = new JLabel("Database System:");
-			jLabelDatabaseType.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelDatabaseType.setPreferredSize(new Dimension(120, 26));
-		}
-		return jLabelDatabaseType;
-	}
-	private JComboBox<String> getJComboBoxDbType() {
-		if (jComboBoxDbType == null) {
-			jComboBoxDbType = new JComboBox<String>(this.getComboBoxModel());
-			jComboBoxDbType.setPreferredSize(new Dimension(240, 26));
-			jComboBoxDbType.addItemListener(new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent ie) {
-					if (ie.getStateChange()==ItemEvent.SELECTED) {
-						setDatabaseSystem(getDatabaseSystem());
-					}
-				}
-			});
-			// --
-			
-		}
-		return jComboBoxDbType;
-	}
-	private DefaultComboBoxModel<String> getComboBoxModel() {
-		if (comboBoxModel==null) {
-			comboBoxModel = new DefaultComboBoxModel<>();
-			List<String> dbSystems = HibernateUtilities.getDatabaseSystemList();
-			for (int i = 0; i < dbSystems.size(); i++) {
-				comboBoxModel.addElement(dbSystems.get(i));
-			}
-		}
-		return comboBoxModel;
-	}
-	
-	private JScrollPane getJScrollPaneSettings() {
-		if (jScrollPaneSettings == null) {
-			jScrollPaneSettings = new JScrollPane();
-			jScrollPaneSettings.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		}
-		return jScrollPaneSettings;
 	}
 	
 	private JPanel getJPanelButtons() {
@@ -286,97 +205,16 @@ public class DatabaseSettingsDialog extends JDialog implements ActionListener {
 	 * @return the database settings
 	 */
 	public DatabaseSettings getDatabaseSettings() {
-		if (databaseSettings==null) {
-			// --- Get the first registered database system ---------
-			String dbSystem = HibernateUtilities.getDatabaseSystemList().get(0);
-			Properties dbProps = null;
-			if (dbSystem.equals(HibernateUtilities.DB_SERVICE_REGISTRATION_ERROR)==false) {
-				databaseSettings = new DatabaseSettings(dbSystem, dbProps);
-				this.setDatabaseSystem(dbSystem);
-				databaseSettings.setHibernateDatabaseSettings(this.getDatabaseSettingPanel().getHibernateConfigurationProperties());
-			}
-			
-		} else {
-			// --- Always get properties from setting panel ---------
-			databaseSettings.setHibernateDatabaseSettings(this.getDatabaseSettingPanel().getHibernateConfigurationProperties());
-		}
-		return databaseSettings;
+		return this.getJPanelDbSettings().getDatabaseSettings();
 	}
 	/**
 	 * Sets the database settings.
 	 * @param databaseSettings the new database settings
 	 */
 	public void setDatabaseSettings(DatabaseSettings databaseSettings) {
-		if (databaseSettings==null) {
-			if (this.databaseSettings==null) {
-				this.getDatabaseSettings();
-			}
-		} else {
-			this.databaseSettings = databaseSettings;
-		}
-		String dbSystem = this.databaseSettings.getDatabaseSystemName();
-		Properties dbProperties = this.databaseSettings.getHibernateDatabaseSettings();
-		this.setDatabaseSystem(dbSystem);
-		this.getDatabaseSettingPanel().setHibernateConfigurationProperties(dbProperties);
-	}
-
-	/**
-	 * Gets the database system.
-	 * @return the database system
-	 */
-	private String getDatabaseSystem() {
-		return databaseSystem;
-	}
-	/**
-	 * Sets the database system.
-	 * @param newDatabaseSystem the new database system
-	 */
-	private void setDatabaseSystem(String newDatabaseSystem) {
-		if (this.databaseSystem==null || this.databaseSystem.equals(newDatabaseSystem)==false) {
-			this.databaseSystem = newDatabaseSystem;
-			this.getJComboBoxDbType().setSelectedItem(newDatabaseSystem);
-			this.setDatabaseSettingPanel(newDatabaseSystem);
-		}
+		this.getJPanelDbSettings().setDatabaseSettings(databaseSettings);
 	}
 	
-	/**
-	 * Sets the database setting panel according to the specified database system.
-	 * @param dbSystem the database system to use
-	 */
-	private void setDatabaseSettingPanel(String dbSystem) {
-		// --- Get setting panel for database system ------
-		HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(dbSystem);
-		DatabaseSettingsPanel dbConfigPanel = hds.getHibernateSettingsPanel();
-		// --- Get the configuration properties -----------
-		Properties dbConfig = this.getDatabaseSettings().getHibernateDatabaseSettings();
-		if (dbConfig==null) {
-			dbConfig = hds.getHibernateDefaultPropertySettings();
-		}
-		dbConfigPanel.setHibernateConfigurationProperties(dbConfig);
-		// --- Integrate the configuration panel ----------
-		this.setDatabaseSettingPanel(dbConfigPanel);
-	}
-	/**
-	 * Sets the database setting panel.
-	 * @param databaseSettingsPanel the new database setting panel
-	 */
-	private void setDatabaseSettingPanel(DatabaseSettingsPanel databaseSettingsPanel) {
-		this.databaseSettingsPanel = databaseSettingsPanel;
-		this.getJScrollPaneSettings().setViewportView(this.databaseSettingsPanel);
-	}
-	/**
-	 * Returns the current database setting panel.
-	 * @return the database setting panel
-	 */
-	private DatabaseSettingsPanel getDatabaseSettingPanel() {
-		if (databaseSettingsPanel==null) {
-			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(this.getDatabaseSystem());
-			databaseSettingsPanel = hds.getHibernateSettingsPanel();
-			databaseSettingsPanel.setHibernateConfigurationProperties(hds.getHibernateDefaultPropertySettings());
-			this.getJScrollPaneSettings().setViewportView(this.databaseSettingsPanel);
-		}
-		return databaseSettingsPanel;
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -391,9 +229,11 @@ public class DatabaseSettingsDialog extends JDialog implements ActionListener {
 			
 		} else if (ae.getSource()==this.getJButtonTestConnection()) {
 			// --- Test connection ------------------------
-			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(this.getDatabaseSystem());
+			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+			
+			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
 			if (hds!=null) {
-				Properties props = this.getDatabaseSettingPanel().getHibernateConfigurationProperties();
+				Properties props = dbSettings.getHibernateDatabaseSettings();
 				this.clearUserMessages();
 				if (hds.isDatabaseAccessible(props, this.getUserMessages(), true)==true) {
 					JOptionPane.showMessageDialog(this, "Connection test successful!", "Connection Test", JOptionPane.INFORMATION_MESSAGE);
