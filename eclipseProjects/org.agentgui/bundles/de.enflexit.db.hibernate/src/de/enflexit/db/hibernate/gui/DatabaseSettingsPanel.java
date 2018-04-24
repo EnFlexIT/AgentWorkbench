@@ -59,7 +59,6 @@ public class DatabaseSettingsPanel extends JPanel {
 	private void initialize() {
 		
 		this.setSize(new Dimension(600, 500));
-		
 	    
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};

@@ -778,6 +778,7 @@ en;;Column Headers:;;;
 en;;Configuration Error;;;
 en;;Configure the agents for deployment;;;
 en;;Configure the certificates for secure communication;;;
+en;;Configure the database settings;;;
 en;;Default operating mode:;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
