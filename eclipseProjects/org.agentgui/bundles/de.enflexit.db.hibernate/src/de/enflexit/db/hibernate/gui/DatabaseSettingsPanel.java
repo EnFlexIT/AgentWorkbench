@@ -122,7 +122,7 @@ public class DatabaseSettingsPanel extends JPanel {
 	private JComboBox<String> getJComboBoxDbType() {
 		if (jComboBoxDbType == null) {
 			jComboBoxDbType = new JComboBox<String>(this.getComboBoxModel());
-			jComboBoxDbType.setPreferredSize(new Dimension(240, 26));
+			jComboBoxDbType.setPreferredSize(new Dimension(260, 26));
 			jComboBoxDbType.addItemListener(new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent ie) {
@@ -185,8 +185,11 @@ public class DatabaseSettingsPanel extends JPanel {
 			
 		} else {
 			// --- Always get configuration from visualization ------
+			AbstractDatabaseSettingsPanel settingsPanel = this.getDatabaseSettingPanel();
 			databaseSettings.setDatabaseSystemName(this.getDatabaseSystem());
-			databaseSettings.setHibernateDatabaseSettings(this.getDatabaseSettingPanel().getHibernateConfigurationProperties());
+			if (settingsPanel!=null) {
+				databaseSettings.setHibernateDatabaseSettings(settingsPanel.getHibernateConfigurationProperties());
+			}
 		}
 		return databaseSettings;
 	}
@@ -206,7 +209,10 @@ public class DatabaseSettingsPanel extends JPanel {
 			String dbSystem = this.databaseSettings.getDatabaseSystemName();
 			Properties dbProperties = this.databaseSettings.getHibernateDatabaseSettings();
 			this.setDatabaseSystem(dbSystem);
-			this.getDatabaseSettingPanel().setHibernateConfigurationProperties(dbProperties);
+			AbstractDatabaseSettingsPanel settingsPanel = this.getDatabaseSettingPanel();
+			if (settingsPanel!=null) {
+				settingsPanel.setHibernateConfigurationProperties(dbProperties);
+			}
 		}
 	}
 
@@ -236,6 +242,8 @@ public class DatabaseSettingsPanel extends JPanel {
 	private void setDatabaseSettingPanel(String dbSystem) {
 		// --- Get setting panel for database system ------
 		HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(dbSystem);
+		if (hds==null) return;
+		
 		AbstractDatabaseSettingsPanel dbConfigPanel = hds.getHibernateSettingsPanel();
 		// --- Get the configuration properties -----------
 		Properties dbConfig = this.getDatabaseSettings().getHibernateDatabaseSettings();
@@ -261,9 +269,11 @@ public class DatabaseSettingsPanel extends JPanel {
 	private AbstractDatabaseSettingsPanel getDatabaseSettingPanel() {
 		if (abstractDatabaseSettingsPanel==null) {
 			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(this.getDatabaseSystem());
-			abstractDatabaseSettingsPanel = hds.getHibernateSettingsPanel();
-			abstractDatabaseSettingsPanel.setHibernateConfigurationProperties(hds.getHibernateDefaultPropertySettings());
-			this.getJScrollPaneSettings().setViewportView(this.abstractDatabaseSettingsPanel);
+			if (hds!=null) {
+				abstractDatabaseSettingsPanel = hds.getHibernateSettingsPanel();
+				abstractDatabaseSettingsPanel.setHibernateConfigurationProperties(hds.getHibernateDefaultPropertySettings());
+				this.getJScrollPaneSettings().setViewportView(this.abstractDatabaseSettingsPanel);
+			}
 		}
 		return abstractDatabaseSettingsPanel;
 	}
