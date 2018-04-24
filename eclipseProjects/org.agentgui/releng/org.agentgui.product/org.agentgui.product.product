@@ -37,9 +37,11 @@
    <vm>
    </vm>
 
+   <plugins>
+   </plugins>
+
    <features>
       <feature id="org.agentgui.feature" installMode="root"/>
-      <feature id="de.enflexit.common.feature"/>
    </features>
 
    <configurations>
