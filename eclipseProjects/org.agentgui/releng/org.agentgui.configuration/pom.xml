@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.0.0</tycho-version>
+		<tycho-version>1.1.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -153,7 +153,7 @@
 		<developerConnection>scm:git:git@github.com:EnFlexIT/AgentWorkbench.git</developerConnection>
 	</scm>
 	<organization>
-		<name>Enflex.IT</name>
+		<name>EnFlex.IT</name>
 		<url>http://www.enflex.it/</url>
 	</organization>
 	<name>Agent.Workbench</name>
