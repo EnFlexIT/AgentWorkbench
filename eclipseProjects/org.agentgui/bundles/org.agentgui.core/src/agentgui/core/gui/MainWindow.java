@@ -29,12 +29,9 @@
 package agentgui.core.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -49,24 +46,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -114,13 +108,10 @@ public class MainWindow extends JFrame {
 		MenuHelp
 	}
 	
-	private final ImageIcon iconGreen = GlobalInfo.getInternalImageIcon("StatGreen.png");
-	private final ImageIcon iconRed = GlobalInfo.getInternalImageIcon("StatRed.png");
 	private final ImageIcon iconClose = GlobalInfo.getInternalImageIcon("MBclose.png");
 	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 
-	private static JLabel statusBar;
-	private JLabel statusJade;
+	private MainWindowStatusBar jPanelStatusBar;
 
 	private JSplitPane jSplitPane4ProjectDesktop;
 	private JDesktopPane jDesktopPane4Projects;
@@ -193,8 +184,6 @@ public class MainWindow extends JFrame {
 		// --- Proceed the MainWindow Extensions --------------------
 		this.proceedMainWindowExtensions();
 		
-		this.validate();
-		this.repaint();
 		this.setVisible(true);
 
 	}
@@ -443,46 +432,11 @@ public class MainWindow extends JFrame {
 	 * Gets the status bar.
 	 * @return the status bar
 	 */
-	private JPanel getStatusBar() {
-
-		// --- Linker Teil ----------------------
-		statusBar = new JLabel();
-		statusBar.setPreferredSize(new Dimension(300, 16));
-		statusBar.setFont(new Font("Dialog", Font.PLAIN, 12));
-
-		// --- Mittlerer Teil -------------------
-		statusJade = new JLabel();
-		statusJade.setPreferredSize(new Dimension(200, 16));
-		statusJade.setFont(new Font("Dialog", Font.PLAIN, 12));
-		statusJade.setHorizontalAlignment(SwingConstants.RIGHT);
-		setStatusJadeRunning(false);
-
-		// --- Rechter Teil ---------------------
-		JPanel RightPart = new JPanel(new BorderLayout());
-		RightPart.add(new JLabel(new AngledLinesWindowsCornerIcon()), BorderLayout.SOUTH);
-		RightPart.setOpaque(false);
-
-		// --- StatusBar zusammenbauen ------------------
-		JPanel JPStat = new JPanel(new BorderLayout());
-		JPStat.setPreferredSize(new Dimension(10, 23));
-		JPStat.add(statusBar, BorderLayout.WEST);
-		JPStat.add(statusJade, BorderLayout.CENTER);
-		JPStat.add(RightPart, BorderLayout.EAST);
-		return JPStat;
-	}
-
-	/**
-	 * Sets a text in the applications status bar.
-	 * @param message the new status bar
-	 */
-	public void setStatusBar(String message) {
-		if (message == null) {
-			statusBar.setText("  ");
-		} else {
-			statusBar.setText("  " + message);
+	public MainWindowStatusBar getStatusBar() {
+		if (jPanelStatusBar==null) {
+			jPanelStatusBar = new MainWindowStatusBar();
 		}
-		statusBar.validate();
-		statusBar.repaint();
+		return jPanelStatusBar;
 	}
 
 	/**
@@ -496,20 +450,19 @@ public class MainWindow extends JFrame {
 			this.setTitle(Application.getGlobalInfo().getApplicationTitle());
 		}
 	}
-
+	/**
+	 * Sets a text in the applications status bar.
+	 * @param message the new status bar
+	 */
+	public void setStatusBar(String message) {
+		this.getStatusBar().setStatusBarMessage(message);
+	}
 	/**
 	 * Sets the indicator in order to visul inform that JADE is running or not (red or green button in the right corner of the status bar + text).
 	 * @param isRunning the new status jade running
 	 */
 	public void setStatusJadeRunning(boolean isRunning) {
-		if (isRunning == false) {
-			statusJade.setText(Language.translate("JADE wurde noch nicht gestartet."));
-			statusJade.setIcon(iconRed);
-		} else {
-			statusJade.setText(Language.translate("JADE wurde lokal gestartet."));
-			statusJade.setIcon(iconGreen);
-		}
-		;
+		this.getStatusBar().setJadeIsRunning(isRunning);
 	}
 
 	/**
@@ -1539,8 +1492,14 @@ public class MainWindow extends JFrame {
 	// --- Methods to control the Buttons for the simulation control -----
 	// -------------------------------------------------------------------
 	/**
+	 * Checks if is enabled sim start.
+	 * @return true, if is enabled sim start
+	 */
+	public boolean isEnabledSimStart() {
+		return jButtonSimStart.isEnabled();
+	}
+	/**
 	 * Sets the enable sim start.
-	 * 
 	 * @param enable the new enable sim start
 	 */
 	public void setEnableSimStart(boolean enable) {
@@ -1549,8 +1508,14 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
+	 * Checks if is enabled sim pause.
+	 * @return true, if is enabled sim pause
+	 */
+	public boolean isEnabledSimPause() {
+		return jButtonSimPause.isEnabled();
+	}
+	/**
 	 * Sets the enable sim pause.
-	 * 
 	 * @param enable the new enable sim pause
 	 */
 	public void setEnableSimPause(boolean enable) {
@@ -1559,40 +1524,19 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
+	 * Checks if is enabled sim stop.
+	 * @return true, if is enabled sim stop
+	 */
+	public boolean isEnabledSimStop() {
+		return jButtonSimStop.isEnabled();
+	}
+	/**
 	 * Sets the enable sim stop.
-	 * 
 	 * @param enable the new enable sim stop
 	 */
 	public void setEnableSimStop(boolean enable) {
 		jButtonSimStop.setEnabled(enable);
 		jMenuItemSimStop.setEnabled(enable);
-	}
-
-	/**
-	 * Checks if is enabled sim start.
-	 * 
-	 * @return true, if is enabled sim start
-	 */
-	public boolean isEnabledSimStart() {
-		return jButtonSimStart.isEnabled();
-	}
-
-	/**
-	 * Checks if is enabled sim pause.
-	 * 
-	 * @return true, if is enabled sim pause
-	 */
-	public boolean isEnabledSimPause() {
-		return jButtonSimPause.isEnabled();
-	}
-
-	/**
-	 * Checks if is enabled sim stop.
-	 * 
-	 * @return true, if is enabled sim stop
-	 */
-	public boolean isEnabledSimStop() {
-		return jButtonSimStop.isEnabled();
 	}
 
 	/**
@@ -1602,66 +1546,8 @@ public class MainWindow extends JFrame {
 		this.setEnableSimStart(true);
 		this.setEnableSimPause(false);
 		this.setEnableSimStop(false);
-		if (Application.getProjectFocused() != null) {
+		if (Application.getProjectFocused()!=null) {
 			this.enableSetupSelector(true);
-		}
-	}
-	// -------------------------------------------------------------------
-	// -------------------------------------------------------------------
-
-	/**
-	 * The Class AngledLinesWindowsCornerIcon.
-	 */
-	private class AngledLinesWindowsCornerIcon implements Icon {
-
-		private final Color WHITE_LINE_COLOR = new Color(255, 255, 255);
-		private final Color GRAY_LINE_COLOR = new Color(172, 168, 153);
-
-		private static final int WIDTH = 13;
-		private static final int HEIGHT = 13;
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.swing.Icon#getIconHeight()
-		 */
-		public int getIconHeight() {
-			return WIDTH;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.swing.Icon#getIconWidth()
-		 */
-		public int getIconWidth() {
-			return HEIGHT;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
-		 */
-		public void paintIcon(Component c, Graphics g, int x, int y) {
-
-			g.setColor(WHITE_LINE_COLOR);
-			g.drawLine(0, 12, 12, 0);
-			g.drawLine(5, 12, 12, 5);
-			g.drawLine(10, 12, 12, 10);
-
-			g.setColor(GRAY_LINE_COLOR);
-			g.drawLine(1, 12, 12, 1);
-			g.drawLine(2, 12, 12, 2);
-			g.drawLine(3, 12, 12, 3);
-
-			g.drawLine(6, 12, 12, 6);
-			g.drawLine(7, 12, 12, 7);
-			g.drawLine(8, 12, 12, 8);
-
-			g.drawLine(11, 12, 12, 11);
-			g.drawLine(12, 12, 12, 12);
-
 		}
 	}
 

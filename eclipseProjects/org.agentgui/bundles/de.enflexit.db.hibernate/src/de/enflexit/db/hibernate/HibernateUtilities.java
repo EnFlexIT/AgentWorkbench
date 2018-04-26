@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+
+import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 
 /**
  * The class HibernateUtilities provides static access to Hibernate SessionFactories
@@ -24,14 +27,45 @@ import org.hibernate.service.ServiceRegistry;
  */
 public class HibernateUtilities {
 
-	public static final String DEFAULT_SESSION_FACTORY_ID = "defaultFactory";
+	public static final String DEFAULT_SESSION_FACTORY_ID = "awbSessionFactory";
 	public static final String DB_SERVICE_REGISTRATION_ERROR = "NO DATABASE SYSTEM REGISTERD";
 	
 	private static HashMap<String, HibernateDatabaseService> databaseServices;
+	private static ConcurrentHashMap<String, SessionFactoryMonitor> sessionFactoryMonitorHashMap;
 	private static HashMap<String, SessionFactory> sessionFactoryHashMap;
 	
+	
 	/**
-	 * Gets the session factory hash map.
+	 * Returns the session factory monitor hash map.
+	 * @return the session factory monitor hash map
+	 */
+	private static ConcurrentHashMap<String, SessionFactoryMonitor> getSessionFactoryMonitorHashMap() {
+		if (sessionFactoryMonitorHashMap==null) {
+			sessionFactoryMonitorHashMap = new ConcurrentHashMap<>();
+		}
+		return sessionFactoryMonitorHashMap;
+	}
+	/**
+	 * Returns the session factory monitor for the specified factory defined by its ID.
+	 * @param factoryID the factory ID (<code>null</code> will use the default factory)
+	 * @return the session factory monitor
+	 * @see #DEFAULT_SESSION_FACTORY_ID
+	 */
+	public static SessionFactoryMonitor getSessionFactoryMonitor(String factoryID) {
+		
+		String idFactory = getFactoryID(factoryID);
+		// --- Try to get the SessionFactoryMonitor ----------------- 
+		SessionFactoryMonitor monitor = getSessionFactoryMonitorHashMap().get(idFactory);
+		if (monitor==null) {
+			// --- Put monitor instance into the local hash map -----
+			monitor = new SessionFactoryMonitor(idFactory);
+			getSessionFactoryMonitorHashMap().put(idFactory, monitor);
+		}
+		return monitor;
+	}
+	
+	/**
+	 * Returns the session factory hash map.
 	 * @return the session factory hash map
 	 */
 	private static HashMap<String, SessionFactory> getSessionFactoryHashMap() {
@@ -79,6 +113,21 @@ public class HibernateUtilities {
 	}
 	
 	/**
+	 * Checks and return a factory ID. If the argument is not null the specified ID will be used. 
+	 * In case of a <code>null</code> argument, the default factory ID will be returned.
+	 *
+	 * @param factoryID the factory ID
+	 * @return the factory ID
+	 */
+	private static String getFactoryID(String factoryID) {
+		String idFactory = factoryID;
+		if (idFactory==null || idFactory.isEmpty()) {
+			idFactory = DEFAULT_SESSION_FACTORY_ID;
+		}
+		return idFactory;
+	}
+	
+	/**
 	 * Returns the hibernate session factory.
 	 *
 	 * @param factoryID the factory ID (<code>null</code> will use the default factory)
@@ -86,24 +135,32 @@ public class HibernateUtilities {
 	 * @param isResetSessionFactory the is reset session factory
 	 * @param doSilentConnectionCheck set true, the do a silent connection check
 	 * @return the session factory
+	 * @see #DEFAULT_SESSION_FACTORY_ID
 	 */
-	public static synchronized SessionFactory getSessionFactory(String factoryID, Configuration configuration, boolean isResetSessionFactory, boolean doSilentConnectionCheck) {
+	public static SessionFactory getSessionFactory(String factoryID, Configuration configuration, boolean isResetSessionFactory, boolean doSilentConnectionCheck) {
 
 		// --- Check for an available SessionFactory -------------------------- 
-		String idFactory = factoryID;
-		if (idFactory==null || idFactory.isEmpty()) {
-			idFactory = DEFAULT_SESSION_FACTORY_ID;
-		}		
+		String idFactory = getFactoryID(factoryID);
 		SessionFactory factory = getSessionFactoryHashMap().get(idFactory);
 		
 		// --- Reset the session factory first? -------------------------------
-		if (factory!=null && isResetSessionFactory==true) {
-			closeSessionFactory(factory);
-			factory = null;
+		if (factory!=null) {
+			if (isResetSessionFactory==true) {
+				closeSessionFactory(factoryID);
+				factory = null;
+			} else {
+				return factory;
+			}
 		}
 		
-		// --- Create the session factory, if not already available ----------- 
-		if (factory==null) {
+		// --- Synchronize on monitor object ----------------------------------		
+		SessionFactoryMonitor monitor = getSessionFactoryMonitor(idFactory);
+		switch (monitor.getSessionFactoryState()) {
+		case NotAvailableYet:
+		case CheckDBConectionFailed:
+		case InitializationProcessFailed:
+		case Destroyed:
+			// --- (Retry to) Create the session factory ----------------------
 			try {
 				if (configuration==null) {
 					// --- Use Hibernate auto configuration here --------------
@@ -111,25 +168,66 @@ public class HibernateUtilities {
 				}
 				
 				// --- Check the database connection here ---------------------
+				monitor.setSessionFactoryState(SessionFactoryState.CheckDBConnection);
 				String dbCheckMessage = isAvailableDatabase(configuration, doSilentConnectionCheck); 
 				if (dbCheckMessage==null) {
 					// --- Create the session factory -------------------------
+					monitor.setSessionFactoryState(SessionFactoryState.InitializationProcessStarted);
 					ServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 					factory = configuration.buildSessionFactory(registry);
 					getSessionFactoryHashMap().put(idFactory, factory);
+					monitor.setSessionFactoryState(SessionFactoryState.Created);
 					
 				} else {
+					monitor.setSessionFactoryState(SessionFactoryState.CheckDBConectionFailed);
 					if (doSilentConnectionCheck==false) {
 						System.err.println("[" + HibernateUtilities.class.getSimpleName() + "]: No database connection could be established: " + dbCheckMessage);
 					}
 				}
 				
 			} catch (Throwable th) {
+				monitor.setSessionFactoryState(SessionFactoryState.InitializationProcessFailed);
 				System.err.println("Failed to create session factory " + th);
 				th.printStackTrace();
-			}	
+				
+			} finally {
+				// --- notify all waiters ---------------------------------
+				synchronized (monitor) {
+					monitor.notifyAll();
+				}
+			}
+			break;
+
+		case CheckDBConnection:
+		case InitializationProcessStarted:
+			// --- Wait for the creation ----------------------------------
+			waitForSessionFactoryCreation(monitor);
+			// --- Get the Factory from the local HashMap -----------------
+			factory = getSessionFactoryHashMap().get(idFactory);
+			break;
+			
+		case Created:
+			// --- Get the Factory from the local HashMap -----------------
+			factory = getSessionFactoryHashMap().get(idFactory);
+			break;
 		}
+		
+	
 		return factory;
+	}
+	/**
+	 * Wait for the session factory creation.
+	 * @param monitor the monitor
+	 */
+	private static void waitForSessionFactoryCreation(SessionFactoryMonitor monitor) {
+		try {
+			synchronized (monitor) {
+				monitor.wait();
+			}
+			
+		} catch (IllegalMonitorStateException | InterruptedException imse) {
+			// imse.printStackTrace();
+		}
 	}
 	
 	/**
@@ -137,16 +235,17 @@ public class HibernateUtilities {
 	 * @param factoryID the factory ID (<code>null</code> will use the default factory)
 	 */
 	public static void closeSessionFactory(String factoryID) {
-		if (factoryID==null) {
-			factoryID = DEFAULT_SESSION_FACTORY_ID;
-		}
-		closeSessionFactory(getSessionFactoryHashMap().get(factoryID));
+		String idFactory = getFactoryID(factoryID);
+		SessionFactory factory = getSessionFactoryHashMap().remove(idFactory);
+		SessionFactoryMonitor monitor = getSessionFactoryMonitor(idFactory);
+		monitor.setSessionFactoryState(SessionFactoryState.Destroyed);
+		closeSessionFactory(factory);
 	}
 	/**
 	 * Closes the specified hibernate session factory.
 	 * @param factory the factory
 	 */
-	public static void closeSessionFactory(SessionFactory factory) {
+	private static void closeSessionFactory(SessionFactory factory) {
 		if (factory!=null) {
 			factory.close();
 			factory = null;
@@ -209,7 +308,7 @@ public class HibernateUtilities {
 	 * Returns the available {@link HibernateDatabaseService}.
 	 * @return the database services
 	 */
-	public static HashMap<String, HibernateDatabaseService> getDatabaseServices() {
+	private static HashMap<String, HibernateDatabaseService> getDatabaseServices() {
 		if (databaseServices==null) {
 			databaseServices = new HashMap<>();
 		}

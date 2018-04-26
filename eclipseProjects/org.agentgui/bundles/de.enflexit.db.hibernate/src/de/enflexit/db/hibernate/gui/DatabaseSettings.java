@@ -1,6 +1,7 @@
 package de.enflexit.db.hibernate.gui;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -94,6 +95,53 @@ public class DatabaseSettings implements Serializable {
 	 */
 	public void setHibernateDatabaseSettings(Properties hibernateDatabaseSettings) {
 		this.hibernateDatabaseSettings = hibernateDatabaseSettings;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject instanceof DatabaseSettings) {
+			// --- Cast the object to a DatabaseSettings instance and compare it --------
+			DatabaseSettings compareSettings = (DatabaseSettings) compareObject;
+			
+			// --- Compare the database system name -------------------------------------
+			if (compareSettings.getDatabaseSystemName().equals(this.getDatabaseSystemName())==false) return false;
+			if (compareSettings.getHibernateDatabaseSettings().size()!=this.getHibernateDatabaseSettings().size()) return false;
+			
+			ArrayList<?> propKeys = new ArrayList<>(compareSettings.getHibernateDatabaseSettings().keySet());
+			for (int i = 0; i < propKeys.size(); i++) {
+				String comparePropKey = (String) propKeys.get(i);
+				String comparePropValue = compareSettings.getHibernateDatabaseSettings().getProperty(comparePropKey);
+				String localPropValue = this.getHibernateDatabaseSettings().getProperty(comparePropKey);
+				if (this.isEqualString(comparePropValue, localPropValue)==false) {
+					return false;
+				}
+			}
+			return true;
+			
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if is the specified string are equal or equal strings.
+	 *
+	 * @param string1 the string 1
+	 * @param string2 the string 2
+	 * @return true, if is equal string
+	 */
+	private boolean isEqualString(String string1, String string2) {
+		if (string1==null & string2==null) {
+			return true;
+		} else if (string1==null & string2!=null) {
+			return false;
+		} else if (string1!=null & string2==null) {
+			return false;
+		}
+		return string1.equals(string2);
 	}
 	
 }

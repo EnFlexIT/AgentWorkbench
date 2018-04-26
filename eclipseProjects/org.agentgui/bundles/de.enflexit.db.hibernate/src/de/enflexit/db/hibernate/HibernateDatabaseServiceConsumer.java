@@ -1,6 +1,5 @@
 package de.enflexit.db.hibernate;
 
-
 /**
  * The Class HibernateDatabaseServiceConsumer is used to receive bind
  * registrations for {@link HibernateDatabaseService}s and will forward 
@@ -17,9 +16,8 @@ public class HibernateDatabaseServiceConsumer {
 	public synchronized void registerDatabaseService(HibernateDatabaseService dbService) {
 		HibernateUtilities.registerDatabaseService(dbService);
 	}
-	
 	/**
-	 * UnRegister the specified HibernateDatabaseService.
+	 * Unregister the specified HibernateDatabaseService.
 	 * @param dbService the HibernateDatabaseService to register
 	 */
 	public synchronized void unregisterDatabaseService(HibernateDatabaseService dbService) {
