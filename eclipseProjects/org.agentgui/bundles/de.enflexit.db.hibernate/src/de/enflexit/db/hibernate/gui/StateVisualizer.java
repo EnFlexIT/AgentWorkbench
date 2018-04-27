@@ -4,6 +4,12 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 
 /**
@@ -39,6 +45,28 @@ public class StateVisualizer {
 		if (visServices==null) {
 			visServices = new Vector<>();
 		}
+		
+		// --- Additionally, try to get services programmatically ---
+		Bundle bundle = FrameworkUtil.getBundle(StateVisualizer.class);
+		if (bundle!=null) {
+			try {
+				// --- Get context and services ---------------------
+				BundleContext context =  bundle.getBundleContext();
+				ServiceReference<?>[] serviceRefs = context.getAllServiceReferences(HibernateStateVisualizationService.class.getName(), null);
+				if (serviceRefs!=null) {
+					for (int i = 0; i < serviceRefs.length; i++) {
+						HibernateStateVisualizationService service = (HibernateStateVisualizationService) context.getService(serviceRefs[i]);
+						if (visServices.contains(service)==false) {
+							visServices.add(service);
+						}
+					}
+				}
+				
+			} catch (InvalidSyntaxException isEx) {
+				isEx.printStackTrace();
+			}
+		}
+		
 		return visServices;
 	}
 	/**

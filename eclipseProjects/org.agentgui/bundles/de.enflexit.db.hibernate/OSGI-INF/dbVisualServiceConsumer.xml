@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.db.hibernate.gui.HibernateStateVisualizationServiceConsumer">
-   <implementation class="de.enflexit.db.hibernate.gui.HibernateStateVisualizationServiceConsumer"/>
-   <reference bind="registerVisualizationService" cardinality="0..n" interface="de.enflexit.db.hibernate.gui.HibernateStateVisualizationService" name="HibernateStateVisualizationService" policy="static" unbind="unregisterVisualizationService"/>
-</scr:component>
