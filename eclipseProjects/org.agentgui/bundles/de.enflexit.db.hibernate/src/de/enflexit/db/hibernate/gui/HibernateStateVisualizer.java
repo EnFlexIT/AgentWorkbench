@@ -13,12 +13,12 @@ import org.osgi.framework.ServiceReference;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 
 /**
- * The Class StateVisualizer provides static methods to visualize  
+ * The Class HibernateStateVisualizer provides static methods to visualize  
  * the state of a session factory and thus of a database connection.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class StateVisualizer {
+public class HibernateStateVisualizer {
 
 	private static final String imagePackage = "/de/enflexit/db/hibernate/gui/img/";
 
@@ -47,7 +47,7 @@ public class StateVisualizer {
 		}
 		
 		// --- Additionally, try to get services programmatically ---
-		Bundle bundle = FrameworkUtil.getBundle(StateVisualizer.class);
+		Bundle bundle = FrameworkUtil.getBundle(HibernateStateVisualizer.class);
 		if (bundle!=null) {
 			try {
 				// --- Get context and services ---------------------
@@ -66,7 +66,6 @@ public class StateVisualizer {
 				isEx.printStackTrace();
 			}
 		}
-		
 		return visServices;
 	}
 	/**
@@ -106,7 +105,7 @@ public class StateVisualizer {
 		String imagePackage = getImagePackage();
 		ImageIcon imageIcon=null;
 		try {
-			imageIcon = new ImageIcon(StateVisualizer.class.getResource((imagePackage + fileName)));
+			imageIcon = new ImageIcon(HibernateStateVisualizer.class.getResource((imagePackage + fileName)));
 		} catch (Exception err) {
 			System.err.println("Error while searching for image file '" + fileName + "' in " + imagePackage);
 			err.printStackTrace();

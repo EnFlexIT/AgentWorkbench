@@ -156,6 +156,7 @@ public class LoadMeasureJVM implements Cloneable {
 		long[] jvmThreadIDs = threadXB.getAllThreadIds();
 		ThreadInfo[] jvmThreadInfo = threadXB.getThreadInfo(jvmThreadIDs);
 		for (int i = 0; i < jvmThreadInfo.length; i++) {
+			if (jvmThreadInfo[i]==null) continue;
 			String threadName = jvmThreadInfo[i].getThreadName();
 			if (threadName.equalsIgnoreCase(threadName2LookAt)) {
 				exists = true;

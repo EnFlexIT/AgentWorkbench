@@ -17,14 +17,14 @@ public class HibernateStateVisualizationServiceConsumer {
 	 * @param visService the HibernateStateVisualizationService to register
 	 */
 	public synchronized void registerVisualizationService(HibernateStateVisualizationService visService) {
-		StateVisualizer.registerStateVisualizationService(visService);
+		HibernateStateVisualizer.registerStateVisualizationService(visService);
 	}
 	/**
 	 * Unregister the specified HibernateStateVisualizationService.
 	 * @param visService the HibernateStateVisualizationService to register
 	 */
 	public synchronized void unregisterVisualizationService(HibernateStateVisualizationService visService) {
-		StateVisualizer.unregisterStateVisualizationService(visService);
+		HibernateStateVisualizer.unregisterStateVisualizationService(visService);
 	}
 	
 }

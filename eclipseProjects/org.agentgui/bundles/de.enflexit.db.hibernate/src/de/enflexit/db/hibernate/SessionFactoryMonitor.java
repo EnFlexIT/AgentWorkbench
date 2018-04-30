@@ -2,7 +2,7 @@ package de.enflexit.db.hibernate;
 
 import javax.swing.ImageIcon;
 
-import de.enflexit.db.hibernate.gui.StateVisualizer;
+import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 
 /**
  * The Class SessionFactoryMonitor serves as synchronization object to initialize 
@@ -20,7 +20,7 @@ public class SessionFactoryMonitor {
 		Destroyed("SessionFactory was destroyed", "DB_State_Grey.png"),
 		CheckDBConnection("Checking database connection ...", "DB_State_Blue.png"),
 		CheckDBConectionFailed("Database connection test failed!", "DB_State_Red.png"),
-		InitializationProcessStarted("Inizilize SessionFactory", "DB_State_Turquoise.png"),
+		InitializationProcessStarted("Initialize SessionFactory", "DB_State_Turquoise.png"),
 		InitializationProcessFailed("Initialization of SessionFactory failed", "DB_State_Red.png"),
 		Created("Successfully Initialized", "DB_State_Green.png");
 		
@@ -56,7 +56,7 @@ public class SessionFactoryMonitor {
 		 * @return the icon image
 		 */
 		public ImageIcon getIconImage() {
-			return StateVisualizer.getImageIcon(this.getIconImageName());
+			return HibernateStateVisualizer.getImageIcon(this.getIconImageName());
 		}
 	}
 
@@ -100,7 +100,7 @@ public class SessionFactoryMonitor {
 	 */
 	public void setSessionFactoryState(SessionFactoryState sessionFactoryState) {
 		this.sessionFactoryState = sessionFactoryState;
-		StateVisualizer.setConnectionState(this.getFactoryID(), this.sessionFactoryState);
+		HibernateStateVisualizer.setConnectionState(this.getFactoryID(), this.sessionFactoryState);
 	}
 	
 }

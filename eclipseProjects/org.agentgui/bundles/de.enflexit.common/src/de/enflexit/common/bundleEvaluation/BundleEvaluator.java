@@ -329,6 +329,7 @@ public class BundleEvaluator {
 			@Override
 			public void run() {
 				try {
+					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 					evaluateBundle(bundle, bundleClassFilterToUse);
 				} catch (IllegalStateException isEx) {
 					System.err.println(Thread.currentThread().getName() + ": " + isEx.getMessage());
