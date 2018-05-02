@@ -71,6 +71,8 @@ public class AgentGuiUpdater extends Thread {
 	private AwbProgressMonitor progressMonitor;
 	
 	private Object synchronizationObject;
+	
+	private boolean debug = false;
 
 	
 	/**
@@ -330,11 +332,19 @@ public class AgentGuiUpdater extends Thread {
 	public void waitForUpdate() {
 		synchronized (this.getSynchronizationObject()) {
 			try {
+				this.debugPrint("Waiting for the update process");
 				this.getSynchronizationObject().wait();
+				this.debugPrint("Update process finished, proceeding");
 			} catch (InterruptedException e) {
 				System.err.println("Waiting for update interrupted");
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private void debugPrint(String text) {
+		if (this.debug==true) {
+			System.out.println(text);
 		}
 	}
 

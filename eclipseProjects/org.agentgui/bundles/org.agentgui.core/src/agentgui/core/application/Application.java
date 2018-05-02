@@ -587,11 +587,6 @@ public class Application {
 		switch (getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			
-			// --- Check for updates --------------------------------
-			updater = new AgentGuiUpdater();
-			updater.start();
-			updater.waitForUpdate();
-			
 			// ------------------------------------------------------
 			// --- Start Application --------------------------------
 			getTrayIcon(); 
@@ -604,13 +599,20 @@ public class Application {
 					
 					setOntologyVisualisationConfigurationToCommonBundle();
 					
+					// --- Check for updates --------------------------------
+					AgentGuiUpdater updater = new AgentGuiUpdater();
+					updater.start();
+					updater.waitForUpdate();
+					
+					// --- Do the benchmark -----------------------------------
 					doBenchmark(false);
 					waitForBenchmark();
 					
+					// --- Start the bundle evaluation process ----------------
 					startBundleEvaluation();
 					
+					// --- Open project if specified via start argument -------
 					proceedStartArgumentOpenProject();
-					new AgentGuiUpdater().start();
 					
 				}
 			});
