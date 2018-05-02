@@ -203,7 +203,11 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		
 		// --- 2. Try to check the resources of the bundle ----------
 		String simpleClassName = className.substring(className.lastIndexOf(".")+1);
-		String packagePath = className.substring(0, className.lastIndexOf("."));
+		String packagePath = className;
+		int lastDotIndex = className.lastIndexOf(".");
+		if (lastDotIndex!=-1) {
+			packagePath = className.substring(0, lastDotIndex);
+		}
 		packagePath = packagePath.replace(".", "/");
 		if (packagePath.startsWith("/")==false) packagePath = "/" + packagePath;
 		if (packagePath.endsWith("/")  ==false) packagePath = packagePath + "/";
