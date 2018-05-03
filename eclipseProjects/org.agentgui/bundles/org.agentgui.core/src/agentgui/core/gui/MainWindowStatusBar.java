@@ -120,7 +120,7 @@ public class MainWindowStatusBar extends JPanel {
 			jLabelJadeState.setPreferredSize(new Dimension(200, 16));
 			jLabelJadeState.setMinimumSize(new Dimension(200, 16));
 			jLabelJadeState.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelJadeState.setHorizontalAlignment(SwingConstants.RIGHT);
+			jLabelJadeState.setHorizontalAlignment(SwingConstants.LEFT);
 		}
 		return jLabelJadeState;
 	}
