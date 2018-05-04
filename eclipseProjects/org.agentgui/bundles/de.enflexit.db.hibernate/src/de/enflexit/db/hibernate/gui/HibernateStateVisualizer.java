@@ -52,14 +52,16 @@ public class HibernateStateVisualizer {
 			try {
 				// --- Get context and services ---------------------
 				BundleContext context =  bundle.getBundleContext();
-				ServiceReference<?>[] serviceRefs = context.getAllServiceReferences(HibernateStateVisualizationService.class.getName(), null);
-				if (serviceRefs!=null) {
-					for (int i = 0; i < serviceRefs.length; i++) {
-						HibernateStateVisualizationService service = (HibernateStateVisualizationService) context.getService(serviceRefs[i]);
-						if (visServices.contains(service)==false) {
-							visServices.add(service);
+				if (context!=null) {
+					ServiceReference<?>[] serviceRefs = context.getAllServiceReferences(HibernateStateVisualizationService.class.getName(), null);
+					if (serviceRefs!=null) {
+						for (int i = 0; i < serviceRefs.length; i++) {
+							HibernateStateVisualizationService service = (HibernateStateVisualizationService) context.getService(serviceRefs[i]);
+							if (visServices.contains(service)==false) {
+								visServices.add(service);
+							}
 						}
-					}
+					}					
 				}
 				
 			} catch (InvalidSyntaxException isEx) {

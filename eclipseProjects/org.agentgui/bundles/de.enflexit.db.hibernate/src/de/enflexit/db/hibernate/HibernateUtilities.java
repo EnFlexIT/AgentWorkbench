@@ -12,6 +12,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 
@@ -312,6 +317,29 @@ public class HibernateUtilities {
 		if (databaseServices==null) {
 			databaseServices = new HashMap<>();
 		}
+		// --- Dynamically check for corresponding OSGI services ----
+		Bundle bundle = FrameworkUtil.getBundle(HibernateUtilities.class);
+		if (bundle!=null) {
+			try {
+				// --- Get context and services ---------------------
+				BundleContext context =  bundle.getBundleContext();
+				if (context!=null) {
+					ServiceReference<?>[] serviceRefs = context.getAllServiceReferences(HibernateDatabaseService.class.getName(), null);
+					if (serviceRefs!=null) {
+						for (int i = 0; i < serviceRefs.length; i++) {
+							HibernateDatabaseService dbService = (HibernateDatabaseService) context.getService(serviceRefs[i]);
+							HibernateDatabaseService dbServiceAvailable = databaseServices.get(dbService.getDatabaseSystemName());
+							if (dbServiceAvailable==null) {
+								databaseServices.put(dbService.getDatabaseSystemName(), dbService);
+							}
+						}
+					}	
+				}
+				
+			} catch (InvalidSyntaxException isEx) {
+				isEx.printStackTrace();
+			}
+		}		
 		return databaseServices;
 	}
 	/**
@@ -325,7 +353,7 @@ public class HibernateUtilities {
 		if (isValidHibernateDatabaseService(databaseService)) {
 			String dbSystemName = databaseService.getDatabaseSystemName();
 			HibernateDatabaseService oldDbService = getDatabaseServices().get(dbSystemName);
-			if (oldDbService!=null) {
+			if (oldDbService!=null && databaseService!=oldDbService) {
 				System.err.println("Overwrite service for database system '" + dbSystemName + "'!");
 			}
 			getDatabaseServices().put(dbSystemName, databaseService);
