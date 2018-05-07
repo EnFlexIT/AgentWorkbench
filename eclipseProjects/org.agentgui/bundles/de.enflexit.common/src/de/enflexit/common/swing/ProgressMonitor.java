@@ -95,6 +95,13 @@ public class ProgressMonitor implements ActionListener {
 	public void setOwner(Dialog ownerDialog) {
 		this.owner = ownerDialog;
 	}
+	/**
+	 * Allows to set the owner window .
+	 * @param owner the new owner
+	 */
+	public void setOwner(Window owner) {
+		this.owner = owner;
+	}
 	
 	/**
 	 * Sets the progress monitor modal (or not) if possible (applies 
