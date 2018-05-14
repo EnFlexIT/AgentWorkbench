@@ -1,6 +1,6 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
-de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please enter a different name for the setup.;;;
-de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br>Please enter a longer name for the setup.;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
 de;' ist bereits geöffnet!;' is already open!;;;
@@ -13,7 +13,6 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name 
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
-de;Ablaufdatum;Expiration Date;;;
 de;Abtastintervall;Sampling interval;;;
 de;Adressen;Addresses;;;
 de;Agent auswählen!;Select an Agent!;;;
@@ -48,6 +47,7 @@ de;Agentenklasse;Agent class
 de;Agentenliste aktualisieren;Refresh agent list
 de;Agentenumgebung;Agent Environment;;;
 de;Aktualisiere Agenten-Liste...;Refreshing agent list
+de;Aktualisierung;Update;;;
 de;Alias;Alias;;;
 de;Alle Eigenschaftsfenster schließen;Close all property windows;;;
 de;Alle Objekte löschen;Delete all objects
@@ -62,7 +62,7 @@ de;Ansicht wiederherstellen;Restore View;;;
 de;Ansicht:;View:
 de;Ansicht;View
 de;Anwenden;Apply;;;
-de;Anwendung umschalten ?;Switch Application ?;;;
+de;Anwendung umschalten ?;Switch application?;;;
 de;Anwendung;Application
 de;Anzahl Agenten (erwartet);Number of agents (expected)
 de;Anzahl Container berechnen;Calculate number of container
@@ -96,33 +96,29 @@ de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
-de;Bitte geben Sie den Agenten an, der gestartet werden soll;Please specify the agent to be started;;;
-de;Bitte geben Sie den Namen für das neue Setup an!;Please, enter a name for the new setup!;null;null;null
-de;Bitte geben Sie den neuen Namen für das Setup an!;Please, specify the new name for the setup!;null;null;null
+de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
+de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
-de;Bitte geben Sie einen Agenten-Namen an;Please specify an agent name;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
-de;Bitte spezifizieren Sie den Typ des Startarguments!;Please, specify the type of the start argument!;null;null;null
-de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! - The benchmark is running ...;null;null;null
-de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please, repeat the process if required and then confirm with 'Yes'.;null;null;null
-de;Bitte wählen Sie das Projekt aus, das den Agenten enthält;Please, select the project that contains the agent;;;
-de;Bitte wählen Sie das gewünschte Projekt aus!;Please, select the desired project!;null;null;null
-de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please, select the agent that you want to start.;;;
-de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please, select the agent that you want to start;;;
-de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please, select the ontology, which has to be added to your project!;null;null;null
-de;Bitte wählen Sie die Tabellenzeile, die gelöscht werden soll;Please select the table row to be deleted;;;
-de;Bitte wählen Sie die Zeile, in der ein Agent definiert werden soll;Please select the line in which an agent should be defined;;;
-de;Bitte wählen Sie ein Projekt aus;Please, select a project;;;
-de;Bitte wählen Sie ein Simulations-Setup;Please, select a simulation setup;;;
-de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please, select one of the mapped ontology references from the list.;;;
-de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please, select a single network component!;;;
-de;Bitte wählen Sie einen Agenten aus der Liste.;Please, select an agent from the list.;;;
-de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please, select an agent and an ontology reference from the corresponding lists.;;;
-de;Bitte wählen Sie einen Agenten;Please, select an agent;;;
-de;Bitte wählen Sie einen Namen für den Agenten!;Please, choose a name for the agent!;null;null;null
-de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please, check your database settings!;null;null;null
+de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
+de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
+de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
+de;Bitte wählen Sie das Projekt aus, das den Agenten enthält;Please select the project that contains the agent;;;
+de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
+de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please select the agent you want to start.;;;
+de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please select the agent that you want to start;;;
+de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
+de;Bitte wählen Sie ein Projekt aus;Please select a project;;;
+de;Bitte wählen Sie ein Simulations-Setup;Please select a simulation setup;;;
+de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
+de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
+de;Bitte wählen Sie einen Agenten aus der Liste.;Please select an agent from the list.;;;
+de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please select an agent and an ontology reference from the corresponding lists.;;;
+de;Bitte wählen Sie einen Agenten;Please select an agent;;;
+de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
+de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
 de;Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien);Include build directory from a Java project (directory with * .class files);;;
 de;CPU-Auslastung;CPU-Load
 de;CPU;CPU
@@ -219,7 +215,6 @@ de;Entwickler-Ansicht;Developer view
 de;Erfolgreich;Successful;;;
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
-de;Erzeuge die Tabelle 'platforms' für den Server-Master ...;Create table 'platforms' for the server.master now ...;;;
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
@@ -240,7 +235,6 @@ de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Date
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
-de;Fehlender Agent Name!;Missing Agent Name!;;;
 de;Fehlender Agent!;Missing Agent!;;;
 de;Fehlendes Projekt!;Missing Project!;;;
 de;Fehlendes Simulations-Setup!;Missing Simulation Setup!;;;
@@ -312,6 +306,8 @@ de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
 de;Installationspakete;Installation Package Directory;;;
+de;Installiere Updates;Installing updates;;;
+de;Installiere;Installing;;;
 de;Introspector-Agent starten;Start Introspector agent
 de;Italienisch;Italian
 de;JADE direkt starten ohne nachzufragen.;Directly start JADE without further confirmation.;;;
@@ -348,6 +344,7 @@ de;Keine SVG-Datei zugewiesen;No SVG file assigned
 de;Keine Umgebung definiert;No environment defined
 de;Keine Umgebungsdatei definiert;No environment file defined
 de;Keine Umgebungsdatei zugewiesen;No environment file assigned
+de;Keine Updates gefunden;No updates found;;;
 de;Keine;None
 de;Keiner;None
 de;Kennwort bestätigen;Confirm password;;;
@@ -433,7 +430,7 @@ de;Möchten Sie JADE nun beenden?;Quit JADE now?
 de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
 de;Möchten Sie das Wörterbuches auf den Stand nach der Erstinstallation zurücksetzen?;Would you like to reset the dictionary to the state after the first installation?;;;
 de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
-de;Möchten Sie die Anwendung nun umschalten ?;Would you like to switch the application now ?;;;
+de;Möchten Sie die Anwendung nun umschalten ?;Do you want do switch the application now?;;;
 de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
 de;Möchten Sie die Konfiguration nun vornehmen?;Would you like to configure this now?;;;
@@ -465,7 +462,7 @@ de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
 de;Neues Projekt anlegen;Create new project
-de;Neues Projekt;New Project;null;null;null
+de;Neues Projekt;New project
 de;Neues Setup anlegen ...;Create new setup ...
 de;Neuinitialsierung des Anwendungsfensters ...;Re-initialization of the application window ...;;;
 de;Neustart des Server-Dienstes;Restart server;;;
@@ -581,7 +578,6 @@ de;Setup umbenennen;Rename Setup
 de;Setup-Datei nicht gefunden!;Could not find setup file!
 de;Setup-Name wird bereits verwendet!;Setup name is already used!
 de;Setup-Name zu kurz!;Setup name too short!
-de;Setup:;;;;
 de;Setup;Setup;;;
 de;Simulation starten;Start simulation
 de;Simulation-Start;Start simulation
@@ -633,6 +629,7 @@ de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
 de;Suche löschen;Clear Search;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
+de;Suche nach Updates;Looking for updates;;;
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
 de;Suche rückwärts;Search backwards;;;
 de;Suche vorwärts;Search forwards;;;
@@ -642,7 +639,7 @@ de;Summe;Sum;;;
 de;Sämtliche visuellen Darstellungen deaktivieren;Disable all visual representations;;;
 de;Tabelle;Table;;;
 de;Tage;Days;;;
-de;Tar.gz-Datei;Tar.gz-File;;;
+de;Tar.gz-Datei;Tar.gz file;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
@@ -672,6 +669,7 @@ de;Update automatisch herunterladen, Installationszeitpunkt manuell festlegen;Do
 de;Update-Konfiguration;Update Configuration;;;
 de;Updates automatisch installieren;Install updates automatically;;;
 de;Updates nicht automatisch herunterladen oder installieren;Do not automatically download or install ;;;
+de;Updates verfügbar, installieren?;Updates available, install?;;;
 de;Verbinden;Connect;;;
 de;Verbindungsknoten;Connection nodes;;;
 de;Verfügbare JADE-Services;Available JADE Services;;;
@@ -730,9 +728,7 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
-de;Zertifikats-Alias;Certificate Alias;;;
-de;Zertifikatsbesitzer;Certificate Owner;;;
-de;Zip-Datei;Zip-File;;;
+de;Zip-Datei;Zip file;;;
 de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!<br><br>Soll diese Option jetzt aktualisiert werden?;To include external bin resources, an update <br>of the project MANIFEST.MF is required!<br><br>Do you want to update this option?;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project.;;;
@@ -774,36 +770,18 @@ de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;Alias:;;;
-en;;Column Headers:;;;
-en;;Configuration Error;;;
-en;;Configure the agents for deployment;;;
-en;;Configure the certificates for secure communication;;;
 en;;Configure the database settings;;;
-en;;Default operating mode:;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
 en;;Discrete squares environment;;;
 en;;Edit feature repository;;;
 en;;MTP Protocol:;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
-en;;No agent class was specified.;;;
-en;;No agent name was specified.;;;
-en;;No agent selected;;;
-en;;No container for the agent was specified.;;;
-en;;No specified agent class could not be found.;;;
 en;;Number of changes;;;
-en;;Operating mode:;;;
-en;;Operating;;;
-en;;Organization:;;;
-en;;Organizational Unit:;;;
-en;;Password:;;;
-en;;Paste from Clipboard;;;
-en;;Path:;;;
 en;;Pause Thread Measurement;;;
 en;;Piston Compressor;;;
 en;;Please insert a valid repository URI for the feature;;;
 en;;Please open a Keystore first!;;;
-en;;Please select an agent for deployment!;;;
 en;;Please, select the tab of the component that you want to delete!;;;
 en;;Please, specifiy the ID for the new Electric Motor!;;;
 en;;Please, specifiy the ID for the new Gas Driven Motor!;;;
@@ -813,29 +791,19 @@ en;;Please, specifiy the ID for the new Turbo Compressor!;;;
 en;;Refresh Thread Measurement;;;
 en;;Remove Component;;;
 en;;Remove Turbo Compressor;;;
-en;;Required fields;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
-en;;Separator:;;;
 en;;Should they be removed too?;;;
 en;;Show Label;;;
 en;;Simulation Interval;;;
 en;;Speed Max;;;
 en;;Speed Min;;;
 en;;Start Thread Measurement;;;
-en;;State Or Province:;;;
 en;;Switch Simulation Time Model;;;
-en;;The MTP port used by the CEA's JADE platform;;;
-en;;The MTP port used by the testbed agent's JADE platform;;;
-en;;The URL or IP address of the CEA's JADE platform;;;
 en;;The following component type exists at least twice;;;
 en;;The following domain exists at least twice;;;
 en;;The following error occured:;;;
-en;;The port used by the CEA's JADE platform;;;
-en;;The port used by the testbed agent's JADE platform;;;
-en;;The protocol to be used for comunication with CEA and ProxyAgent;;;
 en;;The selection contains also NetworkComponets that are single nodes.;;;
-en;;The testbed agent's operating mode;;;
 en;;These are:;;;
 en;;Time Format and Offset;;;
 en;;Time after a signal must be sent at least;;;
@@ -846,7 +814,6 @@ en;;TrustStore created;;;
 en;;Trusted Certificate Alias:;;;
 en;;Trusted Certificate:;;;
 en;;Turbo Compressor;;;
-en;;URL or IP:;;;
 en;;Update after changes or milliseconds;;;
 en;;Update after changes;;;
 en;;Update after milliseconds (Realtime);;;
@@ -864,12 +831,15 @@ en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agent.GUI: HTTPS Konfiguration;Agent.GUI: HTTPS Configuration;;;
 en;Agenten Klasse;Agent Class;;;
+en;Agenten für's Deployment konfigurieren;Configure the agents for deployment;;;
 en;Agenten-Adresse:;Agent address:;;;
 en;Agenten-ID:;Agent ID:;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktivieren;Enable;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Anzahl;Count;;;
+en;Aus der Zwischenablage einfügen;Paste from Clipboard;;;
+en;Ausführungsmodus:;Operating mode:;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
 en;Auswahl ausschneiden;Cut Selection;;;
@@ -894,7 +864,7 @@ en;Bitte wählen Sie mindestens zwei gültige Knoten!;Select at least two valid 
 en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
 en;Bitte wählen Sie zwei gültige Knoten;Select two valid vertices;;;
-en;Bitte, Geben Sie das Kennwort für;Please, enter the password for;;;
+en;Bitte, Geben Sie das Kennwort für;Please enter the password for;;;
 en;Bitte, Geben Sie das Kennwort für;Please, enter the password for;;;
 en;Bitte, geben Sie Zertifikat Alias;Please, enter Certificate's alias;;;
 en;Bitte, wählen Sie die Netzwerk-Komponente aus, die Sie hinzufügen möchten!;Please, select the network component that you would like to add!;;;
@@ -908,15 +878,20 @@ en;Das Unterverzeichnis 'plugins' konnte nicht gefunden werden.;Could not find s
 en;Das angegebene Verzeichnis konnte nicht gefunden werden.;The specified directory could not be found.;;;
 en;Daten;Data;;;
 en;Deaktivieren;Disable;;;
+en;Der Ausführungsmodus des deployten Agenten;The testbed agent's operating mode;;;
 en;Der Equinox Launcher wurde im plugins-Verzeichnis des installierten Produkts nicht gefunden.;Could not find the equinox launcher within the plugins-directory of the installed product.;;;
+en;Der JADE-Port des deployten Agenten;The port used by the testbed agent's JADE platform;;;
+en;Der Jade-Port des CEA;The port used by the CEA's JADE platform;;;
 en;Der Komponentename existiert bereits! <br> Bitte wählen Sie einen anderen.;The component name already exists!<br>Choose a different one.;;;
 en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente<br>vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;Der ausgewählte Knoten sollte zumindest zwischen zwei Komponenten liegen !;The select Vertex should be at least between two components !;;;
 en;Der ausgewählte Knoten sollte zwischen zwei Komponenten liegen !;The select Vertex should be between two components !;;;
 en;Diagramm bearbeiten;Edit Chart;;;
 en;Die Komponente ist bereits vorhanden!<br>  Bitte wählen Sie einen anderen Namen.;The component name already exists!<br> Choose a different one.;;;
+en;Die URL oder IP-Adresse des CEA;The URL or IP address of the CEA's JADE platform;;;
 en;Die Verzeichnisangabe für Installationspakete ist leer.;Directory for installation packages is empty.;;;
 en;Die aktuelle Auswahl im Graphen stellt bereits eine Komponente vom <br>Typ 'DistributionNode' dar. Dies ist an einem Knoten nur einmalig zulässigt!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
+en;Die ausgewählte Agentenklasse konnte nicht gefunden werden.;The specified agent class could not be found.;;;
 en;Diese ID wird bereits verwendet. Bitte geben Sie eine andere Kennung (ID) an!;The ID is already in use. Please specify another identifier!;;;
 en;Diskretes Zeitmodell;Discrete Time Model;;;
 en;Doppelte Domäne;Duplicate Domain;;;
@@ -928,6 +903,7 @@ en;Ein Agent.GUI-Update ist verfügbar.<br>Wollen Sie es jetzt herunterladen?;An
 en;Ein Agent.GUI-Update wurde heruntergeladen.<br>Wollen Sie es jetzt installieren?;Agent.GUI-Update was downloaded. Install now?;;;
 en;Einstellungen;Settings;;;
 en;Entfernen Zertifikat;Remove Certificate;;;
+en;Erforderliche Felder;Required fields;;;
 en;Erstelle eine neue KeyStore;Create new KeyStore;;;
 en;Erstelle eine neue TrustStore;Create new TrustStore;;;
 en;Erstellen;Create;;;
@@ -964,10 +940,13 @@ en;Installationspaket für Windows 64-Bit gefunden;Found installation package fo
 en;Installationspaket für macOS gefunden;Found installation package for macOS;;;
 en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
+en;Kein Container angegeben.;No container for the agent was specified.;;;
 en;Kein Filter!;No Filter!;;;
 en;Kein Graph-Prototyp definiert für;No Graph-Prototype defined for;;;
+en;Kein Name für den Agenten angegeben.;No agent name was specified.;;;
 en;Kein NetworkComponentAdapter<br>definiert für die<br> Netzwerkkomponente<br>;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;Kein NetworkComponentAdapter<br>definiert für die<br> die Knoten der Domain<br>;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
+en;Keine Klasse ausgewählt.;No agent class was specified.;;;
 en;Kennwort bestätigen;Confirm Password;;;
 en;Kennwort;Password;;;
 en;KeyStore Datei:;KeyStore File:;;;
@@ -991,6 +970,7 @@ en;Komponenten-Typ;Component Type;;;
 en;Komponentensuche;Search Components;;;
 en;Komponententyp-Fehler;Component Type Error;;;
 en;Komprimieren des Installationspakets im ZIP-Format;Compress the installation package in zip format;;;
+en;Konfigurationsfehler;Configuration Error;;;
 en;Kontinuierliches Zeitmodell;Continious Time Model;;;
 en;Landescode;Country Code;;;
 en;Laufzeit-Updates deaktivieren / aktivieren;Disable / Enable runtime updates;;;
@@ -1010,10 +990,18 @@ en;Neue Startzeit festlegen und zeitliche Verschiebung auf die zu importierenden
 en;Nicht definiert!;Not defined!;;;
 en;Ontologie-Klasse;Ontology class;;;
 en;Optionen;Options;;;
+en;Organisation:;Organization:;;;
 en;Organisation;Organization;;;
+en;Organisationseinheit:;Organizational Unit:;;;
 en;Organisationseinheit;Organizational Unit;;;
+en;Passwort:;Password:;;;
 en;Pfad:;Location:;;;
+en;Pfad:;Path:;;;
 en;Pfad;Location;;;
+en;Port, auf dem das MTP des CEA läuft.;The MTP port used by the CEA's JADE platform;;;
+en;Port, auf dem das MTP des deployten Agenten gestartet wird;The MTP port used by the testbed agent's JADE platform;;;
+en;Protokoll, das zur Kommunikation mit CEA und Proxy-Agent verwendet wird;The protocol to be used for comunication with CEA and ProxyAgent;;;
+en;Region:;State Or Province:;;;
 en;Rückgängig;Undo Action;;;
 en;Schließen;Close;;;
 en;Setze Datenmodell für;Setting data model for;;;
@@ -1026,6 +1014,7 @@ en;Speichern;Save;;;
 en;Staat oder Provinz;State or Province;;;
 en;Stadt oder Ort;City or Locality;;;
 en;Stadt oder Örtlichkeit:;City Or Locality:;;;
+en;Standard-Ausführungsmodus:;Default operating mode:;;;
 en;Start auf den folgenden Zeitpunkt verschieben:;Adjust time shift to the following start time:;;;
 en;Startzeit:;Start Time:;;;
 en;Startzeitpunkt des aktuellen Simulations Setups verwenden!;Use configured start time of the simulation setup!;;;
@@ -1035,6 +1024,7 @@ en;TrustStore Datei;TrustStore File;;;
 en;TrustStore Name;TrustStore Name;;;
 en;Trusted Zertifikate:;Trusted Certificates:;;;
 en;Typen-Bezeichnung;Type-Specifier;;;
+en;URL oder IP-Adresse:;URL or IP:;;;
 en;Umgebungsmodell exportieren;Export the environment model;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
@@ -1057,6 +1047,7 @@ en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;
 en;Wählen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;
 en;Zeitformat;Time Format;;;
 en;Zertifikat hinzufügen;Add Certificate;;;
+en;Zertifikate für sichere Kommunikation konfigurieren;Configure the certificates for secure communication;;;
 en;Zertifikatgültigkeit:;Certificate Validity:;;;
 en;Zertifikatname:;Certificate Name:;;;
 en;Zertifikatsinformationen;Certificate Information;;;

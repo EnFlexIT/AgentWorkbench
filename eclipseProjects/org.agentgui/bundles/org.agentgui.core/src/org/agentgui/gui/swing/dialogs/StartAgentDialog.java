@@ -446,7 +446,7 @@ public class StartAgentDialog extends JDialog implements ActionListener {
 				//cnfEx.printStackTrace();
 			}
 			if (agentClass==null) {
-				this.errorText = "No specified agent class could not be found.";
+				this.errorText = "The specified agent class could not be found.";
 				return true;
 			}
 		}
