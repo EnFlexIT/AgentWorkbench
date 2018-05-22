@@ -707,10 +707,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	public Vector<String> getBundleNames() {
 		Vector<String> bundleNames = new Vector<>();
-		for (Bundle bundle : this.getBundles()) {
-			bundleNames.add(bundle.getSymbolicName());
+		Vector<Bundle> bundleVector = this.getBundles();
+		for (int i = 0; i < bundleVector.size(); i++) {
+			bundleNames.add(bundleVector.get(i).getSymbolicName());
 		}
-		if (bundleNames.size() == 0) {
+		if (bundleNames.size()==0) {
 			bundleNames = null;
 		}
 		return bundleNames;

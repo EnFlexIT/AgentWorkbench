@@ -393,19 +393,19 @@ public class BundleEvaluator {
 	private void executeWaitingSearchThreads() {
 		
 		for (int i=0; i < getVectorOfBundleEvaluatorThreads().size(); i++) {
-			
-			BundleEvaluatorThread searchThread = getVectorOfBundleEvaluatorThreads().get(i);
-			boolean isTerminated = searchThread.getState()==State.TERMINATED;
-			if (isTerminated==false && searchThread.isAlive()==false) {
-				try {
-					searchThread.start();
-				} catch (Exception ex) {
-					ex.printStackTrace();
+			BundleEvaluatorThread searchThread = this.getVectorOfBundleEvaluatorThreads().get(i);
+			synchronized (searchThread) {
+				if (searchThread.getState()==State.NEW) {
+					try {
+						searchThread.start();
+					} catch (Exception ex) {
+						System.err.println("[" + this.getClass().getSimpleName() + "] Error with BundleEvaluatorThread '" + searchThread.getName() + "', State: " + searchThread.getState() + ":");
+						ex.printStackTrace();
+					}
 				}
 			}
 			if ((i+1)>this.maxSearchThreads) break;
 		}
-		
 	}
 	
 	

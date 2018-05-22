@@ -9,6 +9,8 @@ import org.osgi.framework.Bundle;
  */
 public class BundleEvaluatorThread extends Thread {
 
+	private static int THREAD_PRIORITY = Thread.MIN_PRIORITY;
+	
 	private Bundle bundle;
 	private AbstractBundleClassFilter bundleClassFilter;
 	
@@ -56,6 +58,7 @@ public class BundleEvaluatorThread extends Thread {
 		this.bundleClassFilter = bundleClassFilter;
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
@@ -69,8 +72,8 @@ public class BundleEvaluatorThread extends Thread {
 		}
 		
 		try {
-			// --- Set name and priority of the thread --------------
-			this.setPriority(Thread.MIN_PRIORITY);
+			// --- priority of the thread ---------------------------
+			this.setPriority(THREAD_PRIORITY);
 
 			// --- Execute the search -------------------------------
 			BundleEvaluator.getInstance().evaluateBundle(this.getBundle(), this.getBundleClassFilter());
