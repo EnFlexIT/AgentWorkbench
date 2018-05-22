@@ -502,7 +502,34 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			this.newDataModel = nca4dm.getDataModel();
 			this.newDataModelBase64 = nca4dm.getDataModelBase64Encoded(this.newDataModel);
 			Vector<Integer> newHashCodes = this.getHashCodeVectorFromDataModel(newDataModelBase64);
-			changed = !newHashCodes.equals(this.dataModelInitialHashCodes);
+			// --- Check for changes --------------------------------
+			if (! (newHashCodes==null & this.dataModelInitialHashCodes==null)) {
+				if ( (newHashCodes==null & this.dataModelInitialHashCodes!=null) || (newHashCodes!=null & this.dataModelInitialHashCodes==null) ) {
+					changed = true;
+				} else {
+					// --- Compare the two vector instances ---------
+					if (newHashCodes.size()!=this.dataModelInitialHashCodes.size()) {
+						changed = true;
+					} else {
+						// --- Compare the elements of the Vector ---
+						for (int i = 0; i < newHashCodes.size(); i++) {
+							Integer hashElementOld = this.dataModelInitialHashCodes.get(i);
+							Integer hashElementNew = newHashCodes.get(i);
+							if (! (hashElementOld==null & hashElementNew==null)) {
+								if ( (hashElementOld==null & hashElementNew!=null) || (hashElementOld!=null & hashElementNew==null)) {
+									changed = true;
+									break;
+								} else {
+									if (hashElementOld.equals(hashElementNew)==false) {
+										changed = true;
+										break;
+									}
+								}
+							}
+						} // end for
+					}
+				}
+			}
 		}
 		return changed;
 	}
