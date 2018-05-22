@@ -73,6 +73,8 @@ public class AgentGuiUpdater extends Thread {
 	private Object synchronizationObject;
 	
 	private boolean debug = false;
+	
+	private boolean updateDone = false;
 
 	
 	/**
@@ -199,6 +201,8 @@ public class AgentGuiUpdater extends Thread {
 			}
 			
 			// --- Notify waiting threads ----------------------
+			this.debugPrint("Update done, notifying");
+			this.updateDone = true;
 			this.getSynchronizationObject().notify();
 		}
 	}
@@ -316,6 +320,37 @@ public class AgentGuiUpdater extends Thread {
 	}
 	
 	/**
+	 * Checks if the update is done.
+	 * @return true, if is update done
+	 */
+	public boolean isUpdateDone() {
+		return updateDone;
+	}
+	/**
+	 * Wait until the update is done.
+	 */
+	public void waitForUpdate() {
+
+		// --- Only wait if the update is not done yet --------------
+		if (this.isUpdateDone()==false) {
+		
+			synchronized (this.getSynchronizationObject()) {
+				try {
+					this.debugPrint("Waiting for the update process");
+					this.getSynchronizationObject().wait();
+					this.debugPrint("Update process finished, proceeding");
+				} catch (InterruptedException e) {
+					System.err.println("Waiting for update interrupted");
+					e.printStackTrace();
+				}
+			}
+			
+		} else {
+			this.debugPrint("Update already done, no need to wait");
+		}
+	}
+	
+	/**
 	 * Gets the synchronization object.
 	 * @return the synchronization object
 	 */
@@ -325,23 +360,6 @@ public class AgentGuiUpdater extends Thread {
 		}
 		return this.synchronizationObject;
 	}
-	
-	/**
-	 * Wait until the update is done.
-	 */
-	public void waitForUpdate() {
-		synchronized (this.getSynchronizationObject()) {
-			try {
-				this.debugPrint("Waiting for the update process");
-				this.getSynchronizationObject().wait();
-				this.debugPrint("Update process finished, proceeding");
-			} catch (InterruptedException e) {
-				System.err.println("Waiting for update interrupted");
-				e.printStackTrace();
-			}
-		}
-	}
-	
 	private void debugPrint(String text) {
 		if (this.debug==true) {
 			System.out.println(text);
