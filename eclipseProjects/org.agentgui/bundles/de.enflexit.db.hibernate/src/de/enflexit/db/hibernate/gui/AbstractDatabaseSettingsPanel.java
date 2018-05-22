@@ -3,6 +3,7 @@ package de.enflexit.db.hibernate.gui;
 import java.util.Properties;
 
 import javax.swing.JPanel;
+import javax.swing.event.DocumentListener;
 
 /**
  * The Class AbstractDatabaseSettingsPanel must be extended by database 
@@ -29,6 +30,13 @@ public abstract class AbstractDatabaseSettingsPanel extends JPanel {
 	 * @return the hibernate configuration properties
 	 */
 	public abstract Properties getHibernateConfigurationProperties();
+	
+	/**
+	 * This method allows to add a {@link DocumentListener} to all text fields of the panel,
+	 * allowing to react on changes of the database configuration.
+	 * @param documentnListener the {@link DocumentListener} to add
+	 */
+	public abstract void addDocumentListenerToTextFields(DocumentListener documentnListener);
 	
 	
 }

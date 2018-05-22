@@ -368,5 +368,14 @@ public class MySQLSettingsPanel extends AbstractDatabaseSettingsPanel {
 		}
 		return url;
 	}
+	@Override
+	public void addDocumentListenerToTextFields(DocumentListener documentnListener) {
+		this.getJTextFieldHostOrIP().getDocument().addDocumentListener(documentnListener);
+		this.getJTextFieldPort().getDocument().addDocumentListener(documentnListener);
+		this.getJTextFieldDatabase().getDocument().addDocumentListener(documentnListener);
+		this.getJTextFieldAddUrlParams().getDocument().addDocumentListener(documentnListener);
+		this.getJTextFieldUserName().getDocument().addDocumentListener(documentnListener);
+		this.getJTextFieldPassword().getDocument().addDocumentListener(documentnListener);
+	}
 	
 }

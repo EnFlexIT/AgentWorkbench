@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.DocumentListener;
 
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
@@ -318,6 +319,15 @@ public class DatabaseSettingsPanel extends JPanel {
 	 */
 	protected void clearUserMessages() {
 		this.getUserMessages().clear();
+	}
+
+	/**
+	 * This method allows to add a {@link DocumentListener} to all text fields of the panel,
+	 * allowing to react on changes of the database configuration.
+	 * @param documentnListener the {@link DocumentListener} to add
+	 */
+	public void addDocumentListenerToTextFields(DocumentListener documentnListener) {
+		this.getDatabaseSettingPanel().addDocumentListenerToTextFields(documentnListener);
 	}
 	
 }
