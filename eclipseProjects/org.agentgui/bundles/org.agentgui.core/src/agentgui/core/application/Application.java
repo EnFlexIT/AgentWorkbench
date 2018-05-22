@@ -36,13 +36,12 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Vector;
+
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.agentgui.PlugInApplication;
-import org.agentgui.bundle.evaluation.FilterForAgent;
-import org.agentgui.bundle.evaluation.FilterForBaseService;
-import org.agentgui.bundle.evaluation.FilterForOntology;
+import org.agentgui.bundle.evaluation.BundleClassFilterCollector;
 import org.agentgui.gui.AwbConsole;
 import org.agentgui.gui.AwbTrayIcon;
 import org.agentgui.gui.UiBridge;
@@ -592,6 +591,9 @@ public class Application {
 			getTrayIcon(); 
 			getProjectsLoaded();
 
+			// --- Define filter for bundle class search ------------
+			BundleClassFilterCollector.collectAndDefineSetOfBundleClassFilter();
+			
 			startMainWindow(new Runnable() {
 				@Override
 				public void run() {
@@ -599,19 +601,19 @@ public class Application {
 					
 					setOntologyVisualisationConfigurationToCommonBundle();
 					
-					// --- Check for updates --------------------------------
+					// --- Check for updates ------------------------
 					AgentGuiUpdater updater = new AgentGuiUpdater();
 					updater.start();
 					updater.waitForUpdate();
 					
-					// --- Do the benchmark -----------------------------------
+					// --- Do the benchmark -------------------------
 					doBenchmark(false);
 					waitForBenchmark();
 					
-					// --- Start the bundle evaluation process ----------------
+					// --- Start the bundle evaluation process ------
 					startBundleEvaluation();
 					
-					// --- Open project if specified via start argument -------
+					// --- Open project? ----------------------------
 					proceedStartArgumentOpenProject();
 					
 				}
@@ -1205,19 +1207,13 @@ public class Application {
 		
 		// -- Create a new thread that waits for the end of the benchmark before starting the evaluation threads ----
 		Thread evaluatorThread = new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
 				// --- Evaluate the already loaded bundles --------
-				BundleEvaluator be = BundleEvaluator.getInstance(); 
-				be.addBundleClassFilter(new FilterForAgent(), false);
-				be.addBundleClassFilter(new FilterForBaseService(), false);
-				be.addBundleClassFilter(new FilterForOntology(), false);
-				be.evaluateAllBundles();
+				BundleEvaluator.getInstance().evaluateAllBundles();
 				// --- Evaluate the features ----------------------
 				FeatureEvaluator.getInstance().evaluateFeatureInformationInThread();
 			}
-			
 		});
 		evaluatorThread.start();
 	}

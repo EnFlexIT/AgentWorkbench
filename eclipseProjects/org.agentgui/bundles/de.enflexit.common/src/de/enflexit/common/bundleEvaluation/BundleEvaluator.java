@@ -30,6 +30,7 @@ package de.enflexit.common.bundleEvaluation;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -67,6 +68,9 @@ public class BundleEvaluator {
 	private HashSet<String> bundleExcludeHashSet;
 	private EvaluationFilterResults evaluationFilterResults;
 
+	private int maxSearchThreads = 5;
+	private Vector<BundleEvaluatorThread> bundleEvaluatorThreadVector;
+	
 	private HashMap<String, ClassRequest> classRequestHash;
 	private long requestMaxStayTime = 1000 * 10; // 10 seconds
 	
@@ -318,35 +322,98 @@ public class BundleEvaluator {
 	 * @param bundleClassFilterToUse the bundle class filter to exclusively search with (<code>null</code> IS permitted).
 	 * @see #getEvaluationFilterResults()
 	 */
-	public void evaluateBundleInThread(final Bundle bundle, final AbstractBundleClassFilter bundleClassFilterToUse) {
+	public void evaluateBundleInThread(Bundle bundle, AbstractBundleClassFilter bundleClassFilterToUse) {
 
 		if (bundle==null) return;
 		if (this.isExcludedBundle(bundle.getSymbolicName())==true) return;
 		if (bundleClassFilterToUse==null && getEvaluationFilterResults().size()==0) return;
 		
-		// --- Define search thread for the bundle ------------------
-		Thread searchThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
+		
+		String sbn = bundle.getSymbolicName();
+		String classFilterDescription = "Null";
+		if (bundleClassFilterToUse!=null) {
+			classFilterDescription = bundleClassFilterToUse.getFilterScope(); 
+		}
+		
+		// ----------------------------------------------------------
+		// --- Debug area for the search thread start ---------------
+		// ----------------------------------------------------------
+		boolean debugThreadStart = false;
+		if (this.debug==true && debugThreadStart==true) {
+			System.out.println("Start Thread: Evaluate bundle " + sbn + " - filter scope: " + classFilterDescription);
+		}
+		// ----------------------------------------------------------
+		
+		
+		// --- Start the evaluation of the bundle -------------------
+		BundleEvaluatorThread searchThread = new BundleEvaluatorThread(bundle, bundleClassFilterToUse);
+		// --- If not already available register and start search ---
+		if (this.registerSearchThread(searchThread)==true) {
+			this.executeWaitingSearchThreads();
+		} else {
+			if (this.debug==true) {
+				System.err.println("Search was already active for '" + sbn + " - filter scope: " + classFilterDescription);
+			}
+		}
+	}
+	/**
+	 * Gets the vector of bundle evaluator threads.
+	 * @return the vector of bundle evaluator threads
+	 */
+	private Vector<BundleEvaluatorThread> getVectorOfBundleEvaluatorThreads() {
+		if (bundleEvaluatorThreadVector==null) {
+			bundleEvaluatorThreadVector = new Vector<>();
+		}
+		return bundleEvaluatorThreadVector;
+	}
+	/**
+	 * Registers the specified BundleEvaluatorThread.
+	 *
+	 * @param bundleEvaluatorThread the bundle evaluator thread
+	 * @return true, if successful
+	 */
+	public boolean registerSearchThread(BundleEvaluatorThread bundleEvaluatorThread) {
+		if (this.getVectorOfBundleEvaluatorThreads().contains(bundleEvaluatorThread)==false) {
+			this.getVectorOfBundleEvaluatorThreads().addElement(bundleEvaluatorThread);
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Unregister the specified BundleEvaluatorThread.
+	 * @param bundleEvaluatorThread the bundle evaluator thread
+	 */
+	public void unregisterSearchThread(BundleEvaluatorThread bundleEvaluatorThread) {
+		this.getVectorOfBundleEvaluatorThreads().remove(bundleEvaluatorThread);
+		this.executeWaitingSearchThreads();
+	}
+	/**
+	 * Execute waiting search threads.
+	 */
+	private void executeWaitingSearchThreads() {
+		
+		for (int i=0; i < getVectorOfBundleEvaluatorThreads().size(); i++) {
+			
+			BundleEvaluatorThread searchThread = getVectorOfBundleEvaluatorThreads().get(i);
+			boolean isTerminated = searchThread.getState()==State.TERMINATED;
+			if (isTerminated==false && searchThread.isAlive()==false) {
 				try {
-					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-					evaluateBundle(bundle, bundleClassFilterToUse);
-				} catch (IllegalStateException isEx) {
-					System.err.println(Thread.currentThread().getName() + ": " + isEx.getMessage());
+					searchThread.start();
 				} catch (Exception ex) {
-					System.err.println(Thread.currentThread().getName() + ": " + ex.getMessage());
+					ex.printStackTrace();
 				}
 			}
-		});
-		searchThread.setName("BundleSearch_" + bundle.getSymbolicName());
-		searchThread.start();
+			if ((i+1)>this.maxSearchThreads) break;
+		}
+		
 	}
+	
 	
 	/**
 	 * Gets the debug detail.
 	 * @return the debug detail
 	 */
-	public HashMap<Bundle, Boolean> getDebugDetailsInBundle() {
+	private HashMap<Bundle, Boolean> getDebugDetailsInBundle() {
 		if (debugDetailsInBundel==null) {
 			debugDetailsInBundel = new HashMap<>();
 		}
@@ -369,16 +436,30 @@ public class BundleEvaluator {
 		if (this.isExcludedBundle(bundle.getSymbolicName())==true) return;
 		if (bundleClassFilterToUse==null && getEvaluationFilterResults().size()==0) return;
 		
+		// --- Remind start time of the search ----------------------
 		long starTime = System.nanoTime(); 
+
+		
+		// ----------------------------------------------------------
+		// --- Debug area for the search thread start ---------------
+		// ----------------------------------------------------------
 		if (this.debug==true) {
 			String sbn = bundle.getSymbolicName();
-			System.out.println("Evaluate bundle " + sbn);
-			if (sbn.equals("org.agentgui.lib.jade")==true) {
+			String classFilterDescription = "";
+			if (bundleClassFilterToUse!=null) {
+				classFilterDescription = bundleClassFilterToUse.getFilterScope(); 
+			}
+			System.out.println("Evaluate bundle " + sbn + " - filter scope: " + classFilterDescription);
+			
+			boolean debugDetails = false;
+			if (debugDetails==true && sbn.equals("org.agentgui.lib.jade")==true) {
 				this.getDebugDetailsInBundle().put(bundle, true);
-				System.out.println("Stop here - found '" + sbn + "'");
+				System.out.println("Debug stop here - found '" + sbn + "'");
 			}
 		}
+		// ----------------------------------------------------------
 
+		
 		// ----------------------------------------------------------
 		// --- Set a busy marker for the used bundle filter ---------
 		// ----------------------------------------------------------
@@ -1153,5 +1234,6 @@ public class BundleEvaluator {
 	}
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
+
 	
 }
