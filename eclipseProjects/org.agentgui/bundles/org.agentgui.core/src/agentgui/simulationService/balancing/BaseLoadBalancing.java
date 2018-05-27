@@ -494,7 +494,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 				while (loadHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
 					this.block(100);
 				}
-				while (loadHelper.getContainerLoads().get(newContainerName)==null) {
+				while (loadHelper.getContainerLoadHash().get(newContainerName)==null) {
 					this.block(100);
 				}
 				// --- Update the locations of all involved container --------------- 

@@ -158,7 +158,7 @@ public abstract class DynamicLoadBalancingBase extends BaseLoadBalancing  {
 		PlatformLoad containerLoad = null;
 		try {
 			containerDesc = loadHelper.getContainerDescription(newContainerName);
-			containerLoad = loadHelper.getContainerLoads().get(newContainerName);
+			containerLoad = loadHelper.getContainerLoadHash().get(newContainerName);
 			
 		} catch (ServiceException e) {
 			e.printStackTrace();

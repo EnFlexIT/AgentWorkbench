@@ -51,14 +51,13 @@ import agentgui.simulationService.LoadService;
  */
 public class LoadAgentMap implements Serializable {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7651064205614961934L;
 
 	/** The agents at platform. */
-	private Hashtable<String, AID_Container> agentsAtPlatform = new Hashtable<String, AID_Container>();
+	private Hashtable<String, AID_Container> agentsAtPlatform;
 	
 	/** The agents at container. */
-	private Hashtable<String, AID_Container_List> agentsAtContainer = new Hashtable<String, AID_Container_List>();
+	private Hashtable<String, AID_Container_List> agentsAtContainer;
 	
 	/** The no agents at platform. */
 	public Integer noAgentsAtPlatform = null;
@@ -78,14 +77,14 @@ public class LoadAgentMap implements Serializable {
 	 */
 	public void doCountings() {
 		
-		noAgentsAtPlatform = agentsAtPlatform.size();
+		noAgentsAtPlatform = this.getAgentsAtPlatform().size();
 		this.setNoAgentsAtContainerHash(null);
 		
-		Vector<String> container = new Vector<String>(agentsAtContainer.keySet());
+		Vector<String> container = new Vector<String>(this.getAgentsAtContainer().keySet());
 		Iterator<String> it = container.iterator();
 		while (it.hasNext()) {
 			String containerName = it.next();
-			AID_Container_List aidList = agentsAtContainer.get(containerName);
+			AID_Container_List aidList = this.getAgentsAtContainer().get(containerName);
 			if (aidList==null) {
 				this.getNoAgentsAtContainerHash().put(containerName, 0);	
 			} else {
@@ -109,7 +108,7 @@ public class LoadAgentMap implements Serializable {
 			cAID.setContainerName(containerName);
 			cAID.setServiceSensor(hasServiceSensor);
 			// --- Put into the list of the Platform ------
-			this.agentsAtPlatform.put(aid.getLocalName(), cAID);
+			this.getAgentsAtPlatform().put(aid.getLocalName(), cAID);
 			// --- Put also into the List for Containers --
 			this.put2AgentsAtContainer(containerName, cAID);
 		}
@@ -122,14 +121,14 @@ public class LoadAgentMap implements Serializable {
 	 * @param cAID the AID_Container
 	 */
 	private void put2AgentsAtContainer(String containerName, AID_Container cAID) {
-		AID_Container_List agentList = agentsAtContainer.get(containerName);
+		AID_Container_List agentList = this.getAgentsAtContainer().get(containerName);
 		if (agentList==null) {
 			agentList = new AID_Container_List(); 
 		}
 		if (cAID!=null) {
 			agentList.put(cAID.getAID().getLocalName(), cAID);	
 		}
-		agentsAtContainer.put(containerName, agentList);
+		this.getAgentsAtContainer().put(containerName, agentList);
 	}
 	
 	/**
@@ -137,14 +136,19 @@ public class LoadAgentMap implements Serializable {
 	 * @return the agentsAtPlatform
 	 */
 	public Hashtable<String, AID_Container> getAgentsAtPlatform() {
+		if (agentsAtPlatform==null) {
+			agentsAtPlatform = new Hashtable<>();
+		}
 		return agentsAtPlatform;
 	}
-	
 	/**
 	 * Gets the agents at container.
 	 * @return the agentsAtContainer
 	 */
 	public Hashtable<String, AID_Container_List> getAgentsAtContainer() {
+		if (agentsAtContainer==null) {
+			agentsAtContainer = new Hashtable<>();
+		}
 		return agentsAtContainer;
 	}
 
@@ -175,12 +179,12 @@ public class LoadAgentMap implements Serializable {
 	 */
 	public AID_Container getAID_Container(AID agentsAID) {
 				
-		String[] aidArr = new String[this.agentsAtPlatform.keySet().size()];  
-		aidArr = (String[]) this.agentsAtPlatform.keySet().toArray();
+		String[] aidArr = new String[this.getAgentsAtPlatform().keySet().size()];  
+		aidArr = (String[]) this.getAgentsAtPlatform().keySet().toArray();
 		
 		for (int i = 0; i < aidArr.length; i++) {
 			String key = aidArr[i];
-			AID_Container cAID = this.agentsAtPlatform.get(key);
+			AID_Container cAID = this.getAgentsAtPlatform().get(key);
 			if (cAID.getAID().equals(agentsAID) ) {
 				return cAID;
 			}

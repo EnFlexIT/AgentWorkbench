@@ -121,7 +121,7 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * @return the container queue
 	 * @throws ServiceException the service exception
 	 */
-	public Vector<String> getContainerQueue() throws ServiceException;
+	public Vector<String> getContainerNames() throws ServiceException;
 	
 	/**
 	 * Provides the average cycle time for a simulation.
@@ -154,7 +154,7 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * @return the container loads
 	 * @throws ServiceException the service exception
 	 */
-	public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException;
+	public Hashtable<String, PlatformLoad> getContainerLoadHash() throws ServiceException;
 	
 	/**
 	 * Returns the load of a specified container.
@@ -232,7 +232,7 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * @throws ServiceException the service exception
 	 * @see LoadAgentMap
 	 */
-	public LoadAgentMap getAgentMap() throws ServiceException;
+	public LoadAgentMap getLoadAgentMap() throws ServiceException;
 
 	/**
 	 * Sets the agent migration.

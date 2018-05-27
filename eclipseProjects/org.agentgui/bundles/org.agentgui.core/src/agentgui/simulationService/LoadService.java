@@ -137,7 +137,7 @@ public class LoadService extends BaseService {
 	private RemoteContainerConfig defaults4RemoteContainerConfig; 
 
 	/** The List of Agents, which are registered to this service  **/ 
-	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
+	private HashMap<String, AID> serviceUsingAgents = new HashMap<String, AID>();
 	/**  The Load-Information Array of all slices **/
 	private LoadInformation loadInfo = new LoadInformation(); 
 	
@@ -238,7 +238,7 @@ public class LoadService extends BaseService {
 		 */
 		public void init(Agent ag) {
 			// --- Store the Agent in the agentList -----------------
-			agentList.put(ag.getName(), ag.getAID());			
+			serviceUsingAgents.put(ag.getLocalName(), ag.getAID());			
 		}
 				
 		/* (non-Javadoc)
@@ -319,14 +319,14 @@ public class LoadService extends BaseService {
 		 * @see agentgui.simulationService.LoadServiceHelper#getContainerDescriptions()
 		 */
 		public Hashtable<String, NodeDescription> getContainerDescriptions() throws ServiceException {
-			return loadInfo.containerDescription;
+			return loadInfo.getContainerDescriptionHash();
 		}
 		
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#getContainerDescription(java.lang.String)
 		 */
 		public NodeDescription getContainerDescription(String containerName) throws ServiceException {
-			return loadInfo.containerDescription.get(containerName);
+			return loadInfo.getContainerDescriptionHash().get(containerName);
 		}
 		
 		// ----------------------------------------------------------
@@ -336,7 +336,7 @@ public class LoadService extends BaseService {
 		 */
 		public Hashtable<String, Location> getContainerLocations() throws ServiceException {
 			broadcastGetContainerLocation(getAllSlices());
-			return loadInfo.containerLocations;
+			return loadInfo.getContainerLocationHash();
 		}
 		
 		/* (non-Javadoc)
@@ -344,7 +344,7 @@ public class LoadService extends BaseService {
 		 */
 		public Location getContainerLocation(String containerName) throws ServiceException {
 			this.getContainerLocations();
-			return loadInfo.containerLocations.get(containerName);
+			return loadInfo.getContainerLocationHash().get(containerName);
 		}
 		
 		// ----------------------------------------------------------
@@ -359,9 +359,9 @@ public class LoadService extends BaseService {
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLoads()
 		 */
-		public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
+		public Hashtable<String, PlatformLoad> getContainerLoadHash() throws ServiceException {
 			broadcastMeasureLoad(getAllSlices());
-			return loadInfo.containerLoads;
+			return loadInfo.getContainerLoadHash();
 		}
 		
 		/* (non-Javadoc)
@@ -369,14 +369,14 @@ public class LoadService extends BaseService {
 		 */
 		public PlatformLoad getContainerLoad(String containerName) throws ServiceException {
 			broadcastMeasureLoad(getAllSlices());
-			return loadInfo.containerLoads.get(containerName);
+			return loadInfo.getContainerLoadHash().get(containerName);
 		}
 		
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#getContainerQueue()
 		 */
-		public Vector<String> getContainerQueue() throws ServiceException {
-			return loadInfo.containerQueue;
+		public Vector<String> getContainerNames() throws ServiceException {
+			return loadInfo.getContainerNames();
 		}
 		
 		/* (non-Javadoc)
@@ -397,11 +397,11 @@ public class LoadService extends BaseService {
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#getAgentMap()
 		 */
-		public LoadAgentMap getAgentMap() throws ServiceException {
+		public LoadAgentMap getLoadAgentMap() throws ServiceException {
 			Service.Slice[] slices = getAllSlices();
 			broadcastGetAIDListSensorAgents(slices);
 			broadcastGetAIDList(slices);
-			return loadInfo.agentLocations;
+			return loadInfo.getLoadAgentMap();
 		}
 		
 		// ----------------------------------------------------------
@@ -635,7 +635,7 @@ public class LoadService extends BaseService {
 	 */
 	private void broadcastGetContainerLocation(Service.Slice[] slices) throws ServiceException {
 		
-		loadInfo.containerLocations.clear();
+		loadInfo.getContainerLocationHash().clear();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Try to get Location-Informations!");
@@ -649,7 +649,7 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to get Location-Object for " + sliceName );
 				}
 				Location cLoc = slice.getLocation();
-				loadInfo.containerLocations.put(sliceName, cLoc);
+				loadInfo.getContainerLocationHash().put(sliceName, cLoc);
 			
 			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -708,7 +708,7 @@ public class LoadService extends BaseService {
 	 */
 	private void broadcastThresholdLevels(Service.Slice[] slices, LoadThresholdLevels thresholdLevels) throws ServiceException {
 		
-		loadInfo.containerLoads.clear();
+		loadInfo.getContainerLoadHash().clear();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Try to set threshold level to all Containers !");
@@ -739,7 +739,7 @@ public class LoadService extends BaseService {
 	 */
 	private void broadcastMeasureLoad(Service.Slice[] slices) throws ServiceException {
 		
-		loadInfo.containerLoads.clear();
+		loadInfo.getContainerLoadHash().clear();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Try to get Load-Information from all Containers !");
@@ -753,7 +753,7 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to get Load-Information of " + sliceName);
 				}
 				PlatformLoad pl = slice.measureLoad();
-				loadInfo.containerLoads.put(sliceName, pl);
+				loadInfo.getContainerLoadHash().put(sliceName, pl);
 			
 			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
@@ -835,7 +835,7 @@ public class LoadService extends BaseService {
 	private void broadcastGetAIDListSensorAgents(Service.Slice[] slices) throws ServiceException {
 		
 		if (this.isActiveSimulationService()==false) return;
-		this.loadInfo.sensorAgents = new Vector<AID>();
+		this.loadInfo.getSensorAgents().clear();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Try to get Sensor-AID's from all Containers !");
@@ -849,10 +849,9 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to get Sensor-AID's from " + sliceName);
 				}
 				AID[] aidList = slice.getAIDListSensorAgents();
-				loadInfo.sensorAgents.addAll(new Vector<AID>(Arrays.asList(aidList)) );
+				loadInfo.getSensorAgents().addAll(new Vector<AID>(Arrays.asList(aidList)) );
 			
 			} catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while trying to get Sensor-AID's from " + sliceName, t);
 			}
 		}
@@ -954,8 +953,7 @@ public class LoadService extends BaseService {
 		public Node getNode() throws ServiceException {
 			try {
 				return LoadService.this.getLocalNode();
-			}
-			catch(IMTPException imtpe) {
+			} catch(IMTPException imtpe) {
 				throw new ServiceException("Error retrieving local node", imtpe);
 			}
 		}
@@ -1208,11 +1206,11 @@ public class LoadService extends BaseService {
 			ClientRemoteContainerReply crcReply = getLocalClientRemoteContainerReply();
 			if (crcReply!=null) {
 				
-				// --- Add information about container, machine ---------
+				// --- Add information about container, machine ---------------
 				threadProtocol.setContainerName(crcReply.getRemoteContainerName());
 				threadProtocol.setProcessID(crcReply.getRemotePID());
 				
-				// --- jvm@machine, e.g. 73461@dell-blade-2 -------------
+				// --- jvm@machine, e.g. 73461@dell-blade-2 -------------------
 				String[] temp = threadProtocol.getProcessID().split("@");
 				String jvmName = temp[0];
 				String machineName = temp[1];
@@ -1224,18 +1222,23 @@ public class LoadService extends BaseService {
 				double mflops = crcReply.getRemoteBenchmarkResult().getBenchmarkValue();
 				threadProtocol.setMflops(mflops * noOfCPU);
 				
-				// --- Do the check if a thread is an agent or not ------
-				HashMap<String, AID> aidHash = new HashMap<String, AID>();
-				for (AID aid : myContainer.agentNames()) {
-					aidHash.put(aid.getLocalName(), aid);
+				// --- Check the container names in current JVM ---------------
+				for (int i = 0; i <  loadInfo.getContainerNames().size(); i++) {
+					String containerName = loadInfo.getContainerNames().get(i);
+					if (threadProtocol.getContainerName().contains(containerName)==false) {
+						threadProtocol.setContainerName(threadProtocol.getContainerName() + " / " + containerName);
+					}
 				}
-				for (ThreadDetail threadDetail : threadProtocol.getThreadDetails()) {
-					if (aidHash.get(threadDetail.getThreadName())!=null) {
+				
+				// --- Do the check if a thread is an agent or not ------------
+				for (int i = 0; i < threadProtocol.getThreadDetails().size(); i++) {
+					ThreadDetail threadDetail = threadProtocol.getThreadDetails().get(i);
+					if (loadInfo.getLoadAgentMap().getAgentsAtPlatform().get(threadDetail.getThreadName())!=null) {
 						threadDetail.setIsAgent(true);
 					}
 				}
 				
-				// --- Send protocol to the main container --------------
+				// --- Send protocol to the main container --------------------
 				try {
 					sendThreadProtocolToMainContainer(threadProtocol);
 				} catch (ServiceException se) {
@@ -1307,8 +1310,8 @@ public class LoadService extends BaseService {
 				Object[] params = cmd.getParams();
 				ContainerID id = (ContainerID) params[0];
 				String containerName = id.getName();
-				loadInfo.containerLoads.remove(containerName);
-				loadInfo.containerLocations.remove(containerName);
+				loadInfo.getContainerLoadHash().remove(containerName);
+				loadInfo.getContainerLocationHash().remove(containerName);
 			
 			} else if (cmdName.equals(AgentMobilityHelper.INFORM_MOVED)) {
 				Object[] params = cmd.getParams();
@@ -1476,15 +1479,12 @@ public class LoadService extends BaseService {
 		newContainerName = newContainerPrefix + newContainerNo;
 		
 		// --- Get machines to be excluded for remote start ---------
-		jade.util.leap.List hostExcludeIP = null;
-		for (String containerName : loadInfo.containerDescription.keySet()) {
-			
-			NodeDescription nodeDesc = loadInfo.containerDescription.get(containerName);
-			String ip = nodeDesc.getPlAddress().getIp();
-			if (hostExcludeIP == null) {
-				hostExcludeIP = new ArrayList();
-			}
-			hostExcludeIP.add(ip);
+		jade.util.leap.List hostExcludeIP = new ArrayList();
+		java.util.ArrayList<String> containerNames = new java.util.ArrayList<>(this.loadInfo.getContainerDescriptionHash().keySet());
+		for (int i = 0; i < containerNames.size(); i++) {
+			String containerName = containerNames.get(i);
+			NodeDescription nodeDesc = this.loadInfo.getContainerDescriptionHash().get(containerName);
+			hostExcludeIP.add(nodeDesc.getPlAddress().getIp());
 		}
 		
 		// --- Get the AID of the file manager agent ----------------
@@ -1537,7 +1537,7 @@ public class LoadService extends BaseService {
 		
 		// --- Apply defaults, if set -------------------------------
 		if (this.defaults4RemoteContainerConfig!=null) {
-			if (defaults4RemoteContainerConfig.getPreventUsageOfUsedComputer()==true) {
+			if (defaults4RemoteContainerConfig.getPreventUsageOfUsedComputer()==true && hostExcludeIP.size()>0) {
 				remConf.setHostExcludeIP(hostExcludeIP);	
 			}
 			remConf.setJadeShowGUI(this.defaults4RemoteContainerConfig.getJadeShowGUI());

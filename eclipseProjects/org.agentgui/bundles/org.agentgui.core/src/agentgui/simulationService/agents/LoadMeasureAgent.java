@@ -448,8 +448,8 @@ public class LoadMeasureAgent extends Agent {
 				// --- Get the PlatformLoad and the Agents at their locations -----------
 				monitorTimeStamp = System.currentTimeMillis();
 				setLoadCycleTime(getLoadServiceHelper().getAvgCycleTime());
-				setLoadContainer(getLoadServiceHelper().getContainerLoads());
-				setLoadContainerAgentMap(getLoadServiceHelper().getAgentMap());
+				setLoadContainer(getLoadServiceHelper().getContainerLoadHash());
+				setLoadContainerAgentMap(getLoadServiceHelper().getLoadAgentMap());
 				setLoadContainerLoactions(getLoadServiceHelper().getContainerLocations());
 				
 				// --- Display number of agents -----------------------------------------
@@ -465,7 +465,7 @@ public class LoadMeasureAgent extends Agent {
 				loadJVM4Balancing = new Hashtable<String, LoadMerger>();
 				
 				// --- Walk through the list of all containers --------------------------
-				loadContainer2Display = new Vector<String>(getLoadServiceHelper().getContainerQueue());
+				loadContainer2Display = new Vector<String>(getLoadServiceHelper().getContainerNames());
 				
 				for (int i = 0; i < loadContainer2Display.size(); i++) {
 					// --- Get container name -------------------------------------------

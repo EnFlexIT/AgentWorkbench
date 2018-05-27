@@ -50,30 +50,90 @@ import agentgui.simulationService.ontology.PlatformPerformance;
  */
 public class LoadInformation  {
 
-	/** The Vector of container, which are or were connected. */
-	public Vector<String> containerQueue = new Vector<String>();
-	/** The Hashtable containerDescription, which holds the information identifiable by the container name. */
-	public Hashtable<String, NodeDescription> containerDescription = new Hashtable<String, NodeDescription>();
-	/** The Hashtable containerLoads, which holds the load information identifiable by the container name. */
-	public Hashtable<String, PlatformLoad> containerLoads = new Hashtable<String, PlatformLoad>(); 
-	/** The Hashtable containerLocations, which holds the location identifiable by the container name. */
-	public Hashtable<String, Location> containerLocations = new Hashtable<String, Location>();
-	/** The agents locations (answers to: where can I find a specified agent). */
-	public LoadAgentMap agentLocations = new LoadAgentMap();
-	/** The Vector of agents, which are connected by the actuator/sensor relationship of the SimulationService. */
-	public Vector<AID> sensorAgents = null;
+	private Vector<String> containerNames;
+	private Hashtable<String, NodeDescription> containerDescriptionHash;
+	private Hashtable<String, PlatformLoad> containerLoadHash; 
+	private Hashtable<String, Location> containerLocationHash;
+	private LoadAgentMap agentLocations;
+	private Vector<AID> sensorAgents;
 	
-	/** The Hashtable, which holds the list of remote container, that should join the current platform. */
-	private Hashtable<String, Container2Wait4> newContainers2Wait4 = new Hashtable<String, Container2Wait4>();
+	private Hashtable<String, Container2Wait4> newContainers2Wait4;
 	
 	private long cycleTimeStart = 0; 
 	private Vector<Long> cycleTimeVector = new Vector<Long>();
 	private long cycleTimeVectorMaxSize = 500;
 
+	
 	/**
-	 * Constructor of this class
+	 * Returns the names of all known container.
+	 * @return the container names
 	 */
-	public LoadInformation() {
+	public Vector<String> getContainerNames() {
+		if (containerNames==null) {
+			containerNames = new Vector<>();
+		}
+		return containerNames;
+	}
+	/**
+	 * Returns the container description hash.
+	 * @return the container description hash
+	 */
+	public Hashtable<String, NodeDescription> getContainerDescriptionHash() {
+		if (containerDescriptionHash==null) {
+			containerDescriptionHash = new Hashtable<>();
+		}
+		return containerDescriptionHash;
+	}
+	/**
+	 * Returns the container load hash that holds load information by container name.
+	 * @return the container loads
+	 */
+	public Hashtable<String, PlatformLoad> getContainerLoadHash() {
+		if (containerLoadHash==null) {
+			containerLoadHash = new Hashtable<>(); 
+		}
+		return containerLoadHash;
+	}
+	/**
+	 * Returns the container location hash that describes the relation between container name and JADE Location.
+	 * @return the container location hash
+	 */
+	public Hashtable<String, Location> getContainerLocationHash() {
+		if (containerLocationHash==null) {
+			containerLocationHash = new Hashtable<>();
+		}
+		return containerLocationHash;
+	}
+	/**
+	 * Returns the {@link LoadAgentMap} that allows to answer: where can I find a specified agent).
+	 * @return the load agent map
+	 */
+	public LoadAgentMap getLoadAgentMap() {
+		if (agentLocations==null) {
+			agentLocations = new LoadAgentMap(); 
+		}
+		return agentLocations;
+	}
+	/**
+	 * Returns all known sensor agents (agents that are connected to an environment model 
+	 * by the actuator-sensor relationship of the SimulationService).
+	 * @return the sensor agents
+	 */
+	public Vector<AID> getSensorAgents() {
+		if (sensorAgents==null) {
+			sensorAgents = new Vector<>();
+		}
+		return sensorAgents;
+	}
+	/**
+	 * Returns the Hashtable of new remote containers on which the current platform is waiting for.
+	 * @return the new containers 2 wait 4 hash
+	 */
+	private Hashtable<String, Container2Wait4> getNewContainers2Wait4Hash() {
+		if (newContainers2Wait4==null) {
+			newContainers2Wait4 = new Hashtable<>(); 
+		}
+		return newContainers2Wait4;
 	}
 	
 	/**
@@ -110,7 +170,7 @@ public class LoadInformation  {
 		}		
 		return (double)cycleTimeSum/(double)currentCycleTimeArray.length;
 	}
-	
+
 	
 	/**
 	 * Method to put the answer of the Server.Master directly
@@ -120,9 +180,9 @@ public class LoadInformation  {
 	 */
 	public void putContainerDescription(ClientRemoteContainerReply crcReply) {
 		NodeDescription node = new NodeDescription(crcReply);
-		this.containerDescription.put(node.getContainerName(), node);
-		if (containerQueue.contains(node.getContainerName())==false) {
-			containerQueue.addElement(node.getContainerName());	
+		this.getContainerDescriptionHash().put(node.getContainerName(), node);
+		if (this.getContainerNames().contains(node.getContainerName())==false) {
+			this.getContainerNames().addElement(node.getContainerName());	
 		}
 	}
 	
@@ -136,7 +196,7 @@ public class LoadInformation  {
 	 */
 	public void setNewContainer2Wait4(String container2Wait4) {
 		Container2Wait4 cont = new Container2Wait4(container2Wait4);
-		this.newContainers2Wait4.put(container2Wait4, cont);
+		this.getNewContainers2Wait4Hash().put(container2Wait4, cont);
 	}
 	/**
 	 * Returns the status of the container on which the system is waiting for
@@ -148,14 +208,14 @@ public class LoadInformation  {
 	 * @see LoadServiceHelper#startNewRemoteContainerStaus(String)
 	 */
 	public Container2Wait4 getNewContainer2Wait4Status(String containerName) {
-		return newContainers2Wait4.get(containerName);
+		return this.getNewContainers2Wait4Hash().get(containerName);
 	}
 	/**
 	 * This method sets that the new RemoteContainerRequest was successfully.
 	 * @param containerName the new container, which started
 	 */
 	public void setNewContainerStarted(String containerName) {
-		Container2Wait4 cont = newContainers2Wait4.get(containerName);
+		Container2Wait4 cont = this.getNewContainers2Wait4Hash().get(containerName);
 		if (cont!=null ) {
 			cont.setStarted(true);
 		}
@@ -165,7 +225,7 @@ public class LoadInformation  {
 	 * @param containerName the container, which was NOT started
 	 */
 	public void setNewContainerCanceled(String containerName) {
-		Container2Wait4 cont = newContainers2Wait4.get(containerName);
+		Container2Wait4 cont = this.getNewContainers2Wait4Hash().get(containerName);
 		if (cont!=null ) {
 			cont.setCancelled(true);
 		}

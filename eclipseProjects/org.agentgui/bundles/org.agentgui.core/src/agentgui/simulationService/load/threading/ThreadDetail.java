@@ -37,10 +37,13 @@ import java.io.Serializable;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadDetail implements Serializable, ThreadDetailProperties {
+public class ThreadDetail implements Serializable {
 
 	private static final long serialVersionUID = 7920683110304631892L;
 	
+	public final static String UNKNOWN_THREAD_CLASSNAME = "system.class.-Regular-Thread-";
+	public final static String UNKNOWN_AGENT_CLASSNAME = "agent.class.+Unknown-Agent-Class+";
+
 	private String threadName;
 	private String className;
 	private boolean isAgent;
@@ -51,16 +54,17 @@ public class ThreadDetail implements Serializable, ThreadDetailProperties {
 	private double predictiveMetric;
 	private double realMetric;
     
+	
 	/**
 	 * Instantiates a new thread detail.
 	 */
-	public ThreadDetail(){
+	public ThreadDetail() {
 		this.setThreadName("");
     	this.setSystemTime(0);
     	this.setUserTime(0);
     	// --- default ---
     	this.setIsAgent(false);
-    	this.setClassName(UNKNOWN_AGENT_CLASSNAME);
+    	this.setClassName(ThreadDetail.UNKNOWN_THREAD_CLASSNAME);
 	}
     /**
      * Instantiates a new thread detail.
@@ -75,7 +79,7 @@ public class ThreadDetail implements Serializable, ThreadDetailProperties {
     	this.setUserTime(userTime);
     	// --- default ---
     	this.setIsAgent(false);
-    	this.setClassName(UNKNOWN_AGENT_CLASSNAME);
+    	this.setClassName(ThreadDetail.UNKNOWN_THREAD_CLASSNAME);
     }
     
     /* (non-Javadoc)
@@ -130,6 +134,9 @@ public class ThreadDetail implements Serializable, ThreadDetailProperties {
 	 */
 	public void setIsAgent(boolean isAgent) {
 		this.isAgent = isAgent;
+		if (this.isAgent==true && this.getClassName().equals(UNKNOWN_THREAD_CLASSNAME)) {
+			this.setClassName(UNKNOWN_AGENT_CLASSNAME);
+		}
 	}
 	
 	/**

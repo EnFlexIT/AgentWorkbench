@@ -120,13 +120,15 @@ public class ThreadMonitorProtocolTableTab extends JPanel implements ActionListe
 	 */
 	private JTable getJTableThreadProtocolVector() {
 		if (jTableThreadProtocolVector == null) {
-			
+
 			if (threadProtocolVector==null) {
 				jTableThreadProtocolVector = new JTable();
 			} else {
 				jTableThreadProtocolVector = new JTable(threadProtocolVector.getTableModel());
 			}
 			jTableThreadProtocolVector.setFillsViewportHeight(true);
+			jTableThreadProtocolVector.getTableHeader().setReorderingAllowed(false);
+
 			jTableThreadProtocolVector.getColumnModel().getColumn(0).setMinWidth(50);
 			jTableThreadProtocolVector.getColumnModel().getColumn(1).setMinWidth(200);
 			

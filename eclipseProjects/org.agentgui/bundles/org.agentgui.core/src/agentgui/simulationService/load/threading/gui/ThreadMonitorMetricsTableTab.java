@@ -171,7 +171,6 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	
 	/**
 	 * Gets the j table thread info metrics.
-	 *
 	 * @return the j table thread info metrics
 	 */
 	private JTable getJTableThreadInfoMetrics() {
@@ -183,6 +182,8 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 				jTableThreadInfoMetrics = new JTable(threadInfoStorage.getTableModel());
 			}
 			jTableThreadInfoMetrics.setFillsViewportHeight(true);
+			jTableThreadInfoMetrics.getTableHeader().setReorderingAllowed(false);
+			
 			jTableThreadInfoMetrics.getColumnModel().getColumn(0).setMinWidth(50);
 			jTableThreadInfoMetrics.getColumnModel().getColumn(1).setMinWidth(200);
 			

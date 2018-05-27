@@ -28,10 +28,10 @@
  */
 package agentgui.simulationService.load.threading.storage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
@@ -43,20 +43,20 @@ import javax.swing.tree.TreeNode;
 import org.jfree.data.xy.XYSeries;
 
 import agentgui.simulationService.load.threading.ThreadCalculateMetrics;
-import agentgui.simulationService.load.threading.ThreadDetailProperties;
+import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 
 /**
  * Storage class for relevant load information about agents/threads.
  * 
- * Analyses the received ThredProtocol and adds data to the corresponding
+ * Analysis the received ThredProtocol and adds data to the corresponding
  * XY-Series, calculates moving averages and delta-values.
  * Updates table model of ThreadMonitorProtocolTableTab and tree model
  * of ThreadMonitorDetailTreeTab
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadDetailProperties{
+public class ThreadInfoStorage extends Vector<ThreadProtocol> {
 	
 	/**
 	* The available series keys as constants
@@ -225,35 +225,25 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 			mapCluster.put(clusterName, clusterStorage);
 		}
 		
-		/*
-		 * get thread times from protocol,
-		 * calculate values and put them to time series 
-		 */
-		
+		// --- Get thread times from protocol, calculate values and put them to time series
 		for (int i = 0; i < threadProtocol.getThreadDetails().size(); i++) {
 			
 			/******* AGENT
 			 * simply add data to series
-			 * 
 			 */
-			String agentName = threadProtocol.getThreadDetails().get(i).toString()+AT+containerName;
-			String classKey;
-			boolean isAgent = threadProtocol.getThreadDetails().get(i).isAgent();
 			int noOfAgents = 1;
+
+			ThreadDetail tDetail = threadProtocol.getThreadDetails().get(i);
+			String agentName = tDetail.toString() + AT + containerName;
+			String classKey = tDetail.getClassName();
+			boolean isAgent = tDetail.isAgent();
 			
-			classKey = threadProtocol.getThreadDetails().get(i).getClassName();
-	
-			if(!isAgent ){
-				classKey = UNKNOWN_AGENT_CLASSNAME;
-//				classKey = UNKNOWN_AGENT_CLASSNAME + "->" + agentName.substring(0, agentName.indexOf("@"));
-			}
-			
-			if (getNoOfAgentsPerClass().get(classKey) == null) {
+			if (this.getNoOfAgentsPerClass().get(classKey)==null) {
 				noOfAgentsPerClass.put(classKey, 0);
 			}
 			
 			ThreadInfoStorageAgent agentStorage = getMapAgent().get(agentName);
-			if(agentStorage == null){
+			if (agentStorage == null) {
 				// --- add agent to map
 				agentStorage = new ThreadInfoStorageAgent(agentName, classKey, isAgent);
 				agentStorage.getXYSeriesMap().put(TOTAL_CPU_USER_TIME, new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+agentName));
@@ -313,7 +303,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 			}			
 
 			// --- Metrics only exist for Agent-Threads ---
-			if(isAgent == true){
+			if (isAgent==true) {
+				
 				double predictiveMetric = threadProtocol.getThreadDetails().get(i).getPredictiveMetric();
 				double realMetric = threadProtocol.getThreadDetails().get(i).getRealMetric();	
 				
@@ -632,14 +623,14 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 		
 		//TODO: Observer  pattern notifyObserver
 		// --- Add (new) nodes to the tree model ----------
-		addNodesToTreeModel(mapMachine, mapJVM, mapContainer, mapAgent);
+		this.addNodesToTreeModel(mapMachine, mapJVM, mapContainer, mapAgent);
 		
 		// --- add data to table model ---
-		clearTableModel();
-		addTableModelRow(mapAgent);
+		this.clearTableModel();
+		this.addTableModelRow(mapAgent);
 		
 		//update metrics
-		getThreadMeasureMetrics().getMetrics();
+		this.getThreadMeasureMetrics().getMetrics();
 		
 		return done;
 	}
@@ -664,6 +655,14 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 				private static final long serialVersionUID = 1L;
 
 				/* (non-Javadoc)
+				 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+				 */
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+				
+				/* (non-Javadoc)
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 				 */
 				public Class<?> getColumnClass(int column){
@@ -675,7 +674,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 				}
 			};
 			// --- Necessary for preventing sorter from throwing error about empty row
-			addTableModelRow(null);
+			this.addTableModelRow(null);
 		}
 		return tableModel;
 	}
@@ -686,7 +685,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 	 * @param mapAgent the map agent
 	 */
 	private void addTableModelRow(HashMap<String, ThreadInfoStorageAgent> mapAgent) {
-		if(mapAgent == null){
+		
+		if (mapAgent==null) {
 			ThreadInfoStorageAgent actualAgent = new ThreadInfoStorageAgent("", "", false);
 			
 			Vector<Object> row = new Vector<Object>();
@@ -698,19 +698,20 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 			
 		} else {
 			
-			Iterator<Entry<String, ThreadInfoStorageAgent>> iteratorAgent = mapAgent.entrySet().iterator();
-			
-			while (iteratorAgent.hasNext()) {
-				ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
-				String[] className = actualAgent.getClassName().split("\\.");
+			ArrayList<String> agentNames = new ArrayList<>( mapAgent.keySet());  
+			for (int i = 0; i < agentNames.size(); i++) {
+				
+				String agentName = agentNames.get(i);
+				ThreadInfoStorageAgent threadInfoAgent = mapAgent.get(agentName);
+				String[] className = threadInfoAgent.getClassName().split("\\.");
 				
 				Vector<Object> row = new Vector<Object>();
-				row.add(actualAgent);
+				row.add(threadInfoAgent);
 				row.add(className[className.length-1]);
-				row.add(getNoOfAgentsPerClass().get(actualAgent.getClassName()));
+				row.add(getNoOfAgentsPerClass().get(threadInfoAgent.getClassName()));
 				
 				// --- remove decimal .000 ----
-				row.add(Math.round(actualAgent.getRealMetric()));
+				row.add(Math.round(threadInfoAgent.getRealMetric()));
 				
 				// --- Add row to table model ---
 				getTableModel().addRow(row);

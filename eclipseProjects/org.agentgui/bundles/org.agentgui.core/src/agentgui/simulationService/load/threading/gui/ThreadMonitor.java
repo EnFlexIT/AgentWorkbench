@@ -133,10 +133,8 @@ public class ThreadMonitor extends JFrame {
 		}
 		return tabbedPane;
 	}
-	
 	/**
 	 * Gets the j panel measure protocol.
-	 *
 	 * @return the j panel measure protocol
 	 */
 	public ThreadMonitorProtocolTableTab getJPanelMeasureProtocol() {
@@ -145,10 +143,8 @@ public class ThreadMonitor extends JFrame {
 		}
 		return jPanelMeasureProtocol;
 	}
-	
 	/**
 	 * Gets the j panel measure tree detail.
-	 *
 	 * @return the j panel measure tree detail
 	 */
 	public ThreadMonitorDetailTreeTab getJPanelMeasureTreeDetail() {
@@ -157,10 +153,8 @@ public class ThreadMonitor extends JFrame {
 		}
 		return jPanelMeasureTreeDetail;
 	}
-	
 	/**
 	 * Gets the j panel measure metrics.
-	 *
 	 * @return the j panel measure metrics
 	 */
 	public ThreadMonitorMetricsTableTab getJPanelMeasureMetrics() {

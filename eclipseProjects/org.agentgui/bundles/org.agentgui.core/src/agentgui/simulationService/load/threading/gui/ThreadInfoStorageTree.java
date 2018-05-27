@@ -56,7 +56,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import agentgui.core.config.GlobalInfo;
-import agentgui.simulationService.load.threading.ThreadDetailProperties;
+import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorageCluster;
@@ -183,7 +183,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
         	    		if(ae.getSource()==viewAgentClass){
         	    			className =  tia.getClassName();	
         	    		}else{
-	        	    		className =  ThreadDetailProperties.UNKNOWN_AGENT_CLASSNAME;
+	        	    		className =  ThreadDetail.UNKNOWN_AGENT_CLASSNAME;
 	        	    	}
         	    		folderNamePrefix = "Class: ";
         	    		iteratorClass = threadInfoStorage.getMapAgentClass().get(className).getXYSeriesMap().keySet().iterator();

@@ -146,6 +146,13 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 				private static final long serialVersionUID = 1L;
 
 				/* (non-Javadoc)
+				 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+				 */
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+				/* (non-Javadoc)
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 				 */
 				public Class<?> getColumnClass(int column){

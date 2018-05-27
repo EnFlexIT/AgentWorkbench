@@ -32,11 +32,11 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 
-import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.core.application.Application;
 import agentgui.simulationService.load.monitoring.AbstractMonitoringTask;
 import agentgui.simulationService.load.monitoring.SingleAgentMonitor;
 import agentgui.simulationService.load.threading.ThreadDetail;
+import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 
 /**
@@ -123,7 +123,7 @@ public class LoadMeasureThread extends Thread {
 	private static Integer loadNoThreads = 0;
 	
 	/** Reminder for the last thread measurement */
-	private static long threadMeasurementLastTimeStamp;
+	private static long lastThreadProtocolTimeStamp;
 	
 	// --- Monitoring tasks for this thread -----------------------------------
 	private static ArrayList<AbstractMonitoringTask> monitoringTasks;
@@ -563,12 +563,11 @@ public class LoadMeasureThread extends Thread {
 	 */
 	public static void doThreadMeasurement(final long timestamp, final ThreadProtocolReceiver threadProtocolReceiver) {
 
-		if (timestamp!=threadMeasurementLastTimeStamp) {
-
+		if (timestamp!=lastThreadProtocolTimeStamp) {
 			// --- Remind this time stamp in order to avoid double work -------
-			threadMeasurementLastTimeStamp = timestamp;
+			lastThreadProtocolTimeStamp = timestamp;
 			
-			// --- Start Thread to do0 the work -------------------------------
+			// --- Start Thread to do the work -------------------------------
 			Runnable threadMeasurement = new Runnable() {
 				@Override
 				public void run() {
@@ -579,7 +578,7 @@ public class LoadMeasureThread extends Thread {
 					// --- Configure ThreadMXBean if possible and needed ------ 
 					ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
 			        if (tmxb.isThreadCpuTimeSupported()==true){
-			        	if(tmxb.isThreadCpuTimeEnabled()==false){
+			        	if (tmxb.isThreadCpuTimeEnabled()==false) {
 			        		tmxb.setThreadCpuTimeEnabled(true);  
 			        	}	
 			        } else{
@@ -603,10 +602,11 @@ public class LoadMeasureThread extends Thread {
 			            if (nanosCpuTime==-1 || nanosUserTime==-1) {
 			            	continue;   // Thread died
 			            }
-
 			        	threadName = tmxb.getThreadInfo(threadID).getThreadName();
+			        	
 			        	// --- add times, converted to milliseconds, to thread-Protocol
-			        	tp.getThreadDetails().add(new ThreadDetail(threadName, (nanosCpuTime/factorMiliseconds), (nanosUserTime/factorMiliseconds)));
+			        	ThreadDetail tDetails = new ThreadDetail(threadName, (nanosCpuTime/factorMiliseconds), (nanosUserTime/factorMiliseconds));
+			        	tp.getThreadDetails().add(tDetails);
 			        }
 			        // --- Send protocol to the requester of the measurement --
 			        threadProtocolReceiver.receiveThreadProtocol(tp);
@@ -616,6 +616,9 @@ public class LoadMeasureThread extends Thread {
 			threadMeasurement.run();
 		}
 	}
+	
+	
+	
 	
 	/**
 	 * Returns the registered Monitoring tasks.
