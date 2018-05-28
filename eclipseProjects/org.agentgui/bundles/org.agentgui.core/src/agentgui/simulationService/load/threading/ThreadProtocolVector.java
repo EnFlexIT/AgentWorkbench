@@ -28,17 +28,10 @@
  */
 package agentgui.simulationService.load.threading;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.AgentClassElement4SimStart;
-import agentgui.core.project.setup.SimulationSetup;
 
 
 /**
@@ -51,79 +44,15 @@ import agentgui.core.project.setup.SimulationSetup;
 public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 
 	private static final long serialVersionUID = -6007682527796979437L;
-
-	
-	/** The agent start hash map reminder. */
-	private HashMap<String, AgentClassElement4SimStart> agentStartHashMapReminder;
 	
 	/** The table model. */
 	private DefaultTableModel tableModel;
-
 	
 	/**
 	 * Instantiates a new thread protocol vector.
 	 */
 	public ThreadProtocolVector() {
 		super();
-	}
-	
-	/**
-	 * Gets the agent start list of the current {@link SimulationSetup}.
-	 * @return the agent start list
-	 */
-	private ArrayList<AgentClassElement4SimStart> getAgentListFromProjectSetup() {
-		Project project = Application.getProjectFocused();
-		if (project!=null) {
-			// --- Get Agent list from simulation setup -------------
-			SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
-			if (simSetup!=null) {
-				return simSetup.getAgentList();
-			}
-		}
-		return null;
-	}
-	/**
-	 * Gets the agent start hash map reminder.
-	 * @return the agent start hash map reminder
-	 */
-	private HashMap<String, AgentClassElement4SimStart> getAgentStartHashMapReminder() {
-		if (agentStartHashMapReminder==null) {
-			agentStartHashMapReminder = new HashMap<String, AgentClassElement4SimStart>();
-		}
-		return agentStartHashMapReminder;
-	}
-	/**
-	 * Sets the agent start hash map reminder.
-	 * @param agentStartHashMap the agent start hash map
-	 */
-	private void setAgentStartHashMapReminder(HashMap<String, AgentClassElement4SimStart> agentStartHashMap) {
-		this.agentStartHashMapReminder = agentStartHashMap;
-	}
-	/**
-	 * Returns the agent start list as hash map, in order to accelerate the access.
-	 * @return the agent hash map
-	 */
-	public HashMap<String, AgentClassElement4SimStart> getAgentStartHashMap() {
-		
-		ArrayList<AgentClassElement4SimStart> agentStartList = this.getAgentListFromProjectSetup();
-		if (agentStartList!=null) {
-			// ------------------------------------------------------
-			// --- Check the size of the reminded HashMap -----------
-			// ------------------------------------------------------
-			if (agentStartList.size()!=this.getAgentStartHashMapReminder().size()) {
-				// --- Number of elements are different: Rebuild ----
-				HashMap<String, AgentClassElement4SimStart> agentStartHashMap = new HashMap<String, AgentClassElement4SimStart>();
-				for (int i = 0; i < agentStartList.size(); i++) {
-					AgentClassElement4SimStart ace4ss = agentStartList.get(i); 
-					agentStartHashMap.put(ace4ss.getStartAsName(), ace4ss);
-				}
-				// --- Remind ---------------------------------------
-				this.setAgentStartHashMapReminder(agentStartHashMap);
-			}
-			return this.getAgentStartHashMapReminder();
-			// ------------------------------------------------------
-		}
-		return null;
 	}
 	
 	/**
@@ -136,7 +65,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			
 			Vector<String> header = new Vector<String>();
 			header.add("PID");
-			header.add("Thread");
+			header.add("Thread Name");
 			header.add("Class");
 			header.add("System Time [ms]");
 			header.add("User Time [ms]");
@@ -180,24 +109,19 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		if (threadDetail == null) {
 			threadDetail = new ThreadDetail();
 		}
-		
-		// --- Check for agent class out of the setup start-list ----
-		if (threadDetail.isAgent()==true) {
-			HashMap<String, AgentClassElement4SimStart> agentStartHashMap = this.getAgentStartHashMap();
-			if (agentStartHashMap!=null) {
-				AgentClassElement4SimStart ace4ss = agentStartHashMap.get(threadDetail.getThreadName());
-				if (ace4ss!=null) {
-					threadDetail.setClassName(ace4ss.getAgentClassReference());
-				}
-			}
+
+		// --- Set the class name entry -----------------------------
+		String className = threadDetail.getClassName();
+		if (className.equals(ThreadDetail.UNKNOWN_THREAD_CLASSNAME) || className.equals(ThreadDetail.UNKNOWN_AGENT_CLASSNAME)) {
+			String[] classNameSplitArray = className.split("\\.");
+			className = classNameSplitArray[classNameSplitArray.length-1];
 		}
 		
-		String[] className = threadDetail.getClassName().split("\\.");
 		// --- Create row vector ------------------------------------
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadDetail);
-		row.add(className[className.length-1]);
+		row.add(className);
 		row.add(threadDetail.getSystemTime());
 		row.add(threadDetail.getUserTime());
 		

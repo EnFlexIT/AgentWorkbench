@@ -274,7 +274,7 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			
 			Node n = getNode();
 			Object result = n.accept(cmd);
-			if((result != null) && (result instanceof Throwable)) {
+			if ((result != null) && (result instanceof Throwable)) {
 				if(result instanceof IMTPException) {
 					throw (IMTPException)result;
 				} else {

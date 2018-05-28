@@ -46,6 +46,7 @@ import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -64,63 +65,41 @@ import javax.swing.SwingConstants;
  */
 public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListener {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4848470750194315559L;
 	
-	/** The thread info storage. */
 	private ThreadInfoStorage threadInfoStorage;
 	
-	/** The scroll pane table. */
 	private JScrollPane scrollPaneTable;
-	
-	/** The j table thread protocol vector. */
 	private JTable jTableThreadInfoMetrics;
-	
-	/** The J panel filter. */
 	private JPanel JPanelFilter;
 	
-	/** The j radio button no filter. */
 	private JRadioButton jRadioButtonNoFilter;
-	
-	/** The j radio button filter agents. */
 	private JRadioButton jRadioButtonFilterAgents;
 	
-	/** The btn calc metrics hint. */
 	private JLabel lblCalcBaseHint;
-	
-	/** The radio button integral. */
 	private JRadioButton rdbtnIntegralDelta;
-	
-	/** The radio button total. */
 	private JRadioButton rdbtnLastTotal;
-	
-	/** The radio button individual. */
 	private JRadioButton rdbtnIndividual;
-	
-	/** The radio button class. */
 	private JRadioButton rdbtnClass;
-	
-	/** The radio button average. */
 	private JRadioButton rdbtnIntegralTotal;
 	
-	/** The J panel options. */
 	private JPanel JPanelOptions;
 	
-	private String lblCalcBaseHintString = Language.translate("Calculate the real metrics based on recorded chart value selection.");
-	private String rdBtnIntegralTotalString = Language.translate("Calculate metrics based on total integrals.");
-	private String rdBtnIntegralDeltaString = Language.translate("Calculate metrics based on delta integrals.");
-	private String rdBtnLastTotalString =  Language.translate("Calculate metrics based on last total system cpu time.");
-	private String rdBtnIndividualString = Language.translate("Calculate metrics based on individual agent data.");
-	private String rdBtnClassString = Language.translate("Calculate metrics based on agent class data.");
+	private String lblCalcBaseHintString = Language.translate("Calculate the real metrics based on recorded chart value selection.", Language.EN);
+	private String rdBtnIntegralTotalString = Language.translate("Calculate metrics based on total integrals.", Language.EN);
+	private String rdBtnIntegralDeltaString = Language.translate("Calculate metrics based on delta integrals.", Language.EN);
+	private String rdBtnLastTotalString =  Language.translate("Calculate metrics based on last total system cpu time.", Language.EN);
+	private String rdBtnIndividualString = Language.translate("Calculate metrics based on individual agent data.", Language.EN);
+	private String rdBtnClassString = Language.translate("Calculate metrics based on agent class data.", Language.EN);
+	
 	
 	/**
 	 * Instantiates a new thread measure metrics tab.
-	 *
 	 * @param threadInfoStorage the thread info storage
 	 */
 	public ThreadMonitorMetricsTableTab(ThreadInfoStorage threadInfoStorage) {
 		this.threadInfoStorage = threadInfoStorage;
-		initialize();
+		this.initialize();
 	}
 	
 	/**
@@ -132,7 +111,8 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 		gridBagLayout.rowHeights = new int[] {241, 30, 15, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		this.setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_scrollPaneTable = new GridBagConstraints();
 		gbc_scrollPaneTable.fill = GridBagConstraints.BOTH;
 		gbc_scrollPaneTable.insets = new Insets(0, 0, 5, 0);
@@ -151,12 +131,11 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 		gbc_JPanelOptions.anchor = GridBagConstraints.SOUTH;
 		gbc_JPanelOptions.gridx = 0;
 		gbc_JPanelOptions.gridy = 2;
-		add(getJPanelOptions(), gbc_JPanelOptions);
+		this.add(getJPanelOptions(), gbc_JPanelOptions);
 	}
 
 	/**
 	 * Gets the scroll pane table.
-	 *
 	 * @return the scroll pane table
 	 */
 	private JScrollPane getScrollPaneTable() {
@@ -184,8 +163,17 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 			jTableThreadInfoMetrics.setFillsViewportHeight(true);
 			jTableThreadInfoMetrics.getTableHeader().setReorderingAllowed(false);
 			
-			jTableThreadInfoMetrics.getColumnModel().getColumn(0).setMinWidth(50);
-			jTableThreadInfoMetrics.getColumnModel().getColumn(1).setMinWidth(200);
+			TableColumnModel columnModel = jTableThreadInfoMetrics.getColumnModel();
+			
+			columnModel.getColumn(0).setMinWidth(50);
+			columnModel.getColumn(1).setMinWidth(200);
+			
+			int numberColumnWidth = 120;
+			columnModel.getColumn(2).setMinWidth(numberColumnWidth);
+			columnModel.getColumn(2).setMaxWidth(numberColumnWidth);
+			
+			columnModel.getColumn(3).setMinWidth(numberColumnWidth);
+			columnModel.getColumn(3).setMaxWidth(numberColumnWidth);
 			
 			
 			if (threadInfoStorage!=null) {

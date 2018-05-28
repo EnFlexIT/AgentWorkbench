@@ -104,6 +104,7 @@ public class LoadInformation  {
 		}
 		return containerLocationHash;
 	}
+	
 	/**
 	 * Returns the {@link LoadAgentMap} that allows to answer: where can I find a specified agent).
 	 * @return the load agent map
@@ -114,6 +115,48 @@ public class LoadInformation  {
 		}
 		return agentLocations;
 	}
+	/**
+	 * Resets the Object, which holds the Informations about 
+	 * the agent in relation to it's locations etc.
+	 * @see #agentLocations
+	 */
+	public void resetLoadAgentMap() {
+		agentLocations = null;		
+	}
+	/**
+	 * Method to put the Agent-AIDs which are coming from the
+	 * currently running containers.
+	 *
+	 * @param containerName the container name
+	 * @param aid the AID array of the agents
+	 * @see #agentLocations
+	 */
+	public void putAIDsToLoadAgentMap(String containerName, AID[] aid) {
+		
+		boolean hasSensor = false;
+		
+		if (aid.length==0) {
+			this.getLoadAgentMap().put(containerName, null, false);
+		} else {
+			for (int i = 0; i < aid.length; i++) {
+				// --- ServiceSensor available? -----
+				if (this.getSensorAgents().contains(aid[i])==true) {
+					hasSensor = true;
+				} else {
+					hasSensor = false;
+				}
+				this.getLoadAgentMap().put(containerName, aid[i], hasSensor);			
+			}
+		}
+	}
+	/**
+	 * This method starts the counting for the agents at the platform 
+	 * and the agents that are located at one specific container  
+	 */
+	public void doCountingsInLoadAgentMap() {
+		this.getLoadAgentMap().doCountings();
+	}
+	
 	/**
 	 * Returns all known sensor agents (agents that are connected to an environment model 
 	 * by the actuator-sensor relationship of the SimulationService).
@@ -231,47 +274,6 @@ public class LoadInformation  {
 		}
 	}
 	
-	/**
-	 * Resets the Object, which holds the Informations about 
-	 * the agent in relation to it's locations etc.
-	 * @see #agentLocations
-	 */
-	public void resetAIDs4Container() {
-		agentLocations = new LoadAgentMap();		
-	}
-	/**
-	 * Method to put the Agent-AIDs which are coming from the
-	 * currently running containers.
-	 *
-	 * @param containerName the container name
-	 * @param aid the AID array of the agents
-	 * @see #agentLocations
-	 */
-	public void putAIDs4Container(String containerName, AID[] aid) {
-		
-		boolean hasSensor = false;
-		
-		if (aid.length==0) {
-			agentLocations.put(containerName, null, false);
-		} else {
-			for (int i = 0; i < aid.length; i++) {
-				// --- ServiceSensor available? -----
-				if (sensorAgents.contains(aid[i])==true) {
-					hasSensor = true;
-				} else {
-					hasSensor = false;
-				}
-				agentLocations.put(containerName, aid[i], hasSensor);			
-			}
-		}
-	}
-	/**
-	 * This method starts the counting for the agents at the platform 
-	 * and the agents, which are located at one specific container  
-	 */
-	public void countAIDs4Container() {
-		agentLocations.doCountings();
-	}
 	
 	// --------------------------------------------------------------
 	// --- Sub-Class NodeDescription --- S T A R T ------------------

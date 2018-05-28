@@ -785,7 +785,6 @@ public class LoadService extends BaseService {
 				slice.requestThreadMeasurement(timeStamp);
 			
 			} catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while requesting Thread Measurement on slice " + sliceName, t);
 			}
 		}		
@@ -801,7 +800,7 @@ public class LoadService extends BaseService {
 	private void broadcastGetAIDList(Service.Slice[] slices) throws ServiceException {
 		
 		if (this.isActiveSimulationService()==false) return;
-		this.loadInfo.resetAIDs4Container();
+		this.loadInfo.resetLoadAgentMap();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Try to get AID's from all Containers !");
@@ -815,14 +814,13 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to get AID's from " + sliceName);
 				}
 				AID[] aid = slice.getAIDList();
-				loadInfo.putAIDs4Container(sliceName, aid);
+				loadInfo.putAIDsToLoadAgentMap(sliceName, aid);
 			
 			} catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while trying to get AID's from " + sliceName, t);
 			}
 		}
-		this.loadInfo.countAIDs4Container();
+		this.loadInfo.doCountingsInLoadAgentMap();
 	}
 	
 	/**
@@ -1182,7 +1180,7 @@ public class LoadService extends BaseService {
 		}
 		
 		/**
-		 * Step simulation.
+		 * Sets the simulation cycle start time stamp.
 		 */
 		private void setSimulationCycleStartTimeStamp() {
 			loadInfo.setSimulationCycleStartTimeStamp();
@@ -1231,10 +1229,20 @@ public class LoadService extends BaseService {
 				}
 				
 				// --- Do the check if a thread is an agent or not ------------
+				Hashtable<String, AID_Container> agentsAtPlatform = loadInfo.getLoadAgentMap().getAgentsAtPlatform();
 				for (int i = 0; i < threadProtocol.getThreadDetails().size(); i++) {
+					
 					ThreadDetail threadDetail = threadProtocol.getThreadDetails().get(i);
-					if (loadInfo.getLoadAgentMap().getAgentsAtPlatform().get(threadDetail.getThreadName())!=null) {
+					
+					AID_Container aidContainer = agentsAtPlatform.get(threadDetail.getThreadName());
+					if (aidContainer!=null) {
+						// --- Found an agent thread --------------------------
 						threadDetail.setIsAgent(true);
+						// --- Check the class name ---------------------------
+						Object classNameObject = aidContainer.getAID().getAllUserDefinedSlot().get(SimulationService.AID_PROPERTY_CLASSNAME);
+						if (classNameObject!=null) {
+							threadDetail.setClassName((String) classNameObject);
+						}
 					}
 				}
 				

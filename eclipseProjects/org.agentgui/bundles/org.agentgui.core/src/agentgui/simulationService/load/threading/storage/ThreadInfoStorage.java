@@ -645,7 +645,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> {
 		if (tableModel==null) {
 			
 			Vector<String> header = new Vector<String>();
-			header.add("Thread");
+			header.add("Thread Name");
 			header.add("Class");
 			header.add("Instances Of Class");
 			header.add("Real Metric");
@@ -703,11 +703,17 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> {
 				
 				String agentName = agentNames.get(i);
 				ThreadInfoStorageAgent threadInfoAgent = mapAgent.get(agentName);
-				String[] className = threadInfoAgent.getClassName().split("\\.");
+				
+				// --- Set the class name entry -----------------------------
+				String className = threadInfoAgent.getClassName();
+				if (className.equals(ThreadDetail.UNKNOWN_THREAD_CLASSNAME) || className.equals(ThreadDetail.UNKNOWN_AGENT_CLASSNAME)) {
+					String[] classNameSplitArray = className.split("\\.");
+					className = classNameSplitArray[classNameSplitArray.length-1];
+				}
 				
 				Vector<Object> row = new Vector<Object>();
 				row.add(threadInfoAgent);
-				row.add(className[className.length-1]);
+				row.add(className);
 				row.add(getNoOfAgentsPerClass().get(threadInfoAgent.getClassName()));
 				
 				// --- remove decimal .000 ----

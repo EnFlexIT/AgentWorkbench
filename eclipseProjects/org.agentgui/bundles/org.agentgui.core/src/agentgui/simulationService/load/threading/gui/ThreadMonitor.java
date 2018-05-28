@@ -86,7 +86,7 @@ public class ThreadMonitor extends JFrame {
 	 */
 	private void initialize() {
 		
-		this.setSize(800, 600);
+		this.setSize(1000, 562);
 		
 		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Thread Monitor");
@@ -121,7 +121,6 @@ public class ThreadMonitor extends JFrame {
 
 	/**
 	 * Gets the tabbed pane.
-	 *
 	 * @return the tabbed pane
 	 */
 	private JTabbedPane getTabbedPane() {

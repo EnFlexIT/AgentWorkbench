@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTable;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -66,22 +67,13 @@ public class ThreadMonitorProtocolTableTab extends JPanel implements ActionListe
 
 	private static final long serialVersionUID = -7315494195421538651L;
 
-	/** The thread protocol vector. */
 	private ThreadProtocolVector threadProtocolVector;
 	
-	/** The scroll pane table. */
 	private JScrollPane scrollPaneTable;
-	
-	/** The j table thread protocol vector. */
 	private JTable jTableThreadProtocolVector;
-	
-	/** The J panel filter. */
 	private JPanel JPanelFilter;
 	
-	/** The j radio button no filter. */
 	private JRadioButton jRadioButtonNoFilter;
-	
-	/** The j radio button filter agents. */
 	private JRadioButton jRadioButtonFilterAgents;
 	
 	/**
@@ -129,8 +121,19 @@ public class ThreadMonitorProtocolTableTab extends JPanel implements ActionListe
 			jTableThreadProtocolVector.setFillsViewportHeight(true);
 			jTableThreadProtocolVector.getTableHeader().setReorderingAllowed(false);
 
-			jTableThreadProtocolVector.getColumnModel().getColumn(0).setMinWidth(50);
-			jTableThreadProtocolVector.getColumnModel().getColumn(1).setMinWidth(200);
+			TableColumnModel tableModel = jTableThreadProtocolVector.getColumnModel(); 
+			tableModel.getColumn(0).setMinWidth(50);
+			tableModel.getColumn(0).setMaxWidth(150);
+			
+			tableModel.getColumn(1).setMinWidth(150);
+			
+			tableModel.getColumn(2).setMinWidth(150);
+			
+			int numberColumnWidth = 120;
+			tableModel.getColumn(3).setMinWidth(numberColumnWidth);
+			tableModel.getColumn(3).setMaxWidth(numberColumnWidth);
+			tableModel.getColumn(4).setMinWidth(numberColumnWidth);
+			tableModel.getColumn(4).setMaxWidth(numberColumnWidth);
 			
 			
 			if (threadProtocolVector!=null) {

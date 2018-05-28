@@ -71,7 +71,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 /**
  * This is the SimulationService, which provides a list of functionalities for agent based simulations.
  * These are namely:<br>
- * - time synchronisation for all involved (remote) container,<br>
+ * - time synchronization for all involved (remote) container,<br>
  * - methods to stop agents, that are using the Actuator/Sensor relationship between agents and this service,<br>
  * - a method to pause a running simulation, <br>
  * - methods to transport an {@link EnvironmentModel} model to all connected agents in an asynchronous way and<br>
@@ -97,6 +97,8 @@ public class SimulationService extends BaseService {
 
 	public static final String NAME = SimulationServiceHelper.SERVICE_NAME;
 	public static final String SERVICE_NODE_DESCRIPTION_FILE = SimulationServiceHelper.SERVICE_NODE_DESCRIPTION_FILE;
+	public static final String AID_PROPERTY_CLASSNAME = "_AgentClassName";
+	
 	
 	private AgentContainer myContainer;
 	private MainContainer myMainContainer;
@@ -1404,11 +1406,30 @@ public class SimulationService extends BaseService {
 		}
 		
 		/**
-		 * Returns the list of agents running in this container.
-		 * @return the list of agents
+		 * Returns the list of agents running in this container. Additionally the 
+		 * class name of the agent will be resolved. 
+		 * @return the AID list of the local agents
 		 */
 		private AID[] getListOfAgents() {
-			return myContainer.agentNames();
+			
+			AID[] localAgentAIDs = myContainer.agentNames();
+			try {
+			
+				// --- Add user defined slot value for the class name ---------
+				for (int i = 0; i < localAgentAIDs.length; i++) {
+					if (localAgentAIDs[i].getAllUserDefinedSlot().get(AID_PROPERTY_CLASSNAME)==null) {
+						Agent agent = myContainer.acquireLocalAgent(localAgentAIDs[i]);
+						if (agent!=null) {
+							localAgentAIDs[i].addUserDefinedSlot(AID_PROPERTY_CLASSNAME, agent.getClass().getName());
+							myContainer.releaseLocalAgent(localAgentAIDs[i]);
+						}
+					}
+				}
+				
+			} catch (Exception ex) {
+				// --- Simply continue in case of errors ---------------------- 
+			}
+			return localAgentAIDs;
 		}
 		
 		/**
