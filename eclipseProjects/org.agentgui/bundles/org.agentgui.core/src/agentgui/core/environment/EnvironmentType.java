@@ -35,7 +35,7 @@ import agentgui.core.config.GlobalInfo;
 
 /**
  * This class has to be used in order to hand over a predefined environment model
- * with its visual representation and tools to Agent.GUI.<br>
+ * with its visual representation and tools to Agent.Workbench.<br>
  * In order to add such constructions to Agent.GUI use the methods in the class 
  * GlobalInfo (accessible at runtime by using Application.RunInfo) 
  * 

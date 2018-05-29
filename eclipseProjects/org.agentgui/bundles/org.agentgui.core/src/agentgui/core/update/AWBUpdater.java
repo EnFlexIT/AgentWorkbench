@@ -44,19 +44,20 @@ import agentgui.core.gui.options.UpdateOptions;
 import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
- * The Class AgentGuiUpdater.
+ * The Class AWBUpdater provides a thread that can be used to update
+ * Agent.Workbench and its features.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AgentGuiUpdater extends Thread {
+public class AWBUpdater extends Thread {
+
+	public static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
 	// --- For the debugging of this class set true -------------
 	private boolean debuggingInIDE = false;
-
-	public static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
-	public static final String UPDATE_SUB_FOLDER = "updates"; // - subfolder in the web server directory -
-	public static final String UPDATE_VERSION_INFO_FILE = "latestVersion.xml";
+	private boolean debug = false;
+	private boolean updateDone = false;
 
 	private GlobalInfo globalInfo;
 	private ExecutionMode executionMode;
@@ -68,26 +69,22 @@ public class AgentGuiUpdater extends Thread {
 	private boolean doUpdateProcedure = true;
 	private boolean askBeforeDownload = false;
 	
+	private Object synchronizationObject;
 	private AwbProgressMonitor progressMonitor;
 	
-	private Object synchronizationObject;
-	
-	private boolean debug = false;
-	
-	private boolean updateDone = false;
 
 	
 	/**
 	 * Instantiates a new Agent.GUI updater process.
 	 */
-	public AgentGuiUpdater() {
+	public AWBUpdater() {
 		this.initialize();
 	}
 	/**
 	 * Instantiates a new Agent.GUI updater process.
 	 * @param userExecuted indicates that execution was manually chosen by user
 	 */
-	public AgentGuiUpdater(boolean userExecuted) {
+	public AWBUpdater(boolean userExecuted) {
 		this.manualyExecutedByUser = userExecuted;
 		this.initialize();
 	}
@@ -115,7 +112,7 @@ public class AgentGuiUpdater extends Thread {
 
 		if (this.manualyExecutedByUser==false) {
 			long timeNow = System.currentTimeMillis();
-			long time4NextCheck = this.updateDateLastChecked + AgentGuiUpdater.UPDATE_CHECK_PERIOD;
+			long time4NextCheck = this.updateDateLastChecked + AWBUpdater.UPDATE_CHECK_PERIOD;
 			if (timeNow < time4NextCheck) {
 				doUpdateProcedure = false;
 			} else {

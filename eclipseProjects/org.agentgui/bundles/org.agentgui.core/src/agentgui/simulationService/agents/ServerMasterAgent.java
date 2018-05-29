@@ -36,7 +36,7 @@ import java.util.Iterator;
 
 import agentgui.core.application.Application;
 import agentgui.core.database.DBConnection;
-import agentgui.core.update.AgentGuiUpdater;
+import agentgui.core.update.AWBUpdater;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
@@ -190,10 +190,10 @@ public class ServerMasterAgent extends Agent {
 		protected void onWake() {
 			
 			// --- Start the Updater --------------------------
-			new AgentGuiUpdater().start();
+			new AWBUpdater().start();
 			
 			// --- Set the time for the next update check -----
-			long updateStartTimeLong = 1000 + Application.getGlobalInfo().getUpdateDateLastChecked() + AgentGuiUpdater.UPDATE_CHECK_PERIOD;
+			long updateStartTimeLong = 1000 + Application.getGlobalInfo().getUpdateDateLastChecked() + AWBUpdater.UPDATE_CHECK_PERIOD;
 			Date updateStartDate = new Date(updateStartTimeLong); 
 			this.reset(updateStartDate);
 		}

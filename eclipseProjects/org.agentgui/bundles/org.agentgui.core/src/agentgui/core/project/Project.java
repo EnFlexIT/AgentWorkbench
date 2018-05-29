@@ -66,6 +66,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -87,7 +88,7 @@ import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettings;
-import agentgui.core.update.VersionInformation;
+import agentgui.core.update.ProjectUpdater;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.ontology.AgentStartConfiguration;
@@ -112,7 +113,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String CHANGED_ProjectStartTab = "ProjectStartTab";
 	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
 
-	@XmlTransient public static final String CHANGED_VersionInformation= "VersionInformation";
+	@XmlTransient public static final String CHANGED_VersionTag = "VersionTag";
+	@XmlTransient public static final String CHANGED_Version = "Version";
 	@XmlTransient public static final String CHANGED_UpdateAutoConfiguration= "UpdateAutoConfiguration";
 	@XmlTransient public static final String CHANGED_UpdateSite = "UpdateSite";
 	@XmlTransient public static final String CHANGED_UpdateDateLastChecked= "UpdateDateLastChecked";
@@ -143,10 +145,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionRemoved = "AgentMetric_AgentDescriptionRemoved";
 
 	// --- Constants -------------------------------------------
-	@XmlTransient private String defaultSubFolder4Setups   = "setups";
-	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
-	@XmlTransient private final String[] defaultSubFolders = {defaultSubFolder4Setups, defaultSubFolderEnvSetups};
-	@XmlTransient private String defaultTempFolder = "~tmp";
+	@XmlTransient private static final String defaultSubFolder4Setups   = "setups";
+	@XmlTransient private static final String defaultSubFolderEnvSetups = "setupsEnv";
+	@XmlTransient private final String[] DEFAULT_SUB_FOLDERS = {defaultSubFolder4Setups, defaultSubFolderEnvSetups};
+	@XmlTransient public static final String DEFAULT_TEMP_FOLDER = "~tmp";
 
 	/** The OSGI-bundle of the current project */
 	@XmlTransient private ProjectBundleLoader projectBundleLoader;
@@ -164,17 +166,21 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
 
-	// --- Variables saved within the project file -------------
+	// --- Variables saved within the project file ------------------
 	@XmlElement(name="projectName")				private String projectName;
 	@XmlElement(name="projectDescription")		private String projectDescription;
 	@XmlElement(name="projectStartTab")			private String projectStartTab;	
 	@XmlElement(name="projectView")				private String projectView;			// --- View for developer or end-user ---
 
-	@XmlElement(name="versionInformation")		private VersionInformation versionInformation;
-	@XmlElement(name="updateAutoConfiguration")	private Integer updateAutoConfiguration;
+	// --- Variables for the update and version handling ------------
+	@XmlTransient public static final String DEFAULT_VERSION_TAG = "Complete Project"; 
+	@XmlElement(name="version")					private String version;
+	@XmlElement(name="versionTag")				private String versionTag;
 	@XmlElement(name="updateSite")				private String updateSite;
+	@XmlElement(name="updateAutoConfiguration")	private Integer updateAutoConfiguration;
 	@XmlElement(name="updateDateLastChecked")	private Long updateDateLastChecked;
 
+	// --- The environment model name to use ------------------------
 	@XmlElement(name="environmentModel")		private String environmentModelName;	
 
 	/**
@@ -1122,9 +1128,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		File file = null;
 		boolean error = false;
 
-		for (int i = 0; i < this.defaultSubFolders.length; i++) {
+		for (int i = 0; i < this.DEFAULT_SUB_FOLDERS.length; i++) {
 			// --- Does the default folder exists ---------
-			newDirName = this.getProjectFolderFullPath() + defaultSubFolders[i];
+			newDirName = this.getProjectFolderFullPath() + DEFAULT_SUB_FOLDERS[i];
 			file = new File(newDirName);
 			if (file.isDirectory() == false) {
 				// --- create directors -------------------
@@ -1287,31 +1293,12 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		return projectFolderFullPath;
 	}
 	
-
-	
-
-	/**
-	 * Gets the default temp folder.
-	 * @return the default temp folder
-	 */
-	public String getDefaultTempFolder() {
-		return defaultTempFolder;
-	}
-
-	/**
-	 * Sets the default temp folder.
-	 * @param defaultTempFolder the new default temp folder
-	 */
-	public void setDefaultTempFolder(String defaultTempFolder) {
-		this.defaultTempFolder = defaultTempFolder;
-	}
-
 	/**
 	 * Gets the projects temporary folder.
 	 * @return the projects temporary folder
 	 */
 	public String getProjectTempFolderFullPath() {
-		String tmpFolder = this.getProjectFolderFullPath() + this.getDefaultTempFolder() + File.separator;
+		String tmpFolder = this.getProjectFolderFullPath() + DEFAULT_TEMP_FOLDER + File.separator;
 		File tmpFile = new File(tmpFolder);
 		if (tmpFile.exists() == false) {
 			tmpFile.mkdir();
@@ -1322,31 +1309,54 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 	// --- Version and Update information ---------------------------
 	/**
-	 * Sets the projects {@link VersionInformation}.
-	 * @param versionInformation the new project version information
+	 * Sets the projects version as String.
+	 * @param newVersion the new version string
 	 */
-	public void setVersionInformation(VersionInformation versionInformation) {
-		this.versionInformation = versionInformation;
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_VersionInformation);
+	@XmlTransient
+	public void setVersion(String newVersion) {
+		if (newVersion==null || newVersion.isEmpty()) return;
+		if (this.version!=null && this.version.equals(newVersion)==true) return;
+		this.version = newVersion;
+		this.setChangedAndNotify(CHANGED_Version);
+	}
+	/**
+	 * Gets the projects {@link Version}.
+	 * @return the project version information
+	 */
+	public Version getVersion() {
+		Version versionInst = null;
+		if (this.version==null) {
+			String versionQualifier = ProjectUpdater.getVersionQualifierForTimeStamp(System.currentTimeMillis());
+			versionInst = Version.parseVersion("0.0.1." + versionQualifier);
+			this.setChangedAndNotify(CHANGED_Version);
+		} else {
+			versionInst = Version.parseVersion(this.version);
+		}
+		return versionInst;
 	}
 
 	/**
-	 * Gets the projects {@link VersionInformation}.
-	 * @return the project version information
+	 * Sets the version tag.
+	 * @param newVersionTag the new version tag
+	 */
+	public void setVersionTag(String newVersionTag) {
+		if (newVersionTag==null || newVersionTag.isEmpty()) return;
+		if (this.versionTag!=null && this.versionTag.equals(newVersionTag)==true) return;
+		this.versionTag = newVersionTag;
+		this.setChangedAndNotify(CHANGED_VersionTag);
+	}
+	/**
+	 * Returns the version tag.
+	 * @return the version tag
 	 */
 	@XmlTransient
-	public VersionInformation getVersionInformation() {
-		if (versionInformation == null) {
-			versionInformation = new VersionInformation();
-			versionInformation.setMajorRevision(0);
-			versionInformation.setMinorRevision(1);
-			versionInformation.setBuild(1);
+	public String getVersionTag() {
+		if (versionTag==null) {
+			versionTag = DEFAULT_VERSION_TAG;
 		}
-		return versionInformation;
+		return versionTag;
 	}
-
+	
 	/**
 	 * Sets the update auto configuration (1-3).
 	 * @param updateAutoConfiguration the new update auto configuration
@@ -1540,9 +1550,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Gets the subfolder for setup environment files
+	 * Gets the sub folder for setup environment files
 	 * @param fullPath If true, the absolute path is returned, otherwise relative to the project folder
-	 * @return The subfolder for setup environment files
+	 * @return The sub folder for setup environment files
 	 */
 	public String getEnvSetupPath(boolean fullPath) {
 		if (fullPath == true) {
@@ -1550,13 +1560,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		} else {
 			return defaultSubFolderEnvSetups;
 		}
-	}
-
-	/**
-	 * @param newSubFolder4Setups the defaultSubFolderOntology to set
-	 */
-	public void setSubFolder4Setups(String newSubFolder4Setups) {
-		this.defaultSubFolder4Setups = newSubFolder4Setups;
 	}
 
 	/**
@@ -1571,13 +1574,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * @param newSubFolderEnvSetups the defaultSubFolderEnvSetups to set
-	 */
-	public void setSubFolderEnvSetups(String newSubFolderEnvSetups) {
-		defaultSubFolderEnvSetups = newSubFolderEnvSetups;
-	}
-
-	/**
+	 * Gets the sub folder for environment setups.
 	 * @return the defaultSubFolderEnvSetups
 	 */
 	public String getSubFolderEnvSetups() {

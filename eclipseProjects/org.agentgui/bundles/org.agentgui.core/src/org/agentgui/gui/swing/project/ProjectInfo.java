@@ -84,6 +84,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JSeparator jSeparatorHorizontal;
 	private JPanel jPanelUpdateOptions;
 	
+	private Dimension versionPanelDimension = new Dimension(200, 80); 
 	private JPanel jPanelVersion;
 	private JLabel jLabelVersion;
 	private JLabel jLabelVersionInfo;
@@ -103,6 +104,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JRadioButton jRadioButtonUpdateDownloadAndAsk;
 	private JRadioButton jRadioButtonUpdateDisabled;
 	private JButton jButtonUpdateSiteDefault;
+	private JLabel jLabelVersionTag;
 	
 	
 	
@@ -415,6 +417,8 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private ProjectInfoVersionPanel getJPanelVersionEdit() {
 		if (jPanelVersionEdit==null) {
 			jPanelVersionEdit = new ProjectInfoVersionPanel(this.currProject, this);
+			jPanelVersionEdit.setPreferredSize(this.versionPanelDimension);
+			jPanelVersionEdit.setMinimumSize(this.versionPanelDimension);
 		}
 		return jPanelVersionEdit;
 	}
@@ -424,11 +428,12 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			jPanelVersion = new JPanel();
 			GridBagLayout gbl_jPanelVersion = new GridBagLayout();
 			gbl_jPanelVersion.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelVersion.rowHeights = new int[]{0, 0, 0};
+			gbl_jPanelVersion.rowHeights = new int[]{0, 0, 0, 0};
 			gbl_jPanelVersion.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-			gbl_jPanelVersion.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelVersion.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 			jPanelVersion.setLayout(gbl_jPanelVersion);
 			GridBagConstraints gbc_jLabelVersion = new GridBagConstraints();
+			gbc_jLabelVersion.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jLabelVersion.insets = new Insets(0, 0, 5, 5);
 			gbc_jLabelVersion.gridx = 0;
 			gbc_jLabelVersion.gridy = 0;
@@ -439,11 +444,19 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			gbc_jButtonEditVersion.gridy = 0;
 			jPanelVersion.add(getJButtonEditVersion(), gbc_jButtonEditVersion);
 			GridBagConstraints gbc_jLabelVersionInfo = new GridBagConstraints();
-			gbc_jLabelVersionInfo.insets = new Insets(30, 0, 0, 0);
+			gbc_jLabelVersionInfo.insets = new Insets(15, 0, 5, 0);
 			gbc_jLabelVersionInfo.gridwidth = 2;
 			gbc_jLabelVersionInfo.gridx = 0;
 			gbc_jLabelVersionInfo.gridy = 1;
 			jPanelVersion.add(getLabelVersionInfo(), gbc_jLabelVersionInfo);
+			jPanelVersion.setPreferredSize(this.versionPanelDimension);
+			jPanelVersion.setMinimumSize(this.versionPanelDimension);
+			GridBagConstraints gbc_jLabelVersionTag = new GridBagConstraints();
+			gbc_jLabelVersionTag.gridwidth = 2;
+			gbc_jLabelVersionTag.insets = new Insets(0, 0, 0, 5);
+			gbc_jLabelVersionTag.gridx = 0;
+			gbc_jLabelVersionTag.gridy = 2;
+			jPanelVersion.add(getJLabelVersionTag(), gbc_jLabelVersionTag);
 		}
 		return jPanelVersion;
 	}
@@ -452,8 +465,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			jLabelVersion = new JLabel();
 			jLabelVersion.setText(Language.translate("Version"));
 			jLabelVersion.setFont(new Font("Dialog", Font.BOLD, 14));
-			jLabelVersion.setPreferredSize(new Dimension(100, 26));
-			jLabelVersion.setMinimumSize(new Dimension(100, 26));
+			
 		}
 		return jLabelVersion;
 	}
@@ -469,13 +481,19 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	}
 	private JLabel getLabelVersionInfo() {
 		if (jLabelVersionInfo == null) {
-			jLabelVersionInfo = new JLabel(this.currProject.getVersionInformation().toString());
+			jLabelVersionInfo = new JLabel(this.currProject.getVersion().toString());
 			jLabelVersionInfo.setHorizontalAlignment(SwingConstants.CENTER);
 			jLabelVersionInfo.setFont(new Font("Dialog", Font.BOLD, 14));
 		}
 		return jLabelVersionInfo;
 	}
-	
+	private JLabel getJLabelVersionTag() {
+		if (jLabelVersionTag == null) {
+			jLabelVersionTag = new JLabel("(" + this.currProject.getVersionTag() + ")");
+			jLabelVersionTag.setFont(new Font("Dialog", Font.BOLD, 14));
+		}
+		return jLabelVersionTag;
+	}
 	
 	private JSeparator getJSeparatorVersionUpdate() {
 		if (jSeparatorVersionUpdate == null) {
@@ -617,7 +635,8 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (this.isVersionEdit==true) {
 			this.getJPanelUpdateOptions().remove(this.getJPanelVersionEdit());
 			this.getJPanelUpdateOptions().add(this.getJPanelVersion(), gbc_jPanelVersion);
-			this.getLabelVersionInfo().setText(this.currProject.getVersionInformation().toString());
+			this.getLabelVersionInfo().setText(this.currProject.getVersion().toString());
+			this.getJLabelVersionTag().setText(this.currProject.getVersionTag());
 			this.isVersionEdit = false;
 		} else {
 			this.getJPanelUpdateOptions().remove(this.getJPanelVersion());
@@ -689,6 +708,5 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			System.err.println("Unkknow: action => " + ae.getSource().toString());
 		}
 	}
-	
 	
 }  

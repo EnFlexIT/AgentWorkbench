@@ -30,7 +30,7 @@ package agentgui.simulationService.agents;
 
 import agentgui.core.application.Application;
 import agentgui.core.network.JadeUrlConfiguration;
-import agentgui.core.update.AgentGuiUpdater;
+import agentgui.core.update.AWBUpdater;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.distribution.JadeRemoteStartAgent;
@@ -385,7 +385,7 @@ public class ServerSlaveAgent extends Agent {
 						@SuppressWarnings("unused")
 						MasterUpdateNote masterUpdateNote = (MasterUpdateNote) agentAction;
 						// --- Start update process ---------------------------
-						new AgentGuiUpdater(false).start();
+						new AWBUpdater(false).start();
 						
 					}
 				}

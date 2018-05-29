@@ -42,7 +42,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.update.AgentGuiUpdater;
+import agentgui.core.update.AWBUpdater;
 
 /**
  * This class represents the context menu of the tray icon.
@@ -237,7 +237,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		
 		String ActCMD = ae.getActionCommand();
 		if ( ActCMD.equalsIgnoreCase("Update")) {
-			new AgentGuiUpdater(true).start();
+			new AWBUpdater(true).start();
 		} else if ( ActCMD.equalsIgnoreCase("About")) {
 			Application.showAboutDialog();
 		}else if ( ActCMD.equalsIgnoreCase("startAgentGUIService")) {

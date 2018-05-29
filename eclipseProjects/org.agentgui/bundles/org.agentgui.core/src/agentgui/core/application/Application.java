@@ -65,7 +65,7 @@ import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
-import agentgui.core.update.AgentGuiUpdater;
+import agentgui.core.update.AWBUpdater;
 import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -581,7 +581,7 @@ public class Application {
 		// ----------------------------------------------------------
 		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		
-		AgentGuiUpdater updater = null;
+		AWBUpdater updater = null;
 		
 		switch (getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
@@ -602,7 +602,7 @@ public class Application {
 					setOntologyVisualisationConfigurationToCommonBundle();
 					
 					// --- Check for updates ------------------------
-					AgentGuiUpdater updater = new AgentGuiUpdater();
+					AWBUpdater updater = new AWBUpdater();
 					updater.start();
 					updater.waitForUpdate();
 					
@@ -635,7 +635,7 @@ public class Application {
 		case DEVICE_SYSTEM:
 
 			// --- Check for updates --------------------------------
-			updater = new AgentGuiUpdater();
+			updater = new AWBUpdater();
 			updater.start();
 			updater.waitForUpdate();
 

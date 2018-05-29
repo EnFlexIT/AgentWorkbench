@@ -43,7 +43,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import de.enflexit.common.PathHandling;

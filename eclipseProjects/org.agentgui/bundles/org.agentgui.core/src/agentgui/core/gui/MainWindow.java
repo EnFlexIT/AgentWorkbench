@@ -83,7 +83,7 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
-import agentgui.core.update.AgentGuiUpdater;
+import agentgui.core.update.AWBUpdater;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
@@ -1210,7 +1210,7 @@ public class MainWindow extends JFrame {
 
 				// --- Menu Hilfe ---------------------------------
 			} else if (actionCMD.equalsIgnoreCase("HelpUpdate")) {
-				new AgentGuiUpdater(true).start();
+				new AWBUpdater(true).start();
 
 			} else if (actionCMD.equalsIgnoreCase("HelpChanges")) {
 				Application.showChangeDialog();
