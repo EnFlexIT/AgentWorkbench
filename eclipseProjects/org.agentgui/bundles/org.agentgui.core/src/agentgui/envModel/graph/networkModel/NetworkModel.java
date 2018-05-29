@@ -2167,7 +2167,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			try {
 				netCompAdapter = ClassLoadServiceUtility.getNetworkComponentAdapterInstance(adapterClassname, graphController);
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				System.err.println("[" + this.getClass().getSimpleName() + "] Could not initiate class '" + adapterClassname + "'");
+				System.err.println(ex.getMessage());
+				//ex.printStackTrace();
 			}
 		}
 		return netCompAdapter;
