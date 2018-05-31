@@ -28,6 +28,7 @@
  */
 package org.agentgui.gui.swing.project;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -35,6 +36,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -45,6 +47,7 @@ import javax.swing.SwingConstants;
 
 import org.osgi.framework.Version;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
@@ -214,7 +217,20 @@ public class ProjectInfoVersionPanel extends JPanel implements ActionListener {
 	
 	private KeyAdapter4Numbers getKeyAdapter4Numbers() {
 		if (keyAdapter4Numbers==null) {
-			keyAdapter4Numbers = new KeyAdapter4Numbers(false);
+			keyAdapter4Numbers = new KeyAdapter4Numbers(false) {
+				/* (non-Javadoc)
+				 * @see de.enflexit.common.swing.KeyAdapter4Numbers#keyTyped(java.awt.event.KeyEvent)
+				 */
+				@Override
+				public void keyTyped(KeyEvent kT) {
+					char charackter = kT.getKeyChar();
+					String singleChar = Character.toString(charackter);
+					// --- Allow '-' and '.' ------------------------
+					if (singleChar.equals("-") || singleChar.equals(".")) return;
+					// --- Do the regular action of the adapter -----
+					super.keyTyped(kT);
+				}
+			};
 		}
 		return keyAdapter4Numbers;
 	}
@@ -246,48 +262,55 @@ public class ProjectInfoVersionPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
+		Container pareComp = Application.getMainWindow();
+		
 		// --- Check for configuration errors -----------------------
 		String configError = this.getConfigurationError();
 		if (configError!=null) {
-			JOptionPane.showMessageDialog(this.getParent().getParent(), configError, "Configuration Error", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(pareComp, configError, "Configuration Error", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
-		if (ae.getSource()==this.getJButtonApplyNewVersion()) {
-			// ------------------------------------------------------
-			// --- Save the changes to the project ------------------
-			// ------------------------------------------------------
-			try {
+		try {
+			
+			if (ae.getSource()==this.getJButtonApplyNewVersion()) {
+				// ------------------------------------------------------
+				// --- Save the changes to the project ------------------
+				// ------------------------------------------------------
 				// --- Check if is newer version --------------------
-				Version version = Version.parseVersion(this.getJTextFieldVersion().getText());
-				
-				currProject.setVersion(version.toString());
+				Version newVersion = Version.parseVersion(this.getJTextFieldVersion().getText());
+				Version oldVersion = this.currProject.getVersion(); 
+				if (newVersion.compareTo(oldVersion)<0) {
+					String message = "The new version number is smaller that the old one.\n\n";
+					message += "Please press 'Yes', if you would like to continue.\n";
+					message += "Press 'No', if you want to undo your changes?";
+					int answer = JOptionPane.showConfirmDialog(pareComp, message, "Version Check", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (answer==JOptionPane.NO_OPTION) {
+						this.getJTextFieldVersion().setText(oldVersion.toString());
+						return;
+					}
+					
+				}
+				currProject.setVersion(newVersion.toString());
 				currProject.setVersionTag(this.getJTextFieldVersionTag().getText());
 				projectInfo.switchJPanelVersion();
 				
-			} catch (IllegalArgumentException iaEx) {
-				iaEx.printStackTrace();
-			}
-			
-		} else if (ae.getSource()==this.getJButtonUpdateQualifier()) {
-			// ------------------------------------------------------
-			// --- Update the version qualifier ---------------------
-			// ------------------------------------------------------
-			try {
-				// --- Check if is newer version --------------------
+			} else if (ae.getSource()==this.getJButtonUpdateQualifier()) {
+				// ------------------------------------------------------
+				// --- Update the version qualifier ---------------------
+				// ------------------------------------------------------
 				Version oldVersion  = Version.parseVersion(this.getJTextFieldVersion().getText());
 				String newQualifier = ProjectUpdater.getVersionQualifierForTimeStamp(System.currentTimeMillis());
 				Version newVersion = new Version(oldVersion.getMajor(), oldVersion.getMinor(), oldVersion.getMicro(), newQualifier); 
 				this.getJTextFieldVersion().setText(newVersion.toString());
-				
-			} catch (IllegalArgumentException iaEx) {
-				iaEx.printStackTrace();
 			}
-			
-			
-			
+
+		} catch (IllegalArgumentException iaEx) {
+			JOptionPane.showMessageDialog(pareComp, iaEx.getLocalizedMessage(), "Configuration Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("[" + this.getClass().getSimpleName() + "] " + iaEx.getLocalizedMessage());
+			//iaEx.printStackTrace();
 		}
+			
 	}
-	
 	
 }
