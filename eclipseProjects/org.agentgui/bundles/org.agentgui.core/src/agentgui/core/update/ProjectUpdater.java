@@ -59,6 +59,7 @@ public class ProjectUpdater extends Thread {
 		super.run();
 		
 		// -- TODO ------------
+		System.out.println("TODO - Project Update!");
 		
 	}
 	

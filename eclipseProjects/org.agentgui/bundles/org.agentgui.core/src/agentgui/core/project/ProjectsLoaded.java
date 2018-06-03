@@ -537,7 +537,7 @@ public class ProjectsLoaded {
 
 		// --- If no project is loaded, select a project for export -----------
 		Project project = Application.getProjectFocused();
-		if (project == null) {
+		if (project==null) {
 			project = this.selectProjectForExport();
 		}
 		
@@ -546,7 +546,7 @@ public class ProjectsLoaded {
 		ProjectExportSettings exportSettings = projectExportController.getProjectExportSettings(project);
 		
 		// --- Do the actual export, if not canceled --------------------------
-		if(exportSettings != null) {
+		if (exportSettings!=null) {
 			projectExportController.exportProject(project, exportSettings);
 		}
 		
@@ -569,6 +569,23 @@ public class ProjectsLoaded {
 
 			return this.add(projectSubFolder);
 		}
+	}
+	
+	/**
+	 * Project export to repository.
+	 */
+	public void projectExportToRepository() {
+	
+		// --- If no project is loaded, select a project for export -----------
+		Project project = Application.getProjectFocused();
+		if (project==null) {
+			project = this.selectProjectForExport();
+		}
+
+		System.out.println("TODO - Repository Export!");
+		
+		
+		
 	}
 	
 	/**

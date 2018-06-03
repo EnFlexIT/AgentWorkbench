@@ -76,7 +76,7 @@ import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
-import agentgui.core.gui.components.JPanel4Visualisation;
+import agentgui.core.gui.components.JPanel4Visualization;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
@@ -156,7 +156,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	/** This is the 'view' in the context of the mentioned MVC pattern */
 	@XmlTransient private AwbProjectEditorWindow projectEditorWindow;
 	/** This panel holds the instance of environment model display */
-	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution;
+	@XmlTransient private JPanel4Visualization visualizationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
 	@XmlTransient private JDesktopPane projectDesktop;
 
@@ -1883,30 +1883,30 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Sets the visualisation tab of the {@link ProjectWindow} for an executed setup.
-	 * @param visualisationTab4SetupExecution the new visualisation tab4 setup execution
+	 * Sets the visualization tab of the {@link ProjectWindow} for an executed setup.
+	 * @param visualizationTab4SetupExecution the new visualization tab4 setup execution
 	 */
-	public void setVisualisationTab4SetupExecution(JPanel4Visualisation visualisationTab4SetupExecution) {
-		this.visualisationTab4SetupExecution = visualisationTab4SetupExecution;
+	public void setVisualizationTab4SetupExecution(JPanel4Visualization visualizationTab4SetupExecution) {
+		this.visualizationTab4SetupExecution = visualizationTab4SetupExecution;
 	}
 
 	/**
-	 * Returns the visualisation tab of the {@link ProjectWindow} for an executed setup.
-	 * @return the visualisation tab4 setup execution
+	 * Returns the visualization tab of the {@link ProjectWindow} for an executed setup.
+	 * @return the visualization tab4 setup execution
 	 */
 	@XmlTransient
-	public JPanel4Visualisation getVisualisationTab4SetupExecution() {
-		if (this.visualisationTab4SetupExecution == null) {
-			this.visualisationTab4SetupExecution = new JPanel4Visualisation(this, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION));
+	public JPanel4Visualization getVisualizationTab4SetupExecution() {
+		if (this.visualizationTab4SetupExecution == null) {
+			this.visualizationTab4SetupExecution = new JPanel4Visualization(this, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
 		}
-		return this.visualisationTab4SetupExecution;
+		return this.visualizationTab4SetupExecution;
 	}
 
 	/**
 	 * Does the project update.
 	 */
 	public void doProjectUpdate() {
-		// TODO Auto-generated method stub
+		new ProjectUpdater(this).start();
 	}
 
 	/**

@@ -215,7 +215,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		// ------------------------------------------------
 		// --- Visualisation ------------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, this.currProject.getVisualisationTab4SetupExecution(), null);
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION), null, null, this.currProject.getVisualizationTab4SetupExecution(), null);
 		pwt.add();
 
 		// ------------------------------------------------

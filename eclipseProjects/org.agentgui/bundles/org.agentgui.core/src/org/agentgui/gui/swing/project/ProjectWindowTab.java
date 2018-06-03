@@ -52,7 +52,7 @@ public class ProjectWindowTab {
 
 	public final static String TAB_4_SUB_PANES_Configuration = "Configuration";
 	public final static String TAB_4_SUB_PANES_Setup ="Setup";
-	public final static String TAB_4_RUNTIME_VISUALISATION = "Laufzeit-Visualisierung";
+	public final static String TAB_4_RUNTIME_VISUALIZATION = "Laufzeit-Visualisierung";
 	
 	
 	private Project currProject;

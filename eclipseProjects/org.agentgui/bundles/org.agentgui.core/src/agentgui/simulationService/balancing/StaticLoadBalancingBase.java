@@ -190,12 +190,12 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 				Class<? extends Agent> displayAgentClass = envType.getDisplayAgentClass();
 				
 				Object[] startArg = new Object[3];
-				startArg[0] = currProject.getVisualisationTab4SetupExecution();
+				startArg[0] = currProject.getVisualizationTab4SetupExecution();
 				startArg[1] = envController;
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				
 				// --- Set the focus on Visualisation-Tab ---------------------
-				currProject.getProjectEditorWindow().setFocus2Tab(Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION));
+				currProject.getProjectEditorWindow().setFocus2Tab(Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
 			}
 			// ----------------------------------------------------------------
 		}

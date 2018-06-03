@@ -722,6 +722,7 @@ public class MainWindow extends JFrame {
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add(new CWMenueItem("ProjectImport", Language.translate("Projekt importieren"), "MBtransImport.png"));
 			jMenuMainProject.add(new CWMenueItem("ProjectExport", Language.translate("Projekt exportieren"), "MBtransExport.png"));
+			jMenuMainProject.add(new CWMenueItem("RepositoryExport", Language.translate("Repository-Export"), "MBrepositoryExoprt.png"));
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add(new CWMenueItem("ProjectDelete", Language.translate("Projekt löschen"), "Delete.png"));
 			jMenuMainProject.addSeparator();
@@ -750,12 +751,12 @@ public class MainWindow extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent evt) {
 					JRadioButtonMenuItem actuator = (JRadioButtonMenuItem) evt.getSource();
-					if (actuator == viewDeveloper) {
+					if (actuator==viewDeveloper) {
 						if (Application.getProjectFocused().getProjectView().equals(Project.VIEW_Developer) == false) {
 							Application.getProjectFocused().setProjectView(Project.VIEW_Developer);
 						}
 
-					} else if (actuator == viewEndUser) {
+					} else if (actuator==viewEndUser) {
 						if (Application.getProjectFocused().getProjectView().equals(Project.VIEW_User) == false) {
 							Application.getProjectFocused().setProjectView(Project.VIEW_User);
 						}
@@ -1136,6 +1137,9 @@ public class MainWindow extends JFrame {
 
 			} else if (actionCMD.equalsIgnoreCase("ProjectExport")) {
 				Application.getProjectsLoaded().projectExport();
+
+			} else if (actionCMD.equalsIgnoreCase("RepositoryExport")) {
+				Application.getProjectsLoaded().projectExportToRepository();
 
 			} else if (actionCMD.equalsIgnoreCase("ProjectDelete")) {
 				Application.getProjectsLoaded().projectDelete();
