@@ -53,6 +53,7 @@ de;Alle Eigenschaftsfenster schließen;Close all property windows;;;
 de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
+de;Alle Simulations-Setups exportieren;;;;
 de;Allgemein;General;;;
 de;Als Bild exportieren;Export as image;;;
 de;Als Projekt Start-Tab verwenden;Us as project start-tab;;;
@@ -300,6 +301,7 @@ de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
+de;Installationspaket einbeziehen;;;;
 de;Installationspakete;Installation Package Directory;;;
 de;Installiere Updates;Installing updates;;;
 de;Installiere;Installing;;;

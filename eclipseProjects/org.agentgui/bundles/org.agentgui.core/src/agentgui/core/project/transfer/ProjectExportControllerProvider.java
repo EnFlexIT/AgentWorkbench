@@ -75,7 +75,7 @@ public class ProjectExportControllerProvider {
 			try {
 				return (ProjectExportController) ClassLoadServiceUtility.newInstance(projectExportControllerClassName);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				System.err.println("Error getting the specialized ProjectExportController implementation - using the drfault one!");
+				System.err.println("Error getting the specialized ProjectExportController implementation - using the default one!");
 				e.printStackTrace();
 				return new DefaultProjectExportController();
 			}

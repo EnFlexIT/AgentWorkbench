@@ -46,18 +46,22 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.agentgui.gui.AwbProjectNewOpenDialog;
 import org.agentgui.gui.AwbProjectNewOpenDialog.ProjectAction;
+import org.agentgui.gui.UiBridge;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.agentgui.gui.UiBridge;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.CommonComponentFactory;
+import agentgui.core.config.BundleProperties;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettings;
+import agentgui.core.project.transfer.gui.ProjectExportDialog;
+import agentgui.core.update.ProjectRepositoryExport;
+import agentgui.core.update.RepositoryEntry;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -582,9 +586,36 @@ public class ProjectsLoaded {
 			project = this.selectProjectForExport();
 		}
 
-		System.out.println("TODO - Repository Export!");
+		// --------------------------------------------------------------------
+		// --- Get the repository export configured ---------------------------
+		// --------------------------------------------------------------------
 		
+		// --- Show a dialog to configure the export --------------------------
+		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
+		if (projectExportDialog.isCanceled()==true) return;
+
+		// --- Get the export settings from the dialog ------------------------
+		ProjectExportSettings exportSettings = projectExportDialog.getExportSettings();
+		projectExportDialog.dispose();
+		projectExportDialog = null;
 		
+		// --- Define the target file name ------------------------------------
+		String repositoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
+		String fileName = project.getProjectFolder() + "_" + project.getVersionTag() + "_" + project.getVersion().toString() + "." + Application.getGlobalInfo().getFileEndProjectZip();
+		File targetFile = new File(repositoryPath + fileName);
+		exportSettings.setTargetFile(targetFile);
+		
+		// --- Define the RepositoryEntry -------------------------------------
+		RepositoryEntry repositoryEntry = new RepositoryEntry(project.getProjectFolder(), project.getVersion().toString(), project.getVersionTag(), fileName);
+		
+		// --------------------------------------------------------------------
+		// --- Finally define and export the project to the repository --------
+		// --------------------------------------------------------------------
+		ProjectRepositoryExport pre = new ProjectRepositoryExport(project);
+		pre.setRepositoryLocationPath(repositoryPath);
+		pre.setProjectExportSettings(exportSettings);
+		pre.setRepositoryEntry(repositoryEntry);
+		pre.start();
 		
 	}
 	

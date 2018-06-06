@@ -48,8 +48,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.osgi.framework.Version;
-
 /**
  * The Class ProjectRepository describes the structure of a project repository.
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -61,14 +59,14 @@ public class ProjectRepository implements Serializable {
 
 	public static String REPOSITORY_FILE_NAME = "ProjectRepository.xml"; 
 	
-	private TreeMap<String, ProjectRepositoryEntries> projectRepositories;
+	private TreeMap<String, RepositoryEntries> projectRepositories;
 	
 	/**
 	 * Return the project repositories, where the key represents the project 
 	 * and the value the Tree the corresponding ProjectRepositoryEntries.
 	 * @return the project repositories
 	 */
-	public TreeMap<String, ProjectRepositoryEntries> getProjectRepositories() {
+	public TreeMap<String, RepositoryEntries> getProjectRepositories() {
 		if (projectRepositories==null) {
 			projectRepositories = new TreeMap<>();
 		}
@@ -89,163 +87,21 @@ public class ProjectRepository implements Serializable {
 	 * @param projectName the project name
 	 * @return the project repository entries
 	 */
-	public ProjectRepositoryEntries getProjectRepositoryEntries(String projectName) {
+	public RepositoryEntries getProjectRepositoryEntries(String projectName) {
 		return this.getProjectRepositories().get(projectName);
 	}
 	
 	/**
-	 * Adds the repository entry.
-	 *
-	 * @param projectName the project name
+	 * Adds the specified RepositoryEntry.
 	 * @param repositoryEntry the repository entry
 	 */
-	public void addRepositoryEntry(String projectName, RepositoryEntry repositoryEntry) {
-		ProjectRepositoryEntries pre = this.getProjectRepositoryEntries(projectName);
+	public void addRepositoryEntry(RepositoryEntry repositoryEntry) {
+		RepositoryEntries pre = this.getProjectRepositoryEntries(repositoryEntry.getProjectID());
 		if (pre==null) {
-			pre = new ProjectRepositoryEntries();
-			this.getProjectRepositories().put(projectName, pre);
+			pre = new RepositoryEntries();
+			this.getProjectRepositories().put(repositoryEntry.getProjectID(), pre);
 		}
 		pre.addRepositoryEntry(repositoryEntry);
-	}
-	
-	
-	// ------------------------------------------------------------------------
-	// --- Sub class ProjectRepositoryEntries ---------------------------------
-	// ------------------------------------------------------------------------
-	/**
-	 * The Class ProjectRepositoryEntries is used to describe different 
-	 * {@link ProjectRepositoryEntries} of a single project.
-	 * 
-	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
-	 */
-	public class ProjectRepositoryEntries implements Serializable {
-
-		private static final long serialVersionUID = -7440175985393423620L;
-		
-		private TreeMap<String, RepositoryEntry> repositoryEntries;
-
-		/**
-		 * Returns the TreeMap of repository entries, where the key represents
-		 * the version tag, while the value is the corresponding RepositoryEntry.
-		 * @return the repository entries
-		 */
-		public TreeMap<String, RepositoryEntry> getRepositoryEntries() {
-			if (repositoryEntries==null) {
-				repositoryEntries = new TreeMap<>();
-			}
-			return repositoryEntries;
-		}
-		/**
-		 * Adds the specified repository entry to the repository entries.
-		 *
-		 * @param repositoryEntry the repository entry
-		 * @return the previous RepositoryEntry, or null if there was no mapping for the specified RepositoryEntry.
-		 */
-		public RepositoryEntry addRepositoryEntry(RepositoryEntry repositoryEntry) {
-			return this.getRepositoryEntries().put(repositoryEntry.getVersionTag(), repositoryEntry);
-		}
-	}
-	
-	
-	// ------------------------------------------------------------------------
-	// --- Sub class RepositoryEntry ------------------------------------------
-	// ------------------------------------------------------------------------
-	/**
-	 * The Class RepositoryEntry is used as descriptor for single installable projects.
-	 * 
-	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
-	 */
-	public class RepositoryEntry implements Serializable {
-
-		private static final long serialVersionUID = -2543921945180740987L;
-		
-		private String version;
-		private String versionTag;
-		private String fileName;
-		
-		/**
-		 * Instantiates a new repository entry (default constructor).
-		 */
-		public RepositoryEntry() { }
-		
-		/**
-		 * Instantiates a new repository entry.
-		 *
-		 * @param version the version as string
-		 * @param versionTag the version tag
-		 * @param fileName the file name
-		 */
-		public RepositoryEntry(String version, String versionTag, String fileName) { 
-			this.setVersion(version);
-			this.setVersionTag(versionTag);
-			this.setFileName(fileName);
-		}
-		/**
-		 * Instantiates a new repository entry.
-		 *
-		 * @param version the version as {@link Version}
-		 * @param versionTag the version tag
-		 * @param fileName the file name
-		 */
-		public RepositoryEntry(Version version, String versionTag, String fileName) { 
-			this.setVersion(version);
-			this.setVersionTag(versionTag);
-			this.setFileName(fileName);
-		}
-
-		
-		public Version getVersion() {
-			return Version.parseVersion(this.version);
-		}
-		public void setVersion(Version version) {
-			this.setVersion(version.toString());
-		}
-		public void setVersion(String version) {
-			if (version==null || version.isEmpty()) {
-				throw new NullPointerException("[" + this.getClass().getSimpleName() + "] The version is not allowed to be null.");
-			}
-			this.version = version;
-		}
-		
-		
-		public String getVersionTag() {
-			return versionTag;
-		}
-		public void setVersionTag(String versionTag) {
-			if (versionTag==null || versionTag.isEmpty()) {
-				throw new NullPointerException("[" + this.getClass().getSimpleName() + "] The version tag is not allowed to be null.");
-			}
-			this.versionTag = versionTag;
-		}
-		
-		
-		public String getFileName() {
-			return fileName;
-		}
-		public void setFileName(String fileName) {
-			if (fileName==null || fileName.isEmpty()) {
-				throw new NullPointerException("[" + this.getClass().getSimpleName() + "] The file name is not allowed to be null.");
-			}
-			this.fileName = fileName;
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object compareObject) {
-			
-			if (compareObject==this) return true;
-			if (! (compareObject instanceof RepositoryEntry)) return false;
-			
-			RepositoryEntry compareRE = (RepositoryEntry) compareObject;
-			if (compareRE.getVersion().equals(this.getVersion())==true && 
-				compareRE.getVersionTag().equals(this.getVersionTag())==true  && 
-				compareRE.getFileName().equals(this.getFileName())==true ) {
-				return true;
-			}
-			return false;
-		}
 	}
 	
 

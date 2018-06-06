@@ -88,7 +88,7 @@ import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettings;
-import agentgui.core.update.ProjectUpdater;
+import agentgui.core.update.ProjectRepositoryUpdate;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.ontology.AgentStartConfiguration;
@@ -1326,7 +1326,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public Version getVersion() {
 		Version versionInst = null;
 		if (this.version==null) {
-			String versionQualifier = ProjectUpdater.getVersionQualifierForTimeStamp(System.currentTimeMillis());
+			String versionQualifier = ProjectRepositoryUpdate.getVersionQualifierForTimeStamp(System.currentTimeMillis());
 			versionInst = Version.parseVersion("0.0.1." + versionQualifier);
 			this.setChangedAndNotify(CHANGED_Version);
 		} else {
@@ -1906,7 +1906,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * Does the project update.
 	 */
 	public void doProjectUpdate() {
-		new ProjectUpdater(this).start();
+		new ProjectRepositoryUpdate(this).start();
 	}
 
 	/**
