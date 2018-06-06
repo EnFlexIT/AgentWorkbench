@@ -284,7 +284,6 @@ public class ProjectRepository implements Serializable {
 				}
 			}
 		}
-		
 	}
 	
 	/**

@@ -79,6 +79,9 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 	private JLabel jLabelInstallationPackedInfo;
 
 	private InstallationPackageFinder installationPackageFinder;
+	private JLabel jLabelProjectRepository;
+	private JTextField jTextFieldProjectRepository;
+	private JButton jButtonProjectRepository;
 	
 	
 	/**
@@ -119,72 +122,72 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{130, 0, 0, 1, 0};
-		gridBagLayout.rowHeights = new int[]{0, 26, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 26, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		
 		GridBagConstraints gbc_jLabelProjectsDirectory = new GridBagConstraints();
 		gbc_jLabelProjectsDirectory.anchor = GridBagConstraints.WEST;
-		gbc_jLabelProjectsDirectory.insets = new Insets(20, 20, 0, 0);
+		gbc_jLabelProjectsDirectory.insets = new Insets(20, 20, 5, 5);
 		gbc_jLabelProjectsDirectory.gridx = 0;
 		gbc_jLabelProjectsDirectory.gridy = 0;
 		
 		GridBagConstraints gbc_jTextFieldProjectsDirectroy = new GridBagConstraints();
 		gbc_jTextFieldProjectsDirectroy.fill = GridBagConstraints.BOTH;
-		gbc_jTextFieldProjectsDirectroy.insets = new Insets(20, 5, 0, 0);
+		gbc_jTextFieldProjectsDirectroy.insets = new Insets(20, 5, 5, 5);
 		gbc_jTextFieldProjectsDirectroy.gridx = 1;
 		gbc_jTextFieldProjectsDirectroy.gridy = 0;
 
 		GridBagConstraints gbc_jButtonProjectesDirectroySelect = new GridBagConstraints();
-		gbc_jButtonProjectesDirectroySelect.insets = new Insets(20, 5, 0, 0);
+		gbc_jButtonProjectesDirectroySelect.insets = new Insets(20, 5, 5, 5);
 		gbc_jButtonProjectesDirectroySelect.gridx = 2;
 		gbc_jButtonProjectesDirectroySelect.gridy = 0;
 
 		GridBagConstraints gbc_jButtonAppliationDirectorySave = new GridBagConstraints();
-		gbc_jButtonAppliationDirectorySave.insets = new Insets(20, 20, 0, 20);
+		gbc_jButtonAppliationDirectorySave.insets = new Insets(20, 20, 5, 20);
 		gbc_jButtonAppliationDirectorySave.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jButtonAppliationDirectorySave.gridx = 3;
 		gbc_jButtonAppliationDirectorySave.gridy = 0;
 		
 		GridBagConstraints gbc_jLabelInstalledProductDirectoryLabel = new GridBagConstraints();
 		gbc_jLabelInstalledProductDirectoryLabel.anchor = GridBagConstraints.WEST;
-		gbc_jLabelInstalledProductDirectoryLabel.insets = new Insets(10, 20, 0, 0);
+		gbc_jLabelInstalledProductDirectoryLabel.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelInstalledProductDirectoryLabel.gridx = 0;
-		gbc_jLabelInstalledProductDirectoryLabel.gridy = 1;
+		gbc_jLabelInstalledProductDirectoryLabel.gridy = 2;
 		
 		GridBagConstraints gbc_jTextFieldInstalledProductDirectory = new GridBagConstraints();
 		gbc_jTextFieldInstalledProductDirectory.fill = GridBagConstraints.BOTH;
-		gbc_jTextFieldInstalledProductDirectory.insets = new Insets(10, 5, 0, 0);
+		gbc_jTextFieldInstalledProductDirectory.insets = new Insets(10, 5, 5, 5);
 		gbc_jTextFieldInstalledProductDirectory.gridx = 1;
-		gbc_jTextFieldInstalledProductDirectory.gridy = 1;
+		gbc_jTextFieldInstalledProductDirectory.gridy = 2;
 		
 		GridBagConstraints gbc_jButtonInstalledProductDirectroySelect = new GridBagConstraints();
-		gbc_jButtonInstalledProductDirectroySelect.insets = new Insets(10, 5, 0, 0);
+		gbc_jButtonInstalledProductDirectroySelect.insets = new Insets(10, 5, 5, 5);
 		gbc_jButtonInstalledProductDirectroySelect.gridx = 2;
-		gbc_jButtonInstalledProductDirectroySelect.gridy = 1;
+		gbc_jButtonInstalledProductDirectroySelect.gridy = 2;
 		
 		GridBagConstraints gbc_jLabelInstallationPackagesDirectory = new GridBagConstraints();
 		gbc_jLabelInstallationPackagesDirectory.anchor = GridBagConstraints.WEST;
-		gbc_jLabelInstallationPackagesDirectory.insets = new Insets(10, 20, 0, 0);
+		gbc_jLabelInstallationPackagesDirectory.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelInstallationPackagesDirectory.gridx = 0;
-		gbc_jLabelInstallationPackagesDirectory.gridy = 2;
+		gbc_jLabelInstallationPackagesDirectory.gridy = 3;
 		
 		GridBagConstraints gbc_jTextFieldInstallationPackagesDirectroy = new GridBagConstraints();
 		gbc_jTextFieldInstallationPackagesDirectroy.fill = GridBagConstraints.BOTH;
-		gbc_jTextFieldInstallationPackagesDirectroy.insets = new Insets(10, 5, 0, 0);
+		gbc_jTextFieldInstallationPackagesDirectroy.insets = new Insets(10, 5, 5, 5);
 		gbc_jTextFieldInstallationPackagesDirectroy.gridx = 1;
-		gbc_jTextFieldInstallationPackagesDirectroy.gridy = 2;
+		gbc_jTextFieldInstallationPackagesDirectroy.gridy = 3;
 
 		GridBagConstraints gbc_jButtonInstallationPackagesDirectorySelect = new GridBagConstraints();
-		gbc_jButtonInstallationPackagesDirectorySelect.insets = new Insets(10, 5, 0, 0);
+		gbc_jButtonInstallationPackagesDirectorySelect.insets = new Insets(10, 5, 5, 5);
 		gbc_jButtonInstallationPackagesDirectorySelect.gridx = 2;
-		gbc_jButtonInstallationPackagesDirectorySelect.gridy = 2;
+		gbc_jButtonInstallationPackagesDirectorySelect.gridy = 3;
 		
 		GridBagConstraints gbc_jLabelInstallationPackedInfo = new GridBagConstraints();
 		gbc_jLabelInstallationPackedInfo.anchor = GridBagConstraints.WEST;
-		gbc_jLabelInstallationPackedInfo.insets = new Insets(5, 7, 0, 0);
+		gbc_jLabelInstallationPackedInfo.insets = new Insets(5, 7, 5, 5);
 		gbc_jLabelInstallationPackedInfo.gridx = 1;
-		gbc_jLabelInstallationPackedInfo.gridy = 3;
+		gbc_jLabelInstallationPackedInfo.gridy = 4;
 		
 		this.setSize(798, 306);
 		this.setLayout(gridBagLayout);
@@ -195,6 +198,23 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 		this.add(this.getJButtonProjectesDirectroySelect(), gbc_jButtonProjectesDirectroySelect);
 		
 		this.add(getJButtonSave(), gbc_jButtonAppliationDirectorySave);
+		GridBagConstraints gbc_jLabelProjectRepository = new GridBagConstraints();
+		gbc_jLabelProjectRepository.anchor = GridBagConstraints.WEST;
+		gbc_jLabelProjectRepository.insets = new Insets(10, 20, 5, 5);
+		gbc_jLabelProjectRepository.gridx = 0;
+		gbc_jLabelProjectRepository.gridy = 1;
+		add(getJLabelProjectRepository(), gbc_jLabelProjectRepository);
+		GridBagConstraints gbc_jTextFieldProjectRepository = new GridBagConstraints();
+		gbc_jTextFieldProjectRepository.insets = new Insets(10, 5, 5, 5);
+		gbc_jTextFieldProjectRepository.fill = GridBagConstraints.BOTH;
+		gbc_jTextFieldProjectRepository.gridx = 1;
+		gbc_jTextFieldProjectRepository.gridy = 1;
+		add(getJTextFieldProjectRepository(), gbc_jTextFieldProjectRepository);
+		GridBagConstraints gbc_jButtonProjectRepository = new GridBagConstraints();
+		gbc_jButtonProjectRepository.insets = new Insets(10, 5, 5, 5);
+		gbc_jButtonProjectRepository.gridx = 2;
+		gbc_jButtonProjectRepository.gridy = 1;
+		add(getJButtonProjectRepository(), gbc_jButtonProjectRepository);
 		
 		this.add(this.getjLabelInstalledProductDirectory(), gbc_jLabelInstalledProductDirectoryLabel);
 		this.add(this.getJTextFieldInstalledProductDirectory(), gbc_jTextFieldInstalledProductDirectory);
@@ -246,6 +266,35 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 		return jButtonSave;
 	}
 
+	
+	private JLabel getJLabelProjectRepository() {
+		if (jLabelProjectRepository == null) {
+			jLabelProjectRepository = new JLabel();
+			jLabelProjectRepository.setText(Language.translate("Lokale Projekt Repository"));
+			jLabelProjectRepository.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelProjectRepository;
+	}
+	private JTextField getJTextFieldProjectRepository() {
+		if (jTextFieldProjectRepository == null) {
+			jTextFieldProjectRepository = new JTextField();
+			jTextFieldProjectRepository.setToolTipText((String) null);
+			jTextFieldProjectRepository.setText((String) null);
+		}
+		return jTextFieldProjectRepository;
+	}
+	private JButton getJButtonProjectRepository() {
+		if (jButtonProjectRepository == null) {
+			jButtonProjectRepository = new JButton();
+			jButtonProjectRepository.setToolTipText(Language.translate("Verzeichnis auswählen"));
+			jButtonProjectRepository.setIcon(GlobalInfo.getInternalImageIcon("MBopen.png"));
+			jButtonProjectRepository.setPreferredSize(new Dimension(45, 26));
+			jButtonProjectRepository.addActionListener(this);
+		}
+		return jButtonProjectRepository;
+	}
+	
+	
 	public JLabel getjLabelInstalledProductDirectory() {
 		if (jLabelInstalledProductDirectory==null) {
 			jLabelInstalledProductDirectory = new JLabel();
@@ -330,7 +379,7 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 			}
 			
 		} else if (actionFrom==this.getJButtonProjectesDirectroySelect()) {
-			// --- Select the projects root directory ---------------			
+			// --- Select the projects root directory ---------------		
 			File currentDir = this.getCurrentDirectory(this.getJTextFieldProjectsDirectroy().getText().trim());
 			File selectedDirectory = this.selectDirectory(Language.translate("Projekt-Basisverzeichnis auswählen"), currentDir);
 			if (selectedDirectory==null) return;
@@ -338,6 +387,26 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 			String selectedDirectoryPath = selectedDirectory.getAbsolutePath() + File.separator;
 			this.getJTextFieldProjectsDirectroy().setText(selectedDirectoryPath);
 			this.getJTextFieldProjectsDirectroy().setToolTipText(selectedDirectoryPath);
+			
+		} else if (actionFrom==this.getJButtonProjectRepository()) {
+			// --- Select the project repository directory ----------
+			File currentDir = this.getCurrentDirectory(this.getJTextFieldProjectRepository().getText().trim());
+			File selectedDirectory = this.selectDirectory(Language.translate("Lokale Projekt-Repository auswählen"), currentDir);
+			if (selectedDirectory==null) return;
+			
+			// --- Check if repository is located in 'projects' -----
+			String pathProjects = this.getJTextFieldProjectsDirectroy().getText().trim();
+			String pathRepository = selectedDirectory.getAbsolutePath();
+			if (pathRepository.startsWith(pathProjects)==true) {
+				String message = Language.translate("Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.\nBitte wählen Sie einen anderen Speicherort.");
+				String title = Language.translate("Unzulässiger Speicherort"); 
+				JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			String selectedRepositoryPath = selectedDirectory.getAbsolutePath() + File.separator;
+			this.getJTextFieldProjectRepository().setText(selectedRepositoryPath);
+			this.getJTextFieldProjectRepository().setToolTipText(selectedRepositoryPath);
 			
 		} else if (actionFrom==this.getJButtonApplicationDirectorySelect()) {
 			// --- Select the installed product directory -----------
@@ -504,6 +573,10 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 		this.getJTextFieldProjectsDirectroy().setText(projectsPath);
 		this.getJTextFieldProjectsDirectroy().setToolTipText(projectsPath);
 		
+		String repositoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
+		this.getJTextFieldProjectRepository().setText(repositoryPath);
+		this.getJTextFieldProjectRepository().setToolTipText(repositoryPath);
+		
 		String productPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
 		this.getJTextFieldInstalledProductDirectory().setText(productPath);
 		this.getJTextFieldInstalledProductDirectory().setToolTipText(productPath);
@@ -521,6 +594,7 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 		String projectsPath = this.getJTextFieldProjectsDirectroy().getText().trim();
 		Application.getGlobalInfo().setPathProjects(projectsPath);
 		Application.getGlobalInfo().putStringToConfiguration(BundleProperties.DEF_PROJECTS_DIRECTORY, projectsPath);
+		Application.getGlobalInfo().putStringToConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, this.getJTextFieldProjectRepository().getText().trim());
 		Application.getGlobalInfo().putStringToConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, this.getJTextFieldInstalledProductDirectory().getText().trim());
 		Application.getGlobalInfo().putStringToConfiguration(BundleProperties.DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES, this.getJTextFieldInstallationPackagesDirectroy().getText().trim());
 		Application.getGlobalInfo().doSaveConfiguration();

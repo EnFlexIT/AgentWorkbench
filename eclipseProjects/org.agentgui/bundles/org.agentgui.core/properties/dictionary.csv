@@ -125,12 +125,6 @@ de;CPU;CPU
 de;CSV-Datei importieren;Import CSV file;;;
 de;CSV-Dateien;CSV files;;;
 de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
-de;Calculate metrics based on agent class data.;;;;
-de;Calculate metrics based on delta integrals.;;;;
-de;Calculate metrics based on individual agent data.;;;;
-de;Calculate metrics based on last total system cpu time.;;;;
-de;Calculate metrics based on total integrals.;;;;
-de;Calculate the real metrics based on recorded chart value selection.;;;;
 de;Class not found:;Class not found:
 de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
@@ -177,6 +171,7 @@ de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht we
 de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
+de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.<br>Bitte wählen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.; choose a different location.;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
@@ -396,6 +391,8 @@ de;Log-Datei immer erstellen;Allways create log file;;;
 de;Log-Manager starten;Start Log Manager
 de;Log-Verzeichnis;Log-Directory;;;
 de;Lokal;Local;;;
+de;Lokale Projekt Repository;Local Project Repository;;;
+de;Lokale Projekt-Repository auswählen;Select local project repository;;;
 de;Lösche Verzeichnis;Delete Folder;;;
 de;Löschen nicht zulässig!;Deleting not allowed!;;;
 de;Löschen;Delete
@@ -518,7 +515,7 @@ de;Projekt exportieren;Export Project
 de;Projekt exportieren?;Export project?
 de;Projekt geöffnet!;Open Project!;;;
 de;Projekt importieren;Import Project
-de;Projekt in Repository exportieren;;;;
+de;Projekt in Repository exportieren;Export to Project Repository;;;
 de;Projekt löschen;Delete Project;;;
 de;Projekt schließen;Close Project
 de;Projekt speichern;Save Project
@@ -548,7 +545,7 @@ de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Reihen-Eigenschaften;Series-Properties;;;
 de;Reinitialisiere;Reinitialize;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
-de;Repository-Export;;;;
+de;Repository-Export;Repository Export;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
 de;SVG laden;Load SVG
@@ -667,6 +664,7 @@ de;Umschalten von;Switch from;;;
 de;Unbekannt:;Unknown:
 de;Undefiniert;undefined
 de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
+de;Unzulässiger Speicherort;Invalid Location;;;
 de;Update automatisch herunterladen, Installationszeitpunkt manuell festlegen;Download the update automatically, manually set the time of installation;;;
 de;Update-Konfiguration;Update Configuration;;;
 de;Updates automatisch installieren;Install updates automatically;;;
