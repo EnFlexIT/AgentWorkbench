@@ -28,13 +28,18 @@
  */
 package agentgui.core.update;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.project.Project;
+import agentgui.core.project.transfer.DefaultProjectExportController;
+import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
+import agentgui.core.update.repositoryModel.ProjectRepository;
+import agentgui.core.update.repositoryModel.RepositoryEntry;
 
 /**
  * The Class ProjectRepositoryExport manages the export 
@@ -45,9 +50,10 @@ import agentgui.core.project.transfer.ProjectExportSettings;
 public class ProjectRepositoryExport extends Thread {
 
 	private Project currProject; 
-	private String repositoryLocationPath;
+	private String repositoryLocationDirectoryPath;
 	private ProjectExportSettings projectExportSettings;
 	private RepositoryEntry repositoryEntry;
+	
 	
 	/**
 	 * Instantiates a new project updater.
@@ -59,22 +65,22 @@ public class ProjectRepositoryExport extends Thread {
 	}
 	
 	/**
-	 * Returns the repository location path.
-	 * @return the repository location path
+	 * Returns the repository location directory path.
+	 * @return the repository location directory path
 	 */
-	public String getRepositoryLocationPath() {
-		if (repositoryLocationPath==null || repositoryLocationPath.isEmpty()==true) {
+	public String getRepositoryLocationDirectoryPath() {
+		if (repositoryLocationDirectoryPath==null || repositoryLocationDirectoryPath.isEmpty()==true) {
 			// --- Try to get the globally configured location ------
-			repositoryLocationPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
+			repositoryLocationDirectoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
 		}
-		return repositoryLocationPath;
+		return repositoryLocationDirectoryPath;
 	}
 	/**
-	 * Sets the repository location path.
-	 * @param repositoryLocationPath the new repository location path
+	 * Sets the repository location directory path.
+	 * @param repositoryLocationPath the new repository location directory path
 	 */
-	public void setRepositoryLocationPath(String repositoryLocationPath) {
-		this.repositoryLocationPath = repositoryLocationPath;
+	public void setRepositoryLocationDirectoryPath(String repositoryLocationPath) {
+		this.repositoryLocationDirectoryPath = repositoryLocationPath;
 	}
 	
 	/**
@@ -115,11 +121,56 @@ public class ProjectRepositoryExport extends Thread {
 	public void run() {
 		super.run();
 		
-		// -- TODO ------------
-		System.out.println("TODO - Project Export!");
+		// --- Check if the setting are complete --------------------
+		String configError = this.getConfigurationError();
+		if (configError!=null) {
+			String errMsg = "[" + this.getClass().getSimpleName() + "] " + configError + " - Cancel repository export.";
+			throw new IllegalArgumentException(errMsg);
+		}
+		
+		// --- Check if the destination directory exists ------------ 
+		File destinDir = new File(this.getRepositoryLocationDirectoryPath());
+		if (destinDir.exists()==false) {
+			destinDir.mkdirs();
+			if (destinDir.exists()==false) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Could not create directory '" + this.getRepositoryLocationDirectoryPath() + "'.");
+				return;
+			}
+		}
+
+		// --- Export the project -----------------------------------
+		ProjectExportController pec = new DefaultProjectExportController();
+		pec.exportProject(this.currProject, this.getProjectExportSettings(), false, false);
+		
+		// --- Load the current repository --------------------------
+		ProjectRepository repo = ProjectRepository.loadProjectRepository(destinDir);
+		if (repo==null) {
+			repo = new ProjectRepository();
+		}
+		// --- Add the new entry to the repository ------------------
+		repo.addRepositoryEntry(this.getRepositoryEntry());
+		repo.save(destinDir);
 		
 	}
 	
+	
+	/**
+	 * Return the configuration error as string, if there is an error.
+	 * @return the configuration error
+	 */
+	private String getConfigurationError() {
+		
+		if (this.getRepositoryLocationDirectoryPath()==null) {
+			return "The repository location directory was not specified!";
+		}
+		if (this.getProjectExportSettings()==null) {
+			return "The project export settings were not specified!";
+		}
+		if (this.getRepositoryEntry()==null) {
+			return "No repository entry was specified for the export!";
+		}
+		return null;
+	}
 	
 	/**
 	 * Return a version qualifier for a given time stamp.

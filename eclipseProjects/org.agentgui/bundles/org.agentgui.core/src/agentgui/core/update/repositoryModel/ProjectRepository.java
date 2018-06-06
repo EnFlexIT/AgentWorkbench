@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.update;
+package agentgui.core.update.repositoryModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,27 +46,32 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class ProjectRepository describes the structure of a project repository.
+ * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-@XmlRootElement
+@XmlRootElement(name ="awbProjectsRepository")
 public class ProjectRepository implements Serializable {
 
 	private static final long serialVersionUID = -1753468067006537985L;
 
-	public static String REPOSITORY_FILE_NAME = "ProjectRepository.xml"; 
+	public static String REPOSITORY_FILE_NAME = "awbProjectsRepository.xml"; 
 	
-	private TreeMap<String, RepositoryEntries> projectRepositories;
+	@XmlElementWrapper(name = "ProjectRepositories")
+	@XmlElement(name = "ProjectRepository")
+	private TreeMap<String, ProjectRepositoryEntries> projectRepositories;
 	
 	/**
-	 * Return the project repositories, where the key represents the project 
-	 * and the value the Tree the corresponding ProjectRepositoryEntries.
+	 * Return the project repositories, where the key represents the project ID
+	 * and the value the corresponding ProjectRepositoryEntries.
 	 * @return the project repositories
 	 */
-	public TreeMap<String, RepositoryEntries> getProjectRepositories() {
+	public TreeMap<String, ProjectRepositoryEntries> getProjectRepositories() {
 		if (projectRepositories==null) {
 			projectRepositories = new TreeMap<>();
 		}
@@ -87,7 +92,7 @@ public class ProjectRepository implements Serializable {
 	 * @param projectName the project name
 	 * @return the project repository entries
 	 */
-	public RepositoryEntries getProjectRepositoryEntries(String projectName) {
+	public ProjectRepositoryEntries getProjectRepositoryEntries(String projectName) {
 		return this.getProjectRepositories().get(projectName);
 	}
 	
@@ -96,9 +101,9 @@ public class ProjectRepository implements Serializable {
 	 * @param repositoryEntry the repository entry
 	 */
 	public void addRepositoryEntry(RepositoryEntry repositoryEntry) {
-		RepositoryEntries pre = this.getProjectRepositoryEntries(repositoryEntry.getProjectID());
+		ProjectRepositoryEntries pre = this.getProjectRepositoryEntries(repositoryEntry.getProjectID());
 		if (pre==null) {
-			pre = new RepositoryEntries();
+			pre = new ProjectRepositoryEntries();
 			this.getProjectRepositories().put(repositoryEntry.getProjectID(), pre);
 		}
 		pre.addRepositoryEntry(repositoryEntry);
@@ -192,7 +197,7 @@ public class ProjectRepository implements Serializable {
 	 * Loads a project repository from the specified URL.
 	 *
 	 * @param localRepositoryDirectory the local repository directory
-	 * @return the project repository
+	 * @return the project repository or null, if the file could not be found
 	 */
 	public static ProjectRepository loadProjectRepository(File localRepositoryDirectory) {
 		
@@ -201,7 +206,8 @@ public class ProjectRepository implements Serializable {
 		// --- Check for the right destination file ----------------- 
 		String sourceFilePath = getLocationPathIncludingRepositoryFile(localRepositoryDirectory.getAbsolutePath(), false);
 		File sourceFile = new File(sourceFilePath);
-
+		if (sourceFile.exists()==false) return null;
+		
 		FileReader fileReader = null;
 		try {
 			JAXBContext pc = JAXBContext.newInstance(ProjectRepository.class);

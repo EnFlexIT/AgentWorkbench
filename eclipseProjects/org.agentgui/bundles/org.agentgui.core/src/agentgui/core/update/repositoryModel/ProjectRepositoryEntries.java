@@ -1,18 +1,23 @@
-package agentgui.core.update;
+package agentgui.core.update.repositoryModel;
 
 import java.io.Serializable;
 import java.util.TreeMap;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 /**
  * The Class ProjectRepositoryEntries is used to describe different 
- * {@link RepositoryEntries} of a single project.
+ * {@link ProjectRepositoryEntries} of a single project.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class RepositoryEntries implements Serializable {
+public class ProjectRepositoryEntries implements Serializable {
 
 	private static final long serialVersionUID = -7440175985393423620L;
 	
+	@XmlElementWrapper(name = "ProjectRepositoryEntries")
+	@XmlElement(name = "RepositoryEntry")
 	private TreeMap<String, RepositoryTagVersions> repositoryEntries;
 
 	/**
@@ -43,12 +48,12 @@ public class RepositoryEntries implements Serializable {
 			this.getRepositoryEntries().put(repositoryEntry.getVersionTag(), tagVersions);
 		}
 		// -- Check if the entry was already there ----
-		if (tagVersions.contains(repositoryEntry)==true) {
-			int idxOldVersion = tagVersions.indexOf(repositoryEntry);
-			oldEntry = tagVersions.remove(idxOldVersion);
+		if (tagVersions.getRepositoryTagVector().contains(repositoryEntry)==true) {
+			int idxOldVersion = tagVersions.getRepositoryTagVector().indexOf(repositoryEntry);
+			oldEntry = tagVersions.getRepositoryTagVector().remove(idxOldVersion);
 		}
 		// --- Add the Repository Entry ---------------
-		tagVersions.add(repositoryEntry);
+		tagVersions.getRepositoryTagVector().add(repositoryEntry);
 		
 		return oldEntry;
 	}

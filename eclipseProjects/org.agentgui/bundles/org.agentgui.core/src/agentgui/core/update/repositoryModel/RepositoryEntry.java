@@ -26,9 +26,12 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.update;
+package agentgui.core.update.repositoryModel;
 
 import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import org.osgi.framework.Version;
 
@@ -38,6 +41,7 @@ import org.osgi.framework.Version;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
+@XmlType(name = "RepositoryEntry", propOrder = {"projectID", "versionTag", "version", "fileName"})
 public class RepositoryEntry implements Serializable {
 
 	private static final long serialVersionUID = -2543921945180740987L;
@@ -75,7 +79,7 @@ public class RepositoryEntry implements Serializable {
 	 */
 	public RepositoryEntry(String projectID, Version version, String versionTag, String fileName) {
 		this.setProjectID(projectID);
-		this.setVersion(version);
+		this.setOsgiFrameworkVersion(version);
 		this.setVersionTag(versionTag);
 		this.setFileName(fileName);
 	}
@@ -91,12 +95,17 @@ public class RepositoryEntry implements Serializable {
 		this.projectID = projectID;
 	}
 	
-	
-	public Version getVersion() {
-		return Version.parseVersion(this.version);
+	@XmlTransient
+	public Version getOsgiFrameworkVersion() {
+		return Version.parseVersion(this.getVersion());
 	}
-	public void setVersion(Version version) {
+	public void setOsgiFrameworkVersion(Version version) {
 		this.setVersion(version.toString());
+	}
+	
+
+	public String getVersion() {
+		return version;
 	}
 	public void setVersion(String version) {
 		if (version==null || version.isEmpty()) {
@@ -138,7 +147,7 @@ public class RepositoryEntry implements Serializable {
 		
 		RepositoryEntry compareRE = (RepositoryEntry) compareObject;
 		if (compareRE.getProjectID().equals(this.getProjectID())==true &&
-			compareRE.getVersion().equals(this.getVersion())==true && 
+			compareRE.getOsgiFrameworkVersion().equals(this.getOsgiFrameworkVersion())==true && 
 			compareRE.getVersionTag().equals(this.getVersionTag())==true  && 
 			compareRE.getFileName().equals(this.getFileName())==true ) {
 			return true;

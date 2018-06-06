@@ -26,24 +26,36 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.update;
+package agentgui.core.update.repositoryModel;
 
-import java.util.Comparator;
+import java.io.Serializable;
 import java.util.Vector;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * The Class TagVersions is used to store different versions of an AWB project file
  * identified by the project ID and the versionTag of a {@link RepositoryEntry}.
  */
-public class RepositoryTagVersions extends Vector<RepositoryEntry> implements Comparator<RepositoryEntry> {
+public class RepositoryTagVersions implements Serializable {
 
 	private static final long serialVersionUID = 6487025081925973020L;
 
-	/* (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	@XmlElementWrapper(name = "RepositoryTagVector")
+	@XmlElement(name = "RepositoryEntry")
+	private Vector<RepositoryEntry> repositoryTagVector;
+	
+	
+	/**
+	 * Returns the repository entry vector.
+	 * @return the repository entry vector
 	 */
-	@Override
-	public int compare(RepositoryEntry re1, RepositoryEntry re2) {
-		return re1.getVersion().compareTo(re2.getVersion());
+	public Vector<RepositoryEntry> getRepositoryTagVector() {
+		if (repositoryTagVector==null) {
+			repositoryTagVector = new Vector<>();
+		}
+		return repositoryTagVector;
 	}
+	
 }

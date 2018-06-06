@@ -65,54 +65,32 @@ import agentgui.core.project.transfer.ProjectExportSettings;
  */
 public class ProjectExportDialog extends JDialog implements ActionListener {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7642101726572826993L;
 
-	/** The j label header. */
+	private Project project;
+	private ProjectExportSettings exportSettings;
+	
 	private JLabel jLabelHeader;
-
-	/** The j check box include installation package. */
 	private JCheckBox jCheckBoxIncludeInstallationPackage;
-
-	/** The j combo box select installation package. */
-	private JComboBox<InstallationPackageDescription> jComboBoxSelectInstallationPackage;
-
-	/** The j check box include all setups. */
 	private JCheckBox jCheckBoxIncludeAllSetups;
 
-	/** The j panel confirm cancel. */
-	private JPanel jPanelConfirmCancel;
-
-	/** The j button ok. */
-	private JButton jButtonOk;
-
-	/** The j button cancel. */
-	private JButton jButtonCancel;
-
-	/** The j list setup selection. */
-	private JList<String> jListSetupSelection;
-
-	/** The simulation setup list model. */
-	private DefaultListModel<String> simulationSetupListModel;
-
-	/** The installation packages combo box model. */
+	private JComboBox<InstallationPackageDescription> jComboBoxSelectInstallationPackage;
 	private DefaultComboBoxModel<InstallationPackageDescription> installationPackagesComboBoxModel;
 
-	/** The project. */
-	private Project project;
+	private JPanel jPanelConfirmCancel;
 
-	/** The export settings. */
-	private ProjectExportSettings exportSettings;
+	private JButton jButtonOk;
+	private JButton jButtonCancel;
 
-	/** The canceled. */
+	private JScrollPane scrollPane;
+	private JList<String> jListSetupSelection;
+	private DefaultListModel<String> simulationSetupListModel;
+
 	private boolean canceled = false;
 
-	/** The scroll pane. */
-	private JScrollPane scrollPane;
 
 	/**
 	 * Instantiates a new project export dialog.
-	 *
 	 * @param project the project
 	 */
 	public ProjectExportDialog(Project project) {
@@ -178,12 +156,10 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		this.pack();
 		this.setModal(true);
 		this.setLocationRelativeTo(null);
-		this.setVisible(true);
 	}
 
 	/**
 	 * Gets the j label header.
-	 *
 	 * @return the j label header
 	 */
 	private JLabel getJLabelHeader() {
@@ -196,7 +172,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 
 	/**
 	 * Gets the j check box include installation package.
-	 *
 	 * @return the j check box include installation package
 	 */
 	private JCheckBox getJCheckBoxIncludeInstallationPackage() {
@@ -207,10 +182,16 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		}
 		return jCheckBoxIncludeInstallationPackage;
 	}
-
+	/**
+	 * Sets it the installation package configuration is allowed or not.
+	 * @param allowConfiguration the new allow installation package configuration
+	 */
+	public void setAllowInstallationPackageConfiguration(boolean allowConfiguration) {
+		this.getJCheckBoxIncludeInstallationPackage().setEnabled(allowConfiguration);
+	}
+	
 	/**
 	 * Gets the j combo box select installation package.
-	 *
 	 * @return the j combo box select installation package
 	 */
 	private JComboBox<InstallationPackageDescription> getJComboBoxSelectInstallationPackage() {

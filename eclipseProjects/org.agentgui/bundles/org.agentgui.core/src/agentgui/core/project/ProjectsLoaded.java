@@ -61,7 +61,7 @@ import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.project.transfer.gui.ProjectExportDialog;
 import agentgui.core.update.ProjectRepositoryExport;
-import agentgui.core.update.RepositoryEntry;
+import agentgui.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -592,6 +592,9 @@ public class ProjectsLoaded {
 		
 		// --- Show a dialog to configure the export --------------------------
 		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
+		projectExportDialog.setAllowInstallationPackageConfiguration(false);
+		projectExportDialog.setVisible(true);
+		// - - Does the user action here - - - - - - - - - - - - - - - - - - -
 		if (projectExportDialog.isCanceled()==true) return;
 
 		// --- Get the export settings from the dialog ------------------------
@@ -602,6 +605,9 @@ public class ProjectsLoaded {
 		// --- Define the target file name ------------------------------------
 		String repositoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
 		String fileName = project.getProjectFolder() + "_" + project.getVersionTag() + "_" + project.getVersion().toString() + "." + Application.getGlobalInfo().getFileEndProjectZip();
+		fileName = fileName.replace("  ", " ");
+		fileName = fileName.replace(" ", "_");
+		
 		File targetFile = new File(repositoryPath + fileName);
 		exportSettings.setTargetFile(targetFile);
 		
@@ -612,11 +618,10 @@ public class ProjectsLoaded {
 		// --- Finally define and export the project to the repository --------
 		// --------------------------------------------------------------------
 		ProjectRepositoryExport pre = new ProjectRepositoryExport(project);
-		pre.setRepositoryLocationPath(repositoryPath);
+		pre.setRepositoryLocationDirectoryPath(repositoryPath);
 		pre.setProjectExportSettings(exportSettings);
 		pre.setRepositoryEntry(repositoryEntry);
 		pre.start();
-		
 	}
 	
 	/**

@@ -101,7 +101,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 		
 		// --- Show a dialog to configure the export ----------------
 		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
-		
+		projectExportDialog.setVisible(true);
+		// - - Does the user action here - - - - - - - - - - - - - --
 		if (projectExportDialog.isCanceled() == false) {
 			
 			// --- Get the export settings from the dialog ----------
