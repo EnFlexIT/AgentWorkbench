@@ -51,7 +51,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
-import agentgui.core.update.ProjectRepositoryUpdate;
+import agentgui.core.update.ProjectRepositoryExport;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
@@ -300,7 +300,7 @@ public class ProjectInfoVersionPanel extends JPanel implements ActionListener {
 				// --- Update the version qualifier ---------------------
 				// ------------------------------------------------------
 				Version oldVersion  = Version.parseVersion(this.getJTextFieldVersion().getText());
-				String newQualifier = ProjectRepositoryUpdate.getVersionQualifierForTimeStamp(System.currentTimeMillis());
+				String newQualifier = ProjectRepositoryExport.getVersionQualifierForTimeStamp(System.currentTimeMillis());
 				Version newVersion = new Version(oldVersion.getMajor(), oldVersion.getMinor(), oldVersion.getMicro(), newQualifier); 
 				this.getJTextFieldVersion().setText(newVersion.toString());
 			}

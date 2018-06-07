@@ -35,6 +35,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.osgi.framework.Version;
 
+import agentgui.core.project.Project;
+import agentgui.core.update.ProjectRepositoryExport;
+
 
 /**
  * The Class RepositoryEntry is used as descriptor for single installable projects.
@@ -55,6 +58,17 @@ public class RepositoryEntry implements Serializable {
 	 * Instantiates a new repository entry (default constructor).
 	 */
 	public RepositoryEntry() { }
+	
+	/**
+	 * Instantiates a new repository entry based on the available {@link Project}.
+	 * @param project the project for which a RepositoryEntry has to created 
+	 */
+	public RepositoryEntry(Project project) {
+		this.setProjectID(project.getProjectFolder());
+		this.setVersion(project.getVersion().toString());
+		this.setVersionTag(project.getVersionTag());
+		this.setFileName(ProjectRepositoryExport.getRepositoryFileName(project));
+	}
 	/**
 	 * Instantiates a new repository entry.
 	 *

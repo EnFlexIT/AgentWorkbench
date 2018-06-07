@@ -32,8 +32,11 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import agentgui.core.application.Application;
 import agentgui.core.config.BundleProperties;
+import agentgui.core.gui.options.DirectoryOptions;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
@@ -53,7 +56,7 @@ public class ProjectRepositoryExport extends Thread {
 	private String repositoryLocationDirectoryPath;
 	private ProjectExportSettings projectExportSettings;
 	private RepositoryEntry repositoryEntry;
-	
+	private boolean showUserDialogs;
 	
 	/**
 	 * Instantiates a new project updater.
@@ -72,6 +75,9 @@ public class ProjectRepositoryExport extends Thread {
 		if (repositoryLocationDirectoryPath==null || repositoryLocationDirectoryPath.isEmpty()==true) {
 			// --- Try to get the globally configured location ------
 			repositoryLocationDirectoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
+			if (repositoryLocationDirectoryPath.isEmpty()) {
+				repositoryLocationDirectoryPath=null;
+			}
 		}
 		return repositoryLocationDirectoryPath;
 	}
@@ -80,6 +86,7 @@ public class ProjectRepositoryExport extends Thread {
 	 * @param repositoryLocationPath the new repository location directory path
 	 */
 	public void setRepositoryLocationDirectoryPath(String repositoryLocationPath) {
+		if (repositoryLocationPath.isEmpty()==true) return;
 		this.repositoryLocationDirectoryPath = repositoryLocationPath;
 	}
 	
@@ -113,6 +120,20 @@ public class ProjectRepositoryExport extends Thread {
 		this.repositoryEntry = repositoryEntry;
 	}
 	
+	/**
+	 * Sets the show user dialogs.
+	 * @param showUserDialogs the new show user dialogs
+	 */
+	public void setShowUserDialogs(boolean showUserDialogs) {
+		this.showUserDialogs = showUserDialogs;
+	}
+	/**
+	 * Checks if is show user dialogs.
+	 * @return true, if is show user dialogs
+	 */
+	public boolean isShowUserDialogs() {
+		return showUserDialogs;
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
@@ -125,6 +146,14 @@ public class ProjectRepositoryExport extends Thread {
 		String configError = this.getConfigurationError();
 		if (configError!=null) {
 			String errMsg = "[" + this.getClass().getSimpleName() + "] " + configError + " - Cancel repository export.";
+			if (this.isShowUserDialogs()==true) {
+				JOptionPane.showMessageDialog(Application.getMainWindow(), errMsg, "Repository Export Error", JOptionPane.ERROR_MESSAGE);
+				if (this.getRepositoryLocationDirectoryPath()==null) {
+					// --- Special case: missing repository path ----
+					Application.showOptionDialog(DirectoryOptions.TAB_TITLE);
+					return;
+				}
+			}
 			throw new IllegalArgumentException(errMsg);
 		}
 		
@@ -140,7 +169,7 @@ public class ProjectRepositoryExport extends Thread {
 
 		// --- Export the project -----------------------------------
 		ProjectExportController pec = new DefaultProjectExportController();
-		pec.exportProject(this.currProject, this.getProjectExportSettings(), false, false);
+		pec.exportProject(this.currProject, this.getProjectExportSettings(), this.isShowUserDialogs(), false);
 		
 		// --- Load the current repository --------------------------
 		ProjectRepository repo = ProjectRepository.loadProjectRepository(destinDir);
@@ -161,7 +190,7 @@ public class ProjectRepositoryExport extends Thread {
 	private String getConfigurationError() {
 		
 		if (this.getRepositoryLocationDirectoryPath()==null) {
-			return "The repository location directory was not specified!";
+			return "The local directory of the repository was not specified!";
 		}
 		if (this.getProjectExportSettings()==null) {
 			return "The project export settings were not specified!";
@@ -172,6 +201,19 @@ public class ProjectRepositoryExport extends Thread {
 		return null;
 	}
 	
+
+	/**
+	 * Gets the repository file name.
+	 *
+	 * @param project the project
+	 * @return the repository file name
+	 */
+	public static String getRepositoryFileName(Project project) {
+		String fileName = project.getProjectFolder() + "_" + project.getVersionTag() + "_" + project.getVersion().toString() + "." + Application.getGlobalInfo().getFileEndProjectZip();
+		fileName = fileName.replace("  ", " ");
+		fileName = fileName.replace(" ", "_");
+		return fileName;
+	}
 	/**
 	 * Return a version qualifier for a given time stamp.
 	 * @param timeStamp the time stamp

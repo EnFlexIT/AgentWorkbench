@@ -543,6 +543,7 @@ public class ProjectsLoaded {
 		Project project = Application.getProjectFocused();
 		if (project==null) {
 			project = this.selectProjectForExport();
+			if (project==null) return;
 		}
 		
 		// --- Get the export settings ----------------
@@ -553,7 +554,6 @@ public class ProjectsLoaded {
 		if (exportSettings!=null) {
 			projectExportController.exportProject(project, exportSettings);
 		}
-		
 	}
 	
 	/**
@@ -570,13 +570,12 @@ public class ProjectsLoaded {
 			String projectSubFolder = newProDia.getProjectDirectory();
 			newProDia.close();
 			newProDia = null;
-
 			return this.add(projectSubFolder);
 		}
 	}
 	
 	/**
-	 * Project export to repository.
+	 * Exports the currently focused Project to the local repository.
 	 */
 	public void projectExportToRepository() {
 	
@@ -584,13 +583,22 @@ public class ProjectsLoaded {
 		Project project = Application.getProjectFocused();
 		if (project==null) {
 			project = this.selectProjectForExport();
+			if (project==null) return;
 		}
 
 		// --------------------------------------------------------------------
 		// --- Get the repository export configured ---------------------------
 		// --------------------------------------------------------------------
 		
-		// --- Show a dialog to configure the export --------------------------
+		// --- Define the RepositoryEntry -------------------------------------
+		RepositoryEntry repositoryEntry = new RepositoryEntry(project);
+		
+		// --- Define the target file name ------------------------------------
+		String repositoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
+		String fileName = repositoryEntry.getFileName();
+		File targetFile = new File(repositoryPath + fileName);
+		
+		// --- Show the ProjectExportDialog -----------------------------------
 		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
 		projectExportDialog.setAllowInstallationPackageConfiguration(false);
 		projectExportDialog.setVisible(true);
@@ -599,28 +607,18 @@ public class ProjectsLoaded {
 
 		// --- Get the export settings from the dialog ------------------------
 		ProjectExportSettings exportSettings = projectExportDialog.getExportSettings();
+		exportSettings.setTargetFile(targetFile);
 		projectExportDialog.dispose();
 		projectExportDialog = null;
-		
-		// --- Define the target file name ------------------------------------
-		String repositoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
-		String fileName = project.getProjectFolder() + "_" + project.getVersionTag() + "_" + project.getVersion().toString() + "." + Application.getGlobalInfo().getFileEndProjectZip();
-		fileName = fileName.replace("  ", " ");
-		fileName = fileName.replace(" ", "_");
-		
-		File targetFile = new File(repositoryPath + fileName);
-		exportSettings.setTargetFile(targetFile);
-		
-		// --- Define the RepositoryEntry -------------------------------------
-		RepositoryEntry repositoryEntry = new RepositoryEntry(project.getProjectFolder(), project.getVersion().toString(), project.getVersionTag(), fileName);
 		
 		// --------------------------------------------------------------------
 		// --- Finally define and export the project to the repository --------
 		// --------------------------------------------------------------------
 		ProjectRepositoryExport pre = new ProjectRepositoryExport(project);
+		pre.setRepositoryEntry(repositoryEntry);
 		pre.setRepositoryLocationDirectoryPath(repositoryPath);
 		pre.setProjectExportSettings(exportSettings);
-		pre.setRepositoryEntry(repositoryEntry);
+		pre.setShowUserDialogs(true);
 		pre.start();
 	}
 	

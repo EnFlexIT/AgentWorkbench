@@ -63,6 +63,8 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 
 	private static final long serialVersionUID = 1L;
 	
+	public static final String TAB_TITLE = "Verzeichnisse";
+	
 	private JLabel jLabelInstalledProductDirectory;	
 	private JTextField jTextFieldInstalledProductDirectory;
 	private JButton jButtonInstalledProductDirectroySelect;	
@@ -104,14 +106,14 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 	 */
 	@Override
 	public String getTitle() {
-		return Language.translate("Verzeichnisse");
+		return Language.translate(TAB_TITLE);
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.swing.options.AbstractOptionTab#getTabToolTipText()
 	 */
 	@Override
 	public String getTabToolTipText() {
-		return Language.translate("Verzeichnisse");
+		return Language.translate(TAB_TITLE);
 	}
 
 	/**

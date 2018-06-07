@@ -28,9 +28,6 @@
  */
 package agentgui.core.update;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import agentgui.core.project.Project;
 
 /**
@@ -61,26 +58,6 @@ public class ProjectRepositoryUpdate extends Thread {
 		// -- TODO ------------
 		System.out.println("TODO - Project Update!");
 		
-	}
-	
-	
-	/**
-	 * Return a version qualifier for a given time stamp.
-	 * @param timeStamp the time stamp
-	 * @return the version qualifier for time stamp
-	 */
-	public static String getVersionQualifierForTimeStamp(long timeStamp) {
-		return getVersionQualifierForDate(new Date(timeStamp));
-	}
-	/**
-	 * Return the version qualifier for the given time.
-	 *
-	 * @param currTime the curr time
-	 * @return the version qualifier for time stamp
-	 */
-	public static String getVersionQualifierForDate(Date currTime) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmm");
-		return sdf.format(currTime);
 	}
 	
 }
