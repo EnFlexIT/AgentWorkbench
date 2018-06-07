@@ -28,7 +28,13 @@
  */
 package agentgui.core.update;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import agentgui.core.project.Project;
+import agentgui.core.update.repositoryModel.ProjectRepository;
+import agentgui.core.update.repositoryModel.RepositoryEntry;
 
 /**
  * The Class ProjectUpdater does what the name promises.
@@ -38,6 +44,7 @@ import agentgui.core.project.Project;
 public class ProjectRepositoryUpdate extends Thread {
 
 	private Project currProject; 
+	private ProjectRepository projectRepository;
 	
 	/**
 	 * Instantiates a new project updater.
@@ -55,9 +62,74 @@ public class ProjectRepositoryUpdate extends Thread {
 	public void run() {
 		super.run();
 		
-		// -- TODO ------------
-		System.out.println("TODO - Project Update!");
+		// --- Check if the setting are complete --------------------
+		String configError = this.getConfigurationError();
+		if (configError!=null) {
+			String errMsg = "[" + this.getClass().getSimpleName() + "] " + configError + " - Cancel update check.";
+			throw new IllegalArgumentException(errMsg);
+		}
+
+		// -- Check for the configure update site -------------------
+		if (this.currProject.getUpdateSite()==null) {
+			System.err.println("No update-site was specified for the project '" + this.currProject.getProjectName() + "'!");
+			return;
+		}
 		
+		// --- Check if the repository can be loaded ----------------
+		if (this.getProjectRepository()==null) return;
+		
+		// --- Check if an update is available ----------------------
+		RepositoryEntry update = this.getProjectRepository().getProjectUpdate(this.currProject);
+		if (update!=null) {
+			// --- An update is available ---------------------------
+			System.out.println("An Update is available => Do the update");
+			
+		}
+		
+	}
+
+	/**
+	 * Returns the project repository from the projects update site.
+	 * @return the project repository
+	 */
+	public ProjectRepository getProjectRepository() {
+		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {
+			// --- Check if the update site is a web site URL -------
+			try {
+				URL updateURL = new URL(this.currProject.getUpdateSite());
+				projectRepository = ProjectRepository.loadProjectRepository(updateURL);
+			} catch (MalformedURLException urlEx) {
+				//urlEx.printStackTrace();
+				this.printSystemError("URL access action says " + urlEx.getLocalizedMessage());
+			}
+			if (projectRepository==null) {
+				// --- Check if update site is a local directory ----
+				File localRepo = new File(this.currProject.getUpdateSite());
+				if (localRepo.exists()==true) {
+					projectRepository = ProjectRepository.loadProjectRepository(localRepo);
+				}
+			}
+		}
+		return projectRepository;
+	}
+	
+	/**
+	 * Return the configuration error as string, if there is an error.
+	 * @return the configuration error
+	 */
+	private String getConfigurationError() {
+		if (this.currProject==null) {
+			return "No project was specified for an update!";
+		}
+		return null;
+	}
+	
+	/**
+	 * Prints the specified system error.
+	 * @param message the message
+	 */
+	private void printSystemError(String message) {
+		System.err.println("[" + this.getClass().getSimpleName() + "] " + message);
 	}
 	
 }

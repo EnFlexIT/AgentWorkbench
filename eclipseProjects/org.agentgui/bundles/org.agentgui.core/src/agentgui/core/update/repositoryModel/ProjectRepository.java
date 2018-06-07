@@ -50,6 +50,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.osgi.framework.Version;
+
+import agentgui.core.project.Project;
+
 /**
  * The Class ProjectRepository describes the structure of a project repository.
  * 
@@ -89,11 +93,11 @@ public class ProjectRepository implements Serializable {
 	/**
 	 * Returns the ProjectRepositoryEntries for the specified project.
 	 *
-	 * @param projectName the project name
+	 * @param projectID the project ID
 	 * @return the project repository entries
 	 */
-	public ProjectRepositoryEntries getProjectRepositoryEntries(String projectName) {
-		return this.getProjectRepositories().get(projectName);
+	public ProjectRepositoryEntries getProjectRepositoryEntries(String projectID) {
+		return this.getProjectRepositories().get(projectID);
 	}
 	
 	/**
@@ -109,7 +113,42 @@ public class ProjectRepository implements Serializable {
 		pre.addRepositoryEntry(repositoryEntry);
 	}
 	
+	/**
+	 * Returns the project update, if such an update can be found.
+	 * @param project the project for which an update has to be found
+	 * @return the project update
+	 */
+	public RepositoryEntry getProjectUpdate(Project project) {
+		if (project==null) return null;
+		return this.getProjectUpdate(project.getProjectFolder(), project.getVersionTag(), project.getVersion().toString());
+	}
+	/**
+	 * Return the project update, if such an update can be found.
+	 *
+	 * @param projectID the project ID
+	 * @return the project update
+	 */
+	public RepositoryEntry getProjectUpdate(String projectID, String versionTag, String version) {
+		
+		ProjectRepositoryEntries prEntries = this.getProjectRepositoryEntries(projectID);
+		if (prEntries!=null) {
+			RepositoryTagVersions tagVersions = prEntries.getRepositoryTagVersions(versionTag);
+			if (tagVersions!=null) {
+				RepositoryEntry latestVersionEntry = tagVersions.getLatestVersion();
+				if (latestVersionEntry!=null) {
+					Version latestVersion = latestVersionEntry.getOsgiFrameworkVersion();
+					Version currentVersion = Version.parseVersion(version);
+					if (latestVersion.compareTo(currentVersion)>0) {
+						return latestVersionEntry;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 
+	
 	// ------------------------------------------------------------------------
 	// --- Methods for loading and saving a ProjectRepository -----------------  
 	// ------------------------------------------------------------------------	
@@ -158,7 +197,7 @@ public class ProjectRepository implements Serializable {
 		ProjectRepository projectRepository = null;
 		
 		// --- Check for the right destination file ----------------- 
-		String sourceURLPath = getLocationPathIncludingRepositoryFile(webURL.getPath(), true);
+		String sourceURLPath = getLocationPathIncludingRepositoryFile(webURL.toString(), true);
 		
 		HttpURLConnection httpConnection = null;
 		InputStream is = null;

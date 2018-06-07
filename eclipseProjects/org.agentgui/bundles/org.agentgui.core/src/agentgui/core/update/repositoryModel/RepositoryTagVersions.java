@@ -57,5 +57,26 @@ public class RepositoryTagVersions implements Serializable {
 		}
 		return repositoryTagVector;
 	}
+
+	/**
+	 * Returns the latest version from the vector of RepositoryEntries.
+	 * @return the latest version
+	 */
+	public RepositoryEntry getLatestVersion() {
+
+		RepositoryEntry latestRE = null;
+		for (int i = 0; i < this.getRepositoryTagVector().size(); i++) {
+			// --- Get the version to check ---------------
+			RepositoryEntry checkRE = this.getRepositoryTagVector().get(i);	
+			if (latestRE==null) {
+				latestRE = checkRE;
+				continue;
+			}
+			if (checkRE.getOsgiFrameworkVersion().compareTo(latestRE.getOsgiFrameworkVersion())>0) {
+				latestRE = checkRE;
+			}
+		}
+		return latestRE;
+	}
 	
 }
