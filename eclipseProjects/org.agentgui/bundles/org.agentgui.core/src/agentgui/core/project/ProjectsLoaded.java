@@ -41,7 +41,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.agentgui.gui.AwbProjectNewOpenDialog;
@@ -53,16 +52,16 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettings;
+import agentgui.core.project.transfer.ProjectImportController;
+import agentgui.core.project.transfer.ProjectImportSettings;
 import agentgui.core.project.transfer.gui.ProjectExportDialog;
 import agentgui.core.update.ProjectRepositoryExport;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
-import de.enflexit.common.transfer.Zipper;
 
 /**
  * This class holds the list of the projects, that are currently open
@@ -471,66 +470,31 @@ public class ProjectsLoaded {
 	 */
 	public void projectImport() {
 		
-		String optionMsg = null;
-		String optionTitle = null;
-		String newLine = Application.getGlobalInfo().getNewLineSeparator(); 
-		
 		// --- Select a *.agui file -----------------------
 		String fileEnd = Application.getGlobalInfo().getFileEndProjectZip();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileEnd + ")", fileEnd);
 		
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileFilter(filter);
-		chooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
-		chooser.setMultiSelectionEnabled(false);
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileFilter(filter);
+		fileChooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setAcceptAllFileFilterUsed(false);
 		
-		int answerChooser = chooser.showDialog(Application.getMainWindow(), Language.translate("Projekt importieren"));
+		int answerChooser = fileChooser.showDialog(Application.getMainWindow(), Language.translate("Projekt importieren"));
 		if (answerChooser==JFileChooser.CANCEL_OPTION) return;
-		Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());
+		Application.getGlobalInfo().setLastSelectedFolder(fileChooser.getCurrentDirectory());
 		
-		File projectFile = chooser.getSelectedFile();
-		if (projectFile!=null && projectFile.exists()) {
-
-			String destFolder = Application.getGlobalInfo().getPathProjects();
-			String zipFolder = projectFile.getAbsolutePath();
-			
-			// --- Import project file as a new project ---
-			Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
-			zipper.setUnzipZipFolder(zipFolder);
-			zipper.setUnzipDestinationFolder(destFolder);
-			
-			// --- Error-Handling -------------------------
-			final String rootFolder2Extract = zipper.getRootFolder2Extract();
-			String testFolder = destFolder + rootFolder2Extract;
-			File testFile = new File(testFolder);
-			if (testFile.exists()) {
-				optionTitle = rootFolder2Extract + ": " + Language.translate("Verzeichnis bereits vorhanden!");
-				optionMsg = Language.translate("Verzeichnis") + ": " + testFolder + newLine;
-				optionMsg+= Language.translate("Das Verzeichnis existiert bereits. Der Import wird unterbrochen.");
-				JOptionPane.showMessageDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			
-			// --- Define task after the unzip action -----
-			Runnable afterJobTask = new Runnable() {
-				@Override
-				public void run() {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							Application.getProjectsLoaded().add(rootFolder2Extract);
-						}
-					});
-				}
-			};
-			zipper.setAfterJobTask(afterJobTask);
-			
-			// --- Finally unzip --------------------------
-			zipper.doUnzipFolder();
-			zipper = null;
-			
-		}		
+		// --- Start the project import controller ---------
+		File projectArchiveFile = fileChooser.getSelectedFile();
+		if (projectArchiveFile!=null && projectArchiveFile.exists()) {
+			// --- Define the Import settings --------------
+			ProjectImportSettings pims  = new ProjectImportSettings(projectArchiveFile);
+			pims.setExtractInThread(true);
+			// --- Start the import -----------------------
+			ProjectImportController pic = new ProjectImportController(pims);
+			pic.doProjectImport();
+		}
 		
 	}
 

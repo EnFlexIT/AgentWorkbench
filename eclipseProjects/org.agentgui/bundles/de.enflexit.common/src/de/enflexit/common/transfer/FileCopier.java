@@ -44,16 +44,17 @@ import java.io.OutputStream;
 public class FileCopier {
 	
 	/**
-	 * This method does the actual copying process
-	 * 
-	 * @param in
-	 * @param out
-	 * @throws IOException
+	 * This method does the actual copying process.
+	 *
+	 * @param in the InputStream
+	 * @param out the OutputStream
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	private void copy(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[ 0xFFFF ];     
-		for ( int len; (len = in.read(buffer))!=-1; )       
-			out.write( buffer, 0, len );
+		for (int len; (len=in.read(buffer))!=-1;) {
+			out.write(buffer, 0, len );
+		}
 	}
 	
 	/**
@@ -62,36 +63,37 @@ public class FileCopier {
 	 * @param srcPath
 	 * @param destPath
 	 */
-	public void copyFile(String srcPath, String destPath) {
+	public boolean copyFile(String srcPath, String destPath) {
 		
-		File checkFile = null;
+		File checkFile = new File(srcPath);
+		if (checkFile.exists()==false) return false;
+		
+		boolean successful = false;
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
-		
-		checkFile = new File(srcPath);
-		if (checkFile.exists()==false) {
-			return;
-		}
-		
 		try {
 			fis = new FileInputStream(srcPath);
 			fos = new FileOutputStream(destPath);
-			copy(fis, fos);
-		
-		} catch (IOException e) {
-			e.printStackTrace();
+			this.copy(fis, fos);
+			successful = true;
+			
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
 		} finally {
-			if (fis != null)
+			if (fis!=null) {
 				try {
 					fis.close();
 				} catch (IOException e) {
 				}
-			if (fos != null)
+			}
+			if (fos!=null) {
 				try {
 					fos.close();
 				} catch (IOException e) {
 				}
+			}
 		}
+		return successful;
 	}
 
 }

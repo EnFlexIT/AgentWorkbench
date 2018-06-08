@@ -32,9 +32,14 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import agentgui.core.application.Application;
 import agentgui.core.project.Project;
+import agentgui.core.project.transfer.ProjectImportController;
+import agentgui.core.project.transfer.ProjectImportSettings;
 import agentgui.core.update.repositoryModel.ProjectRepository;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.common.transfer.Download;
+import de.enflexit.common.transfer.FileCopier;
 
 /**
  * The Class ProjectUpdater does what the name promises.
@@ -44,6 +49,8 @@ import agentgui.core.update.repositoryModel.RepositoryEntry;
 public class ProjectRepositoryUpdate extends Thread {
 
 	private Project currProject; 
+	
+	private boolean isRepositoryFromWeb;
 	private ProjectRepository projectRepository;
 	
 	/**
@@ -83,11 +90,137 @@ public class ProjectRepositoryUpdate extends Thread {
 		if (update!=null) {
 			// --- An update is available ---------------------------
 			System.out.println("An Update is available => Do the update");
-			
+
+			// --- Rename the original project directory ------------
+			System.out.println("Download has to be done!");
+			String updateFilename = this.getLinkOrPathWithDirectorySuffix(Application.getGlobalInfo().getPathProjects(true), update.getFileName());
+			if (this.downloadUpdateOrCopyFromRepository(update, updateFilename)==true) {
+				System.out.println("Download is done!");
+				// --- Do the installation of the new update --------
+				if (this.updateProject(updateFilename)==true) {
+					System.out.println("Update was successful");
+				} else {
+					System.err.println("Update failed ");
+				}
+			}
 		}
 		
 	}
 
+	
+	/**
+	 * Updates the current project with the specified project archive file.
+	 *
+	 * @param updateFileName the update file name
+	 * @return true, if successful
+	 */
+	public boolean updateProject(String updateFileName) {
+		
+		// --- Collect required information -------------------------
+		String projectDirectory = this.currProject.getProjectFolderFullPath();
+		String projectDirectoryDuringUpdate = Application.getGlobalInfo().getPathProjects() + this.currProject.getProjectFolder() + "_"  + this.currProject.getVersion().toString() + File.separator;
+		
+		// --- Save and close the current project -------------------
+		boolean saved = this.currProject.save();
+		boolean closed = false;
+		if (saved==true) {
+			closed = this.currProject.close();
+		}
+		if (closed==false) return false;
+		
+		// --- Rename current project folder ------------------------
+		if (this.renameDirectory(projectDirectory, projectDirectoryDuringUpdate)==false) return false;
+		
+		// --- Import the new version of the project ----------------
+		ProjectImportSettings pims = new ProjectImportSettings(new File(updateFileName));
+		pims.setExtractInThread(false);
+		ProjectImportController pic = new ProjectImportController(pims);
+		boolean successfuil = pic.doProjectImport();
+		if (successfuil==true) {
+			// --- Clean-up things remaining ------------------------
+			// TODO
+			
+		}
+		return successfuil;
+	}
+	
+	
+	/**
+	 * Renames the specified directory to the new .
+	 *
+	 * @param sourceDirName the source directory name
+	 * @param destinDirName the destination directory name
+	 * @return true, if successful
+	 */
+	public boolean renameDirectory(String sourceDirName, String destinDirName) {
+		
+		boolean successful = false;
+		
+		File sourceDir = new File(sourceDirName);
+		if (sourceDir.isDirectory()==true) {
+		    File destinDir = new File(destinDirName);
+		    successful = sourceDir.renameTo(destinDir);
+		}
+		return successful;
+	}
+	
+	/**
+	 * Download update or copy from repository.
+	 *
+	 * @param updateRepositoryEntry the update repository entry
+	 * @param destinationFileName the destination file name
+	 * @return true, if successful
+	 */
+	private boolean downloadUpdateOrCopyFromRepository(RepositoryEntry updateRepositoryEntry, String destinationFileName) {
+		
+		boolean successful = false;
+		if (this.isRepositoryFromWeb==true) {
+			// -- Start the web download ----------------------------
+			String sourceFileURL = this.getFileNameURLDownload(updateRepositoryEntry);
+			
+			Download download = new Download(sourceFileURL, destinationFileName);
+			download.startDownload();
+			successful = download.wasSuccessful();
+			
+		} else {
+			// --- Copy file to destination 
+			String sourceFileName = this.getFileNameDownload(updateRepositoryEntry);
+			FileCopier copier = new FileCopier();
+			successful = copier.copyFile(sourceFileName, destinationFileName);
+		}
+		return successful;
+	}
+	
+	/**
+	 * Return the download file name URL base on the specified {@link RepositoryEntry}.
+	 * @param updateRepositoryEntry the update repository entry
+	 * @return the download file name URL
+	 */
+	private String getFileNameURLDownload(RepositoryEntry updateRepositoryEntry) {
+		return this.getLinkOrPathWithDirectorySuffix(this.currProject.getUpdateSite(), "/") + updateRepositoryEntry.getFileName();
+	}
+	/**
+	 * Return the repository file name.
+	 * @param updateRepositoryEntry the update repository entry
+	 * @return the repository file name
+	 */
+	private String getFileNameDownload(RepositoryEntry updateRepositoryEntry) {
+		return this.getLinkOrPathWithDirectorySuffix(this.currProject.getUpdateSite(), File.separator) + updateRepositoryEntry.getFileName();
+	}
+	/**
+	 * Returns the link or path with the deisred directory suffix.
+	 * @param linkOfPath the link of path
+	 * @param desiredSuffix the desired suffix
+	 * @return the link or path with directory suffix
+	 */
+	private String getLinkOrPathWithDirectorySuffix(String linkOfPath, String desiredSuffix) {
+		String pathChecked = linkOfPath;
+		if (pathChecked.endsWith(desiredSuffix)==false) {
+			pathChecked += desiredSuffix;
+		}
+		return pathChecked;
+	}
+	
 	/**
 	 * Returns the project repository from the projects update site.
 	 * @return the project repository
@@ -98,17 +231,23 @@ public class ProjectRepositoryUpdate extends Thread {
 			try {
 				URL updateURL = new URL(this.currProject.getUpdateSite());
 				projectRepository = ProjectRepository.loadProjectRepository(updateURL);
+				this.isRepositoryFromWeb = true;
+				
 			} catch (MalformedURLException urlEx) {
 				//urlEx.printStackTrace();
 				this.printSystemError("URL access action says " + urlEx.getLocalizedMessage());
 			}
+			
+			// --- Backup, if repository comes not from an URL ------
 			if (projectRepository==null) {
 				// --- Check if update site is a local directory ----
 				File localRepo = new File(this.currProject.getUpdateSite());
 				if (localRepo.exists()==true) {
 					projectRepository = ProjectRepository.loadProjectRepository(localRepo);
+					this.isRepositoryFromWeb = false;
 				}
 			}
+			
 		}
 		return projectRepository;
 	}

@@ -74,6 +74,7 @@ public class Zipper extends Thread {
 	
 	private Runnable afterJobTask;
 	
+	private boolean runInThread=true;
 	private boolean done = false;
 	
 	private int kindOfExec = 0;
@@ -119,6 +120,21 @@ public class Zipper extends Thread {
 	}
 	
 	/**
+	 * Sets to execute the defined process in an own thread or not (the default is true).
+	 * @param isRunInThread the new extract in thread
+	 */
+	public void setRunInThread(boolean isRunInThread) {
+		this.runInThread = isRunInThread;
+	}
+	/**
+	 * Return if the defined process is to be executed in an own thread.
+	 * @return true, if is extract in thread
+	 */
+	public boolean isRunInThread() {
+		return runInThread;
+	}
+	
+	/**
 	 * Sets that the operation is done.
 	 * @param done the new done
 	 */
@@ -139,6 +155,16 @@ public class Zipper extends Thread {
 	 */
 	@Override
 	public void run() {
+		this.startInCurrentThread();
+	}
+	
+	/**
+	 * Does the actual {@link Zipper} action. Call this method, if you want to do the 
+	 * zipping or unzipping in the current thread. Otherwise use the {@link #start()}
+	 * method of the thread 
+	 * want to do the action 
+	 */
+	public void startInCurrentThread() {
 		
 		this.setDone(false);
 		
@@ -160,7 +186,6 @@ public class Zipper extends Thread {
 		if (this.getAfterJobTask()!=null) {
 			this.getAfterJobTask().run();
 		}
-		
 	}
 	
 	/**
@@ -396,7 +421,11 @@ public class Zipper extends Thread {
 		}
 		if (this.unzipZipFolder!=null && this.unzipDestinationFolder!=null) {
 			this.kindOfExec = this.execUnZip;
-			this.start();	
+			if (this.isRunInThread()==true) {
+				this.start();	
+			} else {
+				this.startInCurrentThread();
+			}
 		}		
 	}
 	/**
@@ -482,7 +511,11 @@ public class Zipper extends Thread {
 		}
 		if (this.zipFolder!=null && this.zipSourceFolder!=null) {
 			this.kindOfExec = execZip;
-			this.start();
+			if (this.isRunInThread()==true) {
+				this.start();	
+			} else {
+				this.startInCurrentThread();
+			}
 		}
 	}
 	
