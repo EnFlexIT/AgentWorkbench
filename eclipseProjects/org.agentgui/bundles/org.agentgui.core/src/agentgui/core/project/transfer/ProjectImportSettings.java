@@ -43,7 +43,7 @@ public class ProjectImportSettings implements Serializable {
 
 	private File projectArchiveFile;
 	private boolean extractInThread;
-	
+	private Runnable afterImportTask;
 	
 	/**
 	 * Instantiates a new project import settings (default constructor).
@@ -86,6 +86,25 @@ public class ProjectImportSettings implements Serializable {
 	 */
 	public boolean isExtractInThread() {
 		return extractInThread;
+	}
+	
+	/**
+	 * Returns the 'after-import-task' that will be executed, after the 
+	 * project was imported / un-zipped to the projects directory.
+	 * .
+	 * @return the after import task
+	 */
+	public Runnable getAfterImportTask() {
+		return afterImportTask;
+	}
+	/**
+	 * Sets the 'after-import-task' that will be executed, after the 
+	 * project was imported / un-zipped to the projects directory.
+	 * 
+	 * @param afterImportTask the new after import task
+	 */
+	public void setAfterImportTask(Runnable afterImportTask) {
+		this.afterImportTask = afterImportTask;
 	}
 	
 }

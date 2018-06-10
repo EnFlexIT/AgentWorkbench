@@ -362,7 +362,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		project.setProjectFolder(projectSubDirectory);
 		project.checkAndCreateProjectsDirectoryStructure();
 		
+		// ----------------------------------------------------------
 		// --- Install required features if necessary ---------------
+		// ----------------------------------------------------------
 		if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
 			// --- Only possible if not running from the IDE --------
 			boolean newFeaturesInstalled = false;
@@ -383,8 +385,16 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			
 		}
 		
+		// ----------------------------------------------------------
+		// --- Check for an update of the project -------------------
+		// ----------------------------------------------------------
+		// TODO
+		
+		
+		
+		
 		if (loadResources==true) {
-			// --- Load additional jar-resources ------------------------
+			// --- Load additional jar-resources --------------------
 			project.resourcesLoad();
 			// --- Load user data model -----------------------------
 			loadProjectUserDataModel(projectPath, project);
@@ -416,7 +426,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
 			message += xmlFileName;
 			if (Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION){
-				JOptionPane.showInternalMessageDialog(Application.getMainWindow(), message, title, JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Application.getMainWindow(), message, title, JOptionPane.WARNING_MESSAGE);
 			}
 			return null;
 		}
@@ -1359,7 +1369,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 	
 	/**
-	 * Sets the update auto configuration (1-3).
+	 * Sets the update auto configuration (1-3), where <br> 
+	 * 0 = automated update without further requests,<br> 
+	 * 1 = do the download then ask and<br> 
+	 * 2 = do nothing in an automated manner.
 	 * @param updateAutoConfiguration the new update auto configuration
 	 */
 	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
@@ -1372,7 +1385,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 	/**
 	 * Returns the current auto-update configuration.
-	 * @return the auto-update configuration
+	 * @return the auto-update configuration, where <br> 
+	 * 0 = automated update without further requests,<br> 
+	 * 1 = do the download then ask and<br> 
+	 * 2 = do nothing in an automated manner
 	 */
 	@XmlTransient
 	public Integer getUpdateAutoConfiguration() {
@@ -1904,10 +1920,13 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Does the project update.
+	 * Does the project update check and installation.
+	 * @param isManuallyExecutedByUser indicator that tells, if the call represents a user call 
 	 */
-	public void doProjectUpdate() {
-		new ProjectRepositoryUpdate(this).start();
+	public void doProjectUpdate(boolean isManuallyExecutedByUser) {
+		ProjectRepositoryUpdate pUpdate = new ProjectRepositoryUpdate(this);
+		pUpdate.setExecutedByUser(isManuallyExecutedByUser);
+		pUpdate.start();
 	}
 
 	/**

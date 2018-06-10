@@ -32,8 +32,13 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.swing.JOptionPane;
+
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.project.Project;
+import agentgui.core.project.transfer.DefaultProjectExportController;
+import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.project.transfer.ProjectImportController;
 import agentgui.core.project.transfer.ProjectImportSettings;
 import agentgui.core.update.repositoryModel.ProjectRepository;
@@ -53,6 +58,11 @@ public class ProjectRepositoryUpdate extends Thread {
 	private boolean isRepositoryFromWeb;
 	private ProjectRepository projectRepository;
 	
+	private boolean executedByUser;
+	private boolean userRequestForDownloadAndInstallation;
+	private boolean userRequestForInstallation;
+	private boolean leaveUpdateProcedure;
+	
 	/**
 	 * Instantiates a new project updater.
 	 * @param projectToUpdate the project to update
@@ -62,12 +72,181 @@ public class ProjectRepositoryUpdate extends Thread {
 		this.setName(this.getClass().getSimpleName()  + " " + this.currProject.getProjectName());
 	}
 	
+	
+	/**
+	 * Checks if the ProjectRepositoryUpdate was executed by user.
+	 * @return true, if is executed by user
+	 */
+	public boolean isExecutedByUser() {
+		return executedByUser;
+	}
+	/**
+	 * Sets the ProjectRepositoryUpdate executed by user.
+	 * @param executedByUser the new executed by user
+	 */
+	public void setExecutedByUser(boolean executedByUser) {
+		this.executedByUser = executedByUser;
+	}
+
+	/**
+	 * Checks if is a user request for download and installation is required.
+	 * @return true, if is user request for download
+	 */
+	private boolean isUserRequestForDownloadAndInstallation() {
+		return userRequestForDownloadAndInstallation;
+	}
+	/**
+	 * Sets that the user request for download and installation is required.
+	 * @param userRequestForInstallation the new user request for download
+	 */
+	private void setUserRequestForDownloadAndInstallation(boolean userRequestForDownload) {
+		this.userRequestForDownloadAndInstallation = userRequestForDownload;
+	}
+	/**
+	 * Checks if is confirmed user request for download and installation.
+	 * @param update the RepositoryEntry of the update 
+	 * @return true, if is confirmed user request for download and installation
+	 */
+	private boolean isConfirmedUserRequestForDownloadAndInstallation(RepositoryEntry update) {
+		boolean confirmed = true;
+		if (this.isUserRequestForDownloadAndInstallation()==true) {
+			if (Application.isOperatingHeadless()==true) {
+				confirmed = false;
+			} else {
+				String title   = "Download and Install the Update?";
+				String message = this.getUpdateAsText(update) + " ";
+				message += Language.translate("is available.", Language.EN) + "\n";
+				message += Language.translate("Would you like to download and install this update?", Language.EN); 
+				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (answer==JOptionPane.NO_OPTION) {
+					confirmed = false;
+				}
+			}
+		}
+		return confirmed;
+	}
+	
+	/**
+	 * Checks if is a user request for installation is required.
+	 * @return true, if is user request for installation
+	 */
+	private boolean isUserRequestForInstallation() {
+		return userRequestForInstallation;
+	}
+	/**
+	 * Sets that the user request for installation is required.
+	 * @param userRequestForInstallation the new user request for installation
+	 */
+	private void setUserRequestForInstallation(boolean userRequestForInstallation) {
+		this.userRequestForInstallation = userRequestForInstallation;
+	}
+	/**
+	 * Checks if is confirmed user request for the installation.
+	 * @param update the RepositoryEntry of the update 
+	 * @return true, if is confirmed user request for download and installation
+	 */
+	private boolean isConfirmedUserRequestForInstallation(RepositoryEntry update) {
+		boolean confirmed = true;
+		if (this.isUserRequestForInstallation()==true) {
+			if (Application.isOperatingHeadless()==true) {
+				confirmed = false;
+			} else {
+				String title   = "Install the Update?";
+				String message = this.getUpdateAsText(update) + " ";
+				message += Language.translate("was downloaded.", Language.EN) + "\n";
+				message += Language.translate("Would you like to install this update now?", Language.EN);
+				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (answer==JOptionPane.NO_OPTION) {
+					confirmed = false;
+				}
+			}
+		}
+		return confirmed;
+	}
+	
+	/**
+	 * Checks if is leave update procedure.
+	 * @return true, if is leave update procedure
+	 */
+	private boolean isLeaveUpdateProcedure() {
+		return leaveUpdateProcedure;
+	}
+	/**
+	 * Sets the leave update procedure.
+	 * @param leaveUpdateProcedure the new leave update procedure
+	 */
+	private void setLeaveUpdateProcedure(boolean leaveUpdateProcedure) {
+		this.leaveUpdateProcedure = leaveUpdateProcedure;
+	}
+	
+	/**
+	 * Configures the internal update procedure.
+	 */
+	private void configureInernalUpdateProcedure() {
+		
+		if (this.isExecutedByUser()==true) {
+			// --- Do not leave the update procedure ----------------
+			this.setLeaveUpdateProcedure(false);
+			// --- Request for download and installation ------------
+			this.setUserRequestForDownloadAndInstallation(true);
+			// --- No further request for installation --------------
+			this.setUserRequestForInstallation(false);
+			
+		} else {
+			// --- Do update as configured --------------------------
+			int updateConfig = this.currProject.getUpdateAutoConfiguration();
+			switch (updateConfig) {
+			case 0:
+				// --- Auto-Update ----------------------------------
+				this.setLeaveUpdateProcedure(false);
+				this.setUserRequestForDownloadAndInstallation(false);
+				this.setUserRequestForInstallation(false);
+				break;
+			case 1:
+				// --- Ask for installation -------------------------
+				this.setLeaveUpdateProcedure(false);
+				this.setUserRequestForDownloadAndInstallation(false);
+				this.setUserRequestForInstallation(true);
+				break;
+			case 2:
+				// --- No automated update --------------------------
+				this.setLeaveUpdateProcedure(true);
+				this.setUserRequestForDownloadAndInstallation(true);
+				this.setUserRequestForInstallation(false);
+				break;
+			}
+			
+		}
+	}
+	
+	/**
+	 * Returns the update version as text.
+	 *
+	 * @param update the update
+	 * @return the update as text
+	 */
+	private String getUpdateAsText(RepositoryEntry update) {
+		return "Project '" + this.currProject.getProjectName() + "', version " + update.getVersion();
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
 	public void run() {
 		super.run();
+		this.startInSameThreas();
+	}
+	/**
+	 * Does the same as calling the threads {@link #start()} method, but 
+	 * without starting an individual thread. Thus, it enables to wait
+	 * until the project update is finalized.
+	 */
+	public void startInSameThreas() {
+		
+		// --- Configure update procedure --------------------------- 
+		this.configureInernalUpdateProcedure();
+		if (this.isLeaveUpdateProcedure()==true) return;
 		
 		// --- Check if the setting are complete --------------------
 		String configError = this.getConfigurationError();
@@ -77,7 +256,7 @@ public class ProjectRepositoryUpdate extends Thread {
 		}
 
 		// -- Check for the configure update site -------------------
-		if (this.currProject.getUpdateSite()==null) {
+		if (this.currProject.getUpdateSite()==null || this.currProject.getUpdateSite().isEmpty()==true) {
 			System.err.println("No update-site was specified for the project '" + this.currProject.getProjectName() + "'!");
 			return;
 		}
@@ -89,24 +268,41 @@ public class ProjectRepositoryUpdate extends Thread {
 		RepositoryEntry update = this.getProjectRepository().getProjectUpdate(this.currProject);
 		if (update!=null) {
 			// --- An update is available ---------------------------
-			System.out.println("An Update is available => Do the update");
-
-			// --- Rename the original project directory ------------
-			System.out.println("Download has to be done!");
+			if (this.isConfirmedUserRequestForDownloadAndInstallation(update)==false) return;
+			
+			// --- Download the update ------------------------------
 			String updateFilename = this.getLinkOrPathWithDirectorySuffix(Application.getGlobalInfo().getPathProjects(true), update.getFileName());
-			if (this.downloadUpdateOrCopyFromRepository(update, updateFilename)==true) {
-				System.out.println("Download is done!");
+			if (this.downloadUpdateOrCopyFromLocalRepository(update, updateFilename)==true) {
+				// --- The download of update is done ---------------
+				if (this.isConfirmedUserRequestForInstallation(update)==false) return;
+				
 				// --- Do the installation of the new update --------
+				String updateTitle = null;
+				String updateMessage = null;
+				int updateMessageType = 0;
 				if (this.updateProject(updateFilename)==true) {
-					System.out.println("Update was successful");
+					updateTitle = Language.translate("Updated successful", Language.EN);
+					updateMessage = Language.translate("The project was updated successfully!", Language.EN);
+					updateMessageType = JOptionPane.INFORMATION_MESSAGE;
 				} else {
-					System.err.println("Update failed ");
+					updateTitle = Language.translate("Update failed", Language.EN);
+					updateMessage = Language.translate("The project update failed!", Language.EN);
+					updateMessageType = JOptionPane.ERROR_MESSAGE;
+				}
+				// --- Give some feedback to the user ---------------
+				if (Application.isOperatingHeadless()==false) {
+					JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
+				} else {
+					if (updateMessageType==JOptionPane.INFORMATION_MESSAGE) {
+						System.out.println(updateMessage);
+					} else {
+						this.printSystemError(updateMessage);
+					}
 				}
 			}
 		}
 		
 	}
-
 	
 	/**
 	 * Updates the current project with the specified project archive file.
@@ -116,10 +312,6 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public boolean updateProject(String updateFileName) {
 		
-		// --- Collect required information -------------------------
-		String projectDirectory = this.currProject.getProjectFolderFullPath();
-		String projectDirectoryDuringUpdate = Application.getGlobalInfo().getPathProjects() + this.currProject.getProjectFolder() + "_"  + this.currProject.getVersion().toString() + File.separator;
-		
 		// --- Save and close the current project -------------------
 		boolean saved = this.currProject.save();
 		boolean closed = false;
@@ -128,41 +320,47 @@ public class ProjectRepositoryUpdate extends Thread {
 		}
 		if (closed==false) return false;
 		
-		// --- Rename current project folder ------------------------
-		if (this.renameDirectory(projectDirectory, projectDirectoryDuringUpdate)==false) return false;
+		// --- Pack the current project into an project archive -----
+		if (this.packCurrentProjectToArchive()==false) return false;
 		
 		// --- Import the new version of the project ----------------
 		ProjectImportSettings pims = new ProjectImportSettings(new File(updateFileName));
 		pims.setExtractInThread(false);
 		ProjectImportController pic = new ProjectImportController(pims);
-		boolean successfuil = pic.doProjectImport();
-		if (successfuil==true) {
-			// --- Clean-up things remaining ------------------------
-			// TODO
-			
-		}
-		return successfuil;
+		return pic.doProjectImport();
 	}
 	
-	
 	/**
-	 * Renames the specified directory to the new .
-	 *
-	 * @param sourceDirName the source directory name
-	 * @param destinDirName the destination directory name
+	 * Packs the current project into a project archive located 
+	 * in the projects directory and removes the project.
 	 * @return true, if successful
 	 */
-	public boolean renameDirectory(String sourceDirName, String destinDirName) {
+	private boolean packCurrentProjectToArchive() {
 		
 		boolean successful = false;
 		
-		File sourceDir = new File(sourceDirName);
-		if (sourceDir.isDirectory()==true) {
-		    File destinDir = new File(destinDirName);
-		    successful = sourceDir.renameTo(destinDir);
+		String projectDir = Application.getGlobalInfo().getPathProjects();
+		String fileName = ProjectRepositoryExport.getRepositoryFileName(this.currProject);
+		File targetFile = new File(projectDir + fileName);
+		if (targetFile.exists()==true) {
+			// --- Delete the old file --------------------
+			targetFile.delete();
 		}
+
+		// --- Define export settings ---------------------
+		ProjectExportSettings pes = new ProjectExportSettings();
+		pes.setIncludeInstallationPackage(false);
+		pes.setIncludeAllSetups(true);
+		pes.setTargetFile(targetFile);
+		
+		// --- Export the project -------------------------
+		DefaultProjectExportController expController = new DefaultProjectExportController();
+		expController.exportProject(this.currProject, pes, false, false);
+		successful = expController.isExportSuccessful();
+		
 		return successful;
 	}
+	
 	
 	/**
 	 * Download update or copy from repository.
@@ -171,7 +369,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @param destinationFileName the destination file name
 	 * @return true, if successful
 	 */
-	private boolean downloadUpdateOrCopyFromRepository(RepositoryEntry updateRepositoryEntry, String destinationFileName) {
+	private boolean downloadUpdateOrCopyFromLocalRepository(RepositoryEntry updateRepositoryEntry, String destinationFileName) {
 		
 		boolean successful = false;
 		if (this.isRepositoryFromWeb==true) {
@@ -227,6 +425,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public ProjectRepository getProjectRepository() {
 		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {
+
 			// --- Check if the update site is a web site URL -------
 			try {
 				URL updateURL = new URL(this.currProject.getUpdateSite());
@@ -235,7 +434,6 @@ public class ProjectRepositoryUpdate extends Thread {
 				
 			} catch (MalformedURLException urlEx) {
 				//urlEx.printStackTrace();
-				this.printSystemError("URL access action says " + urlEx.getLocalizedMessage());
 			}
 			
 			// --- Backup, if repository comes not from an URL ------
@@ -248,6 +446,10 @@ public class ProjectRepositoryUpdate extends Thread {
 				}
 			}
 			
+			// --- If still null, write an error to console ---------
+			if (projectRepository==null) {
+				this.printSystemError("Could not access any projct repository!");
+			}
 		}
 		return projectRepository;
 	}

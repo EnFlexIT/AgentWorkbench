@@ -110,17 +110,21 @@ public class ProjectImportController {
 			return false;
 		}
 		
-		// --- Define task after the unzip action -----
-		Runnable afterJobTask = new Runnable() {
-			@Override
-			public void run() {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Application.getProjectsLoaded().add(rootFolder2Extract);
-					}
-				});
-			}
-		};
+		// --- Define task after the unzip action -------------------
+		Runnable afterJobTask = this.getProjectImportSettings().getAfterImportTask();
+		if (afterJobTask==null) {
+			// --- Apply default action: open the project -----------
+			afterJobTask = new Runnable() {
+				@Override
+				public void run() {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							Application.getProjectsLoaded().add(rootFolder2Extract);
+						}
+					});
+				}
+			};
+		}
 		zipper.setAfterJobTask(afterJobTask);
 		
 		// --- Finally unzip --------------------------
