@@ -792,21 +792,23 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		boolean somethingInstalled = false;
 		Vector<FeatureInfo> projectFeatures = this.getProjectFeatures();
 		
-		if(projectFeatures != null && projectFeatures.isEmpty() == false) {
+		if (projectFeatures!=null && projectFeatures.isEmpty()==false) {
 			
-			for (FeatureInfo feature : projectFeatures) {
+			for (int i = 0; i < projectFeatures.size(); i++) {
 				
-				// --- Check if the feature is already installed ---------- 
+				// --- Get the required feature ---------------------
+				FeatureInfo feature = projectFeatures.get(i);
+				// --- Check if the feature is already installed ---- 
 				if (P2OperationsHandler.getInstance().checkIfInstalled(feature.getId())==false) {
 					
-					// --- Install if not ------------------------
+					// --- Install if not ---------------------------
 					System.out.print("=> Project '" + this.getProjectName() + "': Install '" + feature.getName()  + "' (" + feature.getId() + ") from " + feature.getRepositoryURI() + " ... ");
 					if (P2OperationsHandler.getInstance().installIU(feature.getId(), feature.getRepositoryURI())==true) {
-						// --- Installation successful -----------
+						// --- Installation successful --------------
 						System.out.println("DONE!\n");
 						somethingInstalled = true;
 					} else {
-						// --- Installaiton failed ---------------
+						// --- Installaiton failed ------------------
 						System.out.println("FAILED!");
 						throw new Exception("=> Project '" + this.getProjectName() + "': Unnable to install feature " + feature.getId());
 					}
@@ -1439,9 +1441,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * Does the project update check and installation.
 	 *
 	 * @param isManuallyExecutedByUser indicator that tells, if the call represents a user call
-	 * @param isUserRequestForDownloadAndInstallationRequired the is user request for download and installation required
+	 * @return the project in case that the calling method can continue
 	 */
-	public void doProjectUpdate(boolean isManuallyExecutedByUser) {
+	public Project doProjectUpdate(boolean isManuallyExecutedByUser) {
 		
 		ProjectRepositoryUpdate pru = new ProjectRepositoryUpdate(this);
 		
@@ -1450,6 +1452,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		case APPLICATION:
 			// --- Start update check after the project was opened --
 			pru.setExecutedByUser(isManuallyExecutedByUser);
+			if (isManuallyExecutedByUser==false) {
+				pru.setUserRequestForDownloadAndInstallation(true);
+				pru.setShowFinalUserMessage(false);
+			}
 			pru.start(); // seconds
 			break;
 
@@ -1458,7 +1464,15 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			pru.setExecutedByUser(false);
 			pru.startInSameThread();
 			if (pru.isSuccessfulUpdate()==true) {
-				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						// --- Clean up & restart application -------
+						Application.stopAgentWorkbench();
+						Application.startAgentWorkbench();
+					}
+				}, "Project Update Restarter").start();
+				return null;
 			}
 			break;
 			
@@ -1466,8 +1480,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			// --- Nothing to do here -------------------------------
 			break;
 		}
-
-		
+		return this;
 	}
 	
 	// --- Visualization instances ----------------------------------

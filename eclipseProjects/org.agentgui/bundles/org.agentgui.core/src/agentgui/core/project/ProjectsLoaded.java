@@ -238,7 +238,8 @@ public class ProjectsLoaded {
 		} else {
 			// --- Set Project to saved ---------------------------------------
 			newProject.setUnsaved(false);
-			newProject.doProjectUpdate(false);
+			// --- Check for a project update ---------------------------------
+			newProject = newProject.doProjectUpdate(false);
 		}
 		return newProject;
 	}

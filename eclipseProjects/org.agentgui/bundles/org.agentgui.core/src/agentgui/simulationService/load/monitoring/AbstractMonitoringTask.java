@@ -223,7 +223,7 @@ public abstract class AbstractMonitoringTask {
 		try {
 			// --- Stop Agent.GUI -------------------
 			this.setMonitoringState(MonitoringState.FAULTY_PROCESS_EXCUTED_MEASURE);
-			Application.stopAgentGUI();
+			Application.stopAgentWorkbench();
 			System.err.println("=> " + Language.translate("Reinitialisiere") + " " + Application.getGlobalInfo().getApplicationTitle()  + " ... ");
 			// --- Start Agent.GUI ------------------
 			Application.startAgentWorkbench();

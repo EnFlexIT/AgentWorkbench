@@ -181,7 +181,7 @@ public class PlugInApplication implements IApplication {
 		
 		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
 			// --- Check for open projects ------
-			if (Application.stopAgentGUI()==false) return;
+			if (Application.stopAgentWorkbench()==false) return;
 			// --- Stop LogFileWriter -----------
 			Application.setLogFileWriter(null);
 			// --- ShutdownExecuter -------------

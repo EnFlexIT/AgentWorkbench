@@ -556,7 +556,7 @@ public class Application {
 	/**
 	 * This methods starts Agent.Workbench into application or server mode, which
 	 * depends on the configuration in 'properties/agentgui.ini'.<br>
-	 * Inverse method to {@link #stopAgentGUI()}
+	 * Inverse method to {@link #stopAgentWorkbench()}
 	 */
 	public static void startAgentWorkbench() {
 		
@@ -768,13 +768,13 @@ public class Application {
 	}
 	
 	/**
-	 * This methods stops Agent.GUI, running in application or server mode, which 
+	 * This methods stops Agent.Workbench, running in application or server mode, which 
 	 * depends on the configuration in 'properties/agentgui.ini'.<br>
 	 * Inverse method to {@link #startAgentWorkbench()}
 	 *
 	 * @return true, if everything was stopped successfully
 	 */
-	public static boolean stopAgentGUI() {
+	public static boolean stopAgentWorkbench() {
 		
 		// --- Shutdown JADE --------------------
 		getJadePlatform().stop();
@@ -1141,7 +1141,7 @@ public class Application {
 		}
 		
 		// --- Stop Agent.GUI ---------------------------------------
-		if (stopAgentGUI()==false) return;
+		if (stopAgentWorkbench()==false) return;
 		// --- Switch Language --------------------------------------
 		System.out.println("=> " + Language.translate("Sprachumstellung zu") + " '" + newLang + "'.");
 		Language.changeApplicationLanguageTo(newLang);

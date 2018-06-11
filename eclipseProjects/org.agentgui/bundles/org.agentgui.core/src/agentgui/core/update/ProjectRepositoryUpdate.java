@@ -33,10 +33,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
@@ -64,9 +66,10 @@ public class ProjectRepositoryUpdate extends Thread {
 	private Boolean headlessUpdate;
 	
 	private boolean executedByUser;
-	private boolean userRequestForDownloadAndInstallation;
-	private boolean userRequestForInstallation;
-	private boolean leaveUpdateProcedure;
+	private Boolean userRequestForDownloadAndInstallation;
+	private Boolean userRequestForInstallation;
+	private Boolean showFinalUserMessage;
+	private Boolean leaveUpdateProcedure;
 	
 	private boolean successfulUpdate;
 	
@@ -83,7 +86,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * Checks if is headless update.
 	 * @return the boolean
 	 */
-	public Boolean isHeadlessUpdate() {
+	private Boolean isHeadlessUpdate() {
 		if (headlessUpdate==null) {
 			headlessUpdate = Application.isOperatingHeadless();
 		}
@@ -101,7 +104,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * Checks if the ProjectRepositoryUpdate was executed by user.
 	 * @return true, if is executed by user
 	 */
-	public boolean isExecutedByUser() {
+	private boolean isExecutedByUser() {
 		return executedByUser;
 	}
 	/**
@@ -110,21 +113,20 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public void setExecutedByUser(boolean executedByUser) {
 		this.executedByUser = executedByUser;
-		this.setHeadlessUpdate(!executedByUser);
 	}
 
 	/**
 	 * Checks if is a user request for download and installation is required.
 	 * @return true, if is user request for download
 	 */
-	private boolean isUserRequestForDownloadAndInstallation() {
+	private Boolean isUserRequestForDownloadAndInstallation() {
 		return userRequestForDownloadAndInstallation;
 	}
 	/**
 	 * Sets that the user request for download and installation is required.
 	 * @param userRequestForInstallation the new user request for download
 	 */
-	private void setUserRequestForDownloadAndInstallation(boolean userRequestForDownload) {
+	public void setUserRequestForDownloadAndInstallation(boolean userRequestForDownload) {
 		this.userRequestForDownloadAndInstallation = userRequestForDownload;
 	}
 	/**
@@ -155,14 +157,14 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * Checks if is a user request for installation is required.
 	 * @return true, if is user request for installation
 	 */
-	private boolean isUserRequestForInstallation() {
+	private Boolean isUserRequestForInstallation() {
 		return userRequestForInstallation;
 	}
 	/**
 	 * Sets that the user request for installation is required.
 	 * @param userRequestForInstallation the new user request for installation
 	 */
-	private void setUserRequestForInstallation(boolean userRequestForInstallation) {
+	public void setUserRequestForInstallation(boolean userRequestForInstallation) {
 		this.userRequestForInstallation = userRequestForInstallation;
 	}
 	/**
@@ -173,7 +175,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	private boolean isConfirmedUserRequestForInstallation(RepositoryEntry update) {
 		boolean confirmed = true;
 		if (this.isUserRequestForInstallation()==true) {
-			if (Application.isOperatingHeadless()==true) {
+			if (this.isHeadlessUpdate()==true) {
 				confirmed = false;
 			} else {
 				String title   = "Install the Update?";
@@ -190,10 +192,25 @@ public class ProjectRepositoryUpdate extends Thread {
 	}
 	
 	/**
+	 * Returns if the final message has to be displayed to the user.
+	 * @return the user final message
+	 */
+	private Boolean isShowFinalUserMessage() {
+		return showFinalUserMessage;
+	}
+	/**
+	 * Sets to show a final user message.
+	 * @param showFinalUserMessage the new show final user message
+	 */
+	public void setShowFinalUserMessage(boolean showFinalUserMessage) {
+		this.showFinalUserMessage = showFinalUserMessage;
+	}
+	
+	/**
 	 * Checks if is leave update procedure.
 	 * @return true, if is leave update procedure
 	 */
-	private boolean isLeaveUpdateProcedure() {
+	private Boolean isLeaveUpdateProcedure() {
 		return leaveUpdateProcedure;
 	}
 	/**
@@ -209,13 +226,20 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	private void configureInernalUpdateProcedure() {
 		
+		boolean localLeaveUpdateProcedure = true;
+		boolean localUserRequestForDownloadAndInstallation = true;
+		boolean localUserRequestForInstallation = true;
+		boolean localShowFinalUserMessage = true;
+		
 		if (this.isExecutedByUser()==true) {
 			// --- Do not leave the update procedure ----------------
-			this.setLeaveUpdateProcedure(false);
+			localLeaveUpdateProcedure = false;
 			// --- Request for download and installation ------------
-			this.setUserRequestForDownloadAndInstallation(true);
+			localUserRequestForDownloadAndInstallation = true; 
 			// --- No further request for installation --------------
-			this.setUserRequestForInstallation(false);
+			localUserRequestForInstallation = false;
+			// --- Show final user message --------------------------
+			localShowFinalUserMessage = true;
 			
 		} else {
 			// --- Do update as configured --------------------------
@@ -223,25 +247,34 @@ public class ProjectRepositoryUpdate extends Thread {
 			switch (updateConfig) {
 			case 0:
 				// --- Auto-Update ----------------------------------
-				this.setLeaveUpdateProcedure(false);
-				this.setUserRequestForDownloadAndInstallation(false);
-				this.setUserRequestForInstallation(false);
+				localLeaveUpdateProcedure = false;
+				localUserRequestForDownloadAndInstallation = false; 
+				localUserRequestForInstallation = false;
+				localShowFinalUserMessage = false;
 				break;
 			case 1:
 				// --- Ask for installation -------------------------
-				this.setLeaveUpdateProcedure(false);
-				this.setUserRequestForDownloadAndInstallation(false);
-				this.setUserRequestForInstallation(true);
+				localLeaveUpdateProcedure = false;
+				localUserRequestForDownloadAndInstallation = false; 
+				localUserRequestForInstallation = true;
+				localShowFinalUserMessage = false;
 				break;
 			case 2:
 				// --- No automated update --------------------------
-				this.setLeaveUpdateProcedure(true);
-				this.setUserRequestForDownloadAndInstallation(true);
-				this.setUserRequestForInstallation(false);
+				localLeaveUpdateProcedure = true;
+				localUserRequestForDownloadAndInstallation = true; 
+				localUserRequestForInstallation = false;
+				localShowFinalUserMessage = false;
 				break;
 			}
 			
 		}
+		
+		// --- Assign to local variables, if not already set --------
+		if (this.isLeaveUpdateProcedure()==null) this.setLeaveUpdateProcedure(localLeaveUpdateProcedure);
+		if (this.isUserRequestForDownloadAndInstallation()==null) this.setUserRequestForDownloadAndInstallation(localUserRequestForDownloadAndInstallation);
+		if (this.isUserRequestForInstallation()==null) this.setUserRequestForInstallation(localUserRequestForInstallation);
+		if (this.isShowFinalUserMessage()==null) this.setShowFinalUserMessage(localShowFinalUserMessage);
 		
 		// --- If AWB is executed from IDE, skip the update ---------  
 		if (this.debugUpdateProcedure==false && Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
@@ -323,7 +356,7 @@ public class ProjectRepositoryUpdate extends Thread {
 					updateMessageType = JOptionPane.ERROR_MESSAGE;
 				}
 				// --- Give some feedback to the user ---------------
-				if (this.isHeadlessUpdate()==false) {
+				if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
 					JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
 				} else {
 					this.printSystemOutput(updateMessage, (updateMessageType!=JOptionPane.INFORMATION_MESSAGE));
@@ -335,7 +368,7 @@ public class ProjectRepositoryUpdate extends Thread {
 			updateTitle = Language.translate("Updated check for", Language.EN) + " '" + this.currProject.getProjectName() + "'";
 			updateMessage = Language.translate("No update could be found for the current project!", Language.EN);
 			updateMessageType = JOptionPane.INFORMATION_MESSAGE;
-			if (this.isHeadlessUpdate()==false) {
+			if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
 				JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
 			} else {
 				this.printSystemOutput(updateMessage, false);
@@ -378,11 +411,56 @@ public class ProjectRepositoryUpdate extends Thread {
 		// --- Pack the current project into an project archive -----
 		if (this.packCurrentProjectToArchive()==false) return false;
 		
-		// --- Import the new version of the project ----------------
+		// --- Define settings for update import --------------------
 		ProjectImportSettings pims = new ProjectImportSettings(new File(updateFileName));
 		pims.setExtractInThread(false);
+		pims.setAfterImportTask(this.getAfterUpdateImportTask());
+		
+		// --- Import the new version of the project ----------------
 		ProjectImportController pic = new ProjectImportController(pims);
 		return pic.doProjectImport();
+	}
+	
+	/**
+	 * Returns the task that is to be executed after the import of the project update.
+	 * @return the after import task
+	 */
+	private Runnable getAfterUpdateImportTask() {
+		
+		Runnable afterImportTask = null;
+		final String projectFolderToOpen = this.currProject.getProjectFolder();
+		
+		ExecutionMode eMode = Application.getGlobalInfo().getExecutionMode();
+		switch (eMode) {
+		case APPLICATION:
+			// --- Reopen the project -------------------------------
+			afterImportTask = new Runnable() {
+				@Override
+				public void run() {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							Application.getProjectsLoaded().add(projectFolderToOpen);
+						}
+					});
+				}
+			};
+			break;
+
+		case DEVICE_SYSTEM:
+			// --- Internally restart Agent.Workbench ---------------
+			afterImportTask = new Runnable() {
+				@Override
+				public void run() {
+					// Nothing to do here ---------------------------
+				}
+			};
+			break;
+			
+		default:
+			// --- Nothing to do here -------------------------------
+			break;
+		}
+		return afterImportTask;
 	}
 	
 	/**
