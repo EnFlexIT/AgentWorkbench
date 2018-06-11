@@ -226,7 +226,7 @@ public abstract class AbstractMonitoringTask {
 			Application.stopAgentGUI();
 			System.err.println("=> " + Language.translate("Reinitialisiere") + " " + Application.getGlobalInfo().getApplicationTitle()  + " ... ");
 			// --- Start Agent.GUI ------------------
-			Application.startAgentGUI();
+			Application.startAgentWorkbench();
 			
 		} catch (Exception ex) {
 			this.setMonitoringState(MonitoringState.FAULTY_PROCESS_FAULTY_MEASURE);

@@ -384,7 +384,7 @@ public class Application {
 			Language.startDictionary();
 			
 			new LoadMeasureThread().start();  
-			startAgentGUI();
+			startAgentWorkbench();
 			
 		} else {
 			// ------------------------------------------------------
@@ -554,11 +554,11 @@ public class Application {
 	
 	
 	/**
-	 * This methods starts Agent.GUI into application or server mode, which
+	 * This methods starts Agent.Workbench into application or server mode, which
 	 * depends on the configuration in 'properties/agentgui.ini'.<br>
 	 * Inverse method to {@link #stopAgentGUI()}
 	 */
-	public static void startAgentGUI() {
+	public static void startAgentWorkbench() {
 		
 		// ----------------------------------------------------------
 		// --- Check if Agent.GUI is operated headless --------------
@@ -678,11 +678,11 @@ public class Application {
 		
 		try {
 			
-			final String projectFolder = getGlobalInfo().getDeviceServiceProjectFolder();
 			DeviceSystemExecutionMode execMode = getGlobalInfo().getDeviceServiceExecutionMode();
-			final String simulationSetup = getGlobalInfo().getDeviceServiceSetupSelected();
-			
 			EmbeddedSystemAgentVisualisation embSysAgentVis = getGlobalInfo().getDeviceServiceAgentVisualisation();
+
+			final String projectFolder = getGlobalInfo().getDeviceServiceProjectFolder();
+			final String simulationSetup = getGlobalInfo().getDeviceServiceSetupSelected();
 			
 			// ---- Case separation DeviceSystemExecutionMode ---------------------------
 			switch (execMode) {
@@ -770,7 +770,7 @@ public class Application {
 	/**
 	 * This methods stops Agent.GUI, running in application or server mode, which 
 	 * depends on the configuration in 'properties/agentgui.ini'.<br>
-	 * Inverse method to {@link #startAgentGUI()}
+	 * Inverse method to {@link #startAgentWorkbench()}
 	 *
 	 * @return true, if everything was stopped successfully
 	 */
@@ -1146,7 +1146,7 @@ public class Application {
 		System.out.println("=> " + Language.translate("Sprachumstellung zu") + " '" + newLang + "'.");
 		Language.changeApplicationLanguageTo(newLang);
 		// --- Restart application ----------------------------------
-		startAgentGUI();
+		startAgentWorkbench();
 	}	
 	
 	/**

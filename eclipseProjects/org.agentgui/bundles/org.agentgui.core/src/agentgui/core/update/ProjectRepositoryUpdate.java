@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
@@ -53,15 +54,21 @@ import de.enflexit.common.transfer.FileCopier;
  */
 public class ProjectRepositoryUpdate extends Thread {
 
+	private boolean debugUpdateProcedure = true;
+	
 	private Project currProject; 
 	
 	private boolean isRepositoryFromWeb;
 	private ProjectRepository projectRepository;
 	
+	private Boolean headlessUpdate;
+	
 	private boolean executedByUser;
 	private boolean userRequestForDownloadAndInstallation;
 	private boolean userRequestForInstallation;
 	private boolean leaveUpdateProcedure;
+	
+	private boolean successfulUpdate;
 	
 	/**
 	 * Instantiates a new project updater.
@@ -72,6 +79,23 @@ public class ProjectRepositoryUpdate extends Thread {
 		this.setName(this.getClass().getSimpleName()  + " " + this.currProject.getProjectName());
 	}
 	
+	/**
+	 * Checks if is headless update.
+	 * @return the boolean
+	 */
+	public Boolean isHeadlessUpdate() {
+		if (headlessUpdate==null) {
+			headlessUpdate = Application.isOperatingHeadless();
+		}
+		return headlessUpdate;
+	}
+	/**
+	 * Sets if is a headless update.
+	 * @param headlessUpdate the new headless update
+	 */
+	public void setHeadlessUpdate(boolean headlessUpdate) {
+		this.headlessUpdate = headlessUpdate;
+	}
 	
 	/**
 	 * Checks if the ProjectRepositoryUpdate was executed by user.
@@ -86,6 +110,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public void setExecutedByUser(boolean executedByUser) {
 		this.executedByUser = executedByUser;
+		this.setHeadlessUpdate(!executedByUser);
 	}
 
 	/**
@@ -110,7 +135,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	private boolean isConfirmedUserRequestForDownloadAndInstallation(RepositoryEntry update) {
 		boolean confirmed = true;
 		if (this.isUserRequestForDownloadAndInstallation()==true) {
-			if (Application.isOperatingHeadless()==true) {
+			if (this.isHeadlessUpdate()==true) {
 				confirmed = false;
 			} else {
 				String title   = "Download and Install the Update?";
@@ -217,6 +242,12 @@ public class ProjectRepositoryUpdate extends Thread {
 			}
 			
 		}
+		
+		// --- If AWB is executed from IDE, skip the update ---------  
+		if (this.debugUpdateProcedure==false && Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+			this.setLeaveUpdateProcedure(true);
+		}
+		
 	}
 	
 	/**
@@ -235,15 +266,19 @@ public class ProjectRepositoryUpdate extends Thread {
 	@Override
 	public void run() {
 		super.run();
-		this.startInSameThreas();
+		this.startInSameThread();
 	}
 	/**
 	 * Does the same as calling the threads {@link #start()} method, but 
 	 * without starting an individual thread. Thus, it enables to wait
 	 * until the project update is finalized.
 	 */
-	public void startInSameThreas() {
+	public void startInSameThread() {
 		
+		String updateTitle = null;
+		String updateMessage = null;
+		int updateMessageType = 0;
+
 		// --- Configure update procedure --------------------------- 
 		this.configureInernalUpdateProcedure();
 		if (this.isLeaveUpdateProcedure()==true) return;
@@ -257,7 +292,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 		// -- Check for the configure update site -------------------
 		if (this.currProject.getUpdateSite()==null || this.currProject.getUpdateSite().isEmpty()==true) {
-			System.err.println("No update-site was specified for the project '" + this.currProject.getProjectName() + "'!");
+			this.printSystemOutput("No update-site was specified for the project '" + this.currProject.getProjectName() + "'!", true);
 			return;
 		}
 		
@@ -277,31 +312,51 @@ public class ProjectRepositoryUpdate extends Thread {
 				if (this.isConfirmedUserRequestForInstallation(update)==false) return;
 				
 				// --- Do the installation of the new update --------
-				String updateTitle = null;
-				String updateMessage = null;
-				int updateMessageType = 0;
 				if (this.updateProject(updateFilename)==true) {
 					updateTitle = Language.translate("Updated successful", Language.EN);
 					updateMessage = Language.translate("The project was updated successfully!", Language.EN);
 					updateMessageType = JOptionPane.INFORMATION_MESSAGE;
+					this.setSuccessfulUpdate(true);
 				} else {
 					updateTitle = Language.translate("Update failed", Language.EN);
 					updateMessage = Language.translate("The project update failed!", Language.EN);
 					updateMessageType = JOptionPane.ERROR_MESSAGE;
 				}
 				// --- Give some feedback to the user ---------------
-				if (Application.isOperatingHeadless()==false) {
+				if (this.isHeadlessUpdate()==false) {
 					JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
 				} else {
-					if (updateMessageType==JOptionPane.INFORMATION_MESSAGE) {
-						System.out.println(updateMessage);
-					} else {
-						this.printSystemError(updateMessage);
-					}
+					this.printSystemOutput(updateMessage, (updateMessageType!=JOptionPane.INFORMATION_MESSAGE));
 				}
+			}
+			
+		} else {
+			// --- No Update found ----------------------------------
+			updateTitle = Language.translate("Updated check for", Language.EN) + " '" + this.currProject.getProjectName() + "'";
+			updateMessage = Language.translate("No update could be found for the current project!", Language.EN);
+			updateMessageType = JOptionPane.INFORMATION_MESSAGE;
+			if (this.isHeadlessUpdate()==false) {
+				JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
+			} else {
+				this.printSystemOutput(updateMessage, false);
 			}
 		}
 		
+	}
+	
+	/**
+	 * Returns if the update was successful after the execution of the.
+	 * @return true, if is successful update
+	 */
+	public boolean isSuccessfulUpdate() {
+		return successfulUpdate;
+	}
+	/**
+	 * Sets the successful update.
+	 * @param successfulUpdate the new successful update
+	 */
+	private void setSuccessfulUpdate(boolean successfulUpdate) {
+		this.successfulUpdate = successfulUpdate;
 	}
 	
 	/**
@@ -381,7 +436,7 @@ public class ProjectRepositoryUpdate extends Thread {
 			successful = download.wasSuccessful();
 			
 		} else {
-			// --- Copy file to destination 
+			// --- Copy file to destination -------------------------
 			String sourceFileName = this.getFileNameDownload(updateRepositoryEntry);
 			FileCopier copier = new FileCopier();
 			successful = copier.copyFile(sourceFileName, destinationFileName);
@@ -448,7 +503,7 @@ public class ProjectRepositoryUpdate extends Thread {
 			
 			// --- If still null, write an error to console ---------
 			if (projectRepository==null) {
-				this.printSystemError("Could not access any projct repository!");
+				this.printSystemOutput("Could not access any projct repository!", true);
 			}
 		}
 		return projectRepository;
@@ -467,10 +522,17 @@ public class ProjectRepositoryUpdate extends Thread {
 	
 	/**
 	 * Prints the specified system error.
+	 *
 	 * @param message the message
+	 * @param isError the is error
 	 */
-	private void printSystemError(String message) {
-		System.err.println("[" + this.getClass().getSimpleName() + "] " + message);
+	private void printSystemOutput(String message, boolean isError) {
+		String sysMessage = "[" + this.getClass().getSimpleName() + "] " + message;
+		if (isError) {
+			System.err.println(sysMessage);
+		} else {
+			System.out.println(sysMessage);
+		}
 	}
 	
 }

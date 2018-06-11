@@ -704,7 +704,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				System.out.println("\n" + Language.translate("Neustart des Server-Dienstes") + " ...");
 				Application.getJadePlatform().stop();
 				Application.removeTrayIcon();
-				Application.startAgentGUI();
+				Application.startAgentWorkbench();
 				break;
 				
 			case DEVICE_SYSTEM:
@@ -716,7 +716,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				}		
 				Application.setMainWindow(null);
 				Application.removeTrayIcon();	
-				Application.startAgentGUI();
+				Application.startAgentWorkbench();
 				break;
 			}
 			
@@ -764,7 +764,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				break;
 			}
 			// --- Restart ------------------------------------------
-			Application.startAgentGUI();
+			Application.startAgentWorkbench();
 		}
 	}
 	

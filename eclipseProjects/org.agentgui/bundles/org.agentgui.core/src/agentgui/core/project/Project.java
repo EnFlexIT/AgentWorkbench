@@ -382,18 +382,12 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				Application.relaunch("-project " + project.getProjectFolder());
 				return null; // --- Skip the further loading of the project					
 			}
-			
 		}
 		
 		// ----------------------------------------------------------
-		// --- Check for an update of the project -------------------
+		// --- Load additional resources and data -------------------
 		// ----------------------------------------------------------
-		// TODO
-		
-		
-		
-		
-		if (loadResources==true) {
+		if (project!=null && loadResources==true) {
 			// --- Load additional jar-resources --------------------
 			project.resourcesLoad();
 			// --- Load user data model -----------------------------
@@ -1441,6 +1435,41 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		return updateDateLastChecked;
 	}
 
+	/**
+	 * Does the project update check and installation.
+	 *
+	 * @param isManuallyExecutedByUser indicator that tells, if the call represents a user call
+	 * @param isUserRequestForDownloadAndInstallationRequired the is user request for download and installation required
+	 */
+	public void doProjectUpdate(boolean isManuallyExecutedByUser) {
+		
+		ProjectRepositoryUpdate pru = new ProjectRepositoryUpdate(this);
+		
+		ExecutionMode eMode = Application.getGlobalInfo().getExecutionMode();
+		switch (eMode) {
+		case APPLICATION:
+			// --- Start update check after the project was opened --
+			pru.setExecutedByUser(isManuallyExecutedByUser);
+			pru.start(); // seconds
+			break;
+
+		case DEVICE_SYSTEM:
+			// --- Directly start the update check ------------------
+			pru.setExecutedByUser(false);
+			pru.startInSameThread();
+			if (pru.isSuccessfulUpdate()==true) {
+				
+			}
+			break;
+			
+		default:
+			// --- Nothing to do here -------------------------------
+			break;
+		}
+
+		
+	}
+	
 	// --- Visualization instances ----------------------------------
 	/**
 	 * Checks if the project editor window is open.
@@ -1917,16 +1946,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			this.visualizationTab4SetupExecution = new JPanel4Visualization(this, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
 		}
 		return this.visualizationTab4SetupExecution;
-	}
-
-	/**
-	 * Does the project update check and installation.
-	 * @param isManuallyExecutedByUser indicator that tells, if the call represents a user call 
-	 */
-	public void doProjectUpdate(boolean isManuallyExecutedByUser) {
-		ProjectRepositoryUpdate pUpdate = new ProjectRepositoryUpdate(this);
-		pUpdate.setExecutedByUser(isManuallyExecutedByUser);
-		pUpdate.start();
 	}
 
 	/**

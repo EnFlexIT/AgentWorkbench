@@ -246,18 +246,21 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 		// --- Determine the source path --------------
 		Path sourcePath = new File(project.getProjectFolderFullPath()).toPath();
-
+		Path destinPath = this.getTempExportFolderPath();
+		
 		// --- Copy the required files to the temporary folder --------
-		try {
-			Files.createDirectories(this.getTempExportFolderPath());
-			RecursiveFolderCopier rfc = CommonComponentFactory.getNewRecursiveFolderCopier();
-			rfc.copyFolder(sourcePath, this.getTempExportFolderPath(), this.getFolderCopySkipList(sourcePath));
-		} catch (IOException e) {
-			System.err.println("Error copying project data!");
-			e.printStackTrace();
-			return false;
+		if (destinPath.equals(sourcePath)==false) {
+			
+			try {
+				Files.createDirectories(destinPath);
+				RecursiveFolderCopier rfc = CommonComponentFactory.getNewRecursiveFolderCopier();
+				rfc.copyFolder(sourcePath, destinPath, this.getFolderCopySkipList(sourcePath));
+			} catch (IOException e) {
+				System.err.println("Error copying project data!");
+				e.printStackTrace();
+				return false;
+			}
 		}
-
 		return true;
 	}
 
@@ -600,7 +603,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return the progress monitor
 	 */
 	private AwbProgressMonitor getProgressMonitor() {
-		if (this.progressMonitor == null && this.showUserDialogs == true) {
+		if (this.progressMonitor==null && Application.isOperatingHeadless()==false) {
 			String title = Language.translate("Projekt-Export");
 			String header = Language.translate("Exportiere Projekt") + " " + project.getProjectName();
 			String progress = Language.translate("Exportiere") + "...";

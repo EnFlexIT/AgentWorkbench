@@ -215,14 +215,14 @@ public class ProjectsLoaded {
 		// --- Load the environment controller --------------------------------
 		newProject.getEnvironmentController();
 		
-		// --- add project to the project-listing -----------------------------
+		// --- Add project to the project-listing -----------------------------
 		this.getProjectsOpen().add(newProject);
 		Application.setProjectFocused(newProject);
 
 		// --- Configure the project in the main window -----------------------
 		if (Application.getMainWindow()!=null || UiBridge.getInstance().isWorkbenchRunning()==true) {
 
-			// --- Instantiate project-window and the default tabs ------------		
+			// --- Instantiate project-window and the default tabs ------------
 			newProject.setMaximized();
 			
 			this.setProjectView();
@@ -233,11 +233,12 @@ public class ProjectsLoaded {
 		}
 		
 		if (addNew==true) {
-			// --- Save project for the first time ---
+			// --- Save project for the first time ----------------------------
 			newProject.save();   	
 		} else {
-			// --- Set Project to unsaved ------------
+			// --- Set Project to saved ---------------------------------------
 			newProject.setUnsaved(false);
+			newProject.doProjectUpdate(false);
 		}
 		return newProject;
 	}
