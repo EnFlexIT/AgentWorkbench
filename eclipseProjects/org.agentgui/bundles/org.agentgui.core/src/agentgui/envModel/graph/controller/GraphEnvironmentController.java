@@ -408,7 +408,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
 					// --- Remind the list of custom toolbar elements -----------------------------------------
 					if (GraphEnvironmentController.this.getNetworkModel() != null) {
-						ggs4MAS.setCustomToolbarComponentDescriptions(GraphEnvironmentController.this.getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions());
+						GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
+						if (gg4mas!=null) {
+							ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
+						}
 					}
 					// --- Assign settings to the NetworkModel ------------------------------------------------
 					networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
