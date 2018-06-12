@@ -653,14 +653,13 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	 * Updates the date of the last update check.
 	 */
 	private void updateLastUpdateCheckDate() {
-		// --- Define the update option header text -------
 		
 		String dateTextChecked = "never checked";
 		long timeStampLastChecked = this.currProject.getUpdateDateLastChecked();
 		if (timeStampLastChecked!=0) {
 			dateTextChecked = "last checked at " + new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(timeStampLastChecked));
 		}
-		
+		// --- Define the update option header text -------
 		String updateOptionHeader = Language.translate("Nach Updates suchen") + " (" + dateTextChecked + "):";
 		this.getJLabelLastUpdate().setText(updateOptionHeader);
 	}
