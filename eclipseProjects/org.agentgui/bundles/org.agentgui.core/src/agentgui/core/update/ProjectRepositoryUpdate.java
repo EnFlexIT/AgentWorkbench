@@ -56,9 +56,12 @@ import de.enflexit.common.transfer.FileCopier;
  */
 public class ProjectRepositoryUpdate extends Thread {
 
+	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
+
 	private boolean debugUpdateProcedure = true;
 	
 	private Project currProject; 
+	private long currTimeStamp;
 	
 	private boolean isRepositoryFromWeb;
 	private ProjectRepository projectRepository;
@@ -80,6 +83,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	public ProjectRepositoryUpdate(Project projectToUpdate) {
 		this.currProject = projectToUpdate;
 		this.setName(this.getClass().getSimpleName()  + " " + this.currProject.getProjectName());
+		this.currTimeStamp = System.currentTimeMillis();
 	}
 	
 	/**
@@ -207,6 +211,14 @@ public class ProjectRepositoryUpdate extends Thread {
 	}
 	
 	/**
+	 * Checks if a update check is required because of date.
+	 * @return true, if is required update check because of date
+	 */
+	private boolean isRequiredUpdateCheckBecauseOfDate() {
+		return this.currTimeStamp >= this.currProject.getUpdateDateLastChecked() + UPDATE_CHECK_PERIOD;
+	}
+	
+	/**
 	 * Checks if is leave update procedure.
 	 * @return true, if is leave update procedure
 	 */
@@ -266,6 +278,11 @@ public class ProjectRepositoryUpdate extends Thread {
 				localUserRequestForInstallation = false;
 				localShowFinalUserMessage = false;
 				break;
+			}
+			
+			// --- Ensure that auto check happens once a day --------
+			if (this.isRequiredUpdateCheckBecauseOfDate()==false) {
+				localLeaveUpdateProcedure = true;
 			}
 			
 		}
@@ -364,6 +381,12 @@ public class ProjectRepositoryUpdate extends Thread {
 			}
 			
 		} else {
+			// --- Update last date checked -------------------------
+			this.currProject.setUpdateDateLastChecked(this.currTimeStamp);
+			if (this.isExecutedByUser()==false) {
+				this.currProject.save();	
+			}
+			
 			// --- No Update found ----------------------------------
 			updateTitle = Language.translate("Updated check for", Language.EN) + " '" + this.currProject.getProjectName() + "'";
 			updateMessage = Language.translate("No update could be found for the current project!", Language.EN);

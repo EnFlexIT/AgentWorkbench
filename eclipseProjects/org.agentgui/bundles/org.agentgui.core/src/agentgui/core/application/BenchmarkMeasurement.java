@@ -58,13 +58,13 @@ import agentgui.simulationService.load.LoadMeasureThread;
  */
 public class BenchmarkMeasurement extends Thread {
 
-	private boolean forceBench = false;
+	private boolean forceBenchmark = false;
 	private boolean isHeadlessOperation = Application.isOperatingHeadless();
 
 	private float benchValueOld = Application.getGlobalInfo().getBenchValue();
 	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAlwaysSkip();
 	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
-	private String nowExecOn;
+	private String localSystemID;
 	
 	private double min_time = Constants.RESOLUTION_DEFAULT;
 	private int FFT_size = Constants.FFT_SIZE;
@@ -86,7 +86,7 @@ public class BenchmarkMeasurement extends Thread {
 	 * @param forceBenchmark the force benchmark
 	 */
 	public BenchmarkMeasurement(boolean forceBenchmark) {
-		this.forceBench = forceBenchmark;	
+		this.forceBenchmark = forceBenchmark;	
 	}
 	/**
 	 * Depending on the FileProperties this will measure the ability> of this computer to crunch numbers.<br>
@@ -105,13 +105,13 @@ public class BenchmarkMeasurement extends Thread {
 			}
 			
 			// --- Criteria to not execute the benchmark ------------
-			if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
+			if (isBenchmarkRequired()==false && forceBenchmark==false) {
 				return;
 			}  
 			
 			// --- Initialize Benchmark-Monitor  --------------------
-			if (this.getMonitor()!=null) {
-				this.getMonitor().setVisible(true);
+			if (this.getBenchmarkMonitor()!=null) {
+				this.getBenchmarkMonitor().setVisible(true);
 			} else {
 				System.out.println("Executing Benchmark, please wait ... ");
 			}
@@ -157,13 +157,13 @@ public class BenchmarkMeasurement extends Thread {
 			// --- Store result in LoadMeasurThread -----------------
 			LoadMeasureThread.setCompositeBenchmarkValue(result);
 			Application.getGlobalInfo().setBenchValue(result);
-			Application.getGlobalInfo().setBenchExecOn(this.getLocalSystemIdentifier());
+			Application.getGlobalInfo().setBenchExecOn(this.getLocalSystemID());
 			Application.getGlobalInfo().setBenchAlwaysSkip(benchAllwaysSkip);
 			Application.getGlobalInfo().doSaveConfiguration();
 			
 			// --- Progress Display --- OFF -------------------------
 			if (this.isHeadlessOperation==false) {
-				this.getMonitor().setBenchmarkValue(result);
+				this.getBenchmarkMonitor().setBenchmarkValue(result);
 				Thread.sleep(1000);
 				this.closeGUI();
 			}
@@ -179,14 +179,14 @@ public class BenchmarkMeasurement extends Thread {
 	 * Returns the visual BenchmarkMonitor (if the application is not running headless).
 	 * @return the benchmark monitor
 	 */
-	private AwbBenchmarkMonitor getMonitor() {
+	private AwbBenchmarkMonitor getBenchmarkMonitor() {
 		if (monitor==null && this.isHeadlessOperation==false) {
 			// --- Initialize BenchmarkMonitor ------------ 
 			monitor = UiBridge.getInstance().getBenchmarkMonitor();
 			// --- Set user buttons -----------------------
-			if (this.benchValueOld>0 && this.getLocalSystemIdentifier().equalsIgnoreCase(benchExecOn)) {
+			if (this.benchValueOld>0 && this.getLocalSystemID().equalsIgnoreCase(benchExecOn)) {
 				monitor.setEnableSkipButton(true);
-				if (forceBench==true) {
+				if (forceBenchmark==true) {
 					monitor.setEnableSkipAlwaysButton(false);
 				} else {
 					monitor.setEnableSkipAlwaysButton(true);
@@ -211,11 +211,11 @@ public class BenchmarkMeasurement extends Thread {
 	 * @param n the new benchmark progress
 	 */
 	private void setBenchmarkProgress(final int n) {
-		if (this.getMonitor()!=null) {
+		if (this.getBenchmarkMonitor()!=null) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					getMonitor().setProgressValue(n);
+					getBenchmarkMonitor().setProgressValue(n);
 				}
 			});	
 		}
@@ -226,14 +226,14 @@ public class BenchmarkMeasurement extends Thread {
 	 * @return true, if is skip action
 	 */
 	private boolean isSkipAction() {
-		if (this.getMonitor()!=null) {
-			if (this.getMonitor().isSkipAlways()==true) {
+		if (this.getBenchmarkMonitor()!=null) {
+			if (this.getBenchmarkMonitor().isSkipAlways()==true) {
 				Application.getGlobalInfo().setBenchAlwaysSkip(true);
 				this.closeGUI();
 				Application.setBenchmarkRunning(false);
 				return true;
 			}
-			if (this.getMonitor().isSkip()==true) {
+			if (this.getBenchmarkMonitor().isSkip()==true) {
 				this.closeGUI();
 				Application.setBenchmarkRunning(false);
 				return true;
@@ -246,10 +246,23 @@ public class BenchmarkMeasurement extends Thread {
 	 * This method closes the benchmark monitor GUI.
 	 */
 	private void closeGUI() {
-		if (this.getMonitor()!=null) {
-			this.getMonitor().setVisible(false);
+		if (this.getBenchmarkMonitor()!=null) {
+			this.getBenchmarkMonitor().setVisible(false);
 			this.monitor=null;	
 		}
+	}
+
+	/**
+	 * Returns the MAC-Address local 'CanonicalHostName' to identify
+	 * on which computer this measurement were executed.
+	 * 
+	 * @return an identifier for the local system
+	 */
+	private String getLocalSystemID() {
+		if (localSystemID==null) {
+			localSystemID = BenchmarkMeasurement.getLocalSystemIdentifier();
+		}
+		return localSystemID;
 	}
 	
 	/**
@@ -258,54 +271,71 @@ public class BenchmarkMeasurement extends Thread {
 	 * 
 	 * @return an identifier for the local system
 	 */
-	private String getLocalSystemIdentifier() {
-		if (nowExecOn==null) {
-			// ----------------------------------------------------------------
-			// --- Try to get the MAC address first ---------------------------
-			// ----------------------------------------------------------------
-			try {
-				Vector<String> macAddresses = new Vector<String>();
-				Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-				while (interfaces.hasMoreElements()) {
-					NetworkInterface netInterface = interfaces.nextElement();
-					byte[] mac = netInterface.getHardwareAddress();
-					if(mac != null) {
-				        StringBuilder sb = new StringBuilder();
-				        for (int i = 0; i < mac.length; i++) {
-				          sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-				        }
-				        // --- Add to the list of MAC addresses, if not empty ----- 
-				        String macAddress = sb.toString();
-				        if (macAddress!=null && macAddress.equals("")==false) {
-				        	if (macAddresses.contains(macAddress)==false) {
-				        		macAddresses.add(macAddress);
-				        	}
-				        }
-					}
-				}
-				// --- Found one or more MAC-Addresses ----------------------------
-				if (macAddresses.size()>0) {
-					Collections.sort(macAddresses);
-					nowExecOn = macAddresses.get(macAddresses.size()-1);
-				}
-				
-			} catch (SocketException se) {
-				//se.printStackTrace();
-			}
-			
-			// --- In case that no MAC address was found --------------------------
-			if (nowExecOn==null) {
-				try {
-					nowExecOn = InetAddress.getLocalHost().getCanonicalHostName();
-				} catch (UnknownHostException inetE) {
-					inetE.printStackTrace();
+	public static String getLocalSystemIdentifier() {
+		
+		// --------------------------------------------------------------------
+		// --- Try to get the MAC address first -------------------------------
+		// --------------------------------------------------------------------
+		String localSystemID = null; 
+		try {
+			Vector<String> macAddresses = new Vector<String>();
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface netInterface = interfaces.nextElement();
+				byte[] mac = netInterface.getHardwareAddress();
+				if (mac!=null) {
+			        StringBuilder sb = new StringBuilder();
+			        for (int i=0; i<mac.length; i++) {
+			        	sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+			        }
+			        // --- Add to the list of MAC addresses, if not empty ----- 
+			        String macAddress = sb.toString();
+			        if (macAddress!=null && macAddress.equals("")==false) {
+			        	if (macAddresses.contains(macAddress)==false) {
+			        		macAddresses.add(macAddress);
+			        	}
+			        }
 				}
 			}
+			// --- Found one or more MAC-Addresses ----------------------------
+			if (macAddresses.size()>0) {
+				Collections.sort(macAddresses);
+				localSystemID = macAddresses.get(macAddresses.size()-1);
+			}
 			
+		} catch (SocketException se) {
+			//se.printStackTrace();
 		}
-		return nowExecOn;
+		
+		// --- In case that no MAC address was found --------------------------
+		if (localSystemID==null) {
+			try {
+				localSystemID = InetAddress.getLocalHost().getCanonicalHostName();
+			} catch (UnknownHostException inetE) {
+				inetE.printStackTrace();
+			}
+		}
+			
+		return localSystemID;
 	}
 	
+	/**
+	 * Checks if the benchmark is required.
+	 * @return true, if is benchmark required
+	 */
+	public static boolean isBenchmarkRequired() {
+		
+		float benchValueOld = Application.getGlobalInfo().getBenchValue();
+		boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAlwaysSkip();
+		String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
+		String localSystemID = BenchmarkMeasurement.getLocalSystemIdentifier();
+		
+		boolean isRequired = true;
+		if (benchValueOld>0 && localSystemID.equalsIgnoreCase(benchExecOn) && benchAllwaysSkip==true) {
+			isRequired = false;
+		}  
+		return isRequired;
+	}
 	
 	/**
 	 * Gets the synchronization object, which can be used to wait until the benchmark thread has properly started

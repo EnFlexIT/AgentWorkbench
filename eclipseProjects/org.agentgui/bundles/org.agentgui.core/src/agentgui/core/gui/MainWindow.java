@@ -184,6 +184,7 @@ public class MainWindow extends JFrame {
 		// --- Proceed the MainWindow Extensions --------------------
 		this.proceedMainWindowExtensions();
 		
+		this.pack();
 		this.setVisible(true);
 
 	}

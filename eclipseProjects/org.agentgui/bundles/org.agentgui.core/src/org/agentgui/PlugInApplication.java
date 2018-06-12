@@ -218,7 +218,6 @@ public class PlugInApplication implements IApplication {
 	public Integer startEndUserApplication(Runnable postWindowOpenRunnable) {
 		
 		try {
-			
 			// --- Case separation UI ---------------------
 			switch (this.visualisationBy) {
 			case AgentGuiSwing:
@@ -298,13 +297,16 @@ public class PlugInApplication implements IApplication {
 			this.setSwingMainWindow(new MainWindow());
 			Application.getProjectsLoaded().setProjectView();
 		}
-		// --- Remove splash screen -----------------------
-		this.setApplicationIsRunning();
 		
 		// --- Execute the post window open runnable ------
 		if (postWindowOpenRunnable!=null) {
-			new Thread(postWindowOpenRunnable, "AWB-Swing-PostWindowOpen-Action").start();
+			Thread postAction = new Thread(postWindowOpenRunnable, "AWB-Swing-PostWindowOpen-Action");
+			postAction.setPriority(Thread.MAX_PRIORITY);
+			postAction.start();
 		}
+
+		// --- Remove splash screen -----------------------
+		this.setApplicationIsRunning();
 		
 		return appReturnValue;
 	}

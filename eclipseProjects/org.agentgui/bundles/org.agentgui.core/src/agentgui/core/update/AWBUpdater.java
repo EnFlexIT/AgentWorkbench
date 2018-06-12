@@ -208,9 +208,9 @@ public class AWBUpdater extends Thread {
 	 * Wait for the end of the benchmark.
 	 */
 	private void waitForTheEndOfBenchmark() {
-		while (Application.isBenchmarkRunning() == true) {
+		while (Application.isBenchmarkRunning()==true) {
 			try {
-				sleep(1000);
+				sleep(250);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}

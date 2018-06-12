@@ -36,6 +36,8 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -92,7 +94,6 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private boolean isVersionEdit;
 	private ProjectInfoVersionPanel jPanelVersionEdit;
 	
-	
 	private JSeparator jSeparatorVersionUpdate;
 
 	private JLabel jLabelUpdateSite;
@@ -107,10 +108,8 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JLabel jLabelVersionTag;
 	
 	
-	
 	/**
 	 * This is the default constructor.
-	 *
 	 * @param project the project
 	 */
 	public ProjectInfo(Project project) {
@@ -119,12 +118,11 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		this.currProject.addObserver(this);		
 		this.initialize();
 		this.applyProjectViewSettings();
+		this.updateLastUpdateCheckDate();
 	}
 
 	/**
 	 * This method initializes this
-	 * 
-	 * @return void
 	 */
 	private void initialize() {
 		
@@ -465,7 +463,6 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			jLabelVersion = new JLabel();
 			jLabelVersion.setText(Language.translate("Version"));
 			jLabelVersion.setFont(new Font("Dialog", Font.BOLD, 14));
-			
 		}
 		return jLabelVersion;
 	}
@@ -563,13 +560,15 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JLabel getJLabelLastUpdate() {
 		if (jLabelLastUpdate == null) {
 			jLabelLastUpdate = new JLabel();
-			jLabelLastUpdate.setText("<html><nobr><b>Nach Updates suchen:</b></nobr></html>");
+			jLabelLastUpdate.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelLastUpdate.setText(Language.translate("Nach Updates suchen") + ":");
 		}
 		return jLabelLastUpdate;
 	}
 	private JRadioButton getJRadioButtonUpdateAutomated() {
 		if (jRadioButtonUpdateAutomated == null) {
 			jRadioButtonUpdateAutomated = new JRadioButton();
+			jRadioButtonUpdateAutomated.setFont(new Font("Dialog", Font.PLAIN, 12));
 			if (this.currProject.getUpdateAutoConfiguration()==0) {
 				jRadioButtonUpdateAutomated.setSelected(true);
 			}
@@ -581,6 +580,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JRadioButton getJRadioButtonUpdateDownloadAndAsk() {
 		if (jRadioButtonUpdateDownloadAndAsk == null) {
 			jRadioButtonUpdateDownloadAndAsk = new JRadioButton();
+			jRadioButtonUpdateDownloadAndAsk.setFont(new Font("Dialog", Font.PLAIN, 12));
 			if (this.currProject.getUpdateAutoConfiguration()==1) {
 				jRadioButtonUpdateDownloadAndAsk.setSelected(true);
 			}
@@ -592,6 +592,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JRadioButton getJRadioButtonUpdateDisabled() {
 		if (jRadioButtonUpdateDisabled == null) {
 			jRadioButtonUpdateDisabled = new JRadioButton();
+			jRadioButtonUpdateDisabled.setFont(new Font("Dialog", Font.PLAIN, 12));
 			if (this.currProject.getUpdateAutoConfiguration()==2) {
 				jRadioButtonUpdateDisabled.setSelected(true);
 			}
@@ -648,6 +649,22 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		this.repaint();
 	}
 	
+	/**
+	 * Updates the date of the last update check.
+	 */
+	private void updateLastUpdateCheckDate() {
+		// --- Define the update option header text -------
+		
+		String dateTextChecked = "never checked";
+		long timeStampLastChecked = this.currProject.getUpdateDateLastChecked();
+		if (timeStampLastChecked!=0) {
+			dateTextChecked = "last checked at " + new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(timeStampLastChecked));
+		}
+		
+		String updateOptionHeader = Language.translate("Nach Updates suchen") + " (" + dateTextChecked + "):";
+		this.getJLabelLastUpdate().setText(updateOptionHeader);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -655,18 +672,18 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	public void update(Observable observable, Object updateObject) {
 		
 		String updateAction = updateObject.toString();
-		if (updateAction.equalsIgnoreCase(Project.VIEW_TabsLoaded) || updateAction.equalsIgnoreCase(Project.CHANGED_ProjectStartTab)) {
+		if (updateAction.equals(Project.VIEW_TabsLoaded) || updateAction.equalsIgnoreCase(Project.CHANGED_ProjectStartTab)) {
 			// --- Set the start tab information --------------------
 			ProjectWindow projectWindow = (ProjectWindow) this.currProject.getProjectEditorWindow();
 			this.getJTextFieldStartTab().setText(projectWindow.getStartTabInformation());
 			
-		} else if (updateAction.equalsIgnoreCase(Project.CHANGED_ProjectName)) {
+		} else if (updateAction.equals(Project.CHANGED_ProjectName)) {
 			// --- Display change of the project name ---------------
 			if (getJTextFieldProjectName().isFocusOwner()==false) {
 				this.getJTextFieldProjectName().setText(this.currProject.getProjectName());				
 			}
 			
-		} else if (updateAction.equalsIgnoreCase(Project.CHANGED_ProjectDescription) ) {
+		} else if (updateAction.equals(Project.CHANGED_ProjectDescription) ) {
 			// --- Display change of the project description --------
 			if (this.getJTextAreaProjectDescription().isFocusOwner()==false ) {
 				this.isPauseProjectDescriptionDocumentListener = true;
@@ -674,12 +691,16 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 				this.isPauseProjectDescriptionDocumentListener = false;
 			}
 			
-		} else if (updateAction.equalsIgnoreCase(Project.CHANGED_ProjectView) ) {
+		} else if (updateAction.equals(Project.CHANGED_ProjectView) ) {
 			// --- Applies the project view settings ----------------
 			this.applyProjectViewSettings();
 			
+		} else if (updateAction.equals(Project.CHANGED_UpdateDateLastChecked)) {
+			// --- The date of the last update-check has changed ----
+			this.updateLastUpdateCheckDate();
+			
 		}
-		this.repaint();
+		
 	}
 
 	/* (non-Javadoc)

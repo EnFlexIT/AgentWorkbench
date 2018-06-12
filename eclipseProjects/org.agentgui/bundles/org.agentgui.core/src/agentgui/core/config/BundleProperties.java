@@ -227,7 +227,7 @@ public class BundleProperties {
 		stringPrefValue = eclipsePreferences.get(DEF_BENCH_EXEC_ON, null);
 		this.globalInfo.setBenchExecOn(stringPrefValue);
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
-		booleanPrefValue = eclipsePreferences.getBoolean(DEF_BENCH_SKIP_ALLWAYS, false);
+		booleanPrefValue = eclipsePreferences.getBoolean(DEF_BENCH_SKIP_ALLWAYS, true);
 		this.globalInfo.setBenchAlwaysSkip(booleanPrefValue);
 
 

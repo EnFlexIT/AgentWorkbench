@@ -179,7 +179,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlElement(name="versionTag")				private String versionTag;
 	@XmlElement(name="updateSite")				private String updateSite;
 	@XmlElement(name="updateAutoConfiguration")	private Integer updateAutoConfiguration;
-	@XmlElement(name="updateDateLastChecked")	private Long updateDateLastChecked;
+	@XmlElement(name="updateDateLastChecked")	private long updateDateLastChecked;
 
 	// --- The environment model name to use ------------------------
 	@XmlElement(name="environmentModel")		private String environmentModelName;	
@@ -808,7 +808,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 						System.out.println("DONE!\n");
 						somethingInstalled = true;
 					} else {
-						// --- Installaiton failed ------------------
+						// --- Installation failed ------------------
 						System.out.println("FAILED!");
 						throw new Exception("=> Project '" + this.getProjectName() + "': Unnable to install feature " + feature.getId());
 					}
@@ -1421,7 +1421,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * Sets the date of the last update check.
 	 * @param updateDateLastChecked the new date for the last update check
 	 */
-	public void setUpdateDateLastChecked(Long updateDateLastChecked) {
+	public void setUpdateDateLastChecked(long updateDateLastChecked) {
 		this.updateDateLastChecked = updateDateLastChecked;
 		setUnsaved(true);
 		setChanged();
@@ -1433,7 +1433,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return the date of the last update check
 	 */
 	@XmlTransient
-	public Long getUpdateDateLastChecked() {
+	public long getUpdateDateLastChecked() {
 		return updateDateLastChecked;
 	}
 

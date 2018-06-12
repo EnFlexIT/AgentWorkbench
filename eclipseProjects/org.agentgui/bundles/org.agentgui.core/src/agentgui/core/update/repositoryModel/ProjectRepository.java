@@ -213,7 +213,8 @@ public class ProjectRepository implements Serializable {
 			projectRepository = (ProjectRepository) um.unmarshal(is);
 			
 		} catch (IOException | JAXBException ex) {
-			ex.printStackTrace();
+			System.err.println("[" + ProjectRepository.class.getSimpleName() + "] " + ex.getLocalizedMessage());
+			//ex.printStackTrace();
 		} finally {
 			if (is!=null) {
 				try {

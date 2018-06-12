@@ -531,24 +531,17 @@ public class Application {
 	private static void proceedStartArgumentOpenProject() {
 		
 		if (isRunningAsServer()==false && project2OpenAfterStart!=null) {
-			
-			// --- open the specified project -------------
-			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
-
-			// --- Repaint main window first --------------
-			if (getMainWindow()!=null) {
-				getMainWindow().validate();
-				getMainWindow().repaint();
-			}
 
 			// --- Open the project -----------------------
+			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
+
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					getProjectsLoaded().add(project2OpenAfterStart);
+					Application.setStatusBar(Language.translate("Fertig"));
 				}
 			});
-			Application.setStatusBar(Language.translate("Fertig"));
 		}
 	}
 	
@@ -597,24 +590,25 @@ public class Application {
 			startMainWindow(new Runnable() {
 				@Override
 				public void run() {
+					
 					setStatusBar(Language.translate("Fertig"));
 					
 					setOntologyVisualisationConfigurationToCommonBundle();
 					
+					// --- Do the benchmark -------------------------
+					doBenchmark(false);
+					waitForBenchmark();
+
 					// --- Check for updates ------------------------
 					AWBUpdater updater = new AWBUpdater();
 					updater.start();
 					updater.waitForUpdate();
 					
-					// --- Do the benchmark -------------------------
-					doBenchmark(false);
-					waitForBenchmark();
+					// --- Open project? ----------------------------
+					proceedStartArgumentOpenProject();
 					
 					// --- Start the bundle evaluation process ------
 					startBundleEvaluation();
-					
-					// --- Open project? ----------------------------
-					proceedStartArgumentOpenProject();
 					
 				}
 			});
@@ -1154,18 +1148,19 @@ public class Application {
 	 * The result will be available in Mflops (Millions of floating point operations per second)
 	 */
 	public static void doBenchmark(boolean forceBenchmark) {
-		if (Application.isBenchmarkRunning()==false) {
+		
+		boolean execute = forceBenchmark || BenchmarkMeasurement.isBenchmarkRequired();
+		if (execute==true && Application.isBenchmarkRunning()==false) {
 			// --- Execute the Benchmark-Thread -----------
-			
 			BenchmarkMeasurement bm = new BenchmarkMeasurement(forceBenchmark);
 			Object synchronizationObject = bm.getSynchronizationObject();
 			bm.start();
 			synchronized (synchronizationObject) {
 				try {
 					synchronizationObject.wait();
-				} catch (InterruptedException e) {
+				} catch (InterruptedException intEx) {
 					System.err.println("[Application]: Waiting for the benchmark to properly start was interrupted");
-					e.printStackTrace();
+					intEx.printStackTrace();
 				}
 			}
 			

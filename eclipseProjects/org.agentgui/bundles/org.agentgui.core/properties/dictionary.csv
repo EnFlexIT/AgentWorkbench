@@ -53,7 +53,7 @@ de;Alle Eigenschaftsfenster schließen;Close all property windows;;;
 de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
-de;Alle Simulations-Setups exportieren;;;;
+de;Alle Simulations-Setups exportieren;Export all Simulation Setups;;;
 de;Allgemein;General;;;
 de;Als Bild exportieren;Export as image;;;
 de;Als Projekt Start-Tab verwenden;Us as project start-tab;;;
@@ -301,7 +301,7 @@ de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
-de;Installationspaket einbeziehen;;;;
+de;Installationspaket einbeziehen;Include Installation Package;;;
 de;Installationspakete;Installation Package Directory;;;
 de;Installiere Updates;Installing updates;;;
 de;Installiere;Installing;;;
@@ -437,7 +437,7 @@ de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start 
 de;N - Threads;N - Threads
 de;Nach Update suchen ...;Search for Update ...;;;
 de;Nach Update suchen;Check for Update;;;
-de;Nach Updates suchen;Search for updates;;;
+de;Nach Updates suchen;Search for Updates;;;
 de;Nach X-Werten sortieren;Autosort by X-values;;;
 de;Nach oben verschieben;Move up;;;
 de;Nach unten verschieben;Move down;;;
@@ -775,7 +775,6 @@ en;;Alias:;;;
 en;;Configure the database settings;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
-en;;Discrete squares environment;;;
 en;;Edit feature repository;;;
 en;;MTP Protocol:;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
@@ -783,25 +782,13 @@ en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;No update could be found for the current project!;;;
 en;;Number of changes;;;
 en;;Pause Thread Measurement;;;
-en;;Piston Compressor;;;
 en;;Please insert a valid repository URI for the feature;;;
 en;;Please open a Keystore first!;;;
-en;;Please, select the tab of the component that you want to delete!;;;
-en;;Please, specifiy the ID for the new Electric Motor!;;;
-en;;Please, specifiy the ID for the new Gas Driven Motor!;;;
-en;;Please, specifiy the ID for the new Gas Turbine!;;;
-en;;Please, specifiy the ID for the new Piston Compressor!;;;
-en;;Please, specifiy the ID for the new Turbo Compressor!;;;
 en;;Refresh Thread Measurement;;;
-en;;Remove Component;;;
-en;;Remove Turbo Compressor;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
 en;;Should they be removed too?;;;
-en;;Show Label;;;
 en;;Simulation Interval;;;
-en;;Speed Max;;;
-en;;Speed Min;;;
 en;;Start Thread Measurement;;;
 en;;Switch Simulation Time Model;;;
 en;;The following component type exists at least twice;;;
