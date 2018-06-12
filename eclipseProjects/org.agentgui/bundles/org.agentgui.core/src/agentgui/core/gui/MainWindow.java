@@ -84,6 +84,7 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
 import agentgui.core.update.AWBUpdater;
+import agentgui.core.update.ProjectRepositoryExplorerDialog;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
@@ -722,8 +723,10 @@ public class MainWindow extends JFrame {
 			jMenuMainProject.add(new CWMenueItem("ProjectSave", Language.translate("Projekt speichern"), "MBsave.png"));
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add(new CWMenueItem("ProjectImport", Language.translate("Projekt importieren"), "MBtransImport.png"));
+			jMenuMainProject.add(new CWMenueItem("RepositoryImport", Language.translate("Repository-Import"), "MBrepositoryImport.png"));
+			jMenuMainProject.addSeparator();
 			jMenuMainProject.add(new CWMenueItem("ProjectExport", Language.translate("Projekt exportieren"), "MBtransExport.png"));
-			jMenuMainProject.add(new CWMenueItem("RepositoryExport", Language.translate("Repository-Export"), "MBrepositoryExoprt.png"));
+			jMenuMainProject.add(new CWMenueItem("RepositoryExport", Language.translate("Repository-Export"), "MBrepositoryExport.png"));
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add(new CWMenueItem("ProjectDelete", Language.translate("Projekt löschen"), "Delete.png"));
 			jMenuMainProject.addSeparator();
@@ -1138,7 +1141,10 @@ public class MainWindow extends JFrame {
 
 			} else if (actionCMD.equalsIgnoreCase("ProjectExport")) {
 				Application.getProjectsLoaded().projectExport();
-
+				
+			} else if (actionCMD.equalsIgnoreCase("RepositoryImport")) {
+				new ProjectRepositoryExplorerDialog(MainWindow.this);
+				
 			} else if (actionCMD.equalsIgnoreCase("RepositoryExport")) {
 				Application.getProjectsLoaded().projectExportToRepository();
 
@@ -1148,7 +1154,7 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("ApplicationQuit")) {
 				Application.stop();
 
-				// --- Menu Ansicht / View ------------------------
+				// --- Menu View ---------------------------------
 			} else if (actionCMD.equalsIgnoreCase("ViewConsole")) {
 				Application.getMainWindow().doSwitchConsole();
 

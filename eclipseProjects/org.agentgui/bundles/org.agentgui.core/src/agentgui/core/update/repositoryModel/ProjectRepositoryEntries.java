@@ -53,7 +53,7 @@ public class ProjectRepositoryEntries implements Serializable {
 	 * the version tag, while the value is the corresponding RepositoryEntry.
 	 * @return the repository entries
 	 */
-	private TreeMap<String, RepositoryTagVersions> getRepositoryEntries() {
+	public TreeMap<String, RepositoryTagVersions> getRepositoryEntries() {
 		if (repositoryEntries==null) {
 			repositoryEntries = new TreeMap<>();
 		}

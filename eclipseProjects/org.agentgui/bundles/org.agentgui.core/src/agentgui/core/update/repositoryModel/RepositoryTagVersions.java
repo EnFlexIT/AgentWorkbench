@@ -29,6 +29,8 @@
 package agentgui.core.update.repositoryModel;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -57,7 +59,35 @@ public class RepositoryTagVersions implements Serializable {
 		}
 		return repositoryTagVector;
 	}
-
+	/**
+	 * Gets the repository vector sorted.
+	 * @param ascending set true if the sorting should be don ascending, otherwise false
+	 * @return the repository vector sorted
+	 */
+	public Vector<RepositoryEntry> getRepositoryTagVectorSorted(boolean ascending) {
+		this.sortRepositoryTagVector(ascending);
+		return this.getRepositoryTagVector();
+	}
+	/**
+	 * Sorts the local repository vector.
+	 * @param ascending set true if the sorting should be don ascending, otherwise false
+	 */
+	public void sortRepositoryTagVector(final boolean ascending) {
+		Collections.sort(this.getRepositoryTagVector(), new Comparator<RepositoryEntry>() {
+			@Override
+			public int compare(RepositoryEntry re1, RepositoryEntry re2) {
+				int comparator = 0;
+				if (ascending==true) {
+					comparator = re1.getOsgiFrameworkVersion().compareTo(re2.getOsgiFrameworkVersion());
+				} else {
+					comparator = re2.getOsgiFrameworkVersion().compareTo(re1.getOsgiFrameworkVersion());
+				}
+				return comparator;
+			}
+		});
+	}
+	
+	
 	/**
 	 * Returns the latest version from the vector of RepositoryEntries.
 	 * @return the latest version

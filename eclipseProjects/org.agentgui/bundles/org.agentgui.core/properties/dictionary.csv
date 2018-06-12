@@ -548,6 +548,7 @@ de;Reihen-Eigenschaften;Series-Properties;;;
 de;Reinitialisiere;Reinitialize;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
 de;Repository-Export;Repository Export;;;
+de;Repository-Import;;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
 de;SVG laden;Load SVG
@@ -779,6 +780,7 @@ en;;Edit feature repository;;;
 en;;MTP Protocol:;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
+en;;No project updates are available in the IDE environment.;;;
 en;;No update could be found for the current project!;;;
 en;;Number of changes;;;
 en;;Pause Thread Measurement;;;

@@ -110,10 +110,12 @@ public class BundleProperties {
 	public static final String DEF_OIDC_USERNAME = "60_OIDC_USERNAME";
 	public static final String DEF_OIDC_ISSUER_URI = "61_OIDC_ISSUER_URI";
 	
+	public static final String DEF_LOCAL_PROJECT_REPOSITORY = "70_LOCAL_PROJECT_REPOSITORY";
+	public static final String DEF_PROJECT_REPOSITORIES = "71_PROJECT_REPOSITORIES";
+	
 	public static final String DEF_PRODUCT_INSTALLATION_DIRECTORY = "100_PRODUCT_INSTALLATION_DIRECTORY";
 	public static final String DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES = "101_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES";
 	
-	public static final String DEF_LOCAL_PROJECT_REPOSITORY = "110_LOCAL_PROJECT_REPOSITORY";
 	
 	
 	private GlobalInfo globalInfo;

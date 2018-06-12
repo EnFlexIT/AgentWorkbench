@@ -151,6 +151,14 @@ public class RepositoryEntry implements Serializable {
 	}
 	
 	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getProjectID() + " - " + this.getVersionTag() + " (version: " + this.getVersion() + ")";
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

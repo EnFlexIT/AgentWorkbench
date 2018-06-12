@@ -75,7 +75,7 @@ public class ProjectRepositoryExport extends Thread {
 		if (repositoryLocationDirectoryPath==null || repositoryLocationDirectoryPath.isEmpty()==true) {
 			// --- Try to get the globally configured location ------
 			repositoryLocationDirectoryPath = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_LOCAL_PROJECT_REPOSITORY, null);
-			if (repositoryLocationDirectoryPath.isEmpty()) {
+			if (repositoryLocationDirectoryPath==null || repositoryLocationDirectoryPath.isEmpty()) {
 				repositoryLocationDirectoryPath=null;
 			}
 		}
@@ -86,7 +86,7 @@ public class ProjectRepositoryExport extends Thread {
 	 * @param repositoryLocationPath the new repository location directory path
 	 */
 	public void setRepositoryLocationDirectoryPath(String repositoryLocationPath) {
-		if (repositoryLocationPath.isEmpty()==true) return;
+		if (repositoryLocationPath==null || repositoryLocationPath.isEmpty()==true) return;
 		this.repositoryLocationDirectoryPath = repositoryLocationPath;
 	}
 	
@@ -145,7 +145,7 @@ public class ProjectRepositoryExport extends Thread {
 		// --- Check if the setting are complete --------------------
 		String configError = this.getConfigurationError();
 		if (configError!=null) {
-			String errMsg = "[" + this.getClass().getSimpleName() + "] " + configError + " - Cancel repository export.";
+			String errMsg = configError + " - Cancel repository export.";
 			if (this.isShowUserDialogs()==true) {
 				JOptionPane.showMessageDialog(Application.getMainWindow(), errMsg, "Repository Export Error", JOptionPane.ERROR_MESSAGE);
 				if (this.getRepositoryLocationDirectoryPath()==null) {
@@ -154,6 +154,7 @@ public class ProjectRepositoryExport extends Thread {
 					return;
 				}
 			}
+			errMsg = "[" + this.getClass().getSimpleName() + "] " + errMsg; 
 			throw new IllegalArgumentException(errMsg);
 		}
 		
@@ -190,7 +191,7 @@ public class ProjectRepositoryExport extends Thread {
 	private String getConfigurationError() {
 		
 		if (this.getRepositoryLocationDirectoryPath()==null) {
-			return "The local directory of the repository was not specified!";
+			return "The local directory of the repository is not specified!";
 		}
 		if (this.getProjectExportSettings()==null) {
 			return "The project export settings were not specified!";

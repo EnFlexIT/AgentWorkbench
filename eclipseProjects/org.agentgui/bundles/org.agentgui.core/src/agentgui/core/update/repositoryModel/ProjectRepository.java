@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.osgi.framework.Version;
 
@@ -66,6 +68,8 @@ public class ProjectRepository implements Serializable {
 
 	public static String REPOSITORY_FILE_NAME = "awbProjectsRepository.xml"; 
 	
+	private transient boolean webRepository;
+	
 	@XmlElementWrapper(name = "ProjectRepositories")
 	@XmlElement(name = "ProjectRepository")
 	private TreeMap<String, ProjectRepositoryEntries> projectRepositories;
@@ -82,6 +86,23 @@ public class ProjectRepository implements Serializable {
 		return projectRepositories;
 	}
 
+	/**
+	 * Return if the current repository is a web repository.
+	 * @return true, if is web repository
+	 */
+	@XmlTransient
+	public boolean isWebRepository() {
+		return webRepository;
+	}
+	/**
+	 * Sets that the current repository is a web repository or not.
+	 * @param webRepository the new web repository
+	 */
+	public void setWebRepository(boolean webRepository) {
+		this.webRepository = webRepository;
+	}
+	
+	
 	/**
 	 * Returns the list of projects located in the repository.
 	 * @return the repository project list
@@ -184,6 +205,37 @@ public class ProjectRepository implements Serializable {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Loads a project repository from a file reference or a link.
+	 *
+	 * @param fileReferenceOrLink the file reference or link to the repository
+	 * @return the project repository or null
+	 */
+	public static ProjectRepository loadProjectRepository(String fileReferenceOrLink) {
+		
+		ProjectRepository projectRepository = null;
+		// --- Check if the update site is a web site URL -------
+		try {
+			URL updateURL = new URL(fileReferenceOrLink);
+			projectRepository = ProjectRepository.loadProjectRepository(updateURL);
+			projectRepository.setWebRepository(true);
+			
+		} catch (MalformedURLException urlEx) {
+			//urlEx.printStackTrace();
+		}
+		
+		// --- Backup, if repository comes not from an URL ------
+		if (projectRepository==null) {
+			// --- Check if update site is a local directory ----
+			File localRepo = new File(fileReferenceOrLink);
+			if (localRepo.exists()==true) {
+				projectRepository = ProjectRepository.loadProjectRepository(localRepo);
+				projectRepository.setWebRepository(false);
+			}
+		}
+		return projectRepository;
 	}
 	
 	/**

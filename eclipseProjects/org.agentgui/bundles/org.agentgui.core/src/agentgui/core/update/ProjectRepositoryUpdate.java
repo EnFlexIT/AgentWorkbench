@@ -29,8 +29,6 @@
 package agentgui.core.update;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -58,12 +56,11 @@ public class ProjectRepositoryUpdate extends Thread {
 
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
-	private boolean debugUpdateProcedure = false;
+	private boolean debugUpdateProcedure = true;
 	
 	private Project currProject; 
 	private long currTimeStamp;
 	
-	private boolean isRepositoryFromWeb;
 	private ProjectRepository projectRepository;
 	
 	private Boolean headlessUpdate;
@@ -295,6 +292,13 @@ public class ProjectRepositoryUpdate extends Thread {
 		
 		// --- If AWB is executed from IDE, skip the update ---------  
 		if (this.debugUpdateProcedure==false && Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+
+			String message = Language.translate("No project updates are available in the IDE environment.", Language.EN);
+			if (this.isHeadlessUpdate()==false && this.isExecutedByUser()==true) {
+				JOptionPane.showMessageDialog(Application.getMainWindow(), message, "IDE - Environment", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				this.printSystemOutput(message, false);
+			}
 			this.setLeaveUpdateProcedure(true);
 		}
 		
@@ -528,7 +532,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	private boolean downloadUpdateOrCopyFromLocalRepository(RepositoryEntry updateRepositoryEntry, String destinationFileName) {
 		
 		boolean successful = false;
-		if (this.isRepositoryFromWeb==true) {
+		if (this.getProjectRepository().isWebRepository()==true) {
 			// -- Start the web download ----------------------------
 			String sourceFileURL = this.getFileNameURLDownload(updateRepositoryEntry);
 			
@@ -581,28 +585,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public ProjectRepository getProjectRepository() {
 		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {
-
-			// --- Check if the update site is a web site URL -------
-			try {
-				URL updateURL = new URL(this.currProject.getUpdateSite());
-				projectRepository = ProjectRepository.loadProjectRepository(updateURL);
-				this.isRepositoryFromWeb = true;
-				
-			} catch (MalformedURLException urlEx) {
-				//urlEx.printStackTrace();
-			}
-			
-			// --- Backup, if repository comes not from an URL ------
-			if (projectRepository==null) {
-				// --- Check if update site is a local directory ----
-				File localRepo = new File(this.currProject.getUpdateSite());
-				if (localRepo.exists()==true) {
-					projectRepository = ProjectRepository.loadProjectRepository(localRepo);
-					this.isRepositoryFromWeb = false;
-				}
-			}
-			
-			// --- If still null, write an error to console ---------
+			projectRepository = ProjectRepository.loadProjectRepository(this.currProject.getUpdateSite());
 			if (projectRepository==null) {
 				this.printSystemOutput("Could not access any projct repository!", true);
 			}
