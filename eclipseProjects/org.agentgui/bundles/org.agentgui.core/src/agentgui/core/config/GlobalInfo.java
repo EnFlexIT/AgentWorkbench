@@ -91,6 +91,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	
 	private final static String localPathImageIntern = "/icons/core/";
 	
+	public final static String DEFAULT_AWB_PROJECT_REPOSITORY = "https://p2.enflex.it/awbProjectRepository/";
 	public static final String DEFAULT_OIDC_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 
 	private final static String newLineSeparator = System.getProperty("line.separator");

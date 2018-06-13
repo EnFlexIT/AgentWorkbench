@@ -36,21 +36,29 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.BundleProperties;
@@ -69,7 +77,16 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 
 	private static final long serialVersionUID = -8466682987118948831L;
 	
+	
+	
+	private ProjectRepositoryExplorerPanelListener panelListener;
+	
 	private ProjectRepository projectRepository;
+	private RepositoryEntry repositoryEntrySelected;
+	private boolean showAllVersions;
+
+	private ArrayList<String> localAvailableProjectIDs;
+	
 	
 	private JLabel JLabelHeader;
 	private JLabel jLabelRepository;
@@ -85,6 +102,8 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	private DefaultTreeModel treeModelRepositoryView;
 	
 	private JPanel jPanelProjectDetails;
+	private JCheckBox jCheckBoxShowAllVersions;
+	private JSeparator separator;
 	private JLabel JLabelProject;
 	private JLabel jLabelTag;
 	private JTextField jTextFieldProject;
@@ -98,10 +117,12 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 
 	/**
 	 * Instantiates a new project repository explorer.
-	 * @param window the window of this dialog
+	 * @param listener the {@link ProjectRepositoryExplorerPanelListener}
 	 */
-	public ProjectRepositoryExplorerPanel() {
+	public ProjectRepositoryExplorerPanel(ProjectRepositoryExplorerPanelListener listener) {
+		this.panelListener = listener;
 		this.initialize();
+		this.setSelectedTreeNode(null);
 	}
 	
 	private void initialize() {
@@ -174,6 +195,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	}
 	private DefaultComboBoxModel<String> getComboBoxModel() {
 		if (comboBoxModel==null) {
+			
 			String[] projectRepositoryArray = null;
 			String projectRepositories = Application.getGlobalInfo().getStringFromConfiguration(BundleProperties.DEF_PROJECT_REPOSITORIES, null);
 			if (projectRepositories!=null) {
@@ -183,6 +205,10 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 				comboBoxModel = new DefaultComboBoxModel<>();
 			} else {
 				comboBoxModel = new DefaultComboBoxModel<>(projectRepositoryArray);
+			}
+			// --- Ensure that the default repository is available --
+			if (comboBoxModel.getIndexOf(GlobalInfo.DEFAULT_AWB_PROJECT_REPOSITORY)==-1) {
+				comboBoxModel.addElement(GlobalInfo.DEFAULT_AWB_PROJECT_REPOSITORY);
 			}
 		}
 		return comboBoxModel;
@@ -227,7 +253,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 			GridBagLayout gbl_jPanelRepositoryView = new GridBagLayout();
 			gbl_jPanelRepositoryView.columnWidths = new int[]{0, 0, 0};
 			gbl_jPanelRepositoryView.rowHeights = new int[]{0, 0};
-			gbl_jPanelRepositoryView.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelRepositoryView.columnWeights = new double[]{2.0, 1.0, Double.MIN_VALUE};
 			gbl_jPanelRepositoryView.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 			jPanelRepositoryView.setLayout(gbl_jPanelRepositoryView);
 			GridBagConstraints gbc_jScrollPaneRepositoryView = new GridBagConstraints();
@@ -256,6 +282,15 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		if (jTreeRepositoryView == null) {
 			jTreeRepositoryView = new JTree(this.getTreeModel());
 			jTreeRepositoryView.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTreeRepositoryView.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			jTreeRepositoryView.addTreeSelectionListener(new TreeSelectionListener() {
+				@Override
+				public void valueChanged(TreeSelectionEvent tse) {
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTreeRepositoryView.getLastSelectedPathComponent();
+					setSelectedTreeNode(selectedNode);
+				}
+			});
+			
 		}
 		return jTreeRepositoryView;
 	}
@@ -286,68 +321,96 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 			jPanelProjectDetails.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 			GridBagLayout gbl_jPanelProjectDetails = new GridBagLayout();
 			gbl_jPanelProjectDetails.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelProjectDetails.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+			gbl_jPanelProjectDetails.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 			gbl_jPanelProjectDetails.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-			gbl_jPanelProjectDetails.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelProjectDetails.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			jPanelProjectDetails.setLayout(gbl_jPanelProjectDetails);
+			GridBagConstraints gbc_jCheckBoxShowAllVersions = new GridBagConstraints();
+			gbc_jCheckBoxShowAllVersions.gridwidth = 2;
+			gbc_jCheckBoxShowAllVersions.anchor = GridBagConstraints.WEST;
+			gbc_jCheckBoxShowAllVersions.insets = new Insets(5, 5, 5, 5);
+			gbc_jCheckBoxShowAllVersions.gridx = 0;
+			gbc_jCheckBoxShowAllVersions.gridy = 0;
+			jPanelProjectDetails.add(getJCheckBoxShowAllVersions(), gbc_jCheckBoxShowAllVersions);
+			GridBagConstraints gbc_separator = new GridBagConstraints();
+			gbc_separator.gridwidth = 2;
+			gbc_separator.fill = GridBagConstraints.HORIZONTAL;
+			gbc_separator.insets = new Insets(0, 5, 5, 5);
+			gbc_separator.gridx = 0;
+			gbc_separator.gridy = 1;
+			jPanelProjectDetails.add(getSeparator(), gbc_separator);
 			GridBagConstraints gbc_JLabelProject = new GridBagConstraints();
 			gbc_JLabelProject.anchor = GridBagConstraints.WEST;
 			gbc_JLabelProject.insets = new Insets(5, 5, 5, 5);
 			gbc_JLabelProject.gridx = 0;
-			gbc_JLabelProject.gridy = 0;
+			gbc_JLabelProject.gridy = 2;
 			jPanelProjectDetails.add(getJLabelProject(), gbc_JLabelProject);
 			GridBagConstraints gbc_jTextFieldProject = new GridBagConstraints();
-			gbc_jTextFieldProject.insets = new Insets(5, 0, 5, 5);
+			gbc_jTextFieldProject.insets = new Insets(5, 0, 5, 0);
 			gbc_jTextFieldProject.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldProject.gridx = 1;
-			gbc_jTextFieldProject.gridy = 0;
+			gbc_jTextFieldProject.gridy = 2;
 			jPanelProjectDetails.add(getJTextFieldProject(), gbc_jTextFieldProject);
 			GridBagConstraints gbc_lblDescription = new GridBagConstraints();
 			gbc_lblDescription.anchor = GridBagConstraints.NORTHWEST;
 			gbc_lblDescription.insets = new Insets(2, 5, 5, 5);
 			gbc_lblDescription.gridx = 0;
-			gbc_lblDescription.gridy = 1;
+			gbc_lblDescription.gridy = 3;
 			jPanelProjectDetails.add(getLblDescription(), gbc_lblDescription);
 			GridBagConstraints gbc_jScrollPaneProjectDescription = new GridBagConstraints();
-			gbc_jScrollPaneProjectDescription.insets = new Insets(0, 0, 5, 5);
+			gbc_jScrollPaneProjectDescription.insets = new Insets(0, 0, 5, 0);
 			gbc_jScrollPaneProjectDescription.fill = GridBagConstraints.BOTH;
 			gbc_jScrollPaneProjectDescription.gridx = 1;
-			gbc_jScrollPaneProjectDescription.gridy = 1;
+			gbc_jScrollPaneProjectDescription.gridy = 3;
 			jPanelProjectDetails.add(getJScrollPaneProjectDescription(), gbc_jScrollPaneProjectDescription);
 			GridBagConstraints gbc_jLabelTag = new GridBagConstraints();
 			gbc_jLabelTag.insets = new Insets(0, 5, 5, 5);
 			gbc_jLabelTag.anchor = GridBagConstraints.WEST;
 			gbc_jLabelTag.gridx = 0;
-			gbc_jLabelTag.gridy = 2;
+			gbc_jLabelTag.gridy = 4;
 			jPanelProjectDetails.add(getJLabelTag(), gbc_jLabelTag);
 			GridBagConstraints gbc_jTextFieldTag = new GridBagConstraints();
-			gbc_jTextFieldTag.insets = new Insets(0, 0, 5, 5);
+			gbc_jTextFieldTag.insets = new Insets(0, 0, 5, 0);
 			gbc_jTextFieldTag.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldTag.gridx = 1;
-			gbc_jTextFieldTag.gridy = 2;
+			gbc_jTextFieldTag.gridy = 4;
 			jPanelProjectDetails.add(getJTextFieldTag(), gbc_jTextFieldTag);
 			GridBagConstraints gbc_jLabelVersion = new GridBagConstraints();
 			gbc_jLabelVersion.anchor = GridBagConstraints.WEST;
 			gbc_jLabelVersion.insets = new Insets(0, 5, 5, 5);
 			gbc_jLabelVersion.gridx = 0;
-			gbc_jLabelVersion.gridy = 3;
+			gbc_jLabelVersion.gridy = 5;
 			jPanelProjectDetails.add(getJLabelVersion(), gbc_jLabelVersion);
 			GridBagConstraints gbc_jTextFieldProjectVersion = new GridBagConstraints();
-			gbc_jTextFieldProjectVersion.insets = new Insets(0, 0, 5, 5);
+			gbc_jTextFieldProjectVersion.insets = new Insets(0, 0, 5, 0);
 			gbc_jTextFieldProjectVersion.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldProjectVersion.gridx = 1;
-			gbc_jTextFieldProjectVersion.gridy = 3;
+			gbc_jTextFieldProjectVersion.gridy = 5;
 			jPanelProjectDetails.add(getJTextFieldProjectVersion(), gbc_jTextFieldProjectVersion);
 			GridBagConstraints gbc_jButtonInstallUpdate = new GridBagConstraints();
-			gbc_jButtonInstallUpdate.insets = new Insets(10, 5, 10, 5);
+			gbc_jButtonInstallUpdate.insets = new Insets(10, 5, 10, 0);
 			gbc_jButtonInstallUpdate.gridwidth = 2;
 			gbc_jButtonInstallUpdate.gridx = 0;
-			gbc_jButtonInstallUpdate.gridy = 4;
+			gbc_jButtonInstallUpdate.gridy = 6;
 			jPanelProjectDetails.add(getJButtonInstallUpdate(), gbc_jButtonInstallUpdate);
 		}
 		return jPanelProjectDetails;
 	}
 	
+	private JCheckBox getJCheckBoxShowAllVersions() {
+		if (jCheckBoxShowAllVersions == null) {
+			jCheckBoxShowAllVersions = new JCheckBox("Show all project versions");
+			jCheckBoxShowAllVersions.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxShowAllVersions.addActionListener(this);
+		}
+		return jCheckBoxShowAllVersions;
+	}
+	private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+		}
+		return separator;
+	}
 	private JLabel getJLabelProject() {
 		if (JLabelProject == null) {
 			JLabelProject = new JLabel("Project");
@@ -390,7 +453,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	private JScrollPane getJScrollPaneProjectDescription() {
 		if (jScrollPaneProjectDescription == null) {
 			jScrollPaneProjectDescription = new JScrollPane();
-			jScrollPaneProjectDescription.setViewportView(getJTextAreaProjectDescription());
+			jScrollPaneProjectDescription.setViewportView(this.getJTextAreaProjectDescription());
 		}
 		return jScrollPaneProjectDescription;
 	}
@@ -399,6 +462,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 			jTextAreaProjectDescription = new JTextArea();
 			jTextAreaProjectDescription.setEditable(false);
 			jTextAreaProjectDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextAreaProjectDescription.setLineWrap(true);
 		}
 		return jTextAreaProjectDescription;
 	}
@@ -430,14 +494,21 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	}
 	
 	/**
+	 * Gets the repository directory link (for a local directory or a web directory).
+	 * @return the repository directory link
+	 */
+	private String getRepositoryDirectoryLink() {
+		String link = (String) this.getJComboBoxRepositorySelection().getSelectedItem();
+		if (link==null || link.isEmpty()==true) return null;
+		return link;
+	}
+	/**
 	 * Loads the project repository from combo box reference.
 	 */
 	public void loadProjectRepositoryFromComboBoxReference() {
 		
-		String link = (String) this.getJComboBoxRepositorySelection().getSelectedItem();
-		if (link==null || link.isEmpty()==true) return;
-		
 		// --- Assign to local variable -----------------------------
+		String link = this.getRepositoryDirectoryLink();
 		ProjectRepository repo = ProjectRepository.loadProjectRepository(link);
 		this.setProjectRepository(repo);
 		if (repo!=null) {
@@ -451,9 +522,15 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	 * @param projectRepository the new project repository
 	 */
 	private void setProjectRepository(ProjectRepository projectRepository) {
-	
 		this.projectRepository = projectRepository;
-
+		this.buildRepositoryTree();
+	}
+	
+	/**
+	 * Builds the repository tree.
+	 */
+	private void buildRepositoryTree() {
+		
 		// --- remove all sub-nodes from the root node -------------- 
 		this.getRootNode().removeAllChildren();
 		
@@ -465,20 +542,20 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 				String projectID = projectIDs.get(i);
 				ProjectRepositoryEntries repoEntries = this.projectRepository.getProjectRepositories().get(projectID);
 				
-				DefaultMutableTreeNode projectTreeNode = new DefaultMutableTreeNode(projectID);
+				DefaultMutableTreeNode projectTreeNode = new DefaultMutableTreeNode("Project ID: " + projectID);
 				this.addRepositoryTagNodes(projectTreeNode, repoEntries);
 				this.getRootNode().add(projectTreeNode);
 			}
 		}
+		// --- Reload and expand the view ---------------------------
 		this.getTreeModel().reload();
 		this.expandAllNodes(0, this.getJTreeRepositoryView().getRowCount());
-		
 	}
 	/**
 	 * Adds the tag nodes.
 	 *
 	 * @param projectTreeNode the project tree node
-	 * @param repoEntries the repo entries
+	 * @param repoEntries the ProjectRepositoryEntries
 	 */
 	private void addRepositoryTagNodes(DefaultMutableTreeNode projectTreeNode, ProjectRepositoryEntries repoEntries) {
 		
@@ -490,13 +567,16 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 				String tag = tags.get(i);
 				RepositoryTagVersions tagVersions = repoEntries.getRepositoryEntries().get(tag);
 
-				DefaultMutableTreeNode tagTreeNode = new DefaultMutableTreeNode(tag);
+				int nVersions = tagVersions.getRepositoryTagVector().size();
+				String versionDescription = nVersions + " versions";
+				if (nVersions==1) versionDescription = nVersions + " version";
+				
+				DefaultMutableTreeNode tagTreeNode = new DefaultMutableTreeNode("#" + tag + " (" + versionDescription + ")");
 				this.addRepositoryTagVersionNodes(tagTreeNode, tagVersions);
 				projectTreeNode.add(tagTreeNode);
 			}
 		}
 	}
-	
 	/**
 	 * Adds the repository tag version nodes.
 	 *
@@ -509,10 +589,64 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 			Vector<RepositoryEntry> reVector = tagVersions.getRepositoryTagVectorSorted(false);
 			for (int i = 0; i < reVector.size(); i++) {
 				tagTreeNode.add(new DefaultMutableTreeNode(reVector.get(i)));
+				if (this.showAllVersions==false) break;
 			}
 		}
 	}
 	
+	/**
+	 * Returns the available project IDs of the local projects.
+	 * @return the local available project ID's
+	 */
+	private ArrayList<String> getLocalAvailableProjectIDs() {
+		if (localAvailableProjectIDs==null) {
+			localAvailableProjectIDs = new ArrayList<>(Arrays.asList(Application.getGlobalInfo().getProjectSubDirectories()));
+		}
+		return localAvailableProjectIDs;
+	}
+	
+	/**
+	 * Sets the selected tree node.
+	 * @param selectedNode the new selected tree node
+	 */
+	private void setSelectedTreeNode(DefaultMutableTreeNode selectedNode) {
+		
+		boolean isRepositoryEntry = false;
+		if (selectedNode==null || selectedNode.getUserObject()==null) {
+			isRepositoryEntry = false;
+		} else if ((selectedNode.getUserObject() instanceof RepositoryEntry)) {
+			isRepositoryEntry = true;
+		}
+		
+		this.getJTextFieldProject().setEnabled(isRepositoryEntry);
+		this.getJTextAreaProjectDescription().setEnabled(isRepositoryEntry);
+		this.getJTextFieldTag().setEnabled(isRepositoryEntry);
+		this.getJTextFieldProjectVersion().setEnabled(isRepositoryEntry);
+		this.getJButtonInstallUpdate().setEnabled(isRepositoryEntry);
+		
+		if (isRepositoryEntry==true) {
+			
+			RepositoryEntry re = (RepositoryEntry) selectedNode.getUserObject();
+			
+			this.getJTextFieldProject().setText(re.getProjectName() + " (" + re.getProjectID() + ")");
+			this.getJTextAreaProjectDescription().setText(re.getProjectDescription());
+			this.getJTextFieldTag().setText(re.getVersionTag());
+			this.getJTextFieldProjectVersion().setText(re.getVersion());
+			
+			if (this.getLocalAvailableProjectIDs().contains(re.getProjectID())) {
+				this.getJButtonInstallUpdate().setEnabled(false);
+			}
+			this.repositoryEntrySelected = re;
+			
+		} else {
+			this.getJTextFieldProject().setText(null);
+			this.getJTextAreaProjectDescription().setText(null);
+			this.getJTextFieldTag().setText(null);
+			this.getJTextFieldProjectVersion().setText(null);
+			this.repositoryEntrySelected = null;
+		}
+		
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -520,14 +654,58 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if (ae.getSource()==this.getJButtonRepositoryRefresh() || ae.getSource()==this.getJComboBoxRepositorySelection()) {
+		if (ae.getSource()==this.getJCheckBoxShowAllVersions()) {
+			// --- Show / hide all versions -------------------------
+			this.showAllVersions = !this.showAllVersions;
+			this.buildRepositoryTree();
+			
+		} else if (ae.getSource()==this.getJButtonRepositoryRefresh() || ae.getSource()==this.getJComboBoxRepositorySelection()) {
 			// --- Reload the repository view -----------------------
 			this.loadProjectRepositoryFromComboBoxReference();
 			
 		} else if (ae.getSource()==this.getJButtonInstallUpdate()) {
 			// --- Install or Update the project --------------------
+			this.installProject();
+		}
+	}
+	
+	/**
+	 * Installs the currently selected project from the repository.
+	 */
+	private void installProject() {
+		
+		String link = this.getRepositoryDirectoryLink();
+		if (link==null) return;
+		if (this.repositoryEntrySelected==null) return;
+
+		// --- Initiate a ProjectRepositoryUpdate ------------------- 
+		ProjectRepositoryUpdate pru = new ProjectRepositoryUpdate(null);
+		pru.setProjectRepository(this.projectRepository);
+		
+		// --- Try to download or copy the file ---------------------
+		String downloadFileName = pru.getLinkOrPathWithDirectorySuffix(Application.getGlobalInfo().getPathProjects(true), this.repositoryEntrySelected.getFileName());
+		if (pru.downloadOrCopyProjectArchiveFromRepository(link, this.repositoryEntrySelected, downloadFileName)==true) {
+
+			// --- Install the project ------------------------------
+			if (pru.importProjectFromArchive(downloadFileName)==true) {
+				// --- Close the repository explorer ----------------
+				if (this.panelListener!=null) {
+					this.panelListener.closeProjectRepositoryExplorer();
+				}
+				
+			} else {
+				JOptionPane.showMessageDialog(this, "The installation of the project '" + this.repositoryEntrySelected.getProjectName() + "' failed", "Installation failed", JOptionPane.ERROR_MESSAGE);
+				
+			}
+			
+			// --- Delete the archive -------------------------------
+			File downloadFile = new File(downloadFileName);
+			if (downloadFile.exists()==true) {
+				downloadFile.delete();
+			}
 			
 		}
-		
 	}
+	
+	
 }

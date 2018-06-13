@@ -49,7 +49,7 @@ import java.awt.Insets;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectRepositoryExplorerDialog extends JDialog {
+public class ProjectRepositoryExplorerDialog extends JDialog implements ProjectRepositoryExplorerPanelListener {
 
 	private static final long serialVersionUID = -8466682987118948831L;
 	
@@ -111,8 +111,17 @@ public class ProjectRepositoryExplorerDialog extends JDialog {
 	 */
 	private ProjectRepositoryExplorerPanel getProjectRepositoryExplorerPanel() {
 		if (projectRepositoryExplorerPanel == null) {
-			projectRepositoryExplorerPanel = new ProjectRepositoryExplorerPanel();
+			projectRepositoryExplorerPanel = new ProjectRepositoryExplorerPanel(this);
 		}
 		return projectRepositoryExplorerPanel;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.update.ProjectRepositoryExplorerPanelListener#closeProjectRepositoryExplorer()
+	 */
+	@Override
+	public void closeProjectRepositoryExplorer() {
+		this.setVisible(false);
+		this.dispose();
 	}
 }

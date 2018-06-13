@@ -56,7 +56,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
-	private boolean debugUpdateProcedure = true;
+	private boolean debugUpdateProcedure = false;
 	
 	private Project currProject; 
 	private long currTimeStamp;
@@ -79,7 +79,9 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public ProjectRepositoryUpdate(Project projectToUpdate) {
 		this.currProject = projectToUpdate;
-		this.setName(this.getClass().getSimpleName()  + " " + this.currProject.getProjectName());
+		if (this.currProject!=null) {
+			this.setName(this.getClass().getSimpleName()  + " " + this.currProject.getProjectName());
+		}
 		this.currTimeStamp = System.currentTimeMillis();
 	}
 	
@@ -361,7 +363,7 @@ public class ProjectRepositoryUpdate extends Thread {
 			
 			// --- Download the update ------------------------------
 			String updateFilename = this.getLinkOrPathWithDirectorySuffix(Application.getGlobalInfo().getPathProjects(true), update.getFileName());
-			if (this.downloadUpdateOrCopyFromLocalRepository(update, updateFilename)==true) {
+			if (this.downloadOrCopyProjectArchiveFromRepository(this.currProject.getUpdateSite(), update, updateFilename)==true) {
 				// --- The download of update is done ---------------
 				if (this.isConfirmedUserRequestForInstallation(update)==false) return;
 				
@@ -438,8 +440,20 @@ public class ProjectRepositoryUpdate extends Thread {
 		// --- Pack the current project into an project archive -----
 		if (this.packCurrentProjectToArchive()==false) return false;
 		
+		// --- Import the project archive ---------------------------
+		return this.importProjectFromArchive(updateFileName);
+	}
+	
+	/**
+	 * Imports a project from the specified archive file.
+	 *
+	 * @param projectArchiveFileName the project archive file name
+	 * @return true, if successful
+	 */
+	public boolean importProjectFromArchive(String projectArchiveFileName) {
+		
 		// --- Define settings for update import --------------------
-		ProjectImportSettings pims = new ProjectImportSettings(new File(updateFileName));
+		ProjectImportSettings pims = new ProjectImportSettings(new File(projectArchiveFileName));
 		pims.setExtractInThread(false);
 		pims.setAfterImportTask(this.getAfterUpdateImportTask());
 		
@@ -453,6 +467,8 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @return the after import task
 	 */
 	private Runnable getAfterUpdateImportTask() {
+		
+		if (this.currProject==null) return null;
 		
 		Runnable afterImportTask = null;
 		final String projectFolderToOpen = this.currProject.getProjectFolder();
@@ -523,18 +539,19 @@ public class ProjectRepositoryUpdate extends Thread {
 	
 	
 	/**
-	 * Download update or copy from repository.
+	 * Download or copy project archive from repository.
 	 *
+	 * @param sourceDirectoryOrWebReference the source directory or web reference (without any file)
 	 * @param updateRepositoryEntry the update repository entry
 	 * @param destinationFileName the destination file name
 	 * @return true, if successful
 	 */
-	private boolean downloadUpdateOrCopyFromLocalRepository(RepositoryEntry updateRepositoryEntry, String destinationFileName) {
+	public boolean downloadOrCopyProjectArchiveFromRepository(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry, String destinationFileName) {
 		
 		boolean successful = false;
 		if (this.getProjectRepository().isWebRepository()==true) {
 			// -- Start the web download ----------------------------
-			String sourceFileURL = this.getFileNameURLDownload(updateRepositoryEntry);
+			String sourceFileURL = this.getFileNameURLDownload(sourceDirectoryOrWebReference, updateRepositoryEntry);
 			
 			Download download = new Download(sourceFileURL, destinationFileName);
 			download.startDownload();
@@ -542,28 +559,31 @@ public class ProjectRepositoryUpdate extends Thread {
 			
 		} else {
 			// --- Copy file to destination -------------------------
-			String sourceFileName = this.getFileNameDownload(updateRepositoryEntry);
+			String sourceFileName = this.getFileNameDownload(sourceDirectoryOrWebReference, updateRepositoryEntry);
 			FileCopier copier = new FileCopier();
 			successful = copier.copyFile(sourceFileName, destinationFileName);
 		}
 		return successful;
 	}
-	
 	/**
 	 * Return the download file name URL base on the specified {@link RepositoryEntry}.
+	 *
+	 * @param sourceDirectoryOrWebReference the source directory or web reference (without any file)
 	 * @param updateRepositoryEntry the update repository entry
 	 * @return the download file name URL
 	 */
-	private String getFileNameURLDownload(RepositoryEntry updateRepositoryEntry) {
-		return this.getLinkOrPathWithDirectorySuffix(this.currProject.getUpdateSite(), "/") + updateRepositoryEntry.getFileName();
+	private String getFileNameURLDownload(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry) {
+		return this.getLinkOrPathWithDirectorySuffix(sourceDirectoryOrWebReference, "/") + updateRepositoryEntry.getFileName();
 	}
 	/**
 	 * Return the repository file name.
+	 *
+	 * @param sourceDirectoryOrWebReference the source directory or web reference (without any file)
 	 * @param updateRepositoryEntry the update repository entry
 	 * @return the repository file name
 	 */
-	private String getFileNameDownload(RepositoryEntry updateRepositoryEntry) {
-		return this.getLinkOrPathWithDirectorySuffix(this.currProject.getUpdateSite(), File.separator) + updateRepositoryEntry.getFileName();
+	private String getFileNameDownload(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry) {
+		return this.getLinkOrPathWithDirectorySuffix(sourceDirectoryOrWebReference, File.separator) + updateRepositoryEntry.getFileName();
 	}
 	/**
 	 * Returns the link or path with the deisred directory suffix.
@@ -571,7 +591,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @param desiredSuffix the desired suffix
 	 * @return the link or path with directory suffix
 	 */
-	private String getLinkOrPathWithDirectorySuffix(String linkOfPath, String desiredSuffix) {
+	public String getLinkOrPathWithDirectorySuffix(String linkOfPath, String desiredSuffix) {
 		String pathChecked = linkOfPath;
 		if (pathChecked.endsWith(desiredSuffix)==false) {
 			pathChecked += desiredSuffix;
@@ -591,6 +611,13 @@ public class ProjectRepositoryUpdate extends Thread {
 			}
 		}
 		return projectRepository;
+	}
+	/**
+	 * Sets the current project repository.
+	 * @param projectRepository the new project repository
+	 */
+	public void setProjectRepository(ProjectRepository projectRepository) {
+		this.projectRepository = projectRepository;
 	}
 	
 	/**

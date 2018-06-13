@@ -44,12 +44,14 @@ import agentgui.core.update.ProjectRepositoryExport;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-@XmlType(name = "RepositoryEntry", propOrder = {"projectID", "versionTag", "version", "fileName"})
+@XmlType(name = "RepositoryEntry", propOrder = {"projectID", "projectName", "projectDescription", "versionTag", "version", "fileName"})
 public class RepositoryEntry implements Serializable {
 
 	private static final long serialVersionUID = -2543921945180740987L;
 	
 	private String projectID;
+	private String projectName;
+	private String projectDescription;
 	private String version;
 	private String versionTag;
 	private String fileName;
@@ -65,6 +67,8 @@ public class RepositoryEntry implements Serializable {
 	 */
 	public RepositoryEntry(Project project) {
 		this.setProjectID(project.getProjectFolder());
+		this.setProjectName(project.getProjectName());
+		this.setProjectDescription(project.getProjectDescription());
 		this.setVersion(project.getVersion().toString());
 		this.setVersionTag(project.getVersionTag());
 		this.setFileName(ProjectRepositoryExport.getRepositoryFileName(project));
@@ -73,12 +77,16 @@ public class RepositoryEntry implements Serializable {
 	 * Instantiates a new repository entry.
 	 *
 	 * @param projectID the project ID
+	 * @param projectName the project name
+	 * @param projectDescriptioon the project descriptioon
 	 * @param version the version as string
 	 * @param versionTag the version tag
 	 * @param fileName the file name
 	 */
-	public RepositoryEntry(String projectID, String version, String versionTag, String fileName) { 
+	public RepositoryEntry(String projectID, String projectName, String projectDescriptioon, String version, String versionTag, String fileName) { 
 		this.setProjectID(projectID);
+		this.setProjectName(projectName);
+		this.setProjectDescription(projectDescriptioon);
 		this.setVersion(version);
 		this.setVersionTag(versionTag);
 		this.setFileName(fileName);
@@ -87,12 +95,16 @@ public class RepositoryEntry implements Serializable {
 	 * Instantiates a new repository entry.
 	 *
 	 * @param projectID the project ID
+	 * @param projectName the project name
+	 * @param projectDescriptioon the project descriptioon
 	 * @param version the version as {@link Version}
 	 * @param versionTag the version tag
 	 * @param fileName the file name
 	 */
-	public RepositoryEntry(String projectID, Version version, String versionTag, String fileName) {
+	public RepositoryEntry(String projectID, String projectName, String projectDescriptioon, Version version, String versionTag, String fileName) {
 		this.setProjectID(projectID);
+		this.setProjectName(projectName);
+		this.setProjectDescription(projectDescriptioon);
 		this.setOsgiFrameworkVersion(version);
 		this.setVersionTag(versionTag);
 		this.setFileName(fileName);
@@ -108,6 +120,26 @@ public class RepositoryEntry implements Serializable {
 		}
 		this.projectID = projectID;
 	}
+	
+	
+	public String getProjectName() {
+		return projectName;
+	}
+	public void setProjectName(String projectName) {
+		if (projectName==null || projectName.isEmpty()) {
+			throw new NullPointerException("[" + this.getClass().getSimpleName() + "] The project name is not allowed to be null.");
+		}
+		this.projectName = projectName;
+	}
+	
+	
+	public String getProjectDescription() {
+		return projectDescription;
+	}
+	public void setProjectDescription(String projectDescription) {
+		this.projectDescription = projectDescription;
+	}
+	
 	
 	@XmlTransient
 	public Version getOsgiFrameworkVersion() {
@@ -155,7 +187,7 @@ public class RepositoryEntry implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return this.getProjectID() + " - " + this.getVersionTag() + " (version: " + this.getVersion() + ")";
+		return "Project: '" + this.getProjectName() + "', #" + this.getVersionTag() + ", Version: " + this.getVersion() + "";
 	}
 	
 	/* (non-Javadoc)
@@ -167,6 +199,7 @@ public class RepositoryEntry implements Serializable {
 		if (compareObject==this) return true;
 		if (! (compareObject instanceof RepositoryEntry)) return false;
 		
+		// --- Do comparison without project name and description --- 
 		RepositoryEntry compareRE = (RepositoryEntry) compareObject;
 		if (compareRE.getProjectID().equals(this.getProjectID())==true &&
 			compareRE.getOsgiFrameworkVersion().equals(this.getOsgiFrameworkVersion())==true && 

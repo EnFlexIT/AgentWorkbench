@@ -215,12 +215,16 @@ public class ProjectRepository implements Serializable {
 	 */
 	public static ProjectRepository loadProjectRepository(String fileReferenceOrLink) {
 		
+		if (fileReferenceOrLink==null) return null;
+		
 		ProjectRepository projectRepository = null;
 		// --- Check if the update site is a web site URL -------
 		try {
 			URL updateURL = new URL(fileReferenceOrLink);
 			projectRepository = ProjectRepository.loadProjectRepository(updateURL);
-			projectRepository.setWebRepository(true);
+			if (projectRepository!=null) {
+				projectRepository.setWebRepository(true);
+			}
 			
 		} catch (MalformedURLException urlEx) {
 			//urlEx.printStackTrace();
@@ -232,7 +236,9 @@ public class ProjectRepository implements Serializable {
 			File localRepo = new File(fileReferenceOrLink);
 			if (localRepo.exists()==true) {
 				projectRepository = ProjectRepository.loadProjectRepository(localRepo);
-				projectRepository.setWebRepository(false);
+				if (projectRepository!=null) {
+					projectRepository.setWebRepository(false);
+				}
 			}
 		}
 		return projectRepository;
@@ -245,6 +251,8 @@ public class ProjectRepository implements Serializable {
 	 * @return the project repository
 	 */
 	public static ProjectRepository loadProjectRepository(URL webURL) {
+		
+		if (webURL==null) return null;
 		
 		ProjectRepository projectRepository = null;
 		
@@ -292,6 +300,8 @@ public class ProjectRepository implements Serializable {
 	 * @return the project repository or null, if the file could not be found
 	 */
 	public static ProjectRepository loadProjectRepository(File localRepositoryDirectory) {
+		
+		if (localRepositoryDirectory==null) return null;
 		
 		ProjectRepository projectRepository = null;
 
