@@ -72,6 +72,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 	
 	private static final String PROJECT_PATH_WINDOWS_LINUX = "agentgui/projects";
 	private static final String PROJECT_PATH_MAC = "agentgui.app/Contents/Eclipse/projects";
+	
+	private static final String TEMP_FOLDER_SUFFIX = "_tmp";
 
 	private Project project;
 	private ProjectExportSettings exportSettings;
@@ -438,7 +440,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 			// --- Determine the path for the temporary export folder, based on the selected target file --------------
 			File targetFile = this.exportSettings.getTargetFile();
 			Path containingFolder = targetFile.getParentFile().toPath();
-			tempFolderPath = containingFolder.resolve(project.getProjectFolder());
+			tempFolderPath = containingFolder.resolve(project.getProjectFolder() + TEMP_FOLDER_SUFFIX);
 		}
 
 		return this.tempFolderPath;
@@ -578,7 +580,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 				} else {
 					// --- Zip the temporary folder --------------
 					ArchiveFileHandler newZipper = new ArchiveFileHandler();
-					success = newZipper.compressFolder(tempFolderPath.toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile());
+					success = newZipper.compressFolder(tempFolderPath.toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile(), this.getProject().getProjectFolder(), null);
 					try {
 						new RecursiveFolderDeleter().deleteFolder(tempFolderPath);
 					} catch (IOException e) {

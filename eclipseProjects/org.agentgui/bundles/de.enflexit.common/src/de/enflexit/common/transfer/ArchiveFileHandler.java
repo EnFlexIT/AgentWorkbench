@@ -41,6 +41,9 @@ public class ArchiveFileHandler {
 
 	private ArchiveFormat archiveFormat;
 	private int bufferSize = 2048;
+	
+	private String replace;
+	private String replaceWith;
 
 	/**
 	 * Compresses a folder. The archive format is determined from the target file name.
@@ -50,14 +53,21 @@ public class ArchiveFileHandler {
 	 * @return true, if successful
 	 */
 	public boolean compressFolder(File sourceFolder, File targetFile) {
-		ArchiveFormat archiveFormat = this.determineArchiveFormat(targetFile);
-		if (archiveFormat != null) {
-			return this.compressFolder(sourceFolder, targetFile, archiveFormat);
-		} else {
-			System.err.println("Archive format could not be determined for file " + targetFile.getName());
-			return false;
-		}
+		return this.compressFolder(sourceFolder, targetFile, null, null);
 	}
+	
+	/**
+	 * Compresses a folder. Allows to modify the folder name. The archive format is determined from the target file name.
+	 *
+	 * @param sourceFolder the source folder
+	 * @param targetFile the target file
+	 * @param folderNameInsideArchive the folder name inside archive
+	 * @return true, if successful
+	 */
+	public boolean compressFolder(File sourceFolder, File targetFile, String folderNameInsideArchive) {
+		return this.compressFolder(sourceFolder, targetFile, folderNameInsideArchive, null);
+	}
+	
 
 	/**
 	 * Compresses a folder.
@@ -68,18 +78,43 @@ public class ArchiveFileHandler {
 	 * @return true, if successful
 	 */
 	public boolean compressFolder(File sourceFolder, File targetFile, ArchiveFormat archiveFormat) {
-
-		boolean success;
+		return this.compressFolder(sourceFolder, targetFile, null, archiveFormat);
+	}
+	
+	/**
+	 * Compresses a folder. Allows to modify the folder name.
+	 * @param sourceFolder the source folder
+	 * @param targetFile the target file
+	 * @param folderNameInsideArchive the folder name inside the archive
+	 * @param archiveFormat the archive format
+	 * @return true, if successful
+	 */
+	public boolean compressFolder(File sourceFolder, File targetFile, String folderNameInsideArchive, ArchiveFormat archiveFormat) {
+		if (archiveFormat == null) {
+			archiveFormat = this.determineArchiveFormat(targetFile);
+			if (archiveFormat==null) {
+				System.err.println("Archive format could not be determined for file " + targetFile.getName());
+				return false;
+			}
+		}
 
 		if (sourceFolder.isDirectory() == false) {
 			System.err.println(sourceFolder.getName() + " is not a folder!");
 			return false;
 		}
+		
+		boolean success;
+		
+		// --- Initialize folder name modification ------------------
+		if (folderNameInsideArchive!=null) {
+			this.replace = sourceFolder.getName();
+			this.replaceWith = folderNameInsideArchive;
+		}
 
 		this.archiveFormat = archiveFormat;
 
 		ArchiveOutputStream outputStream = null;
-
+		
 		try {
 			outputStream = this.createArchiveOutputStream(targetFile);
 			this.addFileToArchive(sourceFolder, sourceFolder, null, outputStream);
@@ -100,7 +135,6 @@ public class ArchiveFileHandler {
 		}
 
 		return success;
-
 	}
 
 	/**
@@ -411,6 +445,11 @@ public class ArchiveFileHandler {
 	private ArchiveEntry createArchiveEntry(File baseDir, File file, String pathInsideArchive) {
 		ArchiveEntry archiveEntry = null;
 		String entryName = baseDir.getParentFile().toURI().relativize(file.toURI()).getPath();
+		
+		if(this.replace!=null && this.replaceWith!=null) {
+			entryName = entryName.replace(this.replace, this.replaceWith);
+		}
+		
 		if (pathInsideArchive != null) {
 			entryName = pathInsideArchive + File.separator + entryName;
 		}
