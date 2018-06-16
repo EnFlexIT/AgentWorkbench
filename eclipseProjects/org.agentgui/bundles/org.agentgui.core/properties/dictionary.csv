@@ -773,6 +773,12 @@ de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;Alias:;;;
+en;;Calculate metrics based on agent class data.;;;
+en;;Calculate metrics based on delta integrals.;;;
+en;;Calculate metrics based on individual agent data.;;;
+en;;Calculate metrics based on last total system cpu time.;;;
+en;;Calculate metrics based on total integrals.;;;
+en;;Calculate the real metrics based on recorded chart value selection.;;;
 en;;Configure the database settings;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
