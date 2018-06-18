@@ -88,6 +88,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 	private AwbProgressMonitor progressMonitor;
 	
+	private ArchiveFileHandler archiveFileHandler;
+	
 	private boolean confirmationDialogDisabled = false;
 
 	/* (non-Javadoc)
@@ -437,10 +439,15 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 		if (tempFolderPath == null) {
 
-			// --- Determine the path for the temporary export folder, based on the selected target file --------------
+			// --- Determine the path for the temporary export folder, based on the selected target file ----
 			File targetFile = this.exportSettings.getTargetFile();
 			Path containingFolder = targetFile.getParentFile().toPath();
-			tempFolderPath = containingFolder.resolve(project.getProjectFolder() + TEMP_FOLDER_SUFFIX);
+			String tempFolderName = project.getProjectFolder() + TEMP_FOLDER_SUFFIX;
+			tempFolderPath = containingFolder.resolve(tempFolderName);
+			
+			// --- Replace the temp folder name with the original name when adding files to the archive -----
+			this.getArchiveFileHandler().addPathReplacement(tempFolderName, project.getProjectFolder());
+			
 		}
 
 		return this.tempFolderPath;
@@ -453,9 +460,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 	private boolean integrateProjectIntoInstallationPackage() {
 
 		File installationPackageFile = this.exportSettings.getInstallationPackage().getPacakgeFile();
-		ArchiveFileHandler newZipper = new ArchiveFileHandler();
 		HashMap<File, String> foldersToAdd = this.buildFoldersToAddHasmap();
-		newZipper.appendFoldersToArchive(installationPackageFile, this.exportSettings.getTargetFile(), foldersToAdd, true);
+		this.getArchiveFileHandler().appendFoldersToArchive(installationPackageFile, this.exportSettings.getTargetFile(), foldersToAdd, true);
 		return true;
 	}
 
@@ -579,8 +585,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 					success = DefaultProjectExportController.this.integrateProjectIntoInstallationPackage();
 				} else {
 					// --- Zip the temporary folder --------------
-					ArchiveFileHandler newZipper = new ArchiveFileHandler();
-					success = newZipper.compressFolder(tempFolderPath.toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile(), this.getProject().getProjectFolder(), null);
+					success = this.getArchiveFileHandler().compressFolder(tempFolderPath.toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile());
 					try {
 						new RecursiveFolderDeleter().deleteFolder(tempFolderPath);
 					} catch (IOException e) {
@@ -653,6 +658,20 @@ public class DefaultProjectExportController implements ProjectExportController{
 			}
 		});
 	}
+	
+	
+
+	/**
+	 * Gets the archive file handler.
+	 * @return the archive file handler
+	 */
+	private ArchiveFileHandler getArchiveFileHandler() {
+		if (archiveFileHandler==null) {
+			archiveFileHandler = new ArchiveFileHandler();
+		}
+		return archiveFileHandler;
+	}
+
 
 	/**
 	 * Gets the project.

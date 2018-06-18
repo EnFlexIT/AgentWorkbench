@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -42,8 +43,7 @@ public class ArchiveFileHandler {
 	private ArchiveFormat archiveFormat;
 	private int bufferSize = 2048;
 	
-	private String replace;
-	private String replaceWith;
+	private HashMap<String, String> pathReplacements;
 
 	/**
 	 * Compresses a folder. The archive format is determined from the target file name.
@@ -53,22 +53,9 @@ public class ArchiveFileHandler {
 	 * @return true, if successful
 	 */
 	public boolean compressFolder(File sourceFolder, File targetFile) {
-		return this.compressFolder(sourceFolder, targetFile, null, null);
+		return this.compressFolder(sourceFolder, targetFile, null);
 	}
 	
-	/**
-	 * Compresses a folder. Allows to modify the folder name. The archive format is determined from the target file name.
-	 *
-	 * @param sourceFolder the source folder
-	 * @param targetFile the target file
-	 * @param folderNameInsideArchive the folder name inside archive
-	 * @return true, if successful
-	 */
-	public boolean compressFolder(File sourceFolder, File targetFile, String folderNameInsideArchive) {
-		return this.compressFolder(sourceFolder, targetFile, folderNameInsideArchive, null);
-	}
-	
-
 	/**
 	 * Compresses a folder.
 	 *
@@ -78,18 +65,6 @@ public class ArchiveFileHandler {
 	 * @return true, if successful
 	 */
 	public boolean compressFolder(File sourceFolder, File targetFile, ArchiveFormat archiveFormat) {
-		return this.compressFolder(sourceFolder, targetFile, null, archiveFormat);
-	}
-	
-	/**
-	 * Compresses a folder. Allows to modify the folder name.
-	 * @param sourceFolder the source folder
-	 * @param targetFile the target file
-	 * @param folderNameInsideArchive the folder name inside the archive
-	 * @param archiveFormat the archive format
-	 * @return true, if successful
-	 */
-	public boolean compressFolder(File sourceFolder, File targetFile, String folderNameInsideArchive, ArchiveFormat archiveFormat) {
 		if (archiveFormat == null) {
 			archiveFormat = this.determineArchiveFormat(targetFile);
 			if (archiveFormat==null) {
@@ -105,12 +80,6 @@ public class ArchiveFileHandler {
 		
 		boolean success;
 		
-		// --- Initialize folder name modification ------------------
-		if (folderNameInsideArchive!=null) {
-			this.replace = sourceFolder.getName();
-			this.replaceWith = folderNameInsideArchive;
-		}
-
 		this.archiveFormat = archiveFormat;
 
 		ArchiveOutputStream outputStream = null;
@@ -446,13 +415,14 @@ public class ArchiveFileHandler {
 		ArchiveEntry archiveEntry = null;
 		String entryName = baseDir.getParentFile().toURI().relativize(file.toURI()).getPath();
 		
-		if(this.replace!=null && this.replaceWith!=null) {
-			entryName = entryName.replace(this.replace, this.replaceWith);
-		}
-		
 		if (pathInsideArchive != null) {
 			entryName = pathInsideArchive + File.separator + entryName;
 		}
+		
+		if (this.getPathReplacements().isEmpty()==false) {
+			entryName = this.applyPathReplacements(entryName);
+		}
+		
 		if (this.archiveFormat == ArchiveFormat.ZIP) {
 			archiveEntry = new ZipArchiveEntry(file, entryName);
 		} else if (this.archiveFormat == ArchiveFormat.TAR_GZ) {
@@ -532,5 +502,52 @@ public class ArchiveFileHandler {
 			outputStream.closeArchiveEntry();
 		}
 	}
-
+	
+	/**
+	 * Gets the path replacements.
+	 * @return the path replacements
+	 */
+	private HashMap<String, String> getPathReplacements() {
+		if (this.pathReplacements==null) {
+			this.pathReplacements = new HashMap<>();
+		}
+		return this.pathReplacements;
+	}
+	
+	/**
+	 * Adds a path replacement. When adding a file or folder to the archive, every
+	 * occurrence of replace will be replaced with replaceWith
+	 * @param replace the string to be replaced
+	 * @param replaceWith the string to replace it with
+	 */
+	public void addPathReplacement(String replace, String replaceWith) {
+		this.getPathReplacements().put(replace, replaceWith);
+	}
+	
+	/**
+	 * Deletes a previously defined replacement.
+	 * @param dontReplace
+	 */
+	public void deletePathReplacement(String dontReplace) {
+		this.getPathReplacements().get(dontReplace);
+	}
+	
+	
+	/**
+	 * Apply path replacements. All previously defined replacements will be applied to the path
+	 * @param path the path
+	 * @return the modified path
+	 */
+	private String applyPathReplacements(String path) {
+		String newPath = path;
+		if(this.getPathReplacements().isEmpty()==false) {
+			Vector<String> stringsToReplace = new Vector<>(this.getPathReplacements().keySet());
+			for (int i=0; i<stringsToReplace.size(); i++) {
+				String replace = stringsToReplace.get(i);
+				newPath = newPath.replaceAll(replace, this.getPathReplacements().get(replace));
+			}
+		}
+		return newPath;
+	}
+	
 }
