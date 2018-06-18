@@ -8,9 +8,20 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.1.0</tycho-version>
+		<tycho-version>1.2.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<url.repository.snapshotDir>/workbench/snapshots/</url.repository.snapshotDir>
+		<url.repository.snapshotDomain>https://p2.enflex.it</url.repository.snapshotDomain>
+		
+		<url.repository.releaseDir>/awb/2.1/</url.repository.releaseDir>
+		<url.repository.releaseDomain>https://p2.enflex.it</url.repository.releaseDomain>
+		
+		<repository.subDir>${url.repository.releaseDir}</repository.subDir>
+		<repository.domain>${url.repository.releaseDomain}</repository.domain>
+		<repository.updateSite>${repository.domain}${repository.subDir}</repository.updateSite>
+		
 	</properties>
 
 	<build>
@@ -138,7 +149,7 @@
 					<configuration>
 						<baselineRepositories>
 							<repository>
-								<url>https://p2.enflex.it/workbench/snapshots/</url>
+								<url>${repository.updateSite}</url>
 							</repository>
 						</baselineRepositories>
 					</configuration>

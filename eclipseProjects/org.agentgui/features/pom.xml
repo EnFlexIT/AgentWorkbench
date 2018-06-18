@@ -27,8 +27,6 @@
 				<configuration>
 					<excludes>
 						<plugin id="de.enflexit.oidc.libs" />
-						<plugin id="de.enflexit.db.hibernate" />
-						<plugin id="de.enflexit.db.mySQL" />
 						<plugin id="org.agentgui.lib.bouncyCastle" />
 						<plugin id="org.agentgui.lib.googleTranslate" />
 						<plugin id="org.agentgui.lib.jFreeChart" />
