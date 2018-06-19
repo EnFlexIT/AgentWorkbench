@@ -50,9 +50,9 @@
 					<products>
 						<product>
 							<id>org.agentgui</id>
-							<rootFolder>agentgui</rootFolder>
+							<rootFolder>AgentWorkbench</rootFolder>
 							<rootFolders>
-								<mac>AgentGui.app</mac>
+								<mac>AgentWorkbench.app</mac>
 							</rootFolders>
 						</product>
 					</products>
