@@ -15,11 +15,8 @@
 		<url.repository.snapshotDir>/workbench/snapshots/</url.repository.snapshotDir>
 		<url.repository.snapshotDomain>https://p2.enflex.it</url.repository.snapshotDomain>
 		
-		<url.repository.releaseDir>/awb/2.1/</url.repository.releaseDir>
-		<url.repository.releaseDomain>https://p2.enflex.it</url.repository.releaseDomain>
-		
-		<repository.subDir>${url.repository.releaseDir}</repository.subDir>
-		<repository.domain>${url.repository.releaseDomain}</repository.domain>
+		<repository.subDir>${url.repository.snapshotDir}</repository.subDir>
+		<repository.domain>${url.repository.snapshotDomain}</repository.domain>
 		<repository.updateSite>${repository.domain}${repository.subDir}</repository.updateSite>
 		
 	</properties>
