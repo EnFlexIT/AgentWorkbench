@@ -600,7 +600,12 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	 */
 	private ArrayList<String> getLocalAvailableProjectIDs() {
 		if (localAvailableProjectIDs==null) {
-			localAvailableProjectIDs = new ArrayList<>(Arrays.asList(Application.getGlobalInfo().getProjectSubDirectories()));
+			String[] localProjectDirectories = Application.getGlobalInfo().getProjectSubDirectories();
+			if (localProjectDirectories==null) {
+				localAvailableProjectIDs = new ArrayList<>();
+			} else {
+				localAvailableProjectIDs = new ArrayList<>(Arrays.asList(localProjectDirectories));
+			}
 		}
 		return localAvailableProjectIDs;
 	}
