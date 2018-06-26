@@ -68,9 +68,9 @@ import de.enflexit.common.transfer.RecursiveFolderDeleter;
  */
 public class DefaultProjectExportController implements ProjectExportController{
 
-	private static final String FILE_NAME_FOR_INSTALLATION_PACKAGE = "agentgui";
+	private static final String FILE_NAME_FOR_INSTALLATION_PACKAGE = "AgentWorkbench";
 	
-	private static final String PROJECT_PATH_WINDOWS_LINUX = "agentgui/projects";
+	private static final String PROJECT_PATH_WINDOWS_LINUX = "AgentWorkbench/projects";
 	private static final String PROJECT_PATH_MAC = "agentgui.app/Contents/Eclipse/projects";
 	
 	private static final String TEMP_FOLDER_SUFFIX = "_tmp";
