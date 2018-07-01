@@ -56,7 +56,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
-	private boolean debugUpdateProcedure = true;
+	private boolean debugUpdateProcedure = false;
 	
 	private Project currProject; 
 	private long currTimeStamp;
@@ -437,10 +437,10 @@ public class ProjectRepositoryUpdate extends Thread {
 		}
 		if (closed==false) return false;
 		
-		// --- Pack the current project into an project archive -----
+		// --- Backup the old project into an archive ---------------
 		if (this.packCurrentProjectToArchive()==false) return false;
-		// TODO
-		// --- Import the project archive ---------------------------
+
+		// --- Import the younger project archive -------------------
 		return this.importProjectFromArchive(updateFileName);
 	}
 	
