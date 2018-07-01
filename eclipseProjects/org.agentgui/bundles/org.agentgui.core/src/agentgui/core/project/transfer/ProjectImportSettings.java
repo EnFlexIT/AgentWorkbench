@@ -43,6 +43,8 @@ public class ProjectImportSettings implements Serializable {
 
 	private File projectArchiveFile;
 	private boolean extractInThread;
+	
+	private boolean overwriteExistingVersion;
 	private Runnable afterImportTask;
 	
 	/**
@@ -87,6 +89,22 @@ public class ProjectImportSettings implements Serializable {
 	public boolean isExtractInThread() {
 		return extractInThread;
 	}
+	
+	/**
+	 * Checks if the older version has to be overwritten.
+	 * @return true, if a current project version can be overwritten 
+	 */
+	public boolean isOverwriteExistingVersion() {
+		return overwriteExistingVersion;
+	}
+	/**
+	 * Sets to overwrite an existing version.
+	 * @param overwriteExistingVersion the new overwrite existing version
+	 */
+	public void setOverwriteExistingVersion(boolean overwriteExistingVersion) {
+		this.overwriteExistingVersion = overwriteExistingVersion;
+	}
+	
 	
 	/**
 	 * Returns the 'after-import-task' that will be executed, after the 

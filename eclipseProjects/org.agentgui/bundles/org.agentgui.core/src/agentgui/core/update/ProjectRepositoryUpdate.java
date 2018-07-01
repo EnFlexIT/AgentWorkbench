@@ -56,7 +56,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
-	private boolean debugUpdateProcedure = false;
+	private boolean debugUpdateProcedure = true;
 	
 	private Project currProject; 
 	private long currTimeStamp;
@@ -439,7 +439,7 @@ public class ProjectRepositoryUpdate extends Thread {
 		
 		// --- Pack the current project into an project archive -----
 		if (this.packCurrentProjectToArchive()==false) return false;
-		
+		// TODO
 		// --- Import the project archive ---------------------------
 		return this.importProjectFromArchive(updateFileName);
 	}
@@ -455,6 +455,7 @@ public class ProjectRepositoryUpdate extends Thread {
 		// --- Define settings for update import --------------------
 		ProjectImportSettings pims = new ProjectImportSettings(new File(projectArchiveFileName));
 		pims.setExtractInThread(false);
+		pims.setOverwriteExistingVersion(true);
 		pims.setAfterImportTask(this.getAfterUpdateImportTask());
 		
 		// --- Import the new version of the project ----------------

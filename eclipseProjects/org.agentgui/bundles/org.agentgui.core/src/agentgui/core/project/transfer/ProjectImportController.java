@@ -101,7 +101,7 @@ public class ProjectImportController {
 		final String rootFolder2Extract = zipper.getRootFolder2Extract();
 		String testFolder = destFolder + rootFolder2Extract;
 		File testFile = new File(testFolder);
-		if (testFile.exists()) {
+		if (this.getProjectImportSettings().isOverwriteExistingVersion()==false && testFile.exists()) {
 			String newLine = Application.getGlobalInfo().getNewLineSeparator();
 			String optionTitle = rootFolder2Extract + ": " + Language.translate("Verzeichnis bereits vorhanden!");
 			String optionMsg = Language.translate("Verzeichnis") + ": " + testFolder + newLine;
