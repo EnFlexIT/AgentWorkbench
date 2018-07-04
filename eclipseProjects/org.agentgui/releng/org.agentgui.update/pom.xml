@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.agentgui.update</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>2.1.2-SNAPSHOT</version>
 
 	<packaging>eclipse-repository</packaging>
 
@@ -12,8 +12,20 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<build>
-		<extensions>
-			<!-- Enabling upload via ssh -->
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<createArtifactRepository>true</createArtifactRepository>
+					<includeAllDependencies>true</includeAllDependencies>
+				</configuration>
+			</plugin>
+		</plugins>
+		
+		<!-- Enabling upload via ssh -->
+		<extensions> 
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh-external</artifactId>
@@ -83,6 +95,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 		<profile>
 			<id>p2DeployClean</id>
 			<build>

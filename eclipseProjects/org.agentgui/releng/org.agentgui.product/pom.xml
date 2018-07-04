@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.agentgui.product</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>2.1.2-SNAPSHOT</version>
 
 	<packaging>eclipse-repository</packaging>
 
@@ -16,16 +16,9 @@
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-p2-repository-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<includeAllDependencies>true</includeAllDependencies>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-director-plugin</artifactId>
 				<version>${tycho-version}</version>
+				
 				<executions>
 					<execution>
 						<!-- install the product using the p2 director -->
@@ -42,6 +35,7 @@
 						</goals>
 					</execution>
 				</executions>
+				
 				<configuration>
 					<includeAllDependencies>true</includeAllDependencies>
 					<profileProperties>
@@ -61,8 +55,8 @@
 						<linux>tar.gz</linux>
 						<macosx>tar.gz</macosx>
 					</formats>
-
 				</configuration>
+				
 			</plugin>
 		</plugins>
 	</build>

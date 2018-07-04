@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent.Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.1.1.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Agent.Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.1.2.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.agentgui.core/icons/awb128.png"/>
       <text>
-         Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and start Agents or Multi-Agent systems in various ways.
+         Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and execute Agents and Multi-Agent systems in various ways.
       </text>
    </aboutInfo>
 
