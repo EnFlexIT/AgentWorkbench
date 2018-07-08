@@ -112,7 +112,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	
 	private static String localBaseDir = "";
 	private static String localPathAgentGUI	 = "bin";
-	private static String localPathJade		 = "lib" + File.separator + "jade" +  File.separator + "lib";
 	private static String localPathProperty  = "properties" + File.separator;
 	
 	private static String localFileDictionary  = "dictionary";
@@ -584,18 +583,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public String getPathBaseDirIDE_BIN( ) {
 		return localBaseDir + localPathAgentGUI + File.separator;
 	}	
-	/**
-	 * This method can be invoked in order to get the path to the JADE libraries (e. g. 'lib\jade\lib').
-	 * @param absolute set true if you want to get the full path to this 
-	 * @return the path to the JADE libraries
-	 */
-	public String getPathJade(boolean absolute){
-		if (absolute == true) { 
-			return getFilePathAbsolute(localPathJade);
-		} else {
-			return localPathJade;	
-		}		
-	}
+	
 	/**
 	 * Creates the directory if not already there and thus required.
 	 * @param path the path
@@ -828,6 +816,29 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	
 	/**
+	 * Returns the eclipse launcher file.
+	 * @return the eclipse launcher
+	 */
+	public File getEclipseLauncher() {
+		
+		File eclipseLauncher = null;
+		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+			// --- Executed in the IDE --------------------
+			String instDirPath = this.getStringFromConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
+			// TODO:  Get the right file considering the current OS  			
+			File checkFile = new File(instDirPath + "AgentGui.exe");
+			if (checkFile.exists()==true) {
+				eclipseLauncher = checkFile;
+			}
+			
+		} else {
+			// --- Executed in the product ----------------
+			eclipseLauncher = new File(System.getProperty("eclipse.launcher"));
+		}
+		return eclipseLauncher;
+	}
+	
+	/**
 	 * This method can be used in order to get the applications executable 
 	 * jar-file that is in fact the equinox launcher.
 	 * @return the absolute path to the executable jar file
@@ -857,7 +868,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 				// --- Case separation IDE / product ----------------
 				if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 					// --- For the IDE environment ------------------
-					instDirPath = getStringFromConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
+					instDirPath = this.getStringFromConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
 					
 				} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct) {
 					// --- For the product --------------------------

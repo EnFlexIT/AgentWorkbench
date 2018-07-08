@@ -177,6 +177,8 @@ public class AWBUpdater extends Thread {
 			this.askBeforeDownload = true;
 		}
 
+		MirrorTools.mirrorP2RepositoryDebug();
+		
 	}
 
 	/*

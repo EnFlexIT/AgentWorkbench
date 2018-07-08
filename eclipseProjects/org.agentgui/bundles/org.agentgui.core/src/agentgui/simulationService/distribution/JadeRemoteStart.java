@@ -319,8 +319,8 @@ public class JadeRemoteStart {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			in.close();
-			err.close();	
+			if (in!=null) in.close();
+			if (err!=null) err.close();	
 		}
 
 	}
