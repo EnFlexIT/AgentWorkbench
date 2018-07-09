@@ -377,7 +377,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 * 
 	 * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
 	 */
-	private class MessageReceiveBehaviour extends CyclicBehaviour{
+	private class MessageReceiveBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 6462851620274965730L;
 		@Override
 		public void action() {

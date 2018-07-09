@@ -73,7 +73,7 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 			public void actionPerformed(ActionEvent e) {
 				classSelector.handleOkClick();
 				currentClass = classSelector.getClassSelected();
-				if (currentClass.equals("")) {
+				if (currentClass!=null && currentClass.isEmpty()) {
 					currentClass = null;
 				}
 				fireEditingStopped();

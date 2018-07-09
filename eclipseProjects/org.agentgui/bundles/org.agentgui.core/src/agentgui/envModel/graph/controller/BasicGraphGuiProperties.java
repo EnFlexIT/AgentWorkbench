@@ -300,22 +300,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				// --- No network component adapter was defined -------------------------
 				this.getJToolBarButtonSave().setEnabled(false);
 				this.getJToolBarButtonSaveAndExit().setEnabled(false);
-
-				String displayText = null;
-				if (this.networkComponent!=null) {
-					displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for the\n NetworkComponent", Language.EN) + " " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")!<br><br> </center></html>";
-				} else if (this.graphNode!=null) {
-					String domain = this.graphController.getNetworkModel().getDomain(this.graphNode); 
-					displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for\n the GraphNodes of the Domain", Language.EN) + " '" + domain + "'!<br><br> </center></html>";
-				}
-				
-				JLabel jLabelNoAdapter = new JLabel();
-				jLabelNoAdapter.setText(displayText);
-				jLabelNoAdapter.setFont(new Font("Dialog", Font.BOLD, 12));
-				jLabelNoAdapter.setHorizontalAlignment(JLabel.CENTER);
-				jLabelNoAdapter.setSize(new Dimension(200, 260));
-				
-				this.jComponentContent = jLabelNoAdapter;
+				this.jComponentContent = this.getContentForEmptyNetworkComponentAdapter();
 				
 			} else {
 				// --- There is a network component adapter available -------------------
@@ -370,13 +355,53 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					// --- If Available, Add individual tool bar elements ----------
 					this.addCustomToolBarElements();
 					
-					visualisation.validate();
+					if (visualisation==null) {
+						this.getJToolBarButtonSave().setEnabled(false);
+						this.getJToolBarButtonSaveAndExit().setEnabled(false);
+						String displayText = "<html><center>" + Language.translate("No visualisation component could be found", Language.EN) + "!<br><br> </center></html>";
+						visualisation = this.getContentForEmptyNetworkComponentAdapter(displayText);
+					} else {
+						visualisation.validate();
+					}
 					this.jComponentContent = visualisation;
 				}
 			}
 		}
 		return this.jComponentContent;
 	}
+	
+	
+	/**
+	 * Gets the content for an empty {@link NetworkComponentAdapter}.
+	 * @return the content for empty network component adapter
+	 */
+	private JComponent getContentForEmptyNetworkComponentAdapter() {
+		return this.getContentForEmptyNetworkComponentAdapter(null);
+	}
+	/**
+	 * Gets the content for an empty {@link NetworkComponentAdapter}.
+	 * @param displayText the display text to show
+	 * @return the content for empty network component adapter
+	 */
+	private JComponent getContentForEmptyNetworkComponentAdapter(String displayText) {
+		
+		if (displayText==null || displayText.isEmpty()) {
+			if (this.networkComponent!=null) {
+				displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for the\n NetworkComponent", Language.EN) + " " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")!<br><br> </center></html>";
+			} else if (this.graphNode!=null) {
+				String domain = this.graphController.getNetworkModel().getDomain(this.graphNode); 
+				displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for\n the GraphNodes of the Domain", Language.EN) + " '" + domain + "'!<br><br> </center></html>";
+			}
+		}
+		
+		JLabel jLabelNoAdapter = new JLabel();
+		jLabelNoAdapter.setText(displayText);
+		jLabelNoAdapter.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelNoAdapter.setHorizontalAlignment(JLabel.CENTER);
+		jLabelNoAdapter.setSize(new Dimension(200, 260));
+		return jLabelNoAdapter; 
+	}
+	
 	
 	/**
 	 * This method initializes jContentPane
