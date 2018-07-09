@@ -46,6 +46,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -823,16 +824,38 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		
 		File eclipseLauncher = null;
 		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
-			// --- Executed in the IDE --------------------
+			// ------------------------------------------------------
+			// --- Executed in the IDE ------------------------------
+			// ------------------------------------------------------
 			String instDirPath = this.getStringFromConfiguration(BundleProperties.DEF_PRODUCT_INSTALLATION_DIRECTORY, null);
-			// TODO:  Get the right file considering the current OS  			
-			File checkFile = new File(instDirPath + "AgentGui.exe");
-			if (checkFile.exists()==true) {
-				eclipseLauncher = checkFile;
+			if (instDirPath==null) return null;
+			
+			// --- Check if directory exists ------------------------
+			File execDirectory = new File(instDirPath);
+			if (execDirectory.exists()==false) return null;
+			
+			// --- Get executable files in directory ----------------
+			List<File> execFileList = new ArrayList<>();
+			File[] filesInDir =  execDirectory.listFiles();
+			for (int i = 0; i < filesInDir.length; i++) {
+				File checkFile = filesInDir[i];
+				if (checkFile.isDirectory()==false && checkFile.canExecute()==true) {
+					String checkFileName = checkFile.getName();
+					boolean isAgentGuiExecutable = checkFileName.startsWith("Agent") && checkFileName.endsWith(".ini")==false && checkFileName.endsWith(".bat")==false;
+					if (isAgentGuiExecutable==true ) {
+						execFileList.add(checkFile);
+					}
+				}
+			}
+			// --- Define return value ------------------------------
+			if (execFileList.size()>0) {
+				eclipseLauncher = execFileList.get(0);
 			}
 			
 		} else {
-			// --- Executed in the product ----------------
+			// ------------------------------------------------------
+			// --- Executed in the product --------------------------
+			// ------------------------------------------------------
 			eclipseLauncher = new File(System.getProperty("eclipse.launcher"));
 		}
 		return eclipseLauncher;
