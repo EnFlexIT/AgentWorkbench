@@ -45,6 +45,9 @@ public interface MirrorToolListener {
 
 	/**
 	 * On mirroring finalized will be invoked if a mirroring is done.
+	 *
+	 * @param job the job that was executed
+	 * @param successful true, if the mirroring was successful
 	 */
 	public void onMirroringFinaliized(MirrorToolsJob job, boolean successful); 
 	

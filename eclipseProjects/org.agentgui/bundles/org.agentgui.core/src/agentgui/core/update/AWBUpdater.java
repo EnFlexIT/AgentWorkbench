@@ -176,8 +176,6 @@ public class AWBUpdater extends Thread {
 			this.doUpdateProcedure = true;
 			this.askBeforeDownload = true;
 		}
-
-		MirrorTool.mirrorDebugger();
 		
 	}
 

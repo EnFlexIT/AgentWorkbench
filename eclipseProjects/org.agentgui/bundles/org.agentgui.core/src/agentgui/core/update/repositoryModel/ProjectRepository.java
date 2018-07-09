@@ -42,6 +42,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -168,7 +169,57 @@ public class ProjectRepository implements Serializable {
 		return null;
 	}
 	
+	/**
+	 * Return a complete repository file list.
+	 *
+	 * @return the repository file list
+	 */
+	public List<String> getRepositoryFileList() {
+		return this.getRepositoryFileList(null);
+	}
+	/**
+	 * Return a complete repository file list.
+	 *
+	 * @param baseFileReferenceOrLink the base file reference or link to the repository (may be null)
+	 * @return the repository file list
+	 */
+	public List<String> getRepositoryFileList(String baseFileReferenceOrLink) {
+	
+		// --- Finally, define the source location ------------------
+		String location = "";
+		if (baseFileReferenceOrLink!=null  && baseFileReferenceOrLink.isEmpty()==false) {
+			location = baseFileReferenceOrLink;
+			String fileSeparator = File.separator;
+			if (this.isWebRepository()==true)  fileSeparator = "/";
+			if (location.endsWith(fileSeparator)==false) location += fileSeparator; 
+		}
+		
+		// --- Define the file list ---------------------------------
+		ArrayList<String> fileList = new ArrayList<>();
 
+		// --- Read the list of projects ----------------------------
+		ArrayList<String> projectIDs = new ArrayList<>(this.getProjectRepositories().keySet());
+		for (int i = 0; i < projectIDs.size(); i++) {
+			
+			String projectID = projectIDs.get(i);
+			ProjectRepositoryEntries per = this.getProjectRepositoryEntries(projectID);
+			
+			// --- Get all tags for that project --------------------
+			ArrayList<String> tags = new ArrayList<>(per.getRepositoryEntries().keySet());
+			for (int j = 0; j < tags.size(); j++) {
+
+				String tag = tags.get(j);
+				RepositoryTagVersions tagVersions = per.getRepositoryEntries().get(tag);
+				// --- Get all repository entries -------------------
+				Vector<RepositoryEntry> repoEntries = tagVersions.getRepositoryTagVectorSorted(true);
+				for (int k = 0; k < repoEntries.size(); k++) {
+					fileList.add(location + repoEntries.get(k).getFileName());	
+				}
+			}
+		}
+		return fileList;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- Methods for loading and saving a ProjectRepository -----------------  

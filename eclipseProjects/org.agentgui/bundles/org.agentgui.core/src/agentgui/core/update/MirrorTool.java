@@ -30,12 +30,15 @@ package agentgui.core.update;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 import agentgui.core.application.Application;
+import agentgui.core.update.repositoryModel.ProjectRepository;
+import de.enflexit.common.transfer.Download;
 
 /**
- * The Class MirrorTools can be used to mirror p2 or project repositories.
+ * The Class MirrorTools can be used to mirror Eclipse p2 or Agent.Workbench project repositories.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -64,13 +67,16 @@ public class MirrorTool implements MirrorToolListener {
 	private static String debugP2Source = "http://p2.enflex.it/awb/2.1";
 	private static String debugP2Destin = "D:\\00 Tmp\\01 AWB P2 Mirror";
 	
-	
+	private static boolean debugPRMirroring = false;
+	private static String debugPRSource = "https://p2.enflex.it/awbProjectRepository/";
+	private static String debugPRDestin = "D:\\00 Tmp\\01 AWB Project Mirror";
 	
 	/**
 	 * Mirror a P2 repository for debug purposes.
 	 */
-	protected static void mirrorDebugger() {
+	protected void mirrorDebugger() {
 		MirrorTool mt = new MirrorTool();
+		MirrorTool.mirrorProjectRepository(debugPRSource, debugPRDestin, mt);
 		MirrorTool.mirrorP2Repository(P2DownloadType.MetaData, debugP2Source, debugP2Destin, mt);
 		MirrorTool.mirrorP2Repository(P2DownloadType.Artifacts, debugP2Source, debugP2Destin, mt);
 	}
@@ -84,11 +90,88 @@ public class MirrorTool implements MirrorToolListener {
 	
 	
 	/**
+	 * Mirror project repository.
+	 *
+	 * @param sourceLocation the source location
+	 * @param destinationDirectory the destination directory
+	 * @param listener the MirrorToolListener to inform after the procedure
+	 */
+	public static void mirrorProjectRepository(final String sourceLocation, final String destinationDirectory, final MirrorToolListener listener) {
+		
+		if (sourceLocation==null) throw new NullPointerException("No specified source location for the project repository mirroring.");
+		if (destinationDirectory==null) throw new NullPointerException("No specified destination directory for the project repository mirroring.");
+
+		Thread mirrorThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				boolean successful = false;
+				
+				ProjectRepository projectRepo = ProjectRepository.loadProjectRepository(sourceLocation);
+				if (projectRepo!=null) {
+					// --- Save XML file to destination -----------------------
+					File destinDirFile = new File(destinationDirectory);
+					boolean dirExists = destinDirFile.exists();
+					if (dirExists==false) {
+						dirExists = destinDirFile.mkdirs();
+					}
+					if (dirExists==true) {
+						// --- Locally save ProjectRepository file ------------ 
+						projectRepo.save(destinDirFile);
+						
+						// --- Check destination directory value -------------- 
+						String destinDir = destinationDirectory;
+						if (destinDir.endsWith(File.separator)==false) destinDir += File.separator;
+						
+						// --- List files and download to destination ---------
+						successful = true; 
+						List<String> downloadFiles = projectRepo.getRepositoryFileList();
+						for (int i = 0; i < downloadFiles.size(); i++) {
+							// --- Download project file ----------------------
+							String downloadFile = downloadFiles.get(i);
+							if (debugPRMirroring==true) System.out.println("[MirrorProcess]: Download project archive '" + downloadFile + "'");
+							
+							// --- Do the actual download ---------------------
+							String sourceFilePath = sourceLocation + downloadFile;
+							String destinFilePath = destinDir + downloadFile;
+							File destinFile = new File(destinFilePath);
+							
+							if (destinFile.exists()==false) {
+								// --- Do the download ------------------------
+								Download download = new Download(sourceFilePath, destinFilePath);
+								download.startDownload();
+								// --- Exit on failure ------------------------
+								if (download.wasSuccessful()==false) {
+									successful = false; 
+									break;
+								}	
+							}
+						} // end for
+					} // end destination directory exists
+				 }// end ProjectRepository loaded
+				
+				// --- Inform listener about the result of the job ------------
+				if (listener!=null) {
+					listener.onMirroringFinaliized(MirrorToolsJob.MirrorProjectRepository, successful);
+				}
+
+			}
+		});
+		
+		// --- Name and start the thread --------------------------------------
+		mirrorThread.setName("Mirror project repository " + sourceLocation);
+		mirrorThread.start();
+		
+	}
+	
+	
+	/**
 	 * Mirrors the specified P2 repositories metadata or artifacts to the destination directory.
 	 *
 	 * @param downloadType the download type
 	 * @param sourceLocation the source location
 	 * @param destinationDirectory the destination directory
+	 * @param listener the MirrorToolListener to inform after the procedure
 	 */
 	public static void mirrorP2Repository(final P2DownloadType downloadType, final String sourceLocation, final String destinationDirectory, final MirrorToolListener listener) {
 		
