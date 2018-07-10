@@ -61,58 +61,33 @@ import de.enflexit.common.Language;
  */
 public class TrustStoreController {
 	
-	private DefaultTableModel tableModel;
-	protected KeyStore trustStore;
-	private InputStream trustStoreInputStream = null;
-	private File trustStoreFile;
-	private FileOutputStream trustStoreOutputStream;
-	private String trustStorePassword;
-
-	/**
-	 * returns the key store object for direct interaction
-	 *
-	 * @return the key store object
-	 */
-	public KeyStore getKeyStore(){
-		return trustStore;
-	}
-		
-	/**
-	 * Gets the trust store password.
-	 *
-	 * @return the trust store password
-	 */
-	public String getTrustStorePassword() {
-		return trustStorePassword;
-	}
-
-	/**
-	 * Sets the trust store password.
-	 *
-	 * @param trustStorePassword the new trust store password
-	 */
-	public void setTrustStorePassword(String trustStorePassword) {
-		this.trustStorePassword = trustStorePassword;
-	}
-
 	private Dialog ownerDialog;
+
 	private boolean initialized = false;
 
-	/*
+	protected KeyStore trustStore;
+	private String trustStorePassword;
+
+	private DefaultTableModel tableModel;
+	private File trustStoreFile;
+	private InputStream trustStoreInputStream = null;
+	private FileOutputStream trustStoreOutputStream;
+	
+
+
+	/**
 	 * generates a blank controller, which still needs to initialize the trustStore
 	 */
 	public TrustStoreController(Dialog ownerDialog){
 		this(ownerDialog, null, null, false);
 	}
-	
-	
 	/**
 	 * This Initializes the TrustStoreController.
 	 */
 	public TrustStoreController(Dialog ownerDialog, File trustStoreFile, String trustStorePassword, boolean edit) {
 		this.ownerDialog = ownerDialog;
 		try {
-			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			this.trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			if (trustStoreFile != null && trustStorePassword != null) {
 				if(edit){
 					openTrustStore(trustStoreFile, trustStorePassword);
@@ -125,6 +100,29 @@ public class TrustStoreController {
 		}
 	}
 
+	/**
+	 * returns the key store object for direct interaction
+	 * @return the key store object
+	 */
+	public KeyStore getKeyStore(){
+		return trustStore;
+	}
+		
+	/**
+	 * Gets the trust store password.
+	 * @return the trust store password
+	 */
+	public String getTrustStorePassword() {
+		return trustStorePassword;
+	}
+	/**
+	 * Sets the trust store password.
+	 * @param trustStorePassword the new trust store password
+	 */
+	public void setTrustStorePassword(String trustStorePassword) {
+		this.trustStorePassword = trustStorePassword;
+	}
+	
 	/**
 	 * This method allows the user to create a TrustStore and protect its
 	 * integrity with a password.
@@ -250,8 +248,8 @@ public class TrustStoreController {
 	 * @param newAlias the new alias
 	 */
 	public void changeAlias(String oldAlias, String newAlias) {
+		
 		System.out.println("change alias from " + oldAlias + " to " + newAlias);
-
 		try {
 			if (trustStore.isCertificateEntry(oldAlias)) {
 				System.out.println("isCertificateEntry");
