@@ -1091,6 +1091,23 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public PlugInsLoaded getPlugInsLoaded() {
 		return plugInsLoaded;
 	}
+	
+	/**
+	 * Removes a plug in class from the reference vector. If the plug in is currently loaded, it will be unloaded before. 
+	 * @param classReference the class reference
+	 */
+	public void removePlugInClassReference(String classReference) {
+		// --- Check if the PlugIn is currently loaded --------------
+		PlugIn plugIn = this.getPlugInsLoaded().getPlugIn(classReference);
+		
+		if (plugIn!=null) {
+			// --- If it is, unload it and remove it from the class reference vector ----
+			this.plugInRemove(plugIn, true);
+		} else {
+			// --- If not, just remove it from the class reference vector ---------------
+			this.plugIns_Classes.remove(classReference);
+		}
+	}
 	// ----------------------------------------------------------------------------------
 	// --- Here we come with methods for (un-) load ProjectPlugIns --- End --------------
 	// ----------------------------------------------------------------------------------
