@@ -78,7 +78,7 @@ public class AWBUpdater extends Thread {
 	 * Instantiates a new Agent.GUI updater process.
 	 */
 	public AWBUpdater() {
-		this.initialize();
+		this(false);
 	}
 	/**
 	 * Instantiates a new Agent.GUI updater process.
@@ -167,7 +167,7 @@ public class AWBUpdater extends Thread {
 		if (this.globalInfo.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			this.askBeforeDownload = true;
 			this.doUpdateProcedure = false; // set to 'true' for further developments of the AgentGuiUpdater class
-			System.out.println(Application.getGlobalInfo().getApplicationTitle() + "-Update: No updates in the IDE environment available.");
+			System.out.println("[" + this.getClass().getSimpleName() + "] No updates in the IDE environment available.");
 		}
 
 		// ------------------------------------------------
@@ -227,7 +227,7 @@ public class AWBUpdater extends Thread {
 	public void startP2Updates() {
 		
 		// --- Check for available updates -------
-		System.out.println("P2 Update: Check for updates ...");
+		System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Check for updates ...");
 		
 		if (Application.isOperatingHeadless() == false) {
 			this.getProgressMonitor().setVisible(true);
@@ -239,7 +239,7 @@ public class AWBUpdater extends Thread {
 
 			if (status.getCode()==UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
 				// --- No updates found --------------
-				System.out.println("P2 Update: No updates found!");
+				System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: No updates found!");
 				
 				if (Application.isOperatingHeadless() == false) {
 					this.getProgressMonitor().setProgress(100);
@@ -258,7 +258,7 @@ public class AWBUpdater extends Thread {
 				if (this.askBeforeDownload==true) {
 					
 					// --- Temporary hide the progress dialog, otherwise the confirmation dialog would not be shown-------- 
-					if(this.executionMode == ExecutionMode.APPLICATION) {
+					if (this.executionMode == ExecutionMode.APPLICATION) {
 						this.getProgressMonitor().setVisible(false);
 					}
 					
@@ -266,7 +266,7 @@ public class AWBUpdater extends Thread {
 					int userAnswer = JOptionPane.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), Application.getGlobalInfo().getApplicationTitle() + " Update", JOptionPane.YES_NO_OPTION);
 					if (userAnswer == JOptionPane.NO_OPTION) {
 						installUpdates = false;
-						System.out.println("P2 Update: Update canceled by user.");
+						System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Update canceled by user.");
 						if(Application.isOperatingHeadless() == false) {
 							this.getProgressMonitor().setVisible(false);
 							this.getProgressMonitor().dispose();
@@ -285,10 +285,10 @@ public class AWBUpdater extends Thread {
 					}
 					status = P2OperationsHandler.getInstance().installAvailableUpdates();
 					if (status.isOK()) {
-						System.out.println("P2 Update: Updates sucessfully installed, restarting...");
+						System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Updates sucessfully installed, restarting...");
 						Application.restart();
 					} else {
-						System.err.println("P2 Update: Error installing updates.");
+						System.err.println("[" + this.getClass().getSimpleName() + "] P2 Update: Error installing updates.");
 					}
 				}
 				
@@ -359,7 +359,7 @@ public class AWBUpdater extends Thread {
 	}
 	private void debugPrint(String text) {
 		if (this.debug==true) {
-			System.out.println(text);
+			System.out.println("[" + this.getClass().getSimpleName() + "] " + text);
 		}
 	}
 
