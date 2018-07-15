@@ -189,7 +189,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	@XmlElementWrapper(name = "projectFeatures")
 	@XmlElement(name = "projectFeature")
-	private Vector<FeatureInfo> projectFeatures = new Vector<FeatureInfo>();
+	private Vector<FeatureInfo> projectFeatures;
 	
 	/**
 	 * This Vector holds the additional resources which are used for the current project 
@@ -729,11 +729,14 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Gets the project features.
+	 * Returns the features required for the current project.
 	 * @return the project features
 	 */
 	@XmlTransient
 	public Vector<FeatureInfo> getProjectFeatures() {
+		if (projectFeatures==null) {
+			projectFeatures = new Vector<>();
+		}
 		return projectFeatures;
 	}
 	/**
@@ -774,7 +777,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return true, if all required features are available
 	 */
 	public boolean requiresFeatureInstallation() {
-		for (FeatureInfo feature : this.getProjectFeatures()) {
+		for (int i=0; i<this.getProjectFeatures().size(); i++) {
+			FeatureInfo feature = this.getProjectFeatures().get(i);
 			if (P2OperationsHandler.getInstance().checkIfInstalled(feature.getId())==false) {
 				return true;
 			}
@@ -815,7 +819,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				}
 			}
 		}
-		
 		return somethingInstalled;
 	}
 	/**

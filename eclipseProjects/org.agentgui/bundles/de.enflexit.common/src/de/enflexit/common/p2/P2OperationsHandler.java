@@ -153,7 +153,6 @@ public class P2OperationsHandler {
 
 	/**
 	 * Gets the metadata repository manager.
-	 *
 	 * @return the metadata repository manager
 	 */
 	private IMetadataRepositoryManager getMetadataRepositoryManager() {
@@ -162,10 +161,8 @@ public class P2OperationsHandler {
 		}
 		return metadataRepositoryManager;
 	}
-
 	/**
 	 * Gets the artifact repository manager.
-	 *
 	 * @return the artifact repository manager
 	 */
 	private IArtifactRepositoryManager getArtifactRepositoryManager() {
@@ -200,7 +197,6 @@ public class P2OperationsHandler {
 	public void addRepository(URI repositoryURI) {
 		this.addRepository(repositoryURI, null);
 	}
-
 	/**
 	 * Adds a new p2 repository.
 	 *
@@ -210,11 +206,21 @@ public class P2OperationsHandler {
 	public void addRepository(URI repositoryURI, String repositoryName) {
 		this.getMetadataRepositoryManager().addRepository(repositoryURI);
 		this.getArtifactRepositoryManager().addRepository(repositoryURI);
-		if (repositoryName != null) {
+		if (repositoryName!=null) {
 			this.getMetadataRepositoryManager().setRepositoryProperty(repositoryURI, IRepository.PROP_NICKNAME, repositoryName);
 		}
 	}
+	/**
+	 * Checks if the specified repository is already known.
+	 *
+	 * @param repositoryURI the repository URI
+	 * @return true, if is known repository
+	 */
+	public boolean isKnownRepository(URI repositoryURI) {
+		return this.getMetadataRepositoryManager().contains(repositoryURI) & this.getArtifactRepositoryManager().contains(repositoryURI);
+	}
 
+	
 	/**
 	 * Installs an {@link IInstallableUnit} from a p2 repository.
 	 * 
