@@ -100,7 +100,7 @@ public class NetworkAddresses {
 	}
 
 	/**
-	 * Starts the evaluation of the Ip addresses locally available.
+	 * Starts the evaluation of the IP addresses locally available.
 	 */
 	private void fillNetworkAddressVector() {
 
@@ -164,6 +164,31 @@ public class NetworkAddresses {
 				return nwa1.getSelectionPriority().compareTo(nwa2.getSelectionPriority());
 			}
 		});
+	}
+	
+	/**
+	 * Checks if the specified IP address is locally available.
+	 *
+	 * @param ipAddress the IP address to check
+	 * @return true, if is available IP
+	 */
+	public boolean isAvailableIP(String ipAddress) {
+		
+		if (ipAddress==null || ipAddress.isEmpty()) return false;
+		
+		// --- Get all available network addresses --------  
+		Vector<NetworkAddress> netAddressVector = new Vector<>(this.getNetworkAddressVector());
+		netAddressVector.addAll(this.getInet4AddressesLoopBack());
+
+		// --- Check all available network addresses ------  
+		for (int i = 0; i < netAddressVector.size(); i++) {
+			NetworkAddress netAddess = netAddressVector.get(i);
+			if (netAddess.getInetAddress().getHostAddress().equals(ipAddress)) {
+				return true;
+			}
+		}
+		return false;
+		
 	}
 	
 	/**

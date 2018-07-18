@@ -35,8 +35,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -53,6 +51,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -70,18 +70,21 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JadeSetupMTP extends JPanel implements ActionListener, Observer, ItemListener, FocusListener {
+public class JadeSetupMTP extends JPanel implements ActionListener, Observer, ItemListener {
 
 	private static final long serialVersionUID = -7016775471452161527L;
 
-	private Project currProject = null;
-	private HttpsConfigWindow httpsConfigWindow ;
+	private Project currProject;
+//	private HttpsConfigWindow httpsConfigWindow;
 
-	private JLabel jLabelPort = null;
-	private JLabel jLabelPortExplain = null;
-	private JTextField jTextFieldDefaultPort = null;
-	private JButton jButtonSetPortDefault = null;
-	private JButton jButtonSetPort = null;
+	private boolean pauseObserver;
+//	private boolean pauseDocumentListener;
+
+	private JLabel jLabelPort;
+	private JLabel jLabelPortExplain;
+	private JTextField jTextFieldDefaultPort;
+	private JButton jButtonSetPortDefault;
+	private JButton jButtonSetPort;
 	private JLabel jLabelMTP;
 	private JRadioButton jRadioButtonMtpAutoConfig;
 	private JRadioButton jRadioButtonMtpIP;
@@ -104,10 +107,6 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JButton jButtonEditMtpProtocol;
 	private JComboBoxMtpProtocol jComboBoxMtpProtocol;
 	
-	private File keyStore;
-	private String keyStorePassword;
-	private File trustStore;
-	private String trustStorePassword;
 	private JPanel jPanelMTPaddress;
 	private JPanel jPanelProtocol;
 	private JPanel jPanelPorts;
@@ -303,7 +302,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			gbc_jComboBoxMtpProtocol.insets = new Insets(0, 0, 5, 5);
 			gbc_jComboBoxMtpProtocol.gridx = 1;
 			gbc_jComboBoxMtpProtocol.gridy = 0;
-			jPanelProtocol.add(getJcomboBoxMtpProtocol(), gbc_jComboBoxMtpProtocol);
+			jPanelProtocol.add(getJComboBoxMtpProtocol(), gbc_jComboBoxMtpProtocol);
 			GridBagConstraints gbc_jButtonEditMtpProtocol = new GridBagConstraints();
 			gbc_jButtonEditMtpProtocol.anchor = GridBagConstraints.EAST;
 			gbc_jButtonEditMtpProtocol.insets = new Insets(0, 0, 5, 0);
@@ -527,8 +526,10 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		return jLabelIP;
 	}
 	
+	
 	/**
 	 * Gets the jTextFieldIPAddress.
+	 * @param pauseDocumentListener set true to pause the document listener
 	 * @return the jTextFieldIPAddress
 	 */
 	private JTextField getJTextFieldIPAddress() {
@@ -536,7 +537,28 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jTextFieldIPAddress = new JTextField();
 			jTextFieldIPAddress.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldIPAddress.setPreferredSize(new Dimension(400, 26));
-			jTextFieldIPAddress.addFocusListener(this);
+			jTextFieldIPAddress.getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void removeUpdate(DocumentEvent de) {
+					this.setIPAddress();
+				}
+				@Override
+				public void insertUpdate(DocumentEvent de) {
+					this.setIPAddress();
+				}
+				@Override
+				public void changedUpdate(DocumentEvent de) {
+					this.setIPAddress();
+				}
+				private void setIPAddress() {
+					String newValue = getJTextFieldIPAddress().getText().trim();
+					if (newValue.equals(currProject.getJadeConfiguration().getMtpIpAddress())==false) {
+						pauseObserver = true;
+						currProject.getJadeConfiguration().setMtpIpAddress(newValue);
+						pauseObserver = false;
+					}
+				}
+			});
 		}
 		return jTextFieldIPAddress;
 	}
@@ -643,6 +665,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jTextFieldKeyStoreFile = new JTextField();
 			jTextFieldKeyStoreFile.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldKeyStoreFile.setPreferredSize(new Dimension(400, 26));
+			jTextFieldKeyStoreFile.setEditable(false);
 		}
 		return jTextFieldKeyStoreFile;
 	}
@@ -655,6 +678,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jTextFieldTrustStoreFile = new JTextField();
 			jTextFieldTrustStoreFile.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldTrustStoreFile.setPreferredSize(new Dimension(400, 26));
+			jTextFieldTrustStoreFile.setEditable(false);
 		}
 		return jTextFieldTrustStoreFile;
 	}
@@ -686,140 +710,23 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	 * This method initializes jComboBoxMtpProtocol	
 	 * @return JComboBoxMtpProtocol	
 	 */
-	private JComboBoxMtpProtocol getJcomboBoxMtpProtocol(){
+	private JComboBoxMtpProtocol getJComboBoxMtpProtocol(){
 		if( jComboBoxMtpProtocol == null){
 			jComboBoxMtpProtocol = new JComboBoxMtpProtocol();
-			jComboBoxMtpProtocol.setPreferredSize(new Dimension(80, 26));
+			jComboBoxMtpProtocol.setPreferredSize(new Dimension(130, 26));
 			jComboBoxMtpProtocol.addItemListener(this);
 		}
 		return jComboBoxMtpProtocol;
 	}
-	/**
-	 * This method initializes keyStore.
-	 * @return keyStore
-	 */
-	private File getKeyStore() {
-		return keyStore;
-	}
-	/**
-	 * Sets keyStore.
-	 * @param keyStore
-	 */
-	private void setKeyStore(File keyStore) {
-		this.keyStore = keyStore;
-	}
-	/**
-	 * This method initializes keyStorePassword.
-	 * @return keyStorePassword
-	 */
-	private String getKeyStorePassword() {
-		return keyStorePassword;
-	}
-	/**
-	 * Sets keyStorePassword.
-	 * @param keyStorePassword
-	 */
-	private void setKeyStorePassword(String keyStorePassword) {
-		this.keyStorePassword = keyStorePassword;
-	}
-	/**
-	 * This method initializes trustStore.
-	 * @return trustStore
-	 */
-	private File getTrustStore() {
-		return trustStore;
-	}
-	/**
-	 * Sets trustStore.
-	 * @param trustStore
-	 */
-	private void setTrustStore(File trustStore) {
-		this.trustStore = trustStore;
-	}
-	/**
-	 * This method initializes trustStorePassword.
-	 * @return trustStorePassword
-	 */
-	private String getTrustStorePassword() {
-		return trustStorePassword;
-	}
-	/**
-	 * Sets trustStorePasswords.
-	 * @param trustStorePassword
-	 */
-	private void setTrustStorePassword(String trustStorePassword) {
-		this.trustStorePassword = trustStorePassword;
-	}
 	
 	/**
 	 * Enables or disables all GUI components that are necessary for HTTPS only
-	 * @param enabledState The enabed state to set
+	 * @param enabledState The enabled state to set
 	 */
 	private void setHttpsComponentsEnabledState(boolean enabledState){
 		this.getJTextFieldKeyStoreFile().setEnabled(enabledState);
 		this.getJTextFieldTrustStoreFile().setEnabled(enabledState);
 		this.getJButtonEditMtpProtocol().setEnabled(enabledState);
-	}
-	/**
-	 * Opens the HttpsCinfogWindow to configure the HTTPS MTP
-	 * @param trigger 
-	 * @param configuredProtocol 
-	 */
-	private void editHTTPSsettings(Object trigger, MtpProtocol configuredProtocol) {
-		if (trigger == jButtonEditMtpProtocol) {
-			// --- In case that the user choose to edit the HTTPS MTP ----------
-			// --- Open the HttpsConfigWindow ----------------------------------
-			httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow(), getKeyStore(), getKeyStorePassword(), getTrustStore(), getTrustStorePassword());
-			// --- Wait for the user -------------------------------------------
-			if (httpsConfigWindow.isCanceled() == false) {
-				// ---- Return the KeyStore and TrustStore chosen by the user --
-				this.setKeyStore(httpsConfigWindow.getKeyStoreFile());
-				this.setTrustStore(httpsConfigWindow.getTrustStoreFile());
-				this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
-				this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-				this.currProject.getJadeConfiguration().setKeyStoreFile(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
-				this.currProject.getJadeConfiguration().setTrustStoreFile(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
-				this.currProject.getJadeConfiguration().setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
-				this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-				this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
-				this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
-				this.currProject.getJadeConfiguration().setMtpProtocol(configuredProtocol);
-			} 
-		} else if (trigger == jComboBoxMtpProtocol) {
-			
-			String keyStoreFilePath = this.currProject.getJadeConfiguration().getKeyStoreFile();
-			String trustStoreFilePath = this.currProject.getJadeConfiguration().getTrustStoreFile();
-			
-			// --- If the certificate stores are not set or not existing, show the store configuration window ----------
-			if(keyStoreFilePath == null || trustStoreFilePath == null || new File(keyStoreFilePath).exists() == false || new File(trustStoreFilePath).exists() == false){
-				
-				// --- In case that the user choose to configure new HTTPS MTP ------
-				httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow());
-				
-				// - - Wait for the user - - - - - - - - - - - - -
-				if (httpsConfigWindow.isCanceled() == false) {
-					// ---- Return the KeyStore and TrustStore chosen by the user ---
-					this.setKeyStore(httpsConfigWindow.getKeyStoreFile());
-					this.setTrustStore(httpsConfigWindow.getTrustStoreFile());
-					this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
-					this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-					this.currProject.getJadeConfiguration().setKeyStoreFile(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
-					this.currProject.getJadeConfiguration().setTrustStoreFile(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
-					this.currProject.getJadeConfiguration().setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
-					this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-					this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
-					this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
-					this.currProject.getJadeConfiguration().setMtpProtocol(configuredProtocol);
-				} else {
-					// ---- If the Button Cancel is pressed -------------------------
-					this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
-					this.setHttpsComponentsEnabledState(false);
-				}
-			} else {
-				this.currProject.getJadeConfiguration().setMtpProtocol(configuredProtocol);
-			}
-			
-		}
 	}
 
 	/**
@@ -836,7 +743,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			currPort = Application.getGlobalInfo().getJadeLocalPort();
 			currProject.getJadeConfiguration().setLocalPort(currPort);
 		}
-		jTextFieldDefaultPort.setText(currPort.toString());
+		this.getJTextFieldDefaultPort().setText(currPort.toString());
 		
 		// --- MTP address creation -------------
 		MTP_Creation mTP_Creation = this.currProject.getJadeConfiguration().getMtpCreation();
@@ -851,6 +758,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			this.getJRadioButtonMtpIP().setSelected(true);
 			break;
 		}
+		
 		this.getJTextFieldIPAddress().setText(this.currProject.getJadeConfiguration().getMtpIpAddress());
 		this.refreshMTPView();
 		
@@ -863,16 +771,12 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		this.getJTextFieldDefaultPortMTP().setText(currPortMTP.toString());
 		
 		MtpProtocol mtpProtocol = this.currProject.getJadeConfiguration().getMtpProtocol();
-		this.getJcomboBoxMtpProtocol().setSelectedProtocol(mtpProtocol);
+		this.getJComboBoxMtpProtocol().setSelectedProtocol(mtpProtocol);
 
 		if (mtpProtocol.equals(MtpProtocol.HTTPS) || mtpProtocol.equals(MtpProtocol.PROXIEDHTTPS)) {
 			this.setHttpsComponentsEnabledState(true);
-			this.setKeyStore(new File(this.currProject.getJadeConfiguration().getKeyStoreFile()));
-			this.setTrustStore(new File(this.currProject.getJadeConfiguration().getTrustStoreFile()));
-			this.setKeyStorePassword(this.currProject.getJadeConfiguration().getKeyStorePassword());
-			this.setTrustStorePassword(this.currProject.getJadeConfiguration().getTrustStorePassword());
-			this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
-			this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
+			this.getJTextFieldKeyStoreFile().setText(this.currProject.getJadeConfiguration().getKeyStoreFile());
+			this.getJTextFieldTrustStoreFile().setText(this.currProject.getJadeConfiguration().getTrustStoreFile());
 		} else {
 			this.setHttpsComponentsEnabledState(false);
 		}
@@ -913,7 +817,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	@Override
 	public void update(Observable observable, Object updateObject) {
 		
-		if (updateObject==Project.CHANGED_JadeConfiguration) {
+		if (updateObject==Project.CHANGED_JadeConfiguration && this.pauseObserver==false) {
 			this.refreshDataView();
 		}
 	}
@@ -993,42 +897,100 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			String actCMD = menuItem.getActionCommand();
 			currProject.getJadeConfiguration().setMtpIpAddress(actCMD);
 			this.getJTextFieldIPAddress().setText(actCMD);
-		}else if (trigger == jButtonEditMtpProtocol){
+			
+		} else if (trigger==this.getJButtonEditMtpProtocol()){
 			// --- Open the HttpsConfigWindow ---------------------------------
-			editHTTPSsettings(trigger, this.getJcomboBoxMtpProtocol().getSelectedProtocol());
+			this.editHTTPSsettings(trigger, this.getJComboBoxMtpProtocol().getSelectedProtocol());
+			
 		}
 		
 	}
+	
+	/**
+	 * Opens the HttpsCinfogWindow to configure the HTTPS MTP
+	 * @param trigger 
+	 * @param configuredProtocol 
+	 */
+	private void editHTTPSsettings(Object trigger, MtpProtocol configuredProtocol) {
+		
+		if (trigger==this.getJButtonEditMtpProtocol()) {
+			// --- In case that the user choose to edit the HTTPS MTP ----------
+			File keyStoreFile = new File(this.currProject.getJadeConfiguration().getKeyStoreFile());
+			File trustStoreFile = new File(this.currProject.getJadeConfiguration().getTrustStoreFile());
+			String keyStorePassword = this.currProject.getJadeConfiguration().getKeyStorePassword();
+			String trustStorePassword = this.currProject.getJadeConfiguration().getTrustStorePassword();
+			// --- Open the HttpsConfigWindow ----------------------------------
+			HttpsConfigWindow httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow(), keyStoreFile, keyStorePassword, trustStoreFile, trustStorePassword);
+			// --- Wait for the user -------------------------------------------
+			if (httpsConfigWindow.isCanceled()==false) {
+				// ---- Return the KeyStore and TrustStore chosen by the user --
+				this.currProject.getJadeConfiguration().setMtpProtocol(configuredProtocol);
+				this.currProject.getJadeConfiguration().setKeyStoreFile(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
+				this.currProject.getJadeConfiguration().setTrustStoreFile(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
+				this.currProject.getJadeConfiguration().setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
+				this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
+				this.getJTextFieldKeyStoreFile().setText(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
+				this.getJTextFieldTrustStoreFile().setText(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
+			} 
+			
+		} else if (trigger==this.getJComboBoxMtpProtocol()) {
+			
+			String keyStoreFilePath = this.currProject.getJadeConfiguration().getKeyStoreFile();
+			String trustStoreFilePath = this.currProject.getJadeConfiguration().getTrustStoreFile();
+			
+			// --- If the certificate stores are not set or not existing, show the store configuration window ----------
+			if (keyStoreFilePath==null || trustStoreFilePath==null || new File(keyStoreFilePath).exists()==false || new File(trustStoreFilePath).exists()==false) {
+				
+				// --- In case that the user choose to configure new HTTPS MTP ------
+				HttpsConfigWindow httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow());
+				
+				// - - Wait for the user - - - - - - - - - - - - -
+				if (httpsConfigWindow.isCanceled() == false) {
+					// ---- Return the KeyStore and TrustStore chosen by the user ---
+					this.currProject.getJadeConfiguration().setMtpProtocol(configuredProtocol);
+					this.currProject.getJadeConfiguration().setKeyStoreFile(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
+					this.currProject.getJadeConfiguration().setTrustStoreFile(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
+					this.currProject.getJadeConfiguration().setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
+					this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
+					this.getJTextFieldKeyStoreFile().setText(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
+					this.getJTextFieldTrustStoreFile().setText(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
+				} else {
+					// ---- If the Button Cancel is pressed -------------------------
+					this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
+					this.setHttpsComponentsEnabledState(false);
+				}
+			} else {
+				this.currProject.getJadeConfiguration().setMtpProtocol(configuredProtocol);
+			}
+			
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-		if ( event.getSource() == jComboBoxMtpProtocol){
-			if (this.getJcomboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTP) {
+		
+		if (event.getStateChange()==ItemEvent.SELECTED && event.getSource()==this.getJComboBoxMtpProtocol()){
+			if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTP) {
 				// ---- switch to HTTP ----------------------------------
 				this.setHttpsComponentsEnabledState(false);
 				this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTP);
 				this.getJTextFieldKeyStoreFile().setText(null);
 				this.getJTextFieldTrustStoreFile().setText(null);
-			} else if (this.getJcomboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTPS) {
+				
+			} else if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTPS) {
 				// ---- switch to HTTPS ------------------------------
 				this.setHttpsComponentsEnabledState(true);
 				this.editHTTPSsettings(event.getSource(), MtpProtocol.HTTPS);
-			} else if(this.getJcomboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.PROXIEDHTTPS){
+				
+			} else if(this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.PROXIEDHTTPS){
 				this.setHttpsComponentsEnabledState(true);
 				this.editHTTPSsettings(event.getSource(), MtpProtocol.PROXIEDHTTPS);
 			}
 		}
 	}
-
-	@Override
-	public void focusGained(FocusEvent focusEvent) {
-	}
-
-	@Override
-	public void focusLost(FocusEvent focusEvent) {
-		if(focusEvent.getSource() == jTextFieldIPAddress){
-			currProject.getJadeConfiguration().setMtpIpAddress(getJTextFieldIPAddress().getText());
-		}
-		
-	}
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+	
+}  

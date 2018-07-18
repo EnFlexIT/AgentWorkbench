@@ -282,40 +282,42 @@ public class PlatformJadeConfig implements Serializable {
 		if (mtpCreation==MTP_Creation.ConfiguredByIPandPort) {
 
 			String ipAddress = null;
+			NetworkAddresses networkAddresses = new NetworkAddresses();
+
 			if (mtpIpAddress==null || mtpIpAddress.equals("") || mtpIpAddress.equals(MTP_IP_AUTO_Config)) {
 				// --- Auto configuration of the IP address -------------------
-				NetworkAddresses networkAddresses = new NetworkAddresses();
-				InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
-				if (inetAddress==null || Application.isNetworkConnected()==false) {
-					// --- No network connection, take loopback address -------
-					Vector<NetworkAddress> loopBackAddresses = networkAddresses.getInet4AddressesLoopBack();
-					if (loopBackAddresses!=null && loopBackAddresses.size()>0) {
-						ipAddress = loopBackAddresses.get(0).getInetAddress().getHostAddress(); 
-					}
-					
-				} else {
-					// --- Take the preferred IP address ----------------------
-					ipAddress = inetAddress.getHostAddress();
-				}
+				ipAddress = this.getAutomaticIP(networkAddresses);
 			} else {
-				// --- Use configured IP address ------------------------------
-				ipAddress = mtpIpAddress;
-			}	
+				// --- Use configured IP address, if possible -----------------
+				if (networkAddresses.isAvailableIP(mtpIpAddress)==false) {
+					// --- The configured IP is INVALID -----------------------
+					ipAddress = this.getAutomaticIP(networkAddresses);
+					System.err.println("=> The configured IP address '" + mtpIpAddress +  "' is invalid! The JADE profile will be corrected with the available IP '" + ipAddress + "' instead.");
+				} else {
+					// --- The configured IP is VALID -------------------------- 
+					ipAddress = mtpIpAddress;
+				}
+			}
+			
 			// --- Set the MTP address ----------------------------------------
 			if (ipAddress!=null) {
 				profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 				Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
 				if (mtpProtocol==MtpProtocol.HTTP) {
-					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName()+"(http://" + ipAddress + ":" + freePort + "/acc)");
+					// --- Regular HTTP protocol ------------------------------ 
+					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName() + "(http://" + ipAddress + ":" + freePort + "/acc)");
+					
 				} else if(mtpProtocol==MtpProtocol.HTTPS) {
-					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName()+"(https://" + ipAddress + ":" + freePort + "/acc)");
+					// --- A secure HTTPS protocol ---------------------------- 
+					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName() + "(https://" + ipAddress + ":" + freePort + "/acc)");
 					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile);
 					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
-					profile.setParameter("jade_mtp_http_https_trustManagerClass",jade.mtp.http.https.FriendListAuthentication.class.getName()+"");
+					profile.setParameter("jade_mtp_http_https_trustManagerClass", jade.mtp.http.https.FriendListAuthentication.class.getName());
 					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
-				}
-				else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS){
+				
+				} else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS) {
+					// --- A secured proxy HTTPS using NGINX ------------------ 
 					profile.setParameter(Profile.MTPS, ProxiedHTTPS.class.getName());
 					
 					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTP);
@@ -329,7 +331,7 @@ public class PlatformJadeConfig implements Serializable {
 					
 					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile); // needed as dummy
 					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
-					profile.setParameter("jade_mtp_http_https_trustManagerClass",jade.mtp.http.https.FriendListAuthentication.class.getName()+"");
+					profile.setParameter("jade_mtp_http_https_trustManagerClass", jade.mtp.http.https.FriendListAuthentication.class.getName());
 					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
 					
@@ -365,6 +367,30 @@ public class PlatformJadeConfig implements Serializable {
 		}
 		
 	}
+	/**
+	 * Automatically determines the IP address to use for the platform and the MTP
+	 *
+	 * @param networkAddresses the network addresses
+	 * @return the automatic IP
+	 */
+	private String getAutomaticIP(NetworkAddresses networkAddresses) {
+	
+		String ipAddress = null;
+		InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
+		if (inetAddress==null || Application.isNetworkConnected()==false) {
+			// --- No network connection, take loopBack address -------
+			Vector<NetworkAddress> loopBackAddresses = networkAddresses.getInet4AddressesLoopBack();
+			if (loopBackAddresses!=null && loopBackAddresses.size()>0) {
+				ipAddress = loopBackAddresses.get(0).getInetAddress().getHostAddress(); 
+			}
+			
+		} else {
+			// --- Take the preferred IP address ----------------------
+			ipAddress = inetAddress.getHostAddress();
+		}
+		return ipAddress;
+	}
+	
 	/**
 	 * Adds the local configured SERVICES to the input instance of Profile.
 	 * @param profile the profile to work on

@@ -100,7 +100,7 @@ public class Platform {
 	}	
 	/**
 	 * Starts JADE.
-	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualization 
 	 * @return true, if successful
 	 */
 	public boolean start(boolean showRMA) {
@@ -108,7 +108,7 @@ public class Platform {
 	}
 	/**
 	 * Starts JADE.
-	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualization 
 	 * @param containerProfile the actual container Profile
 	 * @return true, if successful
 	 */
@@ -136,8 +136,8 @@ public class Platform {
 					public void run() {
 						// --- terminate platform -------------------
 						LoadMeasureThread.removeMonitoringTasksForAgents();
-						jadeMainContainer = null;
-						getAgentContainerList().clear();
+						Platform.this.jadeMainContainer = null;
+						Platform.this.getAgentContainerList().clear();
 						Application.setStatusJadeRunning(false);
 						if (Application.getMainWindow()!=null){
 							Application.getMainWindow().setSimulationReady2Start();
@@ -146,13 +146,18 @@ public class Platform {
 						Platform.this.notifyPluginsForTerminatedMAS();
 					}
 				});
-				// --- Start MainContainer --------------------------
-				if (containerProfile!=null) {
-					jadeMainContainer = jadeRuntime.createMainContainer(containerProfile);
-				} else {
-					jadeMainContainer = jadeRuntime.createMainContainer(this.getContainerProfile());
+				
+				// --- Set and check the container profile ----------
+				Profile profile = containerProfile;
+				if (profile==null) {
+					profile = this.getContainerProfile();
 				}
-				startSucceed = true;
+				
+				// --- Start MainContainer --------------------------
+				this.jadeMainContainer = jadeRuntime.createMainContainer(profile);
+				if (this.jadeMainContainer!=null) {
+					startSucceed = true;
+				}
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -161,9 +166,10 @@ public class Platform {
 		}
 
 		// --- Start the Application Background-Agents ---------------
-		if (this.startBackgroundAgents(showRMA)==false) return false;
-		
-		Application.setStatusJadeRunning(true);
+		if (startSucceed==true) {
+			if (this.startBackgroundAgents(showRMA)==false) return false;
+			Application.setStatusJadeRunning(true);
+		}
 		return startSucceed;
 	}
 	

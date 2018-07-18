@@ -168,8 +168,9 @@ public class TrustStoreController {
 				trustStoreInputStream = new FileInputStream(trustStoreFile);
 				init(trustStoreFile, trustStorePassword);
 				return openTrustStoreFromStream(trustStoreInputStream, trustStorePassword);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				
+			} catch (FileNotFoundException fnfEx) {
+				fnfEx.printStackTrace();
 			}
 		}
 		return false;
@@ -183,18 +184,19 @@ public class TrustStoreController {
 	 * @return true, if successful
 	 */
 	public boolean openTrustStoreFromStream(InputStream trustStoreInputStream, String trustStorePassword) {
+		
 		boolean successful = false;
 		this.trustStoreInputStream = trustStoreInputStream;
-
 		try {
 			// --- Loads the TrustStore from the given InputStream -------------
 			trustStore.load(trustStoreInputStream, trustStorePassword.toCharArray());
 			successful = true;
+		
 		} catch (FileNotFoundException | NoSuchAlgorithmException | CertificateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// --- Open a warning Message dialog if the password is incorrect --
-			if (ownerDialog != null) {
+			if (ownerDialog!=null) {
 				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + "!");
 			} else {
 				e.printStackTrace();
