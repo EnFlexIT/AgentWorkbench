@@ -76,16 +76,16 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -4676410555112580221L;
 
+	private String preferredDirector; 
+	
 	private KeyStoreConfigPanel keyStoreConfigPanel;
 	private TrustStoreConfigPanel trustStoreConfigPanel;
 
 	private JPanel jPanelHeader;
 	private JPanel jPanelFooter;
-	private JPanel jPanelPassword;
 	private JPanel jPanelKeyStoreButtons;
 	private JPanel jPanelTrustStoreButtons;
 
-	private JLabel jLabelEnterPassword;
 	private JLabel jLabelKeyStoreFile;
 	private JLabel jLabelKeyStoreLocation;
 	private JLabel jLabelTrustStoreFile;
@@ -117,29 +117,25 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 	private boolean canceled;
 
+	
 	/**
-	 * Instantiates a new httpsConfigWindow.
-	 * 
+	 * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show it.
 	 * @param owner the owner
 	 */
 	public HttpsConfigWindow(Dialog owner) {
 		super(owner);
 		this.initialize();
 	}
-
 	/**
-	 * Instantiates a new httpsConfigWindow.
-	 * 
+	 * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show it.
 	 * @param owner the owner
 	 */
 	public HttpsConfigWindow(Frame owner) {
 		super(owner);
 		this.initialize();
 	}
-
 	/**
-	 * Instantiates a new HttpsConfigWindow.
-	 *
+	 * Instantiates a new HttpsConfigWindow. Set the dialog visible in order to show it.
 	 * @param owner the owner
 	 * @param keystore the KeyStore
 	 * @param keystorePassword the KeyStore password
@@ -152,14 +148,12 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.setKeyStorePassword(keystorePassword);
 		this.setTrustStoreFile(truststore);
 		this.setTrustStorePassword(truststorePassword);
-		this.getKeyStoreData();
-		this.getTrustStoreData();
+		this.setKeyStoreDataToVisualization();
+		this.setTrustStoreDataToVisualization();
 		this.initialize();
 	}
-
 	/**
-	 * Instantiates a new httpsConfigWindow.
-	 *
+	 * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show it.
 	 * @param owner the owner
 	 * @param keystore the KeyStore
 	 * @param keystorePassword the KeyStore password
@@ -172,8 +166,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.setKeyStorePassword(keystorePassword);
 		this.setTrustStoreFile(truststore);
 		this.setTrustStorePassword(truststorePassword);
-		this.getKeyStoreData();
-		this.getTrustStoreData();
+		this.setKeyStoreDataToVisualization();
+		this.setTrustStoreDataToVisualization();
 		this.initialize();
 	}
 
@@ -231,9 +225,50 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		gbc_jPanelFooter.gridx = 0;
 		gbc_jPanelFooter.gridy = 2;
 		this.getContentPane().add(getJPanelFooter(), gbc_jPanelFooter);
-		this.setVisible(true);
+		
 	}
 
+	/**
+	 * Specifies the preferred director for files.
+	 * @param preferredFileDirector the new preferred file director
+	 */
+	public void setPreferredDirector(String preferredFileDirector) {
+		this.preferredDirector = preferredFileDirector;
+	}
+	/**
+	 * Return the preferred director for files.
+	 * @return the preferred file director
+	 */
+	public String getPreferredDirector() {
+		return preferredDirector;
+	}
+	/**
+	 * Checks if the specified file is in the preferred director.
+	 *
+	 * @param fileToCheck the file to check
+	 * @return true, if is within preferred file director
+	 */
+	private boolean isInPreferredDirector(File fileToCheck) {
+		return this.isInPreferredDirector(fileToCheck.getAbsolutePath());
+	}
+	/**
+	 * Checks if the specified file is in the preferred director.
+	 *
+	 * @param filePathToCheck the file path to check
+	 * @return true, if is within preferred file director
+	 */
+	private boolean isInPreferredDirector(String filePathToCheck) {
+		if (this.getPreferredDirector()==null) return true;
+		if (filePathToCheck==null || filePathToCheck.isEmpty()) return false;
+		if (filePathToCheck.startsWith(this.getPreferredDirector())==false) {
+			// --- Space for user messages --------------------------
+			
+			
+			return false;	
+		} 
+		return true;
+	}
+	
 	/**
 	 * Checks if is canceled.
 	 * @return true, if is canceled
@@ -613,9 +648,9 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Get KeyStore information and fill in fields with
+	 * Sets the key store data to visualization.
 	 */
-	public void getKeyStoreData() {
+	public void setKeyStoreDataToVisualization() {
 
 		// ---- Get the Content of the keyStore ----------------------
 		CertificateProperties certificateProperties = null;
@@ -636,9 +671,9 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Get TrustStore information and fill in fields with
+	 * Sets the trust store data to the visualization.
 	 */
-	public void getTrustStoreData() {
+	public void setTrustStoreDataToVisualization() {
 		// ---- Prepare the TrustStore form for update -------------
 		this.getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setText(getTrustStoreFile().getName());
 		this.getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setEnabled(false);
@@ -664,6 +699,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		// ---- Create new KeyStore -------------------------------
 		if (ae.getSource() == this.getJButtonCreateKeyStore()) {
 			// ----- Prepare the KeyStore form --------------------
@@ -683,33 +719,44 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			this.keyStoreFile = null;
 			this.keyStoreButtonPressed = "CreateKeyStore";
 
-		} else if (ae.getSource() == this.getJButtonOpenKeyStore()) {
-			
-			// ---- Open a KeyStore --------------------------------
-			// ---- open JfileChooser ------------------------------
+		} else if (ae.getSource()==this.getJButtonOpenKeyStore()) {
+			// ---- Open a KeyStore -------------------------------------------
 			this.getJFileChooser().setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
-			if (this.getJFileChooser().showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			// --- Is there a preferred directory? ----------------------------
+			if (this.getPreferredDirector()!=null) {
+				this.getJFileChooser().setCurrentDirectory(new File(this.getPreferredDirector()));
+			}
+			// --- Open file selection ----------------------------------------
+			if (this.getJFileChooser().showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
+				if (this.getPreferredDirector()!=null) {
+					if (this.isInPreferredDirector(this.getJFileChooser().getSelectedFile())==false) {
+						String msg = Language.translate("The KeyStore file should be located in directory", Language.EN) + " '" + this.getPreferredDirector() + "'!";
+						String title = Language.translate("Wrong KeyStore location!", Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+				} else {
+					Application.getGlobalInfo().setLastSelectedFolder(this.getJFileChooser().getCurrentDirectory());
+				}
 				
-				Application.getGlobalInfo().setLastSelectedFolder(this.getJFileChooser().getCurrentDirectory());
-				
-				// -------- Get the path of selected KeyStore file -------------
+				// -------- Get the path of selected KeyStore file -----------
 				this.keyStoreFile = this.getJFileChooser().getSelectedFile();
-				// ---- Get the KeyStoreName -----------------------------------
+				// ---- Get the KeyStoreName ----------------------------------
 				String keyStoreName = this.keyStoreFile.getName();
-				// ---- Verify if the selected file is a KeyStore --------------
+				// ---- Verify if the selected file is a KeyStore -------------
 				if (keyStoreName.endsWith(KEYSTORE_FILENAME)) {
-					// --- Create JOptionPane to enter the KeyStore password ---
-					jPanelPassword = new JPanel();
+					// --- Create JOptionPane to enter the KeyStore password --
 					String msg = Language.translate("Please, enter the password for  ", Language.EN);
-					jLabelEnterPassword = new JLabel(msg + " " + keyStoreName + "  :");
+					JLabel jLabelEnterPassword = new JLabel(msg + " " + keyStoreName + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
+					
 					JPasswordField jPasswordField = new JPasswordField(10);
-
-					// Add a listener to request the focus for the password field after it was added to the dialog
 					jPasswordField.addAncestorListener(new RequestFocusListener());
 
+					JPanel jPanelPassword = new JPanel();
 					jPanelPassword.add(jLabelEnterPassword);
 					jPanelPassword.add(jPasswordField);
+
 					String title = Language.translate("Password", Language.EN);
 					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, jPasswordField);
 					if (option==JOptionPane.OK_OPTION) {
@@ -723,7 +770,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 							this.jLabelKeyStoreLocationPath.setText(null);
 							this.keyStoreFile = null;
 						} else {
-							this.getKeyStoreData();
+							this.setKeyStoreDataToVisualization();
 						}
 					}
 					
@@ -732,12 +779,9 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					String title = Language.translate("Warning message", Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-			} else {
-				// ------ Close the jFileChooser ---------------------------------
-				jFileChooser.remove(jFileChooser);
 			}
 
-		} else if (ae.getSource() == this.getJButtonCreateTrustStore()) {
+		} else if (ae.getSource()==this.getJButtonCreateTrustStore()) {
 			// ---- Create new TrustStore ----------------------------------------
 			// ---- Prepared the TrusStore form ----------------------------------
 			trustStoreConfigPanel.getJTextFieldTrustStoreName().requestFocus();
@@ -755,13 +799,23 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			trustStoreButtonPressed = "CreateTrustStore";
 
 		} else if (ae.getSource() == this.getJButtonOpenTrustStore()) {
-			
-			// ---- Open a TrustStore ---------------------------------------
-			// ---- open JfileChooser ---------------------------------------
-			getJFileChooser().setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
-			if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-				
-				Application.getGlobalInfo().setLastSelectedFolder(getJFileChooser().getCurrentDirectory());
+			this.getJFileChooser().setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
+			// --- Is there a preferred directory? ----------------------------
+			if (this.getPreferredDirector()!=null) {
+				this.getJFileChooser().setCurrentDirectory(new File(this.getPreferredDirector()));
+			}
+			// --- Open file selection ----------------------------------------
+			if (this.getJFileChooser().showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
+				if (this.getPreferredDirector()!=null) {
+					if (this.isInPreferredDirector(this.getJFileChooser().getSelectedFile())==false) {
+						String msg = Language.translate("The TrustStore file should be located in directory", Language.EN) + " '" + this.getPreferredDirector() + "'!";
+						String title = Language.translate("Wrong TrustStore location!", Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+				} else {
+					Application.getGlobalInfo().setLastSelectedFolder(this.getJFileChooser().getCurrentDirectory());
+				}
 				
 				// ---- Get the path of selected TrustStore file ------------
 				trustStoreFile = jFileChooser.getSelectedFile();
@@ -770,14 +824,17 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 				// ---- Verify if the selected file is a TrustStore ---------
 				if (truststorename.endsWith(TRUSTSTORE_FILENAME)) {
 					// --- Create JOptionPane to enter the TrustStore password -
-					JPanel jPanelEnterPassword = new JPanel();
 					String msg = Language.translate("Please enter the password for  ", Language.EN);
-					jLabelEnterPassword = new JLabel(msg + " " + truststorename + "  :");
+					JLabel jLabelEnterPassword = new JLabel(msg + " " + truststorename + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
+					
 					JPasswordField jPasswordFiled = new JPasswordField(10);
 					jPasswordFiled.addAncestorListener(new RequestFocusListener());
+
+					JPanel jPanelEnterPassword = new JPanel();
 					jPanelEnterPassword.add(jLabelEnterPassword);
 					jPanelEnterPassword.add(jPasswordFiled);
+					
 					String title = Language.translate("Password", Language.EN);
 					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, jPasswordFiled);
 					trustStorePassword = new String(jPasswordFiled.getPassword());
@@ -792,41 +849,48 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 							getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setText(null);
 							getTrustStoreConfigPanel().getTrustStoreController().clearTableModel();
 						} else {
-							getTrustStoreData();
+							this.setTrustStoreDataToVisualization();
 						}
 					}
 				} else {
-					String msg = Language.translate("Please choose a TrustStore file! Your TrustStore name should ends with 'TrustStore'", Language.EN);
+					String msg = Language.translate("Please, choose a TrustStore file! Your TrustStore name should ends with 'TrustStore'", Language.EN);
 					String title = Language.translate("Warning message", Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-			} else {
-				// ---- Close jFileChosser -----------------------------------
-				jFileChooser.remove(jFileChooser);
 			}
+			
 		} else if (ae.getSource() == this.getJButtonCancel()) {
 			// ---- Button Cancel is pressed ---------------------------------
-			setCanceled(true);
-			dispose();
+			this.setCanceled(true);
+			this.dispose();
+			
 		} else if (ae.getSource() == this.getJButtonOK()) {
 			// ---- Button OK is pressed -------------------------------------
-			if (getKeyStoreFile() == null) {
+			if (this.getKeyStoreFile()==null) {
 				String msg = Language.translate("You should open a KeyStore to run the HTTPS MTP!", Language.EN);
-				String title = Language.translate("Warning message", Language.EN);
+				String title = Language.translate("No KeyStore specified!", Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
-			} else if (getTrustStoreFile() == null) {
+			} else if (this.isInPreferredDirector(this.getKeyStoreFile())==false) {
+				String msg = Language.translate("The KeyStore file should be located in directory", Language.EN) + " '" + this.getPreferredDirector() + "'!";
+				String title = Language.translate("Wrong KeyStore location!", Language.EN);
+				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+			} else if (this.getTrustStoreFile()==null) {
 				String msg = Language.translate("You should open a TrustStore to run the HTTPS MTP!", Language.EN);
-				String title = Language.translate("Warning message", Language.EN);
+				String title = Language.translate("No TrustStore specified!", Language.EN);
+				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+			} else if (this.isInPreferredDirector(this.getTrustStoreFile())==false) {
+				String msg = Language.translate("The TrustStore file should be located in directory", Language.EN) + " '" + this.getPreferredDirector() + "'!";
+				String title = Language.translate("Wrong TrustStore location!", Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 			} else {
-				setCanceled(false);
-				setVisible(false);
+				this.setCanceled(false);
+				this.setVisible(false);
 			}
+			
 		}
 	}
 
 	/**
-	 * 
 	 * Taken from https://tips4java.wordpress.com/2010/03/14/dialog-focus/
 	 * 
 	 * Convenience class to request focus on a component.
@@ -844,47 +908,37 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 * allows you to specify a boolean value of false to prevent the
 	 * AncestorListener from being removed when the event is generated. This will
 	 * allow you to reuse the listener each time the event is generated.
-	 * 
 	 */
 	private class RequestFocusListener implements AncestorListener {
 
 		private boolean removeListener;
 
-		/*
-		 *  Convenience constructor. The listener is only used once and then it is
-		 *  removed from the component.
+		/**
+		 *  Convenience constructor. The listener is only used once and then it is removed from the component.
 		 */
 		public RequestFocusListener() {
 			this(true);
 		}
-
-		/*
-		 *  Constructor that controls whether this listen can be used once or
-		 *  multiple times.
-		 *
-		 *  @param removeListener when true this listener is only invoked once
-		 *                        otherwise it can be invoked multiple times.
+		/**
+		 *  Constructor that controls whether this listen can be used once or multiple times.
+		 *  @param removeListener when true this listener is only invoked once otherwise it can be invoked multiple times.
 		 */
 		public RequestFocusListener(boolean removeListener) {
 			this.removeListener = removeListener;
 		}
-
 		@Override
 		public void ancestorAdded(AncestorEvent e) {
 			JComponent component = e.getComponent();
 			component.requestFocusInWindow();
-
 			if (removeListener)
 				component.removeAncestorListener(this);
 		}
-
 		@Override
 		public void ancestorMoved(AncestorEvent e) {
 		}
-
 		@Override
 		public void ancestorRemoved(AncestorEvent e) {
 		}
-
 	}
+	
 }

@@ -921,6 +921,8 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			String trustStorePassword = this.currProject.getJadeConfiguration().getTrustStorePassword();
 			// --- Open the HttpsConfigWindow ----------------------------------
 			HttpsConfigWindow httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow(), keyStoreFile, keyStorePassword, trustStoreFile, trustStorePassword);
+			httpsConfigWindow.setPreferredDirector(this.currProject.getProjectFolderFullPath());
+			httpsConfigWindow.setVisible(true);
 			// --- Wait for the user -------------------------------------------
 			if (httpsConfigWindow.isCanceled()==false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user --
@@ -940,10 +942,10 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			
 			// --- If the certificate stores are not set or not existing, show the store configuration window ----------
 			if (keyStoreFilePath==null || trustStoreFilePath==null || new File(keyStoreFilePath).exists()==false || new File(trustStoreFilePath).exists()==false) {
-				
 				// --- In case that the user choose to configure new HTTPS MTP ------
 				HttpsConfigWindow httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow());
-				
+				httpsConfigWindow.setPreferredDirector(this.currProject.getProjectFolderFullPath());
+				httpsConfigWindow.setVisible(true);
 				// - - Wait for the user - - - - - - - - - - - - -
 				if (httpsConfigWindow.isCanceled() == false) {
 					// ---- Return the KeyStore and TrustStore chosen by the user ---
@@ -959,6 +961,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 					this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 					this.setHttpsComponentsEnabledState(false);
 				}
+				
 			} else {
 				this.currProject.getJadeConfiguration().setMtpProtocol(configuredProtocol);
 			}

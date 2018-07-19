@@ -61,8 +61,6 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 
 	private static final long serialVersionUID = -7016775471452161527L;
 
-	private HttpsConfigWindow httpsConfigWindow;
-	
 	private JLabel jLabelKeystorePath;
 	private JLabel jLabelTruststorePath;
 	private JLabel jLabelMTPProtocol;
@@ -77,7 +75,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	private String keyStorePassword;
 	private File trustStore;
 	private String trustStorePassword;
-	private String action;
+
 	
 	/**
 	 * Constructor of this class.
@@ -299,14 +297,18 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 		this.getJTextFieldKeyStorePath().setVisible(false);
 		this.getJButtonEditMTP().setVisible(false);
 	}
+	
 	/**
-	 * Opens the HttpsCinfogWindow to configure the HTTPS MTP
+	 * Opens the HttpsCinfogWindow to configure the HTTPS MTP.
+	 * @param trigger the trigger for the call
 	 */
-	private void editHTTPSsettings() {
-		if (this.action == "BUTTON") {
+	private void editHTTPSsettings(Object trigger) {
+		
+		if (trigger==this.getJButtonEditMTP()) {
 			// --- In case that the user choose to edit the HTTPS MTP ----------
 			// --- Open the HttpsConfigWindow ----------------------------------
-			httpsConfigWindow = new HttpsConfigWindow(this.optionDialog, getKeyStore(), getKeyStorePassword(), getTrustStore(), getTrustStorePassword());
+			HttpsConfigWindow httpsConfigWindow = new HttpsConfigWindow(this.optionDialog, getKeyStore(), getKeyStorePassword(), getTrustStore(), getTrustStorePassword());
+			httpsConfigWindow.setVisible(true);
 			// --- Wait for the user -------------------------------------------
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user --
@@ -317,9 +319,11 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 				this.getJTextFieldKeyStorePath().setText(this.getKeyStore().getAbsolutePath());
 				this.getJTextFieldTrustStorePath().setText(this.getTrustStore().getAbsolutePath());
 			} 
-		} else if (this.action == "COMBO") {
+			
+		} else if (trigger==this.getJComboBoxMtpProtocol()) {
 			// --- In case that the user choose to configure new HTTPS MTP ------
-			httpsConfigWindow = new HttpsConfigWindow(this.optionDialog);
+			HttpsConfigWindow httpsConfigWindow = new HttpsConfigWindow(this.optionDialog);
+			httpsConfigWindow.setVisible(true);
 			// --- Wait for the user --------------------------------------------
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user ---
@@ -342,31 +346,33 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-		if ( event.getSource() == this.getJComboBoxMtpProtocol()){
+		
+		if (event.getSource()==this.getJComboBoxMtpProtocol()) {
 			MtpProtocol currentMTP = this.getJComboBoxMtpProtocol().getSelectedProtocol();
-			this.action = "COMBO";
-			if (currentMTP == MtpProtocol.HTTP) {
+			if (currentMTP==MtpProtocol.HTTP) {
 				// ---- switch from HTTPS to HTTP ----------------------------------
 				this.hideCertificateSettings();
-			} else if (currentMTP == MtpProtocol.HTTPS) {
+				
+			} else if (currentMTP==MtpProtocol.HTTPS) {
 				// ---- switch between HTTP and HTTPS ------------------------------
 				if (event.getStateChange() == ItemEvent.SELECTED) {
 					Object item = event.getItem();
 					if (item.equals(MtpProtocol.HTTPS)) {
 						// ---- If the user choose HTTPS ---------------------------
 						this.showCertificateSettings();
-						
 						// --- If the stores are not defined or do not exist, open the configuration dialog ----------
 						if(this.keyStore == null || this.trustStore == null || this.keyStore.exists() == false || this.trustStore.exists() == false){
-							this.editHTTPSsettings();
+							this.editHTTPSsettings(this.getJComboBoxMtpProtocol());
 						}
 					} else {
 						// ---- If the user choose HTTP ----------------------------
 						this.hideCertificateSettings();
 					}
 				}
+				
 			} else if (currentMTP == MtpProtocol.PROXIEDHTTPS){
 				System.err.println("NOT YET IMPLEMENTED");
+				
 			}
 		}
 	}
@@ -376,10 +382,9 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource() == this.getJButtonEditMTP()){
+		if (ae.getSource()==this.getJButtonEditMTP()){
 			// --- Open the HttpsConfigWindow -------------------------------------
-			this.action = "BUTTON";
-			editHTTPSsettings();
+			this.editHTTPSsettings(this.getJButtonEditMTP());
 		}
 	}
 
