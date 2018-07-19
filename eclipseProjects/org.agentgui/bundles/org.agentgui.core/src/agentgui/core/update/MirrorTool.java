@@ -200,7 +200,7 @@ public class MirrorTool implements MirrorToolListener {
 				if (execFile!=null) {
 					// --- Define the command line to execute the process -----
 					String executable = execFile.getAbsolutePath();
-					String execute = executable + " -nosplash -verbose -application " + downloadType.toString() + " -source " + sourceLocation + " -destination \"" + destinationDirectory + "\""; 
+					String execute = executable + " -nosplash -application " + downloadType.toString() + " -source " + sourceLocation + " -destination \"" + destinationDirectory + "\""; 
 					if (debugP2Mirroring==true) System.out.println("=> cmdLine: " + execute);
 					
 					// --- Define and execute the process ---------------------

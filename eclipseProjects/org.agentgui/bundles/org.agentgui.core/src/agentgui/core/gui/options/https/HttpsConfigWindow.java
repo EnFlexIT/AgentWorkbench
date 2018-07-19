@@ -29,14 +29,13 @@
 package agentgui.core.gui.options.https;
 
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -120,29 +119,21 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	
 	/**
 	 * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show it.
-	 * @param owner the owner
+	 * @param owner the owner frame or window
 	 */
-	public HttpsConfigWindow(Dialog owner) {
-		super(owner);
-		this.initialize();
-	}
-	/**
-	 * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show it.
-	 * @param owner the owner
-	 */
-	public HttpsConfigWindow(Frame owner) {
+	public HttpsConfigWindow(Window owner) {
 		super(owner);
 		this.initialize();
 	}
 	/**
 	 * Instantiates a new HttpsConfigWindow. Set the dialog visible in order to show it.
-	 * @param owner the owner
+	 * @param owner the owner frame or dialog
 	 * @param keystore the KeyStore
 	 * @param keystorePassword the KeyStore password
 	 * @param truststore the TrustStore
 	 * @param truststorePassword the TrustStore password
 	 */
-	public HttpsConfigWindow(Dialog owner, File keystore, String keystorePassword, File truststore, String truststorePassword) {
+	public HttpsConfigWindow(Window owner, File keystore, String keystorePassword, File truststore, String truststorePassword) {
 		super(owner);
 		this.setKeyStoreFile(keystore);
 		this.setKeyStorePassword(keystorePassword);
@@ -152,25 +143,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.setTrustStoreDataToVisualization();
 		this.initialize();
 	}
-	/**
-	 * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show it.
-	 * @param owner the owner
-	 * @param keystore the KeyStore
-	 * @param keystorePassword the KeyStore password
-	 * @param truststore the TrustStore
-	 * @param truststorePassword the TrustStore password
-	 */
-	public HttpsConfigWindow(Frame owner, File keystore, String keystorePassword, File truststore, String truststorePassword) {
-		super(owner);
-		this.setKeyStoreFile(keystore);
-		this.setKeyStorePassword(keystorePassword);
-		this.setTrustStoreFile(truststore);
-		this.setTrustStorePassword(truststorePassword);
-		this.setKeyStoreDataToVisualization();
-		this.setTrustStoreDataToVisualization();
-		this.initialize();
-	}
-
 	/**
 	 * Initialize the contents of the dialog.
 	 */
@@ -197,6 +169,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		gridBagLayout.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jPanelHeader = new GridBagConstraints();
 		gbc_jPanelHeader.gridwidth = 2;
 		gbc_jPanelHeader.insets = new Insets(10, 10, 5, 10);
@@ -225,7 +198,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		gbc_jPanelFooter.gridx = 0;
 		gbc_jPanelFooter.gridy = 2;
 		this.getContentPane().add(getJPanelFooter(), gbc_jPanelFooter);
-		
 	}
 
 	/**
@@ -261,9 +233,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		if (this.getPreferredDirector()==null) return true;
 		if (filePathToCheck==null || filePathToCheck.isEmpty()) return false;
 		if (filePathToCheck.startsWith(this.getPreferredDirector())==false) {
-			// --- Space for user messages --------------------------
-			
-			
 			return false;	
 		} 
 		return true;
@@ -654,10 +623,10 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 		// ---- Get the Content of the keyStore ----------------------
 		CertificateProperties certificateProperties = null;
-		KeyStoreController controller = getKeyStoreConfigPanel().getKeyStoreController();
+		KeyStoreController controller = this.getKeyStoreConfigPanel().getKeyStoreController();
 		controller.openTrustStore(getKeyStoreFile(), getKeyStorePassword());
 		if (controller.isInitialized()) {
-			certificateProperties = getKeyStoreConfigPanel().getKeyStoreController().getFirstCertificateProperties();
+			certificateProperties = this.getKeyStoreConfigPanel().getKeyStoreController().getFirstCertificateProperties();
 		} 
 		if (certificateProperties!=null) {
 

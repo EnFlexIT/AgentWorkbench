@@ -146,9 +146,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionRemoved = "AgentMetric_AgentDescriptionRemoved";
 
 	// --- Constants -------------------------------------------
-	@XmlTransient private static final String defaultSubFolder4Setups   = "setups";
-	@XmlTransient private static final String defaultSubFolderEnvSetups = "setupsEnv";
-	@XmlTransient private final String[] DEFAULT_SUB_FOLDERS = {defaultSubFolder4Setups, defaultSubFolderEnvSetups};
+	@XmlTransient private static final String DEFAULT_SUB_FOLDER_4_SETUPS   = "setups";
+	@XmlTransient private static final String DEFAULT_SUB_FOLDER_ENV_SETUPS = "setupsEnv";
+	@XmlTransient private static final String DEFAULT_SUB_FOLDER_SECURITY = "security";
+	@XmlTransient private final String[] DEFAULT_SUB_FOLDERS = {DEFAULT_SUB_FOLDER_4_SETUPS, DEFAULT_SUB_FOLDER_ENV_SETUPS};
 	@XmlTransient public static final String DEFAULT_TEMP_FOLDER = "~tmp";
 
 	/** The OSGI-bundle of the current project */
@@ -166,7 +167,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
-
+	@XmlTransient private String projectSecurtiyFolderFullPath;
+	
 	// --- Variables saved within the project file ------------------
 	@XmlElement(name="projectName")				private String projectName;
 	@XmlElement(name="projectDescription")		private String projectDescription;
@@ -295,7 +297,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * Instantiates a new project.
 	 */
 	public Project() {
-
 		// ----------------------------------------------------------
 		// --- Fill the projects ComboBoxModel for environments -----
 		Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
@@ -520,6 +521,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		Application.setStatusBar(this.projectName + ": " + Language.translate("speichern") + " ... ");
 		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);
 
+		boolean successful = false;
 		try {
 			// --------------------------------------------
 			// --- Prepare Context and Marshaller ---------
@@ -559,6 +561,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			}
 
 			this.setUnsaved(false);
+			successful = true;
 
 			// --- Notification ---------------------------
 			this.setNotChangedButNotify(Project.SAVED);
@@ -568,7 +571,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			e.printStackTrace();
 		}
 		Application.setStatusBar("");
-		return true;
+		return successful;
 	}
 
 	/**
@@ -1302,22 +1305,43 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Returns the current project folder that is one sub-directory name of the Agent.GUI's project directory.
+	 * Returns the current project folder that is one sub-directory name of the Agent.Workbench projects directory.
 	 * @return the projectFolder
 	 */
 	public String getProjectFolder() {
 		return projectFolder;
 	}
-
 	/**
 	 * Returns the absolute location of project directory as full path.
 	 * @return the ProjectFolderFullPath
 	 */
 	public String getProjectFolderFullPath() {
 		if (projectFolderFullPath == null) {
-			projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + projectFolder + File.separator;
+			projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectFolder() + File.separator;
 		}
 		return projectFolderFullPath;
+	}
+	
+	/**
+	 * Returns the current projects security directory relative to Agent.Workbench projects directory (e.g. /myProject/security).
+	 * @return the projectFolder
+	 */
+	public String getProjectSecurityFolder() {
+		return projectFolder + File.separator + DEFAULT_SUB_FOLDER_SECURITY;
+	}
+	/**
+	 * Returns the project security folder as full path.
+	 * @return the project security folder full path
+	 */
+	public String getProjectSecurityFolderFullPath() {
+		if (projectSecurtiyFolderFullPath==null) {
+			projectSecurtiyFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectSecurityFolder() + File.separator;
+			File securityDir = new File(projectSecurtiyFolderFullPath);
+			if (securityDir.exists()==false) {
+				securityDir.mkdir();
+			}
+		}
+		return projectSecurtiyFolderFullPath;
 	}
 	
 	/**
@@ -1327,7 +1351,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public String getProjectTempFolderFullPath() {
 		String tmpFolder = this.getProjectFolderFullPath() + DEFAULT_TEMP_FOLDER + File.separator;
 		File tmpFile = new File(tmpFolder);
-		if (tmpFile.exists() == false) {
+		if (tmpFile.exists()==false) {
 			tmpFile.mkdir();
 		}
 		tmpFile.deleteOnExit();
@@ -1635,9 +1659,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	public String getEnvSetupPath(boolean fullPath) {
 		if (fullPath == true) {
-			return this.getProjectFolderFullPath() + defaultSubFolderEnvSetups;
+			return this.getProjectFolderFullPath() + DEFAULT_SUB_FOLDER_ENV_SETUPS;
 		} else {
-			return defaultSubFolderEnvSetups;
+			return DEFAULT_SUB_FOLDER_ENV_SETUPS;
 		}
 	}
 
@@ -1646,9 +1670,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	public String getSubFolder4Setups(boolean fullPath) {
 		if (fullPath == true) {
-			return getProjectFolderFullPath() + defaultSubFolder4Setups + File.separator;
+			return getProjectFolderFullPath() + DEFAULT_SUB_FOLDER_4_SETUPS + File.separator;
 		} else {
-			return defaultSubFolder4Setups;
+			return DEFAULT_SUB_FOLDER_4_SETUPS;
 		}
 	}
 
@@ -1657,7 +1681,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return the defaultSubFolderEnvSetups
 	 */
 	public String getSubFolderEnvSetups() {
-		return defaultSubFolderEnvSetups;
+		return DEFAULT_SUB_FOLDER_ENV_SETUPS;
 	}
 
 	/**
@@ -1795,7 +1819,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		if (this.jadeConfiguration == null) {
 			this.jadeConfiguration = new PlatformJadeConfig();
 		}
-		if (this.jadeConfiguration.getProject() == null) {
+		if (this.jadeConfiguration.getProject()==null) {
 			this.jadeConfiguration.setProject(this);
 		}
 		return this.jadeConfiguration;

@@ -28,14 +28,10 @@
  */
 package agentgui.core.project;
 
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.mtp.http.ProxiedHTTPS;
-
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -52,6 +48,9 @@ import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.network.NetworkAddresses;
 import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.network.PortChecker;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.mtp.http.ProxiedHTTPS;
 
 /**
  * With this class, the Profile of a new JADE-Container can be configured.
@@ -115,61 +114,57 @@ public class PlatformJadeConfig implements Serializable {
 	/** Array of services, which will be started with JADE in every case */
 	private static final String[] autoServices = {SERVICE_MessagingService, SERVICE_AgentManagementService};
 	private static final String AUTOSERVICE_TextAddition = "Startet automatisch !";
-	 
 	
 	// --- Runtime variables -------------------------------------------------- 
 	@XmlTransient
 	private Project currProject;
-	@XmlTransient
-	private DefaultListModel<String> listModelServices;
 	
 	@XmlElement(name="skipUserRequestForJadeStart")
 	private boolean skipUserRequestForJadeStart;
 	
 	@XmlElement(name="useLocalPort")	
 	private Integer useLocalPort = Application.getGlobalInfo().getJadeLocalPort();
+	@XmlElement(name="useLocalMtpPort")
+	private Integer useLocalMtpPort = Application.getGlobalInfo().getJadeLocalPortMTP();
 	
 	@XmlElement(name="mtpCreation")
 	private MTP_Creation mtpCreation = MTP_Creation.ConfiguredByJADE;
-	
 	@XmlElement(name="mtpIpAddress")
 	private String mtpIpAddress = MTP_IP_AUTO_Config;
-	
+
 	@XmlElement(name="mtpProtocol")
 	private MtpProtocol mtpProtocol = MtpProtocol.HTTP;
 	
 	@XmlElement(name="keyStoreFile")
 	private String keyStoreFile;
-	@XmlElement(name="trustStoreFile")
-	private String trustStoreFile;
-
 	@XmlElement(name="keyStorePassword")
 	private String keyStorePasswordEncrypted;
+
+	@XmlElement(name="trustStoreFile")
+	private String trustStoreFile;
 	@XmlElement(name="trustStorePassword")
 	private String trustStorePasswordEncrypted;
 	
 	
-	
-	
-	@XmlElement(name="mtpPort")
-	private Integer useLocalPortMTP = Application.getGlobalInfo().getJadeLocalPortMTP();
-	
 	@XmlElementWrapper(name = "serviceList")
 	@XmlElement(name="service")			
-	private HashSet<String> useServiceList = new HashSet<String>();
+	private ArrayList<String> useServiceList;
+	@XmlTransient
+	private DefaultListModel<String> listModelServices;
 	
 	
 	/**
-	 * Constructor of this class.
+	 * Default constructor of this class.
 	 */
 	public PlatformJadeConfig() {
 	}
-
+	
 	/**
 	 * Returns the current project.
 	 * @return the project
 	 */
-	public Object getProject() {
+	@XmlTransient
+	public Project getProject() {
 		return this.currProject;
 	}
 	/**
@@ -179,6 +174,14 @@ public class PlatformJadeConfig implements Serializable {
 	public void setProject(Project project) {
 		this.currProject = project;
 	}
+	/**
+	 * Sets the current project changed.
+	 */
+	private void setProjectChanged() {
+		if (this.currProject!=null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
 	
 	/**
 	 * This method returns the TextAddition if a Service is an automatically starting service of JADE.
@@ -187,7 +190,6 @@ public class PlatformJadeConfig implements Serializable {
 	public static String getAutoServiceTextAddition() {
 		return " " + Language.translate(AUTOSERVICE_TextAddition) + " ";
 	}
-	
 	/**
 	 * Returns if a service generally starts while JADE is starting.
 	 * @param serviceReference the service reference
@@ -265,7 +267,7 @@ public class PlatformJadeConfig implements Serializable {
 		String trustStorePassword = globalInfo.getTrustStorePassword();
 		
 		// --- Replace configuration by project settings? ---------------------
-		if (this.currProject!=null) {
+		if (this.getProject()!=null) {
 			mtpCreation = this.getMtpCreation();
 			mtpIpAddress = this.getMtpIpAddress();
 			mtpPort = this.getLocalPortMTP();
@@ -346,7 +348,7 @@ public class PlatformJadeConfig implements Serializable {
 		// --------------------------------------------------------------------
 		// --- Consider SERVER execution mode --------------------------------- 
 		// --------------------------------------------------------------------
-		if (this.currProject==null && globalInfo.getJadeUrlConfigurationForMaster().isLocalhost()) {
+		if (this.getProject()==null && globalInfo.getJadeUrlConfigurationForMaster().isLocalhost()) {
 			// --- Set MTP port in case of SERVER on local machines -------
 			switch (execMode) {
 			case SERVER:
@@ -401,6 +403,57 @@ public class PlatformJadeConfig implements Serializable {
 			profile.setParameter(Profile.SERVICES, serviceListString);
 		}
 	}	
+	
+	
+	/**
+	 * Returns the current list.
+	 * @return the service list
+	 */
+	public ArrayList<String> getServiceList() {
+		if (useServiceList==null) {
+			useServiceList = new ArrayList<>();
+		}
+		return useServiceList;
+	}
+	/**
+	 * Can be used to add a class reference to an extended JADE-BaseService.
+	 * @param serviceClassReference the service class reference
+	 */
+	public void addService(String serviceClassReference) {
+		if (this.getServiceList().contains(serviceClassReference)==false && serviceClassReference.contains(getAutoServiceTextAddition())==false) {
+			// --- Add to the local HashSet -------------------------
+			this.getServiceList().add(serviceClassReference);
+			// --- add to the DefaultListModel ----------------------
+			this.getListModelServices().addElement(serviceClassReference);
+			// --- sort the ListModel -------------------------------
+			this.sortListModelServices();
+			// --- if set, set project changed and unsaved ----------
+			this.setProjectChanged();
+		}
+	}
+	/**
+	 * Can be used to remove a class reference to an extended JADE-BaseService.
+	 * @param serviceClassReference the service class reference
+	 */
+	public void removeService(String serviceClassReference) {
+		if (this.getServiceList().contains(serviceClassReference)==true) {
+			// --- remove from the local HashSet --------------------
+			this.getServiceList().remove(serviceClassReference);
+			// --- remove from the DefaultListModel -----------------
+			this.getListModelServices().removeElement(serviceClassReference);
+			// --- if set, set project changed and unsaved ----------
+			this.setProjectChanged();
+		}
+	}
+	/**
+	 * This method will remove all Services from the current Profile.
+	 */
+	public void removeAllServices() {
+		this.getServiceList().clear();
+		this.getListModelServices().removeAllElements();
+		// --- if set, set project changed and unsaved ----------
+		this.setProjectChanged();
+	}
 	/**
 	 * This method walks through the HashSet of configured Services and returns them
 	 * as a String separated with a semicolon (';').
@@ -409,9 +462,8 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public String getServiceListArgument() {
 		String serviceListString = "";
-		Iterator<String> it = useServiceList.iterator();
-		while (it.hasNext()) {
-			String singeleService = it.next();
+		for (int i = 0; i < this.getServiceList().size(); i++) {
+			String singeleService = this.getServiceList().get(i);
 			if (singeleService.endsWith(";")==true) {
 				serviceListString += singeleService;
 			} else {
@@ -421,81 +473,6 @@ public class PlatformJadeConfig implements Serializable {
 		return serviceListString;
 	}
 	
-	/**
-	 * Can be used in order to add a class reference to an extended JADE-BaseService.
-	 *
-	 * @param serviceClassReference the service class reference
-	 */
-	public void addService(String serviceClassReference) {
-		
-		if (this.isUsingService(serviceClassReference)==false && serviceClassReference.contains(getAutoServiceTextAddition())==false) {
-			
-			// --- add to the local HashSet -------------------------
-			this.useServiceList.add(serviceClassReference);
-			// --- add to the DefaultListModel ----------------------
-			this.getListModelServices().addElement(serviceClassReference);
-			// --- sort the ListModel -------------------------------
-			this.sortListModelServices();
-			// --- if set, set project changed and unsaved ----------
-			if (this.currProject!=null) {
-				this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-			}
-		}
-	}
-
-	/**
-	 * Can be used in order to remove a class reference to an extended JADE-BaseService.
-	 *
-	 * @param serviceClassReference the service class reference
-	 */
-	public void removeService(String serviceClassReference) {
-		
-		if (this.isUsingService(serviceClassReference)==true) {
-			// --- remove from the local HashSet --------------------
-			this.useServiceList.remove(serviceClassReference);
-			// --- remove from the DefaultListModel -----------------
-			this.getListModelServices().removeElement(serviceClassReference);
-			// --- if set, set project changed and unsaved ----------
-			if (this.currProject!=null) {
-				this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-			}
-		}
-	}
-	
-	/**
-	 * This method will remove all Services from the current Profile.
-	 */
-	public void removeAllServices() {
-		this.useServiceList.clear();
-		this.listModelServices.removeAllElements();
-		// --- if set, set project changed and unsaved ----------
-		if (currProject!=null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
-	}
-	
-	/**
-	 * Checks if a Service is configured for this instance.
-	 * The requested Service can be given with the actual class of the service
-	 *
-	 * @param requestedService the requested service
-	 * @return boolean
-	 */
-	public boolean isUsingService(String requestedService) {
-		if ( useServiceList.contains(requestedService) == true ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	/**
-	 * Counts the number of services which are currently configured.
-	 * @return the number of services used
-	 */
-	public Integer countUsedServices() {
-		return this.useServiceList.size();
-	}
-	
 	
 	/**
 	 * Sets the skip user request for jade start.
@@ -503,9 +480,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setSkipUserRequestForJadeStart(boolean skipUserRequestForJadeStart) {
 		this.skipUserRequestForJadeStart = skipUserRequestForJadeStart;
-		if (this.currProject!=null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.setProjectChanged();
 	}
 	/**
 	 * Checks if is skip user request for jade start.
@@ -523,9 +498,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setLocalPort(int port2Use){
 		this.useLocalPort = port2Use;
-		if (this.currProject!=null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.setProjectChanged();
 	}
 	/**
 	 * Returns the current Port which is  configured for a JADE-Container.
@@ -541,10 +514,8 @@ public class PlatformJadeConfig implements Serializable {
 	 * @param newMTPport the new MTP port to use
 	 */
 	public void setLocalPortMTP(Integer newMTPport) {
-		this.useLocalPortMTP = newMTPport;
-		if (this.currProject!=null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.useLocalMtpPort = newMTPport;
+		this.setProjectChanged();
 	}
 	/**
 	 * Returns the current Port which is configured for the MTP of the JADE main container.
@@ -552,7 +523,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	@XmlTransient
 	public Integer getLocalPortMTP() {
-		return useLocalPortMTP;
+		return useLocalMtpPort;
 	}
 
 	/**
@@ -561,9 +532,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setMtpCreation(MTP_Creation mtpCreation) {
 		this.mtpCreation = mtpCreation;
-		if (this.currProject!=null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.setProjectChanged();
 	}
 	/**
 	 * Returns how the MTP settings have to be created.
@@ -582,9 +551,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setMtpIpAddress(String mtpIpAddress) {
 		this.mtpIpAddress = mtpIpAddress;
-		if (this.currProject!=null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.setProjectChanged();
 	}
 	/**
 	 * Returns the MTP IP-address.
@@ -601,9 +568,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setMtpProtocol(MtpProtocol mtpProtool){
 		this.mtpProtocol = mtpProtool;
-		if (this.currProject != null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.setProjectChanged();
 	}
 	/**
 	 * Gets the MTP Protocol.
@@ -614,15 +579,17 @@ public class PlatformJadeConfig implements Serializable {
 		return mtpProtocol;
 	}
 	
+	
 	/**
 	 * Sets the KeyStoreFile.
-	 * @param keyStoreFile the new KeyStoreFile
+	 * @param neKeyStoreFile the new KeyStoreFile
 	 */
-	public void setKeyStoreFile(String keyStoreFile){
-		this.keyStoreFile = keyStoreFile;
-		if (this.currProject != null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+	public void setKeyStoreFile(String neKeyStoreFile) {
+		if (this.getProject()!=null && neKeyStoreFile!=null) {
+			neKeyStoreFile = neKeyStoreFile.replace(this.getProject().getProjectSecurityFolderFullPath(), ""); 
 		}
+		this.keyStoreFile = neKeyStoreFile;
+		this.setProjectChanged();
 	}
 	/**
 	 * Gets the KeyStoreFile.
@@ -630,7 +597,10 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	@XmlTransient
 	public String getKeyStoreFile(){
-		return keyStoreFile;
+		if (this.getProject()!=null && this.keyStoreFile!=null) {
+			return this.getProject().getProjectSecurityFolderFullPath() + this.keyStoreFile;
+		}
+		return this.keyStoreFile;
 	}
 	/**
 	 * Sets the KeyStorePassword.
@@ -638,9 +608,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setKeyStorePassword(String keyStorePassword){
 		this.setKeyStorePasswordEncrypted(Application.getGlobalInfo().pwEncrypt(keyStorePassword));
-		if (this.currProject != null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.setProjectChanged();
 	}
 	/**
 	 * Gets the KeyStorePassword.
@@ -650,7 +618,6 @@ public class PlatformJadeConfig implements Serializable {
 	public String getKeyStorePassword(){
 		return Application.getGlobalInfo().pwDecrypt(this.getKeyStorePasswordEncrypted());
 	}
-	
 	/**
 	 * Sets the KeyStorePasswordEncrypted.
 	 * @param keyStorePasswordEncrypted the KeyStorePasswordEncrypted
@@ -658,7 +625,6 @@ public class PlatformJadeConfig implements Serializable {
 	public void setKeyStorePasswordEncrypted(String keyStorePasswordEncrypted) {
 		this.keyStorePasswordEncrypted = keyStorePasswordEncrypted;
 	}
-	
 	/**
 	 * Gets the KeyStorePasswordEncrypted.
 	 * @return the keyStorePasswordEncrypted
@@ -671,13 +637,14 @@ public class PlatformJadeConfig implements Serializable {
 	
 	/**
 	 * Sets the TrustStoreFile.
-	 * @param trustStoreFile the new TrustStoreFile
+	 * @param newTrustStoreFile the new TrustStoreFile
 	 */
-	public void setTrustStoreFile(String trustStoreFile){
-		this.trustStoreFile = trustStoreFile;
-		if (this.currProject != null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+	public void setTrustStoreFile(String newTrustStoreFile){
+		if (this.getProject()!=null && newTrustStoreFile!=null) {
+			newTrustStoreFile = newTrustStoreFile.replace(this.getProject().getProjectSecurityFolderFullPath(), ""); 
 		}
+		this.trustStoreFile = newTrustStoreFile;
+		this.setProjectChanged();
 	}
 	/**
 	 * Gets the TrustStoreFile.
@@ -685,7 +652,10 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	@XmlTransient
 	public String getTrustStoreFile(){
-		return trustStoreFile;
+		if (this.getProject()!=null && this.trustStoreFile!=null) {
+			return this.getProject().getProjectSecurityFolderFullPath() + this.trustStoreFile;
+		}
+		return this.trustStoreFile;
 	}
 	/**
 	 * Sets the TrustStorePassword.
@@ -693,9 +663,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setTrustStorePassword(String trustStorePassword){
 		this.setTrustStorePasswordEncrypted(Application.getGlobalInfo().pwEncrypt(trustStorePassword));
-		if (this.currProject != null) {
-			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
-		}
+		this.setProjectChanged();
 	}
 	/**
 	 * Gets the TrustStorePassword.
@@ -705,7 +673,6 @@ public class PlatformJadeConfig implements Serializable {
 	public String getTrustStorePassword(){
 		return Application.getGlobalInfo().pwDecrypt(this.getTrustStorePasswordEncrypted());
 	}
-	
 	/**
 	 * Gets the trust store password encrypted.
 	 * @return the trust store password encrypted
@@ -713,7 +680,6 @@ public class PlatformJadeConfig implements Serializable {
 	public String getTrustStorePasswordEncrypted() {
 		return trustStorePasswordEncrypted;
 	}
-	
 	/**
 	 * Sets the TrustStorePasswordEncrypted.
 	 * @param trustStorePasswordEncrypted the new TrustStorePasswordEncrypted
@@ -722,6 +688,8 @@ public class PlatformJadeConfig implements Serializable {
 	public void setTrustStorePasswordEncrypted(String trustStorePasswordEncrypted) {
 		this.trustStorePasswordEncrypted = trustStorePasswordEncrypted;
 	}
+	
+	
 	/**
 	 * Gets the list model services.
 	 * @return the listModelServices
@@ -752,29 +720,6 @@ public class PlatformJadeConfig implements Serializable {
 				this.listModelServices.addElement(sorty.get(i));
 			}
 		}
-	}
-	
-	/**
-	 * This Method compares the current instance with another instances
-	 * of this class and returns true, if they are logical identical.
-	 *
-	 * @param jadeConfig2 the jade config2
-	 * @return boolean
-	 */
-	public boolean isEqual(PlatformJadeConfig jadeConfig2) {
-		
-		if (this.countUsedServices()!=jadeConfig2.countUsedServices()) return false;
-
-		Iterator<String> it = this.useServiceList.iterator();
-		while(it.hasNext()) {
-			String currService = it.next();
-			if (jadeConfig2.isUsingService(currService)==false) return false;
-		}
-
-		if (jadeConfig2.getLocalPort().equals(this.getLocalPort())==false) return false;
-		if (jadeConfig2.getLocalPortMTP().equals(this.getLocalPortMTP())==false) return false;
-		if (jadeConfig2.getMtpCreation()!=this.getMtpCreation()) return false;
-		return true;
 	}
 
 	/**

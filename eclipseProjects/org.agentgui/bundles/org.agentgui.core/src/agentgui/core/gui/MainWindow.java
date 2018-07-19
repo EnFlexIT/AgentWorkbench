@@ -1450,9 +1450,8 @@ public class MainWindow extends JFrame {
 				Application.getProjectsLoaded().add(false);
 
 			} else if (ActCMD.equalsIgnoreCase("Save")) {
-				Project CurPro = Application.getProjectFocused();
-				if (CurPro != null)
-					CurPro.save();
+				Project currentProject = Application.getProjectFocused();
+				if (currentProject!=null) currentProject.save();
 
 				// ------------------------------------------------
 			} else if (ActCMD.equalsIgnoreCase("ViewConsole")) {
