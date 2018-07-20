@@ -24,6 +24,7 @@ Export-Package: de.enflexit.common,
    javax.swing",
  de.enflexit.common.p2,
  de.enflexit.common.swing,
+ de.enflexit.common.swing.fileSelection,
  de.enflexit.common.transfer
 Require-Bundle: de.enflexit.api,
  org.eclipse.osgi.services,

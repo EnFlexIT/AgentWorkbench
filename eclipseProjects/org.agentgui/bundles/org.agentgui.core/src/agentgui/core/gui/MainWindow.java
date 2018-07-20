@@ -46,6 +46,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -87,6 +88,7 @@ import agentgui.core.update.AWBUpdater;
 import agentgui.core.update.ProjectRepositoryExplorerDialog;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import de.enflexit.common.swing.fileSelection.DirectoryDialog;
 
 /**
  * This class represents the main user-interface of the application AgentGUI.
@@ -1263,7 +1265,6 @@ public class MainWindow extends JFrame {
 	 * @return the main JToolBar of the application window
 	 */
 	public JToolBar getJToolBarApplication() {
-
 		if (jToolBarApplication == null) {
 
 			// --- PopUp-Menu zum Button 'JadeTools' definieren (s. u.) ---
@@ -1325,7 +1326,11 @@ public class MainWindow extends JFrame {
 			jToolBarApplication.add(new JToolBarButton("ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png"));
 			jToolBarApplication.add(new JToolBarButton("ThreadMonitoring", Language.translate("Thread-Monitor öffnen"), null, "MBclock.png"));
 			jToolBarApplication.addSeparator();
-
+			// --------------------------------------------
+			if (this.showTestMenuButton==true) {
+				jToolBarApplication.add(new JToolBarButton("Test", Language.translate("Test"), "Funktion Testen", null));
+			}
+			// --------------------------------------------
 		}
 		return jToolBarApplication;
 	}
@@ -1441,57 +1446,60 @@ public class MainWindow extends JFrame {
 		 */
 		public void actionPerformed(ActionEvent ae) {
 			
-			String ActCMD = ae.getActionCommand();
+			String actCMD = ae.getActionCommand();
 			// ------------------------------------------------
-			if (ActCMD.equalsIgnoreCase("New")) {
+			if (actCMD.equalsIgnoreCase("New")) {
 				Application.getProjectsLoaded().add(true);
 
-			} else if (ActCMD.equalsIgnoreCase("Open")) {
+			} else if (actCMD.equalsIgnoreCase("Open")) {
 				Application.getProjectsLoaded().add(false);
 
-			} else if (ActCMD.equalsIgnoreCase("Save")) {
+			} else if (actCMD.equalsIgnoreCase("Save")) {
 				Project currentProject = Application.getProjectFocused();
 				if (currentProject!=null) currentProject.save();
 
 				// ------------------------------------------------
-			} else if (ActCMD.equalsIgnoreCase("ViewConsole")) {
+			} else if (actCMD.equalsIgnoreCase("ViewConsole")) {
 				Application.getMainWindow().doSwitchConsole();
 
 				// ------------------------------------------------
-			} else if (ActCMD.equalsIgnoreCase("JadeStart")) {
+			} else if (actCMD.equalsIgnoreCase("JadeStart")) {
 				Application.getJadePlatform().start();
 
-			} else if (ActCMD.equalsIgnoreCase("JadeStop")) {
+			} else if (actCMD.equalsIgnoreCase("JadeStop")) {
 				Application.getJadePlatform().stop();
 
-			} else if (ActCMD.equalsIgnoreCase("StartAgent")) {
+			} else if (actCMD.equalsIgnoreCase("StartAgent")) {
 				MainWindow.this.startAgent();
 
-			} else if (ActCMD.equalsIgnoreCase("JadeTools")) {
+			} else if (actCMD.equalsIgnoreCase("JadeTools")) {
 				showJPopupMenuJadeTools();
 
-			} else if (ActCMD.equalsIgnoreCase("ContainerMonitoring")) {
+			} else if (actCMD.equalsIgnoreCase("ContainerMonitoring")) {
 				Application.getJadePlatform().startSystemAgent("loadMonitor", null);
-			} else if (ActCMD.equalsIgnoreCase("ThreadMonitoring")) {
+			} else if (actCMD.equalsIgnoreCase("ThreadMonitoring")) {
 				Application.getJadePlatform().startSystemAgent("threadMonitor", null);
 
 				// ------------------------------------------------
-			} else if (ActCMD.equalsIgnoreCase("SimulationStart")) {
+			} else if (actCMD.equalsIgnoreCase("SimulationStart")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 				Application.getJadePlatform().startSystemAgent("simstarter", null, startWith);
 
-			} else if (ActCMD.equalsIgnoreCase("SimulationPause")) {
+			} else if (actCMD.equalsIgnoreCase("SimulationPause")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
 				Application.getJadePlatform().startSystemAgent("simstarter", null, startWith);
 
-			} else if (ActCMD.equalsIgnoreCase("SimulationStop")) {
+			} else if (actCMD.equalsIgnoreCase("SimulationStop")) {
 				Application.getJadePlatform().stop();
 
+			} else if (actCMD.equalsIgnoreCase("Test")) {
+				MainWindow.this.testMethod();
+				
 				// ------------------------------------------------
 			} else {
-				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
+				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 			}
 			;
 
@@ -1560,5 +1568,23 @@ public class MainWindow extends JFrame {
 			this.enableSetupSelector(true);
 		}
 	}
+
+	// ----------------------------------------------------
+	// --- Test and debug area ------------------ Start ---
+	// ----------------------------------------------------
+	private boolean showTestMenuButton = true;
+	
+	/**
+	 * This is just a test method that can be invoked if the local variable {@link #showTestMenuButton} is set true.
+	 */
+	private void testMethod() {
+		
+		new DirectoryDialog(new File(Application.getGlobalInfo().getPathProjects()));
+		
+		
+	}
+	// ----------------------------------------------------
+	// --- Test and debug area -------------------- End ---
+	// ----------------------------------------------------
 
 } // -- End Class ---
