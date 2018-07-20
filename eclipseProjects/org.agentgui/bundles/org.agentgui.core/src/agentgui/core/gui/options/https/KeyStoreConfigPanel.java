@@ -28,7 +28,6 @@
  */
 package agentgui.core.gui.options.https;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -49,10 +48,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.crypto.CertificateProperties;
@@ -145,11 +142,13 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		gbc_jLabelKeyStoreInformations.gridy = 0;
 		add(getJLabelKeyStoreInformations(), gbc_jLabelKeyStoreInformations);
 		GridBagConstraints gbc_jButtonCertificate = new GridBagConstraints();
+		gbc_jButtonCertificate.anchor = GridBagConstraints.EAST;
 		gbc_jButtonCertificate.insets = new Insets(9, 0, 10, 5);
 		gbc_jButtonCertificate.gridx = 1;
 		gbc_jButtonCertificate.gridy = 0;
 		add(getJButtonCertificate(), gbc_jButtonCertificate);
 		GridBagConstraints gbc_jButtonApplyKeyStore = new GridBagConstraints();
+		gbc_jButtonApplyKeyStore.fill = GridBagConstraints.VERTICAL;
 		gbc_jButtonApplyKeyStore.insets = new Insets(9, 0, 10, 10);
 		gbc_jButtonApplyKeyStore.gridx = 2;
 		gbc_jButtonApplyKeyStore.gridy = 0;
@@ -381,7 +380,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	protected KeyStoreController getKeyStoreController() {
 		if (keyStoreController == null) {
-			keyStoreController = new KeyStoreController(Application.getGlobalInfo().getOwnerDialogForComponent(this));
+			keyStoreController = new KeyStoreController(this.httpsConfigWindow);
 		}
 		return keyStoreController;
 	}
@@ -633,9 +632,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		if (jButtonApplyKeyStore == null) {
 			jButtonApplyKeyStore = new JButton("");
 			jButtonApplyKeyStore.setToolTipText(Language.translate("Save",Language.EN));
-			jButtonApplyKeyStore.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonApplyKeyStore.setForeground(new Color(0, 0, 255));
-			jButtonApplyKeyStore.setVerticalAlignment(SwingConstants.TOP);
 			jButtonApplyKeyStore.setPreferredSize(new Dimension(26, 26));
 			jButtonApplyKeyStore.setIcon(GlobalInfo.getInternalImageIcon("MBsave.png"));
 			jButtonApplyKeyStore.addActionListener(this);
@@ -889,7 +885,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						
 						fillFields(keyStoreSettings);
 
-						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(keyStoreFile.getAbsolutePath());
+						this.httpsConfigWindow.getJTextFieldKeyStoreLocationPath().setText(keyStoreFile.getAbsolutePath());
 						this.httpsConfigWindow.setKeyStoreButtonPressed("UpdateKeyStore");
 					}
 				}

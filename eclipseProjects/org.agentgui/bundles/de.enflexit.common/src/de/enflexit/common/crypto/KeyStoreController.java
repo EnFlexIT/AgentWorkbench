@@ -28,7 +28,7 @@
  */
 package de.enflexit.common.crypto;
 
-import java.awt.Dialog;
+import java.awt.Window;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -79,9 +79,10 @@ public class KeyStoreController extends TrustStoreController {
 
 	/**
 	 * This Initializes the KeyStoreController.
+	 * @param ownerWindow the owner window
 	 */
-	public KeyStoreController(Dialog ownerDialog) {
-		super(ownerDialog);
+	public KeyStoreController(Window ownerWindow) {
+		super(ownerWindow);
 	}
 
 	/**
@@ -94,22 +95,21 @@ public class KeyStoreController extends TrustStoreController {
 	 * @param validity the validity
 	 */
 	public void createKeyStore(CertificateProperties certificateProperties, File keyStoreFile, String keystorePassword, String validity) {
-		KeyPairGenerator kpg;
+		
 		try {
-			kpg = KeyPairGenerator.getInstance(ALGO_RSA);
+
+			KeyPairGenerator kpg = KeyPairGenerator.getInstance(ALGO_RSA);
 			kpg.initialize(keysize);
 
 			KeyPair kp = kpg.genKeyPair();
-//			kp.getPrivate().
-
 			KeyFactory fact = KeyFactory.getInstance(ALGO_RSA);
 
 			try {
+				
 				X509Certificate[] chain = new X509Certificate[1];
-
 				RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
 
-				init(keyStoreFile, keystorePassword);
+				this.init(keyStoreFile, keystorePassword);
 
 				ContentSigner sigGen = new JcaContentSignerBuilder("SHA1withRSA").setProvider(new BouncyCastleProvider()).build(kp.getPrivate());
 				SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(new RSAKeyParameters(false, pub.getModulus(), pub.getPublicExponent()));
@@ -126,25 +126,16 @@ public class KeyStoreController extends TrustStoreController {
 				namebuilder.addRDN(BCStyle.C, certificateProperties.getCountryCode());
 
 				X500Name x500Name = namebuilder.build();
-
-				X509v1CertificateBuilder v1CertGen = new X509v1CertificateBuilder(
-						x500Name,
-						BigInteger.ONE,
-						startDate, endDate,
-						x500Name,
-						subPubKeyInfo);
-
+				X509v1CertificateBuilder v1CertGen = new X509v1CertificateBuilder(x500Name, BigInteger.ONE, startDate, endDate, x500Name, subPubKeyInfo);
 				X509CertificateHolder certHolder = v1CertGen.build(sigGen);
 
-				JcaX509CertificateConverter converter = new JcaX509CertificateConverter()
-						.setProvider(new BouncyCastleProvider());
+				JcaX509CertificateConverter converter = new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider());
 				converter.getCertificate(certHolder);
 
 				chain[0] = converter.getCertificate(certHolder);
 
-				trustStore.setKeyEntry(certificateProperties.getAlias(), kp.getPrivate(), keystorePassword.toCharArray(), chain);
-
-				saveTrustStore();
+				this.trustStore.setKeyEntry(certificateProperties.getAlias(), kp.getPrivate(), keystorePassword.toCharArray(), chain);
+				this.saveTrustStore();
 
 			} catch (InvalidKeySpecException e) {
 				e.printStackTrace();

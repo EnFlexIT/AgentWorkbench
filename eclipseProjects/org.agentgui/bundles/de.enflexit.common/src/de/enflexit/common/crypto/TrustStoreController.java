@@ -28,7 +28,8 @@
  */
 package de.enflexit.common.crypto;
 
-import java.awt.Dialog;
+//import java.awt.Dialog;
+import java.awt.Window;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -61,7 +62,7 @@ import de.enflexit.common.Language;
  */
 public class TrustStoreController {
 	
-	private Dialog ownerDialog;
+	private Window ownerWindow;
 
 	private boolean initialized = false;
 
@@ -78,14 +79,14 @@ public class TrustStoreController {
 	/**
 	 * generates a blank controller, which still needs to initialize the trustStore
 	 */
-	public TrustStoreController(Dialog ownerDialog){
+	public TrustStoreController(Window ownerDialog){
 		this(ownerDialog, null, null, false);
 	}
 	/**
 	 * This Initializes the TrustStoreController.
 	 */
-	public TrustStoreController(Dialog ownerDialog, File trustStoreFile, String trustStorePassword, boolean edit) {
-		this.ownerDialog = ownerDialog;
+	public TrustStoreController(Window ownerWindow, File trustStoreFile, String trustStorePassword, boolean edit) {
+		this.ownerWindow = ownerWindow;
 		try {
 			this.trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			if (trustStoreFile != null && trustStorePassword != null) {
@@ -101,13 +102,20 @@ public class TrustStoreController {
 	}
 
 	/**
+	 * Sets the owner window.
+	 * @param ownerWindow the new owner window
+	 */
+	public void setOwnerWindow(Window ownerWindow) {
+		this.ownerWindow = ownerWindow;
+	}
+	
+	/**
 	 * returns the key store object for direct interaction
 	 * @return the key store object
 	 */
 	public KeyStore getKeyStore(){
 		return trustStore;
 	}
-		
 	/**
 	 * Gets the trust store password.
 	 * @return the trust store password
@@ -163,13 +171,14 @@ public class TrustStoreController {
 	 * @return true, if successful
 	 */
 	public boolean openTrustStore(File trustStoreFile, String trustStorePassword) {
-		if (trustStoreFile != null && trustStoreFile.exists()) {
+		if (trustStoreFile!=null && trustStoreFile.exists()) {
 			try {
 				trustStoreInputStream = new FileInputStream(trustStoreFile);
 				init(trustStoreFile, trustStorePassword);
-				return openTrustStoreFromStream(trustStoreInputStream, trustStorePassword);
+				return this.openTrustStoreFromStream(trustStoreInputStream, trustStorePassword);
 				
 			} catch (FileNotFoundException fnfEx) {
+				//System.err.println("[" + this.getClass().getSimpleName() + "] " + fnfEx.getLocalizedMessage());
 				fnfEx.printStackTrace();
 			}
 		}
@@ -194,12 +203,12 @@ public class TrustStoreController {
 		
 		} catch (FileNotFoundException | NoSuchAlgorithmException | CertificateException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException ioEx) {
 			// --- Open a warning Message dialog if the password is incorrect --
-			if (ownerDialog!=null) {
-				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + "!");
+			if (ownerWindow!=null) {
+				JOptionPane.showMessageDialog(this.ownerWindow, ioEx.getMessage() + "!", "Error reading key or trust store file!", JOptionPane.ERROR_MESSAGE);
 			} else {
-				e.printStackTrace();
+				ioEx.printStackTrace();
 			}
 		}
 		return successful;
@@ -228,8 +237,8 @@ public class TrustStoreController {
 			e.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			if (ownerDialog != null) {
-				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + "!");
+			if (ownerWindow != null) {
+				JOptionPane.showMessageDialog(ownerWindow, e1.getMessage() + "!");
 			}
 		}
 	}
@@ -301,14 +310,14 @@ public class TrustStoreController {
 		} catch (FileNotFoundException | KeyStoreException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (CertificateException e) {
-			if (ownerDialog != null) {
-				JOptionPane.showMessageDialog(ownerDialog, "Please choose a certificate file!");
+			if (ownerWindow != null) {
+				JOptionPane.showMessageDialog(ownerWindow, "Please choose a certificate file!");
 			}
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-			if (ownerDialog != null) {
-				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");
+			if (ownerWindow != null) {
+				JOptionPane.showMessageDialog(ownerWindow, e.getMessage() + " !");
 			}
 		}
 	}

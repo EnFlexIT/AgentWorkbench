@@ -30,7 +30,6 @@ package agentgui.core.gui.options.https;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -42,6 +41,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -50,7 +50,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.event.AncestorEvent;
@@ -80,17 +79,10 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	private KeyStoreConfigPanel keyStoreConfigPanel;
 	private TrustStoreConfigPanel trustStoreConfigPanel;
 
-	private JPanel jPanelHeader;
-	private JPanel jPanelFooter;
-	private JPanel jPanelKeyStoreButtons;
-	private JPanel jPanelTrustStoreButtons;
-
 	private JLabel jLabelKeyStoreFile;
-	private JLabel jLabelKeyStoreLocation;
 	private JLabel jLabelTrustStoreFile;
-	private JLabel jLabelTrustStoreLocation;
-	private JLabel jLabelTrustStoreLocationPath;
-	private JLabel jLabelKeyStoreLocationPath;
+	private JTextField jTextFieldTrustStoreLocationPath;
+	private JTextField jTextFieldKeyStoreLocationPath;
 
 	private JButton jButtonOpenKeyStore;
 	private JButton jButtonCreateKeyStore;
@@ -100,8 +92,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	private JButton jButtonCancel;
 
 	private JFileChooser jFileChooser;
-	private JScrollPane jScrollPaneKeyStore;
-	private JScrollPane jScrollPaneTrustStore;
 
 	private File trustStoreFile;
 	private File keyStoreFile;
@@ -115,11 +105,14 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	public static final String TRUSTSTORE_FILENAME = "TrustStore.jks";
 
 	private boolean canceled;
+	private JPanel jPanelKeystoreControl;
+	private JPanel jPanelTrustStoreControl;
 
 	
 	/**
 	 * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show it.
 	 * @param owner the owner frame or window
+	 * @wbp.parser.constructor
 	 */
 	public HttpsConfigWindow(Window owner) {
 		super(owner);
@@ -165,39 +158,116 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
-		
-		GridBagConstraints gbc_jPanelHeader = new GridBagConstraints();
-		gbc_jPanelHeader.gridwidth = 2;
-		gbc_jPanelHeader.insets = new Insets(10, 10, 5, 10);
-		gbc_jPanelHeader.anchor = GridBagConstraints.NORTH;
-		gbc_jPanelHeader.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jPanelHeader.gridx = 0;
-		gbc_jPanelHeader.gridy = 0;
-		this.getContentPane().add(getJPanelHeader(), gbc_jPanelHeader);
-		GridBagConstraints gbc_jScrollPaneKeyStore = new GridBagConstraints();
-		gbc_jScrollPaneKeyStore.fill = GridBagConstraints.BOTH;
-		gbc_jScrollPaneKeyStore.insets = new Insets(10, 10, 0, 10);
-		gbc_jScrollPaneKeyStore.gridx = 0;
-		gbc_jScrollPaneKeyStore.gridy = 1;
-		this.getContentPane().add(getJPanelBody(), gbc_jScrollPaneKeyStore);
-		GridBagConstraints gbc_jScrollPaneTrustStore = new GridBagConstraints();
-		gbc_jScrollPaneTrustStore.insets = new Insets(10, 0, 0, 10);
-		gbc_jScrollPaneTrustStore.fill = GridBagConstraints.BOTH;
-		gbc_jScrollPaneTrustStore.gridx = 1;
-		gbc_jScrollPaneTrustStore.gridy = 1;
-		getContentPane().add(getJScrollPaneTrustStore(), gbc_jScrollPaneTrustStore);
-		GridBagConstraints gbc_jPanelFooter = new GridBagConstraints();
-		gbc_jPanelFooter.gridwidth = 2;
-		gbc_jPanelFooter.insets = new Insets(10, 10, 15, 10);
-		gbc_jPanelFooter.anchor = GridBagConstraints.NORTH;
-		gbc_jPanelFooter.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jPanelFooter.gridx = 0;
-		gbc_jPanelFooter.gridy = 2;
-		this.getContentPane().add(getJPanelFooter(), gbc_jPanelFooter);
+		GridBagConstraints gbc_jPanelKeystoreControl = new GridBagConstraints();
+		gbc_jPanelKeystoreControl.insets = new Insets(10, 10, 15, 5);
+		gbc_jPanelKeystoreControl.fill = GridBagConstraints.BOTH;
+		gbc_jPanelKeystoreControl.gridx = 0;
+		gbc_jPanelKeystoreControl.gridy = 0;
+		getContentPane().add(getJPanelKeystoreControl(), gbc_jPanelKeystoreControl);
+		GridBagConstraints gbc_jPanelTrustStoreControl = new GridBagConstraints();
+		gbc_jPanelTrustStoreControl.insets = new Insets(10, 5, 15, 10);
+		gbc_jPanelTrustStoreControl.fill = GridBagConstraints.BOTH;
+		gbc_jPanelTrustStoreControl.gridx = 1;
+		gbc_jPanelTrustStoreControl.gridy = 0;
+		getContentPane().add(getJPanelTrustStoreControl(), gbc_jPanelTrustStoreControl);
+	}
+	private JPanel getJPanelKeystoreControl() {
+		if (jPanelKeystoreControl == null) {
+			jPanelKeystoreControl = new JPanel();
+			GridBagLayout gbl_jPanelKeystoreControl = new GridBagLayout();
+			gbl_jPanelKeystoreControl.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelKeystoreControl.rowHeights = new int[]{0, 0, 0, 0, 0};
+			gbl_jPanelKeystoreControl.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelKeystoreControl.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+			jPanelKeystoreControl.setLayout(gbl_jPanelKeystoreControl);
+			GridBagConstraints gbc_jLabelKeyStoreFile = new GridBagConstraints();
+			gbc_jLabelKeyStoreFile.gridx = 0;
+			gbc_jLabelKeyStoreFile.gridy = 0;
+			jPanelKeystoreControl.add(getJLabelKeyStoreFile(), gbc_jLabelKeyStoreFile);
+			GridBagConstraints gbc_jButtonOpenKeyStore = new GridBagConstraints();
+			gbc_jButtonOpenKeyStore.insets = new Insets(0, 0, 0, 5);
+			gbc_jButtonOpenKeyStore.anchor = GridBagConstraints.EAST;
+			gbc_jButtonOpenKeyStore.gridx = 1;
+			gbc_jButtonOpenKeyStore.gridy = 0;
+			jPanelKeystoreControl.add(getJButtonOpenKeyStore(), gbc_jButtonOpenKeyStore);
+			GridBagConstraints gbc_jButtonCreateKeyStore = new GridBagConstraints();
+			gbc_jButtonCreateKeyStore.gridx = 2;
+			gbc_jButtonCreateKeyStore.gridy = 0;
+			jPanelKeystoreControl.add(getJButtonCreateKeyStore(), gbc_jButtonCreateKeyStore);
+			GridBagConstraints gbc_jLabelKeyStoreLocationPath = new GridBagConstraints();
+			gbc_jLabelKeyStoreLocationPath.insets = new Insets(5, 0, 0, 0);
+			gbc_jLabelKeyStoreLocationPath.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jLabelKeyStoreLocationPath.gridwidth = 3;
+			gbc_jLabelKeyStoreLocationPath.gridx = 0;
+			gbc_jLabelKeyStoreLocationPath.gridy = 1;
+			jPanelKeystoreControl.add(getJTextFieldKeyStoreLocationPath(), gbc_jLabelKeyStoreLocationPath);
+			GridBagConstraints gbc_keyStoreConfigPanel = new GridBagConstraints();
+			gbc_keyStoreConfigPanel.insets = new Insets(5, 0, 0, 0);
+			gbc_keyStoreConfigPanel.fill = GridBagConstraints.BOTH;
+			gbc_keyStoreConfigPanel.gridwidth = 3;
+			gbc_keyStoreConfigPanel.gridx = 0;
+			gbc_keyStoreConfigPanel.gridy = 2;
+			jPanelKeystoreControl.add(getKeyStoreConfigPanel(), gbc_keyStoreConfigPanel);
+			GridBagConstraints gbc_jButtonOK = new GridBagConstraints();
+			gbc_jButtonOK.insets = new Insets(10, 0, 0, 20);
+			gbc_jButtonOK.anchor = GridBagConstraints.EAST;
+			gbc_jButtonOK.gridwidth = 3;
+			gbc_jButtonOK.gridx = 0;
+			gbc_jButtonOK.gridy = 3;
+			jPanelKeystoreControl.add(getJButtonOK(), gbc_jButtonOK);
+		}
+		return jPanelKeystoreControl;
+	}
+	private JPanel getJPanelTrustStoreControl() {
+		if (jPanelTrustStoreControl == null) {
+			jPanelTrustStoreControl = new JPanel();
+			GridBagLayout gbl_jPanelTrustStoreControl = new GridBagLayout();
+			gbl_jPanelTrustStoreControl.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelTrustStoreControl.rowHeights = new int[]{0, 0, 0, 0, 0};
+			gbl_jPanelTrustStoreControl.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelTrustStoreControl.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+			jPanelTrustStoreControl.setLayout(gbl_jPanelTrustStoreControl);
+			GridBagConstraints gbc_jLabelTrustStoreFile = new GridBagConstraints();
+			gbc_jLabelTrustStoreFile.gridx = 0;
+			gbc_jLabelTrustStoreFile.gridy = 0;
+			jPanelTrustStoreControl.add(getJLabelTrustStoreFile(), gbc_jLabelTrustStoreFile);
+			GridBagConstraints gbc_jButtonOpenTrustStore = new GridBagConstraints();
+			gbc_jButtonOpenTrustStore.insets = new Insets(0, 0, 0, 5);
+			gbc_jButtonOpenTrustStore.anchor = GridBagConstraints.EAST;
+			gbc_jButtonOpenTrustStore.gridx = 1;
+			gbc_jButtonOpenTrustStore.gridy = 0;
+			jPanelTrustStoreControl.add(getJButtonOpenTrustStore(), gbc_jButtonOpenTrustStore);
+			GridBagConstraints gbc_jButtonCreateTrustStore = new GridBagConstraints();
+			gbc_jButtonCreateTrustStore.gridx = 2;
+			gbc_jButtonCreateTrustStore.gridy = 0;
+			jPanelTrustStoreControl.add(getJButtonCreateTrustStore(), gbc_jButtonCreateTrustStore);
+			GridBagConstraints gbc_jLabelTrustStoreLocationPath = new GridBagConstraints();
+			gbc_jLabelTrustStoreLocationPath.insets = new Insets(5, 0, 0, 0);
+			gbc_jLabelTrustStoreLocationPath.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jLabelTrustStoreLocationPath.gridwidth = 3;
+			gbc_jLabelTrustStoreLocationPath.gridx = 0;
+			gbc_jLabelTrustStoreLocationPath.gridy = 1;
+			jPanelTrustStoreControl.add(getJTextFieldTrustStoreLocationPath(), gbc_jLabelTrustStoreLocationPath);
+			GridBagConstraints gbc_trustStoreConfigPanel = new GridBagConstraints();
+			gbc_trustStoreConfigPanel.insets = new Insets(5, 0, 0, 0);
+			gbc_trustStoreConfigPanel.fill = GridBagConstraints.BOTH;
+			gbc_trustStoreConfigPanel.gridwidth = 3;
+			gbc_trustStoreConfigPanel.gridx = 0;
+			gbc_trustStoreConfigPanel.gridy = 2;
+			jPanelTrustStoreControl.add(getTrustStoreConfigPanel(), gbc_trustStoreConfigPanel);
+			GridBagConstraints gbc_jButtonCancel = new GridBagConstraints();
+			gbc_jButtonCancel.insets = new Insets(10, 20, 0, 0);
+			gbc_jButtonCancel.anchor = GridBagConstraints.WEST;
+			gbc_jButtonCancel.gridwidth = 3;
+			gbc_jButtonCancel.gridx = 0;
+			gbc_jButtonCancel.gridy = 3;
+			jPanelTrustStoreControl.add(getJButtonCancel(), gbc_jButtonCancel);
+		}
+		return jPanelTrustStoreControl;
 	}
 
 	/**
@@ -260,13 +330,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		}
 		return jLabelKeyStoreFile;
 	}
-	private JLabel getJLabelKeyStoreLocation() {
-		if (jLabelKeyStoreLocation == null) {
-			jLabelKeyStoreLocation = new JLabel(Language.translate("Location", Language.EN) + ":");
-			jLabelKeyStoreLocation.setFont(new Font("Dialog", Font.BOLD, 11));
-		}
-		return jLabelKeyStoreLocation;
-	}
 	private JLabel getJLabelTrustStoreFile() {
 		if (jLabelTrustStoreFile == null) {
 			jLabelTrustStoreFile = new JLabel(Language.translate("TrustStore File", Language.EN) + ":");
@@ -274,129 +337,27 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		}
 		return jLabelTrustStoreFile;
 	}
-	protected JLabel getJLabelTrustStoreLocationPath() {
-		if (jLabelTrustStoreLocationPath == null) {
-			jLabelTrustStoreLocationPath = new JLabel("");
-			jLabelTrustStoreLocationPath.setFont(new Font("Dialog", Font.PLAIN, 11));
+	protected JTextField getJTextFieldTrustStoreLocationPath() {
+		if (jTextFieldTrustStoreLocationPath == null) {
+			jTextFieldTrustStoreLocationPath = new JTextField();
+			jTextFieldTrustStoreLocationPath.setEditable(false);
+			jTextFieldTrustStoreLocationPath.setFont(new Font("Dialog", Font.PLAIN, 11));
+			jTextFieldTrustStoreLocationPath.setOpaque(false);
+			jTextFieldTrustStoreLocationPath.setBorder(BorderFactory.createEmptyBorder());
+			jTextFieldTrustStoreLocationPath.setBackground(new Color(0, 0, 0, 0));
 		}
-		return jLabelTrustStoreLocationPath;
+		return jTextFieldTrustStoreLocationPath;
 	}
-	private JLabel getLabelTrustStoreLocation() {
-		if (jLabelTrustStoreLocation == null) {
-			jLabelTrustStoreLocation = new JLabel(Language.translate("Location", Language.EN) + ":");
-			jLabelTrustStoreLocation.setFont(new Font("Dialog", Font.BOLD, 11));
+	protected JTextField getJTextFieldKeyStoreLocationPath() {
+		if (jTextFieldKeyStoreLocationPath == null) {
+			jTextFieldKeyStoreLocationPath = new JTextField();
+			jTextFieldKeyStoreLocationPath.setEditable(false);
+			jTextFieldKeyStoreLocationPath.setFont(new Font("Dialog", Font.PLAIN, 11));
+			jTextFieldKeyStoreLocationPath.setOpaque(false);
+			jTextFieldKeyStoreLocationPath.setBorder(BorderFactory.createEmptyBorder());
+			jTextFieldKeyStoreLocationPath.setBackground(new Color(0, 0, 0, 0));
 		}
-		return jLabelTrustStoreLocation;
-	}
-	protected JLabel getJLabelKeyStoreLocationPath() {
-		if (jLabelKeyStoreLocationPath == null) {
-			jLabelKeyStoreLocationPath = new JLabel("");
-			jLabelKeyStoreLocationPath.setFont(new Font("Dialog", Font.PLAIN, 11));
-		}
-		return jLabelKeyStoreLocationPath;
-	}
-
-	private JPanel getJPanelHeader() {
-		if (jPanelHeader == null) {
-			jPanelHeader = new JPanel();
-			GridBagLayout gbl_jPanelHeader = new GridBagLayout();
-			gbl_jPanelHeader.columnWidths = new int[] { 0, 300, 0, 300, 0 };
-			gbl_jPanelHeader.rowHeights = new int[] { 0, 0, 0 };
-			gbl_jPanelHeader.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
-			gbl_jPanelHeader.rowWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
-			jPanelHeader.setLayout(gbl_jPanelHeader);
-			GridBagConstraints gbc_jLabelKeyStoreFile = new GridBagConstraints();
-			gbc_jLabelKeyStoreFile.insets = new Insets(0, 5, 5, 5);
-			gbc_jLabelKeyStoreFile.gridx = 0;
-			gbc_jLabelKeyStoreFile.gridy = 0;
-			jPanelHeader.add(getJLabelKeyStoreFile(), gbc_jLabelKeyStoreFile);
-			GridBagConstraints gbc_jPanelKeyStoreButtons = new GridBagConstraints();
-			gbc_jPanelKeyStoreButtons.insets = new Insets(0, 0, 5, 5);
-			gbc_jPanelKeyStoreButtons.fill = GridBagConstraints.BOTH;
-			gbc_jPanelKeyStoreButtons.gridx = 1;
-			gbc_jPanelKeyStoreButtons.gridy = 0;
-			jPanelHeader.add(getJPanelKeyStoreButtons(), gbc_jPanelKeyStoreButtons);
-			GridBagConstraints gbc_jLabelTrustStoreFile = new GridBagConstraints();
-			gbc_jLabelTrustStoreFile.insets = new Insets(0, 17, 5, 5);
-			gbc_jLabelTrustStoreFile.gridx = 2;
-			gbc_jLabelTrustStoreFile.gridy = 0;
-			jPanelHeader.add(getJLabelTrustStoreFile(), gbc_jLabelTrustStoreFile);
-			GridBagConstraints gbc_jPanelTrustStoreButtons = new GridBagConstraints();
-			gbc_jPanelTrustStoreButtons.ipadx = 1;
-			gbc_jPanelTrustStoreButtons.insets = new Insets(0, 0, 5, 0);
-			gbc_jPanelTrustStoreButtons.fill = GridBagConstraints.BOTH;
-			gbc_jPanelTrustStoreButtons.gridx = 3;
-			gbc_jPanelTrustStoreButtons.gridy = 0;
-			jPanelHeader.add(getJPanelTrustStoreButtons(), gbc_jPanelTrustStoreButtons);
-			GridBagConstraints gbc_jLabelKeyStoreLocation = new GridBagConstraints();
-			gbc_jLabelKeyStoreLocation.anchor = GridBagConstraints.WEST;
-			gbc_jLabelKeyStoreLocation.insets = new Insets(0, 5, 0, 5);
-			gbc_jLabelKeyStoreLocation.gridx = 0;
-			gbc_jLabelKeyStoreLocation.gridy = 1;
-			jPanelHeader.add(getJLabelKeyStoreLocation(), gbc_jLabelKeyStoreLocation);
-			GridBagConstraints gbc_jLabelKeyStoreLocationPath = new GridBagConstraints();
-			gbc_jLabelKeyStoreLocationPath.anchor = GridBagConstraints.WEST;
-			gbc_jLabelKeyStoreLocationPath.insets = new Insets(0, 0, 0, 5);
-			gbc_jLabelKeyStoreLocationPath.gridx = 1;
-			gbc_jLabelKeyStoreLocationPath.gridy = 1;
-			jPanelHeader.add(getJLabelKeyStoreLocationPath(), gbc_jLabelKeyStoreLocationPath);
-			GridBagConstraints gbc_jLabelTrustStoreLocation = new GridBagConstraints();
-			gbc_jLabelTrustStoreLocation.anchor = GridBagConstraints.WEST;
-			gbc_jLabelTrustStoreLocation.insets = new Insets(0, 17, 0, 5);
-			gbc_jLabelTrustStoreLocation.gridx = 2;
-			gbc_jLabelTrustStoreLocation.gridy = 1;
-			jPanelHeader.add(getLabelTrustStoreLocation(), gbc_jLabelTrustStoreLocation);
-			GridBagConstraints gbc_jLabelTrustStoreLocationPath = new GridBagConstraints();
-			gbc_jLabelTrustStoreLocationPath.anchor = GridBagConstraints.WEST;
-			gbc_jLabelTrustStoreLocationPath.gridx = 3;
-			gbc_jLabelTrustStoreLocationPath.gridy = 1;
-			jPanelHeader.add(getJLabelTrustStoreLocationPath(), gbc_jLabelTrustStoreLocationPath);
-		}
-		return jPanelHeader;
-	}
-
-	private JPanel getJPanelKeyStoreButtons() {
-		if (jPanelKeyStoreButtons == null) {
-			jPanelKeyStoreButtons = new JPanel();
-			GridBagLayout gbl_jPanelKeyStoreButtons = new GridBagLayout();
-			gbl_jPanelKeyStoreButtons.columnWidths = new int[] { 0, 0, 0 };
-			gbl_jPanelKeyStoreButtons.rowHeights = new int[] { 0, 0 };
-			gbl_jPanelKeyStoreButtons.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-			gbl_jPanelKeyStoreButtons.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-			jPanelKeyStoreButtons.setLayout(gbl_jPanelKeyStoreButtons);
-			GridBagConstraints gbc_jButtonOpenKeyStore = new GridBagConstraints();
-			gbc_jButtonOpenKeyStore.insets = new Insets(0, 5, 0, 5);
-			gbc_jButtonOpenKeyStore.gridx = 0;
-			gbc_jButtonOpenKeyStore.gridy = 0;
-			jPanelKeyStoreButtons.add(getJButtonOpenKeyStore(), gbc_jButtonOpenKeyStore);
-			GridBagConstraints gbc_jButtonCreateKeyStore = new GridBagConstraints();
-			gbc_jButtonCreateKeyStore.gridx = 1;
-			gbc_jButtonCreateKeyStore.gridy = 0;
-			jPanelKeyStoreButtons.add(getJButtonCreateKeyStore(), gbc_jButtonCreateKeyStore);
-		}
-		return jPanelKeyStoreButtons;
-	}
-
-	private JPanel getJPanelTrustStoreButtons() {
-		if (jPanelTrustStoreButtons == null) {
-			jPanelTrustStoreButtons = new JPanel();
-			GridBagLayout gbl_jPanelTrustStoreButtons = new GridBagLayout();
-			gbl_jPanelTrustStoreButtons.columnWidths = new int[] { 0, 0, 0 };
-			gbl_jPanelTrustStoreButtons.rowHeights = new int[] { 0, 0 };
-			gbl_jPanelTrustStoreButtons.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-			gbl_jPanelTrustStoreButtons.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-			jPanelTrustStoreButtons.setLayout(gbl_jPanelTrustStoreButtons);
-			GridBagConstraints gbc_jButtonOpenTrustStore = new GridBagConstraints();
-			gbc_jButtonOpenTrustStore.insets = new Insets(0, 5, 0, 5);
-			gbc_jButtonOpenTrustStore.gridx = 0;
-			gbc_jButtonOpenTrustStore.gridy = 0;
-			jPanelTrustStoreButtons.add(getJButtonOpenTrustStore(), gbc_jButtonOpenTrustStore);
-			GridBagConstraints gbc_jButtonCreateTrustStore = new GridBagConstraints();
-			gbc_jButtonCreateTrustStore.gridx = 1;
-			gbc_jButtonCreateTrustStore.gridy = 0;
-			jPanelTrustStoreButtons.add(getJButtonCreateTrustStore(), gbc_jButtonCreateTrustStore);
-		}
-		return jPanelTrustStoreButtons;
+		return jTextFieldKeyStoreLocationPath;
 	}
 
 	protected KeyStoreConfigPanel getKeyStoreConfigPanel() {
@@ -471,34 +432,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			jButtonCancel.addActionListener(this);
 		}
 		return jButtonCancel;
-	}
-
-	private JPanel getJPanelFooter() {
-		if (jPanelFooter == null) {
-			jPanelFooter = new JPanel();
-			FlowLayout fl_jPanelFooter = (FlowLayout) jPanelFooter.getLayout();
-			fl_jPanelFooter.setHgap(10);
-			fl_jPanelFooter.setVgap(10);
-			jPanelFooter.add(getJButtonOK());
-			jPanelFooter.add(getJButtonCancel());
-		}
-		return jPanelFooter;
-	}
-	private JScrollPane getJPanelBody() {
-		if (jScrollPaneKeyStore == null) {
-			jScrollPaneKeyStore = new JScrollPane();
-			jScrollPaneKeyStore.setViewportView(this.getKeyStoreConfigPanel());
-			jScrollPaneKeyStore.setBorder(null);
-		}
-		return jScrollPaneKeyStore;
-	}
-	private JScrollPane getJScrollPaneTrustStore() {
-		if (jScrollPaneTrustStore == null) {
-			jScrollPaneTrustStore = new JScrollPane();
-			jScrollPaneTrustStore.setViewportView(this.getTrustStoreConfigPanel());
-			jScrollPaneTrustStore.setBorder(null);
-		}
-		return jScrollPaneTrustStore;
 	}
 
 	protected JFileChooser getJFileChooser() {
@@ -633,8 +566,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			this.getKeyStoreConfigPanel().fillFields(certificateProperties);
 			this.setKeyAlias(certificateProperties.getAlias());
 
-			this.getJLabelKeyStoreLocationPath().setText(getKeyStoreFile().getAbsolutePath());
-			this.getJLabelKeyStoreLocationPath().setToolTipText(getKeyStoreFile().getAbsolutePath());
+			this.getJTextFieldKeyStoreLocationPath().setText(getKeyStoreFile().getAbsolutePath());
+			this.getJTextFieldKeyStoreLocationPath().setToolTipText(getKeyStoreFile().getAbsolutePath());
 		}
 		this.keyStoreButtonPressed = "UpdateKeyStore";
 	}
@@ -658,8 +591,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.getTrustStoreConfigPanel().getJPasswordFieldPassword().setEnabled(true);
 		this.getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setText(null);
 		this.getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setEnabled(true);
-		this.getJLabelTrustStoreLocationPath().setText(getTrustStoreFile().getAbsolutePath());
-		this.getJLabelTrustStoreLocationPath().setToolTipText(getTrustStoreFile().getAbsolutePath());
+		this.getJTextFieldTrustStoreLocationPath().setText(getTrustStoreFile().getAbsolutePath());
+		this.getJTextFieldTrustStoreLocationPath().setToolTipText(getTrustStoreFile().getAbsolutePath());
 		this.trustStoreButtonPressed = "EditTrustStore";
 	}
 
@@ -684,7 +617,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			this.setFieldsEnabledTrue(this.keyStoreConfigPanel.getJTextFieldAlias());
 			this.setFieldsEnabledTrue(this.keyStoreConfigPanel.getJTextFieldValidity());
 			this.keyStoreConfigPanel.getJTextFieldKeyStoreName().requestFocus();
-			this.jLabelKeyStoreLocationPath.setText(null);
+			this.jTextFieldKeyStoreLocationPath.setText(null);
 			this.keyStoreFile = null;
 			this.keyStoreButtonPressed = "CreateKeyStore";
 
@@ -715,28 +648,17 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 				// ---- Verify if the selected file is a KeyStore -------------
 				if (keyStoreName.endsWith(KEYSTORE_FILENAME)) {
 					// --- Create JOptionPane to enter the KeyStore password --
-					String msg = Language.translate("Please, enter the password for  ", Language.EN);
-					JLabel jLabelEnterPassword = new JLabel(msg + " " + keyStoreName + "  :");
-					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
-					
-					JPasswordField jPasswordField = new JPasswordField(10);
-					jPasswordField.addAncestorListener(new RequestFocusListener());
-
-					JPanel jPanelPassword = new JPanel();
-					jPanelPassword.add(jLabelEnterPassword);
-					jPanelPassword.add(jPasswordField);
-
 					String title = Language.translate("Password", Language.EN);
-					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, jPasswordField);
+					JPanelPassword jPanelEnterPassword = new JPanelPassword(Language.translate("Please enter the password for  ", Language.EN) + " " + keyStoreName + ":");
+					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
 					if (option==JOptionPane.OK_OPTION) {
-						// ------------ Press OK --------------------------------
-						keyStorePassword = new String(jPasswordField.getPassword());
-
-						if (getKeyStoreConfigPanel().getKeyStoreController().openTrustStore(keyStoreFile, keyStorePassword)==true) {
+						// ---- Pressed OK Button -----------------------------
+						if (this.getKeyStoreConfigPanel().getKeyStoreController().openTrustStore(keyStoreFile, jPanelEnterPassword.getPassword())==true) {
+							keyStorePassword = jPanelEnterPassword.getPassword();
 							this.setKeyAlias(this.getKeyStoreConfigPanel().getKeyStoreController().getFirstCertificateProperties().getAlias());
 						}
 						if (this.getKeyAlias()==null) {
-							this.jLabelKeyStoreLocationPath.setText(null);
+							this.getJTextFieldKeyStoreLocationPath().setText(null);
 							this.keyStoreFile = null;
 						} else {
 							this.setKeyStoreDataToVisualization();
@@ -763,7 +685,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			trustStoreConfigPanel.getJPasswordFieldPassword().setText(null);
 			trustStoreConfigPanel.getJPasswordFieldConfirmPassword().setEnabled(true);
 			trustStoreConfigPanel.getJPasswordFieldPassword().setEnabled(true);
-			jLabelTrustStoreLocationPath.setText(null);
+			jTextFieldTrustStoreLocationPath.setText(null);
 			trustStoreFile = null;
 			trustStoreButtonPressed = "CreateTrustStore";
 
@@ -793,34 +715,24 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 				// ---- Verify if the selected file is a TrustStore ---------
 				if (truststorename.endsWith(TRUSTSTORE_FILENAME)) {
 					// --- Create JOptionPane to enter the TrustStore password -
-					String msg = Language.translate("Please enter the password for  ", Language.EN);
-					JLabel jLabelEnterPassword = new JLabel(msg + " " + truststorename + "  :");
-					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
-					
-					JPasswordField jPasswordFiled = new JPasswordField(10);
-					jPasswordFiled.addAncestorListener(new RequestFocusListener());
-
-					JPanel jPanelEnterPassword = new JPanel();
-					jPanelEnterPassword.add(jLabelEnterPassword);
-					jPanelEnterPassword.add(jPasswordFiled);
-					
 					String title = Language.translate("Password", Language.EN);
-					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, jPasswordFiled);
-					trustStorePassword = new String(jPasswordFiled.getPassword());
-					if (option == 0) {
-						// ---- Press OK Button ------------------------------
-						boolean openingSuccessful = getTrustStoreConfigPanel().getTrustStoreController().openTrustStore(trustStoreFile, trustStorePassword);
-						if (openingSuccessful == false) {
-							jLabelTrustStoreLocationPath.setText(null);
-							trustStoreFile = null;
-							getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setText(null);
-							getTrustStoreConfigPanel().getJPasswordFieldPassword().setText(null);
-							getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setText(null);
-							getTrustStoreConfigPanel().getTrustStoreController().clearTableModel();
-						} else {
+					JPanelPassword jPanelEnterPassword = new JPanelPassword(Language.translate("Please enter the password for  ", Language.EN) + " " + truststorename + ":");
+					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+					if (option==JOptionPane.OK_OPTION) {
+						// ---- Pressed OK Button -----------------------------
+						if (this.getTrustStoreConfigPanel().getTrustStoreController().openTrustStore(trustStoreFile, jPanelEnterPassword.getPassword())==true) {
+							trustStorePassword = jPanelEnterPassword.getPassword();
 							this.setTrustStoreDataToVisualization();
+						} else {
+							trustStoreFile = null;
+							this.getJTextFieldTrustStoreLocationPath().setText(null);
+							this.getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setText(null);
+							this.getTrustStoreConfigPanel().getJPasswordFieldPassword().setText(null);
+							this.getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setText(null);
+							this.getTrustStoreConfigPanel().getTrustStoreController().clearTableModel();
 						}
 					}
+					
 				} else {
 					String msg = Language.translate("Please, choose a TrustStore file! Your TrustStore name should ends with 'TrustStore'", Language.EN);
 					String title = Language.translate("Warning message", Language.EN);
@@ -859,54 +771,57 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		}
 	}
 
+	
 	/**
-	 * Taken from https://tips4java.wordpress.com/2010/03/14/dialog-focus/
-	 * 
-	 * Convenience class to request focus on a component.
-	 *
-	 * When the component is added to a realized Window then component will
-	 * request focus immediately, since the ancestorAdded event is fired
-	 * immediately.
-	 *
-	 * When the component is added to a non realized Window, then the focus
-	 * request will be made once the window is realized, since the
-	 * ancestorAdded event will not be fired until then.
-	 *
-	 * Using the default constructor will cause the listener to be removed
-	 * from the component once the AncestorEvent is generated. A second constructor
-	 * allows you to specify a boolean value of false to prevent the
-	 * AncestorListener from being removed when the event is generated. This will
-	 * allow you to reuse the listener each time the event is generated.
+	 * The Class JPanelPassword.
 	 */
-	private class RequestFocusListener implements AncestorListener {
-
-		private boolean removeListener;
-
-		/**
-		 *  Convenience constructor. The listener is only used once and then it is removed from the component.
-		 */
-		public RequestFocusListener() {
-			this(true);
+	private class JPanelPassword extends JPanel {
+		
+		private static final long serialVersionUID = 6605782615579733091L;
+		
+		private String displayText; 
+		private JLabel jLabelDisplayText;
+		private JPasswordField jPasswordField;
+		
+		public JPanelPassword(String displayText) {
+			this.displayText = displayText;
+			this.initialize();
+		}
+		private void initialize() {
+			this.add(this.getjLabelDisplayText());
+			this.add(this.getJPasswordField());
+		}
+		private JLabel getjLabelDisplayText() {
+			if (jLabelDisplayText==null) {
+				jLabelDisplayText = new JLabel(this.displayText);
+				jLabelDisplayText.setFont(new Font("Dialog", Font.BOLD, 11));	
+			}
+			return jLabelDisplayText;
+		}
+		private JPasswordField getJPasswordField() {
+			if (jPasswordField==null) {
+				jPasswordField =  new JPasswordField(10);
+				jPasswordField.addAncestorListener(new AncestorListener() {
+					@Override
+					public void ancestorRemoved(AncestorEvent ae) { }
+					@Override
+					public void ancestorMoved(AncestorEvent ae) { }
+					@Override
+					public void ancestorAdded(AncestorEvent ae) {
+						JComponent component = ae.getComponent();
+						component.requestFocusInWindow();
+						component.removeAncestorListener(this);
+					}
+				});
+			}
+			return jPasswordField;
 		}
 		/**
-		 *  Constructor that controls whether this listen can be used once or multiple times.
-		 *  @param removeListener when true this listener is only invoked once otherwise it can be invoked multiple times.
+		 * Returns the typed password.
+		 * @return the password
 		 */
-		public RequestFocusListener(boolean removeListener) {
-			this.removeListener = removeListener;
-		}
-		@Override
-		public void ancestorAdded(AncestorEvent e) {
-			JComponent component = e.getComponent();
-			component.requestFocusInWindow();
-			if (removeListener)
-				component.removeAncestorListener(this);
-		}
-		@Override
-		public void ancestorMoved(AncestorEvent e) {
-		}
-		@Override
-		public void ancestorRemoved(AncestorEvent e) {
+		public String getPassword() {
+			return new String (this.getJPasswordField().getPassword());
 		}
 	}
 	

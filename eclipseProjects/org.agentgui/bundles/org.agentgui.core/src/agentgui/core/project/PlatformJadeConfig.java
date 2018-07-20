@@ -603,6 +603,13 @@ public class PlatformJadeConfig implements Serializable {
 		return this.keyStoreFile;
 	}
 	/**
+	 * Return the key store file internal, which means without security path.
+	 * @return the key store file internal
+	 */
+	public String getKeyStoreFileInternal(){
+		return this.keyStoreFile;
+	}
+	/**
 	 * Sets the KeyStorePassword.
 	 * @param keyStorePassword the new KeyStorePassword
 	 */
@@ -655,6 +662,13 @@ public class PlatformJadeConfig implements Serializable {
 		if (this.getProject()!=null && this.trustStoreFile!=null) {
 			return this.getProject().getProjectSecurityFolderFullPath() + this.trustStoreFile;
 		}
+		return this.trustStoreFile;
+	}
+	/**
+	 * Return the trust store file internal, which means without security path.
+	 * @return the trust store file internal
+	 */
+	public String getTrustStoreFileInternal(){
 		return this.trustStoreFile;
 	}
 	/**

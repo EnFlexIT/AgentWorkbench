@@ -52,7 +52,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.crypto.CertificateProperties;
@@ -536,7 +535,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	 */
 	protected TrustStoreController getTrustStoreController() {
 		if (trustStoreController == null) {
-			trustStoreController = new TrustStoreController(Application.getGlobalInfo().getOwnerDialogForComponent(this));
+			trustStoreController = new TrustStoreController(this.httpsConfigWindow);
 		}
 		return trustStoreController;
 	}
@@ -756,7 +755,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 						String msg = Language.translate("Your TrustStore has been created successfully!",Language.EN);
 						String title = Language.translate("TrustStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
-						this.httpsConfigWindow.getJLabelTrustStoreLocationPath().setText(this.httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
+						this.httpsConfigWindow.getJTextFieldTrustStoreLocationPath().setText(this.httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
 						this.getJTextFieldTrustStoreName().setEnabled(false);
 						this.getJLabelCertificatesList().setVisible(true);
 						this.getScrollPane().setVisible(true);
