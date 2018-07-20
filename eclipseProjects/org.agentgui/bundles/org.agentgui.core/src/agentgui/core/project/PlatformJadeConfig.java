@@ -308,6 +308,11 @@ public class PlatformJadeConfig implements Serializable {
 				if (mtpProtocol==MtpProtocol.HTTP) {
 					// --- Regular HTTP protocol ------------------------------ 
 					profile.setParameter(Profile.MTPS, jade.mtp.http.MessageTransportProtocol.class.getName() + "(http://" + ipAddress + ":" + freePort + "/acc)");
+					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile);
+					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
+					profile.setParameter("jade_mtp_http_https_trustManagerClass", jade.mtp.http.https.FriendListAuthentication.class.getName());
+					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
+					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
 					
 				} else if(mtpProtocol==MtpProtocol.HTTPS) {
 					// --- A secure HTTPS protocol ---------------------------- 
