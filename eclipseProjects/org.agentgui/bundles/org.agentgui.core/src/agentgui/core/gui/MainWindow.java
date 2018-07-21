@@ -1572,15 +1572,19 @@ public class MainWindow extends JFrame {
 	// ----------------------------------------------------
 	// --- Test and debug area ------------------ Start ---
 	// ----------------------------------------------------
-	private boolean showTestMenuButton = true;
+	private boolean showTestMenuButton = false;
 	
 	/**
 	 * This is just a test method that can be invoked if the local variable {@link #showTestMenuButton} is set true.
 	 */
 	private void testMethod() {
 		
-		new DirectoryDialog(new File(Application.getGlobalInfo().getPathProjects()));
+		DirectoryDialog dirDialog = new DirectoryDialog(new File(Application.getGlobalInfo().getPathProjects()));
 		
+		System.out.println("=> Files found: " + dirDialog.getDirectoryEvaluator().getFilesFound().size());
+		System.out.println("Files included: " + dirDialog.getDirectoryEvaluator().getFileList(true).size()); 
+		System.out.println("Files excluded: " + dirDialog.getDirectoryEvaluator().getFileList(false).size());
+		System.out.println();
 		
 	}
 	// ----------------------------------------------------

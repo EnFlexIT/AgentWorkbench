@@ -2,7 +2,10 @@ package de.enflexit.common.swing.fileSelection;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
+import javax.swing.JCheckBox;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -17,10 +20,10 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class DirectoryEvaluator {
 
-	private boolean debugFileEvaluation = true;
-	
 	private File rootDirectory; 
 	private ArrayList<FileDescriptor> filesFound;
+	private ArrayList<DirectoryEvaluatorListener> directoryEvaluatorListener;
+	
 	private DefaultMutableTreeNode rootNode; 
 	private DefaultTreeModel fileTreeModel;
 	
@@ -40,7 +43,7 @@ public class DirectoryEvaluator {
 	}
 	
 	/**
-	 * Sets the root directory of the evlauator.
+	 * Sets the root directory of the evaluator.
 	 * @param rootDirectory the new root directory
 	 */
 	public void setRootDirectory(File rootDirectory) {
@@ -49,7 +52,7 @@ public class DirectoryEvaluator {
 			this.getFilesFound().clear();
 			this.removeAllTreeNodes();
 			this.getRootNode().setUserObject(new FileDescriptor(rootDirectory));
-			this.evaluateDirectory(this.rootDirectory, this.getRootNode());
+			this.evaluateDirectoryInThread(this.rootDirectory, this.getRootNode());
 		}
 	}
 	/**
@@ -60,6 +63,24 @@ public class DirectoryEvaluator {
 		return this.rootDirectory;
 	}
 	
+	/**
+	 * Evaluate directory in thread.
+	 *
+	 * @param rootDirectory the directory
+	 * @param parentNode the parent node
+	 */
+	private void evaluateDirectoryInThread(final File rootDirectory, final DefaultMutableTreeNode rootNode) {
+		
+		Thread searcher = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				DirectoryEvaluator.this.evaluateDirectory(rootDirectory, rootNode);
+				DirectoryEvaluator.this.fireEvaluationWasFinalized();
+			}
+		});
+		searcher.setName(DirectoryEvaluator.this.getClass().getSimpleName());
+		searcher.start();
+	}
 	
 	/**
 	 * Evaluates the specified directory for file and directories.
@@ -70,32 +91,37 @@ public class DirectoryEvaluator {
 	private void evaluateDirectory(File directory, DefaultMutableTreeNode parentNode) {
 		
 		File[] fileArray = directory.listFiles();
+		
+		// --- Sort the file / directory list first -------
+		Arrays.sort(fileArray, new Comparator<File>() {
+			@Override
+			public int compare(File file1, File file2) {
+				if (file1.isDirectory()==true & file2.isDirectory()==true) {
+					return file1.getName().compareTo(file2.getName());
+				} else if (file1.isDirectory()==false & file2.isDirectory()==true) {
+					return 1;
+				} else if (file1.isDirectory()==true & file2.isDirectory()==false) {
+					return -1;
+				} 
+				return file1.getName().compareTo(file2.getName());
+			}
+		});
+		
+		// --- Add nodes and search deeper ---------------- 
 		for (int i = 0; i < fileArray.length; i++) {
 			
-			// --- Get current file and create node -------
 			File file = fileArray[i];
-			if (this.debugFileEvaluation==true) {
-				System.out.println("=> " + file.getAbsolutePath());
-			}
-			
-			this.getFilesFound().add(new FileDescriptor(file));
-			DefaultMutableTreeNode fileNode = this.createTreeNode(file); 
+
+			FileDescriptor fileDescriptor = new FileDescriptor(file);
+			this.getFilesFound().add(fileDescriptor);
+
+			DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(fileDescriptor);
 			parentNode.add(fileNode);
 
 			if (file.isDirectory()) {
 				this.evaluateDirectory(file, fileNode);
 			}
 		}
-	}
-	
-	/**
-	 * Creates the tree node.
-	 *
-	 * @param fileFound the file found
-	 * @return the default mutable tree node
-	 */
-	private DefaultMutableTreeNode createTreeNode(File fileFound) {
-		return new DefaultMutableTreeNode(new FileDescriptor(fileFound));
 	}
 	
 	/**
@@ -110,10 +136,28 @@ public class DirectoryEvaluator {
 	}
 	
 	/**
+	 * Returns the file list as specified. All selected or all not-selected files can be returned.
+	 *
+	 * @param getSelectedFiles set true if you want to return selected files only; otherwise false
+	 * @return the file list as specified
+	 */
+	public ArrayList<File> getFileList(boolean getSelectedFiles) {
+		ArrayList<File> filesList = new ArrayList<>();
+		for (int i = 0; i < this.getFilesFound().size(); i++) {
+			FileDescriptor fd = this.getFilesFound().get(i);
+			if (fd.isSelected()==getSelectedFiles) {
+				filesList.add(fd.getFile());
+			}
+		}
+		return filesList;
+	}
+	
+	
+	/**
 	 * Returns the root node of the tree model.
 	 * @return the root node
 	 */
-	public DefaultMutableTreeNode getRootNode() {
+	private DefaultMutableTreeNode getRootNode() {
 		if (rootNode==null) {
 			rootNode = new DefaultMutableTreeNode(new FileDescriptor(this.rootDirectory));
 		}
@@ -138,13 +182,50 @@ public class DirectoryEvaluator {
 		}
 	}
 	
+	
+	/**
+	 * Return the registered DirectoryEvaluatorListener.
+	 * @return the file tree listener
+	 */
+	public ArrayList<DirectoryEvaluatorListener> getDirectoryEvaluatorListener() {
+		if (directoryEvaluatorListener==null) {
+			directoryEvaluatorListener = new ArrayList<>();
+		}
+		return directoryEvaluatorListener;
+	}
+	/**
+	 * Adds the specified DirectoryEvaluatorListener.
+	 * @param directoryEvaluatorListener the directory evaluator listener
+	 */
+	public void addDirectoryEvaluatorListener(DirectoryEvaluatorListener directoryEvaluatorListener) {
+		if (this.getDirectoryEvaluatorListener().contains(directoryEvaluatorListener)==false) {
+			this.getDirectoryEvaluatorListener().add(directoryEvaluatorListener);
+		}
+	}
+	/**
+	 * Removes the specified DirectoryEvaluatorListener.
+	 * @param directoryEvaluatorListener the directory evaluator listener
+	 */
+	public void removeDirectoryEvaluatorListener(DirectoryEvaluatorListener directoryEvaluatorListener) {
+		this.getDirectoryEvaluatorListener().remove(directoryEvaluatorListener);
+	}
+	/**
+	 * Fires that the evaluation was finalized.
+	 */
+	private void fireEvaluationWasFinalized() {
+		for (int i = 0; i < this.getDirectoryEvaluatorListener().size(); i++) {
+			this.getDirectoryEvaluatorListener().get(i).onEvaluationWasFinalized();
+		}
+	}
+	
+	
 	/**
 	 * The Class FileDescriptor.
 	 */
 	public class FileDescriptor {
 		
 		private File file;
-		private boolean selected;
+		private JCheckBox checkBox;
 		
 		/**
 		 * Instantiates a new file descriptor.
@@ -165,11 +246,18 @@ public class DirectoryEvaluator {
 			return this.getFile().isDirectory();
 		}
 		
-		public boolean isSelected() {
-			return selected;
+		public JCheckBox getCheckBox() {
+			if (checkBox==null) {
+				checkBox = new JCheckBox();
+			}
+			return checkBox;
 		}
-		public void setSelected(boolean selected) {
-			this.selected = selected;
+		
+		public boolean isSelected() {
+			return this.getCheckBox().isSelected();
+		}
+		public void setSelected(boolean isSelected) {
+			this.getCheckBox().setSelected(isSelected);
 		}
 		
 		/* (non-Javadoc)

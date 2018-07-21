@@ -30,8 +30,8 @@ public class DirectoryDialog extends JDialog {
 	 * @param rootDirectory the root directory
 	 */
 	public DirectoryDialog(File rootDirectory) {
-		this.initialize();
 		this.setRootDirectory(rootDirectory);
+		this.initialize();
 	}
 	
 	private void initialize() {
@@ -61,6 +61,15 @@ public class DirectoryDialog extends JDialog {
 			jPanelDirectoryVisualisation = new DirectoryPanel();
 		}
 		return jPanelDirectoryVisualisation;
+	}
+	
+	/**
+	 * Returns the DirectoryEvaluator used to show the information.
+	 * Just use it to get a list of selected or unselected file elements.
+	 * @return the directory evaluator
+	 */
+	public DirectoryEvaluator getDirectoryEvaluator() {
+		return this.getJPanelDirectoryVisualisation().getDirectoryEvaluator();
 	}
 	
 	/**
