@@ -436,7 +436,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return the temporary export folder path
 	 */
 	private Path getTempExportFolderPath() {
-
 		if (tempFolderPath == null) {
 
 			// --- Determine the path for the temporary export folder, based on the selected target file ----
@@ -449,7 +448,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 			this.getArchiveFileHandler().addPathReplacement(tempFolderName, project.getProjectFolder());
 			
 		}
-
 		return this.tempFolderPath;
 	}
 

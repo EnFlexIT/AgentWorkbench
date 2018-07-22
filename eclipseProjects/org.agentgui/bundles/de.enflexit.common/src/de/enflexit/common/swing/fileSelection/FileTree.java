@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator.FileDescriptor;
 
@@ -34,6 +36,47 @@ public class FileTree extends JTree {
 	}
 	
 	/**
+	 * Returns the tree path for the specified node.
+	 *
+	 * @param treeNode the tree node
+	 * @return the tree path from node
+	 */
+	public TreePath getTreePathFromNode(TreeNode treeNode) {
+		ArrayList<Object> nodePath = new ArrayList<Object>();
+		if (treeNode!=null) {
+			nodePath.add(treeNode);
+			treeNode = treeNode.getParent();
+			while (treeNode!=null) {
+				nodePath.add(0, treeNode);
+				treeNode = treeNode.getParent();
+			}
+		}
+		return nodePath.isEmpty() ? null : new TreePath(nodePath.toArray());
+	}
+	
+	/**
+	 * Expands all nodes starting from the specified node.
+	 *
+	 * @param baseNode the node
+	 * @param childLevels the child levels
+	 */
+	public void expand(TreeNode baseNode, int childLevels) {
+        
+        this.expandPath(this.getTreePathFromNode(baseNode));
+        this.fileTreeModel.reload(baseNode);
+        
+        if (childLevels == 0) return;
+        if (childLevels != -1) childLevels--;
+
+        for (int x = 0; x < this.fileTreeModel.getChildCount(baseNode); x++) {
+        	DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) this.fileTreeModel.getChild(baseNode, x);
+        	this.expandPath(this.getTreePathFromNode(childNode));
+            this.fileTreeModel.reload(childNode);
+            this.expand(childNode, childLevels);
+        }
+    }
+	
+	/**
 	 * Sets all children nodes selected.
 	 *
 	 * @param paraentNode the parent node
@@ -42,6 +85,7 @@ public class FileTree extends JTree {
 	public void setChildrenNodesSelected(DefaultMutableTreeNode paraentNode, boolean isSelected) {
 		
 		if (paraentNode==null) return;
+		this.fileTreeModel.reload(paraentNode);
 		for (int i = 0; i < paraentNode.getChildCount(); i++) {
 			DefaultMutableTreeNode subNode = (DefaultMutableTreeNode) paraentNode.getChildAt(i);
 			FileDescriptor fd = (FileDescriptor) subNode.getUserObject(); 

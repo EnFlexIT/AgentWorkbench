@@ -87,26 +87,26 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 
 	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();  
 	
-	private JPanel jContentPane = null;
-	private JPanel jPanelButtons = null;
-	private JLabel jLabel = null;
-	private JLabel jLabel1 = null;
-	private JLabel jLabel2 = null;
-	private JLabel jLabelDummy = null;
-	private JLabel jLabelLineHorizontal = null;
-	private JTextField jTextFieldProjectName = null;
-	private JTextField jTextFieldProjectDirectory = null;
+	private JPanel jContentPane;
+	private JPanel jPanelButtons;
+	private JLabel jLabel;
+	private JLabel jLabel1;
+	private JLabel jLabel2;
+	private JLabel jLabelDummy;
+	private JLabel jLabelLineHorizontal;
+	private JTextField jTextFieldProjectName;
+	private JTextField jTextFieldProjectDirectory;
 	
-	private JScrollPane jScrollTree = null;
-	private JTree projectTree = null;
+	private JScrollPane jScrollTree;
+	private JTree projectTree;
 	private DefaultTreeModel projectTreeModel;
 	private DefaultMutableTreeNode rootNode;
 	private DefaultMutableTreeNode currentNode;  
 	
-	private JCheckBox jCheckBoxExportBefore = null;
+	private JCheckBox jCheckBoxExportBefore;
 	
-	private JButton jButtonOK = null;
-	private JButton jButtonCancel = null;
+	private JButton jButtonOK;
+	private JButton jButtonCancel;
 	
 	private ProjectAction currDialogAction;
 	private boolean Canceled = false;

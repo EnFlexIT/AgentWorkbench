@@ -43,6 +43,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -53,23 +54,28 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.ProjectExportSettings;
+import de.enflexit.common.swing.fileSelection.DirectoryEvaluator.FileDescriptor;
+import de.enflexit.common.swing.fileSelection.DirectoryEvaluatorListener;
 import de.enflexit.common.swing.fileSelection.DirectoryPanel;
+import de.enflexit.common.swing.fileSelection.FileTree;
 
 /**
  * The Class ProjectExportDialog.
  */
-public class ProjectExportDialog extends JDialog implements ActionListener {
+public class ProjectExportDialog extends JDialog implements ActionListener, DirectoryEvaluatorListener {
 
 	private static final long serialVersionUID = 7642101726572826993L;
 
@@ -83,8 +89,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private JComboBox<InstallationPackageDescription> jComboBoxSelectInstallationPackage;
 	private DefaultComboBoxModel<InstallationPackageDescription> installationPackagesComboBoxModel;
 
-	private JPanel jPanelConfirmCancel;
-
 	private JButton jButtonOk;
 	private JButton jButtonCancel;
 
@@ -92,9 +96,10 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private JList<String> jListSetupSelection;
 	private DefaultListModel<String> simulationSetupListModel;
 
-	private boolean canceled = false;
 	private DirectoryPanel directoryPanel;
 	private JLabel jLabelFileExportSelection;
+
+	private boolean canceled = false;
 
 
 	/**
@@ -113,7 +118,8 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private void initialize() {
 
 		this.setTitle(Language.translate("Projekt exportieren"));
-
+		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
@@ -130,18 +136,18 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		getContentPane().add(getJLabelHeader(), gbc_jLabelHeader);
 
 		GridBagConstraints gbc_jCheckBoxIncludeProduct = new GridBagConstraints();
-		gbc_jCheckBoxIncludeProduct.insets = new Insets(5, 10, 5, 10);
+		gbc_jCheckBoxIncludeProduct.insets = new Insets(5, 10, 0, 10);
 		gbc_jCheckBoxIncludeProduct.anchor = GridBagConstraints.WEST;
 		gbc_jCheckBoxIncludeProduct.gridx = 0;
 		gbc_jCheckBoxIncludeProduct.gridy = 1;
 		getContentPane().add(getJCheckBoxIncludeInstallationPackage(), gbc_jCheckBoxIncludeProduct);
 		
 		GridBagConstraints gbc_jLabelFileExportSelection = new GridBagConstraints();
-		gbc_jLabelFileExportSelection.insets = new Insets(5, 0, 5, 10);
+		gbc_jLabelFileExportSelection.insets = new Insets(5, 0, 0, 10);
 		gbc_jLabelFileExportSelection.anchor = GridBagConstraints.WEST;
 		gbc_jLabelFileExportSelection.gridx = 1;
 		gbc_jLabelFileExportSelection.gridy = 1;
-		getContentPane().add(getLabel_1(), gbc_jLabelFileExportSelection);
+		getContentPane().add(getJLabelFileExportSelection(), gbc_jLabelFileExportSelection);
 
 		GridBagConstraints gbc_jComboBoxSelectOS = new GridBagConstraints();
 		gbc_jComboBoxSelectOS.fill = GridBagConstraints.HORIZONTAL;
@@ -159,7 +165,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		getContentPane().add(getDirectoryPanel(), gbc_directoryPanel);
 
 		GridBagConstraints gbc_jCheckBoxIncludeAllSetups = new GridBagConstraints();
-		gbc_jCheckBoxIncludeAllSetups.insets = new Insets(10, 10, 5, 10);
+		gbc_jCheckBoxIncludeAllSetups.insets = new Insets(10, 10, 0, 10);
 		gbc_jCheckBoxIncludeAllSetups.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jCheckBoxIncludeAllSetups.gridx = 0;
 		gbc_jCheckBoxIncludeAllSetups.gridy = 3;
@@ -171,14 +177,18 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		gbc_jScrollPaneSetupSelection.gridx = 0;
 		gbc_jScrollPaneSetupSelection.gridy = 4;
 		getContentPane().add(getJScrollPaneSetupSelection(), gbc_jScrollPaneSetupSelection);
-
-		GridBagConstraints gbc_jPanelConfirmCancel = new GridBagConstraints();
-		gbc_jPanelConfirmCancel.gridwidth = 2;
-		gbc_jPanelConfirmCancel.insets = new Insets(5, 10, 10, 10);
-		gbc_jPanelConfirmCancel.fill = GridBagConstraints.BOTH;
-		gbc_jPanelConfirmCancel.gridx = 0;
-		gbc_jPanelConfirmCancel.gridy = 5;
-		getContentPane().add(getJPanelConfirmCancel(), gbc_jPanelConfirmCancel);
+		GridBagConstraints gbc_jButtonOk = new GridBagConstraints();
+		gbc_jButtonOk.insets = new Insets(10, 0, 20, 45);
+		gbc_jButtonOk.anchor = GridBagConstraints.EAST;
+		gbc_jButtonOk.gridx = 0;
+		gbc_jButtonOk.gridy = 5;
+		getContentPane().add(getJButtonOk(), gbc_jButtonOk);
+		GridBagConstraints gbc_jButtonCancel = new GridBagConstraints();
+		gbc_jButtonCancel.insets = new Insets(10, 35, 20, 0);
+		gbc_jButtonCancel.anchor = GridBagConstraints.WEST;
+		gbc_jButtonCancel.gridx = 1;
+		gbc_jButtonCancel.gridy = 5;
+		getContentPane().add(getJButtonCancel(), gbc_jButtonCancel);
 
 		
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -201,7 +211,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	 */
 	private JLabel getJLabelHeader() {
 		if (jLabelHeader == null) {
-			jLabelHeader = new JLabel(Language.translate("Exportiere Projekt") + " " + project.getProjectName());
+			jLabelHeader = new JLabel(Language.translate("Exportiere Projekt") + " '" + project.getProjectName() + "'");
 			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
 		}
 		return jLabelHeader;
@@ -262,7 +272,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		return installationPackagesComboBoxModel;
 	}
 
-	private JLabel getLabel_1() {
+	private JLabel getJLabelFileExportSelection() {
 		if (jLabelFileExportSelection == null) {
 			jLabelFileExportSelection = new JLabel(Language.translate("Details zum Dateiexport") + ":");
 			jLabelFileExportSelection.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -276,6 +286,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private DirectoryPanel getDirectoryPanel() {
 		if (directoryPanel == null) {
 			directoryPanel = new DirectoryPanel(new File(this.project.getProjectFolderFullPath()));
+			directoryPanel.addDirectoryEvaluatorListener(this);
 		}
 		return directoryPanel;
 	}
@@ -302,8 +313,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private JScrollPane getJScrollPaneSetupSelection() {
 		if (jScrollPaneSetupSelection == null) {
 			jScrollPaneSetupSelection = new JScrollPane();
-			jScrollPaneSetupSelection.setViewportView(this.getJListSetupSelection());
+			jScrollPaneSetupSelection.setBorder(BorderFactory.createEtchedBorder());
 			jScrollPaneSetupSelection.setMinimumSize(new Dimension(380, 200));
+			jScrollPaneSetupSelection.setViewportView(this.getJListSetupSelection());
 		}
 		return jScrollPaneSetupSelection;
 	}
@@ -331,10 +343,10 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private DefaultListModel<String> getSimulationSetupListModel() {
 		if (simulationSetupListModel == null) {
 			simulationSetupListModel = new DefaultListModel<>();
-			Vector<String> setupsVector = new Vector<String>(project.getSimulationSetups().keySet());
+			Vector<String> setupsVector = new Vector<String>(this.project.getSimulationSetups().keySet());
 			Collections.sort(setupsVector, String.CASE_INSENSITIVE_ORDER);
-			for (String setup : setupsVector) {
-				simulationSetupListModel.addElement(setup);
+			for (int i = 0; i < setupsVector.size(); i++) {
+				simulationSetupListModel.addElement(setupsVector.get(i));
 			}
 		}
 		return simulationSetupListModel;
@@ -350,40 +362,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		}
 		list.setSelectedIndices(selectedIndices);
 	}
-	
-	/**
-	 * Gets the {@link JPanel} containing the ok and cancel buttons
-	 * @return the j panel confirm cancel
-	 */
-	private JPanel getJPanelConfirmCancel() {
-		if (jPanelConfirmCancel == null) {
-			jPanelConfirmCancel = new JPanel();
-			GridBagLayout gbl_jPanelConfirmCancel = new GridBagLayout();
-			gbl_jPanelConfirmCancel.columnWidths = new int[] { 0, 0, 0 };
-			gbl_jPanelConfirmCancel.rowHeights = new int[] { 0, 0 };
-			gbl_jPanelConfirmCancel.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-			gbl_jPanelConfirmCancel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-			jPanelConfirmCancel.setLayout(gbl_jPanelConfirmCancel);
-			GridBagConstraints gbc_jButtonOk = new GridBagConstraints();
-			gbc_jButtonOk.insets = new Insets(5, 0, 10, 15);
-			gbc_jButtonOk.ipadx = 45;
-			gbc_jButtonOk.weightx = 0.5;
-			gbc_jButtonOk.anchor = GridBagConstraints.EAST;
-			gbc_jButtonOk.gridx = 0;
-			gbc_jButtonOk.gridy = 0;
-			jPanelConfirmCancel.add(getJButtonOk(), gbc_jButtonOk);
-			GridBagConstraints gbc_jButtonCancel = new GridBagConstraints();
-			gbc_jButtonCancel.insets = new Insets(5, 15, 10, 0);
-			gbc_jButtonCancel.fill = GridBagConstraints.VERTICAL;
-			gbc_jButtonCancel.ipadx = 45;
-			gbc_jButtonCancel.weightx = 0.5;
-			gbc_jButtonCancel.anchor = GridBagConstraints.WEST;
-			gbc_jButtonCancel.gridx = 1;
-			gbc_jButtonCancel.gridy = 0;
-			jPanelConfirmCancel.add(getJButtonCancel(), gbc_jButtonCancel);
-		}
-		return jPanelConfirmCancel;
-	}
 	/**
 	 * Gets the ok button.
 	 * @return the j button ok
@@ -391,8 +369,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private JButton getJButtonOk() {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton("OK");
-			jButtonOk.setForeground(new Color(0, 153, 0));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setMinimumSize(new Dimension(100, 28));
 			jButtonOk.addActionListener(this);
 		}
 		return jButtonOk;
@@ -404,8 +383,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
-			jButtonCancel.setForeground(new Color(153, 0, 0));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setMinimumSize(new Dimension(100, 28));
 			jButtonCancel.addActionListener(this);
 		}
 		return jButtonCancel;
@@ -429,10 +409,29 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 			this.getExportSettings().setInstallationPackage(null);
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.swing.fileSelection.DirectoryEvaluatorListener#onEvaluationWasFinalized()
+	 */
+	@Override
+	public void onEvaluationWasFinalized() {
+		// --------------------------------------------------------------------
+		// --- Will be invoked, after the file evaluation finished ------------
+		// --------------------------------------------------------------------
+		final FileTree fileTree = this.getDirectoryPanel().getFileTree();
+		final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) fileTree.getModel().getRoot();
+		FileDescriptor fd = (FileDescriptor) rootNode.getUserObject();
+		fd.setSelected(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				fileTree.setChildrenNodesSelected(rootNode, true);
+			}
+		});
+		// TODO
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
@@ -498,14 +497,10 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	 */
 	private class CheckBoxListCellRenderer extends JCheckBox implements ListCellRenderer<String> {
 
-		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 6526933726761540148L;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean,
-		 * boolean)
+		/* (non-Javadoc)
+		 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 		 */
 		@Override
 		public Component getListCellRendererComponent(JList<? extends String> list, String value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -524,12 +519,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 	 */
 	private class ListSelectionModelForJCheckBox extends DefaultListSelectionModel {
 
-		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1067181018028459081L;
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see javax.swing.DefaultListSelectionModel#setSelectionInterval(int, int)
 		 */
 		@Override
@@ -542,5 +534,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		}
 	}
 
+	
 	
 }

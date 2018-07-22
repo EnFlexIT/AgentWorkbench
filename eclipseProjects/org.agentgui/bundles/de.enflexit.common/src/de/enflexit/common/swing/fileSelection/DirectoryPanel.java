@@ -5,6 +5,9 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
@@ -41,7 +44,6 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 		this.setRootDirectory(rootDirectory);
 		this.initialize();
 	}
-	
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{450, 0};
@@ -62,6 +64,10 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 		this.add(this.getJScrollPaneFileTree(), gbc_jScrollPaneFileTree);
 	}
 	
+	/**
+	 * Gets the j scroll pane file tree.
+	 * @return the j scroll pane file tree
+	 */
 	private JScrollPane getJScrollPaneFileTree() {
 		if (jScrollPaneFileTree == null) {
 			jScrollPaneFileTree = new JScrollPane();
@@ -70,7 +76,11 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 		}
 		return jScrollPaneFileTree;
 	}
-	private FileTree getFileTree() {
+	/**
+	 * Returns the file tree.
+	 * @return the file tree
+	 */
+	public FileTree getFileTree() {
 		if (fileTree == null) {
 			fileTree = new FileTree(this.getDirectoryEvaluator().getFileTreeModel());
 			fileTree.addFileTreeListener(this);
@@ -139,6 +149,46 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 	 */
 	@Override
 	public void onEvaluationWasFinalized() {
+		// --- Update the file info text --------
 		this.updateFileInfoText();
+		// --- Expand to the first level --------
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) getFileTree().getModel().getRoot();
+				getFileTree().expand(rootNode, 0);
+			}
+		});
 	}
+	
+	/**
+	 * Adds the specified {@link DirectoryEvaluatorListener} to inform about evaluation events (e.g. if evaluation finished).
+	 * @param listener the listener
+	 */
+	public void addDirectoryEvaluatorListener(DirectoryEvaluatorListener listener) {
+		this.getDirectoryEvaluator().addDirectoryEvaluatorListener(listener);
+	}
+	/**
+	 * Removes the specified {@link DirectoryEvaluatorListener}.
+	 * @param listener the listener
+	 */
+	public void removeDirectoryEvaluatorListener(DirectoryEvaluatorListener listener) {
+		this.getDirectoryEvaluator().removeDirectoryEvaluatorListener(listener);
+	}
+	
+	/**
+	 * Adds the specified {@link FileTreeListener} to inform about selection changes.
+	 * @param listener the listener
+	 */
+	public void addFileTreeListener(FileTreeListener listener) {
+		this.getFileTree().addFileTreeListener(listener);
+	}
+	/**
+	 * Removes the specified {@link FileTreeListener}.
+	 * @param listener the listener
+	 */
+	public void removeFileTreeListener(FileTreeListener listener) {
+		this.getFileTree().removeFileTreeListener(listener);
+	}
+	
 }
