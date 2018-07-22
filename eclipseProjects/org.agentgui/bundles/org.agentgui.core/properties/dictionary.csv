@@ -13,7 +13,7 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name 
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
-de;Ablaufdatum;;;;
+de;Ablaufdatum;Expiration Date;;;
 de;Abtastintervall;Sampling interval;;;
 de;Adressen;Addresses;;;
 de;Agent auswählen!;Select an Agent!;;;
@@ -162,6 +162,7 @@ de;Der Name;The name
 de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The port for the MTP address must match a value other than 0!;;;
 de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
+de;Details zum Dateiexport;Details of file export;;;
 de;Deutsch;German
 de;Dialog schließen;Close Dialog;;;
 de;Dicke;Thickness;;;
@@ -549,7 +550,7 @@ de;Reihen-Eigenschaften;Series-Properties;;;
 de;Reinitialisiere;Reinitialize;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
 de;Repository-Export;Repository Export;;;
-de;Repository-Import;;;;
+de;Repository-Import;Repository-Import;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
 de;SVG laden;Load SVG
@@ -733,8 +734,8 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
-de;Zertifikats-Alias;;;;
-de;Zertifikatsbesitzer;;;;
+de;Zertifikats-Alias;Certificate Alias;;;
+de;Zertifikatsbesitzer;Certificate Owner;;;
 de;Zip-Datei;Zip file;;;
 de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!<br><br>Soll diese Option jetzt aktualisiert werden?;To include external bin resources, an update <br>of the project MANIFEST.MF is required!<br><br>Do you want to update this option?;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;

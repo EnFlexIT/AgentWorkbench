@@ -94,6 +94,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 
 	private boolean canceled = false;
 	private DirectoryPanel directoryPanel;
+	private JLabel jLabelFileExportSelection;
 
 
 	/**
@@ -134,6 +135,13 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		gbc_jCheckBoxIncludeProduct.gridx = 0;
 		gbc_jCheckBoxIncludeProduct.gridy = 1;
 		getContentPane().add(getJCheckBoxIncludeInstallationPackage(), gbc_jCheckBoxIncludeProduct);
+		
+		GridBagConstraints gbc_jLabelFileExportSelection = new GridBagConstraints();
+		gbc_jLabelFileExportSelection.insets = new Insets(5, 0, 5, 10);
+		gbc_jLabelFileExportSelection.anchor = GridBagConstraints.WEST;
+		gbc_jLabelFileExportSelection.gridx = 1;
+		gbc_jLabelFileExportSelection.gridy = 1;
+		getContentPane().add(getLabel_1(), gbc_jLabelFileExportSelection);
 
 		GridBagConstraints gbc_jComboBoxSelectOS = new GridBagConstraints();
 		gbc_jComboBoxSelectOS.fill = GridBagConstraints.HORIZONTAL;
@@ -254,6 +262,13 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		return installationPackagesComboBoxModel;
 	}
 
+	private JLabel getLabel_1() {
+		if (jLabelFileExportSelection == null) {
+			jLabelFileExportSelection = new JLabel(Language.translate("Details zum Dateiexport") + ":");
+			jLabelFileExportSelection.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelFileExportSelection;
+	}
 	/**
 	 * Gets the directory panel.
 	 * @return the directory panel
@@ -527,4 +542,5 @@ public class ProjectExportDialog extends JDialog implements ActionListener {
 		}
 	}
 
+	
 }
