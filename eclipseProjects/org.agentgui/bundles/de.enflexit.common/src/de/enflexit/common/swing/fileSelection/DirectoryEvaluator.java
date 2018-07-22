@@ -92,6 +92,7 @@ public class DirectoryEvaluator {
 		
 		File[] fileArray = directory.listFiles();
 		
+		// ------------------------------------------------
 		// --- Sort the file / directory list first -------
 		Arrays.sort(fileArray, new Comparator<File>() {
 			@Override
@@ -107,12 +108,16 @@ public class DirectoryEvaluator {
 			}
 		});
 		
+		// ------------------------------------------------
 		// --- Add nodes and search deeper ---------------- 
 		for (int i = 0; i < fileArray.length; i++) {
 			
 			File file = fileArray[i];
-
+			String relativePath = this.getRelativePathToRoot(file);
+			
 			FileDescriptor fileDescriptor = new FileDescriptor(file);
+			fileDescriptor.setRelativePathtoRoot(relativePath);
+			
 			this.getFilesFound().add(fileDescriptor);
 
 			DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(fileDescriptor);
@@ -122,6 +127,17 @@ public class DirectoryEvaluator {
 				this.evaluateDirectory(file, fileNode);
 			}
 		}
+	}
+	/**
+	 * Returns the relative path to root path.
+	 *
+	 * @param file the file
+	 * @return the relative path to root
+	 */
+	private String getRelativePathToRoot(File file) {
+		String relativePath = file.getAbsolutePath().substring(this.getRootDirectory().getAbsolutePath().length());
+		relativePath = relativePath.replace(File.separator, "/");
+		return relativePath; 
 	}
 	
 	/**
@@ -225,6 +241,7 @@ public class DirectoryEvaluator {
 	public class FileDescriptor {
 		
 		private File file;
+		private String relativePathtoRoot;
 		private JCheckBox checkBox;
 		
 		/**
@@ -240,6 +257,13 @@ public class DirectoryEvaluator {
 		}
 		public void setFile(File file) {
 			this.file = file;
+		}
+		
+		public String getRelativePathtoRoot() {
+			return relativePathtoRoot;
+		}
+		public void setRelativePathtoRoot(String relativePathtoRoot) {
+			this.relativePathtoRoot = relativePathtoRoot;
 		}
 		
 		public boolean isDirectory() {

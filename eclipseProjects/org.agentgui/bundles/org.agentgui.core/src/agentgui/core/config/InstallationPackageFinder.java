@@ -140,6 +140,7 @@ public class InstallationPackageFinder {
 		
 		// --- Separate results for os and architecture ---
 		String fileInfo = "";
+		String packageDescription = Application.getGlobalInfo().getApplicationTitle();
 		for (int i = 0; i < searchResult.length; i++) {
 			
 			File instPack = searchResult[i];
@@ -150,12 +151,12 @@ public class InstallationPackageFinder {
 					this.installationPackageWindows64 = instPack;
 					fileInfo += Language.translate("Found installation package for Windows 64-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_WINDOWS_64, instPack, "Installation package for Windows 64-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_WINDOWS_64, instPack, packageDescription + " for Windows 64-Bit"));
 				} else {
 					this.installationPackageWindows32 = instPack;
 					fileInfo += Language.translate("Found installation package for Windows 32-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_WINDOWS_32, instPack, "Installation package for Windows 32-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_WINDOWS_32, instPack, packageDescription + " for Windows 32-Bit"));
 				}
 				
 			} else if (instPackName.contains("-linux")) {
@@ -164,12 +165,12 @@ public class InstallationPackageFinder {
 					this.installationPackageLinux64 = instPack;
 					fileInfo += Language.translate("Found installation package for Linux 64-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_LINUX_64, instPack, "Installation package for Linux 64-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_LINUX_64, instPack, packageDescription + " for Linux 64-Bit"));
 				} else {
 					this.installationPackageLinux32 = instPack;
 					fileInfo += Language.translate("Found installation package for Linux 32-Bit", Language.EN);
 					fileInfo += " (" + instPackName + ")\n";
-					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_LINUX_32, instPack, "Installation package for Linux 32-Bit"));
+					this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_LINUX_32, instPack, packageDescription + " for Linux 32-Bit"));
 				}
 				
 			} else if (instPackName.contains("-mac")) {
@@ -177,7 +178,7 @@ public class InstallationPackageFinder {
 				this.installationPackageMacOS = instPack;
 				fileInfo += Language.translate("Found installation package for macOS", Language.EN);
 				fileInfo += " (" + instPackName + ")\n";
-				this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_MAC_OS, instPack, "Installation package for macOS"));
+				this.getInstallationPackageVector().addElement(new InstallationPackageDescription(InstallationPackageDescription.OS_MAC_OS, instPack, packageDescription + " for macOS"));
 			}
 		}
 		
@@ -324,7 +325,18 @@ public class InstallationPackageFinder {
 		 */
 		@Override
 		public String toString() {
-			return this.getPacakgeDescription() + " (" + this.getPacakgeFile().getName() + ")";
+			return this.toString(true);
+		}
+		/**
+		 * Extension of the regular .toString() method.
+		 * @param includeFilename the include filename flag
+		 * @return the description string for this instance
+		 */
+		public String toString(boolean includeFilename) {
+			if (includeFilename==true) {
+				return this.getPacakgeDescription() + " (" + this.getPacakgeFile().getName() + ")";
+			}
+			return this.getPacakgeDescription();
 		}
 		
 		/**

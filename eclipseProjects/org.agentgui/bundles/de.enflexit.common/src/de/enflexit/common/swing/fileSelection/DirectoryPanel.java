@@ -114,7 +114,7 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 	private JLabel getJLabelFileInfo() {
 		if (jLabelFileInfo == null) {
 			jLabelFileInfo = new JLabel(" ");
-			jLabelFileInfo.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelFileInfo.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelFileInfo;
 	}
@@ -125,7 +125,7 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 		int filesFound  = this.getDirectoryEvaluator().getFilesFound().size();
 		int filesSeleted = this.getDirectoryEvaluator().getFileList(true).size(); 
 		int filesExclude = this.getDirectoryEvaluator().getFileList(false).size();
-		this.getJLabelFileInfo().setText("File found: " + filesFound + " - Files selected: " + filesSeleted + " - Files excluded " + filesExclude);
+		this.getJLabelFileInfo().setText("Files found: " + filesFound + " - Files selected: " + filesSeleted + " - Files excluded " + filesExclude);
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.swing.fileSelection.FileTreeListener#onFileSelectionChanged()
