@@ -146,9 +146,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionRemoved = "AgentMetric_AgentDescriptionRemoved";
 
 	// --- Constants -------------------------------------------
-	@XmlTransient private static final String DEFAULT_SUB_FOLDER_4_SETUPS   = "setups";
-	@XmlTransient private static final String DEFAULT_SUB_FOLDER_ENV_SETUPS = "setupsEnv";
-	@XmlTransient private static final String DEFAULT_SUB_FOLDER_SECURITY = "security";
+	@XmlTransient public static final String DEFAULT_SUB_FOLDER_4_SETUPS   = "setups";
+	@XmlTransient public static final String DEFAULT_SUB_FOLDER_ENV_SETUPS = "setupsEnv";
+	@XmlTransient public static final String DEFAULT_SUB_FOLDER_SECURITY = "security";
 	@XmlTransient private final String[] DEFAULT_SUB_FOLDERS = {DEFAULT_SUB_FOLDER_4_SETUPS, DEFAULT_SUB_FOLDER_ENV_SETUPS};
 	@XmlTransient public static final String DEFAULT_TEMP_FOLDER = "~tmp";
 

@@ -3,6 +3,7 @@ package de.enflexit.common.swing.fileSelection;
 import java.util.ArrayList;
 
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -77,12 +78,46 @@ public class FileTree extends JTree {
     }
 	
 	/**
+	 * Sets the nodes selected.
+	 *
+	 * @param nodeToSetSelected the node to set selected
+	 * @param isSelected the is selected
+	 */
+	public void setNodesSelected(final DefaultMutableTreeNode nodeToSetSelected, final boolean isSelected) {
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				FileDescriptor fd = (FileDescriptor) nodeToSetSelected.getUserObject();
+				fd.setSelected(false);
+				fileTreeModel.reload(nodeToSetSelected);
+			}
+		});
+	}
+	/**
 	 * Sets all children nodes selected.
 	 *
 	 * @param paraentNode the parent node
 	 * @param isSelected the selected
 	 */
-	public void setChildrenNodesSelected(DefaultMutableTreeNode paraentNode, boolean isSelected) {
+	public void setChildrenNodesSelected(final DefaultMutableTreeNode paraentNode, final boolean isSelected) {
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				FileTree.this.setChildrenNodesSelectedInternal(paraentNode, isSelected);
+				FileTree.this.fireFileTreeElementEdited(paraentNode);
+				FileTree.this.fireFileSelectionChanged();
+			}
+		});
+	}
+	/**
+	 * Sets all children nodes selected.
+	 *
+	 * @param paraentNode the parent node
+	 * @param isSelected the selected
+	 */
+	private void setChildrenNodesSelectedInternal(DefaultMutableTreeNode paraentNode, boolean isSelected) {
 		
 		if (paraentNode==null) return;
 		this.fileTreeModel.reload(paraentNode);
@@ -92,11 +127,15 @@ public class FileTree extends JTree {
 			fd.setSelected(isSelected);
 			this.fileTreeModel.reload(subNode);
 			if (subNode.getChildCount()>0) {
-				this.setChildrenNodesSelected(subNode, isSelected);
+				this.setChildrenNodesSelectedInternal(subNode, isSelected);
 			}
 		}
 	}
 	
+	
+	// --------------------------------------------------------------
+	// --- From here methods for the FileTreeListener can be found --
+	// --------------------------------------------------------------
 	/**
 	 * Return the registered file tree listener.
 	 * @return the file tree listener
@@ -123,14 +162,22 @@ public class FileTree extends JTree {
 	public void removeFileTreeListener(FileTreeListener fileTreeListener) {
 		this.getFileTreeListener().remove(fileTreeListener);
 	}
-	
 	/**
 	 * Fire file selection changed.
 	 */
-	protected void fireFileSelectionChanged() {
+	private void fireFileSelectionChanged() {
 		for (int i = 0; i < this.getFileTreeListener().size(); i++) {
 			this.getFileTreeListener().get(i).onFileSelectionChanged();
 		}
 	}
-
+	/**
+	 * Fire file tree element edited.
+	 * @param treeNodeEdited the tree node edited
+	 */
+	private void fireFileTreeElementEdited(DefaultMutableTreeNode treeNodeEdited) {
+		for (int i = 0; i < this.getFileTreeListener().size(); i++) {
+			this.getFileTreeListener().get(i).onFileTreeElementEdited(treeNodeEdited);
+		}
+	}
+	
 }

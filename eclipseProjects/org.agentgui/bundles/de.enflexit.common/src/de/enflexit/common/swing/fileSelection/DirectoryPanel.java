@@ -1,12 +1,15 @@
 package de.enflexit.common.swing.fileSelection;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import de.enflexit.common.swing.fileSelection.DirectoryEvaluator.FileDescriptor;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -132,10 +135,26 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 	 * Updates file info text.
 	 */
 	private void updateFileInfoText() {
-		int filesFound  = this.getDirectoryEvaluator().getFilesFound().size();
-		int filesSeleted = this.getDirectoryEvaluator().getFileList(true).size(); 
-		int filesExclude = this.getDirectoryEvaluator().getFileList(false).size();
-		this.getJLabelFileInfo().setText("Files found: " + filesFound + " - Files selected: " + filesSeleted + " - Files excluded " + filesExclude);
+		
+		int filesFound = 0;
+		int filesSelected = 0;
+		int filesExclude = 0;
+		
+		// --- Get the files found and count numbers ------ 
+		ArrayList<FileDescriptor> fileObjectsFound = this.getDirectoryEvaluator().getFilesFound();
+		for (int i = 0; i < fileObjectsFound.size(); i++) {
+			FileDescriptor fd = fileObjectsFound.get(i);
+			if (fd.isDirectory()==false) {
+				filesFound++;
+				if (fd.isSelected()==true) {
+					filesSelected++;
+				} else {
+					filesExclude++;
+				}
+			}
+		}
+		// --- Finally, set the info text -----------------
+		this.getJLabelFileInfo().setText("Files found: " + filesFound + " - Files selected: " + filesSelected + " - Files excluded " + filesExclude);
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.swing.fileSelection.FileTreeListener#onFileSelectionChanged()
@@ -143,6 +162,13 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 	@Override
 	public void onFileSelectionChanged() {
 		this.updateFileInfoText();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.swing.fileSelection.FileTreeListener#onFileTreeElementEdited(javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public void onFileTreeElementEdited(DefaultMutableTreeNode treeNodeEdited) {
+		// --- Nothing to do here ---------------
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.swing.fileSelection.DirectoryEvaluatorListener#onEvaluationWasFinalized()

@@ -1,9 +1,11 @@
 package de.enflexit.common.swing.fileSelection;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -51,7 +53,7 @@ public class DirectoryEvaluator {
 		if (this.rootDirectory!=null) {
 			this.getFilesFound().clear();
 			this.removeAllTreeNodes();
-			this.getRootNode().setUserObject(new FileDescriptor(rootDirectory));
+			this.getRootNode().setUserObject(new FileDescriptor(rootDirectory, this.getRootNode()));
 			this.evaluateDirectoryInThread(this.rootDirectory, this.getRootNode());
 		}
 	}
@@ -90,9 +92,9 @@ public class DirectoryEvaluator {
 	 */
 	private void evaluateDirectory(File directory, DefaultMutableTreeNode parentNode) {
 		
+		// --- Search all file objects in directory -------
 		File[] fileArray = directory.listFiles();
 		
-		// ------------------------------------------------
 		// --- Sort the file / directory list first -------
 		Arrays.sort(fileArray, new Comparator<File>() {
 			@Override
@@ -108,21 +110,24 @@ public class DirectoryEvaluator {
 			}
 		});
 		
-		// ------------------------------------------------
 		// --- Add nodes and search deeper ---------------- 
 		for (int i = 0; i < fileArray.length; i++) {
 			
+			// --- Get File and relative path -------------
 			File file = fileArray[i];
 			String relativePath = this.getRelativePathToRoot(file);
 			
-			FileDescriptor fileDescriptor = new FileDescriptor(file);
+			// --- Define FileDescriptor and node ---------  
+			DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode();
+			FileDescriptor fileDescriptor = new FileDescriptor(file, fileNode);
 			fileDescriptor.setRelativePathtoRoot(relativePath);
+			fileNode.setUserObject(fileDescriptor);
 			
+			// --- Add to list and tree -------------------
 			this.getFilesFound().add(fileDescriptor);
-
-			DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(fileDescriptor);
 			parentNode.add(fileNode);
 
+			// --- Deeper search --------------------------
 			if (file.isDirectory()) {
 				this.evaluateDirectory(file, fileNode);
 			}
@@ -152,6 +157,41 @@ public class DirectoryEvaluator {
 	}
 	
 	/**
+	 * Returns a FileDescriptor identified by a file or directory name or null.
+	 *
+	 * @param fileNameToSearchFor the file name to search for
+	 * @param isDirectory the is directory
+	 * @return the file descriptor by file name
+	 */
+	public FileDescriptor getFileDescriptorByFileName(String fileNameToSearchFor, boolean isDirectory) {
+		FileDescriptor fdFound = null;
+		for (int i = 0; i < this.getFilesFound().size(); i++) {
+			FileDescriptor fd = this.getFilesFound().get(i);
+			if (fd.getFile().getName().equals(fileNameToSearchFor)==true & fd.isDirectory()==isDirectory) {
+				fdFound = fd;
+			}
+		}
+		return fdFound;
+	}
+	/**
+	 * Returns a list of FileDescriptor instances that match the file or directory name as specified.
+	 *
+	 * @param fileNameToSearchFor the file name to search for
+	 * @param isDirectory the is directory
+	 * @return the file descriptor by file name
+	 */
+	public List<FileDescriptor> getFileDescriptorListByFileName(String fileNameToSearchFor, boolean isDirectory) {
+		List<FileDescriptor> fdListFound = new ArrayList<>();
+		for (int i = 0; i < this.getFilesFound().size(); i++) {
+			FileDescriptor fd = this.getFilesFound().get(i);
+			if (fd.getFile().getName().equals(fileNameToSearchFor)==true & fd.isDirectory()==isDirectory) {
+				fdListFound.add(fd);
+			}
+		}
+		return fdListFound;
+	}
+	
+	/**
 	 * Returns the file list as specified. All selected or all not-selected files can be returned.
 	 *
 	 * @param getSelectedFiles set true if you want to return selected files only; otherwise false
@@ -167,7 +207,22 @@ public class DirectoryEvaluator {
 		}
 		return filesList;
 	}
-	
+	/**
+	 * Returns the path list as specified. All selected or all not-selected path's can be returned.
+	 *
+	 * @param getSelectedFiles set true if you want to return selected files only; otherwise false
+	 * @return the path list as specified
+	 */
+	public ArrayList<Path> getPathList(boolean getSelectedFiles) {
+		ArrayList<Path> pathList = new ArrayList<>();
+		for (int i = 0; i < this.getFilesFound().size(); i++) {
+			FileDescriptor fd = this.getFilesFound().get(i);
+			if (fd.isSelected()==getSelectedFiles) {
+				pathList.add(fd.getFile().toPath());
+			}
+		}
+		return pathList;
+	}
 	
 	/**
 	 * Returns the root node of the tree model.
@@ -175,7 +230,8 @@ public class DirectoryEvaluator {
 	 */
 	private DefaultMutableTreeNode getRootNode() {
 		if (rootNode==null) {
-			rootNode = new DefaultMutableTreeNode(new FileDescriptor(this.rootDirectory));
+			rootNode = new DefaultMutableTreeNode();
+			rootNode.setUserObject(new FileDescriptor(this.rootDirectory, this.rootNode));
 		}
 		return rootNode;
 	}
@@ -198,6 +254,7 @@ public class DirectoryEvaluator {
 		}
 	}
 	
+
 	
 	/**
 	 * Return the registered DirectoryEvaluatorListener.
@@ -243,14 +300,19 @@ public class DirectoryEvaluator {
 		private File file;
 		private String relativePathtoRoot;
 		private JCheckBox checkBox;
+		private DefaultMutableTreeNode treeNode;
+		
 		
 		/**
 		 * Instantiates a new file descriptor.
+		 *
+		 * @param file the file
+		 * @param treeNode the tree node
 		 */
-		public FileDescriptor(File file) {
+		public FileDescriptor(File file, DefaultMutableTreeNode treeNode) {
 			this.setFile(file);
+			this.setTreeNode(treeNode);
 		}
-		
 		
 		public File getFile() {
 			return file;
@@ -282,6 +344,13 @@ public class DirectoryEvaluator {
 		}
 		public void setSelected(boolean isSelected) {
 			this.getCheckBox().setSelected(isSelected);
+		}
+		
+		public DefaultMutableTreeNode getTreeNode() {
+			return treeNode;
+		}
+		public void setTreeNode(DefaultMutableTreeNode treeNode) {
+			this.treeNode = treeNode;
 		}
 		
 		/* (non-Javadoc)

@@ -29,6 +29,7 @@
 package agentgui.core.project.transfer;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,8 @@ public class ProjectExportSettings {
 	private boolean includeAllSetups;
 	private List<String> simSetups;
 	private List<File> bundleJarFilesToInclude;
+	
+	private List<Path> fileExcludeList;
 	
 	
 	/**
@@ -128,6 +131,23 @@ public class ProjectExportSettings {
 		this.simSetups = simSetups;
 	}
 
+	/**
+	 * Returns the file exclude list for the export.
+	 * @return the file exclude list
+	 */
+	public List<Path> getFileExcludeList() {
+		if (fileExcludeList==null) {
+			fileExcludeList = new ArrayList<>();
+		}
+		return fileExcludeList;
+	}
+	/**
+	 * Sets the file exclude list for the export.
+	 * @param fileExcludeList the new file exclude list
+	 */
+	public void setFileExcludeList(List<Path> fileExcludeList) {
+		this.fileExcludeList = fileExcludeList;
+	}
 	
 	/**
 	 * Gets the bundle jar files to include.

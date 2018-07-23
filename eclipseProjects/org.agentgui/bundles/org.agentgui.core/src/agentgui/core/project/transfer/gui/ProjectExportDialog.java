@@ -41,6 +41,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -67,10 +68,12 @@ import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescrip
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.ProjectExportSettings;
+import de.enflexit.common.swing.fileSelection.DirectoryEvaluator;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator.FileDescriptor;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluatorListener;
 import de.enflexit.common.swing.fileSelection.DirectoryPanel;
 import de.enflexit.common.swing.fileSelection.FileTree;
+import de.enflexit.common.swing.fileSelection.FileTreeAdapter;
 
 /**
  * The Class ProjectExportDialog.
@@ -96,12 +99,19 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private JList<String> jListSetupSelection;
 	private DefaultListModel<String> simulationSetupListModel;
 
-	private DirectoryPanel directoryPanel;
 	private JLabel jLabelFileExportSelection;
+	private DirectoryPanel directoryPanel;
+	private FileTree fileTree;
 
 	private boolean canceled = false;
 
-
+	private FileDescriptor fdSetups;
+	private FileDescriptor fdSetupsEnvironment;
+	private FileDescriptor fdTemp;
+	private FileDescriptor fdSecurity;
+	private List<FileDescriptor> fdGitIgnoreList;
+	
+	
 	/**
 	 * Instantiates a new project export dialog.
 	 * @param project the project
@@ -287,10 +297,27 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		if (directoryPanel == null) {
 			directoryPanel = new DirectoryPanel(new File(this.project.getProjectFolderFullPath()));
 			directoryPanel.addDirectoryEvaluatorListener(this);
+			directoryPanel.addFileTreeListener(new FileTreeAdapter() {
+				@Override
+				public void onFileTreeElementEdited(DefaultMutableTreeNode treeNodeEdited) {
+					ProjectExportDialog.this.onFileTreeElementEdited(treeNodeEdited);
+				}
+			});
 		}
 		return directoryPanel;
 	}
-
+	/**
+	 * Returns the file tree that is located in the local {@link DirectoryPanel}.
+	 * @return the file tree
+	 */
+	public FileTree getFileTree() {
+		if (fileTree==null) {
+			fileTree = this.getDirectoryPanel().getFileTree();
+		}
+		return fileTree;
+	}
+	
+	
 	/**
 	 * Gets the j check box include all setups.
 	 * @return the j check box include all setups
@@ -304,8 +331,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		}
 		return jCheckBoxIncludeAllSetups;
 	}
-
-	
 	/**
 	 * Gets the scroll pane.
 	 * @return the scroll pane
@@ -408,6 +433,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		} else {
 			this.getExportSettings().setInstallationPackage(null);
 		}
+		this.getExportSettings().setFileExcludeList(this.getDirectoryPanel().getDirectoryEvaluator().getPathList(false));
 	}
 	
 	/* (non-Javadoc)
@@ -415,20 +441,98 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 */
 	@Override
 	public void onEvaluationWasFinalized() {
-		// --------------------------------------------------------------------
-		// --- Will be invoked, after the file evaluation finished ------------
-		// --------------------------------------------------------------------
-		final FileTree fileTree = this.getDirectoryPanel().getFileTree();
-		final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) fileTree.getModel().getRoot();
+
+		// ----------------------------------------------------------
+		// --- First, set everything selected -----------------------
+		// ----------------------------------------------------------
+		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) this.getFileTree().getModel().getRoot();
+		
 		FileDescriptor fd = (FileDescriptor) rootNode.getUserObject();
 		fd.setSelected(true);
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				fileTree.setChildrenNodesSelected(rootNode, true);
+		
+		this.getFileTree().setChildrenNodesSelected(rootNode, true);
+		
+		// ----------------------------------------------------------
+		// --- Set default excludes ---------------------------------
+		// ----------------------------------------------------------
+		DirectoryEvaluator de = getDirectoryPanel().getDirectoryEvaluator();
+		this.fdSetups = de.getFileDescriptorByFileName(Project.DEFAULT_SUB_FOLDER_4_SETUPS, true);
+		this.fdSetupsEnvironment = de.getFileDescriptorByFileName(Project.DEFAULT_SUB_FOLDER_ENV_SETUPS, true);
+		
+		this.fdSecurity = de.getFileDescriptorByFileName(Project.DEFAULT_SUB_FOLDER_SECURITY, true);
+		this.fdSecurity.setSelected(false);
+		this.getFileTree().setChildrenNodesSelected(this.fdSecurity.getTreeNode(), false);
+
+		this.fdTemp = de.getFileDescriptorByFileName(Project.DEFAULT_TEMP_FOLDER,  true);
+		this.fdTemp.setSelected(false);
+		this.getFileTree().setChildrenNodesSelected(this.fdTemp.getTreeNode(), false);
+		
+		this.fdGitIgnoreList = de.getFileDescriptorListByFileName(".gitignore", false);
+		for (int i = 0; i < this.fdGitIgnoreList.size(); i++) {
+			FileDescriptor fdi = this.fdGitIgnoreList.get(i);
+			this.getFileTree().setNodesSelected(fdi.getTreeNode(), false);
+		}
+		
+	}
+	
+	/**
+	 * Will be invoked if a {@link FileTree} element was edited.
+	 * @param treeNodeEdited the tree node edited
+	 */
+	private void onFileTreeElementEdited(DefaultMutableTreeNode treeNodeEdited) {
+		
+		FileDescriptor fdSelected = (FileDescriptor) treeNodeEdited.getUserObject();
+		boolean wasSelected = fdSelected.isSelected();
+
+		if (fdSelected==this.fdSetupsEnvironment) {
+			if (this.fdSetups.isSelected()!=wasSelected) {
+				this.fdSetups.setSelected(wasSelected);
+				this.getFileTree().setChildrenNodesSelected(this.fdSetups.getTreeNode(), wasSelected);
+				this.setIncludeAllSetups(wasSelected);
 			}
-		});
-		// TODO
+			
+		} else if (fdSelected==this.fdSetups) {
+			if (this.fdSetupsEnvironment.isSelected()!=wasSelected) {
+				this.fdSetupsEnvironment.setSelected(wasSelected);
+				this.getFileTree().setChildrenNodesSelected(this.fdSetupsEnvironment.getTreeNode(), wasSelected);
+				this.setIncludeAllSetups(wasSelected);
+			}
+			
+		} 
+		
+	}
+	
+	/**
+	 * Sets the visualization to include /exclude all setups.
+	 * @param includeAllSetups the new include all setups
+	 */
+	private void setIncludeAllSetups(boolean includeAllSetups) {
+		
+		// --- Set the export setting -------------------------------
+		this.getExportSettings().setIncludeAllSetups(includeAllSetups);
+
+		if (this.fdSetups.isSelected()!=includeAllSetups) {
+			this.fdSetups.setSelected(includeAllSetups);
+			this.getFileTree().setChildrenNodesSelected(this.fdSetups.getTreeNode(), includeAllSetups);
+		}
+		
+		if (this.fdSetupsEnvironment.isSelected()!=includeAllSetups) {
+			this.fdSetupsEnvironment.setSelected(includeAllSetups);
+			this.getFileTree().setChildrenNodesSelected(this.fdSetupsEnvironment.getTreeNode(), includeAllSetups);
+		}
+		
+		// --- Check the indication check box first -----------------
+		if (this.getJCheckBoxIncludeAllSetups().isSelected()!=includeAllSetups) {
+			this.getJCheckBoxIncludeAllSetups().setSelected(includeAllSetups);
+		}
+		
+		// --- Set the list of setups -------------------------------
+		this.getJListSetupSelection().setEnabled(!includeAllSetups);
+		if (includeAllSetups==true) {
+			this.selectAllListEntries(getJListSetupSelection());
+		} else {
+			this.getJListSetupSelection().clearSelection();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -448,14 +552,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			}
 
 		} else if (ae.getSource() == this.getJCheckBoxIncludeAllSetups()) {
-			boolean selectionState = this.getJCheckBoxIncludeAllSetups().isSelected();
-			this.getExportSettings().setIncludeAllSetups(selectionState);
-			this.getJListSetupSelection().setEnabled(!selectionState);
-			if (selectionState == true) {
-				this.selectAllListEntries(getJListSetupSelection());
-			} else {
-				this.getJListSetupSelection().clearSelection();
-			}
+			this.setIncludeAllSetups(this.getJCheckBoxIncludeAllSetups().isSelected());
 
 		} else if (ae.getSource()==this.getJButtonOk()) {
 			this.getSettingsFromForm();
@@ -533,6 +630,8 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			}
 		}
 	}
+
+	
 
 	
 	

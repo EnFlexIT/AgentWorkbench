@@ -14,7 +14,7 @@ package de.enflexit.common.swing.fileSelection;
 public interface DirectoryEvaluatorListener {
 
 	/**
-	 * Will be invoked if the evaluation was finalized.
+	 * Will be invoked if the file evaluation in the {@link DirectoryEvaluator} is finalized.
 	 */
 	public void onEvaluationWasFinalized();
 }

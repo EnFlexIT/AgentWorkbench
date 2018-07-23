@@ -3,8 +3,11 @@ package de.enflexit.common.swing.fileSelection;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
@@ -20,8 +23,12 @@ public class FileTreeCellEditor extends AbstractCellEditor implements TreeCellEd
 
 	private static final long serialVersionUID = 6945061461896002317L;
 
-	private FileTreeCellRenderer fileTreeRenderer;
 	private FileTree fileTree;
+
+	private DefaultMutableTreeNode treeNode;
+	private FileDescriptor fileDescriptor;
+	private FileTreeCellRenderer fileTreeRenderer;
+	private ActionListener aListener;
 	
 	/**
 	 * Instantiates a new file tree cell editor.
@@ -36,7 +43,7 @@ public class FileTreeCellEditor extends AbstractCellEditor implements TreeCellEd
 	 */
 	@Override
 	public Object getCellEditorValue() {
-		return this.getFileTreeRenderer();
+		return this.fileDescriptor;
 	}
 	
 	/* (non-Javadoc)
@@ -46,19 +53,10 @@ public class FileTreeCellEditor extends AbstractCellEditor implements TreeCellEd
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 		
 		// --- Get current FileDescriptor ---------------------------
-		final DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-		final FileDescriptor fd = (FileDescriptor) node.getUserObject();
-		
+		this.treeNode = (DefaultMutableTreeNode)value;
+		this.fileDescriptor = (FileDescriptor) this.treeNode.getUserObject();
 		// --- Add an action listener to the check box --------------
-		fd.getCheckBox().addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				boolean isSelected = fd.getCheckBox().isSelected(); 
-				fd.setSelected(isSelected);
-				fileTree.setChildrenNodesSelected(node, isSelected);
-				fileTree.fireFileSelectionChanged();
-			}
-		});
+		this.addActionListener(this.fileDescriptor.getCheckBox());
 		// --- Return renderer component ---------------------------- 
 		return this.getFileTreeRenderer().getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, false);
 	}
@@ -74,4 +72,33 @@ public class FileTreeCellEditor extends AbstractCellEditor implements TreeCellEd
 		return fileTreeRenderer;
 	}
 
+	/**
+	 * Adds the local action listener if not already there.
+	 * @param jCheckBoxToAddTo the j check box to add to
+	 */
+	private void addActionListener(JCheckBox jCheckBoxToAddTo) {
+		ArrayList<ActionListener> listener = new ArrayList<>(Arrays.asList(jCheckBoxToAddTo.getActionListeners()));
+		if (listener.contains(this.getCheckBoxActionListener())==false) {
+			jCheckBoxToAddTo.addActionListener(this.getCheckBoxActionListener());
+		}
+	}
+	/**
+	 * Returns the check box action listener.
+	 * @return the check box action listener
+	 */
+	private ActionListener getCheckBoxActionListener() {
+		if (aListener==null) {
+			aListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					boolean isSelected = ((JCheckBox)ae.getSource()).isSelected(); 
+					fileDescriptor.setSelected(isSelected);
+					fileTree.setChildrenNodesSelected(treeNode, isSelected);
+					fireEditingStopped();
+				}
+			};
+		}
+		return aListener;
+	}
+	
 }
