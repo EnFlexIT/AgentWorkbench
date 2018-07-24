@@ -3,13 +3,10 @@
     <projectName>Game of Life</projectName>
     <projectStartTab>2|2</projectStartTab>
     <projectView>Developer</projectView>
-    <versionInformation>
-        <build>1</build>
-        <majorRevision>0</majorRevision>
-        <minorRevision>1</minorRevision>
-    </versionInformation>
-    <updateAutoConfiguration>0</updateAutoConfiguration>
+    <versionTag>Complete Project</versionTag>
     <updateSite>http://update.agentgui.org</updateSite>
+    <updateAutoConfiguration>0</updateAutoConfiguration>
+    <updateDateLastChecked>0</updateDateLastChecked>
     <environmentModel>Squared</environmentModel>
     <projectFeatures/>
     <projectResources/>
@@ -34,14 +31,14 @@
     <jadeConfiguration>
         <skipUserRequestForJadeStart>true</skipUserRequestForJadeStart>
         <useLocalPort>1099</useLocalPort>
+        <useLocalMtpPort>7778</useLocalMtpPort>
         <mtpCreation>ConfiguredByIPandPort</mtpCreation>
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <keyStoreFile>D:\10 Java Projects\AgentGUI\resources\security\Agent-HyGridKeyStore.jks</keyStoreFile>
-        <trustStoreFile>D:\10 Java Projects\AgentGUI\resources\security\Agent-HyGridTrustStore.jks</trustStoreFile>
         <keyStorePassword>MTIzNDU2</keyStorePassword>
+        <trustStoreFile>D:\10 Java Projects\AgentGUI\resources\security\Agent-HyGridTrustStore.jks</trustStoreFile>
         <trustStorePassword>MTIzNDU2</trustStorePassword>
-        <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.logging.DebugService</service>
             <service>agentgui.simulationService.LoadService</service>
@@ -93,9 +90,8 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>1800 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>4050 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://Pandora.local:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -130,12 +126,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>1800 Agents</key>
-            <value>1800_agents.xml</value>
-        </entry>
-        <entry>
             <key>0032 Agents</key>
             <value>0032_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1800 Agents</key>
+            <value>1800_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>
@@ -150,6 +146,5 @@
             <value>1458_agents.xml</value>
         </entry>
     </simulationSetups>
-    <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>
