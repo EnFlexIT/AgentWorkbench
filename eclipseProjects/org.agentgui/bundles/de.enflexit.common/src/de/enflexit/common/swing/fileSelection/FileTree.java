@@ -89,9 +89,11 @@ public class FileTree extends JTree {
 			@Override
 			public void run() {
 				FileDescriptor fd = (FileDescriptor) nodeToSetSelected.getUserObject();
-				fd.setSelected(false);
-				fileTreeModel.reload(nodeToSetSelected);
-				FileTree.this.fireFileTreeElementEdited(nodeToSetSelected);
+				if (fd.getCheckBox().isEnabled()==true) {
+					fd.setSelected(isSelected);
+					fileTreeModel.reload(nodeToSetSelected);
+					FileTree.this.fireFileTreeElementEdited(nodeToSetSelected);
+				}
 			}
 		});
 	}
@@ -125,8 +127,10 @@ public class FileTree extends JTree {
 		for (int i = 0; i < paraentNode.getChildCount(); i++) {
 			DefaultMutableTreeNode subNode = (DefaultMutableTreeNode) paraentNode.getChildAt(i);
 			FileDescriptor fd = (FileDescriptor) subNode.getUserObject(); 
-			fd.setSelected(isSelected);
-			this.fileTreeModel.reload(subNode);
+			if (fd.getCheckBox().isEnabled()==true) {
+				fd.setSelected(isSelected);
+				this.fileTreeModel.reload(subNode);
+			}
 			if (subNode.getChildCount()>0) {
 				this.setChildrenNodesSelectedInternal(subNode, isSelected);
 			}

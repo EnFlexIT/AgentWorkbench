@@ -87,6 +87,8 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 
 	private static final long serialVersionUID = 7642101726572826993L;
 
+	private static final String[] ALWAYS_SELECTED_FILES = {"agentgui.xml", "agentgui.bin", "/setupsEnv/~GeneralGraphSettings~.xml"};
+	
 	private Project project;
 	private ProjectExportSettings exportSettings;
 	
@@ -104,7 +106,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private DefaultListModel<String> simulationSetupListModel;
 	private JList<String> jListSetupSelection;
 	private boolean pauseSetupsListSelectionListener;
-	private ArrayList<String> lastSelectedSetups;
+	private List<String> lastSelectedSetups;
 	
 	private JLabel jLabelFileExportSelection;
 	private DirectoryPanel directoryPanel;
@@ -301,13 +303,31 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		}
 		return jLabelFileExportSelection;
 	}
+	
+	/**
+	 * Returns the non editable files.
+	 * @return the non editable files
+	 */
+	private ArrayList<File> getAlwaysSelectedFiles() {
+	
+		ArrayList<File> nonEditableFiles = new ArrayList<>();
+		String projectBasePath = this.project.getProjectFolderFullPath();
+		for (int i = 0; i < ALWAYS_SELECTED_FILES.length; i++) {
+			String filePath = projectBasePath + ALWAYS_SELECTED_FILES[i];
+			File file = new File(filePath);
+			if (file.exists()==true) {
+				nonEditableFiles.add(file);
+			}
+		}
+		return nonEditableFiles;
+	}
 	/**
 	 * Gets the directory panel.
 	 * @return the directory panel
 	 */
 	private DirectoryPanel getDirectoryPanel() {
 		if (directoryPanel == null) {
-			directoryPanel = new DirectoryPanel(new File(this.project.getProjectFolderFullPath()));
+			directoryPanel = new DirectoryPanel(new File(this.project.getProjectFolderFullPath()), this.getAlwaysSelectedFiles());
 			directoryPanel.addDirectoryEvaluatorListener(this);
 			directoryPanel.addFileTreeListener(new FileTreeAdapter() {
 				@Override
@@ -331,12 +351,12 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	
 	
 	/**
-	 * Gets the j check box include all setups.
-	 * @return the j check box include all setups
+	 * Gets the JCheckBox include all setups.
+	 * @return the JCheckBox include all setups
 	 */
 	private JCheckBox getJCheckBoxIncludeAllSetups() {
 		if (jCheckBoxIncludeAllSetups == null) {
-			jCheckBoxIncludeAllSetups = new JCheckBox(Language.translate("Alle Simulations-Setups exportieren"));
+			jCheckBoxIncludeAllSetups = new JCheckBox(Language.translate("Alle Setups exportieren"));
 			jCheckBoxIncludeAllSetups.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jCheckBoxIncludeAllSetups.setSelected(true);
 			jCheckBoxIncludeAllSetups.addActionListener(this);
@@ -364,7 +384,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		if (simulationSetupListModel == null) {
 			simulationSetupListModel = new DefaultListModel<>();
 			Vector<String> setupsVector = new Vector<String>(this.project.getSimulationSetups().keySet());
-			Collections.sort(setupsVector, String.CASE_INSENSITIVE_ORDER);
+			Collections.sort(setupsVector);
 			for (int i = 0; i < setupsVector.size(); i++) {
 				simulationSetupListModel.addElement(setupsVector.get(i));
 			}
@@ -398,9 +418,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 					if (lse.getValueIsAdjusting()==false && pauseSetupsListSelectionListener==false) {
 						// --- Find out which indexes are new -----------------
 						ArrayList<String> currentSetups = new ArrayList<>(getJListSetupSelection().getSelectedValuesList());
-						ArrayList<String> addedSetups = getAddedSetups(currentSetups);
-						ArrayList<String> removedSetups = getRemovedSetups(currentSetups);
-						setLastSelectedSetups(currentSetups);
+						ArrayList<String> addedSetups   = ProjectExportDialog.this.getAddedSetups(currentSetups);
+						ArrayList<String> removedSetups = ProjectExportDialog.this.getRemovedSetups(currentSetups);
+						updateLastSelectedSetups();
 						// --- Act on added setups  ---------------------------
 						for (int i = 0; i < addedSetups.size(); i++) {
 							setIncludeSetup(addedSetups.get(i), true);
@@ -421,14 +441,14 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private void selectAllSetupsInSetupList() {
 		this.getJListSetupSelection().setSelectionInterval(0, (this.getSimulationSetupListModel().size()-1));
 	}
-	private ArrayList<String> getLastSelectedSetups() {
+	private List<String> getLastSelectedSetups() {
 		if (lastSelectedSetups==null) {
 			lastSelectedSetups = new ArrayList<>();
 		}
 		return lastSelectedSetups;
 	}
-	public void setLastSelectedSetups(ArrayList<String> lastSelectedSetups) {
-		this.lastSelectedSetups = lastSelectedSetups;
+	private void updateLastSelectedSetups() {
+		this.lastSelectedSetups = this.getJListSetupSelection().getSelectedValuesList();
 	}
 	private ArrayList<String> getAddedSetups(ArrayList<String> currSelectedSetups) {
 		ArrayList<String> newSetups = new ArrayList<>(currSelectedSetups);
@@ -710,7 +730,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 				if (newSelectionSize==0) {
 					this.getJListSetupSelection().clearSelection();
 				} else {
-					int newSelectionIndices[] = new int[oldSelectionIndices.length-1];
+					int newSelectionIndices[] = new int[newSelectionSize];
 					// --- Search for the new setup ---------------------
 					int k = 0;
 					for (int i = 0; i < oldSelectionIndices.length; i++) {
@@ -728,6 +748,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			}
 			
 		}
+		this.updateLastSelectedSetups();
 		
 		// --- Select / deselect the corresponding files (right) ----
 		DirectoryEvaluator de = this.getDirectoryPanel().getDirectoryEvaluator();
@@ -775,6 +796,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		} else {
 			this.getJListSetupSelection().clearSelection();
 		}
+		this.updateLastSelectedSetups();
 		this.getJListSetupSelection().setEnabled(!includeAllSetups);
 	}
 	

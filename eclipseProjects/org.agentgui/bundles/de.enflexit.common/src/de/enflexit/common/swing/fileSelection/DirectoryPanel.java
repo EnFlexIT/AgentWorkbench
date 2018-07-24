@@ -37,16 +37,27 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 	 * Instantiates a new directory panel.
 	 */
 	public DirectoryPanel() {
-		this(null);
+		this(null, null);
 	}
 	/**
 	 * Instantiates a new directory panel.
 	 * @param rootDirectory the root directory
 	 */
 	public DirectoryPanel(File rootDirectory) {
+		this(rootDirectory, null);
+	}
+	/**
+	 * Instantiates a new directory panel.
+	 *
+	 * @param rootDirectory the root directory
+	 * @param alwaysSelectedFiles the always selected files
+	 */
+	public DirectoryPanel(File rootDirectory, ArrayList<File> alwaysSelectedFiles) {
+		this.setAlwaysSelectedFiles(alwaysSelectedFiles);
 		this.setRootDirectory(rootDirectory);
 		this.initialize();
 	}
+	
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{450, 0};
@@ -104,6 +115,21 @@ public class DirectoryPanel extends JPanel implements FileTreeListener, Director
 		return directoryEvaluator;
 	}
 
+	/**
+	 * Sets the non editable files.
+	 * @param nonEditableFiles the new non editable files
+	 */
+	public void setAlwaysSelectedFiles(ArrayList<File> nonEditableFiles) {
+		this.getDirectoryEvaluator().setAlwaysSelectedFiles(nonEditableFiles);
+	}
+	/**
+	 * Returns the configured non editable files.
+	 * @return the non editable files
+	 */
+	public ArrayList<File> getAlwaysSelectedFiles() {
+		return this.getDirectoryEvaluator().getAlwaysSelectedFiles();
+	}
+	
 	/**
 	 * Returns the currently used root directory.
 	 * @return the root directory

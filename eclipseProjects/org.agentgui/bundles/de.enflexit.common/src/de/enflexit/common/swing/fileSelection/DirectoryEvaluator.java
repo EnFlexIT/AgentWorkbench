@@ -22,7 +22,10 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class DirectoryEvaluator {
 
-	private File rootDirectory; 
+	private File rootDirectory;
+	private ArrayList<File> alwaysSelectedFiles;
+	
+	
 	private ArrayList<FileDescriptor> filesFound;
 	private ArrayList<DirectoryEvaluatorListener> directoryEvaluatorListener;
 	
@@ -41,7 +44,31 @@ public class DirectoryEvaluator {
 	 * @param rootDirectory the root directory
 	 */
 	public DirectoryEvaluator(File rootDirectory) {
+		this(rootDirectory, null);
+	}
+	/**
+	 * Instantiates a new directory evaluator.
+	 * @param rootDirectory the root directory
+	 * @param alwaysSelectedFiles the always selected files
+	 */
+	public DirectoryEvaluator(File rootDirectory, ArrayList<File> alwaysSelectedFiles) {
+		this.setAlwaysSelectedFiles(alwaysSelectedFiles);
 		this.setRootDirectory(rootDirectory);
+	}
+	
+	/**
+	 * Sets the always selected files.
+	 * @param alwaysSelectedFiles the new always selected files
+	 */
+	public void setAlwaysSelectedFiles(ArrayList<File> alwaysSelectedFiles) {
+		this.alwaysSelectedFiles = alwaysSelectedFiles;
+	}
+	/**
+	 * Returns the always selected files.
+	 * @return the always selected files
+	 */
+	public ArrayList<File> getAlwaysSelectedFiles() {
+		return alwaysSelectedFiles;
 	}
 	
 	/**
@@ -122,6 +149,12 @@ public class DirectoryEvaluator {
 			FileDescriptor fileDescriptor = new FileDescriptor(file, fileNode);
 			fileDescriptor.setRelativePathtoRoot(relativePath);
 			fileNode.setUserObject(fileDescriptor);
+			
+			// --- A non editable file? -------------------
+			if (this.getAlwaysSelectedFiles()!=null && this.getAlwaysSelectedFiles().contains(file)==true) {
+				fileDescriptor.setSelected(true);
+				fileDescriptor.getCheckBox().setEnabled(false);
+			}
 			
 			// --- Add to list and tree -------------------
 			this.getFilesFound().add(fileDescriptor);
