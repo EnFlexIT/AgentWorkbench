@@ -60,6 +60,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -100,8 +101,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private JButton jButtonCancel;
 
 	private JScrollPane jScrollPaneSetupSelection;
-	private JList<String> jListSetupSelection;
 	private DefaultListModel<String> simulationSetupListModel;
+	private JList<String> jListSetupSelection;
+	private boolean pauseSetupsListSelectionListener;
 	private ArrayList<String> lastSelectedSetups;
 	
 	private JLabel jLabelFileExportSelection;
@@ -393,19 +395,19 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			jListSetupSelection.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent lse) {
-					if (lse.getValueIsAdjusting()==false) {
+					if (lse.getValueIsAdjusting()==false && pauseSetupsListSelectionListener==false) {
 						// --- Find out which indexes are new -----------------
 						ArrayList<String> currentSetups = new ArrayList<>(getJListSetupSelection().getSelectedValuesList());
 						ArrayList<String> addedSetups = getAddedSetups(currentSetups);
 						ArrayList<String> removedSetups = getRemovedSetups(currentSetups);
 						setLastSelectedSetups(currentSetups);
-						System.out.println("=> Changes in the selection ....");
-						// --- Act on changes ---------------------------------
+						// --- Act on added setups  ---------------------------
 						for (int i = 0; i < addedSetups.size(); i++) {
-							System.out.println("New setup " + addedSetups.get(i) );
+							setIncludeSetup(addedSetups.get(i), true);
 						}
+						// --- Act on removed setups  -------------------------
 						for (int i = 0; i < removedSetups.size(); i++) {
-							System.out.println("Removed setup " + removedSetups.get(i));
+							setIncludeSetup(removedSetups.get(i), false);
 						}
 						
 					}
@@ -585,7 +587,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			File[] envFiles =envDirectory.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
-					return name.startsWith(setup);
+					return name.startsWith(setup + ".");
 				}
 			});
 
@@ -637,7 +639,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		FileDescriptor fdSelected = (FileDescriptor) treeNodeEdited.getUserObject();
 		boolean wasSelected = fdSelected.isSelected();
 		
-		DirectoryEvaluator de = this.getDirectoryPanel().getDirectoryEvaluator();
 		String setupName = this.getSetupName(fdSelected);
 		
 		if (fdSelected==this.fdSetupsEnvironment) {
@@ -658,18 +659,90 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			
 		} else if (setupName!=null) {
 			// --- Select / un-select files of setup ---------------- 
-			ArrayList<File> setupFiles = this.getSetupToFilesHash().get(setupName);
-			for (int i = 0; i < setupFiles.size(); i++) {
-				File setupFile = setupFiles.get(i);
-				FileDescriptor fd = de.getFileDescriptorByFile(setupFile);
-				if (fd.isSelected()!=wasSelected) {
-					fd.setSelected(wasSelected);
-					de.getFileTreeModel().reload(fd.getTreeNode());
+			this.setIncludeSetup(setupName, wasSelected);
+			
+		}
+		
+	}
+	
+	/**
+	 * Select all elements that correspond to a setup .
+	 *
+	 * @param setupName the setup name
+	 * @param setSelected the set selected
+	 */
+	private void setIncludeSetup(String setupName, boolean setSelected) {
+
+		// --- Check if export all setups is marked ----------------- 
+		if (setSelected==false && this.getJCheckBoxIncludeAllSetups().isSelected()==true) {
+			this.getJCheckBoxIncludeAllSetups().setSelected(false);
+			this.getJListSetupSelection().setEnabled(true);
+		}
+		
+		// --- Select / deselect in the setup list (left) -----------
+		ListModel<String> listModel = this.getJListSetupSelection().getModel();
+		int oldSelectionIndices[] = this.getJListSetupSelection().getSelectedIndices();
+		if (setSelected==true) {
+			
+			if (this.getJListSetupSelection().getSelectedValuesList().contains(setupName)==false) {
+				// --- Add to the list of selected values -----------
+				int newSelectionIndices[] = new int[oldSelectionIndices.length+1];
+				System.arraycopy(oldSelectionIndices, 0, newSelectionIndices, 0, oldSelectionIndices.length);
+				// --- Search for the new setup ---------------------
+				for (int i = 0; i < listModel.getSize(); i++) {
+					String setup = listModel.getElementAt(i);
+					if (setup.equals(setupName)==true) {
+						newSelectionIndices[newSelectionIndices.length-1] = i;
+						break;
+					}
+				}
+				// --- Set new selections to JList ------------------
+				this.pauseSetupsListSelectionListener=true;
+				this.getJListSetupSelection().setSelectedIndices(newSelectionIndices);
+				this.pauseSetupsListSelectionListener=false;
+			}
+			
+		} else {
+			
+			if (this.getJListSetupSelection().getSelectedValuesList().contains(setupName)==true) {
+				// --- Remove from the list of selected values ------
+				int newSelectionSize = oldSelectionIndices.length-1;
+				if (newSelectionSize==0) {
+					this.getJListSetupSelection().clearSelection();
+				} else {
+					int newSelectionIndices[] = new int[oldSelectionIndices.length-1];
+					// --- Search for the new setup ---------------------
+					int k = 0;
+					for (int i = 0; i < oldSelectionIndices.length; i++) {
+						String setup = listModel.getElementAt(oldSelectionIndices[i]);
+						if (setup.equals(setupName)==false) {
+							newSelectionIndices[k] = oldSelectionIndices[i];
+							k++;
+						}
+					}
+					// --- Set new selections to JList ------------------
+					this.pauseSetupsListSelectionListener=true;
+					this.getJListSetupSelection().setSelectedIndices(newSelectionIndices);
+					this.pauseSetupsListSelectionListener=false;	
 				}
 			}
 			
 		}
 		
+		// --- Select / deselect the corresponding files (right) ----
+		DirectoryEvaluator de = this.getDirectoryPanel().getDirectoryEvaluator();
+		ArrayList<File> setupFiles = this.getSetupToFilesHash().get(setupName);
+		if (setupFiles!=null) {
+			for (int i = 0; i < setupFiles.size(); i++) {
+				File setupFile = setupFiles.get(i);
+				FileDescriptor fd = de.getFileDescriptorByFile(setupFile);
+				if (fd.isSelected()!=setSelected) {
+					fd.setSelected(setSelected);
+					de.getFileTreeModel().reload(fd.getTreeNode());
+				}
+			}
+		}
+				
 	}
 	
 	/**
@@ -697,12 +770,12 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		}
 		
 		// --- Set the list of setups -------------------------------
-		this.getJListSetupSelection().setEnabled(!includeAllSetups);
 		if (includeAllSetups==true) {
 			this.selectAllSetupsInSetupList();
 		} else {
 			this.getJListSetupSelection().clearSelection();
 		}
+		this.getJListSetupSelection().setEnabled(!includeAllSetups);
 	}
 	
 	/* (non-Javadoc)
