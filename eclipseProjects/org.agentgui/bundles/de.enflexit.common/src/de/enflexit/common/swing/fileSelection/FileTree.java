@@ -91,6 +91,7 @@ public class FileTree extends JTree {
 				FileDescriptor fd = (FileDescriptor) nodeToSetSelected.getUserObject();
 				fd.setSelected(false);
 				fileTreeModel.reload(nodeToSetSelected);
+				FileTree.this.fireFileTreeElementEdited(nodeToSetSelected);
 			}
 		});
 	}

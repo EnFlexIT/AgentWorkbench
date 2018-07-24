@@ -216,6 +216,7 @@ public class SimulationSetup {
 	 * @return the simulation setup, or null if loading failed
 	 */
 	public static SimulationSetup load(File setupXmlFile, boolean loadUserRuntimeObject) {
+		
 		SimulationSetup simulationSetup = null;
 		try {
 			JAXBContext pc = JAXBContext.newInstance(SimulationSetup.class);
@@ -223,6 +224,7 @@ public class SimulationSetup {
 			FileReader fr = new FileReader(setupXmlFile);
 			simulationSetup = (SimulationSetup) um.unmarshal(fr);
 			fr.close();
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;

@@ -804,16 +804,12 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		
 		String fileName = xmlFileName;
 		if(fileName.endsWith(getXmlFilePostfix())) {
-			fileName = fileName.substring( 0, (fileName.length()-getXmlFilePostfix().length()) );
-			fileName = fileName + getBinFilePostfix();
+			fileName = fileName.substring( 0, (fileName.length()-this.getXmlFilePostfix().length()) );
+			fileName = fileName + this.getBinFilePostfix();
 		}
 		
-		if (fileName.equals(xmlFileName)==false) {
-			return fileName;	
-		} else {
-			return null;
-		}
-		
+		if (fileName.equals(xmlFileName)==true) return null;
+		return fileName;
 	}
 	
 	/**

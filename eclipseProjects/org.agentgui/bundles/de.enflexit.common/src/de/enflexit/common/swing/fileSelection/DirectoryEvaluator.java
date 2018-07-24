@@ -157,6 +157,22 @@ public class DirectoryEvaluator {
 	}
 	
 	/**
+	 * Return the file descriptor identified by the specified file.
+	 * @return the file descriptor by file
+	 */
+	public FileDescriptor getFileDescriptorByFile(File fileToSearchFor) {
+		FileDescriptor fdFound = null;
+		for (int i = 0; i < this.getFilesFound().size(); i++) {
+			FileDescriptor fd = this.getFilesFound().get(i);
+			if (fd.getFile().equals(fileToSearchFor)==true) {
+				fdFound = fd;
+			}
+		}
+		return fdFound;
+
+	}
+	
+	/**
 	 * Returns a FileDescriptor identified by a file or directory name or null.
 	 *
 	 * @param fileNameToSearchFor the file name to search for

@@ -40,7 +40,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -57,10 +60,11 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.InstallationPackageFinder;
@@ -98,7 +102,8 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private JScrollPane jScrollPaneSetupSelection;
 	private JList<String> jListSetupSelection;
 	private DefaultListModel<String> simulationSetupListModel;
-
+	private ArrayList<String> lastSelectedSetups;
+	
 	private JLabel jLabelFileExportSelection;
 	private DirectoryPanel directoryPanel;
 	private FileTree fileTree;
@@ -110,6 +115,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private FileDescriptor fdTemp;
 	private FileDescriptor fdSecurity;
 	private List<FileDescriptor> fdGitIgnoreList;
+	
+	private HashMap<File, String> fileToSetupHash;
+	private HashMap<String, ArrayList<File>> setupToFilesHash;
 	
 	
 	/**
@@ -166,14 +174,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		gbc_jComboBoxSelectOS.gridy = 2;
 		getContentPane().add(getJComboBoxSelectInstallationPackage(), gbc_jComboBoxSelectOS);
 		
-		GridBagConstraints gbc_directoryPanel = new GridBagConstraints();
-		gbc_directoryPanel.insets = new Insets(5, 0, 5, 10);
-		gbc_directoryPanel.gridheight = 3;
-		gbc_directoryPanel.fill = GridBagConstraints.BOTH;
-		gbc_directoryPanel.gridx = 1;
-		gbc_directoryPanel.gridy = 2;
-		getContentPane().add(getDirectoryPanel(), gbc_directoryPanel);
-
 		GridBagConstraints gbc_jCheckBoxIncludeAllSetups = new GridBagConstraints();
 		gbc_jCheckBoxIncludeAllSetups.insets = new Insets(10, 10, 0, 10);
 		gbc_jCheckBoxIncludeAllSetups.anchor = GridBagConstraints.NORTHWEST;
@@ -187,12 +187,14 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		gbc_jScrollPaneSetupSelection.gridx = 0;
 		gbc_jScrollPaneSetupSelection.gridy = 4;
 		getContentPane().add(getJScrollPaneSetupSelection(), gbc_jScrollPaneSetupSelection);
+		
 		GridBagConstraints gbc_jButtonOk = new GridBagConstraints();
 		gbc_jButtonOk.insets = new Insets(10, 0, 20, 45);
 		gbc_jButtonOk.anchor = GridBagConstraints.EAST;
 		gbc_jButtonOk.gridx = 0;
 		gbc_jButtonOk.gridy = 5;
 		getContentPane().add(getJButtonOk(), gbc_jButtonOk);
+		
 		GridBagConstraints gbc_jButtonCancel = new GridBagConstraints();
 		gbc_jButtonCancel.insets = new Insets(10, 35, 20, 0);
 		gbc_jButtonCancel.anchor = GridBagConstraints.WEST;
@@ -200,7 +202,15 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		gbc_jButtonCancel.gridy = 5;
 		getContentPane().add(getJButtonCancel(), gbc_jButtonCancel);
 
-		
+		GridBagConstraints gbc_directoryPanel = new GridBagConstraints();
+		gbc_directoryPanel.insets = new Insets(5, 0, 5, 10);
+		gbc_directoryPanel.gridheight = 3;
+		gbc_directoryPanel.fill = GridBagConstraints.BOTH;
+		gbc_directoryPanel.gridx = 1;
+		gbc_directoryPanel.gridy = 2;
+		getContentPane().add(getDirectoryPanel(), gbc_directoryPanel);
+
+
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -345,23 +355,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		return jScrollPaneSetupSelection;
 	}
 	/**
-	 * Gets the {@link JList} for selecting the {@link SimulationSetup}s to export
-	 * @return the j list setup selection
-	 */
-	private JList<String> getJListSetupSelection() {
-		if (jListSetupSelection == null) {
-			jListSetupSelection = new JList<String>();
-			jListSetupSelection.setEnabled(false);
-			jListSetupSelection.setModel(this.getSimulationSetupListModel());
-			jListSetupSelection.setCellRenderer(new CheckBoxListCellRenderer());
-			jListSetupSelection.setSelectionModel(new ListSelectionModelForJCheckBox());
-
-			// --- Initially select all entries ----------------
-			this.selectAllListEntries(jListSetupSelection);
-		}
-		return jListSetupSelection;
-	}
-	/**
 	 * Gets the simulation setup list model.
 	 * @return the simulation setup list model
 	 */
@@ -377,16 +370,81 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		return simulationSetupListModel;
 	}
 	/**
-	 * Selects all entries in the given {@link JList}.
-	 * @param list the list
+	 * Gets the {@link JList} for selecting the {@link SimulationSetup}s to export
+	 * @return the j list setup selection
 	 */
-	private void selectAllListEntries(JList<?> list) {
-		int[] selectedIndices = new int[list.getModel().getSize()];
-		for (int i = 0; i < selectedIndices.length; i++) {
-			selectedIndices[i] = i;
+	private JList<String> getJListSetupSelection() {
+		if (jListSetupSelection == null) {
+			jListSetupSelection = new JList<String>();
+			jListSetupSelection.setEnabled(false);
+			jListSetupSelection.setModel(this.getSimulationSetupListModel());
+			jListSetupSelection.setCellRenderer(new CheckBoxListCellRenderer());
+			jListSetupSelection.setSelectionModel(new DefaultListSelectionModel() {
+				private static final long serialVersionUID = 8444856337414000172L;
+				@Override
+				public void setSelectionInterval(int index0, int index1) {
+					if (super.isSelectedIndex(index0)) {
+						super.removeSelectionInterval(index0, index1);
+					} else {
+						super.addSelectionInterval(index0, index1);
+					}
+				}
+			});
+			jListSetupSelection.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent lse) {
+					if (lse.getValueIsAdjusting()==false) {
+						// --- Find out which indexes are new -----------------
+						ArrayList<String> currentSetups = new ArrayList<>(getJListSetupSelection().getSelectedValuesList());
+						ArrayList<String> addedSetups = getAddedSetups(currentSetups);
+						ArrayList<String> removedSetups = getRemovedSetups(currentSetups);
+						setLastSelectedSetups(currentSetups);
+						System.out.println("=> Changes in the selection ....");
+						// --- Act on changes ---------------------------------
+						for (int i = 0; i < addedSetups.size(); i++) {
+							System.out.println("New setup " + addedSetups.get(i) );
+						}
+						for (int i = 0; i < removedSetups.size(); i++) {
+							System.out.println("Removed setup " + removedSetups.get(i));
+						}
+						
+					}
+				}
+			});
+			// --- Initially select all entries ----------------
+			this.selectAllSetupsInSetupList();
 		}
-		list.setSelectedIndices(selectedIndices);
+		return jListSetupSelection;
 	}
+	private void selectAllSetupsInSetupList() {
+		this.getJListSetupSelection().setSelectionInterval(0, (this.getSimulationSetupListModel().size()-1));
+	}
+	private ArrayList<String> getLastSelectedSetups() {
+		if (lastSelectedSetups==null) {
+			lastSelectedSetups = new ArrayList<>();
+		}
+		return lastSelectedSetups;
+	}
+	public void setLastSelectedSetups(ArrayList<String> lastSelectedSetups) {
+		this.lastSelectedSetups = lastSelectedSetups;
+	}
+	private ArrayList<String> getAddedSetups(ArrayList<String> currSelectedSetups) {
+		ArrayList<String> newSetups = new ArrayList<>(currSelectedSetups);
+		for (int i = 0; i < this.getLastSelectedSetups().size(); i++) {
+			newSetups.remove(this.getLastSelectedSetups().get(i));
+		}
+		return newSetups;
+	}
+	private ArrayList<String> getRemovedSetups(ArrayList<String> currSelectedSetups) {
+		ArrayList<String> removedSetups = new ArrayList<>(this.getLastSelectedSetups());
+		for (int i = 0; i < currSelectedSetups.size(); i++) {
+			removedSetups.remove(currSelectedSetups.get(i));
+		}
+		return removedSetups;
+	}
+	
+	
+	
 	/**
 	 * Gets the ok button.
 	 * @return the j button ok
@@ -455,7 +513,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		// ----------------------------------------------------------
 		// --- Set default excludes ---------------------------------
 		// ----------------------------------------------------------
-		DirectoryEvaluator de = getDirectoryPanel().getDirectoryEvaluator();
+		DirectoryEvaluator de = this.getDirectoryPanel().getDirectoryEvaluator();
 		this.fdSetups = de.getFileDescriptorByFileName(Project.DEFAULT_SUB_FOLDER_4_SETUPS, true);
 		this.fdSetupsEnvironment = de.getFileDescriptorByFileName(Project.DEFAULT_SUB_FOLDER_ENV_SETUPS, true);
 		
@@ -473,7 +531,102 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			this.getFileTree().setNodesSelected(fdi.getTreeNode(), false);
 		}
 		
+		// ----------------------------------------------------------
+		// --- Evaluate setups and the corresponding files ----------
+		// ----------------------------------------------------------
+		this.evaluateSetupFiles();
+		
 	}
+	
+	/**
+	 * Returns the file to setup hash.
+	 * @return the file to setup hash
+	 */
+	private HashMap<File, String> getFileToSetupHash() {
+		if (fileToSetupHash==null) {
+			fileToSetupHash = new HashMap<>();
+		}
+		return fileToSetupHash;
+	}
+	/**
+	 * Returns the setup to file hash.
+	 * @return the setup to file hash
+	 */
+	private HashMap<String, ArrayList<File>> getSetupToFilesHash() {
+		if (setupToFilesHash==null) {
+			setupToFilesHash = new HashMap<>();
+		}
+		return setupToFilesHash;
+	}
+	/**
+	 * Evaluates the available setup files.
+	 */
+	private void evaluateSetupFiles() {
+		
+		this.getFileToSetupHash().clear();
+		this.getSetupToFilesHash().clear();
+
+		String setupPath = this.project.getSubFolder4Setups(true);
+		String envModelPath = this.project.getEnvironmentController().getEnvFolderPath();
+		
+		// --- Check all setups -------------------------------------
+		List<String> simSetups = new ArrayList<>(this.project.getSimulationSetups().keySet());
+		for (int i = 0; i < simSetups.size(); i++) {
+			
+			// --- Get all files related to the setup ---------------
+			final String setup = simSetups.get(i);
+			String fileNameXML = this.project.getSimulationSetups().get(setup);
+			String fileNameBIN = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXML);
+			
+			File fileXML = this.getFileFromPath(setupPath + fileNameXML);
+			File fileBIN = this.getFileFromPath(setupPath + fileNameBIN);
+			
+			File envDirectory = new File(envModelPath);
+			File[] envFiles =envDirectory.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.startsWith(setup);
+				}
+			});
+
+			// --- Remind relation setup to file and vice versa -----
+			ArrayList<File> setupFiles = new ArrayList<>();
+			if (fileXML!=null) setupFiles.add(fileXML);
+			if (fileBIN!=null) setupFiles.add(fileBIN);
+
+			this.getFileToSetupHash().put(fileXML, setup);
+			this.getFileToSetupHash().put(fileBIN, setup);
+			for (int j = 0; j < envFiles.length; j++) {
+				this.getFileToSetupHash().put(envFiles[j], setup);
+				setupFiles.add(envFiles[j]);
+			}
+			
+			this.getSetupToFilesHash().put(setup, setupFiles);
+		}
+		
+	}
+	/**
+	 * Returns the file specified by the path and check if it exists.
+	 *
+	 * @param filePath the file path
+	 * @return the file from path
+	 */
+	private File getFileFromPath(String filePath) {
+		File file = new File(filePath);
+		if (file.exists()==false) return null;
+		return file;
+	}
+	
+	/**
+	 * Returns the setup name.
+	 *
+	 * @param fileDescriptor the file descriptor
+	 * @return the setup
+	 */
+	private String getSetupName(FileDescriptor fileDescriptor) {
+		return this.getFileToSetupHash().get(fileDescriptor.getFile());
+	}
+	
 	
 	/**
 	 * Will be invoked if a {@link FileTree} element was edited.
@@ -483,8 +636,12 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		
 		FileDescriptor fdSelected = (FileDescriptor) treeNodeEdited.getUserObject();
 		boolean wasSelected = fdSelected.isSelected();
-
+		
+		DirectoryEvaluator de = this.getDirectoryPanel().getDirectoryEvaluator();
+		String setupName = this.getSetupName(fdSelected);
+		
 		if (fdSelected==this.fdSetupsEnvironment) {
+			// --- Select / un-select all setup files ---------------
 			if (this.fdSetups.isSelected()!=wasSelected) {
 				this.fdSetups.setSelected(wasSelected);
 				this.getFileTree().setChildrenNodesSelected(this.fdSetups.getTreeNode(), wasSelected);
@@ -492,13 +649,26 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			}
 			
 		} else if (fdSelected==this.fdSetups) {
+			// --- Select / un-select all setup files ---------------			
 			if (this.fdSetupsEnvironment.isSelected()!=wasSelected) {
 				this.fdSetupsEnvironment.setSelected(wasSelected);
 				this.getFileTree().setChildrenNodesSelected(this.fdSetupsEnvironment.getTreeNode(), wasSelected);
 				this.setIncludeAllSetups(wasSelected);
 			}
 			
-		} 
+		} else if (setupName!=null) {
+			// --- Select / un-select files of setup ---------------- 
+			ArrayList<File> setupFiles = this.getSetupToFilesHash().get(setupName);
+			for (int i = 0; i < setupFiles.size(); i++) {
+				File setupFile = setupFiles.get(i);
+				FileDescriptor fd = de.getFileDescriptorByFile(setupFile);
+				if (fd.isSelected()!=wasSelected) {
+					fd.setSelected(wasSelected);
+					de.getFileTreeModel().reload(fd.getTreeNode());
+				}
+			}
+			
+		}
 		
 	}
 	
@@ -529,7 +699,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		// --- Set the list of setups -------------------------------
 		this.getJListSetupSelection().setEnabled(!includeAllSetups);
 		if (includeAllSetups==true) {
-			this.selectAllListEntries(getJListSetupSelection());
+			this.selectAllSetupsInSetupList();
 		} else {
 			this.getJListSetupSelection().clearSelection();
 		}
@@ -608,31 +778,4 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		}
 	}
 
-	/**
-	 * {@link ListSelectionModel} that allows to add/remove items to/from the current selection without pressing Crtl.
-	 * Useful e.g. for lists using {@link JCheckBox} as {@link ListCellRenderer}
-	 * 
-	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
-	 */
-	private class ListSelectionModelForJCheckBox extends DefaultListSelectionModel {
-
-		private static final long serialVersionUID = 1067181018028459081L;
-
-		/* (non-Javadoc)
-		 * @see javax.swing.DefaultListSelectionModel#setSelectionInterval(int, int)
-		 */
-		@Override
-		public void setSelectionInterval(int index0, int index1) {
-			if (super.isSelectedIndex(index0)) {
-				super.removeSelectionInterval(index0, index1);
-			} else {
-				super.addSelectionInterval(index0, index1);
-			}
-		}
-	}
-
-	
-
-	
-	
 }
