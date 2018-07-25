@@ -2,6 +2,7 @@ package de.enflexit.common.transfer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +10,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class can be used to recursively delete folder structures
@@ -125,17 +127,37 @@ public class RecursiveFolderDeleter {
 		if (originalList!=null) {
 			for (int i=0; i<originalList.size(); i++) {
 				
-				// --- Add the original path to the list ----------------
+				// --- Add the original path to the list ----------------------
 				Path path = originalList.get(i);
-				processedList.add(path);
-				
-				// --- Add all parents to the list ----------------------
-				while (path.getParent()!=null) {
-					path = path.getParent();
-					if (processedList.contains(path)==false) {
-						processedList.add(path);
+				if (path.toFile().exists()==true) {
+					processedList.add(path);
+	
+					// --- Include contents of directories ------------------------
+					if (path.toFile().isDirectory()==true) {
+						try {
+							List<Path> contents = Files.walk(path, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList());
+							
+							// --- Remove the directory itself --------------------
+							contents.remove(0);
+	
+							// --- Add the contents to the exclude list -----------
+							processedList.addAll(contents);
+							
+						} catch (IOException e) {
+							System.err.println(this.getClass().getSimpleName() + ": Error listing contents of " + path);
+							e.printStackTrace();
+						}
 					}
 					
+					
+					// --- Add all parents to the list ------------------
+					while (path.getParent()!=null) {
+						path = path.getParent();
+						if (processedList.contains(path)==false) {
+							processedList.add(path);
+						}
+						
+					}
 				}
 			}
 		}
