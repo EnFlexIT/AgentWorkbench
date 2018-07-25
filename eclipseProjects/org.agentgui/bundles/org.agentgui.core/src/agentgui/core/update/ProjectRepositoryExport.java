@@ -38,8 +38,8 @@ import agentgui.core.application.Application;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.gui.options.DirectoryOptions;
 import agentgui.core.project.Project;
-import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
+import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.update.repositoryModel.ProjectRepository;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
@@ -52,7 +52,8 @@ import agentgui.core.update.repositoryModel.RepositoryEntry;
  */
 public class ProjectRepositoryExport extends Thread {
 
-	private Project currProject; 
+	private Project currProject;
+	private ProjectExportController projectExportController;
 	private String repositoryLocationDirectoryPath;
 	private ProjectExportSettings projectExportSettings;
 	private RepositoryEntry repositoryEntry;
@@ -62,8 +63,9 @@ public class ProjectRepositoryExport extends Thread {
 	 * Instantiates a new project updater.
 	 * @param projectToUpdate the project to update
 	 */
-	public ProjectRepositoryExport(Project projectToUpdate) {
+	public ProjectRepositoryExport(Project projectToUpdate, ProjectExportController projectExportController) {
 		this.currProject = projectToUpdate;
+		this.projectExportController = projectExportController;
 		this.setName(this.getClass().getSimpleName() + " " + this.currProject.getProjectName());
 	}
 	
@@ -169,8 +171,7 @@ public class ProjectRepositoryExport extends Thread {
 		}
 
 		// --- Export the project -----------------------------------
-		ProjectExportController pec = new DefaultProjectExportController();
-		pec.exportProject(this.currProject, this.getProjectExportSettings(), this.isShowUserDialogs(), false);
+		this.getProjectExportController().exportProject(this.currProject, this.getProjectExportSettings(), this.isShowUserDialogs(), false);
 		
 		// --- Load the current repository --------------------------
 		ProjectRepository repo = ProjectRepository.loadProjectRepository(destinDir);
@@ -184,6 +185,17 @@ public class ProjectRepositoryExport extends Thread {
 	}
 	
 	
+	/**
+	 * Gets the project export controller.
+	 * @return the project export controller
+	 */
+	private ProjectExportController getProjectExportController() {
+		if (projectExportController==null) {
+			projectExportController = ProjectExportControllerProvider.getProjectExportController();
+		}
+		return projectExportController;
+	}
+
 	/**
 	 * Return the configuration error as string, if there is an error.
 	 * @return the configuration error

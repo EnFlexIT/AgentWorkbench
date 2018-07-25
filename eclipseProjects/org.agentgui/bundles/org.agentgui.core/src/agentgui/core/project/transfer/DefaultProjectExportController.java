@@ -100,11 +100,14 @@ public class DefaultProjectExportController implements ProjectExportController{
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.project.transfer.ProjectExportController#getProjectExportSettings(agentgui.core.project.Project)
+	 */
 	@Override
 	public ProjectExportSettings getProjectExportSettings(Project project) {
 		
 		// --- Show a dialog to configure the export ----------------
-		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
+		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project, this);
 		projectExportDialog.setVisible(true);
 		// - - Does the user action here - - - - - - - - - - - - - --
 		if (projectExportDialog.isCanceled() == false) {
@@ -756,6 +759,18 @@ public class DefaultProjectExportController implements ProjectExportController{
 		public void run() {
 			doExport();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.project.transfer.ProjectExportController#getAdditionalSetupFiles(java.lang.String)
+	 */
+	@Override
+	public ArrayList<File> getAdditionalSetupFiles(String setupName) {
+		/* 
+		 * Empty default implementation. Override this method in 
+		 * subclasses to specify additional setup-related files.
+		 */
+		return new ArrayList<File>();
 	}
 
 	

@@ -512,7 +512,7 @@ public class ProjectsLoaded {
 			if (project==null) return;
 		}
 		
-		// --- Get the export settings ----------------
+		// --- Get the export settings ----------------------------------------
 		ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
 		ProjectExportSettings exportSettings = projectExportController.getProjectExportSettings(project);
 		
@@ -564,8 +564,11 @@ public class ProjectsLoaded {
 		String fileName = repositoryEntry.getFileName();
 		File targetFile = new File(repositoryPath + fileName);
 		
+		// --- Get a ProjectExportController instance -------------------------
+		ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
+		
 		// --- Show the ProjectExportDialog -----------------------------------
-		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project);
+		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project, projectExportController);
 		projectExportDialog.setAllowInstallationPackageConfiguration(false);
 		projectExportDialog.setVisible(true);
 		// - - Does the user action here - - - - - - - - - - - - - - - - - - -
@@ -580,7 +583,7 @@ public class ProjectsLoaded {
 		// --------------------------------------------------------------------
 		// --- Finally define and export the project to the repository --------
 		// --------------------------------------------------------------------
-		ProjectRepositoryExport pre = new ProjectRepositoryExport(project);
+		ProjectRepositoryExport pre = new ProjectRepositoryExport(project, projectExportController);
 		pre.setRepositoryEntry(repositoryEntry);
 		pre.setRepositoryLocationDirectoryPath(repositoryPath);
 		pre.setProjectExportSettings(exportSettings);
