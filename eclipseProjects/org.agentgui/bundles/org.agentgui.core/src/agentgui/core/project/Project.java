@@ -151,6 +151,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String DEFAULT_SUB_FOLDER_SECURITY = "security";
 	@XmlTransient private final String[] DEFAULT_SUB_FOLDERS = {DEFAULT_SUB_FOLDER_4_SETUPS, DEFAULT_SUB_FOLDER_ENV_SETUPS};
 	@XmlTransient public static final String DEFAULT_TEMP_FOLDER = "~tmp";
+	@XmlTransient public static final String DEFAULT_AGENT_WORKING_DIRECTORY = "agentWorkingDirectory";
 
 	/** The OSGI-bundle of the current project */
 	@XmlTransient private ProjectBundleLoader projectBundleLoader;
