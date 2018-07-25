@@ -72,6 +72,7 @@ import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
+import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator.FileDescriptor;
@@ -90,6 +91,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private static final String[] ALWAYS_SELECTED_FILES = {"agentgui.xml", "agentgui.bin", "/setupsEnv/~GeneralGraphSettings~.xml"};
 	
 	private Project project;
+	private ProjectExportController projectExportController;
 	private ProjectExportSettings exportSettings;
 	
 	private JLabel jLabelHeader;
@@ -128,9 +130,10 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 * Instantiates a new project export dialog.
 	 * @param project the project
 	 */
-	public ProjectExportDialog(Project project) {
+	public ProjectExportDialog(Project project, ProjectExportController projectExportController) {
 		getContentPane().setFont(new Font("Dialog", Font.PLAIN, 12));
 		this.project = project;
+		this.projectExportController = projectExportController;
 		this.initialize();
 	}
 

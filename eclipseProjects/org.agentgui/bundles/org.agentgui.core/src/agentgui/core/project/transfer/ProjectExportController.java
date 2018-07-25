@@ -28,6 +28,9 @@
  */
 package agentgui.core.project.transfer;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import agentgui.core.project.Project;
 
 /**
@@ -80,5 +83,11 @@ public interface ProjectExportController {
 	 */
 	public void setMessageFailure(String messageFailure);
 	
-	
+	/**
+	 * This method can be used to specify additional setup-related files, that should 
+	 * be considered when determining which files to include when exporting projects.  
+	 * @param setupName the setup name
+	 * @return the additional setup files
+	 */
+	public ArrayList<File> getAdditionalSetupFiles(String setupName);
 }
