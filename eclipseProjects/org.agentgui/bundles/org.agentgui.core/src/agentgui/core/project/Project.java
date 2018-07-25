@@ -1355,14 +1355,27 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 	/**
 	 * Returns the project agent working folder as full path. If the directory does not exists yet, it will be created.
+	 *
+	 * @param createDirIfNotExists set true if the directory should be created if not already done 
 	 * @return the project agent working folder full path
 	 */
 	public String getProjectAgentWorkingFolderFullPath() {
+		return getProjectAgentWorkingFolderFullPath(true);
+	}
+	/**
+	 * Returns the project agent working folder as full path. Directory can be created, if it does'n exists.
+	 *
+	 * @param createDirIfNotExists set true if the directory should be created if not already done 
+	 * @return the project agent working folder full path
+	 */
+	public String getProjectAgentWorkingFolderFullPath(boolean createDirIfNotExists) {
 		if (projectSecurtiyFolderFullPath==null) {
 			projectSecurtiyFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectAgentWorkingFolder() + File.separator;
-			File securityDir = new File(projectSecurtiyFolderFullPath);
-			if (securityDir.exists()==false) {
-				securityDir.mkdir();
+			if (createDirIfNotExists==true) {
+				File workingDir = new File(projectSecurtiyFolderFullPath);
+				if (workingDir.exists()==false) {
+					workingDir.mkdir();
+				}
 			}
 		}
 		return projectSecurtiyFolderFullPath;

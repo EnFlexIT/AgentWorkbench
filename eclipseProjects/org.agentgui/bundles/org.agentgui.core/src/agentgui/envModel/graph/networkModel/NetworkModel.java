@@ -2238,38 +2238,36 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return domain;
 	}
 	
+	
 	/**
-	 * Save the network component definitions to an XML file.
-	 * @param componentsXmlFile the component file
+	 * Load the network topology from a GraphML file.
+	 * @param graphMlFile the GraphML file
 	 * @return true, if successful
 	 */
-	public boolean saveComponentsFile(File componentsXmlFile) {
+	public boolean loadGraphFile(File graphMlFile) {
+		
 		boolean success = false;
-		FileWriter componentFileWriter = null;
-		try {
-			componentFileWriter = new FileWriter(componentsXmlFile);
-			JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-			Marshaller marsh = context.createMarshaller();
-			marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-			marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marsh.marshal(new NetworkComponentList(this.getNetworkComponents()), componentFileWriter);
-			success = true;
-			
-		} catch (IOException | JAXBException e) {
-			System.err.println("Error saving network components!");
-			e.printStackTrace();
-		} finally {
-			if (componentFileWriter!=null) {
-				try {
-					componentFileWriter.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+		GraphModelReader graphModelReader = null;
+		if (graphMlFile.exists()) {
+			try {
+				graphModelReader = new GraphModelReader(graphMlFile);
+				this.setGraph(graphModelReader.readGraph());
+				success = true;
+				
+			} catch (GraphIOException e) {
+				e.printStackTrace();
+			} finally {
+				if (graphModelReader!=null) {
+					try {
+						graphModelReader.close();
+					} catch (GraphIOException gIOEx) {
+						gIOEx.printStackTrace();
+					}
 				}
 			}
 		}
 		return success;
 	}
-	
 	/**
 	 * Save the network topology to a GraphML file.
 	 * @param graphMlFile the GraphML file
@@ -2299,6 +2297,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		return success;
 	}
+	
 	
 	/**
 	 * Load the network component definitions from an XML file.
@@ -2331,25 +2330,36 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				}
 			}
 		}
-		
 		return success;
 	}
-	
 	/**
-	 * Load the network topology from a GraphML file.
-	 * @param graphMlFile the GraphML file
+	 * Save the network component definitions to an XML file.
+	 * @param componentsXmlFile the component file
 	 * @return true, if successful
 	 */
-	public boolean loadGraphFile(File graphMlFile) {
+	public boolean saveComponentsFile(File componentsXmlFile) {
+		
 		boolean success = false;
-		if (graphMlFile.exists()) {
-			try {
-				// Load graph topology
-				GraphModelReader graphModelReader = new GraphModelReader(graphMlFile);
-				this.setGraph(graphModelReader.readGraph());
-				success = true;
-			} catch (GraphIOException e) {
-				e.printStackTrace();
+		FileWriter componentFileWriter = null;
+		try {
+			componentFileWriter = new FileWriter(componentsXmlFile);
+			JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+			Marshaller marsh = context.createMarshaller();
+			marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+			marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marsh.marshal(new NetworkComponentList(this.getNetworkComponents()), componentFileWriter);
+			success = true;
+			
+		} catch (IOException | JAXBException e) {
+			System.err.println("Error saving network components!");
+			e.printStackTrace();
+		} finally {
+			if (componentFileWriter!=null) {
+				try {
+					componentFileWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return success;

@@ -84,20 +84,26 @@ public class RecursiveFolderDeleter {
 	    	this.excludeList = processExcludeList(excludeList);
 		}
 
+		/* (non-Javadoc)
+		 * @see java.nio.file.SimpleFileVisitor#visitFile(java.lang.Object, java.nio.file.attribute.BasicFileAttributes)
+		 */
 		@Override
-	    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+	    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 	        try {
 	        	if (this.excludeList.contains(file)==false) {
 	        		Files.delete(file);
 	        	}
 	        } catch (IOException ioEx) {
-	        	System.err.println(RecursiveFolderDeleter.this.getClass().getSimpleName() + " - Error deleteing file: " + file.getFileName());
-	        	throw ioEx;
+	        	System.err.println(RecursiveFolderDeleter.this.getClass().getSimpleName() + " - Error deleting file: " + file.getFileName());
+//	        	throw ioEx;
 	        }
 	        return FileVisitResult.CONTINUE;
 	    }
 
-	    @Override
+	    /* (non-Javadoc)
+    	 * @see java.nio.file.SimpleFileVisitor#postVisitDirectory(java.lang.Object, java.io.IOException)
+    	 */
+    	@Override
 	    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 	        if (exc==null) {
 	        	try {
@@ -105,8 +111,8 @@ public class RecursiveFolderDeleter {
 	        			Files.delete(dir);
 	        		}
 				} catch (IOException ioEx) {
-					System.err.println(RecursiveFolderDeleter.this.getClass().getSimpleName() + " - Error deleteing diretory: " + dir.getFileName());
-					throw ioEx;
+					System.err.println(RecursiveFolderDeleter.this.getClass().getSimpleName() + " - Error deleting diretory: " + dir.getFileName());
+//					throw ioEx;
 				}
 	            return FileVisitResult.CONTINUE;
 	        }
@@ -122,11 +128,11 @@ public class RecursiveFolderDeleter {
 	 * @return the processed list
 	 */
 	private List<Path> processExcludeList(List<Path> originalList) {
-		List<Path> processedList = new ArrayList<>();
 		
+		List<Path> processedList = new ArrayList<>();
 		if (originalList!=null) {
+			
 			for (int i=0; i<originalList.size(); i++) {
-				
 				// --- Add the original path to the list ----------------------
 				Path path = originalList.get(i);
 				if (path.toFile().exists()==true) {
@@ -136,10 +142,8 @@ public class RecursiveFolderDeleter {
 					if (path.toFile().isDirectory()==true) {
 						try {
 							List<Path> contents = Files.walk(path, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList());
-							
 							// --- Remove the directory itself --------------------
 							contents.remove(0);
-	
 							// --- Add the contents to the exclude list -----------
 							processedList.addAll(contents);
 							
@@ -149,19 +153,17 @@ public class RecursiveFolderDeleter {
 						}
 					}
 					
-					
 					// --- Add all parents to the list ------------------
 					while (path.getParent()!=null) {
 						path = path.getParent();
 						if (processedList.contains(path)==false) {
 							processedList.add(path);
 						}
-						
 					}
 				}
-			}
+			} // end for 
+
 		}
-		
 		return processedList;
 	}
 	

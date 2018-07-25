@@ -29,6 +29,7 @@
 package agentgui.core.update;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -46,6 +47,7 @@ import agentgui.core.update.repositoryModel.ProjectRepository;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.common.transfer.Download;
 import de.enflexit.common.transfer.FileCopier;
+import de.enflexit.common.transfer.RecursiveFolderDeleter;
 
 /**
  * The Class ProjectUpdater does what the name promises.
@@ -56,7 +58,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
-	private boolean debugUpdateProcedure = false;
+	private boolean debugUpdateProcedure = true;
 	
 	private Project currProject; 
 	private long currTimeStamp;
@@ -429,17 +431,23 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public boolean updateProject(String updateFileName) {
 		
-		// --- Save and close the current project -------------------
-		boolean saved = this.currProject.save();
-		boolean closed = false;
-		if (saved==true) {
-			closed = this.currProject.close();
-		}
-		if (closed==false) return false;
+		// --- Just close the current project without saving --------
+		if (this.currProject.close(null, true)==false) return false;
 		
 		// --- Backup the old project into an archive ---------------
 		if (this.packCurrentProjectToArchive()==false) return false;
 
+		// --- Delete old structure (keep agent working directory) --
+		try {
+			String projectPath = this.currProject.getProjectFolderFullPath();
+			String[] excludeDelete = {this.currProject.getProjectAgentWorkingFolderFullPath(false)};
+			RecursiveFolderDeleter rfd = new RecursiveFolderDeleter();
+			rfd.deleteFolder(projectPath, excludeDelete);
+			
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+		
 		// --- Import the younger project archive -------------------
 		return this.importProjectFromArchive(updateFileName);
 	}

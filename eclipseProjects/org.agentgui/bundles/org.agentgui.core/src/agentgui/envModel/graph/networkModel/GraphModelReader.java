@@ -45,7 +45,8 @@ import edu.uci.ics.jung.io.graphml.HyperEdgeMetadata;
 import edu.uci.ics.jung.io.graphml.NodeMetadata;
 
 /**
- * {@link GraphMLReader2} extension for reading graph-based environment models from a GraphML file
+ * {@link GraphMLReader2} extension for reading graph-based environment models from a GraphML file.
+ * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
 public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge>{
@@ -94,7 +95,6 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	
 	/**
 	 * Gets the vertex transformer internal.
-	 *
 	 * @return the vertex transformer internal
 	 */
 	private static Transformer<NodeMetadata, GraphNode> getVertexTransformerInternal() {
@@ -146,7 +146,6 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	
 	/**
 	 * Gets the edge transformer internal.
-	 *
 	 * @return the edge transformer internal
 	 */
 	private static Transformer<EdgeMetadata, GraphEdge> getEdgeTransformerInternal() {
@@ -161,7 +160,6 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	
 	/**
 	 * Gets the hyper edge transformer internal.
-	 *
 	 * @return the hyper edge transformer internal
 	 */
 	private static Transformer<HyperEdgeMetadata, GraphEdge> getHyperEdgeTransformerInternal() {
@@ -173,8 +171,5 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 		};
 		return hyperEdgeTransformer;
 	}
-	
-	
-	
 
 }
