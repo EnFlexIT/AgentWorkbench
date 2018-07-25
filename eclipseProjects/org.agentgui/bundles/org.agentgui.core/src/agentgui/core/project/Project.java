@@ -169,6 +169,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
 	@XmlTransient private String projectSecurtiyFolderFullPath;
+	@XmlTransient private String projectAgentWorkingFolderFullPath;
 	
 	// --- Variables saved within the project file ------------------
 	@XmlElement(name="projectName")				private String projectName;
@@ -1324,19 +1325,41 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 	
 	/**
-	 * Returns the current projects security directory relative to Agent.Workbench projects directory (e.g. /myProject/security).
-	 * @return the projectFolder
+	 * Returns the projects security directory relative to Agent.Workbench projects directory (e.g. /myProject/security).
+	 * @return the projects security folder
 	 */
 	public String getProjectSecurityFolder() {
 		return projectFolder + File.separator + DEFAULT_SUB_FOLDER_SECURITY;
 	}
 	/**
-	 * Returns the project security folder as full path.
+	 * Returns the project security folder as full path. If the directory does not exists yet, it will be created.
 	 * @return the project security folder full path
 	 */
 	public String getProjectSecurityFolderFullPath() {
 		if (projectSecurtiyFolderFullPath==null) {
 			projectSecurtiyFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectSecurityFolder() + File.separator;
+			File securityDir = new File(projectSecurtiyFolderFullPath);
+			if (securityDir.exists()==false) {
+				securityDir.mkdir();
+			}
+		}
+		return projectSecurtiyFolderFullPath;
+	}
+	
+	/**
+	 * Returns the projects agent working directory relative to Agent.Workbench projects directory (e.g. /myProject/agentWorkingDirectory).
+	 * @return the projectFolder
+	 */
+	public String getProjectAgentWorkingFolder() {
+		return projectFolder + File.separator + DEFAULT_AGENT_WORKING_DIRECTORY;
+	}
+	/**
+	 * Returns the project agent working folder as full path. If the directory does not exists yet, it will be created.
+	 * @return the project agent working folder full path
+	 */
+	public String getProjectAgentWorkingFolderFullPath() {
+		if (projectSecurtiyFolderFullPath==null) {
+			projectSecurtiyFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectAgentWorkingFolder() + File.separator;
 			File securityDir = new File(projectSecurtiyFolderFullPath);
 			if (securityDir.exists()==false) {
 				securityDir.mkdir();

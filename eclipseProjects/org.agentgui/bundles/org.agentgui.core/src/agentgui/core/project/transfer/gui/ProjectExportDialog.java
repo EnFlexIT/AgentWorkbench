@@ -599,8 +599,8 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		for (int i = 0; i < simSetups.size(); i++) {
 			
 			// --- Get all files related to the setup ---------------
-			final String setup = simSetups.get(i);
-			String fileNameXML = this.project.getSimulationSetups().get(setup);
+			final String setupName = simSetups.get(i);
+			String fileNameXML = this.project.getSimulationSetups().get(setupName);
 			String fileNameBIN = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXML);
 			
 			File fileXML = this.getFileFromPath(setupPath + fileNameXML);
@@ -610,7 +610,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			File[] envFiles =envDirectory.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
-					return name.startsWith(setup + ".");
+					return name.startsWith(setupName + ".");
 				}
 			});
 
@@ -619,16 +619,29 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			if (fileXML!=null) setupFiles.add(fileXML);
 			if (fileBIN!=null) setupFiles.add(fileBIN);
 
-			this.getFileToSetupHash().put(fileXML, setup);
-			this.getFileToSetupHash().put(fileBIN, setup);
+			this.getFileToSetupHash().put(fileXML, setupName);
+			this.getFileToSetupHash().put(fileBIN, setupName);
 			for (int j = 0; j < envFiles.length; j++) {
-				this.getFileToSetupHash().put(envFiles[j], setup);
+				this.getFileToSetupHash().put(envFiles[j], setupName);
 				setupFiles.add(envFiles[j]);
 			}
 			
-			this.getSetupToFilesHash().put(setup, setupFiles);
-		}
-		
+			this.getSetupToFilesHash().put(setupName, setupFiles);
+			
+			// --- Remind additional setup files, too --------------- 
+			if (this.projectExportController!=null) {
+				ArrayList<File> additionalSetupFiles = this.projectExportController.getAdditionalSetupFiles(setupName);
+				if (additionalSetupFiles!=null && additionalSetupFiles.size()>0) {
+					// --- Add to the list of setups --------------------
+					setupFiles.addAll(additionalSetupFiles);
+					// --- Add to Hash File <-> setup -------------------
+					for (int j = 0; j < additionalSetupFiles.size(); j++) {
+						this.getFileToSetupHash().put(additionalSetupFiles.get(j), setupName);
+					}
+				}
+			}
+			
+		} // end setup loop
 	}
 	/**
 	 * Returns the file specified by the path and check if it exists.
