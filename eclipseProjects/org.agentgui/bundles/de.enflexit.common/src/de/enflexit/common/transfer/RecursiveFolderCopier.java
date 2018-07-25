@@ -117,10 +117,8 @@ public class RecursiveFolderCopier {
     		
     		// --- Check if the current folder is in the skipList ------
 	    	if(this.skipList != null){
-		    	for(Path pathToSkip : skipList){
-		    		if(pathToSkip.equals(dir)){
-		    			return FileVisitResult.SKIP_SUBTREE;
-		    		}
+	    		if (skipList.contains(dir)) {
+	    			return FileVisitResult.SKIP_SUBTREE;
 		    	}
 	    	}
 	    	
@@ -141,10 +139,8 @@ public class RecursiveFolderCopier {
     		
     		// --- Check if the current file is in the skipList ------
     		if(this.skipList != null){
-		    	for(Path pathToSkip : skipList){
-		    		if(pathToSkip.equals(file)){
-		    			return FileVisitResult.SKIP_SUBTREE;
-		    		}
+		    	if (skipList.contains(file)) {
+	    			return FileVisitResult.SKIP_SUBTREE;
 		    	}
 	    	}
     		
