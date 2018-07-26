@@ -396,8 +396,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	
 	/**
-	 * Gets the execution mode from configuration.
+	 * Returns the execution mode from configuration (e.g. {@link ExecutionMode#APPLICATION}).
 	 * @return the execution mode from configuration
+	 * @see ExecutionMode
 	 */
 	public ExecutionMode getExecutionMode() {
 	
