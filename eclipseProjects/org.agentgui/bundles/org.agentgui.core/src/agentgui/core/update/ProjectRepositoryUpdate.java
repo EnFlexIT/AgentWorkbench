@@ -58,7 +58,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
-	private boolean debugUpdateProcedure = true;
+	private boolean debugUpdateProcedure = false;
 	
 	private Project currProject; 
 	private long currTimeStamp;
