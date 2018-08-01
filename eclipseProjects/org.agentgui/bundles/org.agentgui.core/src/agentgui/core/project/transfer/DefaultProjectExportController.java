@@ -91,6 +91,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 	private ArchiveFileHandler archiveFileHandler;
 	
 	private boolean confirmationDialogDisabled = false;
+	
+	
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.project.transfer.ProjectExportController#exportProject(agentgui.core.project.Project)
@@ -105,6 +107,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 */
 	@Override
 	public ProjectExportSettings getProjectExportSettings(Project project) {
+		
+		this.project = project;
 		
 		// --- Show a dialog to configure the export ----------------
 		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project, this);
@@ -415,7 +419,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @throws JAXBException Parsing the setup file failed
 	 * @throws IOException Reading the setup file failed
 	 */
-	private SimulationSetup loadSimSetup(String setupName) throws JAXBException, IOException {
+	protected SimulationSetup loadSimSetup(String setupName) throws JAXBException, IOException {
 		// --- Determine the setup file path ----------
 		String setupFileName = this.project.getSimulationSetups().get(setupName);
 		String setupFileFullPath = this.project.getSubFolder4Setups(true) + File.separator + setupFileName;
@@ -438,7 +442,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * Gets the temporary export folder path
 	 * @return the temporary export folder path
 	 */
-	private Path getTempExportFolderPath() {
+	protected Path getTempExportFolderPath() {
 		if (tempFolderPath == null) {
 
 			// --- Determine the path for the temporary export folder, based on the selected target file ----
