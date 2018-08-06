@@ -395,6 +395,22 @@ public class DirectoryEvaluator {
 			this.getCheckBox().setSelected(isSelected);
 		}
 		
+		/**
+		 * Checks if this file descriptor has selected children  
+		 * @return true if at least one child element is selected
+		 */
+		public boolean hasSelectedChildren() {
+			DefaultMutableTreeNode treeNode = this.getTreeNode();
+			for (int i=0; i<treeNode.getChildCount(); i++) {
+				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) treeNode.getChildAt(i);
+				FileDescriptor childDescriptor = (FileDescriptor) childNode.getUserObject();
+				if (childDescriptor.isSelected()==true) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
 		public DefaultMutableTreeNode getTreeNode() {
 			return treeNode;
 		}

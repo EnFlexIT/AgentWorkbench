@@ -94,6 +94,20 @@ public class FileTreeCellEditor extends AbstractCellEditor implements TreeCellEd
 					boolean isSelected = ((JCheckBox)ae.getSource()).isSelected(); 
 					fileDescriptor.setSelected(isSelected);
 					fileTree.setChildrenNodesSelected(treeNode, isSelected);
+
+					DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) treeNode.getParent();
+					if (parentNode!=null) {
+						FileDescriptor parentDescriptor = (FileDescriptor) parentNode.getUserObject();
+						if (isSelected==true && parentDescriptor.isSelected()==false) {
+							parentDescriptor.setSelected(true);
+						} else if (isSelected==false && parentDescriptor.isSelected()==true) {
+							boolean hasSelectedChildren = parentDescriptor.hasSelectedChildren();
+							if (hasSelectedChildren!=parentDescriptor.isSelected()) {
+								parentDescriptor.setSelected(hasSelectedChildren);
+							}
+						}
+					}
+					
 					fireEditingStopped();
 				}
 			};

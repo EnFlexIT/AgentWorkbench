@@ -708,7 +708,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 * @param setSelected the set selected
 	 */
 	private void setIncludeSetup(String setupName, boolean setSelected) {
-
+		
 		// --- Check if export all setups is marked ----------------- 
 		if (setSelected==false && this.getJCheckBoxIncludeAllSetups().isSelected()==true) {
 			this.getJCheckBoxIncludeAllSetups().setSelected(false);
@@ -775,11 +775,33 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 				FileDescriptor fd = de.getFileDescriptorByFile(setupFile);
 				if (fd.isSelected()!=setSelected) {
 					fd.setSelected(setSelected);
-					de.getFileTreeModel().reload(fd.getTreeNode());
+					
+					// --- Check the selection state of the parent folder, change if necessary --------------
+					boolean parentSelectionChanged = false;
+					File parentFolder = setupFile.getParentFile();
+					FileDescriptor fdParent =  de.getFileDescriptorByFile(parentFolder);
+						
+					if (fd.isSelected()==true && fdParent.isSelected()==false) {
+						// --- If a setup was selected, make sure the parent folder is also selected --------
+						fdParent.setSelected(true);
+						parentSelectionChanged = true;
+					} else if (fd.isSelected()==false && fdParent.isSelected()==true) {
+						// --- If a setup was deselected, deselect the parent folder if there are no selected files left
+						if (fdParent.hasSelectedChildren()==false) {
+							fdParent.setSelected(false);
+							parentSelectionChanged = true;
+						}
+					}
+					
+					// --- Reload as much of the tree as necessary ------------
+					if (parentSelectionChanged==true) {
+						de.getFileTreeModel().reload(fdParent.getTreeNode());
+					} else {
+						de.getFileTreeModel().reload(fd.getTreeNode());
+					}
 				}
-			}
+			}	// end for
 		}
-				
 	}
 	
 	/**
@@ -790,28 +812,26 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		
 		// --- Set the export setting -------------------------------
 		this.getExportSettings().setIncludeAllSetups(includeAllSetups);
+		
+		
+		List<String> allSetups = new ArrayList<>(this.project.getSimulationSetups().keySet());
+		for (int i=0; i<allSetups.size(); i++) {
+			this.setIncludeSetup(allSetups.get(i), includeAllSetups);
+		}
 
-		if (this.fdSetups.isSelected()!=includeAllSetups) {
-			this.fdSetups.setSelected(includeAllSetups);
-			this.getFileTree().setChildrenNodesSelected(this.fdSetups.getTreeNode(), includeAllSetups);
-		}
-		
-		if (this.fdSetupsEnvironment.isSelected()!=includeAllSetups) {
-			this.fdSetupsEnvironment.setSelected(includeAllSetups);
-			this.getFileTree().setChildrenNodesSelected(this.fdSetupsEnvironment.getTreeNode(), includeAllSetups);
-		}
-		
 		// --- Check the indication check box first -----------------
 		if (this.getJCheckBoxIncludeAllSetups().isSelected()!=includeAllSetups) {
 			this.getJCheckBoxIncludeAllSetups().setSelected(includeAllSetups);
 		}
 		
 		// --- Set the list of setups -------------------------------
+		this.pauseSetupsListSelectionListener = true;
 		if (includeAllSetups==true) {
 			this.selectAllSetupsInSetupList();
 		} else {
 			this.getJListSetupSelection().clearSelection();
 		}
+		this.pauseSetupsListSelectionListener = false;
 		this.updateLastSelectedSetups();
 		this.getJListSetupSelection().setEnabled(!includeAllSetups);
 	}
