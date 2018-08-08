@@ -812,12 +812,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		
 		// --- Set the export setting -------------------------------
 		this.getExportSettings().setIncludeAllSetups(includeAllSetups);
-		
-		
-		List<String> allSetups = new ArrayList<>(this.project.getSimulationSetups().keySet());
-		for (int i=0; i<allSetups.size(); i++) {
-			this.setIncludeSetup(allSetups.get(i), includeAllSetups);
-		}
 
 		// --- Check the indication check box first -----------------
 		if (this.getJCheckBoxIncludeAllSetups().isSelected()!=includeAllSetups) {
@@ -825,13 +819,12 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		}
 		
 		// --- Set the list of setups -------------------------------
-		this.pauseSetupsListSelectionListener = true;
 		if (includeAllSetups==true) {
 			this.selectAllSetupsInSetupList();
 		} else {
 			this.getJListSetupSelection().clearSelection();
 		}
-		this.pauseSetupsListSelectionListener = false;
+		
 		this.updateLastSelectedSetups();
 		this.getJListSetupSelection().setEnabled(!includeAllSetups);
 	}
