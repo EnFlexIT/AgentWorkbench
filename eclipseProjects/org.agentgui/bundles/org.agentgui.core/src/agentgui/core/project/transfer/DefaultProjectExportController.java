@@ -31,10 +31,8 @@ package agentgui.core.project.transfer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -281,111 +279,9 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return The skip list
 	 */
 	protected List<Path> getFolderCopySkipList(Path sourcePath) {
-		// --- Specify folders that should not be copied ------
-		List<Path> skipList = new ArrayList<>();
-		skipList.add(sourcePath.resolve("~tmp"));
-		if (this.exportSettings.isIncludeAllSetups() == false) {
-			// --- If only selected setups should be exported, copying setup data is done in
-			// a separate step -----------
-			skipList.add(sourcePath.resolve("setups"));
-			skipList.add(sourcePath.resolve("setupsEnv"));
-		}
-		return skipList;
+		return this.exportSettings.getFileExcludeList();
 	}
 
-	/**
-	 * Copies the required files for the selected simulation setups. Based on a negative list approach, i.e. all files from
-	 * the setup folders except those of the setups not being exported will be copied.
-	 * @return Copying successful?
-	 */
-	private boolean copyRequiredSimulationSetupFiles() {
-
-		// --- Determine source folders -----------------
-		Path setupsSubFolderSourcePath = new File(project.getSubFolder4Setups(true)).toPath();
-		Path setupEnvironmentsSubFolderSourcePath = new File(project.getProjectFolder()).toPath().resolve(project.getEnvSetupPath());
-
-		// --- Create target folders --------------------
-		Path setupsSubFolderTargetPath = this.getTempExportFolderPath().resolve(project.getSubFolder4Setups(false));
-		Path setupEnvironmentsSubFolderTargetPath = this.getTempExportFolderPath().resolve(project.getEnvSetupPath(false));
-		try {
-			if (setupsSubFolderTargetPath.toFile().exists() == false) {
-				Files.createDirectory(setupsSubFolderTargetPath);
-			}
-			if (setupEnvironmentsSubFolderTargetPath.toFile().exists() == false) {
-				Files.createDirectory(setupEnvironmentsSubFolderTargetPath);
-			}
-		} catch (IOException e) {
-			System.err.println("Error creating supfolders for simulation setups!");
-			e.printStackTrace();
-			return false;
-		}
-
-		// --- Create a list of setups not to be exported --------------
-		List<String> setupsNegativeList = new ArrayList<>(this.project.getSimulationSetups().keySet());
-		setupsNegativeList.removeAll(this.exportSettings.getSimSetups());
-
-		// --- Prepare negative lists for setup and environment files ---
-		List<String> setupFilesNegativeList = new ArrayList<>();
-		List<String> environmentFilesNegativeList = new ArrayList<>();
-
-		// --- Add the file base names (without suffix) of the undesired setups to the
-		// negative lists -----------
-		for (String excludedSetupName : setupsNegativeList) {
-
-			// --- Load the setup -------------
-			SimulationSetup excludedSetup = null;
-			try {
-				excludedSetup = this.loadSimSetup(excludedSetupName);
-			} catch (JAXBException | IOException e) {
-				System.err.println("Error loading simulation setup data!");
-				e.printStackTrace();
-				return false;
-			}
-
-			// --- Add the setup's files to the negative lists ----------
-			if (excludedSetup != null) {
-
-				// --- Setup files ------------
-				String setupFileName = this.project.getSimulationSetups().get(excludedSetupName);
-				String setupFileBaseName = setupFileName.substring(0, setupFileName.lastIndexOf('.'));
-				setupFilesNegativeList.add(setupFileBaseName);
-
-				// --- Environment files --------------
-				String envFileName = excludedSetup.getEnvironmentFileName();
-				String setupEnvironmentFileBaseName = envFileName.substring(0, envFileName.lastIndexOf('.'));
-				environmentFilesNegativeList.add(setupEnvironmentFileBaseName);
-
-			}
-
-		}
-
-		try {
-
-			// --- Copy the required setup files to the export folder ---------------
-			FileBaseNameNegativeListFilter setupFilesNegativeListFilter = new FileBaseNameNegativeListFilter(setupFilesNegativeList);
-			DirectoryStream<Path> setupDirectoryStream = Files.newDirectoryStream(setupsSubFolderSourcePath, setupFilesNegativeListFilter);
-			for (Path sourcePath : setupDirectoryStream) {
-				Path targetPath = setupsSubFolderTargetPath.resolve(sourcePath.getFileName());
-				Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-			}
-
-			// --- Copy the required environment files to the export folder -----------
-			FileBaseNameNegativeListFilter environmentFIlesNegativeListFilter = new FileBaseNameNegativeListFilter(environmentFilesNegativeList);
-			DirectoryStream<Path> setupEnvironmentDirectoryStream = Files.newDirectoryStream(setupEnvironmentsSubFolderSourcePath, environmentFIlesNegativeListFilter);
-			for (Path sourcePath : setupEnvironmentDirectoryStream) {
-				Path targetPath = setupEnvironmentsSubFolderTargetPath.resolve(sourcePath.getFileName());
-				Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-			}
-
-		} catch (IOException e) {
-			System.err.println("Error copying simulation setup files");
-			e.printStackTrace();
-			return false;
-		}
-
-		return true;
-	}
-	
 	/**
 	 * Removes all setups that are not selected for export from the setup list
 	 */
@@ -405,7 +301,9 @@ public class DefaultProjectExportController implements ProjectExportController{
 		// --- If the currently selected setup is not exported, set the first exported
 		// setup as selected instead -----
 		if (this.exportSettings.getSimSetups().contains(exportedProject.getSimulationSetupCurrent()) == false) {
-			exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+			if (this.exportSettings.getSimSetups().isEmpty()==false) {
+				exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+			}
 		}
 
 		// --- Save the changes ------------
@@ -569,20 +467,12 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 		if (success == true) {
 
-			// --- Handle export of simulation setups if necessary ------------
-			if (DefaultProjectExportController.this.exportSettings.isIncludeAllSetups() == false) {
-				// --- Copy the required files for the selected setups --------
-				if (DefaultProjectExportController.this.exportSettings.getSimSetups().size() > 0) {
-					success = DefaultProjectExportController.this.copyRequiredSimulationSetupFiles();
-					if (success == true) {
-						this.removeUnexportedSetupsFromList();
-					}
-				}
+			if (this.exportSettings.isIncludeAllSetups()==false) {
+				this.removeUnexportedSetupsFromList();
 			}
-			this.updateProgressMonitor(30);
-
 			// --- Allow additional processing by subclasses ---------
 			success  = this.beforeZip();
+			this.updateProgressMonitor(30);
 
 			if (success == true) {
 				if (DefaultProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
@@ -719,40 +609,6 @@ public class DefaultProjectExportController implements ProjectExportController{
 		this.confirmationDialogDisabled = confirmationDialogEnabled;
 	}
 
-
-
-	/**
-	 * This {@link DirectoryStream.Filter} implementation matches all directory entries whose file base name (without
-	 * extension) is not contained in a negative list.
-	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
-	 */
-	private class FileBaseNameNegativeListFilter implements DirectoryStream.Filter<Path> {
-
-		private List<String> negativeList;
-
-		/**
-		 * Constructor
-		 * @param negativeList the negative list
-		 */
-		public FileBaseNameNegativeListFilter(List<String> negativeList) {
-			this.negativeList = negativeList;
-		}
-
-		@Override
-		public boolean accept(Path entry) throws IOException {
-
-			// --- Get the file base name (without suffix) -------------
-			String fileBaseName = entry.toFile().getName().substring(0, entry.toFile().getName().lastIndexOf('.'));
-
-			// --- Check if the negative list contains this file's base name -------
-			if (negativeList.contains(fileBaseName)) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
-	}
 
 	/**
 	 * This Thread does the actual export.
