@@ -180,19 +180,31 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 */
 	protected JFileChooser getJFileChooser(Project project) {
 
-		// --- Create and initialize the JFileChooser -------
+		// --- Create and initialize the JFileChooser -------------------------
 		JFileChooser jFileChooser = new JFileChooser();
-		List<FileNameExtensionFilter> filtersList = this.getFileNameExtensionFilters();
-		for (FileNameExtensionFilter filter : filtersList) {
-			jFileChooser.addChoosableFileFilter(filter);
-		}
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setAcceptAllFileFilterUsed(false);
 
+		// --- Create the initial file name -----------------------------------
 		File proposedFile = new File(this.getProposedFileName(project));
 		jFileChooser.setSelectedFile(proposedFile);
 		jFileChooser.setCurrentDirectory(proposedFile);
+		
+		// --- Remember the suffix --------------------------------------------
+		String fileName = proposedFile.getName();
+		String fileSuffix = fileName.substring(fileName.indexOf(".")+1, fileName.length());
+		
+		// --- Add file filters -----------------------------------------------
+		List<FileNameExtensionFilter> filtersList = this.getFileNameExtensionFilters();
+		for (FileNameExtensionFilter filter : filtersList) {
+			jFileChooser.addChoosableFileFilter(filter);
+			
+			// --- Set the selected filter according to the suffix ------------
+			if (filter.getExtensions()[0].equals(fileSuffix)) {
+				jFileChooser.setFileFilter(filter);
+			}
+		}
 
 		return jFileChooser;
 	}
