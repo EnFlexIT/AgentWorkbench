@@ -29,22 +29,27 @@
 package agentgui.core.project.transfer;
 
 import java.io.File;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 
 /**
  * The Class ProjectExportSettings.
  * @author Nils Loose 
  */
-public class ProjectExportSettings {
+public class ProjectExportSettings implements Serializable{
 	
+	private static final long serialVersionUID = -1048613565176959102L;
+
 	private File targetFile;
 	
 	private boolean includeInstallationPackage;
-	private InstallationPackageDescription installationPackage;
+	private transient InstallationPackageDescription installationPackage;
+	private String targetOS;
 	
 	private boolean includeAllSetups;
 	private List<String> simSetups;
@@ -58,6 +63,7 @@ public class ProjectExportSettings {
 	 * @return the target path
 	 */
 	public File getTargetFile() {
+		System.currentTimeMillis();
 		return targetFile;
 	}
 	/**
@@ -88,16 +94,26 @@ public class ProjectExportSettings {
 	 * @return the installation package
 	 */
 	public InstallationPackageDescription getInstallationPackage() {
+		if (installationPackage==null) {
+			new InstallationPackageFinder().getInstallationPackageForOperatingSystem(this.getTargetOS());
+		}
 		return installationPackage;
 	}
 	/**
 	 * Sets the installation package.
-	 * @param productVersion the new installation package
+	 * @param installationPackage the new installation package
 	 */
-	public void setInstallationPackage(InstallationPackageDescription productVersion) {
-		this.installationPackage = productVersion;
+	public void setInstallationPackage(InstallationPackageDescription installationPackage) {
+		this.installationPackage = installationPackage;
+		this.setTargetOS(installationPackage.getOperatingSystem());
 	}
 	
+	public String getTargetOS() {
+		return targetOS;
+	}
+	public void setTargetOS(String targetOS) {
+		this.targetOS = targetOS;
+	}
 	/**
 	 * Checks if is include all setups.
 	 * @return true, if is include all setups

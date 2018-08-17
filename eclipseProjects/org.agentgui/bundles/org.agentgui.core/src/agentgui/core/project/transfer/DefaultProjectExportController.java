@@ -71,7 +71,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	private static final String PROJECT_PATH_WINDOWS_LINUX = "AgentWorkbench/projects";
 	private static final String PROJECT_PATH_MAC = "agentgui.app/Contents/Eclipse/projects";
 	
-	private static final String TEMP_FOLDER_SUFFIX = "_tmp";
+	protected static final String TEMP_FOLDER_SUFFIX = "_tmp";
 
 	private Project project;
 	private ProjectExportSettings exportSettings;
@@ -82,7 +82,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	
 	private boolean exportSuccessful;
 	
-	private Path tempFolderPath;
+	protected Path tempFolderPath;
 
 	private AwbProgressMonitor progressMonitor;
 	
@@ -178,7 +178,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * Creates and initialized a {@link JFileChooser} for selecting the export target
 	 * @return the {@link JFileChooser}
 	 */
-	protected JFileChooser getJFileChooser(Project project) {
+	public JFileChooser getJFileChooser(Project project) {
 
 		// --- Create and initialize the JFileChooser -------------------------
 		JFileChooser jFileChooser = new JFileChooser();
@@ -393,7 +393,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 		} else {
 			pathInArchive = PROJECT_PATH_WINDOWS_LINUX;
 		}
-		foldersToAdd.put(this.tempFolderPath.toFile(), pathInArchive);
+		foldersToAdd.put(this.getTempFolderPath().toFile(), pathInArchive);
 		return foldersToAdd;
 	}
 
@@ -492,11 +492,11 @@ public class DefaultProjectExportController implements ProjectExportController{
 					success = DefaultProjectExportController.this.integrateProjectIntoInstallationPackage();
 				} else {
 					// --- Zip the temporary folder --------------
-					success = this.getArchiveFileHandler().compressFolder(tempFolderPath.toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile());
+					success = this.getArchiveFileHandler().compressFolder(this.getTempFolderPath().toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile());
 					try {
-						new RecursiveFolderDeleter().deleteFolder(tempFolderPath);
+						new RecursiveFolderDeleter().deleteFolder(this.getTempFolderPath());
 					} catch (IOException e) {
-						System.err.println("[ProjectExportController]: Error deleting temporary export folder " + tempFolderPath.toFile().getAbsolutePath());
+						System.err.println("[ProjectExportController]: Error deleting temporary export folder " + this.getTempFolderPath().toFile().getAbsolutePath());
 						e.printStackTrace();
 					}
 				}
@@ -532,22 +532,23 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 */
 	protected void updateProgressMonitor(final int currentProgress) {
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-
-				AwbProgressMonitor pm = getProgressMonitor();
-				if (pm == null)
-					return;
-				// --- Show progress monitor if not visible ---------
-				if (pm.isVisible() == false) {
-					pm.setVisible(true);
+		if (this.showUserDialogs==true) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					
+					AwbProgressMonitor pm = getProgressMonitor();
+					if (pm == null)
+						return;
+					// --- Show progress monitor if not visible ---------
+					if (pm.isVisible() == false) {
+						pm.setVisible(true);
+					}
+					// --- Set progress ---------------------------------
+					pm.setProgress(currentProgress);
 				}
-				// --- Set progress ---------------------------------
-				pm.setProgress(currentProgress);
-			}
-		});
-
+			});
+		}
 	}
 
 	/**
@@ -565,14 +566,12 @@ public class DefaultProjectExportController implements ProjectExportController{
 			}
 		});
 	}
-	
-	
 
 	/**
 	 * Gets the archive file handler.
 	 * @return the archive file handler
 	 */
-	private ArchiveFileHandler getArchiveFileHandler() {
+	protected ArchiveFileHandler getArchiveFileHandler() {
 		if (archiveFileHandler==null) {
 			archiveFileHandler = new ArchiveFileHandler();
 		}
@@ -596,6 +595,11 @@ public class DefaultProjectExportController implements ProjectExportController{
 	protected void setProject(Project project) {
 		this.project = project;
 	}
+
+	protected boolean isShowUserDialogs() {
+		return showUserDialogs;
+	}
+
 
 	/**
 	 * Gets the temp folder path.

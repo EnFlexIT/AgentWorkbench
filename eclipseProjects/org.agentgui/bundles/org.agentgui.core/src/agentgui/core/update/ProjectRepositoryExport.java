@@ -223,8 +223,8 @@ public class ProjectRepositoryExport extends Thread {
 	 */
 	public static String getRepositoryFileName(Project project) {
 		String fileName = project.getProjectFolder() + "_" + project.getVersionTag() + "_" + project.getVersion().toString() + "." + Application.getGlobalInfo().getFileEndProjectZip();
-		fileName = fileName.replace("  ", " ");
-		fileName = fileName.replace(" ", "_");
+		// --- Replace one or more whitespaces by an underscore -----
+		fileName.replaceAll("\\s+", "_");
 		return fileName;
 	}
 	/**
