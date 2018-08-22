@@ -198,9 +198,7 @@ public class Platform {
 			}
 			
 			// --- Start "file.manager" agent -----------------------
-			if (this.fileMangerProject!=null) {
-				this.startFileMangerAgent();
-			}
+			this.startFileMangerAgent();
 			
 			// --- Start RMA ('Remote Monitoring Agent') -----------
 			if (showRMA==true) {
@@ -796,10 +794,12 @@ public class Platform {
 	}	
 	
 	/**
-	 * Starts the file manger agent.
+	 * Starts the file manger agent that provides the required project resources for a 
+	 * distributed execution in different container (requires a running background system).
 	 */
 	private void startFileMangerAgent() {
 		
+		if (this.fileMangerProject==null) return;
 		if (this.isAgentRunningInMainContainer(BackgroundSystemAgentFileManger)==true) return;
 		
 		// --- Move required resources to server directory -- 

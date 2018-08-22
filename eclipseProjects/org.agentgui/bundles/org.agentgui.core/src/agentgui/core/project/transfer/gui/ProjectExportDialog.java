@@ -131,7 +131,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 * @param project the project
 	 */
 	public ProjectExportDialog(Project project, ProjectExportController projectExportController) {
-		getContentPane().setFont(new Font("Dialog", Font.PLAIN, 12));
 		this.project = project;
 		this.projectExportController = projectExportController;
 		this.initialize();
