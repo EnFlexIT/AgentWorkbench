@@ -40,10 +40,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -65,7 +63,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.InstallationPackageFinder;
@@ -74,6 +71,7 @@ import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
+import agentgui.core.project.transfer.ProjectExportSettingsController;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator.FileDescriptor;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluatorListener;
@@ -91,8 +89,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private static final String[] ALWAYS_SELECTED_FILES = {"agentgui.xml", "agentgui.bin", "/setupsEnv/~GeneralGraphSettings~.xml"};
 	
 	private Project project;
-	private ProjectExportController projectExportController;
-	private ProjectExportSettings exportSettings;
+	private ProjectExportSettingsController projectExportSettingsController;
 	
 	private JLabel jLabelHeader;
 	private JCheckBox jCheckBoxIncludeInstallationPackage;
@@ -122,17 +119,13 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private FileDescriptor fdSecurity;
 	private List<FileDescriptor> fdGitIgnoreList;
 	
-	private HashMap<File, String> fileToSetupHash;
-	private HashMap<String, ArrayList<File>> setupToFilesHash;
-	
-	
 	/**
 	 * Instantiates a new project export dialog.
 	 * @param project the project
 	 */
 	public ProjectExportDialog(Project project, ProjectExportController projectExportController) {
 		this.project = project;
-		this.projectExportController = projectExportController;
+		this.projectExportSettingsController = new ProjectExportSettingsController(project, projectExportController);
 		this.initialize();
 	}
 
@@ -298,6 +291,10 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		return installationPackagesComboBoxModel;
 	}
 
+	/**
+	 * Gets the j label file export selection.
+	 * @return the j label file export selection
+	 */
 	private JLabel getJLabelFileExportSelection() {
 		if (jLabelFileExportSelection == null) {
 			jLabelFileExportSelection = new JLabel(Language.translate("Details zum Dateiexport") + ":");
@@ -503,12 +500,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 * Sets the export settings according to the form
 	 */
 	private void getSettingsFromForm() {
-		this.getExportSettings().setIncludeAllSetups(this.getJCheckBoxIncludeAllSetups().isSelected());
-		if (this.getExportSettings().isIncludeAllSetups() == false) {
-			this.getExportSettings().setSimSetups(this.getJListSetupSelection().getSelectedValuesList());
-		} else {
-			this.getExportSettings().setSimSetups(null);
-		}
+		this.getExportSettings().setSimSetups(this.getJListSetupSelection().getSelectedValuesList());
 		this.getExportSettings().setIncludeInstallationPackage(this.getJCheckBoxIncludeInstallationPackage().isSelected());
 		if (this.getExportSettings().isIncludeInstallationPackage() == true) {
 			this.getExportSettings().setInstallationPackage((InstallationPackageDescription) this.getJComboBoxSelectInstallationPackage().getSelectedItem());
@@ -555,103 +547,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 			this.getFileTree().setNodesSelected(fdi.getTreeNode(), false);
 		}
 		
-		// ----------------------------------------------------------
-		// --- Evaluate setups and the corresponding files ----------
-		// ----------------------------------------------------------
-		this.evaluateSetupFiles();
-		
-	}
-	
-	/**
-	 * Returns the file to setup hash.
-	 * @return the file to setup hash
-	 */
-	private HashMap<File, String> getFileToSetupHash() {
-		if (fileToSetupHash==null) {
-			fileToSetupHash = new HashMap<>();
-		}
-		return fileToSetupHash;
-	}
-	/**
-	 * Returns the setup to file hash.
-	 * @return the setup to file hash
-	 */
-	private HashMap<String, ArrayList<File>> getSetupToFilesHash() {
-		if (setupToFilesHash==null) {
-			setupToFilesHash = new HashMap<>();
-		}
-		return setupToFilesHash;
-	}
-	/**
-	 * Evaluates the available setup files.
-	 */
-	private void evaluateSetupFiles() {
-		
-		this.getFileToSetupHash().clear();
-		this.getSetupToFilesHash().clear();
-
-		String setupPath = this.project.getSubFolder4Setups(true);
-		String envModelPath = this.project.getEnvironmentController().getEnvFolderPath();
-		
-		// --- Check all setups -------------------------------------
-		List<String> simSetups = new ArrayList<>(this.project.getSimulationSetups().keySet());
-		for (int i = 0; i < simSetups.size(); i++) {
-			
-			// --- Get all files related to the setup ---------------
-			final String setupName = simSetups.get(i);
-			String fileNameXML = this.project.getSimulationSetups().get(setupName);
-			String fileNameBIN = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXML);
-			
-			File fileXML = this.getFileFromPath(setupPath + fileNameXML);
-			File fileBIN = this.getFileFromPath(setupPath + fileNameBIN);
-			
-			File envDirectory = new File(envModelPath);
-			File[] envFiles =envDirectory.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.startsWith(setupName + ".");
-				}
-			});
-
-			// --- Remind relation setup to file and vice versa -----
-			ArrayList<File> setupFiles = new ArrayList<>();
-			if (fileXML!=null) setupFiles.add(fileXML);
-			if (fileBIN!=null) setupFiles.add(fileBIN);
-
-			this.getFileToSetupHash().put(fileXML, setupName);
-			this.getFileToSetupHash().put(fileBIN, setupName);
-			for (int j = 0; j < envFiles.length; j++) {
-				this.getFileToSetupHash().put(envFiles[j], setupName);
-				setupFiles.add(envFiles[j]);
-			}
-			
-			this.getSetupToFilesHash().put(setupName, setupFiles);
-			
-			// --- Remind additional setup files, too --------------- 
-			if (this.projectExportController!=null) {
-				ArrayList<File> additionalSetupFiles = this.projectExportController.getAdditionalSetupFiles(setupName);
-				if (additionalSetupFiles!=null && additionalSetupFiles.size()>0) {
-					// --- Add to the list of setups --------------------
-					setupFiles.addAll(additionalSetupFiles);
-					// --- Add to Hash File <-> setup -------------------
-					for (int j = 0; j < additionalSetupFiles.size(); j++) {
-						this.getFileToSetupHash().put(additionalSetupFiles.get(j), setupName);
-					}
-				}
-			}
-			
-		} // end setup loop
-	}
-	/**
-	 * Returns the file specified by the path and check if it exists.
-	 *
-	 * @param filePath the file path
-	 * @return the file from path
-	 */
-	private File getFileFromPath(String filePath) {
-		File file = new File(filePath);
-		if (file.exists()==false) return null;
-		return file;
 	}
 	
 	/**
@@ -661,7 +556,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 * @return the setup
 	 */
 	private String getSetupName(FileDescriptor fileDescriptor) {
-		return this.getFileToSetupHash().get(fileDescriptor.getFile());
+		return this.projectExportSettingsController.getSetupForFile(fileDescriptor.getFile());
 	}
 	
 	
@@ -767,12 +662,12 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		
 		// --- Select / deselect the corresponding files (right) ----
 		DirectoryEvaluator de = this.getDirectoryPanel().getDirectoryEvaluator();
-		ArrayList<File> setupFiles = this.getSetupToFilesHash().get(setupName);
+		List<File> setupFiles = this.projectExportSettingsController.getFilesForSetup(setupName);
 		if (setupFiles!=null) {
 			for (int i = 0; i < setupFiles.size(); i++) {
 				File setupFile = setupFiles.get(i);
 				FileDescriptor fd = de.getFileDescriptorByFile(setupFile);
-				if (fd.isSelected()!=setSelected) {
+				if (fd!=null && fd.isSelected()!=setSelected) {
 					fd.setSelected(setSelected);
 					
 					// --- Check the selection state of the parent folder, change if necessary --------------
@@ -809,9 +704,6 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 */
 	private void setIncludeAllSetups(boolean includeAllSetups) {
 		
-		// --- Set the export setting -------------------------------
-		this.getExportSettings().setIncludeAllSetups(includeAllSetups);
-
 		// --- Check the indication check box first -----------------
 		if (this.getJCheckBoxIncludeAllSetups().isSelected()!=includeAllSetups) {
 			this.getJCheckBoxIncludeAllSetups().setSelected(includeAllSetups);
@@ -864,10 +756,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 * @return the export settings
 	 */
 	public ProjectExportSettings getExportSettings() {
-		if (exportSettings == null) {
-			exportSettings = new ProjectExportSettings();
-		}
-		return exportSettings;
+		return this.projectExportSettingsController.getProjectExportSettings();
 	}
 
 	/**

@@ -51,7 +51,6 @@ public class ProjectExportSettings implements Serializable{
 	private transient InstallationPackageDescription installationPackage;
 	private String targetOS;
 	
-	private boolean includeAllSetups;
 	private List<String> simSetups;
 	private List<File> bundleJarFilesToInclude;
 	
@@ -104,7 +103,11 @@ public class ProjectExportSettings implements Serializable{
 	 */
 	public void setInstallationPackage(InstallationPackageDescription installationPackage) {
 		this.installationPackage = installationPackage;
-		this.setTargetOS(installationPackage.getOperatingSystem());
+		if (installationPackage!=null) {
+			this.setTargetOS(installationPackage.getOperatingSystem());
+		} else {
+			this.setTargetOS(null);
+		}
 	}
 	
 	public String getTargetOS() {
@@ -112,20 +115,6 @@ public class ProjectExportSettings implements Serializable{
 	}
 	public void setTargetOS(String targetOS) {
 		this.targetOS = targetOS;
-	}
-	/**
-	 * Checks if is include all setups.
-	 * @return true, if is include all setups
-	 */
-	public boolean isIncludeAllSetups() {
-		return includeAllSetups;
-	}
-	/**
-	 * Sets the include all setups.
-	 * @param includeAllSetups the new include all setups
-	 */
-	public void setIncludeAllSetups(boolean includeAllSetups) {
-		this.includeAllSetups = includeAllSetups;
 	}
 	
 	/**

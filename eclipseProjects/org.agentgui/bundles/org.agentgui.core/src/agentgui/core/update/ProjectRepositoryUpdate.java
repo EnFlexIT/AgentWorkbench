@@ -40,7 +40,7 @@ import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.DefaultProjectExportController;
-import agentgui.core.project.transfer.ProjectExportSettings;
+import agentgui.core.project.transfer.ProjectExportSettingsController;
 import agentgui.core.project.transfer.ProjectImportController;
 import agentgui.core.project.transfer.ProjectImportSettings;
 import agentgui.core.update.repositoryModel.ProjectRepository;
@@ -532,15 +532,17 @@ public class ProjectRepositoryUpdate extends Thread {
 			targetFile.delete();
 		}
 
+		
 		// --- Define export settings ---------------------
-		ProjectExportSettings pes = new ProjectExportSettings();
-		pes.setIncludeInstallationPackage(false);
-		pes.setIncludeAllSetups(true);
-		pes.setTargetFile(targetFile);
+		DefaultProjectExportController expController = new DefaultProjectExportController();
+		ProjectExportSettingsController pesc = new ProjectExportSettingsController(this.currProject, expController); 
+		pesc.setIncludeInstallationPackage(false);
+		pesc.setIncludeAllSetups(true);
+		pesc.addDefaultsToExcludeList();
+		pesc.setTargetFile(targetFile);
 		
 		// --- Export the project -------------------------
-		DefaultProjectExportController expController = new DefaultProjectExportController();
-		expController.exportProject(this.currProject, pes, false, false);
+		expController.exportProject(this.currProject, pesc.getProjectExportSettings(), false, false);
 		successful = expController.isExportSuccessful();
 		
 		return successful;

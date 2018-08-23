@@ -897,7 +897,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		ProjectExportSettingsController pesc = new ProjectExportSettingsController(this, pExCon);
 		pesc.setIncludeAllSetups(false);
 		pesc.excludeInstallationPackage();
-		pesc.setExportTargetFile(projectExportFile);
+		pesc.addDefaultsToExcludeList();
+		pesc.setTargetFile(projectExportFile);
 
 		// --- Do the export ----------------------------------------
 		if (messageSuccess!=null) pExCon.setMessageSuccess(messageSuccess);	

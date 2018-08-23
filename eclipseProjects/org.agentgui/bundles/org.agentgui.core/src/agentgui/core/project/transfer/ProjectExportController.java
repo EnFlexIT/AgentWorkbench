@@ -29,8 +29,8 @@
 package agentgui.core.project.transfer;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
-
 import agentgui.core.project.Project;
 
 /**
@@ -90,4 +90,11 @@ public interface ProjectExportController {
 	 * @return the additional setup files
 	 */
 	public ArrayList<File> getAdditionalSetupFiles(String setupName);
+	
+	/**
+	 * This method can be used to provide a list of files and folders that should
+	 * be excluded from the export by default. 
+	 * @return the default exclude files
+	 */
+	public ArrayList<Path> getDefaultExcludeList();
 }

@@ -74,6 +74,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	protected static final String TEMP_FOLDER_SUFFIX = "_tmp";
 
 	private Project project;
+	private Path projectFolderPath;
 	private ProjectExportSettings exportSettings;
 	
 	private boolean showUserDialogs = true;
@@ -479,9 +480,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 		if (success == true) {
 
-			if (this.exportSettings.isIncludeAllSetups()==false) {
-				this.removeUnexportedSetupsFromList();
-			}
+			this.removeUnexportedSetupsFromList();
 			// --- Allow additional processing by subclasses ---------
 			success  = this.beforeZip();
 			this.updateProgressMonitor(30);
@@ -654,6 +653,27 @@ public class DefaultProjectExportController implements ProjectExportController{
 		 * subclasses to specify additional setup-related files.
 		 */
 		return new ArrayList<File>();
+	}
+
+
+	@Override
+	public ArrayList<Path> getDefaultExcludeList() {
+		ArrayList<Path> defaultExcludeList = new ArrayList<>();
+		defaultExcludeList.add(this.getProjectFolderPath().resolve(Project.DEFAULT_TEMP_FOLDER));
+		defaultExcludeList.add(this.getProjectFolderPath().resolve(Project.DEFAULT_SUB_FOLDER_SECURITY));
+		return defaultExcludeList;
+	}
+
+
+	/**
+	 * Gets the project folder path.
+	 * @return the project folder path
+	 */
+	protected Path getProjectFolderPath() {
+		if (projectFolderPath==null) {
+			projectFolderPath = new File(this.getProject().getProjectFolderFullPath()).toPath();
+		}
+		return projectFolderPath;
 	}
 
 	

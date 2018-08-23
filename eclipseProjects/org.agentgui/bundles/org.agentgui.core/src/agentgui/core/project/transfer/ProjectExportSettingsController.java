@@ -255,15 +255,9 @@ public class ProjectExportSettingsController {
 	}
 	
 	/**
-	 * Include installation package.
-	 * @param targetOS the target OS
+	 * Sets the include all setups.
+	 * @param incluceAllSetups the new include all setups
 	 */
-	public void includeInstallationPackage(String targetOS) {
-		this.getProjectExportSettings().setIncludeInstallationPackage(true);
-		this.getProjectExportSettings().setTargetOS(targetOS);
-	}
-	
-	
 	public void setIncludeAllSetups(boolean incluceAllSetups) {
 		List<String> setupsList = new ArrayList<>(this.getProject().getSimulationSetups().keySet());
 		for (int i=0; i<setupsList.size(); i++) {
@@ -273,6 +267,14 @@ public class ProjectExportSettingsController {
 				this.excludeSimulationSetup(setupsList.get(i));
 			}
 		}
+	}
+	/**
+	 * Include installation package.
+	 * @param targetOS the target OS
+	 */
+	public void includeInstallationPackage(String targetOS) {
+		this.getProjectExportSettings().setIncludeInstallationPackage(true);
+		this.getProjectExportSettings().setTargetOS(targetOS);
 	}
 	
 	/**
@@ -287,8 +289,16 @@ public class ProjectExportSettingsController {
 	 * Sets the export target file.
 	 * @param targetFile the new export target file
 	 */
-	public void setExportTargetFile(File targetFile) {
+	public void setTargetFile(File targetFile) {
 		this.getProjectExportSettings().setTargetFile(targetFile);
+	}
+	
+	/**
+	 * Sets the include installation package.
+	 * @param includeInstallationPackage the new include installation package
+	 */
+	public void setIncludeInstallationPackage(boolean includeInstallationPackage) {
+		this.getProjectExportSettings().setIncludeInstallationPackage(includeInstallationPackage);
 	}
 	
 	/**
@@ -298,5 +308,8 @@ public class ProjectExportSettingsController {
 	public File getExportTargetFile() {
 		return this.getProjectExportSettings().getTargetFile();
 	}
-	
+
+	public void addDefaultsToExcludeList() {
+		this.getProjectExportSettings().getFileExcludeList().addAll(this.getProjectExportController().getDefaultExcludeList());
+	}
 }
