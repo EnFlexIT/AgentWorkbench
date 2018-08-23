@@ -52,7 +52,6 @@ public class ProjectExportSettings implements Serializable{
 	private String targetOS;
 	
 	private List<String> simSetups;
-	private List<File> bundleJarFilesToInclude;
 	
 	private List<Path> fileExcludeList;
 	
@@ -151,24 +150,6 @@ public class ProjectExportSettings implements Serializable{
 	 */
 	public void setFileExcludeList(List<Path> fileExcludeList) {
 		this.fileExcludeList = fileExcludeList;
-	}
-	
-	/**
-	 * Gets the bundle jar files to include.
-	 * @return the bundle jar files to include
-	 */
-	public List<File> getBundleJarFilesToInclude() {
-		if (bundleJarFilesToInclude==null) {
-			bundleJarFilesToInclude = new ArrayList<>();
-		}
-		return bundleJarFilesToInclude;
-	}
-	/**
-	 * Sets the bundle jar files to include.
-	 * @param bundleJarFilesToInclude the new bundle jar files to include
-	 */
-	public void setBundleJarFilesToInclude(List<File> bundleJarFilesToInclude) {
-		this.bundleJarFilesToInclude = bundleJarFilesToInclude;
 	}
 	
 }
