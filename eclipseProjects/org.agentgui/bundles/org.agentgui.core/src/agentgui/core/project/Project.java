@@ -87,7 +87,7 @@ import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.setup.SimulationSetups;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
-import agentgui.core.project.transfer.ProjectExportSettings;
+import agentgui.core.project.transfer.ProjectExportSettingsController;
 import agentgui.core.update.ProjectRepositoryExport;
 import agentgui.core.update.ProjectRepositoryUpdate;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
@@ -893,16 +893,16 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		File projectExportFile = new File(destinationDir.getAbsolutePath() + File.separator + this.getProjectFolder() + ".agui");
 
 		// --- Define the export settings ---------------------------
-		ProjectExportSettings pExSet = new ProjectExportSettings();
-		pExSet.setTargetFile(projectExportFile);
-		pExSet.setIncludeAllSetups(false);
-		pExSet.setIncludeInstallationPackage(false);
+		ProjectExportController pExCon = ProjectExportControllerProvider.getProjectExportController();
+		ProjectExportSettingsController pesc = new ProjectExportSettingsController(this, pExCon);
+		pesc.setIncludeAllSetups(false);
+		pesc.excludeInstallationPackage();
+		pesc.setExportTargetFile(projectExportFile);
 
 		// --- Do the export ----------------------------------------
-		ProjectExportController pExCon = ProjectExportControllerProvider.getProjectExportController();
 		if (messageSuccess!=null) pExCon.setMessageSuccess(messageSuccess);	
 		if (messageFailure!=null) pExCon.setMessageFailure(messageFailure);
-		pExCon.exportProject(this, pExSet, false, false);
+		pExCon.exportProject(this, pesc.getProjectExportSettings(), false, false);
 
 		// --- Return the root path for the file manager ------------
 		String destinationDirPath = null;

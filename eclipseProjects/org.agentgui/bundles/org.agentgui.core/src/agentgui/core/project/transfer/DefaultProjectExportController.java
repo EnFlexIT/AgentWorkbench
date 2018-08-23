@@ -584,6 +584,9 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return the project
 	 */
 	protected Project getProject() {
+		if (project==null) {
+			project = Application.getProjectFocused();
+		}
 		return project;
 	}
 	
@@ -596,6 +599,10 @@ public class DefaultProjectExportController implements ProjectExportController{
 		this.project = project;
 	}
 
+	/**
+	 * Checks if is show user dialogs.
+	 * @return true, if is show user dialogs
+	 */
 	protected boolean isShowUserDialogs() {
 		return showUserDialogs;
 	}

@@ -63,7 +63,6 @@ public class ProjectExportSettings implements Serializable{
 	 * @return the target path
 	 */
 	public File getTargetFile() {
-		System.currentTimeMillis();
 		return targetFile;
 	}
 	/**
