@@ -92,7 +92,7 @@ public class ProjectExportSettings implements Serializable{
 	 */
 	public InstallationPackageDescription getInstallationPackage() {
 		if (installationPackage==null) {
-			new InstallationPackageFinder().getInstallationPackageForOperatingSystem(this.getTargetOS());
+			installationPackage = new InstallationPackageFinder().getInstallationPackageForOperatingSystem(this.getTargetOS());
 		}
 		return installationPackage;
 	}
