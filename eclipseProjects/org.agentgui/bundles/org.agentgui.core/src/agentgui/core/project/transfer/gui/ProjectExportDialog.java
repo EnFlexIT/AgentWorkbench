@@ -507,7 +507,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		} else {
 			this.getExportSettings().setInstallationPackage(null);
 		}
-		this.getExportSettings().setFileExcludeList(this.getDirectoryPanel().getDirectoryEvaluator().getPathList(false));
+		this.projectExportSettingsController.addFilesToExcludeList(this.getDirectoryPanel().getDirectoryEvaluator().getPathList(false));
 	}
 	
 	/* (non-Javadoc)

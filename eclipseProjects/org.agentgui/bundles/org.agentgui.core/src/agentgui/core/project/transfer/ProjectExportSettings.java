@@ -30,7 +30,6 @@ package agentgui.core.project.transfer;
 
 import java.io.File;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +52,7 @@ public class ProjectExportSettings implements Serializable{
 	
 	private List<String> simSetups;
 	
-	private List<Path> fileExcludeList;
-	
+	private List<String> fileExcludeListInternal;
 	
 	/**
 	 * Returns the target file.
@@ -109,9 +107,18 @@ public class ProjectExportSettings implements Serializable{
 		}
 	}
 	
+	/**
+	 * Gets the target OS.
+	 * @return the target OS
+	 */
 	public String getTargetOS() {
 		return targetOS;
 	}
+	
+	/**
+	 * Sets the target OS.
+	 * @param targetOS the new target OS
+	 */
 	public void setTargetOS(String targetOS) {
 		this.targetOS = targetOS;
 	}
@@ -135,21 +142,23 @@ public class ProjectExportSettings implements Serializable{
 	}
 
 	/**
-	 * Returns the file exclude list for the export.
-	 * @return the file exclude list
+	 * Gets the file exclude list internal.
+	 * @return the file exclude list internal
 	 */
-	public List<Path> getFileExcludeList() {
-		if (fileExcludeList==null) {
-			fileExcludeList = new ArrayList<>();
-		}
-		return fileExcludeList;
+	protected List<String> getFileExcludeListInternal() {
+		 if (fileExcludeListInternal==null) {
+			 fileExcludeListInternal = new ArrayList<>();
+		 }
+		return fileExcludeListInternal;
 	}
+	
 	/**
-	 * Sets the file exclude list for the export.
-	 * @param fileExcludeList the new file exclude list
+	 * Gets a project export settings controller that is initialized with this settings instance.
+	 * @return the project export settings controller
 	 */
-	public void setFileExcludeList(List<Path> fileExcludeList) {
-		this.fileExcludeList = fileExcludeList;
+	public ProjectExportSettingsController getProjectExportSettingsController() {
+		return new ProjectExportSettingsController(null, this, null);
 	}
+	
 	
 }

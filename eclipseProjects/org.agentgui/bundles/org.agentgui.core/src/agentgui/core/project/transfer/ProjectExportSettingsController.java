@@ -47,28 +47,48 @@ public class ProjectExportSettingsController {
 	private ProjectExportSettings projectExportSettings;
 	
 	private Project project;
+	private Path projectFolderPath;
 	private ProjectExportController projectExportController;
 	
 	private HashMap<File, String> fileToSetupHash;
 	private HashMap<String, ArrayList<File>> setupToFilesHash;
+	
+	private List<Path> fileExcludeList;
+	
 	
 	/**
 	 * Instantiates a new project export settings controller.
 	 * @param project the project
 	 */
 	public ProjectExportSettingsController(Project project) {
-		this(project, null);
+		this(project, null, null);
 	}
-	
+	/**
+	 * Instantiates a new project export settings controller.
+	 * @param projectExportSettings the project export settings
+	 */
+	public ProjectExportSettingsController(ProjectExportSettings projectExportSettings) {
+		this(null, projectExportSettings, null);
+	}
 	/**
 	 * Instantiates a new project export settings controller.
 	 * @param project the project
 	 * @param projectExportController the project export controller
 	 */
 	public ProjectExportSettingsController(Project project, ProjectExportController projectExportController) {
+		this(project, null, projectExportController);
+	}
+	
+	/**
+	 * Instantiates a new project export settings controller.
+	 * @param project the project
+	 * @param projectExportSettings the project export settings
+	 * @param projectExportController the project export controller
+	 */
+	public ProjectExportSettingsController(Project project, ProjectExportSettings projectExportSettings, ProjectExportController projectExportController) {
 		this.project = project;
+		this.projectExportSettings = projectExportSettings;
 		this.projectExportController = projectExportController;
-		this.evaluateSetupFiles();
 	}
 
 	/**
@@ -76,9 +96,22 @@ public class ProjectExportSettingsController {
 	 * @return the project
 	 */
 	private Project getProject() {
+		if (project==null) {
+			project = Application.getProjectFocused();
+		}
 		return project;
 	}
-
+	
+	/**
+	 * Gets the project folder path.
+	 * @return the project folder path
+	 */
+	private Path getProjectFolderPath() {
+		if (projectFolderPath==null) {
+			projectFolderPath = new File(this.getProject().getProjectFolderFullPath()).toPath();
+		}
+		return projectFolderPath;
+	}
 	/**
 	 * Gets the project export controller.
 	 * @return the project export controller
@@ -97,6 +130,7 @@ public class ProjectExportSettingsController {
 	private HashMap<File, String> getFileToSetupHash() {
 		if (fileToSetupHash==null) {
 			fileToSetupHash = new HashMap<>();
+			this.evaluateSetupFiles();
 		}
 		return fileToSetupHash;
 	}
@@ -108,6 +142,7 @@ public class ProjectExportSettingsController {
 	private HashMap<String, ArrayList<File>> getSetupToFilesHash() {
 		if (setupToFilesHash==null) {
 			setupToFilesHash = new HashMap<>();
+			this.evaluateSetupFiles();
 		}
 		return setupToFilesHash;
 	}
@@ -229,13 +264,14 @@ public class ProjectExportSettingsController {
 	public void includeSimulationSetup(String setupName) {
 		// --- Remove all files related to the setup from the exclude list ----
 		List<File> setupFiles = this.getFilesForSetup(setupName);
-		List<Path> excludeList = this.getProjectExportSettings().getFileExcludeList();
 		for (int i=0; i<setupFiles.size(); i++) {
 			Path setupFilePath = setupFiles.get(i).toPath();
-			if (excludeList.contains(setupFilePath)) {
-				excludeList.remove(setupFilePath);
+			if (this.getFileExcludeList().contains(setupFilePath)) {
+				this.removeFileFromExcludeList(setupFilePath);
 			}
 		}
+		// --- Add the setup to the list of included setups -------------------
+		this.projectExportSettings.getSimSetups().add(setupName);
 	}
 	
 	/**
@@ -245,13 +281,14 @@ public class ProjectExportSettingsController {
 	public void excludeSimulationSetup(String setupName) {
 		// --- Add all files related to the setup to the exclude list ---------
 		List<File> setupFiles = this.getFilesForSetup(setupName);
-		List<Path> excludeList = this.getProjectExportSettings().getFileExcludeList();
 		for (int i=0; i<setupFiles.size(); i++) {
 			Path setupFilePath = setupFiles.get(i).toPath();
-			if (excludeList.contains(setupFilePath)==false) {
-				excludeList.add(setupFilePath);
+			if (this.getFileExcludeList().contains(setupFilePath)==false) {
+				this.addFileToExcludeList(setupFilePath);
 			}
 		}
+		// --- Remove the setup from the list of included setups --------------
+		this.projectExportSettings.getSimSetups().remove(setupName);
 	}
 	
 	/**
@@ -309,7 +346,76 @@ public class ProjectExportSettingsController {
 		return this.getProjectExportSettings().getTargetFile();
 	}
 
+	/**
+	 * Adds the default files to the exclude list.
+	 */
 	public void addDefaultsToExcludeList() {
-		this.getProjectExportSettings().getFileExcludeList().addAll(this.getProjectExportController().getDefaultExcludeList());
+		List<Path> defaultExcludes = this.getProjectExportController().getDefaultExcludeList();
+		for (int i=0; i<defaultExcludes.size(); i++) {
+			this.addFileToExcludeList(defaultExcludes.get(i));
+		}
+	}
+	
+	/**
+	 * Gets the file exclude list.
+	 * @return the file exclude list
+	 */
+	public List<Path> getFileExcludeList(){
+		if (fileExcludeList==null) {
+			fileExcludeList = new ArrayList<>();
+			// --- Populate with the entries from the settings -----------
+			List<String> excludeListInternal = this.getProjectExportSettings().getFileExcludeListInternal();
+			for(int i=0; i<excludeListInternal.size(); i++) {
+				Path excludeFilePath =  this.getProjectFolderPath().resolve(excludeListInternal.get(i));
+				fileExcludeList.add(excludeFilePath);
+			}
+		}
+		return fileExcludeList;
+	}
+	
+	/**
+	 * Adds a file to the exclude list.
+	 * @param file the file
+	 */
+	public void addFileToExcludeList(File file) {
+		this.addFileToExcludeList(file.toPath());
+	}
+	
+	/**
+	 * Adds a file to the exclude list.
+	 * @param filePath the file path
+	 */
+	public void addFileToExcludeList(Path filePath) {
+		this.getFileExcludeList().add(filePath);
+		Path relativePath = this.getProjectFolderPath().relativize(filePath);
+		this.projectExportSettings.getFileExcludeListInternal().add(relativePath.toString());
+	}
+	
+	/**
+	 * Adds the files to exclude list.
+	 * @param files the files
+	 */
+	public void addFilesToExcludeList(List<Path> files) {
+		for (int i=0; i<files.size(); i++) {
+			this.addFileToExcludeList(files.get(i));
+		}
+	}
+	
+	/**
+	 * Removes a file from the exclude list.
+	 * @param file the file
+	 */
+	public void removeFileFromExcludeList(File file) {
+		this.removeFileFromExcludeList(file.toPath());
+	}
+	
+	/**
+	 * Removes a file from the exclude list.
+	 * @param filePath the file path
+	 */
+	public void removeFileFromExcludeList(Path filePath) {
+		this.getFileExcludeList().remove(filePath);
+		Path relativePath = this.getProjectFolderPath().relativize(filePath);
+		this.projectExportSettings.getFileExcludeListInternal().remove(relativePath.toString());
 	}
 }
