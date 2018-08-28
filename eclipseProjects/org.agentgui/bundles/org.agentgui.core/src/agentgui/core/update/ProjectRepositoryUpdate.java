@@ -62,6 +62,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	
 	private Project currProject; 
 	private long currTimeStamp;
+	private boolean skipTestOfLastDateChecked;
 	
 	private ProjectRepository projectRepository;
 	
@@ -212,12 +213,28 @@ public class ProjectRepositoryUpdate extends Thread {
 	}
 	
 	/**
+	 * Checks if is skip test of last date checked.
+	 * @return true, if is skip test of last date checked
+	 */
+	public boolean isSkipTestOfLastDateChecked() {
+		return skipTestOfLastDateChecked;
+	}
+	/**
+	 * Sets the skip test of last date checked.
+	 * @param skipTestOfLastDateChecked the new skip test of last date checked
+	 */
+	public void setSkipTestOfLastDateChecked(boolean skipTestOfLastDateChecked) {
+		this.skipTestOfLastDateChecked = skipTestOfLastDateChecked;
+	}
+
+	/**
 	 * Checks if a update check is required because of date.
 	 * @return true, if is required update check because of date
 	 */
 	private boolean isRequiredUpdateCheckBecauseOfDate() {
 		return this.currTimeStamp >= this.currProject.getUpdateDateLastChecked() + UPDATE_CHECK_PERIOD;
 	}
+	
 	
 	/**
 	 * Checks if is leave update procedure.
@@ -282,7 +299,7 @@ public class ProjectRepositoryUpdate extends Thread {
 			}
 			
 			// --- Ensure that auto check happens once a day --------
-			if (this.isRequiredUpdateCheckBecauseOfDate()==false) {
+			if (this.isSkipTestOfLastDateChecked()==false && this.isRequiredUpdateCheckBecauseOfDate()==false) {
 				localLeaveUpdateProcedure = true;
 			}
 			

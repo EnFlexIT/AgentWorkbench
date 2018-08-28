@@ -42,6 +42,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import de.enflexit.common.PathHandling;
+import de.enflexit.common.SystemEnvironmentHelper;
 
 /**
  * This class can be used in order zip or unzip a folder structure.<br><br>
@@ -81,7 +82,6 @@ public class Zipper extends Thread {
 	private final int execZip = 1;
 	private final int execUnZip = 2;
 	
-	private boolean isHeadlessOperation;
 	private ZipperMonitor zipMonitor;
 	
 	private String excludePattern;
@@ -327,18 +327,11 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * Sets the zip monitor visible or not.
-	 * @param isHeadlessOperation the flag for headless operation or not
-	 */
-	public void setHeadlessOperation(boolean isHeadlessOperation) {
-		this.isHeadlessOperation = isHeadlessOperation;
-	}
-	/**
 	 * Checks if is headless (un)zip operation.
 	 * @return true, if is a headless (un)zip operation
 	 */
 	public boolean isHeadlessOperation() {
-		return isHeadlessOperation;
+		return SystemEnvironmentHelper.isHeadlessOperation();
 	}
 	
 	/**

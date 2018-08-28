@@ -144,7 +144,6 @@ public class MirrorTool implements MirrorToolListener {
 								// --- Exit on failure ------------------------
 								if (download.wasSuccessful()==false) {
 									successful = false; 
-									break;
 								}	
 							}
 						} // end for

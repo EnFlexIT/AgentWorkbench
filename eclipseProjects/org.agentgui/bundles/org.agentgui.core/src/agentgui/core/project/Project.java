@@ -1526,6 +1526,16 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return the project in case that the calling method can continue
 	 */
 	public Project doProjectUpdate(boolean isManuallyExecutedByUser) {
+		return doProjectUpdate(isManuallyExecutedByUser, false);
+	}
+	/**
+	 * Does the project update check and installation.
+	 *
+	 * @param isManuallyExecutedByUser indicator that tells, if the call represents a user call
+	 * @param isSkipTestOfLastDateChecked the is skip test of last date checked
+	 * @return the project in case that the calling method can continue
+	 */
+	public Project doProjectUpdate(boolean isManuallyExecutedByUser, boolean isSkipTestOfLastDateChecked) {
 		
 		ProjectRepositoryUpdate pru = new ProjectRepositoryUpdate(this);
 		
@@ -1544,6 +1554,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		case DEVICE_SYSTEM:
 			// --- Directly start the update check ------------------
 			pru.setExecutedByUser(false);
+			pru.setSkipTestOfLastDateChecked(isSkipTestOfLastDateChecked);
 			pru.startInSameThread();
 			if (pru.isSuccessfulUpdate()==true) {
 				new Thread(new Runnable() {
