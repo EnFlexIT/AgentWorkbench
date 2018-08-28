@@ -139,8 +139,9 @@ public class TrustStoreController {
 	 * @param trustStorePassword the TrustStore password
 	 */
 	public void createTrustStore(File trustStoreFile, String trustStorePassword) {
-		openTrustStore(trustStoreFile, trustStorePassword);
-		saveTrustStore();
+		this.init(trustStoreFile, trustStorePassword);
+		this.openTrustStore(trustStoreFile, trustStorePassword);
+		this.saveTrustStore();
 	}
 
 	/**
