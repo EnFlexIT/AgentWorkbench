@@ -534,7 +534,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 		
 		// --- Define export settings ---------------------
-		DefaultProjectExportController expController = new DefaultProjectExportController();
+		DefaultProjectExportController expController = new DefaultProjectExportController(this.currProject);
 		ProjectExportSettingsController pesc = new ProjectExportSettingsController(this.currProject, expController); 
 		pesc.setIncludeInstallationPackage(false);
 		pesc.setIncludeAllSetups(true);

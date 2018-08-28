@@ -35,6 +35,7 @@ import java.util.List;
 
 import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
+import agentgui.core.project.Project;
 
 /**
  * The Class ProjectExportSettings.
@@ -157,8 +158,17 @@ public class ProjectExportSettings implements Serializable{
 	 * @return the project export settings controller
 	 */
 	public ProjectExportSettingsController getProjectExportSettingsController() {
-		return new ProjectExportSettingsController(null, this, null);
+		return this.getProjectExportSettingsController(null);
 	}
 	
+	
+	/**
+	 * Gets the project export settings controller.
+	 * @param project the project
+	 * @return the project export settings controller
+	 */
+	public ProjectExportSettingsController getProjectExportSettingsController(Project project) {
+		return new ProjectExportSettingsController(project, this, null);
+	}
 	
 }

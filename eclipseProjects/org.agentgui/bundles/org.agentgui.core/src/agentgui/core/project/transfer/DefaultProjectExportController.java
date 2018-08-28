@@ -90,6 +90,24 @@ public class DefaultProjectExportController implements ProjectExportController{
 	private ArchiveFileHandler archiveFileHandler;
 	
 	private boolean confirmationDialogDisabled = false;
+	
+	
+	
+	/**
+	 * Instantiates a new default project export controller.
+	 */
+	public DefaultProjectExportController() {
+		this(null);
+	}
+
+	/**
+	 * Instantiates a new default project export controller.
+	 * @param project the project
+	 */
+	public DefaultProjectExportController(Project project) {
+		this.project = project;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.project.transfer.ProjectExportController#exportProject(agentgui.core.project.Project)
@@ -290,7 +308,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return The skip list
 	 */
 	protected List<Path> getFolderCopySkipList(Path sourcePath) {
-		return this.exportSettings.getProjectExportSettingsController().getFileExcludeList();
+		return this.exportSettings.getProjectExportSettingsController(this.getProject()).getFileExcludeList();
 	}
 
 	/**
