@@ -207,7 +207,7 @@ public class Application {
 	 * @param newShutdownThread the new ShutdownThread
 	 */
 	public static void setShutdownThread(ShutdownThread newShutdownThread) {
-		if (shutdownThread!=null && newShutdownThread!=shutdownThread) {
+		if (shutdownThread!=null) {
 			shutdownThread.stopObserving();
 		}
 		shutdownThread = newShutdownThread;

@@ -130,10 +130,7 @@ public class ShutdownThread extends Thread {
 			}
 			// --- Stop the observation of the file? ------
 			if (this.stopObserving==true) {
-				if (this.shutDownFile.delete()==false) {
-					this.shutDownFile.deleteOnExit();
-				}
-				this.shutDownFile = null;
+				this.deleteShutDownFile();
 				return;
 			}
 			
@@ -151,6 +148,20 @@ public class ShutdownThread extends Thread {
 	 */
 	public synchronized void stopObserving() {
 		this.stopObserving = true;
+		this.deleteShutDownFile();
 	}
+	
+	/**
+	 * Deletes the shut down file.
+	 */
+	private synchronized void deleteShutDownFile() {
+		if (this.shutDownFile!=null && this.shutDownFile.exists()==true) {
+			if (this.shutDownFile.delete()==false) {
+				this.shutDownFile.deleteOnExit();
+			}
+			this.shutDownFile = null;
+		}
+	}
+	
 	
 }
