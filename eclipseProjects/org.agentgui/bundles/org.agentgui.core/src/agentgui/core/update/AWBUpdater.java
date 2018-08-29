@@ -66,6 +66,7 @@ public class AWBUpdater extends Thread {
 	private long updateDateLastChecked = 0;
 
 	private boolean manualyExecutedByUser = false;
+	private boolean enforceUpdate = false;
 	private boolean doUpdateProcedure = true;
 	private boolean askBeforeDownload = false;
 	
@@ -75,19 +76,29 @@ public class AWBUpdater extends Thread {
 
 	
 	/**
-	 * Instantiates a new Agent.GUI updater process.
+	 * Instantiates a new Agent.Workbench updater process.
 	 */
 	public AWBUpdater() {
 		this(false);
 	}
 	/**
-	 * Instantiates a new Agent.GUI updater process.
+	 * Instantiates a new Agent.Workbench updater process.
 	 * @param userExecuted indicates that execution was manually chosen by user
 	 */
 	public AWBUpdater(boolean userExecuted) {
+		this(userExecuted, false);
+	}
+	/**
+	 * Instantiates a new Agent.Workbench updater process.
+	 * @param userExecuted indicates that execution was manually chosen by user
+	 * @param enforceUpdate the enforce update
+	 */
+	public AWBUpdater(boolean userExecuted, boolean enforceUpdate) {
 		this.manualyExecutedByUser = userExecuted;
+		this.enforceUpdate = enforceUpdate;
 		this.initialize();
 	}
+	
 	/**
 	 * Initialize and set needed local variables.
 	 */
@@ -113,8 +124,8 @@ public class AWBUpdater extends Thread {
 		if (this.manualyExecutedByUser==false) {
 			long timeNow = System.currentTimeMillis();
 			long time4NextCheck = this.updateDateLastChecked + AWBUpdater.UPDATE_CHECK_PERIOD;
-			if (timeNow < time4NextCheck) {
-				doUpdateProcedure = false;
+			if (this.enforceUpdate==false && timeNow < time4NextCheck) {
+				this.doUpdateProcedure = false;
 			} else {
 				Application.getGlobalInfo().setUpdateDateLastChecked(timeNow);
 				Application.getGlobalInfo().doSaveConfiguration();
