@@ -1,4 +1,4 @@
-# Create a Plug-in for an Agent.Workbench Project
+# Create a Bundle for an Agent.Workbench Project
 
 This section shortly describes how you can define, develop and start your first agent-based "application". Even this is a very simple example, it will demonstrate the principle on how you can extend Agent.Workbench with your own agents and further user functions. Since the workbench is based on OSGI / Eclipse _bundles_, you have to develope OSGI _plug-ins_ for your agent projects too. In the course of the text we are mixing-up these terms from time to time, but their meaning is the same \(plug-in = bundle\). For further reading and a practical introduction into the modularity concept of OSGI, we recommend to read this tutorial: [http://www.vogella.com/tutorials/OSGi/article.html.](http://www.vogella.com/tutorials/OSGi/article.html)
 
