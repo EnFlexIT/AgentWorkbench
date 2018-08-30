@@ -1,5 +1,7 @@
 # Agent.Workbench
 
+The documentation is also available as comprehensive document at [GitBook](https://enflexit.gitbook.io/agent-workbench/).
+
 ![](/eclipseProjects/org.agentgui/bundles/org.agentgui.core/splash.png)
 
 Agent.Workbench \(AWB\) is an [Eclipse](https://www.eclipse.org/) / [OSGI ](https://www.osgi.org/)based application toolkit and framework that utilizes the agent platform [JADE](http://jade.tilab.com/). It enables to develop agent-based, end-user oriented [RCP applications](http://www.vogella.com/tutorials/EclipseRCP/article.html) that should finally enable non-programmers to use agent technologies for their own purposes.
