@@ -36,6 +36,7 @@ import javax.swing.JComponent;
 import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.envModel.graph.controller.BasicGraphGuiProperties;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import de.enflexit.common.ExceptionHandling;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
@@ -146,11 +147,12 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	public final void setVisualizationComponent(JComponent visualizationComponent) {
 		// --- Nothing to do in case of an Ontology -------
 	}
+	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getVisualisationComponent()
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getVisualizationComponent(agentgui.envModel.graph.controller.BasicGraphGuiProperties)
 	 */
 	@Override
-	public JComponent getVisualizationComponent() {
+	public JComponent getVisualizationComponent(BasicGraphGuiProperties internalPropertyFrame) {
 		return this.getOntologyInstanceViewer();
 	}
 	

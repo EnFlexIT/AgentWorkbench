@@ -347,7 +347,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					this.setDataModelBase64InitialHashCodes(dataModelBase64);
 
 					// --- Get the visualization component -------------------------
-					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualizationComponent();
+					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualizationComponent(this);
 					if (visualisation instanceof OntologyInstanceViewer) {
 						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJToolBarProperties());
 					}
@@ -768,7 +768,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (applyUpdate==true) {
 			try {
 				// --- Update the view --------------------
-				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.getNetworkComponentAdapter4DataModel().getVisualizationComponent();
+				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.getNetworkComponentAdapter4DataModel().getVisualizationComponent(this);
 				uds.applyToOntologyInstanceViewer(ontoViewer);
 				
 			} catch (UpdateDataSeriesException udse) {
