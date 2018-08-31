@@ -3,7 +3,9 @@ package de.enflexit.common.p2;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -230,16 +232,26 @@ public class P2OperationsHandler {
 	 */
 	public boolean installIU(String installableUnitID, URI repositoryURI) {
 
-		// --- Make sure the repository is known and enabled ---------
+		// --- Make sure the repository is known and enabled ------------------
 		this.addRepository(repositoryURI);
 
-		// --- Query the repository for the IU of interest -----------
+		// --- Query the repository for the IU of interest --------------------
 		IQueryResult<IInstallableUnit> queryResult = this.queryRepositoryForInstallableUnit(repositoryURI, installableUnitID);
 
 		if (queryResult.isEmpty() == false) {
 
-			// --- If found, trigger an InstallOperation ---------------
-			InstallOperation installOperation = new InstallOperation(this.getProvisioningSession(), queryResult.toSet());
+			// --- If there is more than one result, take the newest one ------
+			Set<IInstallableUnit> resultSet = queryResult.toSet();
+			if (resultSet.size()>1) {
+				IInstallableUnit iuToInstall = this.getNewestUnit(resultSet);
+				resultSet.clear();
+				resultSet.add(iuToInstall);
+			}
+
+			// --- If found, trigger an InstallOperation ----------------------
+			InstallOperation installOperation = new InstallOperation(this.getProvisioningSession(), resultSet);
+			installOperation.getProvisioningContext().setMetadataRepositories(repositoryURI);
+			installOperation.getProvisioningContext().setArtifactRepositories(repositoryURI);
 			IStatus result = this.performOperation(installOperation);
 			return result.isOK();
 
@@ -402,5 +414,24 @@ public class P2OperationsHandler {
 		return iuList;
 	}
 
-
+	
+	/**
+	 * Gets the newest from a collection of {@link IInstallableUnit}s
+	 * @param installableUnits the installable units
+	 * @return the newest unit
+	 */
+	private IInstallableUnit getNewestUnit(Collection<IInstallableUnit> installableUnits) {
+		IInstallableUnit newest = null;
+		List<IInstallableUnit> unitsList = new ArrayList<>(installableUnits);
+		for (int i=0; i<unitsList.size(); i++) {
+			if (newest==null) {
+				newest = unitsList.get(i);
+			} else {
+				if (newest.getVersion().compareTo(unitsList.get(i).getVersion())<0) {
+					newest = unitsList.get(i);
+				}
+			}
+		}
+		return newest;
+	}
 }

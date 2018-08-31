@@ -1,16 +1,16 @@
-# Summary
+# Table of contents
 
 * [Introduction](README.md)
-* [Getting Started](/getting-started.md#getting-started)
-  * [Install Agent.Workbench](/getting-started.md#install-agent-workbench)
-  * [Create an Agent Project](/getting-started.md#create-an-agent-project)
-  * [Install Eclipse IDE](getting-started.md#install-eclipse-ide)
-  * [Setup your Workspace](/getting-started.md#setup-the-eclipse-workspace)
-  * [Define the Target Platform](/getting-started.md#define-the-target-platform-for-agent-developments)
-* [Create a Plug-in for an Agent Project](create-a-project-plugin.md)
-  * [Create an Agent-Plugin](/getting-started.md#create-an-agent-project)
+* [Getting Started](getting-started/README.md)
+  * [Install Agent.Workbench](getting-started/install-agent.workbench.md)
+  * [Create an Agent Project](getting-started/create-an-agent-project.md)
+  * [Install Eclipse IDE](getting-started/getting-started.md)
+  * [Setup your Workspace](getting-started/setup-your-workspace.md)
+  * [Define the Target Platform](getting-started/define-the-target-platform.md)
+* [Create a Plug-in for an Agent Project](create-a-project-plugin/README.md)
+  * [Create an Agent-Plugin](create-a-project-plugin/create-an-agent-plugin.md)
 * [The Project Window](the-project-window.md)
-* [Agent.Workbench Features](agentworkbench-features.md)
-  * [Projects and Setups](02_agentworkbench-features/projects-and-setups.md)
+* [Agent.Workbench Features](agentworkbench-features/README.md)
+  * [Projects and Setups](agentworkbench-features/projects-and-setups.md)
 * [Distributed Execution of Agents](distributed-application.md)
 
