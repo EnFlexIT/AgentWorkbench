@@ -158,7 +158,7 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 
 		// --- Set the IconImage ----------------------------------
-		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
 
 		// --- Set the Look and Feel of the Application -----------
 		this.setLookAndFeel();
