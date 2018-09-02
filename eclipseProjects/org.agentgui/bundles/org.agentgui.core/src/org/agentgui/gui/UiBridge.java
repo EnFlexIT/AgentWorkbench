@@ -263,7 +263,7 @@ public class UiBridge {
 			}
 	
 			// --- Get the image icon for the progress monitor ----------
-			ImageIcon imageIcon = GlobalInfo.getInternalImageIcon("AgentGUI.png");
+			ImageIcon imageIcon = GlobalInfo.getInternalImageIconAwbIcon16();
 			// --- Get the look and feel --------------------------------
 			String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
 			progressMonitor = new org.agentgui.gui.swing.dialogs.ProgressMonitor(windowTitle, headerText, progressText, imageIcon, desktop, lookAndFeelClassName);

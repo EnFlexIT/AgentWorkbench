@@ -329,7 +329,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			this.jFrameStandalone.setContentPane(jContentPane);
 			this.jFrameStandalone.setSize(1150, 640);
 			this.jFrameStandalone.setTitle("DisplayAgent: " + getLocalName());
-			this.jFrameStandalone.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+			this.jFrameStandalone.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 			this.jFrameStandalone.setLocationRelativeTo(null);
 			this.jFrameStandalone.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent we) {

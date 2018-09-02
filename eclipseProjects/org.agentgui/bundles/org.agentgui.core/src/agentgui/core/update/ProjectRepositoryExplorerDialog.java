@@ -82,7 +82,7 @@ public class ProjectRepositoryExplorerDialog extends JDialog implements ProjectR
 		gbc_ExplorerPanel.gridy = 0;
 		this.getContentPane().add(this.getProjectRepositoryExplorerPanel(), gbc_ExplorerPanel);
 		
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Project-Repository Explorer");
 		this.setSize(1200, 750);
 		this.setLocationRelativeTo(null);

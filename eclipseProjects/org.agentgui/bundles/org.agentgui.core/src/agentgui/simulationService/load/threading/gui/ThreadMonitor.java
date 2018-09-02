@@ -88,7 +88,7 @@ public class ThreadMonitor extends JFrame {
 		
 		this.setSize(1000, 562);
 		
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Thread Monitor");
 		
 		// --- Add a WindowsListener --------------------------------

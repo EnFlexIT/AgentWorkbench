@@ -158,7 +158,7 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 
 		// --- Set the IconImage ----------------------------------
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 
 		// --- Set the Look and Feel of the Application -----------
 		this.setLookAndFeel();
@@ -718,21 +718,21 @@ public class MainWindow extends JFrame {
 		if (jMenuMainProject == null) {
 			jMenuMainProject = new JMenu("Projekte");
 			jMenuMainProject.setText(Language.translate("Projekte"));
-			jMenuMainProject.add(new CWMenueItem("ProjectNew", Language.translate("Neues Projekt"), "MBnew.png"));
-			jMenuMainProject.add(new CWMenueItem("ProjectOpen", Language.translate("Projekt öffnen"), "MBopen.png"));
-			jMenuMainProject.add(new CWMenueItem("ProjectClose", Language.translate("Projekt schließen"), "MBclose.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectNew", Language.translate("Neues Projekt"), "MBnew.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectOpen", Language.translate("Projekt öffnen"), "MBopen.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectClose", Language.translate("Projekt schließen"), "MBclose.png"));
 			jMenuMainProject.addSeparator();
-			jMenuMainProject.add(new CWMenueItem("ProjectSave", Language.translate("Projekt speichern"), "MBsave.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectSave", Language.translate("Projekt speichern"), "MBsave.png"));
 			jMenuMainProject.addSeparator();
-			jMenuMainProject.add(new CWMenueItem("ProjectImport", Language.translate("Projekt importieren"), "MBtransImport.png"));
-			jMenuMainProject.add(new CWMenueItem("RepositoryImport", Language.translate("Repository-Import"), "MBrepositoryImport.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectImport", Language.translate("Projekt importieren"), "MBtransImport.png"));
+			jMenuMainProject.add(new CWMenuItem("RepositoryImport", Language.translate("Repository-Import"), "MBrepositoryImport.png"));
 			jMenuMainProject.addSeparator();
-			jMenuMainProject.add(new CWMenueItem("ProjectExport", Language.translate("Projekt exportieren"), "MBtransExport.png"));
-			jMenuMainProject.add(new CWMenueItem("RepositoryExport", Language.translate("Repository-Export"), "MBrepositoryExport.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectExport", Language.translate("Projekt exportieren"), "MBtransExport.png"));
+			jMenuMainProject.add(new CWMenuItem("RepositoryExport", Language.translate("Repository-Export"), "MBrepositoryExport.png"));
 			jMenuMainProject.addSeparator();
-			jMenuMainProject.add(new CWMenueItem("ProjectDelete", Language.translate("Projekt löschen"), "Delete.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectDelete", Language.translate("Projekt löschen"), "Delete.png"));
 			jMenuMainProject.addSeparator();
-			jMenuMainProject.add(new CWMenueItem("ApplicationQuit", Language.translate("Beenden"), null));
+			jMenuMainProject.add(new CWMenuItem("ApplicationQuit", Language.translate("Beenden"), null));
 		}
 		return jMenuMainProject;
 	}
@@ -786,7 +786,7 @@ public class MainWindow extends JFrame {
 			// --------------------------------------------
 
 			jMenuMainView.addSeparator();
-			jMenuMainView.add(new CWMenueItem("ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png"));
+			jMenuMainView.add(new CWMenuItem("ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png"));
 		}
 		return jMenuMainView;
 	}
@@ -803,20 +803,20 @@ public class MainWindow extends JFrame {
 		if (jMenuMainJade == null) {
 			jMenuMainJade = new JMenu("JADE");
 			jMenuMainJade.setText(Language.translate("JADE"));
-			jMenuMainJade.add(new CWMenueItem("JadeStart", Language.translate("JADE starten"), "MBJadeOn.png"));
-			jMenuMainJade.add(new CWMenueItem("JadeStop", Language.translate("JADE stoppen"), "MBJadeOff.png"));
+			jMenuMainJade.add(new CWMenuItem("JadeStart", Language.translate("JADE starten"), "MBJadeOn.png"));
+			jMenuMainJade.add(new CWMenuItem("JadeStop", Language.translate("JADE stoppen"), "MBJadeOff.png"));
 			jMenuMainJade.addSeparator();
-			jMenuMainJade.add(new CWMenueItem("StartAgent", Language.translate("Starte Agenten"), "MBstartAgent.png"));
+			jMenuMainJade.add(new CWMenuItem("StartAgent", Language.translate("Starte Agenten"), "MBstartAgent.png"));
 			jMenuMainJade.addSeparator();
-			jMenuMainJade.add(new CWMenueItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
-			jMenuMainJade.add(new CWMenueItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
-			jMenuMainJade.add(new CWMenueItem("PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif"));
-			jMenuMainJade.add(new CWMenueItem("PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif"));
-			jMenuMainJade.add(new CWMenueItem("PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif"));
-			jMenuMainJade.add(new CWMenueItem("PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif"));
+			jMenuMainJade.add(new CWMenuItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
+			jMenuMainJade.add(new CWMenuItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
+			jMenuMainJade.add(new CWMenuItem("PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif"));
+			jMenuMainJade.add(new CWMenuItem("PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif"));
+			jMenuMainJade.add(new CWMenuItem("PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif"));
+			jMenuMainJade.add(new CWMenuItem("PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif"));
 			jMenuMainJade.addSeparator();
-			jMenuMainJade.add(new CWMenueItem("ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), "MBLoadMonitor.png"));
-			jMenuMainJade.add(new CWMenueItem("ThreadMonitoring", Language.translate("Thread-Monitor öffnen"), "MBclock.png"));
+			jMenuMainJade.add(new CWMenuItem("ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), "MBLoadMonitor.png"));
+			jMenuMainJade.add(new CWMenuItem("ThreadMonitoring", Language.translate("Thread-Monitor öffnen"), "MBclock.png"));
 		}
 		return jMenuMainJade;
 	}
@@ -834,11 +834,11 @@ public class MainWindow extends JFrame {
 			jMenuMainSimulation = new JMenu("MAS");
 			jMenuMainSimulation.setText(Language.translate("MAS"));
 
-			jMenuItemSimStart = new CWMenueItem("SimulationStart", Language.translate("Start"), "MBLoadPlay.png");
+			jMenuItemSimStart = new CWMenuItem("SimulationStart", Language.translate("Start"), "MBLoadPlay.png");
 			jMenuMainSimulation.add(jMenuItemSimStart);
-			jMenuItemSimPause = new CWMenueItem("SimulationPause", Language.translate("Pause"), "MBLoadPause.png");
+			jMenuItemSimPause = new CWMenuItem("SimulationPause", Language.translate("Pause"), "MBLoadPause.png");
 			jMenuMainSimulation.add(jMenuItemSimPause);
-			jMenuItemSimStop = new CWMenueItem("SimulationStop", Language.translate("Stop"), "MBLoadStopRecord.png");
+			jMenuItemSimStop = new CWMenuItem("SimulationStop", Language.translate("Stop"), "MBLoadStopRecord.png");
 			jMenuMainSimulation.add(jMenuItemSimStop);
 		}
 		return jMenuMainSimulation;
@@ -870,11 +870,11 @@ public class MainWindow extends JFrame {
 			jMenuExtra.add(jMenuExtraLnF);
 
 			jMenuExtra.addSeparator();
-			jMenuExtra.add(new CWMenueItem("ExtraBenchmark", "SciMark 2.0 - Benchmark", null));
+			jMenuExtra.add(new CWMenuItem("ExtraBenchmark", "SciMark 2.0 - Benchmark", null));
 
 			jMenuExtra.addSeparator();
-			jMenuExtra.add(new CWMenueItem("ExtraOptions", Language.translate("Optionen"), null));
-			jMenuExtra.add(new CWMenueItem("Authentication", Language.translate("Web Service Authentifizierung"), null));
+			jMenuExtra.add(new CWMenuItem("ExtraOptions", Language.translate("Optionen"), null));
+			jMenuExtra.add(new CWMenuItem("Authentication", Language.translate("Web Service Authentifizierung"), null));
 
 		}
 		return jMenuExtra;
@@ -901,7 +901,7 @@ public class MainWindow extends JFrame {
 		}
 
 		jMenuExtraLang.addSeparator();
-		jMenuExtraLang.add(new CWMenueItem("ExtraTranslation", Language.translate("Übersetzen ..."), null));
+		jMenuExtraLang.add(new CWMenuItem("ExtraTranslation", Language.translate("Übersetzen ..."), null));
 
 	}
 
@@ -1030,12 +1030,12 @@ public class MainWindow extends JFrame {
 		if (jMenuMainHelp == null) {
 			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
-			jMenuMainHelp.add(new CWMenueItem("HelpAbout", Language.translate("Über..."), null));
-			jMenuMainHelp.add(new CWMenueItem("HelpChanges", Language.translate("Letzte Änderungen"), null));
+			jMenuMainHelp.add(new CWMenuItem("HelpAbout", Language.translate("Über..."), "awb16.png"));
+			jMenuMainHelp.add(new CWMenuItem("HelpChanges", Language.translate("Letzte Änderungen"), null));
 			jMenuMainHelp.addSeparator();
-			jMenuMainHelp.add(new CWMenueItem("HelpUpdate", Language.translate("Nach Update suchen") + " !", null));
+			jMenuMainHelp.add(new CWMenuItem("HelpUpdate", Language.translate("Nach Update suchen") + " !", null));
 			jMenuMainHelp.addSeparator();
-			jMenuMainHelp.add(new CWMenueItem("EclipsePreferences", "Eclipse Preferences", null));
+			jMenuMainHelp.add(new CWMenuItem("EclipseWindow", "Eclipse Window", "eclipse.png"));
 		}
 		return jMenuMainHelp;
 	}
@@ -1050,7 +1050,7 @@ public class MainWindow extends JFrame {
 	 */
 	private JMenuItem getCloseButton() {
 		if (jMenuCloseButton == null) {
-			jMenuCloseButton = new CWMenueItem("ProjectClose", "", "MBclose.png");
+			jMenuCloseButton = new CWMenuItem("ProjectClose", "", "MBclose.png");
 			jMenuCloseButton.setText("");
 			jMenuCloseButton.setToolTipText(Language.translate("Projekt schließen"));
 			jMenuCloseButton.setBorder(null);
@@ -1088,23 +1088,28 @@ public class MainWindow extends JFrame {
 	// --- Sub class for simple menu items - START ----------------
 	// ------------------------------------------------------------
 	/** The Class CWMenueItem. */
-	private class CWMenueItem extends JMenuItem implements ActionListener {
+	private class CWMenuItem extends JMenuItem implements ActionListener {
 
 		private static final long serialVersionUID = 1L;
 
 		/**
-		 * Instantiates a new cW menue item.
+		 * Instantiates a new cW menu item.
 		 *
 		 * @param actionCommand the action command
 		 * @param Text the text
 		 * @param imgName the img name
 		 */
-		private CWMenueItem(String actionCommand, String Text, String imgName) {
+		private CWMenuItem(String actionCommand, String Text, String imgName) {
 
 			this.setText(Text);
-			if (imgName != null) {
+			if (imgName!=null) {
 				try {
-					this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
+					if (imgName.equals("awb16.png")) {
+						this.setIcon(GlobalInfo.getInternalImageIconAwbIcon16());
+					} else {
+						this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
+					}
+					
 				} catch (Exception err) {
 					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
 				}
@@ -1231,7 +1236,7 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("HelpAbout")) {
 				Application.showAboutDialog();
 
-			} else if (actionCMD.equalsIgnoreCase("EclipsePreferences")) {
+			} else if (actionCMD.equalsIgnoreCase("EclipseWindow")) {
 				Application.showEclipseWorkbench();
 
 			} else {
@@ -1270,12 +1275,12 @@ public class MainWindow extends JFrame {
 			// --- PopUp-Menu zum Button 'JadeTools' definieren (s. u.) ---
 			jPopupMenuJadeTools = new JPopupMenu("SubBar");
 			jPopupMenuJadeTools.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jPopupMenuJadeTools.add(new CWMenueItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
-			jPopupMenuJadeTools.add(new CWMenueItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
-			jPopupMenuJadeTools.add(new CWMenueItem("PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif"));
-			jPopupMenuJadeTools.add(new CWMenueItem("PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif"));
-			jPopupMenuJadeTools.add(new CWMenueItem("PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif"));
-			jPopupMenuJadeTools.add(new CWMenueItem("PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif"));
 
 			// --- Symbolleisten-Definition -------------------------------
 			jToolBarApplication = new JToolBar("MainBar");

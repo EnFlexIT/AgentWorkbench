@@ -58,7 +58,7 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 
 	private static final long serialVersionUID = 1820851101239120387L;
 	
-	private Image imageAgentGUI = GlobalInfo.getInternalImage("AgentGUI.png");
+	private Image imageAgentGUI = GlobalInfo.getInternalImageAwbIcon16();
 	
 	/** The Dialog is just a container for a ChartEditorJPanel implementation that "does the work" */
 	protected ChartEditorJPanel contentPane;

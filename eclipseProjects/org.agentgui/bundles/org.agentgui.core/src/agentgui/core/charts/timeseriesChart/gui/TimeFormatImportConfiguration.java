@@ -160,7 +160,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 
 		this.setSize(600, 400);
 		this.setTitle(Language.translate("CSV-File", Language.EN) + " Import: " + Language.translate("Time Format and Offset", Language.EN));
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		
 		this.setModal(true);
 		this.setResizable(false);

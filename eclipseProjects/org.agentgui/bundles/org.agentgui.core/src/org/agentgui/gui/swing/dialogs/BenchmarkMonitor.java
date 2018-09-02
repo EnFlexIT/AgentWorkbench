@@ -64,7 +64,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener, AwbBenc
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	private Image imageAgentGUI = GlobalInfo.getInternalImage("AgentGUI.png");
+	private Image imageAgentGUI = GlobalInfo.getInternalImageAwbIcon16();
 
 	private JPanel jContentPane = null;
 	private JPanel jPanelBottomRight = null;

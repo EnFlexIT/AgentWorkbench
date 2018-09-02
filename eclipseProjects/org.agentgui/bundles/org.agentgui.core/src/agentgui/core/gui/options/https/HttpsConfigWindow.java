@@ -142,7 +142,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	private void initialize() {
 		
 		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("HTTPS Configuration", Language.EN));
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		
 		this.setBounds(100, 100, 820, 590);
 		this.setLocationRelativeTo(null);
