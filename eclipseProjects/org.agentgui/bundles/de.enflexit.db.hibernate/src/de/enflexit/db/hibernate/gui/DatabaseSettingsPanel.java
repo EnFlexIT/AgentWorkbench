@@ -200,21 +200,19 @@ public class DatabaseSettingsPanel extends JPanel {
 	 */
 	public void setDatabaseSettings(DatabaseSettings databaseSettings) {
 		if (databaseSettings==null) {
-			if (this.databaseSettings==null) {
-				this.getDatabaseSettings();
-			}
-		} else {
-			this.databaseSettings = databaseSettings;
+			this.databaseSettings = null;
+			databaseSettings = this.getDatabaseSettings();
 		}
-		if (this.databaseSettings!=null) {
-			String dbSystem = this.databaseSettings.getDatabaseSystemName();
-			Properties dbProperties = this.databaseSettings.getHibernateDatabaseSettings();
+		if (databaseSettings!=null) {
+			String dbSystem = databaseSettings.getDatabaseSystemName();
+			Properties dbProperties = databaseSettings.getHibernateDatabaseSettings();
 			this.setDatabaseSystem(dbSystem);
 			AbstractDatabaseSettingsPanel settingsPanel = this.getDatabaseSettingPanel();
 			if (settingsPanel!=null) {
 				settingsPanel.setHibernateConfigurationProperties(dbProperties);
 			}
-		}
+			this.databaseSettings = databaseSettings;
+		} 
 	}
 
 	/**
