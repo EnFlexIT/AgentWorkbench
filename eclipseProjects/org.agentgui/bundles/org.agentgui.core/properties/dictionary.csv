@@ -216,6 +216,7 @@ de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for th
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
+de;Es wurden keine Installationspakete gefunden! Bitte überprüfen Sie ob in den Optionen das korrekte Verzeichnis eingestellt ist!;No installation packages could be found! Please check in the options if the correct directory is selected!;;;
 de;Export erfolgreich;Export successful;;;
 de;Export:;Export:;;;
 de;Exportiere Projekt;Export Project;;;
@@ -337,6 +338,7 @@ de;Kein SVG zugewiesen;No SVG assigned
 de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;;;
 de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that already host a remote-container;;;
 de;Keine Graph-Datei definiert!;No Graph file defined!
+de;Keine Installationspakete gefunden!;No installation packages found!;;;
 de;Keine Klasse definiert;No class defined
 de;Keine SVG-Datei definiert!;No SVG file defined!
 de;Keine SVG-Datei definiert;No SVG file defined
