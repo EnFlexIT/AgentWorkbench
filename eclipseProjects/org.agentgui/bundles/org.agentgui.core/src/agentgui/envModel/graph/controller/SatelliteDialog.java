@@ -30,19 +30,17 @@ package agentgui.envModel.graph.controller;
 
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 
 import agentgui.core.application.Language;
-import agentgui.envModel.graph.GraphGlobals;
+import agentgui.core.config.GlobalInfo;
 
 
 /**
- * The Class SatelliteDialog.
+ * The SatelliteDialog for the graph & network environment.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -50,9 +48,6 @@ public class SatelliteDialog extends JDialog {
 
 	private static final long serialVersionUID = -4309439744074827584L;
 
-	private final String pathImage = GraphGlobals.getPathImages();
-	private final Image imageAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png")).getImage();
-	
 	private GraphEnvironmentController graphController;
 	
 	
@@ -79,7 +74,7 @@ public class SatelliteDialog extends JDialog {
 		this.initialize(graphEnvController, basicGraphGui);
 	}
 	/**
-	 * Initialises this dialog.
+	 * Initializes this dialog.
 	 *
 	 * @param graphEnvController the current GraphEnvironmentController
 	 * @param basicGraphGui the current BasicGraphGui
@@ -89,7 +84,7 @@ public class SatelliteDialog extends JDialog {
 		this.graphController = graphEnvController;
 		
 		this.setTitle(Language.translate("Übersicht"));
-		this.setIconImage(imageAgentGUI);
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 
 		this.setSize(200, 150);
 		this.add(basicGraphGui.getSatelliteVisualizationViewer());

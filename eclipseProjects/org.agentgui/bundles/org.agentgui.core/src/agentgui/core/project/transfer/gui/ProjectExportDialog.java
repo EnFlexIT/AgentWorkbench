@@ -135,7 +135,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private void initialize() {
 
 		this.setTitle(Language.translate("Projekt exportieren"));
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };

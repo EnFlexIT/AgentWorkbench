@@ -133,7 +133,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 					"</CENTER></HTML></BODY>";
 
 		this.setSize(550, 480);
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		
 		this.setModal(true);
 		this.setResizable(false);
@@ -218,7 +218,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 			
 			jLabelIcon = new JLabel();
 			jLabelIcon.setText(" ");
-			jLabelIcon.setIcon(GlobalInfo.getInternalImageIcon("AgentGUI.png"));
+			jLabelIcon.setIcon(GlobalInfo.getInternalImageIconAwbIcon48());
 			
 			jLabelTitle = new JLabel();
 			jLabelTitle.setText("Agent.GUI");

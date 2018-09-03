@@ -112,7 +112,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 		
 		this.setSize(720, 500);
 		this.setTitle("Auswahl - Agenten");
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setModal(true);
 		this.setContentPane(getJContentPane());
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

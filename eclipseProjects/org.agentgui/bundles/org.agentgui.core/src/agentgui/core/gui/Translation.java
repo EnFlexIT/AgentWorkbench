@@ -217,7 +217,7 @@ private static final long serialVersionUID = 1L;
 		this.setSize(1000, 550);
 		
 		this.setTitle(appName + ": " + "Wörterbuch");
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {

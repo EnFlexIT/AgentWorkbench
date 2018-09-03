@@ -73,7 +73,7 @@ public class SystemLoadDialog extends JFrame {
 	private void initialize() {
 		
 		this.setSize(620, 120);
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Load Monitor"));
 		this.setLookAndFeel();
 		this.setContentPane(this.getSystemLoadPanel());		

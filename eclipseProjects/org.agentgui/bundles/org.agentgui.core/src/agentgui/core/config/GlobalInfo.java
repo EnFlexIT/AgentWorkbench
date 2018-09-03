@@ -90,6 +90,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.Workbench";
 	
+	private final static String localPathImageAWB = "/icons/";
 	private final static String localPathImageIntern = "/icons/core/";
 	
 	public final static String DEFAULT_AWB_PROJECT_REPOSITORY = "https://p2.enflex.it/awbProjectRepository/";
@@ -2087,7 +2088,14 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	
 	/**
-	 * Returns the path to the internal image-package of Agent.GUI (de.enflexit.common.swing.img)
+	 * Returns the path to the base image directory of Agent.Workbench.
+	 * @return path to the images, which are located in our project
+	 */
+	public static String getPathImageAWB(){
+		return localPathImageAWB;
+	}
+	/**
+	 * Returns the path to the internal image directory of Agent.Workbench. 
 	 * @return path to the images, which are located in our project
 	 */
 	public static String getPathImageIntern(){
@@ -2099,7 +2107,18 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the internal image icon
 	 */
 	public static javax.swing.ImageIcon getInternalImageIcon(String imageFileName) {
-		String imagePath = getPathImageIntern() + imageFileName;
+		return GlobalInfo.getInternalImageIcon(null, imageFileName);
+	}
+	/**
+	 * Returns one of the internal images as ImageIcon, specified by its file name.
+	 * @param internalImagePath the internal image path to use (if null, the internal image path will be used {@link #getPathImageIntern()})
+	 * @param imageFileName the image file name
+	 * @return the internal image icon
+	 */
+	public static javax.swing.ImageIcon getInternalImageIcon(String internalImagePath, String imageFileName) {
+		
+		if (internalImagePath==null) internalImagePath = getPathImageIntern();
+		String imagePath = internalImagePath + imageFileName;
 		URL imageURL = GlobalInfo.class.getResource(imagePath);
 		if (imageURL!=null) {
 			return new javax.swing.ImageIcon(imageURL);
@@ -2115,6 +2134,42 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public static java.awt.Image getInternalImage(String imageFileName) {
 		javax.swing.ImageIcon imageIcon = getInternalImageIcon(imageFileName);
+		if (imageIcon!=null) {
+			return imageIcon.getImage();
+		}
+		return null;
+	}
+	/**
+	 * Returns the internal image icon of Agent.Workbench sized 16x16.
+	 * @return the internal image icon awb icon 16
+	 */
+	public static javax.swing.ImageIcon getInternalImageIconAwbIcon16() {
+		return getInternalImageIcon(getPathImageAWB(), "awb16.png");
+	}
+	/**
+	 * Returns the internal image icon of Agent.Workbench sized 48x48.
+	 * @return the internal image icon awb icon 16
+	 */
+	public static javax.swing.ImageIcon getInternalImageIconAwbIcon48() {
+		return getInternalImageIcon(getPathImageAWB(), "awb48.png");
+	}
+	/**
+	 * Returns the internal image icon of Agent.Workbench sized 16x16.
+	 * @return the internal image icon awb icon 16
+	 */
+	public static java.awt.Image getInternalImageAwbIcon16() {
+		javax.swing.ImageIcon imageIcon = getInternalImageIconAwbIcon16();
+		if (imageIcon!=null) {
+			return imageIcon.getImage();
+		}
+		return null;
+	}
+	/**
+	 * Returns the internal image icon of Agent.Workbench sized 48x48.
+	 * @return the internal image icon awb icon 16
+	 */
+	public static java.awt.Image getInternalImageAwbIcon48() {
+		javax.swing.ImageIcon imageIcon = getInternalImageIconAwbIcon48();
 		if (imageIcon!=null) {
 			return imageIcon.getImage();
 		}

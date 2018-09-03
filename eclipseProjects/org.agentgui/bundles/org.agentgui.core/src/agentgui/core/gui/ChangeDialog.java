@@ -118,7 +118,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 		title += Application.getGlobalInfo().getVersionInfo().getFullVersionInfo(true, null);
 		this.setTitle(title);
 		
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setSize(850, 550);
 		this.setModal(true);
 		this.setResizable(true);

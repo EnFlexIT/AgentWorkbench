@@ -36,6 +36,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane;
+import agentgui.envModel.graph.controller.BasicGraphGuiProperties;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
@@ -82,9 +83,11 @@ public abstract class NetworkComponentAdapter4DataModel {
 	
 	/**
 	 * Returns the JComponent for the visualization of the data model.
+	 *
+	 * @param internalPropertyFrame the current internal property frame that will display the properties
 	 * @return the visualization component
 	 */
-	public abstract JComponent getVisualizationComponent();
+	public abstract JComponent getVisualizationComponent(BasicGraphGuiProperties internalPropertyFrame);
 	
 	/**
 	 * Sets the visualization component.

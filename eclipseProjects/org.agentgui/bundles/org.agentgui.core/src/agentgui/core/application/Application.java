@@ -1269,7 +1269,7 @@ public class Application {
 		// --- Set the current main window ------------------------------------
 		OntologyVisualisationConfiguration.setApplicationTitle(Application.getGlobalInfo().getApplicationTitle());
 		OntologyVisualisationConfiguration.setOwnerWindow(Application.getMainWindow());
-		OntologyVisualisationConfiguration.setApplicationIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		OntologyVisualisationConfiguration.setApplicationIconImage(GlobalInfo.getInternalImageAwbIcon16());
 	}
 
 	

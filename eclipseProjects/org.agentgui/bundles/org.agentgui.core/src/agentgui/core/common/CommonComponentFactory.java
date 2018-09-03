@@ -64,7 +64,7 @@ public class CommonComponentFactory {
 	public static Zipper getNewZipper(Frame owner) {
 
 		Zipper zipper = new Zipper(owner);
-		zipper.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		zipper.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		zipper.setLookAndFeelClassName(Application.getGlobalInfo().getAppLookAndFeelClassName());
 		zipper.setApplicationName(Application.getGlobalInfo().getApplicationTitle());
 		return zipper;

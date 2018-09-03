@@ -160,7 +160,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		}
 
 		this.setTitle("Optionen");
-		this.setIconImage(GlobalInfo.getInternalImage("AgentGUI.png"));
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setContentPane(this.getJPanelBase());
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
