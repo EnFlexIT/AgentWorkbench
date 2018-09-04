@@ -562,7 +562,7 @@ public class Platform {
 		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null) {
 			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
 			String message = Language.translate("Möchten Sie JADE nun beenden?");
-			Integer answer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), message, title, JOptionPane.YES_NO_OPTION);
+			Integer answer =  JOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), message, title, JOptionPane.YES_NO_OPTION);
 			if (answer==1) return false; // --- NO,just exit 
 			// --- Stop the JADE-Platform -------------------
 			this.stop();
@@ -716,8 +716,8 @@ public class Platform {
 					dialogContent[0] = msgText + "\n\n";
 					dialogContent[1] = jCheckBoxDoNotAskAgain;
 				}
-				
-				int msgAnswer = JOptionPane.showInternalConfirmDialog(Application.getMainWindow().getContentPane(), dialogContent, msgHead, JOptionPane.YES_NO_OPTION);
+				 
+				int msgAnswer = JOptionPane.showConfirmDialog(Application.getMainWindow(), dialogContent, msgHead, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO, just exit
 				// --- Remind CheckBox value if selected ------------
 				if (currProject!=null && jCheckBoxDoNotAskAgain.isSelected()==true) {
@@ -758,7 +758,7 @@ public class Platform {
 			if (Application.getMainWindow()==null) {
 				msgAnswer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);				
 			} else {
-				msgAnswer = JOptionPane.showInternalConfirmDialog(Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);	
+				msgAnswer = JOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);	
 			}
 			if (msgAnswer==0) {
 				// --- YES - Start another agent of this kind --------
@@ -1084,7 +1084,7 @@ public class Platform {
 		if (this.isMainContainerRunning()==false) {
 			String msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			String msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
-			int msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
+			int msgAnswer = JOptionPane.showConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO,just exit 
 			
 			// --- Start the JADE-Platform -------------------------------

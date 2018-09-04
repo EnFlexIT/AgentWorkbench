@@ -1125,7 +1125,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (writeFile.exists()) {
 			String msgHead = "Overwrite?";
 			String msgText = "Overwrite existing file?";
-			int msgAnswer = JOptionPane.showInternalConfirmDialog(this, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+			int msgAnswer = JOptionPane.showConfirmDialog(this, msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if (msgAnswer == JOptionPane.NO_OPTION) {
 				return;
 			}

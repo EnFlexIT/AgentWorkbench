@@ -578,7 +578,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			}
 
 			// --- User request ---------------------------------------
-			int diaAnswer = JOptionPane.showInternalConfirmDialog(this, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
+			int diaAnswer = JOptionPane.showConfirmDialog(this, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
 			if (diaAnswer==JOptionPane.YES_OPTION) {
 				if (this.graphController.getProject()!=null) {
 					// --- Setup case -------------

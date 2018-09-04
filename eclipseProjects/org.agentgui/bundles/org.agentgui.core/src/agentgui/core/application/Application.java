@@ -1129,7 +1129,7 @@ public class Application {
 							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
 							 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
 							 "von Ihnen neu geöffnet werden.");
-			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			Integer MsgAnswer = JOptionPane.showConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if (MsgAnswer==1) return;
 			
 		}

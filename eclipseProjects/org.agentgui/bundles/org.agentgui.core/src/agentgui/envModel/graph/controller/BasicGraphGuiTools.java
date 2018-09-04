@@ -747,7 +747,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 						// --- No selection -------------------------
 						String title = Language.translate("Fehlende Auswahl!");
 						String message = Language.translate("Es wurde keine Komponente ausgewählt!");
-						JOptionPane.showInternalMessageDialog(basicGraphGui, message, title, JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(basicGraphGui, message, title, JOptionPane.WARNING_MESSAGE);
 						
 					} else {
 						// --- Open the property dialog(s) ----------

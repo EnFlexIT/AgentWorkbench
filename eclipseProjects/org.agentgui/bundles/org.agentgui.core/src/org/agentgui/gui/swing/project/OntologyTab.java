@@ -330,7 +330,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			if (ontoTree.isSelectionEmpty()) {
 				msgHead = Language.translate("Fehlende Auswahl !");
 				msgText = Language.translate("Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!");			
-				JOptionPane.showInternalMessageDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) ontoTree.getSelectionPath().getLastPathComponent();

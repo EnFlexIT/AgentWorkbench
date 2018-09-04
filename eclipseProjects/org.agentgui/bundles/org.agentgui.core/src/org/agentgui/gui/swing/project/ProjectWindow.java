@@ -1203,7 +1203,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	@Override
 	public void showErrorMessage(String msgText, String msgHead) {
-		JOptionPane.showInternalMessageDialog(this, msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 	}
 
 }

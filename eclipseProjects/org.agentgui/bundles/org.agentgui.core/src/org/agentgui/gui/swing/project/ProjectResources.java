@@ -330,10 +330,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 							msg += "eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!\n\n";
 							msg += "Soll diese Option jetzt aktualisiert werden?";
 							msg = Language.translate(msg);
-
-							int answer = JOptionPane.showInternalConfirmDialog(getJListBinResources(), msg, title, JOptionPane.YES_NO_OPTION);
-							if (answer != JOptionPane.YES_OPTION)
+							if (JOptionPane.showConfirmDialog(getJListBinResources(), msg, title, JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
 								return;
+							}
 							// --- Set rebuild of MANIFEST.MF to 'true' -------
 							currProject.setReCreateProjectManifest(true);
 						}

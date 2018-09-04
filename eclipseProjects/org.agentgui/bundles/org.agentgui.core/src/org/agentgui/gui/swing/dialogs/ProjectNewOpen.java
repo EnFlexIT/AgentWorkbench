@@ -783,7 +783,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 					msgTitle = Language.translate("Fehler - Projektverzeichnis !" );
 					msgText = Language.translate("Das Verzeichnis konnte nicht aangelegt werden !" );
 				}
-				JOptionPane.showInternalMessageDialog( this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog( this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} else {
@@ -819,7 +819,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 					msgTitle = msgTitle.replace("@", Application.getGlobalInfo().getFileNameProject() );
 					msgText = msgText.replace("@", Application.getGlobalInfo().getFileNameProject() );					
 				}				
-				JOptionPane.showInternalMessageDialog(this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 

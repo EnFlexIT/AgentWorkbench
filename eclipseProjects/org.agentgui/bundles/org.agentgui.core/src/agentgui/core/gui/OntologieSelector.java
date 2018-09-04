@@ -381,7 +381,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 			} else {
 				String title = Language.translate("Fehlende Ontologie-Auswahl !");
 				String msg = Language.translate("Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !");			
-				JOptionPane.showInternalMessageDialog(this.getContentPane(), msg, title, JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this.getContentPane(), msg, title, JOptionPane.WARNING_MESSAGE);
 			}
 			
 		} else if (ae.getSource()==this.getJButtonCancel()) {
