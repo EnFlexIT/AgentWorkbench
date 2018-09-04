@@ -574,8 +574,6 @@ public class Application {
 		// ----------------------------------------------------------
 		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		
-		AWBUpdater updater = null;
-		
 		switch (getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			
@@ -629,7 +627,7 @@ public class Application {
 		case DEVICE_SYSTEM:
 
 			// --- Check for updates --------------------------------
-			updater = new AWBUpdater();
+			AWBUpdater updater = new AWBUpdater();
 			updater.start();
 			updater.waitForUpdate();
 

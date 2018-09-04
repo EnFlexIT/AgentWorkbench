@@ -242,7 +242,7 @@ public class AWBUpdater extends Thread {
 		
 		if (Application.isOperatingHeadless() == false) {
 			this.getProgressMonitor().setVisible(true);
-			this.getProgressMonitor().setProgress(0);
+			P2OperationsHandler.getInstance().setProgressMonitor(this.getProgressMonitor());
 		}
 		
 		IStatus status = P2OperationsHandler.getInstance().checkForUpdates();
@@ -278,7 +278,7 @@ public class AWBUpdater extends Thread {
 					if (userAnswer == JOptionPane.NO_OPTION) {
 						installUpdates = false;
 						System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Update canceled by user.");
-						if(Application.isOperatingHeadless() == false) {
+						if (Application.isOperatingHeadless() == false) {
 							this.getProgressMonitor().setVisible(false);
 							this.getProgressMonitor().dispose();
 						}
@@ -292,7 +292,7 @@ public class AWBUpdater extends Thread {
 						this.getProgressMonitor().setHeaderText(Language.translate("Installiere Updates"));
 						this.getProgressMonitor().setProgressText(Language.translate("Installiere") + "...");
 						this.getProgressMonitor().setVisible(true);
-						this.getProgressMonitor().setProgress(30);
+						P2OperationsHandler.getInstance().setProgressMonitor(this.getProgressMonitor());
 					}
 					status = P2OperationsHandler.getInstance().installAvailableUpdates();
 					if (status.isOK()) {
@@ -311,6 +311,10 @@ public class AWBUpdater extends Thread {
 
 			}
 		}
+		
+		// --- Finally remove the local progress monitor ------------
+		P2OperationsHandler.getInstance().setProgressMonitor(null);
+		
 	}
 	
 	/**

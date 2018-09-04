@@ -2,11 +2,13 @@ package org.agentgui.gui;
 
 import java.awt.Window;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 /**
  * The Interface AwbProgressMonitor defines the required methods for a visual progress monitor.
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface AwbProgressMonitor {
+public interface AwbProgressMonitor extends IProgressMonitor {
 
 	/**
 	 * Sets the component visible or invisible.

@@ -53,6 +53,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.agentgui.gui.AwbProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import de.enflexit.common.Language;
 
@@ -63,7 +64,7 @@ import de.enflexit.common.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
+public class ProgressMonitor implements ActionListener, AwbProgressMonitor, IProgressMonitor {
 
 	private JDesktopPane parentDesktopPane;
 	
@@ -122,7 +123,7 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 	private Container getProgressMonitorContainer() {
 		if (progressMonitorContainer==null) {
 			
-			Dimension defaultSize = new Dimension(570, 188);
+			Dimension defaultSize = new Dimension(570, 200);
 			if (this.parentDesktopPane==null) {
 				JDialog jDialog = new JDialog(this.owner);	
 				jDialog.setSize(defaultSize);
@@ -166,7 +167,7 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 	public void setVisible(boolean visible) {
 		if (this.getProgressMonitorContainer() instanceof JDialog) {
 			((JDialog) this.getProgressMonitorContainer()).setVisible(visible);
-			// --- Centre dialog ----------------
+			// --- Center dialog ----------------
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 			int top = (screenSize.height - this.getProgressMonitorContainer().getHeight()) / 2; 
 		    int left = (screenSize.width - this.getProgressMonitorContainer().getWidth()) / 2; 
@@ -233,7 +234,7 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 	 */
 	public void setHeaderText(String headerText) {
 		this.headerText = headerText;
-		this.jLabelHeader.setText(headerText);
+		this.getJLabelHeader().setText("<html>" + headerText + "</html>");
 	}
 	/**
 	 * Sets the progress text.
@@ -241,7 +242,7 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 	 */
 	public void setProgressText(String progressText) {
 		this.progressText = progressText;
-		this.jLabelProgress.setText(progressText);
+		this.getJLabelProgress().setText("<html>" + progressText + "</html>");
 	}
 	/**
 	 * Can be used to set the progress in percent (0 - 100).
@@ -339,25 +340,42 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints.gridy = 0;
 			
-			jLabelHeader = new JLabel();
-			jLabelHeader.setText(this.headerText);
-			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
-			
-			jLabelProgress = new JLabel();
-			jLabelProgress.setText(this.progressText);
-			jLabelProgress.setFont(new Font("Dialog", Font.BOLD, 12));
-			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.add(jLabelHeader, gridBagConstraints);
-			jContentPane.add(getJProgressBarDownload(), gridBagConstraints1);
-			jContentPane.add(jLabelProgress, gridBagConstraints2);
-			jContentPane.add(getJButtonCancel(), gridBagConstraints3);
-			jContentPane.add(getJPanelDummy(), gridBagConstraints11);
+			jContentPane.add(this.getJLabelHeader(), gridBagConstraints);
+			jContentPane.add(this.getJProgressBarDownload(), gridBagConstraints1);
+			jContentPane.add(this.getJLabelProgress(), gridBagConstraints2);
+			jContentPane.add(this.getJButtonCancel(), gridBagConstraints3);
+			jContentPane.add(this.getJPanelDummy(), gridBagConstraints11);
 		}
 		return jContentPane;
 	}
 
+	private JLabel getJLabelHeader() {
+		if (jLabelHeader==null) {
+			jLabelHeader = new JLabel();
+			jLabelHeader.setText(this.headerText);
+			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 13));
+			jLabelHeader.setPreferredSize(new Dimension(148, 28));
+			jLabelHeader.setMinimumSize(new Dimension(148, 28));
+			jLabelHeader.setMaximumSize(new Dimension(148, 28));
+		}
+		return jLabelHeader;
+	}
+	
+	private JLabel getJLabelProgress() {
+		if (jLabelProgress==null) {
+			jLabelProgress = new JLabel();
+			jLabelProgress.setText(this.progressText);
+			jLabelProgress.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelProgress.setVerticalAlignment(JLabel.TOP);
+			jLabelProgress.setVerticalTextPosition(JLabel.TOP);
+			jLabelProgress.setPreferredSize(new Dimension(148, 36));
+			jLabelProgress.setMinimumSize(new Dimension(148, 36));
+			jLabelProgress.setMaximumSize(new Dimension(148, 36));
+		}
+		return jLabelProgress;
+	}
 	/**
 	 * This method initializes jProgressBarDownload.
 	 * @return javax.swing.JProgressBar
@@ -366,6 +384,8 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 		if (jProgressBarDownload == null) {
 			jProgressBarDownload = new JProgressBar();
 			jProgressBarDownload.setPreferredSize(new Dimension(148, 26));
+			jProgressBarDownload.setMinimumSize(new Dimension(148, 26));
+			jProgressBarDownload.setMaximumSize(new Dimension(148, 26));
 			jProgressBarDownload.setStringPainted(true);
 			jProgressBarDownload.setMinimum(0);
 			jProgressBarDownload.setMaximum(100);
@@ -406,14 +426,54 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		
+
 		if (ae.getSource()==this.getJButtonCancel()) {
 			this.canceled=true;
 			this.setVisible(false);
 		}
-		
 	}
 
-	
+	// --------------------------------------------------------------
+	// --- From here, the methods from the IProgressMonitor ---------
+	// --------------------------------------------------------------
+	private int totalWork;
+	private int progress;
+	@Override
+	public void beginTask(String name, int totalWork) {
+		this.setTaskName(name);
+		this.totalWork = totalWork;
+	}
+	@Override
+	public void done() {
+		this.setProgress(this.totalWork);
+		this.setVisible(false);
+	}
+	@Override
+	public void setCanceled(boolean value) {
+		if (value==true) {
+			this.canceled=true;
+			this.setVisible(false);
+		}
+	}
+	@Override
+	public void setTaskName(String name) {
+		if (name!=null && name.isEmpty()==false) {
+			this.setHeaderText(name);
+		}
+	}
+	@Override
+	public void subTask(String name) {
+		if (name!=null && name.isEmpty()==false) {
+			this.setProgressText(name);
+		}
+	}
+	@Override
+	public void worked(int work) {
+		this.progress+=work;
+		Long percentLong = Math.round(((double)this.progress/this.totalWork)*100.0);
+		this.setProgress(percentLong.intValue());
+	}
+	@Override
+	public void internalWorked(double work) { }
 
 }  

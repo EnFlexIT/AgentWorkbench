@@ -43,13 +43,15 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
  */
 public class P2OperationsHandler {
 
-	private boolean isDevelopmentMode = false;
-	private File p2Directory = null; //new File("D:\\AgentGui\\p2\\");
-	
+	private boolean isDevelopmentMode = true;
+	private File p2Directory = null;
+//	private File p2Directory = new File("D:/AgentWorkbench/p2/");
 
 	private ProvisioningSession provisioningSession;
 	private IProvisioningAgent provisioningAgent;
 
+	private IProgressMonitor progressMonitor;
+	
 	private UpdateOperation updateOperation;
 
 	private IMetadataRepositoryManager metadataRepositoryManager;
@@ -132,18 +134,25 @@ public class P2OperationsHandler {
 	}
 	
 	/**
+	 * Sets the progress monitor for the used processes.
+	 * @param progressMonitor the new progress monitor
+	 */
+	public void setProgressMonitor(IProgressMonitor progressMonitor) {
+		this.progressMonitor = progressMonitor;
+	}
+	/**
 	 * Gets a {@link IProgressMonitor} for p2 operations. Currently always returns a new {@link NullProgressMonitor}.
-	 * 
 	 * @return the progress monitor
 	 */
 	private IProgressMonitor getProgressMonitor() {
-		// TODO Figure out how to handle other progress monitors for graphical visualization
-		return new NullProgressMonitor();
+		if (progressMonitor==null) {
+			progressMonitor = new NullProgressMonitor();
+		}
+		return progressMonitor;
 	}
 
 	/**
 	 * Gets the update operation.
-	 *
 	 * @return the update operation
 	 */
 	private UpdateOperation getUpdateOperation() {
