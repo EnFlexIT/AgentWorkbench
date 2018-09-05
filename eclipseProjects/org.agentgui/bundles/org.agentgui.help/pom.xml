@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>org.agentgui.help</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<parent>
+		<groupId>org.agentgui</groupId>
+		<artifactId>org.agentgui.root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<platform.api>org.eclipse.platform.doc.isv/reference/api</platform.api>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-document-bundle-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+				<cleanFirst>true</cleanFirst>
+				<javadocOptions>
+					<ignoreError>false</ignoreError>
+					<encoding>UTF-8</encoding>
+					<includes>
+						<include>de.enflexit.*</include>
+						<include>org.agentgui.*</include>
+					</includes>
+					<excludes>
+						<exclude>org.agentgui.sample.*</exclude>
+					</excludes>
+					<additionalArguments>
+						<additionalArgument>-windowtitle "Agent.Workbench - API"</additionalArgument>
+						<additionalArgument>-nosince</additionalArgument>
+					</additionalArguments>
+				</javadocOptions>
+			</configuration>
+			</plugin>
+			
+		</plugins>
+	</build>
+</project>

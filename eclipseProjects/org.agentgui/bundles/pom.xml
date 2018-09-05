@@ -22,6 +22,7 @@
 		<module>de.enflexit.oidc.libs</module>
 		<module>de.enflexit.oshi</module>
 		<module>org.agentgui.core</module>
+		<module>org.agentgui.help</module>
 		<module>org.agentgui.lib.bouncyCastle</module>
 		<module>org.agentgui.lib.googleTranslate</module>
 		
