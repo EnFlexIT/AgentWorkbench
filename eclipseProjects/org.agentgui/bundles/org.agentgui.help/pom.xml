@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.agentgui.help</artifactId>
+	<version>2.1.4-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	<parent>
 		<groupId>org.agentgui</groupId>
-		<artifactId>org.agentgui.root</artifactId>
+		<artifactId>org.agentgui.configuration</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../org.agantgui</relativePath>
 	</parent>
 
 	<properties>
@@ -56,8 +56,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			
 		</plugins>
+
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -77,7 +77,7 @@
 											tycho-document-bundle-plugin
 										</artifactId>
 										<versionRange>
-											[1.2.0,)
+											[1.1.0,)
 										</versionRange>
 										<goals>
 											<goal>javadoc</goal>
@@ -94,5 +94,5 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<version>2.1.4-SNAPSHOT</version>
+	
 </project>
