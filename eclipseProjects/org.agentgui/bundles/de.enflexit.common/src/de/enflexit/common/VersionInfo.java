@@ -64,6 +64,7 @@ public class VersionInfo {
 
 	/**
 	 * Loads the version information to this instance.
+	 * @return the version
 	 */
 	public Version getVersion() {
 		if (version==null) {
@@ -170,6 +171,7 @@ public class VersionInfo {
 
 	/**
 	 * Returns the current java version and vendor.
+	 * @return the java info
 	 */
 	public String getJavaInfo() {
 		String javaVersion = System.getProperty("java.version");

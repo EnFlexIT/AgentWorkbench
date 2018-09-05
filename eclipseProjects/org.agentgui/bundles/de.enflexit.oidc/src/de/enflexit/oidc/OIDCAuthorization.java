@@ -112,9 +112,9 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the OIDC client.
-	 * 
+	 *
 	 * @return the OIDC client
-	 * @throws URISyntaxException
+	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public SimpleOIDCClient getOIDCClient() throws URISyntaxException {
 		if (oidcClient == null) {
@@ -128,13 +128,12 @@ public class OIDCAuthorization {
 	 * Gets the url processor.
 	 *
 	 * @return the url processor
-	 * @throws IOException
-	 * @throws URISyntaxException
-	 * @throws ParseException
-	 * @throws KeyStoreException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public URLProcessor getUrlProcessor() throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		if (urlProcessor == null) {
@@ -147,7 +146,7 @@ public class OIDCAuthorization {
 	 * Sets the trust store.
 	 *
 	 * @param trustStoreFile the new trust store
-	 * @throws URISyntaxException
+	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public void setTrustStore(File trustStoreFile) throws URISyntaxException {
 		this.truststoreFile = trustStoreFile;
@@ -244,7 +243,7 @@ public class OIDCAuthorization {
 	 * Checks if OIDC token is valid, so access has been granted.
 	 *
 	 * @return true, if is valid
-	 * @throws URISyntaxException
+	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public boolean isValid() throws URISyntaxException {
 		if (getOIDCClient().getAccessToken() != null) {
@@ -258,7 +257,7 @@ public class OIDCAuthorization {
 	 *
 	 * @return the user ID
 	 * @throws OIDCProblemException if the token is not valid/the user is not authenticated yet
-	 * @throws URISyntaxException
+	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public String getUserID() throws OIDCProblemException, URISyntaxException {
 		String userID;
@@ -276,14 +275,13 @@ public class OIDCAuthorization {
 
 	/**
 	 * Initiates the authorization process by setting the necessary URIs and data to the OIDC client and preparing the URLProcessor.
-	 * 
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws KeyStoreException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 *
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public void init() throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
@@ -310,13 +308,12 @@ public class OIDCAuthorization {
 	 * @param username the username
 	 * @param password the password
 	 * @return true, if successful
-	 * @throws IOException
-	 * @throws URISyntaxException
-	 * @throws ParseException
-	 * @throws KeyStoreException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public boolean authorizeByUserAndPW(String username, String password) throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
@@ -348,10 +345,12 @@ public class OIDCAuthorization {
 	 * Access some resource previously set by {@link #setResourceURI(String)}. If not accessible, show user/password dialog
 	 *
 	 * @return true, if successful
-	 * @throws KeyStoreException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public boolean accessResource() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
@@ -386,16 +385,15 @@ public class OIDCAuthorization {
 	/**
 	 * Access some resource like {@link #accessResource()}, but also provide the presetUsername/owner for the dialog.
 	 *
-	 * @param url the url
 	 * @param presetUsername the preset username
 	 * @param owner the owner frame
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws KeyStoreException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @return true, if successful
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public boolean accessResource(String presetUsername, Window owner) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		this.presetUsername = presetUsername;
@@ -409,13 +407,13 @@ public class OIDCAuthorization {
 	 * @param url the url
 	 * @param presetUsername the preset username
 	 * @param owner the owner frame
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws KeyStoreException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @return true, if successful
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public boolean accessResource(String url, String presetUsername, Window owner) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		this.setResourceURI(url);
@@ -490,7 +488,7 @@ public class OIDCAuthorization {
 		 * Sets the upload file.
 		 *
 		 * @param uploadFile the new upload file
-		 * @throws IOException
+		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
 		public void setUploadFile(File uploadFile) throws IOException {
 			this.uploadFile = uploadFile;
@@ -552,10 +550,10 @@ public class OIDCAuthorization {
 		 * @param requestURL the request URL
 		 * @return the URL processor
 		 * @throws IOException Signals that an I/O exception has occurred.
-		 * @throws KeyStoreException 
-		 * @throws CertificateException 
-		 * @throws NoSuchAlgorithmException 
-		 * @throws KeyManagementException 
+		 * @throws KeyManagementException the key management exception
+		 * @throws NoSuchAlgorithmException the no such algorithm exception
+		 * @throws CertificateException the certificate exception
+		 * @throws KeyStoreException the key store exception
 		 */
 		public URLProcessor prepare(URL requestURL) throws IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 //			System.out.println("requestURL=");
@@ -610,8 +608,8 @@ public class OIDCAuthorization {
 
 		/**
 		 * Inject a file to upload into the URLConnection and set method to POST.
-		 * 
-		 * @throws IOException
+		 *
+		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
 		public void injectUpload() throws IOException {
 			

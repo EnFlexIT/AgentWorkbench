@@ -7,6 +7,7 @@
 		<groupId>org.agentgui</groupId>
 		<artifactId>org.agentgui.root</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../org.agantgui</relativePath>
 	</parent>
 
 	<properties>
@@ -19,26 +20,79 @@
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-document-bundle-plugin</artifactId>
 				<version>${tycho-extras-version}</version>
-				<configuration>
-				<cleanFirst>true</cleanFirst>
-				<javadocOptions>
-					<ignoreError>false</ignoreError>
-					<encoding>UTF-8</encoding>
-					<includes>
-						<include>de.enflexit.*</include>
-						<include>org.agentgui.*</include>
-					</includes>
-					<excludes>
-						<exclude>org.agentgui.sample.*</exclude>
-					</excludes>
-					<additionalArguments>
-						<additionalArgument>-windowtitle "Agent.Workbench - API"</additionalArgument>
-						<additionalArgument>-nosince</additionalArgument>
-					</additionalArguments>
-				</javadocOptions>
-			</configuration>
+				<executions>
+					<execution>
+						<id>eclipse-javadoc</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+						<configuration>
+							<cleanFirst>true</cleanFirst>
+							<outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
+							<tocFile>${project.basedir}/help/api_docs.xml</tocFile>
+							<tocOptions>
+								<mainLabel>Agent.Workbench API</mainLabel>
+							</tocOptions>
+							<javadocOptions>
+								<ignoreError>true</ignoreError>
+								<encoding>UTF-8</encoding>
+								<includes>
+									<include>de.enflexit.*</include>
+									<include>org.agentgui.*</include>
+									<include>agentgui.*</include>
+								</includes>
+								<excludes>
+									<exclude>org.agentgui.sample.*</exclude>
+								</excludes>
+								<additionalArguments>
+									<additionalArgument>-windowtitle "Agent.Workbench - API"</additionalArgument>
+									<additionalArgument>-link http://docs.oracle.com/javase/8/docs/api/</additionalArgument>
+									<additionalArgument>-linkoffline ../../${platform.api} http://help.eclipse.org/photon/topic/org.eclipse.platform.doc.isv/reference/api/</additionalArgument>
+									<additionalArgument>-nosince</additionalArgument>
+								</additionalArguments>
+							</javadocOptions>
+						</configuration>					
+					</execution>
+				</executions>
 			</plugin>
 			
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.eclipse.tycho.extras
+										</groupId>
+										<artifactId>
+											tycho-document-bundle-plugin
+										</artifactId>
+										<versionRange>
+											[1.2.0,)
+										</versionRange>
+										<goals>
+											<goal>javadoc</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
+	<version>2.1.4-SNAPSHOT</version>
 </project>

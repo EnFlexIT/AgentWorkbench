@@ -8,8 +8,6 @@ package de.enflexit.common.bundleEvaluation;
  * component's <code>addBundleClassFilterListener</code> method. When
  * the bundleClassFilter event occurs, that object's appropriate
  * method is invoked.
- *
- * @see BundleClassFilterEvent
  */
 public interface BundleClassFilterListener {
 

@@ -18,16 +18,20 @@ public class Language {
 	public static Translator getTranslator() {
 		return translator;
 	}
+	
 	/**
 	 * Sets the translator.
-	 * @param translator the new translator
+	 * @param newTranslator the new translator
 	 */
 	public static void setTranslator(Translator newTranslator) {
 		translator = newTranslator;
 	}
 	
 	/**
-	 * Translate one expression, which is based on a German expression
+	 * Translate one expression, which is based on a German expression.
+	 *
+	 * @param deExpression the de expression
+	 * @return the string
 	 */
 	public static String translate(String deExpression) {
 		return translate(deExpression, SourceLanguage.DE);

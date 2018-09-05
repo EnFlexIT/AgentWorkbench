@@ -86,6 +86,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Instantiates a new OIDC panel.
+	 * @param owner the owner that is the current OIDCAuthorization
 	 */
 	public OIDCPanel(OIDCAuthorization owner) {
 		super();
@@ -235,9 +236,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Display result.
-	 * 
+	 *
 	 * @param successful the successful
-	 * @param userName 
+	 * @param message the message
+	 * @param userName the user name
 	 */
 	public void displayResult(boolean successful, String message, String userName) {
 		this.getJLabelResult().setVisible(true);

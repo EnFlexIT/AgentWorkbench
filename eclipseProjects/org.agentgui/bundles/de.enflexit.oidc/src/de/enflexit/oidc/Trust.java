@@ -57,12 +57,12 @@ public class Trust {
 	 *
 	 * @param connection the connection
 	 * @param trustStoreFile the trust store file
-	 * @throws IOException 
-	 * @throws KeyStoreException 
-	 * @throws FileNotFoundException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws KeyStoreException the key store exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void trustSpecific(HttpsURLConnection connection, File trustStoreFile) throws KeyManagementException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, KeyStoreException, IOException {
 		connection.setSSLSocketFactory(getSocketFactory(trustStoreFile));
@@ -73,12 +73,12 @@ public class Trust {
 	 *
 	 * @param trustStoreFile the trust store file
 	 * @return the socket factory
-	 * @throws IOException 
-	 * @throws KeyStoreException 
-	 * @throws FileNotFoundException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws KeyStoreException the key store exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static SSLSocketFactory getSocketFactory(File trustStoreFile) throws KeyManagementException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, KeyStoreException, IOException {
 		SSLContext trustableSSLContext = getTrustableSSLContext(trustStoreFile);
@@ -90,12 +90,12 @@ public class Trust {
 	 *
 	 * @param trustStoreFile the trust store file
 	 * @return the trustable SSL context
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 * @throws CertificateException
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyStoreException
-	 * @throws KeyManagementException
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws KeyStoreException the key store exception
+	 * @throws KeyManagementException the key management exception
 	 */
 	private static SSLContext getTrustableSSLContext(File trustStoreFile) throws NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, KeyStoreException, KeyManagementException {
 		SSLContext sslContext = null;

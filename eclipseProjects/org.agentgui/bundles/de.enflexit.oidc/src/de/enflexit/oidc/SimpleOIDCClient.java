@@ -218,10 +218,10 @@ public class SimpleOIDCClient {
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ParseException the parse exception
-	 * @throws KeyStoreException
-	 * @throws CertificateException
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public void retrieveProviderMetadata() throws IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
@@ -292,16 +292,16 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Client registration
-	 * If the provider supports dynamic registration, a new client can be registered using the client registration process:
-	 * 
+	 * If the provider supports dynamic registration, a new client can be registered using the client registration process:.
+	 *
 	 * @param initialAccessToken the initial access token
 	 * @throws SerializeException the serialize exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ParseException the parse exception
-	 * @throws KeyStoreException
-	 * @throws CertificateException
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public void registerClient(BearerAccessToken initialAccessToken) throws SerializeException, IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 
@@ -483,12 +483,12 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Token Request
-	 * When an authorization code (using code or hybrid flow) has been obtained, a token request can made to get the access token and the id token:
-	 * 
-	 * @throws KeyStoreException
-	 * @throws CertificateException
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
+	 * When an authorization code (using code or hybrid flow) has been obtained, a token request can made to get the access token and the id token:.
+	 *
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
 	 */
 	public void requestToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 
@@ -542,8 +542,8 @@ public class SimpleOIDCClient {
 	/**
 	 * Dump token info.
 	 *
-	 * @throws ParseException the parse exception
-	 * @throws java.text.ParseException
+	 * @throws com.nimbusds.oauth2.sdk.ParseException the nimbusds parse exception
+	 * @throws java.text.ParseException the java text parse exception
 	 */
 	public void dumpTokenInfo() throws ParseException, java.text.ParseException {
 		System.out.println("Access Token:");
@@ -564,15 +564,15 @@ public class SimpleOIDCClient {
 
 	/**
 	 * UserInfo Request
-	 * Using the access token, information about the end user can be obtained by making a user info request
-	 * 
-	 * @throws KeyStoreException
-	 * @throws CertificateException
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
-	 * @throws ParseException
-	 * @throws IOException
-	 * @throws FileNotFoundException
+	 * Using the access token, information about the end user can be obtained by making a user info request.
+	 *
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
+	 * @throws ParseException the parse exception
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void requestUserInfo() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, ParseException, FileNotFoundException, IOException {
 		if (accessToken == null) {
@@ -629,7 +629,7 @@ public class SimpleOIDCClient {
 	 * Gets the id claims.
 	 * 
 	 * @return the id claims
-	 * @throws java.text.ParseException
+	 * @throws java.text.ParseException the java text parse exception
 	 */
 	public JWTClaimsSet getIdClaims() {
 		try {
