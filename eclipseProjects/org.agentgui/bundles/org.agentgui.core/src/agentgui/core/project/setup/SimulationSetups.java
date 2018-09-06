@@ -84,7 +84,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		String XMLPathName = null;
 						
 		this.currSimSetupName = SimulationSetups.DEFAULT_SETUP_NAME;
-		xmlFile = currProject.getSimulationSetups().getSuggestSetupFile(currSimSetupName);
+		xmlFile = this.getSuggestSetupFile(currSimSetupName);
 		
 		this.put(currSimSetupName, xmlFile);
 		this.currProject.setSimulationSetupCurrent(currSimSetupName);
@@ -112,7 +112,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Set focus to the current setup -------------
 		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_ADD_NEW, name, true);
 		// --- Save project -------------------------------
-		currProject.save();
+		this.saveProject(true);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 			this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD,this.getFirstSetup(), false);
 		}
 		// --- Save project -------------------------------
-		currProject.save();
+		this.saveProject(false);
 	}
 	
 	/**
@@ -161,27 +161,27 @@ public class SimulationSetups extends Hashtable<String, String> {
 		this.currSimSetup.save();
 		
 		// --- Prepare folder info and copy XML file ------
-		String pathSimXML  = this.currProject.getSubFolder4Setups(true);
-		String fileNameXMLNew = pathSimXML + fileNameNew; 
-		FileCopier fc = new FileCopier();
-		fc.copyFile(currSimXMLFile, fileNameXMLNew);
+		File oldFileNameXML = new File(this.currSimXMLFile);
+		File newFileNameXML = new File(this.currProject.getSubFolder4Setups(true) + fileNameNew);
 		
-		// --- Copy user object file ----------------------
-		String userObjectFileNameOld = Application.getGlobalInfo().getBinFileNameFromXmlFileName(this.currSimXMLFile);
-		String userObjectFileNameNew = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXMLNew);
-		fc = new FileCopier();
-		fc.copyFile(userObjectFileNameOld, userObjectFileNameNew);
+		File oldFileNameUserObject = new File(Application.getGlobalInfo().getBinFileNameFromXmlFileName(this.currSimXMLFile));
+		File newFileNameUserObject = new File(Application.getGlobalInfo().getBinFileNameFromXmlFileName(newFileNameXML.getAbsolutePath()));
+
+		if (oldFileNameXML.exists()==true && newFileNameXML.exists()==false) {
+			oldFileNameXML.renameTo(newFileNameXML);
+		}
 		
-		// --- Remove old file and old entry --------------
-		new File(currSimXMLFile).delete();
-		new File(userObjectFileNameOld).delete();
+		if (oldFileNameUserObject.exists()==true && newFileNameUserObject.exists()==false) {
+			oldFileNameUserObject.renameTo(newFileNameUserObject);
+		}
+		
+		// --- Edit local entries -------------------------
 		this.remove(nameOld);
-		
-		// --- Insert new entry ----------------------------
 		this.put(nameNew, fileNameNew);
+		
 		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_RENAME, nameNew, false);
 		// --- Save Project -------------------------------
-		this.currProject.save();
+		this.saveProject(false);
 	}
 
 	/**
@@ -195,7 +195,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 		if (this.containsKey(nameOld)==false) return;
 		// --- Save current state and project -------------
-		this.currProject.save();
+		this.saveProject(true);
 		
 		// --- Prepare folder info and copy XML file ------
 		String pathSimXML  = this.currProject.getSubFolder4Setups(true);
@@ -213,7 +213,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		this.put(nameNew, fileNameNew);
 		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_COPY, nameNew, false);
 		// --- Save Project --------------------------
-		this.currProject.save();
+		this.saveProject(false);
 	}
 	
 	/**
@@ -243,6 +243,17 @@ public class SimulationSetups extends Hashtable<String, String> {
 		this.currProject.setChangedAndNotify(new SimulationSetupNotification(action));
 		return done;
 		
+	}
+	
+	/**
+	 * Saves the current project.
+	 */
+	private void saveProject(boolean alsoSaveSetup) {
+		if (this.currProject!=null) {
+			if (this.currProject.isUnsaved()==true) {
+				this.currProject.save();
+			}
+		}
 	}
 	
 	/**

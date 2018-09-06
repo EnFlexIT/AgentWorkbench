@@ -104,6 +104,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/** The abstract environment model is just an open slot, where individual things can be placed. */
 	private AbstractEnvironmentModel abstractEnvironmentModel;
 
+	/** The is temporary prevent saving. */
+	private boolean isTemporaryPreventSaving;
 	
 	/**
 	 * The constructor for the GraphEnvironmentController for displaying the current environment model during a running simulation. Use {@link #setDisplayEnvironmentModel(DisplaytEnvironmentModel)}, in order to set the current {@link NetworkModel}.
@@ -383,45 +385,58 @@ public class GraphEnvironmentController extends EnvironmentController {
 		final String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
 		if (fileName != null) {
 
+			this.isTemporaryPreventSaving = true;
+			
 			Thread envLoader = new Thread(new Runnable() {
 				@Override
 				public void run() {
 
-					if (Application.getMainWindow() != null) {
-						Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
-					}
+					try {
 
-					// --- register the list of agents, which has to be started with the environment ------
-					GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
-					GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-
-					// --- Load the graph topology from the graph file ------------------------------------
-					File graphFile = new File(getEnvFolderPath() + fileName);
-					networkModel.loadGraphFile(graphFile);
-
-					// --- Load the component definitions from the component file -------------------------
-					File componentsFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
-					networkModel.loadComponentsFile(componentsFile);
-
-					// --- Load component type settings from file ---------------------------------------------
-					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
-					// --- Remind the list of custom toolbar elements -----------------------------------------
-					if (GraphEnvironmentController.this.getNetworkModel() != null) {
-						GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
-						if (gg4mas!=null) {
-							ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
+						// --- Set application status text ----------------------------------------
+						if (Application.getMainWindow() != null) {
+							Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+							Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
 						}
+	
+						// --- Register agents that have to be started with the environment -------
+						GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
+						GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+
+						// --- Load the graph topology from the graph file ------------------------
+						File graphFile = new File(getEnvFolderPath() + fileName);
+						networkModel.loadGraphFile(graphFile);
+						
+						// --- Load the component definitions from the component file -------------
+						File componentsFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
+						networkModel.loadComponentsFile(componentsFile);
+						
+						// --- Load component type settings from file -----------------------------
+						GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
+						// --- Remind the list of custom toolbar elements -------------------------
+						if (GraphEnvironmentController.this.getNetworkModel() != null) {
+							GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
+							if (gg4mas!=null) {
+								ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
+							}
+						}
+
+						// --- Assign settings to the NetworkModel --------------------------------
+						networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
+						
+						// --- Use the local method in order to inform the observer -------------------
+						GraphEnvironmentController.this.setDisplayEnvironmentModel(networkModel);
+						
+						// --- Decode the data models that are Base64 encoded in the moment -----------
+						GraphEnvironmentController.this.setNetworkComponentDataModelBase64Decoded();
+						
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						
+					} finally {
+						GraphEnvironmentController.this.isTemporaryPreventSaving = false;
 					}
-					// --- Assign settings to the NetworkModel ------------------------------------------------
-					networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
-
-					// --- Use the local method in order to inform the observer -------------------------------
-					GraphEnvironmentController.this.setDisplayEnvironmentModel(networkModel);
-
-					// --- Decode the data models that are Base64 encoded in the moment -----------------------
-					GraphEnvironmentController.this.setNetworkComponentDataModelBase64Decoded();
-
+					
 				}
 			});
 			envLoader.setName("GraphEnvrionmentLoader");
@@ -442,9 +457,20 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	protected void saveEnvironment() {
 
+		// --- Check if saving is currently allowed ----------------- 
+		while (this.isTemporaryPreventSaving==true) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException iEx) {
+				iEx.printStackTrace();
+				break;
+			}
+		}
+		
+		// --- Prepare for saving -----------------------------------
 		this.validateNetworkComponentAndAgents2Start();
 		this.saveGeneralGraphSettings();
-		if (this.getNetworkModel() != null && this.getNetworkModel().getGraph() != null) {
+		if (this.getNetworkModel()!=null && this.getNetworkModel().getGraph()!=null) {
 			
 			File graphFile = this.getFileGraphML();
 			this.getNetworkModel().saveGraphFile(graphFile);

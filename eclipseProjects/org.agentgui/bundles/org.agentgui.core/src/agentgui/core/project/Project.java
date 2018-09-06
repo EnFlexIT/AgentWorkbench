@@ -499,7 +499,14 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public boolean save() {
 		return this.save(new File(this.getProjectFolderFullPath()), true);
 	}
-	
+	/**
+	 * Saves the current Project to the default project files 'agentgui.xml' and agentgui.bin.
+	 * @param saveSetup set to true if the current simulation setup should be saved
+	 * @return true, if successful
+	 */
+	public boolean save(boolean saveSetup) {
+		return this.save(new File(this.getProjectFolderFullPath()), saveSetup, true);
+	}
 	/**
 	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
 	 * @param projectPath the project path where the files have to be stored
@@ -509,8 +516,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public boolean save(File projectPath, boolean saveSetup) {
 		return this.save(projectPath, saveSetup, true);
 	}
-
-	
 	/**
 	 * Saves the current Project to the files 'agentgui.xml', and optionally agentgui.bin.
 	 * @param projectPath the project path where the files have to be stored

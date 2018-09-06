@@ -161,6 +161,7 @@ de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie 
 de;Der Name;The name
 de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The port for the MTP address must match a value other than 0!;;;
 de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
+de;Der gewählte Bezeichner für das Projektverzeichnis enthält<br>unzulässige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benötigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulässig (verwenden Sie <br>stattdessen _ 'Unterstrich').;;;;
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
 de;Details zum Dateiexport;Details of file export;;;
 de;Deutsch;German

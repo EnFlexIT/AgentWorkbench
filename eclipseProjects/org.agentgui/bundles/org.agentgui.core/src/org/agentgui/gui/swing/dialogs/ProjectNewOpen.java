@@ -28,9 +28,13 @@
  */
 package org.agentgui.gui.swing.dialogs;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -44,6 +48,7 @@ import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -54,11 +59,11 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -68,13 +73,6 @@ import org.agentgui.gui.AwbProjectNewOpenDialog;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-
-import java.awt.Color;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JCheckBox;
 
 /**
  * This GUI is used in order to create, open or delete a project.
@@ -95,7 +93,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 	private JLabel jLabelDummy;
 	private JLabel jLabelLineHorizontal;
 	private JTextField jTextFieldProjectName;
-	private JTextField jTextFieldProjectDirectory;
+	private JTextField jTextFieldProjectSubDirectory;
 	
 	private JScrollPane jScrollTree;
 	private JTree projectTree;
@@ -140,22 +138,22 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 	    case NewProject:
 	    	jButtonOK.setText("OK");
 	    	jTextFieldProjectName.setEnabled(true);
-	    	jTextFieldProjectDirectory.setEnabled(true);
+	    	jTextFieldProjectSubDirectory.setEnabled(true);
 	    	break;
 	    case OpenProject:
 	    	jButtonOK.setText("Öffnen");
 	    	jTextFieldProjectName.setEnabled(false);
-	    	jTextFieldProjectDirectory.setEnabled(false);	    
+	    	jTextFieldProjectSubDirectory.setEnabled(false);	    
 	    	break;
 	    case ExportProject:
 	    	jButtonOK.setText("Exportieren");
 	    	jTextFieldProjectName.setEnabled(false);
-	    	jTextFieldProjectDirectory.setEnabled(false);	    
+	    	jTextFieldProjectSubDirectory.setEnabled(false);	    
 	    	break;
 	    case DeleteProject:
 	    	jButtonOK.setText("Löschen");
 	    	jTextFieldProjectName.setEnabled(false);
-	    	jTextFieldProjectDirectory.setEnabled(false);	    
+	    	jTextFieldProjectSubDirectory.setEnabled(false);	    
 	    	break;
 	    }
 	    jButtonOK.setText(Language.translate(jButtonOK.getText()));
@@ -316,7 +314,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			jContentPane.add(jLabel2, gridBagConstraints2);
 			jContentPane.add(jLabelLineHorizontal, gridBagConstraints3);
 			jContentPane.add(getJTextFieldProjectName(), gridBagConstraints5);
-			jContentPane.add(getJTextFieldProjectFolder(), gridBagConstraints6);
+			jContentPane.add(getJTextFieldProjectSubDirectory(), gridBagConstraints6);
 			jContentPane.add(getJScrollTree(), gridBagConstraints7);
 			jContentPane.add(getJPanelButtons(), gridBagConstraints11);
 			if (this.currDialogAction==ProjectAction.DeleteProject) {
@@ -358,62 +356,49 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			jTextFieldProjectName.setPreferredSize(new Dimension(50, 26));
 			jTextFieldProjectName.getDocument().addDocumentListener(new DocumentListener() {
 				
-				private String currText = null;
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					this.getCurrText(e);
-					jTextFieldProjectDirectory.setText( getSuggestProjectFolder() );
+					this.setSuggestedProjectSubDirectory();
 				}
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					this.getCurrText(e);
-					jTextFieldProjectDirectory.setText( getSuggestProjectFolder() );
+					this.setSuggestedProjectSubDirectory();
 				}
 				@Override
 				public void changedUpdate(DocumentEvent e) {
-					this.getCurrText(e);
-					jTextFieldProjectDirectory.setText( getSuggestProjectFolder() );					
+					this.setSuggestedProjectSubDirectory();
 				}
-				private String getCurrText(DocumentEvent e) {
-					try {
-						currText = e.getDocument().getText(0, e.getDocument().getLength());
-					} catch (BadLocationException e1) {
-						e1.printStackTrace();
+				private void setSuggestedProjectSubDirectory() {
+					
+					String projectName = ProjectNewOpen.this.getJTextFieldProjectName().getText();
+					if (projectName==null) {
+						projectName = "";
+					} else {
+						// --- Remove unwanted characters -----------
+						projectName = projectName.toLowerCase();
+						projectName = projectName.replaceAll("  ", " ");
+						projectName = projectName.replace(" ", "-");
+						projectName = projectName.replace("ä", "ae");
+						projectName = projectName.replace("ö", "oe");
+						projectName = projectName.replace("ü", "ue");
 					}
-					return currText;
-				}
-				private String getSuggestProjectFolder() {
 					
-					String RegExp = "[a-z;_]";
-					String suggest = currText;
-					String suggestNew = "";
-					int cut = 0;
-					
-					// --- Vorarbeiten ------------------------------
-					suggest = suggest.toLowerCase();
-					suggest = suggest.replaceAll("  ", " ");
-					suggest = suggest.replace(" ", "_");
-					suggest = suggest.replace("ä", "ae");
-					suggest = suggest.replace("ö", "oe");
-					suggest = suggest.replace("ü", "ue");
-					
-					// --- Alle Buchstaben untersuchen --------------
-					for (int i = 0; i < suggest.length(); i++) {
-						String SngChar = "" + suggest.charAt(i);
-						if ( SngChar.matches( RegExp ) == true ) {
-							suggestNew = suggestNew + SngChar;	
+					// --- Check all characters ---------------------
+					String regExp = "[a-z;_;-]";
+					String suggestion = "";
+					for (int i = 0; i < projectName.length(); i++) {
+						String singleChar = "" + projectName.charAt(i);
+						if (singleChar.matches(regExp) == true) {
+							suggestion = suggestion + singleChar;	
 						}						
 				    }
-					suggest = suggestNew;
-					suggest = suggest.replaceAll("__", "_");
+					suggestion = suggestion.replaceAll("--", "-");
 					
 					// --- Set to maximal length --------------------
-					if (suggest.length()>20) {
-						cut = 20;
-					} else {
-						cut = suggest.length();
+					if (suggestion.length()>20) {
+						suggestion = suggestion.substring(0, 20);
 					}
-					return suggest.substring(0,cut);
+					ProjectNewOpen.this.getJTextFieldProjectSubDirectory().setText(suggestion);
 				}
 				
 			});
@@ -425,15 +410,15 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 	 * This method initializes jTextField.
 	 * @return javax.swing.JTextField
 	 */
-	private JTextField getJTextFieldProjectFolder() {
-		if (jTextFieldProjectDirectory == null) {
-			jTextFieldProjectDirectory = new JTextField();
-			jTextFieldProjectDirectory.setName("ProjectFolder");
-			jTextFieldProjectDirectory.setFont(new Font("Dialog", Font.PLAIN, 12));		
-			jTextFieldProjectDirectory.setPreferredSize(new Dimension(50, 26));
-			jTextFieldProjectDirectory.addActionListener(this);
+	private JTextField getJTextFieldProjectSubDirectory() {
+		if (jTextFieldProjectSubDirectory == null) {
+			jTextFieldProjectSubDirectory = new JTextField();
+			jTextFieldProjectSubDirectory.setName("ProjectFolder");
+			jTextFieldProjectSubDirectory.setFont(new Font("Dialog", Font.PLAIN, 12));		
+			jTextFieldProjectSubDirectory.setPreferredSize(new Dimension(50, 26));
+			jTextFieldProjectSubDirectory.addActionListener(this);
 		}
-		return jTextFieldProjectDirectory;
+		return jTextFieldProjectSubDirectory;
 	}
 
 	/**
@@ -617,14 +602,14 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 	 * @param text the new var project folder
 	 */
 	public void setProjectDirectory(String text) {
-		jTextFieldProjectDirectory.setText(text);
+		jTextFieldProjectSubDirectory.setText(text);
 	}
 	/**
 	 * Gets the var project folder.
 	 * @return the var project folder
 	 */
 	public String getProjectDirectory() {
-		return jTextFieldProjectDirectory.getText();
+		return jTextFieldProjectSubDirectory.getText();
 	}
 	
 	/**
@@ -652,7 +637,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			setVisible(false);
 		} else if ( action == jTextFieldProjectName ) {
 			// --- Do Nothing yet
-		} else if ( action == jTextFieldProjectDirectory ) {
+		} else if ( action == jTextFieldProjectSubDirectory ) {
 			jButtonOK.doClick();
 		} else if ( action == jCheckBoxExportBefore) {
 			this.setExportBeforeDelete(jCheckBoxExportBefore.isSelected());
@@ -708,14 +693,14 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			setProjectDirectory(projectFolder);		
 			// ----------------------------------------------------
 			// --- Check for regular expression -------------------
-			String RegExp = "[a-z_]{3,}";
-			if ( projectError==false && projectFolder.matches( RegExp ) == false ) {
+			String regExpression = "[a-z_-]{3,}";
+			if (projectError==false && projectFolder.matches(regExpression)==false) {
 				projectErrorSource = "ProFolderRegEx";
 				projectError = true;
 			}
 			// ----------------------------------------------------
 			// --- Does the project directory already exists? -----
-			if ( projectError==false ) {
+			if (projectError==false) {
 				String[] IDEProjects = Application.getGlobalInfo().getProjectSubDirectories();
 				if (IDEProjects!=null) {
 					for ( String Pro : IDEProjects ) {
@@ -729,14 +714,14 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			}
 			// ----------------------------------------------------
 			// --- Test: Basis-Verzeichnis anlegen ----------------
-			if ( projectError==false ) {
+			if (projectError==false) {
 				String NewDirName = Application.getGlobalInfo().getPathProjects() + projectFolder;
 				File f = new File(NewDirName);
-				if ( f.isDirectory() ) {
+				if (f.isDirectory()) {
 					projectErrorSource = "ProFolderDouble";
-					projectError = true;	
-				} 
-				else {
+					projectError = true;
+					
+				} else {
 					if ( f.mkdir() == false ) {
 						projectErrorSource = "ProFolderCreate";
 						projectError = true;	
@@ -747,24 +732,25 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			// ----------------------------------------------------
 			// --- Show Error-Msg, if an error occurs -------------
 			if (projectError==true) {
-				if ( projectErrorSource == "ProName" ) {
+				
+				if (projectErrorSource.equals("ProName")) {
 					msgTitle = Language.translate("Fehler - Projektname !");
 					msgText = Language.translate(
 								 "Bitte geben Sie einen Projektnamen an!" + newLine + newLine + 
 								 "Zulässig sind beliebige Zeichen " + newLine +
-								 "sowie Leerzeichen." );			
-				}
-				else if ( projectErrorSource == "ProFolder" ) {
+								 "sowie Leerzeichen.");
+					
+				} else if (projectErrorSource.equals("ProFolder")) {
 					msgTitle = Language.translate("Fehler - Projektverzeichnis !");
 					msgText = Language.translate(
 								 "Bitte geben Sie ein korrektes Projektverzeichnis an!" + newLine + newLine + 
 								 "Zulässig sind beliebige Zeichen (Kleinbuchstaben), die den " + newLine +
 								 "Konventionen für Verzeichnisse in Ihrem Betriebssystems" + newLine +
 								 "entsprechen. " + newLine + newLine +
-								 "Leerzeichen sind nicht zulässig!" );			
-				}
-				else if ( projectErrorSource == "ProFolderRegEx" ) {
-					msgTitle = Language.translate("Fehler - Projektverzeichnis !" );
+								 "Leerzeichen sind nicht zulässig!");
+					
+				} else if (projectErrorSource.equals("ProFolderRegEx")) {
+					msgTitle = Language.translate("Fehler - Projektverzeichnis !");
 					msgText = Language.translate(
 							 "Der gewählte Bezeichner für das Projektverzeichnis enthält" + newLine +  
 							 "unzulässige oder zu wenige Zeichen! " + newLine + newLine +
@@ -772,16 +758,17 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 							 "Erlaubt sind nur Kleinbuchstaben. Umlaute und" + newLine +
 							 "Leerzeichen sind nicht zulässig (verwenden Sie " + newLine +
 							 "stattdessen _ 'Unterstrich').");
-				}
-				else if ( projectErrorSource == "ProFolderDouble" ) {
-					msgTitle = Language.translate("Fehler - Projektverzeichnis !" );
+					
+				} else if (projectErrorSource.equals("ProFolderDouble")) {
+					msgTitle = Language.translate("Fehler - Projektverzeichnis !");
 					msgText = Language.translate(
 							 "Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!" + newLine + newLine + 
-							 "Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis" );
-				}
-				else if ( projectErrorSource == "ProFolderCreate" ) {
-					msgTitle = Language.translate("Fehler - Projektverzeichnis !" );
-					msgText = Language.translate("Das Verzeichnis konnte nicht aangelegt werden !" );
+							 "Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis");
+					
+				} else if (projectErrorSource.equals("ProFolderCreate")) {
+					msgTitle = Language.translate("Fehler - Projektverzeichnis !");
+					msgText = Language.translate("Das Verzeichnis konnte nicht aangelegt werden !");
+					
 				}
 				JOptionPane.showMessageDialog( this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
 			}
