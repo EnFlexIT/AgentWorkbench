@@ -16,11 +16,11 @@ Extract Agent.Workbench at a desired location on your file system. Afterwards st
 
 ![](.gitbook/assets/02_benchmarkwindow.png)
 
-## Define a target Agent.Workbench Project {#install-agent-workbench}
+### Define a target Agent.Workbench Project
 
 To develop your own agent system or work on an existing agent project requires to define a target AWB project. These two options are described in the following.
 
-### Open an Agent Project from the Project Repository
+#### Open an Agent Project from the Project Repository
 
 Use the _**Repository-Import**_ in the _**Projects**_ menu to open the _**Project-Repository Explorer**_.  Such repository is used to provide ready-to-run projects to end users. Additionally it enables to distribute updates of agent projects. 
 
@@ -28,7 +28,7 @@ To import a project, simply select the desired project in the tree. If not alrea
 
 With AWB projects you can define required OSGI/Eclipse-features. If not already installed, the required features will be downloaded and installed. Thereafter, the application will automatically restarted and the project will be opened.    
 
-### Create an Agent Project
+#### Create an Agent Project
 
 After the benchmark, click _**New Project**_ in the tool bar or by using the menu _**Projects**_ =&gt; ![](.gitbook/assets/mbnew.png) _**New Project.**_ Define a project title and the folder for your project and click _**OK**_.![](.gitbook/assets/03_createnewproject.png)
 
@@ -46,9 +46,9 @@ Since the installer wants to create directories and copy files to it, execute th
 
 ![](.gitbook/assets/05_eclipseinstaller.png)
 
-## Setup the Eclipse-Workspace {#setup-the-eclipse-workspace}
+### Setup the Eclipse-Workspace
 
-### For Beginners
+#### For Beginners
 
 If you have never worked with Eclipse, you should first take the time to read one of the available beginner tutorials in the web. Some of them are:
 
@@ -71,7 +71,7 @@ If you prefer a video tutorial, you might like one of these:
 
 Starting your Eclipse IDE the first time, you will be prompted to define a workspace directory. _Background_: Eclipse organizes Java projects in different, so-called workspaces. For example: while you develop your website code in one workspace, you can develop your agent system in another. Thus it can be avoided to mix-up things that do not belong to each other.
 
-### For Advanced
+#### For Advanced
 
 If you are already using Eclipse for a while, you will be probably aware about switching a workspace. For sake of completeness: Go to menu _**File**_ =&gt; _**Switch Workspace**_ =&gt; _**Other**_ ****and Browse for the desred workspace location.
 
@@ -83,7 +83,7 @@ As next, we have to make sure that we use the right [Perspective](https://www.tu
 
 ![](.gitbook/assets/07_selectplug-inperspective.png)
 
-## Define the Target Platform for Agent Developments {#define-the-target-platform-for-agent-developments}
+### Define the Target Platform for Agent Developments
 
 With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with your own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
 
