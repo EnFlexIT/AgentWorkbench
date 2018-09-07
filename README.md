@@ -1,6 +1,6 @@
 # Introduction
 
-The documentaton is also available as a comprehensive [GitBook](https://enflexit.gitbook.io/agent-workbench/)!
+The documentaton is also available in our not yet comprehensive [GitBook](https://enflexit.gitbook.io/agent-workbench/)!
 
 ![](.gitbook/assets/splash.png)
 
