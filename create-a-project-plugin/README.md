@@ -4,7 +4,7 @@ This section shortly describes how you can define, develop and start your first 
 
 **Eclipse Projects & Agent.Workbench Projects**: We would like to mention here that, in the context of Agent.Workbench and Eclipse, the word "project" is used with two meanings. Since Agent.Workbench handles agents or Multi-Agent Systems \(MAS\) as self-containing projects on one hand site, also Eclipse uses the term "project" for Java or plug-in developments. This, in turn, makes it sometimes misleading, if we speak about an "agent project" in general. More precisely, we have to distinguish these project types to avoid a lingusitic misunderstanding.
 
-As a prerequisite, we assume that you have an installed Agent.Workbench and an Eclipse IDE \(**I**ntegrated **D**evelopment **E**nvironment\) that enables you to develop plug-ins \(an IDE that enables Java developments only, wil not be sufficient\). For further details see the [Getting Started](../getting-started/getting-started.md#getting-started) tutorial.
+As a prerequisite, we assume that you have an installed Agent.Workbench and an Eclipse IDE \(**I**ntegrated **D**evelopment **E**nvironment\) that enables you to develop plug-ins \(an IDE that enables Java developments only, wil not be sufficient\). For further details see the [Getting Started]() tutorial.
 
 In short words: Our goal here is to create an Eclipse-Plug-in and a first agent, start and debug this agent from the Eclipse IDE and finally, to export the developed agent into a Agent.Workbench project so that the agent application can work on its own \(without the IDE\). For this the following steps are to be done:
 
