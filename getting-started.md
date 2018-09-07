@@ -5,7 +5,7 @@ This section describes the required steps, to get started with the Agent.Workben
 * [Install Agent.Workbench](getting-started.md#install-agent-workbench): Go to our [GitHub-Site](https://github.com/EnFlexIT/AgentWorkbench/releases) and download the latetst release of Agent.Workbench \(for Windows, Linux or MacOS\).Just extract the provided archive and place it at a desired location.
 * [Create an Agent Project](getting-started.md#create-an-agent-project): After installation, start Agent.Workbench. The first start will execute a benchmark that helps us to classify your machine in case of [distributed agent executions](distributed-application.md). Go to the menu or toolbar and create a ![](.gitbook/assets/mbnew%20%281%29.png) _**New Project**_. That's it for the moment - simply close Agent.Workbench now.
 * [Install the Eclipse IDE](getting-started.md#install-eclipse-ide): We recommend to use the [Eclipse IDE for Java EE Developer](https://www.eclipse.org/downloads/) for your developments.
-* [Setup your Workspace](): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
+* [Setup your Workspace](getting-started.md#setup-the-eclipse-workspace): Create a new workspace. This is required, since you need to develop against the bundles of the Agent.Workbench installation.
 * [Define the Target Platform](getting-started.md#define-the-target-platform-for-agent-developments): Create a Target Platform definition that points to the Agent.Workbench installation.
 
 ## Install Agent.Workbench
