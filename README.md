@@ -1,6 +1,6 @@
 # Introduction
 
-The documentaton is also available in our not yet comprehensive [GitBook](https://enflexit.gitbook.io/agent-workbench/){:target="_blank"}
+The documentaton is also available in our not yet comprehensive [GitBook](https://enflexit.gitbook.io/agent-workbench/)
 
 ![Agent.Workbench-Splash](.gitbook/assets/splash.png)
 
