@@ -1,4 +1,4 @@
-# Introduction
+# Agent.Workbench
 
 The documentaton is also available in our not yet comprehensive [GitBook](https://enflexit.gitbook.io/agent-workbench/)
 
