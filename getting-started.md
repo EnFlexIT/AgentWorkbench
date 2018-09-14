@@ -10,7 +10,9 @@ This section describes the required steps, to get started with the Agent.Workben
 
 ## Install Agent.Workbench
 
-To install Agent.Workbench, navigate to the release section of our repository at github under [https://github.com/EnFlexIT/AgentWorkbench/releases](https://github.com/EnFlexIT/AgentWorkbench/releases). Depending on your operating system, select the installation package. Agent.Workbench is available for Windows, Linux and MacOS.![](.gitbook/assets/01_workbench-releases.png)
+To install Agent.Workbench, navigate to the release section of our repository at github under [https://github.com/EnFlexIT/AgentWorkbench/releases](https://github.com/EnFlexIT/AgentWorkbench/releases). Depending on your operating system, select the installation package. Agent.Workbench is available for Windows, Linux and MacOS.
+
+![](.gitbook/assets/01_workbench-releases.png)
 
 Extract Agent.Workbench at a desired location on your file system. Afterwards start the executable of the program \(e.g. AgentWorkbench.exe, AgentWorkbench.app or AgentWorkbench\). After the splash, the main application window appears and and the SciMark 2.0 benchmark will be executed.
 
