@@ -87,7 +87,9 @@ As next, we have to make sure that we use the right [Perspective](https://www.tu
 
 With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with your own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
 
-To do so, open the Eclipse preferences \(menu _**Window**_ =&gt; _**Preferences**_\) and type the word 'target' into the search text field \(see image\).![](.gitbook/assets/08_targetplatform_preferences.png)
+To do so, open the Eclipse preferences \(menu _**Window**_ =&gt; _**Preferences**_\) and type the word 'target' into the search text field \(see image\).
+
+![](.gitbook/assets/08_targetplatform_preferences.png)
 
 Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start with an empty target definition** on the first dialog page and press the _**Next**_ button underneath. In the subsequent dialog:
 
