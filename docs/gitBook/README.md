@@ -1,6 +1,6 @@
 # Introduction
 
-![](.gitbook/assets/splash.png)
+![](.gitbook/assets/splash%20%281%29.png)
 
 Agent.Workbench is an [Eclipse](https://www.eclipse.org/) / [OSGI ](https://www.osgi.org/)based application toolkit and framework that utilizes the agent platform [JADE](http://jade.tilab.com/). It enables to develop agent-based, end-user oriented [RCP applications](http://www.vogella.com/tutorials/EclipseRCP/article.html) that should finally enable non-programmers to use agent technologies for their own purposes.
 
