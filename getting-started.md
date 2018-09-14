@@ -30,7 +30,9 @@ With AWB projects you can define required OSGI/Eclipse-features. If not already 
 
 #### Create an Agent Project
 
-After the benchmark, click _**New Project**_ in the tool bar or by using the menu _**Projects**_ =&gt; ![](.gitbook/assets/mbnew.png) _**New Project.**_ Define a project title and the folder for your project and click _**OK**_.![](.gitbook/assets/03_createnewproject.png)
+After the benchmark, click _**New Project**_ in the tool bar or by using the menu _**Projects**_ =&gt; ![](.gitbook/assets/mbnew.png) _**New Project.**_ Define a project title and the folder for your project and click _**OK**_.
+
+![](.gitbook/assets/03_createnewproject.png)
 
 The agent project will be located in the sub-directory **./projects/** beside the installation of Agent.Workbench, while the structure of the installation looks as shown in the image below. Beside this default location, you can also locate your agent projects at a different location that can be configured via menu _**Extras**_ =&gt; _**Options**_ \(opens the Option Dialog\) =&gt; _**\[Tab: Directories\]**_ =&gt; _**Projects Root Directory**_ and by selecting ![](.gitbook/assets/mbopen.png) the desired directory location.
 
