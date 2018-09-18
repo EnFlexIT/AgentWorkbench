@@ -119,7 +119,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileDictionary  = "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
-	private static String localFileNameProjectUserObject = "agentgui.bin";
+	private static String localFileNameProjectUserObjectBinFile = "agentgui.bin";
+	private static String localFileNameProjectUserObjectXmlFile = "agentgui-UserObject.xml";
 	private static String localXML_FilePostfix = ".xml";
 	private static String localBIN_FilePostfix = ".bin";
 	private static String localFileEndProjectZip = "agui";
@@ -998,13 +999,20 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public String getFileNameProject() {
 		return localFileNameProject;
-	};
+	}
 	/**
-	 * Returns the file name of the binary file, which contains the serializable user object of the Project(file: 'agentgui_userobject.bin')
-	 * @return file name of the project user object binary. (agentgui_userobject.bin)
+	 * Returns the file name of the XML file that contains the user object of a Project(file: 'agentguiUserObject.xml')
+	 * @return file name of the project user object binary. (agentgui.bin)
 	 */
-	public String getFilenameProjectUserObject(){
-		return localFileNameProjectUserObject;
+	public String getFileNameProjectUserObjectXmlFile() {
+		return localFileNameProjectUserObjectXmlFile;
+	}
+	/**
+	 * Returns the file name of the binary file, which contains the serializable user object of the Project(file: 'agentgui.bin')
+	 * @return file name of the project user object binary. (agentgui.bin)
+	 */
+	public String getFilenameProjectUserObjectBinFile(){
+		return localFileNameProjectUserObjectBinFile;
 	}
 	/**
 	 * This method returns the file suffix for Agent.GUI project files 
