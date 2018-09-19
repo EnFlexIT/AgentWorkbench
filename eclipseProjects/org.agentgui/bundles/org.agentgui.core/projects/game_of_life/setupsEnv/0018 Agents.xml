@@ -2,7 +2,11 @@
 <gameOfLifeDataModel>
     <golHash>
         <entry>
-            <key>1&amp;0</key>
+            <key>1&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>2&amp;4</key>
             <value>0</value>
         </entry>
         <entry>
@@ -10,39 +14,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>1&amp;2</key>
-            <value>1</value>
-        </entry>
-        <entry>
-            <key>2&amp;4</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>1&amp;1</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>1&amp;4</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>1&amp;3</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>0&amp;3</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>0&amp;2</key>
-            <value>1</value>
-        </entry>
-        <entry>
-            <key>0&amp;5</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>0&amp;4</key>
+            <key>0&amp;0</key>
             <value>0</value>
         </entry>
         <entry>
@@ -50,19 +22,15 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>0&amp;0</key>
+            <key>1&amp;0</key>
             <value>0</value>
         </entry>
         <entry>
-            <key>2&amp;3</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>2&amp;2</key>
+            <key>0&amp;2</key>
             <value>1</value>
         </entry>
         <entry>
-            <key>2&amp;1</key>
+            <key>1&amp;1</key>
             <value>0</value>
         </entry>
         <entry>
@@ -70,7 +38,39 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>1&amp;5</key>
+            <key>0&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>1&amp;2</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>2&amp;1</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>0&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>1&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>2&amp;2</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>0&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>1&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>2&amp;3</key>
             <value>0</value>
         </entry>
     </golHash>

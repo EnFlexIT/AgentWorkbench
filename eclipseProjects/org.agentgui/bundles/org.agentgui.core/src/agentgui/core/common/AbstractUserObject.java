@@ -63,7 +63,21 @@ public abstract class AbstractUserObject implements Serializable {
 		
 		boolean successfulSaved = false;
 		
-		if (destinationFile!=null && userObject!=null && userObject instanceof AbstractUserObject) {
+		// --- Check if the file was defined --------------
+		if (destinationFile==null) {
+			System.err.println("[" + AbstractUserObject.class.getSimpleName() + "] The path for saving a user object as XML file is not allowed to be null!");
+			return false;
+		}
+		// --- Check the user object instance -------------
+		if (userObject==null) {
+			return true;
+		} 
+		
+		// --- Check type of the user object --------------
+		if (!(userObject instanceof AbstractUserObject)) {
+			System.err.println("[" + AbstractUserObject.class.getSimpleName() + "] The user object to save as XML file needs to be of type '" + AbstractUserObject.class.getName() + "'!");
+			
+		} else {
 			
 			try {
 				// --- Define the JAXB context ------------
@@ -92,12 +106,12 @@ public abstract class AbstractUserObject implements Serializable {
 	 * Load a user object from a XML file.
 	 *
 	 * @param sourceFile the source XML file
-	 * @param rootClassToBeBound the root class to be bound
-	 * @return the user object
+	 * @param rootClassToBeBound the root class to be bound within the JAXB Unmarshaller.
+	 * @return the loaded user object
 	 */
 	public static AbstractUserObject loadUserObjectFromXmlFile(File sourceFile, Class<?> rootClassToBeBound) {
 	
-		if (sourceFile.exists()==false) return null;
+		if (sourceFile==null || sourceFile.exists()==false) return null;
 		if (rootClassToBeBound==null) return null;
 		
 		AbstractUserObject userObject = null;

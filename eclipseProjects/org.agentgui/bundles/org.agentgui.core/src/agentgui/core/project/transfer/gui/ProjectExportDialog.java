@@ -270,7 +270,11 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 				@Override
 				public Component getListCellRendererComponent(JList<? extends InstallationPackageDescription> list, InstallationPackageDescription value, int index, boolean isSelected, boolean cellHasFocus) {
 					JLabel visComp = new DefaultListCellRenderer();
-					visComp.setText(value.toString(false));
+					if (value==null) {
+						visComp.setText(null);
+					} else {
+						visComp.setText(value.toString(false));
+					}
 					return visComp;
 				}
 			});
@@ -534,12 +538,16 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		this.fdSetupsEnvironment = de.getFileDescriptorByFileName(Project.DEFAULT_SUB_FOLDER_ENV_SETUPS, true);
 		
 		this.fdSecurity = de.getFileDescriptorByFileName(Project.DEFAULT_SUB_FOLDER_SECURITY, true);
-		this.fdSecurity.setSelected(false);
-		this.getFileTree().setChildrenNodesSelected(this.fdSecurity.getTreeNode(), false);
+		if (this.fdSecurity!=null) {
+			this.fdSecurity.setSelected(false);
+			this.getFileTree().setChildrenNodesSelected(this.fdSecurity.getTreeNode(), false);
+		}
 
 		this.fdTemp = de.getFileDescriptorByFileName(Project.DEFAULT_TEMP_FOLDER,  true);
-		this.fdTemp.setSelected(false);
-		this.getFileTree().setChildrenNodesSelected(this.fdTemp.getTreeNode(), false);
+		if (this.fdTemp!=null) {
+			this.fdTemp.setSelected(false);
+			this.getFileTree().setChildrenNodesSelected(this.fdTemp.getTreeNode(), false);
+		}
 		
 		this.fdGitIgnoreList = de.getFileDescriptorListByFileName(".gitignore", false);
 		for (int i = 0; i < this.fdGitIgnoreList.size(); i++) {

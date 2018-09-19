@@ -121,8 +121,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectUserObjectBinFile = "agentgui.bin";
 	private static String localFileNameProjectUserObjectXmlFile = "agentgui-UserObject.xml";
-	private static String localXML_FilePostfix = ".xml";
-	private static String localBIN_FilePostfix = ".bin";
 	private static String localFileEndProjectZip = "agui";
 	
 	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
@@ -783,37 +781,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
-	
-	/**
-	 * Returns the common file postfix for XML-files
-	 * @return the xmlFilepostfix
-	 */
-	public String getXmlFilePostfix() {
-		return localXML_FilePostfix;
-	}
-	/**
-	 * Returns the common file postfix for bin-files
-	 * @return the xmlFilepostfix
-	 */
-	public String getBinFilePostfix() {
-		return localBIN_FilePostfix;
-	}
-	/**
-	 * Returns the path or file name for a given XML-file name
-	 * @param xmlFileName
-	 * @return filename with the bin-suffix
-	 */
-	public String getBinFileNameFromXmlFileName(String xmlFileName) {
-		
-		String fileName = xmlFileName;
-		if(fileName.endsWith(getXmlFilePostfix())) {
-			fileName = fileName.substring( 0, (fileName.length()-this.getXmlFilePostfix().length()) );
-			fileName = fileName + this.getBinFilePostfix();
-		}
-		
-		if (fileName.equals(xmlFileName)==true) return null;
-		return fileName;
-	}
+
 	
 	/**
 	 * Returns the eclipse launcher file.

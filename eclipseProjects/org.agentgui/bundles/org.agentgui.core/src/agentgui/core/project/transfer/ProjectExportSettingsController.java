@@ -37,6 +37,7 @@ import java.util.List;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetup;
 
 /**
  * This class can be used to manage {@link ProjectExportSettings}. 
@@ -165,40 +166,39 @@ public class ProjectExportSettingsController {
 			
 			// --- Get all files related to the setup ---------------
 			final String setupName = simSetups.get(i);
-			String fileNameXML = this.getProject().getSimulationSetups().get(setupName);
-			String fileNameBIN = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXML);
+			String fileNameXML = setupPath + this.getProject().getSimulationSetups().get(setupName);
 			
-			File fileXML = this.getFileFromPath(setupPath + fileNameXML);
-			File fileBIN = this.getFileFromPath(setupPath + fileNameBIN);
-			
+			// --- Remind relation setup to file and vice versa -----
+			ArrayList<File> setupFileListFound = new ArrayList<>();
+			List<File> setupFileList = SimulationSetup.getSetupFiles(new File(fileNameXML));
+			for (int j = 0; j < setupFileList.size(); j++) {
+				File setupFile = setupFileList.get(j);
+				if (setupFile.exists()) {
+					setupFileListFound.add(setupFile);
+					this.getFileToSetupHash().put(setupFile, setupName);
+				}
+			}
+
+			// --- Remind environment model files -------------------
 			File envDirectory = new File(envModelPath);
-			File[] envFiles =envDirectory.listFiles(new FilenameFilter() {
+			File[] envFiles = envDirectory.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
 					return name.startsWith(setupName + ".");
 				}
 			});
-
-			// --- Remind relation setup to file and vice versa -----
-			ArrayList<File> setupFiles = new ArrayList<>();
-			if (fileXML!=null) setupFiles.add(fileXML);
-			if (fileBIN!=null) setupFiles.add(fileBIN);
-
-			this.getFileToSetupHash().put(fileXML, setupName);
-			this.getFileToSetupHash().put(fileBIN, setupName);
 			for (int j = 0; j < envFiles.length; j++) {
+				setupFileListFound.add(envFiles[j]);
 				this.getFileToSetupHash().put(envFiles[j], setupName);
-				setupFiles.add(envFiles[j]);
 			}
-			
-			this.getSetupToFilesHash().put(setupName, setupFiles);
+			this.getSetupToFilesHash().put(setupName, setupFileListFound);
 			
 			// --- Remind additional setup files, too --------------- 
 			if (this.getProjectExportController()!=null) {
 				ArrayList<File> additionalSetupFiles = this.getProjectExportController().getAdditionalSetupFiles(setupName);
 				if (additionalSetupFiles!=null && additionalSetupFiles.size()>0) {
 					// --- Add to the list of setups --------------------
-					setupFiles.addAll(additionalSetupFiles);
+					setupFileListFound.addAll(additionalSetupFiles);
 					// --- Add to Hash File <-> setup -------------------
 					for (int j = 0; j < additionalSetupFiles.size(); j++) {
 						this.getFileToSetupHash().put(additionalSetupFiles.get(j), setupName);
@@ -207,17 +207,6 @@ public class ProjectExportSettingsController {
 			}
 			
 		} // end setup loop
-	}
-	
-	/**
-	 * Returns the file specified by the path and check if it exists.
-	 * @param filePath the file path
-	 * @return the file from path
-	 */
-	private File getFileFromPath(String filePath) {
-		File file = new File(filePath);
-		if (file.exists()==false) return null;
-		return file;
 	}
 	
 	/**

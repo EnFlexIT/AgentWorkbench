@@ -417,7 +417,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 		// --- Does the file exists -------------------
 		File xmlFile = new File(xmlFileName);
-		if (xmlFile.exists() == false) {
+		if (xmlFile.exists()==false) {
 
 			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + xmlFileName);
 			Application.setStatusBar(Language.translate("Fertig"));
@@ -644,8 +644,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	private boolean saveUserObjectAsXmlFile(File projectPath) {
 		File destinFile = new File(projectPath + File.separator + Application.getGlobalInfo().getFileNameProjectUserObjectXmlFile());
-		boolean successfulSaved = AbstractUserObject.saveUserObjectAsXmlFile(destinFile, this.getUserRuntimeObject());
-		return successfulSaved;
+		return AbstractUserObject.saveUserObjectAsXmlFile(destinFile, this.getUserRuntimeObject());
 	}
 	/**
 	 * Saves the current user object as bin file.
@@ -656,27 +655,37 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	private boolean saveUserObjectAsBinFile(File projectPath) {
 		
 		boolean successfulSaved = false;
-		try {
-			
-			FileOutputStream fos = null;
-			ObjectOutputStream out = null;
+		
+		if (projectPath==null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The path for saving the projects user runtime object is not allowed to be null!");
+			return false;
+		}
+		
+		if (this.getUserRuntimeObject()==null) {
+			successfulSaved = true;
+		
+		} else {
 			try {
-				fos = new FileOutputStream(projectPath + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
-				out = new ObjectOutputStream(fos);
-				out.writeObject(this.getUserRuntimeObject());
-				successfulSaved = true;
+				FileOutputStream fos = null;
+				ObjectOutputStream out = null;
+				try {
+					fos = new FileOutputStream(projectPath + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
+					out = new ObjectOutputStream(fos);
+					out.writeObject(this.getUserRuntimeObject());
+					successfulSaved = true;
+					
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				} finally {
+					if (out!=null) out.close();
+					if (fos!=null) fos.close();
+				}
 				
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-		    	if (out!=null) out.close();
-		    	if (fos!=null) fos.close();
-			}
-
-		} catch (IOException ioEx) {
-			System.out.println("[" + this.getClass().getSimpleName() + "] Error while saving the user runtime object as bin file:");
-			ioEx.printStackTrace();
-		} 
+			} catch (IOException ioEx) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Error while saving the projects user runtime object as bin file:");
+				ioEx.printStackTrace();
+			} 
+		}
 		return successfulSaved;
 	}
 	
@@ -793,11 +802,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public void setUnsaved(boolean isUnsaved) {
 		this.isUnsaved = isUnsaved;
 	}
-
 	/**
 	 * Checks if the Project is unsaved.
 	 * @return true, if is unsaved
 	 */
+	@XmlTransient
 	public boolean isUnsaved() {
 		return isUnsaved;
 	}
@@ -1240,16 +1249,15 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Sets the simulation setup current.
-	 * @param simulationSetupCurrent the new simulation setup current
+	 * Sets the current simulation setup name (not file).
+	 * @param simulationSetupCurrent the new simulation setup name
 	 */
 	public void setSimulationSetupCurrent(String simulationSetupCurrent) {
 		this.simulationSetupCurrent = simulationSetupCurrent;
 	}
-
 	/**
-	 * Gets the simulation setup current.
-	 * @return the simulation setup current
+	 * Returns the current simulation setup name.
+	 * @return the current simulation setup name
 	 */
 	@XmlTransient
 	public String getSimulationSetupCurrent() {
