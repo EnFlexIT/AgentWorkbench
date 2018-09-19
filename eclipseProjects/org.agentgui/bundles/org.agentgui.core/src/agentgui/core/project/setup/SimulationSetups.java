@@ -368,22 +368,16 @@ public class SimulationSetups extends Hashtable<String, String> {
 		
 		String pathSimXML  = this.currProject.getSubFolder4Setups(true);
 		File[] files = new File(pathSimXML).listFiles();
-		if (files != null) {
+		if (files!=null) {
 			// --- Run through the list of files in folder ----------
 			for (int i = 0; i < files.length; i++) {
-				// --- Just work on files ending with xml -----------
-				if (files[i].getName().endsWith(SimulationSetup.XML_FileSuffix)) {
-					if (this.containsValue(files[i].getName())==false) {
-						// --- If not in the list of setups, delete -
-						List<File> setupFileList = SimulationSetup.getSetupFiles(files[i]);
-						for (int j = 0; j < setupFileList.size(); j++) {
-							File setupFile= setupFileList.get(j);
-							if (setupFile.exists()) setupFile.delete();
-						}
-					}
-				} // end is xml-file
-			} // end for
-		} // end if
+				File checkFile = files[i];
+				File setupBaseFile = SimulationSetup.getSetupBaseFile(checkFile);
+				if (this.containsValue(setupBaseFile.getName())==false) {
+					checkFile.delete();
+				}
+			} 
+		} 
 	}
 	
 	/**

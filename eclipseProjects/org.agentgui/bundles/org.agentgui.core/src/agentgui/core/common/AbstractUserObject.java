@@ -31,10 +31,10 @@ package agentgui.core.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.io.Writer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -79,6 +79,7 @@ public abstract class AbstractUserObject implements Serializable {
 			
 		} else {
 			
+			FileWriter fileWriter = null;
 			try {
 				// --- Define the JAXB context ------------
 				JAXBContext pc = JAXBContext.newInstance(userObject.getClass());
@@ -87,16 +88,20 @@ public abstract class AbstractUserObject implements Serializable {
 				pm.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 				// --- Write instance to xml-File ---------
-				Writer pw = new FileWriter(destinationFile);
-				pm.marshal(userObject, pw);
-				pw.close();
-				
+				fileWriter = new FileWriter(destinationFile);
+				pm.marshal(userObject, fileWriter);
 				successfulSaved = true;
 				
 			} catch (Exception ex) {
 				System.out.println("[" + AbstractUserObject.class.getSimpleName() + "] Error while saving the user object as XML file:");
 				ex.printStackTrace();
-			} 
+			} finally {
+				try {
+					if (fileWriter!=null) fileWriter.close();
+				} catch (IOException ioEx) {
+					ioEx.printStackTrace();
+				}				
+			}
 		}
 		return successfulSaved;
 	}
@@ -115,18 +120,17 @@ public abstract class AbstractUserObject implements Serializable {
 		if (rootClassToBeBound==null) return null;
 		
 		AbstractUserObject userObject = null;
+		InputStream inputStream = null;
+		InputStreamReader isReader = null;
 		try {
 			
 			JAXBContext context = JAXBContext.newInstance(rootClassToBeBound);
 			Unmarshaller unMarsh = context.createUnmarshaller();
 			
-			InputStream inputStream= new FileInputStream(sourceFile);
-			InputStreamReader isReader  = new InputStreamReader(inputStream, FILE_ENCODING);
+			inputStream = new FileInputStream(sourceFile);
+			isReader  = new InputStreamReader(inputStream, FILE_ENCODING);
 			
 			Object jaxbObject = unMarsh.unmarshal(isReader);
-			isReader.close();
-			inputStream.close();
-			
 			if (jaxbObject!=null && jaxbObject instanceof AbstractUserObject) {
 				userObject = (AbstractUserObject)jaxbObject;
 			}
@@ -134,6 +138,13 @@ public abstract class AbstractUserObject implements Serializable {
 		} catch (Exception ex) {
 			System.out.println("[" + AbstractUserObject.class.getSimpleName() + "] Error while loading the user object from XML file:");
 			ex.printStackTrace();
+		} finally {
+			try {
+				if (isReader!=null) isReader.close();
+				if (inputStream!=null) inputStream.close();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}	
 		}
 		return userObject;
 	}

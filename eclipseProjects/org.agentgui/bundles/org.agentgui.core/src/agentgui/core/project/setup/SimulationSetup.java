@@ -124,7 +124,9 @@ public class SimulationSetup {
 	 */
 	@XmlTransient 
 	private Serializable userRuntimeObject;
-	
+	@XmlElement(name = "userObjectClassName")
+	private String userRuntimeObjectClassName;
+
 	
 	/**
 	 * Constructor without arguments (This is first of all
@@ -561,12 +563,18 @@ public class SimulationSetup {
 		this.environmentFileName = environmentFile;
 	}
 	
+	
 	/**
 	 * Sets the user runtime object.
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
+		if (this.userRuntimeObject==null) {
+			this.setUserRuntimeObjectClassName(null);
+		} else {
+			this.setUserRuntimeObjectClassName(this.userRuntimeObject.getClass().getName());
+		}
 		this.setProjectUnsaved(CHANGED.UserRuntimeObject);
 	}
 	/**
@@ -577,6 +585,25 @@ public class SimulationSetup {
 	public Serializable getUserRuntimeObject() {
 		return userRuntimeObject;
 	}
+	
+	/**
+	 * Gets the user runtime object class name.
+	 * @return the user runtime object class name
+	 */
+	private String getUserRuntimeObjectClassName() {
+		if (userRuntimeObjectClassName==null && this.getUserRuntimeObject()!=null) {
+			userRuntimeObjectClassName = this.getUserRuntimeObject().getClass().getName();
+		}
+		return userRuntimeObjectClassName;
+	}
+	/**
+	 * Sets the user runtime object class name.
+	 * @param userRuntimeObjectClassName the new user runtime object class name
+	 */
+	private void setUserRuntimeObjectClassName(String userRuntimeObjectClassName) {
+		this.userRuntimeObjectClassName = userRuntimeObjectClassName;
+	}
+	
 	
 	/**
 	 * Checks if an agent name already exists in the current agent configuration.
@@ -696,6 +723,33 @@ public class SimulationSetup {
 		setupFiles.add(SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN));
 		setupFiles.add(SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_XML));
 		return setupFiles;
+	}
+	
+	/**
+	 * Returns the nominal base setup file from the specified file, but without garanty that 
+	 * the file really exists.
+	 *
+	 * @param fileToCheck the file to check
+	 * @return the base setup file
+	 */
+	public static File getSetupBaseFile(File fileToCheck) {
+		
+		String fileToCheckPath = fileToCheck.getAbsolutePath();
+		
+		if (fileToCheckPath.endsWith(USER_MODEL_XML_FileSuffix)) {
+			fileToCheckPath = fileToCheckPath.substring(0, fileToCheckPath.length() - USER_MODEL_XML_FileSuffix.length()) + XML_FileSuffix;
+		} else if (fileToCheckPath.endsWith(USER_MODEL_BIN_FileSuffix)) {
+			fileToCheckPath = fileToCheckPath.substring(0, fileToCheckPath.length() - USER_MODEL_BIN_FileSuffix.length()) + XML_FileSuffix;
+		} else if (fileToCheckPath.endsWith(XML_FileSuffix)) {
+			// --- Nothing to exchange ----			
+		} else {
+			fileToCheckPath = null;
+		}
+		
+		if (fileToCheckPath==null) {
+			return null;
+		}
+		return new File(fileToCheckPath);
 	}
 	
 }

@@ -23,6 +23,12 @@ public class DatabaseSettings implements Serializable {
 	private String databaseSystemName;
 	private Properties hibernateDatabaseSettings;
 	
+	
+	/**
+	 * Default constructor for DatabaseSettings (for the JAXB context only).
+	 */
+	@Deprecated
+	public DatabaseSettings() {	}
 	/**
 	 * Instantiates a new database settings.
 	 *

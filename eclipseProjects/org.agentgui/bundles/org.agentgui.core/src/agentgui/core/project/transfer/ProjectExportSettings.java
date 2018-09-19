@@ -33,6 +33,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import agentgui.core.project.Project;
@@ -89,6 +91,7 @@ public class ProjectExportSettings implements Serializable{
 	 * Returns the installation package.
 	 * @return the installation package
 	 */
+	@XmlTransient
 	public InstallationPackageDescription getInstallationPackage() {
 		if (installationPackage==null) {
 			installationPackage = new InstallationPackageFinder().getInstallationPackageForOperatingSystem(this.getTargetOS());
