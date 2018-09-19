@@ -277,14 +277,14 @@ public class SimulationSetup {
 	public static SimulationSetup load(File setupXmlFile, boolean loadUserRuntimeObject) {
 		
 		// --- Load the setup from XML file ---------------
-		SimulationSetup simulationSetup = null;
+		SimulationSetup setup = null;
 		FileReader fileReader = null;
 		try {
 			JAXBContext pc = JAXBContext.newInstance(SimulationSetup.class);
 			Unmarshaller um = pc.createUnmarshaller();
 			fileReader = new FileReader(setupXmlFile);
-			simulationSetup = (SimulationSetup) um.unmarshal(fileReader);
-			simulationSetup.setProject(Application.getProjectFocused());
+			setup = (SimulationSetup) um.unmarshal(fileReader);
+			setup.setProject(Application.getProjectFocused());
 			
 		} catch (JAXBException | IOException ex) {
 			ex.printStackTrace();
@@ -296,40 +296,96 @@ public class SimulationSetup {
 			}
 		}
 		
-		if (simulationSetup==null) return null;
+		// --- If no setup was loaded return here -----------------------------
+		if (setup==null) return null;
 		
 		// --- Load the user runtime object if specified ----------------------
-		if (loadUserRuntimeObject = true) {
-			File userRuntimeObjectFile = SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_BIN);
-			if (userRuntimeObjectFile.exists()) {
-				simulationSetup.loadUserRuntimeObject(userRuntimeObjectFile);
-			}
+		if (loadUserRuntimeObject==true) {
+			SimulationSetup.loadSetupUserDataModel(setupXmlFile, setup);
 		}
 		
 		// --- Initialize the agent lists -------------------------------------
-		if (simulationSetup.initializeAgentLists() == true ) {
-			return simulationSetup;
+		if (setup.initializeAgentLists()==true) {
+			return setup;
 		} else {
 			// --- An exception occurred during initializing the agent lists
 			return null;
 		}
 	}
-	
 	/**
 	 * Loads the {@link SimulationSetup}'s user runtime object from the specified file.
-	 * @param userRuntimeObjectFile the user runtime object file
+	 *
+	 * @param xmlBaseFile the xml base file
+	 * @param setup the setup
 	 * @return true, if successful
 	 */
-	public boolean loadUserRuntimeObject(File userRuntimeObjectFile) {
+	private static void loadSetupUserDataModel(File xmlBaseFile, SimulationSetup setup) {
+		
+		// --- ... as XML or bin file ? -------------------
+		boolean successXmlLoad = SimulationSetup.loadUserObjectFromXmlFile(xmlBaseFile, setup);
+		if (successXmlLoad==false) {
+			// --- Backup: load from bin file -------------
+			SimulationSetup.loadUserObjectFromBinFile(xmlBaseFile, setup);
+			
+		} else {
+			// --- Delete old bin file if available -------
+			// --- TODO Can be enabled from the 01.11.2018 !!! 
+//			File binFileUserObject = SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN);
+//			if (binFileUserObject.exists()==true) {
+//				boolean deleted = binFileUserObject.delete();
+//				if (deleted==false) {
+//					binFileUserObject.deleteOnExit();
+//				}
+//			}
+		}
+		
+	}
+	
+	/**
+	 * Loads the user object from a XML file.
+	 *
+	 * @param xmlBaseFile the xml base file
+	 * @param setup the setup
+	 * @return true, if successful
+	 */
+	private static boolean loadUserObjectFromXmlFile(File xmlBaseFile, SimulationSetup setup) {
 		
 		boolean successfulLoaded = false;
+		if (setup!=null && setup.getUserRuntimeObjectClassName()!=null) {
+			try {
+				File userObjectFile = SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_XML);
+				Class<?> userRuntimeClass = ClassLoadServiceUtility.forName(setup.getUserRuntimeObjectClassName());
+				AbstractUserObject userObject = AbstractUserObject.loadUserObjectFromXmlFile(userObjectFile, userRuntimeClass);
+				if (userObject!=null) {
+					setup.setUserRuntimeObject(userObject);
+					successfulLoaded = true;
+				}
+				
+			} catch (ClassNotFoundException | NoClassDefFoundError cEx) {
+				cEx.printStackTrace();
+			}
+		}
+		return successfulLoaded;
+	}
+	/**
+	 * Loads the user object from a bin file.
+	 *
+	 * @param xmlBaseFile the xml base file
+	 * @param setup the setup
+	 * @return true, if successful
+	 */
+	private static boolean loadUserObjectFromBinFile(File xmlBaseFile, SimulationSetup setup) {
+		
+		boolean successfulLoaded = false;
+		
+		File userRuntimeObjectFile = SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN);
 		FileInputStream fis = null;
 		ObjectInputStreamForClassLoadService in = null;
 		try {
 			fis = new FileInputStream(userRuntimeObjectFile);
 			in = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
 			Serializable userObject = (Serializable)in.readObject();
-			this.setUserRuntimeObject(userObject);
+			setup.setUserRuntimeObject(userObject);
 			successfulLoaded = true;
 			
 		} catch(IOException | ClassNotFoundException ex) {
@@ -345,6 +401,10 @@ public class SimulationSetup {
 		return successfulLoaded;
 	}
 	
+	/**
+	 * Initializes the agent lists.
+	 * @return true, if successful
+	 */
 	private boolean initializeAgentLists() {
 		// --- Create the DefaultListModels for the current agent configuration ---- 
 		this.createHashMap4AgentDefaulListModelsFromAgentList();

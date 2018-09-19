@@ -351,7 +351,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * This Method saves the current.
 	 */
 	public void setupSave() {
-		if (currSimSetup!=null) {
+		if (this.currSimSetup!=null) {
 			this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_PREPARE_SAVING));
 			this.currSimSetup.save();
 			this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));

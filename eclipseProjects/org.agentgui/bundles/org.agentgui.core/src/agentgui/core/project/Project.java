@@ -537,10 +537,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			} finally {
 				try {
 					if (inStream!=null) inStream.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-				try {
 					if (fis!=null) fis.close();
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
