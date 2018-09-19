@@ -10,9 +10,11 @@ This section describes the required steps, to get started with the Agent.Workben
 
 ## Install Agent.Workbench
 
-To install Agent.Workbench, navigate to the release section of our repository at github under [https://github.com/EnFlexIT/AgentWorkbench/releases](https://github.com/EnFlexIT/AgentWorkbench/releases). Depending on your operating system, select the installation package. Agent.Workbench is available for Windows, Linux and MacOS.![](.gitbook/assets/01_workbench-releases.png)
+To install Agent.Workbench, navigate to the release section of our repository at github under [https://github.com/EnFlexIT/AgentWorkbench/releases](https://github.com/EnFlexIT/AgentWorkbench/releases). Depending on your operating system, select the installation package. Agent.Workbench is available for Windows, Linux and MacOS.
 
-Extract Agent.Workbench at a desired location on your file system. Afterwards start the executable of the program \(e.g. AgentGui.exe, agentgui.app or AgentGui\). After the splash, the main application window appears and and the SciMark 2.0 benchmark will be executed.
+![](.gitbook/assets/01_workbench-releases.png)
+
+Extract Agent.Workbench at a desired location on your file system. Afterwards start the executable of the program \(e.g. AgentWorkbench.exe, AgentWorkbench.app or AgentWorkbench\). After the splash, the main application window appears and and the SciMark 2.0 benchmark will be executed.
 
 ![](.gitbook/assets/02_benchmarkwindow.png)
 
@@ -30,7 +32,9 @@ With AWB projects you can define required OSGI/Eclipse-features. If not already 
 
 #### Create an Agent Project
 
-After the benchmark, click _**New Project**_ in the tool bar or by using the menu _**Projects**_ =&gt; ![](.gitbook/assets/mbnew.png) _**New Project.**_ Define a project title and the folder for your project and click _**OK**_.![](.gitbook/assets/03_createnewproject.png)
+After the benchmark, click _**New Project**_ in the tool bar or by using the menu _**Projects**_ =&gt; ![](.gitbook/assets/mbnew.png) _**New Project.**_ Define a project title and the folder for your project and click _**OK**_.
+
+![](.gitbook/assets/03_createnewproject.png)
 
 The agent project will be located in the sub-directory **./projects/** beside the installation of Agent.Workbench, while the structure of the installation looks as shown in the image below. Beside this default location, you can also locate your agent projects at a different location that can be configured via menu _**Extras**_ =&gt; _**Options**_ \(opens the Option Dialog\) =&gt; _**\[Tab: Directories\]**_ =&gt; _**Projects Root Directory**_ and by selecting ![](.gitbook/assets/mbopen.png) the desired directory location.
 
@@ -87,7 +91,9 @@ As next, we have to make sure that we use the right [Perspective](https://www.tu
 
 With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with your own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
 
-To do so, open the Eclipse preferences \(menu _**Window**_ =&gt; _**Preferences**_\) and type the word 'target' into the search text field \(see image\).![](.gitbook/assets/08_targetplatform_preferences.png)
+To do so, open the Eclipse preferences \(menu _**Window**_ =&gt; _**Preferences**_\) and type the word 'target' into the search text field \(see image\).
+
+![](.gitbook/assets/08_targetplatform_preferences.png)
 
 Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start with an empty target definition** on the first dialog page and press the _**Next**_ button underneath. In the subsequent dialog:
 

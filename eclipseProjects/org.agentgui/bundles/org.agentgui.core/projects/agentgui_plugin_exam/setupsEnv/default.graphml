@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="dataModelVectorBase64Encoded" for="node">
+<desc>Base64 encoded individual data model</desc>
+<default></default>
+</key>
+<key id="pos" for="node">
+<desc>position</desc>
+<default></default>
+</key>
+<graph edgedefault="directed">
+</graph>
+</graphml>

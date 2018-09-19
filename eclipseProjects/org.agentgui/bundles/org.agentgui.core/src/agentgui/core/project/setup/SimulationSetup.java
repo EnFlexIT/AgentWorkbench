@@ -30,7 +30,6 @@ package agentgui.core.project.setup;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -41,6 +40,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -57,6 +57,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
@@ -69,12 +70,24 @@ import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 @XmlRootElement 
 public class SimulationSetup {
 
+	public static final String XML_FileSuffix = ".xml";
+	public static final String USER_MODEL_BIN_FileSuffix = ".bin";
+	public static final String USER_MODEL_XML_FileSuffix = "-UserObject.xml";
+
+	/** The possible indicator for setup file types. */
+	public enum SetupFileType {
+		BASE_XML_FILE,
+		USER_OBJECT_XML,
+		USER_OBJECT_BIN
+	}
+	
 	/** Lists the possible reasons why a SimulationSetup can be changed and unsaved  */
 	public enum CHANGED {
 		TimeModelSettings,
 		AgentConfiguration,
 		UserRuntimeObject
 	}
+	
 	
 	@XmlTransient 
 	private Project currProject = null;
@@ -99,19 +112,18 @@ public class SimulationSetup {
 
 	
 	/** The environment file name. */
-	private String environmentFileName = null;
+	private String environmentFileName;
 	
 	/** The time model settings. */
 	@XmlElementWrapper(name = "timeModelSettings")
-	private HashMap<String, String> timeModelSettings = null;
+	private HashMap<String, String> timeModelSettings;
 	
 	/**
-	 * This field can be used in order to provide customised objects during
+	 * This field can be used in order to provide customized objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
 	@XmlTransient 
-	private Serializable userRuntimeObject = null;
-	
+	private Serializable userRuntimeObject;
 	
 	
 	/**
@@ -126,9 +138,8 @@ public class SimulationSetup {
 	 * @param project the project
 	 */
 	public SimulationSetup(Project project) {
-		this.currProject = project;
+		this.setProject(project);
 	}
-	
 	/**
 	 * Sets the current project.
 	 * @param project the currProject to set
@@ -164,49 +175,95 @@ public class SimulationSetup {
 	public boolean save(File setupXmlFile, boolean saveUserRuntimeObject) {
 		
 		boolean saved = true;
-		this.mergeListModels();
+		this.mergeAgentListModels();
 		
 		try {			
 			// --------------------------------------------
 			// --- Save this instance as XML-file ---------
-			// --------------------------------------------
 			JAXBContext pc = JAXBContext.newInstance(this.getClass()); 
 			Marshaller pm = pc.createMarshaller(); 
-			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
-			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
+			pm.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+			pm.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE); 
 
-			Writer pw = new FileWriter( setupXmlFile );
+			Writer pw = new FileWriter(setupXmlFile);
 			pm.marshal(this, pw);
 			pw.close();
 			
 			// --------------------------------------------
-			// --- Save the userRuntimeObject in the   ----
-			// --- SimSetup into a different file as a ----
-			// --- Serializable binary object.		   ----
+			// --- Save the userRuntimeObject -------------
+			if (saveUserRuntimeObject==true) {
+				// --- ... as XML or bin file ? -----------
+				boolean successXmlSave = this.saveUserObjectAsXmlFile(setupXmlFile);
+				if (successXmlSave==false) {
+					// --- Backup: save as bin file -------
+					this.saveUserObjectAsBinFile(setupXmlFile);
+				}
+			}
+			
 			// --------------------------------------------
-			FileOutputStream fos = null;
-			ObjectOutputStream out = null;
-		    try  {
-		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(setupXmlFile.getAbsolutePath()); 
-		    	fos = new FileOutputStream(binFileName);
-		    	out = new ObjectOutputStream(fos);
-		    	out.writeObject(this.userRuntimeObject);
-		    	
-		    } catch(IOException ex) {
-		    	ex.printStackTrace();
-		    	saved = false;
-		    } finally {
-		    	out.close();
-		    	fos.close();
-		    }
+			// --- Notify about save action is done -------
 			this.currProject.setNotChangedButNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
 		
 		} catch (Exception ex) {
-			System.out.println("XML-Error while saving Setup-File!");
+			System.out.println("[" + this.getClass().getSimpleName() + "] XML-Error while saving setup file!");
 			ex.printStackTrace();
 			saved = false;
 		}		
 		return saved;		
+	}
+	
+	/**
+	 * Saves the current user object as XML file.
+	 *
+	 * @param setupXmlFile the setup XML file
+	 * @return true, if successful
+	 */
+	private boolean saveUserObjectAsXmlFile(File setupXmlFile) {
+		File destinFile = SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_XML);
+		return AbstractUserObject.saveUserObjectAsXmlFile(destinFile, this.getUserRuntimeObject());
+	}
+	
+	/**
+	 * Saves the current user object as bin file.
+	 *
+	 * @param setupXmlFile the setup XML file
+	 * @return true, if successful
+	 */
+	private boolean saveUserObjectAsBinFile(File setupXmlFile) {
+		
+		boolean successfulSaved = false;
+		
+		if (setupXmlFile==null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The path for saving the setups user runtime object is not allowed to be null!");
+			return false;
+		}
+		
+		if (this.getUserRuntimeObject()==null) {
+			successfulSaved = true;
+		
+		} else {
+			try {
+				FileOutputStream fos = null;
+				ObjectOutputStream out = null;
+				try  {
+					fos = new FileOutputStream(SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_BIN));
+					out = new ObjectOutputStream(fos);
+					out.writeObject(this.userRuntimeObject);
+					successfulSaved = true;
+					
+				} catch(IOException ex) {
+					ex.printStackTrace();
+				} finally {
+					if (out!=null) out.close();
+					if (fos!=null) fos.close();
+				}
+				
+			} catch (IOException ioEx) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Error while saving the setups user runtime object as bin file:");
+				ioEx.printStackTrace();
+			} 
+		}
+		return successfulSaved;
 	}
 	
 	
@@ -217,30 +274,31 @@ public class SimulationSetup {
 	 */
 	public static SimulationSetup load(File setupXmlFile, boolean loadUserRuntimeObject) {
 		
+		// --- Load the setup from XML file ---------------
 		SimulationSetup simulationSetup = null;
+		FileReader fileReader = null;
 		try {
 			JAXBContext pc = JAXBContext.newInstance(SimulationSetup.class);
 			Unmarshaller um = pc.createUnmarshaller();
-			FileReader fr = new FileReader(setupXmlFile);
-			simulationSetup = (SimulationSetup) um.unmarshal(fr);
-			fr.close();
+			fileReader = new FileReader(setupXmlFile);
+			simulationSetup = (SimulationSetup) um.unmarshal(fileReader);
+			simulationSetup.setProject(Application.getProjectFocused());
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		} catch (JAXBException | IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (fileReader!=null) fileReader.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
-		simulationSetup.setProject(Application.getProjectFocused());
+		
+		if (simulationSetup==null) return null;
 		
 		// --- Load the user runtime object if specified ----------------------
 		if (loadUserRuntimeObject = true) {
-			String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(setupXmlFile.getAbsolutePath());
-			File userRuntimeObjectFile = new File(userObjectFileName);
+			File userRuntimeObjectFile = SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_BIN);
 			if (userRuntimeObjectFile.exists()) {
 				simulationSetup.loadUserRuntimeObject(userRuntimeObjectFile);
 			}
@@ -261,36 +319,28 @@ public class SimulationSetup {
 	 * @return true, if successful
 	 */
 	public boolean loadUserRuntimeObject(File userRuntimeObjectFile) {
-		Serializable userObject = null;
+		
+		boolean successfulLoaded = false;
 		FileInputStream fis = null;
 		ObjectInputStreamForClassLoadService in = null;
 		try {
 			fis = new FileInputStream(userRuntimeObjectFile);
 			in = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
-			userObject = (Serializable)in.readObject();
-			in.close();
+			Serializable userObject = (Serializable)in.readObject();
 			this.setUserRuntimeObject(userObject);
+			successfulLoaded = true;
 			
-		} catch(IOException ex) {
+		} catch(IOException | ClassNotFoundException ex) {
 			ex.printStackTrace();
+		} finally {
 			try {
-				in.close();
+				if (in!=null) in.close();
+				if (fis!=null) fis.close();
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
-			return false;
-			
-		} catch(ClassNotFoundException ex) {
-			ex.printStackTrace();
-			try {
-				in.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-			return false;
 		}
-		
-		return true;
+		return successfulLoaded;
 	}
 	
 	private boolean initializeAgentLists() {
@@ -317,14 +367,14 @@ public class SimulationSetup {
 	 */
 	@XmlTransient
 	public ArrayList<AgentClassElement4SimStart> getAgentList() {
-		this.mergeListModels();
+		this.mergeAgentListModels();
 		return agentList;
 	}
 	
 	/**
 	 * Will merge all default list models to one array list.
 	 */
-	private void mergeListModels(){
+	private void mergeAgentListModels(){
 
 		this.agentList = new ArrayList<AgentClassElement4SimStart>();
 
@@ -547,7 +597,7 @@ public class SimulationSetup {
 		
 		if (mergeListModels==true) {
 			// --- merge all list models to the complete list 'agentList' -----
-			this.mergeListModels();	
+			this.mergeAgentListModels();	
 		}
 		// --- search for the agent name in the list 'agentList' --------------s  
 		for (int i = 0; i < agentList.size(); i++) {
@@ -569,7 +619,7 @@ public class SimulationSetup {
 		String newAgentName = agentNameSuggestion;
 		
 		// --- merge the list models to a complete list ---
-		this.mergeListModels();
+		this.mergeAgentListModels();
 		
 		// --- find a new name ----------------------------
 		while (isAgentNameExists(newAgentName, false)==true) {
@@ -597,6 +647,55 @@ public class SimulationSetup {
 			this.timeModelSettings= new HashMap<String, String>();
 		}
 		return this.timeModelSettings;
+	}
+
+	
+	// --------------------------------------------------------------
+	// --- From here, some static help methods for file handling-----
+	// --------------------------------------------------------------
+	/**
+	 * Returns, based on the specified base XML file, the specified setup file (especially for user runtime objects).
+	 *
+	 * @param xmlBaseFile the XML base file
+	 * @param setupFileType the setup file type
+	 * @return the setup file
+	 */
+	public static File getSetupFile(File xmlBaseFile, SetupFileType setupFileType) {
+		
+		if (xmlBaseFile==null) return null;
+		if (setupFileType==null) return null;
+		if (setupFileType==SetupFileType.BASE_XML_FILE) return xmlBaseFile;
+		
+		// --- Remove the file suffix ---------------------
+		String baseFilename = xmlBaseFile.getAbsolutePath();
+		int cut = baseFilename.lastIndexOf(".");
+		baseFilename = baseFilename.substring(0, cut);
+		
+		switch (setupFileType) {
+		case USER_OBJECT_XML:
+			baseFilename += USER_MODEL_XML_FileSuffix; 	
+			break;
+
+		case USER_OBJECT_BIN:
+			baseFilename += USER_MODEL_BIN_FileSuffix;
+			break;
+		default:
+			break;
+		}
+		return new File(baseFilename);
+	}
+	/**
+	 * Returns, based on the specified base XML file, all possible setup file (e.g. also for user runtime objects).
+	 *
+	 * @param xmlBaseFile the XML base file
+	 * @return the setup file
+	 */
+	public static List<File> getSetupFiles(File xmlBaseFile) {
+		List<File> setupFiles = new ArrayList<>();
+		setupFiles.add(xmlBaseFile);
+		setupFiles.add(SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN));
+		setupFiles.add(SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_XML));
+		return setupFiles;
 	}
 	
 }

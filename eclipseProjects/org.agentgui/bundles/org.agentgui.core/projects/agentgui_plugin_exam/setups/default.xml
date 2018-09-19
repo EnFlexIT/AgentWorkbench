@@ -8,4 +8,5 @@
             <startAsName>ASyTiTeAg</startAsName>
         </agent>
     </agentSetup>
+    <environmentFileName>default.graphml</environmentFileName>
 </simulationSetup>

@@ -28,8 +28,7 @@
  */
 package agentgui.simulationService.environment;
 
-import java.io.Serializable;
-
+import agentgui.core.common.AbstractUserObject;
 import agentgui.core.environment.EnvironmentController;
 
 
@@ -45,7 +44,7 @@ import agentgui.core.environment.EnvironmentController;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractEnvironmentModel implements Serializable {
+public abstract class AbstractEnvironmentModel extends AbstractUserObject {
 
 	private static final long serialVersionUID = 7052170323244857840L;
 

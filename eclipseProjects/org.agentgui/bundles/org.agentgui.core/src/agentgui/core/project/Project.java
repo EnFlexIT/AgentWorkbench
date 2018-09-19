@@ -71,6 +71,7 @@ import org.osgi.framework.Version;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.common.AbstractUserObject;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;
@@ -261,8 +262,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * This field can be used in order to provide customised objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
-	@XmlTransient private Serializable userRuntimeObject;
-
+	@XmlTransient 
+	private Serializable userRuntimeObject;
+	@XmlElement(name = "userObjectClassName")
+	private String userRuntimeObjectClassName;
 	/**
 	 * This attribute holds the instance of the currently selected SimulationSetup
 	 */
@@ -394,7 +397,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			// --- Load additional jar-resources --------------------
 			project.resourcesLoad();
 			// --- Load user data model -----------------------------
-			loadProjectUserDataModel(projectPath, project);
+			Project.loadProjectUserDataModel(projectPath, project);
 		}
 		return project;
 	}
@@ -414,7 +417,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 		// --- Does the file exists -------------------
 		File xmlFile = new File(xmlFileName);
-		if (xmlFile.exists() == false) {
+		if (xmlFile.exists()==false) {
 
 			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + xmlFileName);
 			Application.setStatusBar(Language.translate("Fertig"));
@@ -459,19 +462,73 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @param project the project
 	 */
 	private static void loadProjectUserDataModel(File projectPath, Project project) {
+		// --- ... as XML or bin file ? -------------------
+		boolean successXmlLoad = Project.loadUserObjectFromXmlFile(projectPath, project);
+		if (successXmlLoad==false) {
+			// --- Backup: load from bin file -------------
+			Project.loadUserObjectFromBinFile(projectPath, project);
+			
+		} else {
+			// --- Delete old bin file if available -------
+			// --- TODO Can be enabled from the 01.11.2018 !!! 
+//			File binFileUserObject = new File(projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
+//			if (binFileUserObject.exists()==true) {
+//				boolean deleted = binFileUserObject.delete();
+//				if (deleted==false) {
+//					binFileUserObject.deleteOnExit();
+//				}
+//			}
+		}
+	}
 
-		String userObjectFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject();
-
-		File userObjectFile = new File(userObjectFileName);
+	/**
+	 * Loads the user object from a XML file.
+	 *
+	 * @param projectPath the project path
+	 * @param project the project
+	 * @return true, if successful
+	 */
+	private static boolean loadUserObjectFromXmlFile(File projectPath, Project project) {
+		
+		boolean successfulLoaded = false;
+		if (project!=null && project.getUserRuntimeObjectClassName()!=null) {
+			try {
+				File userObjectFile = new File(projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFileNameProjectUserObjectXmlFile());
+				Class<?> userRuntimeClass = ClassLoadServiceUtility.forName(project.getUserRuntimeObjectClassName());
+				AbstractUserObject userObject = AbstractUserObject.loadUserObjectFromXmlFile(userObjectFile, userRuntimeClass);
+				if (userObject!=null) {
+					project.setUserRuntimeObject(userObject);
+					successfulLoaded = true;
+				}
+				
+			} catch (ClassNotFoundException | NoClassDefFoundError cEx) {
+				cEx.printStackTrace();
+			}
+		}
+		return successfulLoaded;
+	}
+	/**
+	 * Loads the user object from a bin file.
+	 *
+	 * @param projectPath the project path
+	 * @param project the project
+	 * @return true, if successful
+	 */
+	private static boolean loadUserObjectFromBinFile(File projectPath, Project project) {
+		
+		boolean successfulLoaded = false;
+		
+		File userObjectFile = new File(projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
 		if (userObjectFile.exists()) {
 
 			FileInputStream fis = null;
 			ObjectInputStreamForClassLoadService inStream = null;
 			try {
-				fis = new FileInputStream(userObjectFileName);
+				fis = new FileInputStream(userObjectFile);
 				inStream = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
 				Serializable userObject = (Serializable) inStream.readObject();
 				project.setUserRuntimeObject(userObject);
+				successfulLoaded = true;
 
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -490,8 +547,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				}
 			}
 		}
+		return successfulLoaded;
 	}
-
+	
 	/**
 	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
 	 * @return true, if successful
@@ -524,12 +582,16 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return true, if successful
 	 */
 	public boolean save(File projectPath, boolean saveSetup, boolean saveUserDataModel) {
-		// --- Save the current project -------------------
+
 		Application.setStatusBar(this.projectName + ": " + Language.translate("speichern") + " ... ");
+
+		// ------------------------------------------------
+		// --- Notify. prepare for saving -----------------
 		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);
 
 		boolean successful = false;
 		try {
+			
 			// --------------------------------------------
 			// --- Prepare Context and Marshaller ---------
 			JAXBContext pc = JAXBContext.newInstance(this.getClass());
@@ -542,26 +604,18 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			pm.marshal(this, pw);
 			pw.close();
 			
-			// --- Save the userRuntimeObject into a different
-			// --- file as a serializable binary object.
-			if (saveUserDataModel == true) {
-				
-				FileOutputStream fos = null;
-				ObjectOutputStream out = null;
-				try {
-					fos = new FileOutputStream(projectPath + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject());
-					out = new ObjectOutputStream(fos);
-					out.writeObject(this.userRuntimeObject);
-	
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				} finally {
-			    	if (out!=null) out.close();
-			    	if (fos!=null) fos.close();
+			// --------------------------------------------
+			// --- Save the userRuntimeObject -------------
+			if (saveUserDataModel==true) {
+				// --- ... as XML or bin file ? -----------
+				boolean successXmlSave = this.saveUserObjectAsXmlFile(projectPath);
+				if (successXmlSave==false) {
+					// --- Backup: save as bin file -------
+					this.saveUserObjectAsBinFile(projectPath);
 				}
-			
 			}
 
+			// --------------------------------------------
 			// --- Save the current SimulationSetup -------
 			if (saveSetup == true) {
 				this.getSimulationSetups().setupSave();
@@ -569,18 +623,73 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 			this.setUnsaved(false);
 			successful = true;
-
+			
+			// --------------------------------------------
 			// --- Notification ---------------------------
 			this.setNotChangedButNotify(Project.SAVED);
 
 		} catch (Exception e) {
-			System.out.println("XML-Error while saving Project-File!");
+			System.out.println("[" + this.getClass().getSimpleName() + "] Error while saving the project files!");
 			e.printStackTrace();
 		}
 		Application.setStatusBar("");
 		return successful;
 	}
 
+	/**
+	 * Saves the current user object as XML file.
+	 *
+	 * @param projectPath the project path
+	 * @return true, if successful
+	 */
+	private boolean saveUserObjectAsXmlFile(File projectPath) {
+		File destinFile = new File(projectPath + File.separator + Application.getGlobalInfo().getFileNameProjectUserObjectXmlFile());
+		return AbstractUserObject.saveUserObjectAsXmlFile(destinFile, this.getUserRuntimeObject());
+	}
+	/**
+	 * Saves the current user object as bin file.
+	 *
+	 * @param projectPath the project path
+	 * @return true, if successful
+	 */
+	private boolean saveUserObjectAsBinFile(File projectPath) {
+		
+		boolean successfulSaved = false;
+		
+		if (projectPath==null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The path for saving the projects user runtime object is not allowed to be null!");
+			return false;
+		}
+		
+		if (this.getUserRuntimeObject()==null) {
+			successfulSaved = true;
+		
+		} else {
+			try {
+				FileOutputStream fos = null;
+				ObjectOutputStream out = null;
+				try {
+					fos = new FileOutputStream(projectPath + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
+					out = new ObjectOutputStream(fos);
+					out.writeObject(this.getUserRuntimeObject());
+					successfulSaved = true;
+					
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				} finally {
+					if (out!=null) out.close();
+					if (fos!=null) fos.close();
+				}
+				
+			} catch (IOException ioEx) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Error while saving the projects user runtime object as bin file:");
+				ioEx.printStackTrace();
+			} 
+		}
+		return successfulSaved;
+	}
+	
+	
 	/**
 	 * Closes the current project. If necessary it will try to save it before.
 	 * @return Returns true if saving was successful
@@ -693,11 +802,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public void setUnsaved(boolean isUnsaved) {
 		this.isUnsaved = isUnsaved;
 	}
-
 	/**
 	 * Checks if the Project is unsaved.
 	 * @return true, if is unsaved
 	 */
+	@XmlTransient
 	public boolean isUnsaved() {
 		return isUnsaved;
 	}
@@ -1140,16 +1249,15 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Sets the simulation setup current.
-	 * @param simulationSetupCurrent the new simulation setup current
+	 * Sets the current simulation setup name (not file).
+	 * @param simulationSetupCurrent the new simulation setup name
 	 */
 	public void setSimulationSetupCurrent(String simulationSetupCurrent) {
 		this.simulationSetupCurrent = simulationSetupCurrent;
 	}
-
 	/**
-	 * Gets the simulation setup current.
-	 * @return the simulation setup current
+	 * Returns the current simulation setup name.
+	 * @return the current simulation setup name
 	 */
 	@XmlTransient
 	public String getSimulationSetupCurrent() {
@@ -1942,6 +2050,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		this.setChangedAndNotify(AGENT_METRIC_Reset);
 	}
 
+	
 	/**
 	 * Returns the user runtime object.
 	 * @return the userRuntimeObject, any kind of serializable object
@@ -1950,18 +2059,41 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public Object getUserRuntimeObject() {
 		return userRuntimeObject;
 	}
-
 	/**
 	 * Can be used in order to set any kind of runtime object that it is serializable by Java.
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_UserRuntimeObject);
+		if (this.userRuntimeObject==null) {
+			this.setUserRuntimeObjectClassName(null);
+		} else {
+			this.setUserRuntimeObjectClassName(this.userRuntimeObject.getClass().getName());
+		}
+		this.setUnsaved(true);
+		this.setChanged();
+		this.notifyObservers(CHANGED_UserRuntimeObject);
 	}
-
+	
+	/**
+	 * Gets the user runtime object class name.
+	 * @return the user runtime object class name
+	 */
+	private String getUserRuntimeObjectClassName() {
+		if (userRuntimeObjectClassName==null && this.getUserRuntimeObject()!=null) {
+			userRuntimeObjectClassName = this.getUserRuntimeObject().getClass().getName();
+		}
+		return userRuntimeObjectClassName;
+	}
+	/**
+	 * Sets the user runtime object class name.
+	 * @param userRuntimeObjectClassName the new user runtime object class name
+	 */
+	private void setUserRuntimeObjectClassName(String userRuntimeObjectClassName) {
+		this.userRuntimeObjectClassName = userRuntimeObjectClassName;
+	}
+	
+	
 	/**
 	 * Checks if a environment controller is initiated.
 	 * @return true, if is environment controller initiated

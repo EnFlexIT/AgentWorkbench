@@ -119,9 +119,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileDictionary  = "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
-	private static String localFileNameProjectUserObject = "agentgui.bin";
-	private static String localXML_FilePostfix = ".xml";
-	private static String localBIN_FilePostfix = ".bin";
+	private static String localFileNameProjectUserObjectBinFile = "agentgui.bin";
+	private static String localFileNameProjectUserObjectXmlFile = "agentgui-UserObject.xml";
 	private static String localFileEndProjectZip = "agui";
 	
 	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
@@ -782,37 +781,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
-	
-	/**
-	 * Returns the common file postfix for XML-files
-	 * @return the xmlFilepostfix
-	 */
-	public String getXmlFilePostfix() {
-		return localXML_FilePostfix;
-	}
-	/**
-	 * Returns the common file postfix for bin-files
-	 * @return the xmlFilepostfix
-	 */
-	public String getBinFilePostfix() {
-		return localBIN_FilePostfix;
-	}
-	/**
-	 * Returns the path or file name for a given XML-file name
-	 * @param xmlFileName
-	 * @return filename with the bin-suffix
-	 */
-	public String getBinFileNameFromXmlFileName(String xmlFileName) {
-		
-		String fileName = xmlFileName;
-		if(fileName.endsWith(getXmlFilePostfix())) {
-			fileName = fileName.substring( 0, (fileName.length()-this.getXmlFilePostfix().length()) );
-			fileName = fileName + this.getBinFilePostfix();
-		}
-		
-		if (fileName.equals(xmlFileName)==true) return null;
-		return fileName;
-	}
+
 	
 	/**
 	 * Returns the eclipse launcher file.
@@ -998,13 +967,20 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public String getFileNameProject() {
 		return localFileNameProject;
-	};
+	}
 	/**
-	 * Returns the file name of the binary file, which contains the serializable user object of the Project(file: 'agentgui_userobject.bin')
-	 * @return file name of the project user object binary. (agentgui_userobject.bin)
+	 * Returns the file name of the XML file that contains the user object of a Project(file: 'agentguiUserObject.xml')
+	 * @return file name of the project user object binary. (agentgui.bin)
 	 */
-	public String getFilenameProjectUserObject(){
-		return localFileNameProjectUserObject;
+	public String getFileNameProjectUserObjectXmlFile() {
+		return localFileNameProjectUserObjectXmlFile;
+	}
+	/**
+	 * Returns the file name of the binary file, which contains the serializable user object of the Project(file: 'agentgui.bin')
+	 * @return file name of the project user object binary. (agentgui.bin)
+	 */
+	public String getFilenameProjectUserObjectBinFile(){
+		return localFileNameProjectUserObjectBinFile;
 	}
 	/**
 	 * This method returns the file suffix for Agent.GUI project files 
