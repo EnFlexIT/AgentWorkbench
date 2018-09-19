@@ -56,7 +56,7 @@ public class HibernateUtilities {
 	 * @return the session factory monitor
 	 * @see #DEFAULT_SESSION_FACTORY_ID
 	 */
-	public static SessionFactoryMonitor getSessionFactoryMonitor(String factoryID) {
+	public static synchronized SessionFactoryMonitor getSessionFactoryMonitor(String factoryID) {
 		
 		String idFactory = getFactoryID(factoryID);
 		// --- Try to get the SessionFactoryMonitor ----------------- 
