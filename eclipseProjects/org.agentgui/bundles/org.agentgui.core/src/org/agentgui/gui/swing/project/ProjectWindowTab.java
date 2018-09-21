@@ -28,6 +28,8 @@
  */
 package org.agentgui.gui.swing.project;
 
+import java.awt.Container;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -75,7 +77,7 @@ public class ProjectWindowTab {
 	 * @param displayType_DEV_or_USER the display type_ de v_or_ user
 	 * @param head_title the head_title
 	 * @param aTipText the a tip text
-	 * @param ico the ico
+	 * @param ico the icon
 	 * @param component the component
 	 * @param pareName the pare name
 	 */
@@ -131,6 +133,7 @@ public class ProjectWindowTab {
 	 * @param indexPosition the index position greater one
 	 */
 	public void add(int indexPosition) {
+		this.setIndexPosition(indexPosition);
 		this.getProjectWindow().addProjectTab(this, indexPosition);	
 	}
 	
@@ -143,7 +146,7 @@ public class ProjectWindowTab {
 	
 	/**
 	 * To string.
-	 * @return the nam of the component
+	 * @return the title of the component
 	 */
 	public String toString() {
 		return this.title;
@@ -226,23 +229,23 @@ public class ProjectWindowTab {
 	
 	
 	/**
-	 * Returns the JComponent for the visualisation.
+	 * Returns the JComponent for the visualization.
 	 * @return the JComponent
 	 */
 	public JComponent getJComponentForVisualization() {
 		return comp;
 	}
 	/**
-	 * Sets the JComponent for the visualisation.
-	 * @param comp the new JComponent for the visualisation
+	 * Sets the JComponent for the visualization.
+	 * @param comp the new JComponent for the visualization
 	 */
 	public void setJComponentForVisualization(JComponent comp) {
 		this.comp = comp;
 	}
 
 	/**
-	 * Sets the comp for child comp.
-	 * @param jTabbedPane4ChildComponents the new comp for child comp
+	 * Sets the JTabbedPane for possible child components.
+	 * @param jTabbedPane4ChildComponents the new JTabbedPane for child components
 	 */
 	public void setCompForChildComp(JTabbedPane jTabbedPane4ChildComponents) {
 		this.compForChildComp = jTabbedPane4ChildComponents;
@@ -255,6 +258,7 @@ public class ProjectWindowTab {
 		return compForChildComp;
 	}
 
+	
 	/**
 	 * Sets the index position.
 	 * @param indexPosition the indexPosition to set
@@ -267,7 +271,20 @@ public class ProjectWindowTab {
 	 * @return the indexPosition
 	 */
 	public int getIndexPosition() {
+		if (this.getJComponentForVisualization()!=null) {
+			Container container = this.getJComponentForVisualization().getParent();
+			if (container!=null && container instanceof JTabbedPane) {
+				JTabbedPane tabbedPane = (JTabbedPane) container;
+				indexPosition = tabbedPane.indexOfComponent(getJComponentForVisualization());
+			}
+		}
 		return indexPosition;
+	}
+	/**
+	 * Updates the index position.
+	 */
+	public void updateIndexPosition() {
+		this.getIndexPosition();
 	}
 
 }

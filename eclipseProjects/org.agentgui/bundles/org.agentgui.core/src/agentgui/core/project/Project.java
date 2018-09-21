@@ -1734,7 +1734,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient
 	public void setProjectView(String newProjectView) {
 		AwbProjectEditorWindow pew = this.getProjectEditorWindow();
-		if (pew != null && newProjectView.equals(this.projectView) == false) {
+		if (pew!=null && newProjectView.equals(this.projectView)==false) {
 
 			// --- Change view ----------------------------
 			this.projectView = newProjectView;

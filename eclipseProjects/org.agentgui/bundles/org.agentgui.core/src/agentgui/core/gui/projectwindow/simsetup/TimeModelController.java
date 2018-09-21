@@ -28,11 +28,11 @@
  */
 package agentgui.core.gui.projectwindow.simsetup;
 
+import java.awt.Container;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import org.agentgui.gui.swing.project.ProjectWindowTab;
@@ -66,7 +66,7 @@ public class TimeModelController implements Observer {
 	private ProjectWindowTab pwt;
 	private JPanel4TimeModelConfiguration display4TimeModel;
 	
-	private int indexPosOfTimeModel = 0;
+	private int indexPositionOfTimeModelTab = 0;
 	
 	
 	/**
@@ -87,7 +87,7 @@ public class TimeModelController implements Observer {
 	 * @param newTimeModel the new time model
 	 */
 	public void setTimeModel(TimeModel newTimeModel) {
-		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
+		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
 		if (configPanel!=null) {
 			configPanel.setTimeModel(newTimeModel);
 		} 
@@ -97,7 +97,7 @@ public class TimeModelController implements Observer {
 	 * @return the time model
 	 */
 	public TimeModel getTimeModel() {
-		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
+		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
 		if (configPanel!=null) {
 			return configPanel.getTimeModel();
 		} 
@@ -121,22 +121,15 @@ public class TimeModelController implements Observer {
 	public void saveTimeModelToSimulationSetup() {
 		SimulationSetup simSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
 		if (simSetup!=null) {
-			simSetup.setTimeModelSettings(this.getDisplayJPanel4Configuration().getTimeModel().getTimeModelSetting());
+			simSetup.setTimeModelSettings(this.getJPanel4TimeModelConfiguration().getTimeModel().getTimeModelSetting());
 		}
 	}
 	
 	/**
-	 * Sets the display for the selected TimeModel.
-	 * @param display4TimeModel the new DisplayJPanel4Configuration
-	 */
-	public void setDisplay4TimeModel(JPanel4TimeModelConfiguration display4TimeModel) {
-		this.display4TimeModel = display4TimeModel;
-	}
-	/**
-	 * Returns the configuration display for the TimeModel.
+	 * Returns the JPanel for the time model configuration.
 	 * @return the DisplayJPanel4Configuration
 	 */
-	public JPanel4TimeModelConfiguration getDisplayJPanel4Configuration() {
+	public JPanel4TimeModelConfiguration getJPanel4TimeModelConfiguration() {
 		if (display4TimeModel==null) {
 			
 			this.currTimeModelClass = this.currProject.getTimeModelClass();
@@ -163,23 +156,55 @@ public class TimeModelController implements Observer {
 	}
 
 	/**
+	 * Gets the index position of time model tab.
+	 * @return the index position of time model tab
+	 */
+	public int getIndexPositionOfTimeModelTab() {
+		return indexPositionOfTimeModelTab;
+	}
+	/**
+	 * Sets the index position of time model tab.
+	 * @param newIndexPosistion the new index position of time model tab
+	 */
+	public void setIndexPositionOfTimeModelTab(int newIndexPosistion) {
+		
+		if (newIndexPosistion!=this.indexPositionOfTimeModelTab && this.pwt!=null && this.getJPanel4TimeModelConfiguration()!=null) {
+			// --- Set the new position of the tab --------
+			JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
+			Container container = configPanel.getParent();
+			if (container!=null && container instanceof JTabbedPane) {
+				JTabbedPane tabbedPane = (JTabbedPane) container;
+				tabbedPane.remove(configPanel);
+				try {
+					tabbedPane.add(configPanel, newIndexPosistion);
+				} catch (Exception ex) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] The Tab for the TimeModel configuration could not pe placed on new index positon " + newIndexPosistion + "!");
+					tabbedPane.add(configPanel, this.indexPositionOfTimeModelTab);
+					return;
+				}
+			}
+			this.pwt.setIndexPosition(newIndexPosistion);
+		}
+		this.indexPositionOfTimeModelTab = newIndexPosistion;
+	}
+	
+	/**
 	 * Sets the time model display to project the window.
 	 */
 	private void addTimeModelDisplayToProjectWindow() {
 		
 		if (this.pwt!=null) {
-			this.indexPosOfTimeModel = this.getIndexPositionOfProjectWindowTab();
+			this.indexPositionOfTimeModelTab = this.pwt.getIndexPosition();
 			this.pwt.remove();
 			this.pwt = null;
 			this.display4TimeModel = null;
 		}
 		
-		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
+		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
 		if (configPanel!=null) {
 			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
-			this.pwt.setIndexPosition(this.indexPosOfTimeModel);
-			this.pwt.add(this.indexPosOfTimeModel);
-			this.setTimeModel(null);
+			this.pwt.add(this.indexPositionOfTimeModelTab);
+			configPanel.setTimeModel(null);
 		}
 	}
 	
@@ -188,7 +213,7 @@ public class TimeModelController implements Observer {
 	 */
 	private void removeTimeModelDisplayFromProjectWindow() {
 		if (this.pwt!=null) {
-			this.indexPosOfTimeModel = this.getIndexPositionOfProjectWindowTab();
+			this.indexPositionOfTimeModelTab = this.pwt.getIndexPosition();
 			this.pwt.remove();
 			this.pwt = null;
 			this.display4TimeModel = null;
@@ -197,23 +222,7 @@ public class TimeModelController implements Observer {
 	}
 	
 	/**
-	 * Returns the current index position of the project window tab.
-	 * @return the index position of project window tab
-	 */
-	private int getIndexPositionOfProjectWindowTab() {
-		int indexPosFound = 0;
-		if (this.pwt!=null) {
-			JComponent component = this.pwt.getJComponentForVisualization();
-			if (component.getParent()!=null) {
-				JTabbedPane jTabbedPane = (JTabbedPane) component.getParent();	
-				indexPosFound = jTabbedPane.indexOfComponent(this.pwt.getJComponentForVisualization());
-			}
-		}
-		return indexPosFound;
-	}
-	
-	/**
-	 * Loads the setup contiguration.
+	 * Loads the setup configuration.
 	 */
 	private void setupLoad() {
 

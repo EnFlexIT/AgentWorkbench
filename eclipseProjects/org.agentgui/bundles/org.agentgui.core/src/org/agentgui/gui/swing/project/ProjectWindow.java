@@ -40,7 +40,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -563,10 +562,11 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		if (maxTab == null) {
 			// --- Get and remove the currently selected tab --------
 			this.maxProjectWindowTab = this.getProjectWindowTabSelected();
+			this.maxProjectWindowTab.updateIndexPosition();
 			this.removeProjectTab(this.maxProjectWindowTab);
 			// --- Create the extra JInternalFrame ------------------
-			this.maxTab = new MaximizedTab(this, this.maxProjectWindowTab.getTitle());
-			this.maxTab.add(this.maxProjectWindowTab.getJComponentForVisualization());
+			maxTab = new MaximizedTab(this, this.maxProjectWindowTab.getTitle());
+			maxTab.add(this.maxProjectWindowTab.getJComponentForVisualization());
 		}
 		return maxTab;
 	}
@@ -681,7 +681,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 					int selSubIndex = subPane.getSelectedIndex();
 					if (selSubIndex != -1) {
 						tabTitle = subPane.getTitleAt(selSubIndex);
-						tabSelected = getProjectWindowTab(tabTitle);
+						tabSelected = this.getProjectWindowTab(tabTitle);
 					}
 				}
 			}
@@ -839,10 +839,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private void removeAllProjectWindowTabsTemporary4Rebuilding() {
 
 		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector);
-		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
-
-			ProjectWindowTab pwt = it.next();
-			if (pwt.getCompForChildComp() != null) {
+		for (int i = 0; i < pwtVector.size(); i++) {
+			ProjectWindowTab pwt = pwtVector.get(i);
+			if (pwt.getCompForChildComp()!=null) {
 				pwt.getCompForChildComp().removeAll();
 			}
 		}
@@ -1070,9 +1069,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		this.removeAllProjectWindowTabsTemporary4Rebuilding();
 
 		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector);
-		for (Iterator<ProjectWindowTab> it = pwtVector.iterator(); it.hasNext();) {
-
-			ProjectWindowTab pwt = it.next();
+		for (int i = 0; i < pwtVector.size(); i++) {
+			
+			ProjectWindowTab pwt = pwtVector.get(i);
 			int displayType = pwt.getDisplayType();
 
 			// --- Which view to the project is needed ? ------------
