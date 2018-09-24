@@ -276,7 +276,7 @@ public class MainWindow extends JFrame {
 	}
 	
 	/**
-	 * Proceeds a single {@link MainWindowExtension} that was registered as extension point.
+	 * Proceeds a single {@link MainWindowExtension} that was registered as extension.
 	 * @param mwExtension the MainWindowExtension to proceed
 	 */
 	private void proceedMainWindowExtension(MainWindowExtension mwExtension) {

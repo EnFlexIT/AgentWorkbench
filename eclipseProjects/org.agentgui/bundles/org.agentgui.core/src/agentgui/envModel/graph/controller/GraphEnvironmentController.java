@@ -830,8 +830,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Gets the known import adapter.
-	 * 
+	 * Return all known import adapter.
 	 * @return the import adapter
 	 */
 	public Vector<NetworkModelFileImporter> getImportAdapter() {
@@ -842,12 +841,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Adds a {@link CustomToolbarComponentDescription}, so that customised components will be added to a toolbar of the {@link BasicGraphGui}.
-	 * 
+	 * Adds a {@link CustomToolbarComponentDescription}, so that customized components will be added to a toolbar of the {@link BasicGraphGui}.
 	 * @param customButtonDescription the CustomToolbarComponentDescription to add
 	 */
 	public void addCustomToolbarComponentDescription(CustomToolbarComponentDescription customButtonDescription) {
-		if (this.getNetworkModel() != null && this.getNetworkModel().getGeneralGraphSettings4MAS() != null) {
+		if (this.getNetworkModel()!=null && this.getNetworkModel().getGeneralGraphSettings4MAS()!=null) {
 			this.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions().add(customButtonDescription);
 			this.getNetworkModelAdapter().addCustomToolbarComponentDescription(customButtonDescription);
 		} else {

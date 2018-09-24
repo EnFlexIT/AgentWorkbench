@@ -71,7 +71,8 @@
       </editor>
    </extension>
   
-   <extension-point id="org.awb.project.plugin" name="Agent.Workbench Project Plugin" schema="schema/org.awb.projectPlugin.exsd"/>
    <extension-point id="org.awb.swing.mainWindowExtension" name="Agent.Workbench Main Window Extension" schema="schema/org.awb.swing.mainWindowExtension.exsd"/>
+   <extension-point id="org.awb.env.graphToolbarExtension" name="Agent.Workbench Graph Environemt Toolbar Extension" schema="schema/org.awb.env.graphToolbarExtension.exsd"/>
+   <extension-point id="org.awb.project.plugin" name="Agent.Workbench Project Plugin" schema="schema/org.awb.projectPlugin.exsd"/>
 
 </plugin>

@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -54,6 +55,10 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.undo.UndoManager;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -77,8 +82,10 @@ import agentgui.envModel.graph.prototypes.DistributionNode;
  */
 public class BasicGraphGuiTools implements ActionListener, Observer {
 
-    private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
-    private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
+	private static final String GRAPH_TOOLBAR_EXTENSION_ID = "org.awb.env.graphToolbarExtension";
+	
+    private final String pathImage = GraphGlobals.getPathImages();
+    private final Dimension jButtonSize = new Dimension(26, 26);
 
     private boolean isPasteAction = false;
     private KeyAdapter keyAdapterPasteActionStop; 
@@ -132,6 +139,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     public BasicGraphGuiTools(GraphEnvironmentController graphEnvironmentController) {
     	this.graphController = graphEnvironmentController;
     	this.graphController.addObserver(this);
+    	this.proceedCustomToolbarComponentExtensions();
     }
 
     /**
@@ -1277,4 +1285,53 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		
 	} // end actionPerformed()
 
+    
+    // ----------------------------------------------------------------------------------
+    // --- From here, the handling of the CustomToolbarComponentExtension can be found --
+    // ----------------------------------------------------------------------------------
+    /**
+	 * Proceeds the toolbar extensions that are defines by the corresponding extension point.
+	 */
+	private void proceedCustomToolbarComponentExtensions() {
+		
+		IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(GRAPH_TOOLBAR_EXTENSION_ID);
+		try {
+			for (int i = 0; i < configElements.length; i++) {
+				IConfigurationElement configElement = configElements[i]; 
+				Object execExt = configElement.createExecutableExtension("class");
+				if (execExt instanceof CustomToolbarComponentExtension) {
+					this.proceedCustomToolbarComponentExtension((CustomToolbarComponentExtension) execExt);
+				}
+			} 
+
+		} catch (CoreException ex) {
+            System.err.println(ex.getMessage());
+        }
+	}
+	/**
+	 * Proceeds a single {@link CustomToolbarComponentExtension}.
+	 * @param mwExtension the toolbar extension to proceed
+	 */
+	private void proceedCustomToolbarComponentExtension(CustomToolbarComponentExtension toolbarExtension) {
+		
+		if (toolbarExtension==null) return;
+
+		try {
+			// --- Get the list  -----------------
+			List<CustomToolbarComponentDescription> ctcDescriptionList = toolbarExtension.getCustomToolbarComponentDescriptionList();
+			if (ctcDescriptionList!=null) {
+				for (int i = 0; i < ctcDescriptionList.size(); i++) {
+					CustomToolbarComponentDescription ctcDescription = ctcDescriptionList.get(i);
+					if (ctcDescription!=null) {
+						this.graphController.addCustomToolbarComponentDescription(ctcDescription);
+					}
+				}
+			}
+			
+		} catch (Exception ex) {
+			System.err.println(toolbarExtension.getClass().getName() + ": Error while initializing the MainWindowExtension.");
+			ex.printStackTrace();
+		}
+	}
+    
 }

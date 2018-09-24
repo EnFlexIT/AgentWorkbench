@@ -177,10 +177,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     
     	if (this.mainDisplayComponent==null) {
     		if (this.getGraphController().getNetworkModel()==null || this.getGraphController().getNetworkModel().getAlternativeNetworkModel().size()==0) {
-    			this.mainDisplayComponent = getBasicGraphGuiJDesktopPane();
+    			this.mainDisplayComponent = this.getBasicGraphGuiJDesktopPane();
     		    this.useTabs = false;
     		} else {
-    		    this.mainDisplayComponent = getJTabbedPaneAltNetModels();
+    		    this.mainDisplayComponent = this.getJTabbedPaneAltNetModels();
     		    this.useTabs = true;
     		}
     	}
