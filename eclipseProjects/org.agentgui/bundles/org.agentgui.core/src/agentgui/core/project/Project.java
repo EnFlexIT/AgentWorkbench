@@ -788,6 +788,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			}
 		}
 		Application.setStatusBar("");
+		System.gc();
 		return true;
 	}
 

@@ -1135,13 +1135,11 @@ public class MainWindow extends JFrame {
 
 			} else if (actionCMD.equalsIgnoreCase("ProjectClose")) {
 				Project currProject = Application.getProjectFocused();
-				if (currProject != null)
-					currProject.close();
+				if (currProject != null) currProject.close();
 
 			} else if (actionCMD.equalsIgnoreCase("ProjectSave")) {
 				Project currProject = Application.getProjectFocused();
-				if (currProject != null)
-					currProject.save();
+				if (currProject != null) currProject.save();
 
 			} else if (actionCMD.equalsIgnoreCase("ProjectImport")) {
 				Application.getProjectsLoaded().projectImport();
