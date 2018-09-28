@@ -55,6 +55,7 @@ de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
 de;Alle Setups exportieren;Export all setups;;;
+de;Alle ausgewählten Gruppen wurden erfolgreich deployt!;All selected groups have been deployed successfully!;;;
 de;Allgemein;General;;;
 de;Als Bild exportieren;Export as image;;;
 de;Als Projekt Start-Tab verwenden;Us as project start-tab;;;
@@ -155,6 +156,7 @@ de;Datenbank nicht vorhanden!;Database does not exist!
 de;Datenfeld;Data field
 de;Datum;Date;;;
 de;Datumsformat;Date Format;;;
+de;Deployment erfolgreich;Deployment successful;;;
 de;Der Agent ';The Agent '
 de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
 de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
@@ -217,6 +219,7 @@ de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for th
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
+de;Es wurden keine Installationspakete gefunden! Bitte Ã¼berprÃ¼fen Sie ob in den Optionen das korrekte Verzeichnis eingestellt ist!;No installation packages could be found! Please check if the correct directory is selected in the options dialog!;;;
 de;Es wurden keine Installationspakete gefunden! Bitte überprüfen Sie ob in den Optionen das korrekte Verzeichnis eingestellt ist!;No installation packages could be found! Please check in the options if the correct directory is selected!;;;
 de;Export erfolgreich;Export successful;;;
 de;Export:;Export:;;;
