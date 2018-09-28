@@ -121,18 +121,52 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 * @see edu.uci.ics.jung.visualization.BasicVisualizationServer#paintComponent(java.awt.Graphics)
 	 */
 	@Override
-	protected void paintComponent(Graphics g) {
-		try {
-			Graphics2D g2d = (Graphics2D)g;
-			if (this.isActionOnTop()==true) {
-				g2d.drawImage(offscreen, null, 0, 0);
-			} else {
-				super.paintComponent(g);
-			}
-		} catch (Exception ex) {
-			System.err.println("Error in the " + this.getClass().getSimpleName() + "[" + this.getClass().getName() + "]");
-			ex.printStackTrace();
+	protected void paintComponent(Graphics graphics) {
+		
+		boolean successfulPainted = false;
+		int paintTrials = 0;
+		int paintTrialsMax = 3;
+		Exception lastException = null;
+		
+		while (successfulPainted==false) {
+			
+			try {
+
+				paintTrials++;
+				if (this.isActionOnTop()==true || paintTrials>paintTrialsMax) {
+					Graphics2D g2d = (Graphics2D)graphics;
+					g2d.drawImage(offscreen, null, 0, 0);
+					if (paintTrials>paintTrialsMax) break;
+					
+				} else {
+					super.paintComponent(graphics);
+					
+				}
+				successfulPainted = true;
+				break;
+				
+			} catch (Exception ex) {
+				String errMessage = "[" + this.getClass().getSimpleName() + "] Error while painting components - Retry ...";
+				if (paintTrials>1) {
+					errMessage = "\n" + errMessage;
+				}
+				System.err.print(errMessage);
+				successfulPainted = false;
+				lastException = ex;
+				//ex.printStackTrace();
+			}	
 		}
+		
+		
+		if (lastException!=null) {
+			if (successfulPainted==false) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while painting components:");
+				lastException.printStackTrace();
+			} else {
+				System.err.println(" Done!");
+			}
+		}
+		
 	}
 	
 	/**

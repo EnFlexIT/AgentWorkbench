@@ -148,6 +148,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	
 	/** Graph visualisation component */
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView;
+	private boolean isCreatedVisualizationViewer;
 	
 	private SatelliteDialog satelliteDialog;
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
@@ -466,6 +467,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 	
 	/**
+	 * Returns if the visualization viewer was fully created.
+	 * @return true, if is created visualization viewer
+	 */
+	public boolean isCreatedVisualizationViewer() {
+		return isCreatedVisualizationViewer;
+	}
+	/**
 	 * Sets the VisualizationViewer.
 	 * @param newVisView the new VisualizationViewer
 	 */
@@ -762,6 +770,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				}
 			});
 			
+			this.isCreatedVisualizationViewer=true;
 		}
 		return visView;
 	}

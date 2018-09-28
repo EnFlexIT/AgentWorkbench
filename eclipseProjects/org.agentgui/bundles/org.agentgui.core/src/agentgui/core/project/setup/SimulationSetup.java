@@ -329,14 +329,13 @@ public class SimulationSetup {
 			
 		} else {
 			// --- Delete old bin file if available -------
-			// --- TODO Can be enabled from the 01.11.2018 !!! 
-//			File binFileUserObject = SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN);
-//			if (binFileUserObject.exists()==true) {
-//				boolean deleted = binFileUserObject.delete();
-//				if (deleted==false) {
-//					binFileUserObject.deleteOnExit();
-//				}
-//			}
+			File binFileUserObject = SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN);
+			if (binFileUserObject.exists()==true) {
+				boolean deleted = binFileUserObject.delete();
+				if (deleted==false) {
+					binFileUserObject.deleteOnExit();
+				}
+			}
 		}
 		
 	}

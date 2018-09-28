@@ -471,13 +471,13 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		} else {
 			// --- Delete old bin file if available -------
 			// --- TODO Can be enabled from the 01.11.2018 !!! 
-//			File binFileUserObject = new File(projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
-//			if (binFileUserObject.exists()==true) {
-//				boolean deleted = binFileUserObject.delete();
-//				if (deleted==false) {
-//					binFileUserObject.deleteOnExit();
-//				}
-//			}
+			File binFileUserObject = new File(projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
+			if (binFileUserObject.exists()==true) {
+				boolean deleted = binFileUserObject.delete();
+				if (deleted==false) {
+					binFileUserObject.deleteOnExit();
+				}
+			}
 		}
 	}
 

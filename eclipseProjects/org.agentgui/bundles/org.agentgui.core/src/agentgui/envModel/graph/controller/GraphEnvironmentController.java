@@ -40,6 +40,7 @@ import javax.swing.DefaultListModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
@@ -424,10 +425,22 @@ public class GraphEnvironmentController extends EnvironmentController {
 						// --- Assign settings to the NetworkModel --------------------------------
 						networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
 						
-						// --- Use the local method in order to inform the observer -------------------
+						// --- Use case 'Application' ---------------------------------------------
+						if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+							// --- Wait for visualization component before assign network model ---
+							while (GraphEnvironmentController.this.getEnvironmentPanel()==null) {
+								Thread.sleep(50);
+							}
+							BasicGraphGui basicGraphGui = GraphEnvironmentController.this.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
+							while (basicGraphGui.isCreatedVisualizationViewer()==false) {
+								Thread.sleep(50);
+							}	
+						}
+						
+						// --- Use the local method in order to inform the observer ---------------
 						GraphEnvironmentController.this.setDisplayEnvironmentModel(networkModel);
 						
-						// --- Decode the data models that are Base64 encoded in the moment -----------
+						// --- Decode the data models that are Base64 encoded in the moment -------
 						GraphEnvironmentController.this.setNetworkComponentDataModelBase64Decoded();
 						
 					} catch (Exception ex) {
@@ -435,6 +448,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 						
 					} finally {
 						GraphEnvironmentController.this.isTemporaryPreventSaving = false;
+						Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
 					}
 					
 				}
