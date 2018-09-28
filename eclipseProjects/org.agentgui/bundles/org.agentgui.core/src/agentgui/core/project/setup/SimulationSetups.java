@@ -30,12 +30,13 @@ package agentgui.core.project.setup;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
@@ -51,7 +52,7 @@ import de.enflexit.common.transfer.FileCopier;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SimulationSetups extends Hashtable<String, String> {
+public class SimulationSetups extends TreeMap<String, String> {
 
 	private static final long serialVersionUID = -9078535303459653695L;
 
