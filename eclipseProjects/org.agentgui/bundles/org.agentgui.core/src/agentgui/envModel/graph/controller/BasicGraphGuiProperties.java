@@ -352,7 +352,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJToolBarProperties());
 					}
 					
-					// --- If Available, Add individual tool bar elements ----------
+					// --- If Available, add individual tool bar elements ----------
 					this.addCustomToolBarElements();
 					
 					if (visualisation==null) {

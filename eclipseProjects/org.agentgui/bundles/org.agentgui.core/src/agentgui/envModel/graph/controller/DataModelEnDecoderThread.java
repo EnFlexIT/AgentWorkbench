@@ -29,7 +29,6 @@
 package agentgui.envModel.graph.controller;
 
 import java.awt.Cursor;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -173,11 +172,8 @@ public class DataModelEnDecoderThread extends Thread {
 		this.firstDisplayTime = System.currentTimeMillis() + this.firstDisplayWaitTime;
 
 		// --- Summarize NetworkComponent's and GraphNode's --------- 
-		Vector<Object> sumCompVector = new Vector<Object>(Arrays.asList(this.graphController.getNetworkModel().getNetworkComponents().values().toArray()));
-		sumCompVector.addAll(new Vector<Object>(Arrays.asList(this.graphController.getNetworkModel().getGraph().getVertices().toArray())));
+		Vector<Object> sumCompVector = this.getNetworkObjectsToEnDecode();
 		this.elementsToConvert = sumCompVector.size();
-		
-		// --- Exit, if no elements are to convert ------------------
 		if (this.elementsToConvert==0) return;
 		
 		// --- Summarize the file sizes -----------------------------
@@ -194,7 +190,7 @@ public class DataModelEnDecoderThread extends Thread {
 		}
 		// --- Finally, adjust the number of Threads ----------------
 		if (noOfVector>this.elementsToConvert) noOfVector=this.elementsToConvert;
-		if (noOfVector>30) noOfVector=30;
+		if (noOfVector>15) noOfVector=15;
 		if (noOfVector<=0) noOfVector=1;
 		
 		// --- Define separation Vector -----------------------------
@@ -202,8 +198,10 @@ public class DataModelEnDecoderThread extends Thread {
 		
 		// --- Distribute components on separated Vector ------------
 		int roundTripIndex = 0;
-		for (Object component : sumCompVector) {
-			// --- Make sure that a Vector is available -------------
+		for (int i = 0; i < sumCompVector.size(); i++) {
+			
+			Object component = sumCompVector.get(i);
+			// --- Make sure that a part Vector is available --------
 			if (splitVector.size()<roundTripIndex+1) {
 				splitVector.add(new Vector<Object>());
 			}
@@ -241,7 +239,7 @@ public class DataModelEnDecoderThread extends Thread {
 		}
 
     	// --- Finally, close progress monitor ---------------------- 
-    	if (isHeadlessOperation==false) {
+    	if (this.isHeadlessOperation==false) {
     		SwingUtilities.invokeLater(new Runnable() {
     			@Override
     			public void run() {
@@ -256,6 +254,59 @@ public class DataModelEnDecoderThread extends Thread {
     		});    		
     	}
 		
+	}
+	
+	/**
+	 * Returns the network objects where data model have to be to en- or decoded.
+	 * @return the network objects to en- decode
+	 */
+	private Vector<Object> getNetworkObjectsToEnDecode() {
+
+		if (this.organizerAction==null) return new Vector<>();
+		
+		// --- Define the result vector -----------------------------
+		Vector<Object> reducedNetElementVector = new Vector<>();
+
+		// --- Work on the NetworkComponents ------------------------
+		Object[] netComps = this.graphController.getNetworkModel().getNetworkComponents().values().toArray();
+		for (int i = 0; i < netComps.length; i++) {
+			
+			NetworkComponent netComp = (NetworkComponent) netComps[i];
+			switch (this.organizerAction) {
+			case ORGANIZE_ENCODE_64:
+				if (netComp.getDataModel()!=null) {
+					reducedNetElementVector.add(netComp);
+				}
+				break;
+
+			case ORGANIZE_DECODE_64:
+				if (netComp.getDataModelBase64()!=null && netComp.getDataModelBase64().size()>0) {
+					reducedNetElementVector.add(netComp);
+				}
+				break;
+			}
+		}
+
+		// --- Work on the GrphNodes --------------------------------
+		Object[] graphNodes = this.graphController.getNetworkModel().getGraph().getVertices().toArray();
+		for (int i = 0; i < graphNodes.length; i++) {
+			
+			GraphNode graphNode = (GraphNode) graphNodes[i];
+			switch (this.organizerAction) {
+			case ORGANIZE_ENCODE_64:
+				if (graphNode.getDataModel()!=null) {
+					reducedNetElementVector.add(graphNode);
+				}
+				break;
+
+			case ORGANIZE_DECODE_64:
+				if (graphNode.getDataModelBase64()!=null && graphNode.getDataModelBase64().size()>0) {
+					reducedNetElementVector.add(graphNode);
+				}
+				break;
+			}
+		}
+		return reducedNetElementVector;
 	}
 	
 	/**

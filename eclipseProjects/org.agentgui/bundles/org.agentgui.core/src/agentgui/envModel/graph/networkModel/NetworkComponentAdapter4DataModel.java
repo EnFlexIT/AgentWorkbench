@@ -126,7 +126,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	public abstract void save();
 	
 	/**
-	 * Sets the data model of a NetworkComponent to the visualisation component.
+	 * Sets the data model of a NetworkComponent to the visualization component.
 	 * @param networkComponent the NetworkComponent
 	 */
 	public void setDataModel(NetworkComponent networkComponent) {
@@ -138,7 +138,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 		}
 	}
 	/**
-	 * Sets the data model of a GraphNode to the visualisation component.
+	 * Sets the data model of a GraphNode to the visualization component.
 	 * @param graphNode the GraphNode
 	 */
 	public void setDataModel(GraphNode graphNode) {
