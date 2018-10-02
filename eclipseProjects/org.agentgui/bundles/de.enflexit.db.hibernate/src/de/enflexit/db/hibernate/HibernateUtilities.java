@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import org.hibernate.stat.Statistics;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -234,6 +235,51 @@ public class HibernateUtilities {
 			// imse.printStackTrace();
 		}
 	}
+	
+	
+	/**
+	 * Sets the statistics for the specified SessionFactory enabled (or not).
+	 *
+	 * @param factoryID the factory ID
+	 * @param setEnabled the set enabled
+	 */
+	public static void setStatisticsEnabled(String factoryID, boolean setEnabled) {
+	
+		String idFactory = getFactoryID(factoryID);
+		SessionFactory factory = getSessionFactoryHashMap().get(idFactory);
+		if (factory!=null) {
+			// --- Enable / disable statistics ----------------------
+			Statistics stats = factory.getStatistics();
+			stats.setStatisticsEnabled(true);
+			
+		} else {
+			System.err.println("[" + HibernateUtilities.class.getSimpleName() + "]: SessionFactory '" + idFactory + "' not found!");
+		}
+	}
+	
+	/**
+	 * Write the SessionFactory statistics for the specified factory.
+	 * @param factoryID the factory ID
+	 */
+	public static void writeStatistics(String factoryID) {
+		
+		String idFactory = getFactoryID(factoryID);
+		SessionFactory factory = getSessionFactoryHashMap().get(idFactory);
+		if (factory!=null) {
+			
+			Statistics stats = factory.getStatistics();
+			if (stats.isStatisticsEnabled()==true) {
+				// --- Write statistics -----------------------------
+				System.out.println(stats.toString());
+			} else {
+				System.err.println("[" + HibernateUtilities.class.getSimpleName() + "]: SessionFactory '" + idFactory + "' statistics are not enabled!");
+			}
+			
+		} else {
+			System.err.println("[" + HibernateUtilities.class.getSimpleName() + "]: SessionFactory '" + idFactory + "' not found!");
+		}
+	}
+	
 	
 	/**
 	 * Close session factory specified by the factory ID.

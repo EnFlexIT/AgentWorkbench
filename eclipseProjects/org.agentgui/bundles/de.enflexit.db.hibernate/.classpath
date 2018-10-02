@@ -8,7 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate-c3p0-5.3.6.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate-commons-annotations-5.0.4.Final.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate-core-5.3.6.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate-core-5.3.6.Final.jar" sourcepath="C:/Users/Christian/.m2/repository/org/hibernate/hibernate-core/5.3.6.Final/hibernate-core-5.3.6.Final-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate-osgi-5.3.6.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jandex-2.0.5.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javassist-3.23.1-GA.jar"/>

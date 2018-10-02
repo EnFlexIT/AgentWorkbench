@@ -238,7 +238,7 @@ public class ProgressMonitor implements ActionListener {
 	 */
 	public void setHeaderText(String headerText) {
 		this.headerText = headerText;
-		this.jLabelHeader.setText(headerText);
+		this.getJLabelHeader().setText(headerText);
 	}
 	/**
 	 * Sets the progress text.
@@ -246,7 +246,7 @@ public class ProgressMonitor implements ActionListener {
 	 */
 	public void setProgressText(String progressText) {
 		this.progressText = progressText;
-		this.jLabelProgress.setText(progressText);
+		this.getJLabelProgress().setText(progressText);
 	}
 	/**
 	 * Can be used to set the progress in percent (0 - 100).
@@ -344,23 +344,34 @@ public class ProgressMonitor implements ActionListener {
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints.gridy = 0;
 			
-			jLabelHeader = new JLabel();
-			jLabelHeader.setText(this.headerText);
-			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
-			
-			jLabelProgress = new JLabel();
-			jLabelProgress.setText(this.progressText);
-			jLabelProgress.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.add(jLabelHeader, gridBagConstraints);
+			jContentPane.add(getJLabelHeader(), gridBagConstraints);
 			jContentPane.add(getJProgressBarDownload(), gridBagConstraints1);
-			jContentPane.add(jLabelProgress, gridBagConstraints2);
+			jContentPane.add(getJLabelProgress(), gridBagConstraints2);
 			jContentPane.add(getJButtonCancel(), gridBagConstraints3);
 			jContentPane.add(getJPanelDummy(), gridBagConstraints11);
 		}
 		return jContentPane;
+	}
+	
+	private JLabel getJLabelHeader() {
+		if (jLabelHeader==null) {
+			jLabelHeader = new JLabel();
+			jLabelHeader.setText(this.headerText);
+			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
+		}
+		return jLabelHeader;
+	}
+	
+	private JLabel getJLabelProgress() {
+		if (jLabelProgress==null) {
+			jLabelProgress = new JLabel();
+			jLabelProgress.setText(this.progressText);
+			jLabelProgress.setFont(new Font("Dialog", Font.BOLD, 12)); 
+		}
+		return jLabelProgress;
 	}
 
 	/**
