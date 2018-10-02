@@ -42,6 +42,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
@@ -84,7 +85,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/** HashMap that provides faster access to the GraphElement's. */
 	private HashMap<String, GraphElement> graphElements;
 	/** A list of all NetworkComponents in the NetworkModel, accessible by ID. */
-	private HashMap<String, NetworkComponent> networkComponents;
+	private TreeMap<String, NetworkComponent> networkComponents;
 	/** A list of {@link GraphElement} (that are {@link GraphNode} or {@link GraphEdge}) mapped to one or more {@link NetworkComponent}'s */
 	private transient HashMap<GraphElement, NetworkComponents> graphElementToNetworkComponents;  
 	
@@ -109,7 +110,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public NetworkModel() {
 		this.graphElements = new HashMap<String, GraphElement>();
-		this.networkComponents = new HashMap<String, NetworkComponent>();
+		this.networkComponents = new TreeMap<String, NetworkComponent>();
 	}
 
 	/**
@@ -171,14 +172,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * Gets the network components.
 	 * @return the networkComponents
 	 */
-	public HashMap<String, NetworkComponent> getNetworkComponents() {
+	public TreeMap<String, NetworkComponent> getNetworkComponents() {
 		return networkComponents;
 	}
 	/**
 	 * Sets the network components.
 	 * @param networkComponents the networkComponents to set
 	 */
-	public void setNetworkComponents(HashMap<String, NetworkComponent> networkComponents) {
+	public void setNetworkComponents(TreeMap<String, NetworkComponent> networkComponents) {
 		this.networkComponents = networkComponents;
 		this.refreshGraphElements();
 	}
@@ -322,7 +323,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				netModel.setGraph(this.getGraphCopy());
 		
 				// --- Create a copy of the networkComponents -----------
-				HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
+				TreeMap<String, NetworkComponent> copyOfComponents = new TreeMap<String, NetworkComponent>();
 				for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 					try {
 						// --- Copy NetworkComponent -------------------- 

@@ -28,7 +28,7 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -41,19 +41,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class NetworkComponentList {
 
-	private HashMap<String, NetworkComponent> componentList;
+	private TreeMap<String, NetworkComponent> componentList;
 	
 	
 	/**
 	 * Default constructor, required for JAXB
 	 */
-	public NetworkComponentList(){
-	}
+	public NetworkComponentList() { }
 	/**
 	 * Constructor
 	 * @param componentList The componentList
 	 */
-	public NetworkComponentList(HashMap<String, NetworkComponent> componentList){
+	public NetworkComponentList(TreeMap<String, NetworkComponent> componentList){
 		this.componentList = componentList;
 	}
 
@@ -62,14 +61,14 @@ public class NetworkComponentList {
 	 * Gets the component list.
 	 * @return the componentList
 	 */
-	public HashMap<String, NetworkComponent> getComponentList() {
+	public TreeMap<String, NetworkComponent> getComponentList() {
 		return componentList;
 	}
 	/**
 	 * Sets the component list.
 	 * @param componentList the componentList to set
 	 */
-	public void setComponentList(HashMap<String, NetworkComponent> componentList) {
+	public void setComponentList(TreeMap<String, NetworkComponent> componentList) {
 		this.componentList = componentList;
 	}
 	

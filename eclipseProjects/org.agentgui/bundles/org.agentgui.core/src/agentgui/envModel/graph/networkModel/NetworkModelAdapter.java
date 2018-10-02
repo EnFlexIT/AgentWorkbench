@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.undo.UndoManager;
@@ -544,7 +545,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponents()
 	 */
 	@Override
-	public HashMap<String, NetworkComponent> getNetworkComponents() {
+	public TreeMap<String, NetworkComponent> getNetworkComponents() {
 		return this.graphController.getNetworkModel().getNetworkComponents();
 	}
 
@@ -552,7 +553,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#setNetworkComponents(java.util.HashMap)
 	 */
 	@Override
-	public void setNetworkComponents(HashMap<String, NetworkComponent> networkComponents) {
+	public void setNetworkComponents(TreeMap<String, NetworkComponent> networkComponents) {
 		this.graphController.getNetworkModel().setNetworkComponents(networkComponents);
 	}
 

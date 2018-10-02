@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import agentgui.envModel.graph.prototypes.DistributionNode;
@@ -90,19 +91,15 @@ public interface NetworkModelInterface {
 	 * @param networkComponent The NetworkComponent
 	 * @return The GraphElements
 	 */
-	public abstract Vector<GraphElement> getGraphElementsFromNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract Vector<GraphElement> getGraphElementsFromNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * Gets the graph.
-	 * 
 	 * @return The Graph
 	 */
 	public abstract Graph<GraphNode, GraphEdge> getGraph();
-
 	/**
 	 * Sets the the graph of the network model.
-	 * 
 	 * @param newGraph the new graph
 	 */
 	public abstract void setGraph(Graph<GraphNode, GraphEdge> newGraph);
@@ -113,8 +110,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponent the network component
 	 * @return the network component
 	 */
-	public abstract NetworkComponent addNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract NetworkComponent addNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * Rename component.
@@ -151,8 +147,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponents the network components
 	 * @return the hash set
 	 */
-	public abstract HashSet<NetworkComponent> removeNetworkComponentsInverse(
-			HashSet<NetworkComponent> networkComponents);
+	public abstract HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Gets the a node from network component.
@@ -160,8 +155,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponent the network component
 	 * @return the a node from network component
 	 */
-	public abstract Vector<GraphNode> getNodesFromNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract Vector<GraphNode> getNodesFromNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * This method gets the NetworkComponent with the given ID from the GridModel's networkComponents HashMap.
@@ -253,29 +247,24 @@ public interface NetworkModelInterface {
 
 	/**
 	 * Gets the network components.
-	 * 
 	 * @return the networkComponents
 	 */
-	public abstract HashMap<String, NetworkComponent> getNetworkComponents();
-
+	public abstract TreeMap<String, NetworkComponent> getNetworkComponents();
 	/**
 	 * Sets the network components.
-	 * 
 	 * @param networkComponents the networkComponents to set
 	 */
-	public abstract void setNetworkComponents(
-			HashMap<String, NetworkComponent> networkComponents);
+	public abstract void setNetworkComponents(TreeMap<String, NetworkComponent> networkComponents);
 
+	
 	/**
 	 * Generates the next unique network component ID in the series n1, n2, n3, ...
-	 * 
 	 * @return the next unique network component ID
 	 */
 	public abstract String nextNetworkComponentID();
 
 	/**
 	 * Generates the next unique node ID in the series PP0, PP1, PP2, ...
-	 * 
 	 * @return String The next unique node ID that can be used.
 	 */
 	public abstract String nextNodeID();
