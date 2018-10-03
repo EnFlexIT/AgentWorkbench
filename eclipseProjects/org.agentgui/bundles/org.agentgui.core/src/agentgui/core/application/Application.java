@@ -533,13 +533,13 @@ public class Application {
 		if (isRunningAsServer()==false && project2OpenAfterStart!=null) {
 
 			// --- Open the project -----------------------
-			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
+			Application.setStatusBarMessage(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					getProjectsLoaded().add(project2OpenAfterStart);
-					Application.setStatusBar(Language.translate("Fertig"));
+					Application.setStatusBarMessageReady();
 				}
 			});
 		}
@@ -589,7 +589,7 @@ public class Application {
 				@Override
 				public void run() {
 					
-					setStatusBar(Language.translate("Fertig"));
+					setStatusBarMessageReady();
 					
 					setOntologyVisualisationConfigurationToCommonBundle();
 					
@@ -690,7 +690,7 @@ public class Application {
 					public void run() {
 						
 						if (getMainWindow()!=null) {
-							getMainWindow().setStatusBar(Language.translate("Fertig"));
+							setStatusBarMessageReady();
 						}
 						doBenchmark(false);
 						waitForBenchmark();
@@ -1079,12 +1079,20 @@ public class Application {
 	}
 	
 	/**
-	 * Enables to set the text of the status bar
-	 * @param statusText
+	 * Sets the status bar message text.
+	 * @param statusText the new status bar message
 	 */
-	public static void setStatusBar(String statusText) {
+	public static void setStatusBarMessage(String statusText) {
 		if (getMainWindow()!=null) {
-			getMainWindow().setStatusBar(statusText);	
+			getMainWindow().setStatusBarMessage(statusText);	
+		}
+	}
+	/**
+	 * Sets the status bar text message to 'Ready'.
+	 */
+	public static void setStatusBarMessageReady() {
+		if (getMainWindow()!=null) {
+			getMainWindow().setStatusBarMessage(Language.translate("Fertig"));
 		}
 	}
 	
@@ -1183,14 +1191,14 @@ public class Application {
 	 */
 	private static void waitForBenchmark() {
 		while (Application.isBenchmarkRunning()==true) {
-			Application.setStatusBar(Language.translate("Warte auf das Ende des Benchmarks ..."));
+			Application.setStatusBarMessage(Language.translate("Warte auf das Ende des Benchmarks ..."));
 			try {
 				Thread.sleep(250);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
-		Application.setStatusBar(Language.translate("Fertig"));
+		Application.setStatusBarMessageReady();
 	}
 	
 	/**

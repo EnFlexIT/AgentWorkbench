@@ -270,7 +270,9 @@ public class SetupSelectorToolbar implements ActionListener {
 	}
 
 	/**
-	 * 
+	 * An asynchronous update interface for receiving notifications
+	 * about My information as the My is constructed.
+	 *
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	private class MyObserver implements Observer {
@@ -293,7 +295,6 @@ public class SetupSelectorToolbar implements ActionListener {
 				}			
 			}
 		}
-		
 	}
 	
 	/**
@@ -379,7 +380,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			if (input.equalsIgnoreCase("")) return null;
 			
 			// --- Can the name be used as file name? -----
-			newFileName = currProject.getSimulationSetups().getSuggestSetupFile(input);
+			newFileName = this.currProject.getSimulationSetups().getSuggestSetupFile(input);
 			if (newFileName.length() < 8) {
 				head = Language.translate("Setup-Name zu kurz!");
 				msg  = "Name: '" + input + "' " + Language.translate("zu Datei") + ": '" + newFileName + ".xml':";
@@ -389,8 +390,8 @@ public class SetupSelectorToolbar implements ActionListener {
 				inputIsOk = true;
 			}
 
-			// --- Wird der Name bereits verwendet ---------------------------------
-			if (currProject.getSimulationSetups().containsSetupName(input)) {
+			// --- Is the name already used?---------------
+			if (this.currProject.getSimulationSetups().containsSetupName(input)) {
 				head = Language.translate("Setup-Name wird bereits verwendet!");
 				msg  = Language.translate("Der Name") + " '" + input + "' " + Language.translate("wird bereits verwendet.");
 				msg += Language.translate("<br>Bitte geben Sie einen anderen Namen für das Setup an.");
@@ -408,12 +409,16 @@ public class SetupSelectorToolbar implements ActionListener {
 	 */
 	private void setupAdd() {
 		
-		String nameNew = this.setupAskUser4SetupName(this.SETUP_add, null);
+		final String nameNew = this.setupAskUser4SetupName(this.SETUP_add, null);
 		if (nameNew==null) return;
-		String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew); 
+		final String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew); 
 
-		currProject.getSimulationSetups().setupAddNew(nameNew, fileNameNew);
-
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				currProject.getSimulationSetups().setupAddNew(nameNew, fileNameNew);
+			}
+		}, this.getClass().getSimpleName() + "Action").start();
 	}
 	
 	/**
@@ -421,14 +426,18 @@ public class SetupSelectorToolbar implements ActionListener {
 	 */
 	private void setupRename() {
 		
-		String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
-		String nameNew = this.setupAskUser4SetupName(this.SETUP_rename, nameOld);
+		final String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
+		final String nameNew = this.setupAskUser4SetupName(this.SETUP_rename, nameOld);
 		if (nameNew==null) return;
 		if (nameNew.equalsIgnoreCase(nameOld)) return;
-		String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
+		final String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
 
-		currProject.getSimulationSetups().setupRename(nameOld, nameNew, fileNameNew);
-		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				currProject.getSimulationSetups().setupRename(nameOld, nameNew, fileNameNew);
+			}
+		}, this.getClass().getSimpleName() + "Action").start();
 	}
 	
 	/**
@@ -436,29 +445,35 @@ public class SetupSelectorToolbar implements ActionListener {
 	 */
 	private void setupCopy(){
 
-		String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
-		String nameNew = this.setupAskUser4SetupName(this.SETUP_copy, nameOld + " (Copy)");
+		final String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
+		final String nameNew = this.setupAskUser4SetupName(this.SETUP_copy, nameOld + " (Copy)");
 		if (nameNew==null) return;
-		String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
+		final String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
 
-		currProject.getSimulationSetups().setupCopy(nameOld, nameNew, fileNameNew);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				currProject.getSimulationSetups().setupCopy(nameOld, nameNew, fileNameNew);
+			}
+		}, this.getClass().getSimpleName() + "Action").start();
 	}
 	
 	/**
 	 * This method removes the current Simulation-Setup from to this project
 	 */
 	private void setupRemove() {
-		
-		String head = null;
-		String msg  = null;
-		Integer input = null;
-		
-		head = jComboBoxSetupSelector.getSelectedItem().toString() + ": " + Language.translate("Setup löschen?");
-		msg  = Language.translate("Wollen Sie das aktuelle Setup wirklich löschen?");
-		input = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
+		final String setupToRemove = this.getJComboBoxSetupSelector().getSelectedItem().toString();
+		String head = setupToRemove + ": " + Language.translate("Setup löschen?");
+		String msg  = Language.translate("Wollen Sie das aktuelle Setup wirklich löschen?");
+		int input = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
 		if (input == JOptionPane.YES_OPTION) {
-			currProject.getSimulationSetups().setupRemove(jComboBoxSetupSelector.getSelectedItem().toString());
-		}		
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					currProject.getSimulationSetups().setupRemove(setupToRemove);
+				}
+			}, this.getClass().getSimpleName() + "Action").start();
+		}
 	}
 	
 }

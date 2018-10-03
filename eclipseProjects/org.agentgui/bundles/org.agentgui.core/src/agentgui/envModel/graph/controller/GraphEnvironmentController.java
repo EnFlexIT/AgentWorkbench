@@ -398,7 +398,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 						// --- Set application status text ----------------------------------------
 						if (Application.getMainWindow() != null) {
 							Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-							Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
+							Application.setStatusBarMessage(Language.translate("Lade Setup") + " :" + fileName + " ...");
 						}
 	
 						// --- Register agents that have to be started with the environment -------

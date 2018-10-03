@@ -28,10 +28,11 @@
  */
 package agentgui.core.gui;
 
-import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -74,12 +75,34 @@ public class MainWindowStatusBar extends JPanel {
 	 */
 	private void initialize() {
 		
-		this.setPreferredSize(new Dimension(700, 22));
+		this.setPreferredSize(new Dimension(881, 22));
 		
-		this.setLayout(new BorderLayout(3, 0));
-		this.add(getJLabelStatusText(), BorderLayout.WEST);
-		this.add(getJLabelJadeState(), BorderLayout.EAST);
-		this.add(getJToolBarCenter(), BorderLayout.CENTER);
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{300, 194, 200, 0};
+		gridBagLayout.rowHeights = new int[]{22, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		setLayout(gridBagLayout);
+		
+		GridBagConstraints gbc_jLabelStatusText = new GridBagConstraints();
+		gbc_jLabelStatusText.anchor = GridBagConstraints.WEST;
+		gbc_jLabelStatusText.fill = GridBagConstraints.VERTICAL;
+		gbc_jLabelStatusText.gridx = 0;
+		gbc_jLabelStatusText.gridy = 0;
+		this.add(getJLabelStatusText(), gbc_jLabelStatusText);
+		
+		GridBagConstraints gbc_jPanelCenter = new GridBagConstraints();
+		gbc_jPanelCenter.fill = GridBagConstraints.BOTH;
+		gbc_jPanelCenter.gridx = 1;
+		gbc_jPanelCenter.gridy = 0;
+		this.add(getJToolBarCenter(), gbc_jPanelCenter);
+		
+		GridBagConstraints gbc_jLabelJadeState = new GridBagConstraints();
+		gbc_jLabelJadeState.anchor = GridBagConstraints.WEST;
+		gbc_jLabelJadeState.fill = GridBagConstraints.VERTICAL;
+		gbc_jLabelJadeState.gridx = 2;
+		gbc_jLabelJadeState.gridy = 0;
+		this.add(getJLabelJadeState(), gbc_jLabelJadeState);
 		
 		this.setJadeIsRunning(false);
 	}
@@ -91,8 +114,6 @@ public class MainWindowStatusBar extends JPanel {
 	private JLabel getJLabelStatusText() {
 		if (jLabelStatusText == null) {
 			jLabelStatusText = new JLabel("Status");
-			jLabelStatusText.setPreferredSize(new Dimension(300, 16));
-			jLabelStatusText.setMinimumSize(new Dimension(300, 16));
 			jLabelStatusText.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelStatusText;
@@ -150,6 +171,8 @@ public class MainWindowStatusBar extends JPanel {
 			jPanelCenter.setBorder(BorderFactory.createEmptyBorder());
 			jPanelCenter.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 			jPanelCenter.addSeparator();
+			jPanelCenter.setPreferredSize(new Dimension(300, 16));
+			jPanelCenter.setMinimumSize(new Dimension(300, 16));
 		}
 		return jPanelCenter;
 	}

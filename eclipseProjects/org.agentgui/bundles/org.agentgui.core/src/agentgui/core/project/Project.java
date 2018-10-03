@@ -109,6 +109,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	// --- public statics --------------------------------------
 	@XmlTransient public static final String PREPARE_FOR_SAVING = "ProjectPrepare4Saving";
 	@XmlTransient public static final String SAVED = "ProjectSaved";
+	@XmlTransient public static final String SAVED_EXCLUDING_SETUP = "ProjectSavedExcludingSetup";
 	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
 	@XmlTransient public static final String CHANGED_ProjectDescription = "ProjectDescription";
 	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
@@ -420,7 +421,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		if (xmlFile.exists()==false) {
 
 			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + xmlFileName);
-			Application.setStatusBar(Language.translate("Fertig"));
+			Application.setStatusBarMessageReady();
 
 			String title = Language.translate("Projekt-Ladefehler!");
 			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
@@ -470,7 +471,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			
 		} else {
 			// --- Delete old bin file if available -------
-			// --- TODO Can be enabled from the 01.11.2018 !!! 
 			File binFileUserObject = new File(projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObjectBinFile());
 			if (binFileUserObject.exists()==true) {
 				boolean deleted = binFileUserObject.delete();
@@ -579,7 +579,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	public boolean save(File projectPath, boolean saveSetup, boolean saveUserDataModel) {
 
-		Application.setStatusBar(this.projectName + ": " + Language.translate("speichern") + " ... ");
+		Application.setStatusBarMessage(this.projectName + ": " + Language.translate("speichern") + " ... ");
 
 		// ------------------------------------------------
 		// --- Notify. prepare for saving -----------------
@@ -613,7 +613,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 			// --------------------------------------------
 			// --- Save the current SimulationSetup -------
-			if (saveSetup == true) {
+			if (saveSetup==true) {
 				this.getSimulationSetups().setupSave();
 			}
 
@@ -622,13 +622,17 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			
 			// --------------------------------------------
 			// --- Notification ---------------------------
-			this.setNotChangedButNotify(Project.SAVED);
+			if (saveSetup==true) {
+				this.setNotChangedButNotify(Project.SAVED);
+			} else {
+				this.setNotChangedButNotify(Project.SAVED_EXCLUDING_SETUP);
+			}
 
 		} catch (Exception e) {
 			System.out.println("[" + this.getClass().getSimpleName() + "] Error while saving the project files!");
 			e.printStackTrace();
 		}
-		Application.setStatusBar("");
+		Application.setStatusBarMessage("");
 		return successful;
 	}
 
@@ -713,7 +717,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		String msgHead = null;
 		String msgText = null;
 
-		Application.setStatusBar(Language.translate("Projekt schließen") + " ...");
+		Application.setStatusBarMessage(Language.translate("Projekt schließen") + " ...");
 		if (isSkipSaving==false && this.isUnsaved()==true) {
 
 			if (Application.isOperatingHeadless()==false) {
@@ -787,7 +791,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				Application.getMainWindow().setCloseButtonPosition(false);
 			}
 		}
-		Application.setStatusBar("");
+		Application.setStatusBarMessage("");
 		System.gc();
 		return true;
 	}

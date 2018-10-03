@@ -389,7 +389,9 @@ public abstract class PlugIn implements Observer {
 			} else if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
 				this.onPrepareForSaving();
 			} else if (updateObject.equals(Project.SAVED)) {
-				this.onProjectSaved();
+				this.onProjectSaved(false);
+			} else if (updateObject.equals(Project.SAVED_EXCLUDING_SETUP)) {
+				this.onProjectSaved(true);
 			} else if (updateObject.equals(Project.CHANGED_ProjectName)) {
 				this.onProjectChangedProjectName();
 			} else if (updateObject.equals(Project.CHANGED_ProjectDescription)) {
@@ -492,8 +494,12 @@ public abstract class PlugIn implements Observer {
 	/**On notification to do the preparations to save a project or simulation setup. */
 	protected void onPrepareForSaving() { };
 
-	/**On project saved. */
-	protected void onProjectSaved() { }
+	/**
+	 * On project saved.
+	 *
+	 * @param isExcludeSetup indicator that reports, if the setup was excluded from the save operation
+	 */
+	protected void onProjectSaved(boolean isExcludeSetup) { }
 	
 	/** On project changed project name. */
 	protected void onProjectChangedProjectName() { }

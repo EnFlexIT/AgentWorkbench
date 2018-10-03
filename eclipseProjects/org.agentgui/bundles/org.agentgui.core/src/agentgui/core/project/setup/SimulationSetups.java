@@ -95,32 +95,36 @@ public class SimulationSetups extends TreeMap<String, String> {
 	}
 	
 	/**
-	 * Adds a new Setup to this Hashtable.
-	 * @param name the name
+	 * Adds a new Setup to the setups.
+	 * @param newSetupName the name
 	 * @param newFileName the new file name
 	 */
-	public void setupAddNew(String name, String newFileName) {
-		
+	public void setupAddNew(String newSetupName, String newFileName) {
+		// --- Set application status for user ------------
+		Application.setStatusBarMessage("Adding new setup '" + newSetupName + "' ...");
 		// --- Setup current setup ------------------------
 		this.setupSave();
 		// --- Add name and file --------------------------
-		this.put(name, newFileName);
+		this.put(newSetupName, newFileName);
 		// --- Set focus to the current setup -------------
-		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_ADD_NEW, name, true);
+		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_ADD_NEW, newSetupName, true);
 		// --- Save project -------------------------------
 		this.saveProject(true);
+		Application.setStatusBarMessageReady();
 	}
 
 	/**
-	 * Removes a Setup form this Hashtable.
-	 * @param name the new up remove
+	 * Removes a setup form the list of setups.
+	 * @param setupName the setup to remove
 	 */
-	public void setupRemove(String name) {
+	public void setupRemove(String setupName) {
 		
-		if (this.containsKey(name)==false) return;
+		if (this.containsKey(setupName)==false) return;
 
+		// --- Set application status for user ------------
+		Application.setStatusBarMessage("Remove setup '" + setupName + "' ...");
 		// --- Remove Setup -------------------------------
-		this.remove(name);
+		this.remove(setupName);
 		
 		// --- Delete setup files -------------------------
 		List<File> setupFileList = SimulationSetup.getSetupFiles(new File(currSimXMLFile));
@@ -130,21 +134,22 @@ public class SimulationSetups extends TreeMap<String, String> {
 		}
 		
 		// --- Notify -------------------------------------
-		currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_REMOVE));
+		this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_REMOVE));
 		
-		if (this.size() == 0) {
-			// --- add default - Setup --------------------
-			currSimSetupName = "default";
+		if (this.size()==0) {
+			// --- Add default setup ----------------------
+			this.currSimSetupName = "default";
 			// --- No setup found -------------------------
 			String newFileName = getSuggestSetupFile(currSimSetupName);
 			this.setupAddNew(currSimSetupName, newFileName);
 
 		} else {
 			// --- Load first Setup -----------------------
-			this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD,this.getFirstSetup(), false);
+			this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, this.getFirstSetup(), false);
 		}
 		// --- Save project -------------------------------
 		this.saveProject(false);
+		Application.setStatusBarMessageReady();
 	}
 	
 	/**
@@ -158,7 +163,9 @@ public class SimulationSetups extends TreeMap<String, String> {
 
 		if (this.containsKey(nameOld)==false) return;
 
-		this.currSimSetup.save();
+		// --- Set application status for user ------------
+		Application.setStatusBarMessage("Rename setup '" + nameOld + "' to '" + nameNew + "' ...");
+		this.saveProject(true);
 		
 		// --- Rename folder setup files ------------------
 		List<File> setupFileListOld = SimulationSetup.getSetupFiles(new File(this.currSimXMLFile));
@@ -178,6 +185,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_RENAME, nameNew, false);
 		// --- Save Project -------------------------------
 		this.saveProject(false);
+		Application.setStatusBarMessageReady();
 	}
 
 	/**
@@ -190,6 +198,10 @@ public class SimulationSetups extends TreeMap<String, String> {
 	public void setupCopy(String nameOld, String nameNew, String fileNameNew) {
 
 		if (this.containsKey(nameOld)==false) return;
+		
+		// --- Set application status for user ------------
+		Application.setStatusBarMessage("Copy setup '" + nameOld + "' to '" + nameNew + "' ...");
+		
 		// --- Save current state and project -------------
 		this.saveProject(true);
 		
@@ -212,6 +224,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_COPY, nameNew, false);
 		// --- Save Project --------------------------
 		this.saveProject(false);
+		Application.setStatusBarMessageReady();
 	}
 	
 	/**
@@ -224,6 +237,8 @@ public class SimulationSetups extends TreeMap<String, String> {
 	public boolean setupLoadAndFocus(SimNoteReason action, String name, boolean isAddedNew) {
 		
 		boolean done = true;
+		
+		if (name==null || name.isEmpty()) return false;
 		if (this.containsKey(name)==false) return false;
 		
 		// --- Configure to the specified setup -----------
@@ -343,7 +358,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 	private void saveProject(boolean alsoSaveSetup) {
 		if (this.currProject!=null) {
 			if (this.currProject.isUnsaved()==true) {
-				this.currProject.save();
+				this.currProject.save(alsoSaveSetup);
 			}
 		}
 	}

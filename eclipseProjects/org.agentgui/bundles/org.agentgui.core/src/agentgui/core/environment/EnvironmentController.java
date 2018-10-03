@@ -57,7 +57,6 @@ import jade.lang.acl.ACLMessage;
  */
 public abstract class EnvironmentController extends Observable implements Observer {
 
-	/** The current project */
 	private Project currProject;
 
 	/** The {@link AbstractDisplayAgent} that is currently using this EnvironmentController. */
@@ -262,15 +261,15 @@ public abstract class EnvironmentController extends Observable implements Observ
 		this.agents2Start = this.getCurrentSimulationSetup().getAgentDefaultListModel(this.agents2Start, listName);
 	}
 	
-	/**
-	 * Invoked when an observable( the {@link Project} in this case) notifies this class.
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
-	public void update(Observable o, Object arg) {
-		if(o.equals(currProject) && arg == Project.SAVED){
+	public void update(Observable observable, Object updateObject) {
+		if (this.currProject!=null && observable==this.currProject && updateObject==Project.SAVED) {
 			this.saveEnvironment();
-		}else if(o.equals(currProject) && arg instanceof SimulationSetupNotification){
-			this.handleSimSetupChange((SimulationSetupNotification) arg);
+		} else if (observable.equals(this.currProject) && updateObject instanceof SimulationSetupNotification) {
+			this.handleSimSetupChange((SimulationSetupNotification) updateObject);
 		}
 	}
 	/**

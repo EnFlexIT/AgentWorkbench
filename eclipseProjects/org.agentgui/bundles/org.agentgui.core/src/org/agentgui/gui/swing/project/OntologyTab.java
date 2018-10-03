@@ -316,7 +316,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			onSel.setVisible(true);
 			// === Wait for user ===
 			if (onSel.isCanceled()==true) {
-				Application.setStatusBar(Language.translate("Fertig"));
+				Application.setStatusBarMessageReady();
 				return;
 			}
 			String newOntologie = onSel.getNewOntologySelected();

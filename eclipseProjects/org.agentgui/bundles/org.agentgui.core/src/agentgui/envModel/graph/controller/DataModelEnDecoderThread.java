@@ -249,7 +249,7 @@ public class DataModelEnDecoderThread extends Thread {
     		    	if (Application.getMainWindow()!=null) {
     		    		Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
     		    	}
-					Application.setStatusBar(Language.translate("Fertig"));
+					Application.setStatusBarMessageReady();
     			}
     		});    		
     	}

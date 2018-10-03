@@ -458,8 +458,13 @@ public class MainWindow extends JFrame {
 	 * Sets a text in the applications status bar.
 	 * @param message the new status bar
 	 */
-	public void setStatusBar(String message) {
-		this.getStatusBar().setStatusBarMessage(message);
+	public void setStatusBarMessage(final String message) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getStatusBar().setStatusBarMessage(message);
+			}
+		});
 	}
 	/**
 	 * Sets the indicator in order to visul inform that JADE is running or not (red or green button in the right corner of the status bar + text).

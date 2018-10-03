@@ -53,6 +53,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.BundleProperties;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
@@ -144,7 +145,7 @@ public class ProjectsLoaded {
 			action = ProjectAction.OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
-		Application.setStatusBar(actionTitel + " ...");
+		Application.setStatusBarMessage(actionTitel + " ...");
 		
 		if (selectedProjectFolder==null) {
 			// --- Open user dialog -------------------------------------------
@@ -154,7 +155,7 @@ public class ProjectsLoaded {
 			newProDia.setVisible(true);
 			// === Wait for user here =========================================
 			if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
-				Application.setStatusBar(Language.translate("Fertig"));
+				Application.setStatusBarMessageReady();
 				return null;
 			} else {
 				localTmpProjectName = newProDia.getProjectName();
@@ -195,7 +196,7 @@ public class ProjectsLoaded {
 		newProject.setEclipseEPartService(ePartService);
 		newProject.setEclipseEModelService(eModelService);
 		
-		// --- Maybe take over Agent.GUI default JADE configuration -----------
+		// --- Possibly, set the AWB default JADE configuration ---------------
 		if (addNew==true) {
 			newProject.setJadeConfiguration(Application.getGlobalInfo().getJadeDefaultPlatformConfig());
 		}
@@ -205,7 +206,9 @@ public class ProjectsLoaded {
 			// --- Create default simulations setup ---------------------------
 			newProject.getSimulationSetups().setupCreateDefault();			
 		}
-
+		// --- Load the setup configured -------------------------------------- 
+		newProject.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, newProject.getSimulationSetupCurrent(), false);
+		
 		// --- Load configured PlugIns ----------------------------------------
 		newProject.plugInVectorLoad();
 
@@ -229,7 +232,7 @@ public class ProjectsLoaded {
 			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);
 			newProject.plugInVectorInformSetupLoaded();
 			Application.setTitelAddition(newProject.getProjectName());
-			Application.setStatusBar(Language.translate("Fertig"));
+			Application.setStatusBarMessageReady();
 		}
 		
 		if (addNew==true) {
@@ -602,7 +605,7 @@ public class ProjectsLoaded {
 		boolean exportBeforeDelete = false;
 		
 		String actionTitel = Language.translate("Projekt löschen");
-		Application.setStatusBar(actionTitel + " ...");
+		Application.setStatusBarMessage(actionTitel + " ...");
 		
 		// ----------------------------------------------------------
 		// --- Open project selection dialog ------------------------
@@ -610,7 +613,7 @@ public class ProjectsLoaded {
 		newProDia.setVisible(true);
 		// === Waiting for closing dialog ===
 		if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
-			Application.setStatusBar(Language.translate("Fertig"));
+			Application.setStatusBarMessageReady();
 			return;
 		} else {
 			exportBeforeDelete = newProDia.isExportBeforeDelete();
@@ -633,14 +636,14 @@ public class ProjectsLoaded {
 				optionMsg = currProject.getProjectName() + ": " + Language.translate("Das Projekt wird nun geschlossen!");
 				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.OK_CANCEL_OPTION);
 				if (answer==JOptionPane.CANCEL_OPTION) {
-					Application.setStatusBar(Language.translate("Fertig"));
+					Application.setStatusBarMessageReady();
 					return;
 				}
 				// --- Close the project window ---------------------
 				while (iProject>=0) {
 					currProject = this.get(iProject);
 					if (currProject.close()==false) {
-						Application.setStatusBar(Language.translate("Fertig"));
+						Application.setStatusBarMessageReady();
 						return;
 					}
 					iProject = this.getIndexByFolderName(projectFolder);
@@ -665,7 +668,7 @@ public class ProjectsLoaded {
 			// ----------------------------------------------------------
 			// --- Delete the folder of the project ---------------------
 			this.projectDelete(projectFolder);
-			Application.setStatusBar(Language.translate("Fertig"));
+			Application.setStatusBarMessageReady();
 			
 		}
 
@@ -737,9 +740,9 @@ public class ProjectsLoaded {
 		public void run() {
 			if (exportSettings != null) {
 				exportController.exportProject(project, exportSettings, true, false);
-				if(exportController.isExportSuccessful() == true) {
+				if (exportController.isExportSuccessful() == true) {
 					ProjectsLoaded.this.projectDelete(project.getProjectFolder());
-					Application.setStatusBar(Language.translate("Fertig"));
+					Application.setStatusBarMessageReady();
 				}
 			}
 		}
