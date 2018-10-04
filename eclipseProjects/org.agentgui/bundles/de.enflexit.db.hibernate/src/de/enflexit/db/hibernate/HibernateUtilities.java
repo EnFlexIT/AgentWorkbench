@@ -71,6 +71,94 @@ public class HibernateUtilities {
 	}
 	
 	/**
+	 * Calling this method, the invoking thread will be paused until all session factory  
+	 * start-ups (successful or not) are finalized. - The maximum wait time is 30s.
+	 */
+	public static void waitForSessionFactoryCreation() {
+		
+		if (getSessionFactoryMonitorHashMap().size()==0) return;
+
+		long sleepTime 	= 1000;			// ms
+		long timeout 	= 1000 * 30; 	// s
+		long exitTime 	= System.currentTimeMillis() + timeout;
+		
+		boolean sfBusy = true;
+		while (sfBusy==true) {
+			
+			// --- Get list of SessionFactoryMonitor ------  
+			List<SessionFactoryMonitor> sfMonitorList = new ArrayList<>(getSessionFactoryMonitorHashMap().values());
+			for (int i = 0; i < sfMonitorList.size(); i++) {
+				// --- Check state of single SessionFactory
+				boolean sfBusySingle = isSessionFactoryInCreation(sfMonitorList.get(i));
+				if (sfBusySingle==true) {
+					// --- Exit for-loop ------------------
+					break;
+				} else {
+					// --- Checked the last monitor? ------
+					if (i==(sfMonitorList.size()-1)) {
+						sfBusy = false;
+					}
+				}
+			}
+			
+			// --- Reached the exit time? -----------------
+			if (System.currentTimeMillis()>=exitTime) {
+				break;
+			}
+			
+			if (sfBusy==true) {
+				// --- Sleep for a while ------------------
+				try {
+					Thread.sleep(sleepTime);
+				} catch (InterruptedException iEx) {
+					System.err.println("[" + HibernateUtilities.class.getSimpleName() + "] Waiting for SessionFactory creation was interrupted.");
+					//iEx.printStackTrace();
+				}
+			}
+		} // end while
+		
+	}
+	
+	/**
+	 * Checks if is session factory in creation.
+	 *
+	 * @param factoryID the factory ID (<code>null</code> will use the default factory)
+	 * @return true, if is session factory in creation
+	 */
+	public static boolean isSessionFactoryInCreation(String factoryID) {
+		String idFactory = getFactoryID(factoryID);
+		SessionFactoryMonitor monitor = getSessionFactoryMonitorHashMap().get(idFactory);
+		return isSessionFactoryInCreation(monitor);
+	}
+	/**
+	 * Checks if a session factory is in creation.
+	 *
+	 * @param sessionFactoryMonitor the session factory monitor
+	 * @return true, if the session factory is in creation
+	 */
+	public static boolean isSessionFactoryInCreation(SessionFactoryMonitor sessionFactoryMonitor) {
+		
+		if (sessionFactoryMonitor==null) return false;
+		
+		boolean sfInCreation = false;
+		SessionFactoryMonitor sfm = sessionFactoryMonitor;
+		switch (sfm.getSessionFactoryState()) {
+		case CheckDBConectionFailed:
+		case InitializationProcessFailed:
+		case Created:
+		case Destroyed:
+			sfInCreation = false;
+			break;
+		case NotAvailableYet:
+		case CheckDBConnection:
+		case InitializationProcessStarted:
+			sfInCreation = true;
+			break;
+		}
+		return sfInCreation;
+	}
+	
+	/**
 	 * Returns the session factory hash map.
 	 * @return the session factory hash map
 	 */

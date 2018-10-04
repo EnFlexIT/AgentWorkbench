@@ -307,15 +307,16 @@ public class Language implements Translator {
 	 * @return the index of the language in the dictionary 
 	 */
 	public static int getIndexOfLanguage(String language) {
-		// --- normation of the query string --------------
-		String langWork = language.toLowerCase();
-		if (langWork.equals("")) {
+
+		// --- Normation of the query string --------------
+		String langWork = language;
+		if (langWork==null || langWork.isEmpty()==true) {
 			langWork = Language.EN;
 			Application.getGlobalInfo().setLanguage(Language.EN);
-			langWork = language.toLowerCase();
 		}
+		langWork = langWork.toLowerCase();
 		
-		// --- search the dictionary header ---------------
+		// --- Search the dictionary header ---------------
 		for (int i = 0; i < dictLangHeaderArray.length; i++) {
 			String lang = dictLangHeaderArray[i].toLowerCase();
 			if (lang.equalsIgnoreCase(langWork)) {

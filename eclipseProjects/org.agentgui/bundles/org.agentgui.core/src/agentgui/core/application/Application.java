@@ -73,6 +73,7 @@ import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
+import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 import de.enflexit.oidc.OIDCPanel;
@@ -1210,12 +1211,14 @@ public class Application {
 		Thread evaluatorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				// --- Evaluate the already loaded bundles --------
+				// --- Wait for the SessionFactory creation --------- 
+				HibernateUtilities.waitForSessionFactoryCreation();
+				// --- Evaluate the already loaded bundles ----------
 				BundleEvaluator.getInstance().evaluateAllBundles();
-				// --- Evaluate the features ----------------------
+				// --- Evaluate the features ------------------------
 				FeatureEvaluator.getInstance().evaluateFeatureInformationInThread();
 			}
-		});
+		}, "Bundle and Feature Evaluation Starter");
 		evaluatorThread.start();
 	}
 	

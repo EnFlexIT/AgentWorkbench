@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
@@ -113,7 +114,7 @@ public class MainWindowStatusBar extends JPanel {
 	 */
 	private JLabel getJLabelStatusText() {
 		if (jLabelStatusText == null) {
-			jLabelStatusText = new JLabel("Status");
+			jLabelStatusText = new JLabel("  Starting " + Application.getGlobalInfo().getApplicationTitle() + " ...");
 			jLabelStatusText.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelStatusText;
