@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.controller.ui.toolbar;
 
 import java.util.List;
 

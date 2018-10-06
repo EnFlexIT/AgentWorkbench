@@ -27,7 +27,7 @@
  * **************************************************************
  */
 
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.controller.ui;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -52,6 +52,7 @@ import javax.swing.JSeparator;
 
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;

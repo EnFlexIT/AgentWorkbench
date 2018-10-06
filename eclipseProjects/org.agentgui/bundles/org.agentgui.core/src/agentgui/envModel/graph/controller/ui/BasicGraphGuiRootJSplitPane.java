@@ -27,7 +27,7 @@
  * **************************************************************
  */
 
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.controller.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -79,6 +79,7 @@ import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 

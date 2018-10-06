@@ -87,16 +87,17 @@ public class ProjectsLoaded {
 	}
 	
 	/**
-	 * Adding (Creating or Opening) a new Project to the Application
-	 * @param addNew
-	 * @return The Project-instance that was added here
+	 * Adding (Creating or Opening) a new Project to the Application.
+	 * @param addNew the add new. If set false, the user dialog for selecting a project to open will be shown
+	 * @return The Project-instance that was added or <code>null</code>.
 	 */
 	public Project add(boolean addNew) {
 		return this.add(addNew, null, null, null, null);
 	}
 	/**
-	 * Open a project corresponding to specified project folder
-	 * @param selectedProjectFolder
+	 * Open a project corresponding to specified project folder.
+	 *
+	 * @param selectedProjectFolder the selected project folder from the projects directory 
 	 * @return the Project-instance that was added here
 	 */
 	public Project add(String selectedProjectFolder) {

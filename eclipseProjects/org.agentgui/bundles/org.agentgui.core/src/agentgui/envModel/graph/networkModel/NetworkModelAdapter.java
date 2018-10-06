@@ -50,8 +50,8 @@ import agentgui.envModel.graph.commands.RenameNetworkComponent;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
 import agentgui.envModel.graph.commands.SetNetworkModel;
 import agentgui.envModel.graph.commands.SplitNetworkComponent;
-import agentgui.envModel.graph.controller.CustomToolbarComponentDescription;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentDescription;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 

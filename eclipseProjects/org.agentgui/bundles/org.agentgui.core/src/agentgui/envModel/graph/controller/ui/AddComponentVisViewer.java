@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.controller.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -45,6 +45,7 @@ import org.apache.commons.collections15.Transformer;
 
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeListElement;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;

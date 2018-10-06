@@ -37,7 +37,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import agentgui.envModel.graph.controller.BasicGraphGuiVisViewer;
+import agentgui.envModel.graph.controller.ui.BasicGraphGuiVisViewer;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 

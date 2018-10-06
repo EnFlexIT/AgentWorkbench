@@ -28,7 +28,7 @@
  */
 package agentgui.envModel.graph.components;
 
-import agentgui.envModel.graph.controller.AddComponentDialog;
+import agentgui.envModel.graph.controller.ui.AddComponentDialog;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 
 /**

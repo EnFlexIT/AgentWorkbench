@@ -27,7 +27,7 @@
  * **************************************************************
  */
 
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.controller.ui;
 
 import java.awt.Cursor;
 import java.awt.Point;
@@ -50,6 +50,7 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import agentgui.envModel.graph.GraphGlobals;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;

@@ -27,7 +27,7 @@
  * **************************************************************
  */
 
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.controller.ui;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -76,6 +76,8 @@ import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.EdgeShapePolyline;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;

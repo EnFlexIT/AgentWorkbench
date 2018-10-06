@@ -26,14 +26,16 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.controller.ui.toolbar;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.envModel.graph.controller.BasicGraphGui.ToolBarSurrounding;
-import agentgui.envModel.graph.controller.BasicGraphGui.ToolBarType;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.ui.BasicGraphGui;
+import agentgui.envModel.graph.controller.ui.BasicGraphGui.ToolBarSurrounding;
+import agentgui.envModel.graph.controller.ui.BasicGraphGui.ToolBarType;
 
 
 /**

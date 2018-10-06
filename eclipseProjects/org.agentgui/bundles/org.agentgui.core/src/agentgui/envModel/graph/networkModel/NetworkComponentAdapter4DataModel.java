@@ -35,9 +35,9 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
-import agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane;
-import agentgui.envModel.graph.controller.BasicGraphGuiProperties;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.ui.BasicGraphGuiJDesktopPane;
+import agentgui.envModel.graph.controller.ui.BasicGraphGuiProperties;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 

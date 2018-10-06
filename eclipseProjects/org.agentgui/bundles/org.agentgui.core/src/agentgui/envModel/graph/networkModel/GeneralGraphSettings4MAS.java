@@ -45,8 +45,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import agentgui.envModel.graph.controller.CustomToolbarComponentDescription;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentDescription;
 import jade.util.leap.Serializable;
 
 /**

@@ -36,8 +36,8 @@ import javax.swing.JComponent;
 import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.envModel.graph.controller.BasicGraphGuiProperties;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.ui.BasicGraphGuiProperties;
 import de.enflexit.common.ExceptionHandling;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
 import de.enflexit.common.ontology.OntologyVisualisationHelper;
