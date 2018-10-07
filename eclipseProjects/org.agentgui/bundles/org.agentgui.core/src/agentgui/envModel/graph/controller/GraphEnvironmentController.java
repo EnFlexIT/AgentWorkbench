@@ -103,6 +103,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/** The network model currently loaded */
 	private NetworkModel networkModel;
 	private NetworkModelAdapter networkModelAdapter;
+	
+	/** The controller for user messages */
+	private UIMessagingController uiMessagingController;
 
 	/** The NetworkModel that is stored in the clipboard */
 	private NetworkModel clipboardNetworkModel;
@@ -113,8 +116,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/** The is temporary prevent saving. */
 	private boolean isTemporaryPreventSaving;
 	
+	
 	/**
-	 * The constructor for the GraphEnvironmentController for displaying the current environment model during a running simulation. Use {@link #setDisplayEnvironmentModel(DisplaytEnvironmentModel)}, in order to set the current {@link NetworkModel}.
+	 * The constructor for the GraphEnvironmentController for displaying the current environment model during 
+	 * a running simulation. Use {@link #setDisplayEnvironmentModel(DisplaytEnvironmentModel)}, in order to set 
+	 * the current {@link NetworkModel}.
 	 */
 	public GraphEnvironmentController() {
 	}
@@ -135,7 +141,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#createEnvironmentPanel()
 	 */
 	@Override
@@ -144,14 +149,24 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Gets the GraphEnvironmentControllerGUI.
-	 * 
+	 * Returns the current {@link GraphEnvironmentControllerGUI}.
 	 * @return the current GraphEnvironmentControllerGUI
 	 */
 	public GraphEnvironmentControllerGUI getGraphEnvironmentControllerGUI() {
 		return (GraphEnvironmentControllerGUI) this.getEnvironmentPanel();
 	}
 
+	/**
+	 * Returns the current {@link UIMessagingController}.
+	 * @return the ui messaging controller
+	 */
+	public UIMessagingController getUiMessagingController() {
+		if (uiMessagingController==null) {
+			uiMessagingController = new UIMessagingController(this);
+		}
+		return uiMessagingController;
+	}
+	
 	/**
 	 * Sets the project unsaved.
 	 */
@@ -173,36 +188,29 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Gets the general graph settings4 mas.
-	 * 
+	 * Returns the {@link GeneralGraphSettings4MAS}
 	 * @return the general graph settings4 mas
 	 */
 	public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
 		return this.getNetworkModel().getGeneralGraphSettings4MAS();
 	}
-
 	/**
-	 * Gets the current ComponentTypeSettings
-	 * 
-	 * @return HashMap<String, ComponentTypeSettings> The current component type settings map.
+	 * Returns the current {@link ComponentTypeSettings}
+	 * @return the current component type settings TreeMap.
 	 */
 	public TreeMap<String, ComponentTypeSettings> getComponentTypeSettings() {
 		return this.getGeneralGraphSettings4MAS().getCurrentCTS();
 	}
-
 	/**
-	 * Returns the DomainSttings.
-	 * 
-	 * @return the DomainSttings
+	 * Returns the current {@link DomainSettings}.
+	 * @return the current domain settings as TreeMap
 	 */
 	public TreeMap<String, DomainSettings> getDomainSettings() {
 		return this.getGeneralGraphSettings4MAS().getDomainSettings();
 	}
-
 	/**
-	 * Sets the environment network model
-	 * 
-	 * @return NetworkModel - The environment model
+	 * Enables to set the current {@link NetworkModel}.
+	 * @param newNetworkModel the new network model
 	 */
 	private void setNetworkModel(NetworkModel newNetworkModel) {
 		// --- Remind the GeneralGraphSettings4MAS ----------------------------
@@ -226,8 +234,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Returns the environment network model
-	 * 
+	 * Returns the current {@link NetworkModel}
 	 * @return NetworkModel - The environment model
 	 */
 	public NetworkModel getNetworkModel() {
@@ -239,9 +246,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Gets the network model for actions.
-	 * 
-	 * @return the network model action
+	 * Returns the {@link NetworkModelAdapter} that enables to do or undo actions in the visualization.
+	 * @return the NetworkModelAdapter for the current controller
 	 */
 	public NetworkModelAdapter getNetworkModelAdapter() {
 		if (networkModelAdapter == null) {
@@ -249,10 +255,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
 		return networkModelAdapter;
 	}
-
+	
+	
 	/**
 	 * Copies a set of NetworkComponent's as independent NetworkModel to the clipboard.
-	 * 
 	 * @param networkComponentsForClipboard the network components
 	 */
 	public void copyToClipboard(HashSet<NetworkComponent> networkComponentsForClipboard) {

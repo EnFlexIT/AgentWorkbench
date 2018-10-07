@@ -76,9 +76,11 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 	 */
 	public BasicGraphGuiJInternalFrame(GraphEnvironmentController controller) {
 		this.graphController = controller;
-		this.graphControllerGUI = this.graphController.getGraphEnvironmentControllerGUI();
-		this.graphDesktop = this.graphControllerGUI.getBasicGraphGuiJDesktopPane();
-		this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
+		if (this.graphController!=null) {
+			this.graphControllerGUI = this.graphController.getGraphEnvironmentControllerGUI();
+			this.graphDesktop = this.graphControllerGUI.getBasicGraphGuiJDesktopPane();
+			this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
+		}
 	}
 	
 	/**

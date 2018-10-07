@@ -99,6 +99,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JToolBar jToolBarView;
     
     private JButton jButtonComponents;
+    private JButton jButtonMessages;
     private JButton jButtonWindows;
     private JToggleButton jButtonSatelliteView;
     private JButton jButtonZoomFit2Window;
@@ -228,6 +229,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     		jToolBarView.add(getJButtonComponents());
     		jToolBarView.addSeparator();
     		
+    		jToolBarView.add(getJButtonMessages());
+    		jToolBarView.addSeparator();
+    		
     		jToolBarView.add(getJButtonWindows());
     		jToolBarView.addSeparator();
     		
@@ -287,6 +291,21 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonComponents;
     }
 
+    /**
+     * This method initializes jButtonMessages
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonMessages() {
+		if (jButtonMessages == null) {
+			jButtonMessages = new JButton();
+			jButtonMessages.setPreferredSize(jButtonSize);
+			jButtonMessages.setIcon(new ImageIcon(getClass().getResource(pathImage + "Message.png")));
+			jButtonMessages.setToolTipText(Language.translate("Messaging", Language.EN));
+			jButtonMessages.addActionListener(this);
+		}
+		return jButtonMessages;
+    }
+    
     /**
      * This method initializes jButtonWindows
      * @return javax.swing.JButton
@@ -1038,6 +1057,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), msg, title, JOptionPane.INFORMATION_MESSAGE);
 			}
 			
+		} else if (ae.getSource() == getJButtonMessages()) {
+			// ------------------------------------------------------
+			// --- Show the message UI ------------------------------
+			this.graphController.getUiMessagingController().showMessagingUI();
+		
 		} else if (ae.getSource() == getJButtonWindows()) {
 			// ------------------------------------------------------
 			// --- Property Windows ---------------------------------
