@@ -730,7 +730,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelCertificateInformation() {
 		if (jLabelCertificateInformation == null) {
-			jLabelCertificateInformation = new JLabel(Language.translate("Certifcate Information",Language.EN));
+			jLabelCertificateInformation = new JLabel(Language.translate("Certificate Information",Language.EN));
 			jLabelCertificateInformation.setFont(new Font("Dialog", Font.BOLD, 11));
 		}
 		return jLabelCertificateInformation;
