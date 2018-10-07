@@ -35,6 +35,9 @@ import java.awt.SystemColor;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.WindowConstants;
@@ -59,6 +62,8 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	private static final long serialVersionUID = -4190004260052846631L;
 
 	private static final String WIDGET_ORIENTATION_PROPERTY = "GraphEnvironmentMessagingWidgetOrientation";
+	private static final String WIDGET_TIME_CONTROLLED_PROPERTY = "GraphEnvironmentMessagingWidgetTimeControlled";
+	
 	public static final Color bgColor = SystemColor.info;
 	
 	public enum WidgetOrientation {
@@ -70,6 +75,8 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	
 	private WidgetOrientation widgetOrientation;
 	
+	private MouseListener mouseListener;
+	private boolean mouseOverWidget;
 	
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> graphVisualizationPanel;
 	private ComponentListener graphVisualizationPanelListener;
@@ -78,6 +85,10 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	private JPanelStates jPanelStates;
 	private JPanelMenu jPanelMenu;
 	
+	private Boolean timeControlled;
+	private Thread closerThread;
+	private long closingTime;
+	private long visibleTime = 5000;
 	
 	/**
 	 * Instantiates a new messaging frame.
@@ -92,7 +103,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	 */
 	private void initialize() {
 		
-		this.setTitle(Language.translate("Notifications", Language.EN));
+		this.setTitle(Language.translate("Messaging", Language.EN));
 		
 		this.setAutoscrolls(true);
 		this.getContentPane().setBackground(MessagingJInternalFrame.bgColor);
@@ -101,6 +112,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		this.setIconifiable(false);
 
 		this.setClosable(true);
+		this.addMouseListener(this.getMouseListener());
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addInternalFrameListener(new InternalFrameAdapter() {
 			@Override
@@ -108,7 +120,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 				MessagingJInternalFrame.this.setVisible(false);
 			}
 		});
-
+		
 		// --- Remove the complete header ------- 
 		((BasicInternalFrameUI)this.getUI()).setNorthPane(null);
 		this.setBorder(BorderFactory.createEtchedBorder());
@@ -151,44 +163,103 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	private JPanelMessages getJPanelMessages() {
 		if (jPanelMessages == null) {
 			jPanelMessages = new JPanelMessages(this.graphController);
+			jPanelMessages.addMouseListener(this.getMouseListener());
 		}
 		return jPanelMessages;
 	}
 	private JPanelStates getJPanelStates() {
 		if (jPanelStates == null) {
 			jPanelStates = new JPanelStates(this.graphController);
+			jPanelStates.addMouseListener(this.getMouseListener());
 		}
 		return jPanelStates;
 	}
 	private JPanelMenu getJPanelMenu() {
 		if (jPanelMenu == null) {
 			jPanelMenu = new JPanelMenu(this);
+			jPanelMenu.addMouseListener(this.getMouseListener());
 		}
 		return jPanelMenu;
 	}
-
+	public MouseListener getMouseListener() {
+		if (mouseListener==null) {
+			mouseListener = new MouseAdapter() {
+				@Override
+				public void mouseExited(MouseEvent me) {
+					resetClosingTime();
+					setMouseOverWidget(false);
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					setMouseOverWidget(true);
+				}
+			};
+		}
+		return mouseListener;
+	}
+	
+	/**
+	 * Sets that the mouse is over the widget.
+	 * @param mouseOverWidget the new mouse over widget
+	 */
+	private void setMouseOverWidget(boolean mouseOverWidget) {
+		this.mouseOverWidget = mouseOverWidget;
+	}
+	/**
+	 * Returns if the mouse is over the widget.
+	 * @return true, if is mouse over widget
+	 */
+	private boolean isMouseOverWidget() {
+		return mouseOverWidget;
+	}
+	
 	/**
 	 * Sets the widget orientation.
 	 * @param widgetOrientation the new widget orientation
 	 */
-	public void setWidgetOrientation(WidgetOrientation widgetOrientation) {
+	protected void setWidgetOrientation(WidgetOrientation widgetOrientation) {
 		if (widgetOrientation!=null && widgetOrientation!=this.widgetOrientation) {
 			this.widgetOrientation = widgetOrientation;
 			Application.getGlobalInfo().putStringToConfiguration(WIDGET_ORIENTATION_PROPERTY, this.widgetOrientation.toString());
 			this.setSizeAndPosition();
 			this.setContentPanels();
+			this.resetClosingTime();
 		}
 	}
 	/**
 	 * Returns the widget orientation.
 	 * @return the widget orientation
 	 */
-	public WidgetOrientation getWidgetOrientation() {
+	protected WidgetOrientation getWidgetOrientation() {
 		if (widgetOrientation==null) {
 			String widgetOrientationString = Application.getGlobalInfo().getStringFromConfiguration(WIDGET_ORIENTATION_PROPERTY, WidgetOrientation.Bottom.toString());
 			widgetOrientation = WidgetOrientation.valueOf(widgetOrientationString);
 		}
 		return widgetOrientation;
+	}
+	
+	/**
+	 * Sets if the widget visualization is time controlled.
+	 * @param timeControlled the new time controlled
+	 */
+	protected void setTimeControlled(boolean timeControlled) {
+		if (timeControlled!=this.timeControlled) {
+			this.timeControlled = timeControlled;
+			Application.getGlobalInfo().putBooleanToConfiguration(WIDGET_TIME_CONTROLLED_PROPERTY, this.timeControlled);
+			if (this.timeControlled==true) {
+				this.restartClosingThread();
+			}
+		}
+	}
+	/**
+	 * Checks if the widget visualization is time controlled.
+	 * @return true, if is time controlled
+	 */
+	protected boolean isTimeControlled() {
+		if (timeControlled==null) {
+			timeControlled = Application.getGlobalInfo().getBooleanFromConfiguration(WIDGET_TIME_CONTROLLED_PROPERTY, true);
+		}
+		return timeControlled;
 	}
 	
 	/**
@@ -279,7 +350,87 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	@Override
 	public void registerAtDesktopAndSetVisible() {
 		super.registerAtDesktopAndSetVisible();
+		this.restartClosingThread();
 	}
+	
+	/**
+	 * (Re-)Starts the widget closing thread.
+	 */
+	private void restartClosingThread() {
+		if (this.isTimeControlled()==false) return;
+		this.resetClosingTime();
+		if (this.getCloserThread().isAlive()==false) {
+			this.getCloserThread().start();
+		}
+	}
+	/**
+	 * Restart visible show time.
+	 */
+	private void resetClosingTime() {
+		this.setClosingTime(System.currentTimeMillis() + this.visibleTime);
+	}
+	/**
+	 * Returns the current closing time.
+	 * @return the closing time
+	 */
+	private long getClosingTime() {
+		if (closingTime==0) {
+			closingTime = System.currentTimeMillis() + this.visibleTime;
+		}
+		return closingTime;
+	}
+	/**
+	 * Sets the closing time.
+	 * @param closingTime the new closing time
+	 */
+	public void setClosingTime(long closingTime) {
+		this.closingTime = closingTime;
+	}
+	/**
+	 * Returns the thread that will close the this widget after a defined time.
+	 * @return the closer thread
+	 */
+	public Thread getCloserThread() {
+		if (closerThread==null) {
+			closerThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					
+					while (true) {
+						// --- Determine the sleep time -------------
+						long sleepTime = getClosingTime() - System.currentTimeMillis();
+						if (sleepTime<=0 && isMouseOverWidget()==true) {
+							sleepTime = 100;
+						}
+						if (sleepTime>0) {
+							try {
+								Thread.sleep(sleepTime);
+							} catch (InterruptedException inEx) {
+								inEx.printStackTrace();
+							}
+						}
+						// --- Close the widget? --------------------
+						if (isMouseOverWidget()==false && (isVisible()==false || getClosingTime()<=System.currentTimeMillis())) {
+							// --- Hide the messaging widget --------
+							setVisible(false);
+							break;
+						}
+						if (isTimeControlled()==false) {
+							break;
+						}
+					} // end while
+					
+					// --- Forget the Thread --------------
+					synchronized (closerThread) {
+						closerThread = null;
+					}
+				}
+			}, this.getClass().getSimpleName() + "-Closer");
+		}
+		return closerThread;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.controller.ui.BasicGraphGuiJInternalFrame#isRemindAsLastOpenedEditor()
 	 */

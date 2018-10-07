@@ -67,6 +67,7 @@ import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeDialog;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
+import agentgui.envModel.graph.controller.ui.messaging.MessagingJInternalFrame;
 import agentgui.envModel.graph.controller.ui.toolbar.AbstractCustomToolbarComponent;
 import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentDescription;
 import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentExtension;
@@ -229,10 +230,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     		jToolBarView.add(getJButtonComponents());
     		jToolBarView.addSeparator();
     		
-    		jToolBarView.add(getJButtonMessages());
+    		jToolBarView.add(getJButtonWindows());
     		jToolBarView.addSeparator();
     		
-    		jToolBarView.add(getJButtonWindows());
+    		jToolBarView.add(getJButtonMessages());
     		jToolBarView.addSeparator();
     		
     		jToolBarView.add(getJToggleMousePicking());
@@ -800,6 +801,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					
 				} else {
 					JInternalFrame frame = getGraphControllerGUI().getBasicGraphGuiJDesktopPane().getEditor(ac);
+					if (frame instanceof MessagingJInternalFrame) {
+						((MessagingJInternalFrame) frame).registerAtDesktopAndSetVisible();
+					}
 					frame.moveToFront();
 					
 				}

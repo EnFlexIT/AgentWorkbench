@@ -63,6 +63,8 @@ public class JPanelMenu extends JToolBar implements ActionListener {
 	private JToggleButton jButtonOrientationTop;
 	private JToggleButton jButtonOrientationLeft;
 	
+	private JToggleButton jButtonTimeControlled;
+	
 	/**
 	 * Instantiates a new messaging state panel.
 	 *
@@ -101,6 +103,8 @@ public class JPanelMenu extends JToolBar implements ActionListener {
 			this.add(this.getJButtonOrientationBottom());
 			this.add(this.getJButtonOrientationLeft());
 			this.add(this.getJButtonOrientationRight());
+			this.addSeparator();
+			this.add(this.getJButtonTimeControlled());
 			
 			break;
 			
@@ -113,7 +117,8 @@ public class JPanelMenu extends JToolBar implements ActionListener {
 			this.add(this.getJButtonOrientationBottom());
 			this.add(this.getJButtonOrientationLeft());
 			this.add(this.getJButtonOrientationRight());
-
+			this.addSeparator();
+			this.add(this.getJButtonTimeControlled());
 			this.add(Box.createHorizontalGlue());
 			this.addSeparator();
 			this.add(this.getJButtonClose());
@@ -186,6 +191,23 @@ public class JPanelMenu extends JToolBar implements ActionListener {
 		return jButtonOrientationRight;
 	}
 
+	private JToggleButton getJButtonTimeControlled() {
+		if (jButtonTimeControlled == null) {
+			jButtonTimeControlled = new JToggleButton();
+			jButtonTimeControlled.setIcon(GlobalInfo.getInternalImageIcon("MBclockWhite.png"));
+			jButtonTimeControlled.setPreferredSize(this.buttonSize);
+			jButtonTimeControlled.setMargin(new Insets(0, 0, 0, 0));
+			jButtonTimeControlled.setSelected(this.messagingFrame.isTimeControlled());
+			if (jButtonTimeControlled.isSelected()) {
+				jButtonTimeControlled.setToolTipText(Language.translate("Display time is time controlled", Language.EN));
+			} else {
+				jButtonTimeControlled.setToolTipText(Language.translate("Set timed display time", Language.EN));
+			}
+			jButtonTimeControlled.addActionListener(this);
+		}
+		return jButtonTimeControlled;
+	}
+	
 	/**
 	 * Sets the widget orientation.
 	 * @param widgetOrientation the new widget orientation
@@ -222,16 +244,31 @@ public class JPanelMenu extends JToolBar implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 
 		if (ae.getSource()==this.getJButtonClose()) {
+			// --- Hide the messaging frame --------------- 
 			this.messagingFrame.setVisible(false);
 		} else if (ae.getSource()==this.getJButtonOrientationBottom()) {
+			// --- Set messaging frame orientation --------
 			this.setWidgetOrientation(WidgetOrientation.Bottom);
 		} else if (ae.getSource()==this.getJButtonOrientationTop()) {
+			// --- Set messaging frame orientation --------
 			this.setWidgetOrientation(WidgetOrientation.Top);
 		} else if (ae.getSource()==this.getJButtonOrientationLeft()) {
+			// --- Set messaging frame orientation --------
 			this.setWidgetOrientation(WidgetOrientation.Left);
 		} else if (ae.getSource()==this.getJButtonOrientationRight()) {
+			// --- Set messaging frame orientation --------
 			this.setWidgetOrientation(WidgetOrientation.Right);
+		} else if (ae.getSource()==this.getJButtonTimeControlled()) {
+			// --- Set time control on/off ----------------
+			boolean setTimeControlled = !this.messagingFrame.isTimeControlled();
+			this.getJButtonTimeControlled().setSelected(setTimeControlled);
+			if (setTimeControlled==true) {
+				this.getJButtonTimeControlled().setToolTipText(Language.translate("Display time is time controlled", Language.EN));
+			} else {
+				this.getJButtonTimeControlled().setToolTipText(Language.translate("Set timed display time", Language.EN));
+			}
+			this.messagingFrame.setTimeControlled(setTimeControlled);
 		}
-		
 	}
+	
 }
