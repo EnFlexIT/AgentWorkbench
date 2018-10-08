@@ -220,14 +220,27 @@ public final class GraphGlobals {
 		/** The Constant TB_TEXTFOREGROUND_SELECTED. */
 		public final static Color TB_TEXTFOREGROUND_SELECTED = Color.WHITE;
 
+		
 		/**
 		 * Sets the color for a component that is located in a cell of a JTable.
 		 *
-		 * @param comp the JComponent
-		 * @param row the row
-		 * @param isSelected the is selected
+		 * @param comp the JComponent to color
+		 * @param row the current table row number 
+		 * @param isSelected the indicator, if the row is selected
 		 */
 		public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected) {
+			setTableCellRendererColors(comp, row, isSelected, GraphGlobals.Colors.TB_BACKGROUND);
+		}
+		
+		/**
+		 * Sets the color for a component that is located in a cell of a JTable.
+		 *
+		 * @param comp the JComponent to color
+		 * @param row the current table row number 
+		 * @param isSelected the indicator, if the row is selected
+		 * @param tableBgColor the table background color to use 
+		 */
+		public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected, Color tableBgColor) {
 
 			// --- do the settings --------------
 			comp.setOpaque(true);
@@ -238,7 +251,7 @@ public final class GraphGlobals {
 			} else {
 				comp.setForeground(GraphGlobals.Colors.TB_TEXTFOREGROUND);
 				if (row%2==0) {
-					comp.setBackground(GraphGlobals.Colors.TB_BACKGROUND);
+					comp.setBackground(tableBgColor);
 				} else {
 					comp.setBackground(GraphGlobals.Colors.TB_ALTERNATEROWCOLOR);			
 				}
@@ -250,6 +263,8 @@ public final class GraphGlobals {
 
 			}
 			if (colorPropertiesAlreadyPrinted==false) {
+				colorPropertiesAlreadyPrinted = true;
+				
 				List<String> colors = new ArrayList<String>();
 				for (Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()) {
 					if (entry.getValue() instanceof Color) {
@@ -260,13 +275,9 @@ public final class GraphGlobals {
 				for (String name : colors) {
 					System.out.println(name);
 				}
-				
 				// --- Print the current color setting ----
 				printColorSetting();
-
-				colorPropertiesAlreadyPrinted = true;
 			}
-
 		}
 		
 		/**

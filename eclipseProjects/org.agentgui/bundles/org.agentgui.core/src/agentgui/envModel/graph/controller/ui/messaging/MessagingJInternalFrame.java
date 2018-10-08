@@ -31,13 +31,13 @@ package agentgui.envModel.graph.controller.ui.messaging;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.WindowConstants;
@@ -50,11 +50,15 @@ import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.ui.BasicGraphGuiJInternalFrame;
 import agentgui.envModel.graph.controller.ui.BasicGraphGuiVisViewer;
+import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 
 /**
  * The Class MessagingJInternalFrame represents the host for the visualization of UI messages.
+ * It consists of three parts that are a toolbar, a message visualization and a state area that
+ * can be filled by he usage of {@link GraphUIStateMessage}
+ * 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
 public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
@@ -75,15 +79,12 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	
 	private WidgetOrientation widgetOrientation;
 	
-	private MouseListener mouseListener;
-	private boolean mouseOverWidget;
-	
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> graphVisualizationPanel;
 	private ComponentListener graphVisualizationPanelListener;
 	
 	private JPanelMessages jPanelMessages;
 	private JPanelStates jPanelStates;
-	private JPanelMenu jPanelMenu;
+	private JPanelToolbar jPanelToolbar;
 	
 	private Boolean timeControlled;
 	private Thread closerThread;
@@ -97,6 +98,13 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	public MessagingJInternalFrame(GraphEnvironmentController controller) {
 		super(controller);
 		this.initialize();
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.controller.ui.BasicGraphGuiJInternalFrame#isRemindAsLastOpenedEditor()
+	 */
+	@Override
+	protected boolean isRemindAsLastOpenedEditor() {
+		return false;
 	}
 	/**
 	 * Initialize the internal frame.
@@ -112,7 +120,6 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		this.setIconifiable(false);
 
 		this.setClosable(true);
-		this.addMouseListener(this.getMouseListener());
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addInternalFrameListener(new InternalFrameAdapter() {
 			@Override
@@ -127,7 +134,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		
 		this.setSizeAndPosition();
 		// --- Set the content panels -----------
-		this.getContentPane().setLayout(new BorderLayout(5, 5));
+		this.getContentPane().setLayout(new BorderLayout(0, 0));
 		this.setContentPanels();
 		
 	}
@@ -143,16 +150,16 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		switch (this.getWidgetOrientation()) {
 		case Bottom:
 		case Top:
-			this.getContentPane().add(getJPanelStates(), BorderLayout.WEST);
-			this.getContentPane().add(getJPanelMessages(), BorderLayout.CENTER);
-			this.getContentPane().add(getJPanelMenu(), BorderLayout.EAST);
+			this.getContentPane().add(this.getJPanelStates(), BorderLayout.WEST);
+			this.getContentPane().add(this.getJPanelMessages(), BorderLayout.CENTER);
+			this.getContentPane().add(this.getJPanelToolbar(), BorderLayout.EAST);
 			break;
 
 		case Left:
 		case Right:
-			this.getContentPane().add(getJPanelMenu(), BorderLayout.NORTH);
-			this.getContentPane().add(getJPanelMessages(), BorderLayout.CENTER);
-			this.getContentPane().add(getJPanelStates(), BorderLayout.SOUTH);
+			this.getContentPane().add(this.getJPanelToolbar(), BorderLayout.NORTH);
+			this.getContentPane().add(this.getJPanelMessages(), BorderLayout.CENTER);
+			this.getContentPane().add(this.getJPanelStates(), BorderLayout.SOUTH);
 			break;
 		}
 		
@@ -160,57 +167,37 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		this.getContentPane().repaint();
 		
 	}
+	private JPanelToolbar getJPanelToolbar() {
+		if (jPanelToolbar == null) {
+			jPanelToolbar = new JPanelToolbar(this);
+		}
+		return jPanelToolbar;
+	}
 	private JPanelMessages getJPanelMessages() {
 		if (jPanelMessages == null) {
-			jPanelMessages = new JPanelMessages(this.graphController);
-			jPanelMessages.addMouseListener(this.getMouseListener());
+			jPanelMessages = new JPanelMessages();
 		}
 		return jPanelMessages;
 	}
 	private JPanelStates getJPanelStates() {
 		if (jPanelStates == null) {
 			jPanelStates = new JPanelStates(this.graphController);
-			jPanelStates.addMouseListener(this.getMouseListener());
 		}
 		return jPanelStates;
 	}
-	private JPanelMenu getJPanelMenu() {
-		if (jPanelMenu == null) {
-			jPanelMenu = new JPanelMenu(this);
-			jPanelMenu.addMouseListener(this.getMouseListener());
-		}
-		return jPanelMenu;
-	}
-	public MouseListener getMouseListener() {
-		if (mouseListener==null) {
-			mouseListener = new MouseAdapter() {
-				@Override
-				public void mouseExited(MouseEvent me) {
-					resetClosingTime();
-					setMouseOverWidget(false);
-				}
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					setMouseOverWidget(true);
-				}
-			};
-		}
-		return mouseListener;
-	}
 	
-	/**
-	 * Sets that the mouse is over the widget.
-	 * @param mouseOverWidget the new mouse over widget
-	 */
-	private void setMouseOverWidget(boolean mouseOverWidget) {
-		this.mouseOverWidget = mouseOverWidget;
-	}
 	/**
 	 * Returns if the mouse is over the widget.
 	 * @return true, if is mouse over widget
 	 */
 	private boolean isMouseOverWidget() {
-		return mouseOverWidget;
+		
+		if (this.isVisible()==false) return false;
+		
+		Point mousePos = MouseInfo.getPointerInfo().getLocation();
+		Rectangle bounds = this.getBounds();
+		bounds.setLocation(this.getLocationOnScreen());
+		return bounds.contains(mousePos);
 	}
 	
 	/**
@@ -305,7 +292,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			int parentWidth = this.getGraphVisualizationPanel().getWidth();
 			
 			// --- Do positioning depending on the orientation ---------------- 
-			int myHeight = (int) (0.2 * (double) parentHeight);
+			int myHeight = (int) (0.21 * (double) parentHeight);
 			int myWidth = parentWidth;
 			
 			int myLocationX = parentPosX;
@@ -349,7 +336,9 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	 */
 	@Override
 	public void registerAtDesktopAndSetVisible() {
-		super.registerAtDesktopAndSetVisible();
+		if (this.isVisible()==false) {
+			super.registerAtDesktopAndSetVisible();
+		}
 		this.restartClosingThread();
 	}
 	
@@ -396,18 +385,24 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 				@Override
 				public void run() {
 					
+					long sleepTimeShort = 100;
 					while (true) {
 						// --- Determine the sleep time -------------
 						long sleepTime = getClosingTime() - System.currentTimeMillis();
 						if (sleepTime<=0 && isMouseOverWidget()==true) {
-							sleepTime = 100;
+							sleepTime = sleepTimeShort;
 						}
+						// --- Sleep --------------------------------
 						if (sleepTime>0) {
 							try {
 								Thread.sleep(sleepTime);
 							} catch (InterruptedException inEx) {
 								inEx.printStackTrace();
 							}
+						}
+						// --- Reset closing time ? -----------------
+						if (sleepTime==sleepTimeShort && isMouseOverWidget()==false) {
+							resetClosingTime();
 						}
 						// --- Close the widget? --------------------
 						if (isMouseOverWidget()==false && (isVisible()==false || getClosingTime()<=System.currentTimeMillis())) {
@@ -430,13 +425,22 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		return closerThread;
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.controller.ui.BasicGraphGuiJInternalFrame#isRemindAsLastOpenedEditor()
+	/**
+	 * Adds the specified GraphUIMessage to the table of messages .
+	 * @param graphUiMessage the GraphUIMessage to add
 	 */
-	@Override
-	protected boolean isRemindAsLastOpenedEditor() {
-		return false;
+	public void addMessage(GraphUIMessage graphUiMessage) {
+		this.getJPanelMessages().addMessage(graphUiMessage);
+	}
+	/**
+	 * Adds the specified message to the table of messages.
+	 *
+	 * @param timeStamp the time stamp of the message
+	 * @param messageType the message type
+	 * @param message the message itself
+	 */
+	public void addMessage(long timeStamp, GraphUIMessageType messageType, String message) {
+		this.getJPanelMessages().addMessage(timeStamp, messageType, message);
 	}
 	
 }

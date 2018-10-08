@@ -28,7 +28,9 @@
  */
 package agentgui.envModel.graph.controller;
 
+import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage;
 import agentgui.envModel.graph.controller.ui.messaging.MessagingJInternalFrame;
+import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
 
 /**
  * The Class UIMessagingController enables to send messages to the UI user.
@@ -37,8 +39,9 @@ import agentgui.envModel.graph.controller.ui.messaging.MessagingJInternalFrame;
  */
 public class UIMessagingController {
 
-	private GraphEnvironmentController graphController;
+	private boolean debug = true;
 	
+	private GraphEnvironmentController graphController;
 	private MessagingJInternalFrame messagingFrame;
 	
 	/**
@@ -47,23 +50,37 @@ public class UIMessagingController {
 	 */
 	public UIMessagingController(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
+		// --- Debugging --------------
+		if (debug==true) {
+			this.addTestMessages();
+		}
+	}
+	/**
+	 * Adds the test messages.
+	 */
+	private void addTestMessages() {
+
+		try {
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Information, "Test Message for the Developing of the message widget."));
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Warning, "Warning Message for the Developing of the message widget."));
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Error, "Error Message for the Developing of the message widget."));
+			Thread.sleep(500);
+			
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Information, "Test Message for the Developing of the message widget."));
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Warning, "Warning Message for the Developing of the message widget."));
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Error, "Error Message for the Developing of the message widget."));
+			Thread.sleep(500);
+			
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Information, "Test Message for the Developing of the message widget."));
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Warning, "Warning Message for the Developing of the message widget."));
+			this.addMessage(new GraphUIMessage(GraphUIMessageType.Error, "Error Message for the Developing of the message widget."));
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 	}
 	
-	/**
-	 * Checks if the UI is available.
-	 * @return true, if the UI is available
-	 */
-	private boolean isAvailableUI() {
-		return this.graphController.getGraphEnvironmentControllerGUI()!=null;
-	}
-	
-	/**
-	 * Shows the messaging UI.
-	 */
-	public void showMessagingUI() {
-		if (isAvailableUI()==false) return;
-		this.getMessagingFrame().registerAtDesktopAndSetVisible();
-	}
 	/**
 	 * Returns the messaging frame.
 	 * @return the messaging frame
@@ -73,6 +90,41 @@ public class UIMessagingController {
 			messagingFrame = new MessagingJInternalFrame(this.graphController);
 		}
 		return messagingFrame;
+	}
+	
+	/**
+	 * Checks if the UI is available.
+	 * @return true, if the UI is available
+	 */
+	private boolean isAvailableUI() {
+		return this.graphController.getGraphEnvironmentControllerGUI()!=null;
+	}
+	/**
+	 * Shows the messaging UI.
+	 */
+	public void showMessagingUI() {
+		if (isAvailableUI()==false) return;
+		this.getMessagingFrame().registerAtDesktopAndSetVisible();
+	}
+
+	/**
+	 * Adds the specified GraphUIMessage to the table of messages .
+	 * @param graphUiMessage the GraphUIMessage to add
+	 */
+	public void addMessage(GraphUIMessage graphUiMessage) {
+		this.getMessagingFrame().addMessage(graphUiMessage);
+		this.showMessagingUI();
+	}
+	/**
+	 * Adds the specified message to the table of messages.
+	 *
+	 * @param timeStamp the time stamp of the message
+	 * @param messageType the message type
+	 * @param message the message itself
+	 */
+	public void addMessage(long timeStamp, GraphUIMessageType messageType, String message) {
+		this.getMessagingFrame().addMessage(timeStamp, messageType, message);
+		this.showMessagingUI();
 	}
 	
 }

@@ -48,11 +48,11 @@ import agentgui.envModel.graph.controller.ui.messaging.MessagingJInternalFrame.W
  * The Class JPanleStates represents the visualization for state indications.
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
-public class JPanelMenu extends JToolBar implements ActionListener {
+public class JPanelToolbar extends JToolBar implements ActionListener {
 
 	private static final long serialVersionUID = 1110726364983505331L;
 
-	private final Dimension buttonSize = new Dimension(20, 20);
+	private final Dimension buttonSize = new Dimension(22, 22);
 	
 	private MessagingJInternalFrame messagingFrame;
 	
@@ -70,7 +70,7 @@ public class JPanelMenu extends JToolBar implements ActionListener {
 	 *
 	 * @param messagingFrame the messaging frame
 	 */
-	public JPanelMenu(MessagingJInternalFrame messagingFrame) {
+	public JPanelToolbar(MessagingJInternalFrame messagingFrame) {
 		this.messagingFrame = messagingFrame;
 		this.initialize();
 	}
