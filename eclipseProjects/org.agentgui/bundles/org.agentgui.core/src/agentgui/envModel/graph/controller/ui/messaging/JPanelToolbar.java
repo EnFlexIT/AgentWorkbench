@@ -65,9 +65,15 @@ public class JPanelToolbar extends JToolBar implements ActionListener {
 	
 	private JToggleButton jButtonTimeControlled;
 	
+	
+	/**
+	 * Default constructor (for WindowBuilder only).
+	 */
+	public JPanelToolbar() {
+		this.initialize();
+	}
 	/**
 	 * Instantiates a new messaging state panel.
-	 *
 	 * @param messagingFrame the messaging frame
 	 */
 	public JPanelToolbar(MessagingJInternalFrame messagingFrame) {

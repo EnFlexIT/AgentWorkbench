@@ -28,9 +28,10 @@
  */
 package agentgui.envModel.graph.controller.ui.messaging;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -40,6 +41,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -84,6 +86,8 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	
 	private JPanelMessages jPanelMessages;
 	private JPanelStates jPanelStates;
+	private JSplitPane jSplitPaneMessagesState; 
+	
 	private JPanelToolbar jPanelToolbar;
 	
 	private Boolean timeControlled;
@@ -133,8 +137,6 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		this.setBorder(BorderFactory.createEtchedBorder());
 		
 		this.setSizeAndPosition();
-		// --- Set the content panels -----------
-		this.getContentPane().setLayout(new BorderLayout(0, 0));
 		this.setContentPanels();
 		
 	}
@@ -147,24 +149,59 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			this.getContentPane().removeAll();
 		}
 		
+		// --- Define general layout ----------------------
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		
+		// --- Assign layouts ----------------------------- 
+		GridBagConstraints gbc_jSplitPane = new GridBagConstraints();
+		gbc_jSplitPane.anchor = GridBagConstraints.WEST;
+		gbc_jSplitPane.fill = GridBagConstraints.BOTH;
+		
+		GridBagConstraints gbc_jPanelToolbar = new GridBagConstraints();
+		gbc_jPanelToolbar.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jPanelToolbar.fill = GridBagConstraints.BOTH;
+		
 		switch (this.getWidgetOrientation()) {
 		case Bottom:
 		case Top:
-			this.getContentPane().add(this.getJPanelStates(), BorderLayout.WEST);
-			this.getContentPane().add(this.getJPanelMessages(), BorderLayout.CENTER);
-			this.getContentPane().add(this.getJPanelToolbar(), BorderLayout.EAST);
+			gridBagLayout.columnWeights = new double[]{1.0, 0.0};
+			gridBagLayout.rowWeights = new double[]{1.0};
+
+			gbc_jSplitPane.gridx = 0;
+			gbc_jSplitPane.gridy = 0;
+			
+			gbc_jPanelToolbar.gridx = 1;
+			gbc_jPanelToolbar.gridy = 0;
+			
+			this.getJSplitPaneMessagesState().setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 			break;
 
 		case Left:
 		case Right:
-			this.getContentPane().add(this.getJPanelToolbar(), BorderLayout.NORTH);
-			this.getContentPane().add(this.getJPanelMessages(), BorderLayout.CENTER);
-			this.getContentPane().add(this.getJPanelStates(), BorderLayout.SOUTH);
+			gridBagLayout.columnWeights = new double[]{1.0};
+			gridBagLayout.rowWeights = new double[]{0.0, 1.0};
+			
+			gbc_jSplitPane.gridx = 0;
+			gbc_jSplitPane.gridy = 1;
+			
+			gbc_jPanelToolbar.gridx = 0;
+			gbc_jPanelToolbar.gridy = 0;
+			
+			this.getJSplitPaneMessagesState().setOrientation(JSplitPane.VERTICAL_SPLIT);
 			break;
 		}
+
+		// --- Add components -----------------------------
+		this.getContentPane().setLayout(gridBagLayout);
+		this.getContentPane().add(this.getJSplitPaneMessagesState(), gbc_jSplitPane);
+		this.getContentPane().add(this.getJPanelToolbar(), gbc_jPanelToolbar);
 		
-		this.getContentPane().validate();
-		this.getContentPane().repaint();
+		this.getJSplitPaneMessagesState().validate();
+		this.getJSplitPaneMessagesState().repaint();
+		this.getJPanelMessages().validate();
+		this.getJPanelMessages().repaint();
+		this.getJPanelStates().validate();
+		this.getJPanelStates().repaint();
 		
 	}
 	private JPanelToolbar getJPanelToolbar() {
@@ -172,6 +209,16 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			jPanelToolbar = new JPanelToolbar(this);
 		}
 		return jPanelToolbar;
+	}
+	
+	private JSplitPane getJSplitPaneMessagesState() {
+		if (jSplitPaneMessagesState==null) {
+			jSplitPaneMessagesState = new JSplitPane();
+			jSplitPaneMessagesState.setDividerSize(1);
+			jSplitPaneMessagesState.setLeftComponent(this.getJPanelStates());
+			jSplitPaneMessagesState.setRightComponent(this.getJPanelMessages());
+		}
+		return jSplitPaneMessagesState;
 	}
 	private JPanelMessages getJPanelMessages() {
 		if (jPanelMessages == null) {
@@ -181,7 +228,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	}
 	private JPanelStates getJPanelStates() {
 		if (jPanelStates == null) {
-			jPanelStates = new JPanelStates(this.graphController);
+			jPanelStates = new JPanelStates(this);
 		}
 		return jPanelStates;
 	}
@@ -325,6 +372,25 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			this.setLocation(myLocationX, myLocationY);
 			this.setSize(new Dimension(myWidth, myHeight));
 			
+			// --- Configure the size of the message panel --------------------
+			int messageHeight = 0;
+			int messageWidth  = 0;
+			switch (this.getWidgetOrientation()) {
+			case Bottom:
+			case Top:
+				messageHeight = myHeight;
+				messageWidth  = (int) ((double)myWidth * 2.0/3.0);
+				break;
+
+			case Left:
+			case Right:
+				messageHeight = (int) ((double)myHeight* 2.0/3.0);
+				messageWidth  = myWidth;
+				break;
+			}
+			this.getJPanelMessages().setSize(new Dimension(messageWidth, messageHeight));
+			this.getJPanelMessages().setMaximumSize(new Dimension(messageWidth, messageHeight));
+			
 		} else {
 			this.setLocation(0, 0);
 			this.setSize(new Dimension(600, 200));
@@ -430,7 +496,11 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	 * @param graphUiMessage the GraphUIMessage to add
 	 */
 	public void addMessage(GraphUIMessage graphUiMessage) {
-		this.getJPanelMessages().addMessage(graphUiMessage);
+		if (graphUiMessage instanceof GraphUIStateMessage) {
+			this.getJPanelStates().addMessage((GraphUIStateMessage) graphUiMessage);
+		} else {
+			this.getJPanelMessages().addMessage(graphUiMessage);
+		}
 	}
 	/**
 	 * Adds the specified message to the table of messages.

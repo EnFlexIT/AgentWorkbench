@@ -28,11 +28,14 @@
  */
 package agentgui.envModel.graph.controller.ui.messaging;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 
 /**
  * The Class JPanleStates represents the visualization for state indications.
@@ -42,30 +45,117 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 public class JPanelStates extends JPanel {
 
 	private static final long serialVersionUID = 1110726364983505331L;
+	
+	private MessagingJInternalFrame messagingFrame;
 
-	private GraphEnvironmentController graphController;
+	private TreeMap<String, GraphUIStateMessagePanel> visualizationMap;
+	private JPanel dummyPanel;
+	
 	
 	/**
-	 * Instantiates a new messaging state panel.
-	 * @param graphController the graph controller
+	 * Default constructor (for WindowBuilder only).
 	 */
-	public JPanelStates(GraphEnvironmentController graphController) {
-		this.graphController = graphController;
+	public JPanelStates() {
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new messaging state panel.
+	 * @param messagingFrame the messaging frame
+	 */
+	public JPanelStates(MessagingJInternalFrame messagingFrame) {
+		this.messagingFrame = messagingFrame;
 		this.initialize();
 	}
 	/**
 	 * Initializes the panel.
 	 */
 	private void initialize() {
-		
 		this.setBackground(MessagingJInternalFrame.bgColor);
+		this.setLayout(new GridBagLayout());
+	}
+	
+	/**
+	 * Returns the visualization map.
+	 * @return the visualization map
+	 */
+	public TreeMap<String, GraphUIStateMessagePanel> getVisualizationMap() {
+		if (visualizationMap==null) {
+			visualizationMap = new TreeMap<>();
+		}
+		return visualizationMap;
+	}
+	
+	/**
+	 * Adds the specified {@link GraphUIStateMessage}.
+	 * @param graphUiMessage the state message 
+	 */
+	public void addMessage(GraphUIStateMessage stateMessage) {
 		
-		GridBagLayout gbl_jPanelStates = new GridBagLayout();
-		gbl_jPanelStates.columnWidths = new int[]{0};
-		gbl_jPanelStates.rowHeights = new int[]{0};
-		gbl_jPanelStates.columnWeights = new double[]{Double.MIN_VALUE};
-		gbl_jPanelStates.rowWeights = new double[]{Double.MIN_VALUE};
-		this.setLayout(gbl_jPanelStates);
+		// --- Get the visualization class of the state Message -----
+		Class<? extends GraphUIStateMessagePanel> stateMessageVisClass = stateMessage.getVisualizationClass();
+		if (stateMessageVisClass==null) {
+			throw new NullPointerException(this.messagingFrame.getClass().getSimpleName() + ": Visualzation class for message was not defined!");
+		}
+		
+		// --- Is this visualization already active? ----------------
+		GraphUIStateMessagePanel visualization = this.getVisualizationMap().get(stateMessageVisClass.getName());
+		if (visualization==null) {
+			try {
+				// --- Create new instance of the visualization -----
+				visualization = (GraphUIStateMessagePanel) ClassLoadServiceUtility.newInstance(stateMessageVisClass.getName());
+				visualization.setBackground(MessagingJInternalFrame.bgColor);
+				// --- Remind the visualization for later usage ----- 
+				this.getVisualizationMap().put(stateMessageVisClass.getName(), visualization);
+				// --- Add the visualization ------------------------
+				this.addVisualization(visualization);
+			    
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+				System.err.println("[" + this.messagingFrame.getClass().getSimpleName() + "] Visualization class '" + stateMessageVisClass.getName() + "' could not be initiated.");
+				//ex.printStackTrace();
+			}
+		}
+		
+		// --- Forward the State message to the visualization ------- 
+		if (visualization!=null) {
+			visualization.addMessage(stateMessage);
+		}
+	}
+	
+	/**
+	 * Adds the specified visualization to the panel.
+	 */
+	private void addVisualization(GraphUIStateMessagePanel visualization) {
+		
+		// --- Remove the dummy panel if available --------
+		this.remove(this.getDummyPanel());
+		
+		// --- Add visualization --------------------------
+		GridBagConstraints gbConVis = new GridBagConstraints();
+		gbConVis.gridx = 0;
+	    gbConVis.gridy = this.getComponentCount();
+	    gbConVis.anchor = GridBagConstraints.NORTHWEST;
+	    gbConVis.ipady = 10;
+	    
+	    this.add(visualization, gbConVis);
+		
+		// --- Add the dummy panel (again) ----------------
+	    GridBagConstraints gbConDummy = new  GridBagConstraints(0, this.getComponentCount(), 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0);
+	    this.add(this.getDummyPanel(), gbConDummy);
+	    
+	    this.messagingFrame.validate();
+		this.messagingFrame.repaint();
+		
+	}
+	/**
+	 * Returns the dummy panel.
+	 * @return the dummy panel
+	 */
+	private JPanel getDummyPanel() {
+		if (dummyPanel==null) {
+			dummyPanel = new JPanel();
+			dummyPanel.setBackground(MessagingJInternalFrame.bgColor);
+		}
+		return dummyPanel;
 	}
 	
 }

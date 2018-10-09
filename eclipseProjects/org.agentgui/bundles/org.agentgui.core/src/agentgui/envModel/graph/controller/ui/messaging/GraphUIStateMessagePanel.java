@@ -28,20 +28,27 @@
  */
 package agentgui.envModel.graph.controller.ui.messaging;
 
+import javax.swing.JPanel;
+
 /**
- * The Class GraphUIStateMessage can be used to define and change the
- * visual state of the state panel within the Messaging widget {@link MessagingJInternalFrame}.
+ * The Class AbstractStateMessageVisualization serves as base for the 
+ * visualization of graph states (e.g. traffic lights and other).
  * 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class GraphUIStateMessage extends GraphUIMessage {
+public abstract class GraphUIStateMessagePanel extends JPanel {
 
-	private static final long serialVersionUID = 3878309177802048286L;
+	private static final long serialVersionUID = -4542890165604477658L;
 
 	/**
-	 * Has to return the class for the visualization of states.
-	 * @return the visualization class
+	 * Defines the required constructor of the visualization.
 	 */
-	public abstract Class<? extends GraphUIStateMessagePanel> getVisualizationClass();
+	public GraphUIStateMessagePanel() { }
+	
+	/**
+	 * Adds the specified state message to the current state visualization.
+	 * @param stateMessage the state message to display
+	 */
+	public abstract void addMessage(GraphUIStateMessage stateMessage);
 	
 }

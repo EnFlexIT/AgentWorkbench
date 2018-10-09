@@ -30,6 +30,7 @@ package agentgui.envModel.graph.controller;
 
 import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage;
 import agentgui.envModel.graph.controller.ui.messaging.MessagingJInternalFrame;
+import agentgui.envModel.graph.controller.ui.messaging.TestStateMessage;
 import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
 
 /**
@@ -39,7 +40,7 @@ import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage.GraphUIMes
  */
 public class UIMessagingController {
 
-	private boolean debug = true;
+	private boolean debug = false;
 	
 	private GraphEnvironmentController graphController;
 	private MessagingJInternalFrame messagingFrame;
@@ -74,6 +75,8 @@ public class UIMessagingController {
 			this.addMessage(new GraphUIMessage(GraphUIMessageType.Information, "Test Message for the Developing of the message widget."));
 			this.addMessage(new GraphUIMessage(GraphUIMessageType.Warning, "Warning Message for the Developing of the message widget."));
 			this.addMessage(new GraphUIMessage(GraphUIMessageType.Error, "Error Message for the Developing of the message widget."));
+			
+			this.addMessage(new TestStateMessage("Test of the state panels"));
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
