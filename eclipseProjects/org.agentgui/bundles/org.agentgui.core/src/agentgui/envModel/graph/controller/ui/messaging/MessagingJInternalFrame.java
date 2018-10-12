@@ -498,9 +498,8 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	public void addMessage(GraphUIMessage graphUiMessage) {
 		if (graphUiMessage instanceof GraphUIStateMessage) {
 			this.getJPanelStates().addMessage((GraphUIStateMessage) graphUiMessage);
-		} else {
-			this.getJPanelMessages().addMessage(graphUiMessage);
 		}
+		this.getJPanelMessages().addMessage(graphUiMessage);
 	}
 	/**
 	 * Adds the specified message to the table of messages.

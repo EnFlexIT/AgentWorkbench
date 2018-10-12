@@ -44,4 +44,18 @@ public abstract class GraphUIStateMessage extends GraphUIMessage {
 	 */
 	public abstract Class<? extends GraphUIStateMessagePanel> getVisualizationClass();
 	
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage#getMessage()
+	 */
+	@Override
+	public abstract String getMessage();
+	
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage#getMessageType()
+	 */
+	@Override
+	public GraphUIMessageType getMessageType() {
+		return GraphUIMessageType.Information;
+	}
+	
 }

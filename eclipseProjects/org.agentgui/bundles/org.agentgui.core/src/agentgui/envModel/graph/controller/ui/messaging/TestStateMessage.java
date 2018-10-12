@@ -43,7 +43,15 @@ public class TestStateMessage extends GraphUIStateMessage {
 	public TestStateMessage(String message) {
 		this.setMessage(message);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.controller.ui.messaging.GraphUIStateMessage#getMessage()
+	 */
+	@Override
+	public String getMessage() {
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.controller.ui.messaging.GraphUIStateMessage#getVisualizationClass()
 	 */
