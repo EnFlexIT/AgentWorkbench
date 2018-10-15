@@ -51,7 +51,7 @@ import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
 import de.enflexit.common.ontology.OntologySingleClassSlotDescription;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
-import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
@@ -74,7 +74,7 @@ import jade.util.leap.List;
 public abstract class DynFormBase {
 
 	/** Necessary parameter that comes from the constructor */
-	protected OntologyVisualisationHelper ontologyVisualisationHelper;
+	protected OntologyVisualizationHelper ontologyVisualisationHelper;
 	/** Constructor parameter  */
 	protected AgentStartConfiguration agentStartConfiguration;
 

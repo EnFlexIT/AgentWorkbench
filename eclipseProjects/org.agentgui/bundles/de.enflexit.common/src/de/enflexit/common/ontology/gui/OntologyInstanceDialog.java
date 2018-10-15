@@ -51,7 +51,7 @@ import javax.swing.border.EtchedBorder;
 import de.enflexit.common.Language;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
-import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.ontology.OntologyVisualizationHelper;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -65,7 +65,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	
 	private int ontologyInstanceViewerConstructor = 0;
 	
-	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
+	private OntologyVisualizationHelper ontologyVisualisationHelper = null;
 	private AgentStartConfiguration agentStartConfiguration = null;
 	private String agentReference = null;
 	
@@ -88,9 +88,9 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * form will be created, because of missing references to special ontology classes.
 	 *
 	 * @param owner the owner
-	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualizationHelper}
 	 */
-	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper) {
+	public OntologyInstanceDialog(Frame owner, OntologyVisualizationHelper ontologyVisualisationHelper) {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.ontologyInstanceViewerConstructor = 0;
@@ -101,11 +101,11 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * on the start arguments configured for an agent.
 	 *
 	 * @param owner the owner
-	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualizationHelper}
 	 * @param agentStartConfiguration the agent configuration
 	 * @param agentReference the agent reference
 	 */
-	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
+	public OntologyInstanceDialog(Frame owner, OntologyVisualizationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.agentStartConfiguration = agentStartConfiguration;
@@ -118,10 +118,10 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * on the class references. This classes have to be part of an ontology.
 	 *
 	 * @param owner the owner
-	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualizationHelper}
 	 * @param ontologyClassReference the ontology class reference
 	 */
-	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper, String[] ontologyClassReference) {
+	public OntologyInstanceDialog(Frame owner, OntologyVisualizationHelper ontologyVisualisationHelper, String[] ontologyClassReference) {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.ontologyClassReference = ontologyClassReference;

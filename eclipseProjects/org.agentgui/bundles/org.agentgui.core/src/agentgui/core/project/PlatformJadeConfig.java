@@ -284,16 +284,14 @@ public class PlatformJadeConfig implements Serializable {
 		if (mtpCreation==MTP_Creation.ConfiguredByIPandPort) {
 
 			String ipAddress = null;
-			NetworkAddresses networkAddresses = new NetworkAddresses();
-
 			if (mtpIpAddress==null || mtpIpAddress.equals("") || mtpIpAddress.equals(MTP_IP_AUTO_Config)) {
 				// --- Auto configuration of the IP address -------------------
-				ipAddress = this.getAutomaticIP(networkAddresses);
+				ipAddress = this.getAutomaticIP();
 			} else {
 				// --- Use configured IP address, if possible -----------------
-				if (networkAddresses.isAvailableIP(mtpIpAddress)==false) {
+				if (this.isAvailableNetworkAddress(mtpIpAddress)==false) {
 					// --- The configured IP is INVALID -----------------------
-					ipAddress = this.getAutomaticIP(networkAddresses);
+					ipAddress = this.getAutomaticIP();
 					System.err.println("=> The configured IP address '" + mtpIpAddress +  "' is invalid! The JADE profile will be corrected with the available IP '" + ipAddress + "' instead.");
 				} else {
 					// --- The configured IP is VALID -------------------------- 
@@ -375,18 +373,32 @@ public class PlatformJadeConfig implements Serializable {
 		
 	}
 	/**
-	 * Automatically determines the IP address to use for the platform and the MTP
+	 * Return the currently know network addresses.
+	 * @return the network addresses
+	 */
+	private NetworkAddresses getNetworkAddresses() {
+		return Application.getJadePlatform().getNetworkAddresses();
+	}
+	/**
+	 * Checks if the specified network address is currently available.
 	 *
-	 * @param networkAddresses the network addresses
+	 * @param ipAddressToCheck the ip address to check
+	 * @return true, if is available network address
+	 */
+	private boolean isAvailableNetworkAddress(String ipAddressToCheck) {
+		return getNetworkAddresses().isAvailableIP(ipAddressToCheck);
+	}
+	/**
+	 * Automatically determines the IP address to use for the platform and the MTP
 	 * @return the automatic IP
 	 */
-	private String getAutomaticIP(NetworkAddresses networkAddresses) {
+	private String getAutomaticIP() {
 	
 		String ipAddress = null;
-		InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
+		InetAddress inetAddress = getNetworkAddresses().getPreferredInetAddress();
 		if (inetAddress==null || Application.isNetworkConnected()==false) {
 			// --- No network connection, take loopBack address -------
-			Vector<NetworkAddress> loopBackAddresses = networkAddresses.getInet4AddressesLoopBack();
+			Vector<NetworkAddress> loopBackAddresses = getNetworkAddresses().getInet4AddressesLoopBack();
 			if (loopBackAddresses!=null && loopBackAddresses.size()>0) {
 				ipAddress = loopBackAddresses.get(0).getInetAddress().getHostAddress(); 
 			}

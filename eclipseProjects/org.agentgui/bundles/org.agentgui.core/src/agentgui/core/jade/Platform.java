@@ -45,6 +45,7 @@ import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
+import agentgui.core.network.NetworkAddresses;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
 import agentgui.core.utillity.UtilityAgent;
@@ -78,6 +79,8 @@ public class Platform {
 	public static final String BackgroundSystemAgentServerSlave = "server.slave";
 	public static final String BackgroundSystemAgentFileManger = "file.manager";
 	
+	private NetworkAddresses networkAddresses;
+	
 	private AgentContainer jadeMainContainer;
 	private final String mainContainerName = jade.core.AgentContainer.MAIN_CONTAINER_NAME;
 	private ArrayList<AgentContainer> agentContainerList;
@@ -90,6 +93,24 @@ public class Platform {
 	public Platform() {
 
 	}	
+	
+	/**
+	 * Returns the currently available network addresses / IP's.
+	 * @return the network addresses
+	 */
+	public NetworkAddresses getNetworkAddresses() {
+		if (networkAddresses==null) {
+			networkAddresses = new NetworkAddresses();
+		}
+		return networkAddresses;
+	}
+	/**
+	 * Sets the network addresses.
+	 * @param networkAddresses the new network addresses
+	 */
+	private void setNetworkAddresses(NetworkAddresses networkAddresses) {
+		this.networkAddresses = networkAddresses;
+	}
 	
 	/**
 	 * Starts JADE without displaying the RMA
@@ -144,6 +165,8 @@ public class Platform {
 						}
 						// --- Notify plugins for termination -------
 						Platform.this.notifyPluginsForTerminatedMAS();
+						// --- Reset known network addresses --------
+						Platform.this.setNetworkAddresses(null);
 					}
 				});
 				
@@ -521,7 +544,7 @@ public class Platform {
 			this.startUtilityAgent(UtilityAgentJob.ShutdownPlatform);
 			// --- Wait for the end of Jade ---------------
 			Long timeStop = System.currentTimeMillis() + (10 * 1000);
-			while(isMainContainerRunning()) {
+			while (isMainContainerRunning()) {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -532,7 +555,6 @@ public class Platform {
 				}
 			}
 			System.out.println(Language.translate("Jade wurde beendet!"));
-			
 			
 			// --- Clean up the memory ------------
 			System.gc();

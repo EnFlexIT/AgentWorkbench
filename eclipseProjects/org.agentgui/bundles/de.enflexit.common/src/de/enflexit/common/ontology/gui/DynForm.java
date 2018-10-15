@@ -51,7 +51,7 @@ import de.enflexit.common.ontology.OntologyClassTree;
 import de.enflexit.common.ontology.OntologySingleClassDescription;
 import de.enflexit.common.ontology.OntologySingleClassSlotDescription;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
-import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.ontology.OntologyVisualizationHelper;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -70,11 +70,11 @@ public class DynForm extends DynFormBase {
 	/**
 	 * Constructor of this class by using a project and an agent reference.
 	 *
-	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualizationHelper}
 	 * @param agentStartConfiguration the {@link AgentStartConfiguration}
 	 * @param agentReference the agent reference
 	 */
-	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
+	public DynForm(OntologyVisualizationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
 		
 		super();
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
@@ -106,10 +106,10 @@ public class DynForm extends DynFormBase {
 	 * Constructor of this class by using an instance of an ontology and
 	 * the reference(s) of a needed class out of the ontology.
 	 *
-	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualizationHelper}
 	 * @param ontologyClassReferences the ontology class references
 	 */
-	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, String[] ontologyClassReferences) {
+	public DynForm(OntologyVisualizationHelper ontologyVisualisationHelper, String[] ontologyClassReferences) {
 
 		super();
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;

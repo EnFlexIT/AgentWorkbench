@@ -51,7 +51,7 @@ import javax.swing.tree.DefaultTreeModel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> {
+public class OntologyVisualizationHelper extends HashMap<String, OntologyClass> {
 
 	private static final long serialVersionUID = 2055269152886396404L;
 	
@@ -66,7 +66,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	 *
 	 * @param subOntologies the Vector of references to sub ontologies
 	 */
-	public OntologyVisualisationHelper(Vector<String> subOntologies) {
+	public OntologyVisualizationHelper(Vector<String> subOntologies) {
 		this.subOntologies = subOntologies;	
 		this.setOntologyTree();	
 	}
@@ -335,7 +335,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	 */
 	private class ErrorCheck {
 
-		private OntologyVisualisationHelper currProjectOntology;
+		private OntologyVisualizationHelper currProjectOntology;
 		
 		private ArrayList<String> mergerConcepts = new ArrayList<String>();
 		private ArrayList<String> mergerAgentActions =  new ArrayList<String>();
@@ -357,7 +357,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 		 *
 		 * @param projectOntology the project ontology
 		 */
-		public ErrorCheck(OntologyVisualisationHelper projectOntology) {
+		public ErrorCheck(OntologyVisualizationHelper projectOntology) {
 			
 			currProjectOntology = projectOntology;
 			if (currProjectOntology.size()>1) {

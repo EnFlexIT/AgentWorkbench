@@ -94,7 +94,7 @@ import agentgui.core.update.ProjectRepositoryUpdate;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.ontology.AgentStartConfiguration;
-import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
@@ -223,7 +223,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * This class is used for the management of the used Ontology's inside a project.
 	 * It handles the concrete instances.
 	 */
-	@XmlTransient private OntologyVisualisationHelper ontologyVisualisationHelper;
+	@XmlTransient private OntologyVisualizationHelper ontologyVisualisationHelper;
 
 	/**
 	 * This Vector is used in order to store the class names of the used ontology's in the project file
@@ -1894,9 +1894,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * Returns the ontology visualisation helper for this project.
 	 * @return the OntologyVisualisationHelper
 	 */
-	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
+	public OntologyVisualizationHelper getOntologyVisualisationHelper() {
 		if (this.ontologyVisualisationHelper == null) {
-			this.ontologyVisualisationHelper = new OntologyVisualisationHelper(this.getSubOntologies());
+			this.ontologyVisualisationHelper = new OntologyVisualizationHelper(this.getSubOntologies());
 			this.setSubOntologies(this.ontologyVisualisationHelper.getSubOntologies());
 		}
 		return ontologyVisualisationHelper;

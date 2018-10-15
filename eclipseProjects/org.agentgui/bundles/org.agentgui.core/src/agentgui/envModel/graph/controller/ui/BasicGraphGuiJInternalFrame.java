@@ -106,7 +106,7 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 	 * @see JDesktopPane
 	 * @param jDesktopLayer the layer in which the JInternaFrame has to be added (e.g. JDesktopPane.PALETTE_LAYER) 
 	 */
-	protected void registerAtDesktopAndSetVisible(Object jDesktopLayer) {
+	protected void registerAtDesktopAndSetVisible(Integer jDesktopLayer) {
 		
 		// --- Does the dialog for that component already exists? ---------
 		JInternalFrame compProps = this.graphDesktop.getEditor(this.getTitle()); 

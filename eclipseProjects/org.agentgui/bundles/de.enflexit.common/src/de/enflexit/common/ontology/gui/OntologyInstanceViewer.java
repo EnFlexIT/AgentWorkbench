@@ -55,7 +55,7 @@ import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
-import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.ontology.OntologyVisualizationHelper;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -67,7 +67,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 	private static final long serialVersionUID = 6748263753769300242L;
 	
-	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
+	private OntologyVisualizationHelper ontologyVisualisationHelper = null;
 	private AgentStartConfiguration agentStartConfiguration = null;
 	private String agentReference = null;
 	private String[] ontologyClassReference = null;
@@ -93,7 +93,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * This is the constructor in case that nothing should be displayed (no form, no slots).
 	 * @param ontologyVisualisationHelper the ontology visualisation helper
 	 */
-	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper) {
+	public OntologyInstanceViewer(OntologyVisualizationHelper ontologyVisualisationHelper) {
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.agentStartConfiguration = null; 
 		this.agentReference = null;
@@ -107,7 +107,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @param agentStartConfiguration the agent configuration
 	 * @param currentAgentReference the current agent reference
 	 */
-	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String currentAgentReference) {
+	public OntologyInstanceViewer(OntologyVisualizationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String currentAgentReference) {
 		super();
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.agentStartConfiguration = agentStartConfiguration;
@@ -121,7 +121,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @param ontologyVisualisationHelper the ontology visualisation helper
 	 * @param currOntologyClassReference the current ontology class reference
 	 */
-	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper, String[] currOntologyClassReference) {
+	public OntologyInstanceViewer(OntologyVisualizationHelper ontologyVisualisationHelper, String[] currOntologyClassReference) {
 		super();
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.agentStartConfiguration = null;
@@ -135,7 +135,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * Returns the current OntologyVisualisationHelper.
 	 * @return the OntologyVisualisationHelper
 	 */
-	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
+	public OntologyVisualizationHelper getOntologyVisualisationHelper() {
 		return this.ontologyVisualisationHelper;
 	}
 	

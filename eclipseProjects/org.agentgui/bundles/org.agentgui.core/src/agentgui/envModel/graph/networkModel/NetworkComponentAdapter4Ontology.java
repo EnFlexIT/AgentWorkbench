@@ -40,7 +40,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.ui.BasicGraphGuiProperties;
 import de.enflexit.common.ExceptionHandling;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
-import de.enflexit.common.ontology.OntologyVisualisationHelper;
+import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
@@ -54,7 +54,7 @@ import jade.content.onto.OntologyException;
  */
 public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentAdapter4DataModel {
 
-	private OntologyVisualisationHelper ovh;
+	private OntologyVisualizationHelper ovh;
 	private OntologyInstanceViewer oiv;
 	
 	/**
@@ -95,22 +95,22 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	
 	
 	/**
-	 * Sets the ontology visualisation helper.
-	 * @param ontologyVisualisationHelper the new ontology visualisation helper
+	 * Sets the ontology visualization helper.
+	 * @param ontologyVisualizationHelper the new ontology visualization helper
 	 */
-	public void setOntologyVisualisationHelper(OntologyVisualisationHelper ontologyVisualisationHelper) {
-		this.ovh = ontologyVisualisationHelper;
+	public void setOntologyVisualizationHelper(OntologyVisualizationHelper ontologyVisualizationHelper) {
+		this.ovh = ontologyVisualizationHelper;
 	}
 	/**
-	 * Returns the ontology visualisation helper.
-	 * @return the ontology visualisation helper
+	 * Returns the ontology visualization helper.
+	 * @return the ontology visualization helper
 	 */
-	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
+	public OntologyVisualizationHelper getOntologyVisualizationHelper() {
 		if (this.ovh==null) {
 			if (this.getOntologyBaseClasses()==null) {
 				throw new NullPointerException("The ontology base classes of the NetworkComponentAdapter were not defined!");
 			} else {
-				this.ovh = new OntologyVisualisationHelper(this.getOntologyBaseClassReferences());	
+				this.ovh = new OntologyVisualizationHelper(this.getOntologyBaseClassReferences());	
 			}
 		}
 		return this.ovh;
@@ -120,12 +120,12 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 * Returns the ontology instance viewer.
 	 * @return the ontology instance viewer
 	 */
-	private OntologyInstanceViewer getOntologyInstanceViewer() {
+	protected OntologyInstanceViewer getOntologyInstanceViewer() {
 		if (this.oiv==null) {
 			if (this.getOntologyClassReferences()==null) {
 				throw new NullPointerException("The references to the classes out of the configured ontologies are not set!");
 			} else {
-				this.oiv = new OntologyInstanceViewer(this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
+				this.oiv = new OntologyInstanceViewer(this.getOntologyVisualizationHelper(), this.getOntologyClassReferences());
 				this.oiv.setAllowViewEnlargement(false);	
 			}
 		}
@@ -194,7 +194,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	@Override
 	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
 		if (dataModel==null) {
-			throw new NullPointerException("Vector<String> 'dataModel' must not be null!");
+			throw new NullPointerException("[" + this.getClass().getSimpleName() + "] Vector<String> 'dataModel' must not be null!");
 		}
 		return this.getInstancesFromXML64(dataModel);
 	}
@@ -209,7 +209,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 * @param ontoXML64Vector the onto XML 64 vector
 	 * @return the instances from XML 64
 	 */
-	private Object[] getInstancesFromXML64(Vector<String> ontoXML64Vector) {
+	protected Object[] getInstancesFromXML64(Vector<String> ontoXML64Vector) {
 		
 		// --- Decode Base64 first ----------------------------------
 		Vector<String> ontoXMLVector = new Vector<>();
@@ -230,7 +230,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 		String[] classReferences = this.getOntologyClassReferences();
 		for (int i = 0; i < classReferences.length; i++) {
 			// --- Get the corresponding Ontology-Instance ----------
-			OntologyClassTreeObject octo = this.getOntologyVisualisationHelper().getClassTreeObject(classReferences[i]);
+			OntologyClassTreeObject octo = this.getOntologyVisualizationHelper().getClassTreeObject(classReferences[i]);
 			Ontology ontology = octo.getOntologyClass().getOntologyInstance();
 			
 			String xml = null;
@@ -305,14 +305,14 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 * @param ontoInstances the ontology instances as object array
 	 * @return the XML from instances
 	 */
-	private Vector<String> getXML64FromInstances(Object[] ontoInstances) {
+	protected Vector<String> getXML64FromInstances(Object[] ontoInstances) {
 	
 		Vector<String> xml64Vector = new Vector<>();
 		String[] classReferences = this.getOntologyClassReferences();
 		for (int i = 0; i < classReferences.length; i++) {
 			
 			// --- Get the corresponding Ontology-Instance ----------
-			OntologyClassTreeObject octo = this.getOntologyVisualisationHelper().getClassTreeObject(classReferences[i]);
+			OntologyClassTreeObject octo = this.getOntologyVisualizationHelper().getClassTreeObject(classReferences[i]);
 			Ontology ontology = octo.getOntologyClass().getOntologyInstance();
 						
 			// --- Generate XML of this object ----------------------
