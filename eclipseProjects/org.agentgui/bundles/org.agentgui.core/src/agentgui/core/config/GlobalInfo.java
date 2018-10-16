@@ -51,6 +51,7 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.agentgui.gui.swt.SWTResourceManager;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.Platform;
@@ -109,7 +110,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Variables --------------------------------------------------------
 	private static ExecutionEnvironment localExecutionEnvironment = ExecutionEnvironment.ExecutedOverIDE;
 	
-	private static String localAppLnF = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+	private static String localAppLnF = DEFAUL_LOOK_AND_FEEL_CLASS;
 	private static Class<?> localAppLnFClass;
 	
 	private static String localBaseDir = "";
@@ -328,7 +330,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public void initialize() {
 		try {
 			this.getVersionInfo();
-			this.doLoadConfiguration();
+			this.loadConfiguration();
+			this.setApplicationsLookAndFeel();
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -501,6 +505,12 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Look and Feel -------------
 	// -------------------------------
 	/**
+	 * Sets the applications look and feel.
+	 */
+	private void setApplicationsLookAndFeel() {
+		AwbLookAndFeelAdjustments.setLookAndFeel(this.getAppLookAndFeelClassName(), null);
+	}
+	/**
 	 * This method will return the current Look and Feel (LnF) for Java Swing.<br>
 	 * Also the class reference will be validated. If the class could not be found the 
 	 * method will return null.
@@ -532,6 +542,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	// -------------------------------
 
+	
+	
 	/**
 	 * This method can be used in order to evaluate how Agent.GUI is currently executed
 	 * @return - 'IDE', if Agent.GUI is executed out of the IDE, where Agent.GUI is developed OR<br>
@@ -1159,9 +1171,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	 
 	/**
-	 * Do load persisted configuration.
+	 * Loads the persisted configuration.
 	 */
-	private void doLoadConfiguration() {
+	private void loadConfiguration() {
 		
 		File fileProps = new File(this.getPathConfigFile(true));
 		if (fileProps.exists()==true) {

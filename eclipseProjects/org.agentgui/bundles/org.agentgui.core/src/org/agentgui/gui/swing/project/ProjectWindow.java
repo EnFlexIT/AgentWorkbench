@@ -44,6 +44,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DesktopManager;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
@@ -69,6 +70,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
+import org.agentgui.gui.swing.AwbBasicTabbedPaneUI;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -154,7 +156,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		this.setAutoscrolls(true);
 		this.setBorder(null);
 		this.setFocusable(true);
+		
 		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+		this.setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	/**
@@ -470,9 +474,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			projectViewRightTabs.setName("ProjectTabs");
 			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
 			projectViewRightTabs.setPreferredSize(new Dimension(126, 72));
-			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 12));
+			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 13));
 			projectViewRightTabs.addMouseListener(this.getTabMouseListener());
 			projectViewRightTabs.addChangeListener(this.getTabSelectionListener());
+			projectViewRightTabs.setUI(new AwbBasicTabbedPaneUI());
 		}
 		return projectViewRightTabs;
 	}

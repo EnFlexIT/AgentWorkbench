@@ -28,6 +28,7 @@
  */
 package agentgui.core.application;
 
+import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -45,6 +46,7 @@ import org.agentgui.bundle.evaluation.BundleClassFilterCollector;
 import org.agentgui.gui.AwbConsole;
 import org.agentgui.gui.AwbTrayIcon;
 import org.agentgui.gui.UiBridge;
+import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.eclipse.equinox.app.IApplication;
 
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
@@ -1096,15 +1098,26 @@ public class Application {
 			getMainWindow().setStatusBarMessage(Language.translate("Fertig"));
 		}
 	}
-	
+	/**
+	 * Sets the cursor for the application.
+	 * @param cursor the new application cursor
+	 */
+	public static void setCursor(Cursor cursor) {
+		if (getMainWindow()!=null) {
+			getMainWindow().setCursor(cursor);
+		}
+	}
 	/**
 	 * Set's the Look and feel of the application
 	 * @param newLnF
 	 */
 	public static void setLookAndFeel(String newLnF) {
-		getGlobalInfo().setAppLookAndFeelClassName(newLnF);
-		getMainWindow().setLookAndFeel();
-		getProjectsLoaded().setProjectView();
+		if (getMainWindow()!=null) {
+			getGlobalInfo().setAppLookAndFeelClassName(newLnF);
+			AwbLookAndFeelAdjustments.setLookAndFeel(newLnF, getMainWindow());
+			getMainWindow().setLookAndFeelUpdated();
+			getProjectsLoaded().setProjectView();
+		}
 	}	
 	
 	/**

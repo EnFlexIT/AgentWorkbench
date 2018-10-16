@@ -161,7 +161,6 @@ public class MainWindow extends JFrame {
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
 
 		// --- Set the Look and Feel of the Application -----------
-		this.setLookAndFeel();
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		// --- Configure console and divider position -------------
@@ -478,22 +477,7 @@ public class MainWindow extends JFrame {
 	 * Here the 'look and feel' LnF of java Swing can be set.
 	 * @param newLnF the new look and feel
 	 */
-	public void setLookAndFeel() {
-
-		String lnfClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
-		if (lnfClassName == null)
-			return;
-
-		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
-		if (lnfClassName.equals(currLookAndFeelClassName) == true)
-			return;
-
-		try {
-			UIManager.setLookAndFeel(lnfClassName);
-			SwingUtilities.updateComponentTreeUI(this);
-		} catch (Exception e) {
-			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
-		}
+	public void setLookAndFeelUpdated() {
 
 		if (jMenuExtraLnF != null) {
 			jMenuExtraLnF.removeAll();

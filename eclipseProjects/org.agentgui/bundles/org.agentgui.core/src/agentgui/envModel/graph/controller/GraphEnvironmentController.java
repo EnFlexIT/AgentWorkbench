@@ -406,7 +406,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 						// --- Set application status text ----------------------------------------
 						if (Application.getMainWindow() != null) {
-							Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+							Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 							Application.setStatusBarMessage(Language.translate("Lade Setup") + " :" + fileName + " ...");
 						}
 	
@@ -465,7 +465,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 						
 					} finally {
 						GraphEnvironmentController.this.isTemporaryPreventSaving = false;
-						Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
+						Application.setCursor(Cursor.getDefaultCursor());
 					}
 					
 				}

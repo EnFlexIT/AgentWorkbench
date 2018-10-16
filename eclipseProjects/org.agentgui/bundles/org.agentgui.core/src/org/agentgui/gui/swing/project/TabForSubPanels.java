@@ -36,6 +36,8 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.agentgui.gui.swing.AwbBasicTabbedPaneUI;
+
 import agentgui.core.project.Project;
 
 /**
@@ -86,10 +88,11 @@ public class TabForSubPanels extends JPanel  {
 	public JTabbedPane getJTabbedPane() {
 		if (jTabbedPaneIntern == null) {
 			jTabbedPaneIntern = new JTabbedPane();
-			jTabbedPaneIntern.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTabbedPaneIntern.setFont(new Font("Dialog", Font.BOLD, 13));
 			ProjectWindow projectWindow = (ProjectWindow) currProject.getProjectEditorWindow();
 			jTabbedPaneIntern.addMouseListener(projectWindow.getTabMouseListener());
 			jTabbedPaneIntern.addChangeListener(projectWindow.getTabSelectionListener());
+			jTabbedPaneIntern.setUI(new AwbBasicTabbedPaneUI());
 		}
 		return jTabbedPaneIntern;
 	}
