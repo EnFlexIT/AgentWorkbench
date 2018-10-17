@@ -1612,9 +1612,25 @@ public class LoadService extends BaseService {
 	private ClientRemoteContainerReply getLocalClientRemoteContainerReply() {
 		if (myCRCReply==null) {
 			// ----------------------------------------------------------------
-			// --- In case of the man container, wait for the MTP-URL ---------
+			// --- For the Main-Container, wait for the MTP-URL ---------------
 			// ----------------------------------------------------------------
-			if (this.myMainContainer!=null && this.myMTP_URL==null) return null;
+			if (this.myMainContainer!=null && this.myMTP_URL==null) {
+				// --- Maximum of 5 seconds wait time -------------------------
+				long endWaitTime = System.currentTimeMillis() + (1000*5);
+				while (this.myMTP_URL==null) {
+					try {
+						Thread.sleep(100);
+						if (System.currentTimeMillis()>=endWaitTime) {
+							break;
+						}
+						
+					} catch (InterruptedException iEx) {
+						iEx.printStackTrace();
+					}
+				}
+				// --- If no MTP address was set, return null -----------------
+				if (this.myMTP_URL==null) return null;
+			}
 			
 			// ----------------------------------------------------------------
 			// --- Build the Descriptions from the running system -------------

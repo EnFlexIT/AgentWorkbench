@@ -131,29 +131,31 @@ public class ServerClientAgent extends Agent {
 		LoadServiceHelper loadHelper = null;
 		try {
 			loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
-			// --- get the local systems-informations ---------
-			myCRCreply = loadHelper.getLocalCRCReply();
 
-			// --- Define Platform-Info -----------------------
-			myPlatform = myCRCreply.getRemoteAddress();
-			// --- Set the Performance of machine -------------
-			myPerformance = myCRCreply.getRemotePerformance();
-			// --- Set OS-Informations ------------------------
-			myOS = myCRCreply.getRemoteOS();
-			// --- Set version info ---------------------------
-			myVersion = myCRCreply.getRemoteAgentGuiVersion();
+			// --- Get the local systems-informations ---------
+			ClientRemoteContainerReply myCRCreply = this.getCrcReply(loadHelper);
+			if (myCRCreply!=null) {
+				// --- Define Platform-Info -------------------
+				myPlatform = myCRCreply.getRemoteAddress();
+				// --- Set the Performance of machine ---------
+				myPerformance = myCRCreply.getRemotePerformance();
+				// --- Set OS-Informations --------------------
+				myOS = myCRCreply.getRemoteOS();
+				// --- Set version info -----------------------
+				myVersion = myCRCreply.getRemoteAgentGuiVersion();
+				
+			} else {
+				this.doDelete();
+				return;
+			}
 			
 		} catch (ServiceException e) {
 			// --- problems to get the SimulationsService ! ---
-			if (loadHelper==null) {
-				this.doDelete();
-				return;
-			} else {
-				e.printStackTrace();	
-			}
+			this.doDelete();
+			return;
 		}
 		
-		// --- Define Main-Platform-Info ------------------
+		// --- Define Main-Platform-Info ----------------------
 		JadeUrlConfiguration myURL = Application.getGlobalInfo().getJadeUrlConfigurationForMaster();
 		if(!myURL.hasErrors()){
 			mainPlatform.setIp(myURL.getHostIP());
@@ -169,7 +171,7 @@ public class ServerClientAgent extends Agent {
 			}		
 		}
 		// --- Set myTime ---------------------------------
-		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
+		myPlatformTime.setTimeStampAsString(Long.toString(System.currentTimeMillis())) ;
 		
 		// --- Send 'Register'-Information ----------------
 		myRegistration.setClientAddress(myPlatform);
@@ -197,6 +199,25 @@ public class ServerClientAgent extends Agent {
 			agentErr.printStackTrace();
 		}
 		
+	}
+	
+	/**
+	 * Returns the local ClientRemoteContainerReply from the {@link LoadService}.
+	 *
+	 * @param loadServiceHelper the load service helper
+	 * @return the crc reply
+	 */
+	private ClientRemoteContainerReply getCrcReply(LoadServiceHelper loadServiceHelper) {
+		if (myCRCreply==null) {
+			if (loadServiceHelper!=null) {
+				try {
+					myCRCreply = loadServiceHelper.getLocalCRCReply();
+				} catch (ServiceException sEx) {
+					sEx.printStackTrace();
+				}
+			}
+		}
+		return myCRCreply;
 	}
 	
 	/* (non-Javadoc)
@@ -553,16 +574,19 @@ public class ServerClientAgent extends Agent {
 
 					BenchmarkResult bench = new BenchmarkResult();
 					bench.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
-					myCRCreply.setRemoteBenchmarkResult(bench);
-				
+					
 					LoadServiceHelper loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
-					loadHelper.putContainerDescription(myCRCreply);
-					loadHelper.setAndSaveCRCReplyLocal(myCRCreply);
+					ClientRemoteContainerReply myCRCreply = getCrcReply(loadHelper);
+					if (myCRCreply!=null) {
+						myCRCreply.setRemoteBenchmarkResult(bench);
+						loadHelper.putContainerDescription(myCRCreply);
+						loadHelper.setAndSaveCRCReplyLocal(myCRCreply);
+						this.stop();
+					}
 
 				} catch (ServiceException servEx) {
 					servEx.printStackTrace();
 				}
-				this.stop();
 			}
 		}
 		
