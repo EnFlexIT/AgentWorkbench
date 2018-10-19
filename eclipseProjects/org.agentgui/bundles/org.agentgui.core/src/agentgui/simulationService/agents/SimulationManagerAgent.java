@@ -64,20 +64,20 @@ public abstract class SimulationManagerAgent extends Agent {
 	protected boolean debug = false;
 	
 	/** The SimulationServiceHelper. */
-	protected SimulationServiceHelper simHelper = null;
+	protected SimulationServiceHelper simHelper;
 	/** The ServiceSensorManager for this agent. */
-	protected ServiceSensorManager mySensor = null;
+	protected ServiceSensorManager mySensor;
 	
 	/** The environment model which contains an abstract and a displayable environment model as well as a time model */
 	protected EnvironmentModel myEnvironmentModel = new EnvironmentModel();
 	
 	/** The answers/next state of all involved agents. */
-	protected Hashtable<AID, Object> agentAnswers = null;
+	protected Hashtable<AID, Object> agentAnswers;
 
 	/** The CyclicSimulationBehavior. */
-	private CyclicSimulationBehaviour simBehaviour = null;
+	private CyclicSimulationBehaviour simBehaviour;
 	/** The CyclicNotificationHandler for incoming notification. */
-	private CyclicNotificationHandler notifyHandler = null;
+	private CyclicNotificationHandler notifyHandler;
 	/** The notifications, which arrived at this agent . */
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 	

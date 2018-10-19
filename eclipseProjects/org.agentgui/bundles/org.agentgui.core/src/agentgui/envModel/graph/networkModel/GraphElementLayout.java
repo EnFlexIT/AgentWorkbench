@@ -39,14 +39,14 @@ import java.util.TreeMap;
  */
 public class GraphElementLayout {
 
-	private GraphElement myGraphElement = null;
+	private GraphElement myGraphElement;
 	
-	private NetworkModel networkModel = null;
-	private TreeMap<String, DomainSettings> domainHash = null;
-	private TreeMap<String, ComponentTypeSettings> ctsHash = null;
+	private NetworkModel networkModel;
+	private TreeMap<String, DomainSettings> domainHash;
+	private TreeMap<String, ComponentTypeSettings> ctsHash;
 
-	private DomainSettings myDomain = null;
-	private ComponentTypeSettings myComponentTypeSettings = null;
+	private DomainSettings myDomain;
+	private ComponentTypeSettings myComponentTypeSettings;
 	
 	private boolean distributionNode = false;
 	private boolean clusterComponent = false;
@@ -58,10 +58,10 @@ public class GraphElementLayout {
 	private float size = 0;
 	private Color color = Color.BLACK;
 	private Color colorPicked = Color.YELLOW;
-	private String labelText = null;
+	private String labelText;
 	private boolean showLabel = true;
-	private String imageReference = null;
-	private String shapeForm = null;
+	private String imageReference;
+	private String shapeForm;
 	
 	/**
 	 * Instantiates a new graph element layout.
