@@ -90,14 +90,17 @@ public class PackageClasses extends ArrayList<String> {
 		// --- Case that only the package is known --------
 		// ------------------------------------------------
 		Bundle[] bundles = be.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			Bundle bundle = bundles[i];
-			List<String> classesFound = be.getClassReferences(bundle, this.searchInPackage);
-			if (classesFound!=null && classesFound.size()>0) {
-				this.addAll(classesFound);
-				return;
+		if (bundles!=null) {
+			for (int i = 0; i < bundles.length; i++) {
+				Bundle bundle = bundles[i];
+				List<String> classesFound = be.getClassReferences(bundle, this.searchInPackage);
+				if (classesFound!=null && classesFound.size()>0) {
+					this.addAll(classesFound);
+					return;
+				}
 			}
 		}
+		
 	}
 	
 	

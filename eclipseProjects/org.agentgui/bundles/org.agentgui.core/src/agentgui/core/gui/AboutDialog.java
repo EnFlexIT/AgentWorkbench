@@ -64,6 +64,7 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.components.JHyperLink;
+import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
  * The GUI of the AboutDialog.
@@ -287,13 +288,14 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane();
-			jTabbedPane.setName("");
+			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
+			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.setTabPlacement(JTabbedPane.TOP);
 			
 			jTabbedPane.addTab("Copyright", null, getJPanelGeneral(), null);
-			
 			jTabbedPane.addTab("Mitwirkende", null, getJPanelMembers(), null);
 			jTabbedPane.setTitleAt(1, Language.translate("Mitwirkende"));
+			
 		}
 		return jTabbedPane;
 	}

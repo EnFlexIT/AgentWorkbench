@@ -73,6 +73,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
  * This JDialog represents the option dialog, where the 
@@ -294,7 +295,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		if (jTabbedPaneRight == null) {
 			jTabbedPaneRight = new JTabbedPane();
 			jTabbedPaneRight.setTabPlacement(JTabbedPane.TOP);
-			jTabbedPaneRight.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTabbedPaneRight.setUI(new AwbBasicTabbedPaneUI());
+			jTabbedPaneRight.setFont(new Font("Dialog", Font.BOLD, 13));
 		}
 		return jTabbedPaneRight;
 	}

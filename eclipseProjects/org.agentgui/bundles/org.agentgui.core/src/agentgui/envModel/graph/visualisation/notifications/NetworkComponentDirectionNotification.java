@@ -39,8 +39,8 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
  */
 public class NetworkComponentDirectionNotification extends DisplayAgentNotificationGraph {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5845301152343373848L;
+
 	/** The network component. */
 	private NetworkComponent networkComponent = null;
 	

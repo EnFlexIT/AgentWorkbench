@@ -78,7 +78,6 @@ public class BundleEvaluatorThread extends Thread {
 			// --- Execute the search -------------------------------
 			BundleEvaluator.getInstance().evaluateBundle(this.getBundle(), this.getBundleClassFilter());
 			
-			
 		} catch (IllegalStateException isEx) {
 			System.err.println(Thread.currentThread().getName() + ": " + isEx.getMessage());
 		} catch (Exception ex) {
@@ -87,7 +86,6 @@ public class BundleEvaluatorThread extends Thread {
 			// --- Unregister as search thread ----------------------
 			BundleEvaluator.getInstance().unregisterSearchThread(this);
 		}
-		
 	}
 	
 	/* (non-Javadoc)

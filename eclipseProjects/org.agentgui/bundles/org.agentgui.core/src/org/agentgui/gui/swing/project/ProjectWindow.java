@@ -70,7 +70,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
-import org.agentgui.gui.swing.AwbBasicTabbedPaneUI;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -80,6 +79,7 @@ import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.project.Project;
+import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
  * This extended JInternalFrame graphically encapsulates the the project in the main window (class CoreWindow)
@@ -471,13 +471,13 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private JTabbedPane getProjectViewRightTabs() {
 		if (projectViewRightTabs == null) {
 			projectViewRightTabs = new JTabbedPane();
-			projectViewRightTabs.setName("ProjectTabs");
 			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
-			projectViewRightTabs.setPreferredSize(new Dimension(126, 72));
+			projectViewRightTabs.setName("ProjectTabs");
+			projectViewRightTabs.setUI(new AwbBasicTabbedPaneUI());
 			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 13));
+			projectViewRightTabs.setPreferredSize(new Dimension(126, 72));
 			projectViewRightTabs.addMouseListener(this.getTabMouseListener());
 			projectViewRightTabs.addChangeListener(this.getTabSelectionListener());
-			projectViewRightTabs.setUI(new AwbBasicTabbedPaneUI());
 		}
 		return projectViewRightTabs;
 	}

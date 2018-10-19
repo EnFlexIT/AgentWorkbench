@@ -36,9 +36,8 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.agentgui.gui.swing.AwbBasicTabbedPaneUI;
-
 import agentgui.core.project.Project;
+import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
  * This class can be used in order to create a tab which can hold further sub tabs (like the tabs

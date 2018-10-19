@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.gui.swing;
+package de.enflexit.common.swing;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -42,7 +42,6 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
-
 
 	private Font fontSelected = null;
 	private Font fontNotSelected = null;

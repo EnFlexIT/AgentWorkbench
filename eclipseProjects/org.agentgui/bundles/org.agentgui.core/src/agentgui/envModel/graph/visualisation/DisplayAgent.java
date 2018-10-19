@@ -75,14 +75,6 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	
 	
 	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#createEnvironmentController()
-	 */
-	@Override
-	protected EnvironmentController createNewEnvironmentController() {
-		return new GraphEnvironmentController();
-	}
-	
-	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#setup()
 	 */
 	@Override
@@ -92,13 +84,6 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		this.addBehaviour(new MessageReceiveBehaviour());
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#afterMove()
-	 */
-	@Override
-	protected void afterMove() {
-		super.afterMove();
-	}
-	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#takeDown()
 	 */
 	@Override
@@ -106,7 +91,6 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		this.myGraphEnvironmentController=null;
 		this.environmentModelStimuli=null;
 		this.disposeDisplayAgentNotificationHandler();
-		this.myDisplayAgentNotificationHandler = null;
 		super.takeDown();
 	}
 	/* (non-Javadoc)
@@ -117,16 +101,23 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		this.myGraphEnvironmentController=null;
 		this.environmentModelStimuli=null;
 		this.disposeDisplayAgentNotificationHandler();
-		this.myDisplayAgentNotificationHandler = null;
 		super.beforeMove();
 	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#afterMove()
+	 */
+	@Override
+	protected void afterMove() {
+		super.afterMove();
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.sensoring.ServiceSensorInterface#setMigration(jade.core.Location)
 	 */
 	@Override
 	public void setMigration(Location newLocation) {
-		System.out.println("No action specified for the 'setMigratioin()' method of the DisplayAgent: " + this.getLocalName());
+		// --- Nothing to do here -------------------------
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#setPauseSimulation(boolean)
@@ -136,12 +127,12 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		super.setPauseSimulation(isPauseSimulation);
 	}
 
-	/**
-	 * Returns the current network model.
-	 * @return the network model
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#createEnvironmentController()
 	 */
-	protected NetworkModel getNetworkModel() {
-		return this.getGraphEnvironmentController().getNetworkModel();
+	@Override
+	protected EnvironmentController createNewEnvironmentController() {
+		return new GraphEnvironmentController();
 	}
 	/**
 	 * Returns the current GraphEnvironmentController.
@@ -153,8 +144,13 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		}
 		return myGraphEnvironmentController;
 	}
-	
-	
+	/**
+	 * Returns the current network model.
+	 * @return the network model
+	 */
+	protected NetworkModel getNetworkModel() {
+		return this.getGraphEnvironmentController().getNetworkModel();
+	}
 	
 	/**
 	 * Returns the Vector of EnvironmentModel's that arrived this agent by an EnvironmentStimulus.

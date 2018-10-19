@@ -28,8 +28,6 @@
  */
 package agentgui.envModel.graph.visualisation;
 
-import jade.core.AID;
-
 import java.util.Vector;
 
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -47,6 +45,7 @@ import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirec
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeriesException;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import jade.core.AID;
 
 /**
  * The Class DisplayAgentNotificationHandler is used by the {@link DisplayAgent}
@@ -113,7 +112,7 @@ public class DisplayAgentNotificationHandler {
 			displayNotificationMultiple = (DisplayAgentNotificationGraphMultiple) notification.getNotification();
 			for (int i = 0; i < displayNotificationMultiple.getDisplayNotifications().size(); i++) {
 				// --- Work on a single notification ----------------
-				DisplayAgentNotificationGraph displayNotificationSingle =  displayNotificationMultiple.getDisplayNotifications().get(i);
+				DisplayAgentNotificationGraph displayNotificationSingle = displayNotificationMultiple.getDisplayNotifications().get(i);
 				try {
 					// --- Try to apply the current settings --------
 					this.setSingleDisplayAgentNotification(graphController, networkModel, displayNotificationSingle, notification.getSender());
@@ -142,7 +141,7 @@ public class DisplayAgentNotificationHandler {
 	}
 	
 	/**
-	 * Sets the concrete, single DisplayAgentNotificationGraph to the NetworkModel first and invokes a visualisation update afterwards.
+	 * Sets the concrete, single DisplayAgentNotificationGraph to the NetworkModel first and invokes a visualization update afterwards.
 	 *
 	 * @param senderAID the sender aid
 	 * @param displayNotification the GraphDisplayAgentNotification
@@ -279,7 +278,7 @@ public class DisplayAgentNotificationHandler {
 			// => Update DataSeries of NetworkComponent or GraphNode
 			// ------------------------------------------------------
 			if (graphController==null) {
-				// --- If there is no visualisation, do update here -
+				// --- If there is no visualization, do update here -
 				try {
 					UpdateDataSeries uds = (UpdateDataSeries) displayNotification;
 					uds.applyToNetworkModelOnly(networkModel);
@@ -290,9 +289,9 @@ public class DisplayAgentNotificationHandler {
 				}
 			}
 
-		} // end of case separation
+		} 
 
-		// --- Update visualisation ---------------------------------
+		// --- Update visualization ---------------------------------
 		this.putDisplayAgentNotificationGraphToDisplayStack(graphController, displayNotification);
 		
 	}
@@ -317,6 +316,10 @@ public class DisplayAgentNotificationHandler {
 			this.getDisplayNotificationStack().add(displayNotification);
 			if (this.displayUpdater==null) {
 				this.startDisplayUpdater(graphController);
+			} else {
+				synchronized (this.getDisplayNotificationStack()) {
+					this.getDisplayNotificationStack().notify();
+				}
 			}
 		}
 	}
@@ -340,6 +343,9 @@ public class DisplayAgentNotificationHandler {
 	public void dispose() {
 		if (this.displayUpdater!=null) {
 			this.displayUpdater.dispose();
+			synchronized (this.getDisplayNotificationStack()) {
+				this.getDisplayNotificationStack().notify();
+			}
 			this.displayUpdater = null;
 		}
 	}

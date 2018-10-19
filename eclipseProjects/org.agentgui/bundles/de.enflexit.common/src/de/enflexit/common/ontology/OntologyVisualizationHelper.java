@@ -269,8 +269,10 @@ public class OntologyVisualizationHelper extends HashMap<String, OntologyClass> 
 		
 		// --- Something found! Get DefaultTableModel for Slots -----
 		OntologyClassTree onClaTree = onCla.getOntologyTree();
-		DefaultMutableTreeNode tn = onClaTree.getTreeNode(searchSrcClass);
-		return tn;
+		if (onClaTree==null) {
+			return null;
+		}
+		return onClaTree.getTreeNode(searchSrcClass);
 	}
 	
 	/**

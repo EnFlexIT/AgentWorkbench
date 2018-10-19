@@ -57,6 +57,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
+import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
  * The GUI for a GraphEnvironmentController. This contains a pane showing the NetworkComponents table and the BasicGraphGUI. The main class which associates with the components table, the environment
@@ -160,8 +161,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     private JTabbedPane getJTabbedPaneAltNetModels() {
 		if (jTabbedPaneAltNetModels == null) {
 		    jTabbedPaneAltNetModels = new JTabbedPane();
-		    jTabbedPaneAltNetModels.setFont(new Font("Dialog", Font.BOLD, 12));
-	
+		    jTabbedPaneAltNetModels.setUI(new AwbBasicTabbedPaneUI());
+		    jTabbedPaneAltNetModels.setFont(new Font("Dialog", Font.BOLD, 13));
+		    
 		    // --- Initialize the Tab-Reminder ------------
 		    this.networkModelTabs = new HashMap<String, GraphEnvironmentControllerGUI>();
 	

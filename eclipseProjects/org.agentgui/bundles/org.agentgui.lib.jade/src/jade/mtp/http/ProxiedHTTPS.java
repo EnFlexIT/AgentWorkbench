@@ -12,6 +12,7 @@ import jade.mtp.http.HTTPSocketFactory;
 import jade.mtp.http.MessageTransportProtocol;
 
 public class ProxiedHTTPS extends MessageTransportProtocol {
+	
 	public static final String PROFILE_PREFIX = "jade_mtp_proxiedhttps_";
 	public static final String PROFILE_PRIVATE_PROTOCOL = PROFILE_PREFIX + "privateProtocol";
 	public static final String PROFILE_PRIVATE_ADDRESS = PROFILE_PREFIX + "privateAddress";

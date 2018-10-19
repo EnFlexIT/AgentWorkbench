@@ -95,6 +95,7 @@ import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.EdgeShape;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
+import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 import javax.swing.JComboBox;
 
@@ -485,7 +486,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane();
-			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
+			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab("Teilnetze", null, getJPanelDomains(), null);
 			jTabbedPane.addTab("Netzwerk-Komponenten", null, getJPanelComponents(), null);
 			jTabbedPane.addTab("Allgemein", null, getJPanelGeneralSettings(), null);
@@ -495,6 +497,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTabbedPane.setTitleAt(2, Language.translate("Allgemein"));
 			jTabbedPane.setSelectedIndex(1);
 
+			
 			jTabbedPane.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent ce) {

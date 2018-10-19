@@ -30,6 +30,7 @@ package agentgui.core.jade;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
+import jade.mtp.http.HTTPSocketFactory;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
@@ -167,6 +169,8 @@ public class Platform {
 						Platform.this.notifyPluginsForTerminatedMAS();
 						// --- Reset known network addresses --------
 						Platform.this.setNetworkAddresses(null);
+						// --- Reset JADE https socket factory ------
+						Platform.this.resetHTTPS();
 					}
 				});
 				
@@ -1232,6 +1236,21 @@ public class Platform {
 			}
 		} catch (IOException ioEx) {
 			ioEx.printStackTrace();
+		}
+	}
+
+	/**
+	 * Resets the JADE HTTPS socket factory.
+	 */
+	private void resetHTTPS() {
+		HTTPSocketFactory factoryObject = HTTPSocketFactory.getInstance();
+		try {
+			Field httpsField = factoryObject.getClass().getDeclaredField("_usingHttps");
+			httpsField.setAccessible(true);
+			httpsField.setBoolean(factoryObject, false);
+			
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
 		}
 	}
 	

@@ -69,8 +69,10 @@ public class BundleProperties {
 	public static final String DEF_LANGUAGE = "05_LANGUAGE";
 	public static final String DEF_MAXIMiZE_MAIN_WINDOW = "06_MAXIMiZE_MAIN_WINDOW";
 	
-	public static final String DEF_LOGGING_ENABLED = "07_LOGGING_ENABLED";
-	public static final String DEF_LOGGING_BASE_PATH = "08_LOGGING_BASE_PATH";
+	public static final String DEF_LOOK_AND_FEEL = "07_LOOK_AND_FEEL";
+	
+	public static final String DEF_LOGGING_ENABLED = "08_LOGGING_ENABLED";
+	public static final String DEF_LOGGING_BASE_PATH = "09_LOGGING_BASE_PATH";
 	
 	public static final String DEF_AUTOSTART = "10_AUTOSTART";
 	public static final String DEF_MASTER_URL = "11_MASTER_URL";
@@ -170,8 +172,9 @@ public class BundleProperties {
 					case DEF_RUNAS:
 						boolean changedExecutionMode = (pce.getOldValue()!=null && pce.getNewValue()!=pce.getOldValue());
 						if (changedExecutionMode==true) {
-							if (debug==true) System.out.println("Changed Execution Mode: changed from " + pce.getOldValue() + " to "+ pce.getNewValue());
-							//TODO if the preference dialog was set to SWT!
+							if (debug==true) {
+								System.out.println("Changed Execution Mode: changed from " + pce.getOldValue() + " to "+ pce.getNewValue());
+							}
 						}
 					}
 				}
@@ -242,6 +245,9 @@ public class BundleProperties {
 		booleanPrefValue = eclipsePreferences.getBoolean(DEF_MAXIMiZE_MAIN_WINDOW, false);
 		this.globalInfo.setMaximzeMainWindow(booleanPrefValue);
 
+		// --- this.DEF_LOOK_AND_FEEL ----------------
+		stringPrefValue = eclipsePreferences.get(DEF_LOOK_AND_FEEL, GlobalInfo.DEFAUL_LOOK_AND_FEEL_CLASS);
+		this.globalInfo.setAppLookAndFeelClassName(stringPrefValue);
 
 		// --- this.DEF_LOGGING_ENABLED --------------
 		booleanPrefValue = eclipsePreferences.getBoolean(DEF_LOGGING_ENABLED, false);
@@ -390,11 +396,15 @@ public class BundleProperties {
 		// --- this.DEF_MAXIMiZE_MAIN_WINDOW ---------
 		eclipsePreferences.putBoolean(DEF_MAXIMiZE_MAIN_WINDOW, this.globalInfo.isMaximzeMainWindow());			
 		
+		// --- this.DEF_LOOK_AND_FEEL ----------------
+		eclipsePreferences.put(DEF_LOOK_AND_FEEL, this.globalInfo.getAppLookAndFeelClassName());
 		
 		// --- this.DEF_LOGGING_ENABLED --------------
 		eclipsePreferences.putBoolean(DEF_LOGGING_ENABLED, this.globalInfo.isLoggingEnabled());			
 		// --- this.DEF_LOGGING_BASE_PATH ------------
-		if (this.globalInfo.getLoggingBasePath()!=null)eclipsePreferences.put(DEF_LOGGING_BASE_PATH, this.globalInfo.getLoggingBasePath());
+		if (this.globalInfo.getLoggingBasePath()!=null) {
+			eclipsePreferences.put(DEF_LOGGING_BASE_PATH, this.globalInfo.getLoggingBasePath());
+		}
 		
 		
 		// --- this.DEF_AUTOSTART --------------------

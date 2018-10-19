@@ -33,9 +33,11 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
+import agentgui.envModel.graph.visualisation.notifications.UIMessage;
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
 
 /**
@@ -56,9 +58,9 @@ public class DisplayAgentNotificationThread extends Thread {
 	 * @param graphController the graph controller
 	 */
 	public DisplayAgentNotificationThread(DisplayAgentNotificationHandler displayNotificationHandler, GraphEnvironmentController graphController) {
+		this.setName("DisplayAgentNotificationThread");
 		this.displayNotificationHandler = displayNotificationHandler;
 		this.graphController = graphController;
-		this.setName("DisplayAgentNotificationThread");
 	}
 	
 	/**
@@ -117,6 +119,8 @@ public class DisplayAgentNotificationThread extends Thread {
 									sendDataModelUpdate(displayNotification);
 								} else if (displayNotification instanceof UpdateDataSeries) {
 									sendDataModelUpdate(displayNotification);
+								} else if (displayNotification instanceof UIMessage) {
+									sendUIMessage(displayNotification);
 								} else {
 									sendNetworkModelNotification(displayNotification);
 								}
@@ -137,12 +141,18 @@ public class DisplayAgentNotificationThread extends Thread {
 			// --- Exit while-loop ------
 			if (this.dispose==true) break;
 			
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException ie) {
-				ie.printStackTrace();
+			synchronized (this.displayNotificationHandler.getDisplayNotificationStack()) {
+				if (this.displayNotificationHandler.getDisplayNotificationStack().size()==0) {
+					try {
+						this.displayNotificationHandler.getDisplayNotificationStack().wait();
+					} catch (InterruptedException ie) {
+						ie.printStackTrace();
+					}
+				}
 			}
 			
+			if (this.dispose==true) break;
+						
 		} // end endless while
 		
 	}
@@ -166,7 +176,7 @@ public class DisplayAgentNotificationThread extends Thread {
 	 *
 	 * @param displayNotification the display notification
 	 */
-	public void sendDataModelUpdate(DisplayAgentNotificationGraph displayNotification) {
+	private void sendDataModelUpdate(DisplayAgentNotificationGraph displayNotification) {
 		
 		// --- Avoid exceptions -----------------------------------------------
 		if (displayNotification==null) return;
@@ -186,5 +196,15 @@ public class DisplayAgentNotificationThread extends Thread {
 		}
 	}
 
+	/**
+	 * Sends an {@link GraphUIMessage} to the visualization.
+	 * @param displayNotification the display notification
+	 */
+	private void sendUIMessage(DisplayAgentNotificationGraph displayNotification) {
+		UIMessage uiMessage = (UIMessage) displayNotification;
+		if (uiMessage.getGraphUIMessage()!=null) {
+			this.graphController.getUiMessagingController().addMessage(uiMessage.getGraphUIMessage());
+		}
+	}
 	
 }

@@ -231,13 +231,15 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 		for (int i = 0; i < classReferences.length; i++) {
 			// --- Get the corresponding Ontology-Instance ----------
 			OntologyClassTreeObject octo = this.getOntologyVisualizationHelper().getClassTreeObject(classReferences[i]);
-			Ontology ontology = octo.getOntologyClass().getOntologyInstance();
-			
-			String xml = null;
-			if (i<=(ontoXMLVector.size()-1)) {
-				xml = ontoXMLVector.get(i);
+			if (octo!=null) {
+				Ontology ontology = octo.getOntologyClass().getOntologyInstance();
+				
+				String xml = null;
+				if (i<=(ontoXMLVector.size()-1)) {
+					xml = ontoXMLVector.get(i);
+				}
+				instances[i] = this.getInstanceOfXML(xml, classReferences[i], ontology);	
 			}
-			instances[i] = this.getInstanceOfXML(xml, classReferences[i], ontology);
 		}
 		return instances;
 	}
