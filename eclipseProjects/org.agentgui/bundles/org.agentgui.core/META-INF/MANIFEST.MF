@@ -3,17 +3,15 @@ Automatic-Module-Name: org.agentgui.core
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - Core Bundle
 Bundle-SymbolicName: org.agentgui.core;singleton:=true
-Bundle-Version: 2.1.5.qualifier
+Bundle-Version: 2.1.6.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/classLoadService.xml, 
  OSGI-INF/dbStateVisualService.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.activation,
- javax.inject;version="1.0.0",
- org.slf4j;version="1.7.10",
- org.slf4j.spi;version="1.7.10" 
+Import-Package: javax.inject;version="1.0.0",
+ org.slf4j;version="1.7.10"
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.oidc,
@@ -24,32 +22,19 @@ Require-Bundle: de.enflexit.api,
  org.agentgui.lib.jade,
  org.agentgui.lib.jFreeChart,
  org.agentgui.lib.jung,
- org.agentgui.lib.bouncyCastle,
  org.agentgui.lib.jep,
  org.agentgui.lib.googleTranslate,
  ch.qos.logback.classic,
  ch.qos.logback.core,
- org.eclipse.core.net,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.e4.core.di,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.ui.services,
  org.eclipse.e4.ui.workbench,
- org.eclipse.e4.ui.workbench.swt,
  org.eclipse.e4.ui.di,
- org.eclipse.equinox.common,
- org.eclipse.equinox.p2.core,
- org.eclipse.equinox.p2.engine,
- org.eclipse.equinox.p2.artifact.repository,
- org.eclipse.equinox.p2.metadata.repository,
  org.eclipse.equinox.p2.operations,
- org.eclipse.equinox.p2.repository.tools,
- org.eclipse.equinox.p2.ui,
- org.eclipse.equinox.p2.ui.sdk,
- org.eclipse.equinox.p2.ui.sdk.scheduler,
  org.eclipse.equinox.p2.metadata,
- org.eclipse.osgi,
  org.eclipse.osgi.services
 Export-Package: agentgui.core.application,
  agentgui.core.charts,
