@@ -177,7 +177,9 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @return true, if is required class load service
 	 */
 	private boolean isRequiredClassLoadService(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className) {
-		return (serviceBaseInterface.isInstance(clsElement.getClassLoadServiceImpl())==true && this.isRequiredBundle(clsElement.getBundle(), className)==true);
+		boolean isRightServiceType = clsElement.isRequiredService(serviceBaseInterface);
+		boolean isRequiredBundle = this.isRequiredBundle(clsElement.getBundle(), className);
+		return (isRightServiceType==true && isRequiredBundle==true);
 	}
 	/**
 	 * Checks if is required bundle.
@@ -290,18 +292,19 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	private Vector<ClassLoadServiceElement> getAllKnowClassLoadServices(boolean unique) {
 		
 		Vector<ClassLoadServiceElement> known = new Vector<>();
-		if (unique) {
+		Vector<Vector<ClassLoadServiceElement>> sebsiNameVector = new Vector<>(this.getClassLoadServiceElementsByServiceInterfaceName().values());
+		if (unique==true) {
 			// --- Unify the know elements --------------------------  
 			HashSet<ClassLoadServiceElement> clsElements = new HashSet<>();
-			for (Vector<ClassLoadServiceElement> servieVector : this.getClassLoadServiceElementsByServiceInterfaceName().values()) {
-				clsElements.addAll(servieVector);
+			for (int i = 0; i < sebsiNameVector.size(); i++) {
+				clsElements.addAll(sebsiNameVector.get(i));
 			}
 			known = new Vector<>(clsElements);
 			
 		} else {
 			// --- Just take the elements 'as is' -------------------
-			for (Vector<ClassLoadServiceElement> servieVector : this.getClassLoadServiceElementsByServiceInterfaceName().values()) {
-				known.addAll(servieVector);
+			for (int i = 0; i < sebsiNameVector.size(); i++) {
+				known.addAll(sebsiNameVector.get(i));
 			}
 		}
 		return known;
@@ -431,7 +434,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	
 	
 	/**
-	 * The Class ClassLoadServiceElement store the important elements belonging to a class load service.
+	 * The Class ClassLoadServiceElement stores the important elements belonging to a class load service.
 	 * 
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
 	 */
@@ -442,47 +445,110 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		private T classLoadServiceImpl;
 		private Vector<String> affectedServices;
 		
+		/**
+		 * Instantiates a new class load service element.
+		 *
+		 * @param componentFactoryName the component factory name
+		 * @param bundle the bundle
+		 * @param classLoadServiceImpl the class load service impl
+		 */
 		public ClassLoadServiceElement(String componentFactoryName, Bundle bundle, T classLoadServiceImpl) {
 			this.setComponentFactoryName(componentFactoryName);
 			this.setBundle(bundle);
 			this.setClassLoadServiceImpl(classLoadServiceImpl);
 		}
+		
+		/**
+		 * Gets the component factory name.
+		 * @return the component factory name
+		 */
 		public String getComponentFactoryName() {
 			return componentFactoryName;
 		}
+		/**
+		 * Sets the component factory name.
+		 * @param componentFactoryName the new component factory name
+		 */
 		public void setComponentFactoryName(String componentFactoryName) {
 			this.componentFactoryName = componentFactoryName;
 		}
 		
+		/**
+		 * Returns the bundle in which the service is located.
+		 * @return the bundle
+		 */
 		public Bundle getBundle() {
 			return bundle;
 		}
+		/**
+		 * Sets the bundle in which the service is located.
+		 * @param bundle the new bundle
+		 */
 		public void setBundle(Bundle bundle) {
 			this.bundle = bundle;
 		}
 		
+		/**
+		 * Returns the actual instance of the class load service implementation.
+		 * @return the class load service implementation
+		 */
 		public T getClassLoadServiceImpl() {
 			return classLoadServiceImpl;
 		}
+		/**
+		 * Sets the actual instance of the class load service implementation.
+		 * @param classLoadService the new class load service impl
+		 */
 		public void setClassLoadServiceImpl(T classLoadService) {
 			this.classLoadServiceImpl = classLoadService;
 		}
 		
+		/**
+		 * Returns the affected services.
+		 * @return the affected services
+		 */
 		public Vector<String> getAffectedServices() {
 			if (affectedServices==null) {
-				affectedServices = this.getAffectedClassLoadServiceInterfaces(this.getClassLoadServiceImpl());
+				affectedServices = this.getAffectedClassLoadServiceInterfaces();
 			}
 			return affectedServices;
 		}
-		private Vector<String> getAffectedClassLoadServiceInterfaces(T classLoadService) {
+		/**
+		 * Return the affected class load service interfaces.
+		 *
+		 * @param classLoadService the class load service
+		 * @return the affected class load service interfaces
+		 */
+		private Vector<String> getAffectedClassLoadServiceInterfaces() {
 			Vector<String> affectedInterfaces = new Vector<>();
-			Class<?>[] interfaceClasses = getSuperInterfaces(classLoadService.getClass().getInterfaces());
+			Class<?>[] interfaceClasses = getSuperInterfaces(this.getClassLoadServiceImpl().getClass().getInterfaces());
 			for (int i = 0; i < interfaceClasses.length; i++) {
 				affectedInterfaces.add(interfaceClasses[i].getName());
 			}
 			return affectedInterfaces;
 		}
+		/**
+		 * Checks if this service implementation is the required one for the specified service base interface.
+		 * @param serviceBaseInterface the service base interface
+		 * @return true, if is required service
+		 */
+		public boolean isRequiredService(Class<?> serviceBaseInterface) {
+			
+			if (serviceBaseInterface.isInstance(this.classLoadServiceImpl)==true) return true;
+
+			String serviceBaseInterfaceClassName = serviceBaseInterface.getClass().getName(); 
+			for (int i = 0; i < this.getAffectedServices().size(); i++) {
+				String affectedService = this.getAffectedServices().get(i);
+				if (serviceBaseInterfaceClassName.equals(affectedService)) {
+					return true;
+				}
+			}
+			return false;
+		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
 		@Override
 		public boolean equals(Object compareObject) {
 		
@@ -505,6 +571,9 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 			return false;
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
 		@Override
 		public int compareTo(AbstractClassLoadServiceUtilityImpl<T>.ClassLoadServiceElement clsElement) {
 			return this.getComponentFactoryName().compareTo(clsElement.getComponentFactoryName());
