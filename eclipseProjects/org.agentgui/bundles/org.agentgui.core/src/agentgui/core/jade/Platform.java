@@ -76,10 +76,41 @@ import jade.wrapper.StaleProxyException;
  */
 public class Platform {
 
-	public static final String BackgroundSystemAgentApplication = "server.client";
-	public static final String BackgroundSystemAgentServerMaster = "server.master";
-	public static final String BackgroundSystemAgentServerSlave = "server.slave";
-	public static final String BackgroundSystemAgentFileManger = "file.manager";
+	/**
+	 * The enumeration that names the system agents like the RMA and other.
+	 */
+	public enum SystemAgent {
+		// --- Known JADE agents ----------------
+		RMA("rma"), 
+		Sniffer("sniffer"), 
+		Dummy("dummy"), 
+		DF("df"), 
+		Introspector("introspector"), 
+		Log("log"),
+		
+		// --- Agents of the Background system --
+		BackgroundSystemAgentApplication("server.client"),
+		BackgroundSystemAgentServerMaster("server.master"),
+		BackgroundSystemAgentServerSlave("server.slave"),
+		
+		// --- Further Agent.Workbench agents --- 
+		SimStarter("simstarter"),
+		Utility("utility"),
+		ProjectFileManager("file.manager"),
+		LoadMonitor("loadmonitor"), 
+		ThreadMonitor("threadmonitor"); 
+		
+		private final String defaultAgentName;
+		private SystemAgent(final String defaultAgentName) {
+			this.defaultAgentName = defaultAgentName;
+		}
+		@Override
+		public String toString() {
+			return defaultAgentName;
+		}
+	}
+	
+	private Hashtable<SystemAgent , String> systemAgentsClasses;
 	
 	private NetworkAddresses networkAddresses;
 	
@@ -157,7 +188,7 @@ public class Platform {
 				Runtime jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
-						// --- terminate platform -------------------
+						// --- Terminate platform -------------------
 						LoadMeasureThread.removeMonitoringTasksForAgents();
 						Platform.this.jadeMainContainer = null;
 						Platform.this.getAgentContainerList().clear();
@@ -165,6 +196,8 @@ public class Platform {
 						if (Application.getMainWindow()!=null){
 							Application.getMainWindow().setSimulationReady2Start();
 						}
+						// --- Remove directory for file transfer ---
+						Platform.this.removeFileTransferDirectories();
 						// --- Notify plugins for termination -------
 						Platform.this.notifyPluginsForTerminatedMAS();
 						// --- Reset known network addresses --------
@@ -220,8 +253,8 @@ public class Platform {
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			// --- Start "server.client" agent ----------------------
-			if (this.isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
-				this.startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+			if (this.isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentApplication.toString())==false) {
+				this.startSystemAgent(SystemAgent.BackgroundSystemAgentApplication, null);
 			}
 			
 			// --- Start "file.manager" agent -----------------------
@@ -229,7 +262,7 @@ public class Platform {
 			
 			// --- Start RMA ('Remote Monitoring Agent') -----------
 			if (showRMA==true) {
-				this.startSystemAgent("rma", null);	
+				this.startSystemAgent(SystemAgent.RMA, null);	
 			}
 			break;
 		
@@ -267,8 +300,8 @@ public class Platform {
 				
 			}
 			// --- Start 'server.master' agent ----------------------		
-			if (isAgentRunningInMainContainer(BackgroundSystemAgentServerMaster)==false) {
-				this.startAgent(BackgroundSystemAgentServerMaster, agentgui.simulationService.agents.ServerMasterAgent.class.getName());	
+			if (isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentServerMaster.toString())==false) {
+				this.startSystemAgent(SystemAgent.BackgroundSystemAgentServerMaster, null);	
 			}
 			break;
 			
@@ -309,8 +342,8 @@ public class Platform {
 				
 			} 
 			// --- Start 'server.slave' agent -----------------------
-			if (isAgentRunningInMainContainer(BackgroundSystemAgentServerSlave)==false) {			
-				this.startAgent(BackgroundSystemAgentServerSlave, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
+			if (isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentServerSlave.toString())==false) {
+				startSystemAgent(SystemAgent.BackgroundSystemAgentServerSlave, null);
 			}
 			break;
 		
@@ -330,13 +363,11 @@ public class Platform {
 			
 			switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
 			case SETUP:
-				if (isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
-					startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+				if (isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentApplication.toString())==false) {
+					startSystemAgent(SystemAgent.BackgroundSystemAgentApplication, null);
 				}
 				// --- Start "file.manager" agent -----------------------
-				if (this.fileMangerProject!=null) {
-					this.startFileMangerAgent();
-				}
+				this.startFileMangerAgent();
 				break;
 
 			case AGENT:
@@ -384,7 +415,7 @@ public class Platform {
 	}
 	
 	/**
-	 * [Trial] Delays the server start by checking the master URL. Using Agent.GUI as
+	 * [Trial] Delays the server start by checking the master URL. Using Agent.Workbench as
 	 * a Service on Linux systems caused an {@link UnknownHostException} that
 	 * disappeared when Agemt.GUI service was restarted. So maybe this delay can help
 	 * to solve the problem of the name resolution. 
@@ -450,7 +481,7 @@ public class Platform {
 	/**
 	 * Start JADE for a specified embedded system agent.
 	 *
-	 * @param agentName the agents name
+	 * @param defaultAgentName the agents name
 	 * @param agentClassName the agent class name
 	 * @return true, if successful
 	 */
@@ -458,10 +489,10 @@ public class Platform {
 		
 		boolean jadeStarted = false;
 		
-		// --- Remove the Agent.GUI services ------------------------
+		// --- Get the container profile ----------------------------
 		Profile jadeProfile = this.getContainerProfile();
 
-		// --- Remove Agent.GUI services ----------------------------
+		// --- Remove Agent.Workbench services ----------------------
 		String servicesNew = "";
 		String services = jadeProfile.getParameter("services", null);
 		String[] serviceArray = services.split(";");
@@ -527,7 +558,7 @@ public class Platform {
 			boolean hasRegularJars = currProject.getProjectBundleLoader().getRegularJarsListModel().size()>0;
 			boolean ideExecuted = Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE;
 			if (hasBundelJars==true || hasRegularJars==true || ideExecuted==true) {
-				// --- Set marker to start the FileManagerAgent ---------
+				// --- Set marker to start the ProjectFileManagerAgent ---------
 				this.fileMangerProject = currProject;
 			}
 			
@@ -547,14 +578,14 @@ public class Platform {
 		if (isMainContainerRunning()) {
 			this.startUtilityAgent(UtilityAgentJob.ShutdownPlatform);
 			// --- Wait for the end of Jade ---------------
-			Long timeStop = System.currentTimeMillis() + (10 * 1000);
+			long timeStop = System.currentTimeMillis() + (10 * 1000);
 			while (isMainContainerRunning()) {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
 					// e.printStackTrace();
 				}
-				if (System.currentTimeMillis() >= timeStop) {
+				if (System.currentTimeMillis()>=timeStop) {
 					break;
 				}
 			}
@@ -565,8 +596,6 @@ public class Platform {
 		}
 		// ------------------------------------------------
 
-		// --- Stop Download-Server -----------------------
-		this.removeFileTransferDirectories();
 		
 		// --- Reset runtime-variables -------------------- 
 		this.getAgentContainerList().clear();
@@ -604,7 +633,7 @@ public class Platform {
 	 */
 	public boolean isMainContainerRunning(boolean forceJadeStart) {
 		if (forceJadeStart==true) {
-			this.startSystemAgent("rma", null);
+			this.startSystemAgent(SystemAgent.RMA, null);
 		}		
 		return this.isMainContainerRunning();
 	}
@@ -650,56 +679,33 @@ public class Platform {
 	 * @param utilityAgentStartArguments the utility agent start arguments
 	 */
 	public void startUtilityAgent(Object[] utilityAgentStartArguments) {
-		startAgent("utility", agentgui.core.utillity.UtilityAgent.class.getName(), utilityAgentStartArguments);
+		this.startAgent(SystemAgent.Utility.toString(), this.getSystemAgentClasses().get(SystemAgent.Utility), utilityAgentStartArguments);
 	}
 	
 	
 	/**
 	 * Starts an Agent, if the main-container exists.
 	 *
-	 * @param rootAgentName the root agent name
+	 * @param systemAgentToStart the system agent to start
 	 * @param optionalSuffixNo the optional postfix no
 	 */
-	public void startSystemAgent(String rootAgentName, Integer optionalSuffixNo) {
-		this.startSystemAgent(rootAgentName, optionalSuffixNo, null);
+	public void startSystemAgent(SystemAgent systemAgentToStart, Integer optionalSuffixNo) {
+		this.startSystemAgent(systemAgentToStart, optionalSuffixNo, null);
 	}
 	
 	/**
-	 * Starts agents, which are available by JADE or AgentGUI like the rma, sniffer etc.<br>
-	 * The herein known root agent names are:<br>
-	 * 'rma', 'sniffer', 'dummy', 'df', 'introspector', 'log' for JADE and
-	 * 'loadmonitor' and 'simstarter' for Agent.GUI
-	 * 
+	 * Starts agents that are available by JADE or Agent.Workbench like the rma, sniffer etc.<br>
 	 *
-	 * @param rootAgentName the root agent name
+	 * @param systemAgentToStart the system agent to start 
 	 * @param optionalSuffixNo an optional postfix no
-	 * @param openArgs the open args
+	 * @param openArgs the open arguments
 	 */
-	public void startSystemAgent(String rootAgentName, Integer optionalSuffixNo, Object[] openArgs) {
-		
-		// --- Table of the known Jade System-Agents ----------------
-		Hashtable<String, String> systemAgents = new Hashtable<String, String>();
-		systemAgents.put("rma", jade.tools.rma.rma.class.getName());
-		systemAgents.put("sniffer", jade.tools.sniffer.Sniffer.class.getName());
-		systemAgents.put("dummy", jade.tools.DummyAgent.DummyAgent.class.getName());
-		systemAgents.put("df", "mas.agents.DFOpener");
-		systemAgents.put("introspector", jade.tools.introspector.Introspector.class.getName());
-		systemAgents.put("log", jade.tools.logging.LogManagerAgent.class.getName());
-
-		// --- AgentGUI - Agents ------------------------------------
-		systemAgents.put("loadmonitor", agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
-		systemAgents.put("threadmonitor", agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
-		systemAgents.put("simstarter", agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
+	public void startSystemAgent(SystemAgent systemAgentToStart, Integer optionalSuffixNo, Object[] openArgs) {
 		
 		boolean showRMA = true;
 		
-		AgentController agentController = null;
-		String agentNameSearch  = rootAgentName.toLowerCase();
-		String agentClassName = null;
-		String agentNameForStart = rootAgentName;
-		
-		// --- For 'simstarter': is there a project? ----------------
-		if (agentNameForStart.equalsIgnoreCase("simstarter")) {
+		// --- For 'SimStarter': is there a project? ----------------
+		if (systemAgentToStart==SystemAgent.SimStarter) {
 			showRMA = false;
 			if (Application.getProjectFocused()==null) {
 				String msgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
@@ -711,9 +717,11 @@ public class Platform {
 			}
 		}
 		
-		// --- Setting the real name of the agent to start ----------
+		// --- Configure classes and names --------------------------
+		String agentName  = systemAgentToStart.toString();
+		String agentClass = this.getSystemAgentClasses().get(systemAgentToStart);
 		if (optionalSuffixNo!=null) {
-			agentNameForStart = rootAgentName + optionalSuffixNo.toString(); 
+			agentName = agentName + optionalSuffixNo.toString(); 
 		}
 		
 		// --- Was the system already started? ----------------------
@@ -752,14 +760,11 @@ public class Platform {
 			}
 			
 			// --- Start the JADE-Platform --------------------------
-			if(this.start(showRMA) == false){
-				// --- Abort if the jade platform was not started -----------
-				return;
-			}
+			if (this.start(showRMA)==false) return;
 			
-			if (agentNameForStart.equalsIgnoreCase("rma")) {
+			if (systemAgentToStart==SystemAgent.RMA) {
 				try {
-					agentController = jadeMainContainer.getAgent("rma");
+					jadeMainContainer.getAgent(agentName);
 				} catch (ControllerException e) {
 					e.printStackTrace();
 				}				
@@ -767,19 +772,11 @@ public class Platform {
 			}
 		}
 	
-		// ----------------------------------------------------------
-		// --- Can a path to the agent be found? --------------------   
-		agentClassName = systemAgents.get(agentNameSearch);
-		if (agentClassName==null) {
-			System.err.println( "jadeSystemAgentOpen: Unknown System-Agent => " + rootAgentName);
-			return;
-		}
-		
 		// --- Does an agent (see name) already exists? -------------
-		if (isAgentRunningInMainContainer(agentNameForStart)==true && agentNameForStart.equalsIgnoreCase("df")==false) {
+		if (systemAgentToStart!=SystemAgent.DF && this.isAgentRunningInMainContainer(agentName)==true) {
 			// --- Agent already EXISTS !! --------------------------
 			int msgAnswer;
-			String msgHead = Language.translate("Der Agent '") + rootAgentName +  Language.translate("' ist bereits geöffnet!");
+			String msgHead = Language.translate("Der Agent '") + agentName +  Language.translate("' ist bereits geöffnet!");
 			String msgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
 			if (Application.getMainWindow()==null) {
 				msgAnswer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);				
@@ -788,29 +785,31 @@ public class Platform {
 			}
 			if (msgAnswer==0) {
 				// --- YES - Start another agent of this kind --------
-				startSystemAgent(rootAgentName, getSuffixNoForAgentName(rootAgentName), openArgs);
+				startSystemAgent(systemAgentToStart, this.getSuffixNoForAgentName(systemAgentToStart.toString()), openArgs);
 			}
 			
 		} else {
 			// --- Agent doe's NOT EXISTS !! ------------------------
 			try {
-				if (agentNameForStart.equalsIgnoreCase("df")) {
+				switch (systemAgentToStart) {
+				case DF:
 					// --- Show the DF-GUI --------------------------
 					this.startUtilityAgent(UtilityAgentJob.OpernDF);
-					return;					
-				} else if (agentNameForStart.equalsIgnoreCase("loadMonitor") ) {
+					break;
+				case LoadMonitor:
 					this.startUtilityAgent(UtilityAgentJob.OpenLoadMonitor);
-					return;
-				} else if (agentNameForStart.equalsIgnoreCase("threadMonitor") ) {
+					break;
+				case ThreadMonitor:
 					this.startUtilityAgent(UtilityAgentJob.OpenThreadMonitor);
-					return;
-				} else if (agentNameForStart.equalsIgnoreCase("simstarter")) {
+					break;
+				case SimStarter:
 					String containerName = Application.getProjectFocused().getProjectFolder();
-					this.startAgent(agentNameForStart, agentClassName, openArgs, containerName);
-				} else {
-					// --- Show a standard jade ToolAgent -----------
-					agentController = jadeMainContainer.createNewAgent(agentNameForStart, agentClassName, openArgs);
+					this.startAgent(agentName, agentClass, openArgs, containerName);
+					break;
+				default:
+					AgentController agentController = jadeMainContainer.createNewAgent(agentName, agentClass, openArgs);
 					agentController.start();
+					break;
 				}
 				
 			} catch (StaleProxyException e) {
@@ -820,30 +819,54 @@ public class Platform {
 	}	
 	
 	/**
+	 * Returns the relation of known system agents, like the rma or the  sniffer, and its classes.
+	 * @return the system agent descriptions
+	 */
+	public Hashtable<SystemAgent, String> getSystemAgentClasses() {
+		if (systemAgentsClasses==null) {
+			systemAgentsClasses = new Hashtable<>();
+			
+			// --- Table of the known Jade System-Agents ----------------
+			systemAgentsClasses.put(SystemAgent.RMA, jade.tools.rma.rma.class.getName());
+			systemAgentsClasses.put(SystemAgent.Sniffer, jade.tools.sniffer.Sniffer.class.getName());
+			systemAgentsClasses.put(SystemAgent.Dummy, jade.tools.DummyAgent.DummyAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.DF, "mas.agents.DFOpener");
+			systemAgentsClasses.put(SystemAgent.Introspector, jade.tools.introspector.Introspector.class.getName());
+			systemAgentsClasses.put(SystemAgent.Log, jade.tools.logging.LogManagerAgent.class.getName());
+
+			// --- Agent.Workbench - Background system agents -----------
+			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerMaster, agentgui.simulationService.agents.ServerMasterAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerSlave, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
+			
+			// --- Agent.Workbench - agents -----------------------------
+			systemAgentsClasses.put(SystemAgent.Utility, agentgui.core.utillity.UtilityAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.ProjectFileManager, agentgui.core.jade.ProjectFileManagerAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.SimStarter, agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.LoadMonitor, agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.ThreadMonitor, agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
+			
+		}
+		return systemAgentsClasses;
+	}
+	
+	
+	/**
 	 * Starts the file manger agent that provides the required project resources for a 
 	 * distributed execution in different container (requires a running background system).
 	 */
 	private void startFileMangerAgent() {
 		
 		if (this.fileMangerProject==null) return;
-		if (this.isAgentRunningInMainContainer(BackgroundSystemAgentFileManger)==true) return;
-		
-		// --- Move required resources to server directory -- 
-		Object[] fileMangerArguments = new Object[1];
-		String fileMangerPath = Application.getGlobalInfo().getFileManagerServerPath(true);
-		String messageSuccess = "[" + this.fileMangerProject.getProjectName() + "] Project resources for remote container execution successfully prepared!";;
-		String messageFailure = "[" + this.fileMangerProject.getProjectName() + "] Provisioning of project resources for remote container execution failed!";
-		fileMangerArguments[0] = this.fileMangerProject.exportProjectRessurcesToDestinationDirectory(fileMangerPath, messageSuccess, messageFailure);
-		// --- Start the file manager agent -----------------
-		if (fileMangerArguments[0]!=null) {
-			this.startAgent(BackgroundSystemAgentFileManger, jade.misc.FileManagerAgent.class.getName(), fileMangerArguments);	
-		}
+		if (this.isAgentRunningInMainContainer(SystemAgent.ProjectFileManager.toString())==true) return;
+		// --- Start the project file manager agent -----------------
+		this.startSystemAgent(SystemAgent.ProjectFileManager, null);
 	}
 	
 	/**
 	 * Returns a new suffix number for the specified name of an agent.
 	 *
-	 * @param agentName the agent name
+	 * @param defaultAgentName the agent name
 	 * @return the integer
 	 */
 	public int getSuffixNoForAgentName(String agentName) {
@@ -1049,7 +1072,7 @@ public class Platform {
 	/**
 	 * Adding an Agent to a Container.
 	 *
-	 * @param agentName the agent name
+	 * @param defaultAgentName the agent name
 	 * @param agentClassName the agent class name
 	 */
 	public void startAgent(String agentName, String agentClassName) {
@@ -1059,7 +1082,7 @@ public class Platform {
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param agentName the agent name
+	 * @param defaultAgentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param inContainer the container name
 	 */
@@ -1070,7 +1093,7 @@ public class Platform {
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param agentName the agent name
+	 * @param defaultAgentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param startArguments the start arguments for the agent
 	 */
@@ -1081,7 +1104,7 @@ public class Platform {
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param agentName the agent name
+	 * @param defaultAgentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
@@ -1099,7 +1122,7 @@ public class Platform {
 	/**
 	 * Starts an agent as specified
 	 *
-	 * @param agentName the agent name
+	 * @param defaultAgentName the agent name
 	 * @param agentClass the class of the agent
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
@@ -1162,7 +1185,7 @@ public class Platform {
 	/**
 	 * Tries to start an agent on a remote container by using the LoadService.
 	 *
-	 * @param agentName the agent name
+	 * @param defaultAgentName the agent name
 	 * @param agentClass the agent class
 	 * @param startArguments the start arguments
 	 * @param inContainer the in container

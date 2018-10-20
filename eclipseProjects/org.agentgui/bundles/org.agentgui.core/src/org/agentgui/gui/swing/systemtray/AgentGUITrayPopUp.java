@@ -42,6 +42,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.jade.Platform.SystemAgent;
 import agentgui.core.update.AWBUpdater;
 
 /**
@@ -247,7 +248,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			Application.getJadePlatform().stop();
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("openRMA")) {
-			Application.getJadePlatform().startSystemAgent("rma", null);
+			Application.getJadePlatform().startSystemAgent(SystemAgent.RMA, null);
 		} else if ( ActCMD.equalsIgnoreCase("Config")) {
 			Application.showOptionDialog();
 		} else if ( ActCMD.equalsIgnoreCase("Konsole")) {

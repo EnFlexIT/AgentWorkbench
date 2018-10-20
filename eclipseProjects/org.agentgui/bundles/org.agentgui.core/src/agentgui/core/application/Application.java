@@ -62,6 +62,7 @@ import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.Platform;
+import agentgui.core.jade.Platform.SystemAgent;
 import agentgui.core.network.NetworkAddresses;
 import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.project.Project;
@@ -712,7 +713,7 @@ public class Application {
 											// --- Start Setup --------------------------
 											Object[] startWith = new Object[1];
 											startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-											getJadePlatform().startSystemAgent("simstarter", null, startWith);
+											getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
 										}
 									}
 								}

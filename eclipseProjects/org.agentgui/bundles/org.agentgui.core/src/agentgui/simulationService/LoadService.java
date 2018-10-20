@@ -40,7 +40,7 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.jade.Platform;
+import agentgui.core.jade.Platform.SystemAgent;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
@@ -1500,7 +1500,7 @@ public class LoadService extends BaseService {
 		try {
 			AID[] agentAIDs = myMainContainer.agentNames();
 			for (int i = 0; i < agentAIDs.length; i++) {
-				if (agentAIDs[i].getLocalName().equals(Platform.BackgroundSystemAgentFileManger)==true) {
+				if (agentAIDs[i].getLocalName().equals(SystemAgent.ProjectFileManager.toString())==true) {
 					fileManagerAID = agentAIDs[i]; 
 					break;
 				}
@@ -1528,7 +1528,7 @@ public class LoadService extends BaseService {
 			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
 			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
 			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
-			myLogger.log(Logger.FINE, "=> FileManagerAgent: " + fileManagerAID.toString());
+			myLogger.log(Logger.FINE, "=> ProjectFileManagerAgent: " + fileManagerAID.toString());
 		}
 		
 		// ----------------------------------------------------------
@@ -1578,7 +1578,7 @@ public class LoadService extends BaseService {
 		act.setAction(req);
 
 		// --- Define receiver of the Message ----------------------- 
-		AID agentGUIAgent = new AID(Platform.BackgroundSystemAgentApplication +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
+		AID agentGUIAgent = new AID(SystemAgent.BackgroundSystemAgentApplication +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
 		
 		// --- Build Message ----------------------------------------
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);

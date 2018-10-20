@@ -28,6 +28,7 @@
  */
 package agentgui.envModel.graph.controller.ui.messaging;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,6 +37,7 @@ import java.util.TreeMap;
 import javax.swing.JPanel;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.envModel.graph.controller.ui.messaging.MessagingJInternalFrame.WidgetOrientation;
 
 /**
  * The Class JPanleStates represents the visualization for state indications.
@@ -47,7 +49,8 @@ public class JPanelStates extends JPanel {
 	private static final long serialVersionUID = 1110726364983505331L;
 	
 	private MessagingJInternalFrame messagingFrame;
-
+	private WidgetOrientation widgetOrientation;
+	
 	private TreeMap<String, GraphUIStateMessagePanel> visualizationMap;
 	private JPanel dummyPanel;
 	
@@ -133,14 +136,15 @@ public class JPanelStates extends JPanel {
 		GridBagConstraints gbConVis = new GridBagConstraints();
 		gbConVis.gridx = 0;
 	    gbConVis.gridy = this.getComponentCount();
-	    gbConVis.anchor = GridBagConstraints.NORTHWEST;
+	    gbConVis.anchor = GridBagConstraints.CENTER;
 	    gbConVis.ipady = 10;
 	    
 	    this.add(visualization, gbConVis);
 		
-		// --- Add the dummy panel (again) ----------------
-	    GridBagConstraints gbConDummy = new  GridBagConstraints(0, this.getComponentCount(), 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0);
-	    this.add(this.getDummyPanel(), gbConDummy);
+		// --- Add the dummy panel again ? ----------------
+	    if (this.getWidgetOrientation()==WidgetOrientation.Top || this.getWidgetOrientation()==WidgetOrientation.Bottom) {
+		    this.addDummyWidget();
+	    }
 	    
 	    this.messagingFrame.validate();
 		this.messagingFrame.repaint();
@@ -153,9 +157,44 @@ public class JPanelStates extends JPanel {
 	private JPanel getDummyPanel() {
 		if (dummyPanel==null) {
 			dummyPanel = new JPanel();
+			dummyPanel.setMaximumSize(new Dimension(10, 10));
 			dummyPanel.setBackground(MessagingJInternalFrame.bgColor);
 		}
 		return dummyPanel;
+	}
+	/**
+	 * Adds the dummy widget.
+	 */
+	private void addDummyWidget() {
+		GridBagConstraints gbConDummy = new  GridBagConstraints(0, this.getComponentCount(), 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0);
+	    this.add(this.getDummyPanel(), gbConDummy);
+	}
+	
+	/**
+	 * Returns the current widget orientation.
+	 * @return the widget orientation
+	 */
+	private WidgetOrientation getWidgetOrientation() {
+		if (widgetOrientation==null && this.messagingFrame!=null) {
+			widgetOrientation = this.messagingFrame.getWidgetOrientation();
+		}
+		return widgetOrientation;
+	}
+	/**
+	 * Sets the widget orientation.
+	 * @param widgetOrientation the new widget orientation
+	 */
+	public void setWidgetOrientation(WidgetOrientation widgetOrientation) {
+
+		this.widgetOrientation = widgetOrientation;
+		if (this.getWidgetOrientation()==WidgetOrientation.Top || this.getWidgetOrientation()==WidgetOrientation.Bottom) {
+			if (this.getDummyPanel().isShowing()==false) {
+				this.addDummyWidget();
+			}
+			
+		} else {
+			this.remove(this.getDummyPanel());
+		}
 	}
 	
 }

@@ -83,6 +83,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
+import agentgui.core.jade.Platform.SystemAgent;
 import agentgui.core.project.Project;
 import agentgui.core.update.AWBUpdater;
 import agentgui.core.update.ProjectRepositoryExplorerDialog;
@@ -1163,42 +1164,42 @@ public class MainWindow extends JFrame {
 				MainWindow.this.startAgent();
 				
 			} else if (actionCMD.equalsIgnoreCase("PopRMAStart")) {
-				Application.getJadePlatform().startSystemAgent("rma", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.RMA, null);
 
 			} else if (actionCMD.equalsIgnoreCase("PopSniffer")) {
-				Application.getJadePlatform().startSystemAgent("sniffer", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.Sniffer, null);
 
 			} else if (actionCMD.equalsIgnoreCase("PopDummy")) {
-				Application.getJadePlatform().startSystemAgent("dummy", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.Dummy, null);
 
 			} else if (actionCMD.equalsIgnoreCase("PopDF")) {
-				Application.getJadePlatform().startSystemAgent("DF", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.DF, null);
 
 			} else if (actionCMD.equalsIgnoreCase("PopIntrospec")) {
-				Application.getJadePlatform().startSystemAgent("introspector", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.Introspector, null);
 
 			} else if (actionCMD.equalsIgnoreCase("PopLog")) {
-				Application.getJadePlatform().startSystemAgent("log", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.Log, null);
 
 				// --- Menu Simulation ----------------------------
 			} else if (actionCMD.equalsIgnoreCase("SimulationStart")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-				Application.getJadePlatform().startSystemAgent("simstarter", null, startWith);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
 
 			} else if (actionCMD.equalsIgnoreCase("SimulationPause")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
-				Application.getJadePlatform().startSystemAgent("simstarter", null, startWith);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
 
 			} else if (actionCMD.equalsIgnoreCase("SimulationStop")) {
 				Application.getJadePlatform().stop();
 
 			} else if (actionCMD.equalsIgnoreCase("ContainerMonitoring")) {
-				Application.getJadePlatform().startSystemAgent("loadMonitor", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.LoadMonitor, null);
 
 			} else if (actionCMD.equalsIgnoreCase("ThreadMonitoring")) {
-				Application.getJadePlatform().startSystemAgent("threadMonitor", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.ThreadMonitor, null);
 
 				// --- Menu Extras => NOT here !! ---------------
 			} else if (actionCMD.equalsIgnoreCase("ExtraTranslation")) {
@@ -1468,20 +1469,20 @@ public class MainWindow extends JFrame {
 				showJPopupMenuJadeTools();
 
 			} else if (actCMD.equalsIgnoreCase("ContainerMonitoring")) {
-				Application.getJadePlatform().startSystemAgent("loadMonitor", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.LoadMonitor, null);
 			} else if (actCMD.equalsIgnoreCase("ThreadMonitoring")) {
-				Application.getJadePlatform().startSystemAgent("threadMonitor", null);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.ThreadMonitor, null);
 
 				// ------------------------------------------------
 			} else if (actCMD.equalsIgnoreCase("SimulationStart")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-				Application.getJadePlatform().startSystemAgent("simstarter", null, startWith);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
 
 			} else if (actCMD.equalsIgnoreCase("SimulationPause")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
-				Application.getJadePlatform().startSystemAgent("simstarter", null, startWith);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
 
 			} else if (actCMD.equalsIgnoreCase("SimulationStop")) {
 				Application.getJadePlatform().stop();

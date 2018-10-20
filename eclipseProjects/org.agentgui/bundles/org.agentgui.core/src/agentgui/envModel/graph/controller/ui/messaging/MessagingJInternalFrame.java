@@ -69,6 +69,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 
 	private static final String WIDGET_ORIENTATION_PROPERTY = "GraphEnvironmentMessagingWidgetOrientation";
 	private static final String WIDGET_TIME_CONTROLLED_PROPERTY = "GraphEnvironmentMessagingWidgetTimeControlled";
+	private static final String WIDGET_WIDTH_HEIGTH = "GraphEnvironmentMessagingWidgetWidthHeight";
 	
 	public static final Color bgColor = SystemColor.info;
 	
@@ -80,13 +81,14 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	}
 	
 	private WidgetOrientation widgetOrientation;
+	private Integer widgetWidthHeight;
 	
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> graphVisualizationPanel;
 	private ComponentListener graphVisualizationPanelListener;
 	
+	private JSplitPane jSplitPaneMessagesState;
 	private JPanelMessages jPanelMessages;
 	private JPanelStates jPanelStates;
-	private JSplitPane jSplitPaneMessagesState; 
 	
 	private JPanelToolbar jPanelToolbar;
 	
@@ -129,6 +131,12 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			@Override
 			public void internalFrameClosing(InternalFrameEvent ife) {
 				MessagingJInternalFrame.this.setVisible(false);
+			}
+		});
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				onResizedInternalFrame();
 			}
 		});
 		
@@ -196,14 +204,20 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 		this.getContentPane().add(this.getJSplitPaneMessagesState(), gbc_jSplitPane);
 		this.getContentPane().add(this.getJPanelToolbar(), gbc_jPanelToolbar);
 		
+		this.repaintWidget();
+	}
+	/**
+	 * Repaints widget.
+	 */
+	private void repaintWidget() {
 		this.getJSplitPaneMessagesState().validate();
 		this.getJSplitPaneMessagesState().repaint();
 		this.getJPanelMessages().validate();
 		this.getJPanelMessages().repaint();
 		this.getJPanelStates().validate();
 		this.getJPanelStates().repaint();
-		
 	}
+	
 	private JPanelToolbar getJPanelToolbar() {
 		if (jPanelToolbar == null) {
 			jPanelToolbar = new JPanelToolbar(this);
@@ -239,7 +253,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	 */
 	private boolean isMouseOverWidget() {
 		
-		if (this.isVisible()==false) return false;
+		if (this.isVisible()==false || this.isShowing()==false) return false;
 		
 		Point mousePos = MouseInfo.getPointerInfo().getLocation();
 		Rectangle bounds = this.getBounds();
@@ -257,6 +271,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			Application.getGlobalInfo().putStringToConfiguration(WIDGET_ORIENTATION_PROPERTY, this.widgetOrientation.toString());
 			this.setSizeAndPosition();
 			this.setContentPanels();
+			this.getJPanelStates().setWidgetOrientation(widgetOrientation);
 			this.resetClosingTime();
 		}
 	}
@@ -270,6 +285,48 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			widgetOrientation = WidgetOrientation.valueOf(widgetOrientationString);
 		}
 		return widgetOrientation;
+	}
+	
+	/**
+	 * Returns the widget width height, which usage depends on the widget orientation.
+	 * @return the widget width height
+	 */
+	protected Integer getWidgetWidthHeight() {
+		if (widgetWidthHeight==null) {
+			widgetWidthHeight = Application.getGlobalInfo().getIntFromConfiguration(WIDGET_WIDTH_HEIGTH, 0);
+		}
+		return widgetWidthHeight;
+	}
+	/**
+	 * Sets the widget width height.
+	 * @param widgetWidthHeight the new widget width height
+	 */
+	protected void setWidgetWidthHeight(Integer widgetWidthHeight) {
+		this.widgetWidthHeight = widgetWidthHeight;
+		Application.getGlobalInfo().putIntToConfiguration(WIDGET_WIDTH_HEIGTH, widgetWidthHeight);
+	}
+	/**
+	 * On resized internal frame remind the dimension.
+	 */
+	private void onResizedInternalFrame() {
+			
+		this.resetClosingTime();
+		
+		int widthHeight = 0;
+		switch (this.getWidgetOrientation()) {
+		case Left:
+		case Right:
+			widthHeight = this.getWidth();
+			break;
+			
+		case Top:
+		case Bottom:
+			widthHeight = this.getHeight();
+			break;
+		}
+		if (widthHeight!=0) {
+			this.setWidgetWidthHeight(widthHeight);
+		}
 	}
 	
 	/**
@@ -317,11 +374,13 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 				@Override
 				public void componentResized(ComponentEvent e) {
 					MessagingJInternalFrame.this.setSizeAndPosition();
+					MessagingJInternalFrame.this.repaintWidget();
 				}
 			};
 		}
 		return graphVisualizationPanelListener;
 	}
+	
 	
 	/**
 	 * Sets the initial size and position of the frame.
@@ -339,8 +398,12 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 			int parentWidth = this.getGraphVisualizationPanel().getWidth();
 			
 			// --- Do positioning depending on the orientation ---------------- 
-			int myHeight = (int) (0.21 * (double) parentHeight);
+			double scaleFactor = 0.21;
+			int myHeight = (int) (scaleFactor * (double) parentHeight);
 			int myWidth = parentWidth;
+			
+			// --- Get reminded widthHeigth -----
+			if (this.getWidgetWidthHeight()!=0) myHeight = this.getWidgetWidthHeight();
 			
 			int myLocationX = parentPosX;
 			int myLocationY = parentPosY + parentHeight - myHeight;
@@ -356,13 +419,15 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 
 			case Left:
 				myHeight = parentHeight;
-				myWidth = (int) (0.2 * (double) parentWidth);
+				myWidth = (int) (scaleFactor * (double) parentWidth);
+				if (this.getWidgetWidthHeight()!=0) myWidth = this.getWidgetWidthHeight();
 				myLocationY = parentPosY;
 				break;
 				
 			case Right:
 				myHeight = parentHeight;
-				myWidth = (int) (0.2 * (double) parentWidth);
+				myWidth = (int) (scaleFactor * (double) parentWidth);
+				if (this.getWidgetWidthHeight()!=0) myWidth = this.getWidgetWidthHeight();
 				myLocationY = parentPosY;
 				myLocationX = parentPosX + parentWidth - myWidth;
 				break;
@@ -471,7 +536,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 							resetClosingTime();
 						}
 						// --- Close the widget? --------------------
-						if (isMouseOverWidget()==false && (isVisible()==false || getClosingTime()<=System.currentTimeMillis())) {
+						if (isTimeControlled()==true && isMouseOverWidget()==false && (isVisible()==false || getClosingTime()<=System.currentTimeMillis())) {
 							// --- Hide the messaging widget --------
 							setVisible(false);
 							break;
