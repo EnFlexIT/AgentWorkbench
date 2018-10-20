@@ -86,7 +86,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 
 	private static final long serialVersionUID = 7642101726572826993L;
 
-	private static final String[] ALWAYS_SELECTED_FILES = {"agentgui.xml", "agentgui.bin", "/setupsEnv/~GeneralGraphSettings~.xml"};
+	private static final String[] ALWAYS_SELECTED_FILES = {"agentgui.xml", "agentgui.bin", "agentgui-UserObject.xml", "/setupsEnv/~GeneralGraphSettings~.xml"};
 	
 	private Project project;
 	private ProjectExportSettingsController projectExportSettingsController;
