@@ -37,8 +37,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 /**
- * This class manages the local version info of the EOM, based on the file located in 
- * the package 'energy/version.properties'.
+ * This class manages the local version info of Agent.Workbench.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -96,7 +95,7 @@ public class VersionInfo {
 	}
 	
 	/**
-	 * This method returns the full version information of Agent.GUI.
+	 * This method returns the full version information of Agent.Workbench.
 	 *
 	 * @param includeApplicationTitle the include application title
 	 * @param newLineString the new line string

@@ -5,7 +5,6 @@
 		<unit id="org.eclipse.equinox.sdk.feature.group" version="3.14.0.v20180518-2029"/>
 		<unit id="org.eclipse.rcp.feature.group" version="4.8.0.v20180611-0656"/>
 		<repository location="http://download.eclipse.org/eclipse/updates/4.8"/>
-		<unit id="org.eclipse.equinox.serverside.sdk.feature.group" version="3.14.0.v20180515-2149"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="ch.qos.logback.classic" version="1.1.2.v20171220-1825"/>
