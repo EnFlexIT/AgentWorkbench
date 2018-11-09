@@ -313,8 +313,10 @@ public class BundleEvaluator {
 	 */
 	public void evaluateAllBundles(AbstractBundleClassFilter bundleClassFilterToUse) {
 		Bundle[] bundles = this.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			this.evaluateBundleInThread(bundles[i], bundleClassFilterToUse);
+		if (bundles!=null) {
+			for (int i = 0; i < bundles.length; i++) {
+				this.evaluateBundleInThread(bundles[i], bundleClassFilterToUse);
+			}
 		}
 	}
 
