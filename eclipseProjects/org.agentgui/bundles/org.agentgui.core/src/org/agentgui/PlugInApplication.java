@@ -159,45 +159,52 @@ public class PlugInApplication implements IApplication {
 		return this.appReturnValue;
 	}
 	
+	/**
+	 * Starts the application in own thread.
+	 */
 	private void startApplicationInOwnThread() {
 	
 		Thread awbStarter = new Thread(new Runnable() {
-		@Override
-		public void run() {
-			try {
-				// --- Start the application --------------
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						// --- Do AWB start ---------------
-						try {
-							PlugInApplication.this.startApplication();
-							
-						} catch (Exception ex) {
-							ex.printStackTrace();
+			@Override
+			public void run() {
+				try {
+					// --- Start the application --------------
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							// --- Do AWB start ---------------
+							try {
+								PlugInApplication.this.startApplication();
+								
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
 						}
-					}
-				});
-
-			} catch (Exception ex) {
-				ex.printStackTrace();
+					});
+	
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
-		}
-	});
-	awbStarter.setName("AWB-Starter");
-	awbStarter.start();
-		
+		});
+		awbStarter.setName("AWB-Starter");
+		awbStarter.start();
 	}
 	
+	/**
+	 * Starts the application.
+	 * @throws Exception the exception
+	 * @see Application#start(PlugInApplication)
+	 */
 	private void startApplication() throws Exception {
-		// --- Start the application ------------------
 		Application.start(this);
 	}
 	
-	
-	
+	/**
+	 * Mminnizes the Eclipse workbench .
+	 * @param display the current display
+	 */
 	private void eclipseUiMminmize(Display display) {
-
 		if (display!=null) {
 			if (display.getActiveShell()!=null) {
 				display.getActiveShell().setMinimized(true);
@@ -207,10 +214,12 @@ public class PlugInApplication implements IApplication {
 				} 
 			}
 		}
-		
 	}
+	/**
+	 * Hides the Eclipse workbench.
+	 * @param display the display
+	 */
 	private void eclipseUiHide(Display display) {
-
 		if (display!=null) {
 			if (display.getActiveShell()!=null) {
 				display.getActiveShell().setVisible(false);
