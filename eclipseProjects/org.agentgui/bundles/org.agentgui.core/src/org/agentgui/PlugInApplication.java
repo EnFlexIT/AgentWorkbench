@@ -28,6 +28,8 @@
  */
 package org.agentgui;
 
+import javax.swing.SwingUtilities;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -96,6 +98,17 @@ public class PlugInApplication implements IApplication {
 			Thread.sleep(250);
 		}
 	}
+	
+	/**
+	 * Checks if is the special MAC start is required.
+	 * @return true, if is special start on mac
+	 */
+	private boolean isSpecialStartOnMac() {
+		boolean isMac = SystemEnvironmentHelper.isMacOperatingSystem();
+		boolean isSwingVisualiszation = this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing;
+		return isMac & isSwingVisualiszation;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
@@ -105,7 +118,6 @@ public class PlugInApplication implements IApplication {
 		// --- Remind application context -----------------
 		this.iApplicationContext = context;
 
-		// --- In case of Swing visualization (for MAC) ---
 		if (this.isSpecialStartOnMac()) {
 			// ++++++++++++++++++++++++++++++++++++++++++++
 			// +++ Just for MAC and Swing +++++++++++++++++
@@ -119,17 +131,11 @@ public class PlugInApplication implements IApplication {
 					display.asyncExec(new Runnable() {
 						public void run() {
 							// --- Minimize display -------
-							if (display!=null) {
-								if (display.getActiveShell()!=null) {
-									display.getActiveShell().setMinimized(true);
-								} else {
-									for (int i = 0; i < display.getShells().length; i++) {
-										display.getShells()[i].setMinimized(true);
-									} 
-								}
-							}
-							// --- Do regular start -------
-							Application.start(PlugInApplication.this);
+							PlugInApplication.this.eclipseUiMminmize(display);
+							// --- Do  regular start ------
+							PlugInApplication.this.startApplicationInOwnThread();
+							// --- Close the --------------
+							PlugInApplication.this.eclipseUiHide(display);
 						}
 					});
 				}
@@ -139,13 +145,12 @@ public class PlugInApplication implements IApplication {
 			// ++++++++++++++++++++++++++++++++++++++++++++
 			// +++ All other cases ++++++++++++++++++++++++
 			// ++++++++++++++++++++++++++++++++++++++++++++
-			// --- Start the application ------------------
-			Application.start(this);
-			
-			// --- Wait for termination of application ----
-			this.waitForApplicationTermination();
+			this.startApplication();
 			
 		}
+		
+		// --- Wait for termination of application --------
+		this.waitForApplicationTermination();
 
 		// --- Stop the Application class -----------------
 		System.out.println(Language.translate("Programmende... "));
@@ -154,14 +159,67 @@ public class PlugInApplication implements IApplication {
 		return this.appReturnValue;
 	}
 	
-	/**
-	 * Checks if is the special MAC start is required.
-	 * @return true, if is special start on mac
-	 */
-	private boolean isSpecialStartOnMac() {
-		boolean isMac = SystemEnvironmentHelper.isMacOperatingSystem();
-		boolean isSwingVisualiszation = this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing;
-		return isMac & isSwingVisualiszation;
+	private void startApplicationInOwnThread() {
+	
+		Thread awbStarter = new Thread(new Runnable() {
+		@Override
+		public void run() {
+			try {
+				// --- Start the application --------------
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						// --- Do AWB start ---------------
+						try {
+							PlugInApplication.this.startApplication();
+							
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+				});
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	});
+	awbStarter.setName("AWB-Starter");
+	awbStarter.start();
+		
+	}
+	
+	private void startApplication() throws Exception {
+		// --- Start the application ------------------
+		Application.start(this);
+	}
+	
+	
+	
+	private void eclipseUiMminmize(Display display) {
+
+		if (display!=null) {
+			if (display.getActiveShell()!=null) {
+				display.getActiveShell().setMinimized(true);
+			} else {
+				for (int i = 0; i < display.getShells().length; i++) {
+					display.getShells()[i].setMinimized(true);
+				} 
+			}
+		}
+		
+	}
+	private void eclipseUiHide(Display display) {
+
+		if (display!=null) {
+			if (display.getActiveShell()!=null) {
+				display.getActiveShell().setVisible(false);
+			} else {
+				for (int i = 0; i < display.getShells().length; i++) {
+					display.getShells()[i].setVisible(false);
+				} 
+			}
+		}
 	}
 	
 	/**
