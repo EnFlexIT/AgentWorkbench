@@ -47,7 +47,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -639,17 +638,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 								} else {
 									// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
 									bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_BASIC_COLOR, currentColor);
-									if (node.getId().equals("PP100")) {
-										String imgFileName = "PP100_R"+currentColor.getRed()+"_G"+currentColor.getGreen()+"_B"+currentColor.getBlue()+".png";
-										File imgFile = new File("D:\\Temp\\"+imgFileName);
-										try {
-											ImageIO.write(bufferedImage, "png", imgFile);
-										} catch (IOException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-										
-									}
 								}
 								
 								if (bufferedImage != null) {
