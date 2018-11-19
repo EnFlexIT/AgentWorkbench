@@ -113,8 +113,12 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			// --- Get info from Agent.GUI configuration ------------
 			this.usePanel = (JPanel) startArgs[0];
 			// --- Get environment from given controller -------------
-			EnvironmentController envController = (EnvironmentController) startArgs[1];
-			tmpEnvironmentModel = envController.getEnvironmentModel();
+			if (startArgs[1] instanceof EnvironmentController) {
+				EnvironmentController envController = (EnvironmentController) startArgs[1];
+				tmpEnvironmentModel = envController.getEnvironmentModel();
+			} else if (startArgs[1] instanceof EnvironmentModel) {
+				tmpEnvironmentModel = (EnvironmentModel) startArgs[1];
+			}
 			
 		}
 		// --- Set a copy of the EnvironmentModel to the local one --
