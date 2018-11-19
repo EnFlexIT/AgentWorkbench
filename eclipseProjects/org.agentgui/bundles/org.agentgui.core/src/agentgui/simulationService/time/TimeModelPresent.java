@@ -80,5 +80,22 @@ public class TimeModelPresent extends TimeModelContinuous {
     protected void logTookLocalTime() {
         // don't output message
     }
+    
+    /* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getCopy()
+	 */
+	@Override
+	public TimeModel getCopy() {
+		TimeModelPresent tmc = new TimeModelPresent();
+		// ------------------------------------------------
+		// --- Do this first to avoid side effects --------
+		tmc.setExecuted(this.isExecuted());
+		// --- Do this first to avoid side effects --------
+		// ------------------------------------------------		
+		tmc.setTimeStart(this.timeStart);
+		tmc.setTimeStop(this.timeStop);
+		tmc.setTimeFormat(this.timeFormat);
+		return tmc;
+	}
 
 }
