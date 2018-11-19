@@ -66,7 +66,6 @@ public class TimeModelContinuousExecutionElements extends TimeModelBaseExecution
 	@Override
 	public void setTimeModel(TimeModel timeModel) {
 		
-		
 		if (timeModel==null) {
 			this.getJLabelTimeDisplay().setText("");			
 
