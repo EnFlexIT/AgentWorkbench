@@ -363,8 +363,14 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 * @param message the notification
 	 */
 	private void forwardACLMessage(ACLMessage message){
-		for (ACLMessageForwardingListener listener : this.getACLMessageForwardingListeners()) {
-			listener.forwardACLMessage(message);
+		for (int i = 0; i < this.getACLMessageForwardingListeners().size(); i++) {
+			ACLMessageForwardingListener listener = this.getACLMessageForwardingListeners().get(i);
+			try {
+				listener.forwardACLMessage(message);
+			} catch (Exception ex) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while forwarding ACL message to Listener / NetworkComponentAdapter!");
+				ex.printStackTrace();
+			}
 		}
 	}
 	

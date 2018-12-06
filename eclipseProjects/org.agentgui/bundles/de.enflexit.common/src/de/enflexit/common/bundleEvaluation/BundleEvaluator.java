@@ -124,8 +124,6 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("de.enflexit.oidc.libs");
 			bundleExcludeHashSet.add("de.enflexit.oshi");
 			
-			bundleExcludeHashSet.add("de.enflexit.awb.webserver");
-			
 			bundleExcludeHashSet.add("org.agentgui.lib.bouncyCastle");
 			bundleExcludeHashSet.add("org.agentgui.lib.googleTranslate");
 			bundleExcludeHashSet.add("org.agentgui.lib.hypericSigar");
