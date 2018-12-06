@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jade
 Bundle-SymbolicName: org.agentgui.lib.jade;singleton:=true
-Bundle-Version: 4.5.1
+Bundle-Version: 4.5.1.qualifier
 Bundle-ClassPath: jade.jar,
  jadeMisc.jar,
  XMLCodec.jar,
