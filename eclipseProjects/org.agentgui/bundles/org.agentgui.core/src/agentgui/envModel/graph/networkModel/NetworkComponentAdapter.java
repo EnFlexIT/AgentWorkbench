@@ -106,14 +106,27 @@ public abstract class NetworkComponentAdapter {
 	 */
 	public Vector<JComponent> invokeGetJPopupMenuElements(Object networkComponentOrGraphNode) {
 		
+		String elementDescription = null; 
 		if (networkComponentOrGraphNode instanceof NetworkComponent) {
 			this.networkComponent = (NetworkComponent) networkComponentOrGraphNode;
 			this.graphNode = null;
+			elementDescription = "NetworkComponent " + networkComponent.getId() + " [" + this.networkComponent.getType() + "]";
 		} else if (networkComponentOrGraphNode instanceof GraphNode) {
 			this.networkComponent = null;
 			this.graphNode = (GraphNode) networkComponentOrGraphNode;
+			elementDescription = "GraphNode " + graphNode.getId();
 		}
-		return this.getJPopupMenuElements();
+		
+		// --- Try to get the individual pop up elements --
+		Vector<JComponent> popUpMenuElements = null;
+		try {
+			popUpMenuElements = this.getJPopupMenuElements();
+			
+		} catch (Exception ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error getting pop up menu for " + elementDescription);
+			ex.printStackTrace();
+		}
+		return popUpMenuElements;
 	}
 	
 	/**
