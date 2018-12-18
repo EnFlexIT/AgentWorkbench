@@ -34,7 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import agentgui.envModel.graph.GraphGlobals;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for rendering JButton.
@@ -43,18 +43,30 @@ import agentgui.envModel.graph.GraphGlobals;
  */
 public class TableCellRenderer4Button implements TableCellRenderer {
 	
-	private JButton button = new JButton();
+	private JButton button;
 
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		button.setText("");
+		this.getJButton().setText("");
 		if (value!=null) {
-			button.setText(value.toString());
+			this.getJButton().setText(value.toString());
 		}
-		button.setOpaque(true);
-		GraphGlobals.Colors.setTableCellRendererColors(button, row, isSelected);
-		return button;
+		TableCellColorHelper.setTableCellRendererColors(this.getJButton(), row, isSelected);
+		return this.getJButton();
 	}
+	
+	 /**
+     * Returns the JBbutton.
+     * @return the JButton
+     */
+    private JButton getJButton() {
+    	if (button==null) {
+    		button = new JButton();
+    		//button.setUI(new BasicButtonUI());
+    		//button.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+    	}
+    	return button;
+    }
 }

@@ -28,19 +28,12 @@
  */
 package agentgui.envModel.graph;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.UIManager;
 
 import edu.uci.ics.jung.graph.Graph;
 
@@ -57,8 +50,6 @@ import de.enflexit.common.PathHandling;
 public final class GraphGlobals {
 
 	private static String pathImages = "/agentgui/envModel/graph/img/";
-	private static boolean debug = false;
-	private static boolean colorPropertiesAlreadyPrinted = false;
 
 	/**
 	 * Gets the path for images.
@@ -202,108 +193,6 @@ public final class GraphGlobals {
 		}
 		return new Rectangle2D.Double(x_min, y_min, x_max - x_min, y_max - y_min);
 	}
- 	
-	/**
-	 * The Class Colors.
-	 */
-	public final static class Colors {
-
-		/** The Constant TB_BACKGROUND. */
-		public final static Color TB_BACKGROUND = Color.WHITE;
-		/** The Constant TB_ALTERNATEROWCOLOR. */
-		public final static Color TB_ALTERNATEROWCOLOR = new Color(242, 242, 242);
-		/** The Constant TB_HIGHLIGHT. */
-		public final static Color TB_HIGHLIGHT = new Color(57, 105, 138);
-
-		/** The Constant TB_TEXTFOREGROUND. */
-		public final static Color TB_TEXTFOREGROUND = new Color(35, 35, 36);
-		/** The Constant TB_TEXTFOREGROUND_SELECTED. */
-		public final static Color TB_TEXTFOREGROUND_SELECTED = Color.WHITE;
-
-		
-		/**
-		 * Sets the color for a component that is located in a cell of a JTable.
-		 *
-		 * @param comp the JComponent to color
-		 * @param row the current table row number 
-		 * @param isSelected the indicator, if the row is selected
-		 */
-		public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected) {
-			setTableCellRendererColors(comp, row, isSelected, GraphGlobals.Colors.TB_BACKGROUND);
-		}
-		
-		/**
-		 * Sets the color for a component that is located in a cell of a JTable.
-		 *
-		 * @param comp the JComponent to color
-		 * @param row the current table row number 
-		 * @param isSelected the indicator, if the row is selected
-		 * @param tableBgColor the table background color to use 
-		 */
-		public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected, Color tableBgColor) {
-
-			// --- do the settings --------------
-			comp.setOpaque(true);
-			if (isSelected == true) {
-				comp.setForeground(GraphGlobals.Colors.TB_TEXTFOREGROUND_SELECTED);
-				comp.setBackground(GraphGlobals.Colors.TB_HIGHLIGHT);
-
-			} else {
-				comp.setForeground(GraphGlobals.Colors.TB_TEXTFOREGROUND);
-				if (row%2==0) {
-					comp.setBackground(tableBgColor);
-				} else {
-					comp.setBackground(GraphGlobals.Colors.TB_ALTERNATEROWCOLOR);			
-				}
-			}
-
-			// --- In case of debugging ---------
-			if (debug==false) {
-				return;
-
-			}
-			if (colorPropertiesAlreadyPrinted==false) {
-				colorPropertiesAlreadyPrinted = true;
-				
-				List<String> colors = new ArrayList<String>();
-				for (Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()) {
-					if (entry.getValue() instanceof Color) {
-						colors.add((String) entry.getKey()); // all the keys are strings
-					}
-				}
-				Collections.sort(colors);
-				for (String name : colors) {
-					System.out.println(name);
-				}
-				// --- Print the current color setting ----
-				printColorSetting();
-			}
-		}
-		
-		/**
-		 * Prints the color settings for table cells.
-		 */
-		public static void printColorSetting() {
-			
-			Color color = TB_BACKGROUND;
-			System.out.println("TB_BACKGROUND => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
-
-			color = TB_ALTERNATEROWCOLOR;
-			System.out.println("TB_ALTERNATEROWCOLOR => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
-			
-			color = TB_HIGHLIGHT;
-			System.out.println("TB_HIGHLIGHT => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
-
-			color = TB_TEXTFOREGROUND;
-			System.out.println("TB_TEXTFOREGROUND => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
-			
-			color = TB_TEXTFOREGROUND_SELECTED;
-			System.out.println("TB_TEXTFOREGROUND_SELECTED => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
-			
-		}
-		
-
-	} // end color sub class
 
 	
 } // end class

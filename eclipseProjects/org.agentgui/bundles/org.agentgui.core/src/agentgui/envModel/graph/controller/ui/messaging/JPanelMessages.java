@@ -45,8 +45,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import agentgui.core.config.GlobalInfo;
-import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * The Class JPanelMessages represents the visualization for state indications.
@@ -127,7 +127,7 @@ public class JPanelMessages extends JScrollPane {
 					} else {
 						display.setText("?" + value.toString());
 					}
-					GraphGlobals.Colors.setTableCellRendererColors(display, row, isSelected, jTableMessages.getBackground());
+					TableCellColorHelper.setTableCellRendererColors(display, row, isSelected, jTableMessages.getBackground());
 					return display;
 				}
 			});
@@ -152,7 +152,7 @@ public class JPanelMessages extends JScrollPane {
 					} else {
 						display.setText("?" + value.toString());
 					}
-					GraphGlobals.Colors.setTableCellRendererColors(display, row, isSelected, jTableMessages.getBackground());
+					TableCellColorHelper.setTableCellRendererColors(display, row, isSelected, jTableMessages.getBackground());
 					return display;
 				}
 			});
@@ -167,7 +167,7 @@ public class JPanelMessages extends JScrollPane {
 				@Override
 				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 					JLabel display = new JLabel(value.toString());
-					GraphGlobals.Colors.setTableCellRendererColors(display, row, isSelected, jTableMessages.getBackground());
+					TableCellColorHelper.setTableCellRendererColors(display, row, isSelected, jTableMessages.getBackground());
 					return display;
 				}
 			});

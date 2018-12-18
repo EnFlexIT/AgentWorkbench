@@ -34,7 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import agentgui.envModel.graph.GraphGlobals;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for displaying agent classes and selected graph prototypes.
@@ -61,7 +61,7 @@ public class TableCellRenderer4Label implements TableCellRenderer {
 		JLabel rendererComponent = new JLabel();
 		rendererComponent.setText(simpleClassName);
 		rendererComponent.setOpaque(true);
-		GraphGlobals.Colors.setTableCellRendererColors(rendererComponent, row, isSelected);
+		TableCellColorHelper.setTableCellRendererColors(rendererComponent, row, isSelected);
 		return rendererComponent;
 	}
 
