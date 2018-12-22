@@ -14,4 +14,4 @@ Require-Bundle: org.eclipse.help,
  de.enflexit.oidc;bundle-version="1.0.0",
  de.enflexit.oidc.libs;bundle-version="5.17.1",
  de.enflexit.oshi;bundle-version="3.4.4"
-Bundle-Vendor: EnFlex.IT
+Bundle-Vendor: EnFlex.IT GmbH

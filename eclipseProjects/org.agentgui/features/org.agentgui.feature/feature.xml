@@ -99,6 +99,8 @@
       <import plugin="org.slf4j.api" version="1.7.10" match="greaterOrEqual"/>
       <import feature="org.eclipse.e4.rcp" version="1.6.100" match="greaterOrEqual"/>
       <import feature="de.enflexit.common.feature" version="2.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.security"/>
+      <import plugin="org.eclipse.equinox.security.ui"/>
    </requires>
 
    <plugin
