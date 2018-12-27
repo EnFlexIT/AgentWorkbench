@@ -35,7 +35,6 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.e4.ui.di,
  org.eclipse.equinox.p2.operations,
  org.eclipse.equinox.p2.metadata,
- org.eclipse.equinox.security,
  org.eclipse.osgi.services
 Export-Package: agentgui.core.application,
  agentgui.core.charts,
