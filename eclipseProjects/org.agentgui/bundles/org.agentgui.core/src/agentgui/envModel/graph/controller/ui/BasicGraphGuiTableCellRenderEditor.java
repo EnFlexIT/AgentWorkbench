@@ -40,7 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import agentgui.envModel.graph.GraphGlobals;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * The Class BasicGraphGuiTableCellRenderEditor is used in the table of 
@@ -66,7 +66,7 @@ public class BasicGraphGuiTableCellRenderEditor extends AbstractCellEditor imple
 			jLabelDisplay.setText(value.toString());
 		}
 		jLabelDisplay.setFont(new Font("Dialog", Font.PLAIN, 12));
-		GraphGlobals.Colors.setTableCellRendererColors(jLabelDisplay, row, isSelected);
+		TableCellColorHelper.setTableCellRendererColors(jLabelDisplay, row, isSelected);
 		return jLabelDisplay;
 	}
 
@@ -84,7 +84,7 @@ public class BasicGraphGuiTableCellRenderEditor extends AbstractCellEditor imple
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		this.getJTextFieldEditor().setText(value.toString());
-		GraphGlobals.Colors.setTableCellRendererColors(this.getJTextFieldEditor(), row, isSelected);
+		TableCellColorHelper.setTableCellRendererColors(this.getJTextFieldEditor(), row, isSelected);
 		return this.getJTextFieldEditor();
 	}
 

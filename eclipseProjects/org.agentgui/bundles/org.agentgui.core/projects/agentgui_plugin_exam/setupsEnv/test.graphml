@@ -14,5 +14,11 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <node id="PP0">
 <data key="pos">74.0:65.0</data>
 </node>
+<node id="PP3">
+<data key="pos">174.0:65.0</data>
+</node>
+<edge id="n2" directed="false" source="PP3" target="PP0">
+<desc>Line</desc>
+</edge>
 </graph>
 </graphml>

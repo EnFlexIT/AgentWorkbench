@@ -2,6 +2,17 @@
 <generalGraphSettings4MAS>
     <currentCTS>
         <entry>
+            <key>Line</key>
+            <value>
+                <color>-10066177</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>4.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>Test</key>
             <value>
                 <adapterClass>energy.agentgui.EomAdapter</adapterClass>

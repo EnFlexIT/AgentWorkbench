@@ -13,6 +13,12 @@
             <agentClassReference>agentproject.MyExampleAgent</agentClassReference>
             <startAsName>n0</startAsName>
         </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agentproject.MyExampleAgent</agentClassReference>
+            <startAsName>n4</startAsName>
+        </agent>
     </agentSetup>
     <timeModelSettings>
         <entry>

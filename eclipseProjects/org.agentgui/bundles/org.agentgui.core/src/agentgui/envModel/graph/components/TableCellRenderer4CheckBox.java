@@ -35,7 +35,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import agentgui.envModel.graph.GraphGlobals;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * Is used in the {@link ComponentTypeDialog} for rendering JButton.
@@ -55,7 +55,7 @@ public class TableCellRenderer4CheckBox extends DefaultTableCellRenderer {
 		checkBox.setSelected((Boolean) value);
 		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
 		checkBox.setOpaque(true);
-		GraphGlobals.Colors.setTableCellRendererColors(checkBox, row, isSelected);
+		TableCellColorHelper.setTableCellRendererColors(checkBox, row, isSelected);
 		return checkBox;
 	}
 

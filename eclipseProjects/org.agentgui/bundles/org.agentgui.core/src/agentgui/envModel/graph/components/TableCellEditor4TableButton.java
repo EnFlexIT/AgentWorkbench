@@ -57,8 +57,9 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
 	private JTable componentsTable;
 	private GraphEnvironmentController graphController;
 	
-	private JButton button = new JButton();
-    int clickCountToStart = 1;
+	private JButton button;
+    private int clickCountToStart = 1;
+    
 
     /**
      * Constructor of this class.
@@ -69,43 +70,56 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
     public TableCellEditor4TableButton(GraphEnvironmentController graphController, JTable componentsTable) {
     	this.graphController = graphController;
     	this.componentsTable = componentsTable;
-    	this.button.addActionListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-
-    	int row = componentsTable.getEditingRow();
-
-		// converting view coordinates to model coordinates
-		int modelRowIndex = componentsTable.convertRowIndexToModel(row);
-		String compID = (String) componentsTable.getModel().getValueAt(modelRowIndex, 0);
-		
-		NetworkComponent comp = graphController.getNetworkModelAdapter().getNetworkComponent(compID);
-
-		NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
-		nmn.setInfoObject(comp);
-		graphController.notifyObservers(nmn);
-		
-    }
 
     /* (non-Javadoc)
      * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
      */
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        button.setText(value.toString());
-        return button;
+        this.getJButton().setText(value.toString());
+        return getJButton();
     }
 
     /* (non-Javadoc)
      * @see javax.swing.CellEditor#getCellEditorValue()
      */
     public Object getCellEditorValue() {
-        return button.getText();
+        return this.getJButton().getText();
     }
 
+    /**
+     * Returns the JBbutton.
+     * @return the JButton
+     */
+    private JButton getJButton() {
+    	if (button==null) {
+    		button = new JButton();
+    		//button.setUI(new BasicButtonUI());
+    		//button.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+    		button.addActionListener(this);
+    	}
+    	return button;
+    }
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+
+		// --- Converting view coordinates to model coordinates -----
+    	int row = this.componentsTable.getEditingRow();
+		int modelRowIndex = this.componentsTable.convertRowIndexToModel(row);
+		String compID = (String) this.componentsTable.getModel().getValueAt(modelRowIndex, 0);
+		
+		NetworkComponent comp = this.graphController.getNetworkModelAdapter().getNetworkComponent(compID);
+
+		NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
+		nmn.setInfoObject(comp);
+		this.graphController.notifyObservers(nmn);
+		
+		this.stopCellEditing();
+    }
+    
     /* (non-Javadoc)
      * @see javax.swing.AbstractCellEditor#isCellEditable(java.util.EventObject)
      */

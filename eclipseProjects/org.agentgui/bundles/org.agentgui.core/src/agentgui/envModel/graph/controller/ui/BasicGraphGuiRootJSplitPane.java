@@ -100,25 +100,25 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private static final long serialVersionUID = 7376906096627051173L;
 
     private final static String pathImage = GraphGlobals.getPathImages();
-    private String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
+    private String newLine = Application.getGlobalInfo().getNewLineSeparator();
     
-    private GraphEnvironmentController graphEnvironmentController = null;
+    private GraphEnvironmentController graphEnvironmentController;
     
-    private JSplitPane jSplitPaneRoot = null;
+    private JSplitPane jSplitPaneRoot;
     
-    private JPanel jPanelControls = null;
-    private JScrollPane jScrollPaneComponentsTable = null;
-    private JLabel jLabelTable = null;
-    private JTextField jTextFieldSearch = null;
-    private JButton jButtonClearSearch = null;
+    private JPanel jPanelControls;
+    private JScrollPane jScrollPaneComponentsTable;
+    private JLabel jLabelTable;
+    private JTextField jTextFieldSearch;
+    private JButton jButtonClearSearch;
 
-    private JTable jTableComponents = null;
-    private DefaultTableModel componentsTableModel = null;
-    private boolean quiteTabelModelListener = false;
+    private JTable jTableComponents;
+    private DefaultTableModel componentsTableModel;
+    private boolean quiteTabelModelListener;
     
-    private BasicGraphGui graphGUI = null;
+    private BasicGraphGui graphGUI;
 
-    private NetworkComponent currNetworkComponent = null;
+    private NetworkComponent currNetworkComponent;
     
     
     /**
@@ -236,7 +236,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private JScrollPane getScpComponentTable() {
 		if (jScrollPaneComponentsTable == null) {
 		    jScrollPaneComponentsTable = new JScrollPane();
-		    jScrollPaneComponentsTable.setViewportView(getJTableComponents());
+		    jScrollPaneComponentsTable.setViewportView(this.getJTableComponents());
 		}
 		return jScrollPaneComponentsTable;
     }
@@ -445,7 +445,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		if (jTableComponents == null) {
 		    jTableComponents = new JTable(this.getDefaultTableModel4Components());
 		    jTableComponents.setFillsViewportHeight(true);
-		    //jTableComponents.setRowSelectionAllowed(true);
 		    jTableComponents.setShowGrid(false);
 		    jTableComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		    jTableComponents.getTableHeader().setReorderingAllowed(false);
@@ -511,9 +510,11 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		colModel.getColumn(1).setPreferredWidth(40);
 		colModel.getColumn(1).setCellRenderer(new BasicGraphGuiTableCellRenderEditor());
 		
-		colModel.getColumn(2).setPreferredWidth(30);
+		colModel.getColumn(2).setWidth(50);
+		colModel.getColumn(2).setMinWidth(50);
+		colModel.getColumn(2).setMaxWidth(60);
 		colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
-		colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(getGraphController(), jTableComponents));			
+		colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(this.getGraphController(), this.jTableComponents));			
 		
     }
     
