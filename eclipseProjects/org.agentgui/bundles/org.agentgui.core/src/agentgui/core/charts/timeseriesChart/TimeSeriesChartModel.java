@@ -89,6 +89,20 @@ public class TimeSeriesChartModel extends ChartModel{
 		
 		org.jfree.data.time.TimeSeries newSeries = new org.jfree.data.time.TimeSeries(series.getLabel());
 		
+		// --- If the chart shows real time data, set length restrictions -----
+		if (parent.isRealTimeData()==true) {
+			int maxStates = parent.getLengthRestriction().getMaxNumberOfStates();
+			if (maxStates>0) {
+				newSeries.setMaximumItemCount(maxStates);
+			}
+			long maxAge = parent.getLengthRestriction().getMaxDuration();
+			if (maxAge>0) {
+				newSeries.setMaximumItemAge(maxAge);
+			}
+			
+		}
+		
+		// --- Add the value pairs --------------------------------------------
 		List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
 		for (int i = 0; i < valuePairs.size(); i++) {
 			
@@ -363,5 +377,5 @@ public class TimeSeriesChartModel extends ChartModel{
 		this.setChanged();
 		this.notifyObservers(ChartModel.EventType.SERIES_RENAMED);
 	}
-
+	
 }

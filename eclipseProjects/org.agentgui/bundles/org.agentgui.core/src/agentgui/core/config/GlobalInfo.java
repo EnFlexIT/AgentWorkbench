@@ -59,6 +59,7 @@ import org.eclipse.core.runtime.Platform;
 import agentgui.core.application.Application;
 import agentgui.core.application.BenchmarkMeasurement;
 import agentgui.core.application.Language;
+import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
@@ -193,7 +194,10 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private FileProperties fileProperties;
 	/** Can be used in order to access the version information */
 	private VersionInfo versionInfo;
-
+	
+	
+	// --- Time series chart configuration ------------------------------------
+	private TimeSeriesLengthRestriction timeSeriesLengthRestriction;
 	
 	/**
 	 * The Enumeration that contains the descriptors of the ExecutionEnvironment.
@@ -1434,6 +1438,23 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd");
 		return "DAY_" + sdf.format(new Date(timeStamp));
 	}
+	
+	// --- Time series chart configuration --------------------------
+	/**
+	 * Gets the time series length restriction.
+	 * @return the time series length restriction
+	 */
+	public TimeSeriesLengthRestriction getTimeSeriesLengthRestriction() {
+		return timeSeriesLengthRestriction;
+	}
+	
+	/**
+	 * Sets the time series length restriction.
+	 * @param timeSeriesLengthRestriction the new time series length restriction
+	 */
+	public void setTimeSeriesLengthRestriction(TimeSeriesLengthRestriction timeSeriesLengthRestriction) {
+		this.timeSeriesLengthRestriction = timeSeriesLengthRestriction;
+	}
 
 	
 	// ---- Connection to the Master-Server -------------------------
@@ -1446,6 +1467,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public void setServerAutoRun(boolean serverAutoRun) {
 		this.filePropServerAutoRun = serverAutoRun;
 	}
+
 	/**
 	 * This method returns the current setting for the file property '10_AUTOSTART', which is 
 	 * used for whether or not to start the server execution mode immediately after the program

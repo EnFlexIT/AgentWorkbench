@@ -36,6 +36,7 @@ import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
+import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
 
 /**
@@ -142,6 +143,9 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 			}else{
 				ValuePair newValuePair = dataModel.createNewValuePair(key, value);
 				seriesData.add(newValuePair);
+				if (dataModel.isRealTimeData()==true) {
+					this.applyLengthRestriction(seriesData);
+				}
 			}
 		}else{
 			throw new NoSuchSeriesException();
@@ -181,6 +185,11 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	 */
 	@Override
 	public void addSeries(DataSeries series){
+		// --- If adding to a real time chart, apply length restrictions before adding ------------
+		if (dataModel.isRealTimeData()==true) {
+			List valuePairs = ((TimeSeries)series).getTimeSeriesValuePairs(); 
+			this.applyLengthRestriction(valuePairs);
+		}
 		timeSeriesChart.getTimeSeriesChartData().add(series);
 	}
 	
@@ -259,6 +268,36 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	 */
 	public void setTimeFormat(String timeFormat){
 		this.timeSeriesChart.getTimeSeriesVisualisationSettings().setTimeFormat(timeFormat);
+	}
+
+	
+	/**
+	 * Apply length restriction.
+	 * @param seriesData the series data
+	 */
+	private void applyLengthRestriction(List seriesData) {
+		int maxStates = dataModel.getLengthRestriction().getMaxNumberOfStates();
+		long maxAge = dataModel.getLengthRestriction().getMaxDuration();
+
+		if (maxStates>0) {
+			while(seriesData.size()>maxStates) {
+				seriesData.remove(0);
+			}
+		}
+		
+		if (maxAge>0) {
+			TimeSeriesValuePair lastValuePair = (TimeSeriesValuePair) seriesData.get(seriesData.size()-1);
+			long lastTimestamp = lastValuePair.getTimestamp().getLongValue();
+			long oldestTimestampToKeep = lastTimestamp-maxAge;
+			
+			TimeSeriesValuePair firstValuePair = (TimeSeriesValuePair) seriesData.get(0);
+			long firstTimeStamp = firstValuePair.getTimestamp().getLongValue();
+			while (firstTimeStamp<oldestTimestampToKeep) {
+				seriesData.remove(0);
+				firstValuePair = (TimeSeriesValuePair) seriesData.get(0);
+				firstTimeStamp = firstValuePair.getTimestamp().getLongValue();
+			}
+		}
 	}
 	
 }

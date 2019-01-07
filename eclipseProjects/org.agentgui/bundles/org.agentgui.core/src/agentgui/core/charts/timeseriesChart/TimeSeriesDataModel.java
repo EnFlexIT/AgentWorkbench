@@ -30,6 +30,7 @@ package agentgui.core.charts.timeseriesChart;
 
 import java.util.Observable;
 
+import agentgui.core.application.Application;
 import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.ChartSettingModel.ChartSettingsUpdateNotification;
 import agentgui.core.charts.ChartSettingModel.EventType;
@@ -65,6 +66,10 @@ public class TimeSeriesDataModel extends DataModel {
 	public static final String DEFAULT_Y_AXIS_LABEL = "Value";
 	
 	private String defaultTimeFormat;
+	
+	private boolean realTimeSeries;
+	
+	private TimeSeriesLengthRestriction lengthRestriction;
 
 	
 	/** Instantiates a new TimeSeriesDataModel. */
@@ -184,6 +189,41 @@ public class TimeSeriesDataModel extends DataModel {
 		tscs.setTimeFormat(timeFormat);
 	}
 	
+	/**
+	 * Checks if this is a real time series.
+	 * @return true, if is real time series
+	 */
+	public boolean isRealTimeData() {
+		return realTimeSeries;
+	}
+
+	/**
+	 * Configures if this is a real time series.
+	 * @param realTimeSeries the new real time series
+	 */
+	public void setRealTimeSeries(boolean realTimeSeries) {
+		this.realTimeSeries = realTimeSeries;
+	}
+
+	/**
+	 * Gets the length restriction.
+	 * @return the length restriction
+	 */
+	public TimeSeriesLengthRestriction getLengthRestriction() {
+		if (lengthRestriction==null) {
+			lengthRestriction = Application.getGlobalInfo().getTimeSeriesLengthRestriction();
+		}
+		return lengthRestriction;
+	}
+
+	/**
+	 * Sets the length restriction.
+	 * @param lengthRestriction the new length restriction
+	 */
+	public void setLengthRestriction(TimeSeriesLengthRestriction lengthRestriction) {
+		this.lengthRestriction = lengthRestriction;
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#createNewDataSeries(java.lang.String)
 	 */
