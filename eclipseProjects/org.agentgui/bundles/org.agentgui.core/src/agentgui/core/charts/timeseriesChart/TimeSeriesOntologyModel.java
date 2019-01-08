@@ -143,7 +143,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 			}else{
 				ValuePair newValuePair = dataModel.createNewValuePair(key, value);
 				seriesData.add(newValuePair);
-				if (dataModel.isRealTimeData()==true) {
+				if (dataModel.isRealTime()==true) {
 					this.applyLengthRestriction(seriesData);
 				}
 			}
@@ -186,7 +186,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	@Override
 	public void addSeries(DataSeries series){
 		// --- If adding to a real time chart, apply length restrictions before adding ------------
-		if (dataModel.isRealTimeData()==true) {
+		if (dataModel.isRealTime()==true) {
 			List valuePairs = ((TimeSeries)series).getTimeSeriesValuePairs(); 
 			this.applyLengthRestriction(valuePairs);
 		}

@@ -67,7 +67,7 @@ public class TimeSeriesDataModel extends DataModel {
 	
 	private String defaultTimeFormat;
 	
-	private boolean realTimeSeries;
+	private boolean realTime;
 	
 	private TimeSeriesLengthRestriction lengthRestriction;
 
@@ -193,16 +193,16 @@ public class TimeSeriesDataModel extends DataModel {
 	 * Checks if this is a real time series.
 	 * @return true, if is real time series
 	 */
-	public boolean isRealTimeData() {
-		return realTimeSeries;
+	public boolean isRealTime() {
+		return realTime;
 	}
 
 	/**
 	 * Configures if this is a real time series.
-	 * @param realTimeSeries the new real time series
+	 * @param realTime the new real time series
 	 */
-	public void setRealTimeSeries(boolean realTimeSeries) {
-		this.realTimeSeries = realTimeSeries;
+	public void setRealTime(boolean realTime) {
+		this.realTime = realTime;
 	}
 
 	/**

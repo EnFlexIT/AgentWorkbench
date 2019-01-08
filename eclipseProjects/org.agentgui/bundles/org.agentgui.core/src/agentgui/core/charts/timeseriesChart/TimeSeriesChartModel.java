@@ -90,7 +90,7 @@ public class TimeSeriesChartModel extends ChartModel{
 		org.jfree.data.time.TimeSeries newSeries = new org.jfree.data.time.TimeSeries(series.getLabel());
 		
 		// --- If the chart shows real time data, set length restrictions -----
-		if (parent.isRealTimeData()==true) {
+		if (parent.isRealTime()==true) {
 			int maxStates = parent.getLengthRestriction().getMaxNumberOfStates();
 			if (maxStates>0) {
 				newSeries.setMaximumItemCount(maxStates);

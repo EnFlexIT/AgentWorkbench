@@ -488,7 +488,7 @@ public class TimeSeriesTableModel extends TableModel {
 	 */
 	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 		
-		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+		if (targetDataSeriesIndex<(this.getColumnCount())) {
 			
 			int targetTbIndex = targetDataSeriesIndex+1;
 			List valuePairs = parentDataModel.getValuePairsFromSeries(series); 
@@ -502,6 +502,12 @@ public class TimeSeriesTableModel extends TableModel {
 				newRow.add(targetTbIndex, parentDataModel.getYValueFromValuePair(vp));
 				tableModelDataVector.add(newRow);
 			}
+			
+			// --- Apply length restrictions if necessary -----------
+			if (((TimeSeriesDataModel)this.parentDataModel).isRealTime()) {
+				this.applyLengthRestriction();
+			}
+			
 			this.fireTableStructureChanged();
 			
 		} else {
@@ -517,7 +523,7 @@ public class TimeSeriesTableModel extends TableModel {
 
 		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
 			
-			boolean dataWereAdded = false;
+			boolean dataWasAdded = false;
 			int targetTbIndex = targetDataSeriesIndex+1;
 			TreeMap<Number, Vector<Number>> tableDataTreeMap = new TreeMap<Number, Vector<Number>>(this.tableModelDataVector.getKeyRowVectorTreeMap()); 
 			
@@ -538,7 +544,7 @@ public class TimeSeriesTableModel extends TableModel {
 					editRow.set(0, key);
 					editRow.set(targetTbIndex, value);
 					tableDataTreeMap.put(key, editRow);
-					dataWereAdded = true;
+					dataWasAdded = true;
 					
 				} else {
 					// --- Finally edit the row -----------
@@ -547,7 +553,7 @@ public class TimeSeriesTableModel extends TableModel {
 			}
 			
 			// --- Finally update the table, if necessary -
-			if (dataWereAdded==true) {
+			if (dataWasAdded==true) {
 				// --- Rebuild the table ------------------
 				Number[] keyArray = new Number[tableDataTreeMap.size()]; 
 				tableDataTreeMap.keySet().toArray(keyArray);
@@ -565,6 +571,12 @@ public class TimeSeriesTableModel extends TableModel {
 					}
 				}	
 			}
+			
+			// --- Apply length restrictions if necessary -----------
+			if (((TimeSeriesDataModel)this.parentDataModel).isRealTime()) {
+				this.applyLengthRestriction();
+			}
+			
 			this.fireTableStructureChanged();
 			
 		} else {
@@ -731,5 +743,78 @@ public class TimeSeriesTableModel extends TableModel {
 			keyVector.addElement(sortKey);
 			myJTable.getRowSorter().setSortKeys(keyVector);
 		}
+	}
+	
+	private void applyLengthRestriction() {
+		int maxValues = ((TimeSeriesDataModel)parentDataModel).getLengthRestriction().getMaxNumberOfStates();
+		long maxAge = ((TimeSeriesDataModel)parentDataModel).getLengthRestriction().getMaxDuration();
+
+		// --- Check age first --------------------------------------
+		if (maxAge>0) {
+			for (int i=0; i<this.getRowCount(); i++) {
+				long rowTimeStamp = (long) this.getValueAt(i, 0);
+				
+				// --- Remove old values ----------------------------
+				if (rowTimeStamp<maxAge) {
+					this.removeRowByKey(rowTimeStamp);
+					i--;
+				}
+			}
+		}
+		
+		// --- Check number of states -------------------------------
+		if (maxValues>0) {
+			for (int seriesIndex=0; seriesIndex<this.parentDataModel.getSeriesCount(); seriesIndex++) {
+				int numberOfValues = this.getNumberOfValuesInSeries(seriesIndex);
+				
+				// --- Remove surplus values ------------------------
+				if (numberOfValues > maxValues) {
+					this.removeFirstValues(seriesIndex, numberOfValues-maxValues);
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * Gets the number of values in a series (= non-empty cells in a column)
+	 * @param seriesIndex the series index
+	 * @return the number of values in the series
+	 */
+	private int getNumberOfValuesInSeries(int seriesIndex) {
+		int numberOfValues = 0;
+		
+		// --- First column for the timestamps ------------
+		int columnIndex = seriesIndex+1;
+		
+		// --- Count all non-empty cells in this column --- 
+		for (int rowIndex=0; rowIndex<this.getRowCount(); rowIndex++) {
+			if (this.getValueAt(rowIndex, columnIndex)!=null) {
+				numberOfValues++;
+			}
+		}
+		
+		return numberOfValues;
+	}
+	
+	/**
+	 * Removes the first values from the specified series.
+	 * @param seriesIndex the series index
+	 * @param numberOfValues the number of values to be removed
+	 */
+	private void removeFirstValues(int seriesIndex, int numberOfValues) {
+		
+		// --- First column for the timestamps ------------
+		int columnIndex = seriesIndex+1;
+		int valuesRemoved = 0;
+		
+		for (int rowIndex=0; rowIndex<this.getRowCount() && valuesRemoved<numberOfValues; rowIndex++) {
+			if (this.getValueAt(rowIndex, columnIndex)!=null) {
+				this.setValueAt(null, rowIndex, columnIndex);
+				valuesRemoved++;
+			}
+		}
+		
+		this.removeEmptyRows();
 	}
 }
