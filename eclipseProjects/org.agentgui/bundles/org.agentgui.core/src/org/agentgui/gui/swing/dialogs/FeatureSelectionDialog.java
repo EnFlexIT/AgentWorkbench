@@ -73,20 +73,20 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -9120650393031177126L;
 	
-	private Vector<FeatureInfo> featureVector;
-
 	private boolean canceled;
 
+	private Vector<FeatureInfo> featureVector;
+	private List<IInstallableUnit> availableFeatures;
+
+	private JLabel jLabelHeader;
 	private JScrollPane jScrollPaneFeaturesList;
+	private JList<IInstallableUnit> jListFeatures;
+	private DefaultListModel<IInstallableUnit> listModelFeatures;
+
+	private JLabel jLabelInfo;
 	private JPanel jPanelButtons;
 	private JButton jButtonOk;
 	private JButton jButtonCancel;
-	private JList<IInstallableUnit> jListFeatures;
-	private DefaultListModel<IInstallableUnit> listModelFeatures;
-	private JLabel jLabelHeader;
-
-	private List<IInstallableUnit> availableFeatures;
-	private JLabel jLabelInfo;
 
 	
 	/**
@@ -230,7 +230,6 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 					selectedIndices[currIndex++] = i;
 				}
 			}
-
 			this.getJListFeatures().setSelectedIndices(selectedIndices);
 		}
 	}
@@ -243,7 +242,8 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	 * @return
 	 */
 	private boolean isFeatureInList(List<FeatureInfo> featuresList, String featureID) {
-		for (FeatureInfo feature : featuresList) {
+		for (int i = 0; i < featuresList.size(); i++) {
+			FeatureInfo feature = featuresList.get(i);
 			if (feature.getId().equals(featureID)) {
 				return true;
 			}
@@ -307,7 +307,6 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	
 	/**
 	 * Checks if is canceled.
-	 *
 	 * @return true, if is canceled
 	 */
 	public boolean isCanceled() {
@@ -322,14 +321,16 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Gets the selected features.
-	 *
+	 * Return the selected features.
 	 * @return the selected features
 	 */
 	public List<IInstallableUnit> getSelectedFeatures() {
 		return this.getJListFeatures().getSelectedValuesList();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == this.getJButtonOk()) {
@@ -382,7 +383,6 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	 */
 	private class ListSelectionModelForJCheckBox extends DefaultListSelectionModel {
 
-		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1067181018028459081L;
 
 		/*

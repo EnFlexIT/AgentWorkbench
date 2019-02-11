@@ -65,23 +65,12 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 		try {
 			plugIn = ClassLoadServiceUtility.getPlugInInstance(plugInReference, project);
 			
-		} catch (ClassNotFoundException e) {
-			throw new PlugInLoadException(e);
-		} catch (SecurityException e) {
-			throw new PlugInLoadException(e);
-		} catch (NoSuchMethodException e) {
-			throw new PlugInLoadException(e);
-		} catch (IllegalArgumentException e) {
-			throw new PlugInLoadException(e);
-		} catch (InstantiationException e) {
-			throw new PlugInLoadException(e);
-		} catch (IllegalAccessException e) {
-			throw new PlugInLoadException(e);
-		} catch (InvocationTargetException e) {
-			throw new PlugInLoadException(e);
+		} catch (ClassNotFoundException  | SecurityException | NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] " + ex.toString());
+			PlugInError plugInError = new PlugInError(project);
+			plugInError.setException(ex);
+			plugIn = plugInError;
 		}
-		if (plugIn==null) return null;
-		
 		
 		// ----------------------------------------------------------
 		// --- Check some configurations of the PlugIn -------------- 

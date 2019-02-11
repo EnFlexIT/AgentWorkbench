@@ -74,6 +74,9 @@ public class PlugInExample extends PlugIn {
 		// ------------------------------------------------
 		this.addMyTabs();
 		
+		// --- Call super method to print to console ------ 
+		super.onPlugIn();
+		
 	}
 	
 	/* (non-Javadoc)
@@ -81,7 +84,7 @@ public class PlugInExample extends PlugIn {
 	 */
 	@Override
 	public void onPlugOut() {
-			
+		super.onPlugOut();
 	}
 	
 	/**

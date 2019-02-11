@@ -1058,7 +1058,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		if (this.plugInVectorLoaded == false) {
 			// --- load all plugins configured in 'plugIns_Classes' -----------
 			for (int i = 0; i < this.plugIns_Classes.size(); i++) {
-				if (this.plugInLoad(this.plugIns_Classes.get(i), false) == false) {
+				if (this.plugInLoad(this.plugIns_Classes.get(i), false)==false) {
 					System.err.println("Removed Plug-In entry for: '" + this.plugIns_Classes.get(i) + "'");
 					this.plugIns_Classes.remove(i);
 				}
@@ -1066,7 +1066,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			this.plugInVectorLoaded = true;
 		}
 	}
-
 	/**
 	 * This method will remove/unload the plugins in 
 	 * descending order of the Vector 'plugins_Loaded'.  
@@ -1078,7 +1077,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		}
 		this.plugInVectorLoaded = false;
 	}
-
 	/**
 	 * This method will reload the configured PlugIns
 	 */
@@ -1086,7 +1084,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		// --- remove all loaded PlugIns ------------------
 		this.plugInVectorRemove();
 		// --- re-initialise the 'PlugInsLoaded'-Vector ---
-		setPlugInsLoaded(new PlugInsLoaded());
+		this.setPlugInsLoaded(new PlugInsLoaded());
 		// --- load all configured PlugIns to the project -
 		this.plugInVectorLoad();
 
@@ -1096,7 +1094,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * Informs all PlugIn's that the setup was loaded.
 	 */
 	public void plugInVectorInformSetupLoaded() {
-		for (PlugIn plugIn : this.getPlugInsLoaded()) {
+		for (int i = 0; i < this.getPlugInsLoaded().size(); i++) {
+			PlugIn plugIn = this.getPlugInsLoaded().get(i);
 			plugIn.update(this, new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_LOAD));
 		}
 	}
@@ -1113,16 +1112,15 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				PlugIn ppi = getPlugInsLoaded().getPlugIn(pluginReference);
 
 				String msgHead = Language.translate("Fehler - PlugIn: ") + " " + ppi.getClassReference() + " !";
-				String msgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
-						"und kann deshalb nicht erneut hinzugefügt werden!");
+				String msgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!");
 				this.getProjectEditorWindow().showErrorMessage(msgText, msgHead);
 				return false;
 
 			} else {
 				// --- PlugIn can be loaded -----------------------------------
-				PlugIn ppi = getPlugInsLoaded().loadPlugin(this, pluginReference);
+				PlugIn ppi = this.getPlugInsLoaded().loadPlugin(this, pluginReference);
 				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
-				if (add2PlugInReferenceVector == true) {
+				if (add2PlugInReferenceVector==true) {
 					this.plugIns_Classes.add(pluginReference);
 				}
 			}
