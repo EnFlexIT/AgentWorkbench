@@ -10,6 +10,7 @@ de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);
 de;0 Sekunden;0 seconds;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
+de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;

@@ -58,7 +58,7 @@ public class ProjectFileManagerAgent extends jade.misc.FileManagerAgent {
 		String messageFailure = "[" + currProject.getProjectName() + "] Provisioning of project resources for remote container execution failed!";
 
 		Object[] originalFileMangerArguments = new Object[1];
-		originalFileMangerArguments[0] = currProject.exportProjectRessurcesToDestinationDirectory(fileMangerPath, messageSuccess, messageFailure);
+		originalFileMangerArguments[0] = currProject.exportProjectRessourcesToDestinationDirectory(fileMangerPath, messageSuccess, messageFailure);
 		if (originalFileMangerArguments[0]==null) {
 			this.doDelete();
 			return;

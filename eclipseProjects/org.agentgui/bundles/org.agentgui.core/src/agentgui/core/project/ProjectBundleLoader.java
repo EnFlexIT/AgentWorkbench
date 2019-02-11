@@ -29,23 +29,17 @@
 package agentgui.core.project;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 
-import org.agentgui.bundle.BundleBuilder;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
-import de.enflexit.common.PathHandling;
 
 /**
  * The Class ProjectBundleLoader.
@@ -58,7 +52,7 @@ public class ProjectBundleLoader {
 	
 	private Project project;
 	
-	private BundleBuilder bundleBuilder;
+	private ProjectBundleEvaluator projectBundleEvaluator;
 	private Vector<Bundle> bundleVector;
 	
 	/**
@@ -77,72 +71,21 @@ public class ProjectBundleLoader {
 	}
 	
 	/**
-	 * Returns the symbolic bundle name for the current project. In case that the
-	 * bundle was not loaded yet, the method return a name suggestion. In case that
-	 * the bundle was already loaded, the method returns its name.
-	 *  
-	 * @return the symbolic bundle name of the projects bundle
-	 */
-	private String getSymbolicBundleName() {
-		
-		// --- Return the first bundle name -------------------------
-		if (this.getBundleVector().size()>0 && this.getBundleVector().get(0)!=null) {
-			return this.getBundleVector().get(0).getSymbolicName();
-		}
-		
-		// --- Bundle was not yet loaded - create name proposal ----- 
-		String bundleName = this.getBundleDirectory();
-		String appPath = Application.getGlobalInfo().getPathBaseDir();
-		if (bundleName.contains(appPath)==true) {
-			// --- Get path difference ------------------------------
-			bundleName = bundleName.substring(appPath.length());
-			String[] pathParts = bundleName.split("\\" + File.separator);
-			bundleName = pathParts[pathParts.length-1];
-			
-		} else {
-			// --- Take the last two sub folder --------------------- 
-			String[] pathParts = bundleName.split("\\" + File.separator);
-			if (pathParts.length>1) {
-				bundleName = pathParts[pathParts.length-1];
-			} else if (pathParts.length==1) {
-				bundleName = pathParts[0];
-			} else {
-				bundleName = "tmp" + bundleName.hashCode();
-			}
-		}
-		// --- Add a suffix to the bundle name ----------------------
-		bundleName = "agentProject." + bundleName;
-		
-		// --- Do some final adjustments ----------------------------
-		while (bundleName.contains("..")) {
-			bundleName = bundleName.replace("..", ".");
-		}
-		while (bundleName.startsWith(".")) {
-			bundleName = bundleName.substring(1);
-		}
-		while (bundleName.endsWith(".")) {
-			bundleName = bundleName.substring(0, bundleName.length()-1);
-		}
-		return bundleName;
-	}
-	
-	
-	/**
-	 * Returns the instance of the {@link BundleBuilder} for this project.
+	 * Returns the instance of the {@link ProjectBundleEvaluator} for this project.
 	 * @return the bundle builder
 	 */
-	private BundleBuilder getBundleBuilder() {
-		if (bundleBuilder==null) {
-			bundleBuilder = new BundleBuilder(new File(this.getBundleDirectory()), this.getSymbolicBundleName());
+	private ProjectBundleEvaluator getProjectBundleEvaluator() {
+		if (projectBundleEvaluator==null) {
+			projectBundleEvaluator = new ProjectBundleEvaluator(new File(this.getBundleDirectory()));
 		}
-		return bundleBuilder;
+		return projectBundleEvaluator;
 	}
 	/**
 	 * Returns the bundle jars.
 	 * @return the bundle jars
 	 */
 	public ArrayList<File> getBundleJars() {
-		return this.getBundleBuilder().getBundleJars();
+		return this.getProjectBundleEvaluator().getBundleJars();
 	}
 	/**
 	 * Return the file of the specified project bundle.
@@ -150,14 +93,14 @@ public class ProjectBundleLoader {
 	 * @return the bundle file
 	 */
 	public File getBundleFile(Bundle bundle) {
-		return this.getBundleBuilder().getBundleFile(bundle);
+		return this.getProjectBundleEvaluator().getBundleFile(bundle);
 	}
 	/**
 	 * Gets the regular jars.
 	 * @return the regular jars
 	 */
 	public ArrayList<File> getRegularJars() {
-		return this.getBundleBuilder().getRegularJars();
+		return this.getProjectBundleEvaluator().getRegularJars();
 	}
 	
 	/**
@@ -165,14 +108,14 @@ public class ProjectBundleLoader {
 	 * @return the regular jar file resources
 	 */
 	public DefaultListModel<String> getRegularJarsListModel() {
-		return this.getListModelFromFilesFound(this.getBundleBuilder().getRegularJars());
+		return this.getListModelFromFilesFound(this.getProjectBundleEvaluator().getRegularJars());
 	}
 	/**
 	 * Returns the bundle jar file resources as list model.
 	 * @return the bundle jar file resources
 	 */
 	public DefaultListModel<String> getBundleJarsListModel() {
-		return this.getListModelFromFilesFound(this.getBundleBuilder().getBundleJars());
+		return this.getListModelFromFilesFound(this.getProjectBundleEvaluator().getBundleJars());
 	}
 	/**
 	 * Returns a list model out of the specified list of files.
@@ -215,185 +158,17 @@ public class ProjectBundleLoader {
 		
 		if (this.getBundleDirectory()==null) return;
 			
-		// --- Check configured project resources for bin folder ----
-		this.createTemporaryJarsFromBinResources();
-		
 		// --- Evaluate the directory -------------------------------
-		this.getBundleBuilder().evaluateDirectory();
-		
-		// --- Load the directory bundle ----------------------------
-		if (this.getBundleBuilder().getRegularJars()!=null) {
-			
-			// --- Check if the manifest file is available ----------
-			if (this.project.isReCreateProjectManifest()==true || this.getBundleBuilder().isAvailableManifest()==false) {
-				
-				// --- Check for files of the ClassLoadService ------
-				this.getBundleBuilder().moveClassLoadServiceFiles();
-				
-				// --- Create the MANIFEST.MF file ------------------
-				if (this.getBundleBuilder().createManifest(this.project.isReCreateProjectManifest())==false) {
-					throw new RuntimeException("The file " + BundleBuilder.MANIFEST_MF + " could not be created!");
-				}
-			}
-			this.installBundle("reference:file:" + this.getBundleDirectory());
-		}
+		this.getProjectBundleEvaluator().evaluateDirectory();
 		
 		// --- Install the independent bundles found ----------------
-		if (this.getBundleBuilder().getBundleJars()!=null) {
-			this.installBundles(this.getBundleBuilder().getBundleJars());
+		if (this.getProjectBundleEvaluator().getBundleJars()!=null) {
+			this.installBundles(this.getProjectBundleEvaluator().getBundleJars());
 		}
 		
 		// --- Finally, start all known bundles ---------------------
 		this.startBundles(this.getBundleVector());
 		
-	}
-	
-	/**
-	 * Creates the temporary jars from the specified bin resources.
-	 */
-	private void createTemporaryJarsFromBinResources() {
-		
-		String projectDir = this.project.getProjectTempFolderFullPath();
-		ProjectResourceVector projectResourcesVector = this.project.getProjectResources();
-		
-		for (int i=0; i<projectResourcesVector.size(); i++) {
-			
-			String resource = projectResourcesVector.get(i);
-			resource = PathHandling.getPathName4LocalOS(resource);
-			
-			String prefixText = null;
-			String suffixText = null;
-			try {
-				
-				// --- Adjust path with respect to the project directory ------
-				String jarFileCorrected = this.adjustPathForForProjectEnvironment(resource, projectDir);
-				File file = new File(jarFileCorrected);
-				if (file.exists()==false && jarFileCorrected.toLowerCase().endsWith("jar")==false) {
-					// --- Try to find / retrieve bin resource ----------------
-					String jarFileCorrectedNew = this.retrievBinResourceFromPath(jarFileCorrected);
-					if (jarFileCorrectedNew.equals(jarFileCorrected)==false) {
-						// --- Found new bin resource -------------------------
-						System.out.println("=> Retrieved new location for resource path '" + jarFileCorrected + "'");
-						System.out.println("=> Corrected it to '" + jarFileCorrectedNew + "'");
-						projectResourcesVector.set(i, jarFileCorrectedNew);
-						
-						resource = jarFileCorrectedNew;
-						jarFileCorrected = jarFileCorrectedNew;
-						file = new File(jarFileCorrected);	
-					}
-				}
-				
-				if (file.isDirectory()) {
-					// --- Folder found: Build a temporary *.jar --------------
-					prefixText = "";
-					suffixText = "proceeding started";
-					
-					// --- Prepare the path variables ---------------
-					String pathBin = file.getAbsolutePath();
-					String pathBinHash = ((Integer)Math.abs(pathBin.hashCode())).toString();
-					String jarArchiveFileName = "BIN_DUMP_" + pathBinHash + ".jar";
-					String jarArchivePath = projectDir + jarArchiveFileName;
-					
-					// --- Create the jar-file ----------------------
-					JarFileCreator jarCreator = new JarFileCreator(pathBin);
-					File jarArchiveFile = new File(jarArchivePath);
-					jarCreator.createJarArchive(jarArchiveFile);
-					jarArchiveFile.deleteOnExit();
-					
-					// --- Prepare the notification -----------------
-					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-					String dateText = dateFormat.format(new Date());
-					
-					prefixText = "OK";
-					suffixText = Language.translate("Verzeichnis gepackt zu") + " '" + File.separator + "~tmp" + File.separator + jarArchiveFileName + "' " + Language.translate("um") + " " + dateText;
-				} 
-				
-			} catch (Exception ioEx) {
-				ioEx.printStackTrace();
-				prefixText = "ERROR";
-				suffixText = ioEx.getMessage();
-			}
-			
-			// --- On Error print it to console -------------------------------
-			if (prefixText!=null && prefixText.equals("ERROR")==true) {
-				System.err.println("=> " + suffixText + " - " + resource);
-			}
-			// --- Set the additional text ------------------------------------
-			projectResourcesVector.setPrefixText(resource, prefixText);
-			projectResourcesVector.setSuffixText(resource, suffixText);
-		}
-		
-	}
-	/**
-	 * Tries to retrieve a bin-folder location given form an external resource to load for a project.
-	 * @param resourcePath the resource path
-	 * @return the same string if nothing is found, otherwise the new resource path
-	 */
-	private String retrievBinResourceFromPath(String resourcePath) {
-		
-		// --- Get Agent.GUI base directory and walk up to parent folders ----
-		File searchDir = new File(Application.getGlobalInfo().getPathBaseDir());
-		for (int i=0; i<2; i++) {
-			if (searchDir!=null) {
-				searchDir = searchDir.getParentFile();
-			} else {
-				break;
-			}
-		}
-		
-		// --- Directory found? -----------------------------------------------
-		if (searchDir!=null) {
-			// --- Set the string for the search path -------------------------
-			String searchPath = searchDir.getAbsolutePath() + File.separator;
-			// --- Examine the give resource path -----------------------------			
-			String checkAddition = null;
-			String[] jarFileCorrectedFragments = resourcePath.split("\\"+File.separator);
-			// --- Try to rebuild the resource path ---------------------------
-			for (int i=(jarFileCorrectedFragments.length-1); i>0; i--) {
-				String fragment = jarFileCorrectedFragments[i];
-				if (fragment.equals("")==false) {
-					if (i==(jarFileCorrectedFragments.length-1)) {
-						checkAddition = fragment;	
-					} else {
-						checkAddition = fragment + File.separator + checkAddition;
-					}
-					 
-					File checkPath = new File(searchPath + checkAddition);	
-					if (checkPath.exists()==true) {
-						// --- Path found ! -----------------------------------
-						return checkPath.getAbsolutePath();
-					}	
-				}
-			}
-		}
-		return resourcePath;
-	}
-	/**
-	 * Will check (and maybe adjust) a resource path with respect to the project directory.
-	 *
-	 * @param resourcePath the resource
-	 * @param projectDir the project directory
-	 * @return a checked or adjusted path for a resource
-	 */
-	private String adjustPathForForProjectEnvironment(String resourcePath, String projectDir) {
-		
-		String checkPath = resourcePath;
-		File checkFile = new File(checkPath);
-		if (checkFile.exists()) {
-			// --- right path was given -----------------------------
-			return checkPath;
-			
-		} else {
-			// --- retry with the addition of the project folder ----
-			checkPath = projectDir + checkPath;
-			checkPath = checkPath.replace((File.separator + File.separator), File.separator);
-			checkFile = new File(checkPath);
-			if (checkFile.exists()) {
-				return checkPath;
-			} 
-			
-		}
-		return resourcePath;
 	}
 	
 
@@ -413,7 +188,7 @@ public class ProjectBundleLoader {
 	public void installBundle(File bundleJarFile) {
 		
 		// --- Check the symbolic bundle name of the jar to load ----
-		String sbn = this.getBundleBuilder().getBundleJarsSymbolicBundleNames().get(bundleJarFile);
+		String sbn = this.getProjectBundleEvaluator().getBundleJarsSymbolicBundleNames().get(bundleJarFile);
 		if (sbn!=null && sbn.isEmpty()==false) {
 			if (Platform.getBundle(sbn)!=null) {
 				System.out.println("[" + this.getClass().getSimpleName() + "] Bundle '" + sbn + "' is already installed, skip installation of jar file!");

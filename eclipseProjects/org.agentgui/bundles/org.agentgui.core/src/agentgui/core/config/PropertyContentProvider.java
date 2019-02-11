@@ -52,8 +52,6 @@ public class PropertyContentProvider {
 	 * The enumeration that describes the FileToProvide.
 	 */
 	public enum FileToProvide {
-		CLASS_LOAD_SERVICE_JAR("classLoadService.jar"),
-		CLASS_LOAD_SERVICE_XML("classLoadService.xml"),
 		DICTIONARY_BIN("dictionary.bin"),
 		DICTIONARY_CSV("dictionary.csv"),
 		OIDC_TRUST_STORE_JKS("oidcTrustStore.jks"),
