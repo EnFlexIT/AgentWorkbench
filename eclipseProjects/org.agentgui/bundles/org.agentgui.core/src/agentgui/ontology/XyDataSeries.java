@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: XyDataSeries
 * @author ontology bean generator
-* @version 2019/02/12, 13:38:42
+* @version 2019/02/12, 14:08:00
 */
 public class XyDataSeries extends DataSeries{ 
 
@@ -50,14 +50,14 @@ public void sort() {
 	}
 }
    /**
-* Protege name: avoidDuplicateXValues
+* Protege name: autoSort
    */
-   private boolean avoidDuplicateXValues;
-   public void setAvoidDuplicateXValues(boolean value) { 
-    this.avoidDuplicateXValues=value;
+   private boolean autoSort;
+   public void setAutoSort(boolean value) { 
+    this.autoSort=value;
    }
-   public boolean getAvoidDuplicateXValues() {
-     return this.avoidDuplicateXValues;
+   public boolean getAutoSort() {
+     return this.autoSort;
    }
 
    /**
@@ -83,14 +83,14 @@ public void sort() {
    public void setXyValuePairs(List l) {xyValuePairs = l; }
 
    /**
-* Protege name: autoSort
+* Protege name: avoidDuplicateXValues
    */
-   private boolean autoSort;
-   public void setAutoSort(boolean value) { 
-    this.autoSort=value;
+   private boolean avoidDuplicateXValues;
+   public void setAvoidDuplicateXValues(boolean value) { 
+    this.avoidDuplicateXValues=value;
    }
-   public boolean getAutoSort() {
-     return this.autoSort;
+   public boolean getAvoidDuplicateXValues() {
+     return this.avoidDuplicateXValues;
    }
 
 }
