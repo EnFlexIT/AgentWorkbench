@@ -28,12 +28,12 @@
  */
 package agentgui.core.config;
 
-//import java.io.IOException;
-//
-//import org.agentgui.PlugInActivator;
-//import org.eclipse.equinox.security.storage.ISecurePreferences;
-//import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
-//import org.eclipse.equinox.security.storage.StorageException;
+import java.io.IOException;
+
+import org.agentgui.PlugInActivator;
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
 
 /**
  * The Class SecureStorageManager provides some simple help methods, e.g. to save or load
@@ -43,61 +43,61 @@ package agentgui.core.config;
  */
 public class SecureStorageManager {
 	
-//	/**
-//	 * Returns the secure preferences.
-//	 * @return the secure preferences
-//	 */
-//	private static ISecurePreferences getAgentWorkbenchSecurePreferences() {
-//		return SecurePreferencesFactory.getDefault().node(PlugInActivator.PLUGIN_ID);
-//	}
-//	/**
-//	 * Returns the secure preferences with the specified preference node ID.
-//	 *
-//	 * @param nodeID the node ID
-//	 * @return the secure preferences
-//	 */
-//	public static ISecurePreferences getSecurePreferences(String nodeID) {
-//		return getAgentWorkbenchSecurePreferences().node(nodeID);
-//	}
-//
-//	
-//	/**
-//	 * Saves the specified password for the specified preference node ID.
-//	 *
-//	 * @param nodeID the node ID
-//	 * @param password the password
-//	 * @return true, if successful
-//	 */
-//	public static boolean savePassword(String nodeID, String password) {
-//		
-//		boolean success = false;
-//		ISecurePreferences prefNode = getSecurePreferences(nodeID);
-//		try {
-//			prefNode.put("Password", password, true);
-//			prefNode.flush();
-//			
-//		} catch (StorageException | IOException sEx) {
-//			sEx.printStackTrace();
-//		}
-//		return success;
-//	}
-//	/**
-//	 * Returns the password for the specified preference node ID.
-//	 *
-//	 * @param nodeID the node ID
-//	 * @return the password
-//	 */
-//	public static String getPassword(String nodeID) {
-//		
-//		String password = null;
-//		ISecurePreferences prefNode = getSecurePreferences(nodeID);
-//		try {
-//			password = prefNode.get(nodeID, null) ;
-//			
-//		} catch (StorageException sEx) {
-//			sEx.printStackTrace();
-//		}
-//		return password;
-//	}
+	/**
+	 * Returns the secure preferences.
+	 * @return the secure preferences
+	 */
+	private static ISecurePreferences getAgentWorkbenchSecurePreferences() {
+		return SecurePreferencesFactory.getDefault().node(PlugInActivator.PLUGIN_ID);
+	}
+	/**
+	 * Returns the secure preferences with the specified preference node ID.
+	 *
+	 * @param nodeID the node ID
+	 * @return the secure preferences
+	 */
+	public static ISecurePreferences getSecurePreferences(String nodeID) {
+		return getAgentWorkbenchSecurePreferences().node(nodeID);
+	}
+
+	
+	/**
+	 * Saves the specified password for the specified preference node ID.
+	 *
+	 * @param nodeID the node ID
+	 * @param password the password
+	 * @return true, if successful
+	 */
+	public static boolean savePassword(String nodeID, String password) {
+		
+		boolean success = false;
+		ISecurePreferences prefNode = getSecurePreferences(nodeID);
+		try {
+			prefNode.put("Password", password, true);
+			prefNode.flush();
+			
+		} catch (StorageException | IOException sEx) {
+			sEx.printStackTrace();
+		}
+		return success;
+	}
+	/**
+	 * Returns the password for the specified preference node ID.
+	 *
+	 * @param nodeID the node ID
+	 * @return the password
+	 */
+	public static String getPassword(String nodeID) {
+		
+		String password = null;
+		ISecurePreferences prefNode = getSecurePreferences(nodeID);
+		try {
+			password = prefNode.get(nodeID, null) ;
+			
+		} catch (StorageException sEx) {
+			sEx.printStackTrace();
+		}
+		return password;
+	}
 	
 }

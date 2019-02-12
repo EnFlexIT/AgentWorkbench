@@ -103,12 +103,14 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jScrollPaneProjectFeatures = new GridBagConstraints();
 		gbc_jScrollPaneProjectFeatures.insets = new Insets(0, 0, 0, 5);
 		gbc_jScrollPaneProjectFeatures.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneProjectFeatures.gridx = 0;
 		gbc_jScrollPaneProjectFeatures.gridy = 0;
 		this.add(this.getJScrollPaneProjectFeatures(), gbc_jScrollPaneProjectFeatures);
+		
 		GridBagConstraints gbc_jPanelFeatureButtons = new GridBagConstraints();
 		gbc_jPanelFeatureButtons.insets = new Insets(0, 5, 0, 0);
 		gbc_jPanelFeatureButtons.fill = GridBagConstraints.BOTH;
@@ -121,7 +123,6 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 		if (jScrollPaneProjectFeatures == null) {
 			jScrollPaneProjectFeatures = new JScrollPane();
 			jScrollPaneProjectFeatures.setViewportView(this.getJTableFeatures());
-			
 		}
 		return jScrollPaneProjectFeatures;
 	}
@@ -182,7 +183,8 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 	 */
 	private void fillTableModel() {
 		this.emptyTableModelForFeature();
-		for (FeatureInfo fi : this.featureVector) {
+		for (int i = 0; i < this.getFeatureVector().size(); i++) {
+			FeatureInfo fi = this.getFeatureVector().get(i);
 			this.addTableRow(fi);
 		}
 	}
@@ -310,7 +312,7 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 
 			// --- Show the feature selection dialog --------------------------
 			Frame ownerFrame = Application.getGlobalInfo().getOwnerFrameForComponent(getJButtonAddFeatures());
-			FeatureSelectionDialog fsd = new FeatureSelectionDialog(ownerFrame, this.featureVector, availableFeatures);
+			FeatureSelectionDialog fsd = new FeatureSelectionDialog(ownerFrame, this.getFeatureVector(), availableFeatures);
 
 			// --- Add the selected features to the list ----------------------
 			if (fsd.isCanceled() == false) {
@@ -320,9 +322,9 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 					if (FeatureEvaluator.getInstance().isFeatureOfBaseInstallation(installableUnit)==false) {
 						// --- Create FeatureInfo -----------------------------
 						FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(installableUnit);
-						if (this.featureVector.contains(featureInfo)==false) {
+						if (this.getFeatureVector().contains(featureInfo)==false) {
 							this.addTableRow(featureInfo);
-							this.featureVector.add(featureInfo);
+							this.getFeatureVector().add(featureInfo);
 							this.addedFeatureInfo(featureInfo);
 						}
 					}
@@ -363,7 +365,7 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 				FeatureInfo featureInfoToRemove = (FeatureInfo) this.getJTableFeatures().getValueAt(tableRowIndex, 0);
 				int modelRowIndex = this.getJTableFeatures().convertRowIndexToModel(tableRowIndex);
 				this.getTableModelForFeature().removeRow(modelRowIndex);
-				this.featureVector.remove(featureInfoToRemove);
+				this.getFeatureVector().remove(featureInfoToRemove);
 				this.removedFeatureInfo(featureInfoToRemove);
 			}
 			

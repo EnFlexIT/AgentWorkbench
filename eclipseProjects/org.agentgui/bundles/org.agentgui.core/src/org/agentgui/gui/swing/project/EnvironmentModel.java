@@ -71,6 +71,7 @@ public class EnvironmentModel extends JPanel implements Observer {
 	private JTextField jTextFieldTimeModelClass;
 	private JButton jButtonDefaultTimeModel;
 	private JButton jButtonSelectTimeModel;
+	private JLabel lblNewLabel;
 
 	
 	/**
@@ -79,7 +80,9 @@ public class EnvironmentModel extends JPanel implements Observer {
 	 */
 	public EnvironmentModel(Project project) {
 		this.currProject = project;
-		this.currProject.addObserver(this);
+		if (this.currProject!=null) {
+			this.currProject.addObserver(this);
+		}
 		this.initialize();
 	}
 	/**
@@ -88,49 +91,64 @@ public class EnvironmentModel extends JPanel implements Observer {
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
+		
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
+		gbc_lblNewLabel.gridx = 0;
+		gbc_lblNewLabel.gridy = 0;
+		add(getLblNewLabel(), gbc_lblNewLabel);
 		GridBagConstraints gbc_jPanelSimulationEnvironment = new GridBagConstraints();
-		gbc_jPanelSimulationEnvironment.insets = new Insets(10, 10, 0, 0);
-		gbc_jPanelSimulationEnvironment.anchor = GridBagConstraints.NORTH;
-		gbc_jPanelSimulationEnvironment.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jPanelSimulationEnvironment.insets = new Insets(10, 0, 0, 0);
+		gbc_jPanelSimulationEnvironment.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jPanelSimulationEnvironment.gridx = 0;
-		gbc_jPanelSimulationEnvironment.gridy = 0;
+		gbc_jPanelSimulationEnvironment.gridy = 1;
 		add(getJPanelSimulationEnvironment(), gbc_jPanelSimulationEnvironment);
 		GridBagConstraints gbc_jPanelTimeModelSelection = new GridBagConstraints();
-		gbc_jPanelTimeModelSelection.anchor = GridBagConstraints.WEST;
-		gbc_jPanelTimeModelSelection.insets = new Insets(10, 10, 0, 0);
-		gbc_jPanelTimeModelSelection.fill = GridBagConstraints.VERTICAL;
+		gbc_jPanelTimeModelSelection.insets = new Insets(10, 0, 0, 0);
+		gbc_jPanelTimeModelSelection.fill = GridBagConstraints.BOTH;
 		gbc_jPanelTimeModelSelection.gridx = 0;
-		gbc_jPanelTimeModelSelection.gridy = 1;
+		gbc_jPanelTimeModelSelection.gridy = 2;
 		add(getJPanelTimeModelSelection(), gbc_jPanelTimeModelSelection);
 
 	}
 
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel(Language.translate("Agentenumgebung"));
+			lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+		}
+		return lblNewLabel;
+	}
+	
 	/**
 	 * Gets the j panel simulation environment.
 	 * @return the j panel simulation environment
 	 */
 	private JPanel getJPanelSimulationEnvironment() {
 		if (jPanelSimulationEnvironment == null) {
+			
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.anchor = GridBagConstraints.WEST;
 			gridBagConstraints5.gridx = 0;
-			gridBagConstraints5.insets = new Insets(0, 5, 0, 0);
 			gridBagConstraints5.gridy = 0;
+			
 			jLabelEnvTyp = new JLabel();
 			jLabelEnvTyp.setText(Language.translate("Umgebungstyp bzw. -modell für Simulation und Visualisierung"));
 			jLabelEnvTyp.setFont(new Font("Dialog", Font.BOLD, 12));
+			
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
 			gridBagConstraints4.gridy = 1;
 			gridBagConstraints4.anchor = GridBagConstraints.WEST;
 			gridBagConstraints4.insets = new Insets(5, 0, 0, 0);
 			jPanelSimulationEnvironment = new JPanel();
+			
 			GridBagLayout gbl_jPanelSimulationEnvironment = new GridBagLayout();
-			gbl_jPanelSimulationEnvironment.columnWeights = new double[] { 1.0 };
+			gbl_jPanelSimulationEnvironment.columnWeights = new double[] { 0.0 };
 			jPanelSimulationEnvironment.setLayout(gbl_jPanelSimulationEnvironment);
 			jPanelSimulationEnvironment.add(getJComboBoxEnvironmentModelSelector(), gridBagConstraints4);
 			jPanelSimulationEnvironment.add(jLabelEnvTyp, gridBagConstraints5);
@@ -145,9 +163,11 @@ public class EnvironmentModel extends JPanel implements Observer {
 	private JComboBox<EnvironmentType> getJComboBoxEnvironmentModelSelector() {
 		if (jComboBoxEnvironmentModelSelector == null) {
 			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
-			jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
 			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
-			jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
+			if (this.currProject!=null) {
+				jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
+				jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
+			}
 			jComboBoxEnvironmentModelSelector.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -214,8 +234,9 @@ public class EnvironmentModel extends JPanel implements Observer {
 		if (jTextFieldTimeModelClass == null) {
 			jTextFieldTimeModelClass = new JTextField();
 			jTextFieldTimeModelClass.setPreferredSize(new Dimension(400, 26));
-			jTextFieldTimeModelClass.setText(this.currProject.getTimeModelClass());
-			jTextFieldTimeModelClass.setText(this.currProject.getTimeModelClass());
+			if (this.currProject!=null) {
+				jTextFieldTimeModelClass.setText(this.currProject.getTimeModelClass());
+			}
 			jTextFieldTimeModelClass.setEditable(false);
 		}
 		return jTextFieldTimeModelClass;
@@ -231,8 +252,7 @@ public class EnvironmentModel extends JPanel implements Observer {
 			jButtonDefaultTimeModel.setPreferredSize(new Dimension(45, 26));
 			jButtonDefaultTimeModel.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultTimeModel.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
-			jButtonDefaultTimeModel.setToolTipText("Agent.GUI - Standard verwenden");
-			jButtonDefaultTimeModel.setToolTipText(Language.translate(jButtonDefaultTimeModel.getToolTipText()));
+			jButtonDefaultTimeModel.setToolTipText(Language.translate("Standard verwenden"));
 			jButtonDefaultTimeModel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -252,8 +272,7 @@ public class EnvironmentModel extends JPanel implements Observer {
 			jButtonSelectTimeModel = new JButton();
 			jButtonSelectTimeModel.setPreferredSize(new Dimension(45, 26));
 			jButtonSelectTimeModel.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
-			jButtonSelectTimeModel.setToolTipText("Klasse auswählen");
-			jButtonSelectTimeModel.setToolTipText(Language.translate(jButtonSelectTimeModel.getToolTipText()));
+			jButtonSelectTimeModel.setToolTipText(Language.translate("Klasse auswählen"));
 			jButtonSelectTimeModel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

@@ -26,47 +26,47 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.jade;
+package agentgui.core.plugin;
 
-import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 
 /**
- * The Class ProjectFileManagerAgent simply extends the original JADE ProjectFileManagerAgent, but
- * allows to define and do some preliminary tasks within the agent and its thread.
+ * The Class PlugInError serves as an error instance in case that a PlugIn class can not be found or loaded.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectFileManagerAgent extends jade.misc.FileManagerAgent {
+public class PlugInError extends PlugIn {
 
-	private static final long serialVersionUID = 5145808575937759053L;
-
+	private Exception exception;
+	
+	/**
+	 * Instantiates a new plug in error.
+	 * @param currProject the current project instance
+	 */
+	public PlugInError(Project currProject) {
+		super(currProject);
+	}
 	/* (non-Javadoc)
-	 * @see jade.misc.FileManagerAgent#setup()
+	 * @see agentgui.core.plugin.PlugIn#getName()
 	 */
 	@Override
-	protected void setup() {
-	
-		Project currProject = Application.getProjectFocused();
-		if (currProject==null) {
-			this.doDelete();
-			return;
-		}
-		
-		String fileMangerPath = Application.getGlobalInfo().getFileManagerServerPath(true);
-		String messageSuccess = "[" + currProject.getProjectName() + "] Project resources for remote container execution successfully prepared!";;
-		String messageFailure = "[" + currProject.getProjectName() + "] Provisioning of project resources for remote container execution failed!";
+	public String getName() {
+		return "ERROR-PlugIn";
+	}
 
-		Object[] originalFileMangerArguments = new Object[1];
-		originalFileMangerArguments[0] = currProject.exportProjectRessourcesToDestinationDirectory(fileMangerPath, messageSuccess, messageFailure);
-		if (originalFileMangerArguments[0]==null) {
-			this.doDelete();
-			return;
-		}
-		
-		// --- Set start arguments for the original FileManager ----- 
-		this.setArguments(originalFileMangerArguments);
-		super.setup();
+	/**
+	 * Sets the exception.
+	 * @param ex the new exception
+	 */
+	public void setException(Exception ex) {
+		exception = ex;
+	}
+	/**
+	 * Returns the exception that was thrown during load operation.
+	 * @return the exception
+	 */
+	public Exception getException() {
+		return exception;
 	}
 	
 }
