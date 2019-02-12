@@ -1,25 +1,26 @@
 package agentgui.ontology;
 
+import jade.content.*;
 import jade.util.leap.*;
+import jade.core.*;
 
 /**
    * This class contains all data related to how a chart will be displayed
 * Protege name: ChartSettingsGeneral
 * @author ontology bean generator
-* @version 2013/10/8, 13:06:41
+* @version 2019/02/12, 13:38:42
 */
 public class ChartSettingsGeneral extends VisualizationSettings{ 
 
    /**
-   * The renderer type to be used fpr rendering the plots
-* Protege name: rendererType
+* Protege name: xAxisLabel
    */
-   private String rendererType;
-   public void setRendererType(String value) { 
-    this.rendererType=value;
+   private String xAxisLabel;
+   public void setXAxisLabel(String value) { 
+    this.xAxisLabel=value;
    }
-   public String getRendererType() {
-     return this.rendererType;
+   public String getXAxisLabel() {
+     return this.xAxisLabel;
    }
 
    /**
@@ -45,17 +46,6 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public void setYAxisColors(List l) {yAxisColors = l; }
 
    /**
-* Protege name: xAxisLabel
-   */
-   private String xAxisLabel;
-   public void setXAxisLabel(String value) { 
-    this.xAxisLabel=value;
-   }
-   public String getXAxisLabel() {
-     return this.xAxisLabel;
-   }
-
-   /**
 * Protege name: chartTitle
    */
    private String chartTitle;
@@ -75,6 +65,18 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    }
    public String getYAxisLabel() {
      return this.yAxisLabel;
+   }
+
+   /**
+   * The renderer type to be used fpr rendering the plots
+* Protege name: rendererType
+   */
+   private String rendererType;
+   public void setRendererType(String value) { 
+    this.rendererType=value;
+   }
+   public String getRendererType() {
+     return this.rendererType;
    }
 
    /**

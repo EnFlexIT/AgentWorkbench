@@ -1,11 +1,13 @@
 package agentgui.ontology;
 
+import jade.content.*;
 import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: XyDataSeries
 * @author ontology bean generator
-* @version 2013/10/8, 13:06:41
+* @version 2019/02/12, 13:38:42
 */
 public class XyDataSeries extends DataSeries{ 
 
@@ -48,6 +50,17 @@ public void sort() {
 	}
 }
    /**
+* Protege name: avoidDuplicateXValues
+   */
+   private boolean avoidDuplicateXValues;
+   public void setAvoidDuplicateXValues(boolean value) { 
+    this.avoidDuplicateXValues=value;
+   }
+   public boolean getAvoidDuplicateXValues() {
+     return this.avoidDuplicateXValues;
+   }
+
+   /**
    * The data of the series
 * Protege name: xyValuePairs
    */
@@ -78,17 +91,6 @@ public void sort() {
    }
    public boolean getAutoSort() {
      return this.autoSort;
-   }
-
-   /**
-* Protege name: avoidDuplicateXValues
-   */
-   private boolean avoidDuplicateXValues;
-   public void setAvoidDuplicateXValues(boolean value) { 
-    this.avoidDuplicateXValues=value;
-   }
-   public boolean getAvoidDuplicateXValues() {
-     return this.avoidDuplicateXValues;
    }
 
 }

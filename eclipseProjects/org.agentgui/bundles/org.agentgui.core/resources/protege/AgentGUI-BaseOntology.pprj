@@ -1,4 +1,4 @@
-; Tue Oct 08 13:29:19 CEST 2013
+; Tue Feb 12 13:39:06 CET 2019
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -56,21 +56,21 @@
 ([AgentGUI-BaseOntology_ProjectKB_Instance_10147] of  Property_List
 )
 
-([AgentGUI-BaseOntology_ProjectKB_Instance_10148] of  String
+([AgentGUI-BaseOntology_ProjectKB_Instance_10151] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([AgentGUI-BaseOntology_ProjectKB_Instance_10149] of  Map_Entry
+([AgentGUI-BaseOntology_ProjectKB_Instance_10152] of  Map_Entry
 
-	(key "add_name_on_instance_form")
+	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([AgentGUI-BaseOntology_ProjectKB_Instance_10150] of  Map_Entry
+([AgentGUI-BaseOntology_ProjectKB_Instance_10153] of  Map_Entry
 
-	(key "change_tracking_active")
+	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
@@ -402,8 +402,8 @@
 ([AgentGUI-BaseOntology_ProjectKB_Instance_221] of  Map
 
 	(entries
-		[AgentGUI-BaseOntology_ProjectKB_Instance_10149]
-		[AgentGUI-BaseOntology_ProjectKB_Instance_10150]))
+		[AgentGUI-BaseOntology_ProjectKB_Instance_10152]
+		[AgentGUI-BaseOntology_ProjectKB_Instance_10153]))
 
 ([AgentGUI-BaseOntology_ProjectKB_Instance_98] of  String
 
@@ -425,7 +425,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [AgentGUI-BaseOntology_ProjectKB_Instance_10148]))
+	(properties [AgentGUI-BaseOntology_ProjectKB_Instance_10151]))
 
 ([CLSES_TAB] of  Widget
 
@@ -649,11 +649,11 @@
 
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
-		[PAL_FORM_WIDGET]
-		[STANDARD_CLASS_FORM_WIDGET]
-		[INSTANCE_ANNOTATION_FORM_WIDGET]
 		[STANDARD_SLOT_FORM_WIDGET]
-		[STANDARD_FACET_FORM_WIDGET])
+		[STANDARD_CLASS_FORM_WIDGET]
+		[STANDARD_FACET_FORM_WIDGET]
+		[INSTANCE_ANNOTATION_FORM_WIDGET]
+		[PAL_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")

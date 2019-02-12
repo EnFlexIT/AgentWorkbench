@@ -1,12 +1,14 @@
 package agentgui.ontology;
 
+import jade.content.*;
 import jade.util.leap.*;
+import jade.core.*;
 
 /**
    * This class represents a time series, containing time related data.
 * Protege name: TimeSeries
 * @author ontology bean generator
-* @version 2013/10/8, 13:06:41
+* @version 2019/02/12, 13:38:42
 */
 public class TimeSeries extends DataSeries{ 
 
@@ -70,5 +72,17 @@ public void sort() {
    public Iterator getAllTimeSeriesValuePairs() {return timeSeriesValuePairs.iterator(); }
    public List getTimeSeriesValuePairs() {return timeSeriesValuePairs; }
    public void setTimeSeriesValuePairs(List l) {timeSeriesValuePairs = l; }
+
+   /**
+   * Indicates if this is a real time data series, i.e. length restrictions are applied
+* Protege name: realTime
+   */
+   private boolean realTime;
+   public void setRealTime(boolean value) { 
+    this.realTime=value;
+   }
+   public boolean getRealTime() {
+     return this.realTime;
+   }
 
 }

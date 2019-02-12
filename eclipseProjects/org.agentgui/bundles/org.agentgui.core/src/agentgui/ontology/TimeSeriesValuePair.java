@@ -1,23 +1,16 @@
 package agentgui.ontology;
 
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
 /**
    * One single data item in a time series.
 * Protege name: TimeSeriesValuePair
 * @author ontology bean generator
-* @version 2013/10/8, 13:06:41
+* @version 2019/02/12, 13:38:42
 */
 public class TimeSeriesValuePair extends ValuePair{ 
-
-   /**
-* Protege name: value
-   */
-   private Simple_Float value;
-   public void setValue(Simple_Float value) { 
-    this.value=value;
-   }
-   public Simple_Float getValue() {
-     return this.value;
-   }
 
    /**
 * Protege name: timestamp
@@ -28,6 +21,17 @@ public class TimeSeriesValuePair extends ValuePair{
    }
    public Simple_Long getTimestamp() {
      return this.timestamp;
+   }
+
+   /**
+* Protege name: value
+   */
+   private Simple_Float value;
+   public void setValue(Simple_Float value) { 
+    this.value=value;
+   }
+   public Simple_Float getValue() {
+     return this.value;
    }
 
 }
