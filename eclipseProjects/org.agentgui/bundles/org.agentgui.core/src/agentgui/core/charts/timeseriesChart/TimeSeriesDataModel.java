@@ -94,6 +94,8 @@ public class TimeSeriesDataModel extends DataModel {
 		this.chartSettingModel = null;
 		this.seriesCount=0;
 		
+		this.setRealTime(timeSeriesChartNew.getRealTime());
+		
 		TimeSeriesOntologyModel tsom = (TimeSeriesOntologyModel) this.ontologyModel;
 		if(tsom.getTimeSeriesChart().isEmpty()){
 			
@@ -216,13 +218,6 @@ public class TimeSeriesDataModel extends DataModel {
 		return lengthRestriction;
 	}
 
-	/**
-	 * Sets the length restriction.
-	 * @param lengthRestriction the new length restriction
-	 */
-	public void setLengthRestriction(TimeSeriesLengthRestriction lengthRestriction) {
-		this.lengthRestriction = lengthRestriction;
-	}
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#createNewDataSeries(java.lang.String)

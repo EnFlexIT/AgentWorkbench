@@ -320,8 +320,10 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 				// --- Remove row ---------------
 				this.tableModelDataVector.remove(i);
 				i--;
+				this.fireTableRowsDeleted(i, i);
 			}
 		}
+		
 	}
 	
 	/**

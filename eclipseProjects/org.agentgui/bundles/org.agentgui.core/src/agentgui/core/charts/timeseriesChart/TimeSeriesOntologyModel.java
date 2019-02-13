@@ -44,23 +44,23 @@ import agentgui.ontology.ValuePair;
  */
 public class TimeSeriesOntologyModel extends OntologyModel{
 	
-	private TimeSeriesDataModel dataModel;
+	private TimeSeriesDataModel parentDataModel;
 	private TimeSeriesChart timeSeriesChart;
 	
 	/**
 	 * Instantiates a new time series ontology model.
 	 *
 	 * @param timeSeriesChart the time series chart
-	 * @param parent the parent
+	 * @param parentDataModel the parent data model
 	 */
-	public TimeSeriesOntologyModel(TimeSeriesChart timeSeriesChart, TimeSeriesDataModel parent){
+	public TimeSeriesOntologyModel(TimeSeriesChart timeSeriesChart, TimeSeriesDataModel parentDataModel){
 		if(timeSeriesChart!=null){
 			this.timeSeriesChart = timeSeriesChart;
 		}else{
 			this.timeSeriesChart = new TimeSeriesChart();
 			this.timeSeriesChart.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
 		}
-		this.dataModel = parent;
+		this.parentDataModel = parentDataModel;
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +98,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 		
 		for(int i=0; i<seriesData.size(); i++){
 			ValuePair valuePair = (ValuePair) seriesData.get(i);
-			if(dataModel.getXValueFromPair(valuePair).doubleValue() == key.doubleValue()){
+			if(parentDataModel.getXValueFromPair(valuePair).doubleValue() == key.doubleValue()){
 				return i;
 			}
 		}
@@ -137,17 +137,23 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 		if(seriesIndex < getSeriesCount()){
 			List seriesData = getSeriesData(seriesIndex);
 			int valueIndex = getIndexByKey(seriesIndex, key);
+			
 			if(valueIndex >= 0){
+				// --- Update an existing value pair ----------------
 				ValuePair valuePairToChange = (ValuePair) seriesData.get(valueIndex);
-				dataModel.setValueForPair(value, valuePairToChange);
+				this.parentDataModel.setValueForPair(value, valuePairToChange);
 			}else{
-				ValuePair newValuePair = dataModel.createNewValuePair(key, value);
+				// --- Add a new value pair -------------------------
+				ValuePair newValuePair = parentDataModel.createNewValuePair(key, value);
 				seriesData.add(newValuePair);
-				if (dataModel.isRealTime()==true) {
+				
+				// --- Apply length restrictions --------------------
+				if (this.parentDataModel.isRealTime()==true) {
 					this.applyLengthRestriction(seriesData);
 				}
 			}
 		}else{
+			// --- Invalid series index -----------------------------
 			throw new NoSuchSeriesException();
 		}
 	}
@@ -167,7 +173,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 					// There is a pair with this key
 					List seriesData = getSeriesData(i);
 					ValuePair vp2update = (ValuePair) seriesData.get(vpIndex);
-					dataModel.setKeyForPair(newKey, vp2update);
+					parentDataModel.setKeyForPair(newKey, vp2update);
 				}
 				
 				
@@ -186,7 +192,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	@Override
 	public void addSeries(DataSeries series){
 		// --- If adding to a real time chart, apply length restrictions before adding ------------
-		if (dataModel.isRealTime()==true) {
+		if (parentDataModel.isRealTime()==true) {
 			List valuePairs = ((TimeSeries)series).getTimeSeriesValuePairs(); 
 			this.applyLengthRestriction(valuePairs);
 		}
@@ -276,11 +282,16 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	 * @param seriesData the series data
 	 */
 	private void applyLengthRestriction(List seriesData) {
-		int maxStates = dataModel.getLengthRestriction().getMaxNumberOfStates();
-		long maxAge = dataModel.getLengthRestriction().getMaxDuration();
+		System.out.println("[" + this.getClass().getSimpleName() + "] Applying length restriction");
+		int maxStates = this.parentDataModel.getLengthRestriction().getMaxNumberOfStates();
+		long maxAge = this.parentDataModel.getLengthRestriction().getMaxDuration();
 
 		if (maxStates>0) {
+			if (seriesData.size()<maxStates) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Number of states below threshold");
+			}
 			while(seriesData.size()>maxStates) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Too many states, removing the first one");
 				seriesData.remove(0);
 			}
 		}
@@ -292,7 +303,11 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 			
 			TimeSeriesValuePair firstValuePair = (TimeSeriesValuePair) seriesData.get(0);
 			long firstTimeStamp = firstValuePair.getTimestamp().getLongValue();
+			if (firstTimeStamp>oldestTimestampToKeep) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] No states older than maxAge");
+			}
 			while (firstTimeStamp<oldestTimestampToKeep) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] First state too old, removing");  
 				seriesData.remove(0);
 				firstValuePair = (TimeSeriesValuePair) seriesData.get(0);
 				firstTimeStamp = firstValuePair.getTimestamp().getLongValue();
