@@ -34,6 +34,7 @@
 						<plugin id="org.agentgui.lib.jep" />
 						<plugin id="org.agentgui.lib.jung" />
 						<plugin id="org.agentgui.lib.scimark" />
+						<feature id="org.eclipse.rcp" />
 						<feature id="org.eclipse.e4.rcp" />
 						<feature id="org.eclipse.emf.ecore" />
 						<feature id="org.eclipse.emf.common" />

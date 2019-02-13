@@ -596,6 +596,8 @@ public class FeatureEvaluator {
 	 */
 	private Feature getFeatureFromInstallableUnit(IInstallableUnit installableUnit) {
 		
+		if (installableUnit==null) return null;
+		
 		// --- Try to find the feature file info ---------- 
 		Feature feature = null;
 		String iuID = installableUnit.getId();

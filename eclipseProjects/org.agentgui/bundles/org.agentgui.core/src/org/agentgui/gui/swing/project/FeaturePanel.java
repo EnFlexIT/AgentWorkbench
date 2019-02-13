@@ -63,7 +63,8 @@ import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
- * The Class FeaturePanel.
+ * The Class FeaturePanel enables the selection and displays the required features for an agent project.
+ * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class FeaturePanel extends JPanel implements ActionListener {
@@ -318,17 +319,32 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 			if (fsd.isCanceled() == false) {
 				// --- Get the selected IUs from the dialog -------------------
 				List<IInstallableUnit> selectedFeatures = fsd.getSelectedFeatures();
-				for (IInstallableUnit installableUnit : selectedFeatures) {
+				for (int i = 0; i < selectedFeatures.size(); i++) {
+					IInstallableUnit installableUnit = selectedFeatures.get(i);
 					if (FeatureEvaluator.getInstance().isFeatureOfBaseInstallation(installableUnit)==false) {
 						// --- Create FeatureInfo -----------------------------
-						FeatureInfo featureInfo = FeatureInfo.createFeatureInfoFromIU(installableUnit);
-						if (this.getFeatureVector().contains(featureInfo)==false) {
-							this.addTableRow(featureInfo);
-							this.getFeatureVector().add(featureInfo);
-							this.addedFeatureInfo(featureInfo);
+						FeatureInfo featureInfoOld = this.getFeatureInfoFromID(installableUnit.getId());
+						boolean isInFeatureVector = (featureInfoOld!=null); 
+
+						FeatureInfo featureInfoNew = FeatureInfo.createFeatureInfoFromIU(installableUnit);
+						boolean isInFeatureVectorWithSameVersion = this.getFeatureVector().contains(featureInfoNew);
+						if (isInFeatureVectorWithSameVersion==false) {
+							if (isInFeatureVector==true) {
+								// --- Update feature info --------------------
+								featureInfoOld.setVersion(featureInfoNew.getVersion());
+								featureInfoOld.setRepositoryName(featureInfoNew.getRepositoryName());
+								featureInfoOld.setRepositoryURI(featureInfoNew.getRepositoryURI());
+								this.updatedFeatureInfo(featureInfoOld);
+								
+							} else {
+								// --- Add the FeatureInfo --------------------
+								this.addTableRow(featureInfoNew);
+								this.getFeatureVector().add(featureInfoNew);
+								this.addedFeatureInfo(featureInfoNew);
+							}
 						}
 					}
-				}
+				} // end for
 			}
 			
 		} else if (ae.getSource()==this.getJButtonEditFeature()) {
@@ -354,7 +370,6 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 						JOptionPane.showMessageDialog(this, uriEx.getLocalizedMessage(), title, JOptionPane.ERROR_MESSAGE);
 						//uriEx.printStackTrace();
 					}
-					
 				}
 			}			
 			
@@ -415,6 +430,21 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 	public void setFeatureVector(Vector<FeatureInfo> featureVector) {
 		this.featureVector = featureVector;
 		this.fillTableModel();
+	}
+	/**
+	 * Returns the FeatureInfo instance that matches the specified ID or <code>null</code>.
+	 *
+	 * @param id the id
+	 * @return the feature info from ID
+	 */
+	private FeatureInfo getFeatureInfoFromID(String id) {
+		for (int i = 0; i < this.getFeatureVector().size(); i++) {
+			FeatureInfo fi = this.getFeatureVector().get(i);
+			if (fi.getId().equals(id)==true) {
+				return fi;
+			}
+		}
+		return null;
 	}
 	
 }

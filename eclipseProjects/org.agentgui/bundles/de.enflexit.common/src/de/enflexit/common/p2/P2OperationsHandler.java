@@ -43,9 +43,9 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
  */
 public class P2OperationsHandler {
 
-	private boolean isDevelopmentMode = true;
-//	private File p2Directory = null;
-	private File p2Directory = new File("D:/AgentWorkbench/p2/");
+	private boolean isDevelopmentMode = false;
+	private File p2Directory = null;
+//	private File p2Directory = new File("D:/AgentWorkbench/p2/");
 
 	private ProvisioningSession provisioningSession;
 	private IProvisioningAgent provisioningAgent;

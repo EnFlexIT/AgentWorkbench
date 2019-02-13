@@ -9,8 +9,6 @@
     <updateDateLastChecked>0</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures/>
-    <projectResources/>
-    <reCreateProjectManifest>true</reCreateProjectManifest>
     <plugins>
         <className>agentproject.PlugInExample</className>
         <className>de.enflexit.awb.webserver.AwbWebServerPlugin</className>
