@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Agent.GUI PlugIn Example</projectName>
-    <projectStartTab>1|8</projectStartTab>
+    <projectStartTab>1|7</projectStartTab>
     <version>1.0.0.20180919-0900</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
