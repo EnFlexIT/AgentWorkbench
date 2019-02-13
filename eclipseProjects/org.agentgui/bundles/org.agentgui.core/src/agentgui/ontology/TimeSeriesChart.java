@@ -1,11 +1,13 @@
 package agentgui.ontology;
 
+import jade.content.*;
 import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: TimeSeriesChart
 * @author ontology bean generator
-* @version 2013/10/8, 13:06:41
+* @version 2019/02/12, 14:08:01
 */
 public class TimeSeriesChart extends Chart{ 
 
@@ -31,6 +33,29 @@ public boolean isEmpty() {
  }
 }
    /**
+   * Indicates if this chart displays real time data, i.e. length restrictions are applied
+* Protege name: realTime
+   */
+   private boolean realTime;
+   public void setRealTime(boolean value) { 
+    this.realTime=value;
+   }
+   public boolean getRealTime() {
+     return this.realTime;
+   }
+
+   /**
+* Protege name: timeSeriesVisualisationSettings
+   */
+   private TimeSeriesChartSettings timeSeriesVisualisationSettings;
+   public void setTimeSeriesVisualisationSettings(TimeSeriesChartSettings value) { 
+    this.timeSeriesVisualisationSettings=value;
+   }
+   public TimeSeriesChartSettings getTimeSeriesVisualisationSettings() {
+     return this.timeSeriesVisualisationSettings;
+   }
+
+   /**
    * The data to be displayed by the chart
 * Protege name: timeSeriesChartData
    */
@@ -51,16 +76,5 @@ public boolean isEmpty() {
    public Iterator getAllTimeSeriesChartData() {return timeSeriesChartData.iterator(); }
    public List getTimeSeriesChartData() {return timeSeriesChartData; }
    public void setTimeSeriesChartData(List l) {timeSeriesChartData = l; }
-
-   /**
-* Protege name: timeSeriesVisualisationSettings
-   */
-   private TimeSeriesChartSettings timeSeriesVisualisationSettings;
-   public void setTimeSeriesVisualisationSettings(TimeSeriesChartSettings value) { 
-    this.timeSeriesVisualisationSettings=value;
-   }
-   public TimeSeriesChartSettings getTimeSeriesVisualisationSettings() {
-     return this.timeSeriesVisualisationSettings;
-   }
 
 }

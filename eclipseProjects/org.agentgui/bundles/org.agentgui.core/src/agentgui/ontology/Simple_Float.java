@@ -2,11 +2,13 @@ package agentgui.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: Simple_Float
 * @author ontology bean generator
-* @version 2013/10/8, 13:06:41
+* @version 2019/02/12, 14:08:01
 */
 public class Simple_Float implements Concept {
 
