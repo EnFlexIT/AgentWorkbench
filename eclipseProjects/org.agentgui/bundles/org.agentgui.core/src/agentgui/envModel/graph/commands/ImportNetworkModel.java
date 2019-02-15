@@ -31,6 +31,7 @@ package agentgui.envModel.graph.commands;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
@@ -136,30 +137,44 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	 */
 	private void selectFile() {
 		
-		// ------------------------------------------------------
-		// --- Button Import graph from file --------------------
+		// ----------------------------------------------------------
+		// --- Button Import graph from file -----------------------
 		JFileChooser graphFC = new JFileChooser();
 		graphFC.removeChoosableFileFilter(graphFC.getAcceptAllFileFilter());
-		// --- Add defined FileFilters --------------------------
-		for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
+		
+		// --- Add defined FileFilters ------------------------------
+		for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
+			NetworkModelFileImporter importer = this.graphController.getImportAdapter().get(i);
 			graphFC.addChoosableFileFilter(importer.getFileFilter());
 		}
-		graphFC.setFileFilter(graphFC.getChoosableFileFilters()[0]);
-		graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 		
-		// --- Show FileChooser ---------------------------------
-		if(graphFC.showOpenDialog(Application.getMainWindow())==JFileChooser.APPROVE_OPTION){
-			Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
-			File selectedFile = graphFC.getSelectedFile();
-			FileFilter selectedFileFilter = graphFC.getFileFilter();
-			for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
-				if (selectedFileFilter==importer.getFileFilter()) {
-					this.networkModelFileSelected = selectedFile;
-					this.networkModelFileImporter = importer;
-					break;
-				}
+		// --- Check for file filter --------------------------------
+		if (graphFC.getChoosableFileFilters().length==0) {
+			// --- Show message that no importer was defined --------
+			String title =  Language.translate("Keine Import-Module vorhanden!");
+			String message =  Language.translate("Derzeit sind keine Module für den Import von Netzwerkmodellen definiert.");
+			JOptionPane.showMessageDialog(this.graphController.getGraphEnvironmentControllerGUI(), message, title, JOptionPane.ERROR_MESSAGE);
+			
+		} else {
+			// --- Select file -------------------------------------- 
+			graphFC.setFileFilter(graphFC.getChoosableFileFilters()[0]);
+			graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
+			
+			// --- Show FileChooser ---------------------------------
+			if(graphFC.showOpenDialog(Application.getMainWindow())==JFileChooser.APPROVE_OPTION){
+				Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
+				File selectedFile = graphFC.getSelectedFile();
+				FileFilter selectedFileFilter = graphFC.getFileFilter();
+				for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
+					if (selectedFileFilter==importer.getFileFilter()) {
+						this.networkModelFileSelected = selectedFile;
+						this.networkModelFileImporter = importer;
+						break;
+					}
+				}	
 			}	
 		}
+		
 		
 	}
 

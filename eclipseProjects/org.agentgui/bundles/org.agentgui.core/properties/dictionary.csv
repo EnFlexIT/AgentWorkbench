@@ -166,6 +166,7 @@ de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The por
 de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
 de;Der gewählte Bezeichner für das Projektverzeichnis enthält<br>unzulässige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benötigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulässig (verwenden Sie <br>stattdessen _ 'Unterstrich').;;;;
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
+de;Derzeit sind keine Module für den Import von Netzwerkmodellen definiert.;Currently, no modules for importing network models are defined.;;;
 de;Details zum Dateiexport;Details of file export;;;
 de;Deutsch;German
 de;Dialog schließen;Close Dialog;;;
@@ -345,6 +346,7 @@ de;Kein SVG zugewiesen;No SVG assigned
 de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;;;
 de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that already host a remote-container;;;
 de;Keine Graph-Datei definiert!;No Graph file defined!
+de;Keine Import-Module vorhanden!;No import modules available!;;;
 de;Keine Installationspakete gefunden!;No installation packages found!;;;
 de;Keine Klasse definiert;No class defined
 de;Keine SVG-Datei definiert!;No SVG file defined!
