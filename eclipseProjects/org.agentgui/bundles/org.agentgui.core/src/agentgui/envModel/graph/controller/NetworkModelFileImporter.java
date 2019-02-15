@@ -122,7 +122,7 @@ public abstract class NetworkModelFileImporter {
 			        }
 			        String path = file.getAbsolutePath();
 			        if (path != null) {
-			        	if (path.endsWith(fileTypeExtension)) {
+			        	if (path.endsWith(fileTypeExtension) || path.endsWith(fileTypeExtension.toLowerCase()) || path.endsWith(fileTypeExtension.toUpperCase())) {
 			        		return true;
 			            } else {
 			                return false;
