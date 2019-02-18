@@ -247,6 +247,7 @@ public class CustomToolbarComponentDescription implements Serializable {
 	public boolean equals(Object compareObject) {
 
 		if (compareObject==null) return false;
+		if (compareObject==this) return true;
 		if (!(compareObject instanceof CustomToolbarComponentDescription)) return false;
 		
 		// --- Compare the objects ------------------------
@@ -255,7 +256,7 @@ public class CustomToolbarComponentDescription implements Serializable {
 		if (compObject.getToolBarType()!=this.getToolBarType()) return false;
 		if (compObject.getToolBarSurrounding()!=this.getToolBarSurrounding()) return false;
 		if (this.isEqualString(compObject.getCustomComponentClass().getName(), this.getCustomComponentClass().getName())==false) return false;
-		if (compObject.getIndexPosition()!=this.getIndexPosition()) return false;
+		if (this.isEqualInteger(compObject.getIndexPosition(), this.getIndexPosition())==false) return false;
 		if (compObject.isAddSeparatorFirst()!=this.isAddSeparatorFirst()) return false;
 		
 		return true;
@@ -280,5 +281,25 @@ public class CustomToolbarComponentDescription implements Serializable {
 		}
 		return isEqual;
 	}
-	
+
+	/**
+	 * Checks if is equal integer.
+	 *
+	 * @param integer1 the integer 1
+	 * @param integer2 the integer 2
+	 * @return true, if is equal integer
+	 */
+	private boolean isEqualInteger(Integer integer1, Integer integer2) {
+		boolean isEqual = true;
+		if (integer1==null & integer2==null) {
+			isEqual = true;
+		} else if (integer1==null & integer2!=null) {
+			isEqual = false;
+		} else if (integer1!=null & integer2==null) {
+			isEqual = false;
+		} else {
+			isEqual = integer1.equals(integer2);
+		}
+		return isEqual;
+	}
 }
