@@ -249,23 +249,16 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 */
 	public void setDataModelNotification(final DataModelNotification dataModelNotification) {
 		
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-
-				Vector<String> internalFramesTitles = new Vector<String>(getHashMapEditorFrames().keySet());
-				for (String internalFrameTitles : internalFramesTitles) {
-					JInternalFrame internalFrame = getHashMapEditorFrames().get(internalFrameTitles);
-					if (internalFrame instanceof BasicGraphGuiProperties) {
-						// --- Put notification into the property dialog ---- 
-						BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
-						if (basicProperties.setDataModelNotification(dataModelNotification)==true) return; // --- Done ! ---
-					}
-				}			
-			
-//			}
-//		});
-		
+		Vector<String> internalFramesTitles = new Vector<String>(getHashMapEditorFrames().keySet());
+		for (int i = 0; i < internalFramesTitles.size(); i++) {
+			String internalFrameTitles = internalFramesTitles.get(i);
+			JInternalFrame internalFrame = getHashMapEditorFrames().get(internalFrameTitles);
+			if (internalFrame instanceof BasicGraphGuiProperties) {
+				// --- Put notification into the property dialog ---- 
+				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
+				if (basicProperties.setDataModelNotification(dataModelNotification)==true) return; // --- Done ! ---
+			}
+		}			
 	}
 	
 	/**
