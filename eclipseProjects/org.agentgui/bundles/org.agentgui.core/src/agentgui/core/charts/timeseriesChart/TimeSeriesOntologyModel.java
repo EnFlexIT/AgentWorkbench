@@ -30,13 +30,13 @@ package agentgui.core.charts.timeseriesChart;
 
 import jade.util.leap.List;
 import agentgui.core.charts.OntologyModel;
+import agentgui.core.application.Application;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
-import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
 
 /**
@@ -46,6 +46,8 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	
 	private TimeSeriesDataModel parentDataModel;
 	private TimeSeriesChart timeSeriesChart;
+	
+	private TimeSeriesChartRealTimeWrapper timeSeriesChartRealTimeWrapper;
 	
 	/**
 	 * Instantiates a new time series ontology model.
@@ -149,7 +151,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 				
 				// --- Apply length restrictions --------------------
 				if (this.parentDataModel.isRealTime()==true) {
-					this.applyLengthRestriction(seriesData);
+					this.getTimeSeriesChartRealTimeWrapper().applyLengthRestriction(seriesIndex);
 				}
 			}
 		}else{
@@ -191,12 +193,11 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	 */
 	@Override
 	public void addSeries(DataSeries series){
-		// --- If adding to a real time chart, apply length restrictions before adding ------------
-		if (parentDataModel.isRealTime()==true) {
-			List valuePairs = ((TimeSeries)series).getTimeSeriesValuePairs(); 
-			this.applyLengthRestriction(valuePairs);
-		}
 		timeSeriesChart.getTimeSeriesChartData().add(series);
+		// --- If adding to a real time chart, apply length restrictions ------
+		if (parentDataModel.isRealTime()==true) {
+			this.getTimeSeriesChartRealTimeWrapper().applyLengthRestriction((TimeSeries) series);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -278,41 +279,16 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 
 	
 	/**
-	 * Apply length restriction.
-	 * @param seriesData the series data
+	 * Gets the time series chart real time wrapper.
+	 * @return the time series chart real time wrapper
 	 */
-	private void applyLengthRestriction(List seriesData) {
-		System.out.println("[" + this.getClass().getSimpleName() + "] Applying length restriction");
-		int maxStates = this.parentDataModel.getLengthRestriction().getMaxNumberOfStates();
-		long maxAge = this.parentDataModel.getLengthRestriction().getMaxDuration();
-
-		if (maxStates>0) {
-			if (seriesData.size()<maxStates) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Number of states below threshold");
-			}
-			while(seriesData.size()>maxStates) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Too many states, removing the first one");
-				seriesData.remove(0);
-			}
+	public TimeSeriesChartRealTimeWrapper getTimeSeriesChartRealTimeWrapper() {
+		if (timeSeriesChartRealTimeWrapper==null) {
+			timeSeriesChartRealTimeWrapper = new TimeSeriesChartRealTimeWrapper(timeSeriesChart, Application.getGlobalInfo().getTimeSeriesLengthRestriction());
 		}
-		
-		if (maxAge>0) {
-			TimeSeriesValuePair lastValuePair = (TimeSeriesValuePair) seriesData.get(seriesData.size()-1);
-			long lastTimestamp = lastValuePair.getTimestamp().getLongValue();
-			long oldestTimestampToKeep = lastTimestamp-maxAge;
-			
-			TimeSeriesValuePair firstValuePair = (TimeSeriesValuePair) seriesData.get(0);
-			long firstTimeStamp = firstValuePair.getTimestamp().getLongValue();
-			if (firstTimeStamp>oldestTimestampToKeep) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] No states older than maxAge");
-			}
-			while (firstTimeStamp<oldestTimestampToKeep) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] First state too old, removing");  
-				seriesData.remove(0);
-				firstValuePair = (TimeSeriesValuePair) seriesData.get(0);
-				firstTimeStamp = firstValuePair.getTimestamp().getLongValue();
-			}
-		}
+		return timeSeriesChartRealTimeWrapper;
 	}
+	
+	
 	
 }

@@ -413,5 +413,30 @@ public class TimeSeriesDataModel extends DataModel {
 	public String getBaseStringForSeriesLabel() {
 		return DEFAULT_SERIES_LABEL;
 	}
+
+	/**
+	 * Edits the series by adding a value pair.
+	 * @param timeStamp the time stamp
+	 * @param value the value
+	 * @param seriesIndex the series index
+	 * @param editOntology if false, only chart and table model will be modified
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public void addValuePairToSeries(long timeStamp, float value, int seriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		if (seriesIndex<this.getSeriesCount()) {
+			
+			// --- Add to the ontology model if specified -----------
+			if (editOntology==true) {
+				this.getTimeSeriesOntologyModel().addOrUpdateValuePair(seriesIndex, timeStamp, value);
+			}
+			
+			this.getTimeSeriesChartModel().addOrUpdateValuePair(seriesIndex, timeStamp, value);
+			this.getTimeSeriesTableModel().addOrUpdateValuePair(seriesIndex, timeStamp, value);
+			
+		} else {
+			// --- Invalid target series index ----------------------
+			throw new NoSuchSeriesException();
+		}
+	}
 	
 }

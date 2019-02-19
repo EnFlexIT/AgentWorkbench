@@ -40,7 +40,7 @@ public class TimeSeriesLengthRestriction {
 	 * Gets the max duration.
 	 * @return the max duration
 	 */
-	public long getMaxDuration() {
+	public long getMaxAge() {
 		return maxDuration;
 	}
 	

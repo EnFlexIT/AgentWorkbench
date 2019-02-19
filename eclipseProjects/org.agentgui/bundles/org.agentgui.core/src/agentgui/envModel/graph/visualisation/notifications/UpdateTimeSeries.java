@@ -463,18 +463,26 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					// ------------------------------------------------
 					case TimeSeriesChartAddOrExchangeDataRow:
 						
-						for (int c=0; c<this.getValueVector().size(); c++) {
-							// -- Get the new value for the Time Series i -------
-							Float newFloatValue = this.getValueVector().get(c);
-							if (newFloatValue==null) continue;
-							// --- Add new value pair to data model -------------
-							dataModelTimeSeries.getTimeSeriesChartModel().addOrUpdateValuePair(c, this.getTimeStamp(), newFloatValue);
-						}
+//						for (int c=0; c<this.getValueVector().size(); c++) {
+//							// -- Get the new value for the Time Series i -------
+//							Float newFloatValue = this.getValueVector().get(c);
+//							if (newFloatValue==null) continue;
+//							// --- Add new value pair to data model -------------
+//							dataModelTimeSeries.getTimeSeriesChartModel().addOrUpdateValuePair(c, this.getTimeStamp(), newFloatValue);
+//						}
+//						
+//						Vector<Number> newRow = new Vector<>();
+//						newRow.add(this.getTimeStamp());
+//						newRow.addAll(this.getValueVector());
+//						dataModelTimeSeries.getTimeSeriesTableModel().addRow(newRow);
+//						break;
 						
-						Vector<Number> newRow = new Vector<>();
-						newRow.add(this.getTimeStamp());
-						newRow.addAll(this.getValueVector());
-						dataModelTimeSeries.getTimeSeriesTableModel().addRow(newRow);
+						for (int c=0; c<this.getValueVector().size(); c++) {
+							Float newFloatValue = this.getValueVector().get(c);
+							if (newFloatValue!=null) {
+								dataModelTimeSeries.addValuePairToSeries(this.getTimeStamp(), newFloatValue, c, true);
+							}
+						}
 						break;
 						
 					// ------------------------------------------------	
@@ -515,7 +523,8 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 				} // end for
 			
 			} catch (Exception ex) {
-				throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), this.getComponentTypeName(), this.getComponentID(), ex);
+//				throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), this.getComponentTypeName(), this.getComponentID(), ex);
+				ex.printStackTrace();
 			}
 			
 		}//end apply to visualisation
