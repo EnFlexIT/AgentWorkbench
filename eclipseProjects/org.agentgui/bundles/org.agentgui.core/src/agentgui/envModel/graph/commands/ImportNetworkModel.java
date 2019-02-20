@@ -50,14 +50,14 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -409810728677898514L;
 
-	private GraphEnvironmentController graphController = null;
+	private GraphEnvironmentController graphController;
 	
 	private boolean canceled = false;
-	private NetworkModelFileImporter networkModelFileImporter = null;
-	private File networkModelFileSelected = null;
+	private NetworkModelFileImporter networkModelFileImporter;
+	private File networkModelFileSelected;
 	
-	private NetworkModel newNetworkModel = null;
-	private NetworkModel oldNetworkModel = null; 
+	private NetworkModel newNetworkModel;
+	private NetworkModel oldNetworkModel; 
 
 	
 	/**
@@ -79,7 +79,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	
 	private void doEdit() {
 		
-		if (this.networkModelFileImporter!=null && this.networkModelFileSelected!=null) {
+		if (this.isCanceled()==false && this.networkModelFileImporter!=null && this.networkModelFileSelected!=null) {
 			
 			this.graphController.getAgents2Start().clear();
 			this.graphController.setDisplayEnvironmentModel(null);
@@ -161,18 +161,23 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 			
 			// --- Show FileChooser ---------------------------------
-			if(graphFC.showOpenDialog(Application.getMainWindow())==JFileChooser.APPROVE_OPTION){
+			int dialogAnswer = graphFC.showOpenDialog(Application.getMainWindow()); 
+			if (dialogAnswer==JFileChooser.APPROVE_OPTION) {
 				Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File selectedFile = graphFC.getSelectedFile();
 				FileFilter selectedFileFilter = graphFC.getFileFilter();
-				for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
+				for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
+					NetworkModelFileImporter importer = this.graphController.getImportAdapter().get(i);
 					if (selectedFileFilter==importer.getFileFilter()) {
 						this.networkModelFileSelected = selectedFile;
 						this.networkModelFileImporter = importer;
 						break;
 					}
-				}	
-			}	
+				}
+				
+			} else {
+				this.setCanceled(true);
+			}
 		}
 		
 		

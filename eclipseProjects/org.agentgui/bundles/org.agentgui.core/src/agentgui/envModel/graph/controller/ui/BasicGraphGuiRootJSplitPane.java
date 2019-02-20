@@ -42,11 +42,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -84,8 +84,8 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
 /**
- * The GUI for a GraphEnvironmentController. This contains a pane showing the NetworkComponents table and the BasicGraphGUI. The main class which associates with the components table, the environment
- * model and the Basic Graph GUI.
+ * The GUI for a GraphEnvironmentController. This contains a pane showing the NetworkComponents table and the BasicGraphGUI. 
+ * The main class which associates with the components table, the environment model and the Basic Graph GUI.
  * 
  * @see GraphEnvironmentController
  * @see BasicGraphGui
@@ -180,7 +180,17 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		}
 		return jSplitPaneRoot;
     }
-
+    /**
+     * Gets the BasicGraphGui, which is the visualization component for the graph.
+     * @return the basic graph GUI that contains the graph visualization component
+     */
+    public BasicGraphGui getBasicGraphGui() {
+		if (graphGUI == null) {
+		    graphGUI = new BasicGraphGui(this.getGraphController());
+		}
+		return graphGUI;
+    }
+    
     /**
      * This method initializes pnlControlls
      * @return javax.swing.JPanel
@@ -242,202 +252,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     }
     
     /**
-     * ReLoads the network model.
-     */
-    private void reLoad() {
-    	
-    	// --- Refresh the list of components -------------
-    	final BasicGraphGuiRootJSplitPane thisInstance = this;
-    	SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				componentsTableModel.removeTableModelListener(thisInstance);
-				componentsTableModel = null;
-				componentsTableModel = getDefaultTableModel4ComponentsNew();
-		    	componentsTableModel.addTableModelListener(thisInstance);
-		    	getJTableComponents().setModel(componentsTableModel);
-		    	setLayout4JTableComponents();
-				// --- Clear search field -----------------
-		    	getJTextFieldSearch().setText(null);
-				// --- Refresh number of components -------
-		    	setNumberOfComponents();
-			}
-		});
-    	
-    }
-    
-    /**
-     * This method builds the tblComponents' contents based on the controllers GridModel
-     * @return The grid components' IDs and class names
-     */
-    private Vector<Vector<String>> getComponentTableContents() {
-
-		Vector<Vector<String>> componentVector = new Vector<Vector<String>>();
-		if (this.getGraphController().getNetworkModel()!=null && this.getGraphController().getNetworkModelAdapter()!=null ) {
-	
-		    // Get the components from the controllers GridModel
-		    Iterator<NetworkComponent> components = this.getGraphController().getNetworkModelAdapter().getNetworkComponents().values().iterator();
-		    // Add component ID and class name to the data vector
-		    while (components.hasNext()) {
-				NetworkComponent comp = components.next();
-		
-				Vector<String> compData = new Vector<String>();
-				compData.add(comp.getId());
-				compData.add(comp.getType());
-				compData.add("Edit"); // For the edit properties button
-				componentVector.add(compData);
-		    }
-		}
-		return componentVector;
-    }
-    
-    /**
-     * Returns the DefaultTableModel for the network components.
-     * @return the DefaultTableModel for the network components
-     */
-    private DefaultTableModel getDefaultTableModel4Components() {
-    	if (componentsTableModel==null) {
-    		componentsTableModel = this.getDefaultTableModel4ComponentsNew();
-    	}
-    	return componentsTableModel;
-    }
-    
-    /**
-     * Returns a new DefaultTableModel for the NetworkComponents.
-     * @return a new DefaultTableModel for the NetworkComponents
-     */
-    private DefaultTableModel getDefaultTableModel4ComponentsNew() {
-    	
-		// --- Set column titles --------------------------------
-	    Vector<String> titles = new Vector<String>();
-	    titles.add("ID");
-	    titles.add(Language.translate("Typ"));
-	    titles.add(Language.translate("Edit", Language.EN));
-
-	    // --- Set DataVector -----------------------------------
-	    final Vector<Vector<String>> data = getComponentTableContents();
-	    DefaultTableModel tableModel = new DefaultTableModel(data, titles) {
-			private static final long serialVersionUID = 1636744550817904118L;
-			@Override
-			public boolean isCellEditable(int row, int col) {
-			    if (col==1) {
-			    	return false;
-			    } else {
-			    	if (getGraphController().getProject()!=null) {
-			    		// --- During Simulation Setup ----------
-			    		return true;	
-			    	} else {
-			    		// --- During simulation runtime --------
-			    		if (col==0) {
-			    			return false;
-			    		} else {
-			    			return true;
-			    		}
-			    	}
-			    }
-			}
-	    };
-    	return tableModel;
-    }
-    
-    /**
-     * Given a network component, selects the corresponding row in the components display table
-     * @param networkComponent
-     */
-    private void networkComponentSelect(NetworkComponent networkComponent) {
-		
-    	if (networkComponent==null) return;
-    	if (networkComponent.getId()==null) return;
-    	
-    	int rowCount = this.getDefaultTableModel4Components().getRowCount();
-		int row = -1;
-		// Searching all the rows in the table
-		for (row = 0; row < rowCount; row++) {
-		    String compId = (String) getJTableComponents().getModel().getValueAt(row, 0);
-		    if (compId!=null) {
-			    // Checking for the matching component Id
-			    if (compId.equals(networkComponent.getId())) {
-					// Converting from model coordinates to view coordinates
-					int viewRowIndex = getJTableComponents().convertRowIndexToView(row);
-					int viewColumnIndex = getJTableComponents().convertColumnIndexToView(0);
-					boolean toggle = false;
-					boolean extend = false;
-					// Selecting the cell in the table
-					this.getJTableComponents().changeSelection(viewRowIndex, viewColumnIndex, toggle, extend);
-					break;
-			    }
-		    }
-		}
-    }
-    
-    /**
-     * Adds a new network component to the list of components in the table.
-     * @param networkComponent the network component
-     */
-    private void networkComponentAdd(NetworkComponent networkComponent) {
-		Vector<String> compData = new Vector<String>();
-		compData.add(networkComponent.getId());
-		compData.add(networkComponent.getType());
-		compData.add("Edit"); // For the edit properties button
-		this.getDefaultTableModel4Components().addRow(compData);
-		this.setNumberOfComponents();
-		
-    }
-    /**
-     * Adds a new network component to the list of components in the table.
-     * @param networkComponent the network component
-     */
-    private void networkComponentAdd(HashSet<NetworkComponent> networkComponents) {
-    	for (NetworkComponent networkComponent : networkComponents) {
-    		Vector<String> compData = new Vector<String>();
-    		compData.add(networkComponent.getId());
-    		compData.add(networkComponent.getType());
-    		compData.add("Edit"); // For the edit properties button
-    		this.getDefaultTableModel4Components().addRow(compData);	
-    	}
-		this.setNumberOfComponents();
-    }
-    
-    /**
-     * Removes a set of NetworkComponent's from the list of components in the table.
-     * @param networkComponents the network components
-     */
-    private void networkComponentRemove(HashSet<NetworkComponent> networkComponents) {
-    
-    	// --- Get a list of all NetworkComponent Id's ----
-    	HashSet<String> networkComponentIDs = new HashSet<String>();
-    	for (NetworkComponent netComponent : networkComponents) {
-    		networkComponentIDs.add(netComponent.getId());
-    	}
-    	
-    	for (int row = 0; row<this.getDefaultTableModel4Components().getRowCount(); row++) {
-    		String entry = (String) this.getDefaultTableModel4Components().getValueAt(row, 0);
-    		if (networkComponentIDs.contains(entry)) {
-    			this.getDefaultTableModel4Components().removeRow(row);
-    			row--;
-    		}
-		}
-    	this.setNumberOfComponents();
-    	
-    }
-    
-    /**
-     * Removes a network component from the list of components in the table.
-     * @param networkComponent the network component
-     */
-    private void networkComponentRemove(NetworkComponent networkComponent) {
-    	int rowCount = this.getDefaultTableModel4Components().getRowCount();
-    	for (int row = 0; row < rowCount; row++) {
-    		String entry = (String) this.getDefaultTableModel4Components().getValueAt(row, 0);
-    		if (entry.equals(networkComponent.getId())) {
-    			this.getDefaultTableModel4Components().removeRow(row);
-    			this.setNumberOfComponents();
-    			return;
-    		}
-		}
-    }
-    
-    /**
      * This method initializes network components table tblComponents and the TabelModel
      * @return javax.swing.JTable
      */
@@ -460,127 +274,121 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    	}
 			});
 		    
-		    this.setLayout4JTableComponents();
+			// --- Define the column widths -------------------
+			TableColumnModel colModel = jTableComponents.getColumnModel();
+			colModel.getColumn(0).setPreferredWidth(40);
+			colModel.getColumn(0).setCellRenderer(new BasicGraphGuiTableCellRenderEditor());
+			colModel.getColumn(0).setCellEditor(new BasicGraphGuiTableCellRenderEditor());			
+			
+			colModel.getColumn(1).setPreferredWidth(40);
+			colModel.getColumn(1).setCellRenderer(new BasicGraphGuiTableCellRenderEditor());
+			
+			colModel.getColumn(2).setWidth(50);
+			colModel.getColumn(2).setMinWidth(50);
+			colModel.getColumn(2).setMaxWidth(60);
+			colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
+			colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(this.getGraphController(), jTableComponents));			
 		    
+			// --- Set Sorter for the table -------------------
+			TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components());
+		   
+		    // --- Define a comparator for the first row ------
+			tblSorter.setComparator(0, new Comparator<String>() {
+				@Override
+				public int compare(String netCompId1, String netCompId2) {
+					Integer ncID1 = null;
+					Integer ncID2 = null;
+					try {
+						ncID1 = Integer.parseInt(netCompId1.replaceAll("\\D+",""));
+						ncID2 = Integer.parseInt(netCompId2.replaceAll("\\D+",""));
+					} catch (NumberFormatException nfe) {
+					}
+
+					if (ncID1!=null & ncID2!=null) {
+						return ncID1.compareTo(ncID2);
+					}
+					return netCompId1.compareTo(netCompId2);
+				}
+			});
+			jTableComponents.setRowSorter(tblSorter);
+			
+			// --- Define the first sort order ----------------
+			List<SortKey> sortKeys = new ArrayList<SortKey>();
+			for (int i = 0; i < jTableComponents.getColumnCount(); i++) {
+			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+			}
+			tblSorter.setSortKeys(sortKeys);
+			tblSorter.sort();
+			
 		}
 		return jTableComponents;
     }
-    
     /**
-     * Sets the layout for the JTable of the NetworkComponents.
+     * Returns the DefaultTableModel for the network components.
+     * @return the DefaultTableModel for the network components
      */
-    private void setLayout4JTableComponents() {
-    	
-    	// --- Set Sorter for the table -------------------
-		TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components());
-	    this.getJTableComponents().setRowSorter(tblSorter);		    
-	   
-	    // --- Define a comparator for the first row ------
-		tblSorter.setComparator(0, new Comparator<String>() {
-			@Override
-			public int compare(String netCompId1, String netCompId2) {
-				Integer ncID1 = null;
-				Integer ncID2 = null;
-				try {
-					ncID1 = Integer.parseInt(netCompId1.replaceAll("\\D+",""));
-					ncID2 = Integer.parseInt(netCompId2.replaceAll("\\D+",""));
-				} catch (NumberFormatException nfe) {
-				}
+    private DefaultTableModel getDefaultTableModel4Components() {
+    	if (componentsTableModel==null) {
+    		
+    	    Vector<String> titles = new Vector<String>();
+    	    titles.add("ID");
+    	    titles.add(Language.translate("Typ"));
+    	    titles.add(Language.translate("Edit", Language.EN));
 
-				if (ncID1!=null & ncID2!=null) {
-					return ncID1.compareTo(ncID2);
-				}
-				return netCompId1.compareTo(netCompId2);
-			}
-		});
-		 // --- Define the first sort order ----------------
-		List<SortKey> sortKeys = new ArrayList<SortKey>();
-		for (int i = 0; i < this.getJTableComponents().getColumnCount(); i++) {
-		    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
-		}
-		tblSorter.setSortKeys(sortKeys);
-		tblSorter.sort();
-		
-		// --- Define the column widths -------------------
-		TableColumnModel colModel = this.getJTableComponents().getColumnModel();
-		colModel.getColumn(0).setPreferredWidth(40);
-		colModel.getColumn(0).setCellRenderer(new BasicGraphGuiTableCellRenderEditor());
-		colModel.getColumn(0).setCellEditor(new BasicGraphGuiTableCellRenderEditor());			
-		
-		colModel.getColumn(1).setPreferredWidth(40);
-		colModel.getColumn(1).setCellRenderer(new BasicGraphGuiTableCellRenderEditor());
-		
-		colModel.getColumn(2).setWidth(50);
-		colModel.getColumn(2).setMinWidth(50);
-		colModel.getColumn(2).setMaxWidth(60);
-		colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
-		colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(this.getGraphController(), this.jTableComponents));			
-		
-    }
-    
-    
-    /**
-     * Extract the numerical value from a String.
-     * @param expression the expression
-     * @return the integer value
-     */
-    @SuppressWarnings("unused")
-	private Long extractNumericalValue(String expression) {
-    	String  numericString = "";
-    	Long 	numeric = null;
-    	for (int i = 0; i < expression.length(); i++) {
-    		String letter = Character.toString(expression.charAt(i));
-    		if (letter.matches("[0-9]")) {
-    			numericString += letter;	
-    		}
-		}
-    	if (numericString.equals("")==false) {
-    		try {
-    			numeric = Long.parseLong(numericString);	
-    			
-			} catch (Exception ex) {
-				numeric = new Long(-1);
-			}
+    	    // --- Set DataVector -----------------------------------
+    	    componentsTableModel = new DefaultTableModel(null, titles) {
+    			private static final long serialVersionUID = 1636744550817904118L;
+    			@Override
+    			public boolean isCellEditable(int row, int col) {
+    			    if (col==1) {
+    			    	return false;
+    			    } else {
+    			    	if (getGraphController().getProject()!=null) {
+    			    		// --- During Simulation Setup ----------
+    			    		return true;	
+    			    	} else {
+    			    		// --- During simulation runtime --------
+    			    		if (col==0) {
+    			    			return false;
+    			    		} else {
+    			    			return true;
+    			    		}
+    			    	}
+    			    }
+    			}
+    	    };
+    		
     	}
-    	return numeric;
+    	return componentsTableModel;
     }
     /**
-     * Row filter for updating table view based on the expression in the text box Used for searching components
+     * This method builds the tblComponents' contents based on the controllers GridModel
+     * @return The grid components' IDs and class names
      */
-    @SuppressWarnings("unchecked")
-	public void tblFilter() {
-		
-    	RowFilter<DefaultTableModel, Object> rf = null;
-		// If current expression doesn't parse, don't update.
-		try {
-		    rf = RowFilter.regexFilter("(?i).*(" + getJTextFieldSearch().getText() + ").*", 0, 1);
-		} catch (java.util.regex.PatternSyntaxException e) {
-		    return;
+    private void fillTableModel() {
+		if (this.getGraphController().getNetworkModel()!=null && this.getGraphController().getNetworkModelAdapter()!=null ) {
+			// --- Clear --------------
+			this.clearTableModel();
+			// --- Fill --------------
+			networkComponentAdd(new ArrayList<>(this.getGraphController().getNetworkModelAdapter().getNetworkComponents().values()));
 		}
-		((TableRowSorter<DefaultTableModel>)this.getJTableComponents().getRowSorter()).setRowFilter(rf);
-		this.setNumberOfComponents();
-
     }
-
     /**
-     * Show number of components.
+     * Clears the table model.
      */
-    private void setNumberOfComponents() {
-		// --- Set the number of rows displayed -----------
-		String text = this.jLabelTable.getText();
-		if (text.indexOf("(") > -1) {
-		    text = text.substring(0, text.indexOf("(")).trim();
-		}
-		text = text + " (" + jTableComponents.getRowCount() + ")";
-		this.jLabelTable.setText(text);
+    private void clearTableModel() {
+    	quiteTabelModelListener = true;
+    	this.getDefaultTableModel4Components().getDataVector().removeAllElements();
+    	this.getDefaultTableModel4Components().fireTableDataChanged();
+    	quiteTabelModelListener = false;
     }
-
+    
     /* (non-Javadoc)
      * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
      */
     @Override
     public void valueChanged(ListSelectionEvent le) {
-		if (getJTableComponents().getSelectedRowCount() > 0) {
+		if (this.getJTableComponents().getSelectedRowCount() > 0) {
 		    // Converting from view coordinates to model coordinates
 		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
 		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
@@ -588,7 +396,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(this.currNetworkComponent);	
 		}
     }
-    
     /*
      * (non-Javadoc)
      * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event. TableModelEvent)
@@ -606,7 +413,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 	
 		    String oldCompID = this.currNetworkComponent.getId();
 			String newCompID = (String) model.getValueAt(row, column);
-		    if (!oldCompID.equals(newCompID)) {
+		    if (oldCompID.equals(newCompID)==false) {
 	
 		    	String message = null;
 		    	String title = "Warning";
@@ -646,6 +453,124 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     }
    
     /**
+     * Given a network component, selects the corresponding row in the components display table
+     * @param networkComponent
+     */
+    private void networkComponentSelect(NetworkComponent networkComponent) {
+		
+    	if (networkComponent==null) return;
+    	if (networkComponent.getId()==null) return;
+    	
+    	int rowCount = this.getDefaultTableModel4Components().getRowCount();
+		int row = -1;
+		// Searching all the rows in the table
+		for (row = 0; row < rowCount; row++) {
+		    String compId = (String) getJTableComponents().getModel().getValueAt(row, 0);
+		    if (compId!=null) {
+			    // Checking for the matching component Id
+			    if (compId.equals(networkComponent.getId())) {
+					// Converting from model coordinates to view coordinates
+					int viewRowIndex = getJTableComponents().convertRowIndexToView(row);
+					int viewColumnIndex = getJTableComponents().convertColumnIndexToView(0);
+					boolean toggle = false;
+					boolean extend = false;
+					// Selecting the cell in the table
+					this.getJTableComponents().changeSelection(viewRowIndex, viewColumnIndex, toggle, extend);
+					break;
+			    }
+		    }
+		}
+    }
+    
+    /**
+     * Adds a new network component to the list of components in the table.
+     * @param networkComponent the network component
+     */
+    private void networkComponentAdd(NetworkComponent networkComponent) {
+    	this.networkComponentAdd(networkComponent, true);
+    }
+    /**
+     * Adds a new network component to the list of components in the table.
+     *
+     * @param networkComponent the network component
+     * @param updateNumberOfComponents the update number of components
+     */
+    private void networkComponentAdd(NetworkComponent networkComponent, boolean updateNumberOfComponents) {
+		
+    	Vector<String> compData = new Vector<String>();
+		compData.add(networkComponent.getId());
+		compData.add(networkComponent.getType());
+		compData.add("Edit"); // For the edit properties button
+		this.getDefaultTableModel4Components().addRow(compData);
+		if (updateNumberOfComponents==true) {
+			this.setNumberOfComponents();
+		}
+    }
+    /**
+     * Adds a new network component to the list of components in the table.
+     * @param netCompList the network component list
+     */
+    private void networkComponentAdd(List<NetworkComponent> netCompList) {
+    	this.quiteTabelModelListener = true;
+    	for (int i = 0; i < netCompList.size(); i++) {
+			this.networkComponentAdd(netCompList.get(i), false);
+		}
+    	this.quiteTabelModelListener = false;
+    	this.setNumberOfComponents();
+    }
+    
+    
+    /**
+     * Removes a network component from the list of components in the table.
+     * @param networkComponent the network component
+     */
+    private void networkComponentRemove(NetworkComponent networkComponent) {
+    	this.networkComponentRemove(networkComponent, true);
+    }
+    /**
+     * Removes a network component from the list of components in the table.
+     *
+     * @param networkComponent the network component
+     * @param updateNumberOfComponents the update number of components
+     */
+    private void networkComponentRemove(NetworkComponent networkComponent, boolean updateNumberOfComponents) {
+    	int rowCount = this.getDefaultTableModel4Components().getRowCount();
+    	for (int row = 0; row < rowCount; row++) {
+    		String entry = (String) this.getDefaultTableModel4Components().getValueAt(row, 0);
+    		if (entry.equals(networkComponent.getId())) {
+    			this.getDefaultTableModel4Components().removeRow(row);
+    			if (updateNumberOfComponents==true) {
+    				this.setNumberOfComponents();
+    			}
+    			return;
+    		}
+		}
+    }
+    /**
+     * Removes a set of NetworkComponent's from the list of components in the table.
+     * @param networkComponents the network components
+     */
+    private void networkComponentRemove(List<NetworkComponent> netCompList) {
+    
+    	// --- Get a list of all NetworkComponent Id's ----
+    	HashSet<String> networkComponentIDs = new HashSet<String>();
+    	for (int i = 0; i < netCompList.size(); i++) {
+    		networkComponentIDs.add(netCompList.get(i).getId());
+		}
+    	
+    	for (int row = 0; row<this.getDefaultTableModel4Components().getRowCount(); row++) {
+    		String entry = (String) this.getDefaultTableModel4Components().getValueAt(row, 0);
+    		if (networkComponentIDs.contains(entry)) {
+    			this.getDefaultTableModel4Components().removeRow(row);
+    			row--;
+    		}
+		}
+    	this.setNumberOfComponents();
+    	
+    }
+    
+    
+    /**
      * The action, when a Network component was renamed.
      * @param renamedNetworkComponent the renamed network component
      */
@@ -679,23 +604,11 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			    }
 		    }
 		}
-    	
     }
     
-    /**
-     * Gets the BasicGraphGui, which is the visualisation component for the graph.
-     * @return the basic graph GUI that contains the graph visualisation component
-     */
-    public BasicGraphGui getBasicGraphGui() {
-		if (graphGUI == null) {
-		    graphGUI = new BasicGraphGui(this.getGraphController());
-		}
-		return graphGUI;
-    }
-    
+
     /**
      * This method initializes jTextFieldSearch Search box - Used for filtering the components
-     * 
      * @return javax.swing.JTextField
      */
     private JTextField getJTextFieldSearch() {
@@ -705,14 +618,12 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
 			@Override
 			public void keyReleased(java.awt.event.KeyEvent e) {
-			    // Calling the table row filter for searching the components
-			    tblFilter();
+				BasicGraphGuiRootJSplitPane.this.tblFilter();
 			}
 		    });
 		}
 		return jTextFieldSearch;
     }
-
     /**
      * This method initializes jButtonClearSearch
      * @return javax.swing.JButton
@@ -725,14 +636,67 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    jButtonClearSearch.addActionListener(new ActionListener() {
 		    	@Override
 				public void actionPerformed(ActionEvent e) {
-				    getJTextFieldSearch().setText(null);
-				    tblFilter();
+				    BasicGraphGuiRootJSplitPane.this.getJTextFieldSearch().setText(null);
+				    BasicGraphGuiRootJSplitPane.this.tblFilter();
 				}
 		    });
 		}
 		return jButtonClearSearch;
     }
+    /**
+     * Row filter for updating table view based on the expression in the text box Used for searching components
+     */
+    @SuppressWarnings("unchecked")
+	public void tblFilter() {
+		
+    	RowFilter<DefaultTableModel, Object> rf = null;
+    	String searchPhrase = this.getJTextFieldSearch().getText().trim();
+    	
+		// --- If current expression doesn't parse, don't update.----
+		try {
+			if (searchPhrase.length()>0) {
+				rf = RowFilter.regexFilter("(?i).*(" + searchPhrase + ").*", 0, 1);
+			}
+			
+		} catch (PatternSyntaxException psEx) {
+		    return;
+		}
+		((TableRowSorter<DefaultTableModel>)this.getJTableComponents().getRowSorter()).setRowFilter(rf);
+		this.setNumberOfComponents();
 
+    }
+    
+    /**
+     * ReLoads the network model.
+     */
+    private void reLoadNetworkComponents() {
+    	
+    	SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				// --- (Re)fill the table model -----------
+				fillTableModel();
+				// --- Clear search field -----------------
+		    	getJTextFieldSearch().setText(null);
+				// --- Refresh number of components -------
+		    	setNumberOfComponents();
+			}
+		});
+    }
+    
+    /**
+     * Set / show number of components.
+     */
+    private void setNumberOfComponents() {
+		// --- Set the number of rows displayed -----------
+		String text = this.jLabelTable.getText();
+		if (text.indexOf("(") > -1) {
+		    text = text.substring(0, text.indexOf("(")).trim();
+		}
+		text = text + " (" + jTableComponents.getRowCount() + ")";
+		this.jLabelTable.setText(text);
+    }
+    
     /*
      * (non-Javadoc)
      * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -751,7 +715,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     		case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
     		case NetworkModelNotification.NETWORK_MODEL_Reload:
     		case NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel:
-    			this.reLoad();
+    			this.reLoadNetworkComponents();
     			break;
 				
     		case NetworkModelNotification.NETWORK_MODEL_Component_Added:
@@ -761,7 +725,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     			} else if (infoObject instanceof HashSet<?>) {
 					@SuppressWarnings("unchecked")
 					HashSet<NetworkComponent> networkComponentHash = (HashSet<NetworkComponent>) infoObject;
-					this.networkComponentAdd(networkComponentHash);
+					this.networkComponentAdd(new ArrayList<>(networkComponentHash));
     			}
 				break;
 				
@@ -773,7 +737,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				} else if (infoObject instanceof HashSet<?>) {
 					@SuppressWarnings("unchecked")
 					HashSet<NetworkComponent> networkComponentHash = (HashSet<NetworkComponent>) infoObject;
-					this.networkComponentRemove(networkComponentHash);
+					this.networkComponentRemove(new ArrayList<>(networkComponentHash));
 				}
 				break;
 			

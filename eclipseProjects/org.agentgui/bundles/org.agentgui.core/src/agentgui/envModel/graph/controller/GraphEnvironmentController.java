@@ -520,7 +520,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
 		try {
-			if (displaytEnvironmentModel == null) {
+			if (displaytEnvironmentModel==null && !(displaytEnvironmentModel instanceof NetworkModel) ) {
 				this.setNetworkModel(null);
 			} else {
 				this.setNetworkModel((NetworkModel) displaytEnvironmentModel);
