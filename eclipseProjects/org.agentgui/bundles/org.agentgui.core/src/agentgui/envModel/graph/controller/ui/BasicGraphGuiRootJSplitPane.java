@@ -359,6 +359,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 					try {
 						super.sort();
 					} catch (IllegalArgumentException iaEx) {
+						// --- Backup solution for the sorting of the table ---
 						//iaEx.printStackTrace();
 						BasicGraphGuiRootJSplitPane.this.isUseNumberSorting = false;
 						super.sort();
@@ -375,8 +376,10 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 						Long ncID2 = this.parseLong(netCompId2);
 						if (ncID1!=null && ncID2!=null) {
 							return ncID1.compareTo(ncID2);
-						} else if ( (ncID1==null & ncID2!=null) | (ncID1!=null & ncID2==null) ) {
+						} else if (ncID1==null & ncID2!=null) {
 							return -1;
+						} else if (ncID1!=null & ncID2==null) {
+							return 1;
 						}							
 					}
 					return netCompId1.compareToIgnoreCase(netCompId2);
