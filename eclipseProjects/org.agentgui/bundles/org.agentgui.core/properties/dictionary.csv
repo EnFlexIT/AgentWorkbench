@@ -833,6 +833,7 @@ en;;Start Thread Measurement;;;
 en;;Switch Simulation Time Model;;;
 en;;The KeyStore file should be located in directory;;;
 en;;The TrustStore file should be located in directory;;;
+en;;The component name already exists!<br>Choose a different one.;;;
 en;;The following component type exists at least twice;;;
 en;;The following domain exists at least twice;;;
 en;;The following error occured:;;;

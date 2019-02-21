@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -114,6 +113,9 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 
     private JTable jTableComponents;
     private DefaultTableModel componentsTableModel;
+    private TableRowSorter<DefaultTableModel> jTableRowSorter;
+    private boolean isUseNumberSorting = true;
+    private RowFilter<DefaultTableModel, Integer> jTableRowFilter;
     private boolean quiteTabelModelListener;
     
     private BasicGraphGui graphGUI;
@@ -288,37 +290,18 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			colModel.getColumn(2).setMaxWidth(60);
 			colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
 			colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(this.getGraphController(), jTableComponents));			
-		    
-			// --- Set Sorter for the table -------------------
-			TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components());
-		   
-		    // --- Define a comparator for the first row ------
-			tblSorter.setComparator(0, new Comparator<String>() {
-				@Override
-				public int compare(String netCompId1, String netCompId2) {
-					Integer ncID1 = null;
-					Integer ncID2 = null;
-					try {
-						ncID1 = Integer.parseInt(netCompId1.replaceAll("\\D+",""));
-						ncID2 = Integer.parseInt(netCompId2.replaceAll("\\D+",""));
-					} catch (NumberFormatException nfe) {
-					}
-
-					if (ncID1!=null & ncID2!=null) {
-						return ncID1.compareTo(ncID2);
-					}
-					return netCompId1.compareTo(netCompId2);
-				}
-			});
-			jTableComponents.setRowSorter(tblSorter);
 			
+
+			// --- Set the table sorter -----------------------
+			TableRowSorter<DefaultTableModel> tblSorter = this.getJTableRowSorter();
+			jTableComponents.setRowSorter(tblSorter);
+
 			// --- Define the first sort order ----------------
 			List<SortKey> sortKeys = new ArrayList<SortKey>();
 			for (int i = 0; i < jTableComponents.getColumnCount(); i++) {
 			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
 			}
 			tblSorter.setSortKeys(sortKeys);
-			tblSorter.sort();
 			
 		}
 		return jTableComponents;
@@ -361,16 +344,96 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     	}
     	return componentsTableModel;
     }
+    
+    /**
+     * Returns the table row sorter.
+     * @return the table row sorter
+     */
+    private TableRowSorter<DefaultTableModel> getJTableRowSorter() {
+    	if (jTableRowSorter==null) {
+    		// --- Set Sorter for the table -------------------
+			jTableRowSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components()) {
+				@Override
+				public void sort() {
+					// --- may throw a "java.lang.IllegalArgumentException: Comparison method violates its general contract!" ---
+					try {
+						super.sort();
+					} catch (IllegalArgumentException iaEx) {
+						//iaEx.printStackTrace();
+						BasicGraphGuiRootJSplitPane.this.isUseNumberSorting = false;
+						super.sort();
+					}
+				}
+			};
+		   
+		    // --- Define a comparator for the first row ------
+			jTableRowSorter.setComparator(0, new Comparator<String>() {
+				@Override
+				public int compare(String netCompId1, String netCompId2) {
+					if (BasicGraphGuiRootJSplitPane.this.isUseNumberSorting==true) {
+						Long ncID1 = this.parseLong(netCompId1);
+						Long ncID2 = this.parseLong(netCompId2);
+						if (ncID1!=null && ncID2!=null) {
+							return ncID1.compareTo(ncID2);
+						} else if ( (ncID1==null & ncID2!=null) | (ncID1!=null & ncID2==null) ) {
+							return -1;
+						}							
+					}
+					return netCompId1.compareToIgnoreCase(netCompId2);
+				}
+				private Long parseLong(String netCompID) {
+					Long longValue = null;
+					String ncIdNumberString = netCompID.replaceAll("\\D+","");
+					if (ncIdNumberString.length()>0) {
+						try {
+							longValue = Long.parseLong(ncIdNumberString);
+						} catch (NumberFormatException nfEx) {
+							// nfEx.printStackTrace();
+						}
+					}
+					return longValue;
+				}
+			});
+			jTableRowSorter.setRowFilter(this.getJTableRowFilter());
+    	}
+    	return jTableRowSorter;
+    }
+    /**
+     * Return the row filter.
+     * @return the row filter
+     */
+    private RowFilter<DefaultTableModel, Integer> getJTableRowFilter() {
+    	if (jTableRowFilter==null) {
+    		jTableRowFilter = new RowFilter<DefaultTableModel, Integer>() {
+    			@Override
+    			public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
+    				
+    				// --- Return true if the search phrase is empty ----
+    				String searchPhrase = BasicGraphGuiRootJSplitPane.this.getJTextFieldSearch().getText().trim();
+    				if (searchPhrase==null || searchPhrase.length()==0) return true;
+    				
+    				// --- Check for the search phrase ------------------
+					boolean matchNetComID = entry.getStringValue(0).matches("(?i).*(" + searchPhrase + ").*");
+					boolean matchNetComType = entry.getStringValue(1).matches("(?i).*(" + searchPhrase + ").*");
+					return matchNetComID==true || matchNetComType==true;
+    			}
+    		};
+        	    		
+    	}
+    	return jTableRowFilter;
+    }
     /**
      * This method builds the tblComponents' contents based on the controllers GridModel
      * @return The grid components' IDs and class names
      */
     private void fillTableModel() {
 		if (this.getGraphController().getNetworkModel()!=null && this.getGraphController().getNetworkModelAdapter()!=null ) {
-			// --- Clear --------------
+			// --- Clear ------------------------
 			this.clearTableModel();
-			// --- Fill --------------
+			// --- Fill -------------------------
 			networkComponentAdd(new ArrayList<>(this.getGraphController().getNetworkModelAdapter().getNetworkComponents().values()));
+			// --- Try to use number sorting ----
+			this.isUseNumberSorting = true;
 		}
     }
     /**
@@ -616,10 +679,10 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    jTextFieldSearch = new JTextField();
 		    jTextFieldSearch.setPreferredSize(new Dimension(100, 20));
 		    jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
-			@Override
-			public void keyReleased(java.awt.event.KeyEvent e) {
-				BasicGraphGuiRootJSplitPane.this.tblFilter();
-			}
+				@Override
+				public void keyReleased(java.awt.event.KeyEvent e) {
+					BasicGraphGuiRootJSplitPane.this.tblFilter();
+				}
 		    });
 		}
 		return jTextFieldSearch;
@@ -646,22 +709,12 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     /**
      * Row filter for updating table view based on the expression in the text box Used for searching components
      */
-    @SuppressWarnings("unchecked")
 	public void tblFilter() {
-		
-    	RowFilter<DefaultTableModel, Object> rf = null;
-    	String searchPhrase = this.getJTextFieldSearch().getText().trim();
-    	
-		// --- If current expression doesn't parse, don't update.----
 		try {
-			if (searchPhrase.length()>0) {
-				rf = RowFilter.regexFilter("(?i).*(" + searchPhrase + ").*", 0, 1);
-			}
-			
-		} catch (PatternSyntaxException psEx) {
-		    return;
+			this.getJTableRowSorter().sort();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		((TableRowSorter<DefaultTableModel>)this.getJTableComponents().getRowSorter()).setRowFilter(rf);
 		this.setNumberOfComponents();
 
     }
@@ -675,11 +728,10 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			@Override
 			public void run() {
 				// --- (Re)fill the table model -----------
-				fillTableModel();
+				BasicGraphGuiRootJSplitPane.this.fillTableModel();
 				// --- Clear search field -----------------
-		    	getJTextFieldSearch().setText(null);
-				// --- Refresh number of components -------
-		    	setNumberOfComponents();
+			    BasicGraphGuiRootJSplitPane.this.getJTextFieldSearch().setText(null);
+			    BasicGraphGuiRootJSplitPane.this.tblFilter();
 			}
 		});
     }
@@ -756,10 +808,8 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			default:
 				break;
 			}
-    		
-    		
     	}
     	
     }
 
-}  //  @jve:decl-index=0:visual-constraint="9,2"
+}  
