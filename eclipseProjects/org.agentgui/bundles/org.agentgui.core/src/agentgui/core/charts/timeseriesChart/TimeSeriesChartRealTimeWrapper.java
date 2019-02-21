@@ -88,8 +88,7 @@ public class TimeSeriesChartRealTimeWrapper {
 	 */
 	public void applyLengthRestriction() {
 		for (int i=0; i<this.timeSeriesChart.getTimeSeriesChartData().size(); i++) {
-			TimeSeries timeSeries = (TimeSeries) this.timeSeriesChart.getTimeSeriesChartData().get(i);
-			this.applyLengthRestriction(timeSeries);
+			this.applyLengthRestriction(i);
 		}
 	}
 	
@@ -107,6 +106,16 @@ public class TimeSeriesChartRealTimeWrapper {
 	 * @param timeSeries the time series
 	 */
 	public void applyLengthRestriction(TimeSeries timeSeries) {
+
+		//TODO for debugging, remove when no longer needed
+//		if (timeSeriesChart.getTimeSeriesVisualisationSettings().getChartTitle().equals("Current & Utilization for n87") && timeSeries.getLabel().equals("Current L1")) {
+//			System.out.print(this.getClass().getSimpleName() + ": System n87, Series " + timeSeries.getLabel());
+//			System.out.println(", " + timeSeries.getTimeSeriesValuePairs().size() + " states:");
+//			for (int i=0; i<timeSeries.getTimeSeriesValuePairs().size(); i++) {
+//				TimeSeriesValuePair tsvp = (TimeSeriesValuePair) timeSeries.getTimeSeriesValuePairs().get(i);
+//				System.out.println(tsvp.getTimestamp().getStringLongValue());
+//			}
+//		}
 
 		// ------------------------------------------------
 		// --- Apply number of states restriction ---------
@@ -162,12 +171,32 @@ public class TimeSeriesChartRealTimeWrapper {
 	public void addValuePair(int timeSeriesIndex, TimeSeriesValuePair valuePair) {
 		TimeSeries timeSeries = (TimeSeries) this.timeSeriesChart.getTimeSeriesChartData().get(timeSeriesIndex);
 		if (timeSeries!=null) {
-			timeSeries.addTimeSeriesValuePairs(valuePair);
-			
-			if (timeSeriesChart.getRealTime()==true) {
-				this.applyLengthRestriction(timeSeries);
+
+			// --- Check if there is already a value pair for this time stamp
+			TimeSeriesValuePair existingValuePair = this.getValuePairForTimestamp(timeSeries, valuePair.getTimestamp().getLongValue());
+
+			if (existingValuePair==null) {
+				// --- Add a new value pair ---------------
+				timeSeries.addTimeSeriesValuePairs(valuePair);
+				if (timeSeriesChart.getRealTime()==true) {
+					this.applyLengthRestriction(timeSeries);
+				}
+			} else {
+				// --- Update an existing value pair ------
+				existingValuePair.setValue(valuePair.getValue());
 			}
 		}
+	}
+	
+	private TimeSeriesValuePair getValuePairForTimestamp(TimeSeries timeSeries, long timestamp) {
+		for (int i=0; i<timeSeries.getTimeSeriesValuePairs().size(); i++) {
+			TimeSeriesValuePair tsvp = (TimeSeriesValuePair) timeSeries.getTimeSeriesValuePairs().get(i);
+			long tsvpTimestamp = tsvp.getTimestamp().getLongValue();
+			if (tsvpTimestamp==timestamp) {
+				return tsvp;
+			}
+		}
+		return null;
 	}
 	
 }
