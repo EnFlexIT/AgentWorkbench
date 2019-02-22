@@ -872,7 +872,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private void rebuildCustomToolbarComponent() {
     	Vector<CustomToolbarComponentDescription> customComponents = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions();
-    	for (CustomToolbarComponentDescription customCopnent : customComponents) {
+    	for (int i = 0; i < customComponents.size(); i++) {
+    		CustomToolbarComponentDescription customCopnent = customComponents.get(i);
     		if (this.isAlreadyAdded(customCopnent)==false) {
     			this.addCustomToolbarComponent(customCopnent);
     		}
@@ -886,7 +887,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private boolean isAlreadyAdded(CustomToolbarComponentDescription compDescription) {
     	for (int i = 0; i < this.getCustomToolbarComponentDescriptionAdded().size(); i++) {
-			if (this.getCustomToolbarComponentDescriptionAdded().get(i).equals(compDescription)) return true;
+    		CustomToolbarComponentDescription checkDescription = this.getCustomToolbarComponentDescriptionAdded().get(i);
+    		if (checkDescription.equals(compDescription)) {
+    			return true;
+    		}
 		}
     	return false;
     }

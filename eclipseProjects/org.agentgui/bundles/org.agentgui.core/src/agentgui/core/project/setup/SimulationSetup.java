@@ -378,24 +378,28 @@ public class SimulationSetup {
 		boolean successfulLoaded = false;
 		
 		File userRuntimeObjectFile = SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN);
-		FileInputStream fis = null;
-		ObjectInputStreamForClassLoadService in = null;
-		try {
-			fis = new FileInputStream(userRuntimeObjectFile);
-			in = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
-			Serializable userObject = (Serializable)in.readObject();
-			setup.setUserRuntimeObject(userObject);
-			successfulLoaded = true;
+		if (userRuntimeObjectFile.exists()==true) {
 			
-		} catch(IOException | ClassNotFoundException ex) {
-			ex.printStackTrace();
-		} finally {
+			FileInputStream fis = null;
+			ObjectInputStreamForClassLoadService in = null;
 			try {
-				if (in!=null) in.close();
-				if (fis!=null) fis.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
+				fis = new FileInputStream(userRuntimeObjectFile);
+				in = new ObjectInputStreamForClassLoadService(fis, ClassLoadServiceUtility.class);
+				Serializable userObject = (Serializable)in.readObject();
+				setup.setUserRuntimeObject(userObject);
+				successfulLoaded = true;
+				
+			} catch(IOException | ClassNotFoundException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					if (in!=null) in.close();
+					if (fis!=null) fis.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 			}
+			
 		}
 		return successfulLoaded;
 	}

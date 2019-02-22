@@ -64,6 +64,10 @@
          id="de.enflexit.common.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.rcp"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
@@ -82,11 +86,12 @@
       <import plugin="org.eclipse.e4.ui.di" version="1.2.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.p2.operations" version="2.4.300" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.p2.metadata" version="2.3.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.security"/>
       <import plugin="org.eclipse.osgi.services" version="3.6.0" match="greaterOrEqual"/>
       <import plugin="javax.inject" version="1.0.0.v20091030" match="greaterOrEqual"/>
       <import plugin="org.slf4j.api" version="1.7.10" match="greaterOrEqual"/>
       <import feature="de.enflexit.common.feature" version="2.0.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.security"/>
+      <import feature="org.eclipse.rcp" version="4.10.0.v20181206-0815"/>
    </requires>
 
    <plugin

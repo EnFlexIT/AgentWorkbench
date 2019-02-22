@@ -50,13 +50,13 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 public abstract class NetworkModelFileImporter {
 	
 	/** The current settings for the graph environment */
-	protected GraphEnvironmentController graphController = null;
+	protected GraphEnvironmentController graphController;
 	/** The file extension used for filtering in JFileChooser selecting the file to import */
-	protected String fileTypeExtension = null;
+	protected String fileTypeExtension;
     /** The file type description for the JFileChooser for selecting the file to import */
-	protected String fileTypeDescription = null;
+	protected String fileTypeDescription;
     /** The file filter. */
-	protected FileFilter fileFilter = null;
+	protected FileFilter fileFilter;
 
 	
 	/**
@@ -83,7 +83,6 @@ public abstract class NetworkModelFileImporter {
 			GraphNode node = nodes.next();
 			node.setPosition(layout.transform(node));
 		}
-		
 	}
 	
 	/**
@@ -92,6 +91,13 @@ public abstract class NetworkModelFileImporter {
 	 * @return The JUNG graph.
 	 */
 	public abstract NetworkModel importGraphFromFile(File graphFile);
+	
+	/**
+	 * Since the instance of the importer will remain after import, this method should reset
+	 * all local variables of the importer to reduce the RAM usage.
+	 */
+	public abstract void cleanupImporter();
+	
 	
 	/**
 	 * Returns the extension of the file type the GraphFileLoader can handle
@@ -122,7 +128,7 @@ public abstract class NetworkModelFileImporter {
 			        }
 			        String path = file.getAbsolutePath();
 			        if (path != null) {
-			        	if (path.endsWith(fileTypeExtension)) {
+			        	if (path.endsWith(fileTypeExtension) || path.endsWith(fileTypeExtension.toLowerCase()) || path.endsWith(fileTypeExtension.toUpperCase())) {
 			        		return true;
 			            } else {
 			                return false;

@@ -407,7 +407,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 						// --- Set application status text ----------------------------------------
 						if (Application.getMainWindow() != null) {
 							Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-							Application.setStatusBarMessage(Language.translate("Lade Setup") + " :" + fileName + " ...");
+							Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + fileName + " ...");
 						}
 	
 						// --- Register agents that have to be started with the environment -------
@@ -466,6 +466,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 					} finally {
 						GraphEnvironmentController.this.isTemporaryPreventSaving = false;
 						Application.setCursor(Cursor.getDefaultCursor());
+						Application.setStatusBarMessageReady();
 					}
 					
 				}
@@ -520,7 +521,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
 		try {
-			if (displaytEnvironmentModel == null) {
+			if (displaytEnvironmentModel==null && !(displaytEnvironmentModel instanceof NetworkModel) ) {
 				this.setNetworkModel(null);
 			} else {
 				this.setNetworkModel((NetworkModel) displaytEnvironmentModel);

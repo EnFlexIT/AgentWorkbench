@@ -48,7 +48,7 @@ public class GraphNode extends GraphElement {
 	public final static String GRAPH_NODE_PREFIX = "PP";
 	
 	/** The GraphNode's position in a visualization */
-	private Point2D position = null;
+	private Point2D position;
 
 	/**	The data model for this GraphNode.*/
 	private Object dataModel;

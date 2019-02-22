@@ -38,6 +38,7 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -122,6 +123,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * Initialize this JPanel.
 	 */
 	private void initialize() {
+		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setViewportView(this.getJPanelContent());
 	}
 
