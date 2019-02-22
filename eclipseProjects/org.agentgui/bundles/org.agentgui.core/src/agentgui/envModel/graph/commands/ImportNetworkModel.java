@@ -85,9 +85,11 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			this.graphController.setDisplayEnvironmentModel(null);
 			
 			if (this.newNetworkModel==null) {
-				// --- Import directly from the selected file -------------------------------------
 				try {
+					// --- Import directly from the selected file ---------------------------------
 					this.newNetworkModel = this.networkModelFileImporter.importGraphFromFile(this.networkModelFileSelected);
+					// --- Invoke to cleanup the importer -----------------------------------------
+					this.networkModelFileImporter.cleanupImporter();
 					// --- The following has to be done only once, directly after the import !!! --
 					this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
 					this.graphController.setNetworkComponentDataModelBase64Encoded();

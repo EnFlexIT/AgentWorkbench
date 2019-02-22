@@ -67,6 +67,30 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 	private static final long serialVersionUID = 6748263753769300242L;
 	
+	/**
+	 * The private enumeration ViewerTab.
+	 */
+	private enum ViewerTab {
+		FormTab    (-1, Language.translate("Formular")), 
+		TableTab   (0,  Language.translate("Tabelle")),
+		XmlTab     (1,  Language.translate("XML")),
+		EnlargeTab (2,  Language.translate("Vergrößern ..."));
+		
+		private final int tabIndex;
+		private final String title;
+		private ViewerTab(int tabIndex, String title) {
+			this.tabIndex = tabIndex;
+			this.title = title;
+		}
+		public int getTabIndex() {
+			return tabIndex;
+		}
+		public String getTitle() {
+			return title;
+		}
+	}
+	
+	
 	private OntologyVisualizationHelper ontologyVisualisationHelper;
 	private AgentStartConfiguration agentStartConfiguration;
 	private String agentReference;
@@ -160,46 +184,120 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		this.setTabPlacement(JTabbedPane.BOTTOM);
 		
 		// --- Add the Table Tab --------------------------
-		this.addTab("Tabelle", getDynTableJPanel());
+		this.addTab("  " + ViewerTab.TableTab.getTitle() + "   ", getDynTableJPanel());
 		
 		// --- Add the Form Tab ---------------------------		
-		this.addTab("Formular", getJScrollPaneDynForm());
+		//this.addTab("  " + ViewerTab.FormTab.getTitle() + "   ", getJScrollPaneDynForm());
 		
 		// --- Add the XML-Tab to the ---------------------
-		this.addTab("XML", getDynFormText());
+		this.addTab("    " + ViewerTab.XmlTab.getTitle() + "    ", getDynFormText());
 
 		// --- Add Enlarge-Tab ----------------------------
 		if (this.getDynForm().isEmptyForm()==false) {
 			this.addEnlargeTab();	
 		}
-
-		// --- Configure Translations ---------------------
-		this.setTitleAt(0, "  " + Language.translate("Tabelle") + "   ");
-		this.setTitleAt(1, "  " + Language.translate("Formular") + "  ");
-		this.setTitleAt(2, "    " + Language.translate("XML") + "     ");
-		
 	}
 	
 	/**
-	 * This method overrides the 'setSelectedIndex' method
-	 * in order to catch the selection of the 'Enlarge view - Tab'.
-	 *
-	 * @param index the new selected index
+	 * This method adds the Enlarge-View-Tab to THIS TabbedPane.
+	 */
+	private void addEnlargeTab() {
+		this.addTab(ViewerTab.EnlargeTab.getTitle(), this.getJPanelEnlarge());
+		this.setTabComponentAt(ViewerTab.EnlargeTab.getTabIndex(), this.getJLabelTitleEnlarge());
+	}
+	/**
+	 * This method removes the Enlarge-View-Tab to THIS TabbedPane.
+	 */
+	private void removeEnlargeTab() {
+		this.remove(jPanelEnlarge);
+	}
+	/**
+	 * This method initialises jPanelEnlarege.
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getJPanelEnlarge() {
+		if (jPanelEnlarge == null) {
+			jPanelEnlarge = new JPanel();
+			jPanelEnlarge.setLayout(new GridBagLayout());
+		}
+		return jPanelEnlarge;
+	}
+	/**
+	 * This method initialises jLabelTitleEnlarge.
+	 * @return javax.swing.JLabel
+	 */
+	private JLabel getJLabelTitleEnlarge() {
+		if (jLabelTitleEnlarge == null) {
+			jLabelTitleEnlarge = new JLabel();
+			jLabelTitleEnlarge.setText("  " + ViewerTab.EnlargeTab.getTitle() + "  ");
+			jLabelTitleEnlarge.setIcon(ImageProvider.getImageIcon(ImageFile.MB_FullScreen_PNG));
+		}
+		return jLabelTitleEnlarge;
+	}
+	
+	/**
+	 * Returns the currently selected tab.
+	 * @return the selected tab
+	 */
+	private ViewerTab getSelectedTab() {
+		ViewerTab selectedTab=null;
+		if (this.getSelectedComponent()==getDynTableJPanel()) {
+			selectedTab = ViewerTab.TableTab;
+		} else if (this.getSelectedComponent()==this.getJScrollPaneDynForm()) {
+			selectedTab = ViewerTab.FormTab;
+		} else if (this.getSelectedComponent()==getDynFormText()) {
+			selectedTab = ViewerTab.XmlTab;
+		} else if (this.getSelectedComponent()==getJPanelEnlarge()) {
+			selectedTab = ViewerTab.EnlargeTab;
+		}
+		return selectedTab;
+	}
+	/**
+	 * Returns the number of expected tabs derived from the local enumeration {@link ViewerTab}.
+	 * An index position smaller 0 will be neglected.
+	 * @return the number of expected tabs
+	 */
+	private int getNumberOfExpectedTabs() {
+		int count = 0;
+		for(ViewerTab viewerTab : ViewerTab.values()) {
+			if (viewerTab.getTabIndex()>=0) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JTabbedPane#setSelectedIndex(int)
 	 */
 	@Override
-	public void setSelectedIndex(int index) {
-	
-		if (index==3) {
+	public void setSelectedIndex(int indexSelection) {
+		
+		// --- Which tab to select ? ----------------------
+		ViewerTab viewerTabSelected = null;
+		for (ViewerTab viewerTab : ViewerTab.values()) {
+			if (viewerTab.getTabIndex()==indexSelection) {
+				viewerTabSelected = viewerTab;
+			}
+		}
+		if (viewerTabSelected==null) {
+			super.setSelectedIndex(indexSelection);
+			return;
+		}
+		
+		// --- Do the required action ---------------------
+		switch (viewerTabSelected) {
+		case EnlargeTab:
 			this.setEnlargedView();
-			
-		} else {
+			break;
+
+		default:
 			// --- Save current settings ------------------
 			this.save();
 			this.setXMLText();
-			
-			// --- Now do the focus change ----------------
-			super.setSelectedIndex(index);
-		}		
+			super.setSelectedIndex(indexSelection);
+			break;
+		}
 	}
 	
 	/**
@@ -258,10 +356,11 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @param allowEnlargement the new allow view enlargement
 	 */
 	public void setAllowViewEnlargement(boolean allowEnlargement) {
-		if (this.getTabCount()==4 && allowEnlargement==false) {
+		int noOfExpectedTabs = this.getNumberOfExpectedTabs();
+		if (this.getTabCount()==noOfExpectedTabs && allowEnlargement==false) {
 			this.removeEnlargeTab();
 		}
-		if (this.getTabCount()<4 && allowEnlargement==true) {
+		if (this.getTabCount()<noOfExpectedTabs && allowEnlargement==true) {
 			this.addEnlargeTab();
 		}
 	}
@@ -381,20 +480,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return jPanel4TouchDown;
 	}
 	/**
-	 * This method adds the Enlarge-View-Tab to THIS TabbedPane.
-	 */
-	private void addEnlargeTab() {
-		this.addTab("Vergrößern", this.getJPanelEnlarge());
-		this.setTabComponentAt(3, this.getJLabelTitleEnlarge());
-		this.jLabelTitleEnlarge.setText("  " + Language.translate("Vergrößern ...") + "  ");
-	}
-	/**
-	 * This method removes the Enlarge-View-Tab to THIS TabbedPane.
-	 */
-	private void removeEnlargeTab() {
-		this.remove(jPanelEnlarge);
-	}
-	/**
 	 * This method initialises dynTableJPanel.
 	 * @return the DynTableJPanel
 	 */
@@ -450,29 +535,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return dynFormText;
 	}
-	/**
-	 * This method initialises jPanelEnlarege.
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanelEnlarge() {
-		if (jPanelEnlarge == null) {
-			jPanelEnlarge = new JPanel();
-			jPanelEnlarge.setLayout(new GridBagLayout());
-		}
-		return jPanelEnlarge;
-	}
-	/**
-	 * This method initialises jLabelTitleEnlarge.
-	 * @return javax.swing.JLabel
-	 */
-	private JLabel getJLabelTitleEnlarge() {
-		if (jLabelTitleEnlarge == null) {
-			jLabelTitleEnlarge = new JLabel();
-			jLabelTitleEnlarge.setText(" Vergrößern");
-			jLabelTitleEnlarge.setIcon(ImageProvider.getImageIcon(ImageFile.MB_FullScreen_PNG));
-		}
-		return jLabelTitleEnlarge;
-	}
 
 	/**
 	 * Returns the OntologyClassEditorJPanel for the specified index of the current data model.
@@ -484,18 +546,25 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 		Vector<OntologyClassEditorJPanel> ontoVisPanel = new Vector<OntologyClassEditorJPanel>();
 
-		if (this.getSelectedIndex()==0) {
+		switch (this.getSelectedTab()) {
+		case TableTab:
 			// --- An open visualization of the DynTable ------------
 			OntologyClassEditorJPanel ocep = this.getDynTableJPanel().getOntologyClassEditorJPanel(targetDataModelIndex);
 			if (ocep!=null) {
 				ontoVisPanel.add(ocep);	
 			}
-		} else if (this.getSelectedIndex()==1) {
+			break;
+
+		case FormTab:
 			// --- Visualization on the DynForm himself -------------
 			DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) this.getDynForm().getObjectTree().getRoot();
 			DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) rootNode.getChildAt(targetDataModelIndex);
 			OntologyClassWidget widget = this.getDynForm().getOntologyClassWidget(targetNode);
 			ontoVisPanel.add(widget);
+			break;
+			
+		default:
+			break;
 		}
 		
 		if (ontoVisPanel.size()==0) ontoVisPanel=null;
@@ -507,25 +576,35 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 */
 	public void save() {
 		
-		// --- Save configuration depending on the current view -----
-		if (this.getSelectedIndex()==0) {
-			// --- Table view -----------------------------
-			this.stopDynTableCellEditingAndSaveOntologyClassInstanceOfOntologyClassWidgetOrOntologyClassEditorJPanel();
-			this.getDynForm().save(true);
-			
-		} else if (this.getSelectedIndex()==1) {
-			// --- Form view ------------------------------
-			this.getDynForm().save(true);
-			this.getDynTableJPanel().refreshTableModel();
-			
-		} else if (this.getSelectedIndex()==2) {
-			// --- XML view -------------------------------
-			String currConfigText = this.getDynFormText().getText();
-			String [] currConfig = this.getXMLParts(currConfigText);
-			this.setConfigurationXML(currConfig);
+		ViewerTab selectedTab = this.getSelectedTab(); 
+		if (selectedTab!=null) {
+			// --- Save configuration depending on the current view -----
+			switch (this.getSelectedTab()) {
+			case TableTab:
+				// --- Table view -----------------------------
+				this.stopDynTableCellEditingAndSaveOntologyClassInstanceOfOntologyClassWidgetOrOntologyClassEditorJPanel();
+				this.getDynForm().save(true);
+				break;
+				
+			case FormTab:
+				// --- Form view ------------------------------
+				this.getDynForm().save(true);
+				this.getDynTableJPanel().refreshTableModel();
+				break;
+				
+			case XmlTab:
+				// --- XML view -------------------------------
+				String currConfigText = this.getDynFormText().getText();
+				String [] currConfig = this.getXMLParts(currConfigText);
+				this.setConfigurationXML(currConfig);
 
-			this.getDynForm().save(false);
-			this.getDynTableJPanel().refreshTableModel();
+				this.getDynForm().save(false);
+				this.getDynTableJPanel().refreshTableModel();
+				break;
+				
+			case EnlargeTab:
+				break;
+			}
 		}
 		
 	}
@@ -536,7 +615,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 */
 	public void setConfigurationXML(String[] configurationXML) {
 		this.dynForm.setOntoArgsXML(configurationXML);
-		if (this.getSelectedIndex()==1) {
+		if (this.getSelectedTab()==ViewerTab.FormTab) {
 			this.setXMLText();
 		}
 	}
@@ -570,7 +649,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		
 		this.getDynForm().setOntoArgsXML(configXML);
 		this.getDynTableJPanel().refreshTableModel();
-		if (this.getSelectedIndex()==1) {
+		if (this.getSelectedTab()==ViewerTab.FormTab) {
 			this.setXMLText();
 		}
 		
@@ -610,7 +689,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	public void setConfigurationInstances(final Object[] configurationInstances) {
 		this.getDynForm().setOntoArgsInstance(configurationInstances);
 		this.getDynTableJPanel().refreshTableModel();
-		if (this.getSelectedIndex()==1) {
+		if (this.getSelectedTab()==ViewerTab.FormTab) {
 			this.setXMLText();
 		}	
 	}

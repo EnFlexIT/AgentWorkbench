@@ -287,12 +287,42 @@ public class DynForm extends DynFormBase {
 		// ---------------------------------------------------------------------
 		// --- Is the current ontology class a special case of Agent.GUI ? -----
 		if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(startObjectClass)==true) {
-			// TODO Removed for test purposes 
+			// -----------------------------------------------------------------
+			// --- Removed since the form view will not be shown anymore -------
+			// -----------------------------------------------------------------
 			//this.createOuterElement4OntologyClassVisualisation(startArgIndex, oscd.getClazz(), parentNode, parentPanel);
+			// -----------------------------------------------------------------
 		}
 		// ---------------------------------------------------------------------
-		
 	}	
+	/**
+	 * Creates the outer element for a Agent.GUI special class.
+	 *
+	 * @param startArgIndex the start arg index
+	 * @param specialClass the special class
+	 * @param curentNode the parent node
+	 * @param parentPanel the parent panel
+	 */
+	@SuppressWarnings("unused")
+	private void createOuterElement4OntologyClassVisualisation(int startArgIndex, Class<?> specialClass, DefaultMutableTreeNode curentNode, JPanel parentPanel){
+		
+		this.save(true);
+		
+		// --- Make all of the created panels invisible and reduce their height ---------
+		Rectangle feBounds = this.setJPanelInvisibleAndSmall(curentNode);
+		
+		// --- Show the widget for the special type -------------------------------------
+		OntologyClassVisualisation ontoClassVis = OntologyVisualisationConfiguration.getOntologyClassVisualisation(specialClass);
+		OntologyClassWidget widget = ontoClassVis.getWidget(this, startArgIndex);
+		if (widget!=null) {
+			widget.setBounds(feBounds.x, feBounds.y, widget.getWidth(), widget.getHeight());
+			parentPanel.add(widget);
+			
+			this.getOntologyClassWidgets().put(curentNode, widget);
+		}
+		this.setPanelBounds(parentPanel);
+	}
+	
 	/**
 	 * This Method sets the preferred size of a specified panel according
 	 * to the position of the 'submitButton'.
@@ -417,33 +447,6 @@ public class DynForm extends DynFormBase {
 		
 	}
 
-	/**
-	 * Creates the outer element for a Agent.GUI special class.
-	 *
-	 * @param startArgIndex the start arg index
-	 * @param specialClass the special class
-	 * @param curentNode the parent node
-	 * @param parentPanel the parent panel
-	 */
-	private void createOuterElement4OntologyClassVisualisation(int startArgIndex, Class<?> specialClass, DefaultMutableTreeNode curentNode, JPanel parentPanel){
-		
-		this.save(true);
-		
-		// --- Make all of the created panels invisible and reduce their height ---------
-		Rectangle feBounds = this.setJPanelInvisibleAndSmall(curentNode);
-		
-		// --- Show the widget for the special type -------------------------------------
-		OntologyClassVisualisation ontoClassVis = OntologyVisualisationConfiguration.getOntologyClassVisualisation(specialClass);
-		OntologyClassWidget widget = ontoClassVis.getWidget(this, startArgIndex);
-		if (widget!=null) {
-			widget.setBounds(feBounds.x, feBounds.y, widget.getWidth(), widget.getHeight());
-			parentPanel.add(widget);
-			
-			this.getOntologyClassWidgets().put(curentNode, widget);
-		}
-		this.setPanelBounds(parentPanel);
-	}
-	
 	/**
 	 * This method creates the panels for fields which have no inner classes.
 	 *
