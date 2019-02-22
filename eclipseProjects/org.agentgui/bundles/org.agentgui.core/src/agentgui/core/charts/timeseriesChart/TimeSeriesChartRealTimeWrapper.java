@@ -174,7 +174,7 @@ public class TimeSeriesChartRealTimeWrapper {
 
 			// --- Check if there is already a value pair for this time stamp
 			TimeSeriesValuePair existingValuePair = this.getValuePairForTimestamp(timeSeries, valuePair.getTimestamp().getLongValue());
-
+			
 			if (existingValuePair==null) {
 				// --- Add a new value pair ---------------
 				timeSeries.addTimeSeriesValuePairs(valuePair);

@@ -246,8 +246,9 @@ public class DynForm extends DynFormBase {
 			this.setPanelBounds(parentPanel);
 			
 			// --- go through each field / inner class ----
-			for (OntologySingleClassSlotDescription oscsd : oscd.getArrayList4SlotDescriptions()) {
+			for (int i = 0; i < oscd.getArrayList4SlotDescriptions().size(); i++) {
 
+				OntologySingleClassSlotDescription oscsd = oscd.getArrayList4SlotDescriptions().get(i);
 				if (this.isRawType(oscsd.getSlotVarTypeCorrected())){
 					// --- Here we have a field with a final type (String, int, ...) ----
 					this.createOuterElements(oscsd, depth, parentPanel, parentNode, false);
@@ -286,7 +287,8 @@ public class DynForm extends DynFormBase {
 		// ---------------------------------------------------------------------
 		// --- Is the current ontology class a special case of Agent.GUI ? -----
 		if (OntologyVisualisationConfiguration.isRegisteredOntologyClassVisualisation(startObjectClass)==true) {
-			this.createOuterElement4OntologyClassVisualisation(startArgIndex, oscd.getClazz(), parentNode, parentPanel);
+			// TODO Removed for test purposes 
+			//this.createOuterElement4OntologyClassVisualisation(startArgIndex, oscd.getClazz(), parentNode, parentPanel);
 		}
 		// ---------------------------------------------------------------------
 		
