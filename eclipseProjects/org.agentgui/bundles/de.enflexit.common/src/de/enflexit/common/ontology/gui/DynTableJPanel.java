@@ -159,16 +159,17 @@ public class DynTableJPanel extends JPanel {
 			
 			DefaultMutableTreeNode node = this.dynForm.getTreeNodeByDynType(this.getDynType());
 			OntologyClassWidget dynFormWidget = this.dynForm.getOntologyClassWidget(node);
-			Object classInstance = dynFormWidget.invokeGetOntologyClassInstance();
-			
-			if (this.jComponent2Add instanceof OntologyClassWidget) {
-				OntologyClassWidget widget = (OntologyClassWidget) this.jComponent2Add; 
-				widget.invokeSetOntologyClassInstance(classInstance);
-			} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
-				OntologyClassEditorJPanel editorPanel = (OntologyClassEditorJPanel) this.jComponent2Add;
-				editorPanel.invokeSetOntologyClassInstance(classInstance);
+			if (dynFormWidget!=null) {
+
+				Object classInstance = dynFormWidget.invokeGetOntologyClassInstance();
+				if (this.jComponent2Add instanceof OntologyClassWidget) {
+					OntologyClassWidget widget = (OntologyClassWidget) this.jComponent2Add; 
+					widget.invokeSetOntologyClassInstance(classInstance);
+				} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
+					OntologyClassEditorJPanel editorPanel = (OntologyClassEditorJPanel) this.jComponent2Add;
+					editorPanel.invokeSetOntologyClassInstance(classInstance);
+				}
 			}
-		
 		}
 	}
 	
@@ -186,7 +187,9 @@ public class DynTableJPanel extends JPanel {
 			Object classInstance = this.getOntologyClassInstanceOfOntologyClassVisualisation();
 			this.dynForm.getOntoArgsInstance()[argumentIndex] = classInstance;
 			this.dynForm.setFormState(classInstance, node);
-			dynFormWidget.invokeSetOntologyClassInstance(classInstance);
+			if (dynFormWidget!=null) {
+				dynFormWidget.invokeSetOntologyClassInstance(classInstance);
+			}
 		}
 	}
 

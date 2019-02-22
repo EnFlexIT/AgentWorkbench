@@ -94,6 +94,8 @@ public class TimeSeriesDataModel extends DataModel {
 		this.chartSettingModel = null;
 		this.seriesCount=0;
 		
+		this.setRealTime(timeSeriesChartNew.getRealTime());
+		
 		TimeSeriesOntologyModel tsom = (TimeSeriesOntologyModel) this.ontologyModel;
 		if(tsom.getTimeSeriesChart().isEmpty()){
 			
@@ -216,13 +218,6 @@ public class TimeSeriesDataModel extends DataModel {
 		return lengthRestriction;
 	}
 
-	/**
-	 * Sets the length restriction.
-	 * @param lengthRestriction the new length restriction
-	 */
-	public void setLengthRestriction(TimeSeriesLengthRestriction lengthRestriction) {
-		this.lengthRestriction = lengthRestriction;
-	}
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#createNewDataSeries(java.lang.String)
@@ -417,6 +412,31 @@ public class TimeSeriesDataModel extends DataModel {
 	@Override
 	public String getBaseStringForSeriesLabel() {
 		return DEFAULT_SERIES_LABEL;
+	}
+
+	/**
+	 * Edits the series by adding a value pair.
+	 * @param timeStamp the time stamp
+	 * @param value the value
+	 * @param seriesIndex the series index
+	 * @param editOntology if false, only chart and table model will be modified
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public void addValuePairToSeries(long timeStamp, float value, int seriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		if (seriesIndex<this.getSeriesCount()) {
+			
+			// --- Add to the ontology model if specified -----------
+			if (editOntology==true) {
+				this.getTimeSeriesOntologyModel().addOrUpdateValuePair(seriesIndex, timeStamp, value);
+			}
+			
+			this.getTimeSeriesChartModel().addOrUpdateValuePair(seriesIndex, timeStamp, value);
+			this.getTimeSeriesTableModel().addOrUpdateValuePair(seriesIndex, timeStamp, value);
+			
+		} else {
+			// --- Invalid target series index ----------------------
+			throw new NoSuchSeriesException();
+		}
 	}
 	
 }

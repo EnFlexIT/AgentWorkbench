@@ -127,7 +127,15 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return tableModelDataVector.get(rowIndex).get(columnIndex);
+		Object value = null;
+		if (rowIndex<tableModelDataVector.size()) {
+			Vector<Number> row = tableModelDataVector.get(rowIndex);
+			if (columnIndex<row.size()) {
+				value = row.get(columnIndex);
+			}
+		}
+		tableModelDataVector.get(rowIndex).get(columnIndex);
+		return value;
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
@@ -320,8 +328,10 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 				// --- Remove row ---------------
 				this.tableModelDataVector.remove(i);
 				i--;
+				this.fireTableRowsDeleted(i, i);
 			}
 		}
+		
 	}
 	
 	/**

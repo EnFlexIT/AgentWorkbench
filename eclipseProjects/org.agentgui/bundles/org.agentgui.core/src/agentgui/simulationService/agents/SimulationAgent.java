@@ -431,7 +431,8 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	 */
 	private EnvironmentNotification onEnvironmentNotificationIntern(EnvironmentNotification notification){
 		notification = this.onEnvironmentNotification(notification);
-		for(ServiceSensorListener listener : this.getSimulationServiceListeners()) {
+		for (int i = 0; i < this.getSimulationServiceListeners().size(); i++) {
+			ServiceSensorListener listener = this.getSimulationServiceListeners().get(i);
 			notification = listener.onEnvironmentNotification(notification);
 		}
 		return notification;

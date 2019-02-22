@@ -43,6 +43,7 @@ import agentgui.core.charts.TableModel;
 import agentgui.core.charts.TableModelDataVector;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;
+import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
 
 /**
@@ -235,6 +236,9 @@ public class TimeSeriesTableModel extends TableModel {
 			targetRowIndex = tableModelDataVector.size();
 			tableModelDataVector.add(newRow);
 			this.fireTableRowsInserted(targetRowIndex, targetRowIndex);
+			if (((TimeSeriesDataModel)this.parentDataModel).isRealTime()==true) {
+				this.applyLengthRestriction();
+			}
 		} else {
 			tableModelDataVector.set(targetRowIndex, newRow);
 			this.fireTableRowsUpdated(targetRowIndex, targetRowIndex);
@@ -619,7 +623,7 @@ public class TimeSeriesTableModel extends TableModel {
 	 */
 	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
-		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+		if (targetDataSeriesIndex<(this.getColumnCount()-1)) {
 			
 			int targetTbIndex = targetDataSeriesIndex+1;
 			HashSet<Number> removeKeys = this.getKeyHashSetFromDataSeries(series);
@@ -637,6 +641,47 @@ public class TimeSeriesTableModel extends TableModel {
 			
 		} else {
 			throw new NoSuchSeriesException();
+		}
+	}
+	
+	/**
+	 * Adds the or update value pair.
+	 * @param targetDataSeriesIndex the target data series index
+	 * @param valuePair the value pair
+	 */
+	public void addOrUpdateValuePair(int targetDataSeriesIndex, TimeSeriesValuePair valuePair) {
+		this.addOrUpdateValuePair(targetDataSeriesIndex, valuePair.getTimestamp().getLongValue(), valuePair.getValue().getFloatValue());
+	}
+	
+	/**
+	 * Adds the or updates a value pair.
+	 * @param targetDataSeriesIndex the index of the target data series
+	 * @param key the key the time stamp
+	 * @param value the value the value
+	 */
+	public void addOrUpdateValuePair(int targetDataSeriesIndex, long key, float value) {
+		if (targetDataSeriesIndex<(this.getColumnCount()-1)) {
+			// --- Column 0 is used for the time stamps -------------
+			int targetColumn = targetDataSeriesIndex+1; 
+			
+			// --- Get the table row for this time stamp ------------
+			Vector<Number> row = this.getTableModelDataVector().getKeyRowVectorTreeMap().get(key);
+			if (row!=null) {
+				// --- Modify an existing row ----------------------- 
+				row.set(targetColumn, value);
+			} else {
+				// --- Create a new row for this time stamp ---------
+				row = new Vector<Number>(parentDataModel.getSeriesCount()+1);
+				row.add(key);
+				for (int i=1; i<=this.parentDataModel.getSeriesCount(); i++) {
+					if (i==targetColumn) {
+						row.add(value);
+					} else {
+						row.add(null);
+					}
+				}
+				this.addRow(row);
+			}
 		}
 	}
 	
@@ -722,10 +767,19 @@ public class TimeSeriesTableModel extends TableModel {
 		return (TimeSeriesOntologyModel)this.parentDataModel.getOntologyModel();
 	}
 	
+	/**
+	 * Sets the table.
+	 *
+	 * @param table the new table
+	 */
 	public void setTable(JTable table){
 		this.myJTable = table;
 	}
 	
+	/**
+	 * Gets the sort key.
+	 * @return the sort key
+	 */
 	private SortKey getSortKey(){
 		SortKey sortKey = null;
 		
@@ -737,6 +791,10 @@ public class TimeSeriesTableModel extends TableModel {
 		
 	}
 	
+	/**
+	 * Sets the sort key.
+	 * @param sortKey the new sort key
+	 */
 	private void setSortKey(SortKey sortKey){
 		if(sortKey != null){
 			Vector<SortKey> keyVector = new Vector<SortKey>();
@@ -745,9 +803,13 @@ public class TimeSeriesTableModel extends TableModel {
 		}
 	}
 	
+	/**
+	 * Apply length restriction.
+	 */
 	private void applyLengthRestriction() {
+		System.out.println("[" + this.getClass().getSimpleName() + "] Applying length restriction");
 		int maxValues = ((TimeSeriesDataModel)parentDataModel).getLengthRestriction().getMaxNumberOfStates();
-		long maxAge = ((TimeSeriesDataModel)parentDataModel).getLengthRestriction().getMaxDuration();
+		long maxAge = ((TimeSeriesDataModel)parentDataModel).getLengthRestriction().getMaxAge();
 
 		// --- Check age first --------------------------------------
 		if (maxAge>0) {
@@ -756,6 +818,7 @@ public class TimeSeriesTableModel extends TableModel {
 				
 				// --- Remove old values ----------------------------
 				if (rowTimeStamp<maxAge) {
+					System.out.println("[" + this.getClass().getSimpleName() + "] First state too old, removing"); 
 					this.removeRowByKey(rowTimeStamp);
 					i--;
 				}
@@ -769,9 +832,12 @@ public class TimeSeriesTableModel extends TableModel {
 				
 				// --- Remove surplus values ------------------------
 				if (numberOfValues > maxValues) {
+					System.out.println("[" + this.getClass().getSimpleName() + "] Too many states in series " + seriesIndex + ", removing the first " + (numberOfValues-maxValues)); 
 					this.removeFirstValues(seriesIndex, numberOfValues-maxValues);
 				}
 			}
+			
+			this.removeEmptyRows();
 		}
 		
 	}
@@ -814,7 +880,5 @@ public class TimeSeriesTableModel extends TableModel {
 				valuesRemoved++;
 			}
 		}
-		
-		this.removeEmptyRows();
 	}
 }

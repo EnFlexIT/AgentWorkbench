@@ -32,6 +32,8 @@ import jade.util.leap.List;
 
 import java.util.Vector;
 
+import agentgui.core.application.Application;
+import agentgui.core.charts.timeseriesChart.TimeSeriesChartRealTimeWrapper;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesHelper;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
@@ -326,6 +328,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		// ------------------------------------------------
 		case TimeSeriesChartAddOrExchangeDataRow:
 
+			TimeSeriesChartRealTimeWrapper wrapper = new TimeSeriesChartRealTimeWrapper(timeSeriesChart, Application.getGlobalInfo().getTimeSeriesLengthRestriction());
 			for (int i = 0; i < this.getValueVector().size(); i++) {
 				// -- Get the new value for the Time Series i -------
 				Float newFloatValue = this.getValueVector().get(i);
@@ -344,8 +347,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 				
 				// --- Add new value pair to data model -------------
 				if (i>=0 && i<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
-					TimeSeries ts = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(i);
-					ts.addTimeSeriesValuePairs(tsvp);
+					wrapper.addValuePair(i, tsvp);
 				}
 			}
 			break;
@@ -464,17 +466,11 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					case TimeSeriesChartAddOrExchangeDataRow:
 						
 						for (int c=0; c<this.getValueVector().size(); c++) {
-							// -- Get the new value for the Time Series i -------
 							Float newFloatValue = this.getValueVector().get(c);
-							if (newFloatValue==null) continue;
-							// --- Add new value pair to data model -------------
-							dataModelTimeSeries.getTimeSeriesChartModel().addOrUpdateValuePair(c, this.getTimeStamp(), newFloatValue);
+							if (newFloatValue!=null) {
+								dataModelTimeSeries.addValuePairToSeries(this.getTimeStamp(), newFloatValue, c, true);
+							}
 						}
-						
-						Vector<Number> newRow = new Vector<>();
-						newRow.add(this.getTimeStamp());
-						newRow.addAll(this.getValueVector());
-						dataModelTimeSeries.getTimeSeriesTableModel().addRow(newRow);
 						break;
 						
 					// ------------------------------------------------	

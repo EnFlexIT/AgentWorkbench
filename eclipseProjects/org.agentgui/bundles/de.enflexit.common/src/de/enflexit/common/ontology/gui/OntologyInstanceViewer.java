@@ -67,26 +67,26 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 	private static final long serialVersionUID = 6748263753769300242L;
 	
-	private OntologyVisualizationHelper ontologyVisualisationHelper = null;
-	private AgentStartConfiguration agentStartConfiguration = null;
-	private String agentReference = null;
-	private String[] ontologyClassReference = null;
+	private OntologyVisualizationHelper ontologyVisualisationHelper;
+	private AgentStartConfiguration agentStartConfiguration;
+	private String agentReference;
+	private String[] ontologyClassReference;
 	private boolean use4Agents =  false;
 
-	private JScrollPane jScrollPaneDynForm = null;
+	private JScrollPane jScrollPaneDynForm;
 	
-	private DynTableJPanel dynTablePanel = null;
-	private DynForm dynForm = null;
-	private DynFormText dynFormText = null;
+	private DynTableJPanel dynTablePanel;
+	private DynForm dynForm;
+	private DynFormText dynFormText;
 	
 	private final String newLine = System.getProperty("line.separator");
 	private final String separatorLine = "------------------------------------------";  
 	
-	private JPanel jPanelEnlarge = null;
-	private JLabel jLabelTitleEnlarge = null;  //  @jve:decl-index=0:visual-constraint="12,220"
+	private JPanel jPanelEnlarge;
+	private JLabel jLabelTitleEnlarge;
 
-	private JPanel jContentPane = null;
-	private JPanel jPanel4TouchDown = null;
+	private JPanel jContentPane;
+	private JPanel jPanel4TouchDown;
 
 	
 	/**

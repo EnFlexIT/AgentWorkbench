@@ -95,7 +95,7 @@ public class TimeSeriesChartModel extends ChartModel{
 			if (maxStates>0) {
 				newSeries.setMaximumItemCount(maxStates);
 			}
-			long maxAge = parent.getLengthRestriction().getMaxDuration();
+			long maxAge = parent.getLengthRestriction().getMaxAge();
 			if (maxAge>0) {
 				newSeries.setMaximumItemAge(maxAge);
 			}
