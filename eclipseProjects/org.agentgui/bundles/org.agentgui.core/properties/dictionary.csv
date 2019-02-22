@@ -457,6 +457,7 @@ de;Nach oben verschieben;Move up;;;
 de;Nach unten verschieben;Move down;;;
 de;Name bereits vorhanden!;Name already exists!
 de;Name ungültig!;Invalid name!
+de;Network Model Information;;;;
 de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
@@ -804,6 +805,7 @@ en;;Depending on watts (absolute);;;
 en;;Discrete squares environment;;;
 en;;Display time is time controlled;;;
 en;;Edit security store settings;;;
+en;;Network Model Info;;;
 en;;No KeyStore specified!;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;

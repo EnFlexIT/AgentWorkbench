@@ -100,6 +100,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JToolBar jToolBarView;
     
     private JButton jButtonComponents;
+    private JButton jButtonNetworkModelInfo;
     private JButton jButtonMessages;
     private JButton jButtonWindows;
     private JToggleButton jButtonSatelliteView;
@@ -230,9 +231,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     		jToolBarView.add(getJButtonComponents());
     		jToolBarView.addSeparator();
     		
+    		jToolBarView.add(getJButtonNetworkModelInfo());
     		jToolBarView.add(getJButtonWindows());
-    		jToolBarView.addSeparator();
-    		
     		jToolBarView.add(getJButtonMessages());
     		jToolBarView.addSeparator();
     		
@@ -292,6 +292,17 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonComponents;
     }
 
+    private JButton getJButtonNetworkModelInfo() {
+    	if (jButtonNetworkModelInfo==null) {
+    		jButtonNetworkModelInfo = new JButton();
+    		jButtonNetworkModelInfo.setPreferredSize(jButtonSize);
+    		jButtonNetworkModelInfo.setIcon(GlobalInfo.getInternalImageIcon("StateInformation.png"));
+    		jButtonNetworkModelInfo.setToolTipText(Language.translate("Network Model Information"));
+    		jButtonNetworkModelInfo.addActionListener(this);
+    	}
+    	return jButtonNetworkModelInfo;
+    }
+    
     /**
      * This method initializes jButtonMessages
      * @return javax.swing.JButton
@@ -732,6 +743,14 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		AddComponentDialog addComponentDialog = new AddComponentDialog(this.graphController);
 		addComponentDialog.setVisible(true);
     }
+    
+    /**
+     * Show network model information dialog.
+     */
+    private void showNetworkModelInformationDialog() {
+    	NetworkModelInformationDialog nmInfoDialog = new NetworkModelInformationDialog(this.graphController);
+    	nmInfoDialog.setVisible(true);
+    }
 
     /**
      * Sets locally the GUI elements for the graph.
@@ -1064,6 +1083,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				String msg = Language.translate("Currently, no network model is available!", Language.EN);
 				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), msg, title, JOptionPane.INFORMATION_MESSAGE);
 			}
+			
+		} else if (ae.getSource() == getJButtonNetworkModelInfo()) {
+			// ------------------------------------------------------
+			// --- Show the NetworkModel information ----------------
+			this.showNetworkModelInformationDialog();
 			
 		} else if (ae.getSource() == getJButtonMessages()) {
 			// ------------------------------------------------------

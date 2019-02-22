@@ -64,10 +64,10 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 
 	private static final long serialVersionUID = -2417300638615468552L;
 
-    protected GraphEnvironmentController graphController = null;
-    protected GraphEnvironmentControllerGUI graphControllerGUI = null;
-    protected BasicGraphGuiJDesktopPane graphDesktop = null;
-    protected BasicGraphGui basicGraphGui = null;
+    protected GraphEnvironmentController graphController;
+    protected GraphEnvironmentControllerGUI graphControllerGUI;
+    protected BasicGraphGuiJDesktopPane graphDesktop;
+    protected BasicGraphGui basicGraphGui;
     
 	/**
 	 * Instantiates a new JInternalFrame that can register at the BasicGraphGuiJDesktopPane.
