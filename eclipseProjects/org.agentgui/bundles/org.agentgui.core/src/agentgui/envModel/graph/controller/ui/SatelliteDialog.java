@@ -30,10 +30,15 @@ package agentgui.envModel.graph.controller.ui;
 
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
+import javax.swing.Timer;
 
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -45,12 +50,13 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SatelliteDialog extends JDialog {
+public class SatelliteDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -4309439744074827584L;
 
 	private GraphEnvironmentController graphController;
 	
+	private Timer resizeWaitTimer;
 	
 	/**
 	 * Instantiates a new satellite view.
@@ -95,8 +101,39 @@ public class SatelliteDialog extends JDialog {
 				graphController.getNetworkModelAdapter().setSatelliteView(false);
 			}
 		});
+		
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent ce) {
+				if (getResizeWaitTimer().isRunning()==true) {
+					SatelliteDialog.this.getResizeWaitTimer().restart();
+				} else {
+					SatelliteDialog.this.getResizeWaitTimer().start();
+				}
+			}
+		});
 	}
 	
+	/**
+	 * Returns the resize wait timer.
+	 * @return the resize wait timer
+	 */
+	private Timer getResizeWaitTimer() {
+		if (resizeWaitTimer==null) {
+			resizeWaitTimer = new Timer(250, this);
+			resizeWaitTimer.setRepeats(false);
+		}
+		return resizeWaitTimer;
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if (ae.getSource()==this.getResizeWaitTimer()) {
+			graphController.getNetworkModelAdapter().setSatelliteView(true);
+		}
+	}
 	
 } 
 	
