@@ -259,17 +259,22 @@ public class NetworkModelInformationDialog extends BasicGraphGuiJInternalFrame i
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelAnalyzerListener#onNetworkModelAnalysisExecuted()
 	 */
 	@Override
-	public void onNetworkModelAnalysisStarted() {
-		// TODO Auto-generated method stub
-		System.out.println("NetworkModel Analysis started.");
+	public void onNetworkModelAnalysStarted() {
+		this.getJTextAreaOutput().setText(null);	
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelAnalyzerListener#onNetworkModelAnalysisFinalized()
 	 */
 	@Override
-	public void onNetworkModelAnalysisFinalized() {
-		// TODO Auto-generated method stub
-		System.out.println("NetworkModel Analysis finalized.");
+	public void onNetworkModelAnalysFinalized() {
+		// --- Nothing to do here yet -------
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelAnalyzerListener#onAppendedMessage(java.lang.String)
+	 */
+	@Override
+	public void onAppendedMessage(String message) {
+		this.getJTextAreaOutput().append(message + System.lineSeparator());
 	}
 	
     /*
@@ -308,6 +313,5 @@ public class NetworkModelInformationDialog extends BasicGraphGuiJInternalFrame i
     	}
 		
 	}
-	
 	
 }

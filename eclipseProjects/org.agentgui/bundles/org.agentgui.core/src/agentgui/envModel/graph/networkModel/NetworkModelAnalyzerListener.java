@@ -37,11 +37,17 @@ public interface NetworkModelAnalyzerListener {
 	/**
 	 * Will be invoked if the network model analysis was started.
 	 */
-	public void onNetworkModelAnalysisStarted();
+	public void onNetworkModelAnalysStarted();
 
 	/**
 	 * Will be invoked if the network model analysis was finalized.
 	 */
-	public void onNetworkModelAnalysisFinalized();
+	public void onNetworkModelAnalysFinalized();
+
+	/**
+	 * Will be invoked if a new message was appended to the result message list.
+	 * @param message the message
+	 */
+	public void onAppendedMessage(String message);
 	
 }
