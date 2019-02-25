@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: XyValuePair
 * @author ontology bean generator
-* @version 2019/02/12, 14:08:01
+* @version 2019/02/25, 13:33:15
 */
 public class XyValuePair extends ValuePair{ 
-
-   /**
-* Protege name: yValue
-   */
-   private Simple_Float yValue;
-   public void setYValue(Simple_Float value) { 
-    this.yValue=value;
-   }
-   public Simple_Float getYValue() {
-     return this.yValue;
-   }
 
    /**
 * Protege name: xValue
@@ -31,6 +20,17 @@ public class XyValuePair extends ValuePair{
    }
    public Simple_Float getXValue() {
      return this.xValue;
+   }
+
+   /**
+* Protege name: yValue
+   */
+   private Simple_Float yValue;
+   public void setYValue(Simple_Float value) { 
+    this.yValue=value;
+   }
+   public Simple_Float getYValue() {
+     return this.yValue;
    }
 
 }
