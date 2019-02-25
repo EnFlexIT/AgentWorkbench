@@ -52,6 +52,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.networkModel.DataModelEnDecoder64;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -526,7 +527,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
 			nca4dm.save();
-			this.newDataModel = nca4dm.getDataModel();
+			this.newDataModel = DataModelEnDecoder64.reviewDataModel(nca4dm.getDataModel());
 			this.newDataModelBase64 = nca4dm.getDataModelBase64Encoded(this.newDataModel);
 			Vector<Integer> newHashCodes = this.getHashCodeVectorFromDataModel(newDataModelBase64);
 			// --- Check for changes --------------------------------
@@ -622,7 +623,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
 			nca4dm.save();
-			this.newDataModel = nca4dm.getDataModel();
+			this.newDataModel = DataModelEnDecoder64.reviewDataModel(nca4dm.getDataModel());
 			this.newDataModelBase64 = nca4dm.getDataModelBase64Encoded(this.newDataModel);
 			
 			if (this.graphNode!=null) {
@@ -632,6 +633,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				this.networkComponent.setDataModel(this.newDataModel);
 				this.networkComponent.setDataModelBase64(this.newDataModelBase64);
 			}
+			this.setDataModelBase64InitialHashCodes(this.newDataModelBase64);
 			
 			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------------
@@ -726,7 +728,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				dataModel = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
 			}
 			this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
-			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(getNetworkComponentAdapter4DataModel().getDataModel()));
+			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(this.getNetworkComponentAdapter4DataModel().getDataModel()));
 		}
 		
 		if (dmn.isForNetworkComponent(this.networkComponent)==true) {
@@ -736,7 +738,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				dataModel = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
 			}
 			this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
-			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(getNetworkComponentAdapter4DataModel().getDataModel()));
+			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(this.getNetworkComponentAdapter4DataModel().getDataModel()));
 		}
 		return true;
 	}

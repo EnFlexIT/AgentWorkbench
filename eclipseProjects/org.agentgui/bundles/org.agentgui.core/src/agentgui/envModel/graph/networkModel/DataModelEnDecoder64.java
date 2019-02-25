@@ -51,9 +51,11 @@ public class DataModelEnDecoder64 {
 	 * Return the specified data model as Base64 encoded string vector.
 	 *
 	 * @param dataModel the data model
-	 * @return the data model base 64 encoded
+	 * @return the data model Base64 encoded or <code>null</code>, if no model instance was provided 
 	 */
 	public static Vector<String> getDataModelBase64Encoded(Object dataModel) {
+		
+		if (dataModel==null) return null;
 		
 		Vector<String> modelVector64 = new Vector<>();
 		if (dataModel!=null && dataModel.getClass().isArray()) {
@@ -121,6 +123,31 @@ public class DataModelEnDecoder64 {
 			
 		}
 		return objectArray;
+	}
+
+	/**
+	 * Revises the specified data model if required.
+	 *
+	 * @param dataModel the data model
+	 * @return the object
+	 */
+	public static Object reviewDataModel(Object dataModel) {
+		
+		if (dataModel!=null) {
+			if (dataModel.getClass().isArray()==true) {
+				Object[] dataModelArray = (Object[]) dataModel;
+				for (int i = 0; i < dataModelArray.length; i++) {
+					if (dataModelArray[i]!=null) {
+						return dataModel;
+					}
+				}
+				return null;
+				
+			} else {
+				return dataModel;
+			}
+		}
+		return null;
 	}
 	
 }

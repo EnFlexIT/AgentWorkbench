@@ -110,11 +110,11 @@ public abstract class NetworkComponentAdapter {
 		if (networkComponentOrGraphNode instanceof NetworkComponent) {
 			this.networkComponent = (NetworkComponent) networkComponentOrGraphNode;
 			this.graphNode = null;
-			elementDescription = "NetworkComponent " + networkComponent.getId() + " [" + this.networkComponent.getType() + "]";
+			elementDescription = "NetworkComponent " + this.networkComponent.getId() + " [" + this.networkComponent.getType() + "]";
 		} else if (networkComponentOrGraphNode instanceof GraphNode) {
 			this.networkComponent = null;
 			this.graphNode = (GraphNode) networkComponentOrGraphNode;
-			elementDescription = "GraphNode " + graphNode.getId();
+			elementDescription = "GraphNode " + this.graphNode.getId();
 		}
 		
 		// --- Try to get the individual pop up elements --
