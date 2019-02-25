@@ -367,8 +367,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     	ClusterNetworkComponent cnc = this.evaluateForClusterNetworkComponent(selectedGraphObject);
     	if (cnc!=null) {
 			this.setFocusOnAlternativeTab(cnc.getId());
-			
     	} else {
+    		if (selectedGraphObject instanceof NetworkComponent) {
+    			// --- Check if selection requires a switch to GraphNode ------
+    			NetworkComponent netComp = (NetworkComponent) selectedGraphObject;
+    			boolean isUsesNetCompToGraphNodeAdapter = this.getGraphController().getNetworkModel().isUsesNetworkComponentToGraphNodeAdapter(netComp);
+    			if (isUsesNetCompToGraphNodeAdapter==true) {
+    				GraphNode graphNode = this.getGraphController().getNetworkModel().getGraphNodeFromDistributionNode(netComp);
+    				selectedGraphObject = graphNode;
+    			}
+    		}
+    		// --- Open the properties window ---------------------------------
     		new BasicGraphGuiProperties(this.getGraphController(), selectedGraphObject);
     	}
     }

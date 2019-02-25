@@ -1772,6 +1772,31 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		HashSet<NetworkComponent> components = this.getNetworkComponents(graphNode);
 		return this.containsDistributionNode(components);
 	}
+	/**
+	 * Checks if the specified NetworkComponent is a distribution node that is that a NetworkComponent is a single GraphNode
+	 *
+	 * @param networkComponent the network component
+	 * @return true, if is distribution node
+	 */
+	public boolean isDistributionNode(NetworkComponent networkComponent) {
+		if (networkComponent==null) return false;
+		ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
+		return cts.getGraphPrototype().equals(DistributionNode.class.getName());
+	}
+	/**
+	 * Returns the GraphNode from the specified NetworkComponent if this component is a distribution node.
+	 *
+	 * @param networkComponent the network component
+	 * @return the graph node from distribution node
+	 */
+	public GraphNode getGraphNodeFromDistributionNode(NetworkComponent networkComponent) {
+		GraphNode graphNodeFound = null;
+		if (this.isDistributionNode(networkComponent)==true) {
+			String graphNodeID = networkComponent.getGraphElementIDs().iterator().next();
+			graphNodeFound = (GraphNode) this.getGraphElement(graphNodeID);
+		}
+		return graphNodeFound;
+	}
 	
 	/**
 	 * Resets the GraphElementLayout for every GraphNode or GraphEdge.
@@ -2084,15 +2109,45 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
+	 * Check, if the specified {@link NetworkComponent} uses the {@link NetworkComponentToGraphNodeAdapter} for editing the data model.
+	 *
+	 * @param networkComponent the network component
+	 * @return true, if the configured adapter class is the NetworkComponentToGraphNodeAdapter
+	 */
+	public boolean isUsesNetworkComponentToGraphNodeAdapter(NetworkComponent networkComponent) {
+		ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
+		boolean isUsesNetworkComponentToGraphNodeAdapter = cts.getAdapterClass()!=null && cts.getAdapterClass().equals(NetworkComponentToGraphNodeAdapter.class.getName());
+		boolean isDistributionNode = this.isDistributionNode(networkComponent);
+		if (isUsesNetworkComponentToGraphNodeAdapter==true & isDistributionNode==false) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The NetworkComponentAdapter for '" + networkComponent.toString() + "' was set to a NetworkComponentToGraphNodeAdapter, but the used Graph-Prototype of the component is not of type DistributionNode!");
+		}
+		return isUsesNetworkComponentToGraphNodeAdapter & isDistributionNode;
+	}
+	
+	/**
 	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.
 	 *
 	 * @param networkComponent the NetworkComponent
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
-		return this.getNetworkComponentAdapter(graphController, networkComponent.getType());
+		
+		NetworkComponentAdapter netCompAdapter = null; 
+		if (this.isUsesNetworkComponentToGraphNodeAdapter(networkComponent)==true) {
+			// --- Mapping from NetworkComponent to GraphNode was chosen ------
+			GraphNode graphNode = this.getGraphNodeFromDistributionNode(networkComponent);
+			NetworkComponentAdapter netCompAdapterGraphNode = this.getNetworkComponentAdapter(graphController, graphNode);
+			if (netCompAdapterGraphNode!=null) {
+				netCompAdapter = netCompAdapterGraphNode;
+			}
+			
+		} else {
+			// --- A regular NetworkComponentAdapter --------------------------
+			netCompAdapter = this.getNetworkComponentAdapter(graphController, networkComponent.getType());
+			
+		}
+		return netCompAdapter;
 	}
-
 	/**
 	 * Returns the NetworkComponentAdapter for the specified GraphNode.
 	 *
@@ -2108,7 +2163,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return null;
 	}
-	
 	/**
 	 * Returns the NetworkComponentAdapter for the specified type of component.
 	 *
@@ -2128,8 +2182,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return netCompAdapter;
 	}
-	
-	
 	/**
 	 * Creates the {@link NetworkComponentAdapter} that is specified with the component type name.
 	 *
@@ -2142,7 +2194,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		NetworkComponentAdapter netCompAdapter = null;
 		
 		// --------------------------------------------------------------------------
-		// --- Find and initialise the corresponding NetworkComponentAdapter --------
+		// --- Find and initialize the corresponding NetworkComponentAdapter --------
 		// --------------------------------------------------------------------------
 		String adapterClassname = null;
 		if (componentTypeName.startsWith(GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX)) {
@@ -2162,7 +2214,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			
 		}
 		// --------------------------------------------------------------------------
-		// --- Initialise the found NetworkComponentAdapter -------------------------
+		// --- Initialize the found NetworkComponentAdapter -------------------------
 		// --------------------------------------------------------------------------
 		if (adapterClassname!=null) {
 			try {
