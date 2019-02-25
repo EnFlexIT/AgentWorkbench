@@ -498,7 +498,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		Vector<Integer> hashCodeVector = new Vector<Integer>();
 		// --- Data model is an object array ----------
-		for (String singleDataModel : dataModelBase64) {
+		for (int i = 0; i < dataModelBase64.size(); i++) {
+			String singleDataModel = dataModelBase64.get(i);
 			int singleDataModelHashCode = 0;
 			if (singleDataModel!=null) {
 				singleDataModelHashCode = singleDataModel.hashCode();	
