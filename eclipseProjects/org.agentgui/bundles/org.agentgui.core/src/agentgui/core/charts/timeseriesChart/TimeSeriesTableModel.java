@@ -30,6 +30,8 @@ package agentgui.core.charts.timeseriesChart;
 
 import jade.util.leap.List;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
@@ -38,6 +40,7 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.TableModelEvent;
+
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.TableModel;
 import agentgui.core.charts.TableModelDataVector;
@@ -229,16 +232,13 @@ public class TimeSeriesTableModel extends TableModel {
 	 * Adds the specified row vector to the current table model.
 	 * @param newRow the new row
 	 */
-	public void addRow(Vector<Number> newRow) {
+	private void addRow(Vector<Number> newRow) {
 
 		int targetRowIndex = this.getRowIndexByKey(newRow.get(0));
 		if (targetRowIndex==-1) {
 			targetRowIndex = tableModelDataVector.size();
 			tableModelDataVector.add(newRow);
 			this.fireTableRowsInserted(targetRowIndex, targetRowIndex);
-			if (((TimeSeriesDataModel)this.parentDataModel).isRealTime()==true) {
-				this.applyLengthRestriction();
-			}
 		} else {
 			tableModelDataVector.set(targetRowIndex, newRow);
 			this.fireTableRowsUpdated(targetRowIndex, targetRowIndex);
@@ -509,7 +509,7 @@ public class TimeSeriesTableModel extends TableModel {
 			
 			// --- Apply length restrictions if necessary -----------
 			if (((TimeSeriesDataModel)this.parentDataModel).isRealTime()) {
-				this.applyLengthRestriction();
+				this.applyLengthRestriction(targetDataSeriesIndex);
 			}
 			
 			this.fireTableStructureChanged();
@@ -578,7 +578,7 @@ public class TimeSeriesTableModel extends TableModel {
 			
 			// --- Apply length restrictions if necessary -----------
 			if (((TimeSeriesDataModel)this.parentDataModel).isRealTime()) {
-				this.applyLengthRestriction();
+				this.applyLengthRestriction(targetDataSeriesIndex);
 			}
 			
 			this.fireTableStructureChanged();
@@ -655,14 +655,14 @@ public class TimeSeriesTableModel extends TableModel {
 	
 	/**
 	 * Adds the or updates a value pair.
-	 * @param targetDataSeriesIndex the index of the target data series
+	 * @param seriesIndex the index of the target data series
 	 * @param key the key the time stamp
 	 * @param value the value the value
 	 */
-	public void addOrUpdateValuePair(int targetDataSeriesIndex, long key, float value) {
-		if (targetDataSeriesIndex<(this.getColumnCount()-1)) {
+	public void addOrUpdateValuePair(int seriesIndex, long key, float value) {
+		if (seriesIndex<(this.getColumnCount()-1)) {
 			// --- Column 0 is used for the time stamps -------------
-			int targetColumn = targetDataSeriesIndex+1; 
+			int targetColumn = seriesIndex+1; 
 			
 			// --- Get the table row for this time stamp ------------
 			Vector<Number> row = this.getTableModelDataVector().getKeyRowVectorTreeMap().get(key);
@@ -681,6 +681,11 @@ public class TimeSeriesTableModel extends TableModel {
 					}
 				}
 				this.addRow(row);
+			}
+			
+			// --- Apply length restriction if necessary ------------
+			if (((TimeSeriesDataModel)this.parentDataModel).isRealTime()==true) {
+				this.applyLengthRestriction(seriesIndex);
 			}
 		}
 	}
@@ -804,42 +809,39 @@ public class TimeSeriesTableModel extends TableModel {
 	}
 	
 	/**
-	 * Apply length restriction.
+	 * Applies the  length restriction to the specified series
+	 * @param seriesIndex the series index
 	 */
-	private void applyLengthRestriction() {
-		System.out.println("[" + this.getClass().getSimpleName() + "] Applying length restriction");
+	private void applyLengthRestriction(int seriesIndex) {
+		int columnIndex = seriesIndex+1;
 		int maxValues = ((TimeSeriesDataModel)parentDataModel).getLengthRestriction().getMaxNumberOfStates();
 		long maxAge = ((TimeSeriesDataModel)parentDataModel).getLengthRestriction().getMaxAge();
-
-		// --- Check age first --------------------------------------
-		if (maxAge>0) {
-			for (int i=0; i<this.getRowCount(); i++) {
-				long rowTimeStamp = (long) this.getValueAt(i, 0);
-				
-				// --- Remove old values ----------------------------
-				if (rowTimeStamp<maxAge) {
-					System.out.println("[" + this.getClass().getSimpleName() + "] First state too old, removing"); 
-					this.removeRowByKey(rowTimeStamp);
-					i--;
-				}
+		
+		if (maxValues>0) {
+			int numberOfValues = this.getNumberOfValuesInSeries(seriesIndex);
+			if (numberOfValues>maxValues) {
+				this.removeFirstValues(seriesIndex, numberOfValues-maxValues);
 			}
 		}
 		
-		// --- Check number of states -------------------------------
-		if (maxValues>0) {
-			for (int seriesIndex=0; seriesIndex<this.parentDataModel.getSeriesCount(); seriesIndex++) {
-				int numberOfValues = this.getNumberOfValuesInSeries(seriesIndex);
-				
-				// --- Remove surplus values ------------------------
-				if (numberOfValues > maxValues) {
-					System.out.println("[" + this.getClass().getSimpleName() + "] Too many states in series " + seriesIndex + ", removing the first " + (numberOfValues-maxValues)); 
-					this.removeFirstValues(seriesIndex, numberOfValues-maxValues);
+		if (maxAge>0) {
+			
+			// --- Determine the oldest timestamp that does not exceed maxAge -----------
+			java.util.List<Long> timestampsForSeries = this.getTimeStampsForSeries(seriesIndex);
+			long newestTimestamp = Collections.max(this.getTimeStampsForSeries(seriesIndex));
+			long oldestTimestampToKeep = newestTimestamp - maxAge;
+			
+			// --- Remove older entries -------------------
+			for (int i=0; i<timestampsForSeries.size(); i++) {
+				if (timestampsForSeries.get(i)<oldestTimestampToKeep) {
+					int rowIndex = this.getRowIndexByKey(timestampsForSeries.get(i));
+					this.setValueAt(null, rowIndex, columnIndex);
 				}
 			}
 			
-			this.removeEmptyRows();
 		}
 		
+		this.removeEmptyRows();
 	}
 	
 	/**
@@ -853,8 +855,10 @@ public class TimeSeriesTableModel extends TableModel {
 		// --- First column for the timestamps ------------
 		int columnIndex = seriesIndex+1;
 		
+		int rowCount = this.getRowCount();
+		
 		// --- Count all non-empty cells in this column --- 
-		for (int rowIndex=0; rowIndex<this.getRowCount(); rowIndex++) {
+		for (int rowIndex=0; rowIndex<rowCount; rowIndex++) {
 			if (this.getValueAt(rowIndex, columnIndex)!=null) {
 				numberOfValues++;
 			}
@@ -881,4 +885,22 @@ public class TimeSeriesTableModel extends TableModel {
 			}
 		}
 	}
+	
+	/**
+	 * Gets the time stamps for the specified series.
+	 * @param seriesIndex the series index
+	 * @return the time stamps
+	 */
+	private ArrayList<Long> getTimeStampsForSeries(int seriesIndex){
+		int columnIndex = seriesIndex+1;
+		ArrayList<Long> timestamps = new ArrayList<>();
+		for (int rowIndex=0; rowIndex<this.getTableModelDataVector().size(); rowIndex++) {
+			if (this.getValueAt(rowIndex, columnIndex)!=null) {
+				Long timestamp = (Long) this.getValueAt(rowIndex, 0);
+				timestamps.add(timestamp);
+			}
+		}
+		return timestamps;
+	}
+	
 }
