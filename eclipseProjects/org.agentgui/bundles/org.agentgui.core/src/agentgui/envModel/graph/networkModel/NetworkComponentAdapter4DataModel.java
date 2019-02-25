@@ -162,21 +162,26 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 */
 	public abstract Object getDataModel();
 	
-	/**
-	 * Returns the data model of a {@link NetworkComponent} as Vector of Base64 encoded String.
-	 *
-	 * @param dataModel the data model
-	 * @return the data model encoded as Base64 String
-	 */
-	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel);
 	
 	/**
-	 * Returns the data model of a {@link NetworkComponent} as Object
-	 * specified by a Base64 encoded String.
+	 * Returns the data model of a {@link NetworkComponent} or a {@link GraphNode} as Vector of Base64 encoded String
+	 * by using the corresponding static method of the {@link DataModelEnDecoder64}.
 	 *
-	 * @param dataModel the data model as String Vector
-	 * @return the data model base64 decode
+	 * @param dataModel the data model model (usually an object array) 
+	 * @return the data model encoded as Base64 String vector
 	 */
-	public abstract Object getDataModelBase64Decoded(Vector<String> dataModel);
-	
+	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
+		return DataModelEnDecoder64.getDataModelBase64Encoded(dataModel);
+	}
+	/**
+	 * Returns the data model specified by the Base64 encoded String vector of a {@link NetworkComponent} or a {@link GraphNode} 
+	 * as Object array by using the corresponding static method of the {@link DataModelEnDecoder64}.
+	 *
+	 * @param dataModel the data model as Base64 encoded String vector
+	 * @return the data model array 
+	 */
+	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
+		return DataModelEnDecoder64.getDataModelBase64Decoded(dataModel);
+	}
+		
 }
