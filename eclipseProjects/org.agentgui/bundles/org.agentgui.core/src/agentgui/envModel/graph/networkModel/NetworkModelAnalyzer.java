@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -42,17 +43,27 @@ public class NetworkModelAnalyzer {
 
 	private enum NetworkModelAnalyzerEvent {
 		AnalysisStarted,
-		AnalysisFinalized
+		AnalysisFinalized,
+		AppendedMessage
 	}
 	
-	
-	private GraphEnvironmentController graphController;
-	private NetworkModel networkModel;
-	
+	public enum CountingType {
+		DomainElement,
+		NetworkComponent,
+		GraphElementPrototype
+	}
+
 	private boolean isExecuted;
 	private boolean isInterruptAnalyzer;
 	
+	private GraphEnvironmentController graphController;
 	private List<NetworkModelAnalyzerListener> listener;
+
+	private NetworkModel networkModel;
+	private HashMap<ElementCounter, Integer> elementCountingHashMap;
+	private List<String> notConnectedNetworkComponents;
+	
+	private List<String> resultList;
 	
 	
 	/**
@@ -115,7 +126,7 @@ public class NetworkModelAnalyzer {
 				// --- Set the executed flag to true ----------------
 				NetworkModelAnalyzer.this.setExecuted(true);
 				// --- Reset local NetworkModel ---------------------
-				NetworkModelAnalyzer.this.resetLocalNetworkModel();
+				NetworkModelAnalyzer.this.resetLocalDataModel();
 				// --- Inform listener ------------------------------
 				NetworkModelAnalyzer.this.informListener(NetworkModelAnalyzerEvent.AnalysisStarted);
 				
@@ -142,8 +153,14 @@ public class NetworkModelAnalyzer {
 		}
 		return networkModel;
 	}
-	private void resetLocalNetworkModel() {
+	/**
+	 * Resets the local data model.
+	 */
+	private void resetLocalDataModel() {
 		this.networkModel = null;
+		this.elementCountingHashMap = null;
+		this.notConnectedNetworkComponents = null;
+		this.resultList = null;
 	}
 	
 	/**
@@ -151,11 +168,276 @@ public class NetworkModelAnalyzer {
 	 */
 	private void doAnalyze() {
 		
+		// --- Simply count Network Components ----------------------
 		int noNetComps = this.getNetworkModel().getNetworkComponents().size();
+		this.addResultMessage(noNetComps + " " + this.getStringNetworkComponentS(noNetComps) + " found in the current NetworkModel");
+
+		// --- Count single elements -------------------------------- 
+		this.doElementCounting();
+		this.addResultMessagesForElementCounting();
 		
+	}
+	
+	/**
+	 * Adds the result messages for the element counting.
+	 */
+	private void addResultMessagesForElementCounting() {
 		
+		GeneralGraphSettings4MAS graphSettings = this.getNetworkModel().getGeneralGraphSettings4MAS();
 		
+		// --- Print domain results ---------------------------------
+		this.addResultMessage("Differentiated by Domain");
+		List<String> domains = new ArrayList<>(graphSettings.getDomainSettings().keySet());
+		for (int i = 0; i < domains.size(); i++) {
+			String domain = domains.get(i);
+			Integer noOfDomainElements = this.getElementCountingHashMap().get(new ElementCounter(CountingType.DomainElement, domain));
+			if (noOfDomainElements!=null) {
+				this.addResultMessage("- Domain '" + domain + "': Found " + noOfDomainElements + " " + this.getStringNetworkComponentS(noOfDomainElements));
+			}
+		}
+		this.addResultMessage("");
 		
+		// --- Print NetworkComponent results -----------------------
+		this.addResultMessage("Type of Network Components");
+		List<String> ctsList = new ArrayList<>(graphSettings.getCurrentCTS().keySet());
+		for (int i = 0; i < ctsList.size(); i++) {
+			String componentType = ctsList.get(i);
+			Integer noOfComponents = this.getElementCountingHashMap().get(new ElementCounter(CountingType.NetworkComponent, componentType));
+			if (noOfComponents!=null) {
+				this.addResultMessage("- " + noOfComponents + " x " + componentType + "");
+			}
+		}
+		this.addResultMessage("");
+		
+		// --- Print NetworkComponent results -----------------------
+		this.addResultMessage("Type of used GraphElementProtottypes");
+		List<ElementCounter> geList = this.getElementCounterByType(CountingType.GraphElementPrototype);
+		for (int i = 0; i < geList.size(); i++) {
+			ElementCounter elementCounter = geList.get(i);
+			Integer noOfGraphElementTypes = this.getElementCountingHashMap().get(elementCounter);
+			this.addResultMessage("- " + noOfGraphElementTypes  + " x " + elementCounter.getElementID() + "");
+		}
+		this.addResultMessage("");
+		
+		// --- Print not connected NetworkComponents ----------------
+		int noOfFreeNetComps = this.getNotConnectedNetworkComponentList().size(); 
+		if (noOfFreeNetComps==0) {
+			this.addResultMessage("All NetworkComponents are connected to other NetworkComponents!");
+		} else {
+			this.addResultMessage(noOfFreeNetComps + " single free " + this.getStringNetworkComponentS(noOfFreeNetComps) + " (not connected to other):");
+			for (int i = 0; i < noOfFreeNetComps; i++) {
+				this.addResultMessage("- " + this.getNotConnectedNetworkComponentList().get(i));
+			}
+		}
+		this.addResultMessage("");
+		
+	}
+	
+	/**
+	 * Do element counting.
+	 */
+	private void doElementCounting() {
+		
+		GeneralGraphSettings4MAS graphSettings = this.getNetworkModel().getGeneralGraphSettings4MAS(); 
+		
+		List<NetworkComponent> netCompList = new ArrayList<>(this.getNetworkModel().getNetworkComponents().values());
+		for (int i = 0; i < netCompList.size(); i++) {
+
+			NetworkComponent netComp = netCompList.get(i);
+
+			// --- Increase counting for domain, NetworkComponent and GraphElement ------
+			ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(netComp.getType());
+			if (cts!=null) {
+				this.increaseElementCounter(CountingType.DomainElement, cts.getDomain());
+			}
+			this.increaseElementCounter(CountingType.NetworkComponent, netComp.getType());
+			this.increaseElementCounter(CountingType.GraphElementPrototype, netComp.getPrototypeClassName());
+			
+			// --- Check for connection to other components -----------------------------
+			if (this.getNetworkModel().getNeighbourNetworkComponents(netComp).size()==0) {
+				this.getNotConnectedNetworkComponentList().add(netComp.toString());
+			}
+		}
+	}
+	
+	/**
+	 * Returns the list of not connected NetworkComponents.
+	 * @return the not connected network component list
+	 */
+	private List<String> getNotConnectedNetworkComponentList() {
+		if (notConnectedNetworkComponents==null) {
+			notConnectedNetworkComponents = new ArrayList<>();
+		}
+		return notConnectedNetworkComponents;
+	}
+	
+	// --------------------------------------------------------------
+	// --- From here methods for the element counting can be found --
+	// --------------------------------------------------------------
+	/**
+	 * Returns the element counting hash map.
+	 * @return the element counting hash map
+	 */
+	private HashMap<ElementCounter, Integer> getElementCountingHashMap() {
+		if (elementCountingHashMap==null) {
+			elementCountingHashMap = new HashMap<>();
+		}
+		return elementCountingHashMap;
+	}
+	/**
+	 * The Class ElementCounter.
+	 */
+	public class ElementCounter {
+		
+		private CountingType countingType;
+		private String elementID;
+		
+		/**
+		 * Instantiates a new element counter.
+		 *
+		 * @param countingType the counting type
+		 * @param elementID the element ID
+		 */
+		public ElementCounter(CountingType countingType, String elementID) {
+			this.setCountingType(countingType);
+			this.setElementID(elementID);
+		}
+		
+		/**
+		 * Gets the counting type.
+		 * @return the counting type
+		 */
+		public CountingType getCountingType() {
+			return countingType;
+		}
+		/**
+		 * Sets the counting type.
+		 * @param countingType the new counting type
+		 */
+		public void setCountingType(CountingType countingType) {
+			this.countingType = countingType;
+		}
+
+		/**
+		 * Gets the element ID.
+		 * @return the element ID
+		 */
+		public String getElementID() {
+			return elementID;
+		}
+		/**
+		 * Sets the element ID.
+		 * @param elementID the new element ID
+		 */
+		public void setElementID(String elementID) {
+			this.elementID = elementID;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			return this.toString().hashCode();
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return this.countingType.name() + "-" + this.elementID;
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object compareObject) {
+			if (compareObject instanceof ElementCounter) {
+				ElementCounter ecCompare = (ElementCounter) compareObject;
+				if (ecCompare.getCountingType()==this.getCountingType()) {
+					if (ecCompare.getElementID().equals(this.getElementID())) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	}
+	/**
+	 * Increase the specified element counter.
+	 *
+	 * @param countingType the counting type
+	 * @param elementID the element ID
+	 */
+	private void increaseElementCounter(CountingType countingType, String elementID) {
+ 		ElementCounter ec = new ElementCounter(countingType, elementID);
+		Integer elementsFound = this.getElementCountingHashMap().get(ec);
+		if (elementsFound==null) {
+			elementsFound = this.getElementCountingHashMap().put(ec, new Integer(1));
+		} else {
+			this.getElementCountingHashMap().put(ec, new Integer(elementsFound+1));
+		}
+	}
+	/**
+	 * Returns the {@link ElementCounter} of the specified {@link CountingType}.
+	 *
+	 * @param type the CountingType to filter for
+	 * @return the element counter by type
+	 */
+	private List<ElementCounter> getElementCounterByType(CountingType type) {
+		List<ElementCounter> typedElementCounter = new ArrayList<>();
+		List<ElementCounter> elementCounterList = new ArrayList<>(this.getElementCountingHashMap().keySet());
+		for (int i = 0; i < elementCounterList.size(); i++) {
+			ElementCounter elementCounter = elementCounterList.get(i); 
+			if (elementCounter.getCountingType()==type) {
+				typedElementCounter.add(elementCounter);
+			}
+		}
+		return typedElementCounter;
+	}
+	
+
+	// --------------------------------------------------------------
+	// --- From here methods for the analysis results can be found --
+	// --------------------------------------------------------------
+	private String getStringNetworkComponentS(int noOf) {
+		if (noOf==1) {
+			return "NetworkComponent";	
+		}
+		return "NetworkComponents";
+	}
+	/**
+	 * Returns the overall result message list with its single results.
+	 * @return the result message list
+	 */
+	public List<String> getResultMessageList() {
+		if (resultList==null) {
+			resultList = new ArrayList<>();
+		}
+		return resultList;
+	}
+	/**
+	 * Adds the specified single result message to the result mesage list.
+	 * @param newMessage the new message
+	 */
+	private void addResultMessage(String newMessage) {
+		this.getResultMessageList().add(newMessage);
+		this.informListener(NetworkModelAnalyzerEvent.AppendedMessage);
+	}
+	
+	/**
+	 * Gets the result message string.
+	 * @return the result message string
+	 */
+	public String getResultMessageString() {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < this.getResultMessageList().size(); i++) {
+			if (builder.length()>=0) {
+				builder.append(System.lineSeparator());
+			}
+			builder.append(this.getResultMessageList().get(i));
+		}
+		return builder.toString();
 	}
 	
 	// --------------------------------------------------------------
@@ -196,11 +478,15 @@ public class NetworkModelAnalyzer {
 			NetworkModelAnalyzerListener listener = this.getListener().get(i);
 			switch (event) {
 			case AnalysisStarted:
-				listener.onNetworkModelAnalysisStarted();
+				listener.onNetworkModelAnalysStarted();
 				break;
 
 			case AnalysisFinalized:
-				listener.onNetworkModelAnalysisFinalized();
+				listener.onNetworkModelAnalysFinalized();
+				break;
+				
+			case AppendedMessage:
+				listener.onAppendedMessage(this.getResultMessageList().get(this.getResultMessageList().size()-1));
 				break;
 			}
 		}
