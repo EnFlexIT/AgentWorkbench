@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: XyDataSeries
 * @author ontology bean generator
-* @version 2019/02/12, 14:08:00
+* @version 2019/02/25, 13:33:15
 */
 public class XyDataSeries extends DataSeries{ 
 
@@ -61,6 +61,17 @@ public void sort() {
    }
 
    /**
+* Protege name: avoidDuplicateXValues
+   */
+   private boolean avoidDuplicateXValues;
+   public void setAvoidDuplicateXValues(boolean value) { 
+    this.avoidDuplicateXValues=value;
+   }
+   public boolean getAvoidDuplicateXValues() {
+     return this.avoidDuplicateXValues;
+   }
+
+   /**
    * The data of the series
 * Protege name: xyValuePairs
    */
@@ -81,16 +92,5 @@ public void sort() {
    public Iterator getAllXyValuePairs() {return xyValuePairs.iterator(); }
    public List getXyValuePairs() {return xyValuePairs; }
    public void setXyValuePairs(List l) {xyValuePairs = l; }
-
-   /**
-* Protege name: avoidDuplicateXValues
-   */
-   private boolean avoidDuplicateXValues;
-   public void setAvoidDuplicateXValues(boolean value) { 
-    this.avoidDuplicateXValues=value;
-   }
-   public boolean getAvoidDuplicateXValues() {
-     return this.avoidDuplicateXValues;
-   }
 
 }

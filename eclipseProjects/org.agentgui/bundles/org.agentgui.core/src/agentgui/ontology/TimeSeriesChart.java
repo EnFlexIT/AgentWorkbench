@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TimeSeriesChart
 * @author ontology bean generator
-* @version 2019/02/12, 14:08:01
+* @version 2019/02/25, 13:33:15
 */
 public class TimeSeriesChart extends Chart{ 
 
@@ -32,18 +32,6 @@ public boolean isEmpty() {
   return false;
  }
 }
-   /**
-   * Indicates if this chart displays real time data, i.e. length restrictions are applied
-* Protege name: realTime
-   */
-   private boolean realTime;
-   public void setRealTime(boolean value) { 
-    this.realTime=value;
-   }
-   public boolean getRealTime() {
-     return this.realTime;
-   }
-
    /**
 * Protege name: timeSeriesVisualisationSettings
    */
@@ -76,5 +64,17 @@ public boolean isEmpty() {
    public Iterator getAllTimeSeriesChartData() {return timeSeriesChartData.iterator(); }
    public List getTimeSeriesChartData() {return timeSeriesChartData; }
    public void setTimeSeriesChartData(List l) {timeSeriesChartData = l; }
+
+   /**
+   * Indicates if this chart displays real time data, i.e. length restrictions are applied
+* Protege name: realTime
+   */
+   private boolean realTime;
+   public void setRealTime(boolean value) { 
+    this.realTime=value;
+   }
+   public boolean getRealTime() {
+     return this.realTime;
+   }
 
 }
