@@ -266,6 +266,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (this.adapter4DataModel==null) {
 			if (this.getNetworkComponentAdapter()!=null) {
 				this.adapter4DataModel = this.getNetworkComponentAdapter().getNewDataModelAdapter();
+				this.adapter4DataModel.setNetworkComponentAdapter(this.getNetworkComponentAdapter());
 			}	
 		}
 		return this.adapter4DataModel;

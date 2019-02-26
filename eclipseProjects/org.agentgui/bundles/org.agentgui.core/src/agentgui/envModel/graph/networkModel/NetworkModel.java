@@ -1766,7 +1766,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Checks if the specified GraphNode is the main GraphNode of a DistributionNode.
 	 * @param graphNode the GraphNode
-	 * @return true, if the GraphNode is the main GraphNode of a DistributionNode
+	 * @return the NetworkComponent of the DistributionNode, otherwise <code>null</code>
 	 */
 	public NetworkComponent isDistributionNode(GraphNode graphNode) {
 		HashSet<NetworkComponent> components = this.getNetworkComponents(graphNode);
@@ -2108,6 +2108,48 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 	}
 
+	
+	/**
+	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.
+	 *
+	 * @param graphController the graph controller
+	 * @param networkComponent the NetworkComponent
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
+		return this.getNetworkComponentAdapter(graphController, networkComponent, null);
+	}
+	/**
+	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.
+	 *
+	 * @param graphController the graph controller
+	 * @param networkComponent the NetworkComponent
+	 * @param externalReminderHashMap an optional external reminder HashMap. If <code>null</code>, the local HashMap will be used
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, NetworkComponent networkComponent, HashMap<String, NetworkComponentAdapter> externalReminderHashMap) {
+		
+		NetworkComponentAdapter netCompAdapter = null; 
+		if (this.isUsesNetworkComponentToGraphNodeAdapter(networkComponent)==true) {
+			// --- Mapping from NetworkComponent to GraphNode was chosen ------
+			GraphNode graphNode = this.getGraphNodeFromDistributionNode(networkComponent);
+			NetworkComponentAdapter netCompAdapterGraphNode = this.getNetworkComponentAdapter(graphController, graphNode, externalReminderHashMap);
+			if (netCompAdapterGraphNode!=null) {
+				netCompAdapter = netCompAdapterGraphNode;
+				netCompAdapter.setNetworkComponent(networkComponent);
+				netCompAdapter.setGraphNode(graphNode);
+			}
+			
+		} else {
+			// --- A regular NetworkComponentAdapter --------------------------
+			netCompAdapter = this.getNetworkComponentAdapter(graphController, networkComponent.getType(), externalReminderHashMap);
+			if (netCompAdapter!=null) {
+				netCompAdapter.setNetworkComponent(networkComponent);
+				netCompAdapter.setGraphNode(null);
+			}
+		}
+		return netCompAdapter;
+	}
 	/**
 	 * Check, if the specified {@link NetworkComponent} uses the {@link NetworkComponentToGraphNodeAdapter} for editing the data model.
 	 *
@@ -2115,6 +2157,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return true, if the configured adapter class is the NetworkComponentToGraphNodeAdapter
 	 */
 	public boolean isUsesNetworkComponentToGraphNodeAdapter(NetworkComponent networkComponent) {
+		if (networkComponent==null) return false;
 		ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
 		boolean isUsesNetworkComponentToGraphNodeAdapter = cts.getAdapterClass()!=null && cts.getAdapterClass().equals(NetworkComponentToGraphNodeAdapter.class.getName());
 		boolean isDistributionNode = this.isDistributionNode(networkComponent);
@@ -2124,30 +2167,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return isUsesNetworkComponentToGraphNodeAdapter & isDistributionNode;
 	}
 	
-	/**
-	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.
-	 *
-	 * @param networkComponent the NetworkComponent
-	 * @return the network component adapter
-	 */
-	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
-		
-		NetworkComponentAdapter netCompAdapter = null; 
-		if (this.isUsesNetworkComponentToGraphNodeAdapter(networkComponent)==true) {
-			// --- Mapping from NetworkComponent to GraphNode was chosen ------
-			GraphNode graphNode = this.getGraphNodeFromDistributionNode(networkComponent);
-			NetworkComponentAdapter netCompAdapterGraphNode = this.getNetworkComponentAdapter(graphController, graphNode);
-			if (netCompAdapterGraphNode!=null) {
-				netCompAdapter = netCompAdapterGraphNode;
-			}
-			
-		} else {
-			// --- A regular NetworkComponentAdapter --------------------------
-			netCompAdapter = this.getNetworkComponentAdapter(graphController, networkComponent.getType());
-			
-		}
-		return netCompAdapter;
-	}
+	
 	/**
 	 * Returns the NetworkComponentAdapter for the specified GraphNode.
 	 *
@@ -2156,29 +2176,77 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, GraphNode graphNode) {
+		return this.getNetworkComponentAdapter(graphController, graphNode, null);
+	}
+	/**
+	 * Returns the NetworkComponentAdapter for the specified GraphNode.
+	 *
+	 * @param graphController the current graph controller, if there is one. Can also be null.
+	 * @param graphNode the graph node
+	 * @param externalReminderHashMap an optional external reminder HashMap. If <code>null</code>, the local HashMap will be used
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, GraphNode graphNode, HashMap<String, NetworkComponentAdapter> externalReminderHashMap) {
 		String domain = this.getDomain(graphNode);
 		if (domain!=null) {
 			String searchFor = GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX + domain;
-			return this.getNetworkComponentAdapter(graphController, searchFor);
+			NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(graphController, searchFor, externalReminderHashMap);
+			if (netCompAdapter!=null) {
+				netCompAdapter.setNetworkComponent(this.getNetworkComponentForNetworkComponentToGraphNodeAdapter(graphNode));
+				netCompAdapter.setGraphNode(graphNode);
+			}
+			return netCompAdapter;
 		}
 		return null;
 	}
 	/**
-	 * Returns the NetworkComponentAdapter for the specified type of component.
+	 * Returns the {@link NetworkComponent} for the specified {@link GraphNode} if the GraphNode is part of a {@link NetworkComponentToGraphNodeAdapter}.
 	 *
-	 * @param componentTypeName the component type name
-	 * @return the network component adapter
+	 * @param graphNode the graph node
+	 * @return the network component for network component to graph node adapter
 	 */
-	private NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, String componentTypeName) {
-		
+	public NetworkComponent getNetworkComponentForNetworkComponentToGraphNodeAdapter(GraphNode graphNode) {
+		NetworkComponent distributionNode = this.isDistributionNode(graphNode);
+		if (this.isUsesNetworkComponentToGraphNodeAdapter(distributionNode)==true) {
+			return distributionNode;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the NetworkComponentAdapter HashMap that serves as reminder for known adapter.
+	 * @return the network component adapter hash
+	 */
+	public HashMap<String, NetworkComponentAdapter> getNetworkComponentAdapterHash() {
 		if (this.networkComponentAdapterHash==null) {
 			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
 		}
-		NetworkComponentAdapter netCompAdapter = this.networkComponentAdapterHash.get(componentTypeName);
+		return networkComponentAdapterHash;
+	}
+	/**
+	 * Returns the NetworkComponentAdapter for the specified type of component.
+	 *
+	 * @param graphController the graph controller
+	 * @param componentTypeName the component type name
+	 * @param externalReminderHashMap an optional external reminder HashMap. If <code>null</code>, the local HashMap will be used
+	 * @return the network component adapter
+	 */
+	private NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, String componentTypeName, HashMap<String, NetworkComponentAdapter> externalReminderHashMap) {
+		
+		// --- Chose the working reminder HashMap -------------------
+		HashMap<String, NetworkComponentAdapter> workingHashMap = null;
+		if (externalReminderHashMap==null) {
+			workingHashMap = this.getNetworkComponentAdapterHash();
+		} else {
+			workingHashMap = externalReminderHashMap;
+		}
+		
+		// --- Check for an adapter in the working HashMap ----------
+		NetworkComponentAdapter netCompAdapter = workingHashMap.get(componentTypeName);
 		if (netCompAdapter==null) {
 			// --- Create corresponding NetworkComponentAdapter -----
 			netCompAdapter = this.createNetworkComponentAdapter(graphController, componentTypeName);
-			this.networkComponentAdapterHash.put(componentTypeName, netCompAdapter);
+			workingHashMap.put(componentTypeName, netCompAdapter);
 		}
 		return netCompAdapter;
 	}
@@ -2227,6 +2295,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return netCompAdapter;
 	}
+	
 	
 	/**
 	 * Gets the domain of a GraphElement.

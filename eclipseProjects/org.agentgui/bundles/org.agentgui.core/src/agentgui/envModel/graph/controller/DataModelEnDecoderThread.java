@@ -39,7 +39,6 @@ import org.agentgui.gui.UiBridge;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
@@ -410,10 +409,10 @@ public class DataModelEnDecoderThread extends Thread {
 				Object objectToWorkOn = this.componentsToWorkOn.get(i);
 				if (objectToWorkOn instanceof NetworkComponent) {
 					netComp = (NetworkComponent) objectToWorkOn;		
-					netCompAdapter = this.getNetworkComponentAdapter(this.graphController, netComp);
+					netCompAdapter = this.getNetworkComponentAdapter(netComp);
 				} else if (objectToWorkOn instanceof GraphNode) {
 					graphNode = (GraphNode) objectToWorkOn;
-					netCompAdapter = this.getNetworkComponentAdapter(this.graphController, graphNode);	
+					netCompAdapter = this.getNetworkComponentAdapter(graphNode);	
 				}
 				
 				// --- Set the components data model instance -----------------
@@ -466,10 +465,10 @@ public class DataModelEnDecoderThread extends Thread {
 				
 				if (objectToWorkOn instanceof NetworkComponent) {
 					netComp = (NetworkComponent) objectToWorkOn;		
-					netCompAdapter = this.getNetworkComponentAdapter(this.graphController, netComp);
+					netCompAdapter = this.getNetworkComponentAdapter(netComp);
 				} else if (objectToWorkOn instanceof GraphNode) {
 					graphNode = (GraphNode) objectToWorkOn;
-					netCompAdapter = this.getNetworkComponentAdapter(this.graphController, graphNode);	
+					netCompAdapter = this.getNetworkComponentAdapter(graphNode);	
 				}
 				// --- Set the components data model as Base64 ----------------
 				if (netCompAdapter!=null) {
@@ -519,15 +518,25 @@ public class DataModelEnDecoderThread extends Thread {
 		}// end for
 	}
 	
-
+	
+	/**
+	 * Returns the NetworkComponentAdapter HashMap that serves as reminder for known adapter.
+	 * @return the network component adapter hash
+	 */
+	private HashMap<String, NetworkComponentAdapter> getNetworkComponentAdapterHash() {
+		if (this.networkComponentAdapterHash==null) {
+			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
+		}
+		return networkComponentAdapterHash;
+	}
 	/**
 	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.
 	 *
 	 * @param networkComponent the NetworkComponent
 	 * @return the network component adapter
 	 */
-	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
-		return this.getNetworkComponentAdapter(graphController, networkComponent.getType());
+	public NetworkComponentAdapter getNetworkComponentAdapter(NetworkComponent networkComponent) {
+		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, networkComponent, this.getNetworkComponentAdapterHash());
 	}
 	/**
 	 * Returns the NetworkComponentAdapter for the specified GraphNode.
@@ -536,32 +545,8 @@ public class DataModelEnDecoderThread extends Thread {
 	 * @param graphNode the graph node
 	 * @return the network component adapter
 	 */
-	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, GraphNode graphNode) {
-		String domain = this.graphController.getNetworkModel().getDomain(graphNode);
-		if (domain!=null) {
-			String searchFor = GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX + domain;
-			return this.getNetworkComponentAdapter(graphController, searchFor);
-		}
-		return null;
-	}
-	/**
-	 * Returns the NetworkComponentAdapter for the specified type of component.
-	 *
-	 * @param componentTypeName the component type name
-	 * @return the network component adapter
-	 */
-	private NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, String componentTypeName) {
-		
-		if (this.networkComponentAdapterHash==null) {
-			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
-		}
-		NetworkComponentAdapter netCompAdapter = this.networkComponentAdapterHash.get(componentTypeName);
-		if (netCompAdapter==null) {
-			// --- Create corresponding NetworkComponentAdapter -----
-			netCompAdapter = this.graphController.getNetworkModel().createNetworkComponentAdapter(graphController, componentTypeName);
-			this.networkComponentAdapterHash.put(componentTypeName, netCompAdapter);
-		}
-		return netCompAdapter;
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphNode graphNode) {
+		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, graphNode, this.getNetworkComponentAdapterHash());
 	}
 	
 }

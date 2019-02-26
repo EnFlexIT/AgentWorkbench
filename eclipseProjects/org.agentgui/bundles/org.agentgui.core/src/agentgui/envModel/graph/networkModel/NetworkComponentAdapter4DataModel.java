@@ -54,6 +54,7 @@ import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
  */
 public abstract class NetworkComponentAdapter4DataModel {
 
+	private NetworkComponentAdapter networkComponentAdapter;
 	private GraphEnvironmentController graphController;
 
 	/**
@@ -62,6 +63,22 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 */
 	public NetworkComponentAdapter4DataModel(GraphEnvironmentController graphController) {
 		this.setGraphEnvironmentController(graphController);
+	}
+	
+	
+	/**
+	 * Sets the current network component adapter.
+	 * @param networkComponentAdapter the new network component adapter
+	 */
+	public void setNetworkComponentAdapter(NetworkComponentAdapter networkComponentAdapter) {
+		this.networkComponentAdapter = networkComponentAdapter;
+	}
+	/**
+	 * Returns the superordinate NetworkComponentAdapter.
+	 * @return the network component adapter
+	 */
+	protected NetworkComponentAdapter getNetworkComponentAdapter() {
+		return networkComponentAdapter;
 	}
 	
 	
@@ -76,10 +93,11 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the current GraphEnvironmentController.
 	 * @return the GraphEnvironmentController
 	 */
-	public GraphEnvironmentController getGraphEnvironmentController() {
+	protected GraphEnvironmentController getGraphEnvironmentController() {
 		return this.graphController;
 	}
-
+	
+	
 	
 	/**
 	 * Returns the JComponent for the visualization of the data model.

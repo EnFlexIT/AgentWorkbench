@@ -75,6 +75,36 @@ public abstract class NetworkComponentAdapter {
 	}
 	
 	/**
+	 * Sets the network component that will be edited by the adapter.
+	 * @param networkComponent the new network component
+	 */
+	public void setNetworkComponent(NetworkComponent networkComponent) {
+		this.networkComponent = networkComponent;
+	}
+	/**
+	 * Returns the network component that will be edited.
+	 * @return the network component
+	 */
+	public NetworkComponent getNetworkComponent() {
+		return networkComponent;
+	}
+	
+	/**
+	 * Sets the graph node that will be edited by the adapter.
+	 * @param graphNode the new graph node
+	 */
+	public void setGraphNode(GraphNode graphNode) {
+		this.graphNode = graphNode;
+	}
+	/**
+	 * Gets the graph node.
+	 * @return the graph node
+	 */
+	public GraphNode getGraphNode() {
+		return graphNode;
+	}
+	
+	/**
 	 * Returns the data model adapter for the {@link NetworkComponent}.
 	 * @return the adapter visualization
 	 */
@@ -93,36 +123,32 @@ public abstract class NetworkComponentAdapter {
 	public NetworkComponentAdapter4DataModel getStoredDataModelAdapter() {
 		if (networkComponentAdapter4DataModel==null) {
 			networkComponentAdapter4DataModel = this.getNewDataModelAdapter();
+			networkComponentAdapter4DataModel.setNetworkComponentAdapter(this);
 		}
 		return networkComponentAdapter4DataModel;
 	}
 	
 	/**
-	 * Invokes to get the JPopup menu elements for this kind of NetworkComponent.
-	 * DO NOT OVERRIDE !!!
-	 *
-	 * @param networkComponentOrGraphNode the current NetworkComponent
-	 * @return the vector of menu elements
+	 * Will be invoked to get the individual menu elements for this kind of NetworkComponent or GraphNode.
+	 * @return the vector of individual menu elements
 	 */
-	public Vector<JComponent> invokeGetJPopupMenuElements(Object networkComponentOrGraphNode) {
+	public final Vector<JComponent> invokeGetJPopupMenuElements() {
 		
-		String elementDescription = null; 
-		if (networkComponentOrGraphNode instanceof NetworkComponent) {
-			this.networkComponent = (NetworkComponent) networkComponentOrGraphNode;
-			this.graphNode = null;
-			elementDescription = "NetworkComponent " + this.networkComponent.getId() + " [" + this.networkComponent.getType() + "]";
-		} else if (networkComponentOrGraphNode instanceof GraphNode) {
-			this.networkComponent = null;
-			this.graphNode = (GraphNode) networkComponentOrGraphNode;
-			elementDescription = "GraphNode " + this.graphNode.getId();
-		}
-		
-		// --- Try to get the individual pop up elements --
 		Vector<JComponent> popUpMenuElements = null;
 		try {
+			// --- Try to get the individual pop up elements --------
 			popUpMenuElements = this.getJPopupMenuElements();
 			
 		} catch (Exception ex) {
+			// --- Exception handling -------------------------------
+			String elementDescription = null;
+			if (this.getNetworkComponent()!=null && this.getGraphNode()!=null) {
+				elementDescription = "GraphNode " + this.getGraphNode().getId() + " [NetworkComponentToGraphNodeAdapter]";
+			} else if (this.getNetworkComponent()!=null && this.getGraphNode()==null) {
+				elementDescription = "NetworkComponent " + this.getNetworkComponent().getId() + " [" + this.getNetworkComponent().getType() + "]";
+			} else if (this.getNetworkComponent()==null && this.getGraphNode()!=null) {
+				elementDescription = "GraphNode " + this.getGraphNode().getId();
+			}
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error getting pop up menu for " + elementDescription);
 			ex.printStackTrace();
 		}
