@@ -75,7 +75,7 @@ import javax.swing.table.TableRowSorter;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
+import agentgui.envModel.graph.commands.RenamedNetworkComponent;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -640,7 +640,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
      * The action, when a Network component was renamed.
      * @param renamedNetworkComponent the renamed network component
      */
-    private void networkComponentRenamed(NetworkComponentRenamed renamedNetworkComponent) {
+    private void renamedNetworkComponent(RenamedNetworkComponent renamedNetworkComponent) {
     	
     	if (renamedNetworkComponent==null) return;
     	
@@ -805,8 +805,8 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				break;
 			
 			case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
-				NetworkComponentRenamed renamed = (NetworkComponentRenamed) infoObject;
-				this.networkComponentRenamed(renamed);
+				RenamedNetworkComponent renamed = (RenamedNetworkComponent) infoObject;
+				this.renamedNetworkComponent(renamed);
 				break;
 			default:
 				break;

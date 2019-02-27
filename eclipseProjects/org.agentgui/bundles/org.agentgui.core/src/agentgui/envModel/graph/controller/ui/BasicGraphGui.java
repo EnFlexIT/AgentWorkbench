@@ -75,7 +75,7 @@ import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
+import agentgui.envModel.graph.commands.RenamedNetworkComponent;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
@@ -1440,7 +1440,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 			case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
 				this.clearPickedObjects();
-				NetworkComponentRenamed renamed = (NetworkComponentRenamed) infoObject;
+				RenamedNetworkComponent renamed = (RenamedNetworkComponent) infoObject;
 				this.selectObject(renamed.getNetworkComponent()); 
 				break;
 

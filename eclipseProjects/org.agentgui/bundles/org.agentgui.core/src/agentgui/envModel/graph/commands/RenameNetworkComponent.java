@@ -81,7 +81,7 @@ public class RenameNetworkComponent extends AbstractUndoableEdit {
 		this.graphController.setProjectUnsaved();
 
 		NetworkComponent netComp = this.graphController.getNetworkModel().getNetworkComponent(this.newComponentID);
-		NetworkComponentRenamed renamed = new NetworkComponentRenamed(netComp, oldComponentID, newComponentID);
+		RenamedNetworkComponent renamed = new RenamedNetworkComponent(netComp, oldComponentID, newComponentID);
 
 		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Renamed);
 		notification.setInfoObject(renamed);
@@ -117,78 +117,12 @@ public class RenameNetworkComponent extends AbstractUndoableEdit {
 		this.graphController.setProjectUnsaved();
 
 		NetworkComponent netComp = this.graphController.getNetworkModel().getNetworkComponent(this.oldComponentID);
-		NetworkComponentRenamed renamed = new NetworkComponentRenamed(netComp, newComponentID, oldComponentID);
+		RenamedNetworkComponent renamed = new RenamedNetworkComponent(netComp, newComponentID, oldComponentID);
 
 		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Renamed);
 		notification.setInfoObject(renamed);
 		this.graphController.notifyObservers(notification);
 		
 	}
-
-	
-	/**
-	 * The Class RenamedNetworkComponent.
-	 */
-	public class NetworkComponentRenamed {
-		
-		private NetworkComponent networkComponent = null;
-		private String oldNetworkComponentID = null;
-		private String newNetworkComponentID = null;
-		
-		/**
-		 * Instantiates a new renamed network component.
-		 * @param networkComponent the network component
-		 */
-		public NetworkComponentRenamed(NetworkComponent networkComponent, String oldCompID, String newCompID) {
-			this.networkComponent = networkComponent;
-			this.oldNetworkComponentID = oldCompID;
-			this.newNetworkComponentID = newCompID;
-		}
-		
-		/**
-		 * Gets the network component.
-		 * @return the networkComponent
-		 */
-		public NetworkComponent getNetworkComponent() {
-			return networkComponent;
-		}
-		/**
-		 * Sets the network component.
-		 * @param networkComponent the networkComponent to set
-		 */
-		public void setNetworkComponent(NetworkComponent networkComponent) {
-			this.networkComponent = networkComponent;
-		}
-		
-		/**
-		 * Gets the old network component id.
-		 * @return the oldNetworkComponentID
-		 */
-		public String getOldNetworkComponentID() {
-			return oldNetworkComponentID;
-		}
-		/**
-		 * Sets the old network component id.
-		 * @param oldNetworkComponentID the oldNetworkComponentID to set
-		 */
-		public void setOldNetworkComponentID(String oldNetworkComponentID) {
-			this.oldNetworkComponentID = oldNetworkComponentID;
-		}
-		
-		/**
-		 * Gets the new network component id.
-		 * @return the newNetworkComponentID
-		 */
-		public String getNewNetworkComponentID() {
-			return newNetworkComponentID;
-		}
-		/**
-		 * Sets the new network component id.
-		 * @param newNetworkComponentID the newNetworkComponentID to set
-		 */
-		public void setNewNetworkComponentID(String newNetworkComponentID) {
-			this.newNetworkComponentID = newNetworkComponentID;
-		}
-	} // end sub class
 	
 }
