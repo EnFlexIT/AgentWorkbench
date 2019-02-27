@@ -484,6 +484,12 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public void renameGraphNode(String oldGraphNodeID, String newGraphNodeID) {
 		
+		if (oldGraphNodeID==null) return;
+		if (oldGraphNodeID==null || newGraphNodeID.length()==0) {
+			throw new IllegalArgumentException(this.getClass().getSimpleName() + ": The new ID is not allowed to be null or an empty String!");
+		}
+		if (newGraphNodeID.equals(oldGraphNodeID)==true) return;
+		
 		// --- Rename the GraphNode ----------------------------------------
 		GraphElement graphElement = graphElements.get(oldGraphNodeID);
 		if (graphElement instanceof GraphNode) {
@@ -511,6 +517,12 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param newCompID the new ID of the NetworkComponent
 	 */
 	public void renameNetworkComponent(String oldCompID, String newCompID) {
+		
+		if (oldCompID==null) return;
+		if (newCompID==null || newCompID.length()==0) {
+			throw new IllegalArgumentException(this.getClass().getSimpleName() + ": The new ID is not allowed to be null or an empty String!");
+		}
+		if (newCompID.equals(oldCompID)==true) return;
 		
 		NetworkComponent networkComponent = this.networkComponents.get(oldCompID);
 		if (networkComponent!=null) {
