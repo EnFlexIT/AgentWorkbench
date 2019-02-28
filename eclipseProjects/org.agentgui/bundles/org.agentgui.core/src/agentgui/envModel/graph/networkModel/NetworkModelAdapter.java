@@ -30,9 +30,9 @@ package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -609,7 +609,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getClusterComponents()
 	 */
 	@Override
-	public ArrayList<ClusterNetworkComponent> getClusterComponents() {
+	public List<ClusterNetworkComponent> getClusterComponents() {
 		return this.graphController.getNetworkModel().getClusterComponents();
 	}
 
@@ -617,7 +617,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getClusterComponents(java.util.Collection)
 	 */
 	@Override
-	public ArrayList<ClusterNetworkComponent> getClusterComponents(Collection<NetworkComponent> components) {
+	public List<ClusterNetworkComponent> getClusterComponents(List<NetworkComponent> components) {
 		return this.graphController.getNetworkModel().getClusterNetworkComponents(components);
 	}
 

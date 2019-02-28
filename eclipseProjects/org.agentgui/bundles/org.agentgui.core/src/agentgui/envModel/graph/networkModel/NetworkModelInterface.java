@@ -30,9 +30,9 @@ package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -337,14 +337,13 @@ public interface NetworkModelInterface {
 	 * @param components the components as HashSet<NetworkComponent>
 	 * @return the network component, which is the DistributionNode or null
 	 */
-	public abstract NetworkComponent containsDistributionNode(
-			HashSet<NetworkComponent> components);
+	public abstract NetworkComponent containsDistributionNode(HashSet<NetworkComponent> components);
 
 	/**
 	 * Returns the cluster components of the NetworkModel.
 	 * @return the cluster components
 	 */
-	public abstract ArrayList<ClusterNetworkComponent> getClusterComponents();
+	public abstract List<ClusterNetworkComponent> getClusterComponents();
 
 	/**
 	 * Gets the cluster components of a collection of clusterComponents.
@@ -352,8 +351,7 @@ public interface NetworkModelInterface {
 	 * @param components the components
 	 * @return the cluster components
 	 */
-	public abstract ArrayList<ClusterNetworkComponent> getClusterComponents(
-			Collection<NetworkComponent> components);
+	public abstract List<ClusterNetworkComponent> getClusterComponents(List<NetworkComponent> components);
 
 	/**
 	 * Checks whether a network component is in the star graph element

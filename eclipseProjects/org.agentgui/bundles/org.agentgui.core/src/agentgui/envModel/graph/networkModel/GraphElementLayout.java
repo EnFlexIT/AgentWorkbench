@@ -31,6 +31,7 @@ package agentgui.envModel.graph.networkModel;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -178,13 +179,13 @@ public class GraphElementLayout {
 				// -------------------------------------------------------
 				// --- Normal node or ClusterNode ------------------------
 				// -------------------------------------------------------
-				ArrayList<ClusterNetworkComponent> clusterHash = this.networkModel.getClusterNetworkComponents(componentHashSet);
-				if (componentHashSet.size()==1 && clusterHash.size()==1 && this.networkModel.isFreeGraphNode(graphNode)==false) {
+				List<ClusterNetworkComponent> clusterNetCompList = this.networkModel.getClusterNetworkComponents(new ArrayList<>(componentHashSet));
+				if (componentHashSet.size()==1 && clusterNetCompList.size()==1 && this.networkModel.isFreeGraphNode(graphNode)==false) {
 					// ---------------------------------------------------
 					// --- Central GraphNode of a cluster component ------
 					this.setClusterComponent(true);
 					
-					ClusterNetworkComponent cnc = clusterHash.get(0);
+					ClusterNetworkComponent cnc = clusterNetCompList.get(0);
 					String domain = cnc.getDomain();
 					if (domain != null) {
 						if (domain.equals("") == false) {
