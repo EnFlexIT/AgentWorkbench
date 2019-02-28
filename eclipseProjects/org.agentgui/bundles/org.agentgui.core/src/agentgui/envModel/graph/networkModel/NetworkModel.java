@@ -312,117 +312,17 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the copy
 	 */
 	public NetworkModel getCopy() {
-		
 		synchronized (this) {
-
-			NetworkModel netModel = null;	
-			boolean cloneInstance = true;
-			if (cloneInstance==true) {
-				// -------------------------------------------------------
-				// --- Make a serialisation copy the NetworkModel -------- 
-				// -------------------------------------------------------
-				try {
-					netModel = SerialClone.clone(this);
-					netModel.refreshGraphElements();
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+			NetworkModel networkModelCopy = null;	
+			try {
+				networkModelCopy = SerialClone.clone(this);
+				networkModelCopy.refreshGraphElements();
 				
-			} else {
-				// -------------------------------------------------------
-				// ---- Alternative approach to copy the NetworkModel ----
-				// -------------------------------------------------------
-				netModel = new NetworkModel();
-				
-				// --- Create a copy of the generalGraphSettings4MAS ----
-				GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
-				if (this.generalGraphSettings4MAS != null) {
-					copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
-				}
-				netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
-
-				// --- Copy the graph -----------------------------------
-				netModel.setGraph(this.getGraphCopy());
-		
-				// --- Create a copy of the networkComponents -----------
-				TreeMap<String, NetworkComponent> copyOfComponents = new TreeMap<String, NetworkComponent>();
-				
-				List<NetworkComponent> netCompList = new ArrayList<NetworkComponent>(this.getNetworkComponents().values());
-				for (int i = 0; i < netCompList.size(); i++) {
-					NetworkComponent networkComponent = netCompList.get(i);
-					try {
-						// --- Copy NetworkComponent -------------------- 
-						if (networkComponent instanceof ClusterNetworkComponent) {
-							ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy(this);
-							copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
-						} else {
-							NetworkComponent networkComponentCopy = networkComponent.getCopy(this);
-							copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
-						}
-						
-					} catch (Exception ex) {
-						System.err.println("Error during copy of network component " + networkComponent.getId());
-						ex.printStackTrace();
-					}
-				}
-				netModel.setNetworkComponents(copyOfComponents);
-				netModel.refreshGraphElements();
-		
-				// ------------------------------------------------------
-				// -- Create a copy of the alternativeNetworkModel ------
-				// ------------------------------------------------------
-				HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
-				if (this.alternativeNetworkModel != null) {
-					copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>();
-					Vector<String> altNetModelsName = new Vector<String>(this.alternativeNetworkModel.keySet());
-					for (String networkModelName : altNetModelsName) {
-						NetworkModel networkModel = this.alternativeNetworkModel.get(networkModelName);
-						networkModel = networkModel.getCopy();
-						copyOfAlternativeNetworkModel.put(networkModelName, networkModel);
-					}
-				}
-				netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
-				
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-			return netModel;
-		} // end synchronized
-	}
-
-	/**
-	 * Copy graph and graph elements.
-	 * @param netModel the net model
-	 */
-	private Graph<GraphNode, GraphEdge> getGraphCopy() {
-
-		Graph<GraphNode, GraphEdge> copyGraph = new SparseGraph<GraphNode, GraphEdge>();
-
-		// --- Copy all nodes and remind the relation between ID and new instance -------
-		Collection<GraphNode> nodesCollection = this.getGraph().getVertices();
-		GraphNode[] nodes = nodesCollection.toArray(new GraphNode[nodesCollection.size()]);
-		HashMap<String, GraphNode> graphNodeCopies = new HashMap<String, GraphNode>();
-		for (int i = 0; i < nodes.length; i++) {
-			GraphNode node = nodes[i];
-			GraphNode nodeCopy = node.getCopy(this);
-			graphNodeCopies.put(node.getId(), nodeCopy);
-			copyGraph.addVertex(nodeCopy);
-		}
-
-		// --- Copy the edges -----------------------------------------------------------
-		Collection<GraphEdge> edgesCollection = this.getGraph().getEdges();
-		GraphEdge[] edges = edgesCollection.toArray(new GraphEdge[edgesCollection.size()]);
-		for (int i = 0; i < edges.length; i++) {
-			GraphEdge edge = edges[i];
-			EdgeType edgeType = this.getGraph().getEdgeType(edge);
-			GraphNode first = this.getGraph().getEndpoints(edge).getFirst();
-			GraphNode second = this.getGraph().getEndpoints(edge).getSecond();
-
-			GraphNode copyFirst = graphNodeCopies.get(first.getId());
-			GraphNode copySecond = graphNodeCopies.get(second.getId());
-			GraphEdge copyEdge = edge.getCopy(this);
-			copyGraph.addEdge(copyEdge, copyFirst, copySecond, edgeType);
-		}
-		return copyGraph;
+			return networkModelCopy;
+		} 
 	}
 
 	/**
@@ -1938,7 +1838,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		for( GraphNode graphNode : clusterNetworkComponent.getClusterNetworkModel().getGraph().getVertices()) {
 			
 			if (getGraphElement(graphNode.getId()) == null) {
-				GraphNode graphNodeCopy = graphNode.getCopy(this);
+				GraphNode graphNodeCopy = graphNode.getCopy();
 				this.getGraph().addVertex(graphNodeCopy);
 				this.getGraphElements().put(graphNodeCopy.getId(), graphNodeCopy);
 			}

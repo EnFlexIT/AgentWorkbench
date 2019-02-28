@@ -73,7 +73,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel) {
 		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, networkComponent).getStoredDataModelAdapter();
 		networkComponent.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(networkComponent.getDataModel()));
-		this.networkComponent = networkComponent.getCopy(networkModel);
+		this.networkComponent = networkComponent.getCopy();
 	}
 	/**
 	 * Instantiates a new data model notification for a NetworkComponent.
@@ -84,7 +84,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 * @see NetworkComponent#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
 	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
-		this.networkComponent = networkComponent.getCopy(networkModel);
+		this.networkComponent = networkComponent.getCopy();
 		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
 	}
 	
@@ -108,7 +108,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel) {
 		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, graphNode).getStoredDataModelAdapter();
 		graphNode.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(graphNode.getDataModel()));
-		this.graphNode = graphNode.getCopy(networkModel);
+		this.graphNode = graphNode.getCopy();
 	}
 	/**
 	 * Instantiates a new data model notification for a GraphNode.
@@ -119,7 +119,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 * @see GraphNode#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
 	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
-		this.graphNode = graphNode.getCopy(networkModel);
+		this.graphNode = graphNode.getCopy();
 		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
 	}
 

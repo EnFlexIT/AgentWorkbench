@@ -104,9 +104,11 @@ public abstract class NetworkComponentAdapter {
 		return graphNode;
 	}
 	
+	
 	/**
-	 * Returns the data model adapter for the {@link NetworkComponent}.
-	 * @return the adapter visualization
+	 * Has to return the data model adapter for this NetworkComponentAdapter.
+	 * @return the data model adapter
+	 * @see NetworkComponentAdapter4DataModel
 	 */
 	public abstract NetworkComponentAdapter4DataModel getNewDataModelAdapter();
 	
@@ -116,17 +118,27 @@ public abstract class NetworkComponentAdapter {
 	 * the fact that the instantiation of such Object can be quit time consuming. In order 
 	 * to accelerate the load process of a NetworkModel (with possibly hundreds of similar
 	 * components) one instance will be stored here. In case that no data model adapter is
-	 * found, the method will created a new one by invoking {@link #getNewDataModelAdapter()}.
+	 * found, the method will created a new one by using the abstract corresponding method.
 	 * 
 	 * @return the stored data model adapter
 	 */
 	public NetworkComponentAdapter4DataModel getStoredDataModelAdapter() {
 		if (networkComponentAdapter4DataModel==null) {
 			networkComponentAdapter4DataModel = this.getNewDataModelAdapter();
-			networkComponentAdapter4DataModel.setNetworkComponentAdapter(this);
 		}
+		// --- Assign runtime objects to the adapter ------
+		networkComponentAdapter4DataModel.setNetworkComponentAdapter(this);
+		networkComponentAdapter4DataModel.setNetworkComponent(this.getNetworkComponent());
+		networkComponentAdapter4DataModel.setGraphNode(this.getGraphNode());
 		return networkComponentAdapter4DataModel;
 	}
+	/**
+	 * Resets the stored data model adapter to <code>null</code>.
+	 */
+	public void resetStoredDataModelAdapter() {
+		this.networkComponentAdapter4DataModel = null;
+	}
+	
 	
 	/**
 	 * Will be invoked to get the individual menu elements for this kind of NetworkComponent or GraphNode.
@@ -232,5 +244,5 @@ public abstract class NetworkComponentAdapter {
 	protected boolean isSetupConfiguration(){
 		return (this.graphController.getProject()!=null);
 	}
-	
+
 }

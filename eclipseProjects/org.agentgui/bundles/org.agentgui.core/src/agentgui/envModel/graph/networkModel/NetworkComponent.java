@@ -104,73 +104,14 @@ public class NetworkComponent implements Serializable {
 	
 	/**
 	 * Returns a copy of the current NetworkComponent.
-	 *
-	 * @param networkModel the current network model (required because of the {@link NetworkComponentAdapter}
 	 * @return the copy
 	 */
-	public NetworkComponent getCopy(NetworkModel networkModel) {
-		
+	public NetworkComponent getCopy() {
 		NetworkComponent copy = null;	
-		boolean cloneInstance = true;
-		if (cloneInstance==true) {
-			// -------------------------------------------------------
-			// --- Make a serialisation copy the NetworkModel -------- 
-			// -------------------------------------------------------
-			try {
-				copy = SerialClone.clone(this);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			
-		} else {
-			// -------------------------------------------------------
-			// ---- Alternative approach to copy a NetworkComponent --
-			// -------------------------------------------------------
-			String newID = null;
-			String newType = null;
-			String newAgentClassName = null;
-			String newPrototypeClassName = null;
-			
-			if (this.id!=null) newID = new String(this.id);
-			if (this.type!=null) newType = new String(this.type);
-			if (this.prototypeClassName!=null) newPrototypeClassName = new String(this.prototypeClassName);
-			if (this.agentClassName!=null) newAgentClassName = new String(this.agentClassName);
-			
-			// --- Create new instance ------------------------
-			copy = new NetworkComponent(newID, newType, newPrototypeClassName, newAgentClassName, null, this.directed);
-			copy.setGraphElementIDs(new HashSet<String>(this.getGraphElementIDs()));
-			
-			// --- Copy the data model ------------------------
-			if (this.dataModel!=null) {
-				NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
-				NetworkComponentAdapter4DataModel adapter4DataModel = adapter.getStoredDataModelAdapter();
-				if (this.dataModelBase64==null) {
-					this.dataModelBase64 = adapter4DataModel.getDataModelBase64Encoded(this.dataModel);
-				} 
-				Object dataModelCopy = adapter4DataModel.getDataModelBase64Decoded(this.dataModelBase64);
-				copy.setDataModel(dataModelCopy);
-			}
-			// --- Copy the Base64 data model -----------------
-			if (this.dataModelBase64!=null) {
-				Vector<String> dataModelCopy64 = new Vector<String>();
-				for (String single64 : this.dataModelBase64) {
-					if (single64!=null & single64.equals("")==false) {
-						dataModelCopy64.add(new String(single64));
-					} else {
-						dataModelCopy64.add(null);
-					}
-				}
-				copy.setDataModelBase64(dataModelCopy64);
-			}
-
-			if (this.edgeDirections!=null && this.edgeDirections.size()!=0) {
-				HashMap<String, GraphEdgeDirection> edgeDirectionsCopy = new HashMap<String, GraphEdgeDirection>();
-				for (String graphEdgeID : this.edgeDirections.keySet()) {
-					GraphEdgeDirection ged = this.edgeDirections.get(graphEdgeID); 
-					edgeDirectionsCopy.put(graphEdgeID, ged.getCopy());
-				}
-				copy.setEdgeDirections(edgeDirectionsCopy);
-			}	
+		try {
+			copy = SerialClone.clone(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return copy;
 	}

@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.networkModel;
 
+import de.enflexit.common.SerialClone;
+
 /**
  * This class represents a graph edge in an environment model of the type graph / network.
  * 
@@ -55,15 +57,20 @@ public class GraphEdge extends GraphElement {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
+	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy()
 	 */
 	@Override
-	public GraphEdge getCopy(NetworkModel networkModel) {
-		GraphEdge edgceCopy = new GraphEdge(new String(this.id), new String(this.componentType));
-		if (this.graphElementLayout!=null) {
-			edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
+	public GraphEdge getCopy() {
+		GraphEdge edgceCopy = null;	
+		try {
+			edgceCopy = SerialClone.clone(this);
+			if (this.graphElementLayout!=null) {
+				edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		edgceCopy.setComponentType(this.getComponentType());
 		return edgceCopy;
 	}
 

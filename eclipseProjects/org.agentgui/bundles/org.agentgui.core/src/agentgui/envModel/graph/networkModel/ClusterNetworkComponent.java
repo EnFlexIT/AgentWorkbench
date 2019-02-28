@@ -30,9 +30,7 @@ package agentgui.envModel.graph.networkModel;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Vector;
 
 import de.enflexit.common.SerialClone;
 
@@ -71,76 +69,12 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponent#getCopy()
 	 */
 	@Override
-	public ClusterNetworkComponent getCopy(NetworkModel networkModel) {
-		
+	public ClusterNetworkComponent getCopy() {
 		ClusterNetworkComponent copy = null;	
-		boolean cloneInstance = true;
-		if (cloneInstance==true) {
-			// -------------------------------------------------------
-			// --- Make a serialisation copy the NetworkModel -------- 
-			// -------------------------------------------------------
-			try {
-				copy = SerialClone.clone(this);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			
-		} else {
-			// -------------------------------------------------------
-			// --- Make a serialisation copy the NetworkModel -------- 
-			// -------------------------------------------------------
-			String newID = null;
-			String newType = null;
-			String newPrototypeClassName = null; 
-			String newAgentClassName = null;
-			String newDomain = null;
-			NetworkModel newClusterNetworkModel = null;
-			
-			if (this.id!=null) newID = new String(this.id);
-			if (this.type!=null) newType = new String(this.type);
-			if (this.prototypeClassName!=null) newPrototypeClassName = new String(this.prototypeClassName);
-			if (this.agentClassName!=null) newAgentClassName = new String(this.agentClassName);
-			if (this.domain!=null) newDomain = new String(this.domain);
-			if (this.clusterNetworkModel!=null) newClusterNetworkModel = this.clusterNetworkModel.getCopy();
-			
-			copy = new ClusterNetworkComponent(newID, newType, newAgentClassName, null, this.directed, newDomain, newClusterNetworkModel);
-			HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
-			copy.setGraphElementIDs(gaphElementIDs);
-			if (newPrototypeClassName!=null) {
-				copy.setPrototypeClassName(newPrototypeClassName);
-			}
-			
-			// --- Copy the data model ------------------------
-			if (this.dataModel!=null) {
-				NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
-				NetworkComponentAdapter4DataModel adapter4DataModel = adapter.getStoredDataModelAdapter();
-				if (this.dataModelBase64==null) {
-					this.dataModelBase64 = adapter4DataModel.getDataModelBase64Encoded(this.dataModel);
-				} 
-				Object dataModelCopy = adapter4DataModel.getDataModelBase64Decoded(this.dataModelBase64);
-				copy.setDataModel(dataModelCopy);
-			}
-			// --- Copy the Base64 data model -----------------
-			if (this.dataModelBase64!=null) {
-				Vector<String> dataModelCopy64 = new Vector<String>();
-				for (String single64 : this.dataModelBase64) {
-					if (single64!=null & single64.equals("")==false) {
-						dataModelCopy64.add(new String(single64));
-					} else {
-						dataModelCopy64.add(null);
-					}
-				}
-				copy.setDataModelBase64(dataModelCopy64);
-			}
-	
-			if (this.edgeDirections!=null && this.edgeDirections.size()!=0) {
-				HashMap<String, GraphEdgeDirection> edgeDirectionsCopy = new HashMap<String, GraphEdgeDirection>();
-				for (String graphEdgeID : this.edgeDirections.keySet()) {
-					GraphEdgeDirection ged = this.edgeDirections.get(graphEdgeID); 
-					edgeDirectionsCopy.put(graphEdgeID, ged.getCopy());
-				}
-				copy.setEdgeDirections(edgeDirectionsCopy);
-			}
+		try {
+			copy = SerialClone.clone(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return copy;
 	}

@@ -132,12 +132,14 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 		return this.oiv;
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#save()
 	 */
 	@Override
-	public void save() {
+	public boolean save() {
 		this.getOntologyInstanceViewer().save();
+		return true;
 	}
 
 	/* (non-Javadoc)

@@ -75,53 +75,15 @@ public class GraphNode extends GraphElement {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
+	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy()
 	 */
 	@Override
-	public GraphNode getCopy(NetworkModel networkModel) {
-		
+	public GraphNode getCopy() {
 		GraphNode copy = null;	
-		boolean cloneInstance = true;
-		if (cloneInstance==true) {
-			// -------------------------------------------------------
-			// --- Make a serialisation copy the NetworkModel -------- 
-			// -------------------------------------------------------
-			try {
-				copy = SerialClone.clone(this);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			
-		} else {
-			// -------------------------------------------------------
-			// ---- Alternative approach to copy a GraphNode ---------
-			// -------------------------------------------------------
-			copy = new GraphNode(new String(this.id), new Point2D.Double(this.position.getX(), this.position.getY()));
-			if (this.graphElementLayout!=null) {
-				copy.setGraphElementLayout(this.graphElementLayout.getCopy(copy));	
-			}
-			// --- Copy the data model ------------------------
-			if (this.dataModel!=null) {
-				NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
-				NetworkComponentAdapter4DataModel adapter4DataModel = adapter.getStoredDataModelAdapter();
-				if (this.dataModelBase64==null) {
-					this.dataModelBase64 = adapter4DataModel.getDataModelBase64Encoded(this.dataModel);
-				} 
-				Object dataModelCopy = adapter4DataModel.getDataModelBase64Decoded(this.dataModelBase64);
-				copy.setDataModel(dataModelCopy);
-			}
-			// --- Copy the Base64 data model -----------------
-			if (this.dataModelBase64!=null) {
-				Vector<String> dataModelCopy64 = new Vector<String>();
-				for (String single64 : this.dataModelBase64) {
-					if (single64!=null & single64.equals("")==false) {
-						dataModelCopy64.add(new String(single64));
-					} else {
-						dataModelCopy64.add(null);
-					}
-				}
-				copy.setDataModelBase64(dataModelCopy64);
-			}
+		try {
+			copy = SerialClone.clone(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return copy;
 	}

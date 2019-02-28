@@ -28,8 +28,6 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import jade.content.Concept;
-
 import java.awt.Dimension;
 import java.util.Vector;
 
@@ -38,25 +36,24 @@ import javax.swing.JComponent;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.ui.BasicGraphGuiJDesktopPane;
 import agentgui.envModel.graph.controller.ui.BasicGraphGuiProperties;
-import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 
 /**
- * The Class NetworkComponentAdapter4DataModel can be used in order  
- * to add a customized data model dialog to a specific {@link NetworkComponent}.<br>
- * Furthermore it can be used to define ontology sub classes (for JADE these
- * are extended {@link Concept} classes) that have to be displayed for component 
- * editing and value changes by using the {@link OntologyInstanceViewer}.<br>     
- * Alternatively, and instead of using ontologies for local data models of
- * {@link NetworkComponent}'s, also individual object structures can be used.
+ * The abstract Class NetworkComponentAdapter4DataModel can be extended to provide the required data handling
+ * and visualization functionalities for individual data types for {@link NetworkComponent}s or {@link GraphNode}s.
+ * It is used in {@link NetworkComponentAdapter}.   
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class NetworkComponentAdapter4DataModel {
 
-	private NetworkComponentAdapter networkComponentAdapter;
 	private GraphEnvironmentController graphController;
 
+	private NetworkComponentAdapter networkComponentAdapter;
+	private NetworkComponent networkComponent;
+	private GraphNode graphNode;
+
+	
 	/**
 	 * Instantiates a new network component data model adapter.
 	 * @param graphController the GraphEnvironmentController
@@ -64,39 +61,6 @@ public abstract class NetworkComponentAdapter4DataModel {
 	public NetworkComponentAdapter4DataModel(GraphEnvironmentController graphController) {
 		this.setGraphEnvironmentController(graphController);
 	}
-	
-	
-	/**
-	 * Sets the current network component adapter.
-	 * @param networkComponentAdapter the new network component adapter
-	 */
-	public void setNetworkComponentAdapter(NetworkComponentAdapter networkComponentAdapter) {
-		this.networkComponentAdapter = networkComponentAdapter;
-	}
-	/**
-	 * Returns the superordinate NetworkComponentAdapter.
-	 * @return the network component adapter
-	 */
-	protected NetworkComponentAdapter getNetworkComponentAdapter() {
-		return networkComponentAdapter;
-	}
-	
-	
-	/**
-	 * Sets the current GraphEnvironmentController.
-	 * @param graphController the new GraphEnvironmentController
-	 */
-	public void setGraphEnvironmentController(GraphEnvironmentController graphController) {
-		this.graphController = graphController;
-	}
-	/**
-	 * Returns the current GraphEnvironmentController.
-	 * @return the GraphEnvironmentController
-	 */
-	protected GraphEnvironmentController getGraphEnvironmentController() {
-		return this.graphController;
-	}
-	
 	
 	
 	/**
@@ -139,9 +103,14 @@ public abstract class NetworkComponentAdapter4DataModel {
 	
 	
 	/**
-	 * Save the current settings in the visualization component.
+	 * Will be invoked to prepare for saving the current data model instance and can be used to
+	 * validate the settings in the visualization component. The name 'save' used here, basically 
+	 * indicates that the save button was pressed by the user or that the window is about to close.
+	 *
+	 * @return true, if the edit / property window can be closed, <code>false</code> otherwise.
 	 */
-	public abstract void save();
+	public abstract boolean save();
+	
 	
 	/**
 	 * Sets the data model of a NetworkComponent to the visualization component.
@@ -201,5 +170,68 @@ public abstract class NetworkComponentAdapter4DataModel {
 	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
 		return DataModelEnDecoder64.getDataModelBase64Decoded(dataModel);
 	}
-		
+
+	
+	// --------------------------------------------------------------
+	// --- From here some simple getter and setter methods ----------
+	// --------------------------------------------------------------
+	/**
+	 * Sets the current GraphEnvironmentController.
+	 * @param graphController the new GraphEnvironmentController
+	 */
+	public void setGraphEnvironmentController(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
+	}
+	/**
+	 * Returns the current GraphEnvironmentController.
+	 * @return the GraphEnvironmentController
+	 */
+	protected GraphEnvironmentController getGraphEnvironmentController() {
+		return this.graphController;
+	}
+	
+	/**
+	 * Sets the current network component adapter.
+	 * @param networkComponentAdapter the new network component adapter
+	 */
+	public void setNetworkComponentAdapter(NetworkComponentAdapter networkComponentAdapter) {
+		this.networkComponentAdapter = networkComponentAdapter;
+	}
+	/**
+	 * Returns the superordinate NetworkComponentAdapter.
+	 * @return the network component adapter
+	 */
+	protected NetworkComponentAdapter getNetworkComponentAdapter() {
+		return networkComponentAdapter;
+	}
+	
+	/**
+	 * Sets the network component that will be edited by the adapter.
+	 * @param networkComponent the new network component
+	 */
+	public void setNetworkComponent(NetworkComponent networkComponent) {
+		this.networkComponent = networkComponent;
+	}
+	/**
+	 * Returns the network component that will be edited.
+	 * @return the network component
+	 */
+	public NetworkComponent getNetworkComponent() {
+		return networkComponent;
+	}
+	
+	/**
+	 * Sets the graph node that will be edited by the adapter.
+	 * @param graphNode the new graph node
+	 */
+	public void setGraphNode(GraphNode graphNode) {
+		this.graphNode = graphNode;
+	}
+	/**
+	 * Gets the graph node.
+	 * @return the graph node
+	 */
+	public GraphNode getGraphNode() {
+		return graphNode;
+	}
 }

@@ -97,6 +97,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private Object selectedGraphObject;
 	private GraphNode graphNode;
 	private NetworkComponent networkComponent;
+	
 	private NetworkComponentAdapter networkComponentAdapter;
 	private NetworkComponentAdapter4DataModel adapter4DataModel;
 	
@@ -123,7 +124,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	public BasicGraphGuiProperties(GraphEnvironmentController graphController, Object selectedGraphObject) {
 		super(graphController);
-		this.selectedGraphObject = selectedGraphObject;
+		this.setSelectedGraphObject(selectedGraphObject);
 		this.initialize();
 	}
 
@@ -150,7 +151,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		this.addInternalFrameListener(new InternalFrameAdapter() {
 			@Override
 			public void internalFrameClosing(InternalFrameEvent ife) {
-				doClose();
+				BasicGraphGuiProperties.this.doClose();
 			}
 		});
 		
@@ -198,6 +199,13 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		}
 	}
 	
+	/**
+	 * Sets the selected graph object that is either a NetworkComponent or a GraphNode.
+	 * @param selectedGraphObject the new selected graph object
+	 */
+	public void setSelectedGraphObject(Object selectedGraphObject) {
+		this.selectedGraphObject = selectedGraphObject;
+	}
 	/**
 	 * Returns the graph object.
 	 * @return the graphObject
@@ -265,8 +273,9 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	public NetworkComponentAdapter4DataModel getNetworkComponentAdapter4DataModel() {
 		if (this.adapter4DataModel==null) {
 			if (this.getNetworkComponentAdapter()!=null) {
-				this.adapter4DataModel = this.getNetworkComponentAdapter().getNewDataModelAdapter();
-				this.adapter4DataModel.setNetworkComponentAdapter(this.getNetworkComponentAdapter());
+				// --- Ensure to get a new adapter4DataModel --------
+				this.getNetworkComponentAdapter().resetStoredDataModelAdapter();
+				this.adapter4DataModel = this.getNetworkComponentAdapter().getStoredDataModelAdapter();
 			}	
 		}
 		return this.adapter4DataModel;
@@ -527,9 +536,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		boolean changed = false;
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
-			nca4dm.save();
-			this.newDataModel = DataModelEnDecoder64.reviewDataModel(nca4dm.getDataModel());
-			this.newDataModelBase64 = nca4dm.getDataModelBase64Encoded(this.newDataModel);
+			Object newDataModel = DataModelEnDecoder64.reviewDataModel(nca4dm.getDataModel());
+			Vector<String> newDataModelBase64 = nca4dm.getDataModelBase64Encoded(newDataModel);
 			Vector<Integer> newHashCodes = this.getHashCodeVectorFromDataModel(newDataModelBase64);
 			// --- Check for changes --------------------------------
 			if (! (newHashCodes==null & this.dataModelInitialHashCodes==null)) {
@@ -563,33 +571,48 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		return changed;
 	}
 	
+	/**
+	 * Checks if the current data model is savable.
+	 * @return true, if the current data model can be saved
+	 */
+	private boolean isSavableModel() {
+		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
+		if (nca4dm!=null) {
+			return nca4dm.save();
+		}
+		return true;
+	}
 	
 	/**
 	 * Does the close action.
 	 */
 	private void doClose() {
 		
+		// --- Check if closing is allowed currently ----------------
+		if (this.isSavableModel()==false) return;
+		
+		// --- Check if we have changes -----------------------------
 		if (this.hasChanged()==true) {
-			// --- Data model has changed ! ---------------------------
+			// --- Data model has changed ! -------------------------
 			String diaTitle = Language.translate("Close Properties", Language.EN);
 			String diaQuestion = null;
 			if (this.graphController.getProject()!=null) {
-				// --- Setup case -------------
+				// --- Setup case -------------------------
 				diaQuestion = Language.translate("Save changes to network model?", Language.EN);
 			} else {
-				// --- Execution case ---------
+				// --- Execution case ---------------------
 				diaQuestion = Language.translate("Save and send data model changes to agent(s)?", Language.EN);
 			}
 
-			// --- User request ---------------------------------------
+			// --- User request -------------------------------------
 			int diaAnswer = JOptionPane.showConfirmDialog(this, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
 			if (diaAnswer==JOptionPane.YES_OPTION) {
-				if (this.graphController.getProject()!=null) {
-					// --- Setup case -------------
-					this.save();	
-				} else {
-					// --- Execution case ---------
-					this.save(true);
+				
+				// --- Save to node or component ----------
+				this.saveToNetworkComponentOrGraphNode();
+				if (this.graphController.getProject()==null) {
+					// --- Send to Agent ------------------
+					this.sendChangesToAgent();
 				}
 				this.setVisible(false);
 				this.dispose();
@@ -610,16 +633,10 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
-	 * Saves the current settings without sending them to the agent(s).
+	 * Saves the current data model to its corresponding NetworkComponent or GraphNode.
+	 * If used in the setup environment, the project will be set to dirty (unsaved).
 	 */
-	private void save() {
-		this.save(false);
-	}
-	/**
-	 * Saves the current settings.
-	 * @param sendChangesToAgent set true, if you want to send the changes to the agent(s) during execution
-	 */
-	private void save(boolean sendChangesToAgent) {
+	private void saveToNetworkComponentOrGraphNode() {
 		
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
@@ -639,10 +656,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------------
 				this.graphController.setProjectUnsaved();
-				
-			} else if (this.graphController.getProject()==null && sendChangesToAgent==true) {
-				// --- Execution case ---------------			
-				this.sendChangesToAgent();
 			}			
 		}
 		
@@ -794,17 +807,19 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		String actionCommand = ae.getActionCommand();
 		if (actionCommand.equals("Save") || actionCommand.equals("SaveAndExit")) {
 			// --- Actions for 'Save' and 'Save and Exit' -----------
-			if (this.graphController.getProject()!=null) {
-				this.save();	
-			} else {
-				this.save(true);
+			if (this.isSavableModel()==true) {
+				this.saveToNetworkComponentOrGraphNode();
+				if (this.graphController.getProject()==null) {
+					// --- Send to Agent ----------------------------
+					this.sendChangesToAgent();
+				}
+				// --- Close, if 'Save and Exit' --------------------
+				if (actionCommand.equals("SaveAndExit")) {
+					this.setVisible(false);
+					this.dispose();
+				
+				}				
 			}
-			// --- Close, if 'Save and Exit' ------------------------
-			if (actionCommand.equals("SaveAndExit")) {
-				this.setVisible(false);
-				this.dispose();
-			
-			} 
 		
 		} else if (actionCommand.equals("DisableRuntimeUpdates")) {
 			// --- Disable runtime updates --------------------------
