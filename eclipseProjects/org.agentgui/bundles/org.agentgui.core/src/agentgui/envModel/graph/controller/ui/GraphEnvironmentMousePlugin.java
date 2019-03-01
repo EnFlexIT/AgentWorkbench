@@ -245,7 +245,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	private void mousePressedOrClicked(MouseEvent me) {
 		
 		// --- Left click ---------------------------------
-		if(SwingUtilities.isLeftMouseButton(me) || SwingUtilities.isRightMouseButton(me)){
+		if (SwingUtilities.isLeftMouseButton(me) || SwingUtilities.isRightMouseButton(me)){
 
 			// --- Check if an object was selected --------
 			Object pickedObject = null;
@@ -261,8 +261,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				}
 			}
 
-			// --- Only when node or edge is clicked -----------
-			if(pickedObject != null) {
+			// --- Only when node or edge is picked -------
+			if (pickedObject!=null) {
 				if (me.getClickCount()==2){
 					// --- Double click ---------
 					this.basicGraphGUI.handleObjectDoubleClick(pickedObject);

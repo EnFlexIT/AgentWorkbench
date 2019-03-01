@@ -71,37 +71,7 @@ public abstract class NetworkComponentAdapter {
 	 * @param graphEnvironmentController the graph environment controller
 	 */
 	public NetworkComponentAdapter(GraphEnvironmentController graphEnvironmentController) {
-		this.graphController = graphEnvironmentController;
-	}
-	
-	/**
-	 * Sets the network component that will be edited by the adapter.
-	 * @param networkComponent the new network component
-	 */
-	public void setNetworkComponent(NetworkComponent networkComponent) {
-		this.networkComponent = networkComponent;
-	}
-	/**
-	 * Returns the network component that will be edited.
-	 * @return the network component
-	 */
-	public NetworkComponent getNetworkComponent() {
-		return networkComponent;
-	}
-	
-	/**
-	 * Sets the graph node that will be edited by the adapter.
-	 * @param graphNode the new graph node
-	 */
-	public void setGraphNode(GraphNode graphNode) {
-		this.graphNode = graphNode;
-	}
-	/**
-	 * Gets the graph node.
-	 * @return the graph node
-	 */
-	public GraphNode getGraphNode() {
-		return graphNode;
+		this.setGraphEnvironmentController(graphEnvironmentController);
 	}
 	
 	
@@ -245,4 +215,52 @@ public abstract class NetworkComponentAdapter {
 		return (this.graphController.getProject()!=null);
 	}
 
+	// --------------------------------------------------------------
+	// --- From here some simple getter and setter methods ----------
+	// --------------------------------------------------------------
+	/**
+	 * Sets the current GraphEnvironmentController.
+	 * @param graphController the new GraphEnvironmentController
+	 */
+	public void setGraphEnvironmentController(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
+	}
+	/**
+	 * Returns the current GraphEnvironmentController.
+	 * @return the GraphEnvironmentController
+	 */
+	protected GraphEnvironmentController getGraphEnvironmentController() {
+		return this.graphController;
+	}
+	
+	/**
+	 * Sets the network component that will be edited by the adapter.
+	 * @param networkComponent the new network component
+	 */
+	public void setNetworkComponent(NetworkComponent networkComponent) {
+		this.networkComponent = networkComponent;
+	}
+	/**
+	 * Returns the network component that will be edited.
+	 * @return the network component
+	 */
+	public NetworkComponent getNetworkComponent() {
+		return networkComponent;
+	}
+	
+	/**
+	 * Sets the graph node that will be edited by the adapter.
+	 * @param graphNode the new graph node
+	 */
+	public void setGraphNode(GraphNode graphNode) {
+		this.graphNode = graphNode;
+	}
+	/**
+	 * Gets the graph node.
+	 * @return the graph node
+	 */
+	public GraphNode getGraphNode() {
+		return graphNode;
+	}
+	
 }

@@ -79,6 +79,7 @@ import agentgui.envModel.graph.commands.RenamedNetworkComponent;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.ComponentSorting;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
@@ -102,6 +103,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private String newLine = Application.getGlobalInfo().getNewLineSeparator();
     
     private GraphEnvironmentController graphEnvironmentController;
+    private NetworkComponent currNetworkComponent;
     
     private JSplitPane jSplitPaneRoot;
     
@@ -114,13 +116,12 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private JTable jTableComponents;
     private DefaultTableModel componentsTableModel;
     private TableRowSorter<DefaultTableModel> jTableRowSorter;
-    private boolean isUseNumberSorting = true;
+    private ComponentSorting componentSorting;
     private RowFilter<DefaultTableModel, Integer> jTableRowFilter;
     private boolean quiteTabelModelListener;
     
     private BasicGraphGui graphGUI;
 
-    private NetworkComponent currNetworkComponent;
     
     
     /**
@@ -357,12 +358,11 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				public void sort() {
 					// --- may throw a "java.lang.IllegalArgumentException: Comparison method violates its general contract!" ---
 					try {
+						BasicGraphGuiRootJSplitPane.this.updateComponentSorting();
 						super.sort();
+						
 					} catch (IllegalArgumentException iaEx) {
-						// --- Backup solution for the sorting of the table ---
-						//iaEx.printStackTrace();
-						BasicGraphGuiRootJSplitPane.this.isUseNumberSorting = false;
-						super.sort();
+						iaEx.printStackTrace();
 					}
 				}
 			};
@@ -371,7 +371,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			jTableRowSorter.setComparator(0, new Comparator<String>() {
 				@Override
 				public int compare(String netCompId1, String netCompId2) {
-					if (BasicGraphGuiRootJSplitPane.this.isUseNumberSorting==true) {
+					if (BasicGraphGuiRootJSplitPane.this.componentSorting==ComponentSorting.Alphanumeric) {
 						Long ncID1 = this.parseLong(netCompId1);
 						Long ncID2 = this.parseLong(netCompId2);
 						if (ncID1!=null && ncID2!=null) {
@@ -435,8 +435,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			this.clearTableModel();
 			// --- Fill -------------------------
 			networkComponentAdd(new ArrayList<>(this.getGraphController().getNetworkModelAdapter().getNetworkComponents().values()));
-			// --- Try to use number sorting ----
-			this.isUseNumberSorting = true;
 		}
     }
     /**
@@ -684,7 +682,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
 				@Override
 				public void keyReleased(java.awt.event.KeyEvent e) {
-					BasicGraphGuiRootJSplitPane.this.tblFilter();
+					BasicGraphGuiRootJSplitPane.this.applyTableSorter();
 				}
 		    });
 		}
@@ -703,25 +701,32 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    	@Override
 				public void actionPerformed(ActionEvent e) {
 				    BasicGraphGuiRootJSplitPane.this.getJTextFieldSearch().setText(null);
-				    BasicGraphGuiRootJSplitPane.this.tblFilter();
+				    BasicGraphGuiRootJSplitPane.this.applyTableSorter();
 				}
 		    });
 		}
 		return jButtonClearSearch;
     }
+    
     /**
-     * Row filter for updating table view based on the expression in the text box Used for searching components
+     * Applies the table sorter again.
      */
-	public void tblFilter() {
+	public void applyTableSorter() {
 		try {
 			this.getJTableRowSorter().sort();
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		this.setNumberOfComponents();
 
     }
-    
+    /**
+     * Updates the setting for the component sorting.
+     */
+    private void updateComponentSorting() {
+    	this.componentSorting = BasicGraphGuiRootJSplitPane.this.getGraphController().getGeneralGraphSettings4MAS().getComponentSorting();
+    }
     /**
      * ReLoads the network model.
      */
@@ -734,7 +739,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				BasicGraphGuiRootJSplitPane.this.fillTableModel();
 				// --- Clear search field -----------------
 			    BasicGraphGuiRootJSplitPane.this.getJTextFieldSearch().setText(null);
-			    BasicGraphGuiRootJSplitPane.this.tblFilter();
+			    BasicGraphGuiRootJSplitPane.this.applyTableSorter();
 			}
 		});
     }

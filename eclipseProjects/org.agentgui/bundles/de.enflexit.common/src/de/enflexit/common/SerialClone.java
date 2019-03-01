@@ -78,7 +78,9 @@ public class SerialClone {
 	 */
 	private static <T> T cloneX(T x) throws IOException, ClassNotFoundException {
 		
-		try{
+		if (x==null) return null;
+		
+		try {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			CloneOutput cout = new CloneOutput(bout);
 			cout.writeObject(x);

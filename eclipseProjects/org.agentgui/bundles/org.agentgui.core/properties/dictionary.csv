@@ -2,7 +2,7 @@ SOURCE_LANGUAGE;DE;EN;IT;ES;FR
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
 de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
-de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name be removed from the list of setups?;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'#' markiert alle Features, die zur Basisinstallation gehören.;'#' marks all features that belong to the base installation.;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
@@ -358,7 +358,7 @@ de;Keine Umgebungsdatei zugewiesen;No environment file assigned
 de;Keine Updates gefunden;No updates found;;;
 de;Keine;None
 de;Keiner;None
-de;Kennwort bestätigen;Confirm password;;;
+de;Kennwort bestätigen;Confirm Password;;;
 de;Kennwort;Password;;;
 de;KeyStore Name;KeyStore Name;;;
 de;Kind-Umgebungen;Child playgrounds
@@ -398,6 +398,7 @@ de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediate
 de;Laufzeit-Visualisierung;Runtime Visualisation;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
+de;Listen-Sortierung;Component List Sorting;;;
 de;Load Monitor öffnen;Open Load Monitor;;;
 de;Load Monitor;Load Monitor
 de;Log Datei;Log File;;;
@@ -877,10 +878,9 @@ en;;Wrong TrustStore location!;;;
 en;;You must fill out all required fields!;;;
 en;;You should open a KeyStore to run the HTTPS MTP!;;;
 en;;You should open a TrustStore to run the HTTPS MTP!;;;
-en;;day(s);;;
-en;;is available.;;;
 en;;located in the projects 'security' directory;;;
 en;Abbruch;Cancel;;;
+en;Adapter meldet Konfigurationsfehler!;Adapter signals configuration error!;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agent.GUI: HTTPS Konfiguration;Agent.GUI: HTTPS Configuration;;;
 en;Agenten Klasse;Agent Class;;;
@@ -890,6 +890,8 @@ en;Agenten-ID:;Agent ID:;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktivieren;Enable;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
+en;Alphabetisch;Alphabetical;;;
+en;Alphanumerisch;Alphanumeric;;;
 en;Anzahl;Count;;;
 en;Aus der Zwischenablage einfügen;Paste from Clipboard;;;
 en;Ausführungsmodus:;Operating mode:;;;
@@ -899,6 +901,7 @@ en;Auswahl ausschneiden;Cut Selection;;;
 en;Auswahl kopieren;Copy Selection;;;
 en;Base64-Kodierung des Datenmodells für;Base64-encoding of data model for;;;
 en;Bearbeiten;Edit;;;
+en;Beenden ohne zu speichern?;Exit without saving?;;;
 en;Beispiel-String aus Datei;Example String from file;;;
 en;Beschriftung zeigen;Show label;;;
 en;Bestätigung;Confirmation;;;
@@ -1077,6 +1080,7 @@ en;Standard-Ausführungsmodus:;Default operating mode:;;;
 en;Start auf den folgenden Zeitpunkt verschieben:;Adjust time shift to the following start time:;;;
 en;Startzeit:;Start Time:;;;
 en;Startzeitpunkt des aktuellen Simulations Setups verwenden!;Use configured start time of the simulation setup!;;;
+en;Tag(e);day(s);;;
 en;Teilnetz;Subnetwork;;;
 en;TrustStore Datei:;TrustStore File:;;;
 en;TrustStore Datei;TrustStore File;;;
@@ -1112,6 +1116,7 @@ en;Zertifikatname:;Certificate Name:;;;
 en;Zertifikatsinformationen;Certificate Information;;;
 en;Zuordnung von externen Typen zu lokalen Komponenten;Set mapping of external types to local components;;;
 en;Zur Zeit steht kein Agent.GUI-Update zur Verfügung!;There is no Agent.GUI-Update available!;;;
+en;is verfügbar;is available.;;;
 en;ist verfügbar;is available;;;
 en;wurde heruntergeladen;was downloaded;;;
 en;Änderungen im Netzwerkmodell speichern?;Save Changes to network model?;;;

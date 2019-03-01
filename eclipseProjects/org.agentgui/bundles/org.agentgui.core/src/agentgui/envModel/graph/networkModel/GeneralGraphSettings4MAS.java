@@ -45,6 +45,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentDescription;
 import jade.util.leap.Serializable;
@@ -111,6 +112,24 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		Wedge
 	}
 	
+	/** The enumeration for component sorting options */
+	public enum ComponentSorting {
+		Alphanumeric("Alphanumeric"),
+		Alphabetical("Alphabetical");
+		
+		private final String displayText;
+		private ComponentSorting(String displayText) {
+			this.displayText = displayText;
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return Language.translate(displayText, Language.EN);
+		}
+	}
+	
 	/** The prefix name for the NetworkComponentAdapter of a GraphNode */
 	public static final String GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX = "GraphNodeAdapter_";
 	
@@ -123,6 +142,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	private boolean snap2Grid = true;
 	private double snapRaster = DEFAULT_RASTER_SIZE;
 	private EdgeShape edgeShape = EdgeShape.Line;
+	private ComponentSorting componentSorting = ComponentSorting.Alphanumeric;
 	
 	/** 
 	 * The current vector of custom BasicGraphGuiCustomJBottonDescription. 
@@ -134,8 +154,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/**
 	 * Default constructor
 	 */
-	public GeneralGraphSettings4MAS() {
-	}
+	public GeneralGraphSettings4MAS() {	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -168,6 +187,11 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 			if (isEqual==true) {
 				isEqual = (ggsToCompare.getEdgeShape()==this.getEdgeShape());
 			}
+			// --- Compare 'componentSorting' -------------
+			if (isEqual==true) {
+				isEqual = (ggsToCompare.getComponentSorting()==this.getComponentSorting());
+			}
+
 		}
 		return isEqual;
 	}
@@ -372,6 +396,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		copy.setSnap2Grid(this.isSnap2Grid());
 		copy.setSnapRaster(this.getSnapRaster());
 		copy.setEdgeShape(this.getEdgeShape());
+		copy.setComponentSorting(this.getComponentSorting());
 		copy.setCustomToolbarComponentDescriptions(this.copyCustomToolbarComponentDescription());
 		return copy;
 	}
@@ -505,7 +530,22 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		return edgeShape;
 	}
 
-
+	/**
+	 * Sets the component sorting.
+	 * @param componentSorting the new component sorting
+	 */
+	public void setComponentSorting(ComponentSorting componentSorting) {
+		this.componentSorting = componentSorting;
+	}
+	/**
+	 * Gets the component sorting.
+	 * @return the component sorting
+	 */
+	public ComponentSorting getComponentSorting() {
+		return componentSorting;
+	}
+	
+	
 	/**
 	 * Returns the vector of custom {@link CustomToolbarComponentDescription}.
 	 * @return the vector of custom {@link CustomToolbarComponentDescription}.

@@ -92,6 +92,7 @@ import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.ComponentSorting;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.EdgeShape;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
@@ -112,25 +113,25 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private final String pathImage = GraphGlobals.getPathImages();
 	
 	private Vector<String> columnHeaderDomains 		= null;
-	public final String COL_D_DomainName 			= Language.translate("Name", Language.EN);  			//  @jve:decl-index=0:
-	public final String COL_D_AdapterClass			= Language.translate("Adapter class", Language.EN); 	//  @jve:decl-index=0:
-	public final String COL_D_VertexSize 			= Language.translate("Vertex size", Language.EN);  		//  @jve:decl-index=0:
-	public final String COL_D_VertexColor			= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
-	public final String COL_D_VertexColorPicked 	= Language.translate("Color picked", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_D_ShowLable				= Language.translate("Show label", Language.EN);  		//  @jve:decl-index=0:
-	public final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_D_ClusterAgent			= Language.translate("Cluster agent", Language.EN);  	//  @jve:decl-index=0:
+	public final String COL_D_DomainName 			= Language.translate("Name", Language.EN); 
+	public final String COL_D_AdapterClass			= Language.translate("Adapter class", Language.EN);
+	public final String COL_D_VertexSize 			= Language.translate("Vertex size", Language.EN);
+	public final String COL_D_VertexColor			= Language.translate("Color", Language.EN);
+	public final String COL_D_VertexColorPicked 	= Language.translate("Color picked", Language.EN);
+	public final String COL_D_ShowLable				= Language.translate("Show label", Language.EN);
+	public final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);
+	public final String COL_D_ClusterAgent			= Language.translate("Cluster agent", Language.EN);
 	
 	private Vector<String> columnHeaderComponents 	= null;
-	public final String COL_TypeSpecifier 			= Language.translate("Type-Specifier", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_Domain 					= Language.translate("Subnetwork", Language.EN);  		//  @jve:decl-index=0:
-	public final String COL_AgentClass 				= Language.translate("Agent Class", Language.EN); 		//  @jve:decl-index=0:
-	public final String COL_GraphPrototyp 			= Language.translate("Graph-Prototype", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_AdapterClass 			= Language.translate("Adapter class", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_ShowLabel 				= Language.translate("Show Label", Language.EN);  		//  @jve:decl-index=0:
-	public final String COL_Image 					= Language.translate("Image", Language.EN);  			//  @jve:decl-index=0:
-	public final String COL_EdgeWidth 				= Language.translate("Width", Language.EN);  			//  @jve:decl-index=0:
-	public final String COL_EdgeColor 				= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
+	public final String COL_TypeSpecifier 			= Language.translate("Type-Specifier", Language.EN);
+	public final String COL_Domain 					= Language.translate("Subnetwork", Language.EN);
+	public final String COL_AgentClass 				= Language.translate("Agent Class", Language.EN);
+	public final String COL_GraphPrototyp 			= Language.translate("Graph-Prototype", Language.EN);
+	public final String COL_AdapterClass 			= Language.translate("Adapter class", Language.EN);
+	public final String COL_ShowLabel 				= Language.translate("Show Label", Language.EN);
+	public final String COL_Image 					= Language.translate("Image", Language.EN);
+	public final String COL_EdgeWidth 				= Language.translate("Width", Language.EN);
+	public final String COL_EdgeColor 				= Language.translate("Color", Language.EN);
 
 	
 	private TreeMap<String, ComponentTypeSettings> currCompTypSettings;
@@ -138,8 +139,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	private boolean currSnap2Grid = true;
 	private double currSnapRaster = 5; 
-	
 	private EdgeShape currEdgeShape; 
+	private ComponentSorting currComponentSorting;
 	
 	private Project currProject;
 	private boolean canceled = false;
@@ -149,13 +150,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JPanel jContentPane;
 	private JPanel jPanelDomains;
 	private JPanel jPanelComponents;
-	private JPanel jPanelRaster;
 	private JPanel jPanelGeneralSettings;
 	private JPanel jPanelButtonOkCancel;
 
 	private JLabel jLabelGridHeader;
 	private JLabel jLabelGuideGridWidth;
-	private JLabel jLabelBottomDummy;
 	private JCheckBox jCheckBoxSnap2Grid;
 	private JSpinner jSpnnerGridWidth;
 
@@ -174,13 +173,18 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JTable jTableComponentTypes;
 	private DefaultTableModel componentTypesModel;
 	
+	private JLabel jLabelListSorting;
+	private JComboBox<ComponentSorting> jComboBoxListSorting;
+	private DefaultComboBoxModel<ComponentSorting> comboBoxModelComponentSorting;
+	
 	private JLabel jLabelEdgeShape;
 	private JComboBox<EdgeShape> jComboBoxEdgeShapes;
 	private DefaultComboBoxModel<EdgeShape> comboBoxModelEdgeShapes;
-
+	
 	private TableCellEditor4ClassSelector agentClassesCellEditor;  		
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor;  	
 	private TableCellEditor4ClassSelector adapterClassesCellEditor;  
+	
 
 	
 	/**
@@ -188,6 +192,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 *
 	 * @param graphSettings the graph settings
 	 * @param project the current project
+	 * @wbp.parser.constructor
 	 */
 	public ComponentTypeDialog(GeneralGraphSettings4MAS graphSettings, Project project) {
 		this.setStartArguments(graphSettings, project);
@@ -230,6 +235,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		this.currSnap2Grid = graphSettings.isSnap2Grid();
 		this.currSnapRaster = graphSettings.getSnapRaster();
 		this.currEdgeShape = graphSettings.getEdgeShape();
+		this.currComponentSorting = graphSettings.getComponentSorting();
 		this.currProject = project;
 	}
 	/**
@@ -321,6 +327,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		this.getJCheckBoxSnap2Grid().setSelected(this.currSnap2Grid);
 		this.getJSpinnerGridWidth().setValue(this.currSnapRaster);
 		this.getJComboBoxEdgeShapes().setSelectedItem(this.currEdgeShape);
+		this.getJComboBoxListSorting().setSelectedItem(this.currComponentSorting);
 	}
 	
 	/**
@@ -359,6 +366,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return this.currEdgeShape;
 	}
 	/**
+	 * Gets the component sorting.
+	 * @return the component sorting
+	 */
+	public ComponentSorting getComponentSorting() {
+		return this.currComponentSorting;
+	}
+	/**
 	 * Returns the GeneralGraphSettings4MAS.
 	 * @return the GeneralGraphSettings4MAS for the graph environment
 	 */
@@ -369,6 +383,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		genSettings.setSnap2Grid(this.isSnap2Grid());
 		genSettings.setSnapRaster(this.getSnapRaster());
 		genSettings.setEdgeShape(this.getEdgeShape());
+		genSettings.setComponentSorting(this.getComponentSorting());
 		return genSettings;
 	}
 	
@@ -454,7 +469,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			gridBagConstraints21.fill = GridBagConstraints.BOTH;
 			gridBagConstraints21.gridheight = 3;
 			gridBagConstraints21.gridx = 0;
-			gridBagConstraints21.gridy = 3;
+			gridBagConstraints21.gridy = 1;
 			gridBagConstraints21.insets = new Insets(15, 15, 20, 15);
 			GridBagConstraints gridBagConstraints110 = new GridBagConstraints();
 			gridBagConstraints110.fill = GridBagConstraints.BOTH;
@@ -520,77 +535,59 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJPanelGeneralSettings() {
 		if (jPanelGeneralSettings == null) {
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.gridx = 0;
-			gridBagConstraints12.fill = GridBagConstraints.BOTH;
-			gridBagConstraints12.weighty = 1.0;
-			gridBagConstraints12.weightx = 1.0;
-			gridBagConstraints12.insets = new Insets(0, 15, 15, 15);
-			gridBagConstraints12.gridy = 1;
 			
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.fill = GridBagConstraints.NONE;
-			gridBagConstraints4.anchor = GridBagConstraints.WEST;
-			gridBagConstraints4.insets = new Insets(15, 15, 0, 15);
-			gridBagConstraints4.gridy = 0;
+			GridBagLayout gridBagLayout = new GridBagLayout();
+			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+			gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
+			gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			
-			jLabelBottomDummy = new JLabel();
-			jLabelBottomDummy.setText("");
 			
-			jPanelGeneralSettings = new JPanel();
-			jPanelGeneralSettings.setLayout(new GridBagLayout());
-			jPanelGeneralSettings.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jPanelGeneralSettings.add(getJPanelRaster(), gridBagConstraints4);
-			jPanelGeneralSettings.add(jLabelBottomDummy, gridBagConstraints12);
-		}
-		return jPanelGeneralSettings;
-	}
-	
-	/**
-	 * This method initializes jPanelRaster	.
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanelRaster() {
-		if (jPanelRaster == null) {
+			GridBagConstraints gbc_jLabelListSorting = new GridBagConstraints();
+			gbc_jLabelListSorting.insets = new Insets(20, 20, 0, 0);
+			gbc_jLabelListSorting.gridx = 0;
+			gbc_jLabelListSorting.gridy = 0;
+			GridBagConstraints gbc_jComboBoxListSorting = new GridBagConstraints();
+			gbc_jComboBoxListSorting.insets = new Insets(20, 5, 0, 0);
+			gbc_jComboBoxListSorting.gridwidth = 2;
+			gbc_jComboBoxListSorting.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jComboBoxListSorting.gridx = 1;
+			gbc_jComboBoxListSorting.gridy = 0;
 			
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.fill = GridBagConstraints.BOTH;
-			gridBagConstraints15.gridy = 2;
-			gridBagConstraints15.weightx = 1.0;
-			gridBagConstraints15.gridwidth = 2;
-			gridBagConstraints15.insets = new Insets(20, 5, 0, 0);
-			gridBagConstraints15.gridx = 1;
-			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.gridx = 0;
-			gridBagConstraints14.anchor = GridBagConstraints.WEST;
-			gridBagConstraints14.insets = new Insets(20, 5, 0, 0);
-			gridBagConstraints14.gridy = 2;
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.anchor = GridBagConstraints.WEST;
-			gridBagConstraints11.insets = new Insets(5, 5, 5, 0);
-			gridBagConstraints11.gridx = 2;
-			gridBagConstraints11.gridy = 1;
-			gridBagConstraints11.weightx = 0.0;
-			gridBagConstraints11.fill = GridBagConstraints.NONE;
-			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.anchor = GridBagConstraints.WEST;
-			gridBagConstraints10.gridx = 1;
-			gridBagConstraints10.gridy = 1;
-			gridBagConstraints10.insets = new Insets(5, 10, 5, 0);
-			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.anchor = GridBagConstraints.WEST;
-			gridBagConstraints7.gridwidth = 2;
-			gridBagConstraints7.gridx = -1;
-			gridBagConstraints7.gridy = -1;
-			gridBagConstraints7.insets = new Insets(5, 10, 5, 0);
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.anchor = GridBagConstraints.WEST;
-			gridBagConstraints5.gridwidth = 1;
-			gridBagConstraints5.gridx = -1;
-			gridBagConstraints5.gridy = -1;
-			gridBagConstraints5.insets = new Insets(5, 5, 5, 5);
+			GridBagConstraints gbc_JComboBoxEdgeShapes = new GridBagConstraints();
+			gbc_JComboBoxEdgeShapes.fill = GridBagConstraints.HORIZONTAL;
+			gbc_JComboBoxEdgeShapes.gridy = 3;
+			gbc_JComboBoxEdgeShapes.gridwidth = 2;
+			gbc_JComboBoxEdgeShapes.insets = new Insets(20, 5, 0, 0);
+			gbc_JComboBoxEdgeShapes.gridx = 1;
+			GridBagConstraints gbc_JLabelEdgeShape = new GridBagConstraints();
+			gbc_JLabelEdgeShape.gridx = 0;
+			gbc_JLabelEdgeShape.anchor = GridBagConstraints.WEST;
+			gbc_JLabelEdgeShape.insets = new Insets(20, 20, 0, 0);
+			gbc_JLabelEdgeShape.gridy = 3;
+			GridBagConstraints gbc_getJSpinnerGridWidth = new GridBagConstraints();
+			gbc_getJSpinnerGridWidth.anchor = GridBagConstraints.WEST;
+			gbc_getJSpinnerGridWidth.insets = new Insets(5, 5, 5, 0);
+			gbc_getJSpinnerGridWidth.gridx = 2;
+			gbc_getJSpinnerGridWidth.gridy = 2;
+			gbc_getJSpinnerGridWidth.fill = GridBagConstraints.NONE;
+			GridBagConstraints gbc_JLabelGuideGridWidth = new GridBagConstraints();
+			gbc_JLabelGuideGridWidth.anchor = GridBagConstraints.WEST;
+			gbc_JLabelGuideGridWidth.gridx = 1;
+			gbc_JLabelGuideGridWidth.gridy = 2;
+			gbc_JLabelGuideGridWidth.insets = new Insets(5, 10, 5, 0);
+			GridBagConstraints gbc_JCheckBoxSnap2Grid = new GridBagConstraints();
+			gbc_JCheckBoxSnap2Grid.anchor = GridBagConstraints.WEST;
+			gbc_JCheckBoxSnap2Grid.gridwidth = 2;
+			gbc_JCheckBoxSnap2Grid.gridx = 1;
+			gbc_JCheckBoxSnap2Grid.gridy = 1;
+			gbc_JCheckBoxSnap2Grid.insets = new Insets(20, 10, 5, 0);
+			GridBagConstraints gbc_JLabelGridHeader = new GridBagConstraints();
+			gbc_JLabelGridHeader.anchor = GridBagConstraints.WEST;
+			gbc_JLabelGridHeader.gridwidth = 1;
+			gbc_JLabelGridHeader.gridx = 0;
+			gbc_JLabelGridHeader.gridy = 1;
+			gbc_JLabelGridHeader.insets = new Insets(20, 20, 5, 5);
 			
 			jLabelGridHeader = new JLabel();
 			jLabelGridHeader.setText("Hilfs-Raster");
@@ -606,21 +603,47 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jLabelEdgeShape.setText(Language.translate(jLabelEdgeShape.getText()) + ":");
 			jLabelEdgeShape.setFont(new Font("Dialog", Font.BOLD, 12));
 			
-			jPanelRaster = new JPanel();
-			jPanelRaster.setLayout(new GridBagLayout());
-			jPanelRaster.add(jLabelGridHeader, gridBagConstraints5);
-			jPanelRaster.add(getJCheckBoxSnap2Grid(), gridBagConstraints7);
-			jPanelRaster.add(jLabelGuideGridWidth, gridBagConstraints10);
-			jPanelRaster.add(getJSpinnerGridWidth(), gridBagConstraints11);
-			jPanelRaster.add(jLabelEdgeShape, gridBagConstraints14);
-			jPanelRaster.add(getJComboBoxEdgeShapes(), gridBagConstraints15);
+			
+			jPanelGeneralSettings = new JPanel();
+			jPanelGeneralSettings.setLayout(gridBagLayout);
+			jPanelGeneralSettings.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+			
+			jPanelGeneralSettings.add(getJLabelListSorting(), gbc_jLabelListSorting);
+			jPanelGeneralSettings.add(getJComboBoxListSorting(), gbc_jComboBoxListSorting);
+			jPanelGeneralSettings.add(jLabelGridHeader, gbc_JLabelGridHeader);
+			jPanelGeneralSettings.add(getJCheckBoxSnap2Grid(), gbc_JCheckBoxSnap2Grid);
+			jPanelGeneralSettings.add(jLabelGuideGridWidth, gbc_JLabelGuideGridWidth);
+			jPanelGeneralSettings.add(getJSpinnerGridWidth(), gbc_getJSpinnerGridWidth);
+			jPanelGeneralSettings.add(jLabelEdgeShape, gbc_JLabelEdgeShape);
+			jPanelGeneralSettings.add(getJComboBoxEdgeShapes(), gbc_JComboBoxEdgeShapes);
+			
+			
 		}
-		return jPanelRaster;
+		return jPanelGeneralSettings;
 	}
 	
+	private JPanel getJPanelButtonOkCancel() {
+		if (jPanelButtonOkCancel == null) {
+			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
+			gridBagConstraints8.anchor = GridBagConstraints.EAST;
+			gridBagConstraints8.gridx = 0;
+			gridBagConstraints8.gridy = 0;
+			gridBagConstraints8.weightx = 0.0;
+			gridBagConstraints8.insets = new Insets(0, 0, 0, 30);
+			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
+			gridBagConstraints9.insets = new Insets(0, 30, 0, 0);
+			gridBagConstraints9.gridy = 0;
+			gridBagConstraints9.anchor = GridBagConstraints.CENTER;
+			gridBagConstraints9.gridx = 1;
+			jPanelButtonOkCancel = new JPanel();
+			jPanelButtonOkCancel.setLayout(new GridBagLayout());
+			jPanelButtonOkCancel.add(this.getJButtonCancel(), gridBagConstraints9);
+			jPanelButtonOkCancel.add(this.getJButtonConfirm(), gridBagConstraints8);
+		}
+		return jPanelButtonOkCancel;
+	}
 	/**
 	 * This method initializes jButtonConfirm	.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonConfirm() {
@@ -638,7 +661,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	/**
 	 * This method initializes jButtonCancel	.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
@@ -666,16 +688,16 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			gridBagConstraints3.gridx = 1;
 			gridBagConstraints3.insets = new Insets(5, 5, 3, 5);
 			gridBagConstraints3.anchor = GridBagConstraints.WEST;
-			gridBagConstraints3.gridy = 1;
+			gridBagConstraints3.gridy = 0;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 0;
 			gridBagConstraints2.insets = new Insets(5, 5, 3, 5);
-			gridBagConstraints2.gridy = 1;
+			gridBagConstraints2.gridy = 0;
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 			gridBagConstraints13.fill = GridBagConstraints.BOTH;
 			gridBagConstraints13.weighty = 1.0;
 			gridBagConstraints13.gridx = 0;
-			gridBagConstraints13.gridy = 3;
+			gridBagConstraints13.gridy = 1;
 			gridBagConstraints13.gridwidth = 2;
 			gridBagConstraints13.weightx = 1.0;
 			
@@ -1151,7 +1173,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
 			
 			// Set table entries for defined assignments, if any
-			if(this.currCompTypSettings!=null){
+			if (this.currCompTypSettings!=null){
 				Iterator<String> etsIter = this.currCompTypSettings.keySet().iterator();
 				while(etsIter.hasNext()){
 					
@@ -1466,11 +1488,31 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jPanelComponents;
 	}
 
-	/**
-	 * This method initializes jCheckBoxSnap2Grid	.
-	 *
-	 * @return javax.swing.JCheckBox
-	 */
+	private JLabel getJLabelListSorting() {
+		if (jLabelListSorting == null) {
+			jLabelListSorting = new JLabel();
+			jLabelListSorting.setText("Listen-Sortierung");
+			jLabelListSorting.setText(Language.translate(jLabelListSorting.getText()) + ":");
+			jLabelListSorting.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelListSorting;
+	}
+	private JComboBox<ComponentSorting> getJComboBoxListSorting() {
+		if (jComboBoxListSorting == null) {
+			jComboBoxListSorting = new JComboBox<>(this.getComboBoxModel4ComponentSorting());
+		}
+		return jComboBoxListSorting;
+	}
+	private DefaultComboBoxModel<ComponentSorting> getComboBoxModel4ComponentSorting() {
+		if (comboBoxModelComponentSorting==null) {
+			comboBoxModelComponentSorting = new DefaultComboBoxModel<>();
+			for (ComponentSorting csElement : ComponentSorting.values()) {
+				comboBoxModelComponentSorting.addElement(csElement);
+			}
+		}
+		return comboBoxModelComponentSorting;
+	}
+	
 	private JCheckBox getJCheckBoxSnap2Grid() {
 		if (jCheckBoxSnap2Grid == null) {
 			jCheckBoxSnap2Grid = new JCheckBox();
@@ -1480,38 +1522,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jCheckBoxSnap2Grid;
 	}
-
-	/**
-	 * This method initializes jPanelButtonOkCancel	.
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanelButtonOkCancel() {
-		if (jPanelButtonOkCancel == null) {
-			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.anchor = GridBagConstraints.EAST;
-			gridBagConstraints8.gridx = 0;
-			gridBagConstraints8.gridy = 0;
-			gridBagConstraints8.weightx = 0.0;
-			gridBagConstraints8.insets = new Insets(0, 0, 0, 30);
-			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.insets = new Insets(0, 30, 0, 0);
-			gridBagConstraints9.gridy = 0;
-			gridBagConstraints9.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints9.gridx = 1;
-			jPanelButtonOkCancel = new JPanel();
-			jPanelButtonOkCancel.setLayout(new GridBagLayout());
-			jPanelButtonOkCancel.add(getJButtonCancel(), gridBagConstraints9);
-			jPanelButtonOkCancel.add(getJButtonConfirm(), gridBagConstraints8);
-		}
-		return jPanelButtonOkCancel;
-	}
-
-	/**
-	 * This method initializes jComboBoxGridWidth	.
-	 *
-	 * @return javax.swing.JComboBox
-	 */
 	private JSpinner getJSpinnerGridWidth() {
 		if (jSpnnerGridWidth == null) {
 			jSpnnerGridWidth = new JSpinner(new SpinnerNumberModel(5.0, 0.1, 100.0, 0.1));
@@ -1520,21 +1530,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jSpnnerGridWidth;
 	}
 	
-	/**
-	 * This method initializes jComboBoxEdgeShapes	.
-	 *
-	 * @return javax.swing.JComboBox
-	 */
 	private JComboBox<EdgeShape> getJComboBoxEdgeShapes() {
 		if (jComboBoxEdgeShapes == null) {
-			jComboBoxEdgeShapes = new JComboBox<EdgeShape>(this.getComboBoxModel4EdgeShapes());
+			jComboBoxEdgeShapes = new JComboBox<>(this.getComboBoxModel4EdgeShapes());
+			jComboBoxEdgeShapes.setMaximumRowCount(12);
 		}
 		return jComboBoxEdgeShapes;
 	}
-	/**
-	 * Gets the combo box model4 edge shapes.
-	 * @return the combo box model4 edge shapes
-	 */
 	private DefaultComboBoxModel<EdgeShape> getComboBoxModel4EdgeShapes() {
 		if (comboBoxModelEdgeShapes==null) {
 			comboBoxModelEdgeShapes = new DefaultComboBoxModel<EdgeShape>();
@@ -1674,6 +1676,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			this.currSnap2Grid = this.jCheckBoxSnap2Grid.isSelected();
 			this.currSnapRaster = (Double)this.jSpnnerGridWidth.getValue(); 
 			this.currEdgeShape = (EdgeShape) this.jComboBoxEdgeShapes.getSelectedItem();
+			this.currComponentSorting = (ComponentSorting) this.getJComboBoxListSorting().getSelectedItem();
 			
 			this.canceled = false;
 			this.setVisible(false);
@@ -1785,6 +1788,5 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			this.message = messag;
 		}
 	}
-	
 	
 } 

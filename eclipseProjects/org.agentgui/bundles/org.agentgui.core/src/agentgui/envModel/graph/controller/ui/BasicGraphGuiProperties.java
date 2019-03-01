@@ -584,18 +584,32 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
+	 * Do the actual save operation.
+	 * @return true, if successful
+	 */
+	private boolean doSave() {
+		if (isSavableModel()==true) {
+			this.saveToNetworkComponentOrGraphNode();
+			if (this.graphController.getProject()==null) {
+				// --- Send to Agent ------------------
+				this.sendChangesToAgent();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Does the close action.
 	 */
 	private void doClose() {
 		
-		// --- Check if closing is allowed currently ----------------
-		if (this.isSavableModel()==false) return;
+		int diaAnswer = 0;
+		String diaTitle = Language.translate("Close Properties", Language.EN);
+		String diaQuestion = null;
 		
 		// --- Check if we have changes -----------------------------
 		if (this.hasChanged()==true) {
-			// --- Data model has changed ! -------------------------
-			String diaTitle = Language.translate("Close Properties", Language.EN);
-			String diaQuestion = null;
 			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------------------
 				diaQuestion = Language.translate("Save changes to network model?", Language.EN);
@@ -604,18 +618,14 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				diaQuestion = Language.translate("Save and send data model changes to agent(s)?", Language.EN);
 			}
 
-			// --- User request -------------------------------------
-			int diaAnswer = JOptionPane.showConfirmDialog(this, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
+			// --- User request ---------------------------
+			diaAnswer = JOptionPane.showConfirmDialog(this, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
 			if (diaAnswer==JOptionPane.YES_OPTION) {
-				
 				// --- Save to node or component ----------
-				this.saveToNetworkComponentOrGraphNode();
-				if (this.graphController.getProject()==null) {
-					// --- Send to Agent ------------------
-					this.sendChangesToAgent();
+				if (this.doSave()==true) {
+					this.setVisible(false);
+					this.dispose();
 				}
-				this.setVisible(false);
-				this.dispose();
 				
 			} else if (diaAnswer==JOptionPane.NO_OPTION){
 				this.setVisible(false);
@@ -640,7 +650,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
-			nca4dm.save();
+			
 			this.newDataModel = DataModelEnDecoder64.reviewDataModel(nca4dm.getDataModel());
 			this.newDataModelBase64 = nca4dm.getDataModelBase64Encoded(this.newDataModel);
 			
@@ -807,18 +817,13 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		String actionCommand = ae.getActionCommand();
 		if (actionCommand.equals("Save") || actionCommand.equals("SaveAndExit")) {
 			// --- Actions for 'Save' and 'Save and Exit' -----------
-			if (this.isSavableModel()==true) {
-				this.saveToNetworkComponentOrGraphNode();
-				if (this.graphController.getProject()==null) {
-					// --- Send to Agent ----------------------------
-					this.sendChangesToAgent();
-				}
+			if (this.doSave()==true) {
 				// --- Close, if 'Save and Exit' --------------------
 				if (actionCommand.equals("SaveAndExit")) {
 					this.setVisible(false);
 					this.dispose();
 				
-				}				
+				}	
 			}
 		
 		} else if (actionCommand.equals("DisableRuntimeUpdates")) {

@@ -464,25 +464,29 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			throw new IllegalArgumentException(this.getClass().getSimpleName() + ": A NetworkComponent with the ID '" + newCompID + "' already exists!");
 		}
 		
-		// --- Rename networkComponent --------------------------------------------------
+		// --- Rename NetworkComponent --------------------------------------------------
 		NetworkComponent networkComponent = this.getNetworkComponents().get(oldCompID);
 		if (networkComponent!=null) {
+			// --- Define a new HashSet for related GraphElements -----------------------
 			HashSet<String> newGraphElementIDs = new HashSet<String>(networkComponent.getGraphElementIDs());
 			// --- Rename the corresponding edges of the network component --------------
 			for (String oldGraphElementID : networkComponent.getGraphElementIDs()) {
-				String newGraphElementID = oldGraphElementID.replaceFirst(oldCompID, newCompID);
-				if (newGraphElementID.equals(oldGraphElementID)==false) {
-					// --- Delete old reference -----------------------------------------
-					newGraphElementIDs.remove(oldGraphElementID);
-					// --- rename the edges ---------------------------------------------
-					GraphElement graphElement = this.getGraphElements().get(oldGraphElementID);
-					if (graphElement instanceof GraphEdge) {
+				
+				// --- For edges only ! -------------------------------------------------
+				GraphElement graphElement = this.getGraphElement(oldGraphElementID);
+				if (graphElement instanceof GraphEdge) {
+					// --- Define new edge ID -------------------------------------------
+					String newGraphEdgeID = oldGraphElementID.replaceFirst(oldCompID, newCompID);
+					if (newGraphEdgeID.equals(oldGraphElementID)==false) {
+						// --- Delete old reference -----------------------------------------
+						newGraphElementIDs.remove(oldGraphElementID);
+						// --- rename the edges ---------------------------------------------
 						this.getGraphElements().remove(oldGraphElementID);
-						graphElement.setId(newGraphElementID);
-						this.getGraphElements().put(newGraphElementID, graphElement);	
-					}
-					// --- Add new reference --------------------------------------------
-					newGraphElementIDs.add(newGraphElementID);	
+						graphElement.setId(newGraphEdgeID);
+						this.getGraphElements().put(newGraphEdgeID, graphElement);	
+						// --- Add new reference --------------------------------------------
+						newGraphElementIDs.add(newGraphEdgeID);	
+					}					
 				}
 			}
 
@@ -499,7 +503,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 					graphElement.resetGraphElementLayout(this);
 				}
 			}
-			
 		}
 		
 	}

@@ -47,11 +47,15 @@ import agentgui.envModel.graph.controller.ui.BasicGraphGuiProperties;
  */
 public abstract class NetworkComponentAdapter4DataModel {
 
-	private GraphEnvironmentController graphController;
-
+	/** The current NetworkComponentAdapter that owns the current instance */
 	private NetworkComponentAdapter networkComponentAdapter;
-	private NetworkComponent networkComponent;
-	private GraphNode graphNode;
+
+	/** The current GraphEnvironmentController */
+	protected GraphEnvironmentController graphController;
+	/** The current NetworkComponent */
+	protected NetworkComponent networkComponent;
+	/** The current GraphNode */
+	protected GraphNode graphNode;
 
 	
 	/**
@@ -106,6 +110,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Will be invoked to prepare for saving the current data model instance and can be used to
 	 * validate the settings in the visualization component. The name 'save' used here, basically 
 	 * indicates that the save button was pressed by the user or that the window is about to close.
+	 * Use this method to rise error messages for the user.
 	 *
 	 * @return true, if the edit / property window can be closed, <code>false</code> otherwise.
 	 */

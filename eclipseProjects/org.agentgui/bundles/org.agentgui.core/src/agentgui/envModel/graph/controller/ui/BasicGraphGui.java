@@ -86,6 +86,7 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentToGraphNodeAdapter;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -890,20 +891,22 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.selectObject(pickedObject);
 		
 		if (pickedObject instanceof GraphNode) {
-			// --- Set the local variable ---------------------------
+			// --- Set the local variable -------------------------------------
 			GraphNode graphNode = (GraphNode) pickedObject;
-			// --- Is the GraphNode a DistributionNode ? ------------
+			// --- Is the GraphNode a DistributionNode ? ----------------------
 			NetworkComponent networkComponent = this.graphController.getNetworkModel().isDistributionNode(graphNode);
 			if (networkComponent!=null) {
-				// --- Yes! Show the PopUp menu for this node -------
-				NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ShowPopUpMenue);
-				nmn.setInfoObject(pickedObject);
-				this.graphController.notifyObservers(nmn);
-				return;
+				ComponentTypeSettings cts = this.graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
+				if (cts.getAdapterClass().equals(NetworkComponentToGraphNodeAdapter.class.getName())==false) {
+					NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ShowPopUpMenue);
+					nmn.setInfoObject(pickedObject);
+					this.graphController.notifyObservers(nmn);
+					return;
+				}
 			}
 		}
 		
-		// --- Notify about the editing request for a component ----- 
+		// --- Notify about the editing request for a component ---------------
 		NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
 		nmNote.setInfoObject(pickedObject);
 		this.graphController.notifyObservers(nmNote);
