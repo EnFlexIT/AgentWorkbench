@@ -42,6 +42,7 @@ import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.NetworkModelFileImporter;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.environment.AbstractEnvironmentModel;
 
 /**
  * The AbstractUndoableEdit 'ImportNetworkModel' imports a selected file.
@@ -59,6 +60,8 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	private NetworkModel newNetworkModel;
 	private NetworkModel oldNetworkModel; 
 
+	private AbstractEnvironmentModel newAbstractEnvModel;
+	private AbstractEnvironmentModel oldAbstractEnvModel;
 	
 	/**
 	 * Instantiates a new import network model.
@@ -71,12 +74,16 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		this.selectFile();
 		if (this.networkModelFileImporter!=null && this.networkModelFileSelected!=null) {
 			this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
+			this.oldAbstractEnvModel = this.graphController.getAbstractEnvironmentModel().getCopy();
 			this.doEdit();
 		} else {
 			this.setCanceled(true);
 		}
 	}
 	
+	/**
+	 * Does the edit.
+	 */
 	private void doEdit() {
 		
 		if (this.isCanceled()==false && this.networkModelFileImporter!=null && this.networkModelFileSelected!=null) {
@@ -87,11 +94,20 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			if (this.newNetworkModel==null) {
 				try {
 					// --- Import directly from the selected file ---------------------------------
-					this.newNetworkModel = this.networkModelFileImporter.importGraphFromFile(this.networkModelFileSelected);
+					this.newNetworkModel = this.networkModelFileImporter.importNetworkModelFromFile(this.networkModelFileSelected);
+					// --- Do we have an AbstractEnvironmentModel also? --------------------------- 
+					this.newAbstractEnvModel = this.networkModelFileImporter.getAbstractEnvironmentModel();
 					// --- Invoke to cleanup the importer -----------------------------------------
 					this.networkModelFileImporter.cleanupImporter();
-					// --- The following has to be done only once, directly after the import !!! --
+					// --- Set new instances to GraphEnvironmentController ------------------------
 					this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
+					if (this.newAbstractEnvModel!=null) {
+						this.graphController.setAbstractEnvironmentModel(this.newAbstractEnvModel);
+					}
+					// ----------------------------------------------------------------------------
+					// --- The following has to be done only once, directly after the import !!! --
+					// ----------------------------------------------------------------------------
+					// --- Base64 encode the model elements --------------------------------------- 
 					this.graphController.setNetworkComponentDataModelBase64Encoded();
 					
 				} catch (Exception ex) {
@@ -101,11 +117,15 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			} else {
 				// --- The preparation for saving the Network were already done before (above) ---- 
 				this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
+				if (this.newAbstractEnvModel!=null) {
+					this.graphController.setAbstractEnvironmentModel(this.newAbstractEnvModel);
+				}
 			}
 			this.graphController.setProjectUnsaved();
-			
 		}
 	}
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#redo()
@@ -123,6 +143,9 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	public void undo() throws CannotUndoException {
 		super.undo();
 		this.graphController.setDisplayEnvironmentModel(this.oldNetworkModel);
+		if (this.oldAbstractEnvModel!=null) {
+			this.graphController.setAbstractEnvironmentModel(this.oldAbstractEnvModel);
+		}
 		this.graphController.setProjectUnsaved();
 	}
 
@@ -181,7 +204,6 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 				this.setCanceled(true);
 			}
 		}
-		
 		
 	}
 

@@ -29,14 +29,12 @@
 package agentgui.envModel.graph.controller;
 
 import java.io.File;
-import java.util.Iterator;
 
 import javax.swing.filechooser.FileFilter;
 
-import agentgui.envModel.graph.networkModel.GraphEdge;
-import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import edu.uci.ics.jung.algorithms.layout.Layout;
+import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * Classes that should work as import components for the 
@@ -73,30 +71,28 @@ public abstract class NetworkModelFileImporter {
 	}
 	
 	/**
-	 * Initialize the node positions according to a specified layout
-	 * @param network The NetworkModel containing the graph
-	 * @param layout The initial layout
+	 * This method has to import a {@link NetworkModel} from the file. 
+	 * @param graphFile The file containing the external network model definition.
+	 * @return the NetworkModel to be used within Agent.Workbnech.
 	 */
-	public void initPosition(NetworkModel network, Layout<GraphNode, GraphEdge> layout){
-		Iterator<GraphNode> nodes = network.getGraph().getVertices().iterator();
-		while(nodes.hasNext()){
-			GraphNode node = nodes.next();
-			node.setPosition(layout.transform(node));
-		}
-	}
+	public abstract NetworkModel importNetworkModelFromFile(File graphFile);
 	
 	/**
-	 * This method loads the graph from the file and translates it into a JUNG graph. 
-	 * @param graphFile The file containing the graph definition.
-	 * @return The JUNG graph.
+	 * May return an abstract environment model for the {@link EnvironmentModel}.
+	 * <b>Overwrite</b> this method, if your importer provides an abstract environment model after a successful import.
+	 * @return the abstract environment model that comes with the imported {@link NetworkModel}
+	 * @see EnvironmentModel
+	 * @see EnvironmentModel#setAbstractEnvironment(agentgui.simulationService.environment.AbstractEnvironmentModel)
 	 */
-	public abstract NetworkModel importGraphFromFile(File graphFile);
-	
+	public AbstractEnvironmentModel getAbstractEnvironmentModel() {
+		return null;
+	}
 	/**
 	 * Since the instance of the importer will remain after import, this method should reset
 	 * all local variables of the importer to reduce the RAM usage.
 	 */
 	public abstract void cleanupImporter();
+	
 	
 	
 	/**
