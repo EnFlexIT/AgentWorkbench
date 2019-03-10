@@ -54,6 +54,7 @@ import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInError;
 import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;
+import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
@@ -96,7 +97,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 	private JButton jButtonRefreshPlugIns;
 	private JPanel jPanelProjectPlugIns;
 	private JPanel jPanelFeatures;
-	private EnvironmentModel environmentModel;
+	private EnvironmentModelSelector environmentModelSelector;
 	private JLabel jLabelResourcesHeader;
 	
 	
@@ -111,12 +112,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		this.currProject.addObserver(this);
 
 		this.initialize();
-
-		// --- Set the translations ---------------------------------
-		this.getJButtonAddPlugIns().setToolTipText(Language.translate("Hinzufügen"));
-		this.getJButtonRemovePlugIns().setToolTipText(Language.translate("Entfernen"));
-		this.getJButtonRefreshPlugIns().setToolTipText(Language.translate("Neu laden"));
-
+		this.setViewAccordingToProject();
 	}
 
 	/**
@@ -181,7 +177,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 			gbc_environmentModel.fill = GridBagConstraints.BOTH;
 			gbc_environmentModel.gridx = 0;
 			gbc_environmentModel.gridy = 4;
-			jPanelContent.add(getEnvironmentModel(), gbc_environmentModel);
+			jPanelContent.add(getEnvironmentModelSelector(), gbc_environmentModel);
 
 		}
 		return jPanelContent;
@@ -382,7 +378,9 @@ public class ProjectResources extends JScrollPane implements Observer {
 			PlugInError errorPlugIn = (PlugInError) plugIn;
 			pile.setPlugInLoadMessage(errorPlugIn.getException().toString());
 		}
-		this.getListModelPlugIns().addElement(pile);
+		if (this.getListModelPlugIns().contains(pile)==false) {
+			this.getListModelPlugIns().addElement(pile);
+		}
 	}
 	/**
 	 * This methods removes a Plugin from the plugInListModel
@@ -398,6 +396,16 @@ public class ProjectResources extends JScrollPane implements Observer {
 			}
 		}
 	}
+	/**
+	 * Sets the plug ins according to project.
+	 */
+	private void setPlugInsAccordingToProject() {
+		PlugInsLoaded pluginVector = this.currProject.getPlugInsLoaded();
+		for (int i = 0; i < pluginVector.size(); i++) {
+			this.addPlugInElement2List(pluginVector.get(i));
+		}
+	}
+	
 	
 	private JPanel getJPanelPlugInButtons() {
 		if (jPanelPlugInButtons == null) {
@@ -423,17 +431,13 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jPanelPlugInButtons;
 	}
-	/**
-	 * This method initializes jButtonAdd
-	 * 
-	 * @return javax.swing.JButton
-	 */
+	
 	private JButton getJButtonAddPlugIns() {
 		if (jButtonAddPlugIns == null) {
 			jButtonAddPlugIns = new JButton();
 			jButtonAddPlugIns.setPreferredSize(new Dimension(45, 26));
 			jButtonAddPlugIns.setIcon(GlobalInfo.getInternalImageIcon("ListPlus.png"));
-			jButtonAddPlugIns.setToolTipText("Add");
+			jButtonAddPlugIns.setToolTipText(Language.translate("Hinzufügen"));
 			jButtonAddPlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -446,8 +450,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 					ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 					cs.setVisible(true);
 					// --- act in the dialog ... --------------------
-					if (cs.isCanceled() == true)
-						return;
+					if (cs.isCanceled() == true) return;
 
 					// ----------------------------------------------
 					// --- Class was selected. Proceed it -----------
@@ -468,24 +471,18 @@ public class ProjectResources extends JScrollPane implements Observer {
 		return jButtonAddPlugIns;
 	}
 
-	/**
-	 * This method initializes jButtonRemove
-	 * 
-	 * @return javax.swing.JButton
-	 */
 	private JButton getJButtonRemovePlugIns() {
 		if (jButtonRemovePlugIns == null) {
 			jButtonRemovePlugIns = new JButton();
 			jButtonRemovePlugIns.setIcon(GlobalInfo.getInternalImageIcon("ListMinus.png"));
 			jButtonRemovePlugIns.setPreferredSize(new Dimension(45, 26));
-			jButtonRemovePlugIns.setToolTipText("Remove");
+			jButtonRemovePlugIns.setToolTipText(Language.translate("Entfernen"));
 			jButtonRemovePlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 
 					PlugInListElement pile = (PlugInListElement) jListPlugIns.getSelectedValue();
-					if (pile == null)
-						return;
+					if (pile == null) return;
 
 					// --- Get the PlugIn -----------------
 					PlugIn pi = currProject.getPlugInsLoaded().getPlugIn(pile.getPlugInName());
@@ -499,18 +496,12 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jButtonRemovePlugIns;
 	}
-
-	/**
-	 * This method initializes jButtonRefresh
-	 * 
-	 * @return javax.swing.JButton
-	 */
 	private JButton getJButtonRefreshPlugIns() {
 		if (jButtonRefreshPlugIns == null) {
 			jButtonRefreshPlugIns = new JButton();
 			jButtonRefreshPlugIns.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png"));
 			jButtonRefreshPlugIns.setPreferredSize(new Dimension(45, 26));
-			jButtonRefreshPlugIns.setToolTipText("Refresh");
+			jButtonRefreshPlugIns.setToolTipText(Language.translate("Neu laden"));
 			jButtonRefreshPlugIns.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -528,11 +519,11 @@ public class ProjectResources extends JScrollPane implements Observer {
 		}
 		return jSeparatorTop;
 	}
-	private EnvironmentModel getEnvironmentModel() {
-		if (environmentModel == null) {
-			environmentModel = new EnvironmentModel(this.currProject);
+	private EnvironmentModelSelector getEnvironmentModelSelector() {
+		if (environmentModelSelector == null) {
+			environmentModelSelector = new EnvironmentModelSelector(this.currProject);
 		}
-		return environmentModel;
+		return environmentModelSelector;
 	}
 	
 
@@ -542,6 +533,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 	private void setViewAccordingToProject() {
 		this.getJListBundleJars().setModel(this.currProject.getProjectBundleLoader().getBundleJarsListModel());
 		this.getFeaturePanel().setFeatureVector(this.currProject.getProjectFeatures());
+		this.setPlugInsAccordingToProject();
 	}
 
 	/*

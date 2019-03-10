@@ -58,7 +58,7 @@ import de.enflexit.common.classSelection.ClassSelectionDialog;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class EnvironmentModel extends JPanel implements Observer {
+public class EnvironmentModelSelector extends JPanel implements Observer {
 	
 	private static final long serialVersionUID = 7115612858197530835L;
 
@@ -78,7 +78,7 @@ public class EnvironmentModel extends JPanel implements Observer {
 	 * Instantiates a new environment model.
 	 * @param project the project
 	 */
-	public EnvironmentModel(Project project) {
+	public EnvironmentModelSelector(Project project) {
 		this.currProject = project;
 		if (this.currProject!=null) {
 			this.currProject.addObserver(this);
