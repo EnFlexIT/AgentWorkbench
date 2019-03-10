@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.networkModel;
 
 import org.apache.commons.collections15.Transformer;
+import org.apache.commons.text.StringEscapeUtils;
 
 import edu.uci.ics.jung.io.GraphMLWriter;
 
@@ -56,8 +57,8 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 	private void initialize() {
 		this.setEdgeIDs(new Transformer<GraphEdge, String>() {
 			@Override
-			public String transform(GraphEdge arg0) {
-				return arg0.getId();
+			public String transform(GraphEdge graphEdge) {
+				return StringEscapeUtils.escapeHtml4(graphEdge.getId());
 			}
 		});
 		this.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
@@ -69,7 +70,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.setVertexIDs(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode graphNode) {
-				return graphNode.getId();
+				return StringEscapeUtils.escapeHtml4(graphNode.getId());
 			}
 		});
 		this.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {

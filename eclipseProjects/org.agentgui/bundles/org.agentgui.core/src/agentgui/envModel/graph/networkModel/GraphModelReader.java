@@ -35,6 +35,7 @@ import java.io.FileReader;
 import java.util.Vector;
 
 import org.apache.commons.collections15.Transformer;
+import org.apache.commons.text.StringEscapeUtils;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -104,7 +105,7 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 
 				// --- Create GraphNode instance and set ID ---------
 				GraphNode graphNode = new GraphNode();
-				graphNode.setId(nmd.getId());
+				graphNode.setId(StringEscapeUtils.unescapeHtml4(nmd.getId()));
 
 				// --- Load the individual data model ---------------
 				String dmBase64StringSaved = nmd.getProperty(KEY_DATA_MODEL_BASE64_PROPERTY);
@@ -152,7 +153,7 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 		Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
 			@Override
 			public GraphEdge transform(EdgeMetadata emd) {
-				return new GraphEdge(emd.getId(), emd.getDescription());
+				return new GraphEdge(StringEscapeUtils.unescapeHtml4(emd.getId()), emd.getDescription());
 			}
 		};
 		return edgeTransformer;
@@ -165,7 +166,7 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	private static Transformer<HyperEdgeMetadata, GraphEdge> getHyperEdgeTransformerInternal() {
 		Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
 			@Override
-			public GraphEdge transform(HyperEdgeMetadata arg0) {
+			public GraphEdge transform(HyperEdgeMetadata hyperEdgeMetadata) {
 				return null;
 			}
 		};
