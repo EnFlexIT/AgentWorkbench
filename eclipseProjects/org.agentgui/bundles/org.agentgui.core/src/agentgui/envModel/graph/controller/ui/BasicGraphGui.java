@@ -897,7 +897,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			NetworkComponent networkComponent = this.graphController.getNetworkModel().isDistributionNode(graphNode);
 			if (networkComponent!=null) {
 				ComponentTypeSettings cts = this.graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
-				if (cts.getAdapterClass().equals(NetworkComponentToGraphNodeAdapter.class.getName())==false) {
+				if (cts.getAdapterClass()==null || cts.getAdapterClass().equals(NetworkComponentToGraphNodeAdapter.class.getName())==false) {
 					NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ShowPopUpMenue);
 					nmn.setInfoObject(pickedObject);
 					this.graphController.notifyObservers(nmn);

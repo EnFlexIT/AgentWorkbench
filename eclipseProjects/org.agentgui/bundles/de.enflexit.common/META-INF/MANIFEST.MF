@@ -39,6 +39,7 @@ Require-Bundle: de.enflexit.api,
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-Vendor: EnFlex.IT
-Bundle-ClassPath: lib/commons-compress-1.15.jar,
- .
+Bundle-ClassPath: .,
+ lib/commons-compress/commons-compress-1.18.jar,
+ lib/commons-lang/commons-lang3-3.8.1.jar
 Automatic-Module-Name: de.enflexit.common

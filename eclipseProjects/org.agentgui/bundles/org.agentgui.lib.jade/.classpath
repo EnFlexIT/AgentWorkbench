@@ -6,7 +6,7 @@
 	<classpathentry exported="true" kind="lib" path="jade.jar" sourcepath="/jade/src"/>
 	<classpathentry exported="true" kind="lib" path="XMLCodec.jar"/>
 	<classpathentry exported="true" kind="lib" path="migration.jar"/>
-	<classpathentry exported="true" kind="lib" path="commons-codec/commons-codec-1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-codec/commons-codec-1.3.jar" sourcepath="C:/Users/Christian/.m2/repository/net/sf/ingenias/common-codec/1.3/common-codec-1.3-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
