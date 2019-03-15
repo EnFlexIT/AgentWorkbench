@@ -89,7 +89,7 @@ import jade.wrapper.AgentContainer;
  */
 public class GlobalInfo implements LastSelectedFolderReminder {
 
-	// --- Constant values -------------------------------------------------- 
+	// --- Constant values ------------------------------------------ 
 	private static String localAppTitle = "Agent.Workbench";
 	
 	private final static String localPathImageAWB = "/icons/";
@@ -108,7 +108,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private Integer localeJadeLocalPortMTP = 7778;
 	private JadeUrlConfiguration urlConfigurationForMaster;
 	
-	// --- Variables --------------------------------------------------------
+	// --- Variables ------------------------------------------------
 	private static ExecutionEnvironment localExecutionEnvironment = ExecutionEnvironment.ExecutedOverIDE;
 	
 	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
@@ -126,13 +126,13 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileNameProjectUserObjectXmlFile = "agentgui-UserObject.xml";
 	private static String localFileEndProjectZip = "agui";
 	
-	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
+	// --- Known EnvironmentTypes of Agent.GUI ----------------------
 	private EnvironmentTypes knownEnvironmentTypes = new EnvironmentTypes();
 	
-	// --- PropertyContentProvider ------------------------------------------
+	// --- PropertyContentProvider ----------------------------------
 	private PropertyContentProvider propertyContentProvider;
 	
-	// --- File-Properties --------------------------------------------------
+	// --- File-Properties ------------------------------------------
 	private ExecutionMode fileExecutionMode;
 	private String processID;
 	
@@ -185,18 +185,15 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private String oidcUsername;
 	private String oidcIssuerURI;
 
-	// --- Reminder information for file dialogs ----------------------------
+	// --- Reminder information for file dialogs --------------------
 	private File lastSelectedFolder; 
 	
-	// --- FileProperties and VersionInfo -----------------------------------
+	// --- BundleProperties and VersionInfo -------------------------
 	private BundleProperties bundleProperties;
-	/** Holds the instance of the file properties which are defined in '/properties/agentgui.ini' */
-	private FileProperties fileProperties;
-	/** Can be used in order to access the version information */
 	private VersionInfo versionInfo;
 	
 	
-	// --- Time series chart configuration ------------------------------------
+	// --- Time series chart configuration --------------------------
 	private TimeSeriesLengthRestriction timeSeriesLengthRestriction;
 	
 	/**
@@ -334,7 +331,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public void initialize() {
 		try {
 			this.getVersionInfo();
-			this.loadConfiguration();
+			this.getBundleProperties();
 			this.setApplicationsLookAndFeel();
 			
 		} catch (Exception ex) {
@@ -1156,52 +1153,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return bundleProperties;
 	}
 	/**
-	 * Returns the old manage class for the file properties.
-	 * @return the file properties
-	 */
-	private FileProperties getFileProperties() {
-		return this.getFileProperties(true);
-	}
-	/**
-	 * Returns the old manage class for the file properties.
-	 * @param isSetPropertiesToGlobal set <code>true</code> in order to directly set the preferences to the {@link GlobalInfo}
-	 * @return the file properties
-	 */
-	private FileProperties getFileProperties(boolean isSetPropertiesToGlobal) {
-		if (fileProperties==null) {
-			fileProperties = new FileProperties(this, isSetPropertiesToGlobal);
-		}
-		return fileProperties;
-	}
-	 
-	/**
-	 * Loads the persisted configuration.
-	 */
-	private void loadConfiguration() {
-		
-		File fileProps = new File(this.getPathConfigFile(true));
-		if (fileProps.exists()==true) {
-			// --- In case that the old file properties exists, load them, ... ----------
-			this.getFileProperties();
-			// --- initialize the bundle properties and ... -----------------------------
-			this.getBundleProperties(false);
-			// --- load the global information into the bundle properties ---------------
-			this.getBundleProperties().save();
-			// --- Finally, delete the old file properties ------------------------------
-			fileProps.delete();
-			this.fileProperties = null;
-			
-		} else {
-			this.getBundleProperties();
-		}
-	}
-	/**
 	 * Persist (saves) the current configuration by saving the preferences.
 	 */
 	public void doSaveConfiguration() {
 		this.getBundleProperties().save();
 	}
-	
 	
 	public void putStringToConfiguration(String key, String value) {
 		this.getBundleProperties().getEclipsePreferences().put(key, value);
@@ -1254,7 +1210,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * will be measured at the initial program execution (if required)
 	 * @return The benchmark value, stored in the file properties
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public Float getBenchValue() {
 		return filePropBenchValue;
@@ -1263,7 +1219,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * Can be used in order to set the benchmark value in the file properties
 	 * @param benchValue The result of the initial benchmark
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setBenchValue(float benchValue) {
 		this.filePropBenchValue = benchValue;
@@ -1277,7 +1233,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 *   
 	 * @return the filePropBenchExecOn
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public String getBenchExecOn() {
 		return filePropBenchExecOn;
@@ -1288,7 +1244,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 *  
 	 * @param benchExecOn the filePropBenchExecOn to set
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setBenchExecOn(String benchExecOn) {
 		this.filePropBenchExecOn = benchExecOn;
@@ -1317,7 +1273,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * to the property file. 
 	 * @param currentLanguage the filePropLanguage to set
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setLanguage(String currentLanguage) {
 		this.filePropLanguage = currentLanguage;
@@ -1326,7 +1282,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * Returns the currently configured language of the file properties
 	 * @return the filePropLanguage
 	 * @see BenchmarkMeasurement
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public String getLanguage() {
 		return filePropLanguage;
@@ -1462,7 +1418,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * Can be used in order to start the active server mode immediately after the program execution.
 	 * This applies only if the current execution mode is set to server (server.master or server.slave)
 	 * @param serverAutoRun the filePropAutoRun to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerAutoRun(boolean serverAutoRun) {
 		this.filePropServerAutoRun = serverAutoRun;
@@ -1475,7 +1431,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * or server.slave)
 	 * 
 	 * @return the filePropAutoRun
-	 * @see FileProperties
+	 * @see BundleProperties
 	 * @see GlobalInfo#setServerAutoRun(boolean)
 	 */
 	public boolean isServerAutoRun() {
@@ -1484,7 +1440,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Here the URLS or IP of the server.master can be set 
 	 * @param serverMasterURL the filePropMasterURL to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterURL(String serverMasterURL) {
 		this.filePropServerMasterURL = serverMasterURL;
@@ -1493,7 +1449,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Here the URL or IP of the server.master can be get
 	 * @return the filePropMasterURL
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public String getServerMasterURL() {
 		return this.filePropServerMasterURL;
@@ -1501,7 +1457,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Here the port for the server.master can be set
 	 * @param serverMasterPort the filePropMasterPort to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterPort(Integer serverMasterPort) {
 		this.filePropServerMasterPort = serverMasterPort;
@@ -1510,7 +1466,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * This method returns the port on which the server.master can be reached 
 	 * @return The port of the server.master
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public Integer getServerMasterPort() {
 		return this.filePropServerMasterPort;
@@ -1518,7 +1474,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * This method can be used in order to set the MTP port of the server.master
 	 * @param serverMasterPort4MTP the filePropMasterPort to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterPort4MTP(Integer serverMasterPort4MTP) {
 		this.filePropServerMasterPort4MTP = serverMasterPort4MTP;
@@ -1527,7 +1483,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Returns the MTP port of the server.master 
 	 * @return the filePropMasterPort
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public Integer getServerMasterPort4MTP() {
 		return this.filePropServerMasterPort4MTP;
@@ -1536,7 +1492,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Gets the filePropServerMasterProtocol.
 	 * @return the file prop server master protocol
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public MtpProtocol getServerMasterProtocol() {
 		return filePropServerMasterProtocol;
@@ -1545,7 +1501,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Sets the filePropServerMasterProtocol.
 	 * @param filePropServerMasterProtocol the new filePropServerMasterProtocol
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterProtocol(MtpProtocol filePropServerMasterProtocol) {
 		this.filePropServerMasterProtocol = filePropServerMasterProtocol;
@@ -1612,7 +1568,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster
 	 * @param newDBHost the filePropServerMasterDBHost to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterDBHost(String newDBHost) {
 		this.filePropServerMasterDBHost = newDBHost;
@@ -1620,7 +1576,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster 
 	 * @return the filePropServerMasterDBHost
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public String getServerMasterDBHost() {
 		return filePropServerMasterDBHost;
@@ -1628,7 +1584,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster
 	 * @param newDBName the filePropServerMasterDBName to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterDBName(String newDBName) {
 		this.filePropServerMasterDBName = newDBName;
@@ -1636,7 +1592,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster
 	 * @return the filePropServerMasterDBName
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public String getServerMasterDBName() {
 		return filePropServerMasterDBName;
@@ -1644,7 +1600,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster
 	 * @param newDBUser the filePropServerMasterDBUser to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterDBUser(String newDBUser) {
 		this.filePropServerMasterDBUser = newDBUser;
@@ -1652,7 +1608,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster
 	 * @return the filePropServerMasterDBUser
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public String getServerMasterDBUser() {
 		return filePropServerMasterDBUser;
@@ -1660,7 +1616,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster
 	 * @param newDBPswd the filePropServerMasterDBPswd to set
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public void setServerMasterDBPswd(String newDBPswd) {
 		this.filePropServerMasterDBPswd = newDBPswd;
@@ -1668,13 +1624,26 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * Database property for the server.nmaster
 	 * @return the filePropServerMasterDBPswd
-	 * @see FileProperties
+	 * @see BundleProperties
 	 */
 	public String getServerMasterDBPswd() {
 		return filePropServerMasterDBPswd;
 	}
 
 	// ---- Methods for the reminder of the last selected folder ----
+	/**
+	 * This method can be used in order to remind the last folder 
+	 * in which a file was selected (e. g. while using a JFileChooser) 
+	 * @param lastSelectedFolderPath the new last selected folder
+	 */
+	public void setLastSelectedFolder(String lastSelectedFolderPath) {
+		if (lastSelectedFolderPath!=null) {
+			File lastSelectedFile = new File(lastSelectedFolderPath);
+			if (lastSelectedFile.exists()==true) {
+				this.setLastSelectedFolder(lastSelectedFile);
+			}
+		}
+	}
 	/**
 	 * This method can be used in order to remind the last folder 
 	 * in which a file was selected (e. g. while using a JFileChooser) 

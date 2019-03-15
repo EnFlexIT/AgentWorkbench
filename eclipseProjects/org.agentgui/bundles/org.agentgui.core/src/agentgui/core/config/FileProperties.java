@@ -55,7 +55,6 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
  * by accessing the reference Application.Properties.
  * 
  * @see Application#getGlobalInfo()
- * @see GlobalInfo#getFileProperties()
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

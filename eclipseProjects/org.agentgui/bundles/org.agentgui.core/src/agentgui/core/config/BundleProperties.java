@@ -47,8 +47,6 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 
 /**
  * The Class BundleProperties organizes the storage of application configuration data.
- * It replaces the class {@link FileProperties} that stored these information previously 
- * in the file agentgui.ini.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -118,6 +116,7 @@ public class BundleProperties {
 	public static final String DEF_PRODUCT_INSTALLATION_DIRECTORY = "100_PRODUCT_INSTALLATION_DIRECTORY";
 	public static final String DEF_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES = "101_PRODUCT_DIRECTORY_FOR_INSTALLATION_PACKAGES";
 	
+	public static final String DEF_LAST_SELECTED_FOLDER = "110_LAST_SELECTED_FOLDER";
 	
 	
 	private GlobalInfo globalInfo;
@@ -364,6 +363,11 @@ public class BundleProperties {
 		stringPrefValue = eclipsePreferences.get(DEF_OIDC_USERNAME, null);
 		this.globalInfo.setOIDCUsername(stringPrefValue);
 		
+
+		// --- this.DEF_LAST_SELECTED_FOLDER -------------------
+		stringPrefValue = eclipsePreferences.get(DEF_LAST_SELECTED_FOLDER, null);
+		this.globalInfo.setLastSelectedFolder(stringPrefValue);
+		
 	}
 	
 	/**
@@ -453,13 +457,13 @@ public class BundleProperties {
 		eclipsePreferences.putLong(DEF_UPDATE_DATE_LAST_CHECKED, this.globalInfo.getUpdateDateLastChecked());
 
 		
-		// --- this.DEF_KEYSTORE_FILE ------
+		// --- this.DEF_KEYSTORE_FILE ----------------
 		if (this.globalInfo.getKeyStoreFile()!=null) eclipsePreferences.put(DEF_KEYSTORE_FILE, this.globalInfo.getKeyStoreFile());
-		// --- this.DEF_KEYSTORE_PASSWORD ------
+		// --- this.DEF_KEYSTORE_PASSWORD ------------
 		if (this.globalInfo.getKeyStorePasswordEncrypted()!=null) eclipsePreferences.put(DEF_KEYSTORE_PASSWORD, this.globalInfo.getKeyStorePasswordEncrypted());
-		// --- this.DEF_TRUSTSTORE_FILE ------
+		// --- this.DEF_TRUSTSTORE_FILE --------------
 		if (this.globalInfo.getTrustStoreFile()!=null) eclipsePreferences.put(DEF_TRUSTSTORE_FILE, this.globalInfo.getTrustStoreFile());
-		// --- this.DEF_TRUSTSTORE_PASSWORD ------
+		// --- this.DEF_TRUSTSTORE_PASSWORD ----------
 		if (this.globalInfo.getTrustStorePasswordEncrypted()!=null) eclipsePreferences.put(DEF_TRUSTSTORE_PASSWORD, this.globalInfo.getTrustStorePasswordEncrypted());
 		
 		
@@ -475,11 +479,15 @@ public class BundleProperties {
 		eclipsePreferences.put(DEF_DEVICE_SERVICE_VISUALIZATION, this.globalInfo.getDeviceServiceAgentVisualisation().toString());
 		
 		
-		// --- this.DEF_OIDC_ISSUER_URI ------------------
+		// --- this.DEF_OIDC_ISSUER_URI --------------
 		if (this.globalInfo.getOIDCIssuerURI()!=null) eclipsePreferences.put(DEF_OIDC_ISSUER_URI, this.globalInfo.getOIDCIssuerURI());	
-		// --- this.DEF_OIDC_USERNAME -------------
+		// --- this.DEF_OIDC_USERNAME ----------------
 		if (this.globalInfo.getOIDCUsername()!=null) eclipsePreferences.put(DEF_OIDC_USERNAME, this.globalInfo.getOIDCUsername());
 		
+		
+		// --- this.DEF_LAST_SELECTED_FOLDER ---------
+		eclipsePreferences.put(DEF_LAST_SELECTED_FOLDER, this.globalInfo.getLastSelectedFolderAsString());
+
 	}	
 
 	/**
