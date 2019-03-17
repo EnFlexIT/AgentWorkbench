@@ -162,6 +162,14 @@ public class NetworkModelInformationDialog extends BasicGraphGuiJInternalFrame i
         this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
     
+    /* (non-Javadoc)
+     * @see agentgui.envModel.graph.controller.ui.BasicGraphGuiJInternalFrame#isRemindAsLastOpenedEditor()
+     */
+    @Override
+    protected boolean isRemindAsLastOpenedEditor() {
+    	return false;
+    }
+    
     /**
      * Returns a ComponentAdapter for the current desktop object.
      * @return the ComponentAdapter 
