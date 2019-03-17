@@ -39,6 +39,7 @@
 						<feature id="org.eclipse.emf.ecore" />
 						<feature id="org.eclipse.emf.common" />
 						<feature id="org.eclipse.equinox.p2.core.feature" />
+						<feature id="org.eclipse.equinox.p2.sdk" />
 					</excludes>
 				</configuration>
 				<executions>
