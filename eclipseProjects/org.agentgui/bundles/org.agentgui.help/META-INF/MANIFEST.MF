@@ -3,15 +3,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - API Help
 Bundle-SymbolicName: org.agentgui.help;singleton:=true
-Bundle-Version: 2.1.7.qualifier
+Bundle-Version: 2.1.8.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.help,
- org.agentgui.core;bundle-version="2.1.4",
- de.enflexit.api;bundle-version="1.0.0",
- de.enflexit.common;bundle-version="1.0.0",
- de.enflexit.db.hibernate;bundle-version="5.2.16",
- de.enflexit.db.mySQL;bundle-version="5.1.46",
- de.enflexit.oidc;bundle-version="1.0.0",
- de.enflexit.oidc.libs;bundle-version="5.17.1",
- de.enflexit.oshi;bundle-version="3.4.4"
+ org.agentgui.core,
+ de.enflexit.api,
+ de.enflexit.common,
+ de.enflexit.db.hibernate,
+ de.enflexit.db.mySQL,
+ de.enflexit.oidc,
+ de.enflexit.oidc.libs,
+ de.enflexit.oshi
 Bundle-Vendor: EnFlex.IT GmbH
