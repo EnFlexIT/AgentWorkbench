@@ -59,7 +59,6 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
 	public TableCellEditor4Combo(JComboBoxWide<?> comboBox) {
 		this.combo = comboBox;
 		this.combo.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				fireEditingStopped();

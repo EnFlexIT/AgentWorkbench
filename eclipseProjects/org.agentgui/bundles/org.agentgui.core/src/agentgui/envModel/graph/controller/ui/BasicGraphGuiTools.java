@@ -28,10 +28,9 @@
  */
 package agentgui.envModel.graph.controller.ui;
 
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -1057,17 +1056,12 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				
 				ComponentTypeDialog ctsDialog = null;
 				GlobalInfo globalInfo = Application.getGlobalInfo();
-				Frame ownerFrame = globalInfo.getOwnerFrameForComponent(this.getGraphControllerGUI());
-				if (ownerFrame!=null) {
-					ctsDialog = new ComponentTypeDialog(ownerFrame, settings, this.graphController.getProject());
-				} else {
-					Dialog ownerDialog = globalInfo.getOwnerDialogForComponent(this.getGraphControllerGUI());
-					if (ownerDialog!=null) {
-						ctsDialog = new ComponentTypeDialog(ownerDialog, settings, this.graphController.getProject());
-					} else {
-						ctsDialog = new ComponentTypeDialog(settings, this.graphController.getProject());		
-					}
+				
+				Window ownerWindow = globalInfo.getOwnerFrameForComponent(this.getGraphControllerGUI());
+				if (ownerWindow==null) {
+					ownerWindow = globalInfo.getOwnerDialogForComponent(this.getGraphControllerGUI());
 				}
+				ctsDialog = new ComponentTypeDialog(ownerWindow, settings, this.graphController.getProject());
 				ctsDialog.setVisible(true);
 				// - - - Waiting here - - -
 				if (ctsDialog.isCanceled()==false) {

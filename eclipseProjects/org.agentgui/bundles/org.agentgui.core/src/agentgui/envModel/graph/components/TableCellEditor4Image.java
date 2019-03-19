@@ -59,15 +59,11 @@ import de.enflexit.common.PathHandling;
  */
 public class TableCellEditor4Image extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1601832987481564552L;
 	
-	/** The Constant EDIT. */
     protected static final String EDIT = "edit";
     
-    private ComponentTypeDialog ctsDialog = null;
-    /** Current project. */
-    private Project project= null;
+    private ComponentTypeDialog ctsDialog;
 
     /** Current ImageIcon of the selected Cell. */
 	private ImageIcon currentImageIcon;
@@ -82,17 +78,13 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
      *
      * @param project The current project to be passed by the parent
      */
-	public TableCellEditor4Image(ComponentTypeDialog ctsDialog, Project project) {
-		
+	public TableCellEditor4Image(ComponentTypeDialog ctsDialog) {
 		this.ctsDialog = ctsDialog;
-		this.project = project;
-		
 		// --- Creating the button --------------
 		button = new JButton();
 		button.setActionCommand(EDIT);
 		button.addActionListener(this);
 		button.setBorderPainted(false);
-		
 	}
 	
 	/**
@@ -113,17 +105,17 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 		if (ae.getSource()==this.getJButtonRemove()) {
 			
 			this.getFileChooser().cancelSelection();
-			currentImageIcon = ctsDialog.createImageIcon(null, null);
+			currentImageIcon = ComponentTypeDialog.createImageIcon(null, null);
 			
 		} else {
 			
 			if (ae.getActionCommand().equals(EDIT)) {
-	            
-				// --- set the directory to the default project directory or the last selected folder 
-	            if(Application.getGlobalInfo().getLastSelectedFolderAsString().startsWith(project.getProjectFolderFullPath())){
+				// --- Set the directory to the default project directory or the last selected folder 
+				Project project = ctsDialog.getProject();
+	            if (Application.getGlobalInfo().getLastSelectedFolderAsString().startsWith(project.getProjectFolderFullPath())) {
 	            	// --- last selected folder is a sub folder of the project folder ---
 	            	this.getFileChooser().setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());	           
-	            } else{
+	            } else {
 	            	// --- set current directory as the project folder ------------------	
 	            	this.getFileChooser().setCurrentDirectory(new File(project.getProjectFolderFullPath()));
 	            }
@@ -155,7 +147,7 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	                    // --- Constructing the relative resource path ------------------
 	                	path = "/"+ project.getProjectFolder() + "/"  + path.replace(File.separatorChar, '/');
 	                	// --- Updating the image Icon of the table cell ----------------
-	                	currentImageIcon = ctsDialog.createImageIcon(path, path);
+	                	currentImageIcon = ComponentTypeDialog.createImageIcon(path, path);
 	                } else{	                
 	                	// --- The image is not inside the project folder ---------------	
 	                	String msg   = Language.translate("The image should be in the "+project.getProjectFolder()+" folder.", Language.EN);
@@ -179,8 +171,6 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 		currentImageIcon = (ImageIcon) value;
 		return button;
 	}
-	
-	
 	
 	/**
 	 * Gets the file chooser for the selection of an image.
