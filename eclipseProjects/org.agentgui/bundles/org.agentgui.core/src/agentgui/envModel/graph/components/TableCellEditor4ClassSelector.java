@@ -80,12 +80,6 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 			}
 		});
 
-		classSelector.getJButtonCancel().addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fireEditingCanceled();
-			}
-		});
 	}
 
 	/* (non-Javadoc)
@@ -111,7 +105,10 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 			public void actionPerformed(ActionEvent e) {
 				classSelector.setClassSelected(currentClass);
 				classSelector.setVisible(true);
-				
+				// --- Wait for the user interaction ------
+				if (classSelector.isCanceled()==true) {
+					fireEditingCanceled();
+				}
 			}
 		});
 		return btn;

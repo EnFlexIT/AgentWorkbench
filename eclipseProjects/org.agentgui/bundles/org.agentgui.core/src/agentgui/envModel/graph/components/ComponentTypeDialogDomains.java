@@ -535,7 +535,7 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 	 */
 	protected boolean isStopCellEditing() {
 		// --- Stop cell editing, if required ----- 
-    	TableCellEditor editor = getJTable4DomainTypes().getCellEditor();
+    	TableCellEditor editor = this.getJTable4DomainTypes().getCellEditor();
 		if (editor!=null)  {
 			editor.stopCellEditing();
 			return true;

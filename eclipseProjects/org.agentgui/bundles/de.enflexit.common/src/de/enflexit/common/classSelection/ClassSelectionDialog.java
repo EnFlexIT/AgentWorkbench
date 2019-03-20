@@ -38,13 +38,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-
 
 /**
  * This extended JDialog uses the {@link ClassSelectionPanel} in order to allow 
@@ -142,9 +140,6 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 		int top = (screenSize.height - this.getHeight()) / 2; 
 	    int left = (screenSize.width - this.getWidth()) / 2; 
 	    this.setLocation(left, top);
-	    
-	    // --- Add this dialog as a listener to the ClassSelectorPanel -------- 
-//	    this.classSelectionPanel.addClassSelectionListener(this);
 	    
 	}
 	/**
@@ -316,7 +311,7 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 	 * Returns the JButton for the cancel action.
 	 * @return the JButton
 	 */
-	public AbstractButton getJButtonCancel() {
+	public JButton getJButtonCancel() {
 		return this.getClassSelectionPanel().getJButtonCancel();
 	}
 	/**
