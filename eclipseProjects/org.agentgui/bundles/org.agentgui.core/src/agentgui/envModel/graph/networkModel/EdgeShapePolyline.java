@@ -87,11 +87,13 @@ public class EdgeShapePolyline<V, E> extends AbstractEdgeShapeTransformer<V, E> 
 	 * @return the general path
 	 */
 	private GeneralPath getGeneralPath(GraphEdge graphEdge) {
-		if (path==null) {
-			path = new GeneralPath();
-			path.moveTo(0.0f, 0.0f);
-			path.lineTo(1.0f, 0.0f);
-		}
+		GeneralPath path = new GeneralPath();
+		path.moveTo(0.0f, 0.0f);
+		path.lineTo(0.2f, 0.3f);
+		path.lineTo(0.3f, 50.3f);
+		path.lineTo(0.5f, -50.5f);
+		path.lineTo(0.8f, 40.3f);
+		path.lineTo(1.0f, 0.0f);
 		return path;
 	}
 	

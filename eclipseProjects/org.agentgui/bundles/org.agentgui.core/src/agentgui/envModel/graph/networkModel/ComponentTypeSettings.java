@@ -44,31 +44,45 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	
 	private static final long serialVersionUID = 2456632300628196922L;
 	
-	/** The domain in which this instance represents this component type */
 	private String domain;
-	/** The agent class representing this component type */
 	private String agentClass;
-	/** The GraphElementPrototype class representing this component type */
 	private String graphPrototype;
-	/** The adapter class that can extend functionalities for a NetworkComponent  */
 	private String adapterClass;
-	/** The image icon which will be displayed on the component graph edges. */
 	private float edgeWidth = 2;
-	/** The image icon which will be displayed on the component graph edges. */
 	private String edgeImage = null;
-	/** The color which will be displayed on the component graph edges. */
 	private String color = null;
-	/** Indicates if a label is visible or not. */
 	private boolean showLabel = true;
 	
 	
 	/**
 	 * Default Constructor
 	 */
-	public ComponentTypeSettings(){
-		super();
-	}
+	public ComponentTypeSettings(){ }
 
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject==null) return false;
+		if (! (compareObject instanceof ComponentTypeSettings)) return false;
+		
+		ComponentTypeSettings cts2 = (ComponentTypeSettings) compareObject;
+		
+		boolean isEqual = true;
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getDomain(), cts2.getDomain());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getAgentClass(), cts2.getAgentClass());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getGraphPrototype(), cts2.getGraphPrototype());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getAdapterClass(), cts2.getAdapterClass());
+		if (isEqual==true) isEqual = (this.getEdgeWidth()==cts2.getEdgeWidth());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getEdgeImage(), cts2.getEdgeImage());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getColor(), cts2.getColor());
+		if (isEqual==true) isEqual = (this.isShowLabel()==cts2.isShowLabel());
+		return isEqual;
+	}
+	
 	/**
 	 * Returns a copy of the current instance.
 	 * @return the copy

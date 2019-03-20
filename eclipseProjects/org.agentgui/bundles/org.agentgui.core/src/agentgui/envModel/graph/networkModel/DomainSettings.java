@@ -38,25 +38,42 @@ import java.io.Serializable;
  */
 public class DomainSettings implements Serializable {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 469880829860930598L;
 	
 	private boolean showLabel = true;
 	private int vertexSize = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE; 
 	private String vertexColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
 	private String vertexColorPicked = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR.getRGB());
-	/** The adapter class that can extend functionalities for a NetworkComponent  */
 	private String adapterClass = null;
-	/**	The Agent that has to be started in case that a cluster was generated */
 	private String clusterAgent = null;
-	/**	The shape that has to be used for the visual representation of a cluster */
 	private String clusterShape = GeneralGraphSettings4MAS.SHAPE_DEFAULT_4_CLUSTER;
 	
 	
 	/**
 	 * Instantiates a new domain settings.
 	 */
-	public DomainSettings() {
+	public DomainSettings() { }
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject==null) return false;
+		if (! (compareObject instanceof DomainSettings)) return false;
+		
+		DomainSettings ds2Compare = (DomainSettings) compareObject;
+		
+		boolean isEqual = true;
+		if (isEqual==true) isEqual = (this.isShowLabel()==ds2Compare.isShowLabel());
+		if (isEqual==true) isEqual = (this.getVertexSize()==ds2Compare.getVertexSize());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getVertexColor(), ds2Compare.getVertexColor());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getVertexColorPicked(), ds2Compare.getVertexColorPicked());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getAdapterClass(), ds2Compare.getAdapterClass());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getClusterAgent(), ds2Compare.getClusterAgent());
+		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getClusterShape(), ds2Compare.getClusterShape());
+		return isEqual;
 	}
 	
 	/**

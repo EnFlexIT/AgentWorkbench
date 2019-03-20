@@ -47,15 +47,16 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentDescription;
 import jade.util.leap.Serializable;
 
 /**
- * A custom user object encapsulating the required objects which can be placed in the Project object. 
- * You can add more attributes in this class if required, but be careful to cast and use the user object properly.
- * 
+ * The Class GeneralGraphSettings4MAS describes the general settings and the components for a 
+ * {@link NetworkModel} and it's visualization within the {@link GraphEnvironmentControllerGUI}.
+ *
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 @XmlRootElement
 public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
@@ -138,6 +139,8 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	private TreeMap<String, DomainSettings> currentDomainSettings;
 	/** The component type settings used in the {@link GraphEnvironmentController} */
 	private TreeMap<String, ComponentTypeSettings> currentCTS;
+	/** The layout setting to use in the visualization */
+	private TreeMap<String, LayoutSettings> currentLayoutSettings;
 	
 	private boolean snap2Grid = true;
 	private double snapRaster = DEFAULT_RASTER_SIZE;
@@ -174,6 +177,10 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 			// --- Compare ComponentTypeSettings ----------
 			if (isEqual==true) {
 				isEqual = this.hasEqualComponentTypeSettings(ggsToCompare);
+			}
+			// --- Compare LayoutSettings -----------------
+			if (isEqual==true) {
+				isEqual = this.hasEqualLayoutSettings(ggsToCompare);
 			}
 			// --- Compare 'snap2Grid' --------------------
 			if (isEqual==true) {
@@ -215,28 +222,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 				DomainSettings ds2Comp = dsTreeMapToCompare.get(key);
 				DomainSettings dsLocal = this.getDomainSettings().get(key);
 				if (dsLocal==null) return false;
-				if (isEqualDomainSetting(ds2Comp, dsLocal)==false) return false;
+				if (dsLocal.equals(ds2Comp)==false) return false;
 			}
 		}
-		return isEqual;
-	}
-	/**
-	 * Checks if the both {@link DomainSettings} are equal.
-	 * 
-	 * @param ds1 the first  DomainSetting
-	 * @param ds2 the second DomainSetting
-	 * @return true, if is equal DomainSetting
-	 */
-	public static boolean isEqualDomainSetting(DomainSettings ds1, DomainSettings ds2) {
-		
-		boolean isEqual = true;
-		if (isEqual==true) isEqual = (ds1.isShowLabel()==ds2.isShowLabel());
-		if (isEqual==true) isEqual = (ds1.getVertexSize()==ds2.getVertexSize());
-		if (isEqual==true) isEqual = isEqualString(ds1.getVertexColor(), ds2.getVertexColor());
-		if (isEqual==true) isEqual = isEqualString(ds1.getVertexColorPicked(), ds2.getVertexColorPicked());
-		if (isEqual==true) isEqual = isEqualString(ds1.getAdapterClass(), ds2.getAdapterClass());
-		if (isEqual==true) isEqual = isEqualString(ds1.getClusterAgent(), ds2.getClusterAgent());
-		if (isEqual==true) isEqual = isEqualString(ds1.getClusterShape(), ds2.getClusterShape());
 		return isEqual;
 	}
 	
@@ -259,31 +247,38 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 				ComponentTypeSettings cts2Comp = ctsTreeMapToCompare.get(key);
 				ComponentTypeSettings ctsLocal = this.getCurrentCTS().get(key);
 				if (ctsLocal==null) return false;
-				if (isEqualComponentTypeSettings(cts2Comp, ctsLocal)==false) return false;
+				if (ctsLocal.equals(cts2Comp)==false) return false;
 			}
 		}
 		return isEqual;
 	}
+
 	/**
-	 * Checks if the both {@link ComponentTypeSettings} are equal.
-	 * 
-	 * @param cts1 the first ComponentTypeSettings
-	 * @param cts2 the second ComponentTypeSettings
-	 * @return true, if is equal ComponentTypeSettings
+	 * Checks for equal layout settings.
+	 *
+	 * @param ggsToCompare the GeneralGraphSettings4MAS to compare
+	 * @return true, if successful
 	 */
-	public static boolean isEqualComponentTypeSettings(ComponentTypeSettings cts1, ComponentTypeSettings cts2) {
+	public boolean hasEqualLayoutSettings(GeneralGraphSettings4MAS ggsToCompare) {
 		
 		boolean isEqual = true;
-		if (isEqual==true) isEqual = isEqualString(cts1.getDomain(), cts2.getDomain());
-		if (isEqual==true) isEqual = isEqualString(cts1.getAgentClass(), cts2.getAgentClass());
-		if (isEqual==true) isEqual = isEqualString(cts1.getGraphPrototype(), cts2.getGraphPrototype());
-		if (isEqual==true) isEqual = isEqualString(cts1.getAdapterClass(), cts2.getAdapterClass());
-		if (isEqual==true) isEqual = (cts1.getEdgeWidth()==cts2.getEdgeWidth());
-		if (isEqual==true) isEqual = isEqualString(cts1.getEdgeImage(), cts2.getEdgeImage());
-		if (isEqual==true) isEqual = isEqualString(cts1.getColor(), cts2.getColor());
-		if (isEqual==true) isEqual = (cts1.isShowLabel()==cts2.isShowLabel());
+		TreeMap<String, LayoutSettings> lsTreeMapToCompare = ggsToCompare.getLayoutSettings();
+		isEqual = (lsTreeMapToCompare.size()==this.getCurrentCTS().size());
+		if (isEqual==true) {
+			// --- Compare each element in the TreeMap ----
+			Vector<String> keyVector = new Vector<String>(lsTreeMapToCompare.keySet());
+			for (int i = 0; i < keyVector.size(); i++) {
+				String key = keyVector.get(i);
+				LayoutSettings ls2Comp = lsTreeMapToCompare.get(key);
+				LayoutSettings lsLocal = this.getLayoutSettings().get(key);
+				if (lsLocal==null) return false;
+				if (lsLocal.equals(ls2Comp)==false) return false;
+			}
+		}
 		return isEqual;
 	}
+
+	
 	/**
 	 * Checks if is equal string setting.
 	 *
@@ -291,7 +286,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * @param string2 the string 2
 	 * @return true, if is equal string
 	 */
-	private static boolean isEqualString(String string1, String string2) {
+	protected static boolean isEqualString(String string1, String string2) {
 		boolean isEqual = true;
 		if (string1==null & string2==null) {
 			isEqual = true;
@@ -391,8 +386,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 */
 	public GeneralGraphSettings4MAS getCopy() {
 		GeneralGraphSettings4MAS copy = new GeneralGraphSettings4MAS();
-		copy.setCurrentCTS(this.copyComponentTypeSettings());
-		copy.setDomainSettings(this.copyDomainSettings());
+		copy.setCurrentCTS(this.getComponentTypeSettingsCopy());
+		copy.setDomainSettings(this.getDomainSettingsCopy());
+		copy.setLayoutSettings(this.getLayoutSettingsCopy());
 		copy.setSnap2Grid(this.isSnap2Grid());
 		copy.setSnapRaster(this.getSnapRaster());
 		copy.setEdgeShape(this.getEdgeShape());
@@ -400,12 +396,25 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		copy.setCustomToolbarComponentDescriptions(this.copyCustomToolbarComponentDescription());
 		return copy;
 	}
-	
 	/**
 	 * Copies the component type settings.
 	 * @return the hash map
 	 */
-	private TreeMap <String, ComponentTypeSettings> copyComponentTypeSettings() {
+	private TreeMap <String, DomainSettings> getDomainSettingsCopy() {
+		TreeMap<String, DomainSettings> copyDomainHash = new TreeMap<String, DomainSettings>();
+		Iterator<String> ctsIt = this.getDomainSettings().keySet().iterator();
+		while (ctsIt.hasNext()) {
+			String element = ctsIt.next();
+			DomainSettings ds = this.currentDomainSettings.get(element); 
+			copyDomainHash.put(element, ds.getCopy());
+		}
+		return copyDomainHash;
+	}
+	/**
+	 * Copies the component type settings.
+	 * @return the hash map
+	 */
+	private TreeMap <String, ComponentTypeSettings> getComponentTypeSettingsCopy() {
 		TreeMap<String, ComponentTypeSettings> copyCtsHash = new TreeMap<String, ComponentTypeSettings>();
 		Iterator<String> ctsIt = this.getCurrentCTS().keySet().iterator();
 		while (ctsIt.hasNext()) {
@@ -419,16 +428,17 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Copies the component type settings.
 	 * @return the hash map
 	 */
-	private TreeMap <String, DomainSettings> copyDomainSettings() {
-		TreeMap<String, DomainSettings> copyDomainHash = new TreeMap<String, DomainSettings>();
-		Iterator<String> ctsIt = this.getDomainSettings().keySet().iterator();
+	private TreeMap <String, LayoutSettings> getLayoutSettingsCopy() {
+		TreeMap<String, LayoutSettings> copyLayoutMap = new TreeMap<String, LayoutSettings>();
+		Iterator<String> ctsIt = this.getLayoutSettings().keySet().iterator();
 		while (ctsIt.hasNext()) {
 			String element = ctsIt.next();
-			DomainSettings ds = this.currentDomainSettings.get(element); 
-			copyDomainHash.put(element, ds.getCopy());
+			LayoutSettings ls = this.currentLayoutSettings.get(element); 
+			copyLayoutMap.put(element, ls.getCopy());
 		}
-		return copyDomainHash;
+		return copyLayoutMap;
 	}
+	
 	/**
 	 * Copy custom toolbar component descriptions.
 	 * @return the vector
@@ -448,7 +458,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 */
 	public TreeMap<String, ComponentTypeSettings> getCurrentCTS() {
 		if (currentCTS==null) {
-			currentCTS = new TreeMap<String, ComponentTypeSettings>();
+			currentCTS = new TreeMap<>();
 		}
 		return currentCTS;
 	}
@@ -485,7 +495,26 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public void setDomainSettings(TreeMap<String, DomainSettings> domainSettings) {
 		this.currentDomainSettings = domainSettings;
 	}
-
+	
+	/**
+	 * Returns the current layout settings.
+	 * @return the layout settings
+	 */
+	public TreeMap<String, LayoutSettings> getLayoutSettings() {
+		if (currentLayoutSettings==null) {
+			currentLayoutSettings = new TreeMap<>();
+		}
+		return currentLayoutSettings;
+	}
+	/**
+	 * Sets the layout settings.
+	 * @param layoutSettings the layout settings
+	 */
+	public void setLayoutSettings(TreeMap<String, LayoutSettings> layoutSettings) {
+		this.currentLayoutSettings = layoutSettings;
+	}
+	
+	
 	/**
 	 * Sets the snap2 grid.
 	 * @param snap2Grid the new snap2 grid

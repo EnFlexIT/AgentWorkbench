@@ -504,6 +504,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 				@Override
 				public Point2D transform(GraphNode node) {
+					// TODO consider a transformation of coordinates here !
 					return node.getPosition(); // The position is specified in the GraphNode instance
 				}
 			});
@@ -564,7 +565,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				}
 			});
 			
-			// --- Node -------------------------------------------------------
+			// --- Edge -------------------------------------------------------
 			visView.setEdgeToolTipTransformer(new Transformer<GraphEdge, String>() {
 				@Override
 				public String transform(GraphEdge edge) {
