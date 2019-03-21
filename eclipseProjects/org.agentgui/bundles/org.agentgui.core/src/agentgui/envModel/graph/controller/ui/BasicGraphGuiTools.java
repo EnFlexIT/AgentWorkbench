@@ -1128,7 +1128,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Cut Action ---------------------------------------
 			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
-			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
+			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			if(selectedComponents!=null && selectedComponents.size()>0){
 				// --- Copy to clipboard ----------------------------
 				this.graphController.copyToClipboard(selectedComponents);
@@ -1140,7 +1140,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Copy Action --------------------------------------
 			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
-			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
+			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			this.graphController.copyToClipboard(selectedComponents);
 			
 		} else if (ae.getSource() == getJButtonPaste()) {
@@ -1177,7 +1177,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			boolean removeDistributionNodes = true;
 			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
 			Set<GraphEdge> edgeSet = this.basicGraphGui.getPickedEdges();
-			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
+			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			
 			// ------------------------------------------------------
 			// --- Capture the case of one edged-NetworkComponent ---  
@@ -1186,7 +1186,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				// --- Determine NetworkComponents by edges ---------
 				HashSet<NetworkComponent> edgeComponents = new HashSet<NetworkComponent>();
 				for (GraphEdge edgeSelected : edgeSet) {
-					NetworkComponent componentFound = this.graphController.getNetworkModelAdapter().getNetworkComponent(edgeSelected);
+					NetworkComponent componentFound = this.graphController.getNetworkModel().getNetworkComponent(edgeSelected);
 					if (componentFound!=null && edgeComponents.contains(componentFound)==false) {
 						edgeComponents.add(componentFound);
 						if (edgeComponents.size()>1) {
@@ -1243,7 +1243,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				GraphNode node2Add2 = null;
 				HashSet<GraphNode> nodeHash2Add = new HashSet<GraphNode>();
 				for (GraphNode node : nodeSet) {
-					if (this.graphController.getNetworkModelAdapter().isFreeGraphNode(node)==false) {
+					if (this.graphController.getNetworkModel().isFreeGraphNode(node)==false) {
 						mergeError=true;
 						break;
 					}
@@ -1282,8 +1282,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			GraphNode pickedNode = basicGraphGui.getPickedSingleNode();
 			if(pickedNode!=null){
 				// --- One vertex is picked -----
-				List<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(pickedNode);
-				NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
+				List<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(pickedNode);
+				NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().getDistributionNode(components);
 				if (containsDistributionNode!=null) {
 					if(components.size()>=2){
 						this.graphController.getNetworkModelAdapter().splitNetworkModelAtNode(pickedNode);

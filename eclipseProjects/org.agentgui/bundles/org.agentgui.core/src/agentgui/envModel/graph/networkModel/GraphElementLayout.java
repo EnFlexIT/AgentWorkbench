@@ -134,7 +134,7 @@ public class GraphElementLayout {
 		// --- Evaluate the GraphNode ------------------------------------
 		GraphNode graphNode = (GraphNode) this.myGraphElement;
 		List<NetworkComponent> componentHashSet = this.networkModel.getNetworkComponents(graphNode);
-		NetworkComponent distributionNode = networkModel.containsDistributionNode(componentHashSet);
+		NetworkComponent distributionNode = networkModel.getDistributionNode(componentHashSet);
 		if (distributionNode!=null) {
 			// -----------------------------------------------------------
 			// --- DistributionNode --------------------------------------

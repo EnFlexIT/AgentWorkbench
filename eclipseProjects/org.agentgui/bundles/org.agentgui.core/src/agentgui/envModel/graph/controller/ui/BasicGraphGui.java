@@ -896,7 +896,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- Set the local variable -------------------------------------
 			GraphNode graphNode = (GraphNode) pickedObject;
 			// --- Is the GraphNode a DistributionNode ? ----------------------
-			NetworkComponent networkComponent = this.graphController.getNetworkModel().isDistributionNode(graphNode);
+			NetworkComponent networkComponent = this.graphController.getNetworkModel().getDistributionNode(graphNode);
 			if (networkComponent!=null) {
 				ComponentTypeSettings cts = this.graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
 				if (cts.getAdapterClass()==null || cts.getAdapterClass().equals(NetworkComponentToGraphNodeAdapter.class.getName())==false) {
@@ -1005,8 +1005,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
 			// --- Is that node a distribution node? ----------------
-			List<NetworkComponent> netComps = graphController.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
-			NetworkComponent disNode = graphController.getNetworkModelAdapter().containsDistributionNode(netComps);
+			List<NetworkComponent> netComps = graphController.getNetworkModel().getNetworkComponents((GraphNode) object);
+			NetworkComponent disNode = graphController.getNetworkModel().getDistributionNode(netComps);
 			if (disNode != null) {
 				this.graphController.getNetworkModelAdapter().selectNetworkComponent(disNode);
 			}
@@ -1017,12 +1017,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 
 		} else if (object instanceof GraphEdge) {
-			NetworkComponent netComp = graphController.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
-			this.setPickedObjects(graphController.getNetworkModelAdapter().getGraphElementsFromNetworkComponent(netComp));
+			NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent((GraphEdge) object);
+			this.setPickedObjects(graphController.getNetworkModel().getGraphElementsFromNetworkComponent(netComp));
 			this.graphController.getNetworkModelAdapter().selectNetworkComponent(netComp);
 
 		} else if (object instanceof NetworkComponent) {
-			this.setPickedObjects(graphController.getNetworkModelAdapter().getGraphElementsFromNetworkComponent((NetworkComponent) object));
+			this.setPickedObjects(graphController.getNetworkModel().getGraphElementsFromNetworkComponent((NetworkComponent) object));
 		}
 	}
 
@@ -1269,7 +1269,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		Set<GraphNode> nodesPicked = this.getVisualizationViewer().getPickedVertexState().getPicked();
 		if (nodesPicked.size()!=0) {
-			HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodesPicked);
+			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
 			if (components!=null && components.size()!=0) {
 				// --- Get the dimension of the selected nodes ------ 
 				Rectangle2D areaSelected = GraphGlobals.getGraphSpreadDimension(nodesPicked);

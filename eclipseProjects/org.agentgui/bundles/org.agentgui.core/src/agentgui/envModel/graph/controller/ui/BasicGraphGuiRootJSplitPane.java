@@ -434,7 +434,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			// --- Clear ------------------------
 			this.clearTableModel();
 			// --- Fill -------------------------
-			networkComponentAdd(new ArrayList<>(this.getGraphController().getNetworkModelAdapter().getNetworkComponents().values()));
+			networkComponentAdd(new ArrayList<>(this.getGraphController().getNetworkModel().getNetworkComponents().values()));
 		}
     }
     /**
@@ -456,7 +456,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    // Converting from view coordinates to model coordinates
 		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
 		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
-		    this.currNetworkComponent = this.getGraphController().getNetworkModelAdapter().getNetworkComponent(componentID);
+		    this.currNetworkComponent = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
 		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(this.currNetworkComponent);	
 		}
     }
@@ -494,7 +494,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				    JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		
-				} else if (getGraphController().getNetworkModelAdapter().getNetworkComponent(newCompID) != null) {
+				} else if (getGraphController().getNetworkModel().getNetworkComponent(newCompID)!=null) {
 				    // --- Check if a network component name already exists
 					message = "The component name already exists!" + newLine + "Choose a different one.";
 				    JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);

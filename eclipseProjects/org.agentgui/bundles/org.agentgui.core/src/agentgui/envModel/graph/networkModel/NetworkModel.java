@@ -544,7 +544,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		if (graphElements!=null) {
 			for (GraphElement graphElement : graphElements) {
 				GraphNode node = (GraphNode) graphElement;
-				boolean isDistributionGraphNode = this.isDistributionNode(node)!=null;
+				boolean isDistributionGraphNode = this.isDistributionNode(node);
 				if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
 					List<NetworkComponent> networkComponents = this.getNetworkComponents(node);
 					if (networkComponents.size() > 1) {
@@ -563,7 +563,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				
 			} else if (graphElement instanceof GraphNode) {
 				GraphNode node = (GraphNode) graphElement;
-				boolean isDistributionGraphNode = this.isDistributionNode(node)!=null;
+				boolean isDistributionGraphNode = this.isDistributionNode(node);
 				if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
 					this.getGraph().removeVertex((GraphNode) graphElement);
 					this.getGraphElements().remove(graphElement.getId());
@@ -634,10 +634,13 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Removes all network components if not in the specified list.
+	 * Removes all NetworkComponent's from the current NetworkModel, except of the specified ones.
+	 *
 	 * @param networkComponentsToKeep the network components to keep when deleting network components
+	 * @return the hash set of removed NetworkComponents
 	 */
 	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponentsToKeep) {
+		
 		HashSet<NetworkComponent> removed = new HashSet<NetworkComponent>();
 		HashSet<String> networkComponentIDs = this.getNetworkComponentsIDs(networkComponentsToKeep);
 		
@@ -645,7 +648,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		for (int i = 0; i < netCompList.size(); i++) {
 			NetworkComponent networkComponent = netCompList.get(i);
 			if (networkComponentIDs.contains(networkComponent.getId())==false) {
-				removeNetworkComponent(networkComponent, true, false);
+				this.removeNetworkComponent(networkComponent, true, false);
 				removed.add(networkComponent);
 			}
 		}
@@ -1266,13 +1269,13 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		HashSet<GraphNode> distributionNodes = new HashSet<GraphNode>();
 		
 		// --- Get the first component --------------------
-		if (containsDistributionNode(this.getNetworkComponents(graphNodePairs.getGraphNode1()))!=null) {
+		if (containsDistributionNode(this.getNetworkComponents(graphNodePairs.getGraphNode1()))==true) {
 			distributionNodes.add(graphNodePairs.getGraphNode1());
 		}
 		nodes2Merge.add(graphNodePairs.getGraphNode1());
 		// --- Get all other components -------------------
 		for (GraphNode node : graphNodePairs.getGraphNode2Hash()) {
-			if (containsDistributionNode(this.getNetworkComponents(node))!=null) {
+			if (containsDistributionNode(this.getNetworkComponents(node))==true) {
 				distributionNodes.add(node);
 			}
 			nodes2Merge.add(node);
@@ -1428,7 +1431,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Splits the network model at a specified node.
 	 *
-	 * @param node2SplitAt the node
+	 * @param node2SplitAt the GraphNode where the NetworkModel should be split
 	 * @param moveOppositeNode the move opposite node
 	 * @return the GraphNodePairs that can be used to undo this operation
 	 */
@@ -1438,13 +1441,13 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		HashSet<GraphNode> graphNodeConnections = new HashSet<GraphNode>();
 		
 		// --- Get the components containing the node -------------------------
-		List<NetworkComponent> netCompHash = this.getNetworkComponents(node2SplitAt);
+		List<NetworkComponent> netCompList = this.getNetworkComponents(node2SplitAt);
 		// --- Sort the list of component: ------------------------------------
 		// --- If the component list contains a DistributionNode, -------------
 		// --- this component should be the last one in the list! -------------
-		Vector<NetworkComponent> netCompVector = this.getNetworkComponentVectorWithDistributionNodeAsLast(netCompHash);
+		Vector<NetworkComponent> netCompVector = this.getNetworkComponentVectorWithDistributionNodeAsLast(netCompList);
 		NetworkComponent lastNetComp = netCompVector.get(netCompVector.size()-1);
-		if (lastNetComp.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+		if (this.isDistributionNode(lastNetComp)==true) {
 			moveOppositeNode = true;
 		}
 		
@@ -1586,99 +1589,39 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return newComponentVector;
 	}
 	
-	
 	/**
-	 * Returns the first {@link DistributionNode} NetworkComponent, if available.
-	 * @param componentHashSet the component hash set
-	 * @return the distribution node
-	 */
-	public NetworkComponent getDistributionNode(HashSet<NetworkComponent> componentHashSet) {
-		
-		NetworkComponent distributionNodeComponent = null;
-		for (NetworkComponent component : componentHashSet) {
-			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-				distributionNodeComponent = component;
-				break;
-			}
-		}
-		return distributionNodeComponent;
-	}
-	/**
-	 * Returns the first {@link DistributionNode} that ccan be found in the specified list of {@link NetworkComponent}s.
+	 * Returns the first {@link DistributionNode} that can be found in the specified list of {@link NetworkComponent}s.
 	 * 
-	 * @param networkComponentList the list of NetworkComonent's
+	 * @param netCompList the list of NetworkComonent's
 	 * @return the first DistributionNode found or <code>null</code> 
 	 */
-	public NetworkComponent getDistributionNode(List<NetworkComponent> networkComponentList) {
+	public NetworkComponent getDistributionNode(List<NetworkComponent> netCompList) {
 		NetworkComponent distributionNodeComponent = null;
-		for (int i = 0; i < networkComponentList.size(); i++) {
-			NetworkComponent component = networkComponentList.get(i);
-			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-				distributionNodeComponent = component;
+		for (int i = 0; i < netCompList.size(); i++) {
+			NetworkComponent netComp = netCompList.get(i);
+			if (this.isDistributionNode(netComp)==true) {
+				distributionNodeComponent = netComp;
 				break;
 			}
 		}
 		return distributionNodeComponent;
 	}
 	/**
-	 * Checks if the specified GraphNode is the GraphNode of a DistributionNode.
+	 * Return the DistributionNode - {@link NetworkComponent} that belongs to the specified GraphNode.
 	 * @param graphNode the GraphNode
-	 * @return the NetworkComponent of the DistributionNode, otherwise <code>null</code>
+	 * @return the NetworkComponent that is a DistributionNode or <code>null</code>
 	 */
 	public NetworkComponent getDistributionNode(GraphNode graphNode) {
-		List<NetworkComponent> components = this.getNetworkComponents(graphNode);
-		return this.containsDistributionNode(components);
-	}
-	
-	
-	/**
-	 * Checks, if a component list contains a DistributionNode.
-	 * 
-	 * @param networkComponents the components as HashSet<NetworkComponent>
-	 * @return the network component, which is the DistributionNode or null
-	 */
-	public NetworkComponent containsDistributionNode(HashSet<NetworkComponent> networkComponents) {
-		for (NetworkComponent component : networkComponents) {
-			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-				return component;
+		List<NetworkComponent> netCompList = this.getNetworkComponents(graphNode);
+		if (netCompList!=null) {
+			for (int i = 0; i < netCompList.size(); i++) {
+				NetworkComponent component = netCompList.get(i);
+				if (this.isDistributionNode(component)) {
+					return component;
+				}
 			}
 		}
 		return null;
-	}
-	/**
-	 * Checks, if the specified list of {@link NetworkComponent}s contains a DistributionNode.
-	 * 
-	 * @param networkComponents the components as HashSet<NetworkComponent>
-	 * @return the NetworkComponent that IS the first DistributionNode or null
-	 */
-	public NetworkComponent containsDistributionNode(List<NetworkComponent> networkComponents) {
-		for (NetworkComponent component : networkComponents) {
-			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-				return component;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Checks if the specified GraphNode is the main GraphNode of a DistributionNode.
-	 * @param graphNode the GraphNode
-	 * @return the NetworkComponent of the DistributionNode, otherwise <code>null</code>
-	 */
-	public NetworkComponent isDistributionNode(GraphNode graphNode) {
-		List<NetworkComponent> components = this.getNetworkComponents(graphNode);
-		return this.containsDistributionNode(components);
-	}
-	/**
-	 * Checks if the specified NetworkComponent is a distribution node that is that a NetworkComponent is a single GraphNode
-	 *
-	 * @param networkComponent the network component
-	 * @return true, if is distribution node
-	 */
-	public boolean isDistributionNode(NetworkComponent networkComponent) {
-		if (networkComponent==null) return false;
-		ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
-		return cts.getGraphPrototype().equals(DistributionNode.class.getName());
 	}
 	/**
 	 * Returns the GraphNode from the specified NetworkComponent if this component is a distribution node.
@@ -1693,6 +1636,43 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			graphNodeFound = (GraphNode) this.getGraphElement(graphNodeID);
 		}
 		return graphNodeFound;
+	}
+	
+	/**
+	 * Checks, if the specified list of {@link NetworkComponent}s contains a DistributionNode.
+	 * 
+	 * @param netCompList the components as HashSet<NetworkComponent>
+	 * @return the NetworkComponent that IS the first DistributionNode or null
+	 */
+	public boolean containsDistributionNode(List<NetworkComponent> netCompList) {
+		if (netCompList!=null) {
+			for (int i = 0; i < netCompList.size(); i++) {
+				NetworkComponent component = netCompList.get(i);
+				if (this.isDistributionNode(component)==true) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if the specified GraphNode is the main GraphNode of a DistributionNode.
+	 * @param graphNode the GraphNode
+	 * @return the NetworkComponent of the DistributionNode, otherwise <code>null</code>
+	 */
+	public boolean isDistributionNode(GraphNode graphNode) {
+		return this.containsDistributionNode(this.getNetworkComponents(graphNode));
+	}
+	/**
+	 * Checks if the specified NetworkComponent is a distribution node that is that a NetworkComponent is a single GraphNode
+	 *
+	 * @param networkComponent the network component
+	 * @return true, if is distribution node
+	 */
+	public boolean isDistributionNode(NetworkComponent networkComponent) {
+		if (networkComponent==null) return false;
+		return networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName());
 	}
 	
 	
@@ -1934,7 +1914,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				// --- Get connected NetworkComponents of this GraphNode ------
 				List<NetworkComponent> connNetComps = this.getGraphElementToNetworkComponentHash().get(nodeElement);
 				// --- Distribution Node within neighbours and set outer? -----
-				if (setDistributionNodesToOuterNodes==true && this.containsDistributionNode(connNetComps)!=null && outerNodes.contains((GraphNode)nodeElement)==false) {
+				if (setDistributionNodesToOuterNodes==true && this.containsDistributionNode(connNetComps)==true && outerNodes.contains((GraphNode)nodeElement)==false) {
 					// --- Add to outer nodes ---------------------------------
 					outerNodes.add((GraphNode)nodeElement);	
 					
@@ -2209,8 +2189,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the network component for network component to graph node adapter
 	 */
 	public NetworkComponent getNetworkComponentForNetworkComponentToGraphNodeAdapter(GraphNode graphNode) {
-		NetworkComponent distributionNode = this.isDistributionNode(graphNode);
-		if (this.isUsesNetworkComponentToGraphNodeAdapter(distributionNode)==true) {
+		NetworkComponent distributionNode = this.getDistributionNode(graphNode);
+		if (distributionNode!=null && this.isUsesNetworkComponentToGraphNodeAdapter(distributionNode)==true) {
 			return distributionNode;
 		}
 		return null;

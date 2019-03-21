@@ -111,7 +111,7 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
 		int modelRowIndex = this.componentsTable.convertRowIndexToModel(row);
 		String compID = (String) this.componentsTable.getModel().getValueAt(modelRowIndex, 0);
 		
-		NetworkComponent comp = this.graphController.getNetworkModelAdapter().getNetworkComponent(compID);
+		NetworkComponent comp = this.graphController.getNetworkModel().getNetworkComponent(compID);
 
 		NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
 		nmn.setInfoObject(comp);

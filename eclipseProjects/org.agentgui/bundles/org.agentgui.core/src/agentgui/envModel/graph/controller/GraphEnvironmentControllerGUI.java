@@ -394,12 +394,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     	ClusterNetworkComponent cnc = null;
     	Object checkObject = null;
 		if (graphObject instanceof GraphNode) {
-			List<NetworkComponent> netComps = this.getGraphController().getNetworkModelAdapter().getNetworkComponents((GraphNode) graphObject);
+			List<NetworkComponent> netComps = this.getGraphController().getNetworkModel().getNetworkComponents((GraphNode) graphObject);
 			if (netComps.size()==1) {
 				checkObject = netComps.iterator().next();
 			}
 		} else if (graphObject instanceof GraphEdge) {
-			checkObject = this.getGraphController().getNetworkModelAdapter().getNetworkComponent((GraphEdge) graphObject);
+			checkObject = this.getGraphController().getNetworkModel().getNetworkComponent((GraphEdge) graphObject);
 		} else {
 			checkObject = graphObject;
 		}

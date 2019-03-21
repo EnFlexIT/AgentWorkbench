@@ -140,7 +140,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		if (graphElements!=null) {
 			for (GraphElement node: graphElements) {
 				GraphNode node2SplitAt = (GraphNode) node;
-				boolean isDistributionGraphNode = sourceNetworkModel.isDistributionNode(node2SplitAt)!=null;
+				boolean isDistributionGraphNode = sourceNetworkModel.isDistributionNode(node2SplitAt);
 				if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
 					// --- Split the connection node --------------------------
 					GraphNodePairs couples = sourceNetworkModel.splitNetworkModelAtNode(node2SplitAt);

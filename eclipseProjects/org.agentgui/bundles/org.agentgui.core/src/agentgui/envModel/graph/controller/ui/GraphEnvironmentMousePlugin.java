@@ -57,7 +57,6 @@ import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -284,16 +283,16 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	protected void pickContainedVertices(VisualizationViewer<GraphNode, GraphEdge> vv, Point2D down,Point2D out, boolean clear) {
 		
 		super.pickContainedVertices(vv, down, out, clear);
-		NetworkModelAdapter netAdapter = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter();
+		NetworkModel networkModel = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel();
 		
 		// --- Get the selected nodes ----------------
 		Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
 		// --- Get the related NetworkComponent's ---- 
-		HashSet<NetworkComponent> components = netAdapter.getNetworkComponentsFullySelected(nodesSelected);
+		HashSet<NetworkComponent> components = networkModel.getNetworkComponentsFullySelected(nodesSelected);
 		if (components!=null) {
 			// --- Run through NetworkComponents -----  
 			for (NetworkComponent networkComponent : components) {
-				Vector<GraphElement> elements = netAdapter.getGraphElementsFromNetworkComponent(networkComponent);
+				Vector<GraphElement> elements = networkModel.getGraphElementsFromNetworkComponent(networkComponent);
 				for (GraphElement graphElement : elements) {
 					if (graphElement instanceof GraphEdge) {
 						this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
@@ -420,7 +419,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 				// --- Get the Graph, if not already there --------------------
 				if (graph==null) {
-					graph = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGraph();
+					graph = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getGraph();
 					this.nodesMoved.removeAllElements();
 					this.removeAllTemporaryNodes(graph);
 				}

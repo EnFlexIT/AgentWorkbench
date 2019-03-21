@@ -1048,8 +1048,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    
 		} else if (this.localGraphElementPrototype instanceof DistributionNode) {
 			// --- If the current selection of the main graph is also a DistributionNode => disallow ---
-			List<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(graphNodeSelectedInMainGraph);
-			NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
+			List<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(graphNodeSelectedInMainGraph);
+			NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().getDistributionNode(components);
 			if (containsDistributionNode!=null) {
 				String newLine = Application.getGlobalInfo().getNewLineSeparator();
 				msg  = "The selection in the main graph already contains a component of" + newLine;

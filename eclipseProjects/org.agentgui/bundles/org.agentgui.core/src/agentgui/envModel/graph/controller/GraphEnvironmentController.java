@@ -61,7 +61,7 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
+import agentgui.envModel.graph.networkModel.NetworkModelUndoManager;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import jade.core.Agent;
@@ -102,7 +102,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/** The network model currently loaded */
 	private NetworkModel networkModel;
-	private NetworkModelAdapter networkModelAdapter;
+	private NetworkModelUndoManager networkModelUndoManager;
 	
 	/** The controller for user messages */
 	private UIMessagingController uiMessagingController;
@@ -246,14 +246,14 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Returns the {@link NetworkModelAdapter} that enables to do or undo actions in the visualization.
-	 * @return the NetworkModelAdapter for the current controller
+	 * Returns the {@link NetworkModelUndoManager} that enables to do or undo actions in the visualization.
+	 * @return the NetworkModelUndoManager for the current controller
 	 */
-	public NetworkModelAdapter getNetworkModelAdapter() {
-		if (networkModelAdapter == null) {
-			networkModelAdapter = new NetworkModelAdapter(this);
+	public NetworkModelUndoManager getNetworkModelAdapter() {
+		if (networkModelUndoManager == null) {
+			networkModelUndoManager = new NetworkModelUndoManager(this);
 		}
-		return networkModelAdapter;
+		return networkModelUndoManager;
 	}
 	
 	
