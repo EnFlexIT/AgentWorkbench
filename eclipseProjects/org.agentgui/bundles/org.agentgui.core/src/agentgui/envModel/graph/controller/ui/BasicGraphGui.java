@@ -52,6 +52,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -533,7 +534,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				@Override
 				public String transform(GraphNode node) {
 					
-					HashSet<NetworkComponent> netCompsAtNode = graphController.getNetworkModel().getNetworkComponents(node);
+					List<NetworkComponent> netCompsAtNode = graphController.getNetworkModel().getNetworkComponents(node);
 					NetworkComponent netCompDisNode =  graphController.getNetworkModel().getDistributionNode(netCompsAtNode);
 					
 					// --- Generally define the toolTip -----------------------
@@ -639,7 +640,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 									bufferedImage = convertToBufferedImage(imageIcon.getImage());
 								} else {
 									// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
-									bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_BASIC_COLOR, currentColor);
+									bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
 								}
 								
 								if (bufferedImage != null) {
@@ -1004,7 +1005,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
 			// --- Is that node a distribution node? ----------------
-			HashSet<NetworkComponent> netComps = graphController.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
+			List<NetworkComponent> netComps = graphController.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
 			NetworkComponent disNode = graphController.getNetworkModelAdapter().containsDistributionNode(netComps);
 			if (disNode != null) {
 				this.graphController.getNetworkModelAdapter().selectNetworkComponent(disNode);

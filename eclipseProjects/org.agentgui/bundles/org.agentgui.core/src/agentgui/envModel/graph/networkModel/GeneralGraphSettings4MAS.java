@@ -49,6 +49,7 @@ import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentDescription;
+import agentgui.envModel.graph.networkModel.LayoutSettings.EdgeShape;
 import jade.util.leap.Serializable;
 
 /**
@@ -68,6 +69,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	/** Default name for the first DomainSettings. */
 	public static final String DEFAULT_DOMAIN_SETTINGS_NAME = "Default Domain";
+	/** Default name for the first LayoutSettings. */
+	public static final String DEFAULT_LAYOUT_SETTINGS_NAME = "Default Layout";
+	
 	/** Default width for edges. */
 	public static final float DEFAULT_EDGE_WIDTH = 2;
 	/** Default color to be used for edges in the graph */
@@ -86,7 +90,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public static final String NETWORK_COMPONENT_TYPE_4_CLUSTER = "C L U S T E R !";
 	
 	/** Basic color for image icons. If using dynamic colorization, this color will be replaced */
-	public static final Color IMAGE_ICON_BASIC_COLOR = new Color(179, 179, 179);
+	public static final Color IMAGE_ICON_COLORIZE_BASE_COLOR = new Color(179, 179, 179);
 	
 	/** Default shapes for nodes */
 	public static final String SHAPE_ELLIPSE = "Ellipse";
@@ -99,19 +103,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/** Default shapes for a central cluster node */
 	public static final String SHAPE_DEFAULT_4_CLUSTER = SHAPE_RECTANGLE;
 	
-	/** The list of possible edge shapes */
-	public static enum EdgeShape {
-		BentLine,
-		Box,
-		CubicCurve,
-		Line,
-		Polyline,
-		Loop,
-		Orthogonal,
-		QuadCurve,
-		SimpleLoop,
-		Wedge
-	}
 	
 	/** The enumeration for component sorting options */
 	public enum ComponentSorting {
@@ -130,6 +121,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 			return Language.translate(displayText, Language.EN);
 		}
 	}
+	
 	
 	/** The prefix name for the NetworkComponentAdapter of a GraphNode */
 	public static final String GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX = "GraphNodeAdapter_";
@@ -478,11 +470,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		if (currentDomainSettings==null) {
 			currentDomainSettings = new TreeMap<String, DomainSettings>();
 		}
-		if (this.currentDomainSettings.size()==0) {
-			DomainSettings ds = new DomainSettings();
-			currentDomainSettings.put(DEFAULT_DOMAIN_SETTINGS_NAME, ds);
-		}
-		if (this.currentDomainSettings.containsKey(DEFAULT_DOMAIN_SETTINGS_NAME)==false) {
+		if (this.currentDomainSettings.size()==0 || this.currentDomainSettings.containsKey(DEFAULT_DOMAIN_SETTINGS_NAME)==false) {
 			DomainSettings ds = new DomainSettings();
 			currentDomainSettings.put(DEFAULT_DOMAIN_SETTINGS_NAME, ds);
 		}
@@ -503,6 +491,10 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public TreeMap<String, LayoutSettings> getLayoutSettings() {
 		if (currentLayoutSettings==null) {
 			currentLayoutSettings = new TreeMap<>();
+		}
+		if (this.currentLayoutSettings.size()==0 || this.currentLayoutSettings.containsKey(DEFAULT_LAYOUT_SETTINGS_NAME)==false) {
+			LayoutSettings ds = new LayoutSettings();
+			currentLayoutSettings.put(DEFAULT_LAYOUT_SETTINGS_NAME, ds);
 		}
 		return currentLayoutSettings;
 	}

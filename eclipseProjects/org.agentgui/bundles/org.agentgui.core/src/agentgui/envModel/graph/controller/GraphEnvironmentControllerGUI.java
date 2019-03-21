@@ -35,6 +35,7 @@ import java.beans.PropertyVetoException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -393,7 +394,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     	ClusterNetworkComponent cnc = null;
     	Object checkObject = null;
 		if (graphObject instanceof GraphNode) {
-			HashSet<NetworkComponent> netComps = this.getGraphController().getNetworkModelAdapter().getNetworkComponents((GraphNode) graphObject);
+			List<NetworkComponent> netComps = this.getGraphController().getNetworkModelAdapter().getNetworkComponents((GraphNode) graphObject);
 			if (netComps.size()==1) {
 				checkObject = netComps.iterator().next();
 			}

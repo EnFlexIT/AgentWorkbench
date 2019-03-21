@@ -1282,7 +1282,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			GraphNode pickedNode = basicGraphGui.getPickedSingleNode();
 			if(pickedNode!=null){
 				// --- One vertex is picked -----
-				HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(pickedNode);
+				List<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(pickedNode);
 				NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
 				if (containsDistributionNode!=null) {
 					if(components.size()>=2){

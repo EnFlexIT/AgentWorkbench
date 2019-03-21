@@ -34,7 +34,8 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -677,7 +678,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private void sendChangesToAgent() {
 		
 		DataModelNotification dmNote = null;
-		HashSet<NetworkComponent> comps = new HashSet<NetworkComponent>();
+		List<NetworkComponent> comps = new ArrayList<>();
 		if (this.graphNode!=null) {
 			dmNote = new DataModelNotification(this.graphNode, this.graphController.getNetworkModel());
 			// --- Get the NetworkComponent's connected to this GraphNode -----

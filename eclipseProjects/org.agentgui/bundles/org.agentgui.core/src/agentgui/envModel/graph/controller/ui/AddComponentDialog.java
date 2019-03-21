@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -1047,7 +1048,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    
 		} else if (this.localGraphElementPrototype instanceof DistributionNode) {
 			// --- If the current selection of the main graph is also a DistributionNode => disallow ---
-			HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(graphNodeSelectedInMainGraph);
+			List<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(graphNodeSelectedInMainGraph);
 			NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
 			if (containsDistributionNode!=null) {
 				String newLine = Application.getGlobalInfo().getNewLineSeparator();

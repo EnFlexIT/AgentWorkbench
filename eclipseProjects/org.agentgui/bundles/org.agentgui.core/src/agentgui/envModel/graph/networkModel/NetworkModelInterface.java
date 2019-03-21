@@ -238,12 +238,12 @@ public interface NetworkModelInterface {
 	public abstract HashSet<GraphElement> getGraphElementsOfNetworkComponent(NetworkComponent networkComponent, GraphElement searchForInstance);
 	
 	/**
-	 * Gives the set of network components containing the given node.
-	 * 
-	 * @param graphNode - A GraphNode
-	 * @return HashSet<NetworkComponent> - The set of components which contain the node
+	 * Return the list of {@link NetworkComponent}s that contain the given node.
+	 *
+	 * @param graphNode the GraphNode to check
+	 * @return the network components
 	 */
-	public abstract HashSet<NetworkComponent> getNetworkComponents(GraphNode graphNode);
+	public abstract List<NetworkComponent> getNetworkComponents(GraphNode graphNode);
 
 	/**
 	 * Gets the network components.
@@ -318,10 +318,10 @@ public interface NetworkModelInterface {
 	/**
 	 * Returns the network component vector with the DistributionNode as last.
 	 * 
-	 * @param componentHashSet the component hash set
+	 * @param netCompList a list of {@link NetworkComponent}s
 	 * @return the network component vector with distribution node as last
 	 */
-	public abstract Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentHashSet);
+	public abstract Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(List<NetworkComponent> netCompList);
 
 	/**
 	 * Returns the first {@link DistributionNode} NetworkComponent, if available.
@@ -337,7 +337,7 @@ public interface NetworkModelInterface {
 	 * @param components the components as HashSet<NetworkComponent>
 	 * @return the network component, which is the DistributionNode or null
 	 */
-	public abstract NetworkComponent containsDistributionNode(HashSet<NetworkComponent> components);
+	public abstract NetworkComponent containsDistributionNode(List<NetworkComponent> components);
 
 	/**
 	 * Returns the cluster components of the NetworkModel.

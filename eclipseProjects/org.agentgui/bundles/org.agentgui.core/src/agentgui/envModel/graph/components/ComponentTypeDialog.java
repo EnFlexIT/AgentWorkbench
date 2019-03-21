@@ -77,7 +77,7 @@ import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.ComponentSorting;
-import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.EdgeShape;
+import agentgui.envModel.graph.networkModel.LayoutSettings.EdgeShape;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;

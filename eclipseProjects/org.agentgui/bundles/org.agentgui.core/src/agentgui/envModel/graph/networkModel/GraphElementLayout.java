@@ -30,7 +30,6 @@ package agentgui.envModel.graph.networkModel;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -134,7 +133,7 @@ public class GraphElementLayout {
 		
 		// --- Evaluate the GraphNode ------------------------------------
 		GraphNode graphNode = (GraphNode) this.myGraphElement;
-		HashSet<NetworkComponent> componentHashSet = this.networkModel.getNetworkComponents(graphNode);
+		List<NetworkComponent> componentHashSet = this.networkModel.getNetworkComponents(graphNode);
 		NetworkComponent distributionNode = networkModel.containsDistributionNode(componentHashSet);
 		if (distributionNode!=null) {
 			// -----------------------------------------------------------

@@ -28,7 +28,7 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import java.util.HashSet;
+import java.util.List;
 
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
@@ -77,7 +77,7 @@ public class GraphEdgeConnection {
 			this.graphNode2 = nodePair.getSecond();
 		}
 		
-		HashSet<NetworkComponent> netComps = null; 
+		List<NetworkComponent> netComps = null; 
 		
 		netComps = networkModel.getNetworkComponents(this.graphNode1);
 		netComps.remove(networkComponent);

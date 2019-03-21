@@ -537,7 +537,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponents(agentgui.envModel.graph.networkModel.GraphNode)
 	 */
 	@Override
-	public HashSet<NetworkComponent> getNetworkComponents(GraphNode graphNode) {
+	public List<NetworkComponent> getNetworkComponents(GraphNode graphNode) {
 		return this.graphController.getNetworkModel().getNetworkComponents(graphNode);
 	}
 
@@ -582,10 +582,10 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponentVectorWithDistributionNodeAsLast(java.util.HashSet)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponentVectorWithDistributionNodeAsLast(java.util.List)
 	 */
 	@Override
-	public Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentHashSet) {
+	public Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(List<NetworkComponent> componentHashSet) {
 		return this.graphController.getNetworkModel().getNetworkComponentVectorWithDistributionNodeAsLast(componentHashSet);
 	}
 
@@ -598,10 +598,10 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#containsDistributionNode(java.util.HashSet)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#containsDistributionNode(java.util.List)
 	 */
 	@Override
-	public NetworkComponent containsDistributionNode(HashSet<NetworkComponent> components) {
+	public NetworkComponent containsDistributionNode(List<NetworkComponent> components) {
 		return this.graphController.getNetworkModel().containsDistributionNode(components);
 	}
 
