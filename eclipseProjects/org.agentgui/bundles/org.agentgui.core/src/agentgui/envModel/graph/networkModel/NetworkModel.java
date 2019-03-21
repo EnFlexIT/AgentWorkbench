@@ -2412,8 +2412,21 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public boolean loadComponentsFile(File componentsXmlFile) {
 		
 		boolean success = false;
-		if (componentsXmlFile.exists()) {
-		
+		if (componentsXmlFile.exists()==true) {
+			
+			// ------------------------------------------------------
+			// --- Try to load the newer file format ----------------
+			// ------------------------------------------------------
+			NetworkModelFileContent fileContent = NetworkModelFileContent.load(componentsXmlFile);
+			if (fileContent!=null) {
+				fileContent.getLayoutUsed(); // TODO 
+				this.setNetworkComponents(fileContent.getNetworkComponentList());
+				return true;
+			}
+
+			// ------------------------------------------------------
+			// --- Not successful loaded yet, try old version -------
+			// ------------------------------------------------------
 			FileReader componentReader = null;
 			try {
 				componentReader = new FileReader(componentsXmlFile);
@@ -2445,25 +2458,39 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public boolean saveComponentsFile(File componentsXmlFile) {
 		
 		boolean success = false;
-		FileWriter componentFileWriter = null;
-		try {
-			componentFileWriter = new FileWriter(componentsXmlFile);
-			JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-			Marshaller marsh = context.createMarshaller();
-			marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-			marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marsh.marshal(new NetworkComponentList(this.getNetworkComponents()), componentFileWriter);
-			success = true;
-			
-		} catch (IOException | JAXBException e) {
-			System.err.println("Error saving network components!");
-			e.printStackTrace();
-		} finally {
-			if (componentFileWriter!=null) {
-				try {
-					componentFileWriter.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+		
+		// ----------------------------------------------------------
+		// --- Try to save the newer file format --------------------
+		// ----------------------------------------------------------
+		NetworkModelFileContent fileContent = new NetworkModelFileContent();
+		//fileContent.setLayoutUsed(layoutUsed); TODO
+		fileContent.setNetworkComponentList(this.getNetworkComponents());
+		success = fileContent.save(componentsXmlFile);
+		
+		if (success==false) {
+			// ------------------------------------------------------
+			// --- Not successful saved yet, try old version --------
+			// ------------------------------------------------------
+			FileWriter componentFileWriter = null;
+			try {
+				componentFileWriter = new FileWriter(componentsXmlFile);
+				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+				Marshaller marsh = context.createMarshaller();
+				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				marsh.marshal(new NetworkComponentList(this.getNetworkComponents()), componentFileWriter);
+				success = true;
+				
+			} catch (IOException | JAXBException e) {
+				System.err.println("Error saving network components!");
+				e.printStackTrace();
+			} finally {
+				if (componentFileWriter!=null) {
+					try {
+						componentFileWriter.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
