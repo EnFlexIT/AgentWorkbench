@@ -21,29 +21,29 @@
     </display>  
   </class>  
   <association id="3">    
-    <bendpoint x="402" y="113"/>    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="4" name="myEnvironmentPanel">        
-        <position height="14" width="103" x="353" y="115"/>      
+    <bendpoint x="401" y="68"/>    
+    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
+      <attribute id="4" name="environmentController">        
+        <position height="14" width="111" x="349" y="51"/>      
       </attribute>      
       <multiplicity id="5" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="6">    
-    <bendpoint x="401" y="68"/>    
-    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="7" name="environmentController">        
-        <position height="14" width="111" x="349" y="51"/>      
+    <bendpoint x="402" y="113"/>    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="7" name="myEnvironmentPanel">        
+        <position height="14" width="103" x="353" y="115"/>      
       </attribute>      
       <multiplicity id="8" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" 

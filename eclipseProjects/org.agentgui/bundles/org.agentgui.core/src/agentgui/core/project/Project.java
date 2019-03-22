@@ -75,6 +75,7 @@ import agentgui.core.common.AbstractUserObject;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.components.JPanel4Visualization;
@@ -584,7 +585,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			Marshaller pm = pc.createMarshaller();
 			pm.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			pm.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			// pm.marshal( this, System.out );
+			
 			// --- Write values to xml-File ---------------
 			Writer pw = new FileWriter(projectPath + File.separator + Application.getGlobalInfo().getFileNameProject());
 			pm.marshal(this, pw);
@@ -607,6 +608,13 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				this.getSimulationSetups().setupSave();
 			}
 
+			// --------------------------------------------
+			// --- Save the environment -------------------
+			EnvironmentController envController = this.getEnvironmentController();
+			if (envController!=null) {
+				envController.callSaveEnvironment(PersistenceStrategy.HandleWithProjectOpenOrSave);
+			}
+			
 			this.setUnsaved(false);
 			successful = true;
 			
@@ -782,7 +790,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			}
 		}
 		Application.setStatusBarMessage("");
-		System.gc();
+		Application.startGarbageCollection();
 		return true;
 	}
 

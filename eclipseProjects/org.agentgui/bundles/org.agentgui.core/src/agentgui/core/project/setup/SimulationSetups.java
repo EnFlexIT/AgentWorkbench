@@ -39,6 +39,8 @@ import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.transfer.FileCopier;
@@ -273,6 +275,11 @@ public class SimulationSetups extends TreeMap<String, String> {
 			if (this.currSimSetup!=null) {
 				this.currSimSetup.setProject(this.currProject);
 			}
+			// --- Load the environment?! -----------
+			EnvironmentController envCont = this.currProject.getEnvironmentController();
+			if (envCont!=null) {
+				envCont.callLoadEnvironment(PersistenceStrategy.HandleWithSetupOpenOrSave);
+			}
 			
 		} else {
 			String head = Language.translate("Setup-Datei nicht gefunden!");
@@ -368,8 +375,15 @@ public class SimulationSetups extends TreeMap<String, String> {
 	 */
 	public void setupSave() {
 		if (this.currSimSetup!=null) {
+			// --- Notify about the planned saving action -----------
 			this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_PREPARE_SAVING));
-			this.currSimSetup.save();
+			// --- Save the setup files -----------------------------
+			this.currSimSetup.saveSetupFiles();
+			// --- Save the environment model? ----------------------
+			EnvironmentController envCont = this.currProject.getEnvironmentController();
+			if (envCont!=null) {
+				envCont.callSaveEnvironment(PersistenceStrategy.HandleWithSetupOpenOrSave);
+			}
 			this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
 		}
 		this.setupCleanUpSubFolder();

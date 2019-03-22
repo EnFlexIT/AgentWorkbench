@@ -134,7 +134,7 @@ public class NetworkModelFileContent {
 			success = true;
 			
 		} catch (IOException | JAXBException e) {
-			System.err.println("Error saving NetworkModel file!");
+			System.err.println("[" +  NetworkModelFileContent.class.getSimpleName() + "] Error while saving NetworkModel file!");
 			e.printStackTrace();
 		} finally {
 			if (componentFileWriter!=null) {
@@ -150,10 +150,22 @@ public class NetworkModelFileContent {
 
 	/**
 	 * Load the NetworkModelFileContent from a XML file.
+	 *
 	 * @param xmlFile the components file
+	 * @param isPrintException set true if you want to print exceptions
 	 * @return true, if successful
 	 */
 	public static NetworkModelFileContent load(File xmlFile) {
+		return load(xmlFile, true);
+	}
+	/**
+	 * Load the NetworkModelFileContent from a XML file.
+	 *
+	 * @param xmlFile the components file
+	 * @param isPrintException set true if you want to print exceptions
+	 * @return true, if successful
+	 */
+	public static NetworkModelFileContent load(File xmlFile, boolean isPrintException) {
 		
 		NetworkModelFileContent fileContent = null;
 		if (xmlFile.exists()) {
@@ -166,8 +178,8 @@ public class NetworkModelFileContent {
 				Unmarshaller unmarsh = context.createUnmarshaller();
 				fileContent = (NetworkModelFileContent) unmarsh.unmarshal(componentReader);
 				
-			} catch (JAXBException | IOException e) {
-				e.printStackTrace();
+			} catch (JAXBException | IOException ex) {
+				if (isPrintException) ex.printStackTrace();
 			} finally {
 				try {
 					componentReader.close();

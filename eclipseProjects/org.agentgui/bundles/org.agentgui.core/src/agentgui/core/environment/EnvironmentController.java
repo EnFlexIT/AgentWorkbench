@@ -57,6 +57,17 @@ import jade.lang.acl.ACLMessage;
  */
 public abstract class EnvironmentController extends Observable implements Observer {
 
+	/**
+	 * The enumeration PersistenceStrategy helps to differentiate when an 
+	 * environment model should be opened or saved.<br>
+	 * a: if a project is opened or saved OR<br>
+	 * b. if a setup is opened or saved<br>
+	 */
+	public enum PersistenceStrategy {
+		HandleWithProjectOpenOrSave,
+		HandleWithSetupOpenOrSave
+	}
+	
 	private Project currProject;
 
 	/** The {@link AbstractDisplayAgent} that is currently using this EnvironmentController. */
@@ -78,12 +89,10 @@ public abstract class EnvironmentController extends Observable implements Observ
 	
 	
 	/**
-	 * Constructor for a new environment controller
-	 * for displaying the current environment model
-	 * during a running simulation.
+	 * Constructor for a new environment controller for handling 
+	 * and displaying the current environment model during a running simulation.
 	 */
-	public EnvironmentController() {
-	}
+	public EnvironmentController() { }
 	/**
 	 * Constructor for a controller within the Agent.GUI application.
 	 * @param project the current project
@@ -168,6 +177,46 @@ public abstract class EnvironmentController extends Observable implements Observ
 		return envFolderPath;
 	}
 
+	/**
+	 * Has to return which strategy is to be used to load or save an {@link EnvironmentModel}. Hereby, it can be adjusted
+	 * when the methods {@link #loadEnvironment()} and {@link #saveEnvironment()} will be called from Agent.Workbench.
+	 *
+	 * @return the persistence strategy
+	 * @see PersistenceStrategy
+	 */
+	protected abstract PersistenceStrategy getPersistenceStrategy();
+	/** 
+	 * Has to load the environment model (e.g. from file).<br>
+	 * Will explicitly be invoked if a project will be opened. 
+	 */
+	public abstract void loadEnvironment();
+	/** 
+	 * Has to save the environment model (e.g. to to file).<br>
+	 * Will explicitly be invoked if a project will be saved. 
+	 */
+	public abstract void saveEnvironment();
+	
+	
+	/**
+	 * Call to load the environment model.
+	 * @param invokedFrom indicates if the method was called during open a project or a setup 
+	 */
+	public final void callLoadEnvironment(PersistenceStrategy invokedFrom) {
+		if (invokedFrom!=null && invokedFrom==this.getPersistenceStrategy()) {
+			this.loadEnvironment();
+		}
+	}
+	/**
+	 * Call to save the environment model.
+	 * @param invokedFrom indicates if the method was called during open a project or a setup 
+	 */
+	public final void callSaveEnvironment(PersistenceStrategy invokedFrom) {
+		if (invokedFrom!=null && invokedFrom==this.getPersistenceStrategy()) {
+			this.saveEnvironment();
+		}
+	}
+	
+	
 	/**
 	 * Gets the list of agents to start.
 	 * @return the agents2 start
@@ -265,24 +314,30 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
-	public void update(Observable observable, Object updateObject) {
-		if (this.currProject!=null && observable==this.currProject && updateObject==Project.SAVED) {
-			this.saveEnvironment();
-		} else if (observable.equals(this.currProject) && updateObject instanceof SimulationSetupNotification) {
-			this.handleSimSetupChange((SimulationSetupNotification) updateObject);
+	public final void update(Observable observable, Object updateObject) {
+		if (observable!=null && observable==this.currProject) {
+			if (updateObject instanceof SimulationSetupNotification) {
+				this.handleSimulationSetupNotification((SimulationSetupNotification) updateObject);
+			} else {
+				this.handleProjectNotification(updateObject);
+			}
 		}
 	}
+	
 	/**
-	 * Invoked by the project when the simulation setup change event occurs.
+	 * Invoked by the observer for the current {@link Project} you can react on changes within the Project.
+	 * Normally, the provided updateObject will be one of the constants specified in the class {@link Project}.
+	 * For example the 'SAVED' constant of that class.
+	 * 
+	 * @param updateObject the update object that informs about the type of change within the current project
+	 */
+	protected abstract void handleProjectNotification(Object updateObject);
+	
+	/**
+	 * Invoked by the projects observer if the simulation setup change event occurs.
 	 * @param sscn the SimulationSetupsChangeNotification that can be differentiated by its globals
 	 */
-	protected abstract void handleSimSetupChange(SimulationSetupNotification sscn);
-	
-	
-	/** Load environment model from files */
-	protected abstract void loadEnvironment();
-	/** Save environment model to files */
-	protected abstract void saveEnvironment();
+	protected abstract void handleSimulationSetupNotification(SimulationSetupNotification sscn);
 	
 	
 	/**

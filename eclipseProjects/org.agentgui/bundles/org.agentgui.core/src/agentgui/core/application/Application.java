@@ -1296,5 +1296,22 @@ public class Application {
 	}
 
 	
+	/**
+	 * Starts the java systems garbage collection in an individual Thread.
+	 * @see System#gc()
+	 */
+	public static void startGarbageCollection() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					System.gc();
+				} catch (Exception ex) {
+					// Hide exception
+				}
+			}
+		}, "GarbageCollectorThread").start();
+	}
+	
 } 
 

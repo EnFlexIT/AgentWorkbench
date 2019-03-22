@@ -771,7 +771,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 				this.agentSelectedLast.setStartArguments(currOntoInstViewer.getConfigurationXML());	
 			}
 		}
-		this.currSimSetup.save();
+		this.currSimSetup.saveSetupFiles();
 		
 	}
 	

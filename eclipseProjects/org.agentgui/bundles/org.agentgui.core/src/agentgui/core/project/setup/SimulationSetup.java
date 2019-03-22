@@ -59,7 +59,6 @@ import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 
 /**
@@ -161,20 +160,24 @@ public class SimulationSetup {
 	}
 	
 	/**
-	 * This method saves the current Simulation-Setup to the default location.
+	 * This method saves the current {@link SimulationSetup} and it files to the default location for setups.<br>
+	 * <b>Note: </b> this methods only saves the files without further notification to the setups observer.
 	 * @return true, if saving was successful
 	 */
-	public boolean save() {
+	public boolean saveSetupFiles() {
 		File setupXmlFile = new File(this.currProject.getSimulationSetups().getCurrSimXMLFile());
-		return this.save(setupXmlFile, true);
+		return this.saveSetupFiles(setupXmlFile, true);
 	}
-
 	/**
-	 * This method saves the current Simulation-Setup to the specified location.
+	 * This method saves the current {@link SimulationSetup} to the specified location. 
+	 * If the user runtime object should not be saved, set the according parameter.<br>
+	 * <b>Note: </b> this methods only saves the files without further notification to the setups observer.
+	 *
 	 * @param setupXmlFile The setup xml file (other file paths are derived)
+	 * @param saveUserRuntimeObject set true, if user runtime object should be saved in its separate file
 	 * @return true, if saving was successful
 	 */
-	public boolean save(File setupXmlFile, boolean saveUserRuntimeObject) {
+	public boolean saveSetupFiles(File setupXmlFile, boolean saveUserRuntimeObject) {
 		
 		boolean saved = true;
 		this.mergeAgentListModels();
@@ -201,10 +204,6 @@ public class SimulationSetup {
 					this.saveUserObjectAsBinFile(setupXmlFile);
 				}
 			}
-			
-			// --------------------------------------------
-			// --- Notify about save action is done -------
-			this.currProject.setNotChangedButNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
 		
 		} catch (Exception ex) {
 			System.out.println("[" + this.getClass().getSimpleName() + "] XML-Error while saving setup file!");

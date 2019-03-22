@@ -53,6 +53,8 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.BundleProperties;
+import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
@@ -217,7 +219,10 @@ public class ProjectsLoaded {
 		newProject.getTimeModelController();
 
 		// --- Load the environment controller --------------------------------
-		newProject.getEnvironmentController();
+		EnvironmentController envController = newProject.getEnvironmentController();
+		if (envController!=null) {
+			envController.callLoadEnvironment(PersistenceStrategy.HandleWithProjectOpenOrSave);
+		}
 		
 		// --- Add project to the project-listing -----------------------------
 		this.getProjectsOpen().add(newProject);

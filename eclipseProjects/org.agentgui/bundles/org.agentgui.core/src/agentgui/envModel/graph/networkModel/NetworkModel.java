@@ -2406,18 +2406,18 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	
 	/**
 	 * Load the network component definitions from an XML file.
-	 * @param componentsXmlFile the components file
+	 * @param xmlFile the components file
 	 * @return true, if successful
 	 */
-	public boolean loadComponentsFile(File componentsXmlFile) {
+	public boolean loadComponentsFile(File xmlFile) {
 		
 		boolean success = false;
-		if (componentsXmlFile.exists()==true) {
+		if (xmlFile.exists()==true) {
 			
 			// ------------------------------------------------------
 			// --- Try to load the newer file format ----------------
 			// ------------------------------------------------------
-			NetworkModelFileContent fileContent = NetworkModelFileContent.load(componentsXmlFile);
+			NetworkModelFileContent fileContent = NetworkModelFileContent.load(xmlFile, false);
 			if (fileContent!=null) {
 				fileContent.getLayoutUsed(); // TODO 
 				this.setNetworkComponents(fileContent.getNetworkComponentList());
@@ -2429,7 +2429,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			// ------------------------------------------------------
 			FileReader componentReader = null;
 			try {
-				componentReader = new FileReader(componentsXmlFile);
+				componentReader = new FileReader(xmlFile);
 
 				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 				Unmarshaller unmarsh = context.createUnmarshaller();
@@ -2452,10 +2452,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 	/**
 	 * Save the network component definitions to an XML file.
-	 * @param componentsXmlFile the component file
+	 * @param xmlFile the component file
 	 * @return true, if successful
 	 */
-	public boolean saveComponentsFile(File componentsXmlFile) {
+	public boolean saveComponentsFile(File xmlFile) {
 		
 		boolean success = false;
 		
@@ -2465,7 +2465,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		NetworkModelFileContent fileContent = new NetworkModelFileContent();
 		//fileContent.setLayoutUsed(layoutUsed); TODO
 		fileContent.setNetworkComponentList(this.getNetworkComponents());
-		success = fileContent.save(componentsXmlFile);
+		success = fileContent.save(xmlFile);
 		
 		if (success==false) {
 			// ------------------------------------------------------
@@ -2473,7 +2473,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			// ------------------------------------------------------
 			FileWriter componentFileWriter = null;
 			try {
-				componentFileWriter = new FileWriter(componentsXmlFile);
+				componentFileWriter = new FileWriter(xmlFile);
 				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 				Marshaller marsh = context.createMarshaller();
 				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");

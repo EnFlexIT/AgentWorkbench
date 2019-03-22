@@ -85,16 +85,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 	private static final String GeneralGraphSettings4MASFile = "~GeneralGraphSettings~";
 
 	
-	/**
-	 * The Enumeration with possible ControllerAction.
-	 */
-	private enum ControllerAction {
-		Initializing
-	}
-	/** The current controller action. */
-	private ControllerAction currControllerAction;
-	
-	
 	/** The base file name used for saving the graph and the components (without suffix) */
 	private String baseFileName;
 	/** Known adapter for the import of network models */
@@ -131,12 +121,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	public GraphEnvironmentController(Project project) {
 		super(project);
-		if (this.getProject()!=null) {
-			this.currControllerAction=ControllerAction.Initializing;
-			this.updateGraphFileName();
-			this.currControllerAction=null;;
-			this.loadEnvironment();
-		}
 	}
 
 	/*
@@ -294,24 +278,21 @@ public class GraphEnvironmentController extends EnvironmentController {
 		return clipboardNetworkModel;
 	}
 
-	/**
-	 * This method handles the SimulationSetupChangeNotifications sent from the project
-	 * 
-	 * @param sscn The SimulationSetupChangeNotifications to handle
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#handleProjectNotification(java.lang.Object)
 	 */
 	@Override
-	protected void handleSimSetupChange(SimulationSetupNotification sscn) {
+	protected void handleProjectNotification(Object updateObject) {
+		// TODO Auto-generated method stub
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#handleSimulationSetupNotification(agentgui.core.sim.setup.SimulationSetupsChangeNotification)
+	 */
+	@Override
+	protected void handleSimulationSetupNotification(SimulationSetupNotification sscn) {
 
 		switch (sscn.getUpdateReason()) {
-		case SIMULATION_SETUP_LOAD:
-			this.updateGraphFileName();
-			this.loadEnvironment(); // Loads network model and notifies observers
-			break;
-
-		case SIMULATION_SETUP_SAVED:
-			this.saveEnvironment();
-			break;
-
 		case SIMULATION_SETUP_ADD_NEW:
 			this.updateGraphFileName();
 			this.setDisplayEnvironmentModel(null);
@@ -321,8 +302,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 			break;
 
 		case SIMULATION_SETUP_COPY:
-			this.updateGraphFileName();
-			this.saveEnvironment();
 			this.getProject().setUnsaved(true);
 			break;
 
@@ -335,7 +314,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 			if (componentFile.exists()) {
 				componentFile.delete();
 			}
-			this.updateGraphFileName();
 			break;
 
 		case SIMULATION_SETUP_RENAME:
@@ -351,6 +329,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 			break;
 
 		case SIMULATION_SETUP_PREPARE_SAVING:
+		case SIMULATION_SETUP_LOAD:
+		case SIMULATION_SETUP_SAVED:
 			// --- Nothing to do here ---------------------
 			break;
 		}
@@ -385,14 +365,19 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 * @see agentgui.core.environment.EnvironmentController#getPersistenceStrategy()
+	 */
+	@Override
+	protected PersistenceStrategy getPersistenceStrategy() {
+		return PersistenceStrategy.HandleWithSetupOpenOrSave;
+	}
+	/*
+	 * (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#loadEnvironment()
 	 */
 	@Override
-	protected void loadEnvironment() {
+	public void loadEnvironment() {
 
-		if (this.currControllerAction==ControllerAction.Initializing) return;
-		
 		final String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
 		if (fileName != null) {
 
@@ -414,6 +399,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 						GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
 						GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 
+						// --- Update path according to setup -------------------------------------
+						GraphEnvironmentController.this.updateGraphFileName();
+						
 						// --- Define the NetworkModel --------------------------------------------
 						NetworkModel netModel = new NetworkModel();
 
@@ -483,11 +471,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
 	 */
 	@Override
-	protected void saveEnvironment() {
+	public void saveEnvironment() {
 
 		// --- Check if saving is currently allowed ----------------- 
 		while (this.isTemporaryPreventSaving==true) {
@@ -504,6 +491,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.saveGeneralGraphSettings();
 		if (this.getNetworkModel()!=null && this.getNetworkModel().getGraph()!=null) {
 			
+			// --- Update path according to setup -------------------
+			this.updateGraphFileName();
+
 			File graphFile = this.getFileGraphML();
 			this.getNetworkModel().saveGraphFile(graphFile);
 			
@@ -515,7 +505,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
 	 */
 	@Override
@@ -530,20 +519,16 @@ public class GraphEnvironmentController extends EnvironmentController {
 			ex.printStackTrace();
 		}
 	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
 	 */
 	@Override
 	public DisplaytEnvironmentModel getDisplayEnvironmentModel() {
 		return this.getNetworkModel();
 	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
 	 */
 	@Override
@@ -553,27 +538,22 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(java.lang.Object)
 	 */
 	@Override
 	public void setAbstractEnvironmentModel(AbstractEnvironmentModel abstractEnvironmentModel) {
 		this.abstractEnvironmentModel = abstractEnvironmentModel;
 	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
 	 */
 	@Override
 	public AbstractEnvironmentModel getAbstractEnvironmentModel() {
 		return this.abstractEnvironmentModel;
 	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModelCopy()
 	 */
 	@Override

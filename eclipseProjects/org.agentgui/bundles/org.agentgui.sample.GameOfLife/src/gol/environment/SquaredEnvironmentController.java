@@ -70,10 +70,17 @@ public class SquaredEnvironmentController extends EnvironmentController {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#handleSimSetupChange(agentgui.core.sim.setup.SimulationSetupsChangeNotification)
+	 * @see agentgui.core.environment.EnvironmentController#handleProjectNotification(java.lang.Object)
 	 */
 	@Override
-	protected void handleSimSetupChange(SimulationSetupNotification sscn) {
+	protected void handleProjectNotification(Object updateObject) {
+		// --- Nothing to do here -----
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#handleSimulationSetupNotification(agentgui.core.sim.setup.SimulationSetupsChangeNotification)
+	 */
+	@Override
+	protected void handleSimulationSetupNotification(SimulationSetupNotification sscn) {
 
 		switch (sscn.getUpdateReason()) {
 		case SIMULATION_SETUP_LOAD:
@@ -137,11 +144,19 @@ public class SquaredEnvironmentController extends EnvironmentController {
 		return getEnvFolderPath() + myCurrentSimSetupName + ".xml";
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getPersistenceStrategy()
+	 */
+	@Override
+	protected PersistenceStrategy getPersistenceStrategy() {
+		return PersistenceStrategy.HandleWithSetupOpenOrSave;
+	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#loadEnvironment()
 	 */
 	@Override
-	protected void loadEnvironment() {
+	public void loadEnvironment() {
 		
 		// --- Load gol.environment model -----------
 		File componentFile = new File(this.getCurrentEnvironmentFileName());
@@ -171,7 +186,7 @@ public class SquaredEnvironmentController extends EnvironmentController {
 	 * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
 	 */
 	@Override
-	protected void saveEnvironment() {
+	public void saveEnvironment() {
 		
 		// --- update the internal gol.environment model ------
 		this.getSquaredEnvironmentGUI().saveCurrentEnvironmentModel();
