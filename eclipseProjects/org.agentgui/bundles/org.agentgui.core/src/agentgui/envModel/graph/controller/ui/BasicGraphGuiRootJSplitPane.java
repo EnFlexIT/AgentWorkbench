@@ -776,6 +776,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     		case NetworkModelNotification.NETWORK_MODEL_Reload:
     		case NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel:
     			this.reLoadNetworkComponents();
+    			this.applyTableSorter();
     			break;
 				
     		case NetworkModelNotification.NETWORK_MODEL_Component_Added:

@@ -46,10 +46,10 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -4772137855514690242L;
 
-	private GraphEnvironmentController graphController = null;
-	private GeneralGraphSettings4MAS newGeneralGraphSettings4MAS = null;
+	private GraphEnvironmentController graphController;
+	private GeneralGraphSettings4MAS newGeneralGraphSettings4MAS;
 	
-	private NetworkModel oldNetworkModel = null;
+	private NetworkModel oldNetworkModel;
 	
 	
 	/**
@@ -62,20 +62,8 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 		super();
 		this.graphController = graphController;
 		this.newGeneralGraphSettings4MAS = newGeneralGraphSettings4MAS;
-		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 		this.doEdit();
 	}
-	
-	/**
-	 * Do the wished edit.
-	 */
-	private void doEdit() {
-		this.graphController.getNetworkModel().setGeneralGraphSettings4MAS(this.newGeneralGraphSettings4MAS);
-		this.graphController.validateNetworkComponentAndAgents2Start();
-		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged));
-		this.graphController.setProjectUnsaved();
-	}
-	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#getPresentationName()
 	 */
@@ -84,6 +72,29 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 		return Language.translate("Komponenten-Definition bearbeiten");
 	}
 
+	
+	/**
+	 * Do the wished edit.
+	 */
+	private void doEdit() {
+		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
+		this.graphController.getNetworkModel().setGeneralGraphSettings4MAS(this.newGeneralGraphSettings4MAS);
+		this.graphController.validateNetworkComponentAndAgents2Start();
+		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged));
+		this.graphController.setProjectUnsaved();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.undo.AbstractUndoableEdit#undo()
+	 */
+	@Override
+	public void undo() throws CannotUndoException {
+		super.undo();
+		this.graphController.setDisplayEnvironmentModel(this.oldNetworkModel);
+		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged));
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#redo()
 	 */
@@ -92,15 +103,5 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 		super.redo();
 		this.doEdit();
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.undo.AbstractUndoableEdit#undo()
-	 */
-	@Override
-	public void undo() throws CannotUndoException {
-		super.undo();
-		this.graphController.setDisplayEnvironmentModel(oldNetworkModel.getCopy());
-	}
-	
 	
 }

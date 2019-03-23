@@ -377,95 +377,95 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	public void loadEnvironment() {
-
+		
+		// --- Check for a file name in the setup -------------------------------------------------
 		final String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
-		if (fileName != null) {
+		if (fileName==null) return;
 
-			this.isTemporaryPreventSaving = true;
-			
-			Thread envLoader = new Thread(new Runnable() {
-				@Override
-				public void run() {
+		// --- Set lock to prevent parallel saving actions ----------------------------------------
+		this.isTemporaryPreventSaving = true;
+		
+		// --- Define loader thread ---------------------------------------------------------------
+		Thread envLoader = new Thread(new Runnable() {
+			@Override
+			public void run() {
 
-					try {
+				try {
 
-						// --- Set application status text ----------------------------------------
-						if (Application.getMainWindow() != null) {
-							Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-							Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + fileName + " ...");
+					// --- Set application status text --------------------------------------------
+					if (Application.getMainWindow() != null) {
+						Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + fileName + " ...");
+						// --- Reset Undo-Manager -------------------------------------------------
+						GraphEnvironmentController.this.getNetworkModelAdapter().getUndoManager().discardAllEdits();
+					}
+
+					// --- Register agents that have to be started with the environment -----------
+					GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
+					GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+
+					// --- Update path according to setup -----------------------------------------
+					GraphEnvironmentController.this.updateGraphFileName();
+					
+					// --- Define the NetworkModel ------------------------------------------------
+					NetworkModel netModel = new NetworkModel();
+
+					// --- 1. Load the graph topology from the graph file -------------------------
+					netModel.loadGraphFile(new File(getEnvFolderPath() + fileName));
+					
+					// --- 2. Load the component definitions from the component file --------------
+					File componentsFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
+					netModel.loadComponentsFile(componentsFile);
+					
+					// --- 3. Load component type settings from file ------------------------------
+					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
+					// --- Remind the list of custom toolbar elements -----------------------------
+					if (GraphEnvironmentController.this.getNetworkModel() != null) {
+						GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
+						if (gg4mas!=null) {
+							ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
 						}
-	
-						// --- Register agents that have to be started with the environment -------
-						GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
-						GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-
-						// --- Update path according to setup -------------------------------------
-						GraphEnvironmentController.this.updateGraphFileName();
-						
-						// --- Define the NetworkModel --------------------------------------------
-						NetworkModel netModel = new NetworkModel();
-
-						// --- 1. Load the graph topology from the graph file ---------------------
-						netModel.loadGraphFile(new File(getEnvFolderPath() + fileName));
-						
-						// --- 2. Load the component definitions from the component file ----------
-						File componentsFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
-						netModel.loadComponentsFile(componentsFile);
-						
-						// --- 3. Load component type settings from file --------------------------
-						GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
-						// --- Remind the list of custom toolbar elements -------------------------
-						if (GraphEnvironmentController.this.getNetworkModel() != null) {
-							GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
-							if (gg4mas!=null) {
-								ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
-							}
+					}
+					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
+					
+					// --- Use case 'Application' -------------------------------------------------
+					if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+						// --- Wait for visualization component before assign network model ---
+						while (GraphEnvironmentController.this.getEnvironmentPanel()==null) {
+							Thread.sleep(50);
 						}
-						netModel.setGeneralGraphSettings4MAS(ggs4MAS);
-						
-						// --- Use case 'Application' ---------------------------------------------
-						if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
-							// --- Wait for visualization component before assign network model ---
-							while (GraphEnvironmentController.this.getEnvironmentPanel()==null) {
-								Thread.sleep(50);
-							}
-							BasicGraphGui basicGraphGui = GraphEnvironmentController.this.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
-							while (basicGraphGui.isCreatedVisualizationViewer()==false) {
-								Thread.sleep(50);
-							}	
-						}
-						
-						// --- Assign NetworkMoldel to visualization ------------------------------
-						final NetworkModel netModelAssigen = netModel;
-						SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								// --- Use the local method in order to inform the observer -------
-								GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelAssigen);
-								// --- Decode data models that are Base64 encoded in the moment ---
-								GraphEnvironmentController.this.setNetworkComponentDataModelBase64Decoded();
-							}
-						});
-						
-						
-					} catch (Exception ex) {
-						ex.printStackTrace();
-						
-					} finally {
-						GraphEnvironmentController.this.isTemporaryPreventSaving = false;
-						Application.setCursor(Cursor.getDefaultCursor());
-						Application.setStatusBarMessageReady();
+						BasicGraphGui basicGraphGui = GraphEnvironmentController.this.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
+						while (basicGraphGui.isCreatedVisualizationViewer()==false) {
+							Thread.sleep(50);
+						}	
 					}
 					
+					// --- Assign NetworkMoldel to visualization ----------------------------------
+					final NetworkModel netModelAssigen = netModel;
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							// --- Use the local method in order to inform the observer -----------
+							GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelAssigen);
+							// --- Decode data models that are Base64 encoded in the moment -------
+							GraphEnvironmentController.this.setNetworkComponentDataModelBase64Decoded();
+						}
+					});
+					
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					
+				} finally {
+					GraphEnvironmentController.this.isTemporaryPreventSaving = false;
+					Application.setCursor(Cursor.getDefaultCursor());
+					Application.setStatusBarMessageReady();
 				}
-			});
-			envLoader.setName("GraphEnvrionmentLoader");
-			envLoader.start();
-
-		}
-
-		// --- Reset Undo-Manager -----------------------------------------------------------------
-		GraphEnvironmentController.this.getNetworkModelAdapter().getUndoManager().discardAllEdits();
+				
+			}
+		});
+		envLoader.setName("GraphEnvrionmentLoader");
+		envLoader.start();
 
 	}
 

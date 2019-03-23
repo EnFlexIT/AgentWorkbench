@@ -297,8 +297,8 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 			
 			//Set up renderer and editor for show label
 			TableColumn showLabelClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_ShowLabel));
-			showLabelClassColumn.setCellEditor(new TableCellEditor4CheckBox(this.componentTypeDialog.getCheckBoxEdgeWidth()));
-			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
+			showLabelClassColumn.setCellEditor(new TableCellRenderEditor4CheckBox());
+			showLabelClassColumn.setCellRenderer(new TableCellRenderEditor4CheckBox());
 			showLabelClassColumn.setMinWidth(80);
 			showLabelClassColumn.setMaxWidth(80);
 
@@ -339,12 +339,15 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 				 */
 				public Class<?> getColumnClass(int columnIndex) {
-		            if(columnIndex==getColumnHeaderIndexComponents(COL_Image))
+		            if (columnIndex==getColumnHeaderIndexComponents(COL_Image)) {
 		            	return ImageIcon.class;
-		            else if(columnIndex==getColumnHeaderIndexComponents(COL_EdgeColor))
+		            } else if(columnIndex==getColumnHeaderIndexComponents(COL_EdgeColor)) {
 		            	return Color.class;
-		            else 
+		            } else if(columnIndex==getColumnHeaderIndexComponents(COL_ShowLabel)) {
+		            	return Boolean.class;
+		            } else {
 		            	return String.class;
+		            }
 		        }
 			};
 			// --- Fill the table model with data ---------

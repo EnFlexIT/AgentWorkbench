@@ -90,6 +90,8 @@ public class LayoutSettings implements Serializable, Cloneable {
 		SimpleLoop,
 		Wedge
 	}
+	/** Default raster size for guide grid. */
+	public static final double DEFAULT_RASTER_SIZE = 5.0; 
 	
 	
 	private CoordinateSystemXDirection coordinateSystemXDirection = CoordinateSystemXDirection.East;
@@ -97,7 +99,7 @@ public class LayoutSettings implements Serializable, Cloneable {
 	
 	private EdgeShape edgeShape = EdgeShape.Line;
 	private boolean snap2Grid = true;
-	private double snapRaster = GeneralGraphSettings4MAS.DEFAULT_RASTER_SIZE;
+	private double snapRaster = DEFAULT_RASTER_SIZE;
 
 	
 	/**

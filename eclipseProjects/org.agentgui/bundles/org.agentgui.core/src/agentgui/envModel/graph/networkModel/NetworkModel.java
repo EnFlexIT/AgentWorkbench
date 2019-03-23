@@ -81,6 +81,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/** This attribute stores layout settings like the DomainSettings and the ComponentTypeSettings. */
 	private GeneralGraphSettings4MAS generalGraphSettings4MAS;
 	
+	/** The layout (name) used for this NetworkModel. */
+	private String layoutName;
+	
+	
 	/** The original JUNG graph created or imported in the application. */
 	private Graph<GraphNode, GraphEdge> graph;
 	/** HashMap that provides faster access to the GraphElement's. */
@@ -130,6 +134,38 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return generalGraphSettings4MAS;
 	}
 
+	/**
+	 * Returns the layout (name) used by this NetworkModel.
+	 * @return the current layout name
+	 */
+	public String getLayoutName() {
+		if (layoutName==null) {
+			layoutName = GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME;
+		}
+		return layoutName;
+	}
+	/**
+	 * Sets the layout name to be used by this NetworkModel.
+	 * @param layoutName the new layout name
+	 */
+	public void setLayoutName(String layoutName) {
+		this.layoutName = layoutName;
+	}
+	/**
+	 * Returns the {@link LayoutSettings} that correspond to {@link #getLayoutName()}.
+	 * @return the layout settings
+	 */
+	public LayoutSettings getLayoutSettings() {
+		
+		LayoutSettings ls = this.getGeneralGraphSettings4MAS().getLayoutSettings().get(this.getLayoutName());
+		if (ls==null) {
+			// --- Get the default layout settings --------
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find LayoutSettings named '" + this.getLayoutName() + "' and setting and using defaults now.");
+			this.setLayoutName(GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME);
+		}
+		return ls;
+	}
+	
 	/**
 	 * Returns the JUNG graph.
 	 * @return the JUNG Graph
@@ -1535,7 +1571,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the shifted position
 	 */
 	public Point2D getShiftedPosition(GraphNode fixedNode, GraphNode shiftNode) {
-		double move = this.generalGraphSettings4MAS.getSnapRaster() * 2;
+		double move = this.getLayoutSettings().getSnapRaster() * 2;
 		return this.getShiftedPosition(fixedNode, shiftNode, move);
 	}
 	
@@ -2419,7 +2455,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			// ------------------------------------------------------
 			NetworkModelFileContent fileContent = NetworkModelFileContent.load(xmlFile, false);
 			if (fileContent!=null) {
-				fileContent.getLayoutUsed(); // TODO 
+				this.setLayoutName(fileContent.getLayoutName());
 				this.setNetworkComponents(fileContent.getNetworkComponentList());
 				return true;
 			}
@@ -2463,8 +2499,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		// --- Try to save the newer file format --------------------
 		// ----------------------------------------------------------
 		NetworkModelFileContent fileContent = new NetworkModelFileContent();
-		//fileContent.setLayoutUsed(layoutUsed); TODO
+		fileContent.setLayoutName(this.getLayoutName());
 		fileContent.setNetworkComponentList(this.getNetworkComponents());
+		// --- Do save -----------
 		success = fileContent.save(xmlFile);
 		
 		if (success==false) {

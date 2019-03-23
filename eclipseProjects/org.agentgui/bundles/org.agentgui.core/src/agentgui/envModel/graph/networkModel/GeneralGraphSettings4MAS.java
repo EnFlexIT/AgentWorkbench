@@ -49,7 +49,6 @@ import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.controller.ui.toolbar.CustomToolbarComponentDescription;
-import agentgui.envModel.graph.networkModel.LayoutSettings.EdgeShape;
 import jade.util.leap.Serializable;
 
 /**
@@ -66,11 +65,17 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	/** The Constant PREFIX_NETWORK_COMPONENT. */
 	public final static String PREFIX_NETWORK_COMPONENT = "n"; 
+	/** The prefix name for the NetworkComponentAdapter of a GraphNode */
+	public static final String GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX = "GraphNodeAdapter_";
+	/** The NetworkComponent type name for a cluster component representation */
+	public static final String NETWORK_COMPONENT_TYPE_4_CLUSTER = "C L U S T E R !";
+	
 	
 	/** Default name for the first DomainSettings. */
 	public static final String DEFAULT_DOMAIN_SETTINGS_NAME = "Default Domain";
 	/** Default name for the first LayoutSettings. */
 	public static final String DEFAULT_LAYOUT_SETTINGS_NAME = "Default Layout";
+	
 	
 	/** Default width for edges. */
 	public static final float DEFAULT_EDGE_WIDTH = 2;
@@ -84,13 +89,11 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public static final Color DEFAULT_VERTEX_COLOR = Color.RED; 
 	/** Default color to be used for Vertices in the graph when highlighted/picked. */
 	public static final Color DEFAULT_VERTEX_PICKED_COLOR = Color.YELLOW; 
-	/** Default raster size for guide grid. */
-	public static final Integer DEFAULT_RASTER_SIZE = 5; 
-	 
-	public static final String NETWORK_COMPONENT_TYPE_4_CLUSTER = "C L U S T E R !";
+
 	
 	/** Basic color for image icons. If using dynamic colorization, this color will be replaced */
 	public static final Color IMAGE_ICON_COLORIZE_BASE_COLOR = new Color(179, 179, 179);
+	
 	
 	/** Default shapes for nodes */
 	public static final String SHAPE_ELLIPSE = "Ellipse";
@@ -123,8 +126,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	}
 	
 	
-	/** The prefix name for the NetworkComponentAdapter of a GraphNode */
-	public static final String GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX = "GraphNodeAdapter_";
 	
 	
 	/** The available domains used in the {@link GraphEnvironmentController} */
@@ -134,9 +135,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/** The layout setting to use in the visualization */
 	private TreeMap<String, LayoutSettings> currentLayoutSettings;
 	
-	private boolean snap2Grid = true;
-	private double snapRaster = DEFAULT_RASTER_SIZE;
-	private EdgeShape edgeShape = EdgeShape.Line;
 	private ComponentSorting componentSorting = ComponentSorting.Alphanumeric;
 	
 	/** 
@@ -173,18 +171,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 			// --- Compare LayoutSettings -----------------
 			if (isEqual==true) {
 				isEqual = this.hasEqualLayoutSettings(ggsToCompare);
-			}
-			// --- Compare 'snap2Grid' --------------------
-			if (isEqual==true) {
-				isEqual = (ggsToCompare.isSnap2Grid()==this.isSnap2Grid());
-			}
-			// --- Compare 'snapRaster' -------------------
-			if (isEqual==true) {
-				isEqual = (ggsToCompare.getSnapRaster()==this.getSnapRaster());
-			}
-			// --- Compare 'edgeShape' --------------------
-			if (isEqual==true) {
-				isEqual = (ggsToCompare.getEdgeShape()==this.getEdgeShape());
 			}
 			// --- Compare 'componentSorting' -------------
 			if (isEqual==true) {
@@ -381,9 +367,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		copy.setCurrentCTS(this.getComponentTypeSettingsCopy());
 		copy.setDomainSettings(this.getDomainSettingsCopy());
 		copy.setLayoutSettings(this.getLayoutSettingsCopy());
-		copy.setSnap2Grid(this.isSnap2Grid());
-		copy.setSnapRaster(this.getSnapRaster());
-		copy.setEdgeShape(this.getEdgeShape());
 		copy.setComponentSorting(this.getComponentSorting());
 		copy.setCustomToolbarComponentDescriptions(this.copyCustomToolbarComponentDescription());
 		return copy;
@@ -505,51 +488,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public void setLayoutSettings(TreeMap<String, LayoutSettings> layoutSettings) {
 		this.currentLayoutSettings = layoutSettings;
 	}
-	
-	
-	/**
-	 * Sets the snap2 grid.
-	 * @param snap2Grid the new snap2 grid
-	 */
-	public void setSnap2Grid(boolean snap2Grid) {
-		this.snap2Grid = snap2Grid;
-	}
-	/**
-	 * Checks if is snap2 grid.
-	 * @return true, if is snap2grid is true
-	 */
-	public boolean isSnap2Grid() {
-		return snap2Grid;
-	}
 
-	/**
-	 * Sets the snap raster.
-	 * @param snapRaster the new snap raster
-	 */
-	public void setSnapRaster(double snapRaster) {
-		this.snapRaster = snapRaster;
-	}
-	/**
-	 * Gets the snap raster.
-	 * @return the snap raster
-	 */
-	public double getSnapRaster() {
-		return snapRaster;
-	}
-	/**
-	 * Sets the edge shape.
-	 * @param edgeShape the new edge shape
-	 */
-	public void setEdgeShape(EdgeShape edgeShape) {
-		this.edgeShape = edgeShape;
-	}
-	/**
-	 * Gets the edge shape.
-	 * @return the edge shape
-	 */
-	public EdgeShape getEdgeShape() {
-		return edgeShape;
-	}
 
 	/**
 	 * Sets the component sorting.

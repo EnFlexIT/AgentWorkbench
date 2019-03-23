@@ -306,8 +306,8 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 			
 			//Set up renderer and editor for show label
 			TableColumn showLabelClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ShowLable));
-			showLabelClassColumn.setCellEditor(new TableCellEditor4CheckBox(this.componentTypeDialog.getCheckBoxEdgeWidth()));
-			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
+			showLabelClassColumn.setCellEditor(new TableCellRenderEditor4CheckBox());
+			showLabelClassColumn.setCellRenderer(new TableCellRenderEditor4CheckBox());
 			showLabelClassColumn.setPreferredWidth(10);
 			
 			TableColumn clusterShapeColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ClusterShape));
@@ -338,6 +338,8 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 		            	return Color.class;
 		            } else if(columnIndex==getColumnHeaderIndexDomains(COL_D_VertexColorPicked)) {
 		            	return Color.class;
+		            } else if(columnIndex==getColumnHeaderIndexDomains(COL_D_ShowLable)) {
+		            	return Boolean.class;
 		            } else {
 		            	return String.class;
 		            }
@@ -473,7 +475,6 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 	
 	/**
 	 * This method initializes jComboBoxNodeSize	.
-	 *
 	 * @return javax.swing.JComboBox
 	 */
 	private JComboBoxWide<Integer> getJComboBoxNodeSize() {

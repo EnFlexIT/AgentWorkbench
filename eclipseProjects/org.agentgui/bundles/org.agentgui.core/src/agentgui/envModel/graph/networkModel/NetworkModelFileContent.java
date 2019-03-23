@@ -52,13 +52,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NetworkModelFileContent", propOrder = {
-    "layoutUsed",
+    "layoutName",
     "networkComponentList"
 })
 public class NetworkModelFileContent {
 
 	private TreeMap<String, NetworkComponent> networkComponentList;
-	private String layoutUsed;
+	private String layoutName;
 	
 	
 	/**
@@ -71,15 +71,15 @@ public class NetworkModelFileContent {
 	 * Returns the name of the used layout.
 	 * @return the layout used
 	 */
-	public String getLayoutUsed() {
-		return layoutUsed;
+	public String getLayoutName() {
+		return layoutName;
 	}
 	/**
 	 * Sets the name of the used layout.
-	 * @param layoutUsed the new layout used
+	 * @param layoutName the new layout used
 	 */
-	public void setLayoutUsed(String layoutUsed) {
-		this.layoutUsed = layoutUsed;
+	public void setLayoutName(String layoutUsed) {
+		this.layoutName = layoutUsed;
 	}
 	
 	

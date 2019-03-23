@@ -29,7 +29,6 @@
 package agentgui.envModel.graph.components;
 
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -42,9 +41,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -59,10 +55,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -77,7 +71,7 @@ import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.ComponentSorting;
-import agentgui.envModel.graph.networkModel.LayoutSettings.EdgeShape;
+import agentgui.envModel.graph.networkModel.LayoutSettings;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
@@ -95,38 +89,27 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private boolean currSnap2Grid = true;
-	private double currSnapRaster = 5; 
-	private EdgeShape currEdgeShape; 
 	private ComponentSorting currComponentSorting;
 	
 	private Project currProject;
 	private boolean canceled;
 
+	private JPanel jContentPane;
 	private JTabbedPane jTabbedPane;
 
-	private JPanel jContentPane;
 	private ComponentTypeDialogDomains jPanelDomains;
 	private ComponentTypeDialogComponents jPanelComponents;
-	
+	private ComponentTypeDialogLayout jPanelLayouts;
+
 	private JPanel jPanelGeneralSettings;
-	private JPanel jPanelButtonOkCancel;
-
-	private JLabel jLabelGridHeader;
-	private JLabel jLabelGuideGridWidth;
-	private JCheckBox jCheckBoxSnap2Grid;
-	private JSpinner jSpnnerGridWidth;
-
-	private JButton jButtonOk;
-	private JButton jButtonCancel;
 
 	private JLabel jLabelListSorting;
 	private JComboBox<ComponentSorting> jComboBoxListSorting;
 	private DefaultComboBoxModel<ComponentSorting> comboBoxModelComponentSorting;
-	
-	private JLabel jLabelEdgeShape;
-	private JComboBox<EdgeShape> jComboBoxEdgeShapes;
-	private DefaultComboBoxModel<EdgeShape> comboBoxModelEdgeShapes;
+
+	private JPanel jPanelButtonOkCancel;
+	private JButton jButtonOk;
+	private JButton jButtonCancel;
 	
 	private TableCellEditor4ClassSelector agentClassesCellEditor;  		
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor;  	
@@ -142,23 +125,21 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 */
 	public ComponentTypeDialog(Window ownerWindow, GeneralGraphSettings4MAS graphSettings, Project project) {
 		super(ownerWindow);
-		this.setStartArguments(graphSettings, project);
+		this.setGraphSettings(graphSettings, project);
 		this.initialize();
 	}
 
 	/**
-	 * Sets the start arguments to the local variables.
+	 * Sets the graph settings .
 	 *
 	 * @param graphSettings the graph settings
 	 * @param project the project
 	 */
-	private void setStartArguments(GeneralGraphSettings4MAS graphSettings, Project project) {
+	private void setGraphSettings(GeneralGraphSettings4MAS graphSettings, Project project) {
 		this.currProject = project;
 		this.getJPanelDomains().setDomainSettings(graphSettings.getDomainSettings());
 		this.getJPanelComponents().setComponentTypeSettings(graphSettings.getCurrentCTS());
-		this.currSnap2Grid = graphSettings.isSnap2Grid();
-		this.currSnapRaster = graphSettings.getSnapRaster();
-		this.currEdgeShape = graphSettings.getEdgeShape();
+		this.getJPanelLayouts().setLayoutSettings(graphSettings.getLayoutSettings());
 		this.currComponentSorting = graphSettings.getComponentSorting();
 	}
 	/**
@@ -189,6 +170,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	    if (this.currProject==null) {
 	    	this.getJPanelDomains().setEnabled(false);
 	    	this.getJPanelComponents().setEnabled(false);
+	    	this.getJPanelLayouts().setEnabled(false);
 	    	this.getJButtonOk().setEnabled(false);
 	    }
 	    
@@ -203,6 +185,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
             	// --- Stop cell editing, if required ----- 
 				if (ComponentTypeDialog.this.getJPanelDomains().isStopCellEditing()) return;
 				if (ComponentTypeDialog.this.getJPanelComponents().isStopCellEditing()) return;
+				if (ComponentTypeDialog.this.getJPanelLayouts().isStopCellEditing()) return;
             	// --- Close dialog -----------------------
 				String title = Language.translate("Schließen") + " ?";
 				String message = Language.translate("Dialog schließen") + " ?";
@@ -229,9 +212,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 */
 	private void setGeneralConfiguration() {
 		// --- Get the Guide grid configuration -------------------------------
-		this.getJCheckBoxSnap2Grid().setSelected(this.currSnap2Grid);
-		this.getJSpinnerGridWidth().setValue(this.currSnapRaster);
-		this.getJComboBoxEdgeShapes().setSelectedItem(this.currEdgeShape);
 		this.getJComboBoxListSorting().setSelectedItem(this.currComponentSorting);
 	}
 	
@@ -257,28 +237,17 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	public TreeMap<String, DomainSettings> getDomainSettings() {
 		return this.getJPanelDomains().getDomainSettings();
 	}
+	/**
+	 * Returns the layout settings.
+	 * @return the LayoutSettings
+	 */
+	public TreeMap<String, LayoutSettings> getLayoutSettings() {
+		return this.getJPanelLayouts().getLayoutSettings();
+	}
 	
-	/**
-	 * Checks if is snap2 grid.
-	 * @return true, if is snap2 grid
-	 */
-	public boolean isSnap2Grid() {
-		return this.currSnap2Grid;
-	}
-	/**
-	 * Gets the snap raster.
-	 * @return the snap raster
-	 */
-	public double getSnapRaster(){
-		return this.currSnapRaster;
-	}
-	/**
-	 * Gets the edge shape.
-	 * @return the edge shape
-	 */
-	public EdgeShape getEdgeShape() {
-		return this.currEdgeShape;
-	}
+	
+	
+	
 	/**
 	 * Gets the component sorting.
 	 * @return the component sorting
@@ -294,9 +263,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 		GeneralGraphSettings4MAS genSettings = new GeneralGraphSettings4MAS();
 		genSettings.setCurrentCTS(this.getComponentTypeSettings());
 		genSettings.setDomainSettings(this.getDomainSettings());
-		genSettings.setSnap2Grid(this.isSnap2Grid());
-		genSettings.setSnapRaster(this.getSnapRaster());
-		genSettings.setEdgeShape(this.getEdgeShape());
+		genSettings.setLayoutSettings(this.getLayoutSettings());
 		genSettings.setComponentSorting(this.getComponentSorting());
 		return genSettings;
 	}
@@ -348,11 +315,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab("Teilnetze", null, getJPanelDomains(), null);
 			jTabbedPane.addTab("Netzwerk-Komponenten", null, getJPanelComponents(), null);
+			jTabbedPane.addTab("Layouts", null, getJPanelLayouts(), null);
 			jTabbedPane.addTab("Allgemein", null, getJPanelGeneralSettings(), null);
 			
 			jTabbedPane.setTitleAt(0, Language.translate("Teilnetze"));
 			jTabbedPane.setTitleAt(1, Language.translate("Netzwerk-Komponenten"));
-			jTabbedPane.setTitleAt(2, Language.translate("Allgemein"));
+			jTabbedPane.setTitleAt(2, Language.translate("Layouts"));
+			jTabbedPane.setTitleAt(3, Language.translate("Allgemein"));
 			jTabbedPane.setSelectedIndex(1);
 
 			jTabbedPane.addChangeListener(new ChangeListener() {
@@ -370,7 +339,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 
 	
 	/**
-	 * This method initializes jPanelDomains	.
+	 * This method initializes jPanelDomains.
 	 * @return javax.swing.JPanel
 	 */
 	private ComponentTypeDialogDomains getJPanelDomains() {
@@ -389,7 +358,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	
 	
 	/**
-	 * This method initializes jPanelComponents	.
+	 * This method initializes jPanelComponents.
 	 * @return javax.swing.JPanel
 	 */
 	private ComponentTypeDialogComponents getJPanelComponents() {
@@ -398,6 +367,18 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 		}
 		return jPanelComponents;
 	}
+	
+	/**
+	 * This method initializes jPanelLayouts.
+	 * @return javax.swing.JPanel
+	 */
+	private ComponentTypeDialogLayout getJPanelLayouts() {
+		if (jPanelLayouts==null) {
+			jPanelLayouts = new ComponentTypeDialogLayout(this);
+		}
+		return jPanelLayouts;
+	}
+	
 	
 	
 	/**
@@ -425,55 +406,12 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			gbc_jComboBoxListSorting.gridx = 1;
 			gbc_jComboBoxListSorting.gridy = 0;
 			
-			GridBagConstraints gbc_JComboBoxEdgeShapes = new GridBagConstraints();
-			gbc_JComboBoxEdgeShapes.fill = GridBagConstraints.HORIZONTAL;
-			gbc_JComboBoxEdgeShapes.gridy = 3;
-			gbc_JComboBoxEdgeShapes.gridwidth = 2;
-			gbc_JComboBoxEdgeShapes.insets = new Insets(20, 5, 0, 0);
-			gbc_JComboBoxEdgeShapes.gridx = 1;
-			GridBagConstraints gbc_JLabelEdgeShape = new GridBagConstraints();
-			gbc_JLabelEdgeShape.gridx = 0;
-			gbc_JLabelEdgeShape.anchor = GridBagConstraints.WEST;
-			gbc_JLabelEdgeShape.insets = new Insets(20, 20, 0, 0);
-			gbc_JLabelEdgeShape.gridy = 3;
 			GridBagConstraints gbc_getJSpinnerGridWidth = new GridBagConstraints();
 			gbc_getJSpinnerGridWidth.anchor = GridBagConstraints.WEST;
 			gbc_getJSpinnerGridWidth.insets = new Insets(5, 5, 5, 0);
 			gbc_getJSpinnerGridWidth.gridx = 2;
 			gbc_getJSpinnerGridWidth.gridy = 2;
 			gbc_getJSpinnerGridWidth.fill = GridBagConstraints.NONE;
-			GridBagConstraints gbc_JLabelGuideGridWidth = new GridBagConstraints();
-			gbc_JLabelGuideGridWidth.anchor = GridBagConstraints.WEST;
-			gbc_JLabelGuideGridWidth.gridx = 1;
-			gbc_JLabelGuideGridWidth.gridy = 2;
-			gbc_JLabelGuideGridWidth.insets = new Insets(5, 10, 5, 0);
-			GridBagConstraints gbc_JCheckBoxSnap2Grid = new GridBagConstraints();
-			gbc_JCheckBoxSnap2Grid.anchor = GridBagConstraints.WEST;
-			gbc_JCheckBoxSnap2Grid.gridwidth = 2;
-			gbc_JCheckBoxSnap2Grid.gridx = 1;
-			gbc_JCheckBoxSnap2Grid.gridy = 1;
-			gbc_JCheckBoxSnap2Grid.insets = new Insets(20, 10, 5, 0);
-			GridBagConstraints gbc_JLabelGridHeader = new GridBagConstraints();
-			gbc_JLabelGridHeader.anchor = GridBagConstraints.WEST;
-			gbc_JLabelGridHeader.gridwidth = 1;
-			gbc_JLabelGridHeader.gridx = 0;
-			gbc_JLabelGridHeader.gridy = 1;
-			gbc_JLabelGridHeader.insets = new Insets(20, 20, 5, 5);
-			
-			jLabelGridHeader = new JLabel();
-			jLabelGridHeader.setText("Hilfs-Raster");
-			jLabelGridHeader.setText(Language.translate(jLabelGridHeader.getText()) + ":");
-			jLabelGridHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-			
-			jLabelGuideGridWidth = new JLabel();
-			jLabelGuideGridWidth.setText("Raster-Breite");
-			jLabelGuideGridWidth.setText(Language.translate(jLabelGuideGridWidth.getText()));
-			
-			jLabelEdgeShape = new JLabel();
-			jLabelEdgeShape.setText("Kanten-Typ");
-			jLabelEdgeShape.setText(Language.translate(jLabelEdgeShape.getText()) + ":");
-			jLabelEdgeShape.setFont(new Font("Dialog", Font.BOLD, 12));
-			
 			
 			jPanelGeneralSettings = new JPanel();
 			jPanelGeneralSettings.setLayout(gridBagLayout);
@@ -481,12 +419,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			
 			jPanelGeneralSettings.add(getJLabelListSorting(), gbc_jLabelListSorting);
 			jPanelGeneralSettings.add(getJComboBoxListSorting(), gbc_jComboBoxListSorting);
-			jPanelGeneralSettings.add(jLabelGridHeader, gbc_JLabelGridHeader);
-			jPanelGeneralSettings.add(getJCheckBoxSnap2Grid(), gbc_JCheckBoxSnap2Grid);
-			jPanelGeneralSettings.add(jLabelGuideGridWidth, gbc_JLabelGuideGridWidth);
-			jPanelGeneralSettings.add(getJSpinnerGridWidth(), gbc_getJSpinnerGridWidth);
-			jPanelGeneralSettings.add(jLabelEdgeShape, gbc_JLabelEdgeShape);
-			jPanelGeneralSettings.add(getJComboBoxEdgeShapes(), gbc_JComboBoxEdgeShapes);
 			
 		}
 		return jPanelGeneralSettings;
@@ -514,41 +446,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			}
 		}
 		return comboBoxModelComponentSorting;
-	}
-	
-	private JCheckBox getJCheckBoxSnap2Grid() {
-		if (jCheckBoxSnap2Grid == null) {
-			jCheckBoxSnap2Grid = new JCheckBox();
-			jCheckBoxSnap2Grid.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-			jCheckBoxSnap2Grid.setText("Raster verwenden");
-			jCheckBoxSnap2Grid.setText(Language.translate(jCheckBoxSnap2Grid.getText()));
-		}
-		return jCheckBoxSnap2Grid;
-	}
-	private JSpinner getJSpinnerGridWidth() {
-		if (jSpnnerGridWidth == null) {
-			jSpnnerGridWidth = new JSpinner(new SpinnerNumberModel(5.0, 0.1, 100.0, 0.1));
-			jSpnnerGridWidth.setPreferredSize(new Dimension(60, 26));
-		}
-		return jSpnnerGridWidth;
-	}
-	
-	private JComboBox<EdgeShape> getJComboBoxEdgeShapes() {
-		if (jComboBoxEdgeShapes == null) {
-			jComboBoxEdgeShapes = new JComboBox<>(this.getComboBoxModel4EdgeShapes());
-			jComboBoxEdgeShapes.setMaximumRowCount(12);
-		}
-		return jComboBoxEdgeShapes;
-	}
-	private DefaultComboBoxModel<EdgeShape> getComboBoxModel4EdgeShapes() {
-		if (comboBoxModelEdgeShapes==null) {
-			comboBoxModelEdgeShapes = new DefaultComboBoxModel<EdgeShape>();
-			List<EdgeShape> shapes = new ArrayList<EdgeShape>(Arrays.asList(EdgeShape.values()));
-			for (int i = 0; i < shapes.size(); i++) {
-				comboBoxModelEdgeShapes.addElement(shapes.get(i));
-			}
-		}
-		return comboBoxModelEdgeShapes;
 	}
 	
 	private JPanel getJPanelButtonOkCancel() {
@@ -637,17 +534,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * Gets the check box edge width.
-	 * @return the check box edge width
-	 */
-	public JCheckBox getCheckBoxEdgeWidth() {
-		JCheckBox checkBox = new JCheckBox();
-		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
-		return checkBox;
-	}
-	
-	
-	/**
 	 * Sets the table CellEditor for domains in components.
 	 * @param domainVector the string vector of the current domains
 	 */
@@ -713,9 +599,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 				return;
 			}
 			
-			this.currSnap2Grid = this.jCheckBoxSnap2Grid.isSelected();
-			this.currSnapRaster = (Double)this.jSpnnerGridWidth.getValue(); 
-			this.currEdgeShape = (EdgeShape) this.jComboBoxEdgeShapes.getSelectedItem();
+			// --- Check for errors in the LayoutSettings -----------
+			ctError = getJPanelLayouts().hasLayoutSettingError();
+			if (ctError!=null) {
+				JOptionPane.showMessageDialog(this, ctError.getMessage(), ctError.getTitle(), JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
 			this.currComponentSorting = (ComponentSorting) this.getJComboBoxListSorting().getSelectedItem();
 			
 			this.canceled = false;

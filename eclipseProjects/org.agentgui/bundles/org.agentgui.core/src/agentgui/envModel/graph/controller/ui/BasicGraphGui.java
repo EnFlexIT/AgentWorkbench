@@ -830,7 +830,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Use straight lines as edges ? ------------------------------
 		AbstractEdgeShapeTransformer<GraphNode, GraphEdge> edgeShapeTransformer = null;
-		switch (this.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().getEdgeShape()) {
+		switch (this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
 		case BentLine:
 			edgeShapeTransformer = new EdgeShape.BentLine<GraphNode, GraphEdge>();
 			break;
@@ -1420,6 +1420,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 			Object infoObject = nmNotification.getInfoObject();
 
 			switch (reason) {
+			case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
+				this.setEdgeShapeTransformer();
+				break;
+				
 			case NetworkModelNotification.NETWORK_MODEL_Reload:
 				this.reLoadGraph();
 				break;

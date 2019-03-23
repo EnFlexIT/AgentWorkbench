@@ -30,33 +30,48 @@ package agentgui.envModel.graph.components;
 
 import java.awt.Component;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
- * Is used in the {@link ComponentTypeDialog} for rendering JButton.
- *
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * The Class TableCellRenderEditor4CheckBox.
  */
-public class TableCellRenderer4CheckBox extends DefaultTableCellRenderer {
+public class TableCellRenderEditor4CheckBox extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
+
+	private static final long serialVersionUID = -1544056145162025328L;
+
+	private JCheckBox checkBox;
+	 
+	public TableCellRenderEditor4CheckBox() { }
 	
-	private static final long serialVersionUID = 6053370819529907169L;
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-	 */
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		
-		JCheckBox checkBox = new JCheckBox();
-		checkBox.setSelected((Boolean) value);
-		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
-		checkBox.setOpaque(true);
-		TableCellColorHelper.setTableCellRendererColors(checkBox, row, isSelected);
+	public JCheckBox getCheckBox() {
+		if (checkBox==null) {
+			checkBox = new JCheckBox();
+			checkBox.setHorizontalAlignment(JCheckBox.CENTER);
+			checkBox.setOpaque(true);
+		}
 		return checkBox;
 	}
-
+	
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		this.getCheckBox().setSelected((boolean)value);
+		TableCellColorHelper.setTableCellRendererColors(this.getCheckBox(), row, isSelected);
+		return this.getCheckBox();
+	}
+	@Override
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		this.getCheckBox().setSelected((boolean)value);
+		return this.getCheckBox();
+	}
+	@Override
+	public Object getCellEditorValue() {
+		return this.getCheckBox().isSelected();
+	}
+	
 }

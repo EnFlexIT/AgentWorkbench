@@ -411,8 +411,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		if (this.moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
-			boolean snapToGrid = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().isSnap2Grid();
-			double snapRaster = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().getSnapRaster();
+			boolean snapToGrid = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().isSnap2Grid();
+			double snapRaster = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getSnapRaster();
 			
 			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
 			for(GraphNode pickedNode: pickedNodes){

@@ -37,7 +37,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -53,8 +53,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SortOrder;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -66,12 +66,15 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.JComboBoxWide;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.networkModel.LayoutSettings;
+import agentgui.envModel.graph.networkModel.LayoutSettings.CoordinateSystemXDirection;
+import agentgui.envModel.graph.networkModel.LayoutSettings.CoordinateSystemYDirection;
+import agentgui.envModel.graph.networkModel.LayoutSettings.EdgeShape;
 
 /**
- * The Class ComponentTypeDialogDomains represents the sub part of the 
- * {@link ComponentTypeDialog} that displays the domain settings.
+ * The Class ComponentTypeDialogLayout represents the sub part of the 
+ * {@link ComponentTypeDialog} that displays the layout settings.
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
@@ -83,32 +86,30 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 
 	private final String pathImage = GraphGlobals.getPathImages();
 	
-	private Vector<String> columnHeaderDomains 		= null;
-	private final String COL_D_DomainName 			= Language.translate("Name", Language.EN); 
-	private final String COL_D_AdapterClass			= Language.translate("Adapter class", Language.EN);
-	private final String COL_D_VertexSize 			= Language.translate("Vertex size", Language.EN);
-	private final String COL_D_VertexColor			= Language.translate("Color", Language.EN);
-	private final String COL_D_VertexColorPicked 	= Language.translate("Color picked", Language.EN);
-	private final String COL_D_ShowLable			= Language.translate("Show label", Language.EN);
-	private final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);
-	private final String COL_D_ClusterAgent			= Language.translate("Cluster agent", Language.EN);
+	private Vector<String> columnHeaderLayouts 		= null;
+	private final String COL_L_LayoutName 			= Language.translate("Layout Name", Language.EN); 
+	private final String COL_L_X_Direction			= Language.translate("X - Direction", Language.EN);
+	private final String COL_L_Y_Direction 			= Language.translate("Y - Direction", Language.EN);
+	private final String COL_L_SnapToGrid 			= Language.translate("Use Guide Grid", Language.EN);
+	private final String COL_L_SnapGridWidth		= Language.translate("Guide Grid Step", Language.EN);
+	private final String COL_L_EdgeShape			= Language.translate("Edge Shape", Language.EN);
 
 	private ComponentTypeDialog componentTypeDialog;
 	
-	private TreeMap<String, DomainSettings> domainSettings;
+	private TreeMap<String, LayoutSettings> layoutSettings;
 	
-	private JButton jButtonAddDomain;
-	private JButton jButtonRemoveDomainntRow;
-	private JScrollPane jScrollPaneClassTableDomains;
-	private JTable jTableDomainTypes;
-	private DefaultTableModel domainTableModel;
+	private JButton jButtonAddLayout;
+	private JButton jButtonRemoveLayoutRow;
+	private JScrollPane jScrollPaneClassTableLayouts;
+	private JTable jTableLayoutTypes;
+	private DefaultTableModel layoutTableModel;
 
 	
 	/**
-	 * Instantiates a new component type dialog domains.
+	 * Instantiates a new component type dialog layouts.
 	 *
 	 * @param componentTypeDialog the parent {@link ComponentTypeDialog}
-	 * @param domainSettings the domain settings
+	 * @param layoutSettings the layout settings
 	 */
 	public ComponentTypeDialogLayout(ComponentTypeDialog componentTypeDialog) {
 		this.componentTypeDialog = componentTypeDialog;
@@ -138,75 +139,73 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		
 		this.setLayout(new GridBagLayout());
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		this.add(this.getJScrollPaneClassTableDomains(), gridBagConstraints13);
-		this.add(this.getJButtonAddDomain(), gridBagConstraints2);
-		this.add(this.getJButtonRemoveDomainntRow(), gridBagConstraints3);
+		this.add(this.getJScrollPaneClassTableLayouts(), gridBagConstraints13);
+		this.add(this.getJButtonAddLayout(), gridBagConstraints2);
+		this.add(this.getJButtonRemoveLayoutRow(), gridBagConstraints3);
 	}
 	
 	/**
-	 * This method initializes jButtonAddDomain	.
+	 * This method initializes jButtonAddLayout	.
 	 * @return javax.swing.JButton
 	 */
-	private JButton getJButtonAddDomain() {
-		if (jButtonAddDomain == null) {
+	private JButton getJButtonAddLayout() {
+		if (jButtonAddLayout == null) {
 			ImageIcon imageIcon = new ImageIcon(getClass().getResource(this.pathImage + "ListPlus.png"));
-			jButtonAddDomain = new JButton();
-			jButtonAddDomain.setIcon(imageIcon);
-			jButtonAddDomain.addActionListener(this);
+			jButtonAddLayout = new JButton();
+			jButtonAddLayout.setIcon(imageIcon);
+			jButtonAddLayout.addActionListener(this);
 		}
-		return jButtonAddDomain;
+		return jButtonAddLayout;
 	}
 	/**
-	 * This method initializes jButtonRemoveDomainntRow	.
+	 * This method initializes jButtonRemoveLayoutRow	.
 	 * @return javax.swing.JButton
 	 */
-	private JButton getJButtonRemoveDomainntRow() {
-		if (jButtonRemoveDomainntRow == null) {
+	private JButton getJButtonRemoveLayoutRow() {
+		if (jButtonRemoveLayoutRow == null) {
 			ImageIcon imageIcon1 = new ImageIcon(getClass().getResource(this.pathImage + "ListMinus.png"));
-			jButtonRemoveDomainntRow = new JButton();
-			jButtonRemoveDomainntRow.setIcon(imageIcon1);
-			jButtonRemoveDomainntRow.addActionListener(this);
+			jButtonRemoveLayoutRow = new JButton();
+			jButtonRemoveLayoutRow.setIcon(imageIcon1);
+			jButtonRemoveLayoutRow.addActionListener(this);
 		}
-		return jButtonRemoveDomainntRow;
+		return jButtonRemoveLayoutRow;
 	}
 	
 	/**
-	 * This method initializes jScrollPaneClassTableDomains	.
+	 * This method initializes jScrollPaneClassTableLayouts	.
 	 * @return javax.swing.JScrollPane
 	 */
-	private JScrollPane getJScrollPaneClassTableDomains() {
-		if (jScrollPaneClassTableDomains == null) {
-			jScrollPaneClassTableDomains = new JScrollPane();
-			jScrollPaneClassTableDomains.setViewportView(getJTable4DomainTypes());
+	private JScrollPane getJScrollPaneClassTableLayouts() {
+		if (jScrollPaneClassTableLayouts == null) {
+			jScrollPaneClassTableLayouts = new JScrollPane();
+			jScrollPaneClassTableLayouts.setViewportView(getJTable4LayoutTypes());
 		}
-		return jScrollPaneClassTableDomains;
+		return jScrollPaneClassTableLayouts;
 	}
 	
 	/**
 	 * Gets the Vector of the column header in the needed order.
 	 * @return the column header
 	 */
-	private Vector<String> getColumnHeaderDomains() {
-		if (columnHeaderDomains==null) {
-			columnHeaderDomains = new Vector<String>();
-			columnHeaderDomains.add(COL_D_DomainName);
-			columnHeaderDomains.add(COL_D_AdapterClass);
-			columnHeaderDomains.add(COL_D_ShowLable);	
-			columnHeaderDomains.add(COL_D_VertexSize);
-			columnHeaderDomains.add(COL_D_VertexColor);
-			columnHeaderDomains.add(COL_D_VertexColorPicked);
-			columnHeaderDomains.add(COL_D_ClusterAgent);
-			columnHeaderDomains.add(COL_D_ClusterShape);
+	private Vector<String> getColumnHeaderLayouts() {
+		if (columnHeaderLayouts==null) {
+			columnHeaderLayouts = new Vector<String>();
+			columnHeaderLayouts.add(COL_L_LayoutName);
+			columnHeaderLayouts.add(COL_L_X_Direction);
+			columnHeaderLayouts.add(COL_L_Y_Direction);
+			columnHeaderLayouts.add(COL_L_SnapToGrid);
+			columnHeaderLayouts.add(COL_L_SnapGridWidth);	
+			columnHeaderLayouts.add(COL_L_EdgeShape);
 		}
-		return columnHeaderDomains;
+		return columnHeaderLayouts;
 	}
 	/**
 	 * Gets the header index.
 	 * @param header the header
 	 * @return the header index
 	 */
-	private int getColumnHeaderIndexDomains(String header) {
-		Vector<String> headers = this.getColumnHeaderDomains();
+	private int getColumnHeaderIndexLayouts(String header) {
+		Vector<String> headers = this.getColumnHeaderLayouts();
 		int headerIndex = -1;
 		for (int i=0; i < headers.size(); i++) {
 			if (headers.get(i).equals(header)) {
@@ -218,37 +217,37 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	}
 	
 	/**
-	 * This method initializes jTableDomainTypes	.
+	 * This method initializes jTableLayoutTypes	.
 	 * @return javax.swing.JTable
 	 */
-	private JTable getJTable4DomainTypes() {
-		if (jTableDomainTypes == null) {
+	private JTable getJTable4LayoutTypes() {
+		if (jTableLayoutTypes == null) {
 			
-			jTableDomainTypes = new JTable();
-			jTableDomainTypes.setModel(this.getTableModel4Domains());
-			jTableDomainTypes.setFillsViewportHeight(true);
-			jTableDomainTypes.setShowGrid(false);
-			jTableDomainTypes.setRowHeight(20);
-			jTableDomainTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTableDomainTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			jTableDomainTypes.setAutoCreateRowSorter(true);
-			jTableDomainTypes.getTableHeader().setReorderingAllowed(false);
+			jTableLayoutTypes = new JTable();
+			jTableLayoutTypes.setModel(this.getTableModel4Layouts());
+			jTableLayoutTypes.setFillsViewportHeight(true);
+			jTableLayoutTypes.setShowGrid(false);
+			jTableLayoutTypes.setRowHeight(20);
+			jTableLayoutTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTableLayoutTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jTableLayoutTypes.setAutoCreateRowSorter(true);
+			jTableLayoutTypes.getTableHeader().setReorderingAllowed(false);
 			
 			// --- Define the sorter ----------------------
-			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4Domains());
-			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_ShowLable), new Comparator<Boolean>() {
+			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4Layouts());
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_SnapGridWidth), new Comparator<Boolean>() {
 				@Override
 				public int compare(Boolean o1, Boolean o2) {
 					return o1.compareTo(o2);
 				}
 			});
-			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_VertexSize), new Comparator<Integer>() {
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_Y_Direction), new Comparator<Integer>() {
 				@Override
 				public int compare(Integer o1, Integer o2) {
 					return o1.compareTo(o2);
 				}
 			});
-			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_VertexColor), new Comparator<Color>() {
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_EdgeShape), new Comparator<Color>() {
 				@Override
 				public int compare(Color o1, Color o2) {
 					Integer o1RGB = o1.getRGB();
@@ -256,7 +255,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 					return o1RGB.compareTo(o2RGB);
 				}
 			});
-			sorter.setComparator(getColumnHeaderIndexDomains(COL_D_VertexColorPicked), new Comparator<Color>() {
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_SnapToGrid), new Comparator<Color>() {
 				@Override
 				public int compare(Color o1, Color o2) {
 					Integer o1RGB = o1.getRGB();
@@ -264,269 +263,253 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 					return o1RGB.compareTo(o2RGB);
 				}
 			});
-			jTableDomainTypes.setRowSorter(sorter);
+			jTableLayoutTypes.setRowSorter(sorter);
 
 			
 			// --- Define the first sort order ------------
 			List<SortKey> sortKeys = new ArrayList<SortKey>();
-			for (int i = 0; i < jTableDomainTypes.getColumnCount(); i++) {
+			for (int i = 0; i < jTableLayoutTypes.getColumnCount(); i++) {
 			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
 			}
-			jTableDomainTypes.getRowSorter().setSortKeys(sortKeys);
+			jTableLayoutTypes.getRowSorter().setSortKeys(sortKeys);
 
 			
 			// --- Configure the editor and the renderer of the cells ---------
-			TableColumnModel tcm = jTableDomainTypes.getColumnModel();
+			TableColumnModel tcm = jTableLayoutTypes.getColumnModel();
 
-			//Set up renderer and editor for the domain name column
-			TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_DomainName));
-			domainColumn.setCellEditor(new TableCellEditor4Domains(this.componentTypeDialog));
+			TableColumn colXDirection = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_X_Direction));
+			colXDirection.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxCoordinateSystemXDirection()));
+
+			TableColumn colYDirection = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_Y_Direction));
+			colYDirection.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxCoordinateSystemYDirection()));
+			colYDirection.setPreferredWidth(10);
 			
-			//Set up renderer and editor for the agent class column
-			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_AdapterClass));
-			agentClassColumn.setCellEditor(this.componentTypeDialog.getAdapterClassesCellEditor());
-			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
-
-			//Set up renderer and editor for Graph prototype column
-			TableColumn vertexSize = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_VertexSize));
-			vertexSize.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxNodeSize()));
-			vertexSize.setPreferredWidth(10);
+			TableColumn colSnapToGrid = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_SnapToGrid));
+			colSnapToGrid.setCellEditor(new TableCellRenderEditor4CheckBox());
+			colSnapToGrid.setCellRenderer(new TableCellRenderEditor4CheckBox());
+			colSnapToGrid.setPreferredWidth(10);
+			
+			TableColumn colSnapGridWidth = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_SnapGridWidth));
+			colSnapGridWidth.setCellEditor(new TableCellEditor4Spinner(0.1, 100, 0.1));
+			colSnapGridWidth.setCellRenderer(new TableCellEditor4Spinner(0.1, 100, 0.1));
+			colSnapGridWidth.setPreferredWidth(10);
 			
 			//Set up renderer and editor for the  Color column.	        
-			TableColumn vertexColor = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_VertexColor));
-			vertexColor.setCellEditor(new TableCellEditor4Color());
-			vertexColor.setCellRenderer(new TableCellRenderer4Color(true));			
-			vertexColor.setPreferredWidth(10);
-			
-			//Set up renderer and editor for the  Color column.
-			TableColumn vertexColorPicked = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_VertexColorPicked));
-			vertexColorPicked.setCellEditor(new TableCellEditor4Color());
-			vertexColorPicked.setCellRenderer(new TableCellRenderer4Color(true));			
-			vertexColorPicked.setPreferredWidth(10);
-			
-			//Set up renderer and editor for show label
-			TableColumn showLabelClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ShowLable));
-			showLabelClassColumn.setCellEditor(new TableCellEditor4CheckBox(this.componentTypeDialog.getCheckBoxEdgeWidth()));
-			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
-			showLabelClassColumn.setPreferredWidth(10);
-			
-			TableColumn clusterShapeColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ClusterShape));
-			clusterShapeColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxClusterShape()));
-			clusterShapeColumn.setPreferredWidth(10);
-			
-			TableColumn clusterAgentColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ClusterAgent));
-			clusterAgentColumn.setCellEditor(this.componentTypeDialog.getAgentClassesCellEditor());
-			clusterAgentColumn.setCellRenderer(new TableCellRenderer4Label());
+			TableColumn colEdgeShape = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_EdgeShape));
+			colEdgeShape.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxEdgeShape()));
+			colEdgeShape.setPreferredWidth(10);
 			
 		}
-		return jTableDomainTypes;
+		return jTableLayoutTypes;
 	}
 	
 	/**
-	 * Gets the table model for domains.
-	 * @return the table model4 domains
+	 * Gets the table model for layouts.
+	 * @return the table model4 layouts
 	 */
-	private DefaultTableModel getTableModel4Domains(){
-		if (domainTableModel==null) {
-			domainTableModel = new DefaultTableModel(null, this.getColumnHeaderDomains()){
+	private DefaultTableModel getTableModel4Layouts(){
+		if (layoutTableModel==null) {
+			layoutTableModel = new DefaultTableModel(null, this.getColumnHeaderLayouts()){
 				private static final long serialVersionUID = 3550155601170744633L;
 				/* (non-Javadoc)
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 				 */
+				@Override
 				public Class<?> getColumnClass(int columnIndex) {
-		            if(columnIndex==getColumnHeaderIndexDomains(COL_D_VertexColor)) {
-		            	return Color.class;
-		            } else if(columnIndex==getColumnHeaderIndexDomains(COL_D_VertexColorPicked)) {
-		            	return Color.class;
+					if (columnIndex==getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
+						return CoordinateSystemXDirection.class;
+					} else if (columnIndex==getColumnHeaderIndexLayouts(COL_L_Y_Direction)) {
+						return CoordinateSystemYDirection.class;
+					} else if(columnIndex==getColumnHeaderIndexLayouts(COL_L_SnapToGrid)) {
+						return Boolean.class;
+					} else if(columnIndex==getColumnHeaderIndexLayouts(COL_L_SnapGridWidth)) {
+						return Double.class;
+					} else if (columnIndex==getColumnHeaderIndexLayouts(COL_L_EdgeShape)) {
+		            	return EdgeShape.class;
 		            } else {
 		            	return String.class;
 		            }
 		        }
+				/* (non-Javadoc)
+				 * @see javax.swing.table.isCellEditable#getColumnClass(int, int)
+				 */
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					if (column==0) {
+						String value = (String) getTableModel4Layouts().getValueAt(row, column);
+						if (value!=null && value.equals(GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME)==true) {
+							return false;
+						}
+					}
+					return true;
+				}
 			};
 			// --- Fill the table model with data ---------
-			this.fillDomainTableModel();
+			this.fillLayoutTableModel();
 		}
-		return domainTableModel;
+		return layoutTableModel;
 	}
 	/**
-	 * Clear domain table model table.
+	 * Clear layout table model table.
 	 */
-	private void clearDomainTableModel() {
-		if (this.getTableModel4Domains().getRowCount()>0) {
-			this.getTableModel4Domains().getDataVector().removeAllElements();
-			this.getTableModel4Domains().fireTableDataChanged();
+	private void clearLayoutTableModel() {
+		if (this.getTableModel4Layouts().getRowCount()>0) {
+			this.getTableModel4Layouts().getDataVector().removeAllElements();
+			this.getTableModel4Layouts().fireTableDataChanged();
 		}
 	}
 	/**
-	 * Fill domain table model.
+	 * Fill layout table model.
 	 */
-	private void fillDomainTableModel() {
+	private void fillLayoutTableModel() {
 		
 		// --- Clear the table model if not empty -------------------
-		this.clearDomainTableModel();
+		this.clearLayoutTableModel();
 		
-		if (this.domainSettings==null || this.domainSettings.size()==0)  return;
+		if (this.layoutSettings==null || this.layoutSettings.size()==0) return;
 		
 		// --- Set table entries for defined assignments, if any ----
-		Iterator<String> domainIterator = this.domainSettings.keySet().iterator();
-		while (domainIterator.hasNext()){
+		Iterator<String> layoutIterator = this.layoutSettings.keySet().iterator();
+		while (layoutIterator.hasNext()){
 			
-			String domainName = domainIterator.next();
-			DomainSettings domSetting = this.domainSettings.get(domainName);
-
-			String ontologyClass = domSetting.getAdapterClass();
-			Integer vertexSize = domSetting.getVertexSize();
-			if (vertexSize==0) {
-				vertexSize = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE;
-			}
-			Color vertexColor = new Color(Integer.parseInt(domSetting.getVertexColor()));
-			Color vertexColorPicked = new Color(Integer.parseInt(domSetting.getVertexColorPicked()));
-			boolean showLabel = domSetting.isShowLabel();
-			String clusterShape = domSetting.getClusterShape();
-			String clusterAgent = domSetting.getClusterAgent();
+			String layoutName = layoutIterator.next();
+			LayoutSettings layoutSetting = this.layoutSettings.get(layoutName);
+			
+			CoordinateSystemXDirection xDircetion = layoutSetting.getCoordinateSystemXDirection();
+			CoordinateSystemYDirection yDircetion = layoutSetting.getCoordinateSystemYDirection();
+			boolean isSnap2Grid = layoutSetting.isSnap2Grid();
+			double snapRaster = layoutSetting.getSnapRaster();
+			EdgeShape edgeShape = layoutSetting.getEdgeShape();
 			
 			// --- Create row vector --------------
 			Vector<Object> newRow = new Vector<Object>();
-			for (int i = 0; i < this.getColumnHeaderDomains().size(); i++) {
-				if (i == getColumnHeaderIndexDomains(COL_D_DomainName)) {
-					newRow.add(domainName);
-				} else if (i == getColumnHeaderIndexDomains(COL_D_AdapterClass)) {
-					newRow.add(ontologyClass);
-				} else if (i == getColumnHeaderIndexDomains(COL_D_VertexSize)) {
-					newRow.add(vertexSize);
-				} else if (i == getColumnHeaderIndexDomains(COL_D_VertexColor)) {
-					newRow.add(vertexColor);
-				} else if (i == getColumnHeaderIndexDomains(COL_D_VertexColorPicked)) {
-					newRow.add(vertexColorPicked);
-				} else if (i == getColumnHeaderIndexDomains(COL_D_ShowLable)) {
-					newRow.add(showLabel);
-				} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterShape)) {
-					newRow.add(clusterShape);
-				} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterAgent)) {
-					newRow.add(clusterAgent);
+			for (int i = 0; i < this.getColumnHeaderLayouts().size(); i++) {
+				if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
+					newRow.add(layoutName);
+				} else if (i == getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
+					newRow.add(xDircetion);
+				} else if (i == getColumnHeaderIndexLayouts(COL_L_Y_Direction)) {
+					newRow.add(yDircetion);
+				} else if (i == getColumnHeaderIndexLayouts(COL_L_SnapToGrid)) {
+					newRow.add(isSnap2Grid);
+				} else if (i == getColumnHeaderIndexLayouts(COL_L_SnapGridWidth)) {
+					newRow.add(snapRaster);
+				} else if (i == getColumnHeaderIndexLayouts(COL_L_EdgeShape)) {
+					newRow.add(edgeShape);
 				}
 			}
-			this.getTableModel4Domains().addRow(newRow);
+			this.getTableModel4Layouts().addRow(newRow);
 		}
 	}
 	
 	/**
-	 * This method adds a new row to the jTableClasses' TableModel4Domains.
+	 * This method adds a new default row to the table for layouts.
 	 */
-	private void addDomainRow(){
+	private void addLayoutRow(){
 		// --- Create row vector --------------
 		Vector<Object> newRow = new Vector<Object>();
-		for (int i = 0; i < this.getColumnHeaderDomains().size(); i++) {
-			if (i == getColumnHeaderIndexDomains(COL_D_DomainName)) {
+		for (int i = 0; i < this.getColumnHeaderLayouts().size(); i++) {
+			if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
 				newRow.add(null);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_AdapterClass)) {
-				newRow.add(null);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_ShowLable)) {
+			} else if (i == getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
+				newRow.add(CoordinateSystemXDirection.East);
+			} else if (i == getColumnHeaderIndexLayouts(COL_L_Y_Direction)) {
+				newRow.add(CoordinateSystemYDirection.ClockwiseToX);
+			} else if (i == getColumnHeaderIndexLayouts(COL_L_SnapToGrid)) {
 				newRow.add(true);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_VertexSize)) {
-				newRow.add(GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_VertexColor)) {
-				newRow.add(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_VertexColorPicked)) {
-				newRow.add(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterShape)) {
-				newRow.add(GeneralGraphSettings4MAS.SHAPE_DEFAULT_4_CLUSTER);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterAgent)) {
-				newRow.add(null);
+			} else if (i == getColumnHeaderIndexLayouts(COL_L_SnapGridWidth)) {
+				newRow.add(LayoutSettings.DEFAULT_RASTER_SIZE);
+			} else if (i == getColumnHeaderIndexLayouts(COL_L_EdgeShape)) {
+				newRow.add(EdgeShape.Line);
 			}
 		}
 		
-		this.getTableModel4Domains().addRow(newRow);
-		int newIndex = this.getTableModel4Domains().getRowCount() - 1;
-		newIndex = this.getJTable4DomainTypes().convertRowIndexToView(newIndex);
+		this.getTableModel4Layouts().addRow(newRow);
+		int newIndex = this.getTableModel4Layouts().getRowCount() - 1;
+		newIndex = this.getJTable4LayoutTypes().convertRowIndexToView(newIndex);
 		
-		this.getJTable4DomainTypes().changeSelection(newIndex, 0, false, false);
-		this.getJTable4DomainTypes().editCellAt(newIndex, 0);
-		this.componentTypeDialog.setTableCellEditor4DomainsInComponents(null);
+		this.getJTable4LayoutTypes().changeSelection(newIndex, 0, false, false);
+		this.getJTable4LayoutTypes().editCellAt(newIndex, 0);
 	}
 	
 	/**
-	 * Removes the domain row.
+	 * Removes the layout row.
 	 * @param rowNumTable the row num
 	 */
-	private void removeDomainRow(int rowNumTable){
+	private void removeLayoutRow(int rowNumTable){
 		
-		int rowNumModel = this.getJTable4DomainTypes().convertRowIndexToModel(rowNumTable);
-		int colDamain = this.getColumnHeaderIndexDomains(COL_D_DomainName);
-		String domainName = (String)this.getJTable4DomainTypes().getValueAt(rowNumTable, colDamain);
-		String defaultDomain = GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME;
+		int rowNumModel = this.getJTable4LayoutTypes().convertRowIndexToModel(rowNumTable);
+		int colDamain = this.getColumnHeaderIndexLayouts(COL_L_LayoutName);
+		String layoutName = (String)this.getJTable4LayoutTypes().getValueAt(rowNumTable, colDamain);
+		String defaultLayout = GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME;
 		
-		if (domainName!=null) {
-			if (domainName.equals(defaultDomain)) {
+		if (layoutName!=null) {
+			if (layoutName.equals(defaultLayout)) {
 				String newLine = Application.getGlobalInfo().getNewLineSeparator();
 				String msg = Language.translate("Dieser Eintrag ist ein notwendiger Systemparameter, der " + newLine + "nicht gelöscht oder umbenannt werden darf!");
-				String title = "'" + defaultDomain + "': " +  Language.translate("Löschen nicht zulässig!");
+				String title = "'" + defaultLayout + "': " +  Language.translate("Löschen nicht zulässig!");
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				return;
 			} 
 		} 
-		((DefaultTableModel)getJTable4DomainTypes().getModel()).removeRow(rowNumModel);
-		this.componentTypeDialog.renameDomainInComponents(domainName, defaultDomain);
-		this.componentTypeDialog.setTableCellEditor4DomainsInComponents(null);	
-		
+		((DefaultTableModel)getJTable4LayoutTypes().getModel()).removeRow(rowNumModel);
 	}
 	
 	/**
-	 * This method initializes jComboBoxNodeSize	.
-	 *
-	 * @return javax.swing.JComboBox
+	 * Gets the combo box for the coordinate systems X direction.
+	 * @return the combo box coordinate system X direction
 	 */
-	private JComboBoxWide<Integer> getJComboBoxNodeSize() {
-		Integer[] sizeList = {0,5,6,7,8,9,10,11,12,13,14,15,20,25,30,35,40,45,50};
-		DefaultComboBoxModel<Integer> cbmSizes = new DefaultComboBoxModel<Integer>(sizeList); 
-
-		JComboBoxWide<Integer> jComboBoxNodeSize = new JComboBoxWide<Integer>(cbmSizes);
+	private JComboBoxWide<CoordinateSystemXDirection> getJComboBoxCoordinateSystemXDirection() {
+		
+		DefaultComboBoxModel<CoordinateSystemXDirection> cbmXdirections = new DefaultComboBoxModel<>(); 
+		cbmXdirections.addElement(CoordinateSystemXDirection.East);
+		cbmXdirections.addElement(CoordinateSystemXDirection.North);
+		cbmXdirections.addElement(CoordinateSystemXDirection.West);
+		cbmXdirections.addElement(CoordinateSystemXDirection.South);
+		
+		JComboBoxWide<CoordinateSystemXDirection> jComboBoxNodeSize = new JComboBoxWide<>(cbmXdirections);
 		jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
 		return jComboBoxNodeSize;
 	}
-	
 	/**
-	 * Return the current domain vector.
-	 * @return the domain vector
+	 * Gets the combo box for the coordinate systems Y direction.
+	 * @return the combo box coordinate system Y direction
 	 */
-	public Vector<String> getDomainVector() {
-		Vector<String> domainVector =  new Vector<String>();
-		for (int i = 0; i < this.getTableModel4Domains().getRowCount(); i++) {
-			String domain = (String) this.getTableModel4Domains().getValueAt(i, 0);
-			if (domain!=null) {
-				domainVector.addElement(domain);	
-			}
+	private JComboBoxWide<CoordinateSystemYDirection> getJComboBoxCoordinateSystemYDirection() {
+		
+		DefaultComboBoxModel<CoordinateSystemYDirection> cbmXdirections = new DefaultComboBoxModel<>(); 
+		cbmXdirections.addElement(CoordinateSystemYDirection.ClockwiseToX);
+		cbmXdirections.addElement(CoordinateSystemYDirection.CounterclockwiseToX);
+		
+		JComboBoxWide<CoordinateSystemYDirection> jComboBoxNodeSize = new JComboBoxWide<>(cbmXdirections);
+		jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
+		return jComboBoxNodeSize;
+	}
+	/**
+	 * Gets the combo box for the coordinate systems Y direction.
+	 * @return the combo box coordinate system Y direction
+	 */
+	private JComboBoxWide<EdgeShape> getJComboBoxEdgeShape() {
+		
+		DefaultComboBoxModel<EdgeShape> cbmXdirections = new DefaultComboBoxModel<>(); 
+		List<EdgeShape> shapes = new ArrayList<EdgeShape>(Arrays.asList(EdgeShape.values()));
+		for (int i = 0; i < shapes.size(); i++) {
+			cbmXdirections.addElement(shapes.get(i));
 		}
-		Collections.sort(domainVector);
-		return domainVector;
+		
+		JComboBoxWide<EdgeShape> jComboBoxEdgeShapes = new JComboBoxWide<>(cbmXdirections);
+		jComboBoxEdgeShapes.setMaximumRowCount(12);
+		return jComboBoxEdgeShapes;
 	}
 	
-	/**
-	 * Returns the JComboBox for the possible cluster shapes.
-	 * @return the JComboBox for the possible cluster shapes
-	 */
-	private JComboBoxWide<String> getJComboBoxClusterShape() {
-		
-		DefaultComboBoxModel<String> cbmShape = new DefaultComboBoxModel<String>(); 
-		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_ELLIPSE);
-		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_RECTANGLE);
-		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE);
-		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON);
-		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR);
-		
-		JComboBoxWide<String> jComboBoxClusterShape = new JComboBoxWide<String>(cbmShape);
-		jComboBoxClusterShape.setPreferredSize(new Dimension(50, 26));
-		return jComboBoxClusterShape;
-	}
-
 	/* (non-Javadoc)
 	 * @see javax.swing.JComponent#setEnabled(boolean)
 	 */
 	@Override
 	public void setEnabled(boolean enabled) {
-		this.getJTable4DomainTypes().setEnabled(enabled);
-    	this.getJButtonAddDomain().setEnabled(enabled);
-    	this.getJButtonRemoveDomainntRow().setEnabled(enabled);
+		this.getJTable4LayoutTypes().setEnabled(enabled);
+    	this.getJButtonAddLayout().setEnabled(enabled);
+    	this.getJButtonRemoveLayoutRow().setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
 	/**
@@ -535,7 +518,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	 */
 	protected boolean isStopCellEditing() {
 		// --- Stop cell editing, if required ----- 
-    	TableCellEditor editor = this.getJTable4DomainTypes().getCellEditor();
+    	TableCellEditor editor = this.getJTable4LayoutTypes().getCellEditor();
 		if (editor!=null)  {
 			editor.stopCellEditing();
 			return true;
@@ -551,109 +534,103 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if (ae.getSource()==this.getJButtonAddDomain()) {
-			// --- Add a new row to the domain table ----------------
-			this.addDomainRow();
+		if (ae.getSource()==this.getJButtonAddLayout()) {
+			// --- Add a new row to the layout table ----------------
+			this.addLayoutRow();
 			
-		} else if(ae.getSource()==this.getJButtonRemoveDomainntRow()) {
+		} else if(ae.getSource()==this.getJButtonRemoveLayoutRow()) {
 			// --- Remove a row from the component types table ------
-			if(getJTable4DomainTypes().getSelectedRow() > -1){
-				this.removeDomainRow(getJTable4DomainTypes().getSelectedRow());
+			if(getJTable4LayoutTypes().getSelectedRow() > -1){
+				this.removeLayoutRow(getJTable4LayoutTypes().getSelectedRow());
 			}
 		}		
 	}
 	
 	/**
-	 * Sets the domain settings.
-	 * @param domainSettings the domain settings
+	 * Sets the layout settings.
+	 * @param layoutSettings the layout settings
 	 */
-	public void setDomainSettings(TreeMap<String, DomainSettings> domainSettings) {
-		this.domainSettings = domainSettings;
-		this.fillDomainTableModel();
+	public void setLayoutSettings(TreeMap<String, LayoutSettings> layoutSettings) {
+		this.layoutSettings = layoutSettings;
+		this.fillLayoutTableModel();
 	}
 	/**
-	 * Returns the TreeMap of DomainSettings.
-	 * @return the domain settings
+	 * Returns the TreeMap of LayoutSettings.
+	 * @return the layout settings
 	 */
-	public TreeMap<String, DomainSettings> getDomainSettings() {
-		this.hasDomainSettingError();
-		return domainSettings;
+	public TreeMap<String, LayoutSettings> getLayoutSettings() {
+		this.hasLayoutSettingError();
+		return layoutSettings;
 	}
 	
 	/**
-	 * Checks for domain setting errors.
+	 * Checks for layout setting errors.
 	 * @return the component type error
 	 */
-	public ComponentTypeError hasDomainSettingError() {
+	public ComponentTypeError hasLayoutSettingError() {
 		
 		ComponentTypeError cte = null;
 		
-		JTable jtDomains = this.getJTable4DomainTypes();
-		DefaultTableModel dtmDomains = this.getTableModel4Domains();
+		JTable jtLayouts = this.getJTable4LayoutTypes();
+		DefaultTableModel dtmLayouts = this.getTableModel4Layouts();
 		// --- Confirm, apply changes in table ------------					
-		TableCellEditor tceDomains = jtDomains.getCellEditor();
-		if (tceDomains!=null) {
-			tceDomains.stopCellEditing();
+		TableCellEditor tceLayouts = jtLayouts.getCellEditor();
+		if (tceLayouts!=null) {
+			tceLayouts.stopCellEditing();
 		}
 
 		// --- Define a new TreeMap -----------------------
-		TreeMap<String, DomainSettings> dsTreeMap = new TreeMap<String, DomainSettings>();
-		for (int row=0; row<dtmDomains.getRowCount(); row++){
+		TreeMap<String, LayoutSettings> lsTreeMap = new TreeMap<String, LayoutSettings>();
+		for (int row=0; row<dtmLayouts.getRowCount(); row++){
 			
-			String name = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_DomainName));
+			String name = (String) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_LayoutName));
 			if (name!=null && name.length()!=0){
 				
-				String adapterClass  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_AdapterClass));
-				boolean showLabel 	 = (Boolean)dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ShowLable));
-				Integer vertexSize 	 = (Integer)dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexSize));
-				Color color 		 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexColor));
-				String colorStr 	 = String.valueOf(color.getRGB());
-				Color colorPicked	 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexColorPicked));					
-				String colorPickStr	 = String.valueOf(colorPicked.getRGB());
-				String clusterShape  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ClusterShape));
-				String clusterAgent  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ClusterAgent));
+				CoordinateSystemXDirection xDirection 	= (CoordinateSystemXDirection) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_X_Direction));
+				CoordinateSystemYDirection yDirection	= (CoordinateSystemYDirection) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_Y_Direction));
+				boolean isSnapToGrid 					= (boolean)  dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_SnapToGrid));					
+				double  snapRaster 						= (double) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_SnapGridWidth));
+				EdgeShape edgeShape 					= (EdgeShape) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_EdgeShape));
 				
-				DomainSettings ds = new DomainSettings();
-				ds.setAdapterClass(adapterClass);
-				ds.setShowLabel(showLabel);
-				ds.setVertexSize(vertexSize);
-				ds.setVertexColor(colorStr);
-				ds.setVertexColorPicked(colorPickStr);
-				ds.setClusterShape(clusterShape);
-				ds.setClusterAgent(clusterAgent);
+				LayoutSettings ls = new LayoutSettings();
+				ls.setCoordinateSystemXDirection(xDirection);
+				ls.setCoordinateSystemYDirection(yDirection);
+				ls.setSnap2Grid(isSnapToGrid);
+				ls.setSnapRaster(snapRaster);
+				ls.setEdgeShape(edgeShape);
 				
-				ComponentTypeError componentTypeError = this.isDomainConfigError(name, ds, dsTreeMap);
+				ComponentTypeError componentTypeError = this.isLayoutConfigError(name, ls, lsTreeMap);
 				if (componentTypeError!=null) {
 					// --- Set focus to error position ---- 
 					this.componentTypeDialog.getJTabbedPane().setSelectedIndex(0);
-					int tableRow = jtDomains.convertRowIndexToView(row);
-					jtDomains.setRowSelectionInterval(tableRow, tableRow);
+					int tableRow = jtLayouts.convertRowIndexToView(row);
+					jtLayouts.setRowSelectionInterval(tableRow, tableRow);
 					return componentTypeError;
 				}
-				dsTreeMap.put(name, ds);
+				lsTreeMap.put(name, ls);
 			}
 		}
 		// --- If arrived here, set to local variable ----- 
-		this.domainSettings = dsTreeMap;
+		this.layoutSettings = lsTreeMap;
 		
 		return cte;
 	}
 	/**
-	 * Checks if there is domain configuration error.
+	 * Checks if there is layout configuration error.
 	 *
-	 * @param dsName the DomainSettings name
-	 * @param ds the DomainSettings to check
-	 * @param dsHash the DomainSettings hash that contains the already checked DomainSettings
-	 * @return true, if is domain configuration error
+	 * @param dsName the LayoutSettings name
+	 * @param ds the LayoutSettings to check
+	 * @param dsHash the LayoutSettings hash that contains the already checked LayoutSettings
+	 * @return true, if is layout configuration error
 	 */
-	private ComponentTypeError isDomainConfigError(String dsName, DomainSettings ds, TreeMap<String, DomainSettings> dsHash) {
+	private ComponentTypeError isLayoutConfigError(String dsName, LayoutSettings ds, TreeMap<String, LayoutSettings> dsHash) {
 		
 		String title = "";
 		String message = "";
 		if (dsHash.get(dsName)!=null) {
-			// --- Duplicate DomainSettings -------------------------
-			title = Language.translate("Duplicate Domain", Language.EN) + "!";
-			message = Language.translate("The following domain exists at least twice", Language.EN) + ": '" + dsName + "' !";
+			// --- Duplicate LayoutSettings -------------------------
+			title = Language.translate("Duplicate Layout", Language.EN) + "!";
+			message = Language.translate("The following layout exists at least twice", Language.EN) + ": '" + dsName + "' !";
 			return new ComponentTypeError(title, message);
 		}
 		return null;

@@ -164,7 +164,7 @@ de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie 
 de;Der Name;The name
 de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The port for the MTP address must match a value other than 0!;;;
 de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
-de;Der gewählte Bezeichner für das Projektverzeichnis enthält<br>unzulässige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benötigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulässig (verwenden Sie <br>stattdessen _ 'Unterstrich').;;;;
+de;Der gewählte Bezeichner für das Projektverzeichnis enthält<br>unzulässige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benötigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulässig (verwenden Sie <br>stattdessen _ 'Unterstrich').;The selected identifier for the project directory contains invalid or too few characters! <br> <br> Min. 3 to max. 20 characters are required. <br> Only lower case letters are allowed. <br>Spaces are not allowed (please, use '_' instead 'underscore').;;;
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
 de;Derzeit sind keine Module für den Import von Netzwerkmodellen definiert.;Currently, no modules for importing network models are defined.;;;
 de;Details zum Dateiexport;Details of file export;;;
@@ -179,7 +179,7 @@ de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht we
 de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
-de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.<br>Bitte wählen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.; choose a different location.;;
+de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.<br>Bitte wählen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
@@ -187,7 +187,8 @@ de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be re
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
-de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which<br>can not be deleted or renamed!;;;
+de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter that<br>can not be deleted or renamed!;;;
+de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter that <br>can not be deleted or renamed!;;;
 de;Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.;Incremental discrete-time model with start and stop time.;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Doppelte X-Werte nicht zulässig!;Duplicate x values are not allowed!;;;
@@ -219,7 +220,7 @@ de;Entwickler-Ansicht;Developer view
 de;Erfolgreich;Successful;;;
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
-de;Erzeuge die Tabelle 'platforms' für den Server-Master ...;;;;
+de;Erzeuge die Tabelle 'platforms' für den Server-Master ...;Creating table 'platforms' for the Server-Master ...;;;
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
 de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
@@ -396,6 +397,7 @@ de;Lade Umgebung aus;Loading environment from
 de;Lade Umgebungsdatei;Getting environment file
 de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediately on JADE startup;;;
 de;Laufzeit-Visualisierung;Runtime Visualisation;;;
+de;Layouts;Layouts;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
 de;Listen-Sortierung;Component List Sorting;;;
@@ -458,7 +460,7 @@ de;Nach oben verschieben;Move up;;;
 de;Nach unten verschieben;Move down;;;
 de;Name bereits vorhanden!;Name already exists!
 de;Name ungültig!;Invalid name!
-de;Network Model Information;;;;
+de;Network Model Information;Network Model Information;;;
 de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
@@ -660,7 +662,6 @@ de;Tage;Days;;;
 de;Tar.gz-Datei;Tar.gz file;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
-de;Test;;;;
 de;Text zur Übersetzung;Text to translate
 de;Thread-Monitor bei JADE-Start anzeigen;Show Thread-Monitor on Jade startup;;;
 de;Thread-Monitor öffnen;Open Thread-Monitor;;;
@@ -798,15 +799,22 @@ en;;Calculate metrics based on individual agent data.;;;
 en;;Calculate metrics based on last total system cpu time.;;;
 en;;Calculate metrics based on total integrals.;;;
 en;;Calculate the real metrics based on recorded chart value selection.;;;
+en;;Clockwise to X;;;
 en;;Column Headers:;;;
+en;;Counterclockwise to X;;;
 en;;Delete MTP security references?;;;
 en;;Delete security store settings;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
 en;;Discrete squares environment;;;
 en;;Display time is time controlled;;;
+en;;East;;;
+en;;Edge Shape;;;
 en;;Edit security store settings;;;
+en;;Guide Grid Step;;;
+en;;Guide Grid;;;
 en;;Invalid node selection!;;;
+en;;Layout Name;;;
 en;;Network Model Info;;;
 en;;No KeyStore specified!;;;
 en;;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
@@ -817,6 +825,7 @@ en;;No agent selected;;;
 en;;No project updates are available in the IDE environment.;;;
 en;;No update could be found for the current project!;;;
 en;;No visualisation component could be found;;;
+en;;North;;;
 en;;Notifications;;;
 en;;Number of changes;;;
 en;;Operating;;;
@@ -834,6 +843,7 @@ en;;Set timed display time;;;
 en;;Should they be removed too?;;;
 en;;Show Label;;;
 en;;Simulation Interval;;;
+en;;South;;;
 en;;Start Thread Measurement;;;
 en;;Switch Simulation Time Model;;;
 en;;The KeyStore file should be located in directory;;;
@@ -864,10 +874,12 @@ en;;Updated check for;;;
 en;;Updated successful;;;
 en;;Upgrade costs;;;
 en;;Use "<AgentID>" as wildcard for the actual agent ID;;;
+en;;Use Guide Grid;;;
 en;;Validity:;;;
 en;;Validity;;;
 en;;Visualisation Updates;;;
 en;;Warning message;;;
+en;;West;;;
 en;;Widget Orientation: Bottom;;;
 en;;Widget Orientation: Left;;;
 en;;Widget Orientation: Right;;;
@@ -877,10 +889,14 @@ en;;Would you like to download and install this update?;;;
 en;;Writing;;;
 en;;Wrong KeyStore location!;;;
 en;;Wrong TrustStore location!;;;
+en;;X - Direction;;;
+en;;Y - Direction;;;
 en;;You must fill out all required fields!;;;
 en;;You should open a KeyStore to run the HTTPS MTP!;;;
 en;;You should open a TrustStore to run the HTTPS MTP!;;;
 en;;located in the projects 'security' directory;;;
+en;;x-Direction;;;
+en;;y-Direction;;;
 en;Abbruch;Cancel;;;
 en;Adapter meldet Konfigurationsfehler!;Adapter signals configuration error!;;;
 en;Adapter-Klasse;Adapter class;;;
