@@ -155,6 +155,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 		});
 		this.registerEscapeKeyStroke();
 		
+		this.setSize(800, 600);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 	    int width  = (int) (screenSize.getWidth() * 0.7);
 	    int height = (int) (screenSize.getHeight() * 0.7);
@@ -388,9 +389,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			
 			GridBagLayout gridBagLayout = new GridBagLayout();
 			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-			gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
+			gridBagLayout.rowHeights = new int[]{0, 0};
 			gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 			
 			
 			GridBagConstraints gbc_jLabelListSorting = new GridBagConstraints();
