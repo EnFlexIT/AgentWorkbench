@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -53,9 +52,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SortOrder;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.border.EtchedBorder;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -137,7 +135,7 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 		gridBagConstraints13.weightx = 1.0;
 		
 		this.setLayout(new GridBagLayout());
-		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		this.add(this.getJScrollPaneClassTableDomains(), gridBagConstraints13);
 		this.add(this.getJButtonAddDomain(), gridBagConstraints2);
 		this.add(this.getJButtonRemoveDomainntRow(), gridBagConstraints3);
@@ -344,7 +342,23 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 		            	return String.class;
 		            }
 		        }
+			
+				/* (non-Javadoc)
+				 * @see javax.swing.table.isCellEditable#getColumnClass(int, int)
+				 */
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					if (column==0) {
+						String value = (String) getTableModel4Domains().getValueAt(row, column);
+						if (value!=null && value.equals(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME)==true) {
+							return false;
+						}
+					}
+					return true;
+				}
 			};
+			
+			
 			// --- Fill the table model with data ---------
 			this.fillDomainTableModel();
 		}
@@ -415,7 +429,7 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 	/**
 	 * This method adds a new row to the jTableClasses' TableModel4Domains.
 	 */
-	private void addDomainRow(){
+	private void addNewDomainRow(){
 		// --- Create row vector --------------
 		Vector<Object> newRow = new Vector<Object>();
 		for (int i = 0; i < this.getColumnHeaderDomains().size(); i++) {
@@ -444,6 +458,8 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 		
 		this.getJTable4DomainTypes().changeSelection(newIndex, 0, false, false);
 		this.getJTable4DomainTypes().editCellAt(newIndex, 0);
+		this.getJTable4DomainTypes().setSurrendersFocusOnKeystroke(true);
+		this.getJTable4DomainTypes().getEditorComponent().requestFocus();
 		this.componentTypeDialog.setTableCellEditor4DomainsInComponents(null);
 	}
 	
@@ -554,7 +570,7 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 		
 		if (ae.getSource()==this.getJButtonAddDomain()) {
 			// --- Add a new row to the domain table ----------------
-			this.addDomainRow();
+			this.addNewDomainRow();
 			
 		} else if(ae.getSource()==this.getJButtonRemoveDomainntRow()) {
 			// --- Remove a row from the component types table ------

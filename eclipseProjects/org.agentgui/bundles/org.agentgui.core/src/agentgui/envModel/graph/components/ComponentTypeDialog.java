@@ -44,7 +44,6 @@ import java.awt.event.WindowEvent;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -56,7 +55,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -296,8 +294,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			gridBagConstraints.gridx = 0;
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.add(getJTabbedPane(), gridBagConstraints110);
-			jContentPane.add(getJPanelButtonOkCancel(), gridBagConstraints21);
+			jContentPane.add(this.getJTabbedPane(), gridBagConstraints110);
+			jContentPane.add(this.getJPanelButtonOkCancel(), gridBagConstraints21);
 		}
 		return jContentPane;
 	}
@@ -414,8 +412,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			
 			jPanelGeneralSettings = new JPanel();
 			jPanelGeneralSettings.setLayout(gridBagLayout);
-			jPanelGeneralSettings.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			
 			jPanelGeneralSettings.add(getJLabelListSorting(), gbc_jLabelListSorting);
 			jPanelGeneralSettings.add(getJComboBoxListSorting(), gbc_jComboBoxListSorting);
 			

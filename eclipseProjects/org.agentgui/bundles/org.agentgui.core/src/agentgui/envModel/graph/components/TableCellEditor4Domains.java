@@ -34,15 +34,12 @@ import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.BadLocationException;
-
-import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 
 /**
  * This class is used in the {@link ComponentTypeDialog} for showing the agent class selector dialog 
@@ -84,17 +81,12 @@ public class TableCellEditor4Domains extends AbstractCellEditor implements Table
 		
 		this.domainVector = ctsDialog.getDomainVector();
 		this.domainName = (String) value;
-		if (this.domainName!=null && this.domainName.equals(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME)==true) {
-			JLabel jLabel = new JLabel(this.domainName);
-			editComponent = jLabel;
-			
-		} else {
-			JTextField jTextField = new JTextField(this.domainName);
-	        jTextField.setBorder(BorderFactory.createEmptyBorder());
-	        jTextField.getDocument().addDocumentListener(this.getTextFieldDocumentListener());
-	        editComponent = jTextField;
-	        
-		}
+		
+		JTextField jTextField = new JTextField(this.domainName);
+        jTextField.setBorder(BorderFactory.createEmptyBorder());
+        jTextField.getDocument().addDocumentListener(this.getTextFieldDocumentListener());
+        editComponent = jTextField;
+		
 		return editComponent;
 	}
 	

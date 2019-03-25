@@ -34,8 +34,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
@@ -468,6 +471,13 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	}
 	
 	/**
+	 * Generates a unique layout ID.
+	 * @return the string
+	 */
+	public static String generateLayoutID() {
+		return UUID.randomUUID().toString();
+	}
+	/**
 	 * Returns the current layout settings.
 	 * @return the layout settings
 	 */
@@ -475,9 +485,10 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		if (currentLayoutSettings==null) {
 			currentLayoutSettings = new TreeMap<>();
 		}
-		if (this.currentLayoutSettings.size()==0 || this.currentLayoutSettings.containsKey(DEFAULT_LAYOUT_SETTINGS_NAME)==false) {
-			LayoutSettings ds = new LayoutSettings();
-			currentLayoutSettings.put(DEFAULT_LAYOUT_SETTINGS_NAME, ds);
+		if (this.containsDefaultLayout()==false) {
+			LayoutSettings ls = new LayoutSettings();
+			ls.setLayoutName(DEFAULT_LAYOUT_SETTINGS_NAME);
+			currentLayoutSettings.put(generateLayoutID(), ls);
 		}
 		return currentLayoutSettings;
 	}
@@ -488,8 +499,41 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public void setLayoutSettings(TreeMap<String, LayoutSettings> layoutSettings) {
 		this.currentLayoutSettings = layoutSettings;
 	}
+	/**
+	 * Check, if the current LayouSettings contains the default layout.
+	 * @return true, if the DefaultLayout is available
+	 */
+	private boolean containsDefaultLayout() {
+		List<LayoutSettings> layoutSettingList = new ArrayList<>(this.currentLayoutSettings.values());
+		for (int i = 0; i < layoutSettingList.size(); i++) {
+			LayoutSettings lsWork = layoutSettingList.get(i);
+			if (lsWork.getLayoutName().equals(DEFAULT_LAYOUT_SETTINGS_NAME)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * Returns the layout id derived from the layout name.
+	 *
+	 * @param layoutName the layout name
+	 * @return the layout id that corresponds to the layout name or <code>null</code>
+	 */
+	public String getLayoutIdByLayoutName(String layoutName) {
+		
+		List<String> layoutIDs = new ArrayList<>(this.getLayoutSettings().keySet());
+		for (int i = 0; i < layoutIDs.size(); i++) {
+			String layoutIdWork = layoutIDs.get(i);
+			LayoutSettings lsWork = this.getLayoutSettings().get(layoutIdWork);
+			if (lsWork.getLayoutName().equals(layoutName)) {
+				return layoutIdWork;
+			}
+		}
+		return null;
+	}
 
-
+	
+	
 	/**
 	 * Sets the component sorting.
 	 * @param componentSorting the new component sorting
@@ -524,5 +568,5 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public void setCustomToolbarComponentDescriptions(Vector<CustomToolbarComponentDescription> newCustomToolbarComponentDescriptions) {
 		this.customToolbarComponentDescriptions = newCustomToolbarComponentDescriptions;
 	}
-	
+
 }

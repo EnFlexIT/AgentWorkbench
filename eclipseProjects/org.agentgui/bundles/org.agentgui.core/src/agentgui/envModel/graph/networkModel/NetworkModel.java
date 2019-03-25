@@ -82,7 +82,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	private GeneralGraphSettings4MAS generalGraphSettings4MAS;
 	
 	/** The layout (name) used for this NetworkModel. */
-	private String layoutName;
+	private String layoutID;
 	
 	
 	/** The original JUNG graph created or imported in the application. */
@@ -135,33 +135,36 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Returns the layout (name) used by this NetworkModel.
+	 * Returns the layout ID, used by this NetworkModel.
 	 * @return the current layout name
 	 */
-	public String getLayoutName() {
-		if (layoutName==null) {
-			layoutName = GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME;
+	public String getLayoutID() {
+		if (layoutID==null) {
+			layoutID = this.getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME);
 		}
-		return layoutName;
+		return layoutID;
 	}
 	/**
 	 * Sets the layout name to be used by this NetworkModel.
-	 * @param layoutName the new layout name
+	 * @param layoutID the new layout name
 	 */
-	public void setLayoutName(String layoutName) {
-		this.layoutName = layoutName;
+	public void setLayoutID(String layoutID) {
+		this.layoutID = layoutID;
 	}
 	/**
-	 * Returns the {@link LayoutSettings} that correspond to {@link #getLayoutName()}.
+	 * Returns the {@link LayoutSettings} that correspond to {@link #getLayoutID()}.
 	 * @return the layout settings
 	 */
 	public LayoutSettings getLayoutSettings() {
 		
-		LayoutSettings ls = this.getGeneralGraphSettings4MAS().getLayoutSettings().get(this.getLayoutName());
+		LayoutSettings ls = this.getGeneralGraphSettings4MAS().getLayoutSettings().get(this.getLayoutID());
 		if (ls==null) {
+			// --- Change to default layout settings ------
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find LayoutSettings with ID '" + this.getLayoutID() + "' - use defaults now.");
+			String defaultLayoutID = this.generalGraphSettings4MAS.getLayoutIdByLayoutName(GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME);
+			this.setLayoutID(defaultLayoutID);
 			// --- Get the default layout settings --------
-			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find LayoutSettings named '" + this.getLayoutName() + "' and setting and using defaults now.");
-			this.setLayoutName(GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME);
+			ls = this.getGeneralGraphSettings4MAS().getLayoutSettings().get(this.getLayoutID());
 		}
 		return ls;
 	}
@@ -2455,7 +2458,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			// ------------------------------------------------------
 			NetworkModelFileContent fileContent = NetworkModelFileContent.load(xmlFile, false);
 			if (fileContent!=null) {
-				this.setLayoutName(fileContent.getLayoutName());
+				this.setLayoutID(fileContent.getLayoutID());
 				this.setNetworkComponents(fileContent.getNetworkComponentList());
 				return true;
 			}
@@ -2499,7 +2502,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		// --- Try to save the newer file format --------------------
 		// ----------------------------------------------------------
 		NetworkModelFileContent fileContent = new NetworkModelFileContent();
-		fileContent.setLayoutName(this.getLayoutName());
+		fileContent.setLayoutID(this.getLayoutID());
 		fileContent.setNetworkComponentList(this.getNetworkComponents());
 		// --- Do save -----------
 		success = fileContent.save(xmlFile);

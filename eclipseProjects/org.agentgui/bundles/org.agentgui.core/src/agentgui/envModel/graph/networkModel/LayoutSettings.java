@@ -93,6 +93,7 @@ public class LayoutSettings implements Serializable, Cloneable {
 	/** Default raster size for guide grid. */
 	public static final double DEFAULT_RASTER_SIZE = 5.0; 
 	
+	private String layoutName;
 	
 	private CoordinateSystemXDirection coordinateSystemXDirection = CoordinateSystemXDirection.East;
 	private CoordinateSystemYDirection coordinateSystemYDirection = CoordinateSystemYDirection.ClockwiseToX; 
@@ -119,6 +120,7 @@ public class LayoutSettings implements Serializable, Cloneable {
 		LayoutSettings ls2Compare = (LayoutSettings) compareObject;
 		 
 		boolean isEqual = true;
+		if (isEqual==true) isEqual = (this.getLayoutName().equals(ls2Compare.getLayoutName()));
 		if (isEqual==true) isEqual = (this.getCoordinateSystemXDirection()==ls2Compare.getCoordinateSystemXDirection());
 		if (isEqual==true) isEqual = (this.getCoordinateSystemYDirection()==ls2Compare.getCoordinateSystemYDirection());
 		
@@ -134,8 +136,11 @@ public class LayoutSettings implements Serializable, Cloneable {
 	 * @return the copy
 	 */
 	public LayoutSettings getCopy() {
+		
 		LayoutSettings copy = new LayoutSettings();
 
+		copy.setLayoutName(new String(this.getLayoutName()));
+		
 		copy.setCoordinateSystemXDirection(this.getCoordinateSystemXDirection());
 		copy.setCoordinateSystemYDirection(this.getCoordinateSystemYDirection());
 		
@@ -146,6 +151,22 @@ public class LayoutSettings implements Serializable, Cloneable {
 		return copy;
 	}
 
+	
+	/**
+	 * Sets the layout name.
+	 * @param layoutName the new layout name
+	 */
+	public void setLayoutName(String layoutName) {
+		this.layoutName = layoutName;
+	}
+	/**
+	 * Returns the layout name.
+	 * @return the layout name
+	 */
+	public String getLayoutName() {
+		return layoutName;
+	}
+	
 	/**
 	 * Sets the coordinate systems X direction.
 	 * @param coordinateSystemXDirection the new coordinate system X direction

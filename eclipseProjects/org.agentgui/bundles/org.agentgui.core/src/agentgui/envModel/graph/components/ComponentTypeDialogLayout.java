@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -55,7 +54,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -87,6 +85,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	private final String pathImage = GraphGlobals.getPathImages();
 	
 	private Vector<String> columnHeaderLayouts 		= null;
+	private final String COL_L_LayoutID 			= Language.translate("Layout ID", Language.EN);
 	private final String COL_L_LayoutName 			= Language.translate("Layout Name", Language.EN); 
 	private final String COL_L_X_Direction			= Language.translate("X - Direction", Language.EN);
 	private final String COL_L_Y_Direction 			= Language.translate("Y - Direction", Language.EN);
@@ -138,7 +137,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		gridBagConstraints13.weightx = 1.0;
 		
 		this.setLayout(new GridBagLayout());
-		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		this.add(this.getJScrollPaneClassTableLayouts(), gridBagConstraints13);
 		this.add(this.getJButtonAddLayout(), gridBagConstraints2);
 		this.add(this.getJButtonRemoveLayoutRow(), gridBagConstraints3);
@@ -196,6 +195,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			columnHeaderLayouts.add(COL_L_SnapToGrid);
 			columnHeaderLayouts.add(COL_L_SnapGridWidth);	
 			columnHeaderLayouts.add(COL_L_EdgeShape);
+			columnHeaderLayouts.add(COL_L_LayoutID);
 		}
 		return columnHeaderLayouts;
 	}
@@ -294,10 +294,12 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			colSnapGridWidth.setCellRenderer(new TableCellEditor4Spinner(0.1, 100, 0.1));
 			colSnapGridWidth.setPreferredWidth(10);
 			
-			//Set up renderer and editor for the  Color column.	        
 			TableColumn colEdgeShape = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_EdgeShape));
 			colEdgeShape.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxEdgeShape()));
 			colEdgeShape.setPreferredWidth(10);
+
+			// --- Remove the column with the layoutID ---- 
+			tcm.removeColumn(tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_LayoutID)));
 			
 		}
 		return jTableLayoutTypes;
@@ -335,7 +337,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 				 */
 				@Override
 				public boolean isCellEditable(int row, int column) {
-					if (column==0) {
+					if (column==getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
 						String value = (String) getTableModel4Layouts().getValueAt(row, column);
 						if (value!=null && value.equals(GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME)==true) {
 							return false;
@@ -372,9 +374,10 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		Iterator<String> layoutIterator = this.layoutSettings.keySet().iterator();
 		while (layoutIterator.hasNext()){
 			
-			String layoutName = layoutIterator.next();
-			LayoutSettings layoutSetting = this.layoutSettings.get(layoutName);
+			String layoutID = layoutIterator.next();
+			LayoutSettings layoutSetting = this.layoutSettings.get(layoutID);
 			
+			String layoutName = layoutSetting.getLayoutName();
 			CoordinateSystemXDirection xDircetion = layoutSetting.getCoordinateSystemXDirection();
 			CoordinateSystemYDirection yDircetion = layoutSetting.getCoordinateSystemYDirection();
 			boolean isSnap2Grid = layoutSetting.isSnap2Grid();
@@ -384,7 +387,9 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			// --- Create row vector --------------
 			Vector<Object> newRow = new Vector<Object>();
 			for (int i = 0; i < this.getColumnHeaderLayouts().size(); i++) {
-				if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
+				if (i == getColumnHeaderIndexLayouts(COL_L_LayoutID)) {
+					newRow.add(layoutID);
+				} else if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
 					newRow.add(layoutName);
 				} else if (i == getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
 					newRow.add(xDircetion);
@@ -405,11 +410,13 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	/**
 	 * This method adds a new default row to the table for layouts.
 	 */
-	private void addLayoutRow(){
+	private void addNewLayoutRow(){
 		// --- Create row vector --------------
 		Vector<Object> newRow = new Vector<Object>();
 		for (int i = 0; i < this.getColumnHeaderLayouts().size(); i++) {
-			if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
+			if (i == getColumnHeaderIndexLayouts(COL_L_LayoutID)) {
+				newRow.add(GeneralGraphSettings4MAS.generateLayoutID());
+			} else if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
 				newRow.add(null);
 			} else if (i == getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
 				newRow.add(CoordinateSystemXDirection.East);
@@ -430,6 +437,8 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		
 		this.getJTable4LayoutTypes().changeSelection(newIndex, 0, false, false);
 		this.getJTable4LayoutTypes().editCellAt(newIndex, 0);
+		this.getJTable4LayoutTypes().setSurrendersFocusOnKeystroke(true);
+		this.getJTable4LayoutTypes().getEditorComponent().requestFocus();
 	}
 	
 	/**
@@ -439,8 +448,8 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	private void removeLayoutRow(int rowNumTable){
 		
 		int rowNumModel = this.getJTable4LayoutTypes().convertRowIndexToModel(rowNumTable);
-		int colDamain = this.getColumnHeaderIndexLayouts(COL_L_LayoutName);
-		String layoutName = (String)this.getJTable4LayoutTypes().getValueAt(rowNumTable, colDamain);
+		int colLayout = this.getColumnHeaderIndexLayouts(COL_L_LayoutName);
+		String layoutName = (String)this.getJTable4LayoutTypes().getValueAt(rowNumTable, colLayout);
 		String defaultLayout = GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME;
 		
 		if (layoutName!=null) {
@@ -536,7 +545,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		
 		if (ae.getSource()==this.getJButtonAddLayout()) {
 			// --- Add a new row to the layout table ----------------
-			this.addLayoutRow();
+			this.addNewLayoutRow();
 			
 		} else if(ae.getSource()==this.getJButtonRemoveLayoutRow()) {
 			// --- Remove a row from the component types table ------
@@ -583,9 +592,10 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		TreeMap<String, LayoutSettings> lsTreeMap = new TreeMap<String, LayoutSettings>();
 		for (int row=0; row<dtmLayouts.getRowCount(); row++){
 			
-			String name = (String) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_LayoutName));
-			if (name!=null && name.length()!=0){
+			String layoutName = (String) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_LayoutName));
+			if (layoutName!=null && layoutName.length()!=0){
 				
+				String layoutID 						= (String) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_LayoutID));
 				CoordinateSystemXDirection xDirection 	= (CoordinateSystemXDirection) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_X_Direction));
 				CoordinateSystemYDirection yDirection	= (CoordinateSystemYDirection) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_Y_Direction));
 				boolean isSnapToGrid 					= (boolean)  dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_SnapToGrid));					
@@ -593,21 +603,22 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 				EdgeShape edgeShape 					= (EdgeShape) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_EdgeShape));
 				
 				LayoutSettings ls = new LayoutSettings();
+				ls.setLayoutName(layoutName);
 				ls.setCoordinateSystemXDirection(xDirection);
 				ls.setCoordinateSystemYDirection(yDirection);
 				ls.setSnap2Grid(isSnapToGrid);
 				ls.setSnapRaster(snapRaster);
 				ls.setEdgeShape(edgeShape);
 				
-				ComponentTypeError componentTypeError = this.isLayoutConfigError(name, ls, lsTreeMap);
+				ComponentTypeError componentTypeError = this.isLayoutConfigError(layoutName, ls, lsTreeMap);
 				if (componentTypeError!=null) {
 					// --- Set focus to error position ---- 
-					this.componentTypeDialog.getJTabbedPane().setSelectedIndex(0);
+					this.componentTypeDialog.getJTabbedPane().setSelectedIndex(2);
 					int tableRow = jtLayouts.convertRowIndexToView(row);
 					jtLayouts.setRowSelectionInterval(tableRow, tableRow);
 					return componentTypeError;
 				}
-				lsTreeMap.put(name, ls);
+				lsTreeMap.put(layoutID, ls);
 			}
 		}
 		// --- If arrived here, set to local variable ----- 
@@ -618,22 +629,49 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	/**
 	 * Checks if there is layout configuration error.
 	 *
-	 * @param dsName the LayoutSettings name
-	 * @param ds the LayoutSettings to check
-	 * @param dsHash the LayoutSettings hash that contains the already checked LayoutSettings
+	 * @param lsName the LayoutSettings name
+	 * @param lsToCheck the LayoutSettings to check
+	 * @param lsTreeMap the LayoutSettings hash that contains the already checked LayoutSettings
 	 * @return true, if is layout configuration error
 	 */
-	private ComponentTypeError isLayoutConfigError(String dsName, LayoutSettings ds, TreeMap<String, LayoutSettings> dsHash) {
+	private ComponentTypeError isLayoutConfigError(String lsID, LayoutSettings lsToCheck, TreeMap<String, LayoutSettings> lsTreeMap) {
 		
 		String title = "";
 		String message = "";
-		if (dsHash.get(dsName)!=null) {
-			// --- Duplicate LayoutSettings -------------------------
-			title = Language.translate("Duplicate Layout", Language.EN) + "!";
-			message = Language.translate("The following layout exists at least twice", Language.EN) + ": '" + dsName + "' !";
+		if (lsTreeMap.get(lsID)!=null) {
+			// --- Duplicate LayoutSettings ID ----------------------
+			title = Language.translate("Duplicate Layout", Language.EN) + " ID !";
+			message = Language.translate("The following layout exists at least twice", Language.EN) + ": Layout-ID <b>'" + lsID + "'</b> !";
+			return new ComponentTypeError(title, message);
+		}
+		
+		String layoutNameToCheck = lsToCheck.getLayoutName();
+		if (this.isAlreadyAvailableLayoutName(layoutNameToCheck, lsTreeMap)==true) {
+			// --- Duplicate LayoutSettings Name --------------------
+			title = Language.translate("Duplicate Layout", Language.EN) + " Name !";
+			message = Language.translate("The following layout exists at least twice", Language.EN) + ": '" + layoutNameToCheck + "' !";
 			return new ComponentTypeError(title, message);
 		}
 		return null;
+	}
+	/**
+	 * Checks if the specified layout name is already available.
+	 *
+	 * @param layoutNameToCheck the layout name to check
+	 * @param lsTreeMap the LayoutSettings hash that contains the already checked LayoutSettings
+	 * @return true, if is already available layout name
+	 */
+	private boolean isAlreadyAvailableLayoutName(String layoutNameToCheck, TreeMap<String, LayoutSettings> lsTreeMap) {
+		
+		List<LayoutSettings> layoutSettingList = new ArrayList<>(lsTreeMap.values());
+		for (int i = 0; i < layoutSettingList.size(); i++) {
+			LayoutSettings lsWork = layoutSettingList.get(i);
+			if (lsWork.getLayoutName().equals(layoutNameToCheck)) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 	
 }

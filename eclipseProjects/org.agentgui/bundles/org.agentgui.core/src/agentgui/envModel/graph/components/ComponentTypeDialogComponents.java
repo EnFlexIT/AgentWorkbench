@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,7 +51,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -138,7 +136,7 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 		gridBagConstraints1.gridx = 0;
 		
 		this.setLayout(new GridBagLayout());
-		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		this.add(this.getJButtonAddComponentRow(), gridBagConstraints1);
 		this.add(this.getJButtonRemoveComponentRow(), gridBagConstraints6);
 		this.add(this.getJScrollPaneClassTableComponents(), gridBagConstraints24);
@@ -418,7 +416,7 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 	/**
 	 * This method adds a new row to the jTableClasses' TableModel.
 	 */
-	private void addComponentRow(){
+	private void addNewComponentRow(){
 		// --- Create row vector --------------
 		Vector<Object> newRow = new Vector<Object>();
 		for (int i = 0; i < this.getColumnHeaderComponents().size(); i++) {
@@ -450,6 +448,9 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 		int editCell = this.getColumnHeaderIndexComponents(COL_TypeSpecifier);
 		this.getJTable4ComponentTypes().changeSelection(newIndex, editCell, false, false);
 		this.getJTable4ComponentTypes().editCellAt(newIndex, editCell);
+		this.getJTable4ComponentTypes().setSurrendersFocusOnKeystroke(true);
+		this.getJTable4ComponentTypes().getEditorComponent().requestFocus();
+
 		
 	}
 	/**
@@ -555,7 +556,7 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 
 		if(ae.getSource()==this.getJButtonAddComponentRow()){
 			// --- Add a new row to the component types table -------
-			this.addComponentRow();
+			this.addNewComponentRow();
 			
 		} else if(ae.getSource()==this.getJButtonRemoveComponentRow()) {
 			// --- Remove a row from the component types table ------
