@@ -35,12 +35,11 @@ import java.util.Collection;
 
 import javax.swing.ImageIcon;
 
-import edu.uci.ics.jung.graph.Graph;
-
 import agentgui.core.application.Application;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import de.enflexit.common.PathHandling;
+import edu.uci.ics.jung.graph.Graph;
 
 /**
  * The Class Globals for global constant values of the Graph or Network model.
@@ -154,7 +153,7 @@ public final class GraphGlobals {
 	 * @return the graph spread
 	 */
 	public static Rectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
-		if (graph == null) {
+		if (graph==null) {
 			return new Rectangle2D.Double(0, 0, 0, 0);
 		}
 		return getGraphSpreadDimension(graph.getVertices());
@@ -167,32 +166,21 @@ public final class GraphGlobals {
 	 */
 	public static Rectangle2D getGraphSpreadDimension(Collection<GraphNode> graphNodes) {
 
-		int count = 0;
-		double x_min = 0;
-		double x_max = 0;
-		double y_min = 0;
-		double y_max = 0;
-
+		Rectangle2D rect = new Rectangle2D.Double();
+		boolean firstNodeAdded = false;
 		GraphNode[] nodes = graphNodes.toArray(new GraphNode[graphNodes.size()]);
-		for (GraphNode node : nodes) {
-			double x = node.getPosition().getX();
-			double y = node.getPosition().getY();
-
-			if (count == 0) {
-				x_min = x;
-				x_max = x;
-				y_min = y;
-				y_max = y;
+		for (int i = 0; i < nodes.length; i++) {
+			
+			double x = nodes[i].getPosition().getX();
+			double y = nodes[i].getPosition().getY();
+			if (firstNodeAdded==false) {
+				rect.setRect(x, y, 0, 0);
+				firstNodeAdded = true;
 			}
-
-			if (x < x_min) x_min = x;
-			if (x > x_max) x_max = x;
-			if (y < y_min) y_min = y;
-			if (y > y_max) y_max = y;
-			count++;
+			rect.add(x, y);
 		}
-		return new Rectangle2D.Double(x_min, y_min, x_max - x_min, y_max - y_min);
+		return rect;
 	}
 
 	
-} // end class
+} 

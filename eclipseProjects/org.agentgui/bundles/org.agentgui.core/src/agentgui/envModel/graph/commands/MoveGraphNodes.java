@@ -58,11 +58,11 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -7057568320137759472L;
 
-	private GraphEnvironmentController graphController = null;
-	private VisualizationViewer<GraphNode,GraphEdge> visViewer = null; 	
+	private GraphEnvironmentController graphController;
+	private VisualizationViewer<GraphNode,GraphEdge> visViewer; 	
 	
-	private HashMap<String, Point2D> nodesMovedOldPositions = null;
-	private HashMap<String, Point2D> nodesMovedNewPositions = null;
+	private HashMap<String, Point2D> nodesMovedOldPositions;
+	private HashMap<String, Point2D> nodesMovedNewPositions;
 	
 	
 	/**
@@ -80,7 +80,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 		
 		// --- evaluate the current positions ---
 		this.nodesMovedNewPositions = new HashMap<String, Point2D>();
-		for(String nodeID : this.nodesMovedOldPositions.keySet()) {
+		for (String nodeID : this.nodesMovedOldPositions.keySet()) {
 			GraphElement graphElement = this.graphController.getNetworkModel().getGraphElement(nodeID);
 			if (graphElement instanceof GraphNode) {
 				GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
