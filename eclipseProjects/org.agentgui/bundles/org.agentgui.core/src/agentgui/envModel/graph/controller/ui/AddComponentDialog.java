@@ -215,7 +215,14 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			this.registerAtDesktopAndSetVisible();	
 			this.graphDesktop.addComponentListener(this.getComponentAdapter4Desktop());
 		}
-		
+    }
+    
+    /* (non-Javadoc)
+     * @see agentgui.envModel.graph.controller.ui.BasicGraphGuiJInternalFrame#isRemindAsLastOpenedEditor()
+     */
+    @Override
+    protected boolean isRemindAsLastOpenedEditor() {
+    	return false;
     }
     
     /* (non-Javadoc)

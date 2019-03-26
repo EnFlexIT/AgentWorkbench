@@ -74,7 +74,7 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	/**
 	 * Transforms the specified position into the position for the visualization.
 	 *
-	 * @param graphNodePosition the graph node position
+	 * @param npGraphNode the node position of a graph node
 	 * @return the point 2 D
 	 */
 	public Point2D transform(Point2D npGraphNode) {
@@ -120,6 +120,64 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 			break;
 		}
 		return visualNodePosition;
+	}
+	
+	/**
+	 * Inverse transforms the specified position into the position for the GraphNode.
+	 *
+	 * @param visualNodePosition the visual node position
+	 * @return the point 2 D
+	 */
+	public Point2D inverseTransform(Point2D visualNodePosition) {
+		
+		Point2D npGraphNode = new Point2D.Double();
+		
+		LayoutSettings layoutSettings = this.graphController.getNetworkModel().getLayoutSettings();
+		switch (layoutSettings.getCoordinateSystemYDirection()) {
+		case ClockwiseToX:
+			// --- Turn graph node coordinates to the left ---------- 
+			switch (layoutSettings.getCoordinateSystemXDirection()) {
+			case East:
+				npGraphNode = visualNodePosition;
+				break;
+			case North:
+				//visualNodePosition.setLocation(npGraphNode.getY(), npGraphNode.getX() * (-1));
+				npGraphNode.setLocation(visualNodePosition.getY() * (-1), visualNodePosition.getX());
+				break;
+			case West:
+				//visualNodePosition.setLocation(npGraphNode.getX() * (-1), npGraphNode.getY() * (-1));
+				npGraphNode.setLocation(visualNodePosition.getX() * (-1), visualNodePosition.getY() * (-1));
+				break;
+			case South:
+				//visualNodePosition.setLocation(npGraphNode.getY() * (-1), npGraphNode.getX());
+				npGraphNode.setLocation(visualNodePosition.getY(), visualNodePosition.getX() * (-1));
+				break;
+			}
+			break;
+			
+		case CounterclockwiseToX:
+			
+			switch (layoutSettings.getCoordinateSystemXDirection()) {
+			case East:
+				//visualNodePosition.setLocation(npGraphNode.getX(), npGraphNode.getY() * (-1));
+				npGraphNode.setLocation(visualNodePosition.getX(), visualNodePosition.getY()* (-1));
+				break;
+			case North:
+				//visualNodePosition.setLocation(npGraphNode.getY() * (-1), npGraphNode.getX() * (-1));
+				npGraphNode.setLocation(visualNodePosition.getY() * (-1), visualNodePosition.getX() * (-1));
+				break;
+			case West:
+				//visualNodePosition.setLocation(npGraphNode.getX() * (-1), npGraphNode.getY());
+				npGraphNode.setLocation(visualNodePosition.getX() * (-1), visualNodePosition.getY());
+				break;
+			case South:
+				//visualNodePosition.setLocation(npGraphNode.getY(), npGraphNode.getX());
+				npGraphNode.setLocation(visualNodePosition.getY(), visualNodePosition.getX());
+				break;
+			}
+			break;
+		}
+		return npGraphNode;
 	}
 	
 }

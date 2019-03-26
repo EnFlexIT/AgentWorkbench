@@ -42,6 +42,7 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
+import agentgui.envModel.graph.controller.ui.TransformerForGraphNodePosition;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -64,6 +65,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	private HashMap<String, Point2D> nodesMovedOldPositions;
 	private HashMap<String, Point2D> nodesMovedNewPositions;
 	
+	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 	
 	/**
 	 * Instantiates a new UndoableEdit for the movements of GraphNode's.
@@ -102,11 +104,11 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 		PickedState<GraphNode> ps = new MultiPickedState<GraphNode>();
 		this.visViewer.setPickedVertexState(ps);
 		
-		for(String nodeID : nodes2Move.keySet()) {
+		for (String nodeID : nodes2Move.keySet()) {
 			GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
 			if (node!=null) {
 				node.setPosition(nodes2Move.get(nodeID));
-				this.visViewer.getGraphLayout().setLocation(node, node.getPosition());
+				this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
 				ps.pick(node, true);	
 			}
 		}
@@ -121,6 +123,17 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Moved));
 		this.graphController.setProjectUnsaved();
 	}
+	/**
+	 * Returns the graph node position transformer.
+	 * @return the graph node position transformer
+	 */
+	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
+		if (graphNodePositionTransformer==null) {
+			graphNodePositionTransformer = new TransformerForGraphNodePosition<>(this.graphController);
+		}
+		return graphNodePositionTransformer;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#getPresentationName()

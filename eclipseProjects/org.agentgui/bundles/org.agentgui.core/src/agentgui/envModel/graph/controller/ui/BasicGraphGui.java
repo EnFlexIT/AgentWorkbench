@@ -209,7 +209,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Returns the specified JToolBar of the {@link BasicGraphGui}.
 	 *
 	 * @param toolBarType the tool bar type
-	 * @return the j tool bar
+	 * @return the JToolBar
 	 */
 	public JToolBar getJToolBar(ToolBarType toolBarType) {
 		JToolBar toolBar = null;
@@ -376,6 +376,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
 		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
 		layout.setInitializer(new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController()));
+		
 		return layout;
 	}
 	

@@ -39,8 +39,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -55,6 +57,7 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.LayoutSettings;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
@@ -83,6 +86,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGUI;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
+	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 	
 	/** Indicates that a paste action is currently running*/
 	private boolean isPasteAction = false;
@@ -141,6 +145,17 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	}
 	
 	/**
+	 * Returns the graph node position transformer.
+	 * @return the graph node position transformer
+	 */
+	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
+		if (graphNodePositionTransformer==null) {
+			graphNodePositionTransformer = new TransformerForGraphNodePosition<>(this.getGraphController());
+		}
+		return graphNodePositionTransformer;
+	}
+	
+	/**
 	 * Rounds a position value to the closest position using the grid raster.
 	 * @param position the position
 	 * @param snapRaster the snap raster size
@@ -162,7 +177,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		this.removeAllTemporaryNodes(this.getVisViewer().getGraphLayout().getGraph());
 		for (int i = 0; i < this.nodesMoved.size(); i++) {
 			GraphNode node = this.nodesMoved.get(i);
-			this.getVisViewer().getGraphLayout().setLocation(node, node.getPosition());
+			this.getVisViewer().getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
 		}
 	}
 	
@@ -319,7 +334,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		
 		if (this.isPasteAction==true) {
 			if (SwingUtilities.isLeftMouseButton(me)) {
-				// --- Finalise paste action --------------
+				// --- Finalize paste action --------------
 				this.setPasteAction(false, true);
 				
 			} else if (SwingUtilities.isRightMouseButton(me)) {
@@ -339,7 +354,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			if(pickedNode==null && pickedEdge==null){		
 				this.movePanelWithRightAction = true;
 				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-			} 
+			}
+			
 		} else if (SwingUtilities.isLeftMouseButton(me)) {
 			if (pickedNode!=null) {
 				this.moveNodeWithLeftAction = true;	
@@ -347,8 +363,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			} else {
 				this.mousePressedOrClicked(me);	
 			}
+			
 		}
-
 	}
 	
 	/* (non-Javadoc)
@@ -356,13 +372,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@Override
 	public void mouseReleased(MouseEvent me) {
-		super.mouseReleased(me);
 		
+		super.mouseReleased(me);
 		if (SwingUtilities.isRightMouseButton(me)) {
 			if (this.movePanelWithRightAction==true) {
 				this.movePanelWithRightAction = false;
 				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
+			
 		} else if (SwingUtilities.isLeftMouseButton(me)) {
 			if (this.moveNodeWithLeftAction==true) {
 				this.moveNodeWithLeftAction = false;	
@@ -370,8 +387,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				this.createUndoableMoveAction();
 				this.nodesMoved.removeAllElements();
 			} 
+			
 		}
-	
 	}
 	
 	/* (non-Javadoc)
@@ -411,8 +428,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		if (this.moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
-			boolean snapToGrid = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().isSnap2Grid();
-			double snapRaster = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getSnapRaster();
+			LayoutSettings layoutSettings = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getLayoutSettings();
+			boolean snapToGrid = layoutSettings.isSnap2Grid();
+			double snapRaster = layoutSettings.getSnapRaster();
 			
 			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
 			for(GraphNode pickedNode: pickedNodes){
@@ -426,6 +444,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				
 				// --- Get the position of the node ---------------------------
 				Point2D newPos = this.getVisViewer().getGraphLayout().transform(pickedNode);
+				newPos = this.getGraphNodePositionTransformer().inverseTransform(newPos);
 				if (snapToGrid==true && snapRaster>0) {
 					double xPos = roundGridSnap(newPos.getX(), snapRaster); 
 					double yPos = roundGridSnap(newPos.getY(), snapRaster);
@@ -448,7 +467,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	private void mouseDraggedSuperAction(MouseEvent me) {
 	
-		if(locked == false) {
+		if (locked == false) {
             VisualizationViewer<GraphNode,GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
             if(vertex != null) {
                 Point p = me.getPoint();
@@ -508,13 +527,18 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseMoved(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseMoved(MouseEvent me) {
 		
 		if (this.isPasteAction==true) {
 			
 			if (this.networkModel2Paste==null) {
-				// --- Add the NetworkModel that's has to be pasted -
+				// --------------------------------------------------
+				// --- Integrate the clip board NetworkModel --------
+				// --------------------------------------------------
 				this.networkModel2Paste = this.graphController.getClipboardNetworkModel().getCopy();
 				this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(this.networkModel2Paste);
 				this.graphController.getNetworkModel().mergeNetworkModel(this.networkModel2Paste, null, false);
@@ -524,13 +548,16 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				this.graphController.setProjectUnsaved();
 				
 				// --- Mark all GraphElements as selected -----------
-				for (NetworkComponent networkComponent2Paste : this.networkModel2Paste.getNetworkComponents().values()) {
-					
+				List<NetworkComponent> netCompList = new ArrayList<>(this.networkModel2Paste.getNetworkComponents().values());
+				for (int n = 0; n < netCompList.size(); n++) {
+
+					NetworkComponent networkComponent2Paste = netCompList.get(n);
 					NetworkComponent networkComponentPasted = this.graphController.getNetworkModel().getNetworkComponent(networkComponent2Paste.getId());
 					this.graphController.addAgent(networkComponentPasted);
 					
 					Vector<GraphElement> elements = this.networkModel2Paste.getGraphElementsFromNetworkComponent(networkComponentPasted);
-					for (GraphElement graphElement : elements) {
+					for (int i = 0; i < elements.size(); i++) {
+						GraphElement graphElement = elements.get(i);
 						if (graphElement instanceof GraphEdge) {
 							// --- Pick edge ------------------------
 							this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
@@ -539,13 +566,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 							GraphNode graphNodeCurrent = (GraphNode) graphElement;
 							this.getVisViewer().getPickedVertexState().pick(graphNodeCurrent, true);
 							
-							// -------------------------------------------
+							// --------------------------------------
 							// --- Remind the left upper GraphNode --
 							if (this.graphNodeUpperLeft2Paste==null) {
 								this.graphNodeUpperLeft2Paste = graphNodeCurrent;
 							} else {
-								Point2D positionOfGraphNodeAtLeftUpperPosition = this.graphNodeUpperLeft2Paste.getPosition();
-								Point2D positionOfGraphNodeCurrent = graphNodeCurrent.getPosition(); 
+								// --- Consider coordinate system ---
+								Point2D positionOfGraphNodeAtLeftUpperPosition = this.getGraphNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
+								Point2D positionOfGraphNodeCurrent = this.getGraphNodePositionTransformer().transform(graphNodeCurrent.getPosition()); 
 								if (positionOfGraphNodeCurrent.getX()<positionOfGraphNodeAtLeftUpperPosition.getX()) {
 									this.graphNodeUpperLeft2Paste = graphNodeCurrent;
 								} else if (positionOfGraphNodeCurrent.getX()==positionOfGraphNodeAtLeftUpperPosition.getX()) {
@@ -560,34 +588,32 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				}
 			}
 			
+			// ------------------------------------------------------
 			// --- React on the Mouse movement ---------------------- 
-			Point2D mousePositionOnGraph = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
-			double shiftX = mousePositionOnGraph.getX() - this.graphNodeUpperLeft2Paste.getPosition().getX();
-			double shiftY = mousePositionOnGraph.getY() - this.graphNodeUpperLeft2Paste.getPosition().getY();
+			// ------------------------------------------------------
+			Point2D mousePositionLayout = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
 			
-			// --- Accelerate the update position procedure ---------
-			Layout<GraphNode,GraphEdge> layout = this.getVisViewer().getGraphLayout();
-			if (this.graphNodes2Paste == null) {
+			// --- Calculate node movement --------------------------
+			Point2D ulGraphNodeLayout = this.getGraphNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
+			double shiftXLayout = mousePositionLayout.getX() - ulGraphNodeLayout.getX();
+			double shiftYLayout = mousePositionLayout.getY() - ulGraphNodeLayout.getY();
 			
+			// --- Create reminder array for nodes to move ---------- 
+			if (this.graphNodes2Paste==null) {
 				PickedState<GraphNode> ps = this.getVisViewer().getPickedVertexState();
 				this.graphNodes2Paste = new GraphNode[ps.getPicked().size()];
 				ps.getPicked().toArray(this.graphNodes2Paste);
-				for (int i = 0; i < this.graphNodes2Paste.length; i++) {
-					GraphNode graphNode = graphNodes2Paste[i];
-					Point2D vp = layout.transform(graphNode);
-	                vp.setLocation(vp.getX()+shiftX, vp.getY()+shiftY);
-	                layout.setLocation(graphNode, vp);
-	                graphNode.setPosition(vp);
-				}
-
-			} else {
-				
-				for (int i = 0; i < this.graphNodes2Paste.length; i++) {
-					Point2D vp = graphNodes2Paste[i].getPosition();
-	                vp.setLocation(vp.getX()+shiftX, vp.getY()+shiftY);
-	                layout.setLocation(graphNodes2Paste[i], vp);
-	                graphNodes2Paste[i].setPosition(vp);
-				}
+			}
+			
+			// --- Adjust position ----------------------------------
+			Layout<GraphNode,GraphEdge> layout = this.getVisViewer().getGraphLayout();
+			for (int i = 0; i < this.graphNodes2Paste.length; i++) {
+				// --- Set location in Layout -----------------------
+				Point2D locLayout = layout.transform(graphNodes2Paste[i]);
+                locLayout.setLocation(locLayout.getX()+shiftXLayout, locLayout.getY()+shiftYLayout);
+                layout.setLocation(graphNodes2Paste[i], locLayout);
+                // --- Set coordinate system location ---------------
+                graphNodes2Paste[i].setPosition(this.getGraphNodePositionTransformer().inverseTransform(locLayout));
 			}
             this.getVisViewer().repaint();
             me.consume();
@@ -597,22 +623,29 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	
 	/**
 	 * Sets the paste cursor.
+	 *
+	 * @param isDoPaste the do paste
+	 * @param isFinalizePasteAction the finalize paste action
 	 */
-	private void setPasteAction(boolean doPaste, boolean finalisePasteAction) {
+	private void setPasteAction(boolean isDoPaste, boolean isFinalizePasteAction) {
 		
 		// --- Are we in picking mode? ------------------------------
-		if (this.getVisViewer().getGraphMouse() == this.basicGraphGUI.getPluggableGraphMouse()) {
+		if (this.getVisViewer().getGraphMouse()==this.basicGraphGUI.getPluggableGraphMouse()) {
 			
-			this.isPasteAction = doPaste;
+			this.isPasteAction = isDoPaste;
 			if (this.isPasteAction==true) {
+				// --------------------------------------------------
 				// --- Initiate paste action ------------------------
+				// --------------------------------------------------
 				ImageIcon cursorImage = GraphGlobals.getImageIcon("Paste.png");
-				Cursor cursorForPaste = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage.getImage(), new Point(0,0), "Paste");
+				Cursor cursorForPaste = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage.getImage(), new Point(0, 0), "Paste");
 				this.setCursor(cursorForPaste);
 				
 			} else {
-				// --- Finalise paste action ------------------------
-				if (finalisePasteAction==true) {
+				// --------------------------------------------------
+				// --- Finalize paste action ------------------------
+				// --------------------------------------------------
+				if (isFinalizePasteAction==true) {
 					// --- Create an undoable action ----------------
 					this.graphController.getNetworkModelAdapter().pasteNetworkModel(this.networkModel2Paste);
 					
@@ -674,12 +707,16 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			this.setPasteAction(false, false);
 		}
 	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
 	@Override
-	public void keyPressed(KeyEvent ke) {
-	}
+	public void keyPressed(KeyEvent ke) { }
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
 	@Override
-	public void keyReleased(KeyEvent ke) {
-	}
+	public void keyReleased(KeyEvent ke) { }
 
 	
 }
