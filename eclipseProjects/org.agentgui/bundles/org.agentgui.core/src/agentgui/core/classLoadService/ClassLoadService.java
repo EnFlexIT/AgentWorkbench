@@ -32,8 +32,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
@@ -88,22 +86,6 @@ public interface ClassLoadService extends BaseClassLoadService {
 	 */
 	public PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException;
 	
-	/**
-	 * Has to returns the {@link NetworkComponentAdapter} instance from the specified class name..
-	 *
-	 * @param adapterClassname the adapter classname
-	 * @param graphController the current {@link GraphEnvironmentController} instance
-	 * @return the network component adapter instance
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws SecurityException the security exception
-	 * @throws NoSuchMethodException the no such method exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws InvocationTargetException the invocation target exception
-	 */
-	public NetworkComponentAdapter getNetworkComponentAdapterInstance(String adapterClassname, GraphEnvironmentController graphController) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException;
-
 	/**
 	 * Has to returns an instance of a static load balancing to use by the specified agent.
 	 *

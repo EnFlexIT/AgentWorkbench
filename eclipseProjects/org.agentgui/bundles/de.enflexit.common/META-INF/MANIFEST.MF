@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
@@ -43,6 +43,7 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.p2,
  de.enflexit.common.swing,
  de.enflexit.common.swing.fileSelection,
+ de.enflexit.common.swing.imageFileSelection,
  de.enflexit.common.transfer,
  org.apache.commons.compress,
  org.apache.commons.compress.archivers,

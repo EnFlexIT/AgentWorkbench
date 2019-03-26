@@ -67,16 +67,16 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.gui.TimeFormatImportConfiguration;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.imaging.ConfigurableFileFilter;
-import agentgui.core.gui.imaging.ImageFileView;
-import agentgui.core.gui.imaging.ImagePreview;
-import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 import de.enflexit.common.csv.CsvFileWriter;
 import de.enflexit.common.ontology.gui.DynForm;
 import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
+import de.enflexit.common.swing.imageFileSelection.ImageFileView;
+import de.enflexit.common.swing.imageFileSelection.ImagePreview;
+import de.enflexit.common.swing.imageFileSelection.ImageUtils;
 
 /**
  * General superclass for OntologyClassEditorJPanel implementations for charts.

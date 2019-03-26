@@ -42,7 +42,6 @@ import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -137,8 +136,9 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	
 	/**
 	 * Returns a new environment controller that depends on the actual EnvironmentModel.<br> 
-	 * As Example: In case of the 'Graph and Network Environment' a new 
-	 * {@link GraphEnvironmentController} will be created and returned.
+	 * As Example: In case of the 'Graph and Network Environment' a new  GraphEnvironmentController 
+	 * will be created and returned.
+	 * 
 	 * @return the new EnvironmentController
 	 */
 	protected abstract EnvironmentController createNewEnvironmentController();

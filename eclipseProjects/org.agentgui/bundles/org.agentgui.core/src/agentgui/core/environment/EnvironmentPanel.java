@@ -32,13 +32,10 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
-
 /**
  * In order to build an user interface, where environments can be defined by
  * end users in a visual way, this class has to be extended.  
  * 
- * @see GraphEnvironmentControllerGUI
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class EnvironmentPanel extends JPanel implements Observer {

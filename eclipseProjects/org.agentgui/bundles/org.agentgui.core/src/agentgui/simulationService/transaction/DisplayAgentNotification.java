@@ -30,9 +30,6 @@ package agentgui.simulationService.transaction;
 
 import java.io.Serializable;
 
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.visualisation.DisplayAgent;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 
@@ -40,14 +37,10 @@ import agentgui.simulationService.environment.EnvironmentModel;
  * The abstract Class DisplayAgentNotification is the base class for notifications that can 
  * be directed to display agents that are working on an environment model, located in
  * {@link EnvironmentModel#getDisplayEnvironment()}. 
- * For the possible notifications that can be send to specialised display agents, have 
- * a look at the corresponding packages of the special environment model. 
- * As example see the links of 'See also:'
+ * For the possible notifications that can be send to specialized display agents, have 
+ * a look to the corresponding packages of a special environment model (e.g. the graph environment). 
  *  
  * @see SimulationManagerAgent
- * @see GraphEnvironmentController#getDisplayEnvironmentModel()
- * @see NetworkModel
- * @see DisplayAgent
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

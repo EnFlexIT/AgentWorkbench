@@ -32,8 +32,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
@@ -84,14 +82,6 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	@Override
 	public PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		return this.getClassLoadService(pluginClassName, ClassLoadService.class).getPlugInInstance(pluginClassName, project);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getNetworkComponentAdapterInstance(java.lang.String, agentgui.envModel.graph.controller.GraphEnvironmentController)
-	 */
-	@Override
-	public NetworkComponentAdapter getNetworkComponentAdapterInstance(String adapterClassname, GraphEnvironmentController graphController) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return this.getClassLoadService(adapterClassname, ClassLoadService.class).getNetworkComponentAdapterInstance(adapterClassname, graphController);
 	}
 
 	/* (non-Javadoc)

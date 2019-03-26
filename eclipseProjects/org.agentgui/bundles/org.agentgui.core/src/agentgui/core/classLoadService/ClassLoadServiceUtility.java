@@ -32,8 +32,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
@@ -117,24 +115,6 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 */
 	public static PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException , NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		return getClassLoadServiceUtilityImpl().getPlugInInstance(pluginClassName, project);
-	}
-	
-	/**
-	 * Returns the network component adapter instance from the specified class name..
-	 *
-	 * @param adapterClassName the class name
-	 * @param graphController the graph controller
-	 * @return the network component adapter instance
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws SecurityException the security exception
-	 * @throws NoSuchMethodException the no such method exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws InvocationTargetException the invocation target exception
-	 */
-	public static NetworkComponentAdapter getNetworkComponentAdapterInstance(String adapterClassName, GraphEnvironmentController graphController) throws ClassNotFoundException, SecurityException , NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		return getClassLoadServiceUtilityImpl().getNetworkComponentAdapterInstance(adapterClassName, graphController);
 	}
 	
 	/**

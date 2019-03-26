@@ -35,8 +35,6 @@ import java.lang.reflect.Method;
 import agentgui.core.classLoadService.ClassLoadService;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.time.TimeModel;
@@ -117,25 +115,6 @@ public class ClassLoadServiceImpl implements ClassLoadService {
 		Class<?> currOntoClass = Class.forName(ontologyClassName);
 		Method method = currOntoClass.getMethod("getInstance", new Class[0]);
 		return (Ontology) method.invoke(currOntoClass, new Object[0]);
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.classLoadService.ClassLoadService#getNetworkComponentAdapterInstance(java.lang.String, agentgui.envModel.graph.controller.GraphEnvironmentController)
-	 */
-	@Override
-	public NetworkComponentAdapter getNetworkComponentAdapterInstance(String adapterClassname, GraphEnvironmentController graphController) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-
-		@SuppressWarnings("unchecked")
-		Class<? extends NetworkComponentAdapter> nca = (Class<? extends NetworkComponentAdapter>) Class.forName(adapterClassname);
-		// --- look for the right constructor parameter ---------
-		Class<?>[] conParameter = new Class[1];
-		conParameter[0] = GraphEnvironmentController.class;
-		// --- Get the constructor ------------------------------	
-		Constructor<?> ncaConstructor = nca.getConstructor(conParameter);
-		// --- Define the argument for the newInstance call ----- 
-		Object[] args = new Object[1];
-		args[0] = graphController;
-		return (NetworkComponentAdapter) ncaConstructor.newInstance(args);
 	}
 
 	/* (non-Javadoc)

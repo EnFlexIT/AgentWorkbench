@@ -67,8 +67,6 @@ public class BundleClassFilterCollector {
 		be.addBundleClassFilter(new FilterForDynamicLoadBalancing(), false);
 
 		be.addBundleClassFilter(new FilterForTimeModel(), false);
-		be.addBundleClassFilter(new FilterForGraphElementPrototype(), false);
-		be.addBundleClassFilter(new FilterForNetworkComponentAdapter(), false);
 	
 		// ----------------------------------------------------------
 		// --- Check for filter services ----------------------------

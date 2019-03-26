@@ -68,8 +68,6 @@ import agentgui.core.gui.MainWindow;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.visualisation.DisplayAgent;
 import agentgui.logging.logfile.LogbackConfigurationReader;
 import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -127,7 +125,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileEndProjectZip = "agui";
 	
 	// --- Known EnvironmentTypes of Agent.GUI ----------------------
-	private EnvironmentTypes knownEnvironmentTypes = new EnvironmentTypes();
+	private EnvironmentTypes knownEnvironmentTypes;
 	
 	// --- PropertyContentProvider ----------------------------------
 	private PropertyContentProvider propertyContentProvider;
@@ -298,7 +296,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		String envDisplayNameLanguage = null;
 		Class<? extends EnvironmentController> envControllerClass = null;
 		Class<? extends Agent> displayAgentClass = null;
-		EnvironmentType envType = null;
 		
 		// --- No environment -------------------------------------------------
 		envKey = "none";
@@ -306,8 +303,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		envDisplayNameLanguage = Language.DE;
 		envControllerClass = null;
 		displayAgentClass = null;
-		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
-		addEnvironmentType(envType);
+		this.addEnvironmentType(new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass));
 		
 		// --- Grid Environment -----------------------------------------------
 		envKey = "gridEnvironment";
@@ -315,8 +311,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		envDisplayNameLanguage = Language.DE;
 		envControllerClass = GraphEnvironmentController.class;
 		displayAgentClass = DisplayAgent.class;
-		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
-		addEnvironmentType(envType);
+		this.addEnvironmentType(new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass));
 		
 		if (debug==true) {
 			GlobalInfo.println4SysProps();
@@ -1695,6 +1690,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @see EnvironmentTypes
 	 */
 	public EnvironmentTypes getKnownEnvironmentTypes() {
+		if (knownEnvironmentTypes==null) {
+			knownEnvironmentTypes = new EnvironmentTypes();
+		}
 		return knownEnvironmentTypes;
 	}
 	/**
@@ -1704,7 +1702,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @see EnvironmentType
 	 */
 	public void addEnvironmentType(EnvironmentType envType ) {
-		this.knownEnvironmentTypes.add(envType);
+		this.getKnownEnvironmentTypes().add(envType);
 	}
 	/**
 	 * This method can be used in order to remove a tailored environment type
@@ -1712,7 +1710,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @see EnvironmentType
 	 */
 	public void removeEnvironmentType(EnvironmentType envType) {
-		this.knownEnvironmentTypes.remove(envType);
+		this.getKnownEnvironmentTypes().remove(envType);
 	}
 	/**
 	 * This method can be used in order to remove a tailored environment type
@@ -1720,7 +1718,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @see EnvironmentType
 	 */
 	public void removeEnvironmentType(String envTypeKey) {
-		EnvironmentType envType = this.knownEnvironmentTypes.getEnvironmentTypeByKey(envTypeKey);
+		EnvironmentType envType = this.getKnownEnvironmentTypes().getEnvironmentTypeByKey(envTypeKey);
 		this.removeEnvironmentType(envType);
 	}
 	

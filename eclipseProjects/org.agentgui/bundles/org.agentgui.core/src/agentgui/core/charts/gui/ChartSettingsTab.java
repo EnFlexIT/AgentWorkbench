@@ -54,8 +54,8 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.ChartSettingModelListener;
 import agentgui.core.charts.NoSuchSeriesException;
-import agentgui.envModel.graph.components.TableCellEditor4Color;
-import agentgui.envModel.graph.components.TableCellRenderer4Color;
+import de.enflexit.common.swing.TableCellEditor4Color;
+import de.enflexit.common.swing.TableCellRenderer4Color;
 
 /**
  * GUI component for editing the settings for a chart. This component provides means to edit 
