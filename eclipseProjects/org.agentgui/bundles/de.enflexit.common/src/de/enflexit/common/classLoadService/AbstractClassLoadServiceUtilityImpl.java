@@ -338,11 +338,11 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 				for (int i = 0; i < serviceReferences.length; i++) {
 					
 					// --- Get the component factory and its name -----------------------
-					ComponentFactory compFactory = (ComponentFactory) this.getBundleContext().getService(serviceReferences[i]);
+					ComponentFactory<?> compFactory = (ComponentFactory<?>) this.getBundleContext().getService(serviceReferences[i]);
 					String compFactoryName = compFactory.toString();
 					
 					// --- Create ComponentInstance and the actual implementation -------
-					ComponentInstance compInstance = compFactory.newInstance(null);
+					ComponentInstance<?> compInstance = compFactory.newInstance(null);
 					// --- Create a instance of the service -----------------------------
 					Object serviceInstance = compInstance.getInstance();
 					if (serviceInstance instanceof BaseClassLoadService) {
@@ -384,7 +384,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 				System.err.println("=> BaseClassLoadServiceUtillity: Could not find any service for '" + SERVICE_REFERENCE_FILTER + "'.");
 				System.err.println("   Ensure that the following bundles are configured in your start configuration:");
 				System.err.println("   org.eclipse.core.runtime - Start Level=1 - Auto-Start=true");
-				System.err.println("   org.eclipse.equinox.ds   - Start Level=2 - Auto-Start=true");
+				System.err.println("   org.apache.felix.scr     - Start Level=2 - Auto-Start=true");
 			}
 			
 		} catch (InvalidSyntaxException isEx) {

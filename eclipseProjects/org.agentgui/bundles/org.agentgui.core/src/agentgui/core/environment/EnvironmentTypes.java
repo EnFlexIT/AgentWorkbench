@@ -42,7 +42,6 @@ import agentgui.core.config.GlobalInfo;
  * @see Application#getGlobalInfo()
  * @see GlobalInfo
  * @see GlobalInfo#getKnownEnvironmentTypes()
- * @see GlobalInfo#setKnownEnvironmentTypes(EnvironmentTypes)
  * @see EnvironmentType
  *   
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen

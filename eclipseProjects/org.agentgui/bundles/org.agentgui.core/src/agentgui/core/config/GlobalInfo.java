@@ -63,6 +63,7 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
+import agentgui.core.environment.EnvironmentTypeServiceFinder;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.network.JadeUrlConfiguration;
@@ -286,38 +287,12 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			ex.printStackTrace();
 		}
 		// --------------------------------------------------------------------
-		if (debug==true) System.err.println(localAppTitle + " execution directory is '" + localBaseDir + "'");
-		
-		// --------------------------------------------------------------------
-		// --- Define the known EnvironmentTypes of Agent.GUI -----------------
-		// --------------------------------------------------------------------
-		String envKey = null;
-		String envDisplayName = null;
-		String envDisplayNameLanguage = null;
-		Class<? extends EnvironmentController> envControllerClass = null;
-		Class<? extends Agent> displayAgentClass = null;
-		
-		// --- No environment -------------------------------------------------
-		envKey = "none";
-		envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
-		envDisplayNameLanguage = Language.DE;
-		envControllerClass = null;
-		displayAgentClass = null;
-		this.addEnvironmentType(new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass));
-		
-		// --- Grid Environment -----------------------------------------------
-		envKey = "gridEnvironment";
-		envDisplayName = "Graph bzw. Netzwerk";
-		envDisplayNameLanguage = Language.DE;
-		envControllerClass = GraphEnvironmentController.class;
-		displayAgentClass = DisplayAgent.class;
-		this.addEnvironmentType(new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass));
-		
+
 		if (debug==true) {
+			System.err.println(localAppTitle + " execution directory is '" + localBaseDir + "'");
 			GlobalInfo.println4SysProps();
 			GlobalInfo.println4EnvProps();
 		}
-
 	}
 	
 	/**
@@ -1675,15 +1650,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// ---- Methods for EnvironmentTypes ---------------------------------------
 	// -------------------------------------------------------------------------
 	/**
-	 * This method can be used in order to define the predefined environment types of Agent.GUI
-	 * @param knownEnvironmentTypes the knowEnvironmentTypes to set
-	 * @see EnvironmentType
-	 * @see EnvironmentTypes
-	 */
-	public void setKnownEnvironmentTypes(EnvironmentTypes knownEnvironmentTypes) {
-		this.knownEnvironmentTypes = knownEnvironmentTypes;
-	}
-	/**
 	 * This method returns all EnvironmentTypes known by Agent.GUI 
 	 * @return the knowEnvironmentTypes
 	 * @see EnvironmentType
@@ -1692,6 +1658,20 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public EnvironmentTypes getKnownEnvironmentTypes() {
 		if (knownEnvironmentTypes==null) {
 			knownEnvironmentTypes = new EnvironmentTypes();
+			// --- Define 'No environment' ------------------------------------
+			String envKey = "none";
+			String envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
+			String envDisplayNameLanguage = Language.DE;
+			Class<? extends EnvironmentController> envControllerClass = null;
+			Class<? extends Agent> displayAgentClass = null;
+			knownEnvironmentTypes.add(new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass));
+		}
+		// --- Check for environments in the dynamic OSGI environment ---------
+		List<EnvironmentType> envTypeList = EnvironmentTypeServiceFinder.findEnvironmentTypeServices();
+		for (int i = 0; i < envTypeList.size(); i++) {
+			if (knownEnvironmentTypes.contains(envTypeList.get(i))==false) {
+				knownEnvironmentTypes.add(envTypeList.get(i));
+			}
 		}
 		return knownEnvironmentTypes;
 	}
@@ -1701,8 +1681,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @param envType
 	 * @see EnvironmentType
 	 */
-	public void addEnvironmentType(EnvironmentType envType ) {
-		this.getKnownEnvironmentTypes().add(envType);
+	public void addEnvironmentType(EnvironmentType envType) {
+		if (envType==null) return;
+		if (this.getKnownEnvironmentTypes().contains(envType)==false) {
+			this.getKnownEnvironmentTypes().add(envType);
+		}
 	}
 	/**
 	 * This method can be used in order to remove a tailored environment type
@@ -1710,6 +1693,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @see EnvironmentType
 	 */
 	public void removeEnvironmentType(EnvironmentType envType) {
+		if (envType==null) return;
 		this.getKnownEnvironmentTypes().remove(envType);
 	}
 	/**

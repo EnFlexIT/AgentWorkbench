@@ -293,16 +293,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	/**
 	 * Instantiates a new project.
 	 */
-	public Project() {
-		// ----------------------------------------------------------
-		// --- Fill the projects ComboBoxModel for environments -----
-		Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
-		for (int i = 0; i < appEnvTypes.size(); i++) {
-			EnvironmentType envType = (EnvironmentType) appEnvTypes.get(i);
-			this.getEnvironmentsComboBoxModel().addElement(envType);
-		}
-		// ----------------------------------------------------------
-	}
+	public Project() { }
 
 	/**
 	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and agentgui.bin).
@@ -2117,6 +2108,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public DefaultComboBoxModel<EnvironmentType> getEnvironmentsComboBoxModel() {
 		if (environmentsComboBoxModel == null) {
 			environmentsComboBoxModel = new DefaultComboBoxModel<EnvironmentType>();
+			// --- Fill the ComboBoxModel with known environments ---
+			Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
+			for (int i = 0; i < appEnvTypes.size(); i++) {
+				environmentsComboBoxModel.addElement(appEnvTypes.get(i));
+			}
 		}
 		return environmentsComboBoxModel;
 	}
