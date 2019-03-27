@@ -22,10 +22,10 @@ Export-Package: agentgui.envModel.graph,
  agentgui.envModel.graph.prototypes,
  agentgui.envModel.graph.visualisation,
  agentgui.envModel.graph.visualisation.notifications
-Require-Bundle: de.enflexit.api;bundle-version="1.0.0",
- de.enflexit.common;bundle-version="1.1.0",
- org.agentgui.core;bundle-version="2.1.8",
- org.agentgui.lib.jade;bundle-version="4.5.1",
- org.agentgui.lib.jung;bundle-version="2.0.1",
- org.eclipse.core.runtime;bundle-version="3.15.200"
+Require-Bundle: de.enflexit.api,
+ de.enflexit.common,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ org.agentgui.lib.jung,
+ org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
