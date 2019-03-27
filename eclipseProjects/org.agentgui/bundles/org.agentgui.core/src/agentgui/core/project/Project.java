@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
@@ -268,12 +267,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * and their file names 
 	 */
 	private SimulationSetups simulationSetups;
-
-	/**
-	 * This model contains all known environment types of the application 
-	 * and can be also used for tailored environment models / types
-	 */
-	@XmlTransient private DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel;
 
 	/** The EnvironmentController of the project. */
 	@XmlTransient private EnvironmentController environmentController;
@@ -2098,31 +2091,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public void resetEnvironmentController() {
 		this.environmentController = null;
 		this.getEnvironmentController();
-	}
-
-	/**
-	 * Returns the current ComboBoxModel for environment types.
-	 * @return the environmentsComboBoxModel
-	 */
-	@XmlTransient
-	public DefaultComboBoxModel<EnvironmentType> getEnvironmentsComboBoxModel() {
-		if (environmentsComboBoxModel == null) {
-			environmentsComboBoxModel = new DefaultComboBoxModel<EnvironmentType>();
-			// --- Fill the ComboBoxModel with known environments ---
-			Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
-			for (int i = 0; i < appEnvTypes.size(); i++) {
-				environmentsComboBoxModel.addElement(appEnvTypes.get(i));
-			}
-		}
-		return environmentsComboBoxModel;
-	}
-
-	/**
-	 * Sets the ComboBoxModel for environment types.
-	 * @param environmentsComboBoxModel the environmentsComboBoxModel to set
-	 */
-	public void setEnvironmentsComboBoxModel(DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel) {
-		this.environmentsComboBoxModel = environmentsComboBoxModel;
 	}
 
 	/**

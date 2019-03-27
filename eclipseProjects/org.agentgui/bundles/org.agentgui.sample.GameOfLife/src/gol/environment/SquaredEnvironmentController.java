@@ -14,6 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
@@ -47,7 +48,7 @@ public class SquaredEnvironmentController extends EnvironmentController {
 	 */
 	public SquaredEnvironmentController(Project project) {
 		super(project);
-		if (this.getProject()!=null) {
+		if (this.getProject()!=null && this.getCurrentSimulationSetup()!=null) {
 			this.updateEnvironmentFileName();
 			this.loadEnvironment();				
 		}
@@ -130,7 +131,10 @@ public class SquaredEnvironmentController extends EnvironmentController {
 	 */
 	private void updateEnvironmentFileName(){
 		myCurrentSimSetupName = this.getProject().getSimulationSetupCurrent();
-		this.getCurrentSimulationSetup().setEnvironmentFileName(myCurrentSimSetupName+".xml");
+		SimulationSetup setup = this.getCurrentSimulationSetup();
+		if (myCurrentSimSetupName!=null && setup!=null) {
+			setup.setEnvironmentFileName(myCurrentSimSetupName+".xml");
+		}
 	}
 	
 	/**

@@ -65,10 +65,10 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 		try {
 			plugIn = ClassLoadServiceUtility.getPlugInInstance(plugInReference, project);
 			
-		} catch (ClassNotFoundException  | SecurityException | NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+		} catch (ClassNotFoundException | NoClassDefFoundError | SecurityException | NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + ex.toString());
 			PlugInError plugInError = new PlugInError(project);
-			plugInError.setException(ex);
+			plugInError.setThrowable(ex);
 			plugIn = plugInError;
 		}
 		

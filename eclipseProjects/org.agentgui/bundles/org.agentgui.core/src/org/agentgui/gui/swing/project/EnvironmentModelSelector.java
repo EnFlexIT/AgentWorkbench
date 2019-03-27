@@ -38,7 +38,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -63,15 +65,20 @@ public class EnvironmentModelSelector extends JPanel implements Observer {
 	private static final long serialVersionUID = 7115612858197530835L;
 
 	private Project currProject;
-	private JPanel jPanelSimulationEnvironment;
+	
+	private JLabel jLabelHeader;
+
+	private JPanel jPanelEnvironmentSelection;
 	private JLabel jLabelEnvTyp;
+	private DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel; 
 	private JComboBox<EnvironmentType> jComboBoxEnvironmentModelSelector;
-	private JPanel jPanelTimeModelSelection;
+	
 	private JLabel jLabelTimeModelClass;
+	private JPanel jPanelTimeModelSelection;
 	private JTextField jTextFieldTimeModelClass;
+
 	private JButton jButtonDefaultTimeModel;
 	private JButton jButtonSelectTimeModel;
-	private JLabel lblNewLabel;
 
 	
 	/**
@@ -96,17 +103,17 @@ public class EnvironmentModelSelector extends JPanel implements Observer {
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 		
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
-		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 0;
-		add(getLblNewLabel(), gbc_lblNewLabel);
-		GridBagConstraints gbc_jPanelSimulationEnvironment = new GridBagConstraints();
-		gbc_jPanelSimulationEnvironment.insets = new Insets(10, 0, 0, 0);
-		gbc_jPanelSimulationEnvironment.anchor = GridBagConstraints.NORTHWEST;
-		gbc_jPanelSimulationEnvironment.gridx = 0;
-		gbc_jPanelSimulationEnvironment.gridy = 1;
-		add(getJPanelSimulationEnvironment(), gbc_jPanelSimulationEnvironment);
+		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
+		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
+		gbc_jLabelHeader.gridx = 0;
+		gbc_jLabelHeader.gridy = 0;
+		add(getJLabelHeader(), gbc_jLabelHeader);
+		GridBagConstraints gbc_jPanelEnvironmentSelection = new GridBagConstraints();
+		gbc_jPanelEnvironmentSelection.insets = new Insets(10, 0, 0, 0);
+		gbc_jPanelEnvironmentSelection.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jPanelEnvironmentSelection.gridx = 0;
+		gbc_jPanelEnvironmentSelection.gridy = 1;
+		add(getJPanelEnvironmentSelection(), gbc_jPanelEnvironmentSelection);
 		GridBagConstraints gbc_jPanelTimeModelSelection = new GridBagConstraints();
 		gbc_jPanelTimeModelSelection.insets = new Insets(10, 0, 0, 0);
 		gbc_jPanelTimeModelSelection.fill = GridBagConstraints.BOTH;
@@ -116,20 +123,20 @@ public class EnvironmentModelSelector extends JPanel implements Observer {
 
 	}
 
-	private JLabel getLblNewLabel() {
-		if (lblNewLabel == null) {
-			lblNewLabel = new JLabel(Language.translate("Agentenumgebung"));
-			lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+	private JLabel getJLabelHeader() {
+		if (jLabelHeader == null) {
+			jLabelHeader = new JLabel(Language.translate("Agentenumgebung"));
+			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
 		}
-		return lblNewLabel;
+		return jLabelHeader;
 	}
 	
 	/**
 	 * Gets the j panel simulation environment.
 	 * @return the j panel simulation environment
 	 */
-	private JPanel getJPanelSimulationEnvironment() {
-		if (jPanelSimulationEnvironment == null) {
+	private JPanel getJPanelEnvironmentSelection() {
+		if (jPanelEnvironmentSelection == null) {
 			
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.anchor = GridBagConstraints.WEST;
@@ -141,19 +148,19 @@ public class EnvironmentModelSelector extends JPanel implements Observer {
 			jLabelEnvTyp.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.anchor = GridBagConstraints.WEST;
 			gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
 			gridBagConstraints4.gridy = 1;
-			gridBagConstraints4.anchor = GridBagConstraints.WEST;
 			gridBagConstraints4.insets = new Insets(5, 0, 0, 0);
-			jPanelSimulationEnvironment = new JPanel();
+			jPanelEnvironmentSelection = new JPanel();
 			
-			GridBagLayout gbl_jPanelSimulationEnvironment = new GridBagLayout();
-			gbl_jPanelSimulationEnvironment.columnWeights = new double[] { 0.0 };
-			jPanelSimulationEnvironment.setLayout(gbl_jPanelSimulationEnvironment);
-			jPanelSimulationEnvironment.add(getJComboBoxEnvironmentModelSelector(), gridBagConstraints4);
-			jPanelSimulationEnvironment.add(jLabelEnvTyp, gridBagConstraints5);
+			GridBagLayout gbl_jPanelEnvironmentSelection = new GridBagLayout();
+			gbl_jPanelEnvironmentSelection.columnWeights = new double[] { 0.0 };
+			jPanelEnvironmentSelection.setLayout(gbl_jPanelEnvironmentSelection);
+			jPanelEnvironmentSelection.add(getJComboBoxEnvironmentModelSelector(), gridBagConstraints4);
+			jPanelEnvironmentSelection.add(jLabelEnvTyp, gridBagConstraints5);
 		}
-		return jPanelSimulationEnvironment;
+		return jPanelEnvironmentSelection;
 	}
 
 	/**
@@ -165,7 +172,7 @@ public class EnvironmentModelSelector extends JPanel implements Observer {
 			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
 			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
 			if (this.currProject!=null) {
-				jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
+				jComboBoxEnvironmentModelSelector.setModel(this.getComboBoxModelEnvironments());
 				jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
 			}
 			jComboBoxEnvironmentModelSelector.addActionListener(new ActionListener() {
@@ -182,7 +189,17 @@ public class EnvironmentModelSelector extends JPanel implements Observer {
 		}
 		return jComboBoxEnvironmentModelSelector;
 	}
-
+	private DefaultComboBoxModel<EnvironmentType> getComboBoxModelEnvironments() {
+		if (environmentsComboBoxModel == null) {
+			environmentsComboBoxModel = new DefaultComboBoxModel<EnvironmentType>();
+			// --- Fill the ComboBoxModel with known environments ---
+			Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
+			for (int i = 0; i < appEnvTypes.size(); i++) {
+				environmentsComboBoxModel.addElement(appEnvTypes.get(i));
+			}
+		}
+		return environmentsComboBoxModel;
+	}
 	/**
 	 * Gets the j panel time model selection.
 	 * @return the j panel time model selection

@@ -9,11 +9,7 @@
     <updateDateLastChecked>0</updateDateLastChecked>
     <environmentModel>Squared</environmentModel>
     <projectFeatures/>
-    <projectResources/>
-    <reCreateProjectManifest>true</reCreateProjectManifest>
-    <plugins>
-        <className>gol.plugin.GameOfLifePlugIn</className>
-    </plugins>
+    <plugins/>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
@@ -81,6 +77,14 @@
                 <realMetricMin>3.475751765547533</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
+            <agentClass>
+                <className>system.class.-Regular-Thread-</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>5.746786754152532</realMetricAverage>
+                <realMetricMax>5.7467867541526045</realMetricMax>
+                <realMetricMin>5.7467867541526045</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
         </agentClassMetricDescriptionVector>
         <useRealLoadMetric>false</useRealLoadMetric>
     </agentClassLoadMetricsTable>
@@ -90,60 +94,60 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>4050 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>1250 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
     <simulationSetups>
         <entry>
-            <key>0242 Agents</key>
-            <value>0242_agents.xml</value>
-        </entry>
-        <entry>
-            <key>0722 Agents</key>
-            <value>0722_agents.xml</value>
-        </entry>
-        <entry>
-            <key>0072 Agents</key>
-            <value>0072_agents.xml</value>
-        </entry>
-        <entry>
-            <key>1250 Agents</key>
-            <value>1250_agents.xml</value>
-        </entry>
-        <entry>
-            <key>0128 Agents</key>
-            <value>0128_agents.xml</value>
-        </entry>
-        <entry>
-            <key>2048 Agents</key>
-            <value>2048_agents.xml</value>
-        </entry>
-        <entry>
-            <key>0968 Agents</key>
-            <value>0968_agents.xml</value>
-        </entry>
-        <entry>
             <key>0018 Agents</key>
             <value>0018_agents.xml</value>
-        </entry>
-        <entry>
-            <key>1800 Agents</key>
-            <value>1800_agents.xml</value>
         </entry>
         <entry>
             <key>0032 Agents</key>
             <value>0032_agents.xml</value>
         </entry>
         <entry>
-            <key>4050 Agents</key>
-            <value>4050_agents.xml</value>
+            <key>0072 Agents</key>
+            <value>0072_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0128 Agents</key>
+            <value>0128_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0242 Agents</key>
+            <value>0242_agents.xml</value>
         </entry>
         <entry>
             <key>0512 Agents</key>
             <value>0512_agents.xml</value>
         </entry>
         <entry>
+            <key>0722 Agents</key>
+            <value>0722_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0968 Agents</key>
+            <value>0968_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1250 Agents</key>
+            <value>1250_agents.xml</value>
+        </entry>
+        <entry>
             <key>1458 Agents</key>
             <value>1458_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1800 Agents</key>
+            <value>1800_agents.xml</value>
+        </entry>
+        <entry>
+            <key>2048 Agents</key>
+            <value>2048_agents.xml</value>
+        </entry>
+        <entry>
+            <key>4050 Agents</key>
+            <value>4050_agents.xml</value>
         </entry>
     </simulationSetups>
 </project>

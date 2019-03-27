@@ -376,7 +376,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 		// --- In case of a PlugInError instance ----------
 		if (plugIn instanceof PlugInError) {
 			PlugInError errorPlugIn = (PlugInError) plugIn;
-			pile.setPlugInLoadMessage(errorPlugIn.getException().toString());
+			pile.setPlugInLoadMessage(errorPlugIn.getThrowable().toString());
 		}
 		if (this.getListModelPlugIns().contains(pile)==false) {
 			this.getListModelPlugIns().addElement(pile);

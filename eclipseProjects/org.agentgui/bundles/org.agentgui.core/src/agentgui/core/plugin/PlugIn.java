@@ -28,8 +28,6 @@
  */
 package agentgui.core.plugin;
 
-import jade.core.ProfileImpl;
-
 import java.awt.Container;
 import java.util.Observable;
 import java.util.Observer;
@@ -42,7 +40,6 @@ import org.agentgui.gui.swing.project.ProjectWindowTab;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.environment.EnvironmentType;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
@@ -51,6 +48,7 @@ import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
 import de.enflexit.common.ontology.gui.OntologyClassVisualisation;
 import de.enflexit.common.ontology.gui.OntologyClassWidget;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
+import jade.core.ProfileImpl;
 
 /**
  * This abstract class is the root for customized plug-in's, which can
@@ -72,7 +70,6 @@ public abstract class PlugIn implements Observer {
 
 	private Vector<JComponent> customJComponent = new Vector<JComponent>();
 	private Vector<ProjectWindowTab> customProjectWindowTab = new Vector<ProjectWindowTab>();
-	private Vector<EnvironmentType> customEnvironmentTypes = new Vector<EnvironmentType>();
 	private Vector<OntologyClassVisualisation> customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
 	
 	
@@ -230,22 +227,6 @@ public abstract class PlugIn implements Observer {
 	}
 	
 	/**
-	 * Adds an environment type to the list of available environment types. It can be used 
-	 * in order to register an individual, tailored EnvironmentType to Agent.GUI.<br>
-	 * After this method was invoked the EnvironmentType can be found for selection
-	 * in the Resources-Tab of the project configuration.
-	 *  
-	 * @param envType the new EnvironmentType
-	 */
-	protected void addEnvironmentType(EnvironmentType envType) {
-		if (envType!=null) {
-			Application.getGlobalInfo().addEnvironmentType(envType);	
-			project.getEnvironmentsComboBoxModel().addElement(envType);
-			customEnvironmentTypes.add(envType);
-		}
-	}
-	
-	/**
 	 * Adds a OntologyClassVisualisation to the global settings. The idea of such an object is
 	 * that you are able to mask / visualize a specified class of your Ontology in order to allow 
 	 * a more common or simplified access to its data.
@@ -292,17 +273,6 @@ public abstract class PlugIn implements Observer {
 			pwt.remove();
 		}
 		customProjectWindowTab = new Vector<ProjectWindowTab>();
-		
-		// --- Remove custom environment types ------------
-		for (int i = customEnvironmentTypes.size()-1; i>-1; i--) {
-			EnvironmentType envType = customEnvironmentTypes.get(i);
-			if (envType.equals(this.project.getEnvironmentModelType())) {
-				this.project.setEnvironmentModelName("none");
-			}
-			project.getEnvironmentsComboBoxModel().removeElement(envType);
-			Application.getGlobalInfo().removeEnvironmentType(envType);
-		}
-		customEnvironmentTypes = new Vector<EnvironmentType>();
 		
 		// --- Remove custom ontology visualizations ------
 		for (int i = customOntologyClassVisualisation.size()-1; i>-1; i--) {

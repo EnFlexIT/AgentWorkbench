@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  de.enflexit.common;bundle-version="1.0.0",
  org.agentgui.core;bundle-version="2.0.0",
- org.agentgui.lib.jade;bundle-version="4.4.0"
+ org.agentgui.lib.jade;bundle-version="4.4.0",
+ org.awb.env.networkModel;bundle-version="2.1.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: agentproject,
  org.agentgui.sample.plugin

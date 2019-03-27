@@ -37,7 +37,7 @@ import agentgui.core.project.Project;
  */
 public class PlugInError extends PlugIn {
 
-	private Exception exception;
+	private Throwable throwable;
 	
 	/**
 	 * Instantiates a new plug in error.
@@ -55,18 +55,18 @@ public class PlugInError extends PlugIn {
 	}
 
 	/**
-	 * Sets the exception.
-	 * @param ex the new exception
+	 * Sets the throwable.
+	 * @param ex the new throwable
 	 */
-	public void setException(Exception ex) {
-		exception = ex;
+	public void setThrowable(Throwable ex) {
+		throwable = ex;
 	}
 	/**
-	 * Returns the exception that was thrown during load operation.
-	 * @return the exception
+	 * Returns the throwable that was thrown during load operation.
+	 * @return the throwable
 	 */
-	public Exception getException() {
-		return exception;
+	public Throwable getThrowable() {
+		return throwable;
 	}
 	
 }
