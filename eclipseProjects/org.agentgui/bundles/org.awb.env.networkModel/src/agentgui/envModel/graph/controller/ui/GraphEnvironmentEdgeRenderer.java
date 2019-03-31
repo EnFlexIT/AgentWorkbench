@@ -66,8 +66,11 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	private float markerStrokeWidth = 0;
 	private Color markerColor = new Color(255,0,0, 140);
 	
+	
 	/**
 	 * Checks if is show marker.
+	 *
+	 * @param edge the GraphEdge
 	 * @return true, if is show marker
 	 */
 	public boolean isShowMarker(GraphEdge edge) {
@@ -75,6 +78,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	}
 	/**
 	 * Returns the marker stroke width.
+	 *
+	 * @param edge the GraphEdge
 	 * @return the marker stroke width
 	 */
 	public float getMarkerStrokeWidth(GraphEdge edge) {
@@ -82,6 +87,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	}
 	/**
 	 * Returns the marker color.
+	 *
+	 * @param edge the GraphEdge
 	 * @return the marker color
 	 */
 	public Color getMarkerColor(GraphEdge edge) {

@@ -202,8 +202,10 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	public String getEdgeImage(){
 		return edgeImage;
 	}	
+	
 	/**
-	 * Sets the path to the component edge image icon
+	 * Sets the path to the component edge image icon.
+	 * @param edgeImage the new edge image
 	 */
 	public void setEdgeImage(String edgeImage){
 		this.edgeImage = edgeImage;

@@ -65,6 +65,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	
 	/**
 	 * Instantiates a new BasicGraphGuiJLayeredPane.
+	 * @param graphController the current graph controller
 	 */
 	public BasicGraphGuiJDesktopPane(GraphEnvironmentController graphController) {
 		this.graphController = graphController;

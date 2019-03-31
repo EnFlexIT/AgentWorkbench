@@ -629,7 +629,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 
 	/**
 	 * Removes a set of network components.
+	 *
 	 * @param networkComponents the network components
+	 * @return the set of removed components 
 	 */
 	public HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
 		
@@ -1680,7 +1682,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Checks, if the specified list of {@link NetworkComponent}s contains a DistributionNode.
 	 * 
-	 * @param netCompList the components as HashSet<NetworkComponent>
+	 * @param netCompList the NetworkComponent list to evaluate
 	 * @return the NetworkComponent that IS the first DistributionNode or null
 	 */
 	public boolean containsDistributionNode(List<NetworkComponent> netCompList) {
@@ -1769,9 +1771,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 
 	/**
 	 * Given a node and a graph component of star prototype, checks whether the node is the center of the star or not.
-	 * 
+	 *
 	 * @param node The node to be checked
 	 * @param networkComponent The network component containing the node having the star prototype
+	 * @return true, if is center node of star
 	 */
 	public boolean isCenterNodeOfStar(GraphNode node, NetworkComponent networkComponent) {
 		for (String graphElementID : networkComponent.getGraphElementIDs()) {
@@ -2418,9 +2421,12 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return success;
 	}
+	
 	/**
 	 * Save the network topology to a GraphML file.
+	 *
 	 * @param graphMlFile the GraphML file
+	 * @return true, if successful
 	 */
 	public boolean saveGraphFile(File graphMlFile) {
 		

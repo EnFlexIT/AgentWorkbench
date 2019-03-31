@@ -85,7 +85,10 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     private JPopupMenu vertexPopup;
 
     
-    /** Creates a new instance of GraphPopupMenuMousePlugin */
+    /**
+     * Creates a new instance of GraphPopupMenuMousePlugin.
+     * @param parentGUI the instance of the parent {@link BasicGraphGui}
+     */
     public GraphEnvironmentPopupPlugin(BasicGraphGui parentGUI) {
         super(MouseEvent.BUTTON3_MASK);
         this.basicGraphGui = parentGUI;
@@ -371,7 +374,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     }
     /**
      * Setter for the Edge popup.
-     * @param edgePopup 
+     * @param edgePopup the JPopupMenu to use for edges
      */
     public void setEdgePopup(JPopupMenu edgePopup) {
         this.edgePopup = edgePopup;
@@ -386,7 +389,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     }
     /**
      * Setter for the vertex popup.
-     * @param vertexPopup 
+     * @param vertexPopup the JPopupMenu to use for vertices 
      */
     public void setVertexPopup(JPopupMenu vertexPopup) {
         this.vertexPopup = vertexPopup;

@@ -88,7 +88,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
     
     /**
-     * This is the default constructor for just displaying the current environment model during a running simulation
+     * This is the default constructor for just displaying the current environment model during a running simulation.
+     *
+     * @param envController the current EnvironmentController that is of typ {@link GraphEnvironmentController}
      */
     public GraphEnvironmentControllerGUI(EnvironmentController envController) {
 		super(envController);

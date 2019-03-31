@@ -76,7 +76,7 @@ public class NetworkModelFileContent {
 	}
 	/**
 	 * Sets the ID of the used layout.
-	 * @param layoutID the new layout used
+	 * @param newLayoutID the new layout used
 	 */
 	public void setLayoutID(String newLayoutID) {
 		this.layoutID = newLayoutID;
@@ -93,15 +93,14 @@ public class NetworkModelFileContent {
 	 * Sets the NetworkComponent list.
 	 * @param networkComponentList the networkComponentList to set
 	 */
-	public void setNetworkComponentList(TreeMap<String, NetworkComponent> componentList) {
-		this.networkComponentList = componentList;
+	public void setNetworkComponentList(TreeMap<String, NetworkComponent> networkComponentList) {
+		this.networkComponentList = networkComponentList;
 	}
 
 	/**
 	 * Save the current NetworkModelFileContent to the specified XML file.
 	 *
 	 * @param xmlFile the component file
-	 * @param fileContent the NetworkModelFileContent
 	 * @return true, if successful
 	 */
 	public boolean save(File xmlFile) {
@@ -151,7 +150,6 @@ public class NetworkModelFileContent {
 	 * Load the NetworkModelFileContent from a XML file.
 	 *
 	 * @param xmlFile the components file
-	 * @param isPrintException set true if you want to print exceptions
 	 * @return true, if successful
 	 */
 	public static NetworkModelFileContent load(File xmlFile) {

@@ -46,7 +46,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 
 
 /**
- * The SatelliteDialog for the graph & network environment.
+ * The SatelliteDialog for the graph and network environment.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

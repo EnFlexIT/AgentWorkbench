@@ -78,8 +78,10 @@ public abstract class GraphElement implements Serializable {
 	public void setGraphElementLayout(GraphElementLayout graphElementLayout) {
 		this.graphElementLayout=graphElementLayout;
 	}
+	
 	/**
 	 * Returns the graph element layout.
+	 * @param networkModel the current {@link NetworkModel}
 	 * @return the graph element layout
 	 */
 	public GraphElementLayout getGraphElementLayout(NetworkModel networkModel) {
@@ -89,8 +91,10 @@ public abstract class GraphElement implements Serializable {
 		}
 		return this.graphElementLayout;
 	}
+	
 	/**
 	 * Resets the graph element layout.
+	 * @param networkModel the current {@link NetworkModel}
 	 */
 	public void resetGraphElementLayout(NetworkModel networkModel) {
 		this.graphElementLayout = null;

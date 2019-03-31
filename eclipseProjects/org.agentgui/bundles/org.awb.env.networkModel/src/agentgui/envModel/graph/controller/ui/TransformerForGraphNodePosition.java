@@ -43,9 +43,6 @@ import agentgui.envModel.graph.networkModel.LayoutSettings.CoordinateSystemYDire
  * according to the {@link LayoutSettings}, where the position of the used coordinate system is specified 
  * by a {@link CoordinateSystemXDirection} and a {@link CoordinateSystemYDirection}.
  *
- * @param <V> the value type
- * @param <Point2D> the generic type
- * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphNode, Point2D> {
@@ -63,7 +60,7 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	/**
 	 * Transforms the specified {@link GraphNode}s position into the position for the visualization.
 	 *
-	 * @param graphNodePosition the graph node position
+	 * @param graphNode the graph node with its position 
 	 * @return the point 2 D
 	 */
 	@Override

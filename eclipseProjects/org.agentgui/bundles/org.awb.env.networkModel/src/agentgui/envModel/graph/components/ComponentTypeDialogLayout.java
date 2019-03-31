@@ -108,7 +108,6 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	 * Instantiates a new component type dialog layouts.
 	 *
 	 * @param componentTypeDialog the parent {@link ComponentTypeDialog}
-	 * @param layoutSettings the layout settings
 	 */
 	public ComponentTypeDialogLayout(ComponentTypeDialog componentTypeDialog) {
 		this.componentTypeDialog = componentTypeDialog;
@@ -574,7 +573,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	
 	/**
 	 * Checks for layout setting errors.
-	 * @return the component type error
+	 * @return the component type error or null
 	 */
 	public ComponentTypeError hasLayoutSettingError() {
 		

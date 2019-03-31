@@ -72,11 +72,11 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	/** File chooser for selecting the image. */
 	private JFileChooser fileChooser;
     private JButton jButtonRemove;
+
     
     /**
-     * Constructor.
-     *
-     * @param project The current project to be passed by the parent
+     * Instantiates a new table cell editor 4 image.
+     * @param ctsDialog the current ComponentTypeDialog
      */
 	public TableCellEditor4Image(ComponentTypeDialog ctsDialog) {
 		this.ctsDialog = ctsDialog;

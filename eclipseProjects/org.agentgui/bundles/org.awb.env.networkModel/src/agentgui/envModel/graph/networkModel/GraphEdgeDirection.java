@@ -39,12 +39,9 @@ public class GraphEdgeDirection implements Serializable {
 
 	private static final long serialVersionUID = -5039217366665937971L;
 
-	/** The graph edge id. */
-	private String graphEdgeID = null;
-	/** The graph node id from. */
-	private String graphNodeIDFrom = null; 	
-	/** The graph node id to. */
-	private String graphNodeIDTo = null;
+	private String graphEdgeID;
+	private String graphNodeIDFrom; 	
+	private String graphNodeIDTo;
 
 	private boolean fixedDirected = false;
 	
@@ -54,8 +51,14 @@ public class GraphEdgeDirection implements Serializable {
 	public GraphEdgeDirection() {
 		
 	}
+	
 	/**
 	 * Instantiates a new graph edge direction.
+	 *
+	 * @param graphEdgeID the graph edge ID
+	 * @param graphNodeIDFrom the graph node ID from
+	 * @param graphNodeIDTo the graph node ID to
+	 * @param fixedDirected the fixed directed
 	 */
 	public GraphEdgeDirection(String graphEdgeID, String graphNodeIDFrom, String graphNodeIDTo, boolean fixedDirected) {
 		this.graphEdgeID = graphEdgeID;

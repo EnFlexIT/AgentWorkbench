@@ -55,6 +55,10 @@ public class TableCellEditor4Spinner extends AbstractCellEditor implements Table
 	 
 	/**
 	 * Instantiates a new table cell editor 4 a JSpinner.
+	 *
+	 * @param minimum the minimum value
+	 * @param maximum the maximum value
+	 * @param stepSize the step size for the spinner
 	 */
 	public TableCellEditor4Spinner(double minimum, double maximum, double stepSize) { 
 		this.minimum  = minimum;

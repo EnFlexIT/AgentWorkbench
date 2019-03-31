@@ -82,7 +82,7 @@ import jade.core.AID;
  * @see GraphNode#getDataModel()
  * @see NetworkComponentAdapter
  * @see NetworkComponentAdapter4DataModel
- * @see NetworkComponentAdapter4DataModel#getVisualisationComponent()
+ * @see NetworkComponentAdapter4DataModel#getVisualizationComponent(BasicGraphGuiProperties)
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -727,7 +727,9 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	
 	/**
 	 * Puts a data model notification into this property window.
+	 *
 	 * @param dmn the DataModelNotification
+	 * @return true, if successful
 	 */
 	public boolean setDataModelNotification(DataModelNotification dmn) {
 		

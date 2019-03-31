@@ -715,7 +715,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	
 	/**
 	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
-	 * @see GeneralGraphSettings4MAS#getEdgeShape()
+	 * @see LayoutSettings#getEdgeShape()
 	 */
 	public void setEdgeShapeTransformer() {
 		this.setEdgeShapeTransformer(this.getVisualizationViewer());
@@ -723,7 +723,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	
 	/**
 	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
-	 * @see GeneralGraphSettings4MAS#getEdgeShape()
+	 * @see LayoutSettings#getEdgeShape()
 	 * @param visViewer the vis viewer
 	 */
 	public void setEdgeShapeTransformer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
@@ -785,8 +785,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.selectObject(pickedObject);
 	}
 	/**
-	 * Invoked when a graph node or edge is double clicked (left or right)
-	 * @param pickedObject
+	 * Invoked when a graph node or edge is double clicked (left or right).
+	 * @param pickedObject the picked object
 	 */
 	public void handleObjectDoubleClick(Object pickedObject) {
 		
@@ -858,8 +858,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 
 	/**
-	 * Gets the Set<GraphNode> of picked nodes.
-	 * @return the picked nodes
+	 * Return a set of GraphNodes that are currently picked.
+	 * @return the picked nodes or null
 	 */
 	public Set<GraphNode> getPickedNodes() {
 		PickedState<GraphNode> nodesPicked = this.getVisualizationViewer().getPickedVertexState();
@@ -882,7 +882,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 
 	/**
-	 * Gets the Set<GraphEdge> of picked edges.
+	 * Return a set of GraphEdge that are currently picked.
 	 * @return the picked edges
 	 */
 	public Set<GraphEdge> getPickedEdges() {

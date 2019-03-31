@@ -353,7 +353,7 @@ public class GraphElementLayout {
 
 	/**
 	 * Sets, if this component belongs to a cluster component.
-	 * @param isClusterComponent 
+	 * @param isClusterComponent the new indicator for a cluster component
 	 */
 	public void setClusterComponent(boolean isClusterComponent) {
 		this.clusterComponent = isClusterComponent;

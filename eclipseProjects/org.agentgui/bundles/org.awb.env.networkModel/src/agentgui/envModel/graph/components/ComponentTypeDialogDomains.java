@@ -108,7 +108,6 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 	 * Instantiates a new component type dialog domains.
 	 *
 	 * @param componentTypeDialog the parent {@link ComponentTypeDialog}
-	 * @param domainSettings the domain settings
 	 */
 	public ComponentTypeDialogDomains(ComponentTypeDialog componentTypeDialog) {
 		this.componentTypeDialog = componentTypeDialog;

@@ -541,7 +541,6 @@ public class DataModelEnDecoderThread extends Thread {
 	/**
 	 * Returns the NetworkComponentAdapter for the specified GraphNode.
 	 *
-	 * @param graphController the current graph controller, if there is one. Can also be null.
 	 * @param graphNode the graph node
 	 * @return the network component adapter
 	 */

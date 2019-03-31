@@ -90,7 +90,7 @@ public class JPanelStates extends JPanel {
 	
 	/**
 	 * Adds the specified {@link GraphUIStateMessage}.
-	 * @param graphUiMessage the state message 
+	 * @param stateMessage the {@link GraphUIStateMessage} 
 	 */
 	public void addMessage(GraphUIStateMessage stateMessage) {
 		

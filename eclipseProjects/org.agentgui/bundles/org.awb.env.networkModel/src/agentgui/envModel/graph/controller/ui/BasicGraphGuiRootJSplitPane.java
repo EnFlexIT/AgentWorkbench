@@ -102,7 +102,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private final static String pathImage = GraphGlobals.getPathImages();
     private String newLine = Application.getGlobalInfo().getNewLineSeparator();
     
-    private GraphEnvironmentController graphEnvironmentController;
+    private GraphEnvironmentController graphController;
     private NetworkComponent currNetworkComponent;
     
     private JSplitPane jSplitPaneRoot;
@@ -125,11 +125,12 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     
     
     /**
-     * This is the default constructor for just displaying the current environment model during a running simulation
+     * This is the default constructor for just displaying the current environment model during a running simulation.
+     * @param graphController the current {@link GraphEnvironmentController}
      */
-    public BasicGraphGuiRootJSplitPane(GraphEnvironmentController envController) {
-		this.graphEnvironmentController = envController;
-		this.graphEnvironmentController.addObserver(this);
+    public BasicGraphGuiRootJSplitPane(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
+		this.graphController.addObserver(this);
 		this.initialize();
     }
     
@@ -154,7 +155,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
      * @return the graph environment controller
      */
     private GraphEnvironmentController getGraphController() {
-    	return this.graphEnvironmentController;
+    	return this.graphController;
     }
 
 	/* (non-Javadoc)

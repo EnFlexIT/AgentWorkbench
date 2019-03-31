@@ -43,7 +43,10 @@ public class RenamedNetworkComponent {
 	
 	/**
 	 * Instantiates a new renamed network component.
+	 *
 	 * @param networkComponent the network component
+	 * @param oldCompID the old component ID
+	 * @param newCompID the new component ID
 	 */
 	public RenamedNetworkComponent(NetworkComponent networkComponent, String oldCompID, String newCompID) {
 		this.networkComponent = networkComponent;

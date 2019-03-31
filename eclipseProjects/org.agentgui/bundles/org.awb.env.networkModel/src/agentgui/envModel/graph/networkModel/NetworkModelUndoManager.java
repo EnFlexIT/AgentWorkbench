@@ -159,7 +159,8 @@ public class NetworkModelUndoManager {
 	}
 	
 	/**
-	 * Open satellite view.
+	 * Sets the satellite view visible or not.
+	 * @param visible the new satellite view
 	 */
 	public void setSatelliteView(boolean visible) {
 		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Satellite_View);
@@ -295,7 +296,7 @@ public class NetworkModelUndoManager {
 
 	/**
 	 * Removes the specified NetworkComponent from the current NetworkModel.
-	 * @param networkComponents the network components to remove
+	 * @param networkComponent the network component to remove
 	 */
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
 		HashSet<NetworkComponent> compHash = new HashSet<NetworkComponent>();
@@ -324,9 +325,9 @@ public class NetworkModelUndoManager {
 	 * @param networkComponentsToKeep the network components to keep when deleting network components
 	 * @return the hash set of removed NetworkComponents
 	 */
-	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponents) {
+	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponentsToKeep) {
 		
-		HashSet<NetworkComponent> removedComponents = this.graphController.getNetworkModel().removeNetworkComponentsInverse(networkComponents);
+		HashSet<NetworkComponent> removedComponents = this.graphController.getNetworkModel().removeNetworkComponentsInverse(networkComponentsToKeep);
 		for (NetworkComponent networkComponent : removedComponents) {
 			
 			this.graphController.removeAgent(networkComponent);

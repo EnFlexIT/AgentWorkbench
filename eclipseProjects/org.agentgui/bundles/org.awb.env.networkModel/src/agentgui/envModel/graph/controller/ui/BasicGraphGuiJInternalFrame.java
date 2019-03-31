@@ -53,8 +53,6 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
  * @see GraphEnvironmentController
  * @see GraphEnvironmentControllerGUI
  * @see BasicGraphGuiJDesktopPane
- * @see #registerAtDesktopAndSetVisible()
- * @see #registerAtDesktopAndSetVisible(Object)
  * @see AddComponentDialog
  * @see BasicGraphGuiProperties
  * 
@@ -89,18 +87,6 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 	protected void registerAtDesktopAndSetVisible() {
 		this.registerAtDesktopAndSetVisible(JDesktopPane.PALETTE_LAYER);
 	}
-	
-	/**
-	 * Checks if the position of this frame should be reminded as a last opened editor.
-	 * if this method returns true (which is the default case), the internal frame will 
-	 * be reminded and a next internal frame will be adjusted relative to the frame position.
-	 * Override this method if you don't want to remind this internal frame as a 'last opened editor'
-	 *  
-	 * @return true, if the position of this frame should be reminded
-	 */
-	protected boolean isRemindAsLastOpenedEditor() {
-		return true;
-	}
 	/**
 	 * Register at the graph desktop and set this extended JInternalFrame visible.
 	 * @see JDesktopPane
@@ -130,6 +116,18 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 			this.setVisible(true);	
 		}
 		
+	}
+	
+	/**
+	 * Checks if the position of this frame should be reminded as a last opened editor.
+	 * if this method returns true (which is the default case), the internal frame will 
+	 * be reminded and a next internal frame will be adjusted relative to the frame position.
+	 * Override this method if you don't want to remind this internal frame as a 'last opened editor'
+	 *  
+	 * @return true, if the position of this frame should be reminded
+	 */
+	protected boolean isRemindAsLastOpenedEditor() {
+		return true;
 	}
 	
 	/* (non-Javadoc)

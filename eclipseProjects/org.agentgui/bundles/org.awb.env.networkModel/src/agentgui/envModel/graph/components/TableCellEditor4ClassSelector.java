@@ -61,6 +61,7 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
 	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
 	 * @param clazz2Search4Description the clazz2 search4 description
+	 * @param allowNull the indicator to allow null or not
 	 */
 	public TableCellEditor4ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull){
 		

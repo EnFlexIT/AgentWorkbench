@@ -60,6 +60,7 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 	
 	/**
 	 * Instantiates a new transformer for vertex shape size aspect.
+	 * @param graphController the current {@link GraphEnvironmentController}
 	 */
 	public TransformerForVertexShape(GraphEnvironmentController graphController) {
 		

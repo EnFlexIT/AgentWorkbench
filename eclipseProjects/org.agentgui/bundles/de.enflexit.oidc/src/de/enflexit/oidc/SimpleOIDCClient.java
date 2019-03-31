@@ -627,9 +627,7 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the id claims.
-	 * 
 	 * @return the id claims
-	 * @throws java.text.ParseException the java text parse exception
 	 */
 	public JWTClaimsSet getIdClaims() {
 		try {

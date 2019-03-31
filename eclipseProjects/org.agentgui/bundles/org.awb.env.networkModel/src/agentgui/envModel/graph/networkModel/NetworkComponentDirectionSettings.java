@@ -362,9 +362,6 @@ public class NetworkComponentDirectionSettings {
 	/**
 	 * Sets the graph edge direction by using either the GraphNodes or the NetworkComponents, which
 	 * are located at the outer boundaries of the NetworkComponent. Be aware that the types in the HasSet have to be the same. <br>
-	 * You can use:<br>
-	 * HashSet<{@link GraphNode}> or <br>
-	 * HashSet<{@link NetworkComponent}><br>
 	 *
 	 * @param inNodesOrComponents the HashSet of incoming {@link GraphNode}'s or {@link NetworkComponent}'s
 	 * @param outNodesOrComponents the HashSet of outgoing {@link GraphNode}'s or {@link NetworkComponent}'s

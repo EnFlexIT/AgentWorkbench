@@ -106,7 +106,6 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 	 * Instantiates the sub part for {@link NetworkComponent}s.
 	 *
 	 * @param componentTypeDialog the parent {@link ComponentTypeDialog}
-	 * @param domainSettings the domain settings
 	 */
 	public ComponentTypeDialogComponents(ComponentTypeDialog componentTypeDialog) {
 		this.componentTypeDialog = componentTypeDialog;
@@ -588,6 +587,7 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 	
 	/**
 	 * Checks for component type setting errors.
+	 * @return the actual component type error or null
 	 */
 	public ComponentTypeError hasComponentTypeSettingError() {
 

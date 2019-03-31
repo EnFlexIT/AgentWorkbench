@@ -41,23 +41,22 @@ import edu.uci.ics.jung.graph.util.Pair;
  */
 public class GraphEdgeConnection {
 
-	/** The graph edge. */
-	private GraphEdge graphEdge = null;
+	private GraphEdge graphEdge;
 	
-	/** The graph node1. */
-	private GraphNode graphNode1 = null;
-	/** The connected external NetworkComponent no. 1. */
-	private NetworkComponent externalNetworkComponent1 = null;
+	private GraphNode graphNode1;
+	private NetworkComponent externalNetworkComponent1;
 	
-	/** The graph node2. */
-	private GraphNode graphNode2 = null;
-	/** The connected external NetworkComponent no. 2. */
-	private NetworkComponent externalNetworkComponent2 = null;
+	private GraphNode graphNode2;
+	private NetworkComponent externalNetworkComponent2;
 	
 	private boolean fixedDirected = false;
 	
 	/**
 	 * Instantiates a new graph edge connection.
+	 *
+	 * @param networkModel the network model
+	 * @param networkComponent the network component
+	 * @param graphEdge the graph edge
 	 */
 	public GraphEdgeConnection(NetworkModel networkModel, NetworkComponent networkComponent, GraphEdge graphEdge) {
 	
