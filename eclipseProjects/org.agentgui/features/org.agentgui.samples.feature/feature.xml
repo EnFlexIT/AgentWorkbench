@@ -24,6 +24,7 @@
       <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.core" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jade" version="4.4.0" match="greaterOrEqual"/>
+      <import plugin="org.awb.env.networkModel" version="2.1.8" match="greaterOrEqual"/>
    </requires>
 
    <plugin
