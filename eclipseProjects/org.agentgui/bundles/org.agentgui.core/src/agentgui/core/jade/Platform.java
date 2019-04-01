@@ -644,6 +644,9 @@ public class Platform {
 	 * @return true, if the Main-Container is running
 	 */
 	public boolean isMainContainerRunning () {
+		
+		if (jadeMainContainer==null) return false;
+
 		boolean isRunning;		
 		try {
 			jadeMainContainer.getState();

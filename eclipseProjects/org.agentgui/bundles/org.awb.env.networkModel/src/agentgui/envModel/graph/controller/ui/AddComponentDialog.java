@@ -88,6 +88,8 @@ import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.GraphNodePairs;
+import agentgui.envModel.graph.networkModel.LayoutSettings;
+import agentgui.envModel.graph.networkModel.LayoutSettings.CoordinateSystemYDirection;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentFactory;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -117,6 +119,14 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
     private static final long serialVersionUID = -7481141098749690137L;
     
+    private static final double ROTATE_45 = (2*Math.PI)/8; 
+    private static final double ROTATE_90 = (2*Math.PI)/4;
+    private static final double ROTATE_180 = Math.PI;
+    private static final double ROTATE_315 = -(2*Math.PI)/8; 
+    private static final double ROTATE_270 = -(2*Math.PI)/4;
+    private static final double ROTATE_45_MINUS = ROTATE_315; 
+    private static final double ROTATE_90_MINUS = ROTATE_270;
+    		
     public static final String NoFilterString = Language.translate("No Filter!", Language.EN); 
     private final String pathImage = GraphGlobals.getPathImages(); 
     
@@ -895,31 +905,6 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     }
     
     /**
-     * Apply a shift for the new elements, in order to match the position 
-     * of the currently selected node of the current setup		
-     *
-     * @param graphNode1 the graph node1
-     * @param graphNode2 the graph node2
-     */
-    private void applyNodeShift2MergeWithNetworkModel(NetworkModel networkModel, GraphNode graphNode1, GraphNode graphNode2) {
-    	
-    	double shiftX = 0;
-		double shiftY = 0;
-		if (graphNode1 != null) {
-			shiftX = graphNode1.getPosition().getX() - graphNode2.getPosition().getX();
-			shiftY = graphNode1.getPosition().getY() - graphNode2.getPosition().getY();
-		}
-		
-		Collection<GraphNode> graphNodes = networkModel.getGraph().getVertices();
-		for (GraphNode node : graphNodes) {
-			double posX = node.getPosition().getX() + shiftX;
-			double posY = node.getPosition().getY() + shiftY;
-			node.setPosition(new Point2D.Double(posX, posY));			
-		}	
-		
-    }
-    
-    /**
      * This method can be used in order to produce components, by using this 
      * dialog as factory. Just specify the component by the name given in 
      * the ComponentTypeSettings dialog. 
@@ -941,64 +926,6 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		}
 		return this.localNetworkModel;
 	}
-    
-    /**
-     * Rotates the current graph around itself.
-     * @param rotateAngle the angle on which the graph should rotate 
-     */
-    private void rotateGraph(double rotateAngle) {
-    	
-    	if (this.localNetworkModel!=null) {
-    		Graph<GraphNode, GraphEdge> graph = this.localNetworkModel.getGraph();
-    		if (graph!=null) {
-    			Vector<GraphNode> graphNodes = new Vector<GraphNode>(graph.getVertices());
-    			if (graphNodes.size()>1) {
-    				
-        	    	double centerX = this.getVisualizationViewer().getCenter().getX();
-        	    	double centerY = this.getVisualizationViewer().getCenter().getY();
-        			
-        			// --- Get all GraphNodes and rotate then around the center ---
-        			for (GraphNode graphNode : graphNodes) {
-        				
-        				double newX = 0;
-        				double newY = 0;
-        				double oldX = graphNode.getPosition().getX() - centerX;
-        				double oldY = graphNode.getPosition().getY() - centerY;
-        				
-        				double hypotenuse = Math.pow((Math.pow(oldX, 2) + Math.pow(oldY, 2)), 0.5);
-        				hypotenuse = Math.round(hypotenuse*10)/10;
-        				double oldAngle = Math.atan(oldY / oldX);
-        				if (Double.isNaN(oldAngle)==false) {
-        					if (oldX < 0 && oldY >= 0) {
-            					oldAngle += Math.PI;
-            				} else if (oldX < 0 && oldY < 0){
-            					oldAngle += Math.PI;
-            				}else if (oldX >= 0 && oldY < 0){
-            					oldAngle += 2*Math.PI;
-            				}
-            				double newAngle = oldAngle + rotateAngle;
-            				newX = Math.cos(newAngle) * hypotenuse;
-            				newY = Math.sin(newAngle) * hypotenuse;
-            				
-        				}
-        				Point2D newPosition = new Point2D.Double(centerX+newX, centerY+newY);
-        				graphNode.setPosition(newPosition);
-        				
-        			}
-        			
-    				Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-    				layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-    					public Point2D transform(GraphNode node) {
-    						return node.getPosition(); // The position is specified in the GraphNode instance
-    					}
-    				});
-    				this.getVisualizationViewer().setGraphLayout(layout);
-        			this.getVisualizationViewer().repaint();
-        			
-    			}
-    		}
-    	}
-    }
     
     /**
      * Adds the component.
@@ -1091,10 +1018,135 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		this.selectNextNodeInMainGraph(networkModelCopy, graphNodeCopy);
 		
     }
+    /**
+     * Apply a shift for the new elements, in order to match the position 
+     * of the currently selected node of the current setup		
+     *
+     * @param graphNodeSelectedInMainGraph the graph node selected in the main graph
+     * @param graphNodeReferenceToMove the reference graph node that is used to calculate the node shift
+     */
+    private void applyNodeShift2MergeWithNetworkModel(NetworkModel networkModel, GraphNode graphNodeSelectedInMainGraph, GraphNode graphNodeReferenceToMove) {
+    	
+    	// --- Consider the x direction of the main graph -----------
+    	LayoutSettings layoutSettings = this.graphController.getNetworkModel().getLayoutSettings();
+    	switch (layoutSettings.getCoordinateSystemXDirection()) {
+		case East:
+			this.rotateGraph(networkModel, 0, false);
+			break;
+		case North:
+			this.rotateGraph(networkModel, ROTATE_90, false);
+			break;
+		case West:
+			this.rotateGraph(networkModel, ROTATE_180, false);
+			break;
+		case South:
+			this.rotateGraph(networkModel, ROTATE_270, false);
+			break;
+		}
+    
+    	// --- Invert the original y position? ----------------------
+		if (layoutSettings.getCoordinateSystemYDirection()==CoordinateSystemYDirection.CounterclockwiseToX) {
+			Collection<GraphNode> graphNodes = networkModel.getGraph().getVertices();
+			for (GraphNode node : graphNodes) {
+				node.getPosition().setLocation(node.getPosition().getX(), -node.getPosition().getY()); 
+			}	
+		}
+    	
+    	// --- Calculate node shift ---------------------------------
+    	double shiftX = 0;
+		double shiftY = 0;
+		if (graphNodeSelectedInMainGraph != null) {
+			shiftX = graphNodeSelectedInMainGraph.getPosition().getX() - graphNodeReferenceToMove.getPosition().getX();
+			shiftY = graphNodeSelectedInMainGraph.getPosition().getY() - graphNodeReferenceToMove.getPosition().getY();
+		}
+		
+		// --- Move all nodes with the calculated shift -------------
+		Collection<GraphNode> graphNodes = networkModel.getGraph().getVertices();
+		for (GraphNode node : graphNodes) {
+			node.getPosition().setLocation(node.getPosition().getX()+shiftX, node.getPosition().getY()+shiftY); 			
+		}	
+		
+    }
+    
+    /**
+     * Rotates the graph of the specified networkModel.
+     *
+     * @param networkModel the network model
+     * @param rotateAngle the rotate angle
+     * @param refreshLocalVisViewer indicator to refresh the local visualization viewer
+     */
+    private void rotateGraph(NetworkModel networkModel, double rotateAngle, boolean refreshLocalVisViewer) {
+    	if (networkModel!=null) {
+    		this.rotateGraph(networkModel.getGraph(), rotateAngle, refreshLocalVisViewer);
+    	}
+    }
+    
+    /**
+     * Rotates the specified graph.
+     *
+     * @param graph the graph
+     * @param rotateAngle the angle on which the graph should rotate
+     * @param isRefreshLocalVisViewer indicator to refresh the local visualization viewer
+     */
+    private void rotateGraph(Graph<GraphNode, GraphEdge> graph , double rotateAngle, boolean isRefreshLocalVisViewer) {
+  
+		if (graph==null) return;
+		if (rotateAngle==0) return;
+		
+		Vector<GraphNode> graphNodes = new Vector<GraphNode>(graph.getVertices());
+		if (graphNodes.size()>1) {
+			
+	    	double centerX = this.getVisualizationViewer().getCenter().getX();
+	    	double centerY = this.getVisualizationViewer().getCenter().getY();
+			
+			// --- Get all GraphNodes and rotate then around the center -------
+	    	for (int i = 0; i < graphNodes.size(); i++) {
+
+	    		GraphNode graphNode = graphNodes.get(i);
+				
+				double newX = 0;
+				double newY = 0;
+				double oldX = graphNode.getPosition().getX() - centerX;
+				double oldY = graphNode.getPosition().getY() - centerY;
+				
+				double hypotenuse = Math.pow((Math.pow(oldX, 2) + Math.pow(oldY, 2)), 0.5);
+				hypotenuse = Math.round(hypotenuse*10)/10;
+				double oldAngle = Math.atan(oldY / oldX);
+				if (Double.isNaN(oldAngle)==false) {
+					if (oldX < 0 && oldY >= 0) {
+    					oldAngle += Math.PI;
+    				} else if (oldX < 0 && oldY < 0){
+    					oldAngle += Math.PI;
+    				} else if (oldX >= 0 && oldY < 0){
+    					oldAngle += 2*Math.PI;
+    				}
+    				double newAngle = oldAngle + rotateAngle;
+    				newX = Math.cos(newAngle) * hypotenuse;
+    				newY = Math.sin(newAngle) * hypotenuse;
+    				
+				}
+				Point2D newPosition = new Point2D.Double(centerX+newX, centerY+newY);
+				graphNode.setPosition(newPosition);
+				
+			}
+
+	    	// --- Refresh the local visualization viewer? --------------------
+	    	if (isRefreshLocalVisViewer==true) {
+	    		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+	    		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+	    			public Point2D transform(GraphNode node) {
+	    				return node.getPosition();
+	    			}
+	    		});
+	    		this.getVisualizationViewer().setGraphLayout(layout);
+	    		this.getVisualizationViewer().repaint();
+	    	}
+			
+		}
+    }
     
     /*
      * (non-Javadoc)
-     * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
@@ -1112,20 +1164,19 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			this.getJListComponentTypes().setModel(this.getListModelComponentTypes());
 			
 		} else if (ae.getSource()==getJButtonRotate45()) {
-			this.rotateGraph((2*Math.PI)/8);
+			this.rotateGraph(this.localNetworkModel, ROTATE_45, true);
 			
 		} else if (ae.getSource()==getJButtonRotate90()) {
-			this.rotateGraph((2*Math.PI)/4);
+			this.rotateGraph(this.localNetworkModel, ROTATE_90, true);
 			
 		} else if (ae.getSource()==getJButtonRotate315()) {
-			this.rotateGraph(-(2*Math.PI)/8);
+			this.rotateGraph(this.localNetworkModel, ROTATE_45_MINUS, true);
 
 		} else if (ae.getSource()==getJButtonRotate270()) {
-			this.rotateGraph(-(2*Math.PI)/4);
+			this.rotateGraph(this.localNetworkModel, ROTATE_90_MINUS, true);
 			
 		}
-    	
     }
 
     
-}  //  @jve:decl-index=0:visual-constraint="30,-18"
+}  
