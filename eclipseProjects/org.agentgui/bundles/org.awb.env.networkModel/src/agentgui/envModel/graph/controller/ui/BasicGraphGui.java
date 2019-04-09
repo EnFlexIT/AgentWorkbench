@@ -71,7 +71,7 @@ import agentgui.envModel.graph.commands.RenamedNetworkComponent;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
-import agentgui.envModel.graph.networkModel.EdgeShapePolyline;
+import agentgui.envModel.graph.networkModel.GraphEdgeShapeTransformer;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -125,8 +125,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * The enumeration ToolBarType describes the toolbar type available in the {@link BasicGraphGui}.
 	 */
 	public enum ToolBarType {
-		ViewControl,
-		EditControl
+		EditControl,
+		LayoutControl,
+		ViewControl
 	}
 	/**
 	 * The enumeration ToolBarSurrounding describes, if a customised toolbar button is to be shown during configuration or during runtime.
@@ -144,7 +145,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private GraphZoomScrollPane graphZoomScrollPane;
 	/** The ToolBar for this component */
 	private BasicGraphGuiTools graphGuiTools;
-	private JPanel jPanelToolBars;
+	private JPanel jPanelToolBarsWest;
+	private JPanel jPanelToolBarsEast;
 	
 	/** Graph visualization component */
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView;
@@ -191,8 +193,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.setDoubleBuffered(true);
 		
 		// --- Add components -----------------------------
-		this.add(this.getJPanelToolBars(), BorderLayout.WEST);
+		this.add(this.getJPanelToolBarsWest(), BorderLayout.WEST);
 		this.add(this.getGraphZoomScrollPane(), BorderLayout.CENTER);
+		this.add(this.getJPanelToolBarsEast(), BorderLayout.EAST);
 	}
 	
 	/**
@@ -220,26 +223,42 @@ public class BasicGraphGui extends JPanel implements Observer {
 		case ViewControl:
 			toolBar = this.getBasicGraphGuiTools().getJToolBarView();
 			break;
+		case LayoutControl:
+			toolBar = this.getBasicGraphGuiTools().getJToolBarLayout();
+			break;
 		}
 		return toolBar;
 	}
 	
 	/**
-	 * Returns the JPanel with the tool bars.
-	 * @return the j panel tool bars
+	 * Returns the JPanel with the tool bars for the west-side.
+	 * @return the jPanel tool bars west-side
 	 */
-	private JPanel getJPanelToolBars() {
-		if (jPanelToolBars==null) {
-			jPanelToolBars = new JPanel();
-			jPanelToolBars.setLayout(new BoxLayout(jPanelToolBars, BoxLayout.X_AXIS));
-			jPanelToolBars.add(this.getBasicGraphGuiTools().getJToolBarView(), null);
+	private JPanel getJPanelToolBarsWest() {
+		if (jPanelToolBarsWest==null) {
+			jPanelToolBarsWest = new JPanel();
+			jPanelToolBarsWest.setLayout(new BoxLayout(jPanelToolBarsWest, BoxLayout.X_AXIS));
+			jPanelToolBarsWest.add(this.getBasicGraphGuiTools().getJToolBarView(), null);
 			// --- In case of editing the simulation setup ----------
 		    if (this.graphController.getProject()!=null) {
-		    	jPanelToolBars.add(this.getBasicGraphGuiTools().getJToolBarEdit(), null);
+		    	jPanelToolBarsWest.add(this.getBasicGraphGuiTools().getJToolBarEdit(), null);
 		    }
 		}
-		return jPanelToolBars;
+		return jPanelToolBarsWest;
 	}
+	/**
+	 * Returns the JPanel with the tool bars for the east-side.
+	 * @return the jPanel tool bars east-side
+	 */
+	private JPanel getJPanelToolBarsEast() {
+		if (jPanelToolBarsEast==null) {
+			jPanelToolBarsEast = new JPanel();
+			jPanelToolBarsEast.setLayout(new BoxLayout(jPanelToolBarsEast, BoxLayout.X_AXIS));
+			jPanelToolBarsEast.add(this.getBasicGraphGuiTools().getJToolBarLayout(), null);
+		}
+		return jPanelToolBarsEast;
+	}
+	
 	
 	/**
 	 * Dispose this panel.
@@ -737,14 +756,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		case Box:
 			edgeShapeTransformer = new EdgeShape.Box<GraphNode, GraphEdge>();
 			break;
+		case ConfigurableLine:
+			edgeShapeTransformer = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>();
+			break;
 		case CubicCurve:
 			edgeShapeTransformer = new EdgeShape.CubicCurve<GraphNode, GraphEdge>();
 			break;
 		case Line:
 			edgeShapeTransformer = new EdgeShape.Line<GraphNode, GraphEdge>();
-			break;
-		case Polyline:
-			edgeShapeTransformer = new EdgeShapePolyline<GraphNode, GraphEdge>();
 			break;
 		case Loop:
 			edgeShapeTransformer = new EdgeShape.Loop<GraphNode, GraphEdge>();
@@ -760,9 +779,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			break;
 		case Wedge:
 			edgeShapeTransformer = new EdgeShape.Wedge<GraphNode, GraphEdge>(5);
-			break;
-		default:
-			edgeShapeTransformer = new EdgeShape.Line<GraphNode, GraphEdge>();	
 			break;
 		}
 		visViewer.getRenderContext().setEdgeShapeTransformer(edgeShapeTransformer);

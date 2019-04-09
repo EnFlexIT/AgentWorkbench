@@ -59,6 +59,7 @@ public class LayoutSettings implements Serializable, Cloneable {
 			return Language.translate(displayText, Language.EN);
 		}
 	}
+	
 	/** The enumeration for CoordinateSystemYDirection */
 	public enum CoordinateSystemYDirection {
 		ClockwiseToX("Clockwise to X"),
@@ -81,9 +82,9 @@ public class LayoutSettings implements Serializable, Cloneable {
 	public static enum EdgeShape {
 		BentLine,
 		Box,
+		ConfigurableLine,
 		CubicCurve,
 		Line,
-		Polyline,
 		Loop,
 		Orthogonal,
 		QuadCurve,

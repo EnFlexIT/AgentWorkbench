@@ -29,72 +29,64 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
-import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.Loop;
 
 
 /**
- * The Class EdgeShapePolyline.
- *
- * @param <V> the value type
- * @param <E> the element type
+ * The Class GraphEdgeShapeTransformer transforms and thus manages the appearance of each single GraphEdge.
+ * Such, can be a Line2D, a QuadCurve2D, a GeneralPath or an Orthogonal connection between two points.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class EdgeShapePolyline<V, E> extends AbstractEdgeShapeTransformer<V, E> {
+public class GraphEdgeShapeTransformer<V, E> extends AbstractEdgeShapeTransformer<GraphNode, GraphEdge> {
 
-	private static GeneralPath path;
-	private static Line2D line = new Line2D.Float(0.0f, 0.0f, 1.0f, 0.0f);
-	private Loop<V, E> loop;    
+	private Line2D line;
+	private Loop<GraphNode, GraphEdge> loop;    
     
 
     /* (non-Javadoc)
 	 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
 	 */
 	@Override
-	public Shape transform(Context<Graph<V, E>, E> context) {
+	public Shape transform(Context<Graph<GraphNode, GraphEdge>, GraphEdge> context) {
 
-		// --- Get the shape for this edge, returning either the --------------
-		// --- shared instance or, in the case of self-loop edges, the --------
-		// --- SimpleLoop shared instance.
-		
-		Graph<V,E> graph = context.graph;
-    	E e = context.element;
+		Graph<GraphNode, GraphEdge> graph = context.graph;
+    	GraphEdge graphEdge = context.element;
         
-        Pair<V> endpoints = graph.getEndpoints(e);
-        if(endpoints != null) {
-        	boolean isLoop = endpoints.getFirst().equals(endpoints.getSecond());
-        	if (isLoop) {
-        		return this.getLoop().transform(context);
-        	}
+    	// --- Check for a loop ---------------------------
+    	GraphNode graphNodeFrom = graph.getSource(graphEdge);
+    	GraphNode graphNodeTo = graph.getDest(graphEdge);
+        if (graphNodeFrom!=null && graphNodeTo!=null && graphNodeFrom.equals(graphNodeTo)) {
+        	return this.getLoop().transform(context);
         }
-        // --- Return the edge shape ------------------------------------------
-        if (e instanceof GraphEdge) {
-        	return this.getGeneralPath((GraphEdge)e);
-        } else {
-        	return this.getLine();
-        }
+        // --- Return the configured edge shape -----------
+        return this.getEdgeShape(graphEdge, graphNodeFrom, graphNodeTo);
 	}
 
 	/**
-	 * Returns the general path for polyline edge.
+	 * Returns the shape for the specified GraphEdge.
 	 *
 	 * @param graphEdge the graph edge
-	 * @return the general path
+	 * @return the graph edge shape
 	 */
-	private GeneralPath getGeneralPath(GraphEdge graphEdge) {
-		GeneralPath path = new GeneralPath();
-		path.moveTo(0.0f, 0.0f);
-		path.lineTo(0.2f, 0.3f);
-		path.lineTo(0.3f, 50.3f);
-		path.lineTo(0.5f, -50.5f);
-		path.lineTo(0.8f, 40.3f);
-		path.lineTo(1.0f, 0.0f);
-		return path;
+	private Shape getEdgeShape(GraphEdge graphEdge, GraphNode graphNodeFrom, GraphNode graphNodeTo) {
+		// --- By default take the shared line instance ---
+		Shape graphEdgeShape = this.getLine();
+		if (graphEdge.getEdgeShapeConfiguration()!=null) {
+			try {
+				// --- Get the specific edge shape --------
+				graphEdgeShape = graphEdge.getEdgeShapeConfiguration().getShape(graphNodeFrom, graphNodeTo);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}		
+		return graphEdgeShape;
 	}
 	
 	/**
@@ -108,13 +100,12 @@ public class EdgeShapePolyline<V, E> extends AbstractEdgeShapeTransformer<V, E> 
 		return line;
 	}
 	/**
-	 * Returns the loop.
-	 * @return the loop
+	 * Returns a loop instance.
+	 * @return a loop
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Loop<V, E> getLoop() {
+	private Loop<GraphNode, GraphEdge> getLoop() {
 		if (loop==null) {
-			 loop = new Loop();
+			 loop = new Loop<GraphNode, GraphEdge>();
 		}
 		return loop;
 	}

@@ -8,7 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="jung-3d-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jung-3d-demos-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jung-algorithms-2.0.1.jar" sourcepath="C:/Users/Christian/.m2/repository/net/sf/jung/jung-algorithms/2.0.1/jung-algorithms-2.0.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="jung-api-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="jung-api-2.0.1.jar" sourcepath="C:/Users/Christian/.m2/repository/net/sf/jung/jung-api/2.0.1/jung-api-2.0.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jung-graph-impl-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jung-io-2.0.1.jar" sourcepath="C:/Users/Christian/.m2/repository/net/sf/jung/jung-io/2.0.1/jung-io-2.0.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jung-jai-2.0.1.jar"/>

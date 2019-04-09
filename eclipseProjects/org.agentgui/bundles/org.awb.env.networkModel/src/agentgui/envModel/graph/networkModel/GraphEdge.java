@@ -28,8 +28,6 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import de.enflexit.common.SerialClone;
-
 /**
  * This class represents a graph edge in an environment model of the type graph / network.
  * 
@@ -41,9 +39,9 @@ public class GraphEdge extends GraphElement {
 
 	private static final long serialVersionUID = 1043215558300713661L;
 
-	/** The type identifier of the network component represented by this edge. */
 	private String componentType;
-
+	private GraphEdgeShapeConfiguration<?> edgeShapeConfiguration;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -61,15 +59,12 @@ public class GraphEdge extends GraphElement {
 	 */
 	@Override
 	public GraphEdge getCopy() {
-		GraphEdge edgceCopy = null;	
-		try {
-			edgceCopy = SerialClone.clone(this);
-			if (this.graphElementLayout!=null) {
-				edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		
+		GraphEdge edgceCopy = new GraphEdge(this.getId(), this.getComponentType());
+		edgceCopy.setEdgeShapeConfiguration(this.getEdgeShapeConfiguration().getCopy());
+		
+		if (this.graphElementLayout!=null) {
+			edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
 		}
 		return edgceCopy;
 	}
@@ -89,4 +84,20 @@ public class GraphEdge extends GraphElement {
 		this.componentType = componentType;
 	}
 
+	
+	/**
+	 * Returns the edge shape configuration for the current edge shape.
+	 * @return the edge shape configuration
+	 */
+	public GraphEdgeShapeConfiguration<?> getEdgeShapeConfiguration() {
+		return edgeShapeConfiguration;
+	}
+	/**
+	 * Sets the edge shape configuration for the corresponding edge shape.
+	 * @param edgeShapeConfiguration the new edge shape configuration
+	 */
+	public void setEdgeShapeConfiguration(GraphEdgeShapeConfiguration<?> edgeShapeConfiguration) {
+		this.edgeShapeConfiguration = edgeShapeConfiguration;
+	}
+	
 }

@@ -97,11 +97,15 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     
     private JToolBar jToolBarEdit;
     private JToolBar jToolBarView;
+    private JToolBar jToolBarLayout;
     
     private JButton jButtonComponents;
     private JButton jButtonNetworkModelInfo;
     private JButton jButtonMessages;
     private JButton jButtonWindows;
+    
+    private JToggleButton jToggleButtonLayoutToolBar;
+    
     private JToggleButton jButtonSatelliteView;
     private JButton jButtonZoomFit2Window;
     private JButton jButtonZoomOne2One;
@@ -123,6 +127,13 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonCopy;
     private JButton jButtonPaste;
     
+    private JButton jButtonLayoutSwitch;
+    private JToggleButton jToggleButtonEdgeLine;
+    private JToggleButton jToggleButtonEdgeQuadCurve;
+    private JToggleButton jToggleButtonEdgePolyLine;
+    private JToggleButton jToggleButtonEdgeOrthogonal;
+
+    
     private JPopupMenu edgePopup;
     private JMenuItem jMenuItemDeleteCompVertex;
     private JMenuItem jMenuItemDeleteCompEdge;
@@ -135,8 +146,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 
     private GraphEnvironmentController graphController;
     private GraphEnvironmentControllerGUI graphControllerGUI;
-    private BasicGraphGui basicGraphGui;
-
+    private BasicGraphGui basicGraphGUI;
+    
     
     private Vector<CustomToolbarComponentDescription> customToolbarComponentDescriptionAdded;
     
@@ -160,6 +171,17 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	}
     	return this.graphControllerGUI;
     }
+    /**
+     * Gets the current {@link BasicGraphGui}.
+     * @return the basic graph GUI
+     */
+    private BasicGraphGui getBasicGraphGUI() {
+    	if (basicGraphGUI==null) {
+    		basicGraphGUI = this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
+    	}
+    	return basicGraphGUI;
+    }
+    
     /**
      * Gets the key adapter paste action stop.
      * @return the key adapter paste action stop
@@ -229,6 +251,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     		jToolBarView.setPreferredSize(new Dimension(30, 30));
 
     		jToolBarView.add(getJButtonComponents());
+    		jToolBarView.add(getJToggleButtonLayoutToolBar());
     		jToolBarView.addSeparator();
     		
     		jToolBarView.add(getJButtonNetworkModelInfo());
@@ -263,57 +286,128 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     }
     
     /**
+     * Gets the Layout toolbar for the BasicGraphGui.
+     * @return the toolbar
+     */
+    public JToolBar getJToolBarLayout() {
+    	if (jToolBarLayout == null) {
+    		jToolBarLayout = new JToolBar();
+    		jToolBarLayout.setOrientation(JToolBar.VERTICAL);
+    		jToolBarLayout.setFloatable(false);
+    		jToolBarLayout.setPreferredSize(new Dimension(30, 30));
+    		jToolBarLayout.setVisible(this.getJToggleButtonLayoutToolBar().isSelected());
+    		
+    		jToolBarLayout.add(this.getJButtonLayoutSwitch());
+    		jToolBarLayout.addSeparator();
+    		
+    		jToolBarLayout.add(this.getJToggleButtonEdgeLine());
+    		jToolBarLayout.add(this.getJToggleButtonEdgeQuadCurve());
+    		jToolBarLayout.add(this.getJToggleButtonEdgePolyLine());
+    		jToolBarLayout.add(this.getJToggleButtonEdgeOrthogonal());
+    		jToolBarLayout.addSeparator();
+    		
+    		ButtonGroup bg = new ButtonGroup();
+    		bg.add(this.getJToggleButtonEdgeLine());
+    		bg.add(this.getJToggleButtonEdgeQuadCurve());
+    		bg.add(this.getJToggleButtonEdgePolyLine());
+    		bg.add(this.getJToggleButtonEdgeOrthogonal());
+    		
+    		
+    	}
+    	return jToolBarLayout;
+    }
+    
+    /**
+     * Represents an internal factory method for new JButton.
+     *
+     * @param imageName the image name
+     * @param toolTipText the tool tip text
+     * @return the new JButton
+     */
+    private JButton getNewJButton(String imageName, String toolTipText) {
+    	ImageIcon imageIcon = null;
+    	if (imageName!=null && imageName.isEmpty()==false) {
+    		imageIcon = new ImageIcon(this.getClass().getResource(this.pathImage + imageName));
+    	}
+    	return this.getNewJButton(imageIcon, toolTipText);
+    }
+    /**
+     * Represents an internal factory method for new JButton.
+     * @param imageIcon the image icon
+     * @param toolTipText the tool tip text
+     * @return the new JButton
+     */
+    private JButton getNewJButton(ImageIcon imageIcon, String toolTipText) {
+    	JButton newJButton = new JButton();
+    	newJButton.setPreferredSize(this.jButtonSize);
+    	newJButton.addActionListener(this);
+    	if (imageIcon!=null) newJButton.setIcon(imageIcon);
+    	if (toolTipText!=null && toolTipText.isEmpty()==false) newJButton.setToolTipText(toolTipText);
+    	return newJButton;
+    }
+    
+    /**
+     * Represents an internal factory method for new JToggleButton.
+     *
+     * @param imageName the image name
+     * @param toolTipText the tool tip text
+     * @return the new JButton
+     */
+    private JToggleButton getNewJToggleButton(String imageName, String toolTipText) {
+    	JToggleButton newButton = new JToggleButton();
+    	newButton.setPreferredSize(this.jButtonSize);
+    	newButton.addActionListener(this);
+    	if (imageName!=null && imageName.isEmpty()==false) newButton.setIcon(new ImageIcon(this.getClass().getResource(this.pathImage + imageName)));
+    	if (toolTipText!=null && toolTipText.isEmpty()==false) newButton.setToolTipText(toolTipText);
+    	return newButton;
+    }
+    
+    /**
      * This method initializes jButtonClearGraph
      * @return javax.swing.JButton
      */
     private JButton getJButtonClearGraph() {
 		if (jButtonClearGraph == null) {
-		    jButtonClearGraph = new JButton();
-		    jButtonClearGraph.setPreferredSize(jButtonSize);
-		    jButtonClearGraph.setIcon(new ImageIcon(getClass().getResource(pathImage + "Remove.png")));
-		    jButtonClearGraph.setToolTipText(Language.translate("Clear graph", Language.EN));
-		    jButtonClearGraph.addActionListener(this);
+		    jButtonClearGraph = getNewJButton("Remove.png", Language.translate("Clear graph", Language.EN));
 		}
 		return jButtonClearGraph;
     }
-
     /**
      * This method initializes jButtonComponents
      * @return javax.swing.JButton
      */
     private JButton getJButtonComponents() {
 		if (jButtonComponents == null) {
-		    jButtonComponents = new JButton();
-		    jButtonComponents.setPreferredSize(jButtonSize);
-		    jButtonComponents.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.png")));
-		    jButtonComponents.setToolTipText(Language.translate("Netzwerk-Komponenten"));
-		    jButtonComponents.addActionListener(this);
+		    jButtonComponents = getNewJButton("Properties.png", Language.translate("Netzwerk-Komponenten"));
 		}
 		return jButtonComponents;
     }
 
+    private JToggleButton getJToggleButtonLayoutToolBar() {
+		if (jToggleButtonLayoutToolBar == null) {
+			jToggleButtonLayoutToolBar = this.getNewJToggleButton("LayoutToolbar.png", Language.translate("Layout-Toolbar ein- und ausblenden"));
+		}
+		return jToggleButtonLayoutToolBar;
+    }
+    
+    
+    /**
+     * Return the JButton for the network model info.
+     * @return the jbutton network model info
+     */
     private JButton getJButtonNetworkModelInfo() {
     	if (jButtonNetworkModelInfo==null) {
-    		jButtonNetworkModelInfo = new JButton();
-    		jButtonNetworkModelInfo.setPreferredSize(jButtonSize);
-    		jButtonNetworkModelInfo.setIcon(GlobalInfo.getInternalImageIcon("StateInformation.png"));
-    		jButtonNetworkModelInfo.setToolTipText(Language.translate("Network Model Information"));
-    		jButtonNetworkModelInfo.addActionListener(this);
+    		jButtonNetworkModelInfo = this.getNewJButton(GlobalInfo.getInternalImageIcon("StateInformation.png"), Language.translate("Network Model Information"));
     	}
     	return jButtonNetworkModelInfo;
     }
-    
     /**
      * This method initializes jButtonMessages
      * @return javax.swing.JButton
      */
     private JButton getJButtonMessages() {
 		if (jButtonMessages == null) {
-			jButtonMessages = new JButton();
-			jButtonMessages.setPreferredSize(jButtonSize);
-			jButtonMessages.setIcon(new ImageIcon(getClass().getResource(pathImage + "Message.png")));
-			jButtonMessages.setToolTipText(Language.translate("Messaging", Language.EN));
-			jButtonMessages.addActionListener(this);
+			jButtonMessages = this.getNewJButton("Message.png", Language.translate("Messaging", Language.EN));
 		}
 		return jButtonMessages;
     }
@@ -324,11 +418,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonWindows() {
 		if (jButtonWindows == null) {
-			jButtonWindows = new JButton();
-			jButtonWindows.setPreferredSize(jButtonSize);
-			jButtonWindows.setIcon(new ImageIcon(getClass().getResource(pathImage + "PropertyWindows.png")));
-			jButtonWindows.setToolTipText(Language.translate("Komponenten-Eigenschaften ..."));
-			jButtonWindows.addActionListener(this);
+			jButtonWindows = this.getNewJButton("PropertyWindows.png", Language.translate("Komponenten-Eigenschaften ..."));
 		}
 		return jButtonWindows;
     }
@@ -340,11 +430,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JToggleButton getJToggleButtonSatelliteView() {
 		if (jButtonSatelliteView == null) {
-		    jButtonSatelliteView = new JToggleButton();
-		    jButtonSatelliteView.setIcon(new ImageIcon(getClass().getResource(pathImage + "SatelliteView.png")));
-		    jButtonSatelliteView.setPreferredSize(jButtonSize);
-		    jButtonSatelliteView.setToolTipText(Language.translate("Übersichtsfenster ein- und ausblenden"));
-		    jButtonSatelliteView.addActionListener(this);
+		    jButtonSatelliteView = this.getNewJToggleButton("SatelliteView.png", Language.translate("Übersichtsfenster ein- und ausblenden"));
 		}
 		return jButtonSatelliteView;
     }
@@ -355,11 +441,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonZoomFit2Window() {
 		if (jButtonZoomFit2Window == null) {
-		    jButtonZoomFit2Window = new JButton();
-		    jButtonZoomFit2Window.setIcon(new ImageIcon(getClass().getResource(pathImage + "FitSize.png")));
-		    jButtonZoomFit2Window.setPreferredSize(jButtonSize);
-		    jButtonZoomFit2Window.setToolTipText(Language.translate("An Fenster anpassen"));
-		    jButtonZoomFit2Window.addActionListener(this);
+		    jButtonZoomFit2Window = this.getNewJButton("FitSize.png", Language.translate("An Fenster anpassen"));
 		}
 		return jButtonZoomFit2Window;
     }
@@ -370,11 +452,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonZoomOne2One() {
 		if (jButtonZoomOne2One == null) {
-		    jButtonZoomOne2One = new JButton();
-		    jButtonZoomOne2One.setIcon(new ImageIcon(getClass().getResource(pathImage + "One2One.png")));
-		    jButtonZoomOne2One.setPreferredSize(jButtonSize);
-		    jButtonZoomOne2One.setToolTipText("1:1 - Zoom 100%");
-		    jButtonZoomOne2One.addActionListener(this);
+		    jButtonZoomOne2One = this.getNewJButton("One2One.png", "1:1 - Zoom 100%");
 		}
 		return jButtonZoomOne2One;
     }
@@ -385,11 +463,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonFocusNetworkComponent() {
 		if (jButtonFocusNetworkComponent == null) {
-			jButtonFocusNetworkComponent = new JButton();
-			jButtonFocusNetworkComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "FocusComponent.png")));
-			jButtonFocusNetworkComponent.setPreferredSize(jButtonSize);
-			jButtonFocusNetworkComponent.setToolTipText(Language.translate("Komponente zentrieren und fokussieren"));
-			jButtonFocusNetworkComponent.addActionListener(this);
+			jButtonFocusNetworkComponent = this.getNewJButton("FocusComponent.png", Language.translate("Komponente zentrieren und fokussieren"));
 		}
 		return jButtonFocusNetworkComponent;
     }
@@ -400,11 +474,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonZoomIn() {
 		if (jButtonZoomIn == null) {
-		    jButtonZoomIn = new JButton();
-		    jButtonZoomIn.setPreferredSize(jButtonSize);
-		    jButtonZoomIn.setIcon(new ImageIcon(getClass().getResource(pathImage + "ZoomIn.png")));
-		    jButtonZoomIn.setToolTipText(Language.translate("Vergrößern"));
-		    jButtonZoomIn.addActionListener(this);
+		    jButtonZoomIn = this.getNewJButton("ZoomIn.png", Language.translate("Vergrößern"));
 		}
 		return jButtonZoomIn;
     }
@@ -415,11 +485,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonZoomOut() {
 		if (jButtonZoomOut == null) {
-		    jButtonZoomOut = new JButton();
-		    jButtonZoomOut.setIcon(new ImageIcon(getClass().getResource(pathImage + "ZoomOut.png")));
-		    jButtonZoomOut.setPreferredSize(jButtonSize);
-		    jButtonZoomOut.setToolTipText(Language.translate("Verkleinern"));
-		    jButtonZoomOut.addActionListener(this);
+		    jButtonZoomOut = this.getNewJButton("ZoomOut.png", Language.translate("Verkleinern"));
 		}
 		return jButtonZoomOut;
     }
@@ -430,28 +496,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonSaveImage() {
 		if (jButtonSaveImage == null) {
-			jButtonSaveImage = new JButton();
-			jButtonSaveImage.setIcon(new ImageIcon(getClass().getResource(pathImage + "SaveAsImage.png")));
-			jButtonSaveImage.setPreferredSize(jButtonSize);
-			jButtonSaveImage.setToolTipText(Language.translate("Als Bild exportieren"));
-			jButtonSaveImage.addActionListener(this);
+			jButtonSaveImage = this.getNewJButton("SaveAsImage.png", Language.translate("Als Bild exportieren"));
 		}
 		return jButtonSaveImage;
-    }
-   
-    /**
-     * This method initializes jButtonAddComponent
-     * @return javax.swing.JButton
-     */
-    private JButton getJButtonAddComponent() {
-		if (jButtonAddComponent == null) {
-		    jButtonAddComponent = new JButton();
-		    jButtonAddComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
-		    jButtonAddComponent.setPreferredSize(jButtonSize);
-		    jButtonAddComponent.setToolTipText(Language.translate("Add new component", Language.EN));
-		    jButtonAddComponent.addActionListener(this);
-		}
-		return jButtonAddComponent;
     }
 
     /**
@@ -460,12 +507,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JToggleButton getJToggleMouseTransforming() {
 		if (jToggleMouseTransforming == null) {
-		    jToggleMouseTransforming = new JToggleButton();
-		    jToggleMouseTransforming.setIcon(new ImageIcon(getClass().getResource(pathImage + "move.png")));
-		    jToggleMouseTransforming.setPreferredSize(jButtonSize);
-		    jToggleMouseTransforming.setToolTipText(Language.translate("Switch to Transforming mode", Language.EN));
-		    jToggleMouseTransforming.setSize(new Dimension(36, 36));
-		    jToggleMouseTransforming.addActionListener(this);
+		    jToggleMouseTransforming = this.getNewJToggleButton("move.png", Language.translate("Switch to Transforming mode", Language.EN));
 		}
 		return jToggleMouseTransforming;
     }
@@ -476,27 +518,29 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JToggleButton getJToggleMousePicking() {
 		if (jToggleMousePicking == null) {
-		    jToggleMousePicking = new JToggleButton();
-		    jToggleMousePicking.setIcon(new ImageIcon(getClass().getResource(pathImage + "edit.png")));
-		    jToggleMousePicking.setPreferredSize(jButtonSize);
-		    jToggleMousePicking.setToolTipText(Language.translate("Switch to Picking mode", Language.EN));
-		    jToggleMousePicking.addActionListener(this);
+		    jToggleMousePicking = this.getNewJToggleButton("edit.png", Language.translate("Switch to Picking mode", Language.EN));
 		    jToggleMousePicking.setSelected(true);
 		}
 		return jToggleMousePicking;
     }
 
     /**
+     * This method initializes jButtonAddComponent
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonAddComponent() {
+		if (jButtonAddComponent == null) {
+		    jButtonAddComponent = this.getNewJButton("ListPlus.png", Language.translate("Add new component", Language.EN));
+		}
+		return jButtonAddComponent;
+    }
+    /**
      * This method initializes jButtonRemoveComponent
      * @return javax.swing.JButton
      */
     private JButton getJButtonRemoveComponent() {
 		if (jButtonRemoveComponent == null) {
-		    jButtonRemoveComponent = new JButton();
-		    jButtonRemoveComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
-		    jButtonRemoveComponent.setPreferredSize(jButtonSize);
-		    jButtonRemoveComponent.setToolTipText(Language.translate("Remove selected component", Language.EN));
-		    jButtonRemoveComponent.addActionListener(this);
+		    jButtonRemoveComponent = this.getNewJButton("ListMinus.png", Language.translate("Remove selected component", Language.EN));
 		}
 		return jButtonRemoveComponent;
     }
@@ -507,11 +551,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonMergeNodes() {
 		if (jButtonMergeNodes == null) {
-		    jButtonMergeNodes = new JButton();
-		    jButtonMergeNodes.setIcon(new ImageIcon(getClass().getResource(pathImage + "Merge.png")));
-		    jButtonMergeNodes.setPreferredSize(jButtonSize);
-		    jButtonMergeNodes.setToolTipText(Language.translate("Merge nodes", Language.EN));
-		    jButtonMergeNodes.addActionListener(this);
+		    jButtonMergeNodes = this.getNewJButton("Merge.png", Language.translate("Merge nodes", Language.EN));
 		}
 		return jButtonMergeNodes;
     }
@@ -522,11 +562,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonSplitNode() {
 		if (jButtonSplitNode == null) {
-		    jButtonSplitNode = new JButton();
-		    jButtonSplitNode.setIcon(new ImageIcon(getClass().getResource(pathImage + "split.png")));
-		    jButtonSplitNode.setPreferredSize(jButtonSize);
-		    jButtonSplitNode.setToolTipText(Language.translate("Split the node into two nodes", Language.EN));
-		    jButtonSplitNode.addActionListener(this);
+		    jButtonSplitNode = this.getNewJButton("split.png", Language.translate("Split the node into two nodes", Language.EN));
 		}
 		return jButtonSplitNode;
     }
@@ -537,11 +573,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonUndo() {
 		if (jButtonUndo == null) {
-			jButtonUndo = new JButton();
-		    jButtonUndo.setIcon(new ImageIcon(getClass().getResource(pathImage + "ActionUndo.png")));
-		    jButtonUndo.setPreferredSize(jButtonSize);
-		    jButtonUndo.setToolTipText(Language.translate("Undo Action", Language.EN));
-		    jButtonUndo.addActionListener(this);
+			jButtonUndo = this.getNewJButton("ActionUndo.png", Language.translate("Undo Action", Language.EN));
 		}
 		return jButtonUndo;
     }
@@ -551,11 +583,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonRedo() {
 		if (jButtonRedo == null) {
-			jButtonRedo = new JButton();
-			jButtonRedo.setIcon(new ImageIcon(getClass().getResource(pathImage + "ActionRedo.png")));
-			jButtonRedo.setPreferredSize(jButtonSize);
-			jButtonRedo.setToolTipText(Language.translate("Redo Action", Language.EN));
-			jButtonRedo.addActionListener(this);
+			jButtonRedo = this.getNewJButton("ActionRedo.png", Language.translate("Redo Action", Language.EN));
 		}
 		return jButtonRedo;
     }
@@ -566,11 +594,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonCut() {
 		if (jButtonCut == null) {
-			jButtonCut = new JButton();
-			jButtonCut.setIcon(new ImageIcon(getClass().getResource(pathImage + "Cut.png")));
-			jButtonCut.setPreferredSize(jButtonSize);
-			jButtonCut.setToolTipText(Language.translate("Cut Selection", Language.EN));
-			jButtonCut.addActionListener(this);
+			jButtonCut = this.getNewJButton("Cut.png", Language.translate("Cut Selection", Language.EN));
 		}
 		return jButtonCut;
     }
@@ -580,11 +604,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonCopy() {
 		if (jButtonCopy == null) {
-			jButtonCopy = new JButton();
-			jButtonCopy.setIcon(new ImageIcon(getClass().getResource(pathImage + "Copy.png")));
-			jButtonCopy.setPreferredSize(jButtonSize);
-			jButtonCopy.setToolTipText(Language.translate("Copy Selection", Language.EN));
-			jButtonCopy.addActionListener(this);
+			jButtonCopy = this.getNewJButton("Copy.png", Language.translate("Copy Selection", Language.EN));
 		}
 		return jButtonCopy;
     }
@@ -594,11 +614,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonPaste() {
 		if (jButtonPaste == null) {
-			jButtonPaste = new JButton();
-			jButtonPaste.setIcon(new ImageIcon(getClass().getResource(pathImage + "Paste.png")));
-			jButtonPaste.setPreferredSize(jButtonSize);
-			jButtonPaste.setToolTipText(Language.translate("Paste from Clipboard", Language.EN));
-			jButtonPaste.addActionListener(this);
+			jButtonPaste = this.getNewJButton("Paste.png", Language.translate("Paste from Clipboard", Language.EN));
 			jButtonPaste.addKeyListener(this.getKeyAdapterPasteActionStop());
 		}
 		return jButtonPaste;
@@ -610,14 +626,45 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonImportGraph() {
 		if (jButtonImportGraph == null) {
-		    jButtonImportGraph = new JButton();
-		    jButtonImportGraph.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBtransImport.png")));
-		    jButtonImportGraph.setPreferredSize(jButtonSize);
-		    jButtonImportGraph.setToolTipText(Language.translate("Import Graph from file", Language.EN));
-		    jButtonImportGraph.addActionListener(this);
+		    jButtonImportGraph = this.getNewJButton("MBtransImport.png", Language.translate("Import Graph from file", Language.EN));
 		}
 		return jButtonImportGraph;
     }
+    
+    
+    private JButton getJButtonLayoutSwitch() {
+		if (jButtonLayoutSwitch== null) {
+			jButtonLayoutSwitch = this.getNewJButton("LayoutSwitch.png", Language.translate("Switch Layout", Language.EN));
+		}
+		return jButtonLayoutSwitch;
+    }
+    
+    private JToggleButton getJToggleButtonEdgeLine() {
+		if (jToggleButtonEdgeLine== null) {
+			jToggleButtonEdgeLine = this.getNewJToggleButton("EdgeLine.png", Language.translate("Straight Line Edge", Language.EN));
+			jToggleButtonEdgeLine.setSelected(true);
+		}
+		return jToggleButtonEdgeLine;
+    }
+    private JToggleButton getJToggleButtonEdgeQuadCurve() {
+		if (jToggleButtonEdgeQuadCurve==null) {
+			jToggleButtonEdgeQuadCurve = this.getNewJToggleButton("EdgeQuadCurve.png", Language.translate("Quadratic Curve Edge", Language.EN));
+		}
+		return jToggleButtonEdgeQuadCurve;
+    }
+    private JToggleButton getJToggleButtonEdgePolyLine() {
+		if (jToggleButtonEdgePolyLine==null) {
+			jToggleButtonEdgePolyLine = this.getNewJToggleButton("EdgePolyline.png", Language.translate("Polyline Edge", Language.EN));
+		}
+		return jToggleButtonEdgePolyLine;
+    }
+    private JToggleButton getJToggleButtonEdgeOrthogonal() {
+		if (jToggleButtonEdgeOrthogonal==null) {
+			jToggleButtonEdgeOrthogonal = this.getNewJToggleButton("EdgeOrthogonal.png", Language.translate("Orthogonal Line Edge", Language.EN));
+		}
+		return jToggleButtonEdgeOrthogonal;
+    }
+
 
     /**
      * This method initializes edgePopup The menu is displayed when an edge is right clicked
@@ -753,13 +800,6 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     }
 
     /**
-     * Sets locally the GUI elements for the graph.
-     */
-    private void setGraphGuiElements() {
-    	this.basicGraphGui = this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();	
-    }
-    
-    /**
      * Sets the undo and redo buttons enabled or not. 
      * Additionally the ToolTipText will be set.
      */
@@ -794,12 +834,12 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				String ac = ae.getActionCommand();
 				if (ac.equals("PropWindowOpenSelection")) {
 					// --- Open properties of current selection -----
-					final Set<Object> selectedObjects = basicGraphGui.getSelectedGraphObject();
+					final Set<Object> selectedObjects = BasicGraphGuiTools.this.getBasicGraphGUI().getSelectedGraphObject();
 					if (selectedObjects==null) {
 						// --- No selection -------------------------
 						String title = Language.translate("Fehlende Auswahl!");
 						String message = Language.translate("Es wurde keine Komponente ausgewählt!");
-						JOptionPane.showMessageDialog(basicGraphGui, message, title, JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(getBasicGraphGUI(), message, title, JOptionPane.WARNING_MESSAGE);
 						
 					} else {
 						// --- Open the property dialog(s) ----------
@@ -816,10 +856,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					}
 					
 				} else if (ac.equals("PropWindowCloseAll")) {
-					getGraphControllerGUI().getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
+					BasicGraphGuiTools.this.getGraphControllerGUI().getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
 					
 				} else {
-					JInternalFrame frame = getGraphControllerGUI().getBasicGraphGuiJDesktopPane().getEditor(ac);
+					JInternalFrame frame = BasicGraphGuiTools.this.getGraphControllerGUI().getBasicGraphGuiJDesktopPane().getEditor(ac);
 					if (frame instanceof MessagingJInternalFrame) {
 						((MessagingJInternalFrame) frame).registerAtDesktopAndSetVisible();
 					}
@@ -943,14 +983,18 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	// --------------------------------------------------------------------
     	JToolBar toolBar = null;
     	switch (compDescription.getToolBarType()) {
-		case EditControl:
+    	case ViewControl:
+    		toolBar = this.getJToolBarView();
+    		break;
+
+    	case EditControl:
 			// --- Nothing to do in case of edit & execution --------
 			if (isExecutionTime==true) return;
 			toolBar = this.getJToolBarEdit();
 			break;
-
-		case ViewControl:
-			toolBar = this.getJToolBarView();
+			
+		case LayoutControl:
+			toolBar = this.getJToolBarLayout();
 			break;
 		}
 
@@ -1045,8 +1089,6 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     @Override
     public void actionPerformed(ActionEvent ae) {
 		
-    	this.setGraphGuiElements();
-    	
 		if (ae.getSource() == getJButtonComponents()) {
 			// ------------------------------------------------------
 			// --- Edit the ComponentType settings ------------------
@@ -1077,6 +1119,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				String msg = Language.translate("Currently, no network model is available!", Language.EN);
 				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), msg, title, JOptionPane.INFORMATION_MESSAGE);
 			}
+			
+		} else if (ae.getSource() == getJToggleButtonLayoutToolBar()) {
+			// ------------------------------------------------------
+			// --- Show / hide layout toolbar -----------------------
+			this.getJToolBarLayout().setVisible(getJToggleButtonLayoutToolBar().isSelected());
 			
 		} else if (ae.getSource() == getJButtonNetworkModelInfo()) {
 			// ------------------------------------------------------
@@ -1126,7 +1173,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonCut()) {
 			// ------------------------------------------------------
 			// --- Cut Action ---------------------------------------
-			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
+			Set<GraphNode> nodeSet = this.getBasicGraphGUI().getPickedNodes();
 			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			if(selectedComponents!=null && selectedComponents.size()>0){
 				// --- Copy to clipboard ----------------------------
@@ -1138,7 +1185,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonCopy()) {
 			// ------------------------------------------------------
 			// --- Copy Action --------------------------------------
-			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
+			Set<GraphNode> nodeSet = this.getBasicGraphGUI().getPickedNodes();
 			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			this.graphController.copyToClipboard(selectedComponents);
 			
@@ -1174,8 +1221,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Remove Component Button clicked ------------------
 			boolean removeDistributionNodes = true;
-			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
-			Set<GraphEdge> edgeSet = this.basicGraphGui.getPickedEdges();
+			Set<GraphNode> nodeSet = this.getBasicGraphGUI().getPickedNodes();
+			Set<GraphEdge> edgeSet = this.getBasicGraphGUI().getPickedEdges();
 			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			
 			// ------------------------------------------------------
@@ -1236,7 +1283,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonMergeNodes()) {
 			// ------------------------------------------------------
 			// --- Merge Nodes Button clicked -----------------------
-			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
+			Set<GraphNode> nodeSet = this.getBasicGraphGUI().getPickedNodes();
 			if(nodeSet.size()>=2){
 				boolean mergeError = false;
 				GraphNode node2Add2 = null;
@@ -1278,7 +1325,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonSplitNode() || ae.getSource() == getJMenuItemSplitNode()) {
 			// ------------------------------------------------------
 			// --- Button Split node --------------------------------
-			GraphNode pickedNode = basicGraphGui.getPickedSingleNode();
+			GraphNode pickedNode = this.getBasicGraphGUI().getPickedSingleNode();
 			if(pickedNode!=null){
 				// --- One vertex is picked -----
 				List<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponents(pickedNode);
@@ -1320,7 +1367,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if(ae.getSource()==getJMenuItemNodeProp()) {
 			// ------------------------------------------------------
 			// --- Popup Menu Item Node properties clicked ----------
-			GraphNode pickedVertex = basicGraphGui.getPickedSingleNode();
+			GraphNode pickedVertex = this.getBasicGraphGUI().getPickedSingleNode();
 			if(pickedVertex!=null){
 				NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
 				nmNote.setInfoObject(pickedVertex);
@@ -1330,13 +1377,21 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if(ae.getSource() == getJMenuItemEdgeProp()){
 			// ------------------------------------------------------
 			// --- Popup Menu Item Edge properties clicked ----------
-			GraphEdge pickedEdge = basicGraphGui.getPickedSingleEdge();
+			GraphEdge pickedEdge = this.getBasicGraphGUI().getPickedSingleEdge();
 			if(pickedEdge!=null){
 				NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
 				nmNote.setInfoObject(pickedEdge);
 				this.graphController.notifyObservers(nmNote);
 			}
-		}		
+			
+			
+		// TODO --- Act on Layout Settings -----  
+		
+			
+		} else {
+			System.out.println("=> Unknow action command from " + ae.getSource());
+			
+		}
 		
 	} // end actionPerformed()
 
