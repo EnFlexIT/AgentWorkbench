@@ -30,9 +30,9 @@ package org.awb.env.networkModel.visualisation.notifications;
 
 import java.util.HashSet;
 
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 

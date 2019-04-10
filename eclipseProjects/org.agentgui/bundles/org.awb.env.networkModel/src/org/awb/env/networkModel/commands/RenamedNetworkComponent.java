@@ -28,7 +28,7 @@
  */
 package org.awb.env.networkModel.commands;
 
-import org.awb.env.networkModel.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkComponent;
 
 /**
  * The Class RenamedNetworkComponent serves as descriptor for renamed NetworkComponents.

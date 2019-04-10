@@ -28,7 +28,7 @@
  */
 package org.awb.env.networkModel.visualisation.notifications;
 
-import org.awb.env.networkModel.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkComponent;
 
 /**
  * The Class NetworkComponentDirectionMessage can be used in order to 

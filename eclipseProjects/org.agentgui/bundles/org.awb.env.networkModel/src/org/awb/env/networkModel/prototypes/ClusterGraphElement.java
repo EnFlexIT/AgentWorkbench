@@ -34,12 +34,12 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Vector;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphGlobals;
-import org.awb.env.networkModel.networkModel.GeneralGraphSettings4MAS;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -76,7 +76,7 @@ public class ClusterGraphElement extends StarGraphElement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.awb.env.networkModel.prototypes.GraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
+	 * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
 	 */
 	@Override
 	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {

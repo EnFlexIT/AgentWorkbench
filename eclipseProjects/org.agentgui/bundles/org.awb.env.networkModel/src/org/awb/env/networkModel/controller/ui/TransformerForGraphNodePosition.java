@@ -31,11 +31,11 @@ package org.awb.env.networkModel.controller.ui;
 import java.awt.geom.Point2D;
 
 import org.apache.commons.collections15.Transformer;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.LayoutSettings;
-import org.awb.env.networkModel.networkModel.LayoutSettings.CoordinateSystemXDirection;
-import org.awb.env.networkModel.networkModel.LayoutSettings.CoordinateSystemYDirection;
+import org.awb.env.networkModel.settings.LayoutSettings;
+import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
+import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
 
 /**
  * The Class TransformerForGraphNodePosition justifies a {@link GraphNode} position in the visualization viewer 

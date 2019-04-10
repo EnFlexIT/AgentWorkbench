@@ -32,10 +32,10 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.GeneralGraphSettings4MAS;
-import org.awb.env.networkModel.networkModel.NetworkModel;
-import org.awb.env.networkModel.networkModel.NetworkModelNotification;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import agentgui.core.application.Language;
 

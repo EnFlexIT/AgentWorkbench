@@ -33,7 +33,7 @@ package org.awb.env.networkModel.prototypes;
  * A sample graph element prototype of star type with 4 connection points
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @see Star3GraphElement
- * @see GraphElementPrototype
+ * @see AbstractGraphElementPrototype
  *
  */
 public class Star4GraphElement extends Star3GraphElement{

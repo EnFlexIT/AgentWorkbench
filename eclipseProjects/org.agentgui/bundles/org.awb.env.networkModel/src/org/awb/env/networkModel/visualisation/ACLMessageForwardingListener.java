@@ -1,6 +1,6 @@
 package org.awb.env.networkModel.visualisation;
 
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 
 import jade.lang.acl.ACLMessage;
 

@@ -28,8 +28,8 @@
  */
 package org.awb.env.networkModel.visualisation.notifications;
 
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
 
 /**
  * The Class DataModelOpenViewNotification can be used in order to

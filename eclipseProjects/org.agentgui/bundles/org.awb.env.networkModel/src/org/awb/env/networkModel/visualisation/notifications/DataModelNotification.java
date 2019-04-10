@@ -28,10 +28,10 @@
  */
 package org.awb.env.networkModel.visualisation.notifications;
 
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter4DataModel;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
 
@@ -68,7 +68,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 *
 	 * @param networkComponent the NetworkComponent that contains the data model
 	 * @param networkModel the current network model
-	 * @see NetworkComponent#getCopy(org.awb.env.networkModel.networkModel.NetworkModel)
+	 * @see NetworkComponent#getCopy(org.awb.env.networkModel.NetworkModel)
 	 */
 	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel) {
 		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, networkComponent).getStoredDataModelAdapter();
@@ -81,7 +81,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 * @param networkComponent the NetworkComponent that contains the data model
 	 * @param networkModel the current network model
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
-	 * @see NetworkComponent#getCopy(org.awb.env.networkModel.networkModel.NetworkModel)
+	 * @see NetworkComponent#getCopy(org.awb.env.networkModel.NetworkModel)
 	 */
 	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
 		this.networkComponent = networkComponent.getCopy();
@@ -103,7 +103,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 *
 	 * @param graphNode the GraphNode that contains the data model
 	 * @param networkModel the current network model
-	 * @see GraphNode#getCopy(org.awb.env.networkModel.networkModel.NetworkModel)
+	 * @see GraphNode#getCopy(org.awb.env.networkModel.NetworkModel)
 	 */
 	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel) {
 		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, graphNode).getStoredDataModelAdapter();
@@ -116,7 +116,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 * @param graphNode the GraphNode that contains the data model
 	 * @param networkModel the current network model
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
-	 * @see GraphNode#getCopy(org.awb.env.networkModel.networkModel.NetworkModel)
+	 * @see GraphNode#getCopy(org.awb.env.networkModel.NetworkModel)
 	 */
 	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
 		this.graphNode = graphNode.getCopy();

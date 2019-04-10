@@ -33,8 +33,8 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.messaging.GraphUIMessage;
-import org.awb.env.networkModel.networkModel.NetworkModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.DataModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotificationGraph;
 import org.awb.env.networkModel.visualisation.notifications.UIMessage;

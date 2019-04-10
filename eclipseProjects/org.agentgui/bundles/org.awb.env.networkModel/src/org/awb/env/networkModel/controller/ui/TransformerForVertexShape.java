@@ -38,9 +38,9 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphGlobals;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.GeneralGraphSettings4MAS;
-import org.awb.env.networkModel.networkModel.GraphNode;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import edu.uci.ics.jung.visualization.FourPassImageShaper;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;

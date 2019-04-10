@@ -40,9 +40,9 @@ import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
 import org.awb.env.networkModel.visualisation.notifications.DataModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeries;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeriesException;

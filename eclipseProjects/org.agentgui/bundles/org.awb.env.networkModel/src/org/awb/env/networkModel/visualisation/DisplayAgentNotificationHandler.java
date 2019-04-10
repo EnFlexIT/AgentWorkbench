@@ -30,12 +30,12 @@ package org.awb.env.networkModel.visualisation;
 
 import java.util.Vector;
 
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphElementLayout;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphElementLayout;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkModel;
 import org.awb.env.networkModel.visualisation.notifications.DataModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.DataModelOpenViewNotification;
 import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotificationGraph;

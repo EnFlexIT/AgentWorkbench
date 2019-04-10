@@ -28,7 +28,7 @@
  */
 package org.awb.env.networkModel.visualisation.notifications;
 
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.NetworkModel;
 
 /**
  * The Class EnableNetworkModelUpdateNotification can be used in order 

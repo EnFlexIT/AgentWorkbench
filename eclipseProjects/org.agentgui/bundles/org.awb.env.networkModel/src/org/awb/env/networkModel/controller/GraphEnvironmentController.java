@@ -39,19 +39,21 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
+import org.awb.env.networkModel.ClusterNetworkComponent;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.commands.NetworkModelUndoManager;
 import org.awb.env.networkModel.controller.DataModelEnDecoderThread.OrganizerAction;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
-import org.awb.env.networkModel.networkModel.ClusterNetworkComponent;
-import org.awb.env.networkModel.networkModel.ComponentTypeSettings;
-import org.awb.env.networkModel.networkModel.DomainSettings;
-import org.awb.env.networkModel.networkModel.GeneralGraphSettings4MAS;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkModel;
-import org.awb.env.networkModel.networkModel.NetworkModelUndoManager;
+import org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter;
+import org.awb.env.networkModel.settings.ComponentTypeSettings;
+import org.awb.env.networkModel.settings.DomainSettings;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -72,8 +74,8 @@ import jade.core.Agent;
  * Also contains the network component type settings configuration.<br>
  * The observable class of the network model in the observer pattern.
  * 
- * @see org.awb.env.networkModel.networkModel.NetworkModel
- * @see org.awb.env.networkModel.networkModel.ComponentTypeSettings
+ * @see org.awb.env.networkModel.NetworkModel
+ * @see org.awb.env.networkModel.settings.ComponentTypeSettings
  * @see GraphEnvironmentControllerGUI
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
@@ -89,7 +91,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/** The base file name used for saving the graph and the components (without suffix) */
 	private String baseFileName;
 	/** Known adapter for the import of network models */
-	private Vector<NetworkModelFileImporter> importAdapter;
+	private Vector<AbstractNetworkModelFileImporter> importAdapter;
 
 	/** The network model currently loaded */
 	private NetworkModel networkModel;
@@ -846,9 +848,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Return all known import adapter.
 	 * @return the import adapter
 	 */
-	public Vector<NetworkModelFileImporter> getImportAdapter() {
+	public Vector<AbstractNetworkModelFileImporter> getImportAdapter() {
 		if (this.importAdapter == null) {
-			this.importAdapter = new Vector<NetworkModelFileImporter>();
+			this.importAdapter = new Vector<AbstractNetworkModelFileImporter>();
 		}
 		return this.importAdapter;
 	}

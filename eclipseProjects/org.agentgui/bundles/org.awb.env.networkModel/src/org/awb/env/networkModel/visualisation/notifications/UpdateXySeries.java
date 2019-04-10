@@ -32,11 +32,11 @@ import jade.util.leap.List;
 
 import java.util.Vector;
 
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter;
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter4Ontology;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
 import agentgui.core.charts.xyChart.XyDataModel;
@@ -186,7 +186,7 @@ public class UpdateXySeries extends UpdateDataSeries {
 	
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.visualisation.notifications.UpdateDataSeries#applyToNetworkModelOnly(org.awb.env.networkModel.networkModel.NetworkModel)
+	 * @see org.awb.env.networkModel.visualisation.notifications.UpdateDataSeries#applyToNetworkModelOnly(org.awb.env.networkModel.helper.NetworkModel)
 	 */
 	@Override
 	public void applyToNetworkModelOnly(NetworkModel networkModel) throws UpdateDataSeriesException {

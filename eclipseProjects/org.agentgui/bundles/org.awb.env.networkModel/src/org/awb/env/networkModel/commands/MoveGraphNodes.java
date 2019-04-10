@@ -35,13 +35,13 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.controller.GraphEnvironmentControllerGUI;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkModelNotification;
 
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.MultiPickedState;

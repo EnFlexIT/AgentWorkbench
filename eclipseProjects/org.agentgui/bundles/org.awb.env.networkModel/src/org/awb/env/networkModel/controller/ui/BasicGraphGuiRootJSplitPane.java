@@ -73,13 +73,13 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 import org.awb.env.networkModel.GraphGlobals;
+import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.commands.RenamedNetworkComponent;
-import org.awb.env.networkModel.components.TableCellEditor4TableButton;
-import org.awb.env.networkModel.components.TableCellRenderer4Button;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkModelNotification;
-import org.awb.env.networkModel.networkModel.GeneralGraphSettings4MAS.ComponentSorting;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
+import org.awb.env.networkModel.settings.ui.TableCellEditor4TableButton;
+import org.awb.env.networkModel.settings.ui.TableCellRenderer4Button;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -90,7 +90,7 @@ import agentgui.core.application.Language;
  * 
  * @see GraphEnvironmentController
  * @see BasicGraphGui
- * @see org.awb.env.networkModel.networkModel
+ * @see org.awb.env.networkModel.helper
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology - Guwahati

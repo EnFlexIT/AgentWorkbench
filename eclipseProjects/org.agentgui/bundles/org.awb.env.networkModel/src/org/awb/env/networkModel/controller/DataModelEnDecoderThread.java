@@ -36,10 +36,10 @@ import javax.swing.SwingUtilities;
 
 import org.agentgui.gui.AwbProgressMonitor;
 import org.agentgui.gui.UiBridge;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter;
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter4DataModel;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;

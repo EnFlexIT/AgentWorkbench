@@ -2,18 +2,18 @@ package org.awb.env.networkModel.classFilter;
 
 import java.lang.reflect.Modifier;
 
-import org.awb.env.networkModel.prototypes.GraphElementPrototype;
+import org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype;
 
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 
 /**
- * The Filter for GraphElementPrototype classes.
+ * The Filter for AbstractGraphElementPrototype classes.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class FilterForGraphElementPrototype extends AbstractBundleClassFilter {
 
-	private Class<GraphElementPrototype> filterclass = GraphElementPrototype.class;
+	private Class<AbstractGraphElementPrototype> filterclass = AbstractGraphElementPrototype.class;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter#getFilterScope()

@@ -42,8 +42,8 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;

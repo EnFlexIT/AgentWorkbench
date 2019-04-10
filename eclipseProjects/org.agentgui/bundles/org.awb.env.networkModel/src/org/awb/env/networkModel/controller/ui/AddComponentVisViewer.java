@@ -42,14 +42,14 @@ import javax.swing.ImageIcon;
 import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.collections15.Transformer;
+import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
-import org.awb.env.networkModel.components.ComponentTypeListElement;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.DomainSettings;
-import org.awb.env.networkModel.networkModel.GeneralGraphSettings4MAS;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
 import org.awb.env.networkModel.prototypes.DistributionNode;
+import org.awb.env.networkModel.settings.DomainSettings;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
+import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.LayeredIcon;

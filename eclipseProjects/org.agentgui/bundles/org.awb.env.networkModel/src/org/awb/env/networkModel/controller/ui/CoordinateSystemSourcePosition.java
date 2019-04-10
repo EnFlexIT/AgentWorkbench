@@ -31,9 +31,9 @@ package org.awb.env.networkModel.controller.ui;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.LayoutSettings;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.settings.LayoutSettings;
 
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 

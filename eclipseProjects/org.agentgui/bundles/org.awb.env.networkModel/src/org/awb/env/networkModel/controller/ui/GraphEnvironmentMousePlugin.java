@@ -51,16 +51,16 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.GraphGlobals;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphElementLayout;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.LayoutSettings;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkModel;
-import org.awb.env.networkModel.networkModel.NetworkModelNotification;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.settings.LayoutSettings;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;

@@ -36,9 +36,9 @@ import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkModel;
 import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotificationGraph;
 import org.awb.env.networkModel.visualisation.notifications.EnableNetworkModelUpdateNotification;
 import org.awb.env.networkModel.visualisation.notifications.EnvironmentModelUpdateNotification;

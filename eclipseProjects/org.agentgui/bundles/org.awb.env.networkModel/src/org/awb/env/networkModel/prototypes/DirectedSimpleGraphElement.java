@@ -30,10 +30,10 @@ package org.awb.env.networkModel.prototypes;
 
 import java.util.HashSet;
 
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -44,13 +44,13 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * 
  */
-public class DirectedSimpleGraphElement extends GraphElementPrototype {
+public class DirectedSimpleGraphElement extends AbstractGraphElementPrototype {
     
     private GraphNode entry;
     private GraphNode exit;
 
     /* (non-Javadoc)
-     * @see org.awb.env.networkModel.prototypes.GraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
+     * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
      */
     @Override
     public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {

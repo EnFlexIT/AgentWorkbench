@@ -54,9 +54,9 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.NetworkModelAnalyzer;
-import org.awb.env.networkModel.networkModel.NetworkModelAnalyzerListener;
-import org.awb.env.networkModel.networkModel.NetworkModelNotification;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.helper.NetworkModelAnalyzer;
+import org.awb.env.networkModel.helper.NetworkModelAnalyzerListener;
 
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -265,21 +265,21 @@ public class NetworkModelInformationDialog extends BasicGraphGuiJInternalFrame i
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.networkModel.NetworkModelAnalyzerListener#onNetworkModelAnalysisExecuted()
+	 * @see org.awb.env.networkModel.helper.NetworkModelAnalyzerListener#onNetworkModelAnalysisExecuted()
 	 */
 	@Override
 	public void onNetworkModelAnalysStarted() {
 		this.getJTextAreaOutput().setText(null);	
 	}
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.networkModel.NetworkModelAnalyzerListener#onNetworkModelAnalysisFinalized()
+	 * @see org.awb.env.networkModel.helper.NetworkModelAnalyzerListener#onNetworkModelAnalysisFinalized()
 	 */
 	@Override
 	public void onNetworkModelAnalysFinalized() {
 		// --- Nothing to do here yet -------
 	}
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.networkModel.NetworkModelAnalyzerListener#onAppendedMessage(java.lang.String)
+	 * @see org.awb.env.networkModel.helper.NetworkModelAnalyzerListener#onAppendedMessage(java.lang.String)
 	 */
 	@Override
 	public void onAppendedMessage(String message) {

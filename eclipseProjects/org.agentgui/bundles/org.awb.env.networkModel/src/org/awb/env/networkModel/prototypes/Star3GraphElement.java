@@ -31,10 +31,10 @@ package org.awb.env.networkModel.prototypes;
 
 import java.util.HashSet;
 
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;

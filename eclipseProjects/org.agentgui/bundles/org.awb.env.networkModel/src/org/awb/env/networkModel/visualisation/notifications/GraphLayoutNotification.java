@@ -30,9 +30,9 @@ package org.awb.env.networkModel.visualisation.notifications;
 
 import java.util.Vector;
 
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphElementLayout;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphElementLayout;
+import org.awb.env.networkModel.NetworkModel;
 
 /**
  * The Class GraphLayoutNotification can be used in order to define

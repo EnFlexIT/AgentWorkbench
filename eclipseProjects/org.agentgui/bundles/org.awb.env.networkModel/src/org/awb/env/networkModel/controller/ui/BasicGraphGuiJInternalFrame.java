@@ -33,10 +33,9 @@ import java.beans.PropertyVetoException;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.controller.GraphEnvironmentControllerGUI;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
 
 
 /**

@@ -47,12 +47,12 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;

@@ -35,9 +35,6 @@ import java.util.Collection;
 
 import javax.swing.ImageIcon;
 
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
-
 import agentgui.core.application.Application;
 import de.enflexit.common.PathHandling;
 import edu.uci.ics.jung.graph.Graph;
@@ -49,7 +46,7 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public final class GraphGlobals {
 
-	private static String pathImages = "/agentgui/envModel/graph/img/";
+	private static String pathImages = "/org/awb/env/networkModel/img/";
 
 	/**
 	 * Gets the path for images.

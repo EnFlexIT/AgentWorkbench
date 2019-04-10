@@ -32,10 +32,10 @@ package org.awb.env.networkModel.prototypes;
 import java.util.HashSet;
 import java.util.Vector;
 
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -45,7 +45,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
-public class Mesh3GraphElement extends GraphElementPrototype {
+public class Mesh3GraphElement extends AbstractGraphElementPrototype {
     
     private Integer n = null;
 

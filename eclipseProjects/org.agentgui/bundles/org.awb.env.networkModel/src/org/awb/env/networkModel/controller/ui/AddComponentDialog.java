@@ -75,24 +75,23 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import org.apache.commons.collections15.Transformer;
+import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
-import org.awb.env.networkModel.components.ComponentTypeListElement;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.controller.GraphEnvironmentControllerGUI;
-import org.awb.env.networkModel.networkModel.ComponentTypeSettings;
-import org.awb.env.networkModel.networkModel.DomainSettings;
-import org.awb.env.networkModel.networkModel.GeneralGraphSettings4MAS;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.GraphNodePairs;
-import org.awb.env.networkModel.networkModel.LayoutSettings;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkComponentFactory;
-import org.awb.env.networkModel.networkModel.NetworkModel;
-import org.awb.env.networkModel.networkModel.LayoutSettings.CoordinateSystemYDirection;
+import org.awb.env.networkModel.helper.GraphNodePairs;
+import org.awb.env.networkModel.helper.NetworkComponentFactory;
 import org.awb.env.networkModel.prototypes.DistributionNode;
-import org.awb.env.networkModel.prototypes.GraphElementPrototype;
+import org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype;
 import org.awb.env.networkModel.prototypes.Star3GraphElement;
+import org.awb.env.networkModel.settings.ComponentTypeSettings;
+import org.awb.env.networkModel.settings.DomainSettings;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
+import org.awb.env.networkModel.settings.LayoutSettings;
+import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
+import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -110,7 +109,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
  * 
  * @see GraphEnvironmentControllerGUI
  * @see GraphEnvironmentController
- * @see GraphElementPrototype
+ * @see AbstractGraphElementPrototype
  * 
  * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -136,7 +135,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private ComponentTypeListElement localComponentTypeListElement;
 	private DomainSettings localDomainSetings;
 	
-    private GraphElementPrototype localGraphElementPrototype;
+    private AbstractGraphElementPrototype localGraphElementPrototype;
 	private GraphNode localGraphNodeSelected;
 	
 	private boolean isHiddenFactory = false;

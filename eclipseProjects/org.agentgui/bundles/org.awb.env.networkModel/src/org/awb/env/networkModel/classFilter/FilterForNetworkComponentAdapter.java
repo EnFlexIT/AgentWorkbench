@@ -2,7 +2,7 @@ package org.awb.env.networkModel.classFilter;
 
 import java.lang.reflect.Modifier;
 
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 

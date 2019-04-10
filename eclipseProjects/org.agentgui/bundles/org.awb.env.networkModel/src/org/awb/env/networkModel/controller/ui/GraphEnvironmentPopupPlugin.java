@@ -50,15 +50,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphGlobals;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkComponent;
-import org.awb.env.networkModel.networkModel.NetworkComponentAdapter;
-import org.awb.env.networkModel.networkModel.NetworkModel;
-import org.awb.env.networkModel.networkModel.NetworkModelNotification;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
 
 import agentgui.core.application.Language;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;

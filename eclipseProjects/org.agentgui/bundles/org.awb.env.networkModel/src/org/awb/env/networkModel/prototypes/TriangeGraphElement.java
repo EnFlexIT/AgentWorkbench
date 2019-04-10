@@ -31,10 +31,10 @@ package org.awb.env.networkModel.prototypes;
 import java.util.HashSet;
 import java.util.Vector;
 
-import org.awb.env.networkModel.networkModel.GraphEdge;
-import org.awb.env.networkModel.networkModel.GraphElement;
-import org.awb.env.networkModel.networkModel.GraphNode;
-import org.awb.env.networkModel.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -44,9 +44,9 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
-public class TriangeGraphElement extends GraphElementPrototype {
+public class TriangeGraphElement extends AbstractGraphElementPrototype {
     /**
-     * The GraphElementPrototype's connection points
+     * The AbstractGraphElementPrototype's connection points
      */
     private Vector<GraphNode> nodes;
 
