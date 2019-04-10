@@ -33,14 +33,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
@@ -48,6 +46,7 @@ import javax.swing.JToolBar;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.gui.components.JComboBoxWide;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
@@ -61,24 +60,26 @@ import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
  */
 public class SetupSelectorToolbar implements ActionListener {
 
-	private final Integer SETUP_add = 1;
-	private final Integer SETUP_rename = 2;
-	private final Integer SETUP_copy = 3;
+	private enum SetupAction {
+		Add,
+		Rename,
+		Copy
+	}
 	
-	private Project currProject = null;
-	private SimulationSetup currSimSetup = null;
+	private Project currProject;
+	private SimulationSetup currSimSetup;
 	
-	private MyObserver myProjectMyObserver = null;
-	private JToolBar jToolBar2Add2 = null;
+	private MyObserver myProjectMyObserver;
+	private JToolBar jToolBar2Add2;
 	
-	private JLabel jLabelSetupSelector = null;
-	private JComboBox<String> jComboBoxSetupSelector = null;
-	private DefaultComboBoxModel<String> jComboBoxModel4Setups = new DefaultComboBoxModel<String>(); 
+	private JLabel jLabelSetupSelector;
+	private JComboBoxWide<String> jComboBoxSetupSelector;
+	private DefaultComboBoxModel<String> jComboBoxModel4Setups; 
 	
-	private JButton jButtonSetupRename = null;
-	private JButton jButtonSetupCopy = null;
-	private JButton jButtonSetupNew = null;
-	private JButton jButtonSetupDelete = null;
+	private JButton jButtonSetupRename;
+	private JButton jButtonSetupCopy;
+	private JButton jButtonSetupNew;
+	private JButton jButtonSetupDelete;
 	
 	
 	/**
@@ -105,11 +106,11 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 		
 		// --- Translate ----------------------------------
-		this.jComboBoxSetupSelector.setToolTipText(Language.translate("Setup auswählen"));
-		this.jButtonSetupRename.setToolTipText(Language.translate("Setup umbenennen"));
-		this.jButtonSetupCopy.setToolTipText(Language.translate("Setup kopieren"));
-		this.jButtonSetupNew.setToolTipText(Language.translate("Setup hinzufügen"));
-		this.jButtonSetupDelete.setToolTipText(Language.translate("Setup löschen"));
+		this.getJComboBoxSetupSelector().setToolTipText(Language.translate("Setup auswählen"));
+		this.getJButtonSetupRename().setToolTipText(Language.translate("Setup umbenennen"));
+		this.getJButtonSetupCopy().setToolTipText(Language.translate("Setup kopieren"));
+		this.getJButtonSetupNew().setToolTipText(Language.translate("Setup hinzufügen"));
+		this.getJButtonSetupDelete().setToolTipText(Language.translate("Setup löschen"));
 		
 		this.setEnabled(false);
 		
@@ -125,8 +126,8 @@ public class SetupSelectorToolbar implements ActionListener {
 			this.setEnabled(false);
 			this.myProjectMyObserver = null;
 			this.currProject = null;
-			this.jComboBoxSetupSelector.removeActionListener(this);
-			this.jComboBoxModel4Setups.removeAllElements();
+			this.getJComboBoxSetupSelector().removeActionListener(this);
+			this.getComboBoxModel4Setups().removeAllElements();
 			
 		} else {
 			this.setEnabled(true);
@@ -147,11 +148,11 @@ public class SetupSelectorToolbar implements ActionListener {
 	public void setEnabled(boolean enable) {
 		
 		this.jLabelSetupSelector.setEnabled(enable);
-		this.jComboBoxSetupSelector.setEnabled(enable);
-		this.jButtonSetupRename.setEnabled(enable);
-		this.jButtonSetupCopy.setEnabled(enable);
-		this.jButtonSetupNew.setEnabled(enable);
-		this.jButtonSetupDelete.setEnabled(enable);
+		this.getJComboBoxSetupSelector().setEnabled(enable);
+		this.getJButtonSetupRename().setEnabled(enable);
+		this.getJButtonSetupCopy().setEnabled(enable);
+		this.getJButtonSetupNew().setEnabled(enable);
+		this.getJButtonSetupDelete().setEnabled(enable);
 		
 	}
 	
@@ -167,13 +168,24 @@ public class SetupSelectorToolbar implements ActionListener {
 		}
 		return jLabelSetupSelector;
 	}
+	
+	/**
+	 * Returns the combo box model for setups.
+	 * @return the combo box model for setups
+	 */
+	private DefaultComboBoxModel<String> getComboBoxModel4Setups() {
+		if (jComboBoxModel4Setups==null) {
+			jComboBoxModel4Setups = new DefaultComboBoxModel<>();
+		}
+		return jComboBoxModel4Setups;
+	}
 	/**
 	 * This method initialises jComboBoxSetupSelector	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox<String> getJComboBoxSetupSelector() {
+	private JComboBoxWide<String> getJComboBoxSetupSelector() {
 		if (jComboBoxSetupSelector == null) {
-			jComboBoxSetupSelector = new JComboBox<String>(jComboBoxModel4Setups);
+			jComboBoxSetupSelector = new JComboBoxWide<String>(this.getComboBoxModel4Setups());
 			jComboBoxSetupSelector.setToolTipText("Setup auswählen");
 			jComboBoxSetupSelector.setMaximumRowCount(18);
 			jComboBoxSetupSelector.setPreferredSize(new Dimension(250, 26));
@@ -309,24 +321,24 @@ public class SetupSelectorToolbar implements ActionListener {
 		String currSetupFile = this.currProject.getSimulationSetups().get(currSetup);
 		
 		// --- (Re)Create ComboBoxModel -------------------
-		jComboBoxSetupSelector.removeActionListener(this);
-		jComboBoxModel4Setups.removeAllElements();
+		this.getJComboBoxSetupSelector().removeActionListener(this);
+		this.getComboBoxModel4Setups().removeAllElements();
 		
-		Vector<String> v = new Vector<String>(this.currProject.getSimulationSetups().keySet());
-		Collections.sort(v, String.CASE_INSENSITIVE_ORDER);
-		Iterator<String> it = v.iterator();
-		while (it.hasNext()) {
-			String setupName = it.next().trim();
-			if (jComboBoxModel4Setups.getIndexOf(setupName)!=-1) {
-				jComboBoxModel4Setups.removeElement(setupName);
+		Vector<String> setupNames = new Vector<String>(this.currProject.getSimulationSetups().keySet());
+		Collections.sort(setupNames, String.CASE_INSENSITIVE_ORDER);
+		for (int i = 0; i < setupNames.size(); i++) {
+			String setupName = setupNames.get(i).trim();
+			if (this.getComboBoxModel4Setups().getIndexOf(setupName)!=-1) {
+				this.getComboBoxModel4Setups().removeElement(setupName);
 			}
-			jComboBoxModel4Setups.addElement(setupName);
+			this.getComboBoxModel4Setups().addElement(setupName);
 		}
 		
 		// --- Set to current SimulationSetup -------------
-		jComboBoxSetupSelector.setToolTipText("Setup '" + currSetup + "' " + Language.translate("in Datei") + " '" + currSetupFile + "'");
-		jComboBoxSetupSelector.setSelectedItem(currSetup);
-		jComboBoxSetupSelector.addActionListener(this);
+		this.getJComboBoxSetupSelector().setToolTipText("Setup '" + currSetup + "' " + Language.translate("in Datei") + " '" + currSetupFile + "'");
+		this.getJComboBoxSetupSelector().setSelectedItem(currSetup);
+		this.getJComboBoxSetupSelector().doLayout();
+		this.getJComboBoxSetupSelector().addActionListener(this);
 		
 		// --- Load DefaultListModel laden ---------
 		this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
@@ -339,11 +351,11 @@ public class SetupSelectorToolbar implements ActionListener {
 	/**
 	 * Asks the user for a name of a setup.
 	 *
-	 * @param ReasonConstant the reason constant
+	 * @param setupAction the setup action
 	 * @param suggestion the suggestion
 	 * @return the string for the requested setup name or null
 	 */
-	private String setupAskUser4SetupName(Integer ReasonConstant, String suggestion) {
+	private String setupAskUser4SetupName(SetupAction setupAction, String suggestion) {
 		
 		String head = null;
 		String msg  = null;
@@ -353,16 +365,16 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 		while (inputIsOk==false) {
 			
-			switch (ReasonConstant) {
-			case 1:
+			switch (setupAction) {
+			case Add:
 				head = Language.translate("Neues Setup anlegen ...");
 				msg  = Language.translate("Bitte geben Sie den Namen für das neue Setup an!");
 				break;
-			case 2:
+			case Rename:
 				head = Language.translate("Setup umbenennen ...");
 				msg  = Language.translate("Bitte geben Sie den neuen Namen für das Setup an!");
 				break;
-			case 3:
+			case Copy:
 				head = Language.translate("Setup kopieren ...");
 				msg  = Language.translate("Bitte geben Sie den neuen Namen für das Setup an!");
 				break;
@@ -377,7 +389,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			
 			if (input==null) return null;
 			input = input.trim();
-			if (input.equalsIgnoreCase("")) return null;
+			if (input.isEmpty()==true) return null;
 			
 			// --- Can the name be used as file name? -----
 			newFileName = this.currProject.getSimulationSetups().getSuggestSetupFile(input);
@@ -409,7 +421,7 @@ public class SetupSelectorToolbar implements ActionListener {
 	 */
 	private void setupAdd() {
 		
-		final String nameNew = this.setupAskUser4SetupName(this.SETUP_add, null);
+		final String nameNew = this.setupAskUser4SetupName(SetupAction.Add, null);
 		if (nameNew==null) return;
 		final String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew); 
 
@@ -426,8 +438,8 @@ public class SetupSelectorToolbar implements ActionListener {
 	 */
 	private void setupRename() {
 		
-		final String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
-		final String nameNew = this.setupAskUser4SetupName(this.SETUP_rename, nameOld);
+		final String nameOld = this.getJComboBoxSetupSelector().getSelectedItem().toString();
+		final String nameNew = this.setupAskUser4SetupName(SetupAction.Rename, nameOld);
 		if (nameNew==null) return;
 		if (nameNew.equalsIgnoreCase(nameOld)) return;
 		final String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
@@ -445,8 +457,8 @@ public class SetupSelectorToolbar implements ActionListener {
 	 */
 	private void setupCopy(){
 
-		final String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
-		final String nameNew = this.setupAskUser4SetupName(this.SETUP_copy, nameOld + " (Copy)");
+		final String nameOld = this.getJComboBoxSetupSelector().getSelectedItem().toString();
+		final String nameNew = this.setupAskUser4SetupName(SetupAction.Copy, nameOld + " (Copy)");
 		if (nameNew==null) return;
 		final String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
 

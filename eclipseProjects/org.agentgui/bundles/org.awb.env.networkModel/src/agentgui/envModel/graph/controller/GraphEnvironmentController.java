@@ -302,7 +302,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 			break;
 
 		case SIMULATION_SETUP_COPY:
-			this.getProject().setUnsaved(true);
+			this.saveEnvironment();
 			break;
 
 		case SIMULATION_SETUP_REMOVE:

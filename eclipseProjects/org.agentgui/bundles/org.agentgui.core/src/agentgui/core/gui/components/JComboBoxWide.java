@@ -28,9 +28,10 @@
  */
 package agentgui.core.gui.components;
 
-import javax.swing.*; 
-import java.awt.*; 
-import java.util.Vector; 
+import java.util.Vector;
+
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox; 
  
 /**
  * The Class WideComboBox.
@@ -41,75 +42,38 @@ public class JComboBoxWide<E> extends JComboBox<E> {
  
 	private static final long serialVersionUID = 3185430839619749814L;
 
-    private boolean layingOut = false;
-	private boolean wide = true;
-
-    
 	/**
 	 * Instantiates a new wide JComboBox.
 	 */
-	public JComboBoxWide() { 
-    } 
+	public JComboBoxWide() { } 
     /**
      * Instantiates a new wide JComboBox.
      * @param items the items
      */
     public JComboBoxWide(E[] items){ 
-        super(items); 
+        super(items);
+        this.initializePopupListener();
     } 
     /**
      * Instantiates a new wide JComboBox.
      * @param items the items
      */
     public JComboBoxWide(Vector<E> items) { 
-        super(items); 
+        super(items);
+        this.initializePopupListener();
     } 
     /**
      * Instantiates a new wide JComboBox.
      * @param aModel the a model
      */
     public JComboBoxWide(ComboBoxModel<E> aModel) { 
-        super(aModel); 
+        super(aModel);
+        this.initializePopupListener();
     } 
  
-	/**
-	 * Checks if is wide.
-	 * @return true, if is wide
-	 */
-	public boolean isWide() {
-		return wide;
-	}
-	/**
-	 * Sets the wide.
-	 * @param wide the new wide
-	 */
-	public void setWide(boolean wide) {
-		this.wide = wide;
-	}
+    /** Initialize the popup menu listener. */
+    private void initializePopupListener() {
+    	this.addPopupMenuListener(new JComboBoxWidePopupMenuListener(false, true, -1, false));
+    }
 
-	
-
-    /* (non-Javadoc)
-     * @see java.awt.Container#doLayout()
-     */
-    public void doLayout(){ 
-        try{ 
-            layingOut = true; 
-            super.doLayout(); 
-        }finally{ 
-            layingOut = false; 
-        } 
-    } 
-    
-    /* (non-Javadoc)
-     * @see java.awt.Component#getSize()
-     */
-    public Dimension getSize() {
-		Dimension dim = super.getSize();
-		if (!layingOut && isWide()) {
-			dim.width = Math.max(dim.width, getPreferredSize().width);
-		}
-		return dim;
-	}
-    
 } 

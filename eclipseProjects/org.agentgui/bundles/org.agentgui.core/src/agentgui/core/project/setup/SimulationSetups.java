@@ -43,6 +43,7 @@ import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.common.PathHandling;
 import de.enflexit.common.transfer.FileCopier;
 
 /**
@@ -184,7 +185,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 		this.remove(nameOld);
 		this.put(nameNew, fileNameNew);
 		
-		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_RENAME, nameNew, false);
+		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_RENAME, nameNew, true);
 		// --- Save Project -------------------------------
 		this.saveProject(false);
 		Application.setStatusBarMessageReady();
@@ -223,7 +224,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 		
 		// --- Insert new entry ----------------------------
 		this.put(nameNew, fileNameNew);
-		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_COPY, nameNew, false);
+		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_COPY, nameNew, true);
 		// --- Save Project --------------------------
 		this.saveProject(false);
 		Application.setStatusBarMessageReady();
@@ -233,19 +234,20 @@ public class SimulationSetups extends TreeMap<String, String> {
 	 * Set the current Setup-File to the one given by name.
 	 *
 	 * @param action the action
-	 * @param name the name
-	 * @param isAddedNew the is added new
+	 * @param setupName the new current setup name
+	 * @param isAlreadyLoadedSetupInstance indicator, that tell the method if the setup instance is already loaded or not. If <code>false</code>, the setup files will be loaded.
+	 * @return true, if successful
 	 */
-	public boolean setupLoadAndFocus(SimNoteReason action, String name, boolean isAddedNew) {
+	public boolean setupLoadAndFocus(SimNoteReason action, String setupName, boolean isAlreadyLoadedSetupInstance) {
 		
 		boolean done = true;
 		
-		if (name==null || name.isEmpty()) return false;
-		if (this.containsKey(name)==false) return false;
+		if (setupName==null || setupName.isEmpty()) return false;
+		if (this.containsKey(setupName)==false) return false;
 		
 		// --- Configure to the specified setup -----------
-		this.currSimSetupName = name;
-		this.currProject.setSimulationSetupCurrent(name);
+		this.currSimSetupName = setupName;
+		this.currProject.setSimulationSetupCurrent(setupName);
 		
 		String xmlFileNameFullPath = this.currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
 		this.setCurrSimXMLFile(xmlFileNameFullPath);
@@ -254,7 +256,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 		this.currSimSetup = new SimulationSetup(this.currProject);
 				
 		// --- Read file if needed ------------------------ 
-		if (isAddedNew==false) {
+		if (isAlreadyLoadedSetupInstance==false) {
 			done = this.setupOpen();
 		}		
 		this.currProject.setChangedAndNotify(new SimulationSetupNotification(action));
@@ -263,7 +265,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 	}
 	
 	/**
-	 * This Method loads the current Simulation-Setup to the local
+	 * This method loads the current Simulation-Setup to the local
 	 * variable 'currSimSetup' which can be get and set by using
 	 * {@link #getCurrSimSetup()} or {@link #setCurrSimSetup(SimulationSetup)}.
 	 */
@@ -313,29 +315,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 	 * @return a Suggestion for the Name of a Setup-File
 	 */
 	public String getSuggestSetupFile(String inputText) {
-		
-		String regExp = "[a-z;_;0-9]";
-		String suggest = inputText;
-		String suggestNew = "";
-		
-		// --- Preparations ---------------------
-		suggest = suggest.toLowerCase();
-		suggest = suggest.replaceAll("  ", " ");
-		suggest = suggest.replace(" ", "_");
-		suggest = suggest.replace("-", "_");
-		suggest = suggest.replace("ä", "ae");
-		suggest = suggest.replace("ö", "oe");
-		suggest = suggest.replace("ü", "ue");
-		
-		// --- Examine all characters -----------
-		for (int i = 0; i < suggest.length(); i++) {
-			String SngChar = "" + suggest.charAt(i);
-			if (SngChar.matches(regExp) == true ) {
-				suggestNew = suggestNew + SngChar;	
-			}						
-	    }
-		suggest = suggestNew;
-		suggest = suggest.replaceAll("__", "_");
+		String suggest = PathHandling.getFileNameSuggestion(inputText);
 		return suggest + SimulationSetup.XML_FileSuffix;
 	}
 	

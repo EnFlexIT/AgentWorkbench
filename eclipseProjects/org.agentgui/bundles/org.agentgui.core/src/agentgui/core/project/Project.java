@@ -91,6 +91,7 @@ import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettingsController;
 import agentgui.core.update.ProjectRepositoryExport;
 import agentgui.core.update.ProjectRepositoryUpdate;
+import de.enflexit.common.PathHandling;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.ontology.AgentStartConfiguration;
@@ -171,7 +172,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
 	@XmlTransient private String projectSecurtiyFolderFullPath;
-	@XmlTransient private String projectAgentWorkingFolderFullPath;
 	
 	// --- Variables saved within the project file ------------------
 	@XmlElement(name="projectName")				private String projectName;
@@ -1407,7 +1407,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return the projectFolder
 	 */
 	public String getProjectAgentWorkingFolder() {
-		return projectFolder + File.separator + DEFAULT_AGENT_WORKING_DIRECTORY;
+		String setupPath = PathHandling.getFileNameSuggestion(this.getSimulationSetupCurrent());
+		return projectFolder + File.separator + DEFAULT_AGENT_WORKING_DIRECTORY + File.separator + setupPath;
 	}
 	/**
 	 * Returns the project agent working folder as full path. If the directory does not exists yet, it will be created.
@@ -1425,16 +1426,14 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @return the project agent working folder full path
 	 */
 	public String getProjectAgentWorkingFolderFullPath(boolean createDirIfNotExists) {
-		if (projectSecurtiyFolderFullPath==null) {
-			projectSecurtiyFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectAgentWorkingFolder() + File.separator;
-			if (createDirIfNotExists==true) {
-				File workingDir = new File(projectSecurtiyFolderFullPath);
-				if (workingDir.exists()==false) {
-					workingDir.mkdir();
-				}
+		String projectAgentWorkingFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectAgentWorkingFolder() + File.separator;
+		if (createDirIfNotExists==true) {
+			File workingDir = new File(projectAgentWorkingFolderFullPath);
+			if (workingDir.exists()==false) {
+				workingDir.mkdirs();
 			}
 		}
-		return projectSecurtiyFolderFullPath;
+		return projectAgentWorkingFolderFullPath;
 	}
 	
 	/**

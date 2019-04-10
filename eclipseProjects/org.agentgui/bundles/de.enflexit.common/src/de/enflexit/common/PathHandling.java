@@ -55,6 +55,38 @@ public class PathHandling {
 	}
 	
 	
+	/**
+	 * Returns a file name suggestion for the specified initial file name proposal.
+	 * E.g German umlauts will be replaced as well as doubled spaces and so on.
+	 *
+	 * @param initialFileNameProposal the initial file name proposal
+	 * @return the file name suggestion
+	 */
+	public static String getFileNameSuggestion(String initialFileNameProposal) {
+		
+		String regExp = "[A-Z;a-z;\\-;_;0-9]";
+		String suggest = initialFileNameProposal.trim();
+		
+		// --- Preparations ---------------------
+		suggest = suggest.replaceAll("( )+", " ");
+		suggest = suggest.replace(" ", "_");
+		suggest = suggest.replace("ä", "ae");
+		suggest = suggest.replace("ö", "oe");
+		suggest = suggest.replace("ü", "ue");
+		
+		// --- Examine all characters -----------
+		String suggestNew = "";
+		for (int i = 0; i < suggest.length(); i++) {
+			String sinlgeChar = "" + suggest.charAt(i);
+			if (sinlgeChar.matches(regExp)==true) {
+				suggestNew = suggestNew + sinlgeChar;	
+			}						
+	    }
+		suggest = suggestNew;
+		suggest = suggest.replaceAll("(_)+", "_");
+		suggest = suggest.replaceAll("(-)+", "-");
+		return suggest;
+	}
 	
 	
 }

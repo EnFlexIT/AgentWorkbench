@@ -400,7 +400,6 @@ public class DataModelEnDecoderThread extends Thread {
 		for (int i = 0; i < this.componentsToWorkOn.size(); i++) {
 		
 			try {
-
 				// --- Find the corresponding NetworkComponentAdapter ---------
 				NetworkComponentAdapter netCompAdapter=null;
 				NetworkComponent netComp = null;
@@ -454,15 +453,15 @@ public class DataModelEnDecoderThread extends Thread {
 	 */
 	private void encode64() {
 		
-		for (Object objectToWorkOn : this.componentsToWorkOn) {
+		for (int i = 0; i < this.componentsToWorkOn.size(); i++) {
 			
 			try {
-				
 				// --- Find the corresponding NetworkComponentAdapter ---------
 				NetworkComponentAdapter netCompAdapter=null;
 				NetworkComponent netComp = null;
 				GraphNode graphNode = null;
 				
+				Object objectToWorkOn = this.componentsToWorkOn.get(i);
 				if (objectToWorkOn instanceof NetworkComponent) {
 					netComp = (NetworkComponent) objectToWorkOn;		
 					netCompAdapter = this.getNetworkComponentAdapter(netComp);
