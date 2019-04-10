@@ -923,10 +923,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 			List<NetworkComponent> netComps = graphController.getNetworkModel().getNetworkComponents((GraphNode) object);
 			NetworkComponent disNode = graphController.getNetworkModel().getDistributionNode(netComps);
 			if (disNode != null) {
-				this.graphController.getNetworkModelAdapter().selectNetworkComponent(disNode);
+				this.graphController.getNetworkModelUndoManager().selectNetworkComponent(disNode);
 			}
 			if (netComps.size() == 1) {
-				this.graphController.getNetworkModelAdapter().selectNetworkComponent(netComps.iterator().next());
+				this.graphController.getNetworkModelUndoManager().selectNetworkComponent(netComps.iterator().next());
 				this.clearPickedObjects();
 				this.setPickedObject((GraphElement) object);
 			}
@@ -934,7 +934,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		} else if (object instanceof GraphEdge) {
 			NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent((GraphEdge) object);
 			this.setPickedObjects(graphController.getNetworkModel().getGraphElementsFromNetworkComponent(netComp));
-			this.graphController.getNetworkModelAdapter().selectNetworkComponent(netComp);
+			this.graphController.getNetworkModelUndoManager().selectNetworkComponent(netComp);
 
 		} else if (object instanceof NetworkComponent) {
 			this.setPickedObjects(graphController.getNetworkModel().getGraphElementsFromNetworkComponent((NetworkComponent) object));

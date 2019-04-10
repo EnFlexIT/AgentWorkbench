@@ -806,7 +806,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				UndoManager undoManager = graphController.getNetworkModelAdapter().getUndoManager();
+				UndoManager undoManager = graphController.getNetworkModelUndoManager().getUndoManager();
 				
 				getJButtonUndo().setEnabled(undoManager.canUndo());
 				getJButtonUndo().setToolTipText(undoManager.getUndoPresentationName());
@@ -1091,7 +1091,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		if (ae.getSource() == getJButtonComponents()) {
 			// ------------------------------------------------------
 			// --- Edit the ComponentType settings ------------------
-			NetworkModel networkModel = this.graphController.getNetworkModelAdapter().getNetworkModel();
+			NetworkModel networkModel = this.graphController.getNetworkModelUndoManager().getNetworkModel();
 			if (networkModel!=null) {
 				
 				GeneralGraphSettings4MAS settings = networkModel.getGeneralGraphSettings4MAS();
@@ -1107,7 +1107,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				ctsDialog.setVisible(true);
 				// - - - Waiting here - - -
 				if (ctsDialog.isCanceled()==false) {
-					this.graphController.getNetworkModelAdapter().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
+					this.graphController.getNetworkModelUndoManager().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
 				}
 				ctsDialog.dispose();
 				ctsDialog = null;
@@ -1142,32 +1142,32 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJToggleButtonSatelliteView()) {
 			// ------------------------------------------------------
 			// --- Open satellite view ------------------------------
-			this.graphController.getNetworkModelAdapter().setSatelliteView(getJToggleButtonSatelliteView().isSelected());
+			this.graphController.getNetworkModelUndoManager().setSatelliteView(getJToggleButtonSatelliteView().isSelected());
 			
 		} else if (ae.getSource() == getJButtonZoomFit2Window()) {
 			// ------------------------------------------------------
 			// --- Button Reset zoom --------------------------------
-			this.graphController.getNetworkModelAdapter().zoomFit2Window();
+			this.graphController.getNetworkModelUndoManager().zoomFit2Window();
 			
 		} else if (ae.getSource() == getJButtonZoomOne2One()) {
 			// ------------------------------------------------------
 			// --- Button Reset zoom --------------------------------
-			this.graphController.getNetworkModelAdapter().zoomOne2One();
+			this.graphController.getNetworkModelUndoManager().zoomOne2One();
 			
 		} else if (ae.getSource() == getJButtonFocusNetworkComponent()) {
 			// ------------------------------------------------------
 			// --- Button Focus Component ---------------------------
-			this.graphController.getNetworkModelAdapter().zoomNetworkComponent();
+			this.graphController.getNetworkModelUndoManager().zoomNetworkComponent();
 			
 		} else if (ae.getSource() == getJButtonZoomIn()) {
 			// ------------------------------------------------------
 			// --- Button Zoom in -----------------------------------
-			this.graphController.getNetworkModelAdapter().zoomIn();
+			this.graphController.getNetworkModelUndoManager().zoomIn();
 			
 		} else if (ae.getSource() == getJButtonZoomOut()) {
 			// ------------------------------------------------------
 			// --- Button Zoom out ----------------------------------
-			this.graphController.getNetworkModelAdapter().zoomOut();
+			this.graphController.getNetworkModelUndoManager().zoomOut();
 
 		} else if (ae.getSource() == getJButtonCut()) {
 			// ------------------------------------------------------
@@ -1178,7 +1178,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				// --- Copy to clipboard ----------------------------
 				this.graphController.copyToClipboard(selectedComponents);
 				// --- Remove component and update graph ------------ 
-				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents);
+				this.graphController.getNetworkModelUndoManager().removeNetworkComponents(selectedComponents);
 			}
 			
 		} else if (ae.getSource() == getJButtonCopy()) {
@@ -1199,17 +1199,17 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonSaveImage()) {
 			// ------------------------------------------------------
 			// --- Save graph as Image ------------------------------
-			this.graphController.getNetworkModelAdapter().saveAsImage();
+			this.graphController.getNetworkModelUndoManager().saveAsImage();
 			
 		} else if (ae.getSource() == getJToggleMouseTransforming()) {
 			// ------------------------------------------------------
 			// --- Button Transforming Mouse mode -------------------
-			this.graphController.getNetworkModelAdapter().setGraphMouseTransforming();
+			this.graphController.getNetworkModelUndoManager().setGraphMouseTransforming();
 			
 		} else if (ae.getSource() == getJToggleMousePicking()) {
 			// ------------------------------------------------------
 			// --- Button Picking Mouse mode ------------------------
-			this.graphController.getNetworkModelAdapter().setGraphMousePicking();
+			this.graphController.getNetworkModelUndoManager().setGraphMousePicking();
 			
 		} else if (ae.getSource() == getJButtonAddComponent() || ae.getSource() == getJMenuItemAddComp()) {
 			// ------------------------------------------------------
@@ -1273,7 +1273,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// --- Proceed with deleting, if applicable -------------  
 			if(selectedComponents!=null && selectedComponents.size()>0){ 
 				// --- Remove component and update graph ------------ 
-				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents, removeDistributionNodes);	
+				this.graphController.getNetworkModelUndoManager().removeNetworkComponents(selectedComponents, removeDistributionNodes);	
 			} else {
 				// --- Nothing valid picked -------------------------
 				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.INFORMATION_MESSAGE);	
@@ -1308,7 +1308,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 						JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 
 					} else {
-						this.graphController.getNetworkModelAdapter().mergeNodes(mergeNodes);	
+						this.graphController.getNetworkModelUndoManager().mergeNodes(mergeNodes);	
 					}
 					
 				} else {
@@ -1331,14 +1331,14 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				NetworkComponent containsDistributionNode = this.graphController.getNetworkModel().getDistributionNode(components);
 				if (containsDistributionNode!=null) {
 					if(components.size()>=2){
-						this.graphController.getNetworkModelAdapter().splitNetworkModelAtNode(pickedNode);
+						this.graphController.getNetworkModelUndoManager().splitNetworkModelAtNode(pickedNode);
 					} else {
 						JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("The select Vertex should be at least between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 
 				} else {
 					if(components.size()==2){
-						this.graphController.getNetworkModelAdapter().splitNetworkModelAtNode(pickedNode);
+						this.graphController.getNetworkModelUndoManager().splitNetworkModelAtNode(pickedNode);
 					} else {
 						JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("The select Vertex should be between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
@@ -1350,18 +1350,18 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			}
 		
 		} else if (ae.getSource()==getJButtonUndo()) {
-			this.graphController.getNetworkModelAdapter().undo();
+			this.graphController.getNetworkModelUndoManager().undo();
 			this.setUndoRedoButtonsEnabled();
 			
 		} else if (ae.getSource()==getJButtonRedo()) {
-			this.graphController.getNetworkModelAdapter().redo();
+			this.graphController.getNetworkModelUndoManager().redo();
 			this.setUndoRedoButtonsEnabled();
 			
 		} else if (ae.getSource()==getJButtonImportGraph()) {
-			this.graphController.getNetworkModelAdapter().importNetworkModel();
+			this.graphController.getNetworkModelUndoManager().importNetworkModel();
 			
 		} else if (ae.getSource()==getJButtonClearGraph()) {
-			this.graphController.getNetworkModelAdapter().clearNetworkModel();
+			this.graphController.getNetworkModelUndoManager().clearNetworkModel();
 		
 		} else if(ae.getSource()==getJMenuItemNodeProp()) {
 			// ------------------------------------------------------

@@ -274,7 +274,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    	@Override
 		    	public void mouseClicked(MouseEvent me) {
 		    		if (me.getClickCount()==2) {
-		    			getGraphController().getNetworkModelAdapter().zoomNetworkComponent();
+		    			getGraphController().getNetworkModelUndoManager().zoomNetworkComponent();
 		    		}
 		    	}
 			});
@@ -432,7 +432,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
      * @return The grid components' IDs and class names
      */
     private void fillTableModel() {
-		if (this.getGraphController().getNetworkModel()!=null && this.getGraphController().getNetworkModelAdapter()!=null ) {
+		if (this.getGraphController().getNetworkModel()!=null && this.getGraphController().getNetworkModelUndoManager()!=null ) {
 			// --- Clear ------------------------
 			this.clearTableModel();
 			// --- Fill -------------------------
@@ -459,7 +459,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
 		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
 		    this.currNetworkComponent = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
-		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(this.currNetworkComponent);	
+		    this.getGraphController().getNetworkModelUndoManager().selectNetworkComponent(this.currNetworkComponent);	
 		}
     }
     /*
@@ -511,7 +511,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				} else {
 				    // --- All validations done, rename the component and update the network model
 					// --- renaming NetworkComponents and GraphElements
-					this.getGraphController().getNetworkModelAdapter().renameNetworkComponent(oldCompID, newCompID);
+					this.getGraphController().getNetworkModelUndoManager().renameNetworkComponent(oldCompID, newCompID);
 				}
 		    }
 		}

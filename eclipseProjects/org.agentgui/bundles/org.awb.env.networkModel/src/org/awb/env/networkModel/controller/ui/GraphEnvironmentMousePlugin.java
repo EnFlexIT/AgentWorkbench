@@ -239,14 +239,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 						Point2D pointCurrent = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
 						Point2D pointStored  = this.nodesMovedOldPositions.get(node.getId());
 						if (pointCurrent.equals(pointStored)==false) {
-							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
+							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
 							break;
 						}
 					} // end for
 					
 				} else {
 					// --- Should never happen ------------
-					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
+					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
 				}
 			}
 			this.nodesMovedOldPositions = null;
@@ -648,7 +648,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				// --------------------------------------------------
 				if (isFinalizePasteAction==true) {
 					// --- Create an undoable action ----------------
-					this.graphController.getNetworkModelAdapter().pasteNetworkModel(this.networkModel2Paste);
+					this.graphController.getNetworkModelUndoManager().pasteNetworkModel(this.networkModel2Paste);
 					
 				} else {
 					// --- Remove the added components --------------

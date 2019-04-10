@@ -1011,7 +1011,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		GraphNodePairs nodeCouples = new GraphNodePairs(graphNodeSelectedInMainGraph, nodes2Add);
 
 		// --- Add the new element to the current NetworkModel ------------
-		this.graphController.getNetworkModelAdapter().mergeNetworkModel(networkModelCopy, nodeCouples);
+		this.graphController.getNetworkModelUndoManager().mergeNetworkModel(networkModelCopy, nodeCouples);
 
 		// --- Select the next GraphNode in the main graph ----------------
 		this.selectNextNodeInMainGraph(networkModelCopy, graphNodeCopy);

@@ -216,7 +216,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --- Clean up agents list corresponding to current NetworkModel -----
 		this.validateNetworkComponentAndAgents2Start();
 		// --- Notify all Observers about a new NetworkModel ------------------
-		this.getNetworkModelAdapter().reLoadNetworkModel();
+		this.getNetworkModelUndoManager().reLoadNetworkModel();
 
 	}
 
@@ -236,7 +236,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Returns the {@link NetworkModelUndoManager} that enables to do or undo actions in the visualization.
 	 * @return the NetworkModelUndoManager for the current controller
 	 */
-	public NetworkModelUndoManager getNetworkModelAdapter() {
+	public NetworkModelUndoManager getNetworkModelUndoManager() {
 		if (networkModelUndoManager == null) {
 			networkModelUndoManager = new NetworkModelUndoManager(this);
 		}
@@ -400,7 +400,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 						Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + fileName + " ...");
 						// --- Reset Undo-Manager -------------------------------------------------
-						GraphEnvironmentController.this.getNetworkModelAdapter().getUndoManager().discardAllEdits();
+						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
 					}
 
 					// --- Register agents that have to be started with the environment -----------
@@ -685,7 +685,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --------------------------------------------------------------------
 		// --- Renumber list --------------------------------------------------
 		this.reNumberAgents2Start();
-		this.getNetworkModelAdapter().refreshNetworkModel();
+		this.getNetworkModelUndoManager().refreshNetworkModel();
 	}
 
 	/**
@@ -862,7 +862,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	public void addCustomToolbarComponentDescription(CustomToolbarComponentDescription customButtonDescription) {
 		if (this.getNetworkModel()!=null && this.getNetworkModel().getGeneralGraphSettings4MAS()!=null) {
 			this.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions().add(customButtonDescription);
-			this.getNetworkModelAdapter().addCustomToolbarComponentDescription(customButtonDescription);
+			this.getNetworkModelUndoManager().addCustomToolbarComponentDescription(customButtonDescription);
 		} else {
 			String errMsg = Language.translate("Could not add custom button: No NetworkModel was defined yet!", Language.EN);
 			System.err.println(errMsg);

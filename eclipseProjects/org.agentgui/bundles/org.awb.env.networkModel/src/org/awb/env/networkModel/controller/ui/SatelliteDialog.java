@@ -99,7 +99,7 @@ public class SatelliteDialog extends JDialog implements ActionListener {
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
-				graphController.getNetworkModelAdapter().setSatelliteView(false);
+				graphController.getNetworkModelUndoManager().setSatelliteView(false);
 			}
 		});
 		
@@ -132,7 +132,7 @@ public class SatelliteDialog extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getResizeWaitTimer()) {
-			graphController.getNetworkModelAdapter().setSatelliteView(true);
+			graphController.getNetworkModelUndoManager().setSatelliteView(true);
 		}
 	}
 	
