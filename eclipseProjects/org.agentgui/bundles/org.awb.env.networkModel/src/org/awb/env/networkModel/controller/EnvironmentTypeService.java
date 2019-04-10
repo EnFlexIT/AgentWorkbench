@@ -1,6 +1,5 @@
-package org.awb.env.networkModel;
+package org.awb.env.networkModel.controller;
 
-import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
 import agentgui.core.application.Language;

@@ -155,6 +155,10 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	 * @return the graphPrototype
 	 */
 	public String getGraphPrototype() {
+		// --- Consider changes due to the bundle refactoring -------
+		if (graphPrototype!=null && graphPrototype.startsWith("agentgui.envModel.graph.prototypes.")==true) {
+			graphPrototype = graphPrototype.replace("agentgui.envModel.graph.prototypes.", "org.awb.env.networkModel.prototypes.");
+		}
 		return graphPrototype;
 	}
 	/**
@@ -166,18 +170,22 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	}
 	
 	/**
+	 * Returns the adapter class for the current NetworkComponent.
+	 * @return the adapter class
+	 */
+	public String getAdapterClass() {
+		// --- Consider changes due to the bundle refactoring -------
+		if (adapterClass!=null && adapterClass.startsWith("agentgui.envModel.graph.networkModel.")==true) {
+			adapterClass = adapterClass.replace("agentgui.envModel.graph.networkModel.", "org.awb.env.networkModel.adapter.");
+		}
+		return adapterClass;
+	}
+	/**
 	 * Sets the adapter class.
 	 * @param adapterClass the new adapter class
 	 */
 	public void setAdapterClass(String adapterClass) {
 		this.adapterClass = adapterClass;
-	}
-	/**
-	 * Returns the adapter class for the current NetworkComponent.
-	 * @return the adapter class
-	 */
-	public String getAdapterClass() {
-		return adapterClass;
 	}
 	
 	/**

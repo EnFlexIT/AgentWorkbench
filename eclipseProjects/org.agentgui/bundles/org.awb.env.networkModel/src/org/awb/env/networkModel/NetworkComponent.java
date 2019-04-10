@@ -198,6 +198,10 @@ public class NetworkComponent implements Serializable {
 	 * @return the prototypeClassName
 	 */
 	public String getPrototypeClassName() {
+		// --- Consider changes due to the bundle refactoring -------
+		if (prototypeClassName!=null && prototypeClassName.startsWith("agentgui.envModel.graph.prototypes")==true) {
+			prototypeClassName = prototypeClassName.replace("agentgui.envModel.graph.prototypes", "org.awb.env.networkModel.prototypes");
+		}
 		return prototypeClassName;
 	}
 	/**

@@ -109,6 +109,10 @@ public class DomainSettings implements Serializable {
 	 * @return the assigned NetworkComponentAdapter-class 
 	 */
 	public String getAdapterClass() {
+		// --- Consider changes due to the bundle refactoring -------
+		if (adapterClass!=null && adapterClass.startsWith("agentgui.envModel.graph.networkModel.")==true) {
+			adapterClass = adapterClass.replace("agentgui.envModel.graph.networkModel.", "org.awb.env.networkModel.adapter.");
+		}
 		return adapterClass;
 	}
 	/**
