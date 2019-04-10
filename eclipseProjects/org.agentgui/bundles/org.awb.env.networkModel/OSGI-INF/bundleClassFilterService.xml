@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="de.enflexit.common.classLoadService" name="agentgui.envModel.graph.classFilter.BundleClassFilterDefinifion">
-   <implementation class="agentgui.envModel.graph.classFilter.BundleClassFilterDefinifion"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="de.enflexit.common.classLoadService" name="org.awb.env.networkModel.classFilter.BundleClassFilterDefinifion">
+   <implementation class="org.awb.env.networkModel.classFilter.BundleClassFilterDefinifion"/>
    <service>
       <provide interface="org.agentgui.bundle.evaluation.BundleClassFilterService"/>
    </service>
