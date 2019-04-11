@@ -29,12 +29,15 @@
 package org.awb.env.networkModel.settings.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -45,10 +48,13 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
@@ -59,6 +65,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.controller.ui.AddComponentDialog;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
@@ -100,12 +107,21 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 	private JButton jButtonRemoveComponentRow;
 	private JScrollPane jScrollPaneClassTableComponents;
 	private JTable jTableComponentTypes;
+	private TableRowSorter<DefaultTableModel> jTableRowSorter;
+	private RowFilter<DefaultTableModel, Integer> jTableRowFilter;
 	private DefaultTableModel componentTypesModel;
 
-	
+    private JLabel jLabelSearch;
+    private JTextField jTextFieldSearch;
+    private JButton jButtonClearSearch;
+
+	private JLabel jLableDomainFilter;
+	private JComboBoxWide<String> jComboBoxFilter;
+    private DefaultComboBoxModel<String> comboBoxModeFilter;
+
+    
 	/**
 	 * Instantiates the sub part for {@link NetworkComponent}s.
-	 *
 	 * @param componentTypeDialog the parent {@link ComponentTypeDialog}
 	 */
 	public ComponentTypeDialogComponents(ComponentTypeDialog componentTypeDialog) {
@@ -117,31 +133,71 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 	 */
 	private void initialize() {
 		
-		GridBagConstraints gridBagConstraints24 = new GridBagConstraints();
-		gridBagConstraints24.fill = GridBagConstraints.BOTH;
-		gridBagConstraints24.gridwidth = 2;
-		gridBagConstraints24.gridx = -1;
-		gridBagConstraints24.gridy = 1;
-		gridBagConstraints24.weightx = 1.0;
-		gridBagConstraints24.weighty = 1.0;
-		gridBagConstraints24.ipadx = 0;
-		gridBagConstraints24.insets = new Insets(0, 0, 0, 0);
-		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-		gridBagConstraints6.insets = new Insets(5, 5, 3, 5);
-		gridBagConstraints6.gridy = 0;
-		gridBagConstraints6.weightx = 1.0;
-		gridBagConstraints6.anchor = GridBagConstraints.WEST;
-		gridBagConstraints6.gridx = 1;
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.insets = new Insets(5, 5, 3, 5);
-		gridBagConstraints1.gridy = 0;
-		gridBagConstraints1.gridx = 0;
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+    	gridBagLayout.rowHeights = new int[]{0, 0, 0};
+    	gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+    	gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		this.setLayout(gridBagLayout);
 		
-		this.setLayout(new GridBagLayout());
-		//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		this.add(this.getJButtonAddComponentRow(), gridBagConstraints1);
-		this.add(this.getJButtonRemoveComponentRow(), gridBagConstraints6);
-		this.add(this.getJScrollPaneClassTableComponents(), gridBagConstraints24);
+		GridBagConstraints gbc_JButtonAdd = new GridBagConstraints();
+		gbc_JButtonAdd.insets = new Insets(5, 5, 3, 5);
+		gbc_JButtonAdd.gridy = 0;
+		gbc_JButtonAdd.gridx = 0;
+		
+		GridBagConstraints gbc_JButtonRemove = new GridBagConstraints();
+		gbc_JButtonRemove.anchor = GridBagConstraints.WEST;
+		gbc_JButtonRemove.insets = new Insets(5, 5, 3, 50);
+		gbc_JButtonRemove.gridx = 1;
+		gbc_JButtonRemove.gridy = 0;
+		
+		GridBagConstraints gbc_jLabelSearch = new GridBagConstraints();
+		gbc_jLabelSearch.anchor = GridBagConstraints.EAST;
+		gbc_jLabelSearch.insets = new Insets(5, 5, 3, 0);
+		gbc_jLabelSearch.gridx = 2;
+		gbc_jLabelSearch.gridy = 0;
+		
+		GridBagConstraints gbc_jTextFieldSearch = new GridBagConstraints();
+		gbc_jTextFieldSearch.anchor = GridBagConstraints.EAST;
+		gbc_jTextFieldSearch.insets = new Insets(5, 5, 3, 0);
+		gbc_jTextFieldSearch.gridx = 3;
+		gbc_jTextFieldSearch.gridy = 0;
+		gbc_jTextFieldSearch.fill = GridBagConstraints.HORIZONTAL;
+		
+		GridBagConstraints gbc_jButtonClearSearch = new GridBagConstraints();
+		gbc_jButtonClearSearch.anchor = GridBagConstraints.WEST;
+		gbc_jButtonClearSearch.insets = new Insets(5, 5, 3, 50);
+		gbc_jButtonClearSearch.gridx = 4;
+		gbc_jButtonClearSearch.gridy = 0;
+		
+		GridBagConstraints gbc_jLableDomainFilter = new GridBagConstraints();
+		gbc_jLableDomainFilter.anchor = GridBagConstraints.EAST;
+		gbc_jLableDomainFilter.insets = new Insets(5, 5, 3, 0);
+		gbc_jLableDomainFilter.gridx = 5;
+		gbc_jLableDomainFilter.gridy = 0;
+
+		GridBagConstraints gbc_jComboBoxFilter = new GridBagConstraints();
+		gbc_jComboBoxFilter.anchor = GridBagConstraints.EAST;
+		gbc_jComboBoxFilter.insets = new Insets(5, 5, 3, 5);
+		gbc_jComboBoxFilter.gridx = 6;
+		gbc_jComboBoxFilter.gridy = 0;
+		
+		GridBagConstraints gbc_ScrollPane = new GridBagConstraints();
+		gbc_ScrollPane.fill = GridBagConstraints.BOTH;
+		gbc_ScrollPane.gridwidth = 7;
+		gbc_ScrollPane.gridx = 0;
+		gbc_ScrollPane.gridy = 1;
+		gbc_ScrollPane.ipadx = 0;
+		gbc_ScrollPane.insets = new Insets(0, 0, 0, 0);
+		
+		this.add(this.getJButtonAddComponentRow(), gbc_JButtonAdd);
+		this.add(this.getJButtonRemoveComponentRow(), gbc_JButtonRemove);
+		this.add(this.getJLabelSearch(), gbc_jLabelSearch);
+		this.add(this.getJTextFieldSearch(), gbc_jTextFieldSearch);
+		this.add(this.getJButtonClearSearch(), gbc_jButtonClearSearch);
+		this.add(this.getJLableDomainFilter(), gbc_jLableDomainFilter);
+		this.add(this.getJComboBoxFilter(), gbc_jComboBoxFilter);
+		this.add(this.getJScrollPaneClassTableComponents(), gbc_ScrollPane);
 	}
 	
 	/**
@@ -167,6 +223,63 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 			jButtonAddComponentRow.addActionListener(this);
 		}
 		return jButtonAddComponentRow;
+	}
+	
+	private JLabel getJLabelSearch() {
+		if (jLabelSearch == null) {
+			jLabelSearch = new JLabel("Search:");
+			jLabelSearch.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelSearch;
+	}
+    private JTextField getJTextFieldSearch() {
+		if (jTextFieldSearch == null) {
+		    jTextFieldSearch = new JTextField();
+		    jTextFieldSearch.setFont(new Font("Dialog", Font.PLAIN, 12));
+		    jTextFieldSearch.setPreferredSize(new Dimension(100, 26));
+		    jTextFieldSearch.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent ke) {
+					ComponentTypeDialogComponents.this.filterComponentTypeTableModel();
+				}
+		    });
+		}
+		return jTextFieldSearch;
+    }
+    private JButton getJButtonClearSearch() {
+		if (jButtonClearSearch == null) {
+		    jButtonClearSearch = new JButton();
+		    jButtonClearSearch.setPreferredSize(new Dimension(26, 26));
+		    jButtonClearSearch.setToolTipText("Clear search");
+		    jButtonClearSearch.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ClearSearch.png")));
+		    jButtonClearSearch.addActionListener(this);
+		}
+		return jButtonClearSearch;
+    }
+
+	private JLabel getJLableDomainFilter() {
+		if (jLableDomainFilter == null) {
+			jLableDomainFilter = new JLabel("Domain Filter:");
+			jLableDomainFilter.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLableDomainFilter;
+	}
+	private JComboBoxWide<String> getJComboBoxFilter() {
+		if (jComboBoxFilter == null) {
+			jComboBoxFilter = new JComboBoxWide<String>(this.getNewComboBoxModelFilter());
+			jComboBoxFilter.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxFilter.addActionListener(this);
+		}
+		return jComboBoxFilter;
+	}
+	private DefaultComboBoxModel<String> getNewComboBoxModelFilter() {
+		Vector<String> domainVector = this.componentTypeDialog.getDomainVector();
+		comboBoxModeFilter = new DefaultComboBoxModel<String>();
+		comboBoxModeFilter.addElement(AddComponentDialog.NoFilterString);
+		for (int i = 0; i < domainVector.size(); i++) {
+			comboBoxModeFilter.addElement(domainVector.get(i));
+		}
+		return comboBoxModeFilter;
 	}
 	
 	/**
@@ -227,40 +340,17 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 	 */
 	private JTable getJTable4ComponentTypes() {
 		if (jTableComponentTypes == null) {
-			jTableComponentTypes = new JTable();
+			jTableComponentTypes = new JTable(this.getTableModel4ComponentTypes());
 			jTableComponentTypes.setFillsViewportHeight(true);
 			jTableComponentTypes.setShowGrid(false);
 			jTableComponentTypes.setRowHeight(20);
 			jTableComponentTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTableComponentTypes.setModel(getTableModel4ComponentTypes());
 			jTableComponentTypes.setAutoCreateRowSorter(true);
 			jTableComponentTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableComponentTypes.getTableHeader().setReorderingAllowed(false);
 			
-			// --- Define the sorter ------------------------------------------
-			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4ComponentTypes());
-			sorter.setComparator(getColumnHeaderIndexComponents(COL_ShowLabel), new Comparator<Boolean>() {
-				@Override
-				public int compare(Boolean o1, Boolean o2) {
-					return o1.compareTo(o2);
-				}
-			});
-			sorter.setComparator(getColumnHeaderIndexComponents(COL_EdgeWidth), new Comparator<Float>() {
-				@Override
-				public int compare(Float o1, Float o2) {
-					return o1.compareTo(o2);
-				}
-			});
-			sorter.setComparator(getColumnHeaderIndexComponents(COL_EdgeColor), new Comparator<Color>() {
-				@Override
-				public int compare(Color o1, Color o2) {
-					Integer o1RGB = o1.getRGB();
-					Integer o2RGB = o2.getRGB();
-					return o1RGB.compareTo(o2RGB);
-				}
-			});
-			jTableComponentTypes.setRowSorter(sorter);
-
+			// --- Define the row sorter and filter --------------------------- 
+			jTableComponentTypes.setRowSorter(this.getJTableRowSorter());
 			
 			// --- Define the first sort order --------------------------------
 			List<SortKey> sortKeys = new ArrayList<SortKey>();
@@ -325,7 +415,101 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 		}
 		return jTableComponentTypes;
 	}
-	
+	/**
+     * Returns the table row sorter.
+     * @return the table row sorter
+     */
+    private TableRowSorter<DefaultTableModel> getJTableRowSorter() {
+    	if (jTableRowSorter==null) {
+    		// --- Define the sorter ------------
+    		jTableRowSorter = new TableRowSorter<DefaultTableModel>(getTableModel4ComponentTypes());
+    		jTableRowSorter.setComparator(getColumnHeaderIndexComponents(COL_ShowLabel), new Comparator<Boolean>() {
+				@Override
+				public int compare(Boolean o1, Boolean o2) {
+					return o1.compareTo(o2);
+				}
+			});
+    		jTableRowSorter.setComparator(getColumnHeaderIndexComponents(COL_EdgeWidth), new Comparator<Float>() {
+				@Override
+				public int compare(Float o1, Float o2) {
+					return o1.compareTo(o2);
+				}
+			});
+    		jTableRowSorter.setComparator(getColumnHeaderIndexComponents(COL_EdgeColor), new Comparator<Color>() {
+				@Override
+				public int compare(Color o1, Color o2) {
+					Integer o1RGB = o1.getRGB();
+					Integer o2RGB = o2.getRGB();
+					return o1RGB.compareTo(o2RGB);
+				}
+			});
+			// --- Define row filter ------------
+			jTableRowSorter.setRowFilter(this.getJTableRowFilter());
+    	}
+    	return jTableRowSorter;
+    }
+	 /**
+     * Return the row filter.
+     * @return the row filter
+     */
+    private RowFilter<DefaultTableModel, Integer> getJTableRowFilter() {
+    	if (jTableRowFilter==null) {
+    		jTableRowFilter = new RowFilter<DefaultTableModel, Integer>() {
+			    @Override
+    			public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
+    				
+    				// --- Return true if the search phrase is empty ----------
+    				String domainFilter = (String) ComponentTypeDialogComponents.this.getJComboBoxFilter().getSelectedItem();
+    				String searchPhrase = ComponentTypeDialogComponents.this.getJTextFieldSearch().getText().trim();
+    				boolean noFiltering = domainFilter.equals(AddComponentDialog.NoFilterString)==true && (searchPhrase==null || searchPhrase.isEmpty());    				
+    				if (noFiltering==true) return true;
+    				
+    				// --- Set Null-value for domain or search phrase? --------
+    				if (domainFilter.equals(AddComponentDialog.NoFilterString)) domainFilter=null;
+    				if (searchPhrase!=null && searchPhrase.isEmpty()==true) searchPhrase=null;
+    				
+    				
+    				// --------------------------------------------------------
+					// --- Check domain ---------------------------------------
+					if (domainFilter!=null) {
+						if (entry.getStringValue(0).equals(domainFilter)==false) {
+							return false;
+						} 
+					}
+    				
+    				// --- Exit filter method? --------------------------------
+					if (searchPhrase==null) return true;
+
+    				// --------------------------------------------------------
+    				// --- Do the column value filtering ----------------------
+					boolean rowMatch = false;
+					for (int i = entry.getValueCount() - 1; i >= 0; i--) {
+						String rowColumnValue = entry.getStringValue(i);
+						if (rowColumnValue==null || rowColumnValue.isEmpty()==true) continue;
+						
+						if (rowColumnValue.toLowerCase().matches("(?i).*(" + searchPhrase.toLowerCase() + ").*")==true) {
+							rowMatch = true;
+							break;
+						}
+					}
+					return rowMatch;
+    			}
+    		};
+        	    		
+    	}
+    	return jTableRowFilter;
+    }
+	/**
+	 * Filters the component type table model according to the search string and the selected domain.
+	 */
+	private void filterComponentTypeTableModel() {
+		try {
+			this.getJTableRowSorter().sort();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
 	/**
 	 * This method initiates the jTableClasses' TableModel.
 	 *
@@ -463,7 +647,7 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 		int rowNumModel = this.getJTable4ComponentTypes().convertRowIndexToModel(rowNumTable);
 		((DefaultTableModel)getJTable4ComponentTypes().getModel()).removeRow(rowNumModel);
 	}
-	
+
 	
 	/**
 	 * Gets the combo4 edge width.
@@ -562,10 +746,19 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 			
 		} else if(ae.getSource()==this.getJButtonRemoveComponentRow()) {
 			// --- Remove a row from the component types table ------
-			if(getJTable4ComponentTypes().getSelectedRow() > -1){
+			if (this.getJTable4ComponentTypes().getSelectedRow()>-1){
 				this.removeComponentRow(getJTable4ComponentTypes().getSelectedRow());
 			}
-		} 
+			
+		} else if (ae.getSource()==this.getJComboBoxFilter()) {
+			// --- Filter table for domains -------------------------
+			this.filterComponentTypeTableModel();;
+			
+		} else if (ae.getSource()==this.getJButtonClearSearch()) {
+			// --- Clear search -------------------------------------
+			this.getJTextFieldSearch().setText(null);
+			this.filterComponentTypeTableModel();
+		}
 		
 	}
 
@@ -676,6 +869,5 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 		}
 		return null;
 	}
-	
-	
+    
 }

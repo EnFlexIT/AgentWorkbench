@@ -698,6 +698,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		if (jButtonClearSearch == null) {
 		    jButtonClearSearch = new JButton();
 		    jButtonClearSearch.setPreferredSize(new Dimension(16, 20));
+		    jButtonClearSearch.setToolTipText("Clear search");
 		    jButtonClearSearch.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ClearSearch.png")));
 		    jButtonClearSearch.addActionListener(new ActionListener() {
 		    	@Override

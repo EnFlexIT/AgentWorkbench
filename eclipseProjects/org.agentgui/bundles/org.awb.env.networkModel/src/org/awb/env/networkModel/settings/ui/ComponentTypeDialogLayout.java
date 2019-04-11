@@ -137,7 +137,6 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		gridBagConstraints13.weightx = 1.0;
 		
 		this.setLayout(new GridBagLayout());
-		//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		this.add(this.getJScrollPaneClassTableLayouts(), gridBagConstraints13);
 		this.add(this.getJButtonAddLayout(), gridBagConstraints2);
 		this.add(this.getJButtonRemoveLayoutRow(), gridBagConstraints3);

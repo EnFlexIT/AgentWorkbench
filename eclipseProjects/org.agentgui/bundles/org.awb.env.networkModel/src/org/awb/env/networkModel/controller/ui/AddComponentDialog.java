@@ -374,6 +374,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	private JComboBoxWide<String> getJComboBoxFilter() {
 		if (jComboBoxFilter == null) {
 			jComboBoxFilter = new JComboBoxWide<String>(this.getNewComboBoxModelFilter());
+			jComboBoxFilter.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jComboBoxFilter.setPreferredSize(new Dimension(100, 26));
 			jComboBoxFilter.addActionListener(this);
 		}

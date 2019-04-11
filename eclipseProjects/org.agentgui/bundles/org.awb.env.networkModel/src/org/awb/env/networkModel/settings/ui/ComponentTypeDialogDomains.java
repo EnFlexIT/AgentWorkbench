@@ -137,7 +137,6 @@ public class ComponentTypeDialogDomains extends JPanel implements ActionListener
 		gridBagConstraints13.weightx = 1.0;
 		
 		this.setLayout(new GridBagLayout());
-		//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		this.add(this.getJScrollPaneClassTableDomains(), gridBagConstraints13);
 		this.add(this.getJButtonAddDomain(), gridBagConstraints2);
 		this.add(this.getJButtonRemoveDomainntRow(), gridBagConstraints3);
