@@ -92,8 +92,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.PropertyContentProvider.FileToProvide;
-import agentgui.core.gui.components.JHyperLink;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JHyperLink;
 
 
 /**

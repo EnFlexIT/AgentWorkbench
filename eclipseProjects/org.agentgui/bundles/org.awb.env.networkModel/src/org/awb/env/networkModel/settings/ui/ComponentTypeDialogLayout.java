@@ -69,7 +69,7 @@ import org.awb.env.networkModel.settings.LayoutSettings.EdgeShape;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.gui.components.JComboBoxWide;
+import de.enflexit.common.swing.JComboBoxWide;
 
 /**
  * The Class ComponentTypeDialogLayout represents the sub part of the 

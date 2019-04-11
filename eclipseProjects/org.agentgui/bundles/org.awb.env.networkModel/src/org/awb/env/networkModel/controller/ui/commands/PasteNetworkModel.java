@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.awb.env.networkModel.commands;
+package org.awb.env.networkModel.controller.ui.commands;
 
 import java.util.HashSet;
 

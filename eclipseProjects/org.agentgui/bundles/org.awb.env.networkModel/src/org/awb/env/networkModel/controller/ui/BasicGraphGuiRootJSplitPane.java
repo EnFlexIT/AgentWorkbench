@@ -74,9 +74,9 @@ import javax.swing.table.TableRowSorter;
 
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.commands.RenamedNetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.commands.RenamedNetworkComponent;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
 import org.awb.env.networkModel.settings.ui.TableCellEditor4TableButton;
 import org.awb.env.networkModel.settings.ui.TableCellRenderer4Button;

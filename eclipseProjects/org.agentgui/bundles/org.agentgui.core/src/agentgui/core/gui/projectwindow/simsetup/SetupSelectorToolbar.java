@@ -46,11 +46,11 @@ import javax.swing.JToolBar;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.JComboBoxWide;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.common.swing.JComboBoxWide;
 
 /**
  * The Class SetupSelectorToolbar is used in the main toolbar of the application

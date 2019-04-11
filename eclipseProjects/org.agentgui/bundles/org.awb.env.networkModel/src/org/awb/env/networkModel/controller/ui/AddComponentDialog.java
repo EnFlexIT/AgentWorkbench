@@ -56,7 +56,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -95,6 +94,7 @@ import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import de.enflexit.common.swing.JComboBoxWide;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -147,7 +147,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private JLabel jLabelInstructionMerge;
     private JLabel jLabelInstructionSelect;
 
-    private JComboBox<String> jComboBoxFilter;
+    private JComboBoxWide<String> jComboBoxFilter;
     private DefaultComboBoxModel<String> comboBoxModeFilter;
     private String filterString = AddComponentDialog.NoFilterString;
     
@@ -371,9 +371,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	 * This method initializes jComboBoxFilter	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox<String> getJComboBoxFilter() {
+	private JComboBoxWide<String> getJComboBoxFilter() {
 		if (jComboBoxFilter == null) {
-			jComboBoxFilter = new JComboBox<String>(this.getNewComboBoxModelFilter());
+			jComboBoxFilter = new JComboBoxWide<String>(this.getNewComboBoxModelFilter());
 			jComboBoxFilter.setPreferredSize(new Dimension(100, 26));
 			jComboBoxFilter.addActionListener(this);
 		}

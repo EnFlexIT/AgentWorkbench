@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.awb.env.networkModel.commands;
+package org.awb.env.networkModel.controller.ui.commands;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
@@ -34,57 +34,58 @@ import javax.swing.undo.CannotUndoException;
 
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.controller.NetworkModelNotification;
-import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import agentgui.core.application.Language;
 
 
 /**
- * The Class SetGeneralGraphSettings4MAS.
+ * This action can be used in order to set a new NetworkModel.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
+public class SetNetworkModel extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -4772137855514690242L;
 
-	private GraphEnvironmentController graphController;
-	private GeneralGraphSettings4MAS newGeneralGraphSettings4MAS;
-	
-	private NetworkModel oldNetworkModel;
-	
+	private GraphEnvironmentController graphController = null;
+
+	private NetworkModel newNetworkModel = null;
+	private NetworkModel oldNetworkModel = null; 
 	
 	/**
-	 * Instantiates a new sets the general graph settings4 mas.
+	 * Instantiates the new action in order to set a new NetworkModel.
 	 *
 	 * @param graphController the graph controller
-	 * @param newGeneralGraphSettings4MAS the new general graph settings4 mas
+	 * @param newNetworkModel the new network model
 	 */
-	public SetGeneralGraphSettings4MAS(GraphEnvironmentController graphController, GeneralGraphSettings4MAS newGeneralGraphSettings4MAS) {
+	public SetNetworkModel(GraphEnvironmentController graphController, NetworkModel newNetworkModel) {
 		super();
 		this.graphController = graphController;
-		this.newGeneralGraphSettings4MAS = newGeneralGraphSettings4MAS;
+		this.newNetworkModel = newNetworkModel;
+		this.oldNetworkModel = this.graphController.getNetworkModel();
 		this.doEdit();
 	}
+
+	/**
+	 * Do the wished edit.
+	 */
+	private void doEdit() {
+		this.graphController.setDisplayEnvironmentModel(this.newNetworkModel.getCopy());
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#getPresentationName()
 	 */
 	@Override
 	public String getPresentationName() {
-		return Language.translate("Komponenten-Definition bearbeiten");
+		return Language.translate("Netzwerkmodell setzen");
 	}
 
-	
-	/**
-	 * Do the wished edit.
-	 */
-	private void doEdit() {
-		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
-		this.graphController.getNetworkModel().setGeneralGraphSettings4MAS(this.newGeneralGraphSettings4MAS);
-		this.graphController.validateNetworkComponentAndAgents2Start();
-		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged));
-		this.graphController.setProjectUnsaved();
+	@Override
+	public void redo() throws CannotRedoException {
+		super.redo();
+		this.doEdit();
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#undo()
@@ -93,16 +94,6 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 	public void undo() throws CannotUndoException {
 		super.undo();
 		this.graphController.setDisplayEnvironmentModel(this.oldNetworkModel);
-		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged));
-	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.undo.AbstractUndoableEdit#redo()
-	 */
-	@Override
-	public void redo() throws CannotRedoException {
-		super.redo();
-		this.doEdit();
 	}
 	
 }

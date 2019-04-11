@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.gui.components;
+package de.enflexit.common.swing;
 
 import java.util.Vector;
 

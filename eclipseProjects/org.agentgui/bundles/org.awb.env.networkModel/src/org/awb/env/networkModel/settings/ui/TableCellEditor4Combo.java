@@ -38,7 +38,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import agentgui.core.gui.components.JComboBoxWide;
+import de.enflexit.common.swing.JComboBoxWide;
 
 /**
  * The Class TableCellEditor4Combo.

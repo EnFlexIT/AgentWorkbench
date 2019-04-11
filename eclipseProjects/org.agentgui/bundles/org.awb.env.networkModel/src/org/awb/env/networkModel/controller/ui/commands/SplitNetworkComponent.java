@@ -26,43 +26,46 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.awb.env.networkModel.commands;
+package org.awb.env.networkModel.controller.ui.commands;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
-import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.helper.GraphNodePairs;
 
 import agentgui.core.application.Language;
 
 
 /**
- * This action can be used in order to set a new NetworkModel.
+ * This action can be used in order to split a NetworkModel 
+ * at a specified GraphNode.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SetNetworkModel extends AbstractUndoableEdit {
+public class SplitNetworkComponent extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -4772137855514690242L;
 
 	private GraphEnvironmentController graphController = null;
-
-	private NetworkModel newNetworkModel = null;
-	private NetworkModel oldNetworkModel = null; 
+	
+	private GraphNode graphNode2SplitAt = null;
+	private GraphNodePairs graphNodePairsSplited = null;
 	
 	/**
-	 * Instantiates the new action in order to set a new NetworkModel.
+	 * Instantiates the new action in order to split a 
+	 * NetworkModel at a specified GraphNode.
 	 *
 	 * @param graphController the graph controller
-	 * @param newNetworkModel the new network model
+	 * @param graphNode2SplitAt the graph node2 split at
 	 */
-	public SetNetworkModel(GraphEnvironmentController graphController, NetworkModel newNetworkModel) {
+	public SplitNetworkComponent(GraphEnvironmentController graphController, GraphNode graphNode2SplitAt) {
 		super();
 		this.graphController = graphController;
-		this.newNetworkModel = newNetworkModel;
-		this.oldNetworkModel = this.graphController.getNetworkModel();
+		this.graphNode2SplitAt = graphNode2SplitAt;
 		this.doEdit();
 	}
 
@@ -70,7 +73,10 @@ public class SetNetworkModel extends AbstractUndoableEdit {
 	 * Do the wished edit.
 	 */
 	private void doEdit() {
-		this.graphController.setDisplayEnvironmentModel(this.newNetworkModel.getCopy());
+		// --- Split at node and remind the coupling ----------------
+		this.graphNodePairsSplited = this.graphController.getNetworkModel().splitNetworkModelAtNode(this.graphNode2SplitAt, true);
+		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Splited));
+		this.graphController.setProjectUnsaved();
 	}
 	
 	/* (non-Javadoc)
@@ -78,9 +84,12 @@ public class SetNetworkModel extends AbstractUndoableEdit {
 	 */
 	@Override
 	public String getPresentationName() {
-		return Language.translate("Netzwerkmodell setzen");
+		return Language.translate("Komponentenverbindung trennen");
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.undo.AbstractUndoableEdit#redo()
+	 */
 	@Override
 	public void redo() throws CannotRedoException {
 		super.redo();
@@ -93,7 +102,11 @@ public class SetNetworkModel extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-		this.graphController.setDisplayEnvironmentModel(this.oldNetworkModel);
+
+		this.graphController.getNetworkModel().mergeNodes(this.graphNodePairsSplited);
+		
+		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Merged));
+		this.graphController.setProjectUnsaved();
 	}
 	
 }

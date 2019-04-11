@@ -46,8 +46,8 @@ import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.JComboBoxWide;
-import agentgui.core.gui.components.JPanelForActions;
+import de.enflexit.common.swing.JComboBoxWide;
+import de.enflexit.common.swing.JPanelForActions;
 
 /**
  * The Class TimeFormatSelection can be used as widget in order to

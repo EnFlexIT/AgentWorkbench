@@ -26,56 +26,63 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.awb.env.networkModel.commands;
+package org.awb.env.networkModel.controller.ui.commands;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
-import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 
 import agentgui.core.application.Language;
 
-
 /**
- * This action can be used in order to split a NetworkModel 
- * at a specified GraphNode.
- * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * The Class AddNetworkComponent.
  */
-public class SplitNetworkComponent extends AbstractUndoableEdit {
+public class MergeNetworkModel extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -4772137855514690242L;
 
 	private GraphEnvironmentController graphController = null;
-	
-	private GraphNode graphNode2SplitAt = null;
-	private GraphNodePairs graphNodePairsSplited = null;
-	
-	/**
-	 * Instantiates the new action in order to split a 
-	 * NetworkModel at a specified GraphNode.
-	 *
-	 * @param graphController the graph controller
-	 * @param graphNode2SplitAt the graph node2 split at
-	 */
-	public SplitNetworkComponent(GraphEnvironmentController graphController, GraphNode graphNode2SplitAt) {
-		super();
-		this.graphController = graphController;
-		this.graphNode2SplitAt = graphNode2SplitAt;
-		this.doEdit();
-	}
+
+	private NetworkModel suppNetModel = null;
+	private GraphNodePairs nodes2Merge = null;
 
 	/**
-	 * Do the wished edit.
+	 * Instantiates a new merge network model.
+	 *
+	 * @param graphController the graph controller
+	 * @param supplementNetworkModel the supplement network model
+	 * @param node2Merge the merge description
+	 */
+	public MergeNetworkModel(GraphEnvironmentController graphController, NetworkModel supplementNetworkModel, GraphNodePairs node2Merge) {
+		super();
+		this.graphController = graphController;
+		
+		this.suppNetModel = this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
+		this.nodes2Merge = node2Merge;
+		
+		this.doEdit();
+	}
+	
+	/**
+	 * Do edit.
 	 */
 	private void doEdit() {
-		// --- Split at node and remind the coupling ----------------
-		this.graphNodePairsSplited = this.graphController.getNetworkModel().splitNetworkModelAtNode(this.graphNode2SplitAt, true);
-		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Splited));
+		
+		// --- 1. Merge NetworkModels -------------------------------
+		this.nodes2Merge = this.graphController.getNetworkModel().mergeNetworkModel(this.suppNetModel, this.nodes2Merge);
+		
+		// --- 2. Add the Agent definitions -------------------------
+		for(NetworkComponent networkComponent : this.suppNetModel.getNetworkComponents().values()) {
+			this.graphController.addAgent(networkComponent);
+		}
+		
+		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel));
 		this.graphController.setProjectUnsaved();
 	}
 	
@@ -84,9 +91,9 @@ public class SplitNetworkComponent extends AbstractUndoableEdit {
 	 */
 	@Override
 	public String getPresentationName() {
-		return Language.translate("Komponentenverbindung trennen");
+		return Language.translate("Netzwerkkomponente(n) hinzufügen");
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#redo()
 	 */
@@ -102,10 +109,18 @@ public class SplitNetworkComponent extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-
-		this.graphController.getNetworkModel().mergeNodes(this.graphNodePairsSplited);
 		
-		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Merged));
+		this.graphController.getNetworkModel().mergeNodesRevert(this.nodes2Merge);
+		
+		for (NetworkComponent networkComponent: this.suppNetModel.getNetworkComponents().values()) {
+
+			NetworkComponent netComp2Remove = this.graphController.getNetworkModel().getNetworkComponent(networkComponent.getId());
+			this.graphController.getNetworkModel().removeNetworkComponent(netComp2Remove);
+			
+			NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+			notification.setInfoObject(netComp2Remove);
+			this.graphController.notifyObservers(notification);
+		}
 		this.graphController.setProjectUnsaved();
 	}
 	
