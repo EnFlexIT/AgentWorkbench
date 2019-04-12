@@ -32,7 +32,7 @@ import java.awt.Cursor;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -248,7 +248,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Copies a set of NetworkComponent's as independent NetworkModel to the clipboard.
 	 * @param networkComponentsForClipboard the network components
 	 */
-	public void copyToClipboard(HashSet<NetworkComponent> networkComponentsForClipboard) {
+	public void copyToClipboard(List<NetworkComponent> networkComponentsForClipboard) {
 
 		if (networkComponentsForClipboard == null)
 			return;

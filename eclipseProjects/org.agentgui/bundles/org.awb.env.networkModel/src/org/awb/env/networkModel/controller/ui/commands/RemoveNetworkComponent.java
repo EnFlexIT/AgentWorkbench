@@ -28,8 +28,10 @@
  */
 package org.awb.env.networkModel.controller.ui.commands;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.undo.AbstractUndoableEdit;
@@ -61,11 +63,11 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	private int noOfComponents4ModelStorage = 100;
 	
 	private GraphEnvironmentController graphController;
-	private Vector<NetworkComponent> networkComponents2Remove;
+	private List<NetworkComponent> networkComponents2Remove;
 	private boolean removeDistributionNodes; 
 	
-	private NetworkModel extractedNetworkModel = null;
-	private HashMap<NetworkComponent, Vector<GraphNodePairs>> nodeConnections = null; 
+	private NetworkModel extractedNetworkModel;
+	private HashMap<NetworkComponent, Vector<GraphNodePairs>> nodeConnections; 
 
 	private NetworkModel oldNetworkModel = null;
 	
@@ -76,10 +78,10 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	 * @param networkComponents2Remove the network components to remove
 	 * @param removeDistributionNodes the boolean that indicates to remove distribution nodes too
 	 */
-	public RemoveNetworkComponent(GraphEnvironmentController graphController, HashSet<NetworkComponent> networkComponents2Remove, boolean removeDistributionNodes) {
+	public RemoveNetworkComponent(GraphEnvironmentController graphController, List<NetworkComponent> networkComponents2Remove, boolean removeDistributionNodes) {
 		super();
 		this.graphController = graphController;
-		this.networkComponents2Remove = new Vector<NetworkComponent>(networkComponents2Remove);
+		this.networkComponents2Remove = networkComponents2Remove;
 		this.removeDistributionNodes = removeDistributionNodes;
 		this.doEdit();
 	}
@@ -99,18 +101,23 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	 */
 	private void doEditSmallerThanNoOfComponents4ModelStorage() {
 	
-		HashSet<NetworkComponent> netCompsRemoved = new HashSet<NetworkComponent>();
+		List<NetworkComponent> netCompsRemoved = new ArrayList<>();
 		this.nodeConnections = new HashMap<NetworkComponent, Vector<GraphNodePairs>>();
 		this.extractedNetworkModel = new NetworkModel();
 		
-		for (NetworkComponent networkComponent : this.networkComponents2Remove) {
-
+		for (int i = 0; i < this.networkComponents2Remove.size(); i++) {
+			NetworkComponent networkComponent = this.networkComponents2Remove.get(i);
 			boolean isDistributionNode = networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName());
 			if (isDistributionNode==false || (isDistributionNode==true && this.removeDistributionNodes==true)) {
-				this.transfer2localNetworkModel(networkComponent);
-				this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, this.removeDistributionNodes, false);
-				this.graphController.removeAgent(networkComponent);
-				netCompsRemoved.add(networkComponent);
+				try {
+					this.transfer2localNetworkModel(networkComponent);
+					this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, this.removeDistributionNodes, false);
+					this.graphController.removeAgent(networkComponent);
+					netCompsRemoved.add(networkComponent);
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		this.graphController.getNetworkModel().refreshGraphElements();
@@ -276,14 +283,12 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		
 		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 		
-		HashSet<NetworkComponent> netCompsRemoved = new HashSet<NetworkComponent>();
+		List<NetworkComponent> netCompsRemoved = new ArrayList<>();
 		for (NetworkComponent networkComponent : this.networkComponents2Remove) {
-
-			this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, false);
 			this.graphController.removeAgent(networkComponent);
 			netCompsRemoved.add(networkComponent);
 		}
-		this.graphController.getNetworkModel().refreshGraphElements();
+		this.graphController.getNetworkModel().removeNetworkComponents(this.networkComponents2Remove);
 		
 		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
 		notification.setInfoObject(netCompsRemoved);

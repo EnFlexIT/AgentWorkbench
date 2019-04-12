@@ -29,8 +29,9 @@
 package org.awb.env.networkModel.controller.ui.commands;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.undo.UndoManager;
 
@@ -296,15 +297,15 @@ public class NetworkModelUndoManager {
 	 * @param networkComponent the network component to remove
 	 */
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-		HashSet<NetworkComponent> compHash = new HashSet<NetworkComponent>();
-		compHash.add(networkComponent);
-		this.removeNetworkComponents(compHash, true);
+		List<NetworkComponent> compList = new ArrayList<>();
+		compList.add(networkComponent);
+		this.removeNetworkComponents(compList, true);
 	}
 	/**
 	 * Removes the specified NetworkComponents from the current NetworkModel.
 	 * @param networkComponents the network components to remove
 	 */
-	public void removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
+	public void removeNetworkComponents(List<NetworkComponent> networkComponents) {
 		this.removeNetworkComponents(networkComponents, true);
 	}
 	/**
@@ -312,7 +313,7 @@ public class NetworkModelUndoManager {
 	 * @param networkComponents the network components to remove
 	 * @param removeDistributionNodes the remove distribution nodes
 	 */
-	public void removeNetworkComponents(HashSet<NetworkComponent> networkComponents, boolean removeDistributionNodes) {
+	public void removeNetworkComponents(List<NetworkComponent> networkComponents, boolean removeDistributionNodes) {
 		this.getUndoManager().addEdit(new RemoveNetworkComponent(this.graphController, networkComponents, removeDistributionNodes));
 	}
 	
@@ -322,11 +323,12 @@ public class NetworkModelUndoManager {
 	 * @param networkComponentsToKeep the network components to keep when deleting network components
 	 * @return the hash set of removed NetworkComponents
 	 */
-	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponentsToKeep) {
+	public List<NetworkComponent> removeNetworkComponentsInverse(List<NetworkComponent> networkComponentsToKeep) {
 		
-		HashSet<NetworkComponent> removedComponents = this.graphController.getNetworkModel().removeNetworkComponentsInverse(networkComponentsToKeep);
-		for (NetworkComponent networkComponent : removedComponents) {
-			
+		List<NetworkComponent> removedComponents = this.graphController.getNetworkModel().removeNetworkComponentsInverse(networkComponentsToKeep);
+		for (int i = 0; i < removedComponents.size(); i++) {
+
+			NetworkComponent networkComponent = removedComponents.get(i);
 			this.graphController.removeAgent(networkComponent);
 			
 			NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);

@@ -798,10 +798,10 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 					networkComponent = (NetworkComponent) infoObject;
 					this.networkComponentRemove(networkComponent);
 				
-				} else if (infoObject instanceof HashSet<?>) {
+				} else if (infoObject instanceof List<?>) {
 					@SuppressWarnings("unchecked")
-					HashSet<NetworkComponent> networkComponentHash = (HashSet<NetworkComponent>) infoObject;
-					this.networkComponentRemove(new ArrayList<>(networkComponentHash));
+					List<NetworkComponent> networkComponentList = (List<NetworkComponent>) infoObject;
+					this.networkComponentRemove(networkComponentList);
 				}
 				break;
 			

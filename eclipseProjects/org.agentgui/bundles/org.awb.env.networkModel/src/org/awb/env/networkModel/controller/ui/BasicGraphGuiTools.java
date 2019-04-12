@@ -1165,7 +1165,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Cut Action ---------------------------------------
 			Set<GraphNode> nodeSet = this.getBasicGraphGUI().getPickedNodes();
-			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
+			List<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			if(selectedComponents!=null && selectedComponents.size()>0){
 				// --- Copy to clipboard ----------------------------
 				this.graphController.copyToClipboard(selectedComponents);
@@ -1177,7 +1177,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Copy Action --------------------------------------
 			Set<GraphNode> nodeSet = this.getBasicGraphGUI().getPickedNodes();
-			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
+			List<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			this.graphController.copyToClipboard(selectedComponents);
 			
 		} else if (ae.getSource() == getJButtonPaste()) {
@@ -1214,7 +1214,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			boolean removeDistributionNodes = true;
 			Set<GraphNode> nodeSet = this.getBasicGraphGUI().getPickedNodes();
 			Set<GraphEdge> edgeSet = this.getBasicGraphGUI().getPickedEdges();
-			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
+			List<NetworkComponent> selectedComponents = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodeSet);
 			
 			// ------------------------------------------------------
 			// --- Capture the case of one edged-NetworkComponent ---  
@@ -1263,7 +1263,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				}
 			}
 			// --- Proceed with deleting, if applicable -------------  
-			if(selectedComponents!=null && selectedComponents.size()>0){ 
+			if (selectedComponents!=null && selectedComponents.size()>0){ 
 				// --- Remove component and update graph ------------ 
 				this.graphController.getNetworkModelUndoManager().removeNetworkComponents(selectedComponents, removeDistributionNodes);	
 			} else {

@@ -28,7 +28,8 @@
  */
 package org.awb.env.networkModel.controller.ui.commands;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
@@ -86,7 +87,7 @@ public class PasteNetworkModel extends AbstractUndoableEdit {
 		super.undo();
 
 		// --- Remove the added components --------------
-		HashSet<NetworkComponent> netComps2Remove = new HashSet<NetworkComponent>();
+		List<NetworkComponent> netComps2Remove = new ArrayList<>();
 		for (NetworkComponent networkComponentPasted : this.pastedNetworkModel.getNetworkComponents().values()) {
 			String netCompID = networkComponentPasted.getId();
 			NetworkComponent netCompRemove = this.graphController.getNetworkModel().getNetworkComponent(netCompID);

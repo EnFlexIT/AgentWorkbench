@@ -41,7 +41,6 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -304,12 +303,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		// --- Get the selected nodes ----------------
 		Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
 		// --- Get the related NetworkComponent's ---- 
-		HashSet<NetworkComponent> components = networkModel.getNetworkComponentsFullySelected(nodesSelected);
+		List<NetworkComponent> components = networkModel.getNetworkComponentsFullySelected(nodesSelected);
 		if (components!=null) {
-			// --- Run through NetworkComponents -----  
-			for (NetworkComponent networkComponent : components) {
+			// --- Run through NetworkComponents -----
+			for (int i = 0; i < components.size(); i++) {
+				NetworkComponent networkComponent = components.get(i);
 				Vector<GraphElement> elements = networkModel.getGraphElementsFromNetworkComponent(networkComponent);
-				for (GraphElement graphElement : elements) {
+				for (int j = 0; j < elements.size(); j++) {
+					GraphElement graphElement = elements.get(j);
 					if (graphElement instanceof GraphEdge) {
 						this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
 					}
@@ -652,7 +653,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					
 				} else {
 					// --- Remove the added components --------------
-					HashSet<NetworkComponent> netComps2Remove = new HashSet<NetworkComponent>();
+					List<NetworkComponent> netComps2Remove = new ArrayList<>();
 					for (NetworkComponent networkComponentPasted : this.networkModel2Paste.getNetworkComponents().values()) {
 						String netCompID = networkComponentPasted.getId();
 						NetworkComponent netCompRemove = this.graphController.getNetworkModel().getNetworkComponent(netCompID);
@@ -662,7 +663,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					
 					this.graphController.getNetworkModel().removeNetworkComponents(netComps2Remove);
 					
-					NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+					NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
 					notification.setInfoObject(netComps2Remove);
 					this.graphController.notifyObservers(notification);
 				}

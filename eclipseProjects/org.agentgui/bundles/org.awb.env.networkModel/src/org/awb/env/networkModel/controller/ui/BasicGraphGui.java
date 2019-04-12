@@ -983,7 +983,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		} else {
 			// --- Something selected ---------------------
-			HashSet<NetworkComponent> fsNetComps = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesSelected);
+			List<NetworkComponent> fsNetComps = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesSelected);
 			if (fsNetComps==null || fsNetComps.size()==0) {
 				if (nodesSelected.size()==1) {
 					selectedGraphObject.add(nodesSelected.iterator().next());
@@ -1058,7 +1058,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Get what is available locally --------------
 		Set<GraphNode> nodesSelected = this.getPickedNodes();
 		Set<GraphEdge> edgesSelected = this.getPickedEdges();
-		HashSet<NetworkComponent> netCompsSelected = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesSelected);
+		List<NetworkComponent> netCompsSelected = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesSelected);
 		
 		// --- Define current selection instance ----------
 		GraphSelection graphSelection = new GraphSelection();
@@ -1271,7 +1271,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		Set<GraphNode> nodesPicked = this.getVisualizationViewer().getPickedVertexState().getPicked();
 		if (nodesPicked.size()!=0) {
-			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
+			List<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
 			if (components!=null && components.size()!=0) {
 				// --- Get the dimension of the selected nodes ------ 
 				Rectangle2D areaSelected = GraphGlobals.getGraphSpreadDimension(nodesPicked);

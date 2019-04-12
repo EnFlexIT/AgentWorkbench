@@ -251,7 +251,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return The NetworkComponent
 	 */
 	public NetworkComponent getNetworkComponent(String id) {
-		if (id==null || id.equals("")) {
+		if (id==null || id.isEmpty()) {
 			return null;
 		} else {
 			return this.getNetworkComponents().get(id);	
@@ -411,7 +411,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			for (String graphElementID : nc.getGraphElementIDs()) {
 				GraphElement ge = this.getGraphElements().get(graphElementID);
 				if (ge==null) {
-					System.err.println("RefreshGraphElements: Could not find GraphElement '" + graphElementID + "' for NetworkComponent '" + nc.getId() + "'");
+					System.err.println("[" + this.getClass().getSimpleName() + "] RefreshGraphElements: Could not find GraphElement '" + graphElementID + "' for NetworkComponent '" + nc.getId() + "'");
 				} else {
 					this.addGraphElementToNetworkComponentRelation(ge, nc);	
 				}
@@ -566,20 +566,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param networkComponent The NetworkComponent to remove
 	 */
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-		this.removeNetworkComponent(networkComponent, true);
+		this.removeNetworkComponent(networkComponent, true, true);
 	}
-	
-	/**
-	 * This method removes a NetworkComponent from the GridModel's networkComponents
-	 * HashMap, using its' ID as key.
-	 *
-	 * @param networkComponent The NetworkComponent to remove
-	 * @param refreshGraphElements true, if the graph elements have to be refreshed
-	 */
-	public void removeNetworkComponent(NetworkComponent networkComponent, boolean refreshGraphElements) {
-		this.removeNetworkComponent(networkComponent, true, refreshGraphElements);
-	}
-	
 	/**
 	 * This method removes a NetworkComponent from the GridModel's networkComponents
 	 * HashMap, using its' ID as key.
@@ -629,7 +617,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		// --- Remove the NetworkComponent --------------------------
 		this.getNetworkComponents().remove(networkComponent.getId());
 		
-		// --- Re-Merge the previously splitted nodes, if needed ---- 
+		// --- Re-Merge the previously split nodes, if needed ------- 
 		for (GraphNodePairs graphNodePairs : graphNodePairsToReMerge) {
 			this.mergeNodes(graphNodePairs);
 		}
@@ -641,19 +629,20 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Removes a set of network components.
+	 * Removes a list of network components.
 	 *
 	 * @param networkComponents the network components
 	 * @return the set of removed components 
 	 */
-	public HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
+	public List<NetworkComponent> removeNetworkComponents(List<NetworkComponent> networkComponents) {
 		
-		HashSet<GraphElement> graphNodes2Remove = new HashSet<GraphElement>();
-		HashSet<GraphElement> graphEdges2Remove = new HashSet<GraphElement>();
+		List<GraphNode> graphNodes2Remove = new ArrayList<>();
+		List<GraphEdge> graphEdges2Remove = new ArrayList<>();
 		
-		for (NetworkComponent networkComponent : networkComponents) {
-			
+		for (int i = 0; i < networkComponents.size(); i++) {
+		
 			// --- Remove from the list of NetworkComponents --------
+			NetworkComponent networkComponent = networkComponents.get(i);
 			this.getNetworkComponents().remove(networkComponent.getId());
 			
 			// --- Get graph elements of the components -------------
@@ -661,24 +650,25 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				GraphElement graphElement = this.getGraphElement(graphElemID);
 				if (graphElement instanceof GraphNode) {
 					if (graphNodes2Remove.contains(graphElement)==false) {
-						graphNodes2Remove.add(graphElement);
+						graphNodes2Remove.add((GraphNode) graphElement);
 					}
 				} else if (graphElement instanceof GraphEdge) {
 					if (graphEdges2Remove.contains(graphElement)==false) {
-						graphEdges2Remove.add(graphElement);
+						graphEdges2Remove.add((GraphEdge) graphElement);
 					}
 				}
 			}
 		}
 		
 		// --- Remove edges from the graph --------------------------
-		for (GraphElement graphElement : graphEdges2Remove) {
-			this.getGraph().removeEdge((GraphEdge) graphElement);
+		for (int i = 0; i < graphEdges2Remove.size(); i++) {
+			GraphEdge graphEdge = graphEdges2Remove.get(i);
+			this.getGraph().removeEdge(graphEdge);
 		}
 		// --- Remove edges from the graph --------------------------
-		for (GraphElement graphElement : graphNodes2Remove) {
-			GraphNode graphNode = (GraphNode) graphElement;
-			if (this.getGraph().getIncidentEdges(graphNode).size() < 2) {
+		for (int i = 0; i < graphNodes2Remove.size(); i++) {
+			GraphNode graphNode = graphNodes2Remove.get(i);
+			if (this.getGraph().getIncidentEdges(graphNode).size()==0) {
 				this.getGraph().removeVertex(graphNode);
 			} 
 		}
@@ -693,35 +683,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param networkComponentsToKeep the network components to keep when deleting network components
 	 * @return the hash set of removed NetworkComponents
 	 */
-	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponentsToKeep) {
-		
-		HashSet<NetworkComponent> removed = new HashSet<NetworkComponent>();
-		HashSet<String> networkComponentIDs = this.getNetworkComponentsIDs(networkComponentsToKeep);
-		
-		List<NetworkComponent> netCompList = new ArrayList<NetworkComponent>(this.getNetworkComponents().values());
-		for (int i = 0; i < netCompList.size(); i++) {
-			NetworkComponent networkComponent = netCompList.get(i);
-			if (networkComponentIDs.contains(networkComponent.getId())==false) {
-				this.removeNetworkComponent(networkComponent, true, false);
-				removed.add(networkComponent);
-			}
-		}
-		this.refreshGraphElements();
-		return removed;
+	public List<NetworkComponent> removeNetworkComponentsInverse(List<NetworkComponent> networkComponentsToKeep) {
+		// --- Get the inverse list of NetworkComponents ------------
+		List<NetworkComponent> networkComponentsToRemove = this.getNetworkComponentsInverse(networkComponentsToKeep);
+		// --- Now, call the regular remove method ------------------
+		this.removeNetworkComponents(networkComponentsToRemove);
+		return networkComponentsToRemove;
 	}
 	
-	/**
-	 * Extracts Network IDs from NetworkComponenList and returns an ID List.
-	 * @param networkComponents the network components
-	 * @return HashSet<String> of the IDs
-	 */
-	private HashSet<String> getNetworkComponentsIDs(HashSet<NetworkComponent> networkComponents) {
-		HashSet<String> networkComponentIDs = new HashSet<String>();
-		for (NetworkComponent networkComponent : networkComponents) {
-			networkComponentIDs.add(networkComponent.getId());
-		}
-		return networkComponentIDs;
-	}
 	
 	
 	/**
@@ -864,12 +833,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param graphNodes the graph nodes
 	 * @return the network components
 	 */
-	public HashSet<NetworkComponent> getNetworkComponents(Set<GraphNode> graphNodes) {
-		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
-		for (GraphNode graphNode : graphNodes) {
-			networkComponents.addAll(this.getNetworkComponents(graphNode));
+	public List<NetworkComponent> getNetworkComponents(Set<GraphNode> graphNodes) {
+		HashSet<NetworkComponent> netCompHashSet = new HashSet<>();
+		List<GraphNode> graphNodeList = new ArrayList<>(graphNodes);
+		for (int i = 0; i < graphNodeList.size(); i++) {
+			GraphNode graphNode = graphNodeList.get(i);
+			netCompHashSet.addAll(this.getNetworkComponents(graphNode));
 		}
-		return networkComponents;
+		return new ArrayList<>(netCompHashSet);
 	}
 
 	/**
@@ -877,33 +848,71 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * As an example: if you have selected one vertex of a simple directed edge with two vertices, this
 	 * method will return null.  
 	 *
-	 * @param graphNodes the set of selected {@link GraphNode}'s
+	 * @param graphNodesSelected the set of selected {@link GraphNode}'s
 	 * @return the {@link NetworkComponent}'s that are fully selected by the given nodes and edges
 	 */
-	public HashSet<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodes) {
+	public List<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodesSelected) {
 		
-		HashSet<NetworkComponent> componentsFound = new HashSet<NetworkComponent>();
-		HashSet<NetworkComponent> componentsAffected = this.getNetworkComponents(graphNodes);
+		List<NetworkComponent> componentsFound = new ArrayList<>();
+		List<NetworkComponent> componentsAffected = this.getNetworkComponents(graphNodesSelected);
 
 		// --- Take affected components and run through them --------
-		for (NetworkComponent networkComponent : componentsAffected) {
+		for (int i = 0; i < componentsAffected.size(); i++) {
+		
+			NetworkComponent networkComponent = componentsAffected.get(i);
 			
+			// --- Get all GraphNodes of the NetworkComponent -------
 			int graphElementsInSelection = 0; 
 			HashSet<GraphElement> graphElementsOfNetworkComponent = this.getGraphElementsOfNetworkComponent(networkComponent, new GraphNode());
-			for (GraphElement element : graphElementsOfNetworkComponent) {
-				if (graphNodes.contains(element)) {
+			for (GraphElement graphNodeOfNetworkComponent : graphElementsOfNetworkComponent) {
+				// --- Increase counter, if in selection ------------ 
+				if (graphNodesSelected.contains(graphNodeOfNetworkComponent)) {
 					graphElementsInSelection++;
 				}
 			}
-			if (graphElementsInSelection==graphElementsOfNetworkComponent.size()) {
+			// --- If all GraphNodes of a component were selected ---
+			if (graphElementsInSelection==graphElementsOfNetworkComponent.size() && componentsFound.contains(networkComponent)==false) {
 				componentsFound.add(networkComponent);
 			}
-			
 		}
 		
 		if (componentsFound.size()==0) componentsFound = null;
 		return componentsFound;
+	}
+
+	/**
+	 * Returns an 'inverse' list of network components with respect to all NetworkComponents in the NetworkModel.
+	 * The result will be equal to <b>All NetworkComponents in the NetworkModel</b> minus <b>the specified list of NetworkComponents</b>.  
+	 *
+	 * @param networkComponentListToInvert the network component list to invert
+	 * @return the resulting inverse network component list 
+	 */
+	public List<NetworkComponent> getNetworkComponentsInverse(List<NetworkComponent> networkComponentListToInvert) {
+
+		List<NetworkComponent> networkComponentsToRemove = new ArrayList<>();
 		
+		// --- Create the list of NetworkComponets to remove -------- 
+		HashSet<String> networkComponentIDs = this.getNetworkComponentsIDs(networkComponentListToInvert);
+		List<NetworkComponent> netCompList = new ArrayList<>(this.getNetworkComponents().values());
+		for (int i = 0; i < netCompList.size(); i++) {
+			NetworkComponent networkComponent = netCompList.get(i);
+			if (networkComponentIDs.contains(networkComponent.getId())==false) {
+				networkComponentsToRemove.add(networkComponent);
+			}
+		}
+		return networkComponentsToRemove;
+	}
+	/**
+	 * Extracts Network IDs from NetworkComponenList and returns an ID List.
+	 * @param networkComponents the network components
+	 * @return HashSet<String> of the IDs
+	 */
+	private HashSet<String> getNetworkComponentsIDs(List<NetworkComponent> networkComponents) {
+		HashSet<String> networkComponentIDs = new HashSet<>();
+		for (int i = 0; i < networkComponents.size(); i++) {
+			networkComponentIDs.add(networkComponents.get(i).getId());
+		}
+		return networkComponentIDs;
 	}
 	
 	
@@ -922,6 +931,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		// --- Create the result set -----------------
 		HashSet<String> elementIDsFound = new HashSet<String>();
+		if (networkComponent==null) return elementIDsFound;
 		
 		// --- Check the GraphElements ---------------
 		Set<String> elements = networkComponent.getGraphElementIDs();
@@ -1855,7 +1865,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponentsToCluster, boolean distributionNodesAreOuterNodes) {
 		
 		// --- Maybe another instance: Get real group of NetworkComponents ---- 
-		HashSet<NetworkComponent> clusterNC2Use = new HashSet<NetworkComponent>();
+		List<NetworkComponent> clusterNC2Use = new ArrayList<>();
 		for (NetworkComponent netComp : networkComponentsToCluster) {
 			clusterNC2Use.add(this.getNetworkComponent(netComp.getId()));
 		}
@@ -1957,12 +1967,15 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param setDistributionNodesToOuterNodes if true, distribution nodes will always set to outer nodes
 	 * @return the outer nodes
 	 */
-	public Vector<GraphNode> getOuterConnectionNodes(HashSet<NetworkComponent> networkComponents, boolean setDistributionNodesToOuterNodes) {
+	public Vector<GraphNode> getOuterConnectionNodes(List<NetworkComponent> networkComponents, boolean setDistributionNodesToOuterNodes) {
 		
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
 		
 		// --- Walk through the list of specified NetworkCompnents ------------
-		for (NetworkComponent netComp : networkComponents) {
+		for (int i = 0; i < networkComponents.size(); i++) {
+		
+			NetworkComponent netComp = networkComponents.get(i);
+		
 			// --- Get all GraphNodes of a NetworkComponent -------------------
 			HashSet<GraphElement> nodeElements = this.getGraphElementsOfNetworkComponent(netComp, new GraphNode());
 			for (GraphElement nodeElement : nodeElements) {
@@ -1995,8 +2008,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param networkComponentsToCluster the network components to cluster
 	 * @return the outer connection remaining graph elements
 	 */
-	private HashMap<GraphNode, HashSet<GraphElement>> getOuterConnectionRemainingGraphElements(Vector<GraphNode> outerNodes, HashSet<NetworkComponent> networkComponentsToCluster) {
+	private HashMap<GraphNode, HashSet<GraphElement>> getOuterConnectionRemainingGraphElements(Vector<GraphNode> outerNodes, List<NetworkComponent> networkComponentsToClusterList) {
 		
+		HashSet<NetworkComponent> networkComponentsToCluster = new HashSet<>(networkComponentsToClusterList);
 		HashMap<GraphNode, HashSet<GraphElement>> ocge = new HashMap<GraphNode, HashSet<GraphElement>>();
 		for (GraphNode graphNode1 : outerNodes) {
 			
