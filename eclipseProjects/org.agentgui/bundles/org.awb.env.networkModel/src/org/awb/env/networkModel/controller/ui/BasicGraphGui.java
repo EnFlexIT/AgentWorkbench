@@ -39,12 +39,17 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,6 +67,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 
 import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
@@ -73,6 +79,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentToGraphNodeAdapter;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.GraphSelectionListener.GraphSelection;
 import org.awb.env.networkModel.controller.ui.commands.RenamedNetworkComponent;
 import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
@@ -150,6 +157,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	/** Graph visualization component */
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView;
 	private boolean isCreatedVisualizationViewer;
+	private List<GraphSelectionListener> graphSelectionListenerList;
 	
 	private SatelliteDialog satelliteDialog;
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
@@ -169,6 +177,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private CoordinateSystemXDirection xDirectionReminder;
 	private CoordinateSystemYDirection yDirectionReminder;
 
+	private Timer graphSelectionWaitTimer;
 	
 	/**
 	 * This is the default constructor
@@ -434,6 +443,20 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- Set the pick size of the visualisation viewer --------
 			((ShapePickSupport<GraphNode, GraphEdge>) visView.getPickSupport()).setPickSize(5);
 			
+			
+			// --- Listener for GraphNode / GraphEdge (de)selections ---------- 
+			ItemListener iListener = new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent ie) {
+					Object item = ie.getItem();
+					if (item instanceof GraphNode || item instanceof GraphNode) {
+						BasicGraphGui.this.reStartGraphSelectionWaitTimer();
+					}
+				}
+			};
+			visView.getPickedVertexState().addItemListener(iListener);
+			visView.getPickedEdgeState().addItemListener(iListener);
+
 			
 			// ----------------------------------------------------------------
 			// --- Define edge and node ToolTip --------------------- Start ---
@@ -970,6 +993,83 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 		}
 		return selectedGraphObject;
+	}
+	
+	/**
+	 * Returns the list of registered {@link GraphSelectionListener}.
+	 * @return the graph selection listener list
+	 */
+	private List<GraphSelectionListener> getGraphSelectionListenerList() {
+		if (graphSelectionListenerList==null) {
+			graphSelectionListenerList = new ArrayList<>();
+		}
+		return graphSelectionListenerList;
+	}
+	/**
+	 * Adds the graph selection listener.
+	 * @param listener the listener to add
+	 */
+	public void addGraphSelectionListener(GraphSelectionListener listener) {
+		if (listener!=null && this.getGraphSelectionListenerList().contains(listener)==false) {
+			this.getGraphSelectionListenerList().add(listener);
+		}
+	}
+	/**
+	 * Removes the graph selection listener.
+	 * @param listener the listener to remove
+	 */
+	public void removeGraphSelectionListener(GraphSelectionListener listener) {
+		this.getGraphSelectionListenerList().remove(listener);
+	}
+
+	/**
+	 * Returns the resize wait timer.
+	 * @return the resize wait timer
+	 */
+	private Timer getGraphSelectionWaitTimer() {
+		if (graphSelectionWaitTimer==null) {
+			graphSelectionWaitTimer = new Timer(100, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					BasicGraphGui.this.informGraphSelectionListener();
+				}
+			});
+			graphSelectionWaitTimer.setRepeats(false);
+		}
+		return graphSelectionWaitTimer;
+	}
+	/**
+	 * Start or restarts the graph selection wait timer.
+	 */
+	private void reStartGraphSelectionWaitTimer() {
+		if (getGraphSelectionWaitTimer().isRunning()==true) {
+			this.getGraphSelectionWaitTimer().restart();
+		} else {
+			this.getGraphSelectionWaitTimer().start();
+		}
+	}
+	/**
+	 * Informs the graph selection listener.
+	 */
+	private void informGraphSelectionListener() {
+		
+		if (this.getGraphSelectionListenerList().size()==0) return;
+		
+		// --- Get what is available locally --------------
+		Set<GraphNode> nodesSelected = this.getPickedNodes();
+		Set<GraphEdge> edgesSelected = this.getPickedEdges();
+		HashSet<NetworkComponent> netCompsSelected = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesSelected);
+		
+		// --- Define current selection instance ----------
+		GraphSelection graphSelection = new GraphSelection();
+		graphSelection.getNodeList().addAll(nodesSelected);
+		graphSelection.getEdgeList().addAll(edgesSelected);
+		if (netCompsSelected!=null) graphSelection.getNetworkComponentList().addAll(netCompsSelected);
+
+		// --- Invoke listener ----------------------------
+		for (int i = 0; i < this.getGraphSelectionListenerList().size(); i++) {
+			this.getGraphSelectionListenerList().get(i).onGraphSelectionChanged(graphSelection);
+		}
 	}
 	
 	

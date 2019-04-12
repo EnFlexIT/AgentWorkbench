@@ -86,10 +86,10 @@ import agentgui.core.config.GlobalInfo;
  */
 public class BasicGraphGuiTools implements ActionListener, Observer {
 
-	private static final String GRAPH_TOOLBAR_EXTENSION_ID = "org.awb.env.graphToolbarExtension";
-	
-    private final String pathImage = GraphGlobals.getPathImages();
-    private final Dimension jButtonSize = new Dimension(26, 26);
+	public static final String GRAPH_TOOLBAR_EXTENSION_ID = "org.awb.env.graphToolbarExtension";
+	public static final Dimension JBUTTON_SIZE = new Dimension(26, 26);
+
+	private final String pathImage = GraphGlobals.getPathImages();
 
     private boolean isPasteAction = false;
     private KeyAdapter keyAdapterPasteActionStop; 
@@ -126,13 +126,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonCopy;
     private JButton jButtonPaste;
     
-    private JButton jButtonLayoutSwitch;
-    private JToggleButton jToggleButtonEdgeLine;
-    private JToggleButton jToggleButtonEdgeQuadCurve;
-    private JToggleButton jToggleButtonEdgePolyLine;
-    private JToggleButton jToggleButtonEdgeOrthogonal;
 
-    
     private JPopupMenu edgePopup;
     private JMenuItem jMenuItemDeleteCompVertex;
     private JMenuItem jMenuItemDeleteCompEdge;
@@ -164,7 +158,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * Gets {@link GraphEnvironmentControllerGUI}
      * @return the {@link GraphEnvironmentControllerGUI}
      */
-    private GraphEnvironmentControllerGUI getGraphControllerGUI() {
+    protected GraphEnvironmentControllerGUI getGraphControllerGUI() {
     	if (this.graphControllerGUI==null) {
     		this.graphControllerGUI = this.graphController.getGraphEnvironmentControllerGUI();
     	}
@@ -174,7 +168,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * Gets the current {@link BasicGraphGui}.
      * @return the basic graph GUI
      */
-    private BasicGraphGui getBasicGraphGUI() {
+    protected BasicGraphGui getBasicGraphGUI() {
     	if (basicGraphGUI==null) {
     		basicGraphGUI = this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
     	}
@@ -286,36 +280,18 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     
     /**
      * Gets the Layout toolbar for the BasicGraphGui.
-     * @return the toolbar
+     * @return the toolbar for layout adjustments
      */
     public JToolBar getJToolBarLayout() {
     	if (jToolBarLayout == null) {
-    		jToolBarLayout = new JToolBar();
-    		jToolBarLayout.setOrientation(JToolBar.VERTICAL);
-    		jToolBarLayout.setFloatable(false);
-    		jToolBarLayout.setPreferredSize(new Dimension(30, 30));
-    		jToolBarLayout.setVisible(this.getJToggleButtonLayoutToolBar().isSelected());
-    		
-    		jToolBarLayout.add(this.getJButtonLayoutSwitch());
-    		jToolBarLayout.addSeparator();
-    		
-    		jToolBarLayout.add(this.getJToggleButtonEdgeLine());
-    		jToolBarLayout.add(this.getJToggleButtonEdgeQuadCurve());
-    		jToolBarLayout.add(this.getJToggleButtonEdgePolyLine());
-    		jToolBarLayout.add(this.getJToggleButtonEdgeOrthogonal());
-    		jToolBarLayout.addSeparator();
-    		
-    		ButtonGroup bg = new ButtonGroup();
-    		bg.add(this.getJToggleButtonEdgeLine());
-    		bg.add(this.getJToggleButtonEdgeQuadCurve());
-    		bg.add(this.getJToggleButtonEdgePolyLine());
-    		bg.add(this.getJToggleButtonEdgeOrthogonal());
-    		
-    		
+    		jToolBarLayout = new BasicGraphGuiToolsLayout(this.graphController, this);
     	}
     	return jToolBarLayout;
     }
     
+    // --------------------------------------------------------------
+    // --- From here, some production methods can be found ----------
+    // --------------------------------------------------------------
     /**
      * Represents an internal factory method for new JButton.
      *
@@ -323,28 +299,54 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * @param toolTipText the tool tip text
      * @return the new JButton
      */
-    private JButton getNewJButton(String imageName, String toolTipText) {
+    protected JButton getNewJButton(String imageName, String toolTipText) {
+    	return this.getNewJButton(imageName, toolTipText, null);
+    }
+    /**
+     * Represents an internal factory method for new JButton.
+     *
+     * @param imageName the image name
+     * @param toolTipText the tool tip text
+     * @param actionListener the action listener to use. If null, the local listener will be used.
+     * @return the new JButton
+     */
+    protected JButton getNewJButton(String imageName, String toolTipText, ActionListener actionListener) {
     	ImageIcon imageIcon = null;
     	if (imageName!=null && imageName.isEmpty()==false) {
     		imageIcon = new ImageIcon(this.getClass().getResource(this.pathImage + imageName));
     	}
-    	return this.getNewJButton(imageIcon, toolTipText);
+    	return this.getNewJButton(imageIcon, toolTipText, actionListener);
     }
+    
     /**
      * Represents an internal factory method for new JButton.
      * @param imageIcon the image icon
      * @param toolTipText the tool tip text
      * @return the new JButton
      */
-    private JButton getNewJButton(ImageIcon imageIcon, String toolTipText) {
+    protected JButton getNewJButton(ImageIcon imageIcon, String toolTipText) {
+    	return this.getNewJButton(imageIcon, toolTipText, null);
+    }
+    /**
+     * Represents an internal factory method for new JButton.
+     * @param imageIcon the image icon
+     * @param toolTipText the tool tip text
+     * @param actionListener the action listener to use. If null, the local listener will be used.
+     * @return the new JButton
+     */
+    protected JButton getNewJButton(ImageIcon imageIcon, String toolTipText, ActionListener actionListener) {
     	JButton newJButton = new JButton();
-    	newJButton.setPreferredSize(this.jButtonSize);
-    	newJButton.addActionListener(this);
+    	newJButton.setPreferredSize(JBUTTON_SIZE);
     	if (imageIcon!=null) newJButton.setIcon(imageIcon);
     	if (toolTipText!=null && toolTipText.isEmpty()==false) newJButton.setToolTipText(toolTipText);
+    	if (actionListener!=null) {
+    		newJButton.addActionListener(actionListener);
+    	} else {
+    		newJButton.addActionListener(this);
+    	}
     	return newJButton;
     }
-    
+
     /**
      * Represents an internal factory method for new JToggleButton.
      *
@@ -352,15 +354,34 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * @param toolTipText the tool tip text
      * @return the new JButton
      */
-    private JToggleButton getNewJToggleButton(String imageName, String toolTipText) {
+    protected JToggleButton getNewJToggleButton(String imageName, String toolTipText) {
+    	return this.getNewJToggleButton(imageName, toolTipText, null);
+    }
+    /**
+     * Represents an internal factory method for new JToggleButton.
+     *
+     * @param imageName the image name
+     * @param toolTipText the tool tip text
+     * @param actionListener the action listener to use. If null, the local listener will be used.
+     * @return the new JButton
+     */
+    protected JToggleButton getNewJToggleButton(String imageName, String toolTipText, ActionListener actionListener) {
     	JToggleButton newButton = new JToggleButton();
-    	newButton.setPreferredSize(this.jButtonSize);
-    	newButton.addActionListener(this);
+    	newButton.setPreferredSize(JBUTTON_SIZE);
     	if (imageName!=null && imageName.isEmpty()==false) newButton.setIcon(new ImageIcon(this.getClass().getResource(this.pathImage + imageName)));
     	if (toolTipText!=null && toolTipText.isEmpty()==false) newButton.setToolTipText(toolTipText);
+    	if (actionListener!=null) {
+    		newButton.addActionListener(actionListener);
+    	} else {
+    		newButton.addActionListener(this);
+    	}
     	return newButton;
     }
     
+    
+    // --------------------------------------------------------------
+    // --- From here, button definitions can be found ---------------
+    // --------------------------------------------------------------
     /**
      * This method initializes jButtonClearGraph
      * @return javax.swing.JButton
@@ -382,7 +403,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonComponents;
     }
 
-    private JToggleButton getJToggleButtonLayoutToolBar() {
+    /**
+     * Returns the JToggleButton for the layout tool bar.
+     * @return the JToggleButton for the layout tool bar
+     */
+    protected JToggleButton getJToggleButtonLayoutToolBar() {
 		if (jToggleButtonLayoutToolBar == null) {
 			jToggleButtonLayoutToolBar = this.getNewJToggleButton("LayoutToolbar.png", Language.translate("Layout-Toolbar ein- und ausblenden"));
 		}
@@ -630,39 +655,6 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonImportGraph;
     }
     
-    
-    private JButton getJButtonLayoutSwitch() {
-		if (jButtonLayoutSwitch== null) {
-			jButtonLayoutSwitch = this.getNewJButton("LayoutSwitch.png", Language.translate("Switch Layout", Language.EN));
-		}
-		return jButtonLayoutSwitch;
-    }
-    
-    private JToggleButton getJToggleButtonEdgeLine() {
-		if (jToggleButtonEdgeLine== null) {
-			jToggleButtonEdgeLine = this.getNewJToggleButton("EdgeLine.png", Language.translate("Straight Line Edge", Language.EN));
-			jToggleButtonEdgeLine.setSelected(true);
-		}
-		return jToggleButtonEdgeLine;
-    }
-    private JToggleButton getJToggleButtonEdgeQuadCurve() {
-		if (jToggleButtonEdgeQuadCurve==null) {
-			jToggleButtonEdgeQuadCurve = this.getNewJToggleButton("EdgeQuadCurve.png", Language.translate("Quadratic Curve Edge", Language.EN));
-		}
-		return jToggleButtonEdgeQuadCurve;
-    }
-    private JToggleButton getJToggleButtonEdgePolyLine() {
-		if (jToggleButtonEdgePolyLine==null) {
-			jToggleButtonEdgePolyLine = this.getNewJToggleButton("EdgePolyline.png", Language.translate("Polyline Edge", Language.EN));
-		}
-		return jToggleButtonEdgePolyLine;
-    }
-    private JToggleButton getJToggleButtonEdgeOrthogonal() {
-		if (jToggleButtonEdgeOrthogonal==null) {
-			jToggleButtonEdgeOrthogonal = this.getNewJToggleButton("EdgeOrthogonal.png", Language.translate("Orthogonal Line Edge", Language.EN));
-		}
-		return jToggleButtonEdgeOrthogonal;
-    }
 
 
     /**
@@ -1383,12 +1375,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				this.graphController.notifyObservers(nmNote);
 			}
 			
-			
-		// TODO --- Act on Layout Settings -----  
-		
-			
 		} else {
-			System.out.println("=> Unknow action command from " + ae.getSource());
+			System.err.println("[" + this.getClass().getSimpleName() + "] => Unknow action command from " + ae.getSource());
 			
 		}
 		
