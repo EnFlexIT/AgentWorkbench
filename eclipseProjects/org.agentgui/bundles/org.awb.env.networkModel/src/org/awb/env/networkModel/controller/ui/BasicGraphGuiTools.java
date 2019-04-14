@@ -377,6 +377,37 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	}
     	return newButton;
     }
+
+    /**
+     * Represents an internal 'factory method' for a new JMenuItem.
+     *
+     * @param displayText the display text
+     * @param imageName the image name
+     * @return the JMenuItem
+     */
+    protected JMenuItem getNewJMenuItem(String displayText, String imageName) {
+    	return this.getNewJMenuItem(displayText, imageName, null);
+    }
+    /**
+     * Represents an internal 'factory method' for a new JMenuItem.
+     *
+     * @param displayText the display text
+     * @param imageName the image name
+     * @param actionListener the action listener to use. If null, the local listener will be used.
+     * @return the JMenuItem
+     */
+    protected JMenuItem getNewJMenuItem(String displayText, String imageName, ActionListener actionListener) {
+    	
+    	JMenuItem newJMenuItem = new JMenuItem();
+	    newJMenuItem.setText(displayText);
+	    if (imageName!=null && imageName.isEmpty()==false) newJMenuItem.setIcon(new ImageIcon(getClass().getResource(this.pathImage + imageName)));
+	    if (actionListener!=null) {
+	    	newJMenuItem.addActionListener(actionListener);
+	    } else {
+	    	newJMenuItem.addActionListener(this);
+	    }
+	    return newJMenuItem;
+    }
     
     
     // --------------------------------------------------------------
@@ -698,10 +729,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JMenuItem getJMenuItemDeleteCompVertex() {
 		if (jMenuItemDeleteCompVertex == null) {
-		    jMenuItemDeleteCompVertex = new JMenuItem();
-		    jMenuItemDeleteCompVertex.setText(Language.translate("Delete Component", Language.EN));
-		    jMenuItemDeleteCompVertex.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
-		    jMenuItemDeleteCompVertex.addActionListener(this);
+		    jMenuItemDeleteCompVertex = this.getNewJMenuItem(Language.translate("Delete Component", Language.EN), "ListMinus.png");
 		}
 		return jMenuItemDeleteCompVertex;
     }
@@ -711,10 +739,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JMenuItem getJMenuItemDeleteCompEdge() {
 		if (jMenuItemDeleteCompEdge == null) {
-			jMenuItemDeleteCompEdge = new JMenuItem();
-			jMenuItemDeleteCompEdge.setText(Language.translate("Delete Component", Language.EN));
-			jMenuItemDeleteCompEdge.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
-			jMenuItemDeleteCompEdge.addActionListener(this);
+			jMenuItemDeleteCompEdge = this.getNewJMenuItem(Language.translate("Delete Component", Language.EN), "ListMinus.png");
 		}
 		return jMenuItemDeleteCompEdge;
     }
@@ -724,10 +749,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JMenuItem getJMenuItemNodeProp() {
 		if (jMenuItemNodeProp == null) {
-		    jMenuItemNodeProp = new JMenuItem();
-		    jMenuItemNodeProp.setText(Language.translate("Edit Vertex Properties", Language.EN));
-		    jMenuItemNodeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.png")));
-		    jMenuItemNodeProp.addActionListener(this);
+		    jMenuItemNodeProp = this.getNewJMenuItem(Language.translate("Edit Vertex Properties", Language.EN), "Properties.png");
 		}
 		return jMenuItemNodeProp;
     }
@@ -738,10 +760,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JMenuItem getJMenuItemEdgeProp() {
 		if (jMenuItemEdgeProp == null) {
-		    jMenuItemEdgeProp = new JMenuItem();
-		    jMenuItemEdgeProp.setText(Language.translate("Edit Properties", Language.EN));
-		    jMenuItemEdgeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.png")));
-		    jMenuItemEdgeProp.addActionListener(this);
+		    jMenuItemEdgeProp = this.getNewJMenuItem(Language.translate("Edit Properties", Language.EN), "Properties.png");
 		}
 		return jMenuItemEdgeProp;
     }
@@ -752,10 +771,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JMenuItem getJMenuItemAddComp() {
 		if (jMenuItemAddComp == null) {
-		    jMenuItemAddComp = new JMenuItem();
-		    jMenuItemAddComp.setText(Language.translate("Add component", Language.EN));
-		    jMenuItemAddComp.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
-		    jMenuItemAddComp.addActionListener(this);
+		    jMenuItemAddComp = this.getNewJMenuItem(Language.translate("Add component", Language.EN), "ListPlus.png");
 		}
 		return jMenuItemAddComp;
     }
@@ -766,10 +782,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JMenuItem getJMenuItemSplitNode() {
 		if (jMenuItemSplitNode == null) {
-		    jMenuItemSplitNode = new JMenuItem();
-		    jMenuItemSplitNode.setText(Language.translate("Split Node", Language.EN));
-		    jMenuItemSplitNode.setIcon(new ImageIcon(getClass().getResource(pathImage + "split.png")));
-		    jMenuItemSplitNode.addActionListener(this);
+		    jMenuItemSplitNode = this.getNewJMenuItem(Language.translate("Split Node", Language.EN), "split.png");
 		}
 		return jMenuItemSplitNode;
     }

@@ -18,14 +18,17 @@ import org.awb.env.networkModel.NetworkComponent;
 public interface GraphSelectionListener {
 
 	/**
-	 * Will be invoked on a new graph selection within the VisualizationViewer (e.g. within the {@link BasicGraphGui}.
-	 * @param graphSelection the current selection of nodes, edges and components
+	 * Will be invoked on a new graph element selection within 
+	 * the VisualizationViewer of the {@link BasicGraphGui}.
+	 * 
+	 * @param graphSelection the currently selected nodes, edges and components
 	 */
 	public void onGraphSelectionChanged(GraphSelection graphSelection);
 	
 	
 	/**
-	 * The Class GraphSelection is used as descriptor for a graph element and network component selection.
+	 * The Class GraphSelection is used as descriptor for selected 
+	 * graph elements and/or network components in the BasicGraphGui.
 	 */
 	public class GraphSelection {
 		

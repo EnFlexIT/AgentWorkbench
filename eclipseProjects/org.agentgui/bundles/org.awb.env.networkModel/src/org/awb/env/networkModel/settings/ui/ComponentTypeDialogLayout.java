@@ -28,7 +28,6 @@
  */
 package org.awb.env.networkModel.settings.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -234,32 +233,34 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			
 			// --- Define the sorter ----------------------
 			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4Layouts());
-			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_SnapGridWidth), new Comparator<Boolean>() {
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_X_Direction), new Comparator<CoordinateSystemXDirection>() {
+				@Override
+				public int compare(CoordinateSystemXDirection xDir1, CoordinateSystemXDirection xDir2) {
+					return xDir1.name().compareTo(xDir2.name());
+				}
+			});
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_Y_Direction), new Comparator<CoordinateSystemYDirection>() {
+				@Override
+				public int compare(CoordinateSystemYDirection yDir1, CoordinateSystemYDirection yDir2) {
+					return yDir1.name().compareTo(yDir2.name());
+				}
+			});
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_SnapToGrid), new Comparator<Boolean>() {
 				@Override
 				public int compare(Boolean o1, Boolean o2) {
 					return o1.compareTo(o2);
 				}
 			});
-			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_Y_Direction), new Comparator<Integer>() {
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_SnapGridWidth), new Comparator<Double>() {
 				@Override
-				public int compare(Integer o1, Integer o2) {
-					return o1.compareTo(o2);
+				public int compare(Double snapRaster1, Double snapRaster2) {
+					return snapRaster1.compareTo(snapRaster2);
 				}
 			});
-			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_EdgeShape), new Comparator<Color>() {
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_EdgeShape), new Comparator<EdgeShape>() {
 				@Override
-				public int compare(Color o1, Color o2) {
-					Integer o1RGB = o1.getRGB();
-					Integer o2RGB = o2.getRGB();
-					return o1RGB.compareTo(o2RGB);
-				}
-			});
-			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_SnapToGrid), new Comparator<Color>() {
-				@Override
-				public int compare(Color o1, Color o2) {
-					Integer o1RGB = o1.getRGB();
-					Integer o2RGB = o2.getRGB();
-					return o1RGB.compareTo(o2RGB);
+				public int compare(EdgeShape edgeShape1, EdgeShape edgeShape2) {
+					return edgeShape1.name().compareTo(edgeShape2.name());
 				}
 			});
 			jTableLayoutTypes.setRowSorter(sorter);

@@ -365,6 +365,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Display the current Graph ------------------
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 		this.zoomToFitToWindow(this.getVisualizationViewer());
+		this.clearPickedObjects();
 		
 		this.getSatelliteVisualizationViewer().getGraphLayout().setGraph(this.getGraph());
 		this.zoomToFitToWindow(this.getSatelliteVisualizationViewer());

@@ -59,6 +59,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 
 import agentgui.core.application.Language;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -181,6 +182,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
         
     	if (this.edgePopup == null) return;
     	
+    	// -----------------------------------------------------
     	// --- Remove the old customized entries ---------------
     	Component[] comps = this.edgePopup.getComponents();
     	for (int i = 0; i < comps.length; i++) {
@@ -189,7 +191,13 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     			this.edgePopup.remove(comp);
     		}
 		}
+
+    	// -----------------------------------------------------
+    	// --- Update the edge menu with layout functions ------
+    	BasicGraphGuiToolsLayout layoutToolbar = (BasicGraphGuiToolsLayout) this.basicGraphGui.getJToolBar(ToolBarType.LayoutControl);
+    	layoutToolbar.updateEdgeMenu(graphEdge);
     	
+    	// -----------------------------------------------------
     	// --- Evaluate for a NetworkComponent -----------------
     	Vector<NetworkComponent> netComps = this.getNetworkComponents(graphEdge);
     	if (netComps!=null && netComps.size()>0) {
