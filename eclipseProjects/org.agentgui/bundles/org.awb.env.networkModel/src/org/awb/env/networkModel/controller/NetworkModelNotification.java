@@ -69,6 +69,8 @@ public class NetworkModelNotification {
 	
 	public static final int NETWORK_MODEL_EditComponentSettings = 25;
 	
+	public static final int NETWORK_MODEL_LayoutChanged = 25;
+	
 	public static final int NETWORK_MODEL_ExportGraphAsImage = 30;
 	
 	public static final int NETWORK_MODEL_AddedCustomToolbarComponentDescription = 40;

@@ -73,6 +73,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 	private JComboBoxWide<String> jComboBoxLayout;
 	private boolean isPauseComboBoxActionListener;
 	
+	
 	/**
      * Instantiates a new AddComponentDialog and displays it for the user.
      * @param graphController the GraphEnvironmentController
@@ -105,12 +106,13 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     	gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
     	gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
     	this.getContentPane().setLayout(gridBagLayout);
+    	
     	GridBagConstraints gbc_jComboBoxLayout = new GridBagConstraints();
     	gbc_jComboBoxLayout.fill = GridBagConstraints.HORIZONTAL;
     	gbc_jComboBoxLayout.insets = new Insets(3, 3, 3, 3);
     	gbc_jComboBoxLayout.gridx = 0;
     	gbc_jComboBoxLayout.gridy = 0;
-    	getContentPane().add(getJComboBoxLayout(), gbc_jComboBoxLayout);
+    	this.getContentPane().add(this.getJComboBoxLayout(), gbc_jComboBoxLayout);
 		
     	this.registerAtDesktopAndSetVisible();	
     }
@@ -134,6 +136,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     		this.setDialogPosition();
     		this.graphController.addObserver(this);
     		this.graphDesktop.addComponentListener(this.getComponentAdapter4Desktop());
+    		this.getJComboBoxLayout().grabFocus();
     	} else {
     		if (graphController!=null) this.graphController.deleteObserver(this);
     		if (this.graphDesktop!=null) {
@@ -151,7 +154,12 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     		desktopAdapter = new ComponentAdapter() {
     			@Override
     			public void componentResized(ComponentEvent ce) {
-    				setDialogPosition();
+    				boolean isComboBoxFocus = LayoutSelectionDialog.this.getJComboBoxLayout().hasFocus(); 
+    				LayoutSelectionDialog.this.setDialogPosition();
+    				if (isComboBoxFocus==true) {
+    					LayoutSelectionDialog.this.basicGraphGui.getJToolBar(ToolBarType.LayoutControl).grabFocus();
+    					LayoutSelectionDialog.this.getJComboBoxLayout().grabFocus();
+    				}
     			}
 			};
     	}
@@ -161,38 +169,33 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
      * Sets the dialog position.
      */
     private void setDialogPosition() {
-    	if (graphDesktop!=null) {
+    	if (this.graphDesktop!=null) {
     		
     		int dialogWidth = 220;
     		int dialogHeight = 32;
-
     		int toolBarWidth =  this.basicGraphGui.getJToolBar(ToolBarType.LayoutControl).getSize().width;
-    		
     		int xPos = this.graphDesktop.getSize().width - dialogWidth - toolBarWidth - 15;
     		this.setBounds(xPos, 0, dialogWidth, dialogHeight);
     	
     	} else {
-    		this.setSize(500, 400);
+    		this.setSize(220, 32);
     	}
     }
     
     
+    /**
+     * Returns the combo box model.
+     * @return the combo box model
+     */
     private DefaultComboBoxModel<String> getComboBoxModel() {
     	if (comboBoxModel==null) {
     		comboBoxModel = new DefaultComboBoxModel<>();
     	}
     	return comboBoxModel;
     }
-    private JComboBoxWide<String> getJComboBoxLayout() {
-		if (jComboBoxLayout == null) {
-			jComboBoxLayout = new JComboBoxWide<>(this.getComboBoxModel());
-			jComboBoxLayout.setToolTipText(Language.translate("Swicht netowrk model layout ...", Language.EN));
-			jComboBoxLayout.setPreferredSize(new Dimension(250, 26));
-			jComboBoxLayout.addActionListener(this);
-			this.fillComboBoxModel();
-		}
-		return jComboBoxLayout;
-	}
+    /**
+     * Fills the combo box model.
+     */
     private void fillComboBoxModel() {
     	
     	// --- Clear the combo box model first ------------ 
@@ -216,6 +219,21 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     	this.getComboBoxModel().setSelectedItem(this.graphController.getNetworkModel().getLayoutSettings().getLayoutName());
     	this.isPauseComboBoxActionListener = false;
     }
+    /**
+     * Returns the layout selection combo box.
+     * @return the combo box for the layout selection
+     */
+    private JComboBoxWide<String> getJComboBoxLayout() {
+		if (jComboBoxLayout == null) {
+			jComboBoxLayout = new JComboBoxWide<>(this.getComboBoxModel());
+			jComboBoxLayout.setToolTipText(Language.translate("Swicht netowrk model layout ...", Language.EN));
+			jComboBoxLayout.setPreferredSize(new Dimension(250, 26));
+			jComboBoxLayout.addActionListener(this);
+			this.fillComboBoxModel();
+		}
+		return jComboBoxLayout;
+	}
+   
  
     /*
      * (non-Javadoc)
@@ -225,12 +243,17 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     public void actionPerformed(ActionEvent ae) {
     	
     	if (ae.getSource()==this.getJComboBoxLayout() && this.isPauseComboBoxActionListener==false) {
-    		// --- Set the new selected layout ------------
+			// --- Set the new selected layout ? ----------
     		String layoutCurrent = this.graphController.getNetworkModel().getLayoutSettings().getLayoutName();
-    		String layoutSelected = (String) this.getComboBoxModel().getSelectedItem();
-    		if (layoutSelected!=null && layoutSelected.equals(layoutCurrent)==false) {
-    			System.err.println("[" + this.getClass().getSimpleName() + "] The new selected layout is '" + layoutSelected + "'");
-    			// TODO
+    		String layoutNew = (String) this.getComboBoxModel().getSelectedItem();
+    		if (layoutNew!=null && layoutNew.equals(layoutCurrent)==false) {
+    			// --- Set the new layout ID --------------
+    			String newLayoutID = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(layoutNew);
+    			this.graphController.getNetworkModel().setLayoutID(newLayoutID);
+    			// --- Notify the controllers observers ---
+    			NetworkModelNotification nmNotification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_LayoutChanged);
+    			this.graphController.notifyObservers(nmNotification);
+    			this.graphController.setProjectUnsaved();
     		}
     	}
     	

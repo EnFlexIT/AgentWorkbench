@@ -1435,6 +1435,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 			switch (reason) {
 			case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
+			case NetworkModelNotification.NETWORK_MODEL_LayoutChanged:
 				this.setEdgeShapeTransformer();
 				if (this.hasChangedCoordinateSystem()==true) {
 					this.reLoadGraph();

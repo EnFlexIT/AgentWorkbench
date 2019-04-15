@@ -847,7 +847,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	private class JToolBarButton extends JButton {
 
-		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1L;
  
 		/**

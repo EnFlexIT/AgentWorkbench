@@ -329,7 +329,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		if (ae.getSource()==this.getJToggleButtonLayoutSwitch()) {
 			// --- Show Layout switch ---------------------
 			boolean isSetVisible = this.getJToggleButtonLayoutSwitch().isSelected();
-			this.getLayoutSelectionDialog().setVisible(isSetVisible);
+			this.getLayoutSelectionDialog();
 			if (isSetVisible==false) {
 				this.getLayoutSelectionDialog().dispose();
 				this.setLayoutSelectionDialog(null);

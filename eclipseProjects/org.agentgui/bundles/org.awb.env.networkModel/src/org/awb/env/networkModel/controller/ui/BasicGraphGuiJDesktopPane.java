@@ -29,8 +29,6 @@
 package org.awb.env.networkModel.controller.ui;
 
 import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentListener;
 import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Vector;
@@ -62,7 +60,6 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	
 	private HashMap<String, JInternalFrame> editorFrames;  
 	private Vector<JInternalFrame> lastOpenedEditor = new Vector<JInternalFrame>();
-	private ComponentListener myComponentAdapter; 
 
 	
 	/**
@@ -86,7 +83,6 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 		
 		this.setDoubleBuffered(true);
 		this.setAutoscrolls(false);
-		this.addComponentListener(this.getComponentListener());
 		this.setDesktopManager(new BasicGraphGuiGraphWorkspaceDesktopManager());
 	}
 
@@ -162,21 +158,6 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Gets the component listener.
-	 * @return the component listener
-	 */
-	private ComponentListener getComponentListener() {
-		if (myComponentAdapter==null) {
-			myComponentAdapter = new ComponentAdapter() {
-				public void componentResized(java.awt.event.ComponentEvent ce) {
-
-				};
-			};
-		}
-		return myComponentAdapter;
 	}
 	
 	
