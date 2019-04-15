@@ -36,7 +36,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
@@ -64,9 +63,10 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
     private BasicGraphGuiTools basicGraphGuiTools;
     private boolean isRegisteredGraphSelectionListener;
     
+    private LayoutSelectionDialog layoutSelectionDialog;
     private GraphEdge editGraphEdge;
     
-    private JButton jButtonLayoutSwitch;
+    private JToggleButton jToggleButtonLayoutSwitch;
     private JToggleButton jToggleButtonEdgeLine;
     private JToggleButton jToggleButtonEdgeQuadCurve;
     private JToggleButton jToggleButtonEdgePolyLine;
@@ -102,7 +102,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		this.setPreferredSize(new Dimension(30, 30));
 		this.setVisible(this.basicGraphGuiTools.getJToggleButtonLayoutToolBar().isSelected());
 		
-		this.add(this.getJButtonLayoutSwitch());
+		this.add(this.getJToggleButtonLayoutSwitch());
 		this.addSeparator();
 		
 		this.add(this.getJToggleButtonEdgeLine());
@@ -119,11 +119,11 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 	}
 	
-	private JButton getJButtonLayoutSwitch() {
-		if (jButtonLayoutSwitch == null) {
-			jButtonLayoutSwitch = this.basicGraphGuiTools.getNewJButton("LayoutSwitch.png", Language.translate("Switch Layout", Language.EN), this);
+	private JToggleButton getJToggleButtonLayoutSwitch() {
+		if (jToggleButtonLayoutSwitch == null) {
+			jToggleButtonLayoutSwitch = this.basicGraphGuiTools.getNewJToggleButton("LayoutSwitch.png", Language.translate("Switch Layout", Language.EN), this);
 		}
-		return jButtonLayoutSwitch;
+		return jToggleButtonLayoutSwitch;
 	}
 	
 	private JToggleButton getJToggleButtonEdgeLine() {
@@ -326,9 +326,14 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if (ae.getSource()==this.getJButtonLayoutSwitch()) {
+		if (ae.getSource()==this.getJToggleButtonLayoutSwitch()) {
 			// --- Show Layout switch ---------------------
-			System.err.println("[" + this.getClass().getSimpleName() + "] => Show Layout switch");
+			boolean isSetVisible = this.getJToggleButtonLayoutSwitch().isSelected();
+			this.getLayoutSelectionDialog().setVisible(isSetVisible);
+			if (isSetVisible==false) {
+				this.getLayoutSelectionDialog().dispose();
+				this.setLayoutSelectionDialog(null);
+			}
 			
 		} else if (ae.getSource()==this.getJToggleButtonEdgeLine() || ae.getSource()==this.getJMenuItemEdgeLine()) {
 			// --- Toggle to line edge --------------------			
@@ -352,6 +357,24 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 	}
 
+	/**
+	 * Returns the layout selection dialog.
+	 * @return the layout selection dialog
+	 */
+	private LayoutSelectionDialog getLayoutSelectionDialog() {
+		if (layoutSelectionDialog==null) {
+			layoutSelectionDialog = new LayoutSelectionDialog(this.graphController);
+		}
+		return layoutSelectionDialog;
+	}
+	/**
+	 * Sets the layout selection dialog.
+	 * @param layoutSelectionDialog the new layout selection dialog
+	 */
+	public void setLayoutSelectionDialog(LayoutSelectionDialog layoutSelectionDialog) {
+		this.layoutSelectionDialog = layoutSelectionDialog;
+	}
+	
 	
 	/**
 	 * Returns the current layout setting.
