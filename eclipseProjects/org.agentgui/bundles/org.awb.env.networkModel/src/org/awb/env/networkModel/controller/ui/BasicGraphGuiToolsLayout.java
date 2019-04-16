@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.controller.ui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -388,9 +389,13 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			// --- Toggle to orthogonal edge --------------
 			this.setGraphConfiguration(new OrthogonalConfiguration());
 			
-		} else if (ae.getSource()==this.getJToggleButtonEdgeEdit() || ae.getSource()==this.getJMenuItemEdgeEdit()) {
-			// --- Do edge editing ------------------------
-			this.enableEdgeEdit(this.getJToggleButtonEdgeEdit().isSelected());
+		} else if (ae.getSource()==this.getJToggleButtonEdgeEdit()) {
+			// --- Do edge editing (from toolbar) ---------
+			this.switchEdgeEdit(this.getJToggleButtonEdgeEdit().isSelected());
+			
+		} else if (ae.getSource()==this.getJMenuItemEdgeEdit()) {
+			// --- Do edge editing (from context menu) ----
+			this.switchEdgeEdit(true);
 			
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] => Unknow action command from " + ae.getSource());
@@ -424,22 +429,52 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		if (this.editGraphEdge==null) return;
 		
+		// --- Set edge configuration and redraw edge -----
 		this.editGraphEdge.setEdgeShapeConfiguration(edgeShapeConfiguration);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, false);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, true);
+		
+		// --- Enable edge edit ---
+		boolean isEnableEdgeEdit = (edgeShapeConfiguration!=null);
+		this.getJToggleButtonEdgeEdit().setEnabled(isEnableEdgeEdit);
+		this.switchEdgeEdit(isEnableEdgeEdit);
+		
 	}
 	
 	/**
-	 * Enable or disables the edge editing.
-	 * @param setEnable the set enable
+	 * Start or stops the edge editing mode.
+	 * @param isStartEdit start=true, stop=false
 	 */
-	private void enableEdgeEdit(boolean setEnabled) {
+	private void switchEdgeEdit(boolean isStartEdit) {
 		
-		System.err.println("[" + this.getClass().getSimpleName() + "] => Enable edge configuration = " + setEnabled);
+		if (isStartEdit==true) {
+			// --- Start edge editing ---------------------------------------------------
+			if (this.getJToggleButtonEdgeEdit().isSelected()==false) this.getJToggleButtonEdgeEdit().setSelected(true);
+			this.graphController.getNetworkModelUndoManager().setGraphMouseEdgeEditing();
+		} else {
+			// --- Stop edge editing ----------------------------------------------------
+			if (this.getJToggleButtonEdgeEdit().isSelected()==true) this.getJToggleButtonEdgeEdit().setSelected(false);
+			this.graphController.getNetworkModelUndoManager().setGraphMousePicking();
+		}
 		
+		// --- Disable (or enable) buttons that are not required for the edge editing ---   
+		this.getJToggleButtonLayoutSwitch().setEnabled(! isStartEdit);
+		this.setEnabled(this.basicGraphGuiTools.getJToolBarEdit(), ! isStartEdit);
+		this.setEnabled(this.basicGraphGuiTools.getJToolBarView(), ! isStartEdit);
 		
 	}
-	
+	/**
+	 * Sets the specified JToolBar (and its buttons) enabled.
+	 *
+	 * @param toolBar the tool bar
+	 * @param enabled the enabled
+	 */
+	private void setEnabled(JToolBar toolBar, boolean enabled) {
+		Component[] compArray = toolBar.getComponents();
+		for (int i = 0; i < compArray.length; i++) {
+			compArray[i].setEnabled(enabled);
+		}
+	}
 	
 	
 	/**

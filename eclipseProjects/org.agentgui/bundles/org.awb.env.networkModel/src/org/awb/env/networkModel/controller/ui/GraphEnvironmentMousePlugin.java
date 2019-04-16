@@ -59,6 +59,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui.GraphMouseMode;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -632,7 +633,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	private void setPasteAction(boolean isDoPaste, boolean isFinalizePasteAction) {
 		
 		// --- Are we in picking mode? ------------------------------
-		if (this.getVisViewer().getGraphMouse()==this.basicGraphGUI.getPluggableGraphMouse()) {
+		if (this.basicGraphGUI.getGraphMouseMode()==GraphMouseMode.Picking) {
 			
 			this.isPasteAction = isDoPaste;
 			if (this.isPasteAction==true) {

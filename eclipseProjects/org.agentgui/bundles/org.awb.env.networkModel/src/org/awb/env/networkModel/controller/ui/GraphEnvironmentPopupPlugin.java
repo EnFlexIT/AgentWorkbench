@@ -26,7 +26,6 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-
 package org.awb.env.networkModel.controller.ui;
 
 import java.awt.Component;
@@ -73,7 +72,7 @@ import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
  * methods will be called prior to the display of the menus (so that they can display
  * context sensitive information for the edge or vertex).
  * 
- * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
 public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePlugin implements Observer {
 	
@@ -138,9 +137,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     			edgePopup.show(visView, locationOnPanel.x, locationOnPanel.y);
                 basicGraphGui.handleObjectRightClick(graphEdge);	
     		}
-            
     	}
-    	
     }
     
     /**

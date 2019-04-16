@@ -26,20 +26,15 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-
 package org.awb.env.networkModel.controller.ui.configLines;
 
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
@@ -47,13 +42,11 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphElementLayout;
-import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
@@ -84,18 +77,12 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener, MouseMotionListener, KeyListener, Observer {
+public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener, MouseMotionListener, Observer {
 	
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGUI;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
-	
-	/** Indicates that a paste action is currently running*/
-	private boolean isPasteAction = false;
-	private NetworkModel networkModel2Paste;
-	private GraphNode graphNodeUpperLeft2Paste;
-	private GraphNode[] graphNodes2Paste;
 	
 	/** Move panel with right currently ? */
 	private boolean movePanelWithRightAction = false;
@@ -255,72 +242,12 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		}
 	}
 	
-	/**
-	 * Acts on the mouse pressed and mouse clicked action.
-	 * @param me the {@link MouseEvent}
-	 */
-	private void mousePressedOrClicked(MouseEvent me) {
-		
-		// --- Left click ---------------------------------
-		if (SwingUtilities.isLeftMouseButton(me) || SwingUtilities.isRightMouseButton(me)){
-
-			// --- Check if an object was selected --------
-			Object pickedObject = null;
-			Point point = me.getPoint();
-			GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
-			GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-			if(pickedNode != null) {  
-				pickedObject = pickedNode;
-			} else {
-				GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-				if(pickedEdge != null) { 
-					pickedObject = pickedEdge;
-				}
-			}
-
-			// --- Only when node or edge is picked -------
-			if (pickedObject!=null) {
-				if (me.getClickCount()==2){
-					// --- Double click ---------
-					this.basicGraphGUI.handleObjectDoubleClick(pickedObject);
-				} else {
-					if(me.isShiftDown()==false) {
-						// --- Left click -----------
-						this.basicGraphGUI.handleObjectLeftClick(pickedObject);
-					}	
-				} 
-			}
-		}
-		
-	}
-	
 	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#pickContainedVertices(edu.uci.ics.jung.visualization.VisualizationViewer, java.awt.geom.Point2D, java.awt.geom.Point2D, boolean)
+	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseMoved(java.awt.event.MouseEvent)
 	 */
 	@Override
-	protected void pickContainedVertices(VisualizationViewer<GraphNode, GraphEdge> vv, Point2D down,Point2D out, boolean clear) {
-		
-		super.pickContainedVertices(vv, down, out, clear);
-		NetworkModel networkModel = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel();
-		
-		// --- Get the selected nodes ----------------
-		Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
-		// --- Get the related NetworkComponent's ---- 
-		List<NetworkComponent> components = networkModel.getNetworkComponentsFullySelected(nodesSelected);
-		if (components!=null) {
-			// --- Run through NetworkComponents -----
-			for (int i = 0; i < components.size(); i++) {
-				NetworkComponent networkComponent = components.get(i);
-				Vector<GraphElement> elements = networkModel.getGraphElementsFromNetworkComponent(networkComponent);
-				for (int j = 0; j < elements.size(); j++) {
-					GraphElement graphElement = elements.get(j);
-					if (graphElement instanceof GraphEdge) {
-						this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
-					}
-				}
-			}
-		}
-		
+	public void mouseMoved(MouseEvent me) {
+		//System.err.println("[" + this.getClass().getSimpleName() + "] Mouse MOVED");
 	}
 	
 	/* (non-Javadoc)
@@ -328,7 +255,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 */
 	@Override
 	public void mouseClicked(MouseEvent me){
-		this.mousePressedOrClicked(me);
+		System.err.println("[" + this.getClass().getSimpleName() + "] Mouse CLICKED");
 	}
 	
 	/* (non-Javadoc)
@@ -337,19 +264,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	@Override
 	public void mousePressed(MouseEvent me) {
 		
-		if (this.isPasteAction==true) {
-			if (SwingUtilities.isLeftMouseButton(me)) {
-				// --- Finalize paste action --------------
-				this.setPasteAction(false, true);
-				
-			} else if (SwingUtilities.isRightMouseButton(me)) {
-				// --- Cancel paste action ----------------
-				this.setPasteAction(false, false);	
-			}
-		}
-		
-		super.mousePressed(me);
-
 		Point position = me.getPoint();
 		GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
 		GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), position.getX(), position.getY());
@@ -365,11 +279,15 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			if (pickedNode!=null) {
 				this.moveNodeWithLeftAction = true;	
 				this.remindOldPositions();
-			} else {
-				this.mousePressedOrClicked(me);	
 			}
-			
 		}
+		
+		System.err.println("[" + this.getClass().getSimpleName() + "] Mouse PRESSED");
+		if (this.movePanelWithRightAction==true) {
+			super.mousePressed(me);
+		}
+
+		
 	}
 	
 	/* (non-Javadoc)
@@ -532,156 +450,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseMoved(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseMoved(MouseEvent me) {
-		
-		if (this.isPasteAction==true) {
-			
-			if (this.networkModel2Paste==null) {
-				// --------------------------------------------------
-				// --- Integrate the clip board NetworkModel --------
-				// --------------------------------------------------
-				this.networkModel2Paste = this.graphController.getClipboardNetworkModel().getCopy();
-				this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(this.networkModel2Paste);
-				this.graphController.getNetworkModel().mergeNetworkModel(this.networkModel2Paste, null, false);
-				
-				// --- Inform about changes -------------------------
-				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel));
-				this.graphController.setProjectUnsaved();
-				
-				// --- Mark all GraphElements as selected -----------
-				List<NetworkComponent> netCompList = new ArrayList<>(this.networkModel2Paste.getNetworkComponents().values());
-				for (int n = 0; n < netCompList.size(); n++) {
-
-					NetworkComponent networkComponent2Paste = netCompList.get(n);
-					NetworkComponent networkComponentPasted = this.graphController.getNetworkModel().getNetworkComponent(networkComponent2Paste.getId());
-					this.graphController.addAgent(networkComponentPasted);
-					
-					Vector<GraphElement> elements = this.networkModel2Paste.getGraphElementsFromNetworkComponent(networkComponentPasted);
-					for (int i = 0; i < elements.size(); i++) {
-						GraphElement graphElement = elements.get(i);
-						if (graphElement instanceof GraphEdge) {
-							// --- Pick edge ------------------------
-							this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
-						} else if (graphElement instanceof GraphNode) {
-							// --- Pick node ------------------------
-							GraphNode graphNodeCurrent = (GraphNode) graphElement;
-							this.getVisViewer().getPickedVertexState().pick(graphNodeCurrent, true);
-							
-							// --------------------------------------
-							// --- Remind the left upper GraphNode --
-							if (this.graphNodeUpperLeft2Paste==null) {
-								this.graphNodeUpperLeft2Paste = graphNodeCurrent;
-							} else {
-								// --- Consider coordinate system ---
-								Point2D positionOfGraphNodeAtLeftUpperPosition = this.getGraphNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
-								Point2D positionOfGraphNodeCurrent = this.getGraphNodePositionTransformer().transform(graphNodeCurrent.getPosition()); 
-								if (positionOfGraphNodeCurrent.getX()<positionOfGraphNodeAtLeftUpperPosition.getX()) {
-									this.graphNodeUpperLeft2Paste = graphNodeCurrent;
-								} else if (positionOfGraphNodeCurrent.getX()==positionOfGraphNodeAtLeftUpperPosition.getX()) {
-									if (positionOfGraphNodeCurrent.getY()<positionOfGraphNodeAtLeftUpperPosition.getY()) {
-										this.graphNodeUpperLeft2Paste = graphNodeCurrent;
-									}
-								}
-							}
-							// -------------------------------------------
-						}
-					}
-				}
-			}
-			
-			// ------------------------------------------------------
-			// --- React on the Mouse movement ---------------------- 
-			// ------------------------------------------------------
-			Point2D mousePositionLayout = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
-			
-			// --- Calculate node movement --------------------------
-			Point2D ulGraphNodeLayout = this.getGraphNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
-			double shiftXLayout = mousePositionLayout.getX() - ulGraphNodeLayout.getX();
-			double shiftYLayout = mousePositionLayout.getY() - ulGraphNodeLayout.getY();
-			
-			// --- Create reminder array for nodes to move ---------- 
-			if (this.graphNodes2Paste==null) {
-				PickedState<GraphNode> ps = this.getVisViewer().getPickedVertexState();
-				this.graphNodes2Paste = new GraphNode[ps.getPicked().size()];
-				ps.getPicked().toArray(this.graphNodes2Paste);
-			}
-			
-			// --- Adjust position ----------------------------------
-			Layout<GraphNode,GraphEdge> layout = this.getVisViewer().getGraphLayout();
-			for (int i = 0; i < this.graphNodes2Paste.length; i++) {
-				// --- Set location in Layout -----------------------
-				Point2D locLayout = layout.transform(graphNodes2Paste[i]);
-                locLayout.setLocation(locLayout.getX()+shiftXLayout, locLayout.getY()+shiftYLayout);
-                layout.setLocation(graphNodes2Paste[i], locLayout);
-                // --- Set coordinate system location ---------------
-                graphNodes2Paste[i].setPosition(this.getGraphNodePositionTransformer().inverseTransform(locLayout));
-			}
-            this.getVisViewer().repaint();
-            me.consume();
-            
-		}
-	}
-	
-	/**
-	 * Sets the paste cursor.
-	 *
-	 * @param isDoPaste the do paste
-	 * @param isFinalizePasteAction the finalize paste action
-	 */
-	private void setPasteAction(boolean isDoPaste, boolean isFinalizePasteAction) {
-		
-		// --- Are we in picking mode? ------------------------------
-		if (this.getVisViewer().getGraphMouse()==this.basicGraphGUI.getPluggableGraphMouse()) {
-			
-			this.isPasteAction = isDoPaste;
-			if (this.isPasteAction==true) {
-				// --------------------------------------------------
-				// --- Initiate paste action ------------------------
-				// --------------------------------------------------
-				ImageIcon cursorImage = GraphGlobals.getImageIcon("Paste.png");
-				Cursor cursorForPaste = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage.getImage(), new Point(0, 0), "Paste");
-				this.setCursor(cursorForPaste);
-				
-			} else {
-				// --------------------------------------------------
-				// --- Finalize paste action ------------------------
-				// --------------------------------------------------
-				if (isFinalizePasteAction==true) {
-					// --- Create an undoable action ----------------
-					this.graphController.getNetworkModelUndoManager().pasteNetworkModel(this.networkModel2Paste);
-					
-				} else {
-					// --- Remove the added components --------------
-					List<NetworkComponent> netComps2Remove = new ArrayList<>();
-					for (NetworkComponent networkComponentPasted : this.networkModel2Paste.getNetworkComponents().values()) {
-						String netCompID = networkComponentPasted.getId();
-						NetworkComponent netCompRemove = this.graphController.getNetworkModel().getNetworkComponent(netCompID);
-						netComps2Remove.add(netCompRemove);
-						this.graphController.removeAgent(networkComponentPasted);
-					}
-					
-					this.graphController.getNetworkModel().removeNetworkComponents(netComps2Remove);
-					
-					NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
-					notification.setInfoObject(netComps2Remove);
-					this.graphController.notifyObservers(notification);
-				}
-				
-				this.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				
-				this.networkModel2Paste = null;
-				this.graphNodeUpperLeft2Paste = null;
-				this.graphNodes2Paste = null;
-			}
-			
-			this.getVisViewer().setCursor(this.getCursor());
-		}
-		
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -692,36 +460,12 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		if (object instanceof NetworkModelNotification) {
 			NetworkModelNotification nmNotification = (NetworkModelNotification) object;
 			switch (nmNotification.getReason()) {
-			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do:
-				this.setPasteAction(true, false);
-				break;
 			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Stop:
-				this.setPasteAction(false, false);
+				// TODO
 				break;
 			}
 		}
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-	 */
-	@Override
-	public void keyTyped(KeyEvent ke) {
-		if (isPasteAction==true) {
-			this.setPasteAction(false, false);
-		}
-	}
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-	 */
-	@Override
-	public void keyPressed(KeyEvent ke) { }
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-	 */
-	@Override
-	public void keyReleased(KeyEvent ke) { }
-
 	
 }

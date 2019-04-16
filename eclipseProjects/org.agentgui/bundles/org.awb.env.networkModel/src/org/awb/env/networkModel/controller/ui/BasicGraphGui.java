@@ -81,6 +81,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.GraphSelectionListener.GraphSelection;
 import org.awb.env.networkModel.controller.ui.commands.RenamedNetworkComponent;
+import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineMousePlugin;
+import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin;
 import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
@@ -143,6 +145,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		ConfigurationOnly,
 		RuntimeOnly
 	}
+	/**
+	 * The enumeration that describes a possible GraphMouseMode.
+	 */
+	public enum GraphMouseMode {
+		Picking,
+		Transforming,
+		EdgeEditing
+	}
 	
 	/** Environment model controller, to be passed by the parent GUI. */
 	private GraphEnvironmentController graphController;
@@ -164,21 +174,28 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
 	
 	/** JUNG object handling zooming */
-	private ScalingControl scalingControl = new CrossoverScalingControl();
+	private ScalingControl scalingControl;
+	
 	/** the margin of the graph for the visualization */
 	private double graphMargin = 25;
 	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);
 	
-	private PluggableGraphMouse pluggableGraphMouse; 
+	/** The current GraphMouseMode */
+	private GraphMouseMode graphMouseMode;
+	
+	private PluggableGraphMouse graphMouse4Picking; 
 	private GraphEnvironmentMousePlugin graphEnvironmentMousePlugin;
 	private GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> graphEnvironmentPopupPlugin;
 
-	private DefaultModalGraphMouse<GraphNode, GraphEdge> defaultModalGraphMouse;
+	private PluggableGraphMouse graphMouse4EdgeEditing;
+	private DefaultModalGraphMouse<GraphNode, GraphEdge> graphMouse4Transforming;
+	
 	
 	private CoordinateSystemXDirection xDirectionReminder;
 	private CoordinateSystemYDirection yDirectionReminder;
 
 	private Timer graphSelectionWaitTimer;
+	
 	
 	/**
 	 * This is the default constructor
@@ -207,6 +224,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.add(this.getJPanelToolBarsEast(), BorderLayout.EAST);
 	}
 	
+	/**
+	 * Gets the graph environment controller.
+	 * @return the controller
+	 */
+	public GraphEnvironmentController getGraphEnvironmentController() {
+		return this.graphController;
+	}
 	/**
 	 * Returns the instance of the BasicGraphGuiTools.
 	 * @return the BasicGraphGuiTools
@@ -268,7 +292,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		return jPanelToolBarsEast;
 	}
 	
-	
 	/**
 	 * Dispose this panel.
 	 */
@@ -277,33 +300,54 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.visView = null;
 	}
 	
-	/**
-	 * Gets the graph environment controller.
-	 * @return the controller
-	 */
-	public GraphEnvironmentController getGraphEnvironmentController() {
-		return this.graphController;
-	}
-	/**
-	 * Gets the scaling control.
-	 * @return the scalingControl
-	 */
-	private ScalingControl getScalingControl() {
-		return this.scalingControl;
-	}
-
 
 	/**
-	 * Returns the PluggableGraphMouse.
-	 * @return the pluggableGraphMouse
+	 * Returns the current graph mouse mode.
+	 * @return the graph mouse mode
 	 */
-	public PluggableGraphMouse getPluggableGraphMouse() {
-		if (pluggableGraphMouse==null) {
-			pluggableGraphMouse = new PluggableGraphMouse();
-			pluggableGraphMouse.add(this.getGraphEnvironmentMousePlugin());
-			pluggableGraphMouse.add(this.getGraphEnvironmentPopupPlugin());
+	public GraphMouseMode getGraphMouseMode() {
+		if (graphMouseMode==null) {
+			graphMouseMode = GraphMouseMode.Picking;
 		}
-		return pluggableGraphMouse;
+		return graphMouseMode;
+	}
+	/**
+	 * Sets the graph mouse mode.
+	 * @param newGraphMouseMode the new graph mouse mode
+	 */
+	private void setGraphMouseMode(GraphMouseMode newGraphMouseMode) {
+		
+		if (newGraphMouseMode==null || newGraphMouseMode==this.graphMouseMode) return;
+		
+		this.graphMouseMode = newGraphMouseMode;
+
+		PluggableGraphMouse graphMouse = null;
+		switch (newGraphMouseMode) {
+		case Picking:
+			graphMouse = this.getGraphMouse4Picking();
+			break;
+		case Transforming:
+			graphMouse = this.getGraphMouse4Transforming();
+			break;
+		case EdgeEditing:
+			graphMouse = this.getGraphMouse4EdgeEditing();
+			break;
+		}
+		this.getVisualizationViewer().setGraphMouse(graphMouse);
+	}
+	
+	
+	/**
+	 * Returns the PluggableGraphMouse that is used in the 'Picking' mode of the graph..
+	 * @return the graphMouse4Picking
+	 */
+	private PluggableGraphMouse getGraphMouse4Picking() {
+		if (graphMouse4Picking==null) {
+			graphMouse4Picking = new PluggableGraphMouse();
+			graphMouse4Picking.add(this.getGraphEnvironmentMousePlugin());
+			graphMouse4Picking.add(this.getGraphEnvironmentPopupPlugin());
+		}
+		return graphMouse4Picking;
 	}
 	/**
 	 * Returns the {@link GraphEnvironmentMousePlugin}
@@ -329,16 +373,32 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 	
 	/**
-	 * Gets the DefaultModalGraphMouse.
+	 * Return the DefaultModalGraphMouse that is used in the 'Transforming' mode of the graph.
 	 * @return the default modal graph mouse
 	 */
-	private DefaultModalGraphMouse<GraphNode, GraphEdge> getDefaultModalGraphMouse() {
-		if (defaultModalGraphMouse == null) {
-			defaultModalGraphMouse = new DefaultModalGraphMouse<GraphNode, GraphEdge>(1/1.1f, 1.1f);
+	private DefaultModalGraphMouse<GraphNode, GraphEdge> getGraphMouse4Transforming() {
+		if (graphMouse4Transforming == null) {
+			graphMouse4Transforming = new DefaultModalGraphMouse<GraphNode, GraphEdge>(1/1.1f, 1.1f);
 		}
-		return defaultModalGraphMouse;
+		return graphMouse4Transforming;
 	}
 
+	
+	/**
+	 * Returns the PluggableGraphMouse that is used in the 'Edge editing' mode of the graph..
+	 * @return the graphMouse4Picking
+	 */
+	private PluggableGraphMouse getGraphMouse4EdgeEditing() {
+		if (graphMouse4EdgeEditing==null) {
+			graphMouse4EdgeEditing = new PluggableGraphMouse();
+			graphMouse4EdgeEditing.add(new ConfiguredLineMousePlugin(this));
+			graphMouse4EdgeEditing.add(new ConfiguredLinePopupPlugin(this));
+		}
+		return graphMouse4EdgeEditing;
+	}
+	
+	
+	
 	/**
 	 * Gets the default point to scale at for zooming.
 	 * @return the default scale at point
@@ -468,7 +528,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.setDoubleBuffered(true);
 			
 			// --- Configure mouse and key interaction ------------------------
-			visView.setGraphMouse(this.getPluggableGraphMouse());
+			visView.setGraphMouse(this.getGraphMouse4Picking());
 			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
 			
 			// --- Set the pick size of the visualization viewer --------------
@@ -1206,7 +1266,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	}
 	
-	
+	/**
+	 * Gets the scaling control.
+	 * @return the scalingControl
+	 */
+	private ScalingControl getScalingControl() {
+		if (scalingControl==null) {
+			scalingControl = new CrossoverScalingControl();
+		}
+		return scalingControl;
+	}
 	/**
 	 * Zoom one to one and move the focus according to the coordinate system source.
 	 * @param visViewer the VisualizationViewer to use
@@ -1281,7 +1350,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// --- Set scaling ------------------------------------------
 		if (scale != 0 && scale != 1) {
-			this.scalingControl.scale(visViewer, scale, coordinateSourcePoint);
+			this.getScalingControl().scale(visViewer, scale, coordinateSourcePoint);
 		}
 	}
 	
@@ -1324,7 +1393,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			
 			// --- Set dimension and create a new SatelliteVisualizationViewer ----
 			visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getDimensionOfSatelliteVisualizationViewer());
-			visViewSatellite.scaleToLayout(this.scalingControl);
+			visViewSatellite.scaleToLayout(this.getScalingControl());
 			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(1/1.1f, 1.1f));
 			
 			// --- Configure the node shape and size ------------------------------
@@ -1520,13 +1589,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
-				this.getVisualizationViewer().setGraphMouse(this.getPluggableGraphMouse());
+				this.setGraphMouseMode(GraphMouseMode.Picking);
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Transforming:
-				this.getVisualizationViewer().setGraphMouse(this.getDefaultModalGraphMouse());
+				this.setGraphMouseMode(GraphMouseMode.Transforming);
 				break;
 
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
+				this.setGraphMouseMode(GraphMouseMode.EdgeEditing);
+				break;
+				
 			default:
 				break;
 			}

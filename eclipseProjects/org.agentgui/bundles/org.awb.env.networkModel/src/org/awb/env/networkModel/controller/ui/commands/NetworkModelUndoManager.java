@@ -223,6 +223,13 @@ public class NetworkModelUndoManager {
 		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking);
 		this.notifyObservers(notification);
 	}
+	/**
+	 * Sets the graph mouse to picking mode.
+	 */
+	public void setGraphMouseEdgeEditing() {
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing);
+		this.notifyObservers(notification);
+	}
 	
 	/**
 	 * Can be used in order to select a NetworkComponent.

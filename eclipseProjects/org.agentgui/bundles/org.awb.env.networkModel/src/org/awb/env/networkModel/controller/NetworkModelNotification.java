@@ -35,7 +35,6 @@ package org.awb.env.networkModel.controller;
  */
 public class NetworkModelNotification {
 
-	/** Possible reasons. */
 	public static final int NETWORK_MODEL_ComponentTypeSettingsChanged = 1;
 	
 	public static final int NETWORK_MODEL_Reload = 2;
@@ -62,18 +61,19 @@ public class NetworkModelNotification {
 	
 	public static final int NETWORK_MODEL_GraphMouse_Picking = 20;
 	public static final int NETWORK_MODEL_GraphMouse_Transforming = 21;
-	public static final int NETWORK_MODEL_ShowPopUpMenue = 22;
+	public static final int NETWORK_MODEL_GraphMouse_EdgeEditing = 22;
 	
-	public static final int NETWORK_MODEL_Paste_Action_Do = 23;
-	public static final int NETWORK_MODEL_Paste_Action_Stop = 24;
+	public static final int NETWORK_MODEL_ShowPopUpMenue = 25;
+	public static final int NETWORK_MODEL_LayoutChanged = 26;
+
+	public static final int NETWORK_MODEL_Paste_Action_Do = 28;
+	public static final int NETWORK_MODEL_Paste_Action_Stop = 29;
 	
-	public static final int NETWORK_MODEL_EditComponentSettings = 25;
+	public static final int NETWORK_MODEL_EditComponentSettings = 30;
+	public static final int NETWORK_MODEL_AddedCustomToolbarComponentDescription = 31;
+
+	public static final int NETWORK_MODEL_ExportGraphAsImage = 40;
 	
-	public static final int NETWORK_MODEL_LayoutChanged = 25;
-	
-	public static final int NETWORK_MODEL_ExportGraphAsImage = 30;
-	
-	public static final int NETWORK_MODEL_AddedCustomToolbarComponentDescription = 40;
 	
 	/** The reason. */
 	private int reason = 0;
