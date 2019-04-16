@@ -441,6 +441,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     protected JToggleButton getJToggleButtonLayoutToolBar() {
 		if (jToggleButtonLayoutToolBar == null) {
 			jToggleButtonLayoutToolBar = this.getNewJToggleButton("LayoutToolbar.png", Language.translate("Layout-Toolbar ein- und ausblenden"));
+			
+			boolean isShowLayoutToolBar = GraphGlobals.getEclipsePreferences().getBoolean(GraphGlobals.PREF_SHOW_LAYOUT_TOOLBAR, false);
+			jToggleButtonLayoutToolBar.setSelected(isShowLayoutToolBar);
 		}
 		return jToggleButtonLayoutToolBar;
     }
@@ -1127,7 +1130,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJToggleButtonLayoutToolBar()) {
 			// ------------------------------------------------------
 			// --- Show / hide layout toolbar -----------------------
-			this.getJToolBarLayout().setVisible(getJToggleButtonLayoutToolBar().isSelected());
+			boolean isShowLayoutToolBar = getJToggleButtonLayoutToolBar().isSelected();
+			this.getJToolBarLayout().setVisible(isShowLayoutToolBar);
+			// --- Remind this setting ------------------------------
+			GraphGlobals.getEclipsePreferences().putBoolean(GraphGlobals.PREF_SHOW_LAYOUT_TOOLBAR, isShowLayoutToolBar);
+			GraphGlobals.saveEclipsePreferences();
 			
 		} else if (ae.getSource() == getJButtonNetworkModelInfo()) {
 			// ------------------------------------------------------

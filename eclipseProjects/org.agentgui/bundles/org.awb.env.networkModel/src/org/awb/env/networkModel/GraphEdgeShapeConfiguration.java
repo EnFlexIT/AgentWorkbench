@@ -1,9 +1,7 @@
 package org.awb.env.networkModel;
 
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.QuadCurve2D;
+import java.io.Serializable;
 
 /**
  * The Class GraphEdgeShapeConfiguration serves as super class for specific edge shape configurationss.
@@ -11,7 +9,9 @@ import java.awt.geom.QuadCurve2D;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  * @param <T> the generic type
  */
-public abstract class GraphEdgeShapeConfiguration<T extends Shape> {
+public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Serializable {
+
+	private static final long serialVersionUID = 7535546074273015170L;
 
 	/**
 	 * Returns the actual edge shape.
@@ -42,149 +42,4 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> {
 	 */
 	public abstract void setConfigurationFromString(String stringConfiguration);
 	
-	
-	
-	/**
-	 * The Class QuadCurveConfiguration.
-	 */
-	public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurve2D> {
-
-		private QuadCurve2D quadCurve2D;
-		
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()
-		 */
-		@Override
-		public String getConfigurationAsString() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#setConfigurationFromString(java.lang.String)
-		 */
-		@Override
-		public void setConfigurationFromString(String stringConfiguration) {
-			// TODO Auto-generated method stub
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
-		 */
-		@Override
-		public QuadCurve2D getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
-			if (quadCurve2D==null) {
-				quadCurve2D = new QuadCurve2D.Double();
-				// --- Set default parameter ----
-				quadCurve2D.setCurve(0.0, 0.0, 0.5, 0.5, 1.0, 0.0);
-			}
-			return quadCurve2D;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
-		 */
-		@Override
-		public GraphEdgeShapeConfiguration<?> getCopy() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	}
-
-	/**
-	 * The Class PolyLineConfiguration.
-	 */
-	public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPath> {
-
-		private GeneralPath generalPath;
-		
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()
-		 */
-		@Override
-		public String getConfigurationAsString() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#setConfigurationFromString(java.lang.String)
-		 */
-		@Override
-		public void setConfigurationFromString(String stringConfiguration) {
-			// TODO Auto-generated method stub
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
-		 */
-		@Override
-		public GeneralPath getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
-			if (generalPath==null) {
-				generalPath = new GeneralPath();
-				// --- Set default parameter ----
-				generalPath.moveTo(0.0f, 0.0f);
-				generalPath.lineTo(0.2f, 0.3f);
-				generalPath.lineTo(0.3f, 50.3f);
-				generalPath.lineTo(0.5f, -50.5f);
-				generalPath.lineTo(0.8f, 40.3f);
-				generalPath.lineTo(1.0f, 0.0f);
-			}
-			return generalPath;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
-		 */
-		@Override
-		public GraphEdgeShapeConfiguration<?> getCopy() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	}
-	
-	/**
-	 * The Class OrthogonalConfiguration.
-	 */
-	public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<Line2D> {
-
-		private Line2D line;
-		
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()
-		 */
-		@Override
-		public String getConfigurationAsString() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#setConfigurationFromString(java.lang.String)
-		 */
-		@Override
-		public void setConfigurationFromString(String stringConfiguration) {
-			// TODO Auto-generated method stub
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
-		 */
-		@Override
-		public Line2D getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
-			if (line==null) {
-				line = new Line2D.Double(0.0, 0.0, 1.0, 0.0);
-			}
-			return line;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
-		 */
-		@Override
-		public GraphEdgeShapeConfiguration<?> getCopy() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	}
 }

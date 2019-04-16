@@ -157,6 +157,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	/** Graph visualization component */
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView;
 	private boolean isCreatedVisualizationViewer;
+	private ItemListener pickedStateItemListener;
 	private List<GraphSelectionListener> graphSelectionListenerList;
 	
 	private SatelliteDialog satelliteDialog;
@@ -366,7 +367,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 		this.zoomToFitToWindow(this.getVisualizationViewer());
 		this.clearPickedObjects();
+
+		// --- Re-attach item listener for vis-viewer -----
+		visView.getPickedVertexState().removeItemListener(this.getPickedStateItemListener());
+		visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
+		visView.getPickedEdgeState().removeItemListener(this.getPickedStateItemListener());
+		visView.getPickedEdgeState().addItemListener(this.getPickedStateItemListener());
 		
+		// --- Adjust the satellite view ------------------
 		this.getSatelliteVisualizationViewer().getGraphLayout().setGraph(this.getGraph());
 		this.zoomToFitToWindow(this.getSatelliteVisualizationViewer());
 		
@@ -375,6 +383,28 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.yDirectionReminder = this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getCoordinateSystemYDirection();
 	}
 
+	/**
+	 * Gets the picked state item listener, a listener 
+	 * for GraphNode / GraphEdge (de)selections.  
+	 *
+	 * @return the picked state item listener
+	 */
+	public ItemListener getPickedStateItemListener() {
+		if (pickedStateItemListener==null) {
+			pickedStateItemListener = new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent ie) {
+					Object item = ie.getItem();
+					if (item instanceof GraphNode || item instanceof GraphNode) {
+						BasicGraphGui.this.reStartGraphSelectionWaitTimer();
+					}
+				}
+			};
+		}
+		return pickedStateItemListener;
+	}
+	
+	
 	/**
 	 * Gets the current Graph and repaints the visualization viewer.
 	 */
@@ -441,22 +471,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.setGraphMouse(this.getPluggableGraphMouse());
 			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
 			
-			// --- Set the pick size of the visualisation viewer --------
+			// --- Set the pick size of the visualization viewer --------------
 			((ShapePickSupport<GraphNode, GraphEdge>) visView.getPickSupport()).setPickSize(5);
 			
-			
-			// --- Listener for GraphNode / GraphEdge (de)selections ---------- 
-			ItemListener iListener = new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent ie) {
-					Object item = ie.getItem();
-					if (item instanceof GraphNode || item instanceof GraphNode) {
-						BasicGraphGui.this.reStartGraphSelectionWaitTimer();
-					}
-				}
-			};
-			visView.getPickedVertexState().addItemListener(iListener);
-			visView.getPickedEdgeState().addItemListener(iListener);
+			// --- Add an item listener for pickings --------------------------
+			visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
+			visView.getPickedEdgeState().addItemListener(this.getPickedStateItemListener());
 
 			
 			// ----------------------------------------------------------------

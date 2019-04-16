@@ -35,6 +35,13 @@ import java.util.Collection;
 
 import javax.swing.ImageIcon;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.prefs.BackingStoreException;
+
 import agentgui.core.application.Application;
 import de.enflexit.common.PathHandling;
 import edu.uci.ics.jung.graph.Graph;
@@ -46,8 +53,13 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public final class GraphGlobals {
 
+	public static final String PREF_SHOW_LAYOUT_TOOLBAR = "ShowLayoutToolBar";
+	
 	private static String pathImages = "/org/awb/env/networkModel/img/";
 
+	private static Bundle localBundle;
+	private static IEclipsePreferences eclipsePreferences;
+	
 	/**
 	 * Gets the path for images.
 	 * @return the pathImages
@@ -180,5 +192,39 @@ public final class GraphGlobals {
 		return rect;
 	}
 
+	// --------------------------------------------------------------
+	// --- Provider methods to access preferences for this bundle ---
+	// --------------------------------------------------------------
+	/**
+	 * Gets the local bundle.
+	 * @return the local bundle
+	 */
+	public static Bundle getLocalBundle() {
+		if (localBundle==null) {
+			localBundle = FrameworkUtil.getBundle(GraphGlobals.class);
+		}
+		return localBundle;
+	}
+	/**
+	 * Returns the eclipse preferences.
+	 * @return the eclipse preferences
+	 */
+	public static IEclipsePreferences getEclipsePreferences() {
+		if (eclipsePreferences==null) {
+			IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+			eclipsePreferences = iScopeContext.getNode(getLocalBundle().getSymbolicName());
+		}
+		return eclipsePreferences;
+	}
+	/**
+	 * Saves the current preferences.
+	 */
+	public static void saveEclipsePreferences() {
+		try {
+			getEclipsePreferences().flush();
+		} catch (BackingStoreException bsEx) {
+			bsEx.printStackTrace();
+		}
+	}
 	
 } 

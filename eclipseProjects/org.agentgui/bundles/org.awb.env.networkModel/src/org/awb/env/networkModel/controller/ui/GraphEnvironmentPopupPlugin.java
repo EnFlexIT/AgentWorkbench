@@ -78,7 +78,7 @@ import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePlugin implements Observer {
 	
 	private final String MENU_ITEM_NAME_PREFIX = "~TmpItem~";
-	private final String IMAGE_PATH = GraphGlobals.getPathImages(); // @jve:decl-index=0:
+	private final String IMAGE_PATH = GraphGlobals.getPathImages();
 	
 	private BasicGraphGui basicGraphGui = null;
 	private GraphEnvironmentController graphController = null;
