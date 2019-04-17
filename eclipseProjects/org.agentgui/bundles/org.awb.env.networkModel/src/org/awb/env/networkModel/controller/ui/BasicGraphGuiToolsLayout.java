@@ -44,8 +44,10 @@ import javax.swing.JToolBar;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineEdit;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
 import org.awb.env.networkModel.controller.ui.configLines.QuadCurveConfiguration;
@@ -53,6 +55,9 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.EdgeShape;
 
 import agentgui.core.application.Language;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.graph.util.Pair;
 
 /**
  * The Class BasicGraphGuiToolsLayout represents the toolbar for layout edits.
@@ -84,6 +89,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
     private javax.swing.JPopupMenu.Separator separatorAfterEdgeTypeSelection;
     private JMenuItem jMenuItemEdgeEdit;
     private javax.swing.JPopupMenu.Separator separatorAfterEdgeEdit;
+    
     
 	/**
 	 * Instantiates a new basic graph gui tools layout.
@@ -202,7 +208,6 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		this.getJToggleButtonEdgePolyLine().setEnabled(enableToggleButtons);
 		this.getJToggleButtonEdgeOrthogonal().setEnabled(enableToggleButtons);
 		// --- Reset edit button ------------------------------------
-		this.getJToggleButtonEdgeEdit().setSelected(false);
 		this.getJToggleButtonEdgeEdit().setEnabled(enableToggleButtons);
 		
 		if (enableToggleButtons==false) {
@@ -391,11 +396,11 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			
 		} else if (ae.getSource()==this.getJToggleButtonEdgeEdit()) {
 			// --- Do edge editing (from toolbar) ---------
-			this.switchEdgeEdit(this.getJToggleButtonEdgeEdit().isSelected());
+			this.switchEdgeEdit(this.getJToggleButtonEdgeEdit().isSelected(), null);
 			
 		} else if (ae.getSource()==this.getJMenuItemEdgeEdit()) {
 			// --- Do edge editing (from context menu) ----
-			this.switchEdgeEdit(true);
+			this.switchEdgeEdit(true, null);
 			
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] => Unknow action command from " + ae.getSource());
@@ -429,28 +434,38 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		if (this.editGraphEdge==null) return;
 		
-		// --- Set edge configuration and redraw edge -----
+		// --- Remind old configuration before the new will be applied --------
+		ConfiguredLineEdit initialConfLineEdit = this.getInitialConfiguredLineEdit();
+		
+		// --- Set edge configuration and redraw edge -------------------------
 		this.editGraphEdge.setEdgeShapeConfiguration(edgeShapeConfiguration);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, false);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, true);
 		
-		// --- Enable edge edit ---
+		// --- Enable edge edit -----------------------------------------------
 		boolean isEnableEdgeEdit = (edgeShapeConfiguration!=null);
 		this.getJToggleButtonEdgeEdit().setEnabled(isEnableEdgeEdit);
-		this.switchEdgeEdit(isEnableEdgeEdit);
+		this.switchEdgeEdit(isEnableEdgeEdit, initialConfLineEdit);
 		
 	}
 	
 	/**
 	 * Start or stops the edge editing mode.
+	 *
 	 * @param isStartEdit start=true, stop=false
+	 * @param initialConfLineEdit the initial {@link ConfiguredLineEdit} description that contains the initial situation before the edit
 	 */
-	private void switchEdgeEdit(boolean isStartEdit) {
+	private void switchEdgeEdit(boolean isStartEdit, ConfiguredLineEdit initialConfLineEdit) {
+		
+		if (initialConfLineEdit==null) {
+			// --- Remind old edge configuration ----------------------------------------
+			initialConfLineEdit = this.getInitialConfiguredLineEdit();
+		}
 		
 		if (isStartEdit==true) {
 			// --- Start edge editing ---------------------------------------------------
 			if (this.getJToggleButtonEdgeEdit().isSelected()==false) this.getJToggleButtonEdgeEdit().setSelected(true);
-			this.graphController.getNetworkModelUndoManager().setGraphMouseEdgeEditing();
+			this.graphController.getNetworkModelUndoManager().setGraphMouseEdgeEditing(initialConfLineEdit);
 		} else {
 			// --- Stop edge editing ----------------------------------------------------
 			if (this.getJToggleButtonEdgeEdit().isSelected()==true) this.getJToggleButtonEdgeEdit().setSelected(false);
@@ -476,6 +491,28 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		}
 	}
 	
+	/**
+	 * Return description {@link ConfiguredLineEdit} that will remind the old edge setting 
+	 * for a possible later undo action. 
+	 * @return the configured line edit
+	 */
+	private ConfiguredLineEdit getInitialConfiguredLineEdit() {
+		
+		GraphNode graphNodeOldStateFrom = null;
+		GraphNode graphNodeOldStateTo = null;
+		
+		Graph<GraphNode, GraphEdge> graph = this.graphController.getNetworkModel().getGraph();
+		if (graph.getEdgeType(this.editGraphEdge)==EdgeType.DIRECTED) {
+			graphNodeOldStateFrom = graph.getSource(this.editGraphEdge);
+			graphNodeOldStateTo   = graph.getDest(this.editGraphEdge);
+			
+		} else {
+			Pair<GraphNode> nodePair = graph.getEndpoints(this.editGraphEdge);
+			graphNodeOldStateFrom = nodePair.getFirst();
+			graphNodeOldStateTo   = nodePair.getSecond();
+		}
+		return new ConfiguredLineEdit(this.editGraphEdge.getCopy(), graphNodeOldStateFrom.getCopy(), graphNodeOldStateTo.getCopy());
+	}
 	
 	/**
 	 * Returns the current layout setting.

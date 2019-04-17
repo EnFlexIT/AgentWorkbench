@@ -222,7 +222,18 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.add(this.getJPanelToolBarsWest(), BorderLayout.WEST);
 		this.add(this.getGraphZoomScrollPane(), BorderLayout.CENTER);
 		this.add(this.getJPanelToolBarsEast(), BorderLayout.EAST);
+		
+		// --- Initialize further elements ----------------
+		this.getGraphMouse4EdgeEditing();
 	}
+	/**
+	 * Dispose this panel.
+	 */
+	public void dispose() {
+		this.disposeSatelliteView();
+		this.visView = null;
+	}
+	
 	
 	/**
 	 * Gets the graph environment controller.
@@ -290,14 +301,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			jPanelToolBarsEast.add(this.getBasicGraphGuiTools().getJToolBarLayout(), null);
 		}
 		return jPanelToolBarsEast;
-	}
-	
-	/**
-	 * Dispose this panel.
-	 */
-	public void dispose() {
-		this.disposeSatelliteView();
-		this.visView = null;
 	}
 	
 

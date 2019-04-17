@@ -59,13 +59,9 @@ public class GraphEdge extends GraphElement {
 	 */
 	@Override
 	public GraphEdge getCopy() {
-		
-		GraphEdge edgceCopy = new GraphEdge(this.getId(), this.getComponentType());
-		edgceCopy.setEdgeShapeConfiguration(this.getEdgeShapeConfiguration().getCopy());
-		
-		if (this.graphElementLayout!=null) {
-			edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
-		}
+		GraphEdge edgceCopy = new GraphEdge(this.id, this.componentType);
+		if (this.edgeShapeConfiguration!=null) edgceCopy.setEdgeShapeConfiguration(this.edgeShapeConfiguration.getCopy());
+		if (this.graphElementLayout!=null)     edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
 		return edgceCopy;
 	}
 

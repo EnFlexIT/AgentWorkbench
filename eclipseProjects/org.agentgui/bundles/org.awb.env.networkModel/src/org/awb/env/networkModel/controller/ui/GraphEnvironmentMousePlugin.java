@@ -89,28 +89,21 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 	
-	/** Indicates that a paste action is currently running*/
 	private boolean isPasteAction = false;
 	private NetworkModel networkModel2Paste;
 	private GraphNode graphNodeUpperLeft2Paste;
 	private GraphNode[] graphNodes2Paste;
 	
-	/** Move panel with right currently ? */
 	private boolean movePanelWithRightAction = false;
-	/** Move node with left currently ? */
 	private boolean moveNodeWithLeftAction = false;
 
 	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
 	private Vector<GraphNode> nodesMoved = new Vector<GraphNode>();
 	private HashMap<String, Point2D> nodesMovedOldPositions;
 	
-	/** Whether to center the zoom at the current mouse position */
 	private boolean zoomAtMouse = true;
-	/** controls scaling operations */
     private ScalingControl scaler = new CrossoverScalingControl();
-    /** the amount to zoom in by */
 	protected float in = 1.1f;
-	/** the amount to zoom out by */
 	protected float out = 1/1.1f;
 	
 	/**
@@ -431,7 +424,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		if (this.moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
-			LayoutSettings layoutSettings = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getLayoutSettings();
+			LayoutSettings layoutSettings = this.getGraphController().getNetworkModel().getLayoutSettings();
 			boolean snapToGrid = layoutSettings.isSnap2Grid();
 			double snapRaster = layoutSettings.getSnapRaster();
 			
@@ -440,7 +433,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 				// --- Get the Graph, if not already there --------------------
 				if (graph==null) {
-					graph = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getGraph();
+					graph = this.getGraphController().getNetworkModel().getGraph();
 					this.nodesMoved.removeAllElements();
 					this.removeAllTemporaryNodes(graph);
 				}

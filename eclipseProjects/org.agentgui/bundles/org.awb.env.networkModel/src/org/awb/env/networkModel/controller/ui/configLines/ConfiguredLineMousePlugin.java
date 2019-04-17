@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package org.awb.env.networkModel.controller.ui.configLines;
 
 import java.awt.Cursor;
@@ -35,8 +7,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -45,11 +15,8 @@ import java.util.Vector;
 import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.GraphEdge;
-import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.GraphNode;
-import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
@@ -69,7 +36,7 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
- * Handling mouse interaction with graph visualizations in a BasicGraphGUI.
+ * Handling mouse interaction with graph visualizations in the {@link BasicGraphGui} during line configurations.
  * 
  * @see BasicGraphGui  
  * 
@@ -84,23 +51,18 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 	
-	/** Move panel with right currently ? */
-	private boolean movePanelWithRightAction = false;
-	/** Move node with left currently ? */
-	private boolean moveNodeWithLeftAction = false;
+	private boolean movePanelWithRightAction;
+	private boolean moveNodeWithLeftAction;
 
 	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
-	private Vector<GraphNode> nodesMoved = new Vector<GraphNode>();
-	private HashMap<String, Point2D> nodesMovedOldPositions;
+	private GraphNode graphNodeMoved;
 	
-	/** Whether to center the zoom at the current mouse position */
 	private boolean zoomAtMouse = true;
-	/** controls scaling operations */
     private ScalingControl scaler = new CrossoverScalingControl();
-    /** the amount to zoom in by */
 	protected float in = 1.1f;
-	/** the amount to zoom out by */
 	protected float out = 1/1.1f;
+	
+	private ConfiguredLineEdit confLineEdit;	
 	
 	/**
 	 * Constructor.
@@ -165,9 +127,8 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 */
 	private void setNodesMoved2EndPosition() {
 		this.removeAllTemporaryNodes(this.getVisViewer().getGraphLayout().getGraph());
-		for (int i = 0; i < this.nodesMoved.size(); i++) {
-			GraphNode node = this.nodesMoved.get(i);
-			this.getVisViewer().getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
+		if (this.graphNodeMoved!=null) {
+			this.getVisViewer().getGraphLayout().setLocation(this.graphNodeMoved, this.getGraphNodePositionTransformer().transform(this.graphNodeMoved.getPosition()));
 		}
 	}
 	
@@ -202,61 +163,15 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.nodesTemp.removeAllElements();
 	}
 	
-	/**
-	 * Sets the reminder for the old positions of the currently moved GraphNodes.
-	 * @param graphNodes the graph nodes
-	 */
-	private void remindOldPositions() {
-		nodesMovedOldPositions = new HashMap<String, Point2D>();
-		// --- Get selected GraphNodes ----------
-		Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
-		for (GraphNode node : nodesSelected) {
-			Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-			nodesMovedOldPositions.put(node.getId(), point);
-		}
-	}
+	
 	/**
 	 * Creates the undoable move action.
 	 */
-	private void createUndoableMoveAction() {
-		if (this.nodesMovedOldPositions!=null) {
-			if (this.nodesMovedOldPositions.size()>0) {
-				// --- Get selected GraphNodes ----------
-				Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
-				if (this.nodesMovedOldPositions.size()==nodesSelected.size()) {
-					for (GraphNode node : nodesSelected) {
-						Point2D pointCurrent = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-						Point2D pointStored  = this.nodesMovedOldPositions.get(node.getId());
-						if (pointCurrent.equals(pointStored)==false) {
-							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
-							break;
-						}
-					} // end for
-					
-				} else {
-					// --- Should never happen ------------
-					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
-				}
-			}
-			this.nodesMovedOldPositions = null;
-		}
+	private void createUndoableEditAction() {
+		
+		
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseMoved(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseMoved(MouseEvent me) {
-		//System.err.println("[" + this.getClass().getSimpleName() + "] Mouse MOVED");
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseClicked(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseClicked(MouseEvent me){
-		System.err.println("[" + this.getClass().getSimpleName() + "] Mouse CLICKED");
-	}
 	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mousePressed(java.awt.event.MouseEvent)
@@ -269,50 +184,58 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), position.getX(), position.getY());
 		GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), position.getX(), position.getY());
 		
-		if (SwingUtilities.isRightMouseButton(me)) {
-			if(pickedNode==null && pickedEdge==null){		
-				this.movePanelWithRightAction = true;
-				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-			}
+		if (SwingUtilities.isRightMouseButton(me) && pickedNode==null && pickedEdge==null){		
+			this.movePanelWithRightAction = true;
+			this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			
-		} else if (SwingUtilities.isLeftMouseButton(me)) {
-			if (pickedNode!=null) {
-				this.moveNodeWithLeftAction = true;	
-				this.remindOldPositions();
-			}
+		} else if (SwingUtilities.isLeftMouseButton(me) && this.isAllowedGraphNodeForMoving(pickedNode)==true) {
+			this.moveNodeWithLeftAction = true;
+			this.graphNodeMoved = pickedNode;
+			this.setOppositeGraphNodeMovedPicked(false);
 		}
 		
-		System.err.println("[" + this.getClass().getSimpleName() + "] Mouse PRESSED");
-		if (this.movePanelWithRightAction==true) {
+		if (this.movePanelWithRightAction==true || this.moveNodeWithLeftAction==true) {
 			super.mousePressed(me);
 		}
-
+	}
+	/**
+	 * Checks if the specified graph node is allowed for moving.
+	 *
+	 * @param graphNodeSelected the graph node
+	 * @return true, if is allowed graph node for moving
+	 */
+	private boolean isAllowedGraphNodeForMoving(GraphNode graphNodeSelected) {
 		
+		boolean isAllowedMoving = false;
+		if (graphNodeSelected!=null) {
+			boolean isGraphNodeStart = graphNodeSelected.getId().equals(this.confLineEdit.getGraphNodeOldFrom().getId()); 
+			boolean isGraphNodeEnd   = graphNodeSelected.getId().equals(this.confLineEdit.getGraphNodeOldTo().getId()); 
+			boolean isGraphNodeIntermediate = false; // TODO
+			if (isGraphNodeStart==true || isGraphNodeEnd==true || isGraphNodeIntermediate==true) {
+				isAllowedMoving = true;
+			}
+		}
+		return isAllowedMoving;
+	}
+	/**
+	 * Sets the opposite GraphNode that is moved picked or not.
+	 * @param iPicked the new opposite graph node moved picked
+	 */
+	private void setOppositeGraphNodeMovedPicked(boolean iPicked) {
+		GraphNode graphNodeChanged = this.getOppositeNode(this.graphNodeMoved);
+		this.getVisViewer().getPickedVertexState().pick(graphNodeChanged, iPicked);
+	}
+	/**
+	 * Returns the opposite node with respect to the current GraphEdge.
+	 *
+	 * @param graphNode the graph node
+	 * @return the opposite node
+	 */
+	private GraphNode getOppositeNode(GraphNode graphNode) {
+		GraphEdge edgePicked = this.getVisViewer().getPickedEdgeState().getPicked().iterator().next();
+		return this.getGraphController().getNetworkModel().getGraph().getOpposite(graphNode, edgePicked);
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseReleased(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseReleased(MouseEvent me) {
-		
-		super.mouseReleased(me);
-		if (SwingUtilities.isRightMouseButton(me)) {
-			if (this.movePanelWithRightAction==true) {
-				this.movePanelWithRightAction = false;
-				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			}
-			
-		} else if (SwingUtilities.isLeftMouseButton(me)) {
-			if (this.moveNodeWithLeftAction==true) {
-				this.moveNodeWithLeftAction = false;	
-				this.setNodesMoved2EndPosition();
-				this.createUndoableMoveAction();
-				this.nodesMoved.removeAllElements();
-			} 
-			
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseDragged(java.awt.event.MouseEvent)
@@ -338,8 +261,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
                 modelTransformer.translate(dx, dy);
                 down.x = me.getX();
                 down.y = me.getY();
-            } catch(RuntimeException ex) {
-                System.err.println("down = "+down+", e = "+me);
+            } catch (RuntimeException ex) {
                 throw ex;
             }
             me.consume();
@@ -351,17 +273,16 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		if (this.moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
-			LayoutSettings layoutSettings = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getLayoutSettings();
+			LayoutSettings layoutSettings = this.getGraphController().getNetworkModel().getLayoutSettings();
 			boolean snapToGrid = layoutSettings.isSnap2Grid();
 			double snapRaster = layoutSettings.getSnapRaster();
 			
 			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
-			for(GraphNode pickedNode: pickedNodes){
+			for (GraphNode pickedNode: pickedNodes) {
 
 				// --- Get the Graph, if not already there --------------------
 				if (graph==null) {
-					graph = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel().getGraph();
-					this.nodesMoved.removeAllElements();
+					graph = this.getGraphController().getNetworkModel().getGraph();
 					this.removeAllTemporaryNodes(graph);
 				}
 				
@@ -373,7 +294,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 					double yPos = roundGridSnap(newPos.getY(), snapRaster);
 					newPos.setLocation(xPos, yPos);
 					
-					this.nodesMoved.add(pickedNode);
 					this.addTemporaryNode(graph, pickedNode, newPos);
 				}
 				pickedNode.setPosition(newPos);
@@ -423,6 +343,31 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	}
 
 	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseReleased(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseReleased(MouseEvent me) {
+		
+		super.mouseReleased(me);
+		if (SwingUtilities.isRightMouseButton(me)) {
+			if (this.movePanelWithRightAction==true) {
+				this.movePanelWithRightAction = false;
+				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+			
+		} else if (SwingUtilities.isLeftMouseButton(me)) {
+			if (this.moveNodeWithLeftAction==true) {
+				this.moveNodeWithLeftAction = false;	
+				this.setNodesMoved2EndPosition();
+				this.setOppositeGraphNodeMovedPicked(true);
+//				this.createUndoableMoveAction();
+			} 
+			
+		}
+	}
+	
+	
+	/* (non-Javadoc)
 	 * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
 	 */
 	@Override
@@ -460,8 +405,12 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		if (object instanceof NetworkModelNotification) {
 			NetworkModelNotification nmNotification = (NetworkModelNotification) object;
 			switch (nmNotification.getReason()) {
-			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Stop:
-				// TODO
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
+				// --- Remind setting of 
+				Object infoObject = nmNotification.getInfoObject();
+				if (infoObject!=null && infoObject instanceof ConfiguredLineEdit) {
+					this.confLineEdit = (ConfiguredLineEdit) nmNotification.getInfoObject();
+				}
 				break;
 			}
 		}

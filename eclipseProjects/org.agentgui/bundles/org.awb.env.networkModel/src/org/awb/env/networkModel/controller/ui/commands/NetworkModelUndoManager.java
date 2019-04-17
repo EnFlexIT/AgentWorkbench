@@ -41,6 +41,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineEdit;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
@@ -223,11 +224,14 @@ public class NetworkModelUndoManager {
 		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking);
 		this.notifyObservers(notification);
 	}
+	
 	/**
-	 * Sets the graph mouse to picking mode.
+	 * Sets the graph mouse to edge editing mode.
+	 * @param confLineEdit the description class {@link ConfiguredLineEdit} that contains the starting point for further edge editing
 	 */
-	public void setGraphMouseEdgeEditing() {
+	public void setGraphMouseEdgeEditing(ConfiguredLineEdit confLineEdit) {
 		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing);
+		notification.setInfoObject(confLineEdit);
 		this.notifyObservers(notification);
 	}
 	

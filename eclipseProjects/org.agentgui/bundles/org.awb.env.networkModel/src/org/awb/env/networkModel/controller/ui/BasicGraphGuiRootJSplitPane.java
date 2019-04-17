@@ -817,6 +817,16 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				RenamedNetworkComponent renamed = (RenamedNetworkComponent) infoObject;
 				this.renamedNetworkComponent(renamed);
 				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
+				// --- Disable to edit elements in the table --------
+				this.getJTableComponents().setEnabled(false);
+				break;
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
+				// --- Enable to edit elements in the table ---------
+				this.getJTableComponents().setEnabled(true);
+				break;
+				
 			default:
 				break;
 			}
