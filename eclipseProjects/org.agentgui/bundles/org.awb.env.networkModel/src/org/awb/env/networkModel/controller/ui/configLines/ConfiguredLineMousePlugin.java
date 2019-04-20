@@ -2,11 +2,15 @@ package org.awb.env.networkModel.controller.ui.configLines;
 
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -15,8 +19,10 @@ import java.util.Vector;
 import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
@@ -27,6 +33,8 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
@@ -46,10 +54,13 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  */
 public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener, MouseMotionListener, Observer {
 	
+	private static final String INTERMEDIATE_GRAPH_NODE_ID_PREFIX = "IGN_";
+	
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGUI;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
+	private IntermediatePointTransformer intermediatePointTransformer;
 	
 	private boolean movePanelWithRightAction;
 	private boolean moveNodeWithLeftAction;
@@ -62,7 +73,15 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	protected float in = 1.1f;
 	protected float out = 1/1.1f;
 	
-	private ConfiguredLineEdit confLineEdit;	
+	private ConfiguredLineEdit confLineEdit;
+	private GraphNode graphNodeStart;
+	private GraphNode graphNodeEnd;
+	private GraphEdge editingGraphEdge;
+	private GraphEdgeShapeConfiguration<? extends Shape> shapeConfiguration;
+	
+	private List<GraphNode> intGraphNodes;
+	
+	
 	
 	/**
 	 * Constructor.
@@ -73,7 +92,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.basicGraphGUI = basicGraphGui;
 		this.getGraphController().addObserver(this);
 	}
-	
 	/**
 	 * Gets the vis viewer.
 	 * @return the vis viewer
@@ -84,7 +102,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		}
 		return this.visViewer;
 	}
-	
 	/**
 	 * Returns the current GraphEnvironmentController.
 	 * @return the graph controller
@@ -105,6 +122,138 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			graphNodePositionTransformer = new TransformerForGraphNodePosition<>(this.getGraphController());
 		}
 		return graphNodePositionTransformer;
+	}
+	/**
+	 * Returnss the intermediate point transformer.
+	 * @return the intermediate point transformer
+	 */
+	private IntermediatePointTransformer getIntermediatePointTransformer() {
+		if (intermediatePointTransformer==null) {
+			intermediatePointTransformer = new IntermediatePointTransformer();
+		}
+		return intermediatePointTransformer;
+	}
+	
+	
+	/**
+	 * Returns the GraphEdge that is currently edited.
+	 * @return the editing graph edge
+	 */
+	private GraphEdge getEditingGraphEdge() {
+		if (editingGraphEdge==null) {
+			String graphEdgeID = this.confLineEdit.getGraphEdgeOld().getId();
+			editingGraphEdge = (GraphEdge) this.getGraphController().getNetworkModel().getGraphElement(graphEdgeID);
+		}
+		return editingGraphEdge;
+	}
+	/**
+	 * Returns the current shape configuration.
+	 * @return the shape configuration
+	 */
+	private GraphEdgeShapeConfiguration<? extends Shape> getShapeConfiguration() {
+		if (shapeConfiguration==null) {
+			shapeConfiguration = this.getEditingGraphEdge().getEdgeShapeConfiguration();  
+		}
+		return shapeConfiguration;
+	}
+	/**
+	 * Returns the start graph node .
+	 * @return the graph node start
+	 */
+	private GraphNode getGraphNodeStart() {
+		if (graphNodeStart==null) {
+			this.setStartAndEndNode();
+		}
+		return graphNodeStart;
+	}
+	/**
+	 * Returns the end graph node.
+	 * @return the graph node end
+	 */
+	private GraphNode getGraphNodeEnd() {
+		if (graphNodeEnd==null) {
+			this.setStartAndEndNode();
+		}
+		return graphNodeEnd;
+	}
+	/**
+	 * Sets the start and end node.
+	 */
+	private void setStartAndEndNode() {
+		
+		Graph<GraphNode, GraphEdge> graph = this.getGraphController().getNetworkModel().getGraph();
+		if (graph.getEdgeType(this.getEditingGraphEdge())==EdgeType.DIRECTED) {
+			// --- We're editing a directed graph edge ----
+			this.graphNodeStart = graph.getSource(this.getEditingGraphEdge());
+			this.graphNodeEnd   = graph.getDest(this.getEditingGraphEdge());
+		} else {
+			// --- We're editing an undirected graph edge -
+			Pair<GraphNode> graphNodePair = graph.getEndpoints(this.getEditingGraphEdge());
+			this.graphNodeStart = graphNodePair.getFirst();
+			this.graphNodeEnd   = graphNodePair.getSecond();
+		}
+	}
+	/**
+	 * Resets the editing graph elements.
+	 */
+	private void resetEditingGraphElements() {
+		this.graphNodeStart = null;
+		this.graphNodeEnd = null;
+		this.editingGraphEdge = null;
+		this.shapeConfiguration = null;
+	}
+	/**
+	 * Returns the current intermediate graph nodes.
+	 * @return the intermediate graph nodes
+	 */
+	private List<GraphNode> getIntermediateGraphNodes() {
+		if (intGraphNodes==null) {
+			intGraphNodes = new ArrayList<>();
+		}
+		return intGraphNodes;
+	}
+	/**
+	 * Adds the intermediate nodes.
+	 */
+	private void addIntermediateNodes() {
+		
+		// --- Remove the intermediate nodes first --------
+		this.removeIntermediateNodes();
+		
+		NetworkModel networkModel = this.getGraphController().getNetworkModel();
+		GraphElementLayout layoutStartNode = this.getGraphNodeStart().getGraphElementLayout(networkModel);
+		// --- Get the intermediate points ----------------
+		List<Point2D> intermediatePointList = this.getShapeConfiguration().getIntermediatePoints();
+		if (intermediatePointList!=null) {
+			for (int i = 0; i < intermediatePointList.size(); i++) {
+				
+				// --- Get each intermediate point ------------
+				Point2D intPoint = intermediatePointList.get(i);
+				// --- Transform the position to graph coordinates 
+				Point2D graphPoint = this.getIntermediatePointTransformer().transformToGraphCoordinate(intPoint, this.getGraphNodeStart(), this.getGraphNodeEnd());
+				
+				// --- Create GraphNode -------------
+				GraphNode intNode = new GraphNode(INTERMEDIATE_GRAPH_NODE_ID_PREFIX + i, graphPoint);
+				
+				GraphElementLayout layoutTmpNode = intNode.getGraphElementLayout(networkModel);
+				layoutTmpNode.setShowLabel(false);
+				layoutTmpNode.setSize(layoutStartNode.getSize());
+				layoutTmpNode.setShapeForm(layoutStartNode.getShapeForm());
+				
+				networkModel.getGraph().addVertex(intNode);
+				this.getIntermediateGraphNodes().add(intNode);
+				
+			}
+		}
+	}
+	/**
+	 * Removes the intermediate nodes of the current editing GraphEdge.
+	 */
+	private void removeIntermediateNodes() {
+		for (int i = 0; i < this.getIntermediateGraphNodes().size(); i++) {
+			this.getGraphController().getNetworkModel().getGraph().removeVertex(this.getIntermediateGraphNodes().get(i));
+		}
+		this.getIntermediateGraphNodes().clear();
 	}
 	
 	/**
@@ -163,11 +312,14 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.nodesTemp.removeAllElements();
 	}
 	
-	
+
 	/**
 	 * Creates the undoable move action.
 	 */
 	private void createUndoableEditAction() {
+		
+		this.removeIntermediateNodes();
+		System.out.println("[" + this.getClass().getSimpleName() + "] Create undoable action ...");
 		
 		
 	}
@@ -210,7 +362,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		if (graphNodeSelected!=null) {
 			boolean isGraphNodeStart = graphNodeSelected.getId().equals(this.confLineEdit.getGraphNodeOldFrom().getId()); 
 			boolean isGraphNodeEnd   = graphNodeSelected.getId().equals(this.confLineEdit.getGraphNodeOldTo().getId()); 
-			boolean isGraphNodeIntermediate = false; // TODO
+			boolean isGraphNodeIntermediate = graphNodeSelected.getId().startsWith(INTERMEDIATE_GRAPH_NODE_ID_PREFIX);
 			if (isGraphNodeStart==true || isGraphNodeEnd==true || isGraphNodeIntermediate==true) {
 				isAllowedMoving = true;
 			}
@@ -223,7 +375,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 */
 	private void setOppositeGraphNodeMovedPicked(boolean iPicked) {
 		GraphNode graphNodeChanged = this.getOppositeNode(this.graphNodeMoved);
-		this.getVisViewer().getPickedVertexState().pick(graphNodeChanged, iPicked);
+		if (graphNodeChanged!=null) this.getVisViewer().getPickedVertexState().pick(graphNodeChanged, iPicked);
 	}
 	/**
 	 * Returns the opposite node with respect to the current GraphEdge.
@@ -232,8 +384,12 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 * @return the opposite node
 	 */
 	private GraphNode getOppositeNode(GraphNode graphNode) {
-		GraphEdge edgePicked = this.getVisViewer().getPickedEdgeState().getPicked().iterator().next();
-		return this.getGraphController().getNetworkModel().getGraph().getOpposite(graphNode, edgePicked);
+		Collection<GraphEdge> incidentEdges = this.getGraphController().getNetworkModel().getGraph().getIncidentEdges(graphNode); 
+		if (incidentEdges!=null && incidentEdges.size()>0) {
+			GraphEdge edgePicked = this.getVisViewer().getPickedEdgeState().getPicked().iterator().next();
+			return this.getGraphController().getNetworkModel().getGraph().getOpposite(graphNode, edgePicked);
+		}
+		return null;
 	}
 	
 	
@@ -272,20 +428,15 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		// ----------------------------------------------------------------------------------------
 		if (this.moveNodeWithLeftAction==true) {
 			
-			Graph<GraphNode, GraphEdge> graph = null;
+			Graph<GraphNode, GraphEdge> graph = this.getGraphController().getNetworkModel().getGraph();
+			this.removeAllTemporaryNodes(graph);
+			
 			LayoutSettings layoutSettings = this.getGraphController().getNetworkModel().getLayoutSettings();
 			boolean snapToGrid = layoutSettings.isSnap2Grid();
 			double snapRaster = layoutSettings.getSnapRaster();
 			
 			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
 			for (GraphNode pickedNode: pickedNodes) {
-
-				// --- Get the Graph, if not already there --------------------
-				if (graph==null) {
-					graph = this.getGraphController().getNetworkModel().getGraph();
-					this.removeAllTemporaryNodes(graph);
-				}
-				
 				// --- Get the position of the node ---------------------------
 				Point2D newPos = this.getVisViewer().getGraphLayout().transform(pickedNode);
 				newPos = this.getGraphNodePositionTransformer().inverseTransform(newPos);
@@ -295,6 +446,28 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 					newPos.setLocation(xPos, yPos);
 					
 					this.addTemporaryNode(graph, pickedNode, newPos);
+				}
+				
+				// --- What do we move? ---------------------------------------
+				if (this.getIntermediateGraphNodes().contains(pickedNode)==true) {
+					// --- Moving an intermediate node ------------------------
+					List<Point2D> intGraphNodePositions = new ArrayList<>();
+					for (int i = 0; i < this.getIntermediateGraphNodes().size(); i++) {
+						GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
+						Point2D intCoordPosition = this.getIntermediatePointTransformer().transformToIntermediateCoordinate(intGraphNode.getPosition(), this.getGraphNodeStart(), this.getGraphNodeEnd());
+						intGraphNodePositions.add(intCoordPosition);
+					}
+					this.getShapeConfiguration().setIntermediatePoints(intGraphNodePositions);
+					
+				} else {
+					// --- Moving an outer node -------------------------------
+					List<Point2D> pointList = this.getShapeConfiguration().getIntermediatePoints();
+					for (int i = 0; i < this.getIntermediateGraphNodes().size(); i++) {
+						GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
+						Point2D newIntNodePosition = this.getIntermediatePointTransformer().transformToGraphCoordinate(pointList.get(i), this.getGraphNodeStart(), this.getGraphNodeEnd());
+						intGraphNode.setPosition(newIntNodePosition);
+						this.getVisViewer().getGraphLayout().setLocation(intGraphNode, newIntNodePosition);
+					}
 				}
 				pickedNode.setPosition(newPos);
 				
@@ -360,7 +533,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				this.moveNodeWithLeftAction = false;	
 				this.setNodesMoved2EndPosition();
 				this.setOppositeGraphNodeMovedPicked(true);
-//				this.createUndoableMoveAction();
 			} 
 			
 		}
@@ -406,15 +578,25 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			NetworkModelNotification nmNotification = (NetworkModelNotification) object;
 			switch (nmNotification.getReason()) {
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
-				// --- Remind setting of 
+				// --- Get reminder for initial setting ------------- 
 				Object infoObject = nmNotification.getInfoObject();
 				if (infoObject!=null && infoObject instanceof ConfiguredLineEdit) {
+					// --- Finalize edit first ---------------------- 
+					this.createUndoableEditAction();
+					// --- Set new current edit description ---------
 					this.confLineEdit = (ConfiguredLineEdit) nmNotification.getInfoObject();
+					this.resetEditingGraphElements();
+					// --- Set intermediate nodes -------------------
+					this.addIntermediateNodes();
 				}
+				break;
+			
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
+				// --- Edit finished, finalize edit description -----
+				this.createUndoableEditAction();	
 				break;
 			}
 		}
-		
 	}
 	
 }

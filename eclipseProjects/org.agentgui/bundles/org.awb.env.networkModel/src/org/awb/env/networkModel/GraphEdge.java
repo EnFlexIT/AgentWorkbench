@@ -28,6 +28,8 @@
  */
 package org.awb.env.networkModel;
 
+import java.awt.Shape;
+
 /**
  * This class represents a graph edge in an environment model of the type graph / network.
  * 
@@ -40,7 +42,7 @@ public class GraphEdge extends GraphElement {
 	private static final long serialVersionUID = 1043215558300713661L;
 
 	private String componentType;
-	private GraphEdgeShapeConfiguration<?> edgeShapeConfiguration;
+	private GraphEdgeShapeConfiguration<? extends Shape> edgeShapeConfiguration;
 	
 	/**
 	 * Constructor.
@@ -85,7 +87,7 @@ public class GraphEdge extends GraphElement {
 	 * Returns the edge shape configuration for the current edge shape.
 	 * @return the edge shape configuration
 	 */
-	public GraphEdgeShapeConfiguration<?> getEdgeShapeConfiguration() {
+	public GraphEdgeShapeConfiguration<? extends Shape> getEdgeShapeConfiguration() {
 		return edgeShapeConfiguration;
 	}
 	/**
