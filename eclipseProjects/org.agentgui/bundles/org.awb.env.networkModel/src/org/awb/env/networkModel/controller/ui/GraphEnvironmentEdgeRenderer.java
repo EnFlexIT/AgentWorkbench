@@ -39,6 +39,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.geom.QuadCurve2D;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
@@ -331,7 +332,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 		
 		if (isOrthogonal==false && shape instanceof GeneralPath) {
 			// --------------------------------------------
-			// --- The Polyline transformation ------------ 
+			// --- The Polyline transformation ------------
 			// --------------------------------------------
 			GeneralPath gPath = (GeneralPath) shape;
 			GeneralPath gPathNew = new GeneralPath();
@@ -340,6 +341,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 			Point2D panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, startNode.getPosition());
 			gPathNew.moveTo(panelPoint.getX(), panelPoint.getY());
 			
+			// --- Add the intermediate points ------------
 			double[] coords = new double[6];
 			for (PathIterator pIterator = gPath.getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
 
@@ -358,6 +360,22 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 			panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, endNode.getPosition());
 			gPathNew.lineTo(panelPoint.getX(), panelPoint.getY());
 			newShape = gPathNew;
+			
+		} else if (shape instanceof QuadCurve2D) {
+			// --------------------------------------------
+			// --- The QuadCurve2D transformation --------- 
+			// --------------------------------------------
+			QuadCurve2D quadCurve = (QuadCurve2D) shape;
+			QuadCurve2D quadCurveNew = new QuadCurve2D.Double();
+			
+			Point2D panelStartPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, startNode.getPosition());
+			Point2D panelEndPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, endNode.getPosition());
+			
+			Point2D graphControlPoint = getIntermediatePointTransformer().transformToGraphCoordinate(quadCurve.getCtrlPt(), startNode, endNode);
+			Point2D panelControlPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphControlPoint); 
+			
+			quadCurveNew.setCurve(panelStartPoint, panelControlPoint, panelEndPoint);
+			newShape = quadCurveNew;
 			
 		} else {
 			// --------------------------------------------

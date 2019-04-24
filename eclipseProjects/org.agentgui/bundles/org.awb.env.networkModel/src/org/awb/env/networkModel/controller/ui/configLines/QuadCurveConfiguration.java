@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
-import org.awb.env.networkModel.GraphNode;
 
 /**
  * The Class QuadCurveConfiguration.
@@ -21,10 +20,10 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#getShape()
 	 */
 	@Override
-	public QuadCurve2D getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
+	public QuadCurve2D getShape() {
 		if (quadCurve2D==null) {
 			quadCurve2D = new QuadCurve2D.Double(0.0, 0.0, 0.5, 50.0, 1.0, 0.0);
 		}
@@ -44,7 +43,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	 */
 	@Override
 	public List<Point2D> getIntermediatePoints() {
-		QuadCurve2D quadCurve = this.getShape(null, null);
+		QuadCurve2D quadCurve = this.getShape();
 		List<Point2D> interPointList = new ArrayList<>();
 		interPointList.add(new Point2D.Double(quadCurve.getCtrlX(), quadCurve.getCtrlY()));
 		return interPointList;
@@ -56,7 +55,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	public void setIntermediatePoints(List<Point2D> intermediatePointList) {
 		if (intermediatePointList!=null && intermediatePointList.size()>0) {
 			Point2D cp = intermediatePointList.get(0);
-			QuadCurve2D quadCurve = this.getShape(null, null); 
+			QuadCurve2D quadCurve = this.getShape(); 
 			quadCurve.setCurve(quadCurve.getP1(), cp, quadCurve.getP2());
 		}
 	}
@@ -84,7 +83,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	@Override
 	public GraphEdgeShapeConfiguration<QuadCurve2D> getCopy() {
 		QuadCurveConfiguration copy = new QuadCurveConfiguration();
-		copy.setShape((QuadCurve2D) this.getShape(null, null).clone());
+		copy.setShape((QuadCurve2D) this.getShape().clone());
 		return copy;
 	}
 	

@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
-import org.awb.env.networkModel.GraphNode;
 
 /**
  * The Class OrthogonalConfiguration.
@@ -16,27 +15,26 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 
 	private static final long serialVersionUID = -8321682966274257112L;
 	
-	private GeneralPath line;
-	
+	private GeneralPath orthLine;
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
 	 */
 	@Override
-	public GeneralPath getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
-		if (line==null) {
-			line = new GeneralPath();
-			line.moveTo(0.0, 0.0);
-			line.lineTo(1.0, 0.0);
+	public GeneralPath getShape() {
+		if (orthLine==null) {
+			orthLine = new GeneralPath();
+			orthLine.moveTo(0.0, 0.0);
+			orthLine.lineTo(1.0, 0.0);
 		}
-		return line;
+		return orthLine;
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#setShape(java.awt.Shape)
 	 */
 	@Override
 	public void setShape(GeneralPath shape) {
-		// TODO Auto-generated method stub
+		this.orthLine = shape;
 		
 	}
 
@@ -45,7 +43,7 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	 */
 	@Override
 	public List<Point2D> getIntermediatePoints() {
-		// TODO Auto-generated method stub
+		// --- Nothing to do here -----
 		return null;
 	}
 	/* (non-Javadoc)
@@ -53,8 +51,7 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	 */
 	@Override
 	public void setIntermediatePoints(List<Point2D> intermediatePointList) {
-		// TODO Auto-generated method stub
-		
+		// --- Nothing to do here -----
 	}
 	
 	/* (non-Javadoc)
@@ -78,8 +75,9 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	 */
 	@Override
 	public GraphEdgeShapeConfiguration<GeneralPath> getCopy() {
-		// TODO Auto-generated method stub
-		return null;
+		OrthogonalConfiguration copy = new OrthogonalConfiguration();
+		copy.setShape((GeneralPath) this.getShape().clone());
+		return copy;
 	}
 	
 }

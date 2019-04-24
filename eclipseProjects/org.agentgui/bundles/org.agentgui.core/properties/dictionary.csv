@@ -803,6 +803,7 @@ en;;Calculate metrics based on total integrals.;;;
 en;;Calculate the real metrics based on recorded chart value selection.;;;
 en;;Clockwise to X;;;
 en;;Column Headers:;;;
+en;;Configure Graph Edge;;;
 en;;Counterclockwise to X;;;
 en;;Delete MTP security references?;;;
 en;;Delete security store settings;;;

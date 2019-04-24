@@ -39,7 +39,6 @@ import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.Loop;
 
-
 /**
  * The Class GraphEdgeShapeTransformer transforms and thus manages the appearance of each single GraphEdge.
  * Such, can be a Line2D, a QuadCurve2D, a GeneralPath or an Orthogonal connection between two points.
@@ -68,7 +67,7 @@ public class GraphEdgeShapeTransformer<V, E> extends AbstractEdgeShapeTransforme
         	return this.getLoop().transform(context);
         }
         // --- Return the configured edge shape -----------
-        return this.getEdgeShape(graphEdge, graphNodeFrom, graphNodeTo);
+        return this.getEdgeShape(graphEdge);
 	}
 
 	/**
@@ -77,13 +76,13 @@ public class GraphEdgeShapeTransformer<V, E> extends AbstractEdgeShapeTransforme
 	 * @param graphEdge the graph edge
 	 * @return the graph edge shape
 	 */
-	private Shape getEdgeShape(GraphEdge graphEdge, GraphNode graphNodeFrom, GraphNode graphNodeTo) {
+	private Shape getEdgeShape(GraphEdge graphEdge) {
 		// --- By default take the shared line instance ---
 		Shape graphEdgeShape = this.getLine();
 		if (graphEdge.getEdgeShapeConfiguration()!=null) {
 			try {
 				// --- Get the specific edge shape --------
-				graphEdgeShape = graphEdge.getEdgeShapeConfiguration().getShape(graphNodeFrom, graphNodeTo);
+				graphEdgeShape = graphEdge.getEdgeShapeConfiguration().getShape();
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();

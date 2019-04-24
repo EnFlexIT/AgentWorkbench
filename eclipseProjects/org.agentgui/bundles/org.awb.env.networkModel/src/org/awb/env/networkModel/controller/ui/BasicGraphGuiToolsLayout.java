@@ -77,15 +77,15 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
     
     private JToggleButton jToggleButtonLayoutSwitch;
     private JToggleButton jToggleButtonEdgeLine;
+    private JToggleButton jToggleButtonEdgeOrthogonal;
     private JToggleButton jToggleButtonEdgeQuadCurve;
     private JToggleButton jToggleButtonEdgePolyLine;
-    private JToggleButton jToggleButtonEdgeOrthogonal;
     private JToggleButton jToggleButtonEdgeEdit;
 
     private JMenuItem jMenuItemEdgeLine;
+    private JMenuItem jMenuItemEdgeOrthogonal;
     private JMenuItem jMenuItemEdgeQuadCurve;
     private JMenuItem jMenuItemEdgePolyLine;
-    private JMenuItem jMenuItemEdgeOrthogonal;
     private javax.swing.JPopupMenu.Separator separatorAfterEdgeTypeSelection;
     private JMenuItem jMenuItemEdgeEdit;
     private javax.swing.JPopupMenu.Separator separatorAfterEdgeEdit;
@@ -119,9 +119,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		this.addSeparator();
 		
 		this.add(this.getJToggleButtonEdgeLine());
+		this.add(this.getJToggleButtonEdgeOrthogonal());
 		this.add(this.getJToggleButtonEdgeQuadCurve());
 		this.add(this.getJToggleButtonEdgePolyLine());
-		this.add(this.getJToggleButtonEdgeOrthogonal());
 		this.addSeparator();
 		
 		this.add(this.getJToggleButtonEdgeEdit());
@@ -149,6 +149,12 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		}
 		return jToggleButtonEdgeLine;
 	}
+	private JToggleButton getJToggleButtonEdgeOrthogonal() {
+		if (jToggleButtonEdgeOrthogonal == null) {
+			jToggleButtonEdgeOrthogonal = this.basicGraphGuiTools.getNewJToggleButton("EdgeOrthogonal.png", Language.translate("Orthogonal Line Edge", Language.EN), this);
+		}
+		return jToggleButtonEdgeOrthogonal;
+	}
 	private JToggleButton getJToggleButtonEdgeQuadCurve() {
 		if (jToggleButtonEdgeQuadCurve == null) {
 			jToggleButtonEdgeQuadCurve = this.basicGraphGuiTools.getNewJToggleButton("EdgeQuadCurve.png", Language.translate("Quadratic Curve Edge", Language.EN), this);
@@ -161,12 +167,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		}
 		return jToggleButtonEdgePolyLine;
 	}
-	private JToggleButton getJToggleButtonEdgeOrthogonal() {
-		if (jToggleButtonEdgeOrthogonal == null) {
-			jToggleButtonEdgeOrthogonal = this.basicGraphGuiTools.getNewJToggleButton("EdgeOrthogonal.png", Language.translate("Orthogonal Line Edge", Language.EN), this);
-		}
-		return jToggleButtonEdgeOrthogonal;
-	}
+	
 
 	private JToggleButton getJToggleButtonEdgeEdit() {
 		if (jToggleButtonEdgeEdit == null) {
@@ -204,9 +205,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		// --- Enable / disable toggle buttons ----------------------
 		this.getJToggleButtonEdgeLine().setEnabled(enableToggleButtons);
+		this.getJToggleButtonEdgeOrthogonal().setEnabled(enableToggleButtons);
 		this.getJToggleButtonEdgeQuadCurve().setEnabled(enableToggleButtons);
 		this.getJToggleButtonEdgePolyLine().setEnabled(enableToggleButtons);
-		this.getJToggleButtonEdgeOrthogonal().setEnabled(enableToggleButtons);
 		// --- Reset edit button ------------------------------------
 		this.getJToggleButtonEdgeEdit().setEnabled(enableToggleButtons);
 		
@@ -221,12 +222,12 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			if (edgeShape==null) {
 				this.getJToggleButtonEdgeLine().setSelected(true);
 				this.getJToggleButtonEdgeEdit().setEnabled(false); // --- Disable edit button here ---
+			} else if (edgeShape instanceof OrthogonalConfiguration) {
+				this.getJToggleButtonEdgeOrthogonal().setSelected(true);
 			} else if (edgeShape instanceof QuadCurveConfiguration) {
 				this.getJToggleButtonEdgeQuadCurve().setSelected(true);
 			} else if (edgeShape instanceof PolylineConfiguration) {
 				this.getJToggleButtonEdgePolyLine().setSelected(true);
-			} else if (edgeShape instanceof OrthogonalConfiguration) {
-				this.getJToggleButtonEdgeOrthogonal().setSelected(true);
 			}
 		}
 	}
@@ -237,6 +238,12 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			jMenuItemEdgeLine = this.basicGraphGuiTools.getNewJMenuItem(Language.translate("Straight Line Edge", Language.EN), "EdgeLine.png", this);
 		}
 		return jMenuItemEdgeLine;
+	}
+	private JMenuItem getJMenuItemEdgeOrthogonal() {
+		if (jMenuItemEdgeOrthogonal==null) {
+			jMenuItemEdgeOrthogonal = this.basicGraphGuiTools.getNewJMenuItem(Language.translate("Orthogonal Line Edge", Language.EN), "EdgeOrthogonal.png", this);
+		}
+		return jMenuItemEdgeOrthogonal;
 	}
 	private JMenuItem getJMenuItemEdgeQuadCurve() {
 		if (jMenuItemEdgeQuadCurve==null) {
@@ -249,12 +256,6 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			jMenuItemEdgePolyLine = this.basicGraphGuiTools.getNewJMenuItem(Language.translate("Polyline Edge", Language.EN), "EdgePolyline.png", this);
 		}
 		return jMenuItemEdgePolyLine;
-	}
-	private JMenuItem getJMenuItemEdgeOrthogonal() {
-		if (jMenuItemEdgeOrthogonal==null) {
-			jMenuItemEdgeOrthogonal = this.basicGraphGuiTools.getNewJMenuItem(Language.translate("Orthogonal Line Edge", Language.EN), "EdgeOrthogonal.png", this);
-		}
-		return jMenuItemEdgeOrthogonal;
 	}
 	private javax.swing.JPopupMenu.Separator getSeparatorAfterEdgeTypeSelection() {
 		if (separatorAfterEdgeTypeSelection==null) {
@@ -333,9 +334,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		// ----------------------------------------------------------
 		// --- Add the layout menu items ---------------------------- 
 		edgePopUpMenu.add(this.getJMenuItemEdgeLine(), 2);
-		edgePopUpMenu.add(this.getJMenuItemEdgeQuadCurve(), 3);
-		edgePopUpMenu.add(this.getJMenuItemEdgePolyLine(), 4);
-		edgePopUpMenu.add(this.getJMenuItemEdgeOrthogonal(), 5);
+		edgePopUpMenu.add(this.getJMenuItemEdgeOrthogonal(), 3);
+		edgePopUpMenu.add(this.getJMenuItemEdgeQuadCurve(), 4);
+		edgePopUpMenu.add(this.getJMenuItemEdgePolyLine(), 5);
 		edgePopUpMenu.add(this.getSeparatorAfterEdgeTypeSelection(), 6);
 		if (edgeShape!=null) {
 			edgePopUpMenu.add(this.getJMenuItemEdgeEdit(), 7);
@@ -382,6 +383,10 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			// --- Toggle to line edge --------------------			
 			this.setGraphConfiguration(null);
 			
+		} else if (ae.getSource()==this.getJToggleButtonEdgeOrthogonal() || ae.getSource()==this.getJMenuItemEdgeOrthogonal()) {
+			// --- Toggle to orthogonal edge --------------
+			this.setGraphConfiguration(new OrthogonalConfiguration());
+
 		} else if (ae.getSource()==this.getJToggleButtonEdgeQuadCurve() || ae.getSource()==this.getJMenuItemEdgeQuadCurve()) {
 			// --- Toggle to quad curve edge --------------
 			this.setGraphConfiguration(new QuadCurveConfiguration());
@@ -390,9 +395,6 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			// --- Toggle to polyline edge ----------------			
 			this.setGraphConfiguration(new PolylineConfiguration());
 			
-		} else if (ae.getSource()==this.getJToggleButtonEdgeOrthogonal() || ae.getSource()==this.getJMenuItemEdgeOrthogonal()) {
-			// --- Toggle to orthogonal edge --------------
-			this.setGraphConfiguration(new OrthogonalConfiguration());
 			
 		} else if (ae.getSource()==this.getJToggleButtonEdgeEdit()) {
 			// --- Do edge editing (from toolbar) ---------

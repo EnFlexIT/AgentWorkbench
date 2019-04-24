@@ -18,19 +18,15 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	
 	/**
 	 * Returns the actual edge shape.
-	 *
-	 * @param graphNodeFrom the graph node from
-	 * @param graphNodeTo the graph node to
 	 * @return the shape
 	 */
-	public abstract T getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo);
+	public abstract T getShape();
 
 	/**
 	 * Allows to set the actual shape.
 	 * @param shape the new shape
 	 */
 	public abstract void setShape(T shape);
-	
 
 	
 	/**

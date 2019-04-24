@@ -312,10 +312,17 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 */
 	private void createUndoableEditAction() {
 		
+		if (this.confLineEdit==null) return;
+		
+		// --- Clean-up intermediate nodes first ---------- 
 		this.removeIntermediateNodes();
-		System.out.println("[" + this.getClass().getSimpleName() + "] Create undoable action ...");
-		
-		
+	
+		// --- Save the new settings ConfiguredLineEdit --- 
+		this.confLineEdit.setGraphEdgeNew(this.getEditingGraphEdge().getCopy());
+		this.confLineEdit.setGraphNodeNewFrom(this.getGraphNodeStart().getCopy());
+		this.confLineEdit.setGraphNodeNewTo(this.getGraphNodeEnd().getCopy());
+
+		this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setConfiguredLineEdit(this.getVisViewer(), this.confLineEdit);
 	}
 	
 	
@@ -563,7 +570,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				Object infoObject = nmNotification.getInfoObject();
 				if (infoObject!=null && infoObject instanceof ConfiguredLineEdit) {
 					// --- Finalize edit first ---------------------- 
-					this.createUndoableEditAction();
+					if (this.confLineEdit!=null) {
+						this.createUndoableEditAction();
+					}
 					// --- Set new current edit description ---------
 					this.confLineEdit = (ConfiguredLineEdit) nmNotification.getInfoObject();
 					this.resetEditingGraphElements();

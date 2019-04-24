@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
-import org.awb.env.networkModel.GraphNode;
 
 /**
  * The Class PolyLineConfiguration.
@@ -22,18 +21,17 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#getShape()
 	 */
 	@Override
-	public GeneralPath getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
+	public GeneralPath getShape() {
 		if (generalPath==null) {
 			generalPath = new GeneralPath();
-			// --- Set default parameter ----
 			generalPath.moveTo(0.0d, 0.0d);
-			generalPath.lineTo(0.2d, 0.3d);
-			generalPath.lineTo(0.3d, 50.3d);
-			generalPath.lineTo(0.5d, -50.5d);
-			generalPath.lineTo(0.8d, 40.3d);
+			generalPath.lineTo(0.2d, 5.0d);
+			generalPath.lineTo(0.4d, 15.0d);
+			generalPath.lineTo(0.6d, 15.0d);
+			generalPath.lineTo(0.8d, 5.0d);
 			generalPath.lineTo(1.0d, 0.0d);
 		}
 		return generalPath;
@@ -56,7 +54,7 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		List<Point2D> intPointList = new ArrayList<>();
 		
 		double[] coords = new double[6];
-		for (PathIterator pIterator = this.getShape(null, null).getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
+		for (PathIterator pIterator = this.getShape().getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
 
 			pIterator.currentSegment(coords);
 			double xCoord = coords[0];
@@ -108,8 +106,9 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	 */
 	@Override
 	public GraphEdgeShapeConfiguration<GeneralPath> getCopy() {
-		// TODO Auto-generated method stub
-		return null;
+		PolylineConfiguration copy = new PolylineConfiguration();
+		copy.setShape((GeneralPath) this.getShape().clone());
+		return copy;
 	}
 
 	

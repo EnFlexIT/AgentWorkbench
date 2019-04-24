@@ -385,7 +385,17 @@ public class NetworkModelUndoManager {
 	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions) {
 		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, visViewer, nodesMovedOldPositions));
 	}
-	
+
+	/**
+	 * Sets a {@link ConfiguredLineEdit} to the undo manager.
+	 *
+	 * @param configuredLineEdit the new configured line edit
+	 * @param visViewer the vis viewer
+	 */
+	public void setConfiguredLineEdit(VisualizationViewer<GraphNode,GraphEdge> visViewer, ConfiguredLineEdit configuredLineEdit) {
+		this.getUndoManager().addEdit(new ConfiguredLineEditAction(this.graphController, visViewer, configuredLineEdit));
+	}
+
 	/**
 	 * Sets a paste action to the undo manager.
 	 * @param networkModelPasted the network model pasted
@@ -393,5 +403,6 @@ public class NetworkModelUndoManager {
 	public void pasteNetworkModel(NetworkModel networkModelPasted) {
 		this.getUndoManager().addEdit(new PasteNetworkModel(this.graphController, networkModelPasted));
 	}
+
 
 }
