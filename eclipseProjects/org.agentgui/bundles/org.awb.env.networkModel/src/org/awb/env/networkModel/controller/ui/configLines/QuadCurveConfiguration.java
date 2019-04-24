@@ -19,9 +19,6 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	
 	private QuadCurve2D quadCurve2D;
 	
-	private double xControlPoint = 0.5;
-	private double yControlPoint = 50.0;
-	
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
@@ -29,9 +26,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	@Override
 	public QuadCurve2D getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
 		if (quadCurve2D==null) {
-			quadCurve2D = new QuadCurve2D.Double();
-			// --- Set default parameter ----
-			quadCurve2D.setCurve(0.0, 0.0, this.xControlPoint, this.yControlPoint, 1.0, 0.0);
+			quadCurve2D = new QuadCurve2D.Double(0.0, 0.0, 0.5, 50.0, 1.0, 0.0);
 		}
 		return quadCurve2D;
 	}
@@ -49,8 +44,9 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	 */
 	@Override
 	public List<Point2D> getIntermediatePoints() {
+		QuadCurve2D quadCurve = this.getShape(null, null);
 		List<Point2D> interPointList = new ArrayList<>();
-		interPointList.add(new Point2D.Double(this.xControlPoint, this.yControlPoint));
+		interPointList.add(new Point2D.Double(quadCurve.getCtrlX(), quadCurve.getCtrlY()));
 		return interPointList;
 	}
 	/* (non-Javadoc)

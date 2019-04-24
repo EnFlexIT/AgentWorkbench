@@ -106,12 +106,10 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
 /**
@@ -128,6 +126,9 @@ import edu.uci.ics.jung.visualization.renderers.Checkmark;
 public class BasicGraphGui extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 5764679914667183305L;
+	
+	public static final float SCALE_FACTOR_IN = 1.1f;
+	public static final float SCALE_FACTOR_OUT = 1.0f / 1.1f;
 	
 	/**
 	 * The enumeration ToolBarType describes the toolbar type available in the {@link BasicGraphGui}.
@@ -159,6 +160,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	
 	/** The GUI's main component, either the graph visualization, or an empty JPanel if no graph is loaded */
 	private GraphZoomScrollPane graphZoomScrollPane;
+	
 	/** The ToolBar for this component */
 	private BasicGraphGuiTools graphGuiTools;
 	private JPanel jPanelToolBarsWest;
@@ -174,7 +176,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
 	
 	/** JUNG object handling zooming */
-	private ScalingControl scalingControl;
+	private CrossoverScalingControl scalingControl;
 	
 	/** the margin of the graph for the visualization */
 	private double graphMargin = 25;
@@ -381,7 +383,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> getGraphMouse4Transforming() {
 		if (graphMouse4Transforming == null) {
-			graphMouse4Transforming = new DefaultModalGraphMouse<GraphNode, GraphEdge>(1/1.1f, 1.1f);
+			graphMouse4Transforming = new DefaultModalGraphMouse<GraphNode, GraphEdge>(SCALE_FACTOR_OUT, SCALE_FACTOR_IN);
 		}
 		return graphMouse4Transforming;
 	}
@@ -511,6 +513,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 		return graphZoomScrollPane;
 	}
+	
 	/**
 	 * Gets the VisualizationViewer
 	 * @return The VisualizationViewer
@@ -535,7 +538,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
 			
 			// --- Set the pick size of the visualization viewer --------------
-			((ShapePickSupport<GraphNode, GraphEdge>) visView.getPickSupport()).setPickSize(5);
+			visView.setPickSupport(new GraphEnvironmentShapePickSupport(visView, 5));
 			
 			// --- Add an item listener for pickings --------------------------
 			visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
@@ -1270,12 +1273,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 	
 	/**
-	 * Gets the scaling control.
+	 * Returns the scaling control.
 	 * @return the scalingControl
 	 */
-	private ScalingControl getScalingControl() {
+	public CrossoverScalingControl getScalingControl() {
 		if (scalingControl==null) {
 			scalingControl = new CrossoverScalingControl();
+			scalingControl.setCrossover(1.0);
 		}
 		return scalingControl;
 	}
@@ -1397,7 +1401,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- Set dimension and create a new SatelliteVisualizationViewer ----
 			visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getDimensionOfSatelliteVisualizationViewer());
 			visViewSatellite.scaleToLayout(this.getScalingControl());
-			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(1/1.1f, 1.1f));
+			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(SCALE_FACTOR_OUT, SCALE_FACTOR_IN));
 			
 			// --- Configure the node shape and size ------------------------------
 			visViewSatellite.getRenderContext().setVertexShapeTransformer(this.getVisualizationViewer().getRenderContext().getVertexShapeTransformer());
@@ -1580,11 +1584,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
-				this.getScalingControl().scale(this.getVisualizationViewer(), 1.1f, this.getDefaultScaleAtPoint());
+				this.getScalingControl().scale(this.getVisualizationViewer(), SCALE_FACTOR_IN, this.getDefaultScaleAtPoint());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
-				this.getScalingControl().scale(this.getVisualizationViewer(), 1 / 1.1f, this.getDefaultScaleAtPoint());
+				this.getScalingControl().scale(this.getVisualizationViewer(), SCALE_FACTOR_OUT, this.getDefaultScaleAtPoint());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_ExportGraphAsImage:

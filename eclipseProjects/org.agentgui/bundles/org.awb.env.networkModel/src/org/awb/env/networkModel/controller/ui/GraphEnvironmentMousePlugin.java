@@ -67,9 +67,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
@@ -101,11 +99,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	private Vector<GraphNode> nodesMoved = new Vector<GraphNode>();
 	private HashMap<String, Point2D> nodesMovedOldPositions;
 	
-	private boolean zoomAtMouse = true;
-    private ScalingControl scaler = new CrossoverScalingControl();
-	protected float in = 1.1f;
-	protected float out = 1/1.1f;
-	
+
 	/**
 	 * Constructor.
 	 * @param basicGraphGui the BasicGraphGui
@@ -502,25 +496,12 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	public void mouseWheelMoved(MouseWheelEvent me) {
 
 		Point2D mouse = me.getPoint();
-		Point2D center = this.getVisViewer().getCenter();
-		int amount = me.getWheelRotation();
-         
-		if(zoomAtMouse) {
-			if(amount > 0) {
-				scaler.scale(this.getVisViewer(), out, mouse);
-			} else if(amount < 0) {
-				scaler.scale(this.getVisViewer(), in, mouse);
-			}
-			
+		if(me.getWheelRotation()>0) {
+			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_OUT, mouse);
 		} else {
-			if(amount > 0) {
-				scaler.scale(this.getVisViewer(), out, center);
-			} else if(amount < 0) {
-				scaler.scale(this.getVisViewer(), in, center);
-			}
-         }
-         me.consume();
-		
+			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_IN, mouse);
+		}
+		me.consume();
 	}
 
 	/* (non-Javadoc)

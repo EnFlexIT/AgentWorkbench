@@ -23,11 +23,17 @@ public class IntermediatePointTransformer {
 	 */
 	public Point2D transformToGraphCoordinate(Point2D intCoordinate, GraphNode startNode, GraphNode endNode) {
 		
-		double baselineGradient = this.getBaselineAngle(startNode, endNode);
-		double c2LengthOfC1x = this.getC2LengthOfC1x(intCoordinate.getX(), startNode, endNode);
+		// --- Linear function between start and end node -----------
+		double a1 = (endNode.getPosition().getY() - startNode.getPosition().getY()) / (endNode.getPosition().getX() - startNode.getPosition().getX());
+		double b1 = startNode.getPosition().getY() - (a1 * startNode.getPosition().getX());
 		
-		double xC2 = (-intCoordinate.getY() * Math.sin(baselineGradient)) + (startNode.getPosition().getX() + (c2LengthOfC1x * Math.cos(baselineGradient)));
-		double yC2 = ( intCoordinate.getY() * Math.cos(baselineGradient)) + (startNode.getPosition().getY() + (c2LengthOfC1x * Math.sin(baselineGradient)));
+		double xCross = startNode.getPosition().getX() + ((endNode.getPosition().getX() - startNode.getPosition().getX()) * intCoordinate.getX());  
+		double yCross = a1 * xCross + b1;
+		
+		double baselineAngle = this.getBaselineAngle(startNode, endNode);
+		double negativeGradient = Math.signum(endNode.getPosition().getX() - startNode.getPosition().getX());
+		double xC2 = xCross - intCoordinate.getY() * Math.sin(baselineAngle) * negativeGradient;
+		double yC2 = yCross + intCoordinate.getY() * Math.cos(baselineAngle) * negativeGradient;
 		
 		return new Point2D.Double(xC2, yC2);
 	}
@@ -43,26 +49,34 @@ public class IntermediatePointTransformer {
 	 */
 	public Point2D transformToIntermediateCoordinate(Point2D graphCoordinate, GraphNode startNode, GraphNode endNode) {
 		
+		// ----------------------------------------------------------
+		// --- Basically, we deal with two linear functions here! ---
+		// ----------------------------------------------------------
+		
+		// --- Calculate gradients ----------------------------------
 		double a1 = (endNode.getPosition().getY() - startNode.getPosition().getY()) / (endNode.getPosition().getX() - startNode.getPosition().getX());
 		double a2 = Math.tan(Math.atan(a1) + Math.PI /2.0);
 
+		// --- Calculate absolute terms -----------------------------
 		double b1 = startNode.getPosition().getY() - (a1 * startNode.getPosition().getX()); 
 		double b2 = graphCoordinate.getY() - (a2 * graphCoordinate.getX());
 		
+		// --- Calculate their intersection -------------------------
 		double xCross = (b2-b1) / (a1-a2);
 		double yCross = a1 * xCross + b1;
 		
-		double xCrossDirection = 1.0;
-		if (startNode.getPosition().getX()>xCross) xCrossDirection = -1.0;
-
+		// --- Determine positive or negative direction -------------
+		double xCrossDirection = Math.signum(xCross - startNode.getPosition().getX());
+		// --- Calculate distance between start point and xCross ----
 		double c2LengthOfxCross = xCrossDirection * Math.sqrt(Math.pow(xCross - startNode.getPosition().getX(), 2) + Math.pow(yCross - startNode.getPosition().getY(), 2)); 
+		// --- Get distance between start and end node --------------
 		double c2LengthOfC1x = this.getC2LengthOfC1x(1.0, startNode, endNode);
 
-		
+		// --- Check y direction in C1 coordinate system ------------ 
 		double b1GraphCoordinate = graphCoordinate.getY() - (a1 * graphCoordinate.getX());
-		double yC1Direction = 1.0;
-		if (b1GraphCoordinate < b1) yC1Direction = -1.0; 
+		double yC1Direction = Math.signum(b1GraphCoordinate - b1);
 
+		// --- Calculate position in coordinate system C1 -----------
 		double xC1 = c2LengthOfxCross / c2LengthOfC1x;
 		double yC1 = yC1Direction * Math.sqrt(Math.pow(graphCoordinate.getX() - xCross, 2) + Math.pow(graphCoordinate.getY() - yCross, 2));
 		
@@ -94,7 +108,9 @@ public class IntermediatePointTransformer {
 	private double getBaselineAngle(GraphNode startNode, GraphNode endNode) {
 		double gk = endNode.getPosition().getY() - startNode.getPosition().getY();
 		double ak = endNode.getPosition().getX() - startNode.getPosition().getX();
-		return Math.atan(gk/ak);
+		double angle = Math.atan(gk/ak);
+		if (angle<0) angle = angle + 2*Math.PI;
+		return angle;
 	}
 	
 }

@@ -1,6 +1,6 @@
 package org.awb.env.networkModel.controller.ui.configLines;
 
-import java.awt.geom.Line2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.List;
 
@@ -12,20 +12,22 @@ import org.awb.env.networkModel.GraphNode;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<Line2D> {
+public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<GeneralPath> {
 
 	private static final long serialVersionUID = -8321682966274257112L;
 	
-	private Line2D line;
+	private GeneralPath line;
 	
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
 	 */
 	@Override
-	public Line2D getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
+	public GeneralPath getShape(GraphNode graphNodeFrom, GraphNode graphNodeTo) {
 		if (line==null) {
-			line = new Line2D.Double(0.0, 0.0, 1.0, 0.0);
+			line = new GeneralPath();
+			line.moveTo(0.0, 0.0);
+			line.lineTo(1.0, 0.0);
 		}
 		return line;
 	}
@@ -33,7 +35,7 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<Line2D>
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#setShape(java.awt.Shape)
 	 */
 	@Override
-	public void setShape(Line2D shape) {
+	public void setShape(GeneralPath shape) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -75,7 +77,7 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<Line2D>
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
 	 */
 	@Override
-	public GraphEdgeShapeConfiguration<Line2D> getCopy() {
+	public GraphEdgeShapeConfiguration<GeneralPath> getCopy() {
 		// TODO Auto-generated method stub
 		return null;
 	}

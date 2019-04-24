@@ -274,6 +274,14 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     			this.fillComboBoxModel();
     			break;
 				
+    		case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
+    			this.getJComboBoxLayout().setEnabled(false);
+    			break;
+
+    		case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
+    			this.getJComboBoxLayout().setEnabled(true);
+    			break;
+    			
 			default:
 				break;
 			}

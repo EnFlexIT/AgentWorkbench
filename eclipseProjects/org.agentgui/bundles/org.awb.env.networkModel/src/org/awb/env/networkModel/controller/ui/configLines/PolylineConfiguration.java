@@ -1,7 +1,9 @@
 package org.awb.env.networkModel.controller.ui.configLines;
 
 import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
@@ -27,12 +29,12 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		if (generalPath==null) {
 			generalPath = new GeneralPath();
 			// --- Set default parameter ----
-			generalPath.moveTo(0.0f, 0.0f);
-			generalPath.lineTo(0.2f, 0.3f);
-			generalPath.lineTo(0.3f, 50.3f);
-			generalPath.lineTo(0.5f, -50.5f);
-			generalPath.lineTo(0.8f, 40.3f);
-			generalPath.lineTo(1.0f, 0.0f);
+			generalPath.moveTo(0.0d, 0.0d);
+			generalPath.lineTo(0.2d, 0.3d);
+			generalPath.lineTo(0.3d, 50.3d);
+			generalPath.lineTo(0.5d, -50.5d);
+			generalPath.lineTo(0.8d, 40.3d);
+			generalPath.lineTo(1.0d, 0.0d);
 		}
 		return generalPath;
 	}
@@ -50,15 +52,37 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	 */
 	@Override
 	public List<Point2D> getIntermediatePoints() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Point2D> intPointList = new ArrayList<>();
+		
+		double[] coords = new double[6];
+		for (PathIterator pIterator = this.getShape(null, null).getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
+
+			pIterator.currentSegment(coords);
+			double xCoord = coords[0];
+			double yCoord = coords[1];
+			
+			if (! (xCoord==0.0 && yCoord==0.0 || xCoord==1.0 && yCoord==0.0)) {
+				intPointList.add(new Point2D.Double(xCoord, yCoord)); 
+			}
+		}
+		return intPointList;
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#setIntermediatePoints(java.util.List)
 	 */
 	@Override
 	public void setIntermediatePoints(List<Point2D> intermediatePointList) {
-		// TODO Auto-generated method stub
+		
+		GeneralPath gp = new GeneralPath();
+		gp.moveTo(0.0d,  0.0d);
+		
+		for (int i = 0; i < intermediatePointList.size(); i++) {
+			Point2D intNodePoint = intermediatePointList.get(i);
+			gp.lineTo(intNodePoint.getX(), intNodePoint.getY());
+		}
+		gp.lineTo(1.0d, 0.0d);
+		this.setShape(gp);
 		
 	}
 	

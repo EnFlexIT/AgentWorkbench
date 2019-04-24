@@ -37,9 +37,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
@@ -68,11 +66,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
 	private GraphNode graphNodeMoved;
 	
-	private boolean zoomAtMouse = true;
-    private ScalingControl scaler = new CrossoverScalingControl();
-	protected float in = 1.1f;
-	protected float out = 1/1.1f;
-	
 	private ConfiguredLineEdit confLineEdit;
 	private GraphNode graphNodeStart;
 	private GraphNode graphNodeEnd;
@@ -80,7 +73,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	private GraphEdgeShapeConfiguration<? extends Shape> shapeConfiguration;
 	
 	private List<GraphNode> intGraphNodes;
-	
 	
 	
 	/**
@@ -244,6 +236,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				this.getIntermediateGraphNodes().add(intNode);
 				
 			}
+			this.getVisViewer().repaint();
 		}
 	}
 	/**
@@ -254,6 +247,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			this.getGraphController().getNetworkModel().getGraph().removeVertex(this.getIntermediateGraphNodes().get(i));
 		}
 		this.getIntermediateGraphNodes().clear();
+		this.getVisViewer().repaint();
 	}
 	
 	/**
@@ -466,7 +460,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 						GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
 						Point2D newIntNodePosition = this.getIntermediatePointTransformer().transformToGraphCoordinate(pointList.get(i), this.getGraphNodeStart(), this.getGraphNodeEnd());
 						intGraphNode.setPosition(newIntNodePosition);
-						this.getVisViewer().getGraphLayout().setLocation(intGraphNode, newIntNodePosition);
+						this.getVisViewer().getGraphLayout().setLocation(intGraphNode, this.getGraphNodePositionTransformer().transform(newIntNodePosition));
 					}
 				}
 				pickedNode.setPosition(newPos);
@@ -485,7 +479,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	
 		if (locked == false) {
             VisualizationViewer<GraphNode,GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
-            if(vertex != null) {
+            if (vertex!=null) {
                 Point p = me.getPoint();
                 Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
                 Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
@@ -546,25 +540,12 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	public void mouseWheelMoved(MouseWheelEvent me) {
 
 		Point2D mouse = me.getPoint();
-		Point2D center = this.getVisViewer().getCenter();
-		int amount = me.getWheelRotation();
-         
-		if(zoomAtMouse) {
-			if(amount > 0) {
-				scaler.scale(this.getVisViewer(), out, mouse);
-			} else if(amount < 0) {
-				scaler.scale(this.getVisViewer(), in, mouse);
-			}
-			
+		if(me.getWheelRotation()>0) {
+			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_OUT, mouse);
 		} else {
-			if(amount > 0) {
-				scaler.scale(this.getVisViewer(), out, center);
-			} else if(amount < 0) {
-				scaler.scale(this.getVisViewer(), in, center);
-			}
-         }
-         me.consume();
-		
+			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_IN, mouse);
+		}
+		me.consume();
 	}
 
 	
