@@ -169,7 +169,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
             xform.translate(0, -edgeShape.getBounds2D().getWidth()/2);
             
         } else if (isOrthogonal==true) {
-            edgeShape = getGeneralPathForOrthogonalConnecction(rc, layout, edge, x1, y1, x2, y2);
+            edgeShape = getGeneralPathForOrthogonalConnection(rc, layout, edge, x1, y1, x2, y2);
         	
         } else {
             // this is a normal edge. Rotate it to the angle between
@@ -404,13 +404,13 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param rc the RenderContext
 	 * @param layout the layout
 	 * @param edge the edge
-	 * @param x1 the x 1
-	 * @param y1 the y 1
-	 * @param x2 the x 2
-	 * @param y2 the y 2
+	 * @param x1 the x1
+	 * @param y1 the y1
+	 * @param x2 the x2
+	 * @param y2 the y2
 	 * @return the general path for orthogonal connection
 	 */
-	public static GeneralPath getGeneralPathForOrthogonalConnecction(RenderContext<GraphNode, GraphEdge> rc, Layout<GraphNode, GraphEdge> layout, GraphEdge edge, float x1, float y1, float x2, float y2) {
+	public static GeneralPath getGeneralPathForOrthogonalConnection(RenderContext<GraphNode, GraphEdge> rc, Layout<GraphNode, GraphEdge> layout, GraphEdge edge, float x1, float y1, float x2, float y2) {
 		
         Graph<GraphNode, GraphEdge> graph = layout.getGraph();
         
@@ -427,34 +427,76 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 
         GeneralPath gp = new GeneralPath();
         gp.moveTo(0, 0);// the xform will do the translation to x1,y1
-        if(x1 > x2) {
-        	if(y1 > y2) {
-        		gp.lineTo(0, index);
-        		gp.lineTo(dx-index, index);
-        		gp.lineTo(dx-index, dy);
-        		gp.lineTo(dx, dy);
-        	} else {
-        		gp.lineTo(0, -index);
-        		gp.lineTo(dx-index, -index);
-        		gp.lineTo(dx-index, dy);
-        		gp.lineTo(dx, dy);
-        	}
+        
+        boolean isFirstMoveInY = false;
+        if (edge.getEdgeShapeConfiguration()!=null && edge.getEdgeShapeConfiguration() instanceof OrthogonalConfiguration) {
+        	OrthogonalConfiguration orthConfig = (OrthogonalConfiguration) edge.getEdgeShapeConfiguration();
+        	isFirstMoveInY = orthConfig.isFirstMoveInY();
+        }
+        
+        if (isFirstMoveInY==false) {
+        	// ------------------------------------------------------
+        	// --- The regular case to first move in x-direction ----
+        	// ------------------------------------------------------
+        	if(x1 > x2) {
+            	if(y1 > y2) {
+            		gp.lineTo(0, index);
+            		gp.lineTo(dx-index, index);
+            		gp.lineTo(dx-index, dy);
+            		gp.lineTo(dx, dy);
+            	} else {
+            		gp.lineTo(0, -index);
+            		gp.lineTo(dx-index, -index);
+            		gp.lineTo(dx-index, dy);
+            		gp.lineTo(dx, dy);
+            	}
+
+            } else {
+            	if(y1 > y2) {
+            		gp.lineTo(0, index);
+            		gp.lineTo(dx+index, index);
+            		gp.lineTo(dx+index, dy);
+            		gp.lineTo(dx, dy);
+            		
+            	} else {
+            		gp.lineTo(0, -index);
+            		gp.lineTo(dx+index, -index);
+            		gp.lineTo(dx+index, dy);
+            		gp.lineTo(dx, dy);
+            	}
+            }
 
         } else {
-        	if(y1 > y2) {
-        		gp.lineTo(0, index);
-        		gp.lineTo(dx+index, index);
-        		gp.lineTo(dx+index, dy);
-        		gp.lineTo(dx, dy);
-        		
-        	} else {
-        		gp.lineTo(0, -index);
-        		gp.lineTo(dx+index, -index);
-        		gp.lineTo(dx+index, dy);
-        		gp.lineTo(dx, dy);
-        		
-        	}
-        	
+        	// ------------------------------------------------------
+        	// --- The case to first move in y-direction ------------
+        	// ------------------------------------------------------
+        	if(x1 > x2) {
+            	if(y1 > y2) {
+            		gp.lineTo(index, 0);
+            		gp.lineTo(index, dy-index);
+            		gp.lineTo(dx, dy-index);
+            		gp.lineTo(dx, dy);
+            	} else {
+            		gp.lineTo(-index, 0);
+            		gp.lineTo(index, dy-index);
+            		gp.lineTo(dx, dy-index);
+            		gp.lineTo(dx, dy);
+            	}
+
+            } else {
+            	if(y1 > y2) {
+            		gp.lineTo(index, 0);
+            		gp.lineTo(index, dy+index);
+            		gp.lineTo(dx, dy+index);
+            		gp.lineTo(dx, dy);
+            		
+            	} else {
+            		gp.lineTo(-index, 0);
+            		gp.lineTo(-index, dy+index);
+            		gp.lineTo(dx, dy+index);
+            		gp.lineTo(dx, dy);
+            	}
+            }
         }
         return gp;
 	}

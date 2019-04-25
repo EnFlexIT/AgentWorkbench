@@ -224,6 +224,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 				this.getJToggleButtonEdgeEdit().setEnabled(false); // --- Disable edit button here ---
 			} else if (edgeShape instanceof OrthogonalConfiguration) {
 				this.getJToggleButtonEdgeOrthogonal().setSelected(true);
+				this.getJToggleButtonEdgeEdit().setEnabled(false); // --- Disable edit button here ---
 			} else if (edgeShape instanceof QuadCurveConfiguration) {
 				this.getJToggleButtonEdgeQuadCurve().setSelected(true);
 			} else if (edgeShape instanceof PolylineConfiguration) {
@@ -300,7 +301,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		// ----------------------------------------------------------
 		// --- Check if further items are allowed -------------------
-		if (graphEdge==null) return;
+		if (graphEdge==null || this.isVisible()==false) return;
 		
 		boolean isConfigurableLine = this.getLayoutSettingEdgeShape()==EdgeShape.ConfigurableLine;
 		if (isConfigurableLine==false) return;
@@ -320,14 +321,14 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		// --- Finally, set the highlight font --
 		this.editGraphEdge = graphEdge;
-		GraphEdgeShapeConfiguration<?> edgeShape = this.editGraphEdge .getEdgeShapeConfiguration();
-		if (edgeShape==null) {
+		GraphEdgeShapeConfiguration<?> edgeShapeConfiguration = this.editGraphEdge .getEdgeShapeConfiguration();
+		if (edgeShapeConfiguration==null) {
 			this.getJMenuItemEdgeLine().setFont(boldFont);
-		} else if (edgeShape instanceof QuadCurveConfiguration) {
+		} else if (edgeShapeConfiguration instanceof QuadCurveConfiguration) {
 			this.getJMenuItemEdgeQuadCurve().setFont(boldFont);
-		} else if (edgeShape instanceof PolylineConfiguration) {
+		} else if (edgeShapeConfiguration instanceof PolylineConfiguration) {
 			this.getJMenuItemEdgePolyLine().setFont(boldFont);
-		} else if (edgeShape instanceof OrthogonalConfiguration) {
+		} else if (edgeShapeConfiguration instanceof OrthogonalConfiguration) {
 			this.getJMenuItemEdgeOrthogonal().setFont(boldFont);
 		}
 		
@@ -338,7 +339,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		edgePopUpMenu.add(this.getJMenuItemEdgeQuadCurve(), 4);
 		edgePopUpMenu.add(this.getJMenuItemEdgePolyLine(), 5);
 		edgePopUpMenu.add(this.getSeparatorAfterEdgeTypeSelection(), 6);
-		if (edgeShape!=null) {
+		if (edgeShapeConfiguration!=null && !(edgeShapeConfiguration instanceof OrthogonalConfiguration)) {
 			edgePopUpMenu.add(this.getJMenuItemEdgeEdit(), 7);
 			edgePopUpMenu.add(this.getSeparatorAfterEdgeEdit(), 8);
 		}
@@ -445,7 +446,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, true);
 		
 		// --- Enable edge edit -----------------------------------------------
-		boolean isEnableEdgeEdit = (edgeShapeConfiguration!=null);
+		boolean isEnableEdgeEdit = (edgeShapeConfiguration!=null && !(edgeShapeConfiguration instanceof OrthogonalConfiguration));
 		this.getJToggleButtonEdgeEdit().setEnabled(isEnableEdgeEdit);
 		this.switchEdgeEdit(isEnableEdgeEdit, initialConfLineEdit);
 		
@@ -464,12 +465,12 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			initialConfLineEdit = this.getInitialConfiguredLineEdit();
 		}
 		
-		if (isStartEdit==true) {
-			// --- Start edge editing ---------------------------------------------------
-			if (this.getJToggleButtonEdgeEdit().isSelected()==false) this.getJToggleButtonEdgeEdit().setSelected(true);
-			this.graphController.getNetworkModelUndoManager().setGraphMouseEdgeEditing(initialConfLineEdit);
-		} else {
-			// --- Stop edge editing ----------------------------------------------------
+		// --- Notify about edge editing ------------------------------------------------
+		if (this.getJToggleButtonEdgeEdit().isSelected()==false) this.getJToggleButtonEdgeEdit().setSelected(true);
+		this.graphController.getNetworkModelUndoManager().setGraphMouseEdgeEditing(initialConfLineEdit);
+		
+		// --- Stop edge editing? -------------------------------------------------------
+		if (isStartEdit==false) {
 			if (this.getJToggleButtonEdgeEdit().isSelected()==true) this.getJToggleButtonEdgeEdit().setSelected(false);
 			this.graphController.getNetworkModelUndoManager().setGraphMousePicking();
 		}

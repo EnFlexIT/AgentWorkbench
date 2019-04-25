@@ -101,6 +101,30 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		// TODO Auto-generated method stub
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject==null || !(compareObject instanceof PolylineConfiguration)) return false;
+		
+		// --- Get the compare object ---------------------
+		PolylineConfiguration comparePolyConfig = (PolylineConfiguration) compareObject;
+		// --- Get intermediate points --------------------
+		List<Point2D> compaIntPoints = comparePolyConfig.getIntermediatePoints();
+		List<Point2D> localIntPoints = this.getIntermediatePoints();
+		// --- Check number of intermediate points --------
+		if (compaIntPoints.size()!=localIntPoints.size()) return false;
+		
+		for (int i = 0; i < localIntPoints.size(); i++) {
+			Point2D localPoint2D = localIntPoints.get(i);
+			Point2D compaPoint2D = compaIntPoints.get(i);
+			if (localPoint2D.equals(compaPoint2D)==false) return false;
+		}
+		return true;
+	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
 	 */

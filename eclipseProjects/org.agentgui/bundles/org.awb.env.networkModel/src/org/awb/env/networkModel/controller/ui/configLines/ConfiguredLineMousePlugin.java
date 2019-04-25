@@ -214,7 +214,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		
 		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		GraphElementLayout layoutStartNode = this.getGraphNodeStart().getGraphElementLayout(networkModel);
+		
 		// --- Get the intermediate points ----------------
+		if (this.getShapeConfiguration()==null) return;
 		List<Point2D> intermediatePointList = this.getShapeConfiguration().getIntermediatePoints();
 		if (intermediatePointList!=null) {
 			for (int i = 0; i < intermediatePointList.size(); i++) {
@@ -316,7 +318,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		
 		// --- Clean-up intermediate nodes first ---------- 
 		this.removeIntermediateNodes();
-	
+		// --- Check for changes --------------------------
+		if (this.isChangedConfiguration()==false) return;
+
 		// --- Save the new settings ConfiguredLineEdit --- 
 		this.confLineEdit.setGraphEdgeNew(this.getEditingGraphEdge().getCopy());
 		this.confLineEdit.setGraphNodeNewFrom(this.getGraphNodeStart().getCopy());
@@ -325,6 +329,35 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setConfiguredLineEdit(this.getVisViewer(), this.confLineEdit);
 	}
 	
+	/**
+	 * Checks for a changed configuration.
+	 * @return true, if is changed configuration
+	 */
+	private boolean isChangedConfiguration() {
+		
+		if (this.confLineEdit!=null) {
+			
+			Point2D startPointNow = this.getGraphNodeStart().getPosition();
+			Point2D startPointOld = this.confLineEdit.getGraphNodeOldFrom().getPosition();
+			if (startPointNow.equals(startPointOld)==false) return true;
+			
+			Point2D endPointNow = this.getGraphNodeEnd().getPosition();
+			Point2D endPointOld = this.confLineEdit.getGraphNodeOldTo().getPosition();
+			if (endPointNow.equals(endPointOld)==false) return true;
+			
+			GraphEdgeShapeConfiguration<? extends Shape> shapeConfigNow = this.getShapeConfiguration();
+			GraphEdgeShapeConfiguration<? extends Shape> shapeConfigOld = this.confLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration();
+			
+			if (shapeConfigNow==null & shapeConfigOld==null ) {
+				// --- Nothing to do here -------
+			} else if (shapeConfigNow==null & shapeConfigOld!=null || shapeConfigNow!=null & shapeConfigOld==null) {
+				return true;
+			} else if (shapeConfigNow.equals(shapeConfigOld)==false) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mousePressed(java.awt.event.MouseEvent)
@@ -569,12 +602,12 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				// --- Get reminder for initial setting ------------- 
 				Object infoObject = nmNotification.getInfoObject();
 				if (infoObject!=null && infoObject instanceof ConfiguredLineEdit) {
-					// --- Finalize edit first ---------------------- 
-					if (this.confLineEdit!=null) {
-						this.createUndoableEditAction();
+					// --- Finalize last edit first ----------------- 
+					if (this.confLineEdit==null) {
+						// --- Set new current edit description -----
+						this.confLineEdit = (ConfiguredLineEdit) nmNotification.getInfoObject();
 					}
-					// --- Set new current edit description ---------
-					this.confLineEdit = (ConfiguredLineEdit) nmNotification.getInfoObject();
+					// --- Reset the editing graph elements --------- 
 					this.resetEditingGraphElements();
 					// --- Set intermediate nodes -------------------
 					this.addIntermediateNodes();
@@ -583,7 +616,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
 				// --- Edit finished, finalize edit description -----
-				this.createUndoableEditAction();	
+				this.createUndoableEditAction();
+				this.resetEditingGraphElements();
+				this.confLineEdit = null;
 				break;
 			}
 		}

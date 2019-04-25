@@ -147,7 +147,7 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 		    xform.translate(0, -edgeShape.getBounds2D().getHeight()/2);
 		    
         } else if (isOrthogonal==true) {
-            edgeShape = GraphEnvironmentEdgeRenderer.getGeneralPathForOrthogonalConnecction(vv.getRenderContext(), layout, edge, x1, y1, x2, y2);
+            edgeShape = GraphEnvironmentEdgeRenderer.getGeneralPathForOrthogonalConnection(vv.getRenderContext(), layout, edge, x1, y1, x2, y2);
 		    
 		} else {
 		    float dx = x2 - x1;

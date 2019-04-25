@@ -77,13 +77,41 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	public void setConfigurationFromString(String stringConfiguration) {
 		// TODO Auto-generated method stub
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject==null || !(compareObject instanceof QuadCurveConfiguration)) return false;
+		
+		// --- Get the compare object ---------------------
+		QuadCurveConfiguration compareCurveConfig = (QuadCurveConfiguration) compareObject;
+		// --- Get intermediate points --------------------
+		List<Point2D> compaIntPoints = compareCurveConfig.getIntermediatePoints();
+		List<Point2D> localIntPoints = this.getIntermediatePoints();
+		// --- Check number of intermediate points --------
+		if (compaIntPoints.size()!=localIntPoints.size()) return false;
+		
+		for (int i = 0; i < localIntPoints.size(); i++) {
+			Point2D localPoint2D = localIntPoints.get(i);
+			Point2D compaPoint2D = compaIntPoints.get(i);
+			if (localPoint2D.equals(compaPoint2D)==false) return false;
+		}
+		return true;
+	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
 	 */
 	@Override
 	public GraphEdgeShapeConfiguration<QuadCurve2D> getCopy() {
+
+		QuadCurve2D curveCopy = new QuadCurve2D.Double();
+		curveCopy.setCurve(this.getShape().getX1(), this.getShape().getY1(), this.getShape().getCtrlX(), this.getShape().getCtrlY(), this.getShape().getX2(), this.getShape().getY2());
+
 		QuadCurveConfiguration copy = new QuadCurveConfiguration();
-		copy.setShape((QuadCurve2D) this.getShape().clone());
+		copy.setShape(curveCopy);
 		return copy;
 	}
 	

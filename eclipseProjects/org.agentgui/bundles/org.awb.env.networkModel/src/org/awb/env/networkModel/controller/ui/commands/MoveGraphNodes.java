@@ -43,11 +43,8 @@ import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.picking.MultiPickedState;
-import edu.uci.ics.jung.visualization.picking.PickedState;
-
 import agentgui.core.application.Language;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
  * The Class MoveGraphNodes is used in the context of the UndoManager
@@ -102,15 +99,14 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	 */
 	private void setPositions(HashMap<String, Point2D> nodes2Move) {
 		
-		PickedState<GraphNode> ps = new MultiPickedState<GraphNode>();
-		this.visViewer.setPickedVertexState(ps);
+		this.visViewer.getPickedVertexState().clear();
 		
 		for (String nodeID : nodes2Move.keySet()) {
 			GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
 			if (node!=null) {
 				node.setPosition(nodes2Move.get(nodeID));
 				this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
-				ps.pick(node, true);	
+				this.visViewer.getPickedVertexState().pick(node, true);	
 			}
 		}
 		

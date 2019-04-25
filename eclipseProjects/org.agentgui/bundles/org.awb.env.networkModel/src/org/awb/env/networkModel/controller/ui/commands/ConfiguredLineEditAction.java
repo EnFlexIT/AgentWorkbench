@@ -28,11 +28,17 @@
  */
 package org.awb.env.networkModel.controller.ui.commands;
 
+import java.awt.Shape;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
+import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
@@ -88,9 +94,11 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 	@Override
 	public void redo() throws CannotRedoException {
 		super.redo();
-		this.setGraphEdgeConfiguration(this.configuredLineEdit.getGraphEdgeNew());
-		this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeNewFrom());
-		this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeNewTo());
+		List<GraphElement> geList = new ArrayList<>();
+		geList.add(this.setGraphEdgeConfiguration(this.configuredLineEdit.getGraphEdgeNew()));
+		geList.add(this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeNewFrom()));
+		geList.add(this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeNewTo()));
+		this.setGraphElementSelection(geList);
 		this.sendNodesMovedNotification();
 	}
 	
@@ -100,22 +108,27 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-		this.setGraphEdgeConfiguration(this.configuredLineEdit.getGraphEdgeOld());
-		this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeOldFrom());
-		this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeOldTo());
+		List<GraphElement> geList = new ArrayList<>();
+		geList.add(this.setGraphEdgeConfiguration(this.configuredLineEdit.getGraphEdgeOld()));
+		geList.add(this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeOldFrom()));
+		geList.add(this.setGraphNodePosition(this.configuredLineEdit.getGraphNodeOldTo()));
+		this.setGraphElementSelection(geList);
 		this.sendNodesMovedNotification();
 	}
 	
 	/**
 	 * Sets the position of the specified GraphNode as configured in there.
+	 *
 	 * @param graphNodeCopy the new position
+	 * @return the graph node that was adjusted in the position
 	 */
-	private void setGraphNodePosition(GraphNode graphNodeCopy) {
+	private GraphNode setGraphNodePosition(GraphNode graphNodeCopy) {
 		GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(graphNodeCopy.getId());
 		if (node!=null) {
-			node.setPosition(graphNodeCopy.getPosition());
+			node.getPosition().setLocation(graphNodeCopy.getPosition().getX(), graphNodeCopy.getPosition().getY());
 			this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
 		}
+		return node;
 	}
 	/**
 	 * Returns the graph node position transformer.
@@ -132,9 +145,33 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 	 * Sets the graph edge configuration.
 	 * @param graphEdgeCopy the new graph edge configuration
 	 */
-	private void setGraphEdgeConfiguration(GraphEdge graphEdgeCopy) {
+	private GraphEdge setGraphEdgeConfiguration(GraphEdge graphEdgeCopy) {
 		GraphEdge edge = (GraphEdge) this.graphController.getNetworkModel().getGraphElement(graphEdgeCopy.getId());
-		edge.setEdgeShapeConfiguration(graphEdgeCopy.getEdgeShapeConfiguration());
+		if (edge!=null) {
+			GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = null;
+			if (graphEdgeCopy.getEdgeShapeConfiguration()!=null) {
+				shapeConfig = graphEdgeCopy.getEdgeShapeConfiguration().getCopy();
+			}
+			edge.setEdgeShapeConfiguration(shapeConfig);
+		}
+		return edge;
+	}
+	
+	/**
+	 * Sets the graph element selection to the specified list elements.
+	 * @param geList the new graph element selection
+	 */
+	private void setGraphElementSelection(List<GraphElement> geList) {
+		this.visViewer.getPickedVertexState().clear();
+		this.visViewer.getPickedEdgeState().clear();
+		for (int i = 0; i < geList.size(); i++) {
+			GraphElement ge = geList.get(i);
+			if (ge instanceof GraphNode) {
+				this.visViewer.getPickedVertexState().pick((GraphNode)ge, true);
+			} else if (ge instanceof GraphEdge) {
+				this.visViewer.getPickedEdgeState().pick((GraphEdge)ge, true);
+			}
+		}
 	}
 	
 	/**

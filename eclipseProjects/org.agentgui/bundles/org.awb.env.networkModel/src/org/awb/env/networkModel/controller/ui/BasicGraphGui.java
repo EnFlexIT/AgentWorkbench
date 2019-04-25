@@ -494,12 +494,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the graph layout
 	 */
 	private Layout<GraphNode, GraphEdge> getNewGraphLayout() {
+
 		Graph<GraphNode, GraphEdge> graph = this.getGraph();
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
 		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
 		layout.setInitializer(new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController()));
-		
 		return layout;
 	}
 	

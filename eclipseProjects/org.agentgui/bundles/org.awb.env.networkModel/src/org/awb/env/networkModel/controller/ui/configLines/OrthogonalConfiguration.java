@@ -16,6 +16,7 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	private static final long serialVersionUID = -8321682966274257112L;
 	
 	private GeneralPath orthLine;
+	private boolean isFirstMoveInY; 
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
@@ -35,9 +36,23 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	@Override
 	public void setShape(GeneralPath shape) {
 		this.orthLine = shape;
-		
 	}
 
+	/**
+	 * Checks if the orthogonal connection has at first to move in Y.
+	 * @return true, if is first move in Y
+	 */
+	public boolean isFirstMoveInY() {
+		return isFirstMoveInY;
+	}
+	/**
+	 * Sets that the orthogonal connection has at first to move in Y (or not).
+	 * @param isFirstMoveInY the new first move in Y
+	 */
+	public void setFirstMoveInY(boolean isFirstMoveInY) {
+		this.isFirstMoveInY = isFirstMoveInY;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#getIntermediatePoints()
 	 */
@@ -71,12 +86,28 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject==null || !(compareObject instanceof OrthogonalConfiguration)) return false;
+		
+		// --- Get the compare object ---------------------
+		OrthogonalConfiguration compareOrthConfig = (OrthogonalConfiguration) compareObject;
+		if (compareOrthConfig.isFirstMoveInY()!=this.isFirstMoveInY()) return false;
+		
+		return true;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
 	 */
 	@Override
 	public GraphEdgeShapeConfiguration<GeneralPath> getCopy() {
 		OrthogonalConfiguration copy = new OrthogonalConfiguration();
 		copy.setShape((GeneralPath) this.getShape().clone());
+		copy.setFirstMoveInY(this.isFirstMoveInY());
 		return copy;
 	}
 	

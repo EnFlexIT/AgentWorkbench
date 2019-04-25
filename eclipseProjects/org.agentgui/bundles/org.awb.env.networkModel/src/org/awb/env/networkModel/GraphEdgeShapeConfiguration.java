@@ -60,6 +60,11 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	public abstract void setConfigurationFromString(String stringConfiguration);
 
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public abstract boolean equals(Object compareObject);
 	
 	/**
 	 * Returns a copy of the current configuration.
