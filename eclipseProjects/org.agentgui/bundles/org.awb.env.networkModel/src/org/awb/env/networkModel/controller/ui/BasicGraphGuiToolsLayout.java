@@ -28,7 +28,6 @@
  */
 package org.awb.env.networkModel.controller.ui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -361,6 +360,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			case NetworkModelNotification.NETWORK_MODEL_Reload:
 				this.registerGraphSelectionListener();
 				break;
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
+				this.getJToggleButtonEdgeEdit().setSelected(false);
+				break;
 			}
 		}
 	}
@@ -465,33 +467,18 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			initialConfLineEdit = this.getInitialConfiguredLineEdit();
 		}
 		
-		// --- Notify about edge editing ------------------------------------------------
+		// --- Start edge editing -------------------------------------------------------
 		if (this.getJToggleButtonEdgeEdit().isSelected()==false) this.getJToggleButtonEdgeEdit().setSelected(true);
 		this.graphController.getNetworkModelUndoManager().setGraphMouseEdgeEditing(initialConfLineEdit);
-		
-		// --- Stop edge editing? -------------------------------------------------------
 		if (isStartEdit==false) {
+			// --- Stop edge editing ----------------------------------------------------
 			if (this.getJToggleButtonEdgeEdit().isSelected()==true) this.getJToggleButtonEdgeEdit().setSelected(false);
 			this.graphController.getNetworkModelUndoManager().setGraphMousePicking();
 		}
 		
-		// --- Disable (or enable) buttons that are not required for the edge editing ---   
+		// --- Disable (or enable) buttons that are not required for the edge editing ---
 		this.getJToggleButtonLayoutSwitch().setEnabled(! isStartEdit);
-		this.setEnabled(this.basicGraphGuiTools.getJToolBarEdit(), ! isStartEdit);
-		this.setEnabled(this.basicGraphGuiTools.getJToolBarView(), ! isStartEdit);
 		
-	}
-	/**
-	 * Sets the specified JToolBar (and its buttons) enabled.
-	 *
-	 * @param toolBar the tool bar
-	 * @param enabled the enabled
-	 */
-	private void setEnabled(JToolBar toolBar, boolean enabled) {
-		Component[] compArray = toolBar.getComponents();
-		for (int i = 0; i < compArray.length; i++) {
-			compArray[i].setEnabled(enabled);
-		}
 	}
 	
 	/**

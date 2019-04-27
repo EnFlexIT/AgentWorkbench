@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.controller.ui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
@@ -62,6 +63,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui.GraphMouseMode;
 import org.awb.env.networkModel.controller.ui.messaging.MessagingJInternalFrame;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
@@ -811,17 +813,20 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * Additionally the ToolTipText will be set.
      */
     private void setUndoRedoButtonsEnabled() {
+    	
     	SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				UndoManager undoManager = graphController.getNetworkModelUndoManager().getUndoManager();
-				
-				getJButtonUndo().setEnabled(undoManager.canUndo());
-				getJButtonUndo().setToolTipText(undoManager.getUndoPresentationName());
-				
-				getJButtonRedo().setEnabled(undoManager.canRedo());
-				getJButtonRedo().setToolTipText(undoManager.getRedoPresentationName());
-				
+				if (BasicGraphGuiTools.this.getBasicGraphGUI().getGraphMouseMode()==GraphMouseMode.EdgeEditing) {
+					BasicGraphGuiTools.this.getJButtonUndo().setEnabled(false);
+					BasicGraphGuiTools.this.getJButtonRedo().setEnabled(false);
+				} else {
+					UndoManager undoManager = BasicGraphGuiTools.this.graphController.getNetworkModelUndoManager().getUndoManager();
+					BasicGraphGuiTools.this.getJButtonUndo().setEnabled(undoManager.canUndo());
+					BasicGraphGuiTools.this.getJButtonUndo().setToolTipText(undoManager.getUndoPresentationName());
+					BasicGraphGuiTools.this.getJButtonRedo().setEnabled(undoManager.canRedo());
+					BasicGraphGuiTools.this.getJButtonRedo().setToolTipText(undoManager.getRedoPresentationName());
+				}
 			}
 		});
     }
@@ -1044,6 +1049,44 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	
     }
     
+    /**
+     * Sets that graph mouse was changed edge editing (or not).
+     * @param isDoEditing the new graph mouse edge editing
+     */
+    private void setGraphMouseEdgeEditing(boolean isDoEdgeEditing) {
+    	
+    	Set<Component> excludeList = new HashSet<>();
+    	excludeList.add(this.getJButtonNetworkModelInfo());
+    	excludeList.add(this.getJButtonZoomIn());
+    	excludeList.add(this.getJButtonZoomOut());
+    	excludeList.add(this.getJButtonZoomOne2One());
+    	excludeList.add(this.getJButtonZoomFit2Window());
+    	excludeList.add(this.getJButtonFocusNetworkComponent());
+    	excludeList.add(this.getJToggleButtonSatelliteView());
+    	excludeList.add(this.getJButtonSaveImage());
+    	
+		this.setToolBarEnabled(this.getJToolBarEdit(), excludeList, !isDoEdgeEditing);
+		this.setToolBarEnabled(this.getJToolBarView(), excludeList, !isDoEdgeEditing);
+		this.setUndoRedoButtonsEnabled();
+    }
+	
+	/**
+	 * Sets the specified JToolBar (and its buttons) enabled.
+	 *
+	 * @param toolBar the tool bar
+	 * @param excludeList the exclude list of components that should not be switched
+	 * @param enabled the enabled
+	 */
+	private void setToolBarEnabled(JToolBar toolBar, Set<Component> excludeList, boolean enabled) {
+		Component[] compArray = toolBar.getComponents();
+		for (int i = 0; i < compArray.length; i++) {
+			if (excludeList.contains(compArray[i])==false) {
+				compArray[i].setEnabled(enabled);
+			}
+		}
+	}
+
+    
     
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -1084,6 +1127,16 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do:
 				// --- Set parameter for 'PASTE' action -----------------------
 				this.isPasteAction=true;
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
+				// --- Start edge edit mode -----------------------------------
+				this.setGraphMouseEdgeEditing(true);
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
+				// --- Stop edge edit mode ------------------------------------
+				this.setGraphMouseEdgeEditing(false);
 				break;
 			}
 			

@@ -23,18 +23,28 @@ public class IntermediatePointTransformer {
 	 */
 	public Point2D transformToGraphCoordinate(Point2D intCoordinate, GraphNode startNode, GraphNode endNode) {
 		
+		double xC2 = 0;
+		double yC2 = 0;
+
 		// --- Linear function between start and end node -----------
-		double a1 = (endNode.getPosition().getY() - startNode.getPosition().getY()) / (endNode.getPosition().getX() - startNode.getPosition().getX());
-		double b1 = startNode.getPosition().getY() - (a1 * startNode.getPosition().getX());
-		
-		double xCross = startNode.getPosition().getX() + ((endNode.getPosition().getX() - startNode.getPosition().getX()) * intCoordinate.getX());  
-		double yCross = a1 * xCross + b1;
-		
-		double baselineAngle = this.getBaselineAngle(startNode, endNode);
-		double negativeGradient = Math.signum(endNode.getPosition().getX() - startNode.getPosition().getX());
-		double xC2 = xCross - intCoordinate.getY() * Math.sin(baselineAngle) * negativeGradient;
-		double yC2 = yCross + intCoordinate.getY() * Math.cos(baselineAngle) * negativeGradient;
-		
+		if (endNode.getPosition().getX()==startNode.getPosition().getX()) {
+			double xCross = endNode.getPosition().getX();
+			double yCross = startNode.getPosition().getY() + intCoordinate.getX() * (endNode.getPosition().getY() - startNode.getPosition().getY());
+			double negativeYDiff = Math.signum(startNode.getPosition().getY()-endNode.getPosition().getY());
+			xC2 = xCross + intCoordinate.getY() * negativeYDiff;
+			yC2 = yCross;
+			
+		} else {
+			double a1 = (endNode.getPosition().getY() - startNode.getPosition().getY()) / (endNode.getPosition().getX() - startNode.getPosition().getX());
+			double b1 = startNode.getPosition().getY() - (a1 * startNode.getPosition().getX());
+			double xCross = startNode.getPosition().getX() + ((endNode.getPosition().getX() - startNode.getPosition().getX()) * intCoordinate.getX());  
+			double yCross = a1 * xCross + b1;
+			
+			double baselineAngle = this.getBaselineAngle(startNode, endNode);
+			double negativeGradient = Math.signum(endNode.getPosition().getX() - startNode.getPosition().getX());
+			xC2 = xCross - intCoordinate.getY() * Math.sin(baselineAngle) * negativeGradient;
+			yC2 = yCross + intCoordinate.getY() * Math.cos(baselineAngle) * negativeGradient;
+		}
 		return new Point2D.Double(xC2, yC2);
 	}
 	
@@ -52,34 +62,54 @@ public class IntermediatePointTransformer {
 		// ----------------------------------------------------------
 		// --- Basically, we deal with two linear functions here! ---
 		// ----------------------------------------------------------
+		double x1 = startNode.getPosition().getX();
+		double y1 = startNode.getPosition().getY();
+		double x2 = endNode.getPosition().getX();
+		double y2 = endNode.getPosition().getY();
 		
-		// --- Calculate gradients ----------------------------------
-		double a1 = (endNode.getPosition().getY() - startNode.getPosition().getY()) / (endNode.getPosition().getX() - startNode.getPosition().getX());
-		double a2 = Math.tan(Math.atan(a1) + Math.PI /2.0);
+		double xC1, yC1;
+		if (x1==x2) {
+			xC1 = (graphCoordinate.getY()-y1) / (y2-y1);
+			yC1 = graphCoordinate.getX() - x1;
+			if (y1<y2) {
+				yC1 *=-1;
+			}
 
-		// --- Calculate absolute terms -----------------------------
-		double b1 = startNode.getPosition().getY() - (a1 * startNode.getPosition().getX()); 
-		double b2 = graphCoordinate.getY() - (a2 * graphCoordinate.getX());
-		
-		// --- Calculate their intersection -------------------------
-		double xCross = (b2-b1) / (a1-a2);
-		double yCross = a1 * xCross + b1;
-		
-		// --- Determine positive or negative direction -------------
-		double xCrossDirection = Math.signum(xCross - startNode.getPosition().getX());
-		// --- Calculate distance between start point and xCross ----
-		double c2LengthOfxCross = xCrossDirection * Math.sqrt(Math.pow(xCross - startNode.getPosition().getX(), 2) + Math.pow(yCross - startNode.getPosition().getY(), 2)); 
-		// --- Get distance between start and end node --------------
-		double c2LengthOfC1x = this.getC2LengthOfC1x(1.0, startNode, endNode);
+		} else {
+			// --- Calculate gradients ------------------------------
+			double a1 = (y2 - y1) / (x2 - x1);
+			double a2 = Math.tan(Math.atan(a1) + Math.PI /2.0);
 
-		// --- Check y direction in C1 coordinate system ------------ 
-		double b1GraphCoordinate = graphCoordinate.getY() - (a1 * graphCoordinate.getX());
-		double yC1Direction = Math.signum(b1GraphCoordinate - b1);
+			// --- Calculate absolute terms -------------------------
+			double b1 = y1 - (a1 * x1); 
+			double b2 = graphCoordinate.getY() - (a2 * graphCoordinate.getX());
+			
+			// --- Calculate their intersection ---------------------
+			double xCross = (b2-b1) / (a1-a2);
+			double yCross = a1 * xCross + b1;
+			
+			// --- Determine positive or negative direction ---------
+			double xCrossDirection = Math.signum(xCross - x1);
+			// --- Distance between start point and xCross ----------
+			double c2LengthOfxCross = xCrossDirection * Math.sqrt(Math.pow(xCross - x1, 2) + Math.pow(yCross - y1, 2)); 
+			// --- Get distance between start and end node ----------
+			double c2LengthOfC1x = this.getC2LengthOfC1x(1.0, startNode, endNode);
 
-		// --- Calculate position in coordinate system C1 -----------
-		double xC1 = c2LengthOfxCross / c2LengthOfC1x;
-		double yC1 = yC1Direction * Math.sqrt(Math.pow(graphCoordinate.getX() - xCross, 2) + Math.pow(graphCoordinate.getY() - yCross, 2));
-		
+			// --- Check y direction in C1 coordinate system -------- 
+			double b1GraphCoordinate = graphCoordinate.getY() - (a1 * graphCoordinate.getX());
+			double yC1Direction = Math.signum(b1GraphCoordinate - b1);
+
+			// --- Calculate position in coordinate system C1 -------
+			xC1 = c2LengthOfxCross / c2LengthOfC1x;
+			yC1 = yC1Direction * Math.sqrt(Math.pow(graphCoordinate.getX() - xCross, 2) + Math.pow(graphCoordinate.getY() - yCross, 2));
+
+			// --- x1 < x2 ??? --------------------------------------
+			if (x1 > x2) {
+				xC1 *=-1;
+				yC1 *=-1;
+			}
+			
+		}
 		return new Point2D.Double(xC1, yC1);
 	}
 	

@@ -314,10 +314,11 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 */
 	private void createUndoableEditAction() {
 		
-		if (this.confLineEdit==null) return;
-		
 		// --- Clean-up intermediate nodes first ---------- 
 		this.removeIntermediateNodes();
+
+		if (this.confLineEdit==null) return;
+		
 		// --- Check for changes --------------------------
 		if (this.isChangedConfiguration()==false) return;
 
