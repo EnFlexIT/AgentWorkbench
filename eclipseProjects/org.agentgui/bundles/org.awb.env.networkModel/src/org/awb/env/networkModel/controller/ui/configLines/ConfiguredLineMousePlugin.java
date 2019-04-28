@@ -42,17 +42,13 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
- * Handling mouse interaction with graph visualizations in the {@link BasicGraphGui} during line configurations.
+ * Handling of mouse interactions in the graph visualizations within the {@link BasicGraphGui} for line configurations.
  * 
- * @see BasicGraphGui  
- * 
- * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
 public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener, MouseMotionListener, Observer {
 	
-	private static final String INTERMEDIATE_GRAPH_NODE_ID_PREFIX = "IGN_";
+	public static final String INTERMEDIATE_GRAPH_NODE_ID_PREFIX = "I~G~N_";
 	
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGUI;
@@ -620,6 +616,11 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				this.createUndoableEditAction();
 				this.resetEditingGraphElements();
 				this.confLineEdit = null;
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_IntermediateNodeChanged:
+				this.removeIntermediateNodes();
+				this.addIntermediateNodes();
 				break;
 			}
 		}

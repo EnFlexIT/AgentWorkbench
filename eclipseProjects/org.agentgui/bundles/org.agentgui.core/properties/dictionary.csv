@@ -794,6 +794,7 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;Add intermediate point;;;
 en;;Alias:;;;
 en;;Calculate metrics based on agent class data.;;;
 en;;Calculate metrics based on delta integrals.;;;
@@ -801,6 +802,7 @@ en;;Calculate metrics based on individual agent data.;;;
 en;;Calculate metrics based on last total system cpu time.;;;
 en;;Calculate metrics based on total integrals.;;;
 en;;Calculate the real metrics based on recorded chart value selection.;;;
+en;;Center between start and end point;;;
 en;;Clockwise to X;;;
 en;;Column Headers:;;;
 en;;Configure Graph Edge;;;
@@ -815,6 +817,7 @@ en;;East;;;
 en;;Edge Shape;;;
 en;;Edit Configurable Edge;;;
 en;;Edit security store settings;;;
+en;;Finalize editing;;;
 en;;Guide Grid Step;;;
 en;;Guide Grid;;;
 en;;Invalid node selection!;;;
@@ -845,6 +848,7 @@ en;;Please, choose a TrustStore file! Your TrustStore name should ends with 'Tru
 en;;Polyline Edge;;;
 en;;Quadratic Curve Edge;;;
 en;;Refresh Thread Measurement;;;
+en;;Remove intermediate point;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
 en;;Separator:;;;

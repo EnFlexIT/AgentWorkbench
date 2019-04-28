@@ -254,11 +254,11 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			Point point = me.getPoint();
 			GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
 			GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-			if(pickedNode != null) {  
+			if (pickedNode!=null) {  
 				pickedObject = pickedNode;
 			} else {
 				GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-				if(pickedEdge != null) { 
+				if (pickedEdge!=null) { 
 					pickedObject = pickedEdge;
 				}
 			}
@@ -269,7 +269,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					// --- Double click ---------
 					this.basicGraphGUI.handleObjectDoubleClick(pickedObject);
 				} else {
-					if(me.isShiftDown()==false) {
+					if (me.isShiftDown()==false) {
 						// --- Left click -----------
 						this.basicGraphGUI.handleObjectLeftClick(pickedObject);
 					}	

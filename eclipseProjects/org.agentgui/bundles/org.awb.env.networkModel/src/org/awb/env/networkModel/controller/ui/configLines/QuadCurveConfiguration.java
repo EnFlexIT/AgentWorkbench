@@ -5,7 +5,16 @@ import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+
+import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
+import org.awb.env.networkModel.GraphGlobals;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+
+import agentgui.core.application.Language;
 
 /**
  * The Class QuadCurveConfiguration.
@@ -15,6 +24,8 @@ import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurve2D> {
 
 	private static final long serialVersionUID = 5665040228749007437L;
+	
+	private static final String ACTION_CENTER_INTERMEDIATE = "CenterIntermediate";
 	
 	private QuadCurve2D quadCurve2D;
 	
@@ -101,6 +112,9 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 		}
 		return true;
 	}
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getCopy()
 	 */
@@ -115,5 +129,49 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 		return copy;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#addPopupMenuItems(javax.swing.JPopupMenu, org.awb.env.networkModel.GraphEdge, org.awb.env.networkModel.GraphNode)
+	 */
+	@Override
+	public void addPopupMenuItems(JPopupMenu popupMenu, GraphEdge graphEdge, GraphNode graphNode) {
+		if (graphNode!=null) {
+			popupMenu.add(this.getJMenuItemCenter());
+		}
+	}
+	/**
+	 * Returns the JMenuItem to center the intermediate point.
+	 * @return the j menu item center
+	 */
+	private JMenuItem getJMenuItemCenter() {
+		JMenuItem jmiCenter = new JMenuItem();
+		jmiCenter.setText(Language.translate("Center between start and end point", Language.EN));
+		jmiCenter.setIcon(GraphGlobals.getImageIcon("EdgeQuadCurveCenter.png"));
+		jmiCenter.setActionCommand(ACTION_CENTER_INTERMEDIATE);
+		return jmiCenter;
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#actionPerformed(java.lang.String, org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin, org.awb.env.networkModel.GraphEdge, org.awb.env.networkModel.GraphNode, java.awt.geom.Point2D)
+	 */
+	@Override
+	public void actionPerformed(String actionCommand, ConfiguredLinePopupPlugin configuredLinePopupPlugin, GraphEdge currentGraphEdge, GraphNode currentGraphNode, Point2D currentMousePosition) {
 
+		switch (actionCommand) {
+		case ACTION_CENTER_INTERMEDIATE:
+			// --- Set the shape control point position ---
+			QuadCurve2D curve = QuadCurveConfiguration.this.getShape();
+			curve.setCurve(curve.getX1(), curve.getY1(), 0.5, curve.getCtrlY(), curve.getX2(), curve.getY2());
+			
+			BasicGraphGuiVisViewer<GraphNode, GraphEdge> visualizationViewer = configuredLinePopupPlugin.getVisualizationViewer();
+			List<GraphNode> edgeNodes = this.getGraphNodesOfGraphEdge(visualizationViewer, currentGraphEdge);
+			Point2D neNodePos = QuadCurveConfiguration.this.getIntermediatePointTransformer().transformToGraphCoordinate(curve.getCtrlPt(), edgeNodes.get(0), edgeNodes.get(1));
+			visualizationViewer.getGraphLayout().setLocation(currentGraphNode, neNodePos);
+			visualizationViewer.repaint();
+			break;
+
+		default:
+			break;
+		}
+	}
+	
 }

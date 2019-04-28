@@ -4,7 +4,11 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.List;
 
+import javax.swing.JPopupMenu;
+
+import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
+import org.awb.env.networkModel.GraphNode;
 
 /**
  * The Class OrthogonalConfiguration.
@@ -68,6 +72,23 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	public void setIntermediatePoints(List<Point2D> intermediatePointList) {
 		// --- Nothing to do here -----
 	}
+
+
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#addPopupMenuItems(javax.swing.JPopupMenu, org.awb.env.networkModel.GraphEdge, org.awb.env.networkModel.GraphNode)
+	 */
+	@Override
+	public void addPopupMenuItems(JPopupMenu popupMenu, GraphEdge graphEdge, GraphNode graphNode) {
+		// --- Nothing to do here ------
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#actionPerformed(java.lang.String, org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin, org.awb.env.networkModel.GraphEdge, org.awb.env.networkModel.GraphNode, java.awt.geom.Point2D)
+	 */
+	@Override
+	public void actionPerformed(String actionCommand, ConfiguredLinePopupPlugin configuredLinePopupPlugin, GraphEdge currentGraphEdge, GraphNode currentGraphNode, Point2D currentMousePosition) {
+		// --- Nothing to do here ------
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()

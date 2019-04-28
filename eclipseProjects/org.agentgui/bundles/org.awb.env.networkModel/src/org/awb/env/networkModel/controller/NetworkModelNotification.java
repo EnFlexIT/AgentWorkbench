@@ -63,6 +63,8 @@ public class NetworkModelNotification {
 	public static final int NETWORK_MODEL_GraphMouse_Transforming = 21;
 	public static final int NETWORK_MODEL_GraphMouse_EdgeEditing = 22;
 	
+	public static final int NETWORK_MODEL_IntermediateNodeChanged = 23;
+	
 	public static final int NETWORK_MODEL_ShowPopUpMenue = 25;
 	public static final int NETWORK_MODEL_LayoutChanged = 26;
 
