@@ -738,11 +738,12 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		// --- Clear/Dispose EnvironmentPanel -------------
 		if (this.isEnvironmentControllerInitiated()==true) {
 			EnvironmentController envController = this.getEnvironmentController();
-			if (envController != null) {
+			if (envController!=null) {
 				EnvironmentPanel envPanel = envController.getEnvironmentPanel();
-				if (envPanel != null) {
+				if (envPanel!=null) {
 					envPanel.dispose();
 				}
+				envController.dispose();
 			}
 		}
 

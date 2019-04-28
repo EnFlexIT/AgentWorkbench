@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
 
@@ -70,11 +71,21 @@ import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, GraphEdge> {
 
 	private static IntermediatePointTransformer intPointTransformer;
-
+	
+	private GraphEnvironmentController graphController;
+	
 	private boolean markerShow = false;
 	private float markerStrokeWidth = 0;
 	private Color markerColor = new Color(255,0,0, 140);
 	
+	
+	/**
+	 * Instantiates a new graph environment edge renderer.
+	 * @param graphController the current GraphEnvironmentController
+	 */
+	public GraphEnvironmentEdgeRenderer(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
+	}
 	
 	/**
 	 * Checks if is show marker.
@@ -187,7 +198,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 		// => ORIGINAL: edgeShape = xform.createTransformedShape(edgeShape);
 		// ----------------------------------------------------------------------------------------
         // => ADJUSTED FORM
-        edgeShape = getTransformedShape(edgeShape, xform, rc, v1, v2, isOrthogonal);
+        edgeShape = getTransformedShape(edgeShape, this.graphController, xform, rc, v1, v2, isOrthogonal);
 		// ----------------------------------------------------------------------------------------
 		
         MutableTransformer vt = rc.getMultiLayerTransformer().getTransformer(Layer.VIEW);
@@ -319,6 +330,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * Returns the transformed shape.
 	 *
 	 * @param shape the shape to transform
+	 * @param graphController the graph controller
 	 * @param affineTransform the (original) affine transform
 	 * @param rc the current RenderContext
 	 * @param startNode the start node
@@ -326,9 +338,11 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param isOrthogonal the indicator if an orthogonal edge is to be drawn
 	 * @return the transformed shape
 	 */
-	public static Shape getTransformedShape(Shape shape, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
+	public static Shape getTransformedShape(Shape shape, GraphEnvironmentController graphController, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
 		
 		Shape newShape = null;
+		
+		TransformerForGraphNodePosition<GraphNode, GraphEdge> csTransformer = new TransformerForGraphNodePosition<>(graphController); 
 		
 		if (isOrthogonal==false && shape instanceof GeneralPath) {
 			// --------------------------------------------
@@ -338,7 +352,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 			GeneralPath gPathNew = new GeneralPath();
 
 			// --- Add the start graph node ---------------
-			Point2D panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, startNode.getPosition());
+			Point2D graphPoint = csTransformer.transform(startNode);
+			Point2D panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphPoint);
 			gPathNew.moveTo(panelPoint.getX(), panelPoint.getY());
 			
 			// --- Add the intermediate points ------------
@@ -350,14 +365,16 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 				double yCoord = coords[1];
 				
 				if (! (xCoord==0.0 && yCoord==0.0 || xCoord==1.0 && yCoord==0.0)) {
-					Point2D graphPoint = getIntermediatePointTransformer().transformToGraphCoordinate(new Point2D.Double(xCoord, yCoord), startNode, endNode);
+					Point2D scaledPoint = getIntermediatePointTransformer().transformToGraphCoordinate(new Point2D.Double(xCoord, yCoord), startNode, endNode);
+					graphPoint = csTransformer.transform(scaledPoint);
 					panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphPoint);
 					gPathNew.lineTo(panelPoint.getX(), panelPoint.getY());
 				}
 			}
 			
 			// --- Add the end graph node -----------------
-			panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, endNode.getPosition());
+			graphPoint = csTransformer.transform(endNode);
+			panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphPoint);
 			gPathNew.lineTo(panelPoint.getX(), panelPoint.getY());
 			newShape = gPathNew;
 			
@@ -368,10 +385,14 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 			QuadCurve2D quadCurve = (QuadCurve2D) shape;
 			QuadCurve2D quadCurveNew = new QuadCurve2D.Double();
 			
-			Point2D panelStartPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, startNode.getPosition());
-			Point2D panelEndPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, endNode.getPosition());
+			Point2D graphStartPoint = csTransformer.transform(startNode);
+			Point2D panelStartPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphStartPoint);
 			
-			Point2D graphControlPoint = getIntermediatePointTransformer().transformToGraphCoordinate(quadCurve.getCtrlPt(), startNode, endNode);
+			Point2D graphEndPoint = csTransformer.transform(endNode); 
+			Point2D panelEndPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphEndPoint);
+			
+			Point2D scaledControlPoint = getIntermediatePointTransformer().transformToGraphCoordinate(quadCurve.getCtrlPt(), startNode, endNode);
+			Point2D graphControlPoint = csTransformer.transform(scaledControlPoint);
 			Point2D panelControlPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphControlPoint); 
 			
 			quadCurveNew.setCurve(panelStartPoint, panelControlPoint, panelEndPoint);
@@ -396,7 +417,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 		}
 		return intPointTransformer;
 	}
-
+	
 	
 	/**
 	 * Gets a GeneralPath for an orthogonal connection.

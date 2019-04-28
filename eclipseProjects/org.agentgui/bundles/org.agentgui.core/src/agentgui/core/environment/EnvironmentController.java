@@ -218,6 +218,12 @@ public abstract class EnvironmentController extends Observable implements Observ
 	
 	
 	/**
+	 * Will be invoked if the environment controller is about to be disposed.
+	 */
+	public abstract void dispose();
+	
+	
+	/**
 	 * Gets the list of agents to start.
 	 * @return the agents2 start
 	 */

@@ -281,13 +281,24 @@ public class GraphEnvironmentController extends EnvironmentController {
 		return clipboardNetworkModel;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#dispose()
+	 */
+	@Override
+	public void dispose() {
+		this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ControllerIsDisposing));
+	}
 	
 	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#handleProjectNotification(java.lang.Object)
 	 */
 	@Override
 	protected void handleProjectNotification(Object updateObject) {
-		// TODO Auto-generated method stub
+
+		if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
+			this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
+		}
+		//System.out.println("[" + this.getClass().getSimpleName() + "] " + updateObject);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#handleSimulationSetupNotification(agentgui.core.sim.setup.SimulationSetupsChangeNotification)

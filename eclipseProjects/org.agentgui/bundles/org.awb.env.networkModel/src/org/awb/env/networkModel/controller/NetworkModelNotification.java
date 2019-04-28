@@ -35,6 +35,9 @@ package org.awb.env.networkModel.controller;
  */
 public class NetworkModelNotification {
 
+	public static final int NETWORK_MODEL_ControllerIsDisposing = 0;
+	public static final int NETWORK_MODEL_Prepare4Saving = -1;
+	
 	public static final int NETWORK_MODEL_ComponentTypeSettingsChanged = 1;
 	
 	public static final int NETWORK_MODEL_Reload = 2;

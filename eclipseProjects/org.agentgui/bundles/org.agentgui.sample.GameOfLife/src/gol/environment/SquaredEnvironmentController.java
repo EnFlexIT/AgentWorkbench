@@ -71,6 +71,14 @@ public class SquaredEnvironmentController extends EnvironmentController {
 	}
 	
 	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#dispose()
+	 */
+	@Override
+	public void dispose() {
+		
+	}
+	
+	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#handleProjectNotification(java.lang.Object)
 	 */
 	@Override

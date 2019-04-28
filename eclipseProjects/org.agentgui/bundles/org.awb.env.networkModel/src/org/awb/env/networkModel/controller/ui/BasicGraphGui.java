@@ -192,7 +192,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private PluggableGraphMouse graphMouse4EdgeEditing;
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> graphMouse4Transforming;
 	
-	
+	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemNodePositionTransformer;
 	private CoordinateSystemXDirection xDirectionReminder;
 	private CoordinateSystemYDirection yDirectionReminder;
 
@@ -499,8 +499,19 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
 		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
-		layout.setInitializer(new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController()));
+		layout.setInitializer(this.getCoordinateSystemNodePositionTransformer());
 		return layout;
+	}
+
+	/**
+	 * Returns the graph node position transformer that considers the directions of the current coordinate system.
+	 * @return the TransformerForGraphNodePosition
+	 */
+	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemNodePositionTransformer() {
+		if (coordinateSystemNodePositionTransformer==null) {
+			coordinateSystemNodePositionTransformer = new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController());
+		}
+		return coordinateSystemNodePositionTransformer;
 	}
 	
 	/**
@@ -538,7 +549,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
 			
 			// --- Set the pick size of the visualization viewer --------------
-			visView.setPickSupport(new GraphEnvironmentShapePickSupport(visView, 5));
+			visView.setPickSupport(new GraphEnvironmentShapePickSupport(visView, 5, this.getGraphEnvironmentController()));
 			
 			// --- Add an item listener for pickings --------------------------
 			visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
@@ -780,7 +791,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 
 			// --- Set edge renderer for a background color of an edge --------
-			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer() {
+			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(this.getGraphEnvironmentController()) {
 				@Override
 				public boolean isShowMarker(GraphEdge edge) {
 					return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();

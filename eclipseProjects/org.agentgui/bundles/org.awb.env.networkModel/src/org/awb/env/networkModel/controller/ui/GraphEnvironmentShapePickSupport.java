@@ -10,6 +10,7 @@ import java.util.ConcurrentModificationException;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -31,22 +32,29 @@ import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
  */
 public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode, GraphEdge> {
 
+	private GraphEnvironmentController graphController;
+	
 	
 	/**
 	 * Instantiates a new graph environment shape pick support.
+	 *
 	 * @param vv the Jung VisualizationServer
+	 * @param graphController the current GraphEnvironmentController
 	 */
-	public GraphEnvironmentShapePickSupport(VisualizationServer<GraphNode, GraphEdge> vv) {
+	public GraphEnvironmentShapePickSupport(VisualizationServer<GraphNode, GraphEdge> vv, GraphEnvironmentController graphController) {
 		super(vv);
+		this.graphController = graphController;
 	}
 	/**
 	 * Instantiates a new graph environment shape pick support.
 	 *
 	 * @param vv the Jung VisualizationServer
 	 * @param pickSize the pick size
+	 * @param graphController the current GraphEnvironmentController
 	 */
-	public GraphEnvironmentShapePickSupport(VisualizationServer<GraphNode, GraphEdge> vv, float pickSize) {
+	public GraphEnvironmentShapePickSupport(VisualizationServer<GraphNode, GraphEdge> vv, float pickSize, GraphEnvironmentController graphController) {
 		super(vv, pickSize);
+		this.graphController = graphController;
 	}
 
 	/* (non-Javadoc)
@@ -164,7 +172,7 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 		// => ORIGINAL: edgeShape = xform.createTransformedShape(edgeShape);
 		// ----------------------------------------------------------------------------------------
 		// => ADJUSTED FORM
-		edgeShape = GraphEnvironmentEdgeRenderer.getTransformedShape(edgeShape, xform, vv.getRenderContext(), v1, v2, isOrthogonal); 
+		edgeShape = GraphEnvironmentEdgeRenderer.getTransformedShape(edgeShape, this.graphController, xform, vv.getRenderContext(), v1, v2, isOrthogonal); 
 		// ----------------------------------------------------------------------------------------		
 		return edgeShape;
 	}

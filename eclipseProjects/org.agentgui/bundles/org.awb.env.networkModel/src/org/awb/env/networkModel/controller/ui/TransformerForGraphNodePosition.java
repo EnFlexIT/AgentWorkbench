@@ -32,6 +32,7 @@ import java.awt.geom.Point2D;
 
 import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
@@ -47,13 +48,40 @@ import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirecti
 public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphNode, Point2D> {
 
 	private GraphEnvironmentController graphController;
+	private LayoutSettings layoutSettings;
+
 	
 	/**
-	 * Instantiates a new transformer for node position.
+	 * Instantiates a new transformer for node position that dynamically 'asks' the graph controller 
+	 * about the current and possibly changed settings in the {@link NetworkModel} (dynamic approach).
+	 * 
 	 * @param graphController the current graph controller
 	 */
 	public TransformerForGraphNodePosition(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
+	}
+	/**
+	 * Instantiates a new transformer for node position that statically uses the specified {@link LayoutSettings}.
+	 * In contrast to the other class constructor, this will not consider changes in a {@link NetworkModel}.
+	 *  
+	 * @param layoutSettings the layout settings
+	 */
+	public TransformerForGraphNodePosition(LayoutSettings layoutSettings) {
+		this.layoutSettings = layoutSettings;
+	}
+	
+	
+	/**
+	 * Returns the current or initially specified layout settings.
+	 * @return the layout settings
+	 */
+	private LayoutSettings getLayoutSettings() {
+		// --- Try to get current settings from GraphEnvironmentController ---- 
+		if (this.graphController!=null) {
+			return this.graphController.getNetworkModel().getLayoutSettings();
+		}
+		// --- Return the specified LayoutSettings (not dynamic) --------------
+		return layoutSettings;
 	}
 	
 	/**
@@ -77,10 +105,9 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 		
 		Point2D visualNodePosition = new Point2D.Double();
 		
-		LayoutSettings layoutSettings = this.graphController.getNetworkModel().getLayoutSettings();
+		LayoutSettings layoutSettings = this.getLayoutSettings();
 		switch (layoutSettings.getCoordinateSystemYDirection()) {
 		case ClockwiseToX:
-			// --- Turn graph node coordinates to the left ---------- 
 			switch (layoutSettings.getCoordinateSystemXDirection()) {
 			case East:
 				visualNodePosition = npGraphNode;
@@ -98,7 +125,6 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 			break;
 			
 		case CounterclockwiseToX:
-			
 			switch (layoutSettings.getCoordinateSystemXDirection()) {
 			case East:
 				visualNodePosition.setLocation(npGraphNode.getX(), npGraphNode.getY() * (-1));
@@ -128,46 +154,37 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 		
 		Point2D npGraphNode = new Point2D.Double();
 		
-		LayoutSettings layoutSettings = this.graphController.getNetworkModel().getLayoutSettings();
+		LayoutSettings layoutSettings = this.getLayoutSettings();
 		switch (layoutSettings.getCoordinateSystemYDirection()) {
 		case ClockwiseToX:
-			// --- Turn graph node coordinates to the left ---------- 
 			switch (layoutSettings.getCoordinateSystemXDirection()) {
 			case East:
 				npGraphNode = visualNodePosition;
 				break;
 			case North:
-				//visualNodePosition.setLocation(npGraphNode.getY(), npGraphNode.getX() * (-1));
 				npGraphNode.setLocation(visualNodePosition.getY() * (-1), visualNodePosition.getX());
 				break;
 			case West:
-				//visualNodePosition.setLocation(npGraphNode.getX() * (-1), npGraphNode.getY() * (-1));
 				npGraphNode.setLocation(visualNodePosition.getX() * (-1), visualNodePosition.getY() * (-1));
 				break;
 			case South:
-				//visualNodePosition.setLocation(npGraphNode.getY() * (-1), npGraphNode.getX());
 				npGraphNode.setLocation(visualNodePosition.getY(), visualNodePosition.getX() * (-1));
 				break;
 			}
 			break;
 			
 		case CounterclockwiseToX:
-			
 			switch (layoutSettings.getCoordinateSystemXDirection()) {
 			case East:
-				//visualNodePosition.setLocation(npGraphNode.getX(), npGraphNode.getY() * (-1));
 				npGraphNode.setLocation(visualNodePosition.getX(), visualNodePosition.getY()* (-1));
 				break;
 			case North:
-				//visualNodePosition.setLocation(npGraphNode.getY() * (-1), npGraphNode.getX() * (-1));
 				npGraphNode.setLocation(visualNodePosition.getY() * (-1), visualNodePosition.getX() * (-1));
 				break;
 			case West:
-				//visualNodePosition.setLocation(npGraphNode.getX() * (-1), npGraphNode.getY());
 				npGraphNode.setLocation(visualNodePosition.getX() * (-1), visualNodePosition.getY());
 				break;
 			case South:
-				//visualNodePosition.setLocation(npGraphNode.getY(), npGraphNode.getX());
 				npGraphNode.setLocation(visualNodePosition.getY(), visualNodePosition.getX());
 				break;
 			}

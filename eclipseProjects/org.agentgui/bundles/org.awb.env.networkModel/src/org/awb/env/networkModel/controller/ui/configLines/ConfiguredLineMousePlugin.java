@@ -53,7 +53,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGUI;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 	private IntermediatePointTransformer intermediatePointTransformer;
 	
 	private boolean movePanelWithRightAction;
@@ -106,10 +105,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 * @return the graph node position transformer
 	 */
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
-		if (graphNodePositionTransformer==null) {
-			graphNodePositionTransformer = new TransformerForGraphNodePosition<>(this.getGraphController());
-		}
-		return graphNodePositionTransformer;
+		return this.basicGraphGUI.getCoordinateSystemNodePositionTransformer();
 	}
 	/**
 	 * Returnss the intermediate point transformer.
@@ -621,6 +617,13 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			case NetworkModelNotification.NETWORK_MODEL_IntermediateNodeChanged:
 				this.removeIntermediateNodes();
 				this.addIntermediateNodes();
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_ControllerIsDisposing:
+				this.removeIntermediateNodes();
+				break;
+			case NetworkModelNotification.NETWORK_MODEL_Prepare4Saving:
+				this.graphController.getNetworkModelUndoManager().setGraphMousePicking();
 				break;
 			}
 		}
