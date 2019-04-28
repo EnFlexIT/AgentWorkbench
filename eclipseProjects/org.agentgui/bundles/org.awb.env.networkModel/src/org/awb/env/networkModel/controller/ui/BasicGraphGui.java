@@ -499,15 +499,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
 		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
-		layout.setInitializer(this.getCoordinateSystemNodePositionTransformer());
+		layout.setInitializer(this.getCoordinateSystemPositionTransformer());
 		return layout;
 	}
 
 	/**
-	 * Returns the graph node position transformer that considers the directions of the current coordinate system.
+	 * Returns the position transformer that considers the directions of the defined coordinate system.
 	 * @return the TransformerForGraphNodePosition
+	 * 
+	 * @see LayoutSettings
 	 */
-	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemNodePositionTransformer() {
+	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemPositionTransformer() {
 		if (coordinateSystemNodePositionTransformer==null) {
 			coordinateSystemNodePositionTransformer = new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController());
 		}

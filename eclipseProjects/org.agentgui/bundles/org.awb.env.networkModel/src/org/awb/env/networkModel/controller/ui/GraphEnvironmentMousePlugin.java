@@ -136,7 +136,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * @return the graph node position transformer
 	 */
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemNodePositionTransformer() {
-		return this.basicGraphGUI.getCoordinateSystemNodePositionTransformer();
+		return this.basicGraphGUI.getCoordinateSystemPositionTransformer();
 	}
 	
 	/**
