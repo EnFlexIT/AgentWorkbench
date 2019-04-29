@@ -12,6 +12,7 @@ import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
+import org.awb.env.networkModel.settings.LayoutSettings;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -155,7 +156,8 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 		    xform.translate(0, -edgeShape.getBounds2D().getHeight()/2);
 		    
         } else if (isOrthogonal==true) {
-            edgeShape = GraphEnvironmentEdgeRenderer.getGeneralPathForOrthogonalConnection(vv.getRenderContext(), layout, edge, x1, y1, x2, y2);
+        	LayoutSettings ls = this.graphController.getNetworkModel().getLayoutSettings();
+        	edgeShape = GraphEnvironmentEdgeRenderer.getGeneralPathForOrthogonalConnection(vv.getRenderContext(), layout, edge, x1, y1, x2, y2, ls.getCoordinateSystemXDirection());
 		    
 		} else {
 		    float dx = x2 - x1;

@@ -49,6 +49,8 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
+import org.awb.env.networkModel.settings.LayoutSettings;
+import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -180,7 +182,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
             xform.translate(0, -edgeShape.getBounds2D().getWidth()/2);
             
         } else if (isOrthogonal==true) {
-            edgeShape = getGeneralPathForOrthogonalConnection(rc, layout, edge, x1, y1, x2, y2);
+        	LayoutSettings ls = this.graphController.getNetworkModel().getLayoutSettings();
+            edgeShape = getGeneralPathForOrthogonalConnection(rc, layout, edge, x1, y1, x2, y2, ls.getCoordinateSystemXDirection());
         	
         } else {
             // this is a normal edge. Rotate it to the angle between
@@ -431,7 +434,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param y2 the y2
 	 * @return the general path for orthogonal connection
 	 */
-	public static GeneralPath getGeneralPathForOrthogonalConnection(RenderContext<GraphNode, GraphEdge> rc, Layout<GraphNode, GraphEdge> layout, GraphEdge edge, float x1, float y1, float x2, float y2) {
+	public static GeneralPath getGeneralPathForOrthogonalConnection(RenderContext<GraphNode, GraphEdge> rc, Layout<GraphNode, GraphEdge> layout, GraphEdge edge, float x1, float y1, float x2, float y2, CoordinateSystemXDirection xDirection) {
 		
         Graph<GraphNode, GraphEdge> graph = layout.getGraph();
         
@@ -449,10 +452,15 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         GeneralPath gp = new GeneralPath();
         gp.moveTo(0, 0);// the xform will do the translation to x1,y1
         
+        // --- Check to which direction we have to move first ------- 
         boolean isFirstMoveInY = false;
         if (edge.getEdgeShapeConfiguration()!=null && edge.getEdgeShapeConfiguration() instanceof OrthogonalConfiguration) {
         	OrthogonalConfiguration orthConfig = (OrthogonalConfiguration) edge.getEdgeShapeConfiguration();
         	isFirstMoveInY = orthConfig.isFirstMoveInY();
+        }
+        // --- Invert the direction indicator? ----------------------
+        if (xDirection==CoordinateSystemXDirection.North || xDirection==CoordinateSystemXDirection.South) {
+        	isFirstMoveInY = !isFirstMoveInY;
         }
         
         if (isFirstMoveInY==false) {

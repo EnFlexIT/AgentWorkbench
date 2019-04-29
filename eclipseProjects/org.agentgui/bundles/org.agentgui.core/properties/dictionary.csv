@@ -824,6 +824,8 @@ en;;Invalid node selection!;;;
 en;;Layout ID;;;
 en;;Layout Name;;;
 en;;Line Edge;;;
+en;;Move to x-direction first;;;
+en;;Move to y-direction first;;;
 en;;Network Model Info;;;
 en;;No KeyStore specified!;;;
 en;;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;

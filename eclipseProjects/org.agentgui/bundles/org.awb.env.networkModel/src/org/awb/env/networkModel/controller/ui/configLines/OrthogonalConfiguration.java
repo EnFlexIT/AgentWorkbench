@@ -22,6 +22,20 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	private GeneralPath orthLine;
 	private boolean isFirstMoveInY; 
 	
+	
+	/**
+	 * Instantiates a new orthogonal configuration (default constructor).
+	 */
+	public OrthogonalConfiguration() { }
+	
+	/**
+	 * Instantiates a new orthogonal configuration.
+	 * @param isFirstMoveInY the indicator to move in the y-direction first
+	 */
+	public OrthogonalConfiguration(boolean isFirstMoveInY) { 
+		this.isFirstMoveInY = isFirstMoveInY;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getShape()
 	 */
