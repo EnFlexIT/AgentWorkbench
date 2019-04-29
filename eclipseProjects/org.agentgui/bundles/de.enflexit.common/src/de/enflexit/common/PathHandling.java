@@ -43,6 +43,8 @@ public class PathHandling {
 	 */
 	public static String getPathName4LocalOS(String fileName) {
 		
+		if (fileName==null) return null;
+		
 		String corrected = "";
 		for (int i = 0; i < fileName.length(); i++) {
 			String	chara = Character.toString(fileName.charAt(i));

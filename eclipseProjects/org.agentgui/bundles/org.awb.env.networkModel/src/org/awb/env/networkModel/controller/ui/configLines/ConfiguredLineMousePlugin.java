@@ -28,6 +28,7 @@ import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -224,7 +225,13 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				GraphElementLayout layoutTmpNode = intNode.getGraphElementLayout(networkModel);
 				layoutTmpNode.setShowLabel(false);
 				layoutTmpNode.setSize(layoutStartNode.getSize());
+				if (layoutTmpNode.getSize()<5) {
+					layoutTmpNode.setSize(5);
+				}
 				layoutTmpNode.setShapeForm(layoutStartNode.getShapeForm());
+				if (layoutStartNode.getShapeForm().equals(GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE)==true) {
+					layoutTmpNode.setShapeForm(null);
+				}
 				
 				networkModel.getGraph().addVertex(intNode);
 				this.getIntermediateGraphNodes().add(intNode);

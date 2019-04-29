@@ -118,7 +118,9 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 				}
 			
 			} else {
-				System.err.println("Could not find node image '" + imageRef + "'");
+				if (imageRef!=null) {
+					System.err.println("Could not find node image '" + imageRef + "'");
+				}
 			}
 			
 			if (imageShape!=null) shape = imageShape;

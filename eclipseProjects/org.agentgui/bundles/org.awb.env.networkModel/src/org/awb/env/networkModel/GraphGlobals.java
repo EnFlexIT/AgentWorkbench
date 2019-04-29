@@ -78,6 +78,8 @@ public final class GraphGlobals {
  	 */
  	public static ImageIcon getImageIcon(String path2Image) {
 	    
+ 		if (path2Image==null) return null;
+
  		String path = null;
  		File imageFile = null;
  		ImageIcon imageIcon = null;
