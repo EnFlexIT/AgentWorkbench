@@ -140,11 +140,13 @@ public class GraphEdge extends GraphElement {
 			for (int i = 0; i < keys.size(); i++) {
 				String key = keys.get(i);
 				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = this.getEdgeShapeConfigurationTreeMap().get(key);
-				String singleConfig = key + ":=" + shapeConfig.getConfigurationAsStringInternal();
-				if (config==null) {
-					config = singleConfig;
-				} else {
-					config = config + "|" + singleConfig;
+				if (shapeConfig!=null) {
+					String singleConfig = key + ":=" + shapeConfig.getConfigurationAsString();
+					if (config==null) {
+						config = singleConfig;
+					} else {
+						config = config + "|" + singleConfig;
+					}
 				}
 			}
 			
@@ -159,15 +161,16 @@ public class GraphEdge extends GraphElement {
 		
 		if (treeMapAsString==null || treeMapAsString.isEmpty()) return;
 
-		String[] layoutShapeConfigurations = treeMapAsString.split("|");
+		String[] layoutShapeConfigurations = treeMapAsString.split("\\|");
 		for (int i = 0; i < layoutShapeConfigurations.length; i++) {
 			
 			String[] layoutConfigurationPair = layoutShapeConfigurations[i].split(":=");
-
-			String layoutID = layoutConfigurationPair[0];
-			GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = GraphEdgeShapeConfiguration.getGraphEdgeShapeConfiguration(layoutConfigurationPair[1]);
-			if (layoutID!=null && layoutID.isEmpty()==false && shapeConfig!=null) {
-				this.getEdgeShapeConfigurationTreeMap().put(layoutID, shapeConfig);
+			if (layoutConfigurationPair.length==2) {
+				String layoutID = layoutConfigurationPair[0];
+				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = GraphEdgeShapeConfiguration.getGraphEdgeShapeConfiguration(layoutConfigurationPair[1]);
+				if (layoutID!=null && layoutID.isEmpty()==false && shapeConfig!=null) {
+					this.getEdgeShapeConfigurationTreeMap().put(layoutID, shapeConfig);
+				}
 			}
 		}
 	}

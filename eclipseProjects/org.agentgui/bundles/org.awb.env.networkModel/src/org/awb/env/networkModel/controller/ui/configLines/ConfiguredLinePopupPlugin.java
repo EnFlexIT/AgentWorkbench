@@ -56,6 +56,13 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
     	return this.basicGraphGui.getGraphEnvironmentController();
     }
     /**
+     * Return the BasicGraphGui.
+     * @return the basic graph gui
+     */
+    public BasicGraphGui getBasicGraphGui() {
+		return this.basicGraphGui;
+	}
+    /**
      * Gets the visualization viewer.
      * @return the visualization viewer
      */

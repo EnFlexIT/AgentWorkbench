@@ -427,23 +427,24 @@ public class GraphEnvironmentController extends EnvironmentController {
 					// --- Define the NetworkModel ------------------------------------------------
 					NetworkModel netModel = new NetworkModel();
 
-					// --- 1. Load the graph topology from the graph file -------------------------
+					// --- 1. Load component type settings from file ------------------------------
+					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
+					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
+					
+					// --- 2. Load the graph topology from the graph file -------------------------
 					netModel.loadGraphFile(new File(getEnvFolderPath() + fileName));
 					
-					// --- 2. Load the component definitions from the component file --------------
+					// --- 3. Load the component definitions from the component file --------------
 					File componentsFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
 					netModel.loadComponentsFile(componentsFile);
 					
-					// --- 3. Load component type settings from file ------------------------------
-					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
 					// --- Remind the list of custom toolbar elements -----------------------------
-					if (GraphEnvironmentController.this.getNetworkModel() != null) {
+					if (GraphEnvironmentController.this.getNetworkModel()!=null) {
 						GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
 						if (gg4mas!=null) {
 							ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
 						}
 					}
-					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
 					
 					// --- Use case 'Application' -------------------------------------------------
 					if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
@@ -586,7 +587,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Load general graph settings.
 	 */
 	private GeneralGraphSettings4MAS loadGeneralGraphSettings() {
-		File componentFile = new File(getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
+		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
 		return GeneralGraphSettings4MAS.load(componentFile);
 	}
 
@@ -594,7 +595,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Save general graph settings.
 	 */
 	private void saveGeneralGraphSettings() {
-		File componentFile = new File(getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
+		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
 		GeneralGraphSettings4MAS.save(componentFile, this.getGeneralGraphSettings4MAS());
 	}
 

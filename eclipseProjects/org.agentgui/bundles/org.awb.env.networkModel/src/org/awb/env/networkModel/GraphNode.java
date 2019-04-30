@@ -164,7 +164,7 @@ public class GraphNode extends GraphElement {
 		
 		if (treeMapAsString==null || treeMapAsString.isEmpty()) return;
 		
-		String[] layoutPositions = treeMapAsString.split("|");
+		String[] layoutPositions = treeMapAsString.split("\\|");
 		for (int i = 0; i < layoutPositions.length; i++) {
 			
 			String[] layoutPositionPair = layoutPositions[i].split(":=");
