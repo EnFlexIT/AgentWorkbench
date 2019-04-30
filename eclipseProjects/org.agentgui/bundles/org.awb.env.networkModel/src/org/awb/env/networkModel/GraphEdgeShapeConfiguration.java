@@ -13,6 +13,9 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin;
 import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
+import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
+import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
+import org.awb.env.networkModel.controller.ui.configLines.QuadCurveConfiguration;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -27,6 +30,13 @@ import edu.uci.ics.jung.graph.util.Pair;
 public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Serializable {
 
 	private static final long serialVersionUID = 7535546074273015170L;
+
+	private enum ShapeConfigurationType {
+		Orthogonal,
+		QuadCurve,
+		Polyline
+	}
+
 
 	
 	/**
@@ -92,7 +102,7 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	 * Returns the configuration as consistent string.
 	 * @return the configuration as string
 	 */
-	public abstract String getConfigurationAsString();
+	protected abstract String getConfigurationAsStringInternal();
 	
 	/**
 	 * Sets the configuration from the specified string.
@@ -100,8 +110,70 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	 * @param stringConfiguration the configuration string 
 	 * @return the graph edge shape configuration
 	 */
-	public abstract void setConfigurationFromString(String stringConfiguration);
+	protected abstract void setConfigurationFromStringInternal(String stringConfiguration);
 
+	
+	/**
+	 * Returns the current edge shape configuration as string.
+	 * @return the configuration as string
+	 */
+	public String getConfigurationAsString() {
+		return this.getShapeConfigurationTypeAsString() + "=>" + this.getConfigurationAsStringInternal();
+	}
+	
+	/**
+	 * Returns a GraphEdgeShapeConfiguration from the specified single config string.
+	 *
+	 * @param singleEdgeShapeConfigString the single config string
+	 * @return the graph edge shape configuration
+	 */
+	public static GraphEdgeShapeConfiguration<? extends Shape> getGraphEdgeShapeConfiguration(String singleEdgeShapeConfigString) {
+		
+		if (singleEdgeShapeConfigString==null || singleEdgeShapeConfigString.isEmpty()==true) return null;
+		
+		GraphEdgeShapeConfiguration<? extends Shape> edgeShapeConfig = null;
+		String[] edgeShapeConfigArry = singleEdgeShapeConfigString.split("=>");
+		if (edgeShapeConfigArry.length==2) {
+			
+			String type = edgeShapeConfigArry[0];
+			String config = edgeShapeConfigArry[1];
+
+			switch (ShapeConfigurationType.valueOf(type)) {
+			case Orthogonal:
+				edgeShapeConfig = new OrthogonalConfiguration();
+				break;
+			case QuadCurve:
+				edgeShapeConfig = new QuadCurveConfiguration();
+				break;
+			case Polyline:
+				edgeShapeConfig = new PolylineConfiguration();
+				break;
+			} 
+			
+			if (edgeShapeConfig!=null) {
+				edgeShapeConfig.setConfigurationFromStringInternal(config);
+			}
+			
+		}
+		return edgeShapeConfig;
+	}
+	
+	/**
+	 * Return the current shape configuration type as string.
+	 * @return the shape configuration as string
+	 */
+	public String getShapeConfigurationTypeAsString() {
+		
+		String shapeConfigType = null;
+		if (this instanceof OrthogonalConfiguration) {
+			shapeConfigType = ShapeConfigurationType.Orthogonal.name();
+		} else if (this instanceof QuadCurveConfiguration) {
+			shapeConfigType = ShapeConfigurationType.QuadCurve.name();
+		} else if (this instanceof PolylineConfiguration) {
+			shapeConfigType = ShapeConfigurationType.Polyline.name();
+		}
+		return shapeConfigType;
+	}
 	
 	
 	/* (non-Javadoc)

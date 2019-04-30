@@ -29,6 +29,10 @@
 package org.awb.env.networkModel;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import de.enflexit.common.SerialClone;
@@ -55,6 +59,7 @@ public class GraphNode extends GraphElement {
 	/** The data model for this GraphNode encoded as Base64 String*/
 	private Vector<String> dataModelBase64;
 
+	private TreeMap<String, Point2D> positionTreeMap;
 	
 	/**
 	 * Default constructor with a default position of (Point2D.Double(50.0, 50.0)).
@@ -104,6 +109,75 @@ public class GraphNode extends GraphElement {
 	}
 
 	/**
+	 * Returns the position tree map that distinguishes positions for different layouts.
+	 * @return the position tree map
+	 */
+	public TreeMap<String, Point2D> getPositionTreeMap() {
+		if (positionTreeMap==null) {
+			positionTreeMap = new TreeMap<>();
+		}
+		return positionTreeMap;
+	}
+	/**
+	 * Sets the position tree map.
+	 * @param positionTreeMap the position tree map
+	 */
+	public void setPositionTreeMap(TreeMap<String, Point2D> positionTreeMap) {
+		this.positionTreeMap = positionTreeMap;
+	}
+	
+	/**
+	 * Returns the position tree map as string.
+	 * @return the position tree map as string
+	 */
+	public String getPositionTreeMapAsString() {
+		
+		String config = null;
+		if (this.getPositionTreeMap().size()==0) {
+			// --- Set to null to reduce RAM load ---------
+			this.setPositionTreeMap(null);
+			
+		} else {
+			// --- Convert to String ----------------------
+			List<String> keys = new ArrayList<>(this.getPositionTreeMap().keySet()); 
+			Collections.sort(keys);
+			for (int i = 0; i < keys.size(); i++) {
+				String layoutID = keys.get(i);
+				Point2D position = this.getPositionTreeMap().get(layoutID);
+	
+				String singleConfig = layoutID + ":=" + getPositionAsString(position);
+				if (config==null) {
+					config = singleConfig;
+				} else {
+					config = config + "|" + singleConfig;
+				}
+			}
+			
+		}
+		return config;
+	}
+	/**
+	 * Sets the position tree map from the specified string.
+	 * @param treeMapAsString the new position tree map from string
+	 */
+	public void setPositionTreeMapFromString(String treeMapAsString) {
+		
+		if (treeMapAsString==null || treeMapAsString.isEmpty()) return;
+		
+		String[] layoutPositions = treeMapAsString.split("|");
+		for (int i = 0; i < layoutPositions.length; i++) {
+			
+			String[] layoutPositionPair = layoutPositions[i].split(":=");
+			
+			String layoutID = layoutPositionPair[0];
+			Point2D postion = getPositionFromString(layoutPositionPair[1]);
+			if (layoutID!=null && layoutID.isEmpty()==false && position!=null) {
+				this.getPositionTreeMap().put(layoutID, postion);
+			}
+		}
+	}
+	
+	/**
 	 * Sets the current data model.
 	 * @param dataModel the new Object instance of the data model
 	 */
@@ -133,4 +207,38 @@ public class GraphNode extends GraphElement {
 		return dataModelBase64;
 	}
 
+	
+	// ------------------------------------------------------------------------
+	// --- From here, some static help methods can be found -------------------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Return a specified position as string.
+	 *
+	 * @param position the position
+	 * @return the position as string
+	 */
+	public static String getPositionAsString(Point2D position) {
+		return position.getX() + ":" + position.getY();
+	}
+	/**
+	 * Returns the position point from string.
+	 *
+	 * @param positionString the position string
+	 * @return the position from string
+	 */
+	public static Point2D getPositionFromString(String positionString) {
+		
+		if (positionString==null || positionString.isEmpty()) return null;
+		
+		Point2D pos = null;
+		String[] coords = positionString.split(":");
+		if (coords.length == 2) {
+			double xPos = Double.parseDouble(coords[0]);
+			double yPos = Double.parseDouble(coords[1]);
+			pos = new Point2D.Double(xPos, yPos);
+			
+		}
+		return pos;
+	}
+	
 }

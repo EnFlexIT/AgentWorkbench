@@ -103,17 +103,37 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()
 	 */
 	@Override
-	public String getConfigurationAsString() {
-		// TODO Auto-generated method stub
-		return null;
+	protected String getConfigurationAsStringInternal() {
+		
+		String positions = null;
+		List<Point2D> intPoints = this.getIntermediatePoints();
+		for (int i = 0; i < intPoints.size(); i++) {
+			Point2D pos = intPoints.get(i);
+			String posString = GraphNode.getPositionAsString(pos);
+			if (positions==null) {
+				positions = posString; 
+			} else {
+				positions = positions + "|" + posString;
+			}
+		}
+		return positions;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#setConfigurationFromString(java.lang.String)
 	 */
 	@Override
-	public void setConfigurationFromString(String stringConfiguration) {
-		// TODO Auto-generated method stub
+	protected void setConfigurationFromStringInternal(String stringConfiguration) {
+		
+		List<Point2D> intPointList = new ArrayList<>();
+		String[] posArray = stringConfiguration.split("\\|");
+		for (int i = 0; i < posArray.length; i++) {
+			Point2D pos = GraphNode.getPositionFromString(posArray[i]);
+			if (pos!=null) {
+				intPointList.add(pos);
+			}
+		}
+		this.setIntermediatePoints(intPointList);
 	}
 	
 	

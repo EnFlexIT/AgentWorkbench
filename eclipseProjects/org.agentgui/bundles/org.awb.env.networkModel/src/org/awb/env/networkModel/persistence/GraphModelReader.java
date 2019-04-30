@@ -37,6 +37,7 @@ import java.util.Vector;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.text.StringEscapeUtils;
 import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphNode;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -54,12 +55,9 @@ import edu.uci.ics.jung.io.graphml.NodeMetadata;
  */
 public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge>{
 	
-	private static final String KEY_POSITION_PROPERTY = "pos";
-	private static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
-	
+
 	/**
 	 * Instantiates a new graph model reader.
-	 *
 	 * @param graphMLFile the graph ML file
 	 */
 	public GraphModelReader(File graphMLFile) {
@@ -110,7 +108,7 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 				graphNode.setId(StringEscapeUtils.unescapeHtml4(nmd.getId()));
 
 				// --- Load the individual data model ---------------
-				String dmBase64StringSaved = nmd.getProperty(KEY_DATA_MODEL_BASE64_PROPERTY);
+				String dmBase64StringSaved = nmd.getProperty(GraphModelWriter.KEY_DATA_MODEL_BASE64_PROPERTY);
 				if (dmBase64StringSaved != null) {
 					Vector<String> base64Vector = new Vector<String>();
 					while (dmBase64StringSaved.contains("]")) {
@@ -126,21 +124,18 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 				}
 
 				// --- Set the position of the node -----------------
-				Point2D pos = null;
-				String posString = nmd.getProperty(KEY_POSITION_PROPERTY);
-				if (posString != null) {
-					String[] coords = posString.split(":");
-					if (coords.length == 2) {
-						double xPos = Double.parseDouble(coords[0]);
-						double yPos = Double.parseDouble(coords[1]);
-						pos = new Point2D.Double(xPos, yPos);
-					}
-				}
+				String posString = nmd.getProperty(GraphModelWriter.KEY_POSITION_PROPERTY);
+				Point2D pos = GraphNode.getPositionFromString(posString);
 				if (pos == null) {
 					System.err.println("Keine Position definiert für Knoten " + nmd.getId());
 					pos = new Point2D.Double(0, 0);
 				}
 				graphNode.setPosition(pos);
+				
+				// --- Set the position TreeMap ---------------------
+				String posTreeMapString = nmd.getProperty(GraphModelWriter.KEY_POSITION_TREE_MAP);
+				graphNode.setPositionTreeMapFromString(posTreeMapString);
+				
 				return graphNode;
 			}
 		};
@@ -155,7 +150,19 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 		Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
 			@Override
 			public GraphEdge transform(EdgeMetadata emd) {
-				return new GraphEdge(StringEscapeUtils.unescapeHtml4(emd.getId()), emd.getDescription());
+				
+				// --- Create GraphEdge and set ID and type ---------
+				GraphEdge graphEdge = new GraphEdge(StringEscapeUtils.unescapeHtml4(emd.getId()), emd.getDescription());
+				
+				// --- Get the edge shape configuration -------------
+				String shapeConfigString = emd.getProperty(GraphModelWriter.KEY_EDGE_SHAPE_CONFIGUARATION);
+				graphEdge.setEdgeShapeConfiguration(GraphEdgeShapeConfiguration.getGraphEdgeShapeConfiguration(shapeConfigString));
+				
+				// --- Get the edge shape configuration TreeMap -----
+				String shapeConfigTreeMapString = emd.getProperty(GraphModelWriter.KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP);
+				graphEdge.setEdgeShapeConfigurationTreeMapFromString(shapeConfigTreeMapString);
+				
+				return graphEdge;
 			}
 		};
 		return edgeTransformer;

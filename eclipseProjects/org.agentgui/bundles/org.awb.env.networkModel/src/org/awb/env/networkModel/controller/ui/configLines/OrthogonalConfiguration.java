@@ -108,16 +108,16 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()
 	 */
 	@Override
-	public String getConfigurationAsString() {
-		// TODO Auto-generated method stub
-		return null;
+	protected String getConfigurationAsStringInternal() {
+		return "" + this.isFirstMoveInY;
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#setConfigurationFromString(java.lang.String)
 	 */
 	@Override
-	public void setConfigurationFromString(String stringConfiguration) {
-		// TODO Auto-generated method stub
+	protected void setConfigurationFromStringInternal(String stringConfiguration) {
+		this.isFirstMoveInY = Boolean.parseBoolean(stringConfiguration);
+		
 	}
 	
 	/* (non-Javadoc)

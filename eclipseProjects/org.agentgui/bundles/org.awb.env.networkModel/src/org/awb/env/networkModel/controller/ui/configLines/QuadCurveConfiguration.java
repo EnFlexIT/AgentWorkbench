@@ -66,27 +66,34 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	public void setIntermediatePoints(List<Point2D> intermediatePointList) {
 		if (intermediatePointList!=null && intermediatePointList.size()>0) {
 			Point2D cp = intermediatePointList.get(0);
-			QuadCurve2D quadCurve = this.getShape(); 
-			quadCurve.setCurve(quadCurve.getP1(), cp, quadCurve.getP2());
+			this.setIntermediatePoint(cp);
 		}
 	}
-	
+	/**
+	 * Sets the intermediate (control) point.
+	 * @param controlPoint the new intermediate point
+	 */
+	private void setIntermediatePoint(Point2D controlPoint) {
+		if (controlPoint!=null) {
+			QuadCurve2D quadCurve = this.getShape(); 
+			quadCurve.setCurve(quadCurve.getP1(), controlPoint, quadCurve.getP2());
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()
 	 */
 	@Override
-	public String getConfigurationAsString() {
-		// TODO Auto-generated method stub
-		return null;
+	protected String getConfigurationAsStringInternal() {
+		return GraphNode.getPositionAsString(this.getShape().getCtrlPt());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#setConfigurationFromString(java.lang.String)
 	 */
 	@Override
-	public void setConfigurationFromString(String stringConfiguration) {
-		// TODO Auto-generated method stub
+	protected void setConfigurationFromStringInternal(String stringConfiguration) {
+		this.setIntermediatePoint(GraphNode.getPositionFromString(stringConfiguration));
 	}
 	
 	/* (non-Javadoc)

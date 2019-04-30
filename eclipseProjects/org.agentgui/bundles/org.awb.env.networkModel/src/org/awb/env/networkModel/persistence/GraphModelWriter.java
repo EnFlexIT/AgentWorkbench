@@ -43,8 +43,14 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 	
 	private static final String GraphML_NewLine = System.getProperty("line.separator");
 	private static final String GraphML_VectorBrackets = "[conent]";
-	private static final String KEY_POSITION_PROPERTY = "pos";
-	private static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
+	
+	protected static final String KEY_POSITION_PROPERTY = "pos";
+	protected static final String KEY_POSITION_TREE_MAP = "positionTreeMap";
+	protected static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
+	
+	protected static final String KEY_EDGE_SHAPE_CONFIGUARATION = "edgeShapeConfiguration";
+	protected static final String KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP = "edgeShapeConfigurationTreeMap";
+	
 
 	/**
 	 * Instantiates a new graph model writer.
@@ -57,18 +63,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 	 * Initialize.
 	 */
 	private void initialize() {
-		this.setEdgeIDs(new Transformer<GraphEdge, String>() {
-			@Override
-			public String transform(GraphEdge graphEdge) {
-				return StringEscapeUtils.escapeHtml4(graphEdge.getId());
-			}
-		});
-		this.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
-			@Override
-			public String transform(GraphEdge graphEdge) {
-				return graphEdge.getComponentType();
-			}
-		});
+		
 		this.setVertexIDs(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode graphNode) {
@@ -78,8 +73,13 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode graphNode) {
-				String pos = graphNode.getPosition().getX() + ":" + graphNode.getPosition().getY();
-				return pos;
+				return GraphNode.getPositionAsString(graphNode.getPosition());
+			}
+		});
+		this.addVertexData(KEY_POSITION_TREE_MAP, "Position TreeMap", "", new Transformer<GraphNode, String>() {
+			@Override
+			public String transform(GraphNode graphNode) {
+				return graphNode.getPositionTreeMapAsString();
 			}
 		});
 		this.addVertexData(KEY_DATA_MODEL_BASE64_PROPERTY, "Base64 encoded individual data model", "", new Transformer<GraphNode, String>() {
@@ -102,6 +102,37 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 				return dmBase64StringSave;
 			}
 		});
+		
+		
+		this.setEdgeIDs(new Transformer<GraphEdge, String>() {
+			@Override
+			public String transform(GraphEdge graphEdge) {
+				return StringEscapeUtils.escapeHtml4(graphEdge.getId());
+			}
+		});
+		this.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
+			@Override
+			public String transform(GraphEdge graphEdge) {
+				return graphEdge.getComponentType();
+			}
+		});
+		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION, "Edge-Configuration", "", new Transformer<GraphEdge, String>() {
+			@Override
+			public String transform(GraphEdge graphEdge) {
+				if (graphEdge.getEdgeShapeConfiguration()!=null) {
+					return graphEdge.getEdgeShapeConfiguration().getConfigurationAsString(); 
+				}
+				return null;
+			}
+		});
+		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP, "Edge-Configuration TreeMap", "", new Transformer<GraphEdge, String>() {
+			@Override
+			public String transform(GraphEdge graphEdge) {
+				return graphEdge.getEdgeShapeConfigurationTreeMapAsString();
+			}
+		});
+		
+		
 	}
 	
 }

@@ -343,6 +343,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 			break;
 
 		case SIMULATION_SETUP_PREPARE_SAVING:
+			this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
+			break;
+
 		case SIMULATION_SETUP_LOAD:
 		case SIMULATION_SETUP_SAVED:
 			// --- Nothing to do here ---------------------

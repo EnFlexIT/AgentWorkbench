@@ -326,7 +326,8 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.confLineEdit.setGraphNodeNewFrom(this.getGraphNodeStart().getCopy());
 		this.confLineEdit.setGraphNodeNewTo(this.getGraphNodeEnd().getCopy());
 
-		this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setConfiguredLineEdit(this.getVisViewer(), this.confLineEdit);
+		this.getGraphController().getNetworkModelUndoManager().setConfiguredLineEdit(this.getVisViewer(), this.confLineEdit);
+		this.getGraphController().setProjectUnsaved();
 	}
 	
 	/**

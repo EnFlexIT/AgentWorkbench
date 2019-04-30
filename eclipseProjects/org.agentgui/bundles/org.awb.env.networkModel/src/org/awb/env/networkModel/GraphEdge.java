@@ -29,6 +29,10 @@
 package org.awb.env.networkModel;
 
 import java.awt.Shape;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeMap;
 
 /**
  * This class represents a graph edge in an environment model of the type graph / network.
@@ -43,6 +47,8 @@ public class GraphEdge extends GraphElement {
 
 	private String componentType;
 	private GraphEdgeShapeConfiguration<? extends Shape> edgeShapeConfiguration;
+	private TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> edgeShapeConfigurationTreeMap;
+	
 	
 	/**
 	 * Constructor.
@@ -96,6 +102,74 @@ public class GraphEdge extends GraphElement {
 	 */
 	public void setEdgeShapeConfiguration(GraphEdgeShapeConfiguration<?> edgeShapeConfiguration) {
 		this.edgeShapeConfiguration = edgeShapeConfiguration;
+	}
+
+	/**
+	 * Returns the edge shape configuration tree map that distinguishes between different layouts.
+	 * @return the edge configuration tree map
+	 */
+	public TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> getEdgeShapeConfigurationTreeMap() {
+		if (edgeShapeConfigurationTreeMap==null) {
+			edgeShapeConfigurationTreeMap = new TreeMap<>();
+		}
+		return edgeShapeConfigurationTreeMap;
+	}
+	/**
+	 * Sets the edge shape configuration tree map.
+	 * @param edgeShapeConfigurationTreeMap the edge configuration tree map
+	 */
+	public void setEdgeShapeConfigurationTreeMap(TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> edgeConfigurationTreeMap) {
+		this.edgeShapeConfigurationTreeMap = edgeConfigurationTreeMap;
+	}
+	
+	/**
+	 * Gets the edge shape configuration tree map as string.
+	 * @return the edge configuration tree map as string
+	 */
+	public String getEdgeShapeConfigurationTreeMapAsString() {
+		
+		String config = null;
+		if (this.getEdgeShapeConfigurationTreeMap().size()==0) {
+			// --- Set to null to reduce RAM load ---------
+			this.setEdgeShapeConfigurationTreeMap(null);
+			
+		} else {
+			// --- Convert to String ----------------------
+			List<String> keys = new ArrayList<>(this.getEdgeShapeConfigurationTreeMap().keySet()); 
+			Collections.sort(keys);
+			for (int i = 0; i < keys.size(); i++) {
+				String key = keys.get(i);
+				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = this.getEdgeShapeConfigurationTreeMap().get(key);
+				String singleConfig = key + ":=" + shapeConfig.getConfigurationAsStringInternal();
+				if (config==null) {
+					config = singleConfig;
+				} else {
+					config = config + "|" + singleConfig;
+				}
+			}
+			
+		}
+		return config;
+	}
+	/**
+	 * Sets the edge shape configuration tree map from the specified string.
+	 * @param treeMapAsString the new edge configuration tree map from string
+	 */
+	public void setEdgeShapeConfigurationTreeMapFromString(String treeMapAsString) {
+		
+		if (treeMapAsString==null || treeMapAsString.isEmpty()) return;
+
+		String[] layoutShapeConfigurations = treeMapAsString.split("|");
+		for (int i = 0; i < layoutShapeConfigurations.length; i++) {
+			
+			String[] layoutConfigurationPair = layoutShapeConfigurations[i].split(":=");
+
+			String layoutID = layoutConfigurationPair[0];
+			GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = GraphEdgeShapeConfiguration.getGraphEdgeShapeConfiguration(layoutConfigurationPair[1]);
+			if (layoutID!=null && layoutID.isEmpty()==false && shapeConfig!=null) {
+				this.getEdgeShapeConfigurationTreeMap().put(layoutID, shapeConfig);
+			}
+		}
 	}
 	
 }
