@@ -141,7 +141,7 @@ public class GraphEdge extends GraphElement {
 				String layoutID = keys.get(i);
 				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = this.getEdgeShapeConfigurationTreeMap().get(layoutID);
 				if (shapeConfig!=null) {
-					String singleConfig = layoutID + ":=" + shapeConfig.getShapeConfigurationTypeAsString() + "=>" + shapeConfig.getConfigurationAsString();
+					String singleConfig = layoutID + ":=" + shapeConfig.getConfigurationAsString();
 					if (config==null) {
 						config = singleConfig;
 					} else {
