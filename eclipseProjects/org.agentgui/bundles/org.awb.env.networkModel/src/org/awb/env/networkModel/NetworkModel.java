@@ -161,48 +161,60 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * Sets the layout name to be used by this NetworkModel.
 	 * @param newLayoutID the new layout name
 	 */
-	public void setLayoutID(String newLayoutID) {
+	public String setLayoutID(String newLayoutID) {
+		
 		if (newLayoutID!=null && newLayoutID.equals(this.getLayoutID())==false) {
-			// ----------------------------------------------------------------
+
 			// --- Check if the layout ID exists ------------------------------
-			// ----------------------------------------------------------------
 			if (this.getGeneralGraphSettings4MAS().getLayoutSettings().get(newLayoutID)==null) {
 				// --- Correct layoutID to default setting name ---------------
+				System.err.println("[" + this.getClass().getSimpleName() +  "] Unknow layout ID '" + newLayoutID + "' - using ID of " + GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME + " instead.");
 				newLayoutID = this.getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(GeneralGraphSettings4MAS.DEFAULT_LAYOUT_SETTINGS_NAME);
 			}
-			
-			// ----------------------------------------------------------------
-			// --- Edit layout specific information of the GraphElements ------
-			// ----------------------------------------------------------------
-			List<GraphElement> graphElementList = new ArrayList<>(this.getGraphElements().values());
-			for (int i = 0; i < graphElementList.size(); i++) {
-				GraphElement graphElement = graphElementList.get(i);
-				if (graphElement instanceof GraphNode) {
-					// --- Change position of all GraphNode position ----------
-					GraphNode graphNode = (GraphNode) graphElement;
-					// --- Remind position in old layout ----------------------
-					graphNode.getPositionTreeMap().put(this.layoutID, graphNode.getPosition());
-					// --- Check for a position in the new layout -------------
-					Point2D newLayoutPosition = graphNode.getPositionTreeMap().get(newLayoutID);
-					if (newLayoutPosition!=null) {
-						graphNode.setPosition(newLayoutPosition);
-					}
-					
-				} else if (graphElement instanceof GraphEdge) {
-					// --- Change shape configuration of GraphEdges -----------
-					GraphEdge graphEdge = (GraphEdge) graphElement;
-					// --- Remind current shape configuration -----------------
-					graphEdge.getEdgeShapeConfigurationTreeMap().put(this.layoutID, graphEdge.getEdgeShapeConfiguration());
-					// --- Check for shape configuration for new layout -------  
-					GraphEdgeShapeConfiguration<?> shapeConfig = graphEdge.getEdgeShapeConfigurationTreeMap().get(newLayoutID);
-					graphEdge.setEdgeShapeConfiguration(shapeConfig);
-				}
-			}
-			
 			// --- Finally, set new value -------------------------------------
 			this.layoutID = newLayoutID;
 		}
+		return this.layoutID;
 	}
+	/**
+	 * Sets the layout ID and exchanges the layout settings.
+	 * @param newLayoutID the new layout ID exchange layout settings
+	 */
+	public void setLayoutIdAndExchangeLayoutSettings(String newLayoutID) {
+		
+		String layoutIdOld = this.getLayoutID();
+		String layoutIdNew = this.setLayoutID(newLayoutID);
+		
+		// ----------------------------------------------------------------
+		// --- Edit layout specific information of the GraphElements ------
+		// ----------------------------------------------------------------
+		List<GraphElement> graphElementList = new ArrayList<>(this.getGraphElements().values());
+		for (int i = 0; i < graphElementList.size(); i++) {
+			GraphElement graphElement = graphElementList.get(i);
+			if (graphElement instanceof GraphNode) {
+				// --- Change position of all GraphNode position ----------
+				GraphNode graphNode = (GraphNode) graphElement;
+				// --- Remind position in old layout ----------------------
+				graphNode.getPositionTreeMap().put(layoutIdOld, graphNode.getPosition());
+				// --- Check for a position in the new layout -------------
+				Point2D newLayoutPosition = graphNode.getPositionTreeMap().get(layoutIdNew);
+				if (newLayoutPosition!=null) {
+					graphNode.setPosition(newLayoutPosition);
+				}
+				
+			} else if (graphElement instanceof GraphEdge) {
+				// --- Change shape configuration of GraphEdges -----------
+				GraphEdge graphEdge = (GraphEdge) graphElement;
+				// --- Remind current shape configuration -----------------
+				graphEdge.getEdgeShapeConfigurationTreeMap().put(layoutIdOld, graphEdge.getEdgeShapeConfiguration());
+				// --- Check for shape configuration for new layout -------  
+				GraphEdgeShapeConfiguration<?> shapeConfig = graphEdge.getEdgeShapeConfigurationTreeMap().get(layoutIdNew);
+				graphEdge.setEdgeShapeConfiguration(shapeConfig);
+			}
+		}
+		
+	}
+	
 	
 	/**
 	 * Returns the {@link LayoutSettings} that correspond to {@link #getLayoutID()}.
@@ -221,6 +233,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return ls;
 	}
+	
 	
 	/**
 	 * Returns the JUNG graph.

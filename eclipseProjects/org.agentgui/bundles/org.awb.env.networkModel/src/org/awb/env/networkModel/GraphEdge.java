@@ -138,10 +138,10 @@ public class GraphEdge extends GraphElement {
 			List<String> keys = new ArrayList<>(this.getEdgeShapeConfigurationTreeMap().keySet()); 
 			Collections.sort(keys);
 			for (int i = 0; i < keys.size(); i++) {
-				String key = keys.get(i);
-				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = this.getEdgeShapeConfigurationTreeMap().get(key);
+				String layoutID = keys.get(i);
+				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = this.getEdgeShapeConfigurationTreeMap().get(layoutID);
 				if (shapeConfig!=null) {
-					String singleConfig = key + ":=" + shapeConfig.getConfigurationAsString();
+					String singleConfig = layoutID + ":=" + shapeConfig.getShapeConfigurationTypeAsString() + "=>" + shapeConfig.getConfigurationAsString();
 					if (config==null) {
 						config = singleConfig;
 					} else {

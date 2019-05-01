@@ -111,7 +111,6 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	 * @return the graph edge shape configuration
 	 */
 	protected abstract void setConfigurationFromStringInternal(String stringConfiguration);
-
 	
 	/**
 	 * Returns the current edge shape configuration as string.
@@ -120,11 +119,28 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	public String getConfigurationAsString() {
 		return this.getShapeConfigurationTypeAsString() + "=>" + this.getConfigurationAsStringInternal();
 	}
+
+	/**
+	 * Return the current shape configuration type as string.
+	 * @return the shape configuration as string
+	 */
+	public String getShapeConfigurationTypeAsString() {
+		
+		String shapeConfigType = null;
+		if (this instanceof OrthogonalConfiguration) {
+			shapeConfigType = ShapeConfigurationType.Orthogonal.name();
+		} else if (this instanceof QuadCurveConfiguration) {
+			shapeConfigType = ShapeConfigurationType.QuadCurve.name();
+		} else if (this instanceof PolylineConfiguration) {
+			shapeConfigType = ShapeConfigurationType.Polyline.name();
+		}
+		return shapeConfigType;
+	}
 	
 	/**
-	 * Returns a GraphEdgeShapeConfiguration from the specified single config string.
+	 * Returns a GraphEdgeShapeConfiguration from the specified single configuration string.
 	 *
-	 * @param singleEdgeShapeConfigString the single config string
+	 * @param singleEdgeShapeConfigString the single configuration string
 	 * @return the graph edge shape configuration
 	 */
 	public static GraphEdgeShapeConfiguration<? extends Shape> getGraphEdgeShapeConfiguration(String singleEdgeShapeConfigString) {
@@ -157,24 +173,7 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 		}
 		return edgeShapeConfig;
 	}
-	
-	/**
-	 * Return the current shape configuration type as string.
-	 * @return the shape configuration as string
-	 */
-	public String getShapeConfigurationTypeAsString() {
-		
-		String shapeConfigType = null;
-		if (this instanceof OrthogonalConfiguration) {
-			shapeConfigType = ShapeConfigurationType.Orthogonal.name();
-		} else if (this instanceof QuadCurveConfiguration) {
-			shapeConfigType = ShapeConfigurationType.QuadCurve.name();
-		} else if (this instanceof PolylineConfiguration) {
-			shapeConfigType = ShapeConfigurationType.Polyline.name();
-		}
-		return shapeConfigType;
-	}
-	
+
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

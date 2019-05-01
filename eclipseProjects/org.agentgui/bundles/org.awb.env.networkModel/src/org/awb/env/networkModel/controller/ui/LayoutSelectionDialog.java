@@ -249,7 +249,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     		if (layoutNew!=null && layoutNew.equals(layoutCurrent)==false) {
     			// --- Set the new layout ID --------------
     			String newLayoutID = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(layoutNew);
-    			this.graphController.getNetworkModel().setLayoutID(newLayoutID);
+    			this.graphController.getNetworkModel().setLayoutIdAndExchangeLayoutSettings(newLayoutID);
     			
     			// --- Notify the controllers observers ---
     			NetworkModelNotification nmNotification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_LayoutChanged);
