@@ -184,6 +184,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		String layoutIdOld = this.getLayoutID();
 		String layoutIdNew = this.setLayoutID(newLayoutID);
+		if (layoutIdNew.equals(layoutIdOld)==true) return;
 		
 		// ----------------------------------------------------------------
 		// --- Edit layout specific information of the GraphElements ------

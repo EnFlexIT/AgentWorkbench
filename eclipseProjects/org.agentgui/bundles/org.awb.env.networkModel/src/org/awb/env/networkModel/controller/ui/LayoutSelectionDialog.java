@@ -249,15 +249,9 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     		if (layoutNew!=null && layoutNew.equals(layoutCurrent)==false) {
     			// --- Set the new layout ID --------------
     			String newLayoutID = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(layoutNew);
-    			this.graphController.getNetworkModel().setLayoutIdAndExchangeLayoutSettings(newLayoutID);
-    			
-    			// --- Notify the controllers observers ---
-    			NetworkModelNotification nmNotification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_LayoutChanged);
-    			this.graphController.notifyObservers(nmNotification);
-    			this.graphController.setProjectUnsaved();
+    			this.graphController.getNetworkModelUndoManager().setLayoutIdAndExchangeLayoutSettings(newLayoutID);
     		}
     	}
-    	
     }
 	
 	/* (non-Javadoc)
@@ -275,6 +269,11 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     			this.fillComboBoxModel();
     			break;
 				
+    		case NetworkModelNotification.NETWORK_MODEL_LayoutChanged:
+    			String layoutName = this.graphController.getNetworkModel().getLayoutSettings().getLayoutName();
+    			this.getJComboBoxLayout().setSelectedItem(layoutName);
+    			break;
+    			
     		case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
     			this.getJComboBoxLayout().setEnabled(false);
     			break;

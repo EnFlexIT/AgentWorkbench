@@ -397,12 +397,22 @@ public class NetworkModelUndoManager {
 	}
 
 	/**
+	 * Sets the specified new layoutID and exchanges layout settings in an undoable action.
+	 * @param newLayoutID the new layout id and exchange layout settings
+	 */
+	public void setLayoutIdAndExchangeLayoutSettings(String newLayoutID) {
+		this.getUndoManager().addEdit(new SwitchLayoutAction(this.graphController, newLayoutID));
+	}
+	
+	/**
 	 * Sets a paste action to the undo manager.
 	 * @param networkModelPasted the network model pasted
 	 */
 	public void pasteNetworkModel(NetworkModel networkModelPasted) {
 		this.getUndoManager().addEdit(new PasteNetworkModel(this.graphController, networkModelPasted));
 	}
+
+	
 
 
 }
