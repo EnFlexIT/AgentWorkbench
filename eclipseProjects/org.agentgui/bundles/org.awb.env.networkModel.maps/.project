@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>de.enflexit.db.hibernate</name>
+	<name>org.awb.env.networkModel.maps</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -21,7 +21,7 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.pde.ds.core.builder</name>
+			<name>org.fusesource.ide.project.RiderProjectBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -32,8 +32,9 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.fusesource.ide.project.RiderProjectNature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
-		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>

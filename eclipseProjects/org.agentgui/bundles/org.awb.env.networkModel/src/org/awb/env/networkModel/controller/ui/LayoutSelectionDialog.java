@@ -244,11 +244,11 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     	
     	if (ae.getSource()==this.getJComboBoxLayout() && this.isPauseComboBoxActionListener==false) {
 			// --- Set the new selected layout ? ----------
-    		String layoutCurrent = this.graphController.getNetworkModel().getLayoutSettings().getLayoutName();
-    		String layoutNew = (String) this.getComboBoxModel().getSelectedItem();
-    		if (layoutNew!=null && layoutNew.equals(layoutCurrent)==false) {
+    		String layoutNameCurrent = this.graphController.getNetworkModel().getLayoutSettings().getLayoutName();
+    		String layoutNameNew = (String) this.getComboBoxModel().getSelectedItem();
+    		if (layoutNameNew!=null && layoutNameNew.equals(layoutNameCurrent)==false) {
     			// --- Set the new layout ID --------------
-    			String newLayoutID = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(layoutNew);
+    			String newLayoutID = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(layoutNameNew);
     			this.graphController.getNetworkModelUndoManager().setLayoutIdAndExchangeLayoutSettings(newLayoutID);
     		}
     	}
