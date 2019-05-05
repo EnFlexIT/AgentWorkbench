@@ -2518,7 +2518,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 
 			fw = new FileWriter(graphMlFile);
 			pw = new PrintWriter(fw);
-			new GraphModelWriter().save(this.getGraph(), pw);
+			
+			// --- Collect allowed layout ID's and write file -------
+			HashSet<String> allowedLayoutIDs = new HashSet<>(this.getGeneralGraphSettings4MAS().getLayoutSettings().keySet());
+			new GraphModelWriter(allowedLayoutIDs).save(this.getGraph(), pw);
 			success=true;
 			
 		} catch (IOException e) {

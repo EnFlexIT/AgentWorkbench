@@ -31,6 +31,7 @@ package org.awb.env.networkModel;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -128,9 +129,11 @@ public class GraphNode extends GraphElement {
 	
 	/**
 	 * Returns the position tree map as string.
+	 *
+	 * @param allowedLayoutIDs the allowed layout I ds
 	 * @return the position tree map as string
 	 */
-	public String getPositionTreeMapAsString() {
+	public String getPositionTreeMapAsString(HashSet<String> allowedLayoutIDs) {
 		
 		String config = null;
 		if (this.getPositionTreeMap().size()==0) {
@@ -143,6 +146,7 @@ public class GraphNode extends GraphElement {
 			Collections.sort(keys);
 			for (int i = 0; i < keys.size(); i++) {
 				String layoutID = keys.get(i);
+				if (allowedLayoutIDs.contains(layoutID)==false) continue;
 				Point2D position = this.getPositionTreeMap().get(layoutID);
 	
 				String singleConfig = layoutID + ":=" + getPositionAsString(position);

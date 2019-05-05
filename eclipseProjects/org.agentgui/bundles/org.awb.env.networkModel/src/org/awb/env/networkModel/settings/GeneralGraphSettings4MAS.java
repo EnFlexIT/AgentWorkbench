@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
@@ -294,13 +293,17 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		GeneralGraphSettings4MAS ggs4MAS = null;
 		try {
 			
-			if (file.exists()==false) GeneralGraphSettings4MAS.save(file, new GeneralGraphSettings4MAS());
-			FileReader componentReader = new FileReader(file);
-		    
+			if (file.exists()==false) {
+				// --- Create file, if it does not exists -----------
+				GeneralGraphSettings4MAS.save(file, new GeneralGraphSettings4MAS());
+			}
+			
+			// -- Create context and read the file ------------------
 			JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
 		    Unmarshaller unmarsh = context.createUnmarshaller();
+
+		    FileReader componentReader = new FileReader(file);
 		    ggs4MAS = (GeneralGraphSettings4MAS) unmarsh.unmarshal(componentReader);
-		    
 		    componentReader.close();
 	
 		} catch (JAXBException ex) {
@@ -477,7 +480,15 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * @return the string
 	 */
 	public static String generateLayoutID() {
-		return UUID.randomUUID().toString();
+		
+		String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		StringBuilder builder = new StringBuilder();
+		int count = 10 ;
+		while (count--!=0) {
+			int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
+			builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+		}
+		return builder.toString();
 	}
 	/**
 	 * Returns the current layout settings.

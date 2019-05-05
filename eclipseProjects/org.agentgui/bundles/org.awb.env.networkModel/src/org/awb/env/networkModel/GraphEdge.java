@@ -31,6 +31,7 @@ package org.awb.env.networkModel;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -45,6 +46,8 @@ public class GraphEdge extends GraphElement {
 
 	private static final long serialVersionUID = 1043215558300713661L;
 
+	private static final String EDGE_SHAPE_CONFIGURATION_SEPERATOR = ";";
+	
 	private String componentType;
 	private GraphEdgeShapeConfiguration<? extends Shape> edgeShapeConfiguration;
 	private TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> edgeShapeConfigurationTreeMap;
@@ -124,9 +127,11 @@ public class GraphEdge extends GraphElement {
 	
 	/**
 	 * Gets the edge shape configuration tree map as string.
+	 *
+	 * @param allowedLayoutIDs the allowed layout I ds
 	 * @return the edge configuration tree map as string
 	 */
-	public String getEdgeShapeConfigurationTreeMapAsString() {
+	public String getEdgeShapeConfigurationTreeMapAsString(HashSet<String> allowedLayoutIDs) {
 		
 		String config = null;
 		if (this.getEdgeShapeConfigurationTreeMap().size()==0) {
@@ -139,13 +144,15 @@ public class GraphEdge extends GraphElement {
 			Collections.sort(keys);
 			for (int i = 0; i < keys.size(); i++) {
 				String layoutID = keys.get(i);
+				if (allowedLayoutIDs.contains(layoutID)==false) continue;
+				
 				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = this.getEdgeShapeConfigurationTreeMap().get(layoutID);
 				if (shapeConfig!=null) {
 					String singleConfig = layoutID + ":=" + shapeConfig.getConfigurationAsString();
 					if (config==null) {
 						config = singleConfig;
 					} else {
-						config = config + "|" + singleConfig;
+						config = config + EDGE_SHAPE_CONFIGURATION_SEPERATOR  + singleConfig;
 					}
 				}
 			}
@@ -161,7 +168,7 @@ public class GraphEdge extends GraphElement {
 		
 		if (treeMapAsString==null || treeMapAsString.isEmpty()) return;
 
-		String[] layoutShapeConfigurations = treeMapAsString.split("\\|");
+		String[] layoutShapeConfigurations = treeMapAsString.split(EDGE_SHAPE_CONFIGURATION_SEPERATOR);
 		for (int i = 0; i < layoutShapeConfigurations.length; i++) {
 			
 			String[] layoutConfigurationPair = layoutShapeConfigurations[i].split(":=");

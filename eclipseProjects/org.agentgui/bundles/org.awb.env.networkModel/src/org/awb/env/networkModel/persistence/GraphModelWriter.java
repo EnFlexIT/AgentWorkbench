@@ -28,6 +28,8 @@
  */
 package org.awb.env.networkModel.persistence;
 
+import java.util.HashSet;
+
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.text.StringEscapeUtils;
 import org.awb.env.networkModel.GraphEdge;
@@ -51,11 +53,16 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 	protected static final String KEY_EDGE_SHAPE_CONFIGUARATION = "edgeShapeConfiguration";
 	protected static final String KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP = "edgeShapeConfigurationTreeMap";
 	
+	
+	private HashSet<String> allowedLayoutIDs;
 
+	
 	/**
 	 * Instantiates a new graph model writer.
+	 * @param allowedLayoutIDs the allowed layout ID's
 	 */
-	public GraphModelWriter() {
+	public GraphModelWriter(HashSet<String> allowedLayoutIDs) {
+		this.allowedLayoutIDs = allowedLayoutIDs;
 		this.initialize();
 	}
 	
@@ -79,7 +86,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.addVertexData(KEY_POSITION_TREE_MAP, "Position TreeMap", "", new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode graphNode) {
-				return graphNode.getPositionTreeMapAsString();
+				return graphNode.getPositionTreeMapAsString(GraphModelWriter.this.allowedLayoutIDs);
 			}
 		});
 		this.addVertexData(KEY_DATA_MODEL_BASE64_PROPERTY, "Base64 encoded individual data model", "", new Transformer<GraphNode, String>() {
@@ -128,7 +135,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP, "Edge-Configuration TreeMap", "", new Transformer<GraphEdge, String>() {
 			@Override
 			public String transform(GraphEdge graphEdge) {
-				return graphEdge.getEdgeShapeConfigurationTreeMapAsString();
+				return graphEdge.getEdgeShapeConfigurationTreeMapAsString(GraphModelWriter.this.allowedLayoutIDs);
 			}
 		});
 		
