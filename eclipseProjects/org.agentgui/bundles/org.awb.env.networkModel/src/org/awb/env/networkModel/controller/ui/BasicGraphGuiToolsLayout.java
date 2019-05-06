@@ -102,9 +102,13 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	 * @param basicGraphGuiTools the basic graph gui tools
 	 */
 	public BasicGraphGuiToolsLayout(GraphEnvironmentController graphController, BasicGraphGuiTools basicGraphGuiTools) {
-		this.graphController = graphController;
-    	this.graphController.addObserver(this);
-    	this.basicGraphGuiTools = basicGraphGuiTools;
+		if (graphController!=null) {
+			this.graphController = graphController;
+			this.graphController.addObserver(this);
+		}
+		if (basicGraphGuiTools!=null) {
+			this.basicGraphGuiTools = basicGraphGuiTools;
+		}
     	this.buildToolBar();
     	this.onGraphSelectionChanged(null);
 	}

@@ -394,7 +394,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 //		Converted to Lat/Long: (-60.1166999854101, -111.78330000822082)
 //		Convert Latitude/Longitude to UTM Reference
 
-		UTMCoordinate utm1 = new UTMCoordinate(456463.99, 3335334.05, "E", 12);
+		UTMCoordinate utm1 = new UTMCoordinate(12, "E", 456463.99, 3335334.05);
 		System.out.println("UTM Reference: " + utm1.toString());
 		WGS84LatLngCoordinate ll3 = utm1.getWGS84LatLngCoordinate();
 		System.out.println("Converted to Lat/Long: " + ll3);

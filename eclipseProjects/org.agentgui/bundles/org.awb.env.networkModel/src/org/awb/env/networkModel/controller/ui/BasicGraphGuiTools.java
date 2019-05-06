@@ -151,8 +151,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * @param graphController the current {@link GraphEnvironmentController}
      */
     public BasicGraphGuiTools(GraphEnvironmentController graphController) {
-    	this.graphController = graphController;
-    	this.graphController.addObserver(this);
+    	if (graphController!=null) {
+    		this.graphController = graphController;
+    		this.graphController.addObserver(this);
+    	}
     	this.proceedCustomToolbarComponentExtensions();
     }
 

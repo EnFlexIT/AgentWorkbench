@@ -1361,16 +1361,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		double scaleX = visWidth / graphWidth;
 		double scaleY = visHeight / graphHeight;
 		
-		double scale = 1;
-		if (scaleX>1 && scaleY>1) {
-			// --- Zoom into graph view -----------------------------
-			scale  = Math.max(scaleX, scaleY);
-		} else {
-			// --- Zoom out of the graph view -----------------------
-			scale  = Math.min(scaleX, scaleY);
-		}
-		
 		// --- Set scaling ------------------------------------------
+		double scale = Math.min(scaleX, scaleY);;
 		if (scale!= 0 && scale!=1) {
 			this.getScalingControl().scale(visViewer, (float) scale, coordinateSourcePoint);
 		}
