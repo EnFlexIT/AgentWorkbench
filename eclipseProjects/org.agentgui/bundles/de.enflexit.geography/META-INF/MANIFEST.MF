@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Geography-Bundle
+Bundle-SymbolicName: de.enflexit.geography
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex:IT
+Automatic-Module-Name: de.enflexit.geography
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.enflexit.geography,
+ de.enflexit.geography.coordinates,
+ de.enflexit.geography.coordinates.ui,
+ de.enflexit.geography.coordinates.ui.img
+Require-Bundle: de.enflexit.common;bundle-version="1.2.1"

@@ -1332,9 +1332,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// ----------------------------------------------------------
 		// --- Calculate the movement in the view -------------------
-		Rectangle2D rectGraph = GraphGlobals.getGraphSpreadDimension(visViewer.getGraphLayout().getGraph());
-		double moveX = (rectGraph.getX() * (-1)) + this.graphMargin;
-		double moveY = (rectGraph.getY() * (-1)) + this.graphMargin;
+		Rectangle2D graphRectangle = GraphGlobals.getGraphSpreadDimension(visViewer.getGraphLayout().getGraph());
+		double moveX = (graphRectangle.getX() * (-1)) + this.graphMargin;
+		double moveY = (graphRectangle.getY() * (-1)) + this.graphMargin;
 
 		// --- Transform coordinate to LayoutSettings ---------------
 		TransformerForGraphNodePosition<GraphNode, GraphEdge> positionTransformer = new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController());
@@ -1349,8 +1349,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// ----------------------------------------------------------		
 		// --- Calculate the scaling --------------------------------
-		double graphWidth = rectGraph.getWidth() + 2 * this.graphMargin;
-		double graphHeight = rectGraph.getHeight() + 2 * this.graphMargin;
+		double graphWidth = graphRectangle.getWidth() + 2 * this.graphMargin;
+		double graphHeight = graphRectangle.getHeight() + 2 * this.graphMargin;
 		Point2D farthestCorner = positionTransformer.transform(new Point2D.Double(graphWidth, graphHeight));
 		graphWidth = Math.abs(farthestCorner.getX());
 		graphHeight = Math.abs(farthestCorner.getY());
@@ -1358,19 +1358,21 @@ public class BasicGraphGui extends JPanel implements Observer {
 		double visWidth = visViewer.getVisibleRect().getWidth();
 		double visHeight = visViewer.getVisibleRect().getHeight();
 
-		float scaleX = (float) (visWidth / graphWidth);
-		float scaleY = (float) (visHeight / graphHeight);
-		if (scaleX > 1) scaleX = 1;
-		if (scaleY > 1) scaleY = 1;
-
-		float scale = scaleX;
-		if (scaleX > scaleY) {
-			scale = scaleY;
+		double scaleX = visWidth / graphWidth;
+		double scaleY = visHeight / graphHeight;
+		
+		double scale = 1;
+		if (scaleX>1 && scaleY>1) {
+			// --- Zoom into graph view -----------------------------
+			scale  = Math.max(scaleX, scaleY);
+		} else {
+			// --- Zoom out of the graph view -----------------------
+			scale  = Math.min(scaleX, scaleY);
 		}
 		
 		// --- Set scaling ------------------------------------------
-		if (scale != 0 && scale != 1) {
-			this.getScalingControl().scale(visViewer, scale, coordinateSourcePoint);
+		if (scale!= 0 && scale!=1) {
+			this.getScalingControl().scale(visViewer, (float) scale, coordinateSourcePoint);
 		}
 	}
 	
