@@ -796,6 +796,11 @@ de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;Add intermediate point;;;
 en;;Alias:;;;
+en;;Align graph nodes;;;
+en;;Align to the bottom;;;
+en;;Align to the left;;;
+en;;Align to the right;;;
+en;;Align to the top;;;
 en;;Calculate metrics based on agent class data.;;;
 en;;Calculate metrics based on delta integrals.;;;
 en;;Calculate metrics based on individual agent data.;;;
