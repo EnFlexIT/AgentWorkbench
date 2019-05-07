@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.enflexit.geography.coordinates.ui;
 
 import java.awt.Desktop;
@@ -23,7 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -67,6 +63,8 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 	private JTextField jTextFieldUtmZone;
 	private JTextField jTextFieldUtmEasting;
 	private JTextField jTextFieldUtmNorthing;
+	private JLabel jLableWSGInfo;
+	private JLabel jLabelUTMInfo;
 	
 	/**
 	 * Instantiates a new JPanel to configure a geographical coordinate.
@@ -84,29 +82,29 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHeader.insets = new Insets(10, 10, 5, 10);
+		gbc_jLabelHeader.insets = new Insets(15, 15, 5, 10);
 		gbc_jLabelHeader.gridx = 0;
 		gbc_jLabelHeader.gridy = 0;
 		add(getJLabelHeader(), gbc_jLabelHeader);
 		GridBagConstraints gbc_jButtonSetNull = new GridBagConstraints();
-		gbc_jButtonSetNull.insets = new Insets(10, 0, 5, 20);
+		gbc_jButtonSetNull.insets = new Insets(15, 0, 5, 20);
 		gbc_jButtonSetNull.gridx = 1;
 		gbc_jButtonSetNull.gridy = 0;
 		add(getJButtonSetNull(), gbc_jButtonSetNull);
 		GridBagConstraints gbc_jButtonMapsGoogle = new GridBagConstraints();
 		gbc_jButtonMapsGoogle.anchor = GridBagConstraints.EAST;
-		gbc_jButtonMapsGoogle.insets = new Insets(10, 0, 5, 5);
+		gbc_jButtonMapsGoogle.insets = new Insets(15, 0, 5, 5);
 		gbc_jButtonMapsGoogle.gridx = 2;
 		gbc_jButtonMapsGoogle.gridy = 0;
 		add(getJButtonMapsGoogle(), gbc_jButtonMapsGoogle);
 		GridBagConstraints gbc_jButtonOSM = new GridBagConstraints();
-		gbc_jButtonOSM.insets = new Insets(10, 0, 5, 10);
+		gbc_jButtonOSM.insets = new Insets(15, 0, 5, 15);
 		gbc_jButtonOSM.gridx = 3;
 		gbc_jButtonOSM.gridy = 0;
 		add(getJButtonOSM(), gbc_jButtonOSM);
 		GridBagConstraints gbc_jTabbedPane = new GridBagConstraints();
 		gbc_jTabbedPane.gridwidth = 4;
-		gbc_jTabbedPane.insets = new Insets(0, 10, 10, 10);
+		gbc_jTabbedPane.insets = new Insets(0, 15, 15, 15);
 		gbc_jTabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_jTabbedPane.gridx = 0;
 		gbc_jTabbedPane.gridy = 1;
@@ -164,12 +162,11 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 	private JPanel getJPanelWGS84() {
 		if (jPanelWGS84 == null) {
 			jPanelWGS84 = new JPanel();
-			jPanelWGS84.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 			GridBagLayout gbl_jPanelWGS84 = new GridBagLayout();
 			gbl_jPanelWGS84.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelWGS84.rowHeights = new int[]{0, 0, 0};
-			gbl_jPanelWGS84.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-			gbl_jPanelWGS84.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelWGS84.rowHeights = new int[]{0, 0, 0, 0};
+			gbl_jPanelWGS84.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelWGS84.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 			jPanelWGS84.setLayout(gbl_jPanelWGS84);
 			GridBagConstraints gbc_jLabelWGSLatitude = new GridBagConstraints();
 			gbc_jLabelWGSLatitude.anchor = GridBagConstraints.EAST;
@@ -178,7 +175,7 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 			gbc_jLabelWGSLatitude.gridy = 0;
 			jPanelWGS84.add(getJLabelWGSLatitude(), gbc_jLabelWGSLatitude);
 			GridBagConstraints gbc_jTextFieldWGSLatitude = new GridBagConstraints();
-			gbc_jTextFieldWGSLatitude.insets = new Insets(10, 5, 0, 0);
+			gbc_jTextFieldWGSLatitude.insets = new Insets(10, 5, 0, 10);
 			gbc_jTextFieldWGSLatitude.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldWGSLatitude.gridx = 1;
 			gbc_jTextFieldWGSLatitude.gridy = 0;
@@ -190,11 +187,18 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 			gbc_jLabelWGSLongitude.gridy = 1;
 			jPanelWGS84.add(getJLabelWGSLongitude(), gbc_jLabelWGSLongitude);
 			GridBagConstraints gbc_jTextFieldLongitude = new GridBagConstraints();
-			gbc_jTextFieldLongitude.insets = new Insets(10, 5, 0, 0);
+			gbc_jTextFieldLongitude.insets = new Insets(10, 5, 0, 10);
 			gbc_jTextFieldLongitude.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldLongitude.gridx = 1;
 			gbc_jTextFieldLongitude.gridy = 1;
 			jPanelWGS84.add(getJTextFieldWGSLongitude(), gbc_jTextFieldLongitude);
+			GridBagConstraints gbc_jLableWSGInfo = new GridBagConstraints();
+			gbc_jLableWSGInfo.fill = GridBagConstraints.BOTH;
+			gbc_jLableWSGInfo.insets = new Insets(0, 10, 0, 10);
+			gbc_jLableWSGInfo.gridwidth = 2;
+			gbc_jLableWSGInfo.gridx = 0;
+			gbc_jLableWSGInfo.gridy = 2;
+			jPanelWGS84.add(getJLableWSGInfo(), gbc_jLableWSGInfo);
 		}
 		return jPanelWGS84;
 	}
@@ -232,17 +236,25 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 		}
 		return jTextFieldWGSLongitude;
 	}
+	private JLabel getJLableWSGInfo() {
+		if (jLableWSGInfo == null) {
+			String wsgInfo = "<html><center>Coordinate strings may be pasted from the clipboard<br>using STRG+V in the format <b>51.46132, 7.01605</b>.</center></html>";
+			jLableWSGInfo = new JLabel(wsgInfo);
+			jLableWSGInfo.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLableWSGInfo.setHorizontalAlignment(JLabel.CENTER);
+		}
+		return jLableWSGInfo;
+	}
 	
 	
 	private JPanel getJPanelUTM() {
 		if (jPanelUTM == null) {
 			jPanelUTM = new JPanel();
-			jPanelUTM.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 			GridBagLayout gbl_jPanelUTM = new GridBagLayout();
 			gbl_jPanelUTM.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelUTM.rowHeights = new int[]{0, 0, 0, 0};
-			gbl_jPanelUTM.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-			gbl_jPanelUTM.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelUTM.rowHeights = new int[]{0, 0, 0, 0, 0};
+			gbl_jPanelUTM.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelUTM.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 			jPanelUTM.setLayout(gbl_jPanelUTM);
 			GridBagConstraints gbc_jLabelUtmZone = new GridBagConstraints();
 			gbc_jLabelUtmZone.anchor = GridBagConstraints.EAST;
@@ -251,7 +263,8 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 			gbc_jLabelUtmZone.gridy = 0;
 			jPanelUTM.add(getJLabelUtmZone(), gbc_jLabelUtmZone);
 			GridBagConstraints gbc_jTextFieldUtmZone = new GridBagConstraints();
-			gbc_jTextFieldUtmZone.insets = new Insets(10, 5, 0, 0);
+			gbc_jTextFieldUtmZone.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldUtmZone.insets = new Insets(10, 5, 0, 10);
 			gbc_jTextFieldUtmZone.gridx = 1;
 			gbc_jTextFieldUtmZone.gridy = 0;
 			jPanelUTM.add(getJTextFieldUtmZone(), gbc_jTextFieldUtmZone);
@@ -262,7 +275,8 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 			gbc_jLabelUtmEasting.gridy = 1;
 			jPanelUTM.add(getJLabelUtmEasting(), gbc_jLabelUtmEasting);
 			GridBagConstraints gbc_jTextFieldUtmEasting = new GridBagConstraints();
-			gbc_jTextFieldUtmEasting.insets = new Insets(10, 5, 0, 0);
+			gbc_jTextFieldUtmEasting.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldUtmEasting.insets = new Insets(10, 5, 0, 10);
 			gbc_jTextFieldUtmEasting.gridx = 1;
 			gbc_jTextFieldUtmEasting.gridy = 1;
 			jPanelUTM.add(getJTextFieldUtmEasting(), gbc_jTextFieldUtmEasting);
@@ -273,10 +287,18 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 			gbc_jLabelUtmNorthing.gridy = 2;
 			jPanelUTM.add(getJLabelUtmNorthing(), gbc_jLabelUtmNorthing);
 			GridBagConstraints gbc_jTextFieldNorthing = new GridBagConstraints();
-			gbc_jTextFieldNorthing.insets = new Insets(10, 5, 0, 0);
+			gbc_jTextFieldNorthing.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldNorthing.insets = new Insets(10, 5, 0, 10);
 			gbc_jTextFieldNorthing.gridx = 1;
 			gbc_jTextFieldNorthing.gridy = 2;
 			jPanelUTM.add(getJTextFieldUtmNorthing(), gbc_jTextFieldNorthing);
+			GridBagConstraints gbc_jLabelUTMInfo = new GridBagConstraints();
+			gbc_jLabelUTMInfo.fill = GridBagConstraints.BOTH;
+			gbc_jLabelUTMInfo.insets = new Insets(0, 10, 10, 10);
+			gbc_jLabelUTMInfo.gridwidth = 2;
+			gbc_jLabelUTMInfo.gridx = 0;
+			gbc_jLabelUTMInfo.gridy = 3;
+			jPanelUTM.add(getJLabelUTMInfo(), gbc_jLabelUTMInfo);
 		}
 		return jPanelUTM;
 	}
@@ -352,7 +374,15 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 		}
 		return jTextFieldUtmNorthing;
 	}
-	
+	private JLabel getJLabelUTMInfo() {
+		if (jLabelUTMInfo == null) {
+			String utmInfo = "<html><center>Coordinate strings may be pasted from the clipboard<br>using STRG+V in the format <b>32U 362178.09 5702994.27</b>.</center></html>";
+			jLabelUTMInfo = new JLabel(utmInfo);
+			jLabelUTMInfo.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelUTMInfo.setHorizontalAlignment(JLabel.CENTER);
+		}
+		return jLabelUTMInfo;
+	}
 	
 	/**
 	 * Gets the number key listener double.
@@ -464,6 +494,7 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 				String zoneText = this.getJTextFieldUtmZone().getText();
 				if (zoneText!=null && zoneText.isEmpty()==false) {
 					UTMCoordinate utmCoord = this.getUTMCoordinate(true);
+					// --- Zone longitude ---------------------------
 					String lngZoneText = zoneText.replaceAll("[^0-9]", "");
 					Integer lngZone = 0;
 					if (lngZoneText!=null && lngZoneText.isEmpty()==false) {
@@ -473,6 +504,7 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 						utmCoord.setLongitudeZone(lngZone);
 						geoCoordinateEdited = utmCoord;	
 					}
+					// --- Zone latitude ----------------------------
 					String latZone = zoneText.replaceAll("[^A-Z]", "");
 					if (latZone!=null && latZone.isEmpty()==false) {
 						utmCoord.setLatitudeZone(latZone.toUpperCase());

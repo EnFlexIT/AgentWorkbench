@@ -50,6 +50,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	/**
 	 * Instantiates a new GeoCoordinateDialog.
 	 * @param owner the owner frame
+	 * @wbp.parser.constructor
 	 */
 	public GeoCoordinateDialog(Frame owner) {
 		super(owner);
@@ -91,7 +92,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	private void initialize() {
 
 		this.setTitle("Geographical Location");
-		this.setSize(400, 300);
+		this.setSize(450, 350);
 		this.setModal(true);
 		this.getContentPane().add(this.getJPanelGeoCoordinate(), BorderLayout.CENTER);
 		this.getContentPane().add(this.getJPanelOkCancel(), BorderLayout.SOUTH);

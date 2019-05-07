@@ -36,6 +36,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -48,6 +49,7 @@ import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.commands.AlignNodesAction.Alignment;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineEdit;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
@@ -83,6 +85,11 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
     private JToggleButton jToggleButtonEdgePolyLine;
     private JToggleButton jToggleButtonEdgeEdit;
 
+    private JButton jButtonAlignLeft;
+    private JButton jButtonAlignRight;
+    private JButton jButtonAlignTop;
+    private JButton jButtonAlignBottom;
+    
     private JMenuItem jMenuItemEdgeLine;
     private JMenuItem jMenuItemEdgeOrthogonal;
     private JMenu jMenuOrthogonalEdgeDirection;
@@ -140,6 +147,12 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		bg.add(this.getJToggleButtonEdgeQuadCurve());
 		bg.add(this.getJToggleButtonEdgePolyLine());
 		bg.add(this.getJToggleButtonEdgeOrthogonal());
+	
+		this.add(this.getJButtonAlignLeft());
+		this.add(this.getJButtonAlignRight());
+		this.add(this.getJButtonAlignTop());
+		this.add(this.getJButtonAlignBottom());
+		this.addSeparator();
 		
 	}
 	
@@ -184,6 +197,31 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		return jToggleButtonEdgeEdit;
 	}
 
+	private JButton getJButtonAlignLeft() {
+		if (jButtonAlignLeft==null) {
+			jButtonAlignLeft = this.basicGraphGuiTools.getNewJButton("AlignLeft.png", Language.translate("Align to the left", Language.EN), this);
+		}
+		return jButtonAlignLeft;
+	}
+	private JButton getJButtonAlignRight() {
+		if (jButtonAlignRight==null) {
+			jButtonAlignRight = this.basicGraphGuiTools.getNewJButton("AlignRight.png", Language.translate("Align to the right", Language.EN), this);
+		}
+		return jButtonAlignRight;
+	}
+	private JButton getJButtonAlignTop() {
+		if (jButtonAlignTop==null) {
+			jButtonAlignTop = this.basicGraphGuiTools.getNewJButton("AlignTop.png", Language.translate("Align to the top", Language.EN), this);
+		}
+		return jButtonAlignTop;
+	}
+	private JButton getJButtonAlignBottom() {
+		if (jButtonAlignBottom==null) {
+			jButtonAlignBottom = this.basicGraphGuiTools.getNewJButton("AlignBottom.png", Language.translate("Align to the bottom", Language.EN), this);
+		}
+		return jButtonAlignBottom;
+	}
+	
 	
 	/**
 	 * Registers the local class as {@link GraphSelectionListener}.
@@ -200,6 +238,10 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	@Override
 	public void onGraphSelectionChanged(GraphSelection graphSelection) {
 
+		// ----------------------------------------------------------
+		// --- Act on the line edit buttons -------------------------
+		// ----------------------------------------------------------
+		
 		// --- Reset current GraphEdge that is to be edited ---------
 		this.editGraphEdge = null;
 		
@@ -239,6 +281,25 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 				this.getJToggleButtonEdgePolyLine().setSelected(true);
 			}
 		}
+		
+		// ----------------------------------------------------------
+		// --- Set the alignment button enabled ---------------------
+		// ----------------------------------------------------------
+		this.setAlignmentButtonsEnabled(graphSelection);
+		
+	}
+	
+	/**
+	 * Sets the alignment buttons enabled (or not).
+	 * @param graphSelection the new alignment buttons
+	 */
+	private void setAlignmentButtonsEnabled(GraphSelection graphSelection) {
+		
+		boolean enabledAlignment = graphSelection!=null && graphSelection.getNodeList().size()>1;
+		this.getJButtonAlignRight().setEnabled(enabledAlignment);
+		this.getJButtonAlignLeft().setEnabled(enabledAlignment);
+		this.getJButtonAlignTop().setEnabled(enabledAlignment);
+		this.getJButtonAlignBottom().setEnabled(enabledAlignment);
 	}
 	
 	
@@ -463,6 +524,22 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		} else if (ae.getSource()==this.getJMenuItemEdgeEdit()) {
 			// --- Do edge editing (from context menu) ----
 			this.switchEdgeEdit(true, null);
+			
+		} else if (ae.getSource()==this.getJButtonAlignLeft()) {
+			// --- Align marked nodes to the left ---------
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(), Alignment.Left);
+			
+		} else if (ae.getSource()==this.getJButtonAlignRight()) {
+			// --- Align marked nodes to the right --------
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Right);
+			
+		} else if (ae.getSource()==this.getJButtonAlignTop()) {
+			// --- Align marked nodes to the top ----------
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Top);
+			
+		} else if (ae.getSource()==this.getJButtonAlignBottom()) {
+			// --- Align marked nodes to the bottom -------
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Bottom);
 			
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] => Unknow action command from " + ae.getSource());

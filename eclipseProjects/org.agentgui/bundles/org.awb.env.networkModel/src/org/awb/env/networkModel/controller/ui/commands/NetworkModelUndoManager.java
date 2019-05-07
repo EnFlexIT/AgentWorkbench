@@ -41,6 +41,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.commands.AlignNodesAction.Alignment;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineEdit;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 import org.awb.env.networkModel.helper.GraphNodePairs;
@@ -405,6 +406,19 @@ public class NetworkModelUndoManager {
 	}
 	
 	/**
+	 * Aligns the currently selected nodes with respect to the specified alignment.
+	 *
+	 * @param visViewer the vis viewer
+	 * @param alignment the alignment
+	 */
+	public void alignNodes(VisualizationViewer<GraphNode,GraphEdge> visViewer, Alignment alignment) {
+		AlignNodesAction anAct = new AlignNodesAction(this.graphController, visViewer, alignment);
+		if (anAct.hasChangedPositions()==true) {
+			this.getUndoManager().addEdit(anAct);
+		}
+	}
+	
+	/**
 	 * Sets a paste action to the undo manager.
 	 * @param networkModelPasted the network model pasted
 	 */
@@ -412,7 +426,6 @@ public class NetworkModelUndoManager {
 		this.getUndoManager().addEdit(new PasteNetworkModel(this.graphController, networkModelPasted));
 	}
 
-	
 
 
 }
