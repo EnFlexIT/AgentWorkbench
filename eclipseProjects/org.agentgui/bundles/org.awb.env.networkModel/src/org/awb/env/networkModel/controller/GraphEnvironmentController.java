@@ -439,10 +439,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
 					
 					// --- 2. Load the graph topology from the graph file -------------------------
-					netModel.loadGraphFile(new File(getEnvFolderPath() + graphmlFileName));
+					netModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
 					
 					// --- 3. Load the component definitions from the component file --------------
-					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileGraphML());
+					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
 					
 					// --- Remind the list of custom toolbar elements -----------------------------
 					if (GraphEnvironmentController.this.getNetworkModel()!=null) {

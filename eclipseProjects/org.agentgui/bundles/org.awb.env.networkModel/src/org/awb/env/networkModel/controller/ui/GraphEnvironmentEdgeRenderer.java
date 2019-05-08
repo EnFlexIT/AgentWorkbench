@@ -169,8 +169,12 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
             deviceRectangle = new Rectangle(0,0,d.width,d.height);
         }
 
+        // --- Do some layout checks --------------------------------------------------------------
+        LayoutSettings ls = this.graphController.getNetworkModel().getLayoutSettings();
+        
         boolean isLoop = v1.equals(v2);
-        boolean isOrthogonal = rc.getEdgeShapeTransformer() instanceof EdgeShape.Orthogonal || (edge.getEdgeShapeConfiguration()!=null && edge.getEdgeShapeConfiguration() instanceof OrthogonalConfiguration);
+        boolean isOrthogonalConfigurableLine = (ls.getEdgeShape()==org.awb.env.networkModel.settings.LayoutSettings.EdgeShape.ConfigurableLine && edge.getEdgeShapeConfiguration()!=null && edge.getEdgeShapeConfiguration() instanceof OrthogonalConfiguration);
+        boolean isOrthogonal = rc.getEdgeShapeTransformer() instanceof EdgeShape.Orthogonal || isOrthogonalConfigurableLine;
         
         AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
         if (isLoop==true) {
@@ -182,7 +186,6 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
             xform.translate(0, -edgeShape.getBounds2D().getWidth()/2);
             
         } else if (isOrthogonal==true) {
-        	LayoutSettings ls = this.graphController.getNetworkModel().getLayoutSettings();
             edgeShape = getGeneralPathForOrthogonalConnection(rc, layout, edge, x1, y1, x2, y2, ls.getCoordinateSystemXDirection());
         	
         } else {

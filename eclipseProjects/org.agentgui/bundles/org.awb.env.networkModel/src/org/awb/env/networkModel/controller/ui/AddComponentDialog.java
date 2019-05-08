@@ -80,6 +80,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.helper.NetworkComponentFactory;
 import org.awb.env.networkModel.prototypes.DistributionNode;
@@ -933,6 +934,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private void addComponent() {
     	
     	String msg = null;
+    	boolean isFirstNetworkComponent = false;
     	// --------------------------------------------------------------------------
 		// --- Evaluate the node to which the user want to add a component ---------- 
 		// --------------------------------------------------------------------------
@@ -943,12 +945,15 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
 		    	return;
 		    } else {
-				if(this.graphController.getNetworkModel().isFreeGraphNode(graphNodeSelectedInMainGraph)==false) {
+				if (this.graphController.getNetworkModel().isFreeGraphNode(graphNodeSelectedInMainGraph)==false) {
 					msg = "Please, select one free vertex in the overall network!";
 					JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					return;
-				};
+				}
 		    }
+			
+		} else {
+			isFirstNetworkComponent = true;
 		}
 
 		// --------------------------------------------------------------------------
@@ -1017,6 +1022,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		// --- Select the next GraphNode in the main graph ----------------
 		this.selectNextNodeInMainGraph(networkModelCopy, graphNodeCopy);
 		
+		if (isFirstNetworkComponent==true) {
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_One2One));
+		}
     }
     /**
      * Apply a shift for the new elements, in order to match the position 
