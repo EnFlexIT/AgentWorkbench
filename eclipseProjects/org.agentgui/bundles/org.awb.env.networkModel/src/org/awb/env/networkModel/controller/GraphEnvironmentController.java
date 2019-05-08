@@ -396,9 +396,16 @@ public class GraphEnvironmentController extends EnvironmentController {
 	public void loadEnvironment() {
 		
 		// --- Check for a file name in the setup -------------------------------------------------
-		final String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
-		if (fileName==null) return;
+		String envFileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
+		if (envFileName==null) {
+			// --- Try to update the graph file name and recall above method ---------------------- 
+			this.updateGraphFileName();
+			envFileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
+			if (envFileName==null) return;
+		}
 
+		final String graphmlFileName = envFileName;
+		
 		// --- Set lock to prevent parallel saving actions ----------------------------------------
 		this.isTemporaryPreventSaving = true;
 		
@@ -412,7 +419,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 					// --- Set application status text --------------------------------------------
 					if (Application.getMainWindow() != null) {
 						Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + fileName + " ...");
+						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + graphmlFileName + " ...");
 						// --- Reset Undo-Manager -------------------------------------------------
 						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
 					}
@@ -432,11 +439,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
 					
 					// --- 2. Load the graph topology from the graph file -------------------------
-					netModel.loadGraphFile(new File(getEnvFolderPath() + fileName));
+					netModel.loadGraphFile(new File(getEnvFolderPath() + graphmlFileName));
 					
 					// --- 3. Load the component definitions from the component file --------------
-					File componentsFile = new File(GraphEnvironmentController.this.getEnvFolderPath() + File.separator + baseFileName + ".xml");
-					netModel.loadComponentsFile(componentsFile);
+					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileGraphML());
 					
 					// --- Remind the list of custom toolbar elements -----------------------------
 					if (GraphEnvironmentController.this.getNetworkModel()!=null) {

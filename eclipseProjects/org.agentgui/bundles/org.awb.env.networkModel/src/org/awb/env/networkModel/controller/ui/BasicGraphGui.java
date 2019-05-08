@@ -87,8 +87,6 @@ import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
-import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
-import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
 
 import agentgui.core.application.Application;
 import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
@@ -193,8 +191,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> graphMouse4Transforming;
 	
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemNodePositionTransformer;
-	private CoordinateSystemXDirection xDirectionReminder;
-	private CoordinateSystemYDirection yDirectionReminder;
 
 	private Timer graphSelectionWaitTimer;
 	
@@ -443,9 +439,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.getSatelliteVisualizationViewer().getGraphLayout().setGraph(this.getGraph());
 		this.zoomToFitToWindow(this.getSatelliteVisualizationViewer());
 		
-		// --- Remind coordinate system alignment ---------
-		this.xDirectionReminder = this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getCoordinateSystemXDirection();
-		this.yDirectionReminder = this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getCoordinateSystemYDirection();
 	}
 
 	/**
@@ -1513,17 +1506,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		return image;
 	}
 	
-	/**
-	 * Checks if the coordinate system has changed.
-	 * @return true, if the 
-	 */
-	private boolean hasChangedCoordinateSystem() {
-		LayoutSettings layoutSetttings = this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings();
-		boolean isChangedXDirection = layoutSetttings.getCoordinateSystemXDirection()!=this.xDirectionReminder;
-		boolean isChangedYDirection = layoutSetttings.getCoordinateSystemYDirection()!=this.yDirectionReminder;
-		return isChangedXDirection | isChangedYDirection;
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -1540,9 +1522,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
 			case NetworkModelNotification.NETWORK_MODEL_LayoutChanged:
 				this.setEdgeShapeTransformer();
-				if (this.hasChangedCoordinateSystem()==true) {
-					this.reLoadGraph();
-				}
+				this.reLoadGraph();
 				break;
 				
 			case NetworkModelNotification.NETWORK_MODEL_Reload:
