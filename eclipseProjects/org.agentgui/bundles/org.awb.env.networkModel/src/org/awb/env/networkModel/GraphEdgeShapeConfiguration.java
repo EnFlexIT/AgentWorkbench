@@ -61,9 +61,7 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	
 	/**
 	 * Allows to set all intermediate points.
-	 *
 	 * @param intermediatePointList the intermediate point list
-	 * @return the intermediate points
 	 */
 	public abstract void setIntermediatePoints(List<Point2D> intermediatePointList);
 	
@@ -72,15 +70,12 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	/**
 	 * Enables to add individual menu items to the specified the popup menu that will be shown at the visualization viewer.
 	 * To add an individual menu item, just add an action command to the menu item. An {@link ActionListener} will be added 
-	 * automatically. Afterwards, the {@link #actionPerformed(String, BasicGraphGuiVisViewer, GraphEdge, GraphNode, Point2D)} will be invoked 
+	 * automatically. Afterwards, the {@link #actionPerformed(String, ConfiguredLinePopupPlugin, GraphEdge, GraphNode, Point2D)} will be invoked 
 	 * and all required runtime variables will be provided.
-	 * 
-	 * @param visView the vis view
+	 *
 	 * @param popupMenu the JPopupMenu to which items can be added
 	 * @param graphEdge the editing graph edge
 	 * @param graphNode the editing graph node (can be <code>null</code>)
-	 * @param mousePosition the current mouse position on the visualization viewer
-	 * 
 	 * @see #actionPerformed(String, BasicGraphGuiVisViewer, GraphEdge, GraphNode, Point2D)
 	 */
 	public abstract void addPopupMenuItems(JPopupMenu popupMenu, GraphEdge graphEdge, GraphNode graphNode);
@@ -106,9 +101,7 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	
 	/**
 	 * Sets the configuration from the specified string.
-	 *
 	 * @param stringConfiguration the configuration string 
-	 * @return the graph edge shape configuration
 	 */
 	protected abstract void setConfigurationFromStringInternal(String stringConfiguration);
 	

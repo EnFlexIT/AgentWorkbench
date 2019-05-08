@@ -362,6 +362,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	
 	/**
 	 * Sets the time model display.
+	 * @param timeModel the new time model display
 	 */
 	protected void setTimeModelDisplay(TimeModel timeModel) {
 		

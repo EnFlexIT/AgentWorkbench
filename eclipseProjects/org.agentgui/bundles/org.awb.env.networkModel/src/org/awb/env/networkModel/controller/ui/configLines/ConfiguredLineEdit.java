@@ -11,7 +11,7 @@ import org.awb.env.networkModel.controller.ui.commands.NetworkModelUndoManager;
  * at one GraphEdge (including the position of start an end node). For this, it 
  * consists of the old and the new settings.
  * 
- * @see NetworkModelUndoManager#setGraphMouseEdgeEditing() 
+ * @see NetworkModelUndoManager#setGraphMouseEdgeEditing(ConfiguredLineEdit) 
  */
 public class ConfiguredLineEdit implements Serializable {
 

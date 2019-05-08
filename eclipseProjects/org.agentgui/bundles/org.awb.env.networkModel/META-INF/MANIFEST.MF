@@ -2,15 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - Graph and Network Environment
 Bundle-SymbolicName: org.awb.env.networkModel;singleton:=true
-Bundle-Version: 2.1.9.qualifier
+Bundle-Version: 2.1.10.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: org.awb.env.networkModel
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/bundleClassFilterService.xml,
- OSGI-INF/EnvironmentTypeService.xml 
+ OSGI-INF/BaseClassLoadService.xml,
+ OSGI-INF/EnvironmentTypeService.xml
 Export-Package: org.awb.env.networkModel,
  org.awb.env.networkModel.adapter,
  org.awb.env.networkModel.classFilter,
+ org.awb.env.networkModel.classLoadService,
  org.awb.env.networkModel.controller,
  org.awb.env.networkModel.controller.ui,
  org.awb.env.networkModel.controller.ui.commands,

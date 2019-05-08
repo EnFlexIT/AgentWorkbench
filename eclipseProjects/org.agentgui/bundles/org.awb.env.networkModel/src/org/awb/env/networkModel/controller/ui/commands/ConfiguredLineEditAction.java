@@ -72,7 +72,7 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 	 *
 	 * @param graphController the graph controller
 	 * @param visViewer the vis viewer
-	 * @param nodesMovedOldPositions the nodes moved old positions
+	 * @param configuredLineEdit the {@link ConfiguredLineEdit} that describes the last edit action
 	 */
 	public ConfiguredLineEditAction(GraphEnvironmentController graphController, VisualizationViewer<GraphNode,GraphEdge> visViewer, ConfiguredLineEdit configuredLineEdit) {
 		this.graphController = graphController;

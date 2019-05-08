@@ -432,6 +432,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param y1 the y1
 	 * @param x2 the x2
 	 * @param y2 the y2
+	 * @param xDirection the x direction
 	 * @return the general path for orthogonal connection
 	 */
 	public static GeneralPath getGeneralPathForOrthogonalConnection(RenderContext<GraphNode, GraphEdge> rc, Layout<GraphNode, GraphEdge> layout, GraphEdge edge, float x1, float y1, float x2, float y2, CoordinateSystemXDirection xDirection) {

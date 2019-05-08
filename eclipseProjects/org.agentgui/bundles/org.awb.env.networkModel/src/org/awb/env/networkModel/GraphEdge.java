@@ -119,10 +119,10 @@ public class GraphEdge extends GraphElement {
 	}
 	/**
 	 * Sets the edge shape configuration tree map.
-	 * @param edgeShapeConfigurationTreeMap the edge configuration tree map
+	 * @param edgeShapeConfigurationTreeMap the edge shape configuration tree map
 	 */
-	public void setEdgeShapeConfigurationTreeMap(TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> edgeConfigurationTreeMap) {
-		this.edgeShapeConfigurationTreeMap = edgeConfigurationTreeMap;
+	public void setEdgeShapeConfigurationTreeMap(TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> edgeShapeConfigurationTreeMap) {
+		this.edgeShapeConfigurationTreeMap = edgeShapeConfigurationTreeMap;
 	}
 	
 	/**

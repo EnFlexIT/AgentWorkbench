@@ -437,9 +437,12 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 		}
 		return notification;
 	}
+	
 	/**
 	 * This method will be executed if a ManagerNotification arrives this agent.
+	 *
 	 * @param notification the notification
+	 * @return the environment notification
 	 */
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification){
 		return notification;
@@ -473,8 +476,10 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 
 	/**
 	 * Registers a service for the agency to the DFService of JADE.
+	 *
 	 * @param type the type
 	 * @param name the name
+	 * @param ownership the ownership
 	 */
 	protected void registerDFService(String type, String name, String ownership) {
 		DFAgentDescription agentDescription = createAgentDescription(type, name, ownership);

@@ -157,9 +157,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return layoutID;
 	}
+	
 	/**
-	 * Sets the layout name to be used by this NetworkModel.
+	 * Sets the layout name to be used by this NetworkModel. If the ID is not defined in the graph settings, the layout ID of the 'Default Layout' will be used and returned. 
+	 *
 	 * @param newLayoutID the new layout name
+	 * @return the layoutID that was actually assigned
+	 * 
+	 * @see GeneralGraphSettings4MAS#DEFAULT_LAYOUT_SETTINGS_NAME
 	 */
 	public String setLayoutID(String newLayoutID) {
 		

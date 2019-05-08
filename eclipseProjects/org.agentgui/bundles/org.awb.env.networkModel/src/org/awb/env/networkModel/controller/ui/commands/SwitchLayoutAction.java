@@ -55,8 +55,7 @@ public class SwitchLayoutAction extends AbstractUndoableEdit {
 	 * Instantiates a new UndoableEdit for the movements of GraphNode's.
 	 *
 	 * @param graphController the graph controller
-	 * @param visViewer the vis viewer
-	 * @param nodesMovedOldPositions the nodes moved old positions
+	 * @param newLayoutID the new layout ID
 	 */
 	public SwitchLayoutAction(GraphEnvironmentController graphController, String newLayoutID) {
 		this.graphController = graphController;

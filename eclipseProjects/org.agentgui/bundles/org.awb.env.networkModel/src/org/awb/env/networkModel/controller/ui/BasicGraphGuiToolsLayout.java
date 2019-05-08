@@ -381,9 +381,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	}
 	/**
 	 * Updates the specified edge menu with further layout menu items.
-	 *
 	 * @param graphEdge the graph edge
-	 * @param edgePopUpMenu the edge pop up menu to update
 	 */
 	public void updateEdgeMenu(GraphEdge graphEdge) {
 

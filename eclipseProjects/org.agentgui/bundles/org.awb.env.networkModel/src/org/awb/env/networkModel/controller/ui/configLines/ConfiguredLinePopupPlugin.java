@@ -105,7 +105,6 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 	/**
 	 * Returns the JPopupMenu for the specified edge and graph node.
 	 *
-	 * @param visView the VisualizationViewer
 	 * @param graphEdge the graph edge captured by the mouse position
 	 * @param graphNode the graph node captured by the mouse position
 	 * @param mousePosition the mouse position

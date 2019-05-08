@@ -478,10 +478,11 @@ public class Platform {
 		}
 		return success;
 	}
+	
 	/**
 	 * Start JADE for a specified embedded system agent.
 	 *
-	 * @param defaultAgentName the agents name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 * @return true, if successful
 	 */
@@ -869,7 +870,7 @@ public class Platform {
 	/**
 	 * Returns a new suffix number for the specified name of an agent.
 	 *
-	 * @param defaultAgentName the agent name
+	 * @param agentName the agent name
 	 * @return the integer
 	 */
 	public int getSuffixNoForAgentName(String agentName) {
@@ -1083,9 +1084,9 @@ public class Platform {
 	}
 	
 	/**
-	 * Starts an agent as specified
+	 * Starts an agent as specified.
 	 *
-	 * @param defaultAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param inContainer the container name
 	 */
@@ -1094,9 +1095,9 @@ public class Platform {
 	}
 	
 	/**
-	 * Starts an agent as specified
+	 * Starts an agent as specified.
 	 *
-	 * @param defaultAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param startArguments the start arguments for the agent
 	 */
@@ -1105,9 +1106,9 @@ public class Platform {
 	}
 	
 	/**
-	 * Starts an agent as specified
+	 * Starts an agent as specified.
 	 *
-	 * @param defaultAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
@@ -1123,9 +1124,9 @@ public class Platform {
 	}
 	
 	/**
-	 * Starts an agent as specified
+	 * Starts an agent as specified.
 	 *
-	 * @param defaultAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClass the class of the agent
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
