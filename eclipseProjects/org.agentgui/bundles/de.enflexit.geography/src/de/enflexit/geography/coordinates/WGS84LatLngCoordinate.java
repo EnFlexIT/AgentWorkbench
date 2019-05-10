@@ -172,13 +172,26 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 	  return new OSGBCoordinate(E, N);
 	}
 	
+	
 	/**
-	 * Gets the UMT reference of this coordinate.
-	 * @return the UMT reference
+	 * Return the UMT coordinate for the current WGS84 coordinate.
+	 * @return the UMT coordinate
 	 */
 	public UTMCoordinate getUTMCoordinate() {
 		return new CoordinateConversion().latLon2UTM(this);
 	}
+	
+	/**
+	 * Returns the UTM coordinate for the current WGS84 coordinate.
+	 *
+	 * @param targetLongitudeZone the target longitude zone
+	 * @param targetLatitudeZone the target latitude zone
+	 * @return the UTM coordinate
+	 */
+	public UTMCoordinate getUTMCoordinate(Integer targetLongitudeZone, String targetLatitudeZone) {
+		return new CoordinateConversion().latLon2UTM(this, targetLongitudeZone, targetLatitudeZone);
+	}
+
 	
 	/**
 	 * Convert WGS 84 to OSGB 36.

@@ -14,8 +14,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class CoordinateConversion {
 
-	public CoordinateConversion() {
-	}
+	public CoordinateConversion() { }
 
 	
 	public WGS84LatLngCoordinate utm2LatLon(UTMCoordinate utmCoordinate) {
@@ -28,13 +27,20 @@ public class CoordinateConversion {
 
 	
 	public UTMCoordinate latLon2UTM(WGS84LatLngCoordinate wgsCoordinate) {
-		return latLon2UTM(wgsCoordinate.getLatitude(), wgsCoordinate.getLongitude());
+		return latLon2UTM(wgsCoordinate.getLatitude(), wgsCoordinate.getLongitude(), null, null);
+	}
+	public UTMCoordinate latLon2UTM(WGS84LatLngCoordinate wgsCoordinate, Integer targetLongitudeZone, String targetLatitudeZone) {
+		return latLon2UTM(wgsCoordinate.getLatitude(), wgsCoordinate.getLongitude(), targetLongitudeZone, targetLatitudeZone);
 	}
 	public UTMCoordinate latLon2UTM(double latitude, double longitude) {
+		return latLon2UTM(latitude, longitude, null, null);
+	}
+	public UTMCoordinate latLon2UTM(double latitude, double longitude, Integer targetLongitudeZone, String targetLatitudeZone) {
 		LatLon2UTM c = new LatLon2UTM();
-		return c.convertLatLonToUTM(latitude, longitude);
+		return c.convertLatLonToUTM(latitude, longitude, targetLongitudeZone, targetLatitudeZone);
 	}
 
+	
 	
 	private void validate(double latitude, double longitude) {
 		if (latitude < -90.0 || latitude > 90.0 || longitude < -180.0 || longitude >= 180.0) {
@@ -125,8 +131,13 @@ public class CoordinateConversion {
 		double K5 = -2.995382942;
 		double A6 = -1.00541E-07;
 
+		
 		public UTMCoordinate convertLatLonToUTM(double latitude, double longitude) {
-
+			return convertLatLonToUTM(latitude, longitude, null, null);
+		}
+		
+		public UTMCoordinate convertLatLonToUTM(double latitude, double longitude, Integer targetLongitudeZone, String targetLatitudeZone) {
+			
 			validate(latitude, longitude);
 			setVariables(latitude, longitude);
 
@@ -134,12 +145,23 @@ public class CoordinateConversion {
 			LatZones latZones = new LatZones();
 			String latZone = latZones.getLatZone(latitude);
 
-			double easting = getEasting();
-			double northing = getNorthing(latitude);
+			double easting = this.getEasting();
+			double northing = this.getNorthing(latitude);
 
+			// --- Longitude transformation of UTM zone? ------------
+			boolean isUtmLongZoneTransformation = targetLongitudeZone!=null && targetLongitudeZone!=longZone;
+			if (isUtmLongZoneTransformation==true) {
+				easting = getEasting_ZoneTransformed(easting, northing, longZone, latZone, targetLongitudeZone);
+				longZone = targetLongitudeZone;
+			}
+			// --- Latitude transformation of UTM zone? -------------
+			boolean isUtmLatZoneTransformation = targetLatitudeZone!=null && targetLatitudeZone.equals(latZone)==false;
+			if (isUtmLatZoneTransformation==true) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] UTM latitude zone transformation not implemented yet!");
+			}
 			return new UTMCoordinate(longZone, latZone, easting, northing);
 		}
-
+		
 		protected void setVariables(double latitude, double longitude) {
 
 			latitude = degreeToRadian(latitude);
@@ -158,34 +180,22 @@ public class CoordinateConversion {
 
 			p = var3 * 3600 / 10000;
 
-			S = A0 * latitude - B0 * SIN(2 * latitude) + C0 * SIN(4 * latitude) - D0 * SIN(6 * latitude)
-					+ E0 * SIN(8 * latitude);
-
+			S = A0 * latitude - B0 * SIN(2 * latitude) + C0 * SIN(4 * latitude) - D0 * SIN(6 * latitude) + E0 * SIN(8 * latitude);
+                                           
 			K1 = S * k0;
 			K2 = nu * SIN(latitude) * COS(latitude) * POW(sin1, 2) * k0 * (100000000) / 2;
 			K3 = ((POW(sin1, 4) * nu * SIN(latitude) * Math.pow(COS(latitude), 3)) / 24) * (5 - POW(TAN(latitude), 2)
-					+ 9 * e1sq * POW(COS(latitude), 2) + 4 * POW(e1sq, 2) * POW(COS(latitude), 4)) * k0
-					* (10000000000000000L);
+				 + 9 * e1sq * POW(COS(latitude), 2) + 4 * POW(e1sq, 2) * POW(COS(latitude), 4)) * k0 * (10000000000000000L);
+			
 			K4 = nu * COS(latitude) * sin1 * k0 * 10000;
-			K5 = POW(sin1 * COS(latitude), 3) * (nu / 6) * (1 - POW(TAN(latitude), 2) + e1sq * POW(COS(latitude), 2))
-					* k0 * 1000000000000L;
+			K5 = POW(sin1 * COS(latitude), 3) * (nu / 6) * (1 - POW(TAN(latitude), 2) + e1sq * POW(COS(latitude), 2)) * k0 * 1000000000000L;
+			
 			A6 = (POW(p * sin1, 6) * nu * SIN(latitude) * POW(COS(latitude), 5) / 720)
-					* (61 - 58 * POW(TAN(latitude), 2) + POW(TAN(latitude), 4) + 270 * e1sq * POW(COS(latitude), 2)
-							- 330 * e1sq * POW(SIN(latitude), 2))
-					* k0 * (1E+24);
+				 * (61 - 58 * POW(TAN(latitude), 2) + POW(TAN(latitude), 4) + 270 * e1sq * POW(COS(latitude), 2)
+				 - 330 * e1sq * POW(SIN(latitude), 2)) * k0 * (1E+24);
 
 		}
 
-		protected int getLongZone(double longitude) {
-
-			double longZone = 0;
-			if (longitude < 0.0) {
-				longZone = ((180.0 + longitude) / 6) + 1;
-			} else {
-				longZone = (longitude / 6) + 31;
-			}
-			return (int) longZone;
-		}
 		protected String getLongZoneAsString(double longitude) {
 			int longZone = getLongZone(longitude);
 			String val = String.valueOf(longZone);
@@ -194,7 +204,26 @@ public class CoordinateConversion {
 			}
 			return val;
 		}
+		protected int getLongZone(double longitude) {
+			double longZone = 0;
+			if (longitude < 0.0) {
+				longZone = ((180.0 + longitude) / 6) + 1;
+			} else {
+				longZone = (longitude / 6) + 31;
+			}
+			return (int) longZone;
+		}
 
+		private double getStartLongitude(int lngZone) {
+			double startLongitude = 0;
+			if (lngZone <= 30) {
+				startLongitude = ((lngZone-1) * 6.0) - 180;
+			} else {
+				startLongitude = ((lngZone-31) * 6.0);
+			}
+			return startLongitude;
+		}
+		
 		protected double getNorthing(double latitude) {
 			double northing = K1 + K2 * p * p + K3 * POW(p, 4);
 			if (latitude < 0.0) {
@@ -202,13 +231,92 @@ public class CoordinateConversion {
 			}
 			return northing;
 		}
-
+		
 		protected double getEasting() {
 			return 500000 + (K4 * p + K5 * POW(p, 3));
 		}
 
+		protected double getEasting_ZoneTransformed(double sourceEasting, double sourceNorting, int sourceLngZone, String sourceLatZone, int destinLngZone) {
+			
+			// --- Quick exit ? -----------------------------------------------
+			if (destinLngZone==sourceLngZone) return sourceEasting;
+			
+			
+			// ----------------------------------------------------------------
+			// --- Get reference WGS84 for reference latitude value -----------
+			UTMCoordinate utmRef = new UTMCoordinate(sourceLngZone, sourceLatZone, sourceEasting, sourceNorting);
+			WGS84LatLngCoordinate wgs84Ref = utmRef.getWGS84LatLngCoordinate();
+			
+			
+			// ----------------------------------------------------------------
+			// --- Define initial easting value ------------------------------- 
+			int zoneStep;
+			double initialEasting = 0.0;
+			if (destinLngZone > sourceLngZone) {
+				zoneStep = 1;
+				// --- Initial easting: start boundary of target zone ---------
+				double longitudeBoundaryStart = this.getStartLongitude(destinLngZone);
+				WGS84LatLngCoordinate wgsZoneEnd = new WGS84LatLngCoordinate(wgs84Ref.getLatitude(), longitudeBoundaryStart);
+				initialEasting = wgsZoneEnd.getUTMCoordinate().getEasting();
+				
+			} else {
+				zoneStep = -1;
+				// --- Initial easting: end boundary of target zone -----------
+				double longitudeBoundaryStart = this.getStartLongitude(destinLngZone);
+				double longitudeBoundaryEnd   = longitudeBoundaryStart + 6.0 - 0.00000001;
+				WGS84LatLngCoordinate wgsZoneEnd = new WGS84LatLngCoordinate(wgs84Ref.getLatitude(), longitudeBoundaryEnd);
+				initialEasting = wgsZoneEnd.getUTMCoordinate().getEasting();
+			}
+			
+			
+			// ----------------------------------------------------------------
+			// --- Loop into target zone --------------------------------------
+			double addEasting = 0.0;
+			int currLngZone = sourceLngZone;
+			while (currLngZone!=destinLngZone) {
+				
+				// --- Calculate to zone boundary -----------------------------
+				double longitudeBoundaryStart = this.getStartLongitude(currLngZone);
+				double longitudeBoundaryEnd   = longitudeBoundaryStart + 6.0 - 0.00000001;
+				
+				if (currLngZone==sourceLngZone) {
+					// --- We are in the start zone ---------------------------
+					if (zoneStep>0) {
+						// --- Forward transformation -------------------------
+						WGS84LatLngCoordinate wgsCurrLngZoneEnd = new WGS84LatLngCoordinate(wgs84Ref.getLatitude(), longitudeBoundaryEnd);
+						UTMCoordinate utmCurrLngZoneEnd = wgsCurrLngZoneEnd.getUTMCoordinate();
+						addEasting = -(utmCurrLngZoneEnd.getEasting() - sourceEasting);
+						
+					} else {
+						// --- Backwards transformation -----------------------
+						WGS84LatLngCoordinate wgsCurrLngZoneStart = new WGS84LatLngCoordinate(wgs84Ref.getLatitude(), longitudeBoundaryStart);
+						UTMCoordinate utmStepCurrLngZone = wgsCurrLngZoneStart.getUTMCoordinate();
+						addEasting = sourceEasting - utmStepCurrLngZone.getEasting(); 
+					}
+					
+				} else if (currLngZone!=sourceLngZone && currLngZone!=destinLngZone) {
+					// --- We're in between start and target zone -------------
+					// --- => Calculate easting width of zone -----------------
+					WGS84LatLngCoordinate wgsCurrLngZoneStart = new WGS84LatLngCoordinate(wgs84Ref.getLatitude(), longitudeBoundaryStart);
+					WGS84LatLngCoordinate wgsCurrLngZoneEnd   = new WGS84LatLngCoordinate(wgs84Ref.getLatitude(), longitudeBoundaryEnd);
+					UTMCoordinate utmCurrLngZoneStart = wgsCurrLngZoneStart.getUTMCoordinate();
+					UTMCoordinate utmCurrLngZoneEnd   = wgsCurrLngZoneEnd.getUTMCoordinate();
+					
+					double zoneWidth = utmCurrLngZoneEnd.getEasting() - utmCurrLngZoneStart.getEasting();
+					if (zoneStep>0) {
+						addEasting = addEasting - zoneWidth;	
+					} else {
+						addEasting = addEasting + zoneWidth;
+					}
+					
+				}
+				currLngZone = currLngZone + zoneStep;
+			}
+			return initialEasting + addEasting;
+		}
+		
 	}
-
+	
 	private class LatLon2MGRUTM extends LatLon2UTM {
 
 		public String convertLatLonToMGRUTM(double latitude, double longitude) {
@@ -446,10 +554,8 @@ public class CoordinateConversion {
 		private Map<Integer, String> digraph1 = new Hashtable<>();
 		private Map<Integer, String> digraph2 = new Hashtable<>();
 
-		private String[] digraph1Array = { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q",
-				"R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-		private String[] digraph2Array = { "V", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P",
-				"Q", "R", "S", "T", "U", "V" };
+		private String[] digraph1Array = { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+		private String[] digraph2Array = { "V", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V" };
 
 		public Digraphs() {
 			digraph1.put(new Integer(1), "A");
@@ -547,10 +653,8 @@ public class CoordinateConversion {
 
 	private class LatZones {
 
-		private char[] letters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T',
-				'U', 'V', 'W', 'X', 'Z' };
-		private int[] degrees = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8, 0, 8, 16, 24, 32, 40, 48, 56,
-				64, 72, 84 };
+		private char[] letters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z' };
+		private int[] degrees = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8, 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };
 
 		private char[] negLetters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M' };
 		private int[] negDegrees = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8 };
