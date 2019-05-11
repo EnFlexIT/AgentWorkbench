@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Network Model - Maps
-Bundle-SymbolicName: org.awb.env.networkModel.maps
-Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: EnFlex.IT
-Automatic-Module-Name: org.awb.env.networkModel.maps
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.awb.env.networkModel.maps

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.awb.env.networkModel.maps</name>
+	<name>org.awb.env.maps</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -21,18 +21,17 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.fusesource.ide.project.RiderProjectBuilder</name>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<name>org.eclipse.pde.ds.core.builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.fusesource.ide.project.RiderProjectNature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>

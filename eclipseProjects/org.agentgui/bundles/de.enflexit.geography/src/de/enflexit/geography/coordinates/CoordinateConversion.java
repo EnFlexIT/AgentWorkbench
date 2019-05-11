@@ -157,7 +157,7 @@ public class CoordinateConversion {
 			// --- Latitude transformation of UTM zone? -------------
 			boolean isUtmLatZoneTransformation = targetLatitudeZone!=null && targetLatitudeZone.equals(latZone)==false;
 			if (isUtmLatZoneTransformation==true) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] UTM latitude zone transformation not implemented yet!");
+				//System.err.println("[" + this.getClass().getSimpleName() + "] UTM latitude zone transformation not implemented yet!");
 			}
 			return new UTMCoordinate(longZone, latZone, easting, northing);
 		}
