@@ -34,6 +34,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import org.awb.env.networkModel.maps.MapPreRenderer;
+
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -51,7 +53,11 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 
 	private static final long serialVersionUID = 8187230173732284770L;
 	
-	private boolean actionOnTop = false;
+	private boolean actionOnTop;
+	
+	private MapPreRenderer<V, E> mapPreRenderer;
+	private boolean doMapPreRendering;
+
 	
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -93,10 +99,10 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 */
 	private void initialize() {
 		
-		this.setBackground(Color.WHITE);
+		this.setBackground(Color.GRAY);
 		this.setDoubleBuffered(true);
 		
-		// --- Configure some rendering hints in order to accelerate the visualisation --
+		// --- Configure some rendering hints in order to accelerate the visualization --
 		this.renderingHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 		this.renderingHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 		this.renderingHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
@@ -108,12 +114,12 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		this.renderingHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		
 		// --- useful and faster, but it makes the image quite unclear --------!!
-//		this.renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); 
+		this.renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); 
 		
 		// ------------------------------------------------------------------------------
 		// --- Test area ----------------------------------------------------------------
 		// ------------------------------------------------------------------------------
-//		this.addPreRenderPaintable(new MapPreRenderer<V, E>(this));
+		//this.setDoMapPreRendering(true);
 		
 	}
 	
@@ -169,19 +175,53 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		
 	}
 	
+	
 	/**
-	 * Setter to indicate, if there is an action on the top of the graph visualisation.
+	 * Setter to indicate, if there is an action on the top of the graph visualization.
 	 * @param actionOnTop the new indicator for an action on top
 	 */
 	public void setActionOnTop(boolean actionOnTop) {
 		this.actionOnTop = actionOnTop;
 	}
 	/**
-	 * Checks if there is an action on top of this graph visualisation.
+	 * Checks if there is an action on top of this graph visualization.
 	 * @return true, if there is currently an action on top 
 	 */
 	public boolean isActionOnTop() {
 		return actionOnTop;
+	}
+
+	
+	/**
+	 * Returns the Map pre-renderer.
+	 * @return the map pre-renderer
+	 */
+	private MapPreRenderer<V, E> getMapPreRenderer() {
+		if (mapPreRenderer==null) {
+			mapPreRenderer = new MapPreRenderer<V, E>(this);
+		}
+		return mapPreRenderer;
+	}
+	/**
+	 * Sets to do a map pre-rendering or not.
+	 * @param doMapPreRendering the new do map pre-rendering
+	 */
+	public void setDoMapPreRendering(boolean doMapPreRendering) {
+		if (doMapPreRendering==true) {
+			this.addPreRenderPaintable(this.getMapPreRenderer());
+		} else {
+			this.removePreRenderPaintable(this.getMapPreRenderer());
+			this.mapPreRenderer=null;
+		}
+		this.doMapPreRendering = doMapPreRendering;
+		this.repaint();
+	}
+	/**
+	 * Returns if there is currently a map pre-rendering to do.
+	 * @return true, if is do map pre rendering
+	 */
+	public boolean isDoMapPreRendering() {
+		return doMapPreRendering;
 	}
 	
 }

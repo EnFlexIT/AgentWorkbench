@@ -103,7 +103,7 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 		String imageURL = "https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=11&size=612x612&scale=2&maptype=roadmap";
 		imageURL = "file:D:\\09 Agent.Workbench\\10 Web\\Web-Images\\CoreWindow.png";
 		// TODO
-        System.out.println("Do something!");
+        //System.out.println("Render Map!");
         
 		BufferedImage mapImage = null;
         try {

@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JComponent;
 import javax.swing.JToggleButton;
 
-import org.awb.env.maps.tests.Sample1;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
 import de.enflexit.geography.BundleHelper;
@@ -52,14 +52,13 @@ public class JToggleButtonOpenStreetMap extends AbstractCustomToolbarComponent i
 	public void actionPerformed(ActionEvent ae) {
 
 		if (this.getJToggleButtonOSM().isSelected()==true) {
-			// --- Selected OSM button -------------------- 
-			Sample1.main(null);
-			
+			// --- Selected OSM button --------------------
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapRendering_ON));
 		} else {
 			// --- Unselected OSM button ------------------			
-			
-			
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapRendering_OFF));
 		}
+		
 	}
 
 }

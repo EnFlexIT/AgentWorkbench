@@ -1558,41 +1558,47 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.selectObject(infoObject);
 				break;
 
+				
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window:
 				this.zoomToFitToWindow(this.getVisualizationViewer());
 				break;
-
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
 				this.zoomOneToOneMoveFocus(this.getVisualizationViewer());
 				break;
-				
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
 				this.zoomToComponent();
 				break;
-
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
 				this.getScalingControl().scale(this.getVisualizationViewer(), SCALE_FACTOR_IN, this.getDefaultScaleAtPoint());
 				break;
-
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
 				this.getScalingControl().scale(this.getVisualizationViewer(), SCALE_FACTOR_OUT, this.getDefaultScaleAtPoint());
 				break;
 
+				
 			case NetworkModelNotification.NETWORK_MODEL_ExportGraphAsImage:
 				this.exportAsImage();
 				break;
 
+				
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
 				this.setGraphMouseMode(GraphMouseMode.Picking);
 				break;
-
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Transforming:
 				this.setGraphMouseMode(GraphMouseMode.Transforming);
 				break;
-
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
 				this.setGraphMouseMode(GraphMouseMode.EdgeEditing);
 				break;
+				
+				
+			case NetworkModelNotification.NETWORK_MODEL_MapRendering_ON:
+				this.getVisualizationViewer().setDoMapPreRendering(true);
+				break;
+			case NetworkModelNotification.NETWORK_MODEL_MapRendering_OFF:
+				this.getVisualizationViewer().setDoMapPreRendering(false);
+				break;
+
 				
 			default:
 				break;

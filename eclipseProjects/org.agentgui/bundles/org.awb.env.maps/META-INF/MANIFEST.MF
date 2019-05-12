@@ -29,5 +29,6 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.agentgui.lib.jade,
  de.enflexit.common,
  de.enflexit.geography,
+ org.agentgui.core,
  org.awb.env.networkModel,
  org.apache.commons.logging

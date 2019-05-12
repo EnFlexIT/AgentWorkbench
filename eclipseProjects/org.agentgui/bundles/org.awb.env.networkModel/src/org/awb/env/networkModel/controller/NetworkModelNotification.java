@@ -79,6 +79,9 @@ public class NetworkModelNotification {
 
 	public static final int NETWORK_MODEL_ExportGraphAsImage = 40;
 	
+	public static final int NETWORK_MODEL_MapRendering_ON = 50;
+	public static final int NETWORK_MODEL_MapRendering_OFF = 51;
+	
 	
 	/** The reason. */
 	private int reason = 0;
