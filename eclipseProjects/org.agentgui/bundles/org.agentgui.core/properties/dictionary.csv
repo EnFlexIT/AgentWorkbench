@@ -794,6 +794,8 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;A geographical layout has to be defined with X = 'North' and Y = 'Clockwise to X';;;
+en;;A geographical layout has to be defined with X = 'North', Y = 'Clockwise to X';;;
 en;;Add intermediate point;;;
 en;;Alias:;;;
 en;;Align graph nodes;;;
@@ -823,6 +825,8 @@ en;;Edge Shape;;;
 en;;Edit Configurable Edge;;;
 en;;Edit security store settings;;;
 en;;Finalize editing;;;
+en;;Geo. Layout;;;
+en;;Geographical Layout;;;
 en;;Guide Grid Step;;;
 en;;Guide Grid;;;
 en;;Invalid node selection!;;;
@@ -914,6 +918,8 @@ en;;Would you like to download and install this update?;;;
 en;;Writing;;;
 en;;Wrong KeyStore location!;;;
 en;;Wrong TrustStore location!;;;
+en;;Wrong coordinate direction;;;
+en;;Wrong coordinate system direction;;;
 en;;X - Direction;;;
 en;;Y - Direction;;;
 en;;You must fill out all required fields!;;;

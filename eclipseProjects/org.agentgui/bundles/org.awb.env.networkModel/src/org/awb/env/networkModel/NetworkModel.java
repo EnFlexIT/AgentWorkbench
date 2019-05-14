@@ -57,6 +57,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.helper.GraphEdgeDirection;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.helper.GraphNodePairsRevert;
+import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.persistence.GraphModelReader;
 import org.awb.env.networkModel.persistence.GraphModelWriter;
 import org.awb.env.networkModel.persistence.NetworkComponentList;
@@ -96,7 +97,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	
 	/** The layout (name) used for this NetworkModel. */
 	private String layoutID;
-	
+	private TreeMap<String, MapSettings> mapSettingsTreeMap;
+
 	
 	/** The original JUNG graph created or imported in the application. */
 	private Graph<GraphNode, GraphEdge> graph;
@@ -147,6 +149,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return generalGraphSettings4MAS;
 	}
 
+	// ------------------------------------------------------------------------
+	// --- From here, the handling of the layout can be found -----------------
+	// ------------------------------------------------------------------------
 	/**
 	 * Returns the layout ID, used by this NetworkModel.
 	 * @return the current layout name
@@ -221,7 +226,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 	}
 	
-	
 	/**
 	 * Returns the {@link LayoutSettings} that correspond to {@link #getLayoutID()}.
 	 * @return the layout settings
@@ -240,7 +244,62 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return ls;
 	}
 	
+	// ------------------------------------------------------------------------
+	// --- From here, the handling of the Map settings can be found -----------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Returns the tree map of layout-dependent {@link MapSettings}.
+	 * @return the map settings tree map
+	 */
+	public TreeMap<String, MapSettings> getMapSettingsTreeMap() {
+		if (mapSettingsTreeMap==null) {
+			mapSettingsTreeMap = new TreeMap<>();
+		}
+		return mapSettingsTreeMap;
+	}
+	/**
+	 * Sets the tree map of {@link MapSettings} .
+	 * @param mapSettingsTreeMap the map settings tree map
+	 */
+	private void setMapSettingsTreeMap(TreeMap<String, MapSettings> mapSettingsTreeMap) {
+		this.mapSettingsTreeMap = mapSettingsTreeMap;
+	}
 	
+	/**
+	 * Returns the {@link MapSettings} if the current layout is a geographical layout, otherwise
+	 * the method returns <code>null</code>.
+	 * @return the layout-dependent MapSettings
+	 * @see #getLayoutSettings()
+	 * @see LayoutSettings#isGeographicalLayout()
+	 */
+	public MapSettings getMapSettings() {
+		
+		String layoutID = this.getLayoutID();
+		MapSettings ms = this.getMapSettingsTreeMap().get(layoutID);
+
+		LayoutSettings layoutSettings = this.getLayoutSettings();
+		if (layoutSettings.isGeographicalLayout()==true) {
+			// --- If geographical layout, return instance of MapSettings -----
+			if (ms==null) {
+				ms = new MapSettings();
+				this.getMapSettingsTreeMap().put(layoutID, ms);
+			}
+			return ms;
+			
+		} else {
+			if (ms!=null) {
+				// --- Clean-up the map settings hash -------------------------
+				this.getMapSettingsTreeMap().remove(layoutID);
+			}
+			
+		}
+		return null;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, the handling of the Network model graph can be found ----
+	// ------------------------------------------------------------------------
 	/**
 	 * Returns the JUNG graph.
 	 * @return the JUNG Graph
@@ -1142,8 +1201,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		// --- Get the general counting information for components and edges --
 		String nextCompID = this.nextNetworkComponentID().replace(GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT, "");
 		String nextNodeID = this.nextNodeID().replace(GraphNode.GRAPH_NODE_PREFIX, "");
-		int nextCompIDCounter = Integer.parseInt(nextCompID);
-		int nextNodeIDCounter = Integer.parseInt(nextNodeID);
+		long nextCompIDCounter = Long.parseLong(nextCompID);
+		long nextNodeIDCounter = Long.parseLong(nextNodeID);
 
 		
 		// --- Make sure that the information are up to date ------------------
@@ -2560,6 +2619,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			NetworkModelFileContent fileContent = NetworkModelFileContent.load(xmlFile, false);
 			if (fileContent!=null) {
 				this.setLayoutID(fileContent.getLayoutID());
+				this.setMapSettingsTreeMap(fileContent.getMapSettingsList());
 				this.setNetworkComponents(fileContent.getNetworkComponentList());
 				return true;
 			}
@@ -2604,6 +2664,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		// ----------------------------------------------------------
 		NetworkModelFileContent fileContent = new NetworkModelFileContent();
 		fileContent.setLayoutID(this.getLayoutID());
+		fileContent.setMapSettingsList(this.getMapSettingsTreeMap());
 		fileContent.setNetworkComponentList(this.getNetworkComponents());
 		// --- Do save -----------
 		success = fileContent.save(xmlFile);

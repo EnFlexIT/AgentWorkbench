@@ -96,6 +96,8 @@ public class LayoutSettings implements Serializable, Cloneable {
 	
 	private String layoutName;
 	
+	private boolean geographicalLayout;
+	
 	private CoordinateSystemXDirection coordinateSystemXDirection = CoordinateSystemXDirection.East;
 	private CoordinateSystemYDirection coordinateSystemYDirection = CoordinateSystemYDirection.ClockwiseToX; 
 	
@@ -122,13 +124,15 @@ public class LayoutSettings implements Serializable, Cloneable {
 		 
 		boolean isEqual = true;
 		if (isEqual==true) isEqual = (this.getLayoutName().equals(ls2Compare.getLayoutName()));
+		
+		if (isEqual==true) isEqual = (this.isGeographicalLayout()==ls2Compare.isGeographicalLayout());
 		if (isEqual==true) isEqual = (this.getCoordinateSystemXDirection()==ls2Compare.getCoordinateSystemXDirection());
 		if (isEqual==true) isEqual = (this.getCoordinateSystemYDirection()==ls2Compare.getCoordinateSystemYDirection());
 		
 		if (isEqual==true) isEqual = (this.getEdgeShape()==ls2Compare.getEdgeShape());
 		if (isEqual==true) isEqual = (this.getSnapRaster()==ls2Compare.getSnapRaster());
 		if (isEqual==true) isEqual = (this.isSnap2Grid()==ls2Compare.isSnap2Grid());
-		//if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getClusterShape(), ds2Compare.getClusterShape());
+		
 		return isEqual;
 	}
 
@@ -142,6 +146,7 @@ public class LayoutSettings implements Serializable, Cloneable {
 
 		copy.setLayoutName(new String(this.getLayoutName()));
 		
+		copy.setGeographicalLayout(this.isGeographicalLayout());
 		copy.setCoordinateSystemXDirection(this.getCoordinateSystemXDirection());
 		copy.setCoordinateSystemYDirection(this.getCoordinateSystemYDirection());
 		
@@ -166,6 +171,21 @@ public class LayoutSettings implements Serializable, Cloneable {
 	 */
 	public String getLayoutName() {
 		return layoutName;
+	}
+	
+	/**
+	 * Sets that the current layout is a geographical layout.
+	 * @param geographicalLayout the new geographical layout
+	 */
+	public void setGeographicalLayout(boolean geographicalLayout) {
+		this.geographicalLayout = geographicalLayout;
+	}
+	/**
+	 * Checks if the current layout is geographical layout.
+	 * @return true, if is geographical layout
+	 */
+	public boolean isGeographicalLayout() {
+		return geographicalLayout;
 	}
 	
 	/**
@@ -243,7 +263,5 @@ public class LayoutSettings implements Serializable, Cloneable {
 	public double getSnapRaster() {
 		return snapRaster;
 	}
-	
-	
 	
 }

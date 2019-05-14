@@ -311,14 +311,14 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 	}
 	private JLabel getJLabelUtmEasting() {
 		if (jLabelUtmEasting == null) {
-			jLabelUtmEasting = new JLabel("Easting:");
+			jLabelUtmEasting = new JLabel("Easting (x):");
 			jLabelUtmEasting.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelUtmEasting;
 	}
 	private JLabel getJLabelUtmNorthing() {
 		if (jLabelUtmNorthing == null) {
-			jLabelUtmNorthing = new JLabel("Northing:");
+			jLabelUtmNorthing = new JLabel("Northing (y):");
 			jLabelUtmNorthing.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelUtmNorthing;

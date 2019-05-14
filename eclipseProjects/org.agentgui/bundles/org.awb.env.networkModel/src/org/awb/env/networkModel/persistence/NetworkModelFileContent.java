@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.maps.MapSettings;
 
 /**
  * This class describes the structure of the NetowkModel's XML file.
@@ -55,13 +56,15 @@ import org.awb.env.networkModel.NetworkComponent;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NetworkModelFileContent", propOrder = {
     "layoutID",
+    "mapSettingsList",
     "networkComponentList"
 })
 public class NetworkModelFileContent {
 
-	private TreeMap<String, NetworkComponent> networkComponentList;
 	private String layoutID;
+	private TreeMap<String, MapSettings> mapSettingsList;
 	
+	private TreeMap<String, NetworkComponent> networkComponentList;
 	
 	/**
 	 * Default constructor, required for JAXB.
@@ -82,6 +85,21 @@ public class NetworkModelFileContent {
 	 */
 	public void setLayoutID(String newLayoutID) {
 		this.layoutID = newLayoutID;
+	}
+	
+	/**
+	 * Returns the tree map of layout-dependent {@link MapSettings}.
+	 * @return the map settings tree map
+	 */
+	public TreeMap<String, MapSettings> getMapSettingsList() {
+		return mapSettingsList;
+	}
+	/**
+	 * Sets the tree map of {@link MapSettings} .
+	 * @param mapSettingsTreeMap the map settings tree map
+	 */
+	public void setMapSettingsList(TreeMap<String, MapSettings> mapSettingsTreeMap) {
+		this.mapSettingsList = mapSettingsTreeMap;
 	}
 	
 	/**

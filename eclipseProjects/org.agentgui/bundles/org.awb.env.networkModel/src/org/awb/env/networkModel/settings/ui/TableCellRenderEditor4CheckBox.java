@@ -46,7 +46,7 @@ public class TableCellRenderEditor4CheckBox extends AbstractCellEditor implement
 	private static final long serialVersionUID = -1544056145162025328L;
 
 	private JCheckBox checkBox;
-	 
+	
 	public TableCellRenderEditor4CheckBox() { }
 	
 	public JCheckBox getCheckBox() {

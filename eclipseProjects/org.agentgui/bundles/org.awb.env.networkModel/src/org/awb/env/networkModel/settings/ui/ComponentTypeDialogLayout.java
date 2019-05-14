@@ -46,6 +46,7 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -86,7 +87,8 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	
 	private Vector<String> columnHeaderLayouts 		= null;
 	private final String COL_L_LayoutID 			= Language.translate("Layout ID", Language.EN);
-	private final String COL_L_LayoutName 			= Language.translate("Layout Name", Language.EN); 
+	private final String COL_L_LayoutName 			= Language.translate("Layout Name", Language.EN);
+	private final String COL_L_GeoLayout 			= Language.translate("Geo. Layout", Language.EN);
 	private final String COL_L_X_Direction			= Language.translate("X - Direction", Language.EN);
 	private final String COL_L_Y_Direction 			= Language.translate("Y - Direction", Language.EN);
 	private final String COL_L_SnapToGrid 			= Language.translate("Use Guide Grid", Language.EN);
@@ -188,6 +190,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 		if (columnHeaderLayouts==null) {
 			columnHeaderLayouts = new Vector<String>();
 			columnHeaderLayouts.add(COL_L_LayoutName);
+			columnHeaderLayouts.add(COL_L_GeoLayout);
 			columnHeaderLayouts.add(COL_L_X_Direction);
 			columnHeaderLayouts.add(COL_L_Y_Direction);
 			columnHeaderLayouts.add(COL_L_SnapToGrid);
@@ -233,6 +236,12 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			
 			// --- Define the sorter ----------------------
 			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4Layouts());
+			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_GeoLayout), new Comparator<Boolean>() {
+				@Override
+				public int compare(Boolean o1, Boolean o2) {
+					return o1.compareTo(o2);
+				}
+			});
 			sorter.setComparator(getColumnHeaderIndexLayouts(COL_L_X_Direction), new Comparator<CoordinateSystemXDirection>() {
 				@Override
 				public int compare(CoordinateSystemXDirection xDir1, CoordinateSystemXDirection xDir2) {
@@ -277,26 +286,51 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			// --- Configure the editor and the renderer of the cells ---------
 			TableColumnModel tcm = jTableLayoutTypes.getColumnModel();
 
+			TableCellRenderEditor4CheckBox checkBoxVisEdit = new TableCellRenderEditor4CheckBox();
+			checkBoxVisEdit.getCheckBox().addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					JCheckBox checkBox = (JCheckBox) ae.getSource();
+					if (checkBox.isSelected()==true) {
+						int rowTable = getJTable4LayoutTypes().getSelectedRow();
+						int rowModel = getJTable4LayoutTypes().convertRowIndexToModel(rowTable);
+						getTableModel4Layouts().setValueAt(CoordinateSystemXDirection.East, rowModel, getColumnHeaderIndexLayouts(COL_L_X_Direction));
+						getTableModel4Layouts().setValueAt(CoordinateSystemYDirection.CounterclockwiseToX, rowModel, getColumnHeaderIndexLayouts(COL_L_Y_Direction));
+						getTableModel4Layouts().setValueAt(0.1, rowModel, getColumnHeaderIndexLayouts(COL_L_SnapGridWidth));
+						getTableModel4Layouts().fireTableRowsUpdated(rowModel, rowModel);
+					}
+				}
+			});
+			
+			TableColumn colGeoLayout = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_GeoLayout));
+			colGeoLayout.setCellRenderer(new TableCellRenderEditor4CheckBox());
+			colGeoLayout.setCellEditor(checkBoxVisEdit);
+			colGeoLayout.setMinWidth(90);
+			colGeoLayout.setPreferredWidth(100);
+			colGeoLayout.setMaxWidth(120);
+			
 			TableColumn colXDirection = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_X_Direction));
 			colXDirection.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxCoordinateSystemXDirection()));
 
 			TableColumn colYDirection = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_Y_Direction));
 			colYDirection.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxCoordinateSystemYDirection()));
-			colYDirection.setPreferredWidth(10);
 			
 			TableColumn colSnapToGrid = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_SnapToGrid));
-			colSnapToGrid.setCellEditor(new TableCellRenderEditor4CheckBox());
 			colSnapToGrid.setCellRenderer(new TableCellRenderEditor4CheckBox());
-			colSnapToGrid.setPreferredWidth(10);
+			colSnapToGrid.setCellEditor(new TableCellRenderEditor4CheckBox());
+			colSnapToGrid.setMinWidth(90);
+			colSnapToGrid.setPreferredWidth(100);
+			colSnapToGrid.setMaxWidth(120);
 			
 			TableColumn colSnapGridWidth = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_SnapGridWidth));
-			colSnapGridWidth.setCellEditor(new TableCellEditor4Spinner(0.1, 100, 0.1));
 			colSnapGridWidth.setCellRenderer(new TableCellEditor4Spinner(0.1, 100, 0.1));
-			colSnapGridWidth.setPreferredWidth(10);
+			colSnapGridWidth.setCellEditor(new TableCellEditor4Spinner(0.1, 100, 0.1));
+			colSnapGridWidth.setMinWidth(120);
+			colSnapGridWidth.setPreferredWidth(130);
+			colSnapGridWidth.setMaxWidth(150);
 			
 			TableColumn colEdgeShape = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_EdgeShape));
 			colEdgeShape.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxEdgeShape()));
-			colEdgeShape.setPreferredWidth(10);
 
 			// --- Remove the column with the layoutID ---- 
 			tcm.removeColumn(tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_LayoutID)));
@@ -318,7 +352,9 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 				 */
 				@Override
 				public Class<?> getColumnClass(int columnIndex) {
-					if (columnIndex==getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
+					if (columnIndex==getColumnHeaderIndexLayouts(COL_L_GeoLayout)) {
+						return Boolean.class;
+					} else if (columnIndex==getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
 						return CoordinateSystemXDirection.class;
 					} else if (columnIndex==getColumnHeaderIndexLayouts(COL_L_Y_Direction)) {
 						return CoordinateSystemYDirection.class;
@@ -343,6 +379,12 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 							return false;
 						}
 					}
+					
+					if (column==getColumnHeaderIndexLayouts(COL_L_X_Direction) || column==getColumnHeaderIndexLayouts(COL_L_Y_Direction)) {
+						Boolean isGeoLayout = (Boolean) getTableModel4Layouts().getValueAt(row, getColumnHeaderIndexLayouts(COL_L_GeoLayout));
+						return !isGeoLayout;
+					}
+					
 					return true;
 				}
 			};
@@ -378,6 +420,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			LayoutSettings layoutSetting = this.layoutSettings.get(layoutID);
 			
 			String layoutName = layoutSetting.getLayoutName();
+			boolean isGeoLayout = layoutSetting.isGeographicalLayout();
 			CoordinateSystemXDirection xDircetion = layoutSetting.getCoordinateSystemXDirection();
 			CoordinateSystemYDirection yDircetion = layoutSetting.getCoordinateSystemYDirection();
 			boolean isSnap2Grid = layoutSetting.isSnap2Grid();
@@ -389,6 +432,8 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			for (int i = 0; i < this.getColumnHeaderLayouts().size(); i++) {
 				if (i == getColumnHeaderIndexLayouts(COL_L_LayoutID)) {
 					newRow.add(layoutID);
+				} else if (i == getColumnHeaderIndexLayouts(COL_L_GeoLayout)) {
+					newRow.add(isGeoLayout);
 				} else if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
 					newRow.add(layoutName);
 				} else if (i == getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
@@ -410,7 +455,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 	/**
 	 * This method adds a new default row to the table for layouts.
 	 */
-	private void addNewLayoutRow(){
+	private void addNewLayoutRow() {
 		// --- Create row vector --------------
 		Vector<Object> newRow = new Vector<Object>();
 		for (int i = 0; i < this.getColumnHeaderLayouts().size(); i++) {
@@ -418,6 +463,8 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 				newRow.add(GeneralGraphSettings4MAS.generateLayoutID());
 			} else if (i == getColumnHeaderIndexLayouts(COL_L_LayoutName)) {
 				newRow.add(null);
+			} else if (i == getColumnHeaderIndexLayouts(COL_L_GeoLayout)) {
+				newRow.add(false);
 			} else if (i == getColumnHeaderIndexLayouts(COL_L_X_Direction)) {
 				newRow.add(CoordinateSystemXDirection.East);
 			} else if (i == getColumnHeaderIndexLayouts(COL_L_Y_Direction)) {
@@ -596,6 +643,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			if (layoutName!=null && layoutName.length()!=0){
 				
 				String layoutID 						= (String) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_LayoutID));
+				boolean isGeoLayout 					= (boolean)  dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_GeoLayout));
 				CoordinateSystemXDirection xDirection 	= (CoordinateSystemXDirection) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_X_Direction));
 				CoordinateSystemYDirection yDirection	= (CoordinateSystemYDirection) dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_Y_Direction));
 				boolean isSnapToGrid 					= (boolean)  dtmLayouts.getValueAt(row, this.getColumnHeaderIndexLayouts(COL_L_SnapToGrid));					
@@ -604,6 +652,7 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 				
 				LayoutSettings ls = new LayoutSettings();
 				ls.setLayoutName(layoutName);
+				ls.setGeographicalLayout(isGeoLayout);
 				ls.setCoordinateSystemXDirection(xDirection);
 				ls.setCoordinateSystemYDirection(yDirection);
 				ls.setSnap2Grid(isSnapToGrid);
@@ -650,6 +699,13 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			// --- Duplicate LayoutSettings Name --------------------
 			title = Language.translate("Duplicate Layout", Language.EN) + " Name !";
 			message = Language.translate("The following layout exists at least twice", Language.EN) + ": '" + layoutNameToCheck + "' !";
+			return new ComponentTypeError(title, message);
+		}
+		
+		if (lsToCheck.isGeographicalLayout()==true && (lsToCheck.getCoordinateSystemXDirection()!=CoordinateSystemXDirection.East || lsToCheck.getCoordinateSystemYDirection()!=CoordinateSystemYDirection.CounterclockwiseToX)) {
+			// --- Geographical Layout - wrong coordinate system ----
+			title = Language.translate("Geographical Layout", Language.EN) + " - " + Language.translate("Wrong coordinate system direction", Language.EN) + "!";
+			message = "Layout '" + layoutNameToCheck + "':\n" + Language.translate("A geographical layout has to be defined with X = 'North' and Y = 'Clockwise to X'", Language.EN) + "!";
 			return new ComponentTypeError(title, message);
 		}
 		return null;
