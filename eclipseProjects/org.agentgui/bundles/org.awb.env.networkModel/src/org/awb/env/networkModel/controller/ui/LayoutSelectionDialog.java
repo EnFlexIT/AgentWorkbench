@@ -52,10 +52,12 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
+import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
 import agentgui.core.application.Language;
 import de.enflexit.common.swing.JComboBoxWide;
+import javax.swing.JSeparator;
 
 
 /**
@@ -63,15 +65,24 @@ import de.enflexit.common.swing.JComboBoxWide;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implements Observer, ActionListener {
+public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implements Observer, ActionListener, MapSettingsPanelListener {
 
     private static final long serialVersionUID = -7481141098749690137L;
+    
+    private int defaultWidth = 300;
+    private int defaultHeightLayout = 35;
+    private int defaultHeightMapSettings = 125;
+
     
 	private ComponentAdapter desktopAdapter;
 	
 	private DefaultComboBoxModel<String> comboBoxModel;
 	private JComboBoxWide<String> jComboBoxLayout;
 	private boolean isPauseComboBoxActionListener;
+	
+	private JSeparator separator;
+	private MapSettingsPanel mapSettingsPanel;
+	private boolean pauseMapSettingsPanelListener;
 	
 	
 	/**
@@ -102,9 +113,9 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
     	gridBagLayout.columnWidths = new int[]{0, 0};
-    	gridBagLayout.rowHeights = new int[]{0, 0};
+    	gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
     	gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-    	gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+    	gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
     	this.getContentPane().setLayout(gridBagLayout);
     	
     	GridBagConstraints gbc_jComboBoxLayout = new GridBagConstraints();
@@ -113,6 +124,18 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     	gbc_jComboBoxLayout.gridx = 0;
     	gbc_jComboBoxLayout.gridy = 0;
     	this.getContentPane().add(this.getJComboBoxLayout(), gbc_jComboBoxLayout);
+    	
+    	GridBagConstraints gbc_separator = new GridBagConstraints();
+    	gbc_separator.fill = GridBagConstraints.HORIZONTAL;
+    	gbc_separator.insets = new Insets(0, 10, 0, 10);
+    	gbc_separator.gridx = 0;
+    	gbc_separator.gridy = 1;
+    	this.getContentPane().add(this.getSeparator(), gbc_separator);
+    	GridBagConstraints gbc_mapSettingsPanel = new GridBagConstraints();
+    	gbc_mapSettingsPanel.fill = GridBagConstraints.HORIZONTAL;
+    	gbc_mapSettingsPanel.gridx = 0;
+    	gbc_mapSettingsPanel.gridy = 2;
+    	this.getContentPane().add(this.getMapSettingsPanel(), gbc_mapSettingsPanel);
 		
     	this.registerAtDesktopAndSetVisible();	
     }
@@ -133,7 +156,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     public void setVisible(boolean visble) {
     	super.setVisible(visble);
     	if (visble==true) {
-    		this.setDialogPosition();
+    		this.setDialogSizeAndPosition();
     		this.graphController.addObserver(this);
     		this.graphDesktop.addComponentListener(this.getComponentAdapter4Desktop());
     		this.getJComboBoxLayout().grabFocus();
@@ -155,7 +178,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     			@Override
     			public void componentResized(ComponentEvent ce) {
     				boolean isComboBoxFocus = LayoutSelectionDialog.this.getJComboBoxLayout().hasFocus(); 
-    				LayoutSelectionDialog.this.setDialogPosition();
+    				LayoutSelectionDialog.this.setDialogSizeAndPosition();
     				if (isComboBoxFocus==true) {
     					LayoutSelectionDialog.this.basicGraphGui.getJToolBar(ToolBarType.LayoutControl).grabFocus();
     					LayoutSelectionDialog.this.getJComboBoxLayout().grabFocus();
@@ -168,20 +191,31 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     /**
      * Sets the dialog position.
      */
-    private void setDialogPosition() {
+    private void setDialogSizeAndPosition() {
+    	
     	if (this.graphDesktop!=null) {
-    		
-    		int dialogWidth = 220;
-    		int dialogHeight = 32;
+    		int dialogWidth  = defaultWidth;
+    		int dialogHeight = this.getDialogHeight();
     		int toolBarWidth =  this.basicGraphGui.getJToolBar(ToolBarType.LayoutControl).getSize().width;
     		int xPos = this.graphDesktop.getSize().width - dialogWidth - toolBarWidth - 15;
     		this.setBounds(xPos, 0, dialogWidth, dialogHeight);
     	
     	} else {
-    		this.setSize(220, 32);
+    		this.setSize(defaultWidth, defaultHeightLayout);
     	}
     }
-    
+    /**
+     * Returns the dialog height.
+     * @return the dialog height
+     */
+    private int getDialogHeight() {
+    	int heigth = this.defaultHeightLayout;
+    	if (this.graphController.getNetworkModel().getMapSettings()!=null) {
+    		heigth = heigth + this.defaultHeightMapSettings;
+    	}
+    	return heigth;
+    }
+
     
     /**
      * Returns the combo box model.
@@ -226,7 +260,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     private JComboBoxWide<String> getJComboBoxLayout() {
 		if (jComboBoxLayout == null) {
 			jComboBoxLayout = new JComboBoxWide<>(this.getComboBoxModel());
-			jComboBoxLayout.setToolTipText(Language.translate("Swicht netowrk model layout ...", Language.EN));
+			jComboBoxLayout.setToolTipText(Language.translate("Swicht network model layout ...", Language.EN));
 			jComboBoxLayout.setPreferredSize(new Dimension(250, 26));
 			jComboBoxLayout.addActionListener(this);
 			this.fillComboBoxModel();
@@ -235,6 +269,60 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 	}
    
  
+    private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+		}
+		return separator;
+	}
+	private MapSettingsPanel getMapSettingsPanel() {
+		if (mapSettingsPanel == null) {
+			mapSettingsPanel = new MapSettingsPanel();
+			this.setMapSettings(this.graphController.getNetworkModel().getMapSettings());
+			mapSettingsPanel.addMapSettingsPanelListener(this);
+		}
+		return mapSettingsPanel;
+	}
+	private void setMapSettings(MapSettings mapSettings) {
+		this.getMapSettingsPanel().setMapSettings(mapSettings);
+		this.getSeparator().setVisible(mapSettings!=null);
+		this.getMapSettingsPanel().setVisible(mapSettings!=null);
+		this.setDialogSizeAndPosition();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.ui.MapSettingsPanelListener#onChangedMapSettings(org.awb.env.networkModel.controller.ui.MapSettingsPanelListener.MapSettingsChanged)
+	 */
+	@Override
+	public void onChangedMapSettings(MapSettingsChanged valueChangedInMapSetting) {
+		
+		if (this.pauseMapSettingsPanelListener==true) return;
+		
+		// --- Get the changed value of the MapSettings --- 
+		MapSettings mapSettings = this.getMapSettingsPanel().getMapSettings();
+		switch (valueChangedInMapSetting) {
+		case UTM_Longitude:
+			System.out.println("Changed UTM_Longitude");
+			break;
+			
+		case UTM_Latitude:
+			System.out.println("Changed UTM_Latitude");
+			break;
+			
+		case MapScale:
+			System.out.println("Changed MapScale");
+			break;
+			
+		case ShowMapTiles:
+			System.out.println("Changed ShowMapTiles");
+			break;
+			
+		case MapTileTransparency:
+			System.out.println("Changed MapTileTransparency");
+			break;
+		}
+	}
+	
     /*
      * (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -272,6 +360,10 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     		case NetworkModelNotification.NETWORK_MODEL_LayoutChanged:
     			String layoutName = this.graphController.getNetworkModel().getLayoutSettings().getLayoutName();
     			this.getJComboBoxLayout().setSelectedItem(layoutName);
+    			// --- Assign MapSettings -----------------
+    			this.pauseMapSettingsPanelListener = true;
+    			this.setMapSettings(this.graphController.getNetworkModel().getMapSettings());
+    			this.pauseMapSettingsPanelListener = false;
     			break;
     			
     		case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:

@@ -82,6 +82,11 @@ public class CoordinateConversion {
 		return Math.tan(value);
 	}
 
+	public char[] getUTMLatZoneLetters() {
+		return new LatZones().getLatZoneLetters();
+	}
+	
+	
 	private class LatLon2UTM {
 
 		// Lat Lon to UTM variables
@@ -667,6 +672,10 @@ public class CoordinateConversion {
 		public LatZones() {
 		}
 
+		public char[] getLatZoneLetters() {
+			return letters;
+		}
+		
 		public int getLatZoneDegree(String letter) {
 			char ltr = letter.charAt(0);
 			for (int i = 0; i < arrayLength; i++) {
