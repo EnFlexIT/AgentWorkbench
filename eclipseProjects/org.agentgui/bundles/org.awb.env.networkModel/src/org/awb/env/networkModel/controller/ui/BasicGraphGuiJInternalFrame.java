@@ -78,7 +78,31 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 			this.graphDesktop = this.graphControllerGUI.getBasicGraphGuiJDesktopPane();
 			this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 		}
+		
 	}
+
+	/**
+	 * Sets that there is an 'action on top' of the graphs visualization viewer (or not).
+	 * If set <code>true</code>, the graph rendering will be hindered to accelerate the 
+	 * visualization update (repaint) in the superpositioned frame or component.
+	 * @param isActionOnTop the new action on top
+	 */
+	protected void setActionOnTop(boolean isActionOnTop) {
+		if (this.basicGraphGui!=null) {
+			this.basicGraphGui.getVisualizationViewer().setActionOnTop(isActionOnTop);
+		}
+	}
+	/**
+	 * Checks if there is currently an action on top of the graphs visualization viewer 
+	 * that possibly hinders to repaint the graph.
+	 * @return true, if there is an action on top
+	 * @see #setActionOnTop(boolean)
+	 */
+	protected boolean isActionOnTop() {
+		if (this.basicGraphGui==null) return false;
+		return this.basicGraphGui.getVisualizationViewer().isActionOnTop();
+	}
+	
 	
 	/**
 	 * Register at the graph desktop and set this extended JInternalFrame visible.

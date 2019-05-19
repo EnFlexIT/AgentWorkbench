@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.controller.ui;
+package org.awb.env.networkModel.maps;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -15,13 +15,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.awb.env.networkModel.controller.ui.MapSettingsPanelListener.MapSettingsChanged;
-import org.awb.env.networkModel.maps.JComboBoxMapScale;
-import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.maps.MapSettings.MapScale;
+import org.awb.env.networkModel.maps.MapSettingsPanelListener.MapSettingsChanged;
 
 import de.enflexit.geography.coordinates.ui.JComboBoxUTMZoneLatitude;
 import de.enflexit.geography.coordinates.ui.JComboBoxUTMZoneLongitude;
@@ -43,6 +42,9 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 	private JLabel jLabelScale;
 	private JComboBoxMapScale jComboBoxMapScale;
 	private JSlider jSliderTransparency;
+	private Timer timeSliderChangeEvent;
+	private boolean pauseSliderListener;
+	
 	private JLabel jLabelTransparency;
 	private JCheckBox jCheckBoxShowMapTiles;
 	private JSeparator jSeparatorFirst;
@@ -144,7 +146,7 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		if (jComboBoxUTMLatitude == null) {
 			jComboBoxUTMLatitude = new JComboBoxUTMZoneLatitude();
 			jComboBoxUTMLatitude.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jComboBoxUTMLatitude.setPreferredSize(new Dimension(50, 26));
+			jComboBoxUTMLatitude.setPreferredSize(new Dimension(45, 26));
 			jComboBoxUTMLatitude.addActionListener(this);
 		}
 		return jComboBoxUTMLatitude;
@@ -162,7 +164,7 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		if (jComboBoxMapScale == null) {
 			jComboBoxMapScale = new JComboBoxMapScale();
 			jComboBoxMapScale.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jComboBoxMapScale.setPreferredSize(new Dimension(50, 26));
+			jComboBoxMapScale.setPreferredSize(new Dimension(70, 26));
 			jComboBoxMapScale.addActionListener(this);
 		}
 		return jComboBoxMapScale;
@@ -176,6 +178,12 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		return jCheckBoxShowMapTiles;
 	}
 	
+	private JSeparator getJSeparatorFirst() {
+		if (jSeparatorFirst == null) {
+			jSeparatorFirst = new JSeparator();
+		}
+		return jSeparatorFirst;
+	}
 	
 	private JLabel getJLabelTransparency() {
 		if (jLabelTransparency == null) {
@@ -195,22 +203,34 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 			jSliderTransparency.setSnapToTicks(true);
 			jSliderTransparency.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent ce) {
-                	JSlider slider = (JSlider)ce.getSource();
-                	MapSettingsPanel.this.setTransparency(slider.getValue(), false);
+                	if (MapSettingsPanel.this.pauseSliderListener==false) {
+                		// --- Set percentage value to display ------
+                		int transValue = MapSettingsPanel.this.getJSliderTransparency().getValue();
+                		MapSettingsPanel.this.getJLabelTransparency().setText("Map-Transparency: " + transValue + " %");
+                		// --- Inform listener with a small delay ---
+                		if (MapSettingsPanel.this.getTimerSliderChangeEvent().isRunning()==true) {
+                			MapSettingsPanel.this.getTimerSliderChangeEvent().restart();
+        				} else {
+        					MapSettingsPanel.this.getTimerSliderChangeEvent().start();
+        				}
+                	}
                 }
             });
 			
 		}
 		return jSliderTransparency;
 	}
-	
-	private JSeparator getJSeparatorFirst() {
-		if (jSeparatorFirst == null) {
-			jSeparatorFirst = new JSeparator();
+	/**
+	 * Gets the timer slider event.
+	 * @return the timer slider event
+	 */
+	private Timer getTimerSliderChangeEvent() {
+		if (timeSliderChangeEvent==null) {
+			timeSliderChangeEvent = new Timer(250, this);
+			timeSliderChangeEvent.setRepeats(false);
 		}
-		return jSeparatorFirst;
+		return timeSliderChangeEvent;
 	}
-	
 	
 	/**
 	 * Returns the current MapSettings.
@@ -236,13 +256,14 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		if (this.mapSettings==null) {
 			this.setMapSettingsEnabled(false);
 		} else {
+			this.pauseSliderListener=true;
 			this.setMapSettingsEnabled(true);
 			this.getJComboBoxUTMLongitude().setSelectedItem(this.mapSettings.getUTMLongitudeZone());
 			this.getJComboBoxUTMLatitude().setSelectedItem(this.mapSettings.getUTMLatitudeZone());
 			this.getJComboBoxMapScale().setSelectedItem(this.mapSettings.getMapScale());
 			this.getJCheckBoxShowMapTiles().setSelected(this.mapSettings.isShowMapTiles());
-			this.getJSliderTransparency().setValue(this.mapSettings.getMapTileTransparency());
-			this.setTransparency(this.mapSettings.getMapTileTransparency());	
+			this.setTransparency(this.mapSettings.getMapTileTransparency());
+			this.pauseSliderListener=false;
 		}
 	}
 	
@@ -299,12 +320,16 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		} else if (ae.getSource()==this.getJComboBoxMapScale()) {
 			this.informListener(MapSettingsChanged.MapScale);
 		} else if (ae.getSource()==this.getJCheckBoxShowMapTiles()) {
+			this.pauseSliderListener = true;
 			if (this.getJCheckBoxShowMapTiles().isSelected()==true && this.getJSliderTransparency().getValue()==100) {
 				this.setTransparency(0);
 			} else {
 				this.setTransparency(100);
 			}
+			this.pauseSliderListener = false;
 			this.informListener(MapSettingsChanged.ShowMapTiles);
+		} else if (ae.getSource()==this.getTimerSliderChangeEvent()) {
+			MapSettingsPanel.this.setTransparency(this.getJSliderTransparency().getValue(), false);
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.controller.ui;
+package org.awb.env.networkModel.maps;
 
 /**
  * The listener interface for receiving events from a {@link MapSettingsPanel}.

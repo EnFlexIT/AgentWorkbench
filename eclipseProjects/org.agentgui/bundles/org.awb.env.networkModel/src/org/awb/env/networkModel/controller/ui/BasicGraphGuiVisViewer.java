@@ -208,6 +208,9 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 */
 	public void setDoMapPreRendering(boolean doMapPreRendering) {
 		if (doMapPreRendering==true) {
+			if (this.preRenderers!=null) {
+				this.preRenderers.clear();
+			}
 			this.addPreRenderPaintable(this.getMapPreRenderer());
 		} else {
 			this.removePreRenderPaintable(this.getMapPreRenderer());

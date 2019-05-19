@@ -34,6 +34,8 @@ import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.maps.MapSettings;
+import org.awb.env.networkModel.maps.MapSettings.MapScale;
 import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
@@ -49,6 +51,7 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 
 	private GraphEnvironmentController graphController;
 	private LayoutSettings layoutSettings;
+	private MapSettings mapSettings;
 
 	
 	/**
@@ -83,6 +86,20 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 		// --- Return the specified LayoutSettings (not dynamic) --------------
 		return layoutSettings;
 	}
+	
+	/**
+	 * Returns the current MapSettings.
+	 * @return the map settings
+	 */
+	private MapSettings getMapSettings() {
+		// --- Try to get current settings from GraphEnvironmentController ----
+		if (this.graphController!=null) {
+			return this.graphController.getNetworkModel().getMapSettings();
+		}
+		// --- Return the specified MapSettings (not dynamic) -----------------
+		return mapSettings;
+	}
+	
 	
 	/**
 	 * Transforms the specified {@link GraphNode}s position into the position for the visualization.
@@ -141,6 +158,19 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 			}
 			break;
 		}
+		
+		// --- Scale the node position ? ------------------
+		MapSettings mapSettings = this.getMapSettings();
+		if (mapSettings!=null) {
+			MapScale mapScale = mapSettings.getMapScale(); 
+			if (mapScale.getScaleDivider()!=1.0) {
+				// --- Scale the UTM coordinates ----------
+				double scaledX = visualNodePosition.getX() / mapScale.getScaleDivider();
+				double scaledY = visualNodePosition.getY() / mapScale.getScaleDivider();
+				visualNodePosition = new Point2D.Double(scaledX, scaledY);
+			}
+		}
+		
 		return visualNodePosition;
 	}
 	
@@ -190,6 +220,19 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 			}
 			break;
 		}
+		
+		// --- Scale the node position ? ------------------
+		MapSettings mapSettings = this.getMapSettings();
+		if (mapSettings!=null) {
+			MapScale mapScale = mapSettings.getMapScale(); 
+			if (mapScale.getScaleDivider()!=1.0) {
+				// --- Scale the UTM coordinates ----------
+				double unScaledX = npGraphNode.getX() * mapScale.getScaleDivider();
+				double unScaledY = npGraphNode.getY() * mapScale.getScaleDivider();
+				visualNodePosition = new Point2D.Double(unScaledX, unScaledY);
+			}
+		}
+		
 		return npGraphNode;
 	}
 	

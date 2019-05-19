@@ -28,12 +28,17 @@ public class MapSettings implements Serializable {
 	private static final long serialVersionUID = 760729234063485505L;
 	
 	public enum MapScale {
-		m(1),
-		km(1000);
+		m(1, "1 m"),
+		m10(10, "10 m"),
+		m100(100, "100 m"),
+		km(1000, "1 km");
 		
 		private final double scaleDivider;
-		private MapScale(double scaleDivider) {
+		private final String scaleDescription;
+		
+		private MapScale(double scaleDivider, String scaleDescription) {
 			this.scaleDivider = scaleDivider;
+			this.scaleDescription = scaleDescription;
 		}
 		public double getScaleDivider() {
 			return scaleDivider;
@@ -42,12 +47,20 @@ public class MapSettings implements Serializable {
 			return 1.0 / ((double)scaleDivider);
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return this.scaleDescription;
+		}
+		
 	}
 	
 	// --- Define variables and default values ------------
-	private int utmLongitudeZone = 33;
+	private int utmLongitudeZone = 32;
 	private String utmLatitudeZone = "U";
-	private MapScale mapScale = MapScale.km;
+	private MapScale mapScale = MapScale.m;
 	
 	private boolean showMapTiles = true;
 	private int mapTileTransparency = 0;

@@ -84,6 +84,7 @@ import org.awb.env.networkModel.controller.ui.commands.RenamedNetworkComponent;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineMousePlugin;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin;
 import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
+import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
@@ -426,21 +427,33 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Display the current Graph ------------------
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
-		this.zoomToFitToWindow(this.getVisualizationViewer());
 		this.clearPickedObjects();
+		this.setMapPreRendering();
+		this.zoomToFitToWindow(this.getVisualizationViewer());
 
 		// --- Re-attach item listener for vis-viewer -----
-		visView.getPickedVertexState().removeItemListener(this.getPickedStateItemListener());
-		visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
-		visView.getPickedEdgeState().removeItemListener(this.getPickedStateItemListener());
-		visView.getPickedEdgeState().addItemListener(this.getPickedStateItemListener());
+		this.getVisualizationViewer().getPickedVertexState().removeItemListener(this.getPickedStateItemListener());
+		this.getVisualizationViewer().getPickedVertexState().addItemListener(this.getPickedStateItemListener());
+		this.getVisualizationViewer().getPickedEdgeState().removeItemListener(this.getPickedStateItemListener());
+		this.getVisualizationViewer().getPickedEdgeState().addItemListener(this.getPickedStateItemListener());
 		
 		// --- Adjust the satellite view ------------------
 		this.getSatelliteVisualizationViewer().getGraphLayout().setGraph(this.getGraph());
 		this.zoomToFitToWindow(this.getSatelliteVisualizationViewer());
 		
 	}
-
+	/**
+	 * Depending on the current MapSettings, sets the map pre-rendering ON or OFF.
+	 */
+	private void setMapPreRendering() {
+		MapSettings mapSettings = this.graphController.getNetworkModel().getMapSettings();
+		if (mapSettings!=null && mapSettings.isShowMapTiles()==true) {
+			this.getVisualizationViewer().setDoMapPreRendering(true);
+		} else {
+			this.getVisualizationViewer().setDoMapPreRendering(false);
+		}
+	}
+	
 	/**
 	 * Gets the picked state item listener, a listener 
 	 * for GraphNode / GraphEdge (de)selections.  
@@ -1599,6 +1612,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.getVisualizationViewer().setDoMapPreRendering(false);
 				break;
 
+			case NetworkModelNotification.NETWORK_MODEL_MapScaleChanged:
+				this.reLoadGraph();
+				break;
 				
 			default:
 				break;

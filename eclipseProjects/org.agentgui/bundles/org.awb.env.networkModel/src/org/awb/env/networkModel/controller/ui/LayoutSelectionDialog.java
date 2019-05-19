@@ -46,6 +46,8 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import org.awb.env.networkModel.NetworkModel;
@@ -53,11 +55,14 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.maps.MapSettings;
+import org.awb.env.networkModel.maps.MapSettingsPanel;
+import org.awb.env.networkModel.maps.MapSettingsPanelListener;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
 import agentgui.core.application.Language;
 import de.enflexit.common.swing.JComboBoxWide;
 import javax.swing.JSeparator;
+import javax.swing.Timer;
 
 
 /**
@@ -111,6 +116,17 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
+		this.addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameActivated(InternalFrameEvent ife) {
+				LayoutSelectionDialog.this.setActionOnTop(true);
+			}
+			@Override
+			public void internalFrameDeactivated(InternalFrameEvent ife) {
+				LayoutSelectionDialog.this.setActionOnTop(false);
+			}
+		});
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
     	gridBagLayout.columnWidths = new int[]{0, 0};
     	gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
@@ -137,7 +153,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     	gbc_mapSettingsPanel.gridy = 2;
     	this.getContentPane().add(this.getMapSettingsPanel(), gbc_mapSettingsPanel);
 		
-    	this.registerAtDesktopAndSetVisible();	
+    	this.registerAtDesktopAndSetVisible();
     }
     
     /* (non-Javadoc)
@@ -147,7 +163,6 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     protected boolean isRemindAsLastOpenedEditor() {
     	return false;
     }
-    
     
     /* (non-Javadoc)
      * @see javax.swing.JComponent#setVisible(boolean)
@@ -290,6 +305,24 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 		this.setDialogSizeAndPosition();
 	}
 	
+	/**
+	 * Resets the setting for 'action on top' with a time delay (of 100 ms).
+	 * @param isActionOnTop the is action on top
+	 */
+	private void resetActionOnTopWithTimeDelay(final boolean isActionOnTop) {
+		
+		Timer timer = new Timer(100, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if (LayoutSelectionDialog.this.isActionOnTop()!=isActionOnTop) {
+					LayoutSelectionDialog.this.setActionOnTop(isActionOnTop);
+				}
+			}
+		});
+		timer.setRepeats(false);
+		timer.start();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.MapSettingsPanelListener#onChangedMapSettings(org.awb.env.networkModel.controller.ui.MapSettingsPanelListener.MapSettingsChanged)
 	 */
@@ -298,7 +331,11 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 		
 		if (this.pauseMapSettingsPanelListener==true) return;
 		
-		// --- Get the changed value of the MapSettings --- 
+		// --- Enable the graph rendering again -----------
+		boolean isActionOnTopReminder = this.isActionOnTop();
+		this.setActionOnTop(false);
+		
+		// --- Get the changed value of the MapSettings ---
 		MapSettings mapSettings = this.getMapSettingsPanel().getMapSettings();
 		switch (valueChangedInMapSetting) {
 		case UTM_Longitude:
@@ -310,17 +347,23 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 			break;
 			
 		case MapScale:
-			System.out.println("Changed MapScale");
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapScaleChanged));
 			break;
 			
 		case ShowMapTiles:
-			System.out.println("Changed ShowMapTiles");
+			if (mapSettings.isShowMapTiles()==true) {
+				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapRendering_ON));
+			} else {
+				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapRendering_OFF));
+			}
 			break;
 			
 		case MapTileTransparency:
 			System.out.println("Changed MapTileTransparency");
 			break;
 		}
+		this.graphController.setProjectUnsaved();
+		this.resetActionOnTopWithTimeDelay(isActionOnTopReminder);
 	}
 	
     /*
@@ -335,9 +378,13 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     		String layoutNameCurrent = this.graphController.getNetworkModel().getLayoutSettings().getLayoutName();
     		String layoutNameNew = (String) this.getComboBoxModel().getSelectedItem();
     		if (layoutNameNew!=null && layoutNameNew.equals(layoutNameCurrent)==false) {
+    			// --- Enable the graph rendering again -----------
+    			boolean isActionOnTopReminder = this.isActionOnTop();
+    			this.setActionOnTop(false);
     			// --- Set the new layout ID --------------
     			String newLayoutID = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getLayoutIdByLayoutName(layoutNameNew);
     			this.graphController.getNetworkModelUndoManager().setLayoutIdAndExchangeLayoutSettings(newLayoutID);
+    			this.resetActionOnTopWithTimeDelay(isActionOnTopReminder);
     		}
     	}
     }
@@ -355,15 +402,13 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     		case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
     		case NetworkModelNotification.NETWORK_MODEL_Reload:
     			this.fillComboBoxModel();
+    			this.assignMapSettings();
     			break;
 				
     		case NetworkModelNotification.NETWORK_MODEL_LayoutChanged:
     			String layoutName = this.graphController.getNetworkModel().getLayoutSettings().getLayoutName();
     			this.getJComboBoxLayout().setSelectedItem(layoutName);
-    			// --- Assign MapSettings -----------------
-    			this.pauseMapSettingsPanelListener = true;
-    			this.setMapSettings(this.graphController.getNetworkModel().getMapSettings());
-    			this.pauseMapSettingsPanelListener = false;
+    			this.assignMapSettings();
     			break;
     			
     		case NetworkModelNotification.NETWORK_MODEL_GraphMouse_EdgeEditing:
@@ -378,7 +423,17 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 				break;
 			}
     	}
-		
 	}
+
+	/**
+	 * Assign the current MapSettings.
+	 */
+	private void assignMapSettings() {
+		this.pauseMapSettingsPanelListener = true;
+		this.setMapSettings(this.graphController.getNetworkModel().getMapSettings());
+		this.pauseMapSettingsPanelListener = false;
+	}
+	
+	
 	
 }

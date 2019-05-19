@@ -81,6 +81,7 @@ public class NetworkModelNotification {
 	
 	public static final int NETWORK_MODEL_MapRendering_ON = 50;
 	public static final int NETWORK_MODEL_MapRendering_OFF = 51;
+	public static final int NETWORK_MODEL_MapScaleChanged = 52;
 	
 	
 	/** The reason. */
