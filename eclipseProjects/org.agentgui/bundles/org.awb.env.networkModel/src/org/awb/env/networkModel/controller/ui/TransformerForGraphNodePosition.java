@@ -229,10 +229,9 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 				// --- Scale the UTM coordinates ----------
 				double unScaledX = npGraphNode.getX() * mapScale.getScaleDivider();
 				double unScaledY = npGraphNode.getY() * mapScale.getScaleDivider();
-				visualNodePosition = new Point2D.Double(unScaledX, unScaledY);
+				npGraphNode = new Point2D.Double(unScaledX, unScaledY);
 			}
 		}
-		
 		return npGraphNode;
 	}
 	

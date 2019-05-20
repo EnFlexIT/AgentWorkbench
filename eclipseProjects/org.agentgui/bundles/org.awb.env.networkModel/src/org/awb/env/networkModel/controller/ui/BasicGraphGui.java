@@ -46,6 +46,7 @@ import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -105,6 +106,7 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
+import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
@@ -175,7 +177,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
 	
 	/** JUNG object handling zooming */
-	private CrossoverScalingControl scalingControl;
+	private ScalingControl scalingControl;
 	
 	/** the margin of the graph for the visualization */
 	private double graphMargin = 25;
@@ -397,27 +399,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			graphMouse4EdgeEditing.add(new ConfiguredLinePopupPlugin(this));
 		}
 		return graphMouse4EdgeEditing;
-	}
-	
-	
-	
-	/**
-	 * Gets the default point to scale at for zooming.
-	 * @return the default scale at point
-	 */
-	private Point2D getDefaultScaleAtPoint() {
-		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
-		if (rectVis.isEmpty()==false) {
-			this.defaultScaleAtPoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
-		}
-		return defaultScaleAtPoint;
-	}
-	/**
-	 * Sets the default point to scale at for zooming..
-	 * @param scalePoint the new default scale at point
-	 */
-	private void setDefaultScaleAtPoint(Point2D scalePoint) {
-		defaultScaleAtPoint = scalePoint;
 	}
 
 	/**
@@ -1288,20 +1269,89 @@ public class BasicGraphGui extends JPanel implements Observer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
+	
 	
 	/**
 	 * Returns the scaling control.
 	 * @return the scalingControl
 	 */
-	public CrossoverScalingControl getScalingControl() {
+	public ScalingControl getScalingControl() {
 		if (scalingControl==null) {
-			scalingControl = new CrossoverScalingControl();
-			scalingControl.setCrossover(1.0);
+			CrossoverScalingControl crossoverScalingControl = new CrossoverScalingControl();
+			crossoverScalingControl.setCrossover(1.0);
+			scalingControl = crossoverScalingControl;
 		}
 		return scalingControl;
 	}
+	/**
+	 * Gets the default point to scale at for zooming.
+	 * @return the default scale at point
+	 */
+	private Point2D getDefaultScaleAtPoint() {
+		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
+		if (rectVis.isEmpty()==false) {
+			this.defaultScaleAtPoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
+		}
+		return defaultScaleAtPoint;
+	}
+	/**
+	 * Sets the default point to scale at for zooming..
+	 * @param scalePoint the new default scale at point
+	 */
+	private void setDefaultScaleAtPoint(Point2D scalePoint) {
+		defaultScaleAtPoint = scalePoint;
+	}
+	
+	/**
+	 * Zooms in.
+	 */
+	public void zoomIn() {
+		this.zoomIn(this.getDefaultScaleAtPoint());
+	}
+	/**
+	 * Zooms in.
+	 * @param zoomAtPoint the point to zoom at (e.g. the current mouse position on screen)
+	 */
+	public void zoomIn(Point2D zoomAtPoint) {
+		this.zoom(SCALE_FACTOR_IN, zoomAtPoint);
+	}
+	/**
+	 * Zooms out.
+	 */
+	public void zoomOut() {
+		this.zoomOut(this.getDefaultScaleAtPoint());
+	}
+	/**
+	 * Zooms out.
+	 * @param zoomAtPoint the zoom at point (e.g. the current mouse position on screen)
+	 */
+	public void zoomOut(Point2D zoomAtPoint) {
+		this.zoom(SCALE_FACTOR_OUT, zoomAtPoint);
+	}
+	/**
+	 * Private zoom method that accumulates all possible calls to the scaling control.
+	 *
+	 * @param scaleAmount the scale amount
+	 * @param zoomAtPoint the zoom at point
+	 */
+	private void zoom(float scaleAmount, Point2D zoomAtPoint) {
+		
+		// --- Set selected frame to the parent internal frame ------
+		BasicGraphGuiRootJSplitPane parentInternalFrame = this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
+		if (parentInternalFrame.isSelected()==false) {
+			try {
+				parentInternalFrame.setSelected(true);
+			} catch (PropertyVetoException pvEx) {
+				pvEx.printStackTrace();
+			}
+		}
+		
+		// --- Scale the graph to the scale amount ------------------
+		this.getScalingControl().scale(this.getVisualizationViewer(), scaleAmount, zoomAtPoint);	
+	}
+	
+	
 	/**
 	 * Zoom one to one and move the focus according to the coordinate system source.
 	 * @param visViewer the VisualizationViewer to use
@@ -1582,10 +1632,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.zoomToComponent();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
-				this.getScalingControl().scale(this.getVisualizationViewer(), SCALE_FACTOR_IN, this.getDefaultScaleAtPoint());
+				this.zoomIn();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
-				this.getScalingControl().scale(this.getVisualizationViewer(), SCALE_FACTOR_OUT, this.getDefaultScaleAtPoint());
+				this.zoomOut();
 				break;
 
 				

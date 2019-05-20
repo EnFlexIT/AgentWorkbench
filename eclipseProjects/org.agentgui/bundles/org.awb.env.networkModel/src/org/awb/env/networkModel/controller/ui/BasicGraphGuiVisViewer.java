@@ -33,6 +33,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
 
 import org.awb.env.networkModel.maps.MapPreRenderer;
 
@@ -54,6 +58,8 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	private static final long serialVersionUID = 8187230173732284770L;
 	
 	private boolean actionOnTop;
+	private Timer resetTimerForActionOnTop;
+	private boolean resetIsActionOnTop;
 	
 	private MapPreRenderer<V, E> mapPreRenderer;
 	private boolean doMapPreRendering;
@@ -175,6 +181,49 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		
 	}
 	
+	
+	/**
+	 * Resets the setting for 'action on top' with a time delay (of 100 ms).
+	 * @param isActionOnTop the is action on top
+	 */
+	public void resetActionOnTopWithTimeDelay(boolean isActionOnTop) {
+		this.resetActionOnTopWithTimeDelay(isActionOnTop, 100);
+	}
+	/**
+	 * Resets the setting for 'action on top' with a time delay (of 'delayMillis').
+	 *
+	 * @param isActionOnTop the is action on top
+	 * @param delayMillis the delay in milliseconds
+	 */
+	public void resetActionOnTopWithTimeDelay(final boolean isActionOnTop, int delayMillis) {
+		
+		this.resetIsActionOnTop = isActionOnTop;
+		this.getResetTimerForActionOnTop().setDelay(delayMillis);
+		if (this.getResetTimerForActionOnTop().isRunning()==false) {
+			this.getResetTimerForActionOnTop().start();
+		} else {
+			this.getResetTimerForActionOnTop().restart();
+		}
+	}
+	
+	/**
+	 * Returns the reset timer to set the value action on top.
+	 * @return the reset timer for action on
+	 */
+	public Timer getResetTimerForActionOnTop() {
+		if (resetTimerForActionOnTop==null) {
+			resetTimerForActionOnTop = new Timer(100, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					if (BasicGraphGuiVisViewer.this.isActionOnTop()!=BasicGraphGuiVisViewer.this.resetIsActionOnTop) {
+						BasicGraphGuiVisViewer.this.setActionOnTop(BasicGraphGuiVisViewer.this.resetIsActionOnTop);
+					}
+				}
+			});
+			resetTimerForActionOnTop.setRepeats(false);
+		}
+		return resetTimerForActionOnTop;
+	}
 	
 	/**
 	 * Setter to indicate, if there is an action on the top of the graph visualization.

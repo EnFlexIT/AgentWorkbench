@@ -573,22 +573,17 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		}
 	}
 	
-	
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
 	 */
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent me) {
-
-		Point2D mouse = me.getPoint();
-		if(me.getWheelRotation()>0) {
-			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_OUT, mouse);
+		if (me.getWheelRotation()>0) {
+			this.basicGraphGUI.zoomOut(me.getPoint());
 		} else {
-			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_IN, mouse);
+			this.basicGraphGUI.zoomIn(me.getPoint());
 		}
-		me.consume();
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)

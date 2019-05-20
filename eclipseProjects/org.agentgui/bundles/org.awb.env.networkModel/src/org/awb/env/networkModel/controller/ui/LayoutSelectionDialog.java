@@ -44,6 +44,7 @@ import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JSeparator;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.InternalFrameAdapter;
@@ -61,9 +62,6 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 
 import agentgui.core.application.Language;
 import de.enflexit.common.swing.JComboBoxWide;
-import javax.swing.JSeparator;
-import javax.swing.Timer;
-
 
 /**
  * Dialog for selecting the layout of the current {@link NetworkModel}.
@@ -303,24 +301,6 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 		this.getSeparator().setVisible(mapSettings!=null);
 		this.getMapSettingsPanel().setVisible(mapSettings!=null);
 		this.setDialogSizeAndPosition();
-	}
-	
-	/**
-	 * Resets the setting for 'action on top' with a time delay (of 100 ms).
-	 * @param isActionOnTop the is action on top
-	 */
-	private void resetActionOnTopWithTimeDelay(final boolean isActionOnTop) {
-		
-		Timer timer = new Timer(100, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				if (LayoutSelectionDialog.this.isActionOnTop()!=isActionOnTop) {
-					LayoutSelectionDialog.this.setActionOnTop(isActionOnTop);
-				}
-			}
-		});
-		timer.setRepeats(false);
-		timer.start();
 	}
 	
 	/* (non-Javadoc)

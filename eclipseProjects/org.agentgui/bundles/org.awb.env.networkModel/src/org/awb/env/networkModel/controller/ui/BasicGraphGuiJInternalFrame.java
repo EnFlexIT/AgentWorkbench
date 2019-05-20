@@ -78,9 +78,28 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 			this.graphDesktop = this.graphControllerGUI.getBasicGraphGuiJDesktopPane();
 			this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 		}
-		
 	}
-
+	
+	/**
+	 * Resets the setting for 'action on top' with a time delay (of 100 ms).
+	 * @param isActionOnTop the is action on top
+	 */
+	protected void resetActionOnTopWithTimeDelay(boolean isActionOnTop) {
+		if (this.basicGraphGui!=null) {
+			this.basicGraphGui.getVisualizationViewer().resetActionOnTopWithTimeDelay(isActionOnTop);
+		}
+	}
+	/**
+	 * Resets the setting for 'action on top' with a time delay (of 'delayMillis').
+	 *
+	 * @param isActionOnTop the is action on top
+	 * @param delayMillis the delay milliseconds
+	 */
+	protected void resetActionOnTopWithTimeDelay(boolean isActionOnTop, int delayMillis) {
+		if (this.basicGraphGui!=null) {
+			this.basicGraphGui.getVisualizationViewer().resetActionOnTopWithTimeDelay(isActionOnTop, delayMillis);
+		}
+	}
 	/**
 	 * Sets that there is an 'action on top' of the graphs visualization viewer (or not).
 	 * If set <code>true</code>, the graph rendering will be hindered to accelerate the 

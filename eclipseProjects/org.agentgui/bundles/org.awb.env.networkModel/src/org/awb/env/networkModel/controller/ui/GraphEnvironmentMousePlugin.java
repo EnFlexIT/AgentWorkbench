@@ -490,12 +490,10 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent me) {
-
-		Point2D mouse = me.getPoint();
-		if(me.getWheelRotation()>0) {
-			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_OUT, mouse);
+		if (me.getWheelRotation()>0) {
+			this.basicGraphGUI.zoomOut(me.getPoint());
 		} else {
-			this.basicGraphGUI.getScalingControl().scale(this.getVisViewer(), BasicGraphGui.SCALE_FACTOR_IN, mouse);
+			this.basicGraphGUI.zoomIn(me.getPoint());
 		}
 		me.consume();
 	}
