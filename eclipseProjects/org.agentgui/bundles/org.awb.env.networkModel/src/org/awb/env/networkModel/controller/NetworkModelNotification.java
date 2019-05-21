@@ -71,6 +71,7 @@ public class NetworkModelNotification {
 	public static final int NETWORK_MODEL_ShowPopUpMenue = 25;
 	public static final int NETWORK_MODEL_LayoutChanged = 26;
 
+	public static final int NETWORK_MODEL_Add_Action_Do = 27;
 	public static final int NETWORK_MODEL_Paste_Action_Do = 28;
 	public static final int NETWORK_MODEL_Paste_Action_Stop = 29;
 	

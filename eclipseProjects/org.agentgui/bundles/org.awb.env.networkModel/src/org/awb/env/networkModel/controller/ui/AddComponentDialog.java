@@ -28,13 +28,17 @@
  */
 package org.awb.env.networkModel.controller.ui;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -891,9 +895,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
             			}
             		}    			
     			}
-    			
     		}
-    		
     	}
     	
     	// --- Select in the main graph -------------------
@@ -901,9 +903,67 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	if (graphNodeSelect!=null) {
     		mainVisView.getPickedVertexState().pick(graphNodeSelect, true);	
     	}
-    	
-    	
     }
+    
+    /**
+     * Move mouse into the VisualizationViewer of the {@link BasicGraphGui}.
+     */
+    private void moveMouseIntoVisualizationViewer() {
+		Point visViewPos = this.basicGraphGui.getVisualizationViewer().getLocationOnScreen();
+		Rectangle visViewRect = this.basicGraphGui.getVisualizationViewer().getVisibleRect();
+		Rectangle destRect = new Rectangle((int)visViewPos.getX(), (int)visViewPos.getY(), (int)visViewRect.getWidth(), (int)visViewRect.getHeight());
+		Point mouseDest = new Point((int)destRect.getCenterX(), (int)destRect.getCenterY()); 
+		Point mousePos  = MouseInfo.getPointerInfo().getLocation();
+		this.mouseGlide(mousePos, mouseDest, 300, 80, destRect, 5);
+    }
+	/**
+	 * Moves the mouse from point p1 to point p2.
+	 *
+	 * @param p1 the source point p1
+	 * @param p2 the destination point p2
+	 * @param t the time in milliseconds
+	 * @param n the number of steps
+	 * @param destRect the destination rectangle (may be null)
+	 * @param maxStepsInRectangle the max steps in rectangle (may be null)
+	 */
+	private void mouseGlide(Point p1, Point p2, int t, int n, Rectangle destRect, Integer maxStepsInRectangle) {
+
+		try {
+			int x1 = (int) p1.getX();
+			int y1 = (int) p1.getY();
+			int x2 = (int) p2.getX();
+			int y2 = (int) p2.getY();
+			
+			double dx = (x2 - x1) / ((double) n);
+			double dy = (y2 - y1) / ((double) n);
+			double dt = t / ((double) n);
+			
+			Robot r = new Robot();
+			for (int step = 1; step <= n; step++) {
+				
+				Thread.sleep((int) dt);
+				// --- Determine new position -----------------------
+				int newX = (int) (x1 + dx * step);
+				int newY = (int) (y1 + dy * step);
+				
+				// --- Do we have a destination rectangle? ----------
+				if (destRect!=null && destRect.contains(newX, newY)) {
+					// -- We're already in the rectangle ------------
+					if (maxStepsInRectangle!=null) {
+						if (maxStepsInRectangle<=0) return;
+						maxStepsInRectangle--;
+					}
+				}
+				// --- Move mouse to next position ------------------
+				r.mouseMove(newX, newY);
+			}
+			
+		} catch (AWTException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
     
     /**
      * This method can be used in order to produce components, by using this 
@@ -935,15 +995,22 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	
     	String msg = null;
     	boolean isFirstNetworkComponent = false;
+    	boolean isDistributionNodeToAdd = false;
     	// --------------------------------------------------------------------------
 		// --- Evaluate the node to which the user want to add a component ---------- 
 		// --------------------------------------------------------------------------
 		GraphNode graphNodeSelectedInMainGraph = this.basicGraphGui.getPickedSingleNode();
 		if (this.graphController.getNetworkModel().getGraph().getVertexCount()!=0) {
 			if (graphNodeSelectedInMainGraph==null) {
-		    	msg = "Please, select one free vertex in the overall network!";
-		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-		    	return;
+				// --- Check if the component to add is a DistributionNode ----------
+				if (this.localGraphElementPrototype instanceof DistributionNode) {
+					isDistributionNodeToAdd = true;
+				} else {
+					msg = "Please, select one free vertex in the overall network!";
+			    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+			    	return;	
+				}
+		    	
 		    } else {
 				if (this.graphController.getNetworkModel().isFreeGraphNode(graphNodeSelectedInMainGraph)==false) {
 					msg = "Please, select one free vertex in the overall network!";
@@ -956,6 +1023,20 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			isFirstNetworkComponent = true;
 		}
 
+		// --------------------------------------------------------------------------
+		// --- Evaluate the NetworkComponent that has to be added -------------------
+		// --------------------------------------------------------------------------
+		if (isFirstNetworkComponent==true || isDistributionNodeToAdd==true) {
+			// --- Inform the user about the positioning ----------------------------
+			//msg = "Please, point to the position, where the network component should be placed!";
+	    	//JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Proceed", Language.EN), JOptionPane.INFORMATION_MESSAGE);
+	    	// --- Transfer the new Component to the paste action -------------------
+	    	this.graphController.setClipboardNetworkModel(this.localNetworkModel);
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Add_Action_Do));
+			this.moveMouseIntoVisualizationViewer();
+			return;
+		}
+		
 		// --------------------------------------------------------------------------
 		// --- Evaluate the NetworkComponent that has to be added -------------------
 		// --------------------------------------------------------------------------

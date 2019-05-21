@@ -593,12 +593,22 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	}
 	
 	/**
-	 * Sets the paste cursor.
+	 * Sets the paste action and cursor active.
 	 *
 	 * @param isDoPaste the do paste
 	 * @param isFinalizePasteAction the finalize paste action
 	 */
 	private void setPasteAction(boolean isDoPaste, boolean isFinalizePasteAction) {
+		this.setPasteAction(isDoPaste, isFinalizePasteAction, false);
+	}
+	/**
+	 * Sets the paste action and cursor active.
+	 *
+	 * @param isDoPaste the do paste
+	 * @param isFinalizePasteAction the finalize paste action
+	 * @param isAddAction sets if the action is an add component action
+	 */
+	private void setPasteAction(boolean isDoPaste, boolean isFinalizePasteAction, boolean isAddAction) {
 		
 		// --- Are we in picking mode? ------------------------------
 		if (this.basicGraphGUI.getGraphMouseMode()==GraphMouseMode.Picking) {
@@ -608,8 +618,17 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				// --------------------------------------------------
 				// --- Initiate paste action ------------------------
 				// --------------------------------------------------
-				ImageIcon cursorImage = GraphGlobals.getImageIcon("Paste.png");
-				Cursor cursorForPaste = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage.getImage(), new Point(0, 0), "Paste");
+				String displayText = "";
+				ImageIcon cursorImage = null;
+				if (isAddAction==true) {
+					cursorImage = GraphGlobals.getImageIcon("ListPlus.png");
+					displayText = "Insert Network Component";
+				} else {
+					cursorImage = GraphGlobals.getImageIcon("Paste.png");
+					displayText = "Paste";
+				}
+				
+				Cursor cursorForPaste = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage.getImage(), new Point(0, 0), displayText);
 				this.setCursor(cursorForPaste);
 				
 			} else {
@@ -658,6 +677,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		if (object instanceof NetworkModelNotification) {
 			NetworkModelNotification nmNotification = (NetworkModelNotification) object;
 			switch (nmNotification.getReason()) {
+			case NetworkModelNotification.NETWORK_MODEL_Add_Action_Do:
+				this.setPasteAction(true, false, true);
+				break;
 			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do:
 				this.setPasteAction(true, false);
 				break;

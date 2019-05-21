@@ -1126,6 +1126,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				}
 				break;
 			
+			case NetworkModelNotification.NETWORK_MODEL_Add_Action_Do:
 			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do:
 				// --- Set parameter for 'PASTE' action -----------------------
 				this.isPasteAction=true;
@@ -1259,8 +1260,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Paste Action -------------------------------------
 			if (this.graphController.getClipboardNetworkModel()!=null) {
-				NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do);
-				this.graphController.notifyObservers(nmNote);	
+				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do));	
 			}
 			
 		} else if (ae.getSource() == getJButtonSaveImage()) {

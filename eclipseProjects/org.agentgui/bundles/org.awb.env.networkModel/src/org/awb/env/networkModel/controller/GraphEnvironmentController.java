@@ -250,10 +250,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	public void copyToClipboard(List<NetworkComponent> networkComponentsForClipboard) {
 
-		if (networkComponentsForClipboard == null)
-			return;
-		if (this.getNetworkModel() == null)
-			return;
+		if (networkComponentsForClipboard==null || networkComponentsForClipboard.size()==0) return;
+		if (this.getNetworkModel()==null) return;
 
 		// ---------- Prepare for the Clipboard ---------------------
 		NetworkModel clipNetworkModel = this.getNetworkModel().getCopy();
