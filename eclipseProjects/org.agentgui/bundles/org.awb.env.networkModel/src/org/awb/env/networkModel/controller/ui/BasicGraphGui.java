@@ -95,6 +95,8 @@ import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
 import de.enflexit.common.swing.imageFileSelection.ImageUtils;
+import de.enflexit.geography.coordinates.UTMCoordinate;
+import de.enflexit.geography.coordinates.ui.GeoCoordinateDialog;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -1080,6 +1082,44 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 		}
 		return selectedGraphObject;
+	}
+	
+	/**
+	 * Edits the position of the specified or of the currently picked GraphNode.
+	 * @param graphNodeToEdit the GraphNode where the position should be edited
+	 */
+	public void editGraphNodePosition(GraphNode graphNodeToEdit) {
+	
+		if (graphNodeToEdit==null) graphNodeToEdit = this.getPickedSingleNode();
+		if (graphNodeToEdit==null) return;
+
+		// --- Found a GraphNode ------------------------------------
+		if (this.getPickedNodes().contains(graphNodeToEdit)==false) {
+			// --- Pick the actual GraphNode ------------------------ 
+			this.getVisualizationViewer().getPickedVertexState().clear();
+			this.getVisualizationViewer().getPickedVertexState().pick(graphNodeToEdit, true);
+		}
+
+		
+		// --- What type of coordinates we're dealing with? ---------
+		if (this.graphController.getNetworkModel().getLayoutSettings().isGeographicalLayout()==true) {
+			// --- Edit geographical coordinates --------------------			
+			MapSettings ms = this.graphController.getNetworkModel().getMapSettings();
+			UTMCoordinate utmCoordinateToEdit = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), graphNodeToEdit.getPosition().getX(), graphNodeToEdit.getPosition().getY());
+			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, utmCoordinateToEdit);
+			// - - - - Wait for user - - - - -
+			if (geoDialog.isCanceled()==true) return;
+			
+			// --- Get coordinates to set the new position ----------
+			System.err.println("Adjust geo coordinate for '" + graphNodeToEdit.getId() + "' - Pos: " + graphNodeToEdit.getPosition());
+			
+		} else {
+			// --- Edit regular coordinates -------------------------
+			System.err.println("Edit GraphNode postion of '" + graphNodeToEdit.getId() + "' - Pos: " + graphNodeToEdit.getPosition());
+			
+		}
+		
 	}
 	
 	/**

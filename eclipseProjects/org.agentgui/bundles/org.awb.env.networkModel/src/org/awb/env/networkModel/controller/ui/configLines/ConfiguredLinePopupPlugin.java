@@ -31,6 +31,7 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 
 	private BasicGraphGui basicGraphGui;
 
+	private JMenuItem jMenuItemNodePositioning;
 	private JMenuItem jMenuItemFinalizeEdit;
 	
 	private GraphEdge currentGraphEdge;
@@ -115,6 +116,12 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 		if (graphEdge==null) return null;
 		
 		JPopupMenu popupMenu = new JPopupMenu();
+		// --- Add the vertex positioning menu item? ----------------
+		if (graphNode!=null) {
+			popupMenu.add(this.getJMenuItemNodePositioning());
+			popupMenu.addSeparator();
+		}
+		
 		// --- Check if the configuration returns menu items --------
 		GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = graphEdge.getEdgeShapeConfiguration();
 		if (shapeConfig!=null) {
@@ -139,12 +146,33 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 		
 		// --- Add the finalize edit item ---------------------------
 		if (popupMenu.getComponentCount()>0) {
-			popupMenu.addSeparator();
+			Component lastComponent = popupMenu.getComponent(popupMenu.getComponentCount()-1);
+			if (!(lastComponent instanceof JPopupMenu.Separator)) {
+				popupMenu.addSeparator();
+			}
 		}
 		popupMenu.add(this.getJMenuItemFinalizeEdit());
 		
 		return popupMenu;
 	}
+	
+	  /**
+     * This method initializes jMenuItemNodePositioning
+     * @return javax.swing.JMenuItem
+     */
+    protected JMenuItem getJMenuItemNodePositioning() {
+    	if (jMenuItemNodePositioning==null) {
+    		jMenuItemNodePositioning = new JMenuItem(Language.translate("Node Positioning", Language.EN));
+    		jMenuItemNodePositioning.setIcon(GraphGlobals.getImageIcon("Positioning.png"));
+    		jMenuItemNodePositioning.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					ConfiguredLinePopupPlugin.this.basicGraphGui.editGraphNodePosition(ConfiguredLinePopupPlugin.this.currentGraphNode);
+				}
+			});
+    	}
+    	return jMenuItemNodePositioning;
+    }
 	
 	/**
 	 * Returns the JMenuItem  to finalize edit.

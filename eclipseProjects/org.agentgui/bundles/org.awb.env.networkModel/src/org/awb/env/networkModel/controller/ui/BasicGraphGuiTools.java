@@ -135,9 +135,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JMenuItem jMenuItemEdgeProp;
 
     private JPopupMenu vertexPopup;
-    private JMenuItem jMenuItemNodeProp;
+    private JMenuItem jMenuItemNodePositioning;
     private JMenuItem jMenuItemAddComp;
     private JMenuItem jMenuItemSplitNode;
+    private JMenuItem jMenuItemNodeProp;
 
     private GraphEnvironmentController graphController;
     private GraphEnvironmentControllerGUI graphControllerGUI;
@@ -719,6 +720,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		if (vertexPopup == null) {
 		    vertexPopup = new JPopupMenu();
 		    if (this.graphController.getProject()!=null) {
+		    	vertexPopup.add(getJMenuItemNodePositioning());
+		    	vertexPopup.addSeparator();
 		    	vertexPopup.add(getJMenuItemAddComp());
 			    vertexPopup.add(getJMenuItemSplitNode());
 		    	vertexPopup.addSeparator();
@@ -771,7 +774,17 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		}
 		return jMenuItemEdgeProp;
     }
-
+    
+    /**
+     * This method initializes jMenuItemNodePositioning
+     * @return javax.swing.JMenuItem
+     */
+    protected JMenuItem getJMenuItemNodePositioning() {
+    	if (jMenuItemNodePositioning==null) {
+    		jMenuItemNodePositioning = this.getNewJMenuItem(Language.translate("Node Positioning", Language.EN), "Positioning.png", (ActionListener) this.getJToolBarLayout());
+    	}
+    	return jMenuItemNodePositioning;
+    }
     /**
      * This method initializes jMenuItemAddComp
      * @return javax.swing.JMenuItem
@@ -782,7 +795,6 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		}
 		return jMenuItemAddComp;
     }
-
     /**
      * This method initializes jMenuItemSplitNode
      * @return javax.swing.JMenuItem

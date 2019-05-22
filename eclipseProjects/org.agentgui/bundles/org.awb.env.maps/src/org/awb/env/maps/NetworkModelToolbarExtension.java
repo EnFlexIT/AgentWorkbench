@@ -22,7 +22,7 @@ public class NetworkModelToolbarExtension implements CustomToolbarComponentExten
 		
 		List<CustomToolbarComponentDescription> ctbElements = new ArrayList<CustomToolbarComponentDescription>();
 		
-		ctbElements.add(new CustomToolbarComponentDescription(ToolBarType.LayoutControl, ToolBarSurrounding.Both, JToggleButtonOpenStreetMap.class, 1, true));
+		ctbElements.add(new CustomToolbarComponentDescription(ToolBarType.LayoutControl, ToolBarSurrounding.Both, JToggleButtonOpenStreetMap.class, 3, true));
 		
 		return ctbElements;
 	}

@@ -4,8 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -49,19 +49,19 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 
 	/**
 	 * Instantiates a new GeoCoordinateDialog.
-	 * @param owner the owner frame
+	 * @param owner the owner window 
 	 * @wbp.parser.constructor
 	 */
-	public GeoCoordinateDialog(Frame owner) {
+	public GeoCoordinateDialog(Window owner) {
 		super(owner);
 		this.initialize();
 	}
 	/**
 	 * Instantiates a new dialog to configure a geographical coordinate .
-	 * @param owner the owner frame
+	 * @param owner the owner window
 	 * @param geoCoordinate the geo coordinate
 	 */
-	public GeoCoordinateDialog(Frame owner, AbstractGeoCoordinate geoCoordinate) {
+	public GeoCoordinateDialog(Window owner, AbstractGeoCoordinate geoCoordinate) {
 		super(owner);
 		this.setGeoCoordinate(geoCoordinate);
 		this.initialize();
@@ -225,7 +225,14 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 		this.isCancelAction = true;
 		this.setVisible(false);
 	}
-
+	/**
+	 * Return, if the editing was canceled.
+	 * @return true, if is canceled
+	 */
+	public boolean isCanceled() {
+		return this.isCancelAction;
+	}
+	
 	/**
 	 * Do some coordinate conversion tests.
 	 */

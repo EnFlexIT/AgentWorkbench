@@ -79,6 +79,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
     private GraphEdge editGraphEdge;
     
     private JToggleButton jToggleButtonLayoutSwitch;
+    
+    private JButton jButtonPositioning;
+    
     private JToggleButton jToggleButtonEdgeLine;
     private JToggleButton jToggleButtonEdgeOrthogonal;
     private JToggleButton jToggleButtonEdgeQuadCurve;
@@ -132,6 +135,8 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		this.add(this.getJToggleButtonLayoutSwitch());
 		this.addSeparator();
+		this.add(this.getJButtonPositioning());
+		this.addSeparator();
 		
 		this.add(this.getJToggleButtonEdgeLine());
 		this.add(this.getJToggleButtonEdgeOrthogonal());
@@ -163,6 +168,13 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		return jToggleButtonLayoutSwitch;
 	}
 	
+	private JButton getJButtonPositioning() {
+		if (jButtonPositioning==null) {
+			jButtonPositioning = this.basicGraphGuiTools.getNewJButton("Positioning.png", Language.translate("Node Positioning", Language.EN), this);
+		}
+		return jButtonPositioning;
+	}
+
 	private JToggleButton getJToggleButtonEdgeLine() {
 		if (jToggleButtonEdgeLine == null) {
 			jToggleButtonEdgeLine = this.basicGraphGuiTools.getNewJToggleButton("EdgeLine.png", Language.translate("Straight Line Edge", Language.EN), this);
@@ -285,16 +297,23 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		// ----------------------------------------------------------
 		// --- Set the alignment button enabled ---------------------
 		// ----------------------------------------------------------
+		this.setPositioningButtonEnabled(graphSelection);
 		this.setAlignmentButtonsEnabled(graphSelection);
 		
 	}
-	
+	/**
+	 * Sets the positioning button enabled.
+	 * @param graphSelection the new positioning button enabled
+	 */
+	private void setPositioningButtonEnabled(GraphSelection graphSelection) {
+		boolean enabledPositioning = graphSelection!=null && graphSelection.getNodeList().size()==1;
+		this.getJButtonPositioning().setEnabled(enabledPositioning);
+	}
 	/**
 	 * Sets the alignment buttons enabled (or not).
 	 * @param graphSelection the new alignment buttons
 	 */
 	private void setAlignmentButtonsEnabled(GraphSelection graphSelection) {
-		
 		boolean enabledAlignment = graphSelection!=null && graphSelection.getNodeList().size()>1;
 		this.getJButtonAlignRight().setEnabled(enabledAlignment);
 		this.getJButtonAlignLeft().setEnabled(enabledAlignment);
@@ -492,8 +511,12 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 				this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().setActionOnTop(false);
 			}
 			
+		} else if (ae.getSource()==this.getJButtonPositioning() || ae.getSource()==this.basicGraphGuiTools.getJMenuItemNodePositioning()) {
+			// --- Edit node positioning ------------------
+			this.basicGraphGuiTools.getBasicGraphGUI().editGraphNodePosition(null);
+			
 		} else if (ae.getSource()==this.getJToggleButtonEdgeLine() || ae.getSource()==this.getJMenuItemEdgeLine()) {
-			// --- Toggle to line edge --------------------			
+			// --- Toggle to line edge --------------------
 			this.setGraphConfiguration(null);
 			
 		} else if (ae.getSource()==this.getJToggleButtonEdgeOrthogonal() || ae.getSource()==this.getJMenuItemEdgeOrthogonal()) {
