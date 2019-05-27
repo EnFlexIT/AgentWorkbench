@@ -1123,6 +1123,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 	
 	/**
+	 * Updates the GraphNode position in the current layout. May be called, if the position was renewed in the GrapHNode.
+	 * @param graphNode the GraphNode
+	 */
+	public void updateGraphNodePositionInLayout(GraphNode graphNode) {
+		if (graphNode!=null && graphNode.getPosition()!=null) {
+			this.getVisualizationViewer().getGraphLayout().setLocation(graphNode, this.getCoordinateSystemPositionTransformer().transform(graphNode.getPosition()));
+		}
+	}
+	
+	/**
 	 * Returns the list of registered {@link GraphSelectionListener}.
 	 * @return the graph selection listener list
 	 */
