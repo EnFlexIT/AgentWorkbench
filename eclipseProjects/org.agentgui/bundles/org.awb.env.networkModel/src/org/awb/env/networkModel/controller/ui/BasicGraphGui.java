@@ -95,7 +95,9 @@ import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
 import de.enflexit.common.swing.imageFileSelection.ImageUtils;
+import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
+import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import de.enflexit.geography.coordinates.ui.GeoCoordinateDialog;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -1093,17 +1095,21 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (graphNodeToEdit==null) graphNodeToEdit = this.getPickedSingleNode();
 		if (graphNodeToEdit==null) return;
 
+		Point2D oldPosition = graphNodeToEdit.getPosition();
+		Point2D newPosition = null;
+		
 		// --- Found a GraphNode ------------------------------------
 		if (this.getPickedNodes().contains(graphNodeToEdit)==false) {
 			// --- Pick the actual GraphNode ------------------------ 
 			this.getVisualizationViewer().getPickedVertexState().clear();
 			this.getVisualizationViewer().getPickedVertexState().pick(graphNodeToEdit, true);
 		}
-
 		
 		// --- What type of coordinates we're dealing with? ---------
 		if (this.graphController.getNetworkModel().getLayoutSettings().isGeographicalLayout()==true) {
+			// ------------------------------------------------------
 			// --- Edit geographical coordinates --------------------			
+			// ------------------------------------------------------
 			MapSettings ms = this.graphController.getNetworkModel().getMapSettings();
 			UTMCoordinate utmCoordinateToEdit = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), graphNodeToEdit.getPosition().getX(), graphNodeToEdit.getPosition().getY());
 			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
@@ -1111,13 +1117,45 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// - - - - Wait for user - - - - -
 			if (geoDialog.isCanceled()==true) return;
 			
-			// --- Get coordinates to set the new position ----------
-			System.err.println("Adjust geo coordinate for '" + graphNodeToEdit.getId() + "' - Pos: " + graphNodeToEdit.getPosition());
+			// --- Get UTM coordinates to set the new position ------
+			UTMCoordinate utmCoordinate = null;
+			AbstractGeoCoordinate geoCoordinate = geoDialog.getGeoCoordinate();
+			if (geoCoordinate ==null) {
+				return;
+			} else  if (geoCoordinate instanceof WGS84LatLngCoordinate) {
+				WGS84LatLngCoordinate wgs84 = (WGS84LatLngCoordinate) geoCoordinate;
+				utmCoordinate = wgs84.getUTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone());
+			} else if (geoCoordinate instanceof UTMCoordinate) {
+				utmCoordinate = (UTMCoordinate) geoCoordinate;
+			}
+			
+			// --- UTM zone transformation? -------------------------
+			if (utmCoordinate.getLongitudeZone()!=ms.getUTMLongitudeZone()) {
+				utmCoordinate.transformZone(ms.getUTMLongitudeZone());
+			}
+
+			// --- Set new GraphNode position -----------------------
+			newPosition = new Point2D.Double(utmCoordinate.getEasting(), utmCoordinate.getNorthing());
 			
 		} else {
+			// ------------------------------------------------------
 			// --- Edit regular coordinates -------------------------
-			System.err.println("Edit GraphNode postion of '" + graphNodeToEdit.getId() + "' - Pos: " + graphNodeToEdit.getPosition());
+			// ------------------------------------------------------
+			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			GraphNodePositionDialog posDialog = new GraphNodePositionDialog(dialogOwner, graphNodeToEdit.getPosition());
+			// - - - - Wait for user - - - - -
+			if (posDialog.isCanceled()==true) return;
+
+			// --- Set new GraphNode position -----------------------
+			newPosition = posDialog.getGraphNodePosition();
 			
+		}
+
+		// --- Do movement and define undoable action ---------------
+		if (newPosition!=null && newPosition.equals(oldPosition)==false) {
+			graphNodeToEdit.setPosition(newPosition);
+			this.updateGraphNodePositionInLayout(graphNodeToEdit);
+			this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this.getVisualizationViewer(), graphNodeToEdit, oldPosition);
 		}
 		
 	}

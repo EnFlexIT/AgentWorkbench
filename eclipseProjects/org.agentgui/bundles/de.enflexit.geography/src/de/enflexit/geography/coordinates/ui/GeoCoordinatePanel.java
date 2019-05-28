@@ -31,11 +31,11 @@ import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 
 /**
- * The Class JPanelGeoCoordinate can be used in order to configure an {@link AbstractGeoCoordinate}.
+ * The Class GeoCoordinatePanel can be used in order to configure an {@link AbstractGeoCoordinate}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JPanelGeoCoordinate extends JPanel implements ActionListener, DocumentListener {
+public class GeoCoordinatePanel extends JPanel implements ActionListener, DocumentListener {
 	
 	private static final long serialVersionUID = -7757305104129949134L;
 	
@@ -69,7 +69,7 @@ public class JPanelGeoCoordinate extends JPanel implements ActionListener, Docum
 	/**
 	 * Instantiates a new JPanel to configure a geographical coordinate.
 	 */
-	public JPanelGeoCoordinate() {
+	public GeoCoordinatePanel() {
 		initialize();
 	}
 	/** Initialize the panel. */

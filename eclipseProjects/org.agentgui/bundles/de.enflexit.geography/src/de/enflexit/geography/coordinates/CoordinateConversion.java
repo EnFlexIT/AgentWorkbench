@@ -26,6 +26,15 @@ public class CoordinateConversion {
 	}
 
 	
+	public void utmTransformEastingByLongitudeZone(UTMCoordinate utmCoordinate, int destinLngZone) {
+		if (destinLngZone!=utmCoordinate.getLongitudeZone()) {
+			double newEasting = new LatLon2UTM().getEasting_ZoneTransformed(utmCoordinate, destinLngZone);
+			utmCoordinate.setEasting(newEasting);
+			utmCoordinate.setLongitudeZone(destinLngZone);
+		}
+	}
+	
+	
 	public UTMCoordinate latLon2UTM(WGS84LatLngCoordinate wgsCoordinate) {
 		return latLon2UTM(wgsCoordinate.getLatitude(), wgsCoordinate.getLongitude(), null, null);
 	}
@@ -40,7 +49,6 @@ public class CoordinateConversion {
 		return c.convertLatLonToUTM(latitude, longitude, targetLongitudeZone, targetLatitudeZone);
 	}
 
-	
 	
 	private void validate(double latitude, double longitude) {
 		if (latitude < -90.0 || latitude > 90.0 || longitude < -180.0 || longitude >= 180.0) {
@@ -241,11 +249,13 @@ public class CoordinateConversion {
 			return 500000 + (K4 * p + K5 * POW(p, 3));
 		}
 
+		protected double getEasting_ZoneTransformed(UTMCoordinate utmCoordinate, int destinLngZone) {
+			return this.getEasting_ZoneTransformed(utmCoordinate.getEasting(), utmCoordinate.getNorthing(), utmCoordinate.getLongitudeZone(), utmCoordinate.getLatitudeZone(), destinLngZone);
+		}
 		protected double getEasting_ZoneTransformed(double sourceEasting, double sourceNorting, int sourceLngZone, String sourceLatZone, int destinLngZone) {
 			
 			// --- Quick exit ? -----------------------------------------------
 			if (destinLngZone==sourceLngZone) return sourceEasting;
-			
 			
 			// ----------------------------------------------------------------
 			// --- Get reference WGS84 for reference latitude value -----------

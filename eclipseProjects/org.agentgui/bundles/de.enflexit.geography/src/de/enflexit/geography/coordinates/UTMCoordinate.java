@@ -77,6 +77,13 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 	public WGS84LatLngCoordinate getWGS84LatLngCoordinate() {
 		return new CoordinateConversion().utm2LatLon(this);
 	}
+	/**
+	 * Transforms the current UTM longitude zone to the specified longitude zone.
+	 * @param targetLongitudeZone the target longitude zone
+	 */
+	public void transformZone(int targetLongitudeZone) {
+		new CoordinateConversion().utmTransformEastingByLongitudeZone(this, targetLongitudeZone);
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -88,5 +95,7 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 		}
 		return "UTM: " + longZoneDisplay + this.latZone + " " + this.easting + " " + this.northing;
 	}
+
+
 	
 }

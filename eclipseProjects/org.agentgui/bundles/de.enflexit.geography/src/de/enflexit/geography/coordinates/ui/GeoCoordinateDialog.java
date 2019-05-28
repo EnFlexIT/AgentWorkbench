@@ -41,7 +41,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	private AbstractGeoCoordinate geoCoordinateOld;
 	private boolean isCancelAction;
 	
-	private JPanelGeoCoordinate jPanelGeoCoordinate;
+	private GeoCoordinatePanel geoCoordinatePanel;
 	private JPanel jPanelOkCancel;
 	private JButton jButtonOk;
 	private JButton jButtonCancel;
@@ -82,8 +82,8 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	 * @param geoCoordinate the geographical coordinate to set
 	 */
 	public void setGeoCoordinate(AbstractGeoCoordinate geoCoordinate) {
-		this.geoCoordinateOld = SerialClone.clone(geoCoordinate) ;
-		this.getJPanelGeoCoordinate().setGeoCoordinate(geoCoordinate);
+		this.geoCoordinateOld = SerialClone.clone(geoCoordinate);
+		this.getJPanelGeoCoordinate().setGeoCoordinate(SerialClone.clone(geoCoordinate));
 	}
 	
 	/**
@@ -131,11 +131,11 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	 * Gets the JPanel to configure the geo coordinate.
 	 * @return the JPanel to configure the geo coordinate.
 	 */
-	private JPanelGeoCoordinate getJPanelGeoCoordinate() {
-		if (jPanelGeoCoordinate == null) {
-			jPanelGeoCoordinate = new JPanelGeoCoordinate();
+	private GeoCoordinatePanel getJPanelGeoCoordinate() {
+		if (geoCoordinatePanel == null) {
+			geoCoordinatePanel = new GeoCoordinatePanel();
 		}
-		return jPanelGeoCoordinate;
+		return geoCoordinatePanel;
 	}
 	/**
 	 * Gets the JPanel for the OK and cancel action.
