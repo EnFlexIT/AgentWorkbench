@@ -424,7 +424,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonClearGraph() {
 		if (jButtonClearGraph == null) {
-		    jButtonClearGraph = getNewJButton("Remove.png", Language.translate("Clear graph", Language.EN));
+		    jButtonClearGraph = getNewJButton("Remove.png", Language.translate("Clear NetworkModel", Language.EN));
 		}
 		return jButtonClearGraph;
     }
@@ -689,7 +689,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonImportGraph() {
 		if (jButtonImportGraph == null) {
-		    jButtonImportGraph = this.getNewJButton("MBtransImport.png", Language.translate("Import Graph from file", Language.EN));
+		    jButtonImportGraph = this.getNewJButton("MBtransImport.png", Language.translate("Import NetworkModel from file", Language.EN));
 		}
 		return jButtonImportGraph;
     }
