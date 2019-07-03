@@ -888,6 +888,7 @@ en;;The following layout exists at least twice;;;
 en;;The project update failed!;;;
 en;;The project was updated successfully!;;;
 en;;The selection contains also NetworkComponets that are single nodes.;;;
+en;;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;;These are:;;;
 en;;Time Controlled;;;
 en;;Time Format and Offset;;;

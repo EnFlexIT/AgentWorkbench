@@ -8,7 +8,6 @@ import java.util.Vector;
 /**
  * Generic CSV file writer
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
- *
  */
 public class CsvFileWriter {
 	

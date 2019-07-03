@@ -903,8 +903,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				// --- In case of available numbers -----------------
 				if (n1NumberString==null || n1NumberString.isEmpty()==true) n1NumberString = "0";		
 				if (n2NumberString==null || n2NumberString.isEmpty()==true) n2NumberString = "0";
-				Integer n1 = Integer.parseInt(n1NumberString);
-				Integer n2 = Integer.parseInt(n2NumberString);
+				Long n1 = Long.parseLong(n1NumberString);
+				Long n2 = Long.parseLong(n2NumberString);
 				if (ascending==true) {
 					return n1.compareTo(n2);
 				} else {
