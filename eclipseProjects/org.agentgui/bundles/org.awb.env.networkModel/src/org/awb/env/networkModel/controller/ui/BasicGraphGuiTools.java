@@ -175,6 +175,15 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     protected BasicGraphGui getBasicGraphGUI() {
     	if (basicGraphGUI==null) {
+    		if (this.getGraphControllerGUI()==null) {
+    			System.err.println("[" + this.getClass().getSimpleName() + "] GraphEnvironmentControllerGUI is null");
+    			return null;
+    		} else if (this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane()==null) {
+    			System.err.println("[" + this.getClass().getSimpleName() + "] BasicGraphGuiRootJSplitPane is null");
+    		} else if (this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui()==null) {
+    			System.err.println("[" + this.getClass().getSimpleName() + "] BasicGraphGui is null");
+    		}
+    		
     		basicGraphGUI = this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
     	}
     	return basicGraphGUI;
@@ -831,7 +840,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				if (BasicGraphGuiTools.this.getBasicGraphGUI().getGraphMouseMode()==GraphMouseMode.EdgeEditing) {
+				if (BasicGraphGuiTools.this.getBasicGraphGUI()!=null && BasicGraphGuiTools.this.getBasicGraphGUI().getGraphMouseMode()==GraphMouseMode.EdgeEditing) {
 					BasicGraphGuiTools.this.getJButtonUndo().setEnabled(false);
 					BasicGraphGuiTools.this.getJButtonRedo().setEnabled(false);
 				} else {
