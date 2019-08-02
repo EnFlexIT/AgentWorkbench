@@ -177,13 +177,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	if (basicGraphGUI==null) {
     		if (this.getGraphControllerGUI()==null) {
     			System.err.println("[" + this.getClass().getSimpleName() + "] GraphEnvironmentControllerGUI is null");
-    			return null;
     		} else if (this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane()==null) {
     			System.err.println("[" + this.getClass().getSimpleName() + "] BasicGraphGuiRootJSplitPane is null");
     		} else if (this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui()==null) {
     			System.err.println("[" + this.getClass().getSimpleName() + "] BasicGraphGui is null");
     		}
-    		
     		basicGraphGUI = this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
     	}
     	return basicGraphGUI;
@@ -836,14 +834,20 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * Additionally the ToolTipText will be set.
      */
     private void setUndoRedoButtonsEnabled() {
+
+    	// --- Should not be done for running simulations! ----------
+    	if (this.graphController.getProject()==null || this.graphController.getGraphEnvironmentControllerGUI()==null || this.getBasicGraphGUI()==null) return;
     	
+    	// --- Invoke by the SwingUtilities ------------------------- 
     	SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				if (BasicGraphGuiTools.this.getBasicGraphGUI()!=null && BasicGraphGuiTools.this.getBasicGraphGUI().getGraphMouseMode()==GraphMouseMode.EdgeEditing) {
+				if (BasicGraphGuiTools.this.getBasicGraphGUI().getGraphMouseMode()==GraphMouseMode.EdgeEditing) {
+					// --- For the EdgeEditing mode -----------------
 					BasicGraphGuiTools.this.getJButtonUndo().setEnabled(false);
 					BasicGraphGuiTools.this.getJButtonRedo().setEnabled(false);
 				} else {
+					// --- The regular case -------------------------
 					UndoManager undoManager = BasicGraphGuiTools.this.graphController.getNetworkModelUndoManager().getUndoManager();
 					BasicGraphGuiTools.this.getJButtonUndo().setEnabled(undoManager.canUndo());
 					BasicGraphGuiTools.this.getJButtonUndo().setToolTipText(undoManager.getUndoPresentationName());
