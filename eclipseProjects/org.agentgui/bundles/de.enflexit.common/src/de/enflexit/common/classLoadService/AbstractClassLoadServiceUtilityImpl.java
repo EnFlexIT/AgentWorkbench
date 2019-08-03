@@ -31,13 +31,20 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 
 	public static final String SERVICE_REFERENCE_FILTER = "(component.factory=de.enflexit.common.classLoadService)";
 	
-	private boolean debug = false;
-	private boolean debugDetail = false;
+	private static final String HOW_FOUND_ReminderHashMap = "In local reminder HashMap";
+	private static final String HOW_FOUND_LocalServiceImplementation = "Through local service implementation.";
+	private static final String HOW_FOUND_AlreadyKnownServices = "Found in already known service implementations.";
+	private static final String HOW_FOUND_AfterUpdateOfServices = "Found after update of registered ClassLoadServices.";
+	
+	private boolean debugFailureDetail = false;
+	private boolean isPrintServicesAfterServiceUpdate = false;
+	private boolean isPrintServicesRequestResult = false;
+	private HashSet<String> printedServicesRequestResult; 
 	
 	private BundleContext bundleContext;
 	
 	private HashMap<String, Vector<ClassLoadServiceElement>> clsElementsByServiceInterfaceName;
-	private HashMap<String, T> clServicesByServiceAndClassName;
+	private HashMap<String, ClassLoadServiceElement> clServicesElementByServiceAndClassName;
 	
 	
 	/* (non-Javadoc)
@@ -81,6 +88,13 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 */
 	public T getClassLoadService(String className, Class<? extends BaseClassLoadService> serviceBaseInterface) {
 		
+		ClassLoadServiceElement clsElementFound = null;
+		ClassLoadServiceElement clsElementLocal = null;
+		
+		String howFound = null;
+		int nServicesKnown = 0;
+		int nServicesNew = 0;
+		
 		// ----------------------------------------------------------
 		// --- Nested classes are problematic - use hosting class --- 
 		// ----------------------------------------------------------
@@ -89,85 +103,140 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 			className = className.substring(0, dollarPos);
 		}
 		
+		
 		// ----------------------------------------------------------
-		// --- Default: Use the already known BaseClassLoadService -- 
+		// --- First trial: Use already known ClassLoadServices ----- 
 		// ----------------------------------------------------------
 		String requestKey = className + "@" + serviceBaseInterface.getName();
-		T clsFoundDefault = this.getLocalClassLoadService();
-		T clsFound = this.getClassLoadServicesByServiceAndClassName().get(requestKey);
-		if (clsFound!=null) {
-			return clsFound;
+		clsElementFound = this.getClassLoadServiceElementsByServiceAndClassName().get(requestKey);
+		if (clsElementFound!=null) { 
+			if (clsElementFound.getBundle().getState()==Bundle.UNINSTALLED) {
+				clsElementFound = null;
+			} else {
+				howFound = HOW_FOUND_ReminderHashMap;
+			}
+		}
 		
-		} else {
-			// --- Check if this is the required service ------------
-			if (this.isRequiredClassLoadService(serviceBaseInterface, clsFoundDefault, className)==true) {
-				// --- Remind this service for later calls --------------
-				this.getClassLoadServicesByServiceAndClassName().put(requestKey, clsFoundDefault);
-				return clsFoundDefault;
+		// ----------------------------------------------------------
+		// --- Check if the local service is usable -----------------
+		// ----------------------------------------------------------
+		if (clsElementFound==null) {
+			T clsFoundLocal = this.getLocalClassLoadService();
+			if (clsFoundLocal!=null) {
+				// --- Create 'local' ClassLoadServiceElement ------- 
+				Bundle bundle = this.getBundleContext().getBundle();
+				clsElementLocal = new ClassLoadServiceElement("LocalClassLoadService", bundle, clsFoundLocal);
+				if (this.isRequiredClassLoadService(serviceBaseInterface, clsElementLocal, className)==true) {
+					// --- Remind this service for later calls ------
+					this.getClassLoadServiceElementsByServiceAndClassName().put(requestKey, clsElementLocal);
+					clsElementFound = clsElementLocal;
+					howFound = HOW_FOUND_LocalServiceImplementation;
+				}
 			}
 		}
 		
 		// ----------------------------------------------------------
 		// --- Try to find the required BaseClassLoadService --------
 		// ----------------------------------------------------------
-		// --- Check all available ClassLoadServices ----------------
-		Vector<ClassLoadServiceElement> clsElementsKnown = this.getClassLoadServiceVector(serviceBaseInterface);
-		int nKnown = clsElementsKnown.size();
-		for (int i=0; i < clsElementsKnown.size(); i++) {
-			// --- Filter from right filter type --------------------
-			ClassLoadServiceElement clsElement = clsElementsKnown.get(i);
-			if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement, className)==true) {
-				this.getClassLoadServicesByServiceAndClassName().put(requestKey, clsElement.getClassLoadServiceImpl());
-				clsFound = clsElement.getClassLoadServiceImpl();
-				break;
-			}	
-		}
-
-		// --- Check for new services if nothing was found ----------
-		int nNew = 0;
-		if (clsFound==null) {
-			Vector<ClassLoadServiceElement> clsElementsNew = this.updateClassLoadServices();
-			nNew = clsElementsNew.size();
-			for (int i=0; i < clsElementsNew.size(); i++) {
-				// --- Filter from right filter type ----------------
-				ClassLoadServiceElement clsElement = clsElementsNew.get(i);
-				if (this.isRequiredClassLoadService(serviceBaseInterface, clsElement, className)==true) {
-					this.getClassLoadServicesByServiceAndClassName().put(requestKey, clsElement.getClassLoadServiceImpl());
-					clsFound = clsElement.getClassLoadServiceImpl();
-					break;
-				}	
+		if (clsElementFound==null) {
+			// --- Check all available ClassLoadServices ------------
+			Vector<ClassLoadServiceElement> clsElementsKnown = this.getClassLoadServiceVector(serviceBaseInterface);
+			nServicesKnown = clsElementsKnown.size();
+			Vector<ClassLoadServiceElementFound> clsElementsFound =  this.getUsableClassLoadServices(className, serviceBaseInterface, clsElementsKnown);
+			if (clsElementsFound.size()>0) {
+				clsElementFound = clsElementsFound.get(0).getClassLoadServiceElement();
+				this.getClassLoadServiceElementsByServiceAndClassName().put(requestKey, clsElementFound);
+				howFound = HOW_FOUND_AlreadyKnownServices;
 			}
 		}
 		
-		// --- Use default service, even if it throws exceptions ----
-		if (clsFound==null) {
-			if (this.debugDetail) {
-				System.err.println("No ClassLoadService found [known: " + nKnown + "| new: " + nNew + "] Searched by: " + this.getClass().getName() + ", Service '" + serviceBaseInterface.getSimpleName() + "' for: " + className + "");
+		// --- Check for new services if nothing was found ----------
+		if (clsElementFound==null) {
+			Vector<ClassLoadServiceElement> clsElementsNew = this.updateClassLoadServices();
+			nServicesNew = clsElementsNew.size();
+			Vector<ClassLoadServiceElementFound> clsElementsFound =  this.getUsableClassLoadServices(className, serviceBaseInterface, clsElementsNew);
+			if (clsElementsFound.size()>0) {
+				clsElementFound = clsElementsFound.get(0).getClassLoadServiceElement();
+				this.getClassLoadServiceElementsByServiceAndClassName().put(requestKey, clsElementFound);
+				howFound = HOW_FOUND_AfterUpdateOfServices;
 			}
-			clsFound = clsFoundDefault;
+		}
+
+		// --- Fallback to local ClassLoadServiceElement? -----------
+		if (clsElementFound==null) {
+			// --- Use local service, even if it throws exceptions --
+			if (this.debugFailureDetail) {
+				System.err.println("No ClassLoadService found [known: " + nServicesKnown + "| new: " + nServicesNew + "] Searched by: " + this.getClass().getName() + ", Service '" + serviceBaseInterface.getSimpleName() + "' for: " + className + "");
+			}
+			clsElementFound = clsElementLocal; // TODO Accelerate  !!
+		}
+
+		// --- Prepare return value ---------------------------------
+		T clsFound = null;
+		if (clsElementFound!=null) {
+			clsFound = clsElementFound.getClassLoadServiceImpl();
+		} else {
+			// --- Fallback to local ClassLoadService ---------------
+			clsFound = this.getLocalClassLoadService();
+		}
+		
+		// --- Print the service request detail ---------------------
+		if (this.isPrintServicesRequestResult==true) {
+			this.printServicesRequestResult(className, serviceBaseInterface, clsElementFound, clsFound, howFound);
 		}
 		return clsFound;
 	}
+
 	
 	/**
-	 * Checks if the specified {@link BaseClassLoadService} is the required one for the specified class.
+	 * Returns a sorted Vector of usable ClassLoadServices that can answer the class request.
+	 *
+	 * @param clsElementVector the cls element vector
+	 * @return the usable class load services
+	 */
+	private Vector<ClassLoadServiceElementFound> getUsableClassLoadServices(String className, Class<? extends BaseClassLoadService> serviceBaseInterface, Vector<ClassLoadServiceElement> clsElementVector) {
+		
+		Vector<ClassLoadServiceElementFound> usableServices = new Vector<>();
+		for (int i=0; i < clsElementVector.size(); i++) {
+			ClassLoadServiceElement clsElement = clsElementVector.get(i);
+			ClassLoadServiceUsability clsUsability = this.getClassLoadServiceUsability(serviceBaseInterface, clsElement, className);
+			if (clsUsability!=ClassLoadServiceUsability.NotUsable) {
+				usableServices.add(new ClassLoadServiceElementFound(clsElement, clsUsability));
+				if (clsUsability==ClassLoadServiceUsability.ContainsClass) {
+					break;
+				}
+			}	
+		}
+		// --- Sort the result vector -----------
+		Collections.sort(usableServices);
+		return usableServices;
+	}
+	
+	/**
+	 * Returns the class load usability.
 	 *
 	 * @param serviceBaseInterface the type of the service, specified by the interface
-	 * @param clsToCheck the BaseClassLoadService found
+	 * @param clsElement the ClassLoadServiceElement element
 	 * @param className the class name
 	 * @return true, if is required class load service
 	 */
-	private boolean isRequiredClassLoadService(Class<?> serviceBaseInterface, T clsToCheck, String className) {
-		if (serviceBaseInterface.isInstance(clsToCheck)==true) {
-			try {
-				clsToCheck.forName(className);
-				return true;
-			} catch (ClassNotFoundException | NoClassDefFoundError cnfe) {
-				//cnfe.printStackTrace();
+	private ClassLoadServiceUsability getClassLoadServiceUsability(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className) {
+		
+		boolean isActiveBundle = clsElement.getBundle().getState()!=Bundle.UNINSTALLED;
+		boolean isRightServiceType = clsElement.isRequiredService(serviceBaseInterface);
+		boolean isLoadingClass = this.isLoadingClass(clsElement.getBundle(), className);
+		boolean isClassInBundle = this.isClassInBundle(clsElement.getBundle(), className);
+		
+		if (isActiveBundle==true && isRightServiceType==true && isLoadingClass==true) {
+			if (isClassInBundle==true) {
+				return ClassLoadServiceUsability.ContainsClass;
+			} else {
+				return ClassLoadServiceUsability.CanLoadClass;
 			}
 		}
-		return false;
+		return ClassLoadServiceUsability.NotUsable;
 	}
+	
 	/**
 	 * Checks if the service, specified within the ClassLoadServiceElement, is the required one for the specified class.
 	 *
@@ -177,9 +246,11 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @return true, if is required class load service
 	 */
 	private boolean isRequiredClassLoadService(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className) {
+		boolean isActiveBundle = clsElement.getBundle().getState()!=Bundle.UNINSTALLED;
 		boolean isRightServiceType = clsElement.isRequiredService(serviceBaseInterface);
-		boolean isRequiredBundle = this.isRequiredBundle(clsElement.getBundle(), className);
-		return (isRightServiceType==true && isRequiredBundle==true);
+		boolean isLoadingClass = this.isLoadingClass(clsElement.getBundle(), className);
+		boolean isClassInBundle = this.isClassInBundle(clsElement.getBundle(), className);
+		return (isActiveBundle==true && isRightServiceType==true && isLoadingClass==true && isClassInBundle);
 	}
 	/**
 	 * Checks if is required bundle.
@@ -188,22 +259,28 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @param className the class name
 	 * @return true, if is required bundle
 	 */
-	private boolean isRequiredBundle(Bundle bundle, String className) {
+	private boolean isLoadingClass(Bundle bundle, String className) {
 
-		// --- Check that bundle is not uninstalled -----------------
-		if (bundle.getState()==Bundle.UNINSTALLED) return false;
-		
-		// --- 1. Simply try to load the class ----------------------
+		// --- Try to load the class ----------------------
 		try {
-			// --- Check the bundle status --------------------------
 			Class<?> classInstance = bundle.loadClass(className);
 			if (classInstance!=null) return true;
 		
 		} catch (ClassNotFoundException cnfEx) {
 			//cnfEx.printStackTrace();
 		}
+		return false;
+	}
+	/**
+	 * Checks if the specified class can be found in the bundle.
+	 *
+	 * @param bundle the bundle
+	 * @param className the class name
+	 * @return true, if is class in bundle
+	 */
+	private boolean isClassInBundle(Bundle bundle, String className) {
 		
-		// --- 2. Try to check the resources of the bundle ----------
+		// --- Try to check the resources of the bundle ---
 		String simpleClassName = className.substring(className.lastIndexOf(".")+1);
 		String packagePath = className;
 		int lastDotIndex = className.lastIndexOf(".");
@@ -222,7 +299,6 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		return false;
 	}
 	
-	
 	/**
 	 * Returns the HashMap of {@link ClassLoadServiceElement} vectors, where the key is given by the ComponentFactory name.
 	 * @return the HashMap of available services
@@ -237,11 +313,11 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * Returns the already known ClassLoadServices by the service name and class name.
 	 * @return the class load services by class name
 	 */
-	private HashMap<String, T> getClassLoadServicesByServiceAndClassName() {
-		if (clServicesByServiceAndClassName==null) {
-			clServicesByServiceAndClassName = new HashMap<>();
+	private HashMap<String, ClassLoadServiceElement> getClassLoadServiceElementsByServiceAndClassName() {
+		if (clServicesElementByServiceAndClassName==null) {
+			clServicesElementByServiceAndClassName = new HashMap<>();
 		}
-		return clServicesByServiceAndClassName;
+		return clServicesElementByServiceAndClassName;
 	}
 	
 	/**
@@ -360,8 +436,9 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 							// --- Store the required information in the reminder -------
 							// ----------------------------------------------------------
 							Vector<String> affectedServices = clsElement.getAffectedServices();
-							for (String affectedService : affectedServices) {
+							for (int j = 0; j < affectedServices.size(); j++) {
 								// --- Get the vector of services -----------------------
+								String affectedService = affectedServices.get(j);
 								Vector<ClassLoadServiceElement> elementVector = this.getClassLoadServiceElementsByServiceInterfaceName().get(affectedService); 
 								if (elementVector==null) {
 									elementVector = new Vector<>();
@@ -406,7 +483,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		}
 		
 		// --- Debug print the remaining services ---------------------------------------
-		if (debug) {
+		if (isPrintServicesAfterServiceUpdate) {
 			
 			int noOfServicesUnique = this.getAllKnowClassLoadServices(true).size();
 			System.out.println("Number of unique services: " + noOfServicesUnique);
@@ -426,11 +503,46 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	private void printClassLoadServiceElementVector(Vector<ClassLoadServiceElement> clsElementVector) {
 		if (clsElementVector==null || clsElementVector.size()==0) return;
 		Collections.sort(clsElementVector);
-		for (ClassLoadServiceElement clsElement : clsElementVector) {
+		for (int i = 0; i < clsElementVector.size(); i++) {
+			ClassLoadServiceElement clsElement = clsElementVector.get(i);
 			System.out.println(clsElement.getComponentFactoryName() + " " + clsElement.getClassLoadServiceImpl());
 		}
 	}
 	
+	/**
+	 * Prints the services request result.
+	 *
+	 * @param clsElementFound the ClassLoadServiceElement found
+	 * @param clsFound the ClassLoadService found
+	 */
+	private void printServicesRequestResult(String className, Class<? extends BaseClassLoadService> serviceBaseInterface, ClassLoadServiceElement clsElementFound, T clsFound, String howFound) {
+
+		if (this.isPrintServicesRequestResult==false) return;
+		try {
+			if (howFound!=HOW_FOUND_ReminderHashMap && this.getPrintedServicesRequestResult().contains(className)==false) {
+				if (clsElementFound==null) {
+					System.out.println("[" + this.getClass().getSimpleName() + "] \t => Loaded class '" + className + "' via bundle '" + this.getBundleContext().getBundle().getSymbolicName() + "'. - Found: " + howFound);
+				} else {
+					System.out.println("[" + this.getClass().getSimpleName() + "] \t => Loaded class '" + className + "' via bundle '" + clsElementFound.getBundle().getSymbolicName() + "'. - Found: " + howFound);
+				}
+				this.getPrintedServicesRequestResult().add(className);
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Return the already printed services request result.
+	 * @return the printed services request result
+	 */
+	private HashSet<String> getPrintedServicesRequestResult() {
+		if (printedServicesRequestResult==null) {
+			printedServicesRequestResult = new HashSet<>();
+		}
+		return printedServicesRequestResult;
+	}
+
 	
 	
 	/**
@@ -579,6 +691,93 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 			return this.getComponentFactoryName().compareTo(clsElement.getComponentFactoryName());
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			Object[] affServiceArray = this.getAffectedServices().toArray();
+			String displayText = this.getBundle().getSymbolicName() + "; " + this.getClassLoadServiceImpl() + "; " + this.getComponentFactoryName() + ";" + affServiceArray.toString();
+			return displayText;
+		}
+	}
+	
+
+	/**
+	 * The enumeration ClassLoadServiceUsability.
+	 */
+	private enum ClassLoadServiceUsability {
+		ContainsClass,
+		CanLoadClass,
+		NotUsable
+	}
+	/**
+	 * The Class ClassLoadServiceElementFound specifies how a usable ClassLoadServiceElement is related to a class that is to be loaded by the ClassLoadService.
+	 */
+	private class ClassLoadServiceElementFound implements Comparable<ClassLoadServiceElementFound> {
+		
+		private ClassLoadServiceElement clsElement;
+		private ClassLoadServiceUsability clsUsabillity;
+		
+		/**
+		 * Instantiates a new description for a found ClassLoadServiceElement.
+		 *
+		 * @param clsElement the ClassLoadServiceElement
+		 * @param clsUsability the cls usability
+		 */
+		public ClassLoadServiceElementFound(ClassLoadServiceElement clsElement, ClassLoadServiceUsability clsUsability) {
+			this.setClassLoadServiceElement(clsElement);
+			this.setClassLoadServiceUsabillity(clsUsability);
+		}
+		
+		/**
+		 * Sets the class load service element.
+		 * @param clsElement the new class load service element
+		 */
+		public void setClassLoadServiceElement(ClassLoadServiceElement clsElement) {
+			this.clsElement = clsElement;
+		}
+		/**
+		 * Gets the class load service element.
+		 * @return the class load service element
+		 */
+		public ClassLoadServiceElement getClassLoadServiceElement() {
+			return clsElement;
+		}
+		
+		/**
+		 * Sets the class load service usability.
+		 * @param clsUsability the new class load service usability
+		 */
+		public void setClassLoadServiceUsabillity(ClassLoadServiceUsability clsUsability) {
+			this.clsUsabillity = clsUsability;
+		}
+		/**
+		 * Gets the class load service usability.
+		 * @return the class load service usability
+		 */
+		public ClassLoadServiceUsability getClassLoadServiceUsability() {
+			return clsUsabillity;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		@Override
+		public int compareTo(ClassLoadServiceElementFound clsFoundToCompare) {
+			if (this.getClassLoadServiceUsability()!=null && clsFoundToCompare!=null && clsFoundToCompare.getClassLoadServiceUsability()!=null && clsFoundToCompare.getClassLoadServiceUsability()!=this.getClassLoadServiceUsability()) {
+				return this.getClassLoadServiceUsability().compareTo(clsFoundToCompare.getClassLoadServiceUsability());
+			}
+			return 0;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return this.getClassLoadServiceUsability().name() + " " + this.getClassLoadServiceElement().toString();
+		}
 	}
 	
 }
