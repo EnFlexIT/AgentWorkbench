@@ -126,7 +126,8 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 				// --- Create 'local' ClassLoadServiceElement ------- 
 				Bundle bundle = this.getBundleContext().getBundle();
 				clsElementLocal = new ClassLoadServiceElement("LocalClassLoadService", bundle, clsFoundLocal);
-				if (this.isRequiredClassLoadService(serviceBaseInterface, clsElementLocal, className)==true) {
+				ClassLoadServiceUsability usability = this.getClassLoadServiceUsability(serviceBaseInterface, clsElementLocal, className, ClassLoadServiceUsability.CanLoadClass);
+				if (usability==ClassLoadServiceUsability.CanLoadClass) {
 					// --- Remind this service for later calls ------
 					this.getClassLoadServiceElementsByServiceAndClassName().put(requestKey, clsElementLocal);
 					clsElementFound = clsElementLocal;
@@ -168,7 +169,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 			if (this.debugFailureDetail) {
 				System.err.println("No ClassLoadService found [known: " + nServicesKnown + "| new: " + nServicesNew + "] Searched by: " + this.getClass().getName() + ", Service '" + serviceBaseInterface.getSimpleName() + "' for: " + className + "");
 			}
-			clsElementFound = clsElementLocal; // TODO Accelerate  !!
+			clsElementFound = clsElementLocal;
 		}
 
 		// --- Prepare return value ---------------------------------
@@ -199,7 +200,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		Vector<ClassLoadServiceElementFound> usableServices = new Vector<>();
 		for (int i=0; i < clsElementVector.size(); i++) {
 			ClassLoadServiceElement clsElement = clsElementVector.get(i);
-			ClassLoadServiceUsability clsUsability = this.getClassLoadServiceUsability(serviceBaseInterface, clsElement, className);
+			ClassLoadServiceUsability clsUsability = this.getClassLoadServiceUsability(serviceBaseInterface, clsElement, className, ClassLoadServiceUsability.ContainsClass);
 			if (clsUsability!=ClassLoadServiceUsability.NotUsable) {
 				usableServices.add(new ClassLoadServiceElementFound(clsElement, clsUsability));
 				if (clsUsability==ClassLoadServiceUsability.ContainsClass) {
@@ -218,15 +219,30 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @param serviceBaseInterface the type of the service, specified by the interface
 	 * @param clsElement the ClassLoadServiceElement element
 	 * @param className the class name
+	 * @param desiredUsability the desired usability
 	 * @return true, if is required class load service
 	 */
-	private ClassLoadServiceUsability getClassLoadServiceUsability(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className) {
-		
+	private ClassLoadServiceUsability getClassLoadServiceUsability(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className, ClassLoadServiceUsability desiredUsability) {
+
+		// --- First two checks ---------------------------
 		boolean isActiveBundle = clsElement.getBundle().getState()!=Bundle.UNINSTALLED;
 		boolean isRightServiceType = clsElement.isRequiredService(serviceBaseInterface);
-		boolean isLoadingClass = this.isLoadingClass(clsElement.getBundle(), className);
-		boolean isClassInBundle = this.isClassInBundle(clsElement.getBundle(), className);
+		if (isActiveBundle==false || isRightServiceType==false) {
+			return ClassLoadServiceUsability.NotUsable;	
+		}
 		
+		// --- Check class load ability -------------------
+		boolean isLoadingClass = this.isLoadingClass(clsElement.getBundle(), className);
+		
+		// --- Check class containment -------------------- 
+		boolean isClassInBundle = false;
+		if (isLoadingClass==true && (desiredUsability==null || desiredUsability==ClassLoadServiceUsability.ContainsClass)) {
+			isClassInBundle = this.isClassInBundle(clsElement.getBundle(), className);
+		}
+		
+		// ------------------------------------------------
+		// --- Prepare return value -----------------------
+		// ------------------------------------------------
 		if (isActiveBundle==true && isRightServiceType==true && isLoadingClass==true) {
 			if (isClassInBundle==true) {
 				return ClassLoadServiceUsability.ContainsClass;
@@ -236,24 +252,8 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		}
 		return ClassLoadServiceUsability.NotUsable;
 	}
-	
 	/**
-	 * Checks if the service, specified within the ClassLoadServiceElement, is the required one for the specified class.
-	 *
-	 * @param serviceBaseInterface the type of the service, specified by the interface
-	 * @param clsElement the ClassLoadServiceElement element
-	 * @param className the class name
-	 * @return true, if is required class load service
-	 */
-	private boolean isRequiredClassLoadService(Class<?> serviceBaseInterface, ClassLoadServiceElement clsElement, String className) {
-		boolean isActiveBundle = clsElement.getBundle().getState()!=Bundle.UNINSTALLED;
-		boolean isRightServiceType = clsElement.isRequiredService(serviceBaseInterface);
-		boolean isLoadingClass = this.isLoadingClass(clsElement.getBundle(), className);
-		boolean isClassInBundle = this.isClassInBundle(clsElement.getBundle(), className);
-		return (isActiveBundle==true && isRightServiceType==true && isLoadingClass==true && isClassInBundle);
-	}
-	/**
-	 * Checks if is required bundle.
+	 * Checks if the class can be loaded from the bundle.
 	 *
 	 * @param bundle the bundle
 	 * @param className the class name
@@ -261,7 +261,6 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 */
 	private boolean isLoadingClass(Bundle bundle, String className) {
 
-		// --- Try to load the class ----------------------
 		try {
 			Class<?> classInstance = bundle.loadClass(className);
 			if (classInstance!=null) return true;
