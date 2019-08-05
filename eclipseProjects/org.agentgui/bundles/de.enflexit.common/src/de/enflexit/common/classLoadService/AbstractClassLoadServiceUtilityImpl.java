@@ -15,6 +15,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.service.component.ComponentException;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 
@@ -414,46 +415,37 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 					
 					// --- Get the component factory and its name -----------------------
 					ComponentFactory<?> compFactory = (ComponentFactory<?>) this.getBundleContext().getService(serviceReferences[i]);
-					String compFactoryName = compFactory.toString();
+					T cls = this.getClassLoadServiceInstanceFromComponentFactory(compFactory);
+					if (cls==null) continue;
 					
-					// --- Create ComponentInstance and the actual implementation -------
-					ComponentInstance<?> compInstance = compFactory.newInstance(null);
-					// --- Create a instance of the service -----------------------------
-					Object serviceInstance = compInstance.getInstance();
-					if (serviceInstance instanceof BaseClassLoadService) {
-						// --- Get the instance of the Class load service impl ----------
-						@SuppressWarnings("unchecked")
-						T cls = (T) serviceInstance;
-						// --------------------------------------------------------------
-						// --- Create the reminder object with useful information -------
-						// --------------------------------------------------------------
-						ClassLoadServiceElement clsElement = new ClassLoadServiceElement(compFactoryName, serviceReferences[i].getBundle(), cls);
-						if (classLoadServiceElementsToDelete.contains(clsElement)==false) {
-							// --- Add to the list of newly added elements --------------
-							classLoadServiceElementsAddedNew.add(clsElement);
-							// ----------------------------------------------------------
-							// --- Store the required information in the reminder -------
-							// ----------------------------------------------------------
-							Vector<String> affectedServices = clsElement.getAffectedServices();
-							for (int j = 0; j < affectedServices.size(); j++) {
-								// --- Get the vector of services -----------------------
-								String affectedService = affectedServices.get(j);
-								Vector<ClassLoadServiceElement> elementVector = this.getClassLoadServiceElementsByServiceInterfaceName().get(affectedService); 
-								if (elementVector==null) {
-									elementVector = new Vector<>();
-									this.getClassLoadServiceElementsByServiceInterfaceName().put(affectedService, elementVector);
-								}
-								// --- Add the element clsElement the the vector --------
-								if (elementVector.contains(clsElement)==false) {
-									elementVector.add(clsElement);
-								}
+					// --- Create the reminder object with useful information -------
+					ClassLoadServiceElement clsElement = new ClassLoadServiceElement(compFactory.toString(), serviceReferences[i].getBundle(), cls);
+					if (classLoadServiceElementsToDelete.contains(clsElement)==false) {
+						// --- Add to the list of newly added elements --------------
+						classLoadServiceElementsAddedNew.add(clsElement);
+						// ----------------------------------------------------------
+						// --- Store the required information in the reminder -------
+						// ----------------------------------------------------------
+						Vector<String> affectedServices = clsElement.getAffectedServices();
+						for (int j = 0; j < affectedServices.size(); j++) {
+							// --- Get the vector of services -----------------------
+							String affectedService = affectedServices.get(j);
+							Vector<ClassLoadServiceElement> elementVector = this.getClassLoadServiceElementsByServiceInterfaceName().get(affectedService); 
+							if (elementVector==null) {
+								elementVector = new Vector<>();
+								this.getClassLoadServiceElementsByServiceInterfaceName().put(affectedService, elementVector);
 							}
-							
-						} else {
-							// --- Remove from the list f delete candidates -----------------
-							classLoadServiceElementsToDelete.remove(clsElement);
+							// --- Add the element clsElement the the vector --------
+							if (elementVector.contains(clsElement)==false) {
+								elementVector.add(clsElement);
+							}
 						}
+						
+					} else {
+						// --- Remove from the list f delete candidates -----------------
+						classLoadServiceElementsToDelete.remove(clsElement);
 					}
+				
 				}
 				
 			} else {
@@ -495,6 +487,40 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 		return classLoadServiceElementsAddedNew;
 	}
 
+	/**
+	 * Return the actual class load service instance from the specified component factory.
+	 *
+	 * @param compFactory the component factory
+	 * @return the class load service instance from component factory
+	 */
+	@SuppressWarnings("unchecked")
+	private T getClassLoadServiceInstanceFromComponentFactory(ComponentFactory<?> compFactory) {
+		
+		if (compFactory==null) return null;
+		
+		Object serviceInstanceObject = null;
+		try {
+			// --- Create ComponentInstance and the actual implementation ---------
+			ComponentInstance<?> compInstance = compFactory.newInstance(null);
+			// --- Create a instance of the service -------------------------------
+			serviceInstanceObject = compInstance.getInstance();
+			
+		} catch (ComponentException compEx) {
+			System.err.println("["  + this.getClass().getSimpleName() + "] Error while initiating ComponentFactory '" + compFactory.toString() + "'!");
+			compEx.printStackTrace();
+		}
+
+		// --- Check instance type --------------------------------------------
+		T serviceInstance = null;
+		if (serviceInstanceObject!=null) {
+			if (serviceInstanceObject instanceof BaseClassLoadService) {
+				serviceInstance = (T) serviceInstanceObject;
+			}
+		}
+		return serviceInstance;
+	}
+	
+	
 	/**
 	 * Prints the class load service element vector.
 	 * @param clsElementVector the cls element vector

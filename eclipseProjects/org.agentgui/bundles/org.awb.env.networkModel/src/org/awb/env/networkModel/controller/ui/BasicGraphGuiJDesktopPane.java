@@ -28,7 +28,6 @@
  */
 package org.awb.env.networkModel.controller.ui;
 
-import java.awt.Dimension;
 import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Vector;
@@ -44,8 +43,6 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.visualisation.notifications.DataModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeries;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeriesException;
-
-import agentgui.core.application.Application;
 
 /**
  * The Class BasicGraphGuiJDesktopPane.
@@ -74,14 +71,6 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 * Initialize this.
 	 */
 	private void initialize() {
-		
-		if (Application.isOperatingHeadless()==false && Application.getMainWindow()!=null) {
-			Dimension desktopSize = Application.getMainWindow().getJDesktopPane4Projects().getSize();
-			this.setSize(desktopSize);
-			this.setPreferredSize(desktopSize);	
-		}
-		
-		this.setDoubleBuffered(true);
 		this.setAutoscrolls(false);
 		this.setDesktopManager(new BasicGraphGuiGraphWorkspaceDesktopManager());
 	}

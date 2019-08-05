@@ -161,9 +161,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		this.setBorder(BorderFactory.createEmptyBorder());
 	}
 
-	/**
-	 * Adds the default project window tabs.
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#addDefaultTabs()
 	 */
+	@Override
 	public void addDefaultTabs() {
 
 		ProjectWindowTab pwt = null;
@@ -229,7 +230,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		this.moveToFront();
 
 		// --- Add this ProjectWindow to the JDesktopPane of the MainWindow ---
-		if (Application.getMainWindow() != null) {
+		if (Application.getMainWindow()!=null) {
 			Application.getMainWindow().getJDesktopPane4Projects().add(this);
 		}
 	}
@@ -277,7 +278,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 	/**
 	 * This method initializes ProjectViewSplit.
-	 * 
 	 * @return javax.swing.JSplitPane
 	 */
 	private JSplitPane getJSplitPaneProjectView() {
@@ -294,7 +294,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 	/**
 	 * This method initializes jScrollPane.
-	 * 
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {

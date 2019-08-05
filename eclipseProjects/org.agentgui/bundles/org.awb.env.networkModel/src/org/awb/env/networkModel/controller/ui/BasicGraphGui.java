@@ -303,7 +303,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (jPanelToolBarsEast==null) {
 			jPanelToolBarsEast = new JPanel();
 			jPanelToolBarsEast.setLayout(new BoxLayout(jPanelToolBarsEast, BoxLayout.X_AXIS));
-			jPanelToolBarsEast.add(this.getBasicGraphGuiTools().getJToolBarLayout(), null);
+			jPanelToolBarsEast.add(this.getBasicGraphGuiTools().getJToolBarLayout());
 		}
 		return jPanelToolBarsEast;
 	}

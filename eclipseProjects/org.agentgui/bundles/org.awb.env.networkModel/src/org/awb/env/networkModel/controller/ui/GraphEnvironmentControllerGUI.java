@@ -30,6 +30,7 @@
 package org.awb.env.networkModel.controller.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyVetoException;
 import java.util.Collections;
@@ -43,6 +44,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.ClusterNetworkComponent;
 import org.awb.env.networkModel.GraphEdge;
@@ -53,6 +55,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.DataModelOpenViewNotification;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
@@ -251,7 +254,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     			}
     		}	
     	}
-
     }
     
     /**
@@ -262,11 +264,30 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     	if (basicGraphGuiJDesktopPane==null) {
     		basicGraphGuiJDesktopPane = new BasicGraphGuiJDesktopPane((GraphEnvironmentController) this.environmentController);
     		basicGraphGuiJDesktopPane.add(this.getBasicGraphGuiRootJSplitPane(), JLayeredPane.DEFAULT_LAYER);
-    		try {
-				this.getBasicGraphGuiRootJSplitPane().setMaximum(true);
-			} catch (PropertyVetoException pvex) {
-				pvex.printStackTrace();
-			}
+    		
+    		// --- Set internal frame size ----------------
+    		Dimension internalFrameSize = new Dimension(800, 600);
+    		if (Application.isOperatingHeadless()==false && Application.getMainWindow()!=null) {
+    			Dimension projectDesktopSize = Application.getMainWindow().getJDesktopPane4Projects().getSize();
+    			internalFrameSize.width  = (int) (projectDesktopSize.getWidth()  - 230.0);
+    			internalFrameSize.height = (int) (projectDesktopSize.getHeight() - 60.0);
+    		}
+    		this.getBasicGraphGuiRootJSplitPane().setLocation(0, 0);
+    		this.getBasicGraphGuiRootJSplitPane().setSize(internalFrameSize);
+    		
+    		// --- Maximize the internal frame ------------ 
+    		SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+		    		try {
+						GraphEnvironmentControllerGUI.this.getBasicGraphGuiRootJSplitPane().setMaximum(true);
+					} catch (PropertyVetoException pvex) {
+						pvex.printStackTrace();
+					}
+
+				}
+			});
+    		
     	}
     	return basicGraphGuiJDesktopPane;
     }

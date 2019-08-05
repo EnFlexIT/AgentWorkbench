@@ -1647,7 +1647,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public synchronized AwbProjectEditorWindow getProjectEditorWindow() {
 		if (this.projectEditorWindow == null) {
 			this.projectEditorWindow = UiBridge.getInstance().getProjectEditorWindow(this);
-			if (this.projectEditorWindow != null) {
+			if (this.projectEditorWindow!=null) {
 				this.projectEditorWindow.addDefaultTabs();
 			}
 		}
