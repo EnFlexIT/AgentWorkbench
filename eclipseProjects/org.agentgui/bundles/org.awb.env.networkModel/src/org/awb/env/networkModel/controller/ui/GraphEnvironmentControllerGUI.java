@@ -284,7 +284,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					} catch (PropertyVetoException pvex) {
 						pvex.printStackTrace();
 					}
-
 				}
 			});
     		
