@@ -71,6 +71,7 @@
       <import plugin="de.enflexit.oshi" version="3.4.4" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.mySQL" version="5.0.8" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.geography"/>
       <import plugin="ch.qos.logback.classic" version="1.1.2" match="greaterOrEqual"/>
       <import plugin="ch.qos.logback.core" version="1.1.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.10.0" match="greaterOrEqual"/>
@@ -82,8 +83,12 @@
       <import plugin="org.eclipse.e4.ui.services" version="1.2.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.e4.ui.workbench" version="1.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.e4.ui.di" version="1.2.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.p2.metadata" version="2.3.200" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.p2.operations" version="2.4.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.core"/>
+      <import plugin="org.eclipse.equinox.p2.engine"/>
+      <import plugin="org.eclipse.equinox.p2.metadata"/>
+      <import plugin="org.eclipse.equinox.p2.operations"/>
+      <import plugin="org.eclipse.equinox.p2.repository"/>
+      <import plugin="org.eclipse.equinox.p2.repository.tools"/>
       <import plugin="org.eclipse.equinox.p2.ui"/>
       <import plugin="org.eclipse.equinox.p2.ui.sdk"/>
       <import plugin="org.eclipse.equinox.p2.ui.sdk.scheduler"/>
