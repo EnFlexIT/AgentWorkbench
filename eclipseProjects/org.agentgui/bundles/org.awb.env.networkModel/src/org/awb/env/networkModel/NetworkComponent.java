@@ -50,7 +50,7 @@ import de.enflexit.common.SerialClone;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class NetworkComponent implements Serializable {
+public class NetworkComponent implements Serializable, Comparable<NetworkComponent> {
 
 	private static final long serialVersionUID = 537431665305238609L;
 
@@ -275,11 +275,33 @@ public class NetworkComponent implements Serializable {
 	}	
 
 	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(NetworkComponent ncToComp) {
+		
+		// --- Check the pure string case first ------------- 
+		String n1NumberString = this.getId().replaceAll("\\D+","");
+		String n2NumberString = ncToComp.getId().replaceAll("\\D+","");
+		if (n1NumberString.isEmpty() && n2NumberString.isEmpty()) {
+			return this.getId().compareTo(ncToComp.getId());
+		}
+		// --- In case of available numbers -----------------
+		if (n1NumberString==null || n1NumberString.isEmpty()==true) n1NumberString = "0";		
+		if (n2NumberString==null || n2NumberString.isEmpty()==true) n2NumberString = "0";
+		Long n1 = Long.parseLong(n1NumberString);
+		Long n2 = Long.parseLong(n2NumberString);
+		return n1.compareTo(n2);
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return this.getId() + " - " + this.getType();
 	}
+
+	
 	
 }

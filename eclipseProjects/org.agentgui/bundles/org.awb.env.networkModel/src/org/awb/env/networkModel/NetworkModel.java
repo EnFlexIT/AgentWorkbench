@@ -38,7 +38,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -882,38 +881,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param ascending set true to sort ascending, false to sort descending
 	 * @return a sorted NetworkComponent vector sorted
 	 */
-	public Vector<NetworkComponent> getNetworkComponentVectorSorted(final boolean ascending) {
+	public Vector<NetworkComponent> getNetworkComponentVectorSorted(boolean ascending) {
 		
-		Vector<NetworkComponent> netCompVector = new Vector<NetworkComponent>();
-		netCompVector.addAll(this.getNetworkComponents().values());
-		
-		Comparator<NetworkComponent> comp = new Comparator<NetworkComponent>() {
-			@Override
-			public int compare(NetworkComponent netComp1, NetworkComponent netComp2) {
-				// --- Check the pure string case first ------------- 
-				String n1NumberString = netComp1.getId().replaceAll("\\D+","");
-				String n2NumberString = netComp2.getId().replaceAll("\\D+","");
-				if (n1NumberString.isEmpty() && n2NumberString.isEmpty()) {
-					if (ascending==true) {
-						return netComp1.getId().compareTo(netComp2.getId());
-					} else {
-						return netComp2.getId().compareTo(netComp1.getId());
-					}	
-				}
-				// --- In case of available numbers -----------------
-				if (n1NumberString==null || n1NumberString.isEmpty()==true) n1NumberString = "0";		
-				if (n2NumberString==null || n2NumberString.isEmpty()==true) n2NumberString = "0";
-				Long n1 = Long.parseLong(n1NumberString);
-				Long n2 = Long.parseLong(n2NumberString);
-				if (ascending==true) {
-					return n1.compareTo(n2);
-				} else {
-					return n2.compareTo(n1);
-				}
-			}
-		};
-
-		Collections.sort(netCompVector, comp);
+		Vector<NetworkComponent> netCompVector = new Vector<NetworkComponent>(this.getNetworkComponents().values());
+		if (ascending==true) {
+			Collections.sort(netCompVector);
+		} else {
+			Collections.sort(netCompVector, Collections.reverseOrder());
+		}
 		return netCompVector;
 	}
 	

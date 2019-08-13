@@ -112,9 +112,14 @@ public class DomainClustering extends Vector<DomainCluster> {
 	 */
 	protected Vector<NetworkComponent> createDomainCluster(NetworkComponent netComp) {
 		
+		// --- Create cluster vector ------------
 		Vector<NetworkComponent> domainCluster = new Vector<>(); 
 		domainCluster.add(netComp);
+		// --- Deep search for domain member ----
 		this.deepSearchDomainNeighbours(netComp, this.getDomain(netComp), domainCluster);
+		// --- Sort the result ------------------
+		Collections.sort(domainCluster);
+		
 		return domainCluster;
 	}
 	
