@@ -88,23 +88,6 @@ public class DomainClustering extends Vector<DomainCluster> {
 	}
 	
 	/**
-	 * Returns the domain cluster for the specified domain and the specified NetworkComponent.
-	 *
-	 * @param domain the domain
-	 * @param netComp the NetworkComponent to check for
-	 * @return the domain cluster
-	 */
-	protected DomainCluster getDomainCluster(String domain, NetworkComponent netComp) {
-		for (int i = 0; i < this.size(); i++) {
-			DomainCluster dCluster = this.get(i);
-			if (dCluster.getDomain().equals(domain) && dCluster.getNetworkComponents().contains(netComp)==true) {
-				return dCluster;
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * Returns the cluster of NetworkComponents that can be found for the domain of the specified NetworkComponent.
 	 *
 	 * @param netComp the NetworkComponent
@@ -185,7 +168,7 @@ public class DomainClustering extends Vector<DomainCluster> {
 	 * 
 	 * @return the network model
 	 */
-	private NetworkModel getNetworkModel() {
+	protected NetworkModel getNetworkModel() {
 		return this.networkModel;
 	}
 	/**
@@ -233,6 +216,44 @@ public class DomainClustering extends Vector<DomainCluster> {
 	 */
 	public boolean isPrintClusterResult() {
 		return isPrintClusterResult;
+	}
+	
+	
+	// --------------------------------------------------------------
+	// --- From here some query methods -----------------------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the domain cluster for the specified domain and the specified NetworkComponent.
+	 *
+	 * @param domain the domain
+	 * @param netComp the NetworkComponent to check for
+	 * @return the domain cluster
+	 */
+	public DomainCluster getDomainCluster(String domain, NetworkComponent netComp) {
+		for (int i = 0; i < this.size(); i++) {
+			DomainCluster dCluster = this.get(i);
+			if (dCluster.getDomain().equals(domain) && dCluster.getNetworkComponents().contains(netComp)==true) {
+				return dCluster;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the {@link DomainCluster} that match with the specified by domain.
+	 *
+	 * @param domain the domain
+	 * @return the domain cluster by domain
+	 */
+	public Vector<DomainCluster> getDomainClusterByDomain(String domain) {
+		
+		Vector<DomainCluster> dcVectorFound = new Vector<>();
+		for (int i = 0; i < this.size(); i++) {
+			DomainCluster dcCheck = this.get(i);
+			if (dcCheck.getDomain().equals(domain)==true) {
+				dcVectorFound.add(dcCheck);
+			}
+		}
+		return dcVectorFound;
 	}
 	
 }

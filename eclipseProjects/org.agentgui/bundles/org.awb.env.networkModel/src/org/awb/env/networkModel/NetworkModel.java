@@ -2505,8 +2505,22 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		} else if (graphElement instanceof GraphEdge) {
 			// --- Get the corresponding NetworkComponent and have a look ----- 
 			NetworkComponent networkComponent = this.getNetworkComponent((GraphEdge) graphElement);
-			domain = this.generalGraphSettings4MAS.getCurrentCTS().get(networkComponent.getType()).getDomain();;
+			domain = this.generalGraphSettings4MAS.getCurrentCTS().get(networkComponent.getType()).getDomain();
 			
+		}
+		return domain;
+	}
+
+	/**
+	 * Returns the domain of the specified NetworkComponent.
+	 *
+	 * @param networkComponent the network component
+	 * @return the domain
+	 */
+	public String getDomain(NetworkComponent networkComponent) {
+		String domain = null;
+		if (networkComponent!=null) {
+			domain = this.generalGraphSettings4MAS.getCurrentCTS().get(networkComponent.getType()).getDomain();
 		}
 		return domain;
 	}
