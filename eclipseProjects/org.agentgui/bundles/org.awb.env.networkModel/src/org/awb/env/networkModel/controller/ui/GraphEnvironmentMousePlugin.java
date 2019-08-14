@@ -265,10 +265,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					// --- Double click ---------
 					this.basicGraphGUI.handleObjectDoubleClick(pickedObject);
 				} else {
-					if (me.isShiftDown()==false) {
-						// --- Left click -----------
-						this.basicGraphGUI.handleObjectLeftClick(pickedObject);
-					}	
+					this.basicGraphGUI.handleObjectLeftClick(pickedObject, me.isShiftDown());
 				} 
 			}
 		}

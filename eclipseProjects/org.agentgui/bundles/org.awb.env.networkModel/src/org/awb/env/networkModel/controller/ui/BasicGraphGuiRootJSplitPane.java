@@ -805,7 +805,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 				}
 				break;
 			
-			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
+			case NetworkModelNotification.NETWORK_MODEL_Component_Selected:
 				networkComponent = (NetworkComponent) infoObject;
 				this.networkComponentSelect(networkComponent);
 				break;
