@@ -241,11 +241,16 @@ public class NetworkModelUndoManager {
 	 * @param networkComponent the network component
 	 */
 	public void selectNetworkComponent(NetworkComponent networkComponent) {
-		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Select);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Selected);
 		notification.setInfoObject(networkComponent);
 		this.notifyObservers(notification);
 	}
 	
+	public void addNetworkComponentToSelection(NetworkComponent networkComponent) {
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_AddedToSelection);
+		notification.setInfoObject(networkComponent);
+		this.notifyObservers(notification);
+	}
 	/**
 	 * Informs that a CustomToolbarComponentDescription was added to the {@link GeneralGraphSettings4MAS}
 	 * @param customButtonDescription the custom button description

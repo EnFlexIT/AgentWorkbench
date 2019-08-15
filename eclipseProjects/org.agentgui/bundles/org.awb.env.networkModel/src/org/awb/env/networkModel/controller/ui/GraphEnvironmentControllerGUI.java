@@ -468,23 +468,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     				}
     			}
     			break;
-    			
-    		case NetworkModelNotification.NETWORK_MODEL_Component_Added:
-				break;
-				
-			case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
-				break;
-			
-			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
-				break;
 				
 			case NetworkModelNotification.NETWORK_MODEL_EditComponentSettings:
 				this.editComponentSettings(infoObject);
 				break;
 			
-			case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
-				break;
-		
 			default:
 				break;
 			}

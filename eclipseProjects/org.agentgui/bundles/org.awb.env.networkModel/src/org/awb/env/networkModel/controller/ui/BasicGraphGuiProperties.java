@@ -249,7 +249,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 
 		if (this.networkComponent!=null) {
 			// --- Mark / Select NetworkComponent for user --------------
-			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Select);
+			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Selected);
 			nmn.setInfoObject(this.networkComponent);
 			this.graphController.notifyObservers(nmn);
 		}

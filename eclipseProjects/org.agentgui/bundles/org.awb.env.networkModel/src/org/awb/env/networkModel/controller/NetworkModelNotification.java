@@ -56,11 +56,12 @@ public class NetworkModelNotification {
 	public static final int NETWORK_MODEL_Component_Added = 11;
 	public static final int NETWORK_MODEL_Component_Removed = 12;
 	public static final int NETWORK_MODEL_Component_Renamed = 13;
-	public static final int NETWORK_MODEL_Component_Select = 14;
+	public static final int NETWORK_MODEL_Component_Selected = 14;
+	public static final int NETWORK_MODEL_Component_AddedToSelection = 15;
 	
-	public static final int NETWORK_MODEL_Nodes_Moved = 15;
-	public static final int NETWORK_MODEL_Nodes_Merged = 16;
-	public static final int NETWORK_MODEL_Nodes_Splited = 17;
+	public static final int NETWORK_MODEL_Nodes_Moved = 16;
+	public static final int NETWORK_MODEL_Nodes_Merged = 17;
+	public static final int NETWORK_MODEL_Nodes_Splited = 18;
 	
 	public static final int NETWORK_MODEL_GraphMouse_Picking = 20;
 	public static final int NETWORK_MODEL_GraphMouse_Transforming = 21;

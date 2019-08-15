@@ -904,7 +904,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param pickedObject The selected object
 	 */
 	public void handleObjectLeftClick(Object pickedObject) {
-		this.selectObject(pickedObject);
+		this.handleObjectLeftClick(pickedObject, false);
+	}
+	
+	/**
+	 * Handle object left click.
+	 *
+	 * @param pickedObject the picked object
+	 * @param shiftPressed the shift pressed
+	 */
+	public void handleObjectLeftClick(Object pickedObject, boolean shiftPressed) {
+		this.selectObject(pickedObject, shiftPressed);
 	}
 	/**
 	 * Notifies the observers that this object is right clicked
@@ -1021,15 +1031,25 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 		return null;
 	}
-
+	
 	/**
-	 * Same as selectObject but optionally shows component settings dialog
-	 * 
-	 * @param object
-	 * @param showComponentSettingsDialog - shows the dialog if true
+	 * Selects an object. Previous selections are cleared:
+	 * @param object the object to select
 	 */
 	private void selectObject(Object object) {
-		this.clearPickedObjects();
+		this.selectObject(object, false);
+	}
+
+	/**
+	 * Selects an object, optionally keeping or clearing the previous selection
+	 * @param object the object to select
+	 * @param keepPrevoiusSelection if true, the previous selection is kept, otherwise cleared
+	 */
+	private void selectObject(Object object, boolean keepPrevoiusSelection) {
+		
+		if (keepPrevoiusSelection==false) {
+			this.clearPickedObjects();
+		}
 
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
@@ -1037,18 +1057,31 @@ public class BasicGraphGui extends JPanel implements Observer {
 			List<NetworkComponent> netComps = graphController.getNetworkModel().getNetworkComponents((GraphNode) object);
 			NetworkComponent disNode = graphController.getNetworkModel().getDistributionNode(netComps);
 			if (disNode != null) {
-				this.graphController.getNetworkModelUndoManager().selectNetworkComponent(disNode);
-			}
+				if (keepPrevoiusSelection==true) {
+					this.graphController.getNetworkModelUndoManager().addNetworkComponentToSelection(disNode);
+				} else {
+					this.graphController.getNetworkModelUndoManager().selectNetworkComponent(disNode);
+				}
+			} 
 			if (netComps.size() == 1) {
-				this.graphController.getNetworkModelUndoManager().selectNetworkComponent(netComps.iterator().next());
-				this.clearPickedObjects();
+				NetworkComponent netComp = netComps.get(0);
+				if (keepPrevoiusSelection==true) {
+					this.graphController.getNetworkModelUndoManager().addNetworkComponentToSelection(netComp);
+				} else {
+					this.graphController.getNetworkModelUndoManager().selectNetworkComponent(netComp);
+					this.clearPickedObjects();
+				}
 				this.setPickedObject((GraphElement) object);
 			}
 
 		} else if (object instanceof GraphEdge) {
 			NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent((GraphEdge) object);
 			this.setPickedObjects(graphController.getNetworkModel().getGraphElementsFromNetworkComponent(netComp));
-			this.graphController.getNetworkModelUndoManager().selectNetworkComponent(netComp);
+			if (keepPrevoiusSelection==true) {
+				this.graphController.getNetworkModelUndoManager().addNetworkComponentToSelection(netComp);
+			} else {
+				this.graphController.getNetworkModelUndoManager().selectNetworkComponent(netComp);
+			}
 
 		} else if (object instanceof NetworkComponent) {
 			this.setPickedObjects(graphController.getNetworkModel().getGraphElementsFromNetworkComponent((NetworkComponent) object));
@@ -1705,7 +1738,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.selectObject(renamed.getNetworkComponent()); 
 				break;
 
-			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
+			case NetworkModelNotification.NETWORK_MODEL_Component_Selected:
 				this.selectObject(infoObject);
 				break;
 
