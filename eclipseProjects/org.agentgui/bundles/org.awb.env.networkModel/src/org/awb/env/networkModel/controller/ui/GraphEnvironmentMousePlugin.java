@@ -508,8 +508,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				// --- Integrate the clip board NetworkModel --------
 				// --------------------------------------------------
 				this.networkModel2Paste = this.graphController.getClipboardNetworkModel().getCopy();
-				this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(this.networkModel2Paste);
-				this.graphController.getNetworkModel().mergeNetworkModel(this.networkModel2Paste, null, false);
+				this.graphController.getNetworkModel().mergeNetworkModel(this.networkModel2Paste, null, true);
 				
 				// --- Inform about changes -------------------------
 				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel));

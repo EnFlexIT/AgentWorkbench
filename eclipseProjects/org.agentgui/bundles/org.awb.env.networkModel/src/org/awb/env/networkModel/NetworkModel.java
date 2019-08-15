@@ -1169,10 +1169,11 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public NetworkModel adjustNameDefinitionsOfSupplementNetworkModel(NetworkModel supplementNetworkModel) {
 
-		if (supplementNetworkModel == this) {
-			return supplementNetworkModel;
-		}
+		// --- Early exit of this adjustment method? --------------------------
+		if (supplementNetworkModel==this) return supplementNetworkModel;
+		if (this.getGraphElementToNetworkComponentHash().size()==0 && this.getGraphElements().size()==0) return supplementNetworkModel;
 
+		
 		// --- Get the general counting information for components and edges --
 		String nextCompID = this.nextNetworkComponentID().replace(GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT, "");
 		String nextNodeID = this.nextNodeID().replace(GraphNode.GRAPH_NODE_PREFIX, "");
