@@ -67,6 +67,8 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     private RowFilter<DefaultTableModel, Integer> jTableRowFilter;
     private boolean tabelModelListenerPaused;
     
+    private Vector<String> excludeList;
+    
     private GraphEnvironmentController graphController;
     
     private boolean editingEnabled;
@@ -205,7 +207,7 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 		    }
 		    jTableComponents.getTableHeader().setReorderingAllowed(false);
 		    
-			// --- Define the column widths -------------------
+			// --- Define the column widths -------------------------
 			TableColumnModel colModel = jTableComponents.getColumnModel();
 			colModel.getColumn(0).setPreferredWidth(40);
 			colModel.getColumn(0).setCellRenderer(new NetworkComponentTableCellRenderEditor());
@@ -213,13 +215,15 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 			
 			colModel.getColumn(1).setPreferredWidth(40);
 			colModel.getColumn(1).setCellRenderer(new NetworkComponentTableCellRenderEditor());
-			
-			colModel.getColumn(2).setWidth(50);
-			colModel.getColumn(2).setMinWidth(50);
-			colModel.getColumn(2).setMaxWidth(60);
-			colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
-			colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(this.getGraphController(), jTableComponents));			
-			
+
+			// --- No third column if editingEnabled==false ---------
+			if (colModel.getColumnCount()>2) {
+				colModel.getColumn(2).setWidth(50);
+				colModel.getColumn(2).setMinWidth(50);
+				colModel.getColumn(2).setMaxWidth(60);
+				colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
+				colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(this.getGraphController(), jTableComponents));			
+			}
 
 			// --- Set the table sorter -----------------------
 			TableRowSorter<DefaultTableModel> tblSorter = this.getJTableRowSorter();
@@ -344,19 +348,45 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     			@Override
     			public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
     				
-    				// --- Return true if the search phrase is empty ----
-    				String searchPhrase = NetworkComponentTablePanel.this.getJTextFieldSearch().getText().trim();
-    				if (searchPhrase==null || searchPhrase.length()==0) return true;
+    				if (getExcludeList().contains(entry.getStringValue(0))) {
+    					// --- Check exclude list -----------------------------
+    					return false;
+    				} else {
+    					// --- Return true if the search phrase is empty ------
+    					String searchPhrase = NetworkComponentTablePanel.this.getJTextFieldSearch().getText().trim();
+    					if (searchPhrase==null || searchPhrase.length()==0) return true;
+    					
+    					// --- Check for the search phrase --------------------
+    					boolean matchNetComID = entry.getStringValue(0).matches("(?i).*(" + searchPhrase + ").*");
+    					boolean matchNetComType = entry.getStringValue(1).matches("(?i).*(" + searchPhrase + ").*");
+    					return matchNetComID==true || matchNetComType==true;
+    					
+    				}
     				
-    				// --- Check for the search phrase ------------------
-					boolean matchNetComID = entry.getStringValue(0).matches("(?i).*(" + searchPhrase + ").*");
-					boolean matchNetComType = entry.getStringValue(1).matches("(?i).*(" + searchPhrase + ").*");
-					return matchNetComID==true || matchNetComType==true;
     			}
     		};
-        	    		
     	}
     	return jTableRowFilter;
+    }
+    
+    /**
+     * Gets the exclude list.
+     * @return the exclude list
+     */
+    private Vector<String> getExcludeList(){
+    	if (excludeList==null) {
+    		excludeList = new Vector<>();
+    	}
+    	return excludeList;
+    }
+    
+    /**
+     * Sets the exclude list.
+     * @param excludeList the new exclude list
+     */
+    public void setExcludeList(Vector<String> excludeList) {
+    	this.excludeList = excludeList;
+    	this.applyTableSorter();
     }
     /**
      * This method builds the tblComponents' contents based on the controllers GridModel
@@ -490,7 +520,7 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     /**
      * Reloads the network model.
      */
-    protected void reLoadNetworkComponents() {
+    public void reLoadNetworkComponents() {
     	
     	SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -582,6 +612,23 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     }
     
     /**
+     * Gets the selected network components.
+     * @return the selected network components
+     */
+    public Vector<NetworkComponent> getSelectedNetworkComponents(){
+    	Vector<NetworkComponent> selectedComponents = new Vector<>();
+    	if (this.getJTableComponents().getSelectedRowCount() > 0) {
+    		int[] selectedRows = this.getJTableComponents().getSelectedRows();
+    		for (int i=0; i<selectedRows.length; i++) {
+    			int selectedIndex = getJTableComponents().convertRowIndexToModel(selectedRows[i]);
+    			String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
+    			selectedComponents.add(this.getGraphController().getNetworkModel().getNetworkComponent(componentID));
+    		}
+    	}
+    	return selectedComponents;
+    }
+    
+    /**
      * Sets the currently selected network component.
      * @param networkComponent the network component to be selected
      */
@@ -608,6 +655,13 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     			}
     		}
     	}
+    }
+    
+    /**
+     * Clear the selection.
+     */
+    public void clearSelection() {
+    	this.getJTableComponents().clearSelection();
     }
     
     /**
