@@ -141,6 +141,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String VIEW_Restore = "RestoreView";
 	@XmlTransient public static final String VIEW_TabsLoaded = "TabsLoaded";
 
+	// --- Constants for the Project Desktop ------------------------
+	@XmlTransient public static final String PROJECT_DESKTOP_COMPONENT_ADDED   = "ProjectDesktopComponentAdded";
+	@XmlTransient public static final String PROJECT_DESKTOP_COMPONENT_REMOVED = "ProjectDesktopComponentRemoved";
+	
 	// --- Constants for the the agent distribution metric ----------
 	@XmlTransient public static final String AGENT_METRIC_Reset = "AgentMetric_Reset";
 	@XmlTransient public static final String AGENT_METRIC_ChangedDataSource = "AgentMetric_ChangedDataSource";

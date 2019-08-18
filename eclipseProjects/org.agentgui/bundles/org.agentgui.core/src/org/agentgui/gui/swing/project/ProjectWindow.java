@@ -101,6 +101,8 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private DefaultTreeModel projectTreeModel;
 	private DefaultMutableTreeNode rootNode;
 	private DefaultMutableTreeNode startNode;
+	
+	private Vector<JInternalFrame> projectDesktopFrameVector;
 
 	private JPopupMenu jPopupMenuTree;
 	private JMenuItem jMenueItemMaximizeSelectedTab;
@@ -110,13 +112,13 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private ChangeListener tabSelectionListener;
 	private MouseListener tabMouseListener;
 
-	private boolean pauseTreeSelectionListener = false;
-	private boolean pauseTabSelectionListener = false;
+	private boolean pauseTreeSelectionListener;
+	private boolean pauseTabSelectionListener;
 
-	private HashMap<String, ProjectWindowTab> tab4SubPanel = new HashMap<String, ProjectWindowTab>(); // @jve:decl-index=0:
-	private Vector<ProjectWindowTab> tabVector = new Vector<ProjectWindowTab>(); // @jve:decl-index=0:
+	private HashMap<String, ProjectWindowTab> tab4SubPanelHash;
+	private Vector<ProjectWindowTab> pwtVector;
 
-	private boolean isMaximizedTab = false;
+	private boolean isMaximizedTab;
 	private MaximizedTab maxTab;
 	private ProjectWindowTab maxProjectWindowTab;
 
@@ -331,8 +333,8 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			jTreeProject.addTreeSelectionListener(new TreeSelectionListener() {
 				@Override
 				public void valueChanged(TreeSelectionEvent ts) {
-					if (pauseTreeSelectionListener)
-						return;
+					if (pauseTreeSelectionListener) return;
+					
 					TreePath pathSelected = ts.getPath();
 					if (pathSelected.getPathCount() >= 2) {
 						// --- Focus corresponding tab ------------------------
@@ -351,8 +353,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 					JTree tree = (JTree) me.getSource();
 					TreePath treePath = tree.getPathForLocation(me.getX(), me.getY());
-					if (treePath == null)
-						return;
+					if (treePath == null) return;
 
 					if (SwingUtilities.isRightMouseButton(me)) {
 						// --- Display the context menu -----------------------
@@ -534,7 +535,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	}
 
 	/**
-	 * Maximise the Project-Window within the AgenGUI-Application
+	 * Maximize the Project-Window within the AgenGUI-Application
 	 */
 	public void setMaximized() {
 
@@ -692,13 +693,24 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	}
 
 	/**
+	 * Gets the project window tab vector.
+	 * @return the project window tab vector
+	 */
+	public Vector<ProjectWindowTab> getProjectWindowTabVector() {
+		if (pwtVector==null) {
+			pwtVector = new Vector<>();
+		}
+		return pwtVector;
+	}
+	/**
 	 * Returns the ProjectWindowTab specified by its name.
 	 *
 	 * @param tabTitle the tab title
 	 * @return the instance of ProjectWindowTab
 	 */
 	private ProjectWindowTab getProjectWindowTab(String tabTitle) {
-		for (ProjectWindowTab pwt : tabVector) {
+		for (int i = 0; i < this.getProjectWindowTabVector().size(); i++) {
+			ProjectWindowTab pwt = this.getProjectWindowTabVector().get(i);
 			if (pwt.getTitle().equals(tabTitle)) {
 				return pwt;
 			}
@@ -737,7 +749,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		projectWindowTab.setIndexPosition(newIndexPos);
 
 		// --- add to reminder vector -----------
-		this.tabVector.add(projectWindowTab);
+		this.getProjectWindowTabVector().add(projectWindowTab);
 
 		// --- use the private function ---------
 		this.addProjectTabInternal(projectWindowTab);
@@ -761,7 +773,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		// --- add to the TreeModel -------------
 		if (parentName != null) {
-			pareNode = getTreeNode(parentName);
+			pareNode = this.getTreeNode(parentName);
 			ProjectWindowTab pareNodePWT = (ProjectWindowTab) pareNode.getUserObject();
 			tabbedPaneParent = pareNodePWT.getCompForChildComp();
 			// --- add ChangeListener -----------
@@ -772,7 +784,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			tabbedPaneParent = projectViewRightTabs;
 		}
 
-		if (projectWindowTab.getIndexPosition() != -1 && projectWindowTab.getIndexPosition() < pareNode.getChildCount()) {
+		if (projectWindowTab.getIndexPosition()!=-1 && projectWindowTab.getIndexPosition()<pareNode.getChildCount()) {
 			// --- Add to parent node/tab at index position ----
 			pareNode.insert(newNode, projectWindowTab.getIndexPosition());
 			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getJComponentForVisualization(), projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
@@ -828,7 +840,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		if (container != null) {
 			container.remove(component);
 		}
-		this.tabVector.remove(projectWindowTab);
+		this.getProjectWindowTabVector().remove(projectWindowTab);
 
 		this.getTreeModel().reload();
 		this.projectTreeExpand2Level(3, true);
@@ -839,7 +851,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	private void removeAllProjectWindowTabsTemporary4Rebuilding() {
 
-		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector);
+		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.getProjectWindowTabVector());
 		for (int i = 0; i < pwtVector.size(); i++) {
 			ProjectWindowTab pwt = pwtVector.get(i);
 			if (pwt.getCompForChildComp()!=null) {
@@ -891,7 +903,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	public void setFocus2Tab(ProjectWindowTab pwt) {
 		String tabCaption = pwt.getTitle();
-		setFocus2Tab(tabCaption);
+		this.setFocus2Tab(tabCaption);
 	}
 
 	/**
@@ -902,27 +914,44 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	public void setFocus2Tab(DefaultMutableTreeNode node2Focus) {
 
-		if (node2Focus == null)
-			return;
+		if (node2Focus == null) return;
 
-		Vector<DefaultMutableTreeNode> nodeArray = new Vector<DefaultMutableTreeNode>();
-		nodeArray.add(node2Focus);
+		Vector<DefaultMutableTreeNode> nodeVector = new Vector<DefaultMutableTreeNode>();
+		nodeVector.add(node2Focus);
 
 		DefaultMutableTreeNode currNode = node2Focus;
 		while (currNode.getParent() != null) {
 			currNode = (DefaultMutableTreeNode) currNode.getParent();
 			if (currNode != this.getRootNode()) {
-				nodeArray.add(currNode);
+				nodeVector.add(currNode);
 			}
 		}
-		for (int i = nodeArray.size() - 1; i > -1; i--) {
-			currNode = nodeArray.get(i);
+		for (int i = nodeVector.size() - 1; i > -1; i--) {
+			currNode = nodeVector.get(i);
 			if (currNode.getUserObject() instanceof ProjectWindowTab) {
 				ProjectWindowTab pwt = (ProjectWindowTab) currNode.getUserObject();
-				if (pwt != null && pwt.getJComponentForVisualization() != null) {
+				if (pwt!=null && pwt.getJComponentForVisualization()!=null) {
 					Component displayElement = pwt.getJComponentForVisualization();
-					if (displayElement.getParent() != null) {
-						((JTabbedPane) displayElement.getParent()).setSelectedComponent(displayElement);
+					if (displayElement.getParent()!=null) {
+						// --- Check parent container -------------------------
+						Container parentContainer = displayElement.getParent(); 
+						if (parentContainer instanceof ProjectDesktop) {
+							// --- Set the focus to the project desktop -------
+							ProjectDesktop desktop = (ProjectDesktop) parentContainer; 
+							JTabbedPane desktopParent = (JTabbedPane)parentContainer.getParent(); 
+							desktopParent.setSelectedComponent(desktop);
+							// --- Move internal frame to front --------------- 
+							JInternalFrame intFrame = (JInternalFrame) pwt.getJComponentForVisualization();
+							intFrame.moveToFront();
+							
+						} else if (parentContainer instanceof JTabbedPane) {
+							// --- Set the focus to the right tab -------------
+							((JTabbedPane) parentContainer).setSelectedComponent(displayElement);
+							
+						} else {
+							// --- An yet unknown parent container type 
+							System.err.println("[" + this.getClass().getSimpleName() + "] Unknown parent container type " + parentContainer.getClass().getName());
+						}
 					}
 				}
 			}
@@ -1069,7 +1098,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		this.getJTreeProject().setSelectionPath(null);
 		this.removeAllProjectWindowTabsTemporary4Rebuilding();
 
-		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.tabVector);
+		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.getProjectWindowTabVector());
 		for (int i = 0; i < pwtVector.size(); i++) {
 			
 			ProjectWindowTab pwt = pwtVector.get(i);
@@ -1133,72 +1162,202 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	}
 
 	/**
-	 * Can be used in order to register a tab which can hold sub panes, by using a JTabbedPane. So it allows the later
-	 * access.
+	 * Returns the project window tab for sub panel hash.
+	 * @return the project window tab for sub panel hash
+	 */
+	public HashMap<String, ProjectWindowTab> getProjectWindowTabForSubPanelHash() {
+		if (tab4SubPanelHash==null) {
+			tab4SubPanelHash = new HashMap<>(); 
+		}
+		return tab4SubPanelHash;
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getTabForSubPanels(java.lang.String)
+	 */
+	@Override
+	public ProjectWindowTab getTabForSubPanels(String name) {
+		return this.getProjectWindowTabForSubPanelHash().get(name);
+	}
+	
+	/**
+	 * Can be used in order to register a tab which can hold sub panels, by using a JTabbedPane and thus allows a later access.
 	 *
 	 * @param name the name
 	 * @param tab4SubPanes the tab4 sub panes
 	 */
 	public void registerTabForSubPanels(String name, ProjectWindowTab tab4SubPanes) {
-		this.tab4SubPanel.put(name, tab4SubPanes);
+		this.getProjectWindowTabForSubPanelHash().put(name, tab4SubPanes);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.agentgui.gui.AwbProjectEditorWindow#getTabForSubPanels(java.lang.String)
-	 */
-	@Override
-	public ProjectWindowTab getTabForSubPanels(String name) {
-		return this.tab4SubPanel.get(name);
-	}
-
 	/**
 	 * Can be used in order to unregister a tab which can hold sub panes, by using a JTabbedPane.
-	 *
 	 * @param name the name
 	 */
 	public void deregisterTabForSubPanels(String name) {
-		this.tab4SubPanel.remove(name);
+		this.getProjectWindowTabForSubPanelHash().remove(name);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void update(Observable observable, Object updateObject) {
 
-		String ObjectName = updateObject.toString();
-		if (ObjectName.equalsIgnoreCase(Project.CHANGED_ProjectName)) {
+		String updateReason = updateObject.toString();
+		if (updateReason.equalsIgnoreCase(Project.CHANGED_ProjectName)) {
 			this.getRootNode().setUserObject(currProject.getProjectName());
 			this.getTreeModel().nodeChanged(this.getRootNode());
 			this.getJTreeProject().repaint();
 			Application.setTitelAddition(currProject.getProjectName());
-
-		} else if (ObjectName.equals(Project.CHANGED_ProjectView)) {
+			
+		} else if (updateReason.equals(Project.CHANGED_ProjectView)) {
 			this.setViewForDeveloperOrEndUser();
 
-		} else if (ObjectName.equals(Project.CHANGED_EnvironmentModelType)) {
+		} else if (updateReason.equals(Project.CHANGED_EnvironmentModelType)) {
 			this.setViewForDeveloperOrEndUser();
 
-		} else if (ObjectName.equals(Project.VIEW_Maximize)) {
+		} else if (updateReason.equals(Project.VIEW_Maximize)) {
 			this.tabMaximize();
 
-		} else if (ObjectName.equals(Project.VIEW_Restore)) {
+		} else if (updateReason.equals(Project.VIEW_Restore)) {
 			this.tabRestore();
 
-		} else if (ObjectName.equals(Project.VIEW_TabsLoaded)) {
+		} else if (updateReason.equals(Project.VIEW_TabsLoaded)) {
 			this.setFocus2StartTab();
+			
+		} else if (updateReason.equals(Project.PROJECT_DESKTOP_COMPONENT_ADDED)) {
+			this.updateProjectDesktopChilds();
+			
+		} else if (updateReason.equals(Project.PROJECT_DESKTOP_COMPONENT_REMOVED)) {
+			this.updateProjectDesktopChilds();
+			
 		}
-		this.validate();
-		this.repaint();
+		
+	}
+
+	/**
+	 * Returns the vector of already known internal frames of the project desktop.
+	 * @return the project desktop frame vector
+	 */
+	private Vector<JInternalFrame> getProjectDesktopFrameVector() {
+		if (projectDesktopFrameVector==null) {
+			projectDesktopFrameVector = new Vector<>();
+		}
+		return projectDesktopFrameVector;
+	}
+	/**
+	 * Update project desktop child's.
+	 */
+	private void updateProjectDesktopChilds() {
+		
+		ProjectWindowTab desktopTab = this.getProjectWindowTab(Language.translate("Projekt-Desktop"));
+		DefaultMutableTreeNode pdTreeNode = this.getTreeNode(desktopTab.toString());
+		if (pdTreeNode!=null) {
+			// --- Create temporary vector for removed internal frames -------- 
+			Vector<JInternalFrame> tmpRemovedInternalFrames = new Vector<>(this.getProjectDesktopFrameVector());
+
+			// --- Check all internal frames shown on the project desktop ----- 
+			JDesktopPane desktopPane = (JDesktopPane) desktopTab.getJComponentForVisualization();
+			JInternalFrame[] intFrameArray = desktopPane.getAllFrames();
+			for (int i = 0; i < intFrameArray.length; i++) {
+				JInternalFrame intFrame = intFrameArray[i];
+				if (tmpRemovedInternalFrames.contains(intFrame)==false) {
+					// --- => Found a new internal frame ----------------------
+					this.addedToProjectDesktop(pdTreeNode, intFrame);
+				} else {
+					// --- => Found an already known internal frame -----------
+					tmpRemovedInternalFrames.remove(intFrame);
+				}
+			} // end for
+			
+			// --- Remove the removed internal frames from local reminder vector
+			for (int i = 0; i < tmpRemovedInternalFrames.size(); i++) {
+				this.removedFromProjectDesktop(pdTreeNode, tmpRemovedInternalFrames.get(i));
+			}
+		}
+	}
+	/**
+	 * Will be called if an internal frame was added to the project desktop.
+	 *
+	 * @param pdTreeNode the projects desktop tree node
+	 * @param intFrameToAdd the internal frame to add
+	 */
+	private void addedToProjectDesktop(DefaultMutableTreeNode pdTreeNode, JInternalFrame intFrameToAdd) {
+		
+		this.getProjectDesktopFrameVector().add(intFrameToAdd);
+
+		String reducedTitle = this.getReducedTitleForInternalFrame(intFrameToAdd);
+		ProjectWindowTab pwtInternal = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, reducedTitle, intFrameToAdd.getTitle(), null, intFrameToAdd, null);
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(pwtInternal);
+		pdTreeNode.add(newNode);
+		this.getTreeModel().reload();
+		this.projectTreeExpand2Level(3, true);
+	}
+	/**
+	 * Will be called if an internal frame was removed from the project desktop.
+	 *
+	 * @param pdTreeNode the projects desktop tree node
+	 * @param intFrameToRemoved the removed internal frame to remove
+	 */
+	private void removedFromProjectDesktop(DefaultMutableTreeNode pdTreeNode , JInternalFrame intFrameToRemoved) {
+		
+		this.getProjectDesktopFrameVector().remove(intFrameToRemoved);
+		
+		for (int i = 0; i < pdTreeNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) pdTreeNode.getChildAt(i);
+			ProjectWindowTab pwt = (ProjectWindowTab) childNode.getUserObject();
+			if (pwt.getJComponentForVisualization()==intFrameToRemoved) {
+				pdTreeNode.remove(i);
+				this.getTreeModel().reload();
+				this.projectTreeExpand2Level(3, true);
+				break;
+			}
+		}
+	}
+	/**
+	 * Return a reduced title for an internal frame.
+	 *
+	 * @param intFrame the internal frame
+	 * @return the reduced title for internal frame
+	 */
+	private String getReducedTitleForInternalFrame(JInternalFrame intFrame) {
+		
+		String title = intFrame.getTitle(); 
+		if (title==null || title.isEmpty()==true) {
+			// --- If not tile was specified for the internal frame -----------
+			title = "Internal Frame [No Title]";
+			
+		} else if (title.length()>25) {
+			// --- Reduce the title here --------------------------------------
+			String reducedTitleBase = title.replaceAll("[^A-Za-z0-9 ]", "");
+			reducedTitleBase = reducedTitleBase.replace("  ", " ");
+			
+			String reducedTitle = "";
+			String[] titleFragArray = reducedTitleBase.trim().split(" ");
+			for (int i = 0; i < titleFragArray.length; i++) {
+				String titleFrag = titleFragArray[i].trim();
+				if (titleFrag.matches("[0-9]+")==true) {
+					// --- Numeric string -------------------------------------
+					reducedTitle += " " + titleFrag + " ";
+				} else {
+					// --- Non-numeric string --------------------------------- 
+					if (titleFrag.length()>2) {
+						titleFrag = titleFrag.substring(0, 2);
+					}
+					reducedTitle += titleFrag + ".";
+				}
+			} // end for
+			
+			if (reducedTitle.isEmpty()==false) {
+				title = reducedTitle.trim();
+			}
+		}
+		return title;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.agentgui.gui.AwbProjectEditorWindow#showErrorMessage(java.lang.String, java.lang.String)
 	 */
 	@Override

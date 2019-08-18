@@ -28,11 +28,14 @@
  */
 package org.agentgui.gui.swing.project;
 
+import java.awt.Dimension;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+
 import javax.swing.JDesktopPane;
 import javax.swing.JTabbedPane;
 
 import agentgui.core.project.Project;
-import java.awt.Dimension;
 
 /**
  * Represents the tab 'Project Desktop'.<br>
@@ -44,7 +47,7 @@ public class ProjectDesktop extends JDesktopPane {
 
 	private static final long serialVersionUID = -9219224867898326652L;
 	private Project currProject;
-
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -52,7 +55,7 @@ public class ProjectDesktop extends JDesktopPane {
 		super();
 		this.currProject = project;
 		this.currProject.setProjectDesktop(this);
-		initialize();
+		this.initialize();
 	}
 
 	/**
@@ -63,12 +66,22 @@ public class ProjectDesktop extends JDesktopPane {
 		
 		this.setAutoscrolls(true);		
 		this.setSize(new Dimension(300, 200));
-		this.addContainerListener(new java.awt.event.ContainerListener() {
-			public void componentAdded(java.awt.event.ContainerEvent e) {
-				//System.out.println( e.getSource() );
-				setFocus();
+		this.addContainerListener(new ContainerListener() {
+			
+			/* (non-Javadoc)
+			 * @see java.awt.event.ContainerListener#componentAdded(java.awt.event.ContainerEvent)
+			 */
+			@Override
+			public void componentAdded(ContainerEvent ce) {
+				currProject.setNotChangedButNotify(Project.PROJECT_DESKTOP_COMPONENT_ADDED);
+				ProjectDesktop.this.setFocusToProjectDesktop();
 			}
-			public void componentRemoved(java.awt.event.ContainerEvent e) {
+			/* (non-Javadoc)
+			 * @see java.awt.event.ContainerListener#componentRemoved(java.awt.event.ContainerEvent)
+			 */
+			@Override
+			public void componentRemoved(ContainerEvent ce) {
+				currProject.setNotChangedButNotify(Project.PROJECT_DESKTOP_COMPONENT_REMOVED);
 			}
 		});
 	}
@@ -76,9 +89,8 @@ public class ProjectDesktop extends JDesktopPane {
 	/**
 	 * Set's the focus to the project-desktop
 	 */
-	public void setFocus () {
+	public void setFocusToProjectDesktop () {
 		((JTabbedPane) this.getParent()).setSelectedComponent(this);
 	}
 
-	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 
