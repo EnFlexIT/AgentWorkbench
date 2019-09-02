@@ -57,6 +57,12 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 
 	private static final long serialVersionUID = 8187230173732284770L;
 	
+	private boolean isDoStatsForPaintComp = false;
+	private long statsPaintCompObservationInterval = 1000; // one second
+	private long statsPaintCompIntervalStart;
+	private long statsLastPaintCompIntervalCounter;
+	
+	
 	private boolean actionOnTop;
 	private Timer resetTimerForActionOnTop;
 	private boolean resetIsActionOnTop;
@@ -129,6 +135,11 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		
 	}
 	
+	private void resetObservationVariables(long currentTimeMillis) {
+		this.statsPaintCompIntervalStart = currentTimeMillis;
+		this.statsLastPaintCompIntervalCounter = 1;
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.BasicVisualizationServer#paintComponent(java.awt.Graphics)
 	 */
@@ -139,7 +150,35 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		int paintTrials = 0;
 		int paintTrialsMax = 3;
 		Exception lastException = null;
+
+		// ----------------------------------------------------------
+		// --- Debug, diagnosis and optimization area ---------------
+		// ----------------------------------------------------------
+		if (this.isDoStatsForPaintComp==true) {
+			// --- Statistics for graph paint activated -------------
+			long currentTimeMillis = System.currentTimeMillis();
+			if (this.statsPaintCompIntervalStart==0) {
+				// --- Define the interval for the observation ------
+				this.resetObservationVariables(currentTimeMillis);
+			
+			} else if (this.statsPaintCompIntervalStart + this.statsPaintCompObservationInterval <= currentTimeMillis) {
+				// --- Print statistics -----------------------------
+				long observationDuration = currentTimeMillis - this.statsPaintCompIntervalStart;
+				double avgCals = (double) observationDuration / (double) this.statsLastPaintCompIntervalCounter; 
+				System.out.println("[" + this.getClass().getSimpleName() + "] PaintStats: " + this.statsLastPaintCompIntervalCounter + " calls in " + observationDuration + " ms (interval length: " + ((int)avgCals) + " ms)");
+				
+				// --- Reset interval for the observation -----------
+				this.resetObservationVariables(currentTimeMillis);
+			}
+			// --- Increase counter and so on -----------------------
+			this.statsLastPaintCompIntervalCounter++;
 		
+		}
+		// ----------------------------------------------------------
+
+		// ----------------------------------------------------------
+		// --- Start to do the actual painting ----------------------
+		// ----------------------------------------------------------
 		while (successfulPainted==false) {
 			
 			try {

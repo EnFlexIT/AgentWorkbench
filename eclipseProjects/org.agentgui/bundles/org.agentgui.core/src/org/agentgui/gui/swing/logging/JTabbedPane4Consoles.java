@@ -45,7 +45,7 @@ public class JTabbedPane4Consoles extends JTabbedPane implements AwbConsoleFolde
 	 */
 	public JTabbedPane4Consoles() {
 		super();
-		initialize();
+		this.initialize();
 	}
 
 	/**

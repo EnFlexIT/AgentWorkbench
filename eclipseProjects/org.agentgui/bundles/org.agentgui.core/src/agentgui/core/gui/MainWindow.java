@@ -29,6 +29,8 @@
 package agentgui.core.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -121,8 +123,7 @@ public class MainWindow extends JFrame {
 	private JDesktopPane jDesktopPane4Projects;
 	private JTabbedPane4Consoles jTabbedPane4Console;
 	private JPanelConsole jPanelConsoleLocal;
-	private int oldDividerLocation;
-	private boolean allowProjectMaximization = true;
+	private int visibleDividersLocation;
 
 	private JMenuBar jMenuBarBase;
 	private JMenuBar jMenuBarMain;
@@ -169,7 +170,7 @@ public class MainWindow extends JFrame {
 		if (Application.getGlobalInfo().isMaximzeMainWindow()==false) {
 			windowHeight = this.getSizeRelatedToScreenSize().getHeight() - 100;
 		}
-		this.oldDividerLocation = (int) windowHeight * 3/4; 
+		this.visibleDividersLocation = (int) windowHeight * 3/4; 
 	
 		// --- Create the Main-Elements of the Application --------
 		this.initComponents();
@@ -493,50 +494,7 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	/**
-	 * AwbConsole is visible.
-	 *
-	 * @return true, if successful
-	 */
-	public boolean isConsoleVisible() {
-		if (this.getJSplit4ProjectDesktop().getDividerSize()==0) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	/**
-	 * Do switch console.
-	 */
-	private void doSwitchConsole() {
-		if (this.getJSplit4ProjectDesktop().getDividerSize()>0) {
-			this.setConsoleVisible(false);
-		} else {
-			this.setConsoleVisible(true);
-		}
-	}
-
-	/**
-	 * Sets the console visible.
-	 *
-	 * @param show the new console visible
-	 */
-	private void setConsoleVisible(boolean show) {
-		this.getJTabbedPane4Console().setVisible(show);
-		if (show==true) {
-			this.getJSplit4ProjectDesktop().setDividerSize(10);
-			this.getJSplit4ProjectDesktop().setDividerLocation(this.oldDividerLocation);
-		} else {
-			oldDividerLocation = this.getJSplit4ProjectDesktop().getDividerLocation();
-			this.getJSplit4ProjectDesktop().setDividerSize(0);
-			this.getJSplit4ProjectDesktop().setDividerLocation(this.getJSplit4ProjectDesktop().getHeight());
-		}
-		if (Application.getProjectsLoaded().count()>0) {
-			Application.getProjectFocused().setMaximized();
-		}
-	}
-
+	
 	/**
 	 * This method sets back the focus to this JFrame.
 	 */
@@ -547,10 +505,51 @@ public class MainWindow extends JFrame {
 		this.setAlwaysOnTop(true);
 		this.setAlwaysOnTop(false);
 	}
-
+	
+	
 	/**
-	 * Gets the main splitpane.
-	 * @return the main splitpane
+	 * Return if the AwbConsole is visible.
+	 * @return true, if successful
+	 */
+	public boolean isConsoleVisible() {
+		if (this.getJSplit4ProjectDesktop().getDividerSize()==0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	/**
+	 * Do switch console.
+	 */
+	private void doSwitchConsole() {
+		if (this.getJSplit4ProjectDesktop().getDividerSize()>0) {
+			this.setConsoleVisible(false);
+		} else {
+			this.setConsoleVisible(true);
+		}
+	}
+	/**
+	 * Sets the console visible.
+	 *
+	 * @param show the new console visible
+	 */
+	private void setConsoleVisible(boolean show) {
+		this.getJTabbedPane4Console().setVisible(show);
+		if (show==true) {
+			this.getJSplit4ProjectDesktop().setDividerSize(10);
+			this.getJSplit4ProjectDesktop().setDividerLocation(this.visibleDividersLocation);
+		} else {
+			this.visibleDividersLocation = this.getJSplit4ProjectDesktop().getDividerLocation();
+			this.getJSplit4ProjectDesktop().setDividerSize(0);
+			this.getJSplit4ProjectDesktop().setDividerLocation(this.getJSplit4ProjectDesktop().getHeight());
+		}
+		if (Application.getProjectsLoaded().count()>0) {
+			Application.getProjectFocused().setMaximized();
+		}
+	}
+	/**
+	 * Returns the main JSplitPane.
+	 * @return the main JSplitPane
 	 */
 	private JSplitPane getJSplit4ProjectDesktop() {
 		if (jSplitPane4ProjectDesktop == null) {
@@ -563,20 +562,24 @@ public class MainWindow extends JFrame {
 			jSplitPane4ProjectDesktop.setResizeWeight(0.8);
 			jSplitPane4ProjectDesktop.addPropertyChangeListener(new PropertyChangeListener() {
 				@Override
-				public void propertyChange(PropertyChangeEvent eventSource) {
-					if (eventSource.getPropertyName().equals("lastDividerLocation")) {
-						if (Application.getProjectsLoaded().count()>0) {
-							if (allowProjectMaximization == true) {
-								allowProjectMaximization = false;
-								Application.getProjectFocused().setMaximized();
-								allowProjectMaximization = true;
-							}
+				public void propertyChange(PropertyChangeEvent pcEvent) {
+					if (Application.getProjectsLoaded().count()>0 && pcEvent.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+						// --- Did the divider location really changed ? ----------------
+						if (pcEvent.getNewValue()!=pcEvent.getOldValue()) {
+							Application.getProjectFocused().setMaximized();
 						}
 					}
 				}
 			});
 		}
 		return jSplitPane4ProjectDesktop;
+	}
+	
+	public JDesktopPane getJDesktopPane4Projects() {
+		if (jDesktopPane4Projects == null) {
+			jDesktopPane4Projects = new JDesktopPane();
+		}
+		return jDesktopPane4Projects;
 	}
 	public JTabbedPane4Consoles getJTabbedPane4Console() {
 		if (jTabbedPane4Console == null) {
@@ -592,12 +595,7 @@ public class MainWindow extends JFrame {
 		}
 		return jPanelConsoleLocal;
 	}
-	public JDesktopPane getJDesktopPane4Projects() {
-		if (jDesktopPane4Projects == null) {
-			jDesktopPane4Projects = new JDesktopPane();
-		}
-		return jDesktopPane4Projects;
-	}
+	
 	// ------------------------------------------------------------
 	// --- Desktop der Anwendung definieren - ENDE ----------------
 	// ------------------------------------------------------------
@@ -1579,8 +1577,37 @@ public class MainWindow extends JFrame {
 		System.out.println();
 		
 	}
+	
+	/**
+	 * Prints the class name of the focus owning component and its parent.
+	 */
+	public void printFocusOwner() {
+		
+		String message = null;
+		String messageIntro = "" + this.getClass().getSimpleName() + "#printFocusOwner() => ";
+
+		Component focusComp = this.getFocusOwner();
+		if (focusComp==null) {
+			message = messageIntro + "No focussed component found!";
+		} else {
+		
+			String parentQueue = "";
+			Container parentContainer = focusComp.getParent(); 
+			while (parentContainer!=null && parentContainer!=this) {
+				if (parentQueue.isEmpty()==false) {
+					parentQueue+= ", ";
+				}
+				parentQueue+= parentContainer.getParent().getClass().getSimpleName();
+				parentContainer = parentContainer.getParent();
+			}
+			message = messageIntro + "Focus is on component " + focusComp.getClass().getName() + " - Parents: " + parentQueue;
+		}
+		System.err.println(message);
+	}
+
 	// ----------------------------------------------------
 	// --- Test and debug area -------------------- End ---
 	// ----------------------------------------------------
 
+	
 } // -- End Class ---
