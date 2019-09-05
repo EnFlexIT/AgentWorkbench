@@ -29,6 +29,7 @@
 package org.awb.env.networkModel.controller.ui.commands;
 
 import java.io.File;
+import java.util.Collections;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -52,6 +53,8 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -409810728677898514L;
 
+	private static FileFilter lastSlectedFileFilter;
+	
 	private GraphEnvironmentController graphController;
 	
 	private boolean canceled = false;
@@ -164,14 +167,23 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	private void selectFile() {
 		
 		// ----------------------------------------------------------
-		// --- Button Import graph from file -----------------------
+		// --- Button Import graph from file ------------------------
 		JFileChooser graphFC = new JFileChooser();
 		graphFC.removeChoosableFileFilter(graphFC.getAcceptAllFileFilter());
 		
-		// --- Add defined FileFilters ------------------------------
+		// --- Add defined FileFilters in alphabetic order ----------
+		Collections.sort(this.graphController.getImportAdapter());
 		for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
+			// --- Get the import adapters FileFilter ---------------
 			AbstractNetworkModelFileImporter importer = this.graphController.getImportAdapter().get(i);
-			graphFC.addChoosableFileFilter(importer.getFileFilter());
+			FileFilter fileFilter = importer.getFileFilter();
+			// --- Add filter to file chooser -----------------------
+			graphFC.addChoosableFileFilter(fileFilter);
+			// --- Check if is last selcted file filter -------------
+			if (lastSlectedFileFilter!=null && fileFilter.getDescription().equals(lastSlectedFileFilter.getDescription())) {
+				// --- To be sure to have the right instance --------
+				lastSlectedFileFilter = fileFilter;
+			}
 		}
 		
 		// --- Check for file filter --------------------------------
@@ -182,8 +194,11 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			JOptionPane.showMessageDialog(this.graphController.getGraphEnvironmentControllerGUI(), message, title, JOptionPane.ERROR_MESSAGE);
 			
 		} else {
-			// --- Select file -------------------------------------- 
+			// --- Pre-Select FileFilter and directory  -------------
 			graphFC.setFileFilter(graphFC.getChoosableFileFilters()[0]);
+			if (lastSlectedFileFilter!=null) {
+				graphFC.setFileFilter(lastSlectedFileFilter);
+			}
 			graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 			
 			// --- Show FileChooser ---------------------------------
@@ -197,6 +212,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 					if (selectedFileFilter==importer.getFileFilter()) {
 						this.networkModelFileSelected = selectedFile;
 						this.abstractNetworkModelFileImporter = importer;
+						lastSlectedFileFilter = selectedFileFilter;
 						break;
 					}
 				}

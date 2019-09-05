@@ -47,7 +47,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class AbstractNetworkModelFileImporter {
+public abstract class AbstractNetworkModelFileImporter implements Comparable<AbstractNetworkModelFileImporter> {
 	
 	/** The current settings for the graph environment */
 	protected GraphEnvironmentController graphController;
@@ -102,6 +102,9 @@ public abstract class AbstractNetworkModelFileImporter {
 	 * @return The file extension
 	 */
 	public String getFileTypeExtension() {
+		if (fileTypeExtension==null || fileTypeExtension.isEmpty()) {
+			fileTypeExtension = "MISSING: file type extension!"; 
+		}
 		return fileTypeExtension;
 	}
 	/**
@@ -109,6 +112,9 @@ public abstract class AbstractNetworkModelFileImporter {
 	 * @return The type String
 	 */
 	public String getFileTypeDescription() {
+		if (fileTypeDescription==null || fileTypeDescription.isEmpty()) {
+			fileTypeDescription = "MISSING: file type description!"; 
+		}
 		return fileTypeDescription;
 	}
 	
@@ -142,6 +148,22 @@ public abstract class AbstractNetworkModelFileImporter {
 			};
 		}
 		return this.fileFilter;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(AbstractNetworkModelFileImporter fiToComp) {
+		
+		String localFileTypeDescription = this.getFileTypeDescription();
+		String compFileTypeDescription  = fiToComp.getFileTypeDescription();
+		if (localFileTypeDescription.equals(compFileTypeDescription)==true) {
+			String localFileTypeExtension = this.getFileTypeExtension();
+			String compFileTypeExtension  = fiToComp.getFileTypeExtension();
+			return localFileTypeExtension.compareTo(compFileTypeExtension);
+		} 
+		return localFileTypeDescription.compareTo(compFileTypeDescription);
 	}
 	
 }
