@@ -45,13 +45,19 @@ public class PathHandling {
 		
 		if (fileName==null) return null;
 		
+		// --- Put slash into right direction -------------
 		String corrected = "";
 		for (int i = 0; i < fileName.length(); i++) {
+
+			boolean skipChar = false;
 			String	chara = Character.toString(fileName.charAt(i));
 			if (chara.equals("\\") || chara.equals("/")) {
 				chara = File.separator;
+				if (corrected.isEmpty()==false && corrected.substring(corrected.length()-1).equals(File.separator)) {
+					skipChar=true;
+				}
 			}
-			corrected = corrected + chara;
+			if (skipChar==false) corrected = corrected + chara;
 		}
 		return corrected;
 	}

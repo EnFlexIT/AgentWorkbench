@@ -121,13 +121,15 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	            }
 	            
 	            if (currentImageIcon!=null && this.currentImageIcon.getDescription()!=null) {
-	            	// --- If file exists make it selected in the file chosser ----------
-	            	String fileDesc = this.currentImageIcon.getDescription().substring(1).replace(project.getProjectFolder(), "").substring(1);
-	            	String filePath = project.getProjectFolderFullPath() + fileDesc;
-	            	filePath = PathHandling.getPathName4LocalOS(filePath);
-	            	File testFile = new File(filePath);
-	            	if (testFile.exists()==true) {
-	            		this.getFileChooser().setSelectedFile(testFile);
+	            	// --- If file exists make it selected in the file chooser ----------
+	            	String relativePath = this.currentImageIcon.getDescription();
+	            	if (relativePath.startsWith("/" + project.getProjectFolder())) {
+	            		relativePath = relativePath.substring(project.getProjectFolder().length()+1);
+	            	}
+	            	String checkFilePath = PathHandling.getPathName4LocalOS(project.getProjectFolderFullPath() + relativePath);
+	            	File checkFile = new File(checkFilePath);
+	            	if (checkFile.exists()==true) {
+	            		this.getFileChooser().setSelectedFile(checkFile);
 	            	}
 	            }
 	            
@@ -141,16 +143,16 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	                String filePath = file.getAbsolutePath();
 	                
 	                // --- Checking the prefix of the chosen file path ------------------
-	                if(filePath.startsWith(project.getProjectFolderFullPath())){
+	                if (filePath.startsWith(project.getProjectFolderFullPath())) {
 	                	// --- The image is inside project folder or its sub folder -----
 	                	String path = filePath.replace(project.getProjectFolderFullPath(), "");
 	                    // --- Constructing the relative resource path ------------------
-	                	path = "/"+ project.getProjectFolder() + "/"  + path.replace(File.separatorChar, '/');
+	                	path = "/"  + path.replace(File.separatorChar, '/');
 	                	// --- Updating the image Icon of the table cell ----------------
 	                	currentImageIcon = ComponentTypeDialog.createImageIcon(path, path);
 	                } else{	                
 	                	// --- The image is not inside the project folder ---------------	
-	                	String msg   = Language.translate("The image should be in the "+project.getProjectFolder()+" folder.", Language.EN);
+	                	String msg   = Language.translate("The image should be in the "+ project.getProjectFolder() + " folder.", Language.EN);
 	                	String title = Language.translate("Warning", Language.EN);
 	                	JOptionPane.showMessageDialog(null, msg, title, JOptionPane.WARNING_MESSAGE);	 	        			
 	                }

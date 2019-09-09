@@ -553,7 +553,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 				if (imageIcon!=null) {
 					return imageIcon;
 				} else {
-					System.err.println("Couldn't find file: " + path);
+					System.err.println("[" + ComponentTypeDialog.class.getSimpleName() + "] Couldn't find file: " + path);
 			        return new MissingIcon(description);
 				}
 			}

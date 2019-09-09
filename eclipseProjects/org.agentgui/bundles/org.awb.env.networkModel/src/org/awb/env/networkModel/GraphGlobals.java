@@ -43,6 +43,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 
 import agentgui.core.application.Application;
+import agentgui.core.project.Project;
 import de.enflexit.common.PathHandling;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -84,51 +85,59 @@ public final class GraphGlobals {
  		File imageFile = null;
  		ImageIcon imageIcon = null;
  		
- 		// ----------------------------------------------------------
- 		// --- 0. Get the source folder of the execution instance ---
- 		// ----------------------------------------------------------
- 		// --- Removed because of a authority bug in IOS-systems ---- 
-// 		File currRootFile;
-//		try {
-//			currRootFile = new File(GraphGlobals.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-//			if (currRootFile.exists()) {
-//				pathRoot = currRootFile.getParentFile().getAbsolutePath();
-//	    	}
-//		} catch (URISyntaxException e) {
-//			//e.printStackTrace();
-//		}
- 		// --- New approach to the above mentioned problem ----------
  		
  		// ----------------------------------------------------------
-		// --- 1. Search in the loaded packages ---------------------
+		// --- 1. Try current project locations ---------------------
  		// ----------------------------------------------------------
-		// --- 1a. Try the direct way -------------------------------
-		try {
-			URL url = GraphGlobals.class.getResource(path2Image);
-			imageIcon = new ImageIcon(url);
-			
-		} catch (Exception ex) {
-			//System.err.println("Could not find image for '" + description + "' in packages");
-			imageIcon = null;
+		Project project = Application.getProjectFocused();
+		if (project!=null) {
+			// --- 1a. Try in projects sub directory ----------------
+			path = project.getProjectFolderFullPath() + path2Image;
+			imageFile = new File(PathHandling.getPathName4LocalOS(path));
+			if (imageFile.exists()) {
+				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
+			} 
+
+			// --- 1b. Starts with the projects directory? ----------
+			if (imageIcon==null && path2Image.startsWith("/" + project.getProjectFolder())==true) {
+				path = Application.getGlobalInfo().getPathProjects() + path2Image;
+				imageFile = new File(PathHandling.getPathName4LocalOS(path));
+				if (imageFile.exists()) {
+					imageIcon = new ImageIcon(imageFile.getAbsolutePath());
+				} 
+			}
+		}
+ 		
+ 		// ----------------------------------------------------------
+		// --- 2. Search in the loaded packages ---------------------
+ 		// ----------------------------------------------------------
+		// --- 2a. Try the direct way -------------------------------
+		if (imageIcon==null) {
+			try {
+				URL url = GraphGlobals.class.getResource(path2Image);
+				imageIcon = new ImageIcon(url);
+				
+			} catch (Exception ex) {
+				imageIcon = null;
+			}
 		}
 
-		// --- 1b. Try the image package of the GraphEnvironement ---
+		// --- 2b. Try the image package of the GraphEnvironement ---
 		if (imageIcon==null) {
 			try {
 				URL url = GraphGlobals.class.getResource(getPathImages() + path2Image);
 				imageIcon = new ImageIcon(url);
 				
 			} catch (Exception ex) {
-				//System.err.println("Could not find image for '" + description + "' in packages");
 				imageIcon = null;
 			}
 		}
 		
  		// ----------------------------------------------------------
-		// --- 2. Try folder locations ------------------------------
+		// --- 3. Try folder locations ------------------------------
  		// ----------------------------------------------------------
 		if (imageIcon==null) {
-			// --- 2a. Try direct folder location -------------------
+			// --- 3a. Try direct folder location -------------------
 	 		path = path2Image;
 	 		imageFile = new File(PathHandling.getPathName4LocalOS(path));
 			if (imageFile.exists()) {
@@ -136,21 +145,15 @@ public final class GraphGlobals {
 			} 
 		}
 		if (imageIcon==null) {
-			// --- 2b. Try sub folder 'project' ---------------------
-			path = "/projects" + path2Image;
-			imageFile = new File(PathHandling.getPathName4LocalOS(path));
-			if (imageFile.exists()) {
-				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
-			} 
-		}
-		if (imageIcon==null) {
-			// --- 2c. Try absolute sub folder 'project' ---------------------
+			// --- 3b. Try absolute sub folder 'project' ------------
 			path = Application.getGlobalInfo().getPathProjects() + path2Image;
 			imageFile = new File(PathHandling.getPathName4LocalOS(path));
 			if (imageFile.exists()) {
 				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
 			} 
 		}
+		
+		
 		if (imageIcon!=null) {
 			imageIcon.setDescription(path2Image);
 		}
