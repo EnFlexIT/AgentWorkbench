@@ -177,6 +177,13 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	public Object getDataModel() {
 		return this.getOntologyInstanceViewer().getConfigurationInstances();
 	}
+	/**
+	 * Returns the ontology data model as array.
+	 * @return the data model as array
+	 */
+	public Object[] getDataModelAsArray() {
+		return this.getOntologyInstanceViewer().getConfigurationInstances();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.NetworkComponentAdapter4DataModel#getDataModelBase64Encoded(java.lang.Object)
@@ -195,12 +202,21 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 */
 	@Override
 	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
+		return this.getDataModelBase64DecodedAsArray(dataModel);
+	}
+	/**
+	 * Returns the Base64 decoded data model as object array.
+	 *
+	 * @param dataModel the data model
+	 * @return the data model base 64 decoded as array
+	 */
+	public Object[] getDataModelBase64DecodedAsArray(Vector<String> dataModel) {
 		if (dataModel==null) {
 			throw new NullPointerException("[" + this.getClass().getSimpleName() + "] Vector<String> 'dataModel' must not be null!");
 		}
 		return this.getInstancesFromXML64(dataModel);
 	}
-
+	
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here, conversion from XML64 to instances --------------------------------
