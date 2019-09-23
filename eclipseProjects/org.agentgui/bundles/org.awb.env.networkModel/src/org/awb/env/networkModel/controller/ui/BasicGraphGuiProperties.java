@@ -93,8 +93,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 
 	private final String pathImage = GraphGlobals.getPathImages();
 	
-	private int defaultWidth = 300;
-	private int defaultHeight= 450;
+	public static final int DEFAULT_WIDTH = 300;
+	public static final int DEFAULT_HEIGHT= 450;
 	
 	private Object selectedGraphObject;
 	private GraphNode graphNode;
@@ -159,7 +159,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		this.configureForGraphObject();
 		this.setContentPane(this.getJContentPane());
-		this.setSize(this.defaultWidth, this.defaultHeight);
+		this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		this.setInitialSizeAndPosition();
 		
 		// --- Call to the super-class ----------
@@ -179,11 +179,11 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		if (this.graphDesktop!=null) {
 			Dimension desktopSize = this.graphDesktop.getSize();
-			Dimension newSize = new Dimension(this.defaultWidth, (int) (desktopSize.getHeight()*(2.0/3.0)));
+			Dimension newSize = new Dimension(DEFAULT_WIDTH, (int) (desktopSize.getHeight()*(2.0/3.0)));
 			// --- Possibly, a user defined size is to be considered ----------
 			if (this.getNetworkComponentAdapter4DataModel()!=null) {
 				Dimension userSize = this.getNetworkComponentAdapter4DataModel().getSizeOfVisualisation(this.graphDesktop); 
-				if (userSize!=null) newSize = userSize;	
+				if (userSize!=null) newSize = userSize;
 			}
 			
 			if (this.graphDesktop.getLastOpenedEditor()==null) {
@@ -288,19 +288,10 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	@Override
 	public void exchangeJPanelContent(JPanel newJPanelContent) {
-
 		if (newJPanelContent==null) return;
-		
 		// --- Set visualization component to NetworkComponentAdapter --------- 
 		this.getNetworkComponentAdapter4DataModel().setVisualizationComponent(newJPanelContent);
-		
-		// --- Remove the old content -----------------------------------------
-		this.getJContentPane().remove(this.getJPanelContent());
-		// --- Add the new content --------------------------------------------
 		this.jComponentContent = newJPanelContent;
-		this.getJContentPane().add(newJPanelContent, BorderLayout.CENTER);
-		this.validate();
-		this.repaint();
 	}
 	
 	/**
@@ -421,7 +412,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 * This method initializes jContentPane
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJContentPane() {
+	public JPanel getJContentPane() {
 		if (jContentPane == null) {
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new BorderLayout());
