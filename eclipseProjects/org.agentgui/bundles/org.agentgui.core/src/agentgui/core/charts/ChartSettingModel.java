@@ -36,6 +36,8 @@ import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.application.Language;
 import agentgui.ontology.DataSeries;
+import agentgui.ontology.TimeSeries;
+import agentgui.ontology.XyDataSeries;
 
 /**
  * The Class ChartSettingModel represents the special data model 
@@ -43,7 +45,7 @@ import agentgui.ontology.DataSeries;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ChartSettingModel extends Observable{
+public class ChartSettingModel extends Observable {
 	
 	/**
 	 * List of constants indicating changes of chart settings
@@ -230,10 +232,12 @@ public class ChartSettingModel extends Observable{
 		}
 		
 		// --- Add rows containing the series specific settings -----
-		for(int i=0; i < parentDataModel.getOntologyModel().getChartData().size(); i++){
+		for (int i=0; i < parentDataModel.getOntologyModel().getChartData().size(); i++) {
 				
 			// Extract series settings from the ontology model
 			DataSeries series = (DataSeries) parentDataModel.getOntologyModel().getChartData().get(i);
+			// TODO @Nils Please check this approach !
+			if (this.isEmptyDataSeries(series)==true) continue;
 			
 			String rgb = null;
 			if (parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().size() < (i+1)) {
@@ -261,6 +265,29 @@ public class ChartSettingModel extends Observable{
 		}
 	}
 
+	/**
+	 * Checks if is empty data series.
+	 *
+	 * @param series the series
+	 * @return true, if is empty data series
+	 */
+	private boolean isEmptyDataSeries(DataSeries series) {
+		
+		boolean isEmpty = false;
+		if (series instanceof TimeSeries) {
+			// --- Check TimeSeries -----------------------
+			TimeSeries timeSeries = (TimeSeries) series;
+			isEmpty = timeSeries.isEmpty();
+			
+		} else if (series instanceof XyDataSeries) {
+			// --- Check XySeries -------------------------
+			XyDataSeries xySeries = (XyDataSeries) series;
+			isEmpty = xySeries.isEmpty();
+			
+		}
+		return isEmpty;
+	}
+	
 	/**
 	 * Gets the vector chart setting model listener.
 	 * @return the chart setting model listener
