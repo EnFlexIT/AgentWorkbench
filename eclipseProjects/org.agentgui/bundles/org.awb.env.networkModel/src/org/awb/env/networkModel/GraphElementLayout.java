@@ -143,12 +143,12 @@ public class GraphElementLayout {
 			// -----------------------------------------------------------
 			// --- DistributionNode --------------------------------------
 			// -----------------------------------------------------------
-			myComponentTypeSettings = ctsHash.get(distributionNode.getType());
-			if (myComponentTypeSettings!=null) {
+			this.myComponentTypeSettings = ctsHash.get(distributionNode.getType());
+			if (this.myComponentTypeSettings!=null) {
 				
 				this.setDistributionNode(true);
 				
-				this.myDomain = this.domainHash.get(myComponentTypeSettings.getDomain());
+				this.myDomain = this.domainHash.get(this.myComponentTypeSettings.getDomain());
 				
 				String labelText = null;
 				boolean showNodeLabel = this.myDomain.isShowLabel();
@@ -272,30 +272,40 @@ public class GraphElementLayout {
 			System.out.println("Graph Element Layout: NetworkComponent for GraphEdge '" + graphEdge.getId() + "' not found!");
 			return;
 		}
+		
+		// --- Set values according to Domain and component type settings - 
+		this.labelText = graphEdge.getId();
+
 		if (networkComponent instanceof ClusterNetworkComponent) {
 			
 			this.setClusterComponent(true);
 			
 			ClusterNetworkComponent clusterNetworkComponent = (ClusterNetworkComponent) networkComponent;
-			this.myDomain = domainHash.get(clusterNetworkComponent.getDomain());
-			
-			this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-			this.labelText = graphEdge.getId();
+
 			this.showLabel = false;
 			this.imageReference = null;
+
+			this.myDomain = this.domainHash.get(clusterNetworkComponent.getDomain());
+			if (this.myDomain!=null) {
+				this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
+			}
 			
 		} else {
 			
-			this.myComponentTypeSettings = ctsHash.get(networkComponent.getType());
-			this.myDomain = domainHash.get(myComponentTypeSettings.getDomain());
-			
-			this.size = myComponentTypeSettings.getEdgeWidth();
-			this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
-			this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-			this.labelText = graphEdge.getId();
-			this.showLabel = myComponentTypeSettings.isShowLabel();
-			this.imageReference = myComponentTypeSettings.getEdgeImage();
-			
+			this.myComponentTypeSettings = this.ctsHash.get(networkComponent.getType());
+			if (this.myComponentTypeSettings!=null) {
+				// --- Set values derived from ComponentTypeSettings ----------
+				this.size = this.myComponentTypeSettings.getEdgeWidth();
+				this.color = new Color(Integer.parseInt(this.myComponentTypeSettings.getColor()));
+				this.showLabel = this.myComponentTypeSettings.isShowLabel();
+				this.imageReference = this.myComponentTypeSettings.getEdgeImage();
+
+				this.myDomain = domainHash.get(this.myComponentTypeSettings.getDomain());
+				if (this.myDomain!=null) {
+					// --- Set values derived from DomainSettings -------------
+					this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
+				}
+			}
 		}
 		
 	}
