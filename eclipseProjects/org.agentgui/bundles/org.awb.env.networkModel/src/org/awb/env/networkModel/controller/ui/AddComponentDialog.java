@@ -249,7 +249,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     			// --- Remind the old inverse divider location ------
     			int oldInverseDividerLocation = this.getHeight() - this.getJSplitPaneContent().getDividerLocation();
     			// --- Calculate and set the new size ---------------
-    			int width = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getJSplitPaneRoot().getDividerLocation();
+    			JSplitPane splitPaneNetworkModel = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getJSplitPaneRoot();
+    			int width = splitPaneNetworkModel.getDividerLocation() + splitPaneNetworkModel.getDividerSize();
     			this.setSize(new Dimension(width, this.graphDesktop.getHeight()));
     			// --- set the new divider position -----------------
     			int newDividerLocation = this.graphDesktop.getHeight() - oldInverseDividerLocation;
