@@ -615,9 +615,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 */
 	public void setConfigurationXML(String[] configurationXML) {
 		this.dynForm.setOntoArgsXML(configurationXML);
-		if (this.getSelectedTab()==ViewerTab.FormTab) {
-			this.setXMLText();
-		}
+		this.setXMLText();
 	}
 	/**
 	 * Returns the configuration in XML.
@@ -649,9 +647,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		
 		this.getDynForm().setOntoArgsXML(configXML);
 		this.getDynTableJPanel().refreshTableModel();
-		if (this.getSelectedTab()==ViewerTab.FormTab) {
-			this.setXMLText();
-		}
+		this.setXMLText();
 		
 	}
 	
@@ -689,9 +685,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	public void setConfigurationInstances(final Object[] configurationInstances) {
 		this.getDynForm().setOntoArgsInstance(configurationInstances);
 		this.getDynTableJPanel().refreshTableModel();
-		if (this.getSelectedTab()==ViewerTab.FormTab) {
-			this.setXMLText();
-		}	
+		this.setXMLText();
 	}
 	
 	/**
