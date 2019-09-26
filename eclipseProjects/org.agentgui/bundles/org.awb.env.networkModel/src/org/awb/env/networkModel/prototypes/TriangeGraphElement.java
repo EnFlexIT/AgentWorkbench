@@ -29,7 +29,6 @@
 package org.awb.env.networkModel.prototypes;
 
 import java.util.HashSet;
-import java.util.Vector;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphElement;
@@ -45,15 +44,11 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
 public class TriangeGraphElement extends AbstractGraphElementPrototype {
-    /**
-     * The AbstractGraphElementPrototype's connection points
+   
+
+    /* (non-Javadoc)
+     * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#addToGraph(org.awb.env.networkModel.NetworkModel)
      */
-    private Vector<GraphNode> nodes;
-
-    public TriangeGraphElement() {
-    	nodes = new Vector<GraphNode>();
-    }
-
     @Override
     public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
     	
@@ -81,11 +76,6 @@ public class TriangeGraphElement extends AbstractGraphElementPrototype {
 		graph.addEdge(e2, n1, n3, EdgeType.UNDIRECTED);
 		graph.addEdge(e3, n2, n3, EdgeType.UNDIRECTED);
 	
-		// Add the nodes to this GraphElementPrototypes node list
-		nodes.add(n1);
-		nodes.add(n2);
-		nodes.add(n3);
-	
 		// Create a HashSet containing the nodes and edge and return it
 		HashSet<GraphElement> elements = new HashSet<GraphElement>();
 		elements.add(n1);
@@ -97,6 +87,9 @@ public class TriangeGraphElement extends AbstractGraphElementPrototype {
 		return elements;
     }
 
+    /* (non-Javadoc)
+     * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#isDirected()
+     */
     @Override
     public boolean isDirected() {
     	return false;

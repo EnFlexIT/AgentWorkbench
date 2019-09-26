@@ -29,7 +29,6 @@
 package org.awb.env.networkModel.prototypes;
 
 import java.util.HashSet;
-import java.util.Vector;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphElement;
@@ -43,16 +42,12 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * A simple graph / network element with two connection points, represented by two nodes and an edge.
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- * 
  */
 public class SimpleGraphElement extends AbstractGraphElementPrototype {
-    
-    private Vector<GraphNode> nodes;
 
-    public SimpleGraphElement() {
-    	nodes = new Vector<GraphNode>();
-    }
-
+    /* (non-Javadoc)
+     * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#addToGraph(org.awb.env.networkModel.NetworkModel)
+     */
     @Override
     public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
     	
@@ -67,21 +62,20 @@ public class SimpleGraphElement extends AbstractGraphElementPrototype {
 		exit.setId(networkModel.nextNodeID());
 		graph.addVertex(exit);
 		
-		GraphEdge e = new GraphEdge(getId(), getType());
-		graph.addEdge(e, entry, exit, EdgeType.UNDIRECTED);
-	
-		// Add the nodes to this GraphElementPrototypes node list
-		nodes.add(entry);
-		nodes.add(exit);
+		GraphEdge graphEdge = new GraphEdge(getId(), getType());
+		graph.addEdge(graphEdge, entry, exit, EdgeType.UNDIRECTED);
 	
 		// Create a HashSet containing the nodes and edge ant return it
 		HashSet<GraphElement> elements = new HashSet<GraphElement>();
-		elements.add(e);
+		elements.add(graphEdge);
 		elements.add(entry);
 		elements.add(exit);
 		return elements;
     }
 
+    /* (non-Javadoc)
+     * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#isDirected()
+     */
     @Override
     public boolean isDirected() {
     	return false;

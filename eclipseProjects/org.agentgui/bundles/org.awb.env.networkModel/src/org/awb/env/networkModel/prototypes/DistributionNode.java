@@ -42,16 +42,6 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class DistributionNode extends AbstractGraphElementPrototype {
 
-	/** The instance of the current DistributionNode */
-	private GraphNode distributionNode;
-	
-	
-	/**
-	 * Instantiates a new distribution node.
-	 */
-	public DistributionNode() {
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
 	 */
@@ -61,11 +51,12 @@ public class DistributionNode extends AbstractGraphElementPrototype {
     	Graph<GraphNode, GraphEdge> graph = networkModel.getGraph();
 		HashSet<GraphElement> elements = new HashSet<GraphElement>();
 
-		distributionNode = new GraphNode();
+		GraphNode distributionNode = new GraphNode();
 		distributionNode.setId(networkModel.nextNodeID());
 		graph.addVertex(distributionNode);
 	    elements.add(distributionNode);
-		return elements;
+		
+	    return elements;
 	}
 
 	/* (non-Javadoc)

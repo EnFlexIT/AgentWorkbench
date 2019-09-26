@@ -42,13 +42,9 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * A simple directed graph / network element with two connection points, represented by two nodes and a directed edge.
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- * 
  */
 public class DirectedSimpleGraphElement extends AbstractGraphElementPrototype {
     
-    private GraphNode entry;
-    private GraphNode exit;
-
     /* (non-Javadoc)
      * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
      */
@@ -58,25 +54,28 @@ public class DirectedSimpleGraphElement extends AbstractGraphElementPrototype {
     	Graph<GraphNode, GraphEdge> graph = networkModel.getGraph();
 	
 		// Create nodes and edge
-		entry = new GraphNode();
+		GraphNode entry = new GraphNode();
 		entry.setId(networkModel.nextNodeID());
 		graph.addVertex(entry);
 		
-		exit = new GraphNode();
+		GraphNode exit = new GraphNode();
 		exit.setId(networkModel.nextNodeID());
 		graph.addVertex(exit);
 		
-		GraphEdge e = new GraphEdge(getId(), getType());
-		graph.addEdge(e, entry, exit, EdgeType.DIRECTED);
+		GraphEdge graphEdge = new GraphEdge(getId(), getType());
+		graph.addEdge(graphEdge, entry, exit, EdgeType.DIRECTED);
 	
 		// Create a HashSet containing the nodes and edge ant return it
 		HashSet<GraphElement> elements = new HashSet<GraphElement>();
-		elements.add(e);
+		elements.add(graphEdge);
 		elements.add(entry);
 		elements.add(exit);
 		return elements;
     }
 
+    /* (non-Javadoc)
+     * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#isDirected()
+     */
     @Override
     public boolean isDirected() {
     	return true;
