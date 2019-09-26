@@ -84,6 +84,11 @@ public class TimeSeriesDataModel extends DataModel {
 
 		TimeSeriesChart timeSeriesChartNew = (TimeSeriesChart) ontologyChart;
 		
+		if (timeSeriesChartNew==null) {
+			timeSeriesChartNew = new TimeSeriesChart();
+			timeSeriesChartNew.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
+		}
+		
 		this.ontologyModel = new TimeSeriesOntologyModel(timeSeriesChartNew, this);
 		this.chartModel = new TimeSeriesChartModel(this);
 		if (this.tableModel==null) {
