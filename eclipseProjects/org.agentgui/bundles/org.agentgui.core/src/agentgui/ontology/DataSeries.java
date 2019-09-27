@@ -9,7 +9,7 @@ import jade.core.*;
    * This class represents one data series, containing x and y values
 * Protege name: DataSeries
 * @author ontology bean generator
-* @version 2019/02/25, 13:33:15
+* @version 2019/09/27, 17:26:05
 */
 public class DataSeries implements Concept {
 

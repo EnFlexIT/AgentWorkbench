@@ -1,4 +1,4 @@
-; Mon Feb 25 13:34:57 CET 2019
+; Fri Sep 27 17:26:48 CEST 2019
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -30,6 +30,11 @@
 
 	(%3AJADE-IGNORE FALSE))
 
+([Simple_Double] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public Double getDoubleValue() {\n	   try {\n		   return Double.parseDouble(this.getStringDoubleValue());\n	   } catch(NumberFormatException ex){\n		   return null;\n	   }\n   }\n   public void setDoubleValue(double doubleValue) {\n	   this.setStringDoubleValue(\"\" + doubleValue);;\n   }\n   public void setDoubleValue(Double doubleValue) {\n	   this.setStringDoubleValue(doubleValue.toString());\n   }"))
+
 ([Simple_Float] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
@@ -54,7 +59,7 @@
 ([TimeSeries] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE)
-	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getTimeSeriesValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getTimeSeriesValuePairs().size() == 1){\n			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);\n			   if(vp.getValue().getFloatValue() == 0.0f && vp.getTimestamp().getStringLongValue().length() == 0){\n				   noValuePairs = true;\n			   }\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n}\n\npublic void sort() {\n	java.util.List<TimeSeriesValuePair> newTimeSeriesValuePairs = new java.util.ArrayList<TimeSeriesValuePair>();\n	for (int i=0; i<this.timeSeriesValuePairs.size(); i++) {\n		newTimeSeriesValuePairs.add((TimeSeriesValuePair) this.timeSeriesValuePairs.get(i));\n	}\n	java.util.Collections.sort(newTimeSeriesValuePairs, new java.util.Comparator<TimeSeriesValuePair>() {\n		@Override\n		public int compare(TimeSeriesValuePair vp1, TimeSeriesValuePair vp2) {\n			Long t1 = vp1.getTimestamp().getLongValue();\n			Long t2 = vp2.getTimestamp().getLongValue();\n			return t1.compareTo(t2);\n		}\n	});\n	this.timeSeriesValuePairs.clear();\n	for (int i=0; i<newTimeSeriesValuePairs.size(); i++) {\n		this.timeSeriesValuePairs.add(newTimeSeriesValuePairs.get(i));\n	}\n}"))
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getTimeSeriesValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getTimeSeriesValuePairs().size() == 1){\n			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);\n			   noValuePairs = vp.isEmpty();\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n	}\n\npublic void sort() {\n	java.util.List<TimeSeriesValuePair> newTimeSeriesValuePairs = new java.util.ArrayList<TimeSeriesValuePair>();\n	for (int i=0; i<this.timeSeriesValuePairs.size(); i++) {\n		newTimeSeriesValuePairs.add((TimeSeriesValuePair) this.timeSeriesValuePairs.get(i));\n	}\n	java.util.Collections.sort(newTimeSeriesValuePairs, new java.util.Comparator<TimeSeriesValuePair>() {\n		@Override\n		public int compare(TimeSeriesValuePair vp1, TimeSeriesValuePair vp2) {\n			Long t1 = vp1.getTimestamp().getLongValue();\n			Long t2 = vp2.getTimestamp().getLongValue();\n			return t1.compareTo(t2);\n		}\n	});\n	this.timeSeriesValuePairs.clear();\n	for (int i=0; i<newTimeSeriesValuePairs.size(); i++) {\n		this.timeSeriesValuePairs.add(newTimeSeriesValuePairs.get(i));\n	}\n}"))
 
 ([TimeSeriesChart] of  %3AJADE-CLASS
 
@@ -67,7 +72,8 @@
 
 ([TimeSeriesValuePair] of  %3AJADE-CLASS
 
-	(%3AJADE-IGNORE FALSE))
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   if(this.getValue().getFloatValue() == 0.0f && this.getTimestamp().getStringLongValue().length() == 0){\n		   return  true;\n	   } else {\n		   return false;\n	   }\n   }"))
 
 ([ValuePair] of  %3AJADE-CLASS
 

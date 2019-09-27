@@ -8,7 +8,7 @@ import jade.core.*;
    * This class represents a time series, containing time related data.
 * Protege name: TimeSeries
 * @author ontology bean generator
-* @version 2019/02/25, 13:33:15
+* @version 2019/09/27, 17:26:05
 */
 public class TimeSeries extends DataSeries{ 
 
@@ -24,14 +24,12 @@ public boolean isEmpty() {
 	   }else{
 		   if(getTimeSeriesValuePairs().size() == 1){
 			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);
-			   if(vp.getValue().getFloatValue() == 0.0f && vp.getTimestamp().getStringLongValue().length() == 0){
-				   noValuePairs = true;
-			   }
+			   noValuePairs = vp.isEmpty();
 		   }
 	   }
 	   
 	   return wrongLabel && noValuePairs;
-}
+	}
 
 public void sort() {
 	java.util.List<TimeSeriesValuePair> newTimeSeriesValuePairs = new java.util.ArrayList<TimeSeriesValuePair>();

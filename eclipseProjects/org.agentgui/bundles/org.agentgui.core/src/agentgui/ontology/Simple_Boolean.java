@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Simple_Boolean
 * @author ontology bean generator
-* @version 2019/02/25, 13:33:15
+* @version 2019/09/27, 17:26:05
 */
 public class Simple_Boolean implements Concept {
 
