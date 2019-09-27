@@ -177,28 +177,46 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		int posVisViewOnBasicGraphGui = this.basicGraphGui.getVisualizationViewer().getParent().getLocation().x; 
 		int initialX = posBasicGraphGui + posVisViewOnBasicGraphGui;
 		
+		// --- Initial size value ----------------------------------------- 
+		Dimension newSize = this.getDefaultSize();
 		if (this.graphDesktop!=null) {
-			Dimension desktopSize = this.graphDesktop.getSize();
-			Dimension newSize = new Dimension(DEFAULT_WIDTH, (int) (desktopSize.getHeight()*(2.0/3.0)));
+
 			// --- Possibly, a user defined size is to be considered ----------
 			if (this.getNetworkComponentAdapter4DataModel()!=null) {
 				Dimension userSize = this.getNetworkComponentAdapter4DataModel().getSizeOfVisualisation(this.graphDesktop); 
-				if (userSize!=null) newSize = userSize;
+				if (userSize!=null) {
+					newSize = userSize;
+				}
 			}
 			
 			if (this.graphDesktop.getLastOpenedEditor()==null) {
 				this.setLocation(initialX, 0);
-				this.setSize(newSize);
 			} else {
 				int movementX = 10;
 				int movementY = 22;
 				Point lastEditorPosition = this.graphDesktop.getLastOpenedEditor().getLocation();
 				this.setLocation(lastEditorPosition.x+movementX, lastEditorPosition.y+movementY);
-				this.setSize(newSize);
 			}
+			
 		} else {
 			this.setLocation(initialX, 0);
+			
 		}
+		this.setSize(newSize);
+		
+	}
+	
+	/**
+	 * Returns the default size of this dialog, which depends on the size of the {@link BasicGraphGuiJDesktopPane}.
+	 * @return the default size
+	 */
+	public Dimension getDefaultSize() {
+		Dimension defaultSize = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		if (this.graphDesktop!=null) {
+			Dimension desktopSize = this.graphDesktop.getSize();
+			defaultSize = new Dimension(DEFAULT_WIDTH, (int) (desktopSize.getHeight()*(2.0/3.0)));
+		}
+		return defaultSize;
 	}
 	
 	/**

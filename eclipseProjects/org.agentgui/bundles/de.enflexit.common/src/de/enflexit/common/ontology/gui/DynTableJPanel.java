@@ -527,7 +527,7 @@ public class DynTableJPanel extends JPanel {
 		if (this.jSplitPaneExpanded==null) {
 			this.jSplitPaneExpanded = new JSplitPane(); 
 			this.jSplitPaneExpanded.setOneTouchExpandable(true);
-			this.jSplitPaneExpanded.setResizeWeight(0);
+			this.jSplitPaneExpanded.setResizeWeight(0.5);
 			this.jSplitPaneExpanded.setBorder(BorderFactory.createEmptyBorder());
 			
 			if (this.getExpansionDirection()==EXPANSION_Horizontal) {

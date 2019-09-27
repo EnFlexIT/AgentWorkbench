@@ -193,17 +193,6 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 		}
 		return jTabbedPaneVisualization;
 	}
-	/**
-	 * Gets the visualization size map.
-	 * @return the visualization size map
-	 */
-	public TreeMap<String, Dimension> getVisualisationSizeMap() {
-		if (visSizeMap==null) {
-			visSizeMap = new TreeMap<>();
-		}
-		return visSizeMap;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#getSizeOfVisualisation(org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane)
 	 */
@@ -215,59 +204,79 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 		int selectedTabIndex = this.getJTabbedPaneVisualization().getSelectedIndex();
 		String selectedTabTitle = this.getJTabbedPaneVisualization().getTitleAt(selectedTabIndex);
 		if (selectedTabTitle!=null) {
-			return this.dataModelAdapterMap.get(selectedTabTitle).getSizeOfVisualisation(graphDesktop);
+			return this.getVisualisationSizeMap().get(selectedTabTitle);
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Gets the visualization size map.
+	 * @return the visualization size map
+	 */
+	private TreeMap<String, Dimension> getVisualisationSizeMap() {
+		if (visSizeMap==null) {
+			visSizeMap = new TreeMap<>();
+			// --- Fill the TreeMap with initial values ---
+			for (int i = 0; i < this.getTitleList().size(); i++) {
+				String title = this.getTitleList().get(i);
+				Dimension visSize = this.dataModelAdapterMap.get(title).getSizeOfVisualisation(this.getBasicGraphGuiDesktop());
+				if (visSize==null) {
+					visSize = this.getBasicGraphGuiProperties().getDefaultSize();
+				}
+				visSizeMap.put(title, visSize);
+			}
+		}
+		return visSizeMap;
+	}
 	/**
 	 * Sets the size of hosting property visualization that is most likely the {@link BasicGraphGuiProperties}.
 	 */
 	private void setSizeOfBasicGraphGuiProperties() {
 
-		// ----------------------------------------------------------
-		// --- Remind size for previously selected tab --------------
-		// ----------------------------------------------------------
-		int oldTabIndex = this.previousTabSelection;
-		String oldTabTitle = this.getJTabbedPaneVisualization().getTitleAt(oldTabIndex);
+		String oldTabTitle = this.getJTabbedPaneVisualization().getTitleAt(this.previousTabSelection);
 		if (oldTabTitle!=null) {
 			// ------------------------------------------------------
-			// --- Remind this size of the previous tab -------------
+			// --- Remind size for previously selected tab ----------
 			// ------------------------------------------------------
-			Dimension currentSize = this.getBasicGraphGuiProperties().getSize();
-			this.getVisualisationSizeMap().put(oldTabTitle, currentSize);
+			Dimension oldSize = this.getBasicGraphGuiProperties().getSize();
+			this.getVisualisationSizeMap().put(oldTabTitle, oldSize);
 			
 			// ------------------------------------------------------
-			// --- Set also as size for similar tabs ----------------
+			// --- Set this size also to similar tabs ---------------
 			// ------------------------------------------------------
-			Component oldTabComponent = this.getJTabbedPaneVisualization().getComponentAt(oldTabIndex);
-			String visCompClassName = oldTabComponent.getClass().getName();
+			Component oldTabComponent = this.getJTabbedPaneVisualization().getComponentAt(this.previousTabSelection);
+			String oldTabComponentClassName = oldTabComponent.getClass().getName();
 			// --- Adjust size for vis. components of same type -----
 			for (int i = 0; i < this.getJTabbedPaneVisualization().getTabCount(); i++) {
 				
-				// --- Skip the previous tab (don above already) ---- 
-				if (i!=oldTabIndex) continue;
+				// --- Skip the previous tab (done above already) --- 
+				if (i==this.previousTabSelection) continue;
 
-				// --- Set the size to the tab-reminder -------------
+				// --- Set the size to the size-reminder -------------
 				Component tabComponent = this.getJTabbedPaneVisualization().getComponentAt(i);
-				String visCompClassNameCurr = tabComponent.getClass().getName();
-				if (visCompClassNameCurr.equals(visCompClassName)==true) {
+				String tabComponentClassName = tabComponent.getClass().getName();
+				if (tabComponentClassName.equals(oldTabComponentClassName)==true) {
 					
 					String tabTitle = this.getJTabbedPaneVisualization().getTitleAt(i);
 					
 					// -- Check type of visualization component -----
-					if (tabComponent instanceof OntologyInstanceViewer) {
+					if (oldTabComponent instanceof OntologyInstanceViewer) {
 						// --- Check if the viewer is expanded ------
+						OntologyInstanceViewer ontoVisViewOld = (OntologyInstanceViewer) oldTabComponent;
 						OntologyInstanceViewer ontoVisView = (OntologyInstanceViewer) tabComponent;
-						if (ontoVisView.isExpandedMainFrame()==true) {
-							//TODO
-						} else {
+						if (ontoVisViewOld.isExpandedMainFrame()==ontoVisView.isExpandedMainFrame()) {
+							// --- Set the same size ----------------
+							this.getVisualisationSizeMap().put(tabTitle, oldSize);
 							
+						} else {
+							// --- Only adjust height ---------------
+							Dimension tabSize = this.getVisualisationSizeMap().get(tabTitle);
+							tabSize.setSize(tabSize.getWidth(), oldSize.getHeight());
 						}
 						
 					} else {
 						// --- Remind this as size to use -----------
-						this.getVisualisationSizeMap().put(tabTitle, currentSize);
+						this.getVisualisationSizeMap().put(tabTitle, oldSize);
 					}
 					
 				}
@@ -275,26 +284,17 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 		}
 		
 		// ----------------------------------------------------------
-		// --- Get the new size to set ------------------------------
+		// --- Set defined size ------------------------------------- 
 		// ----------------------------------------------------------
 		int selectedTabIndex = this.getJTabbedPaneVisualization().getSelectedIndex();
 		String selectedTabTitle = this.getJTabbedPaneVisualization().getTitleAt(selectedTabIndex);
 		if (selectedTabTitle!=null) {
-			// --- Determine the new size to set --------------------
 			Dimension sizeToSet = this.getVisualisationSizeMap().get(selectedTabTitle);
-			if (sizeToSet==null) {
-				// --- Nothing reminded, ask data model adapter -----
-				sizeToSet = this.getSizeOfVisualisation(this.getBasicGraphGuiDesktop());
-				if (sizeToSet!=null) {
-					this.getVisualisationSizeMap().put(selectedTabTitle, sizeToSet);
-				}
-			}
-			
-			// --- Finally, set size if defined --------------------- 
 			if (sizeToSet!=null) {
-//				this.getBasicGraphGuiProperties().setSize(sizeToSet);
+				this.getBasicGraphGuiProperties().setSize(sizeToSet);
 			}
 		}
+		
 	}
 	
 
