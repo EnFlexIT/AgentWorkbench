@@ -1,5 +1,7 @@
 package org.awb.env.networkModel.adapter;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +18,10 @@ import javax.swing.event.ChangeListener;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
 
+import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
 /**
  * The Class BundlingNetworkComponentAdapter4DataModel is used from a {@link BundlingNetworkComponentAdapter}
@@ -30,7 +34,12 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 	private TreeMap<String, NetworkComponentAdapter4DataModel> dataModelAdapterMap;
 	private List<String> titleList;
 	
-	private JTabbedPane eomJTabbedPane;
+	private BasicGraphGuiJDesktopPane basicGraphGuiDesktop;
+	private BasicGraphGuiProperties basicGraphGuiProperties
+	;
+	private JTabbedPane jTabbedPaneVisualization;
+	private int previousTabSelection;
+	private TreeMap<String, Dimension> visSizeMap;
 	
 	/**
 	 * Instantiates a new bundling network component adapter for the actual data models.
@@ -56,49 +65,10 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 		return titleList;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#setVisualizationComponent(javax.swing.JComponent)
-	 */
-	@Override
-	public void setVisualizationComponent(JComponent visualizationComponent) {
-		// TODO Auto-generated method stub
-	}
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#getVisualizationComponent(org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties)
-	 */
-	@Override
-	public JComponent getVisualizationComponent(BasicGraphGuiProperties internalPropertyFrame) {
-		return this.getJTabbedPaneVisualization(internalPropertyFrame);
-	}
-	/**
-	 * Returns the JTabbedPane for the visualization.
-	 * @return the JTabbedPane visualization
-	 */
-	public JTabbedPane getJTabbedPaneVisualization(BasicGraphGuiProperties internalPropertyFrame) {
-		if (eomJTabbedPane==null ) {
-			// --- Create the JTabbedPane -------------------------------------
-			eomJTabbedPane = new JTabbedPane();
-			eomJTabbedPane.setFont(new Font("Dialog", Font.BOLD, 12));
-			eomJTabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
-			
-			for (int i = 0; i < this.getTitleList().size(); i++) {
-				String title = this.getTitleList().get(i);
-				NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(title);
-				if (dmAdapter!=null) {
-					JComponent tabContent = dmAdapter.getVisualizationComponent(internalPropertyFrame);
-					eomJTabbedPane.addTab(title, tabContent);
-				}
-			}
-			// --- Add a listener to the tab selection ------------------------
-			eomJTabbedPane.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent ce) {
-					// TODO Required ???
-				}
-			});
-		}
-		return eomJTabbedPane;
-	}
+	
+	// ------------------------------------------------------------------------
+	// --- From here the data model handling is implemented -------------------
+	// ------------------------------------------------------------------------
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#save()
@@ -157,6 +127,176 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 		// TODO Auto-generated method stub
 		return super.getDataModelBase64Decoded(dataModel);
 	}
+	
+	// ------------------------------------------------------------------------
+	// --- From here visualization handling is implemented --------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the current instance of the BasicGraphGuiJDesktopPane.
+	 * @return the basic graph gui desktop
+	 */
+	private BasicGraphGuiJDesktopPane getBasicGraphGuiDesktop() {
+		return basicGraphGuiDesktop;
+	}
+	/**
+	 * Gets the current instance of the BasicGraphGuiProperties.
+	 * @return the basic graph gui properties
+	 */
+	private BasicGraphGuiProperties getBasicGraphGuiProperties() {
+		return basicGraphGuiProperties;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#setVisualizationComponent(javax.swing.JComponent)
+	 */
+	@Override
+	public void setVisualizationComponent(JComponent visualizationComponent) {
+		// TODO Auto-generated method stub
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#getVisualizationComponent(org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties)
+	 */
+	@Override
+	public JComponent getVisualizationComponent(BasicGraphGuiProperties internalPropertyFrame) {
+		this.basicGraphGuiProperties = internalPropertyFrame;
+		return this.getJTabbedPaneVisualization();
+	}
+	/**
+	 * Returns the JTabbedPane for the visualization.
+	 * @return the JTabbedPane visualization
+	 */
+	public JTabbedPane getJTabbedPaneVisualization() {
+		if (jTabbedPaneVisualization==null ) {
+			// --- Create the JTabbedPane -------------------------------------
+			jTabbedPaneVisualization = new JTabbedPane();
+			jTabbedPaneVisualization.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTabbedPaneVisualization.setTabPlacement(JTabbedPane.BOTTOM);
+			
+			for (int i = 0; i < this.getTitleList().size(); i++) {
+				String title = this.getTitleList().get(i);
+				NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(title);
+				if (dmAdapter!=null) {
+					JComponent tabContent = dmAdapter.getVisualizationComponent(this.getBasicGraphGuiProperties());
+					jTabbedPaneVisualization.addTab(title, tabContent);
+				}
+			}
+			// --- Add a listener to the tab selection ------------------------
+			jTabbedPaneVisualization.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent ce) {
+					// --- Set size of property dialog ------------------------
+					BundlingNetworkComponentAdapter4DataModel.this.setSizeOfBasicGraphGuiProperties();
+					// --- Remind selection as 'old' value for next switch ----
+					BundlingNetworkComponentAdapter4DataModel.this.previousTabSelection = BundlingNetworkComponentAdapter4DataModel.this.getJTabbedPaneVisualization().getSelectedIndex(); 
+				}
+			});
+		}
+		return jTabbedPaneVisualization;
+	}
+	/**
+	 * Gets the visualization size map.
+	 * @return the visualization size map
+	 */
+	public TreeMap<String, Dimension> getVisualisationSizeMap() {
+		if (visSizeMap==null) {
+			visSizeMap = new TreeMap<>();
+		}
+		return visSizeMap;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#getSizeOfVisualisation(org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane)
+	 */
+	@Override
+	public Dimension getSizeOfVisualisation(BasicGraphGuiJDesktopPane graphDesktop) {
+		
+		this.basicGraphGuiDesktop = graphDesktop;
+		
+		int selectedTabIndex = this.getJTabbedPaneVisualization().getSelectedIndex();
+		String selectedTabTitle = this.getJTabbedPaneVisualization().getTitleAt(selectedTabIndex);
+		if (selectedTabTitle!=null) {
+			return this.dataModelAdapterMap.get(selectedTabTitle).getSizeOfVisualisation(graphDesktop);
+		}
+		return null;
+	}
+	
+	/**
+	 * Sets the size of hosting property visualization that is most likely the {@link BasicGraphGuiProperties}.
+	 */
+	private void setSizeOfBasicGraphGuiProperties() {
+
+		// ----------------------------------------------------------
+		// --- Remind size for previously selected tab --------------
+		// ----------------------------------------------------------
+		int oldTabIndex = this.previousTabSelection;
+		String oldTabTitle = this.getJTabbedPaneVisualization().getTitleAt(oldTabIndex);
+		if (oldTabTitle!=null) {
+			// ------------------------------------------------------
+			// --- Remind this size of the previous tab -------------
+			// ------------------------------------------------------
+			Dimension currentSize = this.getBasicGraphGuiProperties().getSize();
+			this.getVisualisationSizeMap().put(oldTabTitle, currentSize);
+			
+			// ------------------------------------------------------
+			// --- Set also as size for similar tabs ----------------
+			// ------------------------------------------------------
+			Component oldTabComponent = this.getJTabbedPaneVisualization().getComponentAt(oldTabIndex);
+			String visCompClassName = oldTabComponent.getClass().getName();
+			// --- Adjust size for vis. components of same type -----
+			for (int i = 0; i < this.getJTabbedPaneVisualization().getTabCount(); i++) {
+				
+				// --- Skip the previous tab (don above already) ---- 
+				if (i!=oldTabIndex) continue;
+
+				// --- Set the size to the tab-reminder -------------
+				Component tabComponent = this.getJTabbedPaneVisualization().getComponentAt(i);
+				String visCompClassNameCurr = tabComponent.getClass().getName();
+				if (visCompClassNameCurr.equals(visCompClassName)==true) {
+					
+					String tabTitle = this.getJTabbedPaneVisualization().getTitleAt(i);
+					
+					// -- Check type of visualization component -----
+					if (tabComponent instanceof OntologyInstanceViewer) {
+						// --- Check if the viewer is expanded ------
+						OntologyInstanceViewer ontoVisView = (OntologyInstanceViewer) tabComponent;
+						if (ontoVisView.isExpandedMainFrame()==true) {
+							//TODO
+						} else {
+							
+						}
+						
+					} else {
+						// --- Remind this as size to use -----------
+						this.getVisualisationSizeMap().put(tabTitle, currentSize);
+					}
+					
+				}
+			}
+		}
+		
+		// ----------------------------------------------------------
+		// --- Get the new size to set ------------------------------
+		// ----------------------------------------------------------
+		int selectedTabIndex = this.getJTabbedPaneVisualization().getSelectedIndex();
+		String selectedTabTitle = this.getJTabbedPaneVisualization().getTitleAt(selectedTabIndex);
+		if (selectedTabTitle!=null) {
+			// --- Determine the new size to set --------------------
+			Dimension sizeToSet = this.getVisualisationSizeMap().get(selectedTabTitle);
+			if (sizeToSet==null) {
+				// --- Nothing reminded, ask data model adapter -----
+				sizeToSet = this.getSizeOfVisualisation(this.getBasicGraphGuiDesktop());
+				if (sizeToSet!=null) {
+					this.getVisualisationSizeMap().put(selectedTabTitle, sizeToSet);
+				}
+			}
+			
+			// --- Finally, set size if defined --------------------- 
+			if (sizeToSet!=null) {
+//				this.getBasicGraphGuiProperties().setSize(sizeToSet);
+			}
+		}
+	}
+	
 
 	// --------------------------------------------------------------
 	// --- ToolBar elements for the property dialog -----------------

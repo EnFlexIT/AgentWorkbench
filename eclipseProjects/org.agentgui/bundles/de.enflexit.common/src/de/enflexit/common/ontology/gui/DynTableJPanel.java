@@ -55,7 +55,7 @@ import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 
 
 /**
- * The Class DynTableJPanel is the base for the visualisation of the {@link DynTable}.
+ * The Class DynTableJPanel is the base for the visualization of the {@link DynTable}.
  * It manages among others to show {@link OntologyClassWidget}'s related the DynTable.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -67,25 +67,25 @@ public class DynTableJPanel extends JPanel {
 	private static final int EXPANSION_Horizontal = 0;
 	private static final int EXPANSION_Vertical = 1;
 	
-	private Container mainFrame = null;
-	private Dimension mainFrameOldSize = null;  //  @jve:decl-index=0:
+	private Container mainFrame;
+	private Dimension mainFrameOldSize;
 	private int expansionDirection = -1;
 	
-	private boolean expanded = false;
-	private JSplitPane jSplitPaneExpanded = null;
+	private boolean expanded;
+	private JSplitPane jSplitPaneExpanded;
 	
-	private DynForm dynForm = null;
-	private JScrollPane jScrollPaneDynTable = null;
-	private DynTable dynTable = null;
-	private DynType dynType = null;  //  @jve:decl-index=0:
+	private DynForm dynForm;
+	private JScrollPane jScrollPaneDynTable;
+	private DynTable dynTable;
+	private DynType dynType;
 	
-	private JComponent jComponent2Add = null;
+	private JComponent jComponent2Add;
 	
-	private JToolBar jToolBar4UserFunction = null;
-	private JToolBar.Separator jSeparator4UserFunctions1 = null;
-	private JToolBar.Separator jSeparator4UserFunctions2 = null;
-	private JLabel jLabelHeader4UserFunctions = null;
-	private Vector<Component> stolenComponentsFromJToolBar = null;  //  @jve:decl-index=0:
+	private JToolBar jToolBar4UserFunction;
+	private JToolBar.Separator jSeparator4UserFunctions1;
+	private JToolBar.Separator jSeparator4UserFunctions2;
+	private JLabel jLabelHeader4UserFunctions;
+	private Vector<Component> stolenComponentsFromJToolBar;
 	
 	/**
 	 * This is the default constructor
@@ -155,7 +155,7 @@ public class DynTableJPanel extends JPanel {
 	 */
 	public void setOntologyClassInstanceToOntologyClassVisualisation(){
 		// --- Only do the following if the DynTableJPanel is expanded ---
-		if (this.expanded==true && this.jComponent2Add!=null) {
+		if (this.isExpandedMainFrame()==true && this.jComponent2Add!=null) {
 			
 			DefaultMutableTreeNode node = this.dynForm.getTreeNodeByDynType(this.getDynType());
 			OntologyClassWidget dynFormWidget = this.dynForm.getOntologyClassWidget(node);
@@ -178,7 +178,7 @@ public class DynTableJPanel extends JPanel {
 	 */
 	public void setOntologyClassInstanceToDynForm() {
 		// --- Only do the following if the DynTableJPanel is expanded ---
-		if (this.expanded==true) {
+		if (this.isExpandedMainFrame()==true) {
 			
 			int argumentIndex = this.getStartArgumentIndex(this.getDynType());
 			DefaultMutableTreeNode node = this.dynForm.getTreeNodeByDynType(this.getDynType());
@@ -330,7 +330,7 @@ public class DynTableJPanel extends JPanel {
 			
 		}
 		// --- Control the expansion of the mainFraime ------------------------
-		this.expandMainFrame(doExpand);
+		this.setExpandMainFrame(doExpand);
 
 	}
 	
@@ -478,7 +478,7 @@ public class DynTableJPanel extends JPanel {
 	 * Expand main frame.
 	 * @param doExpand the do expand
 	 */
-	private void expandMainFrame(boolean doExpand) {
+	private void setExpandMainFrame(boolean doExpand) {
 		
 		if (this.getContainerMainFrame()!=null && this.getExpansionDirection()==EXPANSION_Horizontal) {
 			
@@ -507,6 +507,13 @@ public class DynTableJPanel extends JPanel {
 
 		}
 		
+	}
+	/**
+	 * Return if main frame is expanded.
+	 * @return true, if is expanded main frame
+	 */
+	public boolean isExpandedMainFrame() {
+		return this.expanded;
 	}
 	
 	/**

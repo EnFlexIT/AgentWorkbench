@@ -115,7 +115,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	/**
 	 * This is the constructor in case that nothing should be displayed (no form, no slots).
-	 * @param ontologyVisualisationHelper the ontology visualisation helper
+	 * @param ontologyVisualisationHelper the ontology visualiZation helper
 	 */
 	public OntologyInstanceViewer(OntologyVisualizationHelper ontologyVisualisationHelper) {
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
@@ -496,6 +496,14 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		this.getDynTableJPanel().stopDynTableCellEditing();
 		this.getDynTableJPanel().setOntologyClassInstanceToDynForm();
 	}
+	/**
+	 * Returns if the main frame is currently expanded.
+	 * @return true, if is expanded main frame
+	 */
+	public boolean isExpandedMainFrame() {
+		return this.getDynTableJPanel().isExpandedMainFrame();
+	}
+
 	
 	/**
 	 * This method initialises dynForm.
