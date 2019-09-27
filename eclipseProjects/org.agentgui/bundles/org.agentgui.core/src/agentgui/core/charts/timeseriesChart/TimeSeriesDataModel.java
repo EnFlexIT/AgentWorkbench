@@ -84,6 +84,7 @@ public class TimeSeriesDataModel extends DataModel {
 
 		TimeSeriesChart timeSeriesChartNew = (TimeSeriesChart) ontologyChart;
 		
+		// --- If null was passed, create an empty instance ---------
 		if (timeSeriesChartNew==null) {
 			timeSeriesChartNew = new TimeSeriesChart();
 			timeSeriesChartNew.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());

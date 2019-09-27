@@ -40,6 +40,7 @@ import agentgui.ontology.Simple_Float;
 import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
+import agentgui.ontology.XySeriesChartSettings;
 import agentgui.ontology.XyValuePair;
 
 /**
@@ -85,6 +86,12 @@ public class XyDataModel extends DataModel {
 	public void setOntologyInstanceChart(Chart ontologyChart) {
 
 		XyChart xyChart = (XyChart) ontologyChart;
+		
+		// --- If null was passed, create an empty instance ---------
+		if (xyChart==null) {
+			xyChart = new XyChart();
+			xyChart.setXySeriesVisualisationSettings(new XySeriesChartSettings());
+		}
 		
 		this.ontologyModel = new XyOntologyModel(xyChart, this);
 		this.chartModel = new XyChartModel(this);
