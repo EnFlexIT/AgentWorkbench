@@ -96,9 +96,24 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#setDataModel(java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setDataModel(Object dataModel) {
-		// TODO Auto-generated method stub
+
+		TreeMap<String, Object> dmTreeMap = null;
+		if (dataModel!=null && dataModel instanceof TreeMap<?, ?>) {
+			dmTreeMap = (TreeMap<String, Object>) dataModel;
+		}
+		
+		for (int i = 0; i < this.getTitleList().size(); i++) {
+			String tabTitle = this.getTitleList().get(i);
+			NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(tabTitle);
+			Object partDataModel = null;
+			if (dmTreeMap!=null) {
+				partDataModel = dmTreeMap.get(tabTitle);
+			}
+			dmAdapter.setDataModel(partDataModel);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -106,17 +121,46 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 	 */
 	@Override
 	public Object getDataModel() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		TreeMap<String, Object> dmTreeMap = new TreeMap<>();
+		for (int i = 0; i < this.getTitleList().size(); i++) {
+			String tabTitle = this.getTitleList().get(i);
+			NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(tabTitle);
+			if (dmAdapter instanceof NetworkComponentAdapter4Ontology) dmAdapter.save();
+			dmTreeMap.put(tabTitle, dmAdapter.getDataModel());
+		} 
+		return dmTreeMap;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#getDataModelBase64Encoded(java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
-		// TODO Auto-generated method stub
-		return super.getDataModelBase64Encoded(dataModel);
+
+		Vector<String> encodedDataModel = new Vector<>();
+		
+		TreeMap<String, Object> dmTreeMap = null;
+		if (dataModel!=null && dataModel instanceof TreeMap<?, ?>) {
+			dmTreeMap = (TreeMap<String, Object>) dataModel;
+		}
+		
+		for (int i = 0; i < this.getTitleList().size(); i++) {
+			String tabTitle = this.getTitleList().get(i);
+			NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(tabTitle);
+			if (dmAdapter instanceof NetworkComponentAdapter4Ontology) dmAdapter.save();
+			Object partDataModel = null;
+			if (dmTreeMap!=null) {
+				partDataModel = dmTreeMap.get(tabTitle);
+			}
+			// --- Get the encoded part model vector ------ 
+			Vector<String> encodedDataModelPart = dmAdapter.getDataModelBase64Encoded(partDataModel);
+			// --- Add separator and part model vector ----
+			encodedDataModel.add(tabTitle);
+			encodedDataModel.addAll(encodedDataModelPart);
+		}
+		return encodedDataModel;
 	}
 	
 	/* (non-Javadoc)
@@ -124,9 +168,61 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 	 */
 	@Override
 	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
-		// TODO Auto-generated method stub
-		return super.getDataModelBase64Decoded(dataModel);
+		
+		TreeMap<String, Object> dmTreeMap = new TreeMap<>();
+		for (int i = 0; i < this.getTitleList().size(); i++) {
+			String tabTitle = this.getTitleList().get(i);
+			NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(tabTitle);
+			Vector<String> partDataModelEncoded = this.getPartDataModelVector(dataModel, tabTitle);
+			// --- Decode in data model adapter -----------  
+			Object partDataModel = dmAdapter.getDataModelBase64Decoded(partDataModelEncoded);
+			dmTreeMap.put(tabTitle, partDataModel);
+		}
+		return dmTreeMap;
 	}
+	
+	/**
+	 * Returns the part data model vector.
+	 *
+	 * @param dmVectorOriginal the dm vector original
+	 * @param titleToSearchFor the title to search for
+	 * @return the part data model vector
+	 */
+	private Vector<String> getPartDataModelVector(Vector<String> dmVectorOriginal, String titleToSearchFor) {
+		
+		int indexStart =-1;
+		int indexStop  = dmVectorOriginal.size()-1;
+		
+		// --- Search for the index range -----------------
+		for (int i = 0; i < dmVectorOriginal.size(); i++) {
+			
+			String dmValue = dmVectorOriginal.get(i);
+			boolean isTitleEntry = this.getTitleList().contains(dmValue);
+			
+			if (isTitleEntry==true) {
+				// --- Start or stop to overtake values ---
+				if (dmValue.equals(titleToSearchFor)==true) {
+					indexStart = i+1;
+				} else {
+					if (indexStart!=-1) {
+						indexStop = i-1;
+						break;
+					}
+				}
+			}
+		}
+		
+		// --- Prepare return value -----------------------
+		Vector<String> partDataModelVector = new Vector<>();
+		if (indexStart!=-1) {
+			// --- Start index was found ------------------
+			for (int i=indexStart; i<=indexStop; i++) {
+				partDataModelVector.add(dmVectorOriginal.get(i));
+			}
+		}
+		return partDataModelVector;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- From here visualization handling is implemented --------------------
