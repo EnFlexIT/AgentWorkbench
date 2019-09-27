@@ -50,6 +50,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.awb.env.networkModel.adapter.BundlingNetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentToGraphNodeAdapter;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
@@ -2333,15 +2334,35 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, GraphNode graphNode, HashMap<String, NetworkComponentAdapter> externalReminderHashMap) {
-		String domain = this.getDomain(graphNode);
-		if (domain!=null) {
-			String searchFor = GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX + domain;
-			NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(graphController, searchFor, externalReminderHashMap);
-			if (netCompAdapter!=null) {
-				netCompAdapter.setNetworkComponent(this.getNetworkComponentForNetworkComponentToGraphNodeAdapter(graphNode));
-				netCompAdapter.setGraphNode(graphNode);
+		
+		List<String> domainList = this.getDomain(graphNode);
+		if (domainList!=null && domainList.size()!=0) {
+			
+			// --- Find all NetworkComponentAdapter for the domains found ----- 
+			TreeMap<String, NetworkComponentAdapter> netCompAdapterMap = new TreeMap<>();
+			for (int i = 0; i < domainList.size(); i++) {
+				// --- Check each domain --------------------------------------
+				String domain = domainList.get(i);
+				String searchFor = GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX + domain;
+				NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(graphController, searchFor, externalReminderHashMap);
+				if (netCompAdapter!=null) {
+					netCompAdapter.setNetworkComponent(this.getNetworkComponentForNetworkComponentToGraphNodeAdapter(graphNode));
+					netCompAdapter.setGraphNode(graphNode);
+					// -- Add to TreeMap --------------------------------------
+					netCompAdapterMap.put(domain, netCompAdapter);
+				}
 			}
-			return netCompAdapter;
+			
+			// --- Check number of adapter found ------------------------------
+			if (netCompAdapterMap.size()==0) {
+				// --- Found nothing ------------------------------------------
+			} else if (netCompAdapterMap.size()==1) {
+				// --- Found single adapter -----------------------------------
+				return netCompAdapterMap.get(domainList.get(0));
+			} else {
+				// --- Create and return BundlingNetworkComponentAdapter ---
+				return new BundlingNetworkComponentAdapter(netCompAdapterMap); 
+			}
 		}
 		return null;
 	}
@@ -2405,7 +2426,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public NetworkComponentAdapter createNetworkComponentAdapter(GraphEnvironmentController graphController, String componentTypeName) {
 		
-		
 		// --------------------------------------------------------------------------
 		// --- Find and initialize the corresponding NetworkComponentAdapter --------
 		// --------------------------------------------------------------------------
@@ -2450,68 +2470,51 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	
 	
 	/**
-	 * Gets the domain of a GraphElement.
+	 * Returns all related domains for the specified GraphNode.
 	 *
-	 * @param graphElement the graph element
+	 * @param graphNode the graph node
+	 * @return the domain list (with unique domain entries)
+	 */
+	public List<String> getDomain(GraphNode graphNode) {
+
+		List<String> domainList = new ArrayList<>();
+		
+		// --- Check all connected NetworkComponents ------
+		List<NetworkComponent> netCompList = this.getNetworkComponents(graphNode);
+		for (int i = 0; i < netCompList.size(); i++) {
+
+			String domain = null;
+			NetworkComponent netComp =  netCompList.get(i);
+			if (netComp instanceof ClusterNetworkComponent) {
+				domain = ((ClusterNetworkComponent)netComp).getDomain();
+			} else {
+				domain = this.generalGraphSettings4MAS.getCurrentCTS().get(netComp.getType()).getDomain();
+			}
+			
+			if (domain!=null && domain.isEmpty()==false && domainList.contains(domain)==false) {
+				domainList.add(domain);
+			}
+		}
+		// --- Finally sort the domains found -------------
+		Collections.sort(domainList);
+		return domainList;
+	}
+	/**
+	 * Returns the domain for the specified GraphEdge.
+	 *
+	 * @param graphEdge the graph edge
 	 * @return the domain
 	 */
-	public String getDomain(GraphElement graphElement) {
-		
+	public String getDomain(GraphEdge graphEdge) {
 		String domain = null;
-		if (graphElement instanceof GraphNode) {
-			
-			// --- Make a majority decision for the domain --------------------
-			HashMap<String, Integer> domainCountings = new HashMap<String, Integer>(); 
-			String domainTmp = null;
-
-			// --- Check all NetworkComponents --------------------------------
-			for (NetworkComponent netComp : this.getNetworkComponents((GraphNode) graphElement)) {
-				
-				if (netComp instanceof ClusterNetworkComponent) {
-					domainTmp = ((ClusterNetworkComponent)netComp).getDomain();
-				} else {
-					domainTmp = this.generalGraphSettings4MAS.getCurrentCTS().get(netComp.getType()).getDomain();
-					// --- For a DistributionNode return the result -----------
-					if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-						return domainTmp;
-					}
-				}
-				
-				if (domainTmp!=null) {
-					Integer noOfDomain = domainCountings.get(domainTmp);
-					if (noOfDomain==null) {
-						domainCountings.put(domainTmp, 1);
-					} else {
-						domainCountings.put(domainTmp, noOfDomain+1);
-					}
-				}
+		if (graphEdge!=null) {
+			NetworkComponent networkComponent = this.getNetworkComponent(graphEdge);
+			if (networkComponent!=null) {
+				domain = this.generalGraphSettings4MAS.getCurrentCTS().get(networkComponent.getType()).getDomain();
 			}
-
-			// --- Determine the domain ---------------------------------------
-			if (domainCountings.size()==1) {
-				domain = domainTmp;
-			} else {
-				// --- Find the maximum counting of domains ------------------- 
-				Integer countsMax = 0; 
-				Set<String> domainKeys = domainCountings.keySet();
-				for (String domainKey : domainKeys) {
-					Integer counts = domainCountings.get(domainKey);
-					if (counts > countsMax) {
-						domain = domainKey;
-						countsMax = counts;
-					}
-				}
-			}
-			
-		} else if (graphElement instanceof GraphEdge) {
-			// --- Get the corresponding NetworkComponent and have a look ----- 
-			NetworkComponent networkComponent = this.getNetworkComponent((GraphEdge) graphElement);
-			domain = this.generalGraphSettings4MAS.getCurrentCTS().get(networkComponent.getType()).getDomain();
-			
 		}
 		return domain;
 	}
-
 	/**
 	 * Returns the domain of the specified NetworkComponent.
 	 *

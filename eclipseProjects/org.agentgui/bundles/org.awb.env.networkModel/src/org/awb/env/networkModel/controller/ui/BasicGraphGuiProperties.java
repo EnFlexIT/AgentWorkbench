@@ -394,8 +394,30 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			if (this.networkComponent!=null) {
 				displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for the\n NetworkComponent", Language.EN) + " " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")!<br><br> </center></html>";
 			} else if (this.graphNode!=null) {
-				String domain = this.graphController.getNetworkModel().getDomain(this.graphNode); 
-				displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for\n the GraphNodes of the Domain", Language.EN) + " '" + domain + "'!<br><br> </center></html>";
+				
+				List<String> domainList = this.graphController.getNetworkModel().getDomain(this.graphNode);
+				if (domainList.size()==0) {
+					displayText = "<html><center>" + Language.translate("No domain information could be found for GraphNode '", Language.EN) + " '" + this.graphNode.getId() + "'!<br><br> </center></html>";
+							
+				} else {
+					String domainText = ""; 
+					if (domainList.size()==1) {
+						domainText = domainList.get(0); 
+					} else {
+						for (int i = 0; i < domainList.size(); i++) {
+							if (i==0) {
+								domainText = domainList.get(i);
+							} else {
+								if (i < (domainList.size()-1)) {
+									domainText += ", " + domainList.get(i);
+								} else {
+									domainText += " " + Language.translate("and", Language.EN) + " " + domainList.get(i);
+								}
+							}
+						}
+					}
+					displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for\n the GraphNodes of the Domain", Language.EN) + " '" + domainText + "'!<br><br> </center></html>";
+				}
 			}
 		}
 		

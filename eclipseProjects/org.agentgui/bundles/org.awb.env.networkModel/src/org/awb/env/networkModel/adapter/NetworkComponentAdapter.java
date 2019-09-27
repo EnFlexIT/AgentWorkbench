@@ -94,6 +94,7 @@ public abstract class NetworkComponentAdapter {
 		if (networkComponentAdapter4DataModel==null) {
 			networkComponentAdapter4DataModel = this.getNewDataModelAdapter();
 		}
+		if (networkComponentAdapter4DataModel==null) return null;
 		// --- Assign runtime objects to the adapter ------
 		networkComponentAdapter4DataModel.setNetworkComponentAdapter(this);
 		networkComponentAdapter4DataModel.setNetworkComponent(this.getNetworkComponent());

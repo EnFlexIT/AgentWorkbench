@@ -51,7 +51,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
 public abstract class NetworkComponentAdapter4DataModel {
 
 	/** The current NetworkComponentAdapter that owns the current instance */
-	private NetworkComponentAdapter networkComponentAdapter;
+	protected NetworkComponentAdapter networkComponentAdapter;
 
 	/** The current GraphEnvironmentController */
 	protected GraphEnvironmentController graphController;
@@ -61,6 +61,10 @@ public abstract class NetworkComponentAdapter4DataModel {
 	protected GraphNode graphNode;
 
 	
+	/**
+	 * <b>Just for an internal use!</b> Instantiates a new network component data model adapter. 
+	 */
+	protected NetworkComponentAdapter4DataModel() { }
 	/**
 	 * Instantiates a new network component data model adapter.
 	 * @param graphController the GraphEnvironmentController
