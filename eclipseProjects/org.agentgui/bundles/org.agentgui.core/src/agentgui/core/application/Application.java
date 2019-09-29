@@ -36,6 +36,8 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -49,6 +51,7 @@ import org.agentgui.gui.UiBridge;
 import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.eclipse.equinox.app.IApplication;
 
+import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
 import agentgui.core.charts.xyChart.XyChartVisualisation;
 import agentgui.core.config.GlobalInfo;
@@ -131,6 +134,9 @@ public class Application {
 	private static ProjectsLoaded projectsLoaded;
 	/** Holds the reference of the currently focused project */
 	private static Project projectFocused;
+	
+	/** The list of listener that waiting for ApplicationEvents  */
+	private static List<ApplicationListener> appListenerList;
 	
 	
 	/**
@@ -1311,6 +1317,49 @@ public class Application {
 				}
 			}
 		}, "GarbageCollectorThread").start();
+	}
+	
+	
+	// --------------------------------------------------------------
+	// --- From here, handling of application listeners -------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the list of {@link ApplicationListener}.
+	 * @return the application listener
+	 */
+	private static List<ApplicationListener> getApplicationListenerList() {
+		if (appListenerList==null) {
+			appListenerList = new ArrayList<>();
+		}
+		return appListenerList;
+	}
+	/**
+	 * Adds the specified listener to the list of {@link ApplicationListener} .
+	 * @param listener the listener to add
+	 */
+	public static void addApplicationListener(ApplicationListener listener) {
+		if (listener!=null && getApplicationListenerList().contains(listener)==false) {
+			getApplicationListenerList().add(listener);
+		}
+	}
+	/**
+	 * Removes the specified listener to the list of {@link ApplicationListener} .
+	 * @param listener the listener to remove
+	 */
+	public static void removeApplicationListener(ApplicationListener listener) {
+		if (listener!=null && getApplicationListenerList().contains(listener)==true) {
+			getApplicationListenerList().remove(listener);
+		}
+	}
+	/**
+	 * Informs all registered listener about the specified event.
+	 * @param event the actual {@link ApplicationEvent} to inform about
+	 */
+	public static void informApplicationListener(ApplicationEvent event) {
+		if (event!=null) return;
+		for (int i = 0; i < getApplicationListenerList().size(); i++) {
+			getApplicationListenerList().get(i).onApplicationEvent(event);;
+		}
 	}
 	
 } 

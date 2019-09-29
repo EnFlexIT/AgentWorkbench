@@ -51,6 +51,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.application.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.environment.EnvironmentController;
@@ -231,7 +232,7 @@ public class ProjectsLoaded {
 		// --- Configure the project in the main window -----------------------
 		if (Application.getMainWindow()!=null || UiBridge.getInstance().isWorkbenchRunning()==true) {
 
-			// --- Instantiate project-window and the default tabs ------------
+			// --- Initiate project-window and the default tabs ---------------
 			newProject.setMaximized();
 			
 			this.setProjectView();
@@ -240,6 +241,9 @@ public class ProjectsLoaded {
 			Application.setTitelAddition(newProject.getProjectName());
 			Application.setStatusBarMessageReady();
 		}
+
+		// --- Inform ApplicationListener that the project was loaded ---------
+		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADED));
 		
 		if (addNew==true) {
 			// --- Save project for the first time ----------------------------
