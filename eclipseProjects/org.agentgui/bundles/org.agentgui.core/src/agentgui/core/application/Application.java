@@ -1356,7 +1356,7 @@ public class Application {
 	 * @param event the actual {@link ApplicationEvent} to inform about
 	 */
 	public static void informApplicationListener(ApplicationEvent event) {
-		if (event!=null) return;
+		if (event==null) return;
 		for (int i = 0; i < getApplicationListenerList().size(); i++) {
 			getApplicationListenerList().get(i).onApplicationEvent(event);;
 		}

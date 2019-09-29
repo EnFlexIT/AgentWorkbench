@@ -243,7 +243,7 @@ public class ProjectsLoaded {
 		}
 
 		// --- Inform ApplicationListener that the project was loaded ---------
-		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADED));
+		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADED, newProject));
 		
 		if (addNew==true) {
 			// --- Save project for the first time ----------------------------
@@ -315,19 +315,18 @@ public class ProjectsLoaded {
 	 * @param project2Remove
 	 */
 	public void remove(Project project2Remove) {
+
+		// --- Remove from local array list -----------------------------------
 		this.getProjectsOpen().remove(project2Remove);
+		
+		// --- Inform ApplicationListener that the project was closed ---------
+		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_CLOSED, project2Remove));
+
+		// --- Adjust visualization / MainWindow ------------------------------
 		if (this.getProjectsOpen().size()==0) {
 			Application.setProjectFocused(null);
 		}
 		this.setProjectView();
-	}
-	/**
-	 * Removes all Projects from the (Array) ProjectList
-	 */
-	public void removeAll() {
-		this.getProjectsOpen().clear();
-		Application.setProjectFocused(null);
-		Application.getProjectsLoaded().setProjectView();		
 	}
 
 	/**
