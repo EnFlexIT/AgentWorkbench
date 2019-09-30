@@ -1277,6 +1277,7 @@ public class Application {
 	 */
 	public static void setProjectFocused(Project projectFocused) {
 		Application.projectFocused = projectFocused;
+		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_FOCUSED, projectFocused));
 	}
 	/**
 	 * Returns the currently focused {@link Project}.

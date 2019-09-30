@@ -60,8 +60,9 @@ public interface ApplicationListener {
 	 */
 	public class ApplicationEvent {
 		
-		public static final String PROJECT_LOADED = "ProjectLoaded";
-		public static final String PROJECT_CLOSED = "ProjectClosed";
+		public static final String PROJECT_LOADED  = "ProjectLoaded";
+		public static final String PROJECT_CLOSED  = "ProjectClosed";
+		public static final String PROJECT_FOCUSED = "ProjectFocused";
 		
 		private String applicationEvent;
 		private Object eventObject;
