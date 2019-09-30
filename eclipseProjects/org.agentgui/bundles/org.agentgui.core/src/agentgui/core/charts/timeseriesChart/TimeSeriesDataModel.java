@@ -84,10 +84,19 @@ public class TimeSeriesDataModel extends DataModel {
 
 		TimeSeriesChart timeSeriesChartNew = (TimeSeriesChart) ontologyChart;
 		
-		// --- If null was passed, create an empty instance ---------
+		// --- If null was passed, create an empty instance -----------------------------
 		if (timeSeriesChartNew==null) {
 			timeSeriesChartNew = new TimeSeriesChart();
 			timeSeriesChartNew.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
+		} else {
+			// --- Check for invalid data series from DynForm to avoid problems ---------
+			for (int i=0; i<timeSeriesChartNew.getTimeSeriesChartData().size(); i++) {
+				TimeSeries timeSeries = (TimeSeries) timeSeriesChartNew.getTimeSeriesChartData().get(i);
+				if (timeSeries.isEmpty()) {
+					timeSeriesChartNew.getTimeSeriesChartData().remove(i);
+					i--;
+				}
+			}
 		}
 		
 		this.ontologyModel = new TimeSeriesOntologyModel(timeSeriesChartNew, this);
