@@ -66,19 +66,17 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 	}
 
 	
-	/** The component type. */
-	private COMPONENT_TYPE componentType = null;
-	/** The component ID. */
-	private String componentID = null;
+	private COMPONENT_TYPE componentType;
+	private String componentID;
 	
-	/** The target data model index. */
+	private String domain;
+	
 	private int targetDataModelIndex = -1;
-	/** The target data series index. */
 	private int targetDataSeriesIndex = -1;
-	/** The target action. */
-	private UPDATE_ACTION targetAction = null; 
+
+	private UPDATE_ACTION targetAction; 
 	
-	private transient HashSet<Integer> editedInstances = null;
+	private transient HashSet<Integer> editedInstances;
 
 	/**
 	 * Instantiates a new data series update.
@@ -91,15 +89,18 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 		this.componentID = networkComponent.getId();
 		this.targetDataModelIndex = targetDataModelIndex;
 	}
+	
 	/**
 	 * Instantiates a new data series update.
 	 *
 	 * @param graphNode the graph node
+	 * @param domain the domain to which this update belongs
 	 * @param targetDataModelIndex the target data model index
 	 */
-	public UpdateDataSeries(GraphNode graphNode, int targetDataModelIndex) {
+	public UpdateDataSeries(GraphNode graphNode, String domain, int targetDataModelIndex) {
 		this.componentType = COMPONENT_TYPE.GraphNode;
 		this.componentID = graphNode.getId();
+		this.domain = domain;
 		this.targetDataModelIndex = targetDataModelIndex;
 	}
 	
@@ -131,6 +132,14 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 	 */
 	public String getComponentID() {
 		return componentID;
+	}
+	
+	/**
+	 * Returns the domain to which this update belongs.
+	 * @return the domain
+	 */
+	public String getDomain() {
+		return domain;
 	}
 	/**
 	 * Gets the target data model index.

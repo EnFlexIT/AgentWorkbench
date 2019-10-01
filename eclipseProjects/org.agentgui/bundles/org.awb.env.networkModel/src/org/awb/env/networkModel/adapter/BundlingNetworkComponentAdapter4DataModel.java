@@ -258,6 +258,20 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 		return this.getJTabbedPaneVisualization();
 	}
 	/**
+	 * Returns the visualization component for the specified tab (tab title).
+	 *
+	 * @param title the tab title
+	 * @return the visualization component
+	 */
+	public JComponent getVisualizationComponent(String title) {
+		JComponent tabContent = null;
+		NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(title);
+		if (dmAdapter!=null) {
+			tabContent = dmAdapter.getVisualizationComponent(this.getBasicGraphGuiProperties());
+		}
+		return tabContent;
+	}
+	/**
 	 * Returns the JTabbedPane for the visualization.
 	 * @return the JTabbedPane visualization
 	 */
@@ -270,11 +284,11 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 			
 			for (int i = 0; i < this.getTitleList().size(); i++) {
 				String title = this.getTitleList().get(i);
-				NetworkComponentAdapter4DataModel dmAdapter = this.dataModelAdapterMap.get(title);
-				if (dmAdapter!=null) {
-					JComponent tabContent = dmAdapter.getVisualizationComponent(this.getBasicGraphGuiProperties());
+				JComponent tabContent = this.getVisualizationComponent(title);
+				if (tabContent!=null) {
 					jTabbedPaneVisualization.addTab(title, tabContent);
 				}
+				
 			}
 			// --- Add a listener to the tab selection ------------------------
 			jTabbedPaneVisualization.addChangeListener(new ChangeListener() {

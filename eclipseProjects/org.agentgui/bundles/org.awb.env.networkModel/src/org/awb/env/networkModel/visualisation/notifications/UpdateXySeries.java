@@ -30,6 +30,7 @@ package org.awb.env.networkModel.visualisation.notifications;
 
 import jade.util.leap.List;
 
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.awb.env.networkModel.GraphNode;
@@ -75,10 +76,11 @@ public class UpdateXySeries extends UpdateDataSeries {
 	 * Instantiates a new update xy series.
 	 *
 	 * @param graphNode the graph node
+	 * @param domain the domain to which this update belongs
 	 * @param targetDataModelIndex the target data model index
 	 */
-	public UpdateXySeries(GraphNode graphNode, int targetDataModelIndex) {
-		super(graphNode, targetDataModelIndex);
+	public UpdateXySeries(GraphNode graphNode, String domain,int targetDataModelIndex) {
+		super(graphNode, domain, targetDataModelIndex);
 	}
 	
 	/**
@@ -228,11 +230,30 @@ public class UpdateXySeries extends UpdateDataSeries {
 			throw new UpdateDataSeriesException("NullPointerException: The data model of " + this.getComponentTypeName() + " '" + this.getComponentID() + "' is null!");
 		}
 		
-		// --- Get the right data model part -------------------- 
+		// --- Get the right data model part ------------------------ 
 		try {
-			Object[] objectArr = (Object[]) dataModel; 
-			XyChart tsc = (XyChart) objectArr[this.getTargetDataModelIndex()];
-			this.applyUpdate(tsc);
+			
+			Object[] dmArray = null;
+			if (dataModel instanceof TreeMap<?, ?>) {
+				// --- Multi-Domain model ---------------------------
+				TreeMap<?, ?> dmTreeMap = (TreeMap<?, ?>) dataModel;
+				if (this.getDomain()==null) {
+					throw new UpdateDataSeriesException("NullPointerException: The domain for the XY-series update of " + this.getComponentTypeName() + " '" + this.getComponentID() + "'is null!");
+				} else {
+					dmArray = (Object[]) dmTreeMap.get(this.getDomain());
+				}
+				
+			} else {
+				// --- Single domain model --------------------------
+				dmArray = (Object[]) dataModel;
+			}
+			
+			if (dmArray==null) {
+				throw new UpdateDataSeriesException("NullPointerException: The data model array for the XY-series update of " + this.getComponentTypeName() + " '" + this.getComponentID() + "'is null!");
+			} else {
+				XyChart tsc = (XyChart) dmArray[this.getTargetDataModelIndex()];
+				this.applyUpdate(tsc);
+			}
 			
 		} catch (Exception ex) {
 			throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), this.getComponentTypeName(), this.getComponentID(), ex);

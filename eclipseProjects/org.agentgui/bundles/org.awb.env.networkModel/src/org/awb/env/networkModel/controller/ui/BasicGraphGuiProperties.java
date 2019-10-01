@@ -54,6 +54,7 @@ import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.adapter.BundlingNetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.controller.DataModelEnDecoder64;
@@ -830,9 +831,19 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		// --- Apply the Update -----------------------------------------------
 		if (applyUpdate==true) {
 			try {
-				// --- Update the view --------------------
-				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.getNetworkComponentAdapter4DataModel().getVisualizationComponent(this);
-				uds.applyToOntologyInstanceViewer(ontoViewer);
+				// --- Update the corresponding OntologyInstanceViewer --------
+				OntologyInstanceViewer ontoViewer = null;
+				NetworkComponentAdapter4DataModel nca2DataModel = this.getNetworkComponentAdapter4DataModel();
+				if (nca2DataModel instanceof BundlingNetworkComponentAdapter4DataModel) {
+					BundlingNetworkComponentAdapter4DataModel bnca2DataModel = (BundlingNetworkComponentAdapter4DataModel) nca2DataModel;
+					ontoViewer = (OntologyInstanceViewer) bnca2DataModel.getVisualizationComponent(uds.getDomain());
+				} else {
+					ontoViewer = (OntologyInstanceViewer) nca2DataModel.getVisualizationComponent(this);
+				}
+				
+				if (ontoViewer!=null) {
+					uds.applyToOntologyInstanceViewer(ontoViewer);
+				}
 				
 			} catch (UpdateDataSeriesException udse) {
 				System.err.println("=> Error in Property Dialog!");
