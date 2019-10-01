@@ -35,6 +35,7 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.application.Language;
+import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.XyDataSeries;
@@ -226,36 +227,45 @@ public class ChartSettingModel extends Observable {
 	 */
 	public void updateSeriesList() {
 
-		// --- Remove all elements first ----------------------------
+		// --- Remove all elements first --------------------------------------
 		while(this.getTableModelSeriesSettings().getRowCount()>0) {
 			this.getTableModelSeriesSettings().removeRow(0);
 		}
 		
-		// --- Add rows containing the series specific settings -----
+		// --- Add rows containing the series specific settings ---------------
 		for (int i=0; i < parentDataModel.getOntologyModel().getChartData().size(); i++) {
 				
 			// Extract series settings from the ontology model
 			DataSeries series = (DataSeries) parentDataModel.getOntologyModel().getChartData().get(i);
-			// TODO @Nils Please check this approach !
 			if (this.isEmptyDataSeries(series)==true) continue;
+
+			ChartSettingsGeneral chartSettings = parentDataModel.getOntologyModel().getChartSettings();
 			
 			String rgb = null;
-			if (parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().size() < (i+1)) {
+			if (chartSettings.getYAxisColors().size() < (i+1)) {
 				rgb = ((Integer) DataModel.DEFAULT_COLORS[i % DataModel.DEFAULT_COLORS.length].getRGB()).toString();
-				parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().add(i, rgb);
+				chartSettings.getYAxisColors().add(i, rgb);
 			} else {
-				rgb = (String) parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().get(i);
+				rgb = (String) chartSettings.getYAxisColors().get(i);
+				if (rgb==null || rgb.isEmpty()) {
+					rgb = ((Integer) DataModel.DEFAULT_COLORS[i % DataModel.DEFAULT_COLORS.length].getRGB()).toString();
+					chartSettings.getYAxisColors().add(i, rgb);
+				}
 			}
 			
 			Float width = null; 
-			if (parentDataModel.getOntologyModel().getChartSettings().getYAxisLineWidth().size() < (i+1)) {
+			if (chartSettings.getYAxisLineWidth().size() < (i+1)) {
 				width = DataModel.DEFAULT_LINE_WIDTH;
-				parentDataModel.getOntologyModel().getChartSettings().getYAxisLineWidth().add(i, width);
+				chartSettings.getYAxisLineWidth().add(i, width);
 			} else {
-				width = (Float) parentDataModel.getOntologyModel().getChartSettings().getYAxisLineWidth().get(i);
+				width = (Float) chartSettings.getYAxisLineWidth().get(i);
+				if (width==null || width==0) {
+					width = DataModel.DEFAULT_LINE_WIDTH;
+					chartSettings.getYAxisLineWidth().add(i, width);
+				}
 			}
 			
-			// Create a table row for the series
+			// ---- Create a table row for the series chart settings ----------
 			Vector<Object> rowVector = new Vector<Object>();
 			rowVector.add(series.getLabel());
 			rowVector.add(new Color(Integer.parseInt(rgb)));
