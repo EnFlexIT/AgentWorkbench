@@ -29,6 +29,8 @@
 package org.awb.env.networkModel.adapter;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -164,10 +166,34 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	@Override
 	public void setDataModel(Object dataModel) {
 		Object[] dataModelArray = null;
-		if (dataModel!=null) {
-			dataModelArray = (Object[]) dataModel;	
+		if (dataModel!=null && dataModel.getClass().isArray()) {
+			dataModelArray = (Object[]) dataModel;
+			
+		} else if (dataModel instanceof TreeMap<?, ?>) {
+			TreeMap<?, ?> dmTreeMap = (TreeMap<?, ?>) dataModel;
+			String domain = this.getDomain();
+			if (domain!=null) {
+				dataModelArray = (Object[]) dmTreeMap.get(domain);
+			}
+			
 		}
 		this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray);	
+	}
+	/**
+	 * returns the current domain.
+	 * @return the domain
+	 */
+	private String getDomain() {
+		String domain = null; 
+		if (this.getNetworkComponent()!=null) {
+			domain = this.getGraphEnvironmentController().getNetworkModel().getDomain(this.getNetworkComponent());
+		} else if (this.getGraphNode()!=null) {
+			List<String> domainList = this.getGraphEnvironmentController().getNetworkModel().getDomain(this.getGraphNode());
+			if (domainList.size()==1) {
+				domain = domainList.get(0);
+			}
+		}
+		return domain;
 	}
 	
 	/* (non-Javadoc)
