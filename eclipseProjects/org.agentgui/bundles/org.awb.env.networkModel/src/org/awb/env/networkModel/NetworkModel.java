@@ -1610,38 +1610,41 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			moveOppositeNode = true;
 		}
 		
-		for (int i = 0; i < (netCompVector.size() - 1); i++) {
-			NetworkComponent component = netCompVector.get(i);
+		// --- Work on all NetworkComponents than the last one ---------------- 
+		for (int i = 0; i < (netCompVector.size()-1); i++) {
+			
+			NetworkComponent netComp = netCompVector.get(i);
+			
 			// --- Incident Edges on the node ---------------------------------
-			for (GraphEdge odlEdge : this.getGraph().getIncidentEdges(node2SplitAt)) { // for each incident edge
+			for (GraphEdge oldGraphEdge : this.getGraph().getIncidentEdges(node2SplitAt)) { // for each incident edge
 				// --- If the edge is in comp2 --------------------------------
-				if (component.getGraphElementIDs().contains(odlEdge.getId())) {
+				if (netComp.getGraphElementIDs().contains(oldGraphEdge.getId())) {
 					// --- Creating a new Graph node --------------------------
-					GraphNode newNode = new GraphNode();
-					newNode.setId(this.nextNodeID());
-					newNode.setPosition(node2SplitAt.getPosition());
-					this.getGraphElements().put(newNode.getId(), newNode);
+					GraphNode newGraphNode = new GraphNode();
+					newGraphNode.setId(this.nextNodeID());
+					newGraphNode.setPosition(node2SplitAt.getPosition());
+					this.getGraphElements().put(newGraphNode.getId(), newGraphNode);
 
 					// --- Switch the connection to the new node --------------
-					GraphEdge newEdge = switchEdgeBetweenGraphNodes(odlEdge, newNode, node2SplitAt);
-					this.removeGraphElementToNetworkComponent(odlEdge);
-					this.addGraphElementToNetworkComponentRelation(newEdge, component);
+					GraphEdge newEdge = this.switchEdgeBetweenGraphNodes(oldGraphEdge, newGraphNode, node2SplitAt);
+					this.removeGraphElementToNetworkComponent(oldGraphEdge);
+					this.addGraphElementToNetworkComponentRelation(newEdge, netComp);
 
-					component.getGraphElementIDs().add(newNode.getId());
-					component.getGraphElementIDs().remove(node2SplitAt.getId());
+					netComp.getGraphElementIDs().add(newGraphNode.getId());
+					netComp.getGraphElementIDs().remove(node2SplitAt.getId());
 					
-					graphNodeConnections.add(newNode);
+					graphNodeConnections.add(newGraphNode);
 					
+					// --- Shift position of the new node a bit? --------------
 					if (moveOppositeNode==true) {
-						// --- Shift position of the new node a bit -----------
-						GraphNode otherNode = this.getGraph().getOpposite(newNode, newEdge);
-						newNode.setPosition(this.getShiftedPosition(otherNode, newNode));	
+						GraphNode otherNode = this.getGraph().getOpposite(newGraphNode, newEdge);
+						newGraphNode.setPosition(this.getShiftedPosition(otherNode, newGraphNode));	
 					}
-
+				
 				}
 			}
 			// --- Updating the graph element IDs of the component ------------
-			component.getGraphElementIDs().remove(node2SplitAt.getId());
+			netComp.getGraphElementIDs().remove(node2SplitAt.getId());
 
 		} // --- 'end for' for components -------------------------------------
 		this.refreshGraphElements();
