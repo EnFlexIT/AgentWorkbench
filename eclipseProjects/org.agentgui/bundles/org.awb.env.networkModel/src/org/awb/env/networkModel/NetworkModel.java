@@ -2363,8 +2363,11 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				// --- Found single adapter -----------------------------------
 				return netCompAdapterMap.get(domainList.get(0));
 			} else {
-				// --- Create and return BundlingNetworkComponentAdapter ---
-				return new BundlingNetworkComponentAdapter(netCompAdapterMap); 
+				// --- Create and return a BundlingNetworkComponentAdapter ----
+				BundlingNetworkComponentAdapter bundlingNetCompAdapter = new BundlingNetworkComponentAdapter(netCompAdapterMap);
+				bundlingNetCompAdapter.setGraphEnvironmentController(graphController);
+				bundlingNetCompAdapter.setGraphNode(graphNode);
+				return bundlingNetCompAdapter; 
 			}
 		}
 		return null;
