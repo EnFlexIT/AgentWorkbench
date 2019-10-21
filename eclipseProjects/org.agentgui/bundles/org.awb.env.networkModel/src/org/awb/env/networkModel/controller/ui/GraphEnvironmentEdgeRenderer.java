@@ -166,7 +166,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         JComponent vv = rc.getScreenDevice();
         if (vv != null) {
             Dimension d = vv.getSize();
-            deviceRectangle = new Rectangle(0,0,d.width,d.height);
+            deviceRectangle = new Rectangle(0, 0, d.width, d.height);
         }
 
         // --- Do some layout checks --------------------------------------------------------------
@@ -274,7 +274,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
             float scalex = (float)graphicsDecorator.getTransform().getScaleX();
             float scaley = (float)graphicsDecorator.getTransform().getScaleY();
             // see if arrows are too small to bother drawing
-            if(scalex < .3 || scaley < .3) return;
+            if (scalex < .3 || scaley < .3) return;
             
             if (rc.getEdgeArrowPredicate().evaluate(Context.<Graph<GraphNode, GraphEdge>, GraphEdge> getInstance(graph, edge))) {
             	
@@ -290,7 +290,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
                 destVertexShape = xf.createTransformedShape(destVertexShape);
                 
                 arrowHit = rc.getMultiLayerTransformer().getTransformer(Layer.VIEW).transform(destVertexShape).intersects(deviceRectangle);
-                if(arrowHit) {
+                if (arrowHit) {
                     
                     AffineTransform at = edgeArrowRenderingSupport.getArrowTransform(rc, edgeShape, destVertexShape);
                     if(at == null) return;
@@ -302,8 +302,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
                     graphicsDecorator.draw(arrow);
                 }
                 if (graph.getEdgeType(edge) == EdgeType.UNDIRECTED) {
-                    Shape vertexShape = 
-                        rc.getVertexShapeTransformer().transform(graph.getEndpoints(edge).getFirst());
+                    Shape vertexShape = rc.getVertexShapeTransformer().transform(graph.getEndpoints(edge).getFirst());
                     xf = AffineTransform.getTranslateInstance(x1, y1);
                     vertexShape = xf.createTransformedShape(vertexShape);
                     

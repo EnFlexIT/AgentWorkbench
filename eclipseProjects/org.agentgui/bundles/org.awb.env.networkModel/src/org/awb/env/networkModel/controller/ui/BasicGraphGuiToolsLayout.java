@@ -596,8 +596,19 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		if (this.editGraphEdge==null) return;
 		
-		// --- Remind old configuration before the new will be applied --------
+		// --- Get reminder for old configuration first -----------------------
 		ConfiguredLineEdit initialConfLineEdit = this.getInitialConfiguredLineEdit();
+		
+		// --- Check if new configuration is a new type of configuration ------
+		String oldConfigClassname = "";
+		String newConfigClassname = "";
+		if (initialConfLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration()!=null) {
+			oldConfigClassname = initialConfLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration().getClass().getName();
+		}
+		if (edgeShapeConfiguration!=null) {
+			newConfigClassname = edgeShapeConfiguration.getClass().getName();
+		}
+		if (newConfigClassname.equals(oldConfigClassname)) return;
 		
 		// --- Set edge configuration and redraw edge -------------------------
 		this.editGraphEdge.setEdgeShapeConfiguration(edgeShapeConfiguration);
@@ -612,7 +623,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	}
 	
 	/**
-	 * Start or stops the edge editing mode.
+	 * Starts or stops the edge editing mode.
 	 *
 	 * @param isStartEdit start=true, stop=false
 	 * @param initialConfLineEdit the initial {@link ConfiguredLineEdit} description that contains the initial situation before the edit

@@ -210,7 +210,7 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#actionPerformed(java.lang.String, org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer, org.awb.env.networkModel.GraphEdge, org.awb.env.networkModel.GraphNode, java.awt.geom.Point2D)
 	 */
 	@Override
-	public void actionPerformed(String actionCommand, ConfiguredLinePopupPlugin configuredLinePopupPlugin, GraphEdge currentGraphEdge, GraphNode currentGraphNode, Point2D currentMousePosition) {
+	public void actionPerformed(String actionCommand, ConfiguredLinePopupPlugin configuredLinePopupPlugin, GraphEdge currentGraphEdge, GraphNode currentGraphNode, Point2D currentMousePositionInGraph) {
 
 		// --- Get the start and end node of the current edge -------
 		BasicGraphGuiVisViewer<GraphNode, GraphEdge> visualizationViewer = configuredLinePopupPlugin.getVisualizationViewer();
@@ -218,22 +218,15 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		
 		switch (actionCommand) {
 		case ACTION_ADD_INTERMEDIATE:
-	
-			// --- Where to add the new intermediate node? ----------
-			Point2D mousePosInGraph = visualizationViewer.getRenderContext().getMultiLayerTransformer().inverseTransform(currentMousePosition);
-			
 			// --- Add the new intermediate point -------------------
-			this.setShape(this.addIntermediatePoint(this.getShape(), mousePosInGraph, graphNodeList.get(0), graphNodeList.get(1)));
-			
+			this.setShape(this.addIntermediatePoint(this.getShape(), currentMousePositionInGraph, graphNodeList.get(0), graphNodeList.get(1)));
 			// --- Notify about the change ---------------------------
 			configuredLinePopupPlugin.getGraphEnvironmentController().notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_IntermediateNodeChanged));
 			break;
 
 		case ACTION_REMOVE_INTERMEDIATE:
-			
 			// --- Remove the intermediate node ---------------------
 			this.setShape(this.removeIntermediatePoint(this.getShape(), currentGraphNode.getPosition(), graphNodeList.get(0), graphNodeList.get(1)));
-
 			// --- Notify about the change ---------------------------
 			configuredLinePopupPlugin.getGraphEnvironmentController().notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_IntermediateNodeChanged));
 			break;
@@ -241,7 +234,7 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	}
 	
 	/**
-	 * Adds the specified intermediate point from the source GeneralPath and returns an extended GenerlPath.
+	 * Adds the specified intermediate point from the source GeneralPath and returns an extended GeneralPath.
 	 *
 	 * @param srcGPath the source GeneralPath
 	 * @param pointToAddGraph the point to add in graph coordinates
@@ -251,56 +244,73 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	 */
 	public GeneralPath addIntermediatePoint(GeneralPath srcGPath, Point2D pointToAddGraph, GraphNode startNode, GraphNode endNode) {
 		
-		GeneralPath gPathNew = new GeneralPath();
-
 		IntermediatePointTransformer ipTrans = this.getIntermediatePointTransformer();
-		Double xCoordGraphPrev = null;
-		Double yCoordGraphPrev = null; 
 		
-		boolean alreadyAdded = false;
-		int pointCounter = 0;
-
 		double[] coords = new double[6];
+		
+		// ----------------------------------------------------------
+		// --- Find index position for adding a new node ------------
+		// ----------------------------------------------------------
+		int intPointIndex = 0;
+		int intPointIndexForInsert = -1;
+
+		double shortestDistance = Double.MAX_VALUE;
+		double xCoordGraphPrev = 0.0;
+		double yCoordGraphPrev = 0.0; 
+		
 		for (PathIterator pIterator = srcGPath.getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
 
 			pIterator.currentSegment(coords);
 			double xCoordInt = coords[0]; 
 			double yCoordInt = coords[1];
 			
-			// --- Get graph coordinates -------------- 
+			// --- Transform to graph coordinates -------------------
 			Point2D graphPoint = ipTrans.transformToGraphCoordinate(new Point2D.Double(xCoordInt, yCoordInt), startNode, endNode);
 			double xCoordGraph = graphPoint.getX(); 
 			double yCoordGraph = graphPoint.getY();
 
-			// --- Add a new intermediate point now? ------
-			if (xCoordGraphPrev!=null && alreadyAdded==false) {
-				
-				// --- Calculate distances ----------------
+			// --- Is intermediate point? ---------------------------
+			if (intPointIndex>0) {
+				// --- Calculate distances --------------------------
 				double distanceCurrToPrev = Point.distance(xCoordGraph, yCoordGraph, xCoordGraphPrev, yCoordGraphPrev);
 				double distanceNewToCurr  = Point.distance(pointToAddGraph.getX(), pointToAddGraph.getY(), xCoordGraph, yCoordGraph);
 				double distanceNewToPrev  = Point.distance(pointToAddGraph.getX(), pointToAddGraph.getY(), xCoordGraphPrev, yCoordGraphPrev);
-				double checkZero = Math.abs(distanceNewToPrev + distanceNewToCurr - distanceCurrToPrev);
-				
-				// --- Check if new point is on the line -- 
-				double threshold = 0.01;
-				if (checkZero <= threshold) {
-					Point2D pointToAddInt = ipTrans.transformToIntermediateCoordinate(pointToAddGraph, startNode, endNode);
-					gPathNew.lineTo(pointToAddInt.getX(), pointToAddInt.getY());
-					alreadyAdded = true;
+				double singleDistance = Math.abs(distanceNewToPrev + distanceNewToCurr - distanceCurrToPrev);
+				if (singleDistance < shortestDistance) {
+					shortestDistance = singleDistance;
+					intPointIndexForInsert = intPointIndex;
 				}
 			}
-			
-			// --- Add intermediate node to GeneralPath ------------- 
-			if (pointCounter==0) {
-				gPathNew.moveTo(xCoordInt, yCoordInt);
-			} else {
-				gPathNew.lineTo(xCoordInt, yCoordInt); 
-			}
-			pointCounter++;
 			
 			// --- Remind position as previous node position --------
 			xCoordGraphPrev = xCoordGraph;
 			yCoordGraphPrev = yCoordGraph;
+			intPointIndex++;
+		}
+		
+		// ----------------------------------------------------------
+		// --- Create the new GeneralPath ---------------------------
+		// ----------------------------------------------------------
+		intPointIndex = 0;
+		GeneralPath gPathNew = new GeneralPath();
+
+		for (PathIterator pIterator = srcGPath.getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
+			
+			pIterator.currentSegment(coords);
+			double xCoordInt = coords[0]; 
+			double yCoordInt = coords[1];
+
+			if (intPointIndex==intPointIndexForInsert) {
+				Point2D pointToAddInt = ipTrans.transformToIntermediateCoordinate(pointToAddGraph, startNode, endNode);
+				gPathNew.lineTo(pointToAddInt.getX(), pointToAddInt.getY());
+			}
+			// --- Add intermediate node to new GeneralPath --------- 
+			if (intPointIndex==0) {
+				gPathNew.moveTo(xCoordInt, yCoordInt);
+			} else {
+				gPathNew.lineTo(xCoordInt, yCoordInt); 
+			}
+			intPointIndex++;
 		}
 		return gPathNew;
 	}

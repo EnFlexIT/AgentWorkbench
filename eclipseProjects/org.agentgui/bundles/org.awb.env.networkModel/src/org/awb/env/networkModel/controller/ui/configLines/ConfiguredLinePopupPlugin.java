@@ -37,7 +37,7 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 	private GraphEdge currentGraphEdge;
 	private GraphEdgeShapeConfiguration<? extends Shape> currentShapeConfig;
 	private GraphNode currentGraphNode;
-	private Point2D currentMousePosition;
+	private Point2D currentMousePositionInGraph;
 	
 	
 	/**
@@ -129,8 +129,10 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 			this.currentShapeConfig = shapeConfig;
 			this.currentGraphEdge = graphEdge;
 			this.currentGraphNode = graphNode;
-			this.currentMousePosition = mousePosition;
-					
+
+			this.currentMousePositionInGraph = this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(mousePosition);
+			this.currentMousePositionInGraph = this.basicGraphGui.getCoordinateSystemPositionTransformer().transform(currentMousePositionInGraph);
+			
 			// --- Get the type specific menu items -----------------
 			shapeConfig.addPopupMenuItems(popupMenu, graphEdge, graphNode);
 			// --- Add local ActionListener -------------------------
@@ -202,7 +204,7 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 		if (actionCommand==null || actionCommand.isEmpty()) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] No action command was provided for the button " + ae.getSource());
 		} else {
-			this.currentShapeConfig.actionPerformed(ae.getActionCommand(), this, this.currentGraphEdge, this.currentGraphNode, this.currentMousePosition);
+			this.currentShapeConfig.actionPerformed(ae.getActionCommand(), this, this.currentGraphEdge, this.currentGraphNode, this.currentMousePositionInGraph);
 		}
 	}
 	

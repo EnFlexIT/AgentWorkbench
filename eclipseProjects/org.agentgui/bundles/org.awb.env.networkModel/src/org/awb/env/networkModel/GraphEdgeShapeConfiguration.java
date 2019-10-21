@@ -87,9 +87,9 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	 * @param configuredLinePopupPlugin the popup plugin that enables access to further instances like the {@link GraphEnvironmentController}, the {@link BasicGraphGuiVisViewer} and other.
 	 * @param currentGraphEdge the current graph edge
 	 * @param currentGraphNode the current graph node
-	 * @param currentMousePosition the current mouse position
+	 * @param currentMousePositionInGraph the current mouse position in Graph coordinates
 	 */
-	public abstract void actionPerformed(String actionCommand, ConfiguredLinePopupPlugin configuredLinePopupPlugin, GraphEdge currentGraphEdge, GraphNode currentGraphNode, Point2D currentMousePosition);
+	public abstract void actionPerformed(String actionCommand, ConfiguredLinePopupPlugin configuredLinePopupPlugin, GraphEdge currentGraphEdge, GraphNode currentGraphNode, Point2D currentMousePositionInGraph);
 
 	
 	
