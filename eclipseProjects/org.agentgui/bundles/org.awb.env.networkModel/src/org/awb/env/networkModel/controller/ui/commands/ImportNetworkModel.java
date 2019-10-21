@@ -77,8 +77,9 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		// --- Define the import adapter and the file to import -----
 		this.selectFile();
 		if (this.abstractNetworkModelFileImporter!=null && this.networkModelFileSelected!=null) {
-			this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
-			this.oldAbstractEnvModel = this.graphController.getAbstractEnvironmentModel().getCopy();
+			Application.setStatusBarMessage("Copy current settings Import network model from file(s) ... ");
+			this.oldNetworkModel = this.graphController.getNetworkModel();					// removed .getCopy()
+			this.oldAbstractEnvModel = this.graphController.getAbstractEnvironmentModel();	// removed .getCopy()
 			this.doEdit();
 		} else {
 			this.setCanceled(true);
@@ -96,30 +97,11 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			this.graphController.setDisplayEnvironmentModel(null);
 			
 			if (this.newNetworkModel==null) {
-				try {
-					// --- Import directly from the selected file ---------------------------------
-					this.newNetworkModel = this.abstractNetworkModelFileImporter.importNetworkModelFromFile(this.networkModelFileSelected);
-					// --- Do we have an AbstractEnvironmentModel also? --------------------------- 
-					this.newAbstractEnvModel = this.abstractNetworkModelFileImporter.getAbstractEnvironmentModel();
-					// --- Invoke to cleanup the importer -----------------------------------------
-					this.abstractNetworkModelFileImporter.cleanupImporter();
-					// --- Set new instances to GraphEnvironmentController ------------------------
-					this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
-					if (this.newAbstractEnvModel!=null) {
-						this.graphController.setAbstractEnvironmentModel(this.newAbstractEnvModel);
-					}
-					// ----------------------------------------------------------------------------
-					// --- The following has to be done only once, directly after the import !!! --
-					// ----------------------------------------------------------------------------
-					// --- Base64 encode the model elements --------------------------------------- 
-					this.graphController.setNetworkComponentDataModelBase64Encoded();
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+				// --- Import NetworkModel using a dedicated thread -------------------------------
+				this.importFromFileUsingDedicatedThread();
 				
 			} else {
-				// --- The preparation for saving the Network were already done before (above) ---- 
+				// --- The preparation for saving the Network were already done before (above) ----
 				this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
 				if (this.newAbstractEnvModel!=null) {
 					this.graphController.setAbstractEnvironmentModel(this.newAbstractEnvModel);
@@ -129,7 +111,49 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		}
 	}
 	
-	
+	/**
+	 * Import from file using a dedicated thread.
+	 */
+	private void importFromFileUsingDedicatedThread() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ImportNetworkModel.this.importFromFile();
+			}
+		}, this.getClass().getSimpleName() + "Thread").start();
+	}
+	/**
+	 * Does the Import from the locally specified file.
+	 */
+	private void importFromFile() {
+		
+		try {
+		
+			Application.setStatusBarMessage("Import network model from file(s) ... ");
+			// --- Import directly from the selected file ---------------------------------
+			this.newNetworkModel = this.abstractNetworkModelFileImporter.importNetworkModelFromFile(this.networkModelFileSelected);
+			// --- Do we have an AbstractEnvironmentModel also? --------------------------- 
+			this.newAbstractEnvModel = this.abstractNetworkModelFileImporter.getAbstractEnvironmentModel();
+			// --- Invoke to cleanup the importer -----------------------------------------
+			this.abstractNetworkModelFileImporter.cleanupImporter();
+			// --- Set new instances to GraphEnvironmentController ------------------------
+			this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
+			if (this.newAbstractEnvModel!=null) {
+				this.graphController.setAbstractEnvironmentModel(this.newAbstractEnvModel);
+			}
+			// ----------------------------------------------------------------------------
+			// --- The following has to be done only once, directly after the import !!! --
+			// ----------------------------------------------------------------------------
+			// --- Base64 encode the model elements --------------------------------------- 
+			this.graphController.setNetworkComponentDataModelBase64Encoded();
+			this.graphController.setProjectUnsaved();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			Application.setStatusBarMessageReady();
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#redo()
@@ -179,7 +203,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			FileFilter fileFilter = importer.getFileFilter();
 			// --- Add filter to file chooser -----------------------
 			graphFC.addChoosableFileFilter(fileFilter);
-			// --- Check if is last selcted file filter -------------
+			// --- Check if is last selected file filter ------------
 			if (lastSlectedFileFilter!=null && fileFilter.getDescription().equals(lastSlectedFileFilter.getDescription())) {
 				// --- To be sure to have the right instance --------
 				lastSlectedFileFilter = fileFilter;
