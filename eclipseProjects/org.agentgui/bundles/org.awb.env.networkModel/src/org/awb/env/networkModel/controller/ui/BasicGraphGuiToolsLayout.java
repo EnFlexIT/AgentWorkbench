@@ -536,8 +536,14 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			this.setGraphConfiguration(new QuadCurveConfiguration());
 			
 		} else if (ae.getSource()==this.getJToggleButtonEdgePolyLine() || ae.getSource()==this.getJMenuItemEdgePolyLine()) {
-			// --- Toggle to polyline edge ----------------			
-			this.setGraphConfiguration(new PolylineConfiguration());
+			// --- Toggle to polyline edge ----------------
+			if (getLayoutSetting().isGeographicalLayout()==true) {
+				// --- Use ABSOLUTE coordinates -----------
+				this.setGraphConfiguration(new PolylineConfiguration(this.editGraphEdge, true));
+			} else {
+				// --- Use RELATIVE coordinates -----------
+				this.setGraphConfiguration(new PolylineConfiguration(this.editGraphEdge, false));
+			}
 			
 			
 		} else if (ae.getSource()==this.getJToggleButtonEdgeEdit()) {

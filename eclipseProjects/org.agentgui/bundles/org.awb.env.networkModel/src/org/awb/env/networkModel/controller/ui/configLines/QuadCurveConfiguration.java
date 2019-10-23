@@ -81,6 +81,14 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#isUseAbsoluteCoordinates()
+	 */
+	@Override
+	public boolean isUseAbsoluteCoordinates() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.helper.GraphEdgeShapeConfiguration#getConfigurationAsString()
 	 */
 	@Override

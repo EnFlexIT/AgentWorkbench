@@ -29,10 +29,6 @@
 package org.awb.env.networkModel;
 
 import java.awt.Shape;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -46,8 +42,6 @@ public class GraphEdge extends GraphElement {
 
 	private static final long serialVersionUID = 1043215558300713661L;
 
-	private static final String EDGE_SHAPE_CONFIGURATION_SEPERATOR = ";";
-	
 	private String componentType;
 	private GraphEdgeShapeConfiguration<? extends Shape> edgeShapeConfiguration;
 	private TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> edgeShapeConfigurationTreeMap;
@@ -123,63 +117,6 @@ public class GraphEdge extends GraphElement {
 	 */
 	public void setEdgeShapeConfigurationTreeMap(TreeMap<String, GraphEdgeShapeConfiguration<? extends Shape>> edgeShapeConfigurationTreeMap) {
 		this.edgeShapeConfigurationTreeMap = edgeShapeConfigurationTreeMap;
-	}
-	
-	/**
-	 * Gets the edge shape configuration tree map as string.
-	 *
-	 * @param allowedLayoutIDs the allowed layout I ds
-	 * @return the edge configuration tree map as string
-	 */
-	public String getEdgeShapeConfigurationTreeMapAsString(HashSet<String> allowedLayoutIDs) {
-		
-		String config = null;
-		if (this.getEdgeShapeConfigurationTreeMap().size()==0) {
-			// --- Set to null to reduce RAM load ---------
-			this.setEdgeShapeConfigurationTreeMap(null);
-			
-		} else {
-			// --- Convert to String ----------------------
-			List<String> keys = new ArrayList<>(this.getEdgeShapeConfigurationTreeMap().keySet()); 
-			Collections.sort(keys);
-			for (int i = 0; i < keys.size(); i++) {
-				String layoutID = keys.get(i);
-				if (allowedLayoutIDs.contains(layoutID)==false) continue;
-				
-				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = this.getEdgeShapeConfigurationTreeMap().get(layoutID);
-				if (shapeConfig!=null) {
-					String singleConfig = layoutID + ":=" + shapeConfig.getConfigurationAsString();
-					if (config==null) {
-						config = singleConfig;
-					} else {
-						config = config + EDGE_SHAPE_CONFIGURATION_SEPERATOR  + singleConfig;
-					}
-				}
-			}
-			
-		}
-		return config;
-	}
-	/**
-	 * Sets the edge shape configuration tree map from the specified string.
-	 * @param treeMapAsString the new edge configuration tree map from string
-	 */
-	public void setEdgeShapeConfigurationTreeMapFromString(String treeMapAsString) {
-		
-		if (treeMapAsString==null || treeMapAsString.isEmpty()) return;
-
-		String[] layoutShapeConfigurations = treeMapAsString.split(EDGE_SHAPE_CONFIGURATION_SEPERATOR);
-		for (int i = 0; i < layoutShapeConfigurations.length; i++) {
-			
-			String[] layoutConfigurationPair = layoutShapeConfigurations[i].split(":=");
-			if (layoutConfigurationPair.length==2) {
-				String layoutID = layoutConfigurationPair[0];
-				GraphEdgeShapeConfiguration<? extends Shape> shapeConfig = GraphEdgeShapeConfiguration.getGraphEdgeShapeConfiguration(layoutConfigurationPair[1]);
-				if (layoutID!=null && layoutID.isEmpty()==false && shapeConfig!=null) {
-					this.getEdgeShapeConfigurationTreeMap().put(layoutID, shapeConfig);
-				}
-			}
-		}
 	}
 	
 }

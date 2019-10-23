@@ -156,11 +156,11 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 				
 				// --- Get the edge shape configuration -------------
 				String shapeConfigString = emd.getProperty(GraphModelWriter.KEY_EDGE_SHAPE_CONFIGUARATION);
-				graphEdge.setEdgeShapeConfiguration(GraphEdgeShapeConfiguration.getGraphEdgeShapeConfiguration(shapeConfigString));
+				graphEdge.setEdgeShapeConfiguration(GraphEdgeShapeConfiguration.getGraphEdgeShapeConfiguration(graphEdge, shapeConfigString));
 				
 				// --- Get the edge shape configuration TreeMap -----
 				String shapeConfigTreeMapString = emd.getProperty(GraphModelWriter.KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP);
-				graphEdge.setEdgeShapeConfigurationTreeMapFromString(shapeConfigTreeMapString);
+				graphEdge.setEdgeShapeConfigurationTreeMap(GraphEdgeShapeConfiguration.getGraphEdgeShapeConfigurationTreeMap(graphEdge, shapeConfigTreeMapString));
 				
 				return graphEdge;
 			}

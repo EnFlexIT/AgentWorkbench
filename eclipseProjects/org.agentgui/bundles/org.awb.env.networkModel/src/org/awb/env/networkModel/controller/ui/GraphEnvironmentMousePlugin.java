@@ -60,6 +60,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.GraphMouseMode;
+import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -96,7 +97,10 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
 	private Vector<GraphNode> nodesMoved = new Vector<GraphNode>();
+	
 	private HashMap<String, Point2D> nodesMovedOldPositions;
+	private HashMap<String, List<Point2D>> polylinesMovedOldPositions;
+	
 	
 
 	/**
@@ -201,35 +205,59 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * @param graphNodes the graph nodes
 	 */
 	private void remindOldPositions() {
-		nodesMovedOldPositions = new HashMap<String, Point2D>();
-		// --- Get selected GraphNodes ----------
-		Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
-		for (GraphNode node : nodesSelected) {
+		
+		// --- Get selected GraphNodes ------------------------------
+		this.nodesMovedOldPositions = new HashMap<>();
+		List<GraphNode> nodesMovedList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
+		for (int i = 0; i < nodesMovedList.size(); i++) {
+			GraphNode node = nodesMovedList.get(i);
 			Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-			nodesMovedOldPositions.put(node.getId(), point);
+			this.nodesMovedOldPositions.put(node.getId(), point);
+		}
+		
+		// --- Movement of polyline nodes? --------------------------
+		if (this.getGraphController().getNetworkModel().getLayoutSettings().isGeographicalLayout()==true && nodesMovedList.size()>1) {
+			this.polylinesMovedOldPositions = new HashMap<>();
+			List<GraphEdge> edgesMovedList = new ArrayList<>(this.getVisViewer().getPickedEdgeState().getPicked());
+			for (int i = 0; i < edgesMovedList.size(); i++) {
+				GraphEdge pickedEdge = edgesMovedList.get(i);
+				if (pickedEdge.getEdgeShapeConfiguration() instanceof PolylineConfiguration) {
+					PolylineConfiguration polyLineConfig = (PolylineConfiguration) pickedEdge.getEdgeShapeConfiguration();
+					if (polyLineConfig.isUseAbsoluteCoordinates()==true) {
+						// --- Intermediate node to move ------------
+						List<Point2D> intPointList = new ArrayList<>();
+						for (int j = 0; j < polyLineConfig.getIntermediatePoints().size(); j++) {
+							Point2D intPoint = polyLineConfig.getIntermediatePoints().get(j);
+							intPointList.add(new Point2D.Double(intPoint.getX(), intPoint.getY()));
+						}
+						this.polylinesMovedOldPositions.put(pickedEdge.getId(), intPointList);
+					}
+				}
+			}
 		}
 	}
 	/**
-	 * Creates the undoable move action.
+	 * Creates the undo move action.
 	 */
 	private void createUndoableMoveAction() {
 		if (this.nodesMovedOldPositions!=null) {
 			if (this.nodesMovedOldPositions.size()>0) {
-				// --- Get selected GraphNodes ----------
-				Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
+				// --- Get selected GraphNodes --------------------------------
+				List<GraphNode> nodesSelected = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
 				if (this.nodesMovedOldPositions.size()==nodesSelected.size()) {
-					for (GraphNode node : nodesSelected) {
-						Point2D pointCurrent = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-						Point2D pointStored  = this.nodesMovedOldPositions.get(node.getId());
-						if (pointCurrent.equals(pointStored)==false) {
-							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
+					// --- Only create undo action if there is a movement ----- 
+					for (int i = 0; i < nodesSelected.size(); i++) {
+						GraphNode node = nodesSelected.get(i);
+						Point2D positionOld  = this.nodesMovedOldPositions.get(node.getId());
+						if (node.getPosition().equals(positionOld)==false) {
+							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
 							break;
 						}
 					} // end for
 					
 				} else {
-					// --- Should never happen ------------
-					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
+					// --- Should never happen --------------------------------
+					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
 				}
 			}
 			this.nodesMovedOldPositions = null;
@@ -415,9 +443,11 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			boolean snapToGrid = layoutSettings.isSnap2Grid();
 			double snapRaster = layoutSettings.getSnapRaster();
 			
-			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
-			for(GraphNode pickedNode: pickedNodes){
-
+			List<GraphNode> graphNodeList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
+			for (int i = 0; i < graphNodeList.size(); i++) {
+				
+				GraphNode pickedNode = graphNodeList.get(i);
+				
 				// --- Get the Graph, if not already there --------------------
 				if (graph==null) {
 					graph = this.getGraphController().getNetworkModel().getGraph();
@@ -437,7 +467,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					this.addTemporaryNode(graph, pickedNode, newPos);
 				}
 				pickedNode.setPosition(newPos);
-				
 			}
 			me.consume();
 		}
@@ -452,20 +481,42 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	
 		if (locked == false) {
             VisualizationViewer<GraphNode,GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
-            if(vertex != null) {
-                Point p = me.getPoint();
+            if (vertex!=null) {
+                
+            	Point p = me.getPoint();
                 Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
                 Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
-                Layout<GraphNode,GraphEdge> layout = vv.getGraphLayout();
+                Layout<GraphNode, GraphEdge> layout = vv.getGraphLayout();
+                
                 double dx = graphPoint.getX()-graphDown.getX();
                 double dy = graphPoint.getY()-graphDown.getY();
-                PickedState<GraphNode> ps = vv.getPickedVertexState();
                 
-                for(GraphNode v : ps.getPicked()) {
-                    Point2D vp = layout.transform(v);
-                    vp.setLocation(vp.getX()+dx, vp.getY()+dy);
-                    layout.setLocation(v, vp);
-                }
+                // --- Move nodes -----------------------------------
+                List<GraphNode> nodesMovedList = new ArrayList<>(vv.getPickedVertexState().getPicked());
+    			for (int i = 0; i < nodesMovedList.size(); i++) {
+    				GraphNode pickedNode = nodesMovedList.get(i);
+    				Point2D vp = layout.transform(pickedNode);
+                    vp.setLocation(vp.getX() + dx, vp.getY() + dy);
+                    layout.setLocation(pickedNode, vp);
+    			}
+    			// --- Movement of polyline nodes? ------------------
+    			if (this.getGraphController().getNetworkModel().getLayoutSettings().isGeographicalLayout()==true && nodesMovedList.size()>1) {
+    				List<GraphEdge> edgesMovedList = new ArrayList<>(vv.getPickedEdgeState().getPicked());
+    				for (int i = 0; i < edgesMovedList.size(); i++) {
+    					GraphEdge pickedEdge = edgesMovedList.get(i);
+    					if (pickedEdge.getEdgeShapeConfiguration() instanceof PolylineConfiguration) {
+    						PolylineConfiguration polyLineConfig = (PolylineConfiguration) pickedEdge.getEdgeShapeConfiguration();
+    						if (polyLineConfig.isUseAbsoluteCoordinates()==true) {
+    							// --- Move intermediate nodes ----------
+    							for (int j = 0; j < polyLineConfig.getIntermediatePoints().size(); j++) {
+    								Point2D intPoint = polyLineConfig.getIntermediatePoints().get(j);
+    								intPoint.setLocation(intPoint.getX() + dx, intPoint.getY() - dy);
+    							}
+    						}
+    					}
+    				}
+    			}
+    			
                 down = p;
                 me.consume();
                 vv.repaint();

@@ -87,7 +87,14 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 		// --- Nothing to do here -----
 	}
 
-
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#isUseAbsoluteCoordinates()
+	 */
+	@Override
+	public boolean isUseAbsoluteCoordinates() {
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#addPopupMenuItems(javax.swing.JPopupMenu, org.awb.env.networkModel.GraphEdge, org.awb.env.networkModel.GraphNode)
 	 */
@@ -145,5 +152,5 @@ public class OrthogonalConfiguration extends GraphEdgeShapeConfiguration<General
 		copy.setFirstMoveInY(this.isFirstMoveInY());
 		return copy;
 	}
-	
+
 }

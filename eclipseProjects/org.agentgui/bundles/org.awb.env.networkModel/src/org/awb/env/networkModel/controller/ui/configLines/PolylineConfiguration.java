@@ -14,10 +14,14 @@ import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.EnvironmentController;
 
 /**
  * The Class PolyLineConfiguration.
@@ -28,10 +32,58 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 
 	private static final long serialVersionUID = -4470264048650428232L;
 	
+	private static final String COORD_HANDLING_ABSOLUTE = "Absolute";
+	
 	private static final String ACTION_ADD_INTERMEDIATE = "AddIntermediatePoint";
 	private static final String ACTION_REMOVE_INTERMEDIATE = "RemoveIntermediatePoint";
 	
-	private GeneralPath generalPath;
+
+	private List<Point2D> intermediatePoints;
+	
+	private GraphEdge graphEdge;
+	private boolean useAbsoluteCoordinates;
+	
+	private GraphNode graphNodeStart;
+	private GraphNode graphNodeEnd;
+	
+	
+	/**
+	 * Instantiates a new polyline configuration that uses RELATIVE positions.
+	 */
+	public PolylineConfiguration(GraphEdge graphEdge) {
+		this(graphEdge, false);
+	}
+	
+	/**
+	 * Instantiates a new polyline configuration that uses ABSOLUTE positions.
+	 *
+	 * @param graphEdge the graph edge
+	 * @param isUseAbsoluteCoordinates the is use absolute coordinates
+	 */
+	public PolylineConfiguration(GraphEdge graphEdge, boolean isUseAbsoluteCoordinates) {
+		
+		if (graphEdge==null) {
+			this.setUseAbsoluteCoordinates(false);
+		} else {
+			this.graphEdge = graphEdge;
+			this.setUseAbsoluteCoordinates(isUseAbsoluteCoordinates);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#isUseAbsoluteCoordinates()
+	 */
+	@Override
+	public boolean isUseAbsoluteCoordinates() {
+		return useAbsoluteCoordinates;
+	}
+	/**
+	 * Sets that absolute coordinates are to bes used for handling and saving.
+	 * @param useAbsoluteCoordinates the new use absolute coordinates
+	 */
+	public void setUseAbsoluteCoordinates(boolean useAbsoluteCoordinates) {
+		this.useAbsoluteCoordinates = useAbsoluteCoordinates;
+	}
 	
 	
 	/* (non-Javadoc)
@@ -39,63 +91,85 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	 */
 	@Override
 	public GeneralPath getShape() {
-		if (generalPath==null) {
-			generalPath = new GeneralPath();
-			generalPath.moveTo(0.0d, 0.0d);
-			generalPath.lineTo(0.2d, 5.0d);
-			generalPath.lineTo(0.4d, 15.0d);
-			generalPath.lineTo(0.6d, 15.0d);
-			generalPath.lineTo(0.8d, 5.0d);
-			generalPath.lineTo(1.0d, 0.0d);
+		
+		IntermediatePointTransformer intPointTransformer = this.getIntermediatePointTransformer();
+		
+		// ----------------------------------------------------------------------------------------
+		// --- Always ensure that the return value is in relative coordinates for drawing ---------
+		// ----------------------------------------------------------------------------------------
+		GeneralPath gpReturn = new GeneralPath();
+		gpReturn.moveTo(0.0d, 0.0d);
+		List<Point2D> pointList = this.getIntermediatePoints();
+		for (int i = 0; i < pointList.size(); i++) {
+			Point2D point2D = pointList.get(i);
+			if (this.isUseAbsoluteCoordinates()==true) {
+				// --- Convert to relative coordinates for drawing -------------------------------- 
+				point2D = intPointTransformer.transformToIntermediateCoordinate(point2D, this.getGraphNodeStart(), this.getGraphNodeEnd());
+			}
+			gpReturn.lineTo(point2D.getX(), point2D.getY());
 		}
-		return generalPath;
+		gpReturn.lineTo(1.0, 0.0d);
+
+		return gpReturn;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#setShape(java.awt.Shape)
 	 */
 	@Override
 	public void setShape(GeneralPath shape) {
-		this.generalPath = shape;
-	}
+		
+		int intPointIndex = -1;
+		double[] coords = new double[6];
+		
+		List<Point2D> intPointPosList = new ArrayList<>();
+		for (PathIterator pIterator = shape.getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
+			
+			pIterator.currentSegment(coords);
+			double xCoordInt = coords[0]; 
+			double yCoordInt = coords[1];
 
+			if (intPointIndex>=0) {
+				intPointPosList.add(new Point2D.Double(xCoordInt, yCoordInt));
+			}
+			intPointIndex++;
+		}
+		
+		// --- Remove the last point found (is end node) ------------
+		intPointPosList.remove(intPointPosList.size()-1);
+		this.setIntermediatePoints(intPointPosList);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#getIntermediatePoints()
 	 */
 	@Override
 	public List<Point2D> getIntermediatePoints() {
-		
-		List<Point2D> intPointList = new ArrayList<>();
-		
-		double[] coords = new double[6];
-		for (PathIterator pIterator = this.getShape().getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
-
-			pIterator.currentSegment(coords);
-			double xCoord = coords[0];
-			double yCoord = coords[1];
-			
-			if (! (xCoord==0.0 && yCoord==0.0 || xCoord==1.0 && yCoord==0.0)) {
-				intPointList.add(new Point2D.Double(xCoord, yCoord)); 
+		if (intermediatePoints==null) {
+			intermediatePoints = new ArrayList<>();
+			if (this.isUseAbsoluteCoordinates()==true) {
+				// --- Create absolute coordinates ------------------
+				IntermediatePointTransformer intPointTrans = this.getIntermediatePointTransformer();
+				intermediatePoints.add(intPointTrans.transformToGraphCoordinate(new Point2D.Double(0.2d, 5.0d),  this.getGraphNodeStart(), this.getGraphNodeEnd()));
+				intermediatePoints.add(intPointTrans.transformToGraphCoordinate(new Point2D.Double(0.4d, 15.0d), this.getGraphNodeStart(), this.getGraphNodeEnd()));
+				intermediatePoints.add(intPointTrans.transformToGraphCoordinate(new Point2D.Double(0.6d, 15.0d), this.getGraphNodeStart(), this.getGraphNodeEnd()));
+				intermediatePoints.add(intPointTrans.transformToGraphCoordinate(new Point2D.Double(0.8d, 5.0d),  this.getGraphNodeStart(), this.getGraphNodeEnd()));
+			} else {
+				// --- Create relative coordinates ------------------
+				intermediatePoints.add(new Point2D.Double(0.2d, 5.0d));
+				intermediatePoints.add(new Point2D.Double(0.4d, 15.0d));
+				intermediatePoints.add(new Point2D.Double(0.6d, 15.0d));
+				intermediatePoints.add(new Point2D.Double(0.8d, 5.0d));	
 			}
 		}
-		return intPointList;
+		return this.intermediatePoints;
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.GraphEdgeShapeConfiguration#setIntermediatePoints(java.util.List)
 	 */
 	@Override
 	public void setIntermediatePoints(List<Point2D> intermediatePointList) {
-		
-		GeneralPath gp = new GeneralPath();
-		gp.moveTo(0.0d,  0.0d);
-		
-		for (int i = 0; i < intermediatePointList.size(); i++) {
-			Point2D intNodePoint = intermediatePointList.get(i);
-			gp.lineTo(intNodePoint.getX(), intNodePoint.getY());
-		}
-		gp.lineTo(1.0d, 0.0d);
-		this.setShape(gp);
-		
+		this.intermediatePoints = intermediatePointList;
 	}
 	
 	
@@ -107,6 +181,8 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		
 		String positions = null;
 		List<Point2D> intPoints = this.getIntermediatePoints();
+		
+		// --- Get intermediate points as string --------------------
 		for (int i = 0; i < intPoints.size(); i++) {
 			Point2D pos = intPoints.get(i);
 			String posString = GraphNode.getPositionAsString(pos);
@@ -115,6 +191,11 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 			} else {
 				positions = positions + "|" + posString;
 			}
+		}
+		
+		// --- Set if is absolute position handling ----------------- 
+		if (this.isUseAbsoluteCoordinates()==true) {
+			positions = COORD_HANDLING_ABSOLUTE + "(" + positions + ")";
 		}
 		return positions;
 	}
@@ -126,6 +207,16 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	protected void setConfigurationFromStringInternal(String stringConfiguration) {
 		
 		List<Point2D> intPointList = new ArrayList<>();
+		
+		// --- Determine if absolute or relative handling -----------
+		if (stringConfiguration.startsWith(COORD_HANDLING_ABSOLUTE)) {
+			this.setUseAbsoluteCoordinates(true);
+		} else {
+			this.setUseAbsoluteCoordinates(false);
+		}
+		stringConfiguration = this.getPostionConfiguration(stringConfiguration);
+		
+		// --- Set intermediate point positions ---------------------
 		String[] posArray = stringConfiguration.split("\\|");
 		for (int i = 0; i < posArray.length; i++) {
 			Point2D pos = GraphNode.getPositionFromString(posArray[i]);
@@ -134,6 +225,28 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 			}
 		}
 		this.setIntermediatePoints(intPointList);
+	}
+	
+	/**
+	 * Removes the brackets and additional information to get just the position information.
+	 *
+	 * @param stringConfiguration the string configuration
+	 * @return the intermediate positions as string
+	 */
+	private String getPostionConfiguration(String stringConfiguration) {
+		
+		String cleandConfiguration = stringConfiguration;
+
+		if (stringConfiguration!=null && stringConfiguration.isEmpty()==false) {
+			// --- Remove the absolute indicator, if used ---------------------
+			int idxOpenBracket = stringConfiguration.indexOf("(");
+			if (idxOpenBracket!=-1) {
+				cleandConfiguration = stringConfiguration.substring(idxOpenBracket+1);
+				int idxClosedBracket = cleandConfiguration.indexOf(")");
+				cleandConfiguration = cleandConfiguration.substring(0, idxClosedBracket);
+			}
+		}
+		return cleandConfiguration;
 	}
 	
 	
@@ -165,8 +278,16 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	 */
 	@Override
 	public GraphEdgeShapeConfiguration<GeneralPath> getCopy() {
-		PolylineConfiguration copy = new PolylineConfiguration();
-		copy.setShape((GeneralPath) this.getShape().clone());
+
+		PolylineConfiguration copy = new PolylineConfiguration(this.graphEdge, this.isUseAbsoluteCoordinates());
+		
+		List<Point2D> intPointListCopy = new ArrayList<>();
+		List<Point2D> intPointList = new ArrayList<>();
+		for (int i = 0; i < intPointList.size(); i++) {
+			Point2D point2D = intPointList.get(i);
+			intPointListCopy.add(new Point2D.Double(point2D.getX(), point2D.getY()));
+		}
+		copy.setIntermediatePoints(intPointListCopy);
 		return copy;
 	}
 	
@@ -219,14 +340,14 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		switch (actionCommand) {
 		case ACTION_ADD_INTERMEDIATE:
 			// --- Add the new intermediate point -------------------
-			this.setShape(this.addIntermediatePoint(this.getShape(), currentMousePositionInGraph, graphNodeList.get(0), graphNodeList.get(1)));
+			this.addIntermediatePoint(currentMousePositionInGraph, graphNodeList.get(0), graphNodeList.get(1));
 			// --- Notify about the change ---------------------------
 			configuredLinePopupPlugin.getGraphEnvironmentController().notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_IntermediateNodeChanged));
 			break;
 
 		case ACTION_REMOVE_INTERMEDIATE:
 			// --- Remove the intermediate node ---------------------
-			this.setShape(this.removeIntermediatePoint(this.getShape(), currentGraphNode.getPosition(), graphNodeList.get(0), graphNodeList.get(1)));
+			this.removeIntermediatePoint(currentGraphNode.getPosition(), graphNodeList.get(0), graphNodeList.get(1));
 			// --- Notify about the change ---------------------------
 			configuredLinePopupPlugin.getGraphEnvironmentController().notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_IntermediateNodeChanged));
 			break;
@@ -236,41 +357,48 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	/**
 	 * Adds the specified intermediate point from the source GeneralPath and returns an extended GeneralPath.
 	 *
-	 * @param srcGPath the source GeneralPath
 	 * @param pointToAddGraph the point to add in graph coordinates
 	 * @param startNode the start node
 	 * @param endNode the end node
-	 * @return the general path
 	 */
-	public GeneralPath addIntermediatePoint(GeneralPath srcGPath, Point2D pointToAddGraph, GraphNode startNode, GraphNode endNode) {
+	public void addIntermediatePoint(Point2D pointToAddGraph, GraphNode startNode, GraphNode endNode) {
 		
 		IntermediatePointTransformer ipTrans = this.getIntermediatePointTransformer();
 		
-		double[] coords = new double[6];
-		
-		// ----------------------------------------------------------
-		// --- Find index position for adding a new node ------------
-		// ----------------------------------------------------------
-		int intPointIndex = 0;
 		int intPointIndexForInsert = -1;
 
 		double shortestDistance = Double.MAX_VALUE;
 		double xCoordGraphPrev = 0.0;
 		double yCoordGraphPrev = 0.0; 
 		
-		for (PathIterator pIterator = srcGPath.getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
-
-			pIterator.currentSegment(coords);
-			double xCoordInt = coords[0]; 
-			double yCoordInt = coords[1];
+		// --- Get complete list for all edge related nodes ---------
+		List<Point2D> edgePoints = this.getIntermediatePoints();
+		if (this.isUseAbsoluteCoordinates()==true) {
+			edgePoints.add(0, new Point2D.Double(startNode.getPosition().getX(), startNode.getPosition().getY()));
+			edgePoints.add(new Point2D.Double(endNode.getPosition().getX(), endNode.getPosition().getY()));
+		} else {
+			edgePoints.add(0, new Point2D.Double(0, 0));
+			edgePoints.add(new Point2D.Double(1, 0));
+		}
+		
+		// ----------------------------------------------------------
+		// --- Find index position for adding a new node ------------
+		// ----------------------------------------------------------
+		for (int i = 0; i < edgePoints.size(); i++) {
+			
+			Point2D edgePoint = edgePoints.get(i);
 			
 			// --- Transform to graph coordinates -------------------
-			Point2D graphPoint = ipTrans.transformToGraphCoordinate(new Point2D.Double(xCoordInt, yCoordInt), startNode, endNode);
+			Point2D graphPoint = edgePoint;
+			if (this.isUseAbsoluteCoordinates()==false) {
+				graphPoint = ipTrans.transformToGraphCoordinate(edgePoint, startNode, endNode);
+			}
+			
 			double xCoordGraph = graphPoint.getX(); 
 			double yCoordGraph = graphPoint.getY();
 
 			// --- Is intermediate point? ---------------------------
-			if (intPointIndex>0) {
+			if (i>0) {
 				// --- Calculate distances --------------------------
 				double distanceCurrToPrev = Point.distance(xCoordGraph, yCoordGraph, xCoordGraphPrev, yCoordGraphPrev);
 				double distanceNewToCurr  = Point.distance(pointToAddGraph.getX(), pointToAddGraph.getY(), xCoordGraph, yCoordGraph);
@@ -278,84 +406,101 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 				double singleDistance = Math.abs(distanceNewToPrev + distanceNewToCurr - distanceCurrToPrev);
 				if (singleDistance < shortestDistance) {
 					shortestDistance = singleDistance;
-					intPointIndexForInsert = intPointIndex;
+					intPointIndexForInsert = i;
 				}
 			}
 			
 			// --- Remind position as previous node position --------
 			xCoordGraphPrev = xCoordGraph;
 			yCoordGraphPrev = yCoordGraph;
-			intPointIndex++;
+			
 		}
 		
 		// ----------------------------------------------------------
-		// --- Create the new GeneralPath ---------------------------
+		// --- Update complete edge point list ----------------------
 		// ----------------------------------------------------------
-		intPointIndex = 0;
-		GeneralPath gPathNew = new GeneralPath();
-
-		for (PathIterator pIterator = srcGPath.getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
-			
-			pIterator.currentSegment(coords);
-			double xCoordInt = coords[0]; 
-			double yCoordInt = coords[1];
-
-			if (intPointIndex==intPointIndexForInsert) {
-				Point2D pointToAddInt = ipTrans.transformToIntermediateCoordinate(pointToAddGraph, startNode, endNode);
-				gPathNew.lineTo(pointToAddInt.getX(), pointToAddInt.getY());
-			}
-			// --- Add intermediate node to new GeneralPath --------- 
-			if (intPointIndex==0) {
-				gPathNew.moveTo(xCoordInt, yCoordInt);
-			} else {
-				gPathNew.lineTo(xCoordInt, yCoordInt); 
-			}
-			intPointIndex++;
+		Point2D pointToAdd = pointToAddGraph;
+		if (this.isUseAbsoluteCoordinates()==false) {
+			pointToAdd = ipTrans.transformToIntermediateCoordinate(pointToAddGraph, startNode, endNode);
 		}
-		return gPathNew;
+		edgePoints.add(intPointIndexForInsert, pointToAdd);
+		
+		// --- Remove first and last position -----------------------
+		edgePoints.remove(edgePoints.size()-1);
+		edgePoints.remove(0);
+		
+		// --- Set new intermediate points --------------------------
+		this.setIntermediatePoints(edgePoints);
 	}
 	
 	/**
 	 * Removes the specified intermediate point from the source GeneralPath and returns a new reduced instance.
 	 *
-	 * @param srcGPath the source GeneralPath
 	 * @param pointToRemoveGraph the point to remove
 	 * @param startNode the start node
 	 * @param endNode the end node
-	 * @return the general path
 	 */
-	public GeneralPath removeIntermediatePoint(GeneralPath srcGPath, Point2D pointToRemoveGraph, GraphNode startNode, GraphNode endNode) {
+	public void removeIntermediatePoint(Point2D pointToRemoveGraph, GraphNode startNode, GraphNode endNode) {
 		
-		GeneralPath gPathNew = new GeneralPath();
-		
-		int pointCounter = 0;
 		IntermediatePointTransformer ipTrans = this.getIntermediatePointTransformer();
 		double selectionThreshold = 0.001;
-		
-		double[] coords = new double[6];
-		for (PathIterator pIterator = srcGPath.getPathIterator(null); !pIterator.isDone(); pIterator.next()) {
 
-			pIterator.currentSegment(coords);
-			double xCoordInt = coords[0];
-			double yCoordInt = coords[1];
+		List<Point2D> intPointList = new ArrayList<>(this.getIntermediatePoints());
+		for (int i = 0; i < intPointList.size(); i++) {
 			
-			// --- Get int. point in graph coordinates ---- 
-			Point2D graphPoint = ipTrans.transformToGraphCoordinate(new Point2D.Double(xCoordInt, yCoordInt), startNode, endNode);
-			
-			// --- Skip the current point? ----------------
-			double selectionDistance = Point2D.distance(graphPoint.getX(), graphPoint.getY(), pointToRemoveGraph.getX(), pointToRemoveGraph.getY());
-			if (selectionDistance > selectionThreshold) {
-				if (pointCounter==0) {
-					gPathNew.moveTo(xCoordInt, yCoordInt);
-				} else {
-					gPathNew.lineTo(xCoordInt, yCoordInt); 
-				}
-				pointCounter++;
+			Point2D point = intPointList.get(i);
+			Point2D graphPoint = point;
+			if (this.isUseAbsoluteCoordinates()==false) {
+				graphPoint = ipTrans.transformToGraphCoordinate(point, startNode, endNode);
 			}
 			
+			double selectionDistance = Point2D.distance(graphPoint.getX(), graphPoint.getY(), pointToRemoveGraph.getX(), pointToRemoveGraph.getY());
+			if (selectionDistance <= selectionThreshold) {
+				this.getIntermediatePoints().remove(i);
+				break;
+			}
 		}
-		return gPathNew;
+		
 	}
 	
+	// ------------------------------------------------------------------------------------------------
+	// --- From here help methods to get the corresponding GraphNodes and its positions can be found --
+	// ------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the start GraphNode.
+	 * @return the start graph node 
+	 */
+	private GraphNode getGraphNodeStart() {
+		if (graphNodeStart==null) {
+			graphNodeStart = this.getNetworkModel().getGraph().getEndpoints(this.graphEdge).getFirst();
+		}
+		return graphNodeStart;
+	}
+	/**
+	 * Returns the end GraphNode.
+	 * @return the end graph node
+	 */
+	private GraphNode getGraphNodeEnd() {
+		if (graphNodeEnd==null) {
+			graphNodeEnd = this.getNetworkModel().getGraph().getEndpoints(this.graphEdge).getSecond();
+		}
+		return graphNodeEnd;
+	}
+
+	/**
+	 * Returns the current NetworkModel.
+	 * @return the network model
+	 */
+	private NetworkModel getNetworkModel() {
+		NetworkModel networkModel = null;
+		if (Application.getProjectFocused()!=null) {
+			EnvironmentController envController = Application.getProjectFocused().getEnvironmentController();
+			if (envController instanceof GraphEnvironmentController) {
+				GraphEnvironmentController graphController = (GraphEnvironmentController) envController;
+				networkModel = graphController.getNetworkModel();
+			}
+		}
+		return networkModel;
+	}
 	
 }

@@ -392,16 +392,18 @@ public class NetworkModelUndoManager {
 	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, GraphNode graphNode, Point2D oldPosition) {
 		HashMap<String, Point2D> oldPosHashMap = new HashMap<>();
 		oldPosHashMap.put(graphNode.getId(), oldPosition);
-		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, visViewer, oldPosHashMap));
+		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, visViewer, oldPosHashMap, null));
 	}
+	
 	/**
 	 * Sets the movement of GraphNodes to the undoManager.
 	 *
 	 * @param visViewer the current {@link VisualizationViewer}
 	 * @param nodesMovedOldPositions the nodes moved old positions
+	 * @param polylinesMovedOldPositions the polylines moved old positions of intermediate nodes
 	 */
-	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions) {
-		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, visViewer, nodesMovedOldPositions));
+	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
+		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, visViewer, nodesMovedOldPositions, polylinesMovedOldPositions));
 	}
 
 	/**

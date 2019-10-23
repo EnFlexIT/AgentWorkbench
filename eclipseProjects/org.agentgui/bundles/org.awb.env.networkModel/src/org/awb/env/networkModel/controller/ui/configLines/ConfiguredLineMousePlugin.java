@@ -217,7 +217,10 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				// --- Get each intermediate point ------------
 				Point2D intPoint = intermediatePointList.get(i);
 				// --- Transform the position to graph coordinates 
-				Point2D graphPoint = this.getIntermediatePointTransformer().transformToGraphCoordinate(intPoint, this.getGraphNodeStart(), this.getGraphNodeEnd());
+				Point2D graphPoint = intPoint;
+				if (this.getShapeConfiguration().isUseAbsoluteCoordinates()==false) {
+					graphPoint = this.getIntermediatePointTransformer().transformToGraphCoordinate(intPoint, this.getGraphNodeStart(), this.getGraphNodeEnd());
+				}
 				
 				// --- Create GraphNode -------------
 				GraphNode intNode = new GraphNode(INTERMEDIATE_GRAPH_NODE_ID_PREFIX + i, graphPoint);
@@ -489,20 +492,26 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 					List<Point2D> intGraphNodePositions = new ArrayList<>();
 					for (int i = 0; i < this.getIntermediateGraphNodes().size(); i++) {
 						GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
-						Point2D intCoordPosition = this.getIntermediatePointTransformer().transformToIntermediateCoordinate(intGraphNode.getPosition(), this.getGraphNodeStart(), this.getGraphNodeEnd());
+						Point2D intCoordPosition = intGraphNode.getPosition();
+						if (this.getShapeConfiguration().isUseAbsoluteCoordinates()==false) {
+							intCoordPosition = this.getIntermediatePointTransformer().transformToIntermediateCoordinate(intCoordPosition, this.getGraphNodeStart(), this.getGraphNodeEnd());
+						}
 						intGraphNodePositions.add(intCoordPosition);
 					}
 					this.getShapeConfiguration().setIntermediatePoints(intGraphNodePositions);
 					
 				} else {
 					// --- Moving an outer node -------------------------------
-					List<Point2D> pointList = this.getShapeConfiguration().getIntermediatePoints();
-					for (int i = 0; i < this.getIntermediateGraphNodes().size(); i++) {
-						GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
-						Point2D newIntNodePosition = this.getIntermediatePointTransformer().transformToGraphCoordinate(pointList.get(i), this.getGraphNodeStart(), this.getGraphNodeEnd());
-						intGraphNode.setPosition(newIntNodePosition);
-						this.getVisViewer().getGraphLayout().setLocation(intGraphNode, this.getGraphNodePositionTransformer().transform(newIntNodePosition));
+					if (this.getShapeConfiguration().isUseAbsoluteCoordinates()==false) {
+						List<Point2D> pointList = this.getShapeConfiguration().getIntermediatePoints();
+						for (int i = 0; i < this.getIntermediateGraphNodes().size(); i++) {
+							GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
+							Point2D newIntNodePosition = this.getIntermediatePointTransformer().transformToGraphCoordinate(pointList.get(i), this.getGraphNodeStart(), this.getGraphNodeEnd());
+							intGraphNode.setPosition(newIntNodePosition);
+							this.getVisViewer().getGraphLayout().setLocation(intGraphNode, this.getGraphNodePositionTransformer().transform(newIntNodePosition));
+						}
 					}
+					
 				}
 				pickedNode.setPosition(newPos);
 				

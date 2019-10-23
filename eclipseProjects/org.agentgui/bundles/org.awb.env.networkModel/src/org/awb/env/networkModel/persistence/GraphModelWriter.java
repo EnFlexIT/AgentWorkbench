@@ -33,6 +33,7 @@ import java.util.HashSet;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.text.StringEscapeUtils;
 import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphNode;
 
 import edu.uci.ics.jung.io.GraphMLWriter;
@@ -135,7 +136,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP, "Edge-Configuration TreeMap", "", new Transformer<GraphEdge, String>() {
 			@Override
 			public String transform(GraphEdge graphEdge) {
-				return graphEdge.getEdgeShapeConfigurationTreeMapAsString(GraphModelWriter.this.allowedLayoutIDs);
+				return GraphEdgeShapeConfiguration.getGraphEdgeShapeConfigurationTreeMapAsString(graphEdge.getEdgeShapeConfigurationTreeMap(), GraphModelWriter.this.allowedLayoutIDs);
 			}
 		});
 		
