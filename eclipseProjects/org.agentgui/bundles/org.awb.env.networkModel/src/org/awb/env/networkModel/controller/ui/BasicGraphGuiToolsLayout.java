@@ -656,8 +656,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	}
 	
 	/**
-	 * Return description {@link ConfiguredLineEdit} that will remind the old edge setting 
-	 * for a possible later undo action. 
+	 * Return description {@link ConfiguredLineEdit} that will remind the old edge setting for a possible later undo action. 
 	 * @return the configured line edit
 	 */
 	private ConfiguredLineEdit getInitialConfiguredLineEdit() {

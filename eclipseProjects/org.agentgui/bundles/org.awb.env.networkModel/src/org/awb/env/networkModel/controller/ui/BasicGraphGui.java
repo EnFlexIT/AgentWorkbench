@@ -72,6 +72,7 @@ import javax.swing.Timer;
 
 import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.GraphGlobals;
@@ -84,6 +85,7 @@ import org.awb.env.networkModel.controller.ui.GraphSelectionListener.GraphSelect
 import org.awb.env.networkModel.controller.ui.commands.RenamedNetworkComponent;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineMousePlugin;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin;
+import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
 import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
 import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
@@ -102,6 +104,7 @@ import de.enflexit.geography.coordinates.ui.GeoCoordinateDialog;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.LayeredIcon;
@@ -1186,9 +1189,44 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Do movement and define undoable action ---------------
 		if (newPosition!=null && newPosition.equals(oldPosition)==false) {
+			// --- Set position to graph node ----------------------- 
 			graphNodeToEdit.setPosition(newPosition);
 			this.updateGraphNodePositionInLayout(graphNodeToEdit);
-			this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this.getVisualizationViewer(), graphNodeToEdit, oldPosition);
+
+			// --- Do we work on an intermediate GraphNode? ---------
+			String graphNodeID = graphNodeToEdit.getId();
+			if (this.getGraphMouseMode()!=GraphMouseMode.EdgeEditing) {
+				// --- Create undoable action ----------------------- 
+				this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this.getVisualizationViewer(), graphNodeToEdit, oldPosition);
+				
+			} else {
+				// --- Reconfigure edge -----------------------------
+				GraphEdge editGraphEdge = this.getVisualizationViewer().getPickedEdgeState().getPicked().iterator().next();
+				if (editGraphEdge!=null) {
+					// --- Work on intermediate nodes? --------------
+					if (graphNodeID.startsWith(ConfiguredLineMousePlugin.INTERMEDIATE_GRAPH_NODE_ID_PREFIX)==true) {
+						
+						GraphEdgeShapeConfiguration<?> shapeConfig = editGraphEdge.getEdgeShapeConfiguration();
+						// --- Work on the intermediate points ------
+						int positionIndex = Integer.parseInt(graphNodeID.substring(graphNodeID.indexOf("_") + 1, graphNodeID.length()));
+						List<Point2D> intPointList = shapeConfig.getIntermediatePoints();
+						Point2D intPointPos = intPointList.get(positionIndex);
+						// --- Define new intermediate position -----
+						Point2D intPointPosNew = newPosition;
+						if (shapeConfig.isUseAbsoluteCoordinates()==false) {
+							// --- To relative coordinates ---------- 
+							Pair<GraphNode> graphNodes = this.getGraph().getEndpoints(editGraphEdge);
+							intPointPosNew = new IntermediatePointTransformer().transformToIntermediateCoordinate(intPointPosNew, graphNodes.getFirst(), graphNodes.getSecond());
+						}
+						intPointPos.setLocation(intPointPosNew.getX(), intPointPosNew.getY());
+						// --- Update shape configuration -----------
+						shapeConfig.setIntermediatePoints(intPointList);
+					}
+				}
+				// --- Redraw edge ------------------------------
+				this.getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, false);
+				this.getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, true);
+			}
 		}
 		
 	}

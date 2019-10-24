@@ -48,20 +48,19 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	
 	
 	/**
-	 * Instantiates a new polyline configuration that uses RELATIVE positions.
+	 * Instantiates a new polyline configuration that uses RELATIVE intermediate positions.
 	 */
 	public PolylineConfiguration(GraphEdge graphEdge) {
 		this(graphEdge, false);
 	}
 	
 	/**
-	 * Instantiates a new polyline configuration that uses ABSOLUTE positions.
+	 * Instantiates a new polyline configuration that may use ABSOLUTE intermediate positions (see corresponding argument).
 	 *
-	 * @param graphEdge the graph edge
-	 * @param isUseAbsoluteCoordinates the is use absolute coordinates
+	 * @param graphEdge the GraphEdge to edit
+	 * @param isUseAbsoluteCoordinates the indicator to use absolute intermediate coordinates
 	 */
 	public PolylineConfiguration(GraphEdge graphEdge, boolean isUseAbsoluteCoordinates) {
-		
 		if (graphEdge==null) {
 			this.setUseAbsoluteCoordinates(false);
 		} else {
@@ -282,9 +281,8 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		PolylineConfiguration copy = new PolylineConfiguration(this.graphEdge, this.isUseAbsoluteCoordinates());
 		
 		List<Point2D> intPointListCopy = new ArrayList<>();
-		List<Point2D> intPointList = new ArrayList<>();
-		for (int i = 0; i < intPointList.size(); i++) {
-			Point2D point2D = intPointList.get(i);
+		for (int i = 0; i < this.getIntermediatePoints().size(); i++) {
+			Point2D point2D = this.getIntermediatePoints().get(i);
 			intPointListCopy.add(new Point2D.Double(point2D.getX(), point2D.getY()));
 		}
 		copy.setIntermediatePoints(intPointListCopy);
