@@ -148,7 +148,38 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return generalGraphSettings4MAS;
 	}
-
+	
+	/**
+	 * Returns the GraphElementPrototype (an extended {@link AbstractGraphElementPrototype}) of the specified NetworkComponent.
+	 *
+	 * @param netComp the {@link NetworkComponent}
+	 * @return the prototype class name
+	 */
+	public String getPrototypeClassName(NetworkComponent netComp) {
+		if (netComp!=null && netComp.getType()!=null) {
+			ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(netComp.getType());
+			if (cts!=null && cts.getGraphPrototype()!=null) {
+				return cts.getGraphPrototype();
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the agent class name of the specified NetworkComponent.
+	 *
+	 * @param netComp the {@link NetworkComponent}
+	 * @return the agent class name
+	 */
+	public String getAgentClassName(NetworkComponent netComp) {
+		if (netComp!=null && netComp.getType()!=null) {
+			ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(netComp.getType());
+			if (cts!=null && cts.getGraphPrototype()!=null) {
+				return cts.getAgentClass();
+			}
+		}
+		return null;
+	}
+	
 	// ------------------------------------------------------------------------
 	// --- From here, the handling of the layout can be found -----------------
 	// ------------------------------------------------------------------------
@@ -1739,7 +1770,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		for (int i = 0; i < netCompList.size(); i++) {
 			NetworkComponent netComp = netCompList.get(i);
-			if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+			if (this.isDistributionNode(netComp)==true) {
 				distributionNodeComponent = netComp;
 			} else {
 				newComponentVector.add(netComp);
@@ -1833,8 +1864,15 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return true, if is distribution node
 	 */
 	public boolean isDistributionNode(NetworkComponent networkComponent) {
+		
 		if (networkComponent==null) return false;
-		return networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName());
+		if (networkComponent.getType()==null || networkComponent.getType().isEmpty()==true) return false;
+			
+		ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
+		if (cts!=null && cts.getGraphPrototype()!=null ) {
+			return cts.getGraphPrototype().equals(DistributionNode.class.getName());
+		}
+		return false;
 	}
 	
 	
@@ -1866,14 +1904,15 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Checks whether a network component is in the star graph element
 	 * 
-	 * @param comp the network component
+	 * @param netComp the network component to check
 	 * @return true if the component is a star graph element
 	 */
-	public boolean isStarGraphElement(NetworkComponent comp) {
+	public boolean isStarGraphElement(NetworkComponent netComp) {
 
 		AbstractGraphElementPrototype graphElement = null;
 		try {
-			graphElement = (AbstractGraphElementPrototype) ClassLoadServiceUtility.newInstance(comp.getPrototypeClassName());
+			String prototypeClassName = this.getPrototypeClassName(netComp);
+			graphElement = (AbstractGraphElementPrototype) ClassLoadServiceUtility.newInstance(prototypeClassName);
 
 		} catch (ClassNotFoundException ex) {
 			System.err.println(" AbstractGraphElementPrototype class must be in class path.");
@@ -1917,7 +1956,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public boolean isFreeGraphNode(GraphNode graphNode) {
 
 		// --- The number of network components containing this node ------
-		List<NetworkComponent> networkComponents = getNetworkComponents(graphNode);
+		List<NetworkComponent> networkComponents = this.getNetworkComponents(graphNode);
 		if (networkComponents.size() == 1) {
 			NetworkComponent networkComponent = networkComponents.iterator().next();
 			// --- Node is present in only one component and not center of a star ------------------
@@ -1928,13 +1967,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		
 		for (int i = 0; i < networkComponents.size(); i++) {
-			NetworkComponent networkComponent = networkComponents.get(i);
-			if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-				// --- Node is present in several components ------------------
+			if (this.isDistributionNode(networkComponents.get(i))==true) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 	
@@ -2000,7 +2036,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			if (distributionNodesAreOuterNodes==false) {
 				this.removeNetworkComponent(netComp, true, false);
 			} else {
-				if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())==false) {
+				if (this.isDistributionNode(netComp)==false) {
 					this.removeNetworkComponent(netComp, false, false);
 				}
 			}

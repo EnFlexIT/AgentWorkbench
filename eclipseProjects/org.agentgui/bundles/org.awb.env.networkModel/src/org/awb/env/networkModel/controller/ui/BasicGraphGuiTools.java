@@ -69,7 +69,6 @@ import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarCompo
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentExtension;
 import org.awb.env.networkModel.helper.GraphNodePairs;
-import org.awb.env.networkModel.prototypes.DistributionNode;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.ui.ComponentTypeDialog;
 import org.eclipse.core.runtime.CoreException;
@@ -1339,8 +1338,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 						HashSet<NetworkComponent> disNodeComponents = new HashSet<NetworkComponent>(selectedComponents);
 						disNodeComponents.remove(edgeComponent);
 						// --- Are there DistributionNodes? ---------
-						for(NetworkComponent disNodeSearch : disNodeComponents) {
-							if (disNodeSearch.getPrototypeClassName().equals(DistributionNode.class.getName())==false) {
+						for (NetworkComponent disNodeSearch : disNodeComponents) {
+							if (this.graphController.getNetworkModel().isDistributionNode(disNodeSearch)==false) {
 								disNodeComponents.remove(disNodeSearch);
 							}
 						}
@@ -1348,7 +1347,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 						String title = Language.translate("Also remove node components?", Language.EN);
 						String msg = Language.translate("The selection contains also NetworkComponets that are single nodes.", Language.EN) + "\n";
 						msg += Language.translate("These are:", Language.EN) + "\n";
-						for(NetworkComponent distributionNode : disNodeComponents) {
+						for (NetworkComponent distributionNode : disNodeComponents) {
 							msg += "- " + distributionNode.getType() + " (" + distributionNode.getId() + ")\n";
 						}
 						msg += Language.translate("Should they be removed too?", Language.EN);

@@ -36,13 +36,16 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import org.awb.env.networkModel.helper.GraphEdgeDirection;
+import org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype;
 
 import de.enflexit.common.SerialClone;
 
 /**
- * This class represents a component of the modelled network. It contains its' ontology representation, its' AbstractGraphElementPrototype, the nodes and edges representing it in the environment graph and an
+ * This class represents a component of the modeled network. It may contains it's ontology representation, it's 
+ * {@link AbstractGraphElementPrototype}, the nodes and edges representing it in the environment graph and an
  * ID for easier access.
  * 
  * @see NetworkModel
@@ -50,6 +53,14 @@ import de.enflexit.common.SerialClone;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
+@XmlType(name = "NetworkComponent", propOrder = {
+    "id",
+    "type",
+    "graphElementIDs",
+    "directed",
+    "edgeDirections",
+    "dataModelBase64"
+})
 public class NetworkComponent implements Serializable, Comparable<NetworkComponent> {
 
 	private static final long serialVersionUID = 537431665305238609L;
@@ -62,10 +73,6 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	protected HashSet<String> graphElementIDs = new HashSet<String>();
 	/** Specifies if the NetworkComponent is directed or undirected. */
 	protected boolean directed;
-	/** The NetworkComponent's AbstractGraphElementPrototype class name. */
-	protected String prototypeClassName;
-	/** The NetworkComponent's AbstractGraphElementPrototype class name. */
-	protected String agentClassName;
 	/** The direction(s) of the edge(s). */
 	protected HashMap<String, GraphEdgeDirection> edgeDirections;
 	
@@ -90,17 +97,13 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	 *
 	 * @param id the id
 	 * @param type the type
-	 * @param prototypeClassName the prototype class name
-	 * @param agentClassName the agent class name
 	 * @param graphElements the graph elements
-	 * @param directed the directed
+	 * @param directed the indicator if this NetworkComponent is directed
 	 */
-	public NetworkComponent(String id, String type, String prototypeClassName, String agentClassName, HashSet<GraphElement> graphElements, boolean directed ) {
-		this.id = id;
-		this.type = type;
-		this.prototypeClassName = prototypeClassName;
-		this.agentClassName = agentClassName;
-		this.directed = directed;
+	public NetworkComponent(String id, String type, HashSet<GraphElement> graphElements, boolean directed ) {
+		this.setId(id);
+		this.setType(type);
+		this.setDirected(directed);
 		this.setGraphElements(graphElements);
 	}
 	
@@ -191,40 +194,6 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	 */
 	public void setDirected(boolean directed) {
 		this.directed = directed;
-	}
-
-	/**
-	 * Returns the graph element prototype class name.
-	 * @return the prototypeClassName
-	 */
-	public String getPrototypeClassName() {
-		// --- Consider changes due to the bundle refactoring -------
-		if (prototypeClassName!=null && prototypeClassName.startsWith("agentgui.envModel.graph.prototypes")==true) {
-			prototypeClassName = prototypeClassName.replace("agentgui.envModel.graph.prototypes", "org.awb.env.networkModel.prototypes");
-		}
-		return prototypeClassName;
-	}
-	/**
-	 * Sets the graph element prototype class name.
-	 * @param prototypeClassName the prototypeClassName to set
-	 */
-	public void setPrototypeClassName(String prototypeClassName) {
-		this.prototypeClassName = prototypeClassName;
-	}
-
-	/**
-	 * Gets the agent class name.
-	 * @return the agentClassName
-	 */
-	public String getAgentClassName() {
-		return agentClassName;
-	}
-	/**
-	 * Sets the agent class name.
-	 * @param agentClassName the agentClassName to set
-	 */
-	public void setAgentClassName(String agentClassName) {
-		this.agentClassName = agentClassName;
 	}
 
 	/**

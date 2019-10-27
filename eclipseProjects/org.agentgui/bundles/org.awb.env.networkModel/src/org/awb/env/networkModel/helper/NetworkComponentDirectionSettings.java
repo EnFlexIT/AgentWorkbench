@@ -36,7 +36,6 @@ import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
-import org.awb.env.networkModel.prototypes.DistributionNode;
 
 /**
  * The Class DirectionSettings.
@@ -62,10 +61,8 @@ public class NetworkComponentDirectionSettings {
 	 * @param networkComponent the network component
 	 */
 	public NetworkComponentDirectionSettings(NetworkModel networkModel, NetworkComponent networkComponent) {
-	
 		this.networkModel = networkModel;
 		this.networkComponent = networkComponent;
-		
 		this.evaluate();
 	}
 	
@@ -113,10 +110,7 @@ public class NetworkComponentDirectionSettings {
 	 * @return true, if it is a DistributionNode
 	 */
 	public boolean isDistributionNode() {
-		if (this.networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-			return true;
-		}
-		return false;
+		return this.networkModel.isDistributionNode(this.networkComponent);
 	}
 	
 	/**
@@ -124,7 +118,7 @@ public class NetworkComponentDirectionSettings {
 	 */
 	private void setInnerAndOuterGraphNodes() {
 		
-		if (isDistributionNode()) {
+		if (this.isDistributionNode()) {
 			// --- This is a DistributionNonde ------------
 			GraphElement node = this.networkModel.getGraphElement(this.networkComponent.getGraphElementIDs().iterator().next());
 			this.outerGraphNodes.add((GraphNode) node);
@@ -206,7 +200,7 @@ public class NetworkComponentDirectionSettings {
 	public HashSet<NetworkComponent> getNeighbourNetworkComponent(GraphNode graphNode) {
 		
 		HashSet<NetworkComponent> neighbours = null;
-		if (isDistributionNode()) {
+		if (this.isDistributionNode()) {
 			neighbours = new HashSet<NetworkComponent>(this.networkModel.getNeighbourNetworkComponents(this.networkComponent));
 			
 		} else {
@@ -244,7 +238,7 @@ public class NetworkComponentDirectionSettings {
 	public GraphNode getGraphNodeOfNeighbourNetworkComponent(NetworkComponent neighbourNetworkComponent) {
 		
 		GraphNode graphNode = null;
-		if (isDistributionNode()) {
+		if (this.isDistributionNode()) {
 			graphNode = (GraphNode) this.networkModel.getGraphElement(this.networkComponent.getGraphElementIDs().iterator().next());
 			
 		} else {

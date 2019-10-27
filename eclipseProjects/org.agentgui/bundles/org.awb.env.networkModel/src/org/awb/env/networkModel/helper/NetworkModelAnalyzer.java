@@ -255,7 +255,7 @@ public class NetworkModelAnalyzer {
 				this.increaseElementCounter(CountingType.DomainElement, cts.getDomain());
 			}
 			this.increaseElementCounter(CountingType.NetworkComponent, netComp.getType());
-			this.increaseElementCounter(CountingType.GraphElementPrototype, netComp.getPrototypeClassName());
+			this.increaseElementCounter(CountingType.GraphElementPrototype, cts.getGraphPrototype());
 			
 			// --- Check for connection to other components -----------------------------
 			if (this.getNetworkModel().getNeighbourNetworkComponents(netComp).size()==0) {

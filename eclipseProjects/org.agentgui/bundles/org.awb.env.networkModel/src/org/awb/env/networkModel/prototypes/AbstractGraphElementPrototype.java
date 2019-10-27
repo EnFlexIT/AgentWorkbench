@@ -41,7 +41,6 @@ import org.awb.env.networkModel.NetworkModel;
  * GraphML.
  *     
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- *
  */
 public abstract class AbstractGraphElementPrototype {
 	

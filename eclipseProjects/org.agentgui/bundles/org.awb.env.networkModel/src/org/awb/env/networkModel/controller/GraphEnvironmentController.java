@@ -649,23 +649,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 					comp = null;
 
 				} else {
-
-					if (ctsSingle.getAgentClass() == null) {
-						comp.setAgentClassName(null);
-
-					} else if (comp.getAgentClassName() == null) {
-						// --- Correct this entry -------
-						comp.setAgentClassName(ctsSingle.getAgentClass());
-
-					} else if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
-						// --- Correct this entry -------
-						comp.setAgentClassName(ctsSingle.getAgentClass());
-					}
-					if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype()) == false) {
-						// --- Correct this entry -------
-						// TODO change the graph elements if needed
-						comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
-					}
+					// --- Component settings here? -----------
+					// Empty after revision of NetworkComponent  
 				}
 
 				// ----------------------------------------------------------------
@@ -718,7 +703,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 		if (comp == null) {
 			return false;
 		}
-		if (ace4s.getAgentClassReference().equals(comp.getAgentClassName()) == false) {
+		String agentClassName = this.getNetworkModel().getAgentClassName(comp);
+		if (ace4s.getAgentClassReference().equals(agentClassName)==false) {
 			return false;
 		}
 		if (ace4s.getStartAsName().equals(comp.getId()) == false) {
@@ -729,15 +715,14 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/**
 	 * Adds an agent to the start list corresponding to the current network component .
-	 * 
 	 * @param networkComponent the NetworkComponent
 	 */
 	public void addAgent(NetworkComponent networkComponent) {
 
-		if (networkComponent == null) {
-			return;
-		}
-		Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
+		if (networkComponent == null) return;
+		
+		String agentClassName = this.getNetworkModel().getAgentClassName(networkComponent);
+		Class<? extends Agent> agentClass = this.getAgentClass(agentClassName);
 		if (agentClass != null) {
 
 			int newPosNo = this.getEmptyPosition4Agents2Start();
@@ -803,21 +788,19 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/**
 	 * Returns the agent class.
 	 * 
-	 * @param agentReference the agent reference
+	 * @param agentClassName the agent class name 
 	 * @return the agent class
 	 */
 	@SuppressWarnings("unchecked")
-	private Class<? extends Agent> getAgentClass(String agentReference) {
+	private Class<? extends Agent> getAgentClass(String agentClassName) {
 
-		if (agentReference == null || agentReference.equals("")) {
-			return null;
-		}
+		if (agentClassName == null || agentClassName.isEmpty()==true) return null;
 
 		Class<? extends Agent> agentClass = null;
 		try {
-			agentClass = (Class<? extends Agent>) ClassLoadServiceUtility.forName(agentReference);
+			agentClass = (Class<? extends Agent>) ClassLoadServiceUtility.forName(agentClassName);
 		} catch (ClassNotFoundException ex) {
-			System.err.println("Could not find agent class '" + agentReference + "'");
+			System.err.println("Could not find agent class '" + agentClassName + "'");
 		}
 		return agentClass;
 	}

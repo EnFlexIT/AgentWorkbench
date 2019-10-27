@@ -46,7 +46,6 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.helper.GraphNodePairs;
-import org.awb.env.networkModel.prototypes.DistributionNode;
 
 import agentgui.core.application.Language;
 import edu.uci.ics.jung.graph.Graph;
@@ -107,7 +106,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		
 		for (int i = 0; i < this.networkComponents2Remove.size(); i++) {
 			NetworkComponent networkComponent = this.networkComponents2Remove.get(i);
-			boolean isDistributionNode = networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName());
+			boolean isDistributionNode = this.graphController.getNetworkModel().isDistributionNode(networkComponent);
 			if (isDistributionNode==false || (isDistributionNode==true && this.removeDistributionNodes==true)) {
 				try {
 					this.transfer2localNetworkModel(networkComponent);
@@ -174,7 +173,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		}
 		
 		// --- DistributionNode ? ---------------------------------------------
-		if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+		if (sourceNetworkModel.isDistributionNode(netComp)==true) {
 			String graphNodeID = networkComponent.getGraphElementIDs().iterator().next();
 			GraphNode node = (GraphNode) sourceNetworkModel.getGraphElement(graphNodeID);
 			destinGraph.addVertex(node);
@@ -259,7 +258,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		}
 		
 		// --- DistributionNode ? ---------------------------------------------
-		if (netComp.getPrototypeClassName().equalsIgnoreCase(DistributionNode.class.getName())) {
+		if (destinNetworkModel.isDistributionNode(netComp)==true) {
 			GraphNode node = (GraphNode) sourceNetworkModel.getGraphElement(nodeIDs.iterator().next());
 			destinGraph.addVertex(node);
 		}

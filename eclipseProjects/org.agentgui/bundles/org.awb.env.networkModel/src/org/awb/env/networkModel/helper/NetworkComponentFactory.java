@@ -187,8 +187,8 @@ public class NetworkComponentFactory {
 		    graphElements.add(edge);
 		}
     	
-		// --- Create a NetworkComponent for the local NetworkModel 
-		NetworkComponent newNetComp = new NetworkComponent(abstractGraphElementPrototype.getId(), networkComponentTypeName, graphPrototypeClass, cts.getAgentClass(), graphElements, abstractGraphElementPrototype.isDirected());
+		// --- Create a NetworkComponent ----------------------------
+		NetworkComponent newNetComp = new NetworkComponent(abstractGraphElementPrototype.getId(), networkComponentTypeName, graphElements, abstractGraphElementPrototype.isDirected());
 		compNetworkModel.addNetworkComponent(newNetComp);
 	    
 		// --- Set position of the GraphNoes ------------------------
