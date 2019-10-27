@@ -119,11 +119,6 @@ public class Ring3GraphElement extends AbstractGraphElementPrototype {
 		}
     }
 
-    @Override
-    public boolean isDirected() {
-    	return false;
-    }
-
     /**
      * @return the number of corners
      */

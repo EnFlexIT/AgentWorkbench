@@ -164,6 +164,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return null;
 	}
+	
 	/**
 	 * Returns the agent class name of the specified NetworkComponent.
 	 *
@@ -171,10 +172,26 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the agent class name
 	 */
 	public String getAgentClassName(NetworkComponent netComp) {
+		
 		if (netComp!=null && netComp.getType()!=null) {
-			ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(netComp.getType());
-			if (cts!=null && cts.getGraphPrototype()!=null) {
-				return cts.getAgentClass();
+			if (netComp instanceof ClusterNetworkComponent) {
+				// --- For a ClusterNetworkComponent ---------------- 
+				ClusterNetworkComponent clusterNetComp = (ClusterNetworkComponent) netComp;
+				String domain = clusterNetComp.getDomain();
+				if (domain!=null) {
+					DomainSettings domainSettings = this.getGeneralGraphSettings4MAS().getDomainSettings().get(domain);
+					if (domainSettings!=null) {
+						return domainSettings.getClusterAgent();
+					}
+				}
+				
+			} else {
+				// --- For a regular NetworkComponent ---------------
+				ComponentTypeSettings cts = this.getGeneralGraphSettings4MAS().getCurrentCTS().get(netComp.getType());
+				if (cts!=null && cts.getGraphPrototype()!=null) {
+					return cts.getAgentClass();
+				}
+
 			}
 		}
 		return null;
@@ -2014,12 +2031,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(compType);
 			domain = cts.getDomain();	
 		}
-		// --- Get cluster agent class name -----------------------------------
-		DomainSettings dSettings = this.generalGraphSettings4MAS.getDomainSettings().get(domain);
-		String clusterAgentClassName = null;
-		if (dSettings!=null) {
-			clusterAgentClassName = dSettings.getClusterAgent();
-		}
 		
 		// ---------- Prepare Parameters for ClusterComponent -----------------
 		NetworkModel clusterNetworkModel = this.getCopy();
@@ -2051,7 +2062,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		Rectangle2D rectangle = GraphGlobals.getGraphSpreadDimension(clusterNetworkModel.getGraph().getVertices());
 		clusterGraphElement.getCentralGraphNode().setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
 		// ----------- Create ClusterNetworkComponent -------------------------
-		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterGraphElement.getId(), clusterGraphElement.getType(), clusterAgentClassName, graphElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
+		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterGraphElement.getId(), clusterGraphElement.getType(), graphElements, domain, clusterNetworkModel);
 		this.addNetworkComponent(clusterComponent);
 		this.refreshGraphElements();
 

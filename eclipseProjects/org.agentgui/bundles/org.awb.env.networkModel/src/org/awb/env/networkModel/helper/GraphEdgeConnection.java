@@ -69,7 +69,7 @@ public class GraphEdgeConnection {
 		
 		EdgeType edgeType = networkModel.getGraph().getEdgeType(this.graphEdge);
 		
-		if (networkComponent.isDirected() && edgeType==EdgeType.DIRECTED) {
+		if (edgeType==EdgeType.DIRECTED) {
 			this.fixedDirected = true;	
 			this.graphNode1 = networkModel.getGraph().getSource(this.graphEdge);
 			this.graphNode2 = networkModel.getGraph().getDest(this.graphEdge);

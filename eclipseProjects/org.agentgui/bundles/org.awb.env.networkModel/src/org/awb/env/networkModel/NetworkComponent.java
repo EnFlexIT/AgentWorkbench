@@ -57,7 +57,6 @@ import de.enflexit.common.SerialClone;
     "id",
     "type",
     "graphElementIDs",
-    "directed",
     "edgeDirections",
     "dataModelBase64"
 })
@@ -84,13 +83,13 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	@XmlElement(name="dataModelBase64")
 	protected Vector<String> dataModelBase64;
 	
+	
 	/**
 	 * Instantiates a new network component.
-	 * Depreciated because of the JAXB context
+	 * Depreciated, but available because of the JAXB context
 	 */
 	@Deprecated
-	public NetworkComponent() {
-	}
+	public NetworkComponent() { }
 	
 	/**
 	 * Instantiates a new network component.
@@ -100,25 +99,10 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	 * @param graphElements the graph elements
 	 * @param directed the indicator if this NetworkComponent is directed
 	 */
-	public NetworkComponent(String id, String type, HashSet<GraphElement> graphElements, boolean directed ) {
+	public NetworkComponent(String id, String type, HashSet<GraphElement> graphElements) {
 		this.setId(id);
 		this.setType(type);
-		this.setDirected(directed);
 		this.setGraphElements(graphElements);
-	}
-	
-	/**
-	 * Returns a copy of the current NetworkComponent.
-	 * @return the copy
-	 */
-	public NetworkComponent getCopy() {
-		NetworkComponent copy = null;	
-		try {
-			copy = SerialClone.clone(this);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return copy;
 	}
 	
 	/**
@@ -182,21 +166,6 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	}
 
 	/**
-	 * Checks if is directed.
-	 * @return the directed
-	 */
-	public boolean isDirected() {
-		return directed;
-	}
-	/**
-	 * Sets the directed.
-	 * @param directed the directed to set
-	 */
-	public void setDirected(boolean directed) {
-		this.directed = directed;
-	}
-
-	/**
 	 * Returns the current edge directions.
 	 * @return the edgeDirections
 	 */
@@ -244,6 +213,14 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	}	
 
 	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getId() + " - " + this.getType();
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -262,15 +239,19 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 		Long n2 = Long.parseLong(n2NumberString);
 		return n1.compareTo(n2);
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+
+	/**
+	 * Returns a copy of the current NetworkComponent.
+	 * @return the copy
 	 */
-	@Override
-	public String toString() {
-		return this.getId() + " - " + this.getType();
+	public NetworkComponent getCopy() {
+		NetworkComponent copy = null;	
+		try {
+			copy = SerialClone.clone(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return copy;
 	}
 
-	
-	
 }

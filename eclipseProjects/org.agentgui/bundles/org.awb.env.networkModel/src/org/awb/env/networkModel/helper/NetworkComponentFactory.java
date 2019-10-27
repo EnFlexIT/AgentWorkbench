@@ -188,7 +188,7 @@ public class NetworkComponentFactory {
 		}
     	
 		// --- Create a NetworkComponent ----------------------------
-		NetworkComponent newNetComp = new NetworkComponent(abstractGraphElementPrototype.getId(), networkComponentTypeName, graphElements, abstractGraphElementPrototype.isDirected());
+		NetworkComponent newNetComp = new NetworkComponent(abstractGraphElementPrototype.getId(), networkComponentTypeName, graphElements);
 		compNetworkModel.addNetworkComponent(newNetComp);
 	    
 		// --- Set position of the GraphNoes ------------------------

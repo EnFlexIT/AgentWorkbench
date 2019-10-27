@@ -82,9 +82,5 @@ public abstract class AbstractGraphElementPrototype {
 	public String getType() {
 		return type;
 	}
-	/**
-	 * @return True if directed, false if undirected
-	 */
-	public abstract boolean isDirected();
 	
 }

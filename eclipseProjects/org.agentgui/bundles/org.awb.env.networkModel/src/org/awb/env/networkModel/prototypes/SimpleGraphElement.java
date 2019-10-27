@@ -73,12 +73,4 @@ public class SimpleGraphElement extends AbstractGraphElementPrototype {
 		return elements;
     }
 
-    /* (non-Javadoc)
-     * @see org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype#isDirected()
-     */
-    @Override
-    public boolean isDirected() {
-    	return false;
-    }
-
 }

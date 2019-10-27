@@ -112,11 +112,6 @@ public class Mesh3GraphElement extends AbstractGraphElementPrototype {
 		}
     }
 	
-    @Override
-    public boolean isDirected() {
-		return false;
-    }
-
     /**
      * Gets the n.
      * @return the number of corners

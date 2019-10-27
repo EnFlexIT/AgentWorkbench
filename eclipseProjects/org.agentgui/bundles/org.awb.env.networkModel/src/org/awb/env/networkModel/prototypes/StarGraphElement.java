@@ -15,11 +15,6 @@ public abstract class StarGraphElement extends AbstractGraphElementPrototype {
 		super();
 	}
 
-	@Override
-	public boolean isDirected() {
-		return false;
-	}
-
 	public Integer getN() {
 		return n;
 	}

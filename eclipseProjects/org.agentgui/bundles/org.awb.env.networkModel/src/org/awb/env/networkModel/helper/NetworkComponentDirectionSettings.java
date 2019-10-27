@@ -44,14 +44,14 @@ import org.awb.env.networkModel.NetworkModel;
  */
 public class NetworkComponentDirectionSettings {
 
-	private NetworkModel networkModel = null;
-	private NetworkComponent networkComponent = null;
+	private NetworkModel networkModel;
+	private NetworkComponent networkComponent;
 	
-	private HashSet<GraphNode> innerGraphNodes = new HashSet<GraphNode>();
-	private HashSet<GraphNode> outerGraphNodes = new HashSet<GraphNode>();
+	private HashSet<GraphEdgeConnection> edgeConnections;
+	private HashMap<String, GraphEdgeDirection> edgeDirections;
 	
-	private HashSet<GraphEdgeConnection> edgeConnections = null;
-	private HashMap<String, GraphEdgeDirection> edgeDirections = null;
+	private HashSet<GraphNode> innerGraphNodes;
+	private HashSet<GraphNode> outerGraphNodes;
 	
 	
 	/**
@@ -77,11 +77,9 @@ public class NetworkComponentDirectionSettings {
 			// --- Get the description of the connections to the edge ---------
 			GraphElement graphElement = this.networkModel.getGraphElement(graphElementID);
 			if (graphElement instanceof GraphEdge) {
+				
 				GraphEdgeConnection graphEdgeConnection = new GraphEdgeConnection(this.networkModel, this.networkComponent, (GraphEdge) graphElement);
-				if (this.edgeConnections==null) {
-					this.edgeConnections = new HashSet<GraphEdgeConnection>();
-				}
-				this.edgeConnections.add(graphEdgeConnection);
+				this.getEdgeConnections().add(graphEdgeConnection);
 				
 				String graphEdgeID = graphEdgeConnection.getGraphEdge().getId();
 				GraphEdgeDirection graphEdgeDirection = null;
@@ -92,11 +90,7 @@ public class NetworkComponentDirectionSettings {
 				} else {
 					graphEdgeDirection = new GraphEdgeDirection(graphEdgeID, null, null, false);	
 				}
-				
-				if (this.edgeDirections==null) {
-					this.edgeDirections = new HashMap<String, GraphEdgeDirection>();
-				}
-				this.edgeDirections.put(graphEdgeID, graphEdgeDirection);
+				this.getEdgeDirections().put(graphEdgeID, graphEdgeDirection);
 			}
 		}
 
@@ -121,12 +115,12 @@ public class NetworkComponentDirectionSettings {
 		if (this.isDistributionNode()) {
 			// --- This is a DistributionNonde ------------
 			GraphElement node = this.networkModel.getGraphElement(this.networkComponent.getGraphElementIDs().iterator().next());
-			this.outerGraphNodes.add((GraphNode) node);
+			this.getOuterGraphNodes().add((GraphNode) node);
 			
 		} else {
 			// --- Is there a node, which is there more than one time? --
 			HashMap<GraphNode, Integer> noderCountings = new HashMap<GraphNode, Integer>();
-			for (GraphEdgeConnection connection : this.edgeConnections) {
+			for (GraphEdgeConnection connection : this.getEdgeConnections()) {
 				
 				// --- GraphNode 1 ----------------------------------
 				GraphNode node = connection.getGraphNode1();
@@ -153,9 +147,9 @@ public class NetworkComponentDirectionSettings {
 			for (GraphNode node : noderCountings.keySet()) {
 				Integer countings = noderCountings.get(node);
 				if (countings==1) {
-					this.outerGraphNodes.add(node);
+					this.getOuterGraphNodes().add(node);
 				} else {
-					this.innerGraphNodes.add(node);
+					this.getInnerGraphNodes().add(node);
 				}
 			}
 		}
@@ -166,36 +160,48 @@ public class NetworkComponentDirectionSettings {
 	 * @return the edgeConnections
 	 */
 	public HashSet<GraphEdgeConnection> getEdgeConnections() {
-		return this.edgeConnections;
+		if (edgeConnections==null) {
+			edgeConnections = new HashSet<>();
+		}
+		return edgeConnections;
 	}
 	/**
 	 * Gets the edge directions.
 	 * @return the edgeDirections
 	 */
 	public HashMap<String, GraphEdgeDirection> getEdgeDirections() {
-		return this.edgeDirections;
+		if (edgeDirections==null) {
+			edgeDirections = new HashMap<>();
+		}
+		return edgeDirections;
 	}
 	
 	/**
 	 * Returns the outer GraphNodes of the NetworkComponent.
 	 * @return the outer GraphNodes
 	 */
-	public HashSet<GraphNode> getOuterNodes() {
-		return this.outerGraphNodes;
+	public HashSet<GraphNode> getOuterGraphNodes() {
+		if (outerGraphNodes==null) {
+			outerGraphNodes = new HashSet<>();
+		}
+		return outerGraphNodes;
 	}
 	/**
 	 * Returns the inner GraphNodes of the NetworkComponent.
 	 * @return the inner GraphNodes
 	 */
-	public HashSet<GraphNode> getInnerNodes() {
-		return this.innerGraphNodes;
+	public HashSet<GraphNode> getInnerGraphNodes() {
+		if (innerGraphNodes==null) {
+			innerGraphNodes = new HashSet<>();
+		}
+		return innerGraphNodes;
 	}
 	
 	/**
-	 * Gets the neighbour NetworkComponent(s) of a GraphNode.
+	 * Gets the neighbor NetworkComponent(s) of a GraphNode.
 	 *
 	 * @param graphNode the graph node
-	 * @return the neighbour network component
+	 * @return the neighbor network component
 	 */
 	public HashSet<NetworkComponent> getNeighbourNetworkComponent(GraphNode graphNode) {
 		
@@ -206,7 +212,7 @@ public class NetworkComponentDirectionSettings {
 		} else {
 		
 			String searchID = graphNode.getId();
-			for (GraphEdgeConnection conn : this.edgeConnections) {
+			for (GraphEdgeConnection conn : this.getEdgeConnections()) {
 				
 				// --- GraphNode 1 --------------
 				if (conn.getGraphNode1().getId().equals(searchID)) {
@@ -244,7 +250,7 @@ public class NetworkComponentDirectionSettings {
 		} else {
 		
 			String searchID = neighbourNetworkComponent.getId();
-			for (GraphEdgeConnection conn : this.edgeConnections) {
+			for (GraphEdgeConnection conn : this.getEdgeConnections()) {
 				// --- GraphNode 1 --------------
 				if (conn.getExternalNetworkComponent1()!=null) {
 					if (conn.getExternalNetworkComponent1().getId().equals(searchID)) {
@@ -443,19 +449,19 @@ public class NetworkComponentDirectionSettings {
 		
 		// ----------------------------------------------------------
 		// --- Do Assignment ----------------------------------------
-		if (this.innerGraphNodes.size()==0) {
+		if (this.getInnerGraphNodes().size()==0) {
 			// --- This applies only for simple graph elements ------ 
-			GraphEdgeConnection connection = this.edgeConnections.iterator().next();
+			GraphEdgeConnection connection = this.getEdgeConnections().iterator().next();
 			GraphEdge graphEdge = connection.getGraphEdge();
 			GraphNode graphNodeFrom = inNodes.iterator().next();
 			GraphNode graphNodeTo   = outNodes.iterator().next();
 			
 			this.setGraphEdgeDirection(graphEdge, graphNodeFrom, graphNodeTo);
 			
-		} else if (this.innerGraphNodes.size()==1) {
+		} else if (this.getInnerGraphNodes().size()==1) {
 			// --- This applies for StarElements --------------------
-			GraphNode graphNodeCenter = this.innerGraphNodes.iterator().next();
-			for (GraphEdgeConnection connection : this.edgeConnections) {
+			GraphNode graphNodeCenter = this.getInnerGraphNodes().iterator().next();
+			for (GraphEdgeConnection connection : this.getEdgeConnections()) {
 
 				GraphNode graphNodeFrom = null; 
 				GraphNode graphNodeTo = null;
