@@ -32,6 +32,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.apache.commons.collections15.Transformer;
@@ -39,6 +40,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -109,7 +111,7 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 
 				// --- Load the individual data model ---------------
 				String dmBase64StringSaved = nmd.getProperty(GraphModelWriter.KEY_DATA_MODEL_BASE64_PROPERTY);
-				if (dmBase64StringSaved != null) {
+				if (dmBase64StringSaved!=null) {
 					Vector<String> base64Vector = new Vector<String>();
 					while (dmBase64StringSaved.contains("]")) {
 						int cutAtOpen = dmBase64StringSaved.indexOf("[") + 1;
@@ -118,11 +120,16 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 						base64Vector.add(singleString);
 						dmBase64StringSaved = dmBase64StringSaved.substring(cutAtClose + 1);
 					}
-					if (base64Vector.size() > 0) {
+					if (base64Vector.size()>0) {
 						graphNode.setDataModelBase64(base64Vector);
 					}
 				}
 
+				// --- Load data model storage settings -------------
+				String storageSettings = nmd.getProperty(GraphModelWriter.KEY_DATA_MODEL_STORAGE_SETTINGS);
+				TreeMap<String, String> dataModelStorageSettings = AbstractDataModelStorageHandler.getDataModelStorageSettingsFromString(storageSettings);
+				graphNode.setDataModelStorageSettings(dataModelStorageSettings);
+				
 				// --- Set the position of the node -----------------
 				String posString = nmd.getProperty(GraphModelWriter.KEY_POSITION_PROPERTY);
 				Point2D pos = GraphNode.getPositionFromString(posString);

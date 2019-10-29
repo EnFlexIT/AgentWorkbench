@@ -30,16 +30,19 @@ package org.awb.env.networkModel.controller;
 
 import java.awt.Cursor;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
 import org.agentgui.gui.AwbProgressMonitor;
 import org.agentgui.gui.UiBridge;
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
+import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -58,13 +61,13 @@ import agentgui.core.application.Language;
 public class DataModelEnDecoderThread extends Thread {
 
 	public enum OrganizerAction {
-		ORGANIZE_ENCODE_64,
-		ORGANIZE_DECODE_64,
+		ORGANIZE_SAVING,
+		ORGANIZE_LOADING
 	}
 
 	private enum WorkerAction {
-		ENCODE_64,
-		DECODE_64
+		SAVE,
+		LOAD
 	}
 
 	// --- Variables for all ------------------------------
@@ -87,7 +90,7 @@ public class DataModelEnDecoderThread extends Thread {
 	
 	// --- Variables for the worker -----------------------
 	private WorkerAction workerAction;
-	private Vector<Object> componentsToWorkOn;
+	private Vector<DataModelNetworkElement> componentsToWorkOn;
 	private HashMap<String, NetworkComponentAdapter> networkComponentAdapterHash;
 	
 	
@@ -95,14 +98,14 @@ public class DataModelEnDecoderThread extends Thread {
 	 * Instantiates a new organizer thread for the data model encoding or decoding .
 	 *
 	 * @param graphController the graph controller
-	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_DECODE_64} or {@link OrganizerAction#ORGANIZE_ENCODE_64}
+	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_LOADING} or {@link OrganizerAction#ORGANIZE_SAVING}
 	 */
 	public DataModelEnDecoderThread(GraphEnvironmentController graphController, OrganizerAction action) {
 		this.graphController = graphController;
 		this.organizerAction = action;
-		if (action==OrganizerAction.ORGANIZE_ENCODE_64) {
+		if (action==OrganizerAction.ORGANIZE_SAVING) {
 			this.setName("Encoding-Manager");
-		} else if (action==OrganizerAction.ORGANIZE_DECODE_64) {
+		} else if (action==OrganizerAction.ORGANIZE_LOADING) {
 			this.setName("Decoding-Manager");
 		}
 	}
@@ -116,14 +119,14 @@ public class DataModelEnDecoderThread extends Thread {
 	 * @param action the action
 	 * @param name the designated name for the Thread
 	 */
-	private DataModelEnDecoderThread(DataModelEnDecoderThread organizerThread, GraphEnvironmentController graphController, Vector<Object> componentsToWorkOn, WorkerAction action, int threadNo) {
+	private DataModelEnDecoderThread(DataModelEnDecoderThread organizerThread, GraphEnvironmentController graphController, Vector<DataModelNetworkElement> componentsToWorkOn, WorkerAction action, int threadNo) {
 		this.organizerThread = organizerThread;
 		this.graphController = graphController;
 		this.componentsToWorkOn = componentsToWorkOn;
 		this.workerAction = action;
-		if (action==WorkerAction.ENCODE_64) {
+		if (action==WorkerAction.SAVE) {
 			this.setName("Encoding-Worker-" + threadNo);
-		} else if (action==WorkerAction.DECODE_64) {
+		} else if (action==WorkerAction.LOAD) {
 			this.setName("Decoding-Worker-" + threadNo);
 		}
 	}
@@ -138,21 +141,21 @@ public class DataModelEnDecoderThread extends Thread {
 			// --- Organizer action -----------------------
 			if (this.organizerAction!=null) {
 				switch (this.organizerAction) {
-				case ORGANIZE_DECODE_64:
-				case ORGANIZE_ENCODE_64:
-					this.organizeEnDecoding();
+				case ORGANIZE_LOADING:
+				case ORGANIZE_SAVING:
+					this.organizePersitenceAction();
 					break;
 				}
 			}
 			// --- Worker action --------------------------
 			if (this.workerAction!=null) {
 				switch (this.workerAction) {
-				case DECODE_64:
-					this.decode64();
+				case LOAD:
+					this.loadDataModel();
 					break;
 					
-				case ENCODE_64:
-					this.encode64();
+				case SAVE:
+					this.saveDataModel();
 					break;
 				}			
 			}
@@ -165,13 +168,13 @@ public class DataModelEnDecoderThread extends Thread {
 	/**
 	 * Organizes the decoding or the encoding of the Base64 data models.
 	 */
-	private void organizeEnDecoding() {
+	private void organizePersitenceAction() {
 		
     	this.finalizer = new Object();
 		this.firstDisplayTime = System.currentTimeMillis() + this.firstDisplayWaitTime;
 
 		// --- Summarize NetworkComponent's and GraphNode's --------- 
-		Vector<Object> sumCompVector = this.getNetworkObjectsToEnDecode();
+		Vector<DataModelNetworkElement> sumCompVector = this.getNetworkObjectsToLoadOrSave();
 		this.elementsToConvert = sumCompVector.size();
 		if (this.elementsToConvert==0) return;
 		
@@ -193,16 +196,16 @@ public class DataModelEnDecoderThread extends Thread {
 		if (noOfVector<=0) noOfVector=1;
 		
 		// --- Define separation Vector -----------------------------
-		Vector<Vector<Object>> splitVector = new Vector<>();
+		Vector<Vector<DataModelNetworkElement>> splitVector = new Vector<>();
 		
 		// --- Distribute components on separated Vector ------------
 		int roundTripIndex = 0;
 		for (int i = 0; i < sumCompVector.size(); i++) {
 			
-			Object component = sumCompVector.get(i);
+			DataModelNetworkElement component = sumCompVector.get(i);
 			// --- Make sure that a part Vector is available --------
 			if (splitVector.size()<roundTripIndex+1) {
-				splitVector.add(new Vector<Object>());
+				splitVector.add(new Vector<DataModelNetworkElement>());
 			}
 			splitVector.get(roundTripIndex).add(component);
 			roundTripIndex++;
@@ -216,14 +219,14 @@ public class DataModelEnDecoderThread extends Thread {
 		
 		// --- Start thread for each element vector -----------------
 		for (int i = 0; i < splitVector.size(); i++) {
-			Vector<Object> elementVector = splitVector.get(i);
+			Vector<DataModelNetworkElement> elementVector = splitVector.get(i);
 			switch (this.organizerAction) {
-			case ORGANIZE_DECODE_64:
-				new DataModelEnDecoderThread(this, this.graphController, elementVector, WorkerAction.DECODE_64, i+1).start();
+			case ORGANIZE_LOADING:
+				new DataModelEnDecoderThread(this, this.graphController, elementVector, WorkerAction.LOAD, i+1).start();
 				break;
 
-			case ORGANIZE_ENCODE_64:
-				new DataModelEnDecoderThread(this, this.graphController, elementVector, WorkerAction.ENCODE_64, i+1).start();	
+			case ORGANIZE_SAVING:
+				new DataModelEnDecoderThread(this, this.graphController, elementVector, WorkerAction.SAVE, i+1).start();	
 				break;
 			}
 		}
@@ -256,15 +259,15 @@ public class DataModelEnDecoderThread extends Thread {
 	}
 	
 	/**
-	 * Returns the network objects where data model have to be to en- or decoded.
+	 * Returns the network objects where data model have to be to saved or loaded.
 	 * @return the network objects to en- decode
 	 */
-	private Vector<Object> getNetworkObjectsToEnDecode() {
+	private Vector<DataModelNetworkElement> getNetworkObjectsToLoadOrSave() {
 
 		if (this.organizerAction==null) return new Vector<>();
 		
 		// --- Define the result vector -----------------------------
-		Vector<Object> reducedNetElementVector = new Vector<>();
+		Vector<DataModelNetworkElement> reducedNetElementVector = new Vector<>();
 
 		// --- Work on the NetworkComponents ------------------------
 		Object[] netComps = this.graphController.getNetworkModel().getNetworkComponents().values().toArray();
@@ -272,16 +275,14 @@ public class DataModelEnDecoderThread extends Thread {
 			
 			NetworkComponent netComp = (NetworkComponent) netComps[i];
 			switch (this.organizerAction) {
-			case ORGANIZE_ENCODE_64:
+			case ORGANIZE_SAVING:
 				if (netComp.getDataModel()!=null) {
 					reducedNetElementVector.add(netComp);
 				}
 				break;
 
-			case ORGANIZE_DECODE_64:
-				if (netComp.getDataModelBase64()!=null && netComp.getDataModelBase64().size()>0) {
-					reducedNetElementVector.add(netComp);
-				}
+			case ORGANIZE_LOADING:
+				reducedNetElementVector.add(netComp);
 				break;
 			}
 		}
@@ -292,16 +293,14 @@ public class DataModelEnDecoderThread extends Thread {
 			
 			GraphNode graphNode = (GraphNode) graphNodes[i];
 			switch (this.organizerAction) {
-			case ORGANIZE_ENCODE_64:
+			case ORGANIZE_SAVING:
 				if (graphNode.getDataModel()!=null) {
 					reducedNetElementVector.add(graphNode);
 				}
 				break;
 
-			case ORGANIZE_DECODE_64:
-				if (graphNode.getDataModelBase64()!=null && graphNode.getDataModelBase64().size()>0) {
-					reducedNetElementVector.add(graphNode);
-				}
+			case ORGANIZE_LOADING:
+				reducedNetElementVector.add(graphNode);
 				break;
 			}
 		}
@@ -366,13 +365,13 @@ public class DataModelEnDecoderThread extends Thread {
 			String header = null;
 			String progress = null;
 			switch (this.organizerAction) {
-			case ORGANIZE_DECODE_64:
+			case ORGANIZE_LOADING:
 				title = Language.translate("Initiating network components", Language.EN);
 		    	header = Language.translate("Initiating network components and setting data model", Language.EN);
 		    	progress = Language.translate("Reading", Language.EN) + "...";
 				break;
 				
-			case ORGANIZE_ENCODE_64:
+			case ORGANIZE_SAVING:
 				title = Language.translate("Preparing network components", Language.EN);
 		    	header = Language.translate("Preparing and encoding network components for saving", Language.EN);
 		    	progress = Language.translate("Writing", Language.EN) + "...";
@@ -393,52 +392,31 @@ public class DataModelEnDecoderThread extends Thread {
 	// --- From here, the worker methods can be found ---------------------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
-	 * Decodes the data models from a Base64 string.
+	 * Loads the data models of all {@link DataModelNetworkElement}s (e.g decode from Base64 string).
 	 */
-	private void decode64() {
+	private void loadDataModel() {
 		
 		for (int i = 0; i < this.componentsToWorkOn.size(); i++) {
 		
 			try {
-				// --- Find the corresponding NetworkComponentAdapter ---------
-				NetworkComponentAdapter netCompAdapter=null;
-				NetworkComponent netComp = null;
-				GraphNode graphNode = null;
-				
-				Object objectToWorkOn = this.componentsToWorkOn.get(i);
-				if (objectToWorkOn instanceof NetworkComponent) {
-					netComp = (NetworkComponent) objectToWorkOn;		
-					netCompAdapter = this.getNetworkComponentAdapter(netComp);
-				} else if (objectToWorkOn instanceof GraphNode) {
-					graphNode = (GraphNode) objectToWorkOn;
-					netCompAdapter = this.getNetworkComponentAdapter(graphNode);	
-				}
-				
 				// --- Set the components data model instance -----------------
+				DataModelNetworkElement networkElement =  this.componentsToWorkOn.get(i);
+				NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(networkElement);
 				if (netCompAdapter!=null) {
-					
-					Vector<String> dataModelBase64 = null;
-					if (graphNode!=null) {
-						dataModelBase64 = graphNode.getDataModelBase64();
-					} else {
-						dataModelBase64 = netComp.getDataModelBase64();
+					// --- Get DataModelAdapter -------------------------------
+					NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
+					if (netCompDataModelAdapter!=null) {
+						// --- Load data model instance ------------------------
+						AbstractDataModelStorageHandler storageHandler = netCompDataModelAdapter.getDataModelStorageHandlerInternal();
+						Object dataModel = storageHandler.loadDataModel(networkElement);
+						networkElement.setDataModel(dataModel);
+    					// --- Requires persistence update? -------------------
+    					if (storageHandler.isRequiresPersistenceUpdate()==true) {
+    						TreeMap<String, String> settings = storageHandler.saveDataModel(networkElement);
+    						networkElement.setDataModelStorageSettings(settings);
+    					}
 					}
-					
-					if (dataModelBase64!=null) {
-						// --- Get DataModelAdapter ---------------------------
-						NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
-						if (netCompDataModelAdapter!=null) {
-							// --- Get Base64 decoded Object ------------------
-							Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64);
-							if (graphNode!=null) {
-			    				graphNode.setDataModel(dataModel);
-			    			} else {
-			    				netComp.setDataModel(dataModel);
-			    			}
-						}
-					}
-					
-				}// end found adapter
+				} 
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -449,66 +427,29 @@ public class DataModelEnDecoderThread extends Thread {
 
 	
 	/**
-	 * Encode the data models into a Base64 string.
+	 * Saves the data models of all {@link DataModelNetworkElement}s (e.g encode as Base64 string).
 	 */
-	private void encode64() {
+	private void saveDataModel() {
 		
 		for (int i = 0; i < this.componentsToWorkOn.size(); i++) {
 			
 			try {
-				// --- Find the corresponding NetworkComponentAdapter ---------
-				NetworkComponentAdapter netCompAdapter=null;
-				NetworkComponent netComp = null;
-				GraphNode graphNode = null;
-				
-				Object objectToWorkOn = this.componentsToWorkOn.get(i);
-				if (objectToWorkOn instanceof NetworkComponent) {
-					netComp = (NetworkComponent) objectToWorkOn;		
-					netCompAdapter = this.getNetworkComponentAdapter(netComp);
-				} else if (objectToWorkOn instanceof GraphNode) {
-					graphNode = (GraphNode) objectToWorkOn;
-					netCompAdapter = this.getNetworkComponentAdapter(graphNode);	
-				}
+
 				// --- Set the components data model as Base64 ----------------
+				DataModelNetworkElement dmNetElement = this.componentsToWorkOn.get(i);
+				NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(dmNetElement);
 				if (netCompAdapter!=null) {
-					
-					Object dataModel = null;
-					if (graphNode!=null) {
-						dataModel = graphNode.getDataModel();
-					} else {
-						dataModel = netComp.getDataModel();
-					}
-					
-					if (dataModel==null) {
-						// --- No data model ----------------------------------
-						if (graphNode!=null) {
-		    				graphNode.setDataModelBase64(null);
-		    			} else {
-		    				netComp.setDataModelBase64(null);;
-		    			}
-					} else {
-						// --- Get DataModelAdapter ---------------------------
-						NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
-						if (netCompDataModelAdapter==null) {
-							// --- No DataModelAdapter found ------------------
-							if (graphNode!=null) {
-			    				graphNode.setDataModelBase64(null);
-			    			} else {
-			    				netComp.setDataModelBase64(null);
-			    			}
-								
+					// --- Get DataModelAdapter -------------------------------
+					NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
+					if (netCompDataModelAdapter!=null) {
+						TreeMap<String, String> storageSettings = netCompDataModelAdapter.getDataModelStorageHandlerInternal().saveDataModel(dmNetElement);
+						if (storageSettings==null || storageSettings.size()==0) {
+							dmNetElement.setDataModelStorageSettings(null);
 						} else {
-							// --- Get Base64 encoded String ----------------
-							Vector<String> dataModelBase64 = netCompDataModelAdapter.getDataModelBase64Encoded(dataModel);
-							if (graphNode!=null) {
-			    				graphNode.setDataModelBase64(dataModelBase64);
-			    			} else {
-			    				netComp.setDataModelBase64(dataModelBase64);
-			    			}
+							dmNetElement.setDataModelStorageSettings(storageSettings);
 						}
 					}
-
-				}// end found adapter
+				}					
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -527,6 +468,20 @@ public class DataModelEnDecoderThread extends Thread {
 			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
 		}
 		return networkComponentAdapterHash;
+	}
+	/**
+	 * Returns the NetworkComponentAdapter for the specified DataModelNetworkElement.
+	 *
+	 * @param networkComponent the NetworkComponent
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(DataModelNetworkElement networkElement) {
+		if (networkElement instanceof NetworkComponent) {
+			return this.getNetworkComponentAdapter((NetworkComponent)networkElement);
+		} else if (networkElement instanceof GraphNode) {
+			return this.getNetworkComponentAdapter((GraphNode)networkElement);
+		}
+		return null;
 	}
 	/**
 	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.

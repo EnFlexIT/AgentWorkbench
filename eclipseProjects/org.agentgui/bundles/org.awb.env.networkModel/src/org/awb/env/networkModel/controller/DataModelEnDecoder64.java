@@ -59,33 +59,50 @@ public class DataModelEnDecoder64 {
 		
 		Vector<String> modelVector64 = new Vector<>();
 		if (dataModel!=null && dataModel.getClass().isArray()) {
+			// --- Data model is an array ---------------------------
 			Object[] dmArray = (Object[]) dataModel;
 			for (int i = 0; i < dmArray.length; i++) {
-				
 				Object singleInstance = dmArray[i];
-				String singleInstance64 = null;
-				
-				// --- Try to get single instance as base64 encoded String ----
-				try {
-					if (singleInstance!=null) {
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						ObjectOutputStream oos = new ObjectOutputStream(baos);
-						oos.writeObject(singleInstance);
-						oos.close();
-						singleInstance64 = new String(Base64.encodeBase64(baos.toByteArray()));
-					}
-			        
-				} catch (IOException ioEx) {
-					ioEx.printStackTrace();
-				}
-				// --- Add bas64 string to result vector ---------------------- 
+				String singleInstance64 = getObjectInstanceBase64Encoded(singleInstance);
 				modelVector64.add(singleInstance64);
 			}
 			  
+		} else {
+			// --- Data model is NOT an array -----------------------
+			String singleInstance64 = getObjectInstanceBase64Encoded(dataModel);
+			modelVector64.add(singleInstance64);
 		}
 		return modelVector64;
 	}
 
+	/**
+	 * Returns the specified object instance as Base64 encoded String.
+	 *
+	 * @param singleInstance the single instance
+	 * @return the object instance base 64 encoded
+	 */
+	private static String getObjectInstanceBase64Encoded(Object singleInstance) {
+		
+		String singleInstance64 = null;
+		
+		// --- Try to get single instance as base64 encoded String ----
+		try {
+			if (singleInstance!=null) {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(singleInstance);
+				oos.close();
+				singleInstance64 = new String(Base64.encodeBase64(baos.toByteArray()));
+			}
+	        
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+		return singleInstance64;
+	}
+	
+	
+	
 	/**
 	 * Returns the data model array decoded from the Base64 encoded string vector.
 	 *
@@ -100,54 +117,34 @@ public class DataModelEnDecoder64 {
 		// --- Define output array ----------------------------------
 		Object[] objectArray = new Object[dataModel.size()];
 		for (int i = 0; i < dataModel.size(); i++) {
-			
 			String singleInstance64 = dataModel.get(i);
-			Object singleInstance = null;
-			
-			// --- Check/try to decode from base64 string -----------
-			if (singleInstance64!=null && singleInstance64.isEmpty()==false) {
-				try {
-					
-					byte[] data = Base64.decodeBase64(singleInstance64.getBytes());
-					ObjectInputStreamForClassLoadService ois = new ObjectInputStreamForClassLoadService(new ByteArrayInputStream(data), BaseClassLoadServiceUtility.class);
-					singleInstance = ois.readObject();
-					ois.close();
-					
-				} catch (IOException | ClassNotFoundException | InstantiationError ex) {
-					ex.printStackTrace();
-				}
-				
-			}
-			// --- Set to object array ------------------------------
+			Object singleInstance = getObjectInstanceBase64Decoded(singleInstance64);
 			objectArray[i] = singleInstance;
 			
 		}
 		return objectArray;
 	}
-
 	/**
-	 * Revises the specified data model if required.
+	 * Returns the object instance from the specified Base64 encoded String.
 	 *
-	 * @param dataModel the data model
-	 * @return the object
+	 * @param singleInstance64 the single instance as Base64 encoded string 
+	 * @return the decoded object instance
 	 */
-	public static Object reviewDataModel(Object dataModel) {
+	private static Object getObjectInstanceBase64Decoded(String singleInstance64) {
 		
-		if (dataModel!=null) {
-			if (dataModel.getClass().isArray()==true) {
-				Object[] dataModelArray = (Object[]) dataModel;
-				for (int i = 0; i < dataModelArray.length; i++) {
-					if (dataModelArray[i]!=null) {
-						return dataModel;
-					}
-				}
-				return null;
+		Object singleInstance = null;
+		if (singleInstance64!=null && singleInstance64.isEmpty()==false) {
+			try {
+				byte[] data = Base64.decodeBase64(singleInstance64.getBytes());
+				ObjectInputStreamForClassLoadService ois = new ObjectInputStreamForClassLoadService(new ByteArrayInputStream(data), BaseClassLoadServiceUtility.class);
+				singleInstance = ois.readObject();
+				ois.close();
 				
-			} else {
-				return dataModel;
+			} catch (IOException | ClassNotFoundException | InstantiationError ex) {
+				ex.printStackTrace();
 			}
 		}
-		return null;
+		return singleInstance;
 	}
 	
 }

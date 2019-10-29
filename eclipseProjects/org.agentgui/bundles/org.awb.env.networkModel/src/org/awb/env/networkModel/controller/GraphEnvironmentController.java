@@ -809,14 +809,14 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Sets all Base64 encoded data models to concrete instances.
 	 */
 	public void setNetworkComponentDataModelBase64Decoded() {
-		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_DECODE_64).start();
+		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_LOADING).start();
 	}
 
 	/**
 	 * Sets the instances of all data models to a Base64 encoded strings.
 	 */
 	public void setNetworkComponentDataModelBase64Encoded() {
-		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_ENCODE_64).start();
+		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_SAVING).start();
 	}
 
 	/**

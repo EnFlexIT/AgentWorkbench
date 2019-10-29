@@ -33,12 +33,14 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.controller.DataModelEnDecoder64;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
+import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.dataModel.DataModelStorageHandlerBase64;
 
 
 /**
@@ -60,6 +62,8 @@ public abstract class NetworkComponentAdapter4DataModel {
 	/** The current GraphNode */
 	protected GraphNode graphNode;
 
+	/** The data model storage handler. */
+	protected AbstractDataModelStorageHandler dataModelStorageHandler;
 	
 	/**
 	 * <b>Just for an internal use!</b> Instantiates a new network component data model adapter. 
@@ -163,26 +167,29 @@ public abstract class NetworkComponentAdapter4DataModel {
 	
 	
 	/**
-	 * Returns the data model of a {@link NetworkComponent} or a {@link GraphNode} as Vector of Base64 encoded String
-	 * by using the corresponding static method of the {@link DataModelEnDecoder64}.
+	 * Basically, calls the method {@link #getDataModelStorageHandler()}. If this method does not return 
+	 * an individual storage handler the default {@link DataModelStorageHandlerBase64} will be used instead.
 	 *
-	 * @param dataModel the data model model (usually an object array) 
-	 * @return the data model encoded as Base64 String vector
+	 * @return the storage handler
 	 */
-	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
-		return DataModelEnDecoder64.getDataModelBase64Encoded(dataModel);
+	public final AbstractDataModelStorageHandler getDataModelStorageHandlerInternal() {
+		if (dataModelStorageHandler==null) {
+			dataModelStorageHandler = this.getDataModelStorageHandler();
+			if (dataModelStorageHandler==null) {
+				dataModelStorageHandler = new DataModelStorageHandlerBase64();
+			}
+		}
+		return dataModelStorageHandler;
 	}
 	/**
-	 * Returns the data model specified by the Base64 encoded String vector of a {@link NetworkComponent} or a {@link GraphNode} 
-	 * as Object array by using the corresponding static method of the {@link DataModelEnDecoder64}.
-	 *
-	 * @param dataModel the data model as Base64 encoded String vector
-	 * @return the data model array 
+	 * May return an individual data storage handler to be used to save the data model of a {@link DataModelNetworkElement}
+	 * that is either a {@link NetworkComponent} or a {@link GraphNode}. Overwrite this method to place an individual storage handler here.
+	 * @return the individual data model storage handler
 	 */
-	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
-		return DataModelEnDecoder64.getDataModelBase64Decoded(dataModel);
+	protected AbstractDataModelStorageHandler getDataModelStorageHandler() {
+		return null;
 	}
-
+	
 	
 	// --------------------------------------------------------------
 	// --- From here some simple getter and setter methods ----------

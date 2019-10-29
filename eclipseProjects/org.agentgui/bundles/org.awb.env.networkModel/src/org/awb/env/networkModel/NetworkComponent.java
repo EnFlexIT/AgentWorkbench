@@ -31,6 +31,7 @@ package org.awb.env.networkModel;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -58,9 +59,10 @@ import de.enflexit.common.SerialClone;
     "type",
     "graphElementIDs",
     "edgeDirections",
+    "dataModelStorageSettings",
     "dataModelBase64"
 })
-public class NetworkComponent implements Serializable, Comparable<NetworkComponent> {
+public class NetworkComponent implements DataModelNetworkElement, Serializable, Comparable<NetworkComponent> {
 
 	private static final long serialVersionUID = 537431665305238609L;
 
@@ -70,14 +72,17 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 	protected String type;
 	/** The IDs of the nodes and edges that are part of this NetworkComponent. */
 	protected HashSet<String> graphElementIDs = new HashSet<String>();
-	/** Specifies if the NetworkComponent is directed or undirected. */
-	protected boolean directed;
 	/** The direction(s) of the edge(s). */
 	protected HashMap<String, GraphEdgeDirection> edgeDirections;
 	
 	/**	The data model for this NetworkComponent.*/
 	@XmlTransient
 	protected Object dataModel;
+	
+	@XmlElementWrapper(name = "dataModelStorageSettings")
+	@XmlElement(name="dataModelStorageSetting")
+	protected TreeMap<String, String> dataModelStorageSettings;
+	
 	/** The data model for this NetworkComponent encoded as Base64 String*/
 	@XmlElementWrapper(name = "dataModelsBase64")
 	@XmlElement(name="dataModelBase64")
@@ -180,38 +185,56 @@ public class NetworkComponent implements Serializable, Comparable<NetworkCompone
 		this.edgeDirections = edgeDirections;
 	}
 
-	/**
-	 * Gets the data model instance.
-	 * @return the data model instance
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#getDataModel()
 	 */
+	@Override
 	@XmlTransient
 	public Object getDataModel() {
 		return dataModel;
 	}
-	/**
-	 * Sets the data model instance.
-	 * @param dataModel the new data model instance
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#setDataModel(java.lang.Object)
 	 */
+	@Override
 	public void setDataModel(Object dataModel) {
 		this.dataModel = dataModel;
 	}
 	
-	/**
-	 * Returns the data model Base64 encoded.
-	 * @return the dataModelBase64
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#getDataModelStorageSettings()
 	 */
+	@Override
+	@XmlTransient
+	public TreeMap<String, String> getDataModelStorageSettings() {
+		return dataModelStorageSettings;
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#setDataModelStorageSettings(java.util.TreeMap)
+	 */
+	@Override
+	public void setDataModelStorageSettings(TreeMap<String, String> dataModelStorageSettings) {
+		this.dataModelStorageSettings = dataModelStorageSettings;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#getDataModelBase64()
+	 */
+	@Override
 	@XmlTransient
 	public Vector<String> getDataModelBase64() {
 		return dataModelBase64;
 	}
-	/**
-	 * Sets the data model Base64 encoded.
-	 * @param dataModelBase64 the dataModelBase64 to set
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#setDataModelBase64(java.util.Vector)
 	 */
+	@Override
 	public void setDataModelBase64(Vector<String> dataModelBase64) {
 		this.dataModelBase64 = dataModelBase64;
 	}	
 
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

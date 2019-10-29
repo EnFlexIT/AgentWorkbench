@@ -30,10 +30,7 @@ package org.awb.env.networkModel.visualisation.notifications;
 
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.NetworkModel;
-import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
-
 
 /**
  * The Class DataModelNotification can be used in order to transfer data model 
@@ -47,10 +44,8 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 
 	private static final long serialVersionUID = -4596694664751915164L;
 
-	private GraphNode graphNode = null;
-	private NetworkComponent networkComponent = null;
-	
-	private boolean useDataModelBase64Encoded = false;
+	private GraphNode graphNode;
+	private NetworkComponent networkComponent;
 	
 	private int dataModelPartUpdateIndex = -1;
 	
@@ -64,72 +59,15 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 		this.networkComponent = networkComponent;
 	}
 	/**
-	 * Instantiates a new data model notification for a NetworkComponent.
-	 *
-	 * @param networkComponent the NetworkComponent that contains the data model
-	 * @param networkModel the current network model
-	 * @see NetworkComponent#getCopy()
-	 */
-	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel) {
-		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, networkComponent).getStoredDataModelAdapter();
-		networkComponent.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(networkComponent.getDataModel()));
-		this.networkComponent = networkComponent.getCopy();
-	}
-	/**
-	 * Instantiates a new data model notification for a NetworkComponent.
-	 *
-	 * @param networkComponent the NetworkComponent that contains the data model
-	 * @param networkModel the current network model
-	 * @param useDataModelBase64Encoded the use data model base64 encoded
-	 * @see NetworkComponent#getCopy()
-	 */
-	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
-		this.networkComponent = networkComponent.getCopy();
-		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
-	}
-	
-	
-	/**
 	 * Instantiates a new data model notification. Be aware that with this constructor, no instance copy will be made
-	 * and that this may result to conflict between internal and visualised data model.
+	 * and that this may result to conflict between internal and visualized data model.
 	 *
 	 * @param graphNode the graph node
 	 */
 	public DataModelNotification(GraphNode graphNode) {
 		this.graphNode = graphNode;
 	}
-	/**
-	 * Instantiates a new data model notification for a GraphNode.
-	 *
-	 * @param graphNode the GraphNode that contains the data model
-	 * @param networkModel the current network model
-	 * @see GraphNode#getCopy()
-	 */
-	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel) {
-		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, graphNode).getStoredDataModelAdapter();
-		graphNode.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(graphNode.getDataModel()));
-		this.graphNode = graphNode.getCopy();
-	}
-	/**
-	 * Instantiates a new data model notification for a GraphNode.
-	 *
-	 * @param graphNode the GraphNode that contains the data model
-	 * @param networkModel the current network model
-	 * @param useDataModelBase64Encoded the use data model base64 encoded
-	 * @see GraphNode#getCopy()
-	 */
-	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
-		this.graphNode = graphNode.getCopy();
-		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
-	}
-
-	/**
-	 * Clarifies, if the Base64 encoded data model has to be used.
-	 * @return true, if the Base64 data model has to be used
-	 */
-	public boolean isUseDataModelBase64Encoded() {
-		return useDataModelBase64Encoded;
-	}
+	
 	
 	/**
 	 * Sets the index of the data model that has to be updated.
@@ -171,29 +109,14 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 		} else {
 			if (this.networkComponent!=null) {
 				// --- Case NetworkComponent --------------
-				if (this.useDataModelBase64Encoded==true) {
-					// --- Case Base64 --------------------
-					if (this.networkComponent.getDataModelBase64()==null) {
-						return true;
-					}
-				} else {
-					// --- Case Object --------------------
-					if (this.networkComponent.getDataModel()==null) {
-						return true;
-					}
+				if (this.networkComponent.getDataModel()==null) {
+					return true;
 				}
+				
 			} else if (this.graphNode!=null) {
 				// --- Case GraphNode ---------------------
-				if (this.useDataModelBase64Encoded==true) {
-					// --- Case Base64 --------------------
-					if (this.graphNode.getDataModelBase64()==null) {
-						return true;
-					}
-				} else {
-					// --- Case Object --------------------
-					if (this.graphNode.getDataModel()==null) {
-						return true;
-					}
+				if (this.graphNode.getDataModel()==null) {
+					return true;
 				}
 			}
 		}
@@ -204,7 +127,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 * @return true, if is graph node configuration
 	 */
 	public boolean isGraphNodeConfiguration() {
-		if (isEmpty()==false) {
+		if (this.isEmpty()==false) {
 			if (this.graphNode!=null) {
 				return true;
 			}
@@ -216,7 +139,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 * @return true, if is network component configuration
 	 */
 	public boolean isNetworkComponentConfiguration() {
-		if (isEmpty()==false) {
+		if (this.isEmpty()==false) {
 			if (this.networkComponent!=null) {
 				return true;
 			}

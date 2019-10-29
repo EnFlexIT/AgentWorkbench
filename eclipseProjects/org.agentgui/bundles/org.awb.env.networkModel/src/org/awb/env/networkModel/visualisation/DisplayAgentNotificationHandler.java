@@ -193,40 +193,25 @@ public class DisplayAgentNotificationHandler {
 					// --- Case NetworkComponent --------------------
 					NetworkComponent netCompSend  = dmNote.getNetworkComponent();
 					NetworkComponent netCompLocal = networkModel.getNetworkComponent(netCompSend.getId());
-					if (dmNote.isUseDataModelBase64Encoded()==true) {
-						// --- Case Base64 -------------------------- 
-						if (dmNote.getDataModelPartUpdateIndex()==-1) {
-							// --- Take everything ------------------
-							netCompLocal.setDataModelBase64(netCompSend.getDataModelBase64());
-						} else {
-							// --- Just take a specified detail -----
-							int updateIndex = dmNote.getDataModelPartUpdateIndex();
-							String updateString = netCompSend.getDataModelBase64().get(updateIndex);
-							netCompLocal.getDataModelBase64().setElementAt(updateString, updateIndex);
-						}
-						
+					// --- Case Object instance -----------------
+					if (dmNote.getDataModelPartUpdateIndex()==-1) {
+						// --- Take everything ------------------
+						netCompLocal.setDataModel(netCompSend.getDataModel());
 					} else {
-						// --- Case Object instance -----------------
-						if (dmNote.getDataModelPartUpdateIndex()==-1) {
-							// --- Take everything ------------------
-							netCompLocal.setDataModel(netCompSend.getDataModel());
-						} else {
-							// --- Just take a specified detail -----
-							Object dataModelSend = netCompSend.getDataModel();
-							Object dataModelLocal = netCompLocal.getDataModel();
-							
-							if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
-								// --- Just take a specified detail -
-								Object[] dataModelSendArr = (Object[]) dataModelSend;
-								Object[] dataModelLocalArr = (Object[]) dataModelLocal;
-								int updateIndex = dmNote.getDataModelPartUpdateIndex();
-								dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
-							} else {
-								// --- Worst Case: Take everything --
-								netCompLocal.setDataModel(netCompSend.getDataModel());
-							}
-						}
+						// --- Just take a specified detail -----
+						Object dataModelSend = netCompSend.getDataModel();
+						Object dataModelLocal = netCompLocal.getDataModel();
 						
+						if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
+							// --- Just take a specified detail -
+							Object[] dataModelSendArr = (Object[]) dataModelSend;
+							Object[] dataModelLocalArr = (Object[]) dataModelLocal;
+							int updateIndex = dmNote.getDataModelPartUpdateIndex();
+							dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
+						} else {
+							// --- Worst Case: Take everything --
+							netCompLocal.setDataModel(netCompSend.getDataModel());
+						}
 					}
 					// --- Case NetworkComponent - End --------------
 					// ----------------------------------------------
@@ -236,41 +221,29 @@ public class DisplayAgentNotificationHandler {
 					// --- Case GraphNode ---------------------------
 					GraphNode graphNodeSend  = dmNote.getGraphNode();
 					GraphNode graphNodeLocal = (GraphNode) networkModel.getGraphElement(graphNodeSend.getId());
-					if (dmNote.isUseDataModelBase64Encoded()==true) {
-						// --- Case Base64 -------------------------- 
-						if (dmNote.getDataModelPartUpdateIndex()==-1) {
-							// --- Take everything ------------------
-							graphNodeLocal.setDataModelBase64(graphNodeSend.getDataModelBase64());
-						} else {
-							int updateIndex = dmNote.getDataModelPartUpdateIndex();
-							String updateString = graphNodeSend.getDataModelBase64().get(updateIndex);
-							graphNodeLocal.getDataModelBase64().setElementAt(updateString, updateIndex);
-						}
-						
+					// --- Case Object instance -----------------
+					if (dmNote.getDataModelPartUpdateIndex()==-1) {
+						// --- Take everything ------------------
+						graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
 					} else {
-						// --- Case Object instance -----------------
-						if (dmNote.getDataModelPartUpdateIndex()==-1) {
-							// --- Take everything ------------------
-							graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
+						// --- Just take a specified detail -----
+						Object dataModelSend = graphNodeSend.getDataModel();
+						Object dataModelLocal = graphNodeLocal.getDataModel();
+						
+						if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
+							// --- Just take a specified detail -
+							Object[] dataModelSendArr = (Object[]) dataModelSend;
+							Object[] dataModelLocalArr = (Object[]) dataModelLocal;
+							int updateIndex = dmNote.getDataModelPartUpdateIndex();
+							dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
 						} else {
-							// --- Just take a specified detail -----
-							Object dataModelSend = graphNodeSend.getDataModel();
-							Object dataModelLocal = graphNodeLocal.getDataModel();
-							
-							if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
-								// --- Just take a specified detail -
-								Object[] dataModelSendArr = (Object[]) dataModelSend;
-								Object[] dataModelLocalArr = (Object[]) dataModelLocal;
-								int updateIndex = dmNote.getDataModelPartUpdateIndex();
-								dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
-							} else {
-								// --- Worst Case: Take everything --
-								graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
-							}
+							// --- Worst Case: Take everything --
+							graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
 						}
 					}
 					// --- Case GraphNode - End ---------------------
 					// ----------------------------------------------
+					
 				}
 			}// --- end dmNote.isEmpty ------------------------------
 			

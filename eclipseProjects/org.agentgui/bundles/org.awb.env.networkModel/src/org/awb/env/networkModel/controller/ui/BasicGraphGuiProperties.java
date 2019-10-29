@@ -36,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -50,6 +51,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
@@ -60,6 +62,7 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.controller.DataModelEnDecoder64;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.visualisation.notifications.DataModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeries;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeriesException;
@@ -113,7 +116,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 
 	private Vector<Integer> dataModelInitialHashCodes;
 	private Object newDataModel;
-	private Vector<String> newDataModelBase64;
 	
 	private boolean dataModelNotificationEnabled = true; 
 	private DataModelNotification dataModelNotificationLast;
@@ -327,40 +329,36 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				this.jComponentContent = this.getContentForEmptyNetworkComponentAdapter();
 				
 			} else {
-				// --- There is a network component adapter available -------------------
+				
+				// --- Define the DataModelNetworkElement ------------------------------- 
+				DataModelNetworkElement networkElement = null;
+				if (this.graphNode!=null) {
+					networkElement = this.graphNode;
+				} else {
+					networkElement = this.networkComponent;
+				}
+				
 				if (this.getNetworkComponentAdapter4DataModel()==null) {
 					// --- No DataModelAdapter was defined -------------------------
-					if (this.graphNode!=null) {
-						this.graphNode.setDataModel(null);
-						this.graphNode.setDataModelBase64(null);
-					} else {
-						this.networkComponent.setDataModel(null);
-						this.networkComponent.setDataModelBase64(null);	
-					}
+					networkElement.setDataModel(null);
+					networkElement.setDataModelStorageSettings(null);
+					networkElement.setDataModelBase64(null);
 					// --- Disable save-actions ------------------------------------
 					this.getJToolBarButtonSave().setEnabled(false);
 					this.getJToolBarButtonSaveAndExit().setEnabled(false);
 					
 				} else {
 					// --- There was a DataModelAdapter defined --------------------
-					Object dataModel = null;
-					Vector<String> dataModelBase64 = null;
-					// --- Get the Base64 encoded Vector<String> -------------- 
-					if (this.graphNode!=null) {
-						dataModel = this.graphNode.getDataModel();
-						dataModelBase64 = this.graphNode.getDataModelBase64();
-					} else {
-						dataModel = this.networkComponent.getDataModel();
-						dataModelBase64 = this.networkComponent.getDataModelBase64();	
-					}
-					
-					if (dataModel==null && dataModelBase64!=null) {
-    					// --- Convert Base64 decoded Object ------------------
-    					dataModel = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dataModelBase64);
-    					if (this.graphNode!=null) {
-    						this.graphNode.setDataModel(dataModel);
-    					} else {
-    						this.networkComponent.setDataModel(dataModel);
+					Object dataModel = networkElement.getDataModel();
+					if (dataModel==null) {
+    					// --- Check if data model is really null ------------------
+						AbstractDataModelStorageHandler storageHandler = this.getNetworkComponentAdapter4DataModel().getDataModelStorageHandlerInternal(); 
+    					dataModel = storageHandler.loadDataModel(networkElement);
+    					networkElement.setDataModel(dataModel);
+    					// --- Requires persistence update? ------------------------
+    					if (storageHandler.isRequiresPersistenceUpdate()==true) {
+    						TreeMap<String, String> settings = storageHandler.saveDataModel(networkElement);
+    						networkElement.setDataModelStorageSettings(settings);
     					}
 	    			}
 					
@@ -368,7 +366,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
 
 					// --- Remind initial HashCodes of Base64 data model vector ----
-					this.setDataModelBase64InitialHashCodes(dataModelBase64);
+					this.setDataModelBase64InitialHashCodes(dataModel);
 
 					// --- Get the visualization component -------------------------
 					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualizationComponent(this);
@@ -531,15 +529,18 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		}
 	}
 	
-	
 	/**
 	 * Returns a hash code vector derived from a specified data model.
-	 * @param dataModelBase64 the data model
+	 * 
+	 * @param dataModel the data model
 	 * @return the hash code vector from data model
 	 */
-	private Vector<Integer> getHashCodeVectorFromDataModel(Vector<String> dataModelBase64) {
+	private Vector<Integer> getHashCodeVectorFromDataModel(Object dataModel) {
 		
-		if (dataModelBase64==null) return null;
+		if (dataModel==null) return null;
+		
+		// --- Create a Base64 version of the data model ------------ 
+		Vector<String> dataModelBase64 = DataModelEnDecoder64.getDataModelBase64Encoded(dataModel);
 		
 		Vector<Integer> hashCodeVector = new Vector<Integer>();
 		// --- Data model is an object array ----------
@@ -555,11 +556,11 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
-	 * Sets the initial hash codes for a given DataModel that is Base64 encoded.
+	 * Sets the initial hash codes for a given data model.
 	 * @param dataModelBase64 the new data model base64 initial hash codes
 	 */
-	private void setDataModelBase64InitialHashCodes(Vector<String> dataModelBase64) {
-		this.dataModelInitialHashCodes = this.getHashCodeVectorFromDataModel(dataModelBase64);
+	private void setDataModelBase64InitialHashCodes(Object dataModel) {
+		this.dataModelInitialHashCodes = this.getHashCodeVectorFromDataModel(dataModel);
 	}
 	/**
 	 * Checks if the current settings have changed.
@@ -570,9 +571,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		boolean changed = false;
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
-			Object newDataModel = DataModelEnDecoder64.reviewDataModel(nca4dm.getDataModel());
-			Vector<String> newDataModelBase64 = nca4dm.getDataModelBase64Encoded(newDataModel);
-			Vector<Integer> newHashCodes = this.getHashCodeVectorFromDataModel(newDataModelBase64);
+			Object newDataModel = this.getReviewedDataModel(nca4dm.getDataModel());
+			Vector<Integer> newHashCodes = this.getHashCodeVectorFromDataModel(newDataModel);
 			// --- Check for changes --------------------------------
 			if (! (newHashCodes==null & this.dataModelInitialHashCodes==null)) {
 				if ( (newHashCodes==null & this.dataModelInitialHashCodes!=null) || (newHashCodes!=null & this.dataModelInitialHashCodes==null) ) {
@@ -622,7 +622,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 * @return true, if successful
 	 */
 	private boolean doSave() {
-		if (isSavableModel()==true) {
+		if (this.isSavableModel()==true) {
 			this.saveToNetworkComponentOrGraphNode();
 			if (this.graphController.getProject()==null) {
 				// --- Send to Agent ------------------
@@ -685,17 +685,28 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
 			
-			this.newDataModel = DataModelEnDecoder64.reviewDataModel(nca4dm.getDataModel());
-			this.newDataModelBase64 = nca4dm.getDataModelBase64Encoded(this.newDataModel);
-			
+			// --- Define the current edit element ------------------
+			DataModelNetworkElement networkElement = null;
 			if (this.graphNode!=null) {
-				this.graphNode.setDataModel(this.newDataModel);
-				this.graphNode.setDataModelBase64(this.newDataModelBase64);
+				networkElement = this.graphNode;
 			} else {
-				this.networkComponent.setDataModel(this.newDataModel);
-				this.networkComponent.setDataModelBase64(this.newDataModelBase64);
+				networkElement = this.networkComponent;
 			}
-			this.setDataModelBase64InitialHashCodes(this.newDataModelBase64);
+			
+			// --- Set the new data model to that element -----------
+			this.newDataModel = this.getReviewedDataModel(nca4dm.getDataModel());
+			networkElement.setDataModel(this.newDataModel);
+			
+			// --- Invoke to store that element ---------------------
+			TreeMap<String, String> storageSettings = nca4dm.getDataModelStorageHandlerInternal().saveDataModel(networkElement);
+			if (storageSettings==null || storageSettings.size()==0) {
+				networkElement.setDataModelStorageSettings(null);
+			} else {
+				networkElement.setDataModelStorageSettings(storageSettings);
+			}
+	
+			// --- Store this a new initial hash reminder -----------
+			this.setDataModelBase64InitialHashCodes(this.newDataModel);
 			
 			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------------
@@ -706,24 +717,51 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 
 	/**
-	 * Send changes to agent.
+	 * Will review and possibly correct the specified data model instance.
+	 *
+	 * @param dataModel the data model
+	 * @return the reviewed data model
+	 */
+	private Object getReviewedDataModel(Object dataModel) {
+		
+		if (dataModel!=null) {
+			if (dataModel.getClass().isArray()==true) {
+				Object[] dataModelArray = (Object[]) dataModel;
+				for (int i = 0; i < dataModelArray.length; i++) {
+					if (dataModelArray[i]!=null) {
+						return dataModel;
+					}
+				}
+				return null;
+				
+			} else {
+				return dataModel;
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * Sends the data model changes to the corresponding agent.
 	 */
 	private void sendChangesToAgent() {
 		
 		DataModelNotification dmNote = null;
 		List<NetworkComponent> comps = new ArrayList<>();
 		if (this.graphNode!=null) {
-			dmNote = new DataModelNotification(this.graphNode, this.graphController.getNetworkModel());
+			dmNote = new DataModelNotification(this.graphNode);
 			// --- Get the NetworkComponent's connected to this GraphNode -----
 			comps = this.graphController.getNetworkModel().getNetworkComponents(this.graphNode);
 			
 		} else {
-			dmNote = new DataModelNotification(this.networkComponent, this.graphController.getNetworkModel());
+			dmNote = new DataModelNotification(this.networkComponent);
 			comps.add(this.networkComponent);
 		}
 		
 		if (dmNote!=null) {
-			for (NetworkComponent netComp : comps) {
+			for (int i = 0; i < comps.size(); i++) {
+				NetworkComponent netComp = comps.get(i);
 				// --- Send notifications -------
 				boolean done = this.getNetworkComponentAdapter().sendAgentNotification(new AID(netComp.getId(), AID.ISLOCALNAME), dmNote);
 				if (done==false) {
@@ -783,22 +821,16 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		if (dmn.isForGraphNode(this.graphNode)==true) {
 			Object dataModel = dmn.getGraphNode().getDataModel();
-			// -- Update the model of the current GraphNode ? -------------
-			if (dmn.isUseDataModelBase64Encoded()==true) {
-				dataModel = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
-			}
+			// -- Update GraphNode data model -----------------------
 			this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
-			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(this.getNetworkComponentAdapter4DataModel().getDataModel()));
+			this.setDataModelBase64InitialHashCodes(dataModel);
 		}
 		
 		if (dmn.isForNetworkComponent(this.networkComponent)==true) {
 			Object dataModel = dmn.getNetworkComponent().getDataModel();
-			// -- Update the model of the current NetworkComponent ? ------
-			if (dmn.isUseDataModelBase64Encoded()==true) {
-				dataModel = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
-			}
+			// -- Update NetworkComponent data model ----------------
 			this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
-			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(this.getNetworkComponentAdapter4DataModel().getDataModel()));
+			this.setDataModelBase64InitialHashCodes(dataModel);
 		}
 		return true;
 	}

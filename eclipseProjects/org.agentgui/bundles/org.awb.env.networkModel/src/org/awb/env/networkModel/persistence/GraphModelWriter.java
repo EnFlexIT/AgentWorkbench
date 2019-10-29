@@ -35,6 +35,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
 
 import edu.uci.ics.jung.io.GraphMLWriter;
 
@@ -49,6 +50,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 	
 	protected static final String KEY_POSITION_PROPERTY = "pos";
 	protected static final String KEY_POSITION_TREE_MAP = "positionTreeMap";
+	protected static final String KEY_DATA_MODEL_STORAGE_SETTINGS = "dataModelStorageSettings";
 	protected static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
 	
 	protected static final String KEY_EDGE_SHAPE_CONFIGUARATION = "edgeShapeConfiguration";
@@ -88,6 +90,12 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 			@Override
 			public String transform(GraphNode graphNode) {
 				return graphNode.getPositionTreeMapAsString(GraphModelWriter.this.allowedLayoutIDs);
+			}
+		});
+		this.addVertexData(KEY_DATA_MODEL_STORAGE_SETTINGS, "Data model storage settings", "", new Transformer<GraphNode, String>() {
+			@Override
+			public String transform(GraphNode graphNode) {
+				return AbstractDataModelStorageHandler.getDataModelStorageSettingsAsString(graphNode);
 			}
 		});
 		this.addVertexData(KEY_DATA_MODEL_BASE64_PROPERTY, "Base64 encoded individual data model", "", new Transformer<GraphNode, String>() {
@@ -139,7 +147,6 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 				return GraphEdgeShapeConfiguration.getGraphEdgeShapeConfigurationTreeMapAsString(graphEdge.getEdgeShapeConfigurationTreeMap(), GraphModelWriter.this.allowedLayoutIDs);
 			}
 		});
-		
 		
 	}
 	

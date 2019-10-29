@@ -46,7 +46,7 @@ import de.enflexit.common.SerialClone;
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
-public class GraphNode extends GraphElement {
+public class GraphNode extends GraphElement implements DataModelNetworkElement {
 
 	private static final long serialVersionUID = 7676853104978228247L;
 	
@@ -55,9 +55,8 @@ public class GraphNode extends GraphElement {
 	/** The GraphNode's position in a visualization */
 	private Point2D position;
 
-	/**	The data model for this GraphNode.*/
 	private Object dataModel;
-	/** The data model for this GraphNode encoded as Base64 String*/
+	protected TreeMap<String, String> dataModelStorageSettings;
 	private Vector<String> dataModelBase64;
 
 	private TreeMap<String, Point2D> positionTreeMap;
@@ -181,32 +180,48 @@ public class GraphNode extends GraphElement {
 		}
 	}
 	
-	/**
-	 * Sets the current data model.
-	 * @param dataModel the new Object instance of the data model
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#setDataModel(java.lang.Object)
 	 */
+	@Override
 	public void setDataModel(Object dataModel) {
 		this.dataModel = dataModel;
 	}
-	/**
-	 * Returns the current data model as Object instance.
-	 * @return the data model
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#getDataModel()
 	 */
+	@Override
 	public Object getDataModel() {
 		return dataModel;
 	}
 
-	/**
-	 * Sets the data model as Vector of Base64 encoded Strings.
-	 * @param dataModelBase64 the new data model base64 
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#getDataModelStorageSettings()
 	 */
+	@Override
+	public TreeMap<String, String> getDataModelStorageSettings() {
+		return dataModelStorageSettings;
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#setDataModelStorageSettings(java.util.TreeMap)
+	 */
+	@Override
+	public void setDataModelStorageSettings(TreeMap<String, String> dataModelStorageSettings) {
+		this.dataModelStorageSettings = dataModelStorageSettings;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#setDataModelBase64(java.util.Vector)
+	 */
+	@Override
 	public void setDataModelBase64(Vector<String> dataModelBase64) {
 		this.dataModelBase64 = dataModelBase64;
 	}
-	/**
-	 * Returns the data model as Vector of Base64 encoded Strings.
-	 * @return the data model base64
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.DataModelNetworkElement#getDataModelBase64()
 	 */
+	@Override
 	public Vector<String> getDataModelBase64() {
 		return dataModelBase64;
 	}
