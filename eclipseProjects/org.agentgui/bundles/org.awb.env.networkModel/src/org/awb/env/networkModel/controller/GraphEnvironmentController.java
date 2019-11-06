@@ -557,6 +557,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 			List<SetupDataModelStorageService> sdmServiceList = SetupDataModelStorageServiceFinder.findSetupDataModelStorageServices();
 			for (int i = 0; i < sdmServiceList.size(); i++) {
 				SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+				sdmService.setGraphEnvironmentController(this);
 				Class<? extends AbstractDataModelStorageHandler> storageHandlerClass = sdmService.getDataModelStorageHandlerClass();
 				if (storageHandlerClass!=null) {
 					setupStorageServiceHashMap.put(storageHandlerClass, sdmService);
@@ -583,11 +584,15 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Save individual data model of {@link DataModelNetworkElement} by invoking the registered {@link SetupDataModelStorageService}.
 	 */
 	private void callSaveOnSetupDataModelStorageServices() {
+		
+		String destinationDirectory = this.getEnvFolderPath();
+		String setupName = this.getProject().getSimulationSetupCurrent();
+		
 		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
 		for (int i = 0; i < sdmServiceList.size(); i++) {
 			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
 			try {
-				sdmService.saveNetworkElementDataModels();
+				sdmService.saveNetworkElementDataModels(destinationDirectory, setupName);
 			} catch (Exception ex) {
 				System.err.println("[" + this.getClass().getSimpleName() + "] Error while saving with SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
 				ex.printStackTrace();
@@ -598,11 +603,15 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Loads individual data model of {@link DataModelNetworkElement} by invoking the registered {@link SetupDataModelStorageService}.
 	 */
 	private void callLoadOnSetupDataModelStorageServices() {
+		
+		String destinationDirectory = this.getEnvFolderPath();
+		String setupName = this.getProject().getSimulationSetupCurrent();
+		
 		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
 		for (int i = 0; i < sdmServiceList.size(); i++) {
 			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
 			try {
-				sdmService.loadNetworkElementDataModels();
+				sdmService.loadNetworkElementDataModels(destinationDirectory, setupName);
 			} catch (Exception ex) {
 				System.err.println("[" + this.getClass().getSimpleName() + "] Error while loading with SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
 				ex.printStackTrace();

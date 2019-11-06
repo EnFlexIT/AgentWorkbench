@@ -628,7 +628,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (this.isSavableModel()==true) {
 			this.saveToNetworkComponentOrGraphNode();
 			if (this.graphController.getProject()==null) {
-				// --- Send to Agent ------------------
 				this.sendChangesToAgent();
 			}
 			return true;

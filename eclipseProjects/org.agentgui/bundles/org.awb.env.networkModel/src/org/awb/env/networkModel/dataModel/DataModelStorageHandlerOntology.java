@@ -8,6 +8,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
+import org.awb.env.networkModel.controller.SetupDataModelStorageService;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.common.ExceptionHandling;
@@ -27,6 +28,16 @@ import jade.content.onto.OntologyException;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHandler {
+	
+	public  static final String ONTO_SETTING_STORAGE_LOCATION = "StorageLocation";
+	private static final OntologyStorageLocation DESTINATION = OntologyStorageLocation.Both;
+	
+	private enum OntologyStorageLocation {
+		Base64InNetworkElements,
+		OntologyFile,
+		Both
+	}
+	
 	
 	protected NetworkComponentAdapter4Ontology ontologyAdapter;
 	
@@ -48,17 +59,43 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	@Override
 	public Object loadDataModel(DataModelNetworkElement networkElement) {
 		
-		Object dataModel = null;
-		if (networkElement!=null) {
-			try {
-				Vector<String> dataModelBase64 = networkElement.getDataModelBase64();
-				if (dataModelBase64!=null) {
-					dataModel = this.getInstancesFromXML64(dataModelBase64);
-				}
-			
-			} catch (Exception ex) {
-				ex.printStackTrace();
+		if (networkElement==null) return null;
+		
+		// ----------------------------------------------------------
+		// --- Identify storage location ----------------------------
+		// ----------------------------------------------------------
+		OntologyStorageLocation storageLocation = OntologyStorageLocation.Base64InNetworkElements;
+		if (networkElement.getDataModelStorageSettings()==null) {
+			this.setRequiresPersistenceUpdate(true);
+		} else {
+			String storageLocationString = networkElement.getDataModelStorageSettings().get(ONTO_SETTING_STORAGE_LOCATION);
+			if (storageLocationString!=null && storageLocationString.isEmpty()==false) {
+				storageLocation = OntologyStorageLocation.valueOf(storageLocationString);
+			} else {
+				this.setRequiresPersistenceUpdate(true);
 			}
+		}
+
+		// ----------------------------------------------------------
+		// --- Get the actual data model ----------------------------
+		// ----------------------------------------------------------
+		Object dataModel = null;
+		
+		// --- Try loading from Base64 (also for old versions) ------   
+		try {
+			Vector<String> dataModelBase64 = networkElement.getDataModelBase64();
+			if (dataModelBase64!=null) {
+				dataModel = this.getInstancesFromXML64(dataModelBase64);
+			}
+		
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		// --- Load from central setup file -------------------------
+		if (storageLocation==OntologyStorageLocation.OntologyFile) {
+			// --- Try to get the data model from central file ------
+			dataModel = this.getSetupDataModelStorageServiceOntology().getDataModel(networkElement);
 		}
 		return dataModel;
 	}
@@ -185,12 +222,17 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	@Override
 	public TreeMap<String, String> saveDataModel(DataModelNetworkElement networkElement) {
 
-		if (networkElement!=null) {
-			Object dataModel = networkElement.getDataModel(); 
+		if (networkElement==null) return null;
+			
+		TreeMap<String, String> settings = new TreeMap<>();
+		settings.put(ONTO_SETTING_STORAGE_LOCATION, DESTINATION.toString());
+		
+		Object dataModel = networkElement.getDataModel(); 
+		// ----------------------------------------------------------
+		if (DESTINATION==OntologyStorageLocation.Both || DESTINATION==OntologyStorageLocation.Base64InNetworkElements) {
 			if (dataModel==null) {
 				networkElement.setDataModelBase64(null);
 			} else {
-				
 				if (dataModel.getClass().isArray()==true) {
 					Object[] dmArray = (Object[]) dataModel;
 					Vector<String> dataModelBase64 = this.getXML64FromInstances(dmArray);
@@ -200,7 +242,16 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 				}
 			}
 		}
-		return null;
+		
+		// ----------------------------------------------------------
+		if (DESTINATION==OntologyStorageLocation.Both || DESTINATION==OntologyStorageLocation.OntologyFile) {
+			this.getSetupDataModelStorageServiceOntology().setDataModel(networkElement, dataModel);
+			if (DESTINATION==OntologyStorageLocation.OntologyFile) {
+				// --- Clean up old style model ---------------------
+				networkElement.setDataModelBase64(null);
+			}
+		}
+		return settings;
 	}
 	
 	/**
@@ -261,5 +312,22 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		if (xmlRepresentation!=null) xmlRepresentation.trim();
 		return xmlRepresentation;
 	}
+
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, help methods for saving in an extra file can be found -------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Gets the setup data model storage service for ontology instances.
+	 * @return the setup data model storage service ontology
+	 */
+	private SetupDataModelStorageServiceOntology getSetupDataModelStorageServiceOntology() {
+		SetupDataModelStorageService sdmService = super.getSetupDataModelStorageService();
+		if (sdmService!=null && sdmService instanceof SetupDataModelStorageServiceOntology) {
+			return (SetupDataModelStorageServiceOntology) sdmService;
+		}
+		return null;
+	}
+	
 	
 }

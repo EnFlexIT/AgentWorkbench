@@ -17,6 +17,12 @@ public interface SetupDataModelStorageService {
 	
 	
 	/**
+	 * Will be invoked during initialization and will receive the current graph controller instance.
+	 * @param graphController the new graph environment controller
+	 */
+	public void setGraphEnvironmentController(GraphEnvironmentController graphController);
+	
+	/**
 	 * Has to return the class of type {@link AbstractDataModelStorageHandler}
 	 * that will be used to access the individual data models of {@link DataModelNetworkElement}s.
 	 * This mandatory class will be used to set or get the individual data model from the
@@ -29,16 +35,23 @@ public interface SetupDataModelStorageService {
 	 */
 	public Class<? extends AbstractDataModelStorageHandler> getDataModelStorageHandlerClass();
 	
-
-	/**
-	 * Will be invoked to save the data models within {@link DataModelNetworkElement}s.
-	 */
-	public void saveNetworkElementDataModels();
+	
 	
 	/**
-	 * Will be invoked to load the data models within {@link DataModelNetworkElement}s.
+	 * Will be invoked to save the data models of the locally known {@link DataModelNetworkElement}s.
+	 *
+	 * @param destinationDirectory the destination directory to use
+	 * @param setupName the current setup name
 	 */
-	public void loadNetworkElementDataModels();
+	public void saveNetworkElementDataModels(String destinationDirectory, String setupName);
+	
+	/**
+	 * Will be invoked to load the data models of the locally known {@link DataModelNetworkElement}s.
+	 * 
+	 * @param destinationDirectory the destination directory to use
+	 * @param setupName the current setup name
+	 */
+	public void loadNetworkElementDataModels(String destinationDirectory, String setupName);
 	
 	
 }

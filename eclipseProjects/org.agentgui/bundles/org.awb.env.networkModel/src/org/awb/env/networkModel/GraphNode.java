@@ -54,12 +54,12 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	
 	/** The GraphNode's position in a visualization */
 	private Point2D position;
+	private TreeMap<String, Point2D> positionTreeMap;
 
 	private Object dataModel;
 	protected TreeMap<String, String> dataModelStorageSettings;
 	private Vector<String> dataModelBase64;
 
-	private TreeMap<String, Point2D> positionTreeMap;
 	
 	/**
 	 * Default constructor with a default position of (Point2D.Double(50.0, 50.0)).
