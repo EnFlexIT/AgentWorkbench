@@ -46,6 +46,8 @@ import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class DataModelEnDecoder64 {
+	
+	private static final String NO_ARRAY_INDICATOR = "[NoArray]";
 
 	/**
 	 * Return the specified data model as Base64 encoded string vector.
@@ -70,7 +72,7 @@ public class DataModelEnDecoder64 {
 		} else {
 			// --- Data model is NOT an array -----------------------
 			String singleInstance64 = getObjectInstanceBase64Encoded(dataModel);
-			modelVector64.add(singleInstance64);
+			modelVector64.add(NO_ARRAY_INDICATOR + singleInstance64);
 		}
 		return modelVector64;
 	}
@@ -118,6 +120,13 @@ public class DataModelEnDecoder64 {
 		Object[] objectArray = new Object[dataModel.size()];
 		for (int i = 0; i < dataModel.size(); i++) {
 			String singleInstance64 = dataModel.get(i);
+			if (singleInstance64.startsWith(NO_ARRAY_INDICATOR)==true) {
+				// --- Return single instance -----------------------
+				singleInstance64 = singleInstance64.replace(NO_ARRAY_INDICATOR, "");
+				Object singleInstance = getObjectInstanceBase64Decoded(singleInstance64);
+				return singleInstance;
+			}
+			// --- Place in object array ----------------------------
 			Object singleInstance = getObjectInstanceBase64Decoded(singleInstance64);
 			objectArray[i] = singleInstance;
 			

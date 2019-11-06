@@ -414,6 +414,9 @@ public class DataModelEnDecoderThread extends Thread {
     					if (storageHandler.isRequiresPersistenceUpdate()==true) {
     						TreeMap<String, String> settings = storageHandler.saveDataModel(networkElement);
     						networkElement.setDataModelStorageSettings(settings);
+    						if (this.graphController.getProject()!=null) {
+    							this.graphController.getProject().setUnsaved(true);
+    						}
     					}
 					}
 				} 

@@ -28,7 +28,7 @@ import jade.content.onto.OntologyException;
  */
 public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHandler {
 	
-	private NetworkComponentAdapter4Ontology ontologyAdapter;
+	protected NetworkComponentAdapter4Ontology ontologyAdapter;
 	
 	/**
 	 * Instantiates a new data model storage handler ontology.
@@ -70,22 +70,39 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	 * @return the instances from XML 64
 	 */
 	protected Object[] getInstancesFromXML64(Vector<String> ontoXML64Vector) {
-		
 		// --- Decode Base64 first ----------------------------------
+		Vector<String> ontoXMLVector = this.decodeBase64StringVector(ontoXML64Vector);
+		// --- Create instances -------------------------------------
+		return this.createInstancesFromOntologyXmlVector(ontoXMLVector);
+	}
+
+	/**
+	 * Decodes a vector of Base64-encoded strings.
+	 * @param base64StringVector the Base64-encoded strings
+	 * @return the decoded strings
+	 */
+	protected Vector<String> decodeBase64StringVector(Vector<String>base64StringVector){
 		Vector<String> ontoXMLVector = new Vector<>();
-		for (String ontoXML64 : ontoXML64Vector) {
-			String ontoXML = null;
-			if (ontoXML64!=null && ontoXML64.equals("")==false) {
+		for (String base64String : base64StringVector) {
+			String decodedString = null;
+			if (base64String!=null && base64String.equals("")==false) {
 				try {
-					ontoXML = new String(Base64.decodeBase64(ontoXML64.getBytes()), "UTF8");	
+					decodedString = new String(Base64.decodeBase64(base64String.getBytes()), "UTF8");	
 				} catch (UnsupportedEncodingException uee) {
 					uee.printStackTrace();
 				}
 			}
-			ontoXMLVector.add(ontoXML);
+			ontoXMLVector.add(decodedString);
 		}
-		
-		// --- Create instances -------------------------------------
+		return ontoXMLVector;
+	}
+	
+	/**
+	 * Creates ontology instances for a vector of XML strings
+	 * @param ontologyXmlVector the XML strings
+	 * @return the ontology instances
+	 */
+	protected Object[] createInstancesFromOntologyXmlVector(Vector<String> ontologyXmlVector) {
 		Object[] instances = new Object[this.ontologyAdapter.getOntologyClassReferences().length];
 		String[] classReferences = this.ontologyAdapter.getOntologyClassReferences();
 		for (int i = 0; i < classReferences.length; i++) {
@@ -95,14 +112,15 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 				Ontology ontology = octo.getOntologyClass().getOntologyInstance();
 				
 				String xml = null;
-				if (i<=(ontoXMLVector.size()-1)) {
-					xml = ontoXMLVector.get(i);
+				if (i<=(ontologyXmlVector.size()-1)) {
+					xml = ontologyXmlVector.get(i);
 				}
 				instances[i] = this.getInstanceOfXML(xml, classReferences[i], ontology);	
 			}
 		}
 		return instances;
 	}
+
 	/**
 	 * This method translates an XML String to an object instance by the
 	 * given instance of the current ontology. The translated object must
