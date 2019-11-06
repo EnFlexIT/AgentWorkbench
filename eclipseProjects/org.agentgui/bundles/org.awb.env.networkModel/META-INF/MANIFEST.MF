@@ -8,7 +8,8 @@ Automatic-Module-Name: org.awb.env.networkModel
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/bundleClassFilterService.xml,
  OSGI-INF/BaseClassLoadService.xml,
- OSGI-INF/EnvironmentTypeService.xml
+ OSGI-INF/EnvironmentTypeService.xml,
+ OSGI-INF/SetupDataModelStroageHandlerService.xml
 Export-Package: org.awb.env.networkModel,
  org.awb.env.networkModel.adapter,
  org.awb.env.networkModel.classFilter,
@@ -35,5 +36,6 @@ Require-Bundle: de.enflexit.api,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.osgi.services
 Bundle-ActivationPolicy: lazy

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.awb.env.networkModel.dataModel.DataModelStorageHandlerOntologySetup">
+   <implementation class="org.awb.env.networkModel.dataModel.DataModelStorageHandlerOntologySetup"/>
+   <service>
+      <provide interface="org.awb.env.networkModel.controller.SetupDataModelStorageService"/>
+   </service>
+</scr:component>

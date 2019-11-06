@@ -30,6 +30,7 @@ package org.awb.env.networkModel.controller;
 
 import java.awt.Cursor;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.ClusterNetworkComponent;
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
@@ -50,6 +52,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.commands.NetworkModelUndoManager;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
+import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
@@ -92,7 +95,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	private String baseFileName;
 	/** Known adapter for the import of network models */
 	private Vector<AbstractNetworkModelFileImporter> importAdapter;
-
+	/** Storage handler (services) for individual data models for {@link DataModelNetworkElement} */
+	private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> setupStorageServiceHashMap;
+	
 	/** The network model currently loaded */
 	private NetworkModel networkModel;
 	private NetworkModelUndoManager networkModelUndoManager;
@@ -359,19 +364,15 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.baseFileName = this.getProject().getSimulationSetupCurrent();
 		this.getCurrentSimulationSetup().setEnvironmentFileName(baseFileName + ".graphml");
 	}
-
 	/**
 	 * Returns the XML file for the current NetworkModel.
-	 * 
 	 * @return the XML file
 	 */
 	public File getFileXML() {
 		return new File(this.getEnvFolderPath() + this.baseFileName + ".xml");
 	}
-
 	/**
 	 * Returns the GraphML file for the current NetworkModel.
-	 * 
 	 * @return the GraphML file
 	 */
 	public File getFileGraphML() {
@@ -521,10 +522,95 @@ public class GraphEnvironmentController extends EnvironmentController {
 			
 			File componentsFile = this.getFileXML();
 			this.getNetworkModel().saveComponentsFile(componentsFile);
-
+			
+			// --- Save individual models ---------------------------
+			this.callSaveOnSetupDataModelStorageServices();
 		}
 	}
 
+	/**
+	 * Sets all Base64 encoded data models to concrete instances.
+	 */
+	public void setNetworkComponentDataModelBase64Decoded() {
+		this.callLoadOnSetupDataModelStorageServices();
+		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_LOADING).start();
+	}
+	/**
+	 * Sets the instances of all data models to a Base64 encoded strings.
+	 */
+	public void setNetworkComponentDataModelBase64Encoded() {
+		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_SAVING).start();
+		this.callSaveOnSetupDataModelStorageServices();
+	}
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, the handling of setup data model storage handler can be found -----
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Return all known setup storage handler that were registered as such an OSGI - service.
+	 * @return the setup storage handler
+	 */
+	private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> getSetupDataModelStorageServiceHashMap() {
+		if (setupStorageServiceHashMap==null) {
+			setupStorageServiceHashMap = new HashMap<>();
+			// --- Get all registered services ----------------------
+			List<SetupDataModelStorageService> sdmServiceList = SetupDataModelStorageServiceFinder.findSetupDataModelStorageServices();
+			for (int i = 0; i < sdmServiceList.size(); i++) {
+				SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+				Class<? extends AbstractDataModelStorageHandler> storageHandlerClass = sdmService.getDataModelStorageHandlerClass();
+				if (storageHandlerClass!=null) {
+					setupStorageServiceHashMap.put(storageHandlerClass, sdmService);
+				}
+			}
+		}
+		return setupStorageServiceHashMap;
+	}
+	/**
+	 * Return the setup data model storage handler (setup scope) for the specified data model  
+	 * storage handler (scope of the individual data model of {@link NetworkComponent} or {@link GraphNode}).
+	 *
+	 * @param dataModelStorageHandler the data model storage handler
+	 * @return the setup handler for individual data models
+	 */
+	public SetupDataModelStorageService getSetupDataModelStorageService(AbstractDataModelStorageHandler dataModelStorageHandler) {
+		if (dataModelStorageHandler!=null) {
+			return this.getSetupDataModelStorageServiceHashMap().get(dataModelStorageHandler.getClass());
+		}
+		return null;
+	}
+	
+	/**
+	 * Save individual data model of {@link DataModelNetworkElement} by invoking the registered {@link SetupDataModelStorageService}.
+	 */
+	private void callSaveOnSetupDataModelStorageServices() {
+		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
+		for (int i = 0; i < sdmServiceList.size(); i++) {
+			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+			try {
+				sdmService.saveNetworkElementDataModels();
+			} catch (Exception ex) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while saving with SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
+				ex.printStackTrace();
+			}
+		}
+	}
+	/**
+	 * Loads individual data model of {@link DataModelNetworkElement} by invoking the registered {@link SetupDataModelStorageService}.
+	 */
+	private void callLoadOnSetupDataModelStorageServices() {
+		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
+		for (int i = 0; i < sdmServiceList.size(); i++) {
+			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+			try {
+				sdmService.loadNetworkElementDataModels();
+			} catch (Exception ex) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while loading with SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
+				ex.printStackTrace();
+			}
+		}
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
@@ -805,19 +891,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		return agentClass;
 	}
 
-	/**
-	 * Sets all Base64 encoded data models to concrete instances.
-	 */
-	public void setNetworkComponentDataModelBase64Decoded() {
-		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_LOADING).start();
-	}
-
-	/**
-	 * Sets the instances of all data models to a Base64 encoded strings.
-	 */
-	public void setNetworkComponentDataModelBase64Encoded() {
-		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_SAVING).start();
-	}
 
 	/**
 	 * Sets the indicator that an action on top is running, in order to prevent permanently (re-)paint actions.

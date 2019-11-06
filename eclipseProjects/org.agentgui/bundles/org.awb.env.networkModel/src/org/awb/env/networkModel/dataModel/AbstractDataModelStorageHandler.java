@@ -9,6 +9,12 @@ import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.SetupDataModelStorageService;
+
+import agentgui.core.application.Application;
+import agentgui.core.environment.EnvironmentController;
+import agentgui.core.project.Project;
 
 /**
  * The Class AbstractDataModelStorageHandler serves as base class for storage handler
@@ -251,6 +257,36 @@ public abstract class AbstractDataModelStorageHandler {
 		}
 	}
 
+	
+	// ------------------------------------------------------------------------
+	// --- From here some helper methods to access the current setup ----------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the graph environment controller of the currently open project.
+	 * @return the graph environment controller
+	 */
+	protected GraphEnvironmentController getGraphEnvironmentController() {
+		Project project = Application.getProjectFocused();
+		if (project!=null) {
+			EnvironmentController envController = project.getEnvironmentController();
+			if (envController instanceof GraphEnvironmentController) {
+				return (GraphEnvironmentController) envController;
+			}
+		}
+		return null;
+	}
+	/**
+	 * If such a setup data model storage service is defined, the method will return the actual instance.
+	 * @return the setup data model storage handler
+	 */
+	protected SetupDataModelStorageService getSetupDataModelStorageService() {
+		GraphEnvironmentController graphController = this.getGraphEnvironmentController(); 
+		if (graphController!=null) {
+			return graphController.getSetupDataModelStorageService(this);
+		}
+		return null;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- From here some STATIC helper methods -------------------------------
