@@ -245,7 +245,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		
 		// ----------------------------------------------------------
 		if (DESTINATION==OntologyStorageLocation.Both || DESTINATION==OntologyStorageLocation.OntologyFile) {
-			this.getSetupDataModelStorageServiceOntology().setDataModel(networkElement, dataModel);
+			this.getSetupDataModelStorageServiceOntology().setDataModel(networkElement, this.ontologyAdapter.getOntologyBaseClasses());
 			if (DESTINATION==OntologyStorageLocation.OntologyFile) {
 				// --- Clean up old style model ---------------------
 				networkElement.setDataModelBase64(null);
