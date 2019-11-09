@@ -29,6 +29,8 @@
 package org.awb.env.networkModel.adapter;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -45,25 +47,26 @@ import org.awb.env.networkModel.dataModel.DataModelStorageHandlerBase64;
 
 /**
  * The abstract Class NetworkComponentAdapter4DataModel can be extended to provide the required data handling
- * and visualization functionalities for individual data types for {@link NetworkComponent}s or {@link GraphNode}s.
+ * and visualization functionalities for individual data model types for {@link NetworkComponent}s or {@link GraphNode}s.
  * It is used in {@link NetworkComponentAdapter}.   
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class NetworkComponentAdapter4DataModel {
 
-	/** The current NetworkComponentAdapter that owns the current instance */
+	public static final String DATA_MODEL_TYPE_SERIALIZABLE_OBJECT = "SerializableObject";
+	
+	private List<String> dataModleTypes;
+	
 	protected NetworkComponentAdapter networkComponentAdapter;
 
-	/** The current GraphEnvironmentController */
 	protected GraphEnvironmentController graphController;
-	/** The current NetworkComponent */
 	protected NetworkComponent networkComponent;
-	/** The current GraphNode */
 	protected GraphNode graphNode;
 
-	/** The data model storage handler. */
 	protected AbstractDataModelStorageHandler dataModelStorageHandler;
+	
+	private String partModelID;
 	
 	/**
 	 * <b>Just for an internal use!</b> Instantiates a new network component data model adapter. 
@@ -77,6 +80,38 @@ public abstract class NetworkComponentAdapter4DataModel {
 		this.setGraphEnvironmentController(graphController);
 	}
 	
+	/**
+	 * Has to return a vector of string qualifier that specify the data model types that can be handled 
+	 * with the current data model adapter. Thus, it can be checked, if the data model adapter is of a 
+	 * specific type.<br><br>
+	 * Mostly, the list will contain only a single element. By default, this method will return 
+	 * 'SerializableObject' as single element within the list.<br>
+	 * <b>Overwrite this method, to specify individual data model types</b>   
+	 *
+	 * @return the data model types that will be handled with the current data model adapter
+	 * @see #containsDataModelType(String)
+	 */
+	protected List<String> getDataModelTypes() {
+		if (dataModleTypes==null) {
+			dataModleTypes = new ArrayList<String>();
+			dataModleTypes.add(DATA_MODEL_TYPE_SERIALIZABLE_OBJECT);	
+		}
+		return dataModleTypes;
+	}
+	/**
+	 * This method allows to check, if the current data model adapter is of a specific type.
+	 *
+	 * @param dataModelType the data model type to check
+	 * @return true, if this data model adapter is of the specified type
+	 * @see #getDataModelTypes()
+	 */
+	public boolean containsDataModelType(String dataModelType) {
+		List<String> handledDataModelTypes = this.getDataModelTypes();
+		if (handledDataModelTypes!=null) {
+			return handledDataModelTypes.contains(dataModelType);
+		}
+		return false;
+	}
 	
 	/**
 	 * Returns the JComponent for the visualization of the data model.
@@ -253,4 +288,20 @@ public abstract class NetworkComponentAdapter4DataModel {
 	public GraphNode getGraphNode() {
 		return graphNode;
 	}
+	
+	/**
+	 * Sets the part model ID, if there is any.
+	 * @param partModelID the new part model ID
+	 */
+	public void setPartModelID(String partModelID) {
+		this.partModelID = partModelID;
+	}
+	/**
+	 * Returns the part model ID, if there is any.
+	 * @return the part model ID or null
+	 */
+	public String getPartModelID() {
+		return partModelID;
+	}
+	
 }

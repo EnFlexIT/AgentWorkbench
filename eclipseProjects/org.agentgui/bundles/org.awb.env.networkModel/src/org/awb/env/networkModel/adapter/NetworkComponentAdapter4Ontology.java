@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -50,6 +51,10 @@ import jade.content.onto.Ontology;
  */
 public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentAdapter4DataModel {
 
+	public static final String DATA_MODEL_TYPE_ONTOLOGY = "OntologyDataModel"; 
+	
+	private List<String> dataModelTypes;
+	
 	private OntologyVisualizationHelper ovh;
 	private OntologyInstanceViewer oiv;
 	
@@ -57,13 +62,24 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	
 	/**
 	 * Instantiates a new network component adapter for ontologies.
-	 *
 	 * @param graphController the graph controller
 	 */
 	public NetworkComponentAdapter4Ontology(GraphEnvironmentController graphController) {
 		super(graphController);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#getDataModelTypes()
+	 */
+	@Override
+	protected List<String> getDataModelTypes() {
+		if (dataModelTypes==null) {
+			dataModelTypes = new ArrayList<String>();
+			dataModelTypes.add(DATA_MODEL_TYPE_ONTOLOGY);
+		}
+		return dataModelTypes;
+	}
+	
 	/**
 	 * Define the Vector of the needed Ontologies for this type of NetworkComponent.
 	 * @return the Vector of ontology classes 
@@ -213,7 +229,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	@Override
 	protected AbstractDataModelStorageHandler getDataModelStorageHandler() {
 		if (storageHandler==null) {
-			storageHandler = new DataModelStorageHandlerOntology(this);
+			storageHandler = new DataModelStorageHandlerOntology(this, this.getPartModelID());
 		}
 		return storageHandler;
 	}

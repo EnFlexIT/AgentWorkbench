@@ -39,7 +39,7 @@ public class BundlingDataModelStorageHandler extends AbstractDataModelStorageHan
 			Vector<String> partVector64 = this.base64VectorExtract(networkElement, tabTitle);
 			TreeMap<String, String> partSettings = this.prefixFilterStorageSettings(allSettings, tabTitle, true);
 
-			DataModelNetworkElement partNetworkElement = this.createTemporaryNetworkElement(networkElement.getId());
+			DataModelNetworkElement partNetworkElement = this.createTemporaryNetworkElement(networkElement);
 			partNetworkElement.setDataModelBase64(partVector64);
 			partNetworkElement.setDataModelStorageSettings(partSettings);
 			
@@ -83,7 +83,7 @@ public class BundlingDataModelStorageHandler extends AbstractDataModelStorageHan
 			if (partDataModelAdapter instanceof NetworkComponentAdapter4Ontology) partDataModelAdapter.save();
 			
 			// --- Create temporary network element for part model --
-			DataModelNetworkElement partNetworkElement = this.createTemporaryNetworkElement(networkElement.getId());
+			DataModelNetworkElement partNetworkElement = this.createTemporaryNetworkElement(networkElement);
 			partNetworkElement.setDataModel(partDataModel);
 			partNetworkElement.setDataModelStorageSettings(partSettings);
 			

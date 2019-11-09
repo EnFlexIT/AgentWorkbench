@@ -35,6 +35,8 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 	private TreeMap<String, NetworkComponentAdapter4DataModel> dataModelAdapterMap;
 	private List<String> titleList;
 	
+	private List<String> dataModelTypes;
+	
 	private BundlingDataModelStorageHandler storageHandler;
 
 	private BasicGraphGuiJDesktopPane basicGraphGuiDesktop;
@@ -73,6 +75,29 @@ public class BundlingNetworkComponentAdapter4DataModel extends NetworkComponentA
 	 */
 	protected TreeMap<String, NetworkComponentAdapter4DataModel> getDataModelAdapterMap() {
 		return this.dataModelAdapterMap;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel#getDataModelTypes()
+	 */
+	@Override
+	protected List<String> getDataModelTypes() {
+		if (dataModelTypes==null) {
+			dataModelTypes = new ArrayList<>();
+			// --- Check each data model adapter for its type(s) ----
+			List<NetworkComponentAdapter4DataModel> dmAdapterList = new ArrayList<>(this.dataModelAdapterMap.values());
+			for (int i = 0; i < dmAdapterList.size(); i++) {
+				NetworkComponentAdapter4DataModel dmAdapter = dmAdapterList.get(i);
+				List<String> typeList = dmAdapter.getDataModelTypes();
+				for (int j = 0; j < typeList.size(); j++) {
+					String dataModelType = typeList.get(j);
+					if (dataModelTypes.contains(dataModelType)==false) {
+						dataModelTypes.add(dataModelType);
+					}
+				}
+			}
+		}
+		return dataModelTypes;
 	}
 	
 	// ------------------------------------------------------------------------

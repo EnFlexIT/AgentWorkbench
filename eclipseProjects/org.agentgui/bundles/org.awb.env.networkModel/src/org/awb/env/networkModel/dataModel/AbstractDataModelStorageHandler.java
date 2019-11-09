@@ -96,14 +96,21 @@ public abstract class AbstractDataModelStorageHandler {
 	
 	
 	/**
-	 * Creates a NetworkElement that may temporary only be used for saving 
-	 * or loading part models of more complex data models.
+	 * Creates a NetworkElement that temporary may be used for saving 
+	 * or loading part models of combined / more complex data models.
+	 *
+	 * @param networkElement the network element
 	 * @return the data model network element
 	 */
-	protected DataModelNetworkElement createTemporaryNetworkElement(String id) {
-		GraphNode graphNode = new GraphNode();
-		graphNode.setId(id);
-		return graphNode;
+	protected DataModelNetworkElement createTemporaryNetworkElement(DataModelNetworkElement networkElement) {
+		DataModelNetworkElement tmpNetworkElement = null;
+		if (networkElement instanceof NetworkComponent) {
+			NetworkComponent srcNetComp = (NetworkComponent) networkElement;
+			tmpNetworkElement = new NetworkComponent(srcNetComp.getId(), srcNetComp.getType(), null);
+		} else if (networkElement instanceof GraphNode) {
+			tmpNetworkElement = new GraphNode(networkElement.getId(), null);
+		}
+		return tmpNetworkElement;
 	}
 	
 	/**
@@ -138,7 +145,12 @@ public abstract class AbstractDataModelStorageHandler {
 			
 			String singleBase64 = sourceBase64.get(i);
 			if (singleBase64.startsWith(BASE64_MODEL_SEPARATOR_PREFIX)) {
+				// --- The new regular way --------------------------
 				addSequence = singleBase64.equals(BASE64_MODEL_SEPARATOR_PREFIX + prefix);
+				continue;
+			} else if (singleBase64.equals(prefix)==true) {
+				// --- The old style for combined models ------------
+				addSequence = true;
 				continue;
 			}
 			if (addSequence==true) {

@@ -21,6 +21,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.awb.env.networkModel.DataModelNetworkElement;
+import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.SetupDataModelStorageService;
 import org.xml.sax.Attributes;
@@ -95,23 +99,29 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	 * Returns the local TreeMap key for the specified data model network element.
 	 *
 	 * @param networkElement the network element
+	 * @param partModelID the part model ID
 	 * @return the key of data model network element
 	 */
-	private String getKeyOfDataModelNetworkElement(DataModelNetworkElement networkElement) {
+	private String getKeyOfDataModelNetworkElement(DataModelNetworkElement networkElement, String partModelID) {
 		if (networkElement==null) return null;
 		String id = networkElement.getId();
 		String type = networkElement.getClass().getSimpleName();
 		String key = type + "," + id;
+		if (partModelID!=null && partModelID.isEmpty()==false) {
+			key += "," + partModelID;
+		}
 		return key;
 	}
+	
 	/**
 	 * Sets the data model for the specified network element to the local storage.
 	 *
 	 * @param networkElement the network element
 	 * @param ontologyBaseClasses the ontology base classes
+	 * @param partModelID the part model ID, if the model is part of a combined data model (may be null)
 	 */
-	public void setDataModel(DataModelNetworkElement networkElement, Vector<Class<? extends Ontology>> ontologyBaseClasses) {
-		String key = this.getKeyOfDataModelNetworkElement(networkElement);
+	public void setDataModel(DataModelNetworkElement networkElement, Vector<Class<? extends Ontology>> ontologyBaseClasses, String partModelID) {
+		String key = this.getKeyOfDataModelNetworkElement(networkElement, partModelID);
 		if (key!=null) {
 			Object ontologyDataModel = networkElement.getDataModel();
 			if (ontologyDataModel!=null) {
@@ -122,14 +132,16 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 			}
 		}
 	}
+	
 	/**
 	 * Return the local stored data model for the specified NetworkElement.
 	 *
 	 * @param networkElement the network element
+	 * @param partModelID the part model ID, if the model is part of a combined data model (may be null)
 	 * @return the data model
 	 */
-	public Object getDataModel(DataModelNetworkElement networkElement) {
-		String key = this.getKeyOfDataModelNetworkElement(networkElement);
+	public Object getDataModel(DataModelNetworkElement networkElement, String partModelID) {
+		String key = this.getKeyOfDataModelNetworkElement(networkElement, partModelID);
 		if (key!=null) {
 			OntologyInstanceConfiguration instanceConfig = this.getOntologyInstanceTreeMap().get(key);
 			if (instanceConfig!=null) {
@@ -152,6 +164,34 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		return new File(destinationDirectory + setupName + "-Ontology.xml");
 	}
 	
+	/**
+	 * Checks all NetworkComponents and GraphNodes in the NetworkModel and updates the local ontology data models.
+	 */
+	private void updateOntologyDataModels() {
+		
+		// --- Clear local storage ----------------------------------
+		this.setOntologyInstanceTreeMap(null);
+		
+		// --- Get list of DataModelNetworkElement ------------------ 
+		NetworkModel networkModel = this.graphController.getNetworkModel();
+		List<DataModelNetworkElement> networkElementList = networkModel.getDataModelNetworkElementList();
+		for (int i = 0; i < networkElementList.size(); i++) {
+			
+			DataModelNetworkElement networkElement = networkElementList.get(i);
+			
+			NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(this.graphController, networkElement);
+			if (netCompAdapter!=null) {
+				NetworkComponentAdapter4DataModel dmNetCompAdapter = netCompAdapter.getStoredDataModelAdapter();
+				// --- Check for the usage of Ontologies ------------
+				if (dmNetCompAdapter!=null && dmNetCompAdapter.containsDataModelType(NetworkComponentAdapter4Ontology.DATA_MODEL_TYPE_ONTOLOGY)==true) {
+					// --- Found adapter that handles ontologies ----
+					TreeMap<String, String> storageSettings = dmNetCompAdapter.getDataModelStorageHandlerInternal().saveDataModel(networkElement);
+					networkElement.setDataModelStorageSettings(storageSettings);
+				}
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.SetupDataModelStorageService#saveNetworkElementDataModels(java.lang.String, java.lang.String)
 	 */
@@ -161,6 +201,10 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		File setupFile = this.getSetupFile(destinationDirectory, setupName);
 		if (setupFile==null) return;
 		
+		// --- Update the local instances -----------------
+		this.updateOntologyDataModels();
+		
+		// --- Write to XML file --------------------------
 		OutputStream oStream = null;
 		OutputStreamWriter osWriter = null;
 		XMLStreamWriter xmlOut = null;
@@ -190,7 +234,7 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 				
 				// --- Write out the key / value combination --------
 				xmlOut.writeStartElement(XML_ELEMENT_DataModel);
-				xmlOut.writeCharacters(lineBreak);
+				xmlOut.writeCharacters(lineBreak + "\t");
 				// --- Key: -----------------------------------------
 				xmlOut.writeStartElement(XML_ELEMENT_NetworkElement);
 				xmlOut.writeCharacters(key);

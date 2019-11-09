@@ -2302,10 +2302,23 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			this.getGraph().removeEdge(graphEdge);
 			this.getGraph().addEdge(graphEdge, graphNodeFrom, graphNodeTo, EdgeType.DIRECTED);
 		} 
-		
 	}
 
 	
+	/**
+	 * Returns the NetworkComponentAdapter for the specified DataModelNetworkElement.
+	 *
+	 * @param networkComponent the NetworkComponent
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, DataModelNetworkElement networkElement) {
+		if (networkElement instanceof NetworkComponent) {
+			return this.getNetworkComponentAdapter(graphController, (NetworkComponent)networkElement);
+		} else if (networkElement instanceof GraphNode) {
+			return this.getNetworkComponentAdapter(graphController, (GraphNode)networkElement);
+		}
+		return null;
+	}
 	/**
 	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.
 	 *
@@ -2519,6 +2532,29 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			}
 		}
 		return netCompAdapter;
+	}
+	
+	
+	/**
+	 * Return all {@link DataModelNetworkElement}s that are locate in the current NetworkModel.
+	 * @return the data model network element
+	 */
+	public List<DataModelNetworkElement> getDataModelNetworkElementList() {
+		
+		List<DataModelNetworkElement> netElementList = new ArrayList<>(); 
+		
+		// --- Search Check all NetworkComponts ---------------------
+		netElementList.addAll(this.getNetworkComponents().values());
+		
+		// --- Search all GraphElements -----------------------------
+		List<GraphElement> graphElementList = new ArrayList<>(this.getGraphElements().values());
+		for (int i = 0; i < graphElementList.size(); i++) {
+			GraphElement graphElement = graphElementList.get(i); 
+			if (graphElement instanceof DataModelNetworkElement) {
+				netElementList.add((DataModelNetworkElement)graphElement);
+			}
+		}
+		return netElementList;
 	}
 	
 	
@@ -2744,5 +2780,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return success;
 	}
+
 	
 }

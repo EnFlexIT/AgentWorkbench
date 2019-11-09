@@ -62,6 +62,7 @@ public class BundlingNetworkComponentAdapter extends NetworkComponentAdapter {
 			String title = this.getTitleList().get(i);
 			NetworkComponentAdapter netCompAdapter = this.netCompAdapterMap.get(title);
 			NetworkComponentAdapter4DataModel dmAdapter = netCompAdapter.getNewDataModelAdapter();
+			dmAdapter.setPartModelID(title);
 			// --- Put to TreeMap -----------------------------------
 			netCompAdapterDataModelMap.put(title, dmAdapter);
 		}

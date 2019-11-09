@@ -40,13 +40,15 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	
 	
 	protected NetworkComponentAdapter4Ontology ontologyAdapter;
+	protected String partModelID;
 	
 	/**
 	 * Instantiates a new data model storage handler ontology.
 	 * @param ontologyAdapter the ontology adapter
 	 */
-	public DataModelStorageHandlerOntology(NetworkComponentAdapter4Ontology ontologyAdapter) {
+	public DataModelStorageHandlerOntology(NetworkComponentAdapter4Ontology ontologyAdapter, String partModelID) {
 		this.ontologyAdapter = ontologyAdapter;
+		this.partModelID = partModelID;
 	}
 	
 	// ----------------------------------------------------------------------------------
@@ -64,15 +66,16 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		// ----------------------------------------------------------
 		// --- Identify storage location ----------------------------
 		// ----------------------------------------------------------
+		boolean requiresPersistenceUpdate = false;
 		OntologyStorageLocation storageLocation = OntologyStorageLocation.Base64InNetworkElements;
 		if (networkElement.getDataModelStorageSettings()==null) {
-			this.setRequiresPersistenceUpdate(true);
+			requiresPersistenceUpdate = true;
 		} else {
 			String storageLocationString = networkElement.getDataModelStorageSettings().get(ONTO_SETTING_STORAGE_LOCATION);
 			if (storageLocationString!=null && storageLocationString.isEmpty()==false) {
 				storageLocation = OntologyStorageLocation.valueOf(storageLocationString);
 			} else {
-				this.setRequiresPersistenceUpdate(true);
+				requiresPersistenceUpdate = true;
 			}
 		}
 
@@ -81,7 +84,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		// ----------------------------------------------------------
 		Object dataModel = null;
 		
-		// --- Try loading from Base64 (also for old versions) ------   
+		// --- Try loading from Base64 (also to convert old style) --   
 		try {
 			Vector<String> dataModelBase64 = networkElement.getDataModelBase64();
 			if (dataModelBase64!=null) {
@@ -95,7 +98,12 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		// --- Load from central setup file -------------------------
 		if (storageLocation==OntologyStorageLocation.OntologyFile) {
 			// --- Try to get the data model from central file ------
-			dataModel = this.getSetupDataModelStorageServiceOntology().getDataModel(networkElement);
+			dataModel = this.getSetupDataModelStorageServiceOntology().getDataModel(networkElement, this.partModelID);
+		}
+		
+		// --- Requires persistence update? -------------------------
+		if (dataModel!=null && requiresPersistenceUpdate==true) {
+			this.setRequiresPersistenceUpdate(true);
 		}
 		return dataModel;
 	}
@@ -245,7 +253,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		
 		// ----------------------------------------------------------
 		if (DESTINATION==OntologyStorageLocation.Both || DESTINATION==OntologyStorageLocation.OntologyFile) {
-			this.getSetupDataModelStorageServiceOntology().setDataModel(networkElement, this.ontologyAdapter.getOntologyBaseClasses());
+			this.getSetupDataModelStorageServiceOntology().setDataModel(networkElement, this.ontologyAdapter.getOntologyBaseClasses(), this.partModelID);
 			if (DESTINATION==OntologyStorageLocation.OntologyFile) {
 				// --- Clean up old style model ---------------------
 				networkElement.setDataModelBase64(null);
