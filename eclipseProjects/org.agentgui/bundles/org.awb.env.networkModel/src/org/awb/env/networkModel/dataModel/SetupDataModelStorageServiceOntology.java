@@ -204,6 +204,15 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		// --- Update the local instances -----------------
 		this.updateOntologyDataModels();
 		
+		// --- Is there something to write? ---------------
+		if (this.getOntologyInstanceTreeMap().size()==0) {
+			// --- Delete old file? ---
+			if (setupFile.exists()==true) {
+				setupFile.delete();
+			}
+			return;
+		}
+		
 		// --- Write to XML file --------------------------
 		OutputStream oStream = null;
 		OutputStreamWriter osWriter = null;
