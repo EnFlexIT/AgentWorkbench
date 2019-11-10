@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.dataModel;
+package org.awb.env.networkModel.adapter.dataModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +26,7 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.controller.SetupDataModelStorageService;
+import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -72,7 +72,7 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		this.graphController = graphController;
 	}
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.dataModel.SetupDataModelStorageService#getDataModelStorageHandlerClass()
+	 * @see org.awb.env.networkModel.adapter.dataModel.SetupDataModelStorageService#getDataModelStorageHandlerClass()
 	 */
 	@Override
 	public Class<? extends AbstractDataModelStorageHandler> getDataModelStorageHandlerClass() {

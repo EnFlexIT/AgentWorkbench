@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.dataModel;
+package org.awb.env.networkModel.adapter.dataModel;
 
 import java.util.TreeMap;
 import java.util.Vector;
@@ -24,7 +24,7 @@ import org.awb.env.networkModel.controller.DataModelEnDecoder64;
 public class DataModelStorageHandlerBase64 extends AbstractDataModelStorageHandler {
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler#saveDataModel(org.awb.env.networkModel.DataModelNetworkElement)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#saveDataModel(org.awb.env.networkModel.DataModelNetworkElement)
 	 */
 	@Override
 	public TreeMap<String, String> saveDataModel(DataModelNetworkElement networkElement) {
@@ -42,7 +42,7 @@ public class DataModelStorageHandlerBase64 extends AbstractDataModelStorageHandl
 	}
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler#loadDataModel(org.awb.env.networkModel.DataModelNetworkElement)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#loadDataModel(org.awb.env.networkModel.DataModelNetworkElement)
 	 */
 	@Override
 	public Object loadDataModel(DataModelNetworkElement networkElement) {

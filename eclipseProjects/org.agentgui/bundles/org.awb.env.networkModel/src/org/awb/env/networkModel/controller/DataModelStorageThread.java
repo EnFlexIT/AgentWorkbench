@@ -42,7 +42,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
-import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;

@@ -35,10 +35,10 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.adapter.dataModel.DataModelStorageHandlerOntology;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
-import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
-import org.awb.env.networkModel.dataModel.DataModelStorageHandlerOntology;
 
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;

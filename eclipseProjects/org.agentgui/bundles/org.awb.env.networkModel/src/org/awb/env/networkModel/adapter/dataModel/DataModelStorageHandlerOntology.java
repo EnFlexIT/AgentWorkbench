@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.dataModel;
+package org.awb.env.networkModel.adapter.dataModel;
 
 import java.io.UnsupportedEncodingException;
 import java.util.TreeMap;
@@ -8,7 +8,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
-import org.awb.env.networkModel.controller.SetupDataModelStorageService;
+import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.common.ExceptionHandling;
@@ -48,7 +48,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	// ----------------------------------------------------------------------------------
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler#loadDataModel(org.awb.env.networkModel.DataModelNetworkElement)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#loadDataModel(org.awb.env.networkModel.DataModelNetworkElement)
 	 */
 	@Override
 	public Object loadDataModel(DataModelNetworkElement networkElement) {
@@ -202,7 +202,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	// ----------------------------------------------------------------------------------
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler#saveDataModel(org.awb.env.networkModel.DataModelNetworkElement)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#saveDataModel(org.awb.env.networkModel.DataModelNetworkElement)
 	 */
 	@Override
 	public TreeMap<String, String> saveDataModel(DataModelNetworkElement networkElement) {

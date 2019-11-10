@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.awb.env.networkModel.controller;
+package org.awb.env.networkModel.persistence;
 
 import java.util.ArrayList;
 import java.util.List;

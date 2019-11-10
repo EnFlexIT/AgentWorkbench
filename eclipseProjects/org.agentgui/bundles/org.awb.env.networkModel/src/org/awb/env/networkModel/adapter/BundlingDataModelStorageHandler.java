@@ -4,7 +4,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.awb.env.networkModel.DataModelNetworkElement;
-import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 
 /**
  * The BundlingDataModelStorageHandler is used within a {@link BundlingNetworkComponentAdapter4DataModel}
@@ -25,7 +25,7 @@ public class BundlingDataModelStorageHandler extends AbstractDataModelStorageHan
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler#loadDataModel(org.awb.env.networkModel.DataModelNetworkElement)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#loadDataModel(org.awb.env.networkModel.DataModelNetworkElement)
 	 */
 	@Override
 	public Object loadDataModel(DataModelNetworkElement networkElement) {
@@ -54,7 +54,7 @@ public class BundlingDataModelStorageHandler extends AbstractDataModelStorageHan
 	}
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler#saveDataModel(org.awb.env.networkModel.DataModelNetworkElement)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#saveDataModel(org.awb.env.networkModel.DataModelNetworkElement)
 	 */
 	@Override
 	public TreeMap<String, String> saveDataModel(DataModelNetworkElement networkElement) {

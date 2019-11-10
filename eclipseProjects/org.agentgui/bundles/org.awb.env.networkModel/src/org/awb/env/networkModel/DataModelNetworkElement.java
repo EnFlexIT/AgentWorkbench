@@ -3,7 +3,7 @@ package org.awb.env.networkModel;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 
 /**
  * The Interface DataModelNetworkElement describes {@link GraphElement}s and {@link NetworkComponent}s

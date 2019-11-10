@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.awb.env.networkModel.dataModel.SetupDataModelStorageServiceOntology">
-   <implementation class="org.awb.env.networkModel.dataModel.SetupDataModelStorageServiceOntology"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.awb.env.networkModel.adapter.dataModel.SetupDataModelStorageServiceOntology">
+   <implementation class="org.awb.env.networkModel.adapter.dataModel.SetupDataModelStorageServiceOntology"/>
    <service>
-      <provide interface="org.awb.env.networkModel.controller.SetupDataModelStorageService"/>
+      <provide interface="org.awb.env.networkModel.persistence.SetupDataModelStorageService"/>
    </service>
 </scr:component>

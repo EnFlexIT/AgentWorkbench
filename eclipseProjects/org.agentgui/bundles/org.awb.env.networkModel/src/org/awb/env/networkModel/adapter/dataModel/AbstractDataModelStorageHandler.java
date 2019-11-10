@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.dataModel;
+package org.awb.env.networkModel.adapter.dataModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.controller.SetupDataModelStorageService;
+import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 
 import agentgui.core.application.Application;
 import agentgui.core.environment.EnvironmentController;

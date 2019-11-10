@@ -38,11 +38,11 @@ import javax.swing.JComponent;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.adapter.dataModel.DataModelStorageHandlerBase64;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
-import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
-import org.awb.env.networkModel.dataModel.DataModelStorageHandlerBase64;
 
 
 /**

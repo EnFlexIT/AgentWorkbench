@@ -1,9 +1,10 @@
-package org.awb.env.networkModel.controller;
+package org.awb.env.networkModel.persistence;
 
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 /**
  * The Class SetupDataModelStorageService serves as base interface for storage handler

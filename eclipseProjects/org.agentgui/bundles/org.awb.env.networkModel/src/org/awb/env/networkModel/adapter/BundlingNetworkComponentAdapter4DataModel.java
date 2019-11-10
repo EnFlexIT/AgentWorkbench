@@ -17,10 +17,10 @@ import javax.swing.event.ChangeListener;
 
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
-import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
 
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 
