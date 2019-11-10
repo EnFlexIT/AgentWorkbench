@@ -15,6 +15,16 @@ import org.awb.env.networkModel.dataModel.AbstractDataModelStorageHandler;
  */
 public interface SetupDataModelStorageService {
 	
+	/**
+	 * Describes the possible actions of a SetupDataModelStorageService.
+	 */
+	public enum DataModelServiceAction {
+		SaveSetup,
+		LoadSetup,
+		RenameSetup,
+		RemoveSetup
+	}
+
 	
 	/**
 	 * Will be invoked during initialization and will receive the current graph controller instance.
@@ -53,5 +63,21 @@ public interface SetupDataModelStorageService {
 	 */
 	public void loadNetworkElementDataModels(String destinationDirectory, String setupName);
 	
+	/**
+	 * Will be invoked to remove the data models file of {@link DataModelNetworkElement}s.
+	 * 
+	 * @param destinationDirectory the destination directory to use
+	 * @param setupName the current setup name
+	 */
+	public void removeNetworkElementDataModels(String destinationDirectory, String setupName);
+	
+	/**
+	 * Will be invoked to rename the data models file of {@link DataModelNetworkElement}s.
+	 *
+	 * @param destinationDirectory the destination directory to use
+	 * @param oldSetupName the current setup name
+	 * @param newSetupName the new setup name
+	 */
+	public void renameNetworkElementDataModels(String destinationDirectory, String oldSetupName, String newSetupName);
 	
 }

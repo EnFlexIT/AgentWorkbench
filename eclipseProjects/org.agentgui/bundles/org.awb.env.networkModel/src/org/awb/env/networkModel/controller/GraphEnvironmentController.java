@@ -46,7 +46,8 @@ import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
-import org.awb.env.networkModel.controller.DataModelEnDecoderThread.OrganizerAction;
+import org.awb.env.networkModel.controller.DataModelStorageThread.OrganizerAction;
+import org.awb.env.networkModel.controller.SetupDataModelStorageService.DataModelServiceAction;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
@@ -331,17 +332,33 @@ public class GraphEnvironmentController extends EnvironmentController {
 			if (componentFile.exists()) {
 				componentFile.delete();
 			}
+			this.callSetupDataModelStorageServices(DataModelServiceAction.RemoveSetup);
 			break;
 
 		case SIMULATION_SETUP_RENAME:
+
+			// --- Collect old settings -------------------
+			String oldSetupName = this.baseFileName;
 			File oldGraphFile = this.getFileGraphML();
 			File oldComponentFile = this.getFileXML();
+			
+			// --- Internally update to new settings ------
 			this.updateGraphFileName();
+
+			// --- Rename ---------------------------------
 			if (oldGraphFile.exists()) {
 				oldGraphFile.renameTo(this.getFileGraphML());
 			}
 			if (oldComponentFile.exists()) {
 				oldComponentFile.renameTo(this.getFileXML());
+			}
+			
+			// --- Call storage services ------------------
+			String[] renameArgs = new String[2];
+			renameArgs[0] = oldSetupName;
+			renameArgs[1] = this.getProject().getSimulationSetupCurrent();
+			if (renameArgs[0].equals(renameArgs[1])==false) {
+				this.callSetupDataModelStorageServices(DataModelServiceAction.RenameSetup, renameArgs);
 			}
 			break;
 
@@ -471,7 +488,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 							// --- Use the local method in order to inform the observer -----------
 							GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelAssigen);
 							// --- Decode data models that are Base64 encoded in the moment -------
-							GraphEnvironmentController.this.setNetworkComponentDataModelBase64Decoded();
+							GraphEnvironmentController.this.loadDataModelNetworkElements();
 						}
 					});
 					
@@ -524,23 +541,23 @@ public class GraphEnvironmentController extends EnvironmentController {
 			this.getNetworkModel().saveComponentsFile(componentsFile);
 			
 			// --- Save individual models ---------------------------
-			this.callSaveOnSetupDataModelStorageServices();
+			this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
 		}
 	}
 
 	/**
-	 * Sets all Base64 encoded data models to concrete instances.
+	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
 	 */
-	public void setNetworkComponentDataModelBase64Decoded() {
-		this.callLoadOnSetupDataModelStorageServices();
-		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_LOADING).start();
+	public void loadDataModelNetworkElements() {
+		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING).start();
 	}
 	/**
-	 * Sets the instances of all data models to a Base64 encoded strings.
+	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
 	 */
-	public void setNetworkComponentDataModelBase64Encoded() {
-		new DataModelEnDecoderThread(this, OrganizerAction.ORGANIZE_SAVING).start();
-		this.callSaveOnSetupDataModelStorageServices();
+	public void saveDataModelNetworkElements() {
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING).start();
+		this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
 	}
 	
 	// ----------------------------------------------------------------------------------
@@ -579,30 +596,21 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
 		return null;
 	}
-	
 	/**
-	 * Save individual data model of {@link DataModelNetworkElement} by invoking the registered {@link SetupDataModelStorageService}.
+	 * Calls the known {@link SetupDataModelStorageService}s to do the specified action.
+	 *
+	 * @param serviceAction the service action to invoke
 	 */
-	private void callSaveOnSetupDataModelStorageServices() {
-		
-		String destinationDirectory = this.getEnvFolderPath();
-		String setupName = this.getProject().getSimulationSetupCurrent();
-		
-		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
-		for (int i = 0; i < sdmServiceList.size(); i++) {
-			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
-			try {
-				sdmService.saveNetworkElementDataModels(destinationDirectory, setupName);
-			} catch (Exception ex) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Error while saving with SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
-				ex.printStackTrace();
-			}
-		}
+	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction) {
+		this.callSetupDataModelStorageServices(serviceAction, null);
 	}
 	/**
-	 * Loads individual data model of {@link DataModelNetworkElement} by invoking the registered {@link SetupDataModelStorageService}.
+	 * Calls the known {@link SetupDataModelStorageService}s to do the specified action.
+	 *
+	 * @param serviceAction the service action to invoke
+	 * @param renameFromTo only needed for renaming. String array with two arguments: first old, second new setup name
 	 */
-	private void callLoadOnSetupDataModelStorageServices() {
+	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction, String[] renameFromTo) {
 		
 		String destinationDirectory = this.getEnvFolderPath();
 		String setupName = this.getProject().getSimulationSetupCurrent();
@@ -611,9 +619,26 @@ public class GraphEnvironmentController extends EnvironmentController {
 		for (int i = 0; i < sdmServiceList.size(); i++) {
 			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
 			try {
-				sdmService.loadNetworkElementDataModels(destinationDirectory, setupName);
+				
+				switch (serviceAction) {
+				case LoadSetup:
+					sdmService.loadNetworkElementDataModels(destinationDirectory, setupName);
+					break;
+				case SaveSetup:
+					sdmService.saveNetworkElementDataModels(destinationDirectory, setupName);
+					break;
+				case RemoveSetup:
+					sdmService.removeNetworkElementDataModels(destinationDirectory, setupName);
+					break;
+				case RenameSetup:
+					String oldSetupName = renameFromTo[0];
+					String newSetupName = renameFromTo[1];
+					sdmService.renameNetworkElementDataModels(destinationDirectory, oldSetupName, newSetupName);
+					break;
+				}
+				
 			} catch (Exception ex) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Error while loading with SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while invoking '" + serviceAction.toString() + "' on SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
 				ex.printStackTrace();
 			}
 		}

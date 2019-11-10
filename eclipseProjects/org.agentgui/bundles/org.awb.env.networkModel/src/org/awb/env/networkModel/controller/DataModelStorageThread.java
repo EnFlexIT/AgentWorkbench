@@ -48,7 +48,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
 /**
- * The Class DataModelEnDecoderThread encodes or decodes the data model 
+ * The Class DataModelStorageThread encodes or decodes the data model 
  * of {@link NetworkComponent}'s or {@link GraphNode}'s in or from a Base64 string.
  * 
  * @see NetworkComponent#setDataModel(Object)
@@ -58,7 +58,7 @@ import agentgui.core.application.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
-public class DataModelEnDecoderThread extends Thread {
+public class DataModelStorageThread extends Thread {
 
 	public enum OrganizerAction {
 		ORGANIZE_SAVING,
@@ -74,7 +74,7 @@ public class DataModelEnDecoderThread extends Thread {
 	private GraphEnvironmentController graphController;
 
 	// --- Variables for the organizer --------------------
-	private DataModelEnDecoderThread organizerThread;
+	private DataModelStorageThread organizerThread;
 	private OrganizerAction organizerAction;
 	private int elementsToConvert;
 	private int elementsConverted;
@@ -100,7 +100,7 @@ public class DataModelEnDecoderThread extends Thread {
 	 * @param graphController the graph controller
 	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_LOADING} or {@link OrganizerAction#ORGANIZE_SAVING}
 	 */
-	public DataModelEnDecoderThread(GraphEnvironmentController graphController, OrganizerAction action) {
+	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action) {
 		this.graphController = graphController;
 		this.organizerAction = action;
 		if (action==OrganizerAction.ORGANIZE_SAVING) {
@@ -119,7 +119,7 @@ public class DataModelEnDecoderThread extends Thread {
 	 * @param action the action
 	 * @param name the designated name for the Thread
 	 */
-	private DataModelEnDecoderThread(DataModelEnDecoderThread organizerThread, GraphEnvironmentController graphController, Vector<DataModelNetworkElement> componentsToWorkOn, WorkerAction action, int threadNo) {
+	private DataModelStorageThread(DataModelStorageThread organizerThread, GraphEnvironmentController graphController, Vector<DataModelNetworkElement> componentsToWorkOn, WorkerAction action, int threadNo) {
 		this.organizerThread = organizerThread;
 		this.graphController = graphController;
 		this.componentsToWorkOn = componentsToWorkOn;
@@ -222,11 +222,11 @@ public class DataModelEnDecoderThread extends Thread {
 			Vector<DataModelNetworkElement> elementVector = splitVector.get(i);
 			switch (this.organizerAction) {
 			case ORGANIZE_LOADING:
-				new DataModelEnDecoderThread(this, this.graphController, elementVector, WorkerAction.LOAD, i+1).start();
+				new DataModelStorageThread(this, this.graphController, elementVector, WorkerAction.LOAD, i+1).start();
 				break;
 
 			case ORGANIZE_SAVING:
-				new DataModelEnDecoderThread(this, this.graphController, elementVector, WorkerAction.SAVE, i+1).start();	
+				new DataModelStorageThread(this, this.graphController, elementVector, WorkerAction.SAVE, i+1).start();	
 				break;
 			}
 		}

@@ -46,8 +46,10 @@ import jade.content.onto.OntologyException;
  */
 public class SetupDataModelStorageServiceOntology implements SetupDataModelStorageService {
 
+	private static final String FILE_SETUP_SUFFIX = "_Ontology.xml";
 	private static final String FILE_ENCODING  = "UTF-8";
 	private static final String lineBreak = "\n";
+	private static final String NULL_INSTANCE = "<Null>";
 	
 	private static final String XML_ELEMENT_OntologyInstances = "OntologyInstances";
 	private static final String XML_ELEMENT_DataModel = "DataModel";
@@ -161,7 +163,29 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	 */
 	private File getSetupFile(String destinationDirectory, String setupName) {
 		if (destinationDirectory==null || destinationDirectory.isEmpty()==true || setupName==null || setupName.isEmpty()==true) return null;
-		return new File(destinationDirectory + setupName + "-Ontology.xml");
+		return new File(destinationDirectory + setupName + FILE_SETUP_SUFFIX);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.SetupDataModelStorageService#removeNetworkElementDataModels(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void removeNetworkElementDataModels(String destinationDirectory, String setupName) {
+		File setupFile = this.getSetupFile(destinationDirectory, setupName);
+		if (setupFile!=null && setupFile.exists()==true) {
+			setupFile.delete();
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.SetupDataModelStorageService#renameNetworkElementDataModels(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void renameNetworkElementDataModels(String destinationDirectory, String oldSetupName, String newSetupName) {
+		File oldSetupFile = this.getSetupFile(destinationDirectory, oldSetupName);
+		File newSetupFile = this.getSetupFile(destinationDirectory, newSetupName);
+		if (oldSetupFile.exists()) {
+			oldSetupFile.renameTo(newSetupFile);
+		}
 	}
 	
 	/**
@@ -207,9 +231,7 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		// --- Is there something to write? ---------------
 		if (this.getOntologyInstanceTreeMap().size()==0) {
 			// --- Delete old file? ---
-			if (setupFile.exists()==true) {
-				setupFile.delete();
-			}
+			this.removeNetworkElementDataModels(destinationDirectory, setupName);
 			return;
 		}
 		
@@ -314,35 +336,42 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	 */
 	private List<String> getXMLRepresentationOfDataModel(Vector<Class<? extends Ontology>> ontologyBaseClasses, Object ontologyDataModel) {
 		
-		List<String> xmlRepresentationList = new ArrayList<>();
-		
 		// --- Get the actual array ---------------------------------
-		Object[] ontologyInstances = null;
+		Object[] ontologyInstanceArray = null;
 		if (ontologyDataModel!=null)  {
 			if (ontologyDataModel.getClass().isArray()==true) {
-				ontologyInstances = (Object[]) ontologyDataModel;
+				ontologyInstanceArray = (Object[]) ontologyDataModel;
 			} else {
-				ontologyInstances = new Object[1];
-				ontologyInstances[0] = ontologyDataModel;
+				ontologyInstanceArray = new Object[1];
+				ontologyInstanceArray[0] = ontologyDataModel;
 			}
 		}
 		
 		// --- Convert to XML ---------------------------------------
-		for (int i = 0; i < ontologyInstances.length; i++) {
+		List<String> xmlRepresentationList = new ArrayList<>();
+		for (int i = 0; i < ontologyBaseClasses.size(); i++) {
 			
-			Object ontologyObject = ontologyInstances[i];
-			Ontology ontology = this.getOntology(ontologyBaseClasses.get(i));
-			try {
-				if (ontologyObject!=null & ontology!=null) {
-					String xmlRepresentation = this.getXMLCodec().encodeObject(ontology, ontologyObject, true);
-					xmlRepresentationList.add(xmlRepresentation);
-				}
-				
-			} catch (CodecException e) {
-				e.printStackTrace();
-			} catch (OntologyException e) {
-				e.printStackTrace();
+			Object ontologyInstance = null;
+			String xmlRepresentation = null;
+			if (ontologyInstanceArray.length>=(i+1)) {
+				ontologyInstance = ontologyInstanceArray[i];
 			}
+			
+			if (ontologyInstance!=null) {
+				try {
+					Ontology ontology = this.getOntology(ontologyBaseClasses.get(i));
+					xmlRepresentation = this.getXMLCodec().encodeObject(ontology, ontologyInstance, true);
+				} catch (CodecException e) {
+					e.printStackTrace();
+				} catch (OntologyException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (xmlRepresentation==null || xmlRepresentation.isEmpty()==true) {
+				xmlRepresentation = NULL_INSTANCE;
+			}
+			xmlRepresentationList.add(xmlRepresentation);
 		}
 		return xmlRepresentationList;
 	}
@@ -495,18 +524,18 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 				
 			} else if (qName.equals(XML_ELEMENT_Instance)==true) {
 				// --- Get the ontology instance --------------------
+				Object ontologyInstance = null;
 				String xmlOntologyInstance = this.tmpStringBuilder.toString().trim();
-				if (xmlOntologyInstance!=null & this.tmpOntology!=null) {
+				if (xmlOntologyInstance!=null & xmlOntologyInstance.equals(NULL_INSTANCE)==false & this.tmpOntology!=null) {
 					try {
-						Object ontologyInstance = SetupDataModelStorageServiceOntology.this.getXMLCodec().decodeObject(this.tmpOntology, xmlOntologyInstance);
-						this.getTmpOntologyInstances().add(ontologyInstance);
-						
+						ontologyInstance = SetupDataModelStorageServiceOntology.this.getXMLCodec().decodeObject(this.tmpOntology, xmlOntologyInstance);
 					} catch (CodecException | OntologyException e) {
 						System.err.println("[" + this.getClass().getSimpleName() + "] Error while parsing XML string:");
 						System.err.println(xmlOntologyInstance);
 						e.printStackTrace();
 					}
 				}
+				this.getTmpOntologyInstances().add(ontologyInstance);
 				
 			}
 		}

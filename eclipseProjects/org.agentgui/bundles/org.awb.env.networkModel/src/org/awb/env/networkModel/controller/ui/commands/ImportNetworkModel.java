@@ -145,7 +145,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			// --- The following has to be done only once, directly after the import !!! --
 			// ----------------------------------------------------------------------------
 			// --- Base64 encode the model elements --------------------------------------- 
-			this.graphController.setNetworkComponentDataModelBase64Encoded();
+			this.graphController.saveDataModelNetworkElements();
 			this.graphController.setProjectUnsaved();
 			
 		} catch (Exception ex) {
