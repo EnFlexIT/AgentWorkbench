@@ -74,15 +74,13 @@ public class LoadMeasureThread extends Thread {
 	private static int debugUnit = LoadUnits.CONVERT2_MEGA_BYTE;
 	
 	/** The name of the running Thread. */
-	public static String threadName = "Agent.GUI - Load Monitoring";
+	public static String LOCAL_THREAD_NAME = "Agent.Workbench - Load Monitoring";
 	
 	/** The sampling interval of this Thread. */
 	private int localIntervalInMS = 500;
 	/** The number of measurements, which will be used for the mean value. */
 	private static int localuseN4AvgCount = 5;
 	
-	/** Indicator if the local threshold is exceeded. */
-	private static boolean thisThreadExecuted = false;
 
 	// --- Load-Information for reading through getter and setter -------------
 	/** Load instance for values of OSHI. */
@@ -156,10 +154,10 @@ public class LoadMeasureThread extends Thread {
 		// ------------------------------------------------------
 		// --- Is this thread is already executed in the JVM? ---
 		// ------------------------------------------------------		
-		if (getCurrentLoadMeasureJVM().threadExists(LoadMeasureThread.threadName)==true) return;
+		if (getCurrentLoadMeasureJVM().threadExists(LoadMeasureThread.LOCAL_THREAD_NAME)==true) return;
 
 		System.out.println("Start measuring the system load !");
-		this.setName(LoadMeasureThread.threadName);
+		this.setName(LoadMeasureThread.LOCAL_THREAD_NAME);
 		// ------------------------------------------------------
 		
 		long timeStart = 0;
@@ -326,21 +324,6 @@ public class LoadMeasureThread extends Thread {
 		}
 		return levelExceeded;
 		
-	}
-	
-	/**
-	 * Checks if is this thread executed.
-	 * @return the thisThreadExecuted
-	 */
-	public static boolean isThisThreadExecuted() {
-		return thisThreadExecuted;
-	}
-	/**
-	 * Sets the this thread executed.
-	 * @param thisThreadExecuted the thisThreadExecuted to set
-	 */
-	public static void setThisThreadExecuted(boolean thisThreadExecuted) {
-		LoadMeasureThread.thisThreadExecuted = thisThreadExecuted;
 	}
 	
 	/**
@@ -613,7 +596,8 @@ public class LoadMeasureThread extends Thread {
 				}
 			};
 			// --- Start measurement thread -----------------------------------
-			threadMeasurement.run();
+			new Thread(threadMeasurement,"ThreadMeasurement").start();
+			
 		}
 	}
 	

@@ -54,7 +54,7 @@ public abstract class AbstractMonitoringTask {
 	 */
 	public enum MonitoringMeasureType {
 		SHUTDOWN_JVM,
-		REDO_AGENTGUI_START_SEQUENCE,
+		REDO_AGENT_WORKBENCH_START_SEQUENCE,
 		RESTART_AGENT,
 		CUSTOM_MEASURE
 	}
@@ -165,7 +165,7 @@ public abstract class AbstractMonitoringTask {
 					this.doShutDownJVM();
 					break;
 				
-				case REDO_AGENTGUI_START_SEQUENCE:
+				case REDO_AGENT_WORKBENCH_START_SEQUENCE:
 					System.err.println("[MonitoringEvent] Redo Agent.GUI start sequence for '" + this.getTaskDescription() + "'");
 					this.doRedoAgentGuiStartSequence();
 					break;
