@@ -58,6 +58,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.AbstractUserObject;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 
@@ -132,8 +133,7 @@ public class SimulationSetup {
 	 * for the JAXB-Context and should not be used by any
 	 * other context).
 	 */	
-	public SimulationSetup() {
-	}
+	public SimulationSetup() { }
 	/**
 	 * Default Constructor of this class.
 	 * @param project the project
@@ -158,6 +158,41 @@ public class SimulationSetup {
 			this.currProject.setChangedAndNotify(reason);
 		}
 	}
+	
+	/**
+	 * Returns the list of files that belong to the current setup. This also 
+	 * includes files that are managed by the current {@link EnvironmentController}. 
+	 *
+	 * @return the setup files
+	 */
+	public List<File> getSetupFiles() {
+		
+		// --- Initial files: setup and user object XML-files -------
+		File setupXmlFile = new File(this.currProject.getSimulationSetups().getCurrSimXMLFile());
+		File setupUserObjectFile = SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_XML);
+
+		// --- Files from the environment controller ----------------
+		List<File> envFileList = null;
+		if (this.currProject!=null) {
+			EnvironmentController envController = this.currProject.getEnvironmentController();
+			if (envController!=null) {
+				envFileList = envController.getSetupFiles();
+			}
+		}
+		
+		// --- Create and return final list ------------------------- 
+		List<File> fileList = new ArrayList<>();
+		fileList.add(setupXmlFile);
+		if (this.getUserRuntimeObject()!=null) {
+			fileList.add(setupUserObjectFile);
+		}
+		if (envFileList!=null) {
+			fileList.addAll(envFileList);
+		}
+		
+		return fileList;
+	}
+	
 	
 	/**
 	 * This method saves the current {@link SimulationSetup} and it files to the default location for setups.<br>

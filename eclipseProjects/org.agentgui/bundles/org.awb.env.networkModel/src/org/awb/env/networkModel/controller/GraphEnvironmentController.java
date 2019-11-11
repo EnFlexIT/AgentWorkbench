@@ -271,16 +271,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/**
 	 * Sets a NetworkModel to the clipboard.
-	 * 
 	 * @param newClipboardNetworkModel the new clipboard network model
 	 */
 	public void setClipboardNetworkModel(NetworkModel newClipboardNetworkModel) {
 		this.clipboardNetworkModel = newClipboardNetworkModel;
 	}
-
 	/**
 	 * Returns the NetworkModel from the clipboard .
-	 * 
 	 * @return the clipboard NetworkModel
 	 */
 	public NetworkModel getClipboardNetworkModel() {
@@ -300,11 +297,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	@Override
 	protected void handleProjectNotification(Object updateObject) {
-
 		if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
 			this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
 		}
-		//System.out.println("[" + this.getClass().getSimpleName() + "] " + updateObject);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#handleSimulationSetupNotification(agentgui.core.sim.setup.SimulationSetupsChangeNotification)
@@ -398,6 +393,23 @@ public class GraphEnvironmentController extends EnvironmentController {
 		return new File(this.getEnvFolderPath() + this.baseFileName + ".graphml");
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getSetupFiles()
+	 */
+	@Override
+	public List<File> getSetupFiles() {
+		
+		List<File> fileList = new ArrayList<File>();
+		fileList.add(this.getFileGraphML());
+		fileList.add(this.getFileXML());
+		
+		List<File> sdmServicesFileList = this.getSetupFilesFromSetupDataModelStorageServices();
+		if (sdmServicesFileList!=null) {
+			fileList.addAll(sdmServicesFileList);
+		}
+		return fileList;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#getPersistenceStrategy()
@@ -614,7 +626,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 */
 	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction, String[] renameFromTo) {
 		
-		String destinationDirectory = this.getEnvFolderPath();
 		String setupName = this.getProject().getSimulationSetupCurrent();
 		
 		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
@@ -624,18 +635,18 @@ public class GraphEnvironmentController extends EnvironmentController {
 				
 				switch (serviceAction) {
 				case LoadSetup:
-					sdmService.loadNetworkElementDataModels(destinationDirectory, setupName);
+					sdmService.loadNetworkElementDataModels(setupName);
 					break;
 				case SaveSetup:
-					sdmService.saveNetworkElementDataModels(destinationDirectory, setupName);
+					sdmService.saveNetworkElementDataModels(setupName);
 					break;
 				case RemoveSetup:
-					sdmService.removeNetworkElementDataModels(destinationDirectory, setupName);
+					sdmService.removeNetworkElementDataModels(setupName);
 					break;
 				case RenameSetup:
 					String oldSetupName = renameFromTo[0];
 					String newSetupName = renameFromTo[1];
-					sdmService.renameNetworkElementDataModels(destinationDirectory, oldSetupName, newSetupName);
+					sdmService.renameNetworkElementDataModels(oldSetupName, newSetupName);
 					break;
 				}
 				
@@ -644,6 +655,31 @@ public class GraphEnvironmentController extends EnvironmentController {
 				ex.printStackTrace();
 			}
 		}
+	}
+	/**
+	 * Return the setup files from setup data model storage services for the current setup.
+	 * @return the setup files from setup data model storage services
+	 */
+	private List<File> getSetupFilesFromSetupDataModelStorageServices() {
+	
+		List<File> setupFilesOfServices = new ArrayList<>();
+		
+		String setupName = this.getProject().getSimulationSetupCurrent();
+		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
+		for (int i = 0; i < sdmServiceList.size(); i++) {
+			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+			try {
+				List<File> sdmServiveSetupFiles = sdmService.getSetupFiles(setupName);
+				if (sdmServiveSetupFiles!=null) {
+					setupFilesOfServices.addAll(sdmServiveSetupFiles);
+				}
+				
+			} catch (Exception ex) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while invoking 'getSetupFiles()' on SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
+				ex.printStackTrace();
+			}
+		}
+		return setupFilesOfServices;
 	}
 	
 	

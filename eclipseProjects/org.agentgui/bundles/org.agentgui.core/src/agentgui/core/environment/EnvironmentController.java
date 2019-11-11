@@ -30,6 +30,7 @@ package agentgui.core.environment;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -177,6 +178,13 @@ public abstract class EnvironmentController extends Observable implements Observ
 		return envFolderPath;
 	}
 
+	/**
+	 * Has to return the list of files that belong to the current setup.
+	 * @return the setup files of the environment
+	 */
+	public abstract List<File> getSetupFiles();
+	
+	
 	/**
 	 * Has to return which strategy is to be used to load or save an {@link EnvironmentModel}. Hereby, it can be adjusted
 	 * when the methods {@link #loadEnvironment()} and {@link #saveEnvironment()} will be called from Agent.Workbench.

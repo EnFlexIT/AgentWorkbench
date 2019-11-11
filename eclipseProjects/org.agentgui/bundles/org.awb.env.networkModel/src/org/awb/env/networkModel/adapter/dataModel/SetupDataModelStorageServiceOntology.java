@@ -153,7 +153,17 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		return null;
 	}
 	
-
+	
+	/**
+	 * Returns the destination directory for the setup file.
+	 * @return the destination directory
+	 */
+	private String getDestinationDirectory() {
+		if (this.graphController!=null) {
+			return this.graphController.getEnvFolderPath();
+		}
+		return null;
+	}
 	/**
 	 * Returns the file for the current setup.
 	 *
@@ -161,28 +171,39 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	 * @param setupName the setup name
 	 * @return the file for setup
 	 */
-	private File getSetupFile(String destinationDirectory, String setupName) {
+	private File getSetupFile(String setupName) {
+		String destinationDirectory = this.getDestinationDirectory();
 		if (destinationDirectory==null || destinationDirectory.isEmpty()==true || setupName==null || setupName.isEmpty()==true) return null;
 		return new File(destinationDirectory + setupName + FILE_SETUP_SUFFIX);
 	}
-	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.controller.SetupDataModelStorageService#removeNetworkElementDataModels(java.lang.String, java.lang.String)
+	 * @see org.awb.env.networkModel.persistence.SetupDataModelStorageService#getSetupFiles(java.lang.String)
 	 */
 	@Override
-	public void removeNetworkElementDataModels(String destinationDirectory, String setupName) {
-		File setupFile = this.getSetupFile(destinationDirectory, setupName);
+	public List<File> getSetupFiles(String setupName) {
+		List<File> setupFiles = new ArrayList<>();
+		setupFiles.add(this.getSetupFile(setupName));
+		return setupFiles;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.SetupDataModelStorageService#removeNetworkElementDataModels(java.lang.String)
+	 */
+	@Override
+	public void removeNetworkElementDataModels(String setupName) {
+		File setupFile = this.getSetupFile(setupName);
 		if (setupFile!=null && setupFile.exists()==true) {
 			setupFile.delete();
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.controller.SetupDataModelStorageService#renameNetworkElementDataModels(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.awb.env.networkModel.persistence.SetupDataModelStorageService#renameNetworkElementDataModels(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void renameNetworkElementDataModels(String destinationDirectory, String oldSetupName, String newSetupName) {
-		File oldSetupFile = this.getSetupFile(destinationDirectory, oldSetupName);
-		File newSetupFile = this.getSetupFile(destinationDirectory, newSetupName);
+	public void renameNetworkElementDataModels(String oldSetupName, String newSetupName) {
+		File oldSetupFile = this.getSetupFile(oldSetupName);
+		File newSetupFile = this.getSetupFile(newSetupName);
 		if (oldSetupFile.exists()) {
 			oldSetupFile.renameTo(newSetupFile);
 		}
@@ -217,12 +238,12 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.controller.SetupDataModelStorageService#saveNetworkElementDataModels(java.lang.String, java.lang.String)
+	 * @see org.awb.env.networkModel.persistence.SetupDataModelStorageService#saveNetworkElementDataModels(java.lang.String)
 	 */
 	@Override
-	public void saveNetworkElementDataModels(String destinationDirectory, String setupName) {
+	public void saveNetworkElementDataModels(String setupName) {
 		
-		File setupFile = this.getSetupFile(destinationDirectory, setupName);
+		File setupFile = this.getSetupFile(setupName);
 		if (setupFile==null) return;
 		
 		// --- Update the local instances -----------------
@@ -231,7 +252,7 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		// --- Is there something to write? ---------------
 		if (this.getOntologyInstanceTreeMap().size()==0) {
 			// --- Delete old file? ---
-			this.removeNetworkElementDataModels(destinationDirectory, setupName);
+			this.removeNetworkElementDataModels(setupName);
 			return;
 		}
 		
@@ -409,12 +430,12 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.controller.SetupDataModelStorageService#loadNetworkElementDataModels(java.lang.String, java.lang.String)
+	 * @see org.awb.env.networkModel.persistence.SetupDataModelStorageService#loadNetworkElementDataModels(java.lang.String)
 	 */
 	@Override
-	public void loadNetworkElementDataModels(String destinationDirectory, String setupName) {
+	public void loadNetworkElementDataModels(String setupName) {
 		
-		File setupFile = this.getSetupFile(destinationDirectory, setupName);
+		File setupFile = this.getSetupFile(setupName);
 		if (setupFile==null || setupFile.exists()==false) return;
 		
 		try {

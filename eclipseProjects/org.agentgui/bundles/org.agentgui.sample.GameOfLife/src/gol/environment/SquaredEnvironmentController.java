@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -154,6 +156,16 @@ public class SquaredEnvironmentController extends EnvironmentController {
 			this.updateEnvironmentFileName();
 		}
 		return getEnvFolderPath() + myCurrentSimSetupName + ".xml";
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getSetupFiles()
+	 */
+	@Override
+	public List<File> getSetupFiles() {
+		List<File> fileList = new ArrayList<File>();
+		fileList.add(new File(this.getCurrentEnvironmentFileName()));
+		return fileList;
 	}
 	
 	/*

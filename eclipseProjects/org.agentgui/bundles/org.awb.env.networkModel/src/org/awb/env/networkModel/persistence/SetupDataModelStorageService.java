@@ -1,5 +1,8 @@
 package org.awb.env.networkModel.persistence;
 
+import java.io.File;
+import java.util.List;
+
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
@@ -28,7 +31,7 @@ public interface SetupDataModelStorageService {
 
 	
 	/**
-	 * Will be invoked during initialization and will receive the current graph controller instance.
+	 * Will be invoked during initialization and will receive the current {@link GraphEnvironmentController} instance.
 	 * @param graphController the new graph environment controller
 	 */
 	public void setGraphEnvironmentController(GraphEnvironmentController graphController);
@@ -46,39 +49,40 @@ public interface SetupDataModelStorageService {
 	 */
 	public Class<? extends AbstractDataModelStorageHandler> getDataModelStorageHandlerClass();
 	
+	/**
+	 * Has to return the list of files that belong to the current setup.
+	 *
+	 * @param setupName the setup name
+	 * @return the setup file list
+	 */
+	public List<File> getSetupFiles(String setupName);
 	
 	
 	/**
 	 * Will be invoked to save the data models of the locally known {@link DataModelNetworkElement}s.
-	 *
-	 * @param destinationDirectory the destination directory to use
 	 * @param setupName the current setup name
 	 */
-	public void saveNetworkElementDataModels(String destinationDirectory, String setupName);
+	public void saveNetworkElementDataModels(String setupName);
 	
 	/**
 	 * Will be invoked to load the data models of the locally known {@link DataModelNetworkElement}s.
-	 * 
-	 * @param destinationDirectory the destination directory to use
 	 * @param setupName the current setup name
 	 */
-	public void loadNetworkElementDataModels(String destinationDirectory, String setupName);
+	public void loadNetworkElementDataModels(String setupName);
 	
 	/**
 	 * Will be invoked to remove the data models file of {@link DataModelNetworkElement}s.
-	 * 
-	 * @param destinationDirectory the destination directory to use
 	 * @param setupName the current setup name
 	 */
-	public void removeNetworkElementDataModels(String destinationDirectory, String setupName);
+	public void removeNetworkElementDataModels(String setupName);
 	
 	/**
 	 * Will be invoked to rename the data models file of {@link DataModelNetworkElement}s.
 	 *
-	 * @param destinationDirectory the destination directory to use
 	 * @param oldSetupName the current setup name
 	 * @param newSetupName the new setup name
 	 */
-	public void renameNetworkElementDataModels(String destinationDirectory, String oldSetupName, String newSetupName);
+	public void renameNetworkElementDataModels(String oldSetupName, String newSetupName);
+
 	
 }
