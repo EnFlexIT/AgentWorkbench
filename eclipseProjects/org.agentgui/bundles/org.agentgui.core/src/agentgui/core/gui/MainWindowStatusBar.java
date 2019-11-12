@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -172,6 +173,7 @@ public class MainWindowStatusBar extends JPanel {
 			jProgressBarHeap.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jProgressBarHeap.setStringPainted(true);
 			jProgressBarHeap.setToolTipText("JVM Heap-Usage: ...");
+			this.updateHeapUsage();
 		}
 		return jProgressBarHeap;
 	}
@@ -223,7 +225,12 @@ public class MainWindowStatusBar extends JPanel {
 		}
 		@Override
 		public boolean isFaultlessProcess() {
-			this.statusBar.updateHeapUsage();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					HeapUsageMonitoringTask.this.statusBar.updateHeapUsage();
+				}
+			});
 			return true;
 		}
 	}
