@@ -273,7 +273,6 @@ public class DebugService extends BaseService {
 		}
 		String sliceName = null;
 		try {
-			if (BaseService.MAIN_SLICE==null) return;
 			DebugServiceSlice slice = (DebugServiceSlice) this.getSlice(BaseService.MAIN_SLICE);
 			if (slice!=null) {
 				sliceName = slice.getNode().getName();
