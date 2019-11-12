@@ -33,6 +33,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -65,12 +67,15 @@ public class MainWindowStatusBar extends JPanel {
 	private final ImageIcon iconRed = GlobalInfo.getInternalImageIcon("StatRed.png");
 
 	private JLabel jLabelStatusText;
+
+	private JToolBar jToolBarSystemLoad;
+	private JProgressBar jProgressBarHeapUsage;
+	private JToolBar jToolBarCenter;
+
 	private JLabel jLabelJadeState;
-	private JToolBar jPanelCenter;
 	
 	private HashMap<String, JLabel> databaseStateHashMap;
-	private JPanel jPanelSystemLoad;
-	private JProgressBar jProgressBarHeap;
+	
 	
 	/**
 	 * Instantiates a new main window status bar.
@@ -83,10 +88,10 @@ public class MainWindowStatusBar extends JPanel {
 	 */
 	private void initialize() {
 		
-		this.setPreferredSize(new Dimension(929, 22));
+		this.setPreferredSize(new Dimension(1071, 22));
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{300, 0, 194, 200, 0};
+		gridBagLayout.columnWidths = new int[]{300, 0, 300, 200, 0};
 		gridBagLayout.rowHeights = new int[]{22, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
@@ -97,26 +102,26 @@ public class MainWindowStatusBar extends JPanel {
 		gbc_jLabelStatusText.fill = GridBagConstraints.VERTICAL;
 		gbc_jLabelStatusText.gridx = 0;
 		gbc_jLabelStatusText.gridy = 0;
-		this.add(getJLabelStatusText(), gbc_jLabelStatusText);
+		this.add(this.getJLabelStatusText(), gbc_jLabelStatusText);
 		
 		GridBagConstraints gbc_jPanelSystemLoad = new GridBagConstraints();
 		gbc_jPanelSystemLoad.fill = GridBagConstraints.BOTH;
 		gbc_jPanelSystemLoad.gridx = 1;
 		gbc_jPanelSystemLoad.gridy = 0;
-		add(getJPanelSystemLoad(), gbc_jPanelSystemLoad);
+		add(this.getJToolBarSystemLoad(), gbc_jPanelSystemLoad);
 		
 		GridBagConstraints gbc_jPanelCenter = new GridBagConstraints();
 		gbc_jPanelCenter.fill = GridBagConstraints.BOTH;
 		gbc_jPanelCenter.gridx = 2;
 		gbc_jPanelCenter.gridy = 0;
-		this.add(getJToolBarCenter(), gbc_jPanelCenter);
+		this.add(this.getJToolBarCenter(), gbc_jPanelCenter);
 		
 		GridBagConstraints gbc_jLabelJadeState = new GridBagConstraints();
 		gbc_jLabelJadeState.anchor = GridBagConstraints.WEST;
 		gbc_jLabelJadeState.fill = GridBagConstraints.VERTICAL;
 		gbc_jLabelJadeState.gridx = 3;
 		gbc_jLabelJadeState.gridy = 0;
-		this.add(getJLabelJadeState(), gbc_jLabelJadeState);
+		this.add(this.getJLabelJadeState(), gbc_jLabelJadeState);
 		
 		this.setJadeIsRunning(false);
 	}
@@ -146,36 +151,42 @@ public class MainWindowStatusBar extends JPanel {
 		this.getJLabelStatusText().repaint();
 	}
 	
-	private JPanel getJPanelSystemLoad() {
-		if (jPanelSystemLoad == null) {
-			jPanelSystemLoad = new JPanel();
-			GridBagLayout gbl_jPanelSystemLoad = new GridBagLayout();
-			gbl_jPanelSystemLoad.columnWidths = new int[]{0, 0};
-			gbl_jPanelSystemLoad.rowHeights = new int[]{0, 0};
-			gbl_jPanelSystemLoad.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-			gbl_jPanelSystemLoad.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-			jPanelSystemLoad.setLayout(gbl_jPanelSystemLoad);
-			jPanelSystemLoad.setPreferredSize(new Dimension(120, 16));
-			GridBagConstraints gbc_jProgressBarHeap = new GridBagConstraints();
-			gbc_jProgressBarHeap.fill = GridBagConstraints.HORIZONTAL;
-			gbc_jProgressBarHeap.gridx = 0;
-			gbc_jProgressBarHeap.gridy = 0;
-			jPanelSystemLoad.add(getJProgressBarHeap(), gbc_jProgressBarHeap);
+	private JToolBar getJToolBarSystemLoad() {
+		if (jToolBarSystemLoad== null) {
+			jToolBarSystemLoad = new JToolBar();
+			jToolBarSystemLoad.setFloatable(false);
+			jToolBarSystemLoad.setBorder(BorderFactory.createEmptyBorder());
+			jToolBarSystemLoad.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+			jToolBarSystemLoad.addSeparator();
+			jToolBarSystemLoad.add(this.getJProgressBarHeapUsage());
+
+			Dimension progressBarSize = this.getJProgressBarHeapUsage().getPreferredSize();
+			Dimension toolbarSize = new Dimension(progressBarSize.width + 10, progressBarSize.height);
+			jToolBarSystemLoad.setPreferredSize(toolbarSize);
+			jToolBarSystemLoad.setMinimumSize(toolbarSize);
 		}
-		return jPanelSystemLoad;
+		return jToolBarSystemLoad;
 	}
-	private JProgressBar getJProgressBarHeap() {
-		if (jProgressBarHeap == null) {
+	private JProgressBar getJProgressBarHeapUsage() {
+		if (jProgressBarHeapUsage == null) {
 			// --- Register heap measurement as monitoring task -----
 			new HeapUsageMonitoringTask(this).registerTask();
-			jProgressBarHeap = new JProgressBar();
-			jProgressBarHeap.setPreferredSize(new Dimension(150, 14));
-			jProgressBarHeap.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jProgressBarHeap.setStringPainted(true);
-			jProgressBarHeap.setToolTipText("JVM Heap-Usage: ...");
+			jProgressBarHeapUsage = new JProgressBar();
+			jProgressBarHeapUsage.setPreferredSize(new Dimension(180, 20));
+			jProgressBarHeapUsage.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jProgressBarHeapUsage.setStringPainted(true);
+			jProgressBarHeapUsage.setToolTipText("JVM Heap-Usage: ...");
+			jProgressBarHeapUsage.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent me) {
+					if (SwingUtilities.isLeftMouseButton(me) && me.getClickCount()==2) {
+						Application.startGarbageCollection();
+					}
+				}
+			});
 			this.updateHeapUsage();
 		}
-		return jProgressBarHeap;
+		return jProgressBarHeapUsage;
 	}
 	/**
 	 * Updates the progress of the heap usage indicator.
@@ -188,8 +199,8 @@ public class MainWindowStatusBar extends JPanel {
 		double relative = jvmHeapUsed / jvmHeapMax;
 		int percentage = (int) (relative * 100.0);
 		
-		this.getJProgressBarHeap().setValue(percentage);
-		this.getJProgressBarHeap().setToolTipText("JVM Heap-Usage: " + percentage + " % of " + jvmHeapMax + " GB");
+		this.getJProgressBarHeapUsage().setValue(percentage);
+		this.getJProgressBarHeapUsage().setToolTipText("JVM Heap-Usage: " + percentage + " % of " + jvmHeapMax + " GB");
 	}
 	/**
 	 * The Class HeapUsageMonitoringTask will get .
@@ -201,7 +212,6 @@ public class MainWindowStatusBar extends JPanel {
 		private HeapUsageMonitoringTask(MainWindowStatusBar statusBar) {
 			this.statusBar = statusBar;
 		}
-		
 		@Override
 		public String getTaskDescription() {
 			return "Measure Heap-Usage of JVM";
@@ -237,20 +247,20 @@ public class MainWindowStatusBar extends JPanel {
 	
 	
 	/**
-	 * Returns the CENTER JPanel.
-	 * @return the jPanelCenter
+	 * Returns the CENTER toolbar.
+	 * @return the jToolBarCenter
 	 */
 	private JToolBar getJToolBarCenter() {
-		if (jPanelCenter == null) {
-			jPanelCenter = new JToolBar();
-			jPanelCenter.setFloatable(false);
-			jPanelCenter.setBorder(BorderFactory.createEmptyBorder());
-			jPanelCenter.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-			jPanelCenter.addSeparator();
-			jPanelCenter.setPreferredSize(new Dimension(300, 16));
-			jPanelCenter.setMinimumSize(new Dimension(300, 16));
+		if (jToolBarCenter == null) {
+			jToolBarCenter = new JToolBar();
+			jToolBarCenter.setFloatable(false);
+			jToolBarCenter.setBorder(BorderFactory.createEmptyBorder());
+			jToolBarCenter.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+			jToolBarCenter.addSeparator();
+			jToolBarCenter.setPreferredSize(new Dimension(300, 16));
+			jToolBarCenter.setMinimumSize(new Dimension(300, 16));
 		}
-		return jPanelCenter;
+		return jToolBarCenter;
 	}
 	/**
 	 * Sets the specified session factory state to the status bar.
