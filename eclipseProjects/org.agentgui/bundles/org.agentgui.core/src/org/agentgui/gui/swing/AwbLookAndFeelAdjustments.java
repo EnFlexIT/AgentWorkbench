@@ -93,6 +93,7 @@ public class AwbLookAndFeelAdjustments {
 	 */
 	private static void doLookAndFeelAdjustmentsForNimbus() {
 		
+		// --- Do adjustments for TabbedPane ------------------------ 
 		UIManager.put("TabbedPane.focus", Color.GRAY);
 		
 		UIManager.put("TabbedPane.highlight", Color.WHITE);
@@ -101,6 +102,11 @@ public class AwbLookAndFeelAdjustments {
 		UIManager.put("TabbedPane.shadow", Color.LIGHT_GRAY);
 		UIManager.put("TabbedPane.darkShadow", Color.LIGHT_GRAY);
 
+		// --- Do adjustments for ProgressBar -----------------------
+		AwbProgressBarPainter painter = new AwbProgressBarPainter(new Color(161, 198, 231), new Color(91, 155, 213), Color.GRAY);
+		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled].foregroundPainter", painter);
+		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);		
+		
 	}
-	
+
 }
