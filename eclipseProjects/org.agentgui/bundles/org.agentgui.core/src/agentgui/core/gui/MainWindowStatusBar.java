@@ -184,19 +184,29 @@ public class MainWindowStatusBar extends JPanel {
 					}
 				}
 			});
-			// --- Register heap measurement as monitoring task -----
-			if (Application.getGlobalInfo().getBooleanFromConfiguration(BundleProperties.DEF_SHOW_HEAP_MONITOR, true)==true) {
+			// --- Set the progress bar visible? ------------------------------
+			boolean setProgressBarVisible = Application.getGlobalInfo().getBooleanFromConfiguration(BundleProperties.DEF_SHOW_HEAP_MONITOR, true);
+			if (setProgressBarVisible==true) {
+				// --- Register heap measurement as monitoring task -----------
 				this.createAndRegisterHeapStatusMonitoringTask();
+				this.updateHeapUsage();
 			}
-			this.updateHeapUsage();
+			jProgressBarHeapUsage.setVisible(setProgressBarVisible);
 		}
 		return jProgressBarHeapUsage;
+	}
+
+	/**
+	 * Switches the heap monitor visibility.
+	 */
+	public void doSwitchHeapMonitorVisibility() {
+		this.setHeapMonitorVisible(!this.getJProgressBarHeapUsage().isVisible());
 	}
 	/**
 	 * Can be invoked to set the heap status visible or not.
 	 * @param setVisible the new heap status visible
 	 */
-	public void setHeapStatusVisible(boolean setVisible) {
+	public void setHeapMonitorVisible(boolean setVisible) {
 		
 		this.getJProgressBarHeapUsage().setVisible(setVisible);
 		
