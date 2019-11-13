@@ -123,6 +123,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonUndo;
     private JButton jButtonClearGraph;
     private JButton jButtonImportGraph;
+    private JButton jButtonImportDataModelNetworkElements;
     private JButton jButtonCut;
     private JButton jButtonCopy;
     private JButton jButtonPaste;
@@ -237,6 +238,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 
 			jToolBarEdit.addSeparator();
 			jToolBarEdit.add(getJButtonImportGraph());
+			jToolBarEdit.add(getJButtonImportDataModelNetworkElements());
     		jToolBarEdit.add(getJButtonClearGraph());
 	    	
     	}
@@ -700,7 +702,12 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonImportGraph;
     }
     
-
+    private JButton getJButtonImportDataModelNetworkElements() {
+		if (jButtonImportDataModelNetworkElements == null) {
+		    jButtonImportDataModelNetworkElements = this.getNewJButton("ChartImport.png", Language.translate("Import operational data to the network model", Language.EN));
+		}
+		return jButtonImportDataModelNetworkElements;
+    }
 
     /**
      * This method initializes edgePopup The menu is displayed when an edge is right clicked
