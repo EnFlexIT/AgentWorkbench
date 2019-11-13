@@ -774,7 +774,7 @@ public class MainWindow extends JFrame {
 
 			jMenuMainView.addSeparator();
 			jMenuMainView.add(new CWMenuItem("ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png"));
-			jMenuMainView.add(new CWMenuItem("ViewHeapMonitor", Language.translate("Heap-Monitor ein- oder ausblenden"), "MBConsole.png"));
+			jMenuMainView.add(new CWMenuItem("ViewHeapMonitor", Language.translate("Heap-Monitor ein- oder ausblenden"), "MBHeapMonitor.png"));
 		}
 		return jMenuMainView;
 	}
@@ -784,8 +784,7 @@ public class MainWindow extends JFrame {
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the menu "JADE".
-	 *
-	 * @return the j menu main jade
+	 * @return the JMenu for JADE
 	 */
 	public JMenu getJMenuMainJade() {
 		if (jMenuMainJade == null) {
@@ -1151,6 +1150,9 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("ViewConsole")) {
 				Application.getMainWindow().doSwitchConsole();
 
+			} else if (actionCMD.equalsIgnoreCase("ViewHeapMonitor")) {
+				Application.getMainWindow().getStatusBar().doSwitchHeapMonitorVisibility();
+				
 				// --- Menu Jade ----------------------------------
 			} else if (actionCMD.equalsIgnoreCase("JadeStart")) {
 				Application.getJadePlatform().start();

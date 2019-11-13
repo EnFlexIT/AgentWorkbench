@@ -211,13 +211,13 @@ de;Element;Element
 de;Embedded System Agent: Bitte wählen Sie den Agenten aus, der gestartet werden soll;Embedded System Agent: Please select the agent that you want to execute;;;
 de;Embedded System Agent;Embedded System Agent;;;
 de;Empirisch ermittelte, reale Metrik;emperically measured, real metric;;;
-de;Endanwender-Ansicht;End users view
+de;Endanwender-Ansicht;End Users View;null;null;null
 de;Englisch;English
 de;Entferne Agent;Remove agent
 de;Entferne Hindernis;Remove obstacle
 de;Entfernen;Remove;;;
 de;Entpacke;Unpacking
-de;Entwickler-Ansicht;Developer view
+de;Entwickler-Ansicht;Developer View;null;null;null
 de;Erfolgreich;Successful;;;
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
@@ -298,6 +298,7 @@ de;Grenzwerte;Thresholds
 de;Gruppe;Group;;;
 de;Größe;Size
 de;Hauptserver (server.master);Main Server (server.master);;;
+de;Heap-Monitor ein- oder ausblenden;Show / Hide Heap Monitor;;;
 de;Hilfe;Help
 de;Hilfs-Raster;Guide Grid;;;
 de;Hintergrundsystem (Master / Slave);Background System (Master / Slave);;;
@@ -384,7 +385,7 @@ de;Komponententyp-Definition;Component-Type Definition;;;
 de;Komponentenverbindung trennen;Disconnect components;;;
 de;Konfiguration des;Configuration of
 de;Konfiguration;Configuration
-de;Konsole ein- oder ausblenden;Show / hide console
+de;Konsole ein- oder ausblenden;Show / Hide Console;null;null;null
 de;Konsole: kann ein- bzw. ausgeblendet werden;Console: Can be shown or hidden
 de;Konsole;Console
 de;Kontinuierlich fortschreitende Zeit.;Continuously progressing time.;;;
