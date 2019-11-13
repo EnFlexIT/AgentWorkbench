@@ -55,7 +55,6 @@ import org.awb.env.networkModel.controller.ui.commands.NetworkModelUndoManager;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 import org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
-import org.awb.env.networkModel.persistence.SetupDataModelStorageServiceFinder;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService.DataModelServiceAction;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
@@ -73,6 +72,7 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
+import de.enflexit.common.ServiceFinder;
 import jade.core.Agent;
 
 /**
@@ -585,7 +585,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		if (setupStorageServiceHashMap==null) {
 			setupStorageServiceHashMap = new HashMap<>();
 			// --- Get all registered services ----------------------
-			List<SetupDataModelStorageService> sdmServiceList = SetupDataModelStorageServiceFinder.findSetupDataModelStorageServices();
+			List<SetupDataModelStorageService> sdmServiceList = ServiceFinder.findServices(SetupDataModelStorageService.class);
 			for (int i = 0; i < sdmServiceList.size(); i++) {
 				SetupDataModelStorageService sdmService = sdmServiceList.get(i);
 				sdmService.setGraphEnvironmentController(this);
