@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.BundleProperties;
 import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadUnits;
@@ -68,6 +69,7 @@ public class MainWindowStatusBar extends JPanel {
 
 	private JLabel jLabelStatusText;
 
+	private HeapUsageMonitoringTask heapStatusMonitoringTask;
 	private JToolBar jToolBarSystemLoad;
 	private JProgressBar jProgressBarHeapUsage;
 	private JToolBar jToolBarCenter;
@@ -169,8 +171,6 @@ public class MainWindowStatusBar extends JPanel {
 	}
 	private JProgressBar getJProgressBarHeapUsage() {
 		if (jProgressBarHeapUsage == null) {
-			// --- Register heap measurement as monitoring task -----
-			new HeapUsageMonitoringTask(this).registerTask();
 			jProgressBarHeapUsage = new JProgressBar();
 			jProgressBarHeapUsage.setPreferredSize(new Dimension(180, 20));
 			jProgressBarHeapUsage.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -184,9 +184,34 @@ public class MainWindowStatusBar extends JPanel {
 					}
 				}
 			});
+			// --- Register heap measurement as monitoring task -----
+			if (Application.getGlobalInfo().getBooleanFromConfiguration(BundleProperties.DEF_SHOW_HEAP_MONITOR, true)==true) {
+				this.createAndRegisterHeapStatusMonitoringTask();
+			}
 			this.updateHeapUsage();
 		}
 		return jProgressBarHeapUsage;
+	}
+	/**
+	 * Can be invoked to set the heap status visible or not.
+	 * @param setVisible the new heap status visible
+	 */
+	public void setHeapStatusVisible(boolean setVisible) {
+		
+		this.getJProgressBarHeapUsage().setVisible(setVisible);
+		
+		// --- Start / Stop the monitoring task -----------
+		if (setVisible==true) {
+			this.createAndRegisterHeapStatusMonitoringTask();
+		} else {
+			HeapUsageMonitoringTask task = this.getHeapStatusMonitoringTask();
+			if (task!=null) {
+				task.unregisterTask();
+				this.setHeapStatusMonitoringTask(null);
+			}
+		}
+		// --- Set to core bundle properties --------------
+		Application.getGlobalInfo().putBooleanToConfiguration(BundleProperties.DEF_SHOW_HEAP_MONITOR, setVisible);
 	}
 	/**
 	 * Updates the progress of the heap usage indicator.
@@ -203,7 +228,33 @@ public class MainWindowStatusBar extends JPanel {
 		this.getJProgressBarHeapUsage().setToolTipText("JVM Heap-Usage: " + percentage + " % of " + jvmHeapMax + " GB");
 	}
 	/**
-	 * The Class HeapUsageMonitoringTask will get .
+	 * Returns the heap status monitoring task.
+	 * @return the heap status monitoring task
+	 */
+	private void createAndRegisterHeapStatusMonitoringTask() {
+		if (heapStatusMonitoringTask==null) {
+			heapStatusMonitoringTask = new HeapUsageMonitoringTask(this);
+			heapStatusMonitoringTask.registerTask();
+		}
+	}
+	/**
+	 * Returns the heap status monitoring task.
+	 * @return the heap status monitoring task
+	 */
+	private HeapUsageMonitoringTask getHeapStatusMonitoringTask() {
+		return heapStatusMonitoringTask;
+	}
+	/**
+	 * Sets the heap status monitoring task.
+	 * @param heapStatusMonitoringTask the new heap status monitoring task
+	 */
+	private void setHeapStatusMonitoringTask(HeapUsageMonitoringTask heapStatusMonitoringTask) {
+		this.heapStatusMonitoringTask = heapStatusMonitoringTask;
+	}
+	/**
+	 * The actual HeapUsageMonitoringTask that will be registered at the {@link LoadMeasureThread}.
+	 * This Thread will fire the check in a regular manner, so that the heap usage can be displayed 
+	 * with the help of local progress bar.
 	 */
 	private class HeapUsageMonitoringTask extends AbstractMonitoringTask {
 
@@ -235,6 +286,7 @@ public class MainWindowStatusBar extends JPanel {
 		}
 		@Override
 		public boolean isFaultlessProcess() {
+			// --- Here the task can be done ----
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {

@@ -774,6 +774,7 @@ public class MainWindow extends JFrame {
 
 			jMenuMainView.addSeparator();
 			jMenuMainView.add(new CWMenuItem("ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png"));
+			jMenuMainView.add(new CWMenuItem("ViewHeapMonitor", Language.translate("Heap-Monitor ein- oder ausblenden"), "MBConsole.png"));
 		}
 		return jMenuMainView;
 	}

@@ -118,6 +118,7 @@ public class BundleProperties {
 	
 	public static final String DEF_LAST_SELECTED_FOLDER = "110_LAST_SELECTED_FOLDER";
 	
+	public static final String DEF_SHOW_HEAP_MONITOR = "150_SHOW_HEAP_MONITOR";
 	
 	private GlobalInfo globalInfo;
 	private IEclipsePreferences eclipsePreferences;

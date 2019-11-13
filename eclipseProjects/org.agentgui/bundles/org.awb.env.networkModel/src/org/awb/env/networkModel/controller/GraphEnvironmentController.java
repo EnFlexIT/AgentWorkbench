@@ -601,12 +601,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Return the setup data model storage handler (setup scope) for the specified data model  
 	 * storage handler (scope of the individual data model of {@link NetworkComponent} or {@link GraphNode}).
 	 *
-	 * @param dataModelStorageHandler the data model storage handler
+	 * @param storageHandlerClass the storage handler class
 	 * @return the setup handler for individual data models
 	 */
-	public SetupDataModelStorageService getSetupDataModelStorageService(AbstractDataModelStorageHandler dataModelStorageHandler) {
-		if (dataModelStorageHandler!=null) {
-			return this.getSetupDataModelStorageServiceHashMap().get(dataModelStorageHandler.getClass());
+	public SetupDataModelStorageService getSetupDataModelStorageService(Class<? extends AbstractDataModelStorageHandler> storageHandlerClass) {
+		if (storageHandlerClass!=null) {
+			return this.getSetupDataModelStorageServiceHashMap().get(storageHandlerClass);
 		}
 		return null;
 	}

@@ -294,7 +294,7 @@ public abstract class AbstractDataModelStorageHandler {
 	protected SetupDataModelStorageService getSetupDataModelStorageService() {
 		GraphEnvironmentController graphController = this.getGraphEnvironmentController(); 
 		if (graphController!=null) {
-			return graphController.getSetupDataModelStorageService(this);
+			return graphController.getSetupDataModelStorageService(this.getClass());
 		}
 		return null;
 	}

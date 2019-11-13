@@ -8,6 +8,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
@@ -306,12 +307,22 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	 * @return the setup data model storage service ontology
 	 */
 	private SetupDataModelStorageServiceOntology getSetupDataModelStorageServiceOntology() {
-		SetupDataModelStorageService sdmService = super.getSetupDataModelStorageService();
+		SetupDataModelStorageService sdmService = this.getSetupDataModelStorageService();
 		if (sdmService!=null && sdmService instanceof SetupDataModelStorageServiceOntology) {
 			return (SetupDataModelStorageServiceOntology) sdmService;
 		}
 		return null;
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#getSetupDataModelStorageService()
+	 */
+	@Override
+	protected SetupDataModelStorageService getSetupDataModelStorageService() {
+		GraphEnvironmentController graphController = this.getGraphEnvironmentController(); 
+		if (graphController!=null) {
+			return graphController.getSetupDataModelStorageService(DataModelStorageHandlerOntology.class);
+		}
+		return null;
+	}
 }
