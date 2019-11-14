@@ -73,7 +73,7 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 			throw new IllegalArgumentException("No agent was specified for the monitoring task.");
 		}
 		if (monitoringMeasureType==null) {
-			throw new IllegalArgumentException("No measure were specified in case of a thread failure.");
+			throw new IllegalArgumentException("No measure were specified in case of an agent failure.");
 		}
 		if (monitoringMeasureType==MonitoringMeasureType.CUSTOM_MEASURE && runnable==null) {
 			throw new IllegalArgumentException("No runnable was defined for the custom measure.");
