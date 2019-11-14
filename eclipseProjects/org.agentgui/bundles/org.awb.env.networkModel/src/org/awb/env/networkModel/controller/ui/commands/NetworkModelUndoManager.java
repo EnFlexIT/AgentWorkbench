@@ -159,6 +159,14 @@ public class NetworkModelUndoManager {
 	}
 	
 	/**
+	 * Updates component data models.
+	 */
+	public void updateComponentDataModels() {
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ComponentDataModelUpdated);
+		this.notifyObservers(notification);
+	}
+	
+	/**
 	 * Sets the satellite view visible or not.
 	 * @param visible the new satellite view
 	 */
@@ -268,6 +276,16 @@ public class NetworkModelUndoManager {
 		ImportNetworkModel importNM = new ImportNetworkModel(this.graphController);
 		if (importNM.isCanceled()==false) {
 			this.getUndoManager().addEdit(importNM);	
+		}
+	}
+	
+	/**
+	 * Import data model network elements.
+	 */
+	public void importDataModelNetworkElements() {
+		ImportDataModelNetworkElements importDMNM = new ImportDataModelNetworkElements(this.graphController);
+		if (importDMNM.isCanceled()==false) {
+			this.getUndoManager().addEdit(importDMNM);
 		}
 	}
 	/**
