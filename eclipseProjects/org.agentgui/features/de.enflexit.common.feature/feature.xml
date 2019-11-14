@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.common.feature"
       label="EnFlex.IT common interfaces and classes"
-      version="2.1.3.qualifier"
+      version="2.1.4.qualifier"
       provider-name="EnFlex.IT"
       os="linux,macosx,win32"
       arch="x86,x86_64">

@@ -37,8 +37,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.server.UID;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,6 +76,9 @@ public class BundleEvaluator {
 	private HashMap<String, ClassRequest> classRequestHash;
 	private long requestMaxStayTime = 1000 * 10; // 10 seconds
 	
+	private Cache cache;
+	
+	
 	
 	/** The singleton bundle evaluator instance. */
 	private static BundleEvaluator bundleEvaluatorInstance;
@@ -91,6 +96,18 @@ public class BundleEvaluator {
 			bundleEvaluatorInstance = new BundleEvaluator();
 		}
 		return bundleEvaluatorInstance;
+	}
+	
+	/**
+	 * Returns the Cache that stores the evaluation results in a file.
+	 * @return the cache
+	 */
+	private Cache getCache() {
+		if (cache==null) {
+			cache = new Cache();
+			cache.load();
+		}
+		return cache;
 	}
 	
 	/**
@@ -143,8 +160,6 @@ public class BundleEvaluator {
 	 */
 	private boolean isExcludedBundle(String symbolicBundleName) {
 	
-		boolean excluded = false;
-		
 		String[] nameParts = symbolicBundleName.split("\\.");
 		String name2Check = nameParts[0]; 
 		for (int i=0; i<nameParts.length; i++) {
@@ -153,7 +168,7 @@ public class BundleEvaluator {
 			if ((i+1)>=nameParts.length) break;
 			name2Check += "." + nameParts[i+1];
 		}
-		return excluded;
+		return false;
 	}
 	
 	// --------------------------------------------------------------
@@ -329,10 +344,9 @@ public class BundleEvaluator {
 
 		if (bundle==null) return;
 		if (this.isExcludedBundle(bundle.getSymbolicName())==true) return;
-		if (bundleClassFilterToUse==null && getEvaluationFilterResults().size()==0) return;
+		if (bundleClassFilterToUse==null && this.getEvaluationFilterResults().size()==0) return;
 		
-		
-		String sbn = bundle.getSymbolicName();
+		// --- Evaluate bundle details ------------------------------
 		String classFilterDescription = "Null";
 		if (bundleClassFilterToUse!=null) {
 			classFilterDescription = bundleClassFilterToUse.getFilterScope(); 
@@ -343,7 +357,8 @@ public class BundleEvaluator {
 		// ----------------------------------------------------------
 		boolean debugThreadStart = false;
 		if (this.debug==true && debugThreadStart==true) {
-			System.out.println("Start Thread: Evaluate bundle " + sbn + " - filter scope: " + classFilterDescription);
+			String lastModifiedDisplay = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(bundle.getLastModified()));
+			System.out.println("Start evaluation Thread for: " + bundle.getSymbolicName() + " (Vers. " + bundle.getVersion().toString() + " / " + lastModifiedDisplay + ") - filter scope: " + classFilterDescription + ",\t LOCATION: " + bundle.getLocation());
 		}
 		// ----------------------------------------------------------
 		
@@ -355,7 +370,7 @@ public class BundleEvaluator {
 			this.executeWaitingSearchThreads();
 		} else {
 			if (this.debug==true) {
-				System.err.println("Search was already active for '" + sbn + " - filter scope: " + classFilterDescription);
+				System.err.println("Search was already active for '" + bundle.getSymbolicName() + " - filter scope: " + classFilterDescription);
 			}
 		}
 	}
@@ -395,6 +410,11 @@ public class BundleEvaluator {
 	 */
 	private void executeWaitingSearchThreads() {
 		
+		// --- If no further thread is waiting for execution, save cache ------
+		if (this.getVectorOfBundleEvaluatorThreads().size()==0) {
+			this.getCache().save();
+		}
+		// --- Execute one of the waiting threads -----------------------------
 		for (int i=0; i < getVectorOfBundleEvaluatorThreads().size(); i++) {
 			BundleEvaluatorThread searchThread = this.getVectorOfBundleEvaluatorThreads().get(i);
 			synchronized (searchThread) {
@@ -437,14 +457,13 @@ public class BundleEvaluator {
 
 		if (bundle==null) return;
 		if (this.isExcludedBundle(bundle.getSymbolicName())==true) return;
-		if (bundleClassFilterToUse==null && getEvaluationFilterResults().size()==0) return;
+		if (bundleClassFilterToUse==null && this.getEvaluationFilterResults().size()==0) return;
 		
 		// --- Remind start time of the search ----------------------
 		long starTime = System.nanoTime(); 
 
-		
 		// ----------------------------------------------------------
-		// --- Debug area for the search thread start ---------------
+		// --- Debug area for the search start ----------------------
 		// ----------------------------------------------------------
 		if (this.debug==true) {
 			String sbn = bundle.getSymbolicName();
@@ -472,37 +491,46 @@ public class BundleEvaluator {
 		} else {
 			bundleClassFilterToUse.addBusyMarker(busyMarker);
 		}
-		// ----------------------------------------------------------
+		// --- Define the filter to apply in this search ------------
+		Vector<AbstractBundleClassFilter> filterToApply = this.getEvaluationFilterResults();
+		if (bundleClassFilterToUse!=null) {
+			filterToApply = new Vector<>();
+			filterToApply.add(bundleClassFilterToUse);
+		}
 		
+		// ----------------------------------------------------------
+		// --- Check if the cache does know the results already -----
+		// ----------------------------------------------------------
+		CacheBundleResult cachedBundleResult = this.getCache().getOrReCreateBundleResult(bundle);
+		filterToApply = cachedBundleResult.updateBundleClassFilterFromCache(filterToApply);
+		
+		// ----------------------------------------------------------
+		// --- Get classes and execute the filter checks ------------
+		// ----------------------------------------------------------
 		try {
-			// --- Get all classes from the bundle ------------------
-			List<Class<?>> classes = this.getClasses(bundle);
-			for (int i = 0; i < classes.size(); i++) {
-				// --------------------------------------------------
-				// --- Check single class ---------------------------
-				Class<?> clazz = classes.get(i);
-				if (this.getSourceBundleOfClass(clazz)!=bundle) continue;
-				
-				if (bundleClassFilterToUse==null) {
-					// ----------------------------------------------
-					// --- Use all known filter ---------------------
-					// ----------------------------------------------
-					for (int j = 0; j < getEvaluationFilterResults().size(); j++) {
-						AbstractBundleClassFilter classFilter = this.getEvaluationFilterResults().get(j);
+			
+			if (filterToApply!=null && filterToApply.size()>0) {
+				// --- Get all classes from the bundle --------------
+				List<Class<?>> classes = this.getClasses(bundle);
+				for (int i = 0; i < classes.size(); i++) {
+					// --- Check single class -----------------------
+					Class<?> clazz = classes.get(i);
+					if (this.getSourceBundleOfClass(clazz)!=bundle) continue;
+					
+					// --- Use all defined filter -------------------
+					for (int j = 0; j < filterToApply.size(); j++) {
+						AbstractBundleClassFilter classFilter = filterToApply.get(j);
+						cachedBundleResult.addClassFilterResult(classFilter.getFilterScope(), null);
 						if (classFilter.isInFilterScope(clazz)==true) {
+							// --- Write to results -----------------
 							classFilter.addClassFound(clazz.getName(), bundle.getSymbolicName());
+							// --- Write to cache -------------------
+							cachedBundleResult.addClassFilterResult(classFilter.getFilterScope(), clazz.getName());
 						}
 					}
-					
-				} else {
-					// ----------------------------------------------
-					// --- Use the specified class filter -----------
-					// ----------------------------------------------
-					if (bundleClassFilterToUse.isInFilterScope(clazz)==true) {
-						bundleClassFilterToUse.addClassFound(clazz.getName(), bundle.getSymbolicName());
-					}
 				}
-				
+				// --- Save the current state of the cache ----------
+				this.getCache().save();
 			}
 
 		} catch (Exception ex) {
