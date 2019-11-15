@@ -11,7 +11,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
  * This interface can be implemented to provide an importer for DataModelNetworkElements
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface DataModelNetworkElementImportService {
+public interface NetworkModelOperationalDataImportService {
 	/**
 	 * Will be invoked during initialization and will receive the current {@link GraphEnvironmentController} instance.
 	 * @param graphController the new graph environment controller

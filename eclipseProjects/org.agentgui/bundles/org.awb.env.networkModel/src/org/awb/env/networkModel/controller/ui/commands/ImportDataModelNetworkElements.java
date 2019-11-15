@@ -14,7 +14,7 @@ import javax.swing.undo.CannotUndoException;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.persistence.DataModelNetworkElementImportService;
+import org.awb.env.networkModel.persistence.NetworkModelOperationalDataImportService;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -32,7 +32,7 @@ public class ImportDataModelNetworkElements extends AbstractUndoableEdit{
 	private GraphEnvironmentController graphController;
 	
 	private static FileFilter lastSlectedFileFilter;
-	private DataModelNetworkElementImportService importService;
+	private NetworkModelOperationalDataImportService importService;
 	
 	private File importFile;
 	private boolean canceled = false;
@@ -62,7 +62,7 @@ public class ImportDataModelNetworkElements extends AbstractUndoableEdit{
 	 */
 	private void selectFileForImport() {
 		
-		List<DataModelNetworkElementImportService> servicesList = ServiceFinder.findServices(DataModelNetworkElementImportService.class);
+		List<NetworkModelOperationalDataImportService> servicesList = ServiceFinder.findServices(NetworkModelOperationalDataImportService.class);
 		if (servicesList.size()==0) {
 			// --- No import services found -------------------------
 			String title =  Language.translate("Keine Import-Module vorhanden!");
@@ -75,10 +75,10 @@ public class ImportDataModelNetworkElements extends AbstractUndoableEdit{
 			fileChooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 			
 			// --- Add file filters for all import services --------- 
-			HashMap <FileFilter,DataModelNetworkElementImportService> servicesHashMap = new HashMap<>();
+			HashMap <FileFilter,NetworkModelOperationalDataImportService> servicesHashMap = new HashMap<>();
 			fileChooser.removeChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
 			for (int i=0; i<servicesList.size(); i++) {
-				DataModelNetworkElementImportService service = servicesList.get(i);
+				NetworkModelOperationalDataImportService service = servicesList.get(i);
 				for (FileFilter fileFilter : service.getFileNameExtensionFilters()) {
 					fileChooser.addChoosableFileFilter(fileFilter);
 					// --- Remember which service belongs to which filter -----
