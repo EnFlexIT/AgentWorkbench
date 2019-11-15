@@ -94,12 +94,13 @@ public class BundleEvaluator {
 	public static BundleEvaluator getInstance() {
 		if (bundleEvaluatorInstance==null) {
 			bundleEvaluatorInstance = new BundleEvaluator();
+			bundleEvaluatorInstance.getCache();
 		}
 		return bundleEvaluatorInstance;
 	}
 	
 	/**
-	 * Returns the Cache that stores the evaluation results in a file.
+	 * Returns the Cache that stores the evaluation results in a configuration file.
 	 * @return the cache
 	 */
 	private Cache getCache() {
