@@ -1,12 +1,18 @@
 package de.enflexit.common.bundleEvaluation;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
@@ -90,8 +96,109 @@ public class Cache {
 	 * @return the or create bundle description
 	 */
 	public CacheBundleResult createBundleResult(Bundle bundle) {
-		return this.createBundleResult(bundle.getSymbolicName(), bundle.getVersion(), bundle.getLastModified());
+		return this.createBundleResult(bundle.getSymbolicName(), bundle.getVersion(), this.getLastModified(bundle));
 	}
+	/**
+	 * Return the time stamp of the last modification of the current bundle. If we are in 
+	 * a development environment, were the bundle is available as folder structure, the file 
+	 * with the latest time stamp will be used to determine the last modification date.
+	 *
+	 * @param bundle the bundle
+	 * @return the time stamp last modified
+	 */
+	private long getLastModified(Bundle bundle) {
+		
+		long lastModifiedBundle = bundle.getLastModified();
+		long lastModifiedDetail = lastModifiedBundle;
+		
+		String bLocation = bundle.getLocation();
+		if (bLocation.equals("System Bundle")==true || bLocation.startsWith("System Bundle")) return lastModifiedBundle;
+		if (bLocation.startsWith("initial@reference:file:")) return lastModifiedBundle;
+		
+		try {
+			
+			// --- Get the file object of the bundle ----------------
+			File bLocationFile = null;
+			if (bLocation.startsWith("reference:file:")) {
+				bLocation = bLocation.substring(("reference:file:".length()), bLocation.length());
+				bLocationFile = new File(bLocation);
+			
+			} else {
+				URL bundleLocationURL = new URL(bundle.getLocation());
+				bLocationFile = new File(bundleLocationURL.toURI());	
+			}
+			
+			// --- Update the last modified date --------------------
+			if (bLocationFile!=null && bLocationFile.exists()==true && bLocationFile.isDirectory()==true) {
+				lastModifiedDetail = this.getLastModifiedOfClasses(bLocationFile);
+			}
+			
+		} catch (MalformedURLException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+
+		// --- Do we have a different last modified date? -----------
+		if (lastModifiedDetail!=lastModifiedBundle) {
+			boolean debugDateChange=false;
+			if (debugDateChange==true) {
+				SimpleDateFormat sdf =  new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+				System.out.println("[" + sdf.format(new Date(lastModifiedBundle)) + " => " + sdf.format(new Date(lastModifiedDetail)) + "] for '" + bundle.getSymbolicName() + "'");
+			}
+			lastModifiedBundle = lastModifiedDetail;
+		}
+		return lastModifiedBundle;
+	}
+	/**
+	 * Return the last modified date from the specified file instance were only 
+	 * *.class- and *.java-files will be considered in the search.
+	 *
+	 * @param fileOrDirectory the file or directory
+	 * @return the last modified from directory
+	 */
+	private long getLastModifiedOfClasses(File fileOrDirectory) {
+		
+		if (fileOrDirectory==null) return -1;
+		if (fileOrDirectory.isDirectory()==false) return fileOrDirectory.lastModified();
+		
+		long methodLastModified = 0;
+		
+		// --- Define file filter -------------------------
+		FileFilter fileFilter = new FileFilter() {
+			@Override
+			public boolean accept(File fileToAccept) {
+				// --- For directories --------------------
+				if (fileToAccept.isDirectory()) return true;
+				// --- For files --------------------------
+				String fileName = fileToAccept.getName(); 
+				String extension = null;
+				int i = fileName.lastIndexOf('.');
+				if (i > 0) {
+				    extension = fileName.substring(i+1);
+				}
+				if (extension!=null && (extension.equals("java") || extension.equals("class"))) {
+					return true;
+				}
+				return false;
+			}
+		};
+		
+		// --- List files ---------------------------------
+		File[] fileList = fileOrDirectory.listFiles(fileFilter);
+		for (int i = 0; i < fileList.length; i++) {
+			// --- Consider file object -------------------
+			File file = fileList[i];
+			long fileLastModified = file.lastModified();
+			if (fileLastModified > methodLastModified) methodLastModified = fileLastModified;
+			// --- Consider directory? --------------------
+			if (file.isDirectory()==true) {
+				fileLastModified = this.getLastModifiedOfClasses(file);
+				if (fileLastModified > methodLastModified) methodLastModified = fileLastModified;
+			}
+		}
+		return methodLastModified;
+	}
+	
+	
 	/**
 	 * Gets the or creates a bundle description.
 	 *

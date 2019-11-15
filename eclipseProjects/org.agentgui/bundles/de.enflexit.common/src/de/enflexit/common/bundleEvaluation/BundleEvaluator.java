@@ -359,7 +359,7 @@ public class BundleEvaluator {
 		boolean debugThreadStart = false;
 		if (this.debug==true && debugThreadStart==true) {
 			String lastModifiedDisplay = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(bundle.getLastModified()));
-			System.out.println("Start evaluation Thread for: " + bundle.getSymbolicName() + " (Vers. " + bundle.getVersion().toString() + " / " + lastModifiedDisplay + ") - filter scope: " + classFilterDescription + ",\t LOCATION: " + bundle.getLocation());
+			System.out.println("Start evaluation Thread for: " + bundle.getSymbolicName() + " (Vers. " + bundle.getVersion().toString() + " / " + lastModifiedDisplay + ") - filter scope: " + classFilterDescription + "");
 		}
 		// ----------------------------------------------------------
 		
