@@ -254,13 +254,6 @@ public abstract class AbstractMonitoringTask {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return this.getTaskDescription();
-	}
 	/**
 	 * Registers at the local {@link LoadMeasureThread}. Thus, the monitoring is active.
 	 */
@@ -273,6 +266,27 @@ public abstract class AbstractMonitoringTask {
 	public void unregisterTask() {
 		LoadMeasureThread.removeMonitoringTask(this);
 	}
+
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getTaskDescription();
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject==null) return false;
+		if (compareObject==this) return true;
+		if (compareObject instanceof AbstractMonitoringTask) {
+			return compareObject.toString().equals(this.toString());	
+		}
+		return false;
+	}
 
 }

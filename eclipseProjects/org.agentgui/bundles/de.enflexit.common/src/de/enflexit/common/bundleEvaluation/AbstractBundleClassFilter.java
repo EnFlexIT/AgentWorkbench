@@ -1,9 +1,11 @@
 package de.enflexit.common.bundleEvaluation;
 
 import java.rmi.server.UID;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -133,7 +135,7 @@ public abstract class AbstractBundleClassFilter {
 				// --- Temporary, set busy to true --------------------------------------
 				classListener.setBusy(true);
 				// --- Provide the classes already found to the new listener ------------
-				Vector<String> classVector = new Vector<>(this.getBundleClassesFound().keySet());
+				List<String> classVector = new ArrayList<>(this.getBundleClassesFound().keySet());
 				for (int i = 0; i < classVector.size(); i++) {
 					String className = classVector.get(i);
 					String symbolicBundleName = this.getBundleClassesFound().get(className);
@@ -175,7 +177,9 @@ public abstract class AbstractBundleClassFilter {
 	public void addClassFound(String className, String symbolicBundleName) {
 		this.getBundleClassesFound().put(className, symbolicBundleName);
 		// --- Inform listener ----------------------------
-		for (BundleClassFilterListener listener : this.getFilterListener()) {
+		List<BundleClassFilterListener> listenerVector = new ArrayList<>(this.getFilterListener());
+		for (int i = 0; i < listenerVector.size(); i++) {
+			BundleClassFilterListener listener = listenerVector.get(i);
 			listener.addClassFound(className, symbolicBundleName);
 		}
 	}
