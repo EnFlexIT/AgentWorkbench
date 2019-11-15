@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
+
 /**
  * The Class CacheBundleResult is used within the {@link Cache} and handles
  * the results for single bundles.
@@ -150,26 +152,29 @@ public class CacheBundleResult {
 		for (int i = 0; i < bundleFilterToFillFromCache.size(); i++) {
 			
 			AbstractBundleClassFilter bcFilter = bundleFilterToFillFromCache.get(i);
-			CacheClassFilterResult chachedClasses = this.getClassFilterResult(bcFilter.getFilterScope());
-			if (chachedClasses!=null) {
-				// --- Fill filter results from cache ---------------------
-				for (int j = 0; j < chachedClasses.getFilteredClassesNotNull().size(); j++) {
-					String cachedClassName = chachedClasses.getFilteredClassesNotNull().get(j);
-					bcFilter.addClassFound(cachedClassName, this.getSymbolicBundleName());
+			CacheClassFilterResult classFilterResults = this.getClassFilterResult(bcFilter.getFilterScope());
+			if (classFilterResults!=null) {
+				// --- Fill filter results from cache -------------------------
+				for (int j = 0; j < classFilterResults.getFilteredClassesNotNull().size(); j++) {
+					try {
+						String cachedClassName = classFilterResults.getFilteredClassesNotNull().get(j);
+						// --- Check, if class can be found -------------------
+						Class<?> clazz = BaseClassLoadServiceUtility.forName(cachedClassName);
+						if (clazz!=null) {
+							bcFilter.addClassFound(cachedClassName, this.getSymbolicBundleName());
+						}
+					} catch (ClassNotFoundException | NoClassDefFoundError e) {
+						// No exceptions will be thrown
+					}
 				}
 				
 			} else {
-				// --- Put back into filter vector for regular search ----- 
+				// --- Put back into filter vector for regular search --------- 
 				reducedFilterList.add(bcFilter);
 			}
-			
 		}
 		return reducedFilterList;
 	}
-	
-	
-	
-	
 	
 	
 	/* (non-Javadoc)

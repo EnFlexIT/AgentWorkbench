@@ -833,6 +833,7 @@ en;;Geographical Layout;;;
 en;;Guide Grid Step;;;
 en;;Guide Grid;;;
 en;;Import NetworkModel from file;;;
+en;;Import operational data to the network model;;;
 en;;Invalid node selection!;;;
 en;;Layout ID;;;
 en;;Layout Name;;;
