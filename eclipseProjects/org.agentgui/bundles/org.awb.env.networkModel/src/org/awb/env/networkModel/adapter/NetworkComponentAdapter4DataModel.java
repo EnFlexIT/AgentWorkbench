@@ -270,7 +270,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the network component that will be edited.
 	 * @return the network component
 	 */
-	public NetworkComponent getNetworkComponent() {
+	protected NetworkComponent getNetworkComponent() {
 		return networkComponent;
 	}
 	
@@ -285,8 +285,16 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Gets the graph node.
 	 * @return the graph node
 	 */
-	public GraphNode getGraphNode() {
+	protected GraphNode getGraphNode() {
 		return graphNode;
+	}
+	
+	/**
+	 * Returns either the {@link NetworkComponent} or the {@link GraphNode} that is currently edited.
+	 * @return the current {@link DataModelNetworkElement}
+	 */
+	protected DataModelNetworkElement getDataModelNetworkElement() {
+		return this.getNetworkComponentAdapter().getDataModelNetworkElement();
 	}
 	
 	/**
@@ -300,7 +308,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the part model ID, if there is any.
 	 * @return the part model ID or null
 	 */
-	public String getPartModelID() {
+	protected String getPartModelID() {
 		return partModelID;
 	}
 	
