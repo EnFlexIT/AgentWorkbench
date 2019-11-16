@@ -240,7 +240,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the current GraphEnvironmentController.
 	 * @return the GraphEnvironmentController
 	 */
-	protected GraphEnvironmentController getGraphEnvironmentController() {
+	public GraphEnvironmentController getGraphEnvironmentController() {
 		return this.graphController;
 	}
 	
@@ -255,7 +255,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the superordinate NetworkComponentAdapter.
 	 * @return the network component adapter
 	 */
-	protected NetworkComponentAdapter getNetworkComponentAdapter() {
+	public NetworkComponentAdapter getNetworkComponentAdapter() {
 		return networkComponentAdapter;
 	}
 	
@@ -270,7 +270,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the network component that will be edited.
 	 * @return the network component
 	 */
-	protected NetworkComponent getNetworkComponent() {
+	public NetworkComponent getNetworkComponent() {
 		return networkComponent;
 	}
 	
@@ -285,7 +285,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Gets the graph node.
 	 * @return the graph node
 	 */
-	protected GraphNode getGraphNode() {
+	public GraphNode getGraphNode() {
 		return graphNode;
 	}
 	
@@ -293,7 +293,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns either the {@link NetworkComponent} or the {@link GraphNode} that is currently edited.
 	 * @return the current {@link DataModelNetworkElement}
 	 */
-	protected DataModelNetworkElement getDataModelNetworkElement() {
+	public DataModelNetworkElement getDataModelNetworkElement() {
 		return this.getNetworkComponentAdapter().getDataModelNetworkElement();
 	}
 	
@@ -308,7 +308,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the part model ID, if there is any.
 	 * @return the part model ID or null
 	 */
-	protected String getPartModelID() {
+	public String getPartModelID() {
 		return partModelID;
 	}
 	
