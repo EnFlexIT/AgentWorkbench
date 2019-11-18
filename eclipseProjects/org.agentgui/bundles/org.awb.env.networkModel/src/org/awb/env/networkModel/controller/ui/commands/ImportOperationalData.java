@@ -25,7 +25,7 @@ import de.enflexit.common.ServiceFinder;
  * This class implements an UndoableEdit for importing operational data to a network model.
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ImportDataModelNetworkElements extends AbstractUndoableEdit{
+public class ImportOperationalData extends AbstractUndoableEdit{
 
 	private static final long serialVersionUID = 3828733618007282507L;
 	
@@ -48,7 +48,7 @@ public class ImportDataModelNetworkElements extends AbstractUndoableEdit{
 	 * Instantiates a new import data model network elements.
 	 * @param graphController the graph controller
 	 */
-	public ImportDataModelNetworkElements(GraphEnvironmentController graphController) {
+	public ImportOperationalData(GraphEnvironmentController graphController) {
 		super();
 		this.graphController = graphController;
 		this.selectFileForImport();
@@ -132,7 +132,7 @@ public class ImportDataModelNetworkElements extends AbstractUndoableEdit{
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				ImportDataModelNetworkElements.this.importFromFile();
+				ImportOperationalData.this.importFromFile();
 			}
 		}, this.getClass().getSimpleName() + "Thread").start();
 	}

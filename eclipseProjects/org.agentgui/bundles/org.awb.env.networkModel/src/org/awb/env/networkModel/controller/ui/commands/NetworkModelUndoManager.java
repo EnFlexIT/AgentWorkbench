@@ -282,8 +282,8 @@ public class NetworkModelUndoManager {
 	/**
 	 * Import data model network elements.
 	 */
-	public void importDataModelNetworkElements() {
-		ImportDataModelNetworkElements importDMNM = new ImportDataModelNetworkElements(this.graphController);
+	public void importOperationalData() {
+		ImportOperationalData importDMNM = new ImportOperationalData(this.graphController);
 		if (importDMNM.isCanceled()==false) {
 			this.getUndoManager().addEdit(importDMNM);
 		}

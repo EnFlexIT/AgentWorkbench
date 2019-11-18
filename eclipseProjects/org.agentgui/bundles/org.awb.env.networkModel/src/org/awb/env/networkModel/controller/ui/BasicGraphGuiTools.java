@@ -697,7 +697,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonImportGraph() {
 		if (jButtonImportGraph == null) {
-		    jButtonImportGraph = this.getNewJButton("MBtransImportBlue.png", Language.translate("Import NetworkModel from file", Language.EN));
+		    jButtonImportGraph = this.getNewJButton("ImportTopology.png", Language.translate("Import NetworkModel from file", Language.EN));
 		}
 		return jButtonImportGraph;
     }
@@ -708,7 +708,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonImportNetworkModelOperationalData() {
 		if (jButtonImportNetworkModelOperationalData == null) {
-		    jButtonImportNetworkModelOperationalData = this.getNewJButton("ChartImport_Blue_NoRed.png", Language.translate("Import operational data to the network model", Language.EN));
+		    jButtonImportNetworkModelOperationalData = this.getNewJButton("ImportOperationalData.png", Language.translate("Import operational data to the network model", Language.EN));
 		}
 		return jButtonImportNetworkModelOperationalData;
     }
@@ -1463,7 +1463,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			this.graphController.getNetworkModelUndoManager().importNetworkModel();
 			
 		} else if (ae.getSource()==getJButtonImportNetworkModelOperationalData()) {
-			this.graphController.getNetworkModelUndoManager().importDataModelNetworkElements();
+			this.graphController.getNetworkModelUndoManager().importOperationalData();
 			
 		} else if (ae.getSource()==getJButtonClearGraph()) {
 			this.graphController.getNetworkModelUndoManager().clearNetworkModel();
