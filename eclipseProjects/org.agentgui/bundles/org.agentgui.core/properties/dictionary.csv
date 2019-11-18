@@ -8,7 +8,7 @@ de;'#' markiert alle Features, die zur Basisinstallation gehören.;'#' marks all
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please, choose a different name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
@@ -167,6 +167,7 @@ de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The por
 de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
 de;Der gewählte Bezeichner für das Projektverzeichnis enthält<br>unzulässige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benötigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulässig (verwenden Sie <br>stattdessen _ 'Unterstrich').;The selected identifier for the project directory contains invalid or too few characters! <br> <br> Min. 3 to max. 20 characters are required. <br> Only lower case letters are allowed. <br>Spaces are not allowed (please, use '_' instead 'underscore').;;;
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
+de;Derzeit sind keine Module für den Import von Laufzeit-Daten definiert.;Currently no modules are defined for the import of operational data.;;;
 de;Derzeit sind keine Module für den Import von Netzwerkmodellen definiert.;Currently, no modules for importing network models are defined.;;;
 de;Details zum Dateiexport;Details of file export;;;
 de;Deutsch;German
@@ -833,6 +834,8 @@ en;;Geographical Layout;;;
 en;;Guide Grid Step;;;
 en;;Guide Grid;;;
 en;;Import NetworkModel from file;;;
+en;;Import operational data to the network model;;;
+en;;Import operational data;;;
 en;;Invalid node selection!;;;
 en;;Layout ID;;;
 en;;Layout Name;;;

@@ -240,7 +240,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the current GraphEnvironmentController.
 	 * @return the GraphEnvironmentController
 	 */
-	protected GraphEnvironmentController getGraphEnvironmentController() {
+	public GraphEnvironmentController getGraphEnvironmentController() {
 		return this.graphController;
 	}
 	
@@ -255,7 +255,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Returns the superordinate NetworkComponentAdapter.
 	 * @return the network component adapter
 	 */
-	protected NetworkComponentAdapter getNetworkComponentAdapter() {
+	public NetworkComponentAdapter getNetworkComponentAdapter() {
 		return networkComponentAdapter;
 	}
 	
@@ -287,6 +287,14 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 */
 	public GraphNode getGraphNode() {
 		return graphNode;
+	}
+	
+	/**
+	 * Returns either the {@link NetworkComponent} or the {@link GraphNode} that is currently edited.
+	 * @return the current {@link DataModelNetworkElement}
+	 */
+	public DataModelNetworkElement getDataModelNetworkElement() {
+		return this.getNetworkComponentAdapter().getDataModelNetworkElement();
 	}
 	
 	/**

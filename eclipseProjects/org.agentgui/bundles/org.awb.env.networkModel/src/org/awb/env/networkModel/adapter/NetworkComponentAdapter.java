@@ -32,6 +32,7 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
@@ -108,6 +109,25 @@ public abstract class NetworkComponentAdapter {
 		this.networkComponentAdapter4DataModel = null;
 	}
 	
+	/**
+	 * Returns either the {@link NetworkComponent} or the {@link GraphNode} that is currently edited.
+	 * @return the data model network element
+	 */
+	protected DataModelNetworkElement getDataModelNetworkElement() {
+		
+		DataModelNetworkElement networkElment = null;
+		if (this.getNetworkComponent()!=null && this.getGraphNode()!=null) {
+			// --- [NetworkComponentToGraphNodeAdapter] => GraphNode ----------
+			networkElment = this.getGraphNode();
+		} else if (this.getNetworkComponent()!=null && this.getGraphNode()==null) {
+			// --- NetworkComponent -------------------------------------------
+			networkElment = this.getNetworkComponent();
+		} else if (this.getNetworkComponent()==null && this.getGraphNode()!=null) {
+			// --- GraphNode --------------------------------------------------
+			networkElment = this.getGraphNode();
+		}
+		return networkElment;
+	}
 	
 	/**
 	 * Will be invoked to get the individual menu elements for this kind of NetworkComponent or GraphNode.
