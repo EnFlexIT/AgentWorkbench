@@ -398,8 +398,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     				selectedGraphObject = graphNode;
     			}
     		}
-    		// --- Open the properties window ---------------------------------
-    		new BasicGraphGuiProperties(this.getGraphController(), selectedGraphObject);
+    		// --- Open or focus the property editor --------------------------
+    		BasicGraphGuiProperties propWindow = this.getBasicGraphGuiJDesktopPane().getEditorBySelectedGraphObject(selectedGraphObject);
+    		if (propWindow==null) {
+    			new BasicGraphGuiProperties(this.getGraphController(), selectedGraphObject);
+    		} else {
+    			propWindow.registerAtDesktopAndSetVisible();
+    		}
     	}
     }
    

@@ -264,41 +264,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		}
 	}
 	
-	/**
-	 * Acts on the mouse pressed and mouse clicked action.
-	 * @param me the {@link MouseEvent}
-	 */
-	private void mousePressedOrClicked(MouseEvent me) {
-		
-		// --- Left click ---------------------------------
-		if (SwingUtilities.isLeftMouseButton(me) || SwingUtilities.isRightMouseButton(me)){
-
-			// --- Check if an object was selected --------
-			Object pickedObject = null;
-			Point point = me.getPoint();
-			GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
-			GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-			if (pickedNode!=null) {  
-				pickedObject = pickedNode;
-			} else {
-				GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-				if (pickedEdge!=null) { 
-					pickedObject = pickedEdge;
-				}
-			}
-
-			// --- Only when node or edge is picked -------
-			if (pickedObject!=null) {
-				if (me.getClickCount()==2){
-					// --- Double click ---------
-					this.basicGraphGUI.handleObjectDoubleClick(pickedObject);
-				} else {
-					this.basicGraphGUI.handleObjectLeftClick(pickedObject, me.isShiftDown());
-				} 
-			}
-		}
-		
-	}
 	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#pickContainedVertices(edu.uci.ics.jung.visualization.VisualizationViewer, java.awt.geom.Point2D, java.awt.geom.Point2D, boolean)
@@ -334,7 +299,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@Override
 	public void mouseClicked(MouseEvent me){
-		this.mousePressedOrClicked(me);
+
+		if (me.getClickCount()==2) {
+			// --- Act on double clicks ---------
+			GraphElement gePicked = this.getPickedGraphElement(me);
+			if (gePicked!=null) {
+				this.basicGraphGUI.handleObjectDoubleClick(gePicked);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -361,21 +333,49 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), position.getX(), position.getY());
 		GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), position.getX(), position.getY());
 		
-		if (SwingUtilities.isRightMouseButton(me)) {
-			if(pickedNode==null && pickedEdge==null){		
+		if (SwingUtilities.isRightMouseButton(me)==true) {
+			if (pickedNode==null && pickedEdge==null) {		
 				this.movePanelWithRightAction = true;
 				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			}
 			
-		} else if (SwingUtilities.isLeftMouseButton(me)) {
+		} else if (SwingUtilities.isLeftMouseButton(me)==true) {
 			if (pickedNode!=null) {
 				this.moveNodeWithLeftAction = true;	
 				this.remindOldPositions();
 			} else {
-				this.mousePressedOrClicked(me);	
+				GraphElement gePicked = this.getPickedGraphElement(me);
+				if (gePicked!=null && me.getClickCount()!=2) {
+					this.basicGraphGUI.handleObjectLeftClick(gePicked, me.isShiftDown());
+				}	
 			}
 			
 		}
+	}
+	
+	/**
+	 * Return the graph element (a {@link GraphNode} or a {@link GraphEdge}) picked by the specified mouse event.
+	 * @param me the MouseEvent
+	 * @return the picked graph element
+	 */
+	private GraphElement getPickedGraphElement(MouseEvent me) {
+
+		if (me==null) return null;
+		if (SwingUtilities.isLeftMouseButton(me)==false && SwingUtilities.isRightMouseButton(me)==false) return null;
+
+		GraphElement ge = null;
+		Point point = me.getPoint();
+		GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
+		GraphNode graphNodePicked = ps.getVertex(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
+		if (graphNodePicked!=null) {  
+			ge = graphNodePicked;
+		} else {
+			GraphEdge graphEdgePicked = ps.getEdge(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
+			if (graphEdgePicked!=null) { 
+				ge = graphEdgePicked;
+			}
+		}
+		return ge;
 	}
 	
 	/* (non-Javadoc)

@@ -230,10 +230,10 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		this.selectedGraphObject = selectedGraphObject;
 	}
 	/**
-	 * Returns the graph object.
+	 * Returns the selected graph object for this editor.
 	 * @return the graphObject
 	 */
-	public Object getGraphObject() {
+	public Object getSelectedGraphObject() {
 		return selectedGraphObject;
 	}
 	
@@ -243,33 +243,33 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private void configureForGraphObject() {
 
 		String title2Set = null;
-		if (this.getGraphObject()==null) {
+		if (this.getSelectedGraphObject()==null) {
 			title2Set = "No valid selection!";
 			
-		} else if (this.getGraphObject() instanceof GraphNode) {
+		} else if (this.getSelectedGraphObject() instanceof GraphNode) {
 			// --- Set the local variable ---------------------------
-			this.graphNode = (GraphNode) this.getGraphObject();
+			this.graphNode = (GraphNode) this.getSelectedGraphObject();
 			// --- Get the corresponding NetworkComponentAdapter ----			
 			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.graphNode);
 			title2Set = "Vertex: " + this.graphNode.getId();
 			
-		} else if (this.getGraphObject() instanceof GraphEdge) {
+		} else if (this.getSelectedGraphObject() instanceof GraphEdge) {
 			// --- Just get the corresponding NetworkComponent ------ 
-			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent((GraphEdge) this.getGraphObject());
+			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent((GraphEdge) this.getSelectedGraphObject());
 			// --- Get the corresponding NetworkComponentAdapter ---- 
 			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent);
 			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 			
-		} else if (this.getGraphObject() instanceof NetworkComponent) {
+		} else if (this.getSelectedGraphObject() instanceof NetworkComponent) {
 			// --- Cast to NetworkComponent -------------------------
-			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent(((NetworkComponent) this.getGraphObject()).getId());
+			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent(((NetworkComponent) this.getSelectedGraphObject()).getId());
 			// --- Get the corresponding NetworkComponentAdapter ---- 
 			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent);
 			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 		}
 
 		if (this.networkComponent!=null) {
-			// --- Mark / Select NetworkComponent for user --------------
+			// --- Mark / Select NetworkComponent for user ----------
 			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Selected);
 			nmn.setInfoObject(this.networkComponent);
 			this.graphController.notifyObservers(nmn);
