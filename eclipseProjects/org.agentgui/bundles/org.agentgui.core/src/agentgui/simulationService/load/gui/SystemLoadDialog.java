@@ -32,8 +32,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
@@ -75,7 +73,6 @@ public class SystemLoadDialog extends JFrame {
 		this.setSize(620, 120);
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Load Monitor"));
-		this.setLookAndFeel();
 		this.setContentPane(this.getSystemLoadPanel());		
 		
 		// --- Add a WindowsListener --------------------------------
@@ -99,25 +96,4 @@ public class SystemLoadDialog extends JFrame {
 		return systemLoadPanel;
 	}
 	
-	/**
-	 * This method set the Look and Feel of this Dialog.
-	 */
-	private void setLookAndFeel() {
- 
-		String lnfClassname = Application.getGlobalInfo().getAppLookAndFeelClassName();
-		try {
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-			}
-			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this);
-			
-		}  catch (Exception ex) {
-			System.err.println("Cannot install Look and Feel '" + lnfClassname + "' on this platform.");
-			ex.printStackTrace();
-		}
-	}	
-
-	
-	
-}  //  @jve:decl-index=0:visual-constraint="11,3"
+}  

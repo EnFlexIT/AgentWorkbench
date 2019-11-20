@@ -493,7 +493,7 @@ public class DataModelStorageThread extends Thread {
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(NetworkComponent networkComponent) {
-		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, networkComponent, this.getNetworkComponentAdapterHash());
+		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, networkComponent, false, this.getNetworkComponentAdapterHash());
 	}
 	/**
 	 * Returns the NetworkComponentAdapter for the specified GraphNode.
@@ -502,7 +502,7 @@ public class DataModelStorageThread extends Thread {
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(GraphNode graphNode) {
-		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, graphNode, this.getNetworkComponentAdapterHash());
+		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, graphNode, false, this.getNetworkComponentAdapterHash());
 	}
 	
 }

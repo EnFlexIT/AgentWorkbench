@@ -68,7 +68,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -188,9 +187,6 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		this.setExampleFileData();
 		this.setExampleParse();
 		
-		// --- Set the Look and Feel of the Dialog ------------------
-		this.setLookAndFeel();
-
 		// --- Center dialog ----------------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
@@ -212,27 +208,8 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
         this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
-    /**
-	 * This method set the Look and Feel of this Dialog.
-	 * @param newLnF the new look and feel
-	 */
-	private void setLookAndFeel() {
- 
-		String lnfClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
-		if (lnfClassName==null) return;
-		
-		String currLookAndFeelClassName = UIManager.getLookAndFeel().getClass().getName();
-		if (lnfClassName.equals(currLookAndFeelClassName)==true) return;
-		
-		try {
-			UIManager.setLookAndFeel(lnfClassName);
-			SwingUtilities.updateComponentTreeUI(this);
-		} catch (Exception e) {
-			System.err.println("Cannot install " + lnfClassName + " on this platform:" + e.getMessage());
-		}
-		
-	}
-	
+
+    
 	/**
 	 * Sets the cancelled.
 	 * @param canceled the new cancelled

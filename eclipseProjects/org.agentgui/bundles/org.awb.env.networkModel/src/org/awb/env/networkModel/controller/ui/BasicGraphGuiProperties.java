@@ -250,21 +250,21 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			// --- Set the local variable ---------------------------
 			this.graphNode = (GraphNode) this.getSelectedGraphObject();
 			// --- Get the corresponding NetworkComponentAdapter ----			
-			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.graphNode);
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.graphNode, true, null);
 			title2Set = "Vertex: " + this.graphNode.getId();
 			
 		} else if (this.getSelectedGraphObject() instanceof GraphEdge) {
 			// --- Just get the corresponding NetworkComponent ------ 
 			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent((GraphEdge) this.getSelectedGraphObject());
 			// --- Get the corresponding NetworkComponentAdapter ---- 
-			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent);
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent, true, null);
 			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 			
 		} else if (this.getSelectedGraphObject() instanceof NetworkComponent) {
 			// --- Cast to NetworkComponent -------------------------
 			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent(((NetworkComponent) this.getSelectedGraphObject()).getId());
 			// --- Get the corresponding NetworkComponentAdapter ---- 
-			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent);
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent, true, null);
 			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 		}
 
