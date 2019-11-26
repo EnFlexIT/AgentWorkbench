@@ -114,6 +114,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private JToolBarButton jToolBarButtonDisableRuntimeUpdates;
 	private JComponent jComponentContent;
 
+	private TreeMap<String, String> dataModelInitialStorageSettings;
 	private Vector<Integer> dataModelInitialHashCodes;
 	private Object newDataModel;
 	
@@ -369,7 +370,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
 
 					// --- Remind initial HashCodes of Base64 data model vector ----
-					this.setDataModelBase64InitialHashCodes(dataModel);
+					this.setDataModelBase64InitialHashCodes(networkElement);
 
 					// --- Get the visualization component -------------------------
 					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualizationComponent(this);
@@ -562,18 +563,20 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 * Sets the initial hash codes for a given data model.
 	 * @param dataModelBase64 the new data model base64 initial hash codes
 	 */
-	private void setDataModelBase64InitialHashCodes(Object dataModel) {
-		this.dataModelInitialHashCodes = this.getHashCodeVectorFromDataModel(dataModel);
+	private void setDataModelBase64InitialHashCodes(DataModelNetworkElement networkElement) {
+		this.dataModelInitialStorageSettings = networkElement.getDataModelStorageSettings();
+		this.dataModelInitialHashCodes = this.getHashCodeVectorFromDataModel(networkElement.getDataModel());
 	}
 	/**
-	 * Checks if the current settings have changed.
-	 * @return true, if the data model was changed
+	 * Checks if the storage settings or the data model have changed.
+	 * @return true, if the storage settings or the data model has changed
 	 */
-	private boolean hasChanged() {
+	private boolean isChangedDataModel() {
 		
 		boolean changed = false;
 		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
 		if (nca4dm!=null) {
+			// --- Get the edited data model ------------------------
 			Object newDataModel = this.getReviewedDataModel(nca4dm.getDataModel());
 			Vector<Integer> newHashCodes = this.getHashCodeVectorFromDataModel(newDataModel);
 			// --- Check for changes --------------------------------
@@ -606,6 +609,51 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			}
 		}
 		return changed;
+	}
+	
+	/**
+	 * Have storage settings changed.
+	 * @return true, if the storage settings were changed
+	 */
+	private boolean isChangedStorageSettings() {
+		
+		boolean changedSettings = false;
+		
+		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
+		if (nca4dm!=null) {
+			
+			// --- Get the current / edited data model --------------
+			Object newDataModel = this.getReviewedDataModel(nca4dm.getDataModel());
+			
+			// --- Define the current edit element ------------------
+			DataModelNetworkElement orgNetworkElement = null;
+			if (this.graphNode!=null) {
+				orgNetworkElement = this.graphNode;
+			} else {
+				orgNetworkElement = this.networkComponent;
+			}
+			
+			// --- Get storage handler to invoke save simulated -----
+			AbstractDataModelStorageHandler storageHandler = nca4dm.getDataModelStorageHandlerInternal();
+			
+			// --- Create temporary element -------------------------
+			DataModelNetworkElement tempNetworkElement = storageHandler.createTemporaryNetworkElement(orgNetworkElement);
+			tempNetworkElement.setDataModel(newDataModel);
+			
+			// --- Invoke to store that element ---------------------
+			TreeMap<String, String> newStorageSettings = storageHandler.saveDataModelSimulated(tempNetworkElement);
+			TreeMap<String, String> oldStorageSettings = this.dataModelInitialStorageSettings; 
+			
+			// --- Compare the storage settings ---------------------
+			if (newStorageSettings==null && oldStorageSettings==null) {
+				changedSettings = false;
+			} else if ((newStorageSettings==null && oldStorageSettings!=null) || newStorageSettings!=null && oldStorageSettings==null) {
+				changedSettings = true;
+			} else {
+				changedSettings = newStorageSettings.equals(oldStorageSettings);
+			}
+		}
+		return changedSettings;
 	}
 	
 	/**
@@ -645,7 +693,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		String diaQuestion = null;
 		
 		// --- Check if we have changes -----------------------------
-		if (this.hasChanged()==true) {
+		if (this.isChangedDataModel()==true || this.isChangedStorageSettings()==true) {
+		
 			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------------------
 				diaQuestion = Language.translate("Save changes to network model?", Language.EN);
@@ -708,7 +757,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			}
 	
 			// --- Store this a new initial hash reminder -----------
-			this.setDataModelBase64InitialHashCodes(this.newDataModel);
+			this.setDataModelBase64InitialHashCodes(networkElement);
 			
 			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------------
@@ -825,14 +874,14 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			Object dataModel = dmn.getGraphNode().getDataModel();
 			// -- Update GraphNode data model -----------------------
 			this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
-			this.setDataModelBase64InitialHashCodes(dataModel);
+			this.setDataModelBase64InitialHashCodes(this.graphNode);
 		}
 		
 		if (dmn.isForNetworkComponent(this.networkComponent)==true) {
 			Object dataModel = dmn.getNetworkComponent().getDataModel();
 			// -- Update NetworkComponent data model ----------------
 			this.getNetworkComponentAdapter4DataModel().setDataModel(dataModel);
-			this.setDataModelBase64InitialHashCodes(dataModel);
+			this.setDataModelBase64InitialHashCodes(this.networkComponent);
 		}
 		return true;
 	}

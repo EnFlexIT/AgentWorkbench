@@ -29,6 +29,9 @@ public class DataModelStorageHandlerBase64 extends AbstractDataModelStorageHandl
 	@Override
 	public TreeMap<String, String> saveDataModel(DataModelNetworkElement networkElement) {
 
+		if (networkElement==null) return null;
+		if (this.isSaveSimulated()==true) return null;
+		
 		if (networkElement!=null) {
 			Object dataModel = networkElement.getDataModel(); 
 			if (dataModel==null) {
