@@ -29,6 +29,7 @@
 package de.enflexit.common.bundleEvaluation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
@@ -82,6 +83,7 @@ public class PackageClasses extends ArrayList<String> {
 				List<String> classesFound = be.getClassReferences(bundle, this.searchInPackage);
 				if (classesFound.size()!=0) {
 					this.addAll(classesFound);
+					Collections.sort(this);
 					return;
 				}
 			}
@@ -96,6 +98,7 @@ public class PackageClasses extends ArrayList<String> {
 				List<String> classesFound = be.getClassReferences(bundle, this.searchInPackage);
 				if (classesFound!=null && classesFound.size()>0) {
 					this.addAll(classesFound);
+					Collections.sort(this);
 					return;
 				}
 			}

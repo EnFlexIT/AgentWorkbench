@@ -30,11 +30,13 @@ package de.enflexit.common.ontology;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import de.enflexit.common.bundleEvaluation.PackageClasses;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
@@ -147,30 +149,27 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	 */
 	private void addOntologyNodes() {
 	
-		int clazzListIndex = 0; 
-		int lastClLiIndexResetAtSize = -1;
-
 		// --- Get the class-files from the package ---------------------------
-		ArrayList<String> ontologyClassList = new PackageClasses(this.currOntoClass.getOntologyClass());
-		while (ontologyClassList.size()>0) {
-	    	
-	    	if (clazzListIndex > ontologyClassList.size()-1 ) {
-	    		clazzListIndex=0;
-	    	}
+		ArrayList<String> currentLevelList = new PackageClasses(this.currOntoClass.getOntologyClass());
+		ArrayList<String> higherLevelList  = new ArrayList<>();
+		int treeLevelToEdit = 2;
+		int lastExchangedListSize = 0;
+		
+		while (currentLevelList.size()>0) {
 
 	    	// ----------------------------------------------------------------
 	    	// --- Work on the current class and its description --------------
-	    	String currentClass = ontologyClassList.get(clazzListIndex);
+	    	String currentClass = currentLevelList.get(0);
 	    	OntologyClassTreeObject ontoClassTreeObj = this.getNewTreeNodeUserObject(currentClass);
 
 	    	// ----------------------------------------------------------------
 	    	// --- Work on the OntologyClassTreeObject, if available ---------- 
 	    	if (ontoClassTreeObj==null) {
-				ontologyClassList.remove(currentClass);
+				currentLevelList.remove(currentClass);
 			
 			} else {
 				// --- Add a new node to the ontology tree --------------------
-				DefaultMutableTreeNode currentNode = new DefaultMutableTreeNode(ontoClassTreeObj);
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ontoClassTreeObj);
 	        	if (ontoClassTreeObj.isBaseOntology()==true) {
 	        		// --- Ignore 'AgentGUIProjectOntology' ? -----------------
 	        		baseClassOntoCount++;
@@ -188,71 +187,115 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		        		octo.setObjectTitle(currOntoClass.getOntologyName());
 		        		rootNode.setUserObject(octo);  
 	        		}
-	        		ontologyClassList.remove(currentClass);
+	        		currentLevelList.remove(currentClass);
 	        		
 	        	} else if (ontoClassTreeObj.isConcept()==true) {
-		    		conceptNode.add(currentNode);
-		    		ontologyClassList.remove(currentClass);
+		    		this.addToParentNode(currentClass, newNode, this.conceptNode, treeLevelToEdit, currentLevelList, higherLevelList);
 		    		
 	        	} else if (ontoClassTreeObj.isAgentAction()==true){
-	        		aActionNode.add(currentNode);
-	        		ontologyClassList.remove(currentClass);
+	        		this.addToParentNode(currentClass, newNode, this.aActionNode, treeLevelToEdit, currentLevelList, higherLevelList);
 	        		
 	        	} else if (ontoClassTreeObj.isAID()==true){
 	        		// --- Remind the parent Node -----------------------------
         			OntologyClassTreeObject parentOntologyClassTreeObject = (OntologyClassTreeObject) aidNode.getUserObject();
         			ontoClassTreeObj.setParentOntologyClassTreeObject(parentOntologyClassTreeObject);
-        			currentNode.setUserObject(ontoClassTreeObj);
+        			newNode.setUserObject(ontoClassTreeObj);
         			// --- Add to the parent node -----------------------------
-        			aidNode.add(currentNode);
-	        		ontologyClassList.remove(currentClass);
+        			this.addToParentNode(currentClass, newNode, this.aidNode, treeLevelToEdit, currentLevelList, higherLevelList);
 	        		
 	        	} else if (ontoClassTreeObj.isPredicate()==true){
-	        		predicateNode.add( currentNode );
-	        		ontologyClassList.remove(currentClass);
+	        		predicateNode.add(newNode);
+	        		currentLevelList.remove(currentClass);
 	        		
 	        	} else {
-			    	// --- Get parent node Object ---------------------------
+			    	// --- Get parent node Object -----------------------------
 	        		DefaultMutableTreeNode parentNode = getTreeNode(ontoClassTreeObj.getParentOntologySubClass().getName());
-	        		// --- Add to the appropriated parent node --------------       		
+	        		// --- Add to the appropriated parent node ----------------     		
 	        		if (parentNode!=null) {
-	        			// --------------------------------------------------
-	        			// --- Remind the parent node -----------------------
-	        			// --------------------------------------------------
+	        			// ----------------------------------------------------
+	        			// --- Remind the parent node -------------------------
+	        			// ----------------------------------------------------
 	        			OntologyClassTreeObject parentOntologyClassTreeObject = (OntologyClassTreeObject) parentNode.getUserObject();
 	        			ontoClassTreeObj.setParentOntologyClassTreeObject(parentOntologyClassTreeObject);
-	        			currentNode.setUserObject(ontoClassTreeObj);
-	        			// --- Add to the parent node -----------------------
-	        			parentNode.add( currentNode );
-	        			ontologyClassList.remove(currentClass);
+	        			newNode.setUserObject(ontoClassTreeObj);
+	        			// --- Add to the parent node -------------------------
+	        			this.addToParentNode(currentClass, newNode, parentNode, treeLevelToEdit, currentLevelList, higherLevelList);
 	        			
 	        		} else {
 	        			// --------------------------------------------------
 	        			// --- If no parent node was found, it was maybe ----
 	        			// --- not yet be created => Queue at the end    ----
 	        			// --------------------------------------------------
-	        			ontologyClassList.remove(currentClass);
-	        			ontologyClassList.add(currentClass);	        	
-	        			
-	        			clazzListIndex++;
-	        			if ( clazzListIndex>0 && ontologyClassList.size()==clazzListIndex ) {
-	        				clazzListIndex = 0;
-	        				if (ontologyClassList.size()==lastClLiIndexResetAtSize) {
-	        					break;
-	        				}		        				
-	        				lastClLiIndexResetAtSize = ontologyClassList.size();
-	        			}
+	        			currentLevelList.remove(currentClass);
+	        			higherLevelList.add(currentClass);	        	
 	        		}
-	        		// ------------------------------------------------------
+	        		// --------------------------------------------------------
 	        		// --------------------------------------------------------
     		
 	        	}
 			}
 			
+	    	// --- Exchange the class lists? ----------------------------------
+	    	if (currentLevelList.size()==0 && higherLevelList.size()!=0) {
+	    		// --- Check if we have no further progress -------------------
+	    		if (higherLevelList.size()==lastExchangedListSize) {
+	    			// --- No classes were added in the current level ---------
+	    			System.err.println("[" + this.getClass().getSimpleName() + "] No parent nodes / classes were found within Ontology '" + this.rootNode.getUserObject().toString() + "':");
+	    			System.err.println("[" + this.getClass().getSimpleName() + "] Affected classe: " + String.join(", ", higherLevelList));
+	    			break;
+	    		}
+	    		// --- Prepare for next tree level ----------------------------
+	    		currentLevelList = higherLevelList;
+	    		Collections.sort(currentLevelList);
+	    		higherLevelList = new ArrayList<>();
+	    		treeLevelToEdit++;
+	    		lastExchangedListSize = currentLevelList.size();
+	    	}
+	    	
 	      } // --- end while ---	
 		
 	}
 
+	/**
+	 * Adds the specified new child node to the specified parent node and maintains the lists of classes to be added to the tree.
+	 *
+	 * @param currentOntologyClass the current ontology class
+	 * @param newChildNode the new child node
+	 * @param parentNode the parent node
+	 * @param allowedLevelToAdd the allowed level to add
+	 * @param currentLevelList the current level list
+	 * @param higherLevelList the higher level list
+	 */
+	private void addToParentNode(String currentOntologyClass, DefaultMutableTreeNode newChildNode, DefaultMutableTreeNode parentNode, int allowedLevelToAdd, ArrayList<String> currentLevelList, ArrayList<String> higherLevelList) {
+		
+		int addLevel = this.getNodeLevel(parentNode) + 1;
+		if (addLevel!=allowedLevelToAdd) {
+			// --- Add to higher level list ---------------
+			currentLevelList.remove(currentOntologyClass);
+			higherLevelList.add(currentOntologyClass);
+			
+		} else {
+			// --- Add to parent node ---------------------
+			parentNode.add(newChildNode);
+			currentLevelList.remove(currentOntologyClass);
+		}
+	}
+	/**
+	 * Return the tree level of the specified.
+	 *
+	 * @param treeNode the tree node
+	 * @return the node level
+	 */
+	private int getNodeLevel(DefaultMutableTreeNode treeNode) {
+		int level = 0;
+		TreeNode countTreeNode = treeNode;
+		while(countTreeNode.getParent()!=null) {
+			level++;
+			countTreeNode = countTreeNode.getParent();
+		}
+		return level;
+	}
+	
 	
 	/**
 	 * Returns a new tree node user object depending on the given class.

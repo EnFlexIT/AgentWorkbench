@@ -28,9 +28,11 @@
  */
 package de.enflexit.common.ontology;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -199,17 +201,15 @@ public class OntologyClassTreeObject extends Object {
 			return tm4s;
 		}
 		
-		// --- Nach den entsprechenden Slots im Vokabular filtern ---
+		// --- Filter for slot vocabulary ---------------------------
 		Hashtable<String, String> ontoSlotHash = ontologyClass.ontologieVocabulary.getSlots(ontologySubClass);
 		ReflectClass reflectedClass = new ReflectClass(ontologySubClass, ontoSlotHash);
 		
-		Vector<String> v = new Vector<String>( ontoSlotHash.keySet() );
-	    Collections.sort(v);
-	    Iterator<String> it = v.iterator();
-	    while (it.hasNext()) {
-	    	
-	    	// --- Get Word of the ontology ------------------------- 
-	    	String key = it.next();
+		List<String> slotKeyList = new ArrayList<String>(ontoSlotHash.keySet());
+	    Collections.sort(slotKeyList);
+	    for (int i = 0; i < slotKeyList.size(); i++) {
+
+	    	String key = slotKeyList.get(i);
 	    	String word = ontoSlotHash.get(key);
 	    	
 	    	// --- Get Slot... --------------------------------------

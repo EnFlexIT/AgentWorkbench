@@ -209,7 +209,8 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	public TreeMap<String, String> saveDataModel(DataModelNetworkElement networkElement) {
 
 		if (networkElement==null) return null;
-			
+		if (this.isSaveSimulated()==true) return null;
+		
 		Object dataModel = networkElement.getDataModel(); 
 		// ----------------------------------------------------------
 		// --- Just to not loose the old style solution -------------

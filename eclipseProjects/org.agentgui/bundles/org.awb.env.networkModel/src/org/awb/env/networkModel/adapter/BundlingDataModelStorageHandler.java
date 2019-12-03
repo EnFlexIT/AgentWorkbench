@@ -1,5 +1,7 @@
 package org.awb.env.networkModel.adapter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -106,6 +108,23 @@ public class BundlingDataModelStorageHandler extends AbstractDataModelStorageHan
 			networkElement.setDataModelBase64(dmBase64Vector);
 		}
 		return dmSettingsNew;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler#setSaveSimulated(boolean)
+	 */
+	@Override
+	public void setSaveSimulated(boolean isSimulateSave) {
+		super.setSaveSimulated(isSimulateSave);
+		// --- Distribute simulation indicator to sub adapter -------
+		List<NetworkComponentAdapter4DataModel> dmAdapterList = new ArrayList<>(this.dataModelAdapter.getDataModelAdapterMap().values());
+		for (int i = 0; i < dmAdapterList.size(); i++) {
+			NetworkComponentAdapter4DataModel partDataModelAdapter = dmAdapterList.get(i);
+			AbstractDataModelStorageHandler storageHandler = partDataModelAdapter.getDataModelStorageHandler();
+			if (storageHandler!=null) {
+				storageHandler.setSaveSimulated(isSimulateSave);
+			}
+		}
 	}
 	
 }

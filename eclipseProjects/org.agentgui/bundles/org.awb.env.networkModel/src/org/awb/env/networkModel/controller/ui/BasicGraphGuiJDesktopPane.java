@@ -29,7 +29,9 @@
 package org.awb.env.networkModel.controller.ui;
 
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultDesktopManager;
@@ -93,7 +95,29 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	public JInternalFrame getEditor(String editorTitle) {
 		return this.getHashMapEditorFrames().get(editorTitle);
 	}
-	
+	/**
+	 * Return the editor of a specified graph object, if already registered at this desktop.
+	 *
+	 * @param selectedGraphObject the selected graph object
+	 * @return the editor by selected graph object
+	 */
+	public BasicGraphGuiProperties getEditorBySelectedGraphObject(Object selectedGraphObject) {
+		
+		if (selectedGraphObject==null) return null;
+		
+		List<JInternalFrame> editorList = new ArrayList<>(this.getHashMapEditorFrames().values());
+		for (int i = 0; i < editorList.size(); i++) {
+			JInternalFrame intFrame = editorList.get(i);
+			if (intFrame instanceof BasicGraphGuiProperties) {
+				BasicGraphGuiProperties propertyEditor = (BasicGraphGuiProperties)intFrame;
+				if (propertyEditor.getSelectedGraphObject()==selectedGraphObject) {
+					return propertyEditor;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Can be used in order to register a property window for components or nodes.
 	 * @param internalFrame the JInternalFrame to register
@@ -252,23 +276,16 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 
 		// ----------------------------------------------------------
 		// --- Apply to an open property window, if there is one ----
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-				
-				Vector<String> internalFramesTitles = new Vector<String>(getHashMapEditorFrames().keySet());
-				for (String internalFrameTitles : internalFramesTitles) {
-					JInternalFrame internalFrame = getHashMapEditorFrames().get(internalFrameTitles);
-					if (internalFrame instanceof BasicGraphGuiProperties) {
-						// --- Put notification into the property dialog ---- 
-						BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
-						if (basicProperties.setUpdateDataSeries(updateDataSeries)==true) break;// --- Done ! ---
-					}
-				}
-				
-//			}
-//		});
-	
+		Vector<String> internalFramesTitles = new Vector<String>(getHashMapEditorFrames().keySet());
+		for (String internalFrameTitles : internalFramesTitles) {
+			JInternalFrame internalFrame = getHashMapEditorFrames().get(internalFrameTitles);
+			if (internalFrame instanceof BasicGraphGuiProperties) {
+				// --- Put notification into the property dialog ---- 
+				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
+				if (basicProperties.setUpdateDataSeries(updateDataSeries)==true) break;// --- Done ! ---
+			}
+		}
 	}
+
 	
 }

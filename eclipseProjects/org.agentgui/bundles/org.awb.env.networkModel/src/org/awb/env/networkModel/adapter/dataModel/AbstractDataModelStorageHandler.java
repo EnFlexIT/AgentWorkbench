@@ -29,7 +29,7 @@ public abstract class AbstractDataModelStorageHandler {
 	public static final String BASE64_MODEL_SEPARATOR_PREFIX = "@";
 	
 	private boolean requiresPersistenceUpdate;
-	
+	private boolean saveSimulated;
 	
 	/**
 	 * Has to load a {@link NetworkComponent}s or {@link GraphNode}s data model, by using the provided storage settings of
@@ -51,6 +51,50 @@ public abstract class AbstractDataModelStorageHandler {
 	 */
 	public abstract TreeMap<String, String> saveDataModel(DataModelNetworkElement networkElement);
 
+	
+	// ------------------------------------------------------------------------
+	// --- From here methods to simulate the save action can be found ---------
+	// ------------------------------------------------------------------------
+	/**
+	 * Simulates to save the data model of the network element, which means that the actual 
+	 * save procedure (saving a file or push data into a database) will be skipped while 
+	 * the storage settings may be adjusted. Generally, this allows to check if at least
+	 * the storage settings have changed in comparison to previous settings. 
+	 *
+	 * @param networkElement the network element
+	 * @return the storage settings tree map
+	 */
+	public TreeMap<String, String> saveDataModelSimulated(DataModelNetworkElement networkElement) {
+		
+		TreeMap<String, String> newSettings = null;
+		try {
+			this.setSaveSimulated(true);
+			newSettings = this.saveDataModel(networkElement);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.setSaveSimulated(false);
+		}
+		return newSettings;
+	}
+	/**
+	 * Sets to simulate the save invocation so that the new storage settings 
+	 * can be provided without doing the actual save procedure (which could be to
+	 * save into a file or into a database).
+	 * 
+	 * @param isSimulateSave the new simulate save
+	 */
+	public void setSaveSimulated(boolean isSimulateSave) {
+		this.saveSimulated = isSimulateSave;
+	}
+	/**
+	 * Checks if the save action is only to be simulated in order to receive the new storage settings.
+	 * @return true, if is save simulated
+	 */
+	public boolean isSaveSimulated() {
+		return saveSimulated;
+	}
 	
 	
 	// ------------------------------------------------------------------------
@@ -102,7 +146,7 @@ public abstract class AbstractDataModelStorageHandler {
 	 * @param networkElement the network element
 	 * @return the data model network element
 	 */
-	protected DataModelNetworkElement createTemporaryNetworkElement(DataModelNetworkElement networkElement) {
+	public DataModelNetworkElement createTemporaryNetworkElement(DataModelNetworkElement networkElement) {
 		DataModelNetworkElement tmpNetworkElement = null;
 		if (networkElement instanceof NetworkComponent) {
 			NetworkComponent srcNetComp = (NetworkComponent) networkElement;
