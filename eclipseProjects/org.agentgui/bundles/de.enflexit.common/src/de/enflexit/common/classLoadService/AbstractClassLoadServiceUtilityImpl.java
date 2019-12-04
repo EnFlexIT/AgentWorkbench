@@ -87,7 +87,7 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @param serviceBaseInterface the type of the service, specified by the interface 
 	 * @return the class load service
 	 */
-	public T getClassLoadService(String className, Class<? extends BaseClassLoadService> serviceBaseInterface) {
+	public synchronized T getClassLoadService(String className, Class<? extends BaseClassLoadService> serviceBaseInterface) {
 		
 		ClassLoadServiceElement clsElementFound = null;
 		ClassLoadServiceElement clsElementLocal = null;
