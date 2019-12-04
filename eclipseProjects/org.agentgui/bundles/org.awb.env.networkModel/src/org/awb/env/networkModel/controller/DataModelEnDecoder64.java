@@ -90,11 +90,13 @@ public class DataModelEnDecoder64 {
 		// --- Try to get single instance as base64 encoded String ----
 		try {
 			if (singleInstance!=null) {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(singleInstance);
-				oos.close();
-				singleInstance64 = new String(Base64.encodeBase64(baos.toByteArray()));
+				synchronized (singleInstance) {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ObjectOutputStream oos = new ObjectOutputStream(baos);
+					oos.writeObject(singleInstance);
+					oos.close();
+					singleInstance64 = new String(Base64.encodeBase64(baos.toByteArray()));
+				}
 			}
 	        
 		} catch (IOException ioEx) {
