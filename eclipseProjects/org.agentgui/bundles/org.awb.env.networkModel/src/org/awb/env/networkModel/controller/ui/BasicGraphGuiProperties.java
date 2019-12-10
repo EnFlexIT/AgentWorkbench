@@ -650,7 +650,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			} else if ((newStorageSettings==null && oldStorageSettings!=null) || newStorageSettings!=null && oldStorageSettings==null) {
 				changedSettings = true;
 			} else {
-				changedSettings = newStorageSettings.equals(oldStorageSettings);
+				changedSettings = (newStorageSettings.equals(oldStorageSettings)==false);
 			}
 		}
 		return changedSettings;
