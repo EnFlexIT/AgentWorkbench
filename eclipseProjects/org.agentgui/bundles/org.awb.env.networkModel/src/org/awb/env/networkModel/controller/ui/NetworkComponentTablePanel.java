@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
@@ -38,16 +39,16 @@ import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
-import org.awb.env.networkModel.settings.ui.TableCellEditor4TableButton;
-import org.awb.env.networkModel.settings.ui.TableCellRenderer4Button;
 
 import agentgui.core.application.Language;
+import de.enflexit.common.ServiceFinder;
 
 /**
  * This class provides a table containing a list of network components in a network model,
  * including a text filter and editing functions.
  *  
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class NetworkComponentTablePanel extends JPanel implements TableModelListener{
 
@@ -55,27 +56,29 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 
 	private static final String newLine = "\n";
 	
-	private JScrollPane jScrollPaneComponentsTable;
+	private GraphEnvironmentController graphController;
+
+	private boolean editingEnabled;
+    private boolean enableMultipleSelection;
+
+    private List<NetworkComponentTableService> tableServiceList;
+    
     private JLabel jLabelTable;
     private JTextField jTextFieldSearch;
     private JButton jButtonClearSearch;
-
-    private JTable jTableComponents;
+    private JScrollPane jScrollPaneTable;
+    
     private DefaultTableModel componentsTableModel;
+    private JTable jTableComponents;
     private TableRowSorter<DefaultTableModel> jTableRowSorter;
     private ComponentSorting componentSorting;
     private RowFilter<DefaultTableModel, Integer> jTableRowFilter;
+    
     private boolean tabelModelListenerPaused;
-    
     private Vector<String> excludeList;
-    
-    private GraphEnvironmentController graphController;
-    
-    private boolean editingEnabled;
-    private boolean enableMultipleSelection;
-
 	private NetworkComponent currNetworkComponent;
     
+	
     /**
      * Instantiates a new network component table panel.
      * @param graphController the graph controller
@@ -88,51 +91,6 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 		this.enableMultipleSelection = enableMultipleSelection;
 		this.initialize();
 	}
-
-	/**
-	 * Initialize.
-	 */
-	private void initialize() {
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-	    gridBagConstraints1.gridx = 1;
-	    gridBagConstraints1.insets = new Insets(0, 0, 0, 5);
-	    gridBagConstraints1.gridy = 1;
-	    GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-	    gridBagConstraints11.fill = GridBagConstraints.BOTH;
-	    gridBagConstraints11.gridy = 1;
-	    gridBagConstraints11.weightx = 0.5;
-	    gridBagConstraints11.gridwidth = 1;
-	    gridBagConstraints11.insets = new Insets(0, 10, 0, 1);
-	    gridBagConstraints11.gridx = 0;
-	    GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-	    gridBagConstraints6.gridx = 0;
-	    gridBagConstraints6.anchor = GridBagConstraints.WEST;
-	    gridBagConstraints6.insets = new Insets(0, 15, 0, 5);
-	    gridBagConstraints6.gridwidth = 2;
-	    gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
-	    gridBagConstraints6.gridy = 0;
-	    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-	    gridBagConstraints.fill = GridBagConstraints.BOTH;
-	    gridBagConstraints.gridy = 2;
-	    gridBagConstraints.weightx = 1.0;
-	    gridBagConstraints.weighty = 1.0;
-	    gridBagConstraints.gridheight = 1;
-	    gridBagConstraints.gridwidth = 0;
-	    gridBagConstraints.insets = new Insets(0, 10, 0, 5);
-	    gridBagConstraints.gridx = 0;
-
-	    jLabelTable = new JLabel();
-	    jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
-	    jLabelTable.setText("Search Components");
-	    jLabelTable.setText(Language.translate(jLabelTable.getText(), Language.EN));
-
-	   this.setLayout(new GridBagLayout());
-	   this.add(jLabelTable, gridBagConstraints6);
-	   this.add(getJTextFieldSearch(), gridBagConstraints11);
-	   this.add(getScpComponentTable(), gridBagConstraints);
-	   this.add(getJButtonClearSearch(), gridBagConstraints1);
-	}
-    
     /**
      * Returns the graph environment controller.
      * @return the graph environment controller
@@ -140,18 +98,64 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     private GraphEnvironmentController getGraphController() {
     	return this.graphController;
     }
-	
-	/**
-     * This method initializes scpComponentTable
-     * @return javax.swing.JScrollPane
+    /**
+     * Return the list of {@link NetworkComponentTableService} that extend the local JTable.
+     * @return the network component table service list
      */
-    private JScrollPane getScpComponentTable() {
-		if (jScrollPaneComponentsTable == null) {
-		    jScrollPaneComponentsTable = new JScrollPane();
-		    jScrollPaneComponentsTable.setViewportView(this.getJTableComponents());
-		}
-		return jScrollPaneComponentsTable;
-    }
+    public List<NetworkComponentTableService> getNetworkComponentTableServiceList() {
+    	if (tableServiceList==null) {
+    		tableServiceList = ServiceFinder.findServices(NetworkComponentTableService.class);
+    	}
+		return tableServiceList;
+	}
+	/**
+	 * Initialize.
+	 */
+	private void initialize() {
+		
+		GridBagConstraints gbcJLabelSearch = new GridBagConstraints();
+		gbcJLabelSearch.gridx = 0;
+		gbcJLabelSearch.gridy = 0;
+		gbcJLabelSearch.anchor = GridBagConstraints.WEST;
+		gbcJLabelSearch.insets = new Insets(0, 15, 0, 5);
+		gbcJLabelSearch.gridwidth = 2;
+		gbcJLabelSearch.fill = GridBagConstraints.HORIZONTAL;
+
+		GridBagConstraints gbcJTextFieldSearch = new GridBagConstraints();
+		gbcJTextFieldSearch.fill = GridBagConstraints.BOTH;
+		gbcJTextFieldSearch.gridx = 0;
+		gbcJTextFieldSearch.gridy = 1;
+		gbcJTextFieldSearch.weightx = 0.5;
+		gbcJTextFieldSearch.gridwidth = 1;
+		gbcJTextFieldSearch.insets = new Insets(0, 10, 0, 1);
+		
+		GridBagConstraints gbcJButtonClearSearch = new GridBagConstraints();
+		gbcJButtonClearSearch.gridx = 1;
+		gbcJButtonClearSearch.gridy = 1;
+		gbcJButtonClearSearch.insets = new Insets(0, 0, 0, 5);
+
+		GridBagConstraints gbcJTableNetComps = new GridBagConstraints();
+		gbcJTableNetComps.gridx = 0;
+		gbcJTableNetComps.gridy = 2;
+		gbcJTableNetComps.fill = GridBagConstraints.BOTH;
+		gbcJTableNetComps.weightx = 1.0;
+		gbcJTableNetComps.weighty = 1.0;
+		gbcJTableNetComps.gridheight = 1;
+		gbcJTableNetComps.gridwidth = 0;
+		gbcJTableNetComps.insets = new Insets(0, 10, 0, 5);
+
+		
+		jLabelTable = new JLabel();
+		jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelTable.setText("Search Components");
+		jLabelTable.setText(Language.translate(jLabelTable.getText(), Language.EN));
+
+		this.setLayout(new GridBagLayout());
+		this.add(jLabelTable, gbcJLabelSearch);
+		this.add(this.getJTextFieldSearch(), gbcJTextFieldSearch);
+		this.add(this.getJButtonClearSearch(), gbcJButtonClearSearch);
+		this.add(this.getJScrollPaneTable(), gbcJTableNetComps);
+	}
     
     /**
      * This method initializes jTextFieldSearch Search box - Used for filtering the components
@@ -190,7 +194,19 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 		}
 		return jButtonClearSearch;
     }
+
     
+	/**
+     * This method initializes scpComponentTable
+     * @return javax.swing.JScrollPane
+     */
+    private JScrollPane getJScrollPaneTable() {
+		if (jScrollPaneTable == null) {
+		    jScrollPaneTable = new JScrollPane();
+		    jScrollPaneTable.setViewportView(this.getJTableComponents());
+		}
+		return jScrollPaneTable;
+    }
     /**
      * This method initializes network components table tblComponents and the TabelModel
      * @return javax.swing.JTable
@@ -210,19 +226,41 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 			// --- Define the column widths -------------------------
 			TableColumnModel colModel = jTableComponents.getColumnModel();
 			colModel.getColumn(0).setPreferredWidth(40);
-			colModel.getColumn(0).setCellRenderer(new NetworkComponentTableCellRenderEditor());
-			colModel.getColumn(0).setCellEditor(new NetworkComponentTableCellRenderEditor());			
+			colModel.getColumn(0).setCellRenderer(new NetworkComponentTablePanelEditID());
+			colModel.getColumn(0).setCellEditor(new NetworkComponentTablePanelEditID());			
 			
 			colModel.getColumn(1).setPreferredWidth(40);
-			colModel.getColumn(1).setCellRenderer(new NetworkComponentTableCellRenderEditor());
+			colModel.getColumn(1).setCellRenderer(new NetworkComponentTablePanelEditID());
+			
+    	    // --- Check for NetworkComponentTableService -----------
+    	    for (int i = 0; i < this.getNetworkComponentTableServiceList().size(); i++) {
+    	    	
+    	    	NetworkComponentTableService tableService = this.getNetworkComponentTableServiceList().get(i);
+    	    	
+    	    	Integer tableServiceWidth    = tableService.getWidth();
+    	    	Integer tableServiceMinWidth = tableService.getMinWidth();
+    	    	Integer tableServiceMaxWidth = tableService.getMaxWidth();
+    	    	TableCellRenderer tableServiceRenderer = tableService.getTableCellRenderer();
+    	    	//TableCellEditor   tableServiceEditor   = tableService.getTableCellEditor();
+
+    	    	int colIndex = colModel.getColumnCount()-1;
+    	    	if (tableServiceWidth!=null) 	colModel.getColumn(colIndex).setWidth(tableServiceWidth);
+    	    	if (tableServiceMinWidth!=null) colModel.getColumn(colIndex).setMinWidth(tableServiceMinWidth);
+    	    	if (tableServiceMaxWidth!=null) colModel.getColumn(colIndex).setMaxWidth(tableServiceMaxWidth);
+    	    	if (tableServiceRenderer!=null) colModel.getColumn(colIndex).setCellRenderer(tableServiceRenderer);
+    	    	//if (tableServiceEditor!=null) 	colModel.getColumn(colIndex).setCellEditor(tableServiceEditor);
+			}
+
 
 			// --- No third column if editingEnabled==false ---------
-			if (colModel.getColumnCount()>2) {
-				colModel.getColumn(2).setWidth(50);
-				colModel.getColumn(2).setMinWidth(50);
-				colModel.getColumn(2).setMaxWidth(60);
-				colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
-				colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(this.getGraphController(), jTableComponents));			
+			if (this.editingEnabled==true) {
+				int editColIndex = colModel.getColumnCount()-1;
+				int editColWidth = 38;
+				colModel.getColumn(editColIndex).setWidth(editColWidth);
+				colModel.getColumn(editColIndex).setMinWidth(editColWidth);
+				colModel.getColumn(editColIndex).setMaxWidth(editColWidth);
+				colModel.getColumn(editColIndex).setCellRenderer(new NetworkComponentTablePanelEditButton(this.getGraphController()));
+				colModel.getColumn(editColIndex).setCellEditor(new NetworkComponentTablePanelEditButton(this.getGraphController()));			
 			}
 
 			// --- Set the table sorter -----------------------
@@ -251,6 +289,14 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     		
     	    Vector<String> titles = new Vector<String>();
     	    titles.add("ID");
+
+    	    // --- Check for NetworkComponentTableService -----------
+    	    for (int i = 0; i < this.getNetworkComponentTableServiceList().size(); i++) {
+    	    	NetworkComponentTableService tableService = this.getNetworkComponentTableServiceList().get(i);
+    	    	titles.add(tableService.getColumnHeader());
+			}
+    	    
+    	    // --- Add type and edit column -------------------------
     	    titles.add(Language.translate("Typ"));
     	    if (this.editingEnabled==true) {
     	    	titles.add(Language.translate("Edit", Language.EN));
@@ -261,21 +307,22 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     			private static final long serialVersionUID = 1636744550817904118L;
     			@Override
     			public boolean isCellEditable(int row, int col) {
-    			    if (col==1) {
-    			    	return false;
-    			    } else {
-    			    	if (getGraphController().getProject()!=null) {
-    			    		// --- During Simulation Setup ----------
-    			    		return NetworkComponentTablePanel.this.editingEnabled;	
+    			    if (NetworkComponentTablePanel.this.editingEnabled==true) {
+    			    	// --- Decide when cell editing is allowed --
+    			    	int colCount = NetworkComponentTablePanel.this.getDefaultTableModel4Components().getColumnCount();
+    			    	if (NetworkComponentTablePanel.this.getGraphController().getProject()!=null) {
+    			    		// --- During Simulation Setup: ---------
+    			    		// --- => Last and first allowed --------
+    			    		if (col==0 || col==colCount-1) return true;
+    			    		
     			    	} else {
-    			    		// --- During simulation runtime --------
-    			    		if (col==0) {
-    			    			return false;
-    			    		} else {
-    			    			return NetworkComponentTablePanel.this.editingEnabled;
-    			    		}
+    			    		// --- During agent execution: ----------
+    			    		// --- => Last allowed only -------------
+    			    		if (col==colCount-1) return true;
+    			    		
     			    	}
     			    }
+    			    return false;
     			}
     	    };
     		
@@ -357,10 +404,12 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     					if (searchPhrase==null || searchPhrase.length()==0) return true;
     					
     					// --- Check for the search phrase --------------------
-    					boolean matchNetComID = entry.getStringValue(0).matches("(?i).*(" + searchPhrase + ").*");
-    					boolean matchNetComType = entry.getStringValue(1).matches("(?i).*(" + searchPhrase + ").*");
-    					return matchNetComID==true || matchNetComType==true;
-    					
+    					for (int i = 0; i < entry.getValueCount()-1; i++) {
+    						String value = entry.getStringValue(i);
+    						boolean matchsSearchPhrase = value.matches("(?i).*(" + searchPhrase + ").*");
+    						if (matchsSearchPhrase==true) return true;
+						}
+    					return false;
     				}
     				
     			}
@@ -397,7 +446,7 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 			// --- Clear ------------------------
 			this.clearTableModel();
 			// --- Fill -------------------------
-			addNetworkComponents(new ArrayList<>(this.getGraphController().getNetworkModel().getNetworkComponents().values()));
+			this.addNetworkComponents(new ArrayList<>(this.getGraphController().getNetworkModel().getNetworkComponents().values()));
 		}
     }
     /**
@@ -426,7 +475,13 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 		
     	Vector<String> compData = new Vector<String>();
 		compData.add(networkComponent.getId());
-		compData.add(networkComponent.getType());
+		
+	    // --- Check for NetworkComponentTableService -----------
+	    for (int i = 0; i < this.getNetworkComponentTableServiceList().size(); i++) {
+	    	compData.add(this.getNetworkComponentTableServiceList().get(i).getCellValue(this.graphController.getNetworkModel(), networkComponent)); 
+		}
+
+	    compData.add(networkComponent.getType());
 		if (this.editingEnabled) {
 			compData.add("Edit"); // For the edit properties button
 		}
@@ -773,7 +828,6 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 			    }
 			}
     	}
-		// System.out.println(row+","+column);
     }
 	
 }

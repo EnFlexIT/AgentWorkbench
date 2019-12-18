@@ -27,7 +27,7 @@
  * **************************************************************
  */
 
-package org.awb.env.networkModel.settings.ui;
+package org.awb.env.networkModel.controller.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -36,28 +36,34 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
+import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.settings.ui.ComponentTypeDialog;
 
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * Is used in the {@link ComponentTypeDialog}.
  *
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TableCellEditor4TableButton extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class NetworkComponentTablePanelEditButton extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
 
 	private static final long serialVersionUID = 3607367692654837941L;
 	
 	private JTable componentsTable;
 	private GraphEnvironmentController graphController;
 	
-	private JButton button;
+	private JButton jButtonEdit;
     private int clickCountToStart = 1;
     
 
@@ -67,39 +73,39 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
      * @param graphController the current GraphEnvironmentController
      * @param componentsTable the components table
      */
-    public TableCellEditor4TableButton(GraphEnvironmentController graphController, JTable componentsTable) {
+    public NetworkComponentTablePanelEditButton(GraphEnvironmentController graphController) {
     	this.graphController = graphController;
-    	this.componentsTable = componentsTable;
     }
 
+    /* (non-Javadoc)
+	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+	 */
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		this.componentsTable = table;
+		TableCellColorHelper.setTableCellRendererColors(this.getJButtonEdit(), row, isSelected);
+		return this.getJButtonEdit();
+	}
 
     /* (non-Javadoc)
      * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
      */
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        this.getJButton().setText(value.toString());
-        return getJButton();
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.CellEditor#getCellEditorValue()
-     */
-    public Object getCellEditorValue() {
-        return this.getJButton().getText();
+    	this.componentsTable = table;
+        return getJButtonEdit();
     }
 
     /**
      * Returns the JBbutton.
      * @return the JButton
      */
-    private JButton getJButton() {
-    	if (button==null) {
-    		button = new JButton();
-    		//button.setUI(new BasicButtonUI());
-    		//button.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-    		button.addActionListener(this);
+    private JButton getJButtonEdit() {
+    	if (jButtonEdit==null) {
+    		jButtonEdit = new JButton();
+    		jButtonEdit.setIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "EditNetComp.png")));
+    		jButtonEdit.setToolTipText("Edit data model ...");
+    		jButtonEdit.addActionListener(this);
     	}
-    	return button;
+    	return jButtonEdit;
     }
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -124,12 +130,18 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
      * @see javax.swing.AbstractCellEditor#isCellEditable(java.util.EventObject)
      */
     public boolean isCellEditable(EventObject anEvent) {
-        if(anEvent instanceof MouseEvent) { 
+        if (anEvent instanceof MouseEvent) { 
             return ((MouseEvent)anEvent).getClickCount() >= clickCountToStart;
         }
         return true;
     }
-
+    /* (non-Javadoc)
+     * @see javax.swing.CellEditor#getCellEditorValue()
+     */
+    public Object getCellEditorValue() {
+        return this.getJButtonEdit().getText();
+    }
+    
     /* (non-Javadoc)
      * @see javax.swing.AbstractCellEditor#shouldSelectCell(java.util.EventObject)
      */

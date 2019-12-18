@@ -771,9 +771,13 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		String parentName = projectWindowTab.getParentName();
 
-		// --- add to the TreeModel -------------
+		// --- Add to the TreeModel -------------
 		if (parentName != null) {
+			// --- Parent available? ------------ 
 			pareNode = this.getTreeNode(parentName);
+			if (pareNode==null) return null;
+			
+			// --- Add to the parent ------------
 			ProjectWindowTab pareNodePWT = (ProjectWindowTab) pareNode.getUserObject();
 			tabbedPaneParent = pareNodePWT.getCompForChildComp();
 			// --- add ChangeListener -----------
@@ -1149,10 +1153,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private DefaultMutableTreeNode addProjectTabInternalCheckVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentController> envControllerClass) {
 
 		DefaultMutableTreeNode newNode = null;
-		if (pwt.getDisplayType() == ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION) {
-			// --- Show Visualisation-Tab only in case of ----------
-			// --- an available defined Visualisation-Panel ---------
-			if (envControllerClass != null) {
+		if (pwt.getDisplayType()==ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION) {
+			// --- Show Visualization-Tab only in case of ----------
+			// --- an available defined Visualization-Panel ---------
+			if (envControllerClass!=null) {
 				newNode = this.addProjectTabInternal(pwt);
 			}
 		} else {

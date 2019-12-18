@@ -43,14 +43,14 @@ import javax.swing.table.TableCellRenderer;
 import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
- * The Class BasicGraphGuiTableCellRenderEditor is used in the table of 
- * NetworkComponent's in order to display or edit the name of single NetworkComponent.
+ * The Class NetworkComponentTablePanelEditID is used in the table of 
+ * NetworkComponent's in order to display or edit the ID of a single NetworkComponent.
  * 
- * @see BasicGraphGuiRootJSplitPane
+ * @see NetworkComponentTablePanel
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class NetworkComponentTableCellRenderEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
+public class NetworkComponentTablePanelEditID extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
 
 	private static final long serialVersionUID = 1154095803299095301L;
 
