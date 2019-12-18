@@ -404,7 +404,10 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     					if (searchPhrase==null || searchPhrase.length()==0) return true;
     					
     					// --- Check for the search phrase --------------------
-    					for (int i = 0; i < entry.getValueCount()-1; i++) {
+    					int searchTo = entry.getValueCount();
+    					if (NetworkComponentTablePanel.this.editingEnabled==true) searchTo--;
+    					
+    					for (int i = 0; i < searchTo; i++) {
     						String value = entry.getStringValue(i);
     						boolean matchsSearchPhrase = value.matches("(?i).*(" + searchPhrase + ").*");
     						if (matchsSearchPhrase==true) return true;
