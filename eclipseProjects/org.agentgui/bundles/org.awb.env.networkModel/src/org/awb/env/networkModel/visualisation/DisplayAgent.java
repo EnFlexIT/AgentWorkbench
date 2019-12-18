@@ -239,7 +239,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 					
 				} else {
 					// --- Set original NetworkModel ------------------------------------ 
-					SwingUtilities.invokeLater(new Runnable() {
+					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
 							getGraphEnvironmentController().setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
