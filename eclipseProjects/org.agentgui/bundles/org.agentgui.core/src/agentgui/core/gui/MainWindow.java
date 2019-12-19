@@ -533,7 +533,7 @@ public class MainWindow extends JFrame {
 	 *
 	 * @param show the new console visible
 	 */
-	private void setConsoleVisible(boolean show) {
+	public void setConsoleVisible(boolean show) {
 		this.getJTabbedPane4Console().setVisible(show);
 		if (show==true) {
 			this.getJSplit4ProjectDesktop().setDividerSize(10);
