@@ -1260,16 +1260,6 @@ public class MainWindow extends JFrame {
 	public JToolBar getJToolBarApplication() {
 		if (jToolBarApplication == null) {
 
-			// --- PopUp-Menu zum Button 'JadeTools' definieren (s. u.) ---
-			jPopupMenuJadeTools = new JPopupMenu("SubBar");
-			jPopupMenuJadeTools.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jPopupMenuJadeTools.add(new CWMenuItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
-			jPopupMenuJadeTools.add(new CWMenuItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
-			jPopupMenuJadeTools.add(new CWMenuItem("PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif"));
-			jPopupMenuJadeTools.add(new CWMenuItem("PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif"));
-			jPopupMenuJadeTools.add(new CWMenuItem("PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif"));
-			jPopupMenuJadeTools.add(new CWMenuItem("PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif"));
-
 			// --- Symbolleisten-Definition -------------------------------
 			jToolBarApplication = new JToolBar("MainBar");
 			jToolBarApplication.setFloatable(false);
@@ -1294,7 +1284,6 @@ public class MainWindow extends JFrame {
 				public void mouseClicked(MouseEvent e) {
 					showJPopupMenuJadeTools();
 				}
-
 				@Override
 				public void mousePressed(MouseEvent e) {
 					showJPopupMenuJadeTools();
@@ -1329,10 +1318,27 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * Shows the popup menu of the JADE tools.
+	 * Returns the JPopupMenu with the jade tools.
+	 * @return JPopupMenu jade tools
+	 */
+	private JPopupMenu getJPopupMenuJadeTools() {
+		if (jPopupMenuJadeTools==null) {
+			jPopupMenuJadeTools = new JPopupMenu("JADE-Tools");
+			jPopupMenuJadeTools.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif"));
+			jPopupMenuJadeTools.add(new CWMenuItem("PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif"));
+		}
+		return jPopupMenuJadeTools;
+	}
+	/**
+	 * Shows the JPopupMenu of the JADE tools.
 	 */
 	private void showJPopupMenuJadeTools() {
-		this.jPopupMenuJadeTools.show(jButtonJadeTools, 0, jButtonJadeTools.getHeight());
+		this.getJPopupMenuJadeTools().show(jButtonJadeTools, 0, jButtonJadeTools.getHeight());
 	}
 
 	/**
