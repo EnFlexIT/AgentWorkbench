@@ -128,6 +128,19 @@ public interface AwbProjectEditorWindow {
 	 */
 	public void setViewForDeveloperOrEndUser();
 
+	
+	/**
+	 * Sets the project tree visible or not.
+	 * @param isTreeVisible the new project tree visible
+	 */
+	public void setProjectTreeVisible(boolean isTreeVisible);
+	
+	/**
+	 * Sets the projects tab header visible or not.
+	 * @param isProjectTabHeaderVisible the new project tab header visible
+	 */
+	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible);
+	
 	/**
 	 * Returns the specified tab for sub panels.
 	 *
@@ -141,6 +154,7 @@ public interface AwbProjectEditorWindow {
 	 * changed, if the view was changed from developer to end user view.
 	 */
 	public void validateStartTab();
+
 
 
 }

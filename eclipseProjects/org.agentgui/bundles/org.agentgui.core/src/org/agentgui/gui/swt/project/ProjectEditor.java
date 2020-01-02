@@ -226,6 +226,15 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 	}
 
 	@Override
+	public void setProjectTreeVisible(boolean isTreeVisible) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void setViewForDeveloperOrEndUser() {
 		// TODO Auto-generated method stub
 	}
@@ -260,5 +269,5 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 	public void removeProjectTab(ProjectWindowTab projectWindowTab) {
 		// TODO Auto-generated method stub
 	}
-	
+
 }

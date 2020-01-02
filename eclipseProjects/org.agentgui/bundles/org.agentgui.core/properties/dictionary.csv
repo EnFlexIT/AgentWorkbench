@@ -558,6 +558,7 @@ de;Projekt-Ontologie;Project Ontology;;;
 de;Projekt-PlugIns;Project - Plugins;;;
 de;Projekt-Ressourcen;Project Resources
 de;Projekt;Project;;;
+de;Projektbaum ein- oder ausblenden;Show / Hide Project Tree;;;
 de;Projekte;Projects
 de;Projekttitel;Project title
 de;Quell-Sprache;Source language;;;
@@ -661,6 +662,7 @@ de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
 de;Summe;Sum;;;
 de;Sämtliche visuellen Darstellungen deaktivieren;Disable all visual representations;;;
+de;Tab-Header ein- oder ausblenden;Show / Hide Tab-Header;;;
 de;Tabelle;Table;;;
 de;Tage;Days;;;
 de;Tar.gz-Datei;Tar.gz file;;;

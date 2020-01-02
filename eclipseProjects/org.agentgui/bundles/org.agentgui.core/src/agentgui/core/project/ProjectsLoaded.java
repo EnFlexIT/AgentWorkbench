@@ -56,6 +56,7 @@ import agentgui.core.application.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
+import agentgui.core.gui.MainWindow;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
@@ -385,20 +386,21 @@ public class ProjectsLoaded {
 	 */
 	private void setProjectView4DevOrUser() {
 		
-		JRadioButtonMenuItem viewDeveloper = Application.getMainWindow().viewDeveloper; 
-		JRadioButtonMenuItem viewEndUser = Application.getMainWindow().viewEndUser; 
+		MainWindow mainWindow = Application.getMainWindow();
 		
-		if (this.count()==0) {
-			// --- Disable both MenuItems -----------------
-			viewDeveloper.setEnabled(false);
-			viewEndUser.setEnabled(false);
-		} else {
-			// --- Enable both MenuItems ------------------
-			viewDeveloper.setEnabled(true);
-			viewEndUser.setEnabled(true);
-			
-			// --- select the right item in relation ------  
-			// --- to the project 					 ------
+		JRadioButtonMenuItem viewDeveloper = mainWindow.getJRadioButtonMenuItemViewDeveloper(); 
+		JRadioButtonMenuItem viewEndUser = mainWindow.getJRadioButtonMenuItemViewEndUser(); 
+		JMenuItem viewProjectTree = mainWindow.getJMenuItemViewTree();
+		JMenuItem viewProjectTabHeader = mainWindow.getJMenuItemViewTabHeader();
+		
+		boolean isEnabled = this.count()>0;
+		viewDeveloper.setEnabled(isEnabled);
+		viewEndUser.setEnabled(isEnabled);
+		viewProjectTree.setEnabled(isEnabled);
+		viewProjectTabHeader.setEnabled(isEnabled); 
+		
+		if (isEnabled==true) {
+			// --- Select the right item in relation  to the project ----------
 			String viewConfigured = Application.getProjectFocused().getProjectView();
 			if (viewConfigured.equalsIgnoreCase(Project.VIEW_User)) {
 				viewDeveloper.setSelected(false);

@@ -46,6 +46,7 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 	private Font fontSelected = null;
 	private Font fontNotSelected = null;
 	 
+	private boolean tabHeaderVisible = true;
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#installDefaults()
@@ -78,4 +79,57 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 		}
 	}
 	
+	
+	
+	/**
+	 * Sets the tab header visible (or not).
+	 * @param tabHeaderVisible the indicator to set tab header visible
+	 */
+	public void setTabHeaderVisible(boolean tabHeaderVisible) {
+		this.tabHeaderVisible = tabHeaderVisible;
+	}
+	/**
+	 * Checks if tab headers are visible.
+	 * @return true, if tab headers are visible
+	 */
+	public boolean isTabHeaderVisible() {
+		return tabHeaderVisible;
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabAreaHeight(int, int, int)
+	 */
+	@Override
+	protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
+		if (this.isTabHeaderVisible()==true) {
+			return super.calculateTabAreaHeight(tabPlacement, horizRunCount, maxTabHeight);
+		}
+		return 0;
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabAreaWidth(int, int, int)
+	 */
+	@Override
+	protected int calculateTabAreaWidth(int tabPlacement, int vertRunCount, int maxTabWidth) {
+		if (this.isTabHeaderVisible()==true) {
+			return super.calculateTabAreaWidth(tabPlacement, vertRunCount, maxTabWidth);
+		}
+		return 0;
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabHeight(int, int, int)
+	 */
+	@Override
+	protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+		if (this.isTabHeaderVisible()==true) {
+			return super.calculateTabHeight(tabPlacement, tabIndex, fontHeight);
+		}
+		return 0;
+	}
+	@Override
+	protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
+		if (this.isTabHeaderVisible()==true) {
+			return super.calculateTabWidth(tabPlacement, tabIndex, metrics);
+		}
+		return 0;
+	}
 }

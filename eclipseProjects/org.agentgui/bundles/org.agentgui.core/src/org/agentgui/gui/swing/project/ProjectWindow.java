@@ -28,6 +28,7 @@
  */
 package org.agentgui.gui.swing.project;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -51,6 +52,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -94,6 +96,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 	private Project currProject;
 
+	private JPanel jPanelContent;
 	private JSplitPane jSplitPaneProjectView;
 	private JScrollPane jScrollPane;
 
@@ -150,7 +153,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private void initialize() {
 
 		this.setSize(850, 500);
-		this.setContentPane(this.getJSplitPaneProjectView());
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.setClosable(true);
 		this.setMaximizable(true);
@@ -161,6 +163,8 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		
 		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
 		this.setBorder(BorderFactory.createEmptyBorder());
+
+		this.setContentPane(this.getJPanelContent());
 	}
 
 	/* (non-Javadoc)
@@ -228,6 +232,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		this.projectTreeExpand2Level(3, true);
 
+		this.setProjectTreeVisible(this.currProject.isProjectTreeVisible());
+		this.setProjectTabHeaderVisible(this.currProject.isProjectTabHeaderVisible());
+		
 		this.setVisible(true);
 		this.moveToFront();
 
@@ -278,10 +285,32 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		return userFeedback;
 	}
 
-	/**
-	 * This method initializes ProjectViewSplit.
-	 * @return javax.swing.JSplitPane
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#setProjectTreeVisible(boolean)
 	 */
+	@Override
+	public void setProjectTreeVisible(boolean isTreeVisible) {
+		this.getJPanelContent().removeAll();
+		if (isTreeVisible==true) {
+			this.getJPanelContent().add(this.getJSplitPaneProjectView(), BorderLayout.CENTER);
+			this.getJSplitPaneProjectView().setLeftComponent(this.getJScrollPane());
+			this.getJSplitPaneProjectView().setRightComponent(this.getProjectViewRightTabs());
+		} else {
+			this.getJPanelContent().add(this.getProjectViewRightTabs(), BorderLayout.CENTER);
+		}
+		this.getJPanelContent().validate();
+		this.getJPanelContent().repaint();
+	}
+	
+	private JPanel getJPanelContent() {
+		if (jPanelContent==null) {
+			jPanelContent = new JPanel();
+			jPanelContent.setLayout(new BorderLayout());
+			jPanelContent.setBorder(BorderFactory.createEmptyBorder());
+			jPanelContent.add(this.getJSplitPaneProjectView(), BorderLayout.CENTER);
+		}
+		return jPanelContent;
+	}
 	private JSplitPane getJSplitPaneProjectView() {
 		if (jSplitPaneProjectView == null) {
 			jSplitPaneProjectView = new JSplitPane();
@@ -293,11 +322,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		}
 		return jSplitPaneProjectView;
 	}
-
-	/**
-	 * This method initializes jScrollPane.
-	 * @return javax.swing.JScrollPane
-	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
@@ -314,14 +338,12 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		}
 		return rootNode;
 	}
-
 	private DefaultTreeModel getTreeModel() {
 		if (projectTreeModel == null) {
 			projectTreeModel = new DefaultTreeModel(this.getRootNode());
 		}
 		return projectTreeModel;
 	}
-
 	public JTree getJTreeProject() {
 		if (jTreeProject == null) {
 			jTreeProject = new JTree(this.getTreeModel());
@@ -460,9 +482,42 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		}
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#setProjectTabHeaderVisible(boolean)
+	 */
+	@Override
+	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
+		this.setTabHeaderVisible(this.getProjectViewRightTabs(), isProjectTabHeaderVisible);
+		this.getProjectViewRightTabs().validate();
+		this.getProjectViewRightTabs().repaint();
+		
+	}
+	/**
+	 * Sets the specified tab header visible or not.
+	 *
+	 * @param jTabbedPane the JTabbedPane to adjust
+	 * @param isProjectTabHeaderVisible the is project tab header visible
+	 */
+	private void setTabHeaderVisible(JTabbedPane jTabbedPane, boolean isTabHeaderVisible) {
+		
+		if (jTabbedPane.getUI() instanceof AwbBasicTabbedPaneUI) {
+			AwbBasicTabbedPaneUI tabUI = (AwbBasicTabbedPaneUI) jTabbedPane.getUI();
+			tabUI.setTabHeaderVisible(isTabHeaderVisible);
+		}
+
+		for (int i=0; i<jTabbedPane.getTabCount(); i++) {
+			Component subComp = jTabbedPane.getComponentAt(i);
+			if (subComp instanceof TabForSubPanels) {
+				TabForSubPanels tabForSubPanels = (TabForSubPanels) subComp;
+				this.setTabHeaderVisible(tabForSubPanels.getJTabbedPane(), isTabHeaderVisible);
+			}
+		}
+	}
+	
+	
 	/**
 	 * This method initializes ProjectViewRight.
-	 *
 	 * @return javax.swing.JTabbedPane
 	 */
 	private JTabbedPane getProjectViewRightTabs() {
@@ -720,7 +775,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.agentgui.gui.AwbProjectEditorWindow#addProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab)
 	 */
 	@Override
@@ -730,7 +784,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.agentgui.gui.AwbProjectEditorWindow#addProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab, int)
 	 */
 	@Override
@@ -1032,7 +1085,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 	/**
 	 * Returns the start tab information.
-	 * 
 	 * @return the start tab information
 	 */
 	public String getStartTabInformation() {

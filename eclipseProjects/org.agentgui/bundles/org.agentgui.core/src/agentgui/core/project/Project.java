@@ -182,7 +182,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlElement(name="projectDescription")		private String projectDescription;
 	@XmlElement(name="projectStartTab")			private String projectStartTab;	
 	@XmlElement(name="projectView")				private String projectView;			// --- View for developer or end-user ---
-
+	@XmlElement(name="projectTreeVisible")		private boolean projectTreeVisible=true;
+	@XmlElement(name="projectTabHeaderVisible")	private boolean projectTabHeaderVisible=true;
+	
 	// --- Variables for the update and version handling ------------
 	@XmlTransient public static final String DEFAULT_VERSION_TAG = "Complete Project"; 
 	@XmlElement(name="version")					private String version;
@@ -1688,13 +1690,12 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 			// --- Change view ----------------------------
 			this.projectView = newProjectView;
-			setUnsaved(true);
-			setChanged();
-			notifyObservers(CHANGED_ProjectView);
+			this.setUnsaved(true);
+			this.setChanged();
+			this.notifyObservers(CHANGED_ProjectView);
 			pew.validateStartTab();
 		}
 	}
-
 	/**
 	 * @return the projectView
 	 */
@@ -1706,6 +1707,44 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		}
 	}
 
+	/**
+	 * Toggles the view of the project tree.
+	 */
+	public void toggleViewProjectTree() {
+		this.setProjectTreeVisible(!this.isProjectTreeVisible());
+	}
+	@XmlTransient
+	public void setProjectTreeVisible(boolean isProjectTreeVisible) {
+		this.projectTreeVisible = isProjectTreeVisible;
+		this.setUnsaved(true);
+		this.setChanged();
+		if (Application.isOperatingHeadless()==false) {
+			this.getProjectEditorWindow().setProjectTreeVisible(isProjectTreeVisible);
+		}
+	}
+	public boolean isProjectTreeVisible() {
+		return projectTreeVisible;
+	}
+	
+	/**
+	 * Toggles the view of the tab header of the {@link ProjectWindow}.
+	 */
+	public void toggleViewProjectTabHeader() {
+		this.setProjectTabHeaderVisible(!this.isProjectTabHeaderVisible());		
+	}
+	@XmlTransient
+	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
+		this.projectTabHeaderVisible = isProjectTabHeaderVisible;
+		this.setUnsaved(true);
+		this.setChanged();
+		if (Application.isOperatingHeadless()==false) {
+			this.getProjectEditorWindow().setProjectTabHeaderVisible(isProjectTabHeaderVisible);
+		}
+	}
+	public boolean isProjectTabHeaderVisible() {
+		return projectTabHeaderVisible;
+	}
+	
 	/**
 	 * Sets the new environment model name.
 	 * @param newEnvironmentModelName the new environment model name

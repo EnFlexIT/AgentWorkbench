@@ -128,10 +128,15 @@ public class MainWindow extends JFrame {
 	private JMenuBar jMenuBarBase;
 	private JMenuBar jMenuBarMain;
 	private JMenu jMenuMainProject;
+	
 	private JMenu jMenuMainView;
 	private ButtonGroup viewGroup;
-	public JRadioButtonMenuItem viewDeveloper;
-	public JRadioButtonMenuItem viewEndUser;
+	private JRadioButtonMenuItem viewDeveloper;
+	private JRadioButtonMenuItem viewEndUser;
+	private JMenuItem jMenuItemViewTree;
+	private JMenuItem jMenuItemViewTabHeader;
+	private ActionListener viewActionListener;
+	
 	private JMenu jMenuMainJade;
 	private JMenu jMenuMainSimulation;
 	private JMenuItem jMenuItemSimStart;
@@ -740,36 +745,16 @@ public class MainWindow extends JFrame {
 			// --------------------------------------------
 			// --- View for Developer or End user ---------
 			// --------------------------------------------
-			ActionListener viewListener = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					JRadioButtonMenuItem actuator = (JRadioButtonMenuItem) evt.getSource();
-					if (actuator==viewDeveloper) {
-						if (Application.getProjectFocused().getProjectView().equals(Project.VIEW_Developer) == false) {
-							Application.getProjectFocused().setProjectView(Project.VIEW_Developer);
-						}
-
-					} else if (actuator==viewEndUser) {
-						if (Application.getProjectFocused().getProjectView().equals(Project.VIEW_User) == false) {
-							Application.getProjectFocused().setProjectView(Project.VIEW_User);
-						}
-
-					}
-				}
-			};
-
-			viewDeveloper = new JRadioButtonMenuItem(Language.translate("Entwickler-Ansicht"));
-			viewDeveloper.setSelected(true);
-			viewDeveloper.addActionListener(viewListener);
-			jMenuMainView.add(viewDeveloper);
-
-			viewEndUser = new JRadioButtonMenuItem(Language.translate("Endanwender-Ansicht"));
-			viewEndUser.addActionListener(viewListener);
-			jMenuMainView.add(viewEndUser);
+			jMenuMainView.add(this.getJRadioButtonMenuItemViewDeveloper());
+			jMenuMainView.add(this.getJRadioButtonMenuItemViewEndUser());
 
 			viewGroup = new ButtonGroup();
-			viewGroup.add(viewDeveloper);
-			viewGroup.add(viewEndUser);
+			viewGroup.add(this.getJRadioButtonMenuItemViewDeveloper());
+			viewGroup.add(this.getJRadioButtonMenuItemViewEndUser());
+			
+			jMenuMainView.addSeparator();
+			jMenuMainView.add(this.getJMenuItemViewTree());
+			jMenuMainView.add(this.getJMenuItemViewTabHeader());
 			// --------------------------------------------
 
 			jMenuMainView.addSeparator();
@@ -779,6 +764,63 @@ public class MainWindow extends JFrame {
 		return jMenuMainView;
 	}
 
+	private ActionListener getViewActionListener() {
+		if (viewActionListener==null) {
+			viewActionListener = new ActionListener() {
+				/* (non-Javadoc)
+				 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+				 */
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					if (ae.getSource()==MainWindow.this.getJRadioButtonMenuItemViewDeveloper()) {
+						Application.getProjectFocused().setProjectView(Project.VIEW_Developer);
+					} else if (ae.getSource()==MainWindow.this.getJRadioButtonMenuItemViewEndUser()) {
+						Application.getProjectFocused().setProjectView(Project.VIEW_User);
+
+					} else if (ae.getSource()==MainWindow.this.getJMenuItemViewTree()) {
+						Application.getProjectFocused().toggleViewProjectTree();
+					} else if (ae.getSource()==MainWindow.this.getJMenuItemViewTabHeader()) {
+						Application.getProjectFocused().toggleViewProjectTabHeader();
+					}
+				}
+			};
+		}
+		return viewActionListener;
+	}
+	
+	public JRadioButtonMenuItem getJRadioButtonMenuItemViewDeveloper() {
+		if (viewDeveloper==null) {
+			viewDeveloper = new JRadioButtonMenuItem(Language.translate("Entwickler-Ansicht"));
+			viewDeveloper.setSelected(true);
+			viewDeveloper.addActionListener(this.getViewActionListener());
+		}
+		return viewDeveloper;
+	}
+	public JRadioButtonMenuItem getJRadioButtonMenuItemViewEndUser() {
+		if (viewEndUser==null) {
+			viewEndUser = new JRadioButtonMenuItem(Language.translate("Endanwender-Ansicht"));
+			viewEndUser.addActionListener(this.getViewActionListener());
+		}
+		return viewEndUser;
+	}
+	
+	public JMenuItem getJMenuItemViewTree() {
+		if (jMenuItemViewTree==null) {
+			jMenuItemViewTree = new JMenuItem(Language.translate("Projektbaum ein- oder ausblenden"));
+			jMenuItemViewTree.setIcon(GlobalInfo.getInternalImageIcon("ProjectTree.png"));
+			jMenuItemViewTree.addActionListener(this.getViewActionListener());
+		}
+		return jMenuItemViewTree;
+	}
+	public JMenuItem getJMenuItemViewTabHeader() {
+		if (jMenuItemViewTabHeader==null) {
+			jMenuItemViewTabHeader = new JMenuItem(Language.translate("Tab-Header ein- oder ausblenden"));
+			jMenuItemViewTabHeader.setIcon(GlobalInfo.getInternalImageIcon("ProjectTabHeader.png"));
+			jMenuItemViewTabHeader.addActionListener(this.getViewActionListener());
+		}
+		return jMenuItemViewTabHeader;
+	}
+	
 	// ------------------------------------------------------------
 	// --- Menu "JADE" --------------------------------------------
 	// ------------------------------------------------------------
