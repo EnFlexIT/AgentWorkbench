@@ -151,6 +151,7 @@ public class MainWindow extends JFrame {
 	private JMenuItem jMenuCloseButton;
 
 	private JToolBar jToolBarApplication;
+	private JButton jButtonProjectTree;
 	private SetupSelectorToolbar setupSelectorToolbar;
 	private JButton jButtonJadeTools;
 	private JPopupMenu jPopupMenuJadeTools;
@@ -1313,6 +1314,7 @@ public class MainWindow extends JFrame {
 			jToolBarApplication.addSeparator();
 
 			jToolBarApplication.add(new JToolBarButton("ViewConsole", Language.translate("Konsole ein- oder ausblenden"), null, "MBConsole.png"));
+			jToolBarApplication.add(this.getJButtonProjectTree());
 			jToolBarApplication.addSeparator();
 
 			jToolBarApplication.add(new JToolBarButton("JadeStart", Language.translate("JADE starten"), null, "MBJadeOn.png"));
@@ -1359,6 +1361,33 @@ public class MainWindow extends JFrame {
 		return jToolBarApplication;
 	}
 
+	private JButton getJButtonProjectTree() {
+		if (jButtonProjectTree==null) {
+			jButtonProjectTree = new JButton(GlobalInfo.getInternalImageIcon("ProjectTree.png"));
+			jButtonProjectTree.setToolTipText(Language.translate("Projektbaum ein- oder ausblenden"));
+			jButtonProjectTree.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					if (Application.getProjectFocused()!=null) {
+						Application.getProjectFocused().toggleViewProjectTree();
+					}
+				}
+			});
+		}
+		return jButtonProjectTree;
+	}
+	/**
+	 * Configures the jButtonProjectTree with respect to the current project.
+	 * @param project the project
+	 */
+	public void configureJToggleButtonProjectTree(Project project) {
+		if (project==null) {
+			this.getJButtonProjectTree().setEnabled(false);
+		} else {
+			this.getJButtonProjectTree().setEnabled(true);
+		}
+	}
+	
 	/**
 	 * Returns the JPopupMenu with the jade tools.
 	 * @return JPopupMenu jade tools

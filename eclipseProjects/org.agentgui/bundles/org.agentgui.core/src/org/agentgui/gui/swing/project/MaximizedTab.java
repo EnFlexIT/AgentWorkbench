@@ -98,7 +98,6 @@ public class MaximizedTab extends JInternalFrame {
 			 */
 			@Override
 			public void internalFrameDeactivated(InternalFrameEvent e) {
-//				projectWindow.tabRestore();
 				super.internalFrameDeactivated(e);
 			}
 			

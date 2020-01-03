@@ -527,7 +527,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			projectViewRightTabs.setName("ProjectTabs");
 			projectViewRightTabs.setUI(new AwbBasicTabbedPaneUI());
 			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 13));
-			projectViewRightTabs.setPreferredSize(new Dimension(126, 72));
 			projectViewRightTabs.addMouseListener(this.getTabMouseListener());
 			projectViewRightTabs.addChangeListener(this.getTabSelectionListener());
 		}
@@ -632,9 +631,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * Tab maximize.
 	 */
 	private void tabMaximize() {
-
-		// --- Maximize the main window ---------------------------------------
-		// Application.getMainWindow().setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		// --- Open a new JInteraFrame with the current tab enlarged ----------
 		SwingUtilities.invokeLater(new Runnable() {

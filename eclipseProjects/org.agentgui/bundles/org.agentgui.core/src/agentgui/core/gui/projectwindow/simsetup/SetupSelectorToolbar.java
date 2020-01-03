@@ -153,7 +153,6 @@ public class SetupSelectorToolbar implements ActionListener {
 		this.getJButtonSetupCopy().setEnabled(enable);
 		this.getJButtonSetupNew().setEnabled(enable);
 		this.getJButtonSetupDelete().setEnabled(enable);
-		
 	}
 	
 	/**

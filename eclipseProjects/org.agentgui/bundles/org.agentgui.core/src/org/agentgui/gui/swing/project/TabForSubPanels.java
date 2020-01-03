@@ -28,11 +28,10 @@
  */
 package org.agentgui.gui.swing.project;
 
+import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -40,8 +39,8 @@ import agentgui.core.project.Project;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
- * This class can be used in order to create a tab which can hold further sub tabs (like the tabs
- * 'configuration' or 'Simulation-Setup').
+ * This class can be used in order to create a tab that can hold further sub tabs 
+ * (like the project tabs 'configuration' or 'Setup').
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -53,12 +52,13 @@ public class TabForSubPanels extends JPanel  {
 	private JTabbedPane jTabbedPaneIntern = null;
 
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * @param project the project
 	 */
 	public TabForSubPanels(Project project) {
 		super();
 		this.currProject = project;
-		initialize();
+		this.initialize();
 	}
 
 	/**
@@ -66,18 +66,9 @@ public class TabForSubPanels extends JPanel  {
 	 * @return void
 	 */
 	private void initialize() {
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.fill = GridBagConstraints.BOTH;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.ipadx = 0;
-		gridBagConstraints.ipady = 0;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new Insets(0, 0, 0, 0);
-		gridBagConstraints.gridx = 0;
-		this.setLayout(new GridBagLayout());
-		this.setSize(421, 239);
-		this.add(getJTabbedPane(), gridBagConstraints);
+		this.setSize(400, 250);
+		this.setLayout(new BorderLayout());
+		this.add(getJTabbedPane(), BorderLayout.CENTER);
 	}
 
 	/**
@@ -87,15 +78,16 @@ public class TabForSubPanels extends JPanel  {
 	public JTabbedPane getJTabbedPane() {
 		if (jTabbedPaneIntern == null) {
 			jTabbedPaneIntern = new JTabbedPane();
+			jTabbedPaneIntern.setTabPlacement(JTabbedPane.TOP);
+			jTabbedPaneIntern.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPaneIntern.setFont(new Font("Dialog", Font.BOLD, 13));
+			jTabbedPaneIntern.setBorder(BorderFactory.createEmptyBorder());
+			
 			ProjectWindow projectWindow = (ProjectWindow) currProject.getProjectEditorWindow();
 			jTabbedPaneIntern.addMouseListener(projectWindow.getTabMouseListener());
 			jTabbedPaneIntern.addChangeListener(projectWindow.getTabSelectionListener());
-			jTabbedPaneIntern.setUI(new AwbBasicTabbedPaneUI());
 		}
 		return jTabbedPaneIntern;
 	}
 	
-	
-	
-}  //  @jve:decl-index=0:visual-constraint="10,21"
+} 

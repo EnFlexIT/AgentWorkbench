@@ -373,7 +373,8 @@ public class ProjectsLoaded {
 	public void setProjectView() {
 		if (Application.getMainWindow()!=null) {
 			// --- 1. Set Setup-Selector and Tools --------------------------------
-			Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.getProjectFocused());	
+			Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.getProjectFocused());
+			Application.getMainWindow().configureJToggleButtonProjectTree(Application.getProjectFocused());
 			// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
 			this.setProjectMenuItems();
 			// --- 3. Set the right value to the MenueBar 'View' ------------------
