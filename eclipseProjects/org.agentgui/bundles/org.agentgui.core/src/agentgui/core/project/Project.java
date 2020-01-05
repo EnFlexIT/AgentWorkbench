@@ -596,6 +596,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			// --- Save the current SimulationSetup -------
 			if (saveSetup==true) {
 				this.getSimulationSetups().setupSave();
+				//List<File> setupFileList = this.getSimulationSetups().getCurrSimSetup().getSetupFiles();
+				//System.out.println(setupFileList.size() + " files found!");
 			}
 
 			// --------------------------------------------

@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,6 +51,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -94,7 +96,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	private DefaultComboBoxModel<String> comboBoxModel;
 	private JButton jButtonRepositoryRefresh;
 	
-	private JPanel jPanelRepositoryView;
+	private JSplitPane jSplitPaneRepositoryView;
 
 	private JScrollPane jScrollPaneRepositoryView;
 	private JTree jTreeRepositoryView;
@@ -165,7 +167,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		gbc_jPanelRepositoryView.fill = GridBagConstraints.BOTH;
 		gbc_jPanelRepositoryView.gridx = 0;
 		gbc_jPanelRepositoryView.gridy = 2;
-		add(getJPanelRepositoryView(), gbc_jPanelRepositoryView);
+		add(getJSplitPaneRepositoryView(), gbc_jPanelRepositoryView);
 	}
 	
 	private JLabel getJLabelHeader() {
@@ -247,28 +249,16 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		return jButtonRepositoryRefresh;
 	}
 	
-	private JPanel getJPanelRepositoryView() {
-		if (jPanelRepositoryView == null) {
-			jPanelRepositoryView = new JPanel();
-			GridBagLayout gbl_jPanelRepositoryView = new GridBagLayout();
-			gbl_jPanelRepositoryView.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelRepositoryView.rowHeights = new int[]{0, 0};
-			gbl_jPanelRepositoryView.columnWeights = new double[]{2.0, 1.0, Double.MIN_VALUE};
-			gbl_jPanelRepositoryView.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-			jPanelRepositoryView.setLayout(gbl_jPanelRepositoryView);
-			GridBagConstraints gbc_jScrollPaneRepositoryView = new GridBagConstraints();
-			gbc_jScrollPaneRepositoryView.fill = GridBagConstraints.BOTH;
-			gbc_jScrollPaneRepositoryView.insets = new Insets(0, 0, 0, 5);
-			gbc_jScrollPaneRepositoryView.gridx = 0;
-			gbc_jScrollPaneRepositoryView.gridy = 0;
-			jPanelRepositoryView.add(getJScrollPaneRepositoryView(), gbc_jScrollPaneRepositoryView);
-			GridBagConstraints gbc_jPanelProjectDetails = new GridBagConstraints();
-			gbc_jPanelProjectDetails.fill = GridBagConstraints.BOTH;
-			gbc_jPanelProjectDetails.gridx = 1;
-			gbc_jPanelProjectDetails.gridy = 0;
-			jPanelRepositoryView.add(getJPanelProjectDetails(), gbc_jPanelProjectDetails);
+	private JSplitPane getJSplitPaneRepositoryView() {
+		if (jSplitPaneRepositoryView == null) {
+			jSplitPaneRepositoryView = new JSplitPane();
+			jSplitPaneRepositoryView.setOneTouchExpandable(false);
+			jSplitPaneRepositoryView.setResizeWeight(0.5);
+			jSplitPaneRepositoryView.setBorder(BorderFactory.createEmptyBorder());
+			jSplitPaneRepositoryView.setLeftComponent(this.getJScrollPaneRepositoryView());
+			jSplitPaneRepositoryView.setRightComponent(this.getJPanelProjectDetails());
 		}
-		return jPanelRepositoryView;
+		return jSplitPaneRepositoryView;
 	}
 	private JScrollPane getJScrollPaneRepositoryView() {
 		if (jScrollPaneRepositoryView == null) {
