@@ -29,7 +29,10 @@
 package org.awb.env.networkModel.controller.ui.commands;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -195,21 +198,32 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		JFileChooser graphFC = new JFileChooser();
 		graphFC.removeChoosableFileFilter(graphFC.getAcceptAllFileFilter());
 		
-		// --- Add defined FileFilters in alphabetic order ----------
-		Collections.sort(this.graphController.getImportAdapter());
+		
+		// --- Add all filters to a HashMap ---------------------
+		HashMap<String, FileFilter> fileFiltersHash = new HashMap<>(); 
 		for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
-			// --- Get the import adapters FileFilter ---------------
+			
+			// --- Get the current import adapter's FileFilters ---------------
 			AbstractNetworkModelFileImporter importer = this.graphController.getImportAdapter().get(i);
-			FileFilter fileFilter = importer.getFileFilter();
-			// --- Add filter to file chooser -----------------------
-			graphFC.addChoosableFileFilter(fileFilter);
-			// --- Check if is last selected file filter ------------
-			if (lastSlectedFileFilter!=null && fileFilter.getDescription().equals(lastSlectedFileFilter.getDescription())) {
-				// --- To be sure to have the right instance --------
-				lastSlectedFileFilter = fileFilter;
+			List<FileFilter> fileFilters = importer.getFileFilters();
+			
+			for (int j=0; j<fileFilters.size(); j++) {
+				FileFilter fileFilter = fileFilters.get(j);
+				fileFiltersHash.put(fileFilter.getDescription(), fileFilter);
+				// --- Check if is last selected file filter ------------
+				if (lastSlectedFileFilter!=null && fileFilter.getDescription().equals(lastSlectedFileFilter.getDescription())) {
+					// --- To be sure to have the right instance --------
+					lastSlectedFileFilter = fileFilter;
+				}
 			}
 		}
 		
+		// --- Add all filters in alphabetical order ---------------- 
+		List<String> filterDescriptions = new ArrayList<String>(fileFiltersHash.keySet());
+		Collections.sort(filterDescriptions);
+		for (int i=0; i<filterDescriptions.size(); i++) {
+			graphFC.addChoosableFileFilter(fileFiltersHash.get(filterDescriptions.get(i)));
+		}
 		// --- Check for file filter --------------------------------
 		if (graphFC.getChoosableFileFilters().length==0) {
 			// --- Show message that no importer was defined --------
@@ -233,7 +247,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 				FileFilter selectedFileFilter = graphFC.getFileFilter();
 				for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
 					AbstractNetworkModelFileImporter importer = this.graphController.getImportAdapter().get(i);
-					if (selectedFileFilter==importer.getFileFilter()) {
+					if (importer.getFileFilters().contains(selectedFileFilter)) {
 						this.networkModelFileSelected = selectedFile;
 						this.abstractNetworkModelFileImporter = importer;
 						lastSlectedFileFilter = selectedFileFilter;
