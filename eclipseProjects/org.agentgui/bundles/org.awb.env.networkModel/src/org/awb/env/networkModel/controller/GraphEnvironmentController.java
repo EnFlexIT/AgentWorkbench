@@ -53,7 +53,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.commands.NetworkModelUndoManager;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
-import org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter;
+import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService.DataModelServiceAction;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
@@ -97,7 +97,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 	/** The base file name used for saving the graph and the components (without suffix) */
 	private String baseFileName;
 	/** Known adapter for the import of network models */
-	private Vector<AbstractNetworkModelFileImporter> importAdapter;
+	private Vector<NetworkModelImportService> importAdapter;
 	/** Storage handler (services) for individual data models for {@link DataModelNetworkElement} */
 	private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> setupStorageServiceHashMap;
 	
@@ -995,9 +995,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Return all known import adapter.
 	 * @return the import adapter
 	 */
-	public Vector<AbstractNetworkModelFileImporter> getImportAdapter() {
+	public Vector<NetworkModelImportService> getImportAdapter() {
 		if (this.importAdapter == null) {
-			this.importAdapter = new Vector<AbstractNetworkModelFileImporter>();
+			this.importAdapter = new Vector<NetworkModelImportService>();
 		}
 		return this.importAdapter;
 	}

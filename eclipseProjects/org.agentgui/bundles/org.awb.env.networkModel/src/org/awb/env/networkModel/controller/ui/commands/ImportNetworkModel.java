@@ -43,7 +43,7 @@ import javax.swing.undo.CannotUndoException;
 
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-import org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter;
+import org.awb.env.networkModel.persistence.NetworkModelImportService;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -61,7 +61,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	private GraphEnvironmentController graphController;
 	
 	private boolean canceled = false;
-	private AbstractNetworkModelFileImporter abstractNetworkModelFileImporter;
+	private NetworkModelImportService importService;
 	private File networkModelFileSelected;
 	
 	private NetworkModel newNetworkModel;
@@ -79,7 +79,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		
 		// --- Define the import adapter and the file to import -----
 		this.selectFile();
-		if (this.abstractNetworkModelFileImporter!=null && this.networkModelFileSelected!=null) {
+		if (this.importService!=null && this.networkModelFileSelected!=null) {
 			Application.setStatusBarMessage("Copy current settings Import network model from file(s) ... ");
 			this.oldNetworkModel = this.graphController.getNetworkModel();					// removed .getCopy()
 			this.oldAbstractEnvModel = this.graphController.getAbstractEnvironmentModel();	// removed .getCopy()
@@ -94,7 +94,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	 */
 	private void doEdit() {
 		
-		if (this.isCanceled()==false && this.abstractNetworkModelFileImporter!=null && this.networkModelFileSelected!=null) {
+		if (this.isCanceled()==false && this.importService!=null && this.networkModelFileSelected!=null) {
 			
 			this.graphController.getAgents2Start().clear();
 			this.graphController.setDisplayEnvironmentModel(null);
@@ -134,11 +134,11 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		
 			Application.setStatusBarMessage("Import network model from file(s) ... ");
 			// --- Import directly from the selected file ---------------------------------
-			this.newNetworkModel = this.abstractNetworkModelFileImporter.importNetworkModelFromFile(this.networkModelFileSelected);
+			this.newNetworkModel = this.importService.importNetworkModelFromFile(this.networkModelFileSelected);
 			// --- Do we have an AbstractEnvironmentModel also? --------------------------- 
-			this.newAbstractEnvModel = this.abstractNetworkModelFileImporter.getAbstractEnvironmentModel();
+			this.newAbstractEnvModel = this.importService.getAbstractEnvironmentModel();
 			// --- Invoke to cleanup the importer -----------------------------------------
-			this.abstractNetworkModelFileImporter.cleanupImporter();
+			this.importService.cleanupImporter();
 			// --- Set new instances to GraphEnvironmentController ------------------------
 			this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
 			if (this.newAbstractEnvModel!=null) {
@@ -204,7 +204,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
 			
 			// --- Get the current import adapter's FileFilters ---------------
-			AbstractNetworkModelFileImporter importer = this.graphController.getImportAdapter().get(i);
+			NetworkModelImportService importer = this.graphController.getImportAdapter().get(i);
 			List<FileFilter> fileFilters = importer.getFileFilters();
 			
 			for (int j=0; j<fileFilters.size(); j++) {
@@ -246,10 +246,10 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 				File selectedFile = graphFC.getSelectedFile();
 				FileFilter selectedFileFilter = graphFC.getFileFilter();
 				for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
-					AbstractNetworkModelFileImporter importer = this.graphController.getImportAdapter().get(i);
+					NetworkModelImportService importer = this.graphController.getImportAdapter().get(i);
 					if (importer.getFileFilters().contains(selectedFileFilter)) {
 						this.networkModelFileSelected = selectedFile;
-						this.abstractNetworkModelFileImporter = importer;
+						this.importService = importer;
 						lastSlectedFileFilter = selectedFileFilter;
 						break;
 					}
