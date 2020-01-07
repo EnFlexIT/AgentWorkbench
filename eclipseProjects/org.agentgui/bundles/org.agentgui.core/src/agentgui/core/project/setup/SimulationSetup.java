@@ -58,7 +58,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.AbstractUserObject;
-import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 
@@ -74,6 +73,10 @@ public class SimulationSetup {
 	public static final String USER_MODEL_BIN_FileSuffix = ".bin";
 	public static final String USER_MODEL_XML_FileSuffix = "-UserObject.xml";
 
+	public static final String AGENT_LIST_ManualConfiguration = "01 AgentStartManual";
+	public static final String AGENT_LIST_EnvironmentConfiguration = "02 AgentStartEnvironment";
+	
+	
 	/** The possible indicator for setup file types. */
 	public enum SetupFileType {
 		BASE_XML_FILE,
@@ -92,11 +95,6 @@ public class SimulationSetup {
 	@XmlTransient 
 	private Project currProject = null;
 	
-	@XmlTransient 
-	public static final String AGENT_LIST_ManualConfiguration = "01 AgentStartManual";
-	@XmlTransient 
-	public static final String AGENT_LIST_EnvironmentConfiguration = "02 AgentStartEnvironment";
-	
 	/** This Hash holds the instances of all agent start lists. */
 	@XmlTransient 
 	private HashMap<String, DefaultListModel<AgentClassElement4SimStart>> hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel<AgentClassElement4SimStart>>();
@@ -109,10 +107,6 @@ public class SimulationSetup {
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
-
-	
-	/** The environment file name. */
-	private String environmentFileName;
 	
 	/** The time model settings. */
 	@XmlElementWrapper(name = "timeModelSettings")
@@ -158,41 +152,6 @@ public class SimulationSetup {
 			this.currProject.setChangedAndNotify(reason);
 		}
 	}
-	
-	/**
-	 * Returns the list of files that belong to the current setup. This also 
-	 * includes files that are managed by the current {@link EnvironmentController}. 
-	 *
-	 * @return the setup files
-	 */
-	public List<File> getSetupFiles() {
-		
-		// --- Initial files: setup and user object XML-files -------
-		File setupXmlFile = new File(this.currProject.getSimulationSetups().getCurrSimXMLFile());
-		File setupUserObjectFile = SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_XML);
-
-		// --- Files from the environment controller ----------------
-		List<File> envFileList = null;
-		if (this.currProject!=null) {
-			EnvironmentController envController = this.currProject.getEnvironmentController();
-			if (envController!=null) {
-				envFileList = envController.getSetupFiles();
-			}
-		}
-		
-		// --- Create and return final list ------------------------- 
-		List<File> fileList = new ArrayList<>();
-		fileList.add(setupXmlFile);
-		if (this.getUserRuntimeObject()!=null) {
-			fileList.add(setupUserObjectFile);
-		}
-		if (envFileList!=null) {
-			fileList.addAll(envFileList);
-		}
-		
-		return fileList;
-	}
-	
 	
 	/**
 	 * This method saves the current {@link SimulationSetup} and it files to the default location for setups.<br>
@@ -646,22 +605,6 @@ public class SimulationSetup {
 	}
 	
 	/**
-	 * Gets the environment file name.
-	 * @return the environment file name
-	 */
-	public String getEnvironmentFileName() {
-		return environmentFileName;
-	}
-	/**
-	 * Sets the environment file name.
-	 * @param environmentFile the new environment file name
-	 */
-	public void setEnvironmentFileName(String environmentFile) {
-		this.environmentFileName = environmentFile;
-	}
-	
-	
-	/**
 	 * Sets the user runtime object.
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
@@ -814,7 +757,7 @@ public class SimulationSetup {
 	 * @param xmlBaseFile the XML base file
 	 * @return the setup file
 	 */
-	public static List<File> getSetupFiles(File xmlBaseFile) {
+	protected static List<File> getSetupFiles(File xmlBaseFile) {
 		List<File> setupFiles = new ArrayList<>();
 		setupFiles.add(xmlBaseFile);
 		setupFiles.add(SimulationSetup.getSetupFile(xmlBaseFile, SetupFileType.USER_OBJECT_BIN));

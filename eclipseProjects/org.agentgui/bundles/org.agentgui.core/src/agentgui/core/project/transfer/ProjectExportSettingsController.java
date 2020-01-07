@@ -29,7 +29,6 @@
 package agentgui.core.project.transfer;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +36,6 @@ import java.util.List;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
 
 /**
  * This class can be used to manage {@link ProjectExportSettings}. 
@@ -157,39 +155,23 @@ public class ProjectExportSettingsController {
 		this.getFileToSetupHash().clear();
 		this.getSetupToFilesHash().clear();
 
-		String setupPath = this.getProject().getSubFolder4Setups(true);
-		String envModelPath = this.getProject().getEnvironmentController().getEnvFolderPath();
-		
 		// --- Check all setups -------------------------------------
 		List<String> simSetups = new ArrayList<>(this.getProject().getSimulationSetups().keySet());
 		for (int i = 0; i < simSetups.size(); i++) {
 			
+			String setupName = simSetups.get(i);
+
 			// --- Get all files related to the setup ---------------
-			final String setupName = simSetups.get(i);
-			String fileNameXML = setupPath + this.getProject().getSimulationSetups().get(setupName);
+			List<File> setupFiles = this.getProject().getSimulationSetups().getSetupFiles(setupName);
 			
-			// --- Remind relation setup to file and vice versa -----
 			ArrayList<File> setupFileListFound = new ArrayList<>();
-			List<File> setupFileList = SimulationSetup.getSetupFiles(new File(fileNameXML));
-			for (int j = 0; j < setupFileList.size(); j++) {
-				File setupFile = setupFileList.get(j);
-				if (setupFile.exists()) {
+			for (int j = 0; j < setupFiles.size(); j++) {
+				File setupFile = setupFiles.get(j);
+				if (setupFile.exists()==true) {
+					// --- Remind setup to file and vice versa ------
 					setupFileListFound.add(setupFile);
 					this.getFileToSetupHash().put(setupFile, setupName);
 				}
-			}
-
-			// --- Remind environment model files -------------------
-			File envDirectory = new File(envModelPath);
-			File[] envFiles = envDirectory.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.startsWith(setupName + ".");
-				}
-			});
-			for (int j = 0; j < envFiles.length; j++) {
-				setupFileListFound.add(envFiles[j]);
-				this.getFileToSetupHash().put(envFiles[j], setupName);
 			}
 			this.getSetupToFilesHash().put(setupName, setupFileListFound);
 			

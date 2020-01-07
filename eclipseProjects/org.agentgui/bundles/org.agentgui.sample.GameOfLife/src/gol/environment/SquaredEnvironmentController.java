@@ -16,7 +16,6 @@ import javax.xml.bind.Unmarshaller;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
@@ -141,10 +140,6 @@ public class SquaredEnvironmentController extends EnvironmentController {
 	 */
 	private void updateEnvironmentFileName(){
 		myCurrentSimSetupName = this.getProject().getSimulationSetupCurrent();
-		SimulationSetup setup = this.getCurrentSimulationSetup();
-		if (myCurrentSimSetupName!=null && setup!=null) {
-			setup.setEnvironmentFileName(myCurrentSimSetupName+".xml");
-		}
 	}
 	
 	/**
@@ -159,10 +154,10 @@ public class SquaredEnvironmentController extends EnvironmentController {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#getSetupFiles()
+	 * @see agentgui.core.environment.EnvironmentController#getSetupFiles(java.lang.String)
 	 */
 	@Override
-	public List<File> getSetupFiles() {
+	public List<File> getSetupFiles(String setupName) {
 		List<File> fileList = new ArrayList<File>();
 		fileList.add(new File(this.getCurrentEnvironmentFileName()));
 		return fileList;
