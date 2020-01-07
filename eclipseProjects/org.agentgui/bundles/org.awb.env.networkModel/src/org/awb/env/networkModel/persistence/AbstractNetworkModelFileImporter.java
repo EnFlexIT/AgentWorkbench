@@ -29,6 +29,7 @@
 package org.awb.env.networkModel.persistence;
 
 import java.io.File;
+import java.util.List;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -47,30 +48,10 @@ import agentgui.simulationService.environment.EnvironmentModel;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class AbstractNetworkModelFileImporter implements Comparable<AbstractNetworkModelFileImporter> {
+public abstract class AbstractNetworkModelFileImporter {
 	
 	/** The current settings for the graph environment */
 	protected GraphEnvironmentController graphController;
-	/** The file extension used for filtering in JFileChooser selecting the file to import */
-	protected String fileTypeExtension;
-    /** The file type description for the JFileChooser for selecting the file to import */
-	protected String fileTypeDescription;
-    /** The file filter. */
-	protected FileFilter fileFilter;
-
-	
-	/**
-	 * Constructor.
-	 *
-	 * @param graphController the {@link GraphEnvironmentController}
-	 * @param fileTypeExtension the file type extension
-	 * @param fileTypeDescription the file type description
-	 */
-	public AbstractNetworkModelFileImporter(GraphEnvironmentController graphController, String fileTypeExtension, String fileTypeDescription){
-		this.graphController = graphController;
-	    this.fileTypeExtension = fileTypeExtension;
-	    this.fileTypeDescription = fileTypeDescription;
-	}
 	
 	/**
 	 * This method has to import a {@link NetworkModel} from the file. 
@@ -95,75 +76,50 @@ public abstract class AbstractNetworkModelFileImporter implements Comparable<Abs
 	 */
 	public abstract void cleanupImporter();
 	
-	
-	
 	/**
-	 * Returns the extension of the file type the GraphFileLoader can handle
-	 * @return The file extension
-	 */
-	public String getFileTypeExtension() {
-		if (fileTypeExtension==null || fileTypeExtension.isEmpty()) {
-			fileTypeExtension = "MISSING: file type extension!"; 
-		}
-		return fileTypeExtension;
-	}
-	/**
-	 * Returns a type string used for GraphFileLoader selection
-	 * @return The type String
-	 */
-	public String getFileTypeDescription() {
-		if (fileTypeDescription==null || fileTypeDescription.isEmpty()) {
-			fileTypeDescription = "MISSING: file type description!"; 
-		}
-		return fileTypeDescription;
-	}
-	
-	/**
-	 * Returns the file filter for this type of import.
+	 * Gets a file filter accepting the specified file type or directories.
+	 * @param fileTypeExtension the file type extension
+	 * @param fileTypeDescription the file type description
 	 * @return the file filter
 	 */
-	public FileFilter getFileFilter() {
-		if (this.fileFilter==null) {
-			this.fileFilter = new FileFilter() {
-				@Override
-				public boolean accept(File file) {
-					if (file.isDirectory()) {
-			            return true;
-			        }
-			        String path = file.getAbsolutePath();
-			        if (path != null) {
-			        	if (path.endsWith(fileTypeExtension) || path.endsWith(fileTypeExtension.toLowerCase()) || path.endsWith(fileTypeExtension.toUpperCase())) {
-			        		return true;
-			            } else {
-			                return false;
-			            }
-			        }		
-					return false;
-				}
+	protected FileFilter createFileFilter(String fileTypeExtension, String fileTypeDescription) {
+			FileFilter fileFilter = new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				if (file.isDirectory()) {
+		            return true;
+		        }
+		        String path = file.getAbsolutePath();
+		        if (path != null) {
+		        	if (path.endsWith(fileTypeExtension) || path.endsWith(fileTypeExtension.toLowerCase()) || path.endsWith(fileTypeExtension.toUpperCase())) {
+		        		return true;
+		            } else {
+		                return false;
+		            }
+		        }		
+				return false;
+			}
 
-				@Override
-				public String getDescription() {
-					return fileTypeDescription;
-				}
-			};
-		}
-		return this.fileFilter;
+			@Override
+			public String getDescription() {
+				return fileTypeDescription;
+			}
+		};
+		return fileFilter;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	/**
+	 * Sets the graph environment controller.
+	 * @param graphController the new graph environment controller
 	 */
-	@Override
-	public int compareTo(AbstractNetworkModelFileImporter fiToComp) {
-		
-		String localFileTypeDescription = this.getFileTypeDescription();
-		String compFileTypeDescription  = fiToComp.getFileTypeDescription();
-		if (localFileTypeDescription.equals(compFileTypeDescription)==true) {
-			String localFileTypeExtension = this.getFileTypeExtension();
-			String compFileTypeExtension  = fiToComp.getFileTypeExtension();
-			return localFileTypeExtension.compareTo(compFileTypeExtension);
-		} 
-		return localFileTypeDescription.compareTo(compFileTypeDescription);
+	public void setGraphController(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
 	}
+	
+	/**
+	 * Gets the file filters for this network importer
+	 * @return the file filters
+	 */
+	public abstract List<FileFilter> getFileFilters();
 	
 }
