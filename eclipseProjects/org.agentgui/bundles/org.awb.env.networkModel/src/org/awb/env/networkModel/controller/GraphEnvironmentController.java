@@ -96,8 +96,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 	
 	/** The setup name that serves as base for the file name used for saving the graph and the components (without suffix) */
 	private String setupName;
-	/** Known adapter for the import of network models */
-	private Vector<NetworkModelImportService> importAdapter;
 	/** Storage handler (services) for individual data models for {@link DataModelNetworkElement} */
 	private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> setupStorageServiceHashMap;
 	
@@ -1008,14 +1006,20 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Return all known import adapter.
+	 * Return all known import adapter from the OSGI service registry.
 	 * @return the import adapter
 	 */
 	public Vector<NetworkModelImportService> getImportAdapter() {
-		if (this.importAdapter == null) {
-			this.importAdapter = new Vector<NetworkModelImportService>();
+		
+		Vector<NetworkModelImportService> importAdapter = new Vector<NetworkModelImportService>();
+			
+		List<NetworkModelImportService> importServices = ServiceFinder.findServices(NetworkModelImportService.class);
+		for (int i=0; i<importServices.size(); i++) {
+			NetworkModelImportService importer = importServices.get(i);
+			importer.setGraphController(this);
+			importAdapter.add(importer);
 		}
-		return this.importAdapter;
+		return importAdapter;
 	}
 
 	/**

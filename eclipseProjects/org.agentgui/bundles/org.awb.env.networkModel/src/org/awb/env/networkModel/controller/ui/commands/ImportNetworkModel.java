@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -200,11 +201,13 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		
 		
 		// --- Add all filters to a HashMap ---------------------
+		Vector<NetworkModelImportService> importServices = this.graphController.getImportAdapter(); 
+		
 		HashMap<String, FileFilter> fileFiltersHash = new HashMap<>(); 
-		for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
+		for (int i = 0; i < importServices.size(); i++) {
 			
 			// --- Get the current import adapter's FileFilters ---------------
-			NetworkModelImportService importer = this.graphController.getImportAdapter().get(i);
+			NetworkModelImportService importer = importServices.get(i);
 			List<FileFilter> fileFilters = importer.getFileFilters();
 			
 			for (int j=0; j<fileFilters.size(); j++) {
@@ -245,8 +248,8 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 				Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File selectedFile = graphFC.getSelectedFile();
 				FileFilter selectedFileFilter = graphFC.getFileFilter();
-				for (int i = 0; i < this.graphController.getImportAdapter().size(); i++) {
-					NetworkModelImportService importer = this.graphController.getImportAdapter().get(i);
+				for (int i = 0; i < importServices.size(); i++) {
+					NetworkModelImportService importer = importServices.get(i);
 					if (importer.getFileFilters().contains(selectedFileFilter)) {
 						this.networkModelFileSelected = selectedFile;
 						this.importService = importer;

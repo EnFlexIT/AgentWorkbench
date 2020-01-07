@@ -83,7 +83,8 @@ public abstract class AbstractNetworkModelFileImporter {
 	 * @return the file filter
 	 */
 	protected FileFilter createFileFilter(String fileTypeExtension, String fileTypeDescription) {
-			FileFilter fileFilter = new FileFilter() {
+			
+		FileFilter fileFilter = new FileFilter() {
 			@Override
 			public boolean accept(File file) {
 				if (file.isDirectory()) {
