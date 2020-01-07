@@ -180,9 +180,10 @@ public abstract class EnvironmentController extends Observable implements Observ
 
 	/**
 	 * Has to return the list of files that belong to the current setup.
+	 * @param setupName the name of the setup for which the files should be returned 
 	 * @return the setup files of the environment
 	 */
-	public abstract List<File> getSetupFiles();
+	public abstract List<File> getSetupFiles(String setupName);
 	
 	
 	/**

@@ -29,6 +29,7 @@
 package agentgui.core.project.setup;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,7 @@ import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetup.SetupFileType;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.transfer.FileCopier;
@@ -423,5 +425,55 @@ public class SimulationSetups extends TreeMap<String, String> {
 		return currSimXMLFile;
 	}
 
+	
+	
+	/**
+	 * Returns the list of files that belong to the current setup. This also 
+	 * includes files that are managed by the current {@link EnvironmentController}. 
+	 *
+	 * @param project the project
+	 * @param setupName the setup name
+	 * @return the list of files that belong to the specified setup
+	 */
+	public List<File> getSetupFiles(String setupName) {
+		return SimulationSetups.getSetupFiles(this.currProject, setupName);
+	}
+	
+	/**
+	 * Returns the list of files that belong to the current setup. This also 
+	 * includes files that are managed by the current {@link EnvironmentController}. 
+	 *
+	 * @param project the project (mandatory)
+	 * @param setupName the setup name (mandatory)
+	 * @return the list of files that belong to the specified setup
+	 */
+	public static List<File> getSetupFiles(Project project, String setupName) {
+		
+		if (project==null) return null;
+		if (setupName==null || setupName.isEmpty()) return null;
+		
+		// --- Define list to return --------------------------------
+		List<File> fileList = new ArrayList<>();
+		
+		// --- Get all files possible in directory 'setups' ---------
+		File setupXmlFile = new File(project.getSubFolder4Setups(true) + project.getSimulationSetups().get(setupName));
+		File setupUserFileXml = SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_XML);
+		File setupUserFileBin = SimulationSetup.getSetupFile(setupXmlFile, SetupFileType.USER_OBJECT_BIN);
+		
+		// --- Check / add files that are available -----------------
+		if (setupXmlFile.exists()==true) fileList.add(setupXmlFile);
+		if (setupUserFileXml.exists()==true) fileList.add(setupUserFileXml);
+		if (setupUserFileBin.exists()==true) fileList.add(setupUserFileBin);
+		
+		// --- Get files from the environment controller ------------
+		EnvironmentController envController = project.getEnvironmentController();
+		if (envController!=null) {
+			List<File> envFileList = envController.getSetupFiles(setupName);
+			if (envFileList!=null && envFileList.size()>0) {
+				fileList.addAll(envFileList);
+			}
+		}
+		return fileList;
+	}
 	
 }

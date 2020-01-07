@@ -53,7 +53,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.commands.NetworkModelUndoManager;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
-import org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter;
+import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService.DataModelServiceAction;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
@@ -94,10 +94,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 	private static final String GeneralGraphSettings4MASFile = "~GeneralGraphSettings~";
 
 	
-	/** The base file name used for saving the graph and the components (without suffix) */
-	private String baseFileName;
+	/** The setup name that serves as base for the file name used for saving the graph and the components (without suffix) */
+	private String setupName;
 	/** Known adapter for the import of network models */
-	private Vector<AbstractNetworkModelFileImporter> importAdapter;
+	private Vector<NetworkModelImportService> importAdapter;
 	/** Storage handler (services) for individual data models for {@link DataModelNetworkElement} */
 	private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> setupStorageServiceHashMap;
 	
@@ -309,7 +309,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 		switch (sscn.getUpdateReason()) {
 		case SIMULATION_SETUP_ADD_NEW:
-			this.updateGraphFileName();
+			this.updateSetupName();
 			this.setDisplayEnvironmentModel(null);
 			// --- Register a new list of agents that has to be started with the environment ------
 			this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
@@ -335,12 +335,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 		case SIMULATION_SETUP_RENAME:
 
 			// --- Collect old settings -------------------
-			String oldSetupName = this.baseFileName;
+			String oldSetupName = this.setupName;
 			File oldGraphFile = this.getFileGraphML();
 			File oldComponentFile = this.getFileXML();
 			
 			// --- Internally update to new settings ------
-			this.updateGraphFileName();
+			this.updateSetupName();
 
 			// --- Rename ---------------------------------
 			if (oldGraphFile.exists()) {
@@ -372,38 +372,59 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * This method sets the baseFileName property and the SimulationSetup's environmentFileName according to the current SimulationSetup
+	 * This method sets the setupName property and the SimulationSetup's environmentFileName according to the current SimulationSetup
 	 */
-	private void updateGraphFileName() {
-		this.baseFileName = this.getProject().getSimulationSetupCurrent();
-		this.getCurrentSimulationSetup().setEnvironmentFileName(baseFileName + ".graphml");
+	private void updateSetupName() {
+		this.setupName = this.getProject().getSimulationSetupCurrent();
 	}
 	/**
-	 * Returns the XML file for the current NetworkModel.
-	 * @return the XML file
+	 * Returns the XML file for the NetworkComponents and so on.
+	 * @return the XML file for the NetworkComponents and so on 
 	 */
 	public File getFileXML() {
-		return new File(this.getEnvFolderPath() + this.baseFileName + ".xml");
+		return getFileXML(this.getEnvFolderPath(), this.setupName);
 	}
+	/**
+	 * Returns the XML file for the NetworkComponents and so on.
+	 *
+	 * @param envDirectory the directory for the environment model 
+	 * @param setupName the setup name
+	 * @return the XML file for the NetworkComponents and so on
+	 */
+	public static File getFileXML(String envDirectory, String setupName) {
+		return new File(envDirectory + setupName + ".xml");
+	}
+	
 	/**
 	 * Returns the GraphML file for the current NetworkModel.
 	 * @return the GraphML file
 	 */
 	public File getFileGraphML() {
-		return new File(this.getEnvFolderPath() + this.baseFileName + ".graphml");
+		return getFileGraphML(this.getEnvFolderPath(), this.setupName);
 	}
-
+	/**
+	 * Returns the XML file with the graph definition in graphml.
+	 *
+	 * @param envDirectory the directory for the environment model
+	 * @param setupName the setup name
+	 * @return the XML file for the NetworkComponents and so on
+	 */
+	public static File getFileGraphML(String envDirectory, String setupName) {
+		return new File(envDirectory + setupName + ".graphml");
+	}
+	
+	
 	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#getSetupFiles()
+	 * @see agentgui.core.environment.EnvironmentController#getSetupFiles(java.lang.String)
 	 */
 	@Override
-	public List<File> getSetupFiles() {
+	public List<File> getSetupFiles(String setupName) {
 		
 		List<File> fileList = new ArrayList<File>();
-		fileList.add(this.getFileGraphML());
-		fileList.add(this.getFileXML());
-		
-		List<File> sdmServicesFileList = this.getSetupFilesFromSetupDataModelStorageServices();
+		fileList.add(GraphEnvironmentController.getFileGraphML(this.getEnvFolderPath(), setupName));
+		fileList.add(GraphEnvironmentController.getFileXML(this.getEnvFolderPath(), setupName));
+
+		List<File> sdmServicesFileList = this.getSetupFilesFromSetupDataModelStorageServices(setupName);
 		if (sdmServicesFileList!=null) {
 			fileList.addAll(sdmServicesFileList);
 		}
@@ -425,17 +446,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 	@Override
 	public void loadEnvironment() {
 		
-		// --- Check for a file name in the setup -------------------------------------------------
-		String envFileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
-		if (envFileName==null) {
-			// --- Try to update the graph file name and recall above method ---------------------- 
-			this.updateGraphFileName();
-			envFileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
-			if (envFileName==null) return;
+		// --- Check for the current setup --------------------------------------------------------
+		if (this.setupName==null) {
+			this.updateSetupName();
+			if (setupName==null) return;
 		}
 
-		final String graphmlFileName = envFileName;
-		
 		// --- Set lock to prevent parallel saving actions ----------------------------------------
 		this.isTemporaryPreventSaving = true;
 		
@@ -447,9 +463,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 				try {
 
 					// --- Set application status text --------------------------------------------
-					if (Application.getMainWindow() != null) {
+					if (Application.getMainWindow()!=null) {
 						Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + graphmlFileName + " ...");
+						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + GraphEnvironmentController.this.getFileXML().getAbsolutePath() + " ...");
 						// --- Reset Undo-Manager -------------------------------------------------
 						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
 					}
@@ -459,7 +475,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 					GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 
 					// --- Update path according to setup -----------------------------------------
-					GraphEnvironmentController.this.updateGraphFileName();
+					GraphEnvironmentController.this.updateSetupName();
 					
 					// --- Define the NetworkModel ------------------------------------------------
 					NetworkModel netModel = new NetworkModel();
@@ -546,7 +562,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		if (this.getNetworkModel()!=null && this.getNetworkModel().getGraph()!=null) {
 			
 			// --- Update path according to setup -------------------
-			this.updateGraphFileName();
+			this.updateSetupName();
 
 			File graphFile = this.getFileGraphML();
 			this.getNetworkModel().saveGraphFile(graphFile);
@@ -658,13 +674,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 	/**
 	 * Return the setup files from setup data model storage services for the current setup.
+	 * @param setupName2 
 	 * @return the setup files from setup data model storage services
 	 */
-	private List<File> getSetupFilesFromSetupDataModelStorageServices() {
+	private List<File> getSetupFilesFromSetupDataModelStorageServices(String setupName) {
 	
 		List<File> setupFilesOfServices = new ArrayList<>();
 		
-		String setupName = this.getProject().getSimulationSetupCurrent();
 		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
 		for (int i = 0; i < sdmServiceList.size(); i++) {
 			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
@@ -995,9 +1011,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Return all known import adapter.
 	 * @return the import adapter
 	 */
-	public Vector<AbstractNetworkModelFileImporter> getImportAdapter() {
+	public Vector<NetworkModelImportService> getImportAdapter() {
 		if (this.importAdapter == null) {
-			this.importAdapter = new Vector<AbstractNetworkModelFileImporter>();
+			this.importAdapter = new Vector<NetworkModelImportService>();
 		}
 		return this.importAdapter;
 	}
