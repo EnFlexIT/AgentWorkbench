@@ -146,8 +146,8 @@ public class LoadMeasureOSHI implements Cloneable {
 	public void setProcessorInformation() {
 		CentralProcessor proc = this.getSystemInfo().getHardware().getProcessor();
 		if (proc!=null ){
-	        this.setProcessorName(proc.getName());
-	        double freqMhz = proc.getVendorFreq() / Math.pow(10, 6);
+	        this.setProcessorName(proc.getProcessorIdentifier().getName());
+	        double freqMhz = proc.getProcessorIdentifier().getVendorFreq() / Math.pow(10, 6);
 	        this.setMhz((long) freqMhz);
 	        this.setNumberOfPhysicalCPU(proc.getPhysicalProcessorCount());
 	        this.setNumberOfLogicalCPU(proc.getLogicalProcessorCount());
@@ -164,9 +164,9 @@ public class LoadMeasureOSHI implements Cloneable {
     	setTotalMemory(memory.getTotal());
     	setFreeMemory(memory.getAvailable());
     	setUsedMemory(this.getTotalMemory()-this.getFreeMemory());
-    	
-    	setTotalMemorySwap(memory.getSwapTotal());
-    	setUsedMemorySwap(memory.getSwapUsed());
+
+    	setTotalMemorySwap(memory.getVirtualMemory().getSwapTotal());
+    	setUsedMemorySwap(memory.getVirtualMemory().getSwapUsed());
     	setFreeMemorySwap(this.getTotalMemorySwap()-this.getUsedMemorySwap());
 
     	double memoryPercentageSwap = this.doubleRound(((double)this.getUsedMemorySwap() / (double)this.getTotalMemorySwap()*100.0));
@@ -185,16 +185,7 @@ public class LoadMeasureOSHI implements Cloneable {
 		
     	CentralProcessor processor = this.getSystemInfo().getHardware().getProcessor();
 		if (processor!=null) {
-			// --- The MX Bean way (requires Oracle VM) -------------
-			double cpuUsageMXBean = this.doubleRound(processor.getSystemCpuLoad() * 100.0);
 			
-			// --- The OSHI tick counting way -----------------------
-			// --- => NOT recommended => updates once a second ------
-			//double cpuUsageBetweenTicks = this.doubleRound(processor.getSystemCpuLoadBetweenTicks() * 100.0);
-			
-			// --- The own tick counting way ------------------------
-			// --- => see: https://github.com/Leo-G/DevopsWiki/wiki/How-Linux-CPU-Usage-Time-and-Percentage-is-calculated 
-			// ------------------------------------------------------
 			double cpuUsageBetweenTicksOwn = 0;
 			long[] ticks = processor.getSystemCpuLoadTicks();
 			if (this.prevTicks!=null && this.prevTicks.length>0) {
@@ -215,8 +206,7 @@ public class LoadMeasureOSHI implements Cloneable {
 			this.prevTicks = ticks;
 			
 			if (this.debug) {
-				double deltaCpuUsage = this.doubleRound(cpuUsageMXBean-cpuUsageBetweenTicksOwn);
-				System.out.println("CPU usage: " + cpuUsageMXBean + " % (MXBeans) - " + cpuUsageBetweenTicksOwn + " % (Between Ticks - Own) - Delta:" + deltaCpuUsage + " %");
+				System.out.println("CPU usage: " + cpuUsageBetweenTicksOwn + " % (Between Ticks/Own)");
 			}
 			// --- Set the value of the SPU load --------------------
 			this.setCPU_Usage(cpuUsageBetweenTicksOwn);
