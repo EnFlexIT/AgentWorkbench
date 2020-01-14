@@ -634,8 +634,17 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		// --- Getting the time format ------------------------------
 		String timeFormat = this.getJPanelTimeFormater().getTimeFormat();
 		
-		// --- Set TimeModel ----------------------------------------
-		TimeModelDiscrete  timeModelDiscrete = new TimeModelDiscrete(startLong, stopLong, step);
+		
+		// --- Prepare return value ---------------------------------
+		TimeModelDiscrete  timeModelDiscrete = null;
+		if (this.getTimeModelController().getTimeModel() instanceof TimeModelDiscrete) {
+			timeModelDiscrete = (TimeModelDiscrete) this.getTimeModelController().getTimeModel(); 
+		} else {
+			timeModelDiscrete = new TimeModelDiscrete();
+		}
+		timeModelDiscrete.setTimeStart(startLong);
+		timeModelDiscrete.setTimeStop(stopLong);
+		timeModelDiscrete.setStep(step);
 		timeModelDiscrete.setStepDisplayUnitAsIndexOfTimeUnitVector(indexSelected);
 		timeModelDiscrete.setTimeFormat(timeFormat);
 		return timeModelDiscrete;
@@ -649,9 +658,10 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		if (this.enabledChangeListener==true) {
 			Object ceTrigger = ce.getSource();
 			if (ceTrigger instanceof JSpinner) {
+				this.getTimeModelController().setTimeModel(this.getTimeModel());
 				this.saveTimeModelToSimulationSetup();	
 			}	
 		}
 	}
 	
-}  //  @jve:decl-index=0:visual-constraint="3,10"
+} 

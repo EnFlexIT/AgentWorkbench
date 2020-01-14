@@ -30,6 +30,7 @@ package agentgui.simulationService.time;
 
 import javax.swing.JPanel;
 
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 
 /**
@@ -53,6 +54,17 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel {
 	 */
 	public JPanel4TimeModelConfiguration(Project project) {
 		this.currProject = project;
+	}
+	
+	/**
+	 * Returns the currents project TimeModelController that holds the current {@link TimeModel}.
+	 * @return the time model controller
+	 */
+	protected TimeModelController getTimeModelController() {
+		if (this.currProject!=null) {
+			return this.currProject.getTimeModelController();
+		}
+		return null;
 	}
 	
 	/**

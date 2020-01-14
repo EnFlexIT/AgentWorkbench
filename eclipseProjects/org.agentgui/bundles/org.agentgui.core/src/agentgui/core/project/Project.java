@@ -256,7 +256,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	private RemoteContainerConfiguration remoteContainerConfiguration = new RemoteContainerConfiguration();
 
 	/**
-	 * This field can be used in order to provide customised objects during
+	 * This field can be used in order to provide customized objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
 	@XmlTransient 
@@ -278,7 +278,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient private EnvironmentController environmentController;
 
 	/** Configuration settings for the TimeModel used in this Project */
-	@XmlElement(name="timeModelClass") 	private String timeModelClass = null;
+	@XmlElement(name="timeModelClass") 	private String timeModelClass;
 	/** The TimeModelController controls the display of the selected TimModel. */
 	@XmlTransient private TimeModelController timeModelController;
 

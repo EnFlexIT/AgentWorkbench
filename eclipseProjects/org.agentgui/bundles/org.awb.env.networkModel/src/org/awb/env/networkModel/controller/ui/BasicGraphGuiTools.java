@@ -65,6 +65,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.GraphMouseMode;
 import org.awb.env.networkModel.controller.ui.messaging.MessagingJInternalFrame;
+import org.awb.env.networkModel.controller.ui.timeModel.JToggleButtonTimeConfiguration;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentExtension;
@@ -113,6 +114,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonZoomIn;
     private JButton jButtonZoomOut;
     private JButton jButtonSaveImage;
+    private JToggleButtonTimeConfiguration jToggleTimeConfiguration; 
+    
     private JToggleButton jToggleMouseTransforming;
     private JToggleButton jToggleMousePicking;
     private JButton jButtonAddComponent;
@@ -286,6 +289,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 
   		    jToolBarView.addSeparator();
   		    jToolBarView.add(getJButtonSaveImage());
+  		  jToolBarView.addSeparator();
+		    jToolBarView.add(getJToggleButtonTimeConfiguration());
+  		    
   		    
     	}
     	return jToolBarView;
@@ -572,6 +578,17 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonSaveImage;
     }
 
+    /**
+     * Gets the JToggleButtonTimeConfiguration.
+     * @return the j toggle button time configuration
+     */
+    private JToggleButtonTimeConfiguration getJToggleButtonTimeConfiguration() {
+    	if (jToggleTimeConfiguration==null) {
+    		jToggleTimeConfiguration = new JToggleButtonTimeConfiguration(this.graphController);
+    	}
+		return jToggleTimeConfiguration;
+	}
+    
     /**
      * This method initializes jToggleMouseTransforming
      * @return javax.swing.JToggleButton
@@ -1141,7 +1158,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			
 			switch (reason) {
 			case NetworkModelNotification.NETWORK_MODEL_Reload:
-				// --- Check for customised JButtons  -------------------------
+				// --- Check for customized JButtons  -------------------------
 				this.rebuildCustomToolbarComponent();
 				break;
 				

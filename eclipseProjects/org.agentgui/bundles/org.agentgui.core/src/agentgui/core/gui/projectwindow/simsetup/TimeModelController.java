@@ -62,10 +62,10 @@ public class TimeModelController implements Observer {
 
 	private Project currProject;
 	
-	private String currTimeModelClass;
-	private ProjectWindowTab pwt;
-	private JPanel4TimeModelConfiguration display4TimeModel;
+	private TimeModel timeModel;
 	
+	private ProjectWindowTab pwt;
+	private JPanel4TimeModelConfiguration jPanel4TimeModel;
 	private int indexPositionOfTimeModelTab = 0;
 	
 	
@@ -75,10 +75,8 @@ public class TimeModelController implements Observer {
 	public TimeModelController(Project project) {
 		this.currProject = project;
 		this.currProject.addObserver(this);
-		if (Application.isOperatingHeadless()==false) {
-			this.addTimeModelDisplayToProjectWindow();
-		}
-		this.setupLoad();
+		this.addTimeModelDisplayToProjectWindow();
+		this.loadTimeModelFromSimulationSetup();
 	}
 	
 	
@@ -87,74 +85,97 @@ public class TimeModelController implements Observer {
 	 * @param newTimeModel the new time model
 	 */
 	public void setTimeModel(TimeModel newTimeModel) {
-		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
-		if (configPanel!=null) {
-			configPanel.setTimeModel(newTimeModel);
-		} 
+		this.timeModel = newTimeModel;
 	}
 	/**
 	 * Returns the current time model.
 	 * @return the time model
 	 */
 	public TimeModel getTimeModel() {
-		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
-		if (configPanel!=null) {
-			return configPanel.getTimeModel();
-		} 
-		return null;
+		
+		String timeModelClass = this.currProject.getTimeModelClass();
+		boolean isNoClass = timeModelClass==null || timeModelClass.isEmpty();
+		if (isNoClass==true && this.timeModel!=null) {
+			this.setTimeModel(null);
+		}
+		
+		boolean isDifferentClass = timeModel!=null && this.currProject.getTimeModelClass()!=null && this.currProject.getTimeModelClass().equals(timeModel.getClass().getName())==false; 
+		if (timeModel==null || isDifferentClass==true) {
+			if (isNoClass==false) {
+				try {
+					timeModel = ClassLoadServiceUtility.getTimeModelInstance(timeModelClass);
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return timeModel;
 	}
 	/**
 	 * Returns, if available,  a copy of the current TimeModel.
 	 * @return the TimeModel copy
 	 */
 	public TimeModel getTimeModelCopy() {
-		TimeModel timeModelCopy = null;
 		if (this.getTimeModel()!=null) {
-			timeModelCopy = this.getTimeModel().getCopy();
+			return this.getTimeModel().getCopy();
 		}
-		return timeModelCopy;
-	}
-	
-	/**
-	 * Save the current TimeModel to the current simulation setup.
-	 */
-	public void saveTimeModelToSimulationSetup() {
-		SimulationSetup simSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
-		if (simSetup!=null) {
-			simSetup.setTimeModelSettings(this.getJPanel4TimeModelConfiguration().getTimeModel().getTimeModelSetting());
-		}
+		return null;
 	}
 	
 	/**
 	 * Returns the JPanel for the time model configuration.
 	 * @return the DisplayJPanel4Configuration
 	 */
-	public JPanel4TimeModelConfiguration getJPanel4TimeModelConfiguration() {
-		if (display4TimeModel==null) {
-			
-			this.currTimeModelClass = this.currProject.getTimeModelClass();
-			if (this.currTimeModelClass!=null && this.currTimeModelClass.length()!=0) {
-
-				try {
-					TimeModel timeModel = ClassLoadServiceUtility.getTimeModelInstance(this.currTimeModelClass);
-					this.display4TimeModel = timeModel.getJPanel4Configuration(this.currProject);
-
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					e.printStackTrace();
-				}
+	private JPanel4TimeModelConfiguration getJPanel4TimeModelConfiguration() {
+		if (Application.isOperatingHeadless()==false && jPanel4TimeModel==null && this.getTimeModel()!=null) {
+			jPanel4TimeModel = this.getTimeModel().getJPanel4Configuration(this.currProject);
+		}
+		return jPanel4TimeModel;
+	}
+	/**
+	 * Sets the time model display to project the window.
+	 */
+	private void addTimeModelDisplayToProjectWindow() {
+		
+		if (Application.isOperatingHeadless()==true) return;
+		
+		// --- First, remove time model visualization -----
+		this.removeTimeModelDisplayFromProjectWindow();
+		
+		// --- Add the new time model visualization -------
+		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
+		if (configPanel!=null) {
+			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+			this.pwt.add(this.indexPositionOfTimeModelTab);
+			configPanel.setTimeModel(this.getTimeModel());
+		}
+	}
+	/**
+	 * Removes the time model display from the project window.
+	 */
+	private void removeTimeModelDisplayFromProjectWindow() {
+		if (this.pwt!=null) {
+			this.indexPositionOfTimeModelTab = this.pwt.getIndexPosition();
+			this.pwt.remove();
+			this.pwt = null;
+			this.jPanel4TimeModel = null;
+		}
+	}
+	
+	/**
+	 * Updates the time model visualization.
+	 */
+	public void updateTimeModelVisualization() {
+		TimeModel timeModel = this.getTimeModel();
+		if (timeModel!=null) {
+			JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
+			if (configPanel!=null) {
+				configPanel.setTimeModel(timeModel);
 			}
 		}
-		return display4TimeModel;
 	}
-
+	
+	
 	/**
 	 * Gets the index position of time model tab.
 	 * @return the index position of time model tab
@@ -188,64 +209,9 @@ public class TimeModelController implements Observer {
 		this.indexPositionOfTimeModelTab = newIndexPosistion;
 	}
 	
-	/**
-	 * Sets the time model display to project the window.
-	 */
-	private void addTimeModelDisplayToProjectWindow() {
-		
-		if (this.pwt!=null) {
-			this.indexPositionOfTimeModelTab = this.pwt.getIndexPosition();
-			this.pwt.remove();
-			this.pwt = null;
-			this.display4TimeModel = null;
-		}
-		
-		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
-		if (configPanel!=null) {
-			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
-			this.pwt.add(this.indexPositionOfTimeModelTab);
-			configPanel.setTimeModel(null);
-		}
-	}
 	
-	/**
-	 * Removes the time model display to project window.
-	 */
-	private void removeTimeModelDisplayFromProjectWindow() {
-		if (this.pwt!=null) {
-			this.indexPositionOfTimeModelTab = this.pwt.getIndexPosition();
-			this.pwt.remove();
-			this.pwt = null;
-			this.display4TimeModel = null;
-			this.currTimeModelClass = null;
-		}
-	}
 	
-	/**
-	 * Loads the setup configuration.
-	 */
-	private void setupLoad() {
 
-		// --- Get the current SimulationSetup --------------------------------
-		SimulationSetup simSetup = currProject.getSimulationSetups().getCurrSimSetup();
-		// --- Get the right time model ---------------------------------------
-		TimeModel timeModel = this.getTimeModel();
-		if (timeModel!=null) {
-			// --- Set the configuration from setup ---------------------------
-			HashMap<String, String> configHash = simSetup.getTimeModelSettings();
-			if (configHash!=null) {
-				timeModel.setTimeModelSettings(configHash);
-				// --- Set the TimeModel to the display -----------------------
-				this.setTimeModel(timeModel);
-				// --- Forward time format to ontology visualization? ---------
-				if (timeModel!=null && timeModel instanceof TimeModelDateBased) {
-					TimeModelDateBased tmDateBased = (TimeModelDateBased) timeModel;
-					OntologyVisualisationConfiguration.setTimeFormat(tmDateBased.getTimeFormat());
-				}
-			}	
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -257,13 +223,10 @@ public class TimeModelController implements Observer {
 			if (this.currProject.getTimeModelClass()==null) {
 				// --- Remove the Displaying parts, if there any ----
 				this.removeTimeModelDisplayFromProjectWindow();
-				
-			} else if (this.currProject.getTimeModelClass().equals(this.currTimeModelClass)==false) {
+			} else {
 				// --- Display the new TimeModel display ------------
-				if (Application.isOperatingHeadless()==false) {
-					this.addTimeModelDisplayToProjectWindow();
-				}
-				this.setupLoad();
+				this.addTimeModelDisplayToProjectWindow();
+				this.loadTimeModelFromSimulationSetup();
 			}
 			
 		} else if (updateObject instanceof SimulationSetupNotification) {
@@ -272,12 +235,50 @@ public class TimeModelController implements Observer {
 			switch (scn.getUpdateReason()) {
 			case SIMULATION_SETUP_SAVED:
 				break;
+			case SIMULATION_SETUP_PREPARE_SAVING:
+				this.saveTimeModelToSimulationSetup();
+				break;
 				
 			default:
-				this.setupLoad();	
+				this.loadTimeModelFromSimulationSetup();	
 				break;
 			}
 		}
 	}
+	
+	/**
+	 * Loads the setup configuration.
+	 */
+	private void loadTimeModelFromSimulationSetup() {
 
+		// --- Get the current SimulationSetup --------------------------------
+		SimulationSetup simSetup = currProject.getSimulationSetups().getCurrSimSetup();
+		// --- Get the right time model ---------------------------------------
+		TimeModel timeModel = this.getTimeModel();
+		if (timeModel!=null) {
+			// --- Set the configuration from setup ---------------------------
+			HashMap<String, String> configHash = simSetup.getTimeModelSettings();
+			if (configHash!=null) {
+				timeModel.setTimeModelSettings(configHash);
+				// --- Set the TimeModel to the display -----------------------
+				this.updateTimeModelVisualization();
+				// --- Forward time format to ontology visualization? ---------
+				if (timeModel!=null && timeModel instanceof TimeModelDateBased) {
+					TimeModelDateBased tmDateBased = (TimeModelDateBased) timeModel;
+					OntologyVisualisationConfiguration.setTimeFormat(tmDateBased.getTimeFormat());
+				}
+			}	
+		}
+	}
+	
+	/**
+	 * Save the current TimeModel to the current simulation setup.
+	 */
+	public void saveTimeModelToSimulationSetup() {
+		SimulationSetup simSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
+		if (simSetup!=null && this.getTimeModel()!=null) {
+			simSetup.setTimeModelSettings(this.getTimeModel().getTimeModelSetting());
+		}
+	}
+	
 }

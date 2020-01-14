@@ -208,7 +208,7 @@ public class LoadMeasureOSHI implements Cloneable {
 			if (this.debug) {
 				System.out.println("CPU usage: " + cpuUsageBetweenTicksOwn + " % (Between Ticks/Own)");
 			}
-			// --- Set the value of the SPU load --------------------
+			// --- Set the value of the CPU load --------------------
 			this.setCPU_Usage(cpuUsageBetweenTicksOwn);
 			
 		}

@@ -256,8 +256,16 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 		} else {
 			counterStop = Integer.parseInt(counterStopString);
 		}
-		
-		TimeModelStroke tms = new TimeModelStroke(counterStart, counterStop);
+
+		// --- Prepare return value ----------------------- 
+		TimeModelStroke tms = null;
+		if (this.getTimeModelController().getTimeModel() instanceof TimeModelStroke) {
+			tms = (TimeModelStroke) this.getTimeModelController().getTimeModel();
+		} else {
+			tms = new TimeModelStroke();
+		}
+		tms.setCounterStart(counterStart);
+		tms.setCounterStop(counterStop);
 		return tms;
 	}
 
@@ -289,6 +297,7 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	 */
 	private void saveTimeModelStrokeToSimulationSetup() {
 		if (this.enabledChangeListener==true) {
+			this.getTimeModelController().setTimeModel(this.getTimeModel());
 			this.saveTimeModelToSimulationSetup();
 		}
 	}

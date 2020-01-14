@@ -704,8 +704,16 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		// --- Getting acceleration for the time --------------------
 		Double factor = (Double) this.getJSpinnerAcceleration().getValue();
 		
-		// --- Set TimeModel ----------------------------------------
-		TimeModelContinuous tmc = new TimeModelContinuous(startLong, stopLong);
+		
+		// --- Prepare return value ---------------------------------
+		TimeModelContinuous  tmc = null;
+		if (this.getTimeModelController().getTimeModel() instanceof TimeModelContinuous) {
+			tmc = (TimeModelContinuous) this.getTimeModelController().getTimeModel(); 
+		} else {
+			tmc = new TimeModelContinuous();
+		}
+		tmc.setTimeStart(startLong);
+		tmc.setTimeStop(stopLong);
 		tmc.setAccelerationFactor(factor);
 		tmc.setTimeFormat(timeFormat);
 		return tmc;
@@ -719,10 +727,10 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		if (this.enabledChangeListener==true) {
 			Object ceTrigger = ce.getSource();
 			if (ceTrigger instanceof JSpinner) {
+				this.getTimeModelController().setTimeModel(this.getTimeModel());
 				this.saveTimeModelToSimulationSetup();	
 			}	
 		}
 	}
-
 	
 }  
