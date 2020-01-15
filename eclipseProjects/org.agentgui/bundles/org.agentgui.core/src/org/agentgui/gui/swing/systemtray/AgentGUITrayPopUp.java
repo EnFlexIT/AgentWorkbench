@@ -226,7 +226,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			// --- Start JADE for an embedded system agent ----------------
 			Application.getJadePlatform().start4EmbeddedSystemAgent();
 		} else {
-			Application.getJadePlatform().start();	
+			Application.getJadePlatform().doStartInDedicatedThread();	
 		}
 	}
 	

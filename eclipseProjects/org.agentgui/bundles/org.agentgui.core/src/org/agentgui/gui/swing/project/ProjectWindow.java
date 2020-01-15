@@ -488,10 +488,12 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	@Override
 	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
-		this.setTabHeaderVisible(this.getProjectViewRightTabs(), isProjectTabHeaderVisible);
-		this.getProjectViewRightTabs().validate();
-		this.getProjectViewRightTabs().repaint();
 		
+		this.setTabHeaderVisible(this.getProjectViewRightTabs(), isProjectTabHeaderVisible);
+		
+		Container tabParent = this.getProjectViewRightTabs().getParent();
+		tabParent.validate();
+		tabParent.repaint();
 	}
 	/**
 	 * Sets the specified tab header visible or not.

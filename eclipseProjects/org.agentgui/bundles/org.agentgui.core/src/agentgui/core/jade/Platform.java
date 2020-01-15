@@ -46,6 +46,7 @@ import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
+import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.network.NetworkAddresses;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
@@ -145,6 +146,13 @@ public class Platform {
 		this.networkAddresses = networkAddresses;
 	}
 	
+	
+	/**
+	 * Does the platform start by using a dedicated thread.
+	 */
+	public void doStartInDedicatedThread() {
+		this.start(false, null, true);
+	}
 	/**
 	 * Starts JADE without displaying the RMA
 	 * @return true, if successful
@@ -166,7 +174,38 @@ public class Platform {
 	 * @param containerProfile the actual container Profile
 	 * @return true, if successful
 	 */
-	public boolean start(boolean showRMA, Profile containerProfile) {
+	public boolean start(final boolean showRMA, final Profile containerProfile) {
+		return start(showRMA, containerProfile, false);
+	}
+	
+	/**
+	 * Starts JADE.
+	 *
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualization
+	 * @param containerProfile the actual container Profile
+	 * @param useDedicatedThread the indicator to use a dedicated thread for the start
+	 * @return true, if successful
+	 */
+	public boolean start(final boolean showRMA, final Profile containerProfile, boolean useDedicatedThread) {
+		
+		if (useDedicatedThread==true) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Platform.this.start();
+				}
+			}, "JADE-Starter Thread").start();
+			return true;
+		} 
+		return this.doStart(showRMA, containerProfile);
+	}
+	/**
+	 * Starts JADE.
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualization 
+	 * @param containerProfile the actual container Profile
+	 * @return true, if successful
+	 */
+	private boolean doStart(boolean showRMA, Profile containerProfile) {
 		
 		boolean startSucceed = false;		
 		if (this.isMainContainerRunning()==true) {
@@ -175,6 +214,8 @@ public class Platform {
 		} else {
 			
 			try {
+				// --- Set JADE status to yellow --------------------
+				Application.setJadeStatusColor(JadeStatusColor.Yellow);
 				// --------------------------------------------------
 				// --- In case of execution as Service, check -------
 				// --- Master-URL and maybe delay the JADE start ----
@@ -192,7 +233,7 @@ public class Platform {
 						LoadMeasureThread.removeMonitoringTasksForAgents();
 						Platform.this.jadeMainContainer = null;
 						Platform.this.getAgentContainerList().clear();
-						Application.setStatusJadeRunning(false);
+						Application.setJadeStatusColor(JadeStatusColor.Red);
 						if (Application.getMainWindow()!=null){
 							Application.getMainWindow().setSimulationReady2Start();
 						}
@@ -228,7 +269,7 @@ public class Platform {
 		// --- Start the Application Background-Agents ---------------
 		if (startSucceed==true) {
 			if (this.startBackgroundAgents(showRMA)==false) return false;
-			Application.setStatusJadeRunning(true);
+			Application.setJadeStatusColor(JadeStatusColor.Green);
 		}
 		return startSucceed;
 	}
@@ -602,7 +643,7 @@ public class Platform {
 		this.getAgentContainerList().clear();
 		this.jadeMainContainer = null;
 		
-		Application.setStatusJadeRunning(false);
+		Application.setJadeStatusColor(JadeStatusColor.Red);
 		if (Application.getMainWindow()!=null) {
 			Application.getMainWindow().setSimulationReady2Start();
 		}
@@ -688,7 +729,7 @@ public class Platform {
 	
 	
 	/**
-	 * Starts an Agent, if the main-container exists.
+	 * Starts an AWB system agent, if the main-container exists.
 	 *
 	 * @param systemAgentToStart the system agent to start
 	 * @param optionalSuffixNo the optional postfix no
@@ -696,7 +737,6 @@ public class Platform {
 	public void startSystemAgent(SystemAgent systemAgentToStart, Integer optionalSuffixNo) {
 		this.startSystemAgent(systemAgentToStart, optionalSuffixNo, null);
 	}
-	
 	/**
 	 * Starts agents that are available by JADE or Agent.Workbench like the rma, sniffer etc.<br>
 	 *
@@ -705,6 +745,37 @@ public class Platform {
 	 * @param openArgs the open arguments
 	 */
 	public void startSystemAgent(SystemAgent systemAgentToStart, Integer optionalSuffixNo, Object[] openArgs) {
+		this.startSystemAgent(systemAgentToStart, optionalSuffixNo, openArgs, false);
+	}
+	/**
+	 * Starts agents that are available by JADE or Agent.Workbench like the rma, sniffer etc.<br>
+	 *
+	 * @param systemAgentToStart the system agent to start
+	 * @param optionalSuffixNo an optional postfix no
+	 * @param openArgs the open arguments
+	 * @param useDedicatedThread the indicator to use a dedicated thread for the system agent start
+	 */
+	public void startSystemAgent(final SystemAgent systemAgentToStart, final Integer optionalSuffixNo, final Object[] openArgs, boolean useDedicatedThread) {
+		
+		if (useDedicatedThread==true) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Platform.this.doStartSystemAgent(systemAgentToStart, optionalSuffixNo, openArgs);
+				}
+			}, "System-Agent-Start-Thread").start();
+		} else {
+			this.doStartSystemAgent(systemAgentToStart, optionalSuffixNo, openArgs);
+		}
+	}
+	/**
+	 * Starts agents that are available by JADE or Agent.Workbench like the rma, sniffer etc.<br>
+	 *
+	 * @param systemAgentToStart the system agent to start 
+	 * @param optionalSuffixNo an optional postfix no
+	 * @param openArgs the open arguments
+	 */
+	private void doStartSystemAgent(SystemAgent systemAgentToStart, Integer optionalSuffixNo, Object[] openArgs) {
 		
 		boolean showRMA = true;
 		

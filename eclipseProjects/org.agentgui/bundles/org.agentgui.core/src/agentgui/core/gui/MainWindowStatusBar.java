@@ -64,9 +64,30 @@ public class MainWindowStatusBar extends JPanel {
 
 	private static final long serialVersionUID = -575684753041100082L;
 	
-	private final ImageIcon iconGreen = GlobalInfo.getInternalImageIcon("StatGreen.png");
-	private final ImageIcon iconRed = GlobalInfo.getInternalImageIcon("StatRed.png");
-
+	public enum JadeStatusColor {
+		Green("JADE wurde lokal gestartet.",	"StatGreen.png"),
+		Yellow("JADE wird gestartet ... ", 		"StatYellow.png"),
+		Red("JADE wurde noch nicht gestartet.", "StatRed.png");
+		
+		private String deDescription;
+		private String imageName; 
+		
+		private ImageIcon icon;
+		private JadeStatusColor(String deDescription, String imageName) {
+			this.deDescription = deDescription;
+			this.imageName   = imageName;
+		}
+		public String getDescription() {
+			return Language.translate(this.deDescription);
+		}
+		public ImageIcon getImageIcon() {
+			if (icon==null) {
+				icon = GlobalInfo.getInternalImageIcon(this.imageName);
+			}
+			return icon;
+		}
+	}
+	
 	private JLabel jLabelStatusText;
 
 	private HeapUsageMonitoringTask heapStatusMonitoringTask;
@@ -125,7 +146,7 @@ public class MainWindowStatusBar extends JPanel {
 		gbc_jLabelJadeState.gridy = 0;
 		this.add(this.getJLabelJadeState(), gbc_jLabelJadeState);
 		
-		this.setJadeIsRunning(false);
+		this.setJadeStatusColor(JadeStatusColor.Red);
 	}
 	
 	/**
@@ -376,17 +397,20 @@ public class MainWindowStatusBar extends JPanel {
 		return jLabelJadeState;
 	}
 	/**
-	 * Sets the indicator if JADE is running or not (red or green button in the right corner of the status bar + text).
-	 * @param isRunning the new status jade running
+	 * Sets the jade color status.
+	 * @param jadeStatus the new jade color status
 	 */
-	public void setJadeIsRunning(boolean isRunning) {
-		if (isRunning == false) {
-			this.getJLabelJadeState().setText(Language.translate("JADE wurde noch nicht gestartet.") + "   ");
-			this.getJLabelJadeState().setIcon(this.iconRed);
-		} else {
-			this.getJLabelJadeState().setText(Language.translate("JADE wurde lokal gestartet.") + "   ");
-			this.getJLabelJadeState().setIcon(this.iconGreen);
-		}
+	public void setJadeStatusColor(JadeStatusColor jadeStatus) {
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				MainWindowStatusBar.this.getJLabelJadeState().setText(jadeStatus.getDescription());
+				MainWindowStatusBar.this.getJLabelJadeState().setIcon(jadeStatus.getImageIcon());
+				MainWindowStatusBar.this.getJLabelJadeState().validate();
+				MainWindowStatusBar.this.getJLabelJadeState().repaint();
+			}
+		});
 	}
 	
 }

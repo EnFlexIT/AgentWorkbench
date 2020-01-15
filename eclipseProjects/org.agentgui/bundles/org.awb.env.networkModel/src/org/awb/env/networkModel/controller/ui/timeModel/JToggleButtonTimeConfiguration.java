@@ -39,7 +39,6 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 		this.registerObserver();
 		this.initiate();
 	}
-
 	/**
 	 * Returns the current project.
 	 * @return the project
@@ -47,7 +46,6 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 	private Project getProject() {
 		return this.graphController.getProject();
 	}
-	
 	/**
 	 * Returns the current {@link TimeModel}.
 	 * @return the time model

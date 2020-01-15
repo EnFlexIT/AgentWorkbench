@@ -62,6 +62,7 @@ import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.ChangeDialog;
 import agentgui.core.gui.MainWindow;
+import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.Platform;
@@ -1076,12 +1077,12 @@ public class Application {
 	}
 
 	/**
-	 * Sets the status which shows if JADE is running (green or red in the right corner of the status bar)   
-	 * @param runs  
+	 * Sets the jade status color.
+	 * @param jadeStatus the new jade status color
 	 */
-	public static void setStatusJadeRunning(boolean runs) {
+	public static void setJadeStatusColor(JadeStatusColor jadeStatus) {
 		if (getMainWindow()!=null) {
-			getMainWindow().setStatusJadeRunning(runs);	
+			getMainWindow().setJadeStatusColor(jadeStatus);
 		}
 		if (trayIcon!=null) {
 			trayIcon.refreshView();	

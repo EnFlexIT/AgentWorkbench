@@ -84,6 +84,7 @@ import org.eclipse.core.runtime.Platform;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.jade.Platform.SystemAgent;
 import agentgui.core.project.Project;
@@ -473,12 +474,13 @@ public class MainWindow extends JFrame {
 			}
 		});
 	}
+
 	/**
-	 * Sets the indicator in order to visul inform that JADE is running or not (red or green button in the right corner of the status bar + text).
-	 * @param isRunning the new status jade running
+	 * Sets the jade status color.
+	 * @param jadeStatus the new jade status color
 	 */
-	public void setStatusJadeRunning(boolean isRunning) {
-		this.getStatusBar().setJadeIsRunning(isRunning);
+	public void setJadeStatusColor(JadeStatusColor jadeStatus) {
+		this.getStatusBar().setJadeStatusColor(jadeStatus);
 	}
 
 	/**
@@ -1198,7 +1200,7 @@ public class MainWindow extends JFrame {
 				
 				// --- Menu Jade ----------------------------------
 			} else if (actionCMD.equalsIgnoreCase("JadeStart")) {
-				Application.getJadePlatform().start();
+				Application.getJadePlatform().doStartInDedicatedThread();
 
 			} else if (actionCMD.equalsIgnoreCase("JadeStop")) {
 				Application.getJadePlatform().stop();
@@ -1228,13 +1230,15 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("SimulationStart")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith, true);
+				MainWindow.this.setEnableSimStart(false);
 
 			} else if (actionCMD.equalsIgnoreCase("SimulationPause")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
-				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
-
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith, true);
+				MainWindow.this.setEnableSimPause(false);
+				
 			} else if (actionCMD.equalsIgnoreCase("SimulationStop")) {
 				Application.getJadePlatform().stop();
 
@@ -1534,7 +1538,7 @@ public class MainWindow extends JFrame {
 
 				// ------------------------------------------------
 			} else if (actCMD.equalsIgnoreCase("JadeStart")) {
-				Application.getJadePlatform().start();
+				Application.getJadePlatform().doStartInDedicatedThread();
 
 			} else if (actCMD.equalsIgnoreCase("JadeStop")) {
 				Application.getJadePlatform().stop();
@@ -1554,13 +1558,15 @@ public class MainWindow extends JFrame {
 			} else if (actCMD.equalsIgnoreCase("SimulationStart")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
-
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith, true);
+				MainWindow.this.setEnableSimStart(false);
+				
 			} else if (actCMD.equalsIgnoreCase("SimulationPause")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
-				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
-
+				Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith, true);
+				MainWindow.this.setEnableSimPause(false);
+				
 			} else if (actCMD.equalsIgnoreCase("SimulationStop")) {
 				Application.getJadePlatform().stop();
 
