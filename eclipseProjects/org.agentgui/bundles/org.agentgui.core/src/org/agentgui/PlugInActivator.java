@@ -28,7 +28,10 @@
  */
 package org.agentgui;
 
+import java.util.Optional;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -178,7 +181,11 @@ public class PlugInActivator extends AbstractUIPlugin implements BundleListener 
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+		Optional<ImageDescriptor> imgDesc = ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, path);
+		if (imgDesc.isPresent()) {
+			return imgDesc.get(); 
+		}
+		return null;
 	}
 
 }
