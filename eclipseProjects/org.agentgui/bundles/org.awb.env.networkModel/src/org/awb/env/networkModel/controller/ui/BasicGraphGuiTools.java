@@ -176,7 +176,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * Gets the current {@link BasicGraphGui}.
      * @return the basic graph GUI
      */
-    protected BasicGraphGui getBasicGraphGUI() {
+    public BasicGraphGui getBasicGraphGUI() {
     	if (basicGraphGUI==null) {
     		if (this.getGraphControllerGUI()==null) {
     			System.err.println("[" + this.getClass().getSimpleName() + "] GraphEnvironmentControllerGUI is null");

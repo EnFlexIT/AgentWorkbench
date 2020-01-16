@@ -65,15 +65,13 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private static final long serialVersionUID = 7376906096627051173L;
 
     private GraphEnvironmentController graphController;
-    private NetworkComponent currNetworkComponent;
     
     private JSplitPane jSplitPaneRoot;
-    
     private NetworkComponentTablePanel networkComponentTablePanel;
-    
     private BasicGraphGui graphGUI;
-
     
+    private NetworkComponent currNetworkComponent;
+
     
     /**
      * This is the default constructor for just displaying the current environment model during a running simulation.

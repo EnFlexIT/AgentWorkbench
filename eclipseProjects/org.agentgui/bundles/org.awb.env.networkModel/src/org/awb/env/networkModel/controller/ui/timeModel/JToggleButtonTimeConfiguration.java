@@ -30,29 +30,47 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 
 	private GraphEnvironmentController graphController;
 	
+	private JInternalFrameTimeConfiguration jPanelTimeConfig;
+	
 	/**
 	 * Instantiates a new JButton for the time configuration.
 	 * @param graphController the graph controller
 	 */
 	public JToggleButtonTimeConfiguration(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
-		this.registerObserver();
 		this.initiate();
+		this.registerObserver();
 	}
 	/**
-	 * Returns the current project.
-	 * @return the project
+	 * Initiates this button.
 	 */
-	private Project getProject() {
-		return this.graphController.getProject();
+	private void initiate() {
+		this.setIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "Clock.png")));;
+		this.setPreferredSize(BasicGraphGuiTools.JBUTTON_SIZE);
+		this.addActionListener(this);
+		this.updateToolTip();
 	}
 	/**
-	 * Returns the current {@link TimeModel}.
-	 * @return the time model
+	 * Updates the tool tip.
 	 */
-	private TimeModel getTimeModel() {
-		return this.graphController.getTimeModel();
+	private void updateToolTip() {
+		TimeModel timeModel = this.getTimeModel();
+		String tmDescription = "No TimeModel was specified for the project!";
+		if (timeModel!=null) {
+			tmDescription = this.getTimeModel().getClass().getSimpleName();
+		}
+		this.setToolTipText(Language.translate("Zeit-Konfiguration") + ": " + tmDescription);
 	}
+	/* (non-Javadoc)
+	 * @see javax.swing.AbstractButton#setEnabled(boolean)
+	 */
+	@Override
+	public void setEnabled(boolean isEnabled) {
+		super.setEnabled(isEnabled);
+		if (isEnabled==false) this.setSelected(isEnabled);
+		this.updateToolTip();
+	}
+	
 	
 	/**
 	 * Register local observer.
@@ -92,45 +110,47 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 		}
 		
 	}
-	/* (non-Javadoc)
-	 * @see javax.swing.AbstractButton#setEnabled(boolean)
-	 */
-	@Override
-	public void setEnabled(boolean isEnabled) {
-		super.setEnabled(isEnabled);
-		if (isEnabled==false) this.setSelected(isEnabled);
-		this.updateToolTip();
-	}
-	/**
-	 * Updates the tool tip.
-	 */
-	private void updateToolTip() {
-		TimeModel timeModel = this.getTimeModel();
-		String tmDescription = "No TimeModel was specified for the project!";
-		if (timeModel!=null) {
-			tmDescription = this.getTimeModel().getClass().getSimpleName();
-		}
-		this.setToolTipText(Language.translate("Zeit-Konfiguration") + ": " + tmDescription);
-	}
 	
-	
-	/**
-	 * Initiates this button.
-	 */
-	private void initiate() {
-		this.setIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "Clock.png")));;
-		this.setPreferredSize(BasicGraphGuiTools.JBUTTON_SIZE);
-		this.addActionListener(this);
-		this.updateToolTip();
-	}
+
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		
-		// TODO Auto-generated method stub
-		System.out.println(this.getClass().getSimpleName() + " was pressed");
-		
+
+		if (this.isSelected()==true) {
+			// --- Show time configuration panel ----------
+			this.getJInternalFrameTimeConfiguration().registerAtDesktopAndSetVisible();
+		} else {
+			// --- Hide time configuration panel ----------
+			this.getJInternalFrameTimeConfiguration().setVisible(false);
+		}
 	}
+	/**
+	 * Returns the JInternalFrameTimeConfiguration
+	 * @return the j internal frame time configuration
+	 */
+	private JInternalFrameTimeConfiguration getJInternalFrameTimeConfiguration() {
+		if (jPanelTimeConfig==null) {
+			jPanelTimeConfig = new JInternalFrameTimeConfiguration(this.graphController);
+		}
+		return jPanelTimeConfig;
+	}
+
+	
+	/**
+	 * Returns the current project.
+	 * @return the project
+	 */
+	private Project getProject() {
+		return this.graphController.getProject();
+	}
+	/**
+	 * Returns the current {@link TimeModel}.
+	 * @return the time model
+	 */
+	private TimeModel getTimeModel() {
+		return this.graphController.getTimeModel();
+	}
+	
 }
