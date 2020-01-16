@@ -898,6 +898,7 @@ en;;The project was updated successfully!;;;
 en;;The selection contains also NetworkComponets that are single nodes.;;;
 en;;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;;These are:;;;
+en;;Time Configuration;;;
 en;;Time Controlled;;;
 en;;Time Format and Offset;;;
 en;;Time after a signal must be sent at least;;;
