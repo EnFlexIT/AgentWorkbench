@@ -32,14 +32,12 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -61,14 +59,12 @@ public class TimeFormatSelection extends JPanelForActions {
 	private static final long serialVersionUID = 1L;
 	
 	private boolean showLable = false;
-	private String defaultTimeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;  //  @jve:decl-index=0:
+	private String defaultTimeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
 	
 	private JLabel jLabelFormat = null;
 	private JTextField jTextFieldTimeFormat = null;
 	private JButton jButtonTimeFormatDefault = null;
 	private JComboBoxWide<TimeFormat> jComboBoxTimeFormat = null;
-
-	private JPanel jPanelDummy = null;
 
 	
 	/**
@@ -84,7 +80,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	public TimeFormatSelection(boolean showFormatLabel) {
 		super();
 		this.showLable=showFormatLabel;
-		initialize();
+		this.initialize();
 	}
 	
 	/**
@@ -93,21 +89,30 @@ public class TimeFormatSelection extends JPanelForActions {
 	 */
 	private void initialize() {
 		
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		this.setLayout(gridBagLayout);
+		this.setSize(430, 60);
+
+
 		GridBagConstraints gridBagConstraintLabel = new GridBagConstraints();
 		gridBagConstraintLabel.gridx = 0;
+		gridBagConstraintLabel.gridy = 0;
 		gridBagConstraintLabel.insets = new Insets(0, 5, 0, 0);
 		gridBagConstraintLabel.anchor = GridBagConstraints.WEST;
-		gridBagConstraintLabel.gridy = 1;
 		
 		GridBagConstraints gridBagConstraintButtonDefault = new GridBagConstraints();
 		gridBagConstraintButtonDefault.gridx = 2;
+		gridBagConstraintButtonDefault.gridy = 0;
 		gridBagConstraintButtonDefault.insets = new Insets(0, 5, 0, 5);
-		gridBagConstraintButtonDefault.gridy = 1;
 		
 		GridBagConstraints gridBagConstraintTextField = new GridBagConstraints();
-		gridBagConstraintTextField.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraintTextField.gridx = 1;
-		gridBagConstraintTextField.gridy = 1;
+		gridBagConstraintTextField.gridy = 0;
+		gridBagConstraintTextField.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraintTextField.weightx = 1.0;
 		if (this.showLable==true) {
 			gridBagConstraintTextField.insets = new Insets(0, 5, 0, 0);			
@@ -116,34 +121,23 @@ public class TimeFormatSelection extends JPanelForActions {
 		}
 		
 		GridBagConstraints gridBagConstraintComboBox = new GridBagConstraints();
-		gridBagConstraintComboBox.fill = GridBagConstraints.BOTH;
 		gridBagConstraintComboBox.gridx = 1;
-		gridBagConstraintComboBox.gridy = 2;
+		gridBagConstraintComboBox.gridy = 1;
 		gridBagConstraintComboBox.weightx = 1.0;
+		gridBagConstraintComboBox.fill = GridBagConstraints.BOTH;
 		if (this.showLable==true) {
 			gridBagConstraintComboBox.insets = new Insets(7, 5, 0, 0);
 		} else {
 			gridBagConstraintComboBox.insets = new Insets(7, 0, 0, 0);
 		}
 		
-		GridBagConstraints gridBagConstraintDummy = new GridBagConstraints();
-		gridBagConstraintDummy.gridx = 0;
-		gridBagConstraintDummy.fill = GridBagConstraints.BOTH;
-		gridBagConstraintDummy.weightx = 1.0;
-		gridBagConstraintDummy.weighty = 1.0;
-		gridBagConstraintDummy.gridwidth = 3;
-		gridBagConstraintDummy.insets = new Insets(0, 0, 0, 0);
-		gridBagConstraintDummy.gridy = 3;
 		
-		this.setSize(427, 65);
-		this.setLayout(new GridBagLayout());
-		if (showLable==true) {
+		if (this.showLable==true) {
 			this.add(this.getJLabelFormatHeader(), gridBagConstraintLabel);	
 		}
 		this.add(getJTextFieldTimeFormat(), gridBagConstraintTextField);
 		this.add(getJComboBoxTimeFormat(), gridBagConstraintComboBox);
 		this.add(getJButtonTimeFormatDefault(), gridBagConstraintButtonDefault);
-		this.add(getJPanelDummy(), gridBagConstraintDummy);
 	}
 
 	/**
@@ -193,9 +187,8 @@ public class TimeFormatSelection extends JPanelForActions {
 		if (jButtonTimeFormatDefault == null) {
 			jButtonTimeFormatDefault = new JButton();
 			jButtonTimeFormatDefault.setPreferredSize(new Dimension(45, 26));
-			jButtonTimeFormatDefault.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonTimeFormatDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
-			jButtonTimeFormatDefault.setToolTipText("Agent.GUI - Standard verwenden");
+			jButtonTimeFormatDefault.setToolTipText("Standard verwenden");
 			jButtonTimeFormatDefault.setToolTipText(Language.translate(jButtonTimeFormatDefault.getToolTipText()));
 			jButtonTimeFormatDefault.addActionListener(new ActionListener() {
 				@Override
@@ -231,17 +224,6 @@ public class TimeFormatSelection extends JPanelForActions {
 			});
 		}
 		return jComboBoxTimeFormat;
-	}
-	/**
-	 * This method initializes jPanelDummy	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelDummy() {
-		if (jPanelDummy == null) {
-			jPanelDummy = new JPanel();
-			jPanelDummy.setLayout(new GridBagLayout());
-		}
-		return jPanelDummy;
 	}
 
 	/**
@@ -290,4 +272,4 @@ public class TimeFormatSelection extends JPanelForActions {
 	}
 	
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}

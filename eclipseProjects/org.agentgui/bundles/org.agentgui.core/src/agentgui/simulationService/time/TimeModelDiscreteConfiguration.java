@@ -73,7 +73,6 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	
 	private JLabel jLabelHeader1 = null;
 	private JLabel jLabelHeader2 = null;
-	private JPanel jPanelDummy = null;
 	
 	private JLabel jLabelStop = null;
 	private JLabel jLabelStart = null;
@@ -121,14 +120,23 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	 */
 	private void initialize() {
 		
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		this.setLayout(gridBagLayout);
+		this.setSize(600, 400);
+		
+		
 		GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 		gridBagConstraints10.gridx = 0;
 		gridBagConstraints10.anchor = GridBagConstraints.NORTHWEST;
 		gridBagConstraints10.insets = new Insets(15, 10, 0, 0);
 		gridBagConstraints10.gridy = 5;
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.gridy = 5;
 		gridBagConstraints11.anchor = GridBagConstraints.WEST;
+		gridBagConstraints11.gridy = 5;
 		gridBagConstraints11.gridwidth = 1;
 		gridBagConstraints11.insets = new Insets(10, 5, 0, 0);
 		gridBagConstraints11.gridx = 1;
@@ -154,27 +162,18 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		gridBagConstraints15.gridy = 2;
 		GridBagConstraints gridBagConstraints141 = new GridBagConstraints();
 		gridBagConstraints141.gridx = 1;
-		gridBagConstraints141.gridwidth = 5;
 		gridBagConstraints141.anchor = GridBagConstraints.WEST;
 		gridBagConstraints141.insets = new Insets(10, 5, 10, 0);
 		gridBagConstraints141.gridy = 2;
 		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 		gridBagConstraints13.gridx = 1;
 		gridBagConstraints13.fill = GridBagConstraints.NONE;
-		gridBagConstraints13.gridwidth = 8;
 		gridBagConstraints13.anchor = GridBagConstraints.WEST;
 		gridBagConstraints13.insets = new Insets(10, 5, 10, 0);
 		gridBagConstraints13.gridy = 3;
 		GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 		gridBagConstraints8.gridx = 2;
 		gridBagConstraints8.gridy = 0;
-		GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-		gridBagConstraints7.gridx = 0;
-		gridBagConstraints7.fill = GridBagConstraints.BOTH;
-		gridBagConstraints7.weightx = 1.0;
-		gridBagConstraints7.weighty = 1.0;
-		gridBagConstraints7.gridwidth = 2;
-		gridBagConstraints7.gridy = 6;
 		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 		gridBagConstraints6.gridx = 0;
 		gridBagConstraints6.insets = new Insets(0, 10, 0, 0);
@@ -247,13 +246,8 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		jLabeDateFormat.setText("Ansicht");
 		jLabeDateFormat.setText(Language.translate(jLabeDateFormat.getText()) + ":");
 		
-		this.setSize(new Dimension(559, 350));
-        this.setLayout(new GridBagLayout());
-        this.setPreferredSize(new Dimension(600, 322));
-        this.setPreferredSize(new Dimension(810, 322));
         this.add(jLabelHeader1, gridBagConstraints5);
         this.add(jLabelHeader2, gridBagConstraints6);
-        this.add(getJPanelDummy(), gridBagConstraints7);
         this.add(getJPanelStopSettings(), gridBagConstraints13);
         this.add(getJPanelStartSettings(), gridBagConstraints141);
         this.add(jLabelStart, gridBagConstraints15);
@@ -342,18 +336,6 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 			jSpinnerMillisStop.addChangeListener(this);
 		}
 		return jSpinnerMillisStop;
-	}
-	
-	/**
-	 * This method initializes jPanelDummy	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelDummy() {
-		if (jPanelDummy == null) {
-			jPanelDummy = new JPanel();
-			jPanelDummy.setLayout(new GridBagLayout());
-		}
-		return jPanelDummy;
 	}
 	/**
 	 * This method initializes jPanelStopSettings	

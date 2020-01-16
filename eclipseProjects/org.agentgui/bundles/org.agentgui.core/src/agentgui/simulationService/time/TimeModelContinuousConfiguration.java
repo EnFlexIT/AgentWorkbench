@@ -76,7 +76,6 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	private JPanel jPanelStopSettings = null;
 	private JPanel jPanelWidthSettings = null;
 	private JPanel jPanelDivider = null;
-	private JPanel jPanelDummy = null;
 	
 	private JLabel jLabelStart = null;
 	private JLabel jLabelStartDate = null;
@@ -122,61 +121,62 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	 */
 	protected void initialize() {
 		
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		this.setLayout(gridBagLayout);
+		this.setSize(600, 400);
+		
 		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.gridx = 1;
 		gridBagConstraints21.anchor = GridBagConstraints.WEST;
+		gridBagConstraints21.gridx = 1;
 		gridBagConstraints21.insets = new Insets(10, 5, 0, 0);
-		gridBagConstraints21.gridy = 6;
+		gridBagConstraints21.gridy = 4;
 		GridBagConstraints gridBagConstraints20 = new GridBagConstraints();
 		gridBagConstraints20.gridx = 0;
 		gridBagConstraints20.insets = new Insets(15, 10, 0, 0);
 		gridBagConstraints20.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints20.gridy = 6;
+		gridBagConstraints20.gridy = 4;
 		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 		gridBagConstraints4.gridx = 0;
 		gridBagConstraints4.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints4.insets = new Insets(5, 7, 5, 20);
 		gridBagConstraints4.gridwidth = 2;
-		gridBagConstraints4.gridy = 7;
+		gridBagConstraints4.gridy = 5;
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 1;
 		gridBagConstraints11.anchor = GridBagConstraints.WEST;
 		gridBagConstraints11.insets = new Insets(10, 5, 10, 0);
 		gridBagConstraints11.gridwidth = 1;
-		gridBagConstraints11.gridy = 5;
+		gridBagConstraints11.gridy = 3;
 		GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 		gridBagConstraints10.gridx = 0;
 		gridBagConstraints10.insets = new Insets(0, 10, 0, 0);
 		gridBagConstraints10.anchor = GridBagConstraints.WEST;
-		gridBagConstraints10.gridy = 5;
+		gridBagConstraints10.gridy = 3;
 		GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 		gridBagConstraints9.gridx = 0;
-		gridBagConstraints9.anchor = GridBagConstraints.WEST;
+		gridBagConstraints9.anchor = GridBagConstraints.NORTH;
 		gridBagConstraints9.insets = new Insets(10, 10, 10, 10);
 		gridBagConstraints9.gridwidth = 2;
 		gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints9.gridy = 9;
+		gridBagConstraints9.gridy = 6;
 		GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 		gridBagConstraints15.gridx = 0;
 		gridBagConstraints15.insets = new Insets(0, 10, 0, 0);
 		gridBagConstraints15.anchor = GridBagConstraints.WEST;
-		gridBagConstraints15.gridy = 4;
+		gridBagConstraints15.gridy = 2;
 		GridBagConstraints gridBagConstraints141 = new GridBagConstraints();
 		gridBagConstraints141.gridx = 1;
 		gridBagConstraints141.gridwidth = 1;
 		gridBagConstraints141.anchor = GridBagConstraints.WEST;
 		gridBagConstraints141.insets = new Insets(10, 5, 10, 0);
-		gridBagConstraints141.gridy = 4;
+		gridBagConstraints141.gridy = 2;
 		GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 		gridBagConstraints8.gridx = 2;
 		gridBagConstraints8.gridy = 0;
-		GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-		gridBagConstraints7.gridx = 0;
-		gridBagConstraints7.fill = GridBagConstraints.BOTH;
-		gridBagConstraints7.weightx = 1.0;
-		gridBagConstraints7.weighty = 1.0;
-		gridBagConstraints7.gridwidth = 2;
-		gridBagConstraints7.gridy = 11;
 		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 		gridBagConstraints6.gridx = 0;
 		gridBagConstraints6.insets = new Insets(0, 10, 0, 0);
@@ -222,14 +222,11 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		jLabelAcceleration.setText("Beschleunigungsfaktor");
 		jLabelAcceleration.setText(Language.translate(jLabelAcceleration.getText())+ ":");
 		
-		this.setSize(new Dimension(615, 367));
-        this.setLayout(new GridBagLayout());
-        this.add(jLabelHeader1, gridBagConstraints5);
+		this.add(jLabelHeader1, gridBagConstraints5);
         this.add(jLabelHeader2, gridBagConstraints6);
         this.add(jLabelStart, gridBagConstraints15);
         this.add(getJPanelStartSettings(), gridBagConstraints141);
         this.add(getJPanelWidthSettings(), gridBagConstraints9);
-        this.add(getJPanelDummy(), gridBagConstraints7);
         this.add(jLabelStop, gridBagConstraints10);
         this.add(getJPanelStopSettings(), gridBagConstraints11);
         this.add(getJPanelDivider(), gridBagConstraints4);
@@ -435,7 +432,6 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 					}
 				}
 			});
-
 		}
 		return jPanelTimeFormater;
 	}
@@ -538,17 +534,6 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jPanelDivider.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		}
 		return jPanelDivider;
-	}
-	/**
-	 * This method initializes jPanelDummy	
-	 * @return javax.swing.JPanel	
-	 */
-	protected JPanel getJPanelDummy() {
-		if (jPanelDummy == null) {
-			jPanelDummy = new JPanel();
-			jPanelDummy.setLayout(new GridBagLayout());
-		}
-		return jPanelDummy;
 	}
 	
 	/**

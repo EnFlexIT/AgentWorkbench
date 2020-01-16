@@ -281,6 +281,7 @@ de;Folgende Plattform-Dienste starten:;Start the following platform-services:
 de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
+de;Gegenwarts-Zeit.;;;;
 de;Geräte-Agent;Embedded System Agent;;;
 de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
 de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
@@ -859,6 +860,7 @@ en;;Node Positioning;;;
 en;;North;;;
 en;;Notifications;;;
 en;;Number of changes;;;
+en;;Open a CSV file;;;
 en;;Operating;;;
 en;;Orthogonal Line Edge;;;
 en;;Pause Thread Measurement;;;
@@ -873,6 +875,7 @@ en;;Refresh Thread Measurement;;;
 en;;Remove intermediate point;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
+en;;Select pipe characteristics;;;
 en;;Separator:;;;
 en;;Set timed display time;;;
 en;;Should they be removed too?;;;
