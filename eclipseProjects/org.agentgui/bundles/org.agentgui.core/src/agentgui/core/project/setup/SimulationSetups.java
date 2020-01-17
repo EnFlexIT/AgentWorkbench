@@ -385,7 +385,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 			for (int i = 0; i < files.length; i++) {
 				File checkFile = files[i];
 				File setupBaseFile = SimulationSetup.getSetupBaseFile(checkFile);
-				if (this.containsValue(setupBaseFile.getName())==false) {
+				if (setupBaseFile==null || this.containsValue(setupBaseFile.getName())==false) {
 					checkFile.delete();
 				}
 			} 
