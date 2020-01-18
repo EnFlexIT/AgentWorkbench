@@ -55,6 +55,9 @@ import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.agentgui.gui.swt.SWTResourceManager;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.BenchmarkMeasurement;
@@ -134,6 +137,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- File-Properties ------------------------------------------
 	private ExecutionMode fileExecutionMode;
 	private String processID;
+	
+	private Boolean isUpdatedAwbCoreBundle;
 	
 	private String filePropProjectsDirectory;
 	
@@ -294,7 +299,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			GlobalInfo.println4EnvProps();
 		}
 	}
-	
 	/**
 	 * Initializes this class by reading the file properties and the current version information.
 	 */
@@ -307,6 +311,32 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Checks if the currently running AWB core bundle is an updated version in comparison 
+	 * to the previously executes version.
+	 * 
+	 * @return true, if the current core bundle version is different to the previous execution
+	 */
+	public boolean isUpdatedAwbCoreBundle() {
+		if (isUpdatedAwbCoreBundle==null) {
+			// --- Get the current bundle version -------------------
+			Bundle bundle = FrameworkUtil.getBundle(GlobalInfo.class);
+			Version version = bundle.getVersion();
+			String bundleVersionString = version.toString();
+			// --- Get the reminded bundle version ------------------
+			String propsVersionString = this.getStringFromConfiguration(BundleProperties.DEF_AWG_CORE_BUNLDE_VERSION, null);
+			if (propsVersionString==null || propsVersionString.isEmpty()==true || propsVersionString.equals(bundleVersionString)==false) {
+				// --- A different AWB core bundle was executed -----
+				this.putStringToConfiguration(BundleProperties.DEF_AWG_CORE_BUNLDE_VERSION, bundleVersionString);
+				isUpdatedAwbCoreBundle = true;
+				
+			} else {
+				isUpdatedAwbCoreBundle = false;
+			}
+		}
+		return isUpdatedAwbCoreBundle;
 	}
 	
 	/**

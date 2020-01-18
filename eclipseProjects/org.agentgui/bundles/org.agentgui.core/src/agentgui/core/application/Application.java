@@ -160,7 +160,7 @@ public class Application {
 	}
 	
 	/**
-	 * Checks if Agent.GUI is or has to be executed headless (without any GUI).
+	 * Checks if Agent.Workbench is or has to be executed headless (without any GUI).
 	 * @return true, if is headless operation
 	 */
 	public static boolean isOperatingHeadless() {
@@ -170,7 +170,7 @@ public class Application {
 		return headlessOperation;
 	}
 	/**
-	 * Sets that Agent.GUI has to operated headless.
+	 * Sets that Agent.Workbench has to operated headless.
 	 * @param headlessOperation the new headless operation
 	 */
 	public static void setOperatingHeadless(boolean headlessOperation) {
@@ -385,14 +385,13 @@ public class Application {
 		// --- Start log file writer, if needed ---------------------
 		if (isOperatingHeadless()==true) startLogFileWriter();
 		
-		// --- Case separation Agent.GUI / JADE execution -----------
+		// --- Case separation Agent.Workbench / JADE execution -----
 		if (Application.justStartJade==false) {
 			// ------------------------------------------------------
-			// --- Start the Agent.GUI base-instances ---------------
+			// --- Start required Agent.Workbench instances ---------
 			// ------------------------------------------------------
 			getConsole();
 			getGlobalInfo();
-			Language.startDictionary();
 			
 			new LoadMeasureThread().start();  
 			startAgentWorkbench();
@@ -402,7 +401,6 @@ public class Application {
 			// --- Just start JADE ----------------------------------
 			// ------------------------------------------------------
 			getGlobalInfo();
-			Language.startDictionary();
 
 			// --- Load project resources ? -------------------------
 			if (project2OpenAfterStart!=null) {
@@ -428,7 +426,7 @@ public class Application {
 	 * This method will proceed the start-arguments of the application and
 	 * returns these arguments, which are not understood.
 	 * @param args the start arguments
-	 * @return the remaining arguments, which are not proceeded by Agent.GUI
+	 * @return the remaining arguments, which are not proceeded by Agent.Workbench
 	 */
 	private static String[] proceedStartArguments(String[] args) {
 		
@@ -465,7 +463,7 @@ public class Application {
 					
 				} else if (args[i].equalsIgnoreCase("-headless")) {
 					// --------------------------------------------------------
-					// --- Agent.GUI has to be operated headless --------------
+					// --- Agent.Workbench has to be operated headless --------
 					remainingArgsVector.removeElement(args[i]);
 					setOperatingHeadless(true);
 
@@ -524,12 +522,12 @@ public class Application {
 	 */
 	private static void proceedStartArgumentPrintHelp() {
 		
-		System.out.println("Agent.GUI - usage of start arguments:");
+		System.out.println("Agent.Workbench - usage of start arguments:");
 		System.out.println("");
-		System.out.println("1. '-project projectFolder': opens the project located in the Agent.GUI folder 'project' (e.g. 'myProject')");
-		System.out.println("2. '-headless'             : will set Agent.GUI to operate headless (without any GUI)");
+		System.out.println("1. '-project projectFolder': opens the project located in the configured Agent.Workbench directory for projects (e.g. 'myProject')");
+		System.out.println("2. '-headless'             : will set Agent.Workbench to operate headless (without any visualization)");
 		System.out.println("3. '-jade'                 : indicates that JADE has to be started. For the JADE start arguments, see JADE administrative guide.");
-		System.out.println("4. '-log'                  : starts the Agent.GUI log file writer.");
+		System.out.println("4. '-log'                  : starts the Agent.Workbench log file writer.");
 		System.out.println("5. '-help' or '-?'         : provides this information to the console");
 		System.out.println("");
 		System.out.println("");
@@ -565,13 +563,13 @@ public class Application {
 	public static void startAgentWorkbench() {
 		
 		// ----------------------------------------------------------
-		// --- Check if Agent.GUI is operated headless --------------
+		// --- Check if Agent.Workbench is operated headless --------
 		// ----------------------------------------------------------
 		if (isOperatingHeadless()==true) {
 			// --- Check start settings for headless operation ------
 			if (getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
 				String configFile = getGlobalInfo().getPathConfigFile(false);
-				String msg = "Agent.GUI-Execution Mode was set to 'Application', but this mode can't be executed headless.\n";
+				String msg = "Agent.Workbench-Execution Mode was set to 'Application', but this mode can't be executed headless.\n";
 				msg+= "Please, check the argument '01_RUNAS' in file '" + configFile + "' and set this argument\n";
 				msg+= "either to 'Server' or 'EmbeddedSystemAgent'.";
 				System.err.println(msg);
@@ -581,7 +579,7 @@ public class Application {
 		}
 		
 		// ----------------------------------------------------------		
-		// --- Start Agent.GUI as defined by 'ExecutionMode' --------
+		// --- Start Agent.Workbench as defined by 'ExecutionMode' --
 		// ----------------------------------------------------------
 		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		
@@ -656,7 +654,7 @@ public class Application {
 	
 	
 	/**
-	 * Starts the main procedure for the Server-Version of Agent.GUI
+	 * Starts the main procedure for the Server-Version of Agent.Workbench
 	 */
 	public static void startServer() {
 		// --- Automatically Start JADE, if configured --------------
@@ -675,7 +673,7 @@ public class Application {
 	}
 	
 	/**
-	 * Start Agent.GUI as device system or embedded system agent.
+	 * Start Agent.Workbench as device system or embedded system agent.
 	 */
 	public static void startServiceOrEmbeddedSystemAgent() {
 		
@@ -804,13 +802,13 @@ public class Application {
 		return true;
 	}
 	/**
-	 * Stops Agent.GUI (Application | Server | Service & Embedded System Agent)
+	 * Stops Agent.Workbench (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void stop() {
 		getIApplication().stop();
 	}
 	/**
-	 * Restarts Agent.GUI (Application | Server | Service & Embedded System Agent)
+	 * Restarts Agent.Workbench (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void restart() {
 		getIApplication().stop(IApplication.EXIT_RESTART);
@@ -1162,7 +1160,7 @@ public class Application {
 			
 		}
 		
-		// --- Stop Agent.GUI ---------------------------------------
+		// --- Stop Agent.Workbench ---------------------------------
 		if (stopAgentWorkbench()==false) return;
 		// --- Switch Language --------------------------------------
 		System.out.println("=> " + Language.translate("Sprachumstellung zu") + " '" + newLang + "'.");
@@ -1293,7 +1291,7 @@ public class Application {
 	 */
 	public static void setOntologyVisualisationConfigurationToCommonBundle() {
 		
-		// --- Add the known OntologyClassVisualisation's of Agent.GUI --------
+		// --- Add the known OntologyClassVisualisation's of Agent.Workbench --
 		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
 		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new XyChartVisualisation());
 		

@@ -56,6 +56,7 @@ public class BundleProperties {
 	
 	public static final String PLUGIN_ID = PlugInActivator.PLUGIN_ID;
 	
+	public static final String DEF_AWG_CORE_BUNLDE_VERSION = "00_AWB_CORE_BUNDLE_VERSION";
 	public static final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
 	
 	public static final String DEF_RUNAS = "01_RUNAS";

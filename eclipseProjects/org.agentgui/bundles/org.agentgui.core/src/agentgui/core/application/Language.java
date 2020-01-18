@@ -109,12 +109,13 @@ public class Language implements Translator {
 	/** The dictionary lines as string list */
 	private static List<String> dictionaryLines;
 	/** The HashMap that connects a search phrase with the dictionary lines */
-	private static Hashtable<String, Integer> dictHash64 = new Hashtable<String, Integer>(); 
+	private static Hashtable<String, Integer> dictionaryHashtabel; 
 	
 	/** The currently selected language index of the dictionary-file, which is used in the application */
 	public static Integer currLanguageIndex;
 	
 
+	
 	// --- Singleton-Constructor ---
 	private Language() {
 		de.enflexit.common.Language.setTranslator(this);
@@ -127,36 +128,6 @@ public class Language implements Translator {
 		return thisSingleton;
 	}
 	
-	/**
-	 * This method has to be invoked only once in order to prepare the translation
-	 * functionalities. This will be done by the Application class at the program 
-	 * execution and can not be done a second time.
-	 */
-	public static void startDictionary() {
-		if (dictHash64.size()==0) {
-			// --- load the dictionary ----------
-			loadDictionaryFromDefaultFile();
-		}
-	}
-	/**
-	 * Restarts the dictionary.
-	 */
-	public static void reStartDictionary() {
-		dictHash64 = new Hashtable<String, Integer>();
-		startDictionary();
-	}
-	
-	/**
-	 * Changing the application language to: newLang
-	 * => "DE", "EN", "IT", "ES" or "FR"  
-	 * @param newLang
-	 */
-	public static void changeApplicationLanguageTo(String newLang){
-		String newLangShort = newLang.toLowerCase().replace("lang_", "");
-		Application.getGlobalInfo().setLanguage(newLangShort);
-		currLanguageIndex = getIndexOfLanguage(newLangShort);
-	}
-		
 	/* (non-Javadoc)
 	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String)
 	 */
@@ -172,6 +143,47 @@ public class Language implements Translator {
 		return translate(expression, sourceLanguage.toString());
 	}
 	
+	
+	/**
+	 * Gets access to the {@link GlobalInfo}.
+	 * @return the global info
+	 */
+	private static GlobalInfo getGlobalInfo() {
+		if (globalInfo==null) {
+			globalInfo = Application.getGlobalInfo();	
+		}
+		return globalInfo;
+	}
+	
+	/**
+	 * Gets the dictionary hashtabel.
+	 * @return the dictionary hashtabel
+	 */
+	private static Hashtable<String, Integer> getDictionaryHashtabel() {
+		if (dictionaryHashtabel==null) {
+			dictionaryHashtabel = new Hashtable<>();
+		}
+		return dictionaryHashtabel;
+	}
+	
+	/**
+	 * Restarts the dictionary.
+	 */
+	public static void reStartDictionary() {
+		loadDictionaryFromDefaultFile();
+	}
+	
+	/**
+	 * Changing the application language to: newLang
+	 * => "DE", "EN", "IT", "ES" or "FR"  
+	 * @param newLang
+	 */
+	public static void changeApplicationLanguageTo(String newLang){
+		String newLangShort = newLang.toLowerCase().replace("lang_", "");
+		Application.getGlobalInfo().setLanguage(newLangShort);
+		currLanguageIndex = getIndexOfLanguage(newLangShort);
+	}
+		
 	/**
 	 * Translate one expression, which is based on a German expression
 	 */
@@ -196,18 +208,19 @@ public class Language implements Translator {
 			loadDictionaryFromDefaultFile();
 			if (getDictionaryLines().size()==0) return expression;
 		}
+		
 		// --- Check if the expression exists ---------------------------------
 		String translationExp = null;
 		String expressionWork = null;
 		expressionWork = expression.trim();
 		expressionWork = expressionWork.replace(getNewLine(), getNewLineReplacer());
 
-		Integer lineInDictionary = dictHash64.get(expressionWork);		
-		if (lineInDictionary == null) {
-			// --- Expression NOT there ! => Put to the dictionary ------------
+		Integer lineInDictionary = getDictionaryHashtabel().get(expressionWork);		
+		if (lineInDictionary==null) {
+			// --- Expression NOT available => Put into dictionary ------------
 			String addLine = getNewDictionaryLine(expressionWork, language);
 			getDictionaryLines().add(addLine);
-			dictHash64.put(expressionWork, getDictionaryLines().size()-1);			
+			getDictionaryHashtabel().put(expressionWork, getDictionaryLines().size()-1);			
 			translationExp = expression.trim();			
 		
 		} else {
@@ -219,7 +232,7 @@ public class Language implements Translator {
 				translationExp = expression.trim();
 			} else {
 				translationExp = dictLineValues[currLanguageIndex];
-				if ( translationExp == null || translationExp.isEmpty() ) {
+				if (translationExp==null || translationExp.isEmpty()==true ) {
 					translationExp = expression.trim();
 				} else {
 					translationExp = translationExp.replace(getNewLineReplacer(), getNewLine());				
@@ -267,11 +280,14 @@ public class Language implements Translator {
 	public static String[] getLanguages() {
 		return getLanguages(false);	
 	}
+	
 	/**
-	 * List all available Language-Headers from the 
-	 * Dictionary file as String-Array
+	 * List all available Language-Headers from the dictionary file as String-Array.
+	 *
+	 * @param remove_LANG_SOURCE the remove LAN G SOURCE
+	 * @return the languages
 	 */
-	public static String[] getLanguages (boolean remove_LANG_SOURCE) {
+	public static String[] getLanguages(boolean remove_LANG_SOURCE) {
 		if (remove_LANG_SOURCE==true) {
 			String[] languageArray = new String[dictLangHeaderArray.length-1];
 			for (int i = 0; i < languageArray.length; i++) {
@@ -299,7 +315,7 @@ public class Language implements Translator {
 
 		String langHeaderWork = langHeader.toUpperCase();
 		String langHeaderD = headDescriptions.get(langHeaderWork);
-		if ( langHeaderD == null ) {
+		if (langHeaderD==null) {
 			langHeaderD = langHeaderWork;
 		}		
 		return langHeaderD;		
@@ -348,6 +364,61 @@ public class Language implements Translator {
 		}
 	}
 	
+	/**
+	 * returns the number of languages defined in the current dictionary
+	 */
+	private static int getNumberOfLanguages() {
+		return getLanguages().length-1;
+	}
+	
+	/**
+	 * returns an empty dictionary line.
+	 * @return an empty dictionary line
+	 */
+	private static String getEmptyLine() {
+		return stringRepeat(VALUE_SEPERATOR, getNumberOfLanguages()-1);
+	}
+	/**
+	 * Repeat one String n-times and merge them together
+	 */
+	private static String stringRepeat(String orig, int n) {
+		if( n <= 0 ) return "";
+		int l = orig.length();
+		char [] dest = new char[ n*l ];
+		for( int i=0, destIndex=0; i<n; i++, destIndex+=l ) {
+			orig.getChars( 0, l, dest, destIndex );
+		};
+		return new String( dest );
+	}
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Update this line of the dictionary
+	 * @param expression
+	 * @param dictRow
+	 */
+	public static void update(String expression, String dictRow) {
+		Integer dictLineIndex = getDictionaryHashtabel().get(expression);	
+		if (dictLineIndex!=null) {
+			getDictionaryLines().set(dictLineIndex, dictRow);
+		}
+	}
+	/**
+	 * Remove this line from the dictionary
+	 * (put an empty line)
+	 * @param expression
+	 */
+	public static void delete(String expression) {
+		Integer lineNo = getDictionaryHashtabel().get(expression);	
+		if (lineNo!=null) {
+			getDictionaryLines().set(lineNo, getEmptyLine());
+			getDictionaryHashtabel().remove(expression);	
+		}
+	}
+	
+	
+	// -------------------------------------------------------------------------
+	// --- From here, method for the file handling can be found ----------------
 	// -------------------------------------------------------------------------
 	/**
 	 * Returns the dictionary lines that were loaded from file.
@@ -367,6 +438,10 @@ public class Language implements Translator {
 		getDictionaryLines().clear();
 		getDictionaryLines().addAll(loadDictionaryFile(DictionarySourceFile.DefaultFile64));
 		proceedLoadedDictionaryLines();
+		// --- Update dictionary using the dictionary within the bundle? ------  
+		if (getGlobalInfo()!=null && getGlobalInfo().isUpdatedAwbCoreBundle()==true) {
+			updateDictionaryFromBundleDictionary();
+		}
 	}
 	/**
 	 * This method can be used in order to change the source dictionary file of the application 
@@ -467,14 +542,14 @@ public class Language implements Translator {
 		// --------------------------------------------------------------------		
 		if (getDictionaryLines().size()!=0) {
 			
-			dictHash64 = new Hashtable<String, Integer>(); 
+			getDictionaryHashtabel().clear(); 
 
 			for (int i=0; i < getDictionaryLines().size(); i++) {
 				
 				String line = getDictionaryLines().get(i);
 				if (line!=null && line.isEmpty()==false) {
 					// --- Split the dictionary line --------------------------
-					String[] valueArray = line.split(VALUE_SEPERATOR);
+					String[] valueArray = line.split(VALUE_SEPERATOR, -1);
 					if (valueArray[0].isEmpty()==false) {
 						// ----------------------------------------------------
 						// --- Used to identify the Header of the dictionary --
@@ -484,7 +559,7 @@ public class Language implements Translator {
 							// --- Which Language has to be used --------------
 							currLanguageIndex = getIndexOfLanguage(getGlobalInfo().getLanguage());	
 							// --- index the Header ---------------------------
-							dictHash64.put( valueArray[0], i);
+							getDictionaryHashtabel().put( valueArray[0], i);
 							
 						} else {
 							// ------------------------------------------------
@@ -492,7 +567,7 @@ public class Language implements Translator {
 							int indexOfExpression = getIndexOfLanguage(valueArray[0]);
 							if ( !(indexOfExpression==-1 || indexOfExpression-1 > valueArray.length)) {
 								String indexExpression = valueArray[indexOfExpression];
-								dictHash64.put(indexExpression, i); 			
+								getDictionaryHashtabel().put(indexExpression, i); 			
 							}
 						}
 						// ----------------------------------------------------
@@ -503,15 +578,15 @@ public class Language implements Translator {
 		}
 
 		// --- If there was no proper header, define it now -------------------
-		if (dictHash64.get(Language.SOURCE_LANG)==null) {
+		if (getDictionaryHashtabel().get(Language.SOURCE_LANG)==null) {
 			// --- This entry is mandatory for the dictionary -----------------
 			getDictionaryLines().add(0, dictLangHeaderDefault);
-			dictHash64.put(Language.SOURCE_LANG, 0);
+			getDictionaryHashtabel().put(Language.SOURCE_LANG, 0);
 			dictLangHeaderArray = dictLangHeaderDefault.split(VALUE_SEPERATOR, -1);
 			// --- Reload dictionary ------------------------------------------
 			if (saveDictionaryFile()==true) {
 				getDictionaryLines().clear();
-				dictHash64 = new Hashtable<String, Integer>(); 
+				getDictionaryHashtabel().clear(); 
 				loadDictionaryFromDefaultFile();
 			}
 		}
@@ -584,73 +659,6 @@ public class Language implements Translator {
 		return saved;
 	}
 	
-	/**
-	 * returns the number of languages defined in the current dictionary
-	 */
-	private static int getNumberOfLanguages() {
-		return getLanguages().length-1;
-	}
-	
-	/**
-	 * returns an empty dictionary line.
-	 * @return an empty dictionary line
-	 */
-	private static String getEmptyLine() {
-		return stringRepeat(VALUE_SEPERATOR, getNumberOfLanguages()-1);
-	}
-	
-	/**
-	 * Repeat one String n-times and merge them together
-	 */
-	private static String stringRepeat(String orig, int n) {
-		if( n <= 0 ) return "";
-		int l = orig.length();
-		char [] dest = new char[ n*l ];
-		for( int i=0, destIndex=0; i<n; i++, destIndex+=l ) {
-			orig.getChars( 0, l, dest, destIndex );
-		};
-		return new String( dest );
-	}
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Update this line of the dictionary
-	 * @param expression
-	 * @param dictRow
-	 */
-	public static void update(String expression, String dictRow) {
-
-		Integer line = dictHash64.get(expression);	
-		if (line!=null) {
-			getDictionaryLines().set(line, dictRow);
-		}
-	}
-
-	/**
-	 * Remove this line from the dictionary
-	 * (put an empty line)
-	 * @param expression
-	 */
-	public static void delete(String expression) {
-		
-		Integer lineNo = dictHash64.get(expression);	
-		if (lineNo!=null) {
-			getDictionaryLines().set(lineNo, getEmptyLine());
-			dictHash64.remove(expression);	
-		}
-	}
-	
-	
-	/**
-	 * Gets access to the {@link GlobalInfo}.
-	 * @return the global info
-	 */
-	private static GlobalInfo getGlobalInfo() {
-		if (globalInfo==null) {
-			globalInfo = Application.getGlobalInfo();	
-		}
-		return globalInfo;
-	}
 	
 	/**
 	 * Returns the current new line string.
@@ -725,4 +733,133 @@ public class Language implements Translator {
 		}
 		return dictFileNameBundle;
 	}
+	
+
+	// -------------------------------------------------------------------------
+	// --- From here, the dictionary update from bundle is implemented ---------
+	// -------------------------------------------------------------------------
+	/**
+	 * Updates the current dictionary from the dictionary located in the bundle. This 
+	 * is especially used after an AWB update, were a dictionary is already located
+	 * in the properties directory (which will not be exchanged with an update).
+	 */
+	public static void updateDictionaryFromBundleDictionary() {
+		
+		try {
+			
+			// --- Ensure that the regular dictionary is loaded -----
+			if (getDictionaryLines().size()==0) loadDictionaryFromDefaultFile();
+
+			// --- Load dictionary from within bundle ---------------
+			List<String> bundleDictLines = loadDictionaryFile(DictionarySourceFile.BundleFile);
+			if (bundleDictLines==null) return;
+			
+			// --- Check each dictionary line -----------------------
+			for (int i = 0; i < bundleDictLines.size(); i++) {
+				
+				String dictLine = bundleDictLines.get(i);
+				if (dictLine!=null && dictLine.isEmpty()==false) {
+					// --- Split the dictionary line ----------------
+					String[] valueArray = dictLine.split(VALUE_SEPERATOR, -1);
+					if (valueArray[0].isEmpty()==false && valueArray[0].equalsIgnoreCase(Language.SOURCE_LANG)==false) {
+						// --- Get source language and expression ---
+						int indexOfSourceExpression = getIndexOfLanguage(valueArray[0]);
+						if ( !(indexOfSourceExpression==-1 || indexOfSourceExpression-1 > valueArray.length)) {
+							// --- Update single line ---------------
+							String sourceExpression = valueArray[indexOfSourceExpression];
+							try {
+								updateDictionaryRow(sourceExpression, valueArray);
+							} catch (Exception ex) {
+								System.err.println("[" + Language.class.getClassLoader() + "] Unable to update dictionary row for expression '" + sourceExpression + "'!");
+								ex.printStackTrace();
+							}
+						}
+					} 
+				}
+			} // end for
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Updates the specified dictionary row (see sourceExpression) with the specified valueArray.
+	 *
+	 * @param expression the expression that is the source expression for translations
+	 * @param newValueArray the value array
+	 */
+	public static void updateDictionaryRow(String expression, String[] newValueArray) {
+		
+		Integer dictLineIndex = getDictionaryHashtabel().get(expression);	
+		if (dictLineIndex==null) {
+			// --- New expression for the property dictionary -------
+			String dictLineNew = joinString(VALUE_SEPERATOR, newValueArray);
+			getDictionaryLines().add(dictLineNew);
+			getDictionaryHashtabel().put(expression, getDictionaryLines().size()-1);			
+			
+		} else {
+			// --- Expression is not new ----------------------------
+			String dictLineLocal = getDictionaryLines().get(dictLineIndex);
+			String[] dictLineLocalArray = dictLineLocal.split(VALUE_SEPERATOR, -1);
+
+			String[] dictLineUpdateArray = new String[Math.max(dictLineLocalArray.length, newValueArray.length)];
+			for (int i = 0; i < dictLineUpdateArray.length; i++) {
+				
+				String localValue  = i<=dictLineLocalArray.length-1 ? dictLineLocalArray[i] : null;
+				String newValue    = i<=newValueArray.length-1 ? newValueArray[i] : null;
+				
+				String updateValue = null;
+				if (isNullOrEmpty(localValue)==true && isNullOrEmpty(newValue)==true) {
+					// --- Stay null ----------------------
+				} else if (isNullOrEmpty(localValue)==true && isNullOrEmpty(newValue)==false) {
+					updateValue = newValue;
+				} else if (isNullOrEmpty(localValue)==false && isNullOrEmpty(newValue)==true) {
+					updateValue = localValue;
+				} else {
+					// --- External or local value ? ------
+					// --- ... and the winner is ... ------
+					updateValue = newValue;
+				}
+				dictLineUpdateArray[i] = updateValue;
+			}
+			
+			// --- Update the dictionary line? ------------
+			String dictLineUpdate = joinString(VALUE_SEPERATOR, dictLineUpdateArray);
+			if (dictLineUpdate.equals(dictLineLocal)==false) {
+				getDictionaryLines().set(dictLineIndex, dictLineUpdate);
+			}
+		}
+	}
+	/**
+	 * Checks if is null or empty.
+	 *
+	 * @param checkValue the check value
+	 * @return true, if is null or empty
+	 */
+	private static boolean isNullOrEmpty(String checkValue) {
+		return ! (checkValue!=null && checkValue.isEmpty()==false);
+	} 
+	/**
+	 * Joins the specified array to one string using the specified delimiter.
+	 *
+	 * @param delimiter the delimiter
+	 * @param stringArray the string array
+	 * @return the string
+	 */
+	public static String joinString(String delimiter, String[] stringArray) {
+		
+		if (stringArray==null || stringArray.length==0) return null;
+		
+		String joined = null;
+		for (int i = 0; i < stringArray.length; i++) {
+			String value = stringArray[i]==null || stringArray[i].equalsIgnoreCase("null")==true ? "" : stringArray[i];
+			if (joined==null || joined.isEmpty()==true) {
+				joined = value;
+			} else {
+				joined += delimiter + value;
+			}
+		}
+		return joined;
+	}
+	
 }
