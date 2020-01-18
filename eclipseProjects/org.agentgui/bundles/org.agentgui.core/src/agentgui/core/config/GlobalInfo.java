@@ -926,17 +926,17 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 
 	 * 
-	 * @param base64 if set true, the method will return the path to the 
+	 * @param defaultBase64 if set true, the method will return the path to the default
 	 * Base64-encoded dictionary file, otherwise the path to the csv-version of the dictionary 
 	 * 
 	 * @param absolute set true if you want to get the full path to this
 	 * @return path to the designated dictionary file
 	 */
-	public String getFileDictionary(boolean base64, boolean absolute ){
+	public String getFileDictionary(boolean defaultBase64, boolean absolute ){
 		
 		// --- TXT-Version or Base64-encoded dictionary ---
 		String fileName = null;
-		if (base64==true) {
+		if (defaultBase64==true) {
 			fileName = getPathProperty(absolute) + localFileDictionary + ".bin";
 		} else {
 			fileName = getPathProperty(absolute) + localFileDictionary + ".csv";

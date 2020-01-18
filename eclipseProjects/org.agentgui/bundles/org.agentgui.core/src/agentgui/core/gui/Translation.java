@@ -420,11 +420,11 @@ private static final long serialVersionUID = 1L;
 			
 			// --- Rows of the dictionary -------------------------------
 			int rowNo = 0;
-			List<String> dictContent = Language.getDictLineList();
+			List<String> dictContent = Language.getDictionaryLines();
 			for (String dictLine : dictContent) {
 				
 				Vector<Object> rowData = new Vector<Object>(); 
-				rowData.addAll(Arrays.asList(dictLine.split(Language.seperator, -1)));
+				rowData.addAll(Arrays.asList(dictLine.split(Language.VALUE_SEPERATOR, -1)));
 				
 				if (rowData.get(0)!=null && rowData.get(0).equals("")==false && rowData.get(0).equals(Language.SOURCE_LANG)==false) {
 					// --- add row to the displayable dictionary --------
@@ -465,7 +465,7 @@ private static final long serialVersionUID = 1L;
 						if (dictRow.equals("")) {
 							dictRow += rowData.get(i);	
 						} else {
-							dictRow += Language.seperator + rowData.get(i);
+							dictRow += Language.VALUE_SEPERATOR + rowData.get(i);
 						}
 					}
 					
@@ -1415,7 +1415,7 @@ private static final long serialVersionUID = 1L;
 			if (dictRow.equals("")) {
 				dictRow += currDataSet.get(i);	
 			} else {
-				dictRow += Language.seperator + currDataSet.get(i);
+				dictRow += Language.VALUE_SEPERATOR + currDataSet.get(i);
 			}
 		}
 		Language.update(sourceLangExpression, dictRow);
@@ -1478,7 +1478,7 @@ private static final long serialVersionUID = 1L;
 			int answer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) {
 				this.setVisible(false);
-				Language.useCSVDictionaryFile();
+				Language.loadDictionaryFromCSVFile();
 				Application.showTranslationDialog();
 				this.forceApplicationRestart = true;
 			}
