@@ -61,17 +61,16 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 		this.setIconifiable(false);
 		this.setClosable(true);
 
+		
+		this.setSize(900, 90);
+		this.setBorder(BorderFactory.createEtchedBorder());
+		((BasicInternalFrameUI)this.getUI()).setNorthPane(null);
+
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
-		// --- Remove the complete header ------- 
-		((BasicInternalFrameUI)this.getUI()).setNorthPane(null);
-		this.setBorder(BorderFactory.createEtchedBorder());
-		
-		this.setSize(new Dimension(1000, 90));
-		this.setPosition();
-		
-		this.getContentPane().setBackground(JInternalFrameTimeConfiguration.bgColor);
 		this.setContent();
+		this.setPosition();
+		this.setSize();
 	}
 	
 	/**
@@ -93,6 +92,16 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 			this.setLocation(0, 0);
 		}
 	}
+	
+	/**
+	 * Sets the size.
+	 */
+	private void setSize() {
+		int width  = this.basicGraphGui.getVisualizationViewer().getWidth();
+		int height = (int) this.getJComponentTimeModel().getPreferredSize().getHeight(); 
+		this.setSize(width, height);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame#isRemindAsLastOpenedEditor()
 	 */
@@ -125,6 +134,7 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 		if (jLabelNoTimeModel == null) {
 			jLabelNoTimeModel = new JLabel("No Time Model specified.");
 			jLabelNoTimeModel.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelNoTimeModel.setPreferredSize(new Dimension(200, 90));
 		}
 		return jLabelNoTimeModel;
 	}
@@ -140,10 +150,10 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 				jComponentTimeModel = new JPanelTimeModelStroke(this.graphController.getProject());
 			} else if (timeModel instanceof TimeModelDiscrete) {
 				jComponentTimeModel = new JPanelTimeModelDiscrete(this.graphController.getProject());
-			} else if (timeModel instanceof TimeModelContinuous) {
-				jComponentTimeModel = new JPanelTimeModelContinuous(this.graphController.getProject());
 			} else if (timeModel instanceof TimeModelPresent) {
 				jComponentTimeModel = new JPanelTimeModelPresent(this.graphController.getProject());
+			} else if (timeModel instanceof TimeModelContinuous) {
+				jComponentTimeModel = new JPanelTimeModelContinuous(this.graphController.getProject());
 			}
 			jComponentTimeModel.setBackground(JInternalFrameTimeConfiguration.bgColor);
 		}

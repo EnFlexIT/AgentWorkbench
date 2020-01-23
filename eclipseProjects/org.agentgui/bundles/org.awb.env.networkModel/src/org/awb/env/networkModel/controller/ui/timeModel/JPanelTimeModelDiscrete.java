@@ -82,6 +82,8 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
+	public static final Dimension GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL = new Dimension(62, 22);
+	
 	private JLabel jLabelStop;
 	private JLabel jLabelStart;
 	private JLabel jLabelStartDate;
@@ -121,6 +123,13 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		super(project);
 		this.initialize();
 	}
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#getPreferredSize()
+	 */
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900, 90);
+	}
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -129,7 +138,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
-		this.setSize(1000, 90);
+		this.setSize(900, 90);
 		
 		GridBagConstraints gbcJLabelStopTime = new GridBagConstraints();
 		gbcJLabelStopTime.gridx = 0;
@@ -160,16 +169,16 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		gridBagConstraints1.gridy = 0;
 		
 		GridBagConstraints gbceparatorVert = new GridBagConstraints();
-        gbceparatorVert.insets = new Insets(5, 5, 5, 5);
+        gbceparatorVert.insets = new Insets(5, 5, 0, 5);
         gbceparatorVert.fill = GridBagConstraints.VERTICAL;
-        gbceparatorVert.gridheight = 3;
+        gbceparatorVert.gridheight = 2;
         gbceparatorVert.gridx = 2;
         gbceparatorVert.gridy = 0;
        
         GridBagConstraints gbcTimeFormatter = new GridBagConstraints();
         gbcTimeFormatter.insets = new Insets(5, 0, 0, 0);
-        gbcTimeFormatter.gridheight = 3;
-        gbcTimeFormatter.anchor = GridBagConstraints.WEST;
+        gbcTimeFormatter.gridheight = 2;
+        gbcTimeFormatter.anchor = GridBagConstraints.NORTHWEST;
         gbcTimeFormatter.gridy = 0;
         gbcTimeFormatter.gridwidth = 1;
         gbcTimeFormatter.gridx = 3;
@@ -184,16 +193,19 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		jLabelStart.setText("Start bei");
 		jLabelStart.setText(Language.translate(jLabelStart.getText()) + ":");
 		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStart.setPreferredSize(GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 		
 		jLabelStop = new JLabel();
 		jLabelStop.setText("Stop bei");
 		jLabelStop.setText(Language.translate(jLabelStop.getText())+ ":");
 		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStop.setPreferredSize(GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 		
         jLabelWidth = new JLabel();
         jLabelWidth.setFont(new Font("Dialog", Font.BOLD, 10));
         jLabelWidth.setText("Schrittweite");
         jLabelWidth.setText(Language.translate(jLabelWidth.getText())+ ":");
+        jLabelWidth.setPreferredSize(GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
         
         GridBagConstraints gbcTimeIncrement = new GridBagConstraints();
         gbcTimeIncrement.anchor = GridBagConstraints.WEST;
@@ -501,7 +513,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private TimeFormatSelection getJPanelTimeFormater() {
 		if (jPanelTimeFormater==null) {
 			jPanelTimeFormater = new TimeFormatSelection(true, 3, new Font("Dialog", Font.PLAIN, 10));
-			jPanelTimeFormater.setPreferredSize(new Dimension(360, 80));
+			jPanelTimeFormater.setPreferredSize(new Dimension(365, 47));
 			jPanelTimeFormater.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {

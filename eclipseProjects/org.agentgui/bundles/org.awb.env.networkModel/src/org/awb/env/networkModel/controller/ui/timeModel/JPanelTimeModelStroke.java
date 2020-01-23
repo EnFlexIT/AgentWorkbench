@@ -77,6 +77,13 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 		this.initialize();
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#getPreferredSize()
+	 */
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900, 60);
+	}
 	/**
 	 * Initializes this JPanel.
 	 */

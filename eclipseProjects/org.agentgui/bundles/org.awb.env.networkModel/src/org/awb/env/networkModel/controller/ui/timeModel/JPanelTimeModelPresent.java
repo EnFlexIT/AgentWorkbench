@@ -28,15 +28,13 @@
  */
 package org.awb.env.networkModel.controller.ui.timeModel;
 
-import java.awt.Font;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.JLabel;
 import javax.swing.event.ChangeListener;
 
-import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelPresent;
@@ -47,7 +45,6 @@ import agentgui.simulationService.time.TimeModelPresent;
 public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements ChangeListener {
 
     private static final long serialVersionUID = -7897380427330081422L;
-
     
     /**
      * Instantiates a new time model present configuration.
@@ -56,6 +53,14 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
     public JPanelTimeModelPresent(Project project) {
         super(project);
     }
+    
+    /* (non-Javadoc)
+	 * @see javax.swing.JComponent#getPreferredSize()
+	 */
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900, 60);
+	}
     /* (non-Javadoc)
      * @see agentgui.simulationService.time.TimeModelContinuousConfiguration#initialize()
      */
@@ -63,57 +68,18 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
     protected void initialize() {
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.columnWidths = new int[] { 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		this.setLayout(gridBagLayout);
-		this.setSize(728, 400);
-
-		GridBagConstraints gbcHeader1 = new GridBagConstraints();
-		gbcHeader1.gridx = 0;
-		gbcHeader1.gridy = 0;
-		gbcHeader1.gridwidth = 2;
-		gbcHeader1.anchor = GridBagConstraints.WEST;
-		gbcHeader1.insets = new Insets(10, 10, 5, 0);
-
-		GridBagConstraints gbcHeader2 = new GridBagConstraints();
-		gbcHeader2.gridx = 0;
-		gbcHeader2.gridy = 1;
-		gbcHeader2.gridwidth = 2;
-		gbcHeader2.insets = new Insets(0, 10, 0, 0);
-		gbcHeader2.anchor = GridBagConstraints.WEST;
-		gbcHeader2.weightx = 0.0;
-		gbcHeader2.fill = GridBagConstraints.NONE;
-
-		GridBagConstraints gbcLableDateFormat = new GridBagConstraints();
-		gbcLableDateFormat.gridx = 0;
-		gbcLableDateFormat.gridy = 2;
-		gbcLableDateFormat.insets = new Insets(15, 10, 0, 0);
-		gbcLableDateFormat.anchor = GridBagConstraints.NORTHWEST;
+		this.setSize(900, 60);
 
 		GridBagConstraints gbcTimeFormarter = new GridBagConstraints();
-		gbcTimeFormarter.gridx = 1;
-		gbcTimeFormarter.gridy = 2;
+		gbcTimeFormarter.gridx = 0;
+		gbcTimeFormarter.gridy = 0;
 		gbcTimeFormarter.anchor = GridBagConstraints.WEST;
-		gbcTimeFormarter.insets = new Insets(10, 5, 0, 0);
-
-		JLabel jLabelHeader1 = new JLabel();
-		jLabelHeader1.setText("TimeModelPresent");
-		jLabelHeader1.setFont(new Font("Dialog", Font.BOLD, 14));
-		
-		JLabel jLabelHeader2 = new JLabel();
-		jLabelHeader2.setText("Gegenwarts-Zeit.");
-		jLabelHeader2.setText(Language.translate(jLabelHeader2.getText()));
-
-		JLabel jLabelDateFormat = new JLabel();
-		jLabelDateFormat.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelDateFormat.setText("Ansicht");
-		jLabelDateFormat.setText(Language.translate(jLabelDateFormat.getText()) + ":");
-
-		this.add(jLabelHeader1, gbcHeader1);
-		this.add(jLabelHeader2, gbcHeader2);
-		this.add(jLabelDateFormat, gbcLableDateFormat);
+		gbcTimeFormarter.insets = new Insets(5, 5, 0, 0);
 		this.add(getJPanelTimeFormater(), gbcTimeFormarter);
     }
 
@@ -149,26 +115,4 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
         return tmp;
     }
 
-//    /* (non-Javadoc)
-//     * @see agentgui.simulationService.time.TimeModelContinuousConfiguration#getJPanelWidthSettings()
-//     */
-//    @Override
-//    protected JPanel getJPanelWidthSettings() {
-//        if (jPanelWidthSettings == null) {
-//            GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-//            gridBagConstraints12.gridx = 2;
-//            gridBagConstraints12.fill = GridBagConstraints.HORIZONTAL;
-//            gridBagConstraints12.weightx = 1.0;
-//            gridBagConstraints12.insets = new Insets(0, 5, 0, 0);
-//            gridBagConstraints12.gridy = 0;
-//
-//            JLabel jLabelDummy = new JLabel();
-//            jLabelDummy.setText(" ");
-//
-//            jPanelWidthSettings = new JPanel();
-//            jPanelWidthSettings.setLayout(new GridBagLayout());
-//            jPanelWidthSettings.add(jLabelDummy, gridBagConstraints12);
-//        }
-//        return jPanelWidthSettings;
-//    }
 }

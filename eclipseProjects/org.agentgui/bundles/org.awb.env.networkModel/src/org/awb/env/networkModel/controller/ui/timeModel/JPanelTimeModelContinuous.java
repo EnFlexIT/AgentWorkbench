@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.controller.ui.timeModel;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -39,14 +40,14 @@ import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.EtchedBorder;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DateFormatter;
@@ -73,42 +74,35 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
-	private JLabel jLabelHeader1 = null;
-	private JLabel jLabelHeader2 = null;
+	private JPanel jPanelStartSettings;
+	private JPanel jPanelStopSettings;
+	private JPanel jPanelWidthSettings;
 	
-	private JPanel jPanelStartSettings = null;
-	private JPanel jPanelStopSettings = null;
-	private JPanel jPanelWidthSettings = null;
-	private JPanel jPanelDivider = null;
+	private JLabel jLabelStart;
+	private JLabel jLabelStartDate;
+	private JLabel jLabelStartTime;
+	private JLabel jLabelStartMillis;
 	
-	private JLabel jLabelStart = null;
-	private JLabel jLabelStartDate = null;
-	private JLabel jLabelStartTime = null;
-	private JLabel jLabelStartMillis = null;
+	private JLabel jLabelStop;
+	private JLabel jLabelStopDate;
+	private JLabel jLabelStopTime;
+	private JLabel jLabelStopMillis;
 	
-	private JLabel jLabelStop = null;
-	private JLabel jLabelStopDate = null;
-	private JLabel jLabelStopTime = null;
-	private JLabel jLabelStopMillis = null;
-	
-	private JLabel jLabelAcceleration = null;
-	private JLabel jLabelDummy = null;
-	private JLabel jLabelFactorInfoSeconds = null;
-	private JLabel jLabelFactorInfoMinutes = null;
-	private JLabel jLabelFactorInfoHour = null;
+	private JLabel jLabelAcceleration;
+	private JLabel jLabelFactorInfoSeconds;
 
-	private JSpinner jSpinnerDateStart = null;
-	private JSpinner jSpinnerTimeStart = null;
-	private JSpinner jSpinnerMillisStart = null;
-	private JSpinner jSpinnerDateStop = null;
-	private JSpinner jSpinnerTimeStop = null;
-	private JSpinner jSpinnerMillisStop = null;
-	private JSpinner jSpinnerAcceleration = null;
+	private JSpinner jSpinnerDateStart;
+	private JSpinner jSpinnerTimeStart;
+	private JSpinner jSpinnerMillisStart;
+	private JSpinner jSpinnerDateStop;
+	private JSpinner jSpinnerTimeStop;
+	private JSpinner jSpinnerMillisStop;
+	private JSpinner jSpinnerAcceleration;
 
 	protected boolean enabledChangeListener = true;
 
-	private JLabel jLabelDateFormat = null;
-	private TimeFormatSelection jPanelTimeFormater = null;
+	private TimeFormatSelection jPanelTimeFormater;
+	private JSeparator jSeparatorVert;
 	
 	
 	/**
@@ -120,124 +114,108 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 		this.initialize();
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#getPreferredSize()
+	 */
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900, 90);
+	}
 	/**
 	 * This method initializes this
 	 */
 	protected void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
-		this.setSize(600, 400);
+		this.setSize(900, 90);
 		
-		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.anchor = GridBagConstraints.WEST;
-		gridBagConstraints21.gridx = 1;
-		gridBagConstraints21.insets = new Insets(10, 5, 0, 0);
-		gridBagConstraints21.gridy = 4;
-		GridBagConstraints gridBagConstraints20 = new GridBagConstraints();
-		gridBagConstraints20.gridx = 0;
-		gridBagConstraints20.insets = new Insets(15, 10, 0, 0);
-		gridBagConstraints20.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints20.gridy = 4;
-		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-		gridBagConstraints4.gridx = 0;
-		gridBagConstraints4.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints4.insets = new Insets(5, 7, 5, 20);
-		gridBagConstraints4.gridwidth = 2;
-		gridBagConstraints4.gridy = 5;
-		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.gridx = 1;
-		gridBagConstraints11.anchor = GridBagConstraints.WEST;
-		gridBagConstraints11.insets = new Insets(10, 5, 10, 0);
-		gridBagConstraints11.gridwidth = 1;
-		gridBagConstraints11.gridy = 3;
-		GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-		gridBagConstraints10.gridx = 0;
-		gridBagConstraints10.insets = new Insets(0, 10, 0, 0);
-		gridBagConstraints10.anchor = GridBagConstraints.WEST;
-		gridBagConstraints10.gridy = 3;
-		GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-		gridBagConstraints9.gridx = 0;
-		gridBagConstraints9.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints9.insets = new Insets(10, 10, 10, 10);
-		gridBagConstraints9.gridwidth = 2;
-		gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints9.gridy = 6;
-		GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-		gridBagConstraints15.gridx = 0;
-		gridBagConstraints15.insets = new Insets(0, 10, 0, 0);
-		gridBagConstraints15.anchor = GridBagConstraints.WEST;
-		gridBagConstraints15.gridy = 2;
-		GridBagConstraints gridBagConstraints141 = new GridBagConstraints();
-		gridBagConstraints141.gridx = 1;
-		gridBagConstraints141.gridwidth = 1;
-		gridBagConstraints141.anchor = GridBagConstraints.WEST;
-		gridBagConstraints141.insets = new Insets(10, 5, 10, 0);
-		gridBagConstraints141.gridy = 2;
-		GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-		gridBagConstraints8.gridx = 2;
-		gridBagConstraints8.gridy = 0;
-		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-		gridBagConstraints6.gridx = 0;
-		gridBagConstraints6.insets = new Insets(0, 10, 0, 0);
-		gridBagConstraints6.anchor = GridBagConstraints.WEST;
-		gridBagConstraints6.gridwidth = 2;
-		gridBagConstraints6.weightx = 0.0;
-		gridBagConstraints6.fill = GridBagConstraints.NONE;
-		gridBagConstraints6.gridy = 1;
-		GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-		gridBagConstraints5.gridx = 0;
-		gridBagConstraints5.anchor = GridBagConstraints.WEST;
-		gridBagConstraints5.insets = new Insets(10, 10, 5, 0);
-		gridBagConstraints5.gridwidth = 2;
-		gridBagConstraints5.gridy = 0;
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.gridx = 1;
-		gridBagConstraints1.gridy = 0;
+		GridBagConstraints gbcJLabelStart = new GridBagConstraints();
+		gbcJLabelStart.gridx = 0;
+		gbcJLabelStart.insets = new Insets(5, 5, 0, 0);
+		gbcJLabelStart.anchor = GridBagConstraints.WEST;
+		gbcJLabelStart.gridy = 0;
 		
-		jLabelHeader1 = new JLabel();
-		jLabelHeader1.setText("TimeModelContinuous");
-		jLabelHeader1.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabelHeader2 = new JLabel();
-		jLabelHeader2.setText("Kontinuierlich fortschreitende Zeit.");
-		jLabelHeader2.setText(Language.translate(jLabelHeader2.getText()));
+		GridBagConstraints gbcJPanelStartSettings = new GridBagConstraints();
+		gbcJPanelStartSettings.gridx = 1;
+		gbcJPanelStartSettings.gridwidth = 1;
+		gbcJPanelStartSettings.anchor = GridBagConstraints.WEST;
+		gbcJPanelStartSettings.insets = new Insets(5, 5, 0, 0);
+		gbcJPanelStartSettings.gridy = 0;
 		
-		jLabelStart = new JLabel();
+		GridBagConstraints gbcJLableStop = new GridBagConstraints();
+		gbcJLableStop.gridx = 0;
+		gbcJLableStop.insets = new Insets(5, 5, 0, 0);
+		gbcJLableStop.anchor = GridBagConstraints.WEST;
+		gbcJLableStop.gridy = 1;
+		
+		GridBagConstraints gbcJPanelStopSettings = new GridBagConstraints();
+		gbcJPanelStopSettings.gridx = 1;
+		gbcJPanelStopSettings.anchor = GridBagConstraints.WEST;
+		gbcJPanelStopSettings.insets = new Insets(5, 5, 0, 0);
+		gbcJPanelStopSettings.gridwidth = 1;
+		gbcJPanelStopSettings.gridy = 1;
+		
+		GridBagConstraints gbcJPanelWidth = new GridBagConstraints();
+		gbcJPanelWidth.gridx = 0;
+		gbcJPanelWidth.anchor = GridBagConstraints.NORTH;
+		gbcJPanelWidth.insets = new Insets(3, 5, 0, 0);
+		gbcJPanelWidth.gridwidth = 4;
+		gbcJPanelWidth.fill = GridBagConstraints.HORIZONTAL;
+		gbcJPanelWidth.gridy = 2;
+		
+        GridBagConstraints gbc_jSeparatorVert = new GridBagConstraints();
+        gbc_jSeparatorVert.fill = GridBagConstraints.VERTICAL;
+        gbc_jSeparatorVert.insets = new Insets(5, 5, 0, 5);
+        gbc_jSeparatorVert.gridheight = 2;
+        gbc_jSeparatorVert.gridx = 2;
+        gbc_jSeparatorVert.gridy = 0;
+        
+        GridBagConstraints gbcTimeFormatter = new GridBagConstraints();
+        gbcTimeFormatter.gridheight = 2;
+        gbcTimeFormatter.anchor = GridBagConstraints.NORTHWEST;
+        gbcTimeFormatter.gridx = 3;
+        gbcTimeFormatter.insets = new Insets(5, 5, 0, 0);
+        gbcTimeFormatter.gridy = 0;
+        
+        
+        jLabelStart = new JLabel();
 		jLabelStart.setText("Start bei");
 		jLabelStart.setText(Language.translate(jLabelStart.getText()) + ":");
-		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStart.setPreferredSize(JPanelTimeModelDiscrete.GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 
 		jLabelStop = new JLabel();
 		jLabelStop.setText("Stop bei");
 		jLabelStop.setText(Language.translate(jLabelStop.getText()) + ":");
-		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 12));
-
-		jLabelDateFormat = new JLabel();
-		jLabelDateFormat.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelDateFormat.setText("Ansicht");
-		jLabelDateFormat.setText(Language.translate(jLabelDateFormat.getText()) + ":");
-
-		jLabelAcceleration = new JLabel();
-		jLabelAcceleration.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelAcceleration.setText("Beschleunigungsfaktor");
-		jLabelAcceleration.setText(Language.translate(jLabelAcceleration.getText())+ ":");
+		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStop.setPreferredSize(JPanelTimeModelDiscrete.GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 		
-		this.add(jLabelHeader1, gridBagConstraints5);
-        this.add(jLabelHeader2, gridBagConstraints6);
-        this.add(jLabelStart, gridBagConstraints15);
-        this.add(getJPanelStartSettings(), gridBagConstraints141);
-        this.add(getJPanelWidthSettings(), gridBagConstraints9);
-        this.add(jLabelStop, gridBagConstraints10);
-        this.add(getJPanelStopSettings(), gridBagConstraints11);
-        this.add(getJPanelDivider(), gridBagConstraints4);
-        this.add(jLabelDateFormat, gridBagConstraints20);
-        this.add(getJPanelTimeFormater(), gridBagConstraints21);
+        this.add(jLabelStart, gbcJLabelStart);
+        this.add(getJPanelStartSettings(), gbcJPanelStartSettings);
+        this.add(jLabelStop, gbcJLableStop);
+        this.add(getJPanelStopSettings(), gbcJPanelStopSettings);
+        this.add(getJPanelWidthSettings(), gbcJPanelWidth);
+        this.add(getJSeparatorVert(), gbc_jSeparatorVert);
+        this.add(getJPanelTimeFormater(), gbcTimeFormatter);
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setBackground(java.awt.Color)
+	 */
+	@Override
+	public void setBackground(Color bg) {
+		super.setBackground(bg);
+		this.getJPanelStartSettings().setBackground(bg);
+		this.getJPanelStopSettings().setBackground(bg);
+		this.getJPanelWidthSettings().setBackground(bg);
+		this.getJPanelTimeFormater().setBackground(bg);
+	}
+	
 	/**
 	 * This method initializes jPanelStartSettings	
 	 * @return javax.swing.JPanel	
@@ -247,7 +225,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			FlowLayout flowLayout = new FlowLayout();
 			flowLayout.setAlignment(java.awt.FlowLayout.CENTER);
 			flowLayout.setVgap(0);
-			flowLayout.setHgap(5);
+			flowLayout.setHgap(3);
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.anchor = GridBagConstraints.WEST;
 			gridBagConstraints3.gridx = 1;
@@ -260,13 +238,16 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			gridBagConstraints.insets = new Insets(10, 10, 0, 0);
 			
 			jLabelStartDate = new JLabel();
+			jLabelStartDate.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jLabelStartDate.setText("Datum");
-			jLabelStartDate.setPreferredSize(new Dimension(40, 16));
+			jLabelStartDate.setPreferredSize(new Dimension(35, 16));
 			jLabelStartDate.setText(Language.translate(jLabelStartDate.getText())+ ":");
 			jLabelStartTime = new JLabel();
+			jLabelStartTime.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jLabelStartTime.setText("Uhrzeit");
 			jLabelStartTime.setText(Language.translate(jLabelStartTime.getText())+ ":");
 			jLabelStartMillis = new JLabel();
+			jLabelStartMillis.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jLabelStartMillis.setText("Millisekunden");
 			jLabelStartMillis.setText(Language.translate(jLabelStartMillis.getText())+ ":");
 
@@ -288,8 +269,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerDateStart() {
 		if (jSpinnerDateStart==null) {
 			jSpinnerDateStart = new JSpinner(new SpinnerDateModel());
+			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
-			jSpinnerDateStart.setPreferredSize(new Dimension(100, 28));
+			jSpinnerDateStart.setPreferredSize(new Dimension(85, 22));
 			jSpinnerDateStart.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStart.getEditor()).getTextField();
@@ -304,8 +286,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerTimeStart() {
 		if (jSpinnerTimeStart==null) {
 			jSpinnerTimeStart = new JSpinner(new SpinnerDateModel());
+			jSpinnerTimeStart.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jSpinnerTimeStart.setEditor(new JSpinner.DateEditor(jSpinnerTimeStart, "HH:mm:ss"));
-			jSpinnerTimeStart.setPreferredSize(new Dimension(80, 28));
+			jSpinnerTimeStart.setPreferredSize(new Dimension(75, 22));
 			jSpinnerTimeStart.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerTimeStart.getEditor()).getTextField();
@@ -320,8 +303,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerMillisStart() {
 		if (jSpinnerMillisStart==null) {
 			jSpinnerMillisStart = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+			jSpinnerMillisStart.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jSpinnerMillisStart.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStart, "000"));
-			jSpinnerMillisStart.setPreferredSize(new Dimension(60, 28));
+			jSpinnerMillisStart.setPreferredSize(new Dimension(55, 22));
 			jSpinnerMillisStart.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DefaultEditor) jSpinnerMillisStart.getEditor()).getTextField();
@@ -337,6 +321,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JPanel getJPanelStopSettings() {
 		if (jPanelStopSettings == null) {
 			FlowLayout flowLayout2 = new FlowLayout();
+			flowLayout2.setHgap(3);
 			flowLayout2.setVgap(0);
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
 			gridBagConstraints14.anchor = GridBagConstraints.WEST;
@@ -350,13 +335,16 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			gridBagConstraints2.insets = new Insets(10, 10, 0, 0);
 			
 			jLabelStopDate = new JLabel();
+			jLabelStopDate.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jLabelStopDate.setText("Datum");
-			jLabelStopDate.setPreferredSize(new Dimension(40, 16));
+			jLabelStopDate.setPreferredSize(new Dimension(35, 16));
 			jLabelStopDate.setText(Language.translate(jLabelStopDate.getText())+ ":");
 			jLabelStopTime = new JLabel();
+			jLabelStopTime.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jLabelStopTime.setText("Uhrzeit");
 			jLabelStopTime.setText(Language.translate(jLabelStopTime.getText())+ ":");
 			jLabelStopMillis = new JLabel();
+			jLabelStopMillis.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jLabelStopMillis.setText("Millisekunden");
 			jLabelStopMillis.setText(Language.translate(jLabelStopMillis.getText())+ ":");
 			
@@ -379,8 +367,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerDateStop() {
 		if (jSpinnerDateStop==null) {
 			jSpinnerDateStop = new JSpinner(new SpinnerDateModel());
+			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
-			jSpinnerDateStop.setPreferredSize(new Dimension(100, 28));
+			jSpinnerDateStop.setPreferredSize(new Dimension(85, 22));
 			jSpinnerDateStop.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStop.getEditor()).getTextField();
@@ -395,8 +384,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerTimeStop() {
 		if (jSpinnerTimeStop==null) {
 			jSpinnerTimeStop = new JSpinner(new SpinnerDateModel());
+			jSpinnerTimeStop.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jSpinnerTimeStop.setEditor(new JSpinner.DateEditor(jSpinnerTimeStop, "HH:mm:ss"));
-			jSpinnerTimeStop.setPreferredSize(new Dimension(80, 28));
+			jSpinnerTimeStop.setPreferredSize(new Dimension(75, 22));
 			jSpinnerTimeStop.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerTimeStop.getEditor()).getTextField();
@@ -411,8 +401,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerMillisStop() {
 		if (jSpinnerMillisStop==null) {
 			jSpinnerMillisStop = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+			jSpinnerMillisStop.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jSpinnerMillisStop.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStop, "000"));
-			jSpinnerMillisStop.setPreferredSize(new Dimension(60, 28));
+			jSpinnerMillisStop.setPreferredSize(new Dimension(55, 22));
 			jSpinnerMillisStop.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DefaultEditor) jSpinnerMillisStop.getEditor()).getTextField();
@@ -426,8 +417,8 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	 */
 	protected TimeFormatSelection getJPanelTimeFormater() {
 		if (jPanelTimeFormater == null) {
-			jPanelTimeFormater = new TimeFormatSelection();
-			jPanelTimeFormater.setPreferredSize(new Dimension(360, 80));
+			jPanelTimeFormater = new TimeFormatSelection(true, 3, new Font("Dialog", Font.PLAIN, 10));
+			jPanelTimeFormater.setPreferredSize(new Dimension(365, 47));
 			jPanelTimeFormater.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
@@ -445,61 +436,50 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	 */
 	protected JPanel getJPanelWidthSettings() {
 		if (jPanelWidthSettings == null) {
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.gridx = 2;
-			gridBagConstraints12.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints12.weightx = 1.0;
-			gridBagConstraints12.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints12.gridy = 0;
-			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
-			gridBagConstraints16.insets = new Insets(0, 0, 5, 0);
-			gridBagConstraints16.gridy = 3;
-			gridBagConstraints16.anchor = GridBagConstraints.WEST;
-			gridBagConstraints16.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints16.gridwidth = 3;
-			gridBagConstraints16.gridx = 0;
-			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-			gridBagConstraints13.insets = new Insets(0, 0, 5, 0);
-			gridBagConstraints13.gridy = 2;
-			gridBagConstraints13.anchor = GridBagConstraints.WEST;
-			gridBagConstraints13.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints13.gridwidth = 3;
-			gridBagConstraints13.gridx = 0;
-			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
-			gridBagConstraints17.insets = new Insets(10, 0, 5, 0);
-			gridBagConstraints17.gridy = 1;
-			gridBagConstraints17.anchor = GridBagConstraints.WEST;
-			gridBagConstraints17.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints17.gridwidth = 3;
-			gridBagConstraints17.weightx = 0.0;
-			gridBagConstraints17.gridx = 0;
-			GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
-			gridBagConstraints19.insets = new Insets(0, 5, 0, 5);
-			gridBagConstraints19.gridy = 0;
-			gridBagConstraints19.gridx = 1;
-			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-			gridBagConstraints18.insets = new Insets(0, 0, 0, 2);
-			gridBagConstraints18.gridy = 0;
-			gridBagConstraints18.gridx = 0;
-
-			jLabelDummy = new JLabel();
-			jLabelDummy.setText(" ");
+			
+			jLabelAcceleration = new JLabel();
+			jLabelAcceleration.setFont(new Font("Dialog", Font.BOLD, 10));
+			jLabelAcceleration.setText("Beschleunigung");
+			jLabelAcceleration.setText(Language.translate(jLabelAcceleration.getText())+ ":");
+			jLabelAcceleration.setPreferredSize(new Dimension(101, 20));
 			
 			jLabelFactorInfoSeconds = new JLabel();
-			jLabelFactorInfoSeconds.setText("Sekunden");
-			jLabelFactorInfoMinutes = new JLabel();
-			jLabelFactorInfoMinutes.setText("Minuten");
-			jLabelFactorInfoHour = new JLabel();
-			jLabelFactorInfoHour.setText("Stunden");
+			jLabelFactorInfoSeconds.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelFactorInfoSeconds.setText("Explanation");
+			
+			GridBagLayout gbl_jPanelWidthSettings = new GridBagLayout();
+			gbl_jPanelWidthSettings.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelWidthSettings.rowHeights = new int[]{0, 0};
+			gbl_jPanelWidthSettings.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelWidthSettings.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			
+			
+			GridBagConstraints gbcJLableAcceleration = new GridBagConstraints();
+			gbcJLableAcceleration.anchor = GridBagConstraints.WEST;
+			gbcJLableAcceleration.insets = new Insets(0, 0, 0, 2);
+			gbcJLableAcceleration.gridy = 0;
+			gbcJLableAcceleration.gridx = 0;
+			
+			GridBagConstraints gbcJSpinnerAcceleration = new GridBagConstraints();
+			gbcJSpinnerAcceleration.insets = new Insets(0, 5, 0, 0);
+			gbcJSpinnerAcceleration.gridy = 0;
+			gbcJSpinnerAcceleration.gridx = 1;
+			
+			GridBagConstraints gbcInfoSeconds = new GridBagConstraints();
+			gbcInfoSeconds.insets = new Insets(0, 3, 0, 0);
+			gbcInfoSeconds.gridy = 0;
+			gbcInfoSeconds.anchor = GridBagConstraints.WEST;
+			gbcInfoSeconds.fill = GridBagConstraints.HORIZONTAL;
+			gbcInfoSeconds.weightx = 0.0;
+			gbcInfoSeconds.gridx = 2;
+
 			
 			jPanelWidthSettings = new JPanel();
-			jPanelWidthSettings.setLayout(new GridBagLayout());
-			jPanelWidthSettings.add(jLabelAcceleration, gridBagConstraints18);
-			jPanelWidthSettings.add(getJSpinnerAcceleration(), gridBagConstraints19);
-			jPanelWidthSettings.add(jLabelFactorInfoSeconds, gridBagConstraints17);
-			jPanelWidthSettings.add(jLabelFactorInfoMinutes, gridBagConstraints13);
-			jPanelWidthSettings.add(jLabelFactorInfoHour, gridBagConstraints16);
-			jPanelWidthSettings.add(jLabelDummy, gridBagConstraints12);
+			jPanelWidthSettings.setLayout(gbl_jPanelWidthSettings);
+			
+			jPanelWidthSettings.add(jLabelAcceleration, gbcJLableAcceleration);
+			jPanelWidthSettings.add(getJSpinnerAcceleration(), gbcJSpinnerAcceleration);
+			jPanelWidthSettings.add(jLabelFactorInfoSeconds, gbcInfoSeconds);
 		}
 		return jPanelWidthSettings;
 	}
@@ -510,8 +490,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerAcceleration() {
 		if (jSpinnerAcceleration == null) {
 			jSpinnerAcceleration = new JSpinner(new SpinnerNumberModel(1, 0.001, 10000, 0.001));
+			jSpinnerAcceleration.setFont(new Font("Dialog", Font.PLAIN, 10));
 			jSpinnerAcceleration.setEditor(new JSpinner.NumberEditor(jSpinnerAcceleration, "0.000"));
-			jSpinnerAcceleration.setPreferredSize(new Dimension(100, 28));
+			jSpinnerAcceleration.setPreferredSize(new Dimension(85, 22));
 			jSpinnerAcceleration.addChangeListener(this);
 			jSpinnerAcceleration.addChangeListener(new ChangeListener() {
 				@Override
@@ -525,19 +506,6 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			((NumberFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerAcceleration;
-	}
-	/**
-	 * This method initializes jPanelDivider	
-	 * @return javax.swing.JPanel	
-	 */
-	protected JPanel getJPanelDivider() {
-		if (jPanelDivider == null) {
-			jPanelDivider = new JPanel();
-			jPanelDivider.setLayout(new GridBagLayout());
-			jPanelDivider.setPreferredSize(new Dimension(200, 2));
-			jPanelDivider.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		}
-		return jPanelDivider;
 	}
 	
 	/**
@@ -583,13 +551,16 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 				
 			}
 			
-			jLabelFactorInfoSeconds.setText("1 " + stringSimulated + " " + stringSecond + " = " + textSeconds);
-			jLabelFactorInfoMinutes.setText("1 " + stringSimulated + " " + stringMinute + " = " + textMinutes);
-			jLabelFactorInfoHour.setText("1 " + stringSimulated + " " + stringHour + " = " + textHours);
+//			jLabelFactorInfoSeconds.setText("1 " + stringSimulated + " " + stringSecond + " = " + textSeconds);
+//			jLabelFactorInfoMinutes.setText("1 " + stringSimulated + " " + stringMinute + " = " + textMinutes);
+//			jLabelFactorInfoHour.setText("1 " + stringSimulated + " " + stringHour + " = " + textHours);
+
+			String explanation = "1 " + stringSimulated + " " + stringSecond + " = " + textSeconds + ", ";
+			explanation += "1 " + stringSimulated + " " + stringMinute + " = " + textMinutes + ", ";
+			explanation += "1 " + stringSimulated + " " + stringHour + " = " + textHours;
+			jLabelFactorInfoSeconds.setText(explanation);
 		}
-		
 	}
-	
 	/**
 	 * Rounds a double value two digits after the comma.
 	 *
@@ -722,4 +693,11 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 		}
 	}
 	
+	private JSeparator getJSeparatorVert() {
+		if (jSeparatorVert == null) {
+			jSeparatorVert = new JSeparator();
+			jSeparatorVert.setOrientation(SwingConstants.VERTICAL);
+		}
+		return jSeparatorVert;
+	}
 }  

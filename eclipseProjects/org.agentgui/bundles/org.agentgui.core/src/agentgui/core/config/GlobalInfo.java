@@ -323,6 +323,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		if (isUpdatedAwbCoreBundle==null) {
 			// --- Get the current bundle version -------------------
 			Bundle bundle = FrameworkUtil.getBundle(GlobalInfo.class);
+			if (bundle==null) return false;
+			
 			Version version = bundle.getVersion();
 			String bundleVersionString = version.toString();
 			// --- Get the reminded bundle version ------------------
