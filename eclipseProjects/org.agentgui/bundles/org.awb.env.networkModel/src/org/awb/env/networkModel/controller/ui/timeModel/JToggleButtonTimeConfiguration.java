@@ -90,10 +90,16 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 		Project project = this.getProject();
 		if (updateObject.equals(Project.CHANGED_TimeModelClass)) {
 			// --- Changes in the TimeModel class of the project ----   
+			boolean isVisibleConfiguration = this.getJInternalFrameTimeConfiguration().isVisible();
+			this.disposeJInternalFrameTimeConfiguration();
+			
 			if (project.getTimeModelClass()==null) {
 				this.setEnabled(false);
 			} else {
 				this.setEnabled(true);
+				if (isVisibleConfiguration==true) {
+					this.getJInternalFrameTimeConfiguration().registerAtDesktopAndSetVisible();
+				}
 			}
 			
 		} else if (updateObject instanceof CHANGED) {
@@ -108,9 +114,7 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 				break;
 			} 
 		}
-		
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -123,7 +127,7 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 			this.getJInternalFrameTimeConfiguration().registerAtDesktopAndSetVisible();
 		} else {
 			// --- Hide time configuration panel ----------
-			this.getJInternalFrameTimeConfiguration().setVisible(false);
+			this.disposeJInternalFrameTimeConfiguration();
 		}
 	}
 	/**
@@ -136,7 +140,15 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 		}
 		return jPanelTimeConfig;
 	}
-
+	/**
+	 * Disposes the JInternalFrameTimeConfiguration.
+	 */
+	private void disposeJInternalFrameTimeConfiguration() {
+		if (jPanelTimeConfig!=null) {
+			jPanelTimeConfig.dispose();
+			jPanelTimeConfig = null;
+		}
+	}
 	
 	/**
 	 * Returns the current project.

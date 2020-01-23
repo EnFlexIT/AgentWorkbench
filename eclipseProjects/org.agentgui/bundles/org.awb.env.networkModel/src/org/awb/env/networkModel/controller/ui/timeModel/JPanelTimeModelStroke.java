@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.time;
+package org.awb.env.networkModel.controller.ui.timeModel;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,6 +36,7 @@ import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -44,16 +45,19 @@ import javax.swing.event.DocumentListener;
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
+import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
+import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelStroke;
 
 /**
- * The Class TimeModelStrokeConfiguration.
+ * The Class JPanelTimeModelStroke.
  * 
  * @see TimeModelStroke
  * @see TimeModelController
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration implements DocumentListener {
+public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration implements DocumentListener {
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
@@ -61,8 +65,6 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	private JLabel jLabelCounterStart;
 	private JTextField jTextFieldCounterStart;
 	private JTextField jTextFieldCounterStop;
-	private JLabel jLabelHeader1;
-	private JLabel jLabelHeader2;
 	
 	private boolean enabledChangeListener = true;
 	
@@ -70,7 +72,7 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	 * Instantiates a new time model stroke configuration.
 	 * @param project the project
 	 */
-	public TimeModelStrokeConfiguration(Project project) {
+	public JPanelTimeModelStroke(Project project) {
 		super(project);
 		this.initialize();
 	}
@@ -81,72 +83,46 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0};
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0};
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
-		this.setSize(400, 350);
-		
-		GridBagConstraints gbcJLabelHeader1 = new GridBagConstraints();
-		gbcJLabelHeader1.gridx = 0;
-		gbcJLabelHeader1.gridy = 0;
-		gbcJLabelHeader1.anchor = GridBagConstraints.WEST;
-		gbcJLabelHeader1.insets = new Insets(10, 10, 5, 0);
-		gbcJLabelHeader1.gridwidth = 2;
-
-		GridBagConstraints gbcJLabelHeader2 = new GridBagConstraints();
-		gbcJLabelHeader2.gridx = 0;
-		gbcJLabelHeader2.gridy = 1;
-		gbcJLabelHeader2.insets = new Insets(0, 10, 0, 0);
-		gbcJLabelHeader2.anchor = GridBagConstraints.WEST;
-		gbcJLabelHeader2.gridwidth = 2;
+		this.setSize(244, 60);
 		
 		GridBagConstraints gbcJLabelCounterStart = new GridBagConstraints();
 		gbcJLabelCounterStart.gridx = 0;
-		gbcJLabelCounterStart.gridy = 2;
-		gbcJLabelCounterStart.insets = new Insets(10, 10, 0, 0);
+		gbcJLabelCounterStart.gridy = 0;
+		gbcJLabelCounterStart.insets = new Insets(5, 5, 0, 0);
 		gbcJLabelCounterStart.anchor = GridBagConstraints.WEST;
 
 		GridBagConstraints gbcJTextFieldCounterStart = new GridBagConstraints();
 		gbcJTextFieldCounterStart.anchor = GridBagConstraints.WEST;
 		gbcJTextFieldCounterStart.gridx = 1;
-		gbcJTextFieldCounterStart.gridy = 2;
+		gbcJTextFieldCounterStart.gridy = 0;
 		gbcJTextFieldCounterStart.weightx = 1.0;
-		gbcJTextFieldCounterStart.insets = new Insets(10, 10, 0, 0);
+		gbcJTextFieldCounterStart.insets = new Insets(5, 5, 0, 0);
 		
 		GridBagConstraints gbcJLabelCounterStop = new GridBagConstraints();
 		gbcJLabelCounterStop.gridx = 0;
-		gbcJLabelCounterStop.gridy = 3;
-		gbcJLabelCounterStop.insets = new Insets(10, 10, 0, 0);
+		gbcJLabelCounterStop.gridy = 1;
+		gbcJLabelCounterStop.insets = new Insets(3, 5, 0, 0);
 		gbcJLabelCounterStop.anchor = GridBagConstraints.WEST;
 		
 		GridBagConstraints gbcJTextFiledCounterStop = new GridBagConstraints();
 		gbcJTextFiledCounterStop.anchor = GridBagConstraints.WEST;
 		gbcJTextFiledCounterStop.gridx = 1;		
-		gbcJTextFiledCounterStop.gridy = 3;
+		gbcJTextFiledCounterStop.gridy = 1;
 		gbcJTextFiledCounterStop.weightx = 1.0;
-		gbcJTextFiledCounterStop.insets = new Insets(10, 10, 0, 0);
-
-		
-		
-		jLabelHeader1 = new JLabel();
-		jLabelHeader1.setText("TimeModelStroke");
-		jLabelHeader1.setFont(new Font("Dialog", Font.BOLD, 14));
-		jLabelHeader2 = new JLabel();
-		jLabelHeader2.setText("Einfach zählendes Zeitmodell (z. B. 1 ... 9999)");
-		jLabelHeader2.setText(Language.translate(jLabelHeader2.getText()));
+		gbcJTextFiledCounterStop.insets = new Insets(3, 5, 0, 0);
 		jLabelCounterStart = new JLabel();
-		jLabelCounterStart.setText("Start bei:");
+		jLabelCounterStart.setText("Zähler Start:");
 		jLabelCounterStart.setText(Language.translate(jLabelCounterStart.getText()));
-		jLabelCounterStart.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelCounterStart.setFont(new Font("Dialog", Font.BOLD, 10));
 		jLabelCounterStop = new JLabel();
-		jLabelCounterStop.setText("Stop bei:");
+		jLabelCounterStop.setText("Zähler Stop:");
 		jLabelCounterStop.setText(Language.translate(jLabelCounterStop.getText()));
-		jLabelCounterStop.setFont(new Font("Dialog", Font.BOLD, 12));
-		
-		this.add(jLabelHeader1, gbcJLabelHeader1);
-		this.add(jLabelHeader2, gbcJLabelHeader2);
+		jLabelCounterStop.setFont(new Font("Dialog", Font.BOLD, 10));
 		this.add(jLabelCounterStart, gbcJLabelCounterStart);
         this.add(getJTextFieldCounterStart(), gbcJTextFieldCounterStart);
         this.add(jLabelCounterStop, gbcJLabelCounterStop);
@@ -161,7 +137,9 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	private JTextField getJTextFieldCounterStart() {
 		if (jTextFieldCounterStart == null) {
 			jTextFieldCounterStart = new JTextField();
-			jTextFieldCounterStart.setPreferredSize(new Dimension(120, 26));
+			jTextFieldCounterStart.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jTextFieldCounterStart.setPreferredSize(new Dimension(120, 22));
+			jTextFieldCounterStart.setBorder(BorderFactory.createEtchedBorder());
 			jTextFieldCounterStart.addKeyListener( new KeyAdapter() {
 				public void keyTyped(KeyEvent kT) {
 					char charackter = kT.getKeyChar();
@@ -184,7 +162,9 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	private JTextField getJTextFieldCounterStop() {
 		if (jTextFieldCounterStop == null) {
 			jTextFieldCounterStop = new JTextField();
-			jTextFieldCounterStop.setPreferredSize(new Dimension(120, 26));
+			jTextFieldCounterStop.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jTextFieldCounterStop.setPreferredSize(new Dimension(120, 22));
+			jTextFieldCounterStop.setBorder(BorderFactory.createEtchedBorder());
 			jTextFieldCounterStop.addKeyListener( new KeyAdapter() {
 				public void keyTyped(KeyEvent kT) {
 					char charackter = kT.getKeyChar();

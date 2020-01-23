@@ -29,6 +29,7 @@
 package agentgui.simulationService.time;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -61,25 +62,38 @@ public class TimeFormatSelection extends JPanelForActions {
 	private boolean showLable = false;
 	private String defaultTimeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
 	
-	private JLabel jLabelFormat = null;
-	private JTextField jTextFieldTimeFormat = null;
-	private JButton jButtonTimeFormatDefault = null;
-	private JComboBoxWide<TimeFormat> jComboBoxTimeFormat = null;
+	private JLabel jLabelFormat;
+	private JTextField jTextFieldTimeFormat;
+	private JButton jButtonTimeFormatDefault;
+	private JComboBoxWide<TimeFormat> jComboBoxTimeFormat;
 
+	private int horVertGap = 5;
+	
 	
 	/**
 	 * Instantiates a new time format selection.
 	 */
 	public TimeFormatSelection() {
-		this(true);
+		this(true, null, null);
 	}
 	/**
 	 * Instantiates a new time format selection.
 	 * @param showFormatLabel set true if the introductory label is to be displayed
 	 */
 	public TimeFormatSelection(boolean showFormatLabel) {
+		this(showFormatLabel, null, null);
+	}
+	/**
+	 * Instantiates a new time format selection.
+	 *
+	 * @param showFormatLabel the show format label
+	 * @param horizontalVerticalGap the horizontal or vertical gap between the elements
+	 */
+	public TimeFormatSelection(boolean showFormatLabel, Integer horizontalVerticalGap, Font font) {
 		super();
 		this.showLable=showFormatLabel;
+		if (horizontalVerticalGap!=null) this.horVertGap = horizontalVerticalGap;
+		if (font!=null) this.setFont(font);
 		this.initialize();
 	}
 	
@@ -97,17 +111,12 @@ public class TimeFormatSelection extends JPanelForActions {
 		this.setLayout(gridBagLayout);
 		this.setSize(430, 60);
 
-
+		
 		GridBagConstraints gridBagConstraintLabel = new GridBagConstraints();
 		gridBagConstraintLabel.gridx = 0;
 		gridBagConstraintLabel.gridy = 0;
-		gridBagConstraintLabel.insets = new Insets(0, 5, 0, 0);
+		gridBagConstraintLabel.insets = new Insets(0, this.horVertGap, 0, 0);
 		gridBagConstraintLabel.anchor = GridBagConstraints.WEST;
-		
-		GridBagConstraints gridBagConstraintButtonDefault = new GridBagConstraints();
-		gridBagConstraintButtonDefault.gridx = 2;
-		gridBagConstraintButtonDefault.gridy = 0;
-		gridBagConstraintButtonDefault.insets = new Insets(0, 5, 0, 5);
 		
 		GridBagConstraints gridBagConstraintTextField = new GridBagConstraints();
 		gridBagConstraintTextField.gridx = 1;
@@ -115,10 +124,15 @@ public class TimeFormatSelection extends JPanelForActions {
 		gridBagConstraintTextField.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraintTextField.weightx = 1.0;
 		if (this.showLable==true) {
-			gridBagConstraintTextField.insets = new Insets(0, 5, 0, 0);			
+			gridBagConstraintTextField.insets = new Insets(0, this.horVertGap, 0, 0);			
 		} else {
 			gridBagConstraintTextField.insets = new Insets(0, 0, 0, 0);
 		}
+		
+		GridBagConstraints gridBagConstraintButtonDefault = new GridBagConstraints();
+		gridBagConstraintButtonDefault.gridx = 2;
+		gridBagConstraintButtonDefault.gridy = 0;
+		gridBagConstraintButtonDefault.insets = new Insets(0, this.horVertGap, 0, this.horVertGap);
 		
 		GridBagConstraints gridBagConstraintComboBox = new GridBagConstraints();
 		gridBagConstraintComboBox.gridx = 1;
@@ -126,12 +140,12 @@ public class TimeFormatSelection extends JPanelForActions {
 		gridBagConstraintComboBox.weightx = 1.0;
 		gridBagConstraintComboBox.fill = GridBagConstraints.BOTH;
 		if (this.showLable==true) {
-			gridBagConstraintComboBox.insets = new Insets(7, 5, 0, 0);
+			gridBagConstraintComboBox.insets = new Insets(this.horVertGap, this.horVertGap, 0, 0);
 		} else {
-			gridBagConstraintComboBox.insets = new Insets(7, 0, 0, 0);
+			gridBagConstraintComboBox.insets = new Insets(this.horVertGap, 0, 0, 0);
 		}
 		
-		
+		// --- Add the components -----------------------------------
 		if (this.showLable==true) {
 			this.add(this.getJLabelFormatHeader(), gridBagConstraintLabel);	
 		}
@@ -186,10 +200,10 @@ public class TimeFormatSelection extends JPanelForActions {
 	private JButton getJButtonTimeFormatDefault() {
 		if (jButtonTimeFormatDefault == null) {
 			jButtonTimeFormatDefault = new JButton();
-			jButtonTimeFormatDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonTimeFormatDefault.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
 			jButtonTimeFormatDefault.setToolTipText("Standard verwenden");
 			jButtonTimeFormatDefault.setToolTipText(Language.translate(jButtonTimeFormatDefault.getToolTipText()));
+			jButtonTimeFormatDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonTimeFormatDefault.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -271,5 +285,27 @@ public class TimeFormatSelection extends JPanelForActions {
 		this.fireUpdate(ae);
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setFont(java.awt.Font)
+	 */
+	@Override
+	public void setFont(Font font) {
+		
+		super.setFont(font);
+		
+		Font fPlain = new Font(font.getName(), Font.PLAIN, font.getSize());
+		Font fBold = new Font(font.getName(), Font.PLAIN, font.getSize());
+		
+		this.getJLabelFormatHeader().setFont(fBold);
+		this.getJTextFieldTimeFormat().setFont(fPlain);
+		this.getJComboBoxTimeFormat().setFont(fPlain);
+		this.getJButtonTimeFormatDefault().setFont(fPlain);
+		
+		if (font.getSize()<=10) {
+			this.getJTextFieldTimeFormat().setPreferredSize(new Dimension(30, 22));
+			this.getJButtonTimeFormatDefault().setPreferredSize(new Dimension(21, 22));
+			this.getJComboBoxTimeFormat().setPreferredSize(new Dimension(30, 22));
+		}
+	}
 	
 }

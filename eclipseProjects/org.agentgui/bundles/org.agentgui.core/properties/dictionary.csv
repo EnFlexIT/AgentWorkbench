@@ -678,7 +678,7 @@ de;Titel;Title;;;
 de;Topologie;Topology;;;
 de;Typ-Bezeichner;Type-Specifier
 de;Typ;Type
-de;Uhrzeit;Time of day;;;
+de;Uhrzeit;Time;;;
 de;Umbenennen;Rename
 de;Umgebung speichern;Save environment
 de;Umgebung;Environment
@@ -765,6 +765,8 @@ de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In ord
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project.;;;
 de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!
+de;Zähler Start:;Counter Start:;;;
+de;Zähler Stop:;Counter Stop:;;;
 de;Zähler;Counter;;;
 de;auf;to;;;
 de;bereit;ready
