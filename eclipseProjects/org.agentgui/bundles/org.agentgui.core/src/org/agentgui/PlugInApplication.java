@@ -85,7 +85,7 @@ public class PlugInApplication implements IApplication {
 	 * Sets the application is running.
 	 */
 	public void setApplicationIsRunning() {
-		this.iApplicationContext.applicationRunning();	
+		this.getIApplicationContext().applicationRunning();	
 	}
 	
 	

@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.agents.example;
+package de.enflexit.awb.samples.simulationService;
 
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -39,7 +39,7 @@ import agentgui.simulationService.load.LoadInformation.Container2Wait4;
  * This is a simple agent, which is able to start a new remote container, if the background system is running.
  * After doing this once, the agents will be suspended. To restart this agent, open the JADE rma-Agent, select 
  * the agent in its container and press the 'Resume' button in the menu.<br>
- * The full class name is: <b>agentgui.simulationService.agents.example.RemoteStarterAgent</b>
+ * The full class name is: <b>de.enflexit.awb.samples.simulationService.RemoteStarterAgent</b>
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

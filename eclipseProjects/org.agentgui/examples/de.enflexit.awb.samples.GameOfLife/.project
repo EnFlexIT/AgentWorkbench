@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.agentgui.sample.plugIn</name>
+	<name>de.enflexit.awb.samples.GameOfLife</name>
 	<comment></comment>
 	<projects>
 	</projects>

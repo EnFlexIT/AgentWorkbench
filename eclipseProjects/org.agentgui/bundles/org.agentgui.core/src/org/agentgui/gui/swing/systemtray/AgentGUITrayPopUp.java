@@ -83,11 +83,11 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		itemAbout.setActionCommand("About");
 		itemAbout.addActionListener(this);
 		
-		itemServiceStart = new MenuItem(Language.translate("Starte Agent.GUI - Service"));
+		itemServiceStart = new MenuItem(Language.translate("Starte AWB-Service"));
 		itemServiceStart.setActionCommand("startAgentGUIService");
 		itemServiceStart.addActionListener(this);
 		
-		itemServiceStop = new MenuItem(Language.translate("Stop Agent.GUI - Service"));
+		itemServiceStop = new MenuItem(Language.translate("Stop AWB-Service"));
 		itemServiceStop.setActionCommand("stoptAgentGUIService");
 		itemServiceStop.addActionListener(this);
 		

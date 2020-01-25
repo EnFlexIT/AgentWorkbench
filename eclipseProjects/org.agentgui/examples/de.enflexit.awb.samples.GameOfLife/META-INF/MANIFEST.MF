@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GameOfLife
-Bundle-SymbolicName: org.agentgui.sample.GameOfLife
+Bundle-Name: Agent.Workbenvh GameOfLife
+Bundle-SymbolicName: de.enflexit.awb.samples.GameOfLife
 Automatic-Module-Name: org.agentgui.sample.GameOfLife
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime,
  de.enflexit.common;bundle-version="1.0.0",

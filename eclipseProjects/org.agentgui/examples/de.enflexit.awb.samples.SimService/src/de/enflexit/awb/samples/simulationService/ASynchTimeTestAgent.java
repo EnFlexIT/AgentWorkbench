@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.agents.example;
+package de.enflexit.awb.samples.simulationService;
 
 import jade.core.Agent;
 import jade.core.Location;
@@ -71,12 +71,29 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 
 	private static final long serialVersionUID = 1L;
 	
-	private String myName = null;
-	private SynchTimeGUI gui = null;
+	private String myName;
+	private SynchTimeGUI gui;
 
-	private Date curSynchDate = null;
+	private Date curSynchDate;
 	private long currSynchDiff = 0;
 
+	
+	
+	/**
+	 * Enables to access the SimulationService if available.
+	 * @return the simulation service
+	 */
+	private SimulationServiceHelper getSimulationService() {
+		SimulationServiceHelper simHelper = null;
+		try {
+			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+		} catch (ServiceException se) {
+			//se.printStackTrace();
+			System.err.println("[" + this.getClass().getSimpleName() + "] No SimulationService available!");
+		}
+		return simHelper;
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationAgent#setup()
 	 */
@@ -84,23 +101,25 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		
 		this.myName = this.getLocalName();
 		
-		SimulationServiceHelper simHelper = null;
-		// --- Setup the Simulation with the Simulation-Service ------------
-		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			if (simHelper.getManagerAgent()==null) {
-				simHelper.setManagerAgent(this.getAID());
-				// --- Start a Ticker -----------------------------
-				this.addBehaviour(new ShowTimeBehaviour(this,1000));
+		SimulationServiceHelper simService = this.getSimulationService();
+		if (simService!=null) {
+			try {
+				if (simService.getManagerAgent()==null) {
+					// --- Register as managing agent -----
+					simService.setManagerAgent(this.getAID());
 
-			} else {
-				// --- Wait for the Service-Trigger ---------------
-				this.sensorPlugIn();
+				} else {
+					// --- Wait for the Service-Trigger ---
+					this.sensorPlugIn();
+				}
+				
+			} catch (ServiceException se) {
+				se.printStackTrace();
 			}
-		} catch (ServiceException e) {
-			e.printStackTrace();
 		}
 		
+		// --- Start the Ticker Behaviour -----------------
+		this.addBehaviour(new ShowTimeBehaviour(this,1000));
 		// --- Start and show the GUI ---------------------
 		this.startGUI();
 		
@@ -127,39 +146,34 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 	 */
 	protected void afterMove() {
 		super.afterMove();
-		startGUI();
 		
-		SimulationServiceHelper simHelper = null;
-		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			if (simHelper.getManagerAgent()==null) {
-				simHelper.setManagerAgent(this.getAID());
-				// --- Start a Ticker -----------------------------
-				this.addBehaviour(new ShowTimeBehaviour(this,1000));
-			} 	
-		} catch (ServiceException e) {
-			e.printStackTrace();
+		this.startGUI();
+		
+		SimulationServiceHelper simService = this.getSimulationService();
+		if (simService!=null) {
+			try {
+				if (simService.getManagerAgent()==null) {
+					simService.setManagerAgent(this.getAID());
+					// --- Start a Ticker -----------------------------
+					this.addBehaviour(new ShowTimeBehaviour(this,1000));
+				}
+				
+			} catch (ServiceException se) {
+				se.printStackTrace();
+			}
 		}
 		
 	}
 	
 	/**
-	 * This method starts the clock GUI, which will display the current and the synchronised time.
+	 * This method starts the clock GUI, which will display the current and the synchronized time.
 	 */
 	private void startGUI(){
+		// --- Open the UI ----------------------
 		gui = new SynchTimeGUI(null);
-		SimulationServiceHelper simHelper = null;
-		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			// --- Open the GUI ------------------------------------------------------------
-			curSynchDate = simHelper.getSynchTimeDate();
-			currSynchDiff = simHelper.getSynchTimeDifferenceMillis();
-			gui.setTime(curSynchDate, currSynchDiff);
-			gui.setVisible(true);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		
+		gui.setVisible(true);
+		// --- Get time information -------------
+		this.updateTimeInformation();
 	}
 	
 	/**
@@ -169,6 +183,43 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		if (gui!=null){
 			gui.setVisible(false);
 			gui = null;
+		}
+	}
+
+	/**
+	 * Updates the local time information.
+	 */
+	private void updateTimeInformation() {
+		this.updateTimeInformation(false);
+	}
+	/**
+	 * Updates the local time information.
+	 * @param stepSimulation the indicator to step the simulation and thus to notify other agents about progress
+	 */
+	private void updateTimeInformation(boolean stepSimulation) {
+		
+		// --- Set local variables ------------------------
+		SimulationServiceHelper simService = this.getSimulationService();
+		if (simService!=null) {
+			try {
+				curSynchDate = simService.getSynchTimeDate();
+				currSynchDiff = simService.getSynchTimeDifferenceMillis();
+				if (stepSimulation==true) {
+					simService.stepSimulation(null, 0, true);
+				}
+				
+			} catch (ServiceException se) {
+				se.printStackTrace();
+			}
+			
+		} else {
+			curSynchDate = new Date(System.currentTimeMillis());
+			currSynchDiff = 0;
+		}
+		
+		// --- Update visualization ? ---------------------
+		if (gui!=null) {
+			gui.setTime(curSynchDate, currSynchDiff);	
 		}
 	}
 	
@@ -182,8 +233,8 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		/**
 		 * Instantiates a new show time behaviour.
 		 *
-		 * @param a the a
-		 * @param period the period
+		 * @param a the agent instance
+		 * @param period the ticker period
 		 */
 		public ShowTimeBehaviour(Agent a, long period) {
 			super(a, period);
@@ -193,19 +244,7 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
 		 */
 		protected void onTick() {
-			SimulationServiceHelper simHelper = null;
-			try {
-				simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				curSynchDate = simHelper.getSynchTimeDate();
-				currSynchDiff = simHelper.getSynchTimeDifferenceMillis();
-				simHelper.stepSimulation(null, 0, true);				
-				if (gui!=null) {
-					gui.setTime(curSynchDate, currSynchDiff);	
-				}
-				
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
+			ASynchTimeTestAgent.this.updateTimeInformation(true);
 		} 
 
 	}
@@ -215,19 +254,7 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 	 */
 	@Override
 	public void onEnvironmentStimulus() {
-		
-		SimulationServiceHelper simHelper = null;
-		try {
-			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			curSynchDate = simHelper.getSynchTimeDate();
-			currSynchDiff = simHelper.getSynchTimeDifferenceMillis();
-			if (gui!=null) {
-				gui.setTime(curSynchDate, currSynchDiff);	
-			}
-			
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+		this.updateTimeInformation();
 	}
 	
 	/* (non-Javadoc)

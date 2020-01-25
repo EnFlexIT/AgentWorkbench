@@ -640,11 +640,10 @@ public class Application {
 			updater.start();
 			updater.waitForUpdate();
 
-			// ------------------------------------------------------
-			// --- Start Service / Embedded System Agent ------------
+			// --- Set application as executed ----------------------
 			getIApplication().setApplicationIsRunning();
 			
-			// --- Start the service / agent ------------------------
+			// --- Start Service / Embedded System Agent ------------
 			System.out.println("Starting the service/agent");
 			startServiceOrEmbeddedSystemAgent();
 			break;

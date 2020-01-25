@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: PlugIn
-Bundle-SymbolicName: org.agentgui.sample.plugIn;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Name: Agent.Workbenvh PlugIn-Example
+Bundle-SymbolicName: de.enflexit.awb.samples.PlugIn;singleton:=true
+Bundle-Version: 2.0.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  de.enflexit.common;bundle-version="1.0.0",
  org.agentgui.core;bundle-version="2.0.0",

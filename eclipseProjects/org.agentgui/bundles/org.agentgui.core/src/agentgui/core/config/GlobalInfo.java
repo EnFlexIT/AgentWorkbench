@@ -741,7 +741,21 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the default projects directory
 	 */
 	public String getDefaultProjectsDirectory() {
-		return this.getPathBaseDir() + "projects" + File.separator;
+		
+		String baseDir = this.getPathBaseDir();
+		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+			// --- If in the IDE environment, the git structure has to be considered ----
+			String relPathFromBaseDirGit = "../../../../awbProjects";
+			File ideProjectsDir = new File(baseDir + relPathFromBaseDirGit);
+			if (ideProjectsDir.exists()==true) {
+				try {
+					return ideProjectsDir.getCanonicalPath();
+				} catch (IOException ioEx) {
+					//ioEx.printStackTrace();
+				}
+			}
+		}
+		return baseDir + "projects" + File.separator;
 	}
 
 	/**

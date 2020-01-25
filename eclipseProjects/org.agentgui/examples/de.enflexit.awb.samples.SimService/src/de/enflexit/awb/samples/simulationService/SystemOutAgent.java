@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.agents.example;
+package de.enflexit.awb.samples.simulationService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
