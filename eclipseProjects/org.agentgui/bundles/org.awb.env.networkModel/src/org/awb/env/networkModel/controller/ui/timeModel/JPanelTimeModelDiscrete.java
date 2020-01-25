@@ -115,12 +115,15 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private boolean enabledChangeListener = true;
 	private JSeparator jSeparatorVert;
 
+	
 	/**
 	 * Instantiates a new time model discrete configuration.
+	 *
 	 * @param project the project
+	 * @param timeModelController the time model controller
 	 */
-	public JPanelTimeModelDiscrete(Project project) {
-		super(project);
+	public JPanelTimeModelDiscrete(Project project, TimeModelController timeModelController) {
+		super(project, timeModelController);
 		this.initialize();
 	}
 	/* (non-Javadoc)
@@ -665,7 +668,6 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		if (this.enabledChangeListener==true) {
 			Object ceTrigger = ce.getSource();
 			if (ceTrigger instanceof JSpinner) {
-				this.getTimeModelController().setTimeModel(this.getTimeModel());
 				this.saveTimeModelToSimulationSetup();	
 			}	
 		}

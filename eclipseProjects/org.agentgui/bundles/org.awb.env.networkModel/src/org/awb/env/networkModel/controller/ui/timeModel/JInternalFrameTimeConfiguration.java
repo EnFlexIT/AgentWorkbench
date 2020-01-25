@@ -19,6 +19,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
 import agentgui.core.application.Language;
+import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
@@ -61,7 +62,6 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 		this.setIconifiable(false);
 		this.setClosable(true);
 
-		
 		this.setSize(900, 90);
 		this.setBorder(BorderFactory.createEtchedBorder());
 		((BasicInternalFrameUI)this.getUI()).setNorthPane(null);
@@ -147,16 +147,27 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 			if (timeModel == null) {
 				// --- Equal to the default case (see above) --------
 			} else if (timeModel instanceof TimeModelStroke) {
-				jComponentTimeModel = new JPanelTimeModelStroke(this.graphController.getProject());
+				jComponentTimeModel = new JPanelTimeModelStroke(this.graphController.getProject(), null);
 			} else if (timeModel instanceof TimeModelDiscrete) {
-				jComponentTimeModel = new JPanelTimeModelDiscrete(this.graphController.getProject());
+				jComponentTimeModel = new JPanelTimeModelDiscrete(this.graphController.getProject(), null);
 			} else if (timeModel instanceof TimeModelPresent) {
-				jComponentTimeModel = new JPanelTimeModelPresent(this.graphController.getProject());
+				jComponentTimeModel = new JPanelTimeModelPresent(this.graphController.getProject(), null);
 			} else if (timeModel instanceof TimeModelContinuous) {
-				jComponentTimeModel = new JPanelTimeModelContinuous(this.graphController.getProject());
+				jComponentTimeModel = new JPanelTimeModelContinuous(this.graphController.getProject(), null);
 			}
 			jComponentTimeModel.setBackground(JInternalFrameTimeConfiguration.bgColor);
 		}
 		return jComponentTimeModel;
 	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame#dispose()
+	 */
+	@Override
+	public void dispose() {
+		if (jComponentTimeModel!=null && jComponentTimeModel instanceof JPanel4TimeModelConfiguration) {
+			((JPanel4TimeModelConfiguration)jComponentTimeModel).deleteObserver();
+		}
+		super.dispose();
+	}
+	
 }

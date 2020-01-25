@@ -150,12 +150,13 @@ public class TimeModelStroke extends TimeModel {
 		return counter;
 	}
 	
+	
 	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
+	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration(agentgui.core.project.Project, agentgui.core.gui.projectwindow.simsetup.TimeModelController)
 	 */
 	@Override
-	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project) {
-		return new TimeModelStrokeConfiguration(project);
+	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project, TimeModelController timeModelController) {
+		return new TimeModelStrokeConfiguration(project, timeModelController);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
@@ -212,5 +213,4 @@ public class TimeModelStroke extends TimeModel {
 		return hash;
 	}
 	
-	
-} // --- End of Sub-Class -----
+}

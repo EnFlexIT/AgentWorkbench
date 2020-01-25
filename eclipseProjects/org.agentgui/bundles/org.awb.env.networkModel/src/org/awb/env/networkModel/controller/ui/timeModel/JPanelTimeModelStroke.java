@@ -68,12 +68,15 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	
 	private boolean enabledChangeListener = true;
 	
+	
 	/**
 	 * Instantiates a new time model stroke configuration.
+	 *
 	 * @param project the project
+	 * @param timeModelController the time model controller
 	 */
-	public JPanelTimeModelStroke(Project project) {
-		super(project);
+	public JPanelTimeModelStroke(Project project, TimeModelController timeModelController) {
+		super(project, timeModelController);
 		this.initialize();
 	}
 	
@@ -268,7 +271,6 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	 */
 	private void saveTimeModelStrokeToSimulationSetup() {
 		if (this.enabledChangeListener==true) {
-			this.getTimeModelController().setTimeModel(this.getTimeModel());
 			this.saveTimeModelToSimulationSetup();
 		}
 	}

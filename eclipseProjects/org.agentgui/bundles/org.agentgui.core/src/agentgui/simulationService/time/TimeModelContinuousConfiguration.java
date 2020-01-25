@@ -69,50 +69,52 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
-	private JLabel jLabelHeader1 = null;
-	private JLabel jLabelHeader2 = null;
+	private JLabel jLabelHeader1;
+	private JLabel jLabelHeader2;
 	
-	private JPanel jPanelStartSettings = null;
-	private JPanel jPanelStopSettings = null;
-	private JPanel jPanelWidthSettings = null;
-	private JPanel jPanelDivider = null;
+	private JPanel jPanelStartSettings;
+	private JPanel jPanelStopSettings;
+	private JPanel jPanelWidthSettings;
+	private JPanel jPanelDivider;
 	
-	private JLabel jLabelStart = null;
-	private JLabel jLabelStartDate = null;
-	private JLabel jLabelStartTime = null;
-	private JLabel jLabelStartMillis = null;
+	private JLabel jLabelStart;
+	private JLabel jLabelStartDate;
+	private JLabel jLabelStartTime;
+	private JLabel jLabelStartMillis;
 	
-	private JLabel jLabelStop = null;
-	private JLabel jLabelStopDate = null;
-	private JLabel jLabelStopTime = null;
-	private JLabel jLabelStopMillis = null;
+	private JLabel jLabelStop;
+	private JLabel jLabelStopDate;
+	private JLabel jLabelStopTime;
+	private JLabel jLabelStopMillis;
 	
-	private JLabel jLabelAcceleration = null;
-	private JLabel jLabelDummy = null;
-	private JLabel jLabelFactorInfoSeconds = null;
-	private JLabel jLabelFactorInfoMinutes = null;
-	private JLabel jLabelFactorInfoHour = null;
+	private JLabel jLabelAcceleration;
+	private JLabel jLabelDummy;
+	private JLabel jLabelFactorInfoSeconds;
+	private JLabel jLabelFactorInfoMinutes;
+	private JLabel jLabelFactorInfoHour;
 
-	private JSpinner jSpinnerDateStart = null;
-	private JSpinner jSpinnerTimeStart = null;
-	private JSpinner jSpinnerMillisStart = null;
-	private JSpinner jSpinnerDateStop = null;
-	private JSpinner jSpinnerTimeStop = null;
-	private JSpinner jSpinnerMillisStop = null;
-	private JSpinner jSpinnerAcceleration = null;
+	private JSpinner jSpinnerDateStart;
+	private JSpinner jSpinnerTimeStart;
+	private JSpinner jSpinnerMillisStart;
+	private JSpinner jSpinnerDateStop;
+	private JSpinner jSpinnerTimeStop;
+	private JSpinner jSpinnerMillisStop;
+	private JSpinner jSpinnerAcceleration;
 
 	protected boolean enabledChangeListener = true;
 
-	private JLabel jLabelDateFormat = null;
-	private TimeFormatSelection jPanelTimeFormater = null;
+	private JLabel jLabelDateFormat;
+	private TimeFormatSelection jPanelTimeFormater;
 	
 	
 	/**
 	 * Instantiates a new time model discrete configuration.
+	 *
 	 * @param project the project
+	 * @param timeModelController the time model controller
 	 */
-	public TimeModelContinuousConfiguration(Project project) {
-		super(project);
+	public TimeModelContinuousConfiguration(Project project, TimeModelController timeModelController) {
+		super(project, timeModelController);
 		this.initialize();
 	}
 
@@ -481,24 +483,40 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jLabelDummy = new JLabel();
 			jLabelDummy.setText(" ");
 			
-			jLabelFactorInfoSeconds = new JLabel();
-			jLabelFactorInfoSeconds.setText("Sekunden");
-			jLabelFactorInfoMinutes = new JLabel();
-			jLabelFactorInfoMinutes.setText("Minuten");
-			jLabelFactorInfoHour = new JLabel();
-			jLabelFactorInfoHour.setText("Stunden");
-			
 			jPanelWidthSettings = new JPanel();
 			jPanelWidthSettings.setLayout(new GridBagLayout());
 			jPanelWidthSettings.add(jLabelAcceleration, gridBagConstraints18);
 			jPanelWidthSettings.add(getJSpinnerAcceleration(), gridBagConstraints19);
-			jPanelWidthSettings.add(jLabelFactorInfoSeconds, gridBagConstraints17);
-			jPanelWidthSettings.add(jLabelFactorInfoMinutes, gridBagConstraints13);
-			jPanelWidthSettings.add(jLabelFactorInfoHour, gridBagConstraints16);
+			jPanelWidthSettings.add(getJLabelFactorInfoSeconds(), gridBagConstraints17);
+			jPanelWidthSettings.add(getJLabelFactorInfoMinutes(), gridBagConstraints13);
+			jPanelWidthSettings.add(getJLabelFactorInfoHour(), gridBagConstraints16);
 			jPanelWidthSettings.add(jLabelDummy, gridBagConstraints12);
 		}
 		return jPanelWidthSettings;
 	}
+	
+	private JLabel getJLabelFactorInfoSeconds() {
+		if (jLabelFactorInfoSeconds==null) {
+			jLabelFactorInfoSeconds = new JLabel();
+			jLabelFactorInfoSeconds.setText("Sekunden");
+		}
+		return jLabelFactorInfoSeconds;
+	}
+	private JLabel getJLabelFactorInfoMinutes() {
+		if (jLabelFactorInfoMinutes==null) {
+			jLabelFactorInfoMinutes = new JLabel();
+			jLabelFactorInfoMinutes.setText("Minuten");
+		}
+		return jLabelFactorInfoMinutes;
+	}
+	private JLabel getJLabelFactorInfoHour() {
+		if (jLabelFactorInfoHour==null) {
+			jLabelFactorInfoHour = new JLabel();
+			jLabelFactorInfoHour.setText("Stunden");
+		}
+		return jLabelFactorInfoHour;
+	}
+	
 	/**
 	 * This method initializes jTextFieldWidthValue	
 	 * @return javax.swing.JTextField	
@@ -579,9 +597,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 				
 			}
 			
-			jLabelFactorInfoSeconds.setText("1 " + stringSimulated + " " + stringSecond + " = " + textSeconds);
-			jLabelFactorInfoMinutes.setText("1 " + stringSimulated + " " + stringMinute + " = " + textMinutes);
-			jLabelFactorInfoHour.setText("1 " + stringSimulated + " " + stringHour + " = " + textHours);
+			this.getJLabelFactorInfoSeconds().setText("1 " + stringSimulated + " " + stringSecond + " = " + textSeconds);
+			this.getJLabelFactorInfoMinutes().setText("1 " + stringSimulated + " " + stringMinute + " = " + textMinutes);
+			this.getJLabelFactorInfoHour().setText("1 " + stringSimulated + " " + stringHour + " = " + textHours);
 		}
 		
 	}
@@ -712,7 +730,6 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		if (this.enabledChangeListener==true) {
 			Object ceTrigger = ce.getSource();
 			if (ceTrigger instanceof JSpinner) {
-				this.getTimeModelController().setTimeModel(this.getTimeModel());
 				this.saveTimeModelToSimulationSetup();	
 			}	
 		}

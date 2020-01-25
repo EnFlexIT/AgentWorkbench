@@ -28,10 +28,15 @@
  */
 package agentgui.simulationService.time;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.JPanel;
 
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetup.SetupChangeEvent;
 
 /**
  * The Class JPanel4TimeModelConfiguration has to be extended in order to
@@ -41,30 +46,45 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public abstract class JPanel4TimeModelConfiguration extends JPanel {
+public abstract class JPanel4TimeModelConfiguration extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 4966720402773236025L;
 
-	protected Project currProject = null;
+	protected Project currProject;
+	private TimeModelController timeModelController;
 	
+	private boolean isDisabledObserver;
 	
 	/**
 	 * Instantiates a new display panel for the configuration of the current time model.
-	 * @param project the project
+	 *
+	 * @param project the current project
+	 * @param timeModelController the TimeModelController that is part of the specified project
 	 */
-	public JPanel4TimeModelConfiguration(Project project) {
+	public JPanel4TimeModelConfiguration(Project project, TimeModelController timeModelController) {
 		this.currProject = project;
+		this.timeModelController = timeModelController;
+		this.addObserver();
+		// --- Set the time model to display --------------
+		this.setTimeModel(this.getTimeModelController().getTimeModel());
 	}
 	
+
 	/**
-	 * Returns the currents project TimeModelController that holds the current {@link TimeModel}.
-	 * @return the time model controller
+	 * Adds the observer to the current project.
 	 */
-	protected TimeModelController getTimeModelController() {
+	private void addObserver() {
 		if (this.currProject!=null) {
-			return this.currProject.getTimeModelController();
+			this.currProject.addObserver(this);
 		}
-		return null;
+	}
+	/**
+	 * Deletes the observer from the current project.
+	 */
+	public void deleteObserver() {
+		if (this.currProject!=null) {
+			this.currProject.deleteObserver(this);
+		}
 	}
 	
 	/**
@@ -79,11 +99,66 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel {
 	 */
 	public abstract TimeModel getTimeModel();
 	
+	
+	
+	/**
+	 * Returns the currents project TimeModelController that holds the current {@link TimeModel}.
+	 * @return the time model controller
+	 */
+	protected TimeModelController getTimeModelController() {
+		if (timeModelController==null && this.currProject!=null) {
+			timeModelController = this.currProject.getTimeModelController();
+		}
+		return timeModelController;
+	}
 	/**
 	 * Save the current TimeModel to the simulation setup.
 	 */
 	protected void saveTimeModelToSimulationSetup() {
-		this.currProject.getTimeModelController().saveTimeModelToSimulationSetup();
+		this.isDisabledObserver = true;
+		this.getTimeModelController().setTimeModel(this.getTimeModel());
+		this.getTimeModelController().saveTimeModelToSimulationSetup();
+		this.isDisabledObserver = false;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object updateObject) {
+		
+		if (this.isDisabledObserver==true) return;
+		
+		if (updateObject instanceof SimulationSetupNotification) {
+			// --- Change inside the simulation setup ---------------
+			SimulationSetupNotification scn = (SimulationSetupNotification) updateObject;
+			switch (scn.getUpdateReason()) {
+			case SIMULATION_SETUP_SAVED:
+				break;
+			case SIMULATION_SETUP_PREPARE_SAVING:
+				this.saveTimeModelToSimulationSetup();
+				break;
+				
+			default:
+				this.setTimeModel(this.getTimeModelController().getTimeModel());
+				break;
+			}
+			
+		} else if (updateObject instanceof SetupChangeEvent) {
+			// --- Change inside the simulation setup ---------------
+			SetupChangeEvent setupChangeEvent = (SetupChangeEvent) updateObject;
+			switch (setupChangeEvent) {
+			case TimeModelSettings:
+				this.setTimeModel(this.getTimeModelController().getTimeModel()); 
+				break;
+
+			default:
+				break;
+			} 
+		}
+		
+		
 	}
 	
 }

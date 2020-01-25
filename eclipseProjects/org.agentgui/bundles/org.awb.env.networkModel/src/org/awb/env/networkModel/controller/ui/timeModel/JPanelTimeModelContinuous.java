@@ -107,10 +107,12 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	
 	/**
 	 * Instantiates a new time model discrete configuration.
+	 *
 	 * @param project the project
+	 * @param timeModelController the time model controller
 	 */
-	public JPanelTimeModelContinuous(Project project) {
-		super(project);
+	public JPanelTimeModelContinuous(Project project, TimeModelController timeModelController) {
+		super(project, timeModelController);
 		this.initialize();
 	}
 
@@ -687,7 +689,6 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 		if (this.enabledChangeListener==true) {
 			Object ceTrigger = ce.getSource();
 			if (ceTrigger instanceof JSpinner) {
-				this.getTimeModelController().setTimeModel(this.getTimeModel());
 				this.saveTimeModelToSimulationSetup();	
 			}	
 		}

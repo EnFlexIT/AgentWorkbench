@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.time;
 
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModelContinuous;
@@ -50,11 +51,11 @@ public class TimeModelPresent extends TimeModelContinuous {
     }
 
     /* (non-Javadoc)
-     * @see agentgui.simulationService.time.TimeModelContinuous#getJPanel4Configuration(agentgui.core.project.Project)
+     * @see agentgui.simulationService.time.TimeModelContinuous#getJPanel4Configuration(agentgui.core.project.Project, agentgui.core.gui.projectwindow.simsetup.TimeModelController)
      */
     @Override
-    public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project) {
-        return new TimeModelPresentConfiguration(project);
+    public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project, TimeModelController timeModelController) {
+        return new TimeModelPresentConfiguration(project, timeModelController);
     }
 
     /* (non-Javadoc)

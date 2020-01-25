@@ -563,7 +563,7 @@ public abstract class PlugIn implements Observer {
 	 * used Profile JADE container.
 	 * 
 	 * @param jadeContainerProfile The profile to CHANGE
-	 * @return the CHANGED (!) configuration of the JADE Profile
+	 * @return the SetupChangeEvent (!) configuration of the JADE Profile
 	 */
 	public ProfileImpl getJadeProfile(ProfileImpl jadeContainerProfile) {
 		return jadeContainerProfile;

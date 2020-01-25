@@ -35,6 +35,7 @@ import java.awt.Insets;
 
 import javax.swing.event.ChangeListener;
 
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelPresent;
@@ -48,10 +49,12 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
     
     /**
      * Instantiates a new time model present configuration.
+     *
      * @param project the project
+     * @param timeModelController the time model controller
      */
-    public JPanelTimeModelPresent(Project project) {
-        super(project);
+    public JPanelTimeModelPresent(Project project, TimeModelController timeModelController) {
+        super(project, timeModelController);
     }
     
     /* (non-Javadoc)
