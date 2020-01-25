@@ -101,7 +101,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 
 	protected boolean enabledChangeListener = true;
 
-	private TimeFormatSelection jPanelTimeFormater;
+	private TimeFormatSelection jPanelTimeFormatter;
 	private JSeparator jSeparatorVert;
 	
 	
@@ -121,7 +121,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	 */
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(900, 90);
+		return new Dimension(900, 95);
 	}
 	/**
 	 * This method initializes this
@@ -188,13 +188,13 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
         jLabelStart = new JLabel();
 		jLabelStart.setText("Start bei");
 		jLabelStart.setText(Language.translate(jLabelStart.getText()) + ":");
-		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 11));
 		jLabelStart.setPreferredSize(JPanelTimeModelDiscrete.GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 
 		jLabelStop = new JLabel();
 		jLabelStop.setText("Stop bei");
 		jLabelStop.setText(Language.translate(jLabelStop.getText()) + ":");
-		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 11));
 		jLabelStop.setPreferredSize(JPanelTimeModelDiscrete.GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 		
         this.add(jLabelStart, gbcJLabelStart);
@@ -203,7 +203,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
         this.add(getJPanelStopSettings(), gbcJPanelStopSettings);
         this.add(getJPanelWidthSettings(), gbcJPanelWidth);
         this.add(getJSeparatorVert(), gbc_jSeparatorVert);
-        this.add(getJPanelTimeFormater(), gbcTimeFormatter);
+        this.add(getJPanelTimeFormatter(), gbcTimeFormatter);
 	}
 
 	/* (non-Javadoc)
@@ -215,7 +215,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 		this.getJPanelStartSettings().setBackground(bg);
 		this.getJPanelStopSettings().setBackground(bg);
 		this.getJPanelWidthSettings().setBackground(bg);
-		this.getJPanelTimeFormater().setBackground(bg);
+		this.getJPanelTimeFormatter().setBackground(bg);
 	}
 	
 	/**
@@ -240,16 +240,16 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			gridBagConstraints.insets = new Insets(10, 10, 0, 0);
 			
 			jLabelStartDate = new JLabel();
-			jLabelStartDate.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStartDate.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStartDate.setText("Datum");
 			jLabelStartDate.setPreferredSize(new Dimension(35, 16));
 			jLabelStartDate.setText(Language.translate(jLabelStartDate.getText())+ ":");
 			jLabelStartTime = new JLabel();
-			jLabelStartTime.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStartTime.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStartTime.setText("Uhrzeit");
 			jLabelStartTime.setText(Language.translate(jLabelStartTime.getText())+ ":");
 			jLabelStartMillis = new JLabel();
-			jLabelStartMillis.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStartMillis.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStartMillis.setText("Millisekunden");
 			jLabelStartMillis.setText(Language.translate(jLabelStartMillis.getText())+ ":");
 
@@ -271,9 +271,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerDateStart() {
 		if (jSpinnerDateStart==null) {
 			jSpinnerDateStart = new JSpinner(new SpinnerDateModel());
-			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
-			jSpinnerDateStart.setPreferredSize(new Dimension(85, 22));
+			jSpinnerDateStart.setPreferredSize(new Dimension(85, 24));
 			jSpinnerDateStart.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStart.getEditor()).getTextField();
@@ -288,9 +288,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerTimeStart() {
 		if (jSpinnerTimeStart==null) {
 			jSpinnerTimeStart = new JSpinner(new SpinnerDateModel());
-			jSpinnerTimeStart.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerTimeStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerTimeStart.setEditor(new JSpinner.DateEditor(jSpinnerTimeStart, "HH:mm:ss"));
-			jSpinnerTimeStart.setPreferredSize(new Dimension(75, 22));
+			jSpinnerTimeStart.setPreferredSize(new Dimension(75, 24));
 			jSpinnerTimeStart.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerTimeStart.getEditor()).getTextField();
@@ -305,9 +305,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerMillisStart() {
 		if (jSpinnerMillisStart==null) {
 			jSpinnerMillisStart = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-			jSpinnerMillisStart.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerMillisStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerMillisStart.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStart, "000"));
-			jSpinnerMillisStart.setPreferredSize(new Dimension(55, 22));
+			jSpinnerMillisStart.setPreferredSize(new Dimension(55, 24));
 			jSpinnerMillisStart.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DefaultEditor) jSpinnerMillisStart.getEditor()).getTextField();
@@ -337,16 +337,16 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			gridBagConstraints2.insets = new Insets(10, 10, 0, 0);
 			
 			jLabelStopDate = new JLabel();
-			jLabelStopDate.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStopDate.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStopDate.setText("Datum");
 			jLabelStopDate.setPreferredSize(new Dimension(35, 16));
 			jLabelStopDate.setText(Language.translate(jLabelStopDate.getText())+ ":");
 			jLabelStopTime = new JLabel();
-			jLabelStopTime.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStopTime.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStopTime.setText("Uhrzeit");
 			jLabelStopTime.setText(Language.translate(jLabelStopTime.getText())+ ":");
 			jLabelStopMillis = new JLabel();
-			jLabelStopMillis.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStopMillis.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStopMillis.setText("Millisekunden");
 			jLabelStopMillis.setText(Language.translate(jLabelStopMillis.getText())+ ":");
 			
@@ -369,9 +369,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerDateStop() {
 		if (jSpinnerDateStop==null) {
 			jSpinnerDateStop = new JSpinner(new SpinnerDateModel());
-			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
-			jSpinnerDateStop.setPreferredSize(new Dimension(85, 22));
+			jSpinnerDateStop.setPreferredSize(new Dimension(85, 24));
 			jSpinnerDateStop.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStop.getEditor()).getTextField();
@@ -386,9 +386,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerTimeStop() {
 		if (jSpinnerTimeStop==null) {
 			jSpinnerTimeStop = new JSpinner(new SpinnerDateModel());
-			jSpinnerTimeStop.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerTimeStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerTimeStop.setEditor(new JSpinner.DateEditor(jSpinnerTimeStop, "HH:mm:ss"));
-			jSpinnerTimeStop.setPreferredSize(new Dimension(75, 22));
+			jSpinnerTimeStop.setPreferredSize(new Dimension(75, 24));
 			jSpinnerTimeStop.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerTimeStop.getEditor()).getTextField();
@@ -403,9 +403,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerMillisStop() {
 		if (jSpinnerMillisStop==null) {
 			jSpinnerMillisStop = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-			jSpinnerMillisStop.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerMillisStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerMillisStop.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStop, "000"));
-			jSpinnerMillisStop.setPreferredSize(new Dimension(55, 22));
+			jSpinnerMillisStop.setPreferredSize(new Dimension(55, 24));
 			jSpinnerMillisStop.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DefaultEditor) jSpinnerMillisStop.getEditor()).getTextField();
@@ -417,11 +417,11 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	 * This method initializes timeFormater	
 	 * @return agentgui.simulationService.time.TimeFormatSelection	
 	 */
-	protected TimeFormatSelection getJPanelTimeFormater() {
-		if (jPanelTimeFormater == null) {
-			jPanelTimeFormater = new TimeFormatSelection(true, 3, new Font("Dialog", Font.PLAIN, 10));
-			jPanelTimeFormater.setPreferredSize(new Dimension(365, 47));
-			jPanelTimeFormater.addActionListener(new ActionListener() {
+	protected TimeFormatSelection getJPanelTimeFormatter() {
+		if (jPanelTimeFormatter == null) {
+			jPanelTimeFormatter = new TimeFormatSelection(true, 3, new Font("Dialog", Font.PLAIN, 11));
+			jPanelTimeFormatter.setPreferredSize(new Dimension(370, 51));
+			jPanelTimeFormatter.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					if (enabledChangeListener==true) {
@@ -430,7 +430,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 				}
 			});
 		}
-		return jPanelTimeFormater;
+		return jPanelTimeFormatter;
 	}
 	/**
 	 * This method initializes jPanelWidthSettings	
@@ -440,13 +440,13 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 		if (jPanelWidthSettings == null) {
 			
 			jLabelAcceleration = new JLabel();
-			jLabelAcceleration.setFont(new Font("Dialog", Font.BOLD, 10));
+			jLabelAcceleration.setFont(new Font("Dialog", Font.BOLD, 11));
 			jLabelAcceleration.setText("Beschleunigung");
 			jLabelAcceleration.setText(Language.translate(jLabelAcceleration.getText())+ ":");
-			jLabelAcceleration.setPreferredSize(new Dimension(101, 20));
+			jLabelAcceleration.setPreferredSize(new Dimension(109, 20));
 			
 			jLabelFactorInfoSeconds = new JLabel();
-			jLabelFactorInfoSeconds.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelFactorInfoSeconds.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelFactorInfoSeconds.setText("Explanation");
 			
 			GridBagLayout gbl_jPanelWidthSettings = new GridBagLayout();
@@ -492,9 +492,9 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	private JSpinner getJSpinnerAcceleration() {
 		if (jSpinnerAcceleration == null) {
 			jSpinnerAcceleration = new JSpinner(new SpinnerNumberModel(1, 0.001, 10000, 0.001));
-			jSpinnerAcceleration.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerAcceleration.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerAcceleration.setEditor(new JSpinner.NumberEditor(jSpinnerAcceleration, "0.000"));
-			jSpinnerAcceleration.setPreferredSize(new Dimension(85, 22));
+			jSpinnerAcceleration.setPreferredSize(new Dimension(85, 24));
 			jSpinnerAcceleration.addChangeListener(this);
 			jSpinnerAcceleration.addChangeListener(new ChangeListener() {
 				@Override
@@ -606,7 +606,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 		this.getJSpinnerMillisStop().setValue(calendarWork.get(Calendar.MILLISECOND));
 
 		// --- Settings for the time format -------------------------
-		this.getJPanelTimeFormater().setTimeFormat(timeModelContinuous.getTimeFormat());
+		this.getJPanelTimeFormatter().setTimeFormat(timeModelContinuous.getTimeFormat());
 		
 		// --- Settings for the acceleration of the time ------------
 		Double factor = timeModelContinuous.getAccelerationFactor();
@@ -661,7 +661,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 		Long stopLong = stop.getTime();
 		
 		// --- Getting the time format ------------------------------
-		String timeFormat = this.getJPanelTimeFormater().getTimeFormat();
+		String timeFormat = this.getJPanelTimeFormatter().getTimeFormat();
 		
 		// --- Getting acceleration for the time --------------------
 		Double factor = (Double) this.getJSpinnerAcceleration().getValue();

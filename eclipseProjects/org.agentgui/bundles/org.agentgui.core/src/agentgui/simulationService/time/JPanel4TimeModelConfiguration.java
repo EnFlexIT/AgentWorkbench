@@ -66,7 +66,10 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel implements Ob
 		this.timeModelController = timeModelController;
 		this.addObserver();
 		// --- Set the time model to display --------------
-		this.setTimeModel(this.getTimeModelController().getTimeModel());
+		TimeModelController tmController = this.getTimeModelController();
+		if (tmController!=null) {
+			this.setTimeModel(tmController.getTimeModel());
+		}
 	}
 	
 

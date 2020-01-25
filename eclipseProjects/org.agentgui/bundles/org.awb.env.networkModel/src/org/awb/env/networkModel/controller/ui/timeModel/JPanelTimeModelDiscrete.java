@@ -82,7 +82,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
-	public static final Dimension GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL = new Dimension(62, 22);
+	public static final Dimension GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL = new Dimension(70, 24);
 	
 	private JLabel jLabelStop;
 	private JLabel jLabelStart;
@@ -111,7 +111,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JSpinner jSpinnerTimeStop;
 	private JSpinner jSpinnerMillisStop;
 
-	private TimeFormatSelection jPanelTimeFormater;
+	private TimeFormatSelection jPanelTimeFormatter;
 	private boolean enabledChangeListener = true;
 	private JSeparator jSeparatorVert;
 
@@ -131,7 +131,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	 */
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(900, 90);
+		return new Dimension(900, 95);
 	}
 	private void initialize() {
 		
@@ -195,17 +195,17 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
     	jLabelStart = new JLabel();
 		jLabelStart.setText("Start bei");
 		jLabelStart.setText(Language.translate(jLabelStart.getText()) + ":");
-		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 11));
 		jLabelStart.setPreferredSize(GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 		
 		jLabelStop = new JLabel();
 		jLabelStop.setText("Stop bei");
 		jLabelStop.setText(Language.translate(jLabelStop.getText())+ ":");
-		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 11));
 		jLabelStop.setPreferredSize(GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
 		
         jLabelWidth = new JLabel();
-        jLabelWidth.setFont(new Font("Dialog", Font.BOLD, 10));
+        jLabelWidth.setFont(new Font("Dialog", Font.BOLD, 11));
         jLabelWidth.setText("Schrittweite");
         jLabelWidth.setText(Language.translate(jLabelWidth.getText())+ ":");
         jLabelWidth.setPreferredSize(GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
@@ -223,7 +223,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
         this.add(jLabelWidth, gbc_jLabelWidth);
         this.add(getJPanelWidthSettings(), gbcTimeIncrement);
         this.add(getJSeparatorVert(), gbceparatorVert);
-        this.add(getJPanelTimeFormater(), gbcTimeFormatter);
+        this.add(getJPanelTimeFormatter(), gbcTimeFormatter);
 	}
 
 	/* (non-Javadoc)
@@ -235,7 +235,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		this.getJPanelStartSettings().setBackground(bg);
 		this.getJPanelStopSettings().setBackground(bg);
 		this.getJPanelWidthSettings().setBackground(bg);
-		this.getJPanelTimeFormater().setBackground(bg);
+		this.getJPanelTimeFormatter().setBackground(bg);
 	}
 	
 	/**
@@ -245,9 +245,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JSpinner getJSpinnerDateStart() {
 		if (jSpinnerDateStart==null) {
 			jSpinnerDateStart = new JSpinner(new SpinnerDateModel());
-			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
-			jSpinnerDateStart.setPreferredSize(new Dimension(85, 22));
+			jSpinnerDateStart.setPreferredSize(new Dimension(85, 24));
 			jSpinnerDateStart.addChangeListener(this);
 		}
 		return jSpinnerDateStart;
@@ -259,9 +259,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JSpinner getJSpinnerTimeStart() {
 		if (jSpinnerTimeStart==null) {
 			jSpinnerTimeStart = new JSpinner(new SpinnerDateModel());
-			jSpinnerTimeStart.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerTimeStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerTimeStart.setEditor(new JSpinner.DateEditor(jSpinnerTimeStart, "HH:mm:ss"));
-			jSpinnerTimeStart.setPreferredSize(new Dimension(75, 22));
+			jSpinnerTimeStart.setPreferredSize(new Dimension(75, 24));
 			jSpinnerTimeStart.addChangeListener(this);
 		}
 		return jSpinnerTimeStart;
@@ -273,9 +273,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JSpinner getJSpinnerMillisStart() {
 		if (jSpinnerMillisStart==null) {
 			jSpinnerMillisStart = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-			jSpinnerMillisStart.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerMillisStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerMillisStart.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStart, "000"));
-			jSpinnerMillisStart.setPreferredSize(new Dimension(55, 22));
+			jSpinnerMillisStart.setPreferredSize(new Dimension(55, 24));
 			jSpinnerMillisStart.addChangeListener(this);
 		}
 		return jSpinnerMillisStart;
@@ -287,9 +287,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JSpinner getJSpinnerDateStop() {
 		if (jSpinnerDateStop==null) {
 			jSpinnerDateStop = new JSpinner(new SpinnerDateModel());
-			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
-			jSpinnerDateStop.setPreferredSize(new Dimension(85, 22));
+			jSpinnerDateStop.setPreferredSize(new Dimension(85, 24));
 			jSpinnerDateStop.addChangeListener(this);
 		}
 		return jSpinnerDateStop;
@@ -301,9 +301,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JSpinner getJSpinnerTimeStop() {
 		if (jSpinnerTimeStop==null) {
 			jSpinnerTimeStop = new JSpinner(new SpinnerDateModel());
-			jSpinnerTimeStop.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerTimeStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerTimeStop.setEditor(new JSpinner.DateEditor(jSpinnerTimeStop, "HH:mm:ss"));
-			jSpinnerTimeStop.setPreferredSize(new Dimension(75, 22));
+			jSpinnerTimeStop.setPreferredSize(new Dimension(75, 24));
 			jSpinnerTimeStop.addChangeListener(this);
 		}
 		return jSpinnerTimeStop;
@@ -315,9 +315,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JSpinner getJSpinnerMillisStop() {
 		if (jSpinnerMillisStop==null) {
 			jSpinnerMillisStop = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-			jSpinnerMillisStop.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jSpinnerMillisStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerMillisStop.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStop, "000"));
-			jSpinnerMillisStop.setPreferredSize(new Dimension(55, 22));
+			jSpinnerMillisStop.setPreferredSize(new Dimension(55, 24));
 			jSpinnerMillisStop.addChangeListener(this);
 		}
 		return jSpinnerMillisStop;
@@ -331,18 +331,18 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		if (jPanelStartSettings == null) {
 
 			jLabelStartDate = new JLabel();
-			jLabelStartDate.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStartDate.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStartDate.setText("Datum");
 			jLabelStartDate.setText(Language.translate(jLabelStartDate.getText())+ ":");
 			jLabelStartDate.setPreferredSize(new Dimension(35, 16));
 			
 			jLabelStartTime = new JLabel();
-			jLabelStartTime.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStartTime.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStartTime.setText("Uhrzeit");
 			jLabelStartTime.setText(Language.translate(jLabelStartTime.getText())+ ":");
 			
 			jLabelStartMillis = new JLabel();
-			jLabelStartMillis.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStartMillis.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStartMillis.setText("Millisekunden");
 			jLabelStartMillis.setText(Language.translate(jLabelStartMillis.getText())+ ":");
 			
@@ -371,18 +371,18 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		if (jPanelStopSettings == null) {
 			
 			jLabelStopDate = new JLabel();
-			jLabelStopDate.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStopDate.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStopDate.setText("Datum");
 			jLabelStopDate.setText(Language.translate(jLabelStopDate.getText())+ ":");
 			jLabelStopDate.setPreferredSize(new Dimension(35, 16));
 			
 			jLabelStopTime = new JLabel();
-			jLabelStopTime.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStopTime.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStopTime.setText("Uhrzeit");
 			jLabelStopTime.setText(Language.translate(jLabelStopTime.getText())+ ":");
 			
 			jLabelStopMillis = new JLabel();
-			jLabelStopMillis.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelStopMillis.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStopMillis.setText("Millisekunden");
 			jLabelStopMillis.setText(Language.translate(jLabelStopMillis.getText())+ ":");
 			
@@ -411,13 +411,13 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		if (jPanelWidthSettings == null) {
 			
 			jLabelWidthStep = new JLabel();
-			jLabelWidthStep.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelWidthStep.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelWidthStep.setText("Wert");
 			jLabelWidthStep.setText(Language.translate(jLabelWidthStep.getText())+ ":");
 			jLabelWidthStep.setPreferredSize(new Dimension(35, 16));
 			
 			jLabelWidthUnit = new JLabel();
-			jLabelWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jLabelWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelWidthUnit.setText("Einheit");
 			jLabelWidthUnit.setText(Language.translate(jLabelWidthUnit.getText())+ ":");
 			
@@ -443,9 +443,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JTextField getJTextFieldWidthValue() {
 		if (jTextFieldWidthValue == null) {
 			jTextFieldWidthValue = new JTextField();
-			jTextFieldWidthValue.setFont(new Font("Dialog. Font", Font.PLAIN, 10));
+			jTextFieldWidthValue.setFont(new Font("Dialog. Font", Font.PLAIN, 11));
 			jTextFieldWidthValue.setBorder(BorderFactory.createEtchedBorder());
-			jTextFieldWidthValue.setPreferredSize(new Dimension(85, 22));
+			jTextFieldWidthValue.setPreferredSize(new Dimension(85, 24));
 			jTextFieldWidthValue.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent kT) {
 					char charackter = kT.getKeyChar();
@@ -487,8 +487,8 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JComboBox<TimeUnit> getJComboBoxWidthUnit() {
 		if (jComboBoxWidthUnit == null) {
 			jComboBoxWidthUnit = new JComboBox<TimeUnit>(new DefaultComboBoxModel<TimeUnit>(new TimeUnitVector()));
-			jComboBoxWidthUnit.setPreferredSize(new Dimension(100, 22));
-			jComboBoxWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 10));
+			jComboBoxWidthUnit.setPreferredSize(new Dimension(100, 24));
+			jComboBoxWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jComboBoxWidthUnit.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -510,14 +510,14 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	}
 	
 	/**
-	 * Gets the time formater.
-	 * @return the time formater
+	 * Gets the time formatter.
+	 * @return the time formatter
 	 */
-	private TimeFormatSelection getJPanelTimeFormater() {
-		if (jPanelTimeFormater==null) {
-			jPanelTimeFormater = new TimeFormatSelection(true, 3, new Font("Dialog", Font.PLAIN, 10));
-			jPanelTimeFormater.setPreferredSize(new Dimension(365, 47));
-			jPanelTimeFormater.addActionListener(new ActionListener() {
+	private TimeFormatSelection getJPanelTimeFormatter() {
+		if (jPanelTimeFormatter==null) {
+			jPanelTimeFormatter = new TimeFormatSelection(true, 3, new Font("Dialog", Font.PLAIN, 11));
+			jPanelTimeFormatter.setPreferredSize(new Dimension(370, 51));
+			jPanelTimeFormatter.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					if (enabledChangeListener==true) {
@@ -526,7 +526,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 				}
 			});
 		}
-		return jPanelTimeFormater;
+		return jPanelTimeFormatter;
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.DisplayJPanel4Configuration#setTimeModel(agentgui.simulationService.time.TimeModel)
@@ -568,7 +568,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		this.getJComboBoxWidthUnit().setSelectedIndex(unitSelection);
 		
 		// --- Settings for the time format -------------------------
-		this.getJPanelTimeFormater().setTimeFormat(timeModelDiscrete.getTimeFormat());
+		this.getJPanelTimeFormatter().setTimeFormat(timeModelDiscrete.getTimeFormat());
 		
 		this.enabledChangeListener = true;
 		
@@ -642,7 +642,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		}
 		
 		// --- Getting the time format ------------------------------
-		String timeFormat = this.getJPanelTimeFormater().getTimeFormat();
+		String timeFormat = this.getJPanelTimeFormatter().getTimeFormat();
 		
 		
 		// --- Prepare return value ---------------------------------
