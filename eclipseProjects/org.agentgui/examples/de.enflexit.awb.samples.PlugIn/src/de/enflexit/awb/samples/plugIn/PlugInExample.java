@@ -1,4 +1,4 @@
-package agentproject;
+package de.enflexit.awb.samples.plugIn;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

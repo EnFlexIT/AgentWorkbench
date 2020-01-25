@@ -1,4 +1,4 @@
-package agentproject;
+package de.enflexit.awb.samples.plugIn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
-    <projectName>Agent.GUI PlugIn Example</projectName>
+    <projectName>AWB - PlugIn Example</projectName>
     <projectStartTab>1|7</projectStartTab>
+    <projectTreeVisible>true</projectTreeVisible>
+    <projectTabHeaderVisible>true</projectTabHeaderVisible>
     <version>1.0.0.20180919-0900</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
@@ -10,8 +12,7 @@
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures/>
     <plugins>
-        <className>agentproject.PlugInExample</className>
-        <className>de.enflexit.awb.webserver.AwbWebServerPlugin</className>
+        <className>de.enflexit.awb.samples.plugIn.PlugInExample</className>
     </plugins>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>

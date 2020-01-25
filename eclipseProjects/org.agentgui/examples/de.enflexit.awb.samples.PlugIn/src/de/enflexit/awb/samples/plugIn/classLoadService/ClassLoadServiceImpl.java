@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.sample.plugin;
+package de.enflexit.awb.samples.plugIn.classLoadService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

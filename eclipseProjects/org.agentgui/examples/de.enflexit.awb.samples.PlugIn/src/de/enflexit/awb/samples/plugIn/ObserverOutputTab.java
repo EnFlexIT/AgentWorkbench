@@ -1,4 +1,4 @@
-package agentproject;
+package de.enflexit.awb.samples.plugIn;
 
 import java.awt.Color;
 import java.awt.Font;

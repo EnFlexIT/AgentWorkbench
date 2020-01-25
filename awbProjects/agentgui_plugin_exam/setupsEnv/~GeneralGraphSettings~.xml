@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <generalGraphSettings4MAS>
+    <componentSorting>Alphanumeric</componentSorting>
     <currentCTS>
         <entry>
             <key>Line</key>
@@ -8,20 +9,19 @@
                 <domain>Default Domain</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>4.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
         <entry>
             <key>Test</key>
             <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>agentproject.MyExampleAgent</agentClass>
+                <agentClass>de.enflexit.awb.samples.plugIn.MyExampleAgent</agentClass>
                 <color>-10053376</color>
                 <domain>Default Domain</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
@@ -38,7 +38,18 @@
             </value>
         </entry>
     </domainSettings>
-    <edgeShape>Line</edgeShape>
-    <snap2Grid>true</snap2Grid>
-    <snapRaster>5.0</snapRaster>
+    <layoutSettings>
+        <entry>
+            <key>VuZHjQiTLG</key>
+            <value>
+                <coordinateSystemXDirection>East</coordinateSystemXDirection>
+                <coordinateSystemYDirection>ClockwiseToX</coordinateSystemYDirection>
+                <edgeShape>Line</edgeShape>
+                <geographicalLayout>false</geographicalLayout>
+                <layoutName>Default Layout</layoutName>
+                <snap2Grid>true</snap2Grid>
+                <snapRaster>5.0</snapRaster>
+            </value>
+        </entry>
+    </layoutSettings>
 </generalGraphSettings4MAS>

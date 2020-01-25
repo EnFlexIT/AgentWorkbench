@@ -1,4 +1,4 @@
-package agentproject;
+package de.enflexit.awb.samples.plugIn;
 
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;

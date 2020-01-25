@@ -9,8 +9,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.agentgui.lib.jade;bundle-version="4.4.0",
  org.awb.env.networkModel;bundle-version="2.1.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: agentproject,
- org.agentgui.sample.plugin
+Export-Package: de.enflexit.awb.samples.plugIn,
+ de.enflexit.awb.samples.plugIn.classLoadService
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.agentgui.sample.plugIn
