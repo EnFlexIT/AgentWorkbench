@@ -247,7 +247,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			jSpinnerDateStart = new JSpinner(new SpinnerDateModel());
 			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
-			jSpinnerDateStart.setPreferredSize(new Dimension(85, 24));
+			jSpinnerDateStart.setPreferredSize(new Dimension(88, 24));
 			jSpinnerDateStart.addChangeListener(this);
 		}
 		return jSpinnerDateStart;
@@ -289,7 +289,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			jSpinnerDateStop = new JSpinner(new SpinnerDateModel());
 			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
-			jSpinnerDateStop.setPreferredSize(new Dimension(85, 24));
+			jSpinnerDateStop.setPreferredSize(new Dimension(88, 24));
 			jSpinnerDateStop.addChangeListener(this);
 		}
 		return jSpinnerDateStop;
@@ -445,7 +445,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			jTextFieldWidthValue = new JTextField();
 			jTextFieldWidthValue.setFont(new Font("Dialog. Font", Font.PLAIN, 11));
 			jTextFieldWidthValue.setBorder(BorderFactory.createEtchedBorder());
-			jTextFieldWidthValue.setPreferredSize(new Dimension(85, 24));
+			jTextFieldWidthValue.setPreferredSize(new Dimension(88, 24));
 			jTextFieldWidthValue.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent kT) {
 					char charackter = kT.getKeyChar();

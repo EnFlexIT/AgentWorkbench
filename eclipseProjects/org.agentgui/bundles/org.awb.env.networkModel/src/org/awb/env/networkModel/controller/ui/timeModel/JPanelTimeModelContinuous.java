@@ -273,7 +273,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			jSpinnerDateStart = new JSpinner(new SpinnerDateModel());
 			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
-			jSpinnerDateStart.setPreferredSize(new Dimension(85, 24));
+			jSpinnerDateStart.setPreferredSize(new Dimension(88, 24));
 			jSpinnerDateStart.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStart.getEditor()).getTextField();
@@ -371,7 +371,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			jSpinnerDateStop = new JSpinner(new SpinnerDateModel());
 			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
-			jSpinnerDateStop.setPreferredSize(new Dimension(85, 24));
+			jSpinnerDateStop.setPreferredSize(new Dimension(88, 24));
 			jSpinnerDateStop.addChangeListener(this);
 			// --- Just allow number to be typed --------------------
 			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStop.getEditor()).getTextField();
@@ -494,7 +494,7 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 			jSpinnerAcceleration = new JSpinner(new SpinnerNumberModel(1, 0.001, 10000, 0.001));
 			jSpinnerAcceleration.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jSpinnerAcceleration.setEditor(new JSpinner.NumberEditor(jSpinnerAcceleration, "0.000"));
-			jSpinnerAcceleration.setPreferredSize(new Dimension(85, 24));
+			jSpinnerAcceleration.setPreferredSize(new Dimension(88, 24));
 			jSpinnerAcceleration.addChangeListener(this);
 			jSpinnerAcceleration.addChangeListener(new ChangeListener() {
 				@Override
