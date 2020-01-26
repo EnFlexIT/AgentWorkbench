@@ -35,6 +35,7 @@ import java.awt.Insets;
 
 import javax.swing.event.ChangeListener;
 
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelPresent;
@@ -48,10 +49,12 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
     
     /**
      * Instantiates a new time model present configuration.
+     *
      * @param project the project
+     * @param timeModelController the time model controller
      */
-    public JPanelTimeModelPresent(Project project) {
-        super(project);
+    public JPanelTimeModelPresent(Project project, TimeModelController timeModelController) {
+        super(project, timeModelController);
     }
     
     /* (non-Javadoc)
@@ -59,7 +62,7 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
 	 */
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(900, 60);
+		return new Dimension(900, 65);
 	}
     /* (non-Javadoc)
      * @see agentgui.simulationService.time.TimeModelContinuousConfiguration#initialize()
@@ -80,7 +83,7 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
 		gbcTimeFormarter.gridy = 0;
 		gbcTimeFormarter.anchor = GridBagConstraints.WEST;
 		gbcTimeFormarter.insets = new Insets(5, 5, 0, 0);
-		this.add(getJPanelTimeFormater(), gbcTimeFormarter);
+		this.add(getJPanelTimeFormatter(), gbcTimeFormarter);
     }
 
     /* (non-Javadoc)
@@ -97,7 +100,7 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
 
         // --- Settings for the time format -------------------------
         this.enabledChangeListener = false;
-        this.getJPanelTimeFormater().setTimeFormat(timeModelPresent.getTimeFormat());
+        this.getJPanelTimeFormatter().setTimeFormat(timeModelPresent.getTimeFormat());
         this.enabledChangeListener = true;
     }
 
@@ -107,7 +110,7 @@ public class JPanelTimeModelPresent extends JPanelTimeModelContinuous implements
     @Override
     public TimeModel getTimeModel() {
         // --- Getting the time format ------------------------------
-        String timeFormat = this.getJPanelTimeFormater().getTimeFormat();
+        String timeFormat = this.getJPanelTimeFormatter().getTimeFormat();
 
         // --- Set TimeModel ----------------------------------------
         TimeModelPresent tmp = new TimeModelPresent();

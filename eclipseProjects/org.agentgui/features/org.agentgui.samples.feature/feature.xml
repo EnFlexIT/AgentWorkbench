@@ -28,14 +28,14 @@
    </requires>
 
    <plugin
-         id="org.agentgui.sample.GameOfLife"
+         id="de.enflexit.awb.samples.GameOfLife"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.agentgui.sample.plugIn"
+         id="de.enflexit.awb.samples.PlugIn"
          download-size="0"
          install-size="0"
          version="0.0.0"

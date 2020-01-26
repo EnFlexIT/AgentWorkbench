@@ -30,6 +30,7 @@ package agentgui.simulationService.time;
 
 import java.util.HashMap;
 
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 
 
@@ -100,10 +101,12 @@ public abstract class TimeModel implements Serializable {
 	/**
 	 * Returns the DisplayJPanel4Configuration.java (an extended JPanel) for the configuration
 	 * of a TimeModel (before the agency is executed).
-	 * @param project the current Agent.GUI Project
+	 *
+	 * @param project the current Agent.Workbench Project
+	 * @param timeModelController the current {@link TimeModelController}
 	 * @return the DisplayJPanel4Configuration.java for the TimeModel configuration
 	 */
-	public abstract JPanel4TimeModelConfiguration getJPanel4Configuration(Project project);
+	public abstract JPanel4TimeModelConfiguration getJPanel4Configuration(Project project, TimeModelController timeModelController);
 	
 	/**
 	 * Returns a DisplayJToolBar4Execution (an extended JToolBar) that consists of the necessary 

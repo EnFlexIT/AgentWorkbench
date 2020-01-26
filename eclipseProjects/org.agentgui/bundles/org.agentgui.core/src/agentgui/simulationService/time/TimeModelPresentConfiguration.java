@@ -37,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.event.ChangeListener;
 
 import agentgui.core.application.Language;
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 
 /**
@@ -51,8 +52,8 @@ public class TimeModelPresentConfiguration extends TimeModelContinuousConfigurat
      * Instantiates a new time model present configuration.
      * @param project the project
      */
-    public TimeModelPresentConfiguration(Project project) {
-        super(project);
+    public TimeModelPresentConfiguration(Project project, TimeModelController timeModelController) {
+        super(project, timeModelController);
     }
     /* (non-Javadoc)
      * @see agentgui.simulationService.time.TimeModelContinuousConfiguration#initialize()

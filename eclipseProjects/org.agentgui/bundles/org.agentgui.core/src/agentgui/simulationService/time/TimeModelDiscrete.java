@@ -30,6 +30,7 @@ package agentgui.simulationService.time;
 
 import java.util.HashMap;
 
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 
 
@@ -160,11 +161,11 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
+	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration(agentgui.core.project.Project, agentgui.core.gui.projectwindow.simsetup.TimeModelController)
 	 */
 	@Override
-	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project) {
-		return new TimeModelDiscreteConfiguration(project);
+	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project, TimeModelController timeModelController) {
+		return new TimeModelDiscreteConfiguration(project, timeModelController);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()

@@ -301,10 +301,19 @@ public class TimeFormatSelection extends JPanelForActions {
 		this.getJComboBoxTimeFormat().setFont(fPlain);
 		this.getJButtonTimeFormatDefault().setFont(fPlain);
 		
-		if (font.getSize()<=10) {
-			this.getJTextFieldTimeFormat().setPreferredSize(new Dimension(30, 22));
-			this.getJButtonTimeFormatDefault().setPreferredSize(new Dimension(21, 22));
-			this.getJComboBoxTimeFormat().setPreferredSize(new Dimension(30, 22));
+		int height = 26;
+		switch (font.getSize()) {
+		case 11:
+			height = 24;
+			break;
+		case 10:
+			height = 22;
+			break;
+		}
+		if (height!=26) {
+			this.getJTextFieldTimeFormat().setPreferredSize(new Dimension(30, height));
+			this.getJButtonTimeFormatDefault().setPreferredSize(new Dimension(21, height));
+			this.getJComboBoxTimeFormat().setPreferredSize(new Dimension(30, height));
 		}
 	}
 	

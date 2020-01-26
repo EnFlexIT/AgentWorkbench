@@ -282,7 +282,7 @@ de;Folgende Plattform-Dienste starten:;Start the following platform-services:
 de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
-de;Gegenwarts-Zeit.;;;;
+de;Gegenwarts-Zeit.;Present Time;;;
 de;Geräte-Agent;Embedded System Agent;;;
 de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
 de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
@@ -636,8 +636,7 @@ de;Start-Liste:;Start list:;;;
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
 de;Start;Start
 de;Startargument definieren für Agent;Define start argument for agent;;;
-de;Starte Agent.GUI - Service;Start Agent.GUI - Service
-de;Starte Agent.GUI als:;Start Agent.GUI as:
+de;Starte AWB-Service;Start AWB-Service;;;
 de;Starte Agenten;Start an Agent;;;
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
 de;Starte Messung der Systemauslastung;Start measuring the system load
@@ -648,7 +647,7 @@ de;Startet automatisch !;Starts automatically !;;;
 de;Statische Lastverteilung aktivieren;Enable static load balancing
 de;Status laden;Load status
 de;Status speichern;Save status
-de;Stop Agent.GUI - Service;Stop Agent.GUI - Service
+de;Stop AWB-Service;Stop AWB-Service;;;
 de;Stop bei:;Stop at:;;;
 de;Stop bei;Stop at;;;
 de;Stop;Stop

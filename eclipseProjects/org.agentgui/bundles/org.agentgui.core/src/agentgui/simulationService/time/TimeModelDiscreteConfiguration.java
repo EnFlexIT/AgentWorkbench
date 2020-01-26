@@ -71,50 +71,52 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
-	private JLabel jLabelHeader1 = null;
-	private JLabel jLabelHeader2 = null;
+	private JLabel jLabelHeader1;
+	private JLabel jLabelHeader2;
 	
-	private JLabel jLabelStop = null;
-	private JLabel jLabelStart = null;
-	private JLabel jLabelStartDate = null;
-	private JLabel jLabelStopDate = null;
-	private JLabel jLabelStartTime = null;
-	private JLabel jLabelStopTime = null;
-	private JLabel jLabelStartMillis = null;
-	private JLabel jLabelStopMillis = null;
+	private JLabel jLabelStop;
+	private JLabel jLabelStart;
+	private JLabel jLabelStartDate;
+	private JLabel jLabelStopDate;
+	private JLabel jLabelStartTime;
+	private JLabel jLabelStopTime;
+	private JLabel jLabelStartMillis;
+	private JLabel jLabelStopMillis;
 	
-	private JPanel jPanelStartSettings = null;
-	private JPanel jPanelStopSettings = null;
-	private JPanel jPanelWidthSettings = null;
+	private JPanel jPanelStartSettings;
+	private JPanel jPanelStopSettings;
+	private JPanel jPanelWidthSettings;
 	
-	private JLabel jLabelWidth = null;
-	private JLabel jLabelWidthStep = null;
-	private JLabel jLabelWidthUnit = null;
+	private JLabel jLabelWidth;
+	private JLabel jLabelWidthStep;
+	private JLabel jLabelWidthUnit;
 
-	private JTextField jTextFieldWidthValue = null;
-	private JComboBox<TimeUnit> jComboBoxWidthUnit = null;
+	private JTextField jTextFieldWidthValue;
+	private JComboBox<TimeUnit> jComboBoxWidthUnit;
 
-	private JSpinner jSpinnerDateStart = null;
-	private JSpinner jSpinnerTimeStart = null;
-	private JSpinner jSpinnerMillisStart = null;
-	private JSpinner jSpinnerDateStop = null;
-	private JSpinner jSpinnerTimeStop = null;
-	private JSpinner jSpinnerMillisStop = null;
+	private JSpinner jSpinnerDateStart;
+	private JSpinner jSpinnerTimeStart;
+	private JSpinner jSpinnerMillisStart;
+	private JSpinner jSpinnerDateStop;
+	private JSpinner jSpinnerTimeStop;
+	private JSpinner jSpinnerMillisStop;
 
-	private TimeFormatSelection jPanelTimeFormater = null;
+	private TimeFormatSelection jPanelTimeFormater;
 	private boolean enabledChangeListener = true;
 
-	private JLabel jLabeDateFormat = null;
+	private JLabel jLabeDateFormat;
 
+	
 	/**
 	 * Instantiates a new time model discrete configuration.
+	 *
 	 * @param project the project
+	 * @param timeModelController the time model controller
 	 */
-	public TimeModelDiscreteConfiguration(Project project) {
-		super(project);
+	public TimeModelDiscreteConfiguration(Project project, TimeModelController timeModelController) {
+		super(project, timeModelController);
 		this.initialize();
 	}
-
 	/**
 	 * This method initializes this
 	 */
@@ -640,7 +642,6 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		if (this.enabledChangeListener==true) {
 			Object ceTrigger = ce.getSource();
 			if (ceTrigger instanceof JSpinner) {
-				this.getTimeModelController().setTimeModel(this.getTimeModel());
 				this.saveTimeModelToSimulationSetup();	
 			}	
 		}

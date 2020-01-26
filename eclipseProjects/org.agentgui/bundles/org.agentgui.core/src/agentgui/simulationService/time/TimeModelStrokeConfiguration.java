@@ -68,10 +68,12 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	
 	/**
 	 * Instantiates a new time model stroke configuration.
+	 *
 	 * @param project the project
+	 * @param timeModelController the time model controller
 	 */
-	public TimeModelStrokeConfiguration(Project project) {
-		super(project);
+	public TimeModelStrokeConfiguration(Project project, TimeModelController timeModelController) {
+		super(project, timeModelController);
 		this.initialize();
 	}
 	
@@ -281,7 +283,6 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	 */
 	private void saveTimeModelStrokeToSimulationSetup() {
 		if (this.enabledChangeListener==true) {
-			this.getTimeModelController().setTimeModel(this.getTimeModel());
 			this.saveTimeModelToSimulationSetup();
 		}
 	}

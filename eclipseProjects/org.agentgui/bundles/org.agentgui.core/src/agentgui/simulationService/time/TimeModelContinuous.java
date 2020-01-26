@@ -33,6 +33,7 @@ import jade.core.ServiceException;
 
 import java.util.HashMap;
 
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
@@ -379,11 +380,11 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
+	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration(agentgui.core.project.Project, agentgui.core.gui.projectwindow.simsetup.TimeModelController)
 	 */
 	@Override
-	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project) {
-		return new TimeModelContinuousConfiguration(project);
+	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project, TimeModelController timeModelController) {
+		return new TimeModelContinuousConfiguration(project, timeModelController);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()

@@ -235,7 +235,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton();
 			jButtonOk.setPreferredSize(new Dimension(120, 26));
-			jButtonOk.setForeground(new Color(0, 102, 0));
+			jButtonOk.setForeground(new Color(0, 153, 0));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOk.setText("Hinzufügen");
 			jButtonOk.setActionCommand("Ok");

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Agent.Workbenvh PlugIn-Example
+Bundle-SymbolicName: de.enflexit.awb.samples.PlugIn;singleton:=true
+Bundle-Version: 2.0.0.qualifier
+Require-Bundle: org.eclipse.core.runtime,
+ de.enflexit.common;bundle-version="1.0.0",
+ org.agentgui.core;bundle-version="2.0.0",
+ org.agentgui.lib.jade;bundle-version="4.4.0",
+ org.awb.env.networkModel;bundle-version="2.1.8"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.enflexit.awb.samples.plugIn,
+ de.enflexit.awb.samples.plugIn.classLoadService
+Service-Component: OSGI-INF/classLoadService.xml 
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.agentgui.sample.plugIn

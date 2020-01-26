@@ -14,7 +14,6 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiTools;
 
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup.CHANGED;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 
@@ -71,7 +70,6 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 		this.updateToolTip();
 	}
 	
-	
 	/**
 	 * Register local observer.
 	 */
@@ -101,19 +99,8 @@ public class JToggleButtonTimeConfiguration extends JToggleButton implements Act
 					this.getJInternalFrameTimeConfiguration().registerAtDesktopAndSetVisible();
 				}
 			}
-			
-		} else if (updateObject instanceof CHANGED) {
-			// --- Change inside the simulation setup ---------------
-			CHANGED changed = (CHANGED) updateObject;
-			switch (changed) {
-			case TimeModelSettings:
-				System.out.println(this.getClass().getSimpleName() + " TimeModel was reconfigured ");
-				break;
-
-			default:
-				break;
-			} 
 		}
+		
 	}
 
 	/* (non-Javadoc)

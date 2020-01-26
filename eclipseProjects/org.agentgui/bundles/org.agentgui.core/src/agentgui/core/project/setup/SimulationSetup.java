@@ -85,7 +85,7 @@ public class SimulationSetup {
 	}
 	
 	/** Lists the possible reasons why a SimulationSetup can be changed and unsaved  */
-	public enum CHANGED {
+	public enum SetupChangeEvent {
 		TimeModelSettings,
 		AgentConfiguration,
 		UserRuntimeObject
@@ -144,7 +144,7 @@ public class SimulationSetup {
 	}
 	/**
 	 * Sets the current project to be unsaved.
-	 * @see CHANGED
+	 * @see SetupChangeEvent
 	 * @param reason the new project unsaved
 	 */
 	private void setProjectUnsaved(Object reason) {
@@ -469,7 +469,7 @@ public class SimulationSetup {
 	 */
 	public void setAgentList(ArrayList<AgentClassElement4SimStart> agentList) {
 		this.agentList = agentList;
-		this.setProjectUnsaved(CHANGED.AgentConfiguration);
+		this.setProjectUnsaved(SetupChangeEvent.AgentConfiguration);
 	}
 	
 	/**
@@ -615,7 +615,7 @@ public class SimulationSetup {
 		} else {
 			this.setUserRuntimeObjectClassName(this.userRuntimeObject.getClass().getName());
 		}
-		this.setProjectUnsaved(CHANGED.UserRuntimeObject);
+		this.setProjectUnsaved(SetupChangeEvent.UserRuntimeObject);
 	}
 	/**
 	 * Gets the user runtime object.
@@ -702,7 +702,7 @@ public class SimulationSetup {
 	 */
 	public void setTimeModelSettings(HashMap<String, String> newTimeModelSettings) {
 		this.timeModelSettings = newTimeModelSettings;
-		this.setProjectUnsaved(CHANGED.TimeModelSettings);
+		this.setProjectUnsaved(SetupChangeEvent.TimeModelSettings);
 	}
 	/**
 	 * Gets the time model settings.

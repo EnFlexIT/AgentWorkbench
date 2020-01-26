@@ -68,12 +68,15 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	
 	private boolean enabledChangeListener = true;
 	
+	
 	/**
 	 * Instantiates a new time model stroke configuration.
+	 *
 	 * @param project the project
+	 * @param timeModelController the time model controller
 	 */
-	public JPanelTimeModelStroke(Project project) {
-		super(project);
+	public JPanelTimeModelStroke(Project project, TimeModelController timeModelController) {
+		super(project, timeModelController);
 		this.initialize();
 	}
 	
@@ -82,7 +85,7 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	 */
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(900, 60);
+		return new Dimension(900, 65);
 	}
 	/**
 	 * Initializes this JPanel.
@@ -125,11 +128,11 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 		jLabelCounterStart = new JLabel();
 		jLabelCounterStart.setText("Zähler Start:");
 		jLabelCounterStart.setText(Language.translate(jLabelCounterStart.getText()));
-		jLabelCounterStart.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelCounterStart.setFont(new Font("Dialog", Font.BOLD, 11));
 		jLabelCounterStop = new JLabel();
 		jLabelCounterStop.setText("Zähler Stop:");
 		jLabelCounterStop.setText(Language.translate(jLabelCounterStop.getText()));
-		jLabelCounterStop.setFont(new Font("Dialog", Font.BOLD, 10));
+		jLabelCounterStop.setFont(new Font("Dialog", Font.BOLD, 11));
 		this.add(jLabelCounterStart, gbcJLabelCounterStart);
         this.add(getJTextFieldCounterStart(), gbcJTextFieldCounterStart);
         this.add(jLabelCounterStop, gbcJLabelCounterStop);
@@ -144,8 +147,8 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	private JTextField getJTextFieldCounterStart() {
 		if (jTextFieldCounterStart == null) {
 			jTextFieldCounterStart = new JTextField();
-			jTextFieldCounterStart.setFont(new Font("Dialog", Font.PLAIN, 10));
-			jTextFieldCounterStart.setPreferredSize(new Dimension(120, 22));
+			jTextFieldCounterStart.setFont(new Font("Dialog", Font.PLAIN, 11));
+			jTextFieldCounterStart.setPreferredSize(new Dimension(120, 24));
 			jTextFieldCounterStart.setBorder(BorderFactory.createEtchedBorder());
 			jTextFieldCounterStart.addKeyListener( new KeyAdapter() {
 				public void keyTyped(KeyEvent kT) {
@@ -169,8 +172,8 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	private JTextField getJTextFieldCounterStop() {
 		if (jTextFieldCounterStop == null) {
 			jTextFieldCounterStop = new JTextField();
-			jTextFieldCounterStop.setFont(new Font("Dialog", Font.PLAIN, 10));
-			jTextFieldCounterStop.setPreferredSize(new Dimension(120, 22));
+			jTextFieldCounterStop.setFont(new Font("Dialog", Font.PLAIN, 11));
+			jTextFieldCounterStop.setPreferredSize(new Dimension(120, 24));
 			jTextFieldCounterStop.setBorder(BorderFactory.createEtchedBorder());
 			jTextFieldCounterStop.addKeyListener( new KeyAdapter() {
 				public void keyTyped(KeyEvent kT) {
@@ -268,7 +271,6 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	 */
 	private void saveTimeModelStrokeToSimulationSetup() {
 		if (this.enabledChangeListener==true) {
-			this.getTimeModelController().setTimeModel(this.getTimeModel());
 			this.saveTimeModelToSimulationSetup();
 		}
 	}

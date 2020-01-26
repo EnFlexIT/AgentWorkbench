@@ -68,6 +68,7 @@ public class TimeModelController implements Observer {
 	private JPanel4TimeModelConfiguration jPanel4TimeModel;
 	private int indexPositionOfTimeModelTab = 0;
 	
+	private String currentSetup;
 	
 	/**
 	 * Instantiates a new time model controller.
@@ -76,9 +77,7 @@ public class TimeModelController implements Observer {
 		this.currProject = project;
 		this.currProject.addObserver(this);
 		this.addTimeModelDisplayToProjectWindow();
-		this.loadTimeModelFromSimulationSetup();
 	}
-	
 	
 	/**
 	 * Sets the time model.
@@ -92,14 +91,16 @@ public class TimeModelController implements Observer {
 	 * @return the time model
 	 */
 	public TimeModel getTimeModel() {
-		
+
+		// --- Check, if a TimeModel class is defined -----  
 		String timeModelClass = this.currProject.getTimeModelClass();
 		boolean isNoClass = timeModelClass==null || timeModelClass.isEmpty();
 		if (isNoClass==true && this.timeModel!=null) {
 			this.setTimeModel(null);
 		}
 		
-		boolean isDifferentClass = timeModel!=null && this.currProject.getTimeModelClass()!=null && this.currProject.getTimeModelClass().equals(timeModel.getClass().getName())==false; 
+		// --- Create new TimeModel instance? -------------
+		boolean isDifferentClass = timeModel!=null && this.currProject.getTimeModelClass()!=null && this.currProject.getTimeModelClass().equals(timeModel.getClass().getName())==false;
 		if (timeModel==null || isDifferentClass==true) {
 			if (isNoClass==false) {
 				try {
@@ -108,6 +109,13 @@ public class TimeModelController implements Observer {
 					ex.printStackTrace();
 				}
 			}
+		}
+		
+		// --- Load data from setup? ----------------------
+		boolean isDifferentSetup = currentSetup==null || currentSetup.equals(currProject.getSimulationSetupCurrent())==false;
+		if (isDifferentSetup==true) {
+			currentSetup = currProject.getSimulationSetupCurrent();
+			this.loadTimeModelFromSimulationSetup();
 		}
 		return timeModel;
 	}
@@ -128,7 +136,11 @@ public class TimeModelController implements Observer {
 	 */
 	private JPanel4TimeModelConfiguration getJPanel4TimeModelConfiguration() {
 		if (Application.isOperatingHeadless()==false && jPanel4TimeModel==null && this.getTimeModel()!=null) {
-			jPanel4TimeModel = this.getTimeModel().getJPanel4Configuration(this.currProject);
+			try {
+				jPanel4TimeModel = this.getTimeModel().getJPanel4Configuration(this.currProject, this);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		return jPanel4TimeModel;
 	}
@@ -147,7 +159,6 @@ public class TimeModelController implements Observer {
 		if (configPanel!=null) {
 			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			this.pwt.add(this.indexPositionOfTimeModelTab);
-			configPanel.setTimeModel(this.getTimeModel());
 		}
 	}
 	/**
@@ -158,23 +169,13 @@ public class TimeModelController implements Observer {
 			this.indexPositionOfTimeModelTab = this.pwt.getIndexPosition();
 			this.pwt.remove();
 			this.pwt = null;
-			this.jPanel4TimeModel = null;
-		}
-	}
-	
-	/**
-	 * Updates the time model visualization.
-	 */
-	public void updateTimeModelVisualization() {
-		TimeModel timeModel = this.getTimeModel();
-		if (timeModel!=null) {
-			JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
-			if (configPanel!=null) {
-				configPanel.setTimeModel(timeModel);
+			if (this.jPanel4TimeModel!=null) {
+				this.jPanel4TimeModel.deleteObserver();
+				this.jPanel4TimeModel = null;
 			}
 		}
 	}
-	
+
 	
 	/**
 	 * Gets the index position of time model tab.
@@ -209,8 +210,6 @@ public class TimeModelController implements Observer {
 		this.indexPositionOfTimeModelTab = newIndexPosistion;
 	}
 	
-	
-	
 
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -233,14 +232,11 @@ public class TimeModelController implements Observer {
 			// --- Change inside the simulation setup ---------------
 			SimulationSetupNotification scn = (SimulationSetupNotification) updateObject;
 			switch (scn.getUpdateReason()) {
-			case SIMULATION_SETUP_SAVED:
-				break;
 			case SIMULATION_SETUP_PREPARE_SAVING:
 				this.saveTimeModelToSimulationSetup();
 				break;
 				
 			default:
-				this.loadTimeModelFromSimulationSetup();	
 				break;
 			}
 		}
@@ -260,8 +256,6 @@ public class TimeModelController implements Observer {
 			HashMap<String, String> configHash = simSetup.getTimeModelSettings();
 			if (configHash!=null) {
 				timeModel.setTimeModelSettings(configHash);
-				// --- Set the TimeModel to the display -----------------------
-				this.updateTimeModelVisualization();
 				// --- Forward time format to ontology visualization? ---------
 				if (timeModel!=null && timeModel instanceof TimeModelDateBased) {
 					TimeModelDateBased tmDateBased = (TimeModelDateBased) timeModel;
