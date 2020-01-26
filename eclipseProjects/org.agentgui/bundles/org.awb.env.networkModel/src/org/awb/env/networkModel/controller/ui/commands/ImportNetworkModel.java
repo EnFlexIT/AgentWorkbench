@@ -42,6 +42,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
+import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
@@ -56,6 +57,11 @@ import agentgui.simulationService.environment.AbstractEnvironmentModel;
 public class ImportNetworkModel extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -409810728677898514L;
+	
+	// --- Possible results from the option dialog shown by this.askIfReplaceOrMerge()
+	private static final int REPLACE_OPTION = 0;
+	private static final int MERGE_OPTION = 1;
+	private static final int CANCEL_OPTION = 2;
 
 	private static FileFilter lastSlectedFileFilter;
 	
@@ -70,6 +76,9 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 
 	private AbstractEnvironmentModel newAbstractEnvModel;
 	private AbstractEnvironmentModel oldAbstractEnvModel;
+	
+	private boolean keepExistingComponents = false;
+	
 	
 	/**
 	 * Instantiates a new import network model.
@@ -97,22 +106,43 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		
 		if (this.isCanceled()==false && this.importService!=null && this.networkModelFileSelected!=null) {
 			
-			this.graphController.getAgents2Start().clear();
-			this.graphController.setDisplayEnvironmentModel(null);
-			
-			if (this.newNetworkModel==null) {
-				// --- Import NetworkModel using a dedicated thread -------------------------------
-				this.importFromFileUsingDedicatedThread();
-				
-			} else {
-				// --- The preparation for saving the Network were already done before (above) ----
-				this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
-				if (this.newAbstractEnvModel!=null) {
-					this.graphController.setAbstractEnvironmentModel(this.newAbstractEnvModel);
-				}
+			// --- If there current model is not empty, ask the user if the imported one should replace or extend it
+			if (this.graphController.getNetworkModel().getGraphElements().size()>0) {
+				int dialogAnswer = this.askIfReplaceOrMerge();
+				this.keepExistingComponents = (dialogAnswer==MERGE_OPTION);
+				this.setCanceled(dialogAnswer==CANCEL_OPTION);
 			}
-			this.graphController.setProjectUnsaved();
+			
+			if (this.isCanceled()==false) {
+				
+				this.graphController.getAgents2Start().clear();
+				this.graphController.setDisplayEnvironmentModel(null);
+				
+				if (this.newNetworkModel==null) {
+					// --- Import NetworkModel using a dedicated thread -------------------------------
+					this.importFromFileUsingDedicatedThread();
+					
+				} else {
+					// --- The preparation for saving the Network were already done before (above) ----
+					this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
+					if (this.newAbstractEnvModel!=null) {
+						this.graphController.setAbstractEnvironmentModel(this.newAbstractEnvModel);
+					}
+				}
+				this.graphController.setProjectUnsaved();
+			}
 		}
+	}
+	
+	/**
+	 * Shows an option dialog asking how to proceed if the current model is not empty  
+	 * @return the users answer
+	 */
+	private int askIfReplaceOrMerge() {
+		String message = "The network model already contains components - replace or merge?";
+		String title = "Replace or merge?";
+		Object[] options = {"Replace", "Merge", "Cancel"};
+		return JOptionPane.showOptionDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 	}
 	
 	/**
@@ -135,11 +165,30 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		
 			Application.setStatusBarMessage("Import network model from file(s) ... ");
 			// --- Import directly from the selected file ---------------------------------
-			this.newNetworkModel = this.importService.importNetworkModelFromFile(this.networkModelFileSelected);
-			// --- Do we have an AbstractEnvironmentModel also? --------------------------- 
-			this.newAbstractEnvModel = this.importService.getAbstractEnvironmentModel();
+			NetworkModel importedNetworkModel = this.importService.importNetworkModelFromFile(this.networkModelFileSelected);
+			// --- Do we have an AbstractEnvironmentModel also? ---------------------------
+			AbstractEnvironmentModel importedAbstractEnvironmentModel = this.importService.getAbstractEnvironmentModel();
 			// --- Invoke to cleanup the importer -----------------------------------------
 			this.importService.cleanupImporter();
+		
+			if (this.keepExistingComponents==true) {
+				// --- Merge into existing model --------------------
+				NetworkModel mergedNetworkModel = this.oldNetworkModel.getCopy();
+				mergedNetworkModel.mergeNetworkModel(importedNetworkModel, null, true);
+				for (NetworkComponent networkComponentPasted : importedNetworkModel.getNetworkComponents().values()) {
+					this.graphController.addAgent(networkComponentPasted);
+				}
+				this.newNetworkModel = mergedNetworkModel;
+				
+				//TODO figure out what to handle the  AbstractEnvironmentModel
+				this.newAbstractEnvModel = importedAbstractEnvironmentModel;
+				
+			} else {
+				// --- Replace exiting model ------------------------
+				this.newNetworkModel = importedNetworkModel;
+				this.newAbstractEnvModel = importedAbstractEnvironmentModel;
+			}
+			
 			// --- Set new instances to GraphEnvironmentController ------------------------
 			this.graphController.setDisplayEnvironmentModel(this.newNetworkModel);
 			if (this.newAbstractEnvModel!=null) {
