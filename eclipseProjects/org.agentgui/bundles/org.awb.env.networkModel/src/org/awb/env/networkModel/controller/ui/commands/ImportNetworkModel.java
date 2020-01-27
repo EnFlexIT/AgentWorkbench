@@ -139,9 +139,13 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	 * @return the users answer
 	 */
 	private int askIfReplaceOrMerge() {
-		String message = "The network model already contains components - replace or merge?";
-		String title = "Replace or merge?";
-		Object[] options = {"Replace", "Merge", "Cancel"};
+		String message = Language.translate("The network model already contains components - replace or merge?", Language.EN);
+		String title = Language.translate("Replace or merge?", Language.EN);
+		Object[] options = {
+				Language.translate("Replace", Language.EN), 
+				Language.translate("Merge", Language.EN), 
+				Language.translate("Cancel", Language.EN)
+			};
 		return JOptionPane.showOptionDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 	}
 	

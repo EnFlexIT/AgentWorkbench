@@ -438,7 +438,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonClearGraph() {
 		if (jButtonClearGraph == null) {
-		    jButtonClearGraph = getNewJButton("Remove.png", Language.translate("Clear NetworkModel", Language.EN));
+		    jButtonClearGraph = getNewJButton("Remove.png", Language.translate("Clear Network Model", Language.EN));
 		}
 		return jButtonClearGraph;
     }
