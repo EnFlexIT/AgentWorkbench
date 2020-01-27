@@ -31,8 +31,6 @@
 		<module>org.agentgui.lib.jep</module>
 		<module>org.agentgui.lib.jung</module>
 		<module>org.agentgui.lib.scimark</module>
-		<module>org.agentgui.sample.GameOfLife</module>
-		<module>org.agentgui.sample.plugIn</module>
 		<module>org.awb.env.networkModel</module>
 	</modules>
 </project>

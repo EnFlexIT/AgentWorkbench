@@ -15,7 +15,6 @@
 	<modules>
 		<module>de.enflexit.common.feature</module>
 		<module>org.agentgui.feature</module>
-		<module>org.agentgui.samples.feature</module>
 	</modules>
 
 	<build>
