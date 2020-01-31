@@ -178,7 +178,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			if (this.keepExistingComponents==true) {
 				// --- Merge into existing model --------------------
 				NetworkModel mergedNetworkModel = this.oldNetworkModel.getCopy();
-				mergedNetworkModel.mergeNetworkModel(importedNetworkModel, null, false);
+				mergedNetworkModel.mergeNetworkModel(importedNetworkModel, null, true);
 				for (NetworkComponent networkComponentPasted : importedNetworkModel.getNetworkComponents().values()) {
 					this.graphController.addAgent(networkComponentPasted);
 				}
