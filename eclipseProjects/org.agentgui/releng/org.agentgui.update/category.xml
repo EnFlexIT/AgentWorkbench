@@ -12,11 +12,5 @@
    <feature id="de.enflexit.common.feature.source" version="0.0.0">
       <category name="org.agentgui"/>
    </feature>
-   <feature id="org.agentgui.samples.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
-      <category name="org.agentgui"/>
-   </feature>
-   <feature id="org.agentgui.samples.feature.source" version="0.0.0">
-      <category name="org.agentgui"/>
-   </feature>
    <category-def name="org.agentgui" label="Agent.Workbench"/>
 </site>
