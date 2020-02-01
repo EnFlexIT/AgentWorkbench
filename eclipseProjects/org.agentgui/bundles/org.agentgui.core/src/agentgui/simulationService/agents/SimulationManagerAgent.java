@@ -69,7 +69,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	protected ServiceSensorManager mySensor;
 	
 	/** The environment model which contains an abstract and a displayable environment model as well as a time model */
-	protected EnvironmentModel myEnvironmentModel = new EnvironmentModel();
+	protected EnvironmentModel myEnvironmentModel;
 	
 	/** The answers/next state of all involved agents. */
 	protected Hashtable<AID, Object> agentAnswers;
