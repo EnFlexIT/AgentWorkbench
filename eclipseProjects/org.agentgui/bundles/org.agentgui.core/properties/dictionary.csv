@@ -866,6 +866,7 @@ en;;These are:;;;
 en;;Time Controlled;;;
 en;;Time Format and Offset;;;
 en;;Time after a signal must be sent at least;;;
+en;;Time between two simulation steps;;;
 en;;Transmission of power signals;;;
 en;;TrustStore Information;;;
 en;;TrustStore Name:;;;
