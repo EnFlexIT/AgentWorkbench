@@ -72,14 +72,12 @@ import agentgui.core.gui.MainWindow;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
-import agentgui.logging.logfile.LogbackConfigurationReader;
 import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
-
 
 /**
  * This class is for constant values or variables that can be accessed or used application wide.<br>
@@ -660,8 +658,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			propertyContentProvider = new PropertyContentProvider(new File(pathToProperties));
 			try {
 				propertyContentProvider.checkAndProvideFullPropertyContent();
-				// --- Read the logback configuration -----
-				LogbackConfigurationReader.readConfiguration();
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
