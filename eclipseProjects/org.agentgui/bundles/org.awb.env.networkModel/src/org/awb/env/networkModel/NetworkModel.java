@@ -349,6 +349,15 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	// --- From here, the handling of the Network model graph can be found ----
 	// ------------------------------------------------------------------------
 	/**
+	 * Sets the the graph of the network model.
+	 * @param newGraph the new graph
+	 */
+	public void setGraph(Graph<GraphNode, GraphEdge> newGraph) {
+		this.graph = newGraph;
+		this.resetGraphElements();
+		this.refreshGraphElements();
+	}
+	/**
 	 * Returns the JUNG graph.
 	 * @return the JUNG Graph
 	 */
@@ -359,15 +368,19 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return graph;
 	}
 	/**
-	 * Sets the the graph of the network model.
-	 * @param newGraph the new graph
+	 * Will copy the current graph and its graph elements.
+	 * @return the copied instance of the graph
 	 */
-	public void setGraph(Graph<GraphNode, GraphEdge> newGraph) {
-		this.graph = newGraph;
-		this.resetGraphElements();
-		this.refreshGraphElements();
+	private Graph<GraphNode, GraphEdge> getGraphCopy() {
+		Graph<GraphNode, GraphEdge> graphCopy = null; 
+		try {
+			graphCopy = SerialClone.clone(this.getGraph());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return graphCopy;
 	}
-	
+
 	/**
 	 * Returns the GraphElement with the given ID, or null if not found.
 	 * @param id The ID to look for
@@ -525,23 +538,102 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Creates a clone of the current instance.
-	 * @return the copy
+	 * Creates an instance copy of this NetworkModel.
+	 * @return the copy of the NetworkModel
 	 */
 	public NetworkModel getCopy() {
-		synchronized (this) {
-			NetworkModel networkModelCopy = null;	
-			try {
-				networkModelCopy = SerialClone.clone(this);
-				networkModelCopy.refreshGraphElements();
-				
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			return networkModelCopy;
-		} 
+		return this.getCopy(false);
 	}
+	/**
+	 * Creates an instance copy of this NetworkModel.
+	 *
+	 * @param isCloneNetworkModel the indicator to use serialization to get the copy or to rebuild this network model
+	 * @return the copy of the NetworkModel
+	 */
+	public NetworkModel getCopy(boolean isCloneNetworkModel) {
+		
+		NetworkModel networkModelCopy = null;	
+		synchronized (this) {
 
+			if (isCloneNetworkModel==true) {
+				// ------------------------------------------------------------
+				// --- Make a serialization copy the NetworkModel -------------
+				// ------------------------------------------------------------
+				try {
+					networkModelCopy = SerialClone.clone(this);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				
+			} else {
+				// ------------------------------------------------------------
+				// ---- Step by step rebuild of the NetworkModel --------------
+				// ------------------------------------------------------------
+				networkModelCopy = new NetworkModel();
+				
+				// --- Create a copy of the generalGraphSettings4MAS ----------
+				networkModelCopy.setGeneralGraphSettings4MAS(this.getGeneralGraphSettings4MAS().getCopy());
+
+				// --- Copy the graph -----------------------------------------
+				networkModelCopy.setGraph(this.getGraphCopy());
+		
+				// --- Create a copy of the networkComponents -----------------
+				TreeMap<String, NetworkComponent> copyOfComponents = new TreeMap<String, NetworkComponent>();
+				
+				List<NetworkComponent> netCompList = new ArrayList<NetworkComponent>(this.getNetworkComponents().values());
+				for (int i = 0; i < netCompList.size(); i++) {
+
+					NetworkComponent networkComponent = netCompList.get(i);
+					try {
+						// --- Copy NetworkComponent --------------------------
+						NetworkComponent networkComponentCopy = SerialClone.clone(networkComponent);
+						copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+						
+					} catch (Exception ex) {
+						System.err.println("Error while copy network component '" + networkComponent.getId() + "'");
+						ex.printStackTrace();
+					}
+				}
+				networkModelCopy.setNetworkComponents(copyOfComponents);
+		
+				// --- Copy LayoutID ------------------------------------------
+				networkModelCopy.setLayoutID(new String(this.getLayoutID()));
+				
+				// --- Copy the MappSettings ----------------------------------
+				TreeMap<String, MapSettings> mapSettingsTreeMapCopy = null;
+				try {
+					mapSettingsTreeMapCopy = SerialClone.clone(this.getMapSettingsTreeMap());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				networkModelCopy.setMapSettingsTreeMap(mapSettingsTreeMapCopy);
+				
+				
+				// ------------------------------------------------------------
+				// -- Create a copy of the alternativeNetworkModel ------------
+				// ------------------------------------------------------------
+				HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
+				if (this.alternativeNetworkModel != null) {
+					copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>();
+					Vector<String> altNetModelsName = new Vector<String>(this.alternativeNetworkModel.keySet());
+					for (String networkModelName : altNetModelsName) {
+						NetworkModel networkModel = this.alternativeNetworkModel.get(networkModelName);
+						networkModel = networkModel.getCopy();
+						copyOfAlternativeNetworkModel.put(networkModelName, networkModel);
+					}
+				}
+				networkModelCopy.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
+				
+			}
+		} // end synchronized
+		
+		// --- Refresh GraphElements in the copy ------------------------------
+		if (networkModelCopy!=null) {
+			networkModelCopy.refreshGraphElements();
+		}
+		return networkModelCopy;
+	}
+	
 	/**
 	 * This method gets the GraphElements that are part of the given NetworkComponent
 	 * 
