@@ -114,7 +114,7 @@ public class EnvironmentModel implements Serializable {
 
 	/**
 	 * Returns a copy of the current environment model.
-	 * @return the copy
+	 * @return the copied instance of the current object
 	 */
 	public EnvironmentModel getCopy() {
 		

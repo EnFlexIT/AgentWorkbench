@@ -224,14 +224,14 @@ public abstract class NetworkComponentAdapter {
 	 * @return true, if is runtime visualization
 	 */
 	protected boolean isRuntimeVisualization(){
-		return (this.graphController.getProject()==null);
+		return (this.graphController!=null && this.graphController.getProject()==null);
 	}
 	/**
 	 * Checks if the current view is the setup configuration.
 	 * @return true, if is setup configuration
 	 */
 	protected boolean isSetupConfiguration(){
-		return (this.graphController.getProject()!=null);
+		return (this.graphController!=null && this.graphController.getProject()!=null);
 	}
 
 	// --------------------------------------------------------------

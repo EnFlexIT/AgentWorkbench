@@ -44,6 +44,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
 
+import de.enflexit.common.SerialClone;
+
 
 /**
  * The abstract Class NetworkComponentAdapter4DataModel can be extended to provide the required data handling
@@ -200,6 +202,22 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 */
 	public abstract Object getDataModel();
 	
+	/**
+	 * Has to return a copy of the specified data model. By default, this class will create a serial clone
+	 * of the specified instance. Overwrite this method to do individual things.
+	 *
+	 * @param originalDataModel the original data model instance
+	 * @return the copied instance of the specified data model 
+	 */
+	public Object getDataModelCopy(Object originalDataModel) {
+		Object copy = null;	
+		try {
+			copy = SerialClone.clone(originalDataModel);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return copy;
+	}
 	
 	/**
 	 * Basically, calls the method {@link #getDataModelStorageHandler()}. If this method does not return 

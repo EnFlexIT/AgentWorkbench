@@ -268,9 +268,29 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 	 * @return the copy
 	 */
 	public NetworkComponent getCopy() {
+		return this.getCopy(true);
+	}
+	/**
+	 * Returns a copy of the current NetworkComponent.
+	 * @param isIncludeDataModel the indicator include or exclude the current data model
+	 * @return the copy
+	 */
+	public NetworkComponent getCopy(boolean isIncludeDataModel) {
 		NetworkComponent copy = null;	
 		try {
-			copy = SerialClone.clone(this);
+			if (isIncludeDataModel==true) {
+				// --- Include the data model -------------
+				copy = SerialClone.clone(this);
+			} else {
+				// --- Exclude the data model -------------
+				synchronized (this) {
+					Object dataModel = this.getDataModel();
+					this.setDataModel(null);
+					copy = SerialClone.clone(this);
+					this.setDataModel(dataModel);
+				}
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
