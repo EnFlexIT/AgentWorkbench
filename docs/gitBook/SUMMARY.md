@@ -3,6 +3,7 @@
 * [Introduction](README.md)
 * [Overview](overview/README.md)
   * [Agent.Workbench Features](overview/agentworkbench-features.md)
+  * [Agent.Workbench Use Cases](overview/agent.workbench-use-cases.md)
 
 ## Application Development
 

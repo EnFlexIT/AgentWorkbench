@@ -8,7 +8,7 @@
 * Depending on the selected environment model \(e. g. a graph or a continuous two-dimensional model\) case-specific environment configurations can be done
 * The JADE agent platform and their tools can be easily controlled with the end user application
 * Simulations can be easily distributed and balanced on different machines, in particular also by non-IT specialists
-* AgentWorkbench provides a Multi-Language application \(English, German, French, Spanish, Italian, Polish, …\)
+* AgentWorkbench provides a Multi-Language application \(currently English and German, can easily be extended to French, Spanish, Italian, Polish, …\)
 
 ## Utilities for developer
 
