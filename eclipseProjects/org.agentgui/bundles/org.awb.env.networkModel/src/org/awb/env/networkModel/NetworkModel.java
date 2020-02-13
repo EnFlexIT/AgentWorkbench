@@ -1519,7 +1519,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the graph node pairs
 	 */
 	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge) {
-		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, true);	
+		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, true, true);	
 	}
 	
 	/**
@@ -1531,7 +1531,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the residual GraphNode, which connects the two NetworkModels
 	 */
 	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge, boolean adjustNameDefinitions) {
-		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, true, true);
+		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, adjustNameDefinitions, adjustNameDefinitions);
 	}
 
 	/**
