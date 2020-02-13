@@ -52,6 +52,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.awb.env.networkModel.adapter.BundlingNetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.adapter.NetworkComponentToGraphNodeAdapter;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.helper.GraphEdgeDirection;
@@ -553,7 +554,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public NetworkModel getCopy(boolean isCloneNetworkModel) {
 		
 		NetworkModel networkModelCopy = null;	
-		synchronized (this) {
+		synchronized  (this) {
 
 			if (isCloneNetworkModel==true) {
 				// ------------------------------------------------------------
@@ -583,17 +584,35 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				List<NetworkComponent> netCompList = new ArrayList<NetworkComponent>(this.getNetworkComponents().values());
 				for (int i = 0; i < netCompList.size(); i++) {
 
-					NetworkComponent networkComponent = netCompList.get(i);
+					// --- Copy NetworkComponent ------------------------------
+					NetworkComponent netComp = netCompList.get(i);
+					NetworkComponent netCompCopy = null;
+
 					try {
-						// --- Copy NetworkComponent --------------------------
-						NetworkComponent networkComponentCopy = SerialClone.clone(networkComponent);
-						copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+						// --- Try to get the NetworkComponentAdapter --------- 
+						NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(null, netComp);
+						if (netCompAdapter!=null) {
+							NetworkComponentAdapter4DataModel dmAdapter = netCompAdapter.getNewDataModelAdapter();
+							if (dmAdapter!=null) {
+								netCompCopy = netComp.getCopy(false); 
+								Object dmCopy = dmAdapter.getDataModelCopy(netComp.getDataModel());
+								netCompCopy.setDataModel(dmCopy);
+							}
+						}
 						
 					} catch (Exception ex) {
-						System.err.println("Error while copy network component '" + networkComponent.getId() + "'");
+						System.err.println("[" + this.getClass().getSimpleName() + "] Error while copy network component '" + netComp.getId() + "'");
 						ex.printStackTrace();
 					}
-				}
+						
+					// --- In case of an error above --------------------------
+					if (netCompCopy==null) {
+						netCompCopy = netComp.getCopy();
+					}
+					// --- Add to new component tree map ----------------------
+					copyOfComponents.put(netCompCopy.getId(), netCompCopy);
+				} 
+				// --- Set NetworkComponents to copy --------------------------
 				networkModelCopy.setNetworkComponents(copyOfComponents);
 		
 				// --- Copy LayoutID ------------------------------------------
@@ -613,7 +632,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				// -- Create a copy of the alternativeNetworkModel ------------
 				// ------------------------------------------------------------
 				HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
-				if (this.alternativeNetworkModel != null) {
+				if (this.alternativeNetworkModel!=null) {
 					copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>();
 					Vector<String> altNetModelsName = new Vector<String>(this.alternativeNetworkModel.keySet());
 					for (String networkModelName : altNetModelsName) {
@@ -2665,9 +2684,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				}
 				
 			} catch (Exception ex) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Could not initiate class '" + adapterClassname + "'");
-				System.err.println(ex.getMessage());
-				//ex.printStackTrace();
+				System.err.println("[" + this.getClass().getSimpleName() + "] Could not initiate NetworkComponentAdapter class '" + adapterClassname + "'");
+				ex.printStackTrace();
 			}
 		}
 		return netCompAdapter;
