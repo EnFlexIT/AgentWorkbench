@@ -1309,94 +1309,110 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the NetworkModel with corrected names
 	 */
 	public NetworkModel adjustNameDefinitionsOfSupplementNetworkModel(NetworkModel supplementNetworkModel) {
+		return this.adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel, true, true);
+	}
+		
+	
+	/**
+	 * Adjust name definitions of supplement network model.
+	 * @param supplementNetworkModel the supplement network model
+	 * @param adjustNodeIDs specifies if the node IDs should be adjusted
+	 * @param adjustNetCompIDs specifies if the network component IDs should be adjusted
+	 * @return the NetworkModel with adjusted IDs
+	 */
+	public NetworkModel adjustNameDefinitionsOfSupplementNetworkModel(NetworkModel supplementNetworkModel, boolean adjustNodeIDs, boolean adjustNetCompIDs) {
 
 		// --- Early exit of this adjustment method? --------------------------
 		if (supplementNetworkModel==this) return supplementNetworkModel;
 		if (this.getGraphElementToNetworkComponentHash().size()==0 && this.getGraphElements().size()==0) return supplementNetworkModel;
-
-		
-		// --- Get the general counting information for components and edges --
-		String nextCompID = this.nextNetworkComponentID().replace(GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT, "");
-		String nextNodeID = this.nextNodeID().replace(GraphNode.GRAPH_NODE_PREFIX, "");
-		long nextCompIDCounter = Long.parseLong(nextCompID);
-		long nextNodeIDCounter = Long.parseLong(nextNodeID);
-
+		if (adjustNodeIDs==false&&adjustNetCompIDs==false) return supplementNetworkModel;
 		
 		// --- Make sure that the information are up to date ------------------
 		supplementNetworkModel.refreshGraphElements();
 		
-		// --- Get and rename the list of GraphNodes --------------------------
-		Graph<GraphNode, GraphEdge> graph = supplementNetworkModel.getGraph();
-		Vector<GraphNode> nodes = new Vector<GraphNode>(graph.getVertices());
-		// --- Change node names and positions --------------------------------
-		String newNodeID = GraphNode.GRAPH_NODE_PREFIX + nextNodeIDCounter;
-		for (GraphNode graphNode : nodes) {
+		if (adjustNodeIDs==true) {
 			
-			// --- Find new GraphNodeID ---------------------------------------
-			while (this.getGraphElement(newNodeID)!=null || supplementNetworkModel.getGraphElement(newNodeID)!=null) {
-				nextNodeIDCounter++;
-				newNodeID = GraphNode.GRAPH_NODE_PREFIX + nextNodeIDCounter;
+			String nextNodeID = this.nextNodeID().replace(GraphNode.GRAPH_NODE_PREFIX, "");
+			long nextNodeIDCounter = Long.parseLong(nextNodeID);
+			
+			// --- Get and rename the list of GraphNodes --------------------------
+			Graph<GraphNode, GraphEdge> graph = supplementNetworkModel.getGraph();
+			Vector<GraphNode> nodes = new Vector<GraphNode>(graph.getVertices());
+			// --- Change node names and positions --------------------------------
+			String newNodeID = GraphNode.GRAPH_NODE_PREFIX + nextNodeIDCounter;
+			for (GraphNode graphNode : nodes) {
+				
+				// --- Find new GraphNodeID ---------------------------------------
+				while (this.getGraphElement(newNodeID)!=null || supplementNetworkModel.getGraphElement(newNodeID)!=null) {
+					nextNodeIDCounter++;
+					newNodeID = GraphNode.GRAPH_NODE_PREFIX + nextNodeIDCounter;
+				}
+				
+				// --- Configure new name -----------------------------------------
+				String oldNodeID = graphNode.getId();
+				graphNode.setId(newNodeID);
+				supplementNetworkModel.getGraphElements().remove(oldNodeID);
+				supplementNetworkModel.getGraphElements().put(newNodeID, graphNode);
+				
+				// --- Change to new ID also in the other affected components ----- 
+				List<NetworkComponent> netComps = supplementNetworkModel.getGraphElementToNetworkComponentHash().get(graphNode);
+				if (netComps!=null) {
+					for (int i = 0; i < netComps.size(); i++) {
+						NetworkComponent netComp = netComps.get(i);
+						netComp.getGraphElementIDs().remove(oldNodeID);
+						netComp.getGraphElementIDs().add(newNodeID);
+					}	
+				}
+	
 			}
-			
-			// --- Configure new name -----------------------------------------
-			String oldNodeID = graphNode.getId();
-			graphNode.setId(newNodeID);
-			supplementNetworkModel.getGraphElements().remove(oldNodeID);
-			supplementNetworkModel.getGraphElements().put(newNodeID, graphNode);
-			
-			// --- Change to new ID also in the other affected components ----- 
-			List<NetworkComponent> netComps = supplementNetworkModel.getGraphElementToNetworkComponentHash().get(graphNode);
-			if (netComps!=null) {
-				for (int i = 0; i < netComps.size(); i++) {
-					NetworkComponent netComp = netComps.get(i);
-					netComp.getGraphElementIDs().remove(oldNodeID);
-					netComp.getGraphElementIDs().add(newNodeID);
-				}	
-			}
-
 		}
 		
-		// --- Get the list of NetworkComponents ------------------------------
-		String newCompID = GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT + nextCompIDCounter;
-		NetworkComponent[] netComps = new NetworkComponent[supplementNetworkModel.getNetworkComponents().values().size()]; 
-		supplementNetworkModel.getNetworkComponents().values().toArray(netComps);
-		for (int i = 0; i < netComps.length; i++) {
+		if (adjustNetCompIDs==true) {
+			String nextCompID = this.nextNetworkComponentID().replace(GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT, "");
+			long nextCompIDCounter = Long.parseLong(nextCompID);
 			
-			// --- Find new NetworkComponentID --------------------------------
-			while (this.getNetworkComponent(newCompID)!=null || supplementNetworkModel.getNetworkComponent(newCompID)!=null) {
-				nextCompIDCounter++;
-				newCompID = GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT + nextCompIDCounter;
+			// --- Get the list of NetworkComponents ------------------------------
+			String newCompID = GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT + nextCompIDCounter;
+			NetworkComponent[] netComps = new NetworkComponent[supplementNetworkModel.getNetworkComponents().values().size()]; 
+			supplementNetworkModel.getNetworkComponents().values().toArray(netComps);
+			for (int i = 0; i < netComps.length; i++) {
+				
+				// --- Find new NetworkComponentID --------------------------------
+				while (this.getNetworkComponent(newCompID)!=null || supplementNetworkModel.getNetworkComponent(newCompID)!=null) {
+					nextCompIDCounter++;
+					newCompID = GeneralGraphSettings4MAS.PREFIX_NETWORK_COMPONENT + nextCompIDCounter;
+				}
+				
+				// --- Configure new name -----------------------------------------
+				NetworkComponent nc = netComps[i];
+				String oldCompID = nc.getId();
+				nc.setId(newCompID);
+				supplementNetworkModel.getNetworkComponents().remove(oldCompID);
+				supplementNetworkModel.getNetworkComponents().put(newCompID, nc);
+				
+				HashSet<GraphElement> edgesFound = supplementNetworkModel.getGraphElementsOfNetworkComponent(nc, new GraphEdge(null, null));
+				if (edgesFound!=null && edgesFound.size()>0) {
+					for (GraphElement element : edgesFound) {
+						
+						GraphEdge edge = (GraphEdge) element;
+						String edgeIDOld = edge.getId();
+						String edgeIDNew = edge.getId().replace(oldCompID, newCompID);
+						edge.setId(edgeIDNew);
+						
+						supplementNetworkModel.getGraphElements().remove(edgeIDOld);
+						supplementNetworkModel.getGraphElements().put(edgeIDNew, edge);
+						
+						List <NetworkComponent> netCompsToChange = supplementNetworkModel.getGraphElementToNetworkComponentHash().get(edge);
+						for (int j = 0; j < netCompsToChange.size(); j++) {
+							NetworkComponent netCompToChange = netCompsToChange.get(j);
+							netCompToChange.getGraphElementIDs().remove(edgeIDOld);
+							netCompToChange.getGraphElementIDs().add(edgeIDNew);
+						}
+					}	
+				}
 			}
-			
-			// --- Configure new name -----------------------------------------
-			NetworkComponent nc = netComps[i];
-			String oldCompID = nc.getId();
-			nc.setId(newCompID);
-			supplementNetworkModel.getNetworkComponents().remove(oldCompID);
-			supplementNetworkModel.getNetworkComponents().put(newCompID, nc);
-			
-			HashSet<GraphElement> edgesFound = supplementNetworkModel.getGraphElementsOfNetworkComponent(nc, new GraphEdge(null, null));
-			if (edgesFound!=null && edgesFound.size()>0) {
-				for (GraphElement element : edgesFound) {
-					
-					GraphEdge edge = (GraphEdge) element;
-					String edgeIDOld = edge.getId();
-					String edgeIDNew = edge.getId().replace(oldCompID, newCompID);
-					edge.setId(edgeIDNew);
-					
-					supplementNetworkModel.getGraphElements().remove(edgeIDOld);
-					supplementNetworkModel.getGraphElements().put(edgeIDNew, edge);
-					
-					List <NetworkComponent> netCompsToChange = supplementNetworkModel.getGraphElementToNetworkComponentHash().get(edge);
-					for (int j = 0; j < netCompsToChange.size(); j++) {
-						NetworkComponent netCompToChange = netCompsToChange.get(j);
-						netCompToChange.getGraphElementIDs().remove(edgeIDOld);
-						netCompToChange.getGraphElementIDs().add(edgeIDNew);
-					}
-				}	
-			}
-			
 		}
+		
 		supplementNetworkModel.refreshGraphElements();
 		return supplementNetworkModel;
 	}
@@ -1493,16 +1509,26 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param supplementNetworkModel the supplement network model
 	 * @param nodes2Merge the merge description
 	 * @param adjustNameDefinitions the adjust name definitions
-	 * @return the residual GraphNode, which connects the two NetworkModel's
+	 * @return the residual GraphNode, which connects the two NetworkModels
 	 */
 	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge, boolean adjustNameDefinitions) {
+		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, true, true);
+	}
+
+	/**
+	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
+	 * @param supplementNetworkModel the supplement network model
+	 * @param nodes2Merge the merge description
+	 * @param adjustNodeIDs specifies if the node IDs should be adjusted
+	 * @param adjustNetCompIDs specifies if the network component IDs should be adjusted
+	 * @return the residual GraphNode, which connects the two NetworkModels
+	 */
+	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge, boolean adjustNodeIDs, boolean adjustNetCompIDs) {
 
 		NetworkModel srcNM = supplementNetworkModel;
 		
 		// --- 1. Adjust the names of the supplement NetworkModel, in order to avoid name clashes -
-		if (adjustNameDefinitions==true) {
-			srcNM = this.adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);	
-		}
+		srcNM = this.adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel, adjustNodeIDs, adjustNetCompIDs);	
 
 		// --- 2. Add the new graph to the current graph ------------------------------------------
 		Graph<GraphNode, GraphEdge> suppGraph = supplementNetworkModel.getGraph();

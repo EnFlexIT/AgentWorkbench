@@ -59,6 +59,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	private static final long serialVersionUID = -409810728677898514L;
 	
 	// --- Possible results from the option dialog shown by this.askIfReplaceOrMerge()
+	@SuppressWarnings("unused")
 	private static final int REPLACE_OPTION = 0;
 	private static final int MERGE_OPTION = 1;
 	private static final int CANCEL_OPTION = 2;
@@ -178,7 +179,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			if (this.keepExistingComponents==true) {
 				// --- Merge into existing model --------------------
 				NetworkModel mergedNetworkModel = this.oldNetworkModel.getCopy();
-				mergedNetworkModel.mergeNetworkModel(importedNetworkModel, null, true);
+				mergedNetworkModel.mergeNetworkModel(importedNetworkModel, null, true, false);
 				for (NetworkComponent networkComponentPasted : importedNetworkModel.getNetworkComponents().values()) {
 					this.graphController.addAgent(networkComponentPasted);
 				}
