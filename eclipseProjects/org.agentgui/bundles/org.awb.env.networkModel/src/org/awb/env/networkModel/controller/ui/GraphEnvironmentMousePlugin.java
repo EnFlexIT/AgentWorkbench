@@ -560,83 +560,95 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				// --------------------------------------------------
 				this.networkModel2Paste = this.graphController.getClipboardNetworkModel().getCopy();
 				this.graphController.getNetworkModel().mergeNetworkModel(this.networkModel2Paste, null, true);
-				
-				// --- Inform about changes -------------------------
-				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel));
-				this.graphController.setProjectUnsaved();
-				
-				// --- Mark all GraphElements as selected -----------
-				List<NetworkComponent> netCompList = new ArrayList<>(this.networkModel2Paste.getNetworkComponents().values());
-				for (int n = 0; n < netCompList.size(); n++) {
-
-					NetworkComponent networkComponent2Paste = netCompList.get(n);
-					NetworkComponent networkComponentPasted = this.graphController.getNetworkModel().getNetworkComponent(networkComponent2Paste.getId());
-					this.graphController.addAgent(networkComponentPasted);
-					
-					Vector<GraphElement> elements = this.networkModel2Paste.getGraphElementsFromNetworkComponent(networkComponentPasted);
-					for (int i = 0; i < elements.size(); i++) {
-						GraphElement graphElement = elements.get(i);
-						if (graphElement instanceof GraphEdge) {
-							// --- Pick edge ------------------------
-							this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
-						} else if (graphElement instanceof GraphNode) {
-							// --- Pick node ------------------------
-							GraphNode graphNodeCurrent = (GraphNode) graphElement;
-							this.getVisViewer().getPickedVertexState().pick(graphNodeCurrent, true);
-							
-							// --------------------------------------
-							// --- Remind the left upper GraphNode --
-							if (this.graphNodeUpperLeft2Paste==null) {
-								this.graphNodeUpperLeft2Paste = graphNodeCurrent;
-							} else {
-								// --- Consider coordinate system ---
-								Point2D positionOfGraphNodeAtLeftUpperPosition = this.getCoordinateSystemNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
-								Point2D positionOfGraphNodeCurrent = this.getCoordinateSystemNodePositionTransformer().transform(graphNodeCurrent.getPosition()); 
-								if (positionOfGraphNodeCurrent.getX()<positionOfGraphNodeAtLeftUpperPosition.getX()) {
-									this.graphNodeUpperLeft2Paste = graphNodeCurrent;
-								} else if (positionOfGraphNodeCurrent.getX()==positionOfGraphNodeAtLeftUpperPosition.getX()) {
-									if (positionOfGraphNodeCurrent.getY()<positionOfGraphNodeAtLeftUpperPosition.getY()) {
-										this.graphNodeUpperLeft2Paste = graphNodeCurrent;
-									}
-								}
-							}
-							// -------------------------------------------
-						}
-					}
-				}
 			}
 			
 			// ------------------------------------------------------
 			// --- React on the Mouse movement ---------------------- 
 			// ------------------------------------------------------
-			Point2D mousePositionLayout = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
+			Layout<GraphNode,GraphEdge> layout = this.getVisViewer().getGraphLayout();
+			GraphNode[] graphNodesToMove = this.getGraphNodesToMoveForPaste();
 			
 			// --- Calculate node movement --------------------------
+			Point2D mousePositionLayout = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
 			Point2D ulGraphNodeLayout = this.getCoordinateSystemNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
 			double shiftXLayout = mousePositionLayout.getX() - ulGraphNodeLayout.getX();
 			double shiftYLayout = mousePositionLayout.getY() - ulGraphNodeLayout.getY();
 			
-			// --- Create reminder array for nodes to move ---------- 
-			if (this.graphNodes2Paste==null) {
-				PickedState<GraphNode> ps = this.getVisViewer().getPickedVertexState();
-				this.graphNodes2Paste = new GraphNode[ps.getPicked().size()];
-				ps.getPicked().toArray(this.graphNodes2Paste);
-			}
-			
 			// --- Adjust position ----------------------------------
-			Layout<GraphNode,GraphEdge> layout = this.getVisViewer().getGraphLayout();
-			for (int i = 0; i < this.graphNodes2Paste.length; i++) {
+			for (int i = 0; i < graphNodesToMove.length; i++) {
 				// --- Set location in Layout -----------------------
-				Point2D locLayout = layout.transform(graphNodes2Paste[i]);
-                locLayout.setLocation(locLayout.getX()+shiftXLayout, locLayout.getY()+shiftYLayout);
-                layout.setLocation(graphNodes2Paste[i], locLayout);
+				Point2D locLayout = layout.transform(graphNodesToMove[i]);
+                locLayout.setLocation(locLayout.getX() + shiftXLayout, locLayout.getY() + shiftYLayout);
+                layout.setLocation(graphNodesToMove[i], locLayout);
                 // --- Set coordinate system location ---------------
-                graphNodes2Paste[i].setPosition(this.getCoordinateSystemNodePositionTransformer().inverseTransform(locLayout));
+                graphNodesToMove[i].setPosition(this.getCoordinateSystemNodePositionTransformer().inverseTransform(locLayout));
 			}
             this.getVisViewer().repaint();
             me.consume();
             
 		}
+	}
+	
+	/**
+	 * Returns the array of GraphNodes to move for paste.
+	 * @return the graph nodes to move for paste
+	 */
+	private GraphNode[] getGraphNodesToMoveForPaste() {
+		if (graphNodes2Paste==null) {
+			
+			if (this.networkModel2Paste==null) return null; 
+			
+			// --- Clear graph selection ----------------------------
+			this.getVisViewer().getPickedEdgeState().clear();
+			this.getVisViewer().getPickedVertexState().clear();
+			
+			// --- Mark all GraphElements as selected ---------------
+			List<NetworkComponent> netCompList = new ArrayList<>(this.networkModel2Paste.getNetworkComponents().values());
+			for (int n = 0; n < netCompList.size(); n++) {
+
+				NetworkComponent networkComponent2Paste = netCompList.get(n);
+				NetworkComponent networkComponentPasted = this.graphController.getNetworkModel().getNetworkComponent(networkComponent2Paste.getId());
+				this.graphController.addAgent(networkComponentPasted);
+				
+				Vector<GraphElement> elements = this.networkModel2Paste.getGraphElementsFromNetworkComponent(networkComponentPasted);
+				for (int i = 0; i < elements.size(); i++) {
+					GraphElement graphElement = elements.get(i);
+					if (graphElement instanceof GraphEdge) {
+						// --- Pick edge ----------------------------
+						this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
+					} else if (graphElement instanceof GraphNode) {
+						// --- Pick node ----------------------------
+						GraphNode graphNodeCurrent = (GraphNode) graphElement;
+						this.getVisViewer().getPickedVertexState().pick(graphNodeCurrent, true);
+						
+						// ------------------------------------------
+						// --- Remind the left upper GraphNode ------
+						if (this.graphNodeUpperLeft2Paste==null) {
+							this.graphNodeUpperLeft2Paste = graphNodeCurrent;
+						} else {
+							// --- Consider coordinate system -------
+							Point2D positionOfGraphNodeAtLeftUpperPosition = this.getCoordinateSystemNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
+							Point2D positionOfGraphNodeCurrent = this.getCoordinateSystemNodePositionTransformer().transform(graphNodeCurrent.getPosition()); 
+							if (positionOfGraphNodeCurrent.getX()<positionOfGraphNodeAtLeftUpperPosition.getX()) {
+								this.graphNodeUpperLeft2Paste = graphNodeCurrent;
+							} else if (positionOfGraphNodeCurrent.getX()==positionOfGraphNodeAtLeftUpperPosition.getX()) {
+								if (positionOfGraphNodeCurrent.getY()<positionOfGraphNodeAtLeftUpperPosition.getY()) {
+									this.graphNodeUpperLeft2Paste = graphNodeCurrent;
+								}
+							}
+						}
+						// ------------------------------------------
+					}
+				}
+			}
+			
+			// --- Prepare return value -----------------------------
+			PickedState<GraphNode> ps = this.getVisViewer().getPickedVertexState();
+			graphNodes2Paste = new GraphNode[ps.getPicked().size()];
+			ps.getPicked().toArray(graphNodes2Paste);
+			
+		}
+		return graphNodes2Paste;
 	}
 	
 	/**
@@ -683,8 +695,12 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				// --- Finalize paste action ------------------------
 				// --------------------------------------------------
 				if (isFinalizePasteAction==true) {
+					// --- Inform about changes -------------------------
+					this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+					this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel));
 					// --- Create an undoable action ----------------
 					this.graphController.getNetworkModelUndoManager().pasteNetworkModel(this.networkModel2Paste);
+					this.graphController.setProjectUnsaved();
 					
 				} else {
 					// --- Remove the added components --------------

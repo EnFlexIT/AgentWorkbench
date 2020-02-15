@@ -109,6 +109,7 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	 */
 	@Override
 	public Point2D transform(GraphNode graphNode) {
+		if (graphNode==null) return null;
 		return this.transform(graphNode.getPosition());
 	}
 	
@@ -119,6 +120,8 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	 * @return the point 2 D
 	 */
 	public Point2D transform(Point2D npGraphNode) {
+		
+		if (npGraphNode==null) return null;
 		
 		Point2D visualNodePosition = new Point2D.Double();
 		
