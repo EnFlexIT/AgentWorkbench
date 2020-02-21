@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.visualisation;
 
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.awb.env.networkModel.GraphElement;
@@ -195,19 +196,43 @@ public class DisplayAgentNotificationHandler {
 					NetworkComponent netCompLocal = networkModel.getNetworkComponent(netCompSend.getId());
 					// --- Case Object instance -----------------
 					if (dmNote.getDataModelPartUpdateIndex()==-1) {
-						// --- Take everything ------------------
-						netCompLocal.setDataModel(netCompSend.getDataModel());
+						if (netCompLocal.getDataModel() instanceof TreeMap<?, ?>) {
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmSentTreeMap = (TreeMap<String, Object[]>) netCompSend.getDataModel();
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmLocalTreeMap = (TreeMap<String, Object[]>) netCompLocal.getDataModel();
+							
+							for (String domainKey : dmSentTreeMap.keySet()) {
+								dmLocalTreeMap.put(domainKey, dmSentTreeMap.get(domainKey));
+							} 
+							
+						} else {
+							// --- Take everything ------------------
+							netCompLocal.setDataModel(netCompSend.getDataModel());
+						}
 					} else {
 						// --- Just take a specified detail -----
 						Object dataModelSend = netCompSend.getDataModel();
 						Object dataModelLocal = netCompLocal.getDataModel();
+						int updateIndex = dmNote.getDataModelPartUpdateIndex();
 						
 						if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
 							// --- Just take a specified detail -
 							Object[] dataModelSendArr = (Object[]) dataModelSend;
 							Object[] dataModelLocalArr = (Object[]) dataModelLocal;
-							int updateIndex = dmNote.getDataModelPartUpdateIndex();
 							dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
+						} else if (dataModelSend instanceof TreeMap<?, ?> && dataModelLocal instanceof TreeMap<?, ?>){
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmSentTreeMap = (TreeMap<String, Object[]>) dataModelSend;
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmLocalTreeMap = (TreeMap<String, Object[]>) dataModelLocal;
+							for (String domainKey : dmSentTreeMap.keySet()) {
+								Object[] domainArrayLocal =  dmLocalTreeMap.get(domainKey);
+								Object[] domainArraySent = dmSentTreeMap.get(domainKey);
+								
+								domainArrayLocal[updateIndex] = domainArraySent[updateIndex];
+								
+							} 
 						} else {
 							// --- Worst Case: Take everything --
 							netCompLocal.setDataModel(netCompSend.getDataModel());
@@ -223,19 +248,43 @@ public class DisplayAgentNotificationHandler {
 					GraphNode graphNodeLocal = (GraphNode) networkModel.getGraphElement(graphNodeSend.getId());
 					// --- Case Object instance -----------------
 					if (dmNote.getDataModelPartUpdateIndex()==-1) {
-						// --- Take everything ------------------
-						graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
+						
+						if (graphNodeLocal.getDataModel() instanceof TreeMap<?, ?>) {
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmSentTreeMap = (TreeMap<String, Object[]>) graphNodeSend.getDataModel();
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmLocalTreeMap = (TreeMap<String, Object[]>) graphNodeLocal.getDataModel();
+							
+							for (String domainKey : dmSentTreeMap.keySet()) {
+								dmLocalTreeMap.put(domainKey, dmSentTreeMap.get(domainKey));
+							} 
+							
+						} else {
+							// --- Take everything ------------------
+							graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
+						}
 					} else {
 						// --- Just take a specified detail -----
 						Object dataModelSend = graphNodeSend.getDataModel();
 						Object dataModelLocal = graphNodeLocal.getDataModel();
+						int updateIndex = dmNote.getDataModelPartUpdateIndex();
 						
 						if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
 							// --- Just take a specified detail -
 							Object[] dataModelSendArr = (Object[]) dataModelSend;
 							Object[] dataModelLocalArr = (Object[]) dataModelLocal;
-							int updateIndex = dmNote.getDataModelPartUpdateIndex();
 							dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
+						} else if (dataModelSend instanceof TreeMap<?, ?> && dataModelLocal instanceof TreeMap<?, ?>){
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmSentTreeMap = (TreeMap<String, Object[]>) dataModelSend;
+							@SuppressWarnings("unchecked")
+							TreeMap<String, Object[]> dmLocalTreeMap = (TreeMap<String, Object[]>) dataModelLocal;
+							for (String domainKey : dmSentTreeMap.keySet()) {
+								Object[] domainArrayLocal =  dmLocalTreeMap.get(domainKey);
+								Object[] domainArraySent = dmSentTreeMap.get(domainKey);
+								
+								domainArrayLocal[updateIndex] = domainArraySent[updateIndex];
+							}
 						} else {
 							// --- Worst Case: Take everything --
 							graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
