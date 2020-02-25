@@ -691,9 +691,11 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @param configurationInstances the configurationInstances to set
 	 */
 	public void setConfigurationInstances(final Object[] configurationInstances) {
-		this.getDynForm().setOntoArgsInstance(configurationInstances);
-		this.getDynTableJPanel().refreshTableModel();
-		this.setXMLText();
+		if (configurationInstances!=null) {
+			this.getDynForm().setOntoArgsInstance(configurationInstances);
+			this.getDynTableJPanel().refreshTableModel();
+			this.setXMLText();
+		}
 	}
 	
 	/**
