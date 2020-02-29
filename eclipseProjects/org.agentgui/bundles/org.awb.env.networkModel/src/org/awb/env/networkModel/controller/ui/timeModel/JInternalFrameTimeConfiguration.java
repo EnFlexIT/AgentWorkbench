@@ -1,14 +1,17 @@
 package org.awb.env.networkModel.controller.ui.timeModel;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
@@ -38,8 +41,13 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 	private static final Color bgColor = SystemColor.info;
 	
 	private JLabel jLabelNoTimeModel;
+	
+	private JScrollPane jScrollPaneContent;
 	private JComponent jComponentTimeModel;
 	
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> graphVisualizationPanel;
+	private ComponentListener graphVisualizationPanelListener;
+
 	
 	/**
 	 * Instantiates a new JInternalFrameTimeConfiguration.
@@ -68,6 +76,7 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
+		this.setContentPane(this.getJScrollPaneContent());
 		this.setContent();
 		this.setPosition();
 		this.setSize();
@@ -97,8 +106,13 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 	 * Sets the size.
 	 */
 	private void setSize() {
+
 		int width  = this.basicGraphGui.getVisualizationViewer().getWidth();
-		int height = (int) this.getJComponentTimeModel().getPreferredSize().getHeight(); 
+		int height = (int) this.getJComponentTimeModel().getPreferredSize().getHeight() + 5;
+		
+		// --- Keep height value if higher ------
+		if (this.getHeight()>height) height = this.getHeight();
+
 		this.setSize(width, height);
 	}
 	
@@ -116,6 +130,8 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 	public void registerAtDesktopAndSetVisible() {
 		if (this.isVisible()==false) {
 			super.registerAtDesktopAndSetVisible();
+			// --- Listen to component changes of the graph visualization viewer --------
+			this.getGraphVisualizationPanel();
 		}
 	}
 
@@ -124,12 +140,20 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 	 * Sets the content of this internal frame.
 	 */
 	private void setContent() {
-		JComponent jComponentTimeModel = this.getJComponentTimeModel();
-		this.getContentPane().remove(jComponentTimeModel);
-		this.getContentPane().add(jComponentTimeModel, BorderLayout.CENTER);
+		this.getJScrollPaneContent().remove(this.getJComponentTimeModel());
+		this.getJScrollPaneContent().setViewportView(this.getJComponentTimeModel());
 		this.getContentPane().validate();
 		this.getContentPane().repaint();
 	}
+	
+	public JScrollPane getJScrollPaneContent() {
+		if (jScrollPaneContent==null) {
+			jScrollPaneContent = new JScrollPane();
+			jScrollPaneContent.setBorder(BorderFactory.createEmptyBorder());
+		}
+		return jScrollPaneContent;
+	}
+	
 	private JLabel getJLabelNoTimeModel() {
 		if (jLabelNoTimeModel == null) {
 			jLabelNoTimeModel = new JLabel("No Time Model specified.");
@@ -167,7 +191,39 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 		if (jComponentTimeModel!=null && jComponentTimeModel instanceof JPanel4TimeModelConfiguration) {
 			((JPanel4TimeModelConfiguration)jComponentTimeModel).deleteObserver();
 		}
+		if (graphVisualizationPanel!=null) {
+			graphVisualizationPanel.removeComponentListener(this.getGraphVisualizationPanelListener());
+		}
 		super.dispose();
+	}
+	
+	
+	/**
+	 * Returns the graph visualization panel.
+	 * @return the graph visualization panel
+	 */
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getGraphVisualizationPanel() {
+		if (graphVisualizationPanel==null) {
+			graphVisualizationPanel = this.basicGraphGui.getVisualizationViewer();
+			graphVisualizationPanel.addComponentListener(this.getGraphVisualizationPanelListener());
+		}
+		return graphVisualizationPanel;
+	}
+	/**
+	 * Returns the graph visualization panel listener.
+	 * @return the graph visualization panel listener
+	 */
+	private ComponentListener getGraphVisualizationPanelListener() {
+		if (graphVisualizationPanelListener==null) {
+			graphVisualizationPanelListener = new ComponentAdapter() {
+				@Override
+				public void componentResized(ComponentEvent e) {
+					JInternalFrameTimeConfiguration.this.setPosition();
+					JInternalFrameTimeConfiguration.this.setSize();
+				}
+			};
+		}
+		return graphVisualizationPanelListener;
 	}
 	
 }
