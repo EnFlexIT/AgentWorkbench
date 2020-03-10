@@ -923,15 +923,13 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * @param searchFor the search for
 	 * @return the tree node
 	 */
-	@SuppressWarnings("unchecked")
 	public DefaultMutableTreeNode getTreeNode(String searchFor) {
 
 		DefaultMutableTreeNode nodeFound = null;
-		DefaultMutableTreeNode currNode = null;
 		String currNodeText;
 
-		for (Enumeration<DefaultMutableTreeNode> e = this.getRootNode().breadthFirstEnumeration(); e.hasMoreElements();) {
-			currNode = e.nextElement();
+		for (Enumeration<TreeNode> en = this.getRootNode().breadthFirstEnumeration(); en.hasMoreElements();) {
+			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) en.nextElement();
 			currNodeText = currNode.getUserObject().toString();
 			if (currNodeText.equals(searchFor)) {
 				nodeFound = currNode;

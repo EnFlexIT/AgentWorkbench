@@ -50,6 +50,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jfree.data.xy.XYSeries;
@@ -261,14 +262,13 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		
 		Vector<DefaultMutableTreeNode> toDeleteVect= new Vector<DefaultMutableTreeNode>();
 		
-		@SuppressWarnings("unchecked")
-		Enumeration<DefaultMutableTreeNode> e = node.depthFirstEnumeration();
-		if(e != null){
-			while (e.hasMoreElements()){
-				DefaultMutableTreeNode actualElement = e.nextElement();
-				if (actualElement.isLeaf() == true && matchAgentClass(actualElement) == false) {
+		Enumeration<TreeNode> en = node.depthFirstEnumeration();
+		if (en!=null) {
+			while (en.hasMoreElements()) {
+				DefaultMutableTreeNode actualElement = (DefaultMutableTreeNode) en.nextElement();
+				if (actualElement.isLeaf()==true && this.matchAgentClass(actualElement)==false) {
 					//--- immediate removal invalidates the enumeration ---
-	//				actualElement.removeFromParent();
+					//actualElement.removeFromParent();
 					// --- remember for later removal ---
 					toDeleteVect.add(actualElement); 
 				}
@@ -290,18 +290,17 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 			
 			Vector<DefaultMutableTreeNode> toDeleteVect= new Vector<DefaultMutableTreeNode>();
 			
-			@SuppressWarnings("unchecked")
-			Enumeration<DefaultMutableTreeNode> e = node.breadthFirstEnumeration();
-			if(e != null){
-				while (e.hasMoreElements()){
-					DefaultMutableTreeNode actualElement = e.nextElement();
-					if (actualElement.isLeaf() == true && key.isEmpty() == false && actualElement.toString().toLowerCase().contains(key.toLowerCase()) == false) {
+			Enumeration<TreeNode> e = node.breadthFirstEnumeration();
+			if (e != null) {
+				while (e.hasMoreElements()) {
+					DefaultMutableTreeNode actualElement = (DefaultMutableTreeNode) e.nextElement();
+					if (actualElement.isLeaf()==true && key.isEmpty()==false && actualElement.toString().toLowerCase().contains(key.toLowerCase())==false) {
 						//--- immediate removal invalidates the enumeration ---
-		//				actualElement.removeFromParent();
+						//actualElement.removeFromParent();
 						// --- remember for later removal ---
 						toDeleteVect.add(actualElement); 
 					}
-					if(actualElement.isLeaf() == true && actualElement.toString().toLowerCase().contains(key.toLowerCase()) == true){
+					if (actualElement.isLeaf()==true && actualElement.toString().toLowerCase().contains(key.toLowerCase())==true) {
 						//--- (re)expand collapsed parent if search string matches ---
 						int level = actualElement.getLevel() -1;
 						StringBuilder sb = new StringBuilder();
@@ -518,7 +517,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		            	// --- toggle thread/agent chart visibility on main chart ---
 	        	    	ThreadInfoStorageAgent tis = (ThreadInfoStorageAgent)userObject;
 	        	    	boolean isSelected = leafSelected.get(tis.getName()).booleanValue();
-	        	    	leafSelected.put(tis.getName(),new Boolean(!isSelected));
+	        	    	leafSelected.put(tis.getName(), Boolean.valueOf(!isSelected));
 	        	    	nodeName = tis.getName();
 	        	    	
 		                iterator = threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().keySet().iterator();
@@ -712,7 +711,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	    	    		isSelected = leafSelected.get(tia.getName()).booleanValue();
 	    	    	}else{
 	    	    		isSelected = false;
-	    	    		leafSelected.put(tia.getName(), new Boolean(false));    	    		
+	    	    		leafSelected.put(tia.getName(), false);    	    		
 	    	    	}
 	    	    	
 	    	    	if(isSelected == true){
