@@ -15,7 +15,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/stax-ex.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/txw2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xsom.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

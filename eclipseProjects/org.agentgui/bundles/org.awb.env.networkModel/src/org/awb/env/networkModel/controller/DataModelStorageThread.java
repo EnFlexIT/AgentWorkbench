@@ -70,6 +70,9 @@ public class DataModelStorageThread extends Thread {
 		LOAD
 	}
 
+	// --- Variable for debugging -------------------------
+	private boolean debug = false;
+	
 	// --- Variables for all ------------------------------
 	private GraphEnvironmentController graphController;
 
@@ -194,6 +197,7 @@ public class DataModelStorageThread extends Thread {
 		if (noOfVector>this.elementsToConvert) noOfVector=this.elementsToConvert;
 		if (noOfVector>15) noOfVector=15;
 		if (noOfVector<=0) noOfVector=1;
+		if (this.debug==true) noOfVector = 1;
 		
 		// --- Define separation Vector -----------------------------
 		Vector<Vector<DataModelNetworkElement>> splitVector = new Vector<>();
@@ -406,6 +410,9 @@ public class DataModelStorageThread extends Thread {
 					// --- Get DataModelAdapter -------------------------------
 					NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
 					if (netCompDataModelAdapter!=null) {
+						if (this.debug==true) {
+							System.out.println("["+ this.getClass().getSimpleName() +"] Load data model for " + networkElement.getClass().getSimpleName()  + " " + networkElement.getId() + " ...");
+						}
 						// --- Load data model instance ------------------------
 						AbstractDataModelStorageHandler storageHandler = netCompDataModelAdapter.getDataModelStorageHandlerInternal();
 						Object dataModel = storageHandler.loadDataModel(networkElement);

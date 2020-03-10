@@ -14,7 +14,6 @@ Import-Package: javax.inject;version="1.0.0",
  org.slf4j;version="1.7.10"
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
- de.enflexit.jaxb,
  de.enflexit.oidc,
  de.enflexit.oshi,
  de.enflexit.db.hibernate,
