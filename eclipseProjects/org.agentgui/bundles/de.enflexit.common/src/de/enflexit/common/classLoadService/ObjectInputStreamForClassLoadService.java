@@ -31,7 +31,7 @@ public class ObjectInputStreamForClassLoadService extends ObjectInputStream {
     }
 	
 	private Class<?> utilityClass;
-
+	private ObjectInputStreamObjectFilter objectFilter;
 	
 	/**
 	 * Instantiates a new ObjectInputStream that uses the class load service.
@@ -88,6 +88,29 @@ public class ObjectInputStreamForClassLoadService extends ObjectInputStream {
 			}
 		}
 		return BaseClassLoadServiceUtility.forName(className);
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here the handling for individual filter are implemented -------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Sets the {@link ObjectInputStreamObjectFilter} to apply and enable to resolve objects from the stream.
+	 * @param objectFilter the object filter to apply
+	 */
+	public void setObjectInputStreamObjectFilter(ObjectInputStreamObjectFilter objectFilter) {
+		this.objectFilter = objectFilter;
+		this.enableResolveObject(this.objectFilter!=null);
+	}
+	/* (non-Javadoc)
+	 * @see java.io.ObjectInputStream#resolveObject(java.lang.Object)
+	 */
+	@Override
+	protected Object resolveObject(Object obj) throws IOException {
+		if (this.objectFilter!=null) {
+			return objectFilter.filterObject(obj);
+		} 
+		return super.resolveObject(obj);
 	}
 	
 }
