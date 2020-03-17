@@ -5,10 +5,13 @@
   * [Agent.Workbench Features](overview/agentworkbench-features.md)
   * [Agent.Workbench Use Cases](overview/agent.workbench-use-cases.md)
 
-## Application Development
+## Get started
 
-* [Getting Started: Installations](application-development/getting-started.md)
-* [Create a Plug-in for an Agent Project](application-development/create-a-project-plugin.md)
+* [Installations](get-started/installations.md)
+
+## Tutorials & samples
+
+* [Create a Plug-in for an Agent Project](tutorials-and-samples/create-a-project-plugin.md)
 
 ## AWB Capabilities
 
