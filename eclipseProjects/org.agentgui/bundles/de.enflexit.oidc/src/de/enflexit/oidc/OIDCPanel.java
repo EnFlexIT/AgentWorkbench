@@ -60,7 +60,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	public static final String DEBUG_CLIENT_ID = "testclient";
 	public static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
-	private static final String COMMAND_CONNECT = "connectOIDC";
+//	private static final String COMMAND_CONNECT = "connectOIDC";
 
 	private OIDCAuthorization owner;
 
@@ -73,16 +73,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private JButton jButtonConnect;
 	private JLabel jLabelResult;
 
-	/**
-	 * Sets the parent.
-	 *
-	 * @param parent the parent
-	 * @return the OIDC panel
-	 */
-	public OIDCPanel setParent(ActionListener parent) {
-		this.parentGUI = parent;
-		return this; // for chaining
-	}
 
 	/**
 	 * Instantiates a new OIDC panel.
@@ -150,12 +140,22 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	}
 
+	/**
+	 * Sets the parent.
+	 *
+	 * @param parent the parent
+	 * @return the OIDC panel
+	 */
+	public OIDCPanel setParent(ActionListener parent) {
+		this.parentGUI = parent;
+		return this; // for chaining
+	}
 	
 	private JLabel getJLabelHeader() {
 		if (jLabelHeader==null) {
 			jLabelHeader = new JLabel();
 			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelHeader.setText("Agent.GUI & EOM: " + owner.translate(this, "Web Service Authentifizierung"));
+			jLabelHeader.setText("Agent.Workbench & EOM: " + owner.translate(this, "Web Service Authentifizierung"));
 		}
 		return jLabelHeader;
 	}
@@ -170,7 +170,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jLabelUsername;
 	}
-
 	/**
 	 * Gets the JTextField user name.
 	 * @return the JTextField user name
@@ -180,6 +179,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			jTextFieldUsername = new JTextField();
 			jTextFieldUsername.setPreferredSize(new Dimension(100, 26));
 			jTextFieldUsername.setColumns(10);
+			jTextFieldUsername.addActionListener(this);
 		}
 		return jTextFieldUsername;
 	}
@@ -194,16 +194,16 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jLabelPassword;
 	}
-
 	/**
-	 * Gets the JLabel password.
-	 * @return the JLabel password
+	 * Gets the JPasswordField password.
+	 * @return the JPasswordField password
 	 */
 	public JPasswordField getJPasswordField() {
 		if (jPasswordField == null) {
 			jPasswordField = new JPasswordField();
 			jPasswordField.setPreferredSize(new Dimension(100, 26));
 			jPasswordField.setColumns(10);
+			jPasswordField.addActionListener(this);
 		}
 		return jPasswordField;
 	}
@@ -216,7 +216,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			jButtonConnect = new JButton(owner.translate(this, "Verbinden"));
 			jButtonConnect.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonConnect.setForeground(new Color(0, 0, 153));
-			jButtonConnect.setActionCommand(COMMAND_CONNECT);
 			jButtonConnect.addActionListener(this);
 		}
 		return jButtonConnect;
@@ -241,14 +240,14 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 * @param message the message
 	 * @param userName the user name
 	 */
-	public void displayResult(boolean successful, String message, String userName) {
+	public void displayResult(boolean successful, String message) {
 		this.getJLabelResult().setVisible(true);
-		if (successful) {
+		if (successful==true) {
 			this.getJLabelResult().setText(owner.translate(this, "Erfolgreich"));
 			this.getJLabelResult().setForeground(new Color(0, 153, 0));
 			this.getParent().getParent().getParent().setVisible(false);
 		} else {
-			this.getJLabelResult().setText(owner.translate(this, "Fehlgeschlagen")+": "+message);
+			this.getJLabelResult().setText(owner.translate(this, "Fehlgeschlagen") + ": "+message);
 			this.getJLabelResult().setForeground(new Color(153, 0, 0));
 		}
 	}
@@ -259,15 +258,27 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
-		String actCMD = ae.getActionCommand();
-		if (actCMD.equalsIgnoreCase(COMMAND_CONNECT)) {
-			char[] pswd = getJPasswordField().getPassword();
-			String userName = getJTextFieldUsername().getText().trim();
-			try {
-				displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)),null, userName);
-			} catch (URISyntaxException | IOException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
-				displayResult(false, e.getLocalizedMessage(), null);
-				e.printStackTrace();
+		char[] pswd = getJPasswordField().getPassword();
+		String userName = getJTextFieldUsername().getText().trim();
+
+		if (ae.getSource()==this.getJTextFieldUsername()) {
+			this.getJPasswordField().requestFocus();
+			
+		} else if (ae.getSource()==this.getJPasswordField()) {
+			// --- Enter in password field ----------------
+			if (this.isValidEdit(userName, pswd)==true) {
+				this.getJButtonConnect().doClick();
+			}
+			
+		} else if (ae.getSource()==this.getJButtonConnect()) {
+			// --- Do Connect action ----------------------
+			if (this.isValidEdit(userName, pswd)==true) {
+				try {
+					this.displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)), null);
+				} catch (URISyntaxException | IOException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException ex) {
+					this.displayResult(false, ex.getLocalizedMessage());
+					ex.printStackTrace();
+				}
 			}
 
 		} else {
@@ -277,4 +288,26 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 	}
 
+	/**
+	 * Checks if the current edits are valid enough.
+	 *
+	 * @param userName the user name
+	 * @param pswd the pswd
+	 * @return true, if is valid edit
+	 */
+	private boolean isValidEdit(String userName, char[] pswd) {
+		
+		boolean isValid = true;
+		if (userName==null || userName.isEmpty()==true) {
+			this.displayResult(false, owner.translate(this, "Fehlender Benutzer"));
+			isValid = false;
+		}
+		
+		if (isValid==true && pswd.length==0) {
+			this.displayResult(false, owner.translate(this, "Fehlendes Passwort"));
+			isValid = false;
+		}
+		return isValid;
+	}
+	
 }

@@ -47,14 +47,24 @@ public class JPanelForActions extends JPanel implements MouseListener {
 	private ArrayList<ActionListener> listener = null;
 	private boolean pauseFireUpdates = false;
 	
+	
 	/**
 	 * Instantiates a new JPanel that can fire ActionEvents.
 	 */
 	public JPanelForActions() {
-		listener = new ArrayList<ActionListener>();
-		addMouseListener(this);
+		this(true);
 	}
-	
+	/**
+	 * Instantiates a new JPanel that can fire ActionEvents.
+	 * @param isAddMouseClickedListener the indicator to also add a listener that reacts on mouse clicked events
+	 */
+	public JPanelForActions(boolean isAddMouseClickedListener) {
+		listener = new ArrayList<ActionListener>();
+		if (isAddMouseClickedListener==true) {
+			this.addMouseListener(this);
+		}
+	}
+
 	/**
 	 * Fire update.
 	 * @param evt the ActionEvent
@@ -98,7 +108,7 @@ public class JPanelForActions extends JPanel implements MouseListener {
 	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 	 */
 	public void mouseClicked(MouseEvent evt) {
-		fireUpdate(new ActionEvent(this, 0, "command"));
+		this.fireUpdate(new ActionEvent(this, 0, "command"));
 	}
 	
 	/* (non-Javadoc)
