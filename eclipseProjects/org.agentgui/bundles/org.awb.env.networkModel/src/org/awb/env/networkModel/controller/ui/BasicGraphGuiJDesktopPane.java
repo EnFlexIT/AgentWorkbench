@@ -264,7 +264,6 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 */
 	public void setUpdateDataSeries(final UpdateDataSeries updateDataSeries) {
 		
-		// ----------------------------------------------------------
 		// --- Apply the update to the NetworkModel first -----------
 		try {
 			updateDataSeries.applyToNetworkModelOnly(this.graphController.getNetworkModel());
@@ -274,11 +273,11 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 			return;
 		}
 
-		// ----------------------------------------------------------
 		// --- Apply to an open property window, if there is one ----
 		Vector<String> internalFramesTitles = new Vector<String>(getHashMapEditorFrames().keySet());
-		for (String internalFrameTitles : internalFramesTitles) {
-			JInternalFrame internalFrame = getHashMapEditorFrames().get(internalFrameTitles);
+		for (int i = 0; i < internalFramesTitles.size(); i++) {
+			String intFrameTitle = internalFramesTitles.get(i);
+			JInternalFrame internalFrame = getHashMapEditorFrames().get(intFrameTitle);
 			if (internalFrame instanceof BasicGraphGuiProperties) {
 				// --- Put notification into the property dialog ---- 
 				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;

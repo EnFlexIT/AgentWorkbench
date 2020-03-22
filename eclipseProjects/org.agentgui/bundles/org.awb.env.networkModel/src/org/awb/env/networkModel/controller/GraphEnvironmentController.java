@@ -171,7 +171,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.util.Observable#notifyObservers(java.lang.Object)
 	 */
 	@Override
@@ -573,20 +572,37 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
 	}
 
+	
 	/**
 	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
 	 */
 	public void loadDataModelNetworkElements() {
-		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING).start();
+		this.loadDataModelNetworkElements(null);
 	}
+	/**
+	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to load or reload
+	 */
+	public void loadDataModelNetworkElements(Vector<DataModelNetworkElement> netElementVector) {
+		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, netElementVector).start();
+	}
+	
 	/**
 	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
 	 */
 	public void saveDataModelNetworkElements() {
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING).start();
+		this.saveDataModelNetworkElements(null);
+	}
+	/**
+	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to save
+	 */
+	public void saveDataModelNetworkElements(Vector<DataModelNetworkElement> netElementVector) {
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, netElementVector).start();
 		this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
 	}
+	
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here, the handling of setup data model storage handler can be found -----

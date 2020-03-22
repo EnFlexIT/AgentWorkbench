@@ -79,6 +79,8 @@ public class DataModelStorageThread extends Thread {
 	// --- Variables for the organizer --------------------
 	private DataModelStorageThread organizerThread;
 	private OrganizerAction organizerAction;
+	private Vector<DataModelNetworkElement> networkElementsToLoadOrSave;
+
 	private int elementsToConvert;
 	private int elementsConverted;
 	private int percentProgressOld = -1;
@@ -102,10 +104,12 @@ public class DataModelStorageThread extends Thread {
 	 *
 	 * @param graphController the graph controller
 	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_LOADING} or {@link OrganizerAction#ORGANIZE_SAVING}
+	 * @param networkElementsToLoadOrSave the Vector of network elements to load or save (<code>null</code> is allowed)
 	 */
-	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action) {
+	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action, Vector<DataModelNetworkElement> networkElementsToLoadOrSave) {
 		this.graphController = graphController;
 		this.organizerAction = action;
+		this.networkElementsToLoadOrSave = networkElementsToLoadOrSave;
 		if (action==OrganizerAction.ORGANIZE_SAVING) {
 			this.setName("Encoding-Manager");
 		} else if (action==OrganizerAction.ORGANIZE_LOADING) {
@@ -177,7 +181,7 @@ public class DataModelStorageThread extends Thread {
 		this.firstDisplayTime = System.currentTimeMillis() + this.firstDisplayWaitTime;
 
 		// --- Summarize NetworkComponent's and GraphNode's --------- 
-		Vector<DataModelNetworkElement> sumCompVector = this.getNetworkObjectsToLoadOrSave();
+		Vector<DataModelNetworkElement> sumCompVector = this.getNetworkElementsToLoadOrSave();
 		this.elementsToConvert = sumCompVector.size();
 		if (this.elementsToConvert==0) return;
 		
@@ -240,6 +244,7 @@ public class DataModelStorageThread extends Thread {
     		synchronized (this.finalizer) {
     			this.finalizer.wait();		
     		}
+    		
     	} catch (InterruptedException ie) {
 			ie.printStackTrace();
 		}
@@ -249,66 +254,92 @@ public class DataModelStorageThread extends Thread {
     		SwingUtilities.invokeLater(new Runnable() {
     			@Override
     			public void run() {
-    		    	getProgressMonitor().setVisible(false);
-    		    	getProgressMonitor().dispose();
-    		    	graphController.setBasicGraphGuiVisViewerActionOnTop(false);
-    		    	if (Application.getMainWindow()!=null) {
-    		    		Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
-    		    	}
-					Application.setStatusBarMessageReady();
+    				try {
+    					// --- Close progress monitor ---------------
+    					DataModelStorageThread.this.getProgressMonitor().setVisible(false);
+    					DataModelStorageThread.this.getProgressMonitor().dispose();
+    					
+    					// --- Free application status --------------
+    					DataModelStorageThread.this.graphController.setBasicGraphGuiVisViewerActionOnTop(false);
+    					if (Application.getMainWindow()!=null) {
+    						Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
+    					}
+    					Application.setStatusBarMessageReady();
+
+    					// --- Inform Listener ----------------------
+    					int nmNoteReason = -1;
+    					switch (organizerAction) {
+						case ORGANIZE_LOADING:
+							nmNoteReason = NetworkModelNotification.NETWORK_MODEL_NetworkElementDataModelReLoaded;
+							break;
+						case ORGANIZE_SAVING:
+							nmNoteReason = NetworkModelNotification.NETWORK_MODEL_NetworkElementDataModelSaved;
+							break;
+						}
+    					DataModelStorageThread.this.graphController.notifyObservers(new NetworkModelNotification(nmNoteReason));
+    					
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
     			}
     		});    		
     	}
-		
+
+    	// --- Start Garbage Collector ------------------------------
+    	Application.startGarbageCollection();
 	}
 	
 	/**
 	 * Returns the network objects where data model have to be to saved or loaded.
 	 * @return the network objects to en- decode
 	 */
-	private Vector<DataModelNetworkElement> getNetworkObjectsToLoadOrSave() {
+	private Vector<DataModelNetworkElement> getNetworkElementsToLoadOrSave() {
 
 		if (this.organizerAction==null) return new Vector<>();
 		
-		// --- Define the result vector -----------------------------
-		Vector<DataModelNetworkElement> reducedNetElementVector = new Vector<>();
+		if (networkElementsToLoadOrSave==null) {
 
-		// --- Work on the NetworkComponents ------------------------
-		Object[] netComps = this.graphController.getNetworkModel().getNetworkComponents().values().toArray();
-		for (int i = 0; i < netComps.length; i++) {
+			// --- Define the result vector -------------------------
+			networkElementsToLoadOrSave = new Vector<>();
 			
-			NetworkComponent netComp = (NetworkComponent) netComps[i];
-			switch (this.organizerAction) {
-			case ORGANIZE_SAVING:
-				if (netComp.getDataModel()!=null) {
-					reducedNetElementVector.add(netComp);
+			// --- Work on the NetworkComponents --------------------
+			Object[] netComps = this.graphController.getNetworkModel().getNetworkComponents().values().toArray();
+			for (int i = 0; i < netComps.length; i++) {
+				
+				NetworkComponent netComp = (NetworkComponent) netComps[i];
+				switch (this.organizerAction) {
+				case ORGANIZE_SAVING:
+					if (netComp.getDataModel()!=null) {
+						networkElementsToLoadOrSave.add(netComp);
+					}
+					break;
+					
+				case ORGANIZE_LOADING:
+					networkElementsToLoadOrSave.add(netComp);
+					break;
 				}
-				break;
-
-			case ORGANIZE_LOADING:
-				reducedNetElementVector.add(netComp);
-				break;
 			}
-		}
-
-		// --- Work on the GrphNodes --------------------------------
-		Object[] graphNodes = this.graphController.getNetworkModel().getGraph().getVertices().toArray();
-		for (int i = 0; i < graphNodes.length; i++) {
 			
-			GraphNode graphNode = (GraphNode) graphNodes[i];
-			switch (this.organizerAction) {
-			case ORGANIZE_SAVING:
-				if (graphNode.getDataModel()!=null) {
-					reducedNetElementVector.add(graphNode);
+			// --- Work on the GraphNodes ---------------------------
+			Object[] graphNodes = this.graphController.getNetworkModel().getGraph().getVertices().toArray();
+			for (int i = 0; i < graphNodes.length; i++) {
+				
+				GraphNode graphNode = (GraphNode) graphNodes[i];
+				switch (this.organizerAction) {
+				case ORGANIZE_SAVING:
+					if (graphNode.getDataModel()!=null) {
+						networkElementsToLoadOrSave.add(graphNode);
+					}
+					break;
+					
+				case ORGANIZE_LOADING:
+					networkElementsToLoadOrSave.add(graphNode);
+					break;
 				}
-				break;
-
-			case ORGANIZE_LOADING:
-				reducedNetElementVector.add(graphNode);
-				break;
 			}
+			
 		}
-		return reducedNetElementVector;
+		return networkElementsToLoadOrSave;
 	}
 	
 	/**

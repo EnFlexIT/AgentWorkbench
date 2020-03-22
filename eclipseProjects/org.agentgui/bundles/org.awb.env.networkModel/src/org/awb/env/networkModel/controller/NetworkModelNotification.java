@@ -86,7 +86,8 @@ public class NetworkModelNotification {
 	public static final int NETWORK_MODEL_MapScaleChanged = 52;
 	
 	public static final int NETWORK_MODEL_ComponentDataModelUpdated = 60;
-	
+	public static final int NETWORK_MODEL_NetworkElementDataModelReLoaded = 61;
+	public static final int NETWORK_MODEL_NetworkElementDataModelSaved = 62;
 	
 	/** The reason. */
 	private int reason = 0;

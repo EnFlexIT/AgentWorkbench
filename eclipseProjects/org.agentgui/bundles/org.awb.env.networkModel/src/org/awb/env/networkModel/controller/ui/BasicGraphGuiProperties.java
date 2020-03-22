@@ -36,6 +36,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -91,7 +93,7 @@ import jade.core.AID;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame implements EomVisualizationHostContainer, ActionListener {
+public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame implements Observer, ActionListener, EomVisualizationHostContainer {
 
 	private static final long serialVersionUID = -868257113588339559L;
 
@@ -168,7 +170,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		// --- Call to the super-class ----------
 		this.registerAtDesktopAndSetVisible();
-		
+		this.graphController.addObserver(this);
 	}
 	
 	/**
@@ -708,13 +710,11 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			if (diaAnswer==JOptionPane.YES_OPTION) {
 				// --- Save to node or component ----------
 				if (this.doSave()==true) {
-					this.setVisible(false);
-					this.dispose();
+					this.setInvisibleAndDispose();
 				}
 				
 			} else if (diaAnswer==JOptionPane.NO_OPTION){
-				this.setVisible(false);
-				this.dispose();
+				this.setInvisibleAndDispose();
 				
 			} else if (diaAnswer==JOptionPane.CANCEL_OPTION){
 				// --- Do nothing ---- 
@@ -722,9 +722,17 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			
 		} else {
 			// --- Data model has NOT changed ! ---
-			this.setVisible(false);
-			this.dispose();
+			this.setInvisibleAndDispose();
 		}
+	}
+	
+	/**
+	 * Sets property dialog invisible and disposes it.
+	 */
+	private void setInvisibleAndDispose() {
+		this.graphController.deleteObserver(this);
+		this.setVisible(false);
+		this.dispose();
 	}
 	
 	/**
@@ -965,7 +973,25 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			}
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object updateObject) {
+		
+		if (updateObject instanceof NetworkModelNotification) {
+			NetworkModelNotification nmNote = (NetworkModelNotification) updateObject;
+			switch (nmNote.getReason()) {
+			case NetworkModelNotification.NETWORK_MODEL_NetworkElementDataModelReLoaded:
+				// TODO
+				System.err.println("ToDo: Do somthing with the network model reload!");
+				break;
+				
+			}
+		}
+		
+	}
 	
 	/**
 	 * The Class JToolBarButton.
@@ -1009,5 +1035,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		}
 		
 	}
+
 	
 }
