@@ -201,7 +201,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				int movementX = 10;
 				int movementY = 22;
 				Point lastEditorPosition = this.graphDesktop.getLastOpenedEditor().getLocation();
-				this.setLocation(lastEditorPosition.x+movementX, lastEditorPosition.y+movementY);
+				this.setLocation(lastEditorPosition.x + movementX, lastEditorPosition.y + movementY);
 			}
 			
 		} else {
@@ -984,10 +984,15 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			NetworkModelNotification nmNote = (NetworkModelNotification) updateObject;
 			switch (nmNote.getReason()) {
 			case NetworkModelNotification.NETWORK_MODEL_NetworkElementDataModelReLoaded:
-				// TODO
-				System.err.println("ToDo: Do somthing with the network model reload!");
+				// --- Create an internal DataModelNotification to reload the data model ---------- 
+				DataModelNotification dmNote = null;
+				if (this.graphNode!=null) {
+					dmNote = new DataModelNotification(this.graphNode);
+				} else {
+					dmNote = new DataModelNotification(this.networkComponent);
+				}
+				this.setDataModelNotification(dmNote);
 				break;
-				
 			}
 		}
 		
