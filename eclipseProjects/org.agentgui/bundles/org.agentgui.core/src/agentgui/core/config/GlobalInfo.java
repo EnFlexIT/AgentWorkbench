@@ -2050,7 +2050,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @param component the JComponent
 	 * @return the owner frame for component or null, if no component was specified
 	 */
-	public Frame getOwnerFrameForComponent(JComponent component) {
+	public Frame getOwnerFrameForComponent(Component component) {
 		if (component== null) return null;
 		return this.getOwnerFrameForContainer(component.getParent());
 	}

@@ -577,29 +577,33 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
 	 */
 	public void loadDataModelNetworkElements() {
-		this.loadDataModelNetworkElements(null);
+		this.loadDataModelNetworkElements(true, null);
 	}
 	/**
 	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
+	 *
+	 * @param isShowProgress the indicator to show a progress monitor or not
 	 * @param netElementVector the explicit vector of DataModelNetworkElement's to load or reload
 	 */
-	public void loadDataModelNetworkElements(Vector<DataModelNetworkElement> netElementVector) {
+	public void loadDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector) {
 		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, netElementVector).start();
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, isShowProgress, netElementVector).start();
 	}
 	
 	/**
 	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
 	 */
 	public void saveDataModelNetworkElements() {
-		this.saveDataModelNetworkElements(null);
+		this.saveDataModelNetworkElements(true, null);
 	}
 	/**
 	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
+	 *
+	 * @param isShowProgress the indicator to show a progress monitor or not
 	 * @param netElementVector the explicit vector of DataModelNetworkElement's to save
 	 */
-	public void saveDataModelNetworkElements(Vector<DataModelNetworkElement> netElementVector) {
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, netElementVector).start();
+	public void saveDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector) {
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, isShowProgress, netElementVector).start();
 		this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
 	}
 	
@@ -1008,9 +1012,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 				basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisualizationViewer();
 				if (basicGraphGuiVisViewer != null) {
 					basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
-					if (actionOnTopIsRunning == false) {
+					if (actionOnTopIsRunning==false) {
 						basicGraphGuiVisViewer.repaint();
-						basicGraphGuiVisViewer.requestFocus();
 					}
 				}
 			}

@@ -29,10 +29,13 @@
 package org.awb.env.networkModel.controller;
 
 import java.awt.Cursor;
+import java.awt.Window;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import org.agentgui.gui.AwbProgressMonitor;
@@ -75,7 +78,8 @@ public class DataModelStorageThread extends Thread {
 	
 	// --- Variables for all ------------------------------
 	private GraphEnvironmentController graphController;
-
+	private boolean isShowProgressMonitor;
+	
 	// --- Variables for the organizer --------------------
 	private DataModelStorageThread organizerThread;
 	private OrganizerAction organizerAction;
@@ -104,11 +108,13 @@ public class DataModelStorageThread extends Thread {
 	 *
 	 * @param graphController the graph controller
 	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_LOADING} or {@link OrganizerAction#ORGANIZE_SAVING}
+	 * @param isShowProgressMonitor the indicator to show (or not) the progress monitor
 	 * @param networkElementsToLoadOrSave the Vector of network elements to load or save (<code>null</code> is allowed)
 	 */
-	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action, Vector<DataModelNetworkElement> networkElementsToLoadOrSave) {
+	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action, boolean isShowProgressMonitor, Vector<DataModelNetworkElement> networkElementsToLoadOrSave) {
 		this.graphController = graphController;
 		this.organizerAction = action;
+		this.isShowProgressMonitor = isShowProgressMonitor;
 		this.networkElementsToLoadOrSave = networkElementsToLoadOrSave;
 		if (action==OrganizerAction.ORGANIZE_SAVING) {
 			this.setName("Encoding-Manager");
@@ -223,7 +229,7 @@ public class DataModelStorageThread extends Thread {
 		}
 
 		// --- Set progress to 0 ------------------------------------
-		this.setProgressToProgressMonitor(0);
+		this.updateProgressMonitor(0);
 		
 		// --- Start thread for each element vector -----------------
 		for (int i = 0; i < splitVector.size(); i++) {
@@ -350,6 +356,7 @@ public class DataModelStorageThread extends Thread {
 		this.elementsConverted++;
 		if (this.elementsConverted>=this.elementsToConvert) {
 			// --- Conversion is done -------------------------------
+			this.updateProgressMonitor(100);
     		synchronized (this.finalizer) {
     			this.finalizer.notify();		
     		}
@@ -362,7 +369,7 @@ public class DataModelStorageThread extends Thread {
 
 		// --- Only display progress, if procedure is too long ------
 		if (System.currentTimeMillis()>this.firstDisplayTime && percentProgressNew!=percentProgressOld) {
-			this.setProgressToProgressMonitor(percentProgressNew);
+			this.updateProgressMonitor(percentProgressNew);
 		}
 		
 	}
@@ -371,23 +378,47 @@ public class DataModelStorageThread extends Thread {
 	 * Sets the specified progress to the progress monitor.
 	 * @param percentProgressNew the new progress to progress monitor
 	 */
-	private void setProgressToProgressMonitor(final int percentProgressNew) {
+	private void updateProgressMonitor(final int percentProgressNew) {
 		
 		if (this.isHeadlessOperation==true) return;
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				// --- Set Progress monitor ---------------------
-				getProgressMonitor().setProgress(percentProgressNew);
-				percentProgressOld = percentProgressNew;
-				// --- Show progress monitor if not visible ----- 
-				if (getProgressMonitor().isVisible()==false) {
-					getProgressMonitor().setVisible(true);
-				}
+		if (percentProgressNew==0 || percentProgressNew==100) {
+			// --- Invoke and wait ------------------------
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						DataModelStorageThread.this.setProgressToProgressMonitorInternal(percentProgressNew);	
+					}
+				});
+				
+			} catch (InvocationTargetException | InterruptedException ex) {
+				ex.printStackTrace();
 			}
-		});
+		} else {
+			// --- Invoke later ---------------------------
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					DataModelStorageThread.this.setProgressToProgressMonitorInternal(percentProgressNew);
+				}
+			});
+		}
 	}
+	/**
+	 * Internally sets the percentage progress to the progress monitor .
+	 * @param percentProgressNew the new progress to progress monitor internal
+	 */
+	private void setProgressToProgressMonitorInternal(int percentProgressNew) {
+
+		this.getProgressMonitor().setProgress(percentProgressNew);
+		this.percentProgressOld = percentProgressNew;
+		// --- Show progress monitor if not visible ----- 
+		if (this.isShowProgressMonitor==true && this.getProgressMonitor().isVisible()==false) {
+			this.getProgressMonitor().setVisible(true);
+		}
+	}
+	
 	
 	/**
 	 * Returns the progress monitor for the current action.
@@ -414,14 +445,19 @@ public class DataModelStorageThread extends Thread {
 
 			}
 	    	
+			// --- Determine parent component for progress ----------
+			JComponent parentComponent = this.graphController.getGraphEnvironmentControllerGUI();
+			Window ownerWindow = Application.getGlobalInfo().getOwnerFrameForComponent(parentComponent);
+			
 			// --- Initiate ProgressMonitor -------------------------
 			progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
-			progressMonitor.setOwner(Application.getGlobalInfo().getOwnerFrameForComponent(this.graphController.getGraphEnvironmentControllerGUI()));
+			progressMonitor.setOwner(ownerWindow);
 			progressMonitor.setAllow2Cancel(false);
 			
 		}
 		return progressMonitor;
 	}
+
 	
 	// --------------------------------------------------------------------------------------------
 	// --- From here, the worker methods can be found ---------------------------------------------

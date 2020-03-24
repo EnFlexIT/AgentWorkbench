@@ -38,7 +38,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyVetoException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -105,8 +104,9 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor, IPro
 		if (windowTitle!=null)  this.windowTitle = windowTitle;
 		if (headerText!=null)   this.headerText = headerText;
 		if (progressText!=null) this.progressText = progressText;
-		this.lookAndFeelClassName = lookAndFeelClassName;
+		this.parentDesktopPane = parentDesktopPane;
 		this.iconImage = iconImage;
+		this.lookAndFeelClassName = lookAndFeelClassName;
 	}
 
 	/* (non-Javadoc)
@@ -181,13 +181,6 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor, IPro
 				int top = (this.parentDesktopPane.getHeight() - internalFrame.getHeight()) / 2; 
 			    int left = (this.parentDesktopPane.getWidth() - internalFrame.getWidth()) / 2; 
 			    internalFrame.setLocation(left, top);
-			    try {
-			    	internalFrame.moveToFront();
-			    	internalFrame.setSelected(true);
-			    	internalFrame.repaint();
-				} catch (PropertyVetoException ex) {
-					ex.printStackTrace();
-				}
 			}
 			internalFrame.setVisible(visible);
 		}
