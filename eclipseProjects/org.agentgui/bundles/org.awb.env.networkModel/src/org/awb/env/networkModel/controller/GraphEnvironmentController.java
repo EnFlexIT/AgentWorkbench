@@ -459,6 +459,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 				try {
 
+					// --- Register agents that have to be started with the environment -----------
+					GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
+					GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+
+					// --- Update path according to setup -----------------------------------------
+					GraphEnvironmentController.this.updateSetupName();
+
 					// --- Set application status text --------------------------------------------
 					if (Application.getMainWindow()!=null) {
 						Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -466,13 +473,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 						// --- Reset Undo-Manager -------------------------------------------------
 						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
 					}
-
-					// --- Register agents that have to be started with the environment -----------
-					GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
-					GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-
-					// --- Update path according to setup -----------------------------------------
-					GraphEnvironmentController.this.updateSetupName();
 					
 					// --- Define the NetworkModel ------------------------------------------------
 					NetworkModel netModel = new NetworkModel();
