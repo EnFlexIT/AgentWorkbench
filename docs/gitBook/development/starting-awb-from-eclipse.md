@@ -1,0 +1,2 @@
+# Starting AWB from Eclipse
+
