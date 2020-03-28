@@ -127,7 +127,7 @@ public class ProgressMonitor implements ActionListener {
 	private Container getProgressMonitorContainer() {
 		if (progressMonitorContainer==null) {
 			
-			Dimension defaultSize = new Dimension(570, 188);
+			Dimension defaultSize = new Dimension(570, 200);
 			if (this.parentDesktopPane==null) {
 				JDialog jDialog = new JDialog(this.owner);	
 				jDialog.setSize(defaultSize);
