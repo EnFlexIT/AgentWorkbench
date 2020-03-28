@@ -5,10 +5,11 @@ Bundle-SymbolicName: de.enflexit.awb.samples.GameOfLife
 Automatic-Module-Name: org.agentgui.sample.GameOfLife
 Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.core.runtime,
- de.enflexit.common;bundle-version="1.0.0",
- org.agentgui.core;bundle-version="2.0.0",
- org.agentgui.lib.jade;bundle-version="4.4.0"
+Require-Bundle: de.enflexit.common,
+ de.enflexit.jaxb,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml,
  OSGI-INF/EnvironmentTypeService.xml

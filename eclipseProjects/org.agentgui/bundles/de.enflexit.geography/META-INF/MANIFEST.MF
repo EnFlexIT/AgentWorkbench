@@ -10,4 +10,5 @@ Export-Package: de.enflexit.geography,
  de.enflexit.geography.coordinates,
  de.enflexit.geography.coordinates.ui,
  de.enflexit.geography.coordinates.ui.img
-Require-Bundle: de.enflexit.common;bundle-version="1.2.1"
+Require-Bundle: de.enflexit.common,
+ de.enflexit.jaxb

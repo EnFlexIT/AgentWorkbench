@@ -80,7 +80,6 @@ public class DynTable extends JTable {
 	/**
 	 * Refreshes the local table model by reloading the data from the DynForm.
 	 */
-	@SuppressWarnings("unchecked")
 	public void refreshTableModel() {
 		
 		int rowIndexSelected = this.getSelectedRow();

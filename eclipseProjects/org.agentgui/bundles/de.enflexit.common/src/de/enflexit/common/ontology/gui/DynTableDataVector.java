@@ -44,7 +44,7 @@ import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class DynTableDataVector extends Vector<Object> {
+public class DynTableDataVector extends Vector<Vector<Object>> {
 
 	private static final long serialVersionUID = -6049438110666843131L;
 
@@ -54,7 +54,7 @@ public class DynTableDataVector extends Vector<Object> {
 	
 	
 	/**
-	 * Instantiates and initialises a new DynTableDataVector.
+	 * Instantiates and initializes a  DynTableDataVector.
 	 * @param dynForm the current DynForm
 	 */
 	public DynTableDataVector(DynForm dynForm) {
@@ -71,18 +71,16 @@ public class DynTableDataVector extends Vector<Object> {
 		DefaultTreeModel objectTree = this.dynForm.getObjectTree();
 		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) objectTree.getRoot();
 		
-		Vector<Object> rows = this.getChildNodeVector(rootNode, true);
-		this.addAll(rows);
-		
+		this.addAll(this.getChildNodeVector(rootNode, true));
 	}
 	
 	/**
 	 * Gets the child node vector.
 	 * @return the child node vector
 	 */
-	private Vector<Object> getChildNodeVector(DefaultMutableTreeNode parentNode, boolean visibleInTableView) {
+	private Vector<Vector<Object>> getChildNodeVector(DefaultMutableTreeNode parentNode, boolean visibleInTableView) {
 		
-		Vector<Object> childVector = new Vector<Object>();
+		Vector<Vector<Object>> childVector = new Vector<>();
 		boolean childNodesVisible = true;
 		for (int i=0; i<parentNode.getChildCount(); i++) {
 
