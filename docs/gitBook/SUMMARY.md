@@ -5,9 +5,14 @@
   * [Agent.Workbench Features](overview/agentworkbench-features.md)
   * [Agent.Workbench Use Cases](overview/agent.workbench-use-cases.md)
 
-## Get started
+## Development
 
-* [Installations](get-started/installations.md)
+* [Installations](development/installations.md)
+* [Define a Target Platform](development/define-a-target-platform/README.md)
+  * [... based on AWB-Installation](development/define-a-target-platform/target-platform-based-on-awb-installation.md)
+  * [... based on AWB-Repository](development/define-a-target-platform/target-platform-based-on-software-repository.md)
+  * [... based on AWB-Sources](development/define-a-target-platform/getting-started-as-an-awb-developer.md)
+* [Starting AWB from Eclipse](development/starting-awb-from-eclipse.md)
 
 ## Tutorials & samples
 
