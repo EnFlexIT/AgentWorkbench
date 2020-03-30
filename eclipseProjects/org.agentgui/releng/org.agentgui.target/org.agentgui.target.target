@@ -18,10 +18,15 @@
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="ch.qos.logback.classic" version="0.0.0"/>
+		<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
 		<unit id="ch.qos.logback.core" version="0.0.0"/>
+		<unit id="ch.qos.logback.core.source" version="0.0.0"/>
 		<unit id="ch.qos.logback.slf4j" version="0.0.0"/>
+		<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
 		<unit id="org.slf4j.api" version="0.0.0"/>
+		<unit id="org.slf4j.api.source" version="0.0.0"/>
 		<unit id="org.slf4j.apis.jcl" version="0.0.0"/>
+		<unit id="org.slf4j.apis.jcl.source" version="0.0.0"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
 		<!--  Space for older versions (as reminder)
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository"/>

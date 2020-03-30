@@ -1,4 +1,4 @@
-# Execution of the local projects pom.xml 
+# Execution of the local projects pom4RepoBuild.xml 
 **(Not recommended / required)**
 
 The projects local pom-file basically serves as an **example** file for later use in different projects and 

@@ -25,6 +25,7 @@
 				<version>${tycho-extras-version}</version>
 				<configuration>
 					<excludes>
+						<plugin id="de.enflexit.jaxb" />
 						<plugin id="de.enflexit.oidc.libs" />
 						<plugin id="org.agentgui.lib.bouncyCastle" />
 						<plugin id="org.agentgui.lib.googleTranslate" />
