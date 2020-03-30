@@ -138,6 +138,7 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("de.enflexit.common");
 			bundleExcludeHashSet.add("de.enflexit.db.hibernate");
 			bundleExcludeHashSet.add("de.enflexit.db.mySQL");
+			bundleExcludeHashSet.add("de.enflexit.jaxb");
 			bundleExcludeHashSet.add("de.enflexit.oidc");
 			bundleExcludeHashSet.add("de.enflexit.oidc.libs");
 			bundleExcludeHashSet.add("de.enflexit.oshi");
