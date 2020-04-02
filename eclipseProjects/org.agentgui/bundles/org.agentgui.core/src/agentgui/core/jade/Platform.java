@@ -245,6 +245,8 @@ public class Platform {
 						Platform.this.setNetworkAddresses(null);
 						// --- Reset JADE https socket factory ------
 						Platform.this.resetHTTPS();
+						// --- Clear heap ---------------------------
+						Application.startGarbageCollection();
 					}
 				});
 				
