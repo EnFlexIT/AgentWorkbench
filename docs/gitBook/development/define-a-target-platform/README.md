@@ -2,8 +2,6 @@
 
 ### Define the Target Platform for Agent Developments...
 
-With a target platform you define the system or library structure against which you develop your own code. By default Eclipse would use the current Eclipse installation by itself, but - of course - our goal is to extend Agent.Workbench with your own code. Consequently, we have to define a target platform that points to the previously installed Agent.Workbench.
-
 With a target platform you define the system or library structure against which you develop. By default, Eclipse uses the current Eclipse installation as the target platform. But since our goal is to extend Agent.Workbench with your own code, you need to develop against the system and library structure of Agent.Workbench. Consequently we need to add Agent.Workbench to our target platform. There are three possible ways to achieve this.
 
 ### ...based on an AWB Installation
