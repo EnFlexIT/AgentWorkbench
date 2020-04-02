@@ -21,9 +21,9 @@ In short words: Our goal here is to create an Eclipse-Plug-in and a first agent,
 
 With the goal in mind, to develop your own agent-based application, the first step to do so is developing your own agents. Because Agent.Workbench is OSGI based, your extensions to it \(your own agents\) also need to follow this approach. So in the following, we are going to create a plug-in/OSGI bundle for a dummy agent to demonstrate the process. We want to create the agent, start it with Agent.Workbench and let it print "Hello world!" to the console.
 
-The following steps require you to have an Eclipse IDE installed that enables you to develop Plug-ins \( Eclipse IDE for Enterprise Java Developers\) and you should have completed the tutorial on how to get started as a project Developer. The source code for this example , as well as for other examples, is stored in a corresponding examples- project in our GitHub that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
+The following steps require you to have an Eclipse IDE installed that enables you to develop Plug-ins \( Eclipse IDE for Enterprise Java Developers\) and you should have [defined the target platform](../development/define-a-target-platform/). The source code for this example , as well as for other examples, is stored in a corresponding examples- project in our GitHub that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
 
-In the course of this tutorial, we need to include several files to our plug-in. Each file has a reference to its code in our GithHub, where we created a separate project for this and other examples. But in some cases it is more convenient to go to its location in Agent.Workbench in Eclipse, and just copy and paste the file to the location you need it to be, and do some minor changes to it. The files, necessary for this example, are stored under _org.agentgui &gt; examples &gt;_ [_de.enflexit.awb.samples.Examples_](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
+In the course of this tutorial, we need to create several files in our plug-in. Each file has a reference to its code in our GithHub. In case you cloned Agent.Workbench from GitHub to your Eclipse IDE workspace, you can just copy and paste these files to the location you need it to be, and do some minor changes to it.
 
 ### Creating a "Hello world!" agent
 
@@ -31,11 +31,11 @@ Create a new Plug-in Project in Eclipse under _File_ &gt; _New_ &gt; _Plug-in Pr
 
 ![](../.gitbook/assets/hewoagpluginproject.jpg)
 
-Name the project "de.agent.test". The other text fields and check-boxes can maintain their default configuration. Click _Next_ and then _Finish._ Your plug-in now appears in your Project Explorer tab on the left.
+Name the project "de.agent.test". The other text fields and check-boxes can maintain their default configuration. Click _Next_ and then _Finish._
 
 ![](../.gitbook/assets/hewoagcreateplugin.jpg)
 
-If you go into the plug-in hierarchy,  you can see the _JRE Systems Library_ which contains multiple _.jar_ files, an empty _src_ folder and a folder called _META-INF_. This stores the _MANIFEST.MF_ file which is part of every plug-in. The file is important because it defines which dependencies your plug-in has, and which packages it exports.
+Your plug-in now appears in your Project Explorer tab on the left. If you go into the plug-in hierarchy,  you can see the _JRE Systems Library_ which contains multiple _.jar_ files, an empty _src_ folder and a folder called _META-INF_. This stores the _MANIFEST.MF_ file which is part of every plug-in. The file is important because it defines which dependencies your plug-in has, and which packages it exports.
 
 ![](../.gitbook/assets/hewoagplugincontent.png)
 
@@ -50,33 +50,53 @@ The behavior of an agent is defined in a java class, that represents the agent. 
 
 The bunlde _org.agentgui.lib.jade_ contains the above mentioned agents super class, _org.agentgui.core_ and _de.enflexit.common_ are necessary for the class- load service that we are going to address later. The _de.enflexit.ap_i plug-in contains some helper classes.
 
-Before you can create our own agent, you have to create a package first. Create a package by right-clicking the _scr_ folder and choose _New_ &gt; _Package_. Maintain the generated package-name and click Finish. 
+Next we want to create a package, to store our agent class. Right-click the _scr_ folder and choose _New_ &gt; _Package_. Maintain the generated package-name and click Finish. 
 
 ![](../.gitbook/assets/hewoagpackage.png)
 
-To create the agent class, right-click the _de.agent.test_ package and choose _New_ &gt; _Class_. In the appearing window name the class "HelloWorldAgent" and click _Finish_.  You can find the code for the HelloWorldAgent class [here, ](https://github.com/EnFlexIT/AgentWorkbench/blob/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples/src/de/enflexit/awb/samples/example01/HelloWorldAgent.java)in our GitHub.
+To create the agent class, right-click the _de.agent.test_ package and choose _New_ &gt; _Class_. In the appearing window name the class "HelloWorldAgent" and click _Finish_.  
 
 ![](../.gitbook/assets/hewoagclass.png)
+
+You can find the code for the HelloWorldAgent class [here ](https://github.com/EnFlexIT/AgentWorkbench/blob/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples/src/de/enflexit/awb/samples/example01/HelloWorldAgent.java)in our GitHub. In your code, you just need to change the specified package, in which the class is stored. You can quick fix this problem by moving your mouse over the specified line and choosing _Change package declaration to "de.agent.test"_. This also applies to all following occasion, where we copy source code from GitHub.
+
+![](../.gitbook/assets/specifypackage.png)
 
 {% hint style="info" %}
 What the HelloWorldAgent class does, is it overrides the setup\(\) method from the _Jade_ agent class to perform certain actions during startup of the agent. In our simple case we just want our agent to print "Hello world!" to the console. 
 {% endhint %}
 
-At this point we implemented the core of our hello- world agent plug-in. In the next steps we are going to define the exported packages and adapt OSGI specifications.
+At this point we implemented the core of our hello-world agent plug-in. In the next steps we are going to define the exported packages and adapt OSGI specifications.
 
-Every plugin that extends Agent.Workbench needs to offer a specific service, the class- load service. This has internal reasons. The class load- service is connected to a class called _ClassLoadServiceImpl_. To store the corresponding _ClassLoadServiceImpl_ class we create another package in the _scr_ folder, called "de.agent.test.classLoadService". You can find the _ClassLoadServiceImpl_ class [here](https://github.com/EnFlexIT/AgentWorkbench/blob/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples/src/de/enflexit/awb/samples/classLoadService/ClassLoadServiceImpl.java). For convenience, got to its location in Agent.Workbench and just copy the class and paste it to your package.
+Every plug-in that extends Agent.Workbench needs to offer a specific service, the class-load service. The class-load service is connected to a class called _ClassLoadServiceImpl_. To store the corresponding _ClassLoadServiceImpl_ class we create another package in the _scr_ folder, named "de.agent.test.classLoadService". In that package, create a new class called "ClassLoadServiceImpl". You can find the class code [here](https://github.com/EnFlexIT/AgentWorkbench/blob/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples/src/de/enflexit/awb/samples/classLoadService/ClassLoadServiceImpl.java).
 
-To export the packages and thus make them accessible for other components, we adjust the _MANIFEST.MF_ file in the _runtime_ tab. Under _Exported Packages_, click _Add...,_ select the two packages and add them.
+To export the packages and thus make them accessible for other components, we need to adjust the _MANIFEST.MF_ file in the _Runtime_ tab. Under _Exported Packages_, click _Add._
+
+![](../.gitbook/assets/runtimetab.png)
+
+Select the two packages and _Add_ them.
 
 ![](../.gitbook/assets/hewoagpackexport.png)
 
-Since our Plug-in has to be an OSGI bundle, it needs to comply some OSGI specifications. So to offer the class load-service OSGI conform, we must create a folder in our Plug-in called "OSGI-INF". Right click _de.agent.test_, choose _New_ &gt; _Folder_. In that folder we place a classLoadService.xml file, that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/blob/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples/OSGI-INF/classLoadService.xml). Simply go to its location in Agent.Workbench and copy it to your new _OSGI-INF_ folder. Open the file and modify the _Name_ and _Class_ properties as shown below, so they indicate the location of the _classLoadServiceImpl_ class.
+Since our plug-in has to be an OSGI bundle, it needs to comply some OSGI specifications. So to offer the class load-service OSGI conform, we must create a folder in our plug-in called "OSGI-INF" and then store a file called _classLoadService.xml_ in it. To create the folder, right click _de.agent.test_, choose _New_ &gt; _Folder_. To create the XML file, right-click the _OSGI-INF_ folder and choose _New_ &gt; _File_. Name the file "classLoadService.xml".
 
-![](../.gitbook/assets/hewoagclassloadservice.png)
+![](../.gitbook/assets/createxmlfile.png)
+
+Get the [code for this file](https://github.com/EnFlexIT/AgentWorkbench/blob/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples/OSGI-INF/classLoadService.xml) from our GitHub and paste it to the _Source_ tab, then save the file.
+
+![](../.gitbook/assets/sourcetab.png)
+
+To see changes to the file, close and reopen the file or refresh \(F5\) the project. As a result an _Overview_ tab appears. 
+
+![](../.gitbook/assets/overviewtab.png)
+
+The _Name_ and the _Class_ property specify the location for the _ClassLoadServiceImpl_ class. Since our package structure differs from its original location, we have to set both, _Class_ and _Name_ property to "de.agent.test.classLoadService.ClassLoadServiceImpl".
+
+![](../.gitbook/assets/changeproperties.png)
 
 Another OSGI specification requires us to add some OSGI specific headers to the _MANIFEST.MF_ tab, in the _MANIFEST.MF_ file. More precisely, we have to define our S_ervice-Component_ and the _Bundle-ActivationPolicy_.
 
-![](../.gitbook/assets/hewoagmanifestmf.png)
+![](../.gitbook/assets/manifestmf2.png)
 
 ```css
 Manifest-Version: 1.0
@@ -97,7 +117,7 @@ Bundle-ActivationPolicy: lazy
 
 ```
 
-In the last step we need to define the folders, that must be included in the build. Check the boxes as shown in the screenshot below.
+As a last step, we need to define the folders that must be included in the build. Check the boxes, as shown in the screenshot below, in the _Build_ tab.
 
 ![](../.gitbook/assets/hewoagbuildfolder.png)
 
@@ -105,7 +125,17 @@ In the last step we need to define the folders, that must be included in the bui
 
 ### Starting the agent in Agent.Workbench
 
-Now we created a fully operational agent, that we can use in Agent.Workbench. To demonstrate this, we have to add our _de.agent.test_ plug-in to the run configuration and start Agent.Workbench with it. In Agent.Workbench we want to create a new project, called "Hello world" \(you can find a tutorial, on how to configure a run configuration and create a new project [here](../development/installations.md)\). 
+Now we created a fully operational agent, that we can use in Agent.Workbench. To demonstrate this, we have to add our _de.agent.test_ plug-in to the run-configuration and start Agent.Workbench with it. As a prerequisite, you should have [setup a run- configuration](../development/starting-awb-from-eclipse.md#setup-the-run-configuration).
+
+Open your _Debug Configurations_.
+
+![](../.gitbook/assets/openrunconfig.jpg)
+
+In your _Debug Configurations,_ select your run-configuration and go to the _Plug-ins_ tab. Our plug-in now appears under _Workspace_ &gt; _de.agent.test_. Select the plug-in and click _Debug_ to start Agent.Workbench directly in debug-mode from your IDE.
+
+![](../.gitbook/assets/addplugintotunconfig%20%281%29.jpg)
+
+In Agent.Workbench we want to create a new project, called "Hello world" \(Instructions on how to create a project in Agent.Workbench can be found on [this](../development/installations.md) page\).
 
 In this project, navigate to _Setup_ &gt; _Agent-Start._ Click ![](../.gitbook/assets/addagenticon.png) , select our agent and click _Add_.
 
