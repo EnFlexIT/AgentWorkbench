@@ -20,6 +20,10 @@
       [Enter License Description here.]
    </license>
 
+   <url>
+      <update label="Enflex.IT Update Site" url="https://p2.enflex.it/awb/latest/"/>
+   </url>
+
    <includes
          id="org.eclipse.e4.rcp"
          version="0.0.0"/>
