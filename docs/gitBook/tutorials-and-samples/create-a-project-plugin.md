@@ -133,7 +133,7 @@ Open your _Debug Configurations_.
 
 In your _Debug Configurations,_ select your run-configuration and go to the _Plug-ins_ tab. Our plug-in now appears under _Workspace_ &gt; _de.agent.test_. Select the plug-in and click _Debug_ to start Agent.Workbench directly in debug-mode from your IDE.
 
-![](../.gitbook/assets/addplugintotunconfig.jpg)
+![](../.gitbook/assets/addplugintotunconfig%20%281%29.jpg)
 
 In Agent.Workbench we want to create a new project, called "Hello world" \(Instructions on how to create a project in Agent.Workbench can be found on [this](../development/installations.md) page\).
 

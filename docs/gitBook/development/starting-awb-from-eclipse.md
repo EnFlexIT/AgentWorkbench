@@ -20,7 +20,7 @@ Name the configuration \(e.g "Agent.Workbench.local"\). In the Main tab, check i
 
 Then open the _Plug-ins tab_ \(1\). Make sure you select _Launch with: plug-ins selected below only_ \(2\).
 
-![](../.gitbook/assets/newlaunchconfig3.jpg)
+![2](../.gitbook/assets/newlaunchconfig3.jpg)
 
 To create our own custom configuration, we need to deselect all selected plug-ins with the _Deselect All_ button \(3\). To avoid any problems, it is important to execute the following steps in the exact order. To avoid any problems, execute the following steps in the exact order.
 
@@ -36,6 +36,14 @@ Then click _Add Required Plug-ins_ \(4\) and _Validate Plug-ins_ \(5\). A window
 ![](../.gitbook/assets/confignoproblems.jpg)
 
 Now you can launch Agent.Workbench with the launch configuration from the IDE.
+
+### Adding own plug-ins to the run configuration
+
+In case you already developed own components that you want to launch with Agent.Workbench, adding them to your run configuration is simple. The process is demonstrated by adding a plug-in called _de.agent.test_. 
+
+Open your run configuration and go to the _Plug-ins_ tab \(1\), as shown in the tutorial above. Your own components should appear under _Workspace_. Just select them and apply your changes, or start Agent.Workbench in debug-mode. Your own components are now accessible within the application.
+
+![](../.gitbook/assets/addplugintotunconfig.jpg)
 
 ### Problems after validating plug-ins
 
