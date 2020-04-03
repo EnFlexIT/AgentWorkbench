@@ -913,41 +913,53 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public List<NetworkComponent> removeNetworkComponents(List<NetworkComponent> networkComponents) {
 		
-		List<GraphNode> graphNodes2Remove = new ArrayList<>();
-		List<GraphEdge> graphEdges2Remove = new ArrayList<>();
-		
+		if (networkComponents==null) return null;
+
+		// --- Iterate over NetworkComponent vector -----------------
 		for (int i = 0; i < networkComponents.size(); i++) {
 		
-			// --- Remove from the list of NetworkComponents --------
+			List<GraphNode> graphNodes2Remove = new ArrayList<>();
+			List<GraphEdge> graphEdges2Remove = new ArrayList<>();
+			
+			// ------------------------------------------------------
+			// --- Consolidate the elements for this component ------
+			// ------------------------------------------------------
 			NetworkComponent networkComponent = networkComponents.get(i);
-			this.getNetworkComponents().remove(networkComponent.getId());
 			
 			// --- Get graph elements of the components -------------
-			for (String graphElemID : networkComponent.getGraphElementIDs()) {
-				GraphElement graphElement = this.getGraphElement(graphElemID);
-				if (graphElement instanceof GraphNode) {
-					if (graphNodes2Remove.contains(graphElement)==false) {
-						graphNodes2Remove.add((GraphNode) graphElement);
-					}
-				} else if (graphElement instanceof GraphEdge) {
-					if (graphEdges2Remove.contains(graphElement)==false) {
-						graphEdges2Remove.add((GraphEdge) graphElement);
-					}
+			Vector<GraphElement> graphElementVector = this.getGraphElementsFromNetworkComponent(networkComponent);
+			for (int j = 0; j < graphElementVector.size(); j++) {
+				GraphElement graphElement = graphElementVector.get(j);
+				if (graphElement instanceof GraphEdge) {
+					graphEdges2Remove.add((GraphEdge) graphElement);
+				} else if (graphElement instanceof GraphNode) {
+					graphNodes2Remove.add((GraphNode) graphElement);
 				}
 			}
-		}
-		
-		// --- Remove edges from the graph --------------------------
-		for (int i = 0; i < graphEdges2Remove.size(); i++) {
-			GraphEdge graphEdge = graphEdges2Remove.get(i);
-			this.getGraph().removeEdge(graphEdge);
-		}
-		// --- Remove edges from the graph --------------------------
-		for (int i = 0; i < graphNodes2Remove.size(); i++) {
-			GraphNode graphNode = graphNodes2Remove.get(i);
-			if (this.getGraph().getIncidentEdges(graphNode).size()==0) {
-				this.getGraph().removeVertex(graphNode);
-			} 
+			
+			// ------------------------------------------------------
+			// --- Remove the NetworkComponent and its elements -----
+			// ------------------------------------------------------			
+			// --- Remove edges from the graph ----------------------
+			for (int j = 0; j < graphEdges2Remove.size(); j++) {
+				GraphEdge graphEdge = graphEdges2Remove.get(j);
+				this.getGraph().removeEdge(graphEdge);
+				this.getGraphElements().remove(graphEdge.getId());
+				this.removeGraphElementToNetworkComponentRelation(graphEdge, networkComponent);
+			}
+			// --- Remove nodes from the graph ----------------------
+			for (int j = 0; j < graphNodes2Remove.size(); j++) {
+				GraphNode graphNode = graphNodes2Remove.get(j);
+				int noOfUsingNetorkComponents = this.getNetworkComponents(graphNode).size();
+				if (noOfUsingNetorkComponents<=1) {
+					this.getGraph().removeVertex(graphNode);
+					this.getGraphElements().remove(graphNode.getId());
+				}
+				this.removeGraphElementToNetworkComponentRelation(graphNode, networkComponent);
+			}
+			// --- Remove the NetworkComponent ----------------------
+			this.getNetworkComponents().remove(networkComponent.getId());
+			
 		}
 		
 		this.refreshGraphElements();
