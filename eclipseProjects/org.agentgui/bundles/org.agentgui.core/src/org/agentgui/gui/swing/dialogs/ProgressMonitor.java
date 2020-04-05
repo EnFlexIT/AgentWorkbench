@@ -176,11 +176,23 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor, IPro
 		} else if (this.getProgressMonitorContainer() instanceof JInternalFrame) {
 			JInternalFrame internalFrame = ((JInternalFrame) this.getProgressMonitorContainer());
 			if (visible==true) {
-				this.parentDesktopPane.add(internalFrame, JDesktopPane.POPUP_LAYER);
-				// --- Center dialog ------------				
-				int top = (this.parentDesktopPane.getHeight() - internalFrame.getHeight()) / 2; 
-			    int left = (this.parentDesktopPane.getWidth() - internalFrame.getWidth()) / 2; 
-			    internalFrame.setLocation(left, top);
+				// --- Is that a reset visible action? --------------
+				boolean isResetVisible = false;
+				JInternalFrame[] iFramesOpen = this.parentDesktopPane.getAllFrames();
+				for (int i = 0; i < iFramesOpen.length; i++) {
+					if (iFramesOpen[i]==internalFrame) {
+						isResetVisible = true;
+						break;
+					}
+				} 
+				// --- Add to desktop if not already done before ----
+				if (isResetVisible==false) {
+					this.parentDesktopPane.add(internalFrame, JDesktopPane.POPUP_LAYER);
+					// --- Center dialog ------------				
+					int top = (this.parentDesktopPane.getHeight() - internalFrame.getHeight()) / 2; 
+					int left = (this.parentDesktopPane.getWidth() - internalFrame.getWidth()) / 2; 
+					internalFrame.setLocation(left, top);
+				}
 			}
 			internalFrame.setVisible(visible);
 		}
