@@ -17,6 +17,7 @@
 ## Tutorials & samples
 
 * [Create a Plug-in for an Agent Project](tutorials-and-samples/create-a-project-plugin.md)
+* [Export your Plug-in to an AWB - Project](tutorials-and-samples/export-your-plug-in-to-an-awb-installation-project.md)
 
 ## AWB Capabilities
 
