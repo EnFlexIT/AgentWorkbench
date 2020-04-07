@@ -21,7 +21,13 @@ In short words: Our goal here is to create an Eclipse-Plug-in and a first agent,
 
 With the goal in mind, to develop your own agent-based application, the first step to do so is developing your own agents. Because Agent.Workbench is OSGI based, your extensions to it \(your own agents\) also need to follow this approach. So in the following, we are going to create a plug-in/OSGI bundle for a dummy agent to demonstrate the process. We want to create the agent, start it with Agent.Workbench and let it print "Hello world!" to the console.
 
-The following steps require you to have an Eclipse IDE installed that enables you to develop Plug-ins \( Eclipse IDE for Enterprise Java Developers\) and you should have [defined the target platform](../development/define-a-target-platform/). The source code for this example , as well as for other examples, is stored in a corresponding examples- project in our GitHub that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
+The following steps require you to...
+
+* ... have an Eclipse IDE installed that enables you to develop Plug-ins \( Eclipse IDE for Enterprise Java Developers\)
+* ... have [defined a target platform](../development/define-a-target-platform/)
+* ... have Java version 8 \(the 64 Bit version\) installed and the Eclipse preferences for jre and compiler set to java 1.8
+
+The source code for this example , as well as for other examples, is stored in a corresponding examples- project in our GitHub that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
 
 In the course of this tutorial, we need to create several files in our plug-in. Each file has a reference to its code in our GithHub. In case you cloned Agent.Workbench from GitHub to your Eclipse IDE workspace, you can just copy and paste these files to the location you need it to be, and do some minor changes to it.
 
@@ -42,7 +48,7 @@ Your plug-in now appears in your Project Explorer tab on the left. If you go int
 The behavior of an agent is defined in a java class, that represents the agent. Thus, any agent class needs to extend the super class _jade.core.Agent_. This class is part of the JADE bundle _org.agentgui.lib.jade_ that is part of Agent.Workbench. To use it, we have to define this library as a dependency for our plug-in. Therefore, we have to edit the _MANIFEST.MF_ in the Eclipse _Plug-in Manifest Editor_ and choose the _Dependencies_ tab at the bottom of the view. Because we depend on multiple plug-ins throughout this tutorial, for convenience we are going to add them all in this step. Click _Add_ and select the following bundles as Dependencies:
 
 * _de.enflexit.api_
-* _de.enfelxit.common_
+* _de.enflexit.common_
 * _org.agentgui.core_
 * _org.agentgui.lib.jade_
 
