@@ -12,12 +12,9 @@
   * [... based on AWB-Installation](development/define-a-target-platform/target-platform-based-on-awb-installation.md)
   * [... based on AWB-Repository](development/define-a-target-platform/target-platform-based-on-software-repository.md)
   * [... based on AWB-Sources](development/define-a-target-platform/getting-started-as-an-awb-developer.md)
+* [Create a Plug-in for an Agent Project](development/create-a-project-plugin.md)
 * [Starting AWB from Eclipse](development/starting-awb-from-eclipse.md)
-
-## Tutorials & samples
-
-* [Create a Plug-in for an Agent Project](tutorials-and-samples/create-a-project-plugin.md)
-* [Export your Plug-in to an AWB - Project](tutorials-and-samples/export-your-plug-in-to-an-awb-installation-project.md)
+* [Export your Plug-in to an AWB - Project](development/export-your-plug-in-to-an-awb-installation-project.md)
 
 ## AWB Capabilities
 

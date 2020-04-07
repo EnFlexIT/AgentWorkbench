@@ -1,5 +1,5 @@
 ---
-description: Setup a Debug or Run Configuration in Eclipse
+description: Setup a Debug or Run Configuration to start Agent.Workbench from Eclipse
 ---
 
 # Starting AWB from Eclipse
