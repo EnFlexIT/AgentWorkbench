@@ -19,5 +19,5 @@ Further, _**Add**_ a new Target Platform definition, choose **Nothing: Start wit
 
 As a result, the field in the _**Locations**_ tab should point to your Agent.Workbench installation, saying that approx. 131 plugins were found. Click on _**Finish**_**.** The new target platform definition should now also be displayed in the list in the preference dialog. As final step mark this new definition as active \(_**tick the corresponding box**_\) and press _**Apply and Close**_.
 
-Congratulations you are prepared to develop your first agent project with Agent.Workbench.
+Now you are prepared to develop your first agent project with Agent.Workbench.
 
