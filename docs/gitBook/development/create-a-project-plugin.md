@@ -6,7 +6,7 @@ This section shortly describes how you can define, develop and start your first 
 
 **Eclipse Projects & Agent.Workbench Projects**: We would like to mention here that, in the context of Agent.Workbench and Eclipse, the word "project" is used with two meanings. Since Agent.Workbench handles agents or Multi-Agent Systems \(MAS\) as self-containing projects on one hand site, also Eclipse uses the term "project" for Java or plug-in developments. This, in turn, makes it sometimes misleading, if we speak about an "agent project" in general. More precisely, we have to distinguish these project types to avoid a lingusitic misunderstanding.
 
-As a prerequisite, we assume that you have an installed Agent.Workbench and an Eclipse IDE \(**I**ntegrated **D**evelopment **E**nvironment\) that enables you to develop plug-ins \(an IDE that enables Java developments only, wil not be sufficient\). For further details see the [Getting Started](../development/installations.md) tutorial.
+As a prerequisite, we assume that you have an installed Agent.Workbench and an Eclipse IDE \(**I**ntegrated **D**evelopment **E**nvironment\) that enables you to develop plug-ins \(an IDE that enables Java developments only, wil not be sufficient\). For further details see the [Getting Started](installations.md) tutorial.
 
 In short words: Our goal here is to create an Eclipse-Plug-in and a first agent, start and debug this agent from the Eclipse IDE and finally, to export the developed agent into a Agent.Workbench project so that the agent application can work on its own \(without the IDE\). For this the following steps are to be done:
 
@@ -21,7 +21,13 @@ In short words: Our goal here is to create an Eclipse-Plug-in and a first agent,
 
 With the goal in mind, to develop your own agent-based application, the first step to do so is developing your own agents. Because Agent.Workbench is OSGI based, your extensions to it \(your own agents\) also need to follow this approach. So in the following, we are going to create a plug-in/OSGI bundle for a dummy agent to demonstrate the process. We want to create the agent, start it with Agent.Workbench and let it print "Hello world!" to the console.
 
-The following steps require you to have an Eclipse IDE installed that enables you to develop Plug-ins \( Eclipse IDE for Enterprise Java Developers\) and you should have [defined the target platform](../development/define-a-target-platform/). The source code for this example , as well as for other examples, is stored in a corresponding examples- project in our GitHub that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
+The following steps require you to...
+
+* ... have an Eclipse IDE installed that enables you to develop Plug-ins \( Eclipse IDE for Enterprise Java Developers\)
+* ... have [defined a target platform](define-a-target-platform/)
+* ... have Java version 8 \(the 64 Bit version\) installed and the Eclipse preferences for jre and compiler set to java 1.8
+
+The source code for this example , as well as for other examples, is stored in a corresponding examples- project in our GitHub that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
 
 In the course of this tutorial, we need to create several files in our plug-in. Each file has a reference to its code in our GithHub. In case you cloned Agent.Workbench from GitHub to your Eclipse IDE workspace, you can just copy and paste these files to the location you need it to be, and do some minor changes to it.
 
@@ -42,7 +48,7 @@ Your plug-in now appears in your Project Explorer tab on the left. If you go int
 The behavior of an agent is defined in a java class, that represents the agent. Thus, any agent class needs to extend the super class _jade.core.Agent_. This class is part of the JADE bundle _org.agentgui.lib.jade_ that is part of Agent.Workbench. To use it, we have to define this library as a dependency for our plug-in. Therefore, we have to edit the _MANIFEST.MF_ in the Eclipse _Plug-in Manifest Editor_ and choose the _Dependencies_ tab at the bottom of the view. Because we depend on multiple plug-ins throughout this tutorial, for convenience we are going to add them all in this step. Click _Add_ and select the following bundles as Dependencies:
 
 * _de.enflexit.api_
-* _de.enfelxit.common_
+* _de.enflexit.common_
 * _org.agentgui.core_
 * _org.agentgui.lib.jade_
 
@@ -125,7 +131,7 @@ As a last step, we need to define the folders that must be included in the build
 
 ### Starting the agent in Agent.Workbench
 
-Now we created a fully operational agent, that we can use in Agent.Workbench. To demonstrate this, we have to add our _de.agent.test_ plug-in to the run-configuration and start Agent.Workbench with it. As a prerequisite, you should have [setup a run- configuration](../development/starting-awb-from-eclipse.md#setup-the-run-configuration).
+Now we created a fully operational agent, that we can use in Agent.Workbench. To demonstrate this, we have to add our _de.agent.test_ plug-in to the run-configuration and start Agent.Workbench with it. As a prerequisite, you should have [setup a run- configuration](starting-awb-from-eclipse.md#setup-the-run-configuration).
 
 Open your _Debug Configurations_.
 
@@ -135,7 +141,7 @@ In your _Debug Configurations,_ select your run-configuration and go to the _Plu
 
 ![](../.gitbook/assets/addplugintotunconfig%20%281%29.jpg)
 
-In Agent.Workbench we want to create a new project, called "Hello world" \(Instructions on how to create a project in Agent.Workbench can be found on [this](../development/installations.md) page\).
+In Agent.Workbench we want to create a new project, called "Hello world" \(Instructions on how to create a project in Agent.Workbench can be found on [this](installations.md) page\).
 
 In this project, navigate to _Setup_ &gt; _Agent-Start._ Click ![](../.gitbook/assets/addagenticon.png) , select our agent and click _Add_.
 
