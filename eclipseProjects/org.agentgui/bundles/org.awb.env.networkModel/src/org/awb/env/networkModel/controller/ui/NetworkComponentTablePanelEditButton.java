@@ -69,9 +69,7 @@ public class NetworkComponentTablePanelEditButton extends AbstractCellEditor imp
 
     /**
      * Constructor of this class.
-     *
      * @param graphController the current GraphEnvironmentController
-     * @param componentsTable the components table
      */
     public NetworkComponentTablePanelEditButton(GraphEnvironmentController graphController) {
     	this.graphController = graphController;

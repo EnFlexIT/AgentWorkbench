@@ -49,8 +49,8 @@ public class Requires {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Import }
-     * 
-     * 
+     *
+     * @return the import as list
      */
     public List<Import> getImport() {
         if (_import == null) {

@@ -546,10 +546,11 @@ public class DataModelStorageThread extends Thread {
 		}
 		return networkComponentAdapterHash;
 	}
+	
 	/**
 	 * Returns the NetworkComponentAdapter for the specified DataModelNetworkElement.
 	 *
-	 * @param networkComponent the NetworkComponent
+	 * @param networkElement the {@link DataModelNetworkElement} (e.g. a {@link NetworkComponent} or a {@link GraphNode}
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(DataModelNetworkElement networkElement) {

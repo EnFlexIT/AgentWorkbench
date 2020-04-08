@@ -84,8 +84,7 @@ public class CacheClassFilterResult {
 		this.filteredClasses = filteredClasses;
 	}
 	/**
-	 * Gets the filtered classes to null if empty.
-	 * @return the filtered classes to null if empty
+	 * Sets the filtered classes to null if empty.
 	 */
 	public void setFilteredClassesToNullIfEmpty() {
 		if (filteredClasses!=null && filteredClasses.size()==0) {

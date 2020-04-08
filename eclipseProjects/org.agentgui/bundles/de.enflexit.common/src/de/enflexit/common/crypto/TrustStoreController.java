@@ -54,9 +54,9 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.common.Language;
 
 /**
- * This class allows the user to manage a TrustStore.
+ * This class allows the user to manage a Java TrustStore.
  * 
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI (mohamedamine_jedidi@outlook.com)
  * @version 1.0
  * @since 05-04-2016
  */
@@ -75,15 +75,19 @@ public class TrustStoreController {
 	private FileOutputStream trustStoreOutputStream;
 	
 
-
 	/**
-	 * generates a blank controller, which still needs to initialize the trustStore
+	 * Generates a blank controller, which still needs to initialize the trustStore
 	 */
 	public TrustStoreController(Window ownerDialog){
 		this(ownerDialog, null, null, false);
 	}
 	/**
 	 * This Initializes the TrustStoreController.
+	 *
+	 * @param ownerWindow the owner window
+	 * @param trustStoreFile the trust store file
+	 * @param trustStorePassword the trust store password
+	 * @param edit the indicator to edit
 	 */
 	public TrustStoreController(Window ownerWindow, File trustStoreFile, String trustStorePassword, boolean edit) {
 		this.ownerWindow = ownerWindow;

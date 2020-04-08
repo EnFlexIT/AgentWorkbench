@@ -207,7 +207,9 @@ public class OntologyVisualizationHelper extends HashMap<String, OntologyClass> 
 
 	/**
 	 * Adds a new sub-ontology to the current project.
+	 *
 	 * @param newSubOntology the new sub ontology
+	 * @return true, if successful
 	 */
 	public boolean addSubOntology(String newSubOntology) {
 		OntologyClass onCla = new OntologyClass(newSubOntology);

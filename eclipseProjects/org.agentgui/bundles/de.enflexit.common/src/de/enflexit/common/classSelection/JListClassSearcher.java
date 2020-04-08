@@ -71,16 +71,16 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	
 	/**
 	 * Instantiates a new JList that presents or searches for specific classes.
-	 * @param class2Search4 the class to search for
+	 * @param classToSearchFor the class to search for
 	 */
 	public JListClassSearcher(Class<?> classToSearchFor) {
 		this(classToSearchFor, null);
 	}
 	/**
 	 * Instantiates a new JList that presents or searches for specific classes.
+	 *
 	 * @param classToSearchFor the class to search for
 	 * @param exclusiveBundleNames the exclusive bundle names
-	 * @param listener the listener for the classes found
 	 */
 	public JListClassSearcher(Class<?> classToSearchFor, Vector<String> exclusiveBundleNames) {
 		super();
@@ -141,7 +141,8 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	}
 	
 	/**
-	 * Sets the DefaultListModel for the current JList to display
+	 * Sets the DefaultListModel for the current JList to display.
+	 * @return the list model of {@link ClassElement2Display}
 	 */
 	public synchronized SortedListModel<ClassElement2Display> getListModel() {
 		if (currListModel==null) {
@@ -301,9 +302,12 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 		return listenerList;
 	}
+	
 	/**
-	 * Adds the specified JListClassSearcherListener to the list of listener
+	 * Adds the specified JListClassSearcherListener to the list of listener.
+	 *
 	 * @param listener the listener to add
+	 * @return true, if the listener was added successfully
 	 */
 	public boolean addClassSearcherListListener(JListClassSearcherListener listener) {
 		if (listener!=null && this.getListenerList().contains(listener)==false) {
@@ -318,9 +322,12 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 		return false;
 	}
+	
 	/**
-	 * removes the specified JListClassSearcherListener to the list of listener
+	 * removes the specified JListClassSearcherListener to the list of listener.
+	 *
 	 * @param listener the listener to remove
+	 * @return true, if the listener was successfully removed
 	 */
 	public boolean removeClassSearcherListListener(JListClassSearcherListener listener) {
 		if (listener==null) return false;

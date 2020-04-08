@@ -44,9 +44,15 @@ public class GraphNodePositionDialog extends JDialog implements ActionListener {
 
 
 	/**
+	 * Default constructor, just for the development with the WindowBuilder
+	 */
+	@Deprecated
+	public GraphNodePositionDialog() {
+		this.initialize();
+	}
+	/**
 	 * Instantiates a new GraphNodePositionDialog.
 	 * @param owner the owner window 
-	 * @wbp.parser.constructor
 	 */
 	public GraphNodePositionDialog(Window owner) {
 		super(owner);

@@ -26,7 +26,7 @@ public class FileTree extends JTree {
 	
 	/**
 	 * Instantiates a new file tree.
-	 * @param directoryEvaluator the directory evaluator
+	 * @param fileTreeModel the file tree model to use
 	 */
 	public FileTree(DefaultTreeModel fileTreeModel) {
 		super(fileTreeModel);

@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The Class AgentConfiguration is used in the class {@link Project} in order
- * to save the configuration of the projects agents.
+ * The Class AgentConfiguration is used in AWB projects to
+ * to save the start argument configuration of agents.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */

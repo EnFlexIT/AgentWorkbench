@@ -49,6 +49,7 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	
 	/**
 	 * Instantiates a new polyline configuration that uses RELATIVE intermediate positions.
+	 * @param graphEdge the GraphEdge to edit
 	 */
 	public PolylineConfiguration(GraphEdge graphEdge) {
 		this(graphEdge, false);

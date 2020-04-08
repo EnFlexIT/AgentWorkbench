@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRegistry;
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
  * generated in the de.enflexit.common.featureEvaluation.featureXML package. 
- * <p>An ObjectFactory allows you to programatically 
+ * <p>An ObjectFactory allows you to programmatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
  * content can consist of schema derived interfaces 
@@ -37,104 +37,117 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Copyright }
-     * 
+     * Create an instance of {@link Copyright }.
+     *
+     * @return the copyright
      */
     public Copyright createCopyright() {
         return new Copyright();
     }
 
     /**
-     * Create an instance of {@link Data }
-     * 
+     * Create an instance of {@link Data }.
+     *
+     * @return the data
      */
     public Data createData() {
         return new Data();
     }
 
     /**
-     * Create an instance of {@link Import }
-     * 
+     * Create an instance of {@link Import }.
+     *
+     * @return the import
      */
     public Import createImport() {
         return new Import();
     }
 
     /**
-     * Create an instance of {@link Description }
-     * 
+     * Create an instance of {@link Description }.
+     *
+     * @return the description
      */
     public Description createDescription() {
         return new Description();
     }
 
     /**
-     * Create an instance of {@link Update }
-     * 
+     * Create an instance of {@link Update }.
+     *
+     * @return the update
      */
     public Update createUpdate() {
         return new Update();
     }
 
     /**
-     * Create an instance of {@link Includes }
-     * 
+     * Create an instance of {@link Includes }.
+     *
+     * @return the includes
      */
     public Includes createIncludes() {
         return new Includes();
     }
 
     /**
-     * Create an instance of {@link Url }
-     * 
+     * Create an instance of {@link Url }.
+     *
+     * @return the url
      */
     public Url createUrl() {
         return new Url();
     }
 
     /**
-     * Create an instance of {@link Discovery }
-     * 
+     * Create an instance of {@link Discovery }.
+     *
+     * @return the discovery
      */
     public Discovery createDiscovery() {
         return new Discovery();
     }
 
     /**
-     * Create an instance of {@link InstallHandler }
-     * 
+     * Create an instance of {@link InstallHandler }.
+     *
+     * @return the install handler
      */
     public InstallHandler createInstallHandler() {
         return new InstallHandler();
     }
 
     /**
-     * Create an instance of {@link License }
-     * 
+     * Create an instance of {@link License }.
+     *
+     * @return the license
      */
     public License createLicense() {
         return new License();
     }
 
     /**
-     * Create an instance of {@link Plugin }
-     * 
+     * Create an instance of {@link Plugin }.
+     *
+     * @return the plugin
      */
     public Plugin createPlugin() {
         return new Plugin();
     }
 
     /**
-     * Create an instance of {@link Feature }
-     * 
+     * Create an instance of {@link Feature }.
+     *
+     * @return the feature
      */
     public Feature createFeature() {
         return new Feature();
     }
 
     /**
-     * Create an instance of {@link Requires }
-     * 
+     * Create an instance of {@link Requires }.
+     *
+     * @return the requires
      */
     public Requires createRequires() {
         return new Requires();

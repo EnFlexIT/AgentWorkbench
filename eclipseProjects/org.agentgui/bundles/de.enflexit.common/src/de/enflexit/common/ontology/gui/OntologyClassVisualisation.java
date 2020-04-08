@@ -33,16 +33,16 @@ import java.lang.reflect.InvocationTargetException;
 
 
 /**
- * The Class OntologyClassVisualisation can be used in order to name a 
- * class out of an Ontology that can be configured with customized 
- * widgets or dialog.<br>
- * In order to register your own OntologyClassVisualisation use the register method
- * in the GlobalInfo of the Application (see links below).
- * 
- * @see GlobalInfo#registerOntologyClassVisualisation(String)
- * @see GlobalInfo#getKnownOntologyClassVisualisations()
- * @see GlobalInfo#isRegisteredOntologyClassVisualisation(Class)
- * @see GlobalInfo#getOntologyClassVisualisation(Class)
+ * The Class OntologyClassVisualisation can be used in order to name a class out of an Ontology 
+ * that can be configured with customized widgets or dialog.<br>
+ * To register your own OntologyClassVisualisation, use the register method
+ * in the GlobalInfo of Agent.Workbench. Here, the corresponding methods are:<br>
+ * <ul>
+ * <li>.registerOntologyClassVisualisation(String)),</li>
+ * <li>.isRegisteredOntologyClassVisualisation(Class),</li>
+ * <li>.getKnownOntologyClassVisualisations()) and</li>
+ * <li>.getOntologyClassVisualisation(Class)</li>
+ * </ul>
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

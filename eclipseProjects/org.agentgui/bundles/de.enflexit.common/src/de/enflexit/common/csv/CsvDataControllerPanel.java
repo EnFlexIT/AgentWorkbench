@@ -58,7 +58,7 @@ import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
 
 /**
- * The CSV Controller Panel that can be used with a customised CSV-Importer 
+ * The CSV Controller Panel that can be used with a customized CSV-Importer 
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -280,8 +280,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 	}
 	
 	/**
-	 * Just for development, remove later
-	 * @param args
+	 * Just for development, remove later.
+	 * @param args the start arguments
 	 */
 	public static void main(String[] args){
 		JFrame frame = new JFrame("CSV Importer");

@@ -412,8 +412,9 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	
 	
 	/**
-	 * Returns the TreeNode requested by the reference 
-	 * @param reference
+	 * Returns the TreeNode requested by the reference .
+	 *
+	 * @param reference the string reference to the tree node
 	 * @return The found DefaultMutableTreeNode
 	 */
 	public DefaultMutableTreeNode getTreeNode(String reference) {

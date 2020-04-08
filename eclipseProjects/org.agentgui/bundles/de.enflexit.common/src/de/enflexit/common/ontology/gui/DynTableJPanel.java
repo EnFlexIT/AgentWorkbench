@@ -88,7 +88,8 @@ public class DynTableJPanel extends JPanel {
 	private Vector<Component> stolenComponentsFromJToolBar;
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * @param dynForm the current DynForm
 	 */
 	public DynTableJPanel(DynForm dynForm) {
 		super();

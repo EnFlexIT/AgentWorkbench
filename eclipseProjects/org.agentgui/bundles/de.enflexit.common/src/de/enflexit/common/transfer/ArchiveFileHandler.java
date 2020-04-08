@@ -201,6 +201,7 @@ public class ArchiveFileHandler {
 	 *
 	 * @param folder the folder
 	 * @param archiveFile the archive file
+	 * @param targetFile the target file
 	 * @return true, if successful
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
@@ -526,10 +527,10 @@ public class ArchiveFileHandler {
 	
 	/**
 	 * Deletes a previously defined replacement.
-	 * @param dontReplace
+	 * @param dontReplace the string to do not replace
 	 */
-	public void deletePathReplacement(String dontReplace) {
-		this.getPathReplacements().get(dontReplace);
+	public void removePathReplacement(String dontReplace) {
+		this.getPathReplacements().remove(dontReplace);
 	}
 	
 	

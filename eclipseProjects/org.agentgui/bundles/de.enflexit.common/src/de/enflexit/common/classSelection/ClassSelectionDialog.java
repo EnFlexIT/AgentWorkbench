@@ -56,19 +56,23 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 	
 	private ClassSelectionPanel classSelectionPanel;
 
-
+	/**
+	 * This constructor is only used during developments and the usage of the WindowBuilder. 
+	 */
+	@Deprecated
+	public ClassSelectionDialog() {
+		this.initialize();
+	}
 	/**
 	 * Default constructor.
-	 *
+	 * 
 	 * @param owner the owner
-	 * @wbp.parser.constructor
 	 */
 	public ClassSelectionDialog(Frame owner) {
 		super(owner);
 		this.classSelectionPanel = new ClassSelectionPanel();
 		this.initialize();
 	}
-
 	/**
 	 * Constructor to configure the type of class, we are looking for.
 	 *

@@ -220,7 +220,7 @@ public class Zipper extends Thread {
 	
 	/**
 	 * Sets the look and feel class reference.
-	 * @param lookAndFeelClassName the new look and feel class reference
+	 * @param lookAndFeelClassReference the new look and feel class reference
 	 */
 	public void setLookAndFeelClassName(String lookAndFeelClassReference) {
 		this.lookAndFeelClassName = lookAndFeelClassReference;
@@ -398,8 +398,7 @@ public class Zipper extends Thread {
 	}
 	
 	/**
-	 * Will do the unzipping of the previously specified zip-file
-	 * @throws Exception 
+	 * Will do the unzipping of the previously specified zip-file.
 	 */
 	public void doUnzipFolder() {
 		try {

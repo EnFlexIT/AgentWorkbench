@@ -44,7 +44,9 @@ public class ClassElement2Display implements Comparable<ClassElement2Display> {
 	
 	/**
 	 * Instantiates a new class element to display in a JList.
+	 *
 	 * @param clazz the class
+	 * @param bundle the bundle
 	 */
 	public ClassElement2Display(Class<?> clazz, Bundle bundle){
 		this.className = clazz.getName();
@@ -52,7 +54,9 @@ public class ClassElement2Display implements Comparable<ClassElement2Display> {
 	}
 	/**
 	 * Instantiates a new class element to display in a JList.
+	 *
 	 * @param className the class name
+	 * @param bundleName the bundle name
 	 */
 	public ClassElement2Display(String className, String bundleName){
 		this.className = className;

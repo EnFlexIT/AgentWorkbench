@@ -102,7 +102,6 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 	 * @param id the id
 	 * @param type the type
 	 * @param graphElements the graph elements
-	 * @param directed the indicator if this NetworkComponent is directed
 	 */
 	public NetworkComponent(String id, String type, HashSet<GraphElement> graphElements) {
 		this.setId(id);

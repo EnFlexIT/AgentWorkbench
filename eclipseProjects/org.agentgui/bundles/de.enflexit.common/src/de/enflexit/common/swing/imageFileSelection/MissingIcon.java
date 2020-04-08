@@ -57,8 +57,8 @@ public class MissingIcon extends ImageIcon {
     public MissingIcon() { }
     
     /**
-     * Constructor for setting the description of the ImageIcon
-     * @param description
+     * Constructor for setting the description of the ImageIcon.
+     * @param description the description of the icon
      */
     public MissingIcon(String description){
     	setDescription(description);

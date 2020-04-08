@@ -104,7 +104,7 @@ public class Sorter {
 	}
 
 	/**
-	 * Sorts a ArrayList of the Type ArrayList<OntologySingleClassSlotDescription> in a
+	 * Sorts a ArrayList of the Type {@link OntologySingleClassSlotDescription} in a
 	 * ascending order. This will be used through the reflective access to an ontology
 	 *
 	 * @param array2Sort the array2 sort
@@ -114,7 +114,7 @@ public class Sorter {
 	}
 	
 	/**
-	 * Sorts a ArrayList of the Type ArrayList<OntologySingleClassSlotDescription> in a
+	 * Sorts a ArrayList of the Type {@link OntologySingleClassSlotDescription} in a
 	 * given order. This will be used through the reflective access to an ontology
 	 *
 	 * @param array2Sort the array2 sort

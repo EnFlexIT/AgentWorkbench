@@ -81,7 +81,9 @@ public class GraphLayoutNotification extends DisplayAgentNotificationGraph {
 	
 	/**
 	 * Adds a GraphElementLayout to the listing of Layouts.
+	 *
 	 * @param graphElement the graph element
+	 * @param networkModel the network model
 	 */
 	public void addGraphElementLayout(GraphElement graphElement, NetworkModel networkModel) {
 		GraphElementLayout graphElementLayout = graphElement.getGraphElementLayout(networkModel);

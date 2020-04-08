@@ -271,6 +271,8 @@ public class ProgressMonitor implements ActionListener {
 
 	/**
 	 * Sets the permission to cancel an action via the progress dialog.
+	 * @param allow2Cancel the indicator to allow canceling the current operation
+	 * @see #isCanceled() 
 	 */
 	public void setAllow2Cancel(boolean allow2Cancel) {
 		this.allow2Cancel = allow2Cancel;

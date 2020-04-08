@@ -59,7 +59,6 @@ public class ClassLoadServiceUtilityImplManager {
 	 * Removes a AbstractClassLoadServiceUtilityImpl for the specified BaseClassLoadService.
 	 *
 	 * @param clsClass the class of the extended BaseClassLoadService
-	 * @param clsUtilityImpl the actual AbstractClassLoadServiceUtilityImpl for the BaseClassLoadService 
 	 */
 	public void removeClassLoadServiceUtilityImpl(Class<? extends BaseClassLoadService> clsClass) {
 		getClassLoadServiceUtilityImplHashMap().remove(clsClass);

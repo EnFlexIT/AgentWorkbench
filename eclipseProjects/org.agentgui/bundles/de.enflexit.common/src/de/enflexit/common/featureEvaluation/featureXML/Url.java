@@ -73,8 +73,8 @@ public class Url {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Discovery }
-     * 
-     * 
+     *
+     * @return the discovery as list
      */
     public List<Discovery> getDiscovery() {
         if (discovery == null) {

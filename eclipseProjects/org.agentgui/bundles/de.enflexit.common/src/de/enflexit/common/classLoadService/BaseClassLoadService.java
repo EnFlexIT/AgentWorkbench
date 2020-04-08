@@ -27,6 +27,8 @@ public interface BaseClassLoadService {
 	 * @param className the class name
 	 * @return the object
 	 * @throws ClassNotFoundException the class not found exception
+	 * @throws InstantiationException the instantiation exception
+	 * @throws IllegalAccessException the illegal access exception
 	 */
 	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException;
 	

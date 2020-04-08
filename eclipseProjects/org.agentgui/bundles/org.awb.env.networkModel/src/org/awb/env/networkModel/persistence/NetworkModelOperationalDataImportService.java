@@ -12,6 +12,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
 public interface NetworkModelOperationalDataImportService {
+	
 	/**
 	 * Will be invoked during initialization and will receive the current {@link GraphEnvironmentController} instance.
 	 * @param graphController the new graph environment controller

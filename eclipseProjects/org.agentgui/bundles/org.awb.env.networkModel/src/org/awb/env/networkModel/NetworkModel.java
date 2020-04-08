@@ -2457,7 +2457,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Returns the NetworkComponentAdapter for the specified DataModelNetworkElement.
 	 *
-	 * @param networkComponent the NetworkComponent
+	 * @param graphController the graph controller
+	 * @param networkElement the {@link DataModelNetworkElement} (a NetworkComponent or a GraphNode)
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, DataModelNetworkElement networkElement) {

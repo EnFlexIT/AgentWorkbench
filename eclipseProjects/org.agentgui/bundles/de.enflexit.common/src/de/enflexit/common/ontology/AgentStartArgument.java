@@ -34,9 +34,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The Class AgentStartArgument is used in {@link Project} as attribute
- * for the start configuration and a single (of many) start arguments for
- * a single agent.  
+ * The Class AgentStartArgument is used in AWB Projects as attribute for the 
+ * start configuration and a single (of many) start arguments for agents.  
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -60,15 +59,18 @@ public class AgentStartArgument implements Serializable {
 	
 	/**
 	 * Instantiates a new agent start argument.
-	 * @param ontologyReference the reference to the ontology class 
+	 *
+	 * @param position the index position
+	 * @param ontologyReference the reference to the ontology class
 	 */
 	public AgentStartArgument(int position, String ontologyReference) {
 		this.position = position;
 		this.ontologyReference = ontologyReference;
 	}
-	
 	/**
 	 * Instantiates a new agent start argument.
+	 *
+	 * @param position the index position
 	 * @param ontologyReference the reference to the ontology class
 	 * @param displayTitle the display title
 	 */

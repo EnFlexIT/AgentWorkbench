@@ -58,7 +58,9 @@ public class DynTable extends JTable {
 	
 	/**
 	 * Instantiates a new DynTable.
+	 *
 	 * @param dynForm the current DynForm
+	 * @param dynTableJPanel the DynTableJPanel
 	 */
 	public DynTable(DynForm dynForm, DynTableJPanel dynTableJPanel) {
 		super();

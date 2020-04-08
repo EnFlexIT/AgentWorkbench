@@ -58,10 +58,11 @@ public class FileCopier {
 	}
 	
 	/**
-	 * This method allows to copy a file from one location to another one
-	 * 
-	 * @param srcPath
-	 * @param destPath
+	 * This method allows to copy a file from one location to another one.
+	 *
+	 * @param srcPath the source path
+	 * @param destPath the destination path
+	 * @return true, if successful
 	 */
 	public boolean copyFile(String srcPath, String destPath) {
 		

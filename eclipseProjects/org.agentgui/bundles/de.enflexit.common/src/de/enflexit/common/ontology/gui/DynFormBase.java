@@ -158,7 +158,7 @@ public abstract class DynFormBase {
 	
 	/**
 	 * Returns the OntologyClassWidget's for all current OntologyClassVisualisation's.
-	 * @return the HashMap<DefaultMutableTreeNode, OntologyClassWidget>
+	 * @return the HashMap that manages the relation between node and {@link OntologyClassWidget}
 	 */
 	public HashMap<DefaultMutableTreeNode, OntologyClassWidget> getOntologyClassWidgets() {
 		if (this.ontologyClassWidget==null) {
@@ -409,6 +409,7 @@ public abstract class DynFormBase {
 	 * be a part of this ontology.
 	 *
 	 * @param xmlString the xml string
+	 * @param className the class name
 	 * @param ontology the ontology
 	 * @return the instance of xml
 	 */

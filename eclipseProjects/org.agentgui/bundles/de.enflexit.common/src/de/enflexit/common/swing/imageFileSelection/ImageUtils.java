@@ -43,7 +43,10 @@ public class ImageUtils {
     public final static String png = "png";
 
     /**
-     * Get the extension of a file.
+     * Return the file extension of the specified file instance.
+     *
+     * @param f the f
+     * @return the extension
      */
     public static String getExtension(File f) {
         String ext = null;
@@ -56,8 +59,12 @@ public class ImageUtils {
         return ext;
     }
 
-    /** 
-     * Returns an ImageIcon, or null if the path was invalid. 
+    /**
+     *  
+     * Returns an ImageIcon, or null if the path was invalid.
+     *
+     * @param path the path
+     * @return the image icon
      */
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = ImageUtils.class.getResource(path);

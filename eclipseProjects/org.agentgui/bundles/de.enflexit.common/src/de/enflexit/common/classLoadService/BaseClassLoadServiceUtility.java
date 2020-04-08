@@ -52,6 +52,8 @@ public class BaseClassLoadServiceUtility {
 	 * @param className the class name
 	 * @return the object
 	 * @throws ClassNotFoundException the class not found exception
+	 * @throws InstantiationException the instantiation exception
+	 * @throws IllegalAccessException the illegal access exception
 	 */
 	public static Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return getBaseClassLoadServiceUtility().newInstance(className);

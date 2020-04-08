@@ -66,9 +66,9 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /**
- * This class allows the user to manage a KeyStore.
+ * This class allows to manage a Java KeyStore.
  * 
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI (mohamedamine_jedidi@outlook.com)
  * @version 1.0
  * @since 05-04-2016
  */

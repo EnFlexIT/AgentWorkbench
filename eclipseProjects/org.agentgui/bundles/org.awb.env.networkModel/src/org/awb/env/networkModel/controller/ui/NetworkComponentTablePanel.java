@@ -533,9 +533,10 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     		}
 		}
     }
+    
     /**
      * Removes a set of NetworkComponent's from the list of components in the table.
-     * @param networkComponents the network components
+     * @param netCompList the list of NetworkComponent's
      */
     protected void removeNetworkComponents(List<NetworkComponent> netCompList) {
     

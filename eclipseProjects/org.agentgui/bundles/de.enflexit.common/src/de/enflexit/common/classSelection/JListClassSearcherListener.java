@@ -1,15 +1,11 @@
 package de.enflexit.common.classSelection;
 
 /**
- * The listener interface for receiving JListClassSearcher events.
- * The class that is interested in processing a JListClassSearcher
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addJListClassSearcherListener<code> method. When
- * the JListClassSearcher event occurs, that object's appropriate
- * method is invoked.
- *
- * @see JListClassSearcherEvent
+ * The listener interface for receiving results from a {@link JListClassSearcher}.
+ * 
+ * @see JListClassSearcher
+ * @see JListClassSearcher#addClassSearcherListListener(JListClassSearcherListener)
+ * @see JListClassSearcher#removeClassSearcherListListener(JListClassSearcherListener)
  */
 public interface JListClassSearcherListener {
 

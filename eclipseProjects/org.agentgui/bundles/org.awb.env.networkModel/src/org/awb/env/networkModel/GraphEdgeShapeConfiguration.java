@@ -86,7 +86,7 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	 * @param popupMenu the JPopupMenu to which items can be added
 	 * @param graphEdge the editing graph edge
 	 * @param graphNode the editing graph node (can be <code>null</code>)
-	 * @see #actionPerformed(String, BasicGraphGuiVisViewer, GraphEdge, GraphNode, Point2D)
+	 * @see #actionPerformed(String, ConfiguredLinePopupPlugin, GraphEdge, GraphNode, Point2D)
 	 */
 	public abstract void addPopupMenuItems(JPopupMenu popupMenu, GraphEdge graphEdge, GraphNode graphNode);
 	
@@ -194,8 +194,9 @@ public abstract class GraphEdgeShapeConfiguration<T extends Shape> implements Se
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * Gets the edge shape configuration tree map as string.
+	 * Returns the edge shape configuration TreeMap as string.
 	 *
+	 * @param configTreeMap the configuration TreeMap
 	 * @param allowedLayoutIDs the allowed layout ID's
 	 * @return the edge configuration tree map as string
 	 */

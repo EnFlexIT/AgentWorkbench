@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
- * The Class AgentStartArgument is used in {@link Project} as attribute
+ * The Class AgentStartArgument is used in AWB Projects as attribute
  * for the start configuration and a single (of many) start arguments for
  * a single agent.  
  * 

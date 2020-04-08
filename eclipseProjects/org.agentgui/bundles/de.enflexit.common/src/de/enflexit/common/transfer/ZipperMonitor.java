@@ -86,7 +86,6 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 * @param owner the Frame from which the dialog is displayed
 	 * @param applicationName the current application name
 	 * @param iconImage the icon image that can be used as a decorator for the ZipperMonitor
-	 * @param translator the translator
 	 * @param lookAndFeelClassName the look and feel class name or reference
 	 */
 	public ZipperMonitor(Frame owner, String applicationName, Image iconImage, String lookAndFeelClassName) {
@@ -209,9 +208,10 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		}
 		return jProgressBarProcess;
 	}
+	
 	/**
-	 * This method can be used in order to set the maximum number of files to be handled 
-	 * @param numberOfFiles
+	 * This method can be used in order to set the maximum number of files to be handled .
+	 * @param numberOfFiles the number of files to handle
 	 */
 	public void setNumberOfFilesMax(int numberOfFiles) {
 		jProgressBarProcess.setMinimum(0);
@@ -248,9 +248,10 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 			jLabelProcess.setText(Language.translate("Entpacke") + shortNameOfFileOrFolder);
 		}
 	}
+	
 	/**
-	 * Set the file you are currently working on here
-	 * @param fileName
+	 * Set the file you are currently working on here.
+	 * @param fileName the currents job file name
 	 */
 	public void setCurrentJobFile(String fileName) {
 		File file = new File(fileName);

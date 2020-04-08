@@ -558,8 +558,8 @@ public class FeatureEvaluator {
 	/**
 	 * Checks if the specified feature is part of the base installation.
 	 *
-	 * @param bundleID the bundle ID
-	 * @return true, if is bundle of base installation
+	 * @param featureID the feature ID
+	 * @return true, if the feature is part of the AWB base installation
 	 */
 	public boolean isFeatureOfBaseInstallation(String featureID) {
 		if (featureID!=null && featureID.isEmpty()==false) {

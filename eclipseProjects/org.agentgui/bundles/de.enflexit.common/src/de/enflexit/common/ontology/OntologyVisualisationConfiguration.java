@@ -60,7 +60,7 @@ public class OntologyVisualisationConfiguration {
 	}
 	/**
 	 * Sets the owner window.
-	 * @param ownerWindow the new owner window
+	 * @param newOwnerWindow the new owner window
 	 */
 	public static void setOwnerWindow(Window newOwnerWindow) {
 		ownerWindow = newOwnerWindow;
@@ -95,8 +95,8 @@ public class OntologyVisualisationConfiguration {
 	 * Sets the time format ontology visualization.
 	 * @param newTimeFormat the new time format
 	 */
-	public static void setTimeFormat(String newDefaultTimeFormat) {
-		timeFormat = newDefaultTimeFormat;
+	public static void setTimeFormat(String newTimeFormat) {
+		timeFormat = newTimeFormat;
 	}
 	
 	// ------------------------------------------------------------------------

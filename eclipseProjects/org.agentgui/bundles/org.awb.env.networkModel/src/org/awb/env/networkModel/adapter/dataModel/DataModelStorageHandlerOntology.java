@@ -37,7 +37,9 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	
 	/**
 	 * Instantiates a new data model storage handler ontology.
+	 *
 	 * @param ontologyAdapter the ontology adapter
+	 * @param partModelID the part model ID
 	 */
 	public DataModelStorageHandlerOntology(NetworkComponentAdapter4Ontology ontologyAdapter, String partModelID) {
 		this.ontologyAdapter = ontologyAdapter;
@@ -149,9 +151,10 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	 * given instance of the current ontology. The translated object must
 	 * be a part of this ontology.
 	 *
-	 * @param xmlString the xml string
-	 * @param ontology the ontology
-	 * @return the instance of xml
+	 * @param xmlString the XML string to de-serialize 
+	 * @param className the class name out of the ontology
+	 * @param ontology the ontology that serves as base
+	 * @return the instance of the XML string
 	 */
 	protected Object getInstanceOfXML(String xmlString, String className, Ontology ontology) {
 		

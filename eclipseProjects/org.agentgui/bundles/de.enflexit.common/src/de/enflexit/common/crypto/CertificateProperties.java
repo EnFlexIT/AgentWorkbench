@@ -38,9 +38,9 @@ import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
 /**
- * The Class KeyStoreSettings.
+ * The Class CertificateProperties.
  * 
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI (mohamedamine_jedidi@outlook.com)
  * @version 1.0
  * @since 05-04-2016
  */

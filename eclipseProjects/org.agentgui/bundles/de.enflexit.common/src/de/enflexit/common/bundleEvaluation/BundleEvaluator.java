@@ -569,7 +569,6 @@ public class BundleEvaluator {
 	 *
 	 * @param bundle the bundle to evaluate
 	 * @param packageFilter the package filter; maybe <code>null</code>, which will return all classes from the bundle
-	 * @param options the options according to the {@link BundleWiring} that are {@link BundleWiring#LISTRESOURCES_RECURSE}, {@link BundleWiring#LISTRESOURCES_LOCAL} or {@link BundleWiring#FINDENTRIES_RECURSE}
 	 * @return the list of classes
 	 */
 	public List<Class<?>> getClasses(Bundle bundle, String packageFilter) {
@@ -786,10 +785,10 @@ public class BundleEvaluator {
 	 * @param classList the class list
 	 * @return the packages
 	 */
-	public List<String> getPackages(List<Class<?>> classesList) {
+	public List<String> getPackages(List<Class<?>> classList) {
 		List<String> packagesFound = new ArrayList<String>();
-		for (int i = 0; i < classesList.size(); i++) {
-			Class<?> classFound = classesList.get(i);
+		for (int i = 0; i < classList.size(); i++) {
+			Class<?> classFound = classList.get(i);
 			if (classFound!=null) {
 				if (classFound.getPackage()!=null) {
 					String packageName = classFound.getPackage().getName();
@@ -804,7 +803,7 @@ public class BundleEvaluator {
 	/**
 	 * Return the packages from the specified class name list.
 	 *
-	 * @param classList the class list
+	 * @param classNameList the list of the class names
 	 * @return the packages
 	 */
 	public List<String> getPackagesOfClassNames(List<String> classNameList) {
@@ -880,11 +879,12 @@ public class BundleEvaluator {
 		// --- Return empty list in case of an error ------
 		return new ArrayList<>();
 	}
+	
 	/**
 	 * Loads and returns the classes from a jar file into the specified bundle.
 	 *
 	 * @param bundle the bundle
-	 * @param file the file
+	 * @param jarFileURL the jar file URL
 	 * @return the jar classes
 	 */
 	public List<Class<?>> getJarClasses(Bundle bundle, URL jarFileURL) {
@@ -925,11 +925,12 @@ public class BundleEvaluator {
 		// --- Return empty list in case of an error ------
 		return new ArrayList<>();
 	}
+	
 	/**
 	 * Loads and returns the class references from a jar file into the specified bundle.
 	 *
 	 * @param bundle the bundle
-	 * @param file the file
+	 * @param jarFileURL the jar file URL
 	 * @return the jar classes
 	 */
 	public List<String> getJarClassReferences(Bundle bundle, URL jarFileURL) {

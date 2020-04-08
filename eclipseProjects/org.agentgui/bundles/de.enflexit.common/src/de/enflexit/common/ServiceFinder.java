@@ -46,16 +46,23 @@ import org.osgi.service.component.ComponentFactory;
 public class ServiceFinder {
 
 	/**
-	 * Will evaluate the OSGI service for {@link ServiceFinder}s and return the services found.
-	 * @return the list of {@link EnvironmentType}s found
+	 * Will evaluate the OSGI services for services of the type that is specified by the interface class returns them.
+	 *
+	 * @param <T> the generic type
+	 * @param serviceInterfaceClass the service interface class
+	 * @return the list of OSGI services found
 	 */
 	public static <T> List<T> findServices(Class<T> serviceInterfaceClass) {
 		return findServices(serviceInterfaceClass, false);
 	}
+	
 	/**
-	 * Will evaluate the OSGI service for {@link ServiceFinder}s and return the services found.
+	 * Will evaluate the OSGI services for services of the type that is specified by the interface class returns them.
+	 *
+	 * @param <T> the generic type
+	 * @param serviceInterfaceClass the service interface class
 	 * @param showSystemOutputIfNoServiceWasFound indicates to show system output if no service was found
-	 * @return the list of {@link ServiceFinder}s found
+	 * @return the list of OSGI services found
 	 */
 	public static <T> List<T> findServices(Class<T> serviceInterfaceClass, boolean showSystemOutputIfNoServiceWasFound) {
 		

@@ -314,8 +314,8 @@ public class Feature {
      * {@link Requires }
      * {@link Plugin }
      * {@link Data }
-     * 
-     * 
+     *
+     * @return the install handler or description or copyright or license or url or includes or requires or plugin or data
      */
     public List<Object> getInstallHandlerOrDescriptionOrCopyrightOrLicenseOrUrlOrIncludesOrRequiresOrPluginOrData() {
         if (installHandlerOrDescriptionOrCopyrightOrLicenseOrUrlOrIncludesOrRequiresOrPluginOrData == null) {

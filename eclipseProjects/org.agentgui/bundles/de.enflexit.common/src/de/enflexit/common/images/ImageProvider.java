@@ -87,7 +87,7 @@ public class ImageProvider {
 	
 	/**
 	 * Returns an image out of the current package as {@link ImageIcon}.
-	 * @param simpleImageFileName the simple image file name
+	 * @param imageURL the image URL
 	 * @return the internal image
 	 */
 	public static Image getImage(URL imageURL) {

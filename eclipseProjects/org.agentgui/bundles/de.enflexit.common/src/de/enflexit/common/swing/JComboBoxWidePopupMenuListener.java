@@ -225,7 +225,8 @@ public class JComboBoxWidePopupMenuListener implements PopupMenuListener {
 	}
 
 	/**
-	 * Adjust the width of the scrollpane used by the popup
+	 * Adjust the width of the scrollpane used by the popup.
+	 * @param popup the BasicComboPopup
 	 */
 	protected void popupWider(BasicComboPopup popup) {
 		
@@ -292,7 +293,10 @@ public class JComboBoxWidePopupMenuListener implements PopupMenuListener {
 	}
 
 	/**
-	 * Get the scroll pane used by the popup so its bounds can be adjusted
+	 * Get the scroll pane used by the popup so its bounds can be adjusted.
+	 *
+	 * @param popup the BasicComboPopup
+	 * @return the scroll pane
 	 */
 	protected JScrollPane getScrollPane(BasicComboPopup popup) {
 		JList<?> list = popup.getList();
@@ -301,8 +305,11 @@ public class JComboBoxWidePopupMenuListener implements PopupMenuListener {
 	}
 
 	/**
-	 * I can't find any property on the scrollBar to determine if it will be
-	 * displayed or not so use brute force to determine this.
+	 * Will return the scrollbar width.
+	 *
+	 * @param popup the BasicComboPopup
+	 * @param scrollPane the scroll pane
+	 * @return the scroll bar width
 	 */
 	protected int getScrollBarWidth(BasicComboPopup popup, JScrollPane scrollPane) {
 		
@@ -316,8 +323,11 @@ public class JComboBoxWidePopupMenuListener implements PopupMenuListener {
 	}
 
 	/**
-	 * I can't find any property on the scrollBar to determine if it will be
-	 * displayed or not so use brute force to determine this.
+	 * Returns, if the Horizontal scrollbar will be visible.
+	 *
+	 * @param popup the BasicComboPopup
+	 * @param scrollPane the scroll pane
+	 * @return true, if successful
 	 */
 	protected boolean horizontalScrollBarWillBeVisible(BasicComboPopup popup, JScrollPane scrollPane) {
 		JList<?> list = popup.getList();

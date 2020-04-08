@@ -191,6 +191,8 @@ public class DirectoryEvaluator {
 	
 	/**
 	 * Return the file descriptor identified by the specified file.
+	 *
+	 * @param fileToSearchFor the file to search for
 	 * @return the file descriptor by file
 	 */
 	public FileDescriptor getFileDescriptorByFile(File fileToSearchFor) {

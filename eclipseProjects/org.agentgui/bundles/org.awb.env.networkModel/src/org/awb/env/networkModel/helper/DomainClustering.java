@@ -112,7 +112,6 @@ public class DomainClustering extends Vector<DomainCluster> {
 	 * @param netComp the NetworkComponent that serves as the search base for direct neighbors
 	 * @param targetDomain the target domain
 	 * @param domainNeighbours the already known domain neighbors
-	 * @return the target domain neighbors
 	 */
 	protected void deepSearchDomainNeighbours(NetworkComponent netComp, String targetDomain, Vector<NetworkComponent> domainNeighbours) {
 		
