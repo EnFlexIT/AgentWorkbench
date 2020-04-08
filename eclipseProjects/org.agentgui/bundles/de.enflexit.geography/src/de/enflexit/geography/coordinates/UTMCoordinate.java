@@ -28,11 +28,6 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 	
 	/**
 	 * Instantiates a new UTM reference (default constructor).
-	 *
-	 * @param lngZone the longitude zone
-	 * @param latZone the latitude zone
-	 * @param easting the easting
-	 * @param northing the northing
 	 */
 	public UTMCoordinate() { }
 	

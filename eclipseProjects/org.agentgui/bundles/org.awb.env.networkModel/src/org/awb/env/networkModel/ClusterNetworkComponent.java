@@ -49,9 +49,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 *
 	 * @param id the id
 	 * @param type the type
-	 * @param agentClassName the agent class name
 	 * @param graphElements the graph elements
-	 * @param directed the directed
 	 * @param domain the domain
 	 * @param clusterNetworkModel the cluster network model
 	 */

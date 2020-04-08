@@ -774,10 +774,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			if (projectIndex+1>nProjects ) projectIndex=nProjects-1;  
 			Application.setProjectFocused(loadedProjects.get(projectIndex));
 			Application.getProjectFocused().setFocus(true);
-			Application.setTitelAddition(Application.getProjectFocused().getProjectName());
+			Application.setTitleAddition(Application.getProjectFocused().getProjectName());
 		} else {
 			Application.setProjectFocused(null);
-			Application.setTitelAddition("");
+			Application.setTitleAddition("");
 			if (Application.getMainWindow() != null) {
 				Application.getMainWindow().setCloseButtonPosition(false);
 			}
@@ -1279,7 +1279,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		}
 
 		this.getProjectEditorWindow().moveToFront();
-		Application.setTitelAddition(projectName);
+		Application.setTitleAddition(projectName);
 		Application.setProjectFocused(this);
 		Application.getProjectsLoaded().setProjectView();
 		this.setMaximized();

@@ -238,7 +238,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 *
 	 * @param successful the successful
 	 * @param message the message
-	 * @param userName the user name
 	 */
 	public void displayResult(boolean successful, String message) {
 		this.getJLabelResult().setVisible(true);

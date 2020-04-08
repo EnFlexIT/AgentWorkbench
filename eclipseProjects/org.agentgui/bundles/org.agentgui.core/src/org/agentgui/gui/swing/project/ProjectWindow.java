@@ -1261,7 +1261,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			this.getRootNode().setUserObject(currProject.getProjectName());
 			this.getTreeModel().nodeChanged(this.getRootNode());
 			this.getJTreeProject().repaint();
-			Application.setTitelAddition(currProject.getProjectName());
+			Application.setTitleAddition(currProject.getProjectName());
 			
 		} else if (updateReason.equals(Project.CHANGED_ProjectView)) {
 			this.setViewForDeveloperOrEndUser();

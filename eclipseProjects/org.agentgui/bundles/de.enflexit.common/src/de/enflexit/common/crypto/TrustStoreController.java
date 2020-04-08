@@ -76,7 +76,8 @@ public class TrustStoreController {
 	
 
 	/**
-	 * Generates a blank controller, which still needs to initialize the trustStore
+	 * Generates a blank controller, which still needs to initialize the trustStore.
+	 * @param ownerDialog the owner dialog
 	 */
 	public TrustStoreController(Window ownerDialog){
 		this(ownerDialog, null, null, false);

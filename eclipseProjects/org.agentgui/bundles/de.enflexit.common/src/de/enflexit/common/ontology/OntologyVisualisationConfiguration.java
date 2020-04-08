@@ -103,8 +103,10 @@ public class OntologyVisualisationConfiguration {
 	// ---- Methods for OntologyClassVisualisations ---------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * Register an OntologyClassVisualisation.
-	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
+	 * Allows to register an OntologyClassVisualisation.
+	 *
+	 * @param ontologyClassVisualisation the ontology class visualization
+	 * @return the ontology class visualization
 	 */
 	public static OntologyClassVisualisation registerOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
 		

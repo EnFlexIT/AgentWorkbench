@@ -23,7 +23,7 @@ import jade.content.onto.Ontology;
 
 
 /**
- * The Class ClassLoadServiceUtilityImplManager extends the {@link DefaultClassLoadServiceUtility} 
+ * The Class ClassLoadServiceUtilityImplManager extends the {@link BaseClassLoadService} 
  * and prepares the access to the {@link BaseClassLoadService} depending on the OSGI bundle.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen

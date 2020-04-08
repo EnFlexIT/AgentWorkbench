@@ -177,9 +177,12 @@ public class HibernateUtilities {
 	public static SessionFactory getSessionFactory() {
 		return getSessionFactory(null, null, false, false);
 	}
+	
 	/**
 	 * Will return or create the default session factory. Use this method to 
 	 * create the default session factory.
+	 *
+	 * @param configuration the configuration to use
 	 * @return the session factory
 	 */
 	public static SessionFactory getSessionFactory(Configuration configuration) {

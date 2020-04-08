@@ -29,14 +29,11 @@
 package agentgui.core.application;
 
 /**
- * The listener interface for receiving application events.
- * The class that is interested in processing a application
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addApplicationListener<code> method. When
- * the application event occurs, that object's appropriate
- * method is invoked.
- *
+ * The listener interface for receiving an {@link ApplicationEvent} from the {@link Application}.
+ * 
+ * @see Application
+ * @see Application#addApplicationListener(ApplicationListener)
+ * @see Application#removeApplicationListener(ApplicationListener)
  * @see ApplicationEvent
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen

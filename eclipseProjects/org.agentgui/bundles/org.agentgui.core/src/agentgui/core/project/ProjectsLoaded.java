@@ -239,7 +239,7 @@ public class ProjectsLoaded {
 			this.setProjectView();
 			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);
 			newProject.plugInVectorInformSetupLoaded();
-			Application.setTitelAddition(newProject.getProjectName());
+			Application.setTitleAddition(newProject.getProjectName());
 			Application.setStatusBarMessageReady();
 		}
 

@@ -805,20 +805,21 @@ public class Application {
 		return true;
 	}
 	/**
-	 * Stops Agent.Workbench (Application | Server | Service & Embedded System Agent)
+	 * Stops Agent.Workbench in each execution mode ('Application', 'Server' (Master or Slave), 'Service' or 'Embedded System Agent')
 	 */
 	public static void stop() {
 		getIApplication().stop();
 	}
 	/**
-	 * Restarts Agent.Workbench (Application | Server | Service & Embedded System Agent)
+	 * Restarts Agent.Workbench as configured in each execution mode ('Application', 'Server' (Master or Slave), 'Service' or 'Embedded System Agent')
 	 */
 	public static void restart() {
 		getIApplication().stop(IApplication.EXIT_RESTART);
 	}
 	
 	/**
-	 * Relaunches the application (Application | Server (Master|Slave) | Service & Embedded System Agent) 
+	 * Relaunches the application (as 'Application', as 'Server' (Master or Slave), as 'Service' or as 'Embedded System Agent').
+	 * @param additionalArguments the additional arguments for the relaunch
 	 */
 	public static void relaunch(String additionalArguments) {
 		
@@ -1068,12 +1069,12 @@ public class Application {
 	}
 	
 	/**
-	 * Adds a supplement to the application title
-	 * @param add2BasicTitel
+	 * Adds a supplement to the application title.
+	 * @param add2BasicTitle the addition for the basic title 
 	 */
-	public static void setTitelAddition(String add2BasicTitel) {
+	public static void setTitleAddition(String add2BasicTitle) {
 		if (getMainWindow()!=null) {
-			getMainWindow().setTitelAddition(add2BasicTitel);
+			getMainWindow().setTitelAddition(add2BasicTitle);
 		}
 	}
 
@@ -1116,9 +1117,10 @@ public class Application {
 			getMainWindow().setCursor(cursor);
 		}
 	}
+	
 	/**
-	 * Set's the Look and feel of the application
-	 * @param newLnF
+	 * Set's the Look and feel of the application.
+	 * @param newLnF the new look and feel
 	 */
 	public static void setLookAndFeel(String newLnF) {
 		if (getMainWindow()!=null) {
@@ -1130,8 +1132,8 @@ public class Application {
 	}	
 	
 	/**
-	 * Enables to change the user language of the application   
-	 * @param newLang => 'de', 'en', 'it', 'es' or 'fr' etc. is equal to the header line of the dictionary
+	 * Enables to change the user language of the application   .
+	 * @param newLang the new language indicator. Should be: 'de', 'en', 'it', 'es' or 'fr' etc. and is equal to the header line of the dictionary
 	 */
 	public static void setLanguage(String newLang) {
 		setLanguage(newLang, true);
@@ -1139,9 +1141,9 @@ public class Application {
 	/**
 	 * Enables to change the user language of the application  
 	 * If 'askUser' is set to false the changes will be done without user interaction. 
-	 * 
-	 * @param newLang => 'de', 'en', 'it', 'es' or 'fr' etc. is equal to the header line of the dictionary
-	 * @param askUser 
+	 *
+	 * @param newLang the new language indicator. Should be: 'de', 'en', 'it', 'es' or 'fr' etc. and is equal to the header line of the dictionary
+	 * @param askUser the indicator to ask the user swithcing the language
 	 */
 	public static void setLanguage(String newLang, boolean askUser) {
 
@@ -1175,6 +1177,8 @@ public class Application {
 	/**
 	 * Executes the Benchmark-Test of SciMark 2.0 to determine the ability of this system to deal with number crunching.<br> 
 	 * The result will be available in Mflops (Millions of floating point operations per second)
+	 *
+	 * @param forceBenchmark the indicator to force benchmark, even it was done earlier
 	 */
 	public static void doBenchmark(boolean forceBenchmark) {
 		

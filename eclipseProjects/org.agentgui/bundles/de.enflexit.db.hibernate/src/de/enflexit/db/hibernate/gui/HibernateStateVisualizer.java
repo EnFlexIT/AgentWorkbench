@@ -97,10 +97,11 @@ public class HibernateStateVisualizer {
 	public static String getImagePackage() {
 		return imagePackage;
 	}
+	
 	/**
-	 * Gets the image icon for the specified image.
+	 * Return the image icon for the specified image.
 	 *
-	 * @param dbDescription the file name
+	 * @param fileName the file name
 	 * @return the image icon
 	 */
 	public static ImageIcon getImageIcon(String fileName) {

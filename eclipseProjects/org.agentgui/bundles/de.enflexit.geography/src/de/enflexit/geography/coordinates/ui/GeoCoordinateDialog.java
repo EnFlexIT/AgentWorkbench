@@ -46,11 +46,17 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	private JButton jButtonOk;
 	private JButton jButtonCancel;
 
-
+	
+	/**
+	 * Constructor for developments by using the WindowBuilder.
+	 */
+	@Deprecated
+	public GeoCoordinateDialog() {
+		this.initialize();
+	}
 	/**
 	 * Instantiates a new GeoCoordinateDialog.
 	 * @param owner the owner window 
-	 * @wbp.parser.constructor
 	 */
 	public GeoCoordinateDialog(Window owner) {
 		super(owner);

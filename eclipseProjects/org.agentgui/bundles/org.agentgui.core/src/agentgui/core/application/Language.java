@@ -174,9 +174,8 @@ public class Language implements Translator {
 	}
 	
 	/**
-	 * Changing the application language to: newLang
-	 * => "DE", "EN", "IT", "ES" or "FR"  
-	 * @param newLang
+	 * Changes the translation and the application language to the specified new language.
+	 * @param newLang the new language to use. Use 'DE', 'EN', 'IT', 'ES' or 'FR' (corresponds to the first line in the dictionary file)  
 	 */
 	public static void changeApplicationLanguageTo(String newLang){
 		String newLangShort = newLang.toLowerCase().replace("lang_", "");
@@ -185,7 +184,10 @@ public class Language implements Translator {
 	}
 		
 	/**
-	 * Translate one expression, which is based on a German expression
+	 * Translate one expression, which is based on a German expression.
+	 *
+	 * @param deExpression the German (de) expression
+	 * @return the translated expression
 	 */
 	public static String translate(String deExpression) {
 		return translate(deExpression, Language.DE);
@@ -196,7 +198,7 @@ public class Language implements Translator {
 	 * attribute in this class e.g. 'Language.EN')
 	 * 
 	 * @param expression
-	 * @param language => take one of these parameters: Language.EN, Language.DE and so on
+	 * @param language the source language. Use one of these parameters: Language.EN, Language.DE and so on
 	 * @return the translated text of the expression
 	 */
 	public static String translate(String expression, String language)  {

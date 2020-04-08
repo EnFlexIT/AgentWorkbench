@@ -15,9 +15,6 @@ public class OSGBCoordinate extends AbstractGeoCoordinate {
 	
 	/**
 	 * Instantiates a new ordnance survey coordinate GB (default constructor).
-	 *
-	 * @param easting the easting
-	 * @param northing the northing
 	 */
 	public OSGBCoordinate() { }
 	/**

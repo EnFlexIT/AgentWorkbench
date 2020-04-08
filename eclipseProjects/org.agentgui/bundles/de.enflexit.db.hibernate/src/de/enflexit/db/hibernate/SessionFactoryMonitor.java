@@ -64,8 +64,10 @@ public class SessionFactoryMonitor {
 	private String factoryID;
 	private SessionFactoryState sessionFactoryState;
 	
+	
 	/**
 	 * Instantiates a new session factory monitor.
+	 * @param factoryID the factory ID to use
 	 */
 	public SessionFactoryMonitor(String factoryID) {
 		this.setFactoryID(factoryID);

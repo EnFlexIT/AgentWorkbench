@@ -28,7 +28,6 @@ public interface NetworkModelOperationalDataImportService {
 	/**
 	 * Import data from file.
 	 * @param importFile the import file
-	 * @return true, if successful
 	 */
 	public void importDataFromFile(File importFile);
 	
