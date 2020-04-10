@@ -531,7 +531,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 				
 			}
 		});
-		envLoader.setName("GraphEnvrionmentLoader");
+		envLoader.setName("GraphEnvironmentLoader");
 		envLoader.start();
 
 	}

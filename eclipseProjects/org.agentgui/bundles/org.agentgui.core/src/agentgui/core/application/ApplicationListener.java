@@ -57,9 +57,17 @@ public interface ApplicationListener {
 	 */
 	public class ApplicationEvent {
 		
+		public static final String PROJECT_LOADING_PROJECT_XML_FILE_LOADED = "ProjectLoading_ProjectXmlFileLoaded";
+		public static final String PROJECT_LOADING_PROJECT_USER_FILE_LOADED = "ProjectLoading_ProjectUserFileLoaded";
+		public static final String PROJECT_LOADING_PROJECT_FILES_LOADED = "ProjectLoading_ProjectFilesLoaded";
+
+		public static final String PROJECT_LOADING_SETUP_XML_FILE_LOADED = "ProjectLoading_SetupXmlFileLoaded";
+		public static final String PROJECT_LOADING_SETUP_USER_FILE_LOADED = "ProjectLoading_SetupUserFileLoaded";
+		public static final String PROJECT_LOADING_SETUP_FILES_LOADED = "ProjectLoading_SetupFilesLoaded";
+		
+		public static final String PROJECT_FOCUSED = "ProjectFocused";
 		public static final String PROJECT_LOADED  = "ProjectLoaded";
 		public static final String PROJECT_CLOSED  = "ProjectClosed";
-		public static final String PROJECT_FOCUSED = "ProjectFocused";
 		
 		private String applicationEvent;
 		private Object eventObject;

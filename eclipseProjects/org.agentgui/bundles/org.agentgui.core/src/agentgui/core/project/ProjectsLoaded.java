@@ -206,6 +206,9 @@ public class ProjectsLoaded {
 			newProject.setJadeConfiguration(Application.getGlobalInfo().getJadeDefaultPlatformConfig());
 		}
 		
+		// --- Inform ApplicationListener that the project files were loaded --
+		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_PROJECT_FILES_LOADED, newProject));
+		
 		// --- Is there already a simulation setup? ---------------------------
 		if (newProject.getSimulationSetups().size()==0) {
 			// --- Create default simulations setup ---------------------------

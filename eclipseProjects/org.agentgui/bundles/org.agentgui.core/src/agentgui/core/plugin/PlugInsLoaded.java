@@ -84,6 +84,7 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 		try {
 			plugIn.onPlugIn();	
 		} catch (Exception ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error while calling 'onPlugIn()' on PlugIn '" + plugInReference + "'!");
 			ex.printStackTrace();
 		}
 		

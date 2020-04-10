@@ -69,6 +69,7 @@ import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.AbstractUserObject;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
@@ -208,7 +209,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	@XmlElementWrapper(name = "plugins")
 	@XmlElement(name = "className")
-	private Vector<String> plugIns_Classes = new Vector<String>();
+	private Vector<String> pluginClassNames;
 	/**
 	 * This extended Vector will hold the concrete instances of the PLugIns loaded in this project
 	 */
@@ -394,10 +395,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		
 		Project project = null;
 
-		// --- Get data model from file ---------------
+		// --- Get data model from file -------------------
 		String xmlFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFileNameProject();	
 
-		// --- Does the file exists -------------------
+		// --- Does the file exists -----------------------
 		File xmlFile = new File(xmlFileName);
 		if (xmlFile.exists()==false) {
 
@@ -413,13 +414,15 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			return null;
 		}
 
-		// --- Read file 'agentgui.xml' ---------------
+		// --- Read file 'agentgui.xml' -------------------
 		FileReader fileReader = null;
 		try {
 			fileReader = new FileReader(xmlFileName);
 			JAXBContext pc = JAXBContext.newInstance(Project.class);
 			Unmarshaller um = pc.createUnmarshaller();
 			project = (Project) um.unmarshal(fileReader);
+			// --- Fire application event -----------------
+			Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_PROJECT_XML_FILE_LOADED, project));
 
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
@@ -480,6 +483,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				if (userObject!=null) {
 					project.setUserRuntimeObject(userObject);
 					successfulLoaded = true;
+					// --- Fire application event ---------
+					Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_PROJECT_USER_FILE_LOADED, project));
 				}
 				
 			} catch (ClassNotFoundException | NoClassDefFoundError cEx) {
@@ -510,6 +515,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				Serializable userObject = (Serializable) inStream.readObject();
 				project.setUserRuntimeObject(userObject);
 				successfulLoaded = true;
+				// --- Fire application event -------------
+				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_PROJECT_USER_FILE_LOADED, project));
+
 
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -1050,6 +1058,16 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	// --- Here we come with methods for (un-) load ProjectPlugIns --- Start ------------
 	// ----------------------------------------------------------------------------------
 	/**
+	 * Returns the plugin class names (this is also stored in the project file).
+	 * @return the plugin class names
+	 */
+	public Vector<String> getPluginClassNames() {
+		if (pluginClassNames==null) {
+			pluginClassNames = new Vector<>();
+		}
+		return pluginClassNames;
+	}
+	/**
 	 * This method will load the ProjectPlugIns, which are configured for the
 	 * current project (plugins_Classes). It will be executed only one time during 
 	 * the 'ProjectsLoaded.add()' execution. After this no further functionality 
@@ -1057,11 +1075,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 */
 	public void plugInVectorLoad() {
 		if (this.plugInVectorLoaded == false) {
-			// --- load all plugins configured in 'plugIns_Classes' -----------
-			for (int i = 0; i < this.plugIns_Classes.size(); i++) {
-				if (this.plugInLoad(this.plugIns_Classes.get(i), false)==false) {
-					System.err.println("Removed Plug-In entry for: '" + this.plugIns_Classes.get(i) + "'");
-					this.plugIns_Classes.remove(i);
+			// --- load all plugins configured in 'pluginClassNames' -----------
+			for (int i = 0; i < this.getPluginClassNames().size(); i++) {
+				if (this.plugInLoad(this.getPluginClassNames().get(i), false)==false) {
+					System.err.println("Removed Plug-In entry for: '" + this.getPluginClassNames().get(i) + "'");
+					this.getPluginClassNames().remove(i);
 				}
 			}
 			this.plugInVectorLoaded = true;
@@ -1122,7 +1140,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 				PlugIn ppi = this.getPlugInsLoaded().loadPlugin(this, pluginReference);
 				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
 				if (add2PlugInReferenceVector==true) {
-					this.plugIns_Classes.add(pluginReference);
+					this.getPluginClassNames().add(pluginReference);
 				}
 			}
 
@@ -1145,7 +1163,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		this.getPlugInsLoaded().removePlugIn(plugIn);
 		this.setNotChangedButNotify(new PlugInNotification(PlugIn.REMOVED, plugIn));
 		if (removeFromProjectReferenceVector) {
-			this.plugIns_Classes.remove(plugIn.getClassReference());
+			this.getPluginClassNames().remove(plugIn.getClassReference());
 		}
 	}
 
@@ -1179,7 +1197,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			this.plugInRemove(plugIn, true);
 		} else {
 			// --- If not, just remove it from the class reference vector ---------------
-			this.plugIns_Classes.remove(classReference);
+			this.getPluginClassNames().remove(classReference);
 		}
 	}
 	// ----------------------------------------------------------------------------------
@@ -2063,10 +2081,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 	
 	/**
-	 * Gets the user runtime object class name.
+	 * Returns the user runtime object class name.
 	 * @return the user runtime object class name
 	 */
-	private String getUserRuntimeObjectClassName() {
+	@XmlTransient
+	public String getUserRuntimeObjectClassName() {
 		if (userRuntimeObjectClassName==null && this.getUserRuntimeObject()!=null) {
 			userRuntimeObjectClassName = this.getUserRuntimeObject().getClass().getName();
 		}
@@ -2076,7 +2095,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * Sets the user runtime object class name.
 	 * @param userRuntimeObjectClassName the new user runtime object class name
 	 */
-	private void setUserRuntimeObjectClassName(String userRuntimeObjectClassName) {
+	public void setUserRuntimeObjectClassName(String userRuntimeObjectClassName) {
 		this.userRuntimeObjectClassName = userRuntimeObjectClassName;
 	}
 	

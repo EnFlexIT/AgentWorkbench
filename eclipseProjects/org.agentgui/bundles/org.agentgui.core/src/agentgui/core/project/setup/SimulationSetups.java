@@ -40,6 +40,7 @@ import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
 import agentgui.core.project.Project;
@@ -278,8 +279,10 @@ public class SimulationSetups extends TreeMap<String, String> {
 			this.currSimSetup = SimulationSetup.load(setupXmlFile, true);
 			if (this.currSimSetup!=null) {
 				this.currSimSetup.setProject(this.currProject);
+				// --- Fire application event -------------
+				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_FILES_LOADED, this.currSimSetup));
 			}
-			// --- Load the environment?! -----------
+			// --- Load the environment?! -----------------
 			EnvironmentController envCont = this.currProject.getEnvironmentController();
 			if (envCont!=null) {
 				envCont.callLoadEnvironment(PersistenceStrategy.HandleWithSetupOpenOrSave);

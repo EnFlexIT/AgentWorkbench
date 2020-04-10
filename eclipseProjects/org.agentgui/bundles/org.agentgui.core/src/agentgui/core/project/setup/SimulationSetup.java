@@ -56,6 +56,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
@@ -278,6 +279,8 @@ public class SimulationSetup {
 			fileReader = new FileReader(setupXmlFile);
 			setup = (SimulationSetup) um.unmarshal(fileReader);
 			setup.setProject(Application.getProjectFocused());
+			// --- Fire application event ---------
+			Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_XML_FILE_LOADED, setup));
 			
 		} catch (JAXBException | IOException ex) {
 			ex.printStackTrace();
@@ -351,6 +354,8 @@ public class SimulationSetup {
 				if (userObject!=null) {
 					setup.setUserRuntimeObject(userObject);
 					successfulLoaded = true;
+					// --- Fire application event ---------
+					Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED, setup));
 				}
 				
 			} catch (ClassNotFoundException | NoClassDefFoundError cEx) {
@@ -381,6 +386,8 @@ public class SimulationSetup {
 				Serializable userObject = (Serializable)in.readObject();
 				setup.setUserRuntimeObject(userObject);
 				successfulLoaded = true;
+				// --- Fire application event ---------
+				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED, setup));
 				
 			} catch(IOException | ClassNotFoundException ex) {
 				ex.printStackTrace();
@@ -630,7 +637,8 @@ public class SimulationSetup {
 	 * Gets the user runtime object class name.
 	 * @return the user runtime object class name
 	 */
-	private String getUserRuntimeObjectClassName() {
+	@XmlTransient
+	public String getUserRuntimeObjectClassName() {
 		if (userRuntimeObjectClassName==null && this.getUserRuntimeObject()!=null) {
 			userRuntimeObjectClassName = this.getUserRuntimeObject().getClass().getName();
 		}
@@ -640,7 +648,7 @@ public class SimulationSetup {
 	 * Sets the user runtime object class name.
 	 * @param userRuntimeObjectClassName the new user runtime object class name
 	 */
-	private void setUserRuntimeObjectClassName(String userRuntimeObjectClassName) {
+	public void setUserRuntimeObjectClassName(String userRuntimeObjectClassName) {
 		this.userRuntimeObjectClassName = userRuntimeObjectClassName;
 	}
 	
