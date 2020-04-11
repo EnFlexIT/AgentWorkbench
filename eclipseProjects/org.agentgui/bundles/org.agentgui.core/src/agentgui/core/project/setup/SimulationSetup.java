@@ -432,7 +432,13 @@ public class SimulationSetup {
 	 */
 	@XmlTransient
 	public ArrayList<AgentClassElement4SimStart> getAgentList() {
-		this.mergeAgentListModels();
+		// ----------------------------------------------------------
+		// --- If start lists are defined, merge them to a ---------- 
+		// --- new list. - Otherwise return what we have ------------ 
+		// ----------------------------------------------------------
+		if (this.hashMap4AgentDefaulListModels.size()>0) {
+			this.mergeAgentListModels();
+		}
 		return agentList;
 	}
 	
@@ -451,8 +457,7 @@ public class SimulationSetup {
 		Collections.sort(agentListNames);
 		
 		for (int i = 0; i < agentListNames.size(); i++) {
-			DefaultListModel<AgentClassElement4SimStart> dlm = this.hashMap4AgentDefaulListModels.get(agentListNames.get(i));
-			this.addToAgentList(dlm);
+			this.addToAgentList(this.hashMap4AgentDefaulListModels.get(agentListNames.get(i)));
 		}
 	}
 	
