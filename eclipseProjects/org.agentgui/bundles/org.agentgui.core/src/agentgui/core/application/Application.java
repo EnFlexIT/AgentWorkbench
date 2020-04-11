@@ -1365,7 +1365,11 @@ public class Application {
 	public static void informApplicationListener(ApplicationEvent event) {
 		if (event==null) return;
 		for (int i = 0; i < getApplicationListenerList().size(); i++) {
-			getApplicationListenerList().get(i).onApplicationEvent(event);;
+			try {
+				getApplicationListenerList().get(i).onApplicationEvent(event);;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	
