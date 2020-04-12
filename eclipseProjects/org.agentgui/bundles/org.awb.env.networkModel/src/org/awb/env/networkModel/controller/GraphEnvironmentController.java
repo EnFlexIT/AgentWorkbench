@@ -780,21 +780,28 @@ public class GraphEnvironmentController extends EnvironmentController {
 	}
 
 	/**
-	 * Load general graph settings.
+	 * Loads the general graph settings from the usual location on disc.
 	 */
-	private GeneralGraphSettings4MAS loadGeneralGraphSettings() {
+	public GeneralGraphSettings4MAS loadGeneralGraphSettings() {
 		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
 		return GeneralGraphSettings4MAS.load(componentFile);
 	}
-
 	/**
-	 * Save general graph settings.
+	 * Saves general graph settings to the usual location on disc.
 	 */
-	private void saveGeneralGraphSettings() {
-		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
-		GeneralGraphSettings4MAS.save(componentFile, this.getGeneralGraphSettings4MAS());
+	public void saveGeneralGraphSettings() {
+		this.saveGeneralGraphSettings(this.getGeneralGraphSettings4MAS());
 	}
-
+	/**
+	 * Saves the specified general graph settings to the usual location on disc.
+	 * @param graphSettings the actual graph settings to save
+	 */
+	public void saveGeneralGraphSettings(GeneralGraphSettings4MAS graphSettings) {
+		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
+		GeneralGraphSettings4MAS.save(componentFile, graphSettings);
+	}
+	
+	
 	/**
 	 * Clean up / correct list of agents corresponding to the current NetworkModel.
 	 */

@@ -136,12 +136,20 @@ public class SimulationSetup {
 	public SimulationSetup(Project project) {
 		this.setProject(project);
 	}
+	
 	/**
 	 * Sets the current project.
 	 * @param project the currProject to set
 	 */
 	public void setProject(Project project) {
 		this.currProject = project;
+	}
+	/**
+	 * Returns the current project.
+	 * @return the project
+	 */
+	public Project getProject() {
+		return this.currProject;
 	}
 	/**
 	 * Sets the current project to be unsaved.
