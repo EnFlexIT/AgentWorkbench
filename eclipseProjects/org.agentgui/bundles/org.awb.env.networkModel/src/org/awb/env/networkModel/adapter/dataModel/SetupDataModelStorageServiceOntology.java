@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.enflexit.common.ontology.OntologyInstanceHelper;
+import de.enflexit.common.ontology.OntologyMapper;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
@@ -512,8 +513,11 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 				this.tmpStringBuilder = null;
 				
 			} else if (qName.equals(XML_ELEMENT_Instance)==true) {
-				// --- ReadAction attribute ontology class ---------------- 
+				// --- ReadAction attribute ontology class ---------- 
 				String ontologyClassName = attributes.getValue(XML_ATTRIBUTE_Ontology);
+				// --- Check for an ontology class name mapping -----
+				ontologyClassName = OntologyMapper.getMappedOntologyClassName(ontologyClassName);
+				// --- Try to get the corresponding Ontology --------
 				this.tmpOntology = SetupDataModelStorageServiceOntology.this.getOntology(ontologyClassName);
 				this.getTmpOntologyBaseClasses().add(this.tmpOntology.getClass());
 				this.tmpStringBuilder = new StringBuilder();
