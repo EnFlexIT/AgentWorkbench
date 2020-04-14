@@ -47,8 +47,6 @@ public class CommonComponentFactory {
 
 	/**
 	 * Returns a new pre-configured {@link Zipper}.
-	 *
-	 * @param owner the owner frame
 	 * @return the new {@link Zipper} instance
 	 */
 	public static Zipper getNewZipper() {

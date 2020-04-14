@@ -289,6 +289,7 @@ public class InstallationPackageFinder {
 		/**
 		 * Instantiates a new installation package description.
 		 *
+		 * @param operatingSystem the operating system
 		 * @param packageFile the package file
 		 * @param packageDescription the description
 		 */

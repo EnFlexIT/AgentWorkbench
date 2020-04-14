@@ -197,7 +197,7 @@ public class Language implements Translator {
 	 * the second parameter language (use one of the languages specified as static 
 	 * attribute in this class e.g. 'Language.EN')
 	 * 
-	 * @param expression
+	 * @param expression the expression to translate
 	 * @param language the source language. Use one of these parameters: Language.EN, Language.DE and so on
 	 * @return the translated text of the expression
 	 */
@@ -276,8 +276,8 @@ public class Language implements Translator {
 	}
 	
 	/**
-	 * List all available Language-Headers from the 
-	 * Dictionary file as String-Array
+	 * List of all available Language-Headers in the dictionary file as String-Array.
+	 * @return the languages header from the dictionary file 
 	 */
 	public static String[] getLanguages() {
 		return getLanguages(false);	
@@ -302,8 +302,10 @@ public class Language implements Translator {
 	}
 	
 	/**
-	 * Translate the already known language-headers (e. g. 'LANG_EN') 
-	 * and give them an proper German expression.
+	 * Translate the already known language-headers (e. g. 'LANG_EN') and give them an proper German expression.
+	 *
+	 * @param langHeader the language header
+	 * @return the language name in German
 	 */
 	public static String getLanguageName(String langHeader) {
 		
@@ -352,9 +354,9 @@ public class Language implements Translator {
 	}
 
 	/**
-	 * Returns true if the language, given by the parameter language, is the current one
-	 * @param language
-	 * @return true and false
+	 * Returns true if the language, given by the parameter language, is the current one.
+	 * @param language the language header from the dictionary to check (e.g. 'en')
+	 * @return true if the specified language is the current one 
 	 */
 	public static boolean isCurrentLanguage(String language) {
 		if (currLanguageIndex==null) return false;
@@ -367,7 +369,8 @@ public class Language implements Translator {
 	}
 	
 	/**
-	 * returns the number of languages defined in the current dictionary
+	 * Returns the number of languages defined in the current dictionary.
+	 * @return the number of languages
 	 */
 	private static int getNumberOfLanguages() {
 		return getLanguages().length-1;
@@ -395,26 +398,27 @@ public class Language implements Translator {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Update this line of the dictionary
-	 * @param expression
-	 * @param dictRow
+	 * Updates the specified dictionary line.
+	 *
+	 * @param keyExpression the key expression that was defined with the source language
+	 * @param newDictRow the new dictionary line to set
 	 */
-	public static void update(String expression, String dictRow) {
-		Integer dictLineIndex = getDictionaryHashtabel().get(expression);	
+	public static void update(String keyExpression, String newDictRow) {
+		Integer dictLineIndex = getDictionaryHashtabel().get(keyExpression);	
 		if (dictLineIndex!=null) {
-			getDictionaryLines().set(dictLineIndex, dictRow);
+			getDictionaryLines().set(dictLineIndex, newDictRow);
 		}
 	}
+	
 	/**
-	 * Remove this line from the dictionary
-	 * (put an empty line)
-	 * @param expression
+	 * Remove this line from the dictionary (or better: places an empty line in the dictionary).
+	 * @param keyExpression the key expression
 	 */
-	public static void delete(String expression) {
-		Integer lineNo = getDictionaryHashtabel().get(expression);	
+	public static void delete(String keyExpression) {
+		Integer lineNo = getDictionaryHashtabel().get(keyExpression);	
 		if (lineNo!=null) {
 			getDictionaryLines().set(lineNo, getEmptyLine());
-			getDictionaryHashtabel().remove(expression);	
+			getDictionaryHashtabel().remove(keyExpression);	
 		}
 	}
 	

@@ -45,15 +45,9 @@ import agentgui.ontology.XyValuePair;
 
 public class XyChartModel extends ChartModel {
 
-	/**
-	 * The parent {@link XyDataModel}
-	 */
 	private XyDataModel parent;
-	
-	/**
-	 * The JFreeChart data model for this chart
-	 */
 	private XYSeriesCollection xySeriesCollection;
+
 	
 	/**
 	 * Instantiates a new XYChartModel.
@@ -148,6 +142,7 @@ public class XyChartModel extends ChartModel {
 	
 	/**
 	 * Sets a XY series according to the ontology model.
+	 * @param seriesIndex the new XY series according to ontology model
 	 */
 	public void setXYSeriesAccordingToOntologyModel(int seriesIndex) {
 		

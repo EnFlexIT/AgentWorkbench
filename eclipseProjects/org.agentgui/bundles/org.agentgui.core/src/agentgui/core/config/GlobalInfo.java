@@ -455,9 +455,10 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public String getExecutionModeDescription() {
 		return this.getExecutionModeDescription(this.getExecutionMode());
 	}
-	
 	/**
 	 * Returns the execution mode description.
+	 *
+	 * @param executionMode the execution mode
 	 * @return the execution mode description
 	 */
 	public String getExecutionModeDescription(ExecutionMode executionMode) {
@@ -572,7 +573,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * This method will return a substitute String for the new line String.
 	 * It is used, for example, in the dictionary, so that it is possible
 	 * to write text with several lines in a single one.<br>
-	 * Basically, the HTML-tag <<i>br</i>> is used here.
+	 * Basically, the HTML-tag &lt;br&gt; is used here.
 	 * 
 	 * @return a substitute String for a new line
 	 */
@@ -677,14 +678,14 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	
 	
 	/**
-	 * Sets the 'projects' directory.
-	 * @param newProectsDirectory the new path projects
+	 * Sets the 'projects' base directory.
+	 * @param newProjectsDirectory the new path to AWB projects
 	 */
 	public void setPathProjects(String newProjectsDirectory) {
 		this.filePropProjectsDirectory = newProjectsDirectory;
 	}
 	/**
-	 * This method will return the absolute path to the projects directory ('projects\').
+	 * This method will return the absolute path to the base projects directory ('projects\').
 	 * If the path does not exists, the path will be created.
 	 * @return the path to the project folder
 	 */
@@ -1717,10 +1718,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		}
 		return knownEnvironmentTypes;
 	}
+	
 	/**
-	 * This method can be used in order to add a tailored environment type
-	 * (assume for example a 3D-environment model)  
-	 * @param envType
+	 * This method can be used in order to add a tailored environment type (assume for example a 3D-environment model).
+	 *
+	 * @param envType the EnvironmentType definition to add
 	 * @see EnvironmentType
 	 */
 	public void addEnvironmentType(EnvironmentType envType) {
@@ -2204,6 +2206,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	/**
 	 * Returns the next midnight time stamp for the specified time.
+	 *
+	 * @param timeStamp the time stamp
 	 * @return the next midnight time stamp
 	 */
 	public static long getNextMidnightFromTimeStamp(long timeStamp) {

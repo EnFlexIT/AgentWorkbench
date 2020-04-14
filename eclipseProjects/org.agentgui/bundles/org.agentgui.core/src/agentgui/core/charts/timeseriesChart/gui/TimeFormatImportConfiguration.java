@@ -143,7 +143,9 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 
 	/**
 	 * Instantiates a new time format import configuration.
-	 * @param owner the owner
+	 *
+	 * @param owner the owner frame
+	 * @param csvFile the csv file
 	 */
 	public TimeFormatImportConfiguration(Frame owner, File csvFile) {
 		super(owner);

@@ -366,6 +366,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	 *
 	 * @param csvFile The CSV file
 	 * @param keyFormat the key format
+	 * @param keyOffset the key offset
 	 */
 	protected void importDataSeriesFromCSV(File csvFile, String keyFormat, Number keyOffset) {
 		

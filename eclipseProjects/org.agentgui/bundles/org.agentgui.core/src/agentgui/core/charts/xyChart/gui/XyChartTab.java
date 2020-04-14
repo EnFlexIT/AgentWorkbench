@@ -39,10 +39,11 @@ public class XyChartTab extends ChartTab {
 	
 	private static final long serialVersionUID = 5373349334098916334L;
 
-	
 	/**
 	 * Instantiates a new XyChartTab.
-	 * @param model the model
+	 *
+	 * @param model the XyDataModel
+	 * @param parent the parent XyChartEditorJPanel
 	 */
 	public XyChartTab(XyDataModel model, XyChartEditorJPanel parent){
 		super(ChartFactory.createXYLineChart(

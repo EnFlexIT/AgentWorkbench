@@ -95,8 +95,10 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 	
 	
 	/**
-	 * Constructor
+	 * Instantiates a new ChartTab.
+	 *
 	 * @param chart The chart to be displayed
+	 * @param parent the parent
 	 */
 	public ChartTab(JFreeChart chart, ChartEditorJPanel parent) {
 		

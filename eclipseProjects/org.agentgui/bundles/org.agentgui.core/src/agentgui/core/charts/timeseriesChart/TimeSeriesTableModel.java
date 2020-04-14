@@ -59,9 +59,9 @@ public class TimeSeriesTableModel extends TableModel {
 	
 	private static final String DEFAULT_TIME_COLUMN_TITLE = "Time";
 	
-	
 	/**
-	 * Constructor
+	 * Instantiates a new time series table model.
+	 * @param parent the parent
 	 */
 	public TimeSeriesTableModel(TimeSeriesDataModel parent){
 		this.parentDataModel = parent;
@@ -303,16 +303,16 @@ public class TimeSeriesTableModel extends TableModel {
 	}
 	
 	/**
-	 * Add a new time series to the table model
-	 * @param newSeries
+	 * Add a new time series to the table model.
+	 * @param newSeries the new series
 	 */
 	public void addSeries(DataSeries newSeries){
 		this.addSeries(newSeries, true);
 	}
 	
 	/**
-	 * Add a new time series to the table model
-	 * @param newSeries
+	 * Add a new time series to the table model.
+	 * @param newSeries the new series
 	 * @param restoreSorting Restore sort order afterwards?
 	 */
 	public void addSeries(DataSeries newSeries, boolean restoreSorting){
@@ -484,11 +484,12 @@ public class TimeSeriesTableModel extends TableModel {
 		
 	}
 
-	
 	/**
 	 * Edits the data series by adding data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 		
@@ -518,10 +519,13 @@ public class TimeSeriesTableModel extends TableModel {
 			throw new NoSuchSeriesException(); 
 		}
 	}
+	
 	/**
 	 * Edits the data series by adding or exchanging data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
@@ -587,10 +591,13 @@ public class TimeSeriesTableModel extends TableModel {
 			throw new NoSuchSeriesException();
 		}
 	}
+	
 	/**
 	 * Edits the data series by exchanging data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 

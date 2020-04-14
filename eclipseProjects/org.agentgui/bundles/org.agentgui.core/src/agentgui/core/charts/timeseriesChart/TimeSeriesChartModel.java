@@ -215,11 +215,12 @@ public class TimeSeriesChartModel extends ChartModel{
 		
 	}
 
-	
 	/**
 	 * Edits the data series by adding data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
@@ -244,10 +245,13 @@ public class TimeSeriesChartModel extends ChartModel{
 			throw new NoSuchSeriesException();
 		}
 	}
+	
 	/**
 	 * Edits the data series by adding or exchanging data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 		
@@ -274,8 +278,10 @@ public class TimeSeriesChartModel extends ChartModel{
 
 	/**
 	 * Edits the data series by exchanging data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
@@ -305,8 +311,10 @@ public class TimeSeriesChartModel extends ChartModel{
 
 	/**
 	 * Edits the data series by remove data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 

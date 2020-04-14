@@ -65,8 +65,10 @@ public class XyDataModel extends DataModel {
 	
 	private XyChartEditorJPanel myEditorJPanel = null;
 	
+	
 	/**
 	 * Instantiates a new XyDataModel.
+	 * @param myEditorJPanel the current XyChartEditorJPanel
 	 */
 	public XyDataModel(XyChartEditorJPanel myEditorJPanel){
 		this.myEditorJPanel = myEditorJPanel;

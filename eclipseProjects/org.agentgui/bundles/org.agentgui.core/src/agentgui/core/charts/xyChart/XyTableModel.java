@@ -65,7 +65,9 @@ public class XyTableModel extends TableModel {
 	
 	/**
 	 * Instantiates a new XyTableModel.
-	 * @param parent the parent
+	 *
+	 * @param myJTable the JTable to use
+	 * @param parent the parent XyDataModel
 	 */
 	public XyTableModel(JTable myJTable, XyDataModel parent){
 		this.myJTable = myJTable;
@@ -217,9 +219,7 @@ public class XyTableModel extends TableModel {
 	}
 	/**
 	 * Focuses the specified series.
-	 *
 	 * @param targetSeriesIndex the target series index
-	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void focusSeries(int targetSeriesIndex) {
 		
@@ -662,8 +662,10 @@ public class XyTableModel extends TableModel {
 	}
 	
 	/**
-	 * Moves the current selection according to the direction.
-	 * @param direction the direction to move
+	 * Moves the currently selected row according to the direction.
+	 *
+	 * @param jTable the JTtable
+	 * @param direction the direction to move (> 0 or < 0) 
 	 */
 	public void move(JTable jTable, int direction) {
 		

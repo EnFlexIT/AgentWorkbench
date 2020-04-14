@@ -48,9 +48,12 @@ public class TimeSeriesChartTab extends ChartTab {
 
 	private static final long serialVersionUID = -1998969136744482400L;
 	
+	
 	/**
-	 * Constructor
+	 * Instantiates a new time series chart tab.
+	 *
 	 * @param model The data model for this time series
+	 * @param parent the parent
 	 */
 	public TimeSeriesChartTab(TimeSeriesDataModel model, TimeSeriesChartEditorJPanel parent){
 		
@@ -64,7 +67,7 @@ public class TimeSeriesChartTab extends ChartTab {
 		
 		this.dataModel = model;
 		
-		applySettings();
+		this.applySettings();
 		
 		model.getChartModel().addObserver(this);
 	}

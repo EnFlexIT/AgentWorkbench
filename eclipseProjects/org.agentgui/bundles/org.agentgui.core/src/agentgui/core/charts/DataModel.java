@@ -54,20 +54,6 @@ import agentgui.ontology.ValuePair;
 public abstract class DataModel implements Observer{
 	
 	/** These colors will be used for newly added series. */
-// --- Old setting from Nils ------------------------------	
-//	public static final Color[] DEFAULT_COLORS = {
-//		Color.RED, 
-//		Color.BLUE, 
-//		Color.GREEN, 
-//		Color.ORANGE, 
-//		Color.YELLOW, 
-//		Color.PINK, 
-//		Color.CYAN, 
-//		Color.MAGENTA, 
-//		Color.LIGHT_GRAY, 
-//		Color.DARK_GRAY, 
-//		Color.BLACK
-//	};
 	public static final Color[] DEFAULT_COLORS = {
 		new Color(91, 155, 213), 
 		new Color(237, 125, 49), 
@@ -300,6 +286,7 @@ public abstract class DataModel implements Observer{
 	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void addOrExchangeSeries(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
@@ -318,6 +305,7 @@ public abstract class DataModel implements Observer{
 	 *
 	 * @param series the series
 	 * @param seriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void exchangeSeries(DataSeries series, int seriesIndex) throws NoSuchSeriesException {
 		if (seriesIndex<=(this.getSeriesCount()-1)) {
@@ -353,22 +341,27 @@ public abstract class DataModel implements Observer{
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
 	 * @param editOntology true, if the ontology has to be edited
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public abstract void editDataSeriesAddData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
+	
 	/**
 	 * Edits the data series by adding or exchanging data.
 	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
 	 * @param editOntology true, if the ontology has to be edited
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public abstract void editDataSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
+	
 	/**
 	 * Edits the data series by exchanging data.
 	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
 	 * @param editOntology true, if the ontology has to be edited
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public abstract void editDataSeriesExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
 	

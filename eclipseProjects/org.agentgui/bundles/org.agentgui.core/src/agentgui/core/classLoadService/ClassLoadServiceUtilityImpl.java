@@ -40,7 +40,7 @@ import de.enflexit.common.classLoadService.AbstractClassLoadServiceUtilityImpl;
 import jade.core.Agent;
 
 /**
- * The Class BaseClassLoadServiceUtility extends the {@link DefaultClassLoadServiceUtility} 
+ * The Class BaseClassLoadServiceUtility extends the {@link AbstractClassLoadServiceUtilityImpl} 
  * and prepares the access to the {@link BaseClassLoadService} depending on the OSGI bundle.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen

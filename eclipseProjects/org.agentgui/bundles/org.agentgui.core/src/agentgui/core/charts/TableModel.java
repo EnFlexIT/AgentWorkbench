@@ -115,7 +115,7 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	/**
 	 * Returns the row specified by the index.
 	 * 
--	 * @param rowIndex the row index
+	 * @param rowIndex the row index
 	 * @return the row
 	 */
 	public Vector<Number> getRow(int rowIndex) {
@@ -208,8 +208,8 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	
 	
 	/**
-	 * Add a data series to the table model
-	 * @param newSeries
+	 * Add a data series to the table model.
+	 * @param newSeries the new DataSeries
 	 */
 	public abstract void addSeries(DataSeries newSeries);
 	/**
@@ -223,7 +223,8 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	 * Exchanges the specified data series with a new data series.
 	 *
 	 * @param seriesIndex the series index
-	 * @param newSeries the new series
+	 * @param newSeries the new DataSeries
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public abstract void exchangeSeries(int seriesIndex, DataSeries newSeries) throws NoSuchSeriesException;
 	
