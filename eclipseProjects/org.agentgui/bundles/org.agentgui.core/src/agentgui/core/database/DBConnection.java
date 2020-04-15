@@ -449,7 +449,7 @@ public class DBConnection {
 	}
 	/**
 	 * This method returns the number of rows from a ResultSet-Object
-	 * @param rs
+	 * @param rs the ResultSet
 	 * @return Number of rows from a result set, after SQL execution 
 	 */
 	public int getRowCount(ResultSet rs){
@@ -701,37 +701,39 @@ public class DBConnection {
 			err = false;
 			msg = "";
 		}
+		
 		/**
-		 * Here a error-number (for SQL) can be set
-		 * @param newErrNumber
+		 * Here a error-number (for SQL) can be set.
+		 * @param newErrNumber the new err number
 		 */
 		public void setErrNumber(Integer newErrNumber) {
 			errNumber = newErrNumber;
 		}
 		/**
-		 * Here the Dialog-Title of the JOptionPane can be set
-		 * @param newErrHead
+		 * Here the Dialog-Title of the JOptionPane can be set.
+		 * @param newErrHead the new head
 		 */
 		public void setHead(String newErrHead) {
 			errHead = newErrHead;
 		}
 		/**
-		 * Here, the Text inside of the JOptionPane can be set 
-		 * @param newErrText
+		 * Here, the Text inside of the JOptionPane can be set .
+		 * @param newErrText the new text
 		 */
 		public void setText(String newErrText) {
 			errText = newErrText;
 		}
 		/**
-		 * Here, an indicator for an error can be set 
-		 * @param err
+		 * Here, an indicator for an error can be set .
+		 * @param err the new err
 		 */
 		public void setErr(boolean err) {
 			this.err = err;
 		}
+		
 		/**
-		 * This method returns, if there is an error or not
-		 * @return boolean
+		 * This method returns, if there is an error or not.
+		 * @return true if this is an error
 		 */
 		public boolean isErr() {
 			return err;
@@ -740,7 +742,7 @@ public class DBConnection {
 		 * This method puts the value of 'toClipboard' to the clipboard
 		 * In case of an SQL-Error, the SQL-Statement will be placed in
 		 * such a way and can be used in an external application as well.
-		 * @param toClipboard String which will be placed in the clipboard
+		 * @param toClipboard String that will be placed in the system clipboard
 		 */
 		public void put2Clipboard(String toClipboard) {
 			if (Application.isOperatingHeadless()==false) {
@@ -783,7 +785,7 @@ public class DBConnection {
 	
 	/**
 	 * This method converts an DB-Integer to a Java-boolean 
-	 * @param intValue
+	 * @param intValue the integer value to be converted to a boolean
 	 * @return False, if the integer value is equal 0 - otherwise true
 	 */
 	public boolean dbInteger2Bool(Integer intValue) {
@@ -795,7 +797,7 @@ public class DBConnection {
 	}
 	/**
 	 * This method converts an DB-boolean to an Java-Integer
-	 * @param booleanValue
+	 * @param booleanValue the boolean to be converted to an integer
 	 * @return 0, if the boolean is true - otherwise -1
 	 */
 	public Integer dbBool2Integer(boolean booleanValue) {

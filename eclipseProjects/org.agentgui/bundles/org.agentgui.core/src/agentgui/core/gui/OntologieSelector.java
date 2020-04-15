@@ -72,13 +72,14 @@ public class OntologieSelector extends JDialog implements ActionListener{
 
 	
 	/**
-	 * Constructor equal to JDialog plus the current instance of project 
-	 * @param owner
-	 * @param titel
-	 * @param modal
+	 * Constructor equal to JDialog plus the current instance of project .
+	 *
+	 * @param owner the owner frame
+	 * @param title the dialog title
+	 * @param modal the indicator to use this dialog in a modal way
 	 */
-	public OntologieSelector(Frame owner, String titel, boolean modal) {
-		super(owner, titel, modal);
+	public OntologieSelector(Frame owner, String title, boolean modal) {
+		super(owner, title, modal);
 		
 		this.initialize();
 		this.filterOntology();

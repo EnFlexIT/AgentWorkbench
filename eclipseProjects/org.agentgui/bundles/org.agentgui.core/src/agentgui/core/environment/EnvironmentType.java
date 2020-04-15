@@ -57,7 +57,7 @@ public class EnvironmentType {
 	/**
 	 * Constructor for this class.
 	 *
-	 * @param key A unique identifier for the environment model type
+	 * @param key a unique identifier for the environment model type
 	 * @param displayName A name that will be displayed later on
 	 * @param displayNameLanguage the display name language
 	 * @param controller the controller class of the environment 

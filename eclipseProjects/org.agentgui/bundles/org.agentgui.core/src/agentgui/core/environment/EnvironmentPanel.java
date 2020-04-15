@@ -48,6 +48,7 @@ public abstract class EnvironmentPanel extends JPanel implements Observer {
 	
 	/**
 	 * Constructor for displaying the current environment model during a running simulation.
+	 * @param controller the current EnvironmentController 
 	 */
 	public EnvironmentPanel(EnvironmentController controller){
 		super();

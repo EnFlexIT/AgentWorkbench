@@ -484,10 +484,9 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * Here the 'look and feel' LnF of java Swing can be set.
-	 * @param newLnF the new look and feel
+	 * Resets the Look and Feel and the language menu after the Lnf was updated
 	 */
-	public void setLookAndFeelUpdated() {
+	public void resetAfterLookAndFeelUpdate() {
 
 		if (jMenuExtraLnF != null) {
 			jMenuExtraLnF.removeAll();
@@ -497,7 +496,7 @@ public class MainWindow extends JFrame {
 			jMenuExtraLang.removeAll();
 			this.setjMenuExtraLang();
 		}
-		if (Application.getProjectFocused() != null) {
+		if (Application.getProjectFocused()!=null) {
 			Application.getProjectFocused().setMaximized();
 		}
 	}

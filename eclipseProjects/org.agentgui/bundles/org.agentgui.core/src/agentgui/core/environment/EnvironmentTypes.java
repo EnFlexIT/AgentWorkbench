@@ -59,7 +59,7 @@ public class EnvironmentTypes extends Vector<EnvironmentType>{
 	
 	/**
 	 * This method returns the EnvironmentType instance searched by its key
-	 * @param key
+	 * @param key the unique identifier for the environment model type
 	 * @return The instance of the EnvironmentType
 	 * @see EnvironmentType	
 	 */

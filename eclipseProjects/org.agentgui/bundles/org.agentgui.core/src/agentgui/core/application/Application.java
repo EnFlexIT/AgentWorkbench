@@ -1126,7 +1126,7 @@ public class Application {
 		if (getMainWindow()!=null) {
 			getGlobalInfo().setAppLookAndFeelClassName(newLnF);
 			AwbLookAndFeelAdjustments.setLookAndFeel(newLnF, getMainWindow());
-			getMainWindow().setLookAndFeelUpdated();
+			getMainWindow().resetAfterLookAndFeelUpdate();
 			getProjectsLoaded().setProjectView();
 		}
 	}	
