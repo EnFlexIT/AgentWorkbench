@@ -2,9 +2,13 @@ package org.awb.env.networkModel.persistence;
 
 import java.io.File;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.filechooser.FileFilter;
 
+import org.awb.env.networkModel.DataModelNetworkElement;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
@@ -43,13 +47,28 @@ public interface NetworkModelImportService {
 	public AbstractEnvironmentModel getAbstractEnvironmentModel();
 	
 	/**
+	 * Has to return, if the detail models of {@link NetworkComponent}s and {@link GraphNode}s needs to be saved after the import.<p> 
+	 * If this method return <code>true</code>, the storing procedure for {@link DataModelNetworkElement}s will be executed right after the import. 
+	 * If an implementation returns <code>false</code>, the import implementation should have saved the detail data models already.    
+	 * 
+	 * @return true, if the storing procedure for {@link NetworkComponent}s and {@link GraphNode}s should be executed right after the import.
+	 */
+	public boolean requiresToStoreNetworkElements();
+
+	
+	/**
+	 * Has to return the vector of {@link DataModelNetworkElement}s that are to be saved or <code>null</code>.
+	 * If <code>null</code> or an empty vector is returned, all elements will be saved - otherwise only the returned elements.
+	 * @return the data model network element to save or <code>null</code>
+	 */
+	public Vector<DataModelNetworkElement> getDataModelNetworkElementToSave();
+	
+	/**
 	 * Implement this method to perform some cleanup tasks when the import is done, especially set member variables that may contain large objects to null. 
 	 */
 	public void cleanupImporter();
+
+
 	
-//	/**
-//	 * Gets the network model importer.
-//	 * @return the network model importer
-//	 */
-//	public CSV_FileImporter getNetworkModelImporter();
+	
 }

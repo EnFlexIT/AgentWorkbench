@@ -42,6 +42,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
@@ -173,8 +174,6 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			NetworkModel importedNetworkModel = this.importService.importNetworkModelFromFile(this.networkModelFileSelected);
 			// --- Do we have an AbstractEnvironmentModel also? ---------------------------
 			AbstractEnvironmentModel importedAbstractEnvironmentModel = this.importService.getAbstractEnvironmentModel();
-			// --- Invoke to cleanup the importer -----------------------------------------
-			this.importService.cleanupImporter();
 		
 			if (this.keepExistingComponents==true) {
 				// --- Merge into existing model --------------------
@@ -184,8 +183,6 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 					this.graphController.addAgent(networkComponentPasted);
 				}
 				this.newNetworkModel = mergedNetworkModel;
-				
-				//TODO figure out what to handle the  AbstractEnvironmentModel
 				this.newAbstractEnvModel = importedAbstractEnvironmentModel;
 				
 			} else {
@@ -202,8 +199,18 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			// ----------------------------------------------------------------------------
 			// --- The following has to be done only once, directly after the import !!! --
 			// ----------------------------------------------------------------------------
-			// --- Base64 encode the model elements --------------------------------------- 
-			this.graphController.saveDataModelNetworkElements();
+			// --- Save data models of network elements -----------------------------------
+			if (this.importService.requiresToStoreNetworkElements()==true) {
+				// --- Check which network elements are to be saved -----------------------
+				Vector<DataModelNetworkElement> networkElementsToSave = this.importService.getDataModelNetworkElementToSave();  
+				if (networkElementsToSave==null || networkElementsToSave.size()==0) {
+					this.graphController.saveDataModelNetworkElements();
+				} else {
+					this.graphController.saveDataModelNetworkElements(true, networkElementsToSave);
+				}
+			}
+			// --- Invoke to cleanup the importer -----------------------------------------
+			this.importService.cleanupImporter();
 			this.graphController.setProjectUnsaved();
 			
 		} catch (Exception ex) {
