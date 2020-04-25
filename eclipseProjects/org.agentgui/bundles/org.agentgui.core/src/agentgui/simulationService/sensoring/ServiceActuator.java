@@ -270,14 +270,14 @@ public class ServiceActuator extends Thread {
 		ServiceSensor serviceSensorFound = null;
 		if (this.sensorSearchHashMap==null) {
 			// --- Create the sensor search HashMap -----------------  
-			this.sensorSearchHashMap = this.createServiceSensorHashMap(this.getServiceSensorArray());
+			this.sensorSearchHashMap = this.createServiceSensorHashMap();
 			serviceSensorFound = this.sensorSearchHashMap.get(aid);
 		} else {
 			// --- Try to find the service sensor first -------------
 			serviceSensorFound = this.sensorSearchHashMap.get(aid);
 			if (serviceSensorFound==null && this.sensorSearchHashMap.size()!=this.getServiceSensorArray().length) {
 				// --- Recreate the sensor search HashMap -----------
-				this.sensorSearchHashMap = this.createServiceSensorHashMap(this.getServiceSensorArray());
+				this.sensorSearchHashMap = this.createServiceSensorHashMap();
 				serviceSensorFound = this.sensorSearchHashMap.get(aid);				
 			}
 		}
@@ -285,10 +285,9 @@ public class ServiceActuator extends Thread {
 	}
 	/**
 	 * Creates a service sensor HashMap from the specified array of {@link ServiceSensor}.
-	 * @param serviceSensorArray the service sensor array
-	 * @return the hash map
+	 * @return the hash map that handles the relation between AID and ServiceSensor
 	 */
-	private HashMap<AID, ServiceSensor> createServiceSensorHashMap(ServiceSensor[] serviceSensorArray12) {
+	private HashMap<AID, ServiceSensor> createServiceSensorHashMap() {
 		HashMap<AID, ServiceSensor> sensorSearchHashMap = new HashMap<AID, ServiceSensor>();
 		ServiceSensor[] sensors = this.getServiceSensorArray();
 		for (int i=0; i<sensors.length; i++) {
