@@ -79,6 +79,11 @@ public class ServiceActuator extends Thread {
 	private ServiceSensor[] serviceSensorArray;
 	private HashMap<AID, ServiceSensor> sensorSearchHashMap;
 
+	private boolean debug = false; 	
+	private int noServiceSensors;
+	private int noServiceSensorArray;
+	private int noSensorSearchHashMap;
+	
 	
 	/**
 	 * Instantiates a new service actuator.
@@ -127,6 +132,29 @@ public class ServiceActuator extends Thread {
 						actuatorJob = this.jobVector.remove(0);	
 					} else {
 						this.jobVector.wait();
+					}
+				}
+				
+				if (this.debug==true) {
+					// --- Counting of sensors plugged in ---------------------
+					int noServiceSensors = this.getServiceSensors().size();
+					if (noServiceSensors!=this.noServiceSensors) {
+						System.out.println("[" + this.getClass().getSimpleName() + "][debug] Changed no of Service Sensors in Vector => old: " + this.noServiceSensors + ", new: " + noServiceSensors);
+						this.noServiceSensors = noServiceSensors;
+					}
+					// --- Counting of sensor array ---------------------------
+					int noServiceSensorArray = getServiceSensorArray().length;
+					if (noServiceSensorArray!=this.noServiceSensorArray) {
+						System.out.println("[" + this.getClass().getSimpleName() + "][debug] Changed no of Service Sensors in Array => old: " + this.noServiceSensorArray + ", new: " + noServiceSensorArray);
+						this.noServiceSensorArray = noServiceSensorArray;
+					}
+					// --- Counting of sensor in search HashMap ---------------
+					if (this.sensorSearchHashMap!=null) {
+						int noSensorSearchHashMap = this.sensorSearchHashMap.size();
+						if (noSensorSearchHashMap!=this.noSensorSearchHashMap) {
+							System.out.println("[" + this.getClass().getSimpleName() + "][debug] Changed no of Service Sensors in Array => old: " + this.noSensorSearchHashMap + ", new: " + noSensorSearchHashMap);
+							this.noSensorSearchHashMap = noSensorSearchHashMap;
+						}
 					}
 				}
 				
@@ -204,7 +232,10 @@ public class ServiceActuator extends Thread {
 	 * @param currSensor the ServiceSensor to plug-in
 	 */
 	public void plugIn(ServiceSensor currSensor) {
-		this.getServiceSensors().addElement(currSensor);		
+		if (this.getServiceSensors().contains(currSensor)==false) {
+			this.getServiceSensors().addElement(currSensor);		
+		}
+		
 	}
 	/**
 	 * Method for agents to plug-in to this actuator, but it is not 
@@ -213,8 +244,10 @@ public class ServiceActuator extends Thread {
 	 * @param currSensor the ServiceSensor to plug-in
 	 */
 	public void plugInPassive(ServiceSensor currSensor) {
-		this.getServiceSensors().addElement(currSensor);
-		this.getServiceSensorsPassive().addElement(currSensor);
+		this.plugIn(currSensor);
+		if (this.getServiceSensorsPassive().contains(currSensor)==false ) {
+			this.getServiceSensorsPassive().addElement(currSensor);
+		}
 	}
 	/**
 	 * Method to plug-out from this actuator
@@ -255,7 +288,7 @@ public class ServiceActuator extends Thread {
 	 * @param serviceSensorArray the service sensor array
 	 * @return the hash map
 	 */
-	private HashMap<AID, ServiceSensor> createServiceSensorHashMap(ServiceSensor[] serviceSensorArray) {
+	private HashMap<AID, ServiceSensor> createServiceSensorHashMap(ServiceSensor[] serviceSensorArray12) {
 		HashMap<AID, ServiceSensor> sensorSearchHashMap = new HashMap<AID, ServiceSensor>();
 		ServiceSensor[] sensors = this.getServiceSensorArray();
 		for (int i=0; i<sensors.length; i++) {

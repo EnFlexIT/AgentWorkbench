@@ -67,9 +67,8 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 	private boolean passive = false;
 	private boolean done = false; 
 	
-	/** The ServiceSensor of this agent. */
+	
 	protected ServiceSensor mySensor;
-	/** The current EnvironmentModel. */
 	protected EnvironmentModel myEnvironmentModel;
 	
 	private CyclicNotificationHandler notificationHandler = null;
@@ -161,24 +160,41 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 		return super.onEnd();
 	}
 	
+
+	/**
+	 * Return the service sensor.
+	 * @return the service sensor
+	 */
+	private ServiceSensor getServiceSensor() {
+		if (mySensor==null) {
+			mySensor = new ServiceSensor(this);
+		}
+		return mySensor;
+	}
+	/**
+	 * Sets the service sensor.
+	 * @param newServiceSensor the new service sensor
+	 */
+	private void setServiceSensor(ServiceSensor newServiceSensor) {
+		this.mySensor = newServiceSensor;
+	}
+	
 	/**
 	 * This Method plugs IN the service sensor.
 	 */
 	protected void sensorPlugIn() {
-		// --- Start the ServiceSensor ------------------------------
-		this.mySensor = new ServiceSensor(this);
+
 		// --- Register the sensor to the SimulationService ---------
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) this.myAgent.getHelper(SimulationService.NAME);
 			if (this.passive==true) {
-				simHelper.sensorPlugIn(mySensor, true);
+				simHelper.sensorPlugIn(this.getServiceSensor(), true);
 			} else {
-				simHelper.sensorPlugIn(mySensor);	
+				simHelper.sensorPlugIn(this.getServiceSensor());	
 			}
 				
 		} catch (ServiceException ae) {
 			System.err.println("Agent '" + this.myAgent.getLocalName() + "': Could not plugin simulated sensor!");
-//			se.printStackTrace();
 		}
 	}
 	
@@ -189,11 +205,12 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 		// --- plug-out the Sensor ----------------------------------
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) this.myAgent.getHelper(SimulationService.NAME);
-			simHelper.sensorPlugOut(mySensor);	
+			simHelper.sensorPlugOut(this.getServiceSensor());
+			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		mySensor = null;
+		this.setServiceSensor(null);
 	}
 	/**
 	 * This Method checks if the environment changed in the meantime.
