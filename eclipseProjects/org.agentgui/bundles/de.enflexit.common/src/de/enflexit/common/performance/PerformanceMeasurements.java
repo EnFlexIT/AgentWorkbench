@@ -93,21 +93,34 @@ public class PerformanceMeasurements {
 	 * @return the simulation measurement added
 	 */
 	public PerformanceMeasurement addPerformanceMeasurement(String taskDescriptor, Integer maxNumberForAverage) {
-		PerformanceMeasurement pMeasure = new PerformanceMeasurement(taskDescriptor, maxNumberForAverage);
-		this.getMeasurementHashMap().put(taskDescriptor, pMeasure);
-		this.checkGroupOfPerformanceMeasurement(pMeasure);
+		return this.addPerformanceMeasurement(taskDescriptor, maxNumberForAverage, true);
+	}
+	/**
+	 * Adds a PerformanceMeasurement to the know local measurements. If a measurement with the
+	 * same descriptor is already there, it will be overwritten.
+	 *
+	 * @param taskDescriptor the task descriptor
+	 * @param maxNumberForAverage the max number for average
+	 * @param overwriteExistingMeasurement the boolean to overwrite an existing measurement
+	 * @return the simulation measurement added
+	 */
+	public PerformanceMeasurement addPerformanceMeasurement(String taskDescriptor, Integer maxNumberForAverage, boolean overwriteExistingMeasurement) {
+		PerformanceMeasurement pMeasure = this.getMeasurementHashMap().get(taskDescriptor);
+		if (pMeasure==null || (pMeasure!=null && overwriteExistingMeasurement==true)) {
+			pMeasure = new PerformanceMeasurement(taskDescriptor, maxNumberForAverage);
+			this.getMeasurementHashMap().put(taskDescriptor, pMeasure);
+			this.checkGroupOfPerformanceMeasurement(pMeasure);
+		}
 		return pMeasure;
 	}
-
 	/**
 	 * Sets the specified measurement started.
 	 * @param taskDescriptor the new measurement started
 	 */
 	public void setMeasurementStarted(String taskDescriptor) {
-		
 		PerformanceMeasurement simMeasure = this.getMeasurementHashMap().get(taskDescriptor);
 		if (simMeasure==null) {
-			simMeasure = addPerformanceMeasurement(taskDescriptor);
+			simMeasure = this.addPerformanceMeasurement(taskDescriptor);
 		}
 		simMeasure.setMeasurementStarted();
 	}
@@ -127,7 +140,7 @@ public class PerformanceMeasurements {
 	 * @param taskDescriptor the task descriptor
 	 * @return the measurement interval average
 	 */
-	public Long getMeasurementIntervalAverage(String taskDescriptor) {
+	public Double getMeasurementIntervalAverage(String taskDescriptor) {
 		PerformanceMeasurement simMeasure = this.getMeasurementHashMap().get(taskDescriptor);
 		if (simMeasure!=null) {
 			return simMeasure.getMeasurementIntervalAverage();
@@ -137,16 +150,68 @@ public class PerformanceMeasurements {
 	
 	
 	/**
+	 * Sets the specified loop measurement started.
+	 * @param taskDescriptor the new loop measurement started
+	 */
+	public void setLoopMeasurementStarted(String taskDescriptor) {
+		PerformanceMeasurement simMeasure = this.getMeasurementHashMap().get(taskDescriptor);
+		if (simMeasure==null) {
+			simMeasure = this.addPerformanceMeasurement(taskDescriptor);
+		}
+		simMeasure.setLoopMeasurementStarted();
+	}
+	/**
+	 * Sets the specified loop measurement finalized.
+	 * @param taskDescriptor the new loop measurement finalized
+	 */
+	public void setLoopMeasurementFinalized(String taskDescriptor) {
+		PerformanceMeasurement simMeasure = this.getMeasurementHashMap().get(taskDescriptor);
+		if (simMeasure!=null) {
+			simMeasure.setLoopMeasurementFinalized();
+		}
+	}
+	
+	/**
+	 * Returns the loop counts average for the specified task..
+	 *
+	 * @param taskDescriptor the task descriptor
+	 * @return the loop counts average
+	 */
+	public Double getLoopCountsAverage(String taskDescriptor) {
+		PerformanceMeasurement simMeasure = this.getMeasurementHashMap().get(taskDescriptor);
+		if (simMeasure!=null) {
+			return simMeasure.getLoopCountsAverage();
+		}
+		return null;
+	}
+	/**
+	 * Returns the loop measurement average for the specified task..
+	 *
+	 * @param taskDescriptor the task descriptor
+	 * @return the loop measurement average
+	 */
+	public Double getLoopMeasurementAverage(String taskDescriptor) {
+		PerformanceMeasurement simMeasure = this.getMeasurementHashMap().get(taskDescriptor);
+		if (simMeasure!=null) {
+			return simMeasure.getLoopMeasurementAverage();
+		}
+		return null;
+	}
+	
+	/**
 	 * Adds a performance group to the PerformanceMeasurements.
 	 *
 	 * @param groupName the group name
 	 * @param groupTaskDescriptorArray the group task descriptor array
+	 * @param removePreviousMeasurements the indicator to remove previous measurements of the group
 	 */
-	public void addPerformanceGroup(String groupName, String[] groupTaskDescriptorArray) {
-		this.addPerformanceGroup(new PerformanceGroup(groupName, groupTaskDescriptorArray));
+	public void addPerformanceGroup(String groupName, String[] groupTaskDescriptorArray, boolean removePreviousMeasurements) {
+		this.addPerformanceGroup(new PerformanceGroup(groupName, groupTaskDescriptorArray, removePreviousMeasurements));
 	}
+	
 	/**
 	 * Adds a performance group to the PerformanceMeasurements.
+	 *
 	 * @param pg the PerformanceGroup to add
 	 */
 	public void addPerformanceGroup(PerformanceGroup pg) {

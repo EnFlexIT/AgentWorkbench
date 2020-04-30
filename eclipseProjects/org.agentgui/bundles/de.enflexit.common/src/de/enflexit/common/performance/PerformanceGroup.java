@@ -16,6 +16,7 @@ public class PerformanceGroup {
 	private String groupName;
 	private String[] groupTaskDescriptorArray;
 	
+	
 	private List<PerformanceMeasurement> pMeasurementList;
 	private List<PerformanceMeasurement> pMeasurementResultList;
 	
@@ -24,13 +25,17 @@ public class PerformanceGroup {
 	 *
 	 * @param groupName the group name
 	 * @param groupTaskDescriptorArray the group task descriptor array
+	 * @param removePreviousMeasurements the indicator to remove / reset previous measurements from the global stack first
 	 */
-	public PerformanceGroup(String groupName, String[] groupTaskDescriptorArray) {
+	public PerformanceGroup(String groupName, String[] groupTaskDescriptorArray, boolean removePreviousMeasurements) {
 		this.groupName = groupName;
 		this.groupTaskDescriptorArray = groupTaskDescriptorArray;
-		this.collectGroupMember();
+		if (removePreviousMeasurements==true) {
+			this.removeGroupMember();
+		} else {
+			this.collectGroupMember();
+		}
 	}
-	
 	/**
 	 * Returns the group name.
 	 * @return the group name
@@ -57,6 +62,21 @@ public class PerformanceGroup {
 		return pMeasurementList;
 	}
 	/**
+	 * Returns the performance measurement with the specified task description or <code>null</code>.
+	 *
+	 * @param taskDescription the task description
+	 * @return the performance measurement
+	 */
+	private PerformanceMeasurement getPerformanceMeasurement(String taskDescription) {
+		for (int i = 0; i < this.getPerformanceMeasurementListOfGroup().size(); i++) {
+			PerformanceMeasurement pm = this.getPerformanceMeasurementListOfGroup().get(i);
+			if (pm.getTaskDescriptor().equals(taskDescription)==true) {
+				return pm;
+			}
+		}
+		return null;
+	}
+	/**
 	 * Sort performance measurement list.
 	 */
 	private void sortPerformanceMeasurementList() {
@@ -70,6 +90,20 @@ public class PerformanceGroup {
 		});
 	}
 	
+	
+	/**
+	 * Removes (and thus resets) all group member from the global instance.
+	 */
+	private void removeGroupMember() {
+		PerformanceMeasurements pms = PerformanceMeasurements.getInstance();
+		List<PerformanceMeasurement> knownPmList = new ArrayList<>(pms.getMeasurementHashMap().values());
+		for (int i = 0; i < knownPmList.size(); i++) {
+			PerformanceMeasurement pm = knownPmList.get(i);
+			if (this.isGroupMember(pm)==true) {
+				pms.getMeasurementHashMap().remove(pm.getTaskDescriptor());
+			}
+		}
+	}
 	
 	/**
 	 * Collects all available group member.
@@ -97,7 +131,7 @@ public class PerformanceGroup {
 	 * @param sortList the sort list
 	 */
 	private void addGroupMemberIfIsGroupMember(PerformanceMeasurement pm, boolean sortList) {
-		if (this.isGroupMember(pm)==true) {
+		if (this.isGroupMember(pm)==true && this.getPerformanceMeasurement(pm.getTaskDescriptor())==null) {
 			pm.setPerformanceGroup(this);
 			this.getPerformanceMeasurementListOfGroup().add(pm);
 			if (sortList==true) {
@@ -114,6 +148,8 @@ public class PerformanceGroup {
 			String descriptor = pm.getTaskDescriptor();
 			for (int i = 0; i < groupTaskDescriptorArray.length; i++) {
 				String groupMemberDescriptor = groupTaskDescriptorArray[i];
+				if (groupMemberDescriptor==null || groupMemberDescriptor.isEmpty()) continue;
+				
 				if (descriptor.equals(groupMemberDescriptor)==true || descriptor.startsWith(groupMemberDescriptor)==true) {
 					return true;
 				}
