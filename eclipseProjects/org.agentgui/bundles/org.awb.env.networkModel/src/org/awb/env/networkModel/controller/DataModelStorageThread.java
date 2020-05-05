@@ -95,7 +95,8 @@ public class DataModelStorageThread extends Thread {
 	private long firstDisplayWaitTime = 0;			// ms
 	private long firstDisplayTime;
 	
-	private long vectorDividerBytesPerThread = 450000; 
+	private final long vectorDividerBytesPerThread = 450000; 
+	private final int maxNumberOfThreads = 5;
 	
 	// --- Variables for the worker -----------------------
 	private WorkerAction workerAction;
@@ -203,9 +204,11 @@ public class DataModelStorageThread extends Thread {
 		} catch (Exception ex) {
 			//ex.printStackTrace();
 		}
+		// --- If '1' here, check number of components --------------
+		if (noOfVector<=1 && this.elementsToConvert>1) noOfVector = this.maxNumberOfThreads;
 		// --- Finally, adjust the number of Threads ----------------
 		if (noOfVector>this.elementsToConvert) noOfVector=this.elementsToConvert;
-		if (noOfVector>15) noOfVector=15;
+		if (noOfVector>this.maxNumberOfThreads) noOfVector=this.maxNumberOfThreads;
 		if (noOfVector<=0) noOfVector=1;
 		if (this.debug==true) noOfVector = 1;
 		
