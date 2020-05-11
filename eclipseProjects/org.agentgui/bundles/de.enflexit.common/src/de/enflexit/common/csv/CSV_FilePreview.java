@@ -75,7 +75,7 @@ public class CSV_FilePreview extends JDialog {
 			}
 		}
 
-		// --- Size and centre dialog -------------------------------
+		// --- Size and center dialog -------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		
 		this.setSize((int) (screenSize.getWidth()*0.5), (int)(screenSize.getHeight()*0.7));
@@ -98,5 +98,95 @@ public class CSV_FilePreview extends JDialog {
 		return jTabbedPaneImport;
 	}
 	
+	/**
+	 * Set the focus to the tab with the specified title / file name
+	 * @param fileName to use as tab focus search phrase
+	 */
+	public void setTabFocusToFile(String fileName) {
+		for (int i = 0; i < this.getJTabbedPaneImport().getTabCount(); i++) {
+			String title = this.getJTabbedPaneImport().getTitleAt(i);
+			if (title.equals(fileName)==true) {
+				this.getJTabbedPaneImport().setSelectedIndex(i);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Return the current selection within the file preview 
+	 * @return CSV_FilePreviewSelection that describes the selection
+	 */
+	public CSV_FilePreviewSelection getSelection() {
+		
+		// --- Get the file ---------------------
+		int selectedTabIndex = this.getJTabbedPaneImport().getSelectedIndex();
+		String fileName = this.getJTabbedPaneImport().getTitleAt(selectedTabIndex);
+
+		// --- Get the CsvDataController --------
+		CsvDataController dataController = this.csvDataController.get(fileName);
+		
+		// --- Get the data row selected --------
+		JScrollPane scrollPane = (JScrollPane) this.getJTabbedPaneImport().getComponentAt(selectedTabIndex);
+		JTable table = (JTable) scrollPane.getViewport().getComponent(0);
+		int[] selectedTableRows = table.getSelectedRows();
+		int[] selectedModelRows = null;
+		if (selectedTableRows!=null && selectedTableRows.length>0) {
+			selectedModelRows = new int[selectedTableRows.length];
+			for (int i = 0; i < selectedTableRows.length; i++) {
+				selectedModelRows[i] = table.convertRowIndexToModel(selectedTableRows[i]);
+			}
+		} else {
+			selectedModelRows = selectedTableRows;
+		}
+		
+		// --- Create the return instance -------
+		CSV_FilePreviewSelection selection = new CSV_FilePreviewSelection();
+		selection.setSelectedIndex(selectedTabIndex);
+		selection.setSelectedFile(fileName);
+		selection.setSelectedCsvDataController(dataController);
+		selection.setSelectedModelRows(selectedModelRows);
+		return selection;
+	}
+	
+	/**
+	 * Provides a complete description about the current selection in the file preview.  
+	 */
+	public class CSV_FilePreviewSelection {
+		
+		private int selectedIndex;
+		private String selectedFile;
+		
+		private CsvDataController selectedCsvDataController;
+		private int[] selectedModelRows;
+		
+		
+		public int getSelectedIndex() {
+			return selectedIndex;
+		}
+		public void setSelectedIndex(int selectedIndex) {
+			this.selectedIndex = selectedIndex;
+		}
+		
+		public String getSelectedFile() {
+			return selectedFile;
+		}
+		public void setSelectedFile(String selectedFile) {
+			this.selectedFile = selectedFile;
+		}
+		
+		public CsvDataController getSelectedCsvDataController() {
+			return selectedCsvDataController;
+		}
+		public void setSelectedCsvDataController(CsvDataController csvDataController) {
+			this.selectedCsvDataController = csvDataController;
+		}
+		
+		public int[] getSelectedModelRows() {
+			return selectedModelRows;
+		}
+		public void setSelectedModelRows(int[] selectedModelRows) {
+			this.selectedModelRows = selectedModelRows;
+		}
+	}
 	
 }

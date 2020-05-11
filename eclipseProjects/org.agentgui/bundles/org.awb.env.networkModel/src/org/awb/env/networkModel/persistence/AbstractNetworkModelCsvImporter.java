@@ -240,12 +240,18 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 				csvFilePreview = null;
 			}
 			// --- Get the owner frame ----------
-			Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(this.graphController.getGraphEnvironmentControllerGUI());
+			Frame owner = Application.getMainWindow();
 			// --- Open the import preview ------
 			csvFilePreview = new CSV_FilePreview(owner, this.getCsvDataController());
 		}
 	}
-
+	/**
+	 * Return the current CSV_FilePreview (if open)  
+	 * @return
+	 */
+	public CSV_FilePreview getCSVFilePreviewDialog() {
+		return csvFilePreview;
+	}
 
 	/**
 	 * Gets the CSV data controller for the specified files.
