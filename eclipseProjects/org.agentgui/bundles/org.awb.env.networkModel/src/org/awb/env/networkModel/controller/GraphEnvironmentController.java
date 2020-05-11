@@ -577,33 +577,35 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
 	 */
 	public void loadDataModelNetworkElements() {
-		this.loadDataModelNetworkElements(true, null);
+		this.loadDataModelNetworkElements(true, null, null);
 	}
 	/**
 	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
 	 *
 	 * @param isShowProgress the indicator to show a progress monitor or not
-	 * @param netElementVector the explicit vector of DataModelNetworkElement's to load or reload
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to load or reload (<code>null</code> is allowed)
+	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
 	 */
-	public void loadDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector) {
+	public void loadDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThread) {
 		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, isShowProgress, netElementVector).start();
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, isShowProgress, netElementVector, maxNumberOfThread).start();
 	}
 	
 	/**
 	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
 	 */
 	public void saveDataModelNetworkElements() {
-		this.saveDataModelNetworkElements(true, null);
+		this.saveDataModelNetworkElements(true, null, null);
 	}
 	/**
 	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
 	 *
 	 * @param isShowProgress the indicator to show a progress monitor or not
-	 * @param netElementVector the explicit vector of DataModelNetworkElement's to save
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to save (<code>null</code> is allowed)
+	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
 	 */
-	public void saveDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector) {
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, isShowProgress, netElementVector).start();
+	public void saveDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThreads) {
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, isShowProgress, netElementVector, maxNumberOfThreads).start();
 		this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
 	}
 	

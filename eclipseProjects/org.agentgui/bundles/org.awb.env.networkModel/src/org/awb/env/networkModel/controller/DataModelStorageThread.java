@@ -96,7 +96,7 @@ public class DataModelStorageThread extends Thread {
 	private long firstDisplayTime;
 	
 	private final long vectorDividerBytesPerThread = 450000; 
-	private final int maxNumberOfThreads = 5;
+	private int maxNumberOfThreads = 5;
 	
 	// --- Variables for the worker -----------------------
 	private WorkerAction workerAction;
@@ -111,12 +111,14 @@ public class DataModelStorageThread extends Thread {
 	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_LOADING} or {@link OrganizerAction#ORGANIZE_SAVING}
 	 * @param isShowProgressMonitor the indicator to show (or not) the progress monitor
 	 * @param networkElementsToLoadOrSave the Vector of network elements to load or save (<code>null</code> is allowed)
+	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
 	 */
-	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action, boolean isShowProgressMonitor, Vector<DataModelNetworkElement> networkElementsToLoadOrSave) {
+	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action, boolean isShowProgressMonitor, Vector<DataModelNetworkElement> networkElementsToLoadOrSave, Integer maxNumberOfThreads) {
 		this.graphController = graphController;
 		this.organizerAction = action;
 		this.isShowProgressMonitor = isShowProgressMonitor;
 		this.networkElementsToLoadOrSave = networkElementsToLoadOrSave;
+		this.setMaxNumberOfThreads(maxNumberOfThreads);
 		if (action==OrganizerAction.ORGANIZE_SAVING) {
 			this.setName("Encoding-Manager");
 		} else if (action==OrganizerAction.ORGANIZE_LOADING) {
@@ -142,6 +144,16 @@ public class DataModelStorageThread extends Thread {
 			this.setName("Encoding-Worker-" + threadNo);
 		} else if (action==WorkerAction.LOAD) {
 			this.setName("Decoding-Worker-" + threadNo);
+		}
+	}
+	
+	/**
+	 * Can be used to set the maximum number of threads to be used for the En-/Decoding or saving/loading 
+	 * @param maxNumberOfThreads the maximum number of threads to use
+	 */
+	public void setMaxNumberOfThreads(Integer maxNumberOfThreads) { 
+		if (maxNumberOfThreads!=null && maxNumberOfThreads!=0) {
+			this.maxNumberOfThreads = maxNumberOfThreads;
 		}
 	}
 	

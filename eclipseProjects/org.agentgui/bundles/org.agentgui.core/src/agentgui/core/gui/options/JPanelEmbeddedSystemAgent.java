@@ -97,7 +97,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private void initialize() {
 		
 		
-		this.setPreferredSize(new Dimension(570, 375));
+		this.setPreferredSize(new Dimension(611, 458));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{82, 430, 0};
 		gridBagLayout.rowHeights = new int[]{16, 26, 23, 16, 0, 16, 24, 0, 0};
@@ -175,7 +175,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		add(getJPanelEmbeddedSystemAgentTable(), gbc_panelEmbeddedSystemAgentTable);
 		
 		jLabelVisConfig = new JLabel();
-		jLabelVisConfig.setText("Agent.GUI - Anwendungsvisualisierungen");
+		jLabelVisConfig.setText("Agent.Workbench - Anwendungsvisualisierungen");
 		jLabelVisConfig.setText(Language.translate(jLabelVisConfig.getText()));
 		jLabelVisConfig.setFont(new Font("Dialog", Font.BOLD, 12));
 		GridBagConstraints gbc_jLabelVisConfig = new GridBagConstraints();
@@ -348,7 +348,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		if (jRadioButtonVisTrayIcon == null) {
 			jRadioButtonVisTrayIcon = new JRadioButton();
 			jRadioButtonVisTrayIcon.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jRadioButtonVisTrayIcon.setText("Agent.GUI - Tray Icon anzeigen");
+			jRadioButtonVisTrayIcon.setText("Agent.Workbench - Tray Icon anzeigen");
 			jRadioButtonVisTrayIcon.setText(Language.translate(jRadioButtonVisTrayIcon.getText()));
 			jRadioButtonVisTrayIcon.setPreferredSize(new Dimension(300, 24));
 			jRadioButtonVisTrayIcon.setActionCommand("visTrayIcon");

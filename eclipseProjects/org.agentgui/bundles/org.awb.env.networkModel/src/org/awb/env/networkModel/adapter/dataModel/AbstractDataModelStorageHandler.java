@@ -303,13 +303,13 @@ public abstract class AbstractDataModelStorageHandler {
 		
 		List<String> settingKeys = new ArrayList<String>(storageSettings.keySet());
 		for (int i = 0; i < settingKeys.size(); i++) {
-
 			String key = settingKeys.get(i);
-			String keyNew = prefix + "." + key;
-			String value = storageSettings.get(key);
-			
-			storageSettings.remove(key);
-			storageSettings.put(keyNew, value);
+			if (key.startsWith(prefix + ".")==false) {
+				String keyNew = prefix + "." + key;
+				String value = storageSettings.get(key);
+				storageSettings.remove(key);
+				storageSettings.put(keyNew, value);
+			}
 		}
 	}
 

@@ -13,7 +13,7 @@ de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup 
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
 de;Abbrechen;Cancel;;;
-de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
+de;Abbruch: Kein Projekt geöffnet!;Canceled: No open project!;;;
 de;Abbruch;Cancel;;;
 de;Ablaufdatum;Expiration Date;;;
 de;Abtastintervall;Sampling interval;;;
@@ -24,14 +24,13 @@ de;Agent nach oben verschieben;Move up agent
 de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
 de;Agent und Ontologie-Referenz auswählen!;Select an agent and an ontology reference!;;;
-de;Agent.GUI - Anwendungsvisualisierungen;Agent.GUI - Application Visualisations;;;
 de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
 de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
-de;Agent.GUI - Tray Icon anzeigen;Display Agent.GUI - Tray Icon;;;
 de;Agent.GUI - Update;Agent.GUI - Update;;;
-de;Agent.GUI Dienst / Embedded System Agent;Agent.GUI Service / Embedded System Agent;;;
 de;Agent.GUI Projekt-Datei;Agent.GUI project file
 de;Agent.GUI umschalten ?;Switch Agent.GUI ?
+de;Agent.Workbench - Anwendungsvisualisierungen;Agent.Workbench - Application Visualization;;;
+de;Agent.Workbench - Tray Icon anzeigen;Display Agent.Workbench - Tray Icon			;;;
 de;Agent:;Agent:
 de;Agent;agent
 de;AgentGUI - Standardeinstellungen verwenden;Use Agent.GUI defaults

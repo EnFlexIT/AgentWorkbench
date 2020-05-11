@@ -60,7 +60,9 @@ public abstract class AbstractJPanelForOptions extends JPanel {
 	 */
 	public AbstractJPanelForOptions(OptionDialog optionDialog, StartOptions startOptions) {
 		this.optionDialog = optionDialog;
-		this.optionDialog.registerOptionPanel(this);
+		if (this.optionDialog!=null) {
+			this.optionDialog.registerOptionPanel(this);
+		}
 		this.startOptions = startOptions;
 	}
 	

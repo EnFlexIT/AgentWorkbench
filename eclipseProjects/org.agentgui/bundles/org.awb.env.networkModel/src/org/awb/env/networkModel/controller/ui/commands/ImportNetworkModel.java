@@ -202,11 +202,12 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			// --- Save data models of network elements -----------------------------------
 			if (this.importService.requiresToStoreNetworkElements()==true) {
 				// --- Check which network elements are to be saved -----------------------
-				Vector<DataModelNetworkElement> networkElementsToSave = this.importService.getDataModelNetworkElementToSave();  
+				Vector<DataModelNetworkElement> networkElementsToSave = this.importService.getDataModelNetworkElementToSave();
+				Integer maxNumberOfThreads = this.importService.getMaxNumberOfThreadsForSaveAction();
 				if (networkElementsToSave==null || networkElementsToSave.size()==0) {
-					this.graphController.saveDataModelNetworkElements();
+					this.graphController.saveDataModelNetworkElements(true, null, maxNumberOfThreads);
 				} else {
-					this.graphController.saveDataModelNetworkElements(true, networkElementsToSave);
+					this.graphController.saveDataModelNetworkElements(true, networkElementsToSave, maxNumberOfThreads);
 				}
 			}
 			// --- Invoke to cleanup the importer -----------------------------------------

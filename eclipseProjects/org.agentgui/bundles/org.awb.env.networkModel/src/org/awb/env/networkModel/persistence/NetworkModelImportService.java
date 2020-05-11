@@ -55,7 +55,6 @@ public interface NetworkModelImportService {
 	 */
 	public boolean requiresToStoreNetworkElements();
 
-	
 	/**
 	 * Has to return the vector of {@link DataModelNetworkElement}s that are to be saved or <code>null</code>.
 	 * If <code>null</code> or an empty vector is returned, all elements will be saved - otherwise only the returned elements.
@@ -64,11 +63,16 @@ public interface NetworkModelImportService {
 	public Vector<DataModelNetworkElement> getDataModelNetworkElementToSave();
 	
 	/**
+	 * Has to return the number of threads that are to be used for saving {@link DataModelNetworkElement}'s  
+	 * @return the number of threads to be used for saving the data models of {@link NetworkComponent}s or {@link GraphNode}s.  
+	 */
+	public Integer getMaxNumberOfThreadsForSaveAction();
+	
+	
+	/**
 	 * Implement this method to perform some cleanup tasks when the import is done, especially set member variables that may contain large objects to null. 
 	 */
 	public void cleanupImporter();
 
-
-	
 	
 }
