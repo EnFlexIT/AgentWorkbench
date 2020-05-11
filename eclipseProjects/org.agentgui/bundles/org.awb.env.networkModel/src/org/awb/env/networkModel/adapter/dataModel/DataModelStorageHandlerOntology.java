@@ -35,6 +35,8 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	protected NetworkComponentAdapter4Ontology ontologyAdapter;
 	protected String partModelID;
 	
+	private boolean debug = false;
+	
 	/**
 	 * Instantiates a new data model storage handler ontology.
 	 *
@@ -78,7 +80,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		
 		// --- Load from central setup file -------------------------
 		if (requiresPersistenceUpdate==false) {
-			dataModel = this.getSetupDataModelStorageServiceOntology().getDataModel(networkElement, this.partModelID);
+			dataModel = this.getDataModelForNetworkElement(networkElement);
 		}
 		
 		// --- Requires persistence update? -------------------------
@@ -306,6 +308,47 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 	// ----------------------------------------------------------------------------------
 	// --- From here, help methods for saving in an extra file can be found -------------
 	// ----------------------------------------------------------------------------------
+	
+	/**
+	 * Gets the data model for network element. Tries several times to obtain the storage service instance if nevccessary
+	 * @param networkElement the network element
+	 * @return the data model for network element
+	 */
+	private Object getDataModelForNetworkElement(DataModelNetworkElement networkElement) {
+		
+		Object dataModel = null;
+		// --- Try to obtain the storage service ------------ 
+		SetupDataModelStorageServiceOntology storageService = null;
+		int timesTried=0;
+		int maxTries = 20;
+		long waitMillis = 100;
+		
+		do {
+			storageService = this.getSetupDataModelStorageServiceOntology();
+			
+			if (storageService==null) {
+				// --- Storage service was not available yet ----
+				try {
+					Thread.sleep(waitMillis);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			timesTried++;
+		} while (storageService==null && timesTried<maxTries);
+		
+		if (storageService!=null) {
+			dataModel = this.getSetupDataModelStorageServiceOntology().getDataModel(networkElement, this.partModelID);
+			if (this.debug==true) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] - Successfully obtain SetupDataModelStorageServiceOntology for " + networkElement.getId() + " after " + timesTried + " tries");
+			}
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] - loading data model for " + networkElement.getId() + " failed, could not obtain SetupDataModelStorageServiceOntology after " + timesTried + " tries");
+		}
+		
+		return dataModel;
+	}
+	
 	/**
 	 * Gets the setup data model storage service for ontology instances.
 	 * @return the setup data model storage service ontology
