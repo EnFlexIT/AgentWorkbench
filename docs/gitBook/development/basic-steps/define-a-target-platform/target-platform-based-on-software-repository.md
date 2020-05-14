@@ -41,5 +41,5 @@ In the Preference window, select _Apply and Close_.
 
 ![](../../../.gitbook/assets/selecttargetpltaform.png)
 
-We now successfully defined a target platform based on the AWB Software-Repository. With this target platform, we can now start Agent.Workbench from the Eclipse IDE. A tutorial on how to do this can be found [here](../starting-awb-from-eclipse.md).
+We now successfully defined a target platform based on the AWB Software-Repository. With this target platform, we can now start Agent.Workbench from the Eclipse IDE. A tutorial on how to do this can be found [here](../../execution-modes/starting-awb-from-eclipse.md).
 

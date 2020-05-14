@@ -16,5 +16,5 @@ Another way to define the target platform is by utilizing the Agent.Workbench so
 
 A more cumbersome but equally effective way is to download the Agent.Workbench source code from GitHub directly into your Eclipse workspace. That way you don't have to explicitly change the target platform, but having all the bundles that you develop against in your IDE has the same effect. The tutorial on how to define a target platform, based on AWB sources, can be found [here](getting-started-as-an-awb-developer.md).
 
-Defining a target platform is mandatory if you want to start Agent.Workbench from your Eclipse IDE. Instructions on how to start Agent.Workbench from Eclipse can be found on [this page](../starting-awb-from-eclipse.md).
+Defining a target platform is mandatory if you want to start Agent.Workbench from your Eclipse IDE. Instructions on how to start Agent.Workbench from Eclipse can be found on [this page](../../execution-modes/starting-awb-from-eclipse.md).
 

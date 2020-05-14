@@ -1,4 +1,2 @@
 # Distributed Execution of Agents
 
-
-
