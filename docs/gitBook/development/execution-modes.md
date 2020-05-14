@@ -1,4 +1,4 @@
-# Execution Modes
+# AWB Execution Modes
 
 Agent.Workbench provides four different execution modes: End-user _**Application**_, ****_**Background System**_, _**Service**_ and _**Embedded System Agent**_. These modes are suited for different use cases \(simulation/operation\) and offer individual features like direct execution of agents, a user interface \(UI\) etc.
 
@@ -8,7 +8,7 @@ Agent.Workbench allows you to switch the execution mode anytime. Except for a sp
 
 In execution modes _Application_ and _Service_, Agent.Workbench can be connected to a _Background System_. This allows to distribute the JADE agent platform across multiple machines. To do so, specify the location of the so-called _server.master_ by its URL or IP-address. The port settings must match the configuration of the server.master - usually it will be the default ports 1099 and 7778. More details about the _Background System_ and _Server_ configuration can be found here **\(+link\)**.
 
-![](../../.gitbook/assets/optionsgeneral.jpg)
+![](../.gitbook/assets/optionsgeneral.jpg)
 
 ## End-User Application
 
@@ -16,11 +16,11 @@ The _End-User Application_ mode is the default. It provides the graphical user i
 
 In the _End-User Application_ mode, the _Options_ dialog can be found under _Extras &gt; Options._ Alternatively, as shown further below, you can also use the context menu of the AWB tray icon.
 
-![](../../.gitbook/assets/applicationgotooptions.jpg)
+![](../.gitbook/assets/applicationgotooptions.jpg)
 
 Beside optional settings for the _Background System_ connection, the _Application_ execution mode does not require any further specific configuration. 
 
-![](../../.gitbook/assets/optionsapplication.jpg)
+![](../.gitbook/assets/optionsapplication.jpg)
 
 ## Server / Background System
 
@@ -28,7 +28,7 @@ Agent.Workbench can also be executed in a _Server_ mode that is dedicated to the
 
 The _Server_ mode is connected to the _Background System_. In fact, it is not possible to start an Agent.Workbench instance in _Server_ mode without laying down parameters for the _Background System_. When configured correctly, an AWB instance is either handled as a so called _server.master_, _server.slave_ or _server.client_. These instances can be distributed over several machines and thus create the background system, a network that is in control of dynamically extending the JADE platform with JADE containers. More information about configuring the _Server_ mode, the background system and how to create one is provided on this page.
 
-![](../../.gitbook/assets/optionsserver.jpg)
+![](../.gitbook/assets/optionsserver.jpg)
 
 ## Service
 
@@ -36,15 +36,15 @@ In _Service_ mode, Agent.Workbench spares the user to open and start an agent pr
 
 To utilize the _Service_ mode, you need to specify the project to open, choose _Run as: Service_ and select a  a project setup to execute. The agents specified in the agent start-list of the project setup will be executed directly after pressing the _Apply_ button or the next time you start Agent.Workbench.
 
-![](../../.gitbook/assets/optionsservice.jpg)
+![](../.gitbook/assets/optionsservice.jpg)
 
 ## Embedded System Agent
 
 The mode _Embedded System Agent_ is configured similar to the _Service_ mode and also features direct execution of agents. However, at startup only specified agents from a project will be started. In this mode, the visual representation is restricted. The user can choose between a _Server_-like appearance with a tray-icon or a hidden execution, with no visual representation. In contrast to the _Application_ or _Service_ mode, the _Embedded System Agent_ mode is suited for operational purpose, as for example for agents that have to run in an automation environment on an industrial PC or in a Smart House scenario.
 
-![](../../.gitbook/assets/optionsembeddedsystemagent.jpg)
+![](../.gitbook/assets/optionsembeddedsystemagent.jpg)
 
-To utilize the _Embedded System Agent_ mode, you have to specify a project and choose _Run as: Embedded System Agent_. To specify the agents that you want to execute, for each agent, click the ![](../../.gitbook/assets/addagentbutton.jpg) button and select the desired agent from the list; afterwards, assign a runtime name to the agent. For the visualization you have two options:
+To utilize the _Embedded System Agent_ mode, you have to specify a project and choose _Run as: Embedded System Agent_. To specify the agents that you want to execute, for each agent, click the ![](../.gitbook/assets/addagentbutton.jpg) button and select the desired agent from the list; afterwards, assign a runtime name to the agent. For the visualization you have two options:
 
 #### Display Agent.Workbench - Tray icon
 
@@ -60,7 +60,7 @@ As compensation for the missing Options dialog, the configuration file ._/config
 
 The value for _01\_RUNAS_ specifies the execution mode you want to switch to. Connecting to a _Background System_ is also as straight forward as in the Options dialog. Just type the URL or IP-address of the server.master at _11\_MASTER\_URL_ and so on.
 
-![](../../.gitbook/assets/prefsembeddedsystemhiddenexecedited.jpg)
+![](../.gitbook/assets/prefsembeddedsystemhiddenexecedited.jpg)
 
 The following table shows the possible values for the _**01\_RUNAS**_ key and explains how the _org.agentgui.core.prefs_ file further needs to be configured to successfully switch an execution mode.
 

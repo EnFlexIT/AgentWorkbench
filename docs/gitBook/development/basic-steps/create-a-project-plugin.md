@@ -6,7 +6,7 @@ This section shortly describes how you can define, develop and start your first 
 
 **Eclipse Projects & Agent.Workbench Projects**: We would like to mention here that, in the context of Agent.Workbench and Eclipse, the word "project" is used with two meanings. Since Agent.Workbench handles agents or Multi-Agent Systems \(MAS\) as self-containing projects on one hand site, also Eclipse uses the term "project" for Java or plug-in developments. This, in turn, makes it sometimes misleading, if we speak about an "agent project" in general. More precisely, we have to distinguish these project types to avoid a lingusitic misunderstanding.
 
-As a prerequisite, we assume that you have an installed Agent.Workbench and an Eclipse IDE \(**I**ntegrated **D**evelopment **E**nvironment\) that enables you to develop plug-ins \(an IDE that enables Java developments only, wil not be sufficient\). For further details see the [Getting Started](../basic-steps/installations.md) tutorial.
+As a prerequisite, we assume that you have an installed Agent.Workbench and an Eclipse IDE \(**I**ntegrated **D**evelopment **E**nvironment\) that enables you to develop plug-ins \(an IDE that enables Java developments only, wil not be sufficient\). For further details see the [Getting Started](installations.md) tutorial.
 
 In short words: Our goal here is to create an Eclipse-Plug-in and a first agent, start and debug this agent from the Eclipse IDE and finally, to export the developed agent into a Agent.Workbench project so that the agent application can work on its own \(without the IDE\). For this the following steps are to be done:
 
@@ -24,7 +24,7 @@ With the goal in mind, to develop your own agent-based application, the first st
 The following steps require you to...
 
 * ... have an Eclipse IDE installed that enables you to develop Plug-ins \( Eclipse IDE for Enterprise Java Developers\)
-* ... have [defined a target platform](../basic-steps/define-a-target-platform/)
+* ... have [defined a target platform](define-a-target-platform/)
 * ... have Java version 8 \(the 64 Bit version\) installed and the Eclipse preferences for jre and compiler set to java 1.8
 
 The source code for this example , as well as for other examples, is stored in a corresponding examples- project in our GitHub that you can find [here](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/org.agentgui/examples/de.enflexit.awb.samples.Examples).
@@ -141,7 +141,7 @@ In your _Debug Configurations,_ select your run-configuration and go to the _Plu
 
 ![](../../.gitbook/assets/addplugintotunconfig%20%281%29.jpg)
 
-In Agent.Workbench we want to create a new project, called "Hello world" \(Instructions on how to create a project in Agent.Workbench can be found on [this](../basic-steps/installations.md) page\).
+In Agent.Workbench we want to create a new project, called "Hello world" \(Instructions on how to create a project in Agent.Workbench can be found on [this](installations.md) page\).
 
 In this project, navigate to _Setup_ &gt; _Agent-Start._ Click ![](../../.gitbook/assets/addagenticon.png) , select our agent and click _Add_.
 
