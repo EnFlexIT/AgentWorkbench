@@ -21,5 +21,5 @@
 ## AWB Capabilities
 
 * [The Project Window](awb-capabilities/the-project-window.md)
-* [Distributed Execution of Agents](awb-capabilities/distributed-application.md)
+* [The Background System](awb-capabilities/distributed-application.md)
 
