@@ -16,9 +16,10 @@
   * [Create an Agent Project](development/basic-steps/create-a-project-plugin.md)
   * [Starting AWB from Eclipse](development/basic-steps/starting-awb-from-eclipse.md)
   * [Export your Plug-in to AWB](development/basic-steps/export-your-plug-in-to-an-awb-installation-project.md)
+* [AWB Execution Modes](development/execution-modes.md)
+* [The Background System](development/distributed-application.md)
 
 ## AWB Capabilities
 
 * [The Project Window](awb-capabilities/the-project-window.md)
-* [Distributed Execution of Agents](awb-capabilities/distributed-application.md)
 

@@ -6,8 +6,6 @@ description: The Background System
 
 ## Introductory remarks
 
-
-
 This page describes the different parts of the background systems and gives instructions on how to configure it. It needs to be mentioned that, although the background system is intended to be used in a network of machines, all steps can also be performed on a single machine, where multiple Agent.Workbench instances run simultaneously as different background system agents. However, the background system requires a connection to a MySQL database. So make sure that an appropriate MySQL database server is available in the underlying network \(or on your machine\) and grant access to create a new database is given.
 
 ## Why distribute agents?
