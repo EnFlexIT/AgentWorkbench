@@ -630,7 +630,7 @@ public class BundleEvaluator {
 								bundleClasses.add(clazz);
 							}
 							
-						} catch (ClassNotFoundException | NoClassDefFoundError | IllegalStateException | IllegalAccessError cnfEx) {
+						} catch (ClassNotFoundException | NoClassDefFoundError | IllegalStateException | IllegalAccessError | UnsupportedClassVersionError cnfEx) {
 							//ex.printStackTrace();
 						}
 					}
