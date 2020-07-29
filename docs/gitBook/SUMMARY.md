@@ -18,8 +18,12 @@
   * [Export your Plug-in to AWB](development/basic-steps/export-your-plug-in-to-an-awb-installation-project.md)
 * [AWB Execution Modes](development/execution-modes.md)
 * [The Background System](development/distributed-application.md)
-
-## AWB Capabilities
-
-* [The Project Window](awb-capabilities/the-project-window.md)
+* [AWB Projects](development/awb-projects/README.md)
+  * [Project Window Structure](development/awb-projects/project-window-structure.md)
+  * [Project Import and Export](development/awb-projects/project-import-and-export.md)
+* [AWB-Expandability](development/awb-expandability/README.md)
+  * [General Expandability](development/awb-expandability/general-expandability/README.md)
+    * [AWB Class-Structure](development/awb-expandability/general-expandability/awb-structure.md)
+  * [Project Extension](development/awb-expandability/project-extension.md)
+  * [Framework Extension](development/awb-expandability/framework-extension.md)
 

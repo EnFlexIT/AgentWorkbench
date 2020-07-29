@@ -14,7 +14,7 @@ In the explorer on the left, right-click _Eclipse Application_ and choose _New C
 
 ![](../../.gitbook/assets/newlaunchconfig2.jpg)
 
-Name the configuration \(e.g "Agent.Workbench.local"\). In the Main tab, check if _Run a product_ equals _org.agentgui.core.product_.
+Name the configuration \(e.g "Agent.Workbench.local"\). In the Main tab, check if _Run a product_ equals _org.agentgui.core.product_ and make sure the option _Clear:_ is unselected.
 
 ![](../../.gitbook/assets/newlaunchconfigmain.jpg)
 
@@ -34,6 +34,10 @@ First we must select the following plug-ins:
 Then click _Add Required Plug-ins_ \(4\) and _Validate Plug-ins_ \(5\). A window should show up, saying that no problems were detected.
 
 ![](../../.gitbook/assets/confignoproblems.jpg)
+
+As a last step, head to the Configuration tab and make sure the checkbox _Clear the configuration area before launching_ is unselected as well.
+
+![](../../.gitbook/assets/configtabdebugconfiguration.jpg)
 
 Now you can launch Agent.Workbench with the launch configuration from the IDE.
 
