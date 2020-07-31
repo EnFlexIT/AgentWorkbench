@@ -27,8 +27,9 @@
   * [Project Window Structure](development/awb-projects/project-window-structure.md)
   * [Project Import and Export](development/awb-projects/project-import-and-export.md)
 * [AWB-Expandability](development/awb-expandability/README.md)
-  * [General Expandability](development/awb-expandability/general-expandability/README.md)
-    * [AWB Class-Structure](development/awb-expandability/general-expandability/awb-structure.md)
+  * [OSGI / ClassLoadService](development/awb-expandability/general-expandability.md)
   * [Project Extension](development/awb-expandability/project-extension.md)
   * [Framework Extension](development/awb-expandability/framework-extension.md)
+* [AWB-Structures](development/awb-structures/README.md)
+  * [Operational Main Classes](development/awb-structures/awb-structure.md)
 

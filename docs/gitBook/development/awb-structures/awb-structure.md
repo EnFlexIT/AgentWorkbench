@@ -1,8 +1,8 @@
-# AWB Class-Structure
+# Operational Main Classes
 
 This page provides an overview of the most important classes of Agent.Workbench and their relationships.
 
-![](../../../.gitbook/assets/awbmainclasses.jpg)
+![](../../.gitbook/assets/awbmainclasses.jpg)
 
 **Application** \(agentgui.core.Application\) ****
 

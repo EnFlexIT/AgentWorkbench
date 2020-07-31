@@ -2,7 +2,7 @@
 
 AWB projects differ, depending on the domain, which artifacts are required and how the project is configured. But the core structure is similar throughout all projects. In the following, we are going through an example project to understand how a project is built up and what configuration options it provides. This page simply describes the project window structure. If you are looking for in-depth information on configuration options, follow the provided links.
 
-First up, Agent.Workbench provides different options regarding the project window presentation in the _View_ menu. Optional Tab-Header or the Project tree can be applied to the window if demanded. The same goes for the console and the heap monitor, which aren't specific to the project window.
+First up, Agent.Workbench provides different options regarding the project window presentation in the _View_ menu. An optional Tab-Header or the Project tree can be applied to the window if demanded. The same goes for the console and the heap monitor, which aren't specific to the project window.
 
 ![](../../.gitbook/assets/viewmenu.jpg)
 
@@ -12,7 +12,7 @@ When working with projects, we can distinguish two groups of people, the [projec
 
 ## Info
 
-Common to every project is the Info page. The Info page defines the Project Title, provides space for a description of the project and lets you configure some general settings regarding the project. Additionally, it shows where the project is saved and which tab \(node from the project tree\) is used as the initial view when the project opens. Further, a project version and an update-site can be configured, if a project is opened in the so-called 'Developer View'. The project version and the update-site is related to the import and export capabilities of AWB-projects [that are explained here](project-import-and-export.md).
+Common to every project is the Info page. The Info page defines the Project Title, provides space for a description of the project and lets you configure some general settings regarding the project. Additionally, it shows where the project is saved and which tab \(node from the project tree\) is used as the initial view when the project opens. Further, a project version and an update-site can be configured, if a project is opened in the so-called 'Developer View'. The project version and the update-site are related to the import and export capabilities of AWB-projects [that are explained here](project-import-and-export.md).
 
 ![](../../.gitbook/assets/epinfopage.jpg)
 
