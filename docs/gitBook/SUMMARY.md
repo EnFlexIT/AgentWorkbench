@@ -30,6 +30,7 @@
   * [OSGI / ClassLoadService](development/awb-expandability/general-expandability.md)
   * [Project Extension](development/awb-expandability/project-extension.md)
   * [Framework Extension](development/awb-expandability/framework-extension.md)
+  * [Agents](development/awb-expandability/agents.md)
 * [AWB-Structures](development/awb-structures/README.md)
   * [Operational Main Classes](development/awb-structures/awb-structure.md)
 
