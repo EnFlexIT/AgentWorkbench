@@ -40,7 +40,7 @@ The agent project will be located in the sub-directory **./projects/** beside th
 
 ![](../../.gitbook/assets/04_installationstructure.png)
 
-For the time being, save the project and close Agent.Workbench. [A description of the project window structure will be provided here](../../awb-capabilities/the-project-window.md).
+For the time being, save the project and close Agent.Workbench. [A description of the project window structure will be provided here]().
 
 ## Install Eclipse IDE for Java EE Developers <a id="install-eclipse-ide"></a>
 

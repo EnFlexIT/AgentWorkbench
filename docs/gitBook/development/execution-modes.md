@@ -148,7 +148,9 @@ The following table shows the possible values for the _**01\_RUNAS**_ key and ex
       </td>
     </tr>
   </tbody>
-</table>For sure, the easiest way to configure Agent.Workbench is to use the Options dialog, since it provides suitable user support functions. For some configurations, as for example for the configuration of so-called device agents, the configuration is more complex \(see example below\). Therefore it can be helpful to use the Options dialog to configure your own configuration examples. Here the example:
+</table>
+
+For sure, the easiest way to configure Agent.Workbench is to use the Options dialog, since it provides suitable user support functions. For some configurations, as for example for the configuration of so-called device agents, the configuration is more complex \(see example below\). Therefore it can be helpful to use the Options dialog to configure your own configuration examples. Here the example:
 
 44\_DEVICE\_SERVICE\_AGENT\_Name = Agent1\(net.package.MyAgent\), AgentNo2\(net.package.MyAgent\)
 
@@ -266,4 +268,6 @@ The table below gives explanations on the individual lines, that need to be conf
     </tr>
   </tbody>
 </table>
+
+
 

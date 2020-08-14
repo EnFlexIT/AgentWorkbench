@@ -18,8 +18,19 @@
   * [Export your Plug-in to AWB](development/basic-steps/export-your-plug-in-to-an-awb-installation-project.md)
 * [AWB Execution Modes](development/execution-modes.md)
 * [The Background System](development/distributed-application.md)
-
-## AWB Capabilities
-
-* [The Project Window](awb-capabilities/the-project-window.md)
+* [General AWB UI Functions](development/awb-ui-functions/README.md)
+  * [Option Dialog](development/awb-ui-functions/option-dialog.md)
+  * [Eclipse Preferences](development/awb-ui-functions/eclipse-preferences.md)
+  * [AWB Feature Configuration](development/awb-ui-functions/awb-feature-configuration.md)
+  * [Language Translation](development/awb-ui-functions/language-translation.md)
+* [AWB Projects](development/awb-projects/README.md)
+  * [Project Window Structure](development/awb-projects/project-window-structure.md)
+  * [Project Import and Export](development/awb-projects/project-import-and-export.md)
+* [AWB-Expandability](development/awb-expandability/README.md)
+  * [OSGI / ClassLoadService](development/awb-expandability/general-expandability.md)
+  * [Project Extension](development/awb-expandability/project-extension.md)
+  * [Framework Extension](development/awb-expandability/framework-extension.md)
+  * [Agents](development/awb-expandability/agents.md)
+* [AWB-Structures](development/awb-structures/README.md)
+  * [Operational Main Classes](development/awb-structures/awb-structure.md)
 
