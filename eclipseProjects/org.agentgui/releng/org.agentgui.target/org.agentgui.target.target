@@ -5,8 +5,9 @@
 		<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
 		<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
 		<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/releases/2020-03/"/>
+		<repository location="https://download.eclipse.org/releases/2020-06/"/>
 		<!--  Space for older versions (as reminder) 
+		<repository location="https://download.eclipse.org/releases/2020-03/"/>
 		<repository location="https://download.eclipse.org/releases/2019-12/"/>
 		<repository location="https://download.eclipse.org/releases/2019-09/"/>
 		<repository location="https://download.eclipse.org/releases/2019-06/"/>
@@ -27,8 +28,9 @@
 		<unit id="org.slf4j.api.source" version="0.0.0"/>
 		<unit id="org.slf4j.apis.jcl" version="0.0.0"/>
 		<unit id="org.slf4j.apis.jcl.source" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
+		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository"/>
 		<!--  Space for older versions (as reminder)
+		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
