@@ -72,6 +72,7 @@ public class ImportOperationalData extends AbstractUndoableEdit{
 			
 			// --- Prepare the FileChooser --------------------------
 			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setDialogTitle(Language.translate("Import operational data to the network model", Language.EN) + ":");
 			fileChooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 			
 			// --- Add file filters for all import services --------- 

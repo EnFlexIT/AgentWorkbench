@@ -259,6 +259,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		// ----------------------------------------------------------
 		// --- Button Import graph from file ------------------------
 		JFileChooser graphFC = new JFileChooser();
+		graphFC.setDialogTitle(Language.translate("Import NetworkModel from file", Language.EN) + ":");
 		graphFC.removeChoosableFileFilter(graphFC.getAcceptAllFileFilter());
 		
 		
