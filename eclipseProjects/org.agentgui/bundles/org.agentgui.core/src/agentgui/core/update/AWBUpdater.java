@@ -159,6 +159,7 @@ public class AWBUpdater extends Thread {
 				this.askBeforeDownload = false;
 				break;
 			default:
+				System.out.println("[" + this.getClass().getSimpleName() + "] Automatic updates are disabled.");
 				doUpdateProcedure = false;
 				break;
 			}
