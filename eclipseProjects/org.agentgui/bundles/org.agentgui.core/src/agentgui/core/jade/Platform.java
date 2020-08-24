@@ -46,6 +46,7 @@ import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.network.NetworkAddresses;
 import agentgui.core.plugin.PlugInsLoaded;
@@ -657,8 +658,7 @@ public class Platform {
 	 * @return true, if the user answered 'yes'
 	 */
 	public boolean stopAskUserBefore() {
-		
-		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null) {
+		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null && Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION) {
 			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
 			String message = Language.translate("Möchten Sie JADE nun beenden?");
 			Integer answer =  JOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), message, title, JOptionPane.YES_NO_OPTION);
