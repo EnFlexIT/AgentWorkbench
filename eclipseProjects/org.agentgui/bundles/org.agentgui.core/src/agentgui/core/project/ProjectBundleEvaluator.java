@@ -310,7 +310,10 @@ public class ProjectBundleEvaluator {
 
 				// --- Check for an OSGI bundle ---------------------
 				Attributes mainAttributes = manifest.getMainAttributes();
-				String symbolicName = (String) mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME).trim();
+				String symbolicName = mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
+				if (symbolicName==null || symbolicName.isEmpty()) return fileType;
+						
+				symbolicName = (String) symbolicName.trim();
 				int semicolonPosition = symbolicName.indexOf(";");
 				if (semicolonPosition!=-1) {
 					// --- Remove entries like ';singleton:=true' ---
