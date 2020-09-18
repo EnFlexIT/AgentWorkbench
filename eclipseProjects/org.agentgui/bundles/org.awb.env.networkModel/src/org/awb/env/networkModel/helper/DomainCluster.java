@@ -1,5 +1,6 @@
 package org.awb.env.networkModel.helper;
 
+import java.util.HashSet;
 import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
@@ -15,6 +16,8 @@ public class DomainCluster implements Comparable<DomainCluster> {
 	
 	private String domain;
 	private Vector<NetworkComponent> networkComponents;
+	
+	private HashSet<String> networkComponentIDHashSet;
 	
 	/**
 	 * Instantiates a new domain cluster.
@@ -61,6 +64,44 @@ public class DomainCluster implements Comparable<DomainCluster> {
 	 */
 	public Vector<NetworkComponent> getNetworkComponents() {
 		return networkComponents;
+	}
+	
+	/**
+	 * Gets the network component ID hash set.
+	 * @return the network component ID hash set
+	 */
+	private HashSet<String> getNetworkComponentIDHashSet() {
+		if (networkComponentIDHashSet==null && this.getNetworkComponents()!=null) {
+			networkComponentIDHashSet = new HashSet<String>();
+			for (int i=0; i<this.getNetworkComponents().size(); i++) {
+				networkComponentIDHashSet.add(this.getNetworkComponents().get(i).getId());
+			}
+		}
+		return networkComponentIDHashSet;
+	}
+	
+	/**
+	 * Checks if the network component with the specified ID is part of this domain cluster.
+	 * @param networkComponentID the network component ID
+	 * @return true, if is part of domain cluster
+	 */
+	public boolean isPartOfDomainCluster(String networkComponentID) {
+		if (this.getNetworkComponentIDHashSet()!=null) {
+			return this.getNetworkComponentIDHashSet().contains(networkComponentID);
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if the specified network component is part of this domain cluster.
+	 * @param networkComponent the network component
+	 * @return true, if is part of domain cluster
+	 */
+	public boolean isPartOfDomainCluster(NetworkComponent networkComponent) {
+		if (this.getNetworkComponents()!=null) {
+			return this.getNetworkComponents().contains(networkComponent);
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
