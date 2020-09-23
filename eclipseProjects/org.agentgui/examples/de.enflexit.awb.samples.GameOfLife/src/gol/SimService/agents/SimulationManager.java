@@ -72,7 +72,7 @@ public class SimulationManager extends SimulationManagerAgent {
 	 * @see agentgui.simulationService.agents.SimulationManagerInterface#doSingleSimulationSequennce()
 	 */
 	@Override
-	public void doSingleSimulationSequennce() {
+	public void doSingleSimulationSequence() {
 
 		// --- set the environment model ------------------
 		if (this.getEnvironmentModel().getTimeModel()!=null) {

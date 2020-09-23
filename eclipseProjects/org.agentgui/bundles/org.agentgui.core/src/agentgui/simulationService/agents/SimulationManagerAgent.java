@@ -185,7 +185,7 @@ public abstract class SimulationManagerAgent extends Agent {
 		 */
 		@Override
 		public void action() {
-			doSingleSimulationSequennce();
+			doSingleSimulationSequence();
 			block();
 		}
 		
@@ -257,7 +257,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * The logic of the simulation is implemented here. It's highly recommended 
 	 * to use this methods for implementing the individual logic.
 	 */
-	public abstract void doSingleSimulationSequennce();
+	public abstract void doSingleSimulationSequence();
 	
 	/**
 	 * This method has to be called if the next simulation step can be executed.
