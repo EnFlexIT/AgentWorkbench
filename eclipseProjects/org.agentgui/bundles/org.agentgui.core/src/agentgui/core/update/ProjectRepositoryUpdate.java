@@ -45,6 +45,7 @@ import agentgui.core.project.transfer.ProjectImportController;
 import agentgui.core.project.transfer.ProjectImportSettings;
 import agentgui.core.update.repositoryModel.ProjectRepository;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.transfer.Download;
 import de.enflexit.common.transfer.FileCopier;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
@@ -75,7 +76,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	private Boolean leaveUpdateProcedure;
 	
 	private boolean successfulUpdate;
-	
+		
 	/**
 	 * Instantiates a new project updater.
 	 * @param projectToUpdate the project to update
@@ -353,7 +354,7 @@ public class ProjectRepositoryUpdate extends Thread {
 		String updateTitle = null;
 		String updateMessage = null;
 		int updateMessageType = 0;
-
+		RepositoryEntry update = null;
 		// --- Configure update procedure --------------------------- 
 		this.configureInernalUpdateProcedure();
 		if (this.isLeaveUpdateProcedure()==true) return;
@@ -371,58 +372,70 @@ public class ProjectRepositoryUpdate extends Thread {
 			return;
 		}
 		
-		// --- Check if the repository can be loaded ----------------
-		if (this.getProjectRepository()==null) return;
+		try {
+			ProjectRepository repo = this.getProjectRepository();
+			// --- Check if the repository can be loaded ----------------
+			if (repo ==null) return;
+			// --- Check if an update is available ----------------------
+			update = repo.getProjectUpdate(this.currProject);
 		
-		// --- Check if an update is available ----------------------
-		RepositoryEntry update = this.getProjectRepository().getProjectUpdate(this.currProject);
-		if (update!=null) {
-			// --- An update is available ---------------------------
-			if (this.isConfirmedUserRequestForDownloadAndInstallation(update)==false) return;
-			
-			// --- Download the update ------------------------------
-			String updateFilename = this.getLinkOrPathWithDirectorySuffix(Application.getGlobalInfo().getPathProjects(true), update.getFileName());
-			if (this.downloadOrCopyProjectArchiveFromRepository(this.currProject.getUpdateSite(), update, updateFilename)==true) {
-				// --- The download of update is done ---------------
-				if (this.isConfirmedUserRequestForInstallation(update)==false) return;
+			if (update!=null) {
+				// --- An update is available ---------------------------
+				if (this.isConfirmedUserRequestForDownloadAndInstallation(update)==false) return;
 				
-				// --- Do the installation of the new update --------
-				if (this.updateProject(updateFilename)==true) {
-					updateTitle = Language.translate("Updated successful", Language.EN);
-					updateMessage = Language.translate("The project was updated successfully!", Language.EN);
-					updateMessageType = JOptionPane.INFORMATION_MESSAGE;
-					this.setSuccessfulUpdate(true);
-				} else {
-					updateTitle = Language.translate("Update failed", Language.EN);
-					updateMessage = Language.translate("The project update failed!", Language.EN);
-					updateMessageType = JOptionPane.ERROR_MESSAGE;
+				// --- Download the update ------------------------------
+				String updateFilename = this.getLinkOrPathWithDirectorySuffix(Application.getGlobalInfo().getPathProjects(true), update.getFileName());
+				if (this.downloadOrCopyProjectArchiveFromRepository(this.currProject.getUpdateSite(), update, updateFilename, this.currProject.getUpdateAuthorization())==true) {
+					// --- The download of update is done ---------------
+					if (this.isConfirmedUserRequestForInstallation(update)==false) return;
+					
+					// --- Do the installation of the new update --------
+					if (this.updateProject(updateFilename)==true) {
+						updateTitle = Language.translate("Updated successful", Language.EN);
+						updateMessage = Language.translate("The project was updated successfully!", Language.EN);
+						updateMessageType = JOptionPane.INFORMATION_MESSAGE;
+						this.setSuccessfulUpdate(true);
+					} else {
+						updateTitle = Language.translate("Update failed", Language.EN);
+						updateMessage = Language.translate("The project update failed!", Language.EN);
+						updateMessageType = JOptionPane.ERROR_MESSAGE;
+					}
+					// --- Give some feedback to the user ---------------
+					if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
+						JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
+					} else {
+						this.printSystemOutput(updateMessage, (updateMessageType!=JOptionPane.INFORMATION_MESSAGE));
+					}
 				}
-				// --- Give some feedback to the user ---------------
+				
+			} else {
+				// --- Update last date checked -------------------------
+				this.currProject.setUpdateDateLastChecked(this.currTimeStamp);
+				if (this.isExecutedByUser()==false) {
+					this.currProject.save();	
+				}
+				
+				// --- No Update found ----------------------------------
+				updateTitle = Language.translate("Updated check for", Language.EN) + " '" + this.currProject.getProjectName() + "'";
+				updateMessage = Language.translate("No update could be found for the current project!", Language.EN);
+				updateMessageType = JOptionPane.INFORMATION_MESSAGE;
 				if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
 					JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
 				} else {
-					this.printSystemOutput(updateMessage, (updateMessageType!=JOptionPane.INFORMATION_MESSAGE));
+					this.printSystemOutput(updateMessage, false);
 				}
 			}
-			
-		} else {
-			// --- Update last date checked -------------------------
-			this.currProject.setUpdateDateLastChecked(this.currTimeStamp);
-			if (this.isExecutedByUser()==false) {
-				this.currProject.save();	
-			}
-			
-			// --- No Update found ----------------------------------
-			updateTitle = Language.translate("Updated check for", Language.EN) + " '" + this.currProject.getProjectName() + "'";
-			updateMessage = Language.translate("No update could be found for the current project!", Language.EN);
-			updateMessageType = JOptionPane.INFORMATION_MESSAGE;
+		} catch(ProjectRepositoryUpdateException | IllegalArgumentException ex) {
+			updateTitle = Language.translate("Update failed", Language.EN);
+			updateMessage = ex.getLocalizedMessage();
+			updateMessageType = JOptionPane.ERROR_MESSAGE;
+
 			if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
+				JOptionPane.showMessageDialog(Application.getMainWindow(), ex.getMessage(), updateTitle, updateMessageType);
 			} else {
-				this.printSystemOutput(updateMessage, false);
+				this.printSystemOutput(updateMessage, true);
 			}
-		}
-		
+		}	
 	}
 	
 	/**
@@ -574,14 +587,15 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @param destinationFileName the destination file name
 	 * @return true, if successful
 	 */
-	public boolean downloadOrCopyProjectArchiveFromRepository(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry, String destinationFileName) {
+	public boolean downloadOrCopyProjectArchiveFromRepository(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry, String destinationFileName, WebResourcesAuthorization webResAuth) throws ProjectRepositoryUpdateException {
 		
 		boolean successful = false;
-		if (this.getProjectRepository().isWebRepository()==true) {
+		ProjectRepository repo =  this.getProjectRepository();
+		if (repo.isWebRepository()==true) {
 			// -- Start the web download ----------------------------
 			String sourceFileURL = this.getFileNameURLDownload(sourceDirectoryOrWebReference, updateRepositoryEntry);
 			
-			Download download = new Download(sourceFileURL, destinationFileName);
+			Download download = new Download(sourceFileURL, destinationFileName, webResAuth);
 			download.startDownload();
 			successful = download.wasSuccessful();
 			
@@ -631,9 +645,9 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * Returns the project repository from the projects update site.
 	 * @return the project repository
 	 */
-	public ProjectRepository getProjectRepository() {
+	public ProjectRepository getProjectRepository() throws ProjectRepositoryUpdateException {
 		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {
-			projectRepository = ProjectRepository.loadProjectRepository(this.currProject.getUpdateSite());
+			projectRepository = ProjectRepository.loadProjectRepository(this.currProject.getUpdateSite(), this.currProject.getUpdateAuthorization());
 			if (projectRepository==null) {
 				this.printSystemOutput("Could not access any projct repository!", true);
 			}

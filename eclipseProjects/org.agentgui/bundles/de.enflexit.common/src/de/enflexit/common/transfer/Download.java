@@ -39,6 +39,9 @@ import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+import de.enflexit.common.http.WebResourcesAuthorization;
+import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
+
 /**
  * This class enables the download from a given URL to a local destination folder.
  * 
@@ -48,12 +51,14 @@ public class Download {
 
 	private String srcFileURL;
 	private String destFileLocale;
+	private WebResourcesAuthorization webResAuth;
 	
 	private Integer downloadProgress = 0;
 	private boolean downloadSuccessful = false;
 	private boolean downloadFinished = false;
 	
 	private boolean cancel = false;
+	
 	
 	/**
 	 * Instantiates a new download.
@@ -62,11 +67,37 @@ public class Download {
 	 * @param destinationFileLocal the local destination file 
 	 */
 	public Download(String sourceFileURL, String destinationFileLocal) {
+		this(sourceFileURL, destinationFileLocal, null);
+	}
+	/**
+	 * Instantiates a new download.
+	 *
+	 * @param sourceFileURL the URL of the source file 
+	 * @param destinationFileLocal the local destination file 
+	 * @param webResAuth the settings for authorization 
+	 */
+	public Download(String sourceFileURL, String destinationFileLocal, WebResourcesAuthorization webResAuth) {
 		// --- Set the local variables ----
 		this.srcFileURL  = sourceFileURL;
 		this.destFileLocale = destinationFileLocal;
+		this.webResAuth = webResAuth;
 	}
 	
+	/**
+	 * Returns the {@link WebResourcesAuthorization}.
+	 * @return the webResAuth
+	 */
+	public WebResourcesAuthorization getWebResAuth() {
+		return webResAuth;
+	}
+	/**
+	 * Sets the web res auth.
+	 * @param webResAuth the webResAuth to set
+	 */
+	public void setWebResAuth(WebResourcesAuthorization webResAuth) {
+		this.webResAuth = webResAuth;
+	}
+
 	/**
 	 * Starts the download.
 	 */
@@ -84,7 +115,7 @@ public class Download {
 		
 		URL url;
 		HttpURLConnection huc;
-		byte[] buffer = new byte[4096] ;
+		byte[] buffer = new byte[4096];
 		int totBytes, bytes, sumBytes = 0;
 
 		String host = null;
@@ -94,11 +125,15 @@ public class Download {
 			url = new URL(srcFileURL);
 			host = url.getHost();
 			huc = (HttpURLConnection) url.openConnection();
+			WebResourcesAuthorization auth = this.getWebResAuth();
+			if (auth!=null && auth.getType()==AuthorizationType.BASIC) {
+				huc.setRequestProperty("Authorization", auth.getEncodedHeader());
+			}
 			huc.connect();
 			
 			// --- Checking the connection ----------------
-			is = huc.getInputStream() ;
-			int code = huc.getResponseCode() ; 
+			is = huc.getInputStream();
+			int code = huc.getResponseCode(); 
 			if ( code == HttpURLConnection.HTTP_OK )   {  
 
 				// --- Define Output-File -----------------
@@ -106,7 +141,7 @@ public class Download {
 				FileOutputStream outputStream = new FileOutputStream(fileDownloaded) ; 
 				
 				// --- Proceed ----------------------------
-				totBytes = huc.getContentLength() ; 
+				totBytes = huc.getContentLength(); 
 				while ((bytes = is.read(buffer)) > 0) {
 					if (this.cancel==true) {
 						break;
@@ -180,5 +215,5 @@ public class Download {
 	public synchronized Integer getDownloadProgress() {
 		return downloadProgress;
 	}
-
+	
 }

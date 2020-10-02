@@ -31,8 +31,10 @@ package agentgui.core.update;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +48,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -63,12 +66,14 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.update.repositoryModel.ProjectRepository;
 import agentgui.core.update.repositoryModel.ProjectRepositoryEntries;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
 import agentgui.core.update.repositoryModel.RepositoryTagVersions;
+import de.enflexit.common.http.WebResourcesAuthorization;
 
 /**
  * The Class ProjectRepositoryExplorer provides .
@@ -79,14 +84,14 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 
 	private static final long serialVersionUID = -8466682987118948831L;
 	
-	
-	
 	private ProjectRepositoryExplorerPanelListener panelListener;
+
+	private WebResourcesAuthorization lastUsedAuthorization;
 	
 	private ProjectRepository projectRepository;
 	private RepositoryEntry repositoryEntrySelected;
 	private boolean showAllVersions;
-
+	
 	private ArrayList<String> localAvailableProjectIDs;
 	
 	
@@ -116,7 +121,8 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	private JLabel jLabelVersion;
 	private JTextField jTextFieldProjectVersion;
 	private JButton jButtonInstallUpdate;
-
+	
+	
 	/**
 	 * Instantiates a new project repository explorer.
 	 * @param listener the {@link ProjectRepositoryExplorerPanelListener}
@@ -126,7 +132,6 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		this.initialize();
 		this.setSelectedTreeNode(null);
 	}
-	
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -499,7 +504,30 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		
 		// --- Assign to local variable -----------------------------
 		String link = this.getRepositoryDirectoryLink();
-		ProjectRepository repo = ProjectRepository.loadProjectRepository(link);
+		ProjectRepository repo = null;
+		try {
+			repo = ProjectRepository.loadProjectRepository(link, lastUsedAuthorization);
+			
+		} catch(ProjectRepositoryUpdateAuthorizationException ex) {
+			// --- Open UpdateSettingsDialog if previous request returned an unauthorized response
+			Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			AuthenticatationDialog dialog = new AuthenticatationDialog(owner, lastUsedAuthorization, link);
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setConfirmButtonText("Connect");
+			
+			dialog.setVisible(true);
+			try {
+				lastUsedAuthorization = dialog.getSavedAuthorizationSettings();
+				repo = ProjectRepository.loadProjectRepository(link, lastUsedAuthorization);
+				
+			} catch(ProjectRepositoryUpdateException | IllegalArgumentException e) {
+				System.err.println(e.getLocalizedMessage());
+			}		
+			
+		} catch(ProjectRepositoryUpdateException | IllegalArgumentException ex) {
+			System.err.println(ex.getLocalizedMessage());
+		}
+		
 		this.setProjectRepository(repo);
 		if (repo!=null) {
 			// --- Remind this link ---------------------------------
@@ -667,7 +695,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 	/**
 	 * Installs the currently selected project from the repository.
 	 */
-	private void installProject() {
+	private void installProject(){
 		
 		String link = this.getRepositoryDirectoryLink();
 		if (link==null) return;
@@ -679,28 +707,41 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		
 		// --- Try to download or copy the file ---------------------
 		String downloadFileName = pru.getLinkOrPathWithDirectorySuffix(Application.getGlobalInfo().getPathProjects(true), this.repositoryEntrySelected.getFileName());
-		if (pru.downloadOrCopyProjectArchiveFromRepository(link, this.repositoryEntrySelected, downloadFileName)==true) {
+		try {
+			if (pru.downloadOrCopyProjectArchiveFromRepository(link, this.repositoryEntrySelected, downloadFileName, this.lastUsedAuthorization)==true) {
 
-			// --- Install the project ------------------------------
-			if (pru.importProjectFromArchive(downloadFileName)==true) {
-				// --- Close the repository explorer ----------------
-				if (this.panelListener!=null) {
-					this.panelListener.closeProjectRepositoryExplorer();
+				// --- Install the project ------------------------------
+				if (pru.importProjectFromArchive(downloadFileName)==true) {
+					
+					// --- Close the repository explorer ----------------
+					if (this.panelListener!=null) {
+						this.panelListener.closeProjectRepositoryExplorer();
+					}
+					
+				} else {
+					JOptionPane.showMessageDialog(this, Language.translate("The installation of the project '",Language.EN) + this.repositoryEntrySelected.getProjectName() + Language.translate("' failed ", Language.EN), Language.translate("Installation failed", Language.EN), JOptionPane.ERROR_MESSAGE);
+					
 				}
 				
-			} else {
-				JOptionPane.showMessageDialog(this, "The installation of the project '" + this.repositoryEntrySelected.getProjectName() + "' failed", "Installation failed", JOptionPane.ERROR_MESSAGE);
+				// --- Delete the archive -------------------------------
+				File downloadFile = new File(downloadFileName);
+				if (downloadFile.exists()==true) {
+					downloadFile.delete();
+				}
 				
 			}
-			
-			// --- Delete the archive -------------------------------
-			File downloadFile = new File(downloadFileName);
-			if (downloadFile.exists()==true) {
-				downloadFile.delete();
-			}
-			
+		} catch (HeadlessException | ProjectRepositoryUpdateException e) {
+			JOptionPane.showMessageDialog(this, Language.translate("The installation of the project '",Language.EN) + this.repositoryEntrySelected.getProjectName() + Language.translate("' failed ", Language.EN)+System.getProperty("line.separator") + Language.translate("Error: ",Language.EN) + e.getLocalizedMessage(), Language.translate("Installation failed", Language.EN), JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Returns the last used {@link WebResourcesAuthorization}.
+	 * @return the last used authorization
+	 */
+	public WebResourcesAuthorization getLastUsedAuthorization() {
+		return lastUsedAuthorization;
+	}
 	
 }

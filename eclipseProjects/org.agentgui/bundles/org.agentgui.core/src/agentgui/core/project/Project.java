@@ -95,6 +95,8 @@ import agentgui.core.update.ProjectRepositoryUpdate;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
+import de.enflexit.common.http.WebResourcesAuthorization;
+import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.p2.P2OperationsHandler;
@@ -122,7 +124,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String CHANGED_Version = "Version";
 	@XmlTransient public static final String CHANGED_UpdateAutoConfiguration= "UpdateAutoConfiguration";
 	@XmlTransient public static final String CHANGED_UpdateSite = "UpdateSite";
-	@XmlTransient public static final String CHANGED_UpdateDateLastChecked= "UpdateDateLastChecked";
+	@XmlTransient public static final String CHANGED_UpdateDateLastChecked = "UpdateDateLastChecked";
+	@XmlTransient public static final String CHANGED_UpdateAuthorization = "UpdateAuthorization";
 
 	@XmlTransient public static final String CHANGED_EnvironmentModelType= "EnvironmentModelType";
 	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
@@ -194,6 +197,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlElement(name="updateAutoConfiguration")	private Integer updateAutoConfiguration;
 	@XmlElement(name="updateDateLastChecked")	private long updateDateLastChecked;
 
+	// --- Project repository authorization ------------------------------
+	@XmlElement(name = "updateAuthorization")
+	private WebResourcesAuthorization updateAuthorization;
+	
 	// --- The environment model name to use ------------------------
 	@XmlElement(name="environmentModel")		private String environmentModelName;	
 
@@ -1600,6 +1607,29 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		return updateDateLastChecked;
 	}
 
+	/**
+	 * Sets the update authentication.
+	 * @param updateAuthorization the new update authorization
+	 */
+	public void setUpdateAuthorization(WebResourcesAuthorization updateAuthorization) {
+		this.updateAuthorization = updateAuthorization;
+		setUnsaved(true);
+		setChanged();
+		notifyObservers(CHANGED_UpdateAuthorization);
+	}
+	/**
+	 * Returns the update authorization.
+	 * @return the update authorization
+	 */
+	@XmlTransient
+	public WebResourcesAuthorization getUpdateAuthorization() {
+		if (updateAuthorization==null) {
+			updateAuthorization = new WebResourcesAuthorization(AuthorizationType.NONE, null, null);
+		}
+		return updateAuthorization;
+	}
+	
+	
 	/**
 	 * Does the project update check and installation.
 	 *

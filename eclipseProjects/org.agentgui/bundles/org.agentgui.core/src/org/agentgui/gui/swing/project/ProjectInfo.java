@@ -30,6 +30,7 @@ package org.agentgui.gui.swing.project;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -43,6 +44,7 @@ import java.util.Observer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -54,9 +56,11 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
+import agentgui.core.update.AuthenticatationDialog;
 
 /**
  * Represents the JPanel/Tab 'Info' for the general project information
@@ -106,6 +110,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JRadioButton jRadioButtonUpdateDisabled;
 	private JButton jButtonUpdateSiteDefault;
 	private JLabel jLabelVersionTag;
+	private JButton jButtonUpdateSettings;
 	
 	
 	/**
@@ -334,12 +339,13 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jPanelUpdateOptions == null) {
 			jPanelUpdateOptions = new JPanel();
 			GridBagLayout gbl_jPanelUpdateOptions = new GridBagLayout();
-			gbl_jPanelUpdateOptions.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
+			gbl_jPanelUpdateOptions.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 			gbl_jPanelUpdateOptions.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-			gbl_jPanelUpdateOptions.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelUpdateOptions.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			gbl_jPanelUpdateOptions.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			jPanelUpdateOptions.setLayout(gbl_jPanelUpdateOptions);
 			GridBagConstraints gbc_jPanelVersion = new GridBagConstraints();
+			gbc_jPanelVersion.insets = new Insets(0, 0, 0, 5);
 			gbc_jPanelVersion.fill = GridBagConstraints.BOTH;
 			gbc_jPanelVersion.gridheight = 5;
 			gbc_jPanelVersion.gridx = 0;
@@ -364,18 +370,23 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			gbc_jTextFieldUpdateSite.gridx = 3;
 			gbc_jTextFieldUpdateSite.gridy = 0;
 			jPanelUpdateOptions.add(getJTextFieldUpdateSite(), gbc_jTextFieldUpdateSite);
+			GridBagConstraints gbc_jButtonUpdateSettings = new GridBagConstraints();
+			gbc_jButtonUpdateSettings.insets = new Insets(0, 0, 5, 5);
+			gbc_jButtonUpdateSettings.gridx = 4;
+			gbc_jButtonUpdateSettings.gridy = 0;
+			jPanelUpdateOptions.add(getJButtonUpdateSettings(), gbc_jButtonUpdateSettings);
 			GridBagConstraints gbc_jButtonUpdateSiteDefault = new GridBagConstraints();
 			gbc_jButtonUpdateSiteDefault.insets = new Insets(0, 0, 5, 5);
-			gbc_jButtonUpdateSiteDefault.gridx = 4;
+			gbc_jButtonUpdateSiteDefault.gridx = 5;
 			gbc_jButtonUpdateSiteDefault.gridy = 0;
 			jPanelUpdateOptions.add(getJButtonUpdateSiteDefault(), gbc_jButtonUpdateSiteDefault);
 			GridBagConstraints gbc_jButtonSearchForUpdate = new GridBagConstraints();
 			gbc_jButtonSearchForUpdate.insets = new Insets(0, 0, 5, 0);
-			gbc_jButtonSearchForUpdate.gridx = 5;
+			gbc_jButtonSearchForUpdate.gridx = 6;
 			gbc_jButtonSearchForUpdate.gridy = 0;
 			jPanelUpdateOptions.add(getJButtonSearchForUpdate(), gbc_jButtonSearchForUpdate);
 			GridBagConstraints gbc_jLabelLastUpdate = new GridBagConstraints();
-			gbc_jLabelLastUpdate.gridwidth = 4;
+			gbc_jLabelLastUpdate.gridwidth = 5;
 			gbc_jLabelLastUpdate.fill = GridBagConstraints.VERTICAL;
 			gbc_jLabelLastUpdate.anchor = GridBagConstraints.WEST;
 			gbc_jLabelLastUpdate.insets = new Insets(5, 0, 5, 0);
@@ -536,6 +547,16 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			});
 		}
 		return jTextFieldUpdateSite;
+	}
+	private JButton getJButtonUpdateSettings() {
+		if (jButtonUpdateSettings == null) {
+			jButtonUpdateSettings = new JButton();
+			jButtonUpdateSettings.addActionListener(this);
+			jButtonUpdateSettings.setToolTipText(Language.translate("Authentisierungs-Einstellungen"));
+			jButtonUpdateSettings.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
+			jButtonUpdateSettings.setPreferredSize(new Dimension(45, 26));
+		}
+		return jButtonUpdateSettings;
 	}
 	private JButton getJButtonUpdateSiteDefault() {
 		if (jButtonUpdateSiteDefault == null) {
@@ -710,23 +731,35 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 
 		if (ae.getSource()==this.getJButtonEditVersion()) {
 			this.switchJPanelVersion();
-			
 		} else if (ae.getSource()==this.getJButtonUpdateSiteDefault()) {
 			this.getJTextFieldUpdateSite().setText(GlobalInfo.DEFAULT_AWB_PROJECT_REPOSITORY);
 			this.currProject.setUpdateSite(GlobalInfo.DEFAULT_AWB_PROJECT_REPOSITORY);
-			
 		} else if (ae.getSource()==this.getJButtonSearchForUpdate()) {
 			this.currProject.doProjectUpdate(true);
-			
 		} else if (ae.getSource()==this.getJRadioButtonUpdateAutomated()) {
 			this.currProject.setUpdateAutoConfiguration(0);
 		} else if (ae.getSource()==this.getJRadioButtonUpdateDownloadAndAsk()) {
 			this.currProject.setUpdateAutoConfiguration(1);
 		} else if (ae.getSource()==this.getJRadioButtonUpdateDisabled()) {
 			this.currProject.setUpdateAutoConfiguration(2);
+		} else if (ae.getSource() == this.getJButtonUpdateSettings()) {
+			this.showUpdateSettingsDialog();
 		} else {
-			System.err.println("Unkknow: action => " + ae.getSource().toString());
+			System.err.println("Unknown: action => " + ae.getSource().toString());
 		}
 	}
 	
+	/**
+	 * Show update settings dialog.
+	 */
+	private void showUpdateSettingsDialog() {
+		Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+		AuthenticatationDialog dialog = new AuthenticatationDialog(owner, this.currProject.getUpdateAuthorization(), this.currProject.getUpdateSite());
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setVisible(true);
+		if (dialog.getSavedAuthorizationSettings()!=null) {
+			this.currProject.setUpdateAuthorization(dialog.getSavedAuthorizationSettings());
+			
+		}
+	}
 }  
