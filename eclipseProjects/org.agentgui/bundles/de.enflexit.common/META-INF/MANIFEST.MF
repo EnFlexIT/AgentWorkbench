@@ -31,6 +31,7 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.csv;uses:="javax.swing.table,javax.swing",
  de.enflexit.common.featureEvaluation,
  de.enflexit.common.featureEvaluation.featureXML,
+ de.enflexit.common.http,
  de.enflexit.common.images,
  de.enflexit.common.ontology;uses:="javax.swing.table,javax.swing.tree,jade.content.onto",
  de.enflexit.common.ontology.gui;

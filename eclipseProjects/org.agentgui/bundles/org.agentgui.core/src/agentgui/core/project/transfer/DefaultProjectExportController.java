@@ -424,7 +424,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	}
 
 	/**
-	 * This callback method is called before zipping the exported project. In can be overriden by subclasses to provide
+	 * This callback method is called after zipping the exported project. In can be overridden by subclasses to provide
 	 * specific success/failure messages.
 	 */
 	protected void afterZip(boolean success) {
@@ -490,6 +490,10 @@ public class DefaultProjectExportController implements ProjectExportController{
 		
 		this.updateProgressMonitor(0);
 
+		// --- Set authorization settings -------------------------------------
+		if (this.exportSettings.isIncludeAuthorizationSettings()==false) {
+			this.project.setUpdateAuthorization(null);
+		}
 		// --- Copy the required data to a temporary folder -------------------
 		boolean success = DefaultProjectExportController.this.copyProjectDataToTempFolder();
 		this.updateProgressMonitor(10);

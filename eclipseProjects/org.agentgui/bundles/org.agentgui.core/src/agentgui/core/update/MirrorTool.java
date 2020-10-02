@@ -36,6 +36,7 @@ import java.util.Scanner;
 import agentgui.core.application.Application;
 import agentgui.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.transfer.Download;
 
 /**
@@ -77,7 +78,7 @@ public class MirrorTool implements MirrorToolListener {
 	 */
 	protected void mirrorDebugger() {
 		MirrorTool mt = new MirrorTool();
-		MirrorTool.mirrorProjectRepository(debugPRSource, debugPRDestin, mt);
+		MirrorTool.mirrorProjectRepository(debugPRSource, debugPRDestin, null, mt);
 		MirrorTool.mirrorP2Repository(P2DownloadType.MetaData, debugP2Source, debugP2Destin, mt);
 		MirrorTool.mirrorP2Repository(P2DownloadType.Artifacts, debugP2Source, debugP2Destin, mt);
 	}
@@ -95,9 +96,10 @@ public class MirrorTool implements MirrorToolListener {
 	 *
 	 * @param sourceLocation the source location
 	 * @param destinationDirectory the destination directory
+	 * @param auth the WebResourcesAuthorization
 	 * @param listener the MirrorToolListener to inform after the procedure
 	 */
-	public static void mirrorProjectRepository(final String sourceLocation, final String destinationDirectory, final MirrorToolListener listener) {
+	public static void mirrorProjectRepository(final String sourceLocation, final String destinationDirectory, final WebResourcesAuthorization auth,final MirrorToolListener listener) {
 		
 		if (sourceLocation==null) throw new NullPointerException("No specified source location for the project repository mirroring.");
 		if (destinationDirectory==null) throw new NullPointerException("No specified destination directory for the project repository mirroring.");
@@ -105,57 +107,61 @@ public class MirrorTool implements MirrorToolListener {
 		Thread mirrorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-
 				boolean successful = false;
-				
-				ProjectRepository projectRepo = ProjectRepository.loadProjectRepository(sourceLocation);
-				if (projectRepo!=null) {
-					// --- Save XML file to destination -----------------------
-					File destinDirFile = new File(destinationDirectory);
-					boolean dirExists = destinDirFile.exists();
-					if (dirExists==false) {
-						dirExists = destinDirFile.mkdirs();
+				ProjectRepository projectRepo = null;
+				try {
+					projectRepo = ProjectRepository.loadProjectRepository(sourceLocation, auth);
+					if (projectRepo!=null) {
+						// --- Save XML file to destination -----------------------
+						File destinDirFile = new File(destinationDirectory);
+						boolean dirExists = destinDirFile.exists();
+						if (dirExists==false) {
+							dirExists = destinDirFile.mkdirs();
+						}
+						if (dirExists==true) {
+							// --- Locally save ProjectRepository file ------------ 
+							projectRepo.save(destinDirFile);
+							
+							// --- Check destination directory value -------------- 
+							String destinDir = destinationDirectory;
+							if (destinDir.endsWith(File.separator)==false) destinDir += File.separator;
+							
+							// --- List files and download to destination ---------
+							successful = true; 
+							List<String> downloadFiles = projectRepo.getRepositoryFileList();
+							for (int i = 0; i < downloadFiles.size(); i++) {
+								// --- Download project file ----------------------
+								String downloadFile = downloadFiles.get(i);
+								if (debugPRMirroring==true) System.out.println("[MirrorProcess]: Download project archive '" + downloadFile + "'");
+								
+								// --- Do the actual download ---------------------
+								String sourceFilePath = sourceLocation + downloadFile;
+								String destinFilePath = destinDir + downloadFile;
+								File destinFile = new File(destinFilePath);
+								
+								if (destinFile.exists()==false) {
+									// --- Do the download ------------------------
+									Download download = new Download(sourceFilePath, destinFilePath, auth);
+									download.startDownload();
+									// --- Exit on failure ------------------------
+									if (download.wasSuccessful()==false) {
+										successful = false; 
+									}	
+								}
+							} // end for
+						} // end destination directory exists
+					 }// end ProjectRepository loaded
+					
+					// --- Inform listener about the result of the job ------------
+					if (listener!=null) {
+						listener.onMirroringFinaliized(MirrorToolsJob.MirrorProjectRepository, successful);
 					}
-					if (dirExists==true) {
-						// --- Locally save ProjectRepository file ------------ 
-						projectRepo.save(destinDirFile);
-						
-						// --- Check destination directory value -------------- 
-						String destinDir = destinationDirectory;
-						if (destinDir.endsWith(File.separator)==false) destinDir += File.separator;
-						
-						// --- List files and download to destination ---------
-						successful = true; 
-						List<String> downloadFiles = projectRepo.getRepositoryFileList();
-						for (int i = 0; i < downloadFiles.size(); i++) {
-							// --- Download project file ----------------------
-							String downloadFile = downloadFiles.get(i);
-							if (debugPRMirroring==true) System.out.println("[MirrorProcess]: Download project archive '" + downloadFile + "'");
-							
-							// --- Do the actual download ---------------------
-							String sourceFilePath = sourceLocation + downloadFile;
-							String destinFilePath = destinDir + downloadFile;
-							File destinFile = new File(destinFilePath);
-							
-							if (destinFile.exists()==false) {
-								// --- Do the download ------------------------
-								Download download = new Download(sourceFilePath, destinFilePath);
-								download.startDownload();
-								// --- Exit on failure ------------------------
-								if (download.wasSuccessful()==false) {
-									successful = false; 
-								}	
-							}
-						} // end for
-					} // end destination directory exists
-				 }// end ProjectRepository loaded
-				
-				// --- Inform listener about the result of the job ------------
-				if (listener!=null) {
-					listener.onMirroringFinaliized(MirrorToolsJob.MirrorProjectRepository, successful);
-				}
 
+				} catch(ProjectRepositoryUpdateException ex) {
+					System.err.println(ex.getLocalizedMessage());
+				}
 			}
+				
 		});
 		
 		// --- Name and start the thread --------------------------------------

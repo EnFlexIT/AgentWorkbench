@@ -87,6 +87,12 @@ de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
 de;Auswahl Startliste;Selection: start list;;;
+de;Authentifizierung benötigt. Bitte Authorisierungseinstellungen setzen;Authentication required. Please set authorization settings;;;
+de;Authentifizierung fehlerhaft oder nicht vorhanden. Bitte Authorisierungseinstellungen prüfen;Authentication faulty or not available. Please check authorization settings;;;
+de;Authentifizierung ist nicht möglich. Bitte Authorisierungseinstellungen überprüfen;Authentication is not possible. Please check authorization settings;;;
+de;Authentisierungs-Einstellungen;Authorization Settings;;;
+de;Authentisierungs-Methode;Authorization Method;;;
+de;Authorisierungsdaten fehlerhaft oder nicht vorhanden.;Authorization data incorrect or not available.;;;
 de;Automatisch sortieren;Automatically sort;;;
 de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
@@ -187,6 +193,7 @@ de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenba
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
+de;Die angeforderte Ressource steht nicht mehr unter der gewählten Update-Site zur Verfügung und wurde umgeleitet;The requested resource is no longer available at the selected update site and has been redirected;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
@@ -698,10 +705,12 @@ de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, onl
 de;Unzulässiger Speicherort;Invalid Location;;;
 de;Update automatisch herunterladen, Installationszeitpunkt manuell festlegen;Download the update automatically, manually set the time of installation;;;
 de;Update-Konfiguration;Update Configuration;;;
+de;Update;Update;;;
 de;Updates automatisch installieren;Install updates automatically;;;
 de;Updates nicht automatisch herunterladen oder installieren;Do not automatically download or install ;;;
 de;Updates verfügbar, installieren?;Updates available, install?;;;
 de;Verbinden;Connect;;;
+de;Verbindung erfolgreich;Successful connected;;;
 de;Verbindungsknoten;Connection nodes;;;
 de;Verfügbare JADE-Services;Available JADE Services;;;
 de;Vergrößern ...;Expand View ...
@@ -826,6 +835,7 @@ en;;Discrete squares environment;;;
 en;;Display time is time controlled;;;
 en;;Edit security store settings;;;
 en;;Geo. Layout;;;
+en;;Import;;;
 en;;Layout ID;;;
 en;;Layout Name;;;
 en;;Line Edge;;;
@@ -842,13 +852,16 @@ en;;Operating;;;
 en;;Orthogonal Line Edge;;;
 en;;Pause Thread Measurement;;;
 en;;Please choose a KeyStore file! Your KeyStore name should ends with 'KeyStore'!;;;
+en;;Please enter the login data for the protected directory;;;
 en;;Please insert a valid repository URI for the feature;;;
 en;;Please open a Keystore first!;;;
 en;;Please select an agent for deployment!;;;
 en;;Please, choose a TrustStore file! Your TrustStore name should ends with 'TrustStore';;;
 en;;Polyline Edge;;;
+en;;ProjectRepositoryAuthorization must not be null.;;;
 en;;Quadratic Curve Edge;;;
 en;;Refresh Thread Measurement;;;
+en;;Save Credentials;;;
 en;;Set timed display time;;;
 en;;Show Label;;;
 en;;Simulation Interval;;;
@@ -922,6 +935,7 @@ en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
 en;Auswahl ausschneiden;Cut Selection;;;
 en;Auswahl kopieren;Copy Selection;;;
+en;Autorisierungseinstellungen;Authorization Settings;;;
 en;Base64-Kodierung des Datenmodells für;Base64-encoding of data model for;;;
 en;Bearbeiten;Edit;;;
 en;Bearbeitung beenden;Finalize editing;;;
@@ -1156,6 +1170,8 @@ en;Umgebungsmodell exportieren;Export the environment model;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
 en;Ungültige Knoten-Auswahl!;Invalid node selection!;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
+en;Verbinden...;Connecting...;;;
+en;Verbinden;Connect;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
 en;Verbindungsknoten trennen;Split Node;;;
 en;Verschiedene MTP-Protokolle konfiguriert!;Different MTP-protocols configured!;;;

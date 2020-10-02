@@ -41,6 +41,7 @@ import javax.swing.KeyStroke;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.http.WebResourcesAuthorization;
 
 import java.awt.Insets;
 
@@ -114,6 +115,13 @@ public class ProjectRepositoryExplorerDialog extends JDialog implements ProjectR
 			projectRepositoryExplorerPanel = new ProjectRepositoryExplorerPanel(this);
 		}
 		return projectRepositoryExplorerPanel;
+	}
+	/**
+	 * Returns the last used {@link WebResourcesAuthorization}.
+	 * @return the last used authorization
+	 */
+	public WebResourcesAuthorization getLastUsedAuthorization() {
+		return this.getProjectRepositoryExplorerPanel().getLastUsedAuthorization();
 	}
 	
 	/* (non-Javadoc)

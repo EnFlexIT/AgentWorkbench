@@ -53,9 +53,11 @@ public class ProjectExportSettings implements Serializable{
 	private transient InstallationPackageDescription installationPackage;
 	private String targetOS;
 	
-	private List<String> simSetups;
+	private boolean includeAuthorizationSettings = false;
 	
+	private List<String> simSetups;
 	private List<String> fileExcludeListInternal;
+
 	
 	/**
 	 * Returns the target file.
@@ -118,13 +120,27 @@ public class ProjectExportSettings implements Serializable{
 	public String getTargetOS() {
 		return targetOS;
 	}
-	
 	/**
 	 * Sets the target OS.
 	 * @param targetOS the new target OS
 	 */
 	public void setTargetOS(String targetOS) {
 		this.targetOS = targetOS;
+	}
+	
+	/**
+	 * Checks if authorization settings should be included.
+	 * @return true, if is include authorization settings
+	 */
+	public boolean isIncludeAuthorizationSettings() {
+		return includeAuthorizationSettings;
+	}
+	/**
+	 * Include authorization settings.
+	 * @param includeAuthorizationSettings the new include authorization settings
+	 */
+	public void setIncludeAuthorizationSettings(boolean includeAuthorizationSettings) {
+		this.includeAuthorizationSettings = includeAuthorizationSettings;
 	}
 	
 	/**
@@ -163,8 +179,6 @@ public class ProjectExportSettings implements Serializable{
 	public ProjectExportSettingsController getProjectExportSettingsController() {
 		return this.getProjectExportSettingsController(null);
 	}
-	
-	
 	/**
 	 * Gets the project export settings controller.
 	 * @param project the project
@@ -173,5 +187,5 @@ public class ProjectExportSettings implements Serializable{
 	public ProjectExportSettingsController getProjectExportSettingsController(Project project) {
 		return new ProjectExportSettingsController(project, this, null);
 	}
-	
+
 }
