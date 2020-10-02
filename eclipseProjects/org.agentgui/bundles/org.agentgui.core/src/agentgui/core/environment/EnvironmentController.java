@@ -47,6 +47,8 @@ import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelDiscrete;
+import agentgui.simulationService.time.TimeModelStroke;
 import jade.lang.acl.ACLMessage;
 
 /**
@@ -391,6 +393,15 @@ public abstract class EnvironmentController extends Observable implements Observ
 	public TimeModel getTimeModel() {
 		if (this.getProject()!=null) {
 			myTimeModel = this.getProject().getTimeModelController().getTimeModel();
+			if (myTimeModel!=null) {
+				if (myTimeModel instanceof TimeModelStroke) {
+					TimeModelStroke tmSroke = (TimeModelStroke) myTimeModel;
+					tmSroke.setCounter(0);
+				} else if (myTimeModel instanceof TimeModelDiscrete) {
+					TimeModelDiscrete tmDiscrete = (TimeModelDiscrete) myTimeModel;
+					tmDiscrete.setTime(tmDiscrete.getTimeStart());
+				}
+			}
 		}
 		return myTimeModel;
 	}

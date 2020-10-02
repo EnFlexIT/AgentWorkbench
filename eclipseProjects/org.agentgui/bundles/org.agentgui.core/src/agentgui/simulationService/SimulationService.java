@@ -28,24 +28,6 @@
  */
 package agentgui.simulationService;
 
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.AgentContainer;
-import jade.core.BaseService;
-import jade.core.Filter;
-import jade.core.HorizontalCommand;
-import jade.core.IMTPException;
-import jade.core.MainContainer;
-import jade.core.Node;
-import jade.core.Profile;
-import jade.core.ProfileException;
-import jade.core.Service;
-import jade.core.ServiceException;
-import jade.core.ServiceHelper;
-import jade.core.VerticalCommand;
-import jade.core.mobility.AgentMobilityHelper;
-import jade.util.Logger;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -67,6 +49,23 @@ import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.sensoring.ServiceSensorManager;
 import agentgui.simulationService.transaction.EnvironmentManagerDescription;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.AgentContainer;
+import jade.core.BaseService;
+import jade.core.Filter;
+import jade.core.HorizontalCommand;
+import jade.core.IMTPException;
+import jade.core.MainContainer;
+import jade.core.Node;
+import jade.core.Profile;
+import jade.core.ProfileException;
+import jade.core.Service;
+import jade.core.ServiceException;
+import jade.core.ServiceHelper;
+import jade.core.VerticalCommand;
+import jade.core.mobility.AgentMobilityHelper;
+import jade.util.Logger;
 
 /**
  * This is the SimulationService, which provides a list of functionalities for agent based simulations.

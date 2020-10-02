@@ -185,15 +185,23 @@ public abstract class SimulationManagerAgent extends Agent {
 		 */
 		@Override
 		public void action() {
-			doSingleSimulationSequennce();
+			doSingleSimulationSequence();
 			block();
+		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#restart()
+		 */
+		@Override
+		public void restart() {
+			super.restart();
 		}
 	}
 	
 	
 	
 	/**
-	 * This method is used for initialising the simulation during the .setup()-method of the agent.
+	 * This method is used for initializing the simulation during the .setup()-method of the agent.
 	 * Here the environment model (see class agentgui.simulationService.environment.EnvironmentModel)
 	 * will be set out of the current Setup.
 	 * In case that you want to fill the {@link EnvironmentModel} with your own data, just overwrite this method. 
@@ -249,7 +257,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * The logic of the simulation is implemented here. It's highly recommended 
 	 * to use this methods for implementing the individual logic.
 	 */
-	public abstract void doSingleSimulationSequennce();
+	public abstract void doSingleSimulationSequence();
 	
 	/**
 	 * This method has to be called if the next simulation step can be executed.
