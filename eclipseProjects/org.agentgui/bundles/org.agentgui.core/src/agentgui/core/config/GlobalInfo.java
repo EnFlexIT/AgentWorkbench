@@ -227,7 +227,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 
 	/**
 	 * The Enumeration EmbeddedSystemAgentVisualisation indicates
-	 * if and how visualisations are to be displayed in case that
+	 * if and how visualizations are to be displayed in case that
 	 * the {@link ExecutionMode} is set to {@link ExecutionMode#DEVICE_SYSTEM}
 	 * or embedded system agent respectively.
 	 */
