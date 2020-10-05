@@ -45,13 +45,13 @@ public abstract class AbstractDiscreteSimulationStep<T extends Serializable> imp
 	/**
 	 * The enumeration SystemStateType.
 	 */
-	public enum SystemStateType {
+	public enum DiscreteSystemStateType {
 		Iteration,
 		Final
 	}
 	
 	private T systemState;
-	private SystemStateType systemStateType;
+	private DiscreteSystemStateType discreteSystemStateType;
 	
 	
 	/**
@@ -65,11 +65,11 @@ public abstract class AbstractDiscreteSimulationStep<T extends Serializable> imp
 	 * Instantiates a new discrete simulation step.
 	 *
 	 * @param systemState the system state
-	 * @param systemStateType the system state type
+	 * @param discreteSystemStateType the system state type
 	 */
-	public AbstractDiscreteSimulationStep(T systemState, SystemStateType systemStateType) {
+	public AbstractDiscreteSimulationStep(T systemState, DiscreteSystemStateType discreteSystemStateType) {
 		this.setSystemState(systemState);
-		this.setSystemStateType(systemStateType);
+		this.setDiscreteSystemStateType(discreteSystemStateType);
 	}
 	
 	
@@ -91,17 +91,17 @@ public abstract class AbstractDiscreteSimulationStep<T extends Serializable> imp
 	
 	/**
 	 * Sets the system state type.
-	 * @param systemStateType the new system state type
+	 * @param discreteSystemStateType the new system state type
 	 */
-	public void setSystemStateType(SystemStateType systemStateType) {
-		this.systemStateType = systemStateType;
+	public void setDiscreteSystemStateType(DiscreteSystemStateType discreteSystemStateType) {
+		this.discreteSystemStateType = discreteSystemStateType;
 	}
 	/**
 	 * Returns the system state type.
 	 * @return the system state type
 	 */
-	public SystemStateType getSystemStateType() {
-		return systemStateType;
+	public DiscreteSystemStateType getDiscreteSystemStateType() {
+		return discreteSystemStateType;
 	}
 	
 }
