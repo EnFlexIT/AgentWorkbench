@@ -175,7 +175,7 @@ public class Platform {
 	 * @param containerProfile the actual container Profile
 	 * @return true, if successful
 	 */
-	public boolean start(final boolean showRMA, final Profile containerProfile) {
+	public boolean start(boolean showRMA, final Profile containerProfile) {
 		return start(showRMA, containerProfile, false);
 	}
 	

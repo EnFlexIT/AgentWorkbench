@@ -30,8 +30,6 @@ package agentgui.simulationService.time;
 
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
-import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
-import agentgui.simulationService.time.TimeModelContinuous;
 
 /**
  * TimeModel which uses the current system time of the system/platform, especially for monitoring use cases.

@@ -585,7 +585,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- General Directory information ------------------
 	// ----------------------------------------------------
 	/**
-	 * This method returns the base path of the application (e. g. 'C:\Java_Workspace\AgentGUI\')
+	 * This method returns the base path of the application (e. g. 'C:\Program Files\Agent.Workbench\')
 	 * @return the base path of the application
 	 */
 	public String getPathBaseDir( ) {

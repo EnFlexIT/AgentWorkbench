@@ -213,11 +213,21 @@ public class PlatformJadeConfig implements Serializable {
 		if (debug) {
 			this.setProfileDumOptions(profile);
 		}
+		this.setFileDir(profile);
 		this.setProfileLocalHost(profile);
 		this.setProfileLocalPort(profile);
 		this.setProfileLocalPortMTP(profile);
 		this.setProfileServices(profile);
 		return profile;
+	}
+	
+	/**
+	 * Sets the file directory for the files .
+	 * @param profile the new file directory
+	 */
+	private void setFileDir(ProfileImpl profile) {
+		String baseDir = Application.getGlobalInfo().getPathBaseDir();
+		profile.setParameter(Profile.FILE_DIR, baseDir);
 	}
 	/**
 	 * Adds the local configured DUMP_OPTIONS to the input instance of Profile.
