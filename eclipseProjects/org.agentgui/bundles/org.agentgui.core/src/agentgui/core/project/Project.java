@@ -176,7 +176,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 	/** Indicates that the project is unsaved or not */
 	@XmlTransient private boolean isUnsaved = false;
-
+	
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
 	@XmlTransient private String projectSecurtiyFolderFullPath;
@@ -611,8 +611,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			// --- Save the current SimulationSetup -------
 			if (saveSetup==true) {
 				this.getSimulationSetups().setupSave();
-				//List<File> setupFileList = this.getSimulationSetups().getCurrSimSetup().getSetupFiles();
-				//System.out.println(setupFileList.size() + " files found!");
 			}
 
 			// --------------------------------------------
@@ -1275,8 +1273,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @param reason
 	 */
 	public void setNotChangedButNotify(Object reason) {
-		setChanged();
-		notifyObservers(reason);
+		this.setChanged();
+		this.notifyObservers(reason);
 	}
 
 	/**
@@ -1284,9 +1282,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * @param reason
 	 */
 	public void setChangedAndNotify(Object reason) {
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(reason);
+		this.setUnsaved(true);
+		this.setChanged();
+		this.notifyObservers(reason);
 	}
 
 	/**

@@ -369,7 +369,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 			if (envCont!=null) {
 				envCont.callSaveEnvironment(PersistenceStrategy.HandleWithSetupOpenOrSave);
 			}
-			this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
+			this.currProject.setNotChangedButNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
 		}
 		this.setupCleanUpSubFolder();
 	}

@@ -35,9 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -318,11 +316,17 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 		// --- Get the list of setups from the project file --------------
 		Project exportedProject = Project.load(this.getTempExportFolderPath().toFile(), false);
-		Set<String> setupNames = new HashSet<>(exportedProject.getSimulationSetups().keySet());
-
+		
+		// --- Set authorization settings -------------------------------------
+		if (this.exportSettings.isIncludeAuthorizationSettings()==false) {
+			exportedProject.setUpdateAuthorization(null);
+		}
+		
 		// --- Remove all setups that are not exported --------------------
-		for (String setupName : setupNames) {
-			if (exportSettings.getSimSetups().contains(setupName) == false) {
+		List<String> setupNames = new ArrayList<>(exportedProject.getSimulationSetups().keySet());
+		for (int i = 0; i < setupNames.size(); i++) {
+			String setupName = setupNames.get(i);
+			if (this.exportSettings.getSimSetups().contains(setupName) == false) {
 				exportedProject.getSimulationSetups().remove(setupName);
 			}
 		}
@@ -405,7 +409,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 		HashMap<File, String> foldersToAdd = new HashMap<>();
 		// --- Add the project directory ---------------------
 		String pathInArchive;
-		if(this.exportSettings.getInstallationPackage().isForMac() == true) {
+		if (this.exportSettings.getInstallationPackage().isForMac() == true) {
 			pathInArchive = PROJECT_PATH_MAC;
 		} else {
 			pathInArchive = PROJECT_PATH_WINDOWS_LINUX;
@@ -490,27 +494,23 @@ public class DefaultProjectExportController implements ProjectExportController{
 		
 		this.updateProgressMonitor(0);
 
-		// --- Set authorization settings -------------------------------------
-		if (this.exportSettings.isIncludeAuthorizationSettings()==false) {
-			this.project.setUpdateAuthorization(null);
-		}
 		// --- Copy the required data to a temporary folder -------------------
 		boolean success = DefaultProjectExportController.this.copyProjectDataToTempFolder();
 		this.updateProgressMonitor(10);
 
-		if (success == true) {
-
+		if (success==true) {
+			// --- Write new project file and remove setups -------------------
 			this.removeUnexportedSetupsFromList();
-			// --- Allow additional processing by subclasses ---------
+			// --- Allow additional processing by subclasses ------------------
 			success  = this.beforeZip();
 			this.updateProgressMonitor(30);
 
 			if (success == true) {
 				if (DefaultProjectExportController.this.exportSettings.isIncludeInstallationPackage()) {
-					// --- Integrate the project into the installation package ------
+					// --- Integrate project into the installation package ----
 					success = DefaultProjectExportController.this.integrateProjectIntoInstallationPackage();
 				} else {
-					// --- Zip the temporary folder --------------
+					// --- Zip the temporary folder ---------------------------
 					success = this.getArchiveFileHandler().compressFolder(this.getTempFolderPath().toFile(), DefaultProjectExportController.this.exportSettings.getTargetFile());
 					try {
 						new RecursiveFolderDeleter().deleteFolder(this.getTempFolderPath());
@@ -524,10 +524,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 				this.updateProgressMonitor(100);
 				this.disposeProgressMonitor();
 			}
-
 			this.afterZip(success);
 		}
-		
 		this.exportSuccessful = success;
 	}
 
