@@ -339,8 +339,11 @@ public class BundleProperties {
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_AGENT_NAME, "");
 		this.globalInfo.setDeviceServiceAgents(this.getDeviceAgentsVector(stringPrefValue.trim()));
 		// --- this.DEF_DeviceServcie_Vis ------------
-		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_VISUALIZATION, EmbeddedSystemAgentVisualisation.NONE.toString());
-		EmbeddedSystemAgentVisualisation esaVis = EmbeddedSystemAgentVisualisation.valueOf(stringPrefValue);
+		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_VISUALIZATION, EmbeddedSystemAgentVisualisation.TRAY_ICON.toString());
+		EmbeddedSystemAgentVisualisation esaVis = EmbeddedSystemAgentVisualisation.TRAY_ICON;
+		if (stringPrefValue.equals(EmbeddedSystemAgentVisualisation.NONE.name())==true || stringPrefValue.equals(EmbeddedSystemAgentVisualisation.TRAY_ICON.name())==true) {
+			esaVis = EmbeddedSystemAgentVisualisation.valueOf(stringPrefValue); 
+		}
 		this.globalInfo.setDeviceServiceAgentVisualisation(esaVis);
 		
 		

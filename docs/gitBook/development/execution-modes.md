@@ -139,7 +139,7 @@ The following table shows the possible values for the _**01\_RUNAS**_ key and ex
         <p>For the <em>Embedded System Agent</em> mode, key <em>41_DEVICE_SERVICE_EXEC_AS</em> has
           to be set to <b>AGENT</b>. Further, the corresponding agent has to be specified
           under <em>44_DEVICE_SERVICE_AGENT_Name</em>. Finally, choose between <b>NONE </b>(for
-          hidden execution) and <b>TRAY-ICON</b> (for tray-icon visualization) for <em>45_DEVICE_SERVICE_VISUALISATION</em>.</p>
+          hidden execution) and <b>TRAY_ICON</b> (for tray-icon visualization) for <em>45_DEVICE_SERVICE_VISUALISATION</em>.</p>
         <p></p>
         <p>For <em>Service </em>mode, <em> 41_DEVICE_SERVICE_EXEC_AS</em> must be set
           to <b>SETUP</b>. The corresponding setup out of the project needs to be
@@ -257,7 +257,7 @@ The table below gives explanations on the individual lines, that need to be conf
     </tr>
     <tr>
       <td style="text-align:left">45_DEVICE_SERVICE_VISUALISATION</td>
-      <td style="text-align:left">TRAY-ICON</td>
+      <td style="text-align:left">TRAY_ICON</td>
       <td style="text-align:left">Enables a tray-icon in <em>Embedded System Agent</em> mode, thru which Agent.Workbench
         can be controlled.</td>
     </tr>

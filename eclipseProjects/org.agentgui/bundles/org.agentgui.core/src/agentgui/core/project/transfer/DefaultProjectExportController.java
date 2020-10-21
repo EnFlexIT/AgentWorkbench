@@ -424,6 +424,15 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return If false is returned, the export process will be aborted
 	 */
 	protected boolean beforeZip() {
+
+		// ---- Locate temporary project folder and update project file inside --------------------------
+		File projectFolder = this.getTempFolderPath().toFile();
+		Project project = Project.load(projectFolder, false);
+		if (this.getExportSettings().isIncludeAuthorizationSettings()==false) {
+			project.setUpdateAuthorization(null);
+		}
+		project.save(projectFolder, false, true);
+		
 		return true;
 	}
 
