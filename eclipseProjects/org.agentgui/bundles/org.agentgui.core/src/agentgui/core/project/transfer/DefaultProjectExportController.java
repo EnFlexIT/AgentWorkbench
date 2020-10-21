@@ -312,35 +312,29 @@ public class DefaultProjectExportController implements ProjectExportController{
 	/**
 	 * Removes all setups that are not selected for export from the setup list
 	 */
-	private void removeUnexportedSetupsFromList() {
+	private void removeUnexportedSetupsFromList(Project projectForExport) {
 
-		// --- Get the list of setups from the project file --------------
-		Project exportedProject = Project.load(this.getTempExportFolderPath().toFile(), false);
-		
-		// --- Set authorization settings -------------------------------------
-		if (this.exportSettings.isIncludeAuthorizationSettings()==false) {
-			exportedProject.setUpdateAuthorization(null);
-		}
+//		// --- Set authorization settings -------------------------------------
+//		if (this.exportSettings.isIncludeAuthorizationSettings()==false) {
+//			exportedProject.setUpdateAuthorization(null);
+//		}
 		
 		// --- Remove all setups that are not exported --------------------
-		List<String> setupNames = new ArrayList<>(exportedProject.getSimulationSetups().keySet());
+		List<String> setupNames = new ArrayList<>(projectForExport.getSimulationSetups().keySet());
 		for (int i = 0; i < setupNames.size(); i++) {
 			String setupName = setupNames.get(i);
 			if (this.exportSettings.getSimSetups().contains(setupName) == false) {
-				exportedProject.getSimulationSetups().remove(setupName);
+				projectForExport.getSimulationSetups().remove(setupName);
 			}
 		}
 
 		// --- If the currently selected setup is not exported, set the first exported
 		// setup as selected instead -----
-		if (this.exportSettings.getSimSetups().contains(exportedProject.getSimulationSetupCurrent()) == false) {
+		if (this.exportSettings.getSimSetups().contains(projectForExport.getSimulationSetupCurrent()) == false) {
 			if (this.exportSettings.getSimSetups().isEmpty()==false) {
-				exportedProject.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
+				projectForExport.setSimulationSetupCurrent(this.exportSettings.getSimSetups().get(0));
 			}
 		}
-
-		// --- Save the changes ------------
-		exportedProject.save(this.getTempExportFolderPath().toFile(), false, false);
 	}
 
 	/**
@@ -419,28 +413,9 @@ public class DefaultProjectExportController implements ProjectExportController{
 	}
 
 	/**
-	 * This callback method is called before zipping the exported project. In can be implemented by subclasses to perform
-	 * additional actions.
-	 * @return If false is returned, the export process will be aborted
+	 * This is called after exporting the project. In can be overridden by subclasses to provide specific success/failure messages.
 	 */
-	protected boolean beforeZip() {
-
-		// ---- Locate temporary project folder and update project file inside --------------------------
-		File projectFolder = this.getTempFolderPath().toFile();
-		Project project = Project.load(projectFolder, false);
-		if (this.getExportSettings().isIncludeAuthorizationSettings()==false) {
-			project.setUpdateAuthorization(null);
-		}
-		project.save(projectFolder, false, true);
-		
-		return true;
-	}
-
-	/**
-	 * This callback method is called after zipping the exported project. In can be overridden by subclasses to provide
-	 * specific success/failure messages.
-	 */
-	protected void afterZip(boolean success) {
+	protected void showResultMessage(boolean success) {
 		// --- Show a feedback message to the user --------------------
 		if (success == true) {
 			if (this.getMessageSuccess().isEmpty()==false) System.out.println(this.getMessageSuccess());
@@ -509,9 +484,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 		if (success==true) {
 			// --- Write new project file and remove setups -------------------
-			this.removeUnexportedSetupsFromList();
-			// --- Allow additional processing by subclasses ------------------
-			success  = this.beforeZip();
+			success = this.performProjectModificationsForExport();
 			this.updateProgressMonitor(30);
 
 			if (success == true) {
@@ -533,9 +506,49 @@ public class DefaultProjectExportController implements ProjectExportController{
 				this.updateProgressMonitor(100);
 				this.disposeProgressMonitor();
 			}
-			this.afterZip(success);
+			this.showResultMessage(success);
 		}
 		this.exportSuccessful = success;
+	}
+	
+	/**
+	 * This method performs some modifications on the project instance that will be exported.
+	 * @return true if successful
+	 */
+	private boolean performProjectModificationsForExport() {
+		// --- Load the project file from the temp folder ---------
+		File projectFolder = this.getTempFolderPath().toFile();
+		Project projectForExport = Project.load(projectFolder, false);
+		
+		// --- Remove authorization settings ------------------------
+		if (this.getExportSettings().isIncludeAuthorizationSettings()==false) {
+			projectForExport.setUpdateAuthorization(null);
+		}
+		
+		// --- Remove setups that are not included in the export ----
+		this.removeUnexportedSetupsFromList(projectForExport);
+		
+		// --- Allow subclasses to perform their modifications ------
+		projectForExport = this.modifyProjectForExport(projectForExport);
+		
+		// --- Save the modified project to the temp folder ---------
+		if (projectForExport!=null) {
+			projectForExport.save(projectFolder, false, true);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Override this callback method to perform changes on the project instance before it is exported.
+	 * Don't call it directly, it will be invoked by the superclass during the export process.
+	 * @param projectForExport the project instance that was loaded from the temporary export folder
+	 * @return the modified project instance, or null in case of failure
+	 */
+	protected Project modifyProjectForExport(Project projectForExport) {
+		// --- Callback method for subclasses. All modifications for this class are done in performProjectModificationsForExport()
+		return projectForExport;
 	}
 
 	/**
