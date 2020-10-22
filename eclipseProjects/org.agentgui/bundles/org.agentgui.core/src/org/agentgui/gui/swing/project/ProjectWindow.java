@@ -928,7 +928,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		DefaultMutableTreeNode nodeFound = null;
 		String currNodeText;
 
-		for (Enumeration<TreeNode> en = this.getRootNode().breadthFirstEnumeration(); en.hasMoreElements();) {
+		for (Enumeration<?> en = this.getRootNode().breadthFirstEnumeration(); en.hasMoreElements();) {
 			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) en.nextElement();
 			currNodeText = currNode.getUserObject().toString();
 			if (currNodeText.equals(searchFor)) {
