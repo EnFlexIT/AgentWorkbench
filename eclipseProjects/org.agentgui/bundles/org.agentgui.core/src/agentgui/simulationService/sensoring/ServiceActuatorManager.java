@@ -101,7 +101,7 @@ public class ServiceActuatorManager {
 	 * @param aSynchron true, if this should be don asynchronously
 	 */
 	public void putAgentAnswers(AID managerAID, Hashtable<AID, Object> agentAnswers, boolean aSynchron) {
-		ServiceSensorManager sensor = getSensor(managerAID);
+		ServiceSensorManager sensor = this.getSensor(managerAID);
 		if (sensor!=null) {
 			sensor.putAgentAnswers(agentAnswers, aSynchron);
 		}		

@@ -508,12 +508,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 					}
 					
 					// --- Assign NetworkMoldel to visualization ----------------------------------
-					final NetworkModel netModelAssigen = netModel;
+					final NetworkModel netModelFinal = netModel;
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
 							// --- Use the local method in order to inform the observer -----------
-							GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelAssigen);
+							GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelFinal);
 							// --- Decode data models that are Base64 encoded in the moment -------
 							GraphEnvironmentController.this.loadDataModelNetworkElements();
 						}
