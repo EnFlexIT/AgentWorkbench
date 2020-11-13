@@ -900,7 +900,8 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		if (jAgentList.getSelectedValue()==null) {
 			this.agentReference = null;
 		} else {
-			this.agentReference = this.jAgentList.getSelectedValue().toString();
+			ClassElement2Display selection = (ClassElement2Display) this.getJAgentList().getSelectedValue();
+			this.agentReference = selection.getClassElement();
 		}
 		// -- configure Var. ontoReference --------------------------		
 		if (this.currOntoObject==null) {
