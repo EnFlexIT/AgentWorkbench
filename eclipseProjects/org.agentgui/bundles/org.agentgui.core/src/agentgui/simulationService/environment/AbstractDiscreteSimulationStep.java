@@ -36,7 +36,7 @@ import java.io.Serializable;
  * Based on this, the simulation manager may decide for a next discrete simulation step
  * or to iteratively reactivated the current simulation round.
  * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public abstract class AbstractDiscreteSimulationStep<T extends Serializable> implements Serializable {
 
