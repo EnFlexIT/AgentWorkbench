@@ -22,6 +22,12 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Caching
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
     - name:  Maven Build (Agent.Workbench)
       run: mvn -B clean install --file pom.xml
       working-directory: eclipseProjects/org.agentgui/
