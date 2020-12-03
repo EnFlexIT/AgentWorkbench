@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Caching
+    - name: Caching AWB source files
       uses: actions/cache@v2
       with:
         path: ~/.m2
