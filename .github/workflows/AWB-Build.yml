@@ -23,4 +23,5 @@ jobs:
       with:
         java-version: 1.8
     - name:  Maven Build (/eclipseProjects/org.agentgui/releng/org.agentgui.product/pom.xml)
-      run: mvn -B clean install --file eclipseProjects/org.agentgui/releng/org.agentgui.product/pom.xml
+      run: mvn -B clean install --file pom.xml
+      working-directory: eclipseProjects/org.agentgui/releng/org.agentgui.product/
