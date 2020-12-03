@@ -34,4 +34,14 @@ jobs:
     - name:  Maven Build (Agent.Workbench)
       run: mvn -B clean install --file pom.xml
       working-directory: eclipseProjects/org.agentgui/
-
+      
+    - name: AWB-Build Output Bundling
+      run: mkdir awbBuilds && 
+        mkdir awbBuilds/products && 
+        mkdir awbBuilds/repo && 
+        cp eclipseProjects/org.agentgui/releng/org.agentgui.product/target/products/org.agentgui-*.* awbBuilds/products/
+    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Package
+        path: awbBuilds
