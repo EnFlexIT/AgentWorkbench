@@ -38,7 +38,7 @@
          </property>
          <property
                name="aboutText"
-               value="Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and start Agents or Multi-Agent systems in various ways.">
+               value="Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and execute Agents and Multi-Agent systems in various ways.">
          </property>
          <property
                name="preferenceCustomization"
