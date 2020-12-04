@@ -23,8 +23,8 @@ jobs:
       with:
         java-version: 1.8
         server-id: p2EnFlexIT
-        server-username: ENFLEXIT_USERNAME
-        server-password: ENFLEXIT_PASSWORD
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
     
     - name: AWB Build - Cache Definition
       uses: actions/cache@v2
@@ -38,8 +38,8 @@ jobs:
       run: mvn -B clean install -P p2Deploy --file pom.xml -e
       working-directory: eclipseProjects/org.agentgui/
       env:
-        ENFLEXIT_USERNAME: ${{ secrets.P2_BUILD_AGENT_USERNAME }}
-        ENFLEXIT_PASSWORD: ${{ secrets.P2_BUILD_AGENT_PASSWORD }}
+        MAVEN_USERNAME: ${{ secrets.P2_BUILD_AGENT_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.P2_BUILD_AGENT_PASSWORD }}
       
     - name: AWB Product Extraction
       run: mkdir awbBuilds && 
