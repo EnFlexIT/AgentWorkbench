@@ -35,7 +35,7 @@ jobs:
           ${{ runner.os }}-AWB-jdk8-
     
     - name:  AWB Build (Maven)
-      run: mvn -B clean install -P p2Deploy --file pom.xml
+      run: mvn -B clean install -P p2Deploy --file pom.xml -e
       working-directory: eclipseProjects/org.agentgui/
       env:
         ENFLEXIT_USERNAME: ${{ secrets.P2_BUILD_AGENT_USERNAME }}
