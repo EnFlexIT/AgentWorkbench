@@ -23,6 +23,14 @@
 		
 	</properties>
 
+	<distributionManagement>
+		<repository>
+			<id>p2EnFlexIT</id>
+			<name>EnFlex.IT p2 - Server</name>
+			<url>${url.repository.snapshotDomain}</url>
+		</repository>
+	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
