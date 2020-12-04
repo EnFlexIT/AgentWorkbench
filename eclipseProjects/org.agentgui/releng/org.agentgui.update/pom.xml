@@ -77,11 +77,11 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<fromDir>${project.build.directory}/repository/</fromDir>
-									<includes>**</includes>
-									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
+									<serverId>p2EnFlexIT</serverId>
 									<url>scpexe://enflex.it</url>
-									<serverId>update-site-enflexit</serverId>
+									<fromDir>${project.build.directory}/repository/</fromDir>
+									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
+									<includes>**</includes>
 									<!-- Points to your "~/.m2/settings.xml", where the connection settings 
 										are stored as shown below <servers> <server> <id>update-site-enflexit</id> 
 										<username>admin.enflex.it</username> <privateKey>${user.home}/.ssh/id_YOURKEY</privateKey> 
@@ -113,11 +113,11 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<fromDir>${project.build.directory}/repository/</fromDir>
-									<includes>**</includes>
-									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
+									<serverId>p2EnFlexIT</serverId>
 									<url>scpexe://enflex.it</url>
-									<serverId>update-site-enflexit</serverId>
+									<fromDir>${project.build.directory}/repository/</fromDir>
+									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
+									<includes>**</includes>
 									<!-- Points to your "~/.m2/settings.xml", where the connection settings 
 										are stored as shown below <servers> <server> <id>update-site-enflexit</id> 
 										<username>admin.enflex.it</username> <privateKey>${user.home}/.ssh/id_YOURKEY</privateKey> 
