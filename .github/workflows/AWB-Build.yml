@@ -22,6 +22,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+        server-id: enflex.it
+        server-username: ENFLEXIT_USERNAME
+        server-password: ENFLEXIT_PASSWORD
     
     - name: Caching AWB source files
       uses: actions/cache@v2
@@ -32,16 +35,18 @@ jobs:
           ${{ runner.os }}-AWB-jdk8-
     
     - name:  Maven Build (Agent.Workbench)
-      run: mvn -B clean install --file pom.xml
+      run: mvn -B clean install --file pom.xml p2Deploy
       working-directory: eclipseProjects/org.agentgui/
+      env:
+        ENFLEXIT_USERNAME: ${{ secrets.P2_BUILD_AGENT_USERNAME }}
+        ENFLEXIT_PASSWORD: ${{ secrets.P2_BUILD_AGENT_PASSWORD }}
       
     - name: AWB-Build Output Bundling
       run: mkdir awbBuilds && 
         mkdir awbBuilds/products && 
-        mkdir awbBuilds/repo && 
         cp eclipseProjects/org.agentgui/releng/org.agentgui.product/target/products/org.agentgui-*.* awbBuilds/products/
     
     - uses: actions/upload-artifact@v2
       with:
-        name: Package
+        name: Agent.Workbench Products
         path: awbBuilds
