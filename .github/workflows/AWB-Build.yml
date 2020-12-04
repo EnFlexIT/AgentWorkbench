@@ -26,7 +26,7 @@ jobs:
         server-username: ENFLEXIT_USERNAME
         server-password: ENFLEXIT_PASSWORD
     
-    - name: Caching AWB source files
+    - name: AWB Build - Cache Definition
       uses: actions/cache@v2
       with:
         path: ~/.m2/repository
@@ -34,19 +34,20 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-AWB-jdk8-
     
-    - name:  Maven Build (Agent.Workbench)
-      run: mvn -B clean install --file pom.xml p2Deploy
+    - name:  AWB Build (Maven)
+      run: mvn -B clean install -P p2Deploy --file pom.xml
       working-directory: eclipseProjects/org.agentgui/
       env:
         ENFLEXIT_USERNAME: ${{ secrets.P2_BUILD_AGENT_USERNAME }}
         ENFLEXIT_PASSWORD: ${{ secrets.P2_BUILD_AGENT_PASSWORD }}
       
-    - name: AWB-Build Output Bundling
+    - name: AWB Product Extraction
       run: mkdir awbBuilds && 
         mkdir awbBuilds/products && 
         cp eclipseProjects/org.agentgui/releng/org.agentgui.product/target/products/org.agentgui-*.* awbBuilds/products/
     
-    - uses: actions/upload-artifact@v2
+    - name: AWB Product Upload
+      uses: actions/upload-artifact@v2
       with:
         name: Agent.Workbench Products
         path: awbBuilds
