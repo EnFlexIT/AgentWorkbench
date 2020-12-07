@@ -15,8 +15,4 @@
 		<module>features</module>
 		<module>releng</module>
 	</modules>
-
-	<scm>
-		<tag>Agent.Workbench-2.1.0</tag>
-	</scm>
 </project>
