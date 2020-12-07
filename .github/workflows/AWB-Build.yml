@@ -24,7 +24,8 @@ jobs:
         java-version: 1.8
         server-id: p2EnFlexIT
         server-username: MAVEN_USERNAME
-    
+        server-password: MAVEN_PASSWORD 
+
     - name: Create SSH key
       run: |
           mkdir -p ~/.ssh/
@@ -49,6 +50,7 @@ jobs:
       working-directory: eclipseProjects/org.agentgui/
       env:
        MAVEN_USERNAME: ${{ secrets.P2_BUILD_AGENT_USERNAME }}
+       MAVEN_PASSWORD: ${{ secrets.P2_BUILD_AGENT_PASSWORD }}
       
     - name: AWB Product Extraction
       run: mkdir awbBuilds && 
