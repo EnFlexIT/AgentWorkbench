@@ -26,6 +26,17 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
     
+    - name: Create SSH key
+      run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+      shell: bash
+      env:
+          SSH_PRIVATE_KEY: ${{secrets.P2_BUILD_SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.P2_BUILD_SSH_KNOWN_HOSTS}}
+          
     - name: AWB Build - Cache Definition
       uses: actions/cache@v2
       with:
@@ -37,9 +48,6 @@ jobs:
     - name:  AWB Build (Maven)
       run: mvn -B clean install -P p2Deploy --file pom.xml -e
       working-directory: eclipseProjects/org.agentgui/
-      env:
-        MAVEN_USERNAME: ${{ secrets.P2_BUILD_AGENT_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.P2_BUILD_AGENT_PASSWORD }}
       
     - name: AWB Product Extraction
       run: mkdir awbBuilds && 
