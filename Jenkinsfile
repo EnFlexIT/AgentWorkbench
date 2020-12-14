@@ -1,9 +1,11 @@
 pipeline {
   agent any
   stages {
-    stage('Clone Git') {
+    stage('Build') {
       steps {
-        archiveArtifacts(artifacts: '*', defaultExcludes: true)
+        echo 'Start building Agent.WorkBench ...'
+        sh 'mvn clean install -f /eclipseProjects'
+        echo 'Finalizing Agent.WorkBench build ...'
       }
     }
 
