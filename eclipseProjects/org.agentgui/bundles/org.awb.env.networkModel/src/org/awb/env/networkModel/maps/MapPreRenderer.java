@@ -31,14 +31,18 @@ package org.awb.env.networkModel.maps;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
+import de.enflexit.common.ServiceFinder;
+import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
@@ -52,6 +56,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 
 	private BasicGraphGuiVisViewer<V,E> visViewer;
+	private MapService mapService;
+	
 	
 	/**
 	 * Instantiates a new MapPreRendererr.
@@ -77,12 +83,30 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         at.concatenate(lat);
         g2d.setTransform(at);
 
-        Image mapImage = this.getMapImage();
-        if (mapImage!=null) {
-        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
+        // --- Call the current MapService ------------------------------------
+        MapService ms = this.getMapService();
+        WGS84LatLngCoordinate wgs84 = new WGS84LatLngCoordinate(51.464471, 7.005437);
+        if (ms!=null) {
+        	MapRenderer mr = ms.getMapRenderer();
+        	if (mr!=null) {
+        		try {
+        			mr.paintMap(graphics, wgs84, this.visViewer.getSize());
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+        		
+        	} else {
+        		System.err.println("[" + this.getClass().getSimpleName() + "] MapService '" + ms.getMapServiceName() + "' does not implement MapRenderer!");
+        	}
         }
-
-        g2d.setTransform(oldXform);
+        
+//        Image mapImage = this.getMapImage();
+//        if (mapImage!=null) {
+//        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
+//        }
+//
+//        g2d.setTransform(oldXform);
 	}
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#useTransform()
@@ -93,25 +117,25 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 	}
 
 	/**
-	 * Returns the specified map image.
-	 *
-	 * @param imageURL the image url
-	 * @return the map image
+	 * Returns the list of registered {@link MapService}s.
+	 * @return the map service list
 	 */
-	private Image getMapImage() {
+	private List<MapService> getMapServiceList() {
 		
-		String imageURL = "https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=11&size=612x612&scale=2&maptype=roadmap";
-		imageURL = "file:D:\\09 Agent.Workbench\\10 Web\\Web-Images\\CoreWindow.png";
-		// TODO
-        //System.out.println("Render Map!");
-        
-		BufferedImage mapImage = null;
-        try {
-        	mapImage = ImageIO.read(new URL(imageURL));
-        } catch(Exception ex) {
-            System.err.println("Can't load \""+imageURL+"\"");
-        }
-        return mapImage;
+		List<MapService> mapServiceList = ServiceFinder.findServices(MapService.class);
+		
+		return mapServiceList;
 	}
-	
+	/**
+	 * Return the current map service.
+	 * @return the map service
+	 */
+	private MapService getMapService() {
+		if (mapService==null) {
+			if (this.getMapServiceList().size()>0) {
+				mapService = this.getMapServiceList().get(0);
+			}
+		}
+		return mapService;
+	}
 }
