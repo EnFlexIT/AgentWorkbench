@@ -4,7 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Start building Agent.Workbench ...'
-        sh 'mvn clean install -f eclipseProjects/org.agentgui'
+        sh 'mvn clean install -e -f eclipseProjects/org.agentgui'
         echo 'Finalizing Agent.Workbench build ...'
       }
     }
