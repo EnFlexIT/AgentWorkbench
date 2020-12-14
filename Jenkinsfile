@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Clone Git') {
       steps {
-        archiveArtifacts(artifacts: 'org.agentgui*', defaultExcludes: true)
+        archiveArtifacts(artifacts: 'eclipseProjects/org.agentgui*', defaultExcludes: true)
       }
     }
 
