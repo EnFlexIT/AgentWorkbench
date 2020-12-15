@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('Build') {
+    stage('Build & Deploy Snapshot') {
       tools {
         jdk 'jdk8'
       }
@@ -9,10 +9,10 @@ pipeline {
         JAVA_HOME = '/usr/lib/jvm/java-1.8.0-openjdk-amd64'
       }
       steps {
-        echo 'Start building Agent.Workbench ...'
+        echo 'Start build and snapshot deployment for Agent.Workbench ...'
         sh 'mvn --version'
         sh 'mvn clean install -P p2Deploy -f eclipseProjects/org.agentgui'
-        echo 'Finalizing Agent.Workbench build ...'
+        echo 'Build & Deployment of Agent.Workbench is done ...'
       }
     }
 
