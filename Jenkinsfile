@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       tools {
-        jdk 'JDK-1.8'
+        jdk 'jdk8'
       }
       environment {
         JAVA_HOME = '/usr/lib/jvm/java-1.8.0-openjdk-amd64'
