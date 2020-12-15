@@ -12,7 +12,7 @@ pipeline {
         echo 'Start build and snapshot deployment for Agent.Workbench ...'
         sh 'mvn --version'
         sh 'mvn clean install -P p2Deploy -f eclipseProjects/org.agentgui'
-        echo 'Build & Deployment of Agent.Workbench is done ...'
+        echo 'Build & Deployment of Agent.Workbench done ...'
       }
     }
 
