@@ -11,7 +11,7 @@ pipeline {
       steps {
         echo 'Start building Agent.Workbench ...'
         sh 'mvn --version'
-        sh 'mvn clean install -e -f eclipseProjects/org.agentgui'
+        sh 'mvn clean install -P p2Deploy -f eclipseProjects/org.agentgui'
         echo 'Finalizing Agent.Workbench build ...'
       }
     }
