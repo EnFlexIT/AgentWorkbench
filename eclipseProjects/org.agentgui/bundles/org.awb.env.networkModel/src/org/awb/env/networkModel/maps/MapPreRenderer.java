@@ -30,14 +30,8 @@ package org.awb.env.networkModel.maps;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
