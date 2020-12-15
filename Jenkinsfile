@@ -2,8 +2,8 @@ pipeline {
   agent any
   stages {
     stage('Build') {
-      environment {
-        JAVA_HOME = '/usr/lib/jvm/java-1.8.0-openjdk-amd64'
+      tools {
+        jdk 'JDK-1.8'
       }
       steps {
         echo 'Start building Agent.Workbench ...'
