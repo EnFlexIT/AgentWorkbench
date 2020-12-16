@@ -77,17 +77,12 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
+									<!-- Points to your "~/.m2/settings.xml", where the connection settings are stored --> 
 									<serverId>p2EnFlexIT</serverId>
-									<url>scpexe://enflex.it</url>
+									<url>scp://enflex.it</url> <!-- <url>scpexe://enflex.it</url> -->
 									<fromDir>${project.build.directory}/repository/</fromDir>
 									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
 									<includes>**</includes>
-									<!-- Points to your "~/.m2/settings.xml", where the connection settings 
-										are stored as shown below <servers> <server> <id>update-site-enflexit</id> 
-										<username>admin.enflex.it</username> <privateKey>${user.home}/.ssh/id_YOURKEY</privateKey> 
-										<configuration> <sshExecutable>plink</sshExecutable> <scpExecutable>pscp</scpExecutable> 
-										<sshArgs></sshArgs> </configuration> </server> </servers> Also see: - https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html, 
-										- https://maven.apache.org/settings.html#Servers, - https://stackoverflow.com/questions/2733447/can-maven-wagon-plugin-use-a-private-key-for-scp -->
 								</configuration>
 							</execution>
 						</executions>
@@ -113,17 +108,12 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
+									<!-- Points to your "~/.m2/settings.xml", where the connection settings are stored -->
 									<serverId>p2EnFlexIT</serverId>
-									<url>scpexe://enflex.it</url>
+									<url>scp://enflex.it</url> <!-- <url>scpexe://enflex.it</url> -->
 									<fromDir>${project.build.directory}/repository/</fromDir>
 									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
 									<includes>**</includes>
-									<!-- Points to your "~/.m2/settings.xml", where the connection settings 
-										are stored as shown below <servers> <server> <id>update-site-enflexit</id> 
-										<username>admin.enflex.it</username> <privateKey>${user.home}/.ssh/id_YOURKEY</privateKey> 
-										<configuration> <sshExecutable>plink</sshExecutable> <scpExecutable>pscp</scpExecutable> 
-										<sshArgs></sshArgs> </configuration> </server> </servers> Also see: - https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html, 
-										- https://maven.apache.org/settings.html#Servers, - https://stackoverflow.com/questions/2733447/can-maven-wagon-plugin-use-a-private-key-for-scp -->
 								</configuration>
 							</execution>
 						</executions>
@@ -131,5 +121,6 @@
 				</plugins>
 			</build>
 		</profile>
+		
 	</profiles>
 </project>
