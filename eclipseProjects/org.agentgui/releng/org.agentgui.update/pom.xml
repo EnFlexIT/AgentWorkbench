@@ -79,7 +79,7 @@
 								<configuration>
 									<!-- Points to your "~/.m2/settings.xml", where the connection settings are stored --> 
 									<serverId>p2EnFlexIT</serverId>
-									<url>scp://enflex.it</url> <!-- <url>scpexe://enflex.it</url> -->
+									<url>scpexe://enflex.it</url> <!-- <url>scpexe://enflex.it</url> -->
 									<fromDir>${project.build.directory}/repository/</fromDir>
 									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
 									<includes>**</includes>
@@ -110,7 +110,7 @@
 								<configuration>
 									<!-- Points to your "~/.m2/settings.xml", where the connection settings are stored -->
 									<serverId>p2EnFlexIT</serverId>
-									<url>scp://enflex.it</url> <!-- <url>scpexe://enflex.it</url> -->
+									<url>scpexe://enflex.it</url> <!-- <url>scpexe://enflex.it</url> -->
 									<fromDir>${project.build.directory}/repository/</fromDir>
 									<toDir>/subDomains/p2.enflex.it${repository.subDir}</toDir>
 									<includes>**</includes>
