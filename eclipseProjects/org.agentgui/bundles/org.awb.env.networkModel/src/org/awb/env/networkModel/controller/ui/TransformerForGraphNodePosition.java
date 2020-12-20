@@ -78,7 +78,7 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	 * Returns the current or initially specified layout settings.
 	 * @return the layout settings
 	 */
-	private LayoutSettings getLayoutSettings() {
+	public LayoutSettings getLayoutSettings() {
 		// --- Try to get current settings from GraphEnvironmentController ---- 
 		if (this.graphController!=null) {
 			return this.graphController.getNetworkModel().getLayoutSettings();
@@ -91,7 +91,7 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	 * Returns the current MapSettings.
 	 * @return the map settings
 	 */
-	private MapSettings getMapSettings() {
+	public MapSettings getMapSettings() {
 		// --- Try to get current settings from GraphEnvironmentController ----
 		if (this.graphController!=null) {
 			return this.graphController.getNetworkModel().getMapSettings();

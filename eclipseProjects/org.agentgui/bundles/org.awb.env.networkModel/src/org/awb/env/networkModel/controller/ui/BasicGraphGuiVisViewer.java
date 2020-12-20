@@ -38,6 +38,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Timer;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.maps.MapPreRenderer;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -67,6 +69,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	private Timer resetTimerForActionOnTop;
 	private boolean resetIsActionOnTop;
 	
+	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer;
 	private MapPreRenderer<V, E> mapPreRenderer;
 	private boolean doMapPreRendering;
 
@@ -127,11 +130,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		
 		// --- useful and faster, but it makes the image quite unclear --------!!
 		this.renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
-		
-		// ------------------------------------------------------------------------------
-		// --- Test area ----------------------------------------------------------------
-		// ------------------------------------------------------------------------------
-		//this.setDoMapPreRendering(true);
 		
 	}
 	
@@ -313,6 +311,21 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 */
 	public boolean isDoMapPreRendering() {
 		return doMapPreRendering;
+	}
+	
+	/**
+	 * Sets the coordinate system position transformer.
+	 * @param coordinateSystemPositionTransformer the coordinate system position transformer
+	 */
+	public void setCoordinateSystemPositionTransformer(TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer) {
+		this.coordinateSystemPositionTransformer = coordinateSystemPositionTransformer;
+	}
+	/**
+	 * Return the coordinate system position transformer.
+	 * @return the coordinate system position transformer
+	 */
+	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemPositionTransformer() {
+		return coordinateSystemPositionTransformer;
 	}
 	
 }

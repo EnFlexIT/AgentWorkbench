@@ -36,7 +36,6 @@ import java.util.List;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
 import de.enflexit.common.ServiceFinder;
-import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
@@ -44,14 +43,15 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 /**
  * The Class MapPreRenderer is used to prepare the painting of the Graph by
  * downloading maps.
- * 
+ *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * @param <V> the value type
+ * @param <E> the element type
  */
 public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 
 	private BasicGraphGuiVisViewer<V,E> visViewer;
 	private MapService mapService;
-	
 	
 	/**
 	 * Instantiates a new MapPreRendererr.
@@ -68,24 +68,36 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 	public void paint(Graphics graphics) {
 		
 		Graphics2D g2d = (Graphics2D) graphics;
-    	AffineTransform oldXform = g2d.getTransform();
+
+		// --- Remind old transformer -----------------------------------------
+		AffineTransform oldTransformer = g2d.getTransform();
+		
+		// --- Define new, concatenated transformer ---------------------------
         AffineTransform lat = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
         AffineTransform vat = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+
         AffineTransform at = new AffineTransform();
         at.concatenate(g2d.getTransform());
         at.concatenate(vat);
         at.concatenate(lat);
+        // --- Set the new transformer to the Graphics object -----------------
         g2d.setTransform(at);
-
+        
         // --- Call the current MapService ------------------------------------
         MapService ms = this.getMapService();
-        WGS84LatLngCoordinate wgs84 = new WGS84LatLngCoordinate(51.464471, 7.005437);
         if (ms!=null) {
         	MapRenderer mr = ms.getMapRenderer();
         	if (mr!=null) {
         		try {
-        			mr.paintMap(graphics, wgs84, this.visViewer.getSize());
+
+        			// --- Invoke map tile integration ------------------------  
+        			mr.paintMap(g2d, new MapRendererSettings(this.visViewer, at), this.visViewer.getSize());
 					
+//			        Image mapImage = this.getMapImage();
+//			        if (mapImage!=null) {
+//			        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
+//			        }
+			        
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -95,12 +107,9 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         	}
         }
         
-//        Image mapImage = this.getMapImage();
-//        if (mapImage!=null) {
-//        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
-//        }
-//
-//        g2d.setTransform(oldXform);
+        // --- Reset to old transformer ---------------------------------------
+        g2d.setTransform(oldTransformer);
+        
 	}
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#useTransform()
@@ -132,4 +141,5 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 		}
 		return mapService;
 	}
+	
 }

@@ -1,11 +1,10 @@
 package org.awb.env.maps;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import org.awb.env.networkModel.maps.MapRenderer;
-
-import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
+import org.awb.env.networkModel.maps.MapRendererSettings;
 
 /**
  * The Class BaseMapRenderer.
@@ -15,10 +14,10 @@ import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 public class BaseMapRenderer implements MapRenderer {
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.maps.MapRenderer#paintMap(java.awt.Graphics, de.enflexit.geography.coordinates.WGS84LatLngCoordinate, java.awt.Dimension)
+	 * @see org.awb.env.networkModel.maps.MapRenderer#paintMap(java.awt.Graphics2D, org.awb.env.networkModel.maps.MapRendererSettings, java.awt.Dimension)
 	 */
 	@Override
-	public void paintMap(Graphics graphics, WGS84LatLngCoordinate geoCoord, Dimension dimension) {
+	public void paintMap(Graphics2D graphics, MapRendererSettings mapRendererSettings, Dimension dimension) {
 
 		//System.out.println("[" + this.getClass().getSimpleName() + "] Angekommen");
 		
