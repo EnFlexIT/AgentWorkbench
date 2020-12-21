@@ -474,6 +474,21 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	
 	
 	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setVisible(boolean)
+	 */
+	@Override
+	public void setVisible(boolean isSetVisible) {
+		// --- Close toolbar related dialogs -------------- 
+		if (isSetVisible==false) {
+			if (this.isLayoutSelectionDialogVisible()==true) {
+				this.setLayoutSelectionDialogVisible(false);
+			}
+		}
+		// --- Call super method --------------------------
+		super.setVisible(isSetVisible);
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
@@ -503,13 +518,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		if (ae.getSource()==this.getJToggleButtonLayoutSwitch()) {
 			// --- Show Layout switch ---------------------
 			boolean isSetVisible = this.getJToggleButtonLayoutSwitch().isSelected();
-			this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().setActionOnTop(true);
-			this.getLayoutSelectionDialog();
-			if (isSetVisible==false) {
-				this.getLayoutSelectionDialog().dispose();
-				this.setLayoutSelectionDialog(null);
-				this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().setActionOnTop(false);
-			}
+			this.setLayoutSelectionDialogVisible(isSetVisible);
 			
 		} else if (ae.getSource()==this.getJButtonPositioning() || ae.getSource()==this.basicGraphGuiTools.getJMenuItemNodePositioning()) {
 			// --- Edit node positioning ------------------
@@ -587,12 +596,37 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		return layoutSelectionDialog;
 	}
 	/**
-	 * Sets the layout selection dialog.
-	 * @param layoutSelectionDialog the new layout selection dialog
+	 * Sets the layout selection dialog visible (or not).
+	 * @param isSetVisible the new layout selection dialog visible
 	 */
-	public void setLayoutSelectionDialog(LayoutSelectionDialog layoutSelectionDialog) {
-		this.layoutSelectionDialog = layoutSelectionDialog;
+	private void setLayoutSelectionDialogVisible(boolean isSetVisible) {
+		if (isSetVisible==true) {
+			this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().setActionOnTop(true);
+			if (this.layoutSelectionDialog==null) {
+				this.getLayoutSelectionDialog();
+			} else {
+				this.getLayoutSelectionDialog().registerAtDesktopAndSetVisible();
+			}
+			
+		} else {
+			if (this.layoutSelectionDialog!=null) {
+				this.layoutSelectionDialog.dispose();
+				this.layoutSelectionDialog=null;
+			}
+			this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().setActionOnTop(false);
+			if (this.getJToggleButtonLayoutSwitch().isSelected()==true) {
+				this.getJToggleButtonLayoutSwitch().setSelected(false);
+			}
+		}
 	}
+	/**
+	 * Checks if the layout selection dialog is visible.
+	 * @return true, if is layout selection dialog visible
+	 */
+	private boolean isLayoutSelectionDialogVisible() {
+		return this.layoutSelectionDialog!=null && this.layoutSelectionDialog.isVisible()==true;
+	}
+	
 	
 	/**
 	 * Sets the specified graph edge shape configuration to the local {@link #editGraphEdge}.
