@@ -1572,19 +1572,28 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		setChanged();
 		notifyObservers(CHANGED_UpdateSite);
 	}
-
 	/**
 	 * Returns the update site.
 	 * @return the update site
 	 */
 	@XmlTransient
 	public String getUpdateSite() {
-		if (updateSite == null) {
-			updateSite = "?";
+		return this.getUpdateSite(false);
+	}
+	/**
+	 * Return the update site. If the request is for the user visualization and the 
+	 * update site is null, a '?' will be returned.
+	 *
+	 * @param isForVisualization the indicator if the return value is used for the end user visualization
+	 * @return the update site
+	 */
+	public String getUpdateSite(boolean isForVisualization) {
+		if (updateSite==null && isForVisualization==true) {
+			return "NOT CONFIGURED YET";
 		}
 		return updateSite;
 	}
-
+	
 	/**
 	 * Sets the date of the last update check.
 	 * @param updateDateLastChecked the new date for the last update check
