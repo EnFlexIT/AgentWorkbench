@@ -1,6 +1,7 @@
 package org.awb.env.maps;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -28,7 +29,7 @@ public class JXMapViewerWrapper extends JXMapViewer {
 
 	private Insets insets;
 
-	public JXMapViewerWrapper(Rectangle dim) {
+	public JXMapViewerWrapper(Dimension dim) {
 		this(new Insets(0, 0, 0, 0), dim);
 	}
 
@@ -39,7 +40,7 @@ public class JXMapViewerWrapper extends JXMapViewer {
 	 * @param height the height
 	 * @param width  the width
 	 */
-	public JXMapViewerWrapper(Insets insets, Rectangle dim) {
+	public JXMapViewerWrapper(Insets insets, Dimension dim) {
 		if (width < 0 && height < 0) {
 			throw new IllegalArgumentException("Height and width must be not negative");
 		}
@@ -67,6 +68,10 @@ public class JXMapViewerWrapper extends JXMapViewer {
 		super.setBounds(rectangle);
 		setHeight((int)rectangle.getHeight());
 		setWidth((int) rectangle.getWidth());
+	}
+	
+	public void setBounds(Dimension dim) {
+		setBounds(new Rectangle(dim));
 	}
 
 	public void paint(Graphics g) {

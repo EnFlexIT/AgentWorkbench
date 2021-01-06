@@ -80,11 +80,8 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         at.concatenate(g2d.getTransform());
         at.concatenate(vat);
         at.concatenate(lat);
-
-        g2d.setTransform(at);
-
         // --- Set the new transformer to the Graphics object -----------------
-        g2d.setTransform(at);
+//        g2d.setTransform(at);
 
         
         // --- Call the current MapService ------------------------------------

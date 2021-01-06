@@ -15,7 +15,7 @@ import org.awb.env.networkModel.maps.MapService;
  */
 public class BaseMapService implements MapService {
 
-	private BaseMapRenderer mapRenderer;
+	private MapRenderer mapRenderer;
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getMapServiceName()
