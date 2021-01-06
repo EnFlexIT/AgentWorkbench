@@ -36,6 +36,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyVetoException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
@@ -926,10 +928,19 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					
 				} else {
 					JInternalFrame frame = BasicGraphGuiTools.this.getGraphControllerGUI().getBasicGraphGuiJDesktopPane().getEditor(ac);
+					if (frame==null) return;
+					
 					if (frame instanceof MessagingJInternalFrame) {
 						((MessagingJInternalFrame) frame).registerAtDesktopAndSetVisible();
+					} else {
+						// --- Move to front & select ---------
+						try {
+							frame.moveToFront();
+							frame.setSelected(true);
+						} catch (PropertyVetoException pvEx) {
+							pvEx.printStackTrace();
+						}
 					}
-					frame.moveToFront();
 					
 				}
 			}
@@ -949,31 +960,38 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	BasicGraphGuiJDesktopPane desktopPane = this.getGraphControllerGUI().getBasicGraphGuiJDesktopPane();
     	JInternalFrame[] intFrames = desktopPane.getAllFrames();
     	
-		boolean separatorSet = false;
+    	// --- Filter BasicGraphGuiProperties -----------------------
+    	List<BasicGraphGuiProperties> propDialogList = new ArrayList<BasicGraphGuiProperties>();
     	for (int i = 0; i < intFrames.length; i++) {
     		JInternalFrame intFrame = intFrames[i];
-			if ( ! (intFrame instanceof AddComponentDialog || intFrame instanceof BasicGraphGuiRootJSplitPane)) {
-				// --- Property frame listed ------------------------
-				if (separatorSet==false) {
-					// --- Add item to close all open windows ------- 
-					pMenue.addSeparator();
-			    	item = new JMenuItem(Language.translate("Alle Eigenschaftsfenster schließen"));
-			    	item.setActionCommand("PropWindowCloseAll");
-			    	item.addActionListener(al);
-			    	pMenue.add(item);
-					pMenue.addSeparator();
-					separatorSet = true;
-				}
-				// --- Add menu item for the window -----------------
-				item = new JMenuItem(intFrame.getTitle());
-    	    	item.setActionCommand(intFrame.getTitle());
-    	    	item.addActionListener(al);
-    	    	if (i==0) {
-    	    		item.setFont(new Font("Dialog", Font.BOLD, 12));
-    	    	}
-    	    	pMenue.add(item); 
-    	    	
+    		if (intFrame instanceof BasicGraphGuiProperties) {
+    			propDialogList.add((BasicGraphGuiProperties) intFrame);
+    		}
+    	}
+    	
+    	// --- Add menu items for component properties --------------
+		boolean separatorSet = false;
+    	for (int i = 0; i < propDialogList.size(); i++) {
+    		BasicGraphGuiProperties propDialog = propDialogList.get(i);
+			// --- Property frame listed ----------------------------
+			if (separatorSet==false) {
+				// --- Add item to close all open windows ----------- 
+				pMenue.addSeparator();
+		    	item = new JMenuItem(Language.translate("Alle Eigenschaftsfenster schließen"));
+		    	item.setActionCommand("PropWindowCloseAll");
+		    	item.addActionListener(al);
+		    	pMenue.add(item);
+				pMenue.addSeparator();
+				separatorSet = true;
 			}
+			// --- Add menu item for the window ---------------------
+			item = new JMenuItem(propDialog.getTitle());
+	    	item.setActionCommand(propDialog.getTitle());
+	    	item.addActionListener(al);
+	    	if (i==0) {
+	    		item.setFont(new Font("Dialog", Font.BOLD, 12));
+	    	}
+	    	pMenue.add(item); 
 		}
     	
     	// --- Show popup menu --------------------------------------

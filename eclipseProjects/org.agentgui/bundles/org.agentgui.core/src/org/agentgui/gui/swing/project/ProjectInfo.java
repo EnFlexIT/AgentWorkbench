@@ -524,7 +524,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jTextFieldUpdateSite == null) {
 			jTextFieldUpdateSite = new JTextField();
 			jTextFieldUpdateSite.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldUpdateSite.setText(this.currProject.getUpdateSite());
+			jTextFieldUpdateSite.setText(this.currProject.getUpdateSite(true));
 			jTextFieldUpdateSite.getDocument().addDocumentListener(new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
 					this.setUpdateSite();

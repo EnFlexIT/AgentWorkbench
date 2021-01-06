@@ -539,6 +539,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
 			visView.setBackground(Color.WHITE);
 			visView.setDoubleBuffered(true);
+			visView.setCoordinateSystemPositionTransformer(this.getCoordinateSystemPositionTransformer());
 			
 			// --- Configure mouse and key interaction ------------------------
 			visView.setGraphMouse(this.getGraphMouse4Picking());
