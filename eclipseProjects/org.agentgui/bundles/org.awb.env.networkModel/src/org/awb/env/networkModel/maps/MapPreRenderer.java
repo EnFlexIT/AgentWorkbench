@@ -28,18 +28,24 @@
  */
 package org.awb.env.networkModel.maps;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.event.MouseInputListener;
 
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+
+import com.sun.javafx.iio.ImageStorage.ImageType;
 
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
@@ -81,16 +87,25 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         at.concatenate(g2d.getTransform());
         at.concatenate(vat);
         at.concatenate(lat);
-        g2d.setTransform(at);
-
+//        g2d.setTransform(at);
+        
         // --- Call the current MapService ------------------------------------
         MapService ms = this.getMapService();
         WGS84LatLngCoordinate wgs84 = new WGS84LatLngCoordinate(51.464471, 7.005437);
+        ArrayList<WGS84LatLngCoordinate> positions = new ArrayList<WGS84LatLngCoordinate>();
+        positions.add(new WGS84LatLngCoordinate(52.08207410403694, 8.865038740841008)); // northernmost node
+        positions.add(new WGS84LatLngCoordinate(52.02531892125302, 8.878751169158551)); // easternmost node
+        positions.add(new WGS84LatLngCoordinate(52.011849789452484, 8.838464944855245)); // southernmost node
+        positions.add(new WGS84LatLngCoordinate(52.033870658983595,8.807551251936445)); // westernmost node
+
         if (ms!=null) {
+        	
         	MapRenderer mr = ms.getMapRenderer();
         	if (mr!=null) {
         		try {
-        			mr.paintMap(graphics, wgs84, this.visViewer.getSize());
+        			mr.paintMap(g2d, wgs84, this.visViewer.getBounds(), positions);
+//        			mr.setMouseInputListener((MouseInputListener) visViewer.getGraphMouse());
+        			mr.setMouseWheelListener((MouseWheelListener) visViewer.getGraphMouse());
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -100,13 +115,8 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         		System.err.println("[" + this.getClass().getSimpleName() + "] MapService '" + ms.getMapServiceName() + "' does not implement MapRenderer!");
         	}
         }
-        
-//        Image mapImage = this.getMapImage();
-//        if (mapImage!=null) {
-//        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
-//        }
-//
-//        g2d.setTransform(oldXform);
+
+        g2d.setTransform(oldXform);
 	}
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#useTransform()

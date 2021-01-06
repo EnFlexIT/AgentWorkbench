@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.event.MouseInputListener;
 
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
@@ -29,6 +30,7 @@ public interface MapService {
 	public ImageIcon getImageIconOfMapService();
 
 	
+	
 	/**
 	 * Has to return the {@link MapRenderer}.
 	 * @return the map renderer
@@ -40,5 +42,6 @@ public interface MapService {
 	 * @return the j components for map interaction
 	 */
 	public Vector<JComponent> getJComponentsForMapInteraction();
+	
 	
 }

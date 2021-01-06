@@ -25,7 +25,7 @@ Export-Package: org.awb.env.maps,
  org.jxmapviewer.viewer.util,
  org.jxmapviewer.viewer.wms
 Bundle-ClassPath: .,
- lib/jxMapViewer/jxmapviewer2-2.4.jar
+ lib/jxMapViewer/jxmapviewer2-2.6.jar
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.agentgui.lib.jade,
  de.enflexit.common,

@@ -38,7 +38,9 @@ public class BaseMapService implements MapService {
 	@Override
 	public MapRenderer getMapRenderer() {
 		if (mapRenderer==null) {
-			mapRenderer = new BaseMapRenderer();
+			mapRenderer = new OSMMapRenderer();
+//			mapRenderer = new TestMapRenderer();
+
 		}
 		return mapRenderer;
 	}
