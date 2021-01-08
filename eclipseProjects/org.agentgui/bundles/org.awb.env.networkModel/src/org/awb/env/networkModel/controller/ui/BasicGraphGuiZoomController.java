@@ -18,7 +18,7 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 
 /**
- * The Class BasicGraphGuiScalingControl contains the JUNG {@link ScalingControl} 
+ * The Class BasicGraphGuiZoomController contains the JUNG {@link ScalingControl} 
  * that is to be used in the current context (e.g. for Map integration).
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
@@ -32,7 +32,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);
 	
 	private GraphEnvironmentController graphController;
-	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
+	private VisualizationViewer<GraphNode, GraphEdge> visViewer;
 	private ScalingControl scalingControl;
 	
 	
@@ -66,16 +66,17 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	 * Returns the current visualization viewer.
 	 * @return the visualization viewer
 	 */
-	protected BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisualizationViewer() {
+	protected VisualizationViewer<GraphNode, GraphEdge> getVisualizationViewer() {
 		return this.visViewer;
 	}
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.controller.ui.ZoomController#setVisualizationViewer(org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer)
+	 * @see org.awb.env.networkModel.controller.ui.ZoomController#setVisualizationViewer(edu.uci.ics.jung.visualization.VisualizationViewer)
 	 */
 	@Override
-	public void setVisualizationViewer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
+	public void setVisualizationViewer(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
 		this.visViewer = visViewer;
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.ZoomController#getScalingControl()
@@ -270,6 +271,5 @@ public class BasicGraphGuiZoomController implements ZoomController {
 			}
 		}
 	}
-	
 	
 }

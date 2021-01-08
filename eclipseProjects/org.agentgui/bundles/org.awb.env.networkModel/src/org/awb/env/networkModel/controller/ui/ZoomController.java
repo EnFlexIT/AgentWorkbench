@@ -26,7 +26,7 @@ public interface ZoomController {
 	 * Sets the visualization viewer.
 	 * @param visViewer the vis viewer
 	 */
-	public void setVisualizationViewer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer);
+	public void setVisualizationViewer(VisualizationViewer<GraphNode, GraphEdge> visViewer);
 
 	
 	/**
@@ -65,13 +65,11 @@ public interface ZoomController {
 	 * Zooms that the graph fits to the window.
 	 */
 	public void zoomToFitToWindow();
-
 	/**
 	 * Zooms to fit the graph to the window. Here the specified visualization viewer can also be the satellite view.
 	 * @param visViewer the {@link VisualizationViewer} to adjust
 	 */
 	public void zoomToFitToWindow(VisualizationViewer<GraphNode, GraphEdge> visViewer);
-	
 	
 	/**
 	 * Zoom to the currently selected component.
