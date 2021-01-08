@@ -28,21 +28,14 @@
  */
 package org.awb.env.networkModel.controller.ui;
 
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalSatelliteGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteScalingGraphMousePlugin;
+import edu.uci.ics.jung.visualization.control.ScalingControl;
 
 /**
  * The Class SatelliteGraphMouse.
  */
 public class SatelliteGraphMouse extends ModalSatelliteGraphMouse {
-
-	/**
-	 * Instantiates a new satellite graph mouse.
-	 */
-	public SatelliteGraphMouse() {
-        this(BasicGraphGui.SCALE_FACTOR_IN, BasicGraphGui.SCALE_FACTOR_OUT);
-    }
 
     /**
      * Instantiates a new satellite graph mouse.
@@ -50,21 +43,19 @@ public class SatelliteGraphMouse extends ModalSatelliteGraphMouse {
      * @param in the in
      * @param out the out
      */
-    public SatelliteGraphMouse(float in, float out) {
-        super(in, out);
+    public SatelliteGraphMouse(ScalingControl scalingControl) {
+        super();
+        this.exchangeScalingControl(scalingControl);
     }
 	
-    /* (non-Javadoc)
-     * @see edu.uci.ics.jung.visualization.control.ModalSatelliteGraphMouse#loadPlugins()
+    /**
+     * Exchanges the scaling control of the SatelliteGraphMouse with the initially specified one.
+     * @param scalingControl the scaling control
      */
-    @Override
-    protected void loadPlugins() {
-    	super.loadPlugins();
+    private void exchangeScalingControl(ScalingControl scalingControl) {
     	remove(scalingPlugin);
-    	scalingPlugin =  new SatelliteScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    	scalingPlugin =  new SatelliteScalingGraphMousePlugin(scalingControl, 0);
     	add(scalingPlugin);
-    	 
     }
-    
     
 }

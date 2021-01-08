@@ -50,7 +50,7 @@ public class MapRendererSettings implements Serializable {
 	 */
 	private void initialize(BasicGraphGuiVisViewer<?,?> visViewer, AffineTransform at) {
 
-		boolean isPrintTransformation = false;
+		boolean isPrintTransformation = true;
 		
 		TransformerForGraphNodePosition<GraphNode, GraphEdge> cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();

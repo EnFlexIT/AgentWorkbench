@@ -46,7 +46,6 @@ import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyVetoException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -106,14 +105,10 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.LayeredIcon;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
@@ -135,8 +130,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 5764679914667183305L;
 	
-	public static final float SCALE_FACTOR_IN = 1.1f;
-	public static final float SCALE_FACTOR_OUT = 1.0f / 1.1f;
+	public static double graphMargin = 25; // TODO not exact if WGS84 coordinates are used
 	
 	/**
 	 * The enumeration ToolBarType describes the toolbar type available in the {@link BasicGraphGui}.
@@ -180,15 +174,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private ItemListener pickedStateItemListener;
 	private List<GraphSelectionListener> graphSelectionListenerList;
 	
+	private BasicGraphGuiZoomController zoomControl;
+	
 	private SatelliteDialog satelliteDialog;
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
-	
-	/** JUNG object handling zooming */
-	private ScalingControl scalingControl;
-	
-	/** the margin of the graph for the visualization */
-	private double graphMargin = 25;
-	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);
 	
 	/** The current GraphMouseMode */
 	private GraphMouseMode graphMouseMode;
@@ -389,7 +378,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> getGraphMouse4Transforming() {
 		if (graphMouse4Transforming == null) {
-			graphMouse4Transforming = new DefaultModalGraphMouse<GraphNode, GraphEdge>(SCALE_FACTOR_OUT, SCALE_FACTOR_IN);
+			graphMouse4Transforming = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
 		}
 		return graphMouse4Transforming;
 	}
@@ -417,7 +406,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 		this.clearPickedObjects();
 		this.setMapPreRendering();
-		this.zoomToFitToWindow(this.getVisualizationViewer());
+		this.zoomToFitToWindow();
 
 		// --- Re-attach item listener for vis-viewer -----
 		this.getVisualizationViewer().getPickedVertexState().removeItemListener(this.getPickedStateItemListener());
@@ -427,7 +416,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// --- Adjust the satellite view ------------------
 		this.getSatelliteVisualizationViewer().getGraphLayout().setGraph(this.getGraph());
-		this.zoomToFitToWindow(this.getSatelliteVisualizationViewer());
+		this.zoomSatelliteVisualizationViewerToFitToWindow();
 		
 	}
 	/**
@@ -1432,188 +1421,70 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 	
 	
+	// --------------------------------------------------------------------------------------------
+	// --- From here, handling of zooming and the usage of the individual scaling control --------- 
+	// --------------------------------------------------------------------------------------------	
 	/**
-	 * Returns the scaling control.
-	 * @return the scalingControl
+	 * Return the current zoom controller.
+	 * @return the zoom controller
 	 */
-	public ScalingControl getScalingControl() {
-		if (scalingControl==null) {
-			CrossoverScalingControl crossoverScalingControl = new CrossoverScalingControl();
-			crossoverScalingControl.setCrossover(1.0);
-			scalingControl = crossoverScalingControl;
+	public ZoomController getZoomController() {
+		if (zoomControl==null) {
+			zoomControl = new BasicGraphGuiZoomController(this.getGraphEnvironmentController(), this.getVisualizationViewer());
 		}
-		return scalingControl;
-	}
-	/**
-	 * Gets the default point to scale at for zooming.
-	 * @return the default scale at point
-	 */
-	private Point2D getDefaultScaleAtPoint() {
-		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
-		if (rectVis.isEmpty()==false) {
-			this.defaultScaleAtPoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
-		}
-		return defaultScaleAtPoint;
-	}
-	/**
-	 * Sets the default point to scale at for zooming..
-	 * @param scalePoint the new default scale at point
-	 */
-	private void setDefaultScaleAtPoint(Point2D scalePoint) {
-		defaultScaleAtPoint = scalePoint;
+		return zoomControl;
 	}
 	
 	/**
 	 * Zooms in.
 	 */
 	public void zoomIn() {
-		this.zoomIn(this.getDefaultScaleAtPoint());
+		this.getZoomController().zoomIn();
 	}
 	/**
 	 * Zooms in.
 	 * @param zoomAtPoint the point to zoom at (e.g. the current mouse position on screen)
 	 */
 	public void zoomIn(Point2D zoomAtPoint) {
-		this.zoom(SCALE_FACTOR_IN, zoomAtPoint);
+		this.getZoomController().zoomIn(zoomAtPoint);
 	}
 	/**
 	 * Zooms out.
 	 */
 	public void zoomOut() {
-		this.zoomOut(this.getDefaultScaleAtPoint());
+		this.getZoomController().zoomOut();
 	}
 	/**
 	 * Zooms out.
 	 * @param zoomAtPoint the zoom at point (e.g. the current mouse position on screen)
 	 */
 	public void zoomOut(Point2D zoomAtPoint) {
-		this.zoom(SCALE_FACTOR_OUT, zoomAtPoint);
+		this.getZoomController().zoomOut(zoomAtPoint);
 	}
-	/**
-	 * Private zoom method that accumulates all possible calls to the scaling control.
-	 *
-	 * @param scaleAmount the scale amount
-	 * @param zoomAtPoint the zoom at point
-	 */
-	private void zoom(float scaleAmount, Point2D zoomAtPoint) {
-		
-		// --- Set selected frame to the parent internal frame ------
-		BasicGraphGuiRootJSplitPane parentInternalFrame = this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
-		if (parentInternalFrame.isSelected()==false) {
-			try {
-				parentInternalFrame.setSelected(true);
-			} catch (PropertyVetoException pvEx) {
-				pvEx.printStackTrace();
-			}
-		}
-		
-		// --- Scale the graph to the scale amount ------------------
-		this.getScalingControl().scale(this.getVisualizationViewer(), scaleAmount, zoomAtPoint);	
-	}
-	
 	
 	/**
 	 * Zoom one to one and move the focus according to the coordinate system source.
-	 * @param visViewer the VisualizationViewer to use
 	 */
-	private void zoomOneToOneMoveFocus(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
-		this.setVisualizationViewerToFitToWindow(visViewer, false);
+	private void zoomOneToOneMoveFocus() {
+		this.getZoomController().zoomOneToOneMoveFocus();
 	}
 	/**
 	 * Zooms that the graph fits to the window.
-	 * @param visViewer the VisualizationViewer to use
 	 */
-	private void zoomToFitToWindow(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
-		this.setVisualizationViewerToFitToWindow(visViewer, true);
+	private void zoomToFitToWindow() {
+		this.getZoomController().zoomToFitToWindow();
 	}
-	/**
-	 * Sets the visualization viewer to fit to window.
-	 *
-	 * @param visViewer the vis viewer
-	 * @param scaleAtCoordinateSource the scale at coordinate source
-	 */
-	private void setVisualizationViewerToFitToWindow(VisualizationViewer<GraphNode, GraphEdge> visViewer, boolean scaleAtCoordinateSource) {
-		
-		if (visViewer.getVisibleRect().isEmpty()) return;
-
-		// ----------------------------------------------------------
-		// --- Get coordinate systems position ----------------------
-		Point2D coordinateSourcePoint = CoordinateSystemSourcePosition.getCoordinateSystemSourcePointInVisualizationViewer(visViewer, this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings());
-		this.setDefaultScaleAtPoint(coordinateSourcePoint);
-		
-		// ----------------------------------------------------------
-		// --- Reset view and layout to identity -------------------- 
-		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-		
-		// ----------------------------------------------------------
-		// --- Calculate the movement in the view -------------------
-		Rectangle2D graphRectangle = GraphGlobals.getGraphSpreadDimension(visViewer.getGraphLayout().getGraph());
-		double moveX = (graphRectangle.getX() * (-1)) + this.graphMargin;
-		double moveY = (graphRectangle.getY() * (-1)) + this.graphMargin;
-
-		// --- Transform coordinate to LayoutSettings ---------------
-		TransformerForGraphNodePosition<GraphNode, GraphEdge> positionTransformer = new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController());
-		Point2D visualPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
-		moveX = visualPosition.getX() + coordinateSourcePoint.getX();
-		moveY = visualPosition.getY() + coordinateSourcePoint.getY();
-		
-		// --- Set focus movement -----------------------------------
-		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(moveX, moveY);
-		if (scaleAtCoordinateSource==false) return;
-
-		
-		// ----------------------------------------------------------		
-		// --- Calculate the scaling --------------------------------
-		double graphWidth = graphRectangle.getWidth() + 2 * this.graphMargin;
-		double graphHeight = graphRectangle.getHeight() + 2 * this.graphMargin;
-		Point2D farthestCorner = positionTransformer.transform(new Point2D.Double(graphWidth, graphHeight));
-		graphWidth = Math.abs(farthestCorner.getX());
-		graphHeight = Math.abs(farthestCorner.getY());
-		
-		double visWidth = visViewer.getVisibleRect().getWidth();
-		double visHeight = visViewer.getVisibleRect().getHeight();
-
-		double scaleX = visWidth / graphWidth;
-		double scaleY = visHeight / graphHeight;
-		
-		// --- Set scaling ------------------------------------------
-		double scale = Math.min(scaleX, scaleY);;
-		if (scale!= 0 && scale!=1) {
-			this.getScalingControl().scale(visViewer, (float) scale, coordinateSourcePoint);
-		}
-	}
-	
 	/**
 	 * Zoom to the selected component.
 	 */
 	private void zoomToComponent() {
-		
-		Set<GraphNode> nodesPicked = this.getVisualizationViewer().getPickedVertexState().getPicked();
-		if (nodesPicked.size()!=0) {
-			List<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
-			if (components!=null && components.size()!=0) {
-				// --- Get the dimension of the selected nodes ------ 
-				Rectangle2D areaSelected = GraphGlobals.getGraphSpreadDimension(nodesPicked);
-				Point2D areaCenter = new Point2D.Double(areaSelected.getCenterX(), areaSelected.getCenterY());
-				// --- Create temporary GraphNode -------------------
-				GraphNode tmpNode = new GraphNode("tmPCenter", areaCenter);
-				this.getVisualizationViewer().getGraphLayout().getGraph().addVertex(tmpNode);
-				// --- Get the needed positions ---------------------
-				Point2D tmpNodePos = this.getVisualizationViewer().getGraphLayout().transform(tmpNode);
-				Point2D visViewCenter = this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(this.getVisualizationViewer().getCenter());
-				// --- Calculate movement ---------------------------
-				final double dx = (visViewCenter.getX() - tmpNodePos.getX());
-				final double dy = (visViewCenter.getY() - tmpNodePos.getY());
-				// --- Remove temporary GraphNode and move view -----
-				this.getVisualizationViewer().getGraphLayout().getGraph().removeVertex(tmpNode);
-				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy); 
-			}
-		}
+		this.getZoomController().zoomToComponent();
 	}
-
 	
 	
+	// --------------------------------------------------------------------------------------------
+	// --- From here, handling of satellite visualization ----------------------------------------- 
+	// --------------------------------------------------------------------------------------------	
 	/**
 	 * Gets the VisualizationViewer for the satellite view
 	 * @return The VisualizationViewer
@@ -1623,8 +1494,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 			
 			// --- Set dimension and create a new SatelliteVisualizationViewer ----
 			visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getDimensionOfSatelliteVisualizationViewer());
-			visViewSatellite.scaleToLayout(this.getScalingControl());
-			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(SCALE_FACTOR_OUT, SCALE_FACTOR_IN));
+			visViewSatellite.scaleToLayout(this.getZoomController().getScalingControl());
+			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(this.getZoomController().getScalingControl()));
 			
 			// --- Configure the node shape and size ------------------------------
 			visViewSatellite.getRenderContext().setVertexShapeTransformer(this.getVisualizationViewer().getRenderContext().getVertexShapeTransformer());
@@ -1650,6 +1521,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visViewSatellite.getRenderer().setEdgeRenderer(this.getVisualizationViewer().getRenderer().getEdgeRenderer());
 		}
 		return visViewSatellite;
+	}
+	/**
+	 * Zooms the satellite visualization viewer to fit to window.
+	 */
+	private void zoomSatelliteVisualizationViewerToFitToWindow() {
+		if (satelliteDialog!=null && satelliteDialog.isVisible()==true) {
+			this.getZoomController().zoomToFitToWindow(this.getSatelliteVisualizationViewer());
+		}
 	}
 	/**
 	 * Returns the dimension of the SatelliteVisualizationViewer.
@@ -1755,7 +1634,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			case NetworkModelNotification.NETWORK_MODEL_Satellite_View:
 				Boolean visible = (Boolean) infoObject;
 				this.getSatelliteDialog().setVisible(visible);
-				this.zoomToFitToWindow(this.getSatelliteVisualizationViewer());
+				if (visible==true) {
+					this.zoomSatelliteVisualizationViewerToFitToWindow();
+				}
 				break;
 				
 			case NetworkModelNotification.NETWORK_MODEL_Repaint:
@@ -1783,10 +1664,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 				
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window:
-				this.zoomToFitToWindow(this.getVisualizationViewer());
+				this.zoomToFitToWindow();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
-				this.zoomOneToOneMoveFocus(this.getVisualizationViewer());
+				this.zoomOneToOneMoveFocus();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
 				this.zoomToComponent();
