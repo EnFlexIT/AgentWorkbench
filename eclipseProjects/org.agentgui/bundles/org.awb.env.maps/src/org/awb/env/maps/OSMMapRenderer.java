@@ -16,6 +16,7 @@ import javax.swing.event.MouseInputListener;
 
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapRendererSettings;
+import org.awb.env.networkModel.maps.ScalingOperator;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.input.PanMouseInputListener;
@@ -35,6 +36,10 @@ public class OSMMapRenderer implements MapRenderer {
 
 	private JXMapViewerWrapper mapCanvas;
 
+	private ScalingOperator scalingOperator;
+	
+	private MapRendererSettings mapRendererSettings;
+	
 	private Graphics graphics;
 	
 	/* (non-Javadoc)
@@ -43,16 +48,19 @@ public class OSMMapRenderer implements MapRenderer {
 	@Override
 	public void paintMap(Graphics2D graphics, MapRendererSettings mapRendererSettings, Dimension dimension) {
 		this.graphics = graphics;
+		this.mapRendererSettings = mapRendererSettings;
+		this.scalingOperator = new OSMScalingOperator(mapRendererSettings.getLandscapeDimension(), mapRendererSettings.getVisualizationDimension(), mapRendererSettings.getCenterPostion());
+		
 		System.out.println("Calling map rendering " + mapRendererSettings.getCenterPostion() );
+		
 		if (this.mapCanvas == null) {
 			this.mapCanvas = new JXMapViewerWrapper(dimension);
 			this.mapCanvas.setBounds(dimension);
-//			TileFactory tileFactory = new DefaultTileFactory(new OSMTileFactoryInfo());
 			this.mapCanvas.setTileFactory(new DefaultTileFactory(new OSMTileFactoryInfo()));
-//			tileFactory.addTileListener(this.tileLoadListener);
 		} else {
 			this.mapCanvas.setBounds(dimension);
 		}
+		
 		graphics.setClip(0, 0, (int) dimension.getWidth(), (int) dimension.getHeight());
 		
 		//Paint nodes and zoom to best fit
@@ -62,22 +70,7 @@ public class OSMMapRenderer implements MapRenderer {
 		nodeCoords.add(this.convertToGeoPosition(mapRendererSettings.getTopLeftPosition()));
 		nodeCoords.add(this.convertToGeoPosition(mapRendererSettings.getTopRightPosition()));
 
-//		if(positions.size() > 0) {
-//			ArrayList<GeoPosition> nodeCoords = new ArrayList<GeoPosition>(); 
-//			HashSet<DefaultWaypoint> waypoints = new HashSet<DefaultWaypoint>();
-//			for (int i = 0; i < positions.size(); i++) {
-//				GeoPosition geoPosition = this.convertToGeoPosition(positions.get(i));
-//				nodeCoords.add(i, geoPosition);			
-//				waypoints.add(new DefaultWaypoint(geoPosition));
-//			}		
-//			WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<Waypoint>();
-//			waypointPainter.setWaypoints(waypoints);
-//			waypointPainter.setVisible(true);
-	        this.mapCanvas.zoomToBestFit(nodeCoords, 0.99);
-//	        this.mapCanvas.setOverlayPainter(waypointPainter);
-//		}else {
-//			this.mapCanvas.setAddressLocation(this.convertToGeoPosition(geoCoord));
-//		}
+
 		this.mapCanvas.setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
 		
 		this.mapCanvas.paint(graphics);
@@ -98,6 +91,10 @@ public class OSMMapRenderer implements MapRenderer {
 	
 	protected GeoPosition convertToGeoPosition(WGS84LatLngCoordinate wgs84coord) {
 		return new GeoPosition(wgs84coord.getLatitude(), wgs84coord.getLongitude());
+	}
+	
+	public ScalingOperator getScalingOperator() {
+		return this.scalingOperator;
 	}
 
 }

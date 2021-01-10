@@ -1545,7 +1545,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Reset view and layout to identity -------------------- 
 		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-		
+	
 		// ----------------------------------------------------------
 		// --- Calculate the movement in the view -------------------
 		Rectangle2D graphRectangle = GraphGlobals.getGraphSpreadDimension(visViewer.getGraphLayout().getGraph());

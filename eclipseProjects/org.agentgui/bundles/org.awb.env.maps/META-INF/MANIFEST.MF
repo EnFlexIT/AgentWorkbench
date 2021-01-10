@@ -32,4 +32,5 @@ Require-Bundle: org.agentgui.lib.jade,
  de.enflexit.geography,
  org.agentgui.core,
  org.awb.env.networkModel,
- org.apache.commons.logging
+ org.apache.commons.logging,
+ org.agentgui.lib.jung

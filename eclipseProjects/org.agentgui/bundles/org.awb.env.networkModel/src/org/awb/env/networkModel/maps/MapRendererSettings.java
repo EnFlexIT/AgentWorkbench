@@ -1,6 +1,7 @@
 package org.awb.env.networkModel.maps;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -13,6 +14,7 @@ import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
+import javafx.geometry.Dimension2D;
 
 /**
  * The Class MapRendererSettings provides information for the rendering of maps.
@@ -23,6 +25,9 @@ public class MapRendererSettings implements Serializable {
 
 	private static final long serialVersionUID = -5126554545457917787L;
 
+	private Dimension visualizationDimension;
+	private Dimension2D landscapeDimension;
+	
 	private WGS84LatLngCoordinate topLeftPosition;
 	private WGS84LatLngCoordinate topRightPosition;
 	
@@ -50,16 +55,24 @@ public class MapRendererSettings implements Serializable {
 	 */
 	private void initialize(BasicGraphGuiVisViewer<?,?> visViewer, AffineTransform at) {
 
-		boolean isPrintTransformation = false;
+		boolean isPrintTransformation = true;
 		
 		TransformerForGraphNodePosition<GraphNode, GraphEdge> cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();
-
-		this.setTopLeftPosition(this.getWGS84LatLngCoordinate(cspt, at, new Point2D.Double(0, 0), isPrintTransformation));
-		this.setTopRightPosition(this.getWGS84LatLngCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), 0), isPrintTransformation));
-		this.setBottomLeftPosition(this.getWGS84LatLngCoordinate(cspt, at, new Point2D.Double(0, vvDim.getHeight()), isPrintTransformation));
-		this.setBottomRightPosition(this.getWGS84LatLngCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), vvDim.getHeight()), isPrintTransformation));
+		this.setVisualizationDimension(vvDim);
 		
+		UTMCoordinate topLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, 0), isPrintTransformation);
+        UTMCoordinate topRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), 0), isPrintTransformation);
+        UTMCoordinate bottomLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, vvDim.getHeight()), isPrintTransformation);
+        UTMCoordinate bottomRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), vvDim.getWidth()), isPrintTransformation);
+
+		this.setTopLeftPosition(topLeftCoordinate.getWGS84LatLngCoordinate());
+		this.setTopRightPosition(topRightCoordinate.getWGS84LatLngCoordinate());
+		this.setBottomLeftPosition(bottomLeftCoordinate.getWGS84LatLngCoordinate());
+		this.setBottomRightPosition(bottomRightCoordinate.getWGS84LatLngCoordinate());
+
+		this.setLandscapeDimension(this.calcLandscapeDimension(topLeftCoordinate, bottomRightCoordinate));
+
 		double centerX = vvDim.getWidth()  / 2.0;
 		double centerY = vvDim.getHeight() / 2.0;
 		this.setCenterPostion(this.getWGS84LatLngCoordinate(cspt, at, new Point2D.Double(centerX, centerY), isPrintTransformation));
@@ -83,10 +96,10 @@ public class MapRendererSettings implements Serializable {
 		try {
 			
 			MapSettings ms = cspTransformer.getMapSettings();
-			
 			Point2D pointJung = at.inverseTransform(point2D, null);
 			Point2D pointCoSy = cspTransformer.inverseTransform(pointJung);
-			UTMCoordinate utm = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), pointCoSy.getX(), pointCoSy.getY());
+
+			UTMCoordinate utm = this.getUTMCoordinate(cspTransformer, at, point2D, isPrintTransformation);
 			wgs84 = utm.getWGS84LatLngCoordinate(); 
 
 			if (isPrintTransformation==true) {
@@ -105,7 +118,52 @@ public class MapRendererSettings implements Serializable {
 		return wgs84;
 	}
 	
+	/**
+	 * Gets the UTM coordinate.
+	 *
+	 * @param cspTransformer the csp transformer
+	 * @param at the at
+	 * @param point2D the point 2 D
+	 * @param isPrintTransformation the is print transformation
+	 * @return the UTM coordinate
+	 */
+	private UTMCoordinate getUTMCoordinate(TransformerForGraphNodePosition<GraphNode, GraphEdge> cspTransformer, AffineTransform at, Point2D point2D, boolean isPrintTransformation) {
+		UTMCoordinate utm = null;
+		try {
+			
+			MapSettings ms = cspTransformer.getMapSettings();
+			
+			Point2D pointJung = at.inverseTransform(point2D, null);
+			Point2D pointCoSy = cspTransformer.inverseTransform(pointJung);
+			utm = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), pointCoSy.getX(), pointCoSy.getY());
+			if (isPrintTransformation==true) {
+				System.out.println("Pos. Screen   " + point2D.getX() + ", " + point2D.getY() + "");
+				System.out.println("Pos. Jung     " + pointJung.getX() + ", " + pointJung.getY() + "");
+				System.out.println("Pos. CoordSys " + pointCoSy.getX() + ", " + pointCoSy.getY() + "");
+				System.out.println("=> UTM        " + utm.toString());
+				System.out.println();
+			}
+			
+		} catch (NoninvertibleTransformException nitEx) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error while transforming visual coordinate into WGS84 coordinate:");
+			nitEx.printStackTrace();
+		}
+		return utm;
+	}
 	
+	/**
+	 * Calculate the landscape dimensions in meter.
+	 *
+	 * @param topLeftCoordinate the top left  UTM coordinate
+	 * @param bottomRightCoordinate the bottom right UTM coordinate
+	 * @return the dimension 2 D
+	 */
+	private Dimension2D calcLandscapeDimension(UTMCoordinate topLeftCoordinate, UTMCoordinate bottomRightCoordinate) {
+		double widthInMeter = Math.abs(topLeftCoordinate.getEasting()- bottomRightCoordinate.getEasting());
+		double heightInMeter = Math.abs(topLeftCoordinate.getNorthing() - bottomRightCoordinate.getNorthing());
+		
+		return new Dimension2D(widthInMeter, heightInMeter);
+	}
 	public WGS84LatLngCoordinate getTopLeftPosition() {
 		return topLeftPosition;
 	}
@@ -146,5 +204,18 @@ public class MapRendererSettings implements Serializable {
 	}
 	public void setMapTileTransparency(int mapTileTransparency) {
 		this.mapTileTransparency = mapTileTransparency;
+	}
+	public Dimension2D getLandscapeDimension() {
+		return landscapeDimension;
+	}
+	public void setLandscapeDimension(Dimension2D landscapeDimension) {
+		this.landscapeDimension = landscapeDimension;
+	}
+	public Dimension getVisualizationDimension() {
+		return visualizationDimension;
+	}
+	
+	public void setVisualizationDimension(Dimension visualizationDimension) {
+		this.visualizationDimension = visualizationDimension;
 	}
 }
