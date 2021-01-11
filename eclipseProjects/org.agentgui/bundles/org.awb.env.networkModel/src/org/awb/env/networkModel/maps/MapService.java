@@ -6,6 +6,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController;
+import org.awb.env.networkModel.controller.ui.ZoomController;
 
 /**
  * The Interface MapService can be used to register a map integration to the background  
@@ -34,6 +36,15 @@ public interface MapService {
 	 */
 	public MapRenderer getMapRenderer();
 
+	/**
+	 * Has to return the {@link ZoomController} to act on zooming action within the visualization. If null will be  
+	 * returned by this method, the default ZoomController (see {@link BasicGraphGuiZoomController}) will be used. 
+	 *  
+	 * @return the zoom controller
+	 * @see BasicGraphGuiZoomController
+	 */
+	public ZoomController getZoomController();
+	
 	/**
 	 * Has to return the components to configure the map visualization.
 	 * @return the j components for map interaction

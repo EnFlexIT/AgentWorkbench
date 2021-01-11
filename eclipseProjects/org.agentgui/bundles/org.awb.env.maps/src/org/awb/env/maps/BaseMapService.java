@@ -5,6 +5,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import org.awb.env.networkModel.controller.ui.ZoomController;
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
@@ -43,6 +44,15 @@ public class BaseMapService implements MapService {
 
 		}
 		return mapRenderer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapService#getZoomController()
+	 */
+	@Override
+	public ZoomController getZoomController() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/* (non-Javadoc)

@@ -86,6 +86,7 @@ import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineMousePlu
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin;
 import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
 import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
+import org.awb.env.networkModel.maps.MapService;
 import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
@@ -174,8 +175,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private ItemListener pickedStateItemListener;
 	private List<GraphSelectionListener> graphSelectionListenerList;
 	
-	private BasicGraphGuiZoomController zoomControl;
-	
 	private SatelliteDialog satelliteDialog;
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
 	
@@ -192,6 +191,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemNodePositionTransformer;
 
 	private Timer graphSelectionWaitTimer;
+
+	/** The current MapService */
+	private ZoomController zoomController;
 	
 	
 	/**
@@ -419,18 +421,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.zoomSatelliteVisualizationViewerToFitToWindow();
 		
 	}
-	/**
-	 * Depending on the current MapSettings, sets the map pre-rendering ON or OFF.
-	 */
-	private void setMapPreRendering() {
-		MapSettings mapSettings = this.graphController.getNetworkModel().getMapSettings();
-		if (mapSettings!=null && mapSettings.isShowMapTiles()==true) {
-			this.getVisualizationViewer().setDoMapPreRendering(true);
-		} else {
-			this.getVisualizationViewer().setDoMapPreRendering(false);
-		}
-	}
-	
 	/**
 	 * Gets the picked state item listener, a listener 
 	 * for GraphNode / GraphEdge (de)selections.  
@@ -1422,6 +1412,56 @@ public class BasicGraphGui extends JPanel implements Observer {
 	
 	
 	// --------------------------------------------------------------------------------------------
+	// --- From here, handling of MapServices ----------------------------------------------------- 
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * Depending on the current MapSettings, sets the map pre-rendering ON or OFF.
+	 */
+	private void setMapPreRendering() {
+		
+		boolean isDoMapRendering = this.isDoMapPreRendering();
+		if (isDoMapRendering==true) {
+			this.getVisualizationViewer().setMapService(this.getMapService());
+		} else {
+			this.getVisualizationViewer().setMapService(null);
+		}
+		this.getVisualizationViewer().setDoMapPreRendering(isDoMapRendering);
+	}
+	/**
+	 * Checks if is usable map service.
+	 * @return true, if is usable map service
+	 */
+	public boolean isDoMapPreRendering() {
+		
+		// --- Get the current layout and check if is layout with geographical coordinates --------
+		LayoutSettings lSettings = this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings();
+		if (lSettings.isGeographicalLayout()==false) return false;
+		
+		// --- Get current MapSettings and check if map painting is activated ---------------------
+		MapSettings mSettings = this.getGraphEnvironmentController().getNetworkModel().getMapSettings();
+		if (mSettings==null) return false;
+		if (mSettings.getMapServiceName()==null || mSettings.getMapServiceName().isEmpty()==true) return false;
+		if (mSettings.getMapTileTransparency()==100) return false;
+		
+		// --- Ensure that the MapService is available --------------------------------------------
+		if (this.getMapService()==null) return false;
+		
+		return true;
+	}
+	/**
+	 * Returns the currently selected {@link MapService}.
+	 * @return the map service
+	 */
+	public MapService getMapService() {
+		MapSettings mapSettings = this.getGraphEnvironmentController().getNetworkModel().getMapSettings();
+		if (mapSettings!=null) {
+			return mapSettings.getMapService();
+		}
+		return null;
+	}
+	
+	
+	// --------------------------------------------------------------------------------------------
 	// --- From here, handling of zooming and the usage of the individual scaling control --------- 
 	// --------------------------------------------------------------------------------------------	
 	/**
@@ -1429,12 +1469,20 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the zoom controller
 	 */
 	public ZoomController getZoomController() {
-		if (zoomControl==null) {
-			zoomControl = new BasicGraphGuiZoomController(this.getGraphEnvironmentController(), this.getVisualizationViewer());
+
+		// --- Check if we have an individual ZoomController ------------------ 
+		if (this.isDoMapPreRendering()==true) {
+			ZoomController zc = this.getMapService().getZoomController();
+			if (zc!=null) {
+				return zc;
+			}
 		}
-		return zoomControl;
+		// --- Use the default ZommController --------------------------------- 
+		if (zoomController==null) {
+			zoomController = new BasicGraphGuiZoomController(graphController, this.getVisualizationViewer());
+		}
+		return zoomController;
 	}
-	
 	/**
 	 * Zooms in.
 	 */
@@ -1696,16 +1744,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 				
 				
-			case NetworkModelNotification.NETWORK_MODEL_MapRendering_ON:
-				this.getVisualizationViewer().setDoMapPreRendering(true);
-				break;
-			case NetworkModelNotification.NETWORK_MODEL_MapRendering_OFF:
-				this.getVisualizationViewer().setDoMapPreRendering(false);
+			case NetworkModelNotification.NETWORK_MODEL_MapScaleChanged:
+			case NetworkModelNotification.NETWORK_MODEL_MapServiceChanged:
+			case NetworkModelNotification.NETWORK_MODEL_MapTransparencyChanged:
+				this.setMapPreRendering();
 				break;
 
-			case NetworkModelNotification.NETWORK_MODEL_MapScaleChanged:
-				this.reLoadGraph();
-				break;
 				
 			default:
 				break;
