@@ -74,7 +74,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     
     private int defaultWidth = 300;
     private int defaultHeightLayout = 35;
-    private int defaultHeightMapSettings = 125;
+    private int defaultHeightMapSettings = 160;
 
     
 	private ComponentAdapter desktopAdapter;
@@ -145,6 +145,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
     	gbc_separator.gridx = 0;
     	gbc_separator.gridy = 1;
     	this.getContentPane().add(this.getSeparator(), gbc_separator);
+    	
     	GridBagConstraints gbc_mapSettingsPanel = new GridBagConstraints();
     	gbc_mapSettingsPanel.fill = GridBagConstraints.HORIZONTAL;
     	gbc_mapSettingsPanel.gridx = 0;
@@ -316,7 +317,7 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 		this.setActionOnTop(false);
 		
 		// --- Get the changed value of the MapSettings ---
-		MapSettings mapSettings = this.getMapSettingsPanel().getMapSettings();
+		// MapSettings mapSettings = this.getMapSettingsPanel().getMapSettings();
 		switch (valueChangedInMapSetting) {
 		case UTM_Longitude:
 			System.out.println("Changed UTM_Longitude");
@@ -330,16 +331,12 @@ public class LayoutSelectionDialog extends BasicGraphGuiJInternalFrame implement
 			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapScaleChanged));
 			break;
 			
-		case ShowMapTiles:
-			if (mapSettings.isShowMapTiles()==true) {
-				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapRendering_ON));
-			} else {
-				this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapRendering_OFF));
-			}
+		case MapService:
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapServiceChanged));
 			break;
 			
 		case MapTileTransparency:
-			System.out.println("Changed MapTileTransparency");
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_MapTransparencyChanged));
 			break;
 		}
 		this.graphController.setProjectUnsaved();

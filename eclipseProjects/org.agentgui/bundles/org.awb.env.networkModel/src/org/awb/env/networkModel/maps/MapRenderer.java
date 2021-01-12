@@ -1,6 +1,5 @@
 package org.awb.env.networkModel.maps;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import org.awb.env.networkModel.NetworkModel;
@@ -20,9 +19,8 @@ public interface MapRenderer {
 	 *
 	 * @param graphics2D the graphics2D instance to work on
 	 * @param mapRendererSettings the map render settings
-	 * @param dimension the dimension of the visualization
 	 */
-	public void paintMap(Graphics2D graphics2D, MapRendererSettings mapRendererSettings, Dimension dimension);
+	public void paintMap(Graphics2D graphics2D, MapRendererSettings mapRendererSettings);
 	
 	/**
 	 * Gets the scaling operator.

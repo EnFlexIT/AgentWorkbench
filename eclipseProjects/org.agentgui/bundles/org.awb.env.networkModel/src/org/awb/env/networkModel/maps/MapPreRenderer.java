@@ -31,14 +31,11 @@ package org.awb.env.networkModel.maps;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.util.List;
 
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
-import de.enflexit.common.ServiceFinder;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-
 
 /**
  * The Class MapPreRenderer is used to prepare the painting of the Graph by
@@ -51,7 +48,6 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 
 	private BasicGraphGuiVisViewer<V,E> visViewer;
-	private MapService mapService;
 	
 	/**
 	 * Instantiates a new MapPreRendererr.
@@ -85,16 +81,13 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 
         
         // --- Call the current MapService ------------------------------------
-        MapService ms = this.getMapService();
+        MapService ms = this.visViewer.getMapService();
         if (ms!=null) {
-        	
         	MapRenderer mr = ms.getMapRenderer();
         	if (mr!=null) {
         		try {
-
         			// --- Invoke map tile integration ------------------------  
-        			mr.paintMap(g2d, new MapRendererSettings(this.visViewer, at), this.visViewer.getSize());
-					
+        			mr.paintMap(g2d, new MapRendererSettings(this.visViewer, at));
 //			        Image mapImage = this.getMapImage();
 //			        if (mapImage!=null) {
 //			        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
@@ -121,27 +114,4 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 		return false;
 	}
 
-	/**
-	 * Returns the list of registered {@link MapService}s.
-	 * @return the map service list
-	 */
-	private List<MapService> getMapServiceList() {
-		
-		List<MapService> mapServiceList = ServiceFinder.findServices(MapService.class);
-		
-		return mapServiceList;
-	}
-	/**
-	 * Return the current map service.
-	 * @return the map service
-	 */
-	private MapService getMapService() {
-		if (mapService==null) {
-			if (this.getMapServiceList().size()>0) {
-				mapService = this.getMapServiceList().get(0);
-			}
-		}
-		return mapService;
-	}
-	
 }
