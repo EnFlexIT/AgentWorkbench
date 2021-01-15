@@ -1474,12 +1474,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (this.isDoMapPreRendering()==true) {
 			ZoomController zc = this.getMapService().getZoomController();
 			if (zc!=null) {
+				zc.setGraphEnvironmentController(this.getGraphEnvironmentController());
+				zc.setVisualizationViewer(this.getVisualizationViewer());
 				return zc;
 			}
 		}
 		// --- Use the default ZommController --------------------------------- 
 		if (zoomController==null) {
-			zoomController = new BasicGraphGuiZoomController(graphController, this.getVisualizationViewer());
+			zoomController = new BasicGraphGuiZoomController(this.getGraphEnvironmentController(), this.getVisualizationViewer());
 		}
 		return zoomController;
 	}

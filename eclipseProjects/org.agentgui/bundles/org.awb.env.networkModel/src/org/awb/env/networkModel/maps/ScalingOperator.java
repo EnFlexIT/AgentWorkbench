@@ -24,4 +24,25 @@ public interface ScalingOperator {
 	 */
 	public double getActualScalingFactor();
 	
+	/**
+	 * 
+	 * @return the actual zoom level
+	 */
+	public int getZoomLevel();
+
+	
+	/**
+	 * Increase zoom level.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean increaseZoomLevel();
+	
+	/**
+	 * Decrease zoom level.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean decreaseZoomLevel();
+	
 }

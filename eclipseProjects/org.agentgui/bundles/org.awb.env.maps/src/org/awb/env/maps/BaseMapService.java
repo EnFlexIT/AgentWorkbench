@@ -5,8 +5,6 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
-import org.awb.env.networkModel.controller.ui.ZoomController;
-import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
 /**
@@ -16,7 +14,8 @@ import org.awb.env.networkModel.maps.MapService;
  */
 public class BaseMapService implements MapService {
 
-	private MapRenderer mapRenderer;
+	private OSMMapRenderer osmMapRenderer;
+	private OSMZoomController osmZoomController;
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getMapServiceName()
@@ -37,22 +36,23 @@ public class BaseMapService implements MapService {
 	 * @see org.awb.env.networkModel.maps.MapService#getMapRenderer()
 	 */
 	@Override
-	public MapRenderer getMapRenderer() {
-		if (mapRenderer==null) {
-			mapRenderer = new OSMMapRenderer();
-//			mapRenderer = new TestMapRenderer();
+	public OSMMapRenderer getMapRenderer() {
+		if (osmMapRenderer==null) {
+			osmMapRenderer = new OSMMapRenderer();
 
 		}
-		return mapRenderer;
+		return osmMapRenderer;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getZoomController()
 	 */
 	@Override
-	public ZoomController getZoomController() {
-		// TODO Auto-generated method stub
-		return null;
+	public OSMZoomController getZoomController() {
+		if (osmZoomController == null) {
+			osmZoomController = new OSMZoomController(this.getMapRenderer()); 
+		}
+		return osmZoomController;
 	}
 
 	/* (non-Javadoc)
@@ -62,5 +62,7 @@ public class BaseMapService implements MapService {
 	public Vector<JComponent> getJComponentsForMapInteraction() {
 		return null;
 	}
+	
 
+	
 }

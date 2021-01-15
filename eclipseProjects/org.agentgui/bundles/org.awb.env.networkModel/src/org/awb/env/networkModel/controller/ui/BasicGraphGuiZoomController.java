@@ -35,7 +35,11 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	private VisualizationViewer<GraphNode, GraphEdge> visViewer;
 	private ScalingControl scalingControl;
 	
-	
+
+	/**
+	 * Instantiates a new BasicGraphGuiZoomController (default constructor).
+	 */
+	public BasicGraphGuiZoomController() { }
 	/**
 	 * Instantiates a new BasicGraphGuiScalingControl.
 	 *
