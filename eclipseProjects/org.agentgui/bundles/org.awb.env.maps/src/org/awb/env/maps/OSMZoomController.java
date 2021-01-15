@@ -21,17 +21,17 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 @SuppressWarnings("unused")
 public class OSMZoomController extends BasicGraphGuiZoomController implements ZoomController {
 
-	ScalingOperator scalingOperator;
+	private ScalingOperator scalingOperator;
 
-	GraphEnvironmentController graphController;
+	private GraphEnvironmentController graphController;
 
-	VisualizationViewer<GraphNode, GraphEdge> visViewer;
+	private VisualizationViewer<GraphNode, GraphEdge> visViewer;
 
-	ScalingControl scalingControl;
+	private ScalingControl scalingControl;
 
-	OSMMapRenderer osmMapRenderer;
+	private OSMMapRenderer osmMapRenderer;
 
-	Point2D defaultScaleAtPoint;
+	private Point2D defaultScaleAtPoint;
 
 	public OSMZoomController(OSMMapRenderer osmMapRenderer) {
 		this.osmMapRenderer = osmMapRenderer;
@@ -116,25 +116,26 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	@Override
 	public void zoomOneToOneMoveFocus() {
 		// TODO Auto-generated method stub
-		this.zoomOneToOneMoveFocus();
+		super.zoomOneToOneMoveFocus();
 	}
 
 	@Override
 	public void zoomToFitToWindow() {
 		// TODO Auto-generated method stub
-		this.zoomToFitToWindow();
+		super.zoomToFitToWindow();
 	}
 
 	@Override
 	public void zoomToFitToWindow(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
 		// TODO Auto-generated method stub
-		this.zoomToFitToWindow(visViewer);
+//		this.zoomToFitToWindow(visViewer);
+		super.zoomToFitToWindow();
 	}
 
 	@Override
 	public void zoomToComponent() {
 		// TODO Auto-generated method stub
-		this.zoomToComponent();
+		super.zoomToComponent();
 	}
 
 	/**
