@@ -72,8 +72,6 @@ public class LogbackConfigurationReader {
 	private static void doManualLoggerConfiguration() {
 
 		// --- Set level of hibernate logging output ------ 
-		@SuppressWarnings("unused")
-		org.jboss.logging.Logger logger = org.jboss.logging.Logger.getLogger("org.hibernate");
 		java.util.logging.Logger.getLogger("org.hibernate").setLevel(java.util.logging.Level.WARNING);
 
 		// --- Set level of C3P0 logging output -----------
