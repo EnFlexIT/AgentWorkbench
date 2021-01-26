@@ -22,11 +22,4 @@ public interface MapRenderer {
 	 */
 	public void paintMap(Graphics2D graphics2D, MapRendererSettings mapRendererSettings);
 	
-	/**
-	 * Gets the scaling operator.
-	 *
-	 * @return the scaling operator
-	 */
-	public ScalingOperator getScalingOperator();
-	
 }

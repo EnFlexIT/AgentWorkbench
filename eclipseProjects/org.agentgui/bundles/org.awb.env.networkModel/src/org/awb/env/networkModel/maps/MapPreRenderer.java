@@ -30,11 +30,9 @@ package org.awb.env.networkModel.maps;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
-import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
@@ -63,23 +61,6 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 	@Override
 	public void paint(Graphics graphics) {
 		
-		Graphics2D g2d = (Graphics2D) graphics;
-
-		// --- Remind old transformer -----------------------------------------
-		AffineTransform oldTransformer = g2d.getTransform();
-		
-		// --- Define new, concatenated transformer ---------------------------
-        AffineTransform lat = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
-        AffineTransform vat = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
-
-        AffineTransform at = new AffineTransform();
-        at.concatenate(g2d.getTransform());
-        at.concatenate(vat);
-        at.concatenate(lat);
-        // --- Set the new transformer to the Graphics object -----------------
-//        g2d.setTransform(at);
-
-        
         // --- Call the current MapService ------------------------------------
         MapService ms = this.visViewer.getMapService();
         if (ms!=null) {
@@ -87,7 +68,8 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         	if (mr!=null) {
         		try {
         			// --- Invoke map tile integration ------------------------  
-        			mr.paintMap(g2d, new MapRendererSettings(this.visViewer, at));
+        			Graphics2D g2d = (Graphics2D) graphics;
+        			mr.paintMap(g2d, new MapRendererSettings(this.visViewer));
 //			        Image mapImage = this.getMapImage();
 //			        if (mapImage!=null) {
 //			        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
@@ -101,11 +83,8 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         		System.err.println("[" + this.getClass().getSimpleName() + "] MapService '" + ms.getMapServiceName() + "' does not implement MapRenderer!");
         	}
         }
-        
-        // --- Reset to old transformer ---------------------------------------
-        g2d.setTransform(oldTransformer);
-
 	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#useTransform()
 	 */

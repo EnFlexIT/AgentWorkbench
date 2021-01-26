@@ -3,8 +3,6 @@ package org.awb.env.maps;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
-import org.awb.env.networkModel.maps.ScalingOperator;
-
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 
 
@@ -93,8 +91,7 @@ public class OSMScalingOperator implements ScalingOperator {
 		return  metersPerPixelByZoomLevel / reqMetersPerPixel;		
 	}
 	
-	protected double calcMetersPerPixel(Rectangle2D landscapeDimension, Dimension visualizationDimension)
-	{
+	protected double calcMetersPerPixel(Rectangle2D landscapeDimension, Dimension visualizationDimension) {
 		double reqMetersPerPixelWidth = landscapeDimension.getWidth() / visualizationDimension.getWidth();
 		double reqMetersPerPixelHeight = landscapeDimension.getHeight() / visualizationDimension.getHeight();
 		return (reqMetersPerPixelHeight >= reqMetersPerPixelWidth) ? reqMetersPerPixelHeight : reqMetersPerPixelWidth;

@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapRendererSettings;
-import org.awb.env.networkModel.maps.ScalingOperator;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.DefaultWaypoint;

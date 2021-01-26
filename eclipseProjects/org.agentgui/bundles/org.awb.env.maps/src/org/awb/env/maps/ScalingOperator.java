@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.maps;
+package org.awb.env.maps;
 
 
 public interface ScalingOperator {

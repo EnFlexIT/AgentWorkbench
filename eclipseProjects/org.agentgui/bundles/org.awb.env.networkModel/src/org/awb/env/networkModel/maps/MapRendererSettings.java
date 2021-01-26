@@ -1,6 +1,8 @@
 package org.awb.env.networkModel.maps;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -14,6 +16,7 @@ import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
+import edu.uci.ics.jung.visualization.Layer;
 
 /**
  * The Class MapRendererSettings provides information for the rendering of maps.
@@ -43,19 +46,20 @@ public class MapRendererSettings implements Serializable {
 	 * @param visViewer the vis viewer
 	 * @param at the AffineTransform to transform to Jung coordinates
 	 */
-	public MapRendererSettings(BasicGraphGuiVisViewer<?,?> visViewer, AffineTransform at) {
-		this.initialize(visViewer, at);
+	public MapRendererSettings(BasicGraphGuiVisViewer<?,?> visViewer) {
+		this.initialize(visViewer);
 	}
 	/**
 	 * Initialize all fields derived from the current visualization viewer and its affine transformer to 
 	 * map coordinates from layout to visualization.
 	 *
 	 * @param visViewer the vis viewer
-	 * @param at the AffineTransform to transform to Jung coordinates
 	 */
-	private void initialize(BasicGraphGuiVisViewer<?,?> visViewer, AffineTransform at) {
+	private void initialize(BasicGraphGuiVisViewer<?,?> visViewer) {
 
 		boolean isPrintTransformation = false;
+
+		AffineTransform at = this.getAffineTransform(visViewer);
 		
 		TransformerForGraphNodePosition<GraphNode, GraphEdge> cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();
@@ -63,7 +67,7 @@ public class MapRendererSettings implements Serializable {
 		UTMCoordinate topLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, 0), isPrintTransformation);
         UTMCoordinate topRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), 0), isPrintTransformation);
         UTMCoordinate bottomLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, vvDim.getHeight()), isPrintTransformation);
-        UTMCoordinate bottomRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), vvDim.getWidth()), isPrintTransformation);
+        UTMCoordinate bottomRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), vvDim.getHeight()), isPrintTransformation);
 
         this.setTopLeftPosition(topLeftCoordinate.getWGS84LatLngCoordinate());
 		this.setTopRightPosition(topRightCoordinate.getWGS84LatLngCoordinate());
@@ -79,6 +83,28 @@ public class MapRendererSettings implements Serializable {
 		this.setVisualizationDimension(vvDim);
 		this.calcLandscapeDimension(topLeftCoordinate, bottomRightCoordinate);
 	}
+	/**
+	 * Return the affine transform from the current visualization viewer.
+	 *
+	 * @param visViewer the vis viewer
+	 * @return the affine transform
+	 */
+	private AffineTransform getAffineTransform(BasicGraphGuiVisViewer<?,?> visViewer) {
+		
+		// --- Define new, concatenated transformer ---------------------------
+        AffineTransform lat = visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
+        AffineTransform vat = visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+
+        Graphics graphics = visViewer.getGraphics();
+        Graphics2D g2d = (Graphics2D) graphics;
+        
+        AffineTransform at = new AffineTransform();
+        at.concatenate(g2d.getTransform());
+        at.concatenate(vat);
+        at.concatenate(lat);
+        return at;
+	}
+	
 	
 	/**
 	 * Returns a WGS 84 coordinate from the specified visual point in the application.

@@ -1,16 +1,21 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Network Model - Maps
-Bundle-SymbolicName: org.awb.env.maps;singleton:=true
+Bundle-SymbolicName: org.awb.env.maps
 Automatic-Module-Name: org.awb.env.networkModel.maps
+Bundle-ActivationPolicy: lazy
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Service-Component: OSGI-INF/BaseClassLoadService.xml,
- OSGI-INF/BaseMapService.xml
+Service-Component: OSGI-INF/BaseMapService.xml
+Bundle-ClassPath: .,
+ lib/jxMapViewer/jxmapviewer2-2.6.jar
+Require-Bundle: de.enflexit.common,
+ de.enflexit.geography,
+ org.awb.env.networkModel,
+ org.agentgui.lib.jung,
+ org.apache.commons.logging
 Export-Package: org.awb.env.maps,
- org.awb.env.maps.classLoadService,
- org.awb.env.maps.tests,
  org.jxmapviewer,
  org.jxmapviewer.beans,
  org.jxmapviewer.cache,
@@ -24,11 +29,4 @@ Export-Package: org.awb.env.maps,
  org.jxmapviewer.viewer.esri,
  org.jxmapviewer.viewer.util,
  org.jxmapviewer.viewer.wms
-Bundle-ClassPath: .,
- lib/jxMapViewer/jxmapviewer2-2.6.jar
-Bundle-ActivationPolicy: lazy
-Require-Bundle: org.agentgui.lib.jade,
- de.enflexit.common,
- de.enflexit.geography,
- org.awb.env.networkModel,
- org.agentgui.lib.jung
+
