@@ -15,7 +15,7 @@ import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 public class OSMScalingOperator implements ScalingOperator {
 
 	/** The req pixel per meters. */
-	private double reqPixelPerMeters;
+	private double reqMetersPerPixel;
 	
 	/** The center. */
 	private WGS84LatLngCoordinate center;
@@ -26,6 +26,7 @@ public class OSMScalingOperator implements ScalingOperator {
 	/** The zoom level. */
 	private int zoomLevel = 0;
 	
+	private double refinementScalingFactor = 1.0;
 	
 	
 	
@@ -52,8 +53,9 @@ public class OSMScalingOperator implements ScalingOperator {
 	 */
 	public OSMScalingOperator(Rectangle2D landscapeDimension, Dimension visualizationDimension, WGS84LatLngCoordinate centerCoord, int zoomLevel) {
 		this.center = centerCoord;
-		this.zoomLevel = zoomLevel;
-		this.scalingFactor = calcPixelsPerMeterByZoomLevel(zoomLevel, centerCoord.getLatitude());
+		this.zoomLevel = MIN_ZOOM - zoomLevel;
+		this.scalingFactor = calcMetersPerPixelByZoomLevel(zoomLevel, centerCoord.getLatitude());
+		this.refinementScalingFactor = calcRefinementScalingFactor(landscapeDimension, visualizationDimension, centerCoord);
 	}
 	
 	/**
@@ -65,8 +67,9 @@ public class OSMScalingOperator implements ScalingOperator {
 	 */
 	public  OSMScalingOperator(Rectangle2D landscapeDimension, Dimension visualizationDimension, WGS84LatLngCoordinate centerCoord) {
 		this.center = centerCoord;
-		this.zoomLevel = this.calcReqZoomLevelToFitVisualization(landscapeDimension, visualizationDimension, centerCoord);
-		this.scalingFactor = calcPixelsPerMeterByZoomLevel(this.zoomLevel, center.getLatitude());
+		this.zoomLevel = MIN_ZOOM - this.calcReqZoomLevelToFitVisualization(landscapeDimension, visualizationDimension, centerCoord);
+		this.scalingFactor = calcMetersPerPixelByZoomLevel(this.zoomLevel, center.getLatitude());
+		this.refinementScalingFactor = calcRefinementScalingFactor(landscapeDimension, visualizationDimension, centerCoord);
 	}
 
 	/**
@@ -78,29 +81,36 @@ public class OSMScalingOperator implements ScalingOperator {
 	 * @return the zoom level
 	 */
 	protected int calcReqZoomLevelToFitVisualization(Rectangle2D landscapeDimension, Dimension visualizationDimension, WGS84LatLngCoordinate centerCoord) {
-		double reqPixelPerMeterWidth = landscapeDimension.getWidth() / visualizationDimension.getWidth();
-		double reqPixelPerMeterHeight = landscapeDimension.getHeight() / visualizationDimension.getHeight();
-		if(reqPixelPerMeterHeight >= reqPixelPerMeterWidth) {
-			this.reqPixelPerMeters = reqPixelPerMeterHeight;
-		}else {
-			this.reqPixelPerMeters = reqPixelPerMeterWidth;
-		}
-		return (int) Math.floor((Math.log10(Math.toDegrees(EQUATOR_LENGTH_IN_METERS * Math.cos(Math.toRadians(center.getLatitude())))) / Math.log(2))/ this.reqPixelPerMeters);
+		reqMetersPerPixel = calcMetersPerPixel(landscapeDimension, visualizationDimension);
+		double metersPerPixelAtLatitude = EQUATOR_LENGTH_IN_METERS * Math.cos(Math.toRadians(centerCoord.getLatitude())) /TILE_SIZE / reqMetersPerPixel;
+		return (int) Math.floor((Math.log(metersPerPixelAtLatitude ) / Math.log(2)));
+	}
+	
+	protected double calcRefinementScalingFactor(Rectangle2D landscapeDimension, Dimension visualizationDimension, WGS84LatLngCoordinate centerCoord) {
+		reqMetersPerPixel = calcMetersPerPixel(landscapeDimension, visualizationDimension);
+		int reqZoomLevel = calcReqZoomLevelToFitVisualization(landscapeDimension, visualizationDimension, centerCoord);
+		double metersPerPixelByZoomLevel = calcMetersPerPixelByZoomLevel(reqZoomLevel, center.getLatitude());
+		return  metersPerPixelByZoomLevel / reqMetersPerPixel;		
+	}
+	
+	protected double calcMetersPerPixel(Rectangle2D landscapeDimension, Dimension visualizationDimension)
+	{
+		double reqMetersPerPixelWidth = landscapeDimension.getWidth() / visualizationDimension.getWidth();
+		double reqMetersPerPixelHeight = landscapeDimension.getHeight() / visualizationDimension.getHeight();
+		return (reqMetersPerPixelHeight >= reqMetersPerPixelWidth) ? reqMetersPerPixelHeight : reqMetersPerPixelWidth;
 	}
 	
 	/**
-	 * Calculate scaling factor.
-	 *
+	 * Calculate required pixels per meter by a given zoom level and latitude
+	 * 
 	 * @param zoomLevel the zoom level
 	 * @param latitude the latitude
 	 * @return the scaling factor
 	 */
-	protected double calcPixelsPerMeterByZoomLevel(int zoomLevel, double latitude) {
-		double scalingFactor = (EQUATOR_LENGTH_IN_METERS * Math.cos(Math.toRadians(latitude))/ Math.pow(2, zoomLevel))/TILE_SIZE ;
-		System.out.println("PixelsPerMeter raw:"+scalingFactor);
-		System.out.println("PixelsPerMeter degree:"+Math.toDegrees(scalingFactor));
-		
-		return (EQUATOR_LENGTH_IN_METERS * Math.cos(Math.toRadians(latitude))/ Math.pow(2, zoomLevel)) / TILE_SIZE;
+	protected double calcMetersPerPixelByZoomLevel(int zoomLevel, double latitude) {
+		double metersPerPixel = (EQUATOR_LENGTH_IN_METERS * Math.cos(Math.toRadians(latitude))/ Math.pow(2, zoomLevel))/TILE_SIZE ;
+		System.out.println("PixelsPerMeter raw:"+metersPerPixel);
+		return metersPerPixel;
 	}
 	
 	
@@ -113,7 +123,7 @@ public class OSMScalingOperator implements ScalingOperator {
 			return 1.0;
 		}
 		System.out.println("Old scaling factor: "+ scalingFactor);
-		double scalingFactor =  calcPixelsPerMeterByZoomLevel(this.zoomLevel+1, this.center.getLatitude()) / calcPixelsPerMeterByZoomLevel(this.zoomLevel, this.center.getLatitude()) ;
+		double scalingFactor =  calcMetersPerPixelByZoomLevel(this.zoomLevel+1, this.center.getLatitude()) / calcMetersPerPixelByZoomLevel(this.zoomLevel, this.center.getLatitude()) ;
 		System.out.println("Zoom in scaling factor:"+ scalingFactor);
 		return scalingFactor;
 
@@ -128,7 +138,7 @@ public class OSMScalingOperator implements ScalingOperator {
 			return 1.0;
 		}
 		System.out.println("Old scaling factor: "+ scalingFactor);
-		double scalingFactor =  calcPixelsPerMeterByZoomLevel(this.zoomLevel-1, this.center.getLatitude()) / calcPixelsPerMeterByZoomLevel(this.zoomLevel, this.center.getLatitude()) ;
+		double scalingFactor =  calcMetersPerPixelByZoomLevel(this.zoomLevel-1, this.center.getLatitude()) / calcMetersPerPixelByZoomLevel(this.zoomLevel, this.center.getLatitude()) ;
 		System.out.println("Zoom out scaling factor:"+ scalingFactor);
 		return scalingFactor;
 //		return Math.toDegrees(EQUATOR_LENGTH_IN_METERS * Math.cos(center.getLatitude())/ Math.pow(2, zoomLevel-1+8)) / this.scalingFactor;
@@ -148,7 +158,7 @@ public class OSMScalingOperator implements ScalingOperator {
 	 * @return required pixels per meters
 	 */
 	public double getReqPixelsPerMeter() {
-		return reqPixelPerMeters;
+		return reqMetersPerPixel;
 	}
 
 	/* (non-Javadoc)
@@ -169,8 +179,10 @@ public class OSMScalingOperator implements ScalingOperator {
 			this.zoomLevel--;
 			System.out.println("Zooming level:"+ zoomLevel);
 			return true;
+		}else {
+			this.scalingFactor = 1.0;
+			return false;
 		}
-		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -183,8 +195,15 @@ public class OSMScalingOperator implements ScalingOperator {
 			this.zoomLevel++;
 			System.out.println("Zooming level:"+ zoomLevel);
 			return true;
+		}else {
+			this.scalingFactor = 1.0;
+			return false;
 		}
-		return false;
+		
+	}
+
+	public double getRefinementScalingFactor() {
+		return refinementScalingFactor;
 	}
 
 

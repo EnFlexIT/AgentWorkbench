@@ -5,6 +5,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import org.awb.env.networkModel.maps.MapRendererSettings;
 import org.awb.env.networkModel.maps.MapService;
 
 /**
@@ -22,7 +23,7 @@ public class BaseMapService implements MapService {
 	 */
 	@Override
 	public String getMapServiceName() {
-		return "AWB-Base Map Service";
+		return "AWB-OpenStreetMaps Map Service";
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getImageIconOfMapService()
@@ -39,7 +40,6 @@ public class BaseMapService implements MapService {
 	public OSMMapRenderer getMapRenderer() {
 		if (osmMapRenderer==null) {
 			osmMapRenderer = new OSMMapRenderer();
-
 		}
 		return osmMapRenderer;
 	}
@@ -63,6 +63,15 @@ public class BaseMapService implements MapService {
 		return null;
 	}
 	
+	
+	/* (non-Javadoc)
+	* @see org.awb.env.networkModel.maps.MapService#setMapRendererSettings(org.awb.env.networkModel.maps.MapRendererSettings)
+	*/
+	public void setMapRendererSettings(MapRendererSettings mapRendererSettings) {
+		this.getMapRenderer().setMapRendererSettings(mapRendererSettings);
+	}
+	
 
+	
 	
 }

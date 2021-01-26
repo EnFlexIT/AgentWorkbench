@@ -14,30 +14,48 @@ import org.awb.env.networkModel.controller.ui.ZoomController;
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.ScalingOperator;
 
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.AbsoluteCrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 
 @SuppressWarnings("unused")
 public class OSMZoomController extends BasicGraphGuiZoomController implements ZoomController {
 
-	private ScalingOperator scalingOperator;
+	ScalingOperator scalingOperator;
 
-	private GraphEnvironmentController graphController;
+	GraphEnvironmentController graphController;
 
-	private VisualizationViewer<GraphNode, GraphEdge> visViewer;
+	VisualizationViewer<GraphNode, GraphEdge> visViewer;
 
-	private ScalingControl scalingControl;
+	ScalingControl scalingControl;
 
-	private OSMMapRenderer osmMapRenderer;
+	OSMMapRenderer osmMapRenderer;
 
-	private Point2D defaultScaleAtPoint;
+	Point2D defaultScaleAtPoint;
+	
+	boolean initialized = false;
+
 
 	public OSMZoomController(OSMMapRenderer osmMapRenderer) {
 		this.osmMapRenderer = osmMapRenderer;
-		this.scalingOperator = osmMapRenderer.getScalingOperator();
-		
 	}
+	
+	public void initialize() {
+		if(initialized == false) {
+        	OSMScalingOperator scalingOperator = osmMapRenderer.getScalingOperator();
+        	float refinementScalingFactor = (float) scalingOperator.getRefinementScalingFactor();
+        	System.out.println("initialize scaling and refine with:" + refinementScalingFactor);
+        	VisualizationViewer<GraphNode, GraphEdge> visViewer = getVisualizationViewer();
+        	ScalingControl scalingControl = getScalingControl();
+        	scalingControl.scale(visViewer,
+        			refinementScalingFactor ,
+        			getDefaultScaleAtPoint());
+        	this.initialized = true;
+		}
+	}
+
 
 	@Override
 	public void setGraphEnvironmentController(GraphEnvironmentController graphController) {
@@ -66,6 +84,9 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 
 	@Override
 	public void zoomIn(Point2D zoomAtPoint) {
+		if(!isInitialized()) {
+			initialize();
+		}
 		if(this.osmMapRenderer.getScalingOperator().increaseZoomLevel()) {
 			System.out.println("Zooming in");
 			this.osmMapRenderer.repaint();
@@ -92,7 +113,9 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 
 	@Override
 	public void zoomOut(Point2D zoomAtPoint) {
-//		this.osmMapRenderer.zoomOut();
+		if(!isInitialized()) {
+			initialize();
+		}
 		if(this.osmMapRenderer.getScalingOperator().decreaseZoomLevel()) {
 			System.out.println("Zooming out");
 			this.osmMapRenderer.repaint();
@@ -128,8 +151,11 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	@Override
 	public void zoomToFitToWindow(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
 		// TODO Auto-generated method stub
-//		this.zoomToFitToWindow(visViewer);
-		super.zoomToFitToWindow();
+		//super.zoomToFitToWindow(visViewer);
+		
+		
+		
+		
 	}
 
 	@Override
@@ -165,4 +191,30 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 		return visViewer;
 	}
 
+	
+	/**
+	 * @return the initialized
+	 */
+	public boolean isInitialized() {
+		return initialized;
+	}
+	
+//	/* (non-Javadoc)
+//	* @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#getScalingFactorToZoomIn()
+//	*/
+//	@Override
+//	public float getScalingFactorToZoomIn() {
+//		// TODO Auto-generated method stub
+//		return (float) this.osmMapRenderer.getScalingOperator().getScalingFactorToZoomIn();
+//	}
+//	
+//	/* (non-Javadoc)
+//	* @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#getScalingFactorToZoomOut()
+//	*/
+//	@Override
+//	public float getScalingFactorToZoomOut() {
+//		// TODO Auto-generated method stub
+//		return (float) this.osmMapRenderer.getScalingOperator().getScalingFactorToZoomOut();
+//	}
+	
 }
