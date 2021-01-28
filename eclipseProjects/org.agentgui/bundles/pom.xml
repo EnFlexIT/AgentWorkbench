@@ -28,7 +28,6 @@
 		<module>org.agentgui.lib.googleTranslate</module>
 		<module>org.agentgui.lib.jFreeChart</module>
 		<module>org.agentgui.lib.jade</module>
-		<module>org.agentgui.lib.jep</module>
 		<module>org.agentgui.lib.jung</module>
 		<module>org.agentgui.lib.scimark</module>
 		<module>org.awb.env.networkModel</module>

@@ -70,7 +70,6 @@
 
    <requires>
       <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
       <import plugin="de.enflexit.oshi" version="3.4.4" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
@@ -112,12 +111,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.agentgui.lib.bouncyCastle"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.agentgui.lib.googleTranslate"
          download-size="0"
          install-size="0"
@@ -131,12 +124,6 @@
 
    <plugin
          id="org.agentgui.lib.jade"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.agentgui.lib.jep"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
