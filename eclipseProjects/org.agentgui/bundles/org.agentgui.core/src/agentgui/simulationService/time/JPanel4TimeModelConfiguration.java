@@ -71,7 +71,6 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel implements Ob
 			this.setTimeModel(tmController.getTimeModel());
 		}
 	}
-	
 
 	/**
 	 * Adds the observer to the current project.
@@ -91,6 +90,18 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel implements Ob
 	}
 	
 	/**
+	 * Returns the currents project TimeModelController that holds the current {@link TimeModel}.
+	 * @return the time model controller
+	 */
+	protected TimeModelController getTimeModelController() {
+		if (timeModelController==null && this.currProject!=null) {
+			timeModelController = this.currProject.getTimeModelController();
+		}
+		return timeModelController;
+	}
+	
+	
+	/**
 	 * Sets the TimeModel.
 	 * @param timeModel the new TimeModel
 	 */
@@ -102,17 +113,14 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel implements Ob
 	 */
 	public abstract TimeModel getTimeModel();
 	
-	
-	
 	/**
-	 * Returns the currents project TimeModelController that holds the current {@link TimeModel}.
-	 * @return the time model controller
+	 * Internally sets the time model.
+	 * @param timeModel the new time model internal
 	 */
-	protected TimeModelController getTimeModelController() {
-		if (timeModelController==null && this.currProject!=null) {
-			timeModelController = this.currProject.getTimeModelController();
-		}
-		return timeModelController;
+	private void setTimeModelInternal(TimeModel timeModel) {
+		this.isDisabledObserver = true;
+		this.setTimeModel(timeModel);
+		this.isDisabledObserver = false;
 	}
 	/**
 	 * Save the current TimeModel to the simulation setup.
@@ -120,7 +128,6 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel implements Ob
 	protected void saveTimeModelToSimulationSetup() {
 		this.isDisabledObserver = true;
 		this.getTimeModelController().setTimeModel(this.getTimeModel());
-		this.getTimeModelController().saveTimeModelToSimulationSetup();
 		this.isDisabledObserver = false;
 	}
 	
@@ -144,7 +151,7 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel implements Ob
 				break;
 				
 			default:
-				this.setTimeModel(this.getTimeModelController().getTimeModel());
+				this.setTimeModelInternal(this.getTimeModelController().getTimeModel());
 				break;
 			}
 			
@@ -153,7 +160,7 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel implements Ob
 			SetupChangeEvent setupChangeEvent = (SetupChangeEvent) updateObject;
 			switch (setupChangeEvent) {
 			case TimeModelSettings:
-				this.setTimeModel(this.getTimeModelController().getTimeModel()); 
+				this.setTimeModelInternal(this.getTimeModelController().getTimeModel());
 				break;
 
 			default:

@@ -85,6 +85,7 @@ public class TimeModelController implements Observer {
 	 */
 	public void setTimeModel(TimeModel newTimeModel) {
 		this.timeModel = newTimeModel;
+		this.saveTimeModelToSimulationSetup();
 	}
 	/**
 	 * Returns the current time model.
