@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JFreeChart
 Bundle-SymbolicName: org.agentgui.lib.jFreeChart
-Bundle-Version: 1.5.0
-Bundle-ClassPath: jfreechart-1.5.0.jar
-Bundle-Vendor: EnFlex.IT
+Bundle-Version: 1.5.2
+Bundle-ClassPath: lib/jfreechart-1.5.2.jar
+Bundle-Vendor: Object Refinery Limited (OSGI by EnFlex.IT)
 Export-Package: org.jfree.chart,
  org.jfree.chart.annotations,
  org.jfree.chart.axis,
