@@ -306,14 +306,6 @@ public class BundleProperties {
 		this.globalInfo.setServerMasterDBPswd(stringPrefValue.trim());
 		
 		
-		// --- this.DEF_GOOGLE_API_KEY ---------------
-		stringPrefValue = eclipsePreferences.get(DEF_GOOGLE_API_KEY, "");
-		this.globalInfo.setGoogleKey4API(stringPrefValue.trim());
-		// --- this.DEF_GOOGLE_HTTP_REF --------------
-		stringPrefValue = eclipsePreferences.get(DEF_GOOGLE_HTTP_REF, "");
-		this.globalInfo.setGoogleHttpRef(stringPrefValue.trim());
-		
-		
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		integerPrefValue = eclipsePreferences.getInt(DEF_UPDATE_AUTOCONFIG, 0);
 		this.globalInfo.setUpdateAutoConfiguration(integerPrefValue);
@@ -446,12 +438,6 @@ public class BundleProperties {
 		if (this.globalInfo.getServerMasterDBUser()!=null) eclipsePreferences.put(DEF_MASTER_DB_USER, this.globalInfo.getServerMasterDBUser());	
 		// --- this.DEF_MASTER_DB_PSWD ---------------
 		if (this.globalInfo.getServerMasterDBPswd()!=null) eclipsePreferences.put(DEF_MASTER_DB_PSWD, this.globalInfo.getServerMasterDBPswd());
-		
-		
-		// --- this.DEF_GOOGLE_API_KEY ---------------
-		if (this.globalInfo.getGoogleKey4API()!=null) eclipsePreferences.put(DEF_GOOGLE_API_KEY, this.globalInfo.getGoogleKey4API());	
-		// --- this.DEF_GOOGLE_HTTP_REF --------------
-		if (this.globalInfo.getGoogleHttpRef()!=null) eclipsePreferences.put(DEF_GOOGLE_HTTP_REF, this.globalInfo.getGoogleHttpRef());	
 		
 		
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------

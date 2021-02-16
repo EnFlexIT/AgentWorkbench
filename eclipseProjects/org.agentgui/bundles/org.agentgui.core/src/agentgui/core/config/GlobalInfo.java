@@ -166,9 +166,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private String filePropServerMasterDBUser;
 	private String filePropServerMasterDBPswd;
 	
-	private String googleKey4API;
-	private String googleHTTPref;
-	
 	private Integer updateAutoConfiguration = 0;
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
@@ -1750,39 +1747,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		this.removeEnvironmentType(envType);
 	}
 	
-	// -------------------------------------------------------------------------
-	// ---- Methods for the API Key for the Google Translation -----------------
-	// -------------------------------------------------------------------------
-	/**
-	 * Returns the API key for Google.
-	 * @return the API key for Google
-	 */
-	public String getGoogleKey4API() {
-		return this.googleKey4API;
-	}
-	/**
-	 * Sets the API key for Google.
-	 * @param key4API the new API key for Google.
-	 */
-	public void setGoogleKey4API(String key4API) {
-		this.googleKey4API = key4API;
-	}
-	/**
-	 * Returns the HTTP-Reference for Google translate.
-	 * @return the HTTP-Reference for Google translate
-	 */
-	public String getGoogleHttpRef() {
-		return this.googleHTTPref;
-	}
-	/**
-	 * Sets the HTTP-Reference for Google translate.
-	 * @param httpRef the new HTTP-Reference for Google translate.
-	 */
-	public void setGoogleHttpRef(String httpRef) {
-		this.googleHTTPref = httpRef;
-	}
 
-
+	
 	/**
 	 * Sets the OIDC issuer URI.
 	 * @param OIDCIssuerURI the new OIDC issuer URI
