@@ -32,7 +32,7 @@ public class OSMMapRenderer implements MapRenderer {
 	private MapRendererSettings mapRendererSettings;
 	
 	private boolean initialized = false;
-
+	
 
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapRenderer#paintMap(java.awt.Graphics2D, org.awb.env.networkModel.maps.MapRendererSettings)
@@ -42,13 +42,14 @@ public class OSMMapRenderer implements MapRenderer {
 
 		this.graphics = graphics;
 		setMapRendererSettings(mapRendererSettings);
-		ScalingOperator scalingOperator= getScalingOperator();
+		ScalingOperator scalingOperator= getScalingOperator(mapRendererSettings);
 		System.out.println("Calling map rendering " + mapRendererSettings.getCenterPostion() );
 		System.out.println("Landscape width:"+ (mapRendererSettings.getLandscapeDimension().getWidth()));
 		System.out.println("Landscape height:"+ (mapRendererSettings.getLandscapeDimension().getHeight()));
-		System.out.println("Visualization width"+ mapRendererSettings.getVisualizationDimension().getWidth());
-		System.out.println("Visualization height"+ mapRendererSettings.getVisualizationDimension().getHeight());
-
+		System.out.println("Visualization width:"+ mapRendererSettings.getVisualizationDimension().getWidth());
+		System.out.println("Visualization height:"+ mapRendererSettings.getVisualizationDimension().getHeight());
+		System.out.println("Zoom level:"+scalingOperator.getZoomLevel());
+		
 		Dimension visDim = mapRendererSettings.getVisualizationDimension();
 		graphics.setClip(0, 0, visDim.width, visDim.height);
 
@@ -87,11 +88,23 @@ public class OSMMapRenderer implements MapRenderer {
 	}
 
 	public void repaint() {
+//		System.out.println("Calling map rendering " + mapRendererSettings.getCenterPostion() );
+//		System.out.println("Landscape width:"+ (mapRendererSettings.getLandscapeDimension().getWidth()));
+//		System.out.println("Landscape height:"+ (mapRendererSettings.getLandscapeDimension().getHeight()));
+//		System.out.println("Visualization width"+ mapRendererSettings.getVisualizationDimension().getWidth());
+//		System.out.println("Visualization height"+ mapRendererSettings.getVisualizationDimension().getHeight());
+		GeoPosition centerPos = this.convertToGeoPosition(mapRendererSettings.getCenterPostion());
 		this.mapCanvas.setZoom(scalingOperator.getZoomLevel());
-		this.mapCanvas.setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
-		this.mapCanvas.paint(this.graphics);
-//		this.paintMap(graphics, mapRendererSettings);
-//		this.mapRendererSettings.getVisViewer().repaint();
+		this.mapCanvas.setAddressLocation(centerPos);
+//		this.mapCanvas.paint(this.graphics);
+		this.paintMap(graphics, mapRendererSettings);
+		this.mapRendererSettings.getVisViewer().repaint();
+	}
+	
+	public void repaint(int zoomLevel, MapRendererSettings mapRendererSettings) {
+		this.mapCanvas.setZoom(zoomLevel);
+		this.paintMap(graphics, mapRendererSettings);
+		mapRendererSettings.getVisViewer().repaint();
 	}
 
 	private TileListener tileLoadListener = new TileListener() {
@@ -114,17 +127,35 @@ public class OSMMapRenderer implements MapRenderer {
 		return new GeoPosition(wgs84coord.getLatitude(), wgs84coord.getLongitude());
 	}
 	
-	/* (non-Javadoc)
-	* @see org.awb.env.networkModel.maps.MapRenderer#getScalingOperator()
-	*/
-	public OSMScalingOperator getScalingOperator() {
+	
+//	/**
+//	 * Gets the scaling operator.
+//	 *
+//	 * @return the scaling operator
+//	 */
+//	public OSMScalingOperator getScalingOperator() {
+//		if(scalingOperator == null) {
+//			MapRendererSettings mapRendererSettings = getMapRendererSettings();
+//			if(mapRendererSettings == null) {
+//				
+//			}else {
+//				this.scalingOperator = new OSMScalingOperator(mapRendererSettings.getLandscapeDimension(), mapRendererSettings.getVisualizationDimension(), mapRendererSettings.getCenterPostion());
+//			}
+//		}
+//		return scalingOperator;
+//	}
+	
+	/**
+	 * Gets the scaling operator.
+	 *
+	 * @param mapRenderSettings the map render settings
+	 * @return the scaling operator
+	 */
+	public OSMScalingOperator getScalingOperator(MapRendererSettings mapRenderSettings) {
 		if(scalingOperator == null) {
-			MapRendererSettings mapRendererSettings = getMapRendererSettings();
-			if(mapRendererSettings == null) {
-				
-			}else {
-				this.scalingOperator = new OSMScalingOperator(mapRendererSettings.getLandscapeDimension(), mapRendererSettings.getVisualizationDimension(), mapRendererSettings.getCenterPostion());
-			}
+			this.scalingOperator = new OSMScalingOperator(mapRenderSettings.getLandscapeDimension(), mapRenderSettings.getVisualizationDimension(), mapRenderSettings.getCenterPostion());
+//			this.scalingOperator = new OSMAbsoluteScalingOperator(mapRenderSettings.getLandscapeDimension(), mapRenderSettings.getVisualizationDimension(), mapRenderSettings.getCenterPostion());
+
 		}
 		return scalingOperator;
 	}
@@ -153,6 +184,10 @@ public class OSMMapRenderer implements MapRenderer {
 	 */
 	public void setMapRendererSettings(MapRendererSettings mapRendererSettings) {
 		this.mapRendererSettings = mapRendererSettings;
+	}
+	
+	public void setZoomLevel(int zoomLevel) {
+		this.scalingOperator.setZoomLevel(zoomLevel);
 	}
 
 }

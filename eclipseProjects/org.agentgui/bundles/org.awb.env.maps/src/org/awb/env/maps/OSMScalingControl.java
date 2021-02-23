@@ -1,12 +1,15 @@
 package org.awb.env.maps;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationServer;
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
+// TODO: Auto-generated Javadoc
 /**
  * scales to the absolute value passed as an argument.
  * It first resets the scaling transformers, then uses
@@ -15,8 +18,43 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  * 
  * @author Tom Nelson 
  */
-public class OSMScalingControl implements ScalingControl {
+public class OSMScalingControl extends CrossoverScalingControl implements ScalingControl {
 
+	
+	/** The scaling factors. */
+	private float scalingFactors[];
+	
+	/** The zoom level. */
+	private int zoomLevel;
+	
+	/** The refinement scaling factor. */
+	private float refinementScalingFactor;
+	
+	/**   The length of the equator in meters  . */
+	static final float EQUATOR_LENGTH_IN_METERS = 40075016.686f; 
+	
+	/** The size of map tiles in pixels. */
+	static final int TILE_SIZE = 256;
+	
+	/** The Constant MAX_ZOOM. */
+	static final int MAX_ZOOM = 0; 
+
+	/** The Constant MIN_ZOOM. */
+	static final int MIN_ZOOM = 19; 
+	
+	/**
+	 * Instantiates a new OSM scaling control.
+	 *
+	 * @param refinementScalingFactor the refinement scaling factor
+	 * @param zoomLevel the zoom level
+	 */
+//	public OSMScalingControl(float refinementScalingFactor, int zoomLevel) {
+//		this.refinementScalingFactor = refinementScalingFactor;
+//		this.zoomLevel = zoomLevel;
+//		calcScalingFactorsByZoomLevel();
+//	}
+	
+//	public OSMScalingControl()
 	 /**
      * Point where scale crosses over from view to layout.
      */
@@ -24,12 +62,17 @@ public class OSMScalingControl implements ScalingControl {
     
     /**
      * Sets the crossover point to the specified value.
+     *
+     * @param crossover the new crossover
      */
 	public void setCrossover(double crossover) {
 	    this.crossover = crossover;
 	}
+    
     /**
      * Returns the current crossover value.
+     *
+     * @return the crossover
      */
     public double getCrossover() {
         return crossover;
@@ -40,8 +83,8 @@ public class OSMScalingControl implements ScalingControl {
 	 */
 	@Override
     public void scale(VisualizationServer<?,?> vv, float amount, Point2D at) {
-       
-    	MutableTransformer layoutTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+  
+		MutableTransformer layoutTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
         MutableTransformer viewTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
         double modelScale = layoutTransformer.getScale();
         double viewScale = viewTransformer.getScale();
@@ -54,7 +97,8 @@ public class OSMScalingControl implements ScalingControl {
         layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
         viewTransformer.scale(inverseViewScale, inverseViewScale, at);
 
-        this.superClassScale(vv, amount, transformedAt);
+        System.out.println("Scale to "+ amount);
+        superClassScale(vv, amount, transformedAt);
     }
     
     /**
@@ -91,5 +135,5 @@ public class OSMScalingControl implements ScalingControl {
  	    }
  	    vv.repaint();
     }
-
+    
 }

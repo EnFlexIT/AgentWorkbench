@@ -14,6 +14,8 @@ import org.awb.env.networkModel.controller.ui.ZoomController;
 import org.awb.env.networkModel.maps.MapRendererSettings;
 
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.AbsoluteCrossoverScalingControl;
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 
 
@@ -23,18 +25,28 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	private VisualizationViewer<GraphNode, GraphEdge> visViewer;
 
 	private ScalingControl scalingControl;
-	private ScalingOperator scalingOperator;
+	private OSMScalingOperator scalingOperator;
 
 	private OSMMapRenderer osmMapRenderer;
 
 	private Point2D defaultScaleAtPoint;
 	
-
+	private boolean initialized = false;
 
 	public OSMZoomController(OSMMapRenderer osmMapRenderer) {
 		this.osmMapRenderer = osmMapRenderer;
 	}
 	
+	public void init() {
+		if(initialized == false) {
+        	MapRendererSettings mapRendererSettings = getMapRendererSettings();
+        	this.osmMapRenderer.setMapRendererSettings(mapRendererSettings);
+        	OSMScalingOperator scalingOperator = this.osmMapRenderer.getScalingOperator(mapRendererSettings);
+        	scalingOperator.calcRefinementScalingFactor(mapRendererSettings.getLandscapeDimension(), mapRendererSettings.getVisualizationDimension(), mapRendererSettings.getCenterPostion());
+        	getScalingControl().scale(getVisualizationViewer(),(float) scalingOperator.getRefinementScalingFactor(), getDefaultScaleAtPoint());
+        	initialized = true;
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#setGraphEnvironmentController(org.awb.env.networkModel.controller.GraphEnvironmentController)
@@ -58,7 +70,6 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	public void setVisualizationViewer(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
 		if (this.visViewer==null) {
 			this.visViewer = visViewer;
-			this.initialize();
 		}
 	}
 	/**
@@ -68,18 +79,6 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	public VisualizationViewer<GraphNode, GraphEdge> getVisualizationViewer() {
 		return visViewer;
 	}
-	/**
-	 * Initialize.
-	 */
-	public void initialize() {
-		
-    	OSMScalingOperator scalingOperator = osmMapRenderer.getScalingOperator();
-    	float refinementScalingFactor = (float) scalingOperator.getRefinementScalingFactor();
-    	
-    	System.out.println("initialize scaling and refine with:" + refinementScalingFactor);
-    	this.getScalingControl().scale(this.getVisualizationViewer(), refinementScalingFactor, getDefaultScaleAtPoint());
-        	
-	}
 	
 	private MapRendererSettings getMapRendererSettings() {
 		if (this.getVisualizationViewer()!=null) {
@@ -88,15 +87,25 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 		return null;
 	}
 	
+	private OSMScalingOperator getScalingOperator() {
+		if(scalingOperator == null) {
+			scalingOperator = osmMapRenderer.getScalingOperator(getMapRendererSettings());
+		}
+		return scalingOperator;
+
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#getScalingControl()
 	 */
 	@Override
 	public ScalingControl getScalingControl() {
-		if (scalingControl == null) {
-			OSMScalingControl crossoverScalingControl = new OSMScalingControl();
+		if (this.scalingControl == null) {
+//			OSMScalingControl crossoverScalingControl = new OSMScalingControl();
+			CrossoverScalingControl crossoverScalingControl = new CrossoverScalingControl();
+//			CrossoverScalingControl crossoverScalingControl = new AbsoluteCrossoverScalingControl();
 			crossoverScalingControl.setCrossover(1.0);
-			scalingControl = crossoverScalingControl;
+			this.scalingControl = crossoverScalingControl;
 		}
 		return scalingControl;
 	}
@@ -113,24 +122,33 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 */
 	@Override
 	public void zoomIn(Point2D zoomAtPoint) {
-		
-		if(this.osmMapRenderer.getScalingOperator().increaseZoomLevel()) {
-			System.out.println("Zooming in");
+		OSMScalingOperator scalingOperator = getScalingOperator();
+		if( scalingOperator.zoomIn()) {
+			int newZoomLevel = scalingOperator.getZoomLevel();
+			System.out.println("Zoom level:"+newZoomLevel);
+			System.out.println("Scaling factor:"+(float) scalingOperator.getScalingFactor());
+			this.getScalingControl().scale(this.getVisualizationViewer(), (float) scalingOperator.getScalingFactor() , zoomAtPoint);
+			scalingOperator.setZoomLevel(newZoomLevel);
 			this.osmMapRenderer.repaint();
 		}
-		double scalingFactor = this.osmMapRenderer.getScalingOperator().getActualScalingFactor();
-		// --- Set selected frame to the parent internal frame ------
-		BasicGraphGuiRootJSplitPane parentInternalFrame = this.getGraphEnvironmentController().getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
-		if (parentInternalFrame.isSelected() == false) {
-			try {
-				parentInternalFrame.setSelected(true);
-			} catch (PropertyVetoException pvEx) {
-				pvEx.printStackTrace();
-			}
-		}
-
-		// --- Scale the graph to the scale amount ------------------
-		this.getScalingControl().scale(this.getVisualizationViewer(), (float) scalingFactor, getDefaultScaleAtPoint());
+		
+//		if(this.osmMapRenderer.getScalingOperator(getMapRendererSettings()).increaseZoomLevel()) {
+//			System.out.println("Zooming in");
+//			this.osmMapRenderer.repaint();
+//		}
+//		double scalingFactor = this.osmMapRenderer.getScalingOperator(getMapRendererSettings()).getActualScalingFactor();
+//		// --- Set selected frame to the parent internal frame ------
+//		BasicGraphGuiRootJSplitPane parentInternalFrame = this.getGraphEnvironmentController().getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
+//		if (parentInternalFrame.isSelected() == false) {
+//			try {
+//				parentInternalFrame.setSelected(true);
+//			} catch (PropertyVetoException pvEx) {
+//				pvEx.printStackTrace();
+//			}
+//		}
+//
+//		// --- Scale the graph to the scale amount ------------------
+//		this.getScalingControl().scale(this.getVisualizationViewer(), (float) this.osmMapRenderer.getScalingOperator(getMapRendererSettings())., getDefaultScaleAtPoint());
 	}
 	
 	/* (non-Javadoc)
@@ -140,29 +158,39 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	public void zoomOut() {
 		this.zoomOut(this.getDefaultScaleAtPoint());
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#zoomOut(java.awt.geom.Point2D)
 	 */
 	@Override
 	public void zoomOut(Point2D zoomAtPoint) {
 
-		if(this.osmMapRenderer.getScalingOperator().decreaseZoomLevel()) {
-			System.out.println("Zooming out");
+		OSMScalingOperator scalingOperator = getScalingOperator();
+		if( scalingOperator.zoomOut()) {
+			int newZoomLevel = scalingOperator.getZoomLevel();
+			System.out.println("Zoom level:"+newZoomLevel);
+			System.out.println("Scaling factor:"+(float) scalingOperator.getScalingFactor());
+			this.getScalingControl().scale(this.getVisualizationViewer(), (float) scalingOperator.getScalingFactor() , zoomAtPoint);
 			this.osmMapRenderer.repaint();
 		}
-		double scalingFactor = this.osmMapRenderer.getScalingOperator().getActualScalingFactor();
-		// --- Set selected frame to the parent internal frame ------
-		BasicGraphGuiRootJSplitPane parentInternalFrame = this.getGraphEnvironmentController().getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
-		if (parentInternalFrame.isSelected() == false) {
-			try {
-				parentInternalFrame.setSelected(true);
-			} catch (PropertyVetoException pvEx) {
-				pvEx.printStackTrace();
-			}
-		}
-
-		// --- Scale the graph to the scale amount ------------------
-		this.getScalingControl().scale(this.getVisualizationViewer(), (float) scalingFactor, getDefaultScaleAtPoint());
+		
+//		if(this.osmMapRenderer.getScalingOperator(getMapRendererSettings()).decreaseZoomLevel()) {
+//			System.out.println("Zooming out");
+//			this.osmMapRenderer.repaint();
+//		}
+//		double scalingFactor = this.osmMapRenderer.getScalingOperator(getMapRendererSettings()).getActualScalingFactor();
+//		// --- Set selected frame to the parent internal frame ------
+//		BasicGraphGuiRootJSplitPane parentInternalFrame = this.getGraphEnvironmentController().getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
+//		if (parentInternalFrame.isSelected() == false) {
+//			try {
+//				parentInternalFrame.setSelected(true);
+//			} catch (PropertyVetoException pvEx) {
+//				pvEx.printStackTrace();
+//			}
+//		}
+//
+//		// --- Scale the graph to the scale amount ------------------
+//		this.getScalingControl().scale(this.getVisualizationViewer(), this.osmMapRenderer.getScalingOperator(getMapRendererSettings()).getZoomLevel(), getDefaultScaleAtPoint());
 
 	}
 
@@ -180,8 +208,15 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 */
 	@Override
 	public void zoomToFitToWindow() {
-		// TODO Auto-generated method stub
-		super.zoomToFitToWindow();
+//		MapRendererSettings mapRendererSettings = getMapRendererSettings();
+//		OSMScalingOperator scalingOperator= this.osmMapRenderer.getScalingOperator(mapRendererSettings);
+//		
+//		int zoomLevel = scalingOperator.calcReqZoomLevelToFitVisualization(mapRendererSettings.getLandscapeDimension(), mapRendererSettings.getVisualizationDimension(), mapRendererSettings.getCenterPostion());
+//		this.osmMapRenderer.setZoomLevel(zoomLevel);
+//		this.getScalingControl().scale(getVisualizationViewer(), zoomLevel, getDefaultScaleAtPoint());
+//		this.osmMapRenderer.repaint();
+//		super.zoomToFitToWindow();
+		this.zoomToFitToWindow(getVisualizationViewer());
 	}
 
 	/* (non-Javadoc)
@@ -189,10 +224,14 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 */
 	@Override
 	public void zoomToFitToWindow(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
-		// TODO Auto-generated method stub
-		//super.zoomToFitToWindow(visViewer);
+		MapRendererSettings mapRendererSettings = getMapRendererSettings();
+		OSMScalingOperator scalingOperator= this.osmMapRenderer.getScalingOperator(mapRendererSettings);
 		
-		this.getScalingControl().scale(visViewer, 1.f, this.getDefaultScaleAtPoint());
+		int zoomLevel = scalingOperator.calcReqZoomLevelToFitVisualization(mapRendererSettings.getLandscapeDimension(), mapRendererSettings.getVisualizationDimension(), mapRendererSettings.getCenterPostion());
+		this.osmMapRenderer.setZoomLevel(zoomLevel);
+		this.getScalingControl().scale(visViewer, zoomLevel, getDefaultScaleAtPoint());
+		this.osmMapRenderer.repaint();
+		super.zoomToFitToWindow();
 	}
 
 	/* (non-Javadoc)
@@ -211,6 +250,8 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	private Point2D getDefaultScaleAtPoint() {
 		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
 		if (rectVis.isEmpty() == false) {
+			System.out.println(rectVis.getCenterX());
+			System.out.println(rectVis.getCenterY());
 			this.defaultScaleAtPoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
 		}
 		return defaultScaleAtPoint;

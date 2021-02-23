@@ -8,21 +8,21 @@ public interface ScalingOperator {
 	 *
 	 * @return the scaling factor to zoom in
 	 */
-	public double getScalingFactorToZoomIn();
+	public float getScalingFactorToZoomIn();
 
 	/**
 	 * Gets the scaling factor to zoom out.
 	 *
 	 * @return the scaling factor to zoom out
 	 */
-	public double getScalingFactorToZoomOut();
+	public float getScalingFactorToZoomOut();
 	
 	/**
 	 * Gets the actual scaling factor.
 	 *
 	 * @return the actual scaling factor
 	 */
-	public double getActualScalingFactor();
+	public float getScalingFactor();
 	
 	/**
 	 * 
@@ -32,17 +32,17 @@ public interface ScalingOperator {
 
 	
 	/**
-	 * Increase zoom level.
+	 * Zoom in if it is possible.
 	 *
 	 * @return true, if successful
 	 */
-	public boolean increaseZoomLevel();
+	public boolean zoomIn();
 	
 	/**
-	 * Decrease zoom level.
+	 * Zoom out if it is possible.
 	 *
 	 * @return true, if successful
 	 */
-	public boolean decreaseZoomLevel();
+	public boolean zoomOut();
 	
 }
