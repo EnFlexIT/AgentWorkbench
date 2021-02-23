@@ -15,4 +15,4 @@ Require-Bundle: de.enflexit.api,
  de.enflexit.oidc,
  de.enflexit.oidc.libs,
  de.enflexit.oshi
-Bundle-Vendor: EnFlex.IT GmbH
+Bundle-Vendor: EnFlex.IT

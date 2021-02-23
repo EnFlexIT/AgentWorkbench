@@ -279,7 +279,12 @@ public class SimulationSetups extends TreeMap<String, String> {
 			this.currSimSetup = SimulationSetup.load(setupXmlFile, true);
 			if (this.currSimSetup!=null) {
 				this.currSimSetup.setProject(this.currProject);
-				// --- Fire application event -------------
+				// --- Fire application events ------------
+				while (this.currSimSetup.getApplicationEventsToFire().size()>0) {
+					ApplicationEvent appEvent = this.currSimSetup.getApplicationEventsToFire().remove(0);
+					Application.informApplicationListener(appEvent);
+				}
+				// --- Final setup notification -----------
 				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_FILES_LOADED, this.currSimSetup));
 			}
 			// --- Load the environment?! -----------------

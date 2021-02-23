@@ -7,9 +7,6 @@ import jade.core.Profile;
 import jade.mtp.InChannel;
 import jade.mtp.MTPException;
 import jade.mtp.TransportAddress;
-import jade.mtp.http.HTTPAddress;
-import jade.mtp.http.HTTPSocketFactory;
-import jade.mtp.http.MessageTransportProtocol;
 
 public class ProxiedHTTPS extends MessageTransportProtocol {
 	

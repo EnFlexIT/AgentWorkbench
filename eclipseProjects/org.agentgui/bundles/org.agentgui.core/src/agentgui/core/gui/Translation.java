@@ -31,7 +31,6 @@ package agentgui.core.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -48,9 +47,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -60,7 +56,6 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -71,7 +66,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
@@ -93,8 +87,6 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.PropertyContentProvider.FileToProvide;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import de.enflexit.common.swing.JHyperLink;
-
 
 /**
  * The JDialog is used in order to allow the translations between all defined languages
@@ -112,9 +104,7 @@ private static final long serialVersionUID = 1L;
 	private DefaultComboBoxModel<LanguageListElement> langSelectionModelSource = new DefaultComboBoxModel<LanguageListElement>();
 	private DefaultComboBoxModel<LanguageListElement> langSelectionModelDestin = new DefaultComboBoxModel<LanguageListElement>();
 	
-	private boolean useGoogleTranslation = false;
-	private String lastGoogleTranslation = null;
-	
+
 	private boolean forceApplicationRestart = false;
 	
 	private JPanel jContentPane = null;
@@ -131,17 +121,14 @@ private static final long serialVersionUID = 1L;
 		private JPanel jPanelTranslation = null;
 			private JLabel jLabelSource = null;
 			private JLabel jLabelDestination = null;
-			private JLabel jLabelGoogleHeader = null;
 			private JLabel jLabelSelectSourceLang = null;
 			private JLabel jLabelSelectDestinationLang = null;
 
 			private JScrollPane jScrollPaneTextSource = null;
 			private JScrollPane jScrollPaneTextDestination = null;
-			private JScrollPane jScrollPanelGoogle = null;
 			
 			private JTextPane jTextFieldSource = null;
 			private JTextPane jTextFieldDestination = null;
-			private JTextPane jTextAreaGoogle = null;
 			
 			private JComboBox<LanguageListElement> jComboBoxSourceLang = null;
 			private JComboBox<LanguageListElement> jComboBoxDestinationLang = null;
@@ -151,7 +138,6 @@ private static final long serialVersionUID = 1L;
 			private JButton jButtonDelete = null;
 			private JButton jButtonSave = null;
 			private JButton jButtonFindGap = null;
-			private JButton jButtonGoogleTake = null;
 
 		private JPanel jPaneFooter = null;
 			private JButton jButtonClose = null;
@@ -164,16 +150,6 @@ private static final long serialVersionUID = 1L;
 	private JPanel jPanelSouthWest = null;
 	private JPanel jPanelEast = null;
 	private JLabel jLabelSourceLanguage = null;
-
-	private JCheckBox jCheckBoxUseGoogleTranslation = null;
-	private JHyperLink jHyperLinkGoogleInfo = null;
-	
-	private JPanel jPanelGoogleKey4API = null;
-	private JLabel jLabelGoogleKey4API = null;
-	private JTextField jTextFieldGoogleKey4API = null;
-	private JLabel jLabelGoogleHTTP = null;
-	private JTextField jTextFieldGoogleHTTP = null;
-	private JButton jButtonGoogleKey4API = null;
 	private JButton jButtonResetDictionary;
 
 
@@ -247,12 +223,6 @@ private static final long serialVersionUID = 1L;
 			jComboBoxSourceLang.setSelectedIndex(Language.getIndexOfLanguage("en")-1);
 			jComboBoxDestinationLang.setSelectedIndex(currLangIndex);
 		}
-		
-		// --- Set Google-HttpReferrer and API key ------------------
-		this.jTextFieldGoogleHTTP.setText(Application.getGlobalInfo().getGoogleHttpRef());
-		this.jTextFieldGoogleKey4API.setText(Application.getGlobalInfo().getGoogleKey4API());
-		com.google.api.GoogleAPI.setHttpReferrer(Application.getGlobalInfo().getGoogleHttpRef());
-		com.google.api.GoogleAPI.setKey(Application.getGlobalInfo().getGoogleKey4API());
 
 		// --- Listen to keyboard events ----------------------------
 		this.setKeyListenEvents();
@@ -276,13 +246,11 @@ private static final long serialVersionUID = 1L;
 		jLabelSelectDestinationLang.setText(Language.translate("Sprache:"));
 		jLabelSource.setText(Language.translate("Text zur Übersetzung"));
 		jLabelDestination.setText(Language.translate("Übersetzter Text "));
-		jLabelGoogleHeader.setText(Language.translate("Google - Übersetzung"));
 		
 		jButtonPreviousDS.setToolTipText(Language.translate("Voriger Datensatz (STRG+UP)"));
 		jButtonNextDS.setToolTipText(Language.translate("Nächster Datensatz (STRG+DOWN)"));
 		jButtonSave.setToolTipText(Language.translate("Übersetzung speichern (STRG+S)"));
 		jButtonFindGap.setToolTipText(Language.translate("Suche nach der nächsten fehlenden Übersetzung (STRG+F)"));
-		jButtonGoogleTake.setToolTipText(Language.translate("Google-Übersetzung übernehmen (STRG+G)"));
 
 	}
 
@@ -311,9 +279,6 @@ private static final long serialVersionUID = 1L;
 				if (ke.getModifiers() == KeyEvent.CTRL_MASK || ke.getModifiers() == KeyEvent.CTRL_DOWN_MASK) {
 					if (ke.getKeyCode()==KeyEvent.VK_S) {
 						jButtonSave.doClick();
-						
-					} else if (ke.getKeyCode()==KeyEvent.VK_G) {
-						jButtonGoogleTake.doClick();
 					
 					} else if (ke.getKeyCode()==KeyEvent.VK_F) {
 						jButtonFindGap.doClick();
@@ -321,7 +286,6 @@ private static final long serialVersionUID = 1L;
 					} else if (ke.getKeyCode()==KeyEvent.VK_UP) {
 						if (jTextFieldSource.hasFocus()==false 
 								& jTextFieldDestination.hasFocus()==false 
-								& jTextAreaGoogle.hasFocus()==false
 								& jTableDictionary.hasFocus()==false) {
 							jButtonPreviousDS.doClick();	
 						}
@@ -329,7 +293,6 @@ private static final long serialVersionUID = 1L;
 					} else if (ke.getKeyCode()==KeyEvent.VK_DOWN) {
 						if (jTextFieldSource.hasFocus()==false 
 								& jTextFieldDestination.hasFocus()==false 
-								& jTextAreaGoogle.hasFocus()==false
 								& jTableDictionary.hasFocus()==false) {
 							jButtonNextDS.doClick();	
 						}
@@ -485,6 +448,7 @@ private static final long serialVersionUID = 1L;
 	private JTable getJTableDictionary() {
 		if (jTableDictionary == null) {
 			jTableDictionary = new JTable();
+			jTableDictionary.setFillsViewportHeight(true);
 			jTableDictionary.setModel(this.getTableModel4Dictionary());
 			jTableDictionary.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 			jTableDictionary.setColumnSelectionAllowed(false);
@@ -640,26 +604,6 @@ private static final long serialVersionUID = 1L;
 	 */
 	private JPanel getJPanelTranslation() {
 		if (jPanelTranslation == null) {
-			
-			GridBagConstraints gridBagConstraints27 = new GridBagConstraints();
-			gridBagConstraints27.gridx = 4;
-			gridBagConstraints27.insets = new Insets(24, 5, 6, 0);
-			gridBagConstraints27.gridwidth = 3;
-			gridBagConstraints27.anchor = GridBagConstraints.WEST;
-			gridBagConstraints27.gridy = 4;
-			GridBagConstraints gridBagConstraints20 = new GridBagConstraints();
-			gridBagConstraints20.gridx = 0;
-			gridBagConstraints20.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints20.insets = new Insets(0, 10, 10, 10);
-			gridBagConstraints20.gridwidth = 7;
-			gridBagConstraints20.gridy = 6;
-			GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
-			gridBagConstraints19.gridx = 1;
-			gridBagConstraints19.insets = new Insets(23, 20, 9, 0);
-			gridBagConstraints19.anchor = GridBagConstraints.SOUTHWEST;
-			gridBagConstraints19.ipadx = 0;
-			gridBagConstraints19.gridwidth = 2;
-			gridBagConstraints19.gridy = 4;
 			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
 			gridBagConstraints18.gridx = 6;
 			gridBagConstraints18.anchor = GridBagConstraints.WEST;
@@ -676,10 +620,6 @@ private static final long serialVersionUID = 1L;
 			gridBagConstraints9.anchor = GridBagConstraints.WEST;
 			gridBagConstraints9.insets = new Insets(10, 30, 5, 5);
 			gridBagConstraints9.gridy = 0;
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.gridx = 3;
-			gridBagConstraints15.insets = new Insets(20, 20, 2, 5);
-			gridBagConstraints15.gridy = 4;
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
 			gridBagConstraints14.gridx = 3;
 			gridBagConstraints14.insets = new Insets(20, 20, 5, 5);
@@ -693,20 +633,6 @@ private static final long serialVersionUID = 1L;
 			gridBagConstraints12.gridx = 3;
 			gridBagConstraints12.insets = new Insets(10, 20, 5, 5);
 			gridBagConstraints12.gridy = 0;
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.fill = GridBagConstraints.BOTH;
-			gridBagConstraints11.gridy = 5;
-			gridBagConstraints11.weightx = 1.0;
-			gridBagConstraints11.weighty = 0.33;
-			gridBagConstraints11.gridwidth = 7;
-			gridBagConstraints11.insets = new Insets(0, 10, 5, 10);
-			gridBagConstraints11.anchor = GridBagConstraints.NORTH;
-			gridBagConstraints11.gridx = 0;
-			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.anchor = GridBagConstraints.WEST;
-			gridBagConstraints10.gridx = 0;
-			gridBagConstraints10.gridy = 4;
-			gridBagConstraints10.insets = new Insets(30, 14, 10, 0);
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 0;
 			gridBagConstraints2.gridy = 0;
@@ -785,18 +711,6 @@ private static final long serialVersionUID = 1L;
 			jLabelSourceLanguage.setHorizontalAlignment(SwingConstants.LEADING);
 			jLabelSourceLanguage.setPreferredSize(new Dimension(38, 26));
 			
-			jLabelGoogleHeader = new JLabel();
-			jLabelGoogleHeader.setText("Google - Übersetzung");
-			jLabelGoogleHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-			
-			jHyperLinkGoogleInfo = new JHyperLink();
-			jHyperLinkGoogleInfo.setFont(new Font("Dialog", Font.BOLD, 12));
-			jHyperLinkGoogleInfo.setText("Infos zum Google-API key und den Webseiten-Einstellungen ...");
-			jHyperLinkGoogleInfo.setText(Language.translate(jHyperLinkGoogleInfo.getText()));
-			jHyperLinkGoogleInfo.setLink("http://code.google.com/p/google-api-translate-java/");
-			jHyperLinkGoogleInfo.setToolTipText(jHyperLinkGoogleInfo.getLink());
-			jHyperLinkGoogleInfo.addActionListener(this);
-			
 			jPanelTranslation = new JPanel();
 			jPanelTranslation.setLayout(new GridBagLayout());
 			jPanelTranslation.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -808,18 +722,12 @@ private static final long serialVersionUID = 1L;
 			jPanelTranslation.add(getJComboBoxDestinationLang(), gridBagConstraints6);
 			jPanelTranslation.add(jLabelSelectSourceLang, gridBagConstraints7);
 			jPanelTranslation.add(jLabelSelectDestinationLang, gridBagConstraints8);
-			jPanelTranslation.add(jLabelGoogleHeader, gridBagConstraints10);
-			jPanelTranslation.add(getJScrollPanelGoogle(), gridBagConstraints11);
 			jPanelTranslation.add(getJButtonPreviousDS(), gridBagConstraints12);
 			jPanelTranslation.add(getJButtonNextDS(), gridBagConstraints13);
 			jPanelTranslation.add(getJButtonSave(), gridBagConstraints14);
-			jPanelTranslation.add(getJButtonGoogleTake(), gridBagConstraints15);
 			jPanelTranslation.add(getJButtonDelete(), gridBagConstraints9);
 			jPanelTranslation.add(getJButtonFindGap(), gridBagConstraints16);
 			jPanelTranslation.add(jLabelSourceLanguage, gridBagConstraints18);
-			jPanelTranslation.add(getJCheckBoxDoGoogleTranslation(), gridBagConstraints19);
-			jPanelTranslation.add(getJPanelGoogleKey4API(), gridBagConstraints20);
-			jPanelTranslation.add(jHyperLinkGoogleInfo, gridBagConstraints27);
 		}
 		return jPanelTranslation;
 	}
@@ -1013,7 +921,6 @@ private static final long serialVersionUID = 1L;
 				public void actionPerformed(ActionEvent e) {
 					if (currDataSet!=null) {
 						jTextFieldSource.setText((String) currDataSet.get(jComboBoxSourceLang.getSelectedIndex()+1));	
-						setGoogleTranslation();
 					}
 				}
 			});
@@ -1034,34 +941,11 @@ private static final long serialVersionUID = 1L;
 				public void actionPerformed(ActionEvent e) {
 					if (currDataSet!=null) {
 						jTextFieldDestination.setText((String) currDataSet.get(jComboBoxDestinationLang.getSelectedIndex()+1));
-						setGoogleTranslation();
 					}
 				}
 			});
 		}
 		return jComboBoxDestinationLang;
-	}
-	/**
-	 * This method initializes jScrollPanelGoogle.
-	 * @return javax.swing.JScrollPane
-	 */
-	private JScrollPane getJScrollPanelGoogle() {
-		if (jScrollPanelGoogle == null) {
-			jScrollPanelGoogle = new JScrollPane();
-			jScrollPanelGoogle.setViewportView(getJTextAreaGoogle());
-		}
-		return jScrollPanelGoogle;
-	}
-	/**
-	 * This method initializes jTextAreaGoogle.
-	 * @return javax.swing.JTextArea
-	 */
-	private JTextPane getJTextAreaGoogle() {
-		if (jTextAreaGoogle == null) {
-			jTextAreaGoogle = new JTextPane();
-			jTextAreaGoogle.setEditable(false);
-		}
-		return jTextAreaGoogle;
 	}
 	/**
 	 * This method initializes jButtonNextDS.
@@ -1133,123 +1017,6 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonFindGap;
 	}
-	/**
-	 * This method initializes jCheckBoxDoGoogleTranslation	
-	 * @return javax.swing.JCheckBox	
-	 */
-	private JCheckBox getJCheckBoxDoGoogleTranslation() {
-		if (jCheckBoxUseGoogleTranslation == null) {
-			jCheckBoxUseGoogleTranslation = new JCheckBox();
-			jCheckBoxUseGoogleTranslation.setText("Google-Übersetzung verwenden");
-			jCheckBoxUseGoogleTranslation.setText(Language.translate(jCheckBoxUseGoogleTranslation.getText()));
-			jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
-			jCheckBoxUseGoogleTranslation.addActionListener(this);
-		}
-		return jCheckBoxUseGoogleTranslation;
-	}
-	/**
-	 * This method initializes jButtonGoogleTake.
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonGoogleTake() {
-		if (jButtonGoogleTake == null) {
-			jButtonGoogleTake = new JButton();
-			jButtonGoogleTake.setPreferredSize(new Dimension(26, 26));
-			jButtonGoogleTake.setToolTipText("Google-Übersetzung übernehmen (STRG+G)");
-			jButtonGoogleTake.setIcon(GlobalInfo.getInternalImageIcon("MBgoogle.png"));
-			jButtonGoogleTake.addActionListener(this);
-		}
-		return jButtonGoogleTake;
-	}
-
-	/**
-	 * This method initializes jPanelGoogleKey4API	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelGoogleKey4API() {
-		if (jPanelGoogleKey4API == null) {
-			GridBagConstraints gridBagConstraints26 = new GridBagConstraints();
-			gridBagConstraints26.fill = GridBagConstraints.BOTH;
-			gridBagConstraints26.gridy = 0;
-			gridBagConstraints26.weightx = 0.5;
-			gridBagConstraints26.insets = new Insets(0, 5, 0, 5);
-			gridBagConstraints26.gridx = 3;
-			GridBagConstraints gridBagConstraints25 = new GridBagConstraints();
-			gridBagConstraints25.gridx = 2;
-			gridBagConstraints25.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints25.gridy = 0;
-			GridBagConstraints gridBagConstraints24 = new GridBagConstraints();
-			gridBagConstraints24.gridx = 0;
-			gridBagConstraints24.gridy = 0;
-			GridBagConstraints gridBagConstraints23 = new GridBagConstraints();
-			gridBagConstraints23.gridx = 2;
-			gridBagConstraints23.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints23.gridy = 0;
-			GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
-			gridBagConstraints22.gridx = 4;
-			gridBagConstraints22.gridy = 0;
-			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-			gridBagConstraints21.fill = GridBagConstraints.BOTH;
-			gridBagConstraints21.gridx = 1;
-			gridBagConstraints21.insets = new Insets(0, 5, 0, 5);
-			gridBagConstraints21.weightx = 0.5;
-
-			jLabelGoogleKey4API = new JLabel();
-			jLabelGoogleKey4API.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelGoogleKey4API.setText("Google-API key:");
-			
-			jLabelGoogleHTTP = new JLabel();
-			jLabelGoogleHTTP.setText("Ihre Webseite:");
-			jLabelGoogleHTTP.setText(Language.translate(jLabelGoogleHTTP.getText()));
-			jLabelGoogleHTTP.setFont(new Font("Dialog", Font.BOLD, 12));
-			
-			jPanelGoogleKey4API = new JPanel();
-			jPanelGoogleKey4API.setLayout(new GridBagLayout());
-			jPanelGoogleKey4API.add(getJTextFieldGoogleKey4API(), gridBagConstraints21);
-			jPanelGoogleKey4API.add(getJButtonGoogleKey4API(), gridBagConstraints22);
-			jPanelGoogleKey4API.add(jLabelGoogleKey4API, gridBagConstraints24);
-			jPanelGoogleKey4API.add(jLabelGoogleHTTP, gridBagConstraints25);
-			jPanelGoogleKey4API.add(getJTextFieldGoogleHTTP(), gridBagConstraints26);
-		}
-		return jPanelGoogleKey4API;
-	}
-
-	/**
-	 * This method initializes jTextFieldGoogleKey4API	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldGoogleKey4API() {
-		if (jTextFieldGoogleKey4API == null) {
-			jTextFieldGoogleKey4API = new JTextField();
-			jTextFieldGoogleKey4API.setPreferredSize(new Dimension(100, 26));
-		}
-		return jTextFieldGoogleKey4API;
-	}
-	/**
-	 * This method initializes jTextFieldGoogleHTTP	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldGoogleHTTP() {
-		if (jTextFieldGoogleHTTP == null) {
-			jTextFieldGoogleHTTP = new JTextField();
-			jTextFieldGoogleHTTP.setPreferredSize(new Dimension(100, 26));
-		}
-		return jTextFieldGoogleHTTP;
-	}
-	/**
-	 * This method initializes jButtonGoogleKey4API	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonGoogleKey4API() {
-		if (jButtonGoogleKey4API == null) {
-			jButtonGoogleKey4API = new JButton();
-			jButtonGoogleKey4API.setText(Language.translate("Speichern"));
-			jButtonGoogleKey4API.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonGoogleKey4API.setForeground(new Color(0,153, 0));
-			jButtonGoogleKey4API.addActionListener(this);
-		}
-		return jButtonGoogleKey4API;
-	}
 	
 	/**
 	 * Sets the current dataset to the specfied row.
@@ -1274,8 +1041,6 @@ private static final long serialVersionUID = 1L;
 		String sourceLangDescription = Language.getLanguageName(sourceLang);
 		jLabelSourceLanguage.setText(Language.translate("Quell-Sprache") + ": " + sourceLang + " - " + sourceLangDescription);
 
-		this.setGoogleTranslation();
-		
 	}
 	
 	/**
@@ -1419,45 +1184,6 @@ private static final long serialVersionUID = 1L;
 			}
 		}
 		Language.update(sourceLangExpression, dictRow);
-		
-	}
-	
-	/**
-	 * Translate the given text by using the Google-Translate-API.
-	 */
-	private void setGoogleTranslation() {
-		
-		if (this.useGoogleTranslation) {
-			
-			String langSource = ((LanguageListElement) jComboBoxSourceLang.getSelectedItem()).getLangShort();
-			String langDestin = ((LanguageListElement) jComboBoxDestinationLang.getSelectedItem()).getLangShort();
-			String text2Translate = jTextFieldSource.getText();
-			
-			if (this.lastGoogleTranslation!=text2Translate) {
-				
-				langSource = langSource.replace("LANG_", "").toLowerCase();
-				langDestin = langDestin.replace("LANG_", "").toLowerCase();
-				
-				com.google.api.translate.Language langGoogleSource = com.google.api.translate.Language.fromString(langSource);
-				com.google.api.translate.Language langGoogleDestin = com.google.api.translate.Language.fromString(langDestin);
-				
-				String translation = null; 
-				try {
-					translation = com.google.api.translate.Translate.DEFAULT.execute(text2Translate, langGoogleSource, langGoogleDestin);
-					
-				} catch (Exception e) {
-					//e.printStackTrace();
-					translation  = "ERROR: " + e.getLocalizedMessage();
-					translation += "\n=> " + Language.translate("Die Google-Übersetzungsfunktion wurde deaktiviert!");
-					this.useGoogleTranslation = false;
-					this.jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
-
-				}
-				jTextAreaGoogle.setText(translation);
-				this.lastGoogleTranslation = text2Translate;
-			}
-		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -1517,28 +1243,6 @@ private static final long serialVersionUID = 1L;
 			
 		} else if (trigger == jButtonSave) {
 			this.saveDS();
-			
-		} else if (trigger == jButtonGoogleTake) {
-			if (jTextAreaGoogle.getText().startsWith("ERROR: ")==false) {
-				jTextFieldDestination.setText(jTextAreaGoogle.getText());
-			}
-		} else if (trigger == jCheckBoxUseGoogleTranslation) {
-			this.useGoogleTranslation = jCheckBoxUseGoogleTranslation.isSelected();
-		
-		} else if (trigger == jHyperLinkGoogleInfo) {
-			try {
-				Desktop.getDesktop().browse(new URI(ae.getActionCommand()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		
-		} else if (trigger == jButtonGoogleKey4API) {
-			Application.getGlobalInfo().setGoogleHttpRef(this.getJTextFieldGoogleHTTP().getText());
-			Application.getGlobalInfo().setGoogleKey4API(this.getJTextFieldGoogleKey4API().getText());
-			com.google.api.GoogleAPI.setHttpReferrer(Application.getGlobalInfo().getGoogleHttpRef());
-			com.google.api.GoogleAPI.setKey(this.getJTextFieldGoogleKey4API().getText());
 			
 		} else {
 			System.out.println("Unknown Action-Event" + ae.getActionCommand() );

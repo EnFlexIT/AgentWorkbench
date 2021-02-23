@@ -27,8 +27,6 @@
 					<excludes>
 						<plugin id="de.enflexit.jaxb" />
 						<plugin id="de.enflexit.oidc.libs" />
-						<plugin id="org.agentgui.lib.bouncyCastle" />
-						<plugin id="org.agentgui.lib.googleTranslate" />
 						<plugin id="org.agentgui.lib.jFreeChart" />
 						<plugin id="org.agentgui.lib.jade" />
 						<plugin id="org.agentgui.lib.jep" />

@@ -122,6 +122,9 @@ public class SimulationSetup {
 	@XmlElement(name = "userObjectClassName")
 	private String userRuntimeObjectClassName;
 
+	@XmlTransient
+	private List<ApplicationEvent> applicationEventsToFire;
+	
 	
 	/**
 	 * Constructor without arguments (This is first of all
@@ -272,6 +275,17 @@ public class SimulationSetup {
 	
 	
 	/**
+	 * Returns the application events that are to be fired after a setup was loaded.
+	 * @return the application events to fire
+	 */
+	public List<ApplicationEvent> getApplicationEventsToFire() {
+		if (applicationEventsToFire==null) {
+			applicationEventsToFire = new ArrayList<>();
+		}
+		return applicationEventsToFire;
+	}
+	
+	/**
 	 * Loads a {@link SimulationSetup} from the specified XML file.
 	 * @param setupXmlFile the setup xml file
 	 * @return the simulation setup, or null if loading failed
@@ -288,7 +302,7 @@ public class SimulationSetup {
 			setup = (SimulationSetup) um.unmarshal(fileReader);
 			setup.setProject(Application.getProjectFocused());
 			// --- Fire application event ---------
-			Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_XML_FILE_LOADED, setup));
+			setup.getApplicationEventsToFire().add(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_XML_FILE_LOADED, setup));
 			
 		} catch (JAXBException | IOException ex) {
 			ex.printStackTrace();
@@ -363,7 +377,7 @@ public class SimulationSetup {
 					setup.setUserRuntimeObject(userObject);
 					successfulLoaded = true;
 					// --- Fire application event ---------
-					Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED, setup));
+					setup.getApplicationEventsToFire().add(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED, setup));
 				}
 				
 			} catch (ClassNotFoundException | NoClassDefFoundError cEx) {
@@ -395,7 +409,7 @@ public class SimulationSetup {
 				setup.setUserRuntimeObject(userObject);
 				successfulLoaded = true;
 				// --- Fire application event ---------
-				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED, setup));
+				setup.getApplicationEventsToFire().add(new ApplicationEvent(ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED, setup));
 				
 			} catch(IOException | ClassNotFoundException ex) {
 				ex.printStackTrace();
