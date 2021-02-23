@@ -26,10 +26,10 @@ public class OSMMapRenderer implements MapRenderer {
 	private JXMapViewerWrapper mapCanvas;
 
 	private Graphics2D graphics;
+	private MapRendererSettings mapRendererSettings;
 	
 	private OSMScalingOperator scalingOperator;
 
-	private MapRendererSettings mapRendererSettings;
 	
 	private boolean initialized = false;
 	
@@ -40,9 +40,11 @@ public class OSMMapRenderer implements MapRenderer {
 	@Override
 	public void paintMap(Graphics2D graphics, MapRendererSettings mapRendererSettings) {
 
-		this.graphics = graphics;
-		setMapRendererSettings(mapRendererSettings);
-		ScalingOperator scalingOperator= getScalingOperator(mapRendererSettings);
+		// --- Set current working instances ------------------------
+		this.setGraphics2D(graphics);
+		this.setMapRendererSettings(mapRendererSettings);
+		
+		ScalingOperator scalingOperator = getScalingOperator(mapRendererSettings);
 		System.out.println("Calling map rendering " + mapRendererSettings.getCenterPostion() );
 		System.out.println("Landscape width:"+ (mapRendererSettings.getLandscapeDimension().getWidth()));
 		System.out.println("Landscape height:"+ (mapRendererSettings.getLandscapeDimension().getHeight()));
@@ -65,9 +67,7 @@ public class OSMMapRenderer implements MapRenderer {
 			this.mapCanvas.setBounds(visDim);
 		}
 		
-		if(initialized == false) {
-			
-        	
+		if (initialized == false) {
             Set<Waypoint> waypoints = new HashSet<Waypoint>(Arrays.asList(
                     new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomLeftPosition())),
                     new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomRightPosition())),
@@ -93,18 +93,18 @@ public class OSMMapRenderer implements MapRenderer {
 //		System.out.println("Landscape height:"+ (mapRendererSettings.getLandscapeDimension().getHeight()));
 //		System.out.println("Visualization width"+ mapRendererSettings.getVisualizationDimension().getWidth());
 //		System.out.println("Visualization height"+ mapRendererSettings.getVisualizationDimension().getHeight());
-		GeoPosition centerPos = this.convertToGeoPosition(mapRendererSettings.getCenterPostion());
+		GeoPosition centerPos = this.convertToGeoPosition(this.getMapRendererSettings().getCenterPostion());
 		this.mapCanvas.setZoom(scalingOperator.getZoomLevel());
 		this.mapCanvas.setAddressLocation(centerPos);
 //		this.mapCanvas.paint(this.graphics);
-		this.paintMap(graphics, mapRendererSettings);
-		this.mapRendererSettings.getVisViewer().repaint();
+		this.paintMap(this.getGraphics2D(), this.getMapRendererSettings());
+		this.getMapRendererSettings().getVisualizationViewer().repaint();
 	}
 	
 	public void repaint(int zoomLevel, MapRendererSettings mapRendererSettings) {
 		this.mapCanvas.setZoom(zoomLevel);
-		this.paintMap(graphics, mapRendererSettings);
-		mapRendererSettings.getVisViewer().repaint();
+		this.paintMap(this.getGraphics2D(), mapRendererSettings);
+		this.getMapRendererSettings().getVisualizationViewer().repaint();
 	}
 
 	private TileListener tileLoadListener = new TileListener() {
@@ -170,24 +170,42 @@ public class OSMMapRenderer implements MapRenderer {
 		return scalingOperator;
 	}
 
+
+	public void setZoomLevel(int zoomLevel) {
+		this.scalingOperator.setZoomLevel(zoomLevel);
+	}
+
+	
 	
 	/**
+	 * Gets the graphics 2D instance.
+	 * @return the graphics
+	 */
+	public Graphics2D getGraphics2D() {
+		return graphics;
+	}
+	/**
+	 * Sets the graphics 2D instance.
+	 * @param graphics the new graphics 12
+	 */
+	public void setGraphics2D(Graphics2D graphics) {
+		this.graphics = graphics;
+	}
+	
+	/**
+	 * Gets the map renderer settings.
 	 * @return the mapRendererSettings
 	 */
 	public MapRendererSettings getMapRendererSettings() {
 		return mapRendererSettings;
 	}
-
-	
 	/**
+	 * Sets the map renderer settings.
 	 * @param mapRendererSettings the mapRendererSettings to set
 	 */
 	public void setMapRendererSettings(MapRendererSettings mapRendererSettings) {
 		this.mapRendererSettings = mapRendererSettings;
 	}
 	
-	public void setZoomLevel(int zoomLevel) {
-		this.scalingOperator.setZoomLevel(zoomLevel);
-	}
 
 }

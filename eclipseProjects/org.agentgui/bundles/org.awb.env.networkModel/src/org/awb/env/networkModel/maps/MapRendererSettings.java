@@ -26,6 +26,8 @@ import edu.uci.ics.jung.visualization.Layer;
 public class MapRendererSettings implements Serializable {
 
 	private static final long serialVersionUID = -5126554545457917787L;
+	
+	private BasicGraphGuiVisViewer<?, ?> visViewer;
 
 	private Dimension visualizationDimension;
 	private Rectangle2D landscapeDimension;
@@ -47,6 +49,7 @@ public class MapRendererSettings implements Serializable {
 	 * @param at the AffineTransform to transform to Jung coordinates
 	 */
 	public MapRendererSettings(BasicGraphGuiVisViewer<?,?> visViewer) {
+		this.setVisualizationViewer(visViewer);
 		this.initialize(visViewer);
 	}
 	/**
@@ -175,6 +178,14 @@ public class MapRendererSettings implements Serializable {
 			nitEx.printStackTrace();
 		}
 		return utm;
+	}
+	
+	
+	public BasicGraphGuiVisViewer<?, ?> getVisualizationViewer() {
+		return visViewer;
+	}
+	public void setVisualizationViewer(BasicGraphGuiVisViewer<?, ?> visViewer) {
+		this.visViewer = visViewer;
 	}
 	
 	
