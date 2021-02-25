@@ -1,7 +1,11 @@
 package org.awb.env.maps;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.util.List;
+
+import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
+import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationServer;
@@ -9,7 +13,6 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
-// TODO: Auto-generated Javadoc
 /**
  * scales to the absolute value passed as an argument.
  * It first resets the scaling transformers, then uses
@@ -20,63 +23,43 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  */
 public class OSMScalingControl extends CrossoverScalingControl implements ScalingControl {
 
+	private boolean isDebug = true;
 	
-	/** The scaling factors. */
-	private float scalingFactors[];
-	
-	/** The zoom level. */
-	private int zoomLevel;
-	
-	/** The refinement scaling factor. */
-	private float refinementScalingFactor;
-	
-	/**   The length of the equator in meters  . */
-	static final float EQUATOR_LENGTH_IN_METERS = 40075016.686f; 
-	
-	/** The size of map tiles in pixels. */
-	static final int TILE_SIZE = 256;
-	
-	/** The Constant MAX_ZOOM. */
-	static final int MAX_ZOOM = 0; 
-
-	/** The Constant MIN_ZOOM. */
-	static final int MIN_ZOOM = 19; 
+	private ZoomLevel zoomLevel;
 	
 	/**
-	 * Instantiates a new OSM scaling control.
-	 *
-	 * @param refinementScalingFactor the refinement scaling factor
-	 * @param zoomLevel the zoom level
+	 * Sets the current zoom level.
+	 * @param zoomLevel the new zoom level
 	 */
-//	public OSMScalingControl(float refinementScalingFactor, int zoomLevel) {
-//		this.refinementScalingFactor = refinementScalingFactor;
-//		this.zoomLevel = zoomLevel;
-//		calcScalingFactorsByZoomLevel();
-//	}
-	
-//	public OSMScalingControl()
-	 /**
-     * Point where scale crosses over from view to layout.
-     */
-    protected double crossover = 1.0;
-    
-    /**
-     * Sets the crossover point to the specified value.
-     *
-     * @param crossover the new crossover
-     */
-	public void setCrossover(double crossover) {
-	    this.crossover = crossover;
+	public void setZoomLevel(ZoomLevel zoomLevel) {
+		this.zoomLevel = zoomLevel;
 	}
-    
-    /**
-     * Returns the current crossover value.
-     *
-     * @return the crossover
-     */
-    public double getCrossover() {
-        return crossover;
-    }
+	/**
+	 * Returns the current zoom level.
+	 * @return the zoom level
+	 */
+	public ZoomLevel getZoomLevel() {
+		if (zoomLevel==null) {
+			List<ZoomLevel> zlList = OSMZoomLevels.getInstance().getZoomLevelList();
+			zoomLevel = zlList.get(zlList.size()-1);
+		}
+		return zoomLevel;
+	}
+	
+	/**
+	 * Scales the view to the specified {@link ZoomLevel}.
+	 *
+	 * @param vv the visualization viewer
+	 * @param zoomLevel the zoom level
+	 * @param at the at
+	 */
+	public void scale(VisualizationServer<?,?> vv, ZoomLevel zoomLevel, Point2D at) {
+		if (zoomLevel!=null) {
+			if (isDebug==true) System.out.println("[" + this.getClass().getSimpleName() + "] Scale to " + zoomLevel);
+			this.setZoomLevel(zoomLevel);
+			this.scale(vv, zoomLevel.getJungScaling(), at);
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.ScalingControl#scale(edu.uci.ics.jung.visualization.VisualizationServer, float, java.awt.geom.Point2D)
@@ -88,52 +71,20 @@ public class OSMScalingControl extends CrossoverScalingControl implements Scalin
         MutableTransformer viewTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
         double modelScale = layoutTransformer.getScale();
         double viewScale = viewTransformer.getScale();
-        double inverseModelScale = Math.sqrt(crossover)/modelScale;
-        double inverseViewScale = Math.sqrt(crossover)/viewScale;
+        double inverseModelScale = Math.sqrt(this.getCrossover())/modelScale;
+        double inverseViewScale = Math.sqrt(this.getCrossover())/viewScale;
         
-        Point2D transformedAt = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.VIEW, at);
+        BasicGraphGuiVisViewer<?, ?> bvv = (BasicGraphGuiVisViewer<?, ?>) vv;
+        TransformerForGraphNodePosition<?, ?> cspTransformer = bvv.getCoordinateSystemPositionTransformer();
+        
+        Point2D transformedAtJung = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.VIEW, at);
+        Point2D transformedAtGraph = cspTransformer.inverseTransform(transformedAtJung);
+        
         
         // return the transformers to 1.0
-        layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
+        layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAtJung);
         viewTransformer.scale(inverseViewScale, inverseViewScale, at);
-
-        System.out.println("Scale to "+ amount);
-        superClassScale(vv, amount, transformedAt);
-    }
-    
-    /**
-     * Super class scale.
-     *
-     * @param vv the vv
-     * @param amount the amount
-     * @param at the at
-     */
-    public void superClassScale(VisualizationServer<?,?> vv, float amount, Point2D at) {
-    	
-    	MutableTransformer layoutTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
- 	    MutableTransformer viewTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
- 	    double modelScale = layoutTransformer.getScale();
- 	    double viewScale = viewTransformer.getScale();
- 	    double inverseModelScale = Math.sqrt(crossover)/modelScale;
- 	    double inverseViewScale = Math.sqrt(crossover)/viewScale;
- 	    double scale = modelScale * viewScale;
- 	    
- 	    Point2D transformedAt = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.VIEW, at);
- 	    
-         if((scale*amount - crossover)*(scale*amount - crossover) < 0.001) {
-             // close to the control point, return both transformers to a scale of sqrt crossover value
-             layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
-             viewTransformer.scale(inverseViewScale, inverseViewScale, at);
-         } else if(scale*amount < crossover) {
-             // scale the viewTransformer, return the layoutTransformer to sqrt crossover value
- 	        viewTransformer.scale(amount, amount, at);
- 	        layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
- 	    } else {
-             // scale the layoutTransformer, return the viewTransformer to crossover value
- 	        layoutTransformer.scale(amount, amount, transformedAt);
- 	        viewTransformer.scale(inverseViewScale, inverseViewScale, at);
- 	    }
- 	    vv.repaint();
+        super.scale(vv, amount, at);
     }
     
 }

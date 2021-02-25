@@ -2,11 +2,14 @@ package org.awb.env.maps;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
+import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapRendererSettings;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -20,20 +23,66 @@ import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 public class OSMMapRenderer implements MapRenderer {
 
+	private boolean isDebug = true;
+	
+	private BaseMapService baseMapService;
+	
 	private JXMapViewerWrapper mapCanvas;
 
 	private Graphics2D graphics;
 	private MapRendererSettings mapRendererSettings;
 	
-	private OSMScalingOperator scalingOperator;
-
 	
-	private boolean initialized = false;
+	private boolean isPrintOverlay = true;
 	
+	/**
+	 * Instantiates a new OSM map renderer.
+	 * @param baseMapService the parent base map service
+	 */
+	public OSMMapRenderer(BaseMapService baseMapService) {
+		this.baseMapService = baseMapService;
+	}
 
+	/**
+	 * Returns the zoom controller.
+	 * @return the zoom controller
+	 */
+	private OSMZoomController getZoomController() {
+		return this.baseMapService.getZoomController();
+	}
+	/**
+	 * Returns the current scaling control.
+	 * @return the scaling control
+	 */
+	private OSMScalingControl getScalingControl() {
+		return this.getZoomController().getScalingControl();
+	}
+
+	/**
+	 * Returns the JX map viewer wrapper.
+	 * @return the JX map viewer wrapper
+	 */
+	private JXMapViewerWrapper getJXMapViewerWrapper() {
+		if (mapCanvas==null) {
+			mapCanvas = new JXMapViewerWrapper();
+			TileFactory tileFactory = new DefaultTileFactory(new OSMTileFactoryInfo());
+			tileFactory.addTileListener(new TileListener() {
+				@Override
+				public void tileLoaded(Tile tile) {
+					OSMMapRenderer.this.repaint();
+				}
+			});
+			mapCanvas.setTileFactory(tileFactory);
+		}
+		return mapCanvas;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapRenderer#paintMap(java.awt.Graphics2D, org.awb.env.networkModel.maps.MapRendererSettings)
 	 */
@@ -44,59 +93,91 @@ public class OSMMapRenderer implements MapRenderer {
 		this.setGraphics2D(graphics);
 		this.setMapRendererSettings(mapRendererSettings);
 		
-		ScalingOperator scalingOperator = getScalingOperator(mapRendererSettings);
-		System.out.println("Calling map rendering " + mapRendererSettings.getCenterPostion() );
-		System.out.println("Landscape width:"+ (mapRendererSettings.getLandscapeDimension().getWidth()));
-		System.out.println("Landscape height:"+ (mapRendererSettings.getLandscapeDimension().getHeight()));
-		System.out.println("Visualization width:"+ mapRendererSettings.getVisualizationDimension().getWidth());
-		System.out.println("Visualization height:"+ mapRendererSettings.getVisualizationDimension().getHeight());
-		System.out.println("Zoom level:"+scalingOperator.getZoomLevel());
+		// --- Check if a Jung re-scaling is required and called ----
+		if (this.isJungReScalingCalled()==true) {
+			mapRendererSettings.getVisualizationViewer().repaint();
+			return;
+		}
 		
 		Dimension visDim = mapRendererSettings.getVisualizationDimension();
 		graphics.setClip(0, 0, visDim.width, visDim.height);
-
-		if (this.mapCanvas == null) {
-			this.mapCanvas = new JXMapViewerWrapper(visDim);
-			this.mapCanvas.setBounds(visDim);
-			TileFactory tileFactory = new DefaultTileFactory(new OSMTileFactoryInfo());
-			tileFactory.addTileListener(this.tileLoadListener);
-//			this.mapCanvas.setTileFactory(new DefaultTileFactory(new OSMTileFactoryInfo()));
-			this.mapCanvas.setTileFactory(tileFactory);
+	
+		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
+		this.getJXMapViewerWrapper().setBounds(visDim);
+		this.getJXMapViewerWrapper().setZoom(this.getScalingControl().getZoomLevel().getJXMapViewerZoomLevel());
 		
-		} else {
-			this.mapCanvas.setBounds(visDim);
+		if (isPrintOverlay==true) {
+			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
+			isPrintOverlay = false;
 		}
+		this.getJXMapViewerWrapper().paint(graphics);
 		
-		if (initialized == false) {
-            Set<Waypoint> waypoints = new HashSet<Waypoint>(Arrays.asList(
-                    new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomLeftPosition())),
-                    new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomRightPosition())),
-                    new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getTopLeftPosition())),
-                    new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getTopRightPosition())),
-                    new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()))
-            	));
-        
-            WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<Waypoint>();
-            waypointPainter.setWaypoints(waypoints);
-        
-            this.mapCanvas.setOverlayPainter(waypointPainter);
-            initialized = true;
-        }
-		this.mapCanvas.setZoom(scalingOperator.getZoomLevel());
-		this.mapCanvas.setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
-		this.mapCanvas.paint(graphics);
 	}
-
+	
+	
+	/**
+	 * Checks if the Jung scaling needs to be adjusted. If so, the nearest {@link ZoomLevel} 
+	 * will be determined out of the available {@link OSMZoomLevels}.  
+	 *
+	 * @return true, if the Jung visualization was called to scale to a known ZoomLevel
+	 */
+	private boolean isJungReScalingCalled() {
+		
+		boolean requiresJungReScaling = false;
+		try {
+			
+			// --- Get current scaling ------------------------------ 
+			MutableTransformer layoutTransformer = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+			MutableTransformer viewTransformer = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+			double modelScale = layoutTransformer.getScale();
+			double viewScale = viewTransformer.getScale();
+			double scale = modelScale * viewScale;
+			
+			// --- Get the closest zoom level -----------------------
+			ZoomLevel zl = OSMZoomLevels.getInstance().getClosestZoomLevelOfJungScaling(scale);
+			
+			// --- Check if the scaling needs to adjusted -----------
+			double scaleDiff = Math.abs(scale - zl.getJungScaling());
+			if (scaleDiff > 0.01) {
+				
+				requiresJungReScaling = true;
+				
+				if (this.isDebug==true) {
+					String classNamePrefix = "[" + this.getClass().getSimpleName() + "] ";
+					System.out.println(classNamePrefix + "Current Map Resolution. " + (1.0/scale) + " m/px" );
+					System.out.println(classNamePrefix + "Current Scale: " + scale + " m/px" );
+					System.out.println(classNamePrefix + "Jung re-scaling required ! - Try " + zl);
+					System.out.println();
+				}
+				
+				BasicGraphGuiVisViewer<?, ?> visViewer = this.getMapRendererSettings().getVisualizationViewer();
+				Point2D scalePoint = null;
+				Rectangle2D rectVis = visViewer.getVisibleRect();
+				if (rectVis.isEmpty() == false) {
+					scalePoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
+				}
+				this.getScalingControl().scale(visViewer, zl, scalePoint);
+			}
+			
+		} catch (Exception ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error while checking graph scaling:");
+			ex.printStackTrace();
+		}
+		return requiresJungReScaling;
+	}
+	
+	
 	public void repaint() {
 //		System.out.println("Calling map rendering " + mapRendererSettings.getCenterPostion() );
 //		System.out.println("Landscape width:"+ (mapRendererSettings.getLandscapeDimension().getWidth()));
 //		System.out.println("Landscape height:"+ (mapRendererSettings.getLandscapeDimension().getHeight()));
 //		System.out.println("Visualization width"+ mapRendererSettings.getVisualizationDimension().getWidth());
 //		System.out.println("Visualization height"+ mapRendererSettings.getVisualizationDimension().getHeight());
-		GeoPosition centerPos = this.convertToGeoPosition(this.getMapRendererSettings().getCenterPostion());
-		this.mapCanvas.setZoom(scalingOperator.getZoomLevel());
-		this.mapCanvas.setAddressLocation(centerPos);
-//		this.mapCanvas.paint(this.graphics);
+
+//		GeoPosition centerPos = this.convertToGeoPosition(this.getMapRendererSettings().getCenterPostion());
+//		this.mapCanvas.setZoom(scalingOperator.getZoomLevel());
+//		this.mapCanvas.setAddressLocation(centerPos);
+		this.getJXMapViewerWrapper().paint(this.getGraphics2D());
 		this.paintMap(this.getGraphics2D(), this.getMapRendererSettings());
 		this.getMapRendererSettings().getVisualizationViewer().repaint();
 	}
@@ -106,16 +187,21 @@ public class OSMMapRenderer implements MapRenderer {
 		this.paintMap(this.getGraphics2D(), mapRendererSettings);
 		this.getMapRendererSettings().getVisualizationViewer().repaint();
 	}
+	
+	
+	private WaypointPainter<Waypoint> getWaypointPainter(MapRendererSettings mapRendererSettings) {
+		
+		Set<Waypoint> waypoints = new HashSet<Waypoint>(Arrays.asList(
+				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomLeftPosition())),
+				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomRightPosition())),
+				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getTopLeftPosition())),
+				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getTopRightPosition())),
+				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()))));
 
-	private TileListener tileLoadListener = new TileListener() {
-		public void tileLoaded(Tile tile) {
-			System.out.println("Tile loaded");
-			if (tile.getZoom() == mapCanvas.getZoom()) {
-				
-				repaint();
-			}
-		}
-	};
+		WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<Waypoint>();
+		waypointPainter.setWaypoints(waypoints);
+		return waypointPainter;
+	}
 	
 	/**
 	 * Convert WSG84 coordinate to geo position.
@@ -126,55 +212,6 @@ public class OSMMapRenderer implements MapRenderer {
 	protected GeoPosition convertToGeoPosition(WGS84LatLngCoordinate wgs84coord) {
 		return new GeoPosition(wgs84coord.getLatitude(), wgs84coord.getLongitude());
 	}
-	
-	
-//	/**
-//	 * Gets the scaling operator.
-//	 *
-//	 * @return the scaling operator
-//	 */
-//	public OSMScalingOperator getScalingOperator() {
-//		if(scalingOperator == null) {
-//			MapRendererSettings mapRendererSettings = getMapRendererSettings();
-//			if(mapRendererSettings == null) {
-//				
-//			}else {
-//				this.scalingOperator = new OSMScalingOperator(mapRendererSettings.getLandscapeDimension(), mapRendererSettings.getVisualizationDimension(), mapRendererSettings.getCenterPostion());
-//			}
-//		}
-//		return scalingOperator;
-//	}
-	
-	/**
-	 * Gets the scaling operator.
-	 *
-	 * @param mapRenderSettings the map render settings
-	 * @return the scaling operator
-	 */
-	public OSMScalingOperator getScalingOperator(MapRendererSettings mapRenderSettings) {
-		if(scalingOperator == null) {
-			this.scalingOperator = new OSMScalingOperator(mapRenderSettings.getLandscapeDimension(), mapRenderSettings.getVisualizationDimension(), mapRenderSettings.getCenterPostion());
-//			this.scalingOperator = new OSMAbsoluteScalingOperator(mapRenderSettings.getLandscapeDimension(), mapRenderSettings.getVisualizationDimension(), mapRenderSettings.getCenterPostion());
-
-		}
-		return scalingOperator;
-	}
-	
-	/* (non-Javadoc)
-	* @see org.awb.env.networkModel.maps.MapRenderer#getScalingOperator()
-	*/
-	public OSMScalingOperator getScalingOperator(Rectangle2D landscapeDimension, Dimension visualizationDimension, WGS84LatLngCoordinate centerPosition) {
-		if(scalingOperator == null) {
-			this.scalingOperator = new OSMScalingOperator(landscapeDimension, visualizationDimension, centerPosition);
-		}
-		return scalingOperator;
-	}
-
-
-	public void setZoomLevel(int zoomLevel) {
-		this.scalingOperator.setZoomLevel(zoomLevel);
-	}
-
 	
 	
 	/**

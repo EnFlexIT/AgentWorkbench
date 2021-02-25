@@ -847,6 +847,7 @@ en;;No KeyStore specified!;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;No TrustStore specified!;;;
 en;;No agent selected;;;
+en;;No domain information could be found for GraphNode ';;;
 en;;No visualisation component could be found;;;
 en;;Number of changes;;;
 en;;Operating;;;

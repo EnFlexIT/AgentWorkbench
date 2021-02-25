@@ -18,9 +18,6 @@ import org.jxmapviewer.viewer.GeoPosition;
 
 public class JXMapViewerWrapper extends JXMapViewer {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4089096441137343303L;
 
 	private int height;
@@ -29,6 +26,11 @@ public class JXMapViewerWrapper extends JXMapViewer {
 
 	private Insets insets;
 
+	
+	public JXMapViewerWrapper() {
+		this(new Insets(0, 0, 0, 0), null);
+	}
+	
 	public JXMapViewerWrapper(Dimension dim) {
 		this(new Insets(0, 0, 0, 0), dim);
 	}
@@ -44,8 +46,10 @@ public class JXMapViewerWrapper extends JXMapViewer {
 		if (width < 0 && height < 0) {
 			throw new IllegalArgumentException("Height and width must be not negative");
 		}
-		setInsets(insets);
-		setBounds(dim);
+		this.setInsets(insets);
+		if (dim!=null) {
+			this.setBounds(dim);
+		}
 		this.setTileFactory(new DefaultTileFactory(new OSMTileFactoryInfo()));
 		this.setDrawTileBorders(true);
 		try {
@@ -60,7 +64,7 @@ public class JXMapViewerWrapper extends JXMapViewer {
 			g2.dispose();
 			this.setLoadingImage(img);
 		}
-		setAddressLocation(new GeoPosition(51.46469597167675, 7.007373381386001)); // Essen UDE campus
+		this.setAddressLocation(new GeoPosition(51.46469597167675, 7.007373381386001)); // Essen UDE campus
 
 	}
 	
@@ -84,7 +88,6 @@ public class JXMapViewerWrapper extends JXMapViewer {
 	public int getHeight() {
 		return height;
 	}
-
 	/**
 	 * @param height the height to set
 	 */
@@ -98,7 +101,6 @@ public class JXMapViewerWrapper extends JXMapViewer {
 	public int getWidth() {
 		return width;
 	}
-
 	/**
 	 * @param width the width to set
 	 */
@@ -106,13 +108,12 @@ public class JXMapViewerWrapper extends JXMapViewer {
 		this.width = width;
 	}
 
+	
 	public Insets getInsets() {
 		return insets;
 	}
-
 	/**
 	 * Sets the insets.
-	 *
 	 * @param insets the new insets
 	 */
 	public void setInsets(Insets insets) {

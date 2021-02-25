@@ -32,7 +32,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);
 	
 	private GraphEnvironmentController graphController;
-	private VisualizationViewer<GraphNode, GraphEdge> visViewer;
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 	private ScalingControl scalingControl;
 	
 
@@ -70,14 +70,14 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	 * Returns the current visualization viewer.
 	 * @return the visualization viewer
 	 */
-	protected VisualizationViewer<GraphNode, GraphEdge> getVisualizationViewer() {
+	protected BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisualizationViewer() {
 		return this.visViewer;
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.ZoomController#setVisualizationViewer(edu.uci.ics.jung.visualization.VisualizationViewer)
 	 */
 	@Override
-	public void setVisualizationViewer(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
+	public void setVisualizationViewer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
 		this.visViewer = visViewer;
 	}
 	

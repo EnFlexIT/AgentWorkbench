@@ -33,12 +33,29 @@ public class BaseMapService implements MapService {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapService#getJComponentsForMapInteraction()
+	 */
+	@Override
+	public Vector<JComponent> getJComponentsForMapInteraction() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapService#destroyMapServiceInstances()
+	 */
+	@Override
+	public void destroyMapServiceInstances() {
+		this.osmMapRenderer = null;
+		this.osmZoomController = null;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getMapRenderer()
 	 */
 	@Override
 	public OSMMapRenderer getMapRenderer() {
 		if (osmMapRenderer==null) {
-			osmMapRenderer = new OSMMapRenderer();
+			osmMapRenderer = new OSMMapRenderer(this);
 		}
 		return osmMapRenderer;
 	}
@@ -49,17 +66,10 @@ public class BaseMapService implements MapService {
 	@Override
 	public OSMZoomController getZoomController() {
 		if (osmZoomController == null) {
-			osmZoomController = new OSMZoomController(this.getMapRenderer()); 
+			osmZoomController = new OSMZoomController(); 
 		}
 		return osmZoomController;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.maps.MapService#getJComponentsForMapInteraction()
-	 */
-	@Override
-	public Vector<JComponent> getJComponentsForMapInteraction() {
-		return null;
-	}
 	
 }

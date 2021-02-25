@@ -50,6 +50,12 @@ public interface MapService {
 	 * @return the j components for map interaction
 	 */
 	public Vector<JComponent> getJComponentsForMapInteraction();
+
+	/**
+	 * Will be called to destroy map service instances after the deselection in the visualization in the {@link MapSettings}.
+	 * Here, all instances within a MapServices should be destroyed in order to save memory. 
+	 */
+	public void destroyMapServiceInstances();
 	
 	
 }

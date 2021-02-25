@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/jxMapViewer/jxmapviewer2-2.6.jar" sourcepath="lib/jxMapViewer/jxmapviewer2-2.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jxMapViewer/jxmapviewer2-2.6.jar" sourcepath="C:/Users/Christian/.m2/repository/org/jxmapviewer/jxmapviewer2/2.6/jxmapviewer2-2.6-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

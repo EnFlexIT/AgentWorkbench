@@ -26,7 +26,7 @@ public interface ZoomController {
 	 * Sets the visualization viewer.
 	 * @param visViewer the vis viewer
 	 */
-	public void setVisualizationViewer(VisualizationViewer<GraphNode, GraphEdge> visViewer);
+	public void setVisualizationViewer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer);
 
 	
 	/**

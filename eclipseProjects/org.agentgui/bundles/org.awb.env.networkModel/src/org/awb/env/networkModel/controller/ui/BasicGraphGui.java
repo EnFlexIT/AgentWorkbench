@@ -77,6 +77,7 @@ import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.adapter.NetworkComponentToGraphNodeAdapter;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
@@ -1419,11 +1420,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void setMapPreRendering() {
 		
+		MapService mapServiceOld = this.getVisualizationViewer().getMapService();
+		
 		boolean isDoMapRendering = this.isDoMapPreRendering();
 		if (isDoMapRendering==true) {
 			this.getVisualizationViewer().setMapService(this.getMapService());
 		} else {
 			this.getVisualizationViewer().setMapService(null);
+			if (mapServiceOld!=null) {
+				mapServiceOld.destroyMapServiceInstances();
+			}
 		}
 		this.getVisualizationViewer().setDoMapPreRendering(isDoMapRendering);
 	}
@@ -1449,8 +1455,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		return true;
 	}
 	/**
-	 * Returns the currently selected {@link MapService}.
-	 * @return the map service
+	 * Returns the currently selected {@link MapService} from the current {@link MapSettings} of the {@link NetworkModel}.
+	 * @return the MapService selected
 	 */
 	public MapService getMapService() {
 		MapSettings mapSettings = this.getGraphEnvironmentController().getNetworkModel().getMapSettings();
