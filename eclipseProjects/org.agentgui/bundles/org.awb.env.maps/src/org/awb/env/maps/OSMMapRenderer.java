@@ -2,6 +2,7 @@ package org.awb.env.maps;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -24,6 +25,8 @@ import org.jxmapviewer.viewer.WaypointPainter;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.MultiLayerTransformer;
+import edu.uci.ics.jung.visualization.transform.MutableAffineTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 public class OSMMapRenderer implements MapRenderer {
@@ -37,6 +40,7 @@ public class OSMMapRenderer implements MapRenderer {
 	private Graphics2D graphics;
 	private MapRendererSettings mapRendererSettings;
 	
+	private MutableAffineTransformer mutableAffineTransformer;
 	
 	private boolean isPrintOverlay = true;
 	
@@ -93,6 +97,11 @@ public class OSMMapRenderer implements MapRenderer {
 		this.setGraphics2D(graphics);
 		this.setMapRendererSettings(mapRendererSettings);
 		
+		// -- Dirty hack -------------------------------- Start -----
+		this.setOwnLayoutTransformer();
+		
+		// -- Dirty hack -------------------------------- Stop ------
+		
 		// --- Check if a Jung re-scaling is required and called ----
 		if (this.isJungReScalingCalled()==true) {
 			mapRendererSettings.getVisualizationViewer().repaint();
@@ -112,6 +121,23 @@ public class OSMMapRenderer implements MapRenderer {
 		}
 		this.getJXMapViewerWrapper().paint(graphics);
 		
+	}
+	
+
+	private void setOwnLayoutTransformer() {
+		
+		MultiLayerTransformer mlt = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer();
+		MutableTransformer mtCurrent = mlt.getTransformer(Layer.VIEW);
+		if (mtCurrent!=this.getMutableAffineTransformer()) {
+			mlt.setTransformer(Layer.VIEW, this.getMutableAffineTransformer());
+		}
+	}
+	
+	private MutableAffineTransformer getMutableAffineTransformer() {
+		if (mutableAffineTransformer==null) {
+			mutableAffineTransformer = new MutableAffineTransformer(new JxMapAffineTransform());
+		}
+		return mutableAffineTransformer;
 	}
 	
 	
