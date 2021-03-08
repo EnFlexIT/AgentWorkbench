@@ -2,7 +2,6 @@ package org.awb.env.maps;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -13,34 +12,30 @@ import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapRendererSettings;
-import org.jxmapviewer.OSMTileFactoryInfo;
-import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Tile;
-import org.jxmapviewer.viewer.TileFactory;
 import org.jxmapviewer.viewer.TileListener;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.MultiLayerTransformer;
-import edu.uci.ics.jung.visualization.transform.MutableAffineTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
+/**
+ * The Class OSMMapRenderer.
+ */
 public class OSMMapRenderer implements MapRenderer {
 
 	private boolean isDebug = true;
 	
 	private BaseMapService baseMapService;
 	
-	private JXMapViewerWrapper mapCanvas;
+	private JXMapViewerForAWB jxMapViewer;
 
 	private Graphics2D graphics;
 	private MapRendererSettings mapRendererSettings;
-	
-	private MutableAffineTransformer mutableAffineTransformer;
 	
 	private boolean isPrintOverlay = true;
 	
@@ -71,19 +66,18 @@ public class OSMMapRenderer implements MapRenderer {
 	 * Returns the JX map viewer wrapper.
 	 * @return the JX map viewer wrapper
 	 */
-	private JXMapViewerWrapper getJXMapViewerWrapper() {
-		if (mapCanvas==null) {
-			mapCanvas = new JXMapViewerWrapper();
-			TileFactory tileFactory = new DefaultTileFactory(new OSMTileFactoryInfo());
-			tileFactory.addTileListener(new TileListener() {
+	private JXMapViewerForAWB getJXMapViewerWrapper() {
+		if (jxMapViewer==null) {
+			jxMapViewer = new JXMapViewerForAWB();
+			jxMapViewer.setDrawTileBorders(true);
+			jxMapViewer.getTileFactory().addTileListener(new TileListener() {
 				@Override
 				public void tileLoaded(Tile tile) {
 					OSMMapRenderer.this.repaint();
 				}
 			});
-			mapCanvas.setTileFactory(tileFactory);
 		}
-		return mapCanvas;
+		return jxMapViewer;
 	}
 	
 	
@@ -96,11 +90,6 @@ public class OSMMapRenderer implements MapRenderer {
 		// --- Set current working instances ------------------------
 		this.setGraphics2D(graphics);
 		this.setMapRendererSettings(mapRendererSettings);
-		
-		// -- Dirty hack -------------------------------- Start -----
-		this.setOwnLayoutTransformer();
-		
-		// -- Dirty hack -------------------------------- Stop ------
 		
 		// --- Check if a Jung re-scaling is required and called ----
 		if (this.isJungReScalingCalled()==true) {
@@ -119,28 +108,9 @@ public class OSMMapRenderer implements MapRenderer {
 			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
 			isPrintOverlay = false;
 		}
-		this.getJXMapViewerWrapper().paint(graphics);
-		
+		this.getJXMapViewerWrapper().paintComponent(graphics);
 	}
-	
 
-	private void setOwnLayoutTransformer() {
-		
-		MultiLayerTransformer mlt = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer();
-		MutableTransformer mtCurrent = mlt.getTransformer(Layer.VIEW);
-		if (mtCurrent!=this.getMutableAffineTransformer()) {
-			mlt.setTransformer(Layer.VIEW, this.getMutableAffineTransformer());
-		}
-	}
-	
-	private MutableAffineTransformer getMutableAffineTransformer() {
-		if (mutableAffineTransformer==null) {
-			mutableAffineTransformer = new MutableAffineTransformer(new JxMapAffineTransform());
-		}
-		return mutableAffineTransformer;
-	}
-	
-	
 	/**
 	 * Checks if the Jung scaling needs to be adjusted. If so, the nearest {@link ZoomLevel} 
 	 * will be determined out of the available {@link OSMZoomLevels}.  
@@ -209,7 +179,7 @@ public class OSMMapRenderer implements MapRenderer {
 	}
 	
 	public void repaint(int zoomLevel, MapRendererSettings mapRendererSettings) {
-		this.mapCanvas.setZoom(zoomLevel);
+		this.jxMapViewer.setZoom(zoomLevel);
 		this.paintMap(this.getGraphics2D(), mapRendererSettings);
 		this.getMapRendererSettings().getVisualizationViewer().repaint();
 	}
