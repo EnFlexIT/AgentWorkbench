@@ -32,7 +32,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Iterator;
 
 import agentgui.core.application.Application;
 import agentgui.core.database.DBConnection;
@@ -601,19 +600,20 @@ public class ServerMasterAgent extends Agent {
 		// --- Build exclude part of the sql-statement ------------------------
 		String excludeIPsql = "";
 		ArrayList excludeIPs = (ArrayList) remConf.getHostExcludeIP();
+		for (int i = 0; i < excludeIPs.size(); i++) {
+			
+			String ip = (String) excludeIPs.get(i);
+			if (excludeIPsql.contains(ip)==true) continue;
 
-		@SuppressWarnings("unchecked")
-		Iterator<String> excludeIPsIterator = excludeIPs.iterator();
-		for (Iterator<String> it = excludeIPsIterator; it.hasNext();) {
-			String ip = it.next();
 			if (excludeIPsql.equals("")==false) {
 				excludeIPsql += ", ";
 			}
-			excludeIPsql += "'" + ip + "'"; 
+			excludeIPsql += "'" + ip + "'";
 		}
 		if (excludeIPsql.equals("")==false) {
 			excludeIPsql = "AND ip NOT IN (" + excludeIPsql + ") ";
 		}
+		
 		// --------------------------------------------------------------------
 		// --- Select the machine with the highest potential of 		 ------
 		// --- Mflops (Millions of floating point operations per second) ------
