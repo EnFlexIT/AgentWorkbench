@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.Bundle;
@@ -240,14 +239,19 @@ public class Cache {
 	 */
 	private File getCacheFile() {
 		
+		// --- Get the applications configuration directory ---------
+		File configDirectory = null;
+		// --- Catch possible NullPointer in ConfigurationScope -----
+		try {
+			IScopeContext scopeContext = ConfigurationScope.INSTANCE;
+			configDirectory = scopeContext.getLocation().toFile();
+		} catch (Exception ex) { }
+		
+		if (configDirectory==null) return null;
+		
+		// --- Return the cache file -------------------------------- 
 		Bundle myBundle = FrameworkUtil.getBundle(this.getClass());
-		
-		IScopeContext scopeContext = ConfigurationScope.INSTANCE;
-		IPath iPath = scopeContext.getLocation();
-		if (iPath==null) return null;
-		
-		File configurationPathFile = iPath.toFile();
-		String cacheFilePath = configurationPathFile.getAbsolutePath() + File.separator + myBundle.getSymbolicName() + File.separator + "BundleEvaluationCache.xml";
+		String cacheFilePath = configDirectory.getAbsolutePath() + File.separator + myBundle.getSymbolicName() + File.separator + "BundleEvaluationCache.xml";
 		return new File(cacheFilePath); 
 	}
 	
@@ -267,7 +271,7 @@ public class Cache {
 			JAXBContext context = JAXBContext.newInstance(Cache.class);
 			Unmarshaller unMarsh = context.createUnmarshaller();
 			
-			inputStream = new FileInputStream(this.getCacheFile());
+			inputStream = new FileInputStream(cacheFile);
 			isReader  = new InputStreamReader(inputStream, FILE_ENCODING);
 			
 			Object jaxbObject = unMarsh.unmarshal(isReader);

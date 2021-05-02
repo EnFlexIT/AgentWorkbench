@@ -157,7 +157,7 @@ public class ServerClientAgent extends Agent {
 		
 		// --- Define Main-Platform-Info ----------------------
 		JadeUrlConfiguration myURL = Application.getGlobalInfo().getJadeUrlConfigurationForMaster();
-		if(!myURL.hasErrors()){
+		if (!myURL.hasErrors()) {
 			mainPlatform.setIp(myURL.getHostIP());
 			mainPlatform.setUrl(myURL.getHostName());
 			mainPlatform.setPort(myURL.getPort());
@@ -403,7 +403,7 @@ public class ServerClientAgent extends Agent {
 					agentAction = act.getAction();
 					
 					// ------------------------------------------------------------------
-					// --- Fallunterscheidung AgentAction --- S T A R T -----------------
+					// --- Case separation AgentAction --- S T A R T --------------------
 					// ------------------------------------------------------------------
 					if (agentAction instanceof RegisterReceipt) {
 						System.out.println( "Server.Master (re)connected!" );
@@ -453,7 +453,7 @@ public class ServerClientAgent extends Agent {
 						System.out.println( agentAction.toString() );
 					}
 					// ------------------------------------------------------------------
-					// --- Fallunterscheidung AgentAction --- E N D E -------------------
+					// --- Case separation  AgentAction --- E N D E ---------------------
 					// ------------------------------------------------------------------
 				}
 			
