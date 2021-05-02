@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -44,6 +46,8 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 	private KeyAdapter4Numbers numberKeyListenerDouble;
 	private boolean pauseDocumentListener;
 	
+	private DecimalFormat decimalFormatter;
+	
 	private JLabel jLabelHeader;
 	private JButton jButtonSetNull;
 	private JButton jButtonMapsGoogle;
@@ -70,7 +74,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 	 * Instantiates a new JPanel to configure a geographical coordinate.
 	 */
 	public GeoCoordinatePanel() {
-		initialize();
+		this.initialize();
 	}
 	/** Initialize the panel. */
 	private void initialize() {
@@ -395,6 +399,21 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		return numberKeyListenerDouble;
 	}
 
+	/**
+	 * Returns the decimal formatter.
+	 * @return the decimal formatter
+	 */
+	private DecimalFormat getDecimalFormatter() {
+		if (decimalFormatter==null) {
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator('.');
+			decimalFormatter = (DecimalFormat) DecimalFormat.getInstance();
+			decimalFormatter.setDecimalFormatSymbols(dfs);
+			decimalFormatter.setMaximumFractionDigits(Integer.MAX_VALUE);
+		}
+		return decimalFormatter;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -405,7 +424,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 			// --- Browse to Google Maps ------------------
 			WGS84LatLngCoordinate wgs84Coordinate = this.getWGS84LatLngCoordinate(false);
 			if (wgs84Coordinate!=null) {
-				String url = "https://maps.google.com/maps?q=loc:" + wgs84Coordinate.getLatitude() + "," + wgs84Coordinate.getLongitude() + "";
+				String url = "https://maps.google.com/maps?q=loc:" + this.getDecimalFormatter().format(wgs84Coordinate.getLatitude()) + "," + this.getDecimalFormatter().format(wgs84Coordinate.getLongitude()) + "";
 				this.browseTo(url);
 			}
 			
@@ -413,7 +432,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 			// --- Browse to OpenStreeMap -----------------
 			WGS84LatLngCoordinate wgs84Coordinate = this.getWGS84LatLngCoordinate(false);
 			if (wgs84Coordinate!=null) {
-				String url = "http://www.openstreetmap.org/?mlat=" + wgs84Coordinate.getLatitude() + "&mlon=" + wgs84Coordinate.getLongitude() + "&zoom=18";
+				String url = "http://www.openstreetmap.org/?mlat=" + this.getDecimalFormatter().format(wgs84Coordinate.getLatitude()) + "&mlon=" + this.getDecimalFormatter().format(wgs84Coordinate.getLongitude()) + "&zoom=18";
 				this.browseTo(url);
 			}
 		

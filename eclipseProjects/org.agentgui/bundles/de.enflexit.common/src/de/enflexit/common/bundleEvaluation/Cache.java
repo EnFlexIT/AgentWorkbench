@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.Bundle;
@@ -242,9 +243,11 @@ public class Cache {
 		Bundle myBundle = FrameworkUtil.getBundle(this.getClass());
 		
 		IScopeContext scopeContext = ConfigurationScope.INSTANCE;
-		File configurationFile = scopeContext.getLocation().toFile();
+		IPath iPath = scopeContext.getLocation();
+		if (iPath==null) return null;
 		
-		String cacheFilePath = configurationFile.getAbsolutePath() + File.separator + myBundle.getSymbolicName() + File.separator + "BundleEvaluationCache.xml";
+		File configurationPathFile = iPath.toFile();
+		String cacheFilePath = configurationPathFile.getAbsolutePath() + File.separator + myBundle.getSymbolicName() + File.separator + "BundleEvaluationCache.xml";
 		return new File(cacheFilePath); 
 	}
 	

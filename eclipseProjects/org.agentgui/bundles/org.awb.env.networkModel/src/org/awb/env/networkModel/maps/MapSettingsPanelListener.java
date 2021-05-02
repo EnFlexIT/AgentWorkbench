@@ -13,7 +13,7 @@ public interface MapSettingsPanelListener {
 		UTM_Longitude,
 		UTM_Latitude,
 		MapScale,
-		ShowMapTiles,
+		MapService,
 	    MapTileTransparency
 	}
 	
