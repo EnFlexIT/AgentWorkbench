@@ -374,7 +374,9 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugOut4Manager(agentgui.simulationService.sensoring.ServiceSensorManager)
 		 */
 		public void sensorPlugOut4Manager(ServiceSensorManager sensor) throws ServiceException {
-			localServiceActuator4Manager.plugOut(sensor);	
+			if (localServiceActuator4Manager!=null) {
+				localServiceActuator4Manager.plugOut(sensor);	
+			}
 		}		
 
 		// ----------------------------------------------------------

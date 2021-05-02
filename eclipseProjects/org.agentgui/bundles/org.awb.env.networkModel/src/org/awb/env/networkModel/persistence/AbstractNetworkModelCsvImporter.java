@@ -37,9 +37,9 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 
 	private NetworkModel networkModel;
 
-	private Vector<String> validFileNames;
-	
+
 	protected boolean debug = false;
+	private Vector<String> validFileNames;
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.NetworkModelFileImporter#cleanupImporter()
@@ -265,10 +265,17 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 	}
 	
 	/**
+	 * Sets the local debug flag.
+	 * @param debug the new debug
+	 */
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	/**
 	 * Checks if debugging is enabled.
 	 * @return true, if debugging is enabled
 	 */
-	protected boolean isDebug() {
+	public boolean isDebug() {
 		return this.debug;
 	}
 	
