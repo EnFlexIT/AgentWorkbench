@@ -840,7 +840,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jPanelStaticClass.add(jLabelStaticLoadClass, gridBagConstraints42);
 			jPanelStaticClass.add(getJTextFieldStaticLoadClass(), gridBagConstraints31);
 			jPanelStaticClass.add(getJButtonDefaultClassStatic(), gridBagConstraints52);
-			jPanelStaticClass.add(getJButtonDefaultClassStaticCheck(), gridBagConstraints28);
+			jPanelStaticClass.add(getJButtonSelectStaticClass(), gridBagConstraints28);
 		}
 		return jPanelStaticClass;
 	}
@@ -916,7 +916,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * This method initializes jButtonDefaultClassStaticCheck	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonDefaultClassStaticCheck() {
+	private JButton getJButtonSelectStaticClass() {
 		if (jButtonSelectStaticClass == null) {
 			jButtonSelectStaticClass = new JButton();
 			jButtonSelectStaticClass.setToolTipText("Klasse auswählen");
@@ -961,7 +961,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jPanelDynamic.add(jLabelDynamicLoadClass, gridBagConstraints4);
 			jPanelDynamic.add(getJTextFieldDynamicLoadClass(), gridBagConstraints3);
 			jPanelDynamic.add(getJButtonDefaultClassDynamic(), gridBagConstraints5);
-			jPanelDynamic.add(getJButtonDefaultClassDynamicCheck(), gridBagConstraints29);
+			jPanelDynamic.add(getJButtonSelectDynamicClass(), gridBagConstraints29);
 		}
 		return jPanelDynamic;
 	}
@@ -999,7 +999,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * This method initializes jButtonDefaultClassDynamicCheck	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonDefaultClassDynamicCheck() {
+	private JButton getJButtonSelectDynamicClass() {
 		if (jButtonSelectDynamicClass == null) {
 			jButtonSelectDynamicClass = new JButton();
 			jButtonSelectDynamicClass.setToolTipText("Klasse auswählen");
@@ -1639,18 +1639,21 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	public void actionPerformed(ActionEvent ae) {
 	
 		Object trigger = ae.getSource();
-		if (trigger==jCheckBoxIsRemoteOnly) {
+		if (trigger==this.getJCheckBoxIsRemoteOnly()) {
 			this.currDistributionSetup.setRemoteOnly(this.getJCheckBoxIsRemoteOnly().isSelected());
-		}else if (trigger==jCheckBoxIsEvenDistribution) {
+			
+		} else if (trigger==this.getJCheckBoxIsEvenDistribution()) {
 			this.currDistributionSetup.setEvenDistribution(this.getJCheckBoxIsEvenDistribution().isSelected());
-		} else if (trigger==jCheckBoxPreventUsageOfUsedComputers) {
+			
+		} else if (trigger==this.getJCheckBoxPreventUsageOfUsedComputers()) {
 			this.currRemoteContainerConfiguration.setPreventUsageOfAlreadyUsedComputers(this.getJCheckBoxPreventUsageOfUsedComputers().isSelected());
 			this.currProject.setRemoteContainerConfiguration(currRemoteContainerConfiguration);
-		} else if (trigger==jCheckBoxShowRMA) {
+			
+		} else if (trigger==this.getJCheckBoxShowRMA()) {
 			this.currRemoteContainerConfiguration.setShowJADErmaGUI(this.getJCheckBoxShowRMA().isSelected());
 			this.currProject.setRemoteContainerConfiguration(currRemoteContainerConfiguration);
-		} else if (trigger==jButtonRemoteDefault) {
 			
+		} else if (trigger==this.getJButtonRemoteDefault()) {
 			this.currRemoteContainerConfiguration = new RemoteContainerConfiguration();
 			this.getJCheckBoxPreventUsageOfUsedComputers().setSelected(currRemoteContainerConfiguration.isPreventUsageOfAlreadyUsedComputers());
 			this.getJCheckBoxShowRMA().setSelected(this.currRemoteContainerConfiguration.isShowJADErmaGUI());
@@ -1663,7 +1666,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			this.getJCheckBoxIsEvenDistribution().setSelected(currDistributionSetup.isEvenDistribution());
 			this.currProject.setDistributionSetup(currDistributionSetup);
 
-		} else if (trigger==jButtonCalcContainer) {
+		} else if (trigger==this.getJButtonCalcContainer()) {
 			// --- calculate the number of container required -------
 			int noAgents = Integer.parseInt(jTextFieldAgentsExpected.getText());
 			int noAgentsMax = Integer.parseInt(jTextFieldThreadsHigh.getText());
@@ -1676,40 +1679,41 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			currDistributionSetup.setNumberOfAgents(noAgents);
 			currDistributionSetup.setNumberOfContainer(noContainer);
 			
-		} else if (trigger==jButtonDefaultClassStatic) {
+		} else if (trigger==this.getJButtonDefaultClassStatic()) {
 			this.setDefaults(STATIC_BALANCING_CLASS);
-		} else if (trigger==jButtonDefaultClassDynamic) { 
+		} else if (trigger==this.getJButtonDefaultClassDynamic()) { 
 			this.setDefaults(DYNAMIC_BALANCING_CLASS);
-		} else if (trigger==jButtonDefaultThreshold) {
+		} else if (trigger==this.getJButtonDefaultThreshold()) {
 			this.setDefaults(THRESHOLD_LEVEL);
 			
-		} else if (trigger==jButtonSelectStaticClass) {
+		} else if (trigger==this.getJButtonSelectStaticClass()) {
 			this.setBalancingClass(STATIC_BALANCING_CLASS);			
-		} else if (trigger==jButtonSelectDynamicClass) {
+		} else if (trigger==this.getJButtonSelectDynamicClass()) {
 			this.setBalancingClass(DYNAMIC_BALANCING_CLASS);
 			
-		} else if (trigger==jCheckBoxDoLoadStatic) {
+		} else if (trigger==this.getJCheckBoxDoLoadStatic()) {
 			currDistributionSetup.setDoStaticLoadBalancing(jCheckBoxDoLoadStatic.isSelected());
-		} else if (trigger==jCheckBoxDoLoadDynamic) {
+		} else if (trigger==this.getJCheckBoxDoLoadDynamic()) {
 			currDistributionSetup.setDoDynamicLoadBalancing(jCheckBoxDoLoadDynamic.isSelected());
-		} else if (trigger==jCheckBoxThresholdDefinition) {
+		} else if (trigger==this.getJCheckBoxThresholdDefinition()) {
 			currDistributionSetup.setUseUserThresholds(jCheckBoxThresholdDefinition.isSelected());
-		} else if (trigger==jCheckBoxShowLoadMonitor) {
+		} else if (trigger==this.getJCheckBoxShowLoadMonitor()) {
 			currDistributionSetup.setShowLoadMonitorAtPlatformStart(jCheckBoxShowLoadMonitor.isSelected());
-		} else if (trigger==jCheckBoxShowThreadMonitor) {
+		} else if (trigger==this.getJCheckBoxShowThreadMonitor()) {
 			currDistributionSetup.setShowThreadMonitorAtPlatformStart(jCheckBoxShowThreadMonitor.isSelected());
-		} else if (trigger==jCheckboxAutosaveRealMetricsOnSimStop){
+		} else if (trigger==this.getJCheckboxAutosaveRealMetricsOnSimStop()){
 			currDistributionSetup.setAutoSaveRealMetricsOnSimStop(jCheckboxAutosaveRealMetricsOnSimStop.isSelected());
-		} else if (trigger==jCheckBoxImmediatelyStartLoadRecording) {
+		} else if (trigger==this.getJCheckBoxImmediatelyStartLoadRecording()) {
 			currDistributionSetup.setImmediatelyStartLoadRecording(jCheckBoxImmediatelyStartLoadRecording.isSelected());
-		} else if (trigger==jComboBoxRecordingInterval) {
+		} else if (trigger==this.getJComboBoxRecordingInterval()) {
 			TimeSelection timeSelection = (TimeSelection) jComboBoxRecordingInterval.getSelectedItem();
 			currDistributionSetup.setLoadRecordingInterval(timeSelection.getTimeInMill());
 			
 		} else {
 			//System.err.println("Action nicht implementiert: " + ae.getActionCommand());
 		}
-		currProject.setDistributionSetup(this.currDistributionSetup);
+		
+		this.currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 	
 	/* (non-Javadoc)
