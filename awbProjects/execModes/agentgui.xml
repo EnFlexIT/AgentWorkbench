@@ -40,7 +40,7 @@
         <remoteOnly>true</remoteOnly>
         <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
         <showThreadMonitorAtPlatformStart>true</showThreadMonitorAtPlatformStart>
-        <staticLoadBalancingClass>agentgui.simulationService.balancing.PredictiveStaticLoadBalancing</staticLoadBalancingClass>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>true</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>
@@ -67,7 +67,7 @@
     <remoteContainerConfiguration>
         <jvmMemAllocInitial>128m</jvmMemAllocInitial>
         <jvmMemAllocMaximum>1g</jvmMemAllocMaximum>
-        <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
+        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
     <simulationSetupCurrent>default</simulationSetupCurrent>

@@ -221,8 +221,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jButtonCalcContainer.setText(Language.translate("Anzahl Container berechnen"));
 		
 		jButtonRemoteDefault.setToolTipText(Language.translate("Standard verwenden"));
-		jButtonDefaultClassStatic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));	
-		jButtonDefaultClassDynamic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));
+		jButtonDefaultClassStatic.setToolTipText(Language.translate("AWB-Standard verwenden"));	
+		jButtonDefaultClassDynamic.setToolTipText(Language.translate("AWB-Standard verwenden"));
 		jButtonSelectStaticClass.setToolTipText(Language.translate("Klasse auswählen"));
 		jButtonSelectDynamicClass.setToolTipText(Language.translate("Klasse auswählen"));
 	}
@@ -868,7 +868,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 				}
 	
 			  	public void checkBalancingMethod() {
-			  		if (jTextFieldStaticLoadClass.getText().equals(StaticLoadBalancing.class.getName())) {
+			  		if (Distribution.this.getJTextFieldStaticLoadClass().getText().equals(StaticLoadBalancing.class.getName())) {
 			  			getJTextFieldAgentsExpected().setVisible(true);
 			  			jLabelAgentsExpected.setVisible(true);
 			  			getJTextFieldContainerExpected().setVisible(true);
@@ -878,7 +878,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			  			getJCheckBoxIsRemoteOnly().setVisible(true);
 			  			getJCheckBoxIsEvenDistribution().setVisible(false);
 			  			
-			  		} else if(jTextFieldStaticLoadClass.getText().equals(PredictiveStaticLoadBalancing.class.getName())) {
+			  		} else if(Distribution.this.getJTextFieldStaticLoadClass().getText().equals(PredictiveStaticLoadBalancing.class.getName())) {
 			  			getJTextFieldAgentsExpected().setVisible(false);
 			  			jLabelAgentsExpected.setVisible(false);
 			  			getJTextFieldContainerExpected().setVisible(false);
@@ -902,7 +902,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JButton getJButtonDefaultClassStatic() {
 		if (jButtonDefaultClassStatic == null) {
 			jButtonDefaultClassStatic = new JButton();
-			jButtonDefaultClassStatic.setToolTipText("Agent.GUI - Standard verwenden");			
+			jButtonDefaultClassStatic.setToolTipText("AWB-Standard verwenden");			
 			jButtonDefaultClassStatic.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClassStatic.setPreferredSize(new Dimension(45, 26));
 			jButtonDefaultClassStatic.setIcon(GlobalInfo.getInternalImageIcon("MBreset.png"));
@@ -1544,33 +1544,33 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.currUserThresholds = this.currDistributionSetup.getUserThresholds();
 		this.currRemoteContainerConfiguration = this.currProject.getRemoteContainerConfiguration();
 		
-		this.jCheckBoxPreventUsageOfUsedComputers.setSelected(currRemoteContainerConfiguration.isPreventUsageOfAlreadyUsedComputers());
-		this.jCheckBoxIsRemoteOnly.setSelected(currDistributionSetup.isRemoteOnly());
-		this.jCheckBoxIsEvenDistribution.setSelected(currDistributionSetup.isEvenDistribution());
-		this.jCheckBoxShowRMA.setSelected(currRemoteContainerConfiguration.isShowJADErmaGUI());
-		this.jComboBoxJVMMemoryMaximum.setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocMaximum());
-		this.jComboBoxJVMMemoryInitial.setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocInitial());
+		this.getJCheckBoxPreventUsageOfUsedComputers().setSelected(currRemoteContainerConfiguration.isPreventUsageOfAlreadyUsedComputers());
+		this.getJCheckBoxIsRemoteOnly().setSelected(currDistributionSetup.isRemoteOnly());
+		this.getJCheckBoxIsEvenDistribution().setSelected(currDistributionSetup.isEvenDistribution());
+		this.getJCheckBoxShowRMA().setSelected(currRemoteContainerConfiguration.isShowJADErmaGUI());
+		this.getJComboBoxJVMMemoryMaximum().setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocMaximum());
+		this.getJComboBoxJVMMemoryInitial().setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocInitial());
 		
-		this.jCheckBoxDoLoadStatic.setSelected(currDistributionSetup.isDoStaticLoadBalancing());
-		this.jTextFieldAgentsExpected.setText(((Integer)currDistributionSetup.getNumberOfAgents()).toString());
-		this.jTextFieldContainerExpected.setText(((Integer)currDistributionSetup.getNumberOfContainer()).toString());
-		this.jTextFieldStaticLoadClass.setText(currDistributionSetup.getStaticLoadBalancingClass());
+		this.getJCheckBoxDoLoadStatic().setSelected(currDistributionSetup.isDoStaticLoadBalancing());
+		this.getJTextFieldAgentsExpected().setText(((Integer)currDistributionSetup.getNumberOfAgents()).toString());
+		this.getJTextFieldContainerExpected().setText(((Integer)currDistributionSetup.getNumberOfContainer()).toString());
+		this.getJTextFieldStaticLoadClass().setText(currDistributionSetup.getStaticLoadBalancingClass());
 		
-		this.jCheckBoxDoLoadDynamic.setSelected(currDistributionSetup.isDoDynamicLoadBalancing());
-		this.jTextFieldDynamicLoadClass.setText(currDistributionSetup.getDynamicLoadBalancingClass());
+		this.getJCheckBoxDoLoadDynamic().setSelected(currDistributionSetup.isDoDynamicLoadBalancing());
+		this.getJTextFieldDynamicLoadClass().setText(currDistributionSetup.getDynamicLoadBalancingClass());
 		
-		this.jCheckBoxThresholdDefinition.setSelected(currDistributionSetup.isUseUserThresholds());
-		this.jTextFieldCpuLow.setText(((Integer)currUserThresholds.getThCpuL()).toString());
-		this.jTextFieldCpuHigh.setText(((Integer)currUserThresholds.getThCpuH()).toString());
-		this.jTextFieldMemLow.setText(((Integer)currUserThresholds.getThMemoL()).toString());
-		this.jTextFieldMemHigh.setText(((Integer)currUserThresholds.getThMemoH()).toString());
-		this.jTextFieldThreadsLow.setText(((Integer)currUserThresholds.getThNoThreadsL()).toString());
-		this.jTextFieldThreadsHigh.setText(((Integer)currUserThresholds.getThNoThreadsH()).toString());
+		this.getJCheckBoxThresholdDefinition().setSelected(currDistributionSetup.isUseUserThresholds());
+		this.getJTextFieldCpuLow().setText(((Integer)currUserThresholds.getThCpuL()).toString());
+		this.getJTextFieldCpuHigh().setText(((Integer)currUserThresholds.getThCpuH()).toString());
+		this.getJTextFieldMemLow().setText(((Integer)currUserThresholds.getThMemoL()).toString());
+		this.getJTextFieldMemHigh().setText(((Integer)currUserThresholds.getThMemoH()).toString());
+		this.getJTextFieldThreadsLow().setText(((Integer)currUserThresholds.getThNoThreadsL()).toString());
+		this.getJTextFieldThreadsHigh().setText(((Integer)currUserThresholds.getThNoThreadsH()).toString());
 		
-		this.jCheckBoxShowLoadMonitor.setSelected(currDistributionSetup.isShowLoadMonitorAtPlatformStart());
-		this.jCheckBoxShowThreadMonitor.setSelected(currDistributionSetup.isShowThreadMonitorAtPlatformStart());
-		this.jCheckboxAutosaveRealMetricsOnSimStop.setSelected(currDistributionSetup.isAutoSaveRealMetricsOnSimStop());
-		this.jCheckBoxImmediatelyStartLoadRecording.setSelected(currDistributionSetup.isImmediatelyStartLoadRecording());
+		this.getJCheckBoxShowLoadMonitor().setSelected(currDistributionSetup.isShowLoadMonitorAtPlatformStart());
+		this.getJCheckBoxShowThreadMonitor().setSelected(currDistributionSetup.isShowThreadMonitorAtPlatformStart());
+		this.getJCheckboxAutosaveRealMetricsOnSimStop().setSelected(currDistributionSetup.isAutoSaveRealMetricsOnSimStop());
+		this.getJCheckBoxImmediatelyStartLoadRecording().setSelected(currDistributionSetup.isImmediatelyStartLoadRecording());
 		this.setRecordingInterval(currDistributionSetup.getLoadRecordingInterval());
 		
 		this.pauseDocumentListener = false;
@@ -1582,7 +1582,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * select a customized static or dynamic load balancing class
 	 * @param values2Set
 	 */
-	private void setBalancingClass(int balancingType) {
+	private String getUserSelectedBalancingClass(int balancingType) {
 		
 		Class<?> search4Class = null;
 		String 	 search4CurrentValue = null;
@@ -1608,7 +1608,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 		cs.setVisible(true);
 		// --- act in the dialog ... --------------------
-		if (cs.isCanceled()==true) return;
+		if (cs.isCanceled()==true) return null;
 		
 		// ----------------------------------------------
 		// --- Class was selected. Proceed it -----------
@@ -1630,6 +1630,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 				break;
 			}
 		}
+		return classSelected;
 	}
 	
 	/* (non-Javadoc)
@@ -1646,8 +1647,38 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			this.currDistributionSetup.setEvenDistribution(this.getJCheckBoxIsEvenDistribution().isSelected());
 			
 		} else if (trigger==this.getJCheckBoxPreventUsageOfUsedComputers()) {
-			this.currRemoteContainerConfiguration.setPreventUsageOfAlreadyUsedComputers(this.getJCheckBoxPreventUsageOfUsedComputers().isSelected());
-			this.currProject.setRemoteContainerConfiguration(currRemoteContainerConfiguration);
+			// --- Get current selection ----------------------------------------------------------
+			boolean isPreventUsageOfUsedComputers = this.getJCheckBoxPreventUsageOfUsedComputers().isSelected();
+			// --- With the PredictiveStaticLoadBalancing, this is always true, inform user ------- 
+			if (isPreventUsageOfUsedComputers==false && this.getJTextFieldStaticLoadClass().getText().equals(PredictiveStaticLoadBalancing.class.getName())) {
+				// --- Ask user what to do --------------------------------------------------------
+				String title = "'PredictiveStaticLoadBalancing ausgewählt!";
+				String message = "Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese Option nicht deaktiviert werden.\n";
+				message += "Möchten Sie stattdessen eine andere Klasse für die statische Lastverteilung auswählen?";
+				
+				int answer = JOptionPane.showConfirmDialog(Application.getGlobalInfo().getOwnerFrameForComponent(this), Language.translate(message), Language.translate(title), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+				if (answer==JOptionPane.YES_OPTION) {
+					// --- Select a new class for the static load balancing -----------------------
+					String staticLoadBalancingSelected = this.getUserSelectedBalancingClass(STATIC_BALANCING_CLASS);
+					if (staticLoadBalancingSelected==null || staticLoadBalancingSelected.equals(PredictiveStaticLoadBalancing.class.getName())==true) {
+						// --- Reset JCheckBox ----------------------------------------------------
+						this.getJCheckBoxPreventUsageOfUsedComputers().setSelected(true);
+					} else {
+						// --- Save new setting ---------------------------------------------------
+						this.currRemoteContainerConfiguration.setPreventUsageOfAlreadyUsedComputers(this.getJCheckBoxPreventUsageOfUsedComputers().isSelected());
+						this.currProject.setRemoteContainerConfiguration(currRemoteContainerConfiguration);
+					}
+					
+				} else {
+					// --- Reset JCheckBox --------------------------------------------------------
+					this.getJCheckBoxPreventUsageOfUsedComputers().setSelected(true);
+				}
+				
+			} else {
+				// --- Set new setting to project -------------------------------------------------
+				this.currRemoteContainerConfiguration.setPreventUsageOfAlreadyUsedComputers(this.getJCheckBoxPreventUsageOfUsedComputers().isSelected());
+				this.currProject.setRemoteContainerConfiguration(currRemoteContainerConfiguration);
+			}
 			
 		} else if (trigger==this.getJCheckBoxShowRMA()) {
 			this.currRemoteContainerConfiguration.setShowJADErmaGUI(this.getJCheckBoxShowRMA().isSelected());
@@ -1687,9 +1718,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			this.setDefaults(THRESHOLD_LEVEL);
 			
 		} else if (trigger==this.getJButtonSelectStaticClass()) {
-			this.setBalancingClass(STATIC_BALANCING_CLASS);			
+			if (this.getUserSelectedBalancingClass(STATIC_BALANCING_CLASS)==null) return;			
 		} else if (trigger==this.getJButtonSelectDynamicClass()) {
-			this.setBalancingClass(DYNAMIC_BALANCING_CLASS);
+			if (this.getUserSelectedBalancingClass(DYNAMIC_BALANCING_CLASS)==null) return;
 			
 		} else if (trigger==this.getJCheckBoxDoLoadStatic()) {
 			currDistributionSetup.setDoStaticLoadBalancing(jCheckBoxDoLoadStatic.isSelected());
@@ -1728,4 +1759,4 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			}
 		}
 	}
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 
