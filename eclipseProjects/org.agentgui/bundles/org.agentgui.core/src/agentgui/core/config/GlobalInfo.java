@@ -1092,10 +1092,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		
 		// --- Here the default-values can be configured ------------
 		PlatformJadeConfig jadeConfig = new PlatformJadeConfig();
-		jadeConfig.setLocalPort(localeJadeLocalPort);
+		jadeConfig.setLocalPort(this.getJadeLocalPort());
 		
 		jadeConfig.addService(PlatformJadeConfig.SERVICE_AgentGUI_LoadService);
 		jadeConfig.addService(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService);
+		jadeConfig.addService(PlatformJadeConfig.SERVICE_NotificationService);
 		
 		if (Application.isRunningAsServer()==false) {
 			// --- Running as application ---------------------------

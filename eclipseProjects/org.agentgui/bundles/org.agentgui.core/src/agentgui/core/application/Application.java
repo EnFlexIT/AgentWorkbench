@@ -505,8 +505,14 @@ public class Application {
 				}
 				
 			} else {
-				// --- unspecified start option ------------------------------- 
-				System.out.println("Argument" + " " + (i+1) + " '" + args[i] + "': unspecified start argument");
+				// --- Exclude known cases, e.g. for further JADE arguments ---  
+				if (args[i].startsWith("rma.remote")==true) {
+					// System.out.println(args[i] + "excluded!");
+				} else {
+					// --- Print unspecified start option ---------------------
+					System.out.println("Argument" + " " + (i+1) + " '" + args[i] + "': unknown start argument");
+				}
+				
 			}
 			
 			// --- proceed next start argument ------------
