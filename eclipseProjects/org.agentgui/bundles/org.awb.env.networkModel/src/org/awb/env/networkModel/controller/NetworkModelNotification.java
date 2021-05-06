@@ -81,9 +81,9 @@ public class NetworkModelNotification {
 
 	public static final int NETWORK_MODEL_ExportGraphAsImage = 40;
 	
-	public static final int NETWORK_MODEL_MapRendering_ON = 50;
-	public static final int NETWORK_MODEL_MapRendering_OFF = 51;
-	public static final int NETWORK_MODEL_MapScaleChanged = 52;
+	public static final int NETWORK_MODEL_MapScaleChanged = 50;
+	public static final int NETWORK_MODEL_MapServiceChanged = 51;
+	public static final int NETWORK_MODEL_MapTransparencyChanged = 52;
 	
 	public static final int NETWORK_MODEL_ComponentDataModelUpdated = 60;
 	public static final int NETWORK_MODEL_NetworkElementDataModelReLoaded = 61;

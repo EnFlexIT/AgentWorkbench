@@ -5,7 +5,6 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
-import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
 /**
@@ -15,14 +14,15 @@ import org.awb.env.networkModel.maps.MapService;
  */
 public class BaseMapService implements MapService {
 
-	private BaseMapRenderer mapRenderer;
+	private OSMMapRenderer osmMapRenderer;
+	private OSMZoomController osmZoomController;
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getMapServiceName()
 	 */
 	@Override
 	public String getMapServiceName() {
-		return "AWB-Base Map Service";
+		return "AWB-OpenStreetMaps";
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getImageIconOfMapService()
@@ -33,22 +33,43 @@ public class BaseMapService implements MapService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.maps.MapService#getMapRenderer()
-	 */
-	@Override
-	public MapRenderer getMapRenderer() {
-		if (mapRenderer==null) {
-			mapRenderer = new BaseMapRenderer();
-		}
-		return mapRenderer;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapService#getJComponentsForMapInteraction()
 	 */
 	@Override
 	public Vector<JComponent> getJComponentsForMapInteraction() {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapService#destroyMapServiceInstances()
+	 */
+	@Override
+	public void destroyMapServiceInstances() {
+		this.osmMapRenderer = null;
+		this.osmZoomController = null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapService#getMapRenderer()
+	 */
+	@Override
+	public OSMMapRenderer getMapRenderer() {
+		if (osmMapRenderer==null) {
+			osmMapRenderer = new OSMMapRenderer(this);
+		}
+		return osmMapRenderer;
+	}
 
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapService#getZoomController()
+	 */
+	@Override
+	public OSMZoomController getZoomController() {
+		if (osmZoomController == null) {
+			osmZoomController = new OSMZoomController(); 
+		}
+		return osmZoomController;
+	}
+
+	
 }

@@ -6,12 +6,14 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name 
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'#' markiert alle Features, die zur Basisinstallation gehören.;'#' marks all features that belong to the base installation.;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
+de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing selected!;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please, choose a different name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
+de;AWB-Standard verwenden;Use AWB defaults;;;
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No open project!;;;
 de;Abbruch;Cancel;;;
@@ -291,6 +293,7 @@ de;Folgende Plattform-Dienste starten:;Start the following platform-services:
 de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
+de;Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese Option nicht deaktiviert werden.<br>Möchten Sie stattdessen eine andere Klasse für die statische Lastverteilung auswählen?;This option cannot be deactivated for the currently selected class for the static load balancing.<br>Would you like to choose a different class for the static load balancing instead?;;;
 de;Gegenwarts-Zeit.;Present Time;;;
 de;Geräte-Agent;Embedded System Agent;;;
 de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
@@ -721,7 +724,7 @@ de;Versionnummer bearbeiten;Edit Version Number;;;
 de;Versionnummer speichern;Save version number;;;
 de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
-de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;;;;
+de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on: ;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribute agents to remote container only;;;
 de;Verteilung;Distribution
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
@@ -847,6 +850,7 @@ en;;No KeyStore specified!;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;No TrustStore specified!;;;
 en;;No agent selected;;;
+en;;No domain information could be found for GraphNode ';;;
 en;;No visualisation component could be found;;;
 en;;Number of changes;;;
 en;;Operating;;;

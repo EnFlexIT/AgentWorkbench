@@ -10,7 +10,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JCheckBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -26,7 +27,7 @@ import de.enflexit.geography.coordinates.ui.JComboBoxUTMZoneLatitude;
 import de.enflexit.geography.coordinates.ui.JComboBoxUTMZoneLongitude;
 
 /**
- * The Class MapSettingsPanel.
+ * The Class MapSettingsPanel allows to configure current {@link MapSettings} within its Panel.
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class MapSettingsPanel extends JPanel implements ActionListener {
@@ -41,13 +42,19 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 	
 	private JLabel jLabelScale;
 	private JComboBoxMapScale jComboBoxMapScale;
-	private JSlider jSliderTransparency;
-	private Timer timeSliderChangeEvent;
-	private boolean pauseSliderListener;
+	
+	private JSeparator jSeparatorFirst;
+
+	private JLabel jLabelMapService;
+	private DefaultComboBoxModel<String> cbmMapServiceName;
+	private JComboBox<String> jComboBoxMapServiceName;
 	
 	private JLabel jLabelTransparency;
-	private JCheckBox jCheckBoxShowMapTiles;
-	private JSeparator jSeparatorFirst;
+	private JSlider jSliderTransparency;
+	
+	private Timer timeSliderChangeEvent;
+	private boolean pauseActionListener;
+	private boolean pauseSliderListener;
 	
 	private List<MapSettingsPanelListener> listener;
 	
@@ -62,9 +69,9 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelUTMZone = new GridBagConstraints();
@@ -102,28 +109,32 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		gbc_jSeparatorFirst.gridx = 0;
 		gbc_jSeparatorFirst.gridy = 1;
 		add(getJSeparatorFirst(), gbc_jSeparatorFirst);
+		GridBagConstraints gbc_jLabelMapService = new GridBagConstraints();
+		gbc_jLabelMapService.insets = new Insets(5, 10, 2, 0);
+		gbc_jLabelMapService.gridx = 0;
+		gbc_jLabelMapService.gridy = 2;
+		add(getJLabelMapService(), gbc_jLabelMapService);
+		GridBagConstraints gbc_jComboBoxMapService = new GridBagConstraints();
+		gbc_jComboBoxMapService.insets = new Insets(5, 5, 0, 10);
+		gbc_jComboBoxMapService.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jComboBoxMapService.gridwidth = 5;
+		gbc_jComboBoxMapService.gridx = 1;
+		gbc_jComboBoxMapService.gridy = 2;
+		add(getJComboBoxMapServiceName(), gbc_jComboBoxMapService);
 		GridBagConstraints gbc_jLabelTransparency = new GridBagConstraints();
-		gbc_jLabelTransparency.insets = new Insets(5, 10, 0, 0);
+		gbc_jLabelTransparency.insets = new Insets(10, 10, 0, 0);
 		gbc_jLabelTransparency.gridwidth = 3;
 		gbc_jLabelTransparency.anchor = GridBagConstraints.WEST;
 		gbc_jLabelTransparency.gridx = 0;
-		gbc_jLabelTransparency.gridy = 2;
+		gbc_jLabelTransparency.gridy = 3;
 		add(getJLabelTransparency(), gbc_jLabelTransparency);
-		GridBagConstraints gbc_jCheckBoxShowMapTiles = new GridBagConstraints();
-		gbc_jCheckBoxShowMapTiles.anchor = GridBagConstraints.EAST;
-		gbc_jCheckBoxShowMapTiles.gridwidth = 3;
-		gbc_jCheckBoxShowMapTiles.insets = new Insets(5, 0, 0, 10);
-		gbc_jCheckBoxShowMapTiles.gridx = 3;
-		gbc_jCheckBoxShowMapTiles.gridy = 2;
-		add(getJCheckBoxShowMapTiles(), gbc_jCheckBoxShowMapTiles);
 		GridBagConstraints gbc_jSliderTransparency = new GridBagConstraints();
 		gbc_jSliderTransparency.insets = new Insets(5, 10, 0, 10);
 		gbc_jSliderTransparency.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jSliderTransparency.gridwidth = 6;
 		gbc_jSliderTransparency.gridx = 0;
-		gbc_jSliderTransparency.gridy = 3;
+		gbc_jSliderTransparency.gridy = 4;
 		add(getJSliderTransparency(), gbc_jSliderTransparency);
-		
 	}
 	
 	private JLabel getJLabelUTMZone() {
@@ -169,14 +180,6 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		}
 		return jComboBoxMapScale;
 	}
-	private JCheckBox getJCheckBoxShowMapTiles() {
-		if (jCheckBoxShowMapTiles == null) {
-			jCheckBoxShowMapTiles = new JCheckBox("Show Map Tiles");
-			jCheckBoxShowMapTiles.setFont(new Font("Dialog", Font.BOLD, 12));
-			jCheckBoxShowMapTiles.addActionListener(this);
-		}
-		return jCheckBoxShowMapTiles;
-	}
 	
 	private JSeparator getJSeparatorFirst() {
 		if (jSeparatorFirst == null) {
@@ -184,6 +187,33 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		}
 		return jSeparatorFirst;
 	}
+	
+	
+	private JLabel getJLabelMapService() {
+		if (jLabelMapService == null) {
+			jLabelMapService = new JLabel("Map Service:");
+			jLabelMapService.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelMapService;
+	}
+	private DefaultComboBoxModel<String> getComboBoxModelMapServiceName() {
+		if (cbmMapServiceName==null) {
+			List<String> mapServiceNameList = MapSettings.getMapServiceNameList();
+			String[] mapServiceNameArray = new String[mapServiceNameList.size()];
+			mapServiceNameArray = mapServiceNameList.toArray(mapServiceNameArray);
+			cbmMapServiceName = new DefaultComboBoxModel<>(mapServiceNameArray);
+		}
+		return cbmMapServiceName;
+	}
+	private JComboBox<String> getJComboBoxMapServiceName() {
+		if (jComboBoxMapServiceName == null) {
+			jComboBoxMapServiceName = new JComboBox<String>(this.getComboBoxModelMapServiceName());
+			jComboBoxMapServiceName.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxMapServiceName.addActionListener(this);
+		}
+		return jComboBoxMapServiceName;
+	}
+
 	
 	private JLabel getJLabelTransparency() {
 		if (jLabelTransparency == null) {
@@ -243,7 +273,7 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		mapSettings.setUTMLongitudeZone((int) this.getJComboBoxUTMLongitude().getSelectedItem());
 		mapSettings.setUTMLatitudeZone((String) this.getJComboBoxUTMLatitude().getSelectedItem());
 		mapSettings.setMapScale((MapScale) this.getJComboBoxMapScale().getSelectedItem());
-		mapSettings.setShowMapTiles(this.getJCheckBoxShowMapTiles().isSelected());
+		mapSettings.setMapServiceName(this.getMapServiceName());
 		mapSettings.setMapTileTransparency(this.getJSliderTransparency().getValue());
 		return mapSettings;
 	}
@@ -256,14 +286,16 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		if (this.mapSettings==null) {
 			this.setMapSettingsEnabled(false);
 		} else {
+			this.pauseActionListener=true;
 			this.pauseSliderListener=true;
 			this.setMapSettingsEnabled(true);
 			this.getJComboBoxUTMLongitude().setSelectedItem(this.mapSettings.getUTMLongitudeZone());
 			this.getJComboBoxUTMLatitude().setSelectedItem(this.mapSettings.getUTMLatitudeZone());
 			this.getJComboBoxMapScale().setSelectedItem(this.mapSettings.getMapScale());
-			this.getJCheckBoxShowMapTiles().setSelected(this.mapSettings.isShowMapTiles());
+			this.setMapServiceName(this.mapSettings.getMapServiceName());
 			this.setTransparency(this.mapSettings.getMapTileTransparency());
 			this.pauseSliderListener=false;
+			this.pauseActionListener=false;
 		}
 	}
 	
@@ -281,10 +313,35 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 		this.getJComboBoxMapScale().setEnabled(isEnabled);
 		
 		this.getJLabelTransparency().setEnabled(isEnabled);
-		this.getJCheckBoxShowMapTiles().setEnabled(isEnabled);
+		this.getJComboBoxMapServiceName().setEnabled(isEnabled);
 		this.getJSliderTransparency().setEnabled(isEnabled);
 	}
-	
+
+	/**
+	 * Sets the map service name.
+	 * @param newMapServiceName the new map service name
+	 */
+	private void setMapServiceName(String newMapServiceName) {
+		if (newMapServiceName==null || newMapServiceName.isEmpty()==true) {
+			this.getJComboBoxMapServiceName().setSelectedItem(MapSettings.NO_MAP_SERVICE_SELECTION);
+		} else {
+			this.getJComboBoxMapServiceName().setSelectedItem(newMapServiceName);
+		}
+	}
+	/**
+	 * Return the currently selected map service name.
+	 * @return the map service name
+	 */
+	private String getMapServiceName() {
+		Object selectedItem = this.getJComboBoxMapServiceName().getSelectedItem();
+		if (selectedItem instanceof String) {
+			String mapServiceSelected = (String) selectedItem;
+			if (mapServiceSelected!=null && mapServiceSelected.isEmpty()==false && mapServiceSelected.equals(MapSettings.NO_MAP_SERVICE_SELECTION)==false) {
+				return mapServiceSelected;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Sets the transparency.
@@ -300,7 +357,6 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 	 */
 	private void setTransparency(int transValue, boolean setToSlider) {
 		this.getJLabelTransparency().setText("Map-Transparency: " + transValue + " %");
-		this.getJCheckBoxShowMapTiles().setSelected(!(transValue==100));
 		if (setToSlider==true) {
 			this.getJSliderTransparency().setValue(transValue);
 		}
@@ -313,23 +369,23 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
+		// --- Paused action listener? --------------------------------------------------
+		if (this.pauseActionListener==true) return;
+		
+		// --- Ensure that the local MapSetting correspond to the visualization ---------
+		this.getMapSettings();
+		
+		// --- Inform listener about changes --------------------------------------------
 		if (ae.getSource()==this.getJComboBoxUTMLongitude()) {
 			this.informListener(MapSettingsChanged.UTM_Longitude);
 		} else if (ae.getSource()==this.getJComboBoxUTMLatitude()) {
 			this.informListener(MapSettingsChanged.UTM_Latitude);			
 		} else if (ae.getSource()==this.getJComboBoxMapScale()) {
 			this.informListener(MapSettingsChanged.MapScale);
-		} else if (ae.getSource()==this.getJCheckBoxShowMapTiles()) {
-			this.pauseSliderListener = true;
-			if (this.getJCheckBoxShowMapTiles().isSelected()==true && this.getJSliderTransparency().getValue()==100) {
-				this.setTransparency(0);
-			} else {
-				this.setTransparency(100);
-			}
-			this.pauseSliderListener = false;
-			this.informListener(MapSettingsChanged.ShowMapTiles);
+		} else if (ae.getSource()==this.getJComboBoxMapServiceName()) {
+			this.informListener(MapSettingsChanged.MapService);
 		} else if (ae.getSource()==this.getTimerSliderChangeEvent()) {
-			MapSettingsPanel.this.setTransparency(this.getJSliderTransparency().getValue(), false);
+			this.setTransparency(this.getJSliderTransparency().getValue(), false);
 		}
 	}
 	
@@ -369,5 +425,4 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 			this.getMapSettingsPanelListener().get(i).onChangedMapSettings(valueChangedInMapSetting);
 		}
 	}
-	
 }

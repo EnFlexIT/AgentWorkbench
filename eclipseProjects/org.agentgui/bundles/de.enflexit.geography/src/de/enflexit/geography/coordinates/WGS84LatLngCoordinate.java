@@ -40,6 +40,7 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 	public WGS84LatLngCoordinate(double latitude, double longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.validate(this.latitude, this.longitude);
 	}
 	
 	/**
@@ -72,6 +73,19 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 		this.longitude = longitude;
 	}
 
+	/**
+	 * Validates the current WGS84 coordinate.
+	 *
+	 * @param latitude the latitude
+	 * @param longitude the longitude
+	 */
+	private void validate(double latitude, double longitude) {
+		if (latitude < -90.0 || latitude > 90.0 || longitude < -180.0 || longitude >= 180.0) {
+			throw new IllegalArgumentException("Legal ranges: latitude [-90,90], longitude [-180,180).");
+		}
+	}
+	
+	
 	/**
 	 * Gets the distance in km.
 	 *

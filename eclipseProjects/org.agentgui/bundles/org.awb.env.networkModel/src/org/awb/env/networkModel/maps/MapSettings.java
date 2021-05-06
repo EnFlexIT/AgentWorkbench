@@ -1,6 +1,9 @@
 package org.awb.env.networkModel.maps;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.settings.LayoutSettings;
+
+import de.enflexit.common.ServiceFinder;
 
 /**
  * The Class MapSettings is used to adjust the graphical representation of a
@@ -20,7 +25,7 @@ import org.awb.env.networkModel.settings.LayoutSettings;
     "utmLongitudeZone",
     "utmLatitudeZone",
     "mapScale",
-    "showMapTiles",
+    "mapServiceName",
     "mapTileTransparency"
 })
 public class MapSettings implements Serializable {
@@ -62,8 +67,13 @@ public class MapSettings implements Serializable {
 	private String utmLatitudeZone = "U";
 	private MapScale mapScale = MapScale.m;
 	
-	private boolean showMapTiles = true;
+	private String mapServiceName;
 	private int mapTileTransparency = 0;
+	
+	
+	public static final String NO_MAP_SERVICE_SELECTION = "Don't use Map Service";
+	private transient MapService mapService;
+	
 	
 	
 	public int getUTMLongitudeZone() {
@@ -90,19 +100,123 @@ public class MapSettings implements Serializable {
 	}
 	
 	
-	public boolean isShowMapTiles() {
-		return showMapTiles;
+	public String getMapServiceName() {
+		return mapServiceName;
 	}
-	public void setShowMapTiles(boolean showMapTiles) {
-		this.showMapTiles = showMapTiles;
+	public void setMapServiceName(String mapServiceName) {
+		this.mapServiceName = mapServiceName;
 	}
 	
-
+	
 	public int getMapTileTransparency() {
 		return mapTileTransparency;
 	}
 	public void setMapTileTransparency(int mapTileTransparency) {
 		this.mapTileTransparency = mapTileTransparency;
 	}
+
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, handling of the currently selected MapService ---------------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Return the current {@link MapService}. if <code>Null</code>, it will be tried to load the 
+	 * currently configured MapsService from the list of available services
+	 * @return the map service
+	 * 
+	 * @see MapSettings#getMapServiceList()
+	 * @see MapSettings#getMapService(String)
+	 * @see #getMapServiceName()
+	 */
+	public MapService getMapService() {
+		if (mapService==null) {
+			if (this.getMapServiceName()!=null && this.getMapServiceName().isEmpty()==false) {
+				mapService = getMapService(this.getMapServiceName());	
+			}
+		}
+		return mapService;
+	}
+	/**
+	 * Sets the current {@link MapService}.
+	 * @param mapService the new map service
+	 */
+	public void setMapService(MapService mapService) {
+		this.mapService = mapService;
+	}
+	/**
+	 * Sets the current {@link MapService} if the specified map service name can be found.
+	 * @param mapServiceName the new map service
+	 */
+	public void setMapService(String mapServiceName) {
+		MapService mapService = getMapService(mapServiceName);
+		this.setMapService(mapService);
+	}
+	
+	
+	/**
+	 * Returns the list of registered {@link MapService}s.
+	 * @return the map service list
+	 */
+	public static List<MapService> getMapServiceList() {
+		return ServiceFinder.findServices(MapService.class);
+	}
+	/**
+	 * Returns the {@link MapService} specified by the map service name or <code>Null</code>.
+	 *
+	 * @param mapServiceName the map service name
+	 * @return the MapService found or <code>Null</code>
+	 */
+	public static MapService getMapService(String mapServiceName) {
+		List<MapService> mServiceList = getMapServiceList();
+		for (int i = 0; i < mServiceList.size(); i++) {
+			MapService ms = mServiceList.get(i);
+			if (ms.getMapServiceName().equals(mapServiceName)==true) {
+				return ms;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the MapService names as sorted list, where the first element is the indicator
+	 * for not using a MapService.
+	 *
+	 * @param isSortList the indicator to sort the list
+	 * @param insertNoMapServiceIndicator the insert no map service indicator
+	 * @return the map service name list
+	 */
+	public static List<String> getMapServiceNameList() {
+		return getMapServiceNameList(true, true);
+	}
+	/**
+	 * Returns the map service name list.
+	 *
+	 * @param isSortList the indicator to sort the list
+	 * @param insertNoMapServiceIndicator the insert no map service indicator
+	 * @return the map service name list
+	 */
+	public static List<String> getMapServiceNameList(boolean isSortList, boolean insertNoMapServiceIndicator) {
+		
+		// --- Extract service names ----------------------
+		List<String> mServiceNameList =  new ArrayList<>();
+		List<MapService> mServiceList = getMapServiceList();
+		for (int i = 0; i < mServiceList.size(); i++) {
+			mServiceNameList.add(mServiceList.get(i).getMapServiceName()); 
+		}
+		
+		// --- Sort ascending -----------------------------
+		if (isSortList==true) {
+			Collections.sort(mServiceNameList);
+		}
+
+		// --- insert no selection indicator --------------
+		if (insertNoMapServiceIndicator==true) {
+			mServiceNameList.add(0, NO_MAP_SERVICE_SELECTION);
+		}
+		return mServiceNameList;
+	}
+
+	
+	
 	
 }

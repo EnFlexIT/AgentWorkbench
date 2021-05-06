@@ -23,8 +23,9 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>agentgui.simulationService.SimulationService</service>
-            <service>jade.core.mobility.AgentMobilityService</service>
             <service>jade.core.event.NotificationService</service>
+            <service>jade.core.mobility.AgentMobilityService</service>
+            <service>agentgui.logging.DebugService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
@@ -35,12 +36,12 @@
         <evenDistribution>false</evenDistribution>
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
-        <numberOfAgents>0</numberOfAgents>
-        <numberOfContainer>0</numberOfContainer>
+        <numberOfAgents>10</numberOfAgents>
+        <numberOfContainer>1</numberOfContainer>
         <remoteOnly>true</remoteOnly>
         <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
         <showThreadMonitorAtPlatformStart>true</showThreadMonitorAtPlatformStart>
-        <staticLoadBalancingClass>agentgui.simulationService.balancing.PredictiveStaticLoadBalancing</staticLoadBalancingClass>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>true</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>
@@ -56,9 +57,81 @@
             <agentClass>
                 <className>system.class.-Regular-Thread-</className>
                 <realMetric>1.0</realMetric>
-                <realMetricAverage>4.287132264239716</realMetricAverage>
-                <realMetricMax>4.287132264239713</realMetricMax>
-                <realMetricMin>4.287132264239713</realMetricMin>
+                <realMetricAverage>0.25409901855452544</realMetricAverage>
+                <realMetricMax>0.2540990185545259</realMetricMax>
+                <realMetricMin>0.2540990185545259</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>agentgui.simulationService.agents.ServerClientAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.16661342755571948</realMetricAverage>
+                <realMetricMax>0.16661342755571948</realMetricMax>
+                <realMetricMin>0.16661342755571948</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.domain.df</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>agentgui.simulationService.agents.LoadMeasureAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.17107331004444448</realMetricAverage>
+                <realMetricMax>0.17107331004444448</realMetricMax>
+                <realMetricMin>0.17107331004444448</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>agentgui.core.jade.ProjectFileManagerAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>de.enflexit.awb.samples.simulationService.ASynchTimeTestAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.026558039515219775</realMetricAverage>
+                <realMetricMax>0.026558039515219775</realMetricMax>
+                <realMetricMin>0.026558039515219775</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.domain.ams</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.022267422329163237</realMetricAverage>
+                <realMetricMax>0.022267422329163237</realMetricMax>
+                <realMetricMin>0.022267422329163237</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.core.ContainerMonitorAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>de.enflexit.awb.samples.simulationService.RemoteStarterAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>9.92820071283367</realMetricAverage>
+                <realMetricMax>9.92820071283367</realMetricMax>
+                <realMetricMin>9.92820071283367</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.tools.rma.rma</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
         </agentClassMetricDescriptionVector>
@@ -67,7 +140,7 @@
     <remoteContainerConfiguration>
         <jvmMemAllocInitial>128m</jvmMemAllocInitial>
         <jvmMemAllocMaximum>1g</jvmMemAllocMaximum>
-        <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
+        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
     <simulationSetupCurrent>default</simulationSetupCurrent>

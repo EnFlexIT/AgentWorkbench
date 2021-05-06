@@ -41,6 +41,7 @@ import javax.swing.Timer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.maps.MapPreRenderer;
+import org.awb.env.networkModel.maps.MapService;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationModel;
@@ -64,14 +65,15 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	private long statsPaintCompIntervalStart;
 	private long statsLastPaintCompIntervalCounter;
 	
-	
 	private boolean actionOnTop;
 	private Timer resetTimerForActionOnTop;
 	private boolean resetIsActionOnTop;
 	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer;
+	private MapService mapService; 
 	private MapPreRenderer<V, E> mapPreRenderer;
 	private boolean doMapPreRendering;
+	
+	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer;
 
 	
 	/**
@@ -279,6 +281,21 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 
 	
 	/**
+	 * Returns the current map service to be used with the rendering.
+	 * @return the map service
+	 */
+	public MapService getMapService() {
+		return mapService;
+	}
+	/**
+	 * Sets the map service to be used with the rendering.
+	 * @param mapService the new map service
+	 */
+	public void setMapService(MapService mapService) {
+		this.mapService = mapService;
+	}
+	
+	/**
 	 * Returns the Map pre-renderer.
 	 * @return the map pre-renderer
 	 */
@@ -312,6 +329,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public boolean isDoMapPreRendering() {
 		return doMapPreRendering;
 	}
+	
 	
 	/**
 	 * Sets the coordinate system position transformer.

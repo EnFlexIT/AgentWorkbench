@@ -1492,7 +1492,10 @@ public class LoadService extends BaseService {
 		for (int i = 0; i < containerNames.size(); i++) {
 			String containerName = containerNames.get(i);
 			NodeDescription nodeDesc = this.loadInfo.getContainerDescriptionHash().get(containerName);
-			hostExcludeIP.add(nodeDesc.getPlAddress().getIp());
+			String ipAddress = nodeDesc.getPlAddress().getIp();
+			if (hostExcludeIP.contains(ipAddress)==false) {
+				hostExcludeIP.add(ipAddress);
+			}
 		}
 		
 		// --- Get the AID of the file manager agent ----------------
