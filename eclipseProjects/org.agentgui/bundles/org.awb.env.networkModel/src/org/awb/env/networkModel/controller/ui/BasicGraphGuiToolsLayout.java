@@ -627,7 +627,6 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		return this.layoutSelectionDialog!=null && this.layoutSelectionDialog.isVisible()==true;
 	}
 	
-	
 	/**
 	 * Sets the specified graph edge shape configuration to the local {@link #editGraphEdge}.
 	 * @param edgeShapeConfiguration the new graph configuration
@@ -639,16 +638,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		// --- Get reminder for old configuration first -----------------------
 		ConfiguredLineEdit initialConfLineEdit = this.getInitialConfiguredLineEdit();
 		
-		// --- Check if new configuration is a new type of configuration ------
-		String oldConfigClassname = "";
-		String newConfigClassname = "";
-		if (initialConfLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration()!=null) {
-			oldConfigClassname = initialConfLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration().getClass().getName();
-		}
-		if (edgeShapeConfiguration!=null) {
-			newConfigClassname = edgeShapeConfiguration.getClass().getName();
-		}
-		if (newConfigClassname.equals(oldConfigClassname)) return;
+		// --- Check if the new configuration is different from the old one ---
+		GraphEdgeShapeConfiguration<?> oldEdgeShapeConfiguration = initialConfLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration();
+		if (edgeShapeConfiguration.equals(oldEdgeShapeConfiguration)==true) return;
 		
 		// --- Set edge configuration and redraw edge -------------------------
 		this.editGraphEdge.setEdgeShapeConfiguration(edgeShapeConfiguration);

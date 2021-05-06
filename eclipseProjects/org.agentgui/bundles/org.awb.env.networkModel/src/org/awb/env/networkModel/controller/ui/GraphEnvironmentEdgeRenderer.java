@@ -462,7 +462,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         	isFirstMoveInY = orthConfig.isFirstMoveInY();
         }
         // --- Invert the direction indicator? ----------------------
-        if (xDirection==CoordinateSystemXDirection.North || xDirection==CoordinateSystemXDirection.South) {
+        if (xDirection==CoordinateSystemXDirection.East || xDirection==CoordinateSystemXDirection.West) {
         	isFirstMoveInY = !isFirstMoveInY;
         }
         
