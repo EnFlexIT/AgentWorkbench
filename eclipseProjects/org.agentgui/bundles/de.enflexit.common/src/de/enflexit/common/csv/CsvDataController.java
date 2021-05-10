@@ -31,6 +31,8 @@ package de.enflexit.common.csv;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -41,7 +43,7 @@ import javax.swing.table.DefaultTableModel;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  */
-public class CsvDataController extends Observable{
+public class CsvDataController extends Observable {
 	
 	/** Event code to inform observers that the table model was replaced */
 	public static final int EVENT_TABLE_MODEL_REPLACED = 0;
@@ -50,6 +52,8 @@ public class CsvDataController extends Observable{
 	private File file;
 	/** The field separator for the CSV file */
 	private String separator = ";";
+	/** The decimal separator for float or decimal values */
+	private String decimalSeparator;
 	/** If true, the first row will be treated as headlines	 */
 	private boolean headline = true;
 	/** The data model */
@@ -59,9 +63,7 @@ public class CsvDataController extends Observable{
 	/**
 	 * Instantiates a new CSV data controller.
 	 */
-	public CsvDataController() {
-	}
-	
+	public CsvDataController() { }
 	/**
 	 * Instantiates a new CSV data controller for the import.
 	 *
@@ -81,12 +83,24 @@ public class CsvDataController extends Observable{
 	 * @param dataModel the data model
 	 */
 	public CsvDataController(File file, String separator, boolean headline, DefaultTableModel dataModel) {
+		this(file, separator, null, headline, dataModel);
+	}
+	/**
+	 * Instantiates a new CSV data controller for the import OR the export.
+	 *
+	 * @param file the file to import or to export
+	 * @param separator the separator within the CSV file
+	 * @param decimalSeparator the decimal separator for float or double values
+	 * @param headline Indicate if there is a headline or not
+	 * @param dataModel the data model
+	 */
+	public CsvDataController(File file, String separator, String decimalSeparator, boolean headline, DefaultTableModel dataModel) {
 		this.setFile(file);
 		this.setSeparator(separator);
+		this.setDecimalSeparator(decimalSeparator);
 		this.setHeadline(headline);
 		this.setTableModel(dataModel);
 	}
-
 	
 	/**
 	 * Gets the file object of the CSV file.
@@ -102,6 +116,7 @@ public class CsvDataController extends Observable{
 	public void setFile(File file) {
 		this.file = file;
 	}
+	
 	/**
 	 * Gets the separator.
 	 * @return the separator
@@ -117,6 +132,26 @@ public class CsvDataController extends Observable{
 		this.separator = separator;
 	}
 
+	/**
+	 * Gets the decimal separator.
+	 * @return the decimal separator
+	 */
+	public String getDecimalSeparator() {
+		if (decimalSeparator==null) {
+			DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
+			DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+			decimalSeparator = Character.toString(symbols.getDecimalSeparator());
+		}
+		return decimalSeparator;
+	}
+	/**
+	 * Sets the decimal separator.
+	 * @param decimalSeparator the new decimal separator
+	 */
+	public void setDecimalSeparator(String decimalSeparator) {
+		this.decimalSeparator = decimalSeparator;
+	}
+	
 	/**
 	 * Checks for a headline.
 	 * @return true, if the current model/file has a headline
@@ -156,18 +191,18 @@ public class CsvDataController extends Observable{
 
 		if (this.getFile()==null) {
 			System.err.println("No CSV file specified for import!");
-		}else{
+		} else {
 			CsvFileReader fileReader = new CsvFileReader(this.separator);
 			Vector<Vector<Object>> importedData = fileReader.importData(this.file);
-			if(importedData != null){
+			if (importedData!=null) {
 				Vector<Object> headlines;
-				if(this.hasHeadlines()){
+				if (this.hasHeadlines()) {
 					headlines = importedData.get(0);
 					importedData.remove(0);
-				}else{
+				} else {
 					headlines = new Vector<Object>();
 					int columnCount = importedData.get(0).size();
-					for(int i=0; i<columnCount; i++){
+					for (int i=0; i<columnCount; i++) {
 						headlines.addElement("Column "+(i+1));
 					}
 				}
@@ -189,7 +224,7 @@ public class CsvDataController extends Observable{
 			// --- Get the first line -------------------------------
 			String inBuffer = br.readLine();
 			
-			if(inBuffer==null){
+			if (inBuffer==null) {
 				System.err.println("Empty File");
 			} else {
 				
@@ -234,7 +269,7 @@ public class CsvDataController extends Observable{
 		@SuppressWarnings("unchecked")
 		Vector<Vector<Object>> tableData = new Vector<>(this.getDataModel().getDataVector());
 		
-		if(this.hasHeadlines() == true){
+		if (this.hasHeadlines()==true) {
 			Vector<Object> columnTitles = new Vector<Object>();
 			for(int i=0; i<this.tableModel.getColumnCount(); i++){
 				columnTitles.add(this.tableModel.getColumnName(i));
@@ -243,6 +278,8 @@ public class CsvDataController extends Observable{
 		}
 		
 		CsvFileWriter fileWriter = new CsvFileWriter();
+		fileWriter.setSeparator(this.getSeparator());
+		fileWriter.setDecimalSeparator(this.getDecimalSeparator());
 		fileWriter.exportData(file, tableData);
 		
 	}
