@@ -13,6 +13,7 @@ import java.awt.event.FocusEvent;
 import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -36,6 +37,8 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 	private JButton jButtonSearch;
 	
 	private ZoneId zoneId;
+	
+	private Vector<ActionListener> actionListeners;
 	
 	/**
 	 * Instantiates a new time zone widget.
@@ -236,6 +239,44 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 	public void setZoneId(ZoneId zoneId) {
 		this.zoneId = zoneId;
 		this.getJTextFieldTimeZone().setText(zoneId.getId());
+		this.notifyListeners();
+	}
+	
+	/**
+	 * Adds an {@link ActionListener} to the widget.
+	 * @param actionListener the action listener
+	 */
+	public void addActionListener(ActionListener actionListener) {
+		this.getActionListeners().add(actionListener);
+	}
+	
+	/**
+	 * Removes an {@link ActionListener} from the widget.
+	 * @param actionListener the action listener
+	 */
+	public void removeActionListeners(ActionListener actionListener) {
+		this.getActionListeners().remove(actionListener);
+	}
+	
+	/**
+	 * Gets the registered action listeners.
+	 * @return the action listeners
+	 */
+	private Vector<ActionListener> getActionListeners() {
+		if (actionListeners==null) {
+			actionListeners = new Vector<ActionListener>();
+		}
+		return actionListeners;
+	}
+	
+	/**
+	 * Notifies all registered listeners about a change of the selected time zone. 
+	 */
+	private void notifyListeners() {
+		ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null);
+		for (int i=0; i<this.getActionListeners().size(); i++) {
+			this.getActionListeners().get(i).actionPerformed(ae);
+		}
 	}
 	
 }
