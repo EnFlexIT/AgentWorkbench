@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - Graph and Network Environment
 Bundle-SymbolicName: org.awb.env.networkModel;singleton:=true
-Bundle-Version: 2.1.17.qualifier
+Bundle-Version: 2.1.18.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: org.awb.env.networkModel
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

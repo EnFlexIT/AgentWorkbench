@@ -821,6 +821,7 @@ en;;A geographical layout has to be defined with X = 'North', Y = 'Clockwise to 
 en;;Alias:;;;
 en;;Align to the bottom;;;
 en;;Align to the top;;;
+en;;CSV-Files;;;
 en;;Calculate metrics based on agent class data.;;;
 en;;Calculate metrics based on delta integrals.;;;
 en;;Calculate metrics based on individual agent data.;;;
@@ -839,6 +840,7 @@ en;;Discrete squares environment;;;
 en;;Display time is time controlled;;;
 en;;Edit security store settings;;;
 en;;Geo. Layout;;;
+en;;Import CSV File;;;
 en;;Import;;;
 en;;Layout ID;;;
 en;;Layout Name;;;

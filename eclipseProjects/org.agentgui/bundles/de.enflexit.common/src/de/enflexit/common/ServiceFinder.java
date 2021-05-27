@@ -31,6 +31,7 @@ package de.enflexit.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
@@ -67,13 +68,17 @@ public class ServiceFinder {
 	public static <T> List<T> findServices(Class<T> serviceInterfaceClass, boolean showSystemOutputIfNoServiceWasFound) {
 		
 		List<T> sdmServiceList = new ArrayList<>();
+		if (serviceInterfaceClass==null) return sdmServiceList;
 		
 		// ------------------------------------------------------------------------------
 		// --- Check the current service references -------------------------------------
 		// ------------------------------------------------------------------------------
 		try {
 			// --- Check for the ServiceReference ---------------------------------------
-			BundleContext bundleContext = FrameworkUtil.getBundle(serviceInterfaceClass).getBundleContext();
+			Bundle bundle = FrameworkUtil.getBundle(serviceInterfaceClass);
+			if (bundle==null) return sdmServiceList;
+			
+			BundleContext bundleContext = bundle.getBundleContext();
 			ServiceReference<?>[] serviceReferences = bundleContext.getServiceReferences(serviceInterfaceClass.getName(), null);
 			if (serviceReferences!=null) {
 				for (int i = 0; i < serviceReferences.length; i++) {

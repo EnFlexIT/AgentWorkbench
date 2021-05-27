@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
-Bundle-Version: 1.2.4.qualifier
+Bundle-Version: 1.2.5.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
