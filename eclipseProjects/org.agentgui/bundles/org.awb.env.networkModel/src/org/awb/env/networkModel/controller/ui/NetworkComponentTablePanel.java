@@ -57,7 +57,8 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 	private static final String newLine = "\n";
 	
 	private GraphEnvironmentController graphController;
-
+	private List<NetworkComponent> netCompsToDisplay; 
+	
 	private boolean editingEnabled;
     private boolean enableMultipleSelection;
 
@@ -79,16 +80,36 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 	private NetworkComponent currNetworkComponent;
     
 	
-    /**
-     * Instantiates a new network component table panel.
+	/**
+     * Instantiates a new network component table panel. To directly show the available network components, invoke {@link #reLoadNetworkComponents()}
+     * or set an exclude list by using {@link #setExcludeList(Vector)} and call {@link #reLoadNetworkComponents()}.<br>
+     * Alternatively, set the list of NetworkCompents by using {@link #setNetworkComponentList(List)}. These will be displayed immediately. 
+     * 
      * @param graphController the graph controller
      * @param enableEditing if true, the table can be used to edit network component
      * @param enableMultipleSelection if true, multiple network components can be selected
+	 * @wbp.parser.constructor
      */
-    public NetworkComponentTablePanel(GraphEnvironmentController graphController, boolean enableEditing, boolean enableMultipleSelection) {
+	public NetworkComponentTablePanel(GraphEnvironmentController graphController, boolean enableEditing, boolean enableMultipleSelection) {
+		this(graphController, enableEditing, enableMultipleSelection, null);
+	}
+    /**
+     * Instantiates a new network component table panel. To directly show the available network components, invoke {@link #reLoadNetworkComponents()}
+     * or set an exclude list by using {@link #setExcludeList(Vector)} and call {@link #reLoadNetworkComponents()}.<br>
+     * Alternatively, set the list of NetworkCompents by using {@link #setNetworkComponentList(List)}. These will be displayed immediately. 
+     *
+     * @param graphController the graph controller
+     * @param enableEditing if true, the table can be used to edit network component
+     * @param enableMultipleSelection if true, multiple network components can be selected
+     * @param columnServicesToAdd the table services to considered and to add further columns to the table
+     */
+    public NetworkComponentTablePanel(GraphEnvironmentController graphController, boolean enableEditing, boolean enableMultipleSelection, List<NetworkComponentTableService> columnServicesToAdd) {
 		this.graphController = graphController;
 		this.editingEnabled = enableEditing;
 		this.enableMultipleSelection = enableMultipleSelection;
+		if (columnServicesToAdd!=null && columnServicesToAdd.size()>0) {
+			this.getNetworkComponentTableServiceList().addAll(columnServicesToAdd);
+		}
 		this.initialize();
 	}
     /**
@@ -114,10 +135,10 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 	private void initialize() {
 		
 		GridBagConstraints gbcJLabelSearch = new GridBagConstraints();
+		gbcJLabelSearch.insets = new Insets(0, 5, 0, 0);
 		gbcJLabelSearch.gridx = 0;
 		gbcJLabelSearch.gridy = 0;
 		gbcJLabelSearch.anchor = GridBagConstraints.WEST;
-		gbcJLabelSearch.insets = new Insets(0, 15, 0, 5);
 		gbcJLabelSearch.gridwidth = 2;
 		gbcJLabelSearch.fill = GridBagConstraints.HORIZONTAL;
 
@@ -127,12 +148,11 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 		gbcJTextFieldSearch.gridy = 1;
 		gbcJTextFieldSearch.weightx = 0.5;
 		gbcJTextFieldSearch.gridwidth = 1;
-		gbcJTextFieldSearch.insets = new Insets(0, 10, 0, 1);
+		gbcJTextFieldSearch.insets = new Insets(0, 0, 0, 1);
 		
 		GridBagConstraints gbcJButtonClearSearch = new GridBagConstraints();
 		gbcJButtonClearSearch.gridx = 1;
 		gbcJButtonClearSearch.gridy = 1;
-		gbcJButtonClearSearch.insets = new Insets(0, 0, 0, 5);
 
 		GridBagConstraints gbcJTableNetComps = new GridBagConstraints();
 		gbcJTableNetComps.gridx = 0;
@@ -142,7 +162,6 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 		gbcJTableNetComps.weighty = 1.0;
 		gbcJTableNetComps.gridheight = 1;
 		gbcJTableNetComps.gridwidth = 0;
-		gbcJTableNetComps.insets = new Insets(0, 10, 0, 5);
 
 		
 		jLabelTable = new JLabel();
@@ -425,13 +444,12 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
      * Gets the exclude list.
      * @return the exclude list
      */
-    private Vector<String> getExcludeList(){
+    public Vector<String> getExcludeList(){
     	if (excludeList==null) {
     		excludeList = new Vector<>();
     	}
     	return excludeList;
     }
-    
     /**
      * Sets the exclude list.
      * @param excludeList the new exclude list
@@ -440,6 +458,26 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     	this.excludeList = excludeList;
     	this.applyTableSorter();
     }
+    
+    /**
+     * Returns the network component list that will be used for displaying network components.
+     * @return the network component list
+     */
+    public List<NetworkComponent> getNetworkComponentList() {
+    	if (netCompsToDisplay==null) {
+    		netCompsToDisplay = new ArrayList<>(this.getGraphController().getNetworkModel().getNetworkComponents().values());
+    	}
+    	return netCompsToDisplay;
+    }
+    /**
+     * Sets the network component list to be used for displaying {@link NetworkComponent}s.
+     * @param netCompsToDisplay the new network component list
+     */
+    public void setNetworkComponentList(List<NetworkComponent> netCompsToDisplay) {
+    	this.netCompsToDisplay = netCompsToDisplay;
+    	this.reLoadNetworkComponents();
+    }
+    
     /**
      * This method builds the tblComponents' contents based on the controllers GridModel
      * @return The grid components' IDs and class names
@@ -449,7 +487,7 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 			// --- Clear ------------------------
 			this.clearTableModel();
 			// --- Fill -------------------------
-			this.addNetworkComponents(new ArrayList<>(this.getGraphController().getNetworkModel().getNetworkComponents().values()));
+			this.addNetworkComponents(this.getNetworkComponentList());
 		}
     }
     /**
@@ -574,24 +612,37 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
      * Updates the setting for the component sorting.
      */
     private void updateComponentSorting() {
-    	this.componentSorting = NetworkComponentTablePanel.this.getGraphController().getGeneralGraphSettings4MAS().getComponentSorting();
+    	if (this.getGraphController()!=null && this.getGraphController().getGeneralGraphSettings4MAS()!=null && this.getGraphController().getGeneralGraphSettings4MAS().getComponentSorting()!=null) {
+    		this.componentSorting = this.getGraphController().getGeneralGraphSettings4MAS().getComponentSorting();
+    	}
     }
     /**
      * Reloads the network model.
      */
     public void reLoadNetworkComponents() {
     	
-    	SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				// --- (Re)fill the table model -----------
-				NetworkComponentTablePanel.this.fillTableModel();
-				// --- Clear search field -----------------
-			    NetworkComponentTablePanel.this.getJTextFieldSearch().setText(null);
-			    NetworkComponentTablePanel.this.applyTableSorter();
-			}
-		});
+    	if (SwingUtilities.isEventDispatchThread()==true) {
+    		this.reloadNetworkComponentTable();
+    	} else {
+    		SwingUtilities.invokeLater(new Runnable() {
+    			@Override
+    			public void run() {
+    				NetworkComponentTablePanel.this.reloadNetworkComponentTable();
+    			}
+    		});	
+    	}
     }
+    /**
+     * Reload network component table.
+     */
+    private void reloadNetworkComponentTable() {
+    	// --- (Re)fill the table model -----------
+		NetworkComponentTablePanel.this.fillTableModel();
+		// --- Clear search field -----------------
+	    NetworkComponentTablePanel.this.getJTextFieldSearch().setText(null);
+	    NetworkComponentTablePanel.this.applyTableSorter();
+    }
+    
     
     /**
      * Set / show number of components.

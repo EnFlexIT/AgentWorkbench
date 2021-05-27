@@ -162,7 +162,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     	}
 		return networkComponentTablePanel;
 	}
-
     /* (non-Javadoc)
      * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
      */
