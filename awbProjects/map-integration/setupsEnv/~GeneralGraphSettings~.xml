@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<generalGraphSettings4MAS>
+    <componentSorting>Alphanumeric</componentSorting>
+    <currentCTS>
+        <entry>
+            <key>Kreis</key>
+            <value>
+                <color>-16777012</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+    </currentCTS>
+    <domainSettings>
+        <entry>
+            <key>Default Domain</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <showLabel>true</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+    </domainSettings>
+    <layoutSettings>
+        <entry>
+            <key>NhieneMxKq</key>
+            <value>
+                <coordinateSystemXDirection>East</coordinateSystemXDirection>
+                <coordinateSystemYDirection>CounterclockwiseToX</coordinateSystemYDirection>
+                <edgeShape>Line</edgeShape>
+                <geographicalLayout>true</geographicalLayout>
+                <layoutName>Geo-Layout</layoutName>
+                <snap2Grid>true</snap2Grid>
+                <snapRaster>0.1</snapRaster>
+            </value>
+        </entry>
+        <entry>
+            <key>nTrMvCljxN</key>
+            <value>
+                <coordinateSystemXDirection>East</coordinateSystemXDirection>
+                <coordinateSystemYDirection>ClockwiseToX</coordinateSystemYDirection>
+                <edgeShape>Line</edgeShape>
+                <geographicalLayout>false</geographicalLayout>
+                <layoutName>Default Layout</layoutName>
+                <snap2Grid>true</snap2Grid>
+                <snapRaster>5.0</snapRaster>
+            </value>
+        </entry>
+    </layoutSettings>
+</generalGraphSettings4MAS>
