@@ -386,29 +386,28 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				if (keyFormat!=null) {
 					// -- Case TimeSeries -----------------
 					String residualInBuffer = "1234.567;" + inBuffer.substring(inBuffer.indexOf(";")+1);
-					validLine = residualInBuffer.matches("[\\d]+\\.?[\\d]*[;[\\d]+\\.?[\\d]*]+");					
+					validLine = residualInBuffer.matches("[-?\\d]+\\.?[\\d]*[;[-?\\d]+\\.?[\\d]*]+");					
 				} else {
 					// -- Case Else -----------------------
-					validLine = inBuffer.matches("[\\d]+\\.?[\\d]*[;[\\d]+\\.?[\\d]*]+");
+					validLine = inBuffer.matches("[-?\\d]+\\.?[\\d]*[;[-?\\d]+\\.?[\\d]*]+");
 				}
 				
 				// --- Valid lines are to proceed -----------------------------
-				if(validLine==true){
+				if (validLine==true) {
 					String[] parts = inBuffer.split(";");
-					if(importedSeries == null && parts.length > 0){
+					if (importedSeries == null && parts.length > 0) {
 						importedSeries = new DataSeries[parts.length-1];
-						
 						for(int k=0; k<parts.length-1; k++){
 							importedSeries[k] = this.getDataModel().createNewDataSeries(null);
 						}
 					}
 					
 					// First column contains the key / x value
-					Number key = parseKey(parts[0], keyFormat, keyOffset);
+					Number key = this.parseKey(parts[0], keyFormat, keyOffset);
 					
 					// Later columns contain data
-					for(int i=1; i<parts.length; i++){
-						if(parts[i].length() > 0){
+					for (int i=1; i<parts.length; i++) {
+						if (parts[i].length() > 0) {
 							// Empty string -> no value for this key in this series -> no new value pair
 							Number value = parseValue(parts[i]);
 							ValuePair valuePair = this.getDataModel().createNewValuePair(key, value);
