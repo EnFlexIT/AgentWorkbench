@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
-  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
-  router="FAN">  
+<class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="agentgui.core.application.Application" project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/core/application/Application.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="552" y="245"/>    
@@ -220,265 +219,265 @@
     </display>  
   </class>  
   <association id="25">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="26" name="projectsLoaded">        
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="26" name="bundleProperties">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="27" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="15" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="21" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="28">    
-    <end type="SOURCE" refId="22" navigable="false" variant="ASSOCIATION">      
-      <attribute id="29" name="thisSingleton">        
-        <position height="0" width="0" x="0" y="0"/>      
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="29" name="console">        
+        <position height="0" width="0" x="-22" y="245"/>      
       </attribute>      
       <multiplicity id="30" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+        <position height="0" width="0" x="-22" y="245"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="22" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="31">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="32" name="console">        
-        <position height="0" width="0" x="-22" y="245"/>      
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="32" name="shutdownThread">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="33" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-22" y="245"/>      
+        <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="34">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="35" name="dbConnection">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="35" name="globalInfo">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="36" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="13" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="37">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="38" name="shutdownThread">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="39" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="20" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="40">    
-    <end type="SOURCE" refId="15" navigable="false" variant="ASSOCIATION">      
-      <attribute id="41" name="projectsOpen">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="42" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="43">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="44" name="projectFocused">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="45" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="46">    
+  <nesting id="37">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="3"/>  
   </nesting>  
-  <association id="47">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="48" name="plugInApplication">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="49" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="50">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="51" name="jadePlatform">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="52" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="53">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="54" name="about">        
-        <position height="0" width="0" x="313" y="157"/>      
-      </attribute>      
-      <multiplicity id="55" minimum="0" maximum="1">        
-        <position height="0" width="0" x="313" y="157"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="56">    
-    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
-      <attribute id="57" name="fileMangerProject">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="58" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="59">    
+  <nesting id="38">    
     <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="2"/>  
+    <end type="TARGET" refId="5"/>  
   </nesting>  
+  <association id="39">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="40" name="projectsLoaded">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="41" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="42">    
+    <end type="SOURCE" refId="17" navigable="false">      
+      <attribute id="43" name="mainWindowSwing">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="44" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="45">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="46" name="projectsOpen">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="47" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="48">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="49" name="jadePlatform">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="50" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="51">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="52" name="thisInstance">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="53" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="23" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="54">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="55" name="fileMangerProject">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="56" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="57">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="58" name="globalInfo">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="59" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="60">    
-    <end type="SOURCE" refId="17" navigable="false" variant="ASSOCIATION">      
-      <attribute id="61" name="mainWindowSwing">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="61" name="plugInApplication">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="62" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="17" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="63">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="64" name="options">        
-        <position height="0" width="0" x="347" y="332"/>      
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="64" name="logFileWriter">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="65" minimum="0" maximum="1">        
-        <position height="0" width="0" x="347" y="332"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="66">    
-    <end type="SOURCE" refId="22" navigable="false" variant="ASSOCIATION">      
-      <attribute id="67" name="globalInfo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="68" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="12" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="18" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="69">    
-    <end type="SOURCE" refId="21" navigable="false" variant="ASSOCIATION">      
-      <attribute id="70" name="globalInfo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="71" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="72">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="5"/>  
-  </nesting>  
-  <association id="73">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="74" name="globalInfo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="75" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="76">    
+  <nesting id="66">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="6"/>  
   </nesting>  
-  <association id="77">    
-    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
-      <attribute id="78" name="bundleProperties">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="79" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="21" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="80">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="81" name="logFileWriter">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="82" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="18" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="83">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="84" name="trayIcon">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="85" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="19" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="86">    
-    <end type="SOURCE" refId="23" navigable="false" variant="ASSOCIATION">      
-      <attribute id="87" name="thisInstance">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="88" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="23" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="89">    
+  <realization id="67">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="19"/>  
   </realization>  
+  <association id="68">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="69" name="projectFocused">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="70" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="71">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="72" name="dbConnection">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="73" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="74">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="75" name="about">        
+        <position height="0" width="0" x="313" y="157"/>      
+      </attribute>      
+      <multiplicity id="76" minimum="0" maximum="1">        
+        <position height="0" width="0" x="313" y="157"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="77">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </nesting>  
+  <association id="78">    
+    <end type="SOURCE" refId="21" navigable="false">      
+      <attribute id="79" name="globalInfo">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="80" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="81">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="82" name="trayIcon">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="83" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="84">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="85" name="thisSingleton">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="86" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="22" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="87">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="88" name="options">        
+        <position height="0" width="0" x="347" y="332"/>      
+      </attribute>      
+      <multiplicity id="89" minimum="0" maximum="1">        
+        <position height="0" width="0" x="347" y="332"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false" static="true"/>    

@@ -787,7 +787,7 @@ public class Application {
 	public static boolean stopAgentWorkbench() {
 		
 		// --- Shutdown JADE --------------------
-		getJadePlatform().stop();
+		getJadePlatform().stop(false);
 
 		// --- Close open projects --------------
 		if (getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {

@@ -203,12 +203,14 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 	 */
 	protected void sensorPlugOut() {
 		// --- plug-out the Sensor ----------------------------------
-		try {
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) this.myAgent.getHelper(SimulationService.NAME);
-			simHelper.sensorPlugOut(this.getServiceSensor());
-			
-		} catch (ServiceException e) {
-			e.printStackTrace();
+		if (this.myAgent!=null) {
+			try {
+				SimulationServiceHelper simHelper = (SimulationServiceHelper) this.myAgent.getHelper(SimulationService.NAME);
+				simHelper.sensorPlugOut(this.getServiceSensor());
+				
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
 		}
 		this.setServiceSensor(null);
 	}
@@ -387,7 +389,7 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 	 * This method removes the CyclicNotificationHandler from this agent.
 	 */
 	private void removeNotificationHandler() {
-		if (this.notificationHandler!=null) {
+		if (this.myAgent!=null && this.notificationHandler!=null) {
 			this.myAgent.removeBehaviour(this.notificationHandler);	
 		}
 	}

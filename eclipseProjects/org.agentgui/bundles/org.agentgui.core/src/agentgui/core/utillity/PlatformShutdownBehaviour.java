@@ -59,8 +59,8 @@ public class PlatformShutdownBehaviour extends OneShotBehaviour {
 			try {
 				SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
 				simHelper.stopSimulationAgents();
-			} catch (ServiceException e) {
-				e.printStackTrace();
+			} catch (ServiceException sEx) {
+				sEx.printStackTrace();
 			}
 		}
 		

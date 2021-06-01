@@ -32,6 +32,8 @@ package org.awb.env.networkModel.controller.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,6 +47,7 @@ import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.awb.env.networkModel.ClusterNetworkComponent;
 import org.awb.env.networkModel.GraphEdge;
@@ -57,7 +60,6 @@ import org.awb.env.networkModel.visualisation.notifications.DataModelOpenViewNot
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
@@ -79,6 +81,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
     private final String sourceTopologyTabName = "Topologie";
     
+    private GraphEnvironmentController graphController;
+    private Timer initVisTimer;
+    
     private JComponent mainDisplayComponent;
     private boolean useTabs = false;
     private JTabbedPane jTabbedPaneAltNetModels;
@@ -90,11 +95,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     
     /**
      * This is the default constructor for just displaying the current environment model during a running simulation.
-     *
-     * @param envController the current EnvironmentController that is of typ {@link GraphEnvironmentController}
+     * @param graphController the current EnvironmentController {here a @link GraphEnvironmentController}
      */
-    public GraphEnvironmentControllerGUI(EnvironmentController envController) {
-		super(envController);
+    public GraphEnvironmentControllerGUI(GraphEnvironmentController graphController) {
+		super(graphController);
+		this.graphController = graphController;
 		this.initialize();
     }
     
@@ -103,10 +108,48 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
      * @return void
      */
     private void initialize() {
-		this.setLayout(new BorderLayout());
+		
+    	this.setLayout(new BorderLayout());
 		this.add(this.getJComponentMainDisplay(), BorderLayout.CENTER);
 		this.setAlternativeNetworkModels();
+		
+		// --- Start the initial visualization timer? -----
+		if (this.graphController.getNetworkModel().getNetworkComponents().size()>0) {
+    		this.getInitVisTimer().start();
+    	}
     }
+    /**
+     * Returns the initial visualization timer.
+     * @return the initial visualization timer.
+     */
+    public Timer getInitVisTimer() {
+    	if (initVisTimer==null) {
+    		initVisTimer = new Timer(50, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					GraphEnvironmentControllerGUI.this.invokeNetworkModelReload();
+				}
+			});
+    	}
+		return initVisTimer;
+	}
+    /**
+     * Invokes the network model reload or restart the local timer.
+     */
+    private void invokeNetworkModelReload() {
+    	
+    	if (this.getParent()!=null && this.isVisible()==true) {
+    		// --- Refresh the view and terminate the timer ---------
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Reload));
+			this.getInitVisTimer().stop();
+			this.initVisTimer = null;
+    	} else {
+    		// --- Not visible yet - restart timer ------------------
+    		this.getInitVisTimer().restart();
+    	}
+    }
+
+    
     
     /**
      * ReLoads the network model.
@@ -114,7 +157,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     private void reLoad() {
     	// --- Close all property windows -----------------
     	this.getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
-    	
     	// --- Set alternative NetworkModel's -------------
     	this.setAlternativeNetworkModels();
     }

@@ -64,7 +64,7 @@ import jade.core.Service;
 import jade.core.ServiceException;
 import jade.core.ServiceHelper;
 import jade.core.VerticalCommand;
-import jade.core.mobility.AgentMobilityHelper;
+import jade.core.management.AgentManagementSlice;
 import jade.util.Logger;
 
 /**
@@ -106,7 +106,7 @@ public class SimulationService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	/** --- Variables for the Time-Synchronisation ----------------------------- */
+	/** --- Variables for the Time-Synchronization ----------------------------- */
 	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
 	private long timeMeasureInterval = 1000*60; 	// --- Measure every 60 seconds 
 	private int timeMeasureCountMax = 100;			// --- How often the time-difference should be measured to build an average value?
@@ -156,9 +156,7 @@ public class SimulationService extends BaseService {
 		// --- Create filters -----------------------------
 		this.outFilter = new CommandOutgoingFilter();
 		this.incFilter = new CommandIncomingFilter();
-		// --- Create local slice -------------------------
-		this.localSlice = new ServiceComponent();
-		
+
 		if (this.myMainContainer!=null && myLogger.isLoggable(Logger.FINE)) {
 			// --- Is !=null, if the Service will start at the Main-Container !!! ----
 			this.myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
@@ -184,12 +182,16 @@ public class SimulationService extends BaseService {
 	 */
 	@Override
 	public void shutdown() {
-		this.displayAgents = null;
-		this.displayAgentDistribution = null;
-		this.agentList = null;
+
+		// --- Stop and reset service actuators -----------
 		this.getServiceActuator().shutdown();
 		this.getServiceActuator().interrupt();
 		this.setServiceActuator(null);
+		
+		// --- Reset local variables ----------------------
+		this.displayAgents = null;
+		this.displayAgentDistribution = null;
+		this.agentList = null;
 		this.localServiceActuator4Manager = null;
 		this.environmentInstanceNextParts = null;
 		this.environmentInstanceNextPartsLocal = null;
@@ -211,10 +213,9 @@ public class SimulationService extends BaseService {
 	 * @see jade.core.BaseService#getCommandFilter(boolean)
 	 */
 	public Filter getCommandFilter(boolean direction) {
-		if(direction == Filter.INCOMING) {
+		if (direction == Filter.INCOMING) {
 			return incFilter;
-		}
-		else {
+		} else {
 			return outFilter;
 		}
 	}
@@ -227,7 +228,10 @@ public class SimulationService extends BaseService {
 	/* (non-Javadoc)
 	 * @see jade.core.BaseService#getLocalSlice()
 	 */
-	public Service.Slice getLocalSlice() {
+	public ServiceComponent getLocalSlice() {
+		if (localSlice==null) {
+			localSlice = new ServiceComponent();
+		}
 		return localSlice;
 	}
 	/**
@@ -1385,7 +1389,7 @@ public class SimulationService extends BaseService {
 		/**
 		 * Stop simulation agents.
 		 */
-		private void stopSimulationAgents() {
+		public void stopSimulationAgents() {
 			getServiceActuator().notifySensorAgentsDoDelete();
 		}
 		
@@ -1529,17 +1533,12 @@ public class SimulationService extends BaseService {
 		public final boolean accept(VerticalCommand cmd) {
 			
 			if (cmd==null) return true;
+			
+//			String cmdName = cmd.getName();
+//			System.out.println( "=> Outgoing " + cmdName + " - " + cmd.getService() + " class: " + cmd.getClass());
 
-			String cmdName = cmd.getName();
-			//System.out.println( "=> out " + cmdName + " - " + cmd.getService() + " - " + cmd.getService().getClass() );	
-
-			if (cmdName.equals(AgentMobilityHelper.INFORM_MOVED)) {
-				Object[] params = cmd.getParams();
-				@SuppressWarnings("unused")
-				AID aid = (AID) params[0];
-//				ContainerID id = (ContainerID) params[1];
-//				localServiceActuator.setAgentMigrated(aid);
-			}
+			// --- Nothing to do here yet ---------------------------
+			
 			// Never veto other commands
 			return true;
 		}
@@ -1563,21 +1562,27 @@ public class SimulationService extends BaseService {
 		public boolean accept(VerticalCommand cmd) {
 			
 			if (cmd==null) return true;
-			String cmdName = cmd.getName();
-			//System.out.println( "=> in " + cmdName + " - " + cmd.getService());
 			
-			if (myMainContainer != null) {
+			String cmdName = cmd.getName();
+//			System.out.println( "<= Incoming " + cmdName + " - " + cmd.getService() + " class: " + cmd.getClass());
+			
+			// ------------------------------------------------------
+			// --- Jobs for the local slice / container -------------
+			if (cmdName.equals(AgentManagementSlice.KILL_CONTAINER)==true) {
+				// --- Stop all simulating agents ---------
+				SimulationService.this.getLocalSlice().stopSimulationAgents();
+			} 
+			
+			// ------------------------------------------------------
+			// --- Jobs for the MainContainer only -------------------
+			if (myMainContainer!=null) {
+				// --- We're in the main container ------------------
 				if (cmdName.equals(Service.NEW_SLICE)) {
 					// --- If the new slice is a SimulationServiceSlice, notify it about the current state ---
 					handleNewSlice(cmd);
 				}
-				
-			} else {
-				if (cmdName.equals(Service.REATTACHED)) {
-					// The Main lost all information related to this container --> Notify it again
-					
-				}
 			}
+			
 			// Never veto a Command
 			return true;
 		}
