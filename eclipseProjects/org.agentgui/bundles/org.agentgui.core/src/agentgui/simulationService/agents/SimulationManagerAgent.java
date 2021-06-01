@@ -79,8 +79,10 @@ public abstract class SimulationManagerAgent extends Agent {
 	/** The CyclicNotificationHandler for incoming notification. */
 	private CyclicNotificationHandler notifyHandler;
 	/** The notifications, which arrived at this agent . */
-	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
+	private Vector<EnvironmentNotification> notifications;
 	
+	/** Flag to indicate that the simulation manager is about to terminate */ 
+	private boolean isDoTerminate;
 	
 
 	/**
@@ -108,12 +110,15 @@ public abstract class SimulationManagerAgent extends Agent {
 	}
 	
 	/* (non-Javadoc)
-	 * @see jade.core.Agent#takeDown()
+	 * @see jade.core.Agent#doDelete()
 	 */
 	@Override
-	protected void takeDown() {
+	public void doDelete() {
+		this.isDoTerminate = true;
+		this.removeSimulationBehaviour();
 		this.removeNotificationHandler();
 		this.sensorPlugOut();
+		super.doDelete();
 	}
 	
 	/**
@@ -159,7 +164,10 @@ public abstract class SimulationManagerAgent extends Agent {
 	 */
 	protected void removeSimulationBehaviour() {
 		// --- Remove the cyclic SimulationBehavior of this manager --
-		this.removeBehaviour(this.simBehaviour);
+		if (this.simBehaviour!=null) {
+			this.removeBehaviour(this.simBehaviour);
+			this.simBehaviour = null;
+		}
 	}
 	
 	
@@ -185,16 +193,8 @@ public abstract class SimulationManagerAgent extends Agent {
 		 */
 		@Override
 		public void action() {
-			doSingleSimulationSequence();
-			block();
-		}
-		
-		/* (non-Javadoc)
-		 * @see jade.core.behaviours.Behaviour#restart()
-		 */
-		@Override
-		public void restart() {
-			super.restart();
+			SimulationManagerAgent.this.doSingleSimulationSequence();
+			this.block();
 		}
 	}
 	
@@ -263,7 +263,9 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * This method has to be called if the next simulation step can be executed.
 	 */
 	public void doNextSimulationStep() {
-		this.simBehaviour.restart();
+		if (this.simBehaviour!=null && this.isDoTerminate==false) {
+			this.simBehaviour.restart();
+		}
 	}
 	
 	/**
@@ -307,6 +309,9 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * @param aSynchron true, if this should be done asynchronously
 	 */
 	public void putAgentAnswers(Hashtable<AID, Object> agentAnswers, boolean aSynchron) {
+		
+		if (this.isDoTerminate==true) return;
+				
 		this.setAgentAnswers(agentAnswers);
 		if (aSynchron==true) {
 			this.addBehaviour(new AgentAnswerStimulus(agentAnswers));	
@@ -339,7 +344,9 @@ public abstract class SimulationManagerAgent extends Agent {
 		 */
 		@Override
 		public void action() {
-			proceedAgentAnswers(aa);
+			if (SimulationManagerAgent.this.isDoTerminate==false) {
+				proceedAgentAnswers(aa);
+			}
 		}
 	}
 	
@@ -403,8 +410,8 @@ public abstract class SimulationManagerAgent extends Agent {
 	 */
 	public void setManagerNotification(EnvironmentNotification notification) {
 		// --- place the notification into the notification vector -------
-		synchronized (this.notifications) {
-			this.notifications.add(notification);	
+		synchronized (this.getNotifications()) {
+			this.getNotifications().add(notification);	
 		}
 		// --- restart the CyclicNotificationHandler ---------------------
 		this.notifyHandler.restart();	
@@ -425,6 +432,8 @@ public abstract class SimulationManagerAgent extends Agent {
 	private void removeNotificationHandler() {
 		if (this.notifyHandler!=null) {
 			this.removeBehaviour(this.notifyHandler);
+			this.notifyHandler = null;
+			this.getNotifications().clear();
 		}
 	}
 
@@ -443,24 +452,33 @@ public abstract class SimulationManagerAgent extends Agent {
 		public void action() {
 			
 			boolean removeFirstElement = false;
-			
-			// --- Get the first element and work on it ------------------
-			if (notifications.size()!=0) {
-				EnvironmentNotification notification = notifications.get(0);
-				onManagerNotification(notification);
+					
+			// --- Get the first element and work on it -----------------------
+			if (SimulationManagerAgent.this.isDoTerminate==false && SimulationManagerAgent.this.getNotifications().size()!=0) {
+				EnvironmentNotification notification = SimulationManagerAgent.this.getNotifications().get(0);
+				SimulationManagerAgent.this.onManagerNotification(notification);
 				removeFirstElement = true;				
 			}
 			
-			// --- remove this element and control the notifications -----
-			synchronized (notifications) {
-				if (removeFirstElement==true) {
-					notifications.remove(0);
+			if (SimulationManagerAgent.this.isDoTerminate==false) {
+				// --- Regular operating case ---------------------------------
+				// --- => Remove this element and control the notifications ---
+				synchronized (SimulationManagerAgent.this.getNotifications()) {
+					if (removeFirstElement==true && SimulationManagerAgent.this.getNotifications().size()>0) {
+						SimulationManagerAgent.this.getNotifications().remove(0);
+					}
+					if (SimulationManagerAgent.this.getNotifications().size()==0) {
+						this.block();
+					}
 				}
-				if (notifications.size()==0) {
-					block();
-				}
+			} else {
+				// --- termination was called ---------------------------------
+				// --- => Simply block this behaviour -------------------------
+				this.block();
 			}
 		}
+		
+		
 	}
 	
 	/**
@@ -561,14 +579,10 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * @return the notifications
 	 */
 	public Vector<EnvironmentNotification> getNotifications() {
+		if (notifications==null) {
+			notifications = new Vector<EnvironmentNotification>();
+		}
 		return notifications;
-	}
-	/**
-	 * Sets the notifications.
-	 * @param notifications the new notifications
-	 */
-	public void setNotifications(Vector<EnvironmentNotification> notifications) {
-		this.notifications = notifications;
 	}
 
 }
