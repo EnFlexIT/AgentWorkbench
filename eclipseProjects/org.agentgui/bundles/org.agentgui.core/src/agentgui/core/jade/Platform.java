@@ -67,6 +67,7 @@ import jade.mtp.http.HTTPSocketFactory;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
+import jade.wrapper.PlatformController;
 import jade.wrapper.StaleProxyException;
 
 /**
@@ -277,6 +278,147 @@ public class Platform {
 		return startSucceed;
 	}
 	
+	
+	/**
+	 * Asks the user to shutdown Jade.
+	 * @return true, if the user answered 'yes'
+	 */
+	public boolean stopAskUserBefore() {
+		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null && Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
+			String message = Language.translate("Möchten Sie JADE nun beenden?");
+			Integer answer =  JOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), message, title, JOptionPane.YES_NO_OPTION);
+			if (answer==JOptionPane.NO_OPTION) return false; // --- NO, just exit 
+			// --- Stop the JADE-Platform -------------------
+			this.stop(false);
+		}
+		return true;
+	}
+
+	/**
+	 * Method to shutdown the JADE platform in a sequential manner.
+	 */
+	public void stop() {
+		this.stop(false);
+	}
+	/**
+	 * Method to shutdown the JADE platform.
+	 * @param useDedicatedThread the indicator to use a dedicated thread
+	 */
+	public void stop(boolean useDedicatedThread) {
+		if (useDedicatedThread==true) {
+			this.stopJadeInDedicatedThread();
+		} else {
+			this.stopJade();
+		}
+	}
+		
+	/**
+	 * Stops jade by using a dedicated thread.
+	 */
+	private void stopJadeInDedicatedThread() {
+		
+		Runnable run = new Runnable() {
+			@Override
+			public void run() {
+				Platform.this.stopJade();
+			}
+		};
+		// --- Execute the thread --------------- 
+		new Thread(run, "JADE-Termination").start();
+	}
+	
+	/**
+	 * Stop method for JADE platform that chooses how to stop JADE.
+	 */
+	private void stopJade() {
+		
+		if (this.isMainContainerRunning()==true) {
+			// --- How to stop JADE? ----------------------
+			boolean useClassicWay = false;
+			if (useClassicWay==true) {
+				this.stopJadeUsingUtilityAgent();	
+			} else {
+				this.stopJadeUsingMainContainer();
+			}
+			
+		} else {
+			// --- Simply reset local variables ----------- 
+			this.resetLocalRuntimeVariables();
+		}
+	}
+	/**
+	 * Stop jade using utility agent (traditional AWB way).
+	 */
+	private void stopJadeUsingUtilityAgent() {
+		
+		// ------------------------------------------------------------------------------
+		// -- The traditional AWB way ---------------------------------------------------
+		// ------------------------------------------------------------------------------
+
+		// --- Starts UtilityAgent that sends a 'ShutdownPlatform()' to the AMS   -------	
+		this.startUtilityAgent(UtilityAgentJob.ShutdownPlatform);
+
+		// --- Wait for the end of Jade -------------------------------------------------
+		long timeWaitMax = System.currentTimeMillis() + (10 * 1000);
+		while (this.isMainContainerRunning()) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// e.printStackTrace();
+			}
+			if (System.currentTimeMillis()>=timeWaitMax) {
+				break;
+			}
+		}
+
+		System.out.println(Language.translate("Jade wurde beendet!"));
+		this.resetLocalRuntimeVariables();
+	}
+	/**
+	 * Stop jade using the JADE main container (newer AWB way).
+	 */
+	private void stopJadeUsingMainContainer() {
+		
+		// ----------------------------------------------------------------------
+		// --- A newer implementation -------------------------------------------
+		// ----------------------------------------------------------------------
+		
+		// --- Stop using platform controller -----------------------------------
+		try {
+
+			PlatformController pController = this.jadeMainContainer.getPlatformController();
+			if (pController!=null) {
+				pController.kill();
+			}
+			
+		} catch (IllegalStateException | ControllerException ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error while shuting down JADE by using the MainContainer.");
+			ex.printStackTrace();
+		}
+		
+		System.out.println(Language.translate("Jade wurde beendet!"));
+		this.resetLocalRuntimeVariables();
+	}
+	/**
+	 * Stop reset runtime variables.
+	 */
+	private void resetLocalRuntimeVariables() {
+		
+		// --- Reset runtime-variables -------------------- 
+		this.getAgentContainerList().clear();
+		this.jadeMainContainer = null;
+		
+		Application.setJadeStatusColor(JadeStatusColor.Red);
+		if (Application.getMainWindow()!=null) {
+			Application.getMainWindow().setSimulationReady2Start();
+		}
+		// --- Clean up the Heap memory -------------------
+		Application.startGarbageCollection();
+	}
+	
+	
+	
 	/**
 	 * This Method will start - depending on the Configuration - the
 	 * programs-background-agents.
@@ -317,7 +459,7 @@ public class Platform {
 			// --- Connecting to Database ---------------------------
 			if (Application.getDatabaseConnection(true).hasErrors()==true ) {
 				
-				this.stop();
+				this.stop(true);
 				
 				String msgHead = "";
 				String msgText = "";
@@ -359,7 +501,7 @@ public class Platform {
 				Application.getGlobalInfo().getServerMasterPort4MTP().equals(0)==true ||
 				Application.getGlobalInfo().getJadeUrlConfigurationForMaster().hasErrors()==true) {
 				
-				this.stop();
+				this.stop(true);
 				
 				String msgHead = "";
 				String msgText = "";
@@ -597,6 +739,12 @@ public class Platform {
 			// --- Invoke the Profile configuration in the plug-ins -- 
 			jadeContainerProfile = currProject.getPlugInsLoaded().getJadeProfile(jadeContainerProfile);
 			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
+
+			// ------------------------------------------------------
+			// --- For debugging: Add further profile parameter -----
+			// ------------------------------------------------------
+			// jadeContainerProfile.setParameter("jade_core_AgentContainerImpl_verboseshutdown", new Boolean(true).toString());
+			// ------------------------------------------------------
 			
 			// --- If the current project has external resources ---- 
 			boolean hasBundelJars = currProject.getProjectBundleLoader().getBundleJarsListModel().size()>0;
@@ -611,63 +759,7 @@ public class Platform {
 		return jadeContainerProfile;
 	}
 	
-	/**
-	 * Shutting down the jade-platform.
-	 */
-	public void stop() {
 
-		// ------------------------------------------------
-		// --- Starts the UtilityAgent which sends --------
-		// --- a 'ShutdownPlatform()' to the AMS   --------	
-		// ------------------------------------------------
-		if (isMainContainerRunning()) {
-			this.startUtilityAgent(UtilityAgentJob.ShutdownPlatform);
-			// --- Wait for the end of Jade ---------------
-			long timeStop = System.currentTimeMillis() + (10 * 1000);
-			while (isMainContainerRunning()) {
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					// e.printStackTrace();
-				}
-				if (System.currentTimeMillis()>=timeStop) {
-					break;
-				}
-			}
-			System.out.println(Language.translate("Jade wurde beendet!"));
-			
-			// --- Clean up the memory ------------
-			Application.startGarbageCollection();
-		}
-		// ------------------------------------------------
-
-		
-		// --- Reset runtime-variables -------------------- 
-		this.getAgentContainerList().clear();
-		this.jadeMainContainer = null;
-		
-		Application.setJadeStatusColor(JadeStatusColor.Red);
-		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().setSimulationReady2Start();
-		}
-		
-	}
-	
-	/**
-	 * Asks the user to shutdown Jade.
-	 * @return true, if the user answered 'yes'
-	 */
-	public boolean stopAskUserBefore() {
-		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null && Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION) {
-			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
-			String message = Language.translate("Möchten Sie JADE nun beenden?");
-			Integer answer =  JOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), message, title, JOptionPane.YES_NO_OPTION);
-			if (answer==1) return false; // --- NO,just exit 
-			// --- Stop the JADE-Platform -------------------
-			this.stop();
-		}
-		return true;
-	}
 	
 	/**
 	 * Checks, whether the main-container (Jade himself) is running or not.
@@ -681,10 +773,8 @@ public class Platform {
 		}		
 		return this.isMainContainerRunning();
 	}
-	
 	/**
-	 * Jade main container is running.
-	 *
+	 * Return if the Jade main container is running.
 	 * @return true, if the Main-Container is running
 	 */
 	public boolean isMainContainerRunning () {

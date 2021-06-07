@@ -245,7 +245,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			this.startJade();
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("stoptAgentGUIService")) {
-			Application.getJadePlatform().stop();
+			Application.getJadePlatform().stop(true);
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("openRMA")) {
 			Application.getJadePlatform().startSystemAgent(SystemAgent.RMA, null);

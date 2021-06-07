@@ -1202,7 +1202,7 @@ public class MainWindow extends JFrame {
 				Application.getJadePlatform().doStartInDedicatedThread();
 
 			} else if (actionCMD.equalsIgnoreCase("JadeStop")) {
-				Application.getJadePlatform().stop();
+				Application.getJadePlatform().stop(true);
 
 			} else if (actionCMD.equalsIgnoreCase("StartAgent")) {
 				MainWindow.this.startAgent();
@@ -1239,7 +1239,7 @@ public class MainWindow extends JFrame {
 				MainWindow.this.setEnableSimPause(false);
 				
 			} else if (actionCMD.equalsIgnoreCase("SimulationStop")) {
-				Application.getJadePlatform().stop();
+				Application.getJadePlatform().stop(true);
 
 			} else if (actionCMD.equalsIgnoreCase("ContainerMonitoring")) {
 				Application.getJadePlatform().startSystemAgent(SystemAgent.LoadMonitor, null);
@@ -1540,7 +1540,7 @@ public class MainWindow extends JFrame {
 				Application.getJadePlatform().doStartInDedicatedThread();
 
 			} else if (actCMD.equalsIgnoreCase("JadeStop")) {
-				Application.getJadePlatform().stop();
+				Application.getJadePlatform().stop(true);
 
 			} else if (actCMD.equalsIgnoreCase("StartAgent")) {
 				MainWindow.this.startAgent();
@@ -1567,7 +1567,7 @@ public class MainWindow extends JFrame {
 				MainWindow.this.setEnableSimPause(false);
 				
 			} else if (actCMD.equalsIgnoreCase("SimulationStop")) {
-				Application.getJadePlatform().stop();
+				Application.getJadePlatform().stop(true);
 
 			} else if (actCMD.equalsIgnoreCase("Test")) {
 				MainWindow.this.testMethod();
