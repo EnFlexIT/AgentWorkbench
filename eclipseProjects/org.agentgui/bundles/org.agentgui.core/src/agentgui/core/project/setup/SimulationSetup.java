@@ -94,7 +94,7 @@ public class SimulationSetup {
 	
 	
 	@XmlTransient 
-	private Project currProject = null;
+	private Project project = null;
 	
 	/** This Hash holds the instances of all agent start lists. */
 	@XmlTransient 
@@ -145,14 +145,15 @@ public class SimulationSetup {
 	 * @param project the currProject to set
 	 */
 	public void setProject(Project project) {
-		this.currProject = project;
+		this.project = project;
 	}
 	/**
 	 * Returns the current project.
 	 * @return the project
 	 */
+	@XmlTransient
 	public Project getProject() {
-		return this.currProject;
+		return this.project;
 	}
 	/**
 	 * Sets the current project to be unsaved.
@@ -160,8 +161,8 @@ public class SimulationSetup {
 	 * @param reason the new project unsaved
 	 */
 	private void setProjectUnsaved(Object reason) {
-		if (this.currProject!=null) {
-			this.currProject.setChangedAndNotify(reason);
+		if (this.project!=null) {
+			this.project.setChangedAndNotify(reason);
 		}
 	}
 	
@@ -171,7 +172,7 @@ public class SimulationSetup {
 	 * @return true, if saving was successful
 	 */
 	public boolean saveSetupFiles() {
-		File setupXmlFile = new File(this.currProject.getSimulationSetups().getCurrSimXMLFile());
+		File setupXmlFile = new File(this.project.getSimulationSetups().getCurrSimXMLFile());
 		return this.saveSetupFiles(setupXmlFile, true);
 	}
 	/**

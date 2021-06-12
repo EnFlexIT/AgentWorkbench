@@ -464,7 +464,16 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
      * @return the network component list
      */
     public List<NetworkComponent> getNetworkComponentList() {
-    	if (netCompsToDisplay==null) {
+    	return this.getNetworkComponentList(false);
+    }
+    
+    /**
+     * Returns the network component list that will be used for displaying network components.
+     * @param forceRebuild if true, an existing list will be discarded and rebuilt
+     * @return the network component list
+     */
+    public List<NetworkComponent> getNetworkComponentList(boolean forceRebuild) {
+    	if (netCompsToDisplay==null || forceRebuild==true) {
     		netCompsToDisplay = new ArrayList<>(this.getGraphController().getNetworkModel().getNetworkComponents().values());
     	}
     	return netCompsToDisplay;
@@ -487,7 +496,7 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 			// --- Clear ------------------------
 			this.clearTableModel();
 			// --- Fill -------------------------
-			this.addNetworkComponents(this.getNetworkComponentList());
+			this.addNetworkComponents(this.getNetworkComponentList(true));
 		}
     }
     /**
