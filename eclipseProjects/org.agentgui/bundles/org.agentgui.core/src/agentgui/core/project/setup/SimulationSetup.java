@@ -93,8 +93,7 @@ public class SimulationSetup {
 	}
 	
 	
-	@XmlTransient 
-	private Project currProject = null;
+	private transient Project currProject = null;
 	
 	/** This Hash holds the instances of all agent start lists. */
 	@XmlTransient 
