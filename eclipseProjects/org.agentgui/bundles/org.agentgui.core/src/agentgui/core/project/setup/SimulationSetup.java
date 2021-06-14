@@ -150,6 +150,7 @@ public class SimulationSetup {
 	 * Returns the current project.
 	 * @return the project
 	 */
+	@XmlTransient
 	public Project getProject() {
 		return this.currProject;
 	}
