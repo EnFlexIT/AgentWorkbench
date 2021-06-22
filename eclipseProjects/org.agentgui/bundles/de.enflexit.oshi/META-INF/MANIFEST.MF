@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OSHI
 Bundle-SymbolicName: de.enflexit.oshi
-Bundle-Version: 5.7.1.qualifier
+Bundle-Version: 5.7.5
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
  lib/jna-5.8.0.jar,
  lib/jna-platform-5.8.0.jar,
- lib/oshi-core-5.7.1.jar
+ lib/oshi-core-5.7.5.jar
 Export-Package: com.sun.jna,
  com.sun.jna.internal,
  com.sun.jna.platform,

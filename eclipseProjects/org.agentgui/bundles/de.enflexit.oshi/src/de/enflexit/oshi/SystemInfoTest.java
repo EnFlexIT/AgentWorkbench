@@ -33,7 +33,7 @@ import oshi.software.os.OSProcess;
 import oshi.software.os.OSService;
 import oshi.software.os.OSSession;
 import oshi.software.os.OperatingSystem;
-import oshi.software.os.OperatingSystem.ProcessSort;
+import oshi.software.os.OperatingSystem.ProcessSorting;
 import oshi.util.FormatUtil;
 import oshi.util.Util;
 
@@ -220,8 +220,9 @@ public class SystemInfoTest { // NOSONAR squid:S5786
         // current process will never be null. Other code should check for null here
         oshi.add("My PID: " + myProc.getProcessID() + " with affinity " + Long.toBinaryString(myProc.getAffinityMask()));
         oshi.add("Processes: " + os.getProcessCount() + ", Threads: " + os.getThreadCount());
+
         // Sort by highest CPU
-        List<OSProcess> procs = os.getProcesses(5, ProcessSort.CPU);
+        List<OSProcess> procs = os.getProcesses(null, ProcessSorting.CPU_DESC, 5);
         oshi.add("   PID  %CPU %MEM       VSZ       RSS Name");
         for (int i = 0; i < procs.size() && i < 5; i++) {
             OSProcess p = procs.get(i);

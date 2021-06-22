@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/oshi-core-5.7.5.jar" sourcepath="C:/Users/Christian/.m2/repository/com/github/oshi/oshi-core/5.7.5/oshi-core-5.7.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jna-5.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jna-platform-5.8.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/oshi-core-5.7.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
