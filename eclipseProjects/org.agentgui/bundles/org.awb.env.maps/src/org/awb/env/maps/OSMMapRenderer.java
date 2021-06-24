@@ -2,6 +2,7 @@ package org.awb.env.maps;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import org.jxmapviewer.viewer.WaypointPainter;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.transform.MutableAffineTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
@@ -97,6 +99,26 @@ public class OSMMapRenderer implements MapRenderer {
 			return;
 		}
 		
+		
+		// --- Get the mutable transformer for the graph ------------
+		AffineTransform aTransGraphics = graphics.getTransform();
+		System.out.println("Graphics2D AffineTransformer " + aTransGraphics.toString());
+		
+		MutableAffineTransformer mTransLayout = (MutableAffineTransformer) mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+		AffineTransform atLayoutTrans  = mTransLayout.getTransform();
+		AffineTransform atLayoutInvers = mTransLayout.getInverse();
+		
+		MutableAffineTransformer mTransView = (MutableAffineTransformer) mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+		AffineTransform atViewTrans  = mTransView.getTransform();
+		AffineTransform atViewInvers = mTransView.getInverse();
+		
+		System.out.println("MutableAffineTransformer [Layout] " + mTransLayout.toString());
+		System.out.println("MutableAffineTransformer [ View ] " + mTransView.toString());
+		System.out.println();
+		
+		// --- Test area to manipulate the transformer --------------
+
+		
 		Dimension visDim = mapRendererSettings.getVisualizationDimension();
 		graphics.setClip(0, 0, visDim.width, visDim.height);
 	
@@ -106,6 +128,9 @@ public class OSMMapRenderer implements MapRenderer {
 		
 		if (isPrintOverlay==true) {
 			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
+			
+			mTransLayout.translate(100, 100);
+			
 			isPrintOverlay = false;
 		}
 		this.getJXMapViewerWrapper().paintComponent(graphics);
