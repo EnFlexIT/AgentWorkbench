@@ -18,7 +18,7 @@ public interface MapRenderer {
 	 * Paint map at the specified geographical coordinate.
 	 *
 	 * @param graphics2D the graphics2D instance to work on
-	 * @param mapRendererSettings the map render settings
+	 * @param mapRendererSettings the current map render settings. This instance only will be produced if the visualization was changed somehow (thru scaling or movement). Otherwise, the last instance will be provided again. 
 	 */
 	public void paintMap(Graphics2D graphics2D, MapRendererSettings mapRendererSettings);
 	

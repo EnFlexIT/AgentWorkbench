@@ -35,6 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.Timer;
 
@@ -44,6 +45,7 @@ import org.awb.env.networkModel.maps.MapPreRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
@@ -140,17 +142,26 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		this.statsLastPaintCompIntervalCounter = 1;
 	}
 	
+
+	/**
+	 * Can be used to explicitly render the graph.
+	 */
+	public void paintComponentRenderGraph() {
+		
+		if (this.isDoubleBuffered()==true) {
+			super.paintComponent(this.offscreenG2d);
+		} else {
+			super.paintComponent(this.getGraphics());
+		}
+		this.getParent().repaint();
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.BasicVisualizationServer#paintComponent(java.awt.Graphics)
 	 */
 	@Override
 	protected void paintComponent(Graphics graphics) {
 		
-		boolean successfulPainted = false;
-		int paintTrials = 0;
-		int paintTrialsMax = 3;
-		Exception lastException = null;
-
 		// ----------------------------------------------------------
 		// --- Debug, diagnosis and optimization area ---------------
 		// ----------------------------------------------------------
@@ -176,15 +187,21 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		}
 		// ----------------------------------------------------------
 
+		
 		// ----------------------------------------------------------
 		// --- Start to do the actual painting ----------------------
 		// ----------------------------------------------------------
+		int paintTrials = 0;
+		int paintTrialsMax = 3;
+		Exception lastException = null;
+		
+		boolean successfulPainted = false;
 		while (successfulPainted==false) {
 			
 			try {
 
 				paintTrials++;
-				if (this.isActionOnTop()==true || paintTrials>paintTrialsMax) {
+				if (this.isActionOnTop()==true || paintTrials > paintTrialsMax) {
 					Graphics2D g2d = (Graphics2D)graphics;
 					g2d.drawImage(offscreen, null, 0, 0);
 					if (paintTrials>paintTrialsMax) break;
@@ -207,7 +224,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 				//ex.printStackTrace();
 			}	
 		}
-		
 		
 		if (lastException!=null) {
 			if (successfulPainted==false) {
@@ -345,5 +361,27 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemPositionTransformer() {
 		return coordinateSystemPositionTransformer;
 	}
+	
+	
+	/**
+	 * Will return a new overall, concatenated affine transform that includes graphics, layout and view.
+	 * @return the overall affine transform
+	 */
+	public AffineTransform getOverallAffineTransform() {
+		
+		// --- Define new, concatenated transformer ---------------------------
+        AffineTransform lat = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
+        AffineTransform vat = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+
+        Graphics graphics = this.getGraphics();
+        Graphics2D g2d = (Graphics2D) graphics;
+        
+        AffineTransform at = new AffineTransform();
+        at.concatenate(g2d.getTransform());
+        at.concatenate(vat);
+        at.concatenate(lat);
+        return at;
+	}
+	
 	
 }

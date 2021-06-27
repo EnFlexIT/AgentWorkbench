@@ -30,14 +30,14 @@ package org.awb.env.networkModel.maps;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
- * The Class MapPreRenderer is used to prepare the painting of the Graph by
- * downloading maps.
+ * The Class MapPreRenderer is used to prepare the painting of the graph by downloading maps.
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  * @param <V> the value type
@@ -46,6 +46,9 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 
 	private BasicGraphGuiVisViewer<V,E> visViewer;
+	private AffineTransform lastAffineTransform;
+	
+	private MapRendererSettings lastMapRendererSettings;
 	
 	/**
 	 * Instantiates a new MapPreRendererr.
@@ -55,6 +58,28 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 		this.visViewer = basicGraphGuiVisViewer;
 	}
 
+	
+	/**
+	 * Checks if the overall affine transform was changed.
+	 *
+	 * @param graphics the graphics
+	 * @return true, if is changed overall affine transform
+	 */
+	private boolean isChangedOverallAffineTransform() {
+		
+		boolean isChanged = false; 
+		
+		// --- Get new, concatenated transformer ------------------------------
+        AffineTransform currAffineTransform = this.visViewer.getOverallAffineTransform();
+        if (this.lastAffineTransform==null) {
+        	isChanged = true;
+        	this.lastAffineTransform = currAffineTransform;
+        } else {
+        	isChanged = ! currAffineTransform.equals(this.lastAffineTransform);
+        }
+		return isChanged;
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#paint(java.awt.Graphics)
 	 */
@@ -67,9 +92,17 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         	MapRenderer mr = ms.getMapRenderer();
         	if (mr!=null) {
         		try {
+        			// --- Renew MapRendererSettings? -------------------------
+        			MapRendererSettings mrs = this.lastMapRendererSettings;
+        			if (mrs==null || this.isChangedOverallAffineTransform()==true) {
+        				mrs = new MapRendererSettings(this.visViewer);
+        				this.lastMapRendererSettings = mrs;
+        				this.lastAffineTransform = this.visViewer.getOverallAffineTransform();
+        			}
+        			
         			// --- Invoke map tile integration ------------------------  
         			Graphics2D g2d = (Graphics2D) graphics;
-        			mr.paintMap(g2d, new MapRendererSettings(this.visViewer));
+        			mr.paintMap(g2d, mrs);
 //			        Image mapImage = this.getMapImage();
 //			        if (mapImage!=null) {
 //			        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	

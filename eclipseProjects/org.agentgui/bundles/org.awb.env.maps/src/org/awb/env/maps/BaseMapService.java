@@ -45,6 +45,9 @@ public class BaseMapService implements MapService {
 	 */
 	@Override
 	public void destroyMapServiceInstances() {
+		if (this.osmMapRenderer!=null) {
+			this.osmMapRenderer.dispose();
+		}
 		this.osmMapRenderer = null;
 		this.osmZoomController = null;
 	}

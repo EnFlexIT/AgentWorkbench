@@ -1,8 +1,6 @@
 package org.awb.env.networkModel.maps;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -16,7 +14,6 @@ import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
-import edu.uci.ics.jung.visualization.Layer;
 
 /**
  * The Class MapRendererSettings provides information for the rendering of maps.
@@ -62,7 +59,7 @@ public class MapRendererSettings implements Serializable {
 
 		boolean isPrintTransformation = false;
 
-		AffineTransform at = this.getAffineTransform(visViewer);
+		AffineTransform at = visViewer.getOverallAffineTransform();
 		
 		TransformerForGraphNodePosition<GraphNode, GraphEdge> cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();
@@ -86,28 +83,6 @@ public class MapRendererSettings implements Serializable {
 		this.setVisualizationDimension(vvDim);
 		this.calcLandscapeDimension(topLeftCoordinate, bottomRightCoordinate);
 	}
-	/**
-	 * Return the affine transform from the current visualization viewer.
-	 *
-	 * @param visViewer the vis viewer
-	 * @return the affine transform
-	 */
-	private AffineTransform getAffineTransform(BasicGraphGuiVisViewer<?,?> visViewer) {
-		
-		// --- Define new, concatenated transformer ---------------------------
-        AffineTransform lat = visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
-        AffineTransform vat = visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
-
-        Graphics graphics = visViewer.getGraphics();
-        Graphics2D g2d = (Graphics2D) graphics;
-        
-        AffineTransform at = new AffineTransform();
-        at.concatenate(g2d.getTransform());
-        at.concatenate(vat);
-        at.concatenate(lat);
-        return at;
-	}
-	
 	
 	/**
 	 * Returns a WGS 84 coordinate from the specified visual point in the application.

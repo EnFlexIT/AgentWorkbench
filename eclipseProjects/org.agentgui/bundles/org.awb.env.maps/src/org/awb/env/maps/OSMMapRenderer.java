@@ -35,11 +35,14 @@ public class OSMMapRenderer implements MapRenderer {
 	private BaseMapService baseMapService;
 	
 	private JXMapViewerForAWB jxMapViewer;
+	private TileListener jxTileListener;
 
 	private Graphics2D graphics;
 	private MapRendererSettings mapRendererSettings;
+	private boolean newMapRendererSettings;
 	
 	private boolean isPrintOverlay = true;
+	
 	
 	/**
 	 * Instantiates a new OSM map renderer.
@@ -64,6 +67,7 @@ public class OSMMapRenderer implements MapRenderer {
 		return this.getZoomController().getScalingControl();
 	}
 
+	
 	/**
 	 * Returns the JX map viewer wrapper.
 	 * @return the JX map viewer wrapper
@@ -72,15 +76,33 @@ public class OSMMapRenderer implements MapRenderer {
 		if (jxMapViewer==null) {
 			jxMapViewer = new JXMapViewerForAWB();
 			jxMapViewer.setDrawTileBorders(true);
-			jxMapViewer.getTileFactory().addTileListener(new TileListener() {
-				@Override
-				public void tileLoaded(Tile tile) {
-					OSMMapRenderer.this.repaint();
-				}
-			});
+			jxMapViewer.getTileFactory().addTileListener(this.getJXTileListener());
 		}
 		return jxMapViewer;
 	}
+	/**
+	 * Returns the local TileListener of the JXMapViewerForAWB.
+	 * @return the tile listener
+	 */
+	private TileListener getJXTileListener() {
+		if (jxTileListener==null) {
+			jxTileListener = new TileListener() {
+				@Override
+				public void tileLoaded(Tile tile) {
+					OSMMapRenderer.this.getMapRendererSettings().getVisualizationViewer().paintComponentRenderGraph();
+				}
+			};
+		}
+		return jxTileListener;
+	}
+	/**
+	 * Disposes the connection between renderer and tile factory of the JXMapViewer.
+	 */
+	public void dispose() {
+		this.getJXMapViewerWrapper().getTileFactory().removeTileListener(this.getJXTileListener());
+		this.getJXMapViewerWrapper().getTileFactory().dispose();
+	}
+	
 	
 	
 	/* (non-Javadoc)
@@ -99,43 +121,59 @@ public class OSMMapRenderer implements MapRenderer {
 			return;
 		}
 		
+		// --- In case of new render settings: ----------------------
+		if (this.isNewMapRendererSettings()==true) {
+			
+			// --- Adjust graph element positions to map ------------
+			this.adjustGraphElementPositions(mapRendererSettings);
+			
+			// --- Set clip and configure JXMapViewer ---------------
+			Dimension visDim = mapRendererSettings.getVisualizationDimension();
+			graphics.setClip(0, 0, visDim.width, visDim.height);
+			
+			this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
+			this.getJXMapViewerWrapper().setBounds(visDim);
+			this.getJXMapViewerWrapper().setZoom(this.getScalingControl().getZoomLevel().getJXMapViewerZoomLevel());
+			
+			if (isPrintOverlay==true) {
+				this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
+				isPrintOverlay = false;
+			}
+		}
+		
+		// --- Paint to the specified graphics object ---------------
+		this.getJXMapViewerWrapper().paintComponent(graphics);
+	}
+	
+	/**
+	 * Translate graph element positions.
+	 * @param mapRendererSettings the map renderer settings
+	 */
+	private void adjustGraphElementPositions(MapRendererSettings mapRendererSettings) {
+
+		// --- Ensure that the correction is only called once -------
+		if (this.isNewMapRendererSettings()==false) return;
 		
 		// --- Get the mutable transformer for the graph ------------
-		AffineTransform aTransGraphics = graphics.getTransform();
-		System.out.println("Graphics2D AffineTransformer " + aTransGraphics.toString());
-		
 		MutableAffineTransformer mTransLayout = (MutableAffineTransformer) mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-		AffineTransform atLayoutTrans  = mTransLayout.getTransform();
-		AffineTransform atLayoutInvers = mTransLayout.getInverse();
-		
 		MutableAffineTransformer mTransView = (MutableAffineTransformer) mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
-		AffineTransform atViewTrans  = mTransView.getTransform();
-		AffineTransform atViewInvers = mTransView.getInverse();
-		
+
 		System.out.println("MutableAffineTransformer [Layout] " + mTransLayout.toString());
 		System.out.println("MutableAffineTransformer [ View ] " + mTransView.toString());
 		System.out.println();
+
+		AffineTransform atLayoutTrans  = mTransLayout.getTransform();
+//		AffineTransform atLayoutInvers = mTransLayout.getInverse();
+		
+//		AffineTransform atViewTrans  = mTransView.getTransform();
+//		AffineTransform atViewInvers = mTransView.getInverse();
 		
 		// --- Test area to manipulate the transformer --------------
-
+//		atLayoutTrans.translate(25, -25);
 		
-		Dimension visDim = mapRendererSettings.getVisualizationDimension();
-		graphics.setClip(0, 0, visDim.width, visDim.height);
-	
-		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
-		this.getJXMapViewerWrapper().setBounds(visDim);
-		this.getJXMapViewerWrapper().setZoom(this.getScalingControl().getZoomLevel().getJXMapViewerZoomLevel());
 		
-		if (isPrintOverlay==true) {
-			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
-			
-			mTransLayout.translate(100, 100);
-			
-			isPrintOverlay = false;
-		}
-		this.getJXMapViewerWrapper().paintComponent(graphics);
 	}
-
+	
 	/**
 	 * Checks if the Jung scaling needs to be adjusted. If so, the nearest {@link ZoomLevel} 
 	 * will be determined out of the available {@link OSMZoomLevels}.  
@@ -186,29 +224,7 @@ public class OSMMapRenderer implements MapRenderer {
 		}
 		return requiresJungReScaling;
 	}
-	
-	
-	public void repaint() {
-//		System.out.println("Calling map rendering " + mapRendererSettings.getCenterPostion() );
-//		System.out.println("Landscape width:"+ (mapRendererSettings.getLandscapeDimension().getWidth()));
-//		System.out.println("Landscape height:"+ (mapRendererSettings.getLandscapeDimension().getHeight()));
-//		System.out.println("Visualization width"+ mapRendererSettings.getVisualizationDimension().getWidth());
-//		System.out.println("Visualization height"+ mapRendererSettings.getVisualizationDimension().getHeight());
 
-//		GeoPosition centerPos = this.convertToGeoPosition(this.getMapRendererSettings().getCenterPostion());
-//		this.mapCanvas.setZoom(scalingOperator.getZoomLevel());
-//		this.mapCanvas.setAddressLocation(centerPos);
-		this.getJXMapViewerWrapper().paint(this.getGraphics2D());
-		this.paintMap(this.getGraphics2D(), this.getMapRendererSettings());
-		this.getMapRendererSettings().getVisualizationViewer().repaint();
-	}
-	
-	public void repaint(int zoomLevel, MapRendererSettings mapRendererSettings) {
-		this.jxMapViewer.setZoom(zoomLevel);
-		this.paintMap(this.getGraphics2D(), mapRendererSettings);
-		this.getMapRendererSettings().getVisualizationViewer().repaint();
-	}
-	
 	
 	private WaypointPainter<Waypoint> getWaypointPainter(MapRendererSettings mapRendererSettings) {
 		
@@ -262,8 +278,23 @@ public class OSMMapRenderer implements MapRenderer {
 	 * @param mapRendererSettings the mapRendererSettings to set
 	 */
 	public void setMapRendererSettings(MapRendererSettings mapRendererSettings) {
+		this.setNewMapRendererSettings(this.mapRendererSettings==null || mapRendererSettings!=this.mapRendererSettings);
 		this.mapRendererSettings = mapRendererSettings;
 	}
 	
-
+	/**
+	 * Checks if is new map renderer settings.
+	 * @return true, if is new map renderer settings
+	 */
+	public boolean isNewMapRendererSettings() {
+		return this.newMapRendererSettings;
+	}
+	/**
+	 * Sets the new map renderer settings.
+	 * @param newMapRendererSettings the new new map renderer settings
+	 */
+	private void setNewMapRendererSettings(boolean newMapRendererSettings) {
+		this.newMapRendererSettings = newMapRendererSettings;
+	}
+	
 }
