@@ -28,7 +28,7 @@ import de.enflexit.common.ServiceFinder;
     "mapServiceName",
     "mapTileTransparency"
 })
-public class MapSettings implements Serializable {
+public class MapSettings implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 760729234063485505L;
 	
@@ -115,6 +115,34 @@ public class MapSettings implements Serializable {
 		this.mapTileTransparency = mapTileTransparency;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	protected MapSettings clone() throws CloneNotSupportedException {
+		return (MapSettings) super.clone();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (compObj==this) return true;
+		if (!(compObj instanceof MapSettings)) return false;
+		
+		MapSettings msComp = (MapSettings) compObj;
+		
+		if (msComp.getUTMLongitudeZone()!=this.getUTMLongitudeZone()) return false;
+		if (msComp.getUTMLatitudeZone().equals(this.getUTMLatitudeZone())==false) return false;
+		
+		if (msComp.getMapServiceName().equals(this.getMapServiceName())==false) return false;
+		if (msComp.getMapScale().equals(this.getMapScale())==false) return false;
+		if (msComp.getMapTileTransparency()!=this.getMapTileTransparency()) return false;
+		
+		return true;
+	}
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here, handling of the currently selected MapService ---------------------

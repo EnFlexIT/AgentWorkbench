@@ -46,8 +46,9 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 
 	private BasicGraphGuiVisViewer<V,E> visViewer;
-	private AffineTransform lastAffineTransform;
 	
+	private MapSettings lastMapSettings;
+	private AffineTransform lastAffineTransform;
 	private MapRendererSettings lastMapRendererSettings;
 	
 	/**
@@ -56,28 +57,6 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 	 */
 	public MapPreRenderer(BasicGraphGuiVisViewer<V,E> basicGraphGuiVisViewer) {
 		this.visViewer = basicGraphGuiVisViewer;
-	}
-
-	
-	/**
-	 * Checks if the overall affine transform was changed.
-	 *
-	 * @param graphics the graphics
-	 * @return true, if is changed overall affine transform
-	 */
-	private boolean isChangedOverallAffineTransform() {
-		
-		boolean isChanged = false; 
-		
-		// --- Get new, concatenated transformer ------------------------------
-        AffineTransform currAffineTransform = this.visViewer.getOverallAffineTransform();
-        if (this.lastAffineTransform==null) {
-        	isChanged = true;
-        	this.lastAffineTransform = currAffineTransform;
-        } else {
-        	isChanged = ! currAffineTransform.equals(this.lastAffineTransform);
-        }
-		return isChanged;
 	}
 	
 	/* (non-Javadoc)
@@ -94,15 +73,18 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         		try {
         			// --- Renew MapRendererSettings? -------------------------
         			MapRendererSettings mrs = this.lastMapRendererSettings;
-        			if (mrs==null || this.isChangedOverallAffineTransform()==true) {
+        			if (this.isChangedMapVisualization()==true) {
         				mrs = new MapRendererSettings(this.visViewer);
         				this.lastMapRendererSettings = mrs;
+        				this.lastMapSettings = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings().clone();
         				this.lastAffineTransform = this.visViewer.getOverallAffineTransform();
         			}
         			
         			// --- Invoke map tile integration ------------------------  
         			Graphics2D g2d = (Graphics2D) graphics;
         			mr.paintMap(g2d, mrs);
+        			
+        			// --- Just as a reminder, how map integration works ------
 //			        Image mapImage = this.getMapImage();
 //			        if (mapImage!=null) {
 //			        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
@@ -117,7 +99,28 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         	}
         }
 	}
-	
+	/**
+	 * Checks if the map visualization settings have changed.
+	 *
+	 * @param graphics the graphics
+	 * @return true, if is changed overall affine transform
+	 */
+	private boolean isChangedMapVisualization() {
+		
+		if (this.lastMapRendererSettings!=null || this.lastMapSettings!=null || this.lastMapSettings!=null) {
+			// --- Check AffineTransform ------------------
+			boolean isChangedAffineTransform = ! this.visViewer.getOverallAffineTransform().equals(this.lastAffineTransform);
+			if (isChangedAffineTransform==true) return true;
+			
+			// --- Check MapSettings ----------------------
+			MapSettings currMapSettings = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings();
+			boolean isChangedMapSetting = ! currMapSettings.equals(this.lastMapSettings); 
+			
+			return isChangedMapSetting;
+		}
+		return true;   
+	}
+
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#useTransform()
 	 */
