@@ -6,7 +6,7 @@
             <key>NhieneMxKq</key>
             <value>
                 <utmLongitudeZone>32</utmLongitudeZone>
-                <utmLatitudeZone>U</utmLatitudeZone>
+                <utmLatitudeZone>N</utmLatitudeZone>
                 <mapScale>m</mapScale>
                 <mapServiceName>AWB-OpenStreetMaps</mapServiceName>
                 <mapTileTransparency>0</mapTileTransparency>
