@@ -22,6 +22,7 @@ import org.jxmapviewer.viewer.WaypointPainter;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.MultiLayerTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableAffineTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
@@ -123,22 +124,21 @@ public class OSMMapRenderer implements MapRenderer {
 		
 		// --- In case of new render settings: ----------------------
 		if (this.isNewMapRendererSettings()==true) {
-			
 			// --- Adjust graph element positions to map ------------
 			this.adjustGraphElementPositions(mapRendererSettings);
-			
-			// --- Set clip and configure JXMapViewer ---------------
-			Dimension visDim = mapRendererSettings.getVisualizationDimension();
-			graphics.setClip(0, 0, visDim.width, visDim.height);
-			
-			this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
-			this.getJXMapViewerWrapper().setBounds(visDim);
-			this.getJXMapViewerWrapper().setZoom(this.getScalingControl().getZoomLevel().getJXMapViewerZoomLevel());
-			
-			if (isPrintOverlay==true) {
-				this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
-				isPrintOverlay = false;
-			}
+		}
+
+		// --- Set clip and configure JXMapViewer -------------------
+		Dimension visDim = mapRendererSettings.getVisualizationDimension();
+		graphics.setClip(0, 0, visDim.width, visDim.height);
+		
+		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
+		this.getJXMapViewerWrapper().setBounds(visDim);
+		this.getJXMapViewerWrapper().setZoom(this.getScalingControl().getZoomLevel().getJXMapViewerZoomLevel());
+		
+		if (isPrintOverlay==true) {
+			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
+			isPrintOverlay = false;
 		}
 		
 		// --- Paint to the specified graphics object ---------------
@@ -154,22 +154,31 @@ public class OSMMapRenderer implements MapRenderer {
 		// --- Ensure that the correction is only called once -------
 		if (this.isNewMapRendererSettings()==false) return;
 		
+		// --- Get the current MultiLayerTransformer ----------------
+		MultiLayerTransformer mlt = mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer();
+		
 		// --- Get the mutable transformer for the graph ------------
-		MutableAffineTransformer mTransLayout = (MutableAffineTransformer) mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-		MutableAffineTransformer mTransView = (MutableAffineTransformer) mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
-
+		MutableAffineTransformer mTransLayout = (MutableAffineTransformer) mlt.getTransformer(Layer.LAYOUT);
+		MutableAffineTransformer mTransView = (MutableAffineTransformer) mlt.getTransformer(Layer.VIEW);
+		
 		System.out.println("MutableAffineTransformer [Layout] " + mTransLayout.toString());
 		System.out.println("MutableAffineTransformer [ View ] " + mTransView.toString());
 		System.out.println();
 
 		AffineTransform atLayoutTrans  = mTransLayout.getTransform();
-//		AffineTransform atLayoutInvers = mTransLayout.getInverse();
-		
-//		AffineTransform atViewTrans  = mTransView.getTransform();
-//		AffineTransform atViewInvers = mTransView.getInverse();
+		AffineTransform atLayoutInvers = mTransLayout.getInverse();
+
+		AffineTransform atViewTrans  = mTransView.getTransform();
+		AffineTransform atViewInvers = mTransView.getInverse();
 		
 		// --- Test area to manipulate the transformer --------------
-//		atLayoutTrans.translate(25, -25);
+
+		
+		AffineTransform atTest = new AffineTransform(atLayoutTrans);
+//		atTest.translate(0, -5);	
+		
+//		MutableAffineTransformer matTest = new MutableAffineTransformer(atTest);
+//		mlt.setTransformer(Layer.LAYOUT, matTest);
 		
 		
 	}

@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.maps;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -49,6 +50,8 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 	
 	private MapSettings lastMapSettings;
 	private AffineTransform lastAffineTransform;
+	private Dimension lastVisViewerDimension;
+	
 	private MapRendererSettings lastMapRendererSettings;
 	
 	/**
@@ -71,15 +74,18 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
         	MapRenderer mr = ms.getMapRenderer();
         	if (mr!=null) {
         		try {
+        			// --------------------------------------------------------
         			// --- Renew MapRendererSettings? -------------------------
         			MapRendererSettings mrs = this.lastMapRendererSettings;
         			if (this.isChangedMapVisualization()==true) {
         				mrs = new MapRendererSettings(this.visViewer);
         				this.lastMapRendererSettings = mrs;
-        				this.lastMapSettings = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings().clone();
         				this.lastAffineTransform = this.visViewer.getOverallAffineTransform();
+        				this.lastVisViewerDimension = this.visViewer.getSize();
+        				this.lastMapSettings = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings().clone();
         			}
-        			
+
+        			// --------------------------------------------------------
         			// --- Invoke map tile integration ------------------------  
         			Graphics2D g2d = (Graphics2D) graphics;
         			mr.paintMap(g2d, mrs);
@@ -107,10 +113,14 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 	 */
 	private boolean isChangedMapVisualization() {
 		
-		if (this.lastMapRendererSettings!=null || this.lastMapSettings!=null || this.lastMapSettings!=null) {
+		if (this.lastMapRendererSettings!=null && this.lastAffineTransform!=null && this.lastMapSettings!=null && this.lastVisViewerDimension!=null) {
 			// --- Check AffineTransform ------------------
 			boolean isChangedAffineTransform = ! this.visViewer.getOverallAffineTransform().equals(this.lastAffineTransform);
 			if (isChangedAffineTransform==true) return true;
+			
+			// --- Check VisViewer dimension --------------
+			boolean isChangedVisViewerDimension = ! this.visViewer.getSize().equals(this.lastVisViewerDimension);
+			if (isChangedVisViewerDimension==true) return true;
 			
 			// --- Check MapSettings ----------------------
 			MapSettings currMapSettings = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings();

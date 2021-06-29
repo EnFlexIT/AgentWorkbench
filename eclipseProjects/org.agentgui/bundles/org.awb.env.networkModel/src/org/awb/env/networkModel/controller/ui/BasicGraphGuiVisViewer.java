@@ -204,7 +204,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 				if (this.isActionOnTop()==true || paintTrials > paintTrialsMax) {
 					Graphics2D g2d = (Graphics2D)graphics;
 					g2d.drawImage(offscreen, null, 0, 0);
-					if (paintTrials>paintTrialsMax) break;
+					if (paintTrials > paintTrialsMax) break;
 					
 				} else {
 					super.paintComponent(graphics);
