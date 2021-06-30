@@ -17,13 +17,19 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 public interface ZoomController {
 
 	/**
-	 * Sets the graph environment controller.
+	 * Will be used to set the current {@link GraphEnvironmentController}.
 	 * @param graphController the new graph environment controller
 	 */
 	public void setGraphEnvironmentController(GraphEnvironmentController graphController);
 
 	/**
-	 * Sets the visualization viewer.
+	 * Will be used to set the current {@link BasicGraphGui}i.
+	 * @param basicGraphGui the new basic graph gui
+	 */
+	public void setBasicGraphGui(BasicGraphGui basicGraphGui);
+	
+	/**
+	 * Will be used to set the current visualization viewer that is of type {@link BasicGraphGuiVisViewer}.
 	 * @param visViewer the vis viewer
 	 */
 	public void setVisualizationViewer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer);

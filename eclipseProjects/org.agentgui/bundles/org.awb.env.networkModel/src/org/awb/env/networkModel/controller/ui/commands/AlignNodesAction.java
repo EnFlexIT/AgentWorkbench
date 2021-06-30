@@ -42,6 +42,7 @@ import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
@@ -68,10 +69,9 @@ public class AlignNodesAction extends AbstractUndoableEdit {
 	}
 	
 	private GraphEnvironmentController graphController;
+	private BasicGraphGui basicGraphGui;
 	private VisualizationViewer<GraphNode,GraphEdge> visViewer;
 	private CoordinateSystemXDirection coordXDirection;
-	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 	
 	private Alignment alignment;
 	private HashMap<String, Point2D> oldPositionHashMap;
@@ -85,12 +85,13 @@ public class AlignNodesAction extends AbstractUndoableEdit {
 	 * Instantiates a new UndoableEdit for the movements of GraphNode's.
 	 *
 	 * @param graphController the graph controller
-	 * @param visViewer the vis viewer
+	 * @param basicGraphGui the basic graph gui
 	 * @param alignment the alignment
 	 */
-	public AlignNodesAction(GraphEnvironmentController graphController, VisualizationViewer<GraphNode, GraphEdge> visViewer, Alignment alignment) {
+	public AlignNodesAction(GraphEnvironmentController graphController, BasicGraphGui basicGraphGui, Alignment alignment) {
 		this.graphController = graphController;
-		this.visViewer = visViewer;
+		this.basicGraphGui = basicGraphGui;
+		this.visViewer = basicGraphGui.getVisualizationViewer();
 		this.alignment = alignment;
 		this.coordXDirection = this.graphController.getNetworkModel().getLayoutSettings().getCoordinateSystemXDirection();
 		
@@ -119,10 +120,7 @@ public class AlignNodesAction extends AbstractUndoableEdit {
 	 * @return the graph node position transformer
 	 */
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
-		if (graphNodePositionTransformer==null) {
-			graphNodePositionTransformer = new TransformerForGraphNodePosition<>(this.graphController);
-		}
-		return graphNodePositionTransformer;
+		return this.basicGraphGui.getCoordinateSystemPositionTransformer();
 	}
 	
 	/**

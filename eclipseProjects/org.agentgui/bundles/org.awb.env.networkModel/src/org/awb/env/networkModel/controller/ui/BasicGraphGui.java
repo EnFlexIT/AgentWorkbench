@@ -500,7 +500,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 		return graphZoomScrollPane;
 	}
-	
 	/**
 	 * Gets the VisualizationViewer
 	 * @return The VisualizationViewer
@@ -526,7 +525,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
 			
 			// --- Set the pick size of the visualization viewer --------------
-			visView.setPickSupport(new GraphEnvironmentShapePickSupport(visView, 5, this.getGraphEnvironmentController()));
+			visView.setPickSupport(new GraphEnvironmentShapePickSupport(this, 5));
 			
 			// --- Add an item listener for pickings --------------------------
 			visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
@@ -768,7 +767,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 
 			// --- Set edge renderer for a background color of an edge --------
-			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(this.getGraphEnvironmentController()) {
+			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(this) {
 				@Override
 				public boolean isShowMarker(GraphEdge edge) {
 					return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
@@ -1178,7 +1177,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			String graphNodeID = graphNodeToEdit.getId();
 			if (this.getGraphMouseMode()!=GraphMouseMode.EdgeEditing) {
 				// --- Create undoable action ----------------------- 
-				this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this.getVisualizationViewer(), graphNodeToEdit, oldPosition);
+				this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this, graphNodeToEdit, oldPosition);
 				
 			} else {
 				// --- Reconfigure edge -----------------------------
@@ -1481,13 +1480,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 			ZoomController zc = this.getMapService().getZoomController();
 			if (zc!=null) {
 				zc.setGraphEnvironmentController(this.getGraphEnvironmentController());
+				zc.setBasicGraphGui(this);
 				zc.setVisualizationViewer(this.getVisualizationViewer());
 				return zc;
 			}
 		}
 		// --- Use the default ZommController --------------------------------- 
 		if (zoomController==null) {
-			zoomController = new BasicGraphGuiZoomController(this.getGraphEnvironmentController(), this.getVisualizationViewer());
+			zoomController = new BasicGraphGuiZoomController(this.getGraphEnvironmentController(), this);
 		}
 		return zoomController;
 	}

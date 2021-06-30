@@ -250,14 +250,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 						GraphNode node = nodesSelected.get(i);
 						Point2D positionOld  = this.nodesMovedOldPositions.get(node.getId());
 						if (node.getPosition().equals(positionOld)==false) {
-							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
+							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.basicGraphGUI, this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
 							break;
 						}
 					} // end for
 					
 				} else {
 					// --- Should never happen --------------------------------
-					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
+					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.basicGraphGUI, this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
 				}
 			}
 			this.nodesMovedOldPositions = null;

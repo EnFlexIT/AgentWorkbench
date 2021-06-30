@@ -46,7 +46,6 @@ import javax.swing.JComponent;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
-import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
 import org.awb.env.networkModel.settings.LayoutSettings;
@@ -74,7 +73,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 
 	private static IntermediatePointTransformer intPointTransformer;
 	
-	private GraphEnvironmentController graphController;
+	private BasicGraphGui basicGraphGui;
 	
 	private boolean markerShow = false;
 	private float markerStrokeWidth = 0;
@@ -83,10 +82,12 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	
 	/**
 	 * Instantiates a new graph environment edge renderer.
+	 *
 	 * @param graphController the current GraphEnvironmentController
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 */
-	public GraphEnvironmentEdgeRenderer(GraphEnvironmentController graphController) {
-		this.graphController = graphController;
+	public GraphEnvironmentEdgeRenderer(BasicGraphGui basicGraphGui) {
+		this.basicGraphGui = basicGraphGui;
 	}
 	
 	/**
@@ -170,7 +171,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         }
 
         // --- Do some layout checks --------------------------------------------------------------
-        LayoutSettings ls = this.graphController.getNetworkModel().getLayoutSettings();
+        LayoutSettings ls = this.basicGraphGui.getCoordinateSystemPositionTransformer().getLayoutSettings();
         
         boolean isLoop = v1.equals(v2);
         boolean isOrthogonalConfigurableLine = (ls.getEdgeShape()==org.awb.env.networkModel.settings.LayoutSettings.EdgeShape.ConfigurableLine && edge.getEdgeShapeConfiguration()!=null && edge.getEdgeShapeConfiguration() instanceof OrthogonalConfiguration);
@@ -204,7 +205,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 		// => ORIGINAL: edgeShape = xform.createTransformedShape(edgeShape);
 		// ----------------------------------------------------------------------------------------
         // => ADJUSTED FORM
-        edgeShape = getTransformedShape(edgeShape, this.graphController, xform, rc, v1, v2, isOrthogonal);
+        edgeShape = getTransformedShape(edgeShape, this.basicGraphGui.getCoordinateSystemPositionTransformer(), xform, rc, v1, v2, isOrthogonal);
 		// ----------------------------------------------------------------------------------------
 		
         MutableTransformer vt = rc.getMultiLayerTransformer().getTransformer(Layer.VIEW);
@@ -335,7 +336,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * Returns the transformed shape.
 	 *
 	 * @param shape the shape to transform
-	 * @param graphController the graph controller
+	 * @param csTransformer the cs transformer
 	 * @param affineTransform the (original) affine transform
 	 * @param rc the current RenderContext
 	 * @param startNode the start node
@@ -343,11 +344,9 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param isOrthogonal the indicator if an orthogonal edge is to be drawn
 	 * @return the transformed shape
 	 */
-	public static Shape getTransformedShape(Shape shape, GraphEnvironmentController graphController, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
+	public static Shape getTransformedShape(Shape shape, TransformerForGraphNodePosition<GraphNode, GraphEdge> csTransformer, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
 		
 		Shape newShape = null;
-		
-		TransformerForGraphNodePosition<GraphNode, GraphEdge> csTransformer = new TransformerForGraphNodePosition<>(graphController); 
 		
 		if (isOrthogonal==false && shape instanceof GeneralPath) {
 			// --------------------------------------------

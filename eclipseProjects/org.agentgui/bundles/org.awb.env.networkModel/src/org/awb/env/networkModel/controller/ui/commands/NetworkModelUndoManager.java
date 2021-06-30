@@ -35,19 +35,17 @@ import java.util.List;
 
 import javax.swing.undo.UndoManager;
 
-import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.commands.AlignNodesAction.Alignment;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineEdit;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
-
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
  * The Class NetworkModelUndoManager is used for the action / interaction
@@ -403,35 +401,35 @@ public class NetworkModelUndoManager {
 	/**
 	 * Sets the movement of GraphNodes to the undoManager.
 	 *
-	 * @param visViewer the current {@link VisualizationViewer}
+	 * @param basicGraphGui the basic graph gui
 	 * @param graphNode the graph node that was moved
 	 * @param oldPosition the old position of the graph node
 	 */
-	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, GraphNode graphNode, Point2D oldPosition) {
+	public void setGraphNodesMoved(BasicGraphGui basicGraphGui, GraphNode graphNode, Point2D oldPosition) {
 		HashMap<String, Point2D> oldPosHashMap = new HashMap<>();
 		oldPosHashMap.put(graphNode.getId(), oldPosition);
-		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, visViewer, oldPosHashMap, null));
+		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, basicGraphGui, oldPosHashMap, null));
 	}
 	
 	/**
 	 * Sets the movement of GraphNodes to the undoManager.
 	 *
-	 * @param visViewer the current {@link VisualizationViewer}
+	 * @param basicGraphGui the basic graph gui
 	 * @param nodesMovedOldPositions the nodes moved old positions
 	 * @param polylinesMovedOldPositions the polylines moved old positions of intermediate nodes
 	 */
-	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
-		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, visViewer, nodesMovedOldPositions, polylinesMovedOldPositions));
+	public void setGraphNodesMoved(BasicGraphGui basicGraphGui, HashMap<String, Point2D> nodesMovedOldPositions, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
+		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, basicGraphGui, nodesMovedOldPositions, polylinesMovedOldPositions));
 	}
 
 	/**
 	 * Sets a {@link ConfiguredLineEdit} to the undo manager.
 	 *
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 * @param configuredLineEdit the new configured line edit
-	 * @param visViewer the vis viewer
 	 */
-	public void setConfiguredLineEdit(VisualizationViewer<GraphNode,GraphEdge> visViewer, ConfiguredLineEdit configuredLineEdit) {
-		this.getUndoManager().addEdit(new ConfiguredLineEditAction(this.graphController, visViewer, configuredLineEdit));
+	public void setConfiguredLineEdit(BasicGraphGui basicGraphGui, ConfiguredLineEdit configuredLineEdit) {
+		this.getUndoManager().addEdit(new ConfiguredLineEditAction(this.graphController, basicGraphGui, configuredLineEdit));
 	}
 
 	/**
@@ -445,11 +443,11 @@ public class NetworkModelUndoManager {
 	/**
 	 * Aligns the currently selected nodes with respect to the specified alignment.
 	 *
-	 * @param visViewer the vis viewer
+	 * @param basicGraphGui the basic graph gui
 	 * @param alignment the alignment
 	 */
-	public void alignNodes(VisualizationViewer<GraphNode,GraphEdge> visViewer, Alignment alignment) {
-		AlignNodesAction anAct = new AlignNodesAction(this.graphController, visViewer, alignment);
+	public void alignNodes(BasicGraphGui basicGraphGui, Alignment alignment) {
+		AlignNodesAction anAct = new AlignNodesAction(this.graphController, basicGraphGui, alignment);
 		if (anAct.hasChangedPositions()==true) {
 			this.getUndoManager().addEdit(anAct);
 		}

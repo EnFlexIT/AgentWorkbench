@@ -32,6 +32,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);
 	
 	private GraphEnvironmentController graphController;
+	private BasicGraphGui basicGraphGui;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 	private ScalingControl scalingControl;
 	
@@ -40,15 +41,17 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	 * Instantiates a new BasicGraphGuiZoomController (default constructor).
 	 */
 	public BasicGraphGuiZoomController() { }
+	
 	/**
 	 * Instantiates a new BasicGraphGuiScalingControl.
 	 *
 	 * @param graphController the graph controller
-	 * @param visViewer the vis viewer
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 */
-	public BasicGraphGuiZoomController(GraphEnvironmentController graphController, BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
+	public BasicGraphGuiZoomController(GraphEnvironmentController graphController, BasicGraphGui basicGraphGui) {
 		this.setGraphEnvironmentController(graphController);
-		this.setVisualizationViewer(visViewer);
+		this.setBasicGraphGui(basicGraphGui);
+		this.setVisualizationViewer(basicGraphGui.getVisualizationViewer());
 	}
 	
 	/**
@@ -67,10 +70,25 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	}
 	
 	/**
+	 * Returns the current {@link BasicGraphGui} instance.
+	 * @return the basic graph gui
+	 */
+	public BasicGraphGui getBasicGraphGui() {
+		return this.basicGraphGui;
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.ui.ZoomController#setBasicGraphGui(org.awb.env.networkModel.controller.ui.BasicGraphGui)
+	 */
+	@Override
+	public void setBasicGraphGui(BasicGraphGui basicGraphGui) {
+		this.basicGraphGui = basicGraphGui;
+	}
+	
+	/**
 	 * Returns the current visualization viewer.
 	 * @return the visualization viewer
 	 */
-	protected BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisualizationViewer() {
+	public BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisualizationViewer() {
 		return this.visViewer;
 	}
 	/* (non-Javadoc)
@@ -216,7 +234,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 		double moveY = (graphRectangle.getY() * (-1)) + this.graphMargin;
 
 		// --- Transform coordinate to LayoutSettings ---------------
-		TransformerForGraphNodePosition<GraphNode, GraphEdge> positionTransformer = new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController());
+		TransformerForGraphNodePosition<GraphNode, GraphEdge> positionTransformer = this.getBasicGraphGui().getCoordinateSystemPositionTransformer();
 		Point2D visualPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
 		moveX = visualPosition.getX() + coordinateSourcePoint.getX();
 		moveY = visualPosition.getY() + coordinateSourcePoint.getY();

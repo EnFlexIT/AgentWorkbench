@@ -64,17 +64,6 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 		this.graphController = graphController;
 	}
 	/**
-	 * Instantiates a new transformer for node position that statically uses the specified {@link LayoutSettings}.
-	 * In contrast to the other class constructor, this will not consider changes in a {@link NetworkModel}.
-	 *  
-	 * @param layoutSettings the layout settings
-	 */
-	public TransformerForGraphNodePosition(LayoutSettings layoutSettings) {
-		this.layoutSettings = layoutSettings;
-	}
-	
-	
-	/**
 	 * Returns the current or initially specified layout settings.
 	 * @return the layout settings
 	 */

@@ -565,19 +565,19 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			
 		} else if (ae.getSource()==this.getJButtonAlignLeft()) {
 			// --- Align marked nodes to the left ---------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(), Alignment.Left);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Left);
 			
 		} else if (ae.getSource()==this.getJButtonAlignRight()) {
 			// --- Align marked nodes to the right --------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Right);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Right);
 			
 		} else if (ae.getSource()==this.getJButtonAlignTop()) {
 			// --- Align marked nodes to the top ----------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Top);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Top);
 			
 		} else if (ae.getSource()==this.getJButtonAlignBottom()) {
 			// --- Align marked nodes to the bottom -------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Bottom);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Bottom);
 			
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] => Unknow action command from " + ae.getSource());

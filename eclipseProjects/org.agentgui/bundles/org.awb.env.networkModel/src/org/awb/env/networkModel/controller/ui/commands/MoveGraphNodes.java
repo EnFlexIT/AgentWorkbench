@@ -42,6 +42,7 @@ import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
@@ -61,6 +62,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	private static final long serialVersionUID = -7057568320137759472L;
 
 	private GraphEnvironmentController graphController;
+	private BasicGraphGui basicGraphGui;
 	private VisualizationViewer<GraphNode,GraphEdge> visViewer; 	
 	
 	private HashMap<String, Point2D> nodesMovedOldPositions;
@@ -69,7 +71,6 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	private HashMap<String, List<Point2D>> polylinesMovedOldPositions;
 	private HashMap<String, List<Point2D>> polylinesMovedNewPositions;
 	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 	
 	/**
 	 * Instantiates a new UndoableEdit for the movements of GraphNode's.
@@ -79,10 +80,10 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	 * @param nodesMovedOldPositions the nodes moved old positions
 	 * @param polylinesMovedOldPositions the polylines moved old positions
 	 */
-	public MoveGraphNodes(GraphEnvironmentController graphController, VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
-		
+	public MoveGraphNodes(GraphEnvironmentController graphController, BasicGraphGui basicGraphGui, HashMap<String, Point2D> nodesMovedOldPositions, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
 		this.graphController = graphController;
-		this.visViewer = visViewer; 	
+		this.basicGraphGui = basicGraphGui;
+		this.visViewer = basicGraphGui.getVisualizationViewer(); 	
 		this.nodesMovedOldPositions = nodesMovedOldPositions;
 		this.polylinesMovedOldPositions = polylinesMovedOldPositions;
 		
@@ -183,10 +184,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	 * @return the graph node position transformer
 	 */
 	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
-		if (graphNodePositionTransformer==null) {
-			graphNodePositionTransformer = new TransformerForGraphNodePosition<>(this.graphController);
-		}
-		return graphNodePositionTransformer;
+		return this.basicGraphGui.getCoordinateSystemPositionTransformer();
 	}
 
 	

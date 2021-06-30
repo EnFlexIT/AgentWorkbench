@@ -329,7 +329,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.confLineEdit.setGraphNodeNewFrom(this.getGraphNodeStart().getCopy());
 		this.confLineEdit.setGraphNodeNewTo(this.getGraphNodeEnd().getCopy());
 
-		this.getGraphController().getNetworkModelUndoManager().setConfiguredLineEdit(this.getVisViewer(), this.confLineEdit);
+		this.getGraphController().getNetworkModelUndoManager().setConfiguredLineEdit(this.basicGraphGUI, this.confLineEdit);
 		this.getGraphController().setProjectUnsaved();
 	}
 	
@@ -528,7 +528,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	private void mouseDraggedSuperAction(MouseEvent me) {
 	
 		if (locked == false) {
-            VisualizationViewer<GraphNode,GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
+            VisualizationViewer<GraphNode, GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
             if (vertex!=null) {
                 Point p = me.getPoint();
                 Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
