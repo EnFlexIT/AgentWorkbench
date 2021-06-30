@@ -7,8 +7,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
-import org.awb.env.networkModel.GraphEdge;
-import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
@@ -61,7 +59,7 @@ public class MapRendererSettings implements Serializable {
 
 		AffineTransform at = visViewer.getOverallAffineTransform();
 		
-		TransformerForGraphNodePosition<GraphNode, GraphEdge> cspt = visViewer.getCoordinateSystemPositionTransformer();
+		TransformerForGraphNodePosition cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();
 
 		UTMCoordinate topLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, 0), isPrintTransformation);
@@ -93,7 +91,7 @@ public class MapRendererSettings implements Serializable {
 	 * @param isPrintTransformation the indicator to print the transformation of the coordinates
 	 * @return the WGS84LatLngCoordinate
 	 */
-	private WGS84LatLngCoordinate getWGS84LatLngCoordinate(TransformerForGraphNodePosition<GraphNode, GraphEdge> cspTransformer, AffineTransform at, Point2D point2D, boolean isPrintTransformation) {
+	private WGS84LatLngCoordinate getWGS84LatLngCoordinate(TransformerForGraphNodePosition cspTransformer, AffineTransform at, Point2D point2D, boolean isPrintTransformation) {
 		
 		WGS84LatLngCoordinate wgs84 = null;
 		try {
@@ -130,7 +128,7 @@ public class MapRendererSettings implements Serializable {
 	 * @param isPrintTransformation the is print transformation
 	 * @return the UTM coordinate
 	 */
-	private UTMCoordinate getUTMCoordinate(TransformerForGraphNodePosition<GraphNode, GraphEdge> cspTransformer, AffineTransform at, Point2D point2D, boolean isPrintTransformation) {
+	private UTMCoordinate getUTMCoordinate(TransformerForGraphNodePosition cspTransformer, AffineTransform at, Point2D point2D, boolean isPrintTransformation) {
 		
 		UTMCoordinate utm = null;
 		try {

@@ -75,7 +75,7 @@ public class OSMScalingControl extends CrossoverScalingControl implements Scalin
         double inverseViewScale = Math.sqrt(this.getCrossover())/viewScale;
         
         BasicGraphGuiVisViewer<?, ?> bvv = (BasicGraphGuiVisViewer<?, ?>) vv;
-        TransformerForGraphNodePosition<?, ?> cspTransformer = bvv.getCoordinateSystemPositionTransformer();
+        TransformerForGraphNodePosition cspTransformer = bvv.getCoordinateSystemPositionTransformer();
         
         Point2D transformedAtJung = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.VIEW, at);
         Point2D transformedAtGraph = cspTransformer.inverseTransform(transformedAtJung);

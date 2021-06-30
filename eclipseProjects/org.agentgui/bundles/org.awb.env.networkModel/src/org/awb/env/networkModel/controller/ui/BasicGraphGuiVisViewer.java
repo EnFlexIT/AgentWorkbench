@@ -39,8 +39,6 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.Timer;
 
-import org.awb.env.networkModel.GraphEdge;
-import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.maps.MapPreRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
@@ -75,7 +73,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	private MapPreRenderer<V, E> mapPreRenderer;
 	private boolean doMapPreRendering;
 	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer;
+	private TransformerForGraphNodePosition coordinateSystemPositionTransformer;
 
 	
 	/**
@@ -351,14 +349,14 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 * Sets the coordinate system position transformer.
 	 * @param coordinateSystemPositionTransformer the coordinate system position transformer
 	 */
-	public void setCoordinateSystemPositionTransformer(TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer) {
+	public void setCoordinateSystemPositionTransformer(TransformerForGraphNodePosition coordinateSystemPositionTransformer) {
 		this.coordinateSystemPositionTransformer = coordinateSystemPositionTransformer;
 	}
 	/**
 	 * Return the coordinate system position transformer.
 	 * @return the coordinate system position transformer
 	 */
-	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemPositionTransformer() {
+	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
 		return coordinateSystemPositionTransformer;
 	}
 	

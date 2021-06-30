@@ -105,7 +105,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 * Returns the graph node position transformer.
 	 * @return the graph node position transformer
 	 */
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
+	private TransformerForGraphNodePosition getGraphNodePositionTransformer() {
 		return this.basicGraphGUI.getCoordinateSystemPositionTransformer();
 	}
 	/**

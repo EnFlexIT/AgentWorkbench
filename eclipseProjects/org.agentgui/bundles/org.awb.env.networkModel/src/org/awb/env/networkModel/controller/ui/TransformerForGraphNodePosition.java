@@ -47,7 +47,7 @@ import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirecti
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphNode, Point2D> {
+public class TransformerForGraphNodePosition implements Transformer<GraphNode, Point2D> {
 
 	private GraphEnvironmentController graphController;
 	private LayoutSettings layoutSettings;

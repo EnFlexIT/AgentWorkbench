@@ -189,7 +189,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private PluggableGraphMouse graphMouse4EdgeEditing;
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> graphMouse4Transforming;
 	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemNodePositionTransformer;
+	private TransformerForGraphNodePosition coordinateSystemNodePositionTransformer;
 
 	private Timer graphSelectionWaitTimer;
 
@@ -483,9 +483,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * 
 	 * @see LayoutSettings
 	 */
-	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemPositionTransformer() {
+	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
 		if (coordinateSystemNodePositionTransformer==null) {
-			coordinateSystemNodePositionTransformer = new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController());
+			coordinateSystemNodePositionTransformer = new TransformerForGraphNodePosition(this.getGraphEnvironmentController());
 		}
 		return coordinateSystemNodePositionTransformer;
 	}

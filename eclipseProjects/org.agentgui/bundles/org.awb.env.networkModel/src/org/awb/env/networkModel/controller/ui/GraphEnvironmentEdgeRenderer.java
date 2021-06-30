@@ -344,7 +344,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param isOrthogonal the indicator if an orthogonal edge is to be drawn
 	 * @return the transformed shape
 	 */
-	public static Shape getTransformedShape(Shape shape, TransformerForGraphNodePosition<GraphNode, GraphEdge> csTransformer, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
+	public static Shape getTransformedShape(Shape shape, TransformerForGraphNodePosition csTransformer, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
 		
 		Shape newShape = null;
 		

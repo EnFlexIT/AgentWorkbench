@@ -183,7 +183,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	 * Returns the graph node position transformer.
 	 * @return the graph node position transformer
 	 */
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
+	private TransformerForGraphNodePosition getGraphNodePositionTransformer() {
 		return this.basicGraphGui.getCoordinateSystemPositionTransformer();
 	}
 

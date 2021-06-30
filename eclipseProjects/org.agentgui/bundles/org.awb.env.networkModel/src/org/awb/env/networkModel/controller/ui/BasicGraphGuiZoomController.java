@@ -234,7 +234,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 		double moveY = (graphRectangle.getY() * (-1)) + this.graphMargin;
 
 		// --- Transform coordinate to LayoutSettings ---------------
-		TransformerForGraphNodePosition<GraphNode, GraphEdge> positionTransformer = this.getBasicGraphGui().getCoordinateSystemPositionTransformer();
+		TransformerForGraphNodePosition positionTransformer = this.getBasicGraphGui().getCoordinateSystemPositionTransformer();
 		Point2D visualPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
 		moveX = visualPosition.getX() + coordinateSourcePoint.getX();
 		moveY = visualPosition.getY() + coordinateSourcePoint.getY();
