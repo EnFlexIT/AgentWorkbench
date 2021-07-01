@@ -46,6 +46,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
 
 /**
  * The Class BasicGraphGuiVisualizationViewer was basically created to
@@ -73,8 +74,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	private MapPreRenderer<V, E> mapPreRenderer;
 	private boolean doMapPreRendering;
 	
-	private TransformerForGraphNodePosition coordinateSystemPositionTransformer;
-
 	
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -97,7 +96,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
 	 * @param model the model
 	 */
-	public BasicGraphGuiVisViewer(VisualizationModel<V,E>model) {
+	public BasicGraphGuiVisViewer(VisualizationModel<V,E> model) {
 		super(model);
 		this.initialize();
 	}
@@ -344,20 +343,13 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		return doMapPreRendering;
 	}
 	
-	
-	/**
-	 * Sets the coordinate system position transformer.
-	 * @param coordinateSystemPositionTransformer the coordinate system position transformer
-	 */
-	public void setCoordinateSystemPositionTransformer(TransformerForGraphNodePosition coordinateSystemPositionTransformer) {
-		this.coordinateSystemPositionTransformer = coordinateSystemPositionTransformer;
-	}
 	/**
 	 * Return the coordinate system position transformer.
 	 * @return the coordinate system position transformer
 	 */
 	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
-		return coordinateSystemPositionTransformer;
+		ObservableCachingLayout<V, E> oLayout = (ObservableCachingLayout<V, E>) this.getGraphLayout();
+		return ((BasicGraphGuiStaticLayout)oLayout.getDelegate()).getCoordinateSystemPositionTransformer();
 	}
 	
 	

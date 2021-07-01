@@ -22,5 +22,37 @@
                 <graphElementIDs>PP0</graphElementIDs>
             </value>
         </entry>
+        <entry>
+            <key>n1</key>
+            <value>
+                <id>n1</id>
+                <type>Kreis</type>
+                <graphElementIDs>PP1</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n2</key>
+            <value>
+                <id>n2</id>
+                <type>Kreis</type>
+                <graphElementIDs>PP2</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n3</key>
+            <value>
+                <id>n3</id>
+                <type>Kreis</type>
+                <graphElementIDs>PP3</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n4</key>
+            <value>
+                <id>n4</id>
+                <type>Kreis</type>
+                <graphElementIDs>PP4</graphElementIDs>
+            </value>
+        </entry>
     </networkComponentList>
 </networkModelFileContent>

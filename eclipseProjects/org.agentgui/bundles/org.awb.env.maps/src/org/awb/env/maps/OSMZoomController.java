@@ -165,7 +165,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 		Point2D pointGraph = null;
 		try {
 			Point2D pointJung = this.getAffineTransform().inverseTransform(pointOnScreen, null);
-			TransformerForGraphNodePosition cspTransformer = this.getVisualizationViewer().getCoordinateSystemPositionTransformer();
+			TransformerForGraphNodePosition cspTransformer = this.getBasicGraphGui().getCoordinateSystemPositionTransformer();
 			pointGraph = cspTransformer.inverseTransform(pointJung);
 			
 		} catch (NoninvertibleTransformException ex) {

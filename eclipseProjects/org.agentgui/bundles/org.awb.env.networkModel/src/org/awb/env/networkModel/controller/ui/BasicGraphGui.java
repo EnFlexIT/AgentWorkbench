@@ -44,7 +44,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -103,7 +102,6 @@ import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import de.enflexit.geography.coordinates.ui.GeoCoordinateDialog;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
@@ -114,6 +112,7 @@ import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
@@ -189,8 +188,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private PluggableGraphMouse graphMouse4EdgeEditing;
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> graphMouse4Transforming;
 	
-	private TransformerForGraphNodePosition coordinateSystemNodePositionTransformer;
-
 	private Timer graphSelectionWaitTimer;
 
 	/** The current MapService */
@@ -469,14 +466,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private Layout<GraphNode, GraphEdge> getNewGraphLayout() {
 
-		Graph<GraphNode, GraphEdge> graph = this.getGraph();
-		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
-		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
-		layout.setInitializer(this.getCoordinateSystemPositionTransformer());
+		Layout<GraphNode, GraphEdge> layout = null;
+		MapService ms = this.getMapService();
+		if (ms==null) {
+			// --- Use the standard layout ----------------
+			layout = new BasicGraphGuiStaticLayout(this.graphController, this.getGraph());
+		} else {
+			// --- Use a GEO-Coordinate layout ------------
+			layout = new BasicGraphGuiStaticLayout(this.graphController, this.getGraph());
+		}
 		return layout;
 	}
-
 	/**
 	 * Returns the position transformer that considers the directions of the defined coordinate system.
 	 * @return the TransformerForGraphNodePosition
@@ -484,10 +484,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @see LayoutSettings
 	 */
 	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
-		if (coordinateSystemNodePositionTransformer==null) {
-			coordinateSystemNodePositionTransformer = new TransformerForGraphNodePosition(this.getGraphEnvironmentController());
-		}
-		return coordinateSystemNodePositionTransformer;
+		ObservableCachingLayout<GraphNode, GraphEdge> oLayout = (ObservableCachingLayout<GraphNode, GraphEdge>) this.getVisualizationViewer().getGraphLayout();
+		return ((BasicGraphGuiStaticLayout)oLayout.getDelegate()).getCoordinateSystemPositionTransformer();
 	}
 	
 	/**
@@ -518,7 +516,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
 			visView.setBackground(Color.WHITE);
 			visView.setDoubleBuffered(true);
-			visView.setCoordinateSystemPositionTransformer(this.getCoordinateSystemPositionTransformer());
 			
 			// --- Configure mouse and key interaction ------------------------
 			visView.setGraphMouse(this.getGraphMouse4Picking());
