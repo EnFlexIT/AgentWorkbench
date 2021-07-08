@@ -39,6 +39,8 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.Timer;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.maps.MapPreRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
@@ -71,7 +73,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	private boolean resetIsActionOnTop;
 	
 	private MapService mapService; 
-	private MapPreRenderer<V, E> mapPreRenderer;
+	private MapPreRenderer mapPreRenderer;
 	private boolean doMapPreRendering;
 	
 	
@@ -82,6 +84,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public BasicGraphGuiVisViewer(Layout<V,E> layout) {
 		super(layout);
 		this.initialize();
+		this.setVisViewerToStaticLayout(layout);
 	}
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -91,6 +94,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public BasicGraphGuiVisViewer(Layout<V,E>layout, Dimension preferredSize) {
 		super(layout, preferredSize);
 		this.initialize();
+		this.setVisViewerToStaticLayout(layout);
 	}
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -99,6 +103,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public BasicGraphGuiVisViewer(VisualizationModel<V,E> model) {
 		super(model);
 		this.initialize();
+		this.setVisViewerToStaticLayout(model.getGraphLayout());
 	}
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -108,8 +113,28 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public BasicGraphGuiVisViewer(VisualizationModel<V,E> model, Dimension preferredSize) {
 		super(model, preferredSize);
 		this.initialize();
+		this.setVisViewerToStaticLayout(model.getGraphLayout());
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.BasicVisualizationServer#setGraphLayout(edu.uci.ics.jung.algorithms.layout.Layout)
+	 */
+	@Override
+	public void setGraphLayout(Layout<V, E> layout) {
+		this.setVisViewerToStaticLayout(layout);
+		super.setGraphLayout(layout);
+	}
+	/**
+	 * Sets the current VisualisationViewer instance to the Layout and its sub classes.
+	 * @param layout the layout
+	 */
+	private void setVisViewerToStaticLayout(Layout<V, E> layout) {
+		if (layout instanceof BasicGraphGuiStaticLayout) {
+			BasicGraphGuiStaticLayout basicGraphGuiStaticLayout = (BasicGraphGuiStaticLayout) layout;
+			basicGraphGuiStaticLayout.setBasicGraphGuiVisViewer(this);
+		}
+	}
+	
 	/**
 	 * This Initializes the VisualizationViewer.
 	 */
@@ -312,9 +337,10 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 * Returns the Map pre-renderer.
 	 * @return the map pre-renderer
 	 */
-	private MapPreRenderer<V, E> getMapPreRenderer() {
+	@SuppressWarnings("unchecked")
+	private MapPreRenderer getMapPreRenderer() {
 		if (mapPreRenderer==null) {
-			mapPreRenderer = new MapPreRenderer<V, E>(this);
+			mapPreRenderer = new MapPreRenderer((BasicGraphGuiVisViewer<GraphNode, GraphEdge>) this);
 		}
 		return mapPreRenderer;
 	}

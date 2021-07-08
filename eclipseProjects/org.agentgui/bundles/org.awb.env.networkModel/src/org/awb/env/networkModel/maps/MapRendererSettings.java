@@ -62,15 +62,15 @@ public class MapRendererSettings implements Serializable {
 		TransformerForGraphNodePosition cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();
 
-		UTMCoordinate topLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, 0), isPrintTransformation);
-        UTMCoordinate topRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), 0), isPrintTransformation);
-        UTMCoordinate bottomLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, vvDim.getHeight()), isPrintTransformation);
-        UTMCoordinate bottomRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), vvDim.getHeight()), isPrintTransformation);
-
-        this.setTopLeftPosition(topLeftCoordinate.getWGS84LatLngCoordinate());
-		this.setTopRightPosition(topRightCoordinate.getWGS84LatLngCoordinate());
-		this.setBottomLeftPosition(bottomLeftCoordinate.getWGS84LatLngCoordinate());
-		this.setBottomRightPosition(bottomRightCoordinate.getWGS84LatLngCoordinate());
+//		UTMCoordinate topLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, 0), isPrintTransformation);
+//        UTMCoordinate topRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), 0), isPrintTransformation);
+//        UTMCoordinate bottomLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, vvDim.getHeight()), isPrintTransformation);
+//        UTMCoordinate bottomRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), vvDim.getHeight()), isPrintTransformation);
+//
+//        this.setTopLeftPosition(topLeftCoordinate.getWGS84LatLngCoordinate());
+//		this.setTopRightPosition(topRightCoordinate.getWGS84LatLngCoordinate());
+//		this.setBottomLeftPosition(bottomLeftCoordinate.getWGS84LatLngCoordinate());
+//		this.setBottomRightPosition(bottomRightCoordinate.getWGS84LatLngCoordinate());
 		
 		double centerX = vvDim.getWidth()  / 2.0;
 		double centerY = vvDim.getHeight() / 2.0;
@@ -79,7 +79,7 @@ public class MapRendererSettings implements Serializable {
 		this.setMapTileTransparency(cspt.getMapSettings().getMapTileTransparency());
 
 		this.setVisualizationDimension(vvDim);
-		this.calcLandscapeDimension(topLeftCoordinate, bottomRightCoordinate);
+//		this.calcLandscapeDimension(topLeftCoordinate, bottomRightCoordinate);
 	}
 	
 	/**

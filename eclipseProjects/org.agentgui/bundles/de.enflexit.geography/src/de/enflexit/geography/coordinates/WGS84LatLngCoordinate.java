@@ -5,6 +5,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.coords.UTMCoord;
+
 /**
  * The Class WGS84LatLngCoordinate describes a coordinate in World Geodetic System 1984 (WGS 84) 
  * format  that is a decimal latitude longitude coordinate. 
@@ -192,7 +195,21 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 	 * @return the UMT coordinate
 	 */
 	public UTMCoordinate getUTMCoordinate() {
-		return new CoordinateConversion().latLon2UTM(this);
+		
+		UTMCoordinate utm = null;
+		
+		boolean useNasaLib = false;
+		if (useNasaLib==true) {
+			// --- Usage of the NASA library ------------------------
+			UTMCoord utmCoord = UTMCoord.fromLatLon(Angle.fromDegrees(this.getLatitude()), Angle.fromDegrees(this.getLongitude()));
+			// --- Conversion to own UTM coordinate ----------------- 
+			String latZone = new CoordinateConversion().getUTMLatitudeZone(this.getLatitude());
+			utm = new UTMCoordinate(utmCoord.getZone(), latZone, utmCoord.getEasting(), utmCoord.getNorthing());
+		} else {
+			// --- Usage of the old style conversion ---------------- 
+			utm = new CoordinateConversion().latLon2UTM(this);
+		}
+		return utm;
 	}
 	
 	/**
@@ -203,7 +220,9 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 	 * @return the UTM coordinate
 	 */
 	public UTMCoordinate getUTMCoordinate(Integer targetLongitudeZone, String targetLatitudeZone) {
-		return new CoordinateConversion().latLon2UTM(this, targetLongitudeZone, targetLatitudeZone);
+		UTMCoordinate utm = this.getUTMCoordinate();
+		utm.transformZone(targetLongitudeZone);
+		return utm;
 	}
 
 	

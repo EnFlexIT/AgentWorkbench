@@ -473,9 +473,21 @@ public class BasicGraphGui extends JPanel implements Observer {
 			layout = new BasicGraphGuiStaticLayout(this.graphController, this.getGraph());
 		} else {
 			// --- Use a GEO-Coordinate layout ------------
-			layout = new BasicGraphGuiStaticLayout(this.graphController, this.getGraph());
+			layout = new BasicGraphGuiStaticGeoLayout(this.graphController, this.getGraph());
 		}
 		return layout;
+	}
+	
+	/**
+	 * Returns the current {@link BasicGraphGuiStaticLayout} that is used in the current visualization viewer.
+	 * @return the BasicGraphGuiStaticLayout or <code>null</code>
+	 */
+	private BasicGraphGuiStaticLayout getBasicGraphGuiStaticLayout() {
+		ObservableCachingLayout<GraphNode, GraphEdge> oLayout = (ObservableCachingLayout<GraphNode, GraphEdge>) this.getVisualizationViewer().getGraphLayout();
+		if (oLayout.getDelegate() instanceof BasicGraphGuiStaticLayout) {
+			return (BasicGraphGuiStaticLayout)oLayout.getDelegate();
+		}
+		return null;
 	}
 	/**
 	 * Returns the position transformer that considers the directions of the defined coordinate system.
@@ -484,8 +496,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @see LayoutSettings
 	 */
 	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
-		ObservableCachingLayout<GraphNode, GraphEdge> oLayout = (ObservableCachingLayout<GraphNode, GraphEdge>) this.getVisualizationViewer().getGraphLayout();
-		return ((BasicGraphGuiStaticLayout)oLayout.getDelegate()).getCoordinateSystemPositionTransformer();
+		BasicGraphGuiStaticLayout staticLayout = this.getBasicGraphGuiStaticLayout();
+		if (staticLayout!=null) {
+			return staticLayout.getCoordinateSystemPositionTransformer();
+		}
+		return null;
 	}
 	
 	/**
@@ -1417,15 +1432,29 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private void setMapPreRendering() {
 		
 		MapService mapServiceOld = this.getVisualizationViewer().getMapService();
+		BasicGraphGuiStaticLayout staticLayoutOld = this.getBasicGraphGuiStaticLayout();
 		
 		boolean isDoMapRendering = this.isDoMapPreRendering();
 		if (isDoMapRendering==true) {
+			// --- Set MapService to visualization viewer --------------------- 
 			this.getVisualizationViewer().setMapService(this.getMapService());
+			// --- Renew static graph layout ? --------------------------------
+			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticGeoLayout.class.getName())==false) {
+				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
+			}
+			
 		} else {
+			// --- Set MapService to visualization viewer ---------------------
 			this.getVisualizationViewer().setMapService(null);
+			// --- Destroy old map service ------------------------------------
 			if (mapServiceOld!=null) {
 				mapServiceOld.destroyMapServiceInstances();
 			}
+			// --- Renew static graph layout ? --------------------------------
+			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticLayout.class.getName())==false) {
+				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
+			}
+			
 		}
 		this.getVisualizationViewer().setDoMapPreRendering(isDoMapRendering);
 	}
@@ -1749,8 +1778,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 				
 				
-			case NetworkModelNotification.NETWORK_MODEL_MapScaleChanged:
 			case NetworkModelNotification.NETWORK_MODEL_MapServiceChanged:
+			case NetworkModelNotification.NETWORK_MODEL_MapScaleChanged:
 			case NetworkModelNotification.NETWORK_MODEL_MapTransparencyChanged:
 				this.setMapPreRendering();
 				break;

@@ -2,7 +2,6 @@ package org.awb.env.maps;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -22,8 +21,6 @@ import org.jxmapviewer.viewer.WaypointPainter;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.MultiLayerTransformer;
-import edu.uci.ics.jung.visualization.transform.MutableAffineTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
@@ -105,6 +102,31 @@ public class OSMMapRenderer implements MapRenderer {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapRenderer#setCenterGeoLocation(de.enflexit.geography.coordinates.WGS84LatLngCoordinate)
+	 */
+	@Override
+	public void setCenterGeoLocation(WGS84LatLngCoordinate geoCoordinate) {
+		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(geoCoordinate));
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapRenderer#getPositionOnScreen(de.enflexit.geography.coordinates.WGS84LatLngCoordinate)
+	 */
+	@Override
+	public Point2D getPositionOnScreen(WGS84LatLngCoordinate wgsCoordinate) {
+		return this.getJXMapViewerWrapper().convertGeoPositionToPoint(new GeoPosition(wgsCoordinate.getLatitude(), wgsCoordinate.getLongitude()));
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapRenderer#getGeoCoordinate(java.awt.geom.Point2D)
+	 */
+	@Override
+	public WGS84LatLngCoordinate getGeoCoordinate(Point2D posOnScreen) {
+		GeoPosition jxGeoPosition = this.getJXMapViewerWrapper().convertPointToGeoPosition(posOnScreen);
+		if (jxGeoPosition!=null) {
+			return new WGS84LatLngCoordinate(jxGeoPosition.getLatitude(), jxGeoPosition.getLongitude());
+		}
+		return null;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapRenderer#paintMap(java.awt.Graphics2D, org.awb.env.networkModel.maps.MapRendererSettings)
@@ -122,12 +144,6 @@ public class OSMMapRenderer implements MapRenderer {
 			return;
 		}
 		
-		// --- In case of new render settings: ----------------------
-		if (this.isNewMapRendererSettings()==true) {
-			// --- Adjust graph element positions to map ------------
-			this.adjustGraphElementPositions(mapRendererSettings);
-		}
-
 		// --- Set clip and configure JXMapViewer -------------------
 		Dimension visDim = mapRendererSettings.getVisualizationDimension();
 		graphics.setClip(0, 0, visDim.width, visDim.height);
@@ -143,44 +159,6 @@ public class OSMMapRenderer implements MapRenderer {
 		
 		// --- Paint to the specified graphics object ---------------
 		this.getJXMapViewerWrapper().paintComponent(graphics);
-	}
-	
-	/**
-	 * Translate graph element positions.
-	 * @param mapRendererSettings the map renderer settings
-	 */
-	private void adjustGraphElementPositions(MapRendererSettings mapRendererSettings) {
-
-		// --- Ensure that the correction is only called once -------
-		if (this.isNewMapRendererSettings()==false) return;
-		
-		// --- Get the current MultiLayerTransformer ----------------
-		MultiLayerTransformer mlt = mapRendererSettings.getVisualizationViewer().getRenderContext().getMultiLayerTransformer();
-		
-		// --- Get the mutable transformer for the graph ------------
-		MutableAffineTransformer mTransLayout = (MutableAffineTransformer) mlt.getTransformer(Layer.LAYOUT);
-		MutableAffineTransformer mTransView = (MutableAffineTransformer) mlt.getTransformer(Layer.VIEW);
-		
-		System.out.println("MutableAffineTransformer [Layout] " + mTransLayout.toString());
-		System.out.println("MutableAffineTransformer [ View ] " + mTransView.toString());
-		System.out.println();
-
-		AffineTransform atLayoutTrans  = mTransLayout.getTransform();
-		AffineTransform atLayoutInvers = mTransLayout.getInverse();
-
-		AffineTransform atViewTrans  = mTransView.getTransform();
-		AffineTransform atViewInvers = mTransView.getInverse();
-		
-		// --- Test area to manipulate the transformer --------------
-
-		
-		AffineTransform atTest = new AffineTransform(atLayoutTrans);
-//		atTest.translate(0, -5);	
-		
-//		MutableAffineTransformer matTest = new MutableAffineTransformer(atTest);
-//		mlt.setTransformer(Layer.LAYOUT, matTest);
-		
-		
 	}
 	
 	/**
@@ -237,12 +215,15 @@ public class OSMMapRenderer implements MapRenderer {
 	
 	private WaypointPainter<Waypoint> getWaypointPainter(MapRendererSettings mapRendererSettings) {
 		
+		Dimension visViewerDim = mapRendererSettings.getVisualizationViewer().getSize();
+		
 		Set<Waypoint> waypoints = new HashSet<Waypoint>(Arrays.asList(
-				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomLeftPosition())),
-				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getBottomRightPosition())),
-				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getTopLeftPosition())),
-				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getTopRightPosition())),
-				new DefaultWaypoint(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()))));
+				new DefaultWaypoint(this.getJXMapViewerWrapper().convertPointToGeoPosition(new Point2D.Double(0, 0))),
+				new DefaultWaypoint(this.getJXMapViewerWrapper().convertPointToGeoPosition(new Point2D.Double(0, visViewerDim.getHeight()))),
+				new DefaultWaypoint(this.getJXMapViewerWrapper().convertPointToGeoPosition(new Point2D.Double(visViewerDim.getWidth(), 0))),
+				new DefaultWaypoint(this.getJXMapViewerWrapper().convertPointToGeoPosition(new Point2D.Double(visViewerDim.getWidth(), visViewerDim.getHeight()))),
+				new DefaultWaypoint(this.getJXMapViewerWrapper().convertPointToGeoPosition(new Point2D.Double(visViewerDim.getWidth()/2.0, visViewerDim.getHeight()/2.0))))
+				);
 
 		WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<Waypoint>();
 		waypointPainter.setWaypoints(waypoints);
@@ -305,5 +286,5 @@ public class OSMMapRenderer implements MapRenderer {
 	private void setNewMapRendererSettings(boolean newMapRendererSettings) {
 		this.newMapRendererSettings = newMapRendererSettings;
 	}
-	
+
 }

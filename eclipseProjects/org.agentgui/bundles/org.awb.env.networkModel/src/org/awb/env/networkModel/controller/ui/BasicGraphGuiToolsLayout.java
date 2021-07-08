@@ -63,7 +63,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
 
 /**
- * The Class BasicGraphGuiToolsLayout represents the toolbar for layout edits.
+ * The Class BasicGraphGuiToolsLayout represents the toolbar for layout edits, e.g. to configure line curves and other.
  * 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */

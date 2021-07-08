@@ -20,7 +20,9 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge> {
 
-	private GraphEnvironmentController graphController;
+	protected GraphEnvironmentController graphController;
+	
+	private BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer;
 	private TransformerForGraphNodePosition coordinateSystemNodePositionTransformer;
 	
 	/**
@@ -58,6 +60,22 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 			coordinateSystemNodePositionTransformer = new TransformerForGraphNodePosition(this.graphController);
 		}
 		return coordinateSystemNodePositionTransformer;
+	}
+	
+	/**
+	 * Sets the current instance of the {@link BasicGraphGuiVisViewer} to this static layout.
+	 * @param basicGraphGuiVisViewer the basic graph gui vis viewer
+	 */
+	public void setBasicGraphGuiVisViewer(BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer) {
+		this.basicGraphGuiVisViewer = basicGraphGuiVisViewer;
+		this.getCoordinateSystemPositionTransformer().setBasicGraphGuiVisViewer(basicGraphGuiVisViewer);
+	}
+	/**
+	 * Returns the current {@link BasicGraphGuiVisViewer} that is used to visualize the current Graph.
+	 * @return the current BasicGraphGuiVisViewer
+	 */
+	public BasicGraphGuiVisViewer<?, ?> getBasicGraphGuiVisViewer() {
+		return basicGraphGuiVisViewer;
 	}
 	
 }

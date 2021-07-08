@@ -50,9 +50,11 @@ import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirecti
 public class TransformerForGraphNodePosition implements Transformer<GraphNode, Point2D> {
 
 	private GraphEnvironmentController graphController;
+	
 	private LayoutSettings layoutSettings;
 	private MapSettings mapSettings;
-
+	
+	private BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer;
 	
 	/**
 	 * Instantiates a new transformer for node position that dynamically 'asks' the graph controller 
@@ -75,7 +77,6 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 		// --- Return the specified LayoutSettings (not dynamic) --------------
 		return layoutSettings;
 	}
-	
 	/**
 	 * Returns the current MapSettings.
 	 * @return the map settings
@@ -87,6 +88,22 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 		}
 		// --- Return the specified MapSettings (not dynamic) -----------------
 		return mapSettings;
+	}
+
+	
+	/**
+	 * Sets the current instance of the {@link BasicGraphGuiVisViewer} to this static layout.
+	 * @param basicGraphGuiVisViewer the basic graph gui vis viewer
+	 */
+	public void setBasicGraphGuiVisViewer(BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer) {
+		this.basicGraphGuiVisViewer = basicGraphGuiVisViewer;
+	}
+	/**
+	 * Returns the current {@link BasicGraphGuiVisViewer} that is used to visualize the current Graph.
+	 * @return the current BasicGraphGuiVisViewer
+	 */
+	public BasicGraphGuiVisViewer<?, ?> getBasicGraphGuiVisViewer() {
+		return basicGraphGuiVisViewer;
 	}
 	
 	

@@ -105,6 +105,7 @@ public class MapSettings implements Serializable, Cloneable {
 	}
 	public void setMapServiceName(String mapServiceName) {
 		this.mapServiceName = mapServiceName;
+		this.setMapService(getMapService(mapServiceName));
 	}
 	
 	
@@ -171,15 +172,6 @@ public class MapSettings implements Serializable, Cloneable {
 	public void setMapService(MapService mapService) {
 		this.mapService = mapService;
 	}
-	/**
-	 * Sets the current {@link MapService} if the specified map service name can be found.
-	 * @param mapServiceName the new map service
-	 */
-	public void setMapService(String mapServiceName) {
-		MapService mapService = getMapService(mapServiceName);
-		this.setMapService(mapService);
-	}
-	
 	
 	/**
 	 * Returns the list of registered {@link MapService}s.
@@ -195,11 +187,13 @@ public class MapSettings implements Serializable, Cloneable {
 	 * @return the MapService found or <code>Null</code>
 	 */
 	public static MapService getMapService(String mapServiceName) {
-		List<MapService> mServiceList = getMapServiceList();
-		for (int i = 0; i < mServiceList.size(); i++) {
-			MapService ms = mServiceList.get(i);
-			if (ms.getMapServiceName().equals(mapServiceName)==true) {
-				return ms;
+		if (mapServiceName!=null && mapServiceName.isEmpty()==false) {
+			List<MapService> mServiceList = getMapServiceList();
+			for (int i = 0; i < mServiceList.size(); i++) {
+				MapService ms = mServiceList.get(i);
+				if (ms.getMapServiceName().equals(mapServiceName)==true) {
+					return ms;
+				}
 			}
 		}
 		return null;

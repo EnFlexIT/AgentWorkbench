@@ -4,6 +4,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.coords.UTMCoord;
+
 /**
  * The Class UTMCoordinate.
  * 
@@ -75,13 +79,7 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 		this.northing = northing;
 	}
 
-	/**
-	 * Return the WGS84LatLngCoordinatefor the current UTMCoordinate.
-	 * @return the corresponding WGS84LatLngCoordinatefor
-	 */
-	public WGS84LatLngCoordinate getWGS84LatLngCoordinate() {
-		return new CoordinateConversion().utm2LatLon(this);
-	}
+	
 	/**
 	 * Transforms the current UTM longitude zone to the specified longitude zone.
 	 * @param targetLongitudeZone the target longitude zone
@@ -89,6 +87,39 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 	public void transformZone(int targetLongitudeZone) {
 		new CoordinateConversion().utmTransformEastingByLongitudeZone(this, targetLongitudeZone);
 	}
+	
+	/**
+	 * Return the WGS84LatLngCoordinatefor the current UTMCoordinate.
+	 * @return the corresponding WGS84LatLngCoordinatefor
+	 */
+	public WGS84LatLngCoordinate getWGS84LatLngCoordinate() {
+		
+		WGS84LatLngCoordinate wgs84 = null;
+		
+		boolean useNasaLib = false;
+		if (useNasaLib==true) {
+			// --- Usage of the NASA library ------------------------
+			String hemisphere = new CoordinateConversion().getUTMHemisphere(this.getLatitudeZone());
+			hemisphere = hemisphere.equals("N") ? AVKey.NORTH : AVKey.SOUTH;
+			LatLon latLon = UTMCoord.locationFromUTMCoord(this.getLongitudeZone(), hemisphere, this.getEasting(), this.getNorthing());
+			wgs84 = new WGS84LatLngCoordinate(latLon.getLatitude().getDegrees(), latLon.getLongitude().getDegrees());
+		} else {
+			// --- Usage of the old style conversion ---------------- 
+			wgs84 = new CoordinateConversion().utm2LatLon(this);
+		}
+		return wgs84;
+	}
+	
+	/**
+	 * Returns the current UTM coordinate as {@link UTMCoord} as used by the NASA world wind.
+	 * @return the UTMCoord from the UTMCoordinate
+	 */
+	protected UTMCoord getUTMCoord() {
+		String hemisphere = new CoordinateConversion().getUTMHemisphere(this.getLatitudeZone());
+		hemisphere = hemisphere.equals("N") ? AVKey.NORTH : AVKey.SOUTH;
+		return UTMCoord.fromUTM(this.getLongitudeZone(), hemisphere, this.getEasting(), this.getNorthing());
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

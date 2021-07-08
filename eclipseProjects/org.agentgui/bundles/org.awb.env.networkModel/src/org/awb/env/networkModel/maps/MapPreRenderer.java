@@ -32,9 +32,15 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphGlobals;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
+import de.enflexit.geography.coordinates.UTMCoordinate;
+import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
@@ -44,9 +50,9 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
  * @param <V> the value type
  * @param <E> the element type
  */
-public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
+public class MapPreRenderer implements VisualizationViewer.Paintable {
 
-	private BasicGraphGuiVisViewer<V,E> visViewer;
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 	
 	private MapSettings lastMapSettings;
 	private AffineTransform lastAffineTransform;
@@ -58,8 +64,44 @@ public class MapPreRenderer<V,E> implements VisualizationViewer.Paintable {
 	 * Instantiates a new MapPreRendererr.
 	 * @param basicGraphGuiVisViewer the BasicGraphGuiVisViewer
 	 */
-	public MapPreRenderer(BasicGraphGuiVisViewer<V,E> basicGraphGuiVisViewer) {
+	public MapPreRenderer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer) {
 		this.visViewer = basicGraphGuiVisViewer;
+		this.initializeMapRenderer();
+	}
+	/**
+	 * Initialize map renderer.
+	 */
+	private void initializeMapRenderer() {
+
+		MapRenderer mr = this.getMapRenderer();
+		if (mr!=null) {
+
+			// --- Get the center of the graph to show --------------
+			Rectangle2D graphRect = GraphGlobals.getGraphSpreadDimension(this.visViewer.getGraphLayout().getGraph());
+			
+			// --- Get the center UTM / WGS84 coordinate ------------
+			MapSettings mapSet = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings();
+			UTMCoordinate centerUTMCoordinate = new UTMCoordinate(mapSet.getUTMLongitudeZone(), mapSet.getUTMLatitudeZone(), graphRect.getCenterX(), graphRect.getCenterY());
+			WGS84LatLngCoordinate centerWGSCoordinate = centerUTMCoordinate.getWGS84LatLngCoordinate(); 
+			
+			// --- Set center coordinate to renderer ----------------
+			mr.setCenterGeoLocation(centerWGSCoordinate);
+		}
+	}
+	
+	/**
+	 * Returns the current {@link MapRenderer}.
+	 * @return the map renderer
+	 */
+	private MapRenderer getMapRenderer() {
+		MapService ms = this.visViewer.getMapService();
+		if (ms!=null) {
+			MapRenderer mr = ms.getMapRenderer();
+        	if (mr!=null) {
+        		return mr;
+        	}
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
