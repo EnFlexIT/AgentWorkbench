@@ -47,6 +47,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -809,24 +810,59 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Resource by the class loader, as configured ----------
 		URL url = getClass().getResource(imageRef);
-		if (url!=null) return url;
+		if (url!=null && isUrlPointToImage(url)) return url;
 		
-		// --- Prepare folder for projects --------------------------
+		// --- Prepare folder for projects and project name --------------------------
 		String projectsFolder = Application.getGlobalInfo().getPathProjects();
 		projectsFolder = projectsFolder.replace("\\", "/");
-		
+		String projectName = Application.getProjectFocused().getProjectFolder();
+				
 		// --- Resource by file, in projects, absolute --------------
 		String extImageRef = (projectsFolder + imageRef).replace("//", "/");
-		try {
-			url = new URL("file", null, -1, extImageRef);
-			if (url!=null) return url;
-			
-		} catch (MalformedURLException urlEx) {
-			//urlEx.printStackTrace();
-		}
+		url = getURLfromPath(extImageRef);
+		if (url!=null && isUrlPointToImage(url)) return url;
+		
+		// --- Resource by file, in projects, relative --------------------------
+		extImageRef = (projectsFolder + "/" + projectName + imageRef).replace("//", "/");
+		url = getURLfromPath(extImageRef);
+		if (url!=null && isUrlPointToImage(url)) return url;
 		
 		// --- Nothing found ----------------------------------------
 		return null;
+	}
+	
+	
+	/**
+	 * Gets the URL from path.
+	 *
+	 * @param path the path
+	 * @return the URl from provided path - can be null
+	 */
+	private URL getURLfromPath(String path) {
+		URL url = null;
+		try {
+			url = new URL("file", null, -1, path);
+		} catch (MalformedURLException urlEx) {
+			//urlEx.printStackTrace();
+		}
+		return url;
+	}
+	
+	
+	/**
+	 * Checks if the provided URL points to an image file.
+	 *
+	 * @param url the url
+	 * @return true, if the provided url point to an image
+	 */
+	private boolean isUrlPointToImage(URL url) {
+		try {
+			return ImageIO.read(url) != null;
+		} catch (IOException e) {
+			//e.printStackTrace();
+			//nothing to do, as expected to fail
+		}
+		return false;
 	}
 	
 	/**
