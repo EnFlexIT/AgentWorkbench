@@ -26,7 +26,6 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-
 package org.awb.env.networkModel.controller.ui;
 
 import java.awt.BasicStroke;
@@ -47,8 +46,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -751,7 +748,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 						content = edge.getId();
 					}
 					if (imageRef!= null) {
-						URL url = getImageURL(imageRef);
+						URL url = GraphGlobals.getImageURL(imageRef);
 						if (url != null) {
 							if (showLabel) {
 								content = content + "<br><img src='" + url + "'>";
@@ -796,72 +793,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		return isCreatedVisualizationViewer;
 	}
 
-	
-	/**
-	 * Searches and returns the image url for the specified image reference.
-	 *
-	 * @param imageRef the image reference
-	 * @return the URL of the image 
-	 */
-	private URL getImageURL(String imageRef){
-		
-		// --- Abort URL generation ---------------------------------
-		if (imageRef.equals("MissingIcon")==true) return null;
-
-		// --- Resource by the class loader, as configured ----------
-		URL url = getClass().getResource(imageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-		
-		// --- Prepare folder for projects and project name ---------
-		String projectsFolder = Application.getGlobalInfo().getPathProjects();
-		projectsFolder = projectsFolder.replace("\\", "/");
-		String projectName = Application.getProjectFocused().getProjectFolder();
-				
-		// --- Default: by file, in projects, relative --------------
-		String extImageRef = (projectsFolder + "/" + projectName + imageRef).replace("//", "/");
-		url = this.getURLfromPath(extImageRef);
-		if (url!=null && this.isUrlPointToImage(url)) return url;
-
-		// --- Alternative: by file, in projects, absolute ----------
-		extImageRef = (projectsFolder + imageRef).replace("//", "/");
-		url = this.getURLfromPath(extImageRef);
-		if (url!=null && this.isUrlPointToImage(url)) return url;
-		
-		// --- Nothing found ----------------------------------------
-		return null;
-	}
-	/**
-	 * Gets the URL from path.
-	 *
-	 * @param path the path
-	 * @return the URl from provided path - can be null
-	 */
-	private URL getURLfromPath(String path) {
-		URL url = null;
-		try {
-			url = new URL("file", null, -1, path);
-		} catch (MalformedURLException urlEx) {
-			//urlEx.printStackTrace();
-		}
-		return url;
-	}
-	/**
-	 * Checks if the provided URL points to an image file.
-	 *
-	 * @param url the url
-	 * @return true, if the provided url point to an image
-	 */
-	private boolean isUrlPointToImage(URL url) {
-		try {
-			return ImageIO.read(url)!=null;
-		} catch (IOException e) {
-			//e.printStackTrace();
-			//nothing to do, as expected to fail
-		}
-		return false;
-	}
-	
-	
 	/**
 	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
 	 * @see LayoutSettings#getEdgeShape()
