@@ -812,26 +812,24 @@ public class BasicGraphGui extends JPanel implements Observer {
 		URL url = getClass().getResource(imageRef);
 		if (url!=null && isUrlPointToImage(url)) return url;
 		
-		// --- Prepare folder for projects and project name --------------------------
+		// --- Prepare folder for projects and project name ---------
 		String projectsFolder = Application.getGlobalInfo().getPathProjects();
 		projectsFolder = projectsFolder.replace("\\", "/");
 		String projectName = Application.getProjectFocused().getProjectFolder();
 				
-		// --- Resource by file, in projects, absolute --------------
-		String extImageRef = (projectsFolder + imageRef).replace("//", "/");
-		url = getURLfromPath(extImageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-		
-		// --- Resource by file, in projects, relative --------------------------
-		extImageRef = (projectsFolder + "/" + projectName + imageRef).replace("//", "/");
-		url = getURLfromPath(extImageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
+		// --- Default: by file, in projects, relative --------------
+		String extImageRef = (projectsFolder + "/" + projectName + imageRef).replace("//", "/");
+		url = this.getURLfromPath(extImageRef);
+		if (url!=null && this.isUrlPointToImage(url)) return url;
+
+		// --- Alternative: by file, in projects, absolute ----------
+		extImageRef = (projectsFolder + imageRef).replace("//", "/");
+		url = this.getURLfromPath(extImageRef);
+		if (url!=null && this.isUrlPointToImage(url)) return url;
 		
 		// --- Nothing found ----------------------------------------
 		return null;
 	}
-	
-	
 	/**
 	 * Gets the URL from path.
 	 *
@@ -847,8 +845,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 		return url;
 	}
-	
-	
 	/**
 	 * Checks if the provided URL points to an image file.
 	 *
@@ -857,13 +853,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private boolean isUrlPointToImage(URL url) {
 		try {
-			return ImageIO.read(url) != null;
+			return ImageIO.read(url)!=null;
 		} catch (IOException e) {
 			//e.printStackTrace();
 			//nothing to do, as expected to fail
 		}
 		return false;
 	}
+	
 	
 	/**
 	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
@@ -872,7 +869,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public void setEdgeShapeTransformer() {
 		this.setEdgeShapeTransformer(this.getVisualizationViewer());
 	}
-	
 	/**
 	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
 	 * @see LayoutSettings#getEdgeShape()
