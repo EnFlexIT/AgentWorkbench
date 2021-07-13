@@ -148,7 +148,12 @@ public class OSMMapRenderer implements MapRenderer {
 		Dimension visDim = mapRendererSettings.getVisualizationDimension();
 		graphics.setClip(0, 0, visDim.width, visDim.height);
 		
-		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(mapRendererSettings.getCenterPostion()));
+		GeoPosition geoPosCenter = this.convertToGeoPosition(mapRendererSettings.getCenterPostion());
+		if (geoPosCenter!=null) {
+			this.getJXMapViewerWrapper().setAddressLocation(geoPosCenter);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No center geo position was specified for the map representation.");
+		}
 		this.getJXMapViewerWrapper().setBounds(visDim);
 		this.getJXMapViewerWrapper().setZoom(this.getScalingControl().getZoomLevel().getJXMapViewerZoomLevel());
 		
@@ -237,6 +242,7 @@ public class OSMMapRenderer implements MapRenderer {
 	 * @return the geo position
 	 */	
 	protected GeoPosition convertToGeoPosition(WGS84LatLngCoordinate wgs84coord) {
+		if (wgs84coord==null) return null;
 		return new GeoPosition(wgs84coord.getLatitude(), wgs84coord.getLongitude());
 	}
 	

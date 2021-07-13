@@ -112,9 +112,9 @@ public class MapRendererSettings implements Serializable {
 				System.out.println();
 			}
 			
-		} catch (NoninvertibleTransformException nitEx) {
+		} catch (Exception ex) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error while transforming visual coordinate into WGS84 coordinate:");
-			nitEx.printStackTrace();
+			ex.printStackTrace();
 		}
 		return wgs84;
 	}

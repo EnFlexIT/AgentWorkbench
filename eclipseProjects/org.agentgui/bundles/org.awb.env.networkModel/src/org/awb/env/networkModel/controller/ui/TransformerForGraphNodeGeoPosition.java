@@ -127,7 +127,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 			
 			UTMCoord utmCoord = UTMCoord.fromLatLon(Angle.fromDegrees(wgsCoordinate.getLatitude()), Angle.fromDegrees(wgsCoordinate.getLongitude()));
 			System.out.println("UTM oww:  " + utmCoordinate);
-			System.out.println("UTM NASE: " + utmCoord);
+			System.out.println("UTM NASA: " + utmCoord);
 			
 			LatLon latLonCoord = UTMCoord.locationFromUTMCoord(utmCoord.getZone(), utmCoord.getHemisphere(), utmCoord.getEasting(), utmCoord.getNorthing());
 			WGS84LatLngCoordinate wgsCoordinateReverted = new WGS84LatLngCoordinate(latLonCoord.getLatitude().getDegrees(), latLonCoord.getLongitude().getDegrees());
