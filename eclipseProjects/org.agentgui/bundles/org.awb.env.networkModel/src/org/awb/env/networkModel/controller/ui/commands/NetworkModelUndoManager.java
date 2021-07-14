@@ -47,6 +47,8 @@ import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDesc
 import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
+import de.enflexit.geography.coordinates.AbstractCoordinate;
+
 /**
  * The Class NetworkModelUndoManager is used for the action / interaction
  * with the NetworkModel in the context of the UI and provides an Swing UndoManager.
@@ -399,22 +401,22 @@ public class NetworkModelUndoManager {
 	}
 	
 	/**
-	 * Sets the movement of GraphNodes to the undoManager.
+	 * Sets the movement of GraphNodes to the undo manager.
 	 *
-	 * @param basicGraphGui the basic graph gui
+	 * @param basicGraphGui {@link BasicGraphGui}
 	 * @param graphNode the graph node that was moved
-	 * @param oldPosition the old position of the graph node
+	 * @param oldCoordinate the old position of the graph node
 	 */
-	public void setGraphNodesMoved(BasicGraphGui basicGraphGui, GraphNode graphNode, Point2D oldPosition) {
-		HashMap<String, Point2D> oldPosHashMap = new HashMap<>();
-		oldPosHashMap.put(graphNode.getId(), oldPosition);
-		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, basicGraphGui, oldPosHashMap, null));
+	public void setGraphNodesMoved(BasicGraphGui basicGraphGui, GraphNode graphNode, AbstractCoordinate oldCoordinate) {
+		HashMap<String, Point2D> oldCoordinateHashMap = new HashMap<>();
+		oldCoordinateHashMap.put(graphNode.getId(), oldCoordinate);
+		this.getUndoManager().addEdit(new MoveGraphNodes(this.graphController, basicGraphGui, oldCoordinateHashMap, null));
 	}
 	
 	/**
-	 * Sets the movement of GraphNodes to the undoManager.
+	 * Sets the movement of GraphNodes to the undo manager.
 	 *
-	 * @param basicGraphGui the basic graph gui
+	 * @param basicGraphGui the {@link BasicGraphGui}
 	 * @param nodesMovedOldPositions the nodes moved old positions
 	 * @param polylinesMovedOldPositions the polylines moved old positions of intermediate nodes
 	 */

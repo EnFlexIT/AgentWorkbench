@@ -41,7 +41,9 @@ import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.io.graphml.EdgeMetadata;
@@ -132,12 +134,12 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 				
 				// --- Set the position of the node -----------------
 				String posString = nmd.getProperty(GraphModelWriter.KEY_POSITION_PROPERTY);
-				Point2D pos = GraphNode.getPositionFromString(posString);
-				if (pos == null) {
+				AbstractCoordinate coordinate = GraphNodePositionFactory.getCoordinateFromString(posString);
+				if (coordinate == null) {
 					System.err.println("Keine Position definiert für Knoten " + nmd.getId());
-					pos = new Point2D.Double(0, 0);
+					coordinate = GraphNodePositionFactory.convertToCoordinate(new Point2D.Double(0, 0));
 				}
-				graphNode.setPosition(pos);
+				graphNode.setCoordinate(coordinate);
 				
 				// --- Set the position TreeMap ---------------------
 				String posTreeMapString = nmd.getProperty(GraphModelWriter.KEY_POSITION_TREE_MAP);

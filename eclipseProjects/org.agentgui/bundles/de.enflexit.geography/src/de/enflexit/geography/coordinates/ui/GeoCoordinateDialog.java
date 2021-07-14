@@ -17,7 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.SerialClone;
-import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.OSGBCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
@@ -38,7 +38,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -7891622905468578296L;
 	
-	private AbstractGeoCoordinate geoCoordinateOld;
+	private AbstractCoordinate geoCoordinateOld;
 	private boolean isCancelAction;
 	
 	private GeoCoordinatePanel geoCoordinatePanel;
@@ -67,7 +67,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	 * @param owner the owner window
 	 * @param geoCoordinate the geo coordinate
 	 */
-	public GeoCoordinateDialog(Window owner, AbstractGeoCoordinate geoCoordinate) {
+	public GeoCoordinateDialog(Window owner, AbstractCoordinate geoCoordinate) {
 		super(owner);
 		this.setGeoCoordinate(geoCoordinate);
 		this.initialize();
@@ -77,7 +77,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	 * Returns the current geographical  coordinate.
 	 * @return the geographical coordinate
 	 */
-	public AbstractGeoCoordinate getGeoCoordinate() {
+	public AbstractCoordinate getGeoCoordinate() {
 		if (this.isCancelAction==true) {
 			return this.geoCoordinateOld;
 		}
@@ -87,7 +87,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	 * Sets the current geographical coordinate.
 	 * @param geoCoordinate the geographical coordinate to set
 	 */
-	public void setGeoCoordinate(AbstractGeoCoordinate geoCoordinate) {
+	public void setGeoCoordinate(AbstractCoordinate geoCoordinate) {
 		this.geoCoordinateOld = SerialClone.clone(geoCoordinate);
 		this.getJPanelGeoCoordinate().setGeoCoordinate(SerialClone.clone(geoCoordinate));
 	}

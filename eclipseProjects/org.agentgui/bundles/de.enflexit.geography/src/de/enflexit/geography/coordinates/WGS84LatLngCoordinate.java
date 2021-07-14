@@ -19,9 +19,11 @@ import gov.nasa.worldwind.geom.coords.UTMCoord;
     "latitude",
     "longitude"
 })
-public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
+public class WGS84LatLngCoordinate extends AbstractCoordinate {
 	
 	private static final long serialVersionUID = -4543228960997341395L;
+	
+	public static final String POS_PREFIX = "WGS84";
 	
 	@XmlElement(name = "Latitude")
 	private double latitude;
@@ -50,7 +52,7 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 	 * Gets the latitude.
 	 * @return the latitude
 	 */
-	public Double getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 	/**
@@ -76,6 +78,37 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 		this.longitude = longitude;
 	}
 
+	// ----------------------------------------------------
+	// --- Methods from abstract class Point2D -- Start --- 
+	// ----------------------------------------------------
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D.Double#getX()
+	 */
+	@Override
+	public double getX() {
+		return this.getLatitude();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#getY()
+	 */
+	@Override
+	public double getY() {
+		return this.getLongitude();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#setLocation(double, double)
+	 */
+	@Override
+	public void setLocation(double x, double y) {
+		this.setLatitude(x);
+		this.setLongitude(y);
+	}
+	// ----------------------------------------------------
+	// --- Methods from abstract class Point2D -- End ----- 
+	// ----------------------------------------------------
+	
+	
+	
 	/**
 	 * Validates the current WGS84 coordinate.
 	 *
@@ -326,11 +359,48 @@ public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 		this.longitude = lambdaB;
 	}
 	
+	
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	 * @see java.awt.geom.Point2D#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		if (compObj==null) return false;
+		if (! (compObj instanceof WGS84LatLngCoordinate)) return false;
+		return super.equals(compObj);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.geography.coordinates.AbstractGeoCoordinate#toString()
 	 */
 	public String toString() {
-	  return "WGS84: " + this.latitude + ", " + this.longitude;
+	  return POS_PREFIX + ": " + this.latitude + ", " + this.longitude;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.geography.coordinates.AbstractCoordinate#serialize()
+	 */
+	@Override
+	public String serialize() {
+		return POS_PREFIX + ":" + this.getLatitude() + ":" + this.getLongitude();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.geography.coordinates.AbstractCoordinate#deserialize(java.lang.String)
+	 */
+	@Override
+	public void deserialize(String coordinateString) throws NullPointerException, CoordinateParseException {
+
+		if (coordinateString==null || coordinateString.isEmpty()==true) throw new NullPointerException("No string was specified to deserialize a coordinate");
+		
+		String[] coords = coordinateString.split(":");
+		if (coords.length == 3 && coords[0].equals(POS_PREFIX)==true) {
+			this.setLatitude(java.lang.Double.parseDouble(coords[1]));
+			this.setLongitude(java.lang.Double.parseDouble(coords[2]));
+			return;
+		}
+		// --- Nothing parsed - throw an error -- 
+		throw new CoordinateParseException("The specified coordinate '" + coordinateString + "' is not of type " + this.getClass().getSimpleName());
+	}
+	
 }

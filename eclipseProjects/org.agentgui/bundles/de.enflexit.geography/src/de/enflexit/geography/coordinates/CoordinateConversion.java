@@ -284,7 +284,7 @@ public class CoordinateConversion {
 			// ----------------------------------------------------------------
 			// --- Get reference WGS84 for reference latitude value -----------
 			UTMCoordinate utmRef = new UTMCoordinate(sourceLngZone, sourceLatZone, sourceEasting, sourceNorting);
-			WGS84LatLngCoordinate wgs84Ref = utmRef.getWGS84LatLngCoordinate();
+			WGS84LatLngCoordinate wgs84Ref = utmRef.getWGS84LatLngCoordinate(); // Fails regular
 			
 			
 			// ----------------------------------------------------------------
@@ -690,7 +690,16 @@ public class CoordinateConversion {
 
 	}
 
-	private class LatZones {
+	
+	/**
+	 * Return the description instance {@link LatZones}.
+	 * @return the lat zones
+	 */
+	public LatZones getLatZones() {
+		return new LatZones();
+	}
+	
+	public class LatZones {
 
 		private char[] letters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z' };
 		private int[] degrees  = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8, 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };

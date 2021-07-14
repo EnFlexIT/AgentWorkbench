@@ -1,5 +1,8 @@
 package org.awb.env.networkModel.controller.ui;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
@@ -37,4 +40,18 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		return coordinateSystemNodeGeoPositionTransformer;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#setBasicGraphGuiVisViewer(org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer)
+	 */
+	@Override
+	public void setBasicGraphGuiVisViewer(BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer) {
+		super.setBasicGraphGuiVisViewer(basicGraphGuiVisViewer);
+		basicGraphGuiVisViewer.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent ce) {
+//				System.out.println("[" + BasicGraphGuiStaticGeoLayout.this.getClass().getSimpleName() + "] VisViewer state changes " + ce.toString());
+			}
+		});
+	}
 }

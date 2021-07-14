@@ -36,7 +36,10 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
+
 import de.enflexit.common.SerialClone;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 
 /**
  * This class represents a graph node in an environment model of the type graph / network
@@ -53,8 +56,8 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	public final static String GRAPH_NODE_PREFIX = "PP";
 	
 	/** The GraphNode's position in a visualization */
-	private Point2D position;
-	private TreeMap<String, Point2D> positionTreeMap;
+	private AbstractCoordinate coordinate;
+	private TreeMap<String, AbstractCoordinate> positionTreeMap;
 
 	private Object dataModel;
 	protected TreeMap<String, String> dataModelStorageSettings;
@@ -64,10 +67,7 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	/**
 	 * Default constructor with a default position of (Point2D.Double(50.0, 50.0)).
 	 */
-	public GraphNode() {
-		this.position = new Point2D.Double(50.0, 50.0);
-	}
-
+	public GraphNode() { }
 	/**
 	 * Instantiates a new graph node.
 	 *
@@ -75,8 +75,8 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	 * @param position the position of the GraphNode
 	 */
 	public GraphNode(String id, Point2D position) {
-		this.id = id;
-		this.position = position;
+		this.setId(id);
+		this.setPosition(position);
 	}
 	
 	/* (non-Javadoc)
@@ -95,24 +95,43 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 
 	/**
 	 * Sets the position of this GraphNode.
-	 * @param point2d the position to set
+	 * @param point2D the position to set
 	 */
-	public void setPosition(Point2D point2d) {
-		this.position = point2d;
+	public void setPosition(Point2D point2D) {
+		this.coordinate = GraphNodePositionFactory.convertToCoordinate(point2D);
 	}
 	/**
 	 * Returns the position.
 	 * @return the position
 	 */
 	public Point2D getPosition() {
-		return position;
+		return this.getCoordinate();
 	}
+	
+	/**
+	 * Sets the new coordinate of the GraphNode.
+	 * @param coordinate the new coordinate
+	 */
+	public void setCoordinate(AbstractCoordinate coordinate) {
+		this.coordinate = coordinate;
+	}
+	/**
+	 * Return the coordinate of the current GraphNode.
+	 * @return the coordinate
+	 */
+	public AbstractCoordinate getCoordinate() {
+		if (coordinate==null) {
+			coordinate = GraphNodePositionFactory.convertToCoordinate(new Point2D.Double(50.0, 50.0));
+		}
+		return coordinate;
+	}
+	
 
 	/**
 	 * Returns the position tree map that distinguishes positions for different layouts.
 	 * @return the position tree map
 	 */
-	public TreeMap<String, Point2D> getPositionTreeMap() {
+	public TreeMap<String, AbstractCoordinate> getPositionTreeMap() {
 		if (positionTreeMap==null) {
 			positionTreeMap = new TreeMap<>();
 		}
@@ -122,7 +141,7 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	 * Sets the position tree map.
 	 * @param positionTreeMap the position tree map
 	 */
-	public void setPositionTreeMap(TreeMap<String, Point2D> positionTreeMap) {
+	public void setPositionTreeMap(TreeMap<String, AbstractCoordinate> positionTreeMap) {
 		this.positionTreeMap = positionTreeMap;
 	}
 	
@@ -146,9 +165,9 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 			for (int i = 0; i < keys.size(); i++) {
 				String layoutID = keys.get(i);
 				if (allowedLayoutIDs.contains(layoutID)==false) continue;
-				Point2D position = this.getPositionTreeMap().get(layoutID);
-	
-				String singleConfig = layoutID + ":=" + getPositionAsString(position);
+				
+				AbstractCoordinate coordinate = this.getPositionTreeMap().get(layoutID);
+				String singleConfig = layoutID + ":=" + coordinate.serialize();
 				if (config==null) {
 					config = singleConfig;
 				} else {
@@ -173,9 +192,9 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 			String[] layoutPositionPair = layoutPositions[i].split(":=");
 			
 			String layoutID = layoutPositionPair[0];
-			Point2D postion = getPositionFromString(layoutPositionPair[1]);
-			if (layoutID!=null && layoutID.isEmpty()==false && position!=null) {
-				this.getPositionTreeMap().put(layoutID, postion);
+			AbstractCoordinate coordinate = GraphNodePositionFactory.getCoordinateFromString(layoutID, layoutPositionPair[1]);
+			if (layoutID!=null && layoutID.isEmpty()==false && coordinate!=null) {
+				this.getPositionTreeMap().put(layoutID, coordinate);
 			}
 		}
 	}
@@ -224,40 +243,6 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	@Override
 	public Vector<String> getDataModelBase64() {
 		return dataModelBase64;
-	}
-
-	
-	// ------------------------------------------------------------------------
-	// --- From here, some static help methods can be found -------------------
-	// ------------------------------------------------------------------------	
-	/**
-	 * Return a specified position as string.
-	 *
-	 * @param position the position
-	 * @return the position as string
-	 */
-	public static String getPositionAsString(Point2D position) {
-		return position.getX() + ":" + position.getY();
-	}
-	/**
-	 * Returns the position point from string.
-	 *
-	 * @param positionString the position string
-	 * @return the position from string
-	 */
-	public static Point2D getPositionFromString(String positionString) {
-		
-		if (positionString==null || positionString.isEmpty()) return null;
-		
-		Point2D pos = null;
-		String[] coords = positionString.split(":");
-		if (coords.length == 2) {
-			double xPos = Double.parseDouble(coords[0]);
-			double yPos = Double.parseDouble(coords[1]);
-			pos = new Point2D.Double(xPos, yPos);
-			
-		}
-		return pos;
 	}
 	
 }

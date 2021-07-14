@@ -58,11 +58,15 @@
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>default</simulationSetupCurrent>
+    <simulationSetupCurrent>default Germany</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>default</key>
             <value>default.xml</value>
+        </entry>
+        <entry>
+            <key>default Germany</key>
+            <value>default_Germany.xml</value>
         </entry>
     </simulationSetups>
 </project>

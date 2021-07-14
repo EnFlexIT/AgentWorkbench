@@ -83,7 +83,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode graphNode) {
-				return GraphNode.getPositionAsString(graphNode.getPosition());
+				return graphNode.getCoordinate().serialize();
 			}
 		});
 		this.addVertexData(KEY_POSITION_TREE_MAP, "Position TreeMap", "", new Transformer<GraphNode, String>() {

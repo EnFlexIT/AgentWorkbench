@@ -48,6 +48,7 @@ import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
 
 import agentgui.core.application.Language;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
@@ -65,8 +66,8 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	private BasicGraphGui basicGraphGui;
 	private VisualizationViewer<GraphNode,GraphEdge> visViewer; 	
 	
-	private HashMap<String, Point2D> nodesMovedOldPositions;
-	private HashMap<String, Point2D> nodesMovedNewPositions;
+	private HashMap<String, Point2D> nodesMovedOldCoordinate;
+	private HashMap<String, Point2D> nodesMovedNewCoordinate;
 	
 	private HashMap<String, List<Point2D>> polylinesMovedOldPositions;
 	private HashMap<String, List<Point2D>> polylinesMovedNewPositions;
@@ -77,28 +78,26 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	 *
 	 * @param graphController the graph controller
 	 * @param visViewer the vis viewer
-	 * @param nodesMovedOldPositions the nodes moved old positions
+	 * @param nodesMovedOldCoordinates the nodes moved old positions
 	 * @param polylinesMovedOldPositions the polylines moved old positions
 	 */
-	public MoveGraphNodes(GraphEnvironmentController graphController, BasicGraphGui basicGraphGui, HashMap<String, Point2D> nodesMovedOldPositions, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
+	public MoveGraphNodes(GraphEnvironmentController graphController, BasicGraphGui basicGraphGui, HashMap<String, Point2D> nodesMovedOldCoordinates, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
 		this.graphController = graphController;
 		this.basicGraphGui = basicGraphGui;
 		this.visViewer = basicGraphGui.getVisualizationViewer(); 	
-		this.nodesMovedOldPositions = nodesMovedOldPositions;
+		this.nodesMovedOldCoordinate = nodesMovedOldCoordinates;
 		this.polylinesMovedOldPositions = polylinesMovedOldPositions;
 		
 		// --- Evaluate the current GraphNode positions -------------
-		this.nodesMovedNewPositions = new HashMap<String, Point2D>();
-		
-		List<String> nodeIDList = new ArrayList<>(this.nodesMovedOldPositions.keySet());
+		this.nodesMovedNewCoordinate = new HashMap<String, Point2D>();
+		List<String> nodeIDList = new ArrayList<>(this.nodesMovedOldCoordinate.keySet());
 		for (int i = 0; i < nodeIDList.size(); i++) {
 			String nodeID = nodeIDList.get(i);
 			GraphElement graphElement = this.graphController.getNetworkModel().getGraphElement(nodeID);
 			if (graphElement instanceof GraphNode) {
-				GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
-				if (node!=null) {
-					Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-					this.nodesMovedNewPositions.put(nodeID, point);	
+				GraphNode graphNode = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
+				if (graphNode!=null) {
+					this.nodesMovedNewCoordinate.put(nodeID, graphNode.getCoordinate());	
 				}	
 			}
 		}
@@ -140,11 +139,16 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 		List<String> nodeIDList = new ArrayList<>(nodes2Move.keySet());
 		for (int i = 0; i < nodeIDList.size(); i++) {
 			String nodeID = nodeIDList.get(i);
-			GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
-			if (node!=null) {
-				node.setPosition(nodes2Move.get(nodeID));
-				this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
-				this.visViewer.getPickedVertexState().pick(node, true);	
+			GraphNode graphNode = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
+			if (graphNode!=null) {
+				Point2D pos = nodes2Move.get(nodeID);
+				if (pos instanceof AbstractCoordinate) {
+					graphNode.setCoordinate((AbstractCoordinate) pos);
+				} else {
+					graphNode.setPosition(pos);
+				}
+				this.visViewer.getGraphLayout().setLocation(graphNode, this.getGraphNodePositionTransformer().transform(graphNode.getPosition()));
+				this.visViewer.getPickedVertexState().pick(graphNode, true);	
 			}
 		}
 		
@@ -202,7 +206,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	@Override
 	public void redo() throws CannotRedoException {
 		super.redo();
-		this.setPositions(this.nodesMovedNewPositions);
+		this.setPositions(this.nodesMovedNewCoordinate);
 		this.setIntermediatePointPositions(this.polylinesMovedNewPositions);
 	}
 	
@@ -212,7 +216,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-		this.setPositions(this.nodesMovedOldPositions);
+		this.setPositions(this.nodesMovedOldCoordinate);
 		this.setIntermediatePointPositions(this.polylinesMovedOldPositions);
 	}
 	

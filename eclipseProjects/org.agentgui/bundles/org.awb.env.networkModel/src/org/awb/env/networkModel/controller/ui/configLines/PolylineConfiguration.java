@@ -18,6 +18,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -185,7 +186,7 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		// --- Get intermediate points as string --------------------
 		for (int i = 0; i < intPoints.size(); i++) {
 			Point2D pos = intPoints.get(i);
-			String posString = GraphNode.getPositionAsString(pos);
+			String posString = GraphNodePositionFactory.getPoint2DAsString(pos);
 			if (positions==null) {
 				positions = posString; 
 			} else {
@@ -219,7 +220,7 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		// --- Set intermediate point positions ---------------------
 		String[] posArray = stringConfiguration.split("\\|");
 		for (int i = 0; i < posArray.length; i++) {
-			Point2D pos = GraphNode.getPositionFromString(posArray[i]);
+			Point2D pos = GraphNodePositionFactory.getPoint2DFromString(posArray[i]);
 			if (pos!=null) {
 				intPointList.add(pos);
 			}

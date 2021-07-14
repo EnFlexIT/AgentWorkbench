@@ -88,6 +88,7 @@ import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTrans
 import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
 import org.awb.env.networkModel.maps.MapService;
 import org.awb.env.networkModel.maps.MapSettings;
+import org.awb.env.networkModel.positioning.GraphNodePositionDialog;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
@@ -97,7 +98,7 @@ import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
 import de.enflexit.common.swing.imageFileSelection.ImageUtils;
-import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import de.enflexit.geography.coordinates.ui.GeoCoordinateDialog;
@@ -467,12 +468,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private Layout<GraphNode, GraphEdge> getNewGraphLayout() {
 
 		Layout<GraphNode, GraphEdge> layout = null;
-		MapService ms = this.getMapService();
-		if (ms==null) {
-			// --- Use the standard layout ----------------
+		if (this.graphController.getNetworkModel().getLayoutSettings().isGeographicalLayout()==false) {
+			// --- Uses the standard layout, where the GraphNode coordinates are used as xy-values for the positioning ----------
 			layout = new BasicGraphGuiStaticLayout(this.graphController, this.getGraph());
 		} else {
-			// --- Use a GEO-Coordinate layout ------------
+			// --- Use the layout that considers the geographical coordinates of GraphNodes in an UTM system --------------------
 			layout = new BasicGraphGuiStaticGeoLayout(this.graphController, this.getGraph());
 		}
 		return layout;
@@ -485,7 +485,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private BasicGraphGuiStaticLayout getBasicGraphGuiStaticLayout() {
 		ObservableCachingLayout<GraphNode, GraphEdge> oLayout = (ObservableCachingLayout<GraphNode, GraphEdge>) this.getVisualizationViewer().getGraphLayout();
 		if (oLayout.getDelegate() instanceof BasicGraphGuiStaticLayout) {
-			return (BasicGraphGuiStaticLayout)oLayout.getDelegate();
+			return (BasicGraphGuiStaticLayout) oLayout.getDelegate();
 		}
 		return null;
 	}
@@ -578,7 +578,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 					
 					// --- Show position in edit mode only --------------------
 					if (graphController.getProject()!=null) {
-						toolTip += "<br>(x=" + node.getPosition().getX() + " - y=" + node.getPosition().getY() + ")";	
+						toolTip += "<br>(" + node.getCoordinate().toString() + ")";
 					}
 					toolTip += "</html>";
 					return toolTip;
@@ -1123,8 +1123,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (graphNodeToEdit==null) graphNodeToEdit = this.getPickedSingleNode();
 		if (graphNodeToEdit==null) return;
 
-		Point2D oldPosition = graphNodeToEdit.getPosition();
-		Point2D newPosition = null;
+		AbstractCoordinate oldCoordinate = graphNodeToEdit.getCoordinate();
+		AbstractCoordinate newCoordinate = null;
 		
 		// --- Found a GraphNode ------------------------------------
 		if (this.getPickedNodes().contains(graphNodeToEdit)==false) {
@@ -1138,58 +1138,46 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ------------------------------------------------------
 			// --- Edit geographical coordinates --------------------			
 			// ------------------------------------------------------
-			MapSettings ms = this.graphController.getNetworkModel().getMapSettings();
-			UTMCoordinate utmCoordinateToEdit = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), graphNodeToEdit.getPosition().getX(), graphNodeToEdit.getPosition().getY());
 			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, utmCoordinateToEdit);
+			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, oldCoordinate);
 			// - - - - Wait for user - - - - -
 			if (geoDialog.isCanceled()==true) return;
 			
 			// --- Get UTM coordinates to set the new position ------
-			UTMCoordinate utmCoordinate = null;
-			AbstractGeoCoordinate geoCoordinate = geoDialog.getGeoCoordinate();
-			if (geoCoordinate ==null) {
+			AbstractCoordinate geoCoordinate = geoDialog.getGeoCoordinate();
+			if (geoCoordinate==null) {
 				return;
-			} else  if (geoCoordinate instanceof WGS84LatLngCoordinate) {
-				WGS84LatLngCoordinate wgs84 = (WGS84LatLngCoordinate) geoCoordinate;
-				utmCoordinate = wgs84.getUTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone());
+			} else if (geoCoordinate instanceof WGS84LatLngCoordinate) {
+				newCoordinate = (WGS84LatLngCoordinate) geoCoordinate;
 			} else if (geoCoordinate instanceof UTMCoordinate) {
-				utmCoordinate = (UTMCoordinate) geoCoordinate;
-			}
-			
-			// --- UTM zone transformation? -------------------------
-			if (utmCoordinate.getLongitudeZone()!=ms.getUTMLongitudeZone()) {
-				utmCoordinate.transformZone(ms.getUTMLongitudeZone());
+				newCoordinate = (UTMCoordinate) geoCoordinate;
 			}
 
-			// --- Set new GraphNode position -----------------------
-			newPosition = new Point2D.Double(utmCoordinate.getEasting(), utmCoordinate.getNorthing());
-			
 		} else {
 			// ------------------------------------------------------
 			// --- Edit regular coordinates -------------------------
 			// ------------------------------------------------------
 			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-			GraphNodePositionDialog posDialog = new GraphNodePositionDialog(dialogOwner, graphNodeToEdit.getPosition());
+			GraphNodePositionDialog posDialog = new GraphNodePositionDialog(dialogOwner, oldCoordinate);
 			// - - - - Wait for user - - - - -
 			if (posDialog.isCanceled()==true) return;
 
 			// --- Set new GraphNode position -----------------------
-			newPosition = posDialog.getGraphNodePosition();
+			newCoordinate = posDialog.getCoordinate();
 			
 		}
 
 		// --- Do movement and define undoable action ---------------
-		if (newPosition!=null && newPosition.equals(oldPosition)==false) {
+		if (newCoordinate!=null && newCoordinate.equals(oldCoordinate)==false) {
 			// --- Set position to graph node ----------------------- 
-			graphNodeToEdit.setPosition(newPosition);
+			graphNodeToEdit.setCoordinate(newCoordinate);
 			this.updateGraphNodePositionInLayout(graphNodeToEdit);
 
 			// --- Do we work on an intermediate GraphNode? ---------
 			String graphNodeID = graphNodeToEdit.getId();
 			if (this.getGraphMouseMode()!=GraphMouseMode.EdgeEditing) {
 				// --- Create undoable action ----------------------- 
-				this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this, graphNodeToEdit, oldPosition);
+				this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this, graphNodeToEdit, oldCoordinate);
 				
 			} else {
 				// --- Reconfigure edge -----------------------------
@@ -1204,7 +1192,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 						List<Point2D> intPointList = shapeConfig.getIntermediatePoints();
 						Point2D intPointPos = intPointList.get(positionIndex);
 						// --- Define new intermediate position -----
-						Point2D intPointPosNew = newPosition;
+						Point2D intPointPosNew = newCoordinate;
 						if (shapeConfig.isUseAbsoluteCoordinates()==false) {
 							// --- To relative coordinates ---------- 
 							Pair<GraphNode> graphNodes = this.getGraph().getEndpoints(editGraphEdge);
@@ -1431,32 +1419,39 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void setMapPreRendering() {
 		
+		// --- Get old / current instances ------------------------------------
 		MapService mapServiceOld = this.getVisualizationViewer().getMapService();
 		BasicGraphGuiStaticLayout staticLayoutOld = this.getBasicGraphGuiStaticLayout();
 		
-		boolean isDoMapRendering = this.isDoMapPreRendering();
-		if (isDoMapRendering==true) {
-			// --- Set MapService to visualization viewer --------------------- 
-			this.getVisualizationViewer().setMapService(this.getMapService());
+		// --- Check how to configure -----------------------------------------
+		boolean isDoMapPreRendering = this.isDoMapPreRendering();
+		
+		if (this.graphController.getNetworkModel().getLayoutSettings().isGeographicalLayout()==true) {
+			// --- For geographical layouts ----------------------------------- 
+			if (isDoMapPreRendering==true) {
+				this.getVisualizationViewer().setMapService(this.getMapService());
+			} else {
+				this.getVisualizationViewer().setMapService(null);
+				if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
+			}
 			// --- Renew static graph layout ? --------------------------------
 			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticGeoLayout.class.getName())==false) {
 				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
+			} else {
+				// TODO staticLayoutOld.doSomething()
 			}
 			
 		} else {
-			// --- Set MapService to visualization viewer ---------------------
+			// --- For normal / non-geographical layouts ----------------------
 			this.getVisualizationViewer().setMapService(null);
-			// --- Destroy old map service ------------------------------------
-			if (mapServiceOld!=null) {
-				mapServiceOld.destroyMapServiceInstances();
-			}
+			if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
 			// --- Renew static graph layout ? --------------------------------
 			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticLayout.class.getName())==false) {
 				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 			}
 			
 		}
-		this.getVisualizationViewer().setDoMapPreRendering(isDoMapRendering);
+		this.getVisualizationViewer().setDoMapPreRendering(isDoMapPreRendering);
 	}
 	/**
 	 * Checks if is usable map service.

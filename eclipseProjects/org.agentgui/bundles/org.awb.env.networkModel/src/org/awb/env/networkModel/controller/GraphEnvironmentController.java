@@ -56,6 +56,7 @@ import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDesc
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService.DataModelServiceAction;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
@@ -477,15 +478,21 @@ public class GraphEnvironmentController extends EnvironmentController {
 					// --- Define the NetworkModel ------------------------------------------------
 					NetworkModel netModel = new NetworkModel();
 
+					// --- Set the NetworkModel instance to the GraphNodePositionFactory ----------
+					GraphNodePositionFactory.setLoadingNetworkModel(netModel);
+					
 					// --- 1. Load component type settings from file ------------------------------
 					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
 					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
 					
-					// --- 2. Load the graph topology from the graph file -------------------------
+					// --- 2. Load the component definitions and other from the component file ----
+					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
+
+					// --- 3. Load the graph topology from the graph file -------------------------
 					netModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
 					
-					// --- 3. Load the component definitions from the component file --------------
-					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
+					// --- 4. Refresh the graph elements in the NetworkModel ----------------------
+					netModel.refreshGraphElements();
 					
 					// --- Remind the list of custom toolbar elements -----------------------------
 					if (GraphEnvironmentController.this.getNetworkModel()!=null) {
@@ -506,6 +513,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 							Thread.sleep(50);
 						}	
 					}
+					
+					// --- Reset the NetworkModel instance in the GraphNodePositionFactory --------
+					GraphNodePositionFactory.setLoadingNetworkModel(null);
 					
 					// --- Assign NetworkMoldel to visualization ----------------------------------
 					final NetworkModel netModelFinal = netModel;
