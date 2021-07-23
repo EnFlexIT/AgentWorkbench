@@ -719,7 +719,6 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
 		    selectedComponent = this.getGraphController().getNetworkModel().getNetworkComponent(componentID);
 		}
-    	
     	return selectedComponent;
     }
     

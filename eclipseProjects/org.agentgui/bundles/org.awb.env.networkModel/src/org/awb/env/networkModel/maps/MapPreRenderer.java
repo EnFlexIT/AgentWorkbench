@@ -85,7 +85,7 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 			WGS84LatLngCoordinate centerWGSCoordinate = centerUTMCoordinate.getWGS84LatLngCoordinate(); 
 			
 			// --- Set center coordinate to renderer ----------------
-			mr.setCenterGeoLocation(centerWGSCoordinate);
+			mr.setCenterGeoCoordinate(centerWGSCoordinate);
 		}
 	}
 	

@@ -3,13 +3,11 @@ package org.awb.env.maps;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
-import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapRendererSettings;
 import org.jxmapviewer.viewer.DefaultWaypoint;
@@ -28,7 +26,7 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  */
 public class OSMMapRenderer implements MapRenderer {
 
-	private boolean isDebug = true;
+	private boolean isDebugJungRescalling = false;
 	
 	private BaseMapService baseMapService;
 	
@@ -56,13 +54,6 @@ public class OSMMapRenderer implements MapRenderer {
 	 */
 	private OSMZoomController getZoomController() {
 		return this.baseMapService.getZoomController();
-	}
-	/**
-	 * Returns the current scaling control.
-	 * @return the scaling control
-	 */
-	private OSMScalingControl getScalingControl() {
-		return this.getZoomController().getScalingControl();
 	}
 
 	
@@ -106,9 +97,21 @@ public class OSMMapRenderer implements MapRenderer {
 	 * @see org.awb.env.networkModel.maps.MapRenderer#setCenterGeoLocation(de.enflexit.geography.coordinates.WGS84LatLngCoordinate)
 	 */
 	@Override
-	public void setCenterGeoLocation(WGS84LatLngCoordinate geoCoordinate) {
+	public void setCenterGeoCoordinate(WGS84LatLngCoordinate geoCoordinate) {
 		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(geoCoordinate));
 	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapRenderer#getCenterGeoCoordinate()
+	 */
+	@Override
+	public WGS84LatLngCoordinate getCenterGeoCoordinate() {
+		GeoPosition jxGeoPosition = this.getJXMapViewerWrapper().getCenterPosition();
+		if (jxGeoPosition!=null) {
+			return new WGS84LatLngCoordinate(jxGeoPosition.getLatitude(), jxGeoPosition.getLongitude());
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapRenderer#getPositionOnScreen(de.enflexit.geography.coordinates.WGS84LatLngCoordinate)
 	 */
@@ -155,7 +158,7 @@ public class OSMMapRenderer implements MapRenderer {
 			System.err.println("[" + this.getClass().getSimpleName() + "] No center geo position was specified for the map representation.");
 		}
 		this.getJXMapViewerWrapper().setBounds(visDim);
-		this.getJXMapViewerWrapper().setZoom(this.getScalingControl().getZoomLevel().getJXMapViewerZoomLevel());
+		this.getJXMapViewerWrapper().setZoom(this.getZoomController().getZoomLevel().getJXMapViewerZoomLevel());
 		
 		if (isPrintOverlay==true) {
 			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
@@ -164,6 +167,15 @@ public class OSMMapRenderer implements MapRenderer {
 		
 		// --- Paint to the specified graphics object ---------------
 		this.getJXMapViewerWrapper().paintComponent(graphics);
+	}
+	
+	/**
+	 * Sets the zoom level.
+	 * @param zoomLevel the new zoom level
+	 */
+	private void setZoomLevel(ZoomLevel zoomLevel) {
+		this.getJXMapViewerWrapper().setZoom(zoomLevel.getJXMapViewerZoomLevel());
+		this.getZoomController().setZoomLevel(zoomLevel);
 	}
 	
 	/**
@@ -177,6 +189,13 @@ public class OSMMapRenderer implements MapRenderer {
 		boolean requiresJungReScaling = false;
 		try {
 			
+			// --- Define an initial zoom level ? -------------------
+			if (this.getZoomController().getZoomLevel()==null) {
+				// -- Set the highest zoom level first --------------
+				this.setZoomLevel(OSMZoomLevels.getInstance().getZoomLevel(19, this.getCenterGeoCoordinate().getLatitude()));
+				return true;
+			}
+			
 			// --- Get current scaling ------------------------------ 
 			MutableTransformer layoutTransformer = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
 			MutableTransformer viewTransformer = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
@@ -185,29 +204,20 @@ public class OSMMapRenderer implements MapRenderer {
 			double scale = modelScale * viewScale;
 			
 			// --- Get the closest zoom level -----------------------
-			ZoomLevel zl = OSMZoomLevels.getInstance().getClosestZoomLevelOfJungScaling(scale);
+			ZoomLevel zl = OSMZoomLevels.getInstance().getClosestZoomLevelOfJungScaling(scale, this.getCenterGeoCoordinate().getLatitude());
 			
 			// --- Check if the scaling needs to adjusted -----------
 			double scaleDiff = Math.abs(scale - zl.getJungScaling());
 			if (scaleDiff > 0.01) {
-				
 				requiresJungReScaling = true;
-				
-				if (this.isDebug==true) {
+				this.setZoomLevel(zl);
+				if (this.isDebugJungRescalling==true) {
 					String classNamePrefix = "[" + this.getClass().getSimpleName() + "] ";
 					System.out.println(classNamePrefix + "Current Map Resolution. " + (1.0/scale) + " m/px" );
 					System.out.println(classNamePrefix + "Current Scale: " + scale + " m/px" );
 					System.out.println(classNamePrefix + "Jung re-scaling required ! - Try " + zl);
 					System.out.println();
 				}
-				
-				BasicGraphGuiVisViewer<?, ?> visViewer = this.getMapRendererSettings().getVisualizationViewer();
-				Point2D scalePoint = null;
-				Rectangle2D rectVis = visViewer.getVisibleRect();
-				if (rectVis.isEmpty() == false) {
-					scalePoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
-				}
-				this.getScalingControl().scale(visViewer, zl, scalePoint);
 			}
 			
 		} catch (Exception ex) {

@@ -112,6 +112,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 					utmCoordinate.transformZone(utmLongZone);
 				}
 				layoutPosition = super.transform(utmCoordinate);
+				System.out.println("Layout Position from UTM " + layoutPosition);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -140,6 +141,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 				// --- Use Jung transformer to calculate virtual graph position ---------
 				AffineTransform at = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
 				layoutPosition = at.inverseTransform(posOnScreen, null);
+				System.out.println("Layout Position from WGS94 " + layoutPosition);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();

@@ -40,6 +40,16 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		return coordinateSystemNodeGeoPositionTransformer;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#refreshGraphNodePosition()
+	 */
+	@Override
+	public void refreshGraphNodePosition() {
+
+		// --- Set the initializer / the coordinate transformer for the layout ----------
+		this.setInitializer(this.getCoordinateSystemPositionTransformer());
+		
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#setBasicGraphGuiVisViewer(org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer)

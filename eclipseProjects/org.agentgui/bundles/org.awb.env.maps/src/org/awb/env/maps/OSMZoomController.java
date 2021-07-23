@@ -22,11 +22,22 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class OSMZoomController extends BasicGraphGuiZoomController implements ZoomController {
 
+	private BaseMapService baseMapService;
+	
 	private GraphEnvironmentController graphController;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 
 	private OSMScalingControl scalingControl;
+	private ZoomLevel zoomLevel;
 
+	
+	/**
+	 * Instantiates a new OSM zoom controller.
+	 * @param baseMapService the base map service
+	 */
+	public OSMZoomController(BaseMapService baseMapService) {
+		this.baseMapService = baseMapService;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#setGraphEnvironmentController(org.awb.env.networkModel.controller.GraphEnvironmentController)
@@ -70,14 +81,26 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 		}
 		return scalingControl;
 	}
+	
 	/**
 	 * Returns the current zoom level of the {@link OSMScalingControl}.
 	 * @return the zoom level
 	 */
 	public ZoomLevel getZoomLevel() {
-		return this.getScalingControl().getZoomLevel();
+		return this.zoomLevel;
 	}
-
+	/**
+	 * Sets the zoom level.
+	 * @param newZoomLevel the new zoom level
+	 */
+	public void setZoomLevel(ZoomLevel newZoomLevel) {
+		if (this.zoomLevel==null || newZoomLevel.equals(this.zoomLevel)==false) {
+			this.zoomLevel = newZoomLevel;
+			if (this.getVisualizationViewer()!=null) {
+				this.getScalingControl().scale(this.getVisualizationViewer(), this.zoomLevel, this.getDefaultScaleAtPoint());
+			}
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#zoomIn()
@@ -91,8 +114,9 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 */
 	@Override
 	public void zoomIn(Point2D pointOnScreen) {
-		ZoomLevel zlNew = OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), 1);
-		this.getScalingControl().scale(this.getVisualizationViewer(), zlNew, pointOnScreen);
+		double currLatitude = this.baseMapService.getMapRenderer().getCenterGeoCoordinate().getLatitude();
+		this.zoomLevel = OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), 1, currLatitude);
+		this.getScalingControl().scale(this.getVisualizationViewer(), this.zoomLevel, pointOnScreen);
 	}
 	
 	/* (non-Javadoc)
@@ -108,8 +132,9 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 */
 	@Override
 	public void zoomOut(Point2D pointOnScreen) {
-		ZoomLevel zlNew = OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), -1);
-		this.getScalingControl().scale(this.getVisualizationViewer(), zlNew, pointOnScreen);
+		double currLatitude = this.baseMapService.getMapRenderer().getCenterGeoCoordinate().getLatitude();
+		this.zoomLevel = OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), -1, currLatitude);
+		this.getScalingControl().scale(this.getVisualizationViewer(), this.zoomLevel, pointOnScreen);
 	}
 
 	/* (non-Javadoc)

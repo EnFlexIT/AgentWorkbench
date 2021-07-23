@@ -1,7 +1,6 @@
 package org.awb.env.maps;
 
 import java.awt.geom.Point2D;
-import java.util.List;
 
 import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
@@ -25,27 +24,6 @@ public class OSMScalingControl extends CrossoverScalingControl implements Scalin
 
 	private boolean isDebug = true;
 	
-	private ZoomLevel zoomLevel;
-	
-	/**
-	 * Sets the current zoom level.
-	 * @param zoomLevel the new zoom level
-	 */
-	public void setZoomLevel(ZoomLevel zoomLevel) {
-		this.zoomLevel = zoomLevel;
-	}
-	/**
-	 * Returns the current zoom level.
-	 * @return the zoom level
-	 */
-	public ZoomLevel getZoomLevel() {
-		if (zoomLevel==null) {
-			List<ZoomLevel> zlList = OSMZoomLevels.getInstance().getZoomLevelList();
-			zoomLevel = zlList.get(zlList.size()-1);
-		}
-		return zoomLevel;
-	}
-	
 	/**
 	 * Scales the view to the specified {@link ZoomLevel}.
 	 *
@@ -56,7 +34,6 @@ public class OSMScalingControl extends CrossoverScalingControl implements Scalin
 	public void scale(VisualizationServer<?,?> vv, ZoomLevel zoomLevel, Point2D at) {
 		if (zoomLevel!=null) {
 			if (isDebug==true) System.out.println("[" + this.getClass().getSimpleName() + "] Scale to " + zoomLevel);
-			this.setZoomLevel(zoomLevel);
 			this.scale(vv, zoomLevel.getJungScaling(), at);
 		}
 	}

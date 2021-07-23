@@ -21,7 +21,14 @@ public interface MapRenderer {
 	 * Will be invoked to set the geographical center location.
 	 * @param geoCoordinate the new geographical center location
 	 */
-	public void setCenterGeoLocation(WGS84LatLngCoordinate geoCoordinate);
+	public void setCenterGeoCoordinate(WGS84LatLngCoordinate geoCoordinate);
+
+	/**
+	 * Has to return the current center geographical coordinate.
+	 * @return the center geographical coordinate
+	 */
+	public WGS84LatLngCoordinate getCenterGeoCoordinate();
+	
 	
 	/**
 	 * Has to return the position on screen for the specified WGS84 coordinate.
@@ -38,6 +45,7 @@ public interface MapRenderer {
 	 */
 	public WGS84LatLngCoordinate getGeoCoordinate(Point2D posOnScreen);
 
+	
 	/**
 	 * Paint map at the specified geographical coordinate.
 	 *

@@ -78,4 +78,11 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 		return basicGraphGuiVisViewer;
 	}
 	
+	/**
+	 * Will refresh the graph node positions .
+	 */
+	public void refreshGraphNodePosition() {
+		// --- In the default case, nothing is to do here ---
+	}
+	
 }

@@ -1430,6 +1430,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- For geographical layouts ----------------------------------- 
 			if (isDoMapPreRendering==true) {
 				this.getVisualizationViewer().setMapService(this.getMapService());
+				// -- Ensure that a ZoomController is initialized -----------------
+				this.getZoomController();
 			} else {
 				this.getVisualizationViewer().setMapService(null);
 				if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
@@ -1438,7 +1440,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticGeoLayout.class.getName())==false) {
 				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 			} else {
-				// TODO staticLayoutOld.doSomething()
+				staticLayoutOld.refreshGraphNodePosition();
 			}
 			
 		} else {
