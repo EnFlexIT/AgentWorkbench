@@ -27,7 +27,13 @@ public class JXMapViewerForAWB extends JXMapViewer {
 	 */
 	public JXMapViewerForAWB() {
 
-		this.setTileFactory(new DefaultTileFactory(new OSMTileFactoryInfo()));
+		// --- Initialize and configure tile factory --------------------------
+		DefaultTileFactory tileFactory = new DefaultTileFactory(new OSMTileFactoryInfo());
+		tileFactory.setThreadPoolSize(8);
+		// --- Caching is an open issue by now ------
+		//tileFactory.setLocalCache(null);
+		//tileFactory.setTileCache(null);
+		this.setTileFactory(tileFactory);
 
 		try {
 			URL url = JXMapViewer.class.getResource("/images/loading.png");

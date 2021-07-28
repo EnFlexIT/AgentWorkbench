@@ -62,6 +62,10 @@ public class OSMZoomLevels {
 //		this.getZoomLevelList().add(new ZoomLevel(18, 0.596));
 //		this.getZoomLevelList().add(new ZoomLevel(19, 0.298));
 		
+		// --- Clear the list first -------------------------------------------
+		this.getZoomLevelList(this.latitude).clear();
+		
+		// --- Refill the list by newly calculated values ---------------------
 		double circumference = 40075016.686; // in m 
 		for (int zoomLevel = 0; zoomLevel < 20; zoomLevel++) {
 			// --- Formula from above web-site --------------------------------
@@ -187,7 +191,7 @@ public class OSMZoomLevels {
 		// --- Run through list and find the current ZoomLevel ------
 		for (int i = 0; i < zoomLevelList.size(); i++) {
 			ZoomLevel zlCheck = zoomLevelList.get(i);
-			if (zlCheck==zlCurrent) {
+			if (zlCheck.getOSMZoomLevel()==zlCurrent.getOSMZoomLevel()) {
 				// --- Check search direction -----------------------
 				int iSelection = i;
 				if (zoomIn > 0) {
@@ -294,8 +298,9 @@ public class OSMZoomLevels {
 		@Override
 		public boolean equals(Object compObj) {
 			if (!(compObj instanceof ZoomLevel)) return false;
+			if (compObj==this) return true;
 			ZoomLevel zlComp = (ZoomLevel) compObj;
-			if (zlComp.getOSMZoomLevel()!= this.getJXMapViewerZoomLevel()) return false;
+			if (zlComp.getOSMZoomLevel()!= this.getOSMZoomLevel()) return false;
 			if (zlComp.getResolution()!=this.getResolution()) return false;
 			return true;
 		}

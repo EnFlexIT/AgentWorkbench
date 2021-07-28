@@ -21,5 +21,13 @@
                 <graphElementIDs>PP0</graphElementIDs>
             </value>
         </entry>
+        <entry>
+            <key>n1</key>
+            <value>
+                <id>n1</id>
+                <type>Kreis</type>
+                <graphElementIDs>PP1</graphElementIDs>
+            </value>
+        </entry>
     </networkComponentList>
 </networkModelFileContent>

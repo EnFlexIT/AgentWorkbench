@@ -126,7 +126,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 				// --- Get WGS84 coordinate ---------------------------------------------
 				WGS84LatLngCoordinate wgs84Coord = null;
 				if (coordGraphNode instanceof WGS84LatLngCoordinate) {
-					wgs84Coord = SerialClone.clone((WGS84LatLngCoordinate) coordGraphNode);
+					wgs84Coord = (WGS84LatLngCoordinate) coordGraphNode;
 				} else if (coordGraphNode instanceof UTMCoordinate) {
 					UTMCoordinate utmCoord = (UTMCoordinate) coordGraphNode;
 					wgs84Coord = utmCoord.getWGS84LatLngCoordinate();

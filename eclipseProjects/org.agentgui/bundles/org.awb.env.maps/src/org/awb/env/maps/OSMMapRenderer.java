@@ -2,7 +2,9 @@ package org.awb.env.maps;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +18,7 @@ import org.jxmapviewer.viewer.Tile;
 import org.jxmapviewer.viewer.TileListener;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
+import org.jxmapviewer.viewer.util.GeoUtil;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
@@ -117,7 +120,18 @@ public class OSMMapRenderer implements MapRenderer {
 	 */
 	@Override
 	public Point2D getPositionOnScreen(WGS84LatLngCoordinate wgsCoordinate) {
-		return this.getJXMapViewerWrapper().convertGeoPositionToPoint(new GeoPosition(wgsCoordinate.getLatitude(), wgsCoordinate.getLongitude()));
+		
+		Point2D mapPos = GeoUtil.getBitmapCoordinate(this.convertToGeoPosition(wgsCoordinate), this.getJXMapViewerWrapper().getZoom(), this.getJXMapViewerWrapper().getTileFactory().getInfo());
+		mapPos = this.getJXMapViewerWrapper().convertGeoPositionToPoint(this.convertToGeoPosition(wgsCoordinate));
+		Point2D centerPos = this.getJXMapViewerWrapper().getCenter();
+		
+		Dimension view = this.getJXMapViewerWrapper().getSize();
+		
+		double xScreen = centerPos.getX() - mapPos.getX();
+		double yScreen = centerPos.getY() - mapPos.getY();
+		
+        return new Point2D.Double(xScreen, yScreen);
+        
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapRenderer#getGeoCoordinate(java.awt.geom.Point2D)

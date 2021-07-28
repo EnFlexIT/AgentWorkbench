@@ -115,8 +115,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	@Override
 	public void zoomIn(Point2D pointOnScreen) {
 		double currLatitude = this.baseMapService.getMapRenderer().getCenterGeoCoordinate().getLatitude();
-		this.zoomLevel = OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), 1, currLatitude);
-		this.getScalingControl().scale(this.getVisualizationViewer(), this.zoomLevel, pointOnScreen);
+		this.setZoomLevel(OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), 1, currLatitude));
 	}
 	
 	/* (non-Javadoc)
@@ -133,8 +132,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	@Override
 	public void zoomOut(Point2D pointOnScreen) {
 		double currLatitude = this.baseMapService.getMapRenderer().getCenterGeoCoordinate().getLatitude();
-		this.zoomLevel = OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), -1, currLatitude);
-		this.getScalingControl().scale(this.getVisualizationViewer(), this.zoomLevel, pointOnScreen);
+		this.setZoomLevel(OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), -1, currLatitude));
 	}
 
 	/* (non-Javadoc)
