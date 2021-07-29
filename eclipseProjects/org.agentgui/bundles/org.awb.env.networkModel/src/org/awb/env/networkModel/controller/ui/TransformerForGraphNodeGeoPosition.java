@@ -56,6 +56,8 @@ import gov.nasa.worldwind.geom.coords.UTMCoord;
  */
 public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodePosition {
 
+	private boolean isDebugPrintPositioning = false;
+	
 	/**
 	 * Instantiates a new transformer for node position that dynamically 'asks' the graph controller 
 	 * about the current and possibly changed settings in the {@link NetworkModel} (dynamic approach).
@@ -112,7 +114,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 					utmCoordinate.transformZone(utmLongZone);
 				}
 				layoutPosition = super.transform(utmCoordinate);
-				System.out.println("Layout Position from UTM " + layoutPosition);
+				if (this.isDebugPrintPositioning) System.out.println("Layout Position from UTM " + layoutPosition);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -141,7 +143,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 				// --- Use Jung transformer to calculate virtual graph position ---------
 				AffineTransform at = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
 				layoutPosition = at.inverseTransform(posOnScreen, null);
-				System.out.println("Layout Position from WGS94 " + layoutPosition);
+				if (this.isDebugPrintPositioning) System.out.println("Layout Position from WGS94 " + layoutPosition);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();

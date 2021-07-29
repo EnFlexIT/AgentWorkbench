@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
 import org.awb.env.networkModel.GraphEdge;
@@ -19,7 +18,11 @@ import org.awb.env.networkModel.controller.ui.ZoomController;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
-
+/**
+ * The OSMZoomController.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
 public class OSMZoomController extends BasicGraphGuiZoomController implements ZoomController {
 
 	private BaseMapService baseMapService;
@@ -29,7 +32,6 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 
 	private OSMScalingControl scalingControl;
 	private ZoomLevel zoomLevel;
-
 	
 	/**
 	 * Instantiates a new OSM zoom controller.
@@ -93,11 +95,22 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 * Sets the zoom level.
 	 * @param newZoomLevel the new zoom level
 	 */
-	public void setZoomLevel(ZoomLevel newZoomLevel) {
+	public void setZoomLevel(ZoomLevel zoomLevel) {
+		this.setZoomLevel(zoomLevel, null);
+	}
+	/**
+	 * Sets the zoom level for the specified position on screen.
+	 *
+	 * @param newZoomLevel the new zoom level
+	 * @param scalePointOnScreen the scale point on screen
+	 */
+	public void setZoomLevel(ZoomLevel newZoomLevel, Point2D scalePointOnScreen) {
 		if (this.zoomLevel==null || newZoomLevel.equals(this.zoomLevel)==false) {
 			this.zoomLevel = newZoomLevel;
 			if (this.getVisualizationViewer()!=null) {
-				this.getScalingControl().scale(this.getVisualizationViewer(), this.zoomLevel, this.getDefaultScaleAtPoint());
+				if (scalePointOnScreen==null) scalePointOnScreen = this.getVisualizationViewerCenter();
+				this.setVisualizationViewerSelected();
+				this.getScalingControl().scale(this.getVisualizationViewer(), this.zoomLevel, scalePointOnScreen);
 			}
 		}
 	}
@@ -107,7 +120,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 */
 	@Override
 	public void zoomIn() {
-		this.zoomIn(this.getDefaultScaleAtPoint());
+		this.zoomIn(this.getVisualizationViewerCenter());
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#zoomIn(java.awt.geom.Point2D)
@@ -115,7 +128,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	@Override
 	public void zoomIn(Point2D pointOnScreen) {
 		double currLatitude = this.baseMapService.getMapRenderer().getCenterGeoCoordinate().getLatitude();
-		this.setZoomLevel(OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), 1, currLatitude));
+		this.setZoomLevel(OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), 1, currLatitude), pointOnScreen);
 	}
 	
 	/* (non-Javadoc)
@@ -123,7 +136,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	 */
 	@Override
 	public void zoomOut() {
-		this.zoomOut(this.getDefaultScaleAtPoint());
+		this.zoomOut(this.getVisualizationViewerCenter());
 	}
 	
 	/* (non-Javadoc)
@@ -132,7 +145,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 	@Override
 	public void zoomOut(Point2D pointOnScreen) {
 		double currLatitude = this.baseMapService.getMapRenderer().getCenterGeoCoordinate().getLatitude();
-		this.setZoomLevel(OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), -1, currLatitude));
+		this.setZoomLevel(OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), -1, currLatitude), pointOnScreen);
 	}
 
 	/* (non-Javadoc)
@@ -167,17 +180,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 		super.zoomToComponent();
 	}
 
-	/**
-	 * Returns the default point to scale at for zooming.
-	 * @return the default scale at point
-	 */
-	public Point2D getDefaultScaleAtPoint() {
-		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
-		if (rectVis.isEmpty() == false) {
-			return new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
-		}
-		return null;
-	}
+	
 	/**
 	 * Return the specified point on screen to a point in graph coordinates.
 	 *
@@ -217,5 +220,5 @@ public class OSMZoomController extends BasicGraphGuiZoomController implements Zo
 		at.concatenate(lat);
 		return at;
 	}
-	
+
 }

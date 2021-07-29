@@ -2,14 +2,15 @@ package org.awb.env.maps;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapRendererSettings;
 import org.jxmapviewer.viewer.DefaultWaypoint;
@@ -18,7 +19,6 @@ import org.jxmapviewer.viewer.Tile;
 import org.jxmapviewer.viewer.TileListener;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
-import org.jxmapviewer.viewer.util.GeoUtil;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.visualization.Layer;
@@ -30,18 +30,14 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 public class OSMMapRenderer implements MapRenderer {
 
 	private boolean isDebugJungRescalling = false;
+	private boolean isPrintWaypointOverlay = false;
 	
 	private BaseMapService baseMapService;
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 	
 	private JXMapViewerForAWB jxMapViewer;
 	private TileListener jxTileListener;
 
-	private Graphics2D graphics;
-	private MapRendererSettings mapRendererSettings;
-	private boolean newMapRendererSettings;
-	
-	private boolean isPrintOverlay = true;
-	
 	
 	/**
 	 * Instantiates a new OSM map renderer.
@@ -81,7 +77,7 @@ public class OSMMapRenderer implements MapRenderer {
 			jxTileListener = new TileListener() {
 				@Override
 				public void tileLoaded(Tile tile) {
-					OSMMapRenderer.this.getMapRendererSettings().getVisualizationViewer().paintComponentRenderGraph();
+					OSMMapRenderer.this.visViewer.paintComponentRenderGraph();
 				}
 			};
 		}
@@ -97,22 +93,13 @@ public class OSMMapRenderer implements MapRenderer {
 	
 	
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.maps.MapRenderer#setCenterGeoLocation(de.enflexit.geography.coordinates.WGS84LatLngCoordinate)
+	 * @see org.awb.env.networkModel.maps.MapRenderer#initialize(org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer, de.enflexit.geography.coordinates.WGS84LatLngCoordinate)
 	 */
 	@Override
-	public void setCenterGeoCoordinate(WGS84LatLngCoordinate geoCoordinate) {
-		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(geoCoordinate));
-	}
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.maps.MapRenderer#getCenterGeoCoordinate()
-	 */
-	@Override
-	public WGS84LatLngCoordinate getCenterGeoCoordinate() {
-		GeoPosition jxGeoPosition = this.getJXMapViewerWrapper().getCenterPosition();
-		if (jxGeoPosition!=null) {
-			return new WGS84LatLngCoordinate(jxGeoPosition.getLatitude(), jxGeoPosition.getLongitude());
-		}
-		return null;
+	public void initialize(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer, WGS84LatLngCoordinate centerGeoCoordinate) {
+		this.visViewer = visViewer;
+		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(centerGeoCoordinate));
+		this.isJungReScalingCalled();
 	}
 	
 	/* (non-Javadoc)
@@ -120,18 +107,7 @@ public class OSMMapRenderer implements MapRenderer {
 	 */
 	@Override
 	public Point2D getPositionOnScreen(WGS84LatLngCoordinate wgsCoordinate) {
-		
-		Point2D mapPos = GeoUtil.getBitmapCoordinate(this.convertToGeoPosition(wgsCoordinate), this.getJXMapViewerWrapper().getZoom(), this.getJXMapViewerWrapper().getTileFactory().getInfo());
-		mapPos = this.getJXMapViewerWrapper().convertGeoPositionToPoint(this.convertToGeoPosition(wgsCoordinate));
-		Point2D centerPos = this.getJXMapViewerWrapper().getCenter();
-		
-		Dimension view = this.getJXMapViewerWrapper().getSize();
-		
-		double xScreen = centerPos.getX() - mapPos.getX();
-		double yScreen = centerPos.getY() - mapPos.getY();
-		
-        return new Point2D.Double(xScreen, yScreen);
-        
+        return this.getJXMapViewerWrapper().convertGeoPositionToPoint(this.convertToGeoPosition(wgsCoordinate));
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapRenderer#getGeoCoordinate(java.awt.geom.Point2D)
@@ -151,18 +127,14 @@ public class OSMMapRenderer implements MapRenderer {
 	@Override
 	public void paintMap(Graphics2D graphics, MapRendererSettings mapRendererSettings) {
 
-		// --- Set current working instances ------------------------
-		this.setGraphics2D(graphics);
-		this.setMapRendererSettings(mapRendererSettings);
-		
 		// --- Check if a Jung re-scaling is required and called ----
 		if (this.isJungReScalingCalled()==true) {
-			mapRendererSettings.getVisualizationViewer().repaint();
+			OSMMapRenderer.this.visViewer.repaint();
 			return;
 		}
 		
 		// --- Set clip and configure JXMapViewer -------------------
-		Dimension visDim = mapRendererSettings.getVisualizationDimension();
+		Dimension visDim = this.visViewer.getSize();
 		graphics.setClip(0, 0, visDim.width, visDim.height);
 		
 		GeoPosition geoPosCenter = this.convertToGeoPosition(mapRendererSettings.getCenterPostion());
@@ -174,13 +146,21 @@ public class OSMMapRenderer implements MapRenderer {
 		this.getJXMapViewerWrapper().setBounds(visDim);
 		this.getJXMapViewerWrapper().setZoom(this.getZoomController().getZoomLevel().getJXMapViewerZoomLevel());
 		
-		if (isPrintOverlay==true) {
+		if (isPrintWaypointOverlay==true) {
 			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
-			isPrintOverlay = false;
+			isPrintWaypointOverlay = false;
 		}
 		
 		// --- Paint to the specified graphics object ---------------
 		this.getJXMapViewerWrapper().paintComponent(graphics);
+	}
+	
+	/**
+	 * Return the center GeoPosition of the map shown.
+	 * @return the center GeoPosition
+	 */
+	public GeoPosition getCenterGeoCoordinate() {
+		return this.getJXMapViewerWrapper().getCenterPosition();
 	}
 	
 	/**
@@ -211,8 +191,8 @@ public class OSMMapRenderer implements MapRenderer {
 			}
 			
 			// --- Get current scaling ------------------------------ 
-			MutableTransformer layoutTransformer = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-			MutableTransformer viewTransformer = this.getMapRendererSettings().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+			MutableTransformer layoutTransformer = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+			MutableTransformer viewTransformer = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
 			double modelScale = layoutTransformer.getScale();
 			double viewScale = viewTransformer.getScale();
 			double scale = modelScale * viewScale;
@@ -223,8 +203,6 @@ public class OSMMapRenderer implements MapRenderer {
 			// --- Check if the scaling needs to adjusted -----------
 			double scaleDiff = Math.abs(scale - zl.getJungScaling());
 			if (scaleDiff > 0.01) {
-				requiresJungReScaling = true;
-				this.setZoomLevel(zl);
 				if (this.isDebugJungRescalling==true) {
 					String classNamePrefix = "[" + this.getClass().getSimpleName() + "] ";
 					System.out.println(classNamePrefix + "Current Map Resolution. " + (1.0/scale) + " m/px" );
@@ -232,6 +210,9 @@ public class OSMMapRenderer implements MapRenderer {
 					System.out.println(classNamePrefix + "Jung re-scaling required ! - Try " + zl);
 					System.out.println();
 				}
+				// --- Set the new zoom level -----------------------
+				this.setZoomLevel(zl);
+				requiresJungReScaling = true;
 			}
 			
 		} catch (Exception ex) {
@@ -244,8 +225,7 @@ public class OSMMapRenderer implements MapRenderer {
 	
 	private WaypointPainter<Waypoint> getWaypointPainter(MapRendererSettings mapRendererSettings) {
 		
-		Dimension visViewerDim = mapRendererSettings.getVisualizationViewer().getSize();
-		
+		Dimension visViewerDim = this.visViewer.getSize();
 		Set<Waypoint> waypoints = new HashSet<Waypoint>(Arrays.asList(
 				new DefaultWaypoint(this.getJXMapViewerWrapper().convertPointToGeoPosition(new Point2D.Double(0, 0))),
 				new DefaultWaypoint(this.getJXMapViewerWrapper().convertPointToGeoPosition(new Point2D.Double(0, visViewerDim.getHeight()))),
@@ -270,51 +250,4 @@ public class OSMMapRenderer implements MapRenderer {
 		return new GeoPosition(wgs84coord.getLatitude(), wgs84coord.getLongitude());
 	}
 	
-	
-	/**
-	 * Gets the graphics 2D instance.
-	 * @return the graphics
-	 */
-	public Graphics2D getGraphics2D() {
-		return graphics;
-	}
-	/**
-	 * Sets the graphics 2D instance.
-	 * @param graphics the new graphics 12
-	 */
-	public void setGraphics2D(Graphics2D graphics) {
-		this.graphics = graphics;
-	}
-	
-	/**
-	 * Gets the map renderer settings.
-	 * @return the mapRendererSettings
-	 */
-	public MapRendererSettings getMapRendererSettings() {
-		return mapRendererSettings;
-	}
-	/**
-	 * Sets the map renderer settings.
-	 * @param mapRendererSettings the mapRendererSettings to set
-	 */
-	public void setMapRendererSettings(MapRendererSettings mapRendererSettings) {
-		this.setNewMapRendererSettings(this.mapRendererSettings==null || mapRendererSettings!=this.mapRendererSettings);
-		this.mapRendererSettings = mapRendererSettings;
-	}
-	
-	/**
-	 * Checks if is new map renderer settings.
-	 * @return true, if is new map renderer settings
-	 */
-	public boolean isNewMapRendererSettings() {
-		return this.newMapRendererSettings;
-	}
-	/**
-	 * Sets the new map renderer settings.
-	 * @param newMapRendererSettings the new new map renderer settings
-	 */
-	private void setNewMapRendererSettings(boolean newMapRendererSettings) {
-		this.newMapRendererSettings = newMapRendererSettings;
-	}
-
 }

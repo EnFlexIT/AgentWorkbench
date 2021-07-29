@@ -8,7 +8,7 @@
                 <utmLongitudeZone>32</utmLongitudeZone>
                 <utmLatitudeZone>U</utmLatitudeZone>
                 <mapScale>m</mapScale>
-                <mapTileTransparency>0</mapTileTransparency>
+                <mapTileTransparency>20</mapTileTransparency>
             </value>
         </entry>
     </mapSettingsList>
@@ -27,6 +27,14 @@
                 <id>n1</id>
                 <type>Kreis</type>
                 <graphElementIDs>PP1</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n2</key>
+            <value>
+                <id>n2</id>
+                <type>Kreis</type>
+                <graphElementIDs>PP2</graphElementIDs>
             </value>
         </entry>
     </networkComponentList>

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
@@ -21,22 +20,9 @@ import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 public class MapRendererSettings implements Serializable {
 
 	private static final long serialVersionUID = -5126554545457917787L;
-	
-	private BasicGraphGuiVisViewer<?, ?> visViewer;
 
-	private Dimension visualizationDimension;
-	private Rectangle2D landscapeDimension;
-
-	private WGS84LatLngCoordinate topLeftPosition;
-	private WGS84LatLngCoordinate topRightPosition;
-	
 	private WGS84LatLngCoordinate centerPostion;
-	
-	private WGS84LatLngCoordinate bottomLeftPosition;
-	private WGS84LatLngCoordinate bottomRightPosition;
-	
 	private int mapTileTransparency = 0;
-	
 	
 	/**
 	 * Instantiates new visual map print settings.
@@ -44,7 +30,6 @@ public class MapRendererSettings implements Serializable {
 	 * @param at the AffineTransform to transform to Jung coordinates
 	 */
 	public MapRendererSettings(BasicGraphGuiVisViewer<?,?> visViewer) {
-		this.setVisualizationViewer(visViewer);
 		this.initialize(visViewer);
 	}
 	/**
@@ -62,24 +47,11 @@ public class MapRendererSettings implements Serializable {
 		TransformerForGraphNodePosition cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();
 
-//		UTMCoordinate topLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, 0), isPrintTransformation);
-//        UTMCoordinate topRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), 0), isPrintTransformation);
-//        UTMCoordinate bottomLeftCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(0, vvDim.getHeight()), isPrintTransformation);
-//        UTMCoordinate bottomRightCoordinate = this.getUTMCoordinate(cspt, at, new Point2D.Double(vvDim.getWidth(), vvDim.getHeight()), isPrintTransformation);
-//
-//        this.setTopLeftPosition(topLeftCoordinate.getWGS84LatLngCoordinate());
-//		this.setTopRightPosition(topRightCoordinate.getWGS84LatLngCoordinate());
-//		this.setBottomLeftPosition(bottomLeftCoordinate.getWGS84LatLngCoordinate());
-//		this.setBottomRightPosition(bottomRightCoordinate.getWGS84LatLngCoordinate());
-		
 		double centerX = vvDim.getWidth()  / 2.0;
 		double centerY = vvDim.getHeight() / 2.0;
 		this.setCenterPostion(this.getWGS84LatLngCoordinate(cspt, at, new Point2D.Double(centerX, centerY), isPrintTransformation));
 		
 		this.setMapTileTransparency(cspt.getMapSettings().getMapTileTransparency());
-
-		this.setVisualizationDimension(vvDim);
-//		this.calcLandscapeDimension(topLeftCoordinate, bottomRightCoordinate);
 	}
 	
 	/**
@@ -154,28 +126,6 @@ public class MapRendererSettings implements Serializable {
 	}
 	
 	
-	public BasicGraphGuiVisViewer<?, ?> getVisualizationViewer() {
-		return visViewer;
-	}
-	public void setVisualizationViewer(BasicGraphGuiVisViewer<?, ?> visViewer) {
-		this.visViewer = visViewer;
-	}
-	
-	
-	public WGS84LatLngCoordinate getTopLeftPosition() {
-		return topLeftPosition;
-	}
-	public void setTopLeftPosition(WGS84LatLngCoordinate topLeftPosition) {
-		this.topLeftPosition = topLeftPosition;
-	}
-	
-	
-	public WGS84LatLngCoordinate getTopRightPosition() {
-		return topRightPosition;
-	}
-	public void setTopRightPosition(WGS84LatLngCoordinate topRightPosition) {
-		this.topRightPosition = topRightPosition;
-	}
 	
 	
 	public WGS84LatLngCoordinate getCenterPostion() {
@@ -185,23 +135,6 @@ public class MapRendererSettings implements Serializable {
 		this.centerPostion = centerPostion;
 	}
 	
-	
-	public WGS84LatLngCoordinate getBottomLeftPosition() {
-		return bottomLeftPosition;
-	}
-	public void setBottomLeftPosition(WGS84LatLngCoordinate bottomLeftPosition) {
-		this.bottomLeftPosition = bottomLeftPosition;
-	}
-	
-	
-	public WGS84LatLngCoordinate getBottomRightPosition() {
-		return bottomRightPosition;
-	}
-	public void setBottomRightPosition(WGS84LatLngCoordinate bottomRightPosition) {
-		this.bottomRightPosition = bottomRightPosition;
-	}
-	
-	
 	public int getMapTileTransparency() {
 		return mapTileTransparency;
 	}
@@ -209,32 +142,6 @@ public class MapRendererSettings implements Serializable {
 		this.mapTileTransparency = mapTileTransparency;
 	}
 
-	
-	public Dimension getVisualizationDimension() {
-		return visualizationDimension;
-	}
-	public void setVisualizationDimension(Dimension visualizationDimension) {
-		this.visualizationDimension = visualizationDimension;
-	}
 
-	
-	public Rectangle2D getLandscapeDimension() {
-		return landscapeDimension;
-	}
-	public void setLandscapeDimension(Rectangle2D landscapeDimension) {
-		this.landscapeDimension = landscapeDimension;
-	}
-	/**
-	 * Calculate the landscape dimensions in meter.
-	 *
-	 * @param topLeftCoordinate the top left  UTM coordinate
-	 * @param bottomRightCoordinate the bottom right UTM coordinate
-	 * @return the dimension 2 D
-	 */
-	private void calcLandscapeDimension(UTMCoordinate topLeftCoordinate, UTMCoordinate bottomRightCoordinate) {
-		double widthInMeter = Math.abs(topLeftCoordinate.getEasting()- bottomRightCoordinate.getEasting());
-		double heightInMeter = Math.abs(topLeftCoordinate.getNorthing() - bottomRightCoordinate.getNorthing());
-		this.landscapeDimension = new Rectangle2D.Double(0, 0, widthInMeter, heightInMeter);
-	}
 	
 }

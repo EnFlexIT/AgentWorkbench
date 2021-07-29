@@ -45,6 +45,8 @@ import org.osgi.service.prefs.BackingStoreException;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import de.enflexit.common.PathHandling;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
+import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -186,13 +188,30 @@ public final class GraphGlobals {
 		GraphNode[] nodes = graphNodes.toArray(new GraphNode[graphNodes.size()]);
 		for (int i = 0; i < nodes.length; i++) {
 			
-			double x = nodes[i].getPosition().getX();
-			double y = nodes[i].getPosition().getY();
-			if (firstNodeAdded==false) {
-				rect.setRect(x, y, 0, 0);
-				firstNodeAdded = true;
+			try {
+
+				// --- Check if the coordinate needs to be converted ---------- 
+				AbstractCoordinate coordToUse = null;
+				AbstractCoordinate coord = nodes[i].getCoordinate();
+				if (coord instanceof WGS84LatLngCoordinate) {
+					coordToUse = ((WGS84LatLngCoordinate) coord).getUTMCoordinate();
+				} else {
+					coordToUse = coord;
+				}
+				
+				// --- Get x and y to be integrated in the result ------------- 
+				double x = coordToUse.getX();
+				double y = coordToUse.getY();
+				if (firstNodeAdded==false) {
+					rect.setRect(x, y, 0, 0);
+					firstNodeAdded = true;
+				}
+				rect.add(x, y);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-			rect.add(x, y);
+			
 		}
 		return rect;
 	}

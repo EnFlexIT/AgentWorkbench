@@ -29,7 +29,6 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	public static final float SCALE_FACTOR_OUT = 1.0f / 1.1f;
 	
 	private double graphMargin = BasicGraphGui.graphMargin;
-	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);
 	
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGui;
@@ -115,22 +114,32 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	
 	
 	/**
-	 * Gets the default point to scale at for zooming.
-	 * @return the default scale at point
+	 * Returns the center point of the visualization viewer in Pixel coordinates determined by its size.
+	 * Can be used as default point to scale the visualization viewer and the graph representation.
+	 * @return the visualization viewer center
 	 */
-	private Point2D getDefaultScaleAtPoint() {
+	protected Point2D getVisualizationViewerCenter() {
 		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
 		if (rectVis.isEmpty()==false) {
-			this.defaultScaleAtPoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
+			return new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
 		}
-		return defaultScaleAtPoint;
+		return new Point2D.Double(this.graphMargin, this.graphMargin);
 	}
 	/**
-	 * Sets the default point to scale at for zooming..
-	 * @param scalePoint the new default scale at point
+	 * Sets the visualization viewer selected and thus allows zoom actions.
 	 */
-	private void setDefaultScaleAtPoint(Point2D scalePoint) {
-		defaultScaleAtPoint = scalePoint;
+	protected void setVisualizationViewerSelected() {
+		// --- Set selected frame to the parent internal frame ------
+		BasicGraphGuiRootJSplitPane parentInternalFrame = this.getGraphEnvironmentController().getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
+		if (parentInternalFrame.isSelected()==false) {
+			try {
+				parentInternalFrame.setSelected(true);
+			} catch (PropertyVetoException pvEx) {
+				pvEx.printStackTrace();
+			}
+		}
+		// --- Set the action on top to false -----------------------
+		this.getVisualizationViewer().setActionOnTop(false);
 	}
 	
 	
@@ -139,7 +148,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	 */
 	@Override
 	public void zoomIn() {
-		this.zoomIn(this.getDefaultScaleAtPoint());
+		this.zoomIn(this.getVisualizationViewerCenter());
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.ZoomController#zoomIn(java.awt.geom.Point2D)
@@ -153,7 +162,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	 */
 	@Override
 	public void zoomOut() {
-		this.zoomOut(this.getDefaultScaleAtPoint());
+		this.zoomOut(this.getVisualizationViewerCenter());
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.ZoomController#zoomOut(java.awt.geom.Point2D)
@@ -169,18 +178,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 	 * @param zoomAtPoint the zoom at point
 	 */
 	private void zoom(float scaleAmount, Point2D zoomAtPoint) {
-		
-		// --- Set selected frame to the parent internal frame ------
-		BasicGraphGuiRootJSplitPane parentInternalFrame = this.getGraphEnvironmentController().getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane();
-		if (parentInternalFrame.isSelected()==false) {
-			try {
-				parentInternalFrame.setSelected(true);
-			} catch (PropertyVetoException pvEx) {
-				pvEx.printStackTrace();
-			}
-		}
-		
-		// --- Scale the graph to the scale amount ------------------
+		this.setVisualizationViewerSelected();
 		this.getScalingControl().scale(this.getVisualizationViewer(), scaleAmount, zoomAtPoint);	
 	}
 	
@@ -220,7 +218,6 @@ public class BasicGraphGuiZoomController implements ZoomController {
 		// ----------------------------------------------------------
 		// --- Get coordinate systems position ----------------------
 		Point2D coordinateSourcePoint = CoordinateSystemSourcePosition.getCoordinateSystemSourcePointInVisualizationViewer(visViewer, this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings());
-		this.setDefaultScaleAtPoint(coordinateSourcePoint);
 		
 		// ----------------------------------------------------------
 		// --- Reset view and layout to identity -------------------- 
@@ -235,9 +232,14 @@ public class BasicGraphGuiZoomController implements ZoomController {
 
 		// --- Transform coordinate to LayoutSettings ---------------
 		TransformerForGraphNodePosition positionTransformer = this.getBasicGraphGui().getCoordinateSystemPositionTransformer();
-		Point2D visualPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
-		moveX = visualPosition.getX() + coordinateSourcePoint.getX();
-		moveY = visualPosition.getY() + coordinateSourcePoint.getY();
+		Point2D jungPosition = null;
+		if (this.basicGraphGui.isDoMapPreRendering()==true) {
+			jungPosition = new Point2D.Double(moveX, -moveY); // TODO!
+		} else {
+			jungPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
+		}
+		moveX = jungPosition.getX() + coordinateSourcePoint.getX();
+		moveY = jungPosition.getY() + coordinateSourcePoint.getY();
 		
 		// --- Set focus movement -----------------------------------
 		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(moveX, moveY);

@@ -217,6 +217,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		int paintTrialsMax = 3;
 		Exception lastException = null;
 		
+		boolean debugPrintPaintSource = false;
 		boolean successfulPainted = false;
 		while (successfulPainted==false) {
 			
@@ -226,10 +227,12 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 				if (this.isActionOnTop()==true || paintTrials > paintTrialsMax) {
 					Graphics2D g2d = (Graphics2D)graphics;
 					g2d.drawImage(offscreen, null, 0, 0);
+					if (debugPrintPaintSource) System.out.println("Offscreen printed");
 					if (paintTrials > paintTrialsMax) break;
 					
 				} else {
 					super.paintComponent(graphics);
+					if (debugPrintPaintSource) System.out.println("Regular printed!");
 					
 				}
 				successfulPainted = true;

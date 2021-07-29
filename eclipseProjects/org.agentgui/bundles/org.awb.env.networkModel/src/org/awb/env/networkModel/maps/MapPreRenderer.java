@@ -77,15 +77,15 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 		if (mr!=null) {
 
 			// --- Get the center of the graph to show --------------
-			Rectangle2D graphRect = GraphGlobals.getGraphSpreadDimension(this.visViewer.getGraphLayout().getGraph());
+			Rectangle2D graphRectUTM = GraphGlobals.getGraphSpreadDimension(this.visViewer.getGraphLayout().getGraph());
 			
 			// --- Get the center UTM / WGS84 coordinate ------------
 			MapSettings mapSet = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings();
-			UTMCoordinate centerUTMCoordinate = new UTMCoordinate(mapSet.getUTMLongitudeZone(), mapSet.getUTMLatitudeZone(), graphRect.getCenterX(), graphRect.getCenterY());
+			UTMCoordinate centerUTMCoordinate = new UTMCoordinate(mapSet.getUTMLongitudeZone(), mapSet.getUTMLatitudeZone(), graphRectUTM.getCenterX(), graphRectUTM.getCenterY());
 			WGS84LatLngCoordinate centerWGSCoordinate = centerUTMCoordinate.getWGS84LatLngCoordinate(); 
 			
 			// --- Set center coordinate to renderer ----------------
-			mr.setCenterGeoCoordinate(centerWGSCoordinate);
+			mr.initialize(this.visViewer, centerWGSCoordinate);
 		}
 	}
 	

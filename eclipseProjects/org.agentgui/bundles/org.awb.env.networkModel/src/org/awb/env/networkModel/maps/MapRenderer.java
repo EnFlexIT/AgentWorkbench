@@ -3,6 +3,8 @@ package org.awb.env.networkModel.maps;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
@@ -18,17 +20,14 @@ import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 public interface MapRenderer {
 
 	/**
-	 * Will be invoked to set the geographical center location.
-	 * @param geoCoordinate the new geographical center location
+	 * Will be invoked to initialize the individual MapRenderer. Here also the initial zoom level (and others) should be set
+	 * to allow a correct calculation between geographical coordinate and position on screen.   
+	 *
+	 * @param visViewer the {@link BasicGraphGuiVisViewer} that visualizes the graph and call the current MapRenderer. Use this, e.g. to determine the current visualization size. 
+	 * @param centerGeoCoordinate the current geographical location in the center of the visViewer
 	 */
-	public void setCenterGeoCoordinate(WGS84LatLngCoordinate geoCoordinate);
+	public void initialize(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer, WGS84LatLngCoordinate centerGeoCoordinate);
 
-	/**
-	 * Has to return the current center geographical coordinate.
-	 * @return the center geographical coordinate
-	 */
-	public WGS84LatLngCoordinate getCenterGeoCoordinate();
-	
 	
 	/**
 	 * Has to return the position on screen for the specified WGS84 coordinate.
