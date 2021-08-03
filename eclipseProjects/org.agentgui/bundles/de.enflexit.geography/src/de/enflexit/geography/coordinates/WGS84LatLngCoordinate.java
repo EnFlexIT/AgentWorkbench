@@ -19,7 +19,7 @@ import gov.nasa.worldwind.geom.coords.UTMCoord;
     "latitude",
     "longitude"
 })
-public class WGS84LatLngCoordinate extends AbstractCoordinate {
+public class WGS84LatLngCoordinate extends AbstractGeoCoordinate {
 	
 	private static final long serialVersionUID = -4543228960997341395L;
 	

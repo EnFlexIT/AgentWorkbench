@@ -215,56 +215,66 @@ public class BasicGraphGuiZoomController implements ZoomController {
 		
 		if (visViewer.getVisibleRect().isEmpty()) return;
 
-		// ----------------------------------------------------------
-		// --- Get coordinate systems position ----------------------
-		Point2D coordinateSourcePoint = CoordinateSystemSourcePosition.getCoordinateSystemSourcePointInVisualizationViewer(visViewer, this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings());
-		
-		// ----------------------------------------------------------
-		// --- Reset view and layout to identity -------------------- 
-		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-		
-		// ----------------------------------------------------------
-		// --- Calculate the movement in the view -------------------
-		Rectangle2D graphRectangle = GraphGlobals.getGraphSpreadDimension(visViewer.getGraphLayout().getGraph());
-		double moveX = (graphRectangle.getX() * (-1)) + this.graphMargin;
-		double moveY = (graphRectangle.getY() * (-1)) + this.graphMargin;
+		try {
+			// --- Pause GraphNode refreshment --------------------------------
+			this.getVisualizationViewer().getBasicGraphGuiStaticLayout().setRefreshGraphNodePositionPaused(true);
 
-		// --- Transform coordinate to LayoutSettings ---------------
-		TransformerForGraphNodePosition positionTransformer = this.getBasicGraphGui().getCoordinateSystemPositionTransformer();
-		Point2D jungPosition = null;
-		if (this.basicGraphGui.isDoMapPreRendering()==true) {
-			jungPosition = new Point2D.Double(moveX, -moveY); // TODO!
-		} else {
-			jungPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
+			// ----------------------------------------------------------------
+			// --- Get coordinate systems position ----------------------------
+			Point2D coordinateSourcePoint = CoordinateSystemSourcePosition.getCoordinateSystemSourcePointInVisualizationViewer(visViewer, this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings());
+			
+			// ----------------------------------------------------------------
+			// --- Reset view and layout to identity --------------------------
+			visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+			visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+			
+			// ----------------------------------------------------------------
+			// --- Calculate the movement in the view -------------------------
+			Rectangle2D graphRectangle = GraphGlobals.getGraphSpreadDimension(visViewer.getGraphLayout().getGraph());
+			double moveX = (graphRectangle.getX() * (-1)) + this.graphMargin;
+			double moveY = (graphRectangle.getY() * (-1)) + this.graphMargin;
+
+			// --- Transform coordinate to LayoutSettings ---------------------
+			TransformerForGraphNodePosition positionTransformer = this.getVisualizationViewer().getCoordinateSystemPositionTransformer();
+			if (this.basicGraphGui.isDoMapPreRendering()==true) {
+				positionTransformer = new TransformerForGraphNodePosition(this.getGraphEnvironmentController());
+			}
+			Point2D jungPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
+			moveX = jungPosition.getX() + coordinateSourcePoint.getX();
+			moveY = jungPosition.getY() + coordinateSourcePoint.getY();
+			
+			// --- Set focus movement -----------------------------------------
+			visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(moveX, moveY);
+			if (scaleAtCoordinateSource==false) return;
+
+			
+			// ----------------------------------------------------------------		
+			// --- Calculate the scaling --------------------------------------
+			double graphWidth = graphRectangle.getWidth() + 2 * this.graphMargin;
+			double graphHeight = graphRectangle.getHeight() + 2 * this.graphMargin;
+			Point2D farthestCorner = positionTransformer.transform(new Point2D.Double(graphWidth, graphHeight));
+			graphWidth = Math.abs(farthestCorner.getX());
+			graphHeight = Math.abs(farthestCorner.getY());
+			
+			double visWidth = visViewer.getVisibleRect().getWidth();
+			double visHeight = visViewer.getVisibleRect().getHeight();
+
+			double scaleX = visWidth / graphWidth;
+			double scaleY = visHeight / graphHeight;
+			
+			// --- Set scaling ------------------------------------------------
+			double scale = Math.min(scaleX, scaleY);;
+			if (scale!= 0 && scale!=1) {
+				this.getScalingControl().scale(visViewer, (float) scale, coordinateSourcePoint);
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			// --- Release GraphNode refreshment ------------------------------
+			this.getVisualizationViewer().getBasicGraphGuiStaticLayout().setRefreshGraphNodePositionPaused(false);
 		}
-		moveX = jungPosition.getX() + coordinateSourcePoint.getX();
-		moveY = jungPosition.getY() + coordinateSourcePoint.getY();
 		
-		// --- Set focus movement -----------------------------------
-		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(moveX, moveY);
-		if (scaleAtCoordinateSource==false) return;
-
-		
-		// ----------------------------------------------------------		
-		// --- Calculate the scaling --------------------------------
-		double graphWidth = graphRectangle.getWidth() + 2 * this.graphMargin;
-		double graphHeight = graphRectangle.getHeight() + 2 * this.graphMargin;
-		Point2D farthestCorner = positionTransformer.transform(new Point2D.Double(graphWidth, graphHeight));
-		graphWidth = Math.abs(farthestCorner.getX());
-		graphHeight = Math.abs(farthestCorner.getY());
-		
-		double visWidth = visViewer.getVisibleRect().getWidth();
-		double visHeight = visViewer.getVisibleRect().getHeight();
-
-		double scaleX = visWidth / graphWidth;
-		double scaleY = visHeight / graphHeight;
-		
-		// --- Set scaling ------------------------------------------
-		double scale = Math.min(scaleX, scaleY);;
-		if (scale!= 0 && scale!=1) {
-			this.getScalingControl().scale(visViewer, (float) scale, coordinateSourcePoint);
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -277,6 +287,8 @@ public class BasicGraphGuiZoomController implements ZoomController {
 		if (nodesPicked.size()!=0) {
 			List<NetworkComponent> components = this.getGraphEnvironmentController().getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
 			if (components!=null && components.size()!=0) {
+				// --- Pause GraphNode refreshment ------------------
+				this.getVisualizationViewer().getBasicGraphGuiStaticLayout().setRefreshGraphNodePositionPaused(true);
 				// --- Get the dimension of the selected nodes ------ 
 				Rectangle2D areaSelected = GraphGlobals.getGraphSpreadDimension(nodesPicked);
 				Point2D areaCenter = new Point2D.Double(areaSelected.getCenterX(), areaSelected.getCenterY());
@@ -291,7 +303,9 @@ public class BasicGraphGuiZoomController implements ZoomController {
 				final double dy = (visViewCenter.getY() - tmpNodePos.getY());
 				// --- Remove temporary GraphNode and move view -----
 				this.getVisualizationViewer().getGraphLayout().getGraph().removeVertex(tmpNode);
-				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy); 
+				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
+				// --- Release GraphNode refreshment ----------------
+				this.getVisualizationViewer().getBasicGraphGuiStaticLayout().setRefreshGraphNodePositionPaused(false);
 			}
 		}
 	}

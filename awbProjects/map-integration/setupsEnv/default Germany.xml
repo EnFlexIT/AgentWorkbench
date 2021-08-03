@@ -8,7 +8,8 @@
                 <utmLongitudeZone>32</utmLongitudeZone>
                 <utmLatitudeZone>U</utmLatitudeZone>
                 <mapScale>m</mapScale>
-                <mapTileTransparency>20</mapTileTransparency>
+                <mapServiceName>AWB-OpenStreetMaps</mapServiceName>
+                <mapTileTransparency>0</mapTileTransparency>
             </value>
         </entry>
     </mapSettingsList>
@@ -35,6 +36,14 @@
                 <id>n2</id>
                 <type>Kreis</type>
                 <graphElementIDs>PP2</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n3</key>
+            <value>
+                <id>n3</id>
+                <type>Kreis</type>
+                <graphElementIDs>PP3</graphElementIDs>
             </value>
         </entry>
     </networkComponentList>

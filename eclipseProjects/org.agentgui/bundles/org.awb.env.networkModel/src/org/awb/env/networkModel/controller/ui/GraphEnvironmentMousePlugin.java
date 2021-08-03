@@ -140,7 +140,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * @return the graph node position transformer
 	 */
 	private TransformerForGraphNodePosition getCoordinateSystemNodePositionTransformer() {
-		return this.basicGraphGUI.getCoordinateSystemPositionTransformer();
+		return this.getVisViewer().getCoordinateSystemPositionTransformer();
 	}
 	
 	/**
@@ -315,6 +315,10 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mousePressed(MouseEvent me) {
 		
+		// --- Release the "action on top" ----------------
+		this.getVisViewer().setActionOnTop(false);
+
+		// --- Check for paste action first ---------------
 		if (this.isPasteAction==true) {
 			if (SwingUtilities.isLeftMouseButton(me)) {
 				// --- Finalize paste action --------------

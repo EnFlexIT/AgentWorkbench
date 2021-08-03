@@ -99,6 +99,7 @@ import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
 import de.enflexit.common.swing.imageFileSelection.ImageUtils;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
+import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import de.enflexit.geography.coordinates.ui.GeoCoordinateDialog;
@@ -113,7 +114,6 @@ import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
@@ -482,26 +482,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Returns the current {@link BasicGraphGuiStaticLayout} that is used in the current visualization viewer.
 	 * @return the BasicGraphGuiStaticLayout or <code>null</code>
 	 */
-	private BasicGraphGuiStaticLayout getBasicGraphGuiStaticLayout() {
-		ObservableCachingLayout<GraphNode, GraphEdge> oLayout = (ObservableCachingLayout<GraphNode, GraphEdge>) this.getVisualizationViewer().getGraphLayout();
-		if (oLayout.getDelegate() instanceof BasicGraphGuiStaticLayout) {
-			return (BasicGraphGuiStaticLayout) oLayout.getDelegate();
-		}
-		return null;
+	public BasicGraphGuiStaticLayout getBasicGraphGuiStaticLayout() {
+		return this.getVisualizationViewer().getBasicGraphGuiStaticLayout();
 	}
 	/**
 	 * Returns the position transformer that considers the directions of the defined coordinate system.
 	 * @return the TransformerForGraphNodePosition
-	 * 
-	 * @see LayoutSettings
 	 */
 	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
-		BasicGraphGuiStaticLayout staticLayout = this.getBasicGraphGuiStaticLayout();
-		if (staticLayout!=null) {
-			return staticLayout.getCoordinateSystemPositionTransformer();
-		}
-		return null;
+		return this.getVisualizationViewer().getCoordinateSystemPositionTransformer();
 	}
+	
 	
 	/**
 	 * Gets the graph zoom scroll pane.
@@ -537,7 +528,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
 			
 			// --- Set the pick size of the visualization viewer --------------
-			visView.setPickSupport(new GraphEnvironmentShapePickSupport(this, 5));
+			visView.setPickSupport(new GraphEnvironmentShapePickSupport(visView, 5));
 			
 			// --- Add an item listener for pickings --------------------------
 			visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
@@ -779,7 +770,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 
 			// --- Set edge renderer for a background color of an edge --------
-			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(this) {
+			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(visView) {
 				@Override
 				public boolean isShowMarker(GraphEdge edge) {
 					return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
@@ -1138,8 +1129,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ------------------------------------------------------
 			// --- Edit geographical coordinates --------------------			
 			// ------------------------------------------------------
+			AbstractGeoCoordinate olgGeoCoordinate = (AbstractGeoCoordinate) oldCoordinate;
 			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, oldCoordinate);
+			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, olgGeoCoordinate);
 			// - - - - Wait for user - - - - -
 			if (geoDialog.isCanceled()==true) return;
 			

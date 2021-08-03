@@ -37,6 +37,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
+import org.awb.env.networkModel.positioning.GraphNodePositionTreeMap;
 
 import de.enflexit.common.SerialClone;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
@@ -57,7 +58,7 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	
 	/** The GraphNode's position in a visualization */
 	private AbstractCoordinate coordinate;
-	private TreeMap<String, AbstractCoordinate> positionTreeMap;
+	private GraphNodePositionTreeMap positionTreeMap;
 
 	private Object dataModel;
 	protected TreeMap<String, String> dataModelStorageSettings;
@@ -131,9 +132,9 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	 * Returns the position tree map that distinguishes positions for different layouts.
 	 * @return the position tree map
 	 */
-	public TreeMap<String, AbstractCoordinate> getPositionTreeMap() {
+	public GraphNodePositionTreeMap getPositionTreeMap() {
 		if (positionTreeMap==null) {
-			positionTreeMap = new TreeMap<>();
+			positionTreeMap = new GraphNodePositionTreeMap();
 		}
 		return positionTreeMap;
 	}
@@ -141,7 +142,7 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	 * Sets the position tree map.
 	 * @param positionTreeMap the position tree map
 	 */
-	public void setPositionTreeMap(TreeMap<String, AbstractCoordinate> positionTreeMap) {
+	private void setPositionTreeMap(GraphNodePositionTreeMap positionTreeMap) {
 		this.positionTreeMap = positionTreeMap;
 	}
 	

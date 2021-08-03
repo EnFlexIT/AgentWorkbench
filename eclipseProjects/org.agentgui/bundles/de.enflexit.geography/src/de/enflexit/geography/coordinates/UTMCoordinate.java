@@ -20,7 +20,7 @@ import gov.nasa.worldwind.geom.coords.UTMCoord;
     "easting",
     "northing"
 })
-public class UTMCoordinate extends AbstractCoordinate {
+public class UTMCoordinate extends AbstractGeoCoordinate {
 
 	private static final long serialVersionUID = -938213615995403657L;
 

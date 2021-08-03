@@ -77,12 +77,42 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 	public BasicGraphGuiVisViewer<?, ?> getBasicGraphGuiVisViewer() {
 		return basicGraphGuiVisViewer;
 	}
+
 	
 	/**
-	 * Will refresh the graph node positions .
+	 * Will immediately refresh the graph node positions in the layout.
 	 */
 	public void refreshGraphNodePosition() {
-		// --- In the default case, nothing is to do here ---
+		// --- In the default layout case, nothing is to do here ----
+	}
+	/**
+	 * Will pause the refreshment of graph node position until either {@link #refreshGraphNodePosition()} 
+	 * or {@link #setRefreshGraphNodePositionPaused(boolean)} with a true parameter is called.
+	 */
+	public void pauseRefreshGraphNodePosition() {
+		// --- In the default layout case, nothing is to do here ----
+	}
+	/**
+	 * Sets the refresh graph node position paused.
+	 * @param isPaused the new refresh graph node position paused
+	 */
+	public void setRefreshGraphNodePositionPaused(boolean isPaused) {
+		// --- In the default layout case, nothing is to do here ----
+	}
+	/**
+	 * Checks if the graph node position refreshment is paused.
+	 * @return true, if is graph node position refreshment is paused
+	 */
+	public boolean isRefreshGraphNodePositionPaused() {
+		return false;
+	}
+
+	
+	/**
+	 * The dispose method will be called if the layout in the visualization viewer will be exchanged.
+	 */
+	public void dispose() {
+		// --- In the default layout case, nothing is to do here ----
 	}
 	
 }

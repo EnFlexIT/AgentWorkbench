@@ -128,8 +128,11 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
         			}
 
         			// --------------------------------------------------------
-        			// --- Invoke map tile integration ------------------------  
+        			// --- Set the clip area to paint in ----------------------
         			Graphics2D g2d = (Graphics2D) graphics;
+        			g2d.setClip(0, 0, this.lastVisViewerDimension.width, this.lastVisViewerDimension.height);
+        			
+        			// --- Invoke map tile integration / painting -------------  
         			mr.paintMap(g2d, mrs);
         			
         			// --- Just as a reminder, how map integration works ------

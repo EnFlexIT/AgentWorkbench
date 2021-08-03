@@ -29,6 +29,7 @@ import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.geography.BundleHelper;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
+import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.CoordinateConversion;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
@@ -42,7 +43,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 	
 	private static final long serialVersionUID = -7757305104129949134L;
 	
-	private AbstractCoordinate geoCoordinate;
+	private AbstractGeoCoordinate geoCoordinate;
 	
 	private KeyAdapter4Numbers numberKeyListenerDouble;
 	private boolean pauseDocumentListener;
@@ -509,7 +510,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		
 		if (this.pauseDocumentListener==true) return;
 		
-		AbstractCoordinate geoCoordinateEdited = null; 
+		AbstractGeoCoordinate geoCoordinateEdited = null; 
 		if (de.getDocument() == this.getJTextFieldWGSLatitude().getDocument()) {
 			// --- Set the WGS84 latitude value --------------------- 
 			if (this.isFullWGS84Coordinate(this.getJTextFieldWGSLatitude().getText())==false) {
@@ -560,7 +561,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		this.updateLocalCoordinate(geoCoordinateEdited);
 	}
 	
-	private void updateLocalCoordinate(AbstractCoordinate geoCoordinateEdited) {
+	private void updateLocalCoordinate(AbstractGeoCoordinate geoCoordinateEdited) {
 		
 		if (geoCoordinateEdited==null) return;
 		
@@ -579,14 +580,14 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 	 * Returns the current geographical coordinate.
 	 * @return the geographical coordinate
 	 */
-	public AbstractCoordinate getGeoCoordinate() {
+	public AbstractGeoCoordinate getGeoCoordinate() {
 		return this.geoCoordinate;
 	}
 	/**
 	 * Sets the current geographical coordinate.
 	 * @param newGeoCoordinate the new geographical coordinate
 	 */
-	public void setGeoCoordinate(AbstractCoordinate newGeoCoordinate) {
+	public void setGeoCoordinate(AbstractGeoCoordinate newGeoCoordinate) {
 		this.geoCoordinate = newGeoCoordinate;
 		if (this.geoCoordinate instanceof WGS84LatLngCoordinate) {
 			this.getJTabbedPane().setSelectedIndex(0);

@@ -63,7 +63,7 @@ public class OSMMapRenderer implements MapRenderer {
 	private JXMapViewerForAWB getJXMapViewerWrapper() {
 		if (jxMapViewer==null) {
 			jxMapViewer = new JXMapViewerForAWB();
-			jxMapViewer.setDrawTileBorders(true);
+			jxMapViewer.setDrawTileBorders(false);
 			jxMapViewer.getTileFactory().addTileListener(this.getJXTileListener());
 		}
 		return jxMapViewer;
@@ -127,31 +127,29 @@ public class OSMMapRenderer implements MapRenderer {
 	@Override
 	public void paintMap(Graphics2D graphics, MapRendererSettings mapRendererSettings) {
 
-		// --- Check if a Jung re-scaling is required and called ----
+		// --- Check if a JUNG re-scaling is required and called ----
 		if (this.isJungReScalingCalled()==true) {
 			OSMMapRenderer.this.visViewer.repaint();
 			return;
 		}
 		
-		// --- Set clip and configure JXMapViewer -------------------
-		Dimension visDim = this.visViewer.getSize();
-		graphics.setClip(0, 0, visDim.width, visDim.height);
-		
+		// --- Configure JXMapViewer --------------------------------
 		GeoPosition geoPosCenter = this.convertToGeoPosition(mapRendererSettings.getCenterPostion());
 		if (geoPosCenter!=null) {
 			this.getJXMapViewerWrapper().setAddressLocation(geoPosCenter);
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] No center geo position was specified for the map representation.");
 		}
-		this.getJXMapViewerWrapper().setBounds(visDim);
+		this.getJXMapViewerWrapper().setBounds(this.visViewer.getSize());
 		this.getJXMapViewerWrapper().setZoom(this.getZoomController().getZoomLevel().getJXMapViewerZoomLevel());
 		
-		if (isPrintWaypointOverlay==true) {
+		// --- Just for debugging purposes --------------------------
+		if (this.isPrintWaypointOverlay==true) {
 			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
-			isPrintWaypointOverlay = false;
+			this.isPrintWaypointOverlay = false;
 		}
 		
-		// --- Paint to the specified graphics object ---------------
+		// --- Paint map tiles to the specified graphics object -----
 		this.getJXMapViewerWrapper().paintComponent(graphics);
 	}
 	
@@ -164,6 +162,17 @@ public class OSMMapRenderer implements MapRenderer {
 	}
 	
 	/**
+	 * Converts a WSG84 coordinate to a JXMapViewer {@link GeoPosition}.
+	 *
+	 * @param wgs84coord the WGS84 coordinate
+	 * @return the Geo Position
+	 */	
+	public GeoPosition convertToGeoPosition(WGS84LatLngCoordinate wgs84coord) {
+		if (wgs84coord==null) return null;
+		return new GeoPosition(wgs84coord.getLatitude(), wgs84coord.getLongitude());
+	}
+	
+	/**
 	 * Sets the zoom level.
 	 * @param zoomLevel the new zoom level
 	 */
@@ -173,10 +182,10 @@ public class OSMMapRenderer implements MapRenderer {
 	}
 	
 	/**
-	 * Checks if the Jung scaling needs to be adjusted. If so, the nearest {@link ZoomLevel} 
+	 * Checks if the JUNG scaling needs to be adjusted. If so, the nearest {@link ZoomLevel} 
 	 * will be determined out of the available {@link OSMZoomLevels}.  
 	 *
-	 * @return true, if the Jung visualization was called to scale to a known ZoomLevel
+	 * @return true, if the JUNG visualization was called to re-scale to a new ZoomLevel (scale)
 	 */
 	private boolean isJungReScalingCalled() {
 		
@@ -223,6 +232,12 @@ public class OSMMapRenderer implements MapRenderer {
 	}
 
 	
+	/**
+	 * Returns the waypoint painter that will generate and print some points directly on the map.
+	 *
+	 * @param mapRendererSettings the map renderer settings
+	 * @return the waypoint painter
+	 */
 	private WaypointPainter<Waypoint> getWaypointPainter(MapRendererSettings mapRendererSettings) {
 		
 		Dimension visViewerDim = this.visViewer.getSize();
@@ -237,17 +252,6 @@ public class OSMMapRenderer implements MapRenderer {
 		WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<Waypoint>();
 		waypointPainter.setWaypoints(waypoints);
 		return waypointPainter;
-	}
-	
-	/**
-	 * Convert WSG84 coordinate to geo position.
-	 *
-	 * @param wgs84coord the wgs 84 coord
-	 * @return the geo position
-	 */	
-	protected GeoPosition convertToGeoPosition(WGS84LatLngCoordinate wgs84coord) {
-		if (wgs84coord==null) return null;
-		return new GeoPosition(wgs84coord.getLatitude(), wgs84coord.getLongitude());
 	}
 	
 }

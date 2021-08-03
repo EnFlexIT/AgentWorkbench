@@ -5,7 +5,7 @@ package de.enflexit.geography.coordinates;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class OSGBCoordinate extends AbstractCoordinate {
+public class OSGBCoordinate extends AbstractGeoCoordinate {
 
 	private static final long serialVersionUID = 2649016678473697000L;
 	

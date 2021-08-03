@@ -29,4 +29,5 @@ Export-Package: org.awb.env.maps,
  org.jxmapviewer.viewer.esri,
  org.jxmapviewer.viewer.util,
  org.jxmapviewer.viewer.wms
+Import-Package: org.slf4j
 

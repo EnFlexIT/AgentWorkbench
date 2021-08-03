@@ -11,12 +11,9 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
- * scales to the absolute value passed as an argument.
- * It first resets the scaling transformers, then uses
- * the relative CrossoverScalingControl to achieve the
- * absolute value.
- * 
- * @author Tom Nelson 
+ * The Class OSMScalingControl.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class OSMScalingControl extends CrossoverScalingControl implements ScalingControl {
 
@@ -49,11 +46,7 @@ public class OSMScalingControl extends CrossoverScalingControl implements Scalin
         double inverseModelScale = Math.sqrt(this.getCrossover())/modelScale;
         double inverseViewScale = Math.sqrt(this.getCrossover())/viewScale;
         
-        //BasicGraphGuiVisViewer<?, ?> bvv = (BasicGraphGuiVisViewer<?, ?>) vv;
-        //TransformerForGraphNodePosition cspTransformer = bvv.getCoordinateSystemPositionTransformer();
-        
         Point2D transformedAtJung = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.VIEW, at);
-        //Point2D transformedAtGraph = cspTransformer.inverseTransform(transformedAtJung);
         
         layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAtJung);
         viewTransformer.scale(inverseViewScale, inverseViewScale, at);

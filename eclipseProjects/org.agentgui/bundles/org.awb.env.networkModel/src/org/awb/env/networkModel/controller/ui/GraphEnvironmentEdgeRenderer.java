@@ -73,7 +73,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 
 	private static IntermediatePointTransformer intPointTransformer;
 	
-	private BasicGraphGui basicGraphGui;
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 	
 	private boolean markerShow = false;
 	private float markerStrokeWidth = 0;
@@ -86,8 +86,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param graphController the current GraphEnvironmentController
 	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 */
-	public GraphEnvironmentEdgeRenderer(BasicGraphGui basicGraphGui) {
-		this.basicGraphGui = basicGraphGui;
+	public GraphEnvironmentEdgeRenderer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
+		this.visViewer = visViewer;
 	}
 	
 	/**
@@ -171,7 +171,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         }
 
         // --- Do some layout checks --------------------------------------------------------------
-        LayoutSettings ls = this.basicGraphGui.getCoordinateSystemPositionTransformer().getLayoutSettings();
+        LayoutSettings ls = this.visViewer.getCoordinateSystemPositionTransformer().getLayoutSettings();
         
         boolean isLoop = v1.equals(v2);
         boolean isOrthogonalConfigurableLine = (ls.getEdgeShape()==org.awb.env.networkModel.settings.LayoutSettings.EdgeShape.ConfigurableLine && edge.getEdgeShapeConfiguration()!=null && edge.getEdgeShapeConfiguration() instanceof OrthogonalConfiguration);
@@ -205,7 +205,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 		// => ORIGINAL: edgeShape = xform.createTransformedShape(edgeShape);
 		// ----------------------------------------------------------------------------------------
         // => ADJUSTED FORM
-        edgeShape = getTransformedShape(edgeShape, this.basicGraphGui.getCoordinateSystemPositionTransformer(), xform, rc, v1, v2, isOrthogonal);
+        edgeShape = getTransformedShape(edgeShape, this.visViewer.getCoordinateSystemPositionTransformer(), xform, rc, v1, v2, isOrthogonal);
 		// ----------------------------------------------------------------------------------------
 		
         MutableTransformer vt = rc.getMultiLayerTransformer().getTransformer(Layer.VIEW);

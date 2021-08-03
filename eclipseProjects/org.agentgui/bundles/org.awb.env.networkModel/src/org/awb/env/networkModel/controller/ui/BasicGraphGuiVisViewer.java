@@ -121,6 +121,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 */
 	@Override
 	public void setGraphLayout(Layout<V, E> layout) {
+		this.disposeCurrentBasicGraphGuiStaticLayout();
 		this.setVisViewerToStaticLayout(layout);
 		super.setGraphLayout(layout);
 	}
@@ -134,6 +135,40 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 			basicGraphGuiStaticLayout.setBasicGraphGuiVisViewer(this);
 		}
 	}
+	
+	/**
+	 * Dispose current basic graph gui static layout.
+	 */
+	private void disposeCurrentBasicGraphGuiStaticLayout() {
+		BasicGraphGuiStaticLayout oldStaticLayout = this.getBasicGraphGuiStaticLayout();
+		if (oldStaticLayout!=null) {
+			oldStaticLayout.dispose();
+		}
+	}
+	
+	/**
+	 * Returns the current {@link BasicGraphGuiStaticLayout} that is used in the current visualization viewer.
+	 * @return the BasicGraphGuiStaticLayout or <code>null</code>
+	 */
+	public BasicGraphGuiStaticLayout getBasicGraphGuiStaticLayout() {
+		ObservableCachingLayout<?, ?> oLayout = (ObservableCachingLayout<?, ?>) this.getGraphLayout();
+		if (oLayout.getDelegate() instanceof BasicGraphGuiStaticLayout) {
+			return (BasicGraphGuiStaticLayout) oLayout.getDelegate();
+		}
+		return null;
+	}
+	/**
+	 * Returns the position transformer that considers the directions of the defined coordinate system.
+	 * @return the TransformerForGraphNodePosition
+	 */
+	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
+		BasicGraphGuiStaticLayout staticLayout = this.getBasicGraphGuiStaticLayout();
+		if (staticLayout!=null) {
+			return staticLayout.getCoordinateSystemPositionTransformer();
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * This Initializes the VisualizationViewer.
@@ -371,16 +406,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public boolean isDoMapPreRendering() {
 		return doMapPreRendering;
 	}
-	
-	/**
-	 * Return the coordinate system position transformer.
-	 * @return the coordinate system position transformer
-	 */
-	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
-		ObservableCachingLayout<V, E> oLayout = (ObservableCachingLayout<V, E>) this.getGraphLayout();
-		return ((BasicGraphGuiStaticLayout)oLayout.getDelegate()).getCoordinateSystemPositionTransformer();
-	}
-	
 	
 	/**
 	 * Will return a new overall, concatenated affine transform that includes graphics, layout and view.

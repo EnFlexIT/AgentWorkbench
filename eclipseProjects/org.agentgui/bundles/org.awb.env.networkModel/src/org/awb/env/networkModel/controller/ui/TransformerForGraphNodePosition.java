@@ -108,7 +108,7 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 	
 	
 	/**
-	 * Transforms the specified {@link GraphNode}s position into the position for the visualization.
+	 * Transforms the specified {@link GraphNode}s position into the position for the JUNG visualization.
 	 *
 	 * @param graphNode the graph node with its position 
 	 * @return the point 2 D
@@ -120,7 +120,7 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 	}
 	
 	/**
-	 * Transforms the specified position into the position for the visualization.
+	 * Transforms the specified position into the position for the JUNG visualization.
 	 *
 	 * @param npGraphNode the node position of a graph node
 	 * @return the point 2 D

@@ -2,7 +2,6 @@ package org.awb.env.networkModel.maps;
 
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
@@ -91,42 +90,6 @@ public class MapRendererSettings implements Serializable {
 		return wgs84;
 	}
 	
-	/**
-	 * Gets the UTM coordinate.
-	 *
-	 * @param cspTransformer the csp transformer
-	 * @param at the at
-	 * @param point2D the point 2 D
-	 * @param isPrintTransformation the is print transformation
-	 * @return the UTM coordinate
-	 */
-	private UTMCoordinate getUTMCoordinate(TransformerForGraphNodePosition cspTransformer, AffineTransform at, Point2D point2D, boolean isPrintTransformation) {
-		
-		UTMCoordinate utm = null;
-		try {
-			
-			MapSettings ms = cspTransformer.getMapSettings();
-			
-			Point2D pointJung = at.inverseTransform(point2D, null);
-			Point2D pointCoSy = cspTransformer.inverseTransform(pointJung);
-			utm = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), pointCoSy.getX(), pointCoSy.getY());
-			if (isPrintTransformation==true) {
-				System.out.println("Pos. Screen   " + point2D.getX() + ", " + point2D.getY() + "");
-				System.out.println("Pos. Jung     " + pointJung.getX() + ", " + pointJung.getY() + "");
-				System.out.println("Pos. CoordSys " + pointCoSy.getX() + ", " + pointCoSy.getY() + "");
-				System.out.println("=> UTM        " + utm.toString());
-				System.out.println();
-			}
-			
-		} catch (NoninvertibleTransformException nitEx) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Error while transforming visual coordinate into WGS84 coordinate:");
-			nitEx.printStackTrace();
-		}
-		return utm;
-	}
-	
-	
-	
 	
 	public WGS84LatLngCoordinate getCenterPostion() {
 		return centerPostion;
@@ -142,6 +105,4 @@ public class MapRendererSettings implements Serializable {
 		this.mapTileTransparency = mapTileTransparency;
 	}
 
-
-	
 }
