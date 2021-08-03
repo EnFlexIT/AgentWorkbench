@@ -35,7 +35,6 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.maps.MapSettings;
-import org.awb.env.networkModel.maps.MapSettings.MapScale;
 import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
@@ -167,19 +166,6 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 			}
 			break;
 		}
-		
-		// --- Scale the node position ? ------------------
-		MapSettings mapSettings = this.getMapSettings();
-		if (mapSettings!=null) {
-			MapScale mapScale = mapSettings.getMapScale(); 
-			if (mapScale.getScaleDivider()!=1.0) {
-				// --- Scale the UTM coordinates ----------
-				double scaledX = visualNodePosition.getX() / mapScale.getScaleDivider();
-				double scaledY = visualNodePosition.getY() / mapScale.getScaleDivider();
-				visualNodePosition = new Point2D.Double(scaledX, scaledY);
-			}
-		}
-		
 		return visualNodePosition;
 	}
 	
@@ -228,18 +214,6 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 				break;
 			}
 			break;
-		}
-		
-		// --- Scale the node position ? ------------------
-		MapSettings mapSettings = this.getMapSettings();
-		if (mapSettings!=null) {
-			MapScale mapScale = mapSettings.getMapScale(); 
-			if (mapScale.getScaleDivider()!=1.0) {
-				// --- Scale the UTM coordinates ----------
-				double unScaledX = npGraphNode.getX() * mapScale.getScaleDivider();
-				double unScaledY = npGraphNode.getY() * mapScale.getScaleDivider();
-				npGraphNode = new Point2D.Double(unScaledX, unScaledY);
-			}
 		}
 		return npGraphNode;
 	}

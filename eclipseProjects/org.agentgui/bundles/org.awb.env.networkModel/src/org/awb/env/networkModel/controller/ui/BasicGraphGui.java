@@ -628,49 +628,47 @@ public class BasicGraphGui extends JPanel implements Observer {
 					boolean picked = visView.getPickedVertexState().isPicked(node);
 					String nodeImagePath = nodeLayout.getImageReference();
 
-					if (nodeImagePath != null) {
-						if (nodeImagePath.equals("MissingIcon")==false) {
-							// --- 1. Search in the local Hash ------
-							LayeredIcon layeredIcon = null;
-							Color currentColor = nodeLayout.getColor();
-							String colorPostfix = "[" + currentColor.getRGB() + "]";
-							if (picked == true) {
-								layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix + this.pickedPostfix);
-							} else {
-								layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix);
-							}
-							// --- 2. If necessary, load the image --
-							if (layeredIcon == null) {
-								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
-								
-								// --- Prepare the image ---------
-								BufferedImage bufferedImage;
-								if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
-									// --- If the color is set to black or white, just use the unchanged image ----------
-									bufferedImage = convertToBufferedImage(imageIcon.getImage());
-								} else {
-									// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
-									bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
-								}
-								
-								if (bufferedImage != null) {
-									// --- 3. Remind this images ----
-									LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
-									this.iconHash.put(nodeImagePath + colorPostfix, layeredIconUnPicked);
-
-									LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
-									layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
-									this.iconHash.put(nodeImagePath + colorPostfix + this.pickedPostfix, layeredIconPicked);
-									// --- 4. Return the right one --
-									if (picked == true) {
-										layeredIcon = layeredIconPicked;
-									} else {
-										layeredIcon = layeredIconUnPicked;
-									}
-								}
-							}
-							icon = layeredIcon;
+					if (nodeImagePath!=null && nodeImagePath.equals("MissingIcon")==false) {
+						// --- 1. Search in the local Hash ----------
+						LayeredIcon layeredIcon = null;
+						Color currentColor = nodeLayout.getColor();
+						String colorPostfix = "[" + currentColor.getRGB() + "]";
+						if (picked == true) {
+							layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix + this.pickedPostfix);
+						} else {
+							layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix);
 						}
+						// --- 2. If necessary, load the image ------
+						if (layeredIcon == null) {
+							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
+							
+							// --- Prepare the image -------------
+							BufferedImage bufferedImage;
+							if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
+								// --- If the color is set to black or white, just use the unchanged image ----------
+								bufferedImage = convertToBufferedImage(imageIcon.getImage());
+							} else {
+								// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
+								bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
+							}
+							
+							if (bufferedImage != null) {
+								// --- 3. Remind this images --------
+								LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
+								this.iconHash.put(nodeImagePath + colorPostfix, layeredIconUnPicked);
+
+								LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
+								layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
+								this.iconHash.put(nodeImagePath + colorPostfix + this.pickedPostfix, layeredIconPicked);
+								// --- 4. Return the right one --
+								if (picked == true) {
+									layeredIcon = layeredIconPicked;
+								} else {
+									layeredIcon = layeredIconUnPicked;
+								}
+							}
+						}
+						icon = layeredIcon;
 					}
 					return icon;
 				}
@@ -714,7 +712,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
 				@Override
 				public Stroke transform(GraphEdge edge) {
-					return new BasicStroke(edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
+					int scaleMultiplier = 1;
+					MapSettings ms = graphController.getNetworkModel().getMapSettings();
+					if (ms!=null) {
+						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
+					}
+					return new BasicStroke(scaleMultiplier * edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
 				}
 			});
 			

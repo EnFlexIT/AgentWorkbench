@@ -40,6 +40,7 @@ import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import edu.uci.ics.jung.visualization.FourPassImageShaper;
@@ -55,22 +56,40 @@ import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Transformer<GraphNode, Shape> {
 
 	private GraphEnvironmentController graphController;
+	
+	private Transformer<GraphNode, Integer> nodeSizeTransformer;
+	
 	private Map<String, Shape> shapeMap = new HashMap<String, Shape>();
 
 	
 	/**
-	 * Instantiates a new transformer for vertex shape size aspect.
+	 * Instantiates a new transformer for the vertex shape and size.
 	 * @param graphController the current {@link GraphEnvironmentController}
 	 */
 	public TransformerForVertexShape(GraphEnvironmentController graphController) {
-		
 		this.graphController = graphController;
-		this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
-			@Override
-			public Integer transform(GraphNode node) {
-				return (int) node.getGraphElementLayout(graphController.getNetworkModel()).getSize();
-			}
-		});
+		this.setSizeTransformer(this.getNodeSizeTransformer());
+	}
+	
+	/**
+	 * Gets the node size transformer.
+	 * @return the node size transformer
+	 */
+	private Transformer<GraphNode, Integer> getNodeSizeTransformer() {
+		if (nodeSizeTransformer==null) {
+			nodeSizeTransformer = new Transformer<GraphNode, Integer>() {
+				@Override
+				public Integer transform(GraphNode graphNode) {
+					int scaleMultiplier = 1;
+					MapSettings ms = TransformerForVertexShape.this.graphController.getNetworkModel().getMapSettings();
+					if (ms!=null) {
+						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
+					}
+					return scaleMultiplier * (int) graphNode.getGraphElementLayout(graphController.getNetworkModel()).getSize();
+				}
+			};
+		}
+		return nodeSizeTransformer;
 	}
 	
 	/*

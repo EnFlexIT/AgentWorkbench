@@ -33,25 +33,26 @@ public class MapSettings implements Serializable, Cloneable {
 	private static final long serialVersionUID = 760729234063485505L;
 	
 	public enum MapScale {
-		m(1, "1 m"),
-		m10(10, "10 m"),
-		m100(100, "100 m"),
-		km(1000, "1 km");
+		s1x(1, "1 x"),
+		s2x(2, "2 x"),
+		s3x(3, "3 x"),
+		s4x(4, "4 x"),
+		s5x(5, "5 x"),
+		s10x(10, "10 x"),
+		s15x(15, "15 x"),
+		s20x(20, "20 x"),
+		s25x(25, "25 x");
 		
-		private final double scaleDivider;
+		private final int scaleMultiplier;
 		private final String scaleDescription;
 		
-		private MapScale(double scaleDivider, String scaleDescription) {
-			this.scaleDivider = scaleDivider;
+		private MapScale(int scaleMultiplier, String scaleDescription) {
+			this.scaleMultiplier = scaleMultiplier;
 			this.scaleDescription = scaleDescription;
 		}
-		public double getScaleDivider() {
-			return scaleDivider;
+		public int getScaleMultiplier() {
+			return scaleMultiplier;
 		}
-		public double getScaleDividerInvers() {
-			return 1.0 / ((double)scaleDivider);
-		}
-		
 		/* (non-Javadoc)
 		 * @see java.lang.Enum#toString()
 		 */
@@ -65,7 +66,7 @@ public class MapSettings implements Serializable, Cloneable {
 	// --- Define variables and default values ------------
 	private int utmLongitudeZone = 32;
 	private String utmLatitudeZone = "U";
-	private MapScale mapScale = MapScale.m;
+	private MapScale mapScale;
 	
 	private String mapServiceName;
 	private int mapTileTransparency = 0;
@@ -93,6 +94,9 @@ public class MapSettings implements Serializable, Cloneable {
 
 	
 	public MapScale getMapScale() {
+		if (mapScale==null) {
+			mapScale = MapScale.s1x;
+		}
 		return mapScale;
 	}
 	public void setMapScale(MapScale mapScale) {
