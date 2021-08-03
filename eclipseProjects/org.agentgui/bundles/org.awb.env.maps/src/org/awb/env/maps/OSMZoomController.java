@@ -63,7 +63,9 @@ public class OSMZoomController extends BasicGraphGuiZoomController {
 		if (this.getVisualizationViewer()!=null) {
 			if (scalePointOnScreen==null) scalePointOnScreen = this.getVisualizationViewerCenter();
 			this.setVisualizationViewerSelected();
+			this.getVisualizationViewer().getBasicGraphGuiStaticLayout().setRefreshGraphNodePositionPaused(true);
 			this.getScalingControl().scale(this.getVisualizationViewer(), newZoomLevel, scalePointOnScreen);
+			this.getVisualizationViewer().getBasicGraphGuiStaticLayout().setRefreshGraphNodePositionPaused(false);
 			this.zoomLevel = newZoomLevel;
 		}
 	}

@@ -86,13 +86,6 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 		// --- In the default layout case, nothing is to do here ----
 	}
 	/**
-	 * Will pause the refreshment of graph node position until either {@link #refreshGraphNodePosition()} 
-	 * or {@link #setRefreshGraphNodePositionPaused(boolean)} with a true parameter is called.
-	 */
-	public void pauseRefreshGraphNodePosition() {
-		// --- In the default layout case, nothing is to do here ----
-	}
-	/**
 	 * Sets the refresh graph node position paused.
 	 * @param isPaused the new refresh graph node position paused
 	 */
@@ -106,7 +99,6 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 	public boolean isRefreshGraphNodePositionPaused() {
 		return false;
 	}
-
 	
 	/**
 	 * The dispose method will be called if the layout in the visualization viewer will be exchanged.

@@ -588,9 +588,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent me) {
 		if (me.getWheelRotation()>0) {
-			this.basicGraphGUI.zoomOut(me.getPoint());
+			this.basicGraphGUI.getZoomController().zoomOut(me.getPoint());
 		} else {
-			this.basicGraphGUI.zoomIn(me.getPoint());
+			this.basicGraphGUI.getZoomController().zoomIn(me.getPoint());
 		}
 	}
 	

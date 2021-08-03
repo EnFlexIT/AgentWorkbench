@@ -21,12 +21,15 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 
+	private boolean debugRefreshmentActions = false;
+	
 	private TransformerForGraphNodeGeoPosition coordinateSystemNodeGeoPositionTransformer;
 	
-	private ChangeListener localChangeListener;
+	private int resetTimerDelay = 50;
 	private Timer resetTimerForGraphNodeRefreshing;
+
+	private ChangeListener localChangeListener;
 	private boolean pauseRefreshGraphNode;
-	
 	
 	/**
 	 * Instantiates a static layout.
@@ -58,21 +61,17 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	}
 
 
-	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#refreshGraphNodePosition()
 	 */
 	@Override
 	public void refreshGraphNodePosition() {
 		this.pauseRefreshGraphNode = false;
+		if (this.debugRefreshmentActions) {
+			System.out.println("Refreshing GraphNode positions ...");
+		}
 		this.setInitializer(this.getCoordinateSystemPositionTransformer());
-	}
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#pauseRefreshGraphNodePosition()
-	 */
-	@Override
-	public void pauseRefreshGraphNodePosition() {
-		this.setRefreshGraphNodePositionPaused(true);
+		this.getBasicGraphGuiVisViewer().paintComponentRenderGraph();
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#setRefreshGraphNodePositionPaused(boolean)
@@ -92,17 +91,17 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		return pauseRefreshGraphNode;
 	}
 	
+	
 	/**
 	 * Returns the reset timer for graph node refreshing.
 	 * @return the reset timer for graph node refreshing
 	 */
 	private Timer getResetTimerForGraphNodeRefreshing() {
 		if (resetTimerForGraphNodeRefreshing==null) {
-			resetTimerForGraphNodeRefreshing = new Timer(100, new ActionListener() {
+			resetTimerForGraphNodeRefreshing = new Timer(this.resetTimerDelay, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					if (pauseRefreshGraphNode==false) {
-						System.out.println("Refreshing GraphNode positions ...");
 						BasicGraphGuiStaticGeoLayout.this.refreshGraphNodePosition();
 					}
 				}
@@ -116,10 +115,10 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	 */
 	private void resetTimerForGraphNodeRefreshing() {
 		if (this.getResetTimerForGraphNodeRefreshing().isRunning()==false) {
-			System.out.println("Starting refreshment timer ...");
+			if (this.debugRefreshmentActions) System.out.println("Starting refreshment timer ...");
 			this.getResetTimerForGraphNodeRefreshing().start();
 		} else {
-			System.out.println("Re-Starting refreshment timer ...");
+			if (this.debugRefreshmentActions) System.out.println("Restarting refreshment timer ...");
 			this.getResetTimerForGraphNodeRefreshing().start();
 		}
 	}
@@ -136,7 +135,9 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 				@Override
 				public void stateChanged(ChangeEvent e) {
 					if (pauseRefreshGraphNode==false) {
-						System.out.println("Changed in Graph ...");
+						if (BasicGraphGuiStaticGeoLayout.this.debugRefreshmentActions) {
+							System.out.println("ChangeListener informed about changes in vis.-viewer ...");
+						}
 						BasicGraphGuiStaticGeoLayout.this.resetTimerForGraphNodeRefreshing();
 					}
 				}
@@ -156,7 +157,6 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	private void removeLocalChangeListener() {
 		this.getBasicGraphGuiVisViewer().removeChangeListener(this.getLocalChangeListener());
 	}
-
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#dispose()
 	 */

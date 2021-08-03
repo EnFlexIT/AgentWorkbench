@@ -407,7 +407,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 		this.clearPickedObjects();
 		this.setMapPreRendering();
-		this.zoomToFitToWindow();
+		this.getZoomController().zoomToFitToWindow();
 
 		// --- Re-attach item listener for vis-viewer -----
 		this.getVisualizationViewer().getPickedVertexState().removeItemListener(this.getPickedStateItemListener());
@@ -1506,52 +1506,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 		return zoomController;
 	}
-	/**
-	 * Zooms in.
-	 */
-	public void zoomIn() {
-		this.getZoomController().zoomIn();
-	}
-	/**
-	 * Zooms in.
-	 * @param zoomAtPoint the point to zoom at (e.g. the current mouse position on screen)
-	 */
-	public void zoomIn(Point2D zoomAtPoint) {
-		this.getZoomController().zoomIn(zoomAtPoint);
-	}
-	/**
-	 * Zooms out.
-	 */
-	public void zoomOut() {
-		this.getZoomController().zoomOut();
-	}
-	/**
-	 * Zooms out.
-	 * @param zoomAtPoint the zoom at point (e.g. the current mouse position on screen)
-	 */
-	public void zoomOut(Point2D zoomAtPoint) {
-		this.getZoomController().zoomOut(zoomAtPoint);
-	}
-	
-	/**
-	 * Zoom one to one and move the focus according to the coordinate system source.
-	 */
-	private void zoomOneToOneMoveFocus() {
-		this.getZoomController().zoomOneToOneMoveFocus();
-	}
-	/**
-	 * Zooms that the graph fits to the window.
-	 */
-	private void zoomToFitToWindow() {
-		this.getZoomController().zoomToFitToWindow();
-	}
-	/**
-	 * Zoom to the selected component.
-	 */
-	private void zoomToComponent() {
-		this.getZoomController().zoomToComponent();
-	}
-	
 	
 	// --------------------------------------------------------------------------------------------
 	// --- From here, handling of satellite visualization ----------------------------------------- 
@@ -1735,19 +1689,19 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 				
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window:
-				this.zoomToFitToWindow();
+				this.getZoomController().zoomToFitToWindow();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
-				this.zoomOneToOneMoveFocus();
+				this.getZoomController().zoomOneToOneMoveFocus();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
-				this.zoomToComponent();
+				this.getZoomController().zoomToComponent();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
-				this.zoomIn();
+				this.getZoomController().zoomIn();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
-				this.zoomOut();
+				this.getZoomController().zoomOut();
 				break;
 
 				

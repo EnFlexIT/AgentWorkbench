@@ -264,7 +264,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 			
 			// --- Set scaling ------------------------------------------------
 			double scale = Math.min(scaleX, scaleY);;
-			if (scale!= 0 && scale!=1) {
+			if (scale!=0 && scale!=1) {
 				this.getScalingControl().scale(visViewer, (float) scale, coordinateSourcePoint);
 			}
 			
