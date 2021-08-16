@@ -62,11 +62,13 @@ public class GraphNodePositionFactory {
 	 * @return the network model
 	 */
 	private static NetworkModel getNetworkModel() {
+
+		// --- Currently loading a NetworkModel? --------------------
+		if (networkModelLoading!=null) return networkModelLoading;
+		
+		// --- The regular way --------------------------------------
 		GraphEnvironmentController graphController = getGraphController();
 		if (graphController!=null) {
-			if (networkModelLoading!=null) {
-				return networkModelLoading;
-			}
 			return graphController.getNetworkModel();
 		}
 		return null;
@@ -78,18 +80,27 @@ public class GraphNodePositionFactory {
 	 * @return the layout settings
 	 */
 	private static LayoutSettings getLayoutSettings(String layoutID) {
+		
 		if (layoutID==null || layoutID.isEmpty()) return null;
-		GraphEnvironmentController graphController = getGraphController();
-		if (graphController!=null) {
-			return graphController.getGeneralGraphSettings4MAS().getLayoutSettings().get(layoutID);
+
+		LayoutSettings ls = null;
+		
+		// --- Try to get LayoutSettings from NetworkModel first --------------
+		NetworkModel networkModel = getNetworkModel();
+		if (networkModel!=null) {
+			ls = networkModel.getGeneralGraphSettings4MAS().getLayoutSettings().get(layoutID);
+		} else {
+			// --- Try to get LayoutSettings from graph controller ------------
+			GraphEnvironmentController graphController = getGraphController();
+			if (graphController!=null) {
+				ls = graphController.getGeneralGraphSettings4MAS().getLayoutSettings().get(layoutID);
+			}
 		}
-		return null;
+		return ls;
 	}
 	// --------------------------------------------------------------------------------------------
 	// --- From here some help methods to access the current project ---------- End ---------------
 	// --------------------------------------------------------------------------------------------
-	
-	
 	
 	
 	
