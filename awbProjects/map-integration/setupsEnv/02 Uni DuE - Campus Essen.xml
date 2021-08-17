@@ -8,7 +8,6 @@
                 <utmLongitudeZone>32</utmLongitudeZone>
                 <utmLatitudeZone>U</utmLatitudeZone>
                 <mapScale>s1x</mapScale>
-                <mapServiceName>AWB-OpenStreetMaps</mapServiceName>
                 <mapTileTransparency>0</mapTileTransparency>
             </value>
         </entry>

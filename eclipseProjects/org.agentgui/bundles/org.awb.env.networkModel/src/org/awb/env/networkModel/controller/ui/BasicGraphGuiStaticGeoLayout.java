@@ -29,6 +29,7 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	
 	private TransformerForGraphNodeGeoPosition coordinateSystemNodeGeoPositionTransformer;
 	
+	private Boolean lastIsDoMapPreRendering;
 	private Double lastOverallScale;
 	private Point2D lastCenterPosition;
 	private double moveDistanceToRefreshPositionsAt = 2.5;
@@ -99,6 +100,17 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		if (this.debugRefreshmentActions) {
 			System.out.println("Refreshing GraphNode positions ...");
 		}
+
+		// ----------------------------------------------------------
+		// --- Check if map pre-rendering has changed --------------- 
+		boolean isChangedDoMapPreRendering = false;
+		boolean currIsDoMapPreRendering = this.getBasicGraphGuiVisViewer().isDoMapPreRendering();
+		if (this.lastIsDoMapPreRendering==null || currIsDoMapPreRendering!=this.lastIsDoMapPreRendering) {
+			isChangedDoMapPreRendering = true;
+		}
+		// --- => Fast exit ? ---------------------------------------
+		if (currIsDoMapPreRendering==false && isChangedDoMapPreRendering==false) return;
+		
 		
 		// ----------------------------------------------------------
 		// --- Check if scale has changed ---------------------------
@@ -124,10 +136,12 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		
 		// ----------------------------------------------------------
 		// --- Check if a refreshment is necessary ------------------
-		if (isChangedScale==true || isChangedPos==true) {
+		if (isChangedDoMapPreRendering==true || isChangedScale==true || isChangedPos==true) {
 			// --- Remind current scale as last scale ---------------
+			this.lastIsDoMapPreRendering = currIsDoMapPreRendering;
 			this.lastOverallScale = currScale;
 			this.lastCenterPosition = utmCenter;
+			
 			// --- Reset positions of nodes -------------------------  
 			this.setInitializer(this.getCoordinateSystemPositionTransformer());
 			this.getBasicGraphGuiVisViewer().paintComponentRenderGraph();

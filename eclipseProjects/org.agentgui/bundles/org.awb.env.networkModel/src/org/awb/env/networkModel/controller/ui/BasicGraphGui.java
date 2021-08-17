@@ -1425,12 +1425,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- For geographical layouts ----------------------------------- 
 			if (isDoMapPreRendering==true) {
 				this.getVisualizationViewer().setMapService(this.getMapService());
-				// -- Ensure that a ZoomController is initialized -----------------
+				// -- Ensure that a ZoomController is initialized -------------
 				this.getZoomController();
 			} else {
 				this.getVisualizationViewer().setMapService(null);
 				if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
 			}
+			
+			// --- Prepare visualization viewer ------------------------------- 
+			this.getVisualizationViewer().setDoMapPreRendering(isDoMapPreRendering);
+			
 			// --- Renew static graph layout ? --------------------------------
 			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticGeoLayout.class.getName())==false) {
 				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
@@ -1442,13 +1446,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- For normal / non-geographical layouts ----------------------
 			this.getVisualizationViewer().setMapService(null);
 			if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
+			
+			// --- Prepare visualization viewer -------------------------------
+			this.getVisualizationViewer().setDoMapPreRendering(false);
+			
 			// --- Renew static graph layout ? --------------------------------
 			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticLayout.class.getName())==false) {
 				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 			}
 			
 		}
-		this.getVisualizationViewer().setDoMapPreRendering(isDoMapPreRendering);
+		
 	}
 	/**
 	 * Checks if is usable map service.
