@@ -21,8 +21,6 @@ import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
  * The Class OSMMapRenderer.
@@ -189,27 +187,21 @@ public class OSMMapRenderer implements MapRenderer {
 	 */
 	private boolean isJungReScalingCalled() {
 		
-		boolean requiresJungReScaling = false;
 		try {
 			
+			// --- Get current scaling ------------------------------ 
+			double scale = this.visViewer.getOverallScale();;
+
+			// --- Get the closest zoom level -----------------------
+			ZoomLevel zl = OSMZoomLevels.getInstance().getClosestZoomLevelOfJungScaling(scale, this.getCenterGeoCoordinate().getLatitude());
+
 			// --- Define an initial zoom level ? -------------------
 			if (this.getZoomController().getZoomLevel()==null) {
-				// -- Set the highest zoom level first --------------
-				this.setZoomLevel(OSMZoomLevels.getInstance().getZoomLevel(19, this.getCenterGeoCoordinate().getLatitude()));
+				this.setZoomLevel(zl);
 				return true;
 			}
 			
-			// --- Get current scaling ------------------------------ 
-			MutableTransformer layoutTransformer = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-			MutableTransformer viewTransformer = this.visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
-			double modelScale = layoutTransformer.getScale();
-			double viewScale = viewTransformer.getScale();
-			double scale = modelScale * viewScale;
-			
-			// --- Get the closest zoom level -----------------------
-			ZoomLevel zl = OSMZoomLevels.getInstance().getClosestZoomLevelOfJungScaling(scale, this.getCenterGeoCoordinate().getLatitude());
-			
-			// --- Check if the scaling needs to adjusted -----------
+			// --- Check if the scaling needs to be adjusted --------
 			double scaleDiff = Math.abs(scale - zl.getJungScaling());
 			if (scaleDiff > 0.01) {
 				if (this.isDebugJungRescalling==true) {
@@ -221,14 +213,14 @@ public class OSMMapRenderer implements MapRenderer {
 				}
 				// --- Set the new zoom level -----------------------
 				this.setZoomLevel(zl);
-				requiresJungReScaling = true;
+				return true;
 			}
 			
 		} catch (Exception ex) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error while checking graph scaling:");
 			ex.printStackTrace();
 		}
-		return requiresJungReScaling;
+		return false;
 	}
 
 	

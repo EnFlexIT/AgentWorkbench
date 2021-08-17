@@ -49,6 +49,7 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
  * The Class BasicGraphGuiVisualizationViewer was basically created to
@@ -406,6 +407,21 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public boolean isDoMapPreRendering() {
 		return doMapPreRendering;
 	}
+	
+	
+	/**
+	 * Returns the current overall scale of the VisualizationViewer.
+	 * @return the overall scale
+	 */
+	public double getOverallScale() {
+		
+		MutableTransformer layoutTransformer = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+		MutableTransformer viewTransformer = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+		double modelScale = layoutTransformer.getScale();
+		double viewScale = viewTransformer.getScale();
+		return modelScale * viewScale;
+	}
+	
 	
 	/**
 	 * Will return a new overall, concatenated affine transform that includes graphics, layout and view.

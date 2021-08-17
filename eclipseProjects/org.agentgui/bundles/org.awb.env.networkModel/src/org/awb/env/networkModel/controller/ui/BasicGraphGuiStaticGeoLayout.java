@@ -1,7 +1,11 @@
 package org.awb.env.networkModel.controller.ui;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
@@ -24,6 +28,9 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	private boolean debugRefreshmentActions = false;
 	
 	private TransformerForGraphNodeGeoPosition coordinateSystemNodeGeoPositionTransformer;
+	
+	private Double lastOverallScale;
+	private Point2D lastCenterPosition;
 	
 	private int resetTimerDelay = 50;
 	private Timer resetTimerForGraphNodeRefreshing;
@@ -59,19 +66,71 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		super.setBasicGraphGuiVisViewer(basicGraphGuiVisViewer);
 		this.addLocalChangeListener();
 	}
+	
+	/**
+	 * Returns the center visualization coordinate as UTM coordinate.
+	 * @return the center visualization coordinate
+	 */
+	private Point2D getCenterVisualizationCoordinate() {
+		
+		Rectangle visRect = this.getBasicGraphGuiVisViewer().getVisibleRect();
+		Point2D visCenter = new Point2D.Double(visRect.getCenterX(), visRect.getCenterY());
 
-
+		AffineTransform trans = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
+		Point2D utmCenter  = null;
+		try {
+			Point2D jungCenter = trans.inverseTransform(visCenter, null);
+			utmCenter = this.getCoordinateSystemPositionTransformer().inverseTransform(jungCenter);
+			
+		} catch (NoninvertibleTransformException e) {
+			e.printStackTrace();
+		}
+		return utmCenter;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#refreshGraphNodePosition()
 	 */
 	@Override
 	public void refreshGraphNodePosition() {
+		
 		this.pauseRefreshGraphNode = false;
 		if (this.debugRefreshmentActions) {
 			System.out.println("Refreshing GraphNode positions ...");
 		}
-		this.setInitializer(this.getCoordinateSystemPositionTransformer());
-		this.getBasicGraphGuiVisViewer().paintComponentRenderGraph();
+		
+		// ----------------------------------------------------------
+		// --- Check if scale has changed ---------------------------
+		boolean isChangedScale = false;
+		Double currScale = this.getBasicGraphGuiVisViewer().getOverallScale(); 
+		if (this.lastOverallScale==null || currScale.equals(this.lastOverallScale)==false) {
+			isChangedScale = true;
+		}
+
+		// ----------------------------------------------------------
+		// --- Check if visual position has changed -----------------
+		boolean isChangedPos = false;
+		Point2D utmCenter  = this.getCenterVisualizationCoordinate();
+		if (this.lastCenterPosition==null) {
+			isChangedPos = true;
+		} else {
+			// --- Calculate distance moved -------------------------
+			double distancMoved = Point2D.distance(utmCenter.getX(), utmCenter.getY(), this.lastCenterPosition.getX(), this.lastCenterPosition.getY());
+			if (distancMoved>=1.0) {
+				isChangedPos = true;
+			}
+		}
+		
+		// ----------------------------------------------------------
+		// --- Check if a refreshment is necessary ------------------
+		if (isChangedScale==true || isChangedPos==true) {
+			// --- Remind current scale as last scale ---------------
+			this.lastOverallScale = currScale;
+			this.lastCenterPosition = utmCenter;
+			// --- Reset positions of nodes -------------------------  
+			this.setInitializer(this.getCoordinateSystemPositionTransformer());
+			this.getBasicGraphGuiVisViewer().paintComponentRenderGraph();
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiStaticLayout#setRefreshGraphNodePositionPaused(boolean)
@@ -111,16 +170,11 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		return resetTimerForGraphNodeRefreshing;
 	}
 	/**
-	 * Reset timer for graph node refreshing.
+	 * Starts the timer for graph node position refreshing.
 	 */
 	private void resetTimerForGraphNodeRefreshing() {
-		if (this.getResetTimerForGraphNodeRefreshing().isRunning()==false) {
-			if (this.debugRefreshmentActions) System.out.println("Starting refreshment timer ...");
-			this.getResetTimerForGraphNodeRefreshing().start();
-		} else {
-			if (this.debugRefreshmentActions) System.out.println("Restarting refreshment timer ...");
-			this.getResetTimerForGraphNodeRefreshing().start();
-		}
+		if (this.debugRefreshmentActions) System.out.println("Starting refreshment timer ...");
+		this.getResetTimerForGraphNodeRefreshing().start();
 	}
 	
 	
