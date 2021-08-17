@@ -21,7 +21,6 @@ public class MapRendererSettings implements Serializable {
 	private static final long serialVersionUID = -5126554545457917787L;
 
 	private WGS84LatLngCoordinate centerPostion;
-	private int mapTileTransparency = 0;
 	
 	/**
 	 * Instantiates new visual map print settings.
@@ -45,12 +44,10 @@ public class MapRendererSettings implements Serializable {
 		
 		TransformerForGraphNodePosition cspt = visViewer.getCoordinateSystemPositionTransformer();
 		Dimension vvDim = visViewer.getSize();
-
 		double centerX = vvDim.getWidth()  / 2.0;
 		double centerY = vvDim.getHeight() / 2.0;
 		this.setCenterPostion(this.getWGS84LatLngCoordinate(cspt, at, new Point2D.Double(centerX, centerY), isPrintTransformation));
 		
-		this.setMapTileTransparency(cspt.getMapSettings().getMapTileTransparency());
 	}
 	
 	/**
@@ -96,13 +93,6 @@ public class MapRendererSettings implements Serializable {
 	}
 	public void setCenterPostion(WGS84LatLngCoordinate centerPostion) {
 		this.centerPostion = centerPostion;
-	}
-	
-	public int getMapTileTransparency() {
-		return mapTileTransparency;
-	}
-	public void setMapTileTransparency(int mapTileTransparency) {
-		this.mapTileTransparency = mapTileTransparency;
 	}
 
 }

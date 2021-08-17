@@ -28,6 +28,8 @@
  */
 package org.awb.env.networkModel.maps;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -115,6 +117,11 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
         if (ms!=null) {
         	MapRenderer mr = ms.getMapRenderer();
         	if (mr!=null) {
+        		
+        		// --- Cast to Graphics2D instance ---------------------------- 
+        		Graphics2D g2d = (Graphics2D) graphics;
+        		Composite compReminder = g2d.getComposite();
+        		
         		try {
         			// --------------------------------------------------------
         			// --- Renew MapRendererSettings? -------------------------
@@ -129,20 +136,24 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 
         			// --------------------------------------------------------
         			// --- Set the clip area to paint in ----------------------
-        			Graphics2D g2d = (Graphics2D) graphics;
         			g2d.setClip(0, 0, this.lastVisViewerDimension.width, this.lastVisViewerDimension.height);
         			
+        			// --------------------------------------------------------
+        			// --- Prepare transparency of the map --------------------
+        			float transparency = 1.0f - (float) (this.lastMapSettings.getMapTileTransparency() / 100.0);
+        	        AlphaComposite alcom = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency);
+        	        g2d.setComposite(alcom);
+        			
+        			// --------------------------------------------------------
         			// --- Invoke map tile integration / painting -------------  
         			mr.paintMap(g2d, mrs);
         			
-        			// --- Just as a reminder, how map integration works ------
-//			        Image mapImage = this.getMapImage();
-//			        if (mapImage!=null) {
-//			        	g2d.drawImage(mapImage, 0, 0, mapImage.getWidth(this.visViewer), mapImage.getWidth(this.visViewer), this.visViewer);	
-//			        }
-			        
 				} catch (Exception ex) {
 					ex.printStackTrace();
+				} finally {
+					// --------------------------------------------------------
+					// --- Reset to non-transparency for graph painting -------
+					g2d.setComposite(compReminder);
 				}
         		
         	} else {

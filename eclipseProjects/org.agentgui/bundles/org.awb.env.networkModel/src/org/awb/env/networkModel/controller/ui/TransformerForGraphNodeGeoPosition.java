@@ -163,6 +163,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 		if (true) return posGraphNodeUTM;
 		
 		// --- Do the inverse things to the above ---------------------------------------
+		// TODO: invert the method calls above
 		try {
 			
 			// --- Get Jung coordinates -------------------------------------------------

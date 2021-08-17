@@ -146,7 +146,7 @@ public class OSMMapRenderer implements MapRenderer {
 			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
 			this.isPrintWaypointOverlay = false;
 		}
-		
+
 		// --- Paint map tiles to the specified graphics object -----
 		this.getJXMapViewerWrapper().paintComponent(graphics);
 	}

@@ -31,6 +31,7 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	
 	private Double lastOverallScale;
 	private Point2D lastCenterPosition;
+	private double moveDistanceToRefreshPositionsAt = 2.5;
 	
 	private int resetTimerDelay = 50;
 	private Timer resetTimerForGraphNodeRefreshing;
@@ -116,7 +117,7 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		} else {
 			// --- Calculate distance moved -------------------------
 			double distancMoved = Point2D.distance(utmCenter.getX(), utmCenter.getY(), this.lastCenterPosition.getX(), this.lastCenterPosition.getY());
-			if (distancMoved>=1.0) {
+			if (distancMoved>=this.moveDistanceToRefreshPositionsAt) {
 				isChangedPos = true;
 			}
 		}
@@ -189,9 +190,7 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 				@Override
 				public void stateChanged(ChangeEvent e) {
 					if (pauseRefreshGraphNode==false) {
-						if (BasicGraphGuiStaticGeoLayout.this.debugRefreshmentActions) {
-							System.out.println("ChangeListener informed about changes in vis.-viewer ...");
-						}
+						if (debugRefreshmentActions)  System.out.println("ChangeListener informed about changes in vis.-viewer ...");
 						BasicGraphGuiStaticGeoLayout.this.resetTimerForGraphNodeRefreshing();
 					}
 				}

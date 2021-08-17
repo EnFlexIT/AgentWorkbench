@@ -229,7 +229,7 @@ public class MapSettingsPanel extends JPanel implements ActionListener {
 			jSliderTransparency.setPaintLabels(true);
 			jSliderTransparency.setPaintTicks(true);
 			jSliderTransparency.setMajorTickSpacing(10);
-			jSliderTransparency.setMinorTickSpacing(1);
+			jSliderTransparency.setMinorTickSpacing(5);
 			jSliderTransparency.setSnapToTicks(true);
 			jSliderTransparency.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent ce) {
