@@ -3,6 +3,28 @@
     <componentSorting>Alphanumeric</componentSorting>
     <currentCTS>
         <entry>
+            <key>Auto Vehicle</key>
+            <value>
+                <color>-16738048</color>
+                <domain>Land Vehicles</domain>
+                <edgeImage>/images/car-red-50-50.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Drone Quadro</key>
+            <value>
+                <color>-16777012</color>
+                <domain>Air Vehicles</domain>
+                <edgeImage>/images/drone-50-50.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>Kreis</key>
             <value>
                 <color>-16777012</color>
@@ -16,10 +38,40 @@
     </currentCTS>
     <domainSettings>
         <entry>
+            <key>Air Vehicles</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <showLabel>false</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+        <entry>
             <key>Default Domain</key>
             <value>
                 <clusterShape>Rectangle</clusterShape>
-                <showLabel>true</showLabel>
+                <showLabel>false</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+        <entry>
+            <key>Land Vehicles</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <showLabel>false</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+        <entry>
+            <key>Water Vehicles</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <showLabel>false</showLabel>
                 <vertexColor>-65536</vertexColor>
                 <vertexColorPicked>-256</vertexColorPicked>
                 <vertexSize>10</vertexSize>
@@ -35,7 +87,7 @@
                 <edgeShape>Line</edgeShape>
                 <geographicalLayout>true</geographicalLayout>
                 <layoutName>Geo-Layout</layoutName>
-                <snap2Grid>true</snap2Grid>
+                <snap2Grid>false</snap2Grid>
                 <snapRaster>0.1</snapRaster>
             </value>
         </entry>

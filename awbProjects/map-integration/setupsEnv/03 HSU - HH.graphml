@@ -27,8 +27,26 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default></default>
 </key>
 <graph edgedefault="directed">
-<node id="PP0">
-<data key="pos">UTM:32:U:573315.4638181543:5936088.2445897255</data>
+<node id="PP5">
+<data key="pos">UTM:32:U:573764.3:5936258.300000001</data>
+</node>
+<node id="PP6">
+<data key="pos">UTM:32:U:573314.6:5936186.4</data>
+</node>
+<node id="PP3">
+<data key="pos">UTM:32:U:573671.4:5936109.4</data>
+</node>
+<node id="PP1">
+<data key="pos">UTM:32:U:573700.0037895223:5936039.883373072</data>
+</node>
+<node id="PP4">
+<data key="pos">UTM:32:U:573797.6:5936100.7</data>
+</node>
+<node id="PP2">
+<data key="pos">UTM:32:U:573767.271094946:5936190.372832845</data>
+</node>
+<node id="PP7">
+<data key="pos">UTM:32:U:573348.3:5936161.9</data>
 </node>
 </graph>
 </graphml>

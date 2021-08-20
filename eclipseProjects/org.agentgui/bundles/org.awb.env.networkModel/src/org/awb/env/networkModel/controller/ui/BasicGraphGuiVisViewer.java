@@ -126,6 +126,19 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		this.setVisViewerToStaticLayout(layout);
 		super.setGraphLayout(layout);
 	}
+	
+	// ------------------------------------------------------------------------------------------------------
+	// --- From here methods to handle the static layout and the graph node position transformer -- Start --- 
+	// ------------------------------------------------------------------------------------------------------
+	/**
+	 * Dispose current basic graph gui static layout.
+	 */
+	private void disposeCurrentBasicGraphGuiStaticLayout() {
+		BasicGraphGuiStaticLayout oldStaticLayout = this.getBasicGraphGuiStaticLayout();
+		if (oldStaticLayout!=null) {
+			oldStaticLayout.dispose();
+		}
+	}
 	/**
 	 * Sets the current VisualisationViewer instance to the Layout and its sub classes.
 	 * @param layout the layout
@@ -134,16 +147,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		if (layout instanceof BasicGraphGuiStaticLayout) {
 			BasicGraphGuiStaticLayout basicGraphGuiStaticLayout = (BasicGraphGuiStaticLayout) layout;
 			basicGraphGuiStaticLayout.setBasicGraphGuiVisViewer(this);
-		}
-	}
-	
-	/**
-	 * Dispose current basic graph gui static layout.
-	 */
-	private void disposeCurrentBasicGraphGuiStaticLayout() {
-		BasicGraphGuiStaticLayout oldStaticLayout = this.getBasicGraphGuiStaticLayout();
-		if (oldStaticLayout!=null) {
-			oldStaticLayout.dispose();
 		}
 	}
 	
@@ -169,15 +172,24 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		}
 		return null;
 	}
+	// ------------------------------------------------------------------------------------------------------
+	// --- From here methods to handle the static layout and the graph node position transformer -- End ----- 
+	// ------------------------------------------------------------------------------------------------------
+
 	
-	
+
 	/**
 	 * This Initializes the VisualizationViewer.
 	 */
 	private void initialize() {
 		
+		// --- Set background color -----------------------------------------------------
 		this.setBackground(Color.GRAY);
+		// --- Set the visualization double buffered ------------------------------------
 		this.setDoubleBuffered(true);
+		// --- Set own renderer to visualization ----------------------------------------
+		this.setRenderer(new ThreadedGraphRenderer<>());
+		
 		
 		// --- Configure some rendering hints in order to accelerate the visualization --
 		this.renderingHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
@@ -195,6 +207,13 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		
 	}
 	
+	
+	
+	
+	/**
+	 * Reset the observation variables for the graph rendering.
+	 * @param currentTimeMillis the current time milliseconds
+	 */
 	private void resetObservationVariables(long currentTimeMillis) {
 		this.statsPaintCompIntervalStart = currentTimeMillis;
 		this.statsLastPaintCompIntervalCounter = 1;

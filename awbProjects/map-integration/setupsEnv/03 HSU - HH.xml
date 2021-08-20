@@ -7,19 +7,67 @@
             <value>
                 <utmLongitudeZone>32</utmLongitudeZone>
                 <utmLatitudeZone>U</utmLatitudeZone>
-                <mapScale>s5x</mapScale>
+                <mapScale>s1x</mapScale>
                 <mapServiceName>AWB-OpenStreetMaps</mapServiceName>
-                <mapTileTransparency>40</mapTileTransparency>
+                <mapTileTransparency>20</mapTileTransparency>
             </value>
         </entry>
     </mapSettingsList>
     <networkComponentList>
         <entry>
-            <key>n0</key>
+            <key>car-01</key>
             <value>
-                <id>n0</id>
-                <type>Kreis</type>
-                <graphElementIDs>PP0</graphElementIDs>
+                <id>car-01</id>
+                <type>Auto Vehicle</type>
+                <graphElementIDs>PP4</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>car-03</key>
+            <value>
+                <id>car-03</id>
+                <type>Auto Vehicle</type>
+                <graphElementIDs>PP6</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>casr-02</key>
+            <value>
+                <id>casr-02</id>
+                <type>Auto Vehicle</type>
+                <graphElementIDs>PP5</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>drone-01</key>
+            <value>
+                <id>drone-01</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP1</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>drone-02</key>
+            <value>
+                <id>drone-02</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP2</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>drone-03</key>
+            <value>
+                <id>drone-03</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP3</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n6</key>
+            <value>
+                <id>n6</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP7</graphElementIDs>
             </value>
         </entry>
     </networkComponentList>

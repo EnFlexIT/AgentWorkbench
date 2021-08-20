@@ -2,7 +2,7 @@
 <project>
     <projectName>Map-Integration</projectName>
     <projectStartTab>2|1</projectStartTab>
-    <projectTreeVisible>true</projectTreeVisible>
+    <projectTreeVisible>false</projectTreeVisible>
     <projectTabHeaderVisible>false</projectTabHeaderVisible>
     <versionTag>Complete Project</versionTag>
     <updateAutoConfiguration>0</updateAutoConfiguration>
@@ -58,7 +58,7 @@
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>02 Uni DuE - Campus Essen</simulationSetupCurrent>
+    <simulationSetupCurrent>03 HSU - HH</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>01 Geo-Source UTM 31 N 0 0</key>
