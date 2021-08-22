@@ -1,12 +1,8 @@
 package org.awb.env.networkModel.controller.ui;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
@@ -28,8 +24,6 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 	
 	private BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer;
 	private TransformerForGraphNodePosition coordinateSystemNodePositionTransformer;
-	
-	private List<PositionDeterminerThread> positionDeterminerThreadList;
 	
 	
 	/**
@@ -55,48 +49,6 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(this.getGraph());
 		this.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * BasicGraphGui.graphMargin), (int) (graphDimension.getHeight() + 2 * BasicGraphGui.graphMargin)));
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.algorithms.layout.AbstractLayout#setInitializer(org.apache.commons.collections15.Transformer)
-	 */
-	@Override
-	public void setInitializer(Transformer<GraphNode, Point2D> initializer) {
-
-		// --- Call super method first (will not fill the locations HashMap)-------------
-		super.setInitializer(initializer);
-		
-		// --- For bigger Networks => use multiple threads to get positions -------------
-		int chunkSize = 200000; // TODO Open issue for large graphs with more than 1000 nodes
-		if (this.getGraph()!=null && this.getGraph().getVertexCount() > chunkSize) {
-			// --- Start PositionDeterminerThreads --------------------------------------
-			Object[] vertities = this.getGraph().getVertices().toArray();
-			int noOfThreads = (int) Math.ceil((double) vertities.length / (double) chunkSize);
-			for (int i = 0; i < noOfThreads; i++) {
-				PositionDeterminerThread pdt = new PositionDeterminerThread(vertities, i, chunkSize);
-				this.getRunningPositionDeterminerThreads().add(pdt);
-				pdt.start();
-			}
-			// --- Wait for threads to be terminated ------------------------------------
-			synchronized (this.getRunningPositionDeterminerThreads()) {
-				try {
-					this.getRunningPositionDeterminerThreads().wait(10000);
-				} catch (InterruptedException iEx) {
-					iEx.printStackTrace();
-				}
-			}
-		}
-	}
-	/**
-	 * Return the list of running position determiner threads.
-	 * @return the running position determiner threads
-	 */
-	private List<PositionDeterminerThread> getRunningPositionDeterminerThreads() {
-		if (positionDeterminerThreadList==null) {
-			positionDeterminerThreadList = new ArrayList<>();
-		}
-		return positionDeterminerThreadList;
-	}
-	
 	
 	/**
 	 * Returns the position transformer that considers the directions of the defined coordinate system.
@@ -155,54 +107,5 @@ public class BasicGraphGuiStaticLayout extends StaticLayout<GraphNode, GraphEdge
 	public void dispose() {
 		// --- In the default layout case, nothing is to do here ----
 	}
-	
-	
-	/**
-	 * The Class PositionDeterminerThread.
-	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
-	 */
-	private class PositionDeterminerThread extends Thread {
-		
-		private Object[] vertexArray;
-		private int threadNumber;
-		private int chunkSize;
-		
-		/**
-		 * Instantiates a new position determiner thread.
-		 *
-		 * @param vertexArray the vertex array
-		 * @param threadNumber the thread number
-		 * @param chunkSize the chunk size
-		 */
-		public PositionDeterminerThread(Object[] vertexArray, int threadNumber, int chunkSize) {
-			this.vertexArray = vertexArray;
-			this.threadNumber = threadNumber;
-			this.chunkSize = chunkSize;
-			this.setName(this.getClass().getSimpleName() + " " + (threadNumber+1));
-		}
-
-		/* (non-Javadoc)
-		 * @see java.lang.Thread#run()
-		 */
-		@Override
-		public void run() {
-			
-			int start = this.threadNumber * this.chunkSize;
-			int end = Math.min(start + chunkSize, vertexArray.length);
-			
-			for (int i = start; i<end; i++) {
-				GraphNode graphNode = (GraphNode) vertexArray[i];
-				locations.put(graphNode, getCoordinateSystemPositionTransformer().transform(graphNode));
-			}
-			
-			// --- Remove this thread from the list of threads ----------------
-			synchronized (getRunningPositionDeterminerThreads()) {
-				getRunningPositionDeterminerThreads().remove(this);
-				if (getRunningPositionDeterminerThreads().size()==0) {
-					getRunningPositionDeterminerThreads().notify();
-				}
-			}
-		}
-	} // --- end sub class --- 
 	
 }

@@ -188,7 +188,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		// --- Set the visualization double buffered ------------------------------------
 		this.setDoubleBuffered(true);
 		// --- Set own renderer to visualization ----------------------------------------
-		this.setRenderer(new ThreadedGraphRenderer<>());
+		this.setRenderer(new OptimizingGraphRenderer<>());
 		
 		
 		// --- Configure some rendering hints in order to accelerate the visualization --
