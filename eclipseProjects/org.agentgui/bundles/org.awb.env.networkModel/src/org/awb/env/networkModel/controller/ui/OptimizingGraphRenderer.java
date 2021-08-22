@@ -16,7 +16,7 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  */
 public class OptimizingGraphRenderer<V, E> extends BasicRenderer<V, E> {
 
-	private boolean debugPrintRenderTime = true;
+	private boolean debugPrintRenderTime = false;
 	private long renderStartTime;
 	private long renderEndTime;
 
