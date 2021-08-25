@@ -13,9 +13,11 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapRendererSettings;
+import org.jxmapviewer.viewer.AbstractTileFactory;
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Tile;
+import org.jxmapviewer.viewer.TileFactory;
 import org.jxmapviewer.viewer.TileListener;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
@@ -29,6 +31,7 @@ public class OSMMapRenderer implements MapRenderer {
 
 	private boolean isDebugJungRescalling = false;
 	private boolean isPrintWaypointOverlay = false;
+	private long tileLoadCounter;
 	
 	private BaseMapService baseMapService;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
@@ -67,15 +70,41 @@ public class OSMMapRenderer implements MapRenderer {
 		return jxMapViewer;
 	}
 	/**
+	 * Returns the current tile factory that is based on the {@link AbstractTileFactory}.
+	 * @return the abstract tile factory
+	 */
+	private AbstractTileFactory getAbstractTileFactory() {
+		TileFactory tf = this.getJXMapViewerWrapper().getTileFactory();
+		if (tf instanceof AbstractTileFactory) {
+			return (AbstractTileFactory) tf;
+		}
+		return null;
+	}
+	/**
 	 * Returns the local TileListener of the JXMapViewerForAWB.
 	 * @return the tile listener
 	 */
 	private TileListener getJXTileListener() {
 		if (jxTileListener==null) {
 			jxTileListener = new TileListener() {
+				private boolean isDebugPrintTileNo = false;
 				@Override
 				public void tileLoaded(Tile tile) {
-					OSMMapRenderer.this.visViewer.paintComponentRenderGraph();
+					// --- Get the current tiles pending / loading ------------
+					int pendingTiles = 0; 
+					AbstractTileFactory tf = OSMMapRenderer.this.getAbstractTileFactory();
+					if (tf!=null) {
+						pendingTiles = tf.getPendingTiles();
+					}
+					// --- Print the number of pending tiles ------------------
+					if (this.isDebugPrintTileNo==true) {
+						tileLoadCounter++;
+						System.out.println("Tile-LoadCounter: " + tileLoadCounter + ", Pending Tiles: " + pendingTiles);
+					}
+					// --- Redraw graph if all tiles were loaded --------------
+					if (pendingTiles==0) {
+						OSMMapRenderer.this.visViewer.paintComponentRenderGraph();
+					}
 				}
 			};
 		}

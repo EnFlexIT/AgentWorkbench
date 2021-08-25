@@ -36,7 +36,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
@@ -191,7 +190,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	
 	private Timer graphSelectionWaitTimer;
 
-	/** The current MapService */
+	/** The current ZoomController */
 	private ZoomController zoomController;
 	
 	
@@ -624,44 +623,49 @@ public class BasicGraphGui extends JPanel implements Observer {
 				public Icon transform(GraphNode node) {
 
 					Icon icon = null;
+					boolean isPicked = visView.getPickedVertexState().isPicked(node);
+					
 					GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController.getNetworkModel());
-					boolean picked = visView.getPickedVertexState().isPicked(node);
 					String nodeImagePath = nodeLayout.getImageReference();
-
 					if (nodeImagePath!=null && nodeImagePath.equals("MissingIcon")==false) {
+
 						// --- 1. Search in the local Hash ----------
-						LayeredIcon layeredIcon = null;
 						Color currentColor = nodeLayout.getColor();
 						String colorPostfix = "[" + currentColor.getRGB() + "]";
-						if (picked == true) {
-							layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix + this.pickedPostfix);
-						} else {
-							layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix);
-						}
+						int scaleMultiplier = this.getScaleMultiplier();
+						
 						// --- 2. If necessary, load the image ------
+						String iconHashKey = scaleMultiplier + "|" + nodeImagePath + colorPostfix;
+						String iconHashKeyPicked = iconHashKey + this.pickedPostfix;
+						LayeredIcon layeredIcon = this.iconHash.get(isPicked==false ? iconHashKey : iconHashKeyPicked);
 						if (layeredIcon == null) {
+							// --- Load the image icon --------------
 							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
-							
 							// --- Prepare the image -------------
 							BufferedImage bufferedImage;
 							if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
 								// --- If the color is set to black or white, just use the unchanged image ----------
-								bufferedImage = convertToBufferedImage(imageIcon.getImage());
+								bufferedImage = GraphGlobals.convertToBufferedImage(imageIcon.getImage());
 							} else {
 								// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
-								bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
+								bufferedImage = GraphGlobals.exchangeColor(GraphGlobals.convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
 							}
 							
 							if (bufferedImage != null) {
-								// --- 3. Remind this images --------
+								// --- Scale the image icon? --------
+								if (scaleMultiplier>1) {
+									bufferedImage = GraphGlobals.scaleBufferedImage(bufferedImage, scaleMultiplier);
+								}
+								// --- 3. Remind the images ---------
 								LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
-								this.iconHash.put(nodeImagePath + colorPostfix, layeredIconUnPicked);
+								this.iconHash.put(iconHashKey, layeredIconUnPicked);
 
 								LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
 								layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
-								this.iconHash.put(nodeImagePath + colorPostfix + this.pickedPostfix, layeredIconPicked);
+								this.iconHash.put(iconHashKeyPicked, layeredIconPicked);
+
 								// --- 4. Return the right one --
-								if (picked == true) {
+								if (isPicked == true) {
 									layeredIcon = layeredIconPicked;
 								} else {
 									layeredIcon = layeredIconUnPicked;
@@ -672,7 +676,18 @@ public class BasicGraphGui extends JPanel implements Observer {
 					}
 					return icon;
 				}
-
+				/**
+				 * Returns the scale multiplier that is used during a map visualization.
+				 * @return the scale multiplier
+				 */
+				private int getScaleMultiplier() {
+					int scaleMultiplier = 1;
+					MapSettings ms = BasicGraphGui.this.graphController.getNetworkModel().getMapSettings();
+					if (ms!=null) {
+						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
+					}
+					return scaleMultiplier;
+				}
 			});
 
 			// --- Configure node colors --------------------------------------
@@ -1609,39 +1624,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.satelliteDialog.dispose();
 			this.setSatelliteDialog(null);	
 		}
-	}
-	
-	/**
-	 * Converts an {@link Image} to a {@link BufferedImage}
-	 * @param image The image
-	 * @return The buffered image
-	 */
-	private BufferedImage convertToBufferedImage(Image image){
-		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D biGraphics = bufferedImage.createGraphics();
-		biGraphics.drawImage(image, 0, 0, null);
-		biGraphics.dispose();
-		return bufferedImage;
-	}
-	
-	/**
-	 * Replaces a specified color with another one in an image.
-	 * @param image The image 
-	 * @param oldColor The color that will be replaced
-	 * @param newColor The new color
-	 * @return The image
-	 */
-	private BufferedImage exchangeColor(BufferedImage image, Color oldColor, Color newColor){
-		for(int x=0; x<image.getWidth(); x++){
-			for(int y=0; y<image.getHeight(); y++){
-				Color currentColor = new Color(image.getRGB(x, y));
-				if(currentColor.equals(oldColor)){
-					image.setRGB(x, y, newColor.getRGB());
-				}
-			}
-			
-		}
-		return image;
 	}
 	
 	/* (non-Javadoc)

@@ -58,8 +58,9 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 	private GraphEnvironmentController graphController;
 	
 	private Transformer<GraphNode, Integer> nodeSizeTransformer;
-	
-	private Map<String, Shape> shapeMap = new HashMap<String, Shape>();
+
+	private HashMap<String, Shape> imageShapeHashMap;
+	private AffineTransform shapeScaleTransformer;
 
 	
 	/**
@@ -69,6 +70,39 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 	public TransformerForVertexShape(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
 		this.setSizeTransformer(this.getNodeSizeTransformer());
+	}
+	/**
+	 * Returns the scale multiplier that is used during a map visualization.
+	 * @return the scale multiplier
+	 */
+	private int getScaleMultiplier() {
+		int scaleMultiplier = 1;
+		MapSettings ms = TransformerForVertexShape.this.graphController.getNetworkModel().getMapSettings();
+		if (ms!=null) {
+			scaleMultiplier = ms.getMapScale().getScaleMultiplier();
+		}
+		return scaleMultiplier;
+	}
+
+	/**
+	 * Returns the shape hash map.
+	 * @return the shape hash map
+	 */
+	public Map<String, Shape> getImageShapeHashMap() {
+		if (imageShapeHashMap==null) {
+			imageShapeHashMap = new HashMap<>();
+		}
+		return imageShapeHashMap;
+	}
+	/**
+	 * Returns the local shape scale transformer.
+	 * @return the shape scale transformer
+	 */
+	private AffineTransform getShapeScaleTransformer() {
+		if (shapeScaleTransformer==null) {
+			shapeScaleTransformer = new AffineTransform();
+		}
+		return shapeScaleTransformer;
 	}
 	
 	/**
@@ -80,18 +114,13 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 			nodeSizeTransformer = new Transformer<GraphNode, Integer>() {
 				@Override
 				public Integer transform(GraphNode graphNode) {
-					int scaleMultiplier = 1;
-					MapSettings ms = TransformerForVertexShape.this.graphController.getNetworkModel().getMapSettings();
-					if (ms!=null) {
-						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
-					}
-					return scaleMultiplier * (int) graphNode.getGraphElementLayout(graphController.getNetworkModel()).getSize();
+					return TransformerForVertexShape.this.getScaleMultiplier() * (int) graphNode.getGraphElementLayout(graphController.getNetworkModel()).getSize();
 				}
 			};
 		}
 		return nodeSizeTransformer;
 	}
-	
+		
 	/*
 	 * (non-Javadoc)
 	 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
@@ -118,32 +147,49 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 			
 		} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE)) {
 			
-			String imageRef = node.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
-
-			//TODO only rebuild if changed
-			//shape = shapeMap.get(imageRef);
-			Shape imageShape = null;
-			ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
-			if (imageIcon != null) {
-				Image image = imageIcon.getImage();
-				imageShape = FourPassImageShaper.getShape(image, 30);
-				if (imageShape .getBounds().getWidth() > 0 && imageShape .getBounds().getHeight() > 0) {
-					// don't cache a zero-sized shape, wait for the image to be ready
-					int width = image.getWidth(null);
-					int height = image.getHeight(null);
-					AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
-					imageShape = transform.createTransformedShape(imageShape );
-					this.shapeMap.put(imageRef, imageShape );
-				}
+			boolean isdebugPrintShapeScaleResults = false;
+			int scaleMultiplier = this.getScaleMultiplier();
+			String imageRef = node.getGraphElementLayout(this.graphController.getNetworkModel()).getImageReference();
+			String hashKey = scaleMultiplier + "|" + imageRef;
 			
-			} else {
-				if (imageRef!=null) {
-					System.err.println("Could not find node image '" + imageRef + "'");
+			Shape imageShape = this.getImageShapeHashMap().get(hashKey);
+			if (imageShape==null) {
+				// --- Get the image shape for the reference ------------------
+				ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
+				if (imageIcon != null) {
+					Image image = imageIcon.getImage();
+					imageShape = FourPassImageShaper.getShape(image, 30);
+					// --- Cache the image shape, if not zero-sized ----------- 
+					if (imageShape!=null && imageShape.getBounds().getWidth()>0 && imageShape.getBounds().getHeight()>0) {
+						
+						int width = image.getWidth(null);
+						int height = image.getHeight(null);
+						AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
+						imageShape = transform.createTransformedShape(imageShape);
+						
+						// --- Scale the image shape --------------------------
+						if (scaleMultiplier>1) {
+							this.getShapeScaleTransformer().scale(this.getScaleMultiplier(), this.getScaleMultiplier());
+							this.getShapeScaleTransformer().createTransformedShape(imageShape);
+						}
+						// --- Remind in local HashMap ------------------------
+						this.getImageShapeHashMap().put(hashKey, imageShape);
+						shape = imageShape;
+						
+						// --- Print shape scale results to console -----------
+						if (isdebugPrintShapeScaleResults==true) {
+							width  = (int) imageShape.getBounds().getWidth();
+							height = (int) imageShape.getBounds().getHeight();
+							System.out.println("[" + imageRef + "] Image-size: w=" + image.getWidth(null) + ", h=" + image.getHeight(null) + " - Shape-size: w=" + width + ", h=" + height);
+						}
+					}
+				
+				} else {
+					if (imageRef!=null) {
+						System.err.println("[" + this.getClass().getSimpleName() + "] Could not find node image '" + imageRef + "'");
+					}
 				}
 			}
-			
-			if (imageShape!=null) shape = imageShape;
-			
 		}
 		return shape;
 	}
