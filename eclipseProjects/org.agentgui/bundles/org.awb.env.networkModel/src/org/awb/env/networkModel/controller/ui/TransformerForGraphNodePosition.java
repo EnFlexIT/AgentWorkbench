@@ -29,6 +29,8 @@
 package org.awb.env.networkModel.controller.ui;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphNode;
@@ -105,6 +107,21 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 		return basicGraphGuiVisViewer;
 	}
 	
+	/**
+	 * Return the list of JUNG coordinates from the list of GraphNode positions.
+	 *
+	 * @param graphPosList the GraphNode position list
+	 * @param transformer the transformer
+	 * @return the position list in JUNG coordinates
+	 */
+	public List<Point2D> getJungPositionList(List<Point2D> graphPosList) {
+		ArrayList<Point2D> jungPosList = new ArrayList<>();
+		for (int i = 0; i < graphPosList.size(); i++) {
+			Point2D graphPos = graphPosList.get(i);
+			jungPosList.add(this.transform(graphPos));
+		}
+		return jungPosList;
+	}
 	
 	/**
 	 * Transforms the specified {@link GraphNode}s position into the position for the JUNG visualization.

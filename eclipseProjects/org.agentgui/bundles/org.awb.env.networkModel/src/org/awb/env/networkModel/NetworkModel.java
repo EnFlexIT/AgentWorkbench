@@ -1120,7 +1120,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * method will return null.  
 	 *
 	 * @param graphNodesSelected the set of selected {@link GraphNode}'s
-	 * @return the {@link NetworkComponent}'s that are fully selected by the given nodes and edges
+	 * @return the {@link NetworkComponent}'s that are fully selected by the given nodes and edges or <code>null</code>
 	 */
 	public List<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodesSelected) {
 		

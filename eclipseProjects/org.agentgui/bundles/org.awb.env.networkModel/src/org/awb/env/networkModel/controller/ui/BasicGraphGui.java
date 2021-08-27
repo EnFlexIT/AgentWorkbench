@@ -1685,7 +1685,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.getZoomController().zoomToFitToWindow();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
-				this.getZoomController().zoomOneToOneMoveFocus();
+				this.getZoomController().zoomOneToOne();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
 				this.getZoomController().zoomToComponent();

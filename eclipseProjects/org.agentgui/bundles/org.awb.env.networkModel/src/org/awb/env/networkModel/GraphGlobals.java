@@ -32,7 +32,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -50,8 +49,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import de.enflexit.common.PathHandling;
-import de.enflexit.geography.coordinates.AbstractCoordinate;
-import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -231,6 +228,7 @@ public final class GraphGlobals {
 	    return scaledImage;
 	} 	
  	
+	
  	// ------------------------------------------------------------------------
  	// --- Some global help method for a Graph --------------------------------
  	// ------------------------------------------------------------------------
@@ -240,11 +238,8 @@ public final class GraphGlobals {
 	 * @param graph the graph
 	 * @return the graph spread
 	 */
-	public static Rectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
-		if (graph==null) {
-			return new Rectangle2D.Double(0, 0, 0, 0);
-		}
-		return getGraphSpreadDimension(graph.getVertices());
+	public static GraphRectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
+		return new GraphRectangle2D(graph);
 	}
 	/**
 	 * Gets the vertices spread dimension.
@@ -252,41 +247,11 @@ public final class GraphGlobals {
 	 * @param graphNodes the graph nodes
 	 * @return the vertices spread dimension
 	 */
-	public static Rectangle2D getGraphSpreadDimension(Collection<GraphNode> graphNodes) {
-
-		Rectangle2D rect = new Rectangle2D.Double();
-		boolean firstNodeAdded = false;
-		GraphNode[] nodes = graphNodes.toArray(new GraphNode[graphNodes.size()]);
-		for (int i = 0; i < nodes.length; i++) {
-			
-			try {
-
-				// --- Check if the coordinate needs to be converted ---------- 
-				AbstractCoordinate coordToUse = null;
-				AbstractCoordinate coord = nodes[i].getCoordinate();
-				if (coord instanceof WGS84LatLngCoordinate) {
-					coordToUse = ((WGS84LatLngCoordinate) coord).getUTMCoordinate();
-				} else {
-					coordToUse = coord;
-				}
-				
-				// --- Get x and y to be integrated in the result ------------- 
-				double x = coordToUse.getX();
-				double y = coordToUse.getY();
-				if (firstNodeAdded==false) {
-					rect.setRect(x, y, 0, 0);
-					firstNodeAdded = true;
-				}
-				rect.add(x, y);
-				
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			
-		}
-		return rect;
+	public static GraphRectangle2D getGraphSpreadDimension(Collection<GraphNode> graphNodes) {
+		return new GraphRectangle2D(graphNodes);
 	}
 
+	
 	// --------------------------------------------------------------
 	// --- Provider methods to access preferences for this bundle ---
 	// --------------------------------------------------------------

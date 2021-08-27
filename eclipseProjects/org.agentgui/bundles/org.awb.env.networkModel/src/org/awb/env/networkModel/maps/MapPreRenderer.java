@@ -34,11 +34,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.GraphRectangle2D;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
 import de.enflexit.geography.coordinates.UTMCoordinate;
@@ -79,7 +79,7 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 		if (mr!=null) {
 
 			// --- Get the center of the graph to show --------------
-			Rectangle2D graphRectUTM = GraphGlobals.getGraphSpreadDimension(this.visViewer.getGraphLayout().getGraph());
+			GraphRectangle2D graphRectUTM = GraphGlobals.getGraphSpreadDimension(this.visViewer.getGraphLayout().getGraph());
 			
 			// --- Get the center UTM / WGS84 coordinate ------------
 			MapSettings mapSet = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings();
