@@ -70,6 +70,10 @@ import agentgui.core.update.AuthenticatationDialog;
 public class ProjectInfo extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final int UPDATE_CONFIGURATION_AUTOMATIC = 0;
+	private static final int UPDATE_CONFIGURATION_ASK = 1;
+	private static final int UPDATE_CONFIGURATION_DISABLED = 2;
 
 	private Project currProject;
 	
@@ -590,7 +594,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jRadioButtonUpdateAutomated == null) {
 			jRadioButtonUpdateAutomated = new JRadioButton();
 			jRadioButtonUpdateAutomated.setFont(new Font("Dialog", Font.PLAIN, 12));
-			if (this.currProject.getUpdateAutoConfiguration()==0) {
+			if (this.currProject.getUpdateAutoConfiguration()==UPDATE_CONFIGURATION_AUTOMATIC) {
 				jRadioButtonUpdateAutomated.setSelected(true);
 			}
 			jRadioButtonUpdateAutomated.setText(Language.translate("Updates automatisch installieren"));
@@ -602,7 +606,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jRadioButtonUpdateDownloadAndAsk == null) {
 			jRadioButtonUpdateDownloadAndAsk = new JRadioButton();
 			jRadioButtonUpdateDownloadAndAsk.setFont(new Font("Dialog", Font.PLAIN, 12));
-			if (this.currProject.getUpdateAutoConfiguration()==1) {
+			if (this.currProject.getUpdateAutoConfiguration()==UPDATE_CONFIGURATION_ASK) {
 				jRadioButtonUpdateDownloadAndAsk.setSelected(true);
 			}
 			jRadioButtonUpdateDownloadAndAsk.setText(Language.translate("Update automatisch herunterladen, Installationszeitpunkt manuell festlegen"));
@@ -614,7 +618,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (jRadioButtonUpdateDisabled == null) {
 			jRadioButtonUpdateDisabled = new JRadioButton();
 			jRadioButtonUpdateDisabled.setFont(new Font("Dialog", Font.PLAIN, 12));
-			if (this.currProject.getUpdateAutoConfiguration()==2) {
+			if (this.currProject.getUpdateAutoConfiguration()==UPDATE_CONFIGURATION_DISABLED) {
 				jRadioButtonUpdateDisabled.setSelected(true);
 			}
 			jRadioButtonUpdateDisabled.setText(Language.translate("Updates nicht automatisch herunterladen oder installieren"));
@@ -719,6 +723,10 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			// --- The date of the last update-check has changed ----
 			this.updateLastUpdateCheckDate();
 			
+		} else if (updateAction.equals(Project.CHANGED_UpdateSettings)) {
+			// --- Refreshes the GUI elements for the update settings
+			this.refreshUpdateSettingsGUI();
+			
 		}
 		
 	}
@@ -737,11 +745,11 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		} else if (ae.getSource()==this.getJButtonSearchForUpdate()) {
 			this.currProject.doProjectUpdate(true);
 		} else if (ae.getSource()==this.getJRadioButtonUpdateAutomated()) {
-			this.currProject.setUpdateAutoConfiguration(0);
+			this.currProject.setUpdateAutoConfiguration(UPDATE_CONFIGURATION_AUTOMATIC);
 		} else if (ae.getSource()==this.getJRadioButtonUpdateDownloadAndAsk()) {
-			this.currProject.setUpdateAutoConfiguration(1);
+			this.currProject.setUpdateAutoConfiguration(UPDATE_CONFIGURATION_ASK);
 		} else if (ae.getSource()==this.getJRadioButtonUpdateDisabled()) {
-			this.currProject.setUpdateAutoConfiguration(2);
+			this.currProject.setUpdateAutoConfiguration(UPDATE_CONFIGURATION_DISABLED);
 		} else if (ae.getSource() == this.getJButtonUpdateSettings()) {
 			this.showUpdateSettingsDialog();
 		} else {
@@ -760,6 +768,27 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		if (dialog.getSavedAuthorizationSettings()!=null) {
 			this.currProject.setUpdateAuthorization(dialog.getSavedAuthorizationSettings());
 			
+		}
+	}
+	
+	/**
+	 * Updates the GUI elements for the update settings.
+	 */
+	private void refreshUpdateSettingsGUI() {
+		this.getJTextFieldUpdateSite().setText(this.currProject.getUpdateSite());
+		switch (this.currProject.getUpdateAutoConfiguration()) {
+		case UPDATE_CONFIGURATION_AUTOMATIC:
+			this.getJRadioButtonUpdateAutomated().setSelected(true);
+			break;
+		case UPDATE_CONFIGURATION_ASK:
+			this.getJRadioButtonUpdateDownloadAndAsk().setSelected(true);
+			break;
+		case UPDATE_CONFIGURATION_DISABLED:
+			this.getJRadioButtonUpdateDisabled().setSelected(true);
+			break;
+		default:
+			// --- Unexpected value - should never occur ------------
+			System.err.println("[" + this.getClass().getSimpleName() + "] Invalid value specified for auto update configuration!");
 		}
 	}
 }  
