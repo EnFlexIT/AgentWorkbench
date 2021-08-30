@@ -545,8 +545,11 @@ public class ProjectRepositoryUpdate extends Thread {
 			afterImportTask = new Runnable() {
 				@Override
 				public void run() {
-					// Nothing to do here ---------------------------
-				}
+					// --- Restore previously configured update settings ------
+					Project project = Project.load(projectFolderToOpen, false);
+					ProjectRepositoryUpdate.this.restoreUpdateSettings(project);
+					project.save(false);
+				};
 			};
 			break;
 			
