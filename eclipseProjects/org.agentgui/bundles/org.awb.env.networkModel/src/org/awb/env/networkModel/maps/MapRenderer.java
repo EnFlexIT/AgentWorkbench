@@ -46,11 +46,17 @@ public interface MapRenderer {
 
 	
 	/**
+	 * Will be invoked to set the center geographical coordinate before {@link #paintMap(Graphics2D)} is called.
+	 * @param centerWgsCoordinate the new geographical center coordinate
+	 */
+	public void setCenterGeoCoordinate(WGS84LatLngCoordinate centerWgsCoordinate);
+	
+	/**
 	 * Paint map at the specified geographical coordinate.
 	 *
 	 * @param graphics2D the graphics2D instance to work on
 	 * @param mapRendererSettings the current map render settings. This instance only will be produced if the visualization was changed somehow (thru scaling or movement). Otherwise, the last instance will be provided again. 
 	 */
-	public void paintMap(Graphics2D graphics2D, MapRendererSettings mapRendererSettings);
+	public void paintMap(Graphics2D graphics2D);
 	
 }

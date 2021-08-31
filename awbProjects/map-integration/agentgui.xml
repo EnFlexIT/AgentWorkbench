@@ -58,7 +58,7 @@
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>03 HSU - HH</simulationSetupCurrent>
+    <simulationSetupCurrent>02 Uni DuE - Campus Essen</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>01 Geo-Source UTM 31 N 0 0</key>

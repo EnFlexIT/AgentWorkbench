@@ -42,6 +42,7 @@ import javax.swing.Timer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.maps.MapPreRenderer;
+import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -403,6 +404,14 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		return mapPreRenderer;
 	}
 	/**
+	 * Updates the current {@link MapRenderer}s center geographical location.
+	 */
+	public void updateMapRendererCenterGeoLocation() {
+		if (this.isDoMapPreRendering()==true && mapPreRenderer!=null) {
+			mapPreRenderer.updateCenterGeoLocation();
+		}
+	}
+	/**
 	 * Sets to do a map pre-rendering or not.
 	 * @param doMapPreRendering the new do map pre-rendering
 	 */
@@ -420,7 +429,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		this.repaint();
 	}
 	/**
-	 * Returns if there is currently a map pre-rendering to do.
+	 * Returns true if a map should be rendered before the graph is rendered.
 	 * @return true, if is do map pre rendering
 	 */
 	public boolean isDoMapPreRendering() {

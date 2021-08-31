@@ -34,12 +34,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.GraphRectangle2D;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
@@ -60,7 +62,7 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 	private AffineTransform lastAffineTransform;
 	private Dimension lastVisViewerDimension;
 	
-	private MapRendererSettings lastMapRendererSettings;
+	private WGS84LatLngCoordinate lastWGS84LatLngCoordinate;
 	
 	/**
 	 * Instantiates a new MapPreRendererr.
@@ -105,7 +107,6 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 		}
 		return null;
 	}
-	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#paint(java.awt.Graphics)
 	 */
@@ -124,15 +125,8 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
         		
         		try {
         			// --------------------------------------------------------
-        			// --- Renew MapRendererSettings? -------------------------
-        			MapRendererSettings mrs = this.lastMapRendererSettings;
-        			if (this.isChangedMapVisualization()==true) {
-        				mrs = new MapRendererSettings(this.visViewer);
-        				this.lastMapRendererSettings = mrs;
-        				this.lastAffineTransform = this.visViewer.getOverallAffineTransform();
-        				this.lastVisViewerDimension = this.visViewer.getSize();
-        				this.lastMapSettings = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings().clone();
-        			}
+        			// --- Update geographical location of the map ------------
+        			this.updateCenterGeoLocation();
 
         			// --------------------------------------------------------
         			// --- Set the clip area to paint in ----------------------
@@ -143,10 +137,10 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
         			float transparency = 1.0f - (float) (this.lastMapSettings.getMapTileTransparency() / 100.0);
         	        AlphaComposite alcom = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency);
         	        g2d.setComposite(alcom);
-        			
+        	        
         			// --------------------------------------------------------
         			// --- Invoke map tile integration / painting -------------  
-        			mr.paintMap(g2d, mrs);
+        			mr.paintMap(g2d);
         			
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -162,6 +156,26 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
         }
 	}
 	/**
+	 * Will update the current geographical center location of the map visualization.
+	 * @param mr the current {@link MapRenderer}
+	 */
+	public void updateCenterGeoLocation() {
+		
+		try {
+			MapRenderer mr = this.getMapRenderer();
+			if (mr!=null && this.isChangedMapVisualization()==true) {
+				this.lastAffineTransform = this.visViewer.getOverallAffineTransform();
+				this.lastVisViewerDimension = this.visViewer.getSize();
+				this.lastMapSettings = this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings().clone();
+				this.lastWGS84LatLngCoordinate = this.getCenterWgs84Coordinate();
+				mr.setCenterGeoCoordinate(this.lastWGS84LatLngCoordinate);
+			}
+
+		} catch (CloneNotSupportedException ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
 	 * Checks if the map visualization settings have changed.
 	 *
 	 * @param graphics the graphics
@@ -169,7 +183,7 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 	 */
 	private boolean isChangedMapVisualization() {
 		
-		if (this.lastMapRendererSettings!=null && this.lastAffineTransform!=null && this.lastMapSettings!=null && this.lastVisViewerDimension!=null) {
+		if (this.lastWGS84LatLngCoordinate!=null && this.lastAffineTransform!=null && this.lastMapSettings!=null && this.lastVisViewerDimension!=null) {
 			// --- Check AffineTransform ------------------
 			boolean isChangedAffineTransform = ! this.visViewer.getOverallAffineTransform().equals(this.lastAffineTransform);
 			if (isChangedAffineTransform==true) return true;
@@ -186,7 +200,45 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 		}
 		return true;   
 	}
+	/**
+	 * Returns the current center WGS84-coordinate.
+	 * @return the center WGS84 coordinate
+	 */
+	public WGS84LatLngCoordinate getCenterWgs84Coordinate() {
+		
+		boolean isPrintTransformation = false;
+		WGS84LatLngCoordinate wgs84 = null;
+		try {
 
+			Point2D centerVisViewer = new Point2D.Double(this.visViewer.getSize().getWidth() / 2.0, this.visViewer.getSize().getHeight() / 2.0);
+			
+			AffineTransform at = this.visViewer.getOverallAffineTransform();
+			Point2D pointJung = at.inverseTransform(centerVisViewer, null);
+
+			TransformerForGraphNodePosition cspTransformer = visViewer.getCoordinateSystemPositionTransformer();
+			Point2D pointCoSy = cspTransformer.inverseTransform(pointJung);
+
+			MapSettings ms = cspTransformer.getMapSettings();
+			UTMCoordinate utm = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), pointCoSy.getX(), pointCoSy.getY());
+			wgs84 = utm.getWGS84LatLngCoordinate(); 
+
+			if (isPrintTransformation==true) {
+				System.out.println("Pos. Screen   " + centerVisViewer.getX() + ", " + centerVisViewer.getY() + "");
+				System.out.println("Pos. Jung     " + pointJung.getX() + ", " + pointJung.getY() + "");
+				System.out.println("Pos. CoordSys " + pointCoSy.getX() + ", " + pointCoSy.getY() + "");
+				System.out.println("=> UTM        " + utm.toString());
+				System.out.println("=> WGS84      " + wgs84.toString());
+				System.out.println();
+			}
+			
+		} catch (Exception ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error while transforming visual coordinate into WGS84 coordinate:");
+			ex.printStackTrace();
+		}
+		return wgs84;
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.VisualizationServer.Paintable#useTransform()
 	 */

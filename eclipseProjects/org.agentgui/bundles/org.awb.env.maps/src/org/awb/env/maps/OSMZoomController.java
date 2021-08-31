@@ -1,9 +1,14 @@
 package org.awb.env.maps;
 
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.List;
 
 import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
+import org.awb.env.networkModel.GraphRectangle2D;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController;
+import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 
 /**
  * The OSMZoomController extends the regular {@link BasicGraphGuiZoomController} 
@@ -85,6 +90,56 @@ public class OSMZoomController extends BasicGraphGuiZoomController {
 	public void zoomOut(Point2D pointOnScreen) {
 		double currLatitude = this.baseMapService.getMapRenderer().getCenterGeoCoordinate().getLatitude();
 		this.setZoomLevel(OSMZoomLevels.getInstance().getNextZoomLevel(this.getZoomLevel(), -1, currLatitude), pointOnScreen);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#zoomOneToOne()
+	 */
+	@Override
+	public void zoomOneToOne() {
+		
+		// --- Use super method first -----------------------------------------
+		super.zoomOneToOne();
+		// --- Do ZoomLevel adjustment / re-scale -----------------------------
+		if (this.baseMapService.getMapRenderer().isJungReScalingCalled()==true) {
+			double scaleNew = this.getVisualizationViewer().getOverallScale();
+			if (scaleNew>1.0) {
+				this.zoomOut();
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.controller.ui.BasicGraphGuiZoomController#zoomToFitToWindow()
+	 */
+	@Override
+	public void zoomToFitToWindow() {
+
+		// --- Use super method first -----------------------------------------
+		super.zoomToFitToWindow();
+		// --- Do ZoomLevel adjustment / re-scale -----------------------------
+		if (this.baseMapService.getMapRenderer().isJungReScalingCalled()==true) {
+
+			// --- Check if each corner point is in the visualization area ----
+			GraphRectangle2D graphRectangle2D = this.getLastGraphRectangle2D();
+			Rectangle visViewerRect = this.getVisualizationViewer().getVisibleRect();
+
+			this.getVisualizationViewer().updateMapRendererCenterGeoLocation();
+			TransformerForGraphNodePosition gnpTransformer = this.getVisualizationViewer().getCoordinateSystemPositionTransformer();
+			AffineTransform at = this.getVisualizationViewer().getOverallAffineTransform();
+			
+			List<Point2D> cpList =  graphRectangle2D.getCornerPointList();
+			for (int i = 0; i < cpList.size(); i++) {
+				Point2D cp = cpList.get(i);
+				Point2D cpJung = gnpTransformer.transform(cp);
+				Point2D cpView = at.transform(cpJung, null);
+				if (visViewerRect.contains(cpView.getX(), cpView.getY())==false) {
+					this.zoomOut();
+					break;
+				}
+			}
+			
+		}
 	}
 	
 }

@@ -109,6 +109,14 @@ public class GraphRectangle2D extends Rectangle2D.Double {
 	}
 	
 	/**
+	 * Returns the center point of the current rectangle.
+	 * @return the center
+	 */
+	public Point2D getCenter() {
+		return new Point2D.Double(this.getCenterX(), this.getCenterY());
+	}
+	
+	/**
 	 * Return the specified corner point, where the method parameter can be of the local constant
 	 * TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT or BOTTOM_RIGHT.
 	 *

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <generalGraphSettings4MAS>
-    <componentSorting>Alphanumeric</componentSorting>
+    <componentSorting>Alphabetical</componentSorting>
     <currentCTS>
         <entry>
             <key>Auto Vehicle</key>

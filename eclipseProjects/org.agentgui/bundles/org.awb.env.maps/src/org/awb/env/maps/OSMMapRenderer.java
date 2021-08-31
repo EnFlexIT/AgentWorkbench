@@ -12,7 +12,6 @@ import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.maps.MapRenderer;
-import org.awb.env.networkModel.maps.MapRendererSettings;
 import org.jxmapviewer.viewer.AbstractTileFactory;
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
@@ -125,7 +124,7 @@ public class OSMMapRenderer implements MapRenderer {
 	@Override
 	public void initialize(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer, WGS84LatLngCoordinate centerGeoCoordinate) {
 		this.visViewer = visViewer;
-		this.getJXMapViewerWrapper().setAddressLocation(this.convertToGeoPosition(centerGeoCoordinate));
+		this.setCenterGeoCoordinate(centerGeoCoordinate);
 		this.isJungReScalingCalled();
 	}
 	
@@ -149,10 +148,22 @@ public class OSMMapRenderer implements MapRenderer {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.maps.MapRenderer#setCenterGeoCoordinate(de.enflexit.geography.coordinates.WGS84LatLngCoordinate)
+	 */
+	@Override
+	public void setCenterGeoCoordinate(WGS84LatLngCoordinate wgsCoordinate) {
+		GeoPosition geoPosCenter = this.convertToGeoPosition(wgsCoordinate);
+		if (geoPosCenter!=null) {
+			this.getJXMapViewerWrapper().setAddressLocation(geoPosCenter);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No center geo position was specified for the map representation.");
+		}
+	}
+	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.maps.MapRenderer#paintMap(java.awt.Graphics2D, org.awb.env.networkModel.maps.MapRendererSettings)
 	 */
 	@Override
-	public void paintMap(Graphics2D graphics, MapRendererSettings mapRendererSettings) {
+	public void paintMap(Graphics2D graphics) {
 
 		// --- Check if a JUNG re-scaling is required and called ----
 		if (this.isJungReScalingCalled()==true) {
@@ -161,18 +172,12 @@ public class OSMMapRenderer implements MapRenderer {
 		}
 		
 		// --- Configure JXMapViewer --------------------------------
-		GeoPosition geoPosCenter = this.convertToGeoPosition(mapRendererSettings.getCenterPostion());
-		if (geoPosCenter!=null) {
-			this.getJXMapViewerWrapper().setAddressLocation(geoPosCenter);
-		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] No center geo position was specified for the map representation.");
-		}
 		this.getJXMapViewerWrapper().setBounds(this.visViewer.getSize());
 		this.getJXMapViewerWrapper().setZoom(this.getZoomController().getZoomLevel().getJXMapViewerZoomLevel());
 		
 		// --- Just for debugging purposes --------------------------
 		if (this.isPrintWaypointOverlay==true) {
-			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter(mapRendererSettings));
+			this.getJXMapViewerWrapper().setOverlayPainter(this.getWaypointPainter());
 			this.isPrintWaypointOverlay = false;
 		}
 
@@ -214,7 +219,7 @@ public class OSMMapRenderer implements MapRenderer {
 	 *
 	 * @return true, if the JUNG visualization was called to re-scale to a new ZoomLevel (scale)
 	 */
-	private boolean isJungReScalingCalled() {
+	protected boolean isJungReScalingCalled() {
 		
 		try {
 			
@@ -255,11 +260,9 @@ public class OSMMapRenderer implements MapRenderer {
 	
 	/**
 	 * Returns the waypoint painter that will generate and print some points directly on the map.
-	 *
-	 * @param mapRendererSettings the map renderer settings
 	 * @return the waypoint painter
 	 */
-	private WaypointPainter<Waypoint> getWaypointPainter(MapRendererSettings mapRendererSettings) {
+	private WaypointPainter<Waypoint> getWaypointPainter() {
 		
 		Dimension visViewerDim = this.visViewer.getSize();
 		Set<Waypoint> waypoints = new HashSet<Waypoint>(Arrays.asList(

@@ -204,8 +204,14 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 				@Override
 				public void stateChanged(ChangeEvent e) {
 					if (pauseRefreshGraphNode==false) {
-						if (debugRefreshmentActions)  System.out.println("ChangeListener informed about changes in vis.-viewer ...");
+						// --- Some debug output ----------------------------------------
+						if (debugRefreshmentActions) {
+							System.out.println("ChangeListener informed about changes in vis.-viewer ...");
+						}
+						// --- Restart GraphNode position calculation -------------------
 						BasicGraphGuiStaticGeoLayout.this.resetTimerForGraphNodeRefreshing();
+						// --- Update center coordinate in the current MapRenderer ------
+						BasicGraphGuiStaticGeoLayout.this.getBasicGraphGuiVisViewer().updateMapRendererCenterGeoLocation();
 					}
 				}
 			};
