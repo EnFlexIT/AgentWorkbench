@@ -9,7 +9,7 @@
                 <utmLatitudeZone>U</utmLatitudeZone>
                 <mapScale>s1x</mapScale>
                 <mapServiceName>AWB-OpenStreetMaps</mapServiceName>
-                <mapTileTransparency>80</mapTileTransparency>
+                <mapTileTransparency>20</mapTileTransparency>
             </value>
         </entry>
     </mapSettingsList>
@@ -68,14 +68,6 @@
                 <id>drone-04</id>
                 <type>Drone Quadro</type>
                 <graphElementIDs>PP7</graphElementIDs>
-            </value>
-        </entry>
-        <entry>
-            <key>drone-05</key>
-            <value>
-                <id>drone-05</id>
-                <type>Drone Quadro</type>
-                <graphElementIDs>PP8</graphElementIDs>
             </value>
         </entry>
     </networkComponentList>
