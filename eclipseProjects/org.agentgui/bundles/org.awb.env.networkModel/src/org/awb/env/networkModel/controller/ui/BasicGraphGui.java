@@ -1546,7 +1546,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- Set dimension and create a new SatelliteVisualizationViewer ----
 			visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getDimensionOfSatelliteVisualizationViewer());
 			visViewSatellite.scaleToLayout(this.getZoomController().getScalingControl());
-			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(this.getZoomController().getScalingControl()));
+			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(this));
 			
 			// --- Configure the node shape and size ------------------------------
 			visViewSatellite.getRenderContext().setVertexShapeTransformer(this.getVisualizationViewer().getRenderContext().getVertexShapeTransformer());
