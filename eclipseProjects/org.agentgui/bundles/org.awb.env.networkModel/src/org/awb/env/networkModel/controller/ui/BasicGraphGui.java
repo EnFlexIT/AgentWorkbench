@@ -1487,7 +1487,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		MapSettings mSettings = this.getGraphEnvironmentController().getNetworkModel().getMapSettings();
 		if (mSettings==null) return false;
 		if (mSettings.getMapServiceName()==null || mSettings.getMapServiceName().isEmpty()==true) return false;
-		if (mSettings.getMapTileTransparency()==100) return false;
+		//if (mSettings.getMapTileTransparency()==100) return false;
 		
 		// --- Ensure that the MapService is available --------------------------------------------
 		if (this.getMapService()==null) return false;
