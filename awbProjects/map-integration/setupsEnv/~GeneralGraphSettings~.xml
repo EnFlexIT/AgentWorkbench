@@ -35,6 +35,17 @@
                 <showLabel>true</showLabel>
             </value>
         </entry>
+        <entry>
+            <key>Linie</key>
+            <value>
+                <color>-16777012</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>3.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
     </currentCTS>
     <domainSettings>
         <entry>
@@ -84,7 +95,7 @@
             <value>
                 <coordinateSystemXDirection>East</coordinateSystemXDirection>
                 <coordinateSystemYDirection>CounterclockwiseToX</coordinateSystemYDirection>
-                <edgeShape>Line</edgeShape>
+                <edgeShape>ConfigurableLine</edgeShape>
                 <geographicalLayout>true</geographicalLayout>
                 <layoutName>Geo-Layout</layoutName>
                 <snap2Grid>false</snap2Grid>
