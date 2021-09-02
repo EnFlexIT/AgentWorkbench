@@ -99,7 +99,11 @@ public class GraphNode extends GraphElement implements DataModelNetworkElement {
 	 * @param point2D the position to set
 	 */
 	public void setPosition(Point2D point2D) {
-		this.coordinate = GraphNodePositionFactory.convertToCoordinate(point2D);
+		if (point2D instanceof AbstractCoordinate) {
+			this.coordinate = (AbstractCoordinate) point2D;
+		} else {
+			this.coordinate = GraphNodePositionFactory.convertToCoordinate(point2D);
+		}
 	}
 	/**
 	 * Returns the position.

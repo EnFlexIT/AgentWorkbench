@@ -31,7 +31,7 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	
 	private Boolean lastIsDoMapPreRendering;
 	private Double lastOverallScale;
-	private Point2D lastCenterPosition;
+	private Point2D lastJungCenterPosition;
 	private double moveDistanceToRefreshPositionsAt = 2.5;
 	
 	private int resetTimerDelay = 50;
@@ -73,21 +73,20 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 	 * Returns the center visualization coordinate as UTM coordinate.
 	 * @return the center visualization coordinate
 	 */
-	private Point2D getCenterVisualizationCoordinate() {
+	private Point2D getJungCenterPosition() {
 		
 		Rectangle visRect = this.getBasicGraphGuiVisViewer().getVisibleRect();
 		Point2D visCenter = new Point2D.Double(visRect.getCenterX(), visRect.getCenterY());
 
 		AffineTransform trans = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
-		Point2D utmCenter  = null;
+		Point2D jungCenter  = null;
 		try {
-			Point2D jungCenter = trans.inverseTransform(visCenter, null);
-			utmCenter = this.getCoordinateSystemPositionTransformer().inverseTransform(jungCenter);
+			jungCenter = trans.inverseTransform(visCenter, null);
 			
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
-		return utmCenter;
+		return jungCenter;
 	}
 	
 	/* (non-Javadoc)
@@ -123,12 +122,12 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		// ----------------------------------------------------------
 		// --- Check if visual position has changed -----------------
 		boolean isChangedPos = false;
-		Point2D utmCenter  = this.getCenterVisualizationCoordinate();
-		if (this.lastCenterPosition==null) {
+		Point2D jungCenterPosition  = this.getJungCenterPosition();
+		if (this.lastJungCenterPosition==null) {
 			isChangedPos = true;
 		} else {
 			// --- Calculate distance moved -------------------------
-			double distancMoved = Point2D.distance(utmCenter.getX(), utmCenter.getY(), this.lastCenterPosition.getX(), this.lastCenterPosition.getY());
+			double distancMoved = Point2D.distance(jungCenterPosition.getX(), jungCenterPosition.getY(), this.lastJungCenterPosition.getX(), this.lastJungCenterPosition.getY());
 			if (distancMoved>=this.moveDistanceToRefreshPositionsAt) {
 				isChangedPos = true;
 			}
@@ -140,7 +139,7 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 			// --- Remind current scale as last scale ---------------
 			this.lastIsDoMapPreRendering = currIsDoMapPreRendering;
 			this.lastOverallScale = currScale;
-			this.lastCenterPosition = utmCenter;
+			this.lastJungCenterPosition = jungCenterPosition;
 			
 			// --- Reset positions of nodes -------------------------  
 			this.setInitializer(this.getCoordinateSystemPositionTransformer());

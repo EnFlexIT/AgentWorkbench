@@ -37,20 +37,14 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.maps.MapService;
 import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 import org.awb.env.networkModel.settings.LayoutSettings;
-import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
-import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
 
 import de.enflexit.common.SerialClone;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.coords.UTMCoord;
 
 /**
- * The Class TransformerForGraphNodePosition justifies a {@link GraphNode} position in the visualization viewer 
- * according to the {@link LayoutSettings}, where the position of the used coordinate system is specified 
- * by a {@link CoordinateSystemXDirection} and a {@link CoordinateSystemYDirection}.
+ * The Class TransformerForGraphNodeGeoPosition extends the regular {@link TransformerForGraphNodePosition}, but justifies 
+ * the geographical {@link GraphNode} position in the visualization viewer according to the current {@link LayoutSettings}.
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -95,25 +89,25 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 			try {
 				// --- Define the destination UTM zones ---------------------------------
 				int utmLongZone   = this.getMapSettings().getUTMLongitudeZone();
-				String utmLatZone = this.getMapSettings().getUTMLatitudeZone();
+				//String utmLatZone = this.getMapSettings().getUTMLatitudeZone();
 				
 				// --- Get a local instance for the layout visualization ----------------
-				UTMCoordinate utmCoordinate = null;
+				UTMCoordinate utmCoord = null;
 				if (coordGraphNode instanceof UTMCoordinate) {
-					utmCoordinate = SerialClone.clone((UTMCoordinate) coordGraphNode); 
+					utmCoord = SerialClone.clone((UTMCoordinate) coordGraphNode); 
 				} else if (coordGraphNode instanceof WGS84LatLngCoordinate) {
 					WGS84LatLngCoordinate wgs84 = (WGS84LatLngCoordinate) coordGraphNode;
-					utmCoordinate = wgs84.getUTMCoordinate();
+					utmCoord = wgs84.getUTMCoordinate();
 				} else {
-					utmCoordinate = (UTMCoordinate) GraphNodePositionFactory.convertToCoordinate(coordGraphNode);
+					utmCoord = (UTMCoordinate) GraphNodePositionFactory.convertToCoordinate(coordGraphNode);
 				}
 				
 				// --- Correct longitude zone for the visualization? --------------------
-				if (utmCoordinate.getLongitudeZone()!=utmLongZone) {
+				if (utmCoord.getLongitudeZone()!=utmLongZone) {
 					// --- Move to the correct longitude zone ---------------------------
-					utmCoordinate.transformZone(utmLongZone);
+					utmCoord.transformZone(utmLongZone);
 				}
-				layoutPosition = super.transform(utmCoordinate);
+				layoutPosition = super.transform(utmCoord);
 				if (this.isDebugPrintPositioning) System.out.println("Layout Position from UTM " + layoutPosition);
 				
 			} catch (Exception ex) {
@@ -140,10 +134,10 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 				// --- Get the xy-Position on Screen from current MapService ------------ 
 				Point2D posOnScreen = this.getMapSettings().getMapService().getMapRenderer().getPositionOnScreen(wgs84Coord);
 
-				// --- Use Jung transformer to calculate virtual graph position ---------
+				// --- Use JUNG transformer to calculate virtual graph position ---------
 				AffineTransform at = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
 				layoutPosition = at.inverseTransform(posOnScreen, null);
-				if (this.isDebugPrintPositioning) System.out.println("Layout Position from WGS94 " + layoutPosition);
+				if (this.isDebugPrintPositioning) System.out.println("Layout Position from WGS84 " + layoutPosition);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -156,46 +150,54 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 	 * @see org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition#inverseTransform(java.awt.geom.Point2D)
 	 */
 	@Override
-	public Point2D inverseTransform(Point2D posGeoLayout) {
+	public Point2D inverseTransform(Point2D layoutPosition) {
 		 
 		// --- The default case ---------------------------------------------------------
-		Point2D posGraphNodeUTM = super.inverseTransform(posGeoLayout);
-		if (true) return posGraphNodeUTM;
+		Point2D graphNodeCoordinate = null;
+		//Point2D graphNodeCoordinate = super.inverseTransform(layoutPosition);
+		//if (true) return graphNodeCoordinate;
 		
-		// --- Do the inverse things to the above ---------------------------------------
-		// TODO: invert the method calls above
-		try {
+		// --- Transform to graph location -----------------------------------------------
+		MapService ms = this.getMapSettings().getMapService();
+		if (ms==null || ms.getMapRenderer()==null) {
+			// --------------------------------------------------------------------------
+			// --- UTM coordinates were used for the visualization ----------------------
+			// --------------------------------------------------------------------------
+			try {
+				// --- Convert layout point to UTM point -------------------------------- 
+				Point2D utmPoint = super.inverseTransform(layoutPosition);
+				
+				// --- Define the destination UTM zones ---------------------------------
+				int utmLongZone   = this.getMapSettings().getUTMLongitudeZone();
+				String utmLatZone = this.getMapSettings().getUTMLatitudeZone();
+
+				UTMCoordinate utmCoord = new UTMCoordinate(utmLongZone, utmLatZone, utmPoint.getX(), utmPoint.getY());
+				graphNodeCoordinate = utmCoord;
+				if (this.isDebugPrintPositioning) System.out.println("UTM from Layout Position " + utmCoord);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 			
-			// --- Get Jung coordinates -------------------------------------------------
-			AffineTransform at = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
-			Point2D posOnScreen = at.transform(posGeoLayout, null);
-			
-			// --- Get WGS84 coordinates ------------------------------------------------
-			WGS84LatLngCoordinate wgsCoordinate = this.getMapSettings().getMapService().getMapRenderer().getGeoCoordinate(posOnScreen);
-			UTMCoordinate utmCoordinate = wgsCoordinate.getUTMCoordinate();
-			
-			UTMCoord utmCoord = UTMCoord.fromLatLon(Angle.fromDegrees(wgsCoordinate.getLatitude()), Angle.fromDegrees(wgsCoordinate.getLongitude()));
-			System.out.println("UTM oww:  " + utmCoordinate);
-			System.out.println("UTM NASA: " + utmCoord);
-			
-			// --- testwise, re convert to WGS84 using NASA system ----------------------  
-			LatLon latLonCoord = UTMCoord.locationFromUTMCoord(utmCoord.getZone(), utmCoord.getHemisphere(), utmCoord.getEasting(), utmCoord.getNorthing());
-			WGS84LatLngCoordinate wgsCoordinateReverted = new WGS84LatLngCoordinate(latLonCoord.getLatitude().getDegrees(), latLonCoord.getLongitude().getDegrees());
-			System.out.println("WGS84 org:      " + wgsCoordinate);
-			System.out.println("WGS84 reverted: " + wgsCoordinateReverted);
-			
-			
-			// --- Transform to destination longitude zone ------------------------------
-			int utmLngZone = this.getMapSettings().getUTMLongitudeZone();
-			utmCoordinate.transformZone(utmLngZone);
-			
-			posGraphNodeUTM = new Point2D.Double(utmCoordinate.getEasting(), utmCoordinate.getNorthing());
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} else {
+			// --------------------------------------------------------------------------
+			// --- WGS84 coordinates and a MapRenderer were used for the visualization --
+			// --------------------------------------------------------------------------
+			try {
+				// --- Use JUNG transformer to calculate position on screen -------------
+				AffineTransform at = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
+				Point2D posOnScreen = at.transform(layoutPosition, null);
+				
+				// --- Get WGS84 coordinate from MapService ----------------------------- 
+				WGS84LatLngCoordinate wgs84Coord = this.getMapSettings().getMapService().getMapRenderer().getGeoCoordinate(posOnScreen);
+				graphNodeCoordinate = wgs84Coord;
+				if (this.isDebugPrintPositioning) System.out.println("WGS84 from Layout Position: " + wgs84Coord);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
-		return posGraphNodeUTM;
+		return graphNodeCoordinate;
 	}
-	
 	
 }

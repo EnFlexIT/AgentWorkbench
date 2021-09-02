@@ -2,6 +2,7 @@ package org.awb.env.networkModel.positioning;
 
 import java.awt.geom.Point2D;
 
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.maps.MapSettings;
@@ -216,6 +217,7 @@ public class GraphNodePositionFactory {
 		}
     	return coord;
     }
+
     
     /**
      * Creates a new AbstractCoordinate object.
@@ -247,6 +249,31 @@ public class GraphNodePositionFactory {
     	return coord;
     }
     
+    /**
+     * Returns the coordinate type for the specified GraphNode.
+     *
+     * @param graphNode the graph node
+     * @return the coordinate type
+     */
+    public static CoordinateType getCoordinateType(GraphNode graphNode) {
+    	return getCoordinateType(graphNode.getCoordinate());
+    }
+    /**
+     * Returns the coordinate type for the specified position.
+     *
+     * @param graphNode the graph node
+     * @return the coordinate type or <code>null</code>
+     */
+    public static CoordinateType getCoordinateType(Point2D coordinate) {
+    	
+    	if (coordinate==null) return null;
+    	
+    	if (coordinate instanceof WGS84LatLngCoordinate) return CoordinateType.WGS84;
+    	if (coordinate instanceof UTMCoordinate) return CoordinateType.UTM;
+    	if (coordinate instanceof OSGBCoordinate) return CoordinateType.OSGB;
+    	if (coordinate instanceof GraphNodePosition) return CoordinateType.SimpleXY;
+    	return null;
+    }
     
     
 	// --------------------------------------------------------------------------------------------

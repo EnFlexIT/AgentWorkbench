@@ -42,6 +42,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.GraphRectangle2D;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
+import org.awb.env.networkModel.settings.LayoutSettings;
 
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
@@ -58,6 +59,8 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 	
+	private TransformerForGraphNodePosition coordianteSOurceTransformer;
+
 	private MapSettings lastMapSettings;
 	private AffineTransform lastAffineTransform;
 	private Dimension lastVisViewerDimension;
@@ -215,10 +218,8 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 			AffineTransform at = this.visViewer.getOverallAffineTransform();
 			Point2D pointJung = at.inverseTransform(centerVisViewer, null);
 
-			TransformerForGraphNodePosition cspTransformer = visViewer.getCoordinateSystemPositionTransformer();
-			Point2D pointCoSy = cspTransformer.inverseTransform(pointJung);
-
-			MapSettings ms = cspTransformer.getMapSettings();
+			Point2D pointCoSy = this.getCoordinateSourceTransformer().inverseTransform(pointJung);
+			MapSettings ms = this.getCoordinateSourceTransformer().getMapSettings();
 			UTMCoordinate utm = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), pointCoSy.getX(), pointCoSy.getY());
 			wgs84 = utm.getWGS84LatLngCoordinate(); 
 
@@ -237,6 +238,26 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
 		}
 		return wgs84;
 		
+	}
+	
+	/**
+	 * Private coordinate source transformer that uses the current transformer to get {@link LayoutSettings} and {@link MapSettings}.
+	 * @return the coordinate source transformer
+	 */
+	private TransformerForGraphNodePosition getCoordinateSourceTransformer() {
+		if (coordianteSOurceTransformer==null) {
+			coordianteSOurceTransformer = new TransformerForGraphNodePosition(null) {
+				@Override
+				public LayoutSettings getLayoutSettings() {
+					return MapPreRenderer.this.visViewer.getCoordinateSystemPositionTransformer().getLayoutSettings();
+				}
+				@Override
+				public MapSettings getMapSettings() {
+					return MapPreRenderer.this.visViewer.getCoordinateSystemPositionTransformer().getMapSettings();
+				}
+			};
+		}
+		return coordianteSOurceTransformer;
 	}
 	
 	/* (non-Javadoc)

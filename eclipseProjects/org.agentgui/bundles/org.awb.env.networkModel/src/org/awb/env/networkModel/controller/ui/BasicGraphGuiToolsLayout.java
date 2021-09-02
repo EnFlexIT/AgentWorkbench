@@ -629,9 +629,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	
 	/**
 	 * Sets the specified graph edge shape configuration to the local {@link #editGraphEdge}.
-	 * @param edgeShapeConfiguration the new graph configuration
+	 * @param newEdgeShapeConfiguration the new graph configuration
 	 */
-	private void setGraphConfiguration(GraphEdgeShapeConfiguration<?> edgeShapeConfiguration) {
+	private void setGraphConfiguration(GraphEdgeShapeConfiguration<?> newEdgeShapeConfiguration) {
 		
 		if (this.editGraphEdge==null) return;
 		
@@ -640,15 +640,15 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		// --- Check if the new configuration is different from the old one ---
 		GraphEdgeShapeConfiguration<?> oldEdgeShapeConfiguration = initialConfLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration();
-		if (edgeShapeConfiguration.equals(oldEdgeShapeConfiguration)==true) return;
+		if (newEdgeShapeConfiguration!=null && newEdgeShapeConfiguration.equals(oldEdgeShapeConfiguration)==true) return;
 		
 		// --- Set edge configuration and redraw edge -------------------------
-		this.editGraphEdge.setEdgeShapeConfiguration(edgeShapeConfiguration);
+		this.editGraphEdge.setEdgeShapeConfiguration(newEdgeShapeConfiguration);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, false);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, true);
 		
 		// --- Enable edge edit -----------------------------------------------
-		boolean isEnableEdgeEdit = (edgeShapeConfiguration!=null && !(edgeShapeConfiguration instanceof OrthogonalConfiguration));
+		boolean isEnableEdgeEdit = (newEdgeShapeConfiguration!=null && !(newEdgeShapeConfiguration instanceof OrthogonalConfiguration));
 		this.getJToggleButtonEdgeEdit().setEnabled(isEnableEdgeEdit);
 		this.switchEdgeEdit(isEnableEdgeEdit, initialConfLineEdit);
 		
