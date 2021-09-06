@@ -48,6 +48,7 @@ import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
 
 import agentgui.core.application.Language;
+import de.enflexit.common.SerialClone;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
@@ -117,8 +118,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 						// --- Copy intermediate points -------------
 						List<Point2D> intPointList = new ArrayList<>();
 						for (int j = 0; j < polyLineConfig.getIntermediatePoints().size(); j++) {
-							Point2D intPoint = polyLineConfig.getIntermediatePoints().get(j);
-							intPointList.add(new Point2D.Double(intPoint.getX(), intPoint.getY()));
+							intPointList.add(SerialClone.clone(polyLineConfig.getIntermediatePoints().get(j)));
 						}
 						this.polylinesMovedNewPositions.put(edgeID, intPointList);
 					}

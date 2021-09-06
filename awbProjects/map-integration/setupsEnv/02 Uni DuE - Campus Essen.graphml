@@ -27,32 +27,33 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default></default>
 </key>
 <graph edgedefault="directed">
-<node id="PP0">
-<data key="positionTreeMap">NhieneMxKq:=UTM:32:U:361477.0:5703256.2|nTrMvCljxN:=-10.0:10.0</data>
-<data key="pos">UTM:32:U:361477.0:5703256.2</data>
-</node>
-<node id="PP1">
-<data key="positionTreeMap">NhieneMxKq:=UTM:32:U:361505.30000000005:5703303.4|nTrMvCljxN:=0.0:10.0</data>
-<data key="pos">UTM:32:U:361505.30000000005:5703303.4</data>
+<node id="PP4">
+<data key="pos">WGS84:51.46341401487323:7.004634449577196</data>
 </node>
 <node id="PP3">
 <data key="positionTreeMap">NhieneMxKq:=UTM:32:U:361467.9:5703293.9|nTrMvCljxN:=20.0:10.0</data>
 <data key="pos">UTM:32:U:361467.9:5703293.9</data>
 </node>
-<node id="PP4">
-<data key="pos">WGS84:51.46341401487323:7.004634449577196</data>
+<node id="PP5">
+<data key="pos">WGS84:51.46400690355751:7.006704918623328</data>
+</node>
+<node id="PP1">
+<data key="positionTreeMap">NhieneMxKq:=UTM:32:U:361505.30000000005:5703303.4|nTrMvCljxN:=0.0:10.0</data>
+<data key="pos">UTM:32:U:361505.30000000005:5703303.4</data>
 </node>
 <node id="PP2">
 <data key="positionTreeMap">NhieneMxKq:=UTM:32:U:361428.60000000003:5703284.0|nTrMvCljxN:=10.0:10.0</data>
 <data key="pos">UTM:32:U:361428.60000000003:5703284.0</data>
 </node>
-<node id="PP5">
-<data key="pos">WGS84:51.46382724079788:7.007233464778331</data>
+<node id="PP0">
+<data key="positionTreeMap">NhieneMxKq:=UTM:32:U:361477.0:5703256.2|nTrMvCljxN:=-10.0:10.0</data>
+<data key="pos">UTM:32:U:361477.9:5703255.8</data>
 </node>
-<edge id="n5" directed="false" source="PP2" target="PP3">
-<desc>Linie</desc>
-</edge>
 <edge id="n10" directed="false" source="PP5" target="PP0">
+<desc>Linie</desc>
+<data key="edgeShapeConfiguration">Polyline=>Absolute(51.46383647601546:7.007241126454744|51.463680588375695:7.007087494315414|51.463629927238586:7.0067408376163876|51.463537374096965:7.0066379828050795|51.4634119111988:7.005916492700659)</data>
+</edge>
+<edge id="n5" directed="false" source="PP2" target="PP3">
 <desc>Linie</desc>
 </edge>
 <edge id="n7" directed="false" source="PP1" target="PP3">

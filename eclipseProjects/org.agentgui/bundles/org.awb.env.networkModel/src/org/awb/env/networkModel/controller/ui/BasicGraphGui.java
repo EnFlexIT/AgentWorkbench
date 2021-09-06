@@ -405,6 +405,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Display the current Graph ------------------
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 		this.clearPickedObjects();
+		this.setEdgeShapeTransformer();
 		this.setMapPreRendering();
 		this.getZoomController().zoomToFitToWindow();
 
@@ -720,7 +721,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setLabelOffset(6);
 			visView.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 			
-			// --- Set the EdgeShape of the Visualisation Viewer --------------
+			// --- Set the EdgeShape of the Visualization Viewer --------------
 			this.setEdgeShapeTransformer(visView);
 			
 			// --- Set edge width ---------------------------------------------
@@ -1198,9 +1199,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 						
 						GraphEdgeShapeConfiguration<?> shapeConfig = editGraphEdge.getEdgeShapeConfiguration();
 						// --- Work on the intermediate points ------
-						int positionIndex = Integer.parseInt(graphNodeID.substring(graphNodeID.indexOf("_") + 1, graphNodeID.length()));
+						int posIdx = Integer.parseInt(graphNodeID.substring(graphNodeID.indexOf("_") + 1, graphNodeID.length()));
 						List<Point2D> intPointList = shapeConfig.getIntermediatePoints();
-						Point2D intPointPos = intPointList.get(positionIndex);
 						// --- Define new intermediate position -----
 						Point2D intPointPosNew = newCoordinate;
 						if (shapeConfig.isUseAbsoluteCoordinates()==false) {
@@ -1208,9 +1208,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 							Pair<GraphNode> graphNodes = this.getGraph().getEndpoints(editGraphEdge);
 							intPointPosNew = new IntermediatePointTransformer().transformToIntermediateCoordinate(intPointPosNew, graphNodes.getFirst(), graphNodes.getSecond());
 						}
-						intPointPos.setLocation(intPointPosNew.getX(), intPointPosNew.getY());
-						// --- Update shape configuration -----------
-						shapeConfig.setIntermediatePoints(intPointList);
+						intPointList.set(posIdx, intPointPosNew);					
 					}
 				}
 				// --- Redraw edge ------------------------------
@@ -1641,7 +1639,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			switch (reason) {
 			case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
 			case NetworkModelNotification.NETWORK_MODEL_LayoutChanged:
-				this.setEdgeShapeTransformer();
 				this.reLoadGraph();
 				break;
 				

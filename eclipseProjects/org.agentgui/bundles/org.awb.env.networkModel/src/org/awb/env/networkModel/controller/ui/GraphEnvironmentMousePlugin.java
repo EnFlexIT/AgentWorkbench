@@ -63,6 +63,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGui.GraphMouseMode;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
+import de.enflexit.common.SerialClone;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -211,8 +212,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		List<GraphNode> nodesMovedList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
 		for (int i = 0; i < nodesMovedList.size(); i++) {
 			GraphNode node = nodesMovedList.get(i);
-			Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-			this.nodesMovedOldPositions.put(node.getId(), point);
+			this.nodesMovedOldPositions.put(node.getId(), SerialClone.clone(node.getPosition()));
 		}
 		
 		// --- Movement of polyline nodes? --------------------------
@@ -227,8 +227,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 						// --- Intermediate node to move ------------
 						List<Point2D> intPointList = new ArrayList<>();
 						for (int j = 0; j < polyLineConfig.getIntermediatePoints().size(); j++) {
-							Point2D intPoint = polyLineConfig.getIntermediatePoints().get(j);
-							intPointList.add(new Point2D.Double(intPoint.getX(), intPoint.getY()));
+							intPointList.add(SerialClone.clone(polyLineConfig.getIntermediatePoints().get(j)));
 						}
 						this.polylinesMovedOldPositions.put(pickedEdge.getId(), intPointList);
 					}

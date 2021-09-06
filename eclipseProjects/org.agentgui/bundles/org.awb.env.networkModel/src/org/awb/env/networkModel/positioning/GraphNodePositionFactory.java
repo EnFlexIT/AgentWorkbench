@@ -11,6 +11,7 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
+import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.OSGBCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
@@ -102,8 +103,123 @@ public class GraphNodePositionFactory {
 	// --------------------------------------------------------------------------------------------
 	// --- From here some help methods to access the current project ---------- End ---------------
 	// --------------------------------------------------------------------------------------------
+
 	
-	
+	/**
+	 * Checks if the specified GraphNode uses a geographical coordinate.
+	 * @param graphNode the GraphNode
+	 * @return true, if the GraphNodes position represents a geographical coordinate
+	 */
+	public static boolean isGeographicalCoordinate(GraphNode graphNode) {
+		return isGeographicalCoordinate(graphNode.getPosition());
+	}
+	/**
+	 * Checks if the specified position is a geographical coordinate.
+	 * @param pos the position instance
+	 * @return true, if the position represents  a geographical coordinate
+	 */
+	public static boolean isGeographicalCoordinate(Point2D pos) {
+		if (pos instanceof AbstractGeoCoordinate) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Converts a specified source coordinate to the specified destination coordinate type - if this is possible in general.<br>
+	 * For example: a simple {@link GraphNodePosition} is not convertible into a geographical coordinate, while
+	 * a WGS84 coordinate can be converted into an UTM coordinate and vice versa.<br>
+	 * <br>
+	 * If inconvertible the original source coordinate will be returned.  
+	 *
+	 * @param sourceCoordinate the coordinate to convert
+	 * @param destinCoordType the destination {@link CoordinateType}
+	 * @return the converted coordinate, the original coordinate or <code>null</code>
+	 */
+	public static AbstractCoordinate convertToCoordinate(AbstractCoordinate sourceCoordinate, CoordinateType destinCoordType) {
+		
+		// --- Fast exit ? ----------------------------------------------------
+		if (sourceCoordinate==null || destinCoordType==null) return null;
+		
+		// --- Unknown or equal coordinate type -------------------------------
+		CoordinateType sourceCoordType = getCoordinateType(sourceCoordinate);
+		if (sourceCoordType==null) return null;
+		if (sourceCoordType==destinCoordType) return sourceCoordinate;
+		
+		// --- Start conversion -----------------------------------------------
+		AbstractCoordinate destinCoordinate = sourceCoordinate;
+		try {
+			// --- Case distinction -------------------------------------------
+			switch (sourceCoordType) {
+			case SimpleXY:
+				// ==> Inconvertible - so nothing is to do here ---------------
+				break;
+				
+			case UTM:
+				UTMCoordinate utm = (UTMCoordinate) sourceCoordinate;
+				// ------------------------------------------------------------
+				// --- Case distinction destination type ----------------------
+				switch (destinCoordType) {
+				case SimpleXY:
+					// ==> Inconvertible - so nothing is to do here -----------
+					break;
+				case UTM:
+					// ==> Same - will not be reached (see above) -------------
+					break;
+				case WGS84:
+					destinCoordinate = utm.getWGS84LatLngCoordinate();
+					break;
+				case OSGB:
+					destinCoordinate = utm.getWGS84LatLngCoordinate().getOSGBCoordinate();
+					break;
+				}
+				break;
+				
+			case WGS84:
+				WGS84LatLngCoordinate wgs = (WGS84LatLngCoordinate) sourceCoordinate;
+				// ------------------------------------------------------------
+				// --- Case distinction destination type ----------------------
+				switch (destinCoordType) {
+				case SimpleXY:
+					// ==> Inconvertible - so nothing is to do here -----------
+					break;
+				case UTM:
+					destinCoordinate = wgs.getUTMCoordinate();
+					break;
+				case WGS84:
+					// ==> Same - will not be reached (see above) -------------
+					break;
+				case OSGB:
+					destinCoordinate = wgs.getOSGBCoordinate();
+					break;
+				}
+				break;
+			
+			case OSGB:
+				OSGBCoordinate osgb = (OSGBCoordinate) sourceCoordinate;
+				// ------------------------------------------------------------
+				// --- Case distinction destination type ----------------------
+				switch (destinCoordType) {
+				case SimpleXY:
+					// ==> Inconvertible - so nothing is to do here -----------
+					break;
+				case UTM:
+					destinCoordinate = osgb.getWGS84LatLngCoordinate().getUTMCoordinate();
+					break;
+				case WGS84:
+					destinCoordinate = osgb.getWGS84LatLngCoordinate();
+					break;
+				case OSGB:
+					// ==> Same - will not be reached (see above) -------------
+					break;
+				}
+				break;
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return destinCoordinate;
+	}
 	
 	/**
 	 * Converts the specified Point2D into a coordinate that is - depending on the current {@link LayoutSettings} in the NetworkModel - a 
@@ -311,5 +427,5 @@ public class GraphNodePositionFactory {
 	// --------------------------------------------------------------------------------------------
 	// --- From here, the old style conversion from string to Point2D and vice versa --- End ------
 	// --------------------------------------------------------------------------------------------	
-	
+
 }
