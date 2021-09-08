@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.jaxb
 Bundle-Version: 2.3.2.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.jaxb
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: .,
  lib/codemodel.jar,
  lib/dtd-parser.jar,
