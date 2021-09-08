@@ -214,7 +214,7 @@ public class ServerMasterAgent extends Agent {
 
 		private static final long serialVersionUID = -2401912961869254054L;
 		private long tickingInterval_ms = 0;
-		private Long tickingInterval_s = new Long(0);
+		private Long tickingInterval_s = Long.valueOf(0);
 		
 		public CleanUpBehaviour(Agent a, long period) {
 			super(a, period);

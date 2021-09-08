@@ -88,7 +88,7 @@ public class DomainSettings implements Serializable {
 			copy.setAdapterClass(new String(adapterClass));	
 		}
 		copy.setShowLabel(showLabel);
-		copy.setVertexSize(new Integer(vertexSize));
+		copy.setVertexSize(vertexSize);
 		if (vertexColor!=null) {
 			copy.setVertexColor(new String(vertexColor));	
 		}

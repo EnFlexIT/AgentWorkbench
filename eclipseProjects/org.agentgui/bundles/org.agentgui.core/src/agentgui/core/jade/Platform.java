@@ -1169,7 +1169,7 @@ public class Platform {
 	public AgentContainer createAgentContainer(String newContainerName) {
 		ProfileImpl pSub = this.getContainerProfile();
 		pSub.setParameter(Profile.CONTAINER_NAME, newContainerName);
-		pSub.setParameter(Profile.MAIN, (new Boolean(false)).toString());
+		pSub.setParameter(Profile.MAIN, String.valueOf(false));
 		pSub.setParameter(Profile.MTPS, null);
 		AgentContainer agentContainer = Runtime.instance().createAgentContainer(pSub);
 		this.getAgentContainerList().add(agentContainer);

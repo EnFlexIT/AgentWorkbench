@@ -53,7 +53,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 	public final static String PROP_TimeFormat = "TimeFormat";
 	
 	private long time = timeStart;
-	private long step = new Long(1000 * 60);
+	private long step = Long.valueOf(1000 * 60);
 	private int stepDisplayUnitAsIndexOfTimeUnitVector = 1;
 	
 	/**
@@ -186,8 +186,8 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 				// --- Use Default values -----------------
 				this.timeStart = this.getDateForMidnight(System.currentTimeMillis()).getTime();
 				this.timeStop = this.timeStart + 1000 * 60 * 60 * 24;
-				this.time = new Long(0);
-				this.step = new Long(1000 * 60);
+				this.time = Long.valueOf(0);
+				this.step = Long.valueOf(1000 * 60);
 				this.stepDisplayUnitAsIndexOfTimeUnitVector = 1;
 				this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
 				return;

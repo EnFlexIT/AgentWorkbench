@@ -1455,7 +1455,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	private Long extractNumericalValue(String expression) {
 		String numericString = "";
-		Long numeric = new Long(-1);
+		Long numeric = Long.valueOf(-1);
 		for (int i = 0; i < expression.length(); i++) {
 			String letter = Character.toString(expression.charAt(i));
 			if (letter.matches("[0-9]")) {
@@ -1466,7 +1466,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			try {
 				numeric = Long.parseLong(numericString);	
 			} catch (Exception e) {
-				numeric = new Long(-1);
+				numeric = Long.valueOf(-1);
 			}
 			
 		}
