@@ -44,7 +44,6 @@ import org.agentgui.gui.swing.project.Distribution;
 import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
-import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
 import agentgui.simulationService.ontology.MachineDescription;
