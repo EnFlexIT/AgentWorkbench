@@ -59,7 +59,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
-	private boolean debugUpdateProcedure = false;
+	private boolean debugUpdateProcedure = true;
 	
 	private Project currProject; 
 	private long currTimeStamp;
@@ -74,6 +74,10 @@ public class ProjectRepositoryUpdate extends Thread {
 	private Boolean userRequestForInstallation;
 	private Boolean showFinalUserMessage;
 	private Boolean leaveUpdateProcedure;
+	
+	private String updateSiteToRestore;
+	private int autoUpdateConfigToRestore;
+	private WebResourcesAuthorization authenticationToRestore;
 	
 	private boolean successfulUpdate;
 		
@@ -461,6 +465,11 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public boolean updateProject(String updateFileName) {
 		
+		// --- Remember previously configured update settings -------
+		this.updateSiteToRestore = this.currProject.getUpdateSite();
+		this.autoUpdateConfigToRestore = this.currProject.getUpdateAutoConfiguration();
+		this.authenticationToRestore = this.currProject.getUpdateAuthorization();
+		
 		// --- Just close the current project without saving --------
 		if (this.currProject.close(null, true)==false) return false;
 		
@@ -478,8 +487,9 @@ public class ProjectRepositoryUpdate extends Thread {
 			ioEx.printStackTrace();
 		}
 		
-		// --- Import the younger project archive -------------------
+		// --- Perform the actual import ----------------------------
 		return this.importProjectFromArchive(updateFileName);
+		
 	}
 	
 	/**
@@ -491,13 +501,14 @@ public class ProjectRepositoryUpdate extends Thread {
 	public boolean importProjectFromArchive(String projectArchiveFileName) {
 		
 		// --- Define settings for update import --------------------
-		ProjectImportSettings pims = new ProjectImportSettings(new File(projectArchiveFileName));
-		pims.setExtractInThread(false);
-		pims.setOverwriteExistingVersion(true);
-		pims.setAfterImportTask(this.getAfterUpdateImportTask());
+		ProjectImportSettings importSettings = new ProjectImportSettings(new File(projectArchiveFileName));
+		// --- Configure some default settings ----------------------
+		importSettings.setExtractInThread(false);
+		importSettings.setOverwriteExistingVersion(true);
+		importSettings.setAfterImportTask(this.getAfterUpdateImportTask());
 		
 		// --- Import the new version of the project ----------------
-		ProjectImportController pic = new ProjectImportController(pims);
+		ProjectImportController pic = new ProjectImportController(importSettings);
 		return pic.doProjectImport();
 	}
 	
@@ -521,7 +532,8 @@ public class ProjectRepositoryUpdate extends Thread {
 				public void run() {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							Application.getProjectsLoaded().add(projectFolderToOpen);
+							Project project = Application.getProjectsLoaded().add(projectFolderToOpen);
+							ProjectRepositoryUpdate.this.restoreUpdateSettings(project);
 						}
 					});
 				}
@@ -533,8 +545,11 @@ public class ProjectRepositoryUpdate extends Thread {
 			afterImportTask = new Runnable() {
 				@Override
 				public void run() {
-					// Nothing to do here ---------------------------
-				}
+					// --- Restore previously configured update settings ------
+					Project project = Project.load(projectFolderToOpen, false);
+					ProjectRepositoryUpdate.this.restoreUpdateSettings(project);
+					project.save(false);
+				};
 			};
 			break;
 			
@@ -543,6 +558,17 @@ public class ProjectRepositoryUpdate extends Thread {
 			break;
 		}
 		return afterImportTask;
+	}
+	
+	/**
+	 * Restores the previously configured update settings after updating the project.
+	 * @param project the project
+	 */
+	private void restoreUpdateSettings(Project project) {
+		project.setUpdateSite(this.updateSiteToRestore);
+		project.setUpdateAutoConfiguration(this.autoUpdateConfigToRestore);
+		project.setUpdateAuthorization(this.authenticationToRestore);
+		project.setChangedAndNotify(Project.CHANGED_UpdateSettings);
 	}
 	
 	/**

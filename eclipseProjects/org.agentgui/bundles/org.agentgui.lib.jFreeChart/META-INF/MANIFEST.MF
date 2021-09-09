@@ -45,5 +45,5 @@ Export-Package: org.jfree.chart,
  org.jfree.data.time.ohlc,
  org.jfree.data.xml,
  org.jfree.data.xy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.agentgui.lib.jFreeChart

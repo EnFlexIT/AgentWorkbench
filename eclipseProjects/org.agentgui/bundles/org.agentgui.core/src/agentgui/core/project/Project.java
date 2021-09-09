@@ -126,6 +126,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlTransient public static final String CHANGED_UpdateSite = "UpdateSite";
 	@XmlTransient public static final String CHANGED_UpdateDateLastChecked = "UpdateDateLastChecked";
 	@XmlTransient public static final String CHANGED_UpdateAuthorization = "UpdateAuthorization";
+	@XmlTransient public static final String CHANGED_UpdateSettings = "UpdateSettings";	// Summarizes UpdateSite, UpdateAutoConfiguration and UpdateAuthorization
 
 	@XmlTransient public static final String CHANGED_EnvironmentModelType= "EnvironmentModelType";
 	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
