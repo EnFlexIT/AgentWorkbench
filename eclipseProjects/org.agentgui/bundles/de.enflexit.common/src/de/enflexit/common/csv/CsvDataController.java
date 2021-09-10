@@ -33,7 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Observable;
+import de.enflexit.common.Observable;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;

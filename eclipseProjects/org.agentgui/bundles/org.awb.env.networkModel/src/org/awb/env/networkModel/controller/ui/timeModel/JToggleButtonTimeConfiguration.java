@@ -2,8 +2,8 @@ package org.awb.env.networkModel.controller.ui.timeModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;

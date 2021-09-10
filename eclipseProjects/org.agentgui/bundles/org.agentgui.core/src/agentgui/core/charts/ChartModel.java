@@ -28,7 +28,7 @@
  */
 package agentgui.core.charts;
 
-import java.util.Observable;
+import de.enflexit.common.Observable;
 
 import org.jfree.data.general.Series;
 

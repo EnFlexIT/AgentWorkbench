@@ -38,8 +38,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;

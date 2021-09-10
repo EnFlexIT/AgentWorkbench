@@ -28,8 +28,8 @@
  */
 package agentgui.simulationService.time;
 
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 import javax.swing.JPanel;
 

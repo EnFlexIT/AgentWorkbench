@@ -30,8 +30,8 @@ package agentgui.core.gui.projectwindow.simsetup;
 
 import java.awt.Container;
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 import javax.swing.JTabbedPane;
 

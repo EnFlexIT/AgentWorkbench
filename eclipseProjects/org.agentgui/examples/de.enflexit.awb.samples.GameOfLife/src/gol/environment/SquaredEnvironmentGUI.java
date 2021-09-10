@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
-import java.util.Observable;
+import de.enflexit.common.Observable;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

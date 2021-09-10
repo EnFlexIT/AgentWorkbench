@@ -42,7 +42,7 @@ import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Observable;
+import de.enflexit.common.Observable;
 import java.util.Vector;
 
 import javax.swing.JDesktopPane;

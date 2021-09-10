@@ -29,7 +29,7 @@
 package agentgui.core.charts;
 
 import java.awt.Color;
-import java.util.Observable;
+import de.enflexit.common.Observable;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
