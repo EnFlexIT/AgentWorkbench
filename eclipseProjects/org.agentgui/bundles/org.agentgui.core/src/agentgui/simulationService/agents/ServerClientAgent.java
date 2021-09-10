@@ -109,8 +109,8 @@ public class ServerClientAgent extends Agent {
 	private TriggerBehaiviour trigger;
 	private SaveNodeDescriptionBehaviour sndBehaiv;
 	
-	private long triggerTime = new Long(1000*1);
-	private long triggerTime4Reconnection = new Long(1000*20);
+	private long triggerTime = Long.valueOf(1000*1);
+	private long triggerTime4Reconnection = Long.valueOf(1000*20);
 	
 	private int sendNotReachable = 0;
 	private int sendNotReachableMax = 3;

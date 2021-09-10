@@ -377,9 +377,9 @@ public class NetworkModelAnalyzer {
  		ElementCounter ec = new ElementCounter(countingType, elementID);
 		Integer elementsFound = this.getElementCountingHashMap().get(ec);
 		if (elementsFound==null) {
-			elementsFound = this.getElementCountingHashMap().put(ec, new Integer(1));
+			elementsFound = this.getElementCountingHashMap().put(ec, Integer.valueOf(1));
 		} else {
-			this.getElementCountingHashMap().put(ec, new Integer(elementsFound+1));
+			this.getElementCountingHashMap().put(ec,  Integer.valueOf(elementsFound+1));
 		}
 	}
 	/**

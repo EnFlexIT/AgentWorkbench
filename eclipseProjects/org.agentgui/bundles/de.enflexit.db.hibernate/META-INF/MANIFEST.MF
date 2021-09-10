@@ -4,7 +4,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Hibernate
 Bundle-SymbolicName: de.enflexit.db.hibernate
 Bundle-Version: 5.3.6.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.hibernate.osgi.HibernateBundleActivator

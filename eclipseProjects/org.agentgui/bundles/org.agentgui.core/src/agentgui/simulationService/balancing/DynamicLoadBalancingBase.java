@@ -103,7 +103,7 @@ public abstract class DynamicLoadBalancingBase extends BaseLoadBalancing  {
 	 */
 	protected void setMeasurements() {
 		
-		currThresholdExceededOverAll = new Integer(myLoadAgent.loadThresholdExceededOverAll);
+		currThresholdExceededOverAll =  Integer.valueOf(myLoadAgent.loadThresholdExceededOverAll);
 		currContainerLoactions = new Hashtable<String, Location>(myLoadAgent.getLoadContainerLoactions()) ;
 		currContainerBenchmarkResults = new Hashtable<String, Float>(myLoadAgent.loadContainerBenchmarkResults);
 		

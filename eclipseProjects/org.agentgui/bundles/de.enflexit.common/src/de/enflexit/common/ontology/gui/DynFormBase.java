@@ -901,7 +901,7 @@ public abstract class DynFormBase {
 			if (stringValue==null | stringValue.equals("")) {
 				returnValue = 0;
 			} else {
-				returnValue = new Float(stringValue);	
+				returnValue = Float.valueOf(stringValue);	
 			}
 			
 		} else if(valueType.equals("int") || valueType.equals("Integer")){
@@ -912,10 +912,10 @@ public abstract class DynFormBase {
 				returnValue = 0;
 			} else {
 				if (stringValue.contains(".")) {
-					returnValue = Math.round(new Double(stringValue));
+					returnValue = Math.round(Double.valueOf(stringValue));
 					jt.setText(returnValue.toString());
 				} else {
-					returnValue = new Integer(stringValue);	
+					returnValue =  Integer.valueOf(stringValue);	
 				}
 			}
 			

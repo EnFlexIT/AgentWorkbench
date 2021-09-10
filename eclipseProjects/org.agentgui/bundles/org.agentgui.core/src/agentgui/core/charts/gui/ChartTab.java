@@ -354,7 +354,7 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 				if(plot.getDataset().getSeriesKey(i).equals(seriesLabel)){
 					XYItemRenderer renderer = plot.getRenderer();
 					boolean currentlyVisible = renderer.getItemVisible(i, 0);
-					renderer.setSeriesVisible(i, new Boolean(!currentlyVisible));
+					renderer.setSeriesVisible(i,  Boolean.valueOf(!currentlyVisible));
 				}
 			}
 			
