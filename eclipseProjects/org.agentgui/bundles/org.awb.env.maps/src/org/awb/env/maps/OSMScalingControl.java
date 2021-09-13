@@ -4,8 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.awb.env.maps.OSMZoomLevels.ZoomLevel;
-import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
-import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
+
 
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationServer;
@@ -73,13 +72,8 @@ public class OSMScalingControl extends CrossoverScalingControl implements Scalin
         double viewScale = viewTransformer.getScale();
         double inverseModelScale = Math.sqrt(this.getCrossover())/modelScale;
         double inverseViewScale = Math.sqrt(this.getCrossover())/viewScale;
-        
-        BasicGraphGuiVisViewer<?, ?> bvv = (BasicGraphGuiVisViewer<?, ?>) vv;
-        TransformerForGraphNodePosition<?, ?> cspTransformer = bvv.getCoordinateSystemPositionTransformer();
-        
-        Point2D transformedAtJung = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.VIEW, at);
-        Point2D transformedAtGraph = cspTransformer.inverseTransform(transformedAtJung);
-        
+                
+        Point2D transformedAtJung = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.VIEW, at);        
         
         // return the transformers to 1.0
         layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAtJung);

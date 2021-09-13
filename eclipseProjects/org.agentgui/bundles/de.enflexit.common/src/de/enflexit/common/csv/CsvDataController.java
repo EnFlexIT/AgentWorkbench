@@ -266,7 +266,6 @@ public class CsvDataController extends Observable {
 			return;
 		}
 		
-		@SuppressWarnings("unchecked")
 		Vector<Vector<Object>> tableData = new Vector<>(this.getDataModel().getDataVector());
 		
 		if (this.hasHeadlines()==true) {
