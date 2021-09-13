@@ -13,6 +13,10 @@ import jade.core.*;
 @SuppressWarnings("unused")
 public class Simple_Double implements Concept {
 
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 //////////////////////////// User code
 public Double getDoubleValue() {
 	   try {

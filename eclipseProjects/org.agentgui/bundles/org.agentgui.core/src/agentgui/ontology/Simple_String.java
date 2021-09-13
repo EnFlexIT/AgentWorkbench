@@ -14,6 +14,10 @@ import jade.core.*;
 public class Simple_String implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: StringValue
    */
    private String stringValue;

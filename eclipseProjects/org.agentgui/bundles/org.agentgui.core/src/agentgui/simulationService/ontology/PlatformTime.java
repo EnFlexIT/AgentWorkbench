@@ -11,6 +11,10 @@ import jade.content.*;
 public class PlatformTime implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: TimeStampAsString
    */
    private String timeStampAsString;

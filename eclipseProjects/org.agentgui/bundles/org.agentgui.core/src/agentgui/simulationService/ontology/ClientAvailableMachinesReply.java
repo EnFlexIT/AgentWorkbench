@@ -12,6 +12,10 @@ import jade.util.leap.*;
 public class ClientAvailableMachinesReply implements AgentAction {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: availableMachines
    */
    private List availableMachines = new ArrayList();
@@ -20,7 +24,7 @@ public class ClientAvailableMachinesReply implements AgentAction {
      availableMachines.add(elem);
    }
    public boolean removeAvailableMachines(MachineDescription elem) {
-     List oldList = this.availableMachines;
+	 List oldList = this.availableMachines;
      boolean result = availableMachines.remove(elem);
      return result;
    }

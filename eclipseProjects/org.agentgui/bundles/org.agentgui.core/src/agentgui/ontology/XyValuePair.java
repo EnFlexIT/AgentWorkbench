@@ -12,7 +12,12 @@ import jade.core.*;
 @SuppressWarnings("unused")
 public class XyValuePair extends ValuePair{ 
 
-   /**
+
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: yValue
    */
    private Simple_Float yValue;

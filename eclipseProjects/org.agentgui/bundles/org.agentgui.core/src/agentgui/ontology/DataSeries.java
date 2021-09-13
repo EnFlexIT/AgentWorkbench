@@ -15,6 +15,10 @@ import jade.core.*;
 public class DataSeries implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
    * The data series label
 * Protege name: label
    */

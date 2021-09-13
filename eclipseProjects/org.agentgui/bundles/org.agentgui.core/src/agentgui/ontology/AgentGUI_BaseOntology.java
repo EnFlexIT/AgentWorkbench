@@ -13,7 +13,11 @@ import jade.core.CaseInsensitiveString;
  */
 @SuppressWarnings("unused")
 public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
-  //NAME
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//NAME
   public static final String ONTOLOGY_NAME = "AgentGUI_Base";
   // The singleton instance of this ontology
   private static ReflectiveIntrospector introspect = new ReflectiveIntrospector();

@@ -14,4 +14,9 @@ import jade.core.*;
 @SuppressWarnings("unused")
 public class ValuePair implements Concept {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 }

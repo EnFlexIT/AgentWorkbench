@@ -13,4 +13,9 @@ import jade.core.*;
 @SuppressWarnings("unused")
 public class VisualizationSettings implements Concept {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 }

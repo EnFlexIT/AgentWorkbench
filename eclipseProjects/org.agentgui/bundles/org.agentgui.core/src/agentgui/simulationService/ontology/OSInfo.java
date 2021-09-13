@@ -11,6 +11,10 @@ import jade.content.*;
 public class OSInfo implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: os_name
    */
    private String os_name;

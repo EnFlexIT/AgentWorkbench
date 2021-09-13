@@ -11,6 +11,10 @@ import jade.content.*;
 public class PlatformPerformance implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: cpu_numberOfLogicalCores
    */
    private int cpu_numberOfLogicalCores;

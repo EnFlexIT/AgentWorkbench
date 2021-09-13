@@ -11,6 +11,10 @@ import jade.content.*;
 public class AgentGuiVersion implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: minorRevision
    */
    private int minorRevision;

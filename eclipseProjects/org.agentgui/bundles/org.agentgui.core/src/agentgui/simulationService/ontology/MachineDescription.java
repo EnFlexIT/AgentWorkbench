@@ -11,6 +11,10 @@ import jade.content.*;
 public class MachineDescription implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: benchmarkResult
    */
    private BenchmarkResult benchmarkResult;

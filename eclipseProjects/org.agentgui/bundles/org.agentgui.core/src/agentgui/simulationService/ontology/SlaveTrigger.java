@@ -11,6 +11,10 @@ import jade.content.*;
 public class SlaveTrigger implements AgentAction {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: triggerTime
    */
    private PlatformTime triggerTime;

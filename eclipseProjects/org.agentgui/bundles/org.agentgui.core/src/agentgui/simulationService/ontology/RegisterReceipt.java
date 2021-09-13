@@ -10,4 +10,9 @@ import jade.content.*;
 */
 public class RegisterReceipt implements AgentAction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 }

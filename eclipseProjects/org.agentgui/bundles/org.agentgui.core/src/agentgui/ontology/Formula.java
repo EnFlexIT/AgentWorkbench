@@ -14,6 +14,10 @@ import jade.core.*;
 public class Formula implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: formula
    */
    private String formula;

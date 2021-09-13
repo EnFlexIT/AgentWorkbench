@@ -9,7 +9,11 @@ import jade.content.schema.*;
  * @version 2018/02/10, 18:49:04
  */
 public class AgentGUI_DistributionOntology extends jade.content.onto.Ontology  {
-  //NAME
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//NAME
   public static final String ONTOLOGY_NAME = "AgentGUI-Distribution";
   // The singleton instance of this ontology
   private static ReflectiveIntrospector introspect = new ReflectiveIntrospector();

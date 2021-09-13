@@ -11,6 +11,10 @@ import jade.content.*;
 public class BenchmarkResult implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: benchmarkValue
    */
    private float benchmarkValue;

@@ -13,6 +13,10 @@ import jade.core.*;
 @SuppressWarnings("unused")
 public class TimeSeries extends DataSeries{ 
 
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 //////////////////////////// User code
 public boolean isEmpty() {
 	   boolean wrongLabel = false;

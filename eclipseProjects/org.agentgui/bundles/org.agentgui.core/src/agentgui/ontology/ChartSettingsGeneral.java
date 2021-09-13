@@ -14,6 +14,10 @@ import jade.core.*;
 public class ChartSettingsGeneral extends VisualizationSettings{ 
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: yAxisLabel
    */
    private String yAxisLabel;

@@ -13,6 +13,10 @@ import jade.core.*;
 public class TimeSeriesChartSettings extends ChartSettingsGeneral{ 
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: timeFormat
    */
    private String timeFormat;

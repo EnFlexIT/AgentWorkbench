@@ -11,6 +11,10 @@ import jade.content.*;
 public class ClientTrigger implements AgentAction {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: clientBenchmarkValue
    */
    private BenchmarkResult clientBenchmarkValue;

@@ -11,8 +11,13 @@ import jade.core.CaseInsensitiveString;
  * @author ontology bean generator
  * @version 2013/12/4, 11:00:31
  */
+@SuppressWarnings("unused")
 public class MyFirstOntology extends jade.content.onto.Ontology  {
-  //NAME
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//NAME
   public static final String ONTOLOGY_NAME = "MyFirst";
   // The singleton instance of this ontology
   private static ReflectiveIntrospector introspect = new ReflectiveIntrospector();

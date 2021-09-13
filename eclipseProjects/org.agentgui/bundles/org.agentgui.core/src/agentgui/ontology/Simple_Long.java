@@ -13,6 +13,10 @@ import jade.core.*;
 @SuppressWarnings("unused")
 public class Simple_Long implements Concept {
 
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 //////////////////////////// User code
 public Long getLongValue(){
 	   try{

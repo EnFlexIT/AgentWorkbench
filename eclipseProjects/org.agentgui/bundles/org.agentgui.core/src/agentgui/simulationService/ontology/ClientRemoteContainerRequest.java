@@ -11,6 +11,10 @@ import jade.content.*;
 public class ClientRemoteContainerRequest implements AgentAction {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: RemoteConfig
    */
    private RemoteContainerConfig remoteConfig;

@@ -13,6 +13,10 @@ import jade.core.*;
 public class RemoteContainerConfig implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: hostExcludeIP
    */
    private List hostExcludeIP = new ArrayList();

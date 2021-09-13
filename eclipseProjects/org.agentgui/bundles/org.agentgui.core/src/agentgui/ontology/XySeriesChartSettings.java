@@ -10,6 +10,11 @@ import jade.core.*;
 * @version 2019/09/27, 17:26:05
 */
 @SuppressWarnings("unused")
-public class XySeriesChartSettings extends ChartSettingsGeneral{ 
+public class XySeriesChartSettings extends ChartSettingsGeneral{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L; 
 
 }

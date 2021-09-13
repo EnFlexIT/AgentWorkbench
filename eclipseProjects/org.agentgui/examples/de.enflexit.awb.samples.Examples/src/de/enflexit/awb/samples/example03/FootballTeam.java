@@ -10,9 +10,14 @@ import jade.core.*;
 * @author ontology bean generator
 * @version 2013/12/4, 11:00:31
 */
+@SuppressWarnings("unused")
 public class FootballTeam implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: player
    */
    private List player = new ArrayList();

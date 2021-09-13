@@ -12,6 +12,10 @@ import jade.core.*;
 @SuppressWarnings("unused")
 public class TimeSeriesChart extends Chart{ 
 
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 //////////////////////////// User code
 public boolean isEmpty() {
  boolean wrongChartTitle = false;

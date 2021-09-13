@@ -10,9 +10,14 @@ import jade.core.*;
 * @author ontology bean generator
 * @version 2013/12/4, 11:00:31
 */
+@SuppressWarnings("unused")
 public class PingPongMessage implements AgentAction {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: requiresAction
    */
    private boolean requiresAction;

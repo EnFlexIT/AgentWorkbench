@@ -11,6 +11,10 @@ import jade.content.*;
 public class PlatformAddress implements Concept {
 
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+/**
 * Protege name: port
    */
    private int port;
