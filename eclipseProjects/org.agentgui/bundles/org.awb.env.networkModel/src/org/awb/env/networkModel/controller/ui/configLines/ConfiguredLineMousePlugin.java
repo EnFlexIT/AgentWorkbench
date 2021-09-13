@@ -549,7 +549,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
                 
             } else {
                 Point2D out = me.getPoint();
-                if(me.getModifiers() == this.addToSelectionModifiers || me.getModifiers() == modifiers) {
+                if(me.getModifiersEx() == this.addToSelectionModifiers || me.getModifiersEx() == modifiers) {
                     if (down!=null) {
                     	rect.setFrameFromDiagonal(down,out);
                     	vv.repaint();
