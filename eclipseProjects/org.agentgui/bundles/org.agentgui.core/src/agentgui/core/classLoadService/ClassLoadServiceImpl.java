@@ -60,8 +60,9 @@ public class ClassLoadServiceImpl implements ClassLoadService {
 	 * @see de.enflexit.common.classLoadService.BaseClassLoadService#newInstance(java.lang.String)
 	 */
 	@Override
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return this.forName(className).newInstance();
+	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException,InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError {
+	    //https://stackoverflow.com/questions/46393863/what-to-use-instead-of-class-newinstance
+	    return this.forName(className).getDeclaredConstructor().newInstance();
 	}
 	
 	/* (non-Javadoc)
@@ -77,10 +78,10 @@ public class ClassLoadServiceImpl implements ClassLoadService {
 	 * @see de.enflexit.common.classLoadService.BaseClassLoadService#getTimeModelInstance(java.lang.String)
 	 */
 	@Override
-	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException {
+	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException, InvocationTargetException, NoSuchMethodException {
 		@SuppressWarnings("unchecked")
 		Class<? extends TimeModel> timeModelClass = (Class<? extends TimeModel>) Class.forName(className);
-		return (TimeModel) timeModelClass.newInstance();
+		return (TimeModel) timeModelClass.getDeclaredConstructor().newInstance();
 	}
 
 	/* (non-Javadoc)

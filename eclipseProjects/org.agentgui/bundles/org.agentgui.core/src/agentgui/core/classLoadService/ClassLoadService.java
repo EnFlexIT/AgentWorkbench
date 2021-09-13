@@ -67,8 +67,10 @@ public interface ClassLoadService extends BaseClassLoadService {
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 * @throws SecurityException the security exception
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
 	 */
-	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException;
+	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException, InvocationTargetException, NoSuchMethodException;
 
 	/**
 	 * Has to return the {@link PlugIn} instance for the specified class name.

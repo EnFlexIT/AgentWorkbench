@@ -94,8 +94,10 @@ public class ClassLoadServiceUtility extends BaseClassLoadServiceUtility {
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 * @throws SecurityException the security exception
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
 	 */
-	public static TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException {
+	public static TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException, InvocationTargetException, NoSuchMethodException {
 		return getClassLoadServiceUtilityImpl().getTimeModelInstance(className); 
 	}
 

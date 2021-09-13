@@ -35,6 +35,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -2087,6 +2088,21 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			System.err.println(ex + " AbstractGraphElementPrototype class must be concrete.");
 		} catch (IllegalAccessException ex) {
 			System.err.println(ex + " AbstractGraphElementPrototype class must have a no-arg constructor.");
+		} catch (IllegalArgumentException ex) {
+			// TODO Specify Exception Message
+			System.err.println(ex + " Specify Exception Message");
+		} catch (InvocationTargetException ex) {
+			// TODO Specify Exception Message
+			System.err.println(ex + "Specify Exception Message");
+		} catch (NoSuchMethodException ex) {
+			// TODO Specify Exception Message
+			System.err.println(ex + "Specify Exception Message");
+		} catch (SecurityException ex) {
+			// TODO Specify Exception Message
+			System.err.println(ex + "Specify Exception Message");
+		} catch (NoClassDefFoundError ex) {
+			// TODO Specify Exception Message
+			System.err.println(ex + "Specify Exception Message");
 		}
 		// --- StarGraphElement is the super class of all star graph elements ---
 		if (graphElement instanceof StarGraphElement) {

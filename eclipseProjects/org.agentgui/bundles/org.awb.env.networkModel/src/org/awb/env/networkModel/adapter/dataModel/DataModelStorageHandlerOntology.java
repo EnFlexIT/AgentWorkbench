@@ -1,6 +1,7 @@
 package org.awb.env.networkModel.adapter.dataModel;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -198,6 +199,16 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoClassDefFoundError e) {
 			e.printStackTrace();
 		}
 		return instance;

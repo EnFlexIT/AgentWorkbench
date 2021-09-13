@@ -30,6 +30,7 @@ package org.awb.env.networkModel.helper;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 
 import org.awb.env.networkModel.GraphEdge;
@@ -162,8 +163,29 @@ public class NetworkComponentFactory {
 		    System.err.println(factoryName + "AbstractGraphElementPrototype class must be concrete.\n" + ex);
 		    return null;
 		} catch (IllegalAccessException ex) {
+			//TODO: Specify Exception Message
 		    System.err.println(factoryName + "AbstractGraphElementPrototype class must have a no-arg constructor.\n" + ex);
 		    return null;
+		} catch (IllegalArgumentException ex) {
+			//TODO: Specify Exception Message
+			 System.err.println(factoryName + "Specify Exception Message\n" + ex);
+			    return null;
+		} catch (InvocationTargetException ex) {
+			//TODO: Specify Exception Message
+			 System.err.println(factoryName + "Specify Exception Message" + ex);
+			    return null;
+		} catch (NoSuchMethodException ex) {
+			//TODO: Specify Exception Message
+			 System.err.println(factoryName + "Specify Exception Message.\n" + ex);
+			    return null;
+		} catch (SecurityException ex) {
+			//TODO: Specify Exception Message
+			 System.err.println(factoryName + "Specify Exception Message\n" + ex);
+			    return null;
+		} catch (NoClassDefFoundError ex) {
+			//TODO: Specify Exception Message
+			 System.err.println(factoryName + "Specify Exception Message\n" + ex);
+			    return null;
 		}
 		    
 		// --- Create a new local NetworkModel ----------------------

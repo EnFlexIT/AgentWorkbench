@@ -31,6 +31,7 @@ package agentgui.core.database;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -582,6 +583,27 @@ public class DBConnection {
 		} catch (SQLException e) {
 			//e.printStackTrace();
 			this.dbError.setErrNumber( e.getErrorCode() );
+			this.dbError.setText( e.getLocalizedMessage() );
+			this.dbError.setErr(true);
+		} catch (IllegalArgumentException e) {
+//			e.printStackTrace();
+			this.dbError.setText( e.getLocalizedMessage() );
+			this.dbError.setErr(true);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			this.dbError.setText( e.getLocalizedMessage() );
+			this.dbError.setErr(true);
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+//			e.printStackTrace();
+			this.dbError.setText( e.getLocalizedMessage() );
+			this.dbError.setErr(true);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			this.dbError.setText( e.getLocalizedMessage() );
+			this.dbError.setErr(true);
+		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
 			this.dbError.setText( e.getLocalizedMessage() );
 			this.dbError.setErr(true);
 		}

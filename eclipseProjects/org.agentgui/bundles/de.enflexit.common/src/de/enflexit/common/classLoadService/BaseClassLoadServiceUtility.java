@@ -54,8 +54,13 @@ public class BaseClassLoadServiceUtility {
 	 * @throws ClassNotFoundException the class not found exception
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
+	 * @throws NoClassDefFoundError 
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
 	 */
-	public static Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError {
 		return getBaseClassLoadServiceUtility().newInstance(className);
 	}
 	

@@ -72,7 +72,7 @@ public class ClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUtility
 	 * @see de.enflexit.common.classLoadService.AbstractClassLoadServiceUtility#getTimeModelInstance(java.lang.String)
 	 */
 	@Override
-	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException {
+	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException, InvocationTargetException, NoSuchMethodException {
 		return this.getClassLoadService(className, ClassLoadService.class).getTimeModelInstance(className);
 	}
 

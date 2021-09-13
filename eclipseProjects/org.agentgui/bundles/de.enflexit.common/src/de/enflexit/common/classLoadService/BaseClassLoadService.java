@@ -29,8 +29,13 @@ public interface BaseClassLoadService {
 	 * @throws ClassNotFoundException the class not found exception
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
+	 * @throws NoClassDefFoundError 
+	 * @throws SecurityException classloader is not the same 
+	 * @throws NoSuchMethodException if a matching method is not found.
+	 * @throws InvocationTargetException if the underlying constructor throws an exception
+	 * @throws IllegalArgumentException the illegal argument exception 
 	 */
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException;
+	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError;
 	
 	/**
 	 * Has to return the ontology instance from the specified ontology class name.

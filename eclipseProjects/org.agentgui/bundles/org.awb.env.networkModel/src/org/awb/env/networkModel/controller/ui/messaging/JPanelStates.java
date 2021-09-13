@@ -32,6 +32,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.lang.reflect.InvocationTargetException;
 import java.util.TreeMap;
 
 import javax.swing.JPanel;
@@ -113,7 +114,7 @@ public class JPanelStates extends JPanel {
 				// --- Add the visualization ------------------------
 				this.addVisualization(visualization);
 			    
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+			} catch (ClassNotFoundException | InstantiationException|IllegalArgumentException|InvocationTargetException|NoSuchMethodException|SecurityException|NoClassDefFoundError| IllegalAccessException ex) {
 				System.err.println("[" + this.messagingFrame.getClass().getSimpleName() + "] Visualization class '" + stateMessageVisClass.getName() + "' could not be initiated.");
 				//ex.printStackTrace();
 			}
