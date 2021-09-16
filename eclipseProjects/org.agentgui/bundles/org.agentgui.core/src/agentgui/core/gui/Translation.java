@@ -276,7 +276,7 @@ private static final long serialVersionUID = 1L;
 				} 
 				
 				// --- CTRL-Events abfangen ---------------
-				if (ke.getModifiers() == KeyEvent.CTRL_MASK || ke.getModifiers() == KeyEvent.CTRL_DOWN_MASK) {
+				if (ke.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
 					if (ke.getKeyCode()==KeyEvent.VK_S) {
 						jButtonSave.doClick();
 					

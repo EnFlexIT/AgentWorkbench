@@ -163,29 +163,18 @@ public class NetworkComponentFactory {
 		    System.err.println(factoryName + "AbstractGraphElementPrototype class must be concrete.\n" + ex);
 		    return null;
 		} catch (IllegalAccessException ex) {
-			//TODO: Specify Exception Message
 		    System.err.println(factoryName + "AbstractGraphElementPrototype class must have a no-arg constructor.\n" + ex);
 		    return null;
 		} catch (IllegalArgumentException ex) {
-			//TODO: Specify Exception Message
-			 System.err.println(factoryName + "Specify Exception Message\n" + ex);
-			    return null;
+			System.err.println(ex + "AbstractGraphElementPrototype has been passed an illegal or inappropriate argument.");
 		} catch (InvocationTargetException ex) {
-			//TODO: Specify Exception Message
-			 System.err.println(factoryName + "Specify Exception Message" + ex);
-			    return null;
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to InovcationTargetException");
 		} catch (NoSuchMethodException ex) {
-			//TODO: Specify Exception Message
-			 System.err.println(factoryName + "Specify Exception Message.\n" + ex);
-			    return null;
+			System.err.println(ex + "A method of AbstractGraphElementPrototype can not be found");
 		} catch (SecurityException ex) {
-			//TODO: Specify Exception Message
-			 System.err.println(factoryName + "Specify Exception Message\n" + ex);
-			    return null;
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to security violation");
 		} catch (NoClassDefFoundError ex) {
-			//TODO: Specify Exception Message
-			 System.err.println(factoryName + "Specify Exception Message\n" + ex);
-			    return null;
+		    System.err.println(ex + "Class AbstractGraphElementPrototype could not be found at runtime");
 		}
 		    
 		// --- Create a new local NetworkModel ----------------------

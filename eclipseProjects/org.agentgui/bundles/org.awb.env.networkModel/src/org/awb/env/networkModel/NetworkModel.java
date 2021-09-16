@@ -2089,20 +2089,15 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		} catch (IllegalAccessException ex) {
 			System.err.println(ex + " AbstractGraphElementPrototype class must have a no-arg constructor.");
 		} catch (IllegalArgumentException ex) {
-			// TODO Specify Exception Message
-			System.err.println(ex + " Specify Exception Message");
+			System.err.println(ex + "AbstractGraphElementPrototype has been passed an illegal or inappropriate argument.");
 		} catch (InvocationTargetException ex) {
-			// TODO Specify Exception Message
-			System.err.println(ex + "Specify Exception Message");
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to InovcationTargetException");
 		} catch (NoSuchMethodException ex) {
-			// TODO Specify Exception Message
-			System.err.println(ex + "Specify Exception Message");
+			System.err.println(ex + "A method of AbstractGraphElementPrototype can not be found");
 		} catch (SecurityException ex) {
-			// TODO Specify Exception Message
-			System.err.println(ex + "Specify Exception Message");
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to security violation");
 		} catch (NoClassDefFoundError ex) {
-			// TODO Specify Exception Message
-			System.err.println(ex + "Specify Exception Message");
+		    System.err.println(ex + "Class AbstractGraphElementPrototype could not be found at runtime");
 		}
 		// --- StarGraphElement is the super class of all star graph elements ---
 		if (graphElement instanceof StarGraphElement) {
