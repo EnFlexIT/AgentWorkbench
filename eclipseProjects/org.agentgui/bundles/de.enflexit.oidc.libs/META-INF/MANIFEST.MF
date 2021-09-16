@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OIDC
 Bundle-SymbolicName: de.enflexit.oidc.libs
-Bundle-Version: 5.17.1
+Bundle-Version: 5.17.2
 Bundle-ClassPath: activation-1.1.jar,
  commons-collections4-4.1.jar,
  commons-io-2.5.jar,
