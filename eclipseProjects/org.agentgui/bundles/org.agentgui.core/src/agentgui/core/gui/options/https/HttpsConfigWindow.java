@@ -112,10 +112,10 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show
-     * it.
+     * it. <br>
+     * <b>wbp.parser.constructor</b>
      * 
-     * @param owner the owner frame or window
-     * @wbp.parser.constructor
+     * @param owner the owner frame or windo
      */
     public HttpsConfigWindow(Window owner) {
 	super(owner);
@@ -473,6 +473,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * This method initializes trustStorefilepath.
+     * 
+     * @return {@link File}
      */
     public File getTrustStoreFile() {
 	return trustStoreFile;
@@ -481,7 +483,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
     /**
      * Sets TrustStorefilepath.
      * 
-     * @param trustStoreFile
+     * @param trustStoreFile the trust store file
      */
     public void setTrustStoreFile(File trustStoreFile) {
 	this.trustStoreFile = trustStoreFile;
@@ -489,6 +491,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * This method initializes keyStorefilepath.
+     * 
+     * @return keyStoreFile
      */
     public File getKeyStoreFile() {
 	return keyStoreFile;
@@ -497,7 +501,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
     /**
      * Sets KeyStorefilepath.
      * 
-     * @param keyStoreFile
+     * @param keyStoreFile the key store file
      */
     public void setKeyStoreFile(File keyStoreFile) {
 	this.keyStoreFile = keyStoreFile;
@@ -505,6 +509,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * This method initializes keyStorePassword.
+     * 
+     * @return String keystorePassword
      */
     public String getKeyStorePassword() {
 	return keyStorePassword;
@@ -513,7 +519,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
     /**
      * Sets KeyStorePassword.
      * 
-     * @param keyStorePassword
+     * @param keyStorePassword the keyStore password
      */
     public void setKeyStorePassword(String keyStorePassword) {
 	this.keyStorePassword = keyStorePassword;
@@ -521,6 +527,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * This method initializes trustStorePassword.
+     * 
+     * @return trustStorePassword
      */
     public String getTrustStorePassword() {
 	return trustStorePassword;
@@ -529,7 +537,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
     /**
      * Sets TrustStorePassword.
      * 
-     * @param trustStorePassword
+     * @param trustStorePassword the trustStore password
      */
     public void setTrustStorePassword(String trustStorePassword) {
 	this.trustStorePassword = trustStorePassword;
@@ -537,6 +545,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * This method initializes keyStoreAlias.
+     * 
+     * @return keyAlias
      */
     protected String getKeyAlias() {
 	return keyAlias;
@@ -545,7 +555,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
     /**
      * Sets KeyStoreAlias.
      * 
-     * @param keyAlias
+     * @param keyAlias the key alias
      */
     protected void setKeyAlias(String keyAlias) {
 	this.keyAlias = keyAlias;
@@ -553,6 +563,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * This method initializes keyStoreButtonPressed.
+     * 
+     * @return keyStoreButtonPressed
      */
     protected String getKeyStoreButtonPressed() {
 	return keyStoreButtonPressed;
@@ -561,7 +573,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
     /**
      * Sets KeyStoreButtonPressed.
      * 
-     * @param keystorebuttonPressed
+     * @param keystorebuttonPressed state of keyStoreButton
      */
     protected void setKeyStoreButtonPressed(String keystorebuttonPressed) {
 	this.keyStoreButtonPressed = keystorebuttonPressed;
@@ -569,6 +581,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * This method initializes trustStoreButtonPressed.
+     * 
+     * @return trustStoreButtonPressed
      */
     protected String getTrustStoreButtonPressed() {
 	return trustStoreButtonPressed;
@@ -577,7 +591,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
     /**
      * Sets TrustStoreButtonPressed.
      * 
-     * @param truststorebuttonPressed
+     * @param truststorebuttonPressed shows state of truststore button
      */
     protected void setTrustStoreButtonPressed(String truststorebuttonPressed) {
 	this.trustStoreButtonPressed = truststorebuttonPressed;

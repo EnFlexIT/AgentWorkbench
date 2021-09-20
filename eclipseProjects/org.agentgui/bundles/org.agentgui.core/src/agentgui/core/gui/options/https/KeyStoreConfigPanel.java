@@ -121,6 +121,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * Create the application.
+     * 
+     * @param httpsConfigWindow the https config window
      */
     public KeyStoreConfigPanel(HttpsConfigWindow httpsConfigWindow) {
 	this.httpsConfigWindow = httpsConfigWindow;
@@ -383,6 +385,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes KeyStoreController.
+     * 
+     * @return {@link KeyStoreController}
      */
     protected KeyStoreController getKeyStoreController() {
 	if (keyStoreController == null) {
@@ -525,6 +529,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldValidity.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldValidity() {
 	if (jTextFieldValidity == null) {
@@ -537,6 +543,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldKeyStoreName.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldKeyStoreName() {
 	if (jTextFieldKeyStoreName == null) {
@@ -549,6 +557,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldAlias.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldAlias() {
 	if (jTextFieldAlias == null) {
@@ -561,6 +571,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldFullName.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldFullName() {
 	if (jTextFieldFullName == null) {
@@ -573,6 +585,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldOrganizationalUnit.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldOrganizationalUnit() {
 	if (jTextFieldOrganizationalUnit == null) {
@@ -585,6 +599,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldOrganization.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldOrganization() {
 	if (jTextFieldOrganization == null) {
@@ -597,6 +613,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldCity.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldCity() {
 	if (jTextFieldCity == null) {
@@ -609,6 +627,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldState.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldState() {
 	if (jTextFieldState == null) {
@@ -621,6 +641,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldCountryCode.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldCountryCode() {
 	if (jTextFieldCountryCode == null) {
@@ -633,6 +655,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jPasswordField.
+     * 
+     * @return {@link JPasswordField} jPasswordFieldPassword
      */
     protected JPasswordField getJPasswordField() {
 	if (jPasswordFieldPassword == null) {
@@ -645,6 +669,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jPasswordConfirmPassword.
+     * 
+     * @return {@link JPasswordField} jPasswordFieldConfirmPassword
      */
     protected JPasswordField getJPasswordConfirmPassword() {
 	if (jPasswordFieldConfirmPassword == null) {
@@ -686,6 +712,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jFileChooserOpen.
+     * 
+     * @return JFileChooser jFileChooserOpen
      */
     protected JFileChooser getJFileChooserOpen() {
 	if (jFileChooserOpen == null) {
@@ -698,6 +726,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jFileChooserSave.
+     * 
+     * @return {@link JFileChooser} jFileChooserSave
      */
     protected JFileChooser getJFileChooserSave() {
 	if (jFileChooserSave == null) {
@@ -731,6 +761,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
     /**
      * This method initializes jTextFieldCertificatePath.
+     * 
+     * @return JTextField jTextFieldCertificatePath
      */
     public JTextField getJTextFieldCertificatePath() {
 	if (jTextFieldCertificatePath == null) {

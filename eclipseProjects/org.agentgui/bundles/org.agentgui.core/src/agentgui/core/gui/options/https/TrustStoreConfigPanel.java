@@ -121,6 +121,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * Create the application.
+     * 
+     * @param httpsConfigWindow the https configuration window
      */
     public TrustStoreConfigPanel(HttpsConfigWindow httpsConfigWindow) {
 	this.httpsConfigWindow = httpsConfigWindow;
@@ -553,6 +555,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes TrustStoreController.
+     * 
+     * @return {@link TrustStoreController}
      */
     protected TrustStoreController getTrustStoreController() {
 	if (trustStoreController == null) {
@@ -596,6 +600,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jLabelTrustStoreConfirmPassword.
+     * 
+     * @return {@link JLabel}
      */
     private JLabel getJLabelTrustStoreConfirmPassword() {
 	if (jLabelTrustStoreConfirmPassword == null) {
@@ -607,6 +613,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jTextFieldTrustStoreName.
+     * 
+     * @return {@link JTextField}
      */
     protected JTextField getJTextFieldTrustStoreName() {
 	if (jTextFieldTrustStoreName == null) {
@@ -619,6 +627,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jPasswordFieldTrustStorePassword.
+     * 
+     * @return {@link JPasswordField}
      */
     protected JPasswordField getJPasswordFieldPassword() {
 	if (jPasswordFieldPassword == null) {
@@ -631,6 +641,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jPasswordFieldTrustStoreConfirmPassword.
+     * 
+     * @return {@link JPasswordField}
      */
     protected JPasswordField getJPasswordFieldConfirmPassword() {
 	if (jPasswordFieldConfirmPassword == null) {
@@ -643,6 +655,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jLabelCertificatesList.
+     * 
+     * @return {@link JLabel}
      */
     protected JLabel getJLabelCertificatesList() {
 	if (jLabelCertificatesList == null) {
@@ -654,6 +668,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jButtonApplyTrustStore.
+     * 
+     * @return {@link JButton}
      */
     private JButton getJButtonApplyTrustStore() {
 	if (jButtonApplyTrustStore == null) {
@@ -670,6 +686,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jButtonAddCertificate.
+     * 
+     * @return {@link JButton}
      */
     protected JButton getJButtonAddCertificate() {
 	if (jButtonAddCertificate == null) {
@@ -685,6 +703,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jButtonRemoveCertificate.
+     * 
+     * @return {@link JButton}
      */
     protected JButton getJButtonRemoveCertificate() {
 	if (jButtonRemoveCertificate == null) {
@@ -700,6 +720,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes scrollPane.
+     * 
+     * @return {@link JScrollPane}
      */
     protected JScrollPane getScrollPane() {
 	if (jscrollPane == null) {
@@ -712,6 +734,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jFileChooser.
+     * 
+     * @return {@link JFileChooser}
      */
     protected JFileChooser getJFileChooser() {
 	if (jFileChooser == null) {
@@ -724,6 +748,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener, Mou
 
     /**
      * This method initializes jFileChooser.
+     * 
+     * @return {@link JFileChooser}
      */
     protected JFileChooser getJFileChooserFile() {
 	if (jFileChooserFile == null) {

@@ -162,6 +162,8 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 
     /**
      * This method initializes jComboBoxMtpProtocol.
+     * 
+     * @return {@link JComboBoxMtpProtocol}
      */
     protected JComboBoxMtpProtocol getJComboBoxMtpProtocol() {
 	if (jComboBoxMtpProtocol == null) {
