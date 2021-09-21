@@ -49,6 +49,36 @@
             </value>
         </entry>
         <entry>
+            <key>n13</key>
+            <value>
+                <id>n13</id>
+                <type>Linie</type>
+                <graphElementIDs>n13</graphElementIDs>
+                <graphElementIDs>PP0</graphElementIDs>
+                <graphElementIDs>PP4</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n14</key>
+            <value>
+                <id>n14</id>
+                <type>Linie</type>
+                <graphElementIDs>n14</graphElementIDs>
+                <graphElementIDs>PP2</graphElementIDs>
+                <graphElementIDs>PP4</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>n15</key>
+            <value>
+                <id>n15</id>
+                <type>Linie</type>
+                <graphElementIDs>PP1</graphElementIDs>
+                <graphElementIDs>n15</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
             <key>n2</key>
             <value>
                 <id>n2</id>

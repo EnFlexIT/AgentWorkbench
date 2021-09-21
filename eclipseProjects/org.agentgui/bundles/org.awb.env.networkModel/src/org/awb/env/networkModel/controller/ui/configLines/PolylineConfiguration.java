@@ -23,6 +23,8 @@ import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
+import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 
 /**
  * The Class PolyLineConfiguration.
@@ -181,12 +183,16 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 	protected String getConfigurationAsStringInternal() {
 		
 		String positions = null;
-		List<Point2D> intPoints = this.getIntermediatePoints();
-		
 		// --- Get intermediate points as string --------------------
+		List<Point2D> intPoints = this.getIntermediatePoints();
 		for (int i = 0; i < intPoints.size(); i++) {
 			Point2D pos = intPoints.get(i);
-			String posString = GraphNodePositionFactory.getPoint2DAsString(pos);
+			String posString = null;
+			if (pos instanceof AbstractCoordinate) {
+				posString = ((AbstractCoordinate)pos).serialize();
+			} else {
+				posString = GraphNodePositionFactory.getPoint2DAsString(pos);
+			}
 			if (positions==null) {
 				positions = posString; 
 			} else {
@@ -220,10 +226,11 @@ public class PolylineConfiguration extends GraphEdgeShapeConfiguration<GeneralPa
 		// --- Set intermediate point positions ---------------------
 		String[] posArray = stringConfiguration.split("\\|");
 		for (int i = 0; i < posArray.length; i++) {
-			Point2D pos = GraphNodePositionFactory.getPoint2DFromString(posArray[i]);
-			if (pos!=null) {
-				intPointList.add(pos);
+			Point2D pos  = GraphNodePositionFactory.getCoordinateFromString(posArray[i]);
+			if (!(pos instanceof AbstractGeoCoordinate)) {
+				pos = GraphNodePositionFactory.getPoint2DFromString(posArray[i]);	
 			}
+			if (pos!=null) intPointList.add(pos);
 		}
 		this.setIntermediatePoints(intPointList);
 	}
