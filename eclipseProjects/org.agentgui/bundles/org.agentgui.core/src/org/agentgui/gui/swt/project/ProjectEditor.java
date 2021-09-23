@@ -62,212 +62,238 @@ import agentgui.core.project.Project;
  */
 public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow {
 
-	public static final String ID = AppModelId.PART_ORG_AGENTGUI_CORE_PART_PROJECTEDITOR;
-	
-	private Shell currShell;
-	private MPart currMPart;
-	private Project currProject;
-	
-	private SashForm sashForm;
-	
-	private Tree tree;
-	private TreeViewer treeViewer;
-	private CTabFolder tabFolder;
-	private CTabItem tabItem;
-	private CTabItem tabItem_1;
+    public static final String ID = AppModelId.PART_ORG_AGENTGUI_CORE_PART_PROJECTEDITOR;
 
-	
-	/**
-	 * Instantiates a new project editor.
-	 *
-	 * @param mPart the MPart that uses the current ProjectEditor as 'Object'
-	 * @param shell the current shell
-	 */
-	@Inject
-	public ProjectEditor(MPart mPart, Shell shell) {
-		if (mPart!=null) {
-			this.currMPart = mPart;
-			this.currShell = shell;
-			this.currProject = (Project) this.currMPart.getTransientData().get(Project.class.getName());
-			this.currMPart.setLabel(this.currProject.getProjectName());
-			this.currMPart.setTooltip(this.currProject.getProjectName());
-		}
-		this.setPartName("Project Editor");
-		this.setContentDescription("The project editor enables to edit projects");
-		this.setTitleImage(GlobalInfo.getInternalSWTImage("AgentGUIGreen16.png"));
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
-	 */
-	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		// TODO Initialize the editor part
-	}
+    private Shell currShell;
+    private MPart currMPart;
+    private Project currProject;
 
-	/**
-	 * Create contents of the editor part.
-	 * @param parent
-	 */
-	@Override
-	@PostConstruct
-	public void createPartControl(Composite parent) {
-		
-		this.sashForm = new SashForm(parent, SWT.NONE);
-		
-		this.treeViewer = new TreeViewer(this.sashForm, SWT.BORDER);
-		this.tree = this.treeViewer.getTree();
-		
-		this.tabFolder = new CTabFolder(this.sashForm, SWT.BORDER);
-		this.tabFolder.setTabPosition(SWT.BOTTOM);
-		this.tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-		
-		this.tabItem = new CTabItem(this.tabFolder, SWT.NONE);
-		this.tabItem.setText("New Item");
-		
-		this.tabItem_1 = new CTabItem(this.tabFolder, SWT.NONE);
-		this.tabItem_1.setText("New Item");
-														
-		this.sashForm.setWeights(new int[] { 3, 10 });
-		
-	}
+    private SashForm sashForm;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
-	@Override
-	public void setFocus() {
-		this.setFocus();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		// TODO the Save operation
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isDirty()
-	 */
-	@Override
-	public boolean isDirty() {
-		return this.getProject().isUnsaved();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
-	@Override
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-	 */
-	@Override
-	public void doSaveAs() {
-		// Nothing to do here !
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.agentgui.gui.AwbProjectEditorWindow#getProject()
-	 */
-	@Override
-	public Project getProject() {
-		return this.currProject;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.agentgui.gui.AwbProjectEditorWindow#getUserFeedbackForClosingProject(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText, Object parentVisualizationComponent) {
-		
-		ProjectCloseUserFeedback userFeedback = null;
-		
-		String answerYES = Language.translate("Yes", Language.EN);
-		String answerNO = Language.translate("No", Language.EN);
-		String answerCANCEL = Language.translate("Cancel", Language.EN);
-		int result = MessageDialog.open(MessageDialog.QUESTION_WITH_CANCEL, this.currShell, msgTitle, msgText, SWT.NONE, new String[] {answerYES, answerNO, answerCANCEL});
-		switch (result) {
-		case 0:
-			userFeedback = ProjectCloseUserFeedback.SaveProject;
-			break;
-		case 1:
-			userFeedback = ProjectCloseUserFeedback.DoNotSaveProject;
-			break;
-		case 2:
-			userFeedback = ProjectCloseUserFeedback.CancelCloseAction;
-			break;
-		}
-		System.out.println("=> " + userFeedback.toString());
-		return userFeedback;
-	}
-	
-	
-	@Override
-	public void addDefaultTabs() {
-		// TODO Auto-generated method stub
-	}
+    private Tree tree;
+    private TreeViewer treeViewer;
+    private CTabFolder tabFolder;
+    private CTabItem tabItem;
+    private CTabItem tabItem_1;
 
-	@Override
-	public void moveToFront() {
-		// TODO Auto-generated method stub
+    /**
+     * Instantiates a new project editor.
+     *
+     * @param mPart the MPart that uses the current ProjectEditor as 'Object'
+     * @param shell the current shell
+     */
+    @Inject
+    public ProjectEditor(MPart mPart, Shell shell) {
+	if (mPart != null) {
+	    this.currMPart = mPart;
+	    this.currShell = shell;
+	    this.currProject = (Project) this.currMPart.getTransientData().get(Project.class.getName());
+	    this.currMPart.setLabel(this.currProject.getProjectName());
+	    this.currMPart.setTooltip(this.currProject.getProjectName());
 	}
+	this.setPartName("Project Editor");
+	this.setContentDescription("The project editor enables to edit projects");
+	this.setTitleImage(GlobalInfo.getInternalSWTImage("AgentGUIGreen16.png"));
+    }
 
-	@Override
-	public void setMaximized() {
-		// TODO Auto-generated method stub
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite,
+     * org.eclipse.ui.IEditorInput)
+     */
+    @Override
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	// TODO Initialize the editor part
+    }
 
-	@Override
-	public void setFocus2Tab(String tabName) {
-		// TODO Auto-generated method stub
-	}
+    /**
+     * Create contents of the editor part.
+     * 
+     * @param parent the parent
+     */
+    @Override
+    @PostConstruct
+    public void createPartControl(Composite parent) {
 
-	@Override
-	public void setProjectTreeVisible(boolean isTreeVisible) {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void setViewForDeveloperOrEndUser() {
-		// TODO Auto-generated method stub
-	}
+	this.sashForm = new SashForm(parent, SWT.NONE);
 
-	@Override
-	public ProjectWindowTab getTabForSubPanels(String superPanelName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	this.treeViewer = new TreeViewer(this.sashForm, SWT.BORDER);
+	this.tree = this.treeViewer.getTree();
 
-	@Override
-	public void validateStartTab() {
-		// TODO Auto-generated method stub
-	}
+	this.tabFolder = new CTabFolder(this.sashForm, SWT.BORDER);
+	this.tabFolder.setTabPosition(SWT.BOTTOM);
+	this.tabFolder.setSelectionBackground(
+		Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
-	@Override
-	public void showErrorMessage(String msgText, String msgHead) {
-		// TODO Auto-generated method stub
-	}
+	this.tabItem = new CTabItem(this.tabFolder, SWT.NONE);
+	this.tabItem.setText("New Item");
 
-	@Override
-	public void addProjectTab(ProjectWindowTab projectWindowTab) {
-		// TODO Auto-generated method stub
-	}
+	this.tabItem_1 = new CTabItem(this.tabFolder, SWT.NONE);
+	this.tabItem_1.setText("New Item");
 
-	@Override
-	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPosition) {
-		// TODO Auto-generated method stub
-	}
+	this.sashForm.setWeights(new int[] { 3, 10 });
 
-	@Override
-	public void removeProjectTab(ProjectWindowTab projectWindowTab) {
-		// TODO Auto-generated method stub
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+     */
+    @Override
+    public void setFocus() {
+	this.setFocus();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.
+     * IProgressMonitor)
+     */
+    @Override
+    public void doSave(IProgressMonitor monitor) {
+	// TODO the Save operation
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.part.EditorPart#isDirty()
+     */
+    @Override
+    public boolean isDirty() {
+	return this.getProject().isUnsaved();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
+     */
+    @Override
+    public boolean isSaveAsAllowed() {
+	return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.part.EditorPart#doSaveAs()
+     */
+    @Override
+    public void doSaveAs() {
+	// Nothing to do here !
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.agentgui.gui.AwbProjectEditorWindow#getProject()
+     */
+    @Override
+    public Project getProject() {
+	return this.currProject;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.agentgui.gui.AwbProjectEditorWindow#getUserFeedbackForClosingProject(java
+     * .lang.String, java.lang.String)
+     */
+    @Override
+    public ProjectCloseUserFeedback getUserFeedbackForClosingProject(String msgTitle, String msgText,
+	    Object parentVisualizationComponent) {
+
+	ProjectCloseUserFeedback userFeedback = null;
+
+	String answerYES = Language.translate("Yes", Language.EN);
+	String answerNO = Language.translate("No", Language.EN);
+	String answerCANCEL = Language.translate("Cancel", Language.EN);
+	int result = MessageDialog.open(MessageDialog.QUESTION_WITH_CANCEL, this.currShell, msgTitle, msgText, SWT.NONE,
+		new String[] { answerYES, answerNO, answerCANCEL });
+	switch (result) {
+	case 0:
+	    userFeedback = ProjectCloseUserFeedback.SaveProject;
+	    break;
+	case 1:
+	    userFeedback = ProjectCloseUserFeedback.DoNotSaveProject;
+	    break;
+	case 2:
+	    userFeedback = ProjectCloseUserFeedback.CancelCloseAction;
+	    break;
 	}
+	System.out.println("=> " + userFeedback.toString());
+	return userFeedback;
+    }
+
+    @Override
+    public void addDefaultTabs() {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void moveToFront() {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setMaximized() {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setFocus2Tab(String tabName) {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setProjectTreeVisible(boolean isTreeVisible) {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setViewForDeveloperOrEndUser() {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public ProjectWindowTab getTabForSubPanels(String superPanelName) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public void validateStartTab() {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void showErrorMessage(String msgText, String msgHead) {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void addProjectTab(ProjectWindowTab projectWindowTab) {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPosition) {
+	// TODO Auto-generated method stub
+    }
+
+    @Override
+    public void removeProjectTab(ProjectWindowTab projectWindowTab) {
+	// TODO Auto-generated method stub
+    }
 
 }

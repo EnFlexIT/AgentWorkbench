@@ -48,225 +48,254 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class ProjectBundleLoader {
 
-	private boolean debug = false;
-	
-	private Project project;
-	
-	private ProjectBundleEvaluator projectBundleEvaluator;
-	private Vector<Bundle> bundleVector;
-	
-	/**
-	 * Instantiates a new bundle loader.
-	 * @param project the project
-	 */
-	public ProjectBundleLoader(Project project) {
-		this.project = project;
-	}
-	/**
-	 * Returns the bundle directory.
-	 * @return the bundle directory
-	 */
-	public String getBundleDirectory() {
-		return this.project.getProjectFolderFullPath();
-	}
-	
-	/**
-	 * Returns the instance of the {@link ProjectBundleEvaluator} for this project.
-	 * @return the bundle builder
-	 */
-	private ProjectBundleEvaluator getProjectBundleEvaluator() {
-		if (projectBundleEvaluator==null) {
-			projectBundleEvaluator = new ProjectBundleEvaluator(new File(this.getBundleDirectory()));
-		}
-		return projectBundleEvaluator;
-	}
-	/**
-	 * Returns the bundle jars.
-	 * @return the bundle jars
-	 */
-	public ArrayList<File> getBundleJars() {
-		return this.getProjectBundleEvaluator().getBundleJars();
-	}
-	/**
-	 * Return the file of the specified project bundle.
-	 * @param bundle the bundle
-	 * @return the bundle file
-	 */
-	public File getBundleFile(Bundle bundle) {
-		return this.getProjectBundleEvaluator().getBundleFile(bundle);
-	}
-	/**
-	 * Gets the regular jars.
-	 * @return the regular jars
-	 */
-	public ArrayList<File> getRegularJars() {
-		return this.getProjectBundleEvaluator().getRegularJars();
-	}
-	
-	/**
-	 * Returns the regular jar file resources as list model.
-	 * @return the regular jar file resources
-	 */
-	public DefaultListModel<String> getRegularJarsListModel() {
-		return this.getListModelFromFilesFound(this.getProjectBundleEvaluator().getRegularJars());
-	}
-	/**
-	 * Returns the bundle jar file resources as list model.
-	 * @return the bundle jar file resources
-	 */
-	public DefaultListModel<String> getBundleJarsListModel() {
-		return this.getListModelFromFilesFound(this.getProjectBundleEvaluator().getBundleJars());
-	}
-	/**
-	 * Returns a list model out of the specified list of files.
-	 *
-	 * @param filesFound the files found as ArrayList
-	 * @return the list model from the files found
-	 */
-	private DefaultListModel<String> getListModelFromFilesFound(ArrayList<File> filesFound) {
-		
-		String projectDir = this.project.getProjectFolderFullPath();
-		DefaultListModel<String> listModel = new DefaultListModel<>();
-		if (filesFound!=null) {
-			for (int i = 0; i < filesFound.size(); i++) {
-				File jarFile = filesFound.get(i);
-				String relPathToFile = jarFile.getAbsolutePath().substring(projectDir.length());
-				relPathToFile = relPathToFile.replace("\\", "/");
-				listModel.addElement(relPathToFile);
-			}
-		}
-		return listModel;
-	}
-	
-	
-	/**
-	 * Returns the bundle vector that contains all bundles loaded by the current project. 
-	 * @return the bundle vector
-	 */
-	public Vector<Bundle> getBundleVector() {
-		if (bundleVector==null) {
-			bundleVector = new Vector<>();
-		}
-		return bundleVector;
-	}
-	
-	/**
-	 * Load the bundle of the current project.
-	 * @return true, if successful
-	 */
-	public void installAndStartBundles() {
-		
-		if (this.getBundleDirectory()==null) return;
-			
-		// --- Evaluate the directory -------------------------------
-		this.getProjectBundleEvaluator().evaluateDirectory();
-		
-		// --- Install the independent bundles found ----------------
-		if (this.getProjectBundleEvaluator().getBundleJars()!=null) {
-			this.installBundles(this.getProjectBundleEvaluator().getBundleJars());
-		}
-		
-		// --- Finally, start all known bundles ---------------------
-		this.startBundles(this.getBundleVector());
-		
-	}
-	
+    private boolean debug = false;
 
-	/**
-	 * Installs the specified list of jar bundled and adds their bundle instances to the local bundle vector {@link #getBundleVector()}.
-	 * @param bundleJarFile the bundle jar file
-	 */
-	public void installBundles(List<File> fileList) {
-		for (int i = 0; i < fileList.size(); i++) {
-			this.installBundle(fileList.get(i));
-		}
+    private Project project;
+
+    private ProjectBundleEvaluator projectBundleEvaluator;
+    private Vector<Bundle> bundleVector;
+
+    /**
+     * Instantiates a new bundle loader.
+     * 
+     * @param project the project
+     */
+    public ProjectBundleLoader(Project project) {
+	this.project = project;
+    }
+
+    /**
+     * Returns the bundle directory.
+     * 
+     * @return the bundle directory
+     */
+    public String getBundleDirectory() {
+	return this.project.getProjectFolderFullPath();
+    }
+
+    /**
+     * Returns the instance of the {@link ProjectBundleEvaluator} for this project.
+     * 
+     * @return the bundle builder
+     */
+    private ProjectBundleEvaluator getProjectBundleEvaluator() {
+	if (projectBundleEvaluator == null) {
+	    projectBundleEvaluator = new ProjectBundleEvaluator(new File(this.getBundleDirectory()));
 	}
-	/**
-	 * Installs the specified jar bundle and adds the Bundle instance to the local bundle vector {@link #getBundleVector()}.
-	 * @param bundleJarFile the bundle jar file
-	 */
-	public void installBundle(File bundleJarFile) {
-		
-		// --- Check the symbolic bundle name of the jar to load ----
-		String sbn = this.getProjectBundleEvaluator().getBundleJarsSymbolicBundleNames().get(bundleJarFile);
-		if (sbn!=null && sbn.isEmpty()==false) {
-			if (Platform.getBundle(sbn)!=null) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Bundle '" + sbn + "' is already installed, skip installation of jar file!");
-				return;
-			}
-		}
-		// --- INstall the local bundle -----------------------------
-		this.installBundle("reference:file:" + bundleJarFile.getAbsolutePath());
+	return projectBundleEvaluator;
+    }
+
+    /**
+     * Returns the bundle jars.
+     * 
+     * @return the bundle jars
+     */
+    public ArrayList<File> getBundleJars() {
+	return this.getProjectBundleEvaluator().getBundleJars();
+    }
+
+    /**
+     * Return the file of the specified project bundle.
+     * 
+     * @param bundle the bundle
+     * @return the bundle file
+     */
+    public File getBundleFile(Bundle bundle) {
+	return this.getProjectBundleEvaluator().getBundleFile(bundle);
+    }
+
+    /**
+     * Gets the regular jars.
+     * 
+     * @return the regular jars
+     */
+    public ArrayList<File> getRegularJars() {
+	return this.getProjectBundleEvaluator().getRegularJars();
+    }
+
+    /**
+     * Returns the regular jar file resources as list model.
+     * 
+     * @return the regular jar file resources
+     */
+    public DefaultListModel<String> getRegularJarsListModel() {
+	return this.getListModelFromFilesFound(this.getProjectBundleEvaluator().getRegularJars());
+    }
+
+    /**
+     * Returns the bundle jar file resources as list model.
+     * 
+     * @return the bundle jar file resources
+     */
+    public DefaultListModel<String> getBundleJarsListModel() {
+	return this.getListModelFromFilesFound(this.getProjectBundleEvaluator().getBundleJars());
+    }
+
+    /**
+     * Returns a list model out of the specified list of files.
+     *
+     * @param filesFound the files found as ArrayList
+     * @return the list model from the files found
+     */
+    private DefaultListModel<String> getListModelFromFilesFound(ArrayList<File> filesFound) {
+
+	String projectDir = this.project.getProjectFolderFullPath();
+	DefaultListModel<String> listModel = new DefaultListModel<>();
+	if (filesFound != null) {
+	    for (int i = 0; i < filesFound.size(); i++) {
+		File jarFile = filesFound.get(i);
+		String relPathToFile = jarFile.getAbsolutePath().substring(projectDir.length());
+		relPathToFile = relPathToFile.replace("\\", "/");
+		listModel.addElement(relPathToFile);
+	    }
 	}
-	/**
-	 * Installs the specified jar bundle and adds the Bundle instance to the local bundle vector {@link #getBundleVector()}.
-	 * @param bundleJarFilePath the bundle jar file path
-	 */
-	public void installBundle(String bundleJarFilePath) {
-		Bundle bundle = null;
-		try {
-			BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-			bundle = bundleContext.installBundle(bundleJarFilePath);
-			if (this.debug) System.out.println("=> + " + bundle.getSymbolicName() + " installed.");
-			
-		} catch (BundleException bEx) {
-			bEx.printStackTrace();
-		}
-		// --- Remind this bundle ---------------
-		if (bundle!=null) this.getBundleVector().addElement(bundle);
+	return listModel;
+    }
+
+    /**
+     * Returns the bundle vector that contains all bundles loaded by the current
+     * project.
+     * 
+     * @return the bundle vector
+     */
+    public Vector<Bundle> getBundleVector() {
+	if (bundleVector == null) {
+	    bundleVector = new Vector<>();
 	}
-	
-	
-	/**
-	 * Tries to start all specified bundles.
-	 * @param bundleVector the bundle vector
-	 */
-	public void startBundles(Vector<Bundle> bundleVector) {
-		for (int i = 0; i < bundleVector.size(); i++) {
-			this.startBundle(bundleVector.get(i));
-		}
+	return bundleVector;
+    }
+
+    /**
+     * Load the bundle of the current project.
+     * 
+     */
+    public void installAndStartBundles() {
+
+	if (this.getBundleDirectory() == null)
+	    return;
+
+	// --- Evaluate the directory -------------------------------
+	this.getProjectBundleEvaluator().evaluateDirectory();
+
+	// --- Install the independent bundles found ----------------
+	if (this.getProjectBundleEvaluator().getBundleJars() != null) {
+	    this.installBundles(this.getProjectBundleEvaluator().getBundleJars());
 	}
-	/**
-	 * Starts the specified bundle and return true if successful.
-	 *
-	 * @param bundle the bundle
-	 * @return true, if successful
-	 */
-	public boolean startBundle(Bundle bundle) {
-		boolean bundleStarted = false;
-		try {
-			bundle.start();
-			bundleStarted = true;
-			if (this.debug) System.out.println("=> ! " + bundle.getSymbolicName() + " started");
-			
-		} catch (BundleException bEx) {
-			bEx.printStackTrace();
-		}
-		return bundleStarted;
+
+	// --- Finally, start all known bundles ---------------------
+	this.startBundles(this.getBundleVector());
+
+    }
+
+    /**
+     * Installs the specified list of jar bundled and adds their bundle instances to
+     * the local bundle vector {@link #getBundleVector()}.
+     * 
+     * @param fileList the bundle jar files
+     */
+    public void installBundles(List<File> fileList) {
+	for (int i = 0; i < fileList.size(); i++) {
+	    this.installBundle(fileList.get(i));
 	}
-	
-	/**
-	 * Stops and un-installs the current bundle.
-	 */
-	public void stopAndUninstallBundles() {
-		
-		// --- Get a copy of loaded bundles -----
-		Vector<Bundle> bundlesToRemove = new Vector<>(this.getBundleVector());
-		for (Bundle bundle: bundlesToRemove) {
-			try {
-				// --- Remove, if active --------
-				if (bundle.getState()==Bundle.ACTIVE) {
-					bundle.stop();
-					bundle.uninstall();
-				}
-				// --- Remove from vector -------
-				this.getBundleVector().remove(bundle);
-				if (this.debug) System.out.println("=> - " + bundle.getSymbolicName() + " stoped & uninstalled");
-				
-			} catch (BundleException bEx) {
-				bEx.printStackTrace();
-			}
-		}
+    }
+
+    /**
+     * Installs the specified jar bundle and adds the Bundle instance to the local
+     * bundle vector {@link #getBundleVector()}.
+     * 
+     * @param bundleJarFile the bundle jar file
+     */
+    public void installBundle(File bundleJarFile) {
+
+	// --- Check the symbolic bundle name of the jar to load ----
+	String sbn = this.getProjectBundleEvaluator().getBundleJarsSymbolicBundleNames().get(bundleJarFile);
+	if (sbn != null && sbn.isEmpty() == false) {
+	    if (Platform.getBundle(sbn) != null) {
+		System.out.println("[" + this.getClass().getSimpleName() + "] Bundle '" + sbn
+			+ "' is already installed, skip installation of jar file!");
+		return;
+	    }
 	}
-	
+	// --- INstall the local bundle -----------------------------
+	this.installBundle("reference:file:" + bundleJarFile.getAbsolutePath());
+    }
+
+    /**
+     * Installs the specified jar bundle and adds the Bundle instance to the local
+     * bundle vector {@link #getBundleVector()}.
+     * 
+     * @param bundleJarFilePath the bundle jar file path
+     */
+    public void installBundle(String bundleJarFilePath) {
+	Bundle bundle = null;
+	try {
+	    BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+	    bundle = bundleContext.installBundle(bundleJarFilePath);
+	    if (this.debug)
+		System.out.println("=> + " + bundle.getSymbolicName() + " installed.");
+
+	} catch (BundleException bEx) {
+	    bEx.printStackTrace();
+	}
+	// --- Remind this bundle ---------------
+	if (bundle != null)
+	    this.getBundleVector().addElement(bundle);
+    }
+
+    /**
+     * Tries to start all specified bundles.
+     * 
+     * @param bundleVector the bundle vector
+     */
+    public void startBundles(Vector<Bundle> bundleVector) {
+	for (int i = 0; i < bundleVector.size(); i++) {
+	    this.startBundle(bundleVector.get(i));
+	}
+    }
+
+    /**
+     * Starts the specified bundle and return true if successful.
+     *
+     * @param bundle the bundle
+     * @return true, if successful
+     */
+    public boolean startBundle(Bundle bundle) {
+	boolean bundleStarted = false;
+	try {
+	    bundle.start();
+	    bundleStarted = true;
+	    if (this.debug)
+		System.out.println("=> ! " + bundle.getSymbolicName() + " started");
+
+	} catch (BundleException bEx) {
+	    bEx.printStackTrace();
+	}
+	return bundleStarted;
+    }
+
+    /**
+     * Stops and un-installs the current bundle.
+     */
+    public void stopAndUninstallBundles() {
+
+	// --- Get a copy of loaded bundles -----
+	Vector<Bundle> bundlesToRemove = new Vector<>(this.getBundleVector());
+	for (Bundle bundle : bundlesToRemove) {
+	    try {
+		// --- Remove, if active --------
+		if (bundle.getState() == Bundle.ACTIVE) {
+		    bundle.stop();
+		    bundle.uninstall();
+		}
+		// --- Remove from vector -------
+		this.getBundleVector().remove(bundle);
+		if (this.debug)
+		    System.out.println("=> - " + bundle.getSymbolicName() + " stoped & uninstalled");
+
+	    } catch (BundleException bEx) {
+		bEx.printStackTrace();
+	    }
+	}
+    }
+
 }

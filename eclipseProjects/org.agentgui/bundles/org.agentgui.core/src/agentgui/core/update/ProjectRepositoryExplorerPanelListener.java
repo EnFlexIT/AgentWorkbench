@@ -37,7 +37,7 @@ package agentgui.core.update;
  * projectRepositoryExplorerPanel event occurs, that object's appropriate method
  * is invoked.
  *
- * @see ProjectRepositoryExplorerPanelEvent
+ * @see ProjectRepositoryExplorerPanel
  */
 public interface ProjectRepositoryExplorerPanelListener {
 

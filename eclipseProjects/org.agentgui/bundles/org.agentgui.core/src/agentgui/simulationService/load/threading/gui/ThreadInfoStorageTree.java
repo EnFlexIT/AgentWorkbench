@@ -331,6 +331,8 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener {
 
     /**
      * Apply text filter.
+     * 
+     * @param filterText the filter text
      */
     public void applyTextFilter(String filterText) {
 
