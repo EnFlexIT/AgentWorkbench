@@ -39,23 +39,24 @@ public class SatelliteGraphMouse extends ModalSatelliteGraphMouse {
 
     /**
      * Instantiates a new satellite graph mouse.
-     *
-     * @param in the in
-     * @param out the out
+     * 
+     * @param scalingControl the scaling control
      */
     public SatelliteGraphMouse(ScalingControl scalingControl) {
-        super();
-        this.exchangeScalingControl(scalingControl);
+	super();
+	this.exchangeScalingControl(scalingControl);
     }
-	
+
     /**
-     * Exchanges the scaling control of the SatelliteGraphMouse with the initially specified one.
+     * Exchanges the scaling control of the SatelliteGraphMouse with the initially
+     * specified one.
+     * 
      * @param scalingControl the scaling control
      */
     private void exchangeScalingControl(ScalingControl scalingControl) {
-    	remove(scalingPlugin);
-    	scalingPlugin =  new SatelliteScalingGraphMousePlugin(scalingControl, 0);
-    	add(scalingPlugin);
+	remove(scalingPlugin);
+	scalingPlugin = new SatelliteScalingGraphMousePlugin(scalingControl, 0);
+	add(scalingPlugin);
     }
-    
+
 }
