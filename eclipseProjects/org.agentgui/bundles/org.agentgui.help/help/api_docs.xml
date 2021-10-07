@@ -103,10 +103,12 @@
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/controller/ui/commands/package-summary.html" label="org.awb.env.networkModel.controller.ui.commands"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/controller/ui/configLines/package-summary.html" label="org.awb.env.networkModel.controller.ui.configLines"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/controller/ui/messaging/package-summary.html" label="org.awb.env.networkModel.controller.ui.messaging"/>
+<topic href="help/api-docs/javadoc/org/awb/env/networkModel/controller/ui/timeModel/package-summary.html" label="org.awb.env.networkModel.controller.ui.timeModel"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/controller/ui/toolbar/package-summary.html" label="org.awb.env.networkModel.controller.ui.toolbar"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/helper/package-summary.html" label="org.awb.env.networkModel.helper"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/maps/package-summary.html" label="org.awb.env.networkModel.maps"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/persistence/package-summary.html" label="org.awb.env.networkModel.persistence"/>
+<topic href="help/api-docs/javadoc/org/awb/env/networkModel/positioning/package-summary.html" label="org.awb.env.networkModel.positioning"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/prototypes/package-summary.html" label="org.awb.env.networkModel.prototypes"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/settings/package-summary.html" label="org.awb.env.networkModel.settings"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/settings/ui/package-summary.html" label="org.awb.env.networkModel.settings.ui"/>
