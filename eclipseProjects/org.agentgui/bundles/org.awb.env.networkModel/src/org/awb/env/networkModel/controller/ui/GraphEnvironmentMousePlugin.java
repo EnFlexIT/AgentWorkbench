@@ -63,6 +63,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGui.GraphMouseMode;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
+import de.enflexit.common.SerialClone;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -139,8 +140,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * Returns the graph node position transformer.
 	 * @return the graph node position transformer
 	 */
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemNodePositionTransformer() {
-		return this.basicGraphGUI.getCoordinateSystemPositionTransformer();
+	private TransformerForGraphNodePosition getCoordinateSystemNodePositionTransformer() {
+		return this.getVisViewer().getCoordinateSystemPositionTransformer();
 	}
 	
 	/**
@@ -211,8 +212,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		List<GraphNode> nodesMovedList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
 		for (int i = 0; i < nodesMovedList.size(); i++) {
 			GraphNode node = nodesMovedList.get(i);
-			Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-			this.nodesMovedOldPositions.put(node.getId(), point);
+			this.nodesMovedOldPositions.put(node.getId(), SerialClone.clone(node.getPosition()));
 		}
 		
 		// --- Movement of polyline nodes? --------------------------
@@ -227,8 +227,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 						// --- Intermediate node to move ------------
 						List<Point2D> intPointList = new ArrayList<>();
 						for (int j = 0; j < polyLineConfig.getIntermediatePoints().size(); j++) {
-							Point2D intPoint = polyLineConfig.getIntermediatePoints().get(j);
-							intPointList.add(new Point2D.Double(intPoint.getX(), intPoint.getY()));
+							intPointList.add(SerialClone.clone(polyLineConfig.getIntermediatePoints().get(j)));
 						}
 						this.polylinesMovedOldPositions.put(pickedEdge.getId(), intPointList);
 					}
@@ -250,14 +249,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 						GraphNode node = nodesSelected.get(i);
 						Point2D positionOld  = this.nodesMovedOldPositions.get(node.getId());
 						if (node.getPosition().equals(positionOld)==false) {
-							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
+							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.basicGraphGUI, this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
 							break;
 						}
 					} // end for
 					
 				} else {
 					// --- Should never happen --------------------------------
-					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
+					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelUndoManager().setGraphNodesMoved(this.basicGraphGUI, this.nodesMovedOldPositions, this.polylinesMovedOldPositions);
 				}
 			}
 			this.nodesMovedOldPositions = null;
@@ -315,6 +314,10 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mousePressed(MouseEvent me) {
 		
+		// --- Release the "action on top" ----------------
+		this.getVisViewer().setActionOnTop(false);
+
+		// --- Check for paste action first ---------------
 		if (this.isPasteAction==true) {
 			if (SwingUtilities.isLeftMouseButton(me)) {
 				// --- Finalize paste action --------------
@@ -539,9 +542,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent me) {
 		if (me.getWheelRotation()>0) {
-			this.basicGraphGUI.zoomOut(me.getPoint());
+			this.basicGraphGUI.getZoomController().zoomOut(me.getPoint());
 		} else {
-			this.basicGraphGUI.zoomIn(me.getPoint());
+			this.basicGraphGUI.getZoomController().zoomIn(me.getPoint());
 		}
 		me.consume();
 	}

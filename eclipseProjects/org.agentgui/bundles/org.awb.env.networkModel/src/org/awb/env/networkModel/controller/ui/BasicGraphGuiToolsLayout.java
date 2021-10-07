@@ -63,7 +63,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
 
 /**
- * The Class BasicGraphGuiToolsLayout represents the toolbar for layout edits.
+ * The Class BasicGraphGuiToolsLayout represents the toolbar for layout edits, e.g. to configure line curves and other.
  * 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
@@ -565,19 +565,19 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 			
 		} else if (ae.getSource()==this.getJButtonAlignLeft()) {
 			// --- Align marked nodes to the left ---------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(), Alignment.Left);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Left);
 			
 		} else if (ae.getSource()==this.getJButtonAlignRight()) {
 			// --- Align marked nodes to the right --------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Right);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Right);
 			
 		} else if (ae.getSource()==this.getJButtonAlignTop()) {
 			// --- Align marked nodes to the top ----------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Top);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Top);
 			
 		} else if (ae.getSource()==this.getJButtonAlignBottom()) {
 			// --- Align marked nodes to the bottom -------
-			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer(),Alignment.Bottom);
+			this.graphController.getNetworkModelUndoManager().alignNodes(this.basicGraphGuiTools.getBasicGraphGUI(), Alignment.Bottom);
 			
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] => Unknow action command from " + ae.getSource());
@@ -629,9 +629,9 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	
 	/**
 	 * Sets the specified graph edge shape configuration to the local {@link #editGraphEdge}.
-	 * @param edgeShapeConfiguration the new graph configuration
+	 * @param newEdgeShapeConfiguration the new graph configuration
 	 */
-	private void setGraphConfiguration(GraphEdgeShapeConfiguration<?> edgeShapeConfiguration) {
+	private void setGraphConfiguration(GraphEdgeShapeConfiguration<?> newEdgeShapeConfiguration) {
 		
 		if (this.editGraphEdge==null) return;
 		
@@ -640,15 +640,15 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 		
 		// --- Check if the new configuration is different from the old one ---
 		GraphEdgeShapeConfiguration<?> oldEdgeShapeConfiguration = initialConfLineEdit.getGraphEdgeOld().getEdgeShapeConfiguration();
-		if (edgeShapeConfiguration.equals(oldEdgeShapeConfiguration)==true) return;
+		if (newEdgeShapeConfiguration!=null && newEdgeShapeConfiguration.equals(oldEdgeShapeConfiguration)==true) return;
 		
 		// --- Set edge configuration and redraw edge -------------------------
-		this.editGraphEdge.setEdgeShapeConfiguration(edgeShapeConfiguration);
+		this.editGraphEdge.setEdgeShapeConfiguration(newEdgeShapeConfiguration);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, false);
 		this.basicGraphGuiTools.getBasicGraphGUI().getVisualizationViewer().getPickedEdgeState().pick(editGraphEdge, true);
 		
 		// --- Enable edge edit -----------------------------------------------
-		boolean isEnableEdgeEdit = (edgeShapeConfiguration!=null && !(edgeShapeConfiguration instanceof OrthogonalConfiguration));
+		boolean isEnableEdgeEdit = (newEdgeShapeConfiguration!=null && !(newEdgeShapeConfiguration instanceof OrthogonalConfiguration));
 		this.getJToggleButtonEdgeEdit().setEnabled(isEnableEdgeEdit);
 		this.switchEdgeEdit(isEnableEdgeEdit, initialConfLineEdit);
 		

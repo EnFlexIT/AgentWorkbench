@@ -4,6 +4,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.coords.UTMCoord;
+
 /**
  * The Class UTMCoordinate.
  * 
@@ -20,6 +24,8 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 
 	private static final long serialVersionUID = -938213615995403657L;
 
+	public static final String POS_PREFIX = "UTM";
+	
 	private int lngZone;
 	private String latZone;
 	private double easting;
@@ -75,19 +81,92 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 		this.northing = northing;
 	}
 
-	/**
-	 * Return the WGS84LatLngCoordinatefor the current UTMCoordinate.
-	 * @return the corresponding WGS84LatLngCoordinatefor
+	
+	// ----------------------------------------------------
+	// --- Methods from abstract class Point2D -- Start --- 
+	// ----------------------------------------------------
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D.Double#getX()
 	 */
-	public WGS84LatLngCoordinate getWGS84LatLngCoordinate() {
-		return new CoordinateConversion().utm2LatLon(this);
+	@Override
+	public double getX() {
+		return this.getEasting();
 	}
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#getY()
+	 */
+	@Override
+	public double getY() {
+		return this.getNorthing();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#setLocation(double, double)
+	 */
+	@Override
+	public void setLocation(double x, double y) {
+		this.setEasting(x);
+		this.setNorthing(y);
+	}
+	// ----------------------------------------------------
+	// --- Methods from abstract class Point2D -- End ----- 
+	// ----------------------------------------------------
+	
+	
 	/**
 	 * Transforms the current UTM longitude zone to the specified longitude zone.
 	 * @param targetLongitudeZone the target longitude zone
 	 */
 	public void transformZone(int targetLongitudeZone) {
 		new CoordinateConversion().utmTransformEastingByLongitudeZone(this, targetLongitudeZone);
+	}
+	
+	/**
+	 * Return the WGS84LatLngCoordinatefor the current UTMCoordinate.
+	 * @return the corresponding WGS84LatLngCoordinatefor
+	 */
+	public WGS84LatLngCoordinate getWGS84LatLngCoordinate() {
+		
+		WGS84LatLngCoordinate wgs84 = null;
+		
+		boolean useNasaLib = false;
+		if (useNasaLib==true) {
+			// --- Usage of the NASA library ------------------------
+			String hemisphere = new CoordinateConversion().getUTMHemisphere(this.getLatitudeZone());
+			hemisphere = hemisphere.equals("N") ? AVKey.NORTH : AVKey.SOUTH;
+			LatLon latLon = UTMCoord.locationFromUTMCoord(this.getLongitudeZone(), hemisphere, this.getEasting(), this.getNorthing());
+			wgs84 = new WGS84LatLngCoordinate(latLon.getLatitude().getDegrees(), latLon.getLongitude().getDegrees());
+		} else {
+			// --- Usage of the old style conversion ---------------- 
+			wgs84 = new CoordinateConversion().utm2LatLon(this);
+		}
+		return wgs84;
+	}
+	
+	/**
+	 * Returns the current UTM coordinate as {@link UTMCoord} as used by the NASA world wind.
+	 * @return the UTMCoord from the UTMCoordinate
+	 */
+	protected UTMCoord getUTMCoord() {
+		String hemisphere = new CoordinateConversion().getUTMHemisphere(this.getLatitudeZone());
+		hemisphere = hemisphere.equals("N") ? AVKey.NORTH : AVKey.SOUTH;
+		return UTMCoord.fromUTM(this.getLongitudeZone(), hemisphere, this.getEasting(), this.getNorthing());
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (compObj==null) return false;
+		if (! (compObj instanceof UTMCoordinate)) return false;
+
+		UTMCoordinate utmComp = (UTMCoordinate) compObj;
+		
+		if (utmComp.getLongitudeZone()!=this.getLongitudeZone()) return false;
+		if (utmComp.getLatitudeZone().equals(this.getLatitudeZone())==false) return false;
+		return super.equals(compObj);
 	}
 	
 	/* (non-Javadoc)
@@ -98,9 +177,43 @@ public class UTMCoordinate extends AbstractGeoCoordinate {
 		if (longZoneDisplay.length()==1) {
 			longZoneDisplay = "0" + longZoneDisplay;
 		}
-		return "UTM: " + longZoneDisplay + this.latZone + " " + this.easting + " " + this.northing;
+		return POS_PREFIX + ": " + longZoneDisplay + this.latZone + " East: " + this.easting + ", North: " + this.northing;
 	}
 
-
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.geography.coordinates.AbstractCoordinate#serialize()
+	 */
+	@Override
+	public String serialize() {
+		
+		String[] utmParts = new String[5]; 
+		utmParts[0] = POS_PREFIX;
+		utmParts[1] = "" + this.getLongitudeZone();
+		utmParts[2] = this.getLatitudeZone();
+		utmParts[3] = "" + this.getEasting();
+		utmParts[4] = "" + this.getNorthing();
+		return String.join(":", utmParts);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.geography.coordinates.AbstractCoordinate#deserialize(java.lang.String)
+	 */
+	@Override
+	public void deserialize(String coordinateString) throws NullPointerException, CoordinateParseException {
+
+		if (coordinateString==null || coordinateString.isEmpty()==true) throw new NullPointerException("No string was specified to deserialize a coordinate");
+		
+		String[] utmParts = coordinateString.split(":");
+		if (utmParts.length==5 && utmParts[0].equals(POS_PREFIX)==true) {
+			this.setLongitudeZone(Integer.parseInt(utmParts[1]));
+			this.setLatitudeZone(utmParts[2]);
+			this.setEasting(java.lang.Double.parseDouble(utmParts[3]));
+			this.setNorthing(java.lang.Double.parseDouble(utmParts[4]));
+			return;
+		}
+		// --- Nothing parsed - throw an error -- 
+		throw new CoordinateParseException("The specified coordinate '" + coordinateString + "' is not of type " + this.getClass().getSimpleName());
+	}
+
 }

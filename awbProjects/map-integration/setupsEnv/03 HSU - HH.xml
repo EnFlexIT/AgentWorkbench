@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<networkModelFileContent>
+    <layoutID>NhieneMxKq</layoutID>
+    <mapSettingsList>
+        <entry>
+            <key>NhieneMxKq</key>
+            <value>
+                <utmLongitudeZone>32</utmLongitudeZone>
+                <utmLatitudeZone>U</utmLatitudeZone>
+                <mapScale>s1x</mapScale>
+                <mapServiceName>AWB-OpenStreetMaps</mapServiceName>
+                <mapTileTransparency>20</mapTileTransparency>
+            </value>
+        </entry>
+    </mapSettingsList>
+    <networkComponentList>
+        <entry>
+            <key>car-01</key>
+            <value>
+                <id>car-01</id>
+                <type>Auto Vehicle</type>
+                <graphElementIDs>PP4</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>car-02</key>
+            <value>
+                <id>car-02</id>
+                <type>Auto Vehicle</type>
+                <graphElementIDs>PP5</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>car-03</key>
+            <value>
+                <id>car-03</id>
+                <type>Auto Vehicle</type>
+                <graphElementIDs>PP6</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>drone-01</key>
+            <value>
+                <id>drone-01</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP1</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>drone-02</key>
+            <value>
+                <id>drone-02</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP2</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>drone-03</key>
+            <value>
+                <id>drone-03</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP3</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
+            <key>drone-04</key>
+            <value>
+                <id>drone-04</id>
+                <type>Drone Quadro</type>
+                <graphElementIDs>PP7</graphElementIDs>
+            </value>
+        </entry>
+    </networkComponentList>
+</networkModelFileContent>

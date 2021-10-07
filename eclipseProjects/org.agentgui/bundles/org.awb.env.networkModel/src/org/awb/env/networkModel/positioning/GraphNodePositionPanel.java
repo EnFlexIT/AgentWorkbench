@@ -1,10 +1,9 @@
-package org.awb.env.networkModel.controller.ui;
+package org.awb.env.networkModel.positioning;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.geom.Point2D;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,7 +12,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory.CoordinateType;
+
 import de.enflexit.common.swing.KeyAdapter4Numbers;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 
 /**
  * The Class GraphNodePositionPanel can be used to configure a GraphNode position.
@@ -24,7 +26,7 @@ public class GraphNodePositionPanel extends JPanel implements DocumentListener {
 	
 	private static final long serialVersionUID = -7757305104129949134L;
 	
-	private Point2D graphNodePosition;
+	private AbstractCoordinate coordinate;
 	
 	private KeyAdapter4Numbers numberKeyListenerDouble;
 	private boolean pauseDocumentListener;
@@ -200,34 +202,34 @@ public class GraphNodePositionPanel extends JPanel implements DocumentListener {
 		
 		if (this.pauseDocumentListener==true) return;
 		
-		Point2D graphNodePosition = null; 
+		AbstractCoordinate graphNodeCoordinate = null; 
 		if (de.getDocument() == this.getJTextFieldXPostition().getDocument()) {
 			// --- Set the x-position value ------------------------- 
-			if (this.isFullGraphNodePosition(this.getJTextFieldXPostition().getText())==false) {
+			if (this.isFullGraphNodeCoordinate(this.getJTextFieldXPostition().getText())==false) {
 				Double number = this.getDoubleValueFromString(this.getJTextFieldXPostition().getText());
 				if (number!=null) {
-					Point2D currPosition = this.getGraphNodePosition(true);
-					currPosition.setLocation(number, currPosition.getY());
-					graphNodePosition = currPosition;
+					AbstractCoordinate currCoordinate = this.getCoordinate(true);
+					currCoordinate.setLocation(number, currCoordinate.getY());
+					graphNodeCoordinate = currCoordinate;
 				}
 			}
 			
 		} else if (de.getDocument() == this.getJTextFieldYPostition().getDocument()) {
 			// --- Set the y-position value -------------------------
-			if (this.isFullGraphNodePosition(this.getJTextFieldYPostition().getText())==false) {
+			if (this.isFullGraphNodeCoordinate(this.getJTextFieldYPostition().getText())==false) {
 				Double number = this.getDoubleValueFromString(this.getJTextFieldYPostition().getText());
 				if (number!=null) {
-					Point2D currPosition = this.getGraphNodePosition(true);
-					currPosition.setLocation(currPosition.getX(), number);
-					graphNodePosition = currPosition;
+					AbstractCoordinate  currCoordinate = this.getCoordinate(true);
+					currCoordinate.setLocation(currCoordinate.getX(), number);
+					graphNodeCoordinate = currCoordinate;
 				}
 			}
 			
 		} 
 		
 		// --- Set new coordinate? ----------------------------------
-		if (graphNodePosition!=null && graphNodePosition.equals(this.graphNodePosition)==false) {
-			this.graphNodePosition = graphNodePosition;
+		if (graphNodeCoordinate!=null && graphNodeCoordinate.equals(this.coordinate)==false) {
+			this.coordinate = graphNodeCoordinate;
 			this.setGraphNodePositionToDisplay();
 		}
 		
@@ -237,33 +239,33 @@ public class GraphNodePositionPanel extends JPanel implements DocumentListener {
 	 * Returns the current GraphNode position.
 	 * @return the geographical coordinate
 	 */
-	public Point2D getGraphNodePosition() {
-		return this.graphNodePosition;
+	public AbstractCoordinate getCoordiante() {
+		return this.coordinate;
 	}
 	/**
 	 * Sets the current GraphNode position.
-	 * @param newGraphNodePosition the new graph node position
+	 * @param graphNodeCoordinate the new graph node coordinate
 	 */
-	public void setGraphNodePosition(Point2D newGraphNodePosition) {
-		this.graphNodePosition = newGraphNodePosition;
+	public void setCoordinate(AbstractCoordinate graphNodeCoordinate) {
+		this.coordinate = graphNodeCoordinate;
 		this.setGraphNodePositionToDisplay();
 	}
 	
 	/**
-	 * Returns the GraphNodePosition from the current settings.
+	 * Returns the coordinate from the current settings.
 	 *
 	 * @param createCoordinateIfRequired the create coordinate if required
 	 * @return the graph node position
 	 */
-	private Point2D getGraphNodePosition(boolean createCoordinateIfRequired) {
+	private AbstractCoordinate getCoordinate(boolean createCoordinateIfRequired) {
 		
-		Point2D nodePos = this.getGraphNodePosition();
-		if (nodePos==null && createCoordinateIfRequired==true) {
+		AbstractCoordinate coord = this.getCoordiante();
+		if (coord==null && createCoordinateIfRequired==true) {
 			// --- Create default Point2D -------
-			nodePos = new Point2D.Double(0, 0);
-			this.setGraphNodePosition(nodePos);
+			coord = GraphNodePositionFactory.createCoordinate(CoordinateType.SimpleXY);
+			this.setCoordinate(coord);
 		}
-		return nodePos;
+		return coord;
 	}
 	
 	/**
@@ -274,10 +276,10 @@ public class GraphNodePositionPanel extends JPanel implements DocumentListener {
 			@Override
 			public void run() {
 				pauseDocumentListener = true;
-				Point2D graphNodePosition = getGraphNodePosition(false);
-				if (graphNodePosition!=null) {
-					getJTextFieldXPostition().setText("" + graphNodePosition.getX());
-					getJTextFieldYPostition().setText("" + graphNodePosition.getY());
+				AbstractCoordinate graphNodeCoordinate = getCoordinate(false);
+				if (graphNodeCoordinate!=null) {
+					getJTextFieldXPostition().setText("" + graphNodeCoordinate.getX());
+					getJTextFieldYPostition().setText("" + graphNodeCoordinate.getY());
 				} else {
 					getJTextFieldXPostition().setText(null);
 					getJTextFieldYPostition().setText(null);
@@ -292,7 +294,7 @@ public class GraphNodePositionPanel extends JPanel implements DocumentListener {
 	 * @param text the text
 	 * @return true, if the text is a full Point2D description
 	 */
-	private boolean isFullGraphNodePosition(String text) {
+	private boolean isFullGraphNodeCoordinate(String text) {
 		boolean isFullGraphNodePosition = false;
 		if (text.contains(",") && text.split(",").length==2) {
 			// --- Try to convert to latitude - longitude -----------
@@ -304,8 +306,9 @@ public class GraphNodePositionPanel extends JPanel implements DocumentListener {
 				Double xPos = Double.parseDouble(xPosString);
 				Double yPos = Double.parseDouble(yPosString);
 				
-				Point2D newPosition = new Point2D.Double(xPos, yPos);
-				this.setGraphNodePosition(newPosition);
+				AbstractCoordinate newCoordinate = GraphNodePositionFactory.createCoordinate(CoordinateType.SimpleXY);
+				newCoordinate.setLocation(xPos, yPos);
+				this.setCoordinate(newCoordinate);
 				isFullGraphNodePosition = true;
 				
 			} catch (Exception ex) {
@@ -317,7 +320,7 @@ public class GraphNodePositionPanel extends JPanel implements DocumentListener {
 			// --- Check if this is a double number to parse --------
 			if (this.getDoubleValueFromString(text)==null) {
 				// --- Create an empty Point2D ----------------------
-				this.setGraphNodePosition(new Point2D.Double(0, 0));
+				this.setCoordinate(GraphNodePositionFactory.createCoordinate(CoordinateType.SimpleXY));
 				isFullGraphNodePosition = true;
 			}
 			

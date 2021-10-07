@@ -9,9 +9,10 @@ public class OSGBCoordinate extends AbstractGeoCoordinate {
 
 	private static final long serialVersionUID = 2649016678473697000L;
 	
+	public static final String POS_PREFIX = "OSGB";
+	
 	private double easting;
 	private double northing;
-	
 	
 	/**
 	 * Instantiates a new ordnance survey coordinate GB (default constructor).
@@ -35,20 +36,48 @@ public class OSGBCoordinate extends AbstractGeoCoordinate {
 		this.setOSGBCoordinateFromSixFigureReference(sixFigureReference);
 	}
 	
-	/**
-	 * Gets the easting.
-	 * @return the easting
-	 */
 	public double getEasting() {
 		return easting;
 	}
-	/**
-	 * Gets the northing.
-	 * @return the northing
-	 */
+	public void setEasting(double easting) {
+		this.easting = easting;
+	}
+
 	public double getNorthing() {
 		return northing;
 	}
+	public void setNorthing(double northing) {
+		this.northing = northing;
+	}
+	
+	// ----------------------------------------------------
+	// --- Methods from abstract class Point2D -- Start --- 
+	// ----------------------------------------------------
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D.Double#getX()
+	 */
+	@Override
+	public double getX() {
+		return this.getNorthing();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#getY()
+	 */
+	@Override
+	public double getY() {
+		return this.getEasting();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#setLocation(double, double)
+	 */
+	@Override
+	public void setLocation(double x, double y) {
+		this.setNorthing(x);
+		this.setEasting(y);
+	}
+	// ----------------------------------------------------
+	// --- Methods from abstract class Point2D -- End ----- 
+	// ----------------------------------------------------
 	
 	/**
 	 * Return the WGS84LatLngCoordinate instance of this coordinate.
@@ -96,13 +125,6 @@ public class OSGBCoordinate extends AbstractGeoCoordinate {
 		lambda = lambda0 + (X * (E - E0)) - (XI * Math.pow(E - E0, 3.0)) + (XII * Math.pow(E - E0, 5.0)) - (XIIA * Math.pow(E - E0, 7.0));
 
 		return new WGS84LatLngCoordinate(GeoUtils.rad2deg(phi), GeoUtils.rad2deg(lambda));
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return  "(" + this.easting + ", " + this.northing + ")";
 	}
 	
 	/**
@@ -180,5 +202,55 @@ public class OSGBCoordinate extends AbstractGeoCoordinate {
 		this.easting  = east + nx;
 		this.northing =  north + ny;
 	}
+
+	
+	/* (non-Javadoc)
+	 * @see java.awt.geom.Point2D#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		if (compObj==null) return false;
+		if (! (compObj instanceof OSGBCoordinate)) return false;
+		return super.equals(compObj);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return  POS_PREFIX + ": " + this.easting + ", " + this.northing + "";
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.geography.coordinates.AbstractCoordinate#serialize()
+	 */
+	@Override
+	public String serialize() {
+		
+		String[] utmParts = new String[3]; 
+		utmParts[0] = POS_PREFIX;
+		utmParts[1] = "" + this.getEasting();
+		utmParts[2] = "" + this.getNorthing();
+		return String.join(":", utmParts);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.geography.coordinates.AbstractCoordinate#deserialize(java.lang.String)
+	 */
+	@Override
+	public void deserialize(String coordinateString) throws NullPointerException, CoordinateParseException {
+
+		if (coordinateString==null || coordinateString.isEmpty()==true) throw new NullPointerException("No string was specified to deserialize a coordinate");
+		
+		String[] utmParts = coordinateString.split(":");
+		if (utmParts.length==3 && utmParts[0].equals(POS_PREFIX)==true) {
+			this.setEasting(java.lang.Double.parseDouble(utmParts[1]));
+			this.setNorthing(java.lang.Double.parseDouble(utmParts[2]));
+			return;
+		}
+		// --- Nothing parsed - throw an error -- 
+		throw new CoordinateParseException("The specified coordinate '" + coordinateString + "' is not of type " + this.getClass().getSimpleName());
+	}
+
 	
 }

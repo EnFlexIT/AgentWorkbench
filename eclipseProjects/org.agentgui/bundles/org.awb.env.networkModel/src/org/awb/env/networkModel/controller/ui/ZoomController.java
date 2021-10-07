@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
+import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -17,13 +18,19 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 public interface ZoomController {
 
 	/**
-	 * Sets the graph environment controller.
+	 * Will be used to set the current {@link GraphEnvironmentController}.
 	 * @param graphController the new graph environment controller
 	 */
 	public void setGraphEnvironmentController(GraphEnvironmentController graphController);
 
 	/**
-	 * Sets the visualization viewer.
+	 * Will be used to set the current {@link BasicGraphGui}i.
+	 * @param basicGraphGui the new basic graph gui
+	 */
+	public void setBasicGraphGui(BasicGraphGui basicGraphGui);
+	
+	/**
+	 * Will be used to set the current visualization viewer that is of type {@link BasicGraphGuiVisViewer}.
 	 * @param visViewer the vis viewer
 	 */
 	public void setVisualizationViewer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer);
@@ -59,7 +66,7 @@ public interface ZoomController {
 	/**
 	 * Zoom one to one and move the focus according to the coordinate system source.
 	 */
-	public void zoomOneToOneMoveFocus();
+	public void zoomOneToOne();
 
 	/**
 	 * Zooms that the graph fits to the window.
@@ -72,8 +79,14 @@ public interface ZoomController {
 	public void zoomToFitToWindow(VisualizationViewer<GraphNode, GraphEdge> visViewer);
 	
 	/**
-	 * Zoom to the currently selected component.
+	 * Zoom to the currently selected {@link NetworkComponent}s.
 	 */
 	public void zoomToComponent();
 
+	/**
+	 * Has to set the current center focus of the view to the specified graph-coordinate point.
+	 * @param graphCoordinatePoint the coordinate point in the graph to center the view to
+	 */
+	public void doCenterToCoordinate(Point2D graphCoordinatePoint);
+	
 }

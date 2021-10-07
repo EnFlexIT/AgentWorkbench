@@ -28,30 +28,31 @@ import de.enflexit.common.ServiceFinder;
     "mapServiceName",
     "mapTileTransparency"
 })
-public class MapSettings implements Serializable {
+public class MapSettings implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 760729234063485505L;
 	
 	public enum MapScale {
-		m(1, "1 m"),
-		m10(10, "10 m"),
-		m100(100, "100 m"),
-		km(1000, "1 km");
+		s1x(1, "1 x"),
+		s2x(2, "2 x"),
+		s3x(3, "3 x"),
+		s4x(4, "4 x"),
+		s5x(5, "5 x"),
+		s10x(10, "10 x"),
+		s15x(15, "15 x"),
+		s20x(20, "20 x"),
+		s25x(25, "25 x");
 		
-		private final double scaleDivider;
+		private final int scaleMultiplier;
 		private final String scaleDescription;
 		
-		private MapScale(double scaleDivider, String scaleDescription) {
-			this.scaleDivider = scaleDivider;
+		private MapScale(int scaleMultiplier, String scaleDescription) {
+			this.scaleMultiplier = scaleMultiplier;
 			this.scaleDescription = scaleDescription;
 		}
-		public double getScaleDivider() {
-			return scaleDivider;
+		public int getScaleMultiplier() {
+			return scaleMultiplier;
 		}
-		public double getScaleDividerInvers() {
-			return 1.0 / ((double)scaleDivider);
-		}
-		
 		/* (non-Javadoc)
 		 * @see java.lang.Enum#toString()
 		 */
@@ -65,7 +66,7 @@ public class MapSettings implements Serializable {
 	// --- Define variables and default values ------------
 	private int utmLongitudeZone = 32;
 	private String utmLatitudeZone = "U";
-	private MapScale mapScale = MapScale.m;
+	private MapScale mapScale;
 	
 	private String mapServiceName;
 	private int mapTileTransparency = 0;
@@ -93,6 +94,9 @@ public class MapSettings implements Serializable {
 
 	
 	public MapScale getMapScale() {
+		if (mapScale==null) {
+			mapScale = MapScale.s1x;
+		}
 		return mapScale;
 	}
 	public void setMapScale(MapScale mapScale) {
@@ -105,6 +109,7 @@ public class MapSettings implements Serializable {
 	}
 	public void setMapServiceName(String mapServiceName) {
 		this.mapServiceName = mapServiceName;
+		this.setMapService(getMapService(mapServiceName));
 	}
 	
 	
@@ -115,6 +120,34 @@ public class MapSettings implements Serializable {
 		this.mapTileTransparency = mapTileTransparency;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	protected MapSettings clone() throws CloneNotSupportedException {
+		return (MapSettings) super.clone();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (compObj==this) return true;
+		if (!(compObj instanceof MapSettings)) return false;
+		
+		MapSettings msComp = (MapSettings) compObj;
+		
+		if (msComp.getUTMLongitudeZone()!=this.getUTMLongitudeZone()) return false;
+		if (msComp.getUTMLatitudeZone().equals(this.getUTMLatitudeZone())==false) return false;
+		
+		if (msComp.getMapServiceName().equals(this.getMapServiceName())==false) return false;
+		if (msComp.getMapScale().equals(this.getMapScale())==false) return false;
+		if (msComp.getMapTileTransparency()!=this.getMapTileTransparency()) return false;
+		
+		return true;
+	}
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here, handling of the currently selected MapService ---------------------
@@ -143,15 +176,6 @@ public class MapSettings implements Serializable {
 	public void setMapService(MapService mapService) {
 		this.mapService = mapService;
 	}
-	/**
-	 * Sets the current {@link MapService} if the specified map service name can be found.
-	 * @param mapServiceName the new map service
-	 */
-	public void setMapService(String mapServiceName) {
-		MapService mapService = getMapService(mapServiceName);
-		this.setMapService(mapService);
-	}
-	
 	
 	/**
 	 * Returns the list of registered {@link MapService}s.
@@ -167,11 +191,13 @@ public class MapSettings implements Serializable {
 	 * @return the MapService found or <code>Null</code>
 	 */
 	public static MapService getMapService(String mapServiceName) {
-		List<MapService> mServiceList = getMapServiceList();
-		for (int i = 0; i < mServiceList.size(); i++) {
-			MapService ms = mServiceList.get(i);
-			if (ms.getMapServiceName().equals(mapServiceName)==true) {
-				return ms;
+		if (mapServiceName!=null && mapServiceName.isEmpty()==false) {
+			List<MapService> mServiceList = getMapServiceList();
+			for (int i = 0; i < mServiceList.size(); i++) {
+				MapService ms = mServiceList.get(i);
+				if (ms.getMapServiceName().equals(mapServiceName)==true) {
+					return ms;
+				}
 			}
 		}
 		return null;

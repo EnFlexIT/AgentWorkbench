@@ -19,6 +19,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.controller.ui.TransformerForGraphNodeGeoPosition;
 
 import agentgui.core.application.Language;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -130,8 +131,15 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 			this.currentGraphEdge = graphEdge;
 			this.currentGraphNode = graphNode;
 
+			// --- Get JUNG coordinate ------------------------------
 			this.currentMousePositionInGraph = this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(mousePosition);
-			this.currentMousePositionInGraph = this.basicGraphGui.getCoordinateSystemPositionTransformer().transform(currentMousePositionInGraph);
+			if (this.getVisualizationViewer().getCoordinateSystemPositionTransformer() instanceof TransformerForGraphNodeGeoPosition) {
+				// --- Use geographical coordinates -----------------
+				this.currentMousePositionInGraph = this.getVisualizationViewer().getCoordinateSystemPositionTransformer().inverseTransform(this.currentMousePositionInGraph);
+			} else {
+				// --- The default case -----------------------------
+				this.currentMousePositionInGraph = this.getVisualizationViewer().getCoordinateSystemPositionTransformer().transform(this.currentMousePositionInGraph);
+			}
 			
 			// --- Get the type specific menu items -----------------
 			shapeConfig.addPopupMenuItems(popupMenu, graphEdge, graphNode);

@@ -29,13 +29,14 @@
 package org.awb.env.networkModel.controller.ui;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.maps.MapSettings;
-import org.awb.env.networkModel.maps.MapSettings.MapScale;
 import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
@@ -47,12 +48,14 @@ import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirecti
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphNode, Point2D> {
+public class TransformerForGraphNodePosition implements Transformer<GraphNode, Point2D> {
 
 	private GraphEnvironmentController graphController;
+	
 	private LayoutSettings layoutSettings;
 	private MapSettings mapSettings;
-
+	
+	private BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer;
 	
 	/**
 	 * Instantiates a new transformer for node position that dynamically 'asks' the graph controller 
@@ -63,17 +66,6 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	public TransformerForGraphNodePosition(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
 	}
-	/**
-	 * Instantiates a new transformer for node position that statically uses the specified {@link LayoutSettings}.
-	 * In contrast to the other class constructor, this will not consider changes in a {@link NetworkModel}.
-	 *  
-	 * @param layoutSettings the layout settings
-	 */
-	public TransformerForGraphNodePosition(LayoutSettings layoutSettings) {
-		this.layoutSettings = layoutSettings;
-	}
-	
-	
 	/**
 	 * Returns the current or initially specified layout settings.
 	 * @return the layout settings
@@ -86,7 +78,6 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 		// --- Return the specified LayoutSettings (not dynamic) --------------
 		return layoutSettings;
 	}
-	
 	/**
 	 * Returns the current MapSettings.
 	 * @return the map settings
@@ -99,10 +90,41 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 		// --- Return the specified MapSettings (not dynamic) -----------------
 		return mapSettings;
 	}
-	
+
 	
 	/**
-	 * Transforms the specified {@link GraphNode}s position into the position for the visualization.
+	 * Sets the current instance of the {@link BasicGraphGuiVisViewer} to this static layout.
+	 * @param basicGraphGuiVisViewer the basic graph gui vis viewer
+	 */
+	public void setBasicGraphGuiVisViewer(BasicGraphGuiVisViewer<?, ?> basicGraphGuiVisViewer) {
+		this.basicGraphGuiVisViewer = basicGraphGuiVisViewer;
+	}
+	/**
+	 * Returns the current {@link BasicGraphGuiVisViewer} that is used to visualize the current Graph.
+	 * @return the current BasicGraphGuiVisViewer
+	 */
+	public BasicGraphGuiVisViewer<?, ?> getBasicGraphGuiVisViewer() {
+		return basicGraphGuiVisViewer;
+	}
+	
+	/**
+	 * Return the list of JUNG coordinates from the list of GraphNode positions.
+	 *
+	 * @param graphPosList the GraphNode position list
+	 * @param transformer the transformer
+	 * @return the position list in JUNG coordinates
+	 */
+	public List<Point2D> getJungPositionList(List<Point2D> graphPosList) {
+		ArrayList<Point2D> jungPosList = new ArrayList<>();
+		for (int i = 0; i < graphPosList.size(); i++) {
+			Point2D graphPos = graphPosList.get(i);
+			jungPosList.add(this.transform(graphPos));
+		}
+		return jungPosList;
+	}
+	
+	/**
+	 * Transforms the specified {@link GraphNode}s position into the position for the JUNG visualization.
 	 *
 	 * @param graphNode the graph node with its position 
 	 * @return the point 2 D
@@ -114,7 +136,7 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 	}
 	
 	/**
-	 * Transforms the specified position into the position for the visualization.
+	 * Transforms the specified position into the position for the JUNG visualization.
 	 *
 	 * @param npGraphNode the node position of a graph node
 	 * @return the point 2 D
@@ -161,19 +183,6 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 			}
 			break;
 		}
-		
-		// --- Scale the node position ? ------------------
-		MapSettings mapSettings = this.getMapSettings();
-		if (mapSettings!=null) {
-			MapScale mapScale = mapSettings.getMapScale(); 
-			if (mapScale.getScaleDivider()!=1.0) {
-				// --- Scale the UTM coordinates ----------
-				double scaledX = visualNodePosition.getX() / mapScale.getScaleDivider();
-				double scaledY = visualNodePosition.getY() / mapScale.getScaleDivider();
-				visualNodePosition = new Point2D.Double(scaledX, scaledY);
-			}
-		}
-		
 		return visualNodePosition;
 	}
 	
@@ -222,18 +231,6 @@ public class TransformerForGraphNodePosition<V, E> implements Transformer<GraphN
 				break;
 			}
 			break;
-		}
-		
-		// --- Scale the node position ? ------------------
-		MapSettings mapSettings = this.getMapSettings();
-		if (mapSettings!=null) {
-			MapScale mapScale = mapSettings.getMapScale(); 
-			if (mapScale.getScaleDivider()!=1.0) {
-				// --- Scale the UTM coordinates ----------
-				double unScaledX = npGraphNode.getX() * mapScale.getScaleDivider();
-				double unScaledY = npGraphNode.getY() * mapScale.getScaleDivider();
-				npGraphNode = new Point2D.Double(unScaledX, unScaledY);
-			}
 		}
 		return npGraphNode;
 	}

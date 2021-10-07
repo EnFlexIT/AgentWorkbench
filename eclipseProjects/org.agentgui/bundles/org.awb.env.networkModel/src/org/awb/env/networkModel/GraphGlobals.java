@@ -28,14 +28,15 @@
  */
 package org.awb.env.networkModel;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -87,6 +88,7 @@ public final class GraphGlobals {
  		String path = null;
  		File imageFile = null;
  		ImageIcon imageIcon = null;
+ 		
  		
  		// ----------------------------------------------------------
 		// --- 1. Try current project locations ---------------------
@@ -155,89 +157,89 @@ public final class GraphGlobals {
 			} 
 		}
 		
+		
 		if (imageIcon!=null) {
 			imageIcon.setDescription(path2Image);
 		}
 		return imageIcon;
     }
 	
- 	
- 	/**
-	 * Searches and returns the image url for the specified image reference.
-	 *
-	 * @param imageRef the image reference
-	 * @return the URL of the image 
+ 	// ------------------------------------------------------------------------
+ 	// --- Some help method for buffered images -------------------------------
+ 	// ------------------------------------------------------------------------
+	/**
+	 * Converts an {@link Image} to a {@link BufferedImage}.
+	 * @param image The image
+	 * @return The buffered image
 	 */
-	public static URL getImageURL(String imageRef){
-		
-		// --- Abort URL generation ---------------------------------
-		if (imageRef.equals("MissingIcon")==true) return null;
+	public static BufferedImage convertToBufferedImage(Image image) {
+		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+		g2d.drawImage(image, 0, 0, null);
+		g2d.dispose();
+		return bufferedImage;
+	}
 
-		// --- Resource by the class loader, as configured ----------
-		URL url = GraphGlobals.class.getClass().getResource(imageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-		
-		// --- Prepare folder for projects and project name ---------
-		String projectsFolder = Application.getGlobalInfo().getPathProjects();
-		projectsFolder = projectsFolder.replace("\\", "/");
-		String projectName = Application.getProjectFocused().getProjectFolder();
-				
-		// --- Default: by file, in projects, relative --------------
-		String extImageRef = (projectsFolder + "/" + projectName + imageRef).replace("//", "/");
-		url = getURLfromPath(extImageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-
-		// --- Alternative: by file, in projects, absolute ----------
-		extImageRef = (projectsFolder + imageRef).replace("//", "/");
-		url = getURLfromPath(extImageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-		
-		// --- Nothing found ----------------------------------------
-		return null;
+	/**
+	 * Replaces a specified color with another one in an image.
+	 * @param image    The image
+	 * @param oldColor The color that will be replaced
+	 * @param newColor The new color
+	 * @return The image
+	 */
+	public static BufferedImage exchangeColor(BufferedImage image, Color oldColor, Color newColor) {
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				Color currentColor = new Color(image.getRGB(x, y));
+				if (currentColor.equals(oldColor)) {
+					image.setRGB(x, y, newColor.getRGB());
+				}
+			}
+		}
+		return image;
 	}
 	/**
-	 * Gets the URL from path.
-	 *
-	 * @param path the path
-	 * @return the URl from provided path - can be null
+	 * Scales the buffered image by its height and it width with the specified scale multiplier.
+	 * @param scrImage        the buffered image
+	 * @param scaleMultiplier the scale multiplier
+	 * @return the buffered image
 	 */
-	public static URL getURLfromPath(String path) {
-		URL url = null;
-		try {
-			url = new URL("file", null, -1, path);
-		} catch (MalformedURLException urlEx) {
-			//urlEx.printStackTrace();
+	public static BufferedImage scaleBufferedImage(BufferedImage scrImage, int scaleMultiplier) {
+		
+		if (scrImage==null || scaleMultiplier==1) return scrImage;
+		
+	    BufferedImage scaledImage = null;
+	    try {
+	    	// --- Resize the source image ----------------
+	    	int newWidth  = scrImage.getWidth() * scaleMultiplier;
+	    	int newHeight = scrImage.getHeight() * scaleMultiplier;
+
+	    	scaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TRANSLUCENT);
+	    	Graphics2D g2d = scaledImage.createGraphics();
+	    	g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    	g2d.drawImage(scrImage, 0, 0, newWidth, newHeight, null);
+	    	g2d.dispose();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			// -- Return source image as backup -----------
+			scaledImage = scrImage;
 		}
-		return url;
-	}
-	/**
-	 * Checks if the provided URL points to an image file.
-	 *
-	 * @param url the url
-	 * @return true, if the provided url point to an image
-	 */
-	public static boolean isUrlPointToImage(URL url) {
-		try {
-			return ImageIO.read(url)!=null;
-		} catch (IOException e) {
-			//e.printStackTrace();
-			//nothing to do, as expected to fail
-		}
-		return false;
-	}
+	    return scaledImage;
+	} 	
  	
- 	
+	
+ 	// ------------------------------------------------------------------------
+ 	// --- Some global help method for a Graph --------------------------------
+ 	// ------------------------------------------------------------------------
  	/**
 	 * Gets the graph spread as Rectangle.
 	 * 
 	 * @param graph the graph
 	 * @return the graph spread
 	 */
-	public static Rectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
-		if (graph==null) {
-			return new Rectangle2D.Double(0, 0, 0, 0);
-		}
-		return getGraphSpreadDimension(graph.getVertices());
+	public static GraphRectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
+		return new GraphRectangle2D(graph);
 	}
 	/**
 	 * Gets the vertices spread dimension.
@@ -245,24 +247,11 @@ public final class GraphGlobals {
 	 * @param graphNodes the graph nodes
 	 * @return the vertices spread dimension
 	 */
-	public static Rectangle2D getGraphSpreadDimension(Collection<GraphNode> graphNodes) {
-
-		Rectangle2D rect = new Rectangle2D.Double();
-		boolean firstNodeAdded = false;
-		GraphNode[] nodes = graphNodes.toArray(new GraphNode[graphNodes.size()]);
-		for (int i = 0; i < nodes.length; i++) {
-			
-			double x = nodes[i].getPosition().getX();
-			double y = nodes[i].getPosition().getY();
-			if (firstNodeAdded==false) {
-				rect.setRect(x, y, 0, 0);
-				firstNodeAdded = true;
-			}
-			rect.add(x, y);
-		}
-		return rect;
+	public static GraphRectangle2D getGraphSpreadDimension(Collection<GraphNode> graphNodes) {
+		return new GraphRectangle2D(graphNodes);
 	}
 
+	
 	// --------------------------------------------------------------
 	// --- Provider methods to access preferences for this bundle ---
 	// --------------------------------------------------------------
@@ -297,5 +286,5 @@ public final class GraphGlobals {
 			bsEx.printStackTrace();
 		}
 	}
-	
+
 } 

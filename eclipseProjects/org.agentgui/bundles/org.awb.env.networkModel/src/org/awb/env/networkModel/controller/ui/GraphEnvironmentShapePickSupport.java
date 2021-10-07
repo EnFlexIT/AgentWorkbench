@@ -10,7 +10,6 @@ import java.util.ConcurrentModificationException;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
-import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
@@ -19,7 +18,6 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 
@@ -33,31 +31,30 @@ import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
  */
 public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode, GraphEdge> {
 
-	private GraphEnvironmentController graphController;
-	
-	
 	/**
 	 * Instantiates a new graph environment shape pick support.
-	 *
-	 * @param vv the Jung VisualizationServer
-	 * @param graphController the current GraphEnvironmentController
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 */
-	public GraphEnvironmentShapePickSupport(VisualizationServer<GraphNode, GraphEdge> vv, GraphEnvironmentController graphController) {
-		super(vv);
-		this.graphController = graphController;
+	public GraphEnvironmentShapePickSupport(BasicGraphGuiVisViewer<GraphNode,GraphEdge> visViewer) {
+		super(visViewer);
 	}
 	/**
 	 * Instantiates a new graph environment shape pick support.
 	 *
-	 * @param vv the Jung VisualizationServer
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 * @param pickSize the pick size
-	 * @param graphController the current GraphEnvironmentController
 	 */
-	public GraphEnvironmentShapePickSupport(VisualizationServer<GraphNode, GraphEdge> vv, float pickSize, GraphEnvironmentController graphController) {
-		super(vv, pickSize);
-		this.graphController = graphController;
+	public GraphEnvironmentShapePickSupport(BasicGraphGuiVisViewer<GraphNode,GraphEdge> visViewer, float pickSize) {
+		super(visViewer, pickSize);
 	}
-
+	/**
+	 * Returns the current {@link BasicGraphGuiVisViewer}.
+	 * @return the visualization viewer
+	 */
+	private BasicGraphGuiVisViewer<GraphNode,GraphEdge> getVisualizationViewer() {
+		return (BasicGraphGuiVisViewer<GraphNode, GraphEdge>) this.vv;
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.picking.ShapePickSupport#getEdge(edu.uci.ics.jung.algorithms.layout.Layout, double, double)
 	 */
@@ -156,7 +153,7 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 		    xform.translate(0, -edgeShape.getBounds2D().getHeight()/2);
 		    
         } else if (isOrthogonal==true) {
-        	LayoutSettings ls = this.graphController.getNetworkModel().getLayoutSettings();
+        	LayoutSettings ls = this.getVisualizationViewer().getCoordinateSystemPositionTransformer().getLayoutSettings();
         	edgeShape = GraphEnvironmentEdgeRenderer.getGeneralPathForOrthogonalConnection(vv.getRenderContext(), layout, edge, x1, y1, x2, y2, ls.getCoordinateSystemXDirection());
 		    
 		} else {
@@ -174,7 +171,7 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 		// => ORIGINAL: edgeShape = xform.createTransformedShape(edgeShape);
 		// ----------------------------------------------------------------------------------------
 		// => ADJUSTED FORM
-		edgeShape = GraphEnvironmentEdgeRenderer.getTransformedShape(edgeShape, this.graphController, xform, vv.getRenderContext(), v1, v2, isOrthogonal); 
+		edgeShape = GraphEnvironmentEdgeRenderer.getTransformedShape(edgeShape, this.getVisualizationViewer().getCoordinateSystemPositionTransformer(), xform, vv.getRenderContext(), v1, v2, isOrthogonal); 
 		// ----------------------------------------------------------------------------------------		
 		return edgeShape;
 	}

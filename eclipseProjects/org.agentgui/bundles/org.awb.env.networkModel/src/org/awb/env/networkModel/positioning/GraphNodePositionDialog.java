@@ -1,4 +1,4 @@
-package org.awb.env.networkModel.controller.ui;
+package org.awb.env.networkModel.positioning;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,13 +11,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Point2D;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.SerialClone;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -34,7 +34,7 @@ public class GraphNodePositionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -7891622905468578296L;
 	
-	private Point2D graphNodePositionOld;
+	private AbstractCoordinate graphNodeCoordinateOld;
 	private boolean isCancelAction;
 	
 	private GraphNodePositionPanel graphNodePositionPanel;
@@ -61,31 +61,31 @@ public class GraphNodePositionDialog extends JDialog implements ActionListener {
 	/**
 	 * Instantiates a new dialog to configure a geographical coordinate .
 	 * @param owner the owner window
-	 * @param geoCoordinate the geo coordinate
+	 * @param coordinate the coordinate to edit
 	 */
-	public GraphNodePositionDialog(Window owner, Point2D geoCoordinate) {
+	public GraphNodePositionDialog(Window owner, AbstractCoordinate coordinate) {
 		super(owner);
-		this.setGraphNodePosition(geoCoordinate);
+		this.setCoordinate(coordinate);
 		this.initialize();
 	}	
 
 	/**
-	 * Returns the current geographical  coordinate.
-	 * @return the geographical coordinate
+	 * Returns the graph node coordinate.
+	 * @return the coordinate
 	 */
-	public Point2D getGraphNodePosition() {
+	public AbstractCoordinate getCoordinate() {
 		if (this.isCancelAction==true) {
-			return this.graphNodePositionOld;
+			return this.graphNodeCoordinateOld;
 		}
-		return this.getJPanelGraphNodePosition().getGraphNodePosition();
+		return this.getJPanelGraphNodePosition().getCoordiante();
 	}
 	/**
-	 * Sets the graph node position.
-	 * @param graphNodePosition the new graph node position
+	 * Sets the graph node coordinate.
+	 * @param graphNodeCoordinate the new graph node coordinate
 	 */
-	public void setGraphNodePosition(Point2D graphNodePosition) {
-		this.graphNodePositionOld = SerialClone.clone(graphNodePosition);
-		this.getJPanelGraphNodePosition().setGraphNodePosition(SerialClone.clone(graphNodePosition));
+	public void setCoordinate(AbstractCoordinate graphNodeCoordinate) {
+		this.graphNodeCoordinateOld = SerialClone.clone(graphNodeCoordinate);
+		this.getJPanelGraphNodePosition().setCoordinate(SerialClone.clone(graphNodeCoordinate));
 	}
 	
 	/**

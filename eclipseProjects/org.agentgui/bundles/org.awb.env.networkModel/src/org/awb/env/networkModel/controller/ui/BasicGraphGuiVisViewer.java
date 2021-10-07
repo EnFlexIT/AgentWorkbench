@@ -35,17 +35,22 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.Timer;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.maps.MapPreRenderer;
+import org.awb.env.networkModel.maps.MapRenderer;
 import org.awb.env.networkModel.maps.MapService;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
  * The Class BasicGraphGuiVisualizationViewer was basically created to
@@ -70,11 +75,9 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	private boolean resetIsActionOnTop;
 	
 	private MapService mapService; 
-	private MapPreRenderer<V, E> mapPreRenderer;
+	private MapPreRenderer mapPreRenderer;
 	private boolean doMapPreRendering;
 	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer;
-
 	
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -83,6 +86,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public BasicGraphGuiVisViewer(Layout<V,E> layout) {
 		super(layout);
 		this.initialize();
+		this.setVisViewerToStaticLayout(layout);
 	}
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -92,14 +96,16 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public BasicGraphGuiVisViewer(Layout<V,E>layout, Dimension preferredSize) {
 		super(layout, preferredSize);
 		this.initialize();
+		this.setVisViewerToStaticLayout(layout);
 	}
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
 	 * @param model the model
 	 */
-	public BasicGraphGuiVisViewer(VisualizationModel<V,E>model) {
+	public BasicGraphGuiVisViewer(VisualizationModel<V,E> model) {
 		super(model);
 		this.initialize();
+		this.setVisViewerToStaticLayout(model.getGraphLayout());
 	}
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -109,15 +115,82 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	public BasicGraphGuiVisViewer(VisualizationModel<V,E> model, Dimension preferredSize) {
 		super(model, preferredSize);
 		this.initialize();
+		this.setVisViewerToStaticLayout(model.getGraphLayout());
 	}
+
+	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.BasicVisualizationServer#setGraphLayout(edu.uci.ics.jung.algorithms.layout.Layout)
+	 */
+	@Override
+	public void setGraphLayout(Layout<V, E> layout) {
+		this.disposeCurrentBasicGraphGuiStaticLayout();
+		this.setVisViewerToStaticLayout(layout);
+		super.setGraphLayout(layout);
+	}
+	
+	// ------------------------------------------------------------------------------------------------------
+	// --- From here methods to handle the static layout and the graph node position transformer -- Start --- 
+	// ------------------------------------------------------------------------------------------------------
+	/**
+	 * Dispose current basic graph gui static layout.
+	 */
+	private void disposeCurrentBasicGraphGuiStaticLayout() {
+		BasicGraphGuiStaticLayout oldStaticLayout = this.getBasicGraphGuiStaticLayout();
+		if (oldStaticLayout!=null) {
+			oldStaticLayout.dispose();
+		}
+	}
+	/**
+	 * Sets the current VisualisationViewer instance to the Layout and its sub classes.
+	 * @param layout the layout
+	 */
+	private void setVisViewerToStaticLayout(Layout<V, E> layout) {
+		if (layout instanceof BasicGraphGuiStaticLayout) {
+			BasicGraphGuiStaticLayout basicGraphGuiStaticLayout = (BasicGraphGuiStaticLayout) layout;
+			basicGraphGuiStaticLayout.setBasicGraphGuiVisViewer(this);
+		}
+	}
+	
+	/**
+	 * Returns the current {@link BasicGraphGuiStaticLayout} that is used in the current visualization viewer.
+	 * @return the BasicGraphGuiStaticLayout or <code>null</code>
+	 */
+	public BasicGraphGuiStaticLayout getBasicGraphGuiStaticLayout() {
+		ObservableCachingLayout<?, ?> oLayout = (ObservableCachingLayout<?, ?>) this.getGraphLayout();
+		if (oLayout.getDelegate() instanceof BasicGraphGuiStaticLayout) {
+			return (BasicGraphGuiStaticLayout) oLayout.getDelegate();
+		}
+		return null;
+	}
+	/**
+	 * Returns the position transformer that considers the directions of the defined coordinate system.
+	 * @return the TransformerForGraphNodePosition
+	 */
+	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
+		BasicGraphGuiStaticLayout staticLayout = this.getBasicGraphGuiStaticLayout();
+		if (staticLayout!=null) {
+			return staticLayout.getCoordinateSystemPositionTransformer();
+		}
+		return null;
+	}
+	// ------------------------------------------------------------------------------------------------------
+	// --- From here methods to handle the static layout and the graph node position transformer -- End ----- 
+	// ------------------------------------------------------------------------------------------------------
+
+	
 
 	/**
 	 * This Initializes the VisualizationViewer.
 	 */
 	private void initialize() {
 		
+		// --- Set background color -----------------------------------------------------
 		this.setBackground(Color.GRAY);
+		// --- Set the visualization double buffered ------------------------------------
 		this.setDoubleBuffered(true);
+		// --- Set own renderer to visualization ----------------------------------------
+		this.setRenderer(new OptimizingGraphRenderer<>());
+		
 		
 		// --- Configure some rendering hints in order to accelerate the visualization --
 		this.renderingHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
@@ -135,9 +208,30 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		
 	}
 	
+	
+	
+	
+	/**
+	 * Reset the observation variables for the graph rendering.
+	 * @param currentTimeMillis the current time milliseconds
+	 */
 	private void resetObservationVariables(long currentTimeMillis) {
 		this.statsPaintCompIntervalStart = currentTimeMillis;
 		this.statsLastPaintCompIntervalCounter = 1;
+	}
+	
+
+	/**
+	 * Can be used to explicitly render the graph.
+	 */
+	public void paintComponentRenderGraph() {
+		
+		if (this.isDoubleBuffered()==true) {
+			super.paintComponent(this.offscreenG2d);
+		} else {
+			super.paintComponent(this.getGraphics());
+		}
+		this.getParent().repaint();
 	}
 	
 	/* (non-Javadoc)
@@ -146,11 +240,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	@Override
 	protected void paintComponent(Graphics graphics) {
 		
-		boolean successfulPainted = false;
-		int paintTrials = 0;
-		int paintTrialsMax = 3;
-		Exception lastException = null;
-
 		// ----------------------------------------------------------
 		// --- Debug, diagnosis and optimization area ---------------
 		// ----------------------------------------------------------
@@ -176,21 +265,30 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		}
 		// ----------------------------------------------------------
 
+		
 		// ----------------------------------------------------------
 		// --- Start to do the actual painting ----------------------
 		// ----------------------------------------------------------
+		int paintTrials = 0;
+		int paintTrialsMax = 3;
+		Exception lastException = null;
+		
+		boolean debugPrintPaintSource = false;
+		boolean successfulPainted = false;
 		while (successfulPainted==false) {
 			
 			try {
 
 				paintTrials++;
-				if (this.isActionOnTop()==true || paintTrials>paintTrialsMax) {
+				if (this.isActionOnTop()==true || paintTrials > paintTrialsMax) {
 					Graphics2D g2d = (Graphics2D)graphics;
 					g2d.drawImage(offscreen, null, 0, 0);
-					if (paintTrials>paintTrialsMax) break;
+					if (debugPrintPaintSource) System.out.println("Offscreen printed");
+					if (paintTrials > paintTrialsMax) break;
 					
 				} else {
 					super.paintComponent(graphics);
+					if (debugPrintPaintSource) System.out.println("Regular printed!");
 					
 				}
 				successfulPainted = true;
@@ -207,7 +305,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 				//ex.printStackTrace();
 			}	
 		}
-		
 		
 		if (lastException!=null) {
 			if (successfulPainted==false) {
@@ -299,11 +396,20 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 * Returns the Map pre-renderer.
 	 * @return the map pre-renderer
 	 */
-	private MapPreRenderer<V, E> getMapPreRenderer() {
+	@SuppressWarnings("unchecked")
+	private MapPreRenderer getMapPreRenderer() {
 		if (mapPreRenderer==null) {
-			mapPreRenderer = new MapPreRenderer<V, E>(this);
+			mapPreRenderer = new MapPreRenderer((BasicGraphGuiVisViewer<GraphNode, GraphEdge>) this);
 		}
 		return mapPreRenderer;
+	}
+	/**
+	 * Updates the current {@link MapRenderer}s center geographical location.
+	 */
+	public void updateMapRendererCenterGeoLocation() {
+		if (this.isDoMapPreRendering()==true && mapPreRenderer!=null) {
+			mapPreRenderer.updateCenterGeoLocation();
+		}
 	}
 	/**
 	 * Sets to do a map pre-rendering or not.
@@ -323,7 +429,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		this.repaint();
 	}
 	/**
-	 * Returns if there is currently a map pre-rendering to do.
+	 * Returns true if a map should be rendered before the graph is rendered.
 	 * @return true, if is do map pre rendering
 	 */
 	public boolean isDoMapPreRendering() {
@@ -332,18 +438,38 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	
 	
 	/**
-	 * Sets the coordinate system position transformer.
-	 * @param coordinateSystemPositionTransformer the coordinate system position transformer
+	 * Returns the current overall scale of the VisualizationViewer.
+	 * @return the overall scale
 	 */
-	public void setCoordinateSystemPositionTransformer(TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemPositionTransformer) {
-		this.coordinateSystemPositionTransformer = coordinateSystemPositionTransformer;
+	public double getOverallScale() {
+		
+		MutableTransformer layoutTransformer = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+		MutableTransformer viewTransformer = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+		double modelScale = layoutTransformer.getScale();
+		double viewScale = viewTransformer.getScale();
+		return modelScale * viewScale;
 	}
+	
+	
 	/**
-	 * Return the coordinate system position transformer.
-	 * @return the coordinate system position transformer
+	 * Will return a new overall, concatenated affine transform that includes graphics, layout and view.
+	 * @return the overall affine transform
 	 */
-	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemPositionTransformer() {
-		return coordinateSystemPositionTransformer;
+	public AffineTransform getOverallAffineTransform() {
+		
+		// --- Define new, concatenated transformer ---------------------------
+        AffineTransform lat = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
+        AffineTransform vat = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+
+        Graphics graphics = this.getGraphics();
+        Graphics2D g2d = (Graphics2D) graphics;
+        
+        AffineTransform at = new AffineTransform();
+        at.concatenate(g2d.getTransform());
+        at.concatenate(vat);
+        at.concatenate(lat);
+        return at;
 	}
+	
 	
 }

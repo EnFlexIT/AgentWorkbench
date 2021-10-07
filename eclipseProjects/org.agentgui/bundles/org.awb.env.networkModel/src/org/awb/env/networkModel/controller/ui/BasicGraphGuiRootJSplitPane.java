@@ -70,8 +70,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private NetworkComponentTablePanel networkComponentTablePanel;
     private BasicGraphGui graphGUI;
     
-    private NetworkComponent currNetworkComponent;
-
     
     /**
      * This is the default constructor for just displaying the current environment model during a running simulation.
@@ -155,7 +153,12 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    	@Override
 		    	public void mouseClicked(MouseEvent me) {
 		    		if (me.getClickCount()==2) {
-		    			getGraphController().getNetworkModelUndoManager().zoomNetworkComponent();
+		    			NetworkComponent netCompSelected = getNetworkComponentTablePanel().getSelectedNetworkComponent();
+		    			if (netCompSelected!=null) {
+		    				getGraphController().getNetworkModelUndoManager().selectNetworkComponent(netCompSelected);
+		    				getGraphController().getNetworkModelUndoManager().zoomNetworkComponent();
+		    			}
+		    			
 		    		}
 		    	}
 			});
@@ -167,9 +170,9 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
      */
     @Override
     public void valueChanged(ListSelectionEvent le) {
-		this.currNetworkComponent = this.getNetworkComponentTablePanel().getSelectedNetworkComponent();
-		if (this.currNetworkComponent!=null) {
-			this.getGraphController().getNetworkModelUndoManager().selectNetworkComponent(this.currNetworkComponent);	
+    	NetworkComponent netCompSelected = this.getNetworkComponentTablePanel().getSelectedNetworkComponent();
+		if (netCompSelected!=null) {
+			this.getGraphController().getNetworkModelUndoManager().selectNetworkComponent(netCompSelected);	
 		}
     }
    

@@ -28,7 +28,6 @@ import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-
 /**
  * The Class GeoCoordinateDialog can be used in order to configure an geographical coordinate.
  * 

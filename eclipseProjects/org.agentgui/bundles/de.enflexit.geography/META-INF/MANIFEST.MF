@@ -9,6 +9,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.geography,
  de.enflexit.geography.coordinates,
  de.enflexit.geography.coordinates.ui,
- de.enflexit.geography.coordinates.ui.img
+ de.enflexit.geography.coordinates.ui.img,
+ gov.nasa.worldwind.avlist,
+ gov.nasa.worldwind.geom,
+ gov.nasa.worldwind.geom.coords,
+ gov.nasa.worldwind.util
 Require-Bundle: de.enflexit.common,
  de.enflexit.jaxb
+Bundle-ClassPath: .,
+ lib/ww-geo-coords-1.0-2013-08.jar
