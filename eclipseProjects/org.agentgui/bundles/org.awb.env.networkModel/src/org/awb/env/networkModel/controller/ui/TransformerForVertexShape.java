@@ -36,12 +36,13 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
+
+import com.google.common.base.Function;
 
 import edu.uci.ics.jung.visualization.FourPassImageShaper;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
@@ -53,11 +54,11 @@ import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Transformer<GraphNode, Shape> {
+public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Function<GraphNode, Shape> {
 
 	private GraphEnvironmentController graphController;
 	
-	private Transformer<GraphNode, Integer> nodeSizeTransformer;
+	private Function<GraphNode, Integer> nodeSizeTransformer;
 
 	private HashMap<String, Shape> imageShapeHashMap;
 	private AffineTransform shapeScaleTransformer;
@@ -109,11 +110,11 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 	 * Gets the node size transformer.
 	 * @return the node size transformer
 	 */
-	private Transformer<GraphNode, Integer> getNodeSizeTransformer() {
+	private Function<GraphNode, Integer> getNodeSizeTransformer() {
 		if (nodeSizeTransformer==null) {
-			nodeSizeTransformer = new Transformer<GraphNode, Integer>() {
+			nodeSizeTransformer = new Function<GraphNode, Integer>() {
 				@Override
-				public Integer transform(GraphNode graphNode) {
+				public Integer apply(GraphNode graphNode) {
 					return TransformerForVertexShape.this.getScaleMultiplier() * (int) graphNode.getGraphElementLayout(graphController.getNetworkModel()).getSize();
 				}
 			};
@@ -121,12 +122,11 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 		return nodeSizeTransformer;
 	}
 		
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
+	/* (non-Javadoc)
+	 * @see com.google.common.base.Function#apply(java.lang.Object)
 	 */
 	@Override
-	public Shape transform(GraphNode node) {
+	public Shape apply(GraphNode node) {
 
 		Shape shape = factory.getEllipse(node); // DEFAULT
 		

@@ -65,7 +65,6 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphElement;
@@ -89,6 +88,8 @@ import org.awb.env.networkModel.positioning.GraphNodePositionDialog;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
+
+import com.google.common.base.Function;
 
 import agentgui.core.application.Application;
 import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
@@ -538,9 +539,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ----------------------------------------------------------------
 			
 			// --- Edge -------------------------------------------------------
-			visView.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
+			visView.setVertexToolTipTransformer(new Function<GraphNode, String>() {
 				@Override
-				public String transform(GraphNode node) {
+				public String apply(GraphNode node) {
 					
 					List<NetworkComponent> netCompsAtNode = graphController.getNetworkModel().getNetworkComponents(node);
 					NetworkComponent netCompDisNode =  graphController.getNetworkModel().getDistributionNode(netCompsAtNode);
@@ -575,9 +576,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 			
 			// --- Edge -------------------------------------------------------
-			visView.setEdgeToolTipTransformer(new Transformer<GraphEdge, String>() {
+			visView.setEdgeToolTipTransformer(new Function<GraphEdge, String>() {
 				@Override
-				public String transform(GraphEdge edge) {
+				public String apply(GraphEdge edge) {
 					String toolTip = null;
 					NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent(edge);
 					if (netComp!=null) {
@@ -610,16 +611,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ----------------------------------------------------------------
 			
 			// --- Configure the node shape and size --------------------------
-			visView.getRenderContext().setVertexShapeTransformer(new TransformerForVertexShape<GraphNode, GraphEdge>(this.getGraphEnvironmentController()));
+			visView.getRenderContext().setVertexShapeFunction(new TransformerForVertexShape<GraphNode, GraphEdge>(this.getGraphEnvironmentController()));
 			
 			// --- Configure node icons, if configured ------------------------
-			visView.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>() {
+			visView.getRenderContext().setVertexIconTransformer(new Function<GraphNode, Icon>() {
 
 				private final String pickedPostfix = "[picked]";
 				private HashMap<String, LayeredIcon> iconHash = new HashMap<String, LayeredIcon>();
 
 				@Override
-				public Icon transform(GraphNode node) {
+				public Icon apply(GraphNode node) {
 
 					Icon icon = null;
 					boolean isPicked = visView.getPickedVertexState().isPicked(node);
@@ -690,9 +691,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 
 			// --- Configure node colors --------------------------------------
-			visView.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
+			visView.getRenderContext().setVertexFillPaintTransformer(new Function<GraphNode, Paint>() {
 				@Override
-				public Paint transform(GraphNode node) {
+				public Paint apply(GraphNode node) {
 					if (visView.getPickedVertexState().isPicked(node)) {
 						return node.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
 					} 
@@ -701,9 +702,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 
 			// --- Configure to show node labels ------------------------------
-			visView.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
+			visView.getRenderContext().setVertexLabelTransformer(new Function<GraphNode, String>() {
 				@Override
-				public String transform(GraphNode node) {
+				public String apply(GraphNode node) {
 					if (node.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel()==true) {
 						return node.getGraphElementLayout(graphController.getNetworkModel()).getLabelText();
 					}
@@ -723,9 +724,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.setEdgeShapeTransformer(visView);
 			
 			// --- Set edge width ---------------------------------------------
-			visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
+			visView.getRenderContext().setEdgeStrokeTransformer(new Function<GraphEdge, Stroke>() {
 				@Override
-				public Stroke transform(GraphEdge edge) {
+				public Stroke apply(GraphEdge edge) {
 					int scaleMultiplier = 1;
 					MapSettings ms = graphController.getNetworkModel().getMapSettings();
 					if (ms!=null) {
@@ -736,9 +737,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 			
 			// --- Configure edge color ---------------------------------------
-			Transformer<GraphEdge, Paint> edgeColorTransformer = new Transformer<GraphEdge, Paint>() {
+			Transformer<GraphEdge, Paint> edgeColorTransformer = new Function<GraphEdge, Paint>() {
 				@Override
-				public Paint transform(GraphEdge edge) {
+				public Paint apply(GraphEdge edge) {
 					Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
 					if (visView.getPickedEdgeState().isPicked(edge)) {
 						initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
@@ -750,9 +751,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setArrowDrawPaintTransformer(edgeColorTransformer);
 			
 			// --- Configure Edge Image Labels --------------------------------
-			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
+			visView.getRenderContext().setEdgeLabelTransformer(new Function<GraphEdge, String>() {
 				@Override
-				public String transform(GraphEdge edge) {
+				public String apply(GraphEdge edge) {
 					// --- Get the needed info --------------------------------
 					String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
 					boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();

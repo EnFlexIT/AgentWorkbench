@@ -77,7 +77,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
@@ -98,6 +97,8 @@ import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
 import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
+
+import com.google.common.base.Function;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -788,8 +789,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
 			// --- Set the graph to the layout ----------------------
 	    	Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(this.localNetworkModel.getGraph());
-			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-				public Point2D transform(GraphNode node) {
+			layout.setInitializer(new Function<GraphNode, Point2D>() {
+				public Point2D apply(GraphNode node) {
 					return node.getPosition(); 
 				}
 			});
@@ -1248,8 +1249,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	    	// --- Refresh the local visualization viewer? --------------------
 	    	if (isRefreshLocalVisViewer==true) {
 	    		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-	    		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-	    			public Point2D transform(GraphNode node) {
+	    		layout.setInitializer(new Function<GraphNode, Point2D>() {
+	    			public Point2D apply(GraphNode node) {
 	    				return node.getPosition();
 	    			}
 	    		});
