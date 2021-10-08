@@ -30,12 +30,13 @@ package org.awb.env.networkModel.persistence;
 
 import java.util.HashSet;
 
-import org.apache.commons.collections15.Transformer;
 import org.apache.commons.text.StringEscapeUtils;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
+
+import com.google.common.base.Function;
 
 import edu.uci.ics.jung.io.GraphMLWriter;
 
@@ -74,33 +75,33 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 	 */
 	private void initialize() {
 		
-		this.setVertexIDs(new Transformer<GraphNode, String>() {
+		this.setVertexIDs(new Function<GraphNode, String>() {
 			@Override
-			public String transform(GraphNode graphNode) {
+			public String apply(GraphNode graphNode) {
 				return StringEscapeUtils.escapeHtml4(graphNode.getId());
 			}
 		});
-		this.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {
+		this.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Function<GraphNode, String>() {
 			@Override
-			public String transform(GraphNode graphNode) {
+			public String apply(GraphNode graphNode) {
 				return graphNode.getCoordinate().serialize();
 			}
 		});
-		this.addVertexData(KEY_POSITION_TREE_MAP, "Position TreeMap", "", new Transformer<GraphNode, String>() {
+		this.addVertexData(KEY_POSITION_TREE_MAP, "Position TreeMap", "", new Function<GraphNode, String>() {
 			@Override
-			public String transform(GraphNode graphNode) {
+			public String apply(GraphNode graphNode) {
 				return graphNode.getPositionTreeMapAsString(GraphModelWriter.this.allowedLayoutIDs);
 			}
 		});
-		this.addVertexData(KEY_DATA_MODEL_STORAGE_SETTINGS, "Data model storage settings", "", new Transformer<GraphNode, String>() {
+		this.addVertexData(KEY_DATA_MODEL_STORAGE_SETTINGS, "Data model storage settings", "", new Function<GraphNode, String>() {
 			@Override
-			public String transform(GraphNode graphNode) {
+			public String apply(GraphNode graphNode) {
 				return AbstractDataModelStorageHandler.getDataModelStorageSettingsAsString(graphNode);
 			}
 		});
-		this.addVertexData(KEY_DATA_MODEL_BASE64_PROPERTY, "Base64 encoded individual data model", "", new Transformer<GraphNode, String>() {
+		this.addVertexData(KEY_DATA_MODEL_BASE64_PROPERTY, "Base64 encoded individual data model", "", new Function<GraphNode, String>() {
 			@Override
-			public String transform(GraphNode graphNode) {
+			public String apply(GraphNode graphNode) {
 				String dmBase64StringSave = null;
 				if (graphNode.getDataModelBase64() != null) {
 					for (String dmBase64String : graphNode.getDataModelBase64()) {
@@ -120,30 +121,30 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		});
 		
 		
-		this.setEdgeIDs(new Transformer<GraphEdge, String>() {
+		this.setEdgeIDs(new Function<GraphEdge, String>() {
 			@Override
-			public String transform(GraphEdge graphEdge) {
+			public String apply(GraphEdge graphEdge) {
 				return StringEscapeUtils.escapeHtml4(graphEdge.getId());
 			}
 		});
-		this.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
+		this.setEdgeDescriptions(new Function<GraphEdge, String>() {
 			@Override
-			public String transform(GraphEdge graphEdge) {
+			public String apply(GraphEdge graphEdge) {
 				return graphEdge.getComponentType();
 			}
 		});
-		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION, "Edge-Configuration", "", new Transformer<GraphEdge, String>() {
+		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION, "Edge-Configuration", "", new Function<GraphEdge, String>() {
 			@Override
-			public String transform(GraphEdge graphEdge) {
+			public String apply(GraphEdge graphEdge) {
 				if (graphEdge.getEdgeShapeConfiguration()!=null) {
 					return graphEdge.getEdgeShapeConfiguration().getConfigurationAsString(); 
 				}
 				return null;
 			}
 		});
-		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP, "Edge-Configuration TreeMap", "", new Transformer<GraphEdge, String>() {
+		this.addEdgeData(KEY_EDGE_SHAPE_CONFIGUARATION_TREE_MAP, "Edge-Configuration TreeMap", "", new Function<GraphEdge, String>() {
 			@Override
-			public String transform(GraphEdge graphEdge) {
+			public String apply(GraphEdge graphEdge) {
 				return GraphEdgeShapeConfiguration.getGraphEdgeShapeConfigurationTreeMapAsString(graphEdge.getEdgeShapeConfigurationTreeMap(), GraphModelWriter.this.allowedLayoutIDs);
 			}
 		});

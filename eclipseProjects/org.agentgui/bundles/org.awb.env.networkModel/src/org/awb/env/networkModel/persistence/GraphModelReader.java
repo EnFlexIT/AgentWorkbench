@@ -35,13 +35,14 @@ import java.io.FileReader;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.apache.commons.collections15.Transformer;
 import org.apache.commons.text.StringEscapeUtils;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
+
+import com.google.common.base.Function;
 
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 import edu.uci.ics.jung.graph.Graph;
@@ -89,10 +90,14 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	 *
 	 * @return the graph transformer internal
 	 */
-	private static Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> getGraphTransformerInternal() {
-		Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>>() {
+	private static Function<GraphMetadata, Graph<GraphNode, GraphEdge>> getGraphTransformerInternal() {
+		Function<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Function<GraphMetadata, Graph<GraphNode, GraphEdge>>() {
+//		@Override
+//		public SparseGraph<GraphNode, GraphEdge> transform(GraphMetadata gmd) {
+//			return new SparseGraph<GraphNode, GraphEdge>();
+//		}
 		@Override
-		public SparseGraph<GraphNode, GraphEdge> transform(GraphMetadata gmd) {
+		public SparseGraph<GraphNode, GraphEdge> apply(GraphMetadata arg0) {
 			return new SparseGraph<GraphNode, GraphEdge>();
 		}};
 		return graphTransformer;
@@ -102,10 +107,10 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	 * Gets the vertex transformer internal.
 	 * @return the vertex transformer internal
 	 */
-	private static Transformer<NodeMetadata, GraphNode> getVertexTransformerInternal() {
-		Transformer<NodeMetadata, GraphNode> nodeTransformer = new Transformer<NodeMetadata, GraphNode>() {
+	private static Function<NodeMetadata, GraphNode> getVertexTransformerInternal() {
+		Function<NodeMetadata, GraphNode> nodeTransformer = new Function<NodeMetadata, GraphNode>() {
 			@Override
-			public GraphNode transform(NodeMetadata nmd) {
+			public GraphNode apply(NodeMetadata nmd) {
 
 				// --- Create GraphNode instance and set ID ---------
 				GraphNode graphNode = new GraphNode();
@@ -155,11 +160,11 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	 * Gets the edge transformer internal.
 	 * @return the edge transformer internal
 	 */
-	private static Transformer<EdgeMetadata, GraphEdge> getEdgeTransformerInternal() {
-		Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
+	private static Function<EdgeMetadata, GraphEdge> getEdgeTransformerInternal() {
+		Function<EdgeMetadata, GraphEdge> edgeTransformer = new Function<EdgeMetadata, GraphEdge>() {
 			@Override
-			public GraphEdge transform(EdgeMetadata emd) {
-				
+			public GraphEdge apply(EdgeMetadata emd) {
+
 				// --- Create GraphEdge and set ID and type ---------
 				GraphEdge graphEdge = new GraphEdge(StringEscapeUtils.unescapeHtml4(emd.getId()), emd.getDescription());
 				
@@ -181,10 +186,10 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 	 * Gets the hyper edge transformer internal.
 	 * @return the hyper edge transformer internal
 	 */
-	private static Transformer<HyperEdgeMetadata, GraphEdge> getHyperEdgeTransformerInternal() {
-		Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
+	private static Function<HyperEdgeMetadata, GraphEdge> getHyperEdgeTransformerInternal() {
+		Function<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Function<HyperEdgeMetadata, GraphEdge>() {
 			@Override
-			public GraphEdge transform(HyperEdgeMetadata hyperEdgeMetadata) {
+			public GraphEdge apply(HyperEdgeMetadata hyperEdgeMetadata) {
 				return null;
 			}
 		};
