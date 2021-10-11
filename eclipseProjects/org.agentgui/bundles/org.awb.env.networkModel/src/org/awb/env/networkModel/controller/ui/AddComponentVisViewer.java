@@ -292,8 +292,8 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 	    this.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 
 		// --- Use straight lines as edges --------------------------------
-	    this.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
-
+	    this.getRenderContext().setEdgeShapeTransformer(EdgeShape.line(this.getGraphLayout().getGraph()));
+	    
 		// --- Set edge width ---------------------------------------------
 	    this.getRenderContext().setEdgeStrokeTransformer(new Function<GraphEdge, Stroke>() {
 			@Override

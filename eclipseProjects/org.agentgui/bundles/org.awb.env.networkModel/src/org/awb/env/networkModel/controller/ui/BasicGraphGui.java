@@ -36,6 +36,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,7 +110,6 @@ import edu.uci.ics.jung.visualization.LayeredIcon;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
-import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.PickedState;
@@ -611,7 +611,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ----------------------------------------------------------------
 			
 			// --- Configure the node shape and size --------------------------
-			visView.getRenderContext().setVertexShapeFunction(new TransformerForVertexShape<GraphNode, GraphEdge>(this.getGraphEnvironmentController()));
+			visView.getRenderContext().setVertexShapeTransformer(new TransformerForVertexShape<GraphNode, GraphEdge>(this.getGraphEnvironmentController()));
 			
 			// --- Configure node icons, if configured ------------------------
 			visView.getRenderContext().setVertexIconTransformer(new Function<GraphNode, Icon>() {
@@ -737,7 +737,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 			
 			// --- Configure edge color ---------------------------------------
-			Transformer<GraphEdge, Paint> edgeColorTransformer = new Function<GraphEdge, Paint>() {
+			Function<GraphEdge, Paint> edgeColorTransformer = new Function<GraphEdge, Paint>() {
 				@Override
 				public Paint apply(GraphEdge edge) {
 					Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
@@ -827,42 +827,53 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @see LayoutSettings#getEdgeShape()
 	 * @param visViewer the vis viewer
 	 */
-	public void setEdgeShapeTransformer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
+	public void setEdgeShapeTransformer(final BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
 
 		// --- Use straight lines as edges ? ------------------------------
-		AbstractEdgeShapeTransformer<GraphNode, GraphEdge> edgeShapeTransformer = null;
-		switch (this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
-		case BentLine:
-			edgeShapeTransformer = new EdgeShape.BentLine<GraphNode, GraphEdge>();
-			break;
-		case Box:
-			edgeShapeTransformer = new EdgeShape.Box<GraphNode, GraphEdge>();
-			break;
-		case ConfigurableLine:
-			edgeShapeTransformer = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>();
-			break;
-		case CubicCurve:
-			edgeShapeTransformer = new EdgeShape.CubicCurve<GraphNode, GraphEdge>();
-			break;
-		case Line:
-			edgeShapeTransformer = new EdgeShape.Line<GraphNode, GraphEdge>();
-			break;
-		case Loop:
-			edgeShapeTransformer = new EdgeShape.Loop<GraphNode, GraphEdge>();
-			break;
-		case Orthogonal:
-			edgeShapeTransformer = new EdgeShape.Orthogonal<GraphNode, GraphEdge>();
-			break;
-		case QuadCurve:
-			edgeShapeTransformer = new EdgeShape.QuadCurve<GraphNode, GraphEdge>();
-			break;
-		case SimpleLoop:
-			edgeShapeTransformer = new EdgeShape.SimpleLoop<GraphNode, GraphEdge>();
-			break;
-		case Wedge:
-			edgeShapeTransformer = new EdgeShape.Wedge<GraphNode, GraphEdge>(5);
-			break;
-		}
+		Function<GraphEdge, Shape> edgeShapeTransformer = new Function<GraphEdge, Shape>() {
+
+			@Override
+			public Shape apply(GraphEdge graphEdge) {
+				
+				Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
+				Shape shape = null;
+				
+				switch (getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
+				case BentLine:
+					shape = new EdgeShape.BentLine<GraphNode, GraphEdge>();
+					break;
+				case Box:
+					shape = new EdgeShape.Box<GraphNode, GraphEdge>();
+					break;
+				case ConfigurableLine:
+					shape = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>();
+					break;
+				case CubicCurve:
+					shape = new EdgeShape.CubicCurve<GraphNode, GraphEdge>();
+					break;
+				case Line:
+					shape = new EdgeShape.Line<GraphNode, GraphEdge>();
+					break;
+				case Loop:
+					shape = new EdgeShape.Loop<GraphNode, GraphEdge>();
+					break;
+				case Orthogonal:
+					shape = new EdgeShape.Orthogonal<GraphNode, GraphEdge>();
+					break;
+				case QuadCurve:
+					shape = new EdgeShape.QuadCurve<GraphNode, GraphEdge>();
+					break;
+				case SimpleLoop:
+					shape = new EdgeShape.SimpleLoop<GraphNode, GraphEdge>();
+					break;
+				case Wedge:
+					shape = new EdgeShape.Wedge<GraphNode, GraphEdge>(5);
+					break;
+				}
+				return shape;
+			}
+		};
+		
 		visViewer.getRenderContext().setEdgeShapeTransformer(edgeShapeTransformer);
 		visViewer.repaint();
 	}
