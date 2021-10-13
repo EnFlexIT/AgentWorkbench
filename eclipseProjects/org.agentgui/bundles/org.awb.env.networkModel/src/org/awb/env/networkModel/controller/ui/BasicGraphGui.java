@@ -112,6 +112,7 @@ import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.decorators.ParallelEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
@@ -832,42 +833,44 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Use straight lines as edges ? ------------------------------
 		Function<GraphEdge, Shape> edgeShapeTransformer = new Function<GraphEdge, Shape>() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public Shape apply(GraphEdge graphEdge) {
 				
 				Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
+				EdgeShape<GraphNode, GraphEdge> edgeShape = new EdgeShape<GraphNode, GraphEdge>(graph);
 				Shape shape = null;
 				
 				switch (getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
 				case BentLine:
-					shape = new EdgeShape.BentLine<GraphNode, GraphEdge>();
+					shape = edgeShape.new BentLine().apply(graphEdge);
 					break;
 				case Box:
-					shape = new EdgeShape.Box<GraphNode, GraphEdge>();
+					shape = edgeShape.new Box().apply(graphEdge);
 					break;
 				case ConfigurableLine:
 					shape = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>();
 					break;
 				case CubicCurve:
-					shape = new EdgeShape.CubicCurve<GraphNode, GraphEdge>();
+					shape = edgeShape.new CubicCurve().apply(graphEdge);
 					break;
 				case Line:
-					shape = new EdgeShape.Line<GraphNode, GraphEdge>();
+					shape = edgeShape.new Line().apply(graphEdge);
 					break;
 				case Loop:
-					shape = new EdgeShape.Loop<GraphNode, GraphEdge>();
+					shape = edgeShape.new Loop().apply(graphEdge);
 					break;
 				case Orthogonal:
-					shape = new EdgeShape.Orthogonal<GraphNode, GraphEdge>();
+					shape = edgeShape.new Orthogonal().apply(graphEdge);
 					break;
 				case QuadCurve:
-					shape = new EdgeShape.QuadCurve<GraphNode, GraphEdge>();
+					shape = edgeShape.new QuadCurve().apply(graphEdge);
 					break;
 				case SimpleLoop:
-					shape = new EdgeShape.SimpleLoop<GraphNode, GraphEdge>();
+					shape = edgeShape.new SimpleLoop().apply(graphEdge);
 					break;
 				case Wedge:
-					shape = new EdgeShape.Wedge<GraphNode, GraphEdge>(5);
+					shape = edgeShape.new Wedge().apply(graphEdge);
 					break;
 				}
 				return shape;

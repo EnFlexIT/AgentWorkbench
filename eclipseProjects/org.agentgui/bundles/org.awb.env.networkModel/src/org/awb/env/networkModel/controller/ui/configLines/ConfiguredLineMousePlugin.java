@@ -492,7 +492,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
 			for (GraphNode pickedNode: pickedNodes) {
 				// --- Get the position of the node ---------------------------
-				Point2D newPosInLayout = this.getVisViewer().getGraphLayout().transform(pickedNode);
+				Point2D newPosInLayout = this.getVisViewer().getGraphLayout().apply(pickedNode);
 				if (this.getGraphNodePositionTransformer() instanceof TransformerForGraphNodeGeoPosition && false) {
 					// --- We're getting nearly UTM coordinates here ! --------
 					newPosInLayout = this.getCoordinateDirectionTransformer().inverseTransform(newPosInLayout);
@@ -562,7 +562,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
                 PickedState<GraphNode> ps = vv.getPickedVertexState();
                 
                 for(GraphNode v : ps.getPicked()) {
-                    Point2D vp = layout.transform(v);
+                    Point2D vp = layout.apply(v);
                     vp.setLocation(vp.getX()+dx, vp.getY()+dy);
                     layout.setLocation(v, vp);
                 }
