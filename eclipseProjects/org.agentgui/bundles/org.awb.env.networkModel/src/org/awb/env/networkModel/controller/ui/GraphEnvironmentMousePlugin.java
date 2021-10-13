@@ -166,7 +166,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		this.removeAllTemporaryNodes(this.getVisViewer().getGraphLayout().getGraph());
 		for (int i = 0; i < this.nodesMoved.size(); i++) {
 			GraphNode node = this.nodesMoved.get(i);
-			this.getVisViewer().getGraphLayout().setLocation(node, this.getCoordinateSystemNodePositionTransformer().transform(node.getPosition()));
+			this.getVisViewer().getGraphLayout().setLocation(node, this.getCoordinateSystemNodePositionTransformer().apply(node.getPosition()));
 		}
 	}
 	
@@ -459,7 +459,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				}
 				
 				// --- Get the position of the node ---------------------------
-				Point2D newPos = this.getVisViewer().getGraphLayout().transform(pickedNode);
+				Point2D newPos = this.getVisViewer().getGraphLayout().apply(pickedNode);
 				newPos = this.getCoordinateSystemNodePositionTransformer().inverseTransform(newPos);
 				if (snapToGrid==true && snapRaster>0) {
 					double xPos = roundGridSnap(newPos.getX(), snapRaster); 
@@ -498,7 +498,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
                 List<GraphNode> nodesMovedList = new ArrayList<>(vv.getPickedVertexState().getPicked());
     			for (int i = 0; i < nodesMovedList.size(); i++) {
     				GraphNode pickedNode = nodesMovedList.get(i);
-    				Point2D vp = layout.transform(pickedNode);
+    				Point2D vp = layout.apply(pickedNode);
                     vp.setLocation(vp.getX() + dx, vp.getY() + dy);
                     layout.setLocation(pickedNode, vp);
     			}
@@ -573,14 +573,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			
 			// --- Calculate node movement --------------------------
 			Point2D mousePositionLayout = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
-			Point2D ulGraphNodeLayout = this.getCoordinateSystemNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
+			Point2D ulGraphNodeLayout = this.getCoordinateSystemNodePositionTransformer().apply(this.graphNodeUpperLeft2Paste.getPosition());
 			double shiftXLayout = mousePositionLayout.getX() - ulGraphNodeLayout.getX();
 			double shiftYLayout = mousePositionLayout.getY() - ulGraphNodeLayout.getY();
 			
 			// --- Adjust position ----------------------------------
 			for (int i = 0; i < graphNodesToMove.length; i++) {
 				// --- Set location in Layout -----------------------
-				Point2D locLayout = layout.transform(graphNodesToMove[i]);
+				Point2D locLayout = layout.apply(graphNodesToMove[i]);
                 locLayout.setLocation(locLayout.getX() + shiftXLayout, locLayout.getY() + shiftYLayout);
                 layout.setLocation(graphNodesToMove[i], locLayout);
                 // --- Set coordinate system location ---------------
@@ -630,8 +630,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 							this.graphNodeUpperLeft2Paste = graphNodeCurrent;
 						} else {
 							// --- Consider coordinate system -------
-							Point2D positionOfGraphNodeAtLeftUpperPosition = this.getCoordinateSystemNodePositionTransformer().transform(this.graphNodeUpperLeft2Paste.getPosition());
-							Point2D positionOfGraphNodeCurrent = this.getCoordinateSystemNodePositionTransformer().transform(graphNodeCurrent.getPosition()); 
+							Point2D positionOfGraphNodeAtLeftUpperPosition = this.getCoordinateSystemNodePositionTransformer().apply(this.graphNodeUpperLeft2Paste.getPosition());
+							Point2D positionOfGraphNodeCurrent = this.getCoordinateSystemNodePositionTransformer().apply(graphNodeCurrent.getPosition()); 
 							if (positionOfGraphNodeCurrent.getX()<positionOfGraphNodeAtLeftUpperPosition.getX()) {
 								this.graphNodeUpperLeft2Paste = graphNodeCurrent;
 							} else if (positionOfGraphNodeCurrent.getX()==positionOfGraphNodeAtLeftUpperPosition.getX()) {

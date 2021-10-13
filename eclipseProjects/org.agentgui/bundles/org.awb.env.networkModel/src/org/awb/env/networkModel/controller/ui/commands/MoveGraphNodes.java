@@ -147,7 +147,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 				} else {
 					graphNode.setPosition(pos);
 				}
-				this.visViewer.getGraphLayout().setLocation(graphNode, this.getGraphNodePositionTransformer().transform(graphNode.getPosition()));
+				this.visViewer.getGraphLayout().setLocation(graphNode, this.getGraphNodePositionTransformer().apply(graphNode.getPosition()));
 				this.visViewer.getPickedVertexState().pick(graphNode, true);	
 			}
 		}

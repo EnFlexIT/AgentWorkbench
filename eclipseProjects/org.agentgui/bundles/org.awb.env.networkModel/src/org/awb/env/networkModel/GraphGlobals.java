@@ -237,11 +237,18 @@ public final class GraphGlobals {
  	// --- Some help method for buffered images -------------------------------
  	// ------------------------------------------------------------------------
 	/**
-	 * Converts an {@link Image} to a {@link BufferedImage}.
-	 * @param image The image
-	 * @return The buffered image
+	 * Converts an {@link Image} into a {@link BufferedImage}.
+	 * @param image the image to convert
+	 * @return the converted buffered image
 	 */
 	public static BufferedImage convertToBufferedImage(Image image) {
+		
+		// --- Is a buffered image already? -----------------------------------
+		if (image instanceof BufferedImage) {
+			return (BufferedImage) image;
+		}
+		
+		// --- Create a BufferedImage -----------------------------------------
 		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
 		g2d.drawImage(image, 0, 0, null);

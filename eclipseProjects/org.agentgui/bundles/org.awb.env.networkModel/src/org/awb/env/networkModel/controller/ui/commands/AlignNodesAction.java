@@ -156,7 +156,7 @@ public class AlignNodesAction extends AbstractUndoableEdit {
 		for (int i = 0; i < graphNodeList.size(); i++) {
 			
 			GraphNode graphNode = graphNodeList.get(i);
-			Point2D pointOnPanel = this.getGraphNodePositionTransformer().transform(graphNode);
+			Point2D pointOnPanel = this.getGraphNodePositionTransformer().apply(graphNode);
 			
 			// --- Get minimum and maximum x/y-positions ------------
 			if (pointOnPanel.getX() < minX) {
@@ -305,7 +305,7 @@ public class AlignNodesAction extends AbstractUndoableEdit {
 					
 				}
 				// -- Set position on Screen ------------------------
-				this.visViewer.getGraphLayout().setLocation(graphNode, this.getGraphNodePositionTransformer().transform(graphNode.getPosition()));
+				this.visViewer.getGraphLayout().setLocation(graphNode, this.getGraphNodePositionTransformer().apply(graphNode.getPosition()));
 			}
 		}
 		

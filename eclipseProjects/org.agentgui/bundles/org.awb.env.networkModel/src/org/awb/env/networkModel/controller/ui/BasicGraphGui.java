@@ -112,7 +112,6 @@ import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.decorators.ParallelEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
@@ -833,45 +832,56 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Use straight lines as edges ? ------------------------------
 		Function<GraphEdge, Shape> edgeShapeTransformer = new Function<GraphEdge, Shape>() {
 
-			@SuppressWarnings("unchecked")
+			/* (non-Javadoc)
+			 * @see com.google.common.base.Function#apply(java.lang.Object)
+			 */
 			@Override
 			public Shape apply(GraphEdge graphEdge) {
 				
 				Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
 				EdgeShape<GraphNode, GraphEdge> edgeShape = new EdgeShape<GraphNode, GraphEdge>(graph);
-				Shape shape = null;
-				
+
+				// --- Get the edge-shape function ----------------------------
+				Function<GraphEdge, Shape> shapeFunction = null;
 				switch (getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
 				case BentLine:
-					shape = edgeShape.new BentLine().apply(graphEdge);
+					shapeFunction = edgeShape.new BentLine();
 					break;
 				case Box:
-					shape = edgeShape.new Box().apply(graphEdge);
+					shapeFunction = edgeShape.new Box();
 					break;
 				case ConfigurableLine:
-					shape = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>();
+					shapeFunction = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>(graph);
 					break;
 				case CubicCurve:
-					shape = edgeShape.new CubicCurve().apply(graphEdge);
+					shapeFunction = edgeShape.new CubicCurve();
 					break;
 				case Line:
-					shape = edgeShape.new Line().apply(graphEdge);
+					shapeFunction = edgeShape.new Line();
 					break;
 				case Loop:
-					shape = edgeShape.new Loop().apply(graphEdge);
+					shapeFunction = edgeShape.new Loop();
 					break;
 				case Orthogonal:
-					shape = edgeShape.new Orthogonal().apply(graphEdge);
+					shapeFunction = edgeShape.new Orthogonal();
 					break;
 				case QuadCurve:
-					shape = edgeShape.new QuadCurve().apply(graphEdge);
+					shapeFunction = edgeShape.new QuadCurve();
 					break;
 				case SimpleLoop:
-					shape = edgeShape.new SimpleLoop().apply(graphEdge);
+					shapeFunction = edgeShape.new SimpleLoop();
 					break;
 				case Wedge:
-					shape = edgeShape.new Wedge().apply(graphEdge);
+					shapeFunction = edgeShape.new Wedge(5);
 					break;
+				}
+				
+				// --- By the current function, transfer into a Shape ---------
+				Shape shape = null;
+				try {
+					shape = shapeFunction.apply(graphEdge);	
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 				return shape;
 			}
@@ -1203,7 +1213,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public void updateGraphNodePositionInLayout(GraphNode graphNode) {
 		if (graphNode!=null && graphNode.getPosition()!=null) {
-			this.getVisualizationViewer().getGraphLayout().setLocation(graphNode, this.getCoordinateSystemPositionTransformer().transform(graphNode.getPosition()));
+			this.getVisualizationViewer().getGraphLayout().setLocation(graphNode, this.getCoordinateSystemPositionTransformer().apply(graphNode.getPosition()));
 		}
 	}
 	

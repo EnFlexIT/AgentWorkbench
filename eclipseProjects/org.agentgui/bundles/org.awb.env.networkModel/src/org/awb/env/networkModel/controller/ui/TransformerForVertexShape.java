@@ -28,7 +28,6 @@
  */
 package org.awb.env.networkModel.controller.ui;
 
-import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
@@ -157,13 +156,12 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 				// --- Get the image shape for the reference ------------------
 				ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
 				if (imageIcon != null) {
-					Image image = imageIcon.getImage();
-					imageShape = FourPassImageShaper.getShape(image, 30);
 					// --- Cache the image shape, if not zero-sized ----------- 
+					imageShape = FourPassImageShaper.getShape(GraphGlobals.convertToBufferedImage(imageIcon.getImage()));
 					if (imageShape!=null && imageShape.getBounds().getWidth()>0 && imageShape.getBounds().getHeight()>0) {
 						
-						int width = image.getWidth(null);
-						int height = image.getHeight(null);
+						int width = imageIcon.getImage().getWidth(null);
+						int height = imageIcon.getImage().getHeight(null);
 						AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
 						imageShape = transform.createTransformedShape(imageShape);
 						
@@ -180,7 +178,7 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 						if (isdebugPrintShapeScaleResults==true) {
 							width  = (int) imageShape.getBounds().getWidth();
 							height = (int) imageShape.getBounds().getHeight();
-							System.out.println("[" + imageRef + "] Image-size: w=" + image.getWidth(null) + ", h=" + image.getHeight(null) + " - Shape-size: w=" + width + ", h=" + height);
+							System.out.println("[" + imageRef + "] Image-size: w=" + imageIcon.getImage().getWidth(null) + ", h=" + imageIcon.getImage().getHeight(null) + " - Shape-size: w=" + width + ", h=" + height);
 						}
 					}
 				

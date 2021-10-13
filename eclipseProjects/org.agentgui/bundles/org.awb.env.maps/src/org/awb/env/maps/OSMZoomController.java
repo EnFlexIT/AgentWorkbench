@@ -131,7 +131,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController {
 			List<Point2D> cpList =  graphRectangle2D.getCornerPointList();
 			for (int i = 0; i < cpList.size(); i++) {
 				Point2D cp = cpList.get(i);
-				Point2D cpJung = gnpTransformer.transform(cp);
+				Point2D cpJung = gnpTransformer.apply(cp);
 				Point2D cpView = at.transform(cpJung, null);
 				if (visViewerRect.contains(cpView.getX(), cpView.getY())==false) {
 					this.zoomOut();

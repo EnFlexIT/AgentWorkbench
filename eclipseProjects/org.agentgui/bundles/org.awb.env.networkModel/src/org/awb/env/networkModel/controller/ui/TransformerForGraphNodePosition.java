@@ -32,7 +32,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
@@ -41,6 +40,8 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
 
+import com.google.common.base.Function;
+
 /**
  * The Class TransformerForGraphNodePosition justifies a {@link GraphNode} position in the visualization viewer 
  * according to the {@link LayoutSettings}, where the position of the used coordinate system is specified 
@@ -48,7 +49,7 @@ import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirecti
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TransformerForGraphNodePosition implements Transformer<GraphNode, Point2D> {
+public class TransformerForGraphNodePosition implements Function<GraphNode, Point2D> {
 
 	private GraphEnvironmentController graphController;
 	
@@ -118,30 +119,27 @@ public class TransformerForGraphNodePosition implements Transformer<GraphNode, P
 		ArrayList<Point2D> jungPosList = new ArrayList<>();
 		for (int i = 0; i < graphPosList.size(); i++) {
 			Point2D graphPos = graphPosList.get(i);
-			jungPosList.add(this.transform(graphPos));
+			jungPosList.add(this.apply(graphPos));
 		}
 		return jungPosList;
 	}
 	
-	/**
-	 * Transforms the specified {@link GraphNode}s position into the position for the JUNG visualization.
-	 *
-	 * @param graphNode the graph node with its position 
-	 * @return the point 2 D
+	
+	/* (non-Javadoc)
+	 * @see com.google.common.base.Function#apply(java.lang.Object)
 	 */
 	@Override
-	public Point2D transform(GraphNode graphNode) {
+	public Point2D apply(GraphNode graphNode) {
 		if (graphNode==null) return null;
-		return this.transform(graphNode.getPosition());
+		return this.apply(graphNode.getPosition());
 	}
-	
 	/**
 	 * Transforms the specified position into the position for the JUNG visualization.
 	 *
 	 * @param npGraphNode the node position of a graph node
 	 * @return the point 2 D
 	 */
-	public Point2D transform(Point2D npGraphNode) {
+	public Point2D apply(Point2D npGraphNode) {
 		
 		if (npGraphNode==null) return null;
 		

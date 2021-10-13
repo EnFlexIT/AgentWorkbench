@@ -249,7 +249,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 			if (this.getBasicGraphGui().isDoMapPreRendering()==true) {
 				positionTransformer = new TransformerForGraphNodePosition(this.getGraphEnvironmentController());
 			}
-			Point2D jungPosition = positionTransformer.transform(new Point2D.Double(moveX, moveY));
+			Point2D jungPosition = positionTransformer.apply(new Point2D.Double(moveX, moveY));
 			moveX = jungPosition.getX() + coordSourcePointOnScreen.getX();
 			moveY = jungPosition.getY() + coordSourcePointOnScreen.getY();
 			
@@ -262,7 +262,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 			// ----------------------------------------------------------------
 			double graphWidth = graphRectangle.getWidth() + 2 * this.graphMargin;
 			double graphHeight = graphRectangle.getHeight() + 2 * this.graphMargin;
-			Point2D farthestCorner = positionTransformer.transform(new Point2D.Double(graphWidth, graphHeight));
+			Point2D farthestCorner = positionTransformer.apply(new Point2D.Double(graphWidth, graphHeight));
 			graphWidth = Math.abs(farthestCorner.getX());
 			graphHeight = Math.abs(farthestCorner.getY());
 			
@@ -362,7 +362,7 @@ public class BasicGraphGuiZoomController implements ZoomController {
 			// --- Update loop variables --------------------------------------
 			IterateCount++;
 			// --- Calculate movement -----------------------------------------
-			Point2D graphCenterJung = gpTransformer.transform(graphCoordinatePoint);
+			Point2D graphCenterJung = gpTransformer.apply(graphCoordinatePoint);
 			Point2D visuCenterJung = mlTransformer.inverseTransform(this.getVisualizationViewer().getCenter());
 			double dx = visuCenterJung.getX() - graphCenterJung.getX();
 			double dy = visuCenterJung.getY() - graphCenterJung.getY();

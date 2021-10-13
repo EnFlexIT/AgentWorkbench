@@ -63,19 +63,19 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 	}
 
 	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition#transform(org.awb.env.networkModel.GraphNode)
+	 * @see org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition#apply(org.awb.env.networkModel.GraphNode)
 	 */
 	@Override
-	public Point2D transform(GraphNode graphNode) {
+	public Point2D apply(GraphNode graphNode) {
 		if (graphNode==null) return null;
-		return this.transform(graphNode.getCoordinate());
+		return this.apply(graphNode.getCoordinate());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition#transform(java.awt.geom.Point2D)
 	 */
 	@Override
-	public Point2D transform(Point2D coordGraphNode) {
+	public Point2D apply(Point2D coordGraphNode) {
 
 		// --- The default case ---------------------------------------------------------
 		Point2D layoutPosition = null;
@@ -107,7 +107,7 @@ public class TransformerForGraphNodeGeoPosition extends TransformerForGraphNodeP
 					// --- Move to the correct longitude zone ---------------------------
 					utmCoord.transformZone(utmLongZone);
 				}
-				layoutPosition = super.transform(utmCoord);
+				layoutPosition = super.apply(utmCoord);
 				if (this.isDebugPrintPositioning) System.out.println("Layout Position from UTM " + layoutPosition);
 				
 			} catch (Exception ex) {

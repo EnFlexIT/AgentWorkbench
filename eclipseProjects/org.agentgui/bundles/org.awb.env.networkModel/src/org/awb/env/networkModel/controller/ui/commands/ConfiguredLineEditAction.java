@@ -127,7 +127,7 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 		GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(graphNodeCopy.getId());
 		if (node!=null) {
 			node.getPosition().setLocation(graphNodeCopy.getPosition().getX(), graphNodeCopy.getPosition().getY());
-			this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
+			this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().apply(node.getPosition()));
 		}
 		return node;
 	}

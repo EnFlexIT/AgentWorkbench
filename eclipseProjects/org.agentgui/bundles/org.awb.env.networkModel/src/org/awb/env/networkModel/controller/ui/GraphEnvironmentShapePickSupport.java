@@ -14,8 +14,6 @@ import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguratio
 import org.awb.env.networkModel.settings.LayoutSettings;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
@@ -128,8 +126,8 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 		GraphNode v1 = pair.getFirst();
 		GraphNode v2 = pair.getSecond();
 		
-		Point2D p1 = vv.getRenderContext().getMultiLayerTransformer().transform(Layer.LAYOUT, layout.transform(v1));
-		Point2D p2 = vv.getRenderContext().getMultiLayerTransformer().transform(Layer.LAYOUT, layout.transform(v2));
+		Point2D p1 = vv.getRenderContext().getMultiLayerTransformer().transform(Layer.LAYOUT, layout.apply(v1));
+		Point2D p2 = vv.getRenderContext().getMultiLayerTransformer().transform(Layer.LAYOUT, layout.apply(v2));
         if (p1==null || p2==null) return null;
         
 		float x1 = (float) p1.getX();
@@ -143,10 +141,10 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 		// translate the edge to the starting vertex
 		AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
-		Shape edgeShape = vv.getRenderContext().getEdgeShapeTransformer().transform(Context.<Graph<GraphNode, GraphEdge>, GraphEdge>getInstance(vv.getGraphLayout().getGraph(), edge));
-		if (isLoop) {
+		Shape edgeShape = vv.getRenderContext().getEdgeShapeTransformer().apply(edge);
+		if (isLoop==true) {
 		    // make the loops proportional to the size of the vertex
-		    Shape s2 = vv.getRenderContext().getVertexShapeTransformer().transform(v2);
+		    Shape s2 = vv.getRenderContext().getVertexShapeTransformer().apply(v2);
 		    Rectangle2D s2Bounds = s2.getBounds2D();
 		    xform.scale(s2Bounds.getWidth(),s2Bounds.getHeight());
 		    // move the loop so that the nadir is centered in the vertex

@@ -289,7 +289,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.removeAllTemporaryNodes(this.getVisViewer().getGraphLayout().getGraph());
 		Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
 		for (GraphNode movedNode : pickedNodes) {
-			this.getVisViewer().getGraphLayout().setLocation(movedNode, this.getGraphNodePositionTransformer().transform(movedNode));
+			this.getVisViewer().getGraphLayout().setLocation(movedNode, this.getGraphNodePositionTransformer().apply(movedNode));
 		}
 	}
 	
@@ -531,7 +531,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 							GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
 							Point2D newIntNodePosition = this.getIntermediatePointTransformer().transformToGraphCoordinate(pointList.get(i), this.getGraphNodeStart(), this.getGraphNodeEnd());
 							intGraphNode.setPosition(newIntNodePosition);
-							this.getVisViewer().getGraphLayout().setLocation(intGraphNode, this.getGraphNodePositionTransformer().transform(newIntNodePosition));
+							this.getVisViewer().getGraphLayout().setLocation(intGraphNode, this.getGraphNodePositionTransformer().apply(newIntNodePosition));
 						}
 					}
 					

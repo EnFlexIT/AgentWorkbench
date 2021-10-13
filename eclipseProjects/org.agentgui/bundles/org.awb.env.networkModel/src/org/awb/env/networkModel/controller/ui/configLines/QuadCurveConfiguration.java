@@ -182,7 +182,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 			BasicGraphGuiVisViewer<GraphNode, GraphEdge> visualizationViewer = configuredLinePopupPlugin.getVisualizationViewer();
 			List<GraphNode> edgeNodes = this.getGraphNodesOfGraphEdge(visualizationViewer, currentGraphEdge);
 			Point2D newPositionGraph = QuadCurveConfiguration.this.getIntermediatePointTransformer().transformToGraphCoordinate(curve.getCtrlPt(), edgeNodes.get(0), edgeNodes.get(1));
-			Point2D newPositionPanel = configuredLinePopupPlugin.getBasicGraphGui().getCoordinateSystemPositionTransformer().transform(newPositionGraph);
+			Point2D newPositionPanel = configuredLinePopupPlugin.getBasicGraphGui().getCoordinateSystemPositionTransformer().apply(newPositionGraph);
 			visualizationViewer.getGraphLayout().setLocation(currentGraphNode, newPositionPanel);
 			visualizationViewer.repaint();
 			break;

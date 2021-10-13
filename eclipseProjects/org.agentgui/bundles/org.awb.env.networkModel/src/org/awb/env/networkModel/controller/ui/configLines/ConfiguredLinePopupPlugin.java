@@ -138,7 +138,7 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
 				this.currentMousePositionInGraph = this.getVisualizationViewer().getCoordinateSystemPositionTransformer().inverseTransform(this.currentMousePositionInGraph);
 			} else {
 				// --- The default case -----------------------------
-				this.currentMousePositionInGraph = this.getVisualizationViewer().getCoordinateSystemPositionTransformer().transform(this.currentMousePositionInGraph);
+				this.currentMousePositionInGraph = this.getVisualizationViewer().getCoordinateSystemPositionTransformer().apply(this.currentMousePositionInGraph);
 			}
 			
 			// --- Get the type specific menu items -----------------
