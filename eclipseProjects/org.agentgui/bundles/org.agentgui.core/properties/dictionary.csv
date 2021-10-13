@@ -1,32 +1,32 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
-de;<br>Bitte geben Sie einen anderen Namen fÃ¼r das Setup an.;<br> Please enter a different name for the setup.;;;
-de;<br>Bitte geben Sie einen lÃ¤ngeren Namen fÃ¼r das Setup an.;<br> Please enter a longer name for the setup.;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
-de;' ist bereits geÃ¶ffnet!;' is already open!;;;
-de;'#' markiert alle Features, die zur Basisinstallation gehÃ¶ren.;'#' marks all features that belong to the base installation.;;;
-de;'.csv'-Version des WÃ¶rterbuchs Ã¼bernehmen ...;Import the '. csv'-version of the dictionary ...;;;
-de;'PredictiveStaticLoadBalancing ausgewÃ¤hlt!;'PredictiveStaticLoadBalancing selected!;;;
-de;(Falls bereits verwendet, wird versucht den nÃ¤chst hÃ¶heren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
+de;' ist bereits geöffnet!;' is already open!;;;
+de;'#' markiert alle Features, die zur Basisinstallation gehören.;'#' marks all features that belong to the base installation.;;;
+de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
+de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing selected!;;;
+de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;<br>Bitte geben Sie einen anderen Namen fÃ¼r das Setup an.;<br>Please, choose a different name for the setup.;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please, choose a different name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
 de;AWB-Standard verwenden;Use AWB defaults;;;
 de;Abbrechen;Cancel;;;
-de;Abbruch: Kein Projekt geÃ¶ffnet!;Canceled: No open project!;;;
+de;Abbruch: Kein Projekt geöffnet!;Canceled: No open project!;;;
 de;Abbruch;Cancel;;;
 de;Ablaufdatum;Expiration Date;;;
 de;Abtastintervall;Sampling interval;;;
 de;Adressen;Addresses;;;
-de;Agent auswÃ¤hlen!;Select an Agent!;;;
+de;Agent auswählen!;Select an Agent!;;;
 de;Agent gestartet;Agent started;;;
 de;Agent nach oben verschieben;Move up agent
 de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
-de;Agent und Ontologie-Referenz auswÃ¤hlen!;Select an agent and an ontology reference!;;;
-de;Agent.GUI - Projekt Ã¶ffnen;Agent.GUI â€“ Open project
+de;Agent und Ontologie-Referenz auswählen!;Select an agent and an ontology reference!;;;
+de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
 de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
 de;Agent.GUI - Update;Agent.GUI - Update;;;
 de;Agent.GUI Projekt-Datei;Agent.GUI project file
@@ -37,9 +37,9 @@ de;Agent:;Agent:
 de;Agent;agent
 de;AgentGUI - Standardeinstellungen verwenden;Use Agent.GUI defaults
 de;Agenten Start-Konfiguration;Agent start configuration
-de;Agenten auswÃ¤hlen;Select Agent;;;
+de;Agenten auswählen;Select Agent;;;
 de;Agenten entfernen;Remove Agent
-de;Agenten hinzufÃ¼gen;Add Agent
+de;Agenten hinzufügen;Add Agent
 de;Agenten in diesem Projekt;Agents in this project
 de;Agenten-Klasse;Agent class
 de;Agenten-Klassen;Agent classes
@@ -53,12 +53,12 @@ de;Agentenumgebung;Agent Environment;;;
 de;Aktualisiere Agenten-Liste...;Refreshing agent list
 de;Aktualisierung;Update;;;
 de;Alias;Alias;;;
-de;Alle Eigenschaftsfenster schlieÃŸen;Close all property windows;;;
-de;Alle Objekte lÃ¶schen;Delete all objects
+de;Alle Eigenschaftsfenster schließen;Close all property windows;;;
+de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
 de;Alle Setups exportieren;Export all setups;;;
-de;Alle ausgewÃ¤hlten Gruppen wurden erfolgreich deployt!;All selected groups have been deployed successfully!;;;
+de;Alle ausgewählten Gruppen wurden erfolgreich deployt!;All selected groups have been deployed successfully!;;;
 de;Allgemein;General;;;
 de;Als Bild exportieren;Export as image;;;
 de;Als Projekt Start-Tab verwenden;Use as project start-tab;;;
@@ -74,24 +74,24 @@ de;Anzahl Agenten (erwartet);Number of agents (expected)
 de;Anzahl Container berechnen;Calculate number of container
 de;Anzahl Container;Number of container
 de;Anzeigesprache wechseln?;Change the GUI Language?
-de;Arbeitsspeicher fÃ¼r Remote-JVM;Memory for remote JVM;;;
+de;Arbeitsspeicher für Remote-JVM;Memory for remote JVM;;;
 de;Arbeitsspeicher;Memory
 de;Argument;argument
 de;Art der Darstellung;Type of display;;;
 de;Auktualisierung der Projekt-MANIFEST.MF;Updating the project MANIFEST.MF;;;
-de;AusfÃ¼hren als;Run as;;;
-de;AusgewÃ¤hlte JADE-Services;Selected JADE Services;;;
-de;AusgewÃ¤hlte Klasse Ã¼bernehmen!;Take selected class!
+de;Ausführen als;Run as;;;
+de;Ausgewählte JADE-Services;Selected JADE Services;;;
+de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
 de;Auslastungs-Monitor bei JADE-Start anzeigen;Show Load-Monitor on Jade startup;;;
-de;Auslastungs-Monitor Ã¶ffnen;Open Load Monitor;;;
+de;Auslastungs-Monitor öffnen;Open Load Monitor;;;
 de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
 de;Auswahl Startliste;Selection: start list;;;
-de;Authentifizierung benÃ¶tigt. Bitte Authorisierungseinstellungen setzen;Authentication required. Please set authorization settings;;;
-de;Authentifizierung fehlerhaft oder nicht vorhanden. Bitte Authorisierungseinstellungen prÃ¼fen;Authentication faulty or not available. Please check authorization settings;;;
-de;Authentifizierung ist nicht mÃ¶glich. Bitte Authorisierungseinstellungen Ã¼berprÃ¼fen;Authentication is not possible. Please check authorization settings;;;
+de;Authentifizierung benötigt. Bitte Authorisierungseinstellungen setzen;Authentication required. Please set authorization settings;;;
+de;Authentifizierung fehlerhaft oder nicht vorhanden. Bitte Authorisierungseinstellungen prüfen;Authentication faulty or not available. Please check authorization settings;;;
+de;Authentifizierung ist nicht möglich. Bitte Authorisierungseinstellungen überprüfen;Authentication is not possible. Please check authorization settings;;;
 de;Authentisierungs-Einstellungen;Authorization Settings;;;
 de;Authentisierungs-Methode;Authorization Method;;;
 de;Authorisierungsdaten fehlerhaft oder nicht vorhanden.;Authorization data incorrect or not available.;;;
@@ -100,7 +100,7 @@ de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
-de;Beim nÃ¤chsten mal direkt starten und nicht erneut nachfragen.;Directly start and do not ask again next time.;;;
+de;Beim nächsten mal direkt starten und nicht erneut nachfragen.;Directly start and do not ask again next time.;;;
 de;Benutzername;User Name;;;
 de;Beschleunigung;Acceleration;;;
 de;Beschleunigungsfaktor;Acceleration Factor;;;
@@ -109,54 +109,54 @@ de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
-de;Bitte geben Sie den Namen fÃ¼r das neue Setup an!;Please enter a name for the new setup!
-de;Bitte geben Sie den neuen Namen fÃ¼r das Setup an!;Please specify the new name for the setup!
+de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
+de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
-de;Bitte geben Sie einen Bezeichner fÃ¼r die Referenz an!;Please, specify an identifier for the reference!;;;
-de;Bitte geben Sie einen Projektnamen an!<br><br>ZulÃ¤ssig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
-de;Bitte nur ganze Zahlen grÃ¶ÃŸer 0 eingeben!;Please integer numbers greater than 0!;;;
+de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
+de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
+de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
 de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
-de;Bitte warten! Der Benchmark wird durchgefÃ¼hrt ...;Please wait! The benchmark is running ...
-de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestÃ¤tigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
-de;Bitte wÃ¤hlen Sie das Projekt aus, das den Agenten enthÃ¤lt;Please select the project that contains the agent;;;
-de;Bitte wÃ¤hlen Sie das gewÃ¼nschte Projekt aus!;Please select the desired project!
-de;Bitte wÃ¤hlen Sie den Agenten aus, den Sie starten wollen.;Please select the agent you want to start.;;;
-de;Bitte wÃ¤hlen Sie den Agenten aus, der gestartet werden soll;Please select the agent that you want to start;;;
-de;Bitte wÃ¤hlen Sie die Ontologie aus, die Ihrem Projekt hinzugefÃ¼gt werden soll !;Please select the ontology, which has to be added to your project!
-de;Bitte wÃ¤hlen Sie ein Projekt aus;Please select a project;;;
-de;Bitte wÃ¤hlen Sie ein Simulations-Setup;Please select a simulation setup;;;
-de;Bitte wÃ¤hlen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
-de;Bitte wÃ¤hlen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
-de;Bitte wÃ¤hlen Sie einen Agenten aus der Liste.;Please select an agent from the list.;;;
-de;Bitte wÃ¤hlen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please select an agent and an ontology reference from the corresponding lists.;;;
-de;Bitte wÃ¤hlen Sie einen Agenten;Please select an agent;;;
-de;Bitte wÃ¤hlen Sie einen Namen fÃ¼r den Agenten!;Please choose a name for the agent!
-de;Bitte Ã¼berprÃ¼fen Sie die Datenbank-Einstellungen!;Please check your database settings!
+de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
+de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
+de;Bitte wählen Sie das Projekt aus, das den Agenten enthält;Please select the project that contains the agent;;;
+de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
+de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please select the agent you want to start.;;;
+de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please select the agent that you want to start;;;
+de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
+de;Bitte wählen Sie ein Projekt aus;Please select a project;;;
+de;Bitte wählen Sie ein Simulations-Setup;Please select a simulation setup;;;
+de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
+de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
+de;Bitte wählen Sie einen Agenten aus der Liste.;Please select an agent from the list.;;;
+de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please select an agent and an ontology reference from the corresponding lists.;;;
+de;Bitte wählen Sie einen Agenten;Please select an agent;;;
+de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
+de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
 de;Build-Verzeichnis aus Java Projekt einbinden (Verzeichnis mit *.class-Dateien);Include build directory from a Java project (directory with * .class files);;;
 de;CPU-Auslastung;CPU-Load
 de;CPU;CPU
 de;CSV-Datei importieren;Import CSV file;;;
 de;CSV-Dateien;CSV files;;;
-de;CSV-Version des WÃ¶rterbuchs Ã¼bernehmen?;Take over the csv-version of the dictionary?;;;
+de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
 de;Class not found:;Class not found:
 de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
 de;DF anzeigen;Show DF GUI
-de;Das Anwenden der neuen Datenreiheneigenschaften <br>kann dazu fÃ¼hren, dass Daten verloren gehen.<br><br>MÃ¶chten Sie fortfahren?;Applying the new data series properties <br>can lead to data loss. <br><br>Would you like to continue?;;;
-de;Das Editor-Panel fÃ¼r die Klasse ist nicht definiert!;The editor panel of this class is not defined!;;;
-de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefÃ¼gt werden!;The plugin is already integrated into the project and therefore can not be added again!
+de;Das Anwenden der neuen Datenreiheneigenschaften <br>kann dazu führen, dass Daten verloren gehen.<br><br>Möchten Sie fortfahren?;Applying the new data series properties <br>can lead to data loss. <br><br>Would you like to continue?;;;
+de;Das Editor-Panel für die Klasse ist nicht definiert!;The editor panel of this class is not defined!;;;
+de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
 de;Das Projekt wird nun geschlossen!;The project will be closed now!;;;
-de;Das SeitenverhÃ¤ltnis des exportierten Bildes;The aspect ratio of the image to be exported;;;
+de;Das Seitenverhältnis des exportierten Bildes;The aspect ratio of the image to be exported;;;
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
-de;Das Widget fÃ¼r die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
-de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>MÃ¶chten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
-de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>MÃ¶chten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br>Do you want to create the directory now?;;;
-de;Das von Ihnen gewÃ¤hlte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wÃ¤hlen Sie einen anderen Namen fÃ¼r Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
-de;Das von Ihnen gewÃ¤hlte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wÃ¤hlen Sie einen anderen Namen fÃ¼r Ihr Verzeichnis;The selected project directory is already in use!<br><br>Please, choose a different name for your directory.;;;
+de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
+de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
+de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>Möchten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br>Do you want to create the directory now?;;;
+de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
+de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;The selected project directory is already in use!<br><br>Please, choose a different name for your directory.;;;
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
-de;Datei Ã¼berschreiben?;Overwrite file?;;;
+de;Datei überschreiben?;Overwrite file?;;;
 de;Datei:;File:
 de;Dateien einbinden;Include Files
 de;Daten Importieren...;Import Data ...;;;
@@ -168,50 +168,50 @@ de;Datum;Date;;;
 de;Datumsformat;Date Format;;;
 de;Deployment erfolgreich;Deployment successful;;;
 de;Der Agent ';The Agent '
-de;Der Agent 'rma' ist bereits geÃ¶ffnet!;The agent 'rma' is already running
-de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wÃ¤hlen Sie einen anderen Namen fÃ¼r den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
+de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
+de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
 de;Der Name;The name
-de;Der Port fÃ¼r die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The port for the MTP address must match a value other than 0!;;;
+de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The port for the MTP address must match a value other than 0!;;;
 de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
-de;Der gewÃ¤hlte Bezeichner fÃ¼r das Projektverzeichnis enthÃ¤lt<br>unzulÃ¤ssige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benÃ¶tigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulÃ¤ssig (verwenden Sie <br>stattdessen _ 'Unterstrich').;The selected identifier for the project directory contains invalid or too few characters! <br> <br> Min. 3 to max. 20 characters are required. <br> Only lower case letters are allowed. <br>Spaces are not allowed (please, use '_' instead 'underscore').;;;
-de;Der maximale Arbeitsspeicher muss grÃ¶ÃŸer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
-de;Derzeit sind keine Module fÃ¼r den Import von Laufzeit-Daten definiert.;Currently no modules are defined for the import of operational data.;;;
-de;Derzeit sind keine Module fÃ¼r den Import von Netzwerkmodellen definiert.;Currently, no modules for importing network models are defined.;;;
+de;Der gewählte Bezeichner für das Projektverzeichnis enthält<br>unzulässige oder zu wenige Zeichen! <br><br>Es werden min. 3 bis max. 20 Zeichen benötigt:<br>Erlaubt sind nur Kleinbuchstaben. Umlaute und<br>Leerzeichen sind nicht zulässig (verwenden Sie <br>stattdessen _ 'Unterstrich').;The selected identifier for the project directory contains invalid or too few characters! <br> <br> Min. 3 to max. 20 characters are required. <br> Only lower case letters are allowed. <br>Spaces are not allowed (please, use '_' instead 'underscore').;;;
+de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
+de;Derzeit sind keine Module für den Import von Laufzeit-Daten definiert.;Currently no modules are defined for the import of operational data.;;;
+de;Derzeit sind keine Module für den Import von Netzwerkmodellen definiert.;Currently, no modules for importing network models are defined.;;;
 de;Details zum Dateiexport;Details of file export;;;
 de;Deutsch;German
-de;Dialog schlieÃŸen;Close Dialog;;;
+de;Dialog schließen;Close Dialog;;;
 de;Dicke;Thickness;;;
 de;Die Breite des exportieren Bildes;The width of the image to be exported;;;
 de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
-de;Die Datei existiert bereits. Wollen Sie diese Datei Ã¼berschreiben?;The file already exists. Do you want to overwrite this file?
+de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
-de;Die Datenbank fÃ¼r den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
-de;Die Datenbank fÃ¼r den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the server master does not exist. <br> Shall it be tried to create the database?;;;
-de;Die Google-Ãœbersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
-de;Die HÃ¶he des exportieren Bildes;The height of the image to be exported;;;
+de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
+de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the server master does not exist. <br> Shall it be tried to create the database?;;;
+de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
+de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
-de;Die Projekt-Repository darf nicht im Ordner fÃ¼r Projekte gespeichert werden.<br>Bitte wÃ¤hlen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.;;;
-de;Die Systemkonfiguration enthÃ¤lt keine gÃ¼ltigen Angaben Ã¼ber den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschlieÃŸend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
-de;Die Systemkonfiguration enthÃ¤lt keine gÃ¼ltigen Angaben Ã¼ber den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gÃ¼ltige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschlieÃŸend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
-de;Die Systemkonfiguration enthÃ¤lt keine gÃ¼ltigen Angaben Ã¼ber den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschlieÃŸend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
-de;Die URL oder IP konnte nicht aufgelÃ¶st werden!;The URL or IP could not be resolved!;;;
-de;Die angeforderte Ressource steht nicht mehr unter der gewÃ¤hlten Update-Site zur VerfÃ¼gung und wurde umgeleitet;The requested resource is no longer available at the selected update site and has been redirected;;;
+de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.<br>Bitte wählen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
+de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
+de;Die angeforderte Ressource steht nicht mehr unter der gewählten Update-Site zur Verfügung und wurde umgeleitet;The requested resource is no longer available at the selected update site and has been redirected;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
-de;Dienst: Bitte wÃ¤hlen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
+de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
-de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelÃ¶scht oder umbenannt werden darf!;This entry is a necessary system parameter that<br>can not be deleted or renamed!;;;
-de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelÃ¶scht oder umbenannt werden darf!;This entry is a necessary system parameter that <br>can not be deleted or renamed!;;;
+de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter that<br>can not be deleted or renamed!;;;
+de;Dieser Eintrag ist ein notwendiger Systemparameter, der <br>nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter that <br>can not be deleted or renamed!;;;
 de;Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.;Incremental discrete-time model with start and stop time.;;;
-de;Doppelklick um eine Klasse auszuwÃ¤hlen !;Double click to select a class!
-de;Doppelte X-Werte nicht zulÃ¤ssig!;Duplicate x values are not allowed!;;;
-de;Doppelte X-Werte sind derzeit nicht zulÃ¤ssig!<br>Die Aktion wird rÃ¼ckgÃ¤ngig gemacht.;Duplicate x values â€‹â€‹are currently not allowed!<br>The action will be canceled.;;;
+de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
+de;Doppelte X-Werte nicht zulässig!;Duplicate x values are not allowed!;;;
+de;Doppelte X-Werte sind derzeit nicht zulässig!<br>Die Aktion wird rückgängig gemacht.;Duplicate x values ??are currently not allowed!<br>The action will be canceled.;;;
 de;Doppelte X-Werte zulassen;Allow duplicate X-Values;;;
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Eigene lokale MTP-Adresse;Own local MTP-Address;;;
 de;Eigenschaften;Properties;;;
-de;Einfach zÃ¤hlendes Zeitmodell (z. B. 1 ... 9999);Simple counting time model (e. g. 1 ... 9999);;;
+de;Einfach zählendes Zeitmodell (z. B. 1 ... 9999);Simple counting time model (e. g. 1 ... 9999);;;
 de;Einfache jar-Dateien;Simple jar-Files;;;
 de;Eingebundene Ressourcen;Included Resources;;;
 de;Einheit;Unit
@@ -219,7 +219,7 @@ de;Einmalige Thread-Messung;Single Thread Measurement;;;
 de;Einstellungen;Settings;;;
 de;Element-Typ;Element type
 de;Element;Element
-de;Embedded System Agent: Bitte wÃ¤hlen Sie den Agenten aus, der gestartet werden soll;Embedded System Agent: Please select the agent that you want to execute;;;
+de;Embedded System Agent: Bitte wählen Sie den Agenten aus, der gestartet werden soll;Embedded System Agent: Please select the agent that you want to execute;;;
 de;Embedded System Agent;Embedded System Agent;;;
 de;Empirisch ermittelte, reale Metrik;emperically measured, real metric;;;
 de;Endanwender-Ansicht;End Users View;;;
@@ -230,14 +230,14 @@ de;Entfernen;Remove;;;
 de;Entpacke;Unpacking
 de;Entwickler-Ansicht;Developer View;;;
 de;Erfolgreich;Successful;;;
-de;Erweiterungsadapter fÃ¼r Netzwerkkomponenten;Extension adapter for network components;;;
-de;Erzeuge die Datenbank fÃ¼r den Server-Master ...;Creating the database for the Server.Master ...
-de;Erzeuge die Tabelle 'platforms' fÃ¼r den Server-Master ...;Creating table 'platforms' for the Server-Master ...;;;
-de;Es wurde kein Name fÃ¼r das PlugIn konfiguriert;There was no name configured for the PlugIn
-de;Es wurde keine Komponente ausgewÃ¤hlt!;No selected component!;;;
-de;Es wurde mehr als eine Komponente ausgewÃ¤hlt!;More than one component was selcted.;;;
-de;Es wurden keine Installationspakete gefunden! Bitte ÃƒÂ¼berprÃƒÂ¼fen Sie ob in den Optionen das korrekte Verzeichnis eingestellt ist!;No installation packages could be found! Please check if the correct directory is selected in the options dialog!;;;
-de;Es wurden keine Installationspakete gefunden! Bitte Ã¼berprÃ¼fen Sie ob in den Optionen das korrekte Verzeichnis eingestellt ist!;No installation packages could be found! Please check in the options if the correct directory is selected!;;;
+de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
+de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
+de;Erzeuge die Tabelle 'platforms' für den Server-Master ...;Creating table 'platforms' for the Server-Master ...;;;
+de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
+de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
+de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
+de;Es wurden keine Installationspakete gefunden! Bitte Ã¼berprÃ¼fen Sie ob in den Optionen das korrekte Verzeichnis eingestellt ist!;No installation packages could be found! Please check if the correct directory is selected in the options dialog!;;;
+de;Es wurden keine Installationspakete gefunden! Bitte überprüfen Sie ob in den Optionen das korrekte Verzeichnis eingestellt ist!;No installation packages could be found! Please check in the options if the correct directory is selected!;;;
 de;Export erfolgreich;Export successful;;;
 de;Export:;Export:;;;
 de;Exportiere Projekt;Export Project;;;
@@ -247,11 +247,11 @@ de;Externe bin-Ressourcen;External 'bin' resources;;;
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
 de;Faktor;Factor;;;
-de;Falls ausgewÃ¤hlt, wird die Log-Datei in jedem AusfÃ¼hrungsmodus erstellt.;If selected, the log file will be created in every execution mode.;;;
-de;Falls nicht ausgewÃ¤hlt, wird die Log-Datei immer nur im 'Headless-Modus' erstellt (z.B. im Modus ';If not selected, the log file will only be created in 'headless mode' (for example, in ';;;
+de;Falls ausgewählt, wird die Log-Datei in jedem Ausführungsmodus erstellt.;If selected, the log file will be created in every execution mode.;;;
+de;Falls nicht ausgewählt, wird die Log-Datei immer nur im 'Headless-Modus' erstellt (z.B. im Modus ';If not selected, the log file will only be created in 'headless mode' (for example, in ';;;
 de;Farbe;Color;;;
-de;Features auswÃ¤hlen;Select Feature;;;
-de;Fehlende Angaben Ã¼ber den Datenbank-Host.<br>Bitte Ã¼berprÃ¼fen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
+de;Features auswählen;Select Feature;;;
+de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
@@ -260,24 +260,24 @@ de;Fehlender Benutzer;Missing user name;;;
 de;Fehlendes Passwort;Missing password;;;
 de;Fehlendes Projekt!;Missing Project!;;;
 de;Fehlendes Simulations-Setup!;Missing Simulation Setup!;;;
-de;Fehler - '@';Error â€“ '@'
+de;Fehler - '@';Error – '@'
 de;Fehler - PlugIn:;Error - PlugIn:
 de;Fehler - Projektauswahl !;Error - project selection!
 de;Fehler - Projektname !;Error - Project Name !;;;
 de;Fehler - Projektverzeichnis !;Error - project folder !
-de;Fehler bei der AusfÃ¼hrung von 'executeQuery'!;Error when executing 'executeQuery'!
-de;Fehler bei der AusfÃ¼hrung von 'executeUpdate'!;Error when executing 'executeUpdate'!
-de;Fehler beim Auslesen der DatensÃ¤tzen!;Error while reading records!
+de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
+de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
+de;Fehler beim Auslesen der Datensätzen!;Error while reading records!
 de;Fehler beim Laden des Bildes:;Error while loading image:;;;
 de;Fehler beim Lesen des Graphen;Error while reading the graph
 de;Fehler beim Parsen der Umgebungsdatei!;Error while parsing environment file!
 de;Fehler beim Verbindungsaufbau mit Datenbank-Server!;Error while connecting to database server!
 de;Fehler in der Datenbank-Konfiguration;Error in the database configuration
-de;Fehler â€“ '@';Error â€“ '@'
-de;Fehler â€“ Projektauswahl!;Error â€“ Project selection!
-de;Fehler â€“ Projektname!;Error â€“ Project name
-de;Fehler â€“ Projektverzeichnis!;Error â€“ Project folder
-de;Fehler: Port fÃ¼r MTP;Error Port for MTP !;;;
+de;Fehler – '@';Error – '@'
+de;Fehler – Projektauswahl!;Error – Project selection!
+de;Fehler – Projektname!;Error – Project name
+de;Fehler – Projektverzeichnis!;Error – Project folder
+de;Fehler: Port für MTP;Error Port for MTP !;;;
 de;Fehler: Port;Error Port !;;;
 de;Fehler: URL oder IP !;Error in  URL or IP !;;;
 de;Fehler;Error
@@ -292,15 +292,15 @@ de;Folgende Jade-Dienste starten:;Start the following JADE-services:
 de;Folgende Plattform-Dienste starten:;Start the following platform-services:
 de;Format;Format;;;
 de;Formular;Form
-de;FranzÃ¶sisch;French
-de;FÃ¼r die aktuell ausgewÃ¤hlte Klasse zur statischen Lastverteilung kann diese Option nicht deaktiviert werden.<br>MÃ¶chten Sie stattdessen eine andere Klasse fÃ¼r die statische Lastverteilung auswÃ¤hlen?;This option cannot be deactivated for the currently selected class for the static load balancing.<br>Would you like to choose a different class for the static load balancing instead?;;;
+de;Französisch;French
+de;Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese Option nicht deaktiviert werden.<br>Möchten Sie stattdessen eine andere Klasse für die statische Lastverteilung auswählen?;This option cannot be deactivated for the currently selected class for the static load balancing.<br>Would you like to choose a different class for the static load balancing instead?;;;
 de;Gegenwarts-Zeit.;Present Time;;;
-de;GerÃ¤te-Agent;Embedded System Agent;;;
-de;GeÃ¶ffnete Projekte mÃ¼ssen geschlossen werden, um das Projekt-Basisverzeichnis zu Ã¤ndern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
-de;GleichmÃ¤ÃŸige Verteilung der Agenten auf alle verfÃ¼gbaren Maschinen;Even distribution on all available machines;;;
-de;Google - Ãœbersetzung;Google translation;;;
-de;Google-Ãœbersetzung verwenden;Use Google Translate;;;
-de;Google-Ãœbersetzung Ã¼bernehmen (STRG+G);Apply Google translation (CTRL + G)
+de;Geräte-Agent;Embedded System Agent;;;
+de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
+de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
+de;Google - Übersetzung;Google translation;;;
+de;Google-Übersetzung verwenden;Use Google Translate;;;
+de;Google-Übersetzung übernehmen (STRG+G);Apply Google translation (CTRL + G)
 de;Graph Importieren;Import Graph
 de;Graph Laden;Load Graph
 de;Graph bzw. Netzwerk;Graph or Network
@@ -311,7 +311,7 @@ de;Graph-Prototypen;Graph-prototypes
 de;GraphML-Dateien;GraphML-Files
 de;Grenzwerte;Thresholds
 de;Gruppe;Group;;;
-de;GrÃ¶ÃŸe;Size
+de;Größe;Size
 de;Hauptserver (server.master);Main Server (server.master);;;
 de;Heap-Monitor ein- oder ausblenden;Show / Hide Heap Monitor;;;
 de;Hilfe;Help
@@ -320,13 +320,13 @@ de;Hintergrundsystem (Master / Slave);Background System (Master / Slave);;;
 de;Hintergrundsystem - Konfiguration;Background System - Configuration;;;
 de;Hintergrundsystem beim Programmstart automatisch initialisieren;Automatically initialize background system at startup;;;
 de;Hinweis;Hint;;;
-de;HinzufÃ¼gen;Add
-de;IP auswÃ¤hlen;Select IP;;;
+de;Hinzufügen;Add
+de;IP auswählen;Select IP;;;
 de;IP-Adresse verwenden;Use IP-Address;;;
-de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rÃ¼ckgÃ¤ngig gemacht.;Switching between 'Application' and 'Server' has been reversed.
+de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
-de;Im Falle eines Updates, eigenes WÃ¶rterbuch beibehalten.;In case of an update, keep own dictionary.;;;
-de;Immer Ã¼berspringen;Allways Skip;;;
+de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
+de;Immer überspringen;Allways Skip;;;
 de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
@@ -341,7 +341,7 @@ de;JADE direkt starten ohne nachzufragen.;Directly start JADE without further co
 de;JADE starten;Start JADE
 de;JADE stoppen;Stop JADE
 de;JADE wird gestartet ...;JADE is starting ...;;;
-de;JADE wird zur Zeit ausgefÃ¼hrt!;JADE is already running!
+de;JADE wird zur Zeit ausgeführt!;JADE is already running!
 de;JADE wurde lokal gestartet.;JADE is running.
 de;JADE wurde noch nicht gestartet!;JADE has not been started yet!
 de;JADE wurde noch nicht gestartet.;JADE has not been started yet.
@@ -357,10 +357,10 @@ de;JVM Heap-Memory;JVM Heap Memory
 de;JVM-Heap;JVM Heap
 de;Jade wurde beendet!;JADE was stopped!
 de;Jahre;Years;;;
-de;Java-Klasse fÃ¼r den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
-de;Java-Klasse fÃ¼r die dynamische Lastverteilung;Java class for dynamic load balancing
+de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
+de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
 de;Kanten-Typ;Edge Type;;;
-de;Kein Projekt geÃ¶ffnet !;No open project!
+de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
 de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;;;
 de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that already host a remote-container;;;
@@ -377,14 +377,14 @@ de;Keine Umgebungsdatei zugewiesen;No environment file assigned
 de;Keine Updates gefunden;No updates found;;;
 de;Keine;None
 de;Keiner;None
-de;Kennwort bestÃ¤tigen;Confirm Password;;;
+de;Kennwort bestätigen;Confirm Password;;;
 de;Kennwort;Password;;;
 de;KeyStore Name;KeyStore Name;;;
 de;Kind-Umgebungen;Child playgrounds
-de;Klasse auswÃ¤hlen;Select class
+de;Klasse auswählen;Select class
 de;Klasse;Class
 de;Klassen bestimmen;Determine classes 
-de;Klassenangabe Ã¼berprÃ¼fen;Check Class specification
+de;Klassenangabe überprüfen;Check Class specification
 de;Klassenzuordnung;Class Assignment
 de;Knoten verbinden;Connect nodes ;;;
 de;Knoten verschieben;Move nodes;;;
@@ -407,7 +407,7 @@ de;Konsole;Console
 de;Kontinuierlich fortschreitende Zeit.;Continuously progressing time.;;;
 de;Kontinuierliche Thread-Messung;Continuous Thread Measurement;;;
 de;Kontinuierliches 2D-Umgebungsmodell;Continuous 2D environment model
-de;Kopiere Durchschnittswert fÃ¼r reale Metrik;Copy average for real metric;;;
+de;Kopiere Durchschnittswert für reale Metrik;Copy average for real metric;;;
 de;Label;Label;;;
 de;Lade SVG-Datei;Loading SVG file
 de;Lade Setup;Load Setup;;;
@@ -417,10 +417,10 @@ de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediate
 de;Laufzeit-Visualisierung;Runtime Visualisation;;;
 de;Layout-Toolbar ein- und ausblenden;Show / Hide Layout Toolbar;;;
 de;Layouts;Layouts;;;
-de;Letzte Ã„nderungen;Recent changes;;;
+de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
 de;Listen-Sortierung;Component List Sorting;;;
-de;Load Monitor Ã¶ffnen;Open Load Monitor;;;
+de;Load Monitor öffnen;Open Load Monitor;;;
 de;Load Monitor;Load Monitor
 de;Log Datei;Log File;;;
 de;Log-Datei Einstellungen;Log-File - Configuration;;;
@@ -430,10 +430,10 @@ de;Log-Manager starten;Start Log Manager
 de;Log-Verzeichnis;Log-Directory;;;
 de;Lokal;Local;;;
 de;Lokale Projekt Repository;Local Project Repository;;;
-de;Lokale Projekt-Repository auswÃ¤hlen;Select local project repository;;;
-de;LÃ¶sche Verzeichnis;Delete Folder;;;
-de;LÃ¶schen nicht zulÃ¤ssig!;Deleting not allowed!;;;
-de;LÃ¶schen;Delete
+de;Lokale Projekt-Repository auswählen;Select local project repository;;;
+de;Lösche Verzeichnis;Delete Folder;;;
+de;Löschen nicht zulässig!;Deleting not allowed!;;;
+de;Löschen;Delete
 de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
@@ -443,33 +443,33 @@ de;MTP-Protokoll:;MTP-Protocol:;;;
 de;Manuell eingegebene, vorhergesagte Metrik;manually entered, predictive metric;;;
 de;Maximale Geschwindigkeit;Maximum speed
 de;Maximieren;Maximize;;;
-de;MaÃŸstab festlegen;Set scale
-de;MaÃŸstab;Scale
+de;Maßstab festlegen;Set scale
+de;Maßstab;Scale
 de;Mess-Agenten anhalten;Stop load measure agent
 de;Mess-Agenten starten;Start load measure agent
 de;Messung aufzeichnen;Record measurement
 de;Messungsaufzeichnung beenden;Stop recording measurement
 de;Metrik-Konfiguration;Metrics Configuration;;;
-de;Metrik: Ã„quivalent fÃ¼r die LeistungsfÃ¤higkeit einer Maschine, die durch den Thread vollstÃ¤ndig ausgelastet wÃ¼rde.[Einheit:MFLOPs, Wert:0-200];Metric: Equivalent for the performance of a machine which could be totally utilized by a thread. [unit:MFLOPs, value:0-200];;;
+de;Metrik: Äquivalent für die Leistungsfähigkeit einer Maschine, die durch den Thread vollständig ausgelastet würde.[Einheit:MFLOPs, Wert:0-200];Metric: Equivalent for the performance of a machine which could be totally utilized by a thread. [unit:MFLOPs, value:0-200];;;
 de;Metriken bei Simulationsstop aktualisieren;Autosave Thread Metrics on simulation stop;;;
 de;Millisekunden;Milliseconds;;;
 de;Minute;Minute;;;
 de;Minuten;Minutes;;;
 de;Mitwirkende;Contributors;;;
 de;Monate;Months;;;
-de;MySQL-Datenbank fÃ¼r den Hauptserver (server.master);MySQL-Database for the main server module (server.master);;;
+de;MySQL-Datenbank für den Hauptserver (server.master);MySQL-Database for the main server module (server.master);;;
 de;MySQL-Fehler:;MySQL-Error:
 de;MySQL-Fehler;MySQL-Error
-de;MÃ¶chten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?
-de;MÃ¶chten Sie JADE nun beenden?;Quit JADE now?
-de;MÃ¶chten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
-de;MÃ¶chten Sie das WÃ¶rterbuches auf den Stand nach der Erstinstallation zurÃ¼cksetzen?;Would you like to reset the dictionary to the state after the first installation?;;;
-de;MÃ¶chten Sie das aktuelle Projekt exportieren?;Export the current project?
-de;MÃ¶chten Sie die Anwendung nun umschalten ?;Do you want do switch the application now?;;;
-de;MÃ¶chten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geÃ¶ffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
-de;MÃ¶chten Sie die CSV-Version des WÃ¶rterbuches jetzt Ã¼bernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
-de;MÃ¶chten Sie die Konfiguration nun vornehmen?;Would you like to configure this now?;;;
-de;MÃ¶chten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
+de;Möchten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?
+de;Möchten Sie JADE nun beenden?;Quit JADE now?
+de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
+de;Möchten Sie das Wörterbuches auf den Stand nach der Erstinstallation zurücksetzen?;Would you like to reset the dictionary to the state after the first installation?;;;
+de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
+de;Möchten Sie die Anwendung nun umschalten ?;Do you want do switch the application now?;;;
+de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
+de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
+de;Möchten Sie die Konfiguration nun vornehmen?;Would you like to configure this now?;;;
+de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
 de;N - Threads;N - Threads
 de;Nach Update suchen ...;Search for Update ...;;;
 de;Nach Update suchen;Check for Update;;;
@@ -478,7 +478,7 @@ de;Nach X-Werten sortieren;Autosort by X-values;;;
 de;Nach oben verschieben;Move up;;;
 de;Nach unten verschieben;Move down;;;
 de;Name bereits vorhanden!;Name already exists!
-de;Name ungÃ¼ltig!;Invalid name!
+de;Name ungültig!;Invalid name!
 de;Network Model Information;Network Model Information;;;
 de;Netz-Komponenten;Network Components
 de;Netz;Network
@@ -486,7 +486,7 @@ de;Netzkomponente;Network component
 de;Netzwerk-Komponenten;Network Components;;;
 de;Netzwerkkomponente umbenennen;Rename network component;;;
 de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
-de;Netzwerkkomponente(n) hinzufÃ¼gen;Add network component s);;;
+de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Netzwerkmodell importieren;Import network model ;;;
 de;Netzwerkmodell leeren;Clear network model;;;
 de;Neu laden;Reload;;;
@@ -506,16 +506,16 @@ de;Neustart;Restart;;;
 de;Nicht definiert;Not defined
 de;Nicht eindeutige Komponentenauswahl !;Non-unique component selection !;;;
 de;Nur Nicht-JADE-Ontologien;Only non-JADE ontologies
-de;NÃ¤chste Datenreihe;Next Data Series;;;
-de;NÃ¤chster Datensatz (STRG+DOWN);Next Record (CTRL + DOWN)
+de;Nächste Datenreihe;Next Data Series;;;
+de;Nächster Datensatz (STRG+DOWN);Next Record (CTRL + DOWN)
 de;OK;OK
 de;Objekt Entfernen;Remove object
 de;Objekt entfernen;Remove object
-de;Objekt hinzufÃ¼gen;Add object
-de;Objekt lÃ¶schen;Remove object
+de;Objekt hinzufügen;Add object
+de;Objekt löschen;Remove object
 de;Objekt nach oben;Move object up
 de;Objekt nach unten;Move object down
-de;Objekt Ã¼bernehmen;Apply object
+de;Objekt übernehmen;Apply object
 de;Objekt-Eigenschaften;Object properties
 de;Objekt-ID;Object ID
 de;Objekt-Typ;Object type
@@ -524,11 +524,11 @@ de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
 de;Ontologie Referenz benennen;Name ontology reference ;;;
 de;Ontologie Referenz maskieren;Mask ontology reference;;;
-de;Ontologie hinzufÃ¼gen;Add ontology
-de;Ontologie-Klasse fÃ¼r Ãœbergabepunkte;Ontology class for transfer points
+de;Ontologie hinzufügen;Add ontology
+de;Ontologie-Klasse für Übergabepunkte;Ontology class for transfer points
 de;Ontologie-Klasse;Ontology Class;;;
 de;Ontologie-Klassen initialisieren;Initialize ontology classes;;;
-de;Ontologie-Referenz auswÃ¤hlen!;Select an ontology reference!;;;
+de;Ontologie-Referenz auswählen!;Select an ontology reference!;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
@@ -537,11 +537,11 @@ de;Organisation;Organization;;;
 de;Organisationseinheit;Organizational Unit;;;
 de;Packe;Packing
 de;Passives Objekt;Passive object
-de;Passwort bestÃ¤tigen;Comfirm password;;;
+de;Passwort bestätigen;Comfirm password;;;
 de;Passwort;Password;;;
 de;Pause;Pause
 de;Plug-Ins;Plug-Ins;;;
-de;PlugIn fÃ¼r Agent.GUI;PlugIn for Agent.GUI
+de;PlugIn für Agent.GUI;PlugIn for Agent.GUI
 de;Position;Position
 de;Produktinstallation;Installed Product Directory;;;
 de;Progamm umschalten auf;Switch progam to
@@ -552,23 +552,23 @@ de;Projekt '@' speichern?;Save Project '@'?
 de;Projekt - Basisverzeichnis;Projects Root Directory;;;
 de;Projekt exportieren;Export Project
 de;Projekt exportieren?;Export project?
-de;Projekt geÃ¶ffnet!;Open Project!;;;
+de;Projekt geöffnet!;Open Project!;;;
 de;Projekt importieren;Import Project
 de;Projekt in Repository exportieren;Export to Project Repository;;;
-de;Projekt lÃ¶schen;Delete Project;;;
-de;Projekt schlieÃŸen;Close Project
+de;Projekt löschen;Delete Project;;;
+de;Projekt schließen;Close Project
 de;Projekt speichern;Save Project
 de;Projekt speichern?;Save Project?
-de;Projekt zum Export auswÃ¤hlen;Select a project to export
-de;Projekt Ã¶ffnen;Open Project
+de;Projekt zum Export auswählen;Select a project to export
+de;Projekt öffnen;Open Project
 de;Projekt-Agenten;Project-Agents
-de;Projekt-Basisverzeichnis auswÃ¤hlen;Selection of the projects root directory;;;
+de;Projekt-Basisverzeichnis auswählen;Selection of the projects root directory;;;
 de;Projekt-Basisverzeichnis nicht gefunden!;Project base directory not found!;;;
 de;Projekt-Desktop;Project Desktop
 de;Projekt-Export;Project Export;;;
 de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
-de;Projekt-MANIFEST.MF beim Ã–ffnen eines Projekts erneuern;Rebuild project MANIFEST.MF when opening the project;;;
+de;Projekt-MANIFEST.MF beim Öffnen eines Projekts erneuern;Rebuild project MANIFEST.MF when opening the project;;;
 de;Projekt-Ontologie;Project Ontology;;;
 de;Projekt-PlugIns;Project - Plugins;;;
 de;Projekt-Ressourcen;Project Resources
@@ -577,11 +577,11 @@ de;Projektbaum ein- oder ausblenden;Show / Hide Project Tree;;;
 de;Projekte;Projects
 de;Projekttitel;Project title
 de;Quell-Sprache;Source language;;;
-de;RMA (Remote Monitoring Agent) Ã¶ffnen;Open RMA (Remote Monitoring Agent)
+de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
 de;Raster verwenden;Use guide grid;;;
 de;Raster-Breite;Grid width;;;
 de;Reale Metriken der Agenten bei Simulationsstop aktualisieren;Update real agent metrics at simulation stop;;;
-de;Rechts-Klick fÃ¼r weitere Optionen;Right-Click for more options
+de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Reihen-Eigenschaften;Series-Properties;;;
 de;Reinitialisiere;Reinitialize;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
@@ -595,7 +595,7 @@ de;SVG-Datei zuweisen;Assign SVG file
 de;SVG-Datei;SVG file
 de;SVG-Dateien;SVG files
 de;SVG-Elementtyp;SVG element type
-de;SchlieÃŸen;Close
+de;Schließen;Close
 de;Schrittweite;Increment;;;
 de;SciMark 2.0 - Benchmark;SciMark 2.0 - Benchmark
 de;Sekunde;Second;;;
@@ -605,14 +605,14 @@ de;Server-Dienst beim Programmstart automatisch initialisieren;Automatically ini
 de;Server-Konfiguration;Server Configuration
 de;Server;Server
 de;Service entfernen;Remove Service;;;
-de;Service hinzufÃ¼gen;Add Service;;;
+de;Service hinzufügen;Add Service;;;
 de;Setup Umbenennen;Rename Setup;;;
-de;Setup auswÃ¤hlen;Select Setup;;;
-de;Setup hinzufÃ¼gen;Add Setup
+de;Setup auswählen;Select Setup;;;
+de;Setup hinzufügen;Add Setup
 de;Setup kopieren ...;Copy Setup ...
 de;Setup kopieren;Copy Setup
-de;Setup lÃ¶schen;Delete Setup
-de;Setup lÃ¶schen?;Delete Setup?
+de;Setup löschen;Delete Setup
+de;Setup löschen?;Delete Setup?
 de;Setup umbenennen ...;Rename Setup ...
 de;Setup umbenennen;Rename Setup
 de;Setup-Datei nicht gefunden!;Could not find setup file!
@@ -626,9 +626,9 @@ de;Simulation;Simulation
 de;Simulations-Setup;Simulation-Setup
 de;Simulationszeit;Simulation time
 de;Sniffer-Agenten starten;Start Sniffer agent
-de;Soll die aktuelle Einstellung trotzdem Ã¼bernommen werden?;Accept setting anyway?;;;
+de;Soll die aktuelle Einstellung trotzdem übernommen werden?;Accept setting anyway?;;;
 de;Spalte entfernen;Remove Column;;;
-de;Spalte hinzufÃ¼gen;Add Column;;;
+de;Spalte hinzufügen;Add Column;;;
 de;Spanisch;Spanish
 de;Speichere SVG nach;Save SVG to
 de;Speichere Umgebung nach;Saving environment to
@@ -642,15 +642,15 @@ de;Standard verwenden;Use Default;;;
 de;Standardkonfiguration verwenden;Use default configuration;;;
 de;Start bei:;Start at:;;;
 de;Start bei;Start at;;;
-de;Start-Argumente fÃ¼r den ausgewÃ¤hlten Agenten;Start-arguments for the selected agent
+de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected agent
 de;Start-Konfiguration;Start-Configuration
 de;Start-Liste:;Start list:;;;
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
 de;Start;Start
-de;Startargument definieren fÃ¼r Agent;Define start argument for agent;;;
+de;Startargument definieren für Agent;Define start argument for agent;;;
 de;Starte AWB-Service;Start AWB-Service;;;
 de;Starte Agenten;Start an Agent;;;
-de;Starte JADE Ã¼ber Port-Nr.:;Start JADE via port no.:
+de;Starte JADE über Port-Nr.:;Start JADE via port no.:
 de;Starte Messung der Systemauslastung;Start measuring the system load
 de;Starte als:;Start as:;;;
 de;Starten als:;Start as:
@@ -666,25 +666,25 @@ de;Stop;Stop
 de;Stunde;Hour;;;
 de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
-de;Suche lÃ¶schen;Clear Search;;;
+de;Suche löschen;Clear Search;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach Updates;Looking for updates;;;
-de;Suche nach der nÃ¤chsten fehlenden Ãœbersetzung (STRG+F);Search for the next missing translation (CTRL + F)
-de;Suche rÃ¼ckwÃ¤rts;Search backwards;;;
-de;Suche vorwÃ¤rts;Search forwards;;;
+de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
+de;Suche rückwärts;Search backwards;;;
+de;Suche vorwärts;Search forwards;;;
 de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
 de;Summe;Sum;;;
-de;SÃ¤mtliche visuellen Darstellungen deaktivieren;Disable all visual representations;;;
+de;Sämtliche visuellen Darstellungen deaktivieren;Disable all visual representations;;;
 de;Tab-Header ein- oder ausblenden;Show / Hide Tab-Header;;;
 de;Tabelle;Table;;;
 de;Tage;Days;;;
 de;Tar.gz-Datei;Tar.gz file;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
-de;Text zur Ãœbersetzung;Text to translate
+de;Text zur Übersetzung;Text to translate
 de;Thread-Monitor bei JADE-Start anzeigen;Show Thread-Monitor on Jade startup;;;
-de;Thread-Monitor Ã¶ffnen;Open Thread-Monitor;;;
+de;Thread-Monitor öffnen;Open Thread-Monitor;;;
 de;Timer-Ansicht;Timer view;;;
 de;Titel;Title;;;
 de;Topologie;Topology;;;
@@ -699,25 +699,25 @@ de;Umgebungsdatei;Environment file
 de;Umgebungseigenschaften;Environment properties
 de;Umgebungskonfiguration;Environment Configuration
 de;Umgebungsmodell;Environment Model;;;
-de;Umgebungstyp bzw. -modell fÃ¼r Simulation und Visualisierung;Environment typ and model for simulation and visualization;;;
+de;Umgebungstyp bzw. -modell für Simulation und Visualisierung;Environment typ and model for simulation and visualization;;;
 de;Umgebungstyp;Environment Type
 de;Umschalten von;Switch from;;;
 de;Unbekannt:;Unknown:
 de;Undefiniert;undefined
-de;UngÃ¼ltige Eingabe, ausschlieÃŸlich zahlenwerte zulÃ¤ssig!;Invalid input, only numbers allowed!
-de;UnzulÃ¤ssiger Speicherort;Invalid Location;;;
+de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
+de;Unzulässiger Speicherort;Invalid Location;;;
 de;Update automatisch herunterladen, Installationszeitpunkt manuell festlegen;Download the update automatically, manually set the time of installation;;;
 de;Update-Konfiguration;Update Configuration;;;
 de;Update;Update;;;
 de;Updates automatisch installieren;Install updates automatically;;;
 de;Updates nicht automatisch herunterladen oder installieren;Do not automatically download or install ;;;
-de;Updates verfÃ¼gbar, installieren?;Updates available, install?;;;
+de;Updates verfügbar, installieren?;Updates available, install?;;;
 de;Verbinden;Connect;;;
 de;Verbindung erfolgreich;Successful connected;;;
 de;Verbindungsknoten;Connection nodes;;;
-de;VerfÃ¼gbare JADE-Services;Available JADE Services;;;
-de;VergrÃ¶ÃŸern ...;Expand View ...
-de;VergrÃ¶ÃŸern;Zoom In
+de;Verfügbare JADE-Services;Available JADE Services;;;
+de;Vergrößern ...;Expand View ...
+de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
 de;Version;Version;;;
 de;Versionnummer bearbeiten;Edit Version Number;;;
@@ -727,22 +727,22 @@ de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on: ;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribute agents to remote container only;;;
 de;Verteilung;Distribution
-de;Verwenden Sie das KontextmenÃ¼ im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
-de;Verzeichnis auswÃ¤hlen;Select Directory;;;
+de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
+de;Verzeichnis auswählen;Select Directory;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis des installierten Produkts nicht gefunden;Directory of the installed product could not be found;;;
 de;Verzeichnis einbinden;Include Directory;;;
-de;Verzeichnis eines installierten Produkts auswÃ¤hlen;Select directory of installed product;;;
+de;Verzeichnis eines installierten Produkts auswählen;Select directory of installed product;;;
 de;Verzeichnis gepackt zu;Folder packed to;;;
 de;Verzeichnis mit *.class-Dateien aus Java Projekt einbinden;Include directory with *.class-files from Java project;;;
-de;Verzeichnis mit Installtions Paketen auswÃ¤hlen;Select the directory with the installation packages;;;
+de;Verzeichnis mit Installtions Paketen auswählen;Select the directory with the installation packages;;;
 de;Verzeichnis;Folder
 de;Verzeichnisse;Directories;;;
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
-de;VollstÃ¤ndiger Name;Full Name;;;
-de;Vom Projekt benÃ¶tigte Features:;Features required by the project:;;;
-de;Vor dem LÃ¶schen exportieren!;Export before deleting!;;;
+de;Vollständiger Name;Full Name;;;
+de;Vom Projekt benötigte Features:;Features required by the project:;;;
+de;Vor dem Löschen exportieren!;Export before deleting!;;;
 de;Vorhandene Projektverzeichnisse;Available project folders;;;
 de;Vorherige Datenreihe;Previous Data Series;;;
 de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
@@ -755,17 +755,17 @@ de;Web Service-Authentifizierung;Web Service Authentication;;;
 de;Wert;Value;;;
 de;Wiederherstellen;Restore;;;
 de;Wochen;Weeks;;;
-de;Wollen Sie das aktuelle Setup wirklich lÃ¶schen?;Do you want to delete the current Setup?
-de;WÃ¶rterbuch zurÃ¼cksetzen.;Reset dictionary.;;;
-de;WÃ¶rterbuch zurÃ¼cksetzen;Reset dictionary;;;
-de;WÃ¶rterbuch zurÃ¼cksetzen?;Reset the dictionary?;;;
-de;WÃ¶rterbuch;Dictionary
+de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the current Setup?
+de;Wörterbuch zurücksetzen.;Reset dictionary.;;;
+de;Wörterbuch zurücksetzen;Reset dictionary;;;
+de;Wörterbuch zurücksetzen?;Reset the dictionary?;;;
+de;Wörterbuch;Dictionary
 de;X Wert;X value;;;
 de;X-Duplikate zulassen;Allow duplicate X-Values;;;
 de;XML-Dateien;XML files
 de;XML;XML
 de;Zeile entfernen;Remove Row;;;
-de;Zeile hinzufÃ¼gen;Add Row;;;
+de;Zeile hinzufügen;Add Row;;;
 de;Zeit-Format;Time format;;;
 de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
@@ -775,23 +775,23 @@ de;Zertifikats-Alias;Certificate Alias;;;
 de;Zertifikatsbesitzer;Certificate Owner;;;
 de;Zip-Datei;Zip file;;;
 de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Projekt-MANIFEST.MF erforderlich!<br><br>Soll diese Option jetzt aktualisiert werden?;To include external bin resources, an update <br>of the project MANIFEST.MF is required!<br><br>Do you want to update this option?;;;
-de;Zum LÃ¶schen, wÃ¤hlen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
-de;Zur Zeit ist kein Agenten-Projekt geÃ¶ffnet.;There is currently no open agent project.;;;
-de;ZurÃ¼cksetzen;Reset
+de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
+de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project.;;;
+de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!
-de;ZÃ¤hler Start:;Counter Start:;;;
-de;ZÃ¤hler Stop:;Counter Stop:;;;
-de;ZÃ¤hler;Counter;;;
+de;Zähler Start:;Counter Start:;;;
+de;Zähler Stop:;Counter Stop:;;;
+de;Zähler;Counter;;;
 de;auf;to;;;
 de;bereit;ready
 de;erfolgreich exportiert!;successfully exported!;;;
-de;fÃ¼r das Setup;for the setup
+de;für das Setup;for the setup
 de;in Datei;In file
-de;liegt auÃŸerhalb von Playground;is outside of playground
+de;liegt außerhalb von Playground;is outside of playground
 de;nicht gefunden!;not found!
 de;nicht gefunden.;not found.
 de;nicht gefunden;not found
-de;nicht unterstÃ¼tzt;not supported
+de;nicht unterstützt;not supported
 de;physikalisch;physical
 de;realer Zeit;of real time;;;
 de;simulierte;simulated;;;
@@ -802,20 +802,20 @@ de;wurde nicht gefunden.;was not found.
 de;yEd GraphML Datei;yEd GraphML file
 de;yEd GraphML;yEd GraphML
 de;zu Datei;to file
-de;Ã„nderungen anwenden;Apply Changes;;;
-de;Ã„nderungen der Log-Datei - Einstellungen werden erst mit dem nÃ¤chsten Start der Anwendung wirksam.;Changes to the log file settings will not take effect until the application will be restarted.;;;
-de;Ã–ffne Projekt;Open Project;;;
-de;Ã–ffnen;Open
-de;Ãœber...;About ...
-de;Ãœbernehme Durchschnittswerte fÃ¼r reale Metrik;Accept average values for real metric;;;
-de;Ãœbernehmen;Apply
-de;Ãœbersetzen ...;Translate ...
-de;Ãœbersetzen;Translate
-de;Ãœbersetzter Text;Text translated
-de;Ãœbersetzung speichern (STRG+S);Save translation (CTRL + S)
-de;Ãœbersicht;Overview;;;
-de;Ãœbersichtsfenster ein- und ausblenden;Show and hide overview window;;;
-de;Ãœberspringen;Skip
+de;Änderungen anwenden;Apply Changes;;;
+de;Änderungen der Log-Datei - Einstellungen werden erst mit dem nächsten Start der Anwendung wirksam.;Changes to the log file settings will not take effect until the application will be restarted.;;;
+de;Öffne Projekt;Open Project;;;
+de;Öffnen;Open
+de;Über...;About ...
+de;Übernehme Durchschnittswerte für reale Metrik;Accept average values for real metric;;;
+de;Übernehmen;Apply
+de;Übersetzen ...;Translate ...
+de;Übersetzen;Translate
+de;Übersetzter Text;Text translated
+de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
+de;Übersicht;Overview;;;
+de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
+de;Überspringen;Skip
 en;;A geographical layout has to be defined with X = 'North' and Y = 'Clockwise to X';;;
 en;;A geographical layout has to be defined with X = 'North', Y = 'Clockwise to X';;;
 en;;Alias:;;;
@@ -927,7 +927,7 @@ en;Adapter meldet Konfigurationsfehler!;Adapter signals configuration error!;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agent.GUI: HTTPS Konfiguration;Agent.GUI: HTTPS Configuration;;;
 en;Agenten Klasse;Agent Class;;;
-en;Agenten fÃ¼r's Deployment konfigurieren;Configure the agents for deployment;;;
+en;Agenten für's Deployment konfigurieren;Configure the agents for deployment;;;
 en;Agenten-Adresse:;Agent address:;;;
 en;Agenten-ID:;Agent ID:;;;
 en;Agenten-Klasse;Agent class;;;
@@ -938,89 +938,89 @@ en;Aktuelles Bild entfernen;Remove current image;;;
 en;Alphabetisch;Alphabetical;;;
 en;Alphanumerisch;Alphanumeric;;;
 en;Anzahl;Count;;;
-en;Aus der Zwischenablage einfÃ¼gen;Paste from Clipboard;;;
-en;AusfÃ¼hrungsmodus:;Operating mode:;;;
-en;AusgewÃ¤hlte Komponente entfernen;Remove selected component;;;
+en;Aus der Zwischenablage einfügen;Paste from Clipboard;;;
+en;Ausführungsmodus:;Operating mode:;;;
+en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
 en;Auswahl ausschneiden;Cut Selection;;;
 en;Auswahl kopieren;Copy Selection;;;
 en;Autorisierungseinstellungen;Authorization Settings;;;
-en;Base64-Kodierung des Datenmodells fÃ¼r;Base64-encoding of data model for;;;
+en;Base64-Kodierung des Datenmodells für;Base64-encoding of data model for;;;
 en;Bearbeiten;Edit;;;
 en;Bearbeitung beenden;Finalize editing;;;
 en;Beenden ohne zu speichern?;Exit without saving?;;;
 en;Beispiel-String aus Datei;Example String from file;;;
 en;Benachrichtigungen;Notifications;;;
 en;Beschriftung zeigen;Show label;;;
-en;BestÃ¤tigung;Confirmation;;;
+en;Bestätigung;Confirmation;;;
 en;Bild;Image;;;
-en;Bitte fÃ¼llen Sie alle erforderlichen Felder aus!;You must fill out all required fields!;;;
+en;Bitte füllen Sie alle erforderlichen Felder aus!;You must fill out all required fields!;;;
 en;Bitte spezifizieren Sie das Zeitformat, das in der Datei verwendet wird.;Please, configure the time format of the file data;;;
-en;Bitte wÃ¤hlen Sie das gleiche Protokoll fÃ¼r die server.master und dem MTP-Protokoll!;Please, choose the same Protocol for the server.master and the MTP-protocol!;;;
-en;Bitte wÃ¤hlen Sie ein gÃ¼ltiges Element!;Select a valid element first!;;;
-en;Bitte wÃ¤hlen Sie einen Knoten !;Select one vertex !;;;
-en;Bitte wÃ¤hlen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
-en;Bitte wÃ¤hlen Sie einen Knoten!;Select one vertex please!;;;
-en;Bitte wÃ¤hlen Sie einen Knoten.;Select one vertex;;;
-en;Bitte wÃ¤hlen Sie einen freien Knoten aus dem Gesamtnetzwerk!;Please, select one free vertex in the overall network!;;;
-en;Bitte wÃ¤hlen Sie einen freien Knoten der Netzwerk-Komponente, die Sie hinzufÃ¼gen mÃ¶chten!;Please, select one free vertex of the network component that you want to add!;;;
-en;Bitte wÃ¤hlen Sie einen gÃ¼ltigen Knoten;Select a valid vertex first;;;
-en;Bitte wÃ¤hlen Sie mindestens zwei gÃ¼ltige Knoten!;Select at least two valid vertices!;;;
-en;Bitte wÃ¤hlen Sie zuerst eine Kante;Select an edge first;;;
-en;Bitte wÃ¤hlen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
-en;Bitte wÃ¤hlen Sie zwei gÃ¼ltige Knoten;Select two valid vertices;;;
-en;Bitte, Geben Sie das Kennwort fÃ¼r;Please enter the password for;;;
-en;Bitte, Geben Sie das Kennwort fÃ¼r;Please, enter the password for;;;
+en;Bitte wählen Sie das gleiche Protokoll für die server.master und dem MTP-Protokoll!;Please, choose the same Protocol for the server.master and the MTP-protocol!;;;
+en;Bitte wählen Sie ein gültiges Element!;Select a valid element first!;;;
+en;Bitte wählen Sie einen Knoten !;Select one vertex !;;;
+en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
+en;Bitte wählen Sie einen Knoten!;Select one vertex please!;;;
+en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
+en;Bitte wählen Sie einen freien Knoten aus dem Gesamtnetzwerk!;Please, select one free vertex in the overall network!;;;
+en;Bitte wählen Sie einen freien Knoten der Netzwerk-Komponente, die Sie hinzufügen möchten!;Please, select one free vertex of the network component that you want to add!;;;
+en;Bitte wählen Sie einen gültigen Knoten;Select a valid vertex first;;;
+en;Bitte wählen Sie mindestens zwei gültige Knoten!;Select at least two valid vertices!;;;
+en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
+en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
+en;Bitte wählen Sie zwei gültige Knoten;Select two valid vertices;;;
+en;Bitte, Geben Sie das Kennwort für;Please enter the password for;;;
+en;Bitte, Geben Sie das Kennwort für;Please, enter the password for;;;
 en;Bitte, geben Sie Zertifikat Alias;Please, enter Certificate's alias;;;
-en;Bitte, wÃ¤hlen Sie die Netzwerk-Komponente aus, die Sie hinzufÃ¼gen mÃ¶chten!;Please, select the network component that you would like to add!;;;
+en;Bitte, wählen Sie die Netzwerk-Komponente aus, die Sie hinzufügen möchten!;Please, select the network component that you would like to add!;;;
 en;Breite;Width;;;
-en;CSV-Datei Ã¶ffnen;Open a CSV file;;;
+en;CSV-Datei öffnen;Open a CSV file;;;
 en;CSV-Datei;CSV-File;;;
 en;Cluster-Agent;Cluster agent;;;
 en;Cluster-Form;Cluster shape;;;
 en;Das Installationsverzeichnis konnte nicht gefunden werden: ;Could not find the installation directory;;;
-en;Das Kennwort und seine bestÃ¤tigen sind nicht das Gleiche!;The password and its confirm are not the same!;;;
-en;Das Netzwerk-Modell enthÃ¤lt bereits Komponenten - ersetzen oder zusammenfÃ¼hren?;The network model already contains components - replace or merge?;;;
+en;Das Kennwort und seine bestätigen sind nicht das Gleiche!;The password and its confirm are not the same!;;;
+en;Das Netzwerk-Modell enthält bereits Komponenten - ersetzen oder zusammenführen?;The network model already contains components - replace or merge?;;;
 en;Das Projekt wurde erfolgreich aktualisiert!;The project was updated successfully!;;;
 en;Das Unterverzeichnis 'plugins' konnte nicht gefunden werden.;Could not find sub directory 'plugins'.;;;
 en;Das angegebene Verzeichnis konnte nicht gefunden werden.;The specified directory could not be found.;;;
 en;Daten;Data;;;
 en;Datenbankeinstellungen;Configure the database settings;;;
 en;Deaktivieren;Disable;;;
-en;Der AusfÃ¼hrungsmodus des deployten Agenten;The testbed agent's operating mode;;;
+en;Der Ausführungsmodus des deployten Agenten;The testbed agent's operating mode;;;
 en;Der Equinox Launcher wurde im plugins-Verzeichnis des installierten Produkts nicht gefunden.;Could not find the equinox launcher within the plugins-directory of the installed product.;;;
 en;Der JADE-Port des deployten Agenten;The port used by the testbed agent's JADE platform;;;
 en;Der Jade-Port des CEA;The port used by the CEA's JADE platform;;;
-en;Der Komponentename existiert bereits! <br> Bitte wÃ¤hlen Sie einen anderen.;The component name already exists!<br>Choose a different one.;;;
-en;Der ausgewÃ¤hlte Knoten des Netzwerkes enthÃ¤lt bereits eine Komponente<br>vom Typ 'DistributionNode'. Dies ist fÃ¼r einen Knoten jedoch nur einmal zulÃ¤ssig!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
-en;Der ausgewÃ¤hlte Knoten sollte zumindest zwischen zwei Komponenten liegen !;The select Vertex should be at least between two components !;;;
-en;Der ausgewÃ¤hlte Knoten sollte zwischen zwei Komponenten liegen !;The select Vertex should be between two components !;;;
+en;Der Komponentename existiert bereits! <br> Bitte wählen Sie einen anderen.;The component name already exists!<br>Choose a different one.;;;
+en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente<br>vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
+en;Der ausgewählte Knoten sollte zumindest zwischen zwei Komponenten liegen !;The select Vertex should be at least between two components !;;;
+en;Der ausgewählte Knoten sollte zwischen zwei Komponenten liegen !;The select Vertex should be between two components !;;;
 en;Der folgende Fehler ist aufgetreten:;The following error occured:;;;
 en;Diagramm bearbeiten;Edit Chart;;;
-en;Die Komponente ist bereits vorhanden!<br>  Bitte wÃ¤hlen Sie einen anderen Namen.;The component name already exists!<br> Choose a different one.;;;
+en;Die Komponente ist bereits vorhanden!<br>  Bitte wählen Sie einen anderen Namen.;The component name already exists!<br> Choose a different one.;;;
 en;Die URL oder IP-Adresse des CEA;The URL or IP address of the CEA's JADE platform;;;
-en;Die Verzeichnisangabe fÃ¼r Installationspakete ist leer.;Directory for installation packages is empty.;;;
-en;Die aktuelle Auswahl im Graphen stellt bereits eine Komponente vom <br>Typ 'DistributionNode' dar. Dies ist an einem Knoten nur einmalig zulÃ¤ssigt!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
-en;Die ausgewÃ¤hlte Agentenklasse konnte nicht gefunden werden.;The specified agent class could not be found.;;;
+en;Die Verzeichnisangabe für Installationspakete ist leer.;Directory for installation packages is empty.;;;
+en;Die aktuelle Auswahl im Graphen stellt bereits eine Komponente vom <br>Typ 'DistributionNode' dar. Dies ist an einem Knoten nur einmalig zulässigt!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
+en;Die ausgewählte Agentenklasse konnte nicht gefunden werden.;The specified agent class could not be found.;;;
 en;Diese ID wird bereits verwendet. Bitte geben Sie eine andere Kennung (ID) an!;The ID is already in use. Please specify another identifier!;;;
 en;Diskretes Zeitmodell;Discrete Time Model;;;
-en;Doppelte DomÃ¤ne;Duplicate Domain;;;
+en;Doppelte Domäne;Duplicate Domain;;;
 en;Doppelter Komponententyp;Duplicate Component Type;;;
-en;DrÃ¼cken Sie die Umschalttaste und wÃ¤hlen Sie mindesten zwei Knoten!;Use Shift and click on two vertices at least!;;;
+en;Drücken Sie die Umschalttaste und wählen Sie mindesten zwei Knoten!;Use Shift and click on two vertices at least!;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
-en;Eigenschaften schlieÃŸen;Close Properties;;;
-en;Ein Agent.GUI-Update ist verfÃ¼gbar.<br>Wollen Sie es jetzt herunterladen?;An Agent.GUI-Update is available. Download now?;;;
+en;Eigenschaften schließen;Close Properties;;;
+en;Ein Agent.GUI-Update ist verfügbar.<br>Wollen Sie es jetzt herunterladen?;An Agent.GUI-Update is available. Download now?;;;
 en;Ein Agent.GUI-Update wurde heruntergeladen.<br>Wollen Sie es jetzt installieren?;Agent.GUI-Update was downloaded. Install now?;;;
 en;Einstellungen;Settings;;;
 en;Entfernen Zertifikat;Remove Certificate;;;
 en;Erforderliche Felder;Required fields;;;
-en;Ersetzen oder zusammenfÃ¼hren?;Replace or merge?;;;
+en;Ersetzen oder zusammenführen?;Replace or merge?;;;
 en;Ersetzen;Replace;;;
 en;Erstelle eine neue KeyStore;Create new KeyStore;;;
 en;Erstelle eine neue TrustStore;Create new TrustStore;;;
 en;Erstellen;Create;;;
 en;Es wurde kein Suchverzeichnis definiert.;No search directory is defined.;;;
-en;Es wurde kein Verzeichnis fÃ¼r Installationspakete definiert.;No directory for the installation packages were defined.;;;
+en;Es wurde kein Verzeichnis für Installationspakete definiert.;No directory for the installation packages were defined.;;;
 en;Es wurden keine Installationspakete gefunden.;No installation packages were found.;;;
 en;Export Zertifikat;Export Certificate;;;
 en;Externer Typ;External Type;;;
@@ -1028,51 +1028,51 @@ en;Farbe (Auswahl);Color picked;;;
 en;Farbe;Color;;;
 en;Feature-Repository bearbeiten;Edit feature repository;;;
 en;Fehler beim Parsen der Zeitinformation!;Error while parsing the time information!;;;
-en;Fehler beim Parsen des Zeitstempels! <br>MÃ¶chten Sie trotzdem fortfahren?;An error occurred while parsing the given time String!<br>Do you want to proceed anyway?;;;
+en;Fehler beim Parsen des Zeitstempels! <br>Möchten Sie trotzdem fortfahren?;An error occurred while parsing the given time String!<br>Do you want to proceed anyway?;;;
 en;Fehler;Error;;;
 en;Formatiert als;Formatted as;;;
-en;FÃ¼hrungsgitter Schrittweite;Guide Grid Step;;;
-en;FÃ¼hrungsgitter;Guide Grid;;;
-en;FÃ¼r das aktuelle Projekt wurden keine Updates gefunden!;No update could be found for the current project!;;;
-en;FÃ¼r die Graph-Knoten dieser DomÃ¤ne wurde keine Adapter-Klasse festgelegt.;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
-en;FÃ¼r diese Netzwerk-Komponente wurde keine Adapter-Klasse festgelegt.;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
-en;FÃ¼r diese Netzwerk-Komponente wurde keine Adapterklasse festgelegt;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
+en;Führungsgitter Schrittweite;Guide Grid Step;;;
+en;Führungsgitter;Guide Grid;;;
+en;Für das aktuelle Projekt wurden keine Updates gefunden!;No update could be found for the current project!;;;
+en;Für die Graph-Knoten dieser Domäne wurde keine Adapter-Klasse festgelegt.;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
+en;Für diese Netzwerk-Komponente wurde keine Adapter-Klasse festgelegt.;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
+en;Für diese Netzwerk-Komponente wurde keine Adapterklasse festgelegt;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;Geben Sie den Namen ohne Leerzeichen ein;Enter the name without spaces;;;
-en;Geben Sie einen gÃ¼ltigen Namen an;Enter a valid name;;;
+en;Geben Sie einen gültigen Namen an;Enter a valid name;;;
 en;Generieren Sie Ihr eigenes Zertifikat aus dem KeyStore;Generate your own certificate from the KeyStore;;;
 en;Geografisches Layout;Geographical Layout;;;
 en;Graph importieren;Import Graph from file;;;
-en;Graph lÃ¶schen;Clear graph;;;
+en;Graph löschen;Clear graph;;;
 en;Graph-Kanten konfigurieren;Configure Graph Edge;;;
 en;Graph-Knoten ausrichten;Align graph nodes;;;
 en;Graph-Prototyp;Graph-Prototype;;;
 en;Graph-Prototyp;Graph-prototype;;;
 en;HTTPS Konfiguration;HTTPS Configuration;;;
-en;Halten Sie die Umschalttaste gedrÃ¼ckt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
-en;HinzufÃ¼gen;Add;;;
-en;Icon auswÃ¤hlen;Choose Icon;;;
+en;Halten Sie die Umschalttaste gedrückt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
+en;Hinzufügen;Add;;;
+en;Icon auswählen;Choose Icon;;;
 en;Ihr Truststore wurde erfolgreich erstellt!;Your TrustStore has been created successfully!;;;
 en;Ihr keystore wurde erfolgreich erstellt!;Your keystore has been created successfully!;;;
-en;In der IDE-Umgebung sind keine Projekt-Updates verfÃ¼gbar.;No project updates are available in the IDE environment.;;;
+en;In der IDE-Umgebung sind keine Projekt-Updates verfügbar.;No project updates are available in the IDE environment.;;;
 en;Informationen Keystore;KeyStore Informations;;;
 en;Informationen Keystore;Keystore Information;;;
 en;Informationen Truststore;TrustStore Informations;;;
 en;Initiiere Netzwerkkomponenten;Initiating network components;;;
-en;Installationspaket fÃ¼r Linux 32-Bit gefunden;Found installation package for Linux 32-Bit;;;
-en;Installationspaket fÃ¼r Linux 64-Bit gefunden;Found installation package for Linux 64-Bit;;;
-en;Installationspaket fÃ¼r Windows 32-Bit gefunden;Found installation package for Windows 32-Bit;;;
-en;Installationspaket fÃ¼r Windows 64-Bit gefunden;Found installation package for Windows 64-Bit;;;
-en;Installationspaket fÃ¼r macOS gefunden;Found installation package for macOS;;;
+en;Installationspaket für Linux 32-Bit gefunden;Found installation package for Linux 32-Bit;;;
+en;Installationspaket für Linux 64-Bit gefunden;Found installation package for Linux 64-Bit;;;
+en;Installationspaket für Windows 32-Bit gefunden;Found installation package for Windows 32-Bit;;;
+en;Installationspaket für Windows 64-Bit gefunden;Found installation package for Windows 64-Bit;;;
+en;Installationspaket für macOS gefunden;Found installation package for macOS;;;
 en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
 en;Kantenform;Edge Shape;;;
 en;Kein Container angegeben.;No container for the agent was specified.;;;
 en;Kein Filter!;No Filter!;;;
-en;Kein Graph-Prototyp definiert fÃ¼r;No Graph-Prototype defined for;;;
-en;Kein Name fÃ¼r den Agenten angegeben.;No agent name was specified.;;;
-en;Kein NetworkComponentAdapter<br>definiert fÃ¼r die<br> die Knoten der Domain<br>;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
-en;Keine Klasse ausgewÃ¤hlt.;No agent class was specified.;;;
-en;Kennwort bestÃ¤tigen;Confirm Password;;;
+en;Kein Graph-Prototyp definiert für;No Graph-Prototype defined for;;;
+en;Kein Name für den Agenten angegeben.;No agent name was specified.;;;
+en;Kein NetworkComponentAdapter<br>definiert für die<br> die Knoten der Domain<br>;No NetworkComponentAdapter<br>was defined for<br> the GraphNodes of the Domain;;;
+en;Keine Klasse ausgewählt.;No agent class was specified.;;;
+en;Kennwort bestätigen;Confirm Password;;;
 en;Kennwort;Password;;;
 en;KeyStore Datei:;KeyStore File:;;;
 en;KeyStore Datei;KeyStore File;;;
@@ -1085,13 +1085,13 @@ en;Knoten zusammenlegen;Merge nodes;;;
 en;Knoten-Eigenschaften bearbeiten;Edit Vertex Properties;;;
 en;Knoten-Positionierung;Node Positioning;;;
 en;Knotenfarbe;Vertex Color;;;
-en;KnotengrÃ¶ÃŸe;Vertex Size;;;
-en;KnotengrÃ¶ÃŸe;Vertex size;;;
-en;Komponente hinzufÃ¼gen;Add component;;;
-en;Komponente hinzufÃ¼gen;Add new component;;;
-en;Komponente lÃ¶schen:;Delete component:;;;
-en;Komponente lÃ¶schen;Delete Component;;;
-en;Komponente lÃ¶schen?;Delete component?;;;
+en;Knotengröße;Vertex Size;;;
+en;Knotengröße;Vertex size;;;
+en;Komponente hinzufügen;Add component;;;
+en;Komponente hinzufügen;Add new component;;;
+en;Komponente löschen:;Delete component:;;;
+en;Komponente löschen;Delete Component;;;
+en;Komponente löschen?;Delete component?;;;
 en;Komponenten-Typ;Component Type;;;
 en;Komponentensuche;Search Components;;;
 en;Komponententyp-Fehler;Component Type Error;;;
@@ -1107,22 +1107,22 @@ en;Laufzeit-Updates deaktivieren;Disable runtime updates;;;
 en;Layout umschalten;Switch Layout;;;
 en;Layout-Duplikat;Duplicate Layout;;;
 en;Lesen;Reading;;;
-en;LinksbÃ¼ndig ausrichten;Align to the left;;;
-en;LÃ¤ndercode:;Country code:;;;
+en;Linksbündig ausrichten;Align to the left;;;
+en;Ländercode:;Country code:;;;
 en;MTP-Protokoll:;MTP Protocol:;;;
 en;MTP-Protokoll:;MTP-Protocol:;;;
 en;MTP-Protokoll;MTP-Protocol;;;
 en;Messwerte;Measurments;;;
 en;Millisekunden;Milliseconds;;;
-en;MÃ¶chten Sie dieses Update herunterladen und installieren?;Would you like to download and install this update?;;;
-en;Nachrichten Widget schlieÃŸen;Close Messaging Widget;;;
+en;Möchten Sie dieses Update herunterladen und installieren?;Would you like to download and install this update?;;;
+en;Nachrichten Widget schließen;Close Messaging Widget;;;
 en;Nachrichten;Messaging;;;
 en;Name;Name;;;
 en;Netzwerk-Komponenten vorbereiten;Preparing network components;;;
 en;Netzwerk-Modell aus Datei importieren;Import NetworkModel from file;;;
 en;Netzwerk-Modell leeren;Clear Network Model;;;
 en;Netzwerkberechnungsintervall;Network Calculation Interval;;;
-en;Netzwerkkomponente hinzufÃ¼gen;Add Network Component;;;
+en;Netzwerkkomponente hinzufügen;Add Network Component;;;
 en;Netzwerkkomponente und Datenmodell initiieren;Initiating network components and setting data model;;;
 en;Neue Startzeit festlegen und zeitliche Verschiebung auf die zu importierenden Daten anwenden;Set new start time and apply offset to the timestamps of the file data;;;
 en;Nicht definiert!;Not defined!;;;
@@ -1138,34 +1138,34 @@ en;Passwort:;Password:;;;
 en;Pfad:;Location:;;;
 en;Pfad:;Path:;;;
 en;Pfad;Location;;;
-en;Port, auf dem das MTP des CEA lÃ¤uft.;The MTP port used by the CEA's JADE platform;;;
+en;Port, auf dem das MTP des CEA läuft.;The MTP port used by the CEA's JADE platform;;;
 en;Port, auf dem das MTP des deployten Agenten gestartet wird;The MTP port used by the testbed agent's JADE platform;;;
 en;Projekt-Update fehlgeschlagen!;The project update failed!;;;
 en;Protokoll, das zur Kommunikation mit CEA und Proxy-Agent verwendet wird;The protocol to be used for comunication with CEA and ProxyAgent;;;
-en;RechtsbÃ¼ndig ausrichten;Align to the right;;;
+en;Rechtsbündig ausrichten;Align to the right;;;
 en;Region:;State Or Province:;;;
-en;Rohrleitungs-Charakteristika auswÃ¤hlen;Select pipe characteristics;;;
-en;RÃ¼ckgÃ¤ngig;Undo Action;;;
-en;SchlieÃŸen;Close;;;
-en;Setze Datenmodell fÃ¼r;Setting data model for;;;
-en;Sie mÃ¼ssen alle erforderlichen Felder ausfÃ¼llen.;You must fill out all required fields.;;;
-en;Sind Sie sicher, dass Sie den Graphen lÃ¶schen wollen?;Are you sure that you want to clear the graph?;;;
-en;Sind Sie sicher, dass Sie diese Komponente lÃ¶schen wollen?;Are you sure that you want to delete this component?;;;
+en;Rohrleitungs-Charakteristika auswählen;Select pipe characteristics;;;
+en;Rückgängig;Undo Action;;;
+en;Schließen;Close;;;
+en;Setze Datenmodell für;Setting data model for;;;
+en;Sie müssen alle erforderlichen Felder ausfüllen.;You must fill out all required fields.;;;
+en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure that you want to clear the graph?;;;
+en;Sind Sie sicher, dass Sie diese Komponente löschen wollen?;Are you sure that you want to delete this component?;;;
 en;Sollen auch die Knoten-Komponenten entfernt werden?;Also remove node components?;;;
 en;Sollen sie auch entfernt werden?;Should they be removed too?;;;
-en;Speichern und Datenmodell-Ã„nderungen an den/die Agenten senden?;Save and send data model changes to agent(s)?;;;
-en;Speichern und SchlieÃŸen;Save and Exit;;;
+en;Speichern und Datenmodell-Änderungen an den/die Agenten senden?;Save and send data model changes to agent(s)?;;;
+en;Speichern und Schließen;Save and Exit;;;
 en;Speichern;Save;;;
 en;Staat oder Provinz;State or Province;;;
 en;Stadt oder Ort;City or Locality;;;
-en;Stadt oder Ã–rtlichkeit:;City Or Locality:;;;
-en;Standard-AusfÃ¼hrungsmodus:;Default operating mode:;;;
+en;Stadt oder Örtlichkeit:;City Or Locality:;;;
+en;Standard-Ausführungsmodus:;Default operating mode:;;;
 en;Start auf den folgenden Zeitpunkt verschieben:;Adjust time shift to the following start time:;;;
 en;Startzeit:;Start Time:;;;
 en;Startzeitpunkt des aktuellen Simulations Setups verwenden!;Use configured start time of the simulation setup!;;;
-en;StÃ¼tzpunkt einfÃ¼gen;Add intermediate point;;;
-en;StÃ¼tzpunkt entfernen;Remove intermediate point;;;
-en;SÃ¼den;South;;;
+en;Stützpunkt einfügen;Add intermediate point;;;
+en;Stützpunkt entfernen;Remove intermediate point;;;
+en;Süden;South;;;
 en;Tag(e);day(s);;;
 en;Teilnetz;Subnetwork;;;
 en;Trennzeichen:;Separator:;;;
@@ -1177,50 +1177,50 @@ en;Typen-Bezeichnung;Type-Specifier;;;
 en;URL oder IP-Adresse:;URL or IP:;;;
 en;Umgebungsmodell exportieren;Export the environment model;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
-en;UngÃ¼ltige Knoten-Auswahl!;Invalid node selection!;;;
+en;Ungültige Knoten-Auswahl!;Invalid node selection!;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
 en;Verbinden...;Connecting...;;;
 en;Verbinden;Connect;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
 en;Verbindungsknoten trennen;Split Node;;;
 en;Verschiedene MTP-Protokolle konfiguriert!;Different MTP-protocols configured!;;;
-en;VertrauenswÃ¼rdige Zertifikate;Trusted Certificates;;;
-en;Verzeichnis fÃ¼r eine ausfÃ¼hrbare Installation konnte nicht gefunden werden.;Could not find directory for an executable installation.;;;
+en;Vertrauenswürdige Zertifikate;Trusted Certificates;;;
+en;Verzeichnis für eine ausführbare Installation konnte nicht gefunden werden.;Could not find directory for an executable installation.;;;
 en;Visualisierungsaktualisierungen deaktivieren;Disable visualization updates;;;
-en;VollstÃ¤ndiger Name:;Full Name:;;;
-en;VollstÃ¤ndiger Name;Full Name;;;
+en;Vollständiger Name:;Full Name:;;;
+en;Vollständiger Name;Full Name;;;
 en;Vorbereiten der Netzwerk-Komponenten zur Speicherung;Preparing and encoding network components for saving;;;
 en;Warnung;Warning;;;
 en;Werkzeuge;Tools;;;
 en;Westen;West;;;
 en;Wiederholen;Redo Action;;;
-en;WÃ¤hlen Sie die Netzwerkkomponente, die hinzugefÃ¼gt werden soll;Select a Network Component to Add;;;
-en;WÃ¤hlen Sie eine Netzwerkkomponente;Select a network component;;;
-en;WÃ¤hlen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
-en;WÃ¤hlen Sie einen gÃ¼ltigen Knoten;Select a valid vertex;;;
-en;WÃ¤hlen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;
+en;Wählen Sie die Netzwerkkomponente, die hinzugefügt werden soll;Select a Network Component to Add;;;
+en;Wählen Sie eine Netzwerkkomponente;Select a network component;;;
+en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
+en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;
+en;Wählen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;
 en;X - Richtung;X - Direction;;;
 en;Y - Richtung;Y - Direction;;;
 en;Zeit-Konfiguration;Time Configuration;;;
 en;Zeitformat;Time Format;;;
 en;Zeitmodell umschalten;Switch Simulation Time Model;;;
-en;Zertifikat hinzufÃ¼gen;Add Certificate;;;
-en;Zertifikate fÃ¼r sichere Kommunikation konfigurieren;Configure the certificates for secure communication;;;
-en;ZertifikatgÃ¼ltigkeit:;Certificate Validity:;;;
+en;Zertifikat hinzufügen;Add Certificate;;;
+en;Zertifikate für sichere Kommunikation konfigurieren;Configure the certificates for secure communication;;;
+en;Zertifikatgültigkeit:;Certificate Validity:;;;
 en;Zertifikatname:;Certificate Name:;;;
 en;Zertifikatsinformationen;Certificate Information;;;
 en;Zuordnung von externen Typen zu lokalen Komponenten;Set mapping of external types to local components;;;
-en;Zur Zeit steht kein Agent.GUI-Update zur VerfÃ¼gung!;There is no Agent.GUI-Update available!;;;
-en;ZusammenfÃ¼hren;Merge;;;
+en;Zur Zeit steht kein Agent.GUI-Update zur Verfügung!;There is no Agent.GUI-Update available!;;;
+en;Zusammenführen;Merge;;;
 en;Zwischen Start- und Endpunkt zentrieren;Center between start and end point;;;
-en;is verfÃ¼gbar;is available.;;;
-en;ist verfÃ¼gbar;is available;;;
+en;is verfügbar;is available.;;;
+en;ist verfügbar;is available;;;
 en;wurde heruntergeladen;was downloaded;;;
 en;x-Richtung;x-Direction;;;
 en;y-Richtung;y-Direction;;;
-en;Ã„nderungen am Netzwerk-Modell speichern?;Save changes to network model?;;;
-en;Ã„nderungen im Netzwerkmodell speichern?;Save Changes to network model?;;;
-en;Ã–ffnen Sie eine Keystore Datei;Open a KeyStore file;;;
-en;Ã–ffnen Sie eine TrustStore Datei;Open a TrustStore file;;;
-en;Ã–ffnen;Open;;;
-en;Ãœbersetztes Datum des Beispiels;Parsed Date from Example;;;
+en;Änderungen am Netzwerk-Modell speichern?;Save changes to network model?;;;
+en;Änderungen im Netzwerkmodell speichern?;Save Changes to network model?;;;
+en;Öffnen Sie eine Keystore Datei;Open a KeyStore file;;;
+en;Öffnen Sie eine TrustStore Datei;Open a TrustStore file;;;
+en;Öffnen;Open;;;
+en;Übersetztes Datum des Beispiels;Parsed Date from Example;;;

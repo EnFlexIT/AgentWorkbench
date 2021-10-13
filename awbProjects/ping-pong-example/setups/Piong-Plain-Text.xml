@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>de.enflexit.awb.samples.example02.Piong</agentClassReference>
+            <startAsName>Ping</startAsName>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>de.enflexit.awb.samples.example02.Piong</agentClassReference>
+            <startAsName>Pong</startAsName>
+        </agent>
+    </agentSetup>
+</simulationSetup>
