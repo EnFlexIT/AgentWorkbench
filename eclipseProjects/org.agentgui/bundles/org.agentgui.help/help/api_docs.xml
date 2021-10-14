@@ -93,6 +93,7 @@
 <topic href="help/api-docs/javadoc/org/agentgui/gui/swt/preferences/pages/package-summary.html" label="org.agentgui.gui.swt.preferences.pages"/>
 <topic href="help/api-docs/javadoc/org/agentgui/gui/swt/project/package-summary.html" label="org.agentgui.gui.swt.project"/>
 <topic href="help/api-docs/javadoc/org/agentgui/gui/swt/systemtray/package-summary.html" label="org.agentgui.gui.swt.systemtray"/>
+<topic href="help/api-docs/javadoc/org/awb/env/maps/package-summary.html" label="org.awb.env.maps"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/package-summary.html" label="org.awb.env.networkModel"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/adapter/package-summary.html" label="org.awb.env.networkModel.adapter"/>
 <topic href="help/api-docs/javadoc/org/awb/env/networkModel/adapter/dataModel/package-summary.html" label="org.awb.env.networkModel.adapter.dataModel"/>
