@@ -32,12 +32,11 @@ import java.awt.Shape;
 import java.awt.geom.Line2D;
 
 import org.awb.env.networkModel.GraphEdge;
-import org.awb.env.networkModel.GraphNode;
+
+import com.google.common.base.Function;
 
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.Context;
-import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.Loop;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 /**
  * The Class GraphEdgeShapeTransformer transforms and thus manages the appearance of each single GraphEdge.
@@ -45,29 +44,35 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape.Loop;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class GraphEdgeShapeTransformer<V, E> extends AbstractEdgeShapeTransformer<GraphNode, GraphEdge> {
+public class GraphEdgeShapeTransformer<V, E> implements Function<E, Shape> {
 
+	private Graph<V, E> graph;
+	
 	private Line2D line;
-	private Loop<GraphNode, GraphEdge> loop;    
-    
+	private EdgeShape<V, E>.Loop loop;    
 
+	/**
+	 * Instantiates a new graph edge shape transformer.
+	 * @param graph the graph
+	 */
+	public GraphEdgeShapeTransformer(Graph<V, E> graph) {
+		this.graph = graph;
+	}	
+	
     /* (non-Javadoc)
 	 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
 	 */
 	@Override
-	public Shape transform(Context<Graph<GraphNode, GraphEdge>, GraphEdge> context) {
+	public Shape apply(E e) {
 
-		Graph<GraphNode, GraphEdge> graph = context.graph;
-    	GraphEdge graphEdge = context.element;
-        
     	// --- Check for a loop ---------------------------
-    	GraphNode graphNodeFrom = graph.getSource(graphEdge);
-    	GraphNode graphNodeTo = graph.getDest(graphEdge);
+    	V graphNodeFrom = graph.getSource(e);
+    	V graphNodeTo = graph.getDest(e);
         if (graphNodeFrom!=null && graphNodeTo!=null && graphNodeFrom.equals(graphNodeTo)) {
-        	return this.getLoop().transform(context);
+        	return this.getLoop().apply(e);
         }
         // --- Return the configured edge shape -----------
-        return this.getEdgeShape(graphEdge);
+        return this.getEdgeShape(e);
 	}
 
 	/**
@@ -76,18 +81,21 @@ public class GraphEdgeShapeTransformer<V, E> extends AbstractEdgeShapeTransforme
 	 * @param graphEdge the graph edge
 	 * @return the graph edge shape
 	 */
-	private Shape getEdgeShape(GraphEdge graphEdge) {
+	private Shape getEdgeShape(E e) {
+
 		// --- By default take the shared line instance ---
 		Shape graphEdgeShape = this.getLine();
-		if (graphEdge.getEdgeShapeConfiguration()!=null) {
-			try {
-				// --- Get the specific edge shape --------
-				graphEdgeShape = graphEdge.getEdgeShapeConfiguration().getShape();
-				
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}		
+		if (e instanceof GraphEdge) {
+			GraphEdge graphEdge = (GraphEdge) e;
+			if (graphEdge.getEdgeShapeConfiguration()!=null) {
+				try {
+					// --- Get the specific edge shape --------
+					graphEdgeShape = graphEdge.getEdgeShapeConfiguration().getShape();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}		
+		}
 		return graphEdgeShape;
 	}
 	
@@ -105,9 +113,9 @@ public class GraphEdgeShapeTransformer<V, E> extends AbstractEdgeShapeTransforme
 	 * Returns a loop instance.
 	 * @return a loop
 	 */
-	private Loop<GraphNode, GraphEdge> getLoop() {
+	private EdgeShape<V, E>.Loop getLoop() {
 		if (loop==null) {
-			 loop = new Loop<GraphNode, GraphEdge>();
+			 loop = new EdgeShape<V, E>(this.graph).new Loop();
 		}
 		return loop;
 	}

@@ -46,7 +46,6 @@ import javax.swing.JComponent;
 
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
-import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
 import org.awb.env.networkModel.controller.ui.configLines.OrthogonalConfiguration;
 import org.awb.env.networkModel.settings.LayoutSettings;
@@ -61,7 +60,7 @@ import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.IndexedRendering;
+import edu.uci.ics.jung.visualization.decorators.ParallelEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.renderers.BasicEdgeRenderer;
 import edu.uci.ics.jung.visualization.transform.LensTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
@@ -74,7 +73,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 
 	private static IntermediatePointTransformer intPointTransformer;
 	
-	private GraphEnvironmentController graphController;
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer;
 	
 	private boolean markerShow = false;
 	private float markerStrokeWidth = 0;
@@ -83,10 +82,12 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	
 	/**
 	 * Instantiates a new graph environment edge renderer.
+	 *
 	 * @param graphController the current GraphEnvironmentController
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 */
-	public GraphEnvironmentEdgeRenderer(GraphEnvironmentController graphController) {
-		this.graphController = graphController;
+	public GraphEnvironmentEdgeRenderer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
+		this.visViewer = visViewer;
 	}
 	
 	/**
@@ -139,7 +140,6 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param edge the edge to draw
 	 * @param isPaintMarker the is paint marker
 	 */
-	@SuppressWarnings("unchecked")
 	private void drawSimpleEdgeAdjusted(RenderContext<GraphNode, GraphEdge> rc, Layout<GraphNode, GraphEdge> layout, GraphEdge edge, boolean isPaintMarker) {
 	        
         GraphicsDecorator graphicsDecorator = rc.getGraphicsContext();
@@ -148,8 +148,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         GraphNode v1 = endpoints.getFirst();
         GraphNode v2 = endpoints.getSecond();
         
-        Point2D p1 = layout.transform(v1);
-        Point2D p2 = layout.transform(v2);
+        Point2D p1 = layout.apply(v1);
+        Point2D p2 = layout.apply(v2);
         p1 = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p1);
         p2 = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p2);
         float x1 = (float) p1.getX();
@@ -157,8 +157,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         float x2 = (float) p2.getX();
         float y2 = (float) p2.getY();
         
-        Shape s2 = rc.getVertexShapeTransformer().transform(v2);
-        Shape edgeShape = rc.getEdgeShapeTransformer().transform(Context.<Graph<GraphNode, GraphEdge>,GraphEdge>getInstance(graph, edge));
+        Shape s2 = rc.getVertexShapeTransformer().apply(v2);
+        Shape edgeShape = rc.getEdgeShapeTransformer().apply(edge);
         
         boolean edgeHit = true;
         boolean arrowHit = true;
@@ -170,7 +170,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         }
 
         // --- Do some layout checks --------------------------------------------------------------
-        LayoutSettings ls = this.graphController.getNetworkModel().getLayoutSettings();
+        LayoutSettings ls = this.visViewer.getCoordinateSystemPositionTransformer().getLayoutSettings();
         
         boolean isLoop = v1.equals(v2);
         boolean isOrthogonalConfigurableLine = (ls.getEdgeShape()==org.awb.env.networkModel.settings.LayoutSettings.EdgeShape.ConfigurableLine && edge.getEdgeShapeConfiguration()!=null && edge.getEdgeShapeConfiguration() instanceof OrthogonalConfiguration);
@@ -204,7 +204,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 		// => ORIGINAL: edgeShape = xform.createTransformedShape(edgeShape);
 		// ----------------------------------------------------------------------------------------
         // => ADJUSTED FORM
-        edgeShape = getTransformedShape(edgeShape, this.graphController, xform, rc, v1, v2, isOrthogonal);
+        edgeShape = getTransformedShape(edgeShape, this.visViewer.getCoordinateSystemPositionTransformer(), xform, rc, v1, v2, isOrthogonal);
 		// ----------------------------------------------------------------------------------------
 		
         MutableTransformer vt = rc.getMultiLayerTransformer().getTransformer(Layer.VIEW);
@@ -219,8 +219,8 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
             
             // get Paints for filling and drawing
             // (filling is done first so that drawing and label use same Paint)
-            Paint fill_paint = rc.getEdgeFillPaintTransformer().transform(edge); 
-            Paint draw_paint = rc.getEdgeDrawPaintTransformer().transform(edge);
+            Paint fill_paint = rc.getEdgeFillPaintTransformer().apply(edge); 
+            Paint draw_paint = rc.getEdgeDrawPaintTransformer().apply(edge);
             if (isPaintMarker==true) {
             	// ----------------------------------------
             	// --- Paint the marker of the edge -------
@@ -276,15 +276,15 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
             // see if arrows are too small to bother drawing
             if (scalex < .3 || scaley < .3) return;
             
-            if (rc.getEdgeArrowPredicate().evaluate(Context.<Graph<GraphNode, GraphEdge>, GraphEdge> getInstance(graph, edge))) {
+            if (rc.getEdgeArrowPredicate().apply(Context.<Graph<GraphNode, GraphEdge>, GraphEdge> getInstance(graph, edge))) {
             	
-                Stroke new_stroke = rc.getEdgeArrowStrokeTransformer().transform(edge);
+                Stroke new_stroke = rc.getEdgeArrowStrokeTransformer().apply(edge);
                 Stroke old_stroke = graphicsDecorator.getStroke();
                 if (new_stroke != null)
                     graphicsDecorator.setStroke(new_stroke);
 
                 
-                Shape destVertexShape = rc.getVertexShapeTransformer().transform(graph.getEndpoints(edge).getSecond());
+                Shape destVertexShape = rc.getVertexShapeTransformer().apply(graph.getEndpoints(edge).getSecond());
 
                 AffineTransform xf = AffineTransform.getTranslateInstance(x2, y2);
                 destVertexShape = xf.createTransformedShape(destVertexShape);
@@ -294,15 +294,15 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
                     
                     AffineTransform at = edgeArrowRenderingSupport.getArrowTransform(rc, edgeShape, destVertexShape);
                     if(at == null) return;
-                    Shape arrow = rc.getEdgeArrowTransformer().transform(Context.<Graph<GraphNode, GraphEdge>, GraphEdge> getInstance(graph, edge));
+                    Shape arrow = rc.getEdgeArrowTransformer().apply(Context.<Graph<GraphNode, GraphEdge>, GraphEdge> getInstance(graph, edge));
                     arrow = at.createTransformedShape(arrow);
-                    graphicsDecorator.setPaint(rc.getArrowFillPaintTransformer().transform(edge));
+                    graphicsDecorator.setPaint(rc.getArrowFillPaintTransformer().apply(edge));
                     graphicsDecorator.fill(arrow);
-                    graphicsDecorator.setPaint(rc.getArrowDrawPaintTransformer().transform(edge));
+                    graphicsDecorator.setPaint(rc.getArrowDrawPaintTransformer().apply(edge));
                     graphicsDecorator.draw(arrow);
                 }
                 if (graph.getEdgeType(edge) == EdgeType.UNDIRECTED) {
-                    Shape vertexShape = rc.getVertexShapeTransformer().transform(graph.getEndpoints(edge).getFirst());
+                    Shape vertexShape = rc.getVertexShapeTransformer().apply(graph.getEndpoints(edge).getFirst());
                     xf = AffineTransform.getTranslateInstance(x1, y1);
                     vertexShape = xf.createTransformedShape(vertexShape);
                     
@@ -311,11 +311,11 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
                     if(arrowHit) {
                         AffineTransform at = edgeArrowRenderingSupport.getReverseArrowTransform(rc, edgeShape, vertexShape, !isLoop);
                         if(at == null) return;
-                        Shape arrow = rc.getEdgeArrowTransformer().transform(Context.<Graph<GraphNode, GraphEdge>, GraphEdge> getInstance(graph, edge));
+                        Shape arrow = rc.getEdgeArrowTransformer().apply(Context.<Graph<GraphNode, GraphEdge>, GraphEdge> getInstance(graph, edge));
                         arrow = at.createTransformedShape(arrow);
-                        graphicsDecorator.setPaint(rc.getArrowFillPaintTransformer().transform(edge));
+                        graphicsDecorator.setPaint(rc.getArrowFillPaintTransformer().apply(edge));
                         graphicsDecorator.fill(arrow);
-                        graphicsDecorator.setPaint(rc.getArrowDrawPaintTransformer().transform(edge));
+                        graphicsDecorator.setPaint(rc.getArrowDrawPaintTransformer().apply(edge));
                         graphicsDecorator.draw(arrow);
                     }
                 }
@@ -335,7 +335,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * Returns the transformed shape.
 	 *
 	 * @param shape the shape to transform
-	 * @param graphController the graph controller
+	 * @param csTransformer the cs transformer
 	 * @param affineTransform the (original) affine transform
 	 * @param rc the current RenderContext
 	 * @param startNode the start node
@@ -343,11 +343,9 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	 * @param isOrthogonal the indicator if an orthogonal edge is to be drawn
 	 * @return the transformed shape
 	 */
-	public static Shape getTransformedShape(Shape shape, GraphEnvironmentController graphController, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
+	public static Shape getTransformedShape(Shape shape, TransformerForGraphNodePosition csTransformer, AffineTransform affineTransform, RenderContext<GraphNode, GraphEdge> rc, GraphNode startNode, GraphNode endNode, boolean isOrthogonal) {
 		
 		Shape newShape = null;
-		
-		TransformerForGraphNodePosition<GraphNode, GraphEdge> csTransformer = new TransformerForGraphNodePosition<>(graphController); 
 		
 		if (isOrthogonal==false && shape instanceof GeneralPath) {
 			// --------------------------------------------
@@ -357,7 +355,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 			GeneralPath gPathNew = new GeneralPath();
 
 			// --- Add the start graph node ---------------
-			Point2D graphPoint = csTransformer.transform(startNode);
+			Point2D graphPoint = csTransformer.apply(startNode);
 			Point2D panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphPoint);
 			gPathNew.moveTo(panelPoint.getX(), panelPoint.getY());
 			
@@ -371,14 +369,14 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 				
 				if (! (xCoord==0.0 && yCoord==0.0 || xCoord==1.0 && yCoord==0.0)) {
 					Point2D scaledPoint = getIntermediatePointTransformer().transformToGraphCoordinate(new Point2D.Double(xCoord, yCoord), startNode, endNode);
-					graphPoint = csTransformer.transform(scaledPoint);
+					graphPoint = csTransformer.apply(scaledPoint);
 					panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphPoint);
 					gPathNew.lineTo(panelPoint.getX(), panelPoint.getY());
 				}
 			}
 			
 			// --- Add the end graph node -----------------
-			graphPoint = csTransformer.transform(endNode);
+			graphPoint = csTransformer.apply(endNode);
 			panelPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphPoint);
 			gPathNew.lineTo(panelPoint.getX(), panelPoint.getY());
 			newShape = gPathNew;
@@ -390,14 +388,14 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 			QuadCurve2D quadCurve = (QuadCurve2D) shape;
 			QuadCurve2D quadCurveNew = new QuadCurve2D.Double();
 			
-			Point2D graphStartPoint = csTransformer.transform(startNode);
+			Point2D graphStartPoint = csTransformer.apply(startNode);
 			Point2D panelStartPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphStartPoint);
 			
-			Point2D graphEndPoint = csTransformer.transform(endNode); 
+			Point2D graphEndPoint = csTransformer.apply(endNode); 
 			Point2D panelEndPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphEndPoint);
 			
 			Point2D scaledControlPoint = getIntermediatePointTransformer().transformToGraphCoordinate(quadCurve.getCtrlPt(), startNode, endNode);
-			Point2D graphControlPoint = csTransformer.transform(scaledControlPoint);
+			Point2D graphControlPoint = csTransformer.apply(scaledControlPoint);
 			Point2D panelControlPoint = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, graphControlPoint); 
 			
 			quadCurveNew.setCurve(panelStartPoint, panelControlPoint, panelEndPoint);
@@ -442,13 +440,13 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
         Graph<GraphNode, GraphEdge> graph = layout.getGraph();
         
         int index = 0;
-        if (rc.getEdgeShapeTransformer() instanceof IndexedRendering) {
-        	@SuppressWarnings("unchecked")
-			EdgeIndexFunction<GraphNode, GraphEdge> peif = ((IndexedRendering<GraphNode, GraphEdge>)rc.getEdgeShapeTransformer()).getEdgeIndexFunction();
+        if (rc.getEdgeShapeTransformer() instanceof ParallelEdgeShapeTransformer) {
+			@SuppressWarnings("unchecked")
+			EdgeIndexFunction<GraphNode, GraphEdge> peif = ((ParallelEdgeShapeTransformer<GraphNode, GraphEdge>)rc.getEdgeShapeTransformer()).getEdgeIndexFunction();
         	index = peif.getIndex(graph, edge);
         	index *= 20;
         }
-
+        
         float dx = x2-x1;
         float dy = y2-y1;
 

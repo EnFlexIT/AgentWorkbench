@@ -27,10 +27,13 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.controller.ui.TransformerForGraphNodeGeoPosition;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
+import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
+import de.enflexit.geography.coordinates.UTMCoordinate;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -54,13 +57,14 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGUI;
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
+	private TransformerForGraphNodePosition coordinateDirectionTransformer;
 	private IntermediatePointTransformer intermediatePointTransformer;
 	
 	private boolean movePanelWithRightAction;
 	private boolean moveNodeWithLeftAction;
 
 	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
-	private GraphNode graphNodeMoved;
+	private GraphNode graphNodePickedLast;
 	
 	private ConfiguredLineEdit confLineEdit;
 	private GraphNode graphNodeStart;
@@ -105,11 +109,21 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 * Returns the graph node position transformer.
 	 * @return the graph node position transformer
 	 */
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
+	private TransformerForGraphNodePosition getGraphNodePositionTransformer() {
 		return this.basicGraphGUI.getCoordinateSystemPositionTransformer();
 	}
 	/**
-	 * Returnss the intermediate point transformer.
+	 * Returns the coordinate direction point transformer.
+	 * @return the coordinate direction transformer
+	 */
+	public TransformerForGraphNodePosition getCoordinateDirectionTransformer() {
+		if (coordinateDirectionTransformer==null) {
+			coordinateDirectionTransformer = new TransformerForGraphNodePosition(this.getGraphController());
+		}
+		return coordinateDirectionTransformer;
+	}
+	/**
+	 * Returns the intermediate point transformer.
 	 * @return the intermediate point transformer
 	 */
 	private IntermediatePointTransformer getIntermediatePointTransformer() {
@@ -118,7 +132,6 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		}
 		return intermediatePointTransformer;
 	}
-	
 	
 	/**
 	 * Returns the GraphEdge that is currently edited.
@@ -274,8 +287,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 */
 	private void setNodesMoved2EndPosition() {
 		this.removeAllTemporaryNodes(this.getVisViewer().getGraphLayout().getGraph());
-		if (this.graphNodeMoved!=null) {
-			this.getVisViewer().getGraphLayout().setLocation(this.graphNodeMoved, this.getGraphNodePositionTransformer().transform(this.graphNodeMoved.getPosition()));
+		Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
+		for (GraphNode movedNode : pickedNodes) {
+			this.getVisViewer().getGraphLayout().setLocation(movedNode, this.getGraphNodePositionTransformer().apply(movedNode));
 		}
 	}
 	
@@ -329,7 +343,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.confLineEdit.setGraphNodeNewFrom(this.getGraphNodeStart().getCopy());
 		this.confLineEdit.setGraphNodeNewTo(this.getGraphNodeEnd().getCopy());
 
-		this.getGraphController().getNetworkModelUndoManager().setConfiguredLineEdit(this.getVisViewer(), this.confLineEdit);
+		this.getGraphController().getNetworkModelUndoManager().setConfiguredLineEdit(this.basicGraphGUI, this.confLineEdit);
 		this.getGraphController().setProjectUnsaved();
 	}
 	
@@ -380,8 +394,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			
 		} else if (SwingUtilities.isLeftMouseButton(me) && this.isAllowedGraphNodeForMoving(pickedNode)==true) {
 			this.moveNodeWithLeftAction = true;
-			this.graphNodeMoved = pickedNode;
-			this.setOppositeGraphNodeMovedPicked(false);
+			this.graphNodePickedLast = pickedNode;
+			this.setEditEgdeOppositeGraphNodeMovedPicked(false);
+			
 		}
 		
 		if (this.movePanelWithRightAction==true || this.moveNodeWithLeftAction==true) {
@@ -411,8 +426,8 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 * Sets the opposite GraphNode that is moved picked or not.
 	 * @param iPicked the new opposite graph node moved picked
 	 */
-	private void setOppositeGraphNodeMovedPicked(boolean iPicked) {
-		GraphNode graphNodeChanged = this.getOppositeNode(this.graphNodeMoved);
+	private void setEditEgdeOppositeGraphNodeMovedPicked(boolean iPicked) {
+		GraphNode graphNodeChanged = this.getEditEdgeOppositeNode(this.graphNodePickedLast);
 		if (graphNodeChanged!=null) this.getVisViewer().getPickedVertexState().pick(graphNodeChanged, iPicked);
 	}
 	/**
@@ -421,7 +436,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	 * @param graphNode the graph node
 	 * @return the opposite node
 	 */
-	private GraphNode getOppositeNode(GraphNode graphNode) {
+	private GraphNode getEditEdgeOppositeNode(GraphNode graphNode) {
 		Collection<GraphEdge> incidentEdges = this.getGraphController().getNetworkModel().getGraph().getIncidentEdges(graphNode); 
 		if (incidentEdges!=null && incidentEdges.size()>0) {
 			GraphEdge edgePicked = this.getVisViewer().getPickedEdgeState().getPicked().iterator().next();
@@ -445,16 +460,17 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		// ----------------------------------------------------------------------------------------
 		if (this.movePanelWithRightAction==true) {
 
-			MutableTransformer modelTransformer = this.getVisViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+			MutableTransformer layoutTransformer = this.getVisViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
             try {
                 Point2D q = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(down);
                 Point2D p = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
                 float dx = (float) (p.getX()-q.getX());
                 float dy = (float) (p.getY()-q.getY());
                 
-                modelTransformer.translate(dx, dy);
+                layoutTransformer.translate(dx, dy);
                 down.x = me.getX();
                 down.y = me.getY();
+                
             } catch (RuntimeException ex) {
                 throw ex;
             }
@@ -476,14 +492,21 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
 			for (GraphNode pickedNode: pickedNodes) {
 				// --- Get the position of the node ---------------------------
-				Point2D newPos = this.getVisViewer().getGraphLayout().transform(pickedNode);
-				newPos = this.getGraphNodePositionTransformer().inverseTransform(newPos);
+				Point2D newPosInLayout = this.getVisViewer().getGraphLayout().apply(pickedNode);
+				if (this.getGraphNodePositionTransformer() instanceof TransformerForGraphNodeGeoPosition && false) {
+					// --- We're getting nearly UTM coordinates here ! --------
+					newPosInLayout = this.getCoordinateDirectionTransformer().inverseTransform(newPosInLayout);
+					MapSettings ms = this.getGraphNodePositionTransformer().getMapSettings();
+					newPosInLayout = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), newPosInLayout.getX(), newPosInLayout.getY());
+				} else {
+					newPosInLayout = this.getGraphNodePositionTransformer().inverseTransform(newPosInLayout);
+				}
 				if (snapToGrid==true && snapRaster>0) {
-					double xPos = roundGridSnap(newPos.getX(), snapRaster); 
-					double yPos = roundGridSnap(newPos.getY(), snapRaster);
-					newPos.setLocation(xPos, yPos);
+					double xPos = this.roundGridSnap(newPosInLayout.getX(), snapRaster); 
+					double yPos = this.roundGridSnap(newPosInLayout.getY(), snapRaster);
+					newPosInLayout.setLocation(xPos, yPos);
 					
-					this.addTemporaryNode(graph, pickedNode, newPos);
+					this.addTemporaryNode(graph, pickedNode, newPosInLayout);
 				}
 				
 				// --- What do we move? ---------------------------------------
@@ -508,12 +531,12 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 							GraphNode intGraphNode = this.getIntermediateGraphNodes().get(i);
 							Point2D newIntNodePosition = this.getIntermediatePointTransformer().transformToGraphCoordinate(pointList.get(i), this.getGraphNodeStart(), this.getGraphNodeEnd());
 							intGraphNode.setPosition(newIntNodePosition);
-							this.getVisViewer().getGraphLayout().setLocation(intGraphNode, this.getGraphNodePositionTransformer().transform(newIntNodePosition));
+							this.getVisViewer().getGraphLayout().setLocation(intGraphNode, this.getGraphNodePositionTransformer().apply(newIntNodePosition));
 						}
 					}
 					
 				}
-				pickedNode.setPosition(newPos);
+				pickedNode.setPosition(newPosInLayout);
 				
 			}
 			me.consume();
@@ -528,7 +551,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	private void mouseDraggedSuperAction(MouseEvent me) {
 	
 		if (locked == false) {
-            VisualizationViewer<GraphNode,GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
+            VisualizationViewer<GraphNode, GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
             if (vertex!=null) {
                 Point p = me.getPoint();
                 Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
@@ -539,7 +562,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
                 PickedState<GraphNode> ps = vv.getPickedVertexState();
                 
                 for(GraphNode v : ps.getPicked()) {
-                    Point2D vp = layout.transform(v);
+                    Point2D vp = layout.apply(v);
                     vp.setLocation(vp.getX()+dx, vp.getY()+dy);
                     layout.setLocation(v, vp);
                 }
@@ -576,7 +599,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			if (this.moveNodeWithLeftAction==true) {
 				this.moveNodeWithLeftAction = false;	
 				this.setNodesMoved2EndPosition();
-				this.setOppositeGraphNodeMovedPicked(true);
+				this.setEditEgdeOppositeGraphNodeMovedPicked(true);
 			} 
 			
 		}
@@ -588,9 +611,9 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent me) {
 		if (me.getWheelRotation()>0) {
-			this.basicGraphGUI.zoomOut(me.getPoint());
+			this.basicGraphGUI.getZoomController().zoomOut(me.getPoint());
 		} else {
-			this.basicGraphGUI.zoomIn(me.getPoint());
+			this.basicGraphGUI.getZoomController().zoomIn(me.getPoint());
 		}
 	}
 	

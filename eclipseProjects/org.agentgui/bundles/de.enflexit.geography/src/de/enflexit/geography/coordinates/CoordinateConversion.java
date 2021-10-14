@@ -8,6 +8,10 @@ package de.enflexit.geography.coordinates;
 import java.util.Hashtable;
 import java.util.Map;
 
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.coords.UTMCoord;
+
 /**
  * The Class CoordinateConversion.
  */
@@ -25,6 +29,26 @@ public class CoordinateConversion {
 		return new UTM2LatLon().convertUTMToLatLong(UTM);
 	}
 
+	/**
+	 * Return the UTM hemisphere from the specified latitude Zone.
+	 *
+	 * @param latZone the UTM latitude zone
+	 * @return the UTM hemisphere
+	 */
+	public String getUTMHemisphere(String latZone) {
+		return new UTM2LatLon().getHemisphere(latZone);
+	}
+	/**
+	 * Return the UTM latitude zone from the specified longitude.
+	 *
+	 * @param longitude the longitude
+	 * @return the UTM latitude zone
+	 */
+	public String getUTMLatitudeZone(double latitude) {
+		LatZones latZones = new LatZones();
+		return latZones.getLatZone(latitude);
+	}
+	
 	
 	public void utmTransformEastingByLongitudeZone(UTMCoordinate utmCoordinate, int destinLngZone) {
 		if (destinLngZone!=utmCoordinate.getLongitudeZone()) {
@@ -260,7 +284,7 @@ public class CoordinateConversion {
 			// ----------------------------------------------------------------
 			// --- Get reference WGS84 for reference latitude value -----------
 			UTMCoordinate utmRef = new UTMCoordinate(sourceLngZone, sourceLatZone, sourceEasting, sourceNorting);
-			WGS84LatLngCoordinate wgs84Ref = utmRef.getWGS84LatLngCoordinate();
+			WGS84LatLngCoordinate wgs84Ref = utmRef.getWGS84LatLngCoordinate(); // Fails regular
 			
 			
 			// ----------------------------------------------------------------
@@ -519,7 +543,7 @@ public class CoordinateConversion {
 			if (hemisphere.equals("S")) {
 				latitude = -latitude;
 			}
-
+			
 			latlon[0] = latitude;
 			latlon[1] = longitude;
 			return latlon;
@@ -666,16 +690,25 @@ public class CoordinateConversion {
 
 	}
 
-	private class LatZones {
+	
+	/**
+	 * Return the description instance {@link LatZones}.
+	 * @return the lat zones
+	 */
+	public LatZones getLatZones() {
+		return new LatZones();
+	}
+	
+	public class LatZones {
 
 		private char[] letters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z' };
-		private int[] degrees = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8, 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };
+		private int[] degrees  = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8, 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };
 
 		private char[] negLetters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M' };
-		private int[] negDegrees = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8 };
+		private int[] negDegrees  = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16, -8 };
 
 		private char[] posLetters = { 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z' };
-		private int[] posDegrees = { 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };
+		private int[] posDegrees  = { 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };
 
 		private int arrayLength = 22;
 

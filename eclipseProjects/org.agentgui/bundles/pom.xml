@@ -29,6 +29,7 @@
 		<module>org.agentgui.lib.jade</module>
 		<module>org.agentgui.lib.jung</module>
 		<module>org.agentgui.lib.scimark</module>
+		<module>org.awb.env.maps</module>
 		<module>org.awb.env.networkModel</module>
 	</modules>
 </project>

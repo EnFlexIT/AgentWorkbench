@@ -8,15 +8,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -28,12 +28,14 @@ import javax.swing.event.DocumentListener;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.geography.BundleHelper;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
+import de.enflexit.geography.coordinates.CoordinateConversion;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 
 /**
- * The Class GeoCoordinatePanel can be used in order to configure an {@link AbstractGeoCoordinate}.
+ * The Class GeoCoordinatePanel can be used in order to configure an {@link AbstractCoordinate}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -64,7 +66,9 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 	private JLabel jLabelUtmZone;
 	private JLabel jLabelUtmEasting;
 	private JLabel jLabelUtmNorthing;
-	private JTextField jTextFieldUtmZone;
+	private JComboBox<Integer> jComboBoxUtmLongZone;
+	private JComboBox<String> jComboBoxUtmLatZone;
+	
 	private JTextField jTextFieldUtmEasting;
 	private JTextField jTextFieldUtmNorthing;
 	private JLabel jLableWSGInfo;
@@ -208,14 +212,14 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 	}
 	private JLabel getJLabelWGSLatitude() {
 		if (jLabelWGSLatitude == null) {
-			jLabelWGSLatitude = new JLabel("Latitude (North - South):");
+			jLabelWGSLatitude = new JLabel("Latitude (North - South, y):");
 			jLabelWGSLatitude.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelWGSLatitude;
 	}
 	private JLabel getJLabelWGSLongitude() {
 		if (jLabelWGSLongitude == null) {
-			jLabelWGSLongitude = new JLabel("Longitude (East - West):");
+			jLabelWGSLongitude = new JLabel("Longitude (East - West, x):");
 			jLabelWGSLongitude.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelWGSLongitude;
@@ -255,9 +259,9 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		if (jPanelUTM == null) {
 			jPanelUTM = new JPanel();
 			GridBagLayout gbl_jPanelUTM = new GridBagLayout();
-			gbl_jPanelUTM.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelUTM.columnWidths = new int[]{0, 0, 0, 0};
 			gbl_jPanelUTM.rowHeights = new int[]{0, 0, 0, 0, 0};
-			gbl_jPanelUTM.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelUTM.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
 			gbl_jPanelUTM.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 			jPanelUTM.setLayout(gbl_jPanelUTM);
 			GridBagConstraints gbc_jLabelUtmZone = new GridBagConstraints();
@@ -268,10 +272,16 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 			jPanelUTM.add(getJLabelUtmZone(), gbc_jLabelUtmZone);
 			GridBagConstraints gbc_jTextFieldUtmZone = new GridBagConstraints();
 			gbc_jTextFieldUtmZone.fill = GridBagConstraints.HORIZONTAL;
-			gbc_jTextFieldUtmZone.insets = new Insets(10, 5, 0, 10);
+			gbc_jTextFieldUtmZone.insets = new Insets(10, 5, 0, 5);
 			gbc_jTextFieldUtmZone.gridx = 1;
 			gbc_jTextFieldUtmZone.gridy = 0;
-			jPanelUTM.add(getJTextFieldUtmZone(), gbc_jTextFieldUtmZone);
+			jPanelUTM.add(getJComboBoxUtmLongZone(), gbc_jTextFieldUtmZone);
+			GridBagConstraints gbc_comboBox = new GridBagConstraints();
+			gbc_comboBox.insets = new Insets(10, 0, 0, 10);
+			gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+			gbc_comboBox.gridx = 2;
+			gbc_comboBox.gridy = 0;
+			jPanelUTM.add(getJComboBoxUtmLatZone(), gbc_comboBox);
 			GridBagConstraints gbc_jLabelUtmEasting = new GridBagConstraints();
 			gbc_jLabelUtmEasting.anchor = GridBagConstraints.EAST;
 			gbc_jLabelUtmEasting.insets = new Insets(10, 10, 0, 0);
@@ -279,6 +289,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 			gbc_jLabelUtmEasting.gridy = 1;
 			jPanelUTM.add(getJLabelUtmEasting(), gbc_jLabelUtmEasting);
 			GridBagConstraints gbc_jTextFieldUtmEasting = new GridBagConstraints();
+			gbc_jTextFieldUtmEasting.gridwidth = 2;
 			gbc_jTextFieldUtmEasting.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldUtmEasting.insets = new Insets(10, 5, 0, 10);
 			gbc_jTextFieldUtmEasting.gridx = 1;
@@ -291,6 +302,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 			gbc_jLabelUtmNorthing.gridy = 2;
 			jPanelUTM.add(getJLabelUtmNorthing(), gbc_jLabelUtmNorthing);
 			GridBagConstraints gbc_jTextFieldNorthing = new GridBagConstraints();
+			gbc_jTextFieldNorthing.gridwidth = 2;
 			gbc_jTextFieldNorthing.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldNorthing.insets = new Insets(10, 5, 0, 10);
 			gbc_jTextFieldNorthing.gridx = 1;
@@ -299,7 +311,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 			GridBagConstraints gbc_jLabelUTMInfo = new GridBagConstraints();
 			gbc_jLabelUTMInfo.fill = GridBagConstraints.BOTH;
 			gbc_jLabelUTMInfo.insets = new Insets(0, 10, 10, 10);
-			gbc_jLabelUTMInfo.gridwidth = 2;
+			gbc_jLabelUTMInfo.gridwidth = 3;
 			gbc_jLabelUTMInfo.gridx = 0;
 			gbc_jLabelUTMInfo.gridy = 3;
 			jPanelUTM.add(getJLabelUTMInfo(), gbc_jLabelUTMInfo);
@@ -327,36 +339,36 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		}
 		return jLabelUtmNorthing;
 	}
-	private JTextField getJTextFieldUtmZone() {
-		if (jTextFieldUtmZone == null) {
-			jTextFieldUtmZone = new JTextField();
-			jTextFieldUtmZone.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldUtmZone.setColumns(15);
-			jTextFieldUtmZone.getDocument().addDocumentListener(this);
-			jTextFieldUtmZone.addKeyListener(new KeyAdapter() {
-				public void keyTyped(KeyEvent kT) {
-
-					char charackter = kT.getKeyChar();
-					String singleChar = Character.toString(charackter);
-					String singleCharUpperCase = singleChar.toUpperCase();
-					if (singleChar.equals(singleCharUpperCase)==false) {
-						kT.setKeyChar(singleCharUpperCase.charAt(0));
-						singleChar = singleCharUpperCase;
-					}
-					if (singleChar.matches("[0-9A-Z]")==false) {
-						kT.consume();
-					}
-					// --- Restrict the length ------------
-					JTextField displayField = (JTextField) kT.getComponent();
-					String currValue = displayField.getText();
-					if (currValue.length()>=3) {
-						kT.consume();
-					}
-				}
-			});
+	private JComboBox<Integer> getJComboBoxUtmLongZone() {
+		if (jComboBoxUtmLongZone == null) {
+			// --- Create a combo box model -----
+			DefaultComboBoxModel<Integer> cbModel = new DefaultComboBoxModel<>();
+			for (int i=1; i<=60; i++) {
+				cbModel.addElement(i);
+			}
+			// --- Create the combo box ---------
+			jComboBoxUtmLongZone = new JComboBox<Integer>(cbModel);
+			jComboBoxUtmLongZone.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxUtmLongZone.addActionListener(this);
 		}
-		return jTextFieldUtmZone;
+		return jComboBoxUtmLongZone;
 	}
+	private JComboBox<String> getJComboBoxUtmLatZone() {
+		if (jComboBoxUtmLatZone == null) {
+			// --- Create a combo box model -----
+			char[] latZoneLetters = new CoordinateConversion().getLatZones().getLatZoneLetters();
+			DefaultComboBoxModel<String> cbModel = new DefaultComboBoxModel<>();
+			for (int i=0; i<=latZoneLetters.length-1; i++) {
+				cbModel.addElement(Character.toString(latZoneLetters[i]));
+			}
+			jComboBoxUtmLatZone = new JComboBox<String>(cbModel);
+			jComboBoxUtmLatZone.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxUtmLatZone.addActionListener(this);
+		}
+		return jComboBoxUtmLatZone;
+	}
+	
+	
 	private JTextField getJTextFieldUtmEasting() {
 		if (jTextFieldUtmEasting == null) {
 			jTextFieldUtmEasting = new JTextField();
@@ -420,7 +432,21 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if (ae.getSource()==this.getJButtonMapsGoogle()) {
+		if (ae.getSource()==this.getJComboBoxUtmLatZone()) {
+			// --- Set UTM latitude zone ------------------
+			if (this.pauseDocumentListener==true) return;
+			UTMCoordinate utmCoord = this.getUTMCoordinate(true);
+			utmCoord.setLatitudeZone((String) this.getJComboBoxUtmLatZone().getSelectedItem());
+			this.updateLocalCoordinate(utmCoord);
+			
+		} else if (ae.getSource()==this.getJComboBoxUtmLongZone()) {
+			// --- Set UTM longitude zone -----------------
+			if (this.pauseDocumentListener==true) return;
+			UTMCoordinate utmCoord = this.getUTMCoordinate(true);
+			utmCoord.setLongitudeZone((int) this.getJComboBoxUtmLongZone().getSelectedItem());
+			this.updateLocalCoordinate(utmCoord);
+			
+		} else if (ae.getSource()==this.getJButtonMapsGoogle()) {
 			// --- Browse to Google Maps ------------------
 			WGS84LatLngCoordinate wgs84Coordinate = this.getWGS84LatLngCoordinate(false);
 			if (wgs84Coordinate!=null) {
@@ -507,31 +533,6 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 				}
 			}
 			
-		} else if (de.getDocument() == this.getJTextFieldUtmZone().getDocument()) {
-			// --- Set the UTM zone value ---------------------------
-			if (this.isFullUTMCoordinate(this.getJTextFieldUtmZone().getText())==false) {
-				String zoneText = this.getJTextFieldUtmZone().getText();
-				if (zoneText!=null && zoneText.isEmpty()==false) {
-					UTMCoordinate utmCoord = this.getUTMCoordinate(true);
-					// --- Zone longitude ---------------------------
-					String lngZoneText = zoneText.replaceAll("[^0-9]", "");
-					Integer lngZone = 0;
-					if (lngZoneText!=null && lngZoneText.isEmpty()==false) {
-						lngZone = Integer.parseInt(lngZoneText);
-					}
-					if (lngZone!=null) {
-						utmCoord.setLongitudeZone(lngZone);
-						geoCoordinateEdited = utmCoord;	
-					}
-					// --- Zone latitude ----------------------------
-					String latZone = zoneText.replaceAll("[^A-Z]", "");
-					if (latZone!=null && latZone.isEmpty()==false) {
-						utmCoord.setLatitudeZone(latZone.toUpperCase());
-						geoCoordinateEdited = utmCoord;
-					}
-				}
-			}
-			
 		} else if (de.getDocument() == this.getJTextFieldUtmEasting().getDocument()) {
 			// --- Set the UTM easting value ------------------------
 			if (this.isFullUTMCoordinate(this.getJTextFieldUtmEasting().getText())==false) {
@@ -556,8 +557,16 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 			
 		} 
 		
+		// --- Update local variable --------------------------------
+		this.updateLocalCoordinate(geoCoordinateEdited);
+	}
+	
+	private void updateLocalCoordinate(AbstractGeoCoordinate geoCoordinateEdited) {
+		
+		if (geoCoordinateEdited==null) return;
+		
 		// --- Set new coordinate? ----------------------------------
-		if (geoCoordinateEdited!=null && geoCoordinateEdited!=this.geoCoordinate) {
+		if (geoCoordinateEdited!=this.geoCoordinate) {
 			this.geoCoordinate = geoCoordinateEdited;
 		}
 		if (this.geoCoordinate instanceof WGS84LatLngCoordinate) {
@@ -565,9 +574,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		} else if (this.geoCoordinate instanceof UTMCoordinate) {
 			this.setWGS84CoordinateToDisplay();
 		}
-		
 	}
-	
 	
 	/**
 	 * Returns the current geographical coordinate.
@@ -688,7 +695,7 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		
 		UTMCoordinate utm = null;
 		if (this.getGeoCoordinate()==null && createCoordinateIfRequired==true) {
-			// --- Create WGS84LatLngCoordinate -----------
+			// --- Create an UTM coordinate --------------- 
 			utm = new UTMCoordinate(32, "U", 0, 0);
 			this.setGeoCoordinate(utm);
 		} else {
@@ -713,11 +720,13 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 				pauseDocumentListener = true;
 				UTMCoordinate utm = getUTMCoordinate(false);
 				if (utm!=null) {
-					getJTextFieldUtmZone().setText("" + utm.getLongitudeZone() + utm.getLatitudeZone());
+					getJComboBoxUtmLongZone().setSelectedItem(utm.getLongitudeZone());
+					getJComboBoxUtmLatZone().setSelectedItem(utm.getLatitudeZone());
 					getJTextFieldUtmEasting().setText("" + utm.getEasting());
 					getJTextFieldUtmNorthing().setText("" + utm.getNorthing());
 				} else {
-					getJTextFieldUtmZone().setText(null);
+					getJComboBoxUtmLongZone().setSelectedItem(32);
+					getJComboBoxUtmLatZone().setSelectedItem("U");
 					getJTextFieldUtmEasting().setText(null);
 					getJTextFieldUtmNorthing().setText(null);
 				}

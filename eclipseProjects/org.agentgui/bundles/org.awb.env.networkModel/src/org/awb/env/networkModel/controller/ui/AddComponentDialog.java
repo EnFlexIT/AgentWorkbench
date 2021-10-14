@@ -77,7 +77,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
@@ -87,8 +86,10 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.helper.NetworkComponentFactory;
-import org.awb.env.networkModel.prototypes.DistributionNode;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory.CoordinateType;
 import org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype;
+import org.awb.env.networkModel.prototypes.DistributionNode;
 import org.awb.env.networkModel.prototypes.Star3GraphElement;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
@@ -97,9 +98,13 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
 import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
 
+import com.google.common.base.Function;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import de.enflexit.common.swing.JComboBoxWide;
+import de.enflexit.geography.coordinates.UTMCoordinate;
+import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -784,8 +789,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
 			// --- Set the graph to the layout ----------------------
 	    	Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(this.localNetworkModel.getGraph());
-			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-				public Point2D transform(GraphNode node) {
+			layout.setInitializer(new Function<GraphNode, Point2D>() {
+				public Point2D apply(GraphNode node) {
 					return node.getPosition(); 
 				}
 			});
@@ -1109,52 +1114,72 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_One2One));
 		}
     }
+    
     /**
      * Apply a shift for the new elements, in order to match the position 
-     * of the currently selected node of the current setup		
+     * of the currently selected node of the current setup		.
      *
+     * @param networkModelToAdd the NetworkModel to add to the main NetworkModel
      * @param graphNodeSelectedInMainGraph the graph node selected in the main graph
      * @param graphNodeReferenceToMove the reference graph node that is used to calculate the node shift
      */
-    private void applyNodeShift2MergeWithNetworkModel(NetworkModel networkModel, GraphNode graphNodeSelectedInMainGraph, GraphNode graphNodeReferenceToMove) {
+    private void applyNodeShift2MergeWithNetworkModel(NetworkModel networkModelToAdd, GraphNode graphNodeSelectedInMainGraph, GraphNode graphNodeReferenceToMove) {
     	
     	// --- Consider the x direction of the main graph -----------
-    	LayoutSettings layoutSettings = this.graphController.getNetworkModel().getLayoutSettings();
+     	LayoutSettings layoutSettings = this.graphController.getNetworkModel().getLayoutSettings();
     	switch (layoutSettings.getCoordinateSystemXDirection()) {
 		case East:
-			this.rotateGraph(networkModel, 0, false);
+			this.rotateGraph(networkModelToAdd, 0, false);
 			break;
 		case North:
-			this.rotateGraph(networkModel, ROTATE_90, false);
+			this.rotateGraph(networkModelToAdd, ROTATE_90, false);
 			break;
 		case West:
-			this.rotateGraph(networkModel, ROTATE_180, false);
+			this.rotateGraph(networkModelToAdd, ROTATE_180, false);
 			break;
 		case South:
-			this.rotateGraph(networkModel, ROTATE_270, false);
+			this.rotateGraph(networkModelToAdd, ROTATE_270, false);
 			break;
 		}
-    
     	// --- Invert the original y position? ----------------------
 		if (layoutSettings.getCoordinateSystemYDirection()==CoordinateSystemYDirection.CounterclockwiseToX) {
-			Collection<GraphNode> graphNodes = networkModel.getGraph().getVertices();
+			Collection<GraphNode> graphNodes = networkModelToAdd.getGraph().getVertices();
 			for (GraphNode node : graphNodes) {
 				node.getPosition().setLocation(node.getPosition().getX(), -node.getPosition().getY()); 
 			}	
 		}
     	
+		// ----------------------------------------------------------
+		// --- Check type of destination coordinate type ------------
+		// ----------------------------------------------------------
+		CoordinateType cType = GraphNodePositionFactory.getCoordinateType(graphNodeSelectedInMainGraph);
+		Point2D destinGraphNodePosition = graphNodeSelectedInMainGraph.getCoordinate();
+		if (cType==CoordinateType.WGS84) {
+			WGS84LatLngCoordinate wgs84LatLngCoordinate = (WGS84LatLngCoordinate)graphNodeSelectedInMainGraph.getCoordinate();
+			destinGraphNodePosition = wgs84LatLngCoordinate.getUTMCoordinate();
+		}
+		
     	// --- Calculate node shift ---------------------------------
     	double shiftX = 0;
 		double shiftY = 0;
 		if (graphNodeSelectedInMainGraph != null) {
-			shiftX = graphNodeSelectedInMainGraph.getPosition().getX() - graphNodeReferenceToMove.getPosition().getX();
-			shiftY = graphNodeSelectedInMainGraph.getPosition().getY() - graphNodeReferenceToMove.getPosition().getY();
+			shiftX = destinGraphNodePosition.getX() - graphNodeReferenceToMove.getPosition().getX();
+			shiftY = destinGraphNodePosition.getY() - graphNodeReferenceToMove.getPosition().getY();
 		}
 		
 		// --- Move all nodes with the calculated shift -------------
-		Collection<GraphNode> graphNodes = networkModel.getGraph().getVertices();
+		Collection<GraphNode> graphNodes = networkModelToAdd.getGraph().getVertices();
 		for (GraphNode node : graphNodes) {
-			node.getPosition().setLocation(node.getPosition().getX()+shiftX, node.getPosition().getY()+shiftY); 			
+			// --- Calculate new position ---------------------------
+			Point2D newPostion = new Point2D.Double(node.getPosition().getX()+shiftX, node.getPosition().getY()+shiftY);
+			// --- Set new coordinate type --------------------------  
+			if (cType==CoordinateType.WGS84) {
+				// --- The WGS84 case -------------------------------
+				UTMCoordinate utmCoordDestin = (UTMCoordinate) destinGraphNodePosition;
+				UTMCoordinate utmCoordNew = new UTMCoordinate(utmCoordDestin.getLongitudeZone(), utmCoordDestin.getLatitudeZone(), newPostion.getX(), newPostion.getY());
+				newPostion = utmCoordNew.getWGS84LatLngCoordinate();
+			}
+			node.setPosition(newPostion);
 		}	
 		
     }
@@ -1224,8 +1249,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	    	// --- Refresh the local visualization viewer? --------------------
 	    	if (isRefreshLocalVisViewer==true) {
 	    		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-	    		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-	    			public Point2D transform(GraphNode node) {
+	    		layout.setInitializer(new Function<GraphNode, Point2D>() {
+	    			public Point2D apply(GraphNode node) {
 	    				return node.getPosition();
 	    			}
 	    		});

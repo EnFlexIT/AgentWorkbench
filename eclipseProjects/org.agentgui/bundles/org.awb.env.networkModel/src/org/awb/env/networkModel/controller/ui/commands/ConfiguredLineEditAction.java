@@ -42,6 +42,7 @@ import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineEdit;
@@ -61,22 +62,22 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 	private static final long serialVersionUID = -7057568320137759472L;
 
 	private GraphEnvironmentController graphController;
+	private BasicGraphGui basicGraphGui;
 	private VisualizationViewer<GraphNode,GraphEdge> visViewer;
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> graphNodePositionTransformer;
 				
 	private ConfiguredLineEdit configuredLineEdit;
-	
 	
 	/**
 	 * Instantiates a new UndoableEdit for the movements of GraphNode's.
 	 *
 	 * @param graphController the graph controller
-	 * @param visViewer the vis viewer
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 * @param configuredLineEdit the {@link ConfiguredLineEdit} that describes the last edit action
 	 */
-	public ConfiguredLineEditAction(GraphEnvironmentController graphController, VisualizationViewer<GraphNode,GraphEdge> visViewer, ConfiguredLineEdit configuredLineEdit) {
+	public ConfiguredLineEditAction(GraphEnvironmentController graphController, BasicGraphGui basicGraphGui, ConfiguredLineEdit configuredLineEdit) {
 		this.graphController = graphController;
-		this.visViewer = visViewer; 	
+		this.basicGraphGui = basicGraphGui;
+		this.visViewer = basicGraphGui.getVisualizationViewer(); 	
 		this.configuredLineEdit = configuredLineEdit;
 	}
 	
@@ -126,7 +127,7 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 		GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(graphNodeCopy.getId());
 		if (node!=null) {
 			node.getPosition().setLocation(graphNodeCopy.getPosition().getX(), graphNodeCopy.getPosition().getY());
-			this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().transform(node.getPosition()));
+			this.visViewer.getGraphLayout().setLocation(node, this.getGraphNodePositionTransformer().apply(node.getPosition()));
 		}
 		return node;
 	}
@@ -134,11 +135,8 @@ public class ConfiguredLineEditAction extends AbstractUndoableEdit {
 	 * Returns the graph node position transformer.
 	 * @return the graph node position transformer
 	 */
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> getGraphNodePositionTransformer() {
-		if (graphNodePositionTransformer==null) {
-			graphNodePositionTransformer = new TransformerForGraphNodePosition<>(this.graphController);
-		}
-		return graphNodePositionTransformer;
+	private TransformerForGraphNodePosition getGraphNodePositionTransformer() {
+		return this.basicGraphGui.getCoordinateSystemPositionTransformer();
 	}
 	
 	/**

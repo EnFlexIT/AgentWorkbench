@@ -64,6 +64,7 @@ import org.awb.env.networkModel.persistence.GraphModelReader;
 import org.awb.env.networkModel.persistence.GraphModelWriter;
 import org.awb.env.networkModel.persistence.NetworkComponentList;
 import org.awb.env.networkModel.persistence.NetworkModelFileContent;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 import org.awb.env.networkModel.prototypes.ClusterGraphElement;
 import org.awb.env.networkModel.prototypes.DistributionNode;
 import org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype;
@@ -77,6 +78,7 @@ import org.awb.env.networkModel.visualisation.DisplayAgent;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import de.enflexit.common.SerialClone;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -256,12 +258,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				// --- Change position of all GraphNode position ----------
 				GraphNode graphNode = (GraphNode) graphElement;
 				// --- Remind position in old layout ----------------------
-				graphNode.getPositionTreeMap().put(layoutIdOld, graphNode.getPosition());
+				graphNode.getPositionTreeMap().put(layoutIdOld, graphNode.getCoordinate());
 				// --- Check for a position in the new layout -------------
-				Point2D newLayoutPosition = graphNode.getPositionTreeMap().get(layoutIdNew);
-				if (newLayoutPosition!=null) {
-					graphNode.setPosition(newLayoutPosition);
+				AbstractCoordinate coordinate = graphNode.getPositionTreeMap().get(layoutIdNew);
+				if (coordinate==null) {
+					// --- Create coordinate that matches the new layout --
+					coordinate = GraphNodePositionFactory.convertToCoordinate(layoutIdNew, graphNode.getPosition().getX(), graphNode.getPosition().getY());
 				}
+				graphNode.setCoordinate(coordinate);
 				
 			} else if (graphElement instanceof GraphEdge) {
 				// --- Change shape configuration of GraphEdges -----------
@@ -423,7 +427,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public void setNetworkComponents(TreeMap<String, NetworkComponent> networkComponents) {
 		this.networkComponents = networkComponents;
-		this.refreshGraphElements();
 	}
 	/**
 	 * This method gets the NetworkComponent with the given ID from the GridModel's networkComponents HashMap.
@@ -628,6 +631,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				}
 				networkModelCopy.setMapSettingsTreeMap(mapSettingsTreeMapCopy);
 				
+				// --- Refresh the graph elements in the NetworkModel ---------
+				networkModelCopy.refreshGraphElements();
+
 				
 				// ------------------------------------------------------------
 				// -- Create a copy of the alternativeNetworkModel ------------
@@ -1115,7 +1121,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * method will return null.  
 	 *
 	 * @param graphNodesSelected the set of selected {@link GraphNode}'s
-	 * @return the {@link NetworkComponent}'s that are fully selected by the given nodes and edges
+	 * @return the {@link NetworkComponent}'s that are fully selected by the given nodes and edges or <code>null</code>
 	 */
 	public List<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodesSelected) {
 		

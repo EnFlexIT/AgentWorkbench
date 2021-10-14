@@ -35,15 +35,16 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -67,7 +68,6 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphElement;
@@ -87,21 +87,24 @@ import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTrans
 import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
 import org.awb.env.networkModel.maps.MapService;
 import org.awb.env.networkModel.maps.MapSettings;
+import org.awb.env.networkModel.positioning.GraphNodePositionDialog;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
+
+import com.google.common.base.Function;
 
 import agentgui.core.application.Application;
 import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
 import de.enflexit.common.swing.imageFileSelection.ImageUtils;
+import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import de.enflexit.geography.coordinates.ui.GeoCoordinateDialog;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
@@ -109,7 +112,6 @@ import edu.uci.ics.jung.visualization.LayeredIcon;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
-import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.PickedState;
@@ -187,11 +189,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private PluggableGraphMouse graphMouse4EdgeEditing;
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> graphMouse4Transforming;
 	
-	private TransformerForGraphNodePosition<GraphNode, GraphEdge> coordinateSystemNodePositionTransformer;
-
 	private Timer graphSelectionWaitTimer;
 
-	/** The current MapService */
+	/** The current ZoomController */
 	private ZoomController zoomController;
 	
 	
@@ -203,7 +203,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.graphController = controller;
 		this.graphController.addObserver(this);
 		this.initialize();
-		this.reLoadGraph();
+		
+		// --- Reload the graph when the GUI is shown -----
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				BasicGraphGui.this.reLoadGraph();
+			}
+		});
 	}
 	/**
 	 * This method initializes this
@@ -406,8 +413,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Display the current Graph ------------------
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 		this.clearPickedObjects();
+		this.setEdgeShapeTransformer();
 		this.setMapPreRendering();
-		this.zoomToFitToWindow();
+		this.getZoomController().zoomToFitToWindow();
 
 		// --- Re-attach item listener for vis-viewer -----
 		this.getVisualizationViewer().getPickedVertexState().removeItemListener(this.getPickedStateItemListener());
@@ -467,26 +475,32 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private Layout<GraphNode, GraphEdge> getNewGraphLayout() {
 
-		Graph<GraphNode, GraphEdge> graph = this.getGraph();
-		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
-		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
-		layout.setInitializer(this.getCoordinateSystemPositionTransformer());
+		Layout<GraphNode, GraphEdge> layout = null;
+		if (this.graphController.getNetworkModel().getLayoutSettings().isGeographicalLayout()==false) {
+			// --- Uses the standard layout, where the GraphNode coordinates are used as xy-values for the positioning ----------
+			layout = new BasicGraphGuiStaticLayout(this.graphController, this.getGraph());
+		} else {
+			// --- Use the layout that considers the geographical coordinates of GraphNodes in an UTM system --------------------
+			layout = new BasicGraphGuiStaticGeoLayout(this.graphController, this.getGraph());
+		}
 		return layout;
 	}
-
+	
+	/**
+	 * Returns the current {@link BasicGraphGuiStaticLayout} that is used in the current visualization viewer.
+	 * @return the BasicGraphGuiStaticLayout or <code>null</code>
+	 */
+	public BasicGraphGuiStaticLayout getBasicGraphGuiStaticLayout() {
+		return this.getVisualizationViewer().getBasicGraphGuiStaticLayout();
+	}
 	/**
 	 * Returns the position transformer that considers the directions of the defined coordinate system.
 	 * @return the TransformerForGraphNodePosition
-	 * 
-	 * @see LayoutSettings
 	 */
-	public TransformerForGraphNodePosition<GraphNode, GraphEdge> getCoordinateSystemPositionTransformer() {
-		if (coordinateSystemNodePositionTransformer==null) {
-			coordinateSystemNodePositionTransformer = new TransformerForGraphNodePosition<>(this.getGraphEnvironmentController());
-		}
-		return coordinateSystemNodePositionTransformer;
+	public TransformerForGraphNodePosition getCoordinateSystemPositionTransformer() {
+		return this.getVisualizationViewer().getCoordinateSystemPositionTransformer();
 	}
+	
 	
 	/**
 	 * Gets the graph zoom scroll pane.
@@ -498,7 +512,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 		return graphZoomScrollPane;
 	}
-	
 	/**
 	 * Gets the VisualizationViewer
 	 * @return The VisualizationViewer
@@ -517,14 +530,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
 			visView.setBackground(Color.WHITE);
 			visView.setDoubleBuffered(true);
-			visView.setCoordinateSystemPositionTransformer(this.getCoordinateSystemPositionTransformer());
 			
 			// --- Configure mouse and key interaction ------------------------
 			visView.setGraphMouse(this.getGraphMouse4Picking());
 			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
 			
 			// --- Set the pick size of the visualization viewer --------------
-			visView.setPickSupport(new GraphEnvironmentShapePickSupport(visView, 5, this.getGraphEnvironmentController()));
+			visView.setPickSupport(new GraphEnvironmentShapePickSupport(visView, 5));
 			
 			// --- Add an item listener for pickings --------------------------
 			visView.getPickedVertexState().addItemListener(this.getPickedStateItemListener());
@@ -536,9 +548,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ----------------------------------------------------------------
 			
 			// --- Edge -------------------------------------------------------
-			visView.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
+			visView.setVertexToolTipTransformer(new Function<GraphNode, String>() {
 				@Override
-				public String transform(GraphNode node) {
+				public String apply(GraphNode node) {
 					
 					List<NetworkComponent> netCompsAtNode = graphController.getNetworkModel().getNetworkComponents(node);
 					NetworkComponent netCompDisNode =  graphController.getNetworkModel().getDistributionNode(netCompsAtNode);
@@ -565,7 +577,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 					
 					// --- Show position in edit mode only --------------------
 					if (graphController.getProject()!=null) {
-						toolTip += "<br>(x=" + node.getPosition().getX() + " - y=" + node.getPosition().getY() + ")";	
+						toolTip += "<br>(" + node.getCoordinate().toString() + ")";
 					}
 					toolTip += "</html>";
 					return toolTip;
@@ -573,9 +585,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 			
 			// --- Edge -------------------------------------------------------
-			visView.setEdgeToolTipTransformer(new Transformer<GraphEdge, String>() {
+			visView.setEdgeToolTipTransformer(new Function<GraphEdge, String>() {
 				@Override
-				public String transform(GraphEdge edge) {
+				public String apply(GraphEdge edge) {
 					String toolTip = null;
 					NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent(edge);
 					if (netComp!=null) {
@@ -611,72 +623,86 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setVertexShapeTransformer(new TransformerForVertexShape<GraphNode, GraphEdge>(this.getGraphEnvironmentController()));
 			
 			// --- Configure node icons, if configured ------------------------
-			visView.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>() {
+			visView.getRenderContext().setVertexIconTransformer(new Function<GraphNode, Icon>() {
 
 				private final String pickedPostfix = "[picked]";
 				private HashMap<String, LayeredIcon> iconHash = new HashMap<String, LayeredIcon>();
 
 				@Override
-				public Icon transform(GraphNode node) {
+				public Icon apply(GraphNode node) {
 
 					Icon icon = null;
+					boolean isPicked = visView.getPickedVertexState().isPicked(node);
+					
 					GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController.getNetworkModel());
-					boolean picked = visView.getPickedVertexState().isPicked(node);
 					String nodeImagePath = nodeLayout.getImageReference();
+					if (nodeImagePath!=null && nodeImagePath.equals("MissingIcon")==false) {
 
-					if (nodeImagePath != null) {
-						if (nodeImagePath.equals("MissingIcon")==false) {
-							// --- 1. Search in the local Hash ------
-							LayeredIcon layeredIcon = null;
-							Color currentColor = nodeLayout.getColor();
-							String colorPostfix = "[" + currentColor.getRGB() + "]";
-							if (picked == true) {
-								layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix + this.pickedPostfix);
+						// --- 1. Search in the local Hash ----------
+						Color currentColor = nodeLayout.getColor();
+						String colorPostfix = "[" + currentColor.getRGB() + "]";
+						int scaleMultiplier = this.getScaleMultiplier();
+						
+						// --- 2. If necessary, load the image ------
+						String iconHashKey = scaleMultiplier + "|" + nodeImagePath + colorPostfix;
+						String iconHashKeyPicked = iconHashKey + this.pickedPostfix;
+						LayeredIcon layeredIcon = this.iconHash.get(isPicked==false ? iconHashKey : iconHashKeyPicked);
+						if (layeredIcon == null) {
+							// --- Load the image icon --------------
+							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
+							// --- Prepare the image -------------
+							BufferedImage bufferedImage;
+							if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
+								// --- If the color is set to black or white, just use the unchanged image ----------
+								bufferedImage = GraphGlobals.convertToBufferedImage(imageIcon.getImage());
 							} else {
-								layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix);
+								// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
+								bufferedImage = GraphGlobals.exchangeColor(GraphGlobals.convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
 							}
-							// --- 2. If necessary, load the image --
-							if (layeredIcon == null) {
-								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
-								
-								// --- Prepare the image ---------
-								BufferedImage bufferedImage;
-								if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
-									// --- If the color is set to black or white, just use the unchanged image ----------
-									bufferedImage = convertToBufferedImage(imageIcon.getImage());
-								} else {
-									// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
-									bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
+							
+							if (bufferedImage != null) {
+								// --- Scale the image icon? --------
+								if (scaleMultiplier>1) {
+									bufferedImage = GraphGlobals.scaleBufferedImage(bufferedImage, scaleMultiplier);
 								}
-								
-								if (bufferedImage != null) {
-									// --- 3. Remind this images ----
-									LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
-									this.iconHash.put(nodeImagePath + colorPostfix, layeredIconUnPicked);
+								// --- 3. Remind the images ---------
+								LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
+								this.iconHash.put(iconHashKey, layeredIconUnPicked);
 
-									LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
-									layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
-									this.iconHash.put(nodeImagePath + colorPostfix + this.pickedPostfix, layeredIconPicked);
-									// --- 4. Return the right one --
-									if (picked == true) {
-										layeredIcon = layeredIconPicked;
-									} else {
-										layeredIcon = layeredIconUnPicked;
-									}
+								LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
+								layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
+								this.iconHash.put(iconHashKeyPicked, layeredIconPicked);
+
+								// --- 4. Return the right one --
+								if (isPicked == true) {
+									layeredIcon = layeredIconPicked;
+								} else {
+									layeredIcon = layeredIconUnPicked;
 								}
 							}
-							icon = layeredIcon;
 						}
+						icon = layeredIcon;
 					}
 					return icon;
 				}
-
+				/**
+				 * Returns the scale multiplier that is used during a map visualization.
+				 * @return the scale multiplier
+				 */
+				private int getScaleMultiplier() {
+					int scaleMultiplier = 1;
+					MapSettings ms = BasicGraphGui.this.graphController.getNetworkModel().getMapSettings();
+					if (ms!=null) {
+						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
+					}
+					return scaleMultiplier;
+				}
 			});
 
 			// --- Configure node colors --------------------------------------
-			visView.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
+			visView.getRenderContext().setVertexFillPaintTransformer(new Function<GraphNode, Paint>() {
 				@Override
-				public Paint transform(GraphNode node) {
+				public Paint apply(GraphNode node) {
 					if (visView.getPickedVertexState().isPicked(node)) {
 						return node.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
 					} 
@@ -685,9 +711,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 
 			// --- Configure to show node labels ------------------------------
-			visView.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
+			visView.getRenderContext().setVertexLabelTransformer(new Function<GraphNode, String>() {
 				@Override
-				public String transform(GraphNode node) {
+				public String apply(GraphNode node) {
 					if (node.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel()==true) {
 						return node.getGraphElementLayout(graphController.getNetworkModel()).getLabelText();
 					}
@@ -703,21 +729,26 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setLabelOffset(6);
 			visView.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 			
-			// --- Set the EdgeShape of the Visualisation Viewer --------------
+			// --- Set the EdgeShape of the Visualization Viewer --------------
 			this.setEdgeShapeTransformer(visView);
 			
 			// --- Set edge width ---------------------------------------------
-			visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
+			visView.getRenderContext().setEdgeStrokeTransformer(new Function<GraphEdge, Stroke>() {
 				@Override
-				public Stroke transform(GraphEdge edge) {
-					return new BasicStroke(edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
+				public Stroke apply(GraphEdge edge) {
+					int scaleMultiplier = 1;
+					MapSettings ms = graphController.getNetworkModel().getMapSettings();
+					if (ms!=null) {
+						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
+					}
+					return new BasicStroke(scaleMultiplier * edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
 				}
 			});
 			
 			// --- Configure edge color ---------------------------------------
-			Transformer<GraphEdge, Paint> edgeColorTransformer = new Transformer<GraphEdge, Paint>() {
+			Function<GraphEdge, Paint> edgeColorTransformer = new Function<GraphEdge, Paint>() {
 				@Override
-				public Paint transform(GraphEdge edge) {
+				public Paint apply(GraphEdge edge) {
 					Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
 					if (visView.getPickedEdgeState().isPicked(edge)) {
 						initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
@@ -729,9 +760,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setArrowDrawPaintTransformer(edgeColorTransformer);
 			
 			// --- Configure Edge Image Labels --------------------------------
-			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
+			visView.getRenderContext().setEdgeLabelTransformer(new Function<GraphEdge, String>() {
 				@Override
-				public String transform(GraphEdge edge) {
+				public String apply(GraphEdge edge) {
 					// --- Get the needed info --------------------------------
 					String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
 					boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();
@@ -766,7 +797,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			});
 
 			// --- Set edge renderer for a background color of an edge --------
-			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(this.getGraphEnvironmentController()) {
+			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(visView) {
 				@Override
 				public boolean isShowMarker(GraphEdge edge) {
 					return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
@@ -805,42 +836,66 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @see LayoutSettings#getEdgeShape()
 	 * @param visViewer the vis viewer
 	 */
-	public void setEdgeShapeTransformer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
+	public void setEdgeShapeTransformer(final BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
 
 		// --- Use straight lines as edges ? ------------------------------
-		AbstractEdgeShapeTransformer<GraphNode, GraphEdge> edgeShapeTransformer = null;
-		switch (this.getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
-		case BentLine:
-			edgeShapeTransformer = new EdgeShape.BentLine<GraphNode, GraphEdge>();
-			break;
-		case Box:
-			edgeShapeTransformer = new EdgeShape.Box<GraphNode, GraphEdge>();
-			break;
-		case ConfigurableLine:
-			edgeShapeTransformer = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>();
-			break;
-		case CubicCurve:
-			edgeShapeTransformer = new EdgeShape.CubicCurve<GraphNode, GraphEdge>();
-			break;
-		case Line:
-			edgeShapeTransformer = new EdgeShape.Line<GraphNode, GraphEdge>();
-			break;
-		case Loop:
-			edgeShapeTransformer = new EdgeShape.Loop<GraphNode, GraphEdge>();
-			break;
-		case Orthogonal:
-			edgeShapeTransformer = new EdgeShape.Orthogonal<GraphNode, GraphEdge>();
-			break;
-		case QuadCurve:
-			edgeShapeTransformer = new EdgeShape.QuadCurve<GraphNode, GraphEdge>();
-			break;
-		case SimpleLoop:
-			edgeShapeTransformer = new EdgeShape.SimpleLoop<GraphNode, GraphEdge>();
-			break;
-		case Wedge:
-			edgeShapeTransformer = new EdgeShape.Wedge<GraphNode, GraphEdge>(5);
-			break;
-		}
+		Function<GraphEdge, Shape> edgeShapeTransformer = new Function<GraphEdge, Shape>() {
+
+			/* (non-Javadoc)
+			 * @see com.google.common.base.Function#apply(java.lang.Object)
+			 */
+			@Override
+			public Shape apply(GraphEdge graphEdge) {
+				
+				Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
+				EdgeShape<GraphNode, GraphEdge> edgeShape = new EdgeShape<GraphNode, GraphEdge>(graph);
+
+				// --- Get the edge-shape function ----------------------------
+				Function<GraphEdge, Shape> shapeFunction = null;
+				switch (getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
+				case BentLine:
+					shapeFunction = edgeShape.new BentLine();
+					break;
+				case Box:
+					shapeFunction = edgeShape.new Box();
+					break;
+				case ConfigurableLine:
+					shapeFunction = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>(graph);
+					break;
+				case CubicCurve:
+					shapeFunction = edgeShape.new CubicCurve();
+					break;
+				case Line:
+					shapeFunction = edgeShape.new Line();
+					break;
+				case Loop:
+					shapeFunction = edgeShape.new Loop();
+					break;
+				case Orthogonal:
+					shapeFunction = edgeShape.new Orthogonal();
+					break;
+				case QuadCurve:
+					shapeFunction = edgeShape.new QuadCurve();
+					break;
+				case SimpleLoop:
+					shapeFunction = edgeShape.new SimpleLoop();
+					break;
+				case Wedge:
+					shapeFunction = edgeShape.new Wedge(5);
+					break;
+				}
+				
+				// --- By the current function, transfer into a Shape ---------
+				Shape shape = null;
+				try {
+					shape = shapeFunction.apply(graphEdge);	
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				return shape;
+			}
+		};
+		
 		visViewer.getRenderContext().setEdgeShapeTransformer(edgeShapeTransformer);
 		visViewer.repaint();
 	}
@@ -1075,8 +1130,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (graphNodeToEdit==null) graphNodeToEdit = this.getPickedSingleNode();
 		if (graphNodeToEdit==null) return;
 
-		Point2D oldPosition = graphNodeToEdit.getPosition();
-		Point2D newPosition = null;
+		AbstractCoordinate oldCoordinate = graphNodeToEdit.getCoordinate();
+		AbstractCoordinate newCoordinate = null;
 		
 		// --- Found a GraphNode ------------------------------------
 		if (this.getPickedNodes().contains(graphNodeToEdit)==false) {
@@ -1090,58 +1145,47 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ------------------------------------------------------
 			// --- Edit geographical coordinates --------------------			
 			// ------------------------------------------------------
-			MapSettings ms = this.graphController.getNetworkModel().getMapSettings();
-			UTMCoordinate utmCoordinateToEdit = new UTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone(), graphNodeToEdit.getPosition().getX(), graphNodeToEdit.getPosition().getY());
+			AbstractGeoCoordinate olgGeoCoordinate = (AbstractGeoCoordinate) oldCoordinate;
 			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, utmCoordinateToEdit);
+			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, olgGeoCoordinate);
 			// - - - - Wait for user - - - - -
 			if (geoDialog.isCanceled()==true) return;
 			
 			// --- Get UTM coordinates to set the new position ------
-			UTMCoordinate utmCoordinate = null;
-			AbstractGeoCoordinate geoCoordinate = geoDialog.getGeoCoordinate();
-			if (geoCoordinate ==null) {
+			AbstractCoordinate geoCoordinate = geoDialog.getGeoCoordinate();
+			if (geoCoordinate==null) {
 				return;
-			} else  if (geoCoordinate instanceof WGS84LatLngCoordinate) {
-				WGS84LatLngCoordinate wgs84 = (WGS84LatLngCoordinate) geoCoordinate;
-				utmCoordinate = wgs84.getUTMCoordinate(ms.getUTMLongitudeZone(), ms.getUTMLatitudeZone());
+			} else if (geoCoordinate instanceof WGS84LatLngCoordinate) {
+				newCoordinate = (WGS84LatLngCoordinate) geoCoordinate;
 			} else if (geoCoordinate instanceof UTMCoordinate) {
-				utmCoordinate = (UTMCoordinate) geoCoordinate;
-			}
-			
-			// --- UTM zone transformation? -------------------------
-			if (utmCoordinate.getLongitudeZone()!=ms.getUTMLongitudeZone()) {
-				utmCoordinate.transformZone(ms.getUTMLongitudeZone());
+				newCoordinate = (UTMCoordinate) geoCoordinate;
 			}
 
-			// --- Set new GraphNode position -----------------------
-			newPosition = new Point2D.Double(utmCoordinate.getEasting(), utmCoordinate.getNorthing());
-			
 		} else {
 			// ------------------------------------------------------
 			// --- Edit regular coordinates -------------------------
 			// ------------------------------------------------------
 			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-			GraphNodePositionDialog posDialog = new GraphNodePositionDialog(dialogOwner, graphNodeToEdit.getPosition());
+			GraphNodePositionDialog posDialog = new GraphNodePositionDialog(dialogOwner, oldCoordinate);
 			// - - - - Wait for user - - - - -
 			if (posDialog.isCanceled()==true) return;
 
 			// --- Set new GraphNode position -----------------------
-			newPosition = posDialog.getGraphNodePosition();
+			newCoordinate = posDialog.getCoordinate();
 			
 		}
 
 		// --- Do movement and define undoable action ---------------
-		if (newPosition!=null && newPosition.equals(oldPosition)==false) {
+		if (newCoordinate!=null && newCoordinate.equals(oldCoordinate)==false) {
 			// --- Set position to graph node ----------------------- 
-			graphNodeToEdit.setPosition(newPosition);
+			graphNodeToEdit.setCoordinate(newCoordinate);
 			this.updateGraphNodePositionInLayout(graphNodeToEdit);
 
 			// --- Do we work on an intermediate GraphNode? ---------
 			String graphNodeID = graphNodeToEdit.getId();
 			if (this.getGraphMouseMode()!=GraphMouseMode.EdgeEditing) {
 				// --- Create undoable action ----------------------- 
-				this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this.getVisualizationViewer(), graphNodeToEdit, oldPosition);
+				this.graphController.getNetworkModelUndoManager().setGraphNodesMoved(this, graphNodeToEdit, oldCoordinate);
 				
 			} else {
 				// --- Reconfigure edge -----------------------------
@@ -1152,19 +1196,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 						
 						GraphEdgeShapeConfiguration<?> shapeConfig = editGraphEdge.getEdgeShapeConfiguration();
 						// --- Work on the intermediate points ------
-						int positionIndex = Integer.parseInt(graphNodeID.substring(graphNodeID.indexOf("_") + 1, graphNodeID.length()));
+						int posIdx = Integer.parseInt(graphNodeID.substring(graphNodeID.indexOf("_") + 1, graphNodeID.length()));
 						List<Point2D> intPointList = shapeConfig.getIntermediatePoints();
-						Point2D intPointPos = intPointList.get(positionIndex);
 						// --- Define new intermediate position -----
-						Point2D intPointPosNew = newPosition;
+						Point2D intPointPosNew = newCoordinate;
 						if (shapeConfig.isUseAbsoluteCoordinates()==false) {
 							// --- To relative coordinates ---------- 
 							Pair<GraphNode> graphNodes = this.getGraph().getEndpoints(editGraphEdge);
 							intPointPosNew = new IntermediatePointTransformer().transformToIntermediateCoordinate(intPointPosNew, graphNodes.getFirst(), graphNodes.getSecond());
 						}
-						intPointPos.setLocation(intPointPosNew.getX(), intPointPosNew.getY());
-						// --- Update shape configuration -----------
-						shapeConfig.setIntermediatePoints(intPointList);
+						intPointList.set(posIdx, intPointPosNew);					
 					}
 				}
 				// --- Redraw edge ------------------------------
@@ -1181,7 +1222,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public void updateGraphNodePositionInLayout(GraphNode graphNode) {
 		if (graphNode!=null && graphNode.getPosition()!=null) {
-			this.getVisualizationViewer().getGraphLayout().setLocation(graphNode, this.getCoordinateSystemPositionTransformer().transform(graphNode.getPosition()));
+			this.getVisualizationViewer().getGraphLayout().setLocation(graphNode, this.getCoordinateSystemPositionTransformer().apply(graphNode.getPosition()));
 		}
 	}
 	
@@ -1383,18 +1424,49 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void setMapPreRendering() {
 		
+		// --- Get old / current instances ------------------------------------
 		MapService mapServiceOld = this.getVisualizationViewer().getMapService();
+		BasicGraphGuiStaticLayout staticLayoutOld = this.getBasicGraphGuiStaticLayout();
 		
-		boolean isDoMapRendering = this.isDoMapPreRendering();
-		if (isDoMapRendering==true) {
-			this.getVisualizationViewer().setMapService(this.getMapService());
-		} else {
-			this.getVisualizationViewer().setMapService(null);
-			if (mapServiceOld!=null) {
-				mapServiceOld.destroyMapServiceInstances();
+		// --- Check how to configure -----------------------------------------
+		boolean isDoMapPreRendering = this.isDoMapPreRendering();
+		
+		if (this.graphController.getNetworkModel().getLayoutSettings().isGeographicalLayout()==true) {
+			// --- For geographical layouts ----------------------------------- 
+			if (isDoMapPreRendering==true) {
+				this.getVisualizationViewer().setMapService(this.getMapService());
+				// -- Ensure that a ZoomController is initialized -------------
+				this.getZoomController();
+			} else {
+				this.getVisualizationViewer().setMapService(null);
+				if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
 			}
+			
+			// --- Prepare visualization viewer ------------------------------- 
+			this.getVisualizationViewer().setDoMapPreRendering(isDoMapPreRendering);
+			
+			// --- Renew static graph layout ? --------------------------------
+			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticGeoLayout.class.getName())==false) {
+				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
+			} else {
+				staticLayoutOld.refreshGraphNodePosition();
+			}
+			
+		} else {
+			// --- For normal / non-geographical layouts ----------------------
+			this.getVisualizationViewer().setMapService(null);
+			if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
+			
+			// --- Prepare visualization viewer -------------------------------
+			this.getVisualizationViewer().setDoMapPreRendering(false);
+			
+			// --- Renew static graph layout ? --------------------------------
+			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticLayout.class.getName())==false) {
+				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
+			}
+			
 		}
-		this.getVisualizationViewer().setDoMapPreRendering(isDoMapRendering);
+		
 	}
 	/**
 	 * Checks if is usable map service.
@@ -1410,7 +1482,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		MapSettings mSettings = this.getGraphEnvironmentController().getNetworkModel().getMapSettings();
 		if (mSettings==null) return false;
 		if (mSettings.getMapServiceName()==null || mSettings.getMapServiceName().isEmpty()==true) return false;
-		if (mSettings.getMapTileTransparency()==100) return false;
+		//if (mSettings.getMapTileTransparency()==100) return false;
 		
 		// --- Ensure that the MapService is available --------------------------------------------
 		if (this.getMapService()==null) return false;
@@ -1444,62 +1516,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 			ZoomController zc = this.getMapService().getZoomController();
 			if (zc!=null) {
 				zc.setGraphEnvironmentController(this.getGraphEnvironmentController());
+				zc.setBasicGraphGui(this);
 				zc.setVisualizationViewer(this.getVisualizationViewer());
 				return zc;
 			}
 		}
 		// --- Use the default ZommController --------------------------------- 
 		if (zoomController==null) {
-			zoomController = new BasicGraphGuiZoomController(this.getGraphEnvironmentController(), this.getVisualizationViewer());
+			zoomController = new BasicGraphGuiZoomController(this.getGraphEnvironmentController(), this);
 		}
 		return zoomController;
 	}
-	/**
-	 * Zooms in.
-	 */
-	public void zoomIn() {
-		this.getZoomController().zoomIn();
-	}
-	/**
-	 * Zooms in.
-	 * @param zoomAtPoint the point to zoom at (e.g. the current mouse position on screen)
-	 */
-	public void zoomIn(Point2D zoomAtPoint) {
-		this.getZoomController().zoomIn(zoomAtPoint);
-	}
-	/**
-	 * Zooms out.
-	 */
-	public void zoomOut() {
-		this.getZoomController().zoomOut();
-	}
-	/**
-	 * Zooms out.
-	 * @param zoomAtPoint the zoom at point (e.g. the current mouse position on screen)
-	 */
-	public void zoomOut(Point2D zoomAtPoint) {
-		this.getZoomController().zoomOut(zoomAtPoint);
-	}
-	
-	/**
-	 * Zoom one to one and move the focus according to the coordinate system source.
-	 */
-	private void zoomOneToOneMoveFocus() {
-		this.getZoomController().zoomOneToOneMoveFocus();
-	}
-	/**
-	 * Zooms that the graph fits to the window.
-	 */
-	private void zoomToFitToWindow() {
-		this.getZoomController().zoomToFitToWindow();
-	}
-	/**
-	 * Zoom to the selected component.
-	 */
-	private void zoomToComponent() {
-		this.getZoomController().zoomToComponent();
-	}
-	
 	
 	// --------------------------------------------------------------------------------------------
 	// --- From here, handling of satellite visualization ----------------------------------------- 
@@ -1514,7 +1541,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- Set dimension and create a new SatelliteVisualizationViewer ----
 			visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getDimensionOfSatelliteVisualizationViewer());
 			visViewSatellite.scaleToLayout(this.getZoomController().getScalingControl());
-			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(this.getZoomController().getScalingControl()));
+			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(this));
 			
 			// --- Configure the node shape and size ------------------------------
 			visViewSatellite.getRenderContext().setVertexShapeTransformer(this.getVisualizationViewer().getRenderContext().getVertexShapeTransformer());
@@ -1594,39 +1621,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 	}
 	
-	/**
-	 * Converts an {@link Image} to a {@link BufferedImage}
-	 * @param image The image
-	 * @return The buffered image
-	 */
-	private BufferedImage convertToBufferedImage(Image image){
-		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D biGraphics = bufferedImage.createGraphics();
-		biGraphics.drawImage(image, 0, 0, null);
-		biGraphics.dispose();
-		return bufferedImage;
-	}
-	
-	/**
-	 * Replaces a specified color with another one in an image.
-	 * @param image The image 
-	 * @param oldColor The color that will be replaced
-	 * @param newColor The new color
-	 * @return The image
-	 */
-	private BufferedImage exchangeColor(BufferedImage image, Color oldColor, Color newColor){
-		for(int x=0; x<image.getWidth(); x++){
-			for(int y=0; y<image.getHeight(); y++){
-				Color currentColor = new Color(image.getRGB(x, y));
-				if(currentColor.equals(oldColor)){
-					image.setRGB(x, y, newColor.getRGB());
-				}
-			}
-			
-		}
-		return image;
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -1642,7 +1636,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			switch (reason) {
 			case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
 			case NetworkModelNotification.NETWORK_MODEL_LayoutChanged:
-				this.setEdgeShapeTransformer();
 				this.reLoadGraph();
 				break;
 				
@@ -1683,19 +1676,19 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 				
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window:
-				this.zoomToFitToWindow();
+				this.getZoomController().zoomToFitToWindow();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
-				this.zoomOneToOneMoveFocus();
+				this.getZoomController().zoomOneToOne();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
-				this.zoomToComponent();
+				this.getZoomController().zoomToComponent();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
-				this.zoomIn();
+				this.getZoomController().zoomIn();
 				break;
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
-				this.zoomOut();
+				this.getZoomController().zoomOut();
 				break;
 
 				
@@ -1715,8 +1708,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 				
 				
-			case NetworkModelNotification.NETWORK_MODEL_MapScaleChanged:
 			case NetworkModelNotification.NETWORK_MODEL_MapServiceChanged:
+			case NetworkModelNotification.NETWORK_MODEL_MapScaleChanged:
 			case NetworkModelNotification.NETWORK_MODEL_MapTransparencyChanged:
 				this.setMapPreRendering();
 				break;

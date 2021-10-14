@@ -13,6 +13,7 @@ import org.awb.env.networkModel.GraphEdgeShapeConfiguration;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 
 import agentgui.core.application.Language;
 
@@ -93,7 +94,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	 */
 	@Override
 	protected String getConfigurationAsStringInternal() {
-		return GraphNode.getPositionAsString(this.getShape().getCtrlPt());
+		return GraphNodePositionFactory.getPoint2DAsString(this.getShape().getCtrlPt());
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +102,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 	 */
 	@Override
 	protected void setConfigurationFromStringInternal(String stringConfiguration) {
-		this.setIntermediatePoint(GraphNode.getPositionFromString(stringConfiguration));
+		this.setIntermediatePoint(GraphNodePositionFactory.getPoint2DFromString(stringConfiguration));
 	}
 	
 	/* (non-Javadoc)
@@ -181,7 +182,7 @@ public class QuadCurveConfiguration extends GraphEdgeShapeConfiguration<QuadCurv
 			BasicGraphGuiVisViewer<GraphNode, GraphEdge> visualizationViewer = configuredLinePopupPlugin.getVisualizationViewer();
 			List<GraphNode> edgeNodes = this.getGraphNodesOfGraphEdge(visualizationViewer, currentGraphEdge);
 			Point2D newPositionGraph = QuadCurveConfiguration.this.getIntermediatePointTransformer().transformToGraphCoordinate(curve.getCtrlPt(), edgeNodes.get(0), edgeNodes.get(1));
-			Point2D newPositionPanel = configuredLinePopupPlugin.getBasicGraphGui().getCoordinateSystemPositionTransformer().transform(newPositionGraph);
+			Point2D newPositionPanel = configuredLinePopupPlugin.getBasicGraphGui().getCoordinateSystemPositionTransformer().apply(newPositionGraph);
 			visualizationViewer.getGraphLayout().setLocation(currentGraphNode, newPositionPanel);
 			visualizationViewer.repaint();
 			break;

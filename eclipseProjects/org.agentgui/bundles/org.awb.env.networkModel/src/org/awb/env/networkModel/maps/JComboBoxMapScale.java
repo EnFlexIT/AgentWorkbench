@@ -21,6 +21,7 @@ public class JComboBoxMapScale extends JComboBox<MapScale> {
 	public JComboBoxMapScale() {
 		super();
 		this.setModel(getComboBoxModel());
+		this.setMaximumRowCount(MapScale.values().length);
 	}
 	/**
 	 * Gets the combo box model.

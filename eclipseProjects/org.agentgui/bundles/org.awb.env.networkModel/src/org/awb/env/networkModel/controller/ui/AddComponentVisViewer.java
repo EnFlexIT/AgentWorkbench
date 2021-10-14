@@ -41,7 +41,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.commons.collections15.Transformer;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
@@ -50,6 +49,8 @@ import org.awb.env.networkModel.prototypes.DistributionNode;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
+
+import com.google.common.base.Function;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.LayeredIcon;
@@ -131,18 +132,14 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 	    this.setSize(new Dimension(150, 150));
 	    this.setPreferredSize(new Dimension(250, 250));
 	    
-	    // --- Define a movement for the nodes ---------------------------- 
-//		MutableTransformer mutableLayout = visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-//		mutableLayout.translate(120, 10);
-
 		// --- Configure the vertex shape and size ------------------------
 	    this.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
 		
 		// --- Configure node icons, if configured ------------------------		
-	    this.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>(){
+	    this.getRenderContext().setVertexIconTransformer(new Function<GraphNode, Icon>(){
 			
 			@Override
-			public Icon transform(GraphNode node) {
+			public Icon apply(GraphNode node) {
 				
 				boolean picked = getPickedVertexState().isPicked(node);
 				Icon icon = null;
@@ -175,17 +172,17 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 		});
 		
 		// --- Set tool tip for nodes -------------------------------------
-	    this.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
+	    this.setVertexToolTipTransformer(new Function<GraphNode, String>() {
 			@Override
-			public String transform(GraphNode edge) {
+			public String apply(GraphNode edge) {
 				return edge.getId();
 			}
 		});
 
 		// --- Configure vertex colors ------------------------------------
-	    this.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
+	    this.getRenderContext().setVertexFillPaintTransformer(new Function<GraphNode, Paint>() {
 			@Override
-			public Paint transform(GraphNode node) {
+			public Paint apply(GraphNode node) {
 
 				String colorString = null;
 				String colorStringDefault = localDomainSetings.getVertexColor();
@@ -221,9 +218,9 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 		}); // end transformer
 				
 		// --- Configure to show node labels ------------------------------
-	    this.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
+	    this.getRenderContext().setVertexLabelTransformer(new Function<GraphNode, String>() {
 				@Override
-				public String transform(GraphNode node) {
+				public String apply(GraphNode node) {
 					if (isCurrentComponentDistributionNode()) {
 						if (localComponentTypeListElement.getComponentTypeSettings().isShowLabel()) {
 							return node.getId();
@@ -239,9 +236,9 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 		);
 
 		// --- Configure edge colors --------------------------------------
-	    this.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
+	    this.getRenderContext().setEdgeDrawPaintTransformer(new Function<GraphEdge, Paint>() {
 			@Override
-			public Paint transform(GraphEdge edge) {
+			public Paint apply(GraphEdge edge) {
 				if (getPickedEdgeState().isPicked(edge)) {
 					return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
 				}
@@ -259,9 +256,9 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 			}
 		});
 		// --- Configure Edge Image Labels --------------------------------
-	    this.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
+	    this.getRenderContext().setEdgeLabelTransformer(new Function<GraphEdge, String>() {
 			@Override
-			public String transform(GraphEdge edge) {
+			public String apply(GraphEdge edge) {
 				// Get the path of the Image from the component type settings
 				String textDisplay = "";
 				try {
@@ -295,12 +292,12 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 	    this.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 
 		// --- Use straight lines as edges --------------------------------
-	    this.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
-
+	    this.getRenderContext().setEdgeShapeTransformer(EdgeShape.line(this.getGraphLayout().getGraph()));
+	    
 		// --- Set edge width ---------------------------------------------
-	    this.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
+	    this.getRenderContext().setEdgeStrokeTransformer(new Function<GraphEdge, Stroke>() {
 			@Override
-			public Stroke transform(GraphEdge edge) {
+			public Stroke apply(GraphEdge edge) {
 				float edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
 				try {
 					edgeWidth = localComponentTypeListElement.getComponentTypeSettings().getEdgeWidth();
@@ -361,14 +358,14 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
 	 */
 	@SuppressWarnings("hiding")
-	private final class VertexShapeSizeAspect<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Transformer<GraphNode, Shape> {
+	private final class VertexShapeSizeAspect<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Function<GraphNode, Shape> {
 
 		/** Instantiates a new vertex shape size aspect. */
 		public VertexShapeSizeAspect() {
 
-			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
+			this.setSizeTransformer(new Function<GraphNode, Integer>() {
 				@Override
-				public Integer transform(GraphNode node) {
+				public Integer apply(GraphNode node) {
 
 					Integer size = graphController.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
 					Integer sizeSettings = null;
@@ -399,7 +396,7 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 		 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
 		 */
 		@Override
-		public Shape transform(GraphNode node) {
+		public Shape apply(GraphNode node) {
 			return factory.getEllipse(node); // DEFAULT;
 		}
 	}

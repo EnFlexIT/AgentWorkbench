@@ -56,6 +56,7 @@ import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDesc
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService.DataModelServiceAction;
+import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
@@ -90,1111 +91,987 @@ import jade.core.Agent;
  */
 public class GraphEnvironmentController extends EnvironmentController {
 
-    /**
-     * Custom user object to be placed in the project object. Used here for storing
-     * the current component type settings.
-     */
-    private static final String GeneralGraphSettings4MASFile = "~GeneralGraphSettings~";
+	/** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
+	private static final String GeneralGraphSettings4MASFile = "~GeneralGraphSettings~";
 
-    /**
-     * The setup name that serves as base for the file name used for saving the
-     * graph and the components (without suffix)
-     */
-    private String setupName;
-    /**
-     * Storage handler (services) for individual data models for
-     * {@link DataModelNetworkElement}
-     */
-    private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> setupStorageServiceHashMap;
+	
+	/** The setup name that serves as base for the file name used for saving the graph and the components (without suffix) */
+	private String setupName;
+	/** Storage handler (services) for individual data models for {@link DataModelNetworkElement} */
+	private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> setupStorageServiceHashMap;
+	
+	/** The network model currently loaded */
+	private NetworkModel networkModel;
+	private NetworkModelUndoManager networkModelUndoManager;
+	
+	/** The controller for user messages */
+	private UIMessagingController uiMessagingController;
 
-    /** The network model currently loaded */
-    private NetworkModel networkModel;
-    private NetworkModelUndoManager networkModelUndoManager;
+	/** The NetworkModel that is stored in the clipboard */
+	private NetworkModel clipboardNetworkModel;
 
-    /** The controller for user messages */
-    private UIMessagingController uiMessagingController;
+	/** The abstract environment model is just an open slot, where individual things can be placed. */
+	private AbstractEnvironmentModel abstractEnvironmentModel;
 
-    /** The NetworkModel that is stored in the clipboard */
-    private NetworkModel clipboardNetworkModel;
-
-    /**
-     * The abstract environment model is just an open slot, where individual things
-     * can be placed.
-     */
-    private AbstractEnvironmentModel abstractEnvironmentModel;
-
-    /** The is temporary prevent saving. */
-    private boolean isTemporaryPreventSaving;
-
-    /**
-     * The constructor for the GraphEnvironmentController for displaying the current
-     * environment model during a running simulation. Use
-     * {@link #setDisplayEnvironmentModel(DisplaytEnvironmentModel)}, in order to
-     * set the current {@link NetworkModel}.
-     */
-    public GraphEnvironmentController() {
-    }
-
-    /**
-     * The constructor for the GraphEnvironmentController for configurations within
-     * Agent.GUI
-     * 
-     * @param project The current project
-     */
-    public GraphEnvironmentController(Project project) {
-	super(project);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#createEnvironmentPanel()
-     */
-    @Override
-    public EnvironmentPanel createEnvironmentPanel() {
-	return new GraphEnvironmentControllerGUI(this);
-    }
-
-    /**
-     * Returns the current {@link GraphEnvironmentControllerGUI}.
-     * 
-     * @return the current GraphEnvironmentControllerGUI
-     */
-    public GraphEnvironmentControllerGUI getGraphEnvironmentControllerGUI() {
-	return (GraphEnvironmentControllerGUI) this.getEnvironmentPanel();
-    }
-
-    /**
-     * Returns the current {@link UIMessagingController}.
-     * 
-     * @return the ui messaging controller
-     */
-    public UIMessagingController getUiMessagingController() {
-	if (uiMessagingController == null) {
-	    uiMessagingController = new UIMessagingController(this);
+	/** The is temporary prevent saving. */
+	private boolean isTemporaryPreventSaving;
+	
+	
+	/**
+	 * The constructor for the GraphEnvironmentController for displaying the current environment model during 
+	 * a running simulation. Use {@link #setDisplayEnvironmentModel(DisplaytEnvironmentModel)}, in order to set 
+	 * the current {@link NetworkModel}.
+	 */
+	public GraphEnvironmentController() {
 	}
-	return uiMessagingController;
-    }
-
-    /**
-     * Sets the project unsaved.
-     */
-    public void setProjectUnsaved() {
-	if (this.getProject() != null) {
-	    this.getProject().setUnsaved(true);
-	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Observable#notifyObservers(java.lang.Object)
-     */
-    @Override
-    public void notifyObservers(Object arg) {
-	this.setChanged();
-	super.notifyObservers(arg);
-    }
-
-    /**
-     * Returns the {@link GeneralGraphSettings4MAS}
-     * 
-     * @return the general graph settings4 mas
-     */
-    public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
-	return this.getNetworkModel().getGeneralGraphSettings4MAS();
-    }
-
-    /**
-     * Returns the current {@link ComponentTypeSettings}
-     * 
-     * @return the current component type settings TreeMap.
-     */
-    public TreeMap<String, ComponentTypeSettings> getComponentTypeSettings() {
-	return this.getGeneralGraphSettings4MAS().getCurrentCTS();
-    }
-
-    /**
-     * Returns the current {@link DomainSettings}.
-     * 
-     * @return the current domain settings as TreeMap
-     */
-    public TreeMap<String, DomainSettings> getDomainSettings() {
-	return this.getGeneralGraphSettings4MAS().getDomainSettings();
-    }
-
-    /**
-     * Enables to set the current {@link NetworkModel}.
-     * 
-     * @param newNetworkModel the new network model
-     */
-    private void setNetworkModel(NetworkModel newNetworkModel) {
-	// --- Remind the GeneralGraphSettings4MAS ----------------------------
-	GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
-	if (this.networkModel != null) {
-	    generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();
-	}
-	// --- Set NetworkModel -----------------------------------------------
-	if (newNetworkModel == null) {
-	    this.networkModel = new NetworkModel();
-	    this.networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
-	} else {
-	    this.networkModel = newNetworkModel;
+	/**
+	 * The constructor for the GraphEnvironmentController for configurations within Agent.GUI
+	 * 
+	 * @param project The current project
+	 */
+	public GraphEnvironmentController(Project project) {
+		super(project);
 	}
 
-	// --- Clean up agents list corresponding to current NetworkModel -----
-	this.validateNetworkComponentAndAgents2Start();
-	// --- Notify all Observers about a new NetworkModel ------------------
-	this.getNetworkModelUndoManager().reLoadNetworkModel();
-
-    }
-
-    /**
-     * Returns the current {@link NetworkModel}
-     * 
-     * @return NetworkModel - The environment model
-     */
-    public NetworkModel getNetworkModel() {
-	if (networkModel == null) {
-	    networkModel = new NetworkModel();
-	    networkModel.setGeneralGraphSettings4MAS(this.loadGeneralGraphSettings());
-	}
-	return networkModel;
-    }
-
-    /**
-     * Returns the {@link NetworkModelUndoManager} that enables to do or undo
-     * actions in the visualization.
-     * 
-     * @return the NetworkModelUndoManager for the current controller
-     */
-    public NetworkModelUndoManager getNetworkModelUndoManager() {
-	if (networkModelUndoManager == null) {
-	    networkModelUndoManager = new NetworkModelUndoManager(this);
-	}
-	return networkModelUndoManager;
-    }
-
-    /**
-     * Copies a set of NetworkComponent's as independent NetworkModel to the
-     * clipboard.
-     * 
-     * @param networkComponentsForClipboard the network components
-     */
-    public void copyToClipboard(List<NetworkComponent> networkComponentsForClipboard) {
-
-	if (networkComponentsForClipboard == null || networkComponentsForClipboard.size() == 0)
-	    return;
-	if (this.getNetworkModel() == null)
-	    return;
-
-	// ---------- Prepare for the Clipboard ---------------------
-	NetworkModel clipNetworkModel = this.getNetworkModel().getCopy();
-	clipNetworkModel.removeNetworkComponentsInverse(networkComponentsForClipboard);
-	clipNetworkModel.resetGraphElementLayout();
-
-	this.setClipboardNetworkModel(clipNetworkModel);
-    }
-
-    /**
-     * Sets a NetworkModel to the clipboard.
-     * 
-     * @param newClipboardNetworkModel the new clipboard network model
-     */
-    public void setClipboardNetworkModel(NetworkModel newClipboardNetworkModel) {
-	this.clipboardNetworkModel = newClipboardNetworkModel;
-    }
-
-    /**
-     * Returns the NetworkModel from the clipboard .
-     * 
-     * @return the clipboard NetworkModel
-     */
-    public NetworkModel getClipboardNetworkModel() {
-	return clipboardNetworkModel;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#dispose()
-     */
-    @Override
-    public void dispose() {
-	this.notifyObservers(
-		new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ControllerIsDisposing));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * agentgui.core.environment.EnvironmentController#handleProjectNotification(
-     * java.lang.Object)
-     */
-    @Override
-    protected void handleProjectNotification(Object updateObject) {
-	if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
-	    this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
-	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#
-     * handleSimulationSetupNotification(agentgui.core.sim.setup.
-     * SimulationSetupsChangeNotification)
-     */
-    @Override
-    protected void handleSimulationSetupNotification(SimulationSetupNotification sscn) {
-
-	switch (sscn.getUpdateReason()) {
-	case SIMULATION_SETUP_ADD_NEW:
-	    this.updateSetupName();
-	    this.setDisplayEnvironmentModel(null);
-	    // --- Register a new list of agents that has to be started with the environment
-	    // ------
-	    this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
-	    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-	    break;
-
-	case SIMULATION_SETUP_COPY:
-	    this.saveEnvironment();
-	    break;
-
-	case SIMULATION_SETUP_REMOVE:
-	    File graphFile = this.getFileGraphML();
-	    if (graphFile.exists()) {
-		graphFile.delete();
-	    }
-	    File componentFile = this.getFileXML();
-	    if (componentFile.exists()) {
-		componentFile.delete();
-	    }
-	    this.callSetupDataModelStorageServices(DataModelServiceAction.RemoveSetup);
-	    break;
-
-	case SIMULATION_SETUP_RENAME:
-
-	    // --- Collect old settings -------------------
-	    String oldSetupName = this.setupName;
-	    File oldGraphFile = this.getFileGraphML();
-	    File oldComponentFile = this.getFileXML();
-
-	    // --- Internally update to new settings ------
-	    this.updateSetupName();
-
-	    // --- Rename ---------------------------------
-	    if (oldGraphFile.exists()) {
-		oldGraphFile.renameTo(this.getFileGraphML());
-	    }
-	    if (oldComponentFile.exists()) {
-		oldComponentFile.renameTo(this.getFileXML());
-	    }
-
-	    // --- Call storage services ------------------
-	    String[] renameArgs = new String[2];
-	    renameArgs[0] = oldSetupName;
-	    renameArgs[1] = this.getProject().getSimulationSetupCurrent();
-	    if (renameArgs[0].equals(renameArgs[1]) == false) {
-		this.callSetupDataModelStorageServices(DataModelServiceAction.RenameSetup, renameArgs);
-	    }
-	    break;
-
-	case SIMULATION_SETUP_PREPARE_SAVING:
-	    this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
-	    break;
-
-	case SIMULATION_SETUP_LOAD:
-	case SIMULATION_SETUP_SAVED:
-	    // --- Nothing to do here ---------------------
-	    break;
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#createEnvironmentPanel()
+	 */
+	@Override
+	public EnvironmentPanel createEnvironmentPanel() {
+		return new GraphEnvironmentControllerGUI(this);
 	}
 
-    }
-
-    /**
-     * This method sets the setupName property and the SimulationSetup's
-     * environmentFileName according to the current SimulationSetup
-     */
-    private void updateSetupName() {
-	this.setupName = this.getProject().getSimulationSetupCurrent();
-    }
-
-    /**
-     * Returns the XML file for the NetworkComponents and so on.
-     * 
-     * @return the XML file for the NetworkComponents and so on
-     */
-    public File getFileXML() {
-	return getFileXML(this.getEnvFolderPath(), this.setupName);
-    }
-
-    /**
-     * Returns the XML file for the NetworkComponents and so on.
-     *
-     * @param envDirectory the directory for the environment model
-     * @param setupName    the setup name
-     * @return the XML file for the NetworkComponents and so on
-     */
-    public static File getFileXML(String envDirectory, String setupName) {
-	return new File(envDirectory + setupName + ".xml");
-    }
-
-    /**
-     * Returns the GraphML file for the current NetworkModel.
-     * 
-     * @return the GraphML file
-     */
-    public File getFileGraphML() {
-	return getFileGraphML(this.getEnvFolderPath(), this.setupName);
-    }
-
-    /**
-     * Returns the XML file with the graph definition in graphml.
-     *
-     * @param envDirectory the directory for the environment model
-     * @param setupName    the setup name
-     * @return the XML file for the NetworkComponents and so on
-     */
-    public static File getFileGraphML(String envDirectory, String setupName) {
-	return new File(envDirectory + setupName + ".graphml");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#getSetupFiles(java.lang.
-     * String)
-     */
-    @Override
-    public List<File> getSetupFiles(String setupName) {
-
-	List<File> fileList = new ArrayList<File>();
-	fileList.add(GraphEnvironmentController.getFileGraphML(this.getEnvFolderPath(), setupName));
-	fileList.add(GraphEnvironmentController.getFileXML(this.getEnvFolderPath(), setupName));
-
-	List<File> sdmServicesFileList = this.getSetupFilesFromSetupDataModelStorageServices(setupName);
-	if (sdmServicesFileList != null) {
-	    fileList.addAll(sdmServicesFileList);
-	}
-	return fileList;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#getPersistenceStrategy()
-     */
-    @Override
-    protected PersistenceStrategy getPersistenceStrategy() {
-	return PersistenceStrategy.HandleWithSetupOpenOrSave;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#loadEnvironment()
-     */
-    @Override
-    public void loadEnvironment() {
-
-	// --- Check for the current setup
-	// --------------------------------------------------------
-	if (this.setupName == null) {
-	    this.updateSetupName();
-	    if (setupName == null)
-		return;
+	/**
+	 * Returns the current {@link GraphEnvironmentControllerGUI}.
+	 * @return the current GraphEnvironmentControllerGUI
+	 */
+	public GraphEnvironmentControllerGUI getGraphEnvironmentControllerGUI() {
+		return (GraphEnvironmentControllerGUI) this.getEnvironmentPanel();
 	}
 
-	// --- Set lock to prevent parallel saving actions
-	// ----------------------------------------
-	this.isTemporaryPreventSaving = true;
+	/**
+	 * Returns the current {@link UIMessagingController}.
+	 * @return the ui messaging controller
+	 */
+	public UIMessagingController getUiMessagingController() {
+		if (uiMessagingController==null) {
+			uiMessagingController = new UIMessagingController(this);
+		}
+		return uiMessagingController;
+	}
+	
+	/**
+	 * Sets the project unsaved.
+	 */
+	public void setProjectUnsaved() {
+		if (this.getProject() != null) {
+			this.getProject().setUnsaved(true);
+		}
+	}
 
-	// --- Define loader thread
-	// ---------------------------------------------------------------
-	Thread envLoader = new Thread(new Runnable() {
-	    @Override
-	    public void run() {
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Observable#notifyObservers(java.lang.Object)
+	 */
+	@Override
+	public void notifyObservers(Object arg) {
+		this.setChanged();
+		super.notifyObservers(arg);
+	}
 
-		try {
+	/**
+	 * Returns the {@link GeneralGraphSettings4MAS}
+	 * @return the general graph settings4 mas
+	 */
+	public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
+		return this.getNetworkModel().getGeneralGraphSettings4MAS();
+	}
+	/**
+	 * Returns the current {@link ComponentTypeSettings}
+	 * @return the current component type settings TreeMap.
+	 */
+	public TreeMap<String, ComponentTypeSettings> getComponentTypeSettings() {
+		return this.getGeneralGraphSettings4MAS().getCurrentCTS();
+	}
+	/**
+	 * Returns the current {@link DomainSettings}.
+	 * @return the current domain settings as TreeMap
+	 */
+	public TreeMap<String, DomainSettings> getDomainSettings() {
+		return this.getGeneralGraphSettings4MAS().getDomainSettings();
+	}
+	/**
+	 * Enables to set the current {@link NetworkModel}.
+	 * @param newNetworkModel the new network model
+	 */
+	private void setNetworkModel(NetworkModel newNetworkModel) {
+		// --- Remind the GeneralGraphSettings4MAS ----------------------------
+		GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+		if (this.networkModel != null) {
+			generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();
+		}
+		// --- Set NetworkModel -----------------------------------------------
+		if (newNetworkModel == null) {
+			this.networkModel = new NetworkModel();
+			this.networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
+		} else {
+			this.networkModel = newNetworkModel;
+		}
 
-		    // --- Register agents that have to be started with the environment -----------
-		    GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
-		    GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(
-			    SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+		// --- Clean up agents list corresponding to current NetworkModel -----
+		this.validateNetworkComponentAndAgents2Start();
+		// --- Notify all Observers about a new NetworkModel ------------------
+		this.getNetworkModelUndoManager().reLoadNetworkModel();
 
-		    // --- Update path according to setup -----------------------------------------
-		    GraphEnvironmentController.this.updateSetupName();
+	}
 
-		    // --- Set application status text --------------------------------------------
-		    if (Application.getMainWindow() != null) {
-			Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			Application.setStatusBarMessage(Language.translate("Lade Setup") + ": "
-				+ GraphEnvironmentController.this.getFileXML().getAbsolutePath() + " ...");
-			// --- Reset Undo-Manager -------------------------------------------------
-			GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
-		    }
+	/**
+	 * Returns the current {@link NetworkModel}
+	 * @return NetworkModel - The environment model
+	 */
+	public NetworkModel getNetworkModel() {
+		if (networkModel == null) {
+			networkModel = new NetworkModel();
+			networkModel.setGeneralGraphSettings4MAS(this.loadGeneralGraphSettings());
+		}
+		return networkModel;
+	}
 
-		    // --- Define the NetworkModel ------------------------------------------------
-		    NetworkModel netModel = new NetworkModel();
+	/**
+	 * Returns the {@link NetworkModelUndoManager} that enables to do or undo actions in the visualization.
+	 * @return the NetworkModelUndoManager for the current controller
+	 */
+	public NetworkModelUndoManager getNetworkModelUndoManager() {
+		if (networkModelUndoManager == null) {
+			networkModelUndoManager = new NetworkModelUndoManager(this);
+		}
+		return networkModelUndoManager;
+	}
+	
+	
+	/**
+	 * Copies a set of NetworkComponent's as independent NetworkModel to the clipboard.
+	 * @param networkComponentsForClipboard the network components
+	 */
+	public void copyToClipboard(List<NetworkComponent> networkComponentsForClipboard) {
 
-		    // --- 1. Load component type settings from file ------------------------------
-		    GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
-		    netModel.setGeneralGraphSettings4MAS(ggs4MAS);
+		if (networkComponentsForClipboard==null || networkComponentsForClipboard.size()==0) return;
+		if (this.getNetworkModel()==null) return;
 
-		    // --- 2. Load the graph topology from the graph file -------------------------
-		    netModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
+		// ---------- Prepare for the Clipboard ---------------------
+		NetworkModel clipNetworkModel = this.getNetworkModel().getCopy();
+		clipNetworkModel.removeNetworkComponentsInverse(networkComponentsForClipboard);
+		clipNetworkModel.resetGraphElementLayout();
 
-		    // --- 3. Load the component definitions from the component file --------------
-		    netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
+		this.setClipboardNetworkModel(clipNetworkModel);
+	}
 
-		    // --- Remind the list of custom toolbar elements -----------------------------
-		    if (GraphEnvironmentController.this.getNetworkModel() != null) {
-			GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
-			if (gg4mas != null) {
-			    ggs4MAS.setCustomToolbarComponentDescriptions(
-				    gg4mas.getCustomToolbarComponentDescriptions());
+	/**
+	 * Sets a NetworkModel to the clipboard.
+	 * @param newClipboardNetworkModel the new clipboard network model
+	 */
+	public void setClipboardNetworkModel(NetworkModel newClipboardNetworkModel) {
+		this.clipboardNetworkModel = newClipboardNetworkModel;
+	}
+	/**
+	 * Returns the NetworkModel from the clipboard .
+	 * @return the clipboard NetworkModel
+	 */
+	public NetworkModel getClipboardNetworkModel() {
+		return clipboardNetworkModel;
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#dispose()
+	 */
+	@Override
+	public void dispose() {
+		this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ControllerIsDisposing));
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#handleProjectNotification(java.lang.Object)
+	 */
+	@Override
+	protected void handleProjectNotification(Object updateObject) {
+		if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
+			this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
+		}
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#handleSimulationSetupNotification(agentgui.core.sim.setup.SimulationSetupsChangeNotification)
+	 */
+	@Override
+	protected void handleSimulationSetupNotification(SimulationSetupNotification sscn) {
+
+		switch (sscn.getUpdateReason()) {
+		case SIMULATION_SETUP_ADD_NEW:
+			this.updateSetupName();
+			this.setDisplayEnvironmentModel(null);
+			// --- Register a new list of agents that has to be started with the environment ------
+			this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
+			this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+			break;
+
+		case SIMULATION_SETUP_COPY:
+			this.saveEnvironment();
+			break;
+
+		case SIMULATION_SETUP_REMOVE:
+			File graphFile = this.getFileGraphML();
+			if (graphFile.exists()) {
+				graphFile.delete();
 			}
-		    }
-
-		    // --- Use case 'Application' -------------------------------------------------
-		    if (Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION) {
-			// --- Wait for visualization component before assign network model ---
-			while (GraphEnvironmentController.this.getEnvironmentPanel() == null) {
-			    Thread.sleep(50);
+			File componentFile = this.getFileXML();
+			if (componentFile.exists()) {
+				componentFile.delete();
 			}
-			BasicGraphGui basicGraphGui = GraphEnvironmentController.this.getGraphEnvironmentControllerGUI()
-				.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
-			while (basicGraphGui.isCreatedVisualizationViewer() == false) {
-			    Thread.sleep(50);
-			}
-		    }
+			this.callSetupDataModelStorageServices(DataModelServiceAction.RemoveSetup);
+			break;
 
-		    // --- Assign NetworkMoldel to visualization ----------------------------------
-		    final NetworkModel netModelFinal = netModel;
-		    SwingUtilities.invokeLater(new Runnable() {
+		case SIMULATION_SETUP_RENAME:
+
+			// --- Collect old settings -------------------
+			String oldSetupName = this.setupName;
+			File oldGraphFile = this.getFileGraphML();
+			File oldComponentFile = this.getFileXML();
+			
+			// --- Internally update to new settings ------
+			this.updateSetupName();
+
+			// --- Rename ---------------------------------
+			if (oldGraphFile.exists()) {
+				oldGraphFile.renameTo(this.getFileGraphML());
+			}
+			if (oldComponentFile.exists()) {
+				oldComponentFile.renameTo(this.getFileXML());
+			}
+			
+			// --- Call storage services ------------------
+			String[] renameArgs = new String[2];
+			renameArgs[0] = oldSetupName;
+			renameArgs[1] = this.getProject().getSimulationSetupCurrent();
+			if (renameArgs[0].equals(renameArgs[1])==false) {
+				this.callSetupDataModelStorageServices(DataModelServiceAction.RenameSetup, renameArgs);
+			}
+			break;
+
+		case SIMULATION_SETUP_PREPARE_SAVING:
+			this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
+			break;
+
+		case SIMULATION_SETUP_LOAD:
+		case SIMULATION_SETUP_SAVED:
+			// --- Nothing to do here ---------------------
+			break;
+		}
+
+	}
+
+	/**
+	 * This method sets the setupName property and the SimulationSetup's environmentFileName according to the current SimulationSetup
+	 */
+	private void updateSetupName() {
+		this.setupName = this.getProject().getSimulationSetupCurrent();
+	}
+	/**
+	 * Returns the XML file for the NetworkComponents and so on.
+	 * @return the XML file for the NetworkComponents and so on 
+	 */
+	public File getFileXML() {
+		return getFileXML(this.getEnvFolderPath(), this.setupName);
+	}
+	/**
+	 * Returns the XML file for the NetworkComponents and so on.
+	 *
+	 * @param envDirectory the directory for the environment model 
+	 * @param setupName the setup name
+	 * @return the XML file for the NetworkComponents and so on
+	 */
+	public static File getFileXML(String envDirectory, String setupName) {
+		return new File(envDirectory + setupName + ".xml");
+	}
+	
+	/**
+	 * Returns the GraphML file for the current NetworkModel.
+	 * @return the GraphML file
+	 */
+	public File getFileGraphML() {
+		return getFileGraphML(this.getEnvFolderPath(), this.setupName);
+	}
+	/**
+	 * Returns the XML file with the graph definition in graphml.
+	 *
+	 * @param envDirectory the directory for the environment model
+	 * @param setupName the setup name
+	 * @return the XML file for the NetworkComponents and so on
+	 */
+	public static File getFileGraphML(String envDirectory, String setupName) {
+		return new File(envDirectory + setupName + ".graphml");
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getSetupFiles(java.lang.String)
+	 */
+	@Override
+	public List<File> getSetupFiles(String setupName) {
+		
+		List<File> fileList = new ArrayList<File>();
+		fileList.add(GraphEnvironmentController.getFileGraphML(this.getEnvFolderPath(), setupName));
+		fileList.add(GraphEnvironmentController.getFileXML(this.getEnvFolderPath(), setupName));
+
+		List<File> sdmServicesFileList = this.getSetupFilesFromSetupDataModelStorageServices(setupName);
+		if (sdmServicesFileList!=null) {
+			fileList.addAll(sdmServicesFileList);
+		}
+		return fileList;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getPersistenceStrategy()
+	 */
+	@Override
+	protected PersistenceStrategy getPersistenceStrategy() {
+		return PersistenceStrategy.HandleWithSetupOpenOrSave;
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#loadEnvironment()
+	 */
+	@Override
+	public void loadEnvironment() {
+		
+		// --- Check for the current setup --------------------------------------------------------
+		if (this.setupName==null) {
+			this.updateSetupName();
+			if (setupName==null) return;
+		}
+
+		// --- Set lock to prevent parallel saving actions ----------------------------------------
+		this.isTemporaryPreventSaving = true;
+		
+		// --- Define loader thread ---------------------------------------------------------------
+		Thread envLoader = new Thread(new Runnable() {
 			@Override
 			public void run() {
-			    // --- Use the local method in order to inform the observer -----------
-			    GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelFinal);
-			    // --- Decode data models that are Base64 encoded in the moment -------
-			    GraphEnvironmentController.this.loadDataModelNetworkElements();
+
+				try {
+
+					// --- Register agents that have to be started with the environment -----------
+					GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
+					GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+
+					// --- Update path according to setup -----------------------------------------
+					GraphEnvironmentController.this.updateSetupName();
+
+					// --- Set application status text --------------------------------------------
+					if (Application.getMainWindow()!=null) {
+						Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + GraphEnvironmentController.this.getFileXML().getAbsolutePath() + " ...");
+						// --- Reset Undo-Manager -------------------------------------------------
+						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
+					}
+					
+					// --- Define the NetworkModel ------------------------------------------------
+					NetworkModel netModel = new NetworkModel();
+
+					// --- Set the NetworkModel instance to the GraphNodePositionFactory ----------
+					GraphNodePositionFactory.setLoadingNetworkModel(netModel);
+					
+					// --- 1. Load component type settings from file ------------------------------
+					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
+					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
+					
+					// --- 2. Load the component definitions and other from the component file ----
+					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
+
+					// --- 3. Load the graph topology from the graph file -------------------------
+					netModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
+					
+					// --- 4. Refresh the graph elements in the NetworkModel ----------------------
+					netModel.refreshGraphElements();
+					
+					// --- Remind the list of custom toolbar elements -----------------------------
+					if (GraphEnvironmentController.this.getNetworkModel()!=null) {
+						GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
+						if (gg4mas!=null) {
+							ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
+						}
+					}
+					
+					// --- Use case 'Application' -------------------------------------------------
+					if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+						// --- Wait for visualization component before assign network model ---
+						while (GraphEnvironmentController.this.getEnvironmentPanel()==null) {
+							Thread.sleep(50);
+						}
+						BasicGraphGui basicGraphGui = GraphEnvironmentController.this.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
+						while (basicGraphGui.isCreatedVisualizationViewer()==false) {
+							Thread.sleep(50);
+						}	
+					}
+					
+					// --- Reset the NetworkModel instance in the GraphNodePositionFactory --------
+					GraphNodePositionFactory.setLoadingNetworkModel(null);
+					
+					// --- Assign NetworkMoldel to visualization ----------------------------------
+					final NetworkModel netModelFinal = netModel;
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							// --- Use the local method in order to inform the observer -----------
+							GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelFinal);
+							// --- Decode data models that are Base64 encoded in the moment -------
+							GraphEnvironmentController.this.loadDataModelNetworkElements();
+						}
+					});
+					
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					
+				} finally {
+					GraphEnvironmentController.this.isTemporaryPreventSaving = false;
+					Application.setCursor(Cursor.getDefaultCursor());
+					Application.setStatusBarMessageReady();
+				}
+				
 			}
-		    });
+		});
+		envLoader.setName("GraphEnvironmentLoader");
+		envLoader.start();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
+	 */
+	@Override
+	public void saveEnvironment() {
+
+		// --- Check if saving is currently allowed ----------------- 
+		while (this.isTemporaryPreventSaving==true) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException iEx) {
+				iEx.printStackTrace();
+				break;
+			}
+		}
+		
+		// --- Prepare for saving -----------------------------------
+		this.validateNetworkComponentAndAgents2Start();
+		this.saveGeneralGraphSettings();
+		if (this.getNetworkModel()!=null && this.getNetworkModel().getGraph()!=null) {
+			
+			// --- Update path according to setup -------------------
+			this.updateSetupName();
+
+			File graphFile = this.getFileGraphML();
+			this.getNetworkModel().saveGraphFile(graphFile);
+			
+			File componentsFile = this.getFileXML();
+			this.getNetworkModel().saveComponentsFile(componentsFile);
+			
+			// --- Save individual models ---------------------------
+			this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
+		}
+	}
+
+	
+	/**
+	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
+	 */
+	public void loadDataModelNetworkElements() {
+		this.loadDataModelNetworkElements(true, null, null);
+	}
+	/**
+	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
+	 *
+	 * @param isShowProgress the indicator to show a progress monitor or not
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to load or reload (<code>null</code> is allowed)
+	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
+	 */
+	public void loadDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThread) {
+		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, isShowProgress, netElementVector, maxNumberOfThread).start();
+	}
+	
+	/**
+	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
+	 */
+	public void saveDataModelNetworkElements() {
+		this.saveDataModelNetworkElements(true, null, null);
+	}
+	/**
+	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
+	 *
+	 * @param isShowProgress the indicator to show a progress monitor or not
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to save (<code>null</code> is allowed)
+	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
+	 */
+	public void saveDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThreads) {
+		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, isShowProgress, netElementVector, maxNumberOfThreads).start();
+		this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
+	}
+	
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, the handling of setup data model storage handler can be found -----
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Return all known setup storage handler that were registered as such an OSGI - service.
+	 * @return the setup storage handler
+	 */
+	private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> getSetupDataModelStorageServiceHashMap() {
+		if (setupStorageServiceHashMap==null) {
+			setupStorageServiceHashMap = new HashMap<>();
+			// --- Get all registered services ----------------------
+			List<SetupDataModelStorageService> sdmServiceList = ServiceFinder.findServices(SetupDataModelStorageService.class);
+			for (int i = 0; i < sdmServiceList.size(); i++) {
+				SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+				sdmService.setGraphEnvironmentController(this);
+				Class<? extends AbstractDataModelStorageHandler> storageHandlerClass = sdmService.getDataModelStorageHandlerClass();
+				if (storageHandlerClass!=null) {
+					setupStorageServiceHashMap.put(storageHandlerClass, sdmService);
+				}
+			}
+		}
+		return setupStorageServiceHashMap;
+	}
+	/**
+	 * Return the setup data model storage handler (setup scope) for the specified data model  
+	 * storage handler (scope of the individual data model of {@link NetworkComponent} or {@link GraphNode}).
+	 *
+	 * @param storageHandlerClass the storage handler class
+	 * @return the setup handler for individual data models
+	 */
+	public SetupDataModelStorageService getSetupDataModelStorageService(Class<? extends AbstractDataModelStorageHandler> storageHandlerClass) {
+		if (storageHandlerClass!=null) {
+			return this.getSetupDataModelStorageServiceHashMap().get(storageHandlerClass);
+		}
+		return null;
+	}
+	/**
+	 * Calls the known {@link SetupDataModelStorageService}s to do the specified action.
+	 *
+	 * @param serviceAction the service action to invoke
+	 */
+	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction) {
+		this.callSetupDataModelStorageServices(serviceAction, null);
+	}
+	/**
+	 * Calls the known {@link SetupDataModelStorageService}s to do the specified action.
+	 *
+	 * @param serviceAction the service action to invoke
+	 * @param renameFromTo only needed for renaming. String array with two arguments: first old, second new setup name
+	 */
+	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction, String[] renameFromTo) {
+		
+		String setupName = this.getProject().getSimulationSetupCurrent();
+		
+		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
+		for (int i = 0; i < sdmServiceList.size(); i++) {
+			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+			try {
+				
+				switch (serviceAction) {
+				case LoadSetup:
+					sdmService.loadNetworkElementDataModels(setupName);
+					break;
+				case SaveSetup:
+					sdmService.saveNetworkElementDataModels(setupName);
+					break;
+				case RemoveSetup:
+					sdmService.removeNetworkElementDataModels(setupName);
+					break;
+				case RenameSetup:
+					String oldSetupName = renameFromTo[0];
+					String newSetupName = renameFromTo[1];
+					sdmService.renameNetworkElementDataModels(oldSetupName, newSetupName);
+					break;
+				}
+				
+			} catch (Exception ex) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while invoking '" + serviceAction.toString() + "' on SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
+				ex.printStackTrace();
+			}
+		}
+	}
+	/**
+	 * Return the setup files from setup data model storage services for the current setup.
+	 * @param setupName2 
+	 * @return the setup files from setup data model storage services
+	 */
+	private List<File> getSetupFilesFromSetupDataModelStorageServices(String setupName) {
+	
+		List<File> setupFilesOfServices = new ArrayList<>();
+		
+		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
+		for (int i = 0; i < sdmServiceList.size(); i++) {
+			SetupDataModelStorageService sdmService = sdmServiceList.get(i);
+			try {
+				List<File> sdmServiveSetupFiles = sdmService.getSetupFiles(setupName);
+				if (sdmServiveSetupFiles!=null) {
+					setupFilesOfServices.addAll(sdmServiveSetupFiles);
+				}
+				
+			} catch (Exception ex) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while invoking 'getSetupFiles()' on SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
+				ex.printStackTrace();
+			}
+		}
+		return setupFilesOfServices;
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
+	 */
+	@Override
+	public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
+		try {
+			if (displaytEnvironmentModel==null && !(displaytEnvironmentModel instanceof NetworkModel) ) {
+				this.setNetworkModel(null);
+			} else {
+				this.setNetworkModel((NetworkModel) displaytEnvironmentModel);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
+	 */
+	@Override
+	public DisplaytEnvironmentModel getDisplayEnvironmentModel() {
+		return this.getNetworkModel();
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
+	 */
+	@Override
+	public DisplaytEnvironmentModel getDisplayEnvironmentModelCopy() {
+		return this.getNetworkModel().getCopy();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(java.lang.Object)
+	 */
+	@Override
+	public void setAbstractEnvironmentModel(AbstractEnvironmentModel abstractEnvironmentModel) {
+		this.abstractEnvironmentModel = abstractEnvironmentModel;
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
+	 */
+	@Override
+	public AbstractEnvironmentModel getAbstractEnvironmentModel() {
+		return this.abstractEnvironmentModel;
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModelCopy()
+	 */
+	@Override
+	public AbstractEnvironmentModel getAbstractEnvironmentModelCopy() {
+		if (this.abstractEnvironmentModel == null) {
+			return null;
+		} else {
+			return this.abstractEnvironmentModel.getCopy();
+		}
+	}
+
+	/**
+	 * Loads the general graph settings from the usual location on disc.
+	 */
+	public GeneralGraphSettings4MAS loadGeneralGraphSettings() {
+		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
+		return GeneralGraphSettings4MAS.load(componentFile);
+	}
+	/**
+	 * Saves general graph settings to the usual location on disc.
+	 */
+	public void saveGeneralGraphSettings() {
+		this.saveGeneralGraphSettings(this.getGeneralGraphSettings4MAS());
+	}
+	/**
+	 * Saves the specified general graph settings to the usual location on disc.
+	 * @param graphSettings the actual graph settings to save
+	 */
+	public void saveGeneralGraphSettings(GeneralGraphSettings4MAS graphSettings) {
+		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
+		GeneralGraphSettings4MAS.save(componentFile, graphSettings);
+	}
+	
+	
+	/**
+	 * Clean up / correct list of agents corresponding to the current NetworkModel.
+	 */
+	public void validateNetworkComponentAndAgents2Start() {
+
+		// --------------------------------------------------------------------
+		// --- Get the current ComponentTypeSettings --------------------------
+		TreeMap<String, ComponentTypeSettings> cts = this.getNetworkModel().getGeneralGraphSettings4MAS().getCurrentCTS();
+
+		// --------------------------------------------------------------------
+		// --- Transfer the agent list into a HashMap for a faster access -----
+		HashMap<String, AgentClassElement4SimStart> agents2StartHash = new HashMap<String, AgentClassElement4SimStart>();
+		for (int i = 0; i < this.getAgents2Start().size(); i++) {
+			AgentClassElement4SimStart ace4s = (AgentClassElement4SimStart) this.getAgents2Start().get(i);
+			String agentName = ace4s.getStartAsName();
+
+			AgentClassElement4SimStart ace4sThere = agents2StartHash.get(agentName);
+			agents2StartHash.put(agentName, ace4s);
+			if (ace4sThere != null) {
+				// --- Remove the redundant entries and let one entry survive -
+				AgentClassElement4SimStart[] ace4sArr2Delete = getAgents2StartFromAgentName(agentName);
+				for (int j = 0; j < ace4sArr2Delete.length - 1; j++) {
+					this.getAgents2Start().removeElement(ace4sArr2Delete[j]);
+				}
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// --- Run through the network components and validate agent list -----
+		Collection<String> compNameCollection = this.getNetworkModel().getNetworkComponents().keySet();
+		String[] compNames = compNameCollection.toArray(new String[compNameCollection.size()]);
+		for (int i = 0; i < compNames.length; i++) {
+			// --- Current component ------------------------------------------
+			String compName = compNames[i];
+			NetworkComponent comp = this.getNetworkModel().getNetworkComponent(compName);
+
+			if (!(comp instanceof ClusterNetworkComponent)) {
+				// ----------------------------------------------------------------
+				// --- Validate current component against ComponentTypeSettings ---
+				ComponentTypeSettings ctsSingle = cts.get(comp.getType());
+				if (ctsSingle == null) {
+					// --- remove this component ---
+					this.getNetworkModel().removeNetworkComponent(comp);
+					comp = null;
+
+				} else {
+					// --- Component settings here? -----------
+					// Empty after revision of NetworkComponent  
+				}
+
+				// ----------------------------------------------------------------
+				// --- Check if an Agent can be found in the start list -----------
+				AgentClassElement4SimStart ace4s = agents2StartHash.get(compName);
+				if (ace4s == null) {
+					// --- Agent definition NOT found in agent start list ---------
+					this.addAgent(comp);
+
+				} else {
+					// --- Agent definition found in agent start list -------------
+					if (isValidAgent2Start(ace4s, comp) == false) {
+						// --- Error found --------------------
+						this.getAgents2Start().removeElement(ace4s);
+						this.addAgent(comp);
+					}
+					agents2StartHash.remove(compName);
+				}
+			}
+
+		} // end for
+
+		// --------------------------------------------------------------------
+		// --- Are there remaining agents in the start list? ------------------
+		if (agents2StartHash.size() != 0) {
+
+			Collection<String> remainingAgents2Start = agents2StartHash.keySet();
+			String[] remainingAgents = remainingAgents2Start.toArray(new String[remainingAgents2Start.size()]);
+			for (int i = 0; i < remainingAgents.length; i++) {
+				String remainingAgent = remainingAgents[i];
+				AgentClassElement4SimStart remainingAce4s = agents2StartHash.get(remainingAgent);
+				this.getAgents2Start().removeElement(remainingAce4s);
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// --- Renumber list --------------------------------------------------
+		this.reNumberAgents2Start();
+		this.getNetworkModelUndoManager().refreshNetworkModel();
+	}
+
+	/**
+	 * Checks if is valid agent2 start.
+	 * 
+	 * @param ace4s the AgentClassElement4SimStart
+	 * @param comp the NetworkComponent
+	 * @return true, if the AgentClassElement4SimStart is valid
+	 */
+	private boolean isValidAgent2Start(AgentClassElement4SimStart ace4s, NetworkComponent comp) {
+		if (comp == null) {
+			return false;
+		}
+		String agentClassName = this.getNetworkModel().getAgentClassName(comp);
+		if (ace4s.getAgentClassReference().equals(agentClassName)==false) {
+			return false;
+		}
+		if (ace4s.getStartAsName().equals(comp.getId()) == false) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Adds an agent to the start list corresponding to the current network component .
+	 * @param networkComponent the NetworkComponent
+	 */
+	public void addAgent(NetworkComponent networkComponent) {
+
+		if (networkComponent == null) return;
+		
+		String agentClassName = this.getNetworkModel().getAgentClassName(networkComponent);
+		Class<? extends Agent> agentClass = this.getAgentClass(agentClassName);
+		if (agentClass != null) {
+
+			int newPosNo = this.getEmptyPosition4Agents2Start();
+			// --- Agent class found. Create new list element ---------
+			AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+			ace4s.setStartAsName(networkComponent.getId());
+			ace4s.setPostionNo(newPosNo);
+			// --- Add the new list element to the list ---------------
+			this.getAgents2Start().add(newPosNo - 1, ace4s);
+		}
+	}
+
+	/**
+	 * Removes an agent from the start list corresponding to the current network component .
+	 * 
+	 * @param networkComponent the NetworkComponent
+	 */
+	public void removeAgent(NetworkComponent networkComponent) {
+
+		if (networkComponent == null) {
+			return;
+		}
+
+		String search4 = networkComponent.getId();
+		DefaultListModel<AgentClassElement4SimStart> agentList = this.getAgents2Start();
+		int i = 0;
+		for (i = 0; i < agentList.size(); i++) {
+			AgentClassElement4SimStart agentElement = (AgentClassElement4SimStart) agentList.get(i);
+			if (agentElement.getStartAsName().equals(search4)) {
+				agentList.remove(i);
+				break;
+			}
+		}
+
+		// Shifting the positions of the later components by 1
+		for (int j = i; j < agentList.size(); j++) {
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) agentList.get(j);
+			ac4s.setPostionNo(ac4s.getPostionNo() - 1);
+		}
+
+	}
+
+	/**
+	 * Renames an agent by its old NetworkComponentID.
+	 * 
+	 * @param oldCompID the old NetworkComponentID
+	 * @param newCompID the new NetworkComponentID
+	 */
+	public void renameAgent(String oldCompID, String newCompID) {
+
+		// Renaming the agent in the agent start list of the simulation setup
+		int i = 0;
+		for (i = 0; i < getAgents2Start().size(); i++) {
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getAgents2Start().get(i);
+			if (ac4s.getStartAsName().equals(oldCompID)) {
+				ac4s.setStartAsName(newCompID);
+				break;
+			}
+		}
+
+	}
+
+	/**
+	 * Returns the agent class.
+	 * 
+	 * @param agentClassName the agent class name 
+	 * @return the agent class
+	 */
+	@SuppressWarnings("unchecked")
+	private Class<? extends Agent> getAgentClass(String agentClassName) {
+
+		if (agentClassName == null || agentClassName.isEmpty()==true) return null;
+
+		Class<? extends Agent> agentClass = null;
+		try {
+			agentClass = (Class<? extends Agent>) ClassLoadServiceUtility.forName(agentClassName);
+		} catch (ClassNotFoundException ex) {
+			System.err.println("Could not find agent class '" + agentClassName + "'");
+		}
+		return agentClass;
+	}
+
+
+	/**
+	 * Sets the indicator that an action on top is running, in order to prevent permanently (re-)paint actions.
+	 * 
+	 * @param actionOnTopIsRunning the indicator that an action on top of the graph is running or not
+	 */
+	public void setBasicGraphGuiVisViewerActionOnTop(boolean actionOnTopIsRunning) {
+
+		BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer = null;
+		try {
+			GraphEnvironmentControllerGUI graphControllerGUI = this.getGraphEnvironmentControllerGUI();
+			if (graphControllerGUI != null) {
+				basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisualizationViewer();
+				if (basicGraphGuiVisViewer != null) {
+					basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
+					if (actionOnTopIsRunning==false) {
+						basicGraphGuiVisViewer.repaint();
+					}
+				}
+			}
 
 		} catch (Exception ex) {
-		    ex.printStackTrace();
-
-		} finally {
-		    GraphEnvironmentController.this.isTemporaryPreventSaving = false;
-		    Application.setCursor(Cursor.getDefaultCursor());
-		    Application.setStatusBarMessageReady();
+			ex.printStackTrace();
 		}
 
-	    }
-	});
-	envLoader.setName("GraphEnvironmentLoader");
-	envLoader.start();
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
-     */
-    @Override
-    public void saveEnvironment() {
-
-	// --- Check if saving is currently allowed -----------------
-	while (this.isTemporaryPreventSaving == true) {
-	    try {
-		Thread.sleep(50);
-	    } catch (InterruptedException iEx) {
-		iEx.printStackTrace();
-		break;
-	    }
 	}
 
-	// --- Prepare for saving -----------------------------------
-	this.validateNetworkComponentAndAgents2Start();
-	this.saveGeneralGraphSettings();
-	if (this.getNetworkModel() != null && this.getNetworkModel().getGraph() != null) {
-
-	    // --- Update path according to setup -------------------
-	    this.updateSetupName();
-
-	    File graphFile = this.getFileGraphML();
-	    this.getNetworkModel().saveGraphFile(graphFile);
-
-	    File componentsFile = this.getFileXML();
-	    this.getNetworkModel().saveComponentsFile(componentsFile);
-
-	    // --- Save individual models ---------------------------
-	    this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
-	}
-    }
-
-    /**
-     * Sets all persisted data models of {@link DataModelNetworkElement}s to
-     * instances (e.g. Base64 encoded models strings).
-     */
-    public void loadDataModelNetworkElements() {
-	this.loadDataModelNetworkElements(true, null, null);
-    }
-
-    /**
-     * Sets all persisted data models of {@link DataModelNetworkElement}s to
-     * instances (e.g. Base64 encoded models strings).
-     *
-     * @param isShowProgress    the indicator to show a progress monitor or not
-     * @param netElementVector  the explicit vector of DataModelNetworkElement's to
-     *                          load or reload (<code>null</code> is allowed)
-     * @param maxNumberOfThread the maximum number of threads to use
-     *                          (<code>null</code> is allowed)
-     */
-    public void loadDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector,
-	    Integer maxNumberOfThread) {
-	this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
-	new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, isShowProgress, netElementVector,
-		maxNumberOfThread).start();
-    }
-
-    /**
-     * Saves all instances of individual data models in
-     * {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
-     */
-    public void saveDataModelNetworkElements() {
-	this.saveDataModelNetworkElements(true, null, null);
-    }
-
-    /**
-     * Saves all instances of individual data models in
-     * {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
-     *
-     * @param isShowProgress     the indicator to show a progress monitor or not
-     * @param netElementVector   the explicit vector of DataModelNetworkElement's to
-     *                           save (<code>null</code> is allowed)
-     * @param maxNumberOfThreads the maximum number of threads to use
-     *                           (<code>null</code> is allowed)
-     */
-    public void saveDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector,
-	    Integer maxNumberOfThreads) {
-	new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, isShowProgress, netElementVector,
-		maxNumberOfThreads).start();
-	this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
-    }
-
-    // ----------------------------------------------------------------------------------
-    // --- From here, the handling of setup data model storage handler can be found
-    // -----
-    // ----------------------------------------------------------------------------------
-    /**
-     * Return all known setup storage handler that were registered as such an OSGI -
-     * service.
-     * 
-     * @return the setup storage handler
-     */
-    private HashMap<Class<? extends AbstractDataModelStorageHandler>, SetupDataModelStorageService> getSetupDataModelStorageServiceHashMap() {
-	if (setupStorageServiceHashMap == null) {
-	    setupStorageServiceHashMap = new HashMap<>();
-	    // --- Get all registered services ----------------------
-	    List<SetupDataModelStorageService> sdmServiceList = ServiceFinder
-		    .findServices(SetupDataModelStorageService.class);
-	    for (int i = 0; i < sdmServiceList.size(); i++) {
-		SetupDataModelStorageService sdmService = sdmServiceList.get(i);
-		sdmService.setGraphEnvironmentController(this);
-		Class<? extends AbstractDataModelStorageHandler> storageHandlerClass = sdmService
-			.getDataModelStorageHandlerClass();
-		if (storageHandlerClass != null) {
-		    setupStorageServiceHashMap.put(storageHandlerClass, sdmService);
+	/**
+	 * Return all known import adapter from the OSGI service registry.
+	 * @return the import adapter
+	 */
+	public Vector<NetworkModelImportService> getImportAdapter() {
+		
+		Vector<NetworkModelImportService> importAdapter = new Vector<NetworkModelImportService>();
+			
+		List<NetworkModelImportService> importServices = ServiceFinder.findServices(NetworkModelImportService.class);
+		for (int i=0; i<importServices.size(); i++) {
+			NetworkModelImportService importer = importServices.get(i);
+			importer.setGraphController(this);
+			importAdapter.add(importer);
 		}
-	    }
-	}
-	return setupStorageServiceHashMap;
-    }
-
-    /**
-     * Return the setup data model storage handler (setup scope) for the specified
-     * data model storage handler (scope of the individual data model of
-     * {@link NetworkComponent} or {@link GraphNode}).
-     *
-     * @param storageHandlerClass the storage handler class
-     * @return the setup handler for individual data models
-     */
-    public SetupDataModelStorageService getSetupDataModelStorageService(
-	    Class<? extends AbstractDataModelStorageHandler> storageHandlerClass) {
-	if (storageHandlerClass != null) {
-	    return this.getSetupDataModelStorageServiceHashMap().get(storageHandlerClass);
-	}
-	return null;
-    }
-
-    /**
-     * Calls the known {@link SetupDataModelStorageService}s to do the specified
-     * action.
-     *
-     * @param serviceAction the service action to invoke
-     */
-    private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction) {
-	this.callSetupDataModelStorageServices(serviceAction, null);
-    }
-
-    /**
-     * Calls the known {@link SetupDataModelStorageService}s to do the specified
-     * action.
-     *
-     * @param serviceAction the service action to invoke
-     * @param renameFromTo  only needed for renaming. String array with two
-     *                      arguments: first old, second new setup name
-     */
-    private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction, String[] renameFromTo) {
-
-	String setupName = this.getProject().getSimulationSetupCurrent();
-
-	List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(
-		this.getSetupDataModelStorageServiceHashMap().values());
-	for (int i = 0; i < sdmServiceList.size(); i++) {
-	    SetupDataModelStorageService sdmService = sdmServiceList.get(i);
-	    try {
-
-		switch (serviceAction) {
-		case LoadSetup:
-		    sdmService.loadNetworkElementDataModels(setupName);
-		    break;
-		case SaveSetup:
-		    sdmService.saveNetworkElementDataModels(setupName);
-		    break;
-		case RemoveSetup:
-		    sdmService.removeNetworkElementDataModels(setupName);
-		    break;
-		case RenameSetup:
-		    String oldSetupName = renameFromTo[0];
-		    String newSetupName = renameFromTo[1];
-		    sdmService.renameNetworkElementDataModels(oldSetupName, newSetupName);
-		    break;
-		}
-
-	    } catch (Exception ex) {
-		System.err.println(
-			"[" + this.getClass().getSimpleName() + "] Error while invoking '" + serviceAction.toString()
-				+ "' on SetupDataModelStorageService '" + sdmService.getClass().getName() + "'");
-		ex.printStackTrace();
-	    }
-	}
-    }
-
-    /**
-     * Return the setup files from setup data model storage services for the current
-     * setup.
-     * 
-     * @param setupName2
-     * @return the setup files from setup data model storage services
-     */
-    private List<File> getSetupFilesFromSetupDataModelStorageServices(String setupName) {
-
-	List<File> setupFilesOfServices = new ArrayList<>();
-
-	List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(
-		this.getSetupDataModelStorageServiceHashMap().values());
-	for (int i = 0; i < sdmServiceList.size(); i++) {
-	    SetupDataModelStorageService sdmService = sdmServiceList.get(i);
-	    try {
-		List<File> sdmServiveSetupFiles = sdmService.getSetupFiles(setupName);
-		if (sdmServiveSetupFiles != null) {
-		    setupFilesOfServices.addAll(sdmServiveSetupFiles);
-		}
-
-	    } catch (Exception ex) {
-		System.err.println("[" + this.getClass().getSimpleName()
-			+ "] Error while invoking 'getSetupFiles()' on SetupDataModelStorageService '"
-			+ sdmService.getClass().getName() + "'");
-		ex.printStackTrace();
-	    }
-	}
-	return setupFilesOfServices;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang
-     * .Object)
-     */
-    @Override
-    public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
-	try {
-	    if (displaytEnvironmentModel == null && !(displaytEnvironmentModel instanceof NetworkModel)) {
-		this.setNetworkModel(null);
-	    } else {
-		this.setNetworkModel((NetworkModel) displaytEnvironmentModel);
-	    }
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
-     */
-    @Override
-    public DisplaytEnvironmentModel getDisplayEnvironmentModel() {
-	return this.getNetworkModel();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
-     */
-    @Override
-    public DisplaytEnvironmentModel getDisplayEnvironmentModelCopy() {
-	return this.getNetworkModel().getCopy();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(
-     * java.lang.Object)
-     */
-    @Override
-    public void setAbstractEnvironmentModel(AbstractEnvironmentModel abstractEnvironmentModel) {
-	this.abstractEnvironmentModel = abstractEnvironmentModel;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
-     */
-    @Override
-    public AbstractEnvironmentModel getAbstractEnvironmentModel() {
-	return this.abstractEnvironmentModel;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#
-     * getAbstractEnvironmentModelCopy()
-     */
-    @Override
-    public AbstractEnvironmentModel getAbstractEnvironmentModelCopy() {
-	if (this.abstractEnvironmentModel == null) {
-	    return null;
-	} else {
-	    return this.abstractEnvironmentModel.getCopy();
-	}
-    }
-
-    /**
-     * Loads the general graph settings from the usual location on disc.
-     * 
-     * @return general graph settings
-     */
-    public GeneralGraphSettings4MAS loadGeneralGraphSettings() {
-	File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
-	return GeneralGraphSettings4MAS.load(componentFile);
-    }
-
-    /**
-     * Saves general graph settings to the usual location on disc.
-     */
-    public void saveGeneralGraphSettings() {
-	this.saveGeneralGraphSettings(this.getGeneralGraphSettings4MAS());
-    }
-
-    /**
-     * Saves the specified general graph settings to the usual location on disc.
-     * 
-     * @param graphSettings the actual graph settings to save
-     */
-    public void saveGeneralGraphSettings(GeneralGraphSettings4MAS graphSettings) {
-	File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");
-	GeneralGraphSettings4MAS.save(componentFile, graphSettings);
-    }
-
-    /**
-     * Clean up / correct list of agents corresponding to the current NetworkModel.
-     */
-    public void validateNetworkComponentAndAgents2Start() {
-
-	// --------------------------------------------------------------------
-	// --- Get the current ComponentTypeSettings --------------------------
-	TreeMap<String, ComponentTypeSettings> cts = this.getNetworkModel().getGeneralGraphSettings4MAS()
-		.getCurrentCTS();
-
-	// --------------------------------------------------------------------
-	// --- Transfer the agent list into a HashMap for a faster access -----
-	HashMap<String, AgentClassElement4SimStart> agents2StartHash = new HashMap<String, AgentClassElement4SimStart>();
-	for (int i = 0; i < this.getAgents2Start().size(); i++) {
-	    AgentClassElement4SimStart ace4s = this.getAgents2Start().get(i);
-	    String agentName = ace4s.getStartAsName();
-
-	    AgentClassElement4SimStart ace4sThere = agents2StartHash.get(agentName);
-	    agents2StartHash.put(agentName, ace4s);
-	    if (ace4sThere != null) {
-		// --- Remove the redundant entries and let one entry survive -
-		AgentClassElement4SimStart[] ace4sArr2Delete = getAgents2StartFromAgentName(agentName);
-		for (int j = 0; j < ace4sArr2Delete.length - 1; j++) {
-		    this.getAgents2Start().removeElement(ace4sArr2Delete[j]);
-		}
-	    }
+		return importAdapter;
 	}
 
-	// --------------------------------------------------------------------
-	// --- Run through the network components and validate agent list -----
-	Collection<String> compNameCollection = this.getNetworkModel().getNetworkComponents().keySet();
-	String[] compNames = compNameCollection.toArray(new String[compNameCollection.size()]);
-	for (int i = 0; i < compNames.length; i++) {
-	    // --- Current component ------------------------------------------
-	    String compName = compNames[i];
-	    NetworkComponent comp = this.getNetworkModel().getNetworkComponent(compName);
-
-	    if (!(comp instanceof ClusterNetworkComponent)) {
-		// ----------------------------------------------------------------
-		// --- Validate current component against ComponentTypeSettings ---
-		ComponentTypeSettings ctsSingle = cts.get(comp.getType());
-		if (ctsSingle == null) {
-		    // --- remove this component ---
-		    this.getNetworkModel().removeNetworkComponent(comp);
-		    comp = null;
-
+	/**
+	 * Adds a {@link CustomToolbarComponentDescription}, so that customized components will be added to a toolbar of the {@link BasicGraphGui}.
+	 * @param customButtonDescription the CustomToolbarComponentDescription to add
+	 */
+	public void addCustomToolbarComponentDescription(CustomToolbarComponentDescription customButtonDescription) {
+		if (this.getNetworkModel()!=null && this.getNetworkModel().getGeneralGraphSettings4MAS()!=null) {
+			this.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions().add(customButtonDescription);
+			this.getNetworkModelUndoManager().addCustomToolbarComponentDescription(customButtonDescription);
 		} else {
-		    // --- Component settings here? -----------
-		    // Empty after revision of NetworkComponent
+			String errMsg = Language.translate("Could not add custom button: No NetworkModel was defined yet!", Language.EN);
+			System.err.println(errMsg);
 		}
-
-		// ----------------------------------------------------------------
-		// --- Check if an Agent can be found in the start list -----------
-		AgentClassElement4SimStart ace4s = agents2StartHash.get(compName);
-		if (ace4s == null) {
-		    // --- Agent definition NOT found in agent start list ---------
-		    this.addAgent(comp);
-
-		} else {
-		    // --- Agent definition found in agent start list -------------
-		    if (isValidAgent2Start(ace4s, comp) == false) {
-			// --- Error found --------------------
-			this.getAgents2Start().removeElement(ace4s);
-			this.addAgent(comp);
-		    }
-		    agents2StartHash.remove(compName);
-		}
-	    }
-
-	} // end for
-
-	// --------------------------------------------------------------------
-	// --- Are there remaining agents in the start list? ------------------
-	if (agents2StartHash.size() != 0) {
-
-	    Collection<String> remainingAgents2Start = agents2StartHash.keySet();
-	    String[] remainingAgents = remainingAgents2Start.toArray(new String[remainingAgents2Start.size()]);
-	    for (int i = 0; i < remainingAgents.length; i++) {
-		String remainingAgent = remainingAgents[i];
-		AgentClassElement4SimStart remainingAce4s = agents2StartHash.get(remainingAgent);
-		this.getAgents2Start().removeElement(remainingAce4s);
-	    }
 	}
-
-	// --------------------------------------------------------------------
-	// --- Renumber list --------------------------------------------------
-	this.reNumberAgents2Start();
-	this.getNetworkModelUndoManager().refreshNetworkModel();
-    }
-
-    /**
-     * Checks if is valid agent2 start.
-     * 
-     * @param ace4s the AgentClassElement4SimStart
-     * @param comp  the NetworkComponent
-     * @return true, if the AgentClassElement4SimStart is valid
-     */
-    private boolean isValidAgent2Start(AgentClassElement4SimStart ace4s, NetworkComponent comp) {
-	if (comp == null) {
-	    return false;
-	}
-	String agentClassName = this.getNetworkModel().getAgentClassName(comp);
-	if (ace4s.getAgentClassReference().equals(agentClassName) == false) {
-	    return false;
-	}
-	if (ace4s.getStartAsName().equals(comp.getId()) == false) {
-	    return false;
-	}
-	return true;
-    }
-
-    /**
-     * Adds an agent to the start list corresponding to the current network
-     * component .
-     * 
-     * @param networkComponent the NetworkComponent
-     */
-    public void addAgent(NetworkComponent networkComponent) {
-
-	if (networkComponent == null)
-	    return;
-
-	String agentClassName = this.getNetworkModel().getAgentClassName(networkComponent);
-	Class<? extends Agent> agentClass = this.getAgentClass(agentClassName);
-	if (agentClass != null) {
-
-	    int newPosNo = this.getEmptyPosition4Agents2Start();
-	    // --- Agent class found. Create new list element ---------
-	    AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass,
-		    SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-	    ace4s.setStartAsName(networkComponent.getId());
-	    ace4s.setPostionNo(newPosNo);
-	    // --- Add the new list element to the list ---------------
-	    this.getAgents2Start().add(newPosNo - 1, ace4s);
-	}
-    }
-
-    /**
-     * Removes an agent from the start list corresponding to the current network
-     * component .
-     * 
-     * @param networkComponent the NetworkComponent
-     */
-    public void removeAgent(NetworkComponent networkComponent) {
-
-	if (networkComponent == null) {
-	    return;
-	}
-
-	String search4 = networkComponent.getId();
-	DefaultListModel<AgentClassElement4SimStart> agentList = this.getAgents2Start();
-	int i = 0;
-	for (i = 0; i < agentList.size(); i++) {
-	    AgentClassElement4SimStart agentElement = agentList.get(i);
-	    if (agentElement.getStartAsName().equals(search4)) {
-		agentList.remove(i);
-		break;
-	    }
-	}
-
-	// Shifting the positions of the later components by 1
-	for (int j = i; j < agentList.size(); j++) {
-	    AgentClassElement4SimStart ac4s = agentList.get(j);
-	    ac4s.setPostionNo(ac4s.getPostionNo() - 1);
-	}
-
-    }
-
-    /**
-     * Renames an agent by its old NetworkComponentID.
-     * 
-     * @param oldCompID the old NetworkComponentID
-     * @param newCompID the new NetworkComponentID
-     */
-    public void renameAgent(String oldCompID, String newCompID) {
-
-	// Renaming the agent in the agent start list of the simulation setup
-	int i = 0;
-	for (i = 0; i < getAgents2Start().size(); i++) {
-	    AgentClassElement4SimStart ac4s = getAgents2Start().get(i);
-	    if (ac4s.getStartAsName().equals(oldCompID)) {
-		ac4s.setStartAsName(newCompID);
-		break;
-	    }
-	}
-
-    }
-
-    /**
-     * Returns the agent class.
-     * 
-     * @param agentClassName the agent class name
-     * @return the agent class
-     */
-    @SuppressWarnings("unchecked")
-    private Class<? extends Agent> getAgentClass(String agentClassName) {
-
-	if (agentClassName == null || agentClassName.isEmpty() == true)
-	    return null;
-
-	Class<? extends Agent> agentClass = null;
-	try {
-	    agentClass = (Class<? extends Agent>) ClassLoadServiceUtility.forName(agentClassName);
-	} catch (ClassNotFoundException ex) {
-	    System.err.println("Could not find agent class '" + agentClassName + "'");
-	}
-	return agentClass;
-    }
-
-    /**
-     * Sets the indicator that an action on top is running, in order to prevent
-     * permanently (re-)paint actions.
-     * 
-     * @param actionOnTopIsRunning the indicator that an action on top of the graph
-     *                             is running or not
-     */
-    public void setBasicGraphGuiVisViewerActionOnTop(boolean actionOnTopIsRunning) {
-
-	BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer = null;
-	try {
-	    GraphEnvironmentControllerGUI graphControllerGUI = this.getGraphEnvironmentControllerGUI();
-	    if (graphControllerGUI != null) {
-		basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui()
-			.getVisualizationViewer();
-		if (basicGraphGuiVisViewer != null) {
-		    basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
-		    if (actionOnTopIsRunning == false) {
-			basicGraphGuiVisViewer.repaint();
-		    }
-		}
-	    }
-
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-
-    }
-
-    /**
-     * Return all known import adapter from the OSGI service registry.
-     * 
-     * @return the import adapter
-     */
-    public Vector<NetworkModelImportService> getImportAdapter() {
-
-	Vector<NetworkModelImportService> importAdapter = new Vector<NetworkModelImportService>();
-
-	List<NetworkModelImportService> importServices = ServiceFinder.findServices(NetworkModelImportService.class);
-	for (int i = 0; i < importServices.size(); i++) {
-	    NetworkModelImportService importer = importServices.get(i);
-	    importer.setGraphController(this);
-	    importAdapter.add(importer);
-	}
-	return importAdapter;
-    }
-
-    /**
-     * Adds a {@link CustomToolbarComponentDescription}, so that customized
-     * components will be added to a toolbar of the {@link BasicGraphGui}.
-     * 
-     * @param customButtonDescription the CustomToolbarComponentDescription to add
-     */
-    public void addCustomToolbarComponentDescription(CustomToolbarComponentDescription customButtonDescription) {
-	if (this.getNetworkModel() != null && this.getNetworkModel().getGeneralGraphSettings4MAS() != null) {
-	    this.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions()
-		    .add(customButtonDescription);
-	    this.getNetworkModelUndoManager().addCustomToolbarComponentDescription(customButtonDescription);
-	} else {
-	    String errMsg = Language.translate("Could not add custom button: No NetworkModel was defined yet!",
-		    Language.EN);
-	    System.err.println(errMsg);
-	}
-    }
 
 }
