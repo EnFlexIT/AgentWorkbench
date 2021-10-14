@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent.Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.1.19.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Agent.Workbench" uid="org.agentgui" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.1.20.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.agentgui.core/icons/awb128.png"/>
