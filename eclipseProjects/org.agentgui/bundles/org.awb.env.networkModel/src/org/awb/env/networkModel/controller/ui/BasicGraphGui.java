@@ -40,6 +40,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
@@ -201,7 +203,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.graphController = controller;
 		this.graphController.addObserver(this);
 		this.initialize();
-		this.reLoadGraph();
+		
+		// --- Reload the graph when the GUI is shown -----
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				BasicGraphGui.this.reLoadGraph();
+			}
+		});
 	}
 	/**
 	 * This method initializes this
