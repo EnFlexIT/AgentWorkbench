@@ -85,35 +85,37 @@
 						</environment>
 					</environments>
 				</configuration>
-<!-- The maven resource-plugin is needed to copy the search.js, which is generated incorrectly for our purposes 
-    (See this link for further information https://github.com/jimu/vassal/wiki/Javadoc-v11-Search-Bug).
-     The bug could be resolved in a higher version of OpenJdk (12 and above).-->
 			</plugin>
-		<plugin>
-    <artifactId>maven-resources-plugin</artifactId>
-    <version>3.0.2</version>
-    <executions>
-        <execution>
-            <id>copy-resource-one</id>
-            <phase>deploy</phase>
-            <goals>
-                <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-                <outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
-                <overwrite>true</overwrite>
-                <resources>
-                    <resource>
-                        <directory>${project.basedir}/help</directory>
-                        <includes>
-                            <include>search.js</include>
-                        </includes>
-                    </resource>
-                </resources>
-            </configuration>
-        </execution>
-    </executions>
-</plugin> 
+			<plugin>
+				<!-- 
+				The maven resource-plugin is needed to copy the search.js, which is generated incorrectly for our purposes 
+			    (See this link for further information https://github.com/jimu/vassal/wiki/Javadoc-v11-Search-Bug).
+			    The bug could be resolved in a higher version of OpenJDK (12 and above).
+			    -->
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-resource-one</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/help</directory>
+									<includes>
+										<include>search.js</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 
 			
 			<!-- see https://maven.apache.org/plugins/maven-jarsigner-plugin/usage.html -->
 			<!-- 

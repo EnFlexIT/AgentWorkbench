@@ -87,6 +87,7 @@
 									<additionalArgument>-linkoffline ../../${platform.api} http://help.eclipse.org/photon/topic/org.eclipse.platform.doc.isv/reference/api/</additionalArgument>
 									<additionalArgument>-nosince</additionalArgument>
 									<additionalArgument>-quiet</additionalArgument>
+									<additionalArgument>--no-module-directories</additionalArgument>
 									<additionalArgument>-tag wbp.parser.constructor</additionalArgument>
 								</additionalArguments>
 							</javadocOptions>
