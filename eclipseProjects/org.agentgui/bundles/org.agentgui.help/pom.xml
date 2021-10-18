@@ -83,7 +83,7 @@
 									<additionalArgument>-windowtitle "Agent.Workbench - API"</additionalArgument>
 									<additionalArgument>-doctitle 'Agent.Workbench - Java API (Version ${helpBundle.majorVersion}.${helpBundle.minorVersion}.${helpBundle.incrementalVersion})'</additionalArgument>
 									<additionalArgument>-bottom 'Copyright 2009-${current.year} EnFlex.IT and/or its affiliates. All rights reserved.'</additionalArgument>
-									<additionalArgument>-link https://docs.oracle.com/en/java/javase/11/docs/api/</additionalArgument>
+									<additionalArgument>-link https://cr.openjdk.java.net/~iris/se/11/latestSpec/api/</additionalArgument>
 									<additionalArgument>-linkoffline ../../${platform.api} http://help.eclipse.org/photon/topic/org.eclipse.platform.doc.isv/reference/api/</additionalArgument>
 									<additionalArgument>-nosince</additionalArgument>
 									<additionalArgument>-quiet</additionalArgument>
