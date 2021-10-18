@@ -58,11 +58,13 @@
 							<goal>javadoc</goal>
 						</goals>
 						<configuration>
-						<!-- if the path of the javadoc or search.js changes, the path must be also changed in the config of the
-						 maven resource plugin, which lies in the parent pom-->
+							<cleanFirst>true</cleanFirst>
+							<!-- 
+							If the path of the javadoc or search.js changes, the path must also be changed 
+							in the config of the maven resource plugin that is located in the parent pom
+							-->
 							<outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
 							<tocFile>${project.basedir}/help/api_docs.xml</tocFile>
-							<cleanFirst>false</cleanFirst>
 							<tocOptions>
 								<mainLabel>Agent.Workbench API</mainLabel>
 							</tocOptions>
