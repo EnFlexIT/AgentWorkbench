@@ -1,4 +1,4 @@
-Automatic-Module-Name: org.a gentgui.help
+Automatic-Module-Name: org.agentgui.help
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - API Help

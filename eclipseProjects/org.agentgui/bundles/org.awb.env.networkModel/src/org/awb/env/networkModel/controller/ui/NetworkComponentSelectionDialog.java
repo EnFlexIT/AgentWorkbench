@@ -60,7 +60,7 @@ public class NetworkComponentSelectionDialog extends JDialog implements ActionLi
      * @param owner                   the owner window
      * @param graphController         the graph controller
      * @param enableMultipleSelection the indicator to enable multiple selection
-     * 
+     * @wbp.parser.constructor
      */
     public NetworkComponentSelectionDialog(Window owner, GraphEnvironmentController graphController,
 	    boolean enableMultipleSelection) {

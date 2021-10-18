@@ -112,10 +112,10 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
     /**
      * Instantiates a new httpsConfigWindow. Set the dialog visible in order to show
-     * it. <br>
-     * <b>wbp.parser.constructor</b>
+     * it.
      * 
-     * @param owner the owner frame or windo
+     * @param owner the owner frame or window
+     * @wbp.parser.constructor
      */
     public HttpsConfigWindow(Window owner) {
 	super(owner);
