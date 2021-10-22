@@ -35,6 +35,7 @@ import javax.swing.JComponent;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
@@ -162,7 +163,24 @@ public abstract class NetworkComponentAdapter {
 	 */
 	public abstract Vector<JComponent> getJPopupMenuElements();
 
+
+	// --------------------------------------------------------------
+	// --- From here methods to enable an individual visualization --
+	// --------------------------------------------------------------
+	/**
+	 * Returns the specified {@link DynamicGraphElementLayout} or <code>null</code> if not overwritten.<br>
+	 * <b>Override this method to enable an individual node or component visualization.</b>
+	 * @return the DynamicGraphElementLayout to be applied during the rendering of the {@link NetworkModel}s graph for the current component type.
+	 * @see DynamicGraphElementLayout
+	 */
+	public DynamicGraphElementLayout getDynamicGraphElementLayout() {
+		return null;
+	}
+
 	
+	// --------------------------------------------------------------
+	// --- From here methods to send messages -----------------------
+	// --------------------------------------------------------------
 	/**
 	 * Gets the current display agent.
 	 * @see DisplayAgent

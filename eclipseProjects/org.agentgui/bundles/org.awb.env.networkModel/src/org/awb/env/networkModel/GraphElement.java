@@ -28,6 +28,8 @@
  */
 package org.awb.env.networkModel;
 
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
+
 import jade.util.leap.Serializable;
 
 /**
@@ -42,8 +44,8 @@ public abstract class GraphElement implements Serializable {
 
 	private static final long serialVersionUID = -8008053317555768852L;
 
-	protected String id = null;
-	protected transient GraphElementLayout graphElementLayout = null;
+	protected String id;
+	protected transient GraphElementLayout graphElementLayout;
 	
 	/**
 	 * Gets the id. 
@@ -80,9 +82,10 @@ public abstract class GraphElement implements Serializable {
 	}
 	
 	/**
-	 * Returns the graph element layout.
+	 * Returns - based on the general settings in the specified {@link NetworkModel} - the {@link GraphElementLayout} .
 	 * @param networkModel the current {@link NetworkModel}
 	 * @return the graph element layout
+	 * @see GeneralGraphSettings4MAS
 	 */
 	public GraphElementLayout getGraphElementLayout(NetworkModel networkModel) {
 		if (this.graphElementLayout==null && networkModel!=null) {

@@ -91,40 +91,42 @@ public class GraphElementLayout {
 	}
 	
 	/**
-	 * Sets the network model.
-	 * @param networkModel the new network model
+	 * Sets the current {@link NetworkModel} to the GraphElementLayout that will additionally set
+	 * the layout parameter for {@link GraphNode}s or {@link GraphEdge}s.
+	 * 
+	 * @param networkModel the current NetworkModel that contains the general layout settings
+	 * @see GeneralGraphSettings4MAS
 	 */
 	public void setNetworkModel(NetworkModel networkModel) {
 		
-		if (networkModel==null) {
-			// --- There is nothing we can do -------------
-			return;
-		}
+		// --- Early return? ------------------------------
+		if (networkModel==null) return;
 		
-		// --- Set the Layout of the component ------------
+		// --- Get important information sources ----------
 		this.networkModel = networkModel;
 		this.domainHash = this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
 		this.ctsHash = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
 		
+		// --- Set the Layout of the component ------------
 		if (this.myGraphElement instanceof GraphNode) {
 			this.setGraphNodeValues();
 		} else if (this.myGraphElement instanceof GraphEdge) {
 			this.setGraphEdgeValues();
 		}
 		
+		// --- Forget information sources -----------------
 		this.networkModel = null;
 		this.domainHash = null;
 		this.ctsHash = null;
-		
 	}
 	
 	/**
-	 * Sets the graph node values.
+	 * Sets the layout parameter for {@link GraphNode}s.
 	 */
 	private void setGraphNodeValues() {
 		
 		// --- Set default values ----------------------------------------
-		this.size = domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
+		this.size = this.domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
 		this.color = GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;
 		this.colorPicked = GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR;
 		this.labelText = this.myGraphElement.getId();
@@ -137,8 +139,10 @@ public class GraphElementLayout {
 		
 		// --- Evaluate the GraphNode ------------------------------------
 		GraphNode graphNode = (GraphNode) this.myGraphElement;
-		List<NetworkComponent> componentHashSet = this.networkModel.getNetworkComponents(graphNode);
-		NetworkComponent distributionNode = networkModel.getDistributionNode(componentHashSet);
+		List<NetworkComponent> componentList = this.networkModel.getNetworkComponents(graphNode);
+		if (componentList.size()==0) return;
+		
+		NetworkComponent distributionNode = this.networkModel.getDistributionNode(componentList);
 		if (distributionNode!=null) {
 			// -----------------------------------------------------------
 			// --- DistributionNode --------------------------------------
@@ -169,8 +173,8 @@ public class GraphElementLayout {
 				this.size = (int) myComponentTypeSettings.getEdgeWidth();
 				this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
 				this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-				this.imageReference = myComponentTypeSettings.getEdgeImage();
-				if (this.imageReference != null) {
+				this.imageReference = this.myComponentTypeSettings.getEdgeImage();
+				if (this.imageReference!=null) {
 					if (this.imageReference.equals("MissingIcon")==false) {
 						this.shapeForm = GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE;
 					}
@@ -178,79 +182,73 @@ public class GraphElementLayout {
 			}
 			
 		} else {
-			if (componentHashSet.iterator().hasNext()) {
+			// -----------------------------------------------------------
+			// --- Normal node OR ClusterNode ----------------------------
+			// -----------------------------------------------------------
+			List<ClusterNetworkComponent> clusterNetCompList = this.networkModel.getClusterNetworkComponents(new ArrayList<>(componentList));
+			if (componentList.size()==1 && clusterNetCompList.size()==1 && this.networkModel.isFreeGraphNode(graphNode)==false) {
 				// -------------------------------------------------------
-				// --- Normal node or ClusterNode ------------------------
+				// --- Central GraphNode of a cluster component ----------
+				this.setClusterComponent(true);
+				
+				ClusterNetworkComponent cnc = clusterNetCompList.get(0);
+				String domain = cnc.getDomain();
+				if (domain!=null && domain.isEmpty()==false) {
+					this.myDomain = this.domainHash.get(domain);
+				}
+				if (this.myDomain == null) {
+					this.myDomain = this.domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+				}
+				this.size = myDomain.getVertexSize() * 3;
+				this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
+				this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
+				this.labelText = cnc.getId();
+				this.showLabel = true;
+				this.imageReference = null;
+				this.shapeForm = myDomain.getClusterShape();
+				
+			} else {
 				// -------------------------------------------------------
-				List<ClusterNetworkComponent> clusterNetCompList = this.networkModel.getClusterNetworkComponents(new ArrayList<>(componentHashSet));
-				if (componentHashSet.size()==1 && clusterNetCompList.size()==1 && this.networkModel.isFreeGraphNode(graphNode)==false) {
-					// ---------------------------------------------------
-					// --- Central GraphNode of a cluster component ------
-					this.setClusterComponent(true);
-					
-					ClusterNetworkComponent cnc = clusterNetCompList.get(0);
+				// --- Normal node ---------------------------------------
+				// -------------------------------------------------------
+				NetworkComponent component = componentList.iterator().next();
+				if (component instanceof ClusterNetworkComponent) {
+					// --- Outer GraphNode of a cluster found ------------
+					ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
 					String domain = cnc.getDomain();
-					if (domain != null) {
-						if (domain.equals("") == false) {
-							myDomain = domainHash.get(domain);
-						}
+					if (domain!=null && domain.isEmpty()==false) {
+						this.myDomain = this.domainHash.get(domain);
 					}
-					if (myDomain == null) {
-						myDomain = domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+					if (this.myDomain==null) {
+						this.myDomain = this.domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
 					}
-					this.size = myDomain.getVertexSize() * 3;
+					this.size = myDomain.getVertexSize();
 					this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
 					this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
 					this.labelText = cnc.getId();
-					this.showLabel = true;
+					this.showLabel = myDomain.isShowLabel();;
 					this.imageReference = null;
-					this.shapeForm = myDomain.getClusterShape();
 					
 				} else {
-					// ---------------------------------------------------
-					// --- Normal node -----------------------------------
-					// ---------------------------------------------------
-					NetworkComponent component = componentHashSet.iterator().next();
-					if (component instanceof ClusterNetworkComponent) {
-						// --- Outer GraphNode of a cluster found --------
-						ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
-						String domain = cnc.getDomain();
-						if (domain != null) {
-							if (domain.equals("") == false) {
-								myDomain = domainHash.get(domain);
-							}
-						}
-						if (myDomain == null) {
-							myDomain = domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
-						}
+					// --- 
+					this.myComponentTypeSettings = ctsHash.get(component.getType());
+					if (this.myComponentTypeSettings!=null) {
+						this.myDomain = this.domainHash.get(this.myComponentTypeSettings.getDomain());
 						this.size = myDomain.getVertexSize();
 						this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
 						this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-						this.labelText = cnc.getId();
-						this.showLabel = myDomain.isShowLabel();;
+						this.labelText = myGraphElement.getId();
+						this.showLabel = myDomain.isShowLabel();
 						this.imageReference = null;
-						
-					} else {
-						// --- 
-						this.myComponentTypeSettings = ctsHash.get(component.getType());
-						if (myComponentTypeSettings!=null) {
-							myDomain = domainHash.get(myComponentTypeSettings.getDomain());
-							this.size = myDomain.getVertexSize();
-							this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
-							this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-							this.labelText = myGraphElement.getId();
-							this.showLabel = myDomain.isShowLabel();
-							this.imageReference = null;
-						}	
-					}// end (component instanceof ClusterNetworkComponent) 
-					
-				}
-			}//end (componentHashSet.iterator().hasNext())
+					}	
+				}// end (component instanceof ClusterNetworkComponent) 
+				
+			}
 		}		
 	}
 	
 	/**
-	 * Sets the graph edge values.
+	 * Sets the layout parameters for {@link GraphEdge}s.
 	 */
 	private void setGraphEdgeValues() {
 		
@@ -268,10 +266,12 @@ public class GraphElementLayout {
 		// --- Evaluate the GraphEdge ------------------------------------
 		GraphEdge graphEdge = (GraphEdge) this.myGraphElement;
 		NetworkComponent networkComponent = this.networkModel.getNetworkComponent(graphEdge);
-		if (networkComponent == null) {
+		if (networkComponent==null) {
 			System.out.println("Graph Element Layout: NetworkComponent for GraphEdge '" + graphEdge.getId() + "' not found!");
 			return;
 		}
+		
+		//this.networkModel.getNetworkComponentAdapter(null, networkComponent);
 		
 		// --- Set values according to Domain and component type settings - 
 		this.labelText = graphEdge.getId();

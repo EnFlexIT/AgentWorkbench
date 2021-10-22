@@ -2,4 +2,5 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="org.awb.env.graphToolbarExtension" name="Agent.Workbench Graph Environemt Toolbar Extension" schema="schema/org.awb.env.graphToolbarExtension.exsd"/>
+   <extension-point id="org.awb.env.dynamicGraphElementLayout" name="Agent.Workbench Dynamic GraphElementLayout" schema="schema/org.awb.env.dynamicGraphElementLayout.exsd"/>
 </plugin>

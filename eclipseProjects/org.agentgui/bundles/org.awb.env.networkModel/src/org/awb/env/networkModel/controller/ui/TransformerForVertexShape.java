@@ -125,30 +125,30 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 	 * @see com.google.common.base.Function#apply(java.lang.Object)
 	 */
 	@Override
-	public Shape apply(GraphNode node) {
+	public Shape apply(GraphNode graphNode) {
 
-		Shape shape = factory.getEllipse(node); // DEFAULT
+		Shape shape = factory.getEllipse(graphNode); // DEFAULT
 		
-		String shapeForm = node.getGraphElementLayout(graphController.getNetworkModel()).getShapeForm();
+		String shapeForm = graphNode.getGraphElementLayout(graphController.getNetworkModel()).getShapeForm();
 		if (shapeForm==null) {
 			// --- nothing to do here ----
 		} else  if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
-			shape = factory.getRectangle(node);
+			shape = factory.getRectangle(graphNode);
 			
 		} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE)) {
-			shape = factory.getRoundRectangle(node);
+			shape = factory.getRoundRectangle(graphNode);
 			
 		} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON)) {
-			shape = factory.getRegularPolygon(node, 6);
+			shape = factory.getRegularPolygon(graphNode, 6);
 			
 		} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR)) {
-			shape = factory.getRegularStar(node, 6);
+			shape = factory.getRegularStar(graphNode, 6);
 			
 		} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE)) {
 			
 			boolean isdebugPrintShapeScaleResults = false;
 			int scaleMultiplier = this.getScaleMultiplier();
-			String imageRef = node.getGraphElementLayout(this.graphController.getNetworkModel()).getImageReference();
+			String imageRef = graphNode.getGraphElementLayout(this.graphController.getNetworkModel()).getImageReference();
 			String hashKey = scaleMultiplier + "|" + imageRef;
 			
 			Shape imageShape = this.getImageShapeHashMap().get(hashKey);
