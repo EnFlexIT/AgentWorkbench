@@ -8,11 +8,13 @@ import org.awb.env.networkModel.NetworkComponent;
 /**
  * The Class DynamicGraphElementLayout enables to visualize a {@link NetworkComponent}
  * or a {@link GraphNode} based it data properties. It can be introduced wit the definition
- * of a {@link NetworkComponentAdapter} by overriding 
- * .
+ * of a {@link NetworkComponentAdapter} by overriding the method {@link NetworkComponentAdapter#getDynamicGraphElementLayout()}.
+ * 
+ * @see NetworkComponentAdapter#getDynamicGraphElementLayout()
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DynamicGraphElementLayout extends GraphElementLayout {
+public abstract class DynamicGraphElementLayout extends GraphElementLayout {
 
 	/**
 	 * Instantiates a new dynamic graph element layout.
@@ -22,5 +24,6 @@ public class DynamicGraphElementLayout extends GraphElementLayout {
 	public DynamicGraphElementLayout(GraphElement graphElement) {
 		super(graphElement);
 	}
+
 
 }

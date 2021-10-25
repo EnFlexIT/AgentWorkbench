@@ -51,8 +51,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
 /**
- * The Class DataModelStorageThread encodes or decodes the data model 
- * of {@link NetworkComponent}'s or {@link GraphNode}'s in or from a Base64 string.
+ * The Class DataModelStorageThread loads or saves the data models 
+ * of {@link NetworkComponent}'s or {@link GraphNode}'s.
  * 
  * @see NetworkComponent#setDataModel(Object)
  * @see NetworkComponent#setDataModelBase64(java.util.Vector)

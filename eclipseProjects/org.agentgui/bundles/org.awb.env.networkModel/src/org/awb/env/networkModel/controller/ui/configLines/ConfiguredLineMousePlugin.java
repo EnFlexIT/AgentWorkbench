@@ -219,7 +219,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		this.removeIntermediateNodes();
 		
 		NetworkModel networkModel = this.getGraphController().getNetworkModel();
-		GraphElementLayout layoutStartNode = this.getGraphNodeStart().getGraphElementLayout(networkModel);
+		GraphElementLayout layoutStartNode = this.getGraphNodeStart().getGraphElementLayout(this.getGraphController());
 		
 		// --- Get the intermediate points ----------------
 		if (this.getShapeConfiguration()==null) return;
@@ -238,7 +238,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 				// --- Create GraphNode -------------
 				GraphNode intNode = new GraphNode(INTERMEDIATE_GRAPH_NODE_ID_PREFIX + i, graphPoint);
 				
-				GraphElementLayout layoutTmpNode = intNode.getGraphElementLayout(networkModel);
+				GraphElementLayout layoutTmpNode = intNode.getGraphElementLayout(this.getGraphController());
 				layoutTmpNode.setShowLabel(false);
 				layoutTmpNode.setSize(layoutStartNode.getSize());
 				if (layoutTmpNode.getSize()<5) {
@@ -303,8 +303,8 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 		GraphNode tmpNode = new GraphNode();
 		tmpNode.setPosition(point2d);
 
-		GraphElementLayout layoutPickedNode = pickedNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel());
-		GraphElementLayout layoutTmpNode = tmpNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel());
+		GraphElementLayout layoutPickedNode = pickedNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController());
+		GraphElementLayout layoutTmpNode = tmpNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController());
 		layoutTmpNode.setSize(layoutPickedNode.getSize());
 		layoutTmpNode.setShapeForm(layoutPickedNode.getShapeForm());
 		layoutTmpNode.setImageReference(layoutPickedNode.getImageReference());

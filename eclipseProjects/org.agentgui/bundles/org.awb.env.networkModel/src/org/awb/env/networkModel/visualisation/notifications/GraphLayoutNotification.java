@@ -32,7 +32,7 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphElementLayout;
-import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 /**
  * The Class GraphLayoutNotification can be used in order to define
@@ -83,10 +83,10 @@ public class GraphLayoutNotification extends DisplayAgentNotificationGraph {
 	 * Adds a GraphElementLayout to the listing of Layouts.
 	 *
 	 * @param graphElement the graph element
-	 * @param networkModel the network model
+	 * @param graphController the graph controller
 	 */
-	public void addGraphElementLayout(GraphElement graphElement, NetworkModel networkModel) {
-		GraphElementLayout graphElementLayout = graphElement.getGraphElementLayout(networkModel);
+	public void addGraphElementLayout(GraphElement graphElement, GraphEnvironmentController graphController) {
+		GraphElementLayout graphElementLayout = graphElement.getGraphElementLayout(graphController);
 		if (graphElementLayout!=null) {
 			this.getGraphElementLayouts().add(graphElementLayout);	
 		}

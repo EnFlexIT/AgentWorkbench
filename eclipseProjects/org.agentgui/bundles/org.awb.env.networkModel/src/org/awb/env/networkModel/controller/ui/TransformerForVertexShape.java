@@ -114,7 +114,7 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 			nodeSizeTransformer = new Function<GraphNode, Integer>() {
 				@Override
 				public Integer apply(GraphNode graphNode) {
-					return TransformerForVertexShape.this.getScaleMultiplier() * (int) graphNode.getGraphElementLayout(graphController.getNetworkModel()).getSize();
+					return TransformerForVertexShape.this.getScaleMultiplier() * (int) graphNode.getGraphElementLayout(graphController).getSize();
 				}
 			};
 		}
@@ -129,7 +129,7 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 
 		Shape shape = factory.getEllipse(graphNode); // DEFAULT
 		
-		String shapeForm = graphNode.getGraphElementLayout(graphController.getNetworkModel()).getShapeForm();
+		String shapeForm = graphNode.getGraphElementLayout(graphController).getShapeForm();
 		if (shapeForm==null) {
 			// --- nothing to do here ----
 		} else  if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
@@ -148,7 +148,7 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 			
 			boolean isdebugPrintShapeScaleResults = false;
 			int scaleMultiplier = this.getScaleMultiplier();
-			String imageRef = graphNode.getGraphElementLayout(this.graphController.getNetworkModel()).getImageReference();
+			String imageRef = graphNode.getGraphElementLayout(this.graphController).getImageReference();
 			String hashKey = scaleMultiplier + "|" + imageRef;
 			
 			Shape imageShape = this.getImageShapeHashMap().get(hashKey);

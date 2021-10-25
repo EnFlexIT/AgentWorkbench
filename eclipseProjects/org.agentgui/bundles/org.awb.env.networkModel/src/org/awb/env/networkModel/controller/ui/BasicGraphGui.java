@@ -634,7 +634,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 					Icon icon = null;
 					boolean isPicked = visView.getPickedVertexState().isPicked(node);
 					
-					GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController.getNetworkModel());
+					GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController);
 					String nodeImagePath = nodeLayout.getImageReference();
 					if (nodeImagePath!=null && nodeImagePath.equals("MissingIcon")==false) {
 
@@ -704,9 +704,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 				@Override
 				public Paint apply(GraphNode node) {
 					if (visView.getPickedVertexState().isPicked(node)) {
-						return node.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+						return node.getGraphElementLayout(graphController).getColorPicked();
 					} 
-					return node.getGraphElementLayout(graphController.getNetworkModel()).getColor();
+					return node.getGraphElementLayout(graphController).getColor();
 				}
 			});
 
@@ -714,8 +714,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setVertexLabelTransformer(new Function<GraphNode, String>() {
 				@Override
 				public String apply(GraphNode node) {
-					if (node.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel()==true) {
-						return node.getGraphElementLayout(graphController.getNetworkModel()).getLabelText();
+					if (node.getGraphElementLayout(graphController).isShowLabel()==true) {
+						return node.getGraphElementLayout(graphController).getLabelText();
 					}
 					return null;
 				}
@@ -741,7 +741,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 					if (ms!=null) {
 						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
 					}
-					return new BasicStroke(scaleMultiplier * edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
+					return new BasicStroke(scaleMultiplier * edge.getGraphElementLayout(graphController).getSize());
 				}
 			});
 			
@@ -749,9 +749,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			Function<GraphEdge, Paint> edgeColorTransformer = new Function<GraphEdge, Paint>() {
 				@Override
 				public Paint apply(GraphEdge edge) {
-					Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
+					Color initColor = edge.getGraphElementLayout(graphController).getColor();
 					if (visView.getPickedEdgeState().isPicked(edge)) {
-						initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+						initColor = edge.getGraphElementLayout(graphController).getColorPicked();
 					}
 					return initColor;
 				}}; 
@@ -764,12 +764,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 				@Override
 				public String apply(GraphEdge edge) {
 					// --- Get the needed info --------------------------------
-					String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
-					boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();
+					String imageRef = edge.getGraphElementLayout(graphController).getImageReference();
+					boolean showLabel = edge.getGraphElementLayout(graphController).isShowLabel();
 					// --- Configure color ------------------------------------
 					Color color = Color.BLACK;
 					if (visView.getPickedEdgeState().isPicked(edge)) {
-						color = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+						color = edge.getGraphElementLayout(graphController).getColorPicked();
 					}
 					String htmlColor = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
 					
@@ -800,15 +800,15 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(visView) {
 				@Override
 				public boolean isShowMarker(GraphEdge edge) {
-					return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
+					return edge.getGraphElementLayout(graphController).isMarkerShow();
 				}
 				@Override
 				public float getMarkerStrokeWidth(GraphEdge edge) {
-					return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerStrokeWidth();
+					return edge.getGraphElementLayout(graphController).getMarkerStrokeWidth();
 				}
 				@Override
 				public Color getMarkerColor(GraphEdge edge) {
-					return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerColor();
+					return edge.getGraphElementLayout(graphController).getMarkerColor();
 				}
 			});
 			

@@ -835,7 +835,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			for (String graphElementID : networkComponent.getGraphElementIDs()) {
 				GraphElement graphElement = this.getGraphElements().get(graphElementID);
 				if (graphElement!=null) {
-					graphElement.resetGraphElementLayout(this);
+					graphElement.setGraphElementLayout(null);
 				}
 			}
 		}
@@ -2156,7 +2156,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		for (int i = 0; i < graphElementList.size(); i++) {
 			GraphElement graphElement = graphElementList.get(i);
 			if (graphElement.graphElementLayout!=null) {
-				graphElement.resetGraphElementLayout(this);	
+				graphElement.setGraphElementLayout(null);	
 			}
 		}
 	}

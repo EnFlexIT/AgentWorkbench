@@ -37,6 +37,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
 import jade.core.AID;
@@ -163,13 +164,24 @@ public abstract class NetworkComponentAdapter {
 	 */
 	public abstract Vector<JComponent> getJPopupMenuElements();
 
-
+	
+	/**
+	 * Updates the current data model visualization.
+	 */
+	public void updateDataModelVisualization() {
+		// --- Reload currently shown data models by notifying observer -------
+		NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_NetworkElementDataModelReLoaded); 
+		this.getGraphEnvironmentController().notifyObservers(nmNote);
+		// --- Ensure to repaint corresponding components ---------------------
+		// TODO
+	}
+	
 	// --------------------------------------------------------------
 	// --- From here methods to enable an individual visualization --
 	// --------------------------------------------------------------
 	/**
-	 * Returns the specified {@link DynamicGraphElementLayout} or <code>null</code> if not overwritten.<br>
-	 * <b>Override this method to enable an individual node or component visualization.</b>
+	 * Returns a specific {@link DynamicGraphElementLayout} or <code>null</code>, if not overwritten.<br>
+	 * <b>Override this method to enable an individual node or component visualization that is based on the current data model.</b>
 	 * @return the DynamicGraphElementLayout to be applied during the rendering of the {@link NetworkModel}s graph for the current component type.
 	 * @see DynamicGraphElementLayout
 	 */

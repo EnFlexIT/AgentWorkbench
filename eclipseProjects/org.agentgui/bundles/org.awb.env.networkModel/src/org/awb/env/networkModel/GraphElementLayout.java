@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
@@ -45,10 +46,12 @@ public class GraphElementLayout {
 
 	private GraphElement myGraphElement;
 	
+	private GraphEnvironmentController graphController;
 	private NetworkModel networkModel;
 	private TreeMap<String, DomainSettings> domainHash;
 	private TreeMap<String, ComponentTypeSettings> ctsHash;
 
+	
 	private DomainSettings myDomain;
 	private ComponentTypeSettings myComponentTypeSettings;
 	
@@ -90,31 +93,34 @@ public class GraphElementLayout {
 		this.myGraphElement = myGraphElement;
 	}
 	
+	
+	
 	/**
-	 * Sets the current {@link NetworkModel} to the GraphElementLayout that will additionally set
-	 * the layout parameter for {@link GraphNode}s or {@link GraphEdge}s.
-	 * 
-	 * @param networkModel the current NetworkModel that contains the general layout settings
-	 * @see GeneralGraphSettings4MAS
+	 * Sets the current {@link GraphEnvironmentController} to the layout that will set the 
+	 * individual layout parameters for {@link GraphNode}s or {@link GraphEdge}s.
+	 *
+	 * @param graphController the current graph controller
 	 */
-	public void setNetworkModel(NetworkModel networkModel) {
+	public void updateLayout(GraphEnvironmentController graphController) {
 		
 		// --- Early return? ------------------------------
-		if (networkModel==null) return;
+		if (graphController==null) return;
 		
 		// --- Get important information sources ----------
-		this.networkModel = networkModel;
+		this.graphController = graphController;
+		this.networkModel = this.graphController.getNetworkModel();
 		this.domainHash = this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
 		this.ctsHash = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
 		
 		// --- Set the Layout of the component ------------
 		if (this.myGraphElement instanceof GraphNode) {
-			this.setGraphNodeValues();
+			this.setGraphNodeLayout();
 		} else if (this.myGraphElement instanceof GraphEdge) {
-			this.setGraphEdgeValues();
+			this.setGraphEdgeLayout();
 		}
 		
 		// --- Forget information sources -----------------
+		this.graphController = null;
 		this.networkModel = null;
 		this.domainHash = null;
 		this.ctsHash = null;
@@ -123,7 +129,7 @@ public class GraphElementLayout {
 	/**
 	 * Sets the layout parameter for {@link GraphNode}s.
 	 */
-	private void setGraphNodeValues() {
+	private void setGraphNodeLayout() {
 		
 		// --- Set default values ----------------------------------------
 		this.size = this.domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
@@ -250,7 +256,7 @@ public class GraphElementLayout {
 	/**
 	 * Sets the layout parameters for {@link GraphEdge}s.
 	 */
-	private void setGraphEdgeValues() {
+	private void setGraphEdgeLayout() {
 		
 		// --- Set default values ----------------------------------------
 		this.size = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
@@ -270,8 +276,6 @@ public class GraphElementLayout {
 			System.out.println("Graph Element Layout: NetworkComponent for GraphEdge '" + graphEdge.getId() + "' not found!");
 			return;
 		}
-		
-		//this.networkModel.getNetworkComponentAdapter(null, networkComponent);
 		
 		// --- Set values according to Domain and component type settings - 
 		this.labelText = graphEdge.getId();

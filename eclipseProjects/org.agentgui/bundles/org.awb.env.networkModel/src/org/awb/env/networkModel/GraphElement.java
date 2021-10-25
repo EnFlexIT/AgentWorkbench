@@ -28,17 +28,22 @@
  */
 package org.awb.env.networkModel;
 
+import org.awb.env.networkModel.adapter.DynamicGraphElementLayout;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import jade.util.leap.Serializable;
 
 /**
- * Abstract super class for nodes and edges in an environment model of the type graph / network.
+ * Abstract super class for {@link GraphNode}s and {@link GraphEdge}s in the Graph- and Network Model Environment.
  * 
  * @see GraphEdge
  * @see GraphNode
+ * @see NetworkModel
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public abstract class GraphElement implements Serializable {
 
@@ -78,30 +83,69 @@ public abstract class GraphElement implements Serializable {
 	 * @param graphElementLayout the new graph element layout
 	 */
 	public void setGraphElementLayout(GraphElementLayout graphElementLayout) {
-		this.graphElementLayout=graphElementLayout;
+		this.graphElementLayout = graphElementLayout;
 	}
-	
 	/**
 	 * Returns - based on the general settings in the specified {@link NetworkModel} - the {@link GraphElementLayout} .
-	 * @param networkModel the current {@link NetworkModel}
+	 *
+	 * @param graphController the graph controller
 	 * @return the graph element layout
 	 * @see GeneralGraphSettings4MAS
 	 */
-	public GraphElementLayout getGraphElementLayout(NetworkModel networkModel) {
-		if (this.graphElementLayout==null && networkModel!=null) {
-			this.graphElementLayout = new GraphElementLayout(this);
-			this.graphElementLayout.setNetworkModel(networkModel);
+	public GraphElementLayout getGraphElementLayout(GraphEnvironmentController graphController) {
+		
+		if (graphController==null) return graphElementLayout;
+		
+		DynamicGraphElementLayout dynGEL = null;
+		if (this.graphElementLayout==null) {
+			// --- Check if there is a dynamic layout --------------- 
+			dynGEL = this.getDynamicGraphElementLayout();
+			if (dynGEL!=null) {
+				dynGEL.updateLayout(graphController);
+				this.graphElementLayout = dynGEL;
+			} else {
+				this.graphElementLayout = new GraphElementLayout(this);
+				this.graphElementLayout.updateLayout(graphController);
+			}
+			
+		} else {
+			// --- Invoke to update the DynamicGraphElementLayout? -- 
+			if (graphElementLayout instanceof DynamicGraphElementLayout) {
+				dynGEL = (DynamicGraphElementLayout) graphElementLayout;
+				dynGEL.updateLayout(graphController);
+			}
 		}
 		return this.graphElementLayout;
 	}
 	
 	/**
-	 * Resets the graph element layout.
-	 * @param networkModel the current {@link NetworkModel}
+	 * Returns the {@link DynamicGraphElementLayout}, if specified with the corresponding {@link NetworkComponentAdapter}.
+	 * @return the dynamic graph element layout
 	 */
-	public void resetGraphElementLayout(NetworkModel networkModel) {
-		this.graphElementLayout = null;
-		this.getGraphElementLayout(networkModel);
+	private DynamicGraphElementLayout getDynamicGraphElementLayout() {
+		NetworkComponentAdapter nca = this.getNetworkComponentAdapter();
+		if (nca!=null) {
+			return nca.getDynamicGraphElementLayout();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the {@link NetworkComponentAdapter} that is responsible for the current graph element.
+	 * @return the network component adapter
+	 */
+	private NetworkComponentAdapter getNetworkComponentAdapter() {
+		
+		NetworkComponentAdapter nca = null;
+		// --- Get NetworkComponentAdapter for the current GraphElement ------- 
+		if (this instanceof GraphNode) {
+			// --- Case GraphNode ---------------------------------------------
+			
+		} else if (this instanceof GraphEdge) {
+			// --- Case GraphEdge ---------------------------------------------
+			
+		}
+		return nca;
 	}
 	
 }
