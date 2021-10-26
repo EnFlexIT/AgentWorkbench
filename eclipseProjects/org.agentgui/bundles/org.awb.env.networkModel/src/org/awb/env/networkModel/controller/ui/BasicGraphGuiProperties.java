@@ -767,6 +767,9 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			// --- Store this a new initial hash reminder -----------
 			this.setDataModelBase64InitialHashCodes(networkElement);
 			
+			// --- Update view / repaint networkModel ---------------
+			this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
+			
 			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------------
 				this.graphController.setProjectUnsaved();

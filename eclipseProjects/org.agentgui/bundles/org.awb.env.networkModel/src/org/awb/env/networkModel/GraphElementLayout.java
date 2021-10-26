@@ -46,21 +46,17 @@ public class GraphElementLayout {
 
 	private GraphElement myGraphElement;
 	
-	private GraphEnvironmentController graphController;
+	// --- Information temporary available ----------------------------------------------
 	private NetworkModel networkModel;
 	private TreeMap<String, DomainSettings> domainHash;
 	private TreeMap<String, ComponentTypeSettings> ctsHash;
 
-	
+	// --- Information available after initialization and by using getter methods ------- 
 	private DomainSettings myDomain;
 	private ComponentTypeSettings myComponentTypeSettings;
 	
 	private boolean distributionNode = false;
 	private boolean clusterComponent = false;
-	
-	private boolean markerShow = false;
-	private float markerStrokeWidth = 0;
-	private Color markerColor = new Color(255,0,0, 140);
 	
 	private float size = 0;
 	private Color color = Color.BLACK;
@@ -69,6 +65,11 @@ public class GraphElementLayout {
 	private boolean showLabel = true;
 	private String imageReference;
 	private String shapeForm;
+	
+	private boolean markerShow = false;
+	private float markerStrokeWidth = 0;
+	private Color markerColor = new Color(255,0,0, 140);
+	
 	
 	/**
 	 * Instantiates a new graph element layout.
@@ -93,22 +94,26 @@ public class GraphElementLayout {
 		this.myGraphElement = myGraphElement;
 	}
 	
-	
-	
 	/**
 	 * Sets the current {@link GraphEnvironmentController} to the layout that will set the 
 	 * individual layout parameters for {@link GraphNode}s or {@link GraphEdge}s.
 	 *
 	 * @param graphController the current graph controller
 	 */
-	public void updateLayout(GraphEnvironmentController graphController) {
-		
+	public void setGraphElementLayout(GraphEnvironmentController graphController) {
 		// --- Early return? ------------------------------
 		if (graphController==null) return;
+		this.setGraphElementLayout(graphController.getNetworkModel());
+	}
+	/**
+	 * Sets the current {@link NetworkModel} to the layout that will set the 
+	 * individual layout parameters for {@link GraphNode}s or {@link GraphEdge}s.
+	 *
+	 * @param networkModel the new graph element layout
+	 */
+	public void setGraphElementLayout(NetworkModel networkModel) {
 		
-		// --- Get important information sources ----------
-		this.graphController = graphController;
-		this.networkModel = this.graphController.getNetworkModel();
+		this.networkModel = networkModel;
 		this.domainHash = this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
 		this.ctsHash = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
 		
@@ -120,7 +125,6 @@ public class GraphElementLayout {
 		}
 		
 		// --- Forget information sources -----------------
-		this.graphController = null;
 		this.networkModel = null;
 		this.domainHash = null;
 		this.ctsHash = null;
@@ -314,46 +318,9 @@ public class GraphElementLayout {
 		
 	}
 	
-	/**
-	 * Returns a copy of the current layout.
-	 *
-	 * @param graphElement the graph element
-	 * @return the copy
-	 */
-	public GraphElementLayout getCopy(GraphElement graphElement) {
-		
-		if (isDistributionNode()==true || isClusterComponent()==true) {
-			return null;
-		}
-		
-		// --- Create a copy of the Layout --------------------------
-		GraphElementLayout copy = new GraphElementLayout(graphElement);
-		
-		copy.setShowLabel(this.isShowLabel());
-		if (this.getLabelText()!=null) {
-			copy.setLabelText(new String(this.getLabelText()));	
-		}
-		
-		copy.setSize(this.getSize());
-		
-		if (this.getImageReference()!=null) {
-			copy.setImageReference(new String(this.getImageReference()));	
-		}
-		
-		copy.setColor(new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue()));
-		copy.setColorPicked(new Color(this.getColorPicked().getRed(), this.getColorPicked().getGreen(), this.getColorPicked().getBlue()));
-		
-		copy.setMarkerShow(this.isMarkerShow());
-		copy.setMarkerColor(new Color(this.getMarkerColor().getRed(), this.getMarkerColor().getGreen(), this.getMarkerColor().getBlue()));
-		copy.setMarkerStrokeWidth(this.getMarkerStrokeWidth());
-		
-		if (this.getShapeForm()!=null) {
-			copy.setShapeForm(new String(this.getShapeForm()));	
-		}
-		return copy;
-	}
-	
-	
+	// ----------------------------------------------------------------------------------
+	// --- From here, regular getter and setter methods for the actual settings ---------
+	// ----------------------------------------------------------------------------------	
 	/**
 	 * Sets the DistributionNode.
 	 * @param isDistributionNode the new distribution node
@@ -384,6 +351,7 @@ public class GraphElementLayout {
 		return clusterComponent;
 	}
 
+	
 	/**
 	 * Gets the label text.
 	 * @return the labelText
@@ -413,6 +381,7 @@ public class GraphElementLayout {
 	public void setShowLabel(boolean showLabel) {
 		this.showLabel = showLabel;
 	}
+	
 	
 	/**
 	 * Gets the size.
