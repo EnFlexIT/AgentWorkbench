@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.swing.ImageIcon;
+
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
@@ -63,8 +65,9 @@ public class GraphElementLayout {
 	private Color colorPicked = Color.YELLOW;
 	private String labelText;
 	private boolean showLabel = true;
-	private String imageReference;
 	private String shapeForm;
+	private String imageReference;
+	private ImageIcon imageIcon;
 	
 	private boolean markerShow = false;
 	private float markerStrokeWidth = 0;
@@ -185,7 +188,7 @@ public class GraphElementLayout {
 				this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
 				this.imageReference = this.myComponentTypeSettings.getEdgeImage();
 				if (this.imageReference!=null) {
-					if (this.imageReference.equals("MissingIcon")==false) {
+					if (this.imageReference.equals(GraphGlobals.MISSING_ICON)==false) {
 						this.shapeForm = GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE;
 					}
 				}
@@ -429,6 +432,21 @@ public class GraphElementLayout {
 	}
 
 	/**
+	 * Gets the shape form.
+	 * @return the shape form
+	 */
+	public String getShapeForm() {
+		return shapeForm;
+	}
+	/**
+	 * Sets the shape form.
+	 * @param shapeForm the new shape form
+	 */
+	public void setShapeForm(String shapeForm) {
+		this.shapeForm = shapeForm;
+	}
+	
+	/**
 	 * Gets the image reference.
 	 * @return the imageReference
 	 */
@@ -444,20 +462,16 @@ public class GraphElementLayout {
 	}
 	
 	/**
-	 * Gets the shape form.
-	 * @return the shape form
+	 * Return the image icon for the current element. By default <code>null</code> is returned.
+	 * Overwrite this method to return an actual {@link ImageIcon}. This method is only used
+	 * in the context of dynamic graph element layouts.
+	 * @return the image icon
 	 */
-	public String getShapeForm() {
-		return shapeForm;
-	}
-	/**
-	 * Sets the shape form.
-	 * @param shapeForm the new shape form
-	 */
-	public void setShapeForm(String shapeForm) {
-		this.shapeForm = shapeForm;
+	public ImageIcon getImageIcon() {
+		return imageIcon;
 	}
 
+	
 	/**
 	 * Checks if is marker show.
 	 * @return the markerShow

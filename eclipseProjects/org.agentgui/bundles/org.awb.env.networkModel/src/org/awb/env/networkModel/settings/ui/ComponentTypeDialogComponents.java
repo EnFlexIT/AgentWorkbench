@@ -619,7 +619,7 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 			} else if (i == getColumnHeaderIndexComponents(COL_ShowLabel)) {
 				newRow.add(true);
 			} else if (i == getColumnHeaderIndexComponents(COL_Image)) {
-				newRow.add(ComponentTypeDialog.createImageIcon(null, "MissingIcon"));
+				newRow.add(ComponentTypeDialog.createImageIcon(null, GraphGlobals.MISSING_ICON));
 			} else if (i == getColumnHeaderIndexComponents(COL_EdgeWidth)) {
 				newRow.add(GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH);
 			} else if (i == getColumnHeaderIndexComponents(COL_EdgeColor)) {

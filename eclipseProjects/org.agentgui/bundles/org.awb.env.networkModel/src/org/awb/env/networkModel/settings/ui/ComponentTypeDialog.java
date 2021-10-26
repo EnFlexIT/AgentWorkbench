@@ -546,7 +546,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 */
 	public static ImageIcon createImageIcon(String path, String description) {
 		if (path!=null ){		
-			if (path.equals("MissingIcon")) {
+			if (path.equals(GraphGlobals.MISSING_ICON)) {
 				return new MissingIcon(description);
 			} else {
 			    ImageIcon imageIcon = GraphGlobals.getImageIcon(path);

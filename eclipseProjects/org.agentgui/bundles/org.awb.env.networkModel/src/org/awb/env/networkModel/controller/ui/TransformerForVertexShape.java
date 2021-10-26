@@ -35,6 +35,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
@@ -114,16 +115,20 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 		
 		boolean isdebugPrintShapeScaleResults = false;
 
-		String imageRef = graphNode.getGraphElementLayout(this.graphController).getImageReference();
-		if (imageRef==null || imageRef.isEmpty()==true) return null;
+		GraphElementLayout layout = graphNode.getGraphElementLayout(this.graphController);
+		String imageRef = layout.getImageReference();
+		ImageIcon imageIcon = layout.getImageIcon();
+		if ((imageRef==null || imageRef.isEmpty()==true || imageRef.equals(GraphGlobals.MISSING_ICON)) && imageIcon==null) return null;
 		
 		int scaleMultiplier = this.getScaleMultiplier();
 		String hashKey = scaleMultiplier + "|" + imageRef;
 
 		Shape imageShape = this.getImageShapeHashMap().get(hashKey);
 		if (imageShape==null) {
-			// --- Get the image shape for the reference ------------------
-			ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
+			// --- Get the image shape for the reference? -----------------
+			if (imageIcon==null) {
+				imageIcon = GraphGlobals.getImageIcon(imageRef);
+			}
 			if (imageIcon != null) {
 				// --- Cache the image shape, if not zero-sized ----------- 
 				imageShape = FourPassImageShaper.getShape(GraphGlobals.convertToBufferedImage(imageIcon.getImage()));
@@ -170,12 +175,12 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 				public Integer apply(GraphNode graphNode) {
 					// -- Calculate regular node size -------------------------
 					Integer nodeSize = TransformerForVertexShape.this.getScaleMultiplier() * (int) graphNode.getGraphElementLayout(graphController).getSize();
-					// --- Check node size and possibly image size ------------  
-					String imageRef = graphNode.getGraphElementLayout(graphController).getImageReference();
-					if (imageRef!=null && imageRef.isEmpty()==false) {
+					// --- Check node size and possibly image size ------------
+					GraphElementLayout layout = graphNode.getGraphElementLayout(graphController);
+					String imageRef = layout.getImageReference();
+					if ((imageRef!=null && imageRef.isEmpty()==false) || layout.getImageIcon()!=null) {
 						Shape imageShape = TransformerForVertexShape.this.getImageShape(graphNode);
 						if (imageShape!=null) {
-//							nodeSize = (int) Math.sqrt((Math.pow(imageShape.getBounds().getWidth(), 2.0) + (Math.pow(imageShape.getBounds().getHeight(), 2.0))));
 							nodeSize = Math.max(nodeSize, (int)imageShape.getBounds().getWidth());
 							nodeSize = Math.max(nodeSize, (int)imageShape.getBounds().getHeight());
 						}
