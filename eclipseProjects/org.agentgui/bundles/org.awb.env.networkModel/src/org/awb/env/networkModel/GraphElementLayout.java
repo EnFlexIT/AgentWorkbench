@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.swing.ImageIcon;
+
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
@@ -45,27 +48,31 @@ public class GraphElementLayout {
 
 	private GraphElement myGraphElement;
 	
+	// --- Information temporary available ----------------------------------------------
 	private NetworkModel networkModel;
 	private TreeMap<String, DomainSettings> domainHash;
 	private TreeMap<String, ComponentTypeSettings> ctsHash;
 
+	// --- Information available after initialization and by using getter methods ------- 
 	private DomainSettings myDomain;
 	private ComponentTypeSettings myComponentTypeSettings;
 	
 	private boolean distributionNode = false;
 	private boolean clusterComponent = false;
 	
-	private boolean markerShow = false;
-	private float markerStrokeWidth = 0;
-	private Color markerColor = new Color(255,0,0, 140);
-	
 	private float size = 0;
 	private Color color = Color.BLACK;
 	private Color colorPicked = Color.YELLOW;
 	private String labelText;
 	private boolean showLabel = true;
-	private String imageReference;
 	private String shapeForm;
+	private String imageReference;
+	private ImageIcon imageIcon;
+	
+	private boolean markerShow = false;
+	private float markerStrokeWidth = 0;
+	private Color markerColor = new Color(255,0,0, 140);
+	
 	
 	/**
 	 * Instantiates a new graph element layout.
@@ -91,40 +98,48 @@ public class GraphElementLayout {
 	}
 	
 	/**
-	 * Sets the network model.
-	 * @param networkModel the new network model
+	 * Sets the current {@link GraphEnvironmentController} to the layout that will set the 
+	 * individual layout parameters for {@link GraphNode}s or {@link GraphEdge}s.
+	 *
+	 * @param graphController the current graph controller
 	 */
-	public void setNetworkModel(NetworkModel networkModel) {
+	public void setGraphElementLayout(GraphEnvironmentController graphController) {
+		// --- Early return? ------------------------------
+		if (graphController==null) return;
+		this.setGraphElementLayout(graphController.getNetworkModel());
+	}
+	/**
+	 * Sets the current {@link NetworkModel} to the layout that will set the 
+	 * individual layout parameters for {@link GraphNode}s or {@link GraphEdge}s.
+	 *
+	 * @param networkModel the new graph element layout
+	 */
+	public void setGraphElementLayout(NetworkModel networkModel) {
 		
-		if (networkModel==null) {
-			// --- There is nothing we can do -------------
-			return;
-		}
-		
-		// --- Set the Layout of the component ------------
 		this.networkModel = networkModel;
 		this.domainHash = this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
 		this.ctsHash = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
 		
+		// --- Set the Layout of the component ------------
 		if (this.myGraphElement instanceof GraphNode) {
-			this.setGraphNodeValues();
+			this.setGraphNodeLayout();
 		} else if (this.myGraphElement instanceof GraphEdge) {
-			this.setGraphEdgeValues();
+			this.setGraphEdgeLayout();
 		}
 		
+		// --- Forget information sources -----------------
 		this.networkModel = null;
 		this.domainHash = null;
 		this.ctsHash = null;
-		
 	}
 	
 	/**
-	 * Sets the graph node values.
+	 * Sets the layout parameter for {@link GraphNode}s.
 	 */
-	private void setGraphNodeValues() {
+	private void setGraphNodeLayout() {
 		
 		// --- Set default values ----------------------------------------
-		this.size = domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
+		this.size = this.domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
 		this.color = GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR;
 		this.colorPicked = GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR;
 		this.labelText = this.myGraphElement.getId();
@@ -137,8 +152,10 @@ public class GraphElementLayout {
 		
 		// --- Evaluate the GraphNode ------------------------------------
 		GraphNode graphNode = (GraphNode) this.myGraphElement;
-		List<NetworkComponent> componentHashSet = this.networkModel.getNetworkComponents(graphNode);
-		NetworkComponent distributionNode = networkModel.getDistributionNode(componentHashSet);
+		List<NetworkComponent> componentList = this.networkModel.getNetworkComponents(graphNode);
+		if (componentList.size()==0) return;
+		
+		NetworkComponent distributionNode = this.networkModel.getDistributionNode(componentList);
 		if (distributionNode!=null) {
 			// -----------------------------------------------------------
 			// --- DistributionNode --------------------------------------
@@ -169,90 +186,84 @@ public class GraphElementLayout {
 				this.size = (int) myComponentTypeSettings.getEdgeWidth();
 				this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
 				this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-				this.imageReference = myComponentTypeSettings.getEdgeImage();
-				if (this.imageReference != null) {
-					if (this.imageReference.equals("MissingIcon")==false) {
+				this.imageReference = this.myComponentTypeSettings.getEdgeImage();
+				if (this.imageReference!=null) {
+					if (this.imageReference.equals(GraphGlobals.MISSING_ICON)==false) {
 						this.shapeForm = GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE;
 					}
 				}
 			}
 			
 		} else {
-			if (componentHashSet.iterator().hasNext()) {
+			// -----------------------------------------------------------
+			// --- Normal node OR ClusterNode ----------------------------
+			// -----------------------------------------------------------
+			List<ClusterNetworkComponent> clusterNetCompList = this.networkModel.getClusterNetworkComponents(new ArrayList<>(componentList));
+			if (componentList.size()==1 && clusterNetCompList.size()==1 && this.networkModel.isFreeGraphNode(graphNode)==false) {
 				// -------------------------------------------------------
-				// --- Normal node or ClusterNode ------------------------
+				// --- Central GraphNode of a cluster component ----------
+				this.setClusterComponent(true);
+				
+				ClusterNetworkComponent cnc = clusterNetCompList.get(0);
+				String domain = cnc.getDomain();
+				if (domain!=null && domain.isEmpty()==false) {
+					this.myDomain = this.domainHash.get(domain);
+				}
+				if (this.myDomain == null) {
+					this.myDomain = this.domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+				}
+				this.size = myDomain.getVertexSize() * 3;
+				this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
+				this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
+				this.labelText = cnc.getId();
+				this.showLabel = true;
+				this.imageReference = null;
+				this.shapeForm = myDomain.getClusterShape();
+				
+			} else {
 				// -------------------------------------------------------
-				List<ClusterNetworkComponent> clusterNetCompList = this.networkModel.getClusterNetworkComponents(new ArrayList<>(componentHashSet));
-				if (componentHashSet.size()==1 && clusterNetCompList.size()==1 && this.networkModel.isFreeGraphNode(graphNode)==false) {
-					// ---------------------------------------------------
-					// --- Central GraphNode of a cluster component ------
-					this.setClusterComponent(true);
-					
-					ClusterNetworkComponent cnc = clusterNetCompList.get(0);
+				// --- Normal node ---------------------------------------
+				// -------------------------------------------------------
+				NetworkComponent component = componentList.iterator().next();
+				if (component instanceof ClusterNetworkComponent) {
+					// --- Outer GraphNode of a cluster found ------------
+					ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
 					String domain = cnc.getDomain();
-					if (domain != null) {
-						if (domain.equals("") == false) {
-							myDomain = domainHash.get(domain);
-						}
+					if (domain!=null && domain.isEmpty()==false) {
+						this.myDomain = this.domainHash.get(domain);
 					}
-					if (myDomain == null) {
-						myDomain = domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+					if (this.myDomain==null) {
+						this.myDomain = this.domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
 					}
-					this.size = myDomain.getVertexSize() * 3;
+					this.size = myDomain.getVertexSize();
 					this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
 					this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
 					this.labelText = cnc.getId();
-					this.showLabel = true;
+					this.showLabel = myDomain.isShowLabel();;
 					this.imageReference = null;
-					this.shapeForm = myDomain.getClusterShape();
 					
 				} else {
-					// ---------------------------------------------------
-					// --- Normal node -----------------------------------
-					// ---------------------------------------------------
-					NetworkComponent component = componentHashSet.iterator().next();
-					if (component instanceof ClusterNetworkComponent) {
-						// --- Outer GraphNode of a cluster found --------
-						ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
-						String domain = cnc.getDomain();
-						if (domain != null) {
-							if (domain.equals("") == false) {
-								myDomain = domainHash.get(domain);
-							}
-						}
-						if (myDomain == null) {
-							myDomain = domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
-						}
+					// --- 
+					this.myComponentTypeSettings = ctsHash.get(component.getType());
+					if (this.myComponentTypeSettings!=null) {
+						this.myDomain = this.domainHash.get(this.myComponentTypeSettings.getDomain());
 						this.size = myDomain.getVertexSize();
 						this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
 						this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-						this.labelText = cnc.getId();
-						this.showLabel = myDomain.isShowLabel();;
+						this.labelText = myGraphElement.getId();
+						this.showLabel = myDomain.isShowLabel();
 						this.imageReference = null;
-						
-					} else {
-						// --- 
-						this.myComponentTypeSettings = ctsHash.get(component.getType());
-						if (myComponentTypeSettings!=null) {
-							myDomain = domainHash.get(myComponentTypeSettings.getDomain());
-							this.size = myDomain.getVertexSize();
-							this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
-							this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-							this.labelText = myGraphElement.getId();
-							this.showLabel = myDomain.isShowLabel();
-							this.imageReference = null;
-						}	
-					}// end (component instanceof ClusterNetworkComponent) 
-					
-				}
-			}//end (componentHashSet.iterator().hasNext())
+					}	
+				}// end (component instanceof ClusterNetworkComponent) 
+				
+			}
 		}		
 	}
 	
 	/**
-	 * Sets the graph edge values.
+	 * Sets the layout parameters for {@link GraphEdge}s.
 	 */
-	private void setGraphEdgeValues() {
+	private void setGraphEdgeLayout() {
 		
 		// --- Set default values ----------------------------------------
 		this.size = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
@@ -268,7 +279,7 @@ public class GraphElementLayout {
 		// --- Evaluate the GraphEdge ------------------------------------
 		GraphEdge graphEdge = (GraphEdge) this.myGraphElement;
 		NetworkComponent networkComponent = this.networkModel.getNetworkComponent(graphEdge);
-		if (networkComponent == null) {
+		if (networkComponent==null) {
 			System.out.println("Graph Element Layout: NetworkComponent for GraphEdge '" + graphEdge.getId() + "' not found!");
 			return;
 		}
@@ -310,46 +321,9 @@ public class GraphElementLayout {
 		
 	}
 	
-	/**
-	 * Returns a copy of the current layout.
-	 *
-	 * @param graphElement the graph element
-	 * @return the copy
-	 */
-	public GraphElementLayout getCopy(GraphElement graphElement) {
-		
-		if (isDistributionNode()==true || isClusterComponent()==true) {
-			return null;
-		}
-		
-		// --- Create a copy of the Layout --------------------------
-		GraphElementLayout copy = new GraphElementLayout(graphElement);
-		
-		copy.setShowLabel(this.isShowLabel());
-		if (this.getLabelText()!=null) {
-			copy.setLabelText(new String(this.getLabelText()));	
-		}
-		
-		copy.setSize(this.getSize());
-		
-		if (this.getImageReference()!=null) {
-			copy.setImageReference(new String(this.getImageReference()));	
-		}
-		
-		copy.setColor(new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue()));
-		copy.setColorPicked(new Color(this.getColorPicked().getRed(), this.getColorPicked().getGreen(), this.getColorPicked().getBlue()));
-		
-		copy.setMarkerShow(this.isMarkerShow());
-		copy.setMarkerColor(new Color(this.getMarkerColor().getRed(), this.getMarkerColor().getGreen(), this.getMarkerColor().getBlue()));
-		copy.setMarkerStrokeWidth(this.getMarkerStrokeWidth());
-		
-		if (this.getShapeForm()!=null) {
-			copy.setShapeForm(new String(this.getShapeForm()));	
-		}
-		return copy;
-	}
-	
-	
+	// ----------------------------------------------------------------------------------
+	// --- From here, regular getter and setter methods for the actual settings ---------
+	// ----------------------------------------------------------------------------------	
 	/**
 	 * Sets the DistributionNode.
 	 * @param isDistributionNode the new distribution node
@@ -380,6 +354,7 @@ public class GraphElementLayout {
 		return clusterComponent;
 	}
 
+	
 	/**
 	 * Gets the label text.
 	 * @return the labelText
@@ -409,6 +384,7 @@ public class GraphElementLayout {
 	public void setShowLabel(boolean showLabel) {
 		this.showLabel = showLabel;
 	}
+	
 	
 	/**
 	 * Gets the size.
@@ -456,6 +432,21 @@ public class GraphElementLayout {
 	}
 
 	/**
+	 * Gets the shape form.
+	 * @return the shape form
+	 */
+	public String getShapeForm() {
+		return shapeForm;
+	}
+	/**
+	 * Sets the shape form.
+	 * @param shapeForm the new shape form
+	 */
+	public void setShapeForm(String shapeForm) {
+		this.shapeForm = shapeForm;
+	}
+	
+	/**
 	 * Gets the image reference.
 	 * @return the imageReference
 	 */
@@ -471,20 +462,16 @@ public class GraphElementLayout {
 	}
 	
 	/**
-	 * Gets the shape form.
-	 * @return the shape form
+	 * Return the image icon for the current element. By default <code>null</code> is returned.
+	 * Overwrite this method to return an actual {@link ImageIcon}. This method is only used
+	 * in the context of dynamic graph element layouts.
+	 * @return the image icon
 	 */
-	public String getShapeForm() {
-		return shapeForm;
-	}
-	/**
-	 * Sets the shape form.
-	 * @param shapeForm the new shape form
-	 */
-	public void setShapeForm(String shapeForm) {
-		this.shapeForm = shapeForm;
+	public ImageIcon getImageIcon() {
+		return imageIcon;
 	}
 
+	
 	/**
 	 * Checks if is marker show.
 	 * @return the markerShow

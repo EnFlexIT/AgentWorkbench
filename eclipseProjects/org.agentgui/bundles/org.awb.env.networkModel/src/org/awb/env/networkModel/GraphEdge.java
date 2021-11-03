@@ -66,7 +66,6 @@ public class GraphEdge extends GraphElement {
 	public GraphEdge getCopy() {
 		GraphEdge edgceCopy = new GraphEdge(this.id, this.componentType);
 		if (this.edgeShapeConfiguration!=null) edgceCopy.setEdgeShapeConfiguration(this.edgeShapeConfiguration.getCopy());
-		if (this.graphElementLayout!=null)     edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
 		return edgceCopy;
 	}
 

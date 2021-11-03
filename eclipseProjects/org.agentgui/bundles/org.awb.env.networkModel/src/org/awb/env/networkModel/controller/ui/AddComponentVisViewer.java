@@ -147,7 +147,7 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 					
 					String nodeImage = localComponentTypeListElement.getComponentTypeSettings().getEdgeImage();
 					if (nodeImage!=null) {
-						if (nodeImage.equals("MissingIcon")==false) {
+						if (nodeImage.equals(GraphGlobals.MISSING_ICON)==false) {
 							// --- Icon reference found --- Start ---
 							LayeredIcon layeredIcon = null;
 							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImage);

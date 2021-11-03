@@ -33,9 +33,13 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import org.awb.env.networkModel.DataModelNetworkElement;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
 import jade.core.AID;
@@ -163,6 +167,46 @@ public abstract class NetworkComponentAdapter {
 	public abstract Vector<JComponent> getJPopupMenuElements();
 
 	
+	/**
+	 * Updates the current data model visualization.
+	 */
+	public void updateDataModelVisualization() {
+		// --- Reload currently shown data models by notifying observer -------
+		NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_NetworkElementDataModelReLoaded); 
+		this.getGraphEnvironmentController().notifyObservers(nmNote);
+		// --- Ensure to repaint corresponding components ---------------------
+		nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint);
+		this.getGraphEnvironmentController().notifyObservers(nmNote);
+	}
+	
+	/**
+	 * In case of a setup usage, will set the current project as unsaved / not saved yet.
+	 */
+	public void setProjectUnsaved() {
+		if (this.getGraphEnvironmentController().getProject()!=null) {
+			this.getGraphEnvironmentController().setProjectUnsaved();
+		}
+	}
+	
+	// --------------------------------------------------------------
+	// --- From here methods to enable an individual visualization --
+	// --------------------------------------------------------------
+	/**
+	 * Returns a specific {@link AbstractDynamicGraphElementLayout} or <code>null</code>, if not overwritten.<br>
+	 * <b>Override this method to enable an individual node or component visualization that is based on the current data model.</b>
+	 *
+	 * @param graphElement the graph element to get the layout settings for (a {@link GraphNode} or a {@link GraphEdge})
+	 * @return the DynamicGraphElementLayout to be applied during the rendering of the {@link NetworkModel}s graph for the current component type.
+	 * @see AbstractDynamicGraphElementLayout
+	 */
+	public AbstractDynamicGraphElementLayout getDynamicGraphElementLayout(GraphElement graphElement) {
+		return null;
+	}
+
+	
+	// --------------------------------------------------------------
+	// --- From here methods to send messages -----------------------
+	// --------------------------------------------------------------
 	/**
 	 * Gets the current display agent.
 	 * @see DisplayAgent

@@ -180,8 +180,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		GraphNode tmpNode = new GraphNode();
 		tmpNode.setPosition(point2d);
 
-		GraphElementLayout layoutPickedNode = pickedNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel());
-		GraphElementLayout layoutTmpNode = tmpNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController().getNetworkModel());
+		GraphElementLayout layoutPickedNode = pickedNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController());
+		GraphElementLayout layoutTmpNode = tmpNode.getGraphElementLayout(this.basicGraphGUI.getGraphEnvironmentController());
 		layoutTmpNode.setSize(layoutPickedNode.getSize());
 		layoutTmpNode.setShapeForm(layoutPickedNode.getShapeForm());
 		layoutTmpNode.setImageReference(layoutPickedNode.getImageReference());

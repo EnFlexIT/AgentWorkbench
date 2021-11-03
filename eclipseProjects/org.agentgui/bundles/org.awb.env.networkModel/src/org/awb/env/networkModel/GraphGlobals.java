@@ -62,6 +62,7 @@ import edu.uci.ics.jung.graph.Graph;
 public final class GraphGlobals {
 
 	public static final String PREF_SHOW_LAYOUT_TOOLBAR = "ShowLayoutToolBar";
+	public static final String MISSING_ICON = "MissingIcon";
 	
 	private static String pathImages = "/org/awb/env/networkModel/img/";
 
@@ -177,7 +178,7 @@ public final class GraphGlobals {
 	public static URL getImageURL(String imageRef){
 		
 		// --- Abort URL generation ---------------------------------
-		if (imageRef.equals("MissingIcon")==true) return null;
+		if (imageRef.equals(MISSING_ICON)==true) return null;
 
 		// --- Resource by the class loader, as configured ----------
 		URL url = GraphGlobals.class.getClass().getResource(imageRef);

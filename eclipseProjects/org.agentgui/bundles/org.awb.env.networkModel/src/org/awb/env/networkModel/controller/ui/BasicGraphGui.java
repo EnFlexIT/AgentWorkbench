@@ -31,8 +31,10 @@ package org.awb.env.networkModel.controller.ui;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Paint;
@@ -47,7 +49,6 @@ import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,7 +63,9 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -116,6 +119,7 @@ import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTra
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
+import edu.uci.ics.jung.visualization.renderers.DefaultEdgeLabelRenderer;
 
 /**
  * This class implements a GUI component for displaying visualizations for JUNG graphs. <br>
@@ -631,59 +635,58 @@ public class BasicGraphGui extends JPanel implements Observer {
 				@Override
 				public Icon apply(GraphNode node) {
 
-					Icon icon = null;
-					boolean isPicked = visView.getPickedVertexState().isPicked(node);
+					GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController);
+					String imageRef = nodeLayout.getImageReference();
+					ImageIcon imageIcon = nodeLayout.getImageIcon();
+					if ((imageRef==null || imageRef.isEmpty()==true || imageRef.equals(GraphGlobals.MISSING_ICON)) && imageIcon==null) return null;
+
+					// --- 1. Search in the local Hash ----------
+					Color currentColor = nodeLayout.getColor();
+					String colorPostfix = "[" + currentColor.getRGB() + "]";
+					int scaleMultiplier = this.getScaleMultiplier();
 					
-					GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController.getNetworkModel());
-					String nodeImagePath = nodeLayout.getImageReference();
-					if (nodeImagePath!=null && nodeImagePath.equals("MissingIcon")==false) {
-
-						// --- 1. Search in the local Hash ----------
-						Color currentColor = nodeLayout.getColor();
-						String colorPostfix = "[" + currentColor.getRGB() + "]";
-						int scaleMultiplier = this.getScaleMultiplier();
+					// --- 2. If necessary, load the image ------
+					boolean isPicked = visView.getPickedVertexState().isPicked(node);
+					String iconHashKey = scaleMultiplier + "|" + imageRef + colorPostfix;
+					String iconHashKeyPicked = iconHashKey + this.pickedPostfix;
+					LayeredIcon layeredIcon = this.iconHash.get(isPicked==false ? iconHashKey : iconHashKeyPicked);
+					if (layeredIcon == null) {
+						// --- Load the image icon --------------
+						if (imageIcon==null) {
+							imageIcon = GraphGlobals.getImageIcon(imageRef);
+						}
+						// --- Prepare the image -------------
+						BufferedImage bufferedImage;
+						if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
+							// --- If the color is set to black or white, just use the unchanged image ----------
+							bufferedImage = GraphGlobals.convertToBufferedImage(imageIcon.getImage());
+						} else {
+							// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
+							bufferedImage = GraphGlobals.exchangeColor(GraphGlobals.convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
+						}
 						
-						// --- 2. If necessary, load the image ------
-						String iconHashKey = scaleMultiplier + "|" + nodeImagePath + colorPostfix;
-						String iconHashKeyPicked = iconHashKey + this.pickedPostfix;
-						LayeredIcon layeredIcon = this.iconHash.get(isPicked==false ? iconHashKey : iconHashKeyPicked);
-						if (layeredIcon == null) {
-							// --- Load the image icon --------------
-							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
-							// --- Prepare the image -------------
-							BufferedImage bufferedImage;
-							if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
-								// --- If the color is set to black or white, just use the unchanged image ----------
-								bufferedImage = GraphGlobals.convertToBufferedImage(imageIcon.getImage());
-							} else {
-								// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
-								bufferedImage = GraphGlobals.exchangeColor(GraphGlobals.convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
+						if (bufferedImage != null) {
+							// --- Scale the image icon? --------
+							if (scaleMultiplier>1) {
+								bufferedImage = GraphGlobals.scaleBufferedImage(bufferedImage, scaleMultiplier);
 							}
-							
-							if (bufferedImage != null) {
-								// --- Scale the image icon? --------
-								if (scaleMultiplier>1) {
-									bufferedImage = GraphGlobals.scaleBufferedImage(bufferedImage, scaleMultiplier);
-								}
-								// --- 3. Remind the images ---------
-								LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
-								this.iconHash.put(iconHashKey, layeredIconUnPicked);
+							// --- 3. Remind the images ---------
+							LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
+							this.iconHash.put(iconHashKey, layeredIconUnPicked);
 
-								LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
-								layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
-								this.iconHash.put(iconHashKeyPicked, layeredIconPicked);
+							LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
+							layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
+							this.iconHash.put(iconHashKeyPicked, layeredIconPicked);
 
-								// --- 4. Return the right one --
-								if (isPicked == true) {
-									layeredIcon = layeredIconPicked;
-								} else {
-									layeredIcon = layeredIconUnPicked;
-								}
+							// --- 4. Return the right one --
+							if (isPicked == true) {
+								layeredIcon = layeredIconPicked;
+							} else {
+								layeredIcon = layeredIconUnPicked;
 							}
 						}
-						icon = layeredIcon;
 					}
-					return icon;
+					return layeredIcon;
 				}
 				/**
 				 * Returns the scale multiplier that is used during a map visualization.
@@ -704,9 +707,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 				@Override
 				public Paint apply(GraphNode node) {
 					if (visView.getPickedVertexState().isPicked(node)) {
-						return node.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+						return node.getGraphElementLayout(graphController).getColorPicked();
 					} 
-					return node.getGraphElementLayout(graphController.getNetworkModel()).getColor();
+					return node.getGraphElementLayout(graphController).getColor();
 				}
 			});
 
@@ -714,8 +717,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setVertexLabelTransformer(new Function<GraphNode, String>() {
 				@Override
 				public String apply(GraphNode node) {
-					if (node.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel()==true) {
-						return node.getGraphElementLayout(graphController.getNetworkModel()).getLabelText();
+					if (node.getGraphElementLayout(graphController).isShowLabel()==true) {
+						return node.getGraphElementLayout(graphController).getLabelText();
 					}
 					return null;
 				}
@@ -741,7 +744,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 					if (ms!=null) {
 						scaleMultiplier = ms.getMapScale().getScaleMultiplier();
 					}
-					return new BasicStroke(scaleMultiplier * edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
+					return new BasicStroke(scaleMultiplier * edge.getGraphElementLayout(graphController).getSize());
 				}
 			});
 			
@@ -749,50 +752,63 @@ public class BasicGraphGui extends JPanel implements Observer {
 			Function<GraphEdge, Paint> edgeColorTransformer = new Function<GraphEdge, Paint>() {
 				@Override
 				public Paint apply(GraphEdge edge) {
-					Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
+					Color initColor = edge.getGraphElementLayout(graphController).getColor();
 					if (visView.getPickedEdgeState().isPicked(edge)) {
-						initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+						initColor = edge.getGraphElementLayout(graphController).getColorPicked();
 					}
 					return initColor;
 				}}; 
 			visView.getRenderContext().setEdgeDrawPaintTransformer(edgeColorTransformer);
 			visView.getRenderContext().setArrowFillPaintTransformer(edgeColorTransformer);
 			visView.getRenderContext().setArrowDrawPaintTransformer(edgeColorTransformer);
+
 			
-			// --- Configure Edge Image Labels --------------------------------
+			// --- Configure edge labels / text -------------------------------
 			visView.getRenderContext().setEdgeLabelTransformer(new Function<GraphEdge, String>() {
 				@Override
-				public String apply(GraphEdge edge) {
-					// --- Get the needed info --------------------------------
-					String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
-					boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();
-					// --- Configure color ------------------------------------
-					Color color = Color.BLACK;
-					if (visView.getPickedEdgeState().isPicked(edge)) {
-						color = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
-					}
-					String htmlColor = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+				public String apply(GraphEdge graphEdge) {
+					return graphEdge.getId();
+				}
+			});
+			// --- Configure Edge Renderer (requires edge text see above) -----
+			visView.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.black, true) {
+				private static final long serialVersionUID = -5671956694208574130L;
+				@Override
+				public <E> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font, boolean isSelected, E e) {
 					
-					// --- Get the text / image content -----------------------
-					String content = "";
-					if (showLabel) {
-						content = edge.getId();
+					// --- Do the regular things: super call  -----------------
+					JLabel jLabelDisplay = (JLabel) super.getEdgeLabelRendererComponent(vv, value, font, isSelected, e);
+					
+					// --- Get current instances ------------------------------
+					GraphEdge graphEdge = (GraphEdge) e;
+					GraphElementLayout layout = graphEdge.getGraphElementLayout(graphController);
+
+					// --- Set the visual text -------------------------------- 
+					if (layout.isShowLabel()==true) {
+						jLabelDisplay.setText(graphEdge.getId());
+					} else {
+						jLabelDisplay.setText(null);
 					}
-					if (imageRef!= null) {
-						URL url = GraphGlobals.getImageURL(imageRef);
-						if (url != null) {
-							if (showLabel) {
-								content = content + "<br><img src='" + url + "'>";
-							} else {
-								content = "<img src='" + url + "'>";
-							}
-						}
+					
+					// --- Set color ------------------------------------------
+					if (isSelected==true) {
+						this.setForeground(layout.getColorPicked());
+					} else {
+						this.setForeground(layout.getColor());
 					}
-					// --- Set the return value -------------------------------
-					String textDisplay = "<html><center><font color='[COLOR]'>[CONTENT]</font></center></html>";
-					textDisplay = textDisplay.replace("[COLOR]", htmlColor);
-					textDisplay = textDisplay.replace("[CONTENT]", content);
-					return textDisplay;
+					
+					// --- Integrate image ------------------------------------
+					String imageRef = layout.getImageReference();
+					ImageIcon imageIcon = layout.getImageIcon();
+					if (imageIcon!=null) {
+						jLabelDisplay.setIcon(imageIcon);
+					} else if (imageRef!=null && imageRef.isEmpty()==false && imageRef.equals(GraphGlobals.MISSING_ICON)==false) {
+						imageIcon = GraphGlobals.getImageIcon(imageRef);
+						if (imageIcon!=null) jLabelDisplay.setIcon(imageIcon);
+					} else {
+						jLabelDisplay.setIcon(null);
+					}
+					return jLabelDisplay;
 				}
 			});
 
@@ -800,15 +816,15 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer(visView) {
 				@Override
 				public boolean isShowMarker(GraphEdge edge) {
-					return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
+					return edge.getGraphElementLayout(graphController).isMarkerShow();
 				}
 				@Override
 				public float getMarkerStrokeWidth(GraphEdge edge) {
-					return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerStrokeWidth();
+					return edge.getGraphElementLayout(graphController).getMarkerStrokeWidth();
 				}
 				@Override
 				public Color getMarkerColor(GraphEdge edge) {
-					return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerColor();
+					return edge.getGraphElementLayout(graphController).getMarkerColor();
 				}
 			});
 			
