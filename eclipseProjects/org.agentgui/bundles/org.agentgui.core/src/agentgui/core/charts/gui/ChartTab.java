@@ -39,8 +39,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -354,7 +354,7 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 				if(plot.getDataset().getSeriesKey(i).equals(seriesLabel)){
 					XYItemRenderer renderer = plot.getRenderer();
 					boolean currentlyVisible = renderer.getItemVisible(i, 0);
-					renderer.setSeriesVisible(i, new Boolean(!currentlyVisible));
+					renderer.setSeriesVisible(i,  Boolean.valueOf(!currentlyVisible));
 				}
 			}
 			

@@ -42,7 +42,6 @@ import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.JDesktopPane;
@@ -92,6 +91,7 @@ import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettingsController;
 import agentgui.core.update.ProjectRepositoryExport;
 import agentgui.core.update.ProjectRepositoryUpdate;
+import de.enflexit.common.Observable;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.featureEvaluation.FeatureInfo;

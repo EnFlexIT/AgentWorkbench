@@ -15,7 +15,7 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
-
+@SuppressWarnings("unused")
 public class Piong_Ontology extends Agent {
 
 	private static final long serialVersionUID = 1276178649247011952L;

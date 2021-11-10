@@ -51,7 +51,7 @@ public class TableCellEditor4FloatObject extends BasicCellEditor{
 		String newValue = ((JTextField)editorComponent).getText();
 		if(newValue.length() > 0){
 			newValue = newValue.replace(",", ".");
-			return new Float(newValue);
+			return Float.valueOf(newValue);
 		}else{
 			return null;
 		}

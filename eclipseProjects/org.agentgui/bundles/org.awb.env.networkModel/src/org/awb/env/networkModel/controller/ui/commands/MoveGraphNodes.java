@@ -65,11 +65,11 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 
 	private GraphEnvironmentController graphController;
 	private BasicGraphGui basicGraphGui;
-	private VisualizationViewer<GraphNode,GraphEdge> visViewer; 	
-	
+	private VisualizationViewer<GraphNode, GraphEdge> visViewer;
+
 	private HashMap<String, Point2D> nodesMovedOldCoordinate;
 	private HashMap<String, Point2D> nodesMovedNewCoordinate;
-	
+
 	private HashMap<String, List<Point2D>> polylinesMovedOldPositions;
 	private HashMap<String, List<Point2D>> polylinesMovedNewPositions;
 	
@@ -85,10 +85,10 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	public MoveGraphNodes(GraphEnvironmentController graphController, BasicGraphGui basicGraphGui, HashMap<String, Point2D> nodesMovedOldCoordinates, HashMap<String, List<Point2D>> polylinesMovedOldPositions) {
 		this.graphController = graphController;
 		this.basicGraphGui = basicGraphGui;
-		this.visViewer = basicGraphGui.getVisualizationViewer(); 	
+		this.visViewer = basicGraphGui.getVisualizationViewer();
 		this.nodesMovedOldCoordinate = nodesMovedOldCoordinates;
 		this.polylinesMovedOldPositions = polylinesMovedOldPositions;
-		
+
 		// --- Evaluate the current GraphNode positions -------------
 		this.nodesMovedNewCoordinate = new HashMap<String, Point2D>();
 		List<String> nodeIDList = new ArrayList<>(this.nodesMovedOldCoordinate.keySet());
@@ -97,15 +97,15 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 			GraphElement graphElement = this.graphController.getNetworkModel().getGraphElement(nodeID);
 			if (graphElement instanceof GraphNode) {
 				GraphNode graphNode = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
-				if (graphNode!=null) {
-					this.nodesMovedNewCoordinate.put(nodeID, graphNode.getCoordinate());	
-				}	
+				if (graphNode != null) {
+					this.nodesMovedNewCoordinate.put(nodeID, graphNode.getCoordinate());
+				}
 			}
 		}
-		
+
 		// --- Evaluate the current Polyline node positions ---------
-		if (this.polylinesMovedOldPositions!=null && this.polylinesMovedOldPositions.size()>0) {
-			
+		if (this.polylinesMovedOldPositions != null && this.polylinesMovedOldPositions.size() > 0) {
+
 			this.polylinesMovedNewPositions = new HashMap<>();
 			List<String> edgeIDList = new ArrayList<>(this.polylinesMovedOldPositions.keySet());
 			for (int i = 0; i < edgeIDList.size(); i++) {
@@ -127,20 +127,20 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 		}
 		this.sendNodesMovedNotification();
 	}
-	
+
 	/**
 	 * Sets the positions of the GraphNodes as configured in the HashMap.
 	 * @param nodes2Move the nodes2 move
 	 */
 	private void setPositions(HashMap<String, Point2D> nodes2Move) {
-		
+
 		this.visViewer.getPickedVertexState().clear();
-		
+
 		List<String> nodeIDList = new ArrayList<>(nodes2Move.keySet());
 		for (int i = 0; i < nodeIDList.size(); i++) {
 			String nodeID = nodeIDList.get(i);
 			GraphNode graphNode = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
-			if (graphNode!=null) {
+			if (graphNode != null) {
 				Point2D pos = nodes2Move.get(nodeID);
 				if (pos instanceof AbstractCoordinate) {
 					graphNode.setCoordinate((AbstractCoordinate) pos);
@@ -148,10 +148,10 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 					graphNode.setPosition(pos);
 				}
 				this.visViewer.getGraphLayout().setLocation(graphNode, this.getGraphNodePositionTransformer().apply(graphNode.getPosition()));
-				this.visViewer.getPickedVertexState().pick(graphNode, true);	
+				this.visViewer.getPickedVertexState().pick(graphNode, true);
 			}
 		}
-		
+
 		this.sendNodesMovedNotification();
 	}
 	/**
@@ -159,14 +159,14 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	 * @param polylinesToMove the polylines to move
 	 */
 	private void setIntermediatePointPositions(HashMap<String, List<Point2D>> polylinesToMove) {
-		
-		if (polylinesToMove==null || polylinesToMove.size()==0) return;
-		
+
+		if (polylinesToMove == null || polylinesToMove.size() == 0) return;
+
 		List<String> nodeIDList = new ArrayList<>(polylinesToMove.keySet());
 		for (int i = 0; i < nodeIDList.size(); i++) {
 			String edgeID = nodeIDList.get(i);
 			GraphEdge edge = (GraphEdge) this.graphController.getNetworkModel().getGraphElement(edgeID);
-			if (edge!=null) {
+			if (edge != null) {
 				if (edge.getEdgeShapeConfiguration() instanceof PolylineConfiguration) {
 					PolylineConfiguration polylineConfig = (PolylineConfiguration) edge.getEdgeShapeConfiguration();
 					polylineConfig.setIntermediatePoints(polylinesToMove.get(edgeID));
@@ -175,7 +175,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 			}
 		}
 	}
-	
+
 	/**
 	 * Send notification to the observer.
 	 */
@@ -219,5 +219,5 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 		this.setPositions(this.nodesMovedOldCoordinate);
 		this.setIntermediatePointPositions(this.polylinesMovedOldPositions);
 	}
-	
+
 }

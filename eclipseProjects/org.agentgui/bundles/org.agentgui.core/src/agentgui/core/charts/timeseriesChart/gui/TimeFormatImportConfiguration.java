@@ -248,7 +248,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 */
 	public long getTimeOffset() {
 		
-		this.timeOffset = new Long(0);
+		this.timeOffset = Long.valueOf(0);
 		
 		if (this.getJCheckBoxTimeShiftAdjust().isSelected()==true) {
 			// --- An offset is wished --------------------

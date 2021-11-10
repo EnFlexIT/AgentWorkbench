@@ -37,7 +37,7 @@ public class BaseClassLoadServiceUtilityImpl extends AbstractClassLoadServiceUti
 	 * @see energy.classLoadService.AbstractClassLoadServiceUtility#newInstance(java.lang.String)
 	 */
 	@Override
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError {
 		return this.getClassLoadService(className, BaseClassLoadService.class).newInstance(className);
 	}
 

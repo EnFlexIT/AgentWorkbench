@@ -35,6 +35,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1461,7 +1462,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	private Long extractNumericalValue(String expression) {
 		String numericString = "";
-		Long numeric = new Long(-1);
+		Long numeric = Long.valueOf(-1);
 		for (int i = 0; i < expression.length(); i++) {
 			String letter = Character.toString(expression.charAt(i));
 			if (letter.matches("[0-9]")) {
@@ -1472,7 +1473,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			try {
 				numeric = Long.parseLong(numericString);	
 			} catch (Exception e) {
-				numeric = new Long(-1);
+				numeric = Long.valueOf(-1);
 			}
 			
 		}
@@ -2093,6 +2094,16 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			System.err.println(ex + " AbstractGraphElementPrototype class must be concrete.");
 		} catch (IllegalAccessException ex) {
 			System.err.println(ex + " AbstractGraphElementPrototype class must have a no-arg constructor.");
+		} catch (IllegalArgumentException ex) {
+			System.err.println(ex + "AbstractGraphElementPrototype has been passed an illegal or inappropriate argument.");
+		} catch (InvocationTargetException ex) {
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to InovcationTargetException");
+		} catch (NoSuchMethodException ex) {
+			System.err.println(ex + "A method of AbstractGraphElementPrototype can not be found");
+		} catch (SecurityException ex) {
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to security violation");
+		} catch (NoClassDefFoundError ex) {
+		    System.err.println(ex + "Class AbstractGraphElementPrototype could not be found at runtime");
 		}
 		// --- StarGraphElement is the super class of all star graph elements ---
 		if (graphElement instanceof StarGraphElement) {

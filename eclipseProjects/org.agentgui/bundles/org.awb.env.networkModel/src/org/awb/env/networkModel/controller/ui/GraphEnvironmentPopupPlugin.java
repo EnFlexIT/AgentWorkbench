@@ -38,8 +38,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -91,7 +91,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
      * @param parentGUI the instance of the parent {@link BasicGraphGui}
      */
     public GraphEnvironmentPopupPlugin(BasicGraphGui parentGUI) {
-        super(MouseEvent.BUTTON3_MASK);
+        super(MouseEvent.BUTTON3_DOWN_MASK);
         this.basicGraphGui = parentGUI;
         this.graphController = this.basicGraphGui.getGraphEnvironmentController();
         this.graphController.addObserver(this);

@@ -38,8 +38,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -65,6 +63,8 @@ import agentgui.core.network.NetworkAddresses;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.core.project.Project;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'JADE-Configuration'

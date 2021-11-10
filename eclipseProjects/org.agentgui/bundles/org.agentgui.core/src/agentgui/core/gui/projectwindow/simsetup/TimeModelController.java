@@ -29,9 +29,8 @@
 package agentgui.core.gui.projectwindow.simsetup;
 
 import java.awt.Container;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JTabbedPane;
 
@@ -46,6 +45,8 @@ import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 
 
@@ -106,7 +107,7 @@ public class TimeModelController implements Observer {
 			if (isNoClass==false) {
 				try {
 					timeModel = ClassLoadServiceUtility.getTimeModelInstance(timeModelClass);
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException ex) {
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException | InvocationTargetException | NoSuchMethodException ex) {
 					ex.printStackTrace();
 				}
 			}

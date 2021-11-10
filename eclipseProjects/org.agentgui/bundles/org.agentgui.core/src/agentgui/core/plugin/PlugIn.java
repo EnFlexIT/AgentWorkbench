@@ -29,8 +29,6 @@
 package agentgui.core.plugin;
 
 import java.awt.Container;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -43,6 +41,8 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
 import de.enflexit.common.ontology.gui.OntologyClassVisualisation;

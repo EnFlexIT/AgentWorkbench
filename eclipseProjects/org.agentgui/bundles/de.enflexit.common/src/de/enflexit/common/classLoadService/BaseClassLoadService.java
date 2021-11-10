@@ -11,40 +11,47 @@ import jade.content.onto.Ontology;
  */
 public interface BaseClassLoadService {
 
-	
-	/**
-	 * Has to return the class for the specified class name or reference.
-	 *
-	 * @param className the class name
-	 * @return the class
-	 * @throws ClassNotFoundException the class not found exception
-	 */
-	public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError;
+    /**
+     * Has to return the class for the specified class name or reference.
+     *
+     * @param className the class name
+     * @return the class
+     * @throws ClassNotFoundException the class not found exception
+     */
+    public Class<?> forName(String className) throws ClassNotFoundException, NoClassDefFoundError;
 
-	/**
-	 * Has to return a new instance of the specified class.
-	 *
-	 * @param className the class name
-	 * @return the object
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException;
-	
-	/**
-	 * Has to return the ontology instance from the specified ontology class name.
-	 *
-	 * @param ontologyClassName the ontology class name
-	 * @return the ontology instance
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws SecurityException the security exception
-	 * @throws NoSuchMethodException the no such method exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws InvocationTargetException the invocation target exception
-	 */
-	public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException;
+    /**
+     * Has to return a new instance of the specified class.
+     *
+     * @param className the class name
+     * @return the object
+     * @throws ClassNotFoundException    the class not found exception
+     * @throws InstantiationException    the instantiation exception
+     * @throws IllegalAccessException    the illegal access exception
+     * @throws NoClassDefFoundError      class not found at runtime
+     * @throws SecurityException         classloader is not the same
+     * @throws NoSuchMethodException     if a matching method is not found.
+     * @throws InvocationTargetException if the underlying constructor throws an
+     *                                   exception
+     * @throws IllegalArgumentException  the illegal argument exception
+     */
+    public Object newInstance(String className)
+	    throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+	    InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError;
 
-	
+    /**
+     * Has to return the ontology instance from the specified ontology class name.
+     *
+     * @param ontologyClassName the ontology class name
+     * @return the ontology instance
+     * @throws ClassNotFoundException    the class not found exception
+     * @throws IllegalAccessException    the illegal access exception
+     * @throws SecurityException         the security exception
+     * @throws NoSuchMethodException     the no such method exception
+     * @throws IllegalArgumentException  the illegal argument exception
+     * @throws InvocationTargetException the invocation target exception
+     */
+    public Ontology getOntologyInstance(String ontologyClassName) throws ClassNotFoundException, IllegalAccessException,
+	    SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException;
+
 }

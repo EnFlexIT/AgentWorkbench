@@ -46,7 +46,7 @@ public class ConfiguredLinePopupPlugin extends AbstractPopupGraphMousePlugin imp
      * @param basicGraphGui the instance of the parent {@link BasicGraphGui}
      */
     public ConfiguredLinePopupPlugin(BasicGraphGui basicGraphGui) {
-        super(MouseEvent.BUTTON3_MASK);
+        super(MouseEvent.BUTTON3_DOWN_MASK);
         this.basicGraphGui = basicGraphGui;
     }
 

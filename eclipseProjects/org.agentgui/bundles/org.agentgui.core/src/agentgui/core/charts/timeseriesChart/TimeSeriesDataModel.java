@@ -28,7 +28,7 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
-import java.util.Observable;
+import de.enflexit.common.Observable;
 
 import agentgui.core.application.Application;
 import agentgui.core.charts.ChartSettingModel;

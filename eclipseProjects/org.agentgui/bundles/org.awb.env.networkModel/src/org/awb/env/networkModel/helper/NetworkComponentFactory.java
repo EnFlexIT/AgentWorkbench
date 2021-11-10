@@ -30,6 +30,7 @@ package org.awb.env.networkModel.helper;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 
 import org.awb.env.networkModel.GraphEdge;
@@ -164,6 +165,16 @@ public class NetworkComponentFactory {
 		} catch (IllegalAccessException ex) {
 		    System.err.println(factoryName + "AbstractGraphElementPrototype class must have a no-arg constructor.\n" + ex);
 		    return null;
+		} catch (IllegalArgumentException ex) {
+			System.err.println(ex + "AbstractGraphElementPrototype has been passed an illegal or inappropriate argument.");
+		} catch (InvocationTargetException ex) {
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to InovcationTargetException");
+		} catch (NoSuchMethodException ex) {
+			System.err.println(ex + "A method of AbstractGraphElementPrototype can not be found");
+		} catch (SecurityException ex) {
+			System.err.println(ex + "Loading of AbstractGraphElementPrototype led to security violation");
+		} catch (NoClassDefFoundError ex) {
+		    System.err.println(ex + "Class AbstractGraphElementPrototype could not be found at runtime");
 		}
 		    
 		// --- Create a new local NetworkModel ----------------------

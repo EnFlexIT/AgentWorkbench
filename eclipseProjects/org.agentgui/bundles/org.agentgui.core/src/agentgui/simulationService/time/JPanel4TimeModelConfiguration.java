@@ -28,14 +28,13 @@
  */
 package agentgui.simulationService.time;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.swing.JPanel;
 
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import agentgui.core.project.setup.SimulationSetup.SetupChangeEvent;
 
 /**

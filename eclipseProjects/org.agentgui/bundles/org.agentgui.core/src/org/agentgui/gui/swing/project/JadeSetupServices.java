@@ -36,8 +36,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -51,6 +49,8 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.classSelection.ClassElement2Display;
 import de.enflexit.common.classSelection.JListClassSearcher;
 import de.enflexit.common.classSelection.JListClassSearcherListener;

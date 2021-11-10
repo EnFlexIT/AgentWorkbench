@@ -39,8 +39,8 @@ import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;

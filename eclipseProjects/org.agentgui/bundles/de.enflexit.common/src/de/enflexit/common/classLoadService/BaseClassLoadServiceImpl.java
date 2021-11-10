@@ -25,8 +25,9 @@ public class BaseClassLoadServiceImpl implements BaseClassLoadService {
 	 * @see energy.classLoadService.ClassLoadService#newInstance(java.lang.String)
 	 */
 	@Override
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return this.forName(className).newInstance();
+	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError {
+		//https://stackoverflow.com/questions/46393863/what-to-use-instead-of-class-newinstance
+		return this.forName(className).getDeclaredConstructor().newInstance();
 	}
 
 	/* (non-Javadoc)

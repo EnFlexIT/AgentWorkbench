@@ -5,8 +5,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

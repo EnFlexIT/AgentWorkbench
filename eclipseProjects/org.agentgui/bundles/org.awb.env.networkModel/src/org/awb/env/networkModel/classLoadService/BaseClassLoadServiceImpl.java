@@ -26,8 +26,8 @@ public class BaseClassLoadServiceImpl implements BaseClassLoadService {
 	 * @see energy.classLoadService.ClassLoadService#newInstance(java.lang.String)
 	 */
 	@Override
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return this.forName(className).newInstance();
+	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError {
+		return this.forName(className).getDeclaredConstructor().newInstance();
 	}
 
 	/* (non-Javadoc)

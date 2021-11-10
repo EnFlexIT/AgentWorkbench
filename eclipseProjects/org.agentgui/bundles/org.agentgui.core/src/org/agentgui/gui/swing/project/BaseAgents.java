@@ -38,8 +38,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -65,6 +63,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.classSelection.ClassElement2Display;
 import de.enflexit.common.classSelection.JListClassSearcher;
 import de.enflexit.common.ontology.AgentStartArgument;

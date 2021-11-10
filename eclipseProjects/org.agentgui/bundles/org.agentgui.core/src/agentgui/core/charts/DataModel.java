@@ -31,8 +31,8 @@ package agentgui.core.charts;
 import jade.util.leap.List;
 
 import java.awt.Color;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 import agentgui.core.charts.ChartSettingModel.ChartSettingsUpdateNotification;
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettingModel;

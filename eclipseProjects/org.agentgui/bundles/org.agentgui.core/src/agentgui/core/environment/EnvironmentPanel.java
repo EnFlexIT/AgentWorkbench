@@ -28,7 +28,7 @@
  */
 package agentgui.core.environment;
 
-import java.util.Observer;
+import de.enflexit.common.Observer;
 
 import javax.swing.JPanel;
 

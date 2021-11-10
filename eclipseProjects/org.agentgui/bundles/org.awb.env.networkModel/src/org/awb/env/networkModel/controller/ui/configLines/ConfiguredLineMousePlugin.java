@@ -11,8 +11,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import java.util.Set;
 import java.util.Vector;
 
@@ -572,7 +572,7 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
                 
             } else {
                 Point2D out = me.getPoint();
-                if(me.getModifiers() == this.addToSelectionModifiers || me.getModifiers() == modifiers) {
+                if(me.getModifiersEx() == this.addToSelectionModifiers || me.getModifiersEx() == modifiers) {
                     if (down!=null) {
                     	rect.setFrameFromDiagonal(down,out);
                     	vv.repaint();

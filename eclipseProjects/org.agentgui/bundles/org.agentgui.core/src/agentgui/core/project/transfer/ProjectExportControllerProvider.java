@@ -28,6 +28,8 @@
  */
 package agentgui.core.project.transfer;
 
+import java.lang.reflect.InvocationTargetException;
+
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 
 /**
@@ -74,7 +76,7 @@ public class ProjectExportControllerProvider {
 			// --- Use a specialized subclass ----------------- 
 			try {
 				return (ProjectExportController) ClassLoadServiceUtility.newInstance(projectExportControllerClassName);
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoClassDefFoundError e) {
 				System.err.println("Error getting the specialized ProjectExportController implementation - using the default one!");
 				e.printStackTrace();
 				return new DefaultProjectExportController();

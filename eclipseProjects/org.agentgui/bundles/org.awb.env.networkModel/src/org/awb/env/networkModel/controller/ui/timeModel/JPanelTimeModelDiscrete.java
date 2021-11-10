@@ -633,9 +633,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		long step;
 		long stepInUnit;
 		if (stepString==null) {
-			step = new Long(0);
+			step =  Long.valueOf(0);
 		} else if (stepString.equals("")) {
-			step = new Long(0);
+			step = Long.valueOf(0);
 		} else {
 			stepInUnit = Long.parseLong(this.getJTextFieldWidthValue().getText());
 			step = stepInUnit * timeUnit.getFactorToMilliseconds();
