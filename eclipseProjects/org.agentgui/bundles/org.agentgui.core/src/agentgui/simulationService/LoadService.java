@@ -29,7 +29,6 @@
 package agentgui.simulationService;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -81,7 +80,6 @@ import jade.core.HorizontalCommand;
 import jade.core.IMTPException;
 import jade.core.Location;
 import jade.core.MainContainer;
-import jade.core.NameClashException;
 import jade.core.Node;
 import jade.core.NotFoundException;
 import jade.core.Profile;
@@ -96,7 +94,6 @@ import jade.core.messaging.MessagingSlice;
 import jade.core.mobility.AgentMobilityHelper;
 import jade.lang.acl.ACLMessage;
 import jade.mtp.MTPDescriptor;
-import jade.security.JADESecurityException;
 import jade.util.Logger;
 import jade.util.ObjectManager;
 import jade.util.leap.ArrayList;
@@ -1093,30 +1090,8 @@ public class LoadService extends BaseService {
 				myContainer.initAgent(agentID, agent, null, null);
 				myContainer.powerUpLocalAgent(agentID);
 				
-			} catch (IMTPException e) {
-				e.printStackTrace();
-			} catch (NameClashException e) {
-				e.printStackTrace();
-			} catch (NotFoundException e) {
-				e.printStackTrace();
-			} catch (JADESecurityException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (NoClassDefFoundError e) {
-				e.printStackTrace();
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 			return true;
 		}

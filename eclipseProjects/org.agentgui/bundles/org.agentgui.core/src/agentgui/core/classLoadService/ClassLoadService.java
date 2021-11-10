@@ -53,8 +53,7 @@ public interface ClassLoadService extends BaseClassLoadService {
      * @throws NoClassDefFoundError   the no class def found error
      * @throws ClassNotFoundException the class not found exception
      */
-    public Class<? extends Agent> getAgentClass(String agentClassName)
-	    throws NoClassDefFoundError, ClassNotFoundException;
+    public Class<? extends Agent> getAgentClass(String agentClassName) throws NoClassDefFoundError, ClassNotFoundException;
 
     /**
      * Has to return a {@link TimeModel} instance from the specified class name.
@@ -67,12 +66,9 @@ public interface ClassLoadService extends BaseClassLoadService {
      * @throws IllegalAccessException    the illegal access exception
      * @throws SecurityException         the security exception
      * @throws NoSuchMethodException     if a matching method is not found
-     * @throws InvocationTargetException if the underlying constructor throws an
-     *                                   exception
+     * @throws InvocationTargetException if the underlying constructor throws an exception
      */
-    public TimeModel getTimeModelInstance(String className)
-	    throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException,
-	    SecurityException, InvocationTargetException, NoSuchMethodException;
+    public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException, InvocationTargetException, NoSuchMethodException;
 
     /**
      * Has to return the {@link PlugIn} instance for the specified class name.
@@ -88,9 +84,7 @@ public interface ClassLoadService extends BaseClassLoadService {
      * @throws IllegalAccessException    the illegal access exception
      * @throws InvocationTargetException the invocation target exception
      */
-    public PlugIn getPlugInInstance(String pluginClassName, Project project)
-	    throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException,
-	    InstantiationException, IllegalAccessException, InvocationTargetException;
+    public PlugIn getPlugInInstance(String pluginClassName, Project project) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException;
 
     /**
      * Has to returns an instance of a static load balancing to use by the specified
@@ -107,9 +101,7 @@ public interface ClassLoadService extends BaseClassLoadService {
      * @throws IllegalAccessException    the illegal access exception
      * @throws InvocationTargetException the invocation target exception
      */
-    public StaticLoadBalancingBase getStaticLoadBalancing(String balancingClassName, Agent executingAgent)
-	    throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException,
-	    InstantiationException, IllegalAccessException, InvocationTargetException;
+    public StaticLoadBalancingBase getStaticLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException;
 
     /**
      * Has to returns an instance of a static load balancing to use by the specified
@@ -126,8 +118,6 @@ public interface ClassLoadService extends BaseClassLoadService {
      * @throws IllegalAccessException    the illegal access exception
      * @throws InvocationTargetException the invocation target exception
      */
-    public DynamicLoadBalancingBase getDynamicLoadBalancing(String balancingClassName, Agent executingAgent)
-	    throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException,
-	    InstantiationException, IllegalAccessException, InvocationTargetException;
+    public DynamicLoadBalancingBase getDynamicLoadBalancing(String balancingClassName, Agent executingAgent) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException;
 
 }
