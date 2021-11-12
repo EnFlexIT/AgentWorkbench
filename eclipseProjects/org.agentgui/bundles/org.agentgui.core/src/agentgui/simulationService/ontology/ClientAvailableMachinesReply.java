@@ -9,22 +9,20 @@ import jade.util.leap.*;
 * @author ontology bean generator
 * @version 2018/02/10, 18:49:04
 */
+@SuppressWarnings({ "unused", "serial" })
 public class ClientAvailableMachinesReply implements AgentAction {
 
    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-/**
 * Protege name: availableMachines
    */
    private List availableMachines = new ArrayList();
    public void addAvailableMachines(MachineDescription elem) { 
-     List oldList = this.availableMachines;
+    
+	List oldList = this.availableMachines;
      availableMachines.add(elem);
    }
    public boolean removeAvailableMachines(MachineDescription elem) {
-	 List oldList = this.availableMachines;
+     List oldList = this.availableMachines;
      boolean result = availableMachines.remove(elem);
      return result;
    }

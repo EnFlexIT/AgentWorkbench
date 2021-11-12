@@ -8,15 +8,13 @@ import jade.content.schema.*;
  * @author ontology bean generator
  * @version 2018/02/10, 18:49:04
  */
+@SuppressWarnings({ "unused", "serial" })
 public class AgentGUI_DistributionOntology extends jade.content.onto.Ontology  {
-  /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-//NAME
+  //NAME
   public static final String ONTOLOGY_NAME = "AgentGUI-Distribution";
   // The singleton instance of this ontology
-  private static ReflectiveIntrospector introspect = new ReflectiveIntrospector();
+
+private static ReflectiveIntrospector introspect = new ReflectiveIntrospector();
   private static Ontology theInstance = new AgentGUI_DistributionOntology();
   public static Ontology getInstance() {
      return theInstance;

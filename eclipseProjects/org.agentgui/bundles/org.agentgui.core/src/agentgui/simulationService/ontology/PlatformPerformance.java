@@ -8,13 +8,10 @@ import jade.content.*;
 * @author ontology bean generator
 * @version 2018/02/10, 18:49:04
 */
+@SuppressWarnings("serial")
 public class PlatformPerformance implements Concept {
 
    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-/**
 * Protege name: cpu_numberOfLogicalCores
    */
    private int cpu_numberOfLogicalCores;

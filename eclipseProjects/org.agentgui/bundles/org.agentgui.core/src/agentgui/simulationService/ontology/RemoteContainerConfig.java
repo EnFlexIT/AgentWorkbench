@@ -10,18 +10,16 @@ import jade.core.*;
 * @author ontology bean generator
 * @version 2018/02/10, 18:49:04
 */
+@SuppressWarnings({ "unused", "serial" })
 public class RemoteContainerConfig implements Concept {
 
    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-/**
 * Protege name: hostExcludeIP
    */
    private List hostExcludeIP = new ArrayList();
    public void addHostExcludeIP(String elem) { 
-     List oldList = this.hostExcludeIP;
+
+	List oldList = this.hostExcludeIP;
      hostExcludeIP.add(elem);
    }
    public boolean removeHostExcludeIP(String elem) {

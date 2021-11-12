@@ -8,13 +8,10 @@ import jade.content.*;
 * @author ontology bean generator
 * @version 2018/02/10, 18:49:04
 */
+@SuppressWarnings("serial")
 public class ClientRemoteContainerReply implements AgentAction {
 
    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-/**
 * Protege name: remotePID
    */
    private String remotePID;
