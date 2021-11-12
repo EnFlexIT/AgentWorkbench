@@ -34,56 +34,50 @@ import javax.swing.JComboBox;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 
 /**
- * The Class JComboBoxMtpProtocol is a JcomboBox that is used to select a MTP
- * protocol.
+ * The Class JComboBoxMtpProtocol is a JcomboBox 
+ * that is used to select a MTP protocol.
  * 
- * @author <a href="mailto:mohamedamine_jedidi@outlook.com">Mohamed Amine
- *         JEDIDI</a>
+ * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
  * @version 1.0
  * @since 29-04-2016
  */
 public class JComboBoxMtpProtocol extends JComboBox<MtpProtocol> {
 
-    private static final long serialVersionUID = 1L;
-    private DefaultComboBoxModel<MtpProtocol> model;
-
-    /**
-     * Instantiates a new JComboBoxMtpProtocol.
-     */
-    public JComboBoxMtpProtocol() {
-	setModel(this.getComboBoxModel());
-    }
-
-    /**
-     * Gets the combo box model.
-     * 
-     * @return the combo box model
-     */
-    private DefaultComboBoxModel<MtpProtocol> getComboBoxModel() {
-	if (model == null) {
-	    model = new DefaultComboBoxModel<MtpProtocol>();
-	    model.addElement(MtpProtocol.HTTP);
-	    model.addElement(MtpProtocol.HTTPS);
-	    model.addElement(MtpProtocol.PROXIEDHTTPS);
+	private static final long serialVersionUID = 1L;
+	private DefaultComboBoxModel<MtpProtocol> model;
+	
+	/**
+	 * Instantiates a new JComboBoxMtpProtocol.
+	 */
+	public JComboBoxMtpProtocol(){
+		setModel(this.getComboBoxModel());
 	}
-	return model;
-    }
-
-    /**
-     * Gets the selected protocol.
-     * 
-     * @return the selected protocol
-     */
-    public MtpProtocol getSelectedProtocol() {
-	return (MtpProtocol) this.getComboBoxModel().getSelectedItem();
-    }
-
-    /**
-     * Sets the selected protocol.
-     * 
-     * @param protocolToSelect the new selected protocol
-     */
-    public void setSelectedProtocol(MtpProtocol protocolToSelect) {
-	this.getComboBoxModel().setSelectedItem(protocolToSelect);
-    }
+	/**
+	 * Gets the combo box model.
+	 * @return the combo box model
+	 */
+	private DefaultComboBoxModel<MtpProtocol> getComboBoxModel() {
+		if (model==null) {
+			model = new DefaultComboBoxModel<MtpProtocol>();
+			model.addElement(MtpProtocol.HTTP);
+			model.addElement(MtpProtocol.HTTPS);
+			model.addElement(MtpProtocol.PROXIEDHTTPS);
+		}
+		return model;
+	}
+	
+	/**
+	 * Gets the selected protocol.
+	 * @return the selected protocol
+	 */
+	public MtpProtocol getSelectedProtocol(){
+		return (MtpProtocol) this.getComboBoxModel().getSelectedItem();
+	}
+	/**
+	 * Sets the selected protocol.
+	 * @param protocolToSelect the new selected protocol
+	 */
+	public void setSelectedProtocol(MtpProtocol protocolToSelect){
+		this.getComboBoxModel().setSelectedItem(protocolToSelect);
+	}
 }
