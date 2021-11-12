@@ -10,13 +10,9 @@ import jade.core.*;
 * @author ontology bean generator
 * @version 2019/09/27, 17:26:05
 */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "serial", "unused" })
 public class Simple_Double implements Concept {
 
-/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 //////////////////////////// User code
 public Double getDoubleValue() {
 	   try {

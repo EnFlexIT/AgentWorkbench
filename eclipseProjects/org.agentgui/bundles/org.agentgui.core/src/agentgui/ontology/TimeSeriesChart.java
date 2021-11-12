@@ -9,13 +9,9 @@ import jade.core.*;
 * @author ontology bean generator
 * @version 2019/09/27, 17:26:05
 */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "serial", "unused" })
 public class TimeSeriesChart extends Chart{ 
 
-/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 //////////////////////////// User code
 public boolean isEmpty() {
  boolean wrongChartTitle = false;

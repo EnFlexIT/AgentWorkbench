@@ -28,22 +28,21 @@
  */
 package agentgui.logging.components;
 
+import jade.core.ServiceException;
+
 import java.io.PrintStream;
 import java.util.Vector;
 
 import org.agentgui.gui.AwbConsole;
 
 import agentgui.logging.DebugService;
-import jade.core.ServiceException;
 
 /**
- * This Class can be used in order to listen to the output which will be
- * generated<br>
+ * This Class can be used in order to listen to the output which will be generated<br> 
  * through the console by using System.out and System.err - commands.<br>
  * <br>
- * The received output will be received in the local <code>Vector</code>
- * outputStack., which<br>
- * can be accessed by the getStack()-method in a synchronized way.<br>
+ * The received output will be received in the local <code>Vector<String></code> outputStack., which<br>
+ * can be accessed by the getStack()-method in a synchronized way.<br>   
  * 
  * @see SysOutBoard
  * @see PrintStreamListener
@@ -54,97 +53,91 @@ import jade.core.ServiceException;
  */
 public class SysOutScanner {
 
-    private Vector<String> outputStack = new Vector<String>();
-    private DebugService debugService;
-    private AwbConsole localConsole;
+	private Vector<String> outputStack = new Vector<String>(); 
+	private DebugService debugService;
+	private AwbConsole localConsole;
 
-    /**
-     * Constructor of this class, if running from the DebugService.
-     * 
-     * @param debugService the current DebugService
-     */
-    public SysOutScanner(DebugService debugService) {
-	this.debugService = debugService;
-	this.setScanner();
-    }
-
-    /**
-     * Constructor of this class, if running local in an application.
-     * 
-     * @param localConsole the local console
-     */
-    public SysOutScanner(AwbConsole localConsole) {
-	this.localConsole = localConsole;
-	this.setScanner();
-    }
-
-    /**
-     * This method will set PrintStreamListener to the System.out and the System.err
-     * PrintStream's
-     */
-    private void setScanner() {
-
-	PrintStream orgStreamOut = System.out;
-	PrintStream orgStreamErr = System.err;
-	try {
-	    // --- Build new PrintStream's ------
-	    PrintStream listenStreamOut = new PrintStreamListener(orgStreamOut, this, PrintStreamListener.SystemOutput);
-	    PrintStream listenStreamErr = new PrintStreamListener(orgStreamErr, this, PrintStreamListener.SystemError);
-
-	    System.setOut(listenStreamOut);
-	    System.setErr(listenStreamErr);
-
-	} catch (Exception ex) {
-	    // --- Restoring back to console ----
-	    System.setOut(orgStreamOut);
-	    System.setErr(orgStreamErr);
-	    // --- Notify about it --------------
-	    System.out.println(
-		    "Unsuccessful tried to redirect output & exceptions to PrintStreamListener for distribute debugging.");
-	    ex.printStackTrace();
+	/**
+	 * Constructor of this class, if running from the DebugService.
+	 * @param debugService the current DebugService
+	 */
+	public SysOutScanner(DebugService debugService) {
+		this.debugService = debugService;
+		this.setScanner();
 	}
-
-    }
-
-    /**
-     * This method will be used in order to append an output line (System.out or
-     * System.err) to the local outputStack
-     *
-     * @param lineOutput the line output to display
-     */
-    public void append2Stack(String lineOutput) {
-	if (this.outputStack.size() >= 20) {
-	    this.outputStack.remove(0);
+	/**
+	 * Constructor of this class, if running local in an application.
+	 * @param localConsole the local console
+	 */
+	public SysOutScanner(AwbConsole localConsole) {
+		this.localConsole = localConsole;
+		this.setScanner();
 	}
-	this.outputStack.add(lineOutput);
+	
+	/**
+	 * This method will set PrintStreamListener to the System.out and the System.err PrintStream's
+	 */
+	private void setScanner() {
 
-	// --- If a local AwbConsole window is used
-	// --------------------------------------------------
-	if (this.localConsole != null) {
-	    this.localConsole.appendText(this.getStack());
+		PrintStream orgStreamOut = System.out;
+		PrintStream orgStreamErr = System.err;
+		try {
+			// --- Build new PrintStream's ------ 
+			PrintStream listenStreamOut = new PrintStreamListener(orgStreamOut, this, PrintStreamListener.SystemOutput);
+			PrintStream listenStreamErr = new PrintStreamListener(orgStreamErr, this, PrintStreamListener.SystemError);
+
+			System.setOut(listenStreamOut);
+			System.setErr(listenStreamErr);
+			
+		} catch (Exception ex) {
+			// --- Restoring back to console ----
+			System.setOut(orgStreamOut);
+			System.setErr(orgStreamErr);
+			// --- Notify about it --------------
+			System.out.println("Unsuccessful tried to redirect output & exceptions to PrintStreamListener for distribute debugging.");
+			ex.printStackTrace();
+		}
+		
 	}
-
-	// --- If a DebuggingService is registered transfer the output to the
-	// Main-Container ------
-	if (this.debugService != null) {
-	    try {
-		this.debugService.sendLocalConsoleOutput2Main(this.getStack());
-	    } catch (ServiceException e) {
-		e.printStackTrace();
-	    }
+	
+	/**
+	 * This method will be used in order to append an output line (System.out or System.err) 
+	 * to the local outputStack
+	 *
+	 * @param lineOutput the line output to display
+	 */
+	public void append2Stack(String lineOutput) {
+		if (this.outputStack.size()>=20) {
+			this.outputStack.remove(0);
+		}
+		this.outputStack.add(lineOutput);
+		
+		// --- If a local AwbConsole window is used --------------------------------------------------
+		if (this.localConsole!=null) {
+			this.localConsole.appendText(this.getStack());		
+		}
+		
+		// --- If a DebuggingService is registered transfer the output to the Main-Container ------
+		if (this.debugService!=null) {
+			try {
+				this.debugService.sendLocalConsoleOutput2Main(this.getStack());
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}	
+		}
+		
 	}
-
-    }
-
-    /**
-     * Can be used in order to get the current outputStack of the local console.
-     * 
-     * @return the current output stack
-     */
-    public synchronized Vector<String> getStack() {
-	Vector<String> stack = this.outputStack;
-	this.outputStack = new Vector<String>();
-	return stack;
-    }
-
+	
+	/**
+	 * Can be used in order to get the current outputStack of the local console.
+	 * @return the current output stack
+	 */
+	public synchronized Vector<String> getStack() {
+		Vector<String> stack = this.outputStack;
+		this.outputStack = new Vector<String>();
+		return stack;
+	}
+	
+	
+	
 }

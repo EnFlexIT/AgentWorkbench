@@ -10,14 +10,10 @@ import jade.core.*;
 * @author ontology bean generator
 * @version 2019/09/27, 17:26:05
 */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "serial" })
 public class Formula implements Concept {
 
    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-/**
 * Protege name: formula
    */
    private String formula;

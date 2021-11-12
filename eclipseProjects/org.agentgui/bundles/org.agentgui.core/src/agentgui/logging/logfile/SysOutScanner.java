@@ -34,12 +34,11 @@ import java.util.Vector;
 import agentgui.logging.logfile.PrintStreamListener.PrintStreamListenerType;
 
 /**
- * This Class can be used in order to listen to the output that will be
- * generated through the console by using System.out and System.err -
- * commands.<br>
+ * This Class can be used in order to listen to the output that will be generated 
+ * through the console by using System.out and System.err - commands.<br>
  * <br>
- * The received output will be stored in the local Vector outputStack that can
- * be accessed by the synchronised method {@link #getStack()}.
+ * The received output will be stored in the local Vector<String> outputStack 
+ * that can be accessed by the synchronised method {@link #getStack()}.   
  * 
  * @see PrintStreamListener
  * @see System#out
@@ -49,77 +48,70 @@ import agentgui.logging.logfile.PrintStreamListener.PrintStreamListenerType;
  */
 public class SysOutScanner {
 
-    private Vector<PrintStreamListenerOutput> outputStack = new Vector<PrintStreamListenerOutput>();
-    private LogFileWriter logFileWriter;
+	private Vector<PrintStreamListenerOutput> outputStack = new Vector<PrintStreamListenerOutput>(); 
+	private LogFileWriter logFileWriter;
 
-    /**
-     * Constructor of this class, if running local in an application.
-     * 
-     * @param localConsole the LogFileWriter
-     */
-    public SysOutScanner(LogFileWriter localConsole) {
-	this.logFileWriter = localConsole;
-	this.setScanner();
-    }
-
-    /**
-     * This method will set PrintStreamListener to the System.out and the System.err
-     * PrintStream's
-     */
-    private void setScanner() {
-
-	PrintStream orgStreamOut = System.out;
-	PrintStream orgStreamErr = System.err;
-	try {
-	    // --- Build new PrintStream's ------
-	    PrintStream listenStreamOut = new PrintStreamListener(orgStreamOut, this,
-		    PrintStreamListenerType.SystemOutput);
-	    PrintStream listenStreamErr = new PrintStreamListener(orgStreamErr, this,
-		    PrintStreamListenerType.SystemError);
-
-	    System.setOut(listenStreamOut);
-	    System.setErr(listenStreamErr);
-
-	} catch (Exception ex) {
-	    // --- Restoring back to console ----
-	    System.setOut(orgStreamOut);
-	    System.setErr(orgStreamErr);
-	    // --- Notify about it --------------
-	    System.out.println(
-		    "Unsuccessful tried to redirect output & exceptions to PrintStreamListener for distribute debugging.");
-	    ex.printStackTrace();
+	/**
+	 * Constructor of this class, if running local in an application.
+	 * @param localConsole the LogFileWriter
+	 */
+	public SysOutScanner(LogFileWriter localConsole) {
+		this.logFileWriter = localConsole;
+		this.setScanner();
 	}
+	
+	/**
+	 * This method will set PrintStreamListener to the System.out and the System.err PrintStream's
+	 */
+	private void setScanner() {
 
-    }
+		PrintStream orgStreamOut = System.out;
+		PrintStream orgStreamErr = System.err;
+		try {
+			// --- Build new PrintStream's ------ 
+			PrintStream listenStreamOut = new PrintStreamListener(orgStreamOut, this, PrintStreamListenerType.SystemOutput);
+			PrintStream listenStreamErr = new PrintStreamListener(orgStreamErr, this, PrintStreamListenerType.SystemError);
 
-    /**
-     * This method will be used in order to append an output line (System.out or
-     * System.err) to the local outputStack
-     * 
-     * @param listenerOutput the PrintStreamListenerOutput
-     */
-    public void append2Stack(PrintStreamListenerOutput listenerOutput) {
-	if (this.outputStack.size() >= 20) {
-	    this.outputStack.remove(0);
+			System.setOut(listenStreamOut);
+			System.setErr(listenStreamErr);
+			
+		} catch (Exception ex) {
+			// --- Restoring back to console ----
+			System.setOut(orgStreamOut);
+			System.setErr(orgStreamErr);
+			// --- Notify about it --------------
+			System.out.println("Unsuccessful tried to redirect output & exceptions to PrintStreamListener for distribute debugging.");
+			ex.printStackTrace();
+		}
+		
 	}
-	this.outputStack.add(listenerOutput);
-
-	// --- If a local AwbConsole window is used
-	// --------------------------------------------------
-	if (this.logFileWriter != null) {
-	    this.logFileWriter.appendText(this.getStack());
+	
+	/**
+	 * This method will be used in order to append an output line (System.out or System.err) 
+	 * to the local outputStack
+	 * @param listenerOutput the PrintStreamListenerOutput 
+	 */
+	public void append2Stack(PrintStreamListenerOutput listenerOutput) {
+		if (this.outputStack.size()>=20) {
+			this.outputStack.remove(0);
+		}
+		this.outputStack.add(listenerOutput);
+		
+		// --- If a local AwbConsole window is used --------------------------------------------------
+		if (this.logFileWriter!=null) {
+			this.logFileWriter.appendText(this.getStack());		
+		}
 	}
-    }
-
-    /**
-     * Can be used in order to get the current outputStack of the local console.
-     * 
-     * @return the stack
-     */
-    public synchronized Vector<PrintStreamListenerOutput> getStack() {
-	Vector<PrintStreamListenerOutput> stack = this.outputStack;
-	this.outputStack = new Vector<>();
-	return stack;
-    }
-
+	/**
+	 * Can be used in order to get the current outputStack of the local console.
+	 * @return the stack
+	 */
+	public synchronized Vector<PrintStreamListenerOutput> getStack() {
+		Vector<PrintStreamListenerOutput> stack = this.outputStack;
+		this.outputStack = new Vector<>();
+		return stack;
+	}
+	
+	
+	
 }
