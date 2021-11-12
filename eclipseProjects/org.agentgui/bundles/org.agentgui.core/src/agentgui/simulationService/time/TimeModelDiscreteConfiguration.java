@@ -607,7 +607,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		long step;
 		long stepInUnit;
 		if (stepString==null) {
-			step = Long.valueOf(0);
+			step =  Long.valueOf(0);
 		} else if (stepString.equals("")) {
 			step = Long.valueOf(0);
 		} else {

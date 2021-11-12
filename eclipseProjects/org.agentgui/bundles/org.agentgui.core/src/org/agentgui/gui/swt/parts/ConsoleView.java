@@ -9,35 +9,34 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+
 public class ConsoleView {
+	
+	private Label lblConsoleView;
 
-    private Label lblConsoleView;
+	public ConsoleView() {
+	}
 
-    public ConsoleView() {
-    }
+	/**
+	 * Create contents of the view part.
+	 */
+	@PostConstruct
+	public void createControls(Composite parent) {
+		
+		parent.setLayout(new GridLayout(1, false));
+		
+		this.lblConsoleView = new Label(parent, SWT.NONE);
+		this.lblConsoleView.setText("AwbConsole View");
+		
+	}
 
-    /**
-     * Create contents of the view part.
-     * 
-     * @param parent the parent
-     */
-    @PostConstruct
-    public void createControls(Composite parent) {
+	@PreDestroy
+	public void dispose() {
+	}
 
-	parent.setLayout(new GridLayout(1, false));
-
-	this.lblConsoleView = new Label(parent, SWT.NONE);
-	this.lblConsoleView.setText("AwbConsole View");
-
-    }
-
-    @PreDestroy
-    public void dispose() {
-    }
-
-    @Focus
-    public void setFocus() {
-	// TODO Set the focus to control
-    }
+	@Focus
+	public void setFocus() {
+		// TODO	Set the focus to control
+	}
 
 }
