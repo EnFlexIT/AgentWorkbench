@@ -4,7 +4,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Api
 Bundle-SymbolicName: de.enflexit.api
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.api,
  de.enflexit.eom.api
 Bundle-Vendor: EnFlex.IT

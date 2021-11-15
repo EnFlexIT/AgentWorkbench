@@ -44,7 +44,7 @@ public class TimeUnit implements Serializable {
 	private int numberOfDigits = 1;
 	private int minValue = 0;
 	private int maxValue = 0;
-	private long factorToMilliseconds = new Long(0);
+	private long factorToMilliseconds =  Long.valueOf(0);
 	
 	/**
 	 * Instantiates a new time unit.

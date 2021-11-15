@@ -5,7 +5,7 @@ Bundle-Name: MySQL - JDBC Connector
 Bundle-SymbolicName: de.enflexit.db.mySQL
 Bundle-Version: 5.1.46.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.db.hibernate;bundle-version="5.2.16"
 Bundle-ActivationPolicy: lazy

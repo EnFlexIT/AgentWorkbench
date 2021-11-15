@@ -8,6 +8,7 @@ import jade.content.*;
 * @author ontology bean generator
 * @version 2018/02/10, 18:49:04
 */
+@SuppressWarnings("serial")
 public class ClientRemoteContainerReply implements AgentAction {
 
    /**

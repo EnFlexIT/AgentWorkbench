@@ -1,17 +1,15 @@
-Automatic-Module-Name: org.a gentgui.help
+Automatic-Module-Name: org.agentgui.help
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - API Help
 Bundle-SymbolicName: org.agentgui.help;singleton:=true
-Bundle-Version: 2.1.20.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Version: 2.2.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  org.eclipse.help,
  org.agentgui.core,
- de.enflexit.geography,
  org.awb.env.networkModel,
- org.awb.env.maps,
  de.enflexit.db.hibernate,
  de.enflexit.db.mySQL,
  de.enflexit.oidc,

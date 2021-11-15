@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.awb.env.networkModel;singleton:=true
 Bundle-Version: 2.1.20.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: org.awb.env.networkModel
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/bundleClassFilterService.xml,
  OSGI-INF/BaseClassLoadService.xml,
  OSGI-INF/EnvironmentTypeService.xml,

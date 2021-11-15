@@ -4,7 +4,7 @@ Bundle-Name: Examples
 Bundle-SymbolicName: de.enflexit.awb.samples.Examples
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.samples.Examples
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/classLoadService.xml
 Require-Bundle: org.agentgui.lib.jade,
  org.agentgui.core,

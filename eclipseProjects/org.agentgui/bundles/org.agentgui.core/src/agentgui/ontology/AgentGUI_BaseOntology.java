@@ -11,6 +11,7 @@ import jade.core.CaseInsensitiveString;
  * @author ontology bean generator
  * @version 2019/09/27, 17:26:05
  */
+@SuppressWarnings({ "unused", "serial" })
 public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
   //NAME
   public static final String ONTOLOGY_NAME = "AgentGUI_Base";

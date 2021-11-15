@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.agentgui.help</artifactId>
-	<version>2.1.20-SNAPSHOT</version>
+	<version>2.2.1-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	
 	<parent>
@@ -59,6 +59,10 @@
 						</goals>
 						<configuration>
 							<cleanFirst>true</cleanFirst>
+							<!-- 
+							If the path of the javadoc or search.js changes, the path must also be changed 
+							in the config of the maven resource plugin that is located in the parent pom
+							-->
 							<outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
 							<tocFile>${project.basedir}/help/api_docs.xml</tocFile>
 							<tocOptions>
@@ -81,18 +85,48 @@
 									<additionalArgument>-windowtitle "Agent.Workbench - API"</additionalArgument>
 									<additionalArgument>-doctitle 'Agent.Workbench - Java API (Version ${helpBundle.majorVersion}.${helpBundle.minorVersion}.${helpBundle.incrementalVersion})'</additionalArgument>
 									<additionalArgument>-bottom 'Copyright 2009-${current.year} EnFlex.IT and/or its affiliates. All rights reserved.'</additionalArgument>
-									<additionalArgument>-link http://docs.oracle.com/javase/8/docs/api/</additionalArgument>
+									<additionalArgument>-link https://cr.openjdk.java.net/~iris/se/11/latestSpec/api/</additionalArgument>
 									<additionalArgument>-linkoffline ../../${platform.api} http://help.eclipse.org/photon/topic/org.eclipse.platform.doc.isv/reference/api/</additionalArgument>
 									<additionalArgument>-nosince</additionalArgument>
 									<additionalArgument>-quiet</additionalArgument>
+									<additionalArgument>-tag wbp.parser.constructor</additionalArgument>
 								</additionalArguments>
 							</javadocOptions>
 						</configuration>					
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<!-- 
+				The maven resource-plugin is needed to copy the search.js, which is generated incorrectly for our purposes 
+			    (See this link for further information https://github.com/jimu/vassal/wiki/Javadoc-v11-Search-Bug).
+			    The bug could be resolved in a higher version of OpenJDK (12 and above).
+			    -->
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-resource-one</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/help</directory>
+									<includes>
+										<include>search.js</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 	
 		</plugins>
-
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -105,15 +139,9 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.eclipse.tycho.extras
-										</groupId>
-										<artifactId>
-											tycho-document-bundle-plugin
-										</artifactId>
-										<versionRange>
-											[1.1.0,)
-										</versionRange>
+										<groupId>org.eclipse.tycho.extras</groupId>
+										<artifactId>tycho-document-bundle-plugin</artifactId>
+										<versionRange>[1.1.0,)</versionRange>
 										<goals>
 											<goal>javadoc</goal>
 										</goals>

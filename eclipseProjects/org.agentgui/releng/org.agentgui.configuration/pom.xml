@@ -8,11 +8,11 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.4.0</tycho-version>
+		<tycho-version>2.4.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<target-platform-version>4.18.0-SNAPSHOT</target-platform-version>
+		<target-platform-version>4.21.0-SNAPSHOT</target-platform-version>
 		
 		<url.repository.snapshotDomain>https://p2.enflex.it</url.repository.snapshotDomain>
 		<url.repository.snapshotDir>/workbench/snapshots/</url.repository.snapshotDir>
@@ -85,8 +85,7 @@
 						</environment>
 					</environments>
 				</configuration>
-			</plugin>
-			
+			</plugin>		
 			<!-- see https://maven.apache.org/plugins/maven-jarsigner-plugin/usage.html -->
 			<!-- 
 			<plugin>
@@ -107,10 +106,8 @@
 					<storepass>Store password</storepass>
 					<keypass>Key password</keypass>
 				</configuration>
-			</plugin>
-			 -->
+			</plugin> -->		
 		</plugins>
-
 		<pluginManagement>
 			<plugins>
 				<plugin>

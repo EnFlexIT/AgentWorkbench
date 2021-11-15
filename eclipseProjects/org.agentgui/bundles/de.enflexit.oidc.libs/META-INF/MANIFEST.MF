@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OIDC
 Bundle-SymbolicName: de.enflexit.oidc.libs
-Bundle-Version: 5.17.1
+Bundle-Version: 5.17.2
 Bundle-ClassPath: activation-1.1.jar,
  commons-collections4-4.1.jar,
  commons-io-2.5.jar,
@@ -299,5 +299,5 @@ Export-Package: com.nimbusds.jose;
  org.apache.commons.lang3.text.translate,
  org.apache.commons.lang3.time,
  org.apache.commons.lang3.tuple
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: de.enflexit.oidc.libs

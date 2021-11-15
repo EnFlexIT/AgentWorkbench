@@ -2,7 +2,7 @@
 <feature
       id="org.agentgui.feature"
       label="Agent.Workbench - Core Feature"
-      version="2.1.20.qualifier"
+      version="2.2.1.qualifier"
       provider-name="EnFlex.IT"
       plugin="org.agentgui.core"
       os="linux,macosx,win32"
@@ -167,13 +167,6 @@
          install-size="0"
          version="0.0.0"
          fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.awb.env.maps"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
          unpack="false"/>
 
 </feature>

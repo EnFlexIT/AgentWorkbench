@@ -4,7 +4,7 @@ Bundle-Name: Agent.Workbenvh GameOfLife
 Bundle-SymbolicName: de.enflexit.awb.samples.GameOfLife
 Automatic-Module-Name: org.agentgui.sample.GameOfLife
 Bundle-Version: 2.2.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.common,
  de.enflexit.jaxb,
  org.agentgui.core,
