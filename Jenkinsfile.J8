@@ -3,10 +3,10 @@ pipeline {
   stages {
     stage('Snapshot Build & Deploy') {
       tools {
-        jdk 'jdk11'
+        jdk 'jdk8'
       }
       environment {
-        JAVA_HOME = '/usr/lib/jvm/java-1.11.0-openjdk-amd64'
+        JAVA_HOME = '/usr/lib/jvm/java-1.8.0-openjdk-amd64'
       }
       steps {
         echo 'Start Snapshot Build and Deployment of Agent.Workbench ...'
