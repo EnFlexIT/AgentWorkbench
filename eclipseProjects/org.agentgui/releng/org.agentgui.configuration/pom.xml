@@ -15,7 +15,7 @@
 		<target-platform-version>4.21.0-SNAPSHOT</target-platform-version>
 		
 		<url.repository.snapshotDomain>https://p2.enflex.it</url.repository.snapshotDomain>
-		<url.repository.snapshotDir>/workbench/snapshots/</url.repository.snapshotDir>
+		<url.repository.snapshotDir>/awb/snapshots/</url.repository.snapshotDir>
 		
 		<repository.subDir>${url.repository.snapshotDir}</repository.subDir>
 		<repository.domain>${url.repository.snapshotDomain}</repository.domain>
