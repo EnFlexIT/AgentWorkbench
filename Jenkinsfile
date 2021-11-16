@@ -2,12 +2,6 @@ pipeline {
   agent any
   stages {
     stage('Snapshot Build & Deploy for Java 11') {
-      tools {
-        jdk 'jdk11'
-      }
-      environment {
-        JAVA_HOME = '/usr/lib/jvm/java-1.11.0-openjdk-amd64'
-      }
       steps {
         echo 'Start Snapshot Build and Deployment of Agent.Workbench ...'
         sh 'mvn --version'
