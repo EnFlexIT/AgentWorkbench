@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('Snapshot Build & Deploy') {
+    stage('Snapshot Build & Deploy for Java 11') {
       tools {
         jdk 'jdk11'
       }
