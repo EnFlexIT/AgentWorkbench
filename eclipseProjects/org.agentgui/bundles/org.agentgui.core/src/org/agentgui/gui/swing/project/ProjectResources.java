@@ -445,7 +445,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 					Class<?> search4Class = PlugIn.class;
 					String search4CurrentValue = null;
 					String search4DefaultValue = null;
-					String search4Description = Language.translate("PlugIn für Agent.GUI");
+					String search4Description = Application.getGlobalInfo().getApplicationTitle() + " - PlugIn";
 
 					ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 					cs.setVisible(true);
