@@ -62,7 +62,7 @@
 	
 	
 	
-	<description>Execute this Maven POM to downlod all Jung libs and its dependencies to the directory '/target/dependency' by calling 
+	<description>Execute this Maven POM to download all Jung libs and its dependencies to the directory '/target/dependency' by calling 
 
 a) mvn dependency:copy-dependencies
 (for the jar-files) or 

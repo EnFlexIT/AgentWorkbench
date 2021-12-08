@@ -39,8 +39,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -51,7 +53,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -69,9 +70,12 @@ import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.time.TimeModelStroke;
 import agentgui.simulationService.time.TimeUnit;
 import agentgui.simulationService.time.TimeUnitVector;
+import de.enflexit.common.swing.JSpinnerDateTime;
+import de.enflexit.common.swing.TimeZoneWidget;
 
 /**
- * The Class JPanelTimeModelStroke.
+ * The Class JPanelTimeModelDiscrete enables to configure the current {@link TimeModel} or {@link TimeModelDiscrete} 
+ * respectively within the configuration of the current graph- or network model environment.
  * 
  * @see TimeModelStroke
  * @see TimeModelController
@@ -88,8 +92,6 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JLabel jLabelStart;
 	private JLabel jLabelStartDate;
 	private JLabel jLabelStopDate;
-	private JLabel jLabelStartTime;
-	private JLabel jLabelStopTime;
 	private JLabel jLabelStartMillis;
 	private JLabel jLabelStopMillis;
 	
@@ -100,20 +102,24 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private JLabel jLabelWidth;
 	private JLabel jLabelWidthStep;
 	private JLabel jLabelWidthUnit;
-
+	private JLabel jLabelTimeZone;
+	private JLabel jLabelTimeFormat;
+	
 	private JTextField jTextFieldWidthValue;
 	private JComboBox<TimeUnit> jComboBoxWidthUnit;
 
-	private JSpinner jSpinnerDateStart;
-	private JSpinner jSpinnerTimeStart;
+	private JSpinnerDateTime jSpinnerDateStart;
 	private JSpinner jSpinnerMillisStart;
-	private JSpinner jSpinnerDateStop;
-	private JSpinner jSpinnerTimeStop;
+	private JSpinnerDateTime jSpinnerDateStop;
 	private JSpinner jSpinnerMillisStop;
 
+	private JSeparator jSeparatorVertFirst;
+	
+	private TimeZoneWidget timeZoneWidget;
 	private TimeFormatSelection jPanelTimeFormatter;
+	
 	private boolean enabledChangeListener = true;
-	private JSeparator jSeparatorVert;
+	
 
 	
 	/**
@@ -136,61 +142,82 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
-		this.setSize(900, 90);
+		this.setSize(867, 90);
 		
 		GridBagConstraints gbcJLabelStopTime = new GridBagConstraints();
 		gbcJLabelStopTime.gridx = 0;
 		gbcJLabelStopTime.insets = new Insets(3, 5, 0, 0);
 		gbcJLabelStopTime.anchor = GridBagConstraints.WEST;
 		gbcJLabelStopTime.gridy = 1;
+		
 		GridBagConstraints gbcJLabelStartTime = new GridBagConstraints();
 		gbcJLabelStartTime.gridx = 0;
 		gbcJLabelStartTime.insets = new Insets(5, 5, 0, 0);
 		gbcJLabelStartTime.anchor = GridBagConstraints.WEST;
 		gbcJLabelStartTime.gridy = 0;
+		
 		GridBagConstraints gbcJPanelStartTime = new GridBagConstraints();
 		gbcJPanelStartTime.gridx = 1;
 		gbcJPanelStartTime.anchor = GridBagConstraints.WEST;
 		gbcJPanelStartTime.insets = new Insets(5, 5, 0, 0);
 		gbcJPanelStartTime.gridy = 0;
+		
 		GridBagConstraints gbcJPanelStopTime = new GridBagConstraints();
 		gbcJPanelStopTime.gridx = 1;
 		gbcJPanelStopTime.fill = GridBagConstraints.NONE;
 		gbcJPanelStopTime.anchor = GridBagConstraints.WEST;
 		gbcJPanelStopTime.insets = new Insets(3, 5, 0, 0);
 		gbcJPanelStopTime.gridy = 1;
-		GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-		gridBagConstraints8.gridx = 2;
-		gridBagConstraints8.gridy = 0;
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.gridx = 1;
-		gridBagConstraints1.gridy = 0;
 		
-		GridBagConstraints gbceparatorVert = new GridBagConstraints();
-        gbceparatorVert.insets = new Insets(5, 5, 0, 5);
-        gbceparatorVert.fill = GridBagConstraints.VERTICAL;
-        gbceparatorVert.gridheight = 2;
-        gbceparatorVert.gridx = 2;
-        gbceparatorVert.gridy = 0;
-       
-        GridBagConstraints gbcTimeFormatter = new GridBagConstraints();
-        gbcTimeFormatter.insets = new Insets(5, 0, 0, 0);
-        gbcTimeFormatter.gridheight = 2;
-        gbcTimeFormatter.anchor = GridBagConstraints.NORTHWEST;
-        gbcTimeFormatter.gridy = 0;
-        gbcTimeFormatter.gridwidth = 1;
-        gbcTimeFormatter.gridx = 3;
-       
-        
         GridBagConstraints gbc_jLabelWidth = new GridBagConstraints();
         gbc_jLabelWidth.insets = new Insets(3, 5, 0, 0);
         gbc_jLabelWidth.gridx = 0;
         gbc_jLabelWidth.gridy = 2;
+        
+        GridBagConstraints gbcTimeIncrement = new GridBagConstraints();
+        gbcTimeIncrement.anchor = GridBagConstraints.WEST;
+        gbcTimeIncrement.gridx = 1;
+        gbcTimeIncrement.insets = new Insets(3, 5, 0, 0);
+        gbcTimeIncrement.gridy = 2;
+
+        GridBagConstraints gbc_SeparatorVertFirst = new GridBagConstraints();
+        gbc_SeparatorVertFirst.insets = new Insets(5, 5, 0, 5);
+        gbc_SeparatorVertFirst.fill = GridBagConstraints.VERTICAL;
+        gbc_SeparatorVertFirst.gridheight = 3;
+        gbc_SeparatorVertFirst.gridx = 2;
+        gbc_SeparatorVertFirst.gridy = 0;
+        
+        GridBagConstraints gbc_jLabelTimeZone = new GridBagConstraints();
+        gbc_jLabelTimeZone.insets = new Insets(5, 0, 0, 0);
+        gbc_jLabelTimeZone.anchor = GridBagConstraints.WEST;
+        gbc_jLabelTimeZone.gridx = 3;
+        gbc_jLabelTimeZone.gridy = 0;
+
+        GridBagConstraints gbc_timeZoneWidget = new GridBagConstraints();
+        gbc_timeZoneWidget.insets = new Insets(5, 5, 0, 0);
+        gbc_timeZoneWidget.fill = GridBagConstraints.BOTH;
+        gbc_timeZoneWidget.gridx = 4;
+        gbc_timeZoneWidget.gridy = 0;
+        
+        GridBagConstraints gbc_jLabelTimeFormat = new GridBagConstraints();
+        gbc_jLabelTimeFormat.insets = new Insets(5, 0, 0, 0);
+        gbc_jLabelTimeFormat.anchor = GridBagConstraints.WEST;
+        gbc_jLabelTimeFormat.gridx = 3;
+        gbc_jLabelTimeFormat.gridy = 1;
+        
+        GridBagConstraints gbcTimeFormatter = new GridBagConstraints();
+        gbcTimeFormatter.insets = new Insets(5, 5, 0, 0);
+        gbcTimeFormatter.anchor = GridBagConstraints.NORTHWEST;
+        gbcTimeFormatter.gridwidth = 1;
+        gbcTimeFormatter.gridheight = 2;
+        gbcTimeFormatter.gridx = 4;
+        gbcTimeFormatter.gridy = 1;
+        
         
     	jLabelStart = new JLabel();
 		jLabelStart.setText("Start bei");
@@ -209,21 +236,31 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
         jLabelWidth.setText("Schrittweite");
         jLabelWidth.setText(Language.translate(jLabelWidth.getText())+ ":");
         jLabelWidth.setPreferredSize(GB_LAYOUT_DIMENSION_FIRST_COLUMN_LABEL);
+    
+        jLabelTimeZone = new JLabel();
+        jLabelTimeZone.setText("Zeitzone");
+        jLabelTimeZone.setText(Language.translate(jLabelTimeZone.getText())+ ":");
+        jLabelTimeZone.setFont(new Font("Dialog", Font.BOLD, 11));
         
-        GridBagConstraints gbcTimeIncrement = new GridBagConstraints();
-        gbcTimeIncrement.anchor = GridBagConstraints.WEST;
-        gbcTimeIncrement.gridx = 1;
-        gbcTimeIncrement.insets = new Insets(3, 5, 0, 0);
-        gbcTimeIncrement.gridy = 2;
+        jLabelTimeFormat = new JLabel();
+        jLabelTimeFormat.setText("Zeitformat");
+        jLabelTimeFormat.setText(Language.translate(jLabelTimeFormat.getText())+ ":");
+        jLabelTimeFormat.setFont(new Font("Dialog", Font.BOLD, 11));
 
-        this.add(jLabelStart, gbcJLabelStartTime);
-        this.add(getJPanelStartSettings(), gbcJPanelStartTime);
-        this.add(jLabelStop, gbcJLabelStopTime);
-        this.add(getJPanelStopSettings(), gbcJPanelStopTime);
-        this.add(jLabelWidth, gbc_jLabelWidth);
-        this.add(getJPanelWidthSettings(), gbcTimeIncrement);
-        this.add(getJSeparatorVert(), gbceparatorVert);
-        this.add(getJPanelTimeFormatter(), gbcTimeFormatter);
+        
+		this.add(jLabelStart, gbcJLabelStartTime);
+		this.add(getJPanelStartSettings(), gbcJPanelStartTime);
+		this.add(jLabelStop, gbcJLabelStopTime);
+		this.add(getJPanelStopSettings(), gbcJPanelStopTime);
+		this.add(jLabelWidth, gbc_jLabelWidth);
+		this.add(getJPanelWidthSettings(), gbcTimeIncrement);
+		
+		this.add(getJSeparatorVertFirst(), gbc_SeparatorVertFirst);
+		
+		this.add(jLabelTimeZone, gbc_jLabelTimeZone);
+		this.add(getTimeZoneWidget(), gbc_timeZoneWidget);
+		this.add(jLabelTimeFormat, gbc_jLabelTimeFormat);
+		this.add(getJPanelTimeFormatter(), gbcTimeFormatter);
 	}
 
 	/* (non-Javadoc)
@@ -235,6 +272,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		this.getJPanelStartSettings().setBackground(bg);
 		this.getJPanelStopSettings().setBackground(bg);
 		this.getJPanelWidthSettings().setBackground(bg);
+		this.getTimeZoneWidget().setBackground(bg);
 		this.getJPanelTimeFormatter().setBackground(bg);
 	}
 	
@@ -242,29 +280,14 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	 * Gets the JSpinner date start.
 	 * @return the JSpinner date start
 	 */
-	private JSpinner getJSpinnerDateStart() {
+	private JSpinnerDateTime getJSpinnerDateStart() {
 		if (jSpinnerDateStart==null) {
-			jSpinnerDateStart = new JSpinner(new SpinnerDateModel());
+			jSpinnerDateStart = new JSpinnerDateTime("dd.MM.yyyy - HH:mm:ss");
 			jSpinnerDateStart.setFont(new Font("Dialog", Font.PLAIN, 11));
-			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
-			jSpinnerDateStart.setPreferredSize(new Dimension(88, 24));
+			jSpinnerDateStart.setPreferredSize(new Dimension(150, 24));
 			jSpinnerDateStart.addChangeListener(this);
 		}
 		return jSpinnerDateStart;
-	}
-	/**
-	 * Gets the JSpinner time start.
-	 * @return the JSpinner time start
-	 */
-	private JSpinner getJSpinnerTimeStart() {
-		if (jSpinnerTimeStart==null) {
-			jSpinnerTimeStart = new JSpinner(new SpinnerDateModel());
-			jSpinnerTimeStart.setFont(new Font("Dialog", Font.PLAIN, 11));
-			jSpinnerTimeStart.setEditor(new JSpinner.DateEditor(jSpinnerTimeStart, "HH:mm:ss"));
-			jSpinnerTimeStart.setPreferredSize(new Dimension(75, 24));
-			jSpinnerTimeStart.addChangeListener(this);
-		}
-		return jSpinnerTimeStart;
 	}
 	/**
 	 * Gets the JSpinner milliseconds start.
@@ -284,29 +307,14 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	 * Gets the JSpinner date stop.
 	 * @return the JSpinner date stop
 	 */
-	private JSpinner getJSpinnerDateStop() {
+	private JSpinnerDateTime getJSpinnerDateStop() {
 		if (jSpinnerDateStop==null) {
-			jSpinnerDateStop = new JSpinner(new SpinnerDateModel());
+			jSpinnerDateStop = new JSpinnerDateTime("dd.MM.yyyy - HH:mm:ss");
 			jSpinnerDateStop.setFont(new Font("Dialog", Font.PLAIN, 11));
-			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
-			jSpinnerDateStop.setPreferredSize(new Dimension(88, 24));
+			jSpinnerDateStop.setPreferredSize(new Dimension(150, 24));
 			jSpinnerDateStop.addChangeListener(this);
 		}
 		return jSpinnerDateStop;
-	}
-	/**
-	 * Gets the JSpinner time stop.
-	 * @return the JSpinner time stop
-	 */
-	private JSpinner getJSpinnerTimeStop() {
-		if (jSpinnerTimeStop==null) {
-			jSpinnerTimeStop = new JSpinner(new SpinnerDateModel());
-			jSpinnerTimeStop.setFont(new Font("Dialog", Font.PLAIN, 11));
-			jSpinnerTimeStop.setEditor(new JSpinner.DateEditor(jSpinnerTimeStop, "HH:mm:ss"));
-			jSpinnerTimeStop.setPreferredSize(new Dimension(75, 24));
-			jSpinnerTimeStop.addChangeListener(this);
-		}
-		return jSpinnerTimeStop;
 	}
 	/**
 	 * Gets the JSpinner milliseconds stop.
@@ -336,11 +344,6 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			jLabelStartDate.setText(Language.translate(jLabelStartDate.getText())+ ":");
 			jLabelStartDate.setPreferredSize(new Dimension(35, 16));
 			
-			jLabelStartTime = new JLabel();
-			jLabelStartTime.setFont(new Font("Dialog", Font.PLAIN, 11));
-			jLabelStartTime.setText("Uhrzeit");
-			jLabelStartTime.setText(Language.translate(jLabelStartTime.getText())+ ":");
-			
 			jLabelStartMillis = new JLabel();
 			jLabelStartMillis.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStartMillis.setText("Millisekunden");
@@ -348,7 +351,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			
 			
 			FlowLayout flowLayout = new FlowLayout();
-			flowLayout.setAlignment(java.awt.FlowLayout.CENTER);
+			flowLayout.setAlignment(FlowLayout.LEFT);
 			flowLayout.setVgap(0);
 			flowLayout.setHgap(3);
 			
@@ -356,8 +359,6 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			jPanelStartSettings.setLayout(flowLayout);
 			jPanelStartSettings.add(jLabelStartDate);
 			jPanelStartSettings.add(getJSpinnerDateStart());
-			jPanelStartSettings.add(jLabelStartTime);
-			jPanelStartSettings.add(getJSpinnerTimeStart());
 			jPanelStartSettings.add(jLabelStartMillis);
 			jPanelStartSettings.add(getJSpinnerMillisStart());
 		}
@@ -376,11 +377,6 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			jLabelStopDate.setText(Language.translate(jLabelStopDate.getText())+ ":");
 			jLabelStopDate.setPreferredSize(new Dimension(35, 16));
 			
-			jLabelStopTime = new JLabel();
-			jLabelStopTime.setFont(new Font("Dialog", Font.PLAIN, 11));
-			jLabelStopTime.setText("Uhrzeit");
-			jLabelStopTime.setText(Language.translate(jLabelStopTime.getText())+ ":");
-			
 			jLabelStopMillis = new JLabel();
 			jLabelStopMillis.setFont(new Font("Dialog", Font.PLAIN, 11));
 			jLabelStopMillis.setText("Millisekunden");
@@ -388,6 +384,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			
 			
 			FlowLayout flowLayout = new FlowLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
 			flowLayout.setVgap(0);
 			flowLayout.setHgap(3);
 			
@@ -395,8 +392,6 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			jPanelStopSettings.setLayout(flowLayout);
 			jPanelStopSettings.add(jLabelStopDate);
 			jPanelStopSettings.add(getJSpinnerDateStop());
-			jPanelStopSettings.add(jLabelStopTime);
-			jPanelStopSettings.add(getJSpinnerTimeStop());
 			jPanelStopSettings.add(jLabelStopMillis);
 			jPanelStopSettings.add(getJSpinnerMillisStop());
 		}
@@ -501,12 +496,29 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		return jComboBoxWidthUnit;
 	}
 	
-	private JSeparator getJSeparatorVert() {
-		if (jSeparatorVert == null) {
-			jSeparatorVert = new JSeparator();
-			jSeparatorVert.setOrientation(SwingConstants.VERTICAL);
+	private JSeparator getJSeparatorVertFirst() {
+		if (jSeparatorVertFirst == null) {
+			jSeparatorVertFirst = new JSeparator();
+			jSeparatorVertFirst.setOrientation(SwingConstants.VERTICAL);
 		}
-		return jSeparatorVert;
+		return jSeparatorVertFirst;
+	}
+	
+	
+	private TimeZoneWidget getTimeZoneWidget() {
+		if (timeZoneWidget==null) {
+			timeZoneWidget = new TimeZoneWidget(null, false);
+			timeZoneWidget.setFont(new Font("Dialog", Font.BOLD, 11));
+			timeZoneWidget.setPreferredSize(new Dimension(60, 24));
+			timeZoneWidget.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					// --- TimeZone was changed ---------------------
+					JPanelTimeModelDiscrete.this.setTimeZone(null);
+				}
+			});
+		}
+		return timeZoneWidget;
 	}
 	
 	/**
@@ -515,7 +527,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	 */
 	private TimeFormatSelection getJPanelTimeFormatter() {
 		if (jPanelTimeFormatter==null) {
-			jPanelTimeFormatter = new TimeFormatSelection(true, 3, new Font("Dialog", Font.PLAIN, 11));
+			jPanelTimeFormatter = new TimeFormatSelection(false, 3, new Font("Dialog", Font.PLAIN, 11));
 			jPanelTimeFormatter.setPreferredSize(new Dimension(370, 51));
 			jPanelTimeFormatter.addActionListener(new ActionListener() {
 				@Override
@@ -534,8 +546,6 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	@Override
 	public void setTimeModel(TimeModel timeModel) {
 		
-		Calendar calendarWork = Calendar.getInstance();
-		
 		TimeModelDiscrete timeModelDiscrete=null; 
 		if (timeModel==null) {
 			timeModelDiscrete = new TimeModelDiscrete();
@@ -544,20 +554,26 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		}
 		
 		this.enabledChangeListener = false;
+		Calendar calendarWork = Calendar.getInstance();
+
+		// --- Time zone settings -----------------------------------
+		this.getTimeZoneWidget().setZoneId(timeModelDiscrete.getZoneId());
+		
 		// --- Start settings ---------------------------------------
 		Date startDate = new Date(timeModelDiscrete.getTimeStart());
 		calendarWork.setTime(startDate);
 		this.getJSpinnerDateStart().setValue(startDate);
-		this.getJSpinnerTimeStart().setValue(startDate);
 		this.getJSpinnerMillisStart().setValue(calendarWork.get(Calendar.MILLISECOND));
 		
 		// --- Stop settings ----------------------------------------
 		Date stopDate = new Date(timeModelDiscrete.getTimeStop());
 		calendarWork.setTime(stopDate);
 		this.getJSpinnerDateStop().setValue(stopDate);
-		this.getJSpinnerTimeStop().setValue(stopDate);
 		this.getJSpinnerMillisStop().setValue(calendarWork.get(Calendar.MILLISECOND));
 		
+		// --- Settings for the time format -------------------------
+		this.getJPanelTimeFormatter().setTimeFormat(timeModelDiscrete.getTimeFormat());
+
 		// --- Settings for the step width --------------------------
 		long step = timeModelDiscrete.getStep();
 		int unitSelection = timeModelDiscrete.getStepDisplayUnitAsIndexOfTimeUnitVector();
@@ -567,11 +583,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		this.getJTextFieldWidthValue().setText(stepInUnit.toString());
 		this.getJComboBoxWidthUnit().setSelectedIndex(unitSelection);
 		
-		// --- Settings for the time format -------------------------
-		this.getJPanelTimeFormatter().setTimeFormat(timeModelDiscrete.getTimeFormat());
-		
 		this.enabledChangeListener = true;
-		
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.DisplayJPanel4Configuration#getTimeModel()
@@ -582,40 +594,22 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		Calendar calendarWork = Calendar.getInstance();
 		
 		// --- Getting Start time as Long ---------------------------
-		Calendar startCalenderMerged = Calendar.getInstance();
 		Date startDate = (Date) this.getJSpinnerDateStart().getValue();
-		Date startTime = (Date) this.getJSpinnerTimeStart().getValue();
 		int startMillis = (Integer) this.getJSpinnerMillisStart().getValue();
 		
 		calendarWork.setTime(startDate);
-		startCalenderMerged.set(Calendar.DAY_OF_MONTH, calendarWork.get(Calendar.DAY_OF_MONTH));
-		startCalenderMerged.set(Calendar.MONTH, calendarWork.get(Calendar.MONTH));
-		startCalenderMerged.set(Calendar.YEAR, calendarWork.get(Calendar.YEAR));
-		calendarWork.setTime(startTime);
-		startCalenderMerged.set(Calendar.HOUR_OF_DAY, calendarWork.get(Calendar.HOUR_OF_DAY));
-		startCalenderMerged.set(Calendar.MINUTE, calendarWork.get(Calendar.MINUTE));
-		startCalenderMerged.set(Calendar.SECOND, calendarWork.get(Calendar.SECOND));
-		startCalenderMerged.set(Calendar.MILLISECOND, startMillis);
-		Date start = startCalenderMerged.getTime();
-		Long startLong = start.getTime();
+		calendarWork.set(Calendar.MILLISECOND, startMillis);
+		Long startLong = calendarWork.getTimeInMillis();
+		
 		
 		// --- Getting Stop time as Long ----------------------------
-		Calendar stopCalenderMerged = Calendar.getInstance();
 		Date stopDate = (Date) this.getJSpinnerDateStop().getValue();
-		Date stopTime = (Date) this.getJSpinnerTimeStop().getValue();
 		int stopMillis = (Integer) this.getJSpinnerMillisStop().getValue();
 
 		calendarWork.setTime(stopDate);
-		stopCalenderMerged.set(Calendar.DAY_OF_MONTH, calendarWork.get(Calendar.DAY_OF_MONTH));
-		stopCalenderMerged.set(Calendar.MONTH, calendarWork.get(Calendar.MONTH));
-		stopCalenderMerged.set(Calendar.YEAR, calendarWork.get(Calendar.YEAR));
-		calendarWork.setTime(stopTime);
-		stopCalenderMerged.set(Calendar.HOUR_OF_DAY, calendarWork.get(Calendar.HOUR_OF_DAY));
-		stopCalenderMerged.set(Calendar.MINUTE, calendarWork.get(Calendar.MINUTE));
-		stopCalenderMerged.set(Calendar.SECOND, calendarWork.get(Calendar.SECOND));
-		stopCalenderMerged.set(Calendar.MILLISECOND, stopMillis);
-		Date stop = stopCalenderMerged.getTime();
-		Long stopLong = stop.getTime();
+		calendarWork.set(Calendar.MILLISECOND, stopMillis);
+		Long stopLong = calendarWork.getTimeInMillis();
+		
 		
 		// --- Get the current index of the unit list ---------------
 		ComboBoxModel<TimeUnit> cbm = this.getJComboBoxWidthUnit().getModel();
@@ -641,9 +635,9 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			step = stepInUnit * timeUnit.getFactorToMilliseconds();
 		}
 		
-		// --- Getting the time format ------------------------------
+		// --- Get ZoneId and time format ---------------------------
+		ZoneId zoneId = this.getTimeZoneWidget().getZoneId();
 		String timeFormat = this.getJPanelTimeFormatter().getTimeFormat();
-		
 		
 		// --- Prepare return value ---------------------------------
 		TimeModelDiscrete  timeModelDiscrete = null;
@@ -656,6 +650,7 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 		timeModelDiscrete.setTimeStop(stopLong);
 		timeModelDiscrete.setStep(step);
 		timeModelDiscrete.setStepDisplayUnitAsIndexOfTimeUnitVector(indexSelected);
+		timeModelDiscrete.setZoneId(zoneId);
 		timeModelDiscrete.setTimeFormat(timeFormat);
 		return timeModelDiscrete;
 	}
@@ -670,6 +665,38 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 			if (ceTrigger instanceof JSpinner) {
 				this.saveTimeModelToSimulationSetup();	
 			}	
+		}
+	}
+
+	
+	/**
+	 * Returns the current time zone.
+	 * @return the time zone
+	 */
+	private TimeZone getTimeZone() {
+		return TimeZone.getTimeZone(this.getTimeZoneWidget().getZoneId());
+	}
+	/**
+	 * Sets the time zone for the current configuration.
+	 * @param newTimeZone the new time zone. May be null. For this, the ZoneId/TimeZone will be taken from the local {@link TimeZoneWidget}. 
+	 * {@link #getTimeZoneWidget()}
+	 */
+	private void setTimeZone(TimeZone newTimeZone) {
+	
+		if (newTimeZone==null) {
+			newTimeZone = this.getTimeZone();
+			if (newTimeZone==null) return;
+		}
+		
+		// --- Set TimeZone to local date spinner -------------------
+		this.getJSpinnerDateStart().setTimeZone(newTimeZone);
+		this.getJSpinnerDateStop().setTimeZone(newTimeZone);
+		
+		// --- Set the new TimeZone to the time zone widget? --------
+		TimeZone oldTimeZone = this.getTimeZoneWidget().getTimeZone();
+		if (newTimeZone.equals(oldTimeZone)==false) {
+			this.getTimeZoneWidget().setTimeZone(newTimeZone);
+			// --- Something to do? --------------
 		}
 	}
 	

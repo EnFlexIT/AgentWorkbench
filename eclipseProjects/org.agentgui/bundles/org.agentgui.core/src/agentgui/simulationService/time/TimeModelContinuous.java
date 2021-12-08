@@ -31,6 +31,7 @@ package agentgui.simulationService.time;
 import jade.core.Agent;
 import jade.core.ServiceException;
 
+import java.time.ZoneId;
 import java.util.HashMap;
 
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
@@ -51,6 +52,7 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	public final static String PROP_TimeStart = "TimeStart";
 	public final static String PROP_TimeStop = "TimeStop";
 	public final static String PROP_AccelerationFactor = "AccelerationFactor";
+	public final static String PROP_ZoneId = "ZoneId";
 	public final static String PROP_TimeFormat = "TimeFormat";
 	
 	private transient Agent timeAskingAgent = null;
@@ -415,6 +417,7 @@ public class TimeModelContinuous extends TimeModelDateBased {
 			String stringStartTime = timeModelSettings.get(PROP_TimeStart);
 			String stringStopTime = timeModelSettings.get(PROP_TimeStop);
 			String stringAccelerationFactor = timeModelSettings.get(PROP_AccelerationFactor);
+			String stringZoneID = timeModelSettings.get(PROP_ZoneId);
 			String stringTimeModelFormat= timeModelSettings.get(PROP_TimeFormat);
 			
 			if (stringStartTime!=null) {
@@ -425,8 +428,9 @@ public class TimeModelContinuous extends TimeModelDateBased {
 			}
 			if (stringAccelerationFactor!=null) {
 				this.accelerationFactor = Float.parseFloat(stringAccelerationFactor);	
-			} else {
-				this.accelerationFactor = 1;
+			}
+			if (stringZoneID!=null) {
+				this.zoneId = ZoneId.of(stringZoneID);
 			}
 			if (stringTimeModelFormat!=null) {
 				this.timeFormat = stringTimeModelFormat;
@@ -448,6 +452,7 @@ public class TimeModelContinuous extends TimeModelDateBased {
 		hash.put(PROP_TimeStart, ((Long) this.timeStart).toString());
 		hash.put(PROP_TimeStop, ((Long) this.timeStop).toString());
 		hash.put(PROP_AccelerationFactor, ((Double) this.accelerationFactor).toString());
+		hash.put(PROP_ZoneId, this.getZoneId().getId());
 		hash.put(PROP_TimeFormat, this.timeFormat);
 		return hash;
 	}

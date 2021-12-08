@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.time;
 
+import java.time.ZoneId;
 import java.util.HashMap;
 
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
@@ -50,6 +51,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 	public final static String PROP_TimeStop = "TimeStop";
 	public final static String PROP_StepWidth = "StepWidth";
 	public final static String PROP_DisplayUnitIndex = "DisplayUnitIndex";
+	public final static String PROP_ZoneId = "ZoneId";
 	public final static String PROP_TimeFormat = "TimeFormat";
 	
 	private long time = timeStart;
@@ -198,6 +200,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 			String stringTimeStop = timeModelSettings.get(PROP_TimeStop);
 			String stringStepWidth = timeModelSettings.get(PROP_StepWidth);
 			String stringDisplayUnitIndex = timeModelSettings.get(PROP_DisplayUnitIndex);
+			String stringZoneID = timeModelSettings.get(PROP_ZoneId);
 			String stringTimeFormat = timeModelSettings.get(PROP_TimeFormat);
 
 			if (stringTimeCurrent!=null) {
@@ -214,6 +217,9 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 			}
 			if (stringDisplayUnitIndex!=null) {
 				this.stepDisplayUnitAsIndexOfTimeUnitVector = Integer.parseInt(stringDisplayUnitIndex);	
+			}
+			if (stringZoneID!=null) {
+				this.zoneId = ZoneId.of(stringZoneID);
 			}
 			if (stringTimeFormat!=null) {
 				this.timeFormat = stringTimeFormat;
@@ -235,6 +241,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 		hash.put(PROP_TimeStop, ((Long) this.timeStop).toString());
 		hash.put(PROP_StepWidth, ((Long) this.step).toString());
 		hash.put(PROP_DisplayUnitIndex, ((Integer) this.stepDisplayUnitAsIndexOfTimeUnitVector).toString());
+		hash.put(PROP_ZoneId, this.getZoneId().getId());
 		hash.put(PROP_TimeFormat, this.timeFormat);
 		return hash;
 	}

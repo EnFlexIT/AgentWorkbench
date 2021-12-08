@@ -21,6 +21,7 @@
 		<module>de.enflexit.db.mySQL</module>
 		<module>de.enflexit.geography</module>
 		<module>de.enflexit.jaxb</module>
+		<module>de.enflexit.mXparser</module>
 		<module>de.enflexit.oidc.libs</module>
 		<module>de.enflexit.oshi</module>
 		<module>org.agentgui.core</module>

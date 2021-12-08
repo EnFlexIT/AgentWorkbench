@@ -13,6 +13,7 @@ import java.awt.event.FocusEvent;
 import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -31,10 +32,14 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 3723882095849761105L;
 
 	private Window ownerWindow;
+	private boolean isShowLabel;
 	
 	private JLabel jLabelTimeZone;
 	private JTextField jTextFieldTimeZone;
 	private JButton jButtonSearch;
+	private JButton jButtonReset;
+
+	private TimeZoneSelectionDialog tzsDialog;
 	
 	private ZoneId zoneId;
 	
@@ -44,25 +49,67 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 	 * Instantiates a new time zone widget.
 	 */
 	public TimeZoneWidget() {
-		this(null);
+		this(null, true);
 	}
 	/**
 	 * Instantiates a new time zone widget.
 	 * @param owner the owner window
 	 */
 	public TimeZoneWidget(Window owner) {
+		this(owner, true);
+	}
+	/**
+	 * Instantiates a new time zone widget.
+	 *
+	 * @param owner the owner
+	 * @param isShowLabel the indicator to show/hide the initial label
+	 */
+	public TimeZoneWidget(Window owner, Boolean isShowLabel) {
 		this.ownerWindow = owner;
-		this.initialize();
+		this.isShowLabel = isShowLabel==null ? true : isShowLabel;
+		this.initialize();	
 	}
 	/**
 	 * Initialize.
 	 */
 	private void initialize() {
 	
+		if (this.isShowLabel==false) {
+			// --- Set layout without initial label ---------------------------
+			GridBagLayout gridBagLayout = new GridBagLayout();
+			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+			gridBagLayout.rowHeights = new int[]{0, 0};
+			gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			this.setLayout(gridBagLayout);
+			
+			GridBagConstraints gbc_comboBox = new GridBagConstraints();
+			gbc_comboBox.fill = GridBagConstraints.BOTH;
+			gbc_comboBox.gridx = 0;
+			gbc_comboBox.gridy = 0;
+			this.add(this.getJTextFieldTimeZone(), gbc_comboBox);
+			
+			GridBagConstraints gbc_jButtonSearch = new GridBagConstraints();
+			gbc_jButtonSearch.fill = GridBagConstraints.VERTICAL;
+			gbc_jButtonSearch.insets = new Insets(0, 2, 0, 0);
+			gbc_jButtonSearch.gridx = 1;
+			gbc_jButtonSearch.gridy = 0;
+			this.add(this.getJButtonSearch(), gbc_jButtonSearch);
+			
+			GridBagConstraints gbc_jButtonReset = new GridBagConstraints();
+			gbc_jButtonReset.fill = GridBagConstraints.VERTICAL;
+			gbc_jButtonReset.insets = new Insets(0, 2, 0, 0);
+			gbc_jButtonReset.gridx = 2;
+			gbc_jButtonReset.gridy = 0;
+			this.add(this.getJButtonReset(), gbc_jButtonReset);
+			return;
+		} 
+		
+		// --- Set layout in case that the initial label is to be shown ---
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
@@ -70,32 +117,37 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 		gbc_jLabelTimeZone.anchor = GridBagConstraints.WEST;
 		gbc_jLabelTimeZone.gridx = 0;
 		gbc_jLabelTimeZone.gridy = 0;
-		this.add(getJLabelTimeZone(), gbc_jLabelTimeZone);
+		this.add(this.getJLabelTimeZone(), gbc_jLabelTimeZone);
 		
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(0, 2, 0, 0);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
-		this.add(getJTextFieldTimeZone(), gbc_comboBox);
+		this.add(this.getJTextFieldTimeZone(), gbc_comboBox);
 		
-		GridBagConstraints gbc_jButtonSort = new GridBagConstraints();
-		gbc_jButtonSort.fill = GridBagConstraints.VERTICAL;
-		gbc_jButtonSort.insets = new Insets(0, 2, 0, 0);
-		gbc_jButtonSort.gridx = 2;
-		gbc_jButtonSort.gridy = 0;
-		this.add(getJButtonSearch(), gbc_jButtonSort);
+		GridBagConstraints gbc_jButtonSearch = new GridBagConstraints();
+		gbc_jButtonSearch.insets = new Insets(0, 2, 0, 0);
+		gbc_jButtonSearch.gridx = 2;
+		gbc_jButtonSearch.gridy = 0;
+		this.add(this.getJButtonSearch(), gbc_jButtonSearch);
+		
+		GridBagConstraints gbc_jButtonReset = new GridBagConstraints();
+		gbc_jButtonReset.insets = new Insets(0, 2, 0, 0);
+		gbc_jButtonReset.gridx = 3;
+		gbc_jButtonReset.gridy = 0;
+		this.add(this.getJButtonReset(), gbc_jButtonReset);
 		
 	}
 	
-	public JLabel getJLabelTimeZone() {
+	private JLabel getJLabelTimeZone() {
 		if (jLabelTimeZone == null) {
 			jLabelTimeZone = new JLabel("Time Zone");
 			jLabelTimeZone.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelTimeZone;
 	}
-	public JTextField getJTextFieldTimeZone() {
+	private JTextField getJTextFieldTimeZone() {
 		if (jTextFieldTimeZone==null) {
 			jTextFieldTimeZone = new JTextField(this.getZoneId().getId());
 			jTextFieldTimeZone.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -122,7 +174,7 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 		}
 		return jTextFieldTimeZone;
 	}
-	public JButton getJButtonSearch() {
+	private JButton getJButtonSearch() {
 		if (jButtonSearch == null) {
 			jButtonSearch = new JButton();
 			jButtonSearch.setIcon(BundleHelper.getImageIcon("Search.png"));
@@ -132,6 +184,44 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 			jButtonSearch.addActionListener(this);
 		}
 		return jButtonSearch;
+	}
+	
+	private JButton getJButtonReset() {
+		if (jButtonReset == null) {
+			jButtonReset = new JButton();
+			jButtonReset.setIcon(BundleHelper.getImageIcon("MBreset.png"));
+			jButtonReset.setToolTipText("Reset to system default");
+			jButtonReset.setSize(new Dimension(26, 26));
+			jButtonReset.setPreferredSize(new Dimension(26, 26));
+			jButtonReset.addActionListener(this);
+		}
+		return jButtonReset;
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setFont(java.awt.Font)
+	 */
+	@Override
+	public void setFont(Font newFont) {
+		if (newFont!=null) {
+			this.getJLabelTimeZone().setFont(newFont.deriveFont(Font.BOLD));
+			this.getJTextFieldTimeZone().setFont(newFont.deriveFont(Font.PLAIN));
+		}
+		super.setFont(newFont);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setPreferredSize(java.awt.Dimension)
+	 */
+	@Override
+	public void setPreferredSize(Dimension newPreferredSize) {
+		if (newPreferredSize!=null) {
+			int newHeight = (int) newPreferredSize.getHeight();
+			this.getJTextFieldTimeZone().setPreferredSize(new Dimension((int)this.getJTextFieldTimeZone().getPreferredSize().getWidth(), newHeight));
+			this.getJButtonSearch().setPreferredSize(new Dimension(newHeight, newHeight));
+			this.getJButtonReset().setPreferredSize(new Dimension(newHeight, newHeight));
+		}
+		super.setPreferredSize(newPreferredSize);
 	}
 	
 	/* (non-Javadoc)
@@ -165,6 +255,10 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 			if (zoneIdSelected!=null) {
 				this.setZoneId(zoneIdSelected);
 			}
+		} else if (ae.getSource()==this.getJButtonReset()) {
+			// --- Reset to system default time zone ----------------
+			this.setZoneId(ZoneId.systemDefault());
+			
 		}
 	}
 
@@ -191,7 +285,7 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 				zoneID = this.getZoneIdFormUserDialog(null);
 			} else if (resultList.size()==1) {
 				// --- Get ZoneId found -----------------------------
-				zoneID = resultList.get(0).getZoneID();
+				zoneID = resultList.get(0).getZoneId();
 			} else {
 				// --- Open search dialog with search phrase --------
 				zoneID = this.getZoneIdFormUserDialog(searchPhrase);
@@ -205,23 +299,30 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 	 */
 	private ZoneId getZoneIdFormUserDialog(String searchPhrase) {
 		
+		if (this.tzsDialog!=null) return null;
+		
 		// --- Open search dialog for ZoneIds -------------
 		ZoneId zoneId = null;
-		TimeZoneSelectionDialog tzsDialog = new TimeZoneSelectionDialog(this.ownerWindow);
-		tzsDialog.setZoneId(this.getZoneId());
+		this.tzsDialog = new TimeZoneSelectionDialog(this.ownerWindow);
+		this.tzsDialog.setZoneId(this.getZoneId());
 		if (searchPhrase!=null && searchPhrase.isEmpty()==false) {
-			tzsDialog.setSearchPhrase(searchPhrase);
+			this.tzsDialog.setSearchPhrase(searchPhrase);
 		}
-		tzsDialog.setVisible(true);
+		this.tzsDialog.setVisible(true);
 
 		// --- Wait for user ------------------------------
-		if (tzsDialog.isCanceled()==false) {
-			zoneId = tzsDialog.getZoneId();
-			tzsDialog.dispose();
+		if (this.tzsDialog.isCanceled()==false) {
+			zoneId = this.tzsDialog.getZoneId();
 		}
+		this.tzsDialog.dispose();
+		this.tzsDialog = null;
 		return zoneId;
 	}
 	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, public data getter and setter methods -------------------
+	// ------------------------------------------------------------------------	
 	/**
 	 * Returns the currently selected ZoneId.
 	 * @return the zone id
@@ -241,6 +342,29 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 		this.getJTextFieldTimeZone().setText(zoneId.getId());
 		this.notifyListeners();
 	}
+	
+	/**
+	 * Returns the current {@link ZoneId} as {@link TimeZone}.
+	 * @return the time zone
+	 */
+	public TimeZone getTimeZone() {
+		return TimeZone.getTimeZone(this.getZoneId());
+	}
+	/**
+	 * Sets the {@link ZoneId} based on the specified {@link TimeZone}.
+	 * @param newTimeZone the new time zone
+	 */
+	public void setTimeZone(TimeZone newTimeZone) {
+		if (newTimeZone!=null) {
+			if (newTimeZone.equals(this.getTimeZone())==false) {
+				this.setZoneId(newTimeZone.toZoneId()); 
+			}
+		}
+	}
+	// ------------------------------------------------------------------------
+	// --- Till here, public data getter and setter methods -------------------
+	// ------------------------------------------------------------------------	
+	
 	
 	/**
 	 * Adds an {@link ActionListener} to the widget.

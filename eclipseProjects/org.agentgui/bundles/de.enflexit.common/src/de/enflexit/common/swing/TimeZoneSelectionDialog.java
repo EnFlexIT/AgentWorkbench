@@ -486,7 +486,7 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 		
 		// --- Sort the list according to the settings --------------
 		if (this.getJRadioButtonSortById().isSelected()) {
-			Collections.sort(zoneIDList, TimeZoneIdAndOffsets.getComparatorForZoneId());
+			Collections.sort(zoneIDList, TimeZoneIdAndOffsets.getComparatorForZoneName());
 		} else if (this.getJRadioButtonSortByOffsetToLocalTime().isSelected()) {
 			Collections.sort(zoneIDList, TimeZoneIdAndOffsets.getComparatorForOffsetToLocalTime());
 		} else if (this.getJRadioButtonSortByOffsetToUTC().isSelected()) {
@@ -510,13 +510,13 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 	
 	/**
 	 * Sets the right model to the JList (complete or filtered).
-	 * @param reselctSelectedElement the indicator to reselect the current selection 
+	 * @param reselectSelectedElement the indicator to reselect the current selection 
 	 */
-	private void setJListModel(boolean reselctSelectedElement) {
+	private void setJListModel(boolean reselectSelectedElement) {
 		
 		// --- Remind selected element? -----------------------------
 		TimeZoneIdAndOffsets tzSelected = null;
-		if (reselctSelectedElement==true && this.getJListZoneIds()!=null) {
+		if (reselectSelectedElement==true && this.getJListZoneIds()!=null) {
 			tzSelected = this.getJListZoneIds().getSelectedValue();
 		}
 		
@@ -534,7 +534,7 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 		}
 		
 		// --- Reselect ---------------------------------------------
-		if (reselctSelectedElement==true && tzSelected!=null) {
+		if (reselectSelectedElement==true && tzSelected!=null) {
 			this.getJListZoneIds().setSelectedValue(tzSelected, true);
 		}
 	}
@@ -557,13 +557,13 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 			for (int i = 0; i < this.getTimeZoneListModel().size(); i++) {
 				
 				TimeZoneIdAndOffsets tzo = this.getTimeZoneListModel().get(i);
-				String tzoID = tzo.getZoneID().getId().toLowerCase();
+				String tzoName = tzo.getTimeZoneName().toLowerCase();
 				boolean addToFilteredList = true;
 				
 				// --- Search for all expressions ---------------
 				for (int j = 0; j < searchArray.length; j++) {
 					String searchExpresion = searchArray[j];
-					if (tzoID.indexOf(searchExpresion)==-1) {
+					if (tzoName.indexOf(searchExpresion)==-1) {
 						addToFilteredList = false;
 						break;
 					}
@@ -621,7 +621,7 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 	public ZoneId getZoneId() {
 		TimeZoneIdAndOffsets zoneIdSelected = this.getJListZoneIds().getSelectedValue();
 		if (zoneIdSelected!=null) {
-			return zoneIdSelected.getZoneID();
+			return zoneIdSelected.getZoneId();
 		}
 		return null;
 	}

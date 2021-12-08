@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.time;
 
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -48,7 +49,7 @@ public abstract class TimeModelDateBased extends TimeModel {
 	protected long timeStart = System.currentTimeMillis();
 	protected long timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
 	protected String timeFormat = "dd.MM.yyyy HH:mm:ss.SSS";
-
+	protected ZoneId zoneId;
 	
 	public abstract long getTime();
 	
@@ -60,7 +61,7 @@ public abstract class TimeModelDateBased extends TimeModel {
 		this.timeStart = timeStart;
 	}
 	/**
-	 * Gets the start time.
+	 * Returns the start time.
 	 * @return the start time 
 	 */
 	public long getTimeStart() {
@@ -75,7 +76,7 @@ public abstract class TimeModelDateBased extends TimeModel {
 		this.timeStop = timeStop;
 	}
 	/**
-	 * Gets the stop time.
+	 * Returns the stop time.
 	 * @return the stop time 
 	 */
 	public long getTimeStop() {
@@ -92,7 +93,7 @@ public abstract class TimeModelDateBased extends TimeModel {
 		OntologyVisualisationConfiguration.setTimeFormat(timeFormat);
 	}
 	/**
-	 * Gets the time format.
+	 * Returns the time format.
 	 * @return the time format
 	 */
 	public String getTimeFormat() {
@@ -103,6 +104,26 @@ public abstract class TimeModelDateBased extends TimeModel {
 		}
 		return this.timeFormat;
 	}
+	
+	/**
+	 * Returns the time models {@link ZoneId}.
+	 * @return the zone id
+	 */
+	public ZoneId getZoneId() {
+		if (zoneId==null) {
+			return ZoneId.systemDefault();
+		}
+		return zoneId;
+	}
+	/**
+	 * Sets the time models {@link ZoneId}.
+	 * @param zoneId the new zone id
+	 */
+	public void setZoneId(ZoneId zoneId) {
+		this.zoneId = zoneId;
+	}
+	
+	
 	
 	/**
 	 * Returns the midnight date for the specified time stamp.
