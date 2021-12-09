@@ -41,6 +41,7 @@ import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -69,9 +70,13 @@ import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypeServiceFinder;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.gui.MainWindow;
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
+import agentgui.core.project.Project;
+import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
@@ -2222,4 +2227,29 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return encryptedPSWD;
 	}
 
+	
+	/**
+	 * Returns the current/active {@link ZoneId} that is either configured 
+	 * in the current {@link Project} or the systems default ZoneId.
+	 * @return the current zone id
+	 * 
+	 * @see Project#getTimeModelController()
+	 * @see TimeModelController#getTimeModel()
+	 * @see TimeModelDateBased#getZoneId()
+	 */
+	public static ZoneId getCurrentZoneId() {
+		
+		// --- Check for an open project ----------------------------
+		Project project = Application.getProjectFocused();
+		if (project!=null) {
+			// --- Check the TimeModel ------------------------------
+			TimeModel timeModel = project.getTimeModelController().getTimeModel();
+			if (timeModel!=null && timeModel instanceof TimeModelDateBased) {
+				TimeModelDateBased tmDate = (TimeModelDateBased) timeModel;
+				return tmDate.getZoneId();
+			}
+		}
+		return ZoneId.systemDefault();
+	}
+	
 }
