@@ -483,10 +483,10 @@ public class DataModelStorageThread extends Thread {
 	private void loadDataModel() {
 		
 		for (int i = 0; i < this.componentsToWorkOn.size(); i++) {
-		
+
+			DataModelNetworkElement networkElement =  this.componentsToWorkOn.get(i);
 			try {
 				// --- Set the components data model instance -----------------
-				DataModelNetworkElement networkElement =  this.componentsToWorkOn.get(i);
 				NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(networkElement);
 				if (netCompAdapter!=null) {
 					// --- Get DataModelAdapter -------------------------------
@@ -495,22 +495,26 @@ public class DataModelStorageThread extends Thread {
 						if (this.debug==true) {
 							System.out.println("["+ this.getClass().getSimpleName() +"] Load data model for " + networkElement.getClass().getSimpleName()  + " " + networkElement.getId() + " ...");
 						}
-						// --- Load data model instance ------------------------
+						// --- Get data models storage handler ----------------
 						AbstractDataModelStorageHandler storageHandler = netCompDataModelAdapter.getDataModelStorageHandlerInternal();
-						Object dataModel = storageHandler.loadDataModel(networkElement);
-						networkElement.setDataModel(dataModel);
-    					// --- Requires persistence update? -------------------
-    					if (storageHandler.isRequiresPersistenceUpdate()==true) {
-    						TreeMap<String, String> settings = storageHandler.saveDataModel(networkElement);
-    						networkElement.setDataModelStorageSettings(settings);
-    						if (this.graphController.getProject()!=null) {
-    							this.graphController.getProject().setUnsaved(true);
-    						}
-    					}
+						if (storageHandler!=null) {
+							// --- Load data model instance -------------------
+							Object dataModel = storageHandler.loadDataModel(networkElement);
+							networkElement.setDataModel(dataModel);
+							// --- Requires persistence update? ---------------
+							if (storageHandler.isRequiresPersistenceUpdate()==true) {
+								TreeMap<String, String> settings = storageHandler.saveDataModel(networkElement);
+								networkElement.setDataModelStorageSettings(settings);
+								if (this.graphController.getProject()!=null) {
+									this.graphController.getProject().setUnsaved(true);
+								}
+							}
+						}
 					}
 				} 
 				
 			} catch (Exception ex) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while loading data model of " + networkElement.getClass().getSimpleName()  + " " + networkElement.getId() + ":");
 				ex.printStackTrace();
 			}
 			this.organizerThread.increaseComponentCounter();
