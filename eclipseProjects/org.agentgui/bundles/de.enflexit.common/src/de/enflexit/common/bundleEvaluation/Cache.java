@@ -309,6 +309,10 @@ public class Cache {
 			
 			// --- Check if the directory exists ----------
 			File cacheFile = this.getCacheFile();
+			if (cacheFile==null) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Could not detect cache file description. Cache save action will be canceled.");
+				return;
+			}
 			File cacheDir  = cacheFile.getParentFile();
 			if (cacheDir.exists()==false) {
 				boolean created = cacheFile.getParentFile().mkdirs();
