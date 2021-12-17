@@ -54,13 +54,11 @@ import com.google.common.base.Function;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.LayeredIcon;
-import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
 /**
@@ -83,40 +81,15 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 	
 	/**
 	 * Instantiates a new VisualizationViewer for the AddComponentDialog.
+	 *
+	 * @param graphController the current {@link GraphEnvironmentController}
 	 * @param layout the layout
 	 */
-	public AddComponentVisViewer(Layout<GraphNode, GraphEdge> layout) {
+	public AddComponentVisViewer(GraphEnvironmentController graphController, Layout<GraphNode, GraphEdge> layout) {
 		super(layout);
+		this.graphController = graphController;
 		this.initialize();
 	}
-	/**
-	 * Instantiates a new VisualizationViewer for the AddComponentDialog.
-	 * @param layout the layout
-	 * @param preferredSize the preferred size
-	 */
-	public AddComponentVisViewer(Layout<GraphNode, GraphEdge> layout, Dimension preferredSize) {
-		super(layout, preferredSize);
-		this.initialize();
-	}
-	/**
-	 * Instantiates a new VisualizationViewer for the AddComponentDialog.
-	 * @param model the model
-	 */
-	public AddComponentVisViewer(VisualizationModel<GraphNode, GraphEdge> model) {
-		super(model);
-		this.initialize();
-	}
-	/**
-	 * Instantiates a new VisualizationViewer for the AddComponentDialog.
-	 * @param model the model
-	 * @param preferredSize the preferred size
-	 */
-	public AddComponentVisViewer(VisualizationModel<GraphNode, GraphEdge>  model, Dimension preferredSize) {
-		super(model, preferredSize);
-		this.initialize();
-	}
-
-	
 	/**
 	 * Initialize.
 	 */
@@ -291,8 +264,8 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 	    this.getRenderContext().setLabelOffset(0);
 	    this.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 
-		// --- Use straight lines as edges --------------------------------
-	    this.getRenderContext().setEdgeShapeTransformer(EdgeShape.line(this.getGraphLayout().getGraph()));
+	    // --- Use straight lines as edges --------------------------------
+	    this.getRenderContext().setEdgeShapeTransformer(new EdgeShapeTransformer(this.graphController, this));
 	    
 		// --- Set edge width ---------------------------------------------
 	    this.getRenderContext().setEdgeStrokeTransformer(new Function<GraphEdge, Stroke>() {
@@ -326,14 +299,7 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
     		return localComponentTypeListElement.getComponentTypeSettings().getGraphPrototype().equals(DistributionNode.class.getName());	
     	}
     }
-    
-	/**
-	 * Sets the GraphEnvironmentController.
-	 * @param graphController the graphController to set
-	 */
-	public void setGraphController(GraphEnvironmentController graphController) {
-		this.graphController = graphController;
-	}
+	
 	/**
 	 * Sets the current ComponentTypeListElement.
 	 * @param newComponentTypeListElement the localComponentTypeListElement to set

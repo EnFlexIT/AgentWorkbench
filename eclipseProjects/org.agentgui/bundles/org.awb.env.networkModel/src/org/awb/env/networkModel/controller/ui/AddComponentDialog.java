@@ -189,7 +189,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      */
     public AddComponentDialog(GraphEnvironmentController graphController) {
     	super(graphController);
-		initialize();
+		this.initialize();
     }
 
     /**
@@ -203,7 +203,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	super(graphController);
 		this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 		this.isHiddenFactory = isHiddenFactory;
-		initialize();
+		this.initialize();
     }
     
     /**
@@ -587,8 +587,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			// --- Define the Layout ------------
 		    Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
 		    // --- Create VisualizationViewer ---
-		    visViewer = new AddComponentVisViewer<GraphNode, GraphEdge>(layout);
-		    visViewer.setGraphController(this.graphController);
+		    visViewer = new AddComponentVisViewer<GraphNode, GraphEdge>(this.graphController, layout);
 		}
 		return visViewer;
     }

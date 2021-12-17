@@ -38,7 +38,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Paint;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,8 +53,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import de.enflexit.common.Observable;
-import de.enflexit.common.Observer;
 import java.util.Set;
 import java.util.Vector;
 
@@ -87,7 +84,6 @@ import org.awb.env.networkModel.controller.ui.commands.RenamedNetworkComponent;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLineMousePlugin;
 import org.awb.env.networkModel.controller.ui.configLines.ConfiguredLinePopupPlugin;
 import org.awb.env.networkModel.controller.ui.configLines.IntermediatePointTransformer;
-import org.awb.env.networkModel.helper.GraphEdgeShapeTransformer;
 import org.awb.env.networkModel.maps.MapService;
 import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.positioning.GraphNodePositionDialog;
@@ -98,6 +94,8 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import com.google.common.base.Function;
 
 import agentgui.core.application.Application;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
@@ -116,7 +114,6 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 import edu.uci.ics.jung.visualization.renderers.DefaultEdgeLabelRenderer;
@@ -417,7 +414,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Display the current Graph ------------------
 		this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 		this.clearPickedObjects();
-		this.setEdgeShapeTransformer();
 		this.setMapPreRendering();
 		this.getZoomController().zoomToFitToWindow();
 
@@ -733,7 +729,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			visView.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 			
 			// --- Set the EdgeShape of the Visualization Viewer --------------
-			this.setEdgeShapeTransformer(visView);
+			visView.getRenderContext().setEdgeShapeTransformer(new EdgeShapeTransformer(this.graphController, visView));
 			
 			// --- Set edge width ---------------------------------------------
 			visView.getRenderContext().setEdgeStrokeTransformer(new Function<GraphEdge, Stroke>() {
@@ -840,83 +836,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		return isCreatedVisualizationViewer;
 	}
 
-	/**
-	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
-	 * @see LayoutSettings#getEdgeShape()
-	 */
-	public void setEdgeShapeTransformer() {
-		this.setEdgeShapeTransformer(this.getVisualizationViewer());
-	}
-	/**
-	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
-	 * @see LayoutSettings#getEdgeShape()
-	 * @param visViewer the vis viewer
-	 */
-	public void setEdgeShapeTransformer(final BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
 
-		// --- Use straight lines as edges ? ------------------------------
-		Function<GraphEdge, Shape> edgeShapeTransformer = new Function<GraphEdge, Shape>() {
-
-			/* (non-Javadoc)
-			 * @see com.google.common.base.Function#apply(java.lang.Object)
-			 */
-			@Override
-			public Shape apply(GraphEdge graphEdge) {
-				
-				Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
-				EdgeShape<GraphNode, GraphEdge> edgeShape = new EdgeShape<GraphNode, GraphEdge>(graph);
-
-				// --- Get the edge-shape function ----------------------------
-				Function<GraphEdge, Shape> shapeFunction = null;
-				switch (getGraphEnvironmentController().getNetworkModel().getLayoutSettings().getEdgeShape()) {
-				case BentLine:
-					shapeFunction = edgeShape.new BentLine();
-					break;
-				case Box:
-					shapeFunction = edgeShape.new Box();
-					break;
-				case ConfigurableLine:
-					shapeFunction = new GraphEdgeShapeTransformer<GraphNode, GraphEdge>(graph);
-					break;
-				case CubicCurve:
-					shapeFunction = edgeShape.new CubicCurve();
-					break;
-				case Line:
-					shapeFunction = edgeShape.new Line();
-					break;
-				case Loop:
-					shapeFunction = edgeShape.new Loop();
-					break;
-				case Orthogonal:
-					shapeFunction = edgeShape.new Orthogonal();
-					break;
-				case QuadCurve:
-					shapeFunction = edgeShape.new QuadCurve();
-					break;
-				case SimpleLoop:
-					shapeFunction = edgeShape.new SimpleLoop();
-					break;
-				case Wedge:
-					shapeFunction = edgeShape.new Wedge(5);
-					break;
-				}
-				
-				// --- By the current function, transfer into a Shape ---------
-				Shape shape = null;
-				try {
-					shape = shapeFunction.apply(graphEdge);	
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return shape;
-			}
-		};
-		
-		visViewer.getRenderContext().setEdgeShapeTransformer(edgeShapeTransformer);
-		visViewer.repaint();
-	}
-
-	
 	/**
 	 * This method notifies the observers about a graph object selection
 	 * @param pickedObject The selected object
