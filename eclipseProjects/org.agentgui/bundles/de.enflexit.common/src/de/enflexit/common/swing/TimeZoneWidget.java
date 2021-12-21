@@ -120,7 +120,7 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 		this.add(this.getJLabelTimeZone(), gbc_jLabelTimeZone);
 		
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.insets = new Insets(0, 2, 0, 0);
+		gbc_comboBox.insets = new Insets(0, 5, 0, 0);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
@@ -142,7 +142,7 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 	
 	private JLabel getJLabelTimeZone() {
 		if (jLabelTimeZone == null) {
-			jLabelTimeZone = new JLabel("Time Zone");
+			jLabelTimeZone = new JLabel("Time Zone:");
 			jLabelTimeZone.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelTimeZone;
