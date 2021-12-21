@@ -225,6 +225,18 @@ public class TimeZoneWidget extends JPanel implements ActionListener {
 	}
 	
 	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setEnabled(boolean)
+	 */
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		this.getJLabelTimeZone().setEnabled(enabled);
+		this.getJTextFieldTimeZone().setEnabled(enabled);
+		this.getJButtonSearch().setEnabled(enabled);
+		this.getJButtonReset().setEnabled(enabled);
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
