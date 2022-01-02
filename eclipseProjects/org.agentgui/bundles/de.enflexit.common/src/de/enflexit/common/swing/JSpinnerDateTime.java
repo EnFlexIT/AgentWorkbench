@@ -1,5 +1,6 @@
 package de.enflexit.common.swing;
 
+import java.time.ZoneId;
 import java.util.TimeZone;
 
 import javax.swing.JSpinner;
@@ -78,6 +79,22 @@ public class JSpinnerDateTime extends JSpinner {
 	 */
 	public TimeZone getTimeZone() {
 		return this.getDateEditor().getFormat().getTimeZone();
+	}
+	
+	
+	/**
+	 * Sets the ZoneId to the current spinner.
+	 * @param newZoneId the new zone ID
+	 */
+	public void setZoneId(ZoneId newZoneId) {
+		this.setTimeZone(TimeZone .getTimeZone(newZoneId));
+	}
+	/**
+	 * Returns the currently used ZoneId of the spinner.
+	 * @return the zone id
+	 */
+	public ZoneId getZoneId() {
+		return this.getTimeZone().toZoneId();
 	}
 	
 }

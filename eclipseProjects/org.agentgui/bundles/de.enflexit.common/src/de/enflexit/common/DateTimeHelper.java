@@ -1,6 +1,9 @@
 package de.enflexit.common;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -70,16 +73,12 @@ public class DateTimeHelper {
 	 * Return the specified date as formatted string.
 	 *
 	 * @param date the date
-	 * @param formatPattern the format pattern
+	 * @param pattern the format pattern
 	 * @return the date as string
 	 */
-	public static String getDateAsString(Date date, String formatPattern) {
+	public static String getDateAsString(Date date, String pattern) {
 		if (date!=null) {
-			String pattern = formatPattern;
-			if (pattern==null || pattern.isEmpty()==true) {
-				pattern = DEFAULT_TIME_FORMAT_PATTERN;
-			}
-			return new SimpleDateFormat(pattern).format(date);
+			return DateTimeHelper.getDateTimeAsString(date, pattern, null);
 		}
 		return null;
 	}
@@ -197,6 +196,36 @@ public class DateTimeHelper {
 		
 		Date newDate = startCalenderMerged.getTime();
 		return newDate;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, static Date (long timestamp) to string methods ----------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the specified UTC date / time stamp as string by considering the format pattern and the ZoneId.
+	 *
+	 * @param date the date to format; <code>null</code> is not allowed. If, <code>null</code> will be returned
+	 * @param pattern the pattern; can be <code>null</code>. If, the local {@link #DEFAULT_TIME_FORMAT_PATTERN} is used
+	 * @param zoneId the ZoneId; can be <code>null</code>. If,  the system defaults will be used.
+	 * @return the date time as string
+	 */
+	public static String getDateTimeAsString(Date date, String pattern, ZoneId zoneId) {
+		if (date==null) return null;
+		return DateTimeHelper.getDateTimeAsString(date.getTime(), pattern, zoneId);
+	}
+	/**
+	 * Returns the specified UTC time stamp as string by considering the format pattern and the ZoneId.
+	 *
+	 * @param utcTimeStamp the UTC time stamp as long 
+	 * @param pattern the pattern; can be <code>null</code>. If, the local {@link #DEFAULT_TIME_FORMAT_PATTERN} is used
+	 * @param zoneId the ZoneId; can be <code>null</code>. If,  the system defaults will be used.
+	 * @return the date time as string
+	 */
+	public static String getDateTimeAsString(long utcTimeStamp, String pattern, ZoneId zoneId) {
+		if (pattern==null || pattern.isBlank()) pattern = DEFAULT_TIME_FORMAT_PATTERN;
+		if (zoneId==null) zoneId = ZoneId.systemDefault();
+		return ZonedDateTime.ofInstant(Instant.ofEpochMilli(utcTimeStamp), zoneId).format(DateTimeFormatter.ofPattern(pattern));
 	}
 	
 }
