@@ -6,8 +6,9 @@
 		<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
 		<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 		<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/releases/2021-09/"/>
+		<repository location="https://download.eclipse.org/releases/2021-12/"/>
 		<!--  Space for older versions (as reminder) 
+		<repository location="https://download.eclipse.org/releases/2021-09/"/>
 		<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java8 
 		<repository location="https://download.eclipse.org/releases/2020-03/"/>
 		<repository location="https://download.eclipse.org/releases/2019-12/"/>
@@ -32,8 +33,9 @@
 		<unit id="org.bouncycastle.bcpkix.source" version="0.0.0"/>
 		<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
 		<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20210825222808/repository"/>
+		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
 		<!--  Space for older versions (as reminder)
+		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20210825222808/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository"/> <= Last for Java8
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository"/>
