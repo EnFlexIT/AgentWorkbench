@@ -87,15 +87,7 @@ public class TimeZoneDateFormat extends SimpleDateFormat {
 	// --- From here, own constructor(s) with ZoneId parameter ------ 
 	// --------------------------------------------------------------
     /**
-	 * Constructs a <code>TimeZoneDateFormat</code> using the given pattern and
-	 * the default date format symbols for the default
-	 * {@link java.util.Locale.Category#FORMAT FORMAT} locale.
-	 * <b>Note:</b> This constructor may not support all locales.
-	 * For full coverage, use the factory methods in the {@link DateFormat}
-	 * class.
-	 * <p>This is equivalent to calling
-	 * {@link #SimpleDateFormat(String, Locale)
-	 *     SimpleDateFormat(pattern, Locale.getDefault(Locale.Category.FORMAT))}.
+	 * Constructs a <code>TimeZoneDateFormat</code> using the specified {@link ZoneId}.
 	 *
 	 * @param pattern the pattern describing the date and time format
 	 * @param zoneId the ZoneId to be used

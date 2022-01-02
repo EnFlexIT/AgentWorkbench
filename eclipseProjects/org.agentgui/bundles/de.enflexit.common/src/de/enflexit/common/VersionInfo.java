@@ -67,8 +67,15 @@ public class VersionInfo {
 	 */
 	public Version getVersion() {
 		if (version==null) {
-			Bundle bundle = Platform.getBundle(this.plugInID);
-			version = bundle.getVersion();
+			if (this.plugInID!=null && this.plugInID.isBlank()==false) {
+				try {
+					Bundle bundle = Platform.getBundle(this.plugInID);
+					version = bundle.getVersion();
+				} catch (Exception ex) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] Error while trying to receive version from bunlde");
+					ex.printStackTrace();
+				}
+			}
 		}
 		return version;
 	}
@@ -104,7 +111,7 @@ public class VersionInfo {
 	public String getFullVersionInfo(boolean includeApplicationTitle, String newLineString) {
 		
 		String versionInfo = "";
-		String dateOrQualifier = this.getVersion().getQualifier(); 
+		String dateOrQualifier = this.getVersion()!=null ? this.getVersion().getQualifier() : "Unknown Qualifier"; 
 		Date versionDate =  this.getVersionDate();
 		if (versionDate!=null) {
 			dateOrQualifier = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(this.getVersionDate());
@@ -129,14 +136,14 @@ public class VersionInfo {
 	 * @return the version major
 	 */
 	public Integer getVersionMajor() {
-		return this.getVersion().getMajor();
+		return this.getVersion()!=null ? this.getVersion().getMajor() : 0;
 	}
 	/**
 	 * Provides the minor version number.
 	 * @return the version minor
 	 */
 	public Integer getVersionMinor() {
-		return this.getVersion().getMinor();
+		return this.getVersion()!=null ? this.getVersion().getMinor() : 0;
 	}
 	
 	/**
@@ -144,7 +151,7 @@ public class VersionInfo {
 	 * @return the version build
 	 */
 	public Integer getVersionMicro() {
-		return this.getVersion().getMicro();
+		return this.getVersion()!=null ? this.getVersion().getMicro() : 0;
 	}
 	/**
 	 * Provides the date where this version was build as Date.
@@ -152,11 +159,13 @@ public class VersionInfo {
 	 */
 	public Date getVersionDate() {
 		Date date=null;
-		try {
-			String qualifier = this.getVersion().getQualifier();
-			date = new SimpleDateFormat("yyyyMMddHHmm").parse(qualifier);
-		} catch (ParseException paEx) {
-			if (this.debug) paEx.printStackTrace();
+		if (this.getVersion()!=null) {
+			try {
+				String qualifier = this.getVersion().getQualifier();
+				date = new SimpleDateFormat("yyyyMMddHHmm").parse(qualifier);
+			} catch (ParseException paEx) {
+				if (this.debug) paEx.printStackTrace();
+			}
 		}
 		return date;
 	}
