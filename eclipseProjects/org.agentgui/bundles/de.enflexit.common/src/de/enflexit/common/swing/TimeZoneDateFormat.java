@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -101,7 +102,7 @@ public class TimeZoneDateFormat extends SimpleDateFormat {
 		this.setZoneId(zoneId);
 	}
 
-    
+	
     /**
      * Sets the {@link ZoneId}.
      * @param zoneId the new zone id
@@ -116,5 +117,16 @@ public class TimeZoneDateFormat extends SimpleDateFormat {
     public ZoneId getZoneId() {
     	return this.getTimeZone().toZoneId();
     }
+ 
+    
+    /**
+     * Formats the specified UTC time stamp into a date-time string.
+     *
+     * @param utcTimeStamp the UTC time stamp value to be formatted into a date-time string.
+     * @return the formatted date-time string.
+    */
+	public String format(long utcTimeStamp) {
+		return this.format(new Date(utcTimeStamp));
+	}
     
 }

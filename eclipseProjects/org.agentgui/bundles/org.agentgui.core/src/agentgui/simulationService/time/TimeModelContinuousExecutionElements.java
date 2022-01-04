@@ -103,7 +103,7 @@ public class TimeModelContinuousExecutionElements extends TimeModelBaseExecution
 				
 			default:
 				// --- timer view -----------------------------------
-				this.getJLabelTimeDisplay().setText(this.getTimeFormatted(time, timeFormat));
+				this.getJLabelTimeDisplay().setText(this.getTimeFormatted(time, this.timeModelContinuous.getZoneId(), timeFormat));
 				this.getJButtonTimeConfig().setText(this.getJMenuItemViewTimer().getText());
 				break;
 			}

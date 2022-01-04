@@ -97,7 +97,7 @@ public class TimeModelDiscreteExecutionElements extends TimeModelBaseExecutionEl
 				
 			default:
 				// --- timer view -------------------------
-				this.getJLabelTimeDisplay().setText(this.getTimeFormatted(time, timeFormat));
+				this.getJLabelTimeDisplay().setText(this.getTimeFormatted(time, this.timeModelDiscrete.getZoneId(), timeFormat));
 				this.getJButtonTimeConfig().setText(this.getJMenuItemViewTimer().getText());
 				break;
 			}

@@ -41,8 +41,8 @@ public class TimeFormat implements Serializable {
 
 	private static final long serialVersionUID = 6691784575006563592L;
 
-	private String format = null;
-	private Date displayFormat = null;
+	private String format;
+	private Date dateDisplay;
 	
 	
 	/**
@@ -66,10 +66,10 @@ public class TimeFormat implements Serializable {
 	 * @return the date to display
 	 */
 	private Date getDateDisplay() {
-		if (displayFormat==null) {
-			displayFormat = new Date();
+		if (dateDisplay==null) {
+			dateDisplay = new Date();
 		}
-		return displayFormat;
+		return dateDisplay;
 	}
 	
 	/**

@@ -32,8 +32,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZoneId;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -45,9 +44,10 @@ import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
+import de.enflexit.common.swing.TimeZoneDateFormat;
 
 /**
- * The Class JToolBarElements4TimeModelExecution has to be extended in order to
+ * The Class TimeModelBaseExecutionElements has to be extended in order to
  * provide a specific display for a TimeModel during the execution of an agency.
  * 
  * @see TimeModel
@@ -172,18 +172,20 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	 * Returns a time formatted.
 	 *
 	 * @param time the time
+	 * @param zoneId the ZoneId
 	 * @param timeFormat the time format
-	 * @return the time formated
+	 * @return the time formatted
 	 */
-	protected String getTimeFormatted(long time, String timeFormat) {
+	protected String getTimeFormatted(long time, ZoneId zoneId, String timeFormat) {
+		
+		if (zoneId==null) zoneId = ZoneId.systemDefault();
+		if (timeFormat==null || timeFormat.isBlank()) timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
+		
 		String timeString = null;
 		try {
-			timeString = new SimpleDateFormat(timeFormat).format(new Date(time));	
+			timeString = new TimeZoneDateFormat(timeFormat, zoneId).format(time);	
 		} catch (Exception ex) {
-			// Retry below
-		}
-		if (timeString==null) {
-			timeString = new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT).format(new Date(time));
+			ex.printStackTrace();
 		}
 		return timeString;
 	}

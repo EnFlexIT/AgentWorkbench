@@ -242,8 +242,7 @@ public class ProjectRepositoryExport extends Thread {
 	 * @return the version qualifier for time stamp
 	 */
 	public static String getVersionQualifierForDate(Date currTime) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmm");
-		return sdf.format(currTime);
+		return new SimpleDateFormat("yyyyMMdd-HHmm").format(currTime);
 	}
 	
 }

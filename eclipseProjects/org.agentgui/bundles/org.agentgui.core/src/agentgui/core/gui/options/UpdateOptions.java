@@ -348,8 +348,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		// --- Set when the update check was done the last time -----
 		String titlePrefix = Language.translate("Nach Updates suchen");
 		long dateChecked = Application.getGlobalInfo().getUpdateDateLastChecked();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-		this.getJLabelUpdateTitle().setText("<html><b>" + titlePrefix + ":</b> (Last check: " + sdf.format(new Date(dateChecked)) + ")</html>");
+		this.getJLabelUpdateTitle().setText("<html><b>" + titlePrefix + ":</b> (Last check: " + new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date(dateChecked)) + ")</html>");
 		
 	}
 	
