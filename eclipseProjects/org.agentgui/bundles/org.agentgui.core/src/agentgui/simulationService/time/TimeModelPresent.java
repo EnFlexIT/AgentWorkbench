@@ -94,6 +94,7 @@ public class TimeModelPresent extends TimeModelContinuous {
 		tmc.setTimeStart(this.timeStart);
 		tmc.setTimeStop(this.timeStop);
 		tmc.setTimeFormat(this.timeFormat);
+		tmc.setZoneId(this.zoneId);
 		return tmc;
 	}
 

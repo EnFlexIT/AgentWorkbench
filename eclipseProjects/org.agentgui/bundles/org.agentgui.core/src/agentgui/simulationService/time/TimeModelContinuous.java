@@ -98,6 +98,7 @@ public class TimeModelContinuous extends TimeModelDateBased {
 		tmc.setTimeStop(this.timeStop);
 		tmc.setAccelerationFactor(this.accelerationFactor);
 		tmc.setTimeFormat(this.timeFormat);
+		tmc.setZoneId(this.zoneId);
 		return tmc;
 	}
 	

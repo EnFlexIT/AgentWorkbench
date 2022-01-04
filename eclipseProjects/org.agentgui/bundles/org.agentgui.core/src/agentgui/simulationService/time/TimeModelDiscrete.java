@@ -96,6 +96,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 		tmd.setTime(this.time);
 		tmd.setStep(this.step);
 		tmd.setTimeFormat(this.timeFormat);
+		tmd.setZoneId(this.zoneId);
 		return tmd;
 	}
 	
