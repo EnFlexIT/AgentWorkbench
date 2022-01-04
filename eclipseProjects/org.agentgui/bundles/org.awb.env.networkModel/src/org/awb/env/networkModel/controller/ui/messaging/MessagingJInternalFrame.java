@@ -237,7 +237,7 @@ public class MessagingJInternalFrame extends BasicGraphGuiJInternalFrame {
 	}
 	private JPanelMessages getJPanelMessages() {
 		if (jPanelMessages == null) {
-			jPanelMessages = new JPanelMessages();
+			jPanelMessages = new JPanelMessages(this.graphController);
 		}
 		return jPanelMessages;
 	}

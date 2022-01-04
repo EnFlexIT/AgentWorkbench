@@ -29,6 +29,7 @@
 package agentgui.core.environment;
 
 import java.io.File;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import de.enflexit.common.Observable;
@@ -47,6 +48,7 @@ import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.time.TimeModelStroke;
 import jade.lang.acl.ACLMessage;
@@ -416,6 +418,21 @@ public abstract class EnvironmentController extends Observable implements Observ
 		} 
 		return timeModel.getCopy();
 	}
+	
+	/**
+	 * Return the {@link ZoneId} currently to be used with the current {@link EnvironmentModel}.<br>
+	 * In case that a {@link TimeModelDateBased} is configured for the current environment, the 
+	 * configured ZoneId will be returned; otherwise the system default.
+	 * @return the current ZoneId
+	 */
+	public ZoneId getZoneId() {
+		TimeModel timeModel = this.getTimeModel();
+		if (timeModel!=null && timeModel instanceof TimeModelDateBased) {
+			return ((TimeModelDateBased) timeModel).getZoneId();
+		}
+		return ZoneId.systemDefault();
+	}
+	
 	
 	/**
 	 * Set the displayable environment object of the EnvironmentModel 

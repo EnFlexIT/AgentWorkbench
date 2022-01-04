@@ -117,10 +117,14 @@ public abstract class TimeModelDateBased extends TimeModel {
 	}
 	/**
 	 * Sets the time models {@link ZoneId}.
-	 * @param zoneId the new zone id
+	 * @param newZoneId the new zone id
 	 */
-	public void setZoneId(ZoneId zoneId) {
-		this.zoneId = zoneId;
+	public void setZoneId(ZoneId newZoneId) {
+		if (newZoneId.equals(ZoneId.systemDefault())==true) {
+			this.zoneId = null;
+		} else {
+			this.zoneId = newZoneId;
+		}
 	}
 	
 	

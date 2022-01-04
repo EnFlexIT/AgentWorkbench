@@ -30,7 +30,6 @@ package org.awb.env.networkModel.controller.ui.messaging;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -44,10 +43,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
 
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.swing.TableCellColorHelper;
+import de.enflexit.common.swing.TimeZoneDateFormat;
 
 /**
  * The Class JPanelMessages represents the visualization for state indications.
@@ -57,11 +58,16 @@ public class JPanelMessages extends JScrollPane {
 
 	private static final long serialVersionUID = 1110726364983505331L;
 
+	private GraphEnvironmentController graphController;
+	
 	private final ImageIcon iconInfo 	= GlobalInfo.getInternalImageIcon("StateInformation.png");
 	private final ImageIcon iconWarning = GlobalInfo.getInternalImageIcon("StateWarning.png");
 	private final ImageIcon iconError 	= GlobalInfo.getInternalImageIcon("StateError.png");
 
 	private final int maxRowCount = 150;
+	
+	private final String timeZoneDateFormatPattern = "dd.MM.YY - HH:mm:ss";
+	private TimeZoneDateFormat timeZoneDateFormatter;
 	
 	private DefaultTableModel tableModel;
 	private JTable jTableMessages;
@@ -69,8 +75,11 @@ public class JPanelMessages extends JScrollPane {
 	
 	/**
 	 * Instantiates a new messaging state panel.
+	 *
+	 * @param graphController the graph controller
 	 */
-	public JPanelMessages() {
+	public JPanelMessages(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
 		this.initialize();
 	}
 	/**
@@ -80,6 +89,17 @@ public class JPanelMessages extends JScrollPane {
 		this.setBackground(MessagingJInternalFrame.bgColor);
 		this.setViewportView(this.getJTableMessages());
 	}
+	/**
+	 * Gets the time zone date formatter.
+	 * @return the time zone date formatter
+	 */
+	private TimeZoneDateFormat getTimeZoneDateFormatter() {
+		if (timeZoneDateFormatter==null || timeZoneDateFormatter.getZoneId().equals(this.graphController.getZoneId())==false) {
+			timeZoneDateFormatter = new TimeZoneDateFormat(this.timeZoneDateFormatPattern, this.graphController.getZoneId());
+		}
+		return timeZoneDateFormatter;
+	}
+	
 	
 	/**
 	 * Returns the JTable for messages.
@@ -148,7 +168,7 @@ public class JPanelMessages extends JScrollPane {
 					JLabel display = new JLabel();
 					if (value!=null && value instanceof Long) {
 						Date date = new Date((long) value);
-						String dateString = new SimpleDateFormat("dd.MM.YY - HH:mm:ss").format(date);
+						String dateString = JPanelMessages.this.getTimeZoneDateFormatter().format(date);
 						display.setText(dateString);
 					} else {
 						display.setText("?" + value.toString());
@@ -167,7 +187,7 @@ public class JPanelMessages extends JScrollPane {
 				 */
 				@Override
 				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-					JLabel display = new JLabel(value.toString());
+					JLabel display = new JLabel(value!=null ? value.toString() : "");
 					TableCellColorHelper.setTableCellRendererColors(display, row, isSelected, jTableMessages.getBackground());
 					return display;
 				}
@@ -224,6 +244,8 @@ public class JPanelMessages extends JScrollPane {
 	 */
 	public void addMessage(long timeStamp, GraphUIMessageType messageType, String message) {
 		
+		if (timeStamp==0 && (message==null || message.isBlank()==true)) return;
+				
 		Vector<Object> row = new Vector<>();
 		row.add(messageType);
 		row.add(timeStamp);
