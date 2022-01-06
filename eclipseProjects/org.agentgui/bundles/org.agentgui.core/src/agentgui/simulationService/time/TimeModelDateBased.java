@@ -120,7 +120,7 @@ public abstract class TimeModelDateBased extends TimeModel {
 	 * @param newZoneId the new zone id
 	 */
 	public void setZoneId(ZoneId newZoneId) {
-		if (newZoneId.equals(ZoneId.systemDefault())==true) {
+		if (newZoneId!=null && newZoneId.equals(ZoneId.systemDefault())==true) {
 			this.zoneId = null;
 		} else {
 			this.zoneId = newZoneId;

@@ -40,7 +40,7 @@ import org.awb.env.networkModel.controller.ui.messaging.GraphUIMessage.GraphUIMe
  */
 public class UIMessagingController {
 
-	private boolean debug = true;
+	private boolean debug = false;
 	
 	private GraphEnvironmentController graphController;
 	private MessagingJInternalFrame messagingFrame;
