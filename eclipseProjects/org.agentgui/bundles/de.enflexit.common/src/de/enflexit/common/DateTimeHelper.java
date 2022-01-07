@@ -228,4 +228,33 @@ public class DateTimeHelper {
 		return ZonedDateTime.ofInstant(Instant.ofEpochMilli(utcTimeStamp), zoneId).format(DateTimeFormatter.ofPattern(pattern));
 	}
 	
+	// ------------------------------------------------------------------------
+	// --- From here, methods for parsing DateTime Strings --------------------
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Parses a date/time string, according to the specified format and zone. Returns a {@link ZonedDateTime} instance.
+	 * @param dateString the date string
+	 * @param dateFormat the date format
+	 * @param zoneId the zone id
+	 * @return the parsed ZonedDateTime instance 
+	 */
+	public static ZonedDateTime getZonedDateTimeFromString(String dateString, String dateFormat, ZoneId zoneId) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat).withZone(zoneId);
+		return ZonedDateTime.parse(dateString, dtf);
+	}
+	
+	/**
+	 * Parses a date/time string, according to the specified format and zone. Returns a long timestamp (epoch millis)
+	 * @param dateString the date string
+	 * @param dateFormat the date format
+	 * @param zoneId the zone id
+	 * @return the timestamp
+	 */
+	public static long getTimestampFromDateTimeString(String dateString, String dateFormat, ZoneId zoneId) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat).withZone(zoneId);
+		ZonedDateTime zdt = ZonedDateTime.parse(dateString, dtf);
+		return zdt.toInstant().toEpochMilli();
+	}
+	
 }

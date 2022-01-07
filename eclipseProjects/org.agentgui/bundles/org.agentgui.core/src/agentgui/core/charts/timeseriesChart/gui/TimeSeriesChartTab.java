@@ -28,9 +28,6 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -38,16 +35,16 @@ import org.jfree.data.time.TimeSeriesCollection;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
+import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.swing.TimeZoneDateFormat;
 
 /**
  * Time series chart visualization component
- * @author Nils
- *
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class TimeSeriesChartTab extends ChartTab {
 
 	private static final long serialVersionUID = -1998969136744482400L;
-	
 	
 	/**
 	 * Instantiates a new time series chart tab.
@@ -66,29 +63,19 @@ public class TimeSeriesChartTab extends ChartTab {
 		), parent);
 		
 		this.dataModel = model;
-		
 		this.applySettings();
-		
 		model.getChartModel().addObserver(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartTab#replaceModel(agentgui.core.charts.DataModel)
+	 */
 	@Override
 	public void replaceModel(DataModel newModel) {
 		this.dataModel = newModel;
 		
-//		this.chartPanel.setChart(ChartFactory.createTimeSeriesChart(
-//				this.dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
-//				this.dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
-//				this.dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
-//				((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection(), 
-//				true, false, false
-//		));
-//		
-//		applySettings();
-		
 		TimeSeriesCollection tsc = ((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection();
 		this.chartPanel.getChart().getXYPlot().setDataset(tsc);
-		
 		dataModel.getChartModel().addObserver(this);
 	}
 
@@ -99,9 +86,9 @@ public class TimeSeriesChartTab extends ChartTab {
 	protected void applySettings() {
 		super.applySettings();
 		DateAxis da = (DateAxis) this.chartPanel.getChart().getXYPlot().getDomainAxis();
-		
-		DateFormat dateFormat = new SimpleDateFormat(((TimeSeriesDataModel)dataModel).getTimeFormat());
-		da.setDateFormatOverride(dateFormat);
+		String formatString = ((TimeSeriesDataModel)dataModel).getTimeFormat();
+		TimeZoneDateFormat tzdf = new TimeZoneDateFormat(formatString, GlobalInfo.getCurrentZoneId());
+		da.setDateFormatOverride(tzdf);
 	}
 	
 	/**
@@ -109,9 +96,9 @@ public class TimeSeriesChartTab extends ChartTab {
 	 * @param timeFormat
 	 */
 	void setTimeFormat(String timeFormat){
-		DateFormat dateFormat = new SimpleDateFormat(timeFormat);
+		TimeZoneDateFormat tzdf = new TimeZoneDateFormat(timeFormat, GlobalInfo.getCurrentZoneId());
 		DateAxis da = (DateAxis) this.chartPanel.getChart().getXYPlot().getDomainAxis();
-		da.setDateFormatOverride(dateFormat);
+		da.setDateFormatOverride(tzdf);
 	}
 	
 }

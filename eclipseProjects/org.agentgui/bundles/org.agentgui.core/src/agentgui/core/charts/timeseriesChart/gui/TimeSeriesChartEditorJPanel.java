@@ -28,16 +28,14 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.JToolBar;
 
 import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
+import agentgui.core.config.GlobalInfo;
 import agentgui.ontology.Chart;
 import de.enflexit.common.ontology.gui.DynForm;
 
@@ -134,19 +132,14 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	protected Number parseKey(String key, String keyFormat, Number keyOffset) {
 
-		Long timestamp = (long) 0; 
-		try {
-			DateFormat df = new SimpleDateFormat(keyFormat);
-			Date dateParsed =  df.parse(key);
-			timestamp = dateParsed.getTime();
-			if (keyOffset!=null) {
-				timestamp = timestamp + (Long) keyOffset;	
-			}
-			// System.out.println( "=> " + new Date(timestamp) );
+		long timestamp = 0; 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(keyFormat).withZone(GlobalInfo.getCurrentZoneId());
+		ZonedDateTime zdt = ZonedDateTime.parse(key, formatter);
+		timestamp = zdt.toInstant().toEpochMilli();
+		if (keyOffset!=null) {
+			timestamp = timestamp + (Long) keyOffset;	
+		}
 			
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}  
 		return timestamp;
 	}
 

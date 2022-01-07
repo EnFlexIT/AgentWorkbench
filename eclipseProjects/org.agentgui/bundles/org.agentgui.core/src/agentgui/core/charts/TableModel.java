@@ -30,12 +30,9 @@ package agentgui.core.charts;
 
 import jade.util.leap.List;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -45,8 +42,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import agentgui.core.config.GlobalInfo;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
+import de.enflexit.common.DateTimeHelper;
 
 /**
  * Abstract superclass for the table representation of chart data.  
@@ -57,6 +56,8 @@ import agentgui.ontology.ValuePair;
 public abstract class TableModel extends AbstractTableModel implements TableModelListener {
 
 	private static final long serialVersionUID = -6719770378777635821L;
+	
+	private static final String DEFAULT_DATE_FORMAT = "dd.MM.yyyy HH:mm:ss";
 	
 	protected JTable myJTable;
 	
@@ -69,7 +70,6 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	
 	/** The parent ChartDataModel this ChartTableModel is part of. */
 	protected DataModel parentDataModel;
-
 	
 	/**
 	 * Initialises the local table model and (re)sets the local values 
@@ -368,8 +368,6 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	public Vector<Vector<Object>> getTableDataAsObjectVector(boolean addHeaders, boolean isTimeSeriesData){
 		Vector<Vector<Object>> dataVector = new Vector<Vector<Object>>();
 		
-		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-		
 		if(addHeaders == true){
 			dataVector.addElement(new Vector<Object>(Arrays.asList(columnTitles.toArray())));
 		}
@@ -379,9 +377,10 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 		for(Vector<Number> numberVector : treeMapData){
 			Vector<Object> objectVector = new Vector<Object>(Arrays.asList(numberVector.toArray()));
 			
+			// --- For time series data, replace the timestamp with the corresponding date/time String
 			if(isTimeSeriesData == true){
 				long timestamp = (long) objectVector.get(0);
-				String dateTime = dateFormat.format(new Date(timestamp));
+				String dateTime = DateTimeHelper.getDateTimeAsString(timestamp, DEFAULT_DATE_FORMAT, GlobalInfo.getCurrentZoneId());						
 				objectVector.remove(0);
 				objectVector.insertElementAt(dateTime, 0);
 			}
@@ -402,16 +401,6 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 		}
 		
 		TableColumnModel tcm = this.myJTable.getColumnModel();
-
-		// Array based old approach
-//		int[] columnWidths = new int[this.getColumnCount()];
-//		for(int i=0; i<this.getColumnCount(); i++){
-//			TableColumn tc = tcm.getColumn(i);
-//			if(tc != null){
-//				columnWidths[i] = tc.getWidth();
-//			}
-//		}
-		
 		Vector<Integer> cwVector = new Vector<Integer>();
 		for(TableColumn tc : Collections.list(tcm.getColumns())){
 			cwVector.addElement(tc.getWidth());
@@ -433,4 +422,5 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 			}
 		}
 	}
+	
 }

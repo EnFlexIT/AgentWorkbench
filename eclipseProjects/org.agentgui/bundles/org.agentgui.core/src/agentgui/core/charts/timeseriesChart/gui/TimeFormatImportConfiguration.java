@@ -47,9 +47,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -79,6 +77,7 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.time.TimeFormatSelection;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.ExceptionHandling;
 
 /**
@@ -139,8 +138,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
 	private JLabel jLabelDummy = null;
-
-
+	
 	/**
 	 * Instantiates a new time format import configuration.
 	 *
@@ -352,18 +350,15 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		} else {
 			try {
 				// --- Try to parse the example String first --------
-				DateFormat df = new SimpleDateFormat(this.getTimeFormat());
-				Date dateParsed =  df.parse(this.csvFileFirstTimeStamp);
-				this.timeExampleFromFile = dateParsed.getTime();
+				this.timeExampleFromFile = DateTimeHelper.getTimestampFromDateTimeString(this.csvFileFirstTimeStamp, this.getTimeFormat(), GlobalInfo.getCurrentZoneId());
 				
 				// --- Try to display the date in a standard way ----
-				DateFormat dfParsed = new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT);
-				this.getJTextFieldParsed().setText(dfParsed.format(dateParsed).toString());
+				this.getJTextFieldParsed().setText(DateTimeHelper.getDateTimeAsString(this.timeExampleFromFile, TimeModelDateBased.DEFAULT_TIME_FORMAT, GlobalInfo.getCurrentZoneId()));
 				this.setError(false);
 				this.getJTextFieldParsed().setForeground(new Color(0, 0, 0));
 				this.jLabelParsed.setForeground(new Color(0, 0, 0));
 				
-			} catch (ParseException pe) {
+			} catch (DateTimeParseException pe) {
 				// --- Error while parsing --------------------------
 				String exceptionShort = ExceptionHandling.getFirstTextLineOfException(pe);
 				if (exceptionShort.contains(":")==true) {
@@ -571,8 +566,9 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 			if (this.timeStartSimSetup==null) {
 				displayText += " [" + Language.translate("Not defined!", Language.EN) + "]";
 			} else {
-				displayText += " " + new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT).format(new Date(this.timeStartSimSetup));
-				displayText += " - <b>" + Language.translate("Formatted as", Language.EN) + ":</b> " + new SimpleDateFormat(timeFormatSimSetup).format(new Date(this.timeStartSimSetup)) + "";
+//				displayText += " " + new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT).format(new Date(this.timeStartSimSetup));
+				displayText += " " + DateTimeHelper.getDateTimeAsString(this.timeStartSimSetup, TimeModelDateBased.DEFAULT_TIME_FORMAT, GlobalInfo.getCurrentZoneId());
+				displayText += " - <b>" + Language.translate("Formatted as", Language.EN) + ":</b> " + DateTimeHelper.getDateTimeAsString(this.timeStartSimSetup, this.timeFormatSimSetup, GlobalInfo.getCurrentZoneId());
 			}
 			displayText += "</html>";
 			

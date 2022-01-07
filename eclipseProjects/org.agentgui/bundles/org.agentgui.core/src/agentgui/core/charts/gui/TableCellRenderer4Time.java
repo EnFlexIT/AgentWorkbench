@@ -28,24 +28,20 @@
  */
 package agentgui.core.charts.gui;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import java.time.Instant;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.DateTimeHelper;
+
 /**
- * Table cell renderer for dates. Displays the date as formatted String according to the system locale.
- * @author Nils
- *
+ * Table cell renderer for date/time data. Displays the date/time as formatted String according the configured time format and zone.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 	
 	private String timeFormat;
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 7378047653825108279L;
 	
 	public TableCellRenderer4Time(String timeFormat){
@@ -57,19 +53,14 @@ public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 	 */
 	@Override
 	protected void setValue(Object value) {
-		Date date = null;
-		if (value==null) {
-			date = new Date(0);
+		Instant instant = null;
+		if (value!=null && value instanceof Number) {
+			long timeMillis = ((Number)value).longValue();
+			instant = Instant.ofEpochMilli(timeMillis);
 		} else {
-			if (value instanceof Number) {
-				Long lngValue = ((Number) value).longValue();
-				date = new Date(lngValue);
-			} else {
-				date = new Date(0);	
-			}
+			instant = Instant.now();
 		}
-		DateFormat timeFormat = new SimpleDateFormat(this.timeFormat);
-		setText(timeFormat.format(date));
+		this.setText(DateTimeHelper.getDateTimeAsString(instant.toEpochMilli(), this.timeFormat, GlobalInfo.getCurrentZoneId()));
 	}
 
 	/**
@@ -78,5 +69,5 @@ public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 	public void setTimeFormat(String timeFormat) {
 		this.timeFormat = timeFormat;
 	}
-
+	
 }
