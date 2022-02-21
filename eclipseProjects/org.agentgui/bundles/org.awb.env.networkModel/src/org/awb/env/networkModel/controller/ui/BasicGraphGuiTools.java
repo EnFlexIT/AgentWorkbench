@@ -126,9 +126,14 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonSplitNode;
     private JButton jButtonRedo;
     private JButton jButtonUndo;
+    
     private JButton jButtonClearGraph;
+    
     private JButton jButtonImportGraph;
     private JButton jButtonImportNetworkModelOperationalData;
+    
+    private JButton jButtonExportGraph;
+    
     private JButton jButtonCut;
     private JButton jButtonCopy;
     private JButton jButtonPaste;
@@ -244,6 +249,12 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			jToolBarEdit.addSeparator();
 			jToolBarEdit.add(getJButtonImportGraph());
 			jToolBarEdit.add(getJButtonImportNetworkModelOperationalData());
+			// --- Check if an Export interface was defined -------------------
+			if (this.graphController.getExportAdapter().size()>0) {
+				jToolBarEdit.addSeparator();
+				jToolBarEdit.add(this.getJButtonExportGraph());
+				jToolBarEdit.addSeparator();
+			}
     		jToolBarEdit.add(getJButtonClearGraph());
 	    	
     	}
@@ -720,7 +731,6 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		}
 		return jButtonImportGraph;
     }
-    
     /**
      * This method initializes jButtonImportDataModelNetworkElements
      * @return javax.swing.JButton
@@ -732,6 +742,18 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonImportNetworkModelOperationalData;
     }
 
+    /**
+     * This method initializes jButtonIjButtonExportGraphmportGraph
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonExportGraph() {
+		if (jButtonExportGraph == null) {
+			jButtonExportGraph = this.getNewJButton("ExportTopology.png", Language.translate("Export NetworkModel to file", Language.EN));
+		}
+		return jButtonExportGraph;
+    }
+    
+    
     /**
      * This method initializes edgePopup The menu is displayed when an edge is right clicked
      * @return javax.swing.JPopupMenu
@@ -1494,15 +1516,21 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			this.graphController.getNetworkModelUndoManager().redo();
 			this.setUndoRedoButtonsEnabled();
 			
+			
 		} else if (ae.getSource()==getJButtonImportGraph()) {
 			this.graphController.getNetworkModelUndoManager().importNetworkModel();
 			
 		} else if (ae.getSource()==getJButtonImportNetworkModelOperationalData()) {
 			this.graphController.getNetworkModelUndoManager().importOperationalData();
 			
+		} else if (ae.getSource()==getJButtonExportGraph()) {
+			this.graphController.getNetworkModelUndoManager().exportNetworkModel();
+			
+			
 		} else if (ae.getSource()==getJButtonClearGraph()) {
 			this.graphController.getNetworkModelUndoManager().clearNetworkModel();
 		
+			
 		} else if(ae.getSource()==getJMenuItemNodeProp()) {
 			// ------------------------------------------------------
 			// --- Popup Menu Item Node properties clicked ----------

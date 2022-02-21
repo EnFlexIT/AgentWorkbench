@@ -41,6 +41,7 @@ import java.util.Collection;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.filechooser.FileFilter;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -233,7 +234,39 @@ public final class GraphGlobals {
 		return false;
 	}
  	
- 	
+	// ------------------------------------------------------------------------
+ 	// --- Some help method to create a simple FileFilter ---------------------
+ 	// ------------------------------------------------------------------------
+	/**
+	 * Creates a FileFilter accepting the specified file type or directories.
+	 * @param fileTypeExtension the file type extension
+	 * @param fileTypeDescription the file type description
+	 * @return the file filter
+	 */
+	public static FileFilter createFileFilter(String fileTypeExtension, String fileTypeDescription) {
+			
+		FileFilter fileFilter = new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				if (file.isDirectory()==true) return true;
+		        String path = file.getAbsolutePath();
+		        if (path!=null && path.isBlank()==false) {
+		        	if (path.toLowerCase().endsWith(fileTypeExtension.toLowerCase())) {
+		        		return true;
+		            } else {
+		                return false;
+		            }
+		        }		
+				return false;
+			}
+			@Override
+			public String getDescription() {
+				return fileTypeDescription;
+			}
+		};
+		return fileFilter;
+	}
+	
  	// ------------------------------------------------------------------------
  	// --- Some help method for buffered images -------------------------------
  	// ------------------------------------------------------------------------

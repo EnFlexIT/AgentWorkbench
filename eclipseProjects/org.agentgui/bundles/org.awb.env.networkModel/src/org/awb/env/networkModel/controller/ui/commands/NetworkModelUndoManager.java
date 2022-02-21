@@ -288,6 +288,17 @@ public class NetworkModelUndoManager {
 			this.getUndoManager().addEdit(importDMNM);
 		}
 	}
+	
+	/**
+	 * Exports the current NetworkModel to a file.
+	 */
+	public void exportNetworkModel() {
+		ExportNetworkModel exportNM = new ExportNetworkModel(this.graphController);
+		if (exportNM.isCanceled()==false) {
+			this.getUndoManager().addEdit(exportNM);
+		}
+	}
+	
 	/**
 	 * Clears the current NetworModel.
 	 */

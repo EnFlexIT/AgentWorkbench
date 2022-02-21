@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.swing.filechooser.FileFilter;
 
+import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
@@ -83,30 +84,7 @@ public abstract class AbstractNetworkModelFileImporter {
 	 * @return the file filter
 	 */
 	protected FileFilter createFileFilter(String fileTypeExtension, String fileTypeDescription) {
-			
-		FileFilter fileFilter = new FileFilter() {
-			@Override
-			public boolean accept(File file) {
-				if (file.isDirectory()) {
-		            return true;
-		        }
-		        String path = file.getAbsolutePath();
-		        if (path != null) {
-		        	if (path.endsWith(fileTypeExtension) || path.endsWith(fileTypeExtension.toLowerCase()) || path.endsWith(fileTypeExtension.toUpperCase())) {
-		        		return true;
-		            } else {
-		                return false;
-		            }
-		        }		
-				return false;
-			}
-
-			@Override
-			public String getDescription() {
-				return fileTypeDescription;
-			}
-		};
-		return fileFilter;
+		return GraphGlobals.createFileFilter(fileTypeExtension, fileTypeDescription);
 	}
 	
 	/**

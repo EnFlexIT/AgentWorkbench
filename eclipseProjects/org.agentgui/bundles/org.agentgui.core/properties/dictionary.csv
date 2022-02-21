@@ -113,6 +113,7 @@ de;Beschriftungen anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
+de;Bitte geben Sie einen Agenten-Namen an;;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
@@ -256,6 +257,7 @@ de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Date
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
+de;Fehlender Agent Name!;;;;
 de;Fehlender Agent!;Missing Agent!;;;
 de;Fehlender Benutzer;Missing user name;;;
 de;Fehlendes Passwort;Missing password;;;
@@ -488,6 +490,7 @@ de;Netzwerk-Komponenten;Network Components;;;
 de;Netzwerkkomponente umbenennen;Rename network component;;;
 de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
+de;Netzwerkmodell exportieren;;;;
 de;Netzwerkmodell importieren;Import network model ;;;
 de;Netzwerkmodell leeren;Clear network model;;;
 de;Neu laden;Reload;;;
@@ -818,6 +821,8 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;... depending on delta watts (percent);;;
+en;;... depending on watts (absolute);;;
 en;;A geographical layout has to be defined with X = 'North' and Y = 'Clockwise to X';;;
 en;;A geographical layout has to be defined with X = 'North', Y = 'Clockwise to X';;;
 en;;Alias:;;;
@@ -842,6 +847,7 @@ en;;Depending on watts (absolute);;;
 en;;Discrete squares environment;;;
 en;;Display time is time controlled;;;
 en;;Edit security store settings;;;
+en;;Export NetworkModel to file;;;
 en;;Geo. Layout;;;
 en;;Import CSV File;;;
 en;;Import;;;

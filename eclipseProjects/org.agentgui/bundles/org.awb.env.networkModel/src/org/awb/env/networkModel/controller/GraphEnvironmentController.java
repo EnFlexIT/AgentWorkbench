@@ -53,6 +53,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.commands.NetworkModelUndoManager;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
+import org.awb.env.networkModel.persistence.NetworkModelExportService;
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService.DataModelServiceAction;
@@ -1043,6 +1044,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	}
 
+	
 	/**
 	 * Return all known import adapter from the OSGI service registry.
 	 * @return the import adapter
@@ -1059,7 +1061,24 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
 		return importAdapter;
 	}
-
+	/**
+	 * Return all known export adapter from the OSGI service registry.
+	 * @return the export adapter
+	 */
+	public Vector<NetworkModelExportService> getExportAdapter() {
+		
+		Vector<NetworkModelExportService> exportAdapter = new Vector<NetworkModelExportService>();
+			
+		List<NetworkModelExportService> exportServices = ServiceFinder.findServices(NetworkModelExportService.class);
+		for (int i=0; i<exportServices.size(); i++) {
+			NetworkModelExportService importer = exportServices.get(i);
+			importer.setGraphController(this);
+			exportAdapter.add(importer);
+		}
+		return exportAdapter;
+	}
+	
+	
 	/**
 	 * Adds a {@link CustomToolbarComponentDescription}, so that customized components will be added to a toolbar of the {@link BasicGraphGui}.
 	 * @param customButtonDescription the CustomToolbarComponentDescription to add
