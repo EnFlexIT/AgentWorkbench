@@ -59,7 +59,7 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	private static final String XML_ELEMENT_Instance = "Instance";
 	private static final String XML_ATTRIBUTE_Ontology = "Ontology";
 	
-	private boolean debug = true;
+	private boolean debug = false;
 	private GraphEnvironmentController graphController;
 	
 	private XMLCodec xmlCodec;
