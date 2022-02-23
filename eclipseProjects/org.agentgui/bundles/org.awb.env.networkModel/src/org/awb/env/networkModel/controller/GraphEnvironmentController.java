@@ -484,7 +484,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 					
 					// --- 0. Define a new NetworkModel -------------------------------------------
 					NetworkModel netModel = new NetworkModel();
-
 					// --- => Set the NetworkModel instance to the GraphNodePositionFactory -------
 					GraphNodePositionFactory.setLoadingNetworkModel(netModel);
 					
@@ -505,9 +504,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 					// --- 5. Refresh the graph elements in the NetworkModel ----------------------
 					netModel.refreshGraphElements();
 					
-					// --- => Reset the NetworkModel instance in the GraphNodePositionFactory -----
-					GraphNodePositionFactory.setLoadingNetworkModel(null);
-
 					// --- 6. Load individual data models of components ---------------------------
 					boolean isApplication = Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION;
 					GraphEnvironmentController.this.loadDataModelNetworkElements(netModel, GraphEnvironmentController.this.getSetupName(), isApplication, null, null);
@@ -531,12 +527,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 							Thread.sleep(20);
 						}	
 						
-						// --- Assign NetworkMoldel to visualization ----------------------------------
+						// --- Assign NetworkMoldel to visualization ------------------------------
 						final NetworkModel netModelFinal = netModel;
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
 							public void run() {
-								// --- Use the local method in order to inform the observer -----------
+								// --- Use the local method in order to inform the observer -------
 								GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelFinal);
 							}
 						});
@@ -546,6 +542,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 					ex.printStackTrace();
 					
 				} finally {
+					// --- => Reset the NetworkModel instance in the GraphNodePositionFactory -----
+					GraphNodePositionFactory.setLoadingNetworkModel(null);
 					GraphEnvironmentController.this.isTemporaryPreventSaving = false;
 					Application.setCursor(Cursor.getDefaultCursor());
 					Application.setStatusBarMessageReady();
