@@ -351,7 +351,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		if (storageService!=null) {
 			dataModel = this.getSetupDataModelStorageServiceOntology().getDataModel(networkElement, this.partModelID);
 			if (this.debug==true) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] - Successfully obtain SetupDataModelStorageServiceOntology for " + networkElement.getId() + " after " + timesTried + " tries");
+				System.out.println("[" + this.getClass().getSimpleName() + "] - Successfully obtain SetupDataModelStorageServiceOntology for " + networkElement.getId() + " after " + timesTried + (timesTried==1 ? " trial" : " tries"));
 			}
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] - loading data model for " + networkElement.getId() + " failed, could not obtain SetupDataModelStorageServiceOntology after " + timesTried + " tries");

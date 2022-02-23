@@ -59,6 +59,7 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 	private static final String XML_ELEMENT_Instance = "Instance";
 	private static final String XML_ATTRIBUTE_Ontology = "Ontology";
 	
+	private boolean debug = true;
 	private GraphEnvironmentController graphController;
 	
 	private XMLCodec xmlCodec;
@@ -253,6 +254,7 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 		// --- Is there something to write? ---------------
 		if (this.getOntologyInstanceTreeMap().size()==0) {
 			// --- Delete old file? ---
+			this.debugPrint("Deleting Ontology file for setup '" + setupName + "'");
 			this.removeNetworkElementDataModels(setupName);
 			return;
 		}
@@ -450,6 +452,16 @@ public class SetupDataModelStorageServiceOntology implements SetupDataModelStora
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Prints a debug output to the console.
+	 * @param message the message
+	 */
+	private void debugPrint(String message) {
+		if (this.debug==true) {
+			System.out.println("[" + this.getClass().getSimpleName() + "] " + message);
 		}
 	}
 	

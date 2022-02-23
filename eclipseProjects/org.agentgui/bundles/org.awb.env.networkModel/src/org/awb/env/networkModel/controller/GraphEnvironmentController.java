@@ -334,7 +334,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		case SIMULATION_SETUP_RENAME:
 
 			// --- Collect old settings -------------------
-			String oldSetupName = this.setupName;
+			String setupNameOld = this.setupName;
 			File oldGraphFile = this.getFileGraphML();
 			File oldComponentFile = this.getFileXML();
 			
@@ -350,11 +350,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 			}
 			
 			// --- Call storage services ------------------
-			String[] renameArgs = new String[2];
-			renameArgs[0] = oldSetupName;
-			renameArgs[1] = this.getProject().getSimulationSetupCurrent();
-			if (renameArgs[0].equals(renameArgs[1])==false) {
-				this.callSetupDataModelStorageServices(DataModelServiceAction.RenameSetup, renameArgs);
+			String setupNameNew = this.getProject().getSimulationSetupCurrent();
+			if (setupNameNew.equals(setupNameOld)==false) {
+				this.callSetupDataModelStorageServices(DataModelServiceAction.RenameSetup, setupNameOld, setupNameNew);
 			}
 			break;
 
@@ -376,6 +374,14 @@ public class GraphEnvironmentController extends EnvironmentController {
 	private void updateSetupName() {
 		this.setupName = this.getProject().getSimulationSetupCurrent();
 	}
+	/**
+	 * Returns the current setup name.
+	 * @return the setup name
+	 */
+	public String getSetupName() {
+		return this.setupName;
+	}
+	
 	/**
 	 * Returns the XML file for the NetworkComponents and so on.
 	 * @return the XML file for the NetworkComponents and so on 
@@ -476,60 +482,65 @@ public class GraphEnvironmentController extends EnvironmentController {
 						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
 					}
 					
-					// --- Define the NetworkModel ------------------------------------------------
+					// --- 0. Define a new NetworkModel -------------------------------------------
 					NetworkModel netModel = new NetworkModel();
 
-					// --- Set the NetworkModel instance to the GraphNodePositionFactory ----------
+					// --- => Set the NetworkModel instance to the GraphNodePositionFactory -------
 					GraphNodePositionFactory.setLoadingNetworkModel(netModel);
 					
 					// --- 1. Load component type settings from file ------------------------------
 					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
 					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
-					
-					// --- 2. Load the component definitions and other from the component file ----
-					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
-
-					// --- 3. Load the graph topology from the graph file -------------------------
-					netModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
-					
-					// --- 4. Refresh the graph elements in the NetworkModel ----------------------
-					netModel.refreshGraphElements();
-					
-					// --- Remind the list of custom toolbar elements -----------------------------
-					if (GraphEnvironmentController.this.getNetworkModel()!=null) {
-						GeneralGraphSettings4MAS gg4mas = GraphEnvironmentController.this.getGeneralGraphSettings4MAS();
-						if (gg4mas!=null) {
-							ggs4MAS.setCustomToolbarComponentDescriptions(gg4mas.getCustomToolbarComponentDescriptions());
-						}
+					// --- 2. Remind the list of custom toolbar elements --------------------------
+					if (ggs4MAS!=null && GraphEnvironmentController.this.getNetworkModel()!=null && GraphEnvironmentController.this.getGeneralGraphSettings4MAS()!=null) {
+						ggs4MAS.setCustomToolbarComponentDescriptions(GraphEnvironmentController.this.getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions());
 					}
 					
-					// --- Use case 'Application' -------------------------------------------------
-					if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
-						// --- Wait for visualization component before assign network model ---
+					// --- 3. Load the component definitions and other from the component file ----
+					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
+
+					// --- 4. Load the graph topology from the graph file -------------------------
+					netModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
+					
+					// --- 5. Refresh the graph elements in the NetworkModel ----------------------
+					netModel.refreshGraphElements();
+					
+					// --- => Reset the NetworkModel instance in the GraphNodePositionFactory -----
+					GraphNodePositionFactory.setLoadingNetworkModel(null);
+
+					// --- 6. Load individual data models of components ---------------------------
+					boolean isApplication = Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION;
+					GraphEnvironmentController.this.loadDataModelNetworkElements(netModel, GraphEnvironmentController.this.getSetupName(), isApplication, null, null);
+					
+					// --- Use case 'Application' ? -----------------------------------------------
+					if (isApplication==true) {
+						// ------------------------------------------------------------------------
+						// --- Directly assign NetworkModel to graph controller -------------------
+						// ------------------------------------------------------------------------
+						GraphEnvironmentController.this.setDisplayEnvironmentModel(netModel);
+						
+					} else {
+						// ------------------------------------------------------------------------
+						// --- Wait for visualization component before assign network model -------
+						// ------------------------------------------------------------------------
 						while (GraphEnvironmentController.this.getEnvironmentPanel()==null) {
-							Thread.sleep(50);
+							Thread.sleep(20);
 						}
 						BasicGraphGui basicGraphGui = GraphEnvironmentController.this.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 						while (basicGraphGui.isCreatedVisualizationViewer()==false) {
-							Thread.sleep(50);
+							Thread.sleep(20);
 						}	
+						
+						// --- Assign NetworkMoldel to visualization ----------------------------------
+						final NetworkModel netModelFinal = netModel;
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								// --- Use the local method in order to inform the observer -----------
+								GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelFinal);
+							}
+						});
 					}
-					
-					// --- Reset the NetworkModel instance in the GraphNodePositionFactory --------
-					GraphNodePositionFactory.setLoadingNetworkModel(null);
-					
-					// --- Assign NetworkMoldel to visualization ----------------------------------
-					final NetworkModel netModelFinal = netModel;
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							// --- Use the local method in order to inform the observer -----------
-							GraphEnvironmentController.this.setDisplayEnvironmentModel(netModelFinal);
-							// --- Decode data models that are Base64 encoded in the moment -------
-							GraphEnvironmentController.this.loadDataModelNetworkElements();
-						}
-					});
-					
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -586,28 +597,28 @@ public class GraphEnvironmentController extends EnvironmentController {
 	
 	/**
 	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
+	 *
+	 * @param isShowProgress the indicator to show a progress monitor or not
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to load or reload (<code>null</code> is allowed)
+	 * @param maxNumberOfThread the max number of thread
 	 */
-	public void loadDataModelNetworkElements() {
-		this.loadDataModelNetworkElements(true, null, null);
+	public void loadDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThread) {
+		this.loadDataModelNetworkElements(null, null, isShowProgress, netElementVector, maxNumberOfThread);
 	}
 	/**
 	 * Sets all persisted data models of {@link DataModelNetworkElement}s to instances (e.g. Base64 encoded models strings).
 	 *
+	 * @param networkModel the network model to work on; may be <code>null</code>. If null, the current NetworkModel will be used.
+	 * @param setupName the name of the setup; may be <code>null</code>. If null, the current setup name will be used.
 	 * @param isShowProgress the indicator to show a progress monitor or not
 	 * @param netElementVector the explicit vector of DataModelNetworkElement's to load or reload (<code>null</code> is allowed)
-	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
+	 * @param maxNumberOfThread the max number of thread
 	 */
-	public void loadDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThread) {
-		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup);
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_LOADING, isShowProgress, netElementVector, maxNumberOfThread).start();
+	public void loadDataModelNetworkElements(NetworkModel networkModel, String setupName, boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThread) {
+		this.callSetupDataModelStorageServices(DataModelServiceAction.LoadSetup, setupName, null);
+		new DataModelStorageThread(this, networkModel, setupName, OrganizerAction.ORGANIZE_LOADING, isShowProgress, netElementVector, maxNumberOfThread).start();
 	}
 	
-	/**
-	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
-	 */
-	public void saveDataModelNetworkElements() {
-		this.saveDataModelNetworkElements(true, null, null);
-	}
 	/**
 	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
 	 *
@@ -616,8 +627,20 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
 	 */
 	public void saveDataModelNetworkElements(boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThreads) {
-		new DataModelStorageThread(this, OrganizerAction.ORGANIZE_SAVING, isShowProgress, netElementVector, maxNumberOfThreads).start();
-		this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup);
+		this.saveDataModelNetworkElements(null, null, isShowProgress, netElementVector, maxNumberOfThreads);
+	}
+	/**
+	 * Saves all instances of individual data models in {@link DataModelNetworkElement}s (e.g. as Base64 encoded strings).
+	 *
+	 * @param networkModel the network model to work on; may be <code>null</code>. If null, the current NetworkModel will be used.
+	 * @param setupName the name of the setup; may be <code>null</code>. If null, the current setup name will be used.
+	 * @param isShowProgress the indicator to show a progress monitor or not
+	 * @param netElementVector the explicit vector of DataModelNetworkElement's to save (<code>null</code> is allowed)
+	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
+	 */
+	public void saveDataModelNetworkElements(NetworkModel networkModel, String setupName, boolean isShowProgress, Vector<DataModelNetworkElement> netElementVector, Integer maxNumberOfThreads) {
+		new DataModelStorageThread(this, networkModel, setupName, OrganizerAction.ORGANIZE_SAVING, isShowProgress, netElementVector, maxNumberOfThreads).start();
+		this.callSetupDataModelStorageServices(DataModelServiceAction.SaveSetup, setupName, null);
 	}
 	
 	
@@ -657,23 +680,26 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
 		return null;
 	}
+	
 	/**
 	 * Calls the known {@link SetupDataModelStorageService}s to do the specified action.
 	 *
 	 * @param serviceAction the service action to invoke
+	 * @param setupName the name of the setup to work on
 	 */
 	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction) {
-		this.callSetupDataModelStorageServices(serviceAction, null);
+		this.callSetupDataModelStorageServices(serviceAction, null, null);
 	}
 	/**
 	 * Calls the known {@link SetupDataModelStorageService}s to do the specified action.
 	 *
 	 * @param serviceAction the service action to invoke
-	 * @param renameFromTo only needed for renaming. String array with two arguments: first old, second new setup name
+	 * @param setupName the name of the setup to work on
+	 * @param setupNameNew only needed for renaming. The new setup name
 	 */
-	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction, String[] renameFromTo) {
+	private void callSetupDataModelStorageServices(DataModelServiceAction serviceAction, String setupName, String setupNameNew) {
 		
-		String setupName = this.getProject().getSimulationSetupCurrent();
+		if (setupName==null) setupName = this.getSetupName();
 		
 		List<SetupDataModelStorageService> sdmServiceList = new ArrayList<SetupDataModelStorageService>(this.getSetupDataModelStorageServiceHashMap().values());
 		for (int i = 0; i < sdmServiceList.size(); i++) {
@@ -691,9 +717,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 					sdmService.removeNetworkElementDataModels(setupName);
 					break;
 				case RenameSetup:
-					String oldSetupName = renameFromTo[0];
-					String newSetupName = renameFromTo[1];
-					sdmService.renameNetworkElementDataModels(oldSetupName, newSetupName);
+					sdmService.renameNetworkElementDataModels(setupName, setupNameNew);
 					break;
 				}
 				

@@ -43,6 +43,7 @@ import org.agentgui.gui.UiBridge;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
@@ -78,6 +79,8 @@ public class DataModelStorageThread extends Thread {
 	
 	// --- Variables for all ------------------------------
 	private GraphEnvironmentController graphController;
+	private NetworkModel networkModel;
+	private String setupName;
 	private boolean isShowProgressMonitor;
 	
 	// --- Variables for the organizer --------------------
@@ -108,13 +111,18 @@ public class DataModelStorageThread extends Thread {
 	 * Instantiates a new organizer thread for the data model encoding or decoding .
 	 *
 	 * @param graphController the graph controller
+	 * @param networkModel the optional NetworkModel to work on; may be <code>null</code>. For that the model of the graphController will be used.
+	 * @param setupName the setup name to be used for the current NetworkNodel
 	 * @param action the action that is either {@link OrganizerAction#ORGANIZE_LOADING} or {@link OrganizerAction#ORGANIZE_SAVING}
 	 * @param isShowProgressMonitor the indicator to show (or not) the progress monitor
 	 * @param networkElementsToLoadOrSave the Vector of network elements to load or save (<code>null</code> is allowed)
 	 * @param maxNumberOfThreads the maximum number of threads to use (<code>null</code> is allowed)
 	 */
-	public DataModelStorageThread(GraphEnvironmentController graphController, OrganizerAction action, boolean isShowProgressMonitor, Vector<DataModelNetworkElement> networkElementsToLoadOrSave, Integer maxNumberOfThreads) {
+	public DataModelStorageThread(GraphEnvironmentController graphController, NetworkModel networkModel, String setupName, OrganizerAction action, boolean isShowProgressMonitor, Vector<DataModelNetworkElement> networkElementsToLoadOrSave, Integer maxNumberOfThreads) {
 		this.graphController = graphController;
+		this.networkModel = networkModel!=null ? networkModel : graphController.getNetworkModel();
+		this.setupName = setupName!=null ? setupName : graphController.getSetupName();
+		
 		this.organizerAction = action;
 		this.isShowProgressMonitor = isShowProgressMonitor;
 		this.networkElementsToLoadOrSave = networkElementsToLoadOrSave;
@@ -131,13 +139,18 @@ public class DataModelStorageThread extends Thread {
 	 *
 	 * @param organizerThread the parent organizer thread
 	 * @param graphController the graph controller
+	 * @param networkModel the network model
+	 * @param setupName the setup name to be used for the current NetworkNodel
 	 * @param componentsToWorkOn the components to work on
 	 * @param action the action
-	 * @param name the designated name for the Thread
+	 * @param threadNo the thread no
 	 */
-	private DataModelStorageThread(DataModelStorageThread organizerThread, GraphEnvironmentController graphController, Vector<DataModelNetworkElement> componentsToWorkOn, WorkerAction action, int threadNo) {
+	private DataModelStorageThread(DataModelStorageThread organizerThread, GraphEnvironmentController graphController, NetworkModel networkModel, String setupName, Vector<DataModelNetworkElement> componentsToWorkOn, WorkerAction action, int threadNo) {
 		this.organizerThread = organizerThread;
 		this.graphController = graphController;
+		this.networkModel = networkModel!=null ? networkModel : graphController.getNetworkModel();
+		this.setupName = setupName!=null ? setupName : graphController.getSetupName();
+
 		this.componentsToWorkOn = componentsToWorkOn;
 		this.workerAction = action;
 		if (action==WorkerAction.SAVE) {
@@ -205,8 +218,8 @@ public class DataModelStorageThread extends Thread {
 		if (this.elementsToConvert==0) return;
 		
 		// --- Summarize the file sizes -----------------------------
-		long fileSizeXML = this.graphController.getFileXML().length();
-		long fileSizeGraphML = this.graphController.getFileGraphML().length();
+		long fileSizeXML = GraphEnvironmentController.getFileXML(this.graphController.getEnvFolderPath(), this.setupName).length();
+		long fileSizeGraphML = GraphEnvironmentController.getFileGraphML(this.graphController.getEnvFolderPath(), this.setupName).length();
 		long fileSize = fileSizeXML + fileSizeGraphML; 
 		
 		// --- Split component vector -------------------------------
@@ -251,11 +264,11 @@ public class DataModelStorageThread extends Thread {
 			Vector<DataModelNetworkElement> elementVector = splitVector.get(i);
 			switch (this.organizerAction) {
 			case ORGANIZE_LOADING:
-				new DataModelStorageThread(this, this.graphController, elementVector, WorkerAction.LOAD, i+1).start();
+				new DataModelStorageThread(this, this.graphController, this.networkModel, this.setupName, elementVector, WorkerAction.LOAD, i+1).start();
 				break;
 
 			case ORGANIZE_SAVING:
-				new DataModelStorageThread(this, this.graphController, elementVector, WorkerAction.SAVE, i+1).start();	
+				new DataModelStorageThread(this, this.graphController, this.networkModel, this.setupName, elementVector, WorkerAction.SAVE, i+1).start();	
 				break;
 			}
 		}
@@ -324,7 +337,7 @@ public class DataModelStorageThread extends Thread {
 			networkElementsToLoadOrSave = new Vector<>();
 			
 			// --- Work on the NetworkComponents --------------------
-			Object[] netComps = this.graphController.getNetworkModel().getNetworkComponents().values().toArray();
+			Object[] netComps = this.networkModel.getNetworkComponents().values().toArray();
 			for (int i = 0; i < netComps.length; i++) {
 				
 				NetworkComponent netComp = (NetworkComponent) netComps[i];
@@ -342,7 +355,7 @@ public class DataModelStorageThread extends Thread {
 			}
 			
 			// --- Work on the GraphNodes ---------------------------
-			Object[] graphNodes = this.graphController.getNetworkModel().getGraph().getVertices().toArray();
+			Object[] graphNodes = this.networkModel.getGraph().getVertices().toArray();
 			for (int i = 0; i < graphNodes.length; i++) {
 				
 				GraphNode graphNode = (GraphNode) graphNodes[i];
@@ -587,7 +600,7 @@ public class DataModelStorageThread extends Thread {
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(NetworkComponent networkComponent) {
-		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, networkComponent, false, this.getNetworkComponentAdapterHash());
+		return this.networkModel.getNetworkComponentAdapter(this.graphController, networkComponent, false, this.getNetworkComponentAdapterHash());
 	}
 	/**
 	 * Returns the NetworkComponentAdapter for the specified GraphNode.
@@ -596,7 +609,7 @@ public class DataModelStorageThread extends Thread {
 	 * @return the network component adapter
 	 */
 	public NetworkComponentAdapter getNetworkComponentAdapter(GraphNode graphNode) {
-		return this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, graphNode, false, this.getNetworkComponentAdapterHash());
+		return this.networkModel.getNetworkComponentAdapter(this.graphController, graphNode, false, this.getNetworkComponentAdapterHash());
 	}
 	
 }
