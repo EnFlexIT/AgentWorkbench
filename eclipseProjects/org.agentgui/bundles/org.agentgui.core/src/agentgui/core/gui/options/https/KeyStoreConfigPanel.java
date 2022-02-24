@@ -59,14 +59,13 @@ import de.enflexit.common.crypto.KeyStoreController;
  * This JPanel allows the user to : 
  * 1- create new KeyStore and protect its integrity with a password 
  * 2- update his KeyStore informations 
- * 3- generate certificate from the KeyStore
- * @see HttpsConfigWindow
- * 
+ * 3- generate certificate from the KeyStore.
+ *
  * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
  * @version 1.0
+ * @see HttpsConfigWindow
  * @since 05-04-2016
  */
-
 public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -4676410555112580221L;
@@ -117,9 +116,12 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	
 	private final Dimension fieldSize = new Dimension(120, 26);
 	private Set<String> ISO_COUNTRIES = new HashSet<String>(Arrays.asList(Locale.getISOCountries()));
+	
 
 	/**
 	 * Create the application.
+	 *
+	 * @param httpsConfigWindow the https config window
 	 */
 	public KeyStoreConfigPanel(HttpsConfigWindow httpsConfigWindow) {
 		this.httpsConfigWindow = httpsConfigWindow;
@@ -375,8 +377,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jPanelCertificate;
 	}
+	
 	/**
 	 * This method initializes KeyStoreController.
+	 *
+	 * @return the key store controller
 	 */
 	protected KeyStoreController getKeyStoreController() {
 		if (keyStoreController == null) {
@@ -384,8 +389,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return keyStoreController;
 	}
+	
 	/**
 	 * This method initializes jLabelKeyStoreInformations.
+	 *
+	 * @return the j label key store informations
 	 */
 	private JLabel getJLabelKeyStoreInformations() {
 		if (jLabelKeyStoreInformations == null) {
@@ -394,8 +402,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelKeyStoreInformations;
 	}
+	
 	/**
 	 * This method initializes jLabelKeyStoreName.
+	 *
+	 * @return the j label key store name
 	 */
 	private JLabel getJLabelKeyStoreName() {
 		if (jLabelKeyStoreName == null) {
@@ -404,8 +415,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelKeyStoreName;
 	}
+	
 	/**
 	 * This method initializes jLabelPassword.
+	 *
+	 * @return the j label password
 	 */
 	private JLabel getJLabelPassword() {
 		if (jLabelPassword == null) {
@@ -414,8 +428,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelPassword;
 	}
+	
 	/**
 	 * This method initializes jLabelConfirmPassword.
+	 *
+	 * @return the j label confirm password
 	 */
 	private JLabel getJLabelConfirmPassword() {
 		if (jLabelConfirmPassword == null) {
@@ -424,8 +441,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelConfirmPassword;
 	}
+	
 	/**
 	 * This method initializes jLabelAlias.
+	 *
+	 * @return the j label alias
 	 */
 	private JLabel getJLabelAlias() {
 		if (jLabelAlias == null) {
@@ -434,8 +454,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelAlias;
 	}
+	
 	/**
 	 * This method initializes jLabelFullName.
+	 *
+	 * @return the j label full name
 	 */
 	private JLabel getJLabelFullName() {
 		if (jLabelFullName == null) {
@@ -444,8 +467,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelFullName;
 	}
+	
 	/**
 	 * This method initializes jLabelOrganizationalUnit.
+	 *
+	 * @return the j label organizational unit
 	 */
 	private JLabel getJLabelOrganizationalUnit() {
 		if (jLabelOrganizationalUnit == null) {
@@ -454,8 +480,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelOrganizationalUnit;
 	}
+	
 	/**
 	 * This method initializes jLabelOrganization.
+	 *
+	 * @return the j label organization
 	 */
 	private JLabel getJLabelOrganization() {
 		if (jLabelOrganization == null) {
@@ -464,8 +493,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelOrganization;
 	}
+	
 	/**
 	 * This method initializes jLabelCity.
+	 *
+	 * @return the j label city
 	 */
 	private JLabel getJLabelCity() {
 		if (jLabelCity == null) {
@@ -474,8 +506,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelCity;
 	}
+	
 	/**
 	 * This method initializes jLabelState.
+	 *
+	 * @return the j label state
 	 */
 	private JLabel getJLabelState() {
 		if (jLabelState == null) {
@@ -484,8 +519,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelState;
 	}
+	
 	/**
 	 * This method initializes jLabelCountryCode.
+	 *
+	 * @return the j label country code
 	 */
 	private JLabel getJLabelCountryCode() {
 		if (jLabelCountryCode == null) {
@@ -494,8 +532,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelCountryCode;
 	}
+	
 	/**
 	 * This method initializes jLabelValidity.
+	 *
+	 * @return the j label validity
 	 */
 	private JLabel getJLabelValidity() {
 		if (jLabelValidity == null) {
@@ -504,8 +545,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelValidity;
 	}
+	
 	/**
 	 * This method initializes jTextFieldValidity.
+	 * @return the j text field validity
 	 */
 	protected JTextField getJTextFieldValidity() {
 		if (jTextFieldValidity == null) {
@@ -517,6 +560,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	}
 	/**
 	 * This method initializes jTextFieldKeyStoreName.
+	 * @return the j text field key store name
 	 */
 	protected JTextField getJTextFieldKeyStoreName() {
 		if (jTextFieldKeyStoreName == null) {
@@ -526,8 +570,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldKeyStoreName;
 	}
+	
 	/**
 	 * This method initializes jTextFieldAlias.
+	 * @return the j text field alias
 	 */
 	protected JTextField getJTextFieldAlias() {
 		if (jTextFieldAlias == null) {
@@ -537,8 +583,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldAlias;
 	}
+	
 	/**
 	 * This method initializes jTextFieldFullName.
+	 * @return the j text field full name
 	 */
 	protected JTextField getJTextFieldFullName() {
 		if (jTextFieldFullName == null) {
@@ -548,8 +596,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldFullName;
 	}
+	
 	/**
 	 * This method initializes jTextFieldOrganizationalUnit.
+	 * @return the j text field organizational unit
 	 */
 	protected JTextField getJTextFieldOrganizationalUnit() {
 		if (jTextFieldOrganizationalUnit == null) {
@@ -559,8 +609,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldOrganizationalUnit;
 	}
+	
 	/**
 	 * This method initializes jTextFieldOrganization.
+	 * @return the j text field organization
 	 */
 	protected JTextField getJTextFieldOrganization() {
 		if (jTextFieldOrganization == null) {
@@ -570,8 +622,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldOrganization;
 	}
+	
 	/**
 	 * This method initializes jTextFieldCity.
+	 * @return the j text field city
 	 */
 	protected JTextField getJTextFieldCity() {
 		if (jTextFieldCity == null) {
@@ -581,8 +635,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldCity;
 	}
+	
 	/**
 	 * This method initializes jTextFieldState.
+	 * @return the j text field state
 	 */
 	protected JTextField getJTextFieldState() {
 		if (jTextFieldState == null) {
@@ -592,8 +648,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldState;
 	}
+	
 	/**
 	 * This method initializes jTextFieldCountryCode.
+	 * @return the j text field country code
 	 */
 	protected JTextField getJTextFieldCountryCode() {
 		if (jTextFieldCountryCode == null) {
@@ -603,8 +661,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldCountryCode;
 	}
+	
 	/**
 	 * This method initializes jPasswordField.
+	 * @return the j password field
 	 */
 	protected JPasswordField getJPasswordField() {
 		if (jPasswordFieldPassword == null) {
@@ -614,8 +674,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jPasswordFieldPassword;
 	}
+	
 	/**
 	 * This method initializes jPasswordConfirmPassword.
+	 * @return the j password confirm password
 	 */
 	protected JPasswordField getJPasswordConfirmPassword() {
 		if (jPasswordFieldConfirmPassword == null) {
@@ -625,8 +687,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jPasswordFieldConfirmPassword;
 	}
+	
 	/**
 	 * This method initializes jButtonApplyKeyStore.
+	 * @return the j button apply key store
 	 */
 	private JButton getJButtonApplyKeyStore() {
 		if (jButtonApplyKeyStore == null) {
@@ -638,8 +702,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jButtonApplyKeyStore;
 	}
+	
 	/**
 	 * This method initializes jButtonCertificate.
+	 *
+	 * @return the j button certificate
 	 */
 	private JButton getJButtonCertificate() {
 		if (jButtonCertificate == null) {
@@ -651,8 +718,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jButtonCertificate;
 	}
+	
 	/**
 	 * This method initializes jFileChooserOpen.
+	 *
+	 * @return the j file chooser open
 	 */
 	protected JFileChooser getJFileChooserOpen() {
 		if (jFileChooserOpen == null) {
@@ -662,8 +732,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jFileChooserOpen;
 	}
+	
 	/**
 	 * This method initializes jFileChooserSave.
+	 *
+	 * @return the j file chooser save
 	 */
 	protected JFileChooser getJFileChooserSave() {
 		if (jFileChooserSave == null) {
@@ -672,8 +745,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jFileChooserSave;
 	}
+	
 	/**
 	 * This method initializes jTextFieldCertificateName.
+	 *
+	 * @return the j text field certificate name
 	 */
 	private JTextField getJTextFieldCertificateName() {
 		if (jTextFieldCertificateName == null) {
@@ -682,8 +758,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldCertificateName;
 	}
+	
 	/**
 	 * This method initializes jTextFieldCertificateValidity.
+	 *
+	 * @return the j text field certificate validity
 	 */
 	private JTextField getJTextFieldCertificateValidity() {
 		if (jTextFieldCertificateValidity == null) {
@@ -692,8 +771,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldCertificateValidity;
 	}
+	
 	/**
 	 * This method initializes jTextFieldCertificatePath.
+	 *
+	 * @return the j text field certificate path
 	 */
 	public JTextField getJTextFieldCertificatePath() {
 		if (jTextFieldCertificatePath == null) {
@@ -702,8 +784,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldCertificatePath;
 	}
+	
 	/**
 	 * This method initializes jLabelCertificatePath.
+	 *
+	 * @return the j label certificate path
 	 */
 	private JLabel getJLabelCertificatePath() {
 		if (jLabelCertificatePath == null) {
@@ -713,8 +798,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelCertificatePath;
 	}
+	
 	/**
 	 * This method initializes jButtonCertificatePath.
+	 *
+	 * @return the button certificate path
 	 */
 	private JButton getButtonCertificatePath() {
 		if (jButtonCertificatePath == null) {
@@ -725,8 +813,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jButtonCertificatePath;
 	}
+	
 	/**
 	 * This method initializes jLabelCertificateInformation.
+	 *
+	 * @return the j label certificate information
 	 */
 	private JLabel getJLabelCertificateInformation() {
 		if (jLabelCertificateInformation == null) {
@@ -735,8 +826,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jLabelCertificateInformation;
 	}
+	
 	/**
 	 * This method initializes jLabelDays.
+	 *
+	 * @return the j label days
 	 */
 	private JLabel getJLabelDays() {
 		if (jLabelDays == null) {
@@ -768,6 +862,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
         return ISO_COUNTRIES.contains(s);
     }
     
+    /**
+     * Fill fields.
+     *
+     * @param keyStoreSettings the key store settings
+     */
     public void fillFields(CertificateProperties keyStoreSettings){
 		// ----- Fill in fields with KeyStore informations -------------------------
 		this.getJTextFieldCity().setEnabled(false);

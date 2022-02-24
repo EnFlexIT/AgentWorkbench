@@ -93,8 +93,8 @@ public abstract class TimeModel implements Serializable {
 	public abstract void setTimeModelSettings(HashMap<String, String> timeModelSettings);
 	
 	/**
-	 * Returns the setup configuration of the TimeModel as HashSet<String, String> consisting of (property, value).
-	 * @return the setup configuration as HashSet<String, String> consisting of (property, value)
+	 * Returns the setup configuration of the TimeModel as HashMap consisting of (property, value).
+	 * @return the setup configuration as HashMap consisting of (property, value)
 	 */
 	public abstract HashMap<String, String> getTimeModelSetting();
 	

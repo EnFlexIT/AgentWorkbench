@@ -1239,7 +1239,7 @@ public class Platform {
 	/**
 	 * Adding an Agent to a Container.
 	 *
-	 * @param defaultAgentName the agent name
+	 * @param agentName the agent name
 	 * @param agentClassName the agent class name
 	 */
 	public void startAgent(String agentName, String agentClassName) {

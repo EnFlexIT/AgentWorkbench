@@ -143,6 +143,7 @@ public class AgentClassLoadMetricsTable implements Serializable {
 	 *
 	 * @param className the class name
 	 * @param userPredictiveLoad the user predictive metric
+	 * @param realMetric the real metric
 	 * @param realMetricMin the real metric min
 	 * @param realMetricMax the real metric max
 	 * @param realMetricAverage the real metric average

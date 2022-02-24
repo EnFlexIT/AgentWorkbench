@@ -62,7 +62,9 @@ public class JPanelDatabase extends AbstractJPanelForOptions {
 	
 	/**
 	 * This is the Constructor.
+	 *
 	 * @param optionDialog the option dialog
+	 * @param startOptions the start options
 	 */
 	public JPanelDatabase(OptionDialog optionDialog, StartOptions startOptions) {
 		super(optionDialog, startOptions);

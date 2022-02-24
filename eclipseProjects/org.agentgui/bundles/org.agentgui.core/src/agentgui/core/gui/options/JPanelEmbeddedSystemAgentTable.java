@@ -255,9 +255,7 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 	
 	/**
 	 * Sets the agent names and classes.
-	 *
-	 * @param deviceServiceAgentNames the new agent names
-	 * @param deviceServiceAgentClassNames the device service agent class names
+	 * @param deviceServiceAgents the Vector of {@link DeviceAgentDescription}
 	 */
 	public void setDeviceServiceAgents(Vector<DeviceAgentDescription> deviceServiceAgents) {
 		for (int i = 0; i < deviceServiceAgents.size(); i++) {

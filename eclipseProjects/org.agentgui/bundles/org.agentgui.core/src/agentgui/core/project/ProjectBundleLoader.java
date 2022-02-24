@@ -152,7 +152,6 @@ public class ProjectBundleLoader {
 	
 	/**
 	 * Load the bundle of the current project.
-	 * @return true, if successful
 	 */
 	public void installAndStartBundles() {
 		
@@ -174,7 +173,7 @@ public class ProjectBundleLoader {
 
 	/**
 	 * Installs the specified list of jar bundled and adds their bundle instances to the local bundle vector {@link #getBundleVector()}.
-	 * @param bundleJarFile the bundle jar file
+	 * @param fileList the list of bundle files
 	 */
 	public void installBundles(List<File> fileList) {
 		for (int i = 0; i < fileList.size(); i++) {

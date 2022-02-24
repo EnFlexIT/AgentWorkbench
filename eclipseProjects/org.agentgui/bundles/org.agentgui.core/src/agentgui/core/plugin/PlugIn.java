@@ -230,17 +230,19 @@ public abstract class PlugIn implements Observer {
 	 * Adds a OntologyClassVisualisation to the global settings. The idea of such an object is
 	 * that you are able to mask / visualize a specified class of your Ontology in order to allow 
 	 * a more common or simplified access to its data.
+	 *
+	 * @param ontologyClassVisualisation the class name of an OntologyClassVisualisation
 	 * 
 	 * @see OntologyClassVisualisation
 	 * @see OntologyClassWidget
 	 * @see OntologyClassEditorJPanel
 	 * 
 	 * @see GlobalInfo
-	 * @see GlobalInfo#registerOntologyClassVisualisation(String)
-	 * @see GlobalInfo#isRegisteredOntologyClassVisualisation(String)
+	 * 
+	 * @see OntologyVisualisationConfiguration#registerOntologyClassVisualisation(OntologyClassVisualisation)
+	 * @see OntologyVisualisationConfiguration#unregisterOntologyClassVisualisation(String)
+	 * @see OntologyVisualisationConfiguration#isRegisteredOntologyClassVisualisation(String)
 	 * @see OntologyInstanceViewer
-	 *
-	 * @param classNameOfOntologyClassVisualisation the class name of an OntologyClassVisualisation
 	 */
 	protected void addOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
 		if (ontologyClassVisualisation!=null) {
@@ -293,54 +295,8 @@ public abstract class PlugIn implements Observer {
 	// --------------------------------------------------------------
 	
 	
-	
-	/**
-	 * AgentGUI uses the observer pattern to inform about changes
-	 * within the project. They can consist on the following kinds
-	 * of notifications<br>
-	 * <br>
-	 * - String Project.SAVED<br>
-	 * - String Project.CHANGED_ProjectName<br>
-	 * - String Project.CHANGED_ProjectDescription<br>
-	 * - String Project.CHANGED_ProjectFolder<br>
-	 * - String Project.CHANGED_ProjectView<br>
-	 * - String Project.CHANGED_EnvironmentModel<br>
-	 * - String Project.CHANGED_AgentReferences<br>
-	 * - String Project.CHANGED_ProjectOntology<br>
-	 * - String Project.CHANGED_ProjectResources<br>
-	 * <br>
-	 * - String SimulationSetups.CHANGED<br>
-	 * Here in Detail, while using the
-	 * 'SimulationSetupsChangeNotification.getUpdateReason' - method:<br>
-	 * => int SimulationSetups.SIMULATION_SETUP_LOAD<br>
-	 * => int SimulationSetups.SIMULATION_SETUP_ADD_NEW<br>
-	 * => int SimulationSetups.SIMULATION_SETUP_COPY<br>
-	 * => int SimulationSetups.SIMULATION_SETUP_REMOVE<br>
-	 * => int SimulationSetups.SIMULATION_SETUP_RENAME<br>
-	 * => int SimulationSetups.SIMULATION_SETUP_SAVED<br>
-	 * <br>
-	 * - String PlugIn.CHANGED<br>
-	 * Here in Detail, while using the
-	 * 'PlugInNotification.getUpdateReason' - method:<br>
-	 * => int PlugIn.ADDED<br>
-	 * => int PlugIn.REMOVED<br>
-	 * Furthermore the instance of the PlugIn can be get
-	 * by using 'PlugInNotification.getPlugIn()'<br>
-	 * <br>
-	 * <br>
-	 * Do NOT override this method directly. Use the updateFromObserver()-method
-	 * instead, in order to get your individual Observer-Changes.
-	 * 
-	 * @see Project
-	 * @see SimulationSetup
-	 * 
-	 * @see PlugIn#CHANGED
-	 * @see PlugIn#ADDED
-	 * @see PlugIn#REMOVED
-	 * @see PlugInNotification
-	 *
-	 * @param observable the observable
-	 * @param updateObject the update object
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.Observer#update(de.enflexit.common.Observable, java.lang.Object)
 	 */
 	@Override
 	public final void update(Observable observable, Object updateObject) {

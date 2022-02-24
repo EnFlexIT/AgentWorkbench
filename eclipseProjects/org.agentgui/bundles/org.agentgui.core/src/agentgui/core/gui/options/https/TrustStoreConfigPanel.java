@@ -61,14 +61,13 @@ import de.enflexit.common.crypto.TrustStoreController;
  * This JPanel allows the user to : 
  * 1- create new TrustStore and protect its integrity with a password 
  * 2- update his TrustStore informations 
- * 3- add or delete certificates from TrustStore
- * @see HttpsConfigWindow
- * 
+ * 3- add or delete certificates from TrustStore.
+ *
  * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
  * @version 1.0
+ * @see HttpsConfigWindow
  * @since 05-04-2016
  */
-
 public class TrustStoreConfigPanel extends JPanel implements ActionListener,MouseListener {
 
 	private static final long serialVersionUID = -4676410555112580221L;
@@ -120,6 +119,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 
 	/**
 	 * Create the application.
+	 *
+	 * @param httpsConfigWindow the https config window
 	 */
 	public TrustStoreConfigPanel(HttpsConfigWindow httpsConfigWindow) {
 		this.httpsConfigWindow = httpsConfigWindow;
@@ -209,8 +210,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		add(getScrollPane(), gbc_scrollPane);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 	}
+	
 	/**
 	 * This method initializes jPanelButtons.
+	 *
+	 * @return the j panel buttons
 	 */
 	private JPanel getJPanelButtons() {
 		if (jPanelButtons == null) {
@@ -234,6 +238,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		return jPanelButtons;
 	}
 	
+	/**
+	 * Gets the j panel certificate info.
+	 *
+	 * @return the j panel certificate info
+	 */
 	private JPanel getJPanelCertificateInfo(){
 		if (jPanelCertificateInfo == null){
 			jPanelCertificateInfo = new JPanel();
@@ -359,6 +368,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	
 	/**
 	 * This method initializes jLabelCertificateAlias.
+	 *
+	 * @return the j label certificate alias
 	 */
 	private JLabel getJLabelCertificateAlias() {
 		if (jLabelCertificateAlias == null) {
@@ -367,8 +378,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelCertificateAlias;
 	}
+	
 	/**
 	 * This method initializes jLabelCertificateValidity.
+	 *
+	 * @return the j label certificate expirationd date
 	 */
 	private JLabel getJLabelCertificateExpirationdDate() {
 		if (jLabelCertificateValidity == null) {
@@ -377,8 +391,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelCertificateValidity;
 	}
+	
 	/**
 	 * This method initializes jLabelOwnerInformations.
+	 *
+	 * @return the j label owner informations
 	 */
 	private JLabel getJLabelOwnerInformations() {
 		if (jLabelOwnerInformations == null) {
@@ -387,8 +404,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelOwnerInformations;
 	}
+	
 	/**
 	 * This method initializes jLabelCertificateInformations.
+	 *
+	 * @return the j label certificate informations
 	 */
 	private JLabel getJLabelCertificateInformations() {
 		if (jLabelCertificateInformations == null) {
@@ -397,8 +417,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelCertificateInformations;
 	}
+	
 	/**
 	 * This method initializes jLabelFullname.
+	 *
+	 * @return the j label fullname
 	 */
 	private JLabel getJLabelFullname() {
 		if (jLabelFullname == null) {
@@ -407,8 +430,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelFullname;
 	}
+	
 	/**
 	 * This method initializes jLabelOrganization.
+	 *
+	 * @return the j label organization
 	 */
 	private JLabel getJLabelOrganization() {
 		if (jLabelOrganization == null) {
@@ -417,8 +443,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelOrganization;
 	}
+	
 	/**
 	 * This method initializes jLabelOrginazationalUnit.
+	 *
+	 * @return the j label orginazational unit
 	 */
 	private JLabel getJLabelOrginazationalUnit() {
 		if (jLabelOrginazationalUnit == null) {
@@ -427,8 +456,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelOrginazationalUnit;
 	}
+	
 	/**
 	 * This method initializes jLabelCity.
+	 *
+	 * @return the j label city
 	 */
 	private JLabel getJLabelCity() {
 		if (jLabelCity == null) {
@@ -437,8 +469,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelCity;
 	}
+	
 	/**
 	 * This method initializes jLabelStateOrProvince.
+	 *
+	 * @return the j label state or province
 	 */
 	private JLabel getJLabelStateOrProvince() {
 		if (jLabelStateOrProvince == null) {
@@ -447,8 +482,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelStateOrProvince;
 	}
+	
 	/**
 	 * This method initializes jLabelCountryCode.
+	 *
+	 * @return the j label country code
 	 */
 	private JLabel getJLabelCountryCode() {
 		if (jLabelCountryCode == null) {
@@ -457,8 +495,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelCountryCode;
 	}
+	
 	/**
 	 * This method initializes jLabelAlias.
+	 *
+	 * @return the j label alias
 	 */
 	private JLabel getJLabelAlias() {
 		if (jLabelAlias == null) {
@@ -466,8 +507,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelAlias;
 	}
+	
 	/**
 	 * This method initializes jLabelValidity.
+	 *
+	 * @return the j label validity
 	 */
 	private JLabel getJLabelValidity() {
 		if (jLabelValidity == null) {
@@ -475,8 +519,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelValidity;
 	}
+	
 	/**
 	 * This method initializes jLabelName.
+	 *
+	 * @return the j label name
 	 */
 	private JLabel getJLabelName() {
 		if (jLabelName == null) {
@@ -484,8 +531,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelName;
 	}
+	
 	/**
 	 * This method initializes jLabelOrg.
+	 *
+	 * @return the j label org
 	 */
 	private JLabel getJLabelOrg() {
 		if (jLabelOrg == null) {
@@ -493,8 +543,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelOrg;
 	}
+	
 	/**
 	 * This method initializes jLabelOrgUnit.
+	 *
+	 * @return the j label org unit
 	 */
 	private JLabel getJLabelOrgUnit() {
 		if (jLabelOrgUnit == null) {
@@ -502,8 +555,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelOrgUnit;
 	}
+	
 	/**
 	 * This method initializes jLabelCityOrLocality.
+	 *
+	 * @return the j label city or locality
 	 */
 	private JLabel getJLabelCityOrLocality() {
 		if (jLabelCityOrLocality == null) {
@@ -511,8 +567,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelCityOrLocality;
 	}
+	
 	/**
 	 * This method initializes jLabelState.
+	 *
+	 * @return the j label state
 	 */
 	private JLabel getJLabelState() {
 		if (jLabelState == null) {
@@ -520,8 +579,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelState;
 	}
+	
 	/**
 	 * This method initializes jLabelCountry.
+	 *
+	 * @return the j label country
 	 */
 	private JLabel getJLabelCountry() {
 		if (jLabelCountry == null) {
@@ -532,6 +594,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	
 	/**
 	 * This method initializes TrustStoreController.
+	 *
+	 * @return the trust store controller
 	 */
 	protected TrustStoreController getTrustStoreController() {
 		if (trustStoreController == null) {
@@ -539,8 +603,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return trustStoreController;
 	}
+	
 	/**
 	 * This method initializes jLabelTrustStoreInformations.
+	 *
+	 * @return the j label trust store informations
 	 */
 	private JLabel getJLabelTrustStoreInformations() {
 		if (jLabelTrustStoreInformations == null) {
@@ -549,8 +616,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelTrustStoreInformations;
 	}
+	
 	/**
 	 * This method initializes jLabelTruststoreName.
+	 *
+	 * @return the j label truststore name
 	 */
 	private JLabel getJLabelTruststoreName() {
 		if (jLabelTruststoreName == null) {
@@ -559,8 +629,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelTruststoreName;
 	}
+	
 	/**
 	 * This method initializes jLabelTrustStorePassword.
+	 *
+	 * @return the j label trust store password
 	 */
 	private JLabel getJLabelTrustStorePassword() {
 		if (jLabelTrustStorePassword == null) {
@@ -569,8 +642,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelTrustStorePassword;
 	}
+	
 	/**
 	 * This method initializes jLabelTrustStoreConfirmPassword.
+	 *
+	 * @return the j label trust store confirm password
 	 */
 	private JLabel getJLabelTrustStoreConfirmPassword() {
 		if (jLabelTrustStoreConfirmPassword == null) {
@@ -579,8 +655,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelTrustStoreConfirmPassword;
 	}
+	
 	/**
 	 * This method initializes jTextFieldTrustStoreName.
+	 *
+	 * @return the j text field trust store name
 	 */
 	protected JTextField getJTextFieldTrustStoreName() {
 		if (jTextFieldTrustStoreName == null) {
@@ -590,8 +669,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jTextFieldTrustStoreName;
 	}
+	
 	/**
 	 * This method initializes jPasswordFieldTrustStorePassword.
+	 *
+	 * @return the j password field password
 	 */
 	protected JPasswordField getJPasswordFieldPassword() {
 		if (jPasswordFieldPassword == null) {
@@ -601,8 +683,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jPasswordFieldPassword;
 	}
+	
 	/**
 	 * This method initializes jPasswordFieldTrustStoreConfirmPassword.
+	 *
+	 * @return the j password field confirm password
 	 */
 	protected JPasswordField getJPasswordFieldConfirmPassword() {
 		if (jPasswordFieldConfirmPassword == null) {
@@ -612,8 +697,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jPasswordFieldConfirmPassword;
 	}
+	
 	/**
 	 * This method initializes jLabelCertificatesList.
+	 *
+	 * @return the j label certificates list
 	 */
 	protected JLabel getJLabelCertificatesList() {
 		if (jLabelCertificatesList == null) {
@@ -622,8 +710,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jLabelCertificatesList;
 	}
+	
 	/**
 	 * This method initializes jButtonApplyTrustStore.
+	 *
+	 * @return the j button apply trust store
 	 */
 	private JButton getJButtonApplyTrustStore() {
 		if (jButtonApplyTrustStore == null) {
@@ -637,8 +728,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jButtonApplyTrustStore;
 	}
+	
 	/**
 	 * This method initializes jButtonAddCertificate.
+	 *
+	 * @return the j button add certificate
 	 */
 	protected JButton getJButtonAddCertificate() {
 		if (jButtonAddCertificate == null) {
@@ -651,8 +745,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jButtonAddCertificate;
 	}
+	
 	/**
 	 * This method initializes jButtonRemoveCertificate.
+	 *
+	 * @return the j button remove certificate
 	 */
 	protected JButton getJButtonRemoveCertificate() {
 		if (jButtonRemoveCertificate == null) {
@@ -665,8 +762,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jButtonRemoveCertificate;
 	}
+	
 	/**
 	 * This method initializes scrollPane.
+	 *
+	 * @return the scroll pane
 	 */
 	protected JScrollPane getScrollPane() {
 		if (jscrollPane == null) {
@@ -676,8 +776,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jscrollPane;
 	}
+	
 	/**
 	 * This method initializes jFileChooser.
+	 *
+	 * @return the j file chooser
 	 */
 	protected JFileChooser getJFileChooser() {
 		if (jFileChooser == null) {
@@ -687,8 +790,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}
 		return jFileChooser;
 	}
+	
 	/**
 	 * This method initializes jFileChooser.
+	 *
+	 * @return the j file chooser file
 	 */
 	protected JFileChooser getJFileChooserFile() {
 		if (jFileChooserFile == null) {
@@ -905,6 +1011,10 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource()== this.getjTableTrusTedCertificates()){
@@ -929,15 +1039,31 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}

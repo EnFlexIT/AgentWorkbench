@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="org.agentgui.target" sequenceNumber="70">
+<target includeMode="feature" name="org.agentgui.target" sequenceNumber="70">
 <locations>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
@@ -47,5 +47,17 @@
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
 		-->
 	</location>
+	
+	<location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-server</artifactId>
+		<version>10.0.6</version>
+	</location>
+	<location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-servlet</artifactId>
+		<version>10.0.6</version>
+	</location>
+	
 </locations>
 </target>

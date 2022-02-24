@@ -97,7 +97,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	
 
 	/**
-	 * This is the Constructor
+	 * This is the Constructor.
+	 * @param optionDialog the option dialog
 	 */
 	public StartOptions(OptionDialog optionDialog) {
 		super(optionDialog);

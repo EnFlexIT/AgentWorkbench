@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.enflexit.common.feature"
-      label="EnFlex.IT common interfaces and classes"
+      label="Agent.Workbench Common-Feature"
       version="2.1.8.qualifier"
       provider-name="EnFlex.IT"
       os="linux,macosx,win32"

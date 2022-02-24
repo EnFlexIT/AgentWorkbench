@@ -263,8 +263,6 @@ public class ProjectsLoaded {
 
 	/**
 	 * This method will try to close all open projects.
-	 *
-	 * @param parentComponent the parent component
 	 * @return Returns true on success
 	 */
 	public boolean closeAll() {
@@ -292,10 +290,12 @@ public class ProjectsLoaded {
 		}
 		return true;
 	}
+	
 	/**
-	 * Returns the Project-instance given by its project name
-	 * @param projectName
-	 * @return A Project instance 
+	 * Returns the Project-instance given by its project name.
+	 * 
+	 * @param projectName the project name
+	 * @return the Project instance
 	 */
 	public Project get(String projectName) {
 		int index = this.getIndexByName(projectName);
@@ -306,17 +306,18 @@ public class ProjectsLoaded {
 		return get(index);
 	}
 	/**
-	 * Returns the Project-instance given by its index
-	 * @param indexOfProject
-	 * @return A Project instance
+	 * Returns the Project-instance given by its index.
+	 * @param indexOfProject the index of project
+	 * @return the Project instance
 	 */
 	public Project get(int indexOfProject) {
 		return this.getProjectsOpen().get(indexOfProject);
 	}
 
 	/**
-	 * Removes a single Project
-	 * @param project2Remove
+	 * Removes a single Project.
+	 * 
+	 * @param project2Remove the project to remove
 	 */
 	public void remove(Project project2Remove) {
 
@@ -334,9 +335,10 @@ public class ProjectsLoaded {
 	}
 
 	/**
-	 * Identifies a Project by its name and returns the Array-/Window-Index
-	 * @param projectName
-	 * @return The index position of a project 
+	 * Identifies a Project by its name and returns the Array-/Window-Index.
+	 * 
+	 * @param projectName the project name
+	 * @return the index position of a project
 	 */
 	public int getIndexByName(String projectName) {
 		int index = -1;
@@ -348,9 +350,11 @@ public class ProjectsLoaded {
 		}
 		return index;
 	}
+	
 	/**
-	 * Identifies a Project by its Root-Folder-Name and returns the Array-/Window-Index
-	 * @param projectFolderName
+	 * Identifies a Project by its Root-Folder-Name and returns the Array-/Window-Index.
+	 *
+	 * @param projectFolderName the project folder name
 	 * @return The index position of a project
 	 */
 	public int getIndexByFolderName(String projectFolderName) {
@@ -363,8 +367,10 @@ public class ProjectsLoaded {
 		}
 		return index;
 	}
+	
 	/**
-	 * Counts the actual open projects
+	 * Counts the actual open projects.
+	 * @return the number of projects that are currently loaded
 	 */
 	public int count() {
 		return this.getProjectsOpen().size();		

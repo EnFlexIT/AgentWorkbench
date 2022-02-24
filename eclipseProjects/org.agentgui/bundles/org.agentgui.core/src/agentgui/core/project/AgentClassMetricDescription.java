@@ -51,10 +51,10 @@ public class AgentClassMetricDescription implements Serializable{
 	/**
 	 * Instantiates a new agent class metric description.
 	 */
-	public AgentClassMetricDescription(){
-	}
+	public AgentClassMetricDescription() { }
 	/**
 	 * Instantiates a new agent class metric description.
+	 * @param currProject the current project
 	 */
 	public AgentClassMetricDescription(Project currProject){
 		this.currProject = currProject;
@@ -63,8 +63,10 @@ public class AgentClassMetricDescription implements Serializable{
 	/**
 	 * Instantiates a new agent class metric description.
 	 *
+	 * @param currProject the current project
 	 * @param className the class name of the agent
 	 * @param userPredictedMetric the user predictive load
+	 * @param realMetric the real metric
 	 * @param realMetricMin the minimum real load
 	 * @param realMetricMax the maximum real load max
 	 * @param realMetricAverage the real metric average

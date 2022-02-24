@@ -72,7 +72,9 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 	
 	/**
 	 * This is the Constructor.
+	 *
 	 * @param optionDialog the option dialog
+	 * @param startOptions the start options
 	 */
 	public JPanelMasterConfiguration(OptionDialog optionDialog, StartOptions startOptions) {
 		super(optionDialog, startOptions);

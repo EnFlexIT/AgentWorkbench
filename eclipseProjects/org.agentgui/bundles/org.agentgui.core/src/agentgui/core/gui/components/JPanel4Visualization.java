@@ -51,6 +51,7 @@ public class JPanel4Visualization extends JPanel {
 	/**
 	 * Instantiates a new j panel4 visualization.
 	 *
+	 * @param project the project
 	 * @param tabName the tab name
 	 */
 	public JPanel4Visualization(Project project, String tabName) {
