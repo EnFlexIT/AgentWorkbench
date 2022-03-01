@@ -19,7 +19,14 @@ public class JettyServerManager {
 	// --- The singleton create / access area -------------
 	// ----------------------------------------------------
 	private static JettyServerManager jettyServerManager;
+	/**
+	 * Instantiates a new jetty server manager.
+	 */
 	private JettyServerManager() { }
+	/**
+	 * Returns the single instance of JettyServerManager.
+	 * @return single instance of JettyServerManager
+	 */
 	public static JettyServerManager getInstance() {
 		if (jettyServerManager==null) {
 			jettyServerManager = new JettyServerManager();
@@ -42,12 +49,14 @@ public class JettyServerManager {
 		}
 		return jettyServerHash;
 	}
+	
 	/**
 	 * Can be used to register server instances. This will allow to couple the shutdown of 
 	 * Agent.Workbench with the shutdown of all registered server instances.
 	 *
 	 * @param serverName the server name
 	 * @param serverInstances the server
+	 * @return the jetty server instances
 	 */
 	private JettyServerInstances registerServerInstances(String serverName, JettyServerInstances serverInstances) {
 		return this.getJettyServerInstaceHash().put(serverName, serverInstances);
@@ -104,7 +113,9 @@ public class JettyServerManager {
 	// ----------------------------------------------------
 	/**
 	 * Start server.
+	 *
 	 * @param serverConfig the server configuration
+	 * @return true, if successful
 	 */
 	public boolean startServer(JettyConfiguration serverConfig) {
 		
@@ -136,7 +147,7 @@ public class JettyServerManager {
 		boolean isStarted = this.startConfiguredServer(server, serverConfig.getServerName());
 		if (isStarted==true) {
 			this.registerServerInstances(serverConfig.getServerName(), new JettyServerInstances(server, hCollection));
-			System.err.println("[" + this.getClass().getSimpleName() + "] Started server '" + serverConfig.getServerName() + "'.");
+			this.systemPrintln("Started server '" + serverConfig.getServerName() + "'.", false);
 		}
 		return isStarted;
 	}
@@ -185,6 +196,7 @@ public class JettyServerManager {
 	public boolean stopServer(String serverName) {
 		if (this.stopServer(this.getServer(serverName))==true) {
 			this.unregisterServerInstances(serverName);
+			this.systemPrintln("Stopped  server '" + serverName + "'.", false);
 			return true;
 		}
 		return false;
@@ -219,6 +231,7 @@ public class JettyServerManager {
 		return server.isStopped();
 	}
 	
+	
 	// ----------------------------------------------------
 	// --- From here, methods to act on Handler -----------
 	// ----------------------------------------------------
@@ -232,18 +245,18 @@ public class JettyServerManager {
 		
 		// --- Check for parameter errors ---------------------------
 		if (handler==null) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] No Handler was specified to add to any server.");
+			this.systemPrintln("No Handler was specified to add to any server.", true);
 			return;
 		}
 		if (serverName==null) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] No server name was specified to add handler '" + handler.getClass().getSimpleName() + "'");
+			this.systemPrintln("No server name was specified to add handler '" + handler.getClass().getSimpleName() + "'", true);
 			return;
 		}
 		
 		// --- Get the HandlerCollection of the server --------------
 		HandlerCollection hCollection = this.getHandlerCollection(serverName);
 		if (hCollection==null) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] No HandlerCollection could be found for server '" + serverName + "'! Thus, could not add specified Handler '" + handler.getClass().getName() + "'.");
+			this.systemPrintln("No HandlerCollection could be found for server '" + serverName + "'! Thus, could not add specified Handler '" + handler.getClass().getName() + "'.", true);
 			return;
 		}
 		
@@ -262,7 +275,6 @@ public class JettyServerManager {
 	// ----------------------------------------------------
 	// --- From here, methods for the service handling ----
 	// ----------------------------------------------------
-
 	/**
 	 * Adds the specified {@link AwbWebServerService} to the running servers.
 	 * @param newServer the new server to start
@@ -275,17 +287,60 @@ public class JettyServerManager {
 			// --- Start the server -----------------------
 			this.startServer(newServer.getJettyConfiguration());
 		} else {
-			// --- Server already there
-			System.err.println("[" + this.getClass().getSimpleName() + "] Server '" + config.getServerName() + "' was already started." );
+			// --- Server already there -------------------
+			this.systemPrintln("Server '" + config.getServerName() + "' was already started.", true);
 		}
 	}
+	/**
+	 * Removes the specified {@link AwbWebServerService} to the running servers.
+	 * @param newServer the new server to start
+	 */
+	public void removeAwbWebServerService(AwbWebServerService newServer) {
+		
+		JettyConfiguration config = newServer.getJettyConfiguration();
+		Server server = this.getServer(config.getServerName());
+		if (server!=null) {
+			this.stopServer(config.getServerName());
+		} else {
+			this.systemPrintln("Server '" + config.getServerName() + "' could not be found or was already stopped.", true);
+		}
+	}
+	
 	
 	/**
 	 * Adds the specified {@link AwbWebHandlerService} to the running servers.
 	 * @param newHandler the new handler
 	 */
 	public void addAwbWebHandlerService(AwbWebHandlerService newHandler) {
-		System.out.println("[" + this.getClass().getSimpleName() + "] Add AwbWebHandlerService " + newHandler.getClass().getName());
+		// TODO
+		this.systemPrintln("Add AwbWebHandlerService " + newHandler.getClass().getName(), false);
+	}
+	/**
+	 * Removes the specified {@link AwbWebHandlerService} to the running servers.
+	 * @param newHandler the new handler
+	 */
+	public void removeAwbWebHandlerService(AwbWebHandlerService newHandler) {
+		// TODO
+		this.systemPrintln("Remove AwbWebHandlerService " + newHandler.getClass().getName(), false);
+	}
+	
+	
+	// ----------------------------------------------------
+	// --- From here, debug print methods -----------------
+	// ----------------------------------------------------
+	/**
+	 * System println.
+	 *
+	 * @param message the message
+	 * @param isError the indicator, if the message describes an error
+	 */
+	private void systemPrintln(String message, boolean isError) {
+		message = "[AWB-" + this.getClass().getSimpleName() + "] " + message;
+		if (isError==true) {
+			System.err.println(message);
+		} else {
+			System.out.println(message);
+		}
 	}
 	
 }

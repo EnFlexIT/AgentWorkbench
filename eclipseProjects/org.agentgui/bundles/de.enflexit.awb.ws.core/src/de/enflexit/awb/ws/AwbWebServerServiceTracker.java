@@ -8,7 +8,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import de.enflexit.awb.ws.core.JettyServerManager;
 
 /**
- * The Class AwbWebServiceManager.
+ * The Class AwbWebServerServiceTracker.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -43,8 +43,11 @@ public class AwbWebServerServiceTracker extends ServiceTracker<AwbWebServerServi
 	 * @see org.osgi.util.tracker.ServiceTracker#removedService(org.osgi.framework.ServiceReference, java.lang.Object)
 	 */
 	@Override
-	public void removedService(ServiceReference<AwbWebServerService> reference, AwbWebServerService service) {
-		super.removedService(reference, service);
+	public void removedService(ServiceReference<AwbWebServerService> reference, AwbWebServerService awbWebServer) {
+		
+		if (debug==true) System.out.println("[" + this.getClass().getSimpleName() + "] Stopping service " + awbWebServer.getClass().getName());
+		JettyServerManager.getInstance().removeAwbWebServerService(awbWebServer);
+		super.removedService(reference, awbWebServer);
 	}
 	
 }
