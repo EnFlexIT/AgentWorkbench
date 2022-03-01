@@ -96,7 +96,7 @@ public class PlugInActivator extends AbstractUIPlugin implements BundleListener 
 		final Bundle bundle = event.getBundle();
 		if (this.debug==true) {
 			String symbolicName = bundle.getSymbolicName();
-			String type = this.getBundleEventAsString(event);
+			String type = BundleEvaluator.getBundleEventAsString(event);
 			System.out.println(this.getClass().getSimpleName() + "#bundleChanged(event): " + symbolicName + ", event.type: " + type);
 		}
 		
@@ -139,40 +139,6 @@ public class PlugInActivator extends AbstractUIPlugin implements BundleListener 
 				
 	}
 	
-	/**
-	 * Returns the specified bundle event as string.
-	 * @param event the bundle event
-	 * @return the bundle event as string
-	 */
-	private String getBundleEventAsString(BundleEvent event) {
-		
-		if (event == null) return "null";
-		
-		int type = event.getType();
-		switch (type) {
-		case BundleEvent.INSTALLED:
-			return "INSTALLED";
-		case BundleEvent.LAZY_ACTIVATION:
-			return "LAZY_ACTIVATION";
-		case BundleEvent.RESOLVED:
-			return "RESOLVED";
-		case BundleEvent.STARTED:
-			return "STARTED";
-		case BundleEvent.STARTING:
-			return "STARTING";
-		case BundleEvent.STOPPED:
-			return "STOPPED";
-		case BundleEvent.UNINSTALLED:
-			return "UNINSTALLED";
-		case BundleEvent.UNRESOLVED:
-			return "UNRESOLVED";
-		case BundleEvent.UPDATED:
-			return "UPDATED";
-		default:
-			return "unknown event type: " + type;
-		}
-	}
-
 	/**
 	 * Returns an image descriptor for the image file at the given
 	 * plug-in relative path
