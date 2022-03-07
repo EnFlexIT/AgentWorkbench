@@ -1,0 +1,17 @@
+# Set start level for gemini.namining
+requires.1.namespace = org.eclipse.equinox.p2.iu
+requires.1.name = naming.bundle.fragment
+requires.1.range = 1.0.0
+
+units.1.id = naming.bundle.fragment
+units.1.version = 1.0.0
+units.1.singleton = true
+units.1.provides.0.namespace = org.eclipse.equinox.p2.iu
+units.1.provides.0.name = naming.bundle.fragment
+units.1.provides.0.version = 1.0.0
+units.1.instructions.configure = setStartLevel(startLevel:4);markStarted(started: true);
+units.1.hostRequirements.0.namespace = org.eclipse.equinox.p2.iu
+units.1.hostRequirements.0.name = de.enflexit.awb.ws.core
+units.1.hostRequirements.0.version = 0.0.0
+units.1.instructions.install = installBundle(bundle:${artifact})
+units.1.instructions.uninstall = uninstallBundle(bundle:${artifact})

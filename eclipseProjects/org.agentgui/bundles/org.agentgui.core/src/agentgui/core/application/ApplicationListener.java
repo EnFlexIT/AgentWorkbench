@@ -57,6 +57,9 @@ public interface ApplicationListener {
 	 */
 	public class ApplicationEvent {
 		
+		public static final String AWB_START = "AWB_Start";
+		public static final String AWB_STOP  = "AWB_Stop";
+		
 		public static final String PROJECT_LOADING_PROJECT_XML_FILE_LOADED = "ProjectLoading_ProjectXmlFileLoaded";
 		public static final String PROJECT_LOADING_PROJECT_USER_FILE_LOADED = "ProjectLoading_ProjectUserFileLoaded";
 		public static final String PROJECT_LOADING_PROJECT_FILES_LOADED = "ProjectLoading_ProjectFilesLoaded";
@@ -68,6 +71,9 @@ public interface ApplicationListener {
 		public static final String PROJECT_FOCUSED = "ProjectFocused";
 		public static final String PROJECT_LOADED  = "ProjectLoaded";
 		public static final String PROJECT_CLOSED  = "ProjectClosed";
+		
+		public static final String JADE_START = "JADE_Start";
+		public static final String JADE_STOP = "JADE_Stop";
 		
 		private String applicationEvent;
 		private Object eventObject;

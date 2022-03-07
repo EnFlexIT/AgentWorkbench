@@ -592,6 +592,8 @@ public class Application {
 		// --- Start Agent.Workbench as defined by 'ExecutionMode' --
 		// ----------------------------------------------------------
 		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
+		// --- Fire ApplicationEvent AWB_START ----------------------
+		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.AWB_START));
 		
 		switch (getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
@@ -799,6 +801,9 @@ public class Application {
 		// --- Close visualization --------------
 		setMainWindow(null);
 		
+		// --- Fire ApplicationEvent AWB_Stop ---
+		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.AWB_STOP));
+		
 		// --- Save file properties -------------
 		getGlobalInfo().doSaveConfiguration();
 		
@@ -807,6 +812,8 @@ public class Application {
 		
 		// --- Remove TrayIcon ------------------
 		removeTrayIcon();	
+		
+		
 		
 		return true;
 	}

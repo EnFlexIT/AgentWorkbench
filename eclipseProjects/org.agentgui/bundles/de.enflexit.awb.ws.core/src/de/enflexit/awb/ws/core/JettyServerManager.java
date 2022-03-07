@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core;
 
+import java.util.List;
 import java.util.TreeMap;
 
 import org.eclipse.jetty.server.Handler;
@@ -7,7 +8,10 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 
 import de.enflexit.awb.ws.AwbWebHandlerService;
+import de.enflexit.awb.ws.AwbWebRegistry;
 import de.enflexit.awb.ws.AwbWebServerService;
+import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 
 /**
  * The Singleton ServerManager .
@@ -147,7 +151,7 @@ public class JettyServerManager {
 		boolean isStarted = this.startConfiguredServer(server, serverConfig.getServerName());
 		if (isStarted==true) {
 			this.registerServerInstances(serverConfig.getServerName(), new JettyServerInstances(server, hCollection));
-			this.systemPrintln("Started server '" + serverConfig.getServerName() + "'.", false);
+			BundleHelper.systemPrintln(this, "Started server '" + serverConfig.getServerName() + "'.", false);
 		}
 		return isStarted;
 	}
@@ -196,7 +200,7 @@ public class JettyServerManager {
 	public boolean stopServer(String serverName) {
 		if (this.stopServer(this.getServer(serverName))==true) {
 			this.unregisterServerInstances(serverName);
-			this.systemPrintln("Stopped  server '" + serverName + "'.", false);
+			BundleHelper.systemPrintln(this, "Stopped  server '" + serverName + "'.", false);
 			return true;
 		}
 		return false;
@@ -245,18 +249,18 @@ public class JettyServerManager {
 		
 		// --- Check for parameter errors ---------------------------
 		if (handler==null) {
-			this.systemPrintln("No Handler was specified to add to any server.", true);
+			BundleHelper.systemPrintln(this, "No Handler was specified to add to any server.", true);
 			return;
 		}
 		if (serverName==null) {
-			this.systemPrintln("No server name was specified to add handler '" + handler.getClass().getSimpleName() + "'", true);
+			BundleHelper.systemPrintln(this, "No server name was specified to add handler '" + handler.getClass().getSimpleName() + "'", true);
 			return;
 		}
 		
 		// --- Get the HandlerCollection of the server --------------
 		HandlerCollection hCollection = this.getHandlerCollection(serverName);
 		if (hCollection==null) {
-			this.systemPrintln("No HandlerCollection could be found for server '" + serverName + "'! Thus, could not add specified Handler '" + handler.getClass().getName() + "'.", true);
+			BundleHelper.systemPrintln(this, "No HandlerCollection could be found for server '" + serverName + "'! Thus, could not add specified Handler '" + handler.getClass().getName() + "'.", true);
 			return;
 		}
 		
@@ -272,37 +276,50 @@ public class JettyServerManager {
 	
 	
 	
-	// ----------------------------------------------------
-	// --- From here, methods for the service handling ----
-	// ----------------------------------------------------
+	// --------------------------------------------------------------
+	// --- From here, methods for the AwbWebService handling --------
+	// --------------------------------------------------------------
+	private AwbWebRegistry awbWebRegistry;
+	/**
+	 * Returns the local/current {@link AwbWebRegistry}.
+	 * @return the AwbWebRegistry
+	 */
+	public AwbWebRegistry getAwbWebRegistry() {
+		if (awbWebRegistry==null) {
+			awbWebRegistry = new AwbWebRegistry();
+		}
+		return awbWebRegistry;
+	}
 	/**
 	 * Adds the specified {@link AwbWebServerService} to the running servers.
 	 * @param newServer the new server to start
 	 */
 	public void addAwbWebServerService(AwbWebServerService newServer) {
-		
-		JettyConfiguration config = newServer.getJettyConfiguration();
-		Server server = this.getServer(config.getServerName());
-		if (server==null) {
-			// --- Start the server -----------------------
-			this.startServer(newServer.getJettyConfiguration());
-		} else {
-			// --- Server already there -------------------
-			this.systemPrintln("Server '" + config.getServerName() + "' was already started.", true);
+		// --- Add to local registry ----------------------
+		boolean added = this.getAwbWebRegistry().addAwbWebServerService(newServer);
+		if (added==true && this.startOn!=null) {
+			// --- Start that server? ---------------------   
+			JettyConfiguration config = newServer.getJettyConfiguration();
+			if (config.getStartOn().ordinal()<=this.startOn.ordinal()) {
+				// --- Start the server -------------------
+				this.startServer(config);
+			}
 		}
 	}
 	/**
 	 * Removes the specified {@link AwbWebServerService} to the running servers.
-	 * @param newServer the new server to start
+	 * @param serverToRemove the server to remove
 	 */
-	public void removeAwbWebServerService(AwbWebServerService newServer) {
-		
-		JettyConfiguration config = newServer.getJettyConfiguration();
-		Server server = this.getServer(config.getServerName());
-		if (server!=null) {
-			this.stopServer(config.getServerName());
-		} else {
-			this.systemPrintln("Server '" + config.getServerName() + "' could not be found or was already stopped.", true);
+	public void removeAwbWebServerService(AwbWebServerService serverToRemove) {
+		// --- Remove from local registry -----------------
+		boolean removed = this.getAwbWebRegistry().removeAwbWebServerService(serverToRemove);
+		if (removed==true) {
+			// --- Stop if server is running --------------
+			JettyConfiguration config = serverToRemove.getJettyConfiguration();
+			Server server = this.getServer(config.getServerName());
+			if (server!=null) {
+				this.stopServer(config.getServerName());
+			}
 		}
 	}
 	
@@ -313,7 +330,7 @@ public class JettyServerManager {
 	 */
 	public void addAwbWebHandlerService(AwbWebHandlerService newHandler) {
 		// TODO
-		this.systemPrintln("Add AwbWebHandlerService " + newHandler.getClass().getName(), false);
+		BundleHelper.systemPrintln(this, "Add AwbWebHandlerService " + newHandler.getClass().getName(), false);
 	}
 	/**
 	 * Removes the specified {@link AwbWebHandlerService} to the running servers.
@@ -321,26 +338,80 @@ public class JettyServerManager {
 	 */
 	public void removeAwbWebHandlerService(AwbWebHandlerService newHandler) {
 		// TODO
-		this.systemPrintln("Remove AwbWebHandlerService " + newHandler.getClass().getName(), false);
+		BundleHelper.systemPrintln(this, "Remove AwbWebHandlerService " + newHandler.getClass().getName(), false);
 	}
 	
 	
-	// ----------------------------------------------------
-	// --- From here, debug print methods -----------------
-	// ----------------------------------------------------
+	// --------------------------------------------------------------
+	// --- From here, methods to start/stop the configured server ---
+	// --------------------------------------------------------------
+	private StartOn startOn;
+	
 	/**
-	 * System println.
-	 *
-	 * @param message the message
-	 * @param isError the indicator, if the message describes an error
+	 * Returns the current local {@link StartOn} value.
+	 * @param startOn the new start on
 	 */
-	private void systemPrintln(String message, boolean isError) {
-		message = "[AWB-" + this.getClass().getSimpleName() + "] " + message;
-		if (isError==true) {
-			System.err.println(message);
-		} else {
-			System.out.println(message);
+	private void setStartOn(StartOn startOn) {
+		this.startOn = startOn;
+	}
+	/**
+	 * Decreases the current local start on value.
+	 */
+	private void decreaseStartOnValue() {
+		this.startOn = StartOn.decrease(this.startOn);
+	}
+	
+	/**
+	 * Does the server start for all servers that are using the specified {@link StartOn} option.
+	 * @param startOn the start on option
+	 */
+	public void doServerStart(StartOn startOn) {
+		
+		// --- Set the local start on value ---------------
+		this.setStartOn(startOn);
+		
+		// --- Get the server to be started ---------------
+		List<AwbWebServerService> serverServices = this.getAwbWebRegistry().getAwbWebServerService(startOn);
+		for (int i = 0; i < serverServices.size(); i++) {
+			// --- Get the server service -----------------
+			AwbWebServerService serverToStart = serverServices.get(i);
+			// --- Get the configuration ------------------
+			JettyConfiguration config = serverToStart.getJettyConfiguration();
+			// --- Check if server is running -------------
+			Server server = this.getServer(config.getServerName());
+			if (server==null) {
+				// --- Start the server -------------------
+				this.startServer(config);
+			} else {
+				// --- Server is already there ------------
+				BundleHelper.systemPrintln(this, "Server '" + config.getServerName() + "' was already started.", true);
+			}
 		}
+	}
+	
+	/**
+	 * Does the server stop for all servers that are using the specified {@link StartOn} option.
+	 *
+	 * @param startOn the start on
+	 */
+	public void doServerStop(StartOn startOn) {
+		
+		// --- Get the server to be started ---------------
+		List<AwbWebServerService> serverServices = this.getAwbWebRegistry().getAwbWebServerService(startOn);
+		for (int i = 0; i < serverServices.size(); i++) {
+			// --- Get the server service -----------------
+			AwbWebServerService serverToStart = serverServices.get(i);
+			// --- Get the configuration ------------------
+			JettyConfiguration config = serverToStart.getJettyConfiguration();
+			// --- Check if server is running -------------
+			Server server = this.getServer(config.getServerName());
+			if (server!=null) {
+				this.stopServer(config.getServerName());
+			}
+		}
+		
+		// --- Revert the local 'start on' value by one ---
+		this.decreaseStartOnValue();
 	}
 	
 }

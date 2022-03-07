@@ -41,6 +41,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.DeviceAgentDescription;
@@ -226,13 +227,18 @@ public class Platform {
 				// --- Notify plugins for agent Start --------------- 
 				this.notifyPluginsForStartMAS();
 				// --- Check for valid plugin preconditions --------- 
-				if (this.hasValidPreconditionsInPlugins()==false)  return false;
+				if (this.hasValidPreconditionsInPlugins()==false) return false;
+				// --- Notify about JADE start ----------------------
+				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.JADE_START));
 				// --- Start Platform -------------------------------
 				Runtime jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
 						// --- Terminate platform -------------------
 						LoadMeasureThread.removeMonitoringTasksForAgents();
+						// --- Notify about JADE start --------------
+						Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.JADE_STOP));
+						
 						Platform.this.jadeMainContainer = null;
 						Platform.this.getAgentContainerList().clear();
 						Application.setJadeStatusColor(JadeStatusColor.Red);

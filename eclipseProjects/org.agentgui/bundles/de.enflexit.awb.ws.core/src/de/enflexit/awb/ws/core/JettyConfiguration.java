@@ -6,7 +6,8 @@ import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.jetty.server.Handler;
 
 /**
- * A ServerConfiguration describes the configuration of a Jetty Server.
+ * A ServerConfiguration describes the configuration of a Jetty Server
+ * to be started with Agent.Workbench.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -14,8 +15,47 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 
 	private static final long serialVersionUID = -425703333358456038L;
 
+	public enum StartOn {
+		AwbStart,
+		ProjectLoaded,
+		JadeStartup,
+		ManualStart;
+
+		/**
+		 * Increases the specified StartOn value by one.
+		 *
+		 * @param startOn the start on value to start from
+		 * @return the increased start on value or the 
+		 */
+		public static StartOn increase(StartOn startOn) {
+			int ordinal = startOn.ordinal() + 1;
+			StartOn[] startOnArray = StartOn.values();
+			if (ordinal>startOnArray.length) {
+				return startOnArray[startOnArray.length-1];
+			}
+			return startOnArray[ordinal];
+		}
+		/**
+		 * Decreases the specified StartOn value by one.
+		 *
+		 * @param startOn the start on value to start from
+		 * @return the decreased StartOn value or <code>null</code>
+		 */
+		public static StartOn decrease(StartOn startOn) {
+			if (startOn==null) return null;
+			int ordinal = startOn.ordinal() - 1;
+			if (ordinal<0) {
+				return null;
+			}
+			StartOn[] startOnArray = StartOn.values();
+			return startOnArray[ordinal];
+		}
+	}
+	
 	private static final Boolean[] valueRangeBoolean = new Boolean[] {true, false};
 	
+	
+	private StartOn startOn;
 	private String serverName;
 	private Handler handler;
 	private boolean mutableHandlerCollection;
@@ -23,23 +63,45 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	
 	/**
 	 * Instantiates a new jetty configuration.
+	 *
 	 * @param serverName the server name
+	 * @param startOn the start time when the server has to be started
 	 */
-	public JettyConfiguration(String serverName) {
-		this(serverName, null, true);
+	public JettyConfiguration(String serverName, StartOn startOn) {
+		this(serverName, startOn, null, true);
 	}
 	/**
 	 * Instantiates a new jetty configuration.
 	 *
 	 * @param serverName the server name
+	 * @param startOn the start time when the server has to be started
 	 * @param handler the initial or the only handler to be used
 	 * @param useMutableHandlerCollection the indicator to use a mutable handler collection thats allows to dynamically add {@link Handler} during server runtime
 	 */
-	public JettyConfiguration(String serverName, Handler handler, boolean useMutableHandlerCollection) {
+	public JettyConfiguration(String serverName, StartOn startOn, Handler handler, boolean useMutableHandlerCollection) {
 		this.setServerName(serverName);
+		this.setStartOn(startOn);
 		this.setHandler(handler);
 		this.setMutableHandlerCollection(useMutableHandlerCollection);
 		this.setDefaultConfiguration();
+	}
+	
+	/**
+	 * Returns when the server is to be started.
+	 * @return the start on
+	 */
+	public StartOn getStartOn() {
+		if (startOn==null) {
+			startOn = StartOn.AwbStart;
+		}
+		return startOn;
+	}
+	/**
+	 * Sets when the server start on.
+	 * @param startOn the new start on
+	 */
+	public void setStartOn(StartOn startOn) {
+		this.startOn = startOn;
 	}
 	
 	/**
