@@ -6,6 +6,9 @@ Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ws.core
 Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-Activator: de.enflexit.awb.ws.AwbWsActivator
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/awbWebServerService.xml 
 Import-Package: javax.servlet;version="4.0.0",
  javax.servlet.annotation,
  javax.servlet.descriptor;version="4.0.0",
@@ -20,7 +23,6 @@ Require-Bundle: org.agentgui.core,
  org.eclipse.jetty.servlet,
  org.eclipse.jetty.util,
  org.eclipse.osgi
-Bundle-Activator: de.enflexit.awb.ws.AwbWsActivator
-Bundle-ActivationPolicy: lazy
 Export-Package: de.enflexit.awb.ws,
- de.enflexit.awb.ws.core
+ de.enflexit.awb.ws.core,
+ de.enflexit.awb.ws.defaultServer

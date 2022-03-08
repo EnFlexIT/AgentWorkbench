@@ -38,8 +38,121 @@ public class JettyServerManager {
 		return jettyServerManager;
 	}
 
+	
+	// --------------------------------------------------------------
+	// --- From here, methods for the AwbWebService handling --------
+	// --------------------------------------------------------------
+	private AwbWebRegistry awbWebRegistry;
+	/**
+	 * Returns the local/current {@link AwbWebRegistry}.
+	 * @return the AwbWebRegistry
+	 */
+	public AwbWebRegistry getAwbWebRegistry() {
+		if (awbWebRegistry==null) {
+			awbWebRegistry = new AwbWebRegistry();
+		}
+		return awbWebRegistry;
+	}
+	/**
+	 * Adds the specified {@link AwbWebServerService} to the running servers.
+	 * @param newServer the new server to start
+	 */
+	public void addAwbWebServerService(AwbWebServerService newServer) {
+		// --- Add to local registry ----------------------
+		boolean added = this.getAwbWebRegistry().addAwbWebServerService(newServer);
+		if (added==true && this.startOn!=null) {
+			// --- Start that server? ---------------------   
+			JettyConfiguration config = newServer.getJettyConfiguration();
+			if (config.getStartOn().ordinal()<=this.startOn.ordinal()) {
+				// --- Start the server -------------------
+				this.startServer(config);
+			}
+		}
+	}
+	/**
+	 * Removes the specified {@link AwbWebServerService} to the running servers.
+	 * @param serverToRemove the server to remove
+	 */
+	public void removeAwbWebServerService(AwbWebServerService serverToRemove) {
+		// --- Remove from local registry -----------------
+		boolean removed = this.getAwbWebRegistry().removeAwbWebServerService(serverToRemove);
+		if (removed==true) {
+			// --- Stop if server is running --------------
+			JettyConfiguration config = serverToRemove.getJettyConfiguration();
+			Server server = this.getServer(config.getServerName());
+			if (server!=null) {
+				this.stopServer(config.getServerName());
+			}
+		}
+	}
+	
+	
+	/**
+	 * Adds the specified {@link AwbWebHandlerService} to the running servers.
+	 * @param newHandlerService the new handler service
+	 */
+	public void addAwbWebHandlerService(AwbWebHandlerService newHandlerService) {
+		// --- Add to local registry --------------------------------
+		boolean added = this.getAwbWebRegistry().addAwbWebHandlerService(newHandlerService);
+		// --- Check if the corresponding server is running ---------
+		if (added==true) {
+			// --- Check if server is running -----------------------
+			String serverName = newHandlerService.getServerNameNotNull();
+			Server server = this.getServer(serverName);
+			HandlerCollection hCollection = this.getHandlerCollection(serverName);
+			if (server!=null && hCollection!=null && this.getAwbWebRegistry().isValidAwbWebHandlerService(newHandlerService, true)==null) {
+				// --- Add the new handler to the HandlerCollection ---------
+				try {
+					Handler handler = newHandlerService.getHandler();
+					hCollection.addHandler(handler);
+					handler.start();
+					BundleHelper.systemPrintln(this, "Added handler of service '" + newHandlerService.getClass().getName() + "' to server '" + serverName + "'.", false);
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+					
+			} else {
+				// --- Show message, if server runs and no HandlerCollection was found --------------------
+				if (server!=null && hCollection==null) {
+					String error = "The server '" + serverName + "' does not use a mutable handler collection. Thus, it can not be extended by another Handler.";
+					BundleHelper.systemPrintln(this, error, true);
+				}
+			}
+		}
+	}
+	/**
+	 * Removes the specified {@link AwbWebHandlerService} to the running servers.
+	 * @param handlerToRemove the handler to remove
+	 */
+	public void removeAwbWebHandlerService(AwbWebHandlerService handlerToRemove) {
+		
+		boolean removed = this.getAwbWebRegistry().removeAwbWebHandlerService(handlerToRemove);
+		// --- Check, if the handler needs to be removed from a server instance ---------
+		if (removed==true) {
+			// --- Check if server is running -----------------------
+			String serverName = handlerToRemove.getServerNameNotNull();
+			Server server = this.getServer(serverName);
+			HandlerCollection hCollection = this.getHandlerCollection(serverName);
+			if (server!=null && hCollection!=null && this.getAwbWebRegistry().isValidAwbWebHandlerService(handlerToRemove, false)==null) {
+				// --- Remove the handler ---------------------------
+				try {
+					Handler handler = handlerToRemove.getHandler();
+					handler.stop();
+					hCollection.removeHandler(handler);
+					BundleHelper.systemPrintln(this, "Removed handler of service '" + handlerToRemove.getClass().getName() + "' from server '" + serverName + "'.", false);
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+		}
+	}
+	
+	
 	// ----------------------------------------------------
-	// --- Detail methods of the class --------------------
+	// --- From here, instance handling -------------------
 	// ----------------------------------------------------
 	private TreeMap<String, JettyServerInstances> jettyServerHash;
 	
@@ -123,9 +236,11 @@ public class JettyServerManager {
 	 */
 	public boolean startServer(JettyConfiguration serverConfig) {
 		
+		// ----------------------------------------------------------
 		// --- Create new server instance ---------------------------
 		Server server = new Server(serverConfig.getHttpPort());
 
+		// ---------------------------------------------------------- 
 		// --- Read & set server configuration ----------------------
 		String[] keyArray = serverConfig.keySet().toArray(new String[serverConfig.keySet().size()]);
 		for (int i = 0; i < keyArray.length; i++) {
@@ -136,17 +251,40 @@ public class JettyServerManager {
 			}
 		}
 		
+		// ----------------------------------------------------------
 		// --- Set the Handler according to the configuration -------
+		Handler initialHandler = serverConfig.getHandler();
 		HandlerCollection hCollection = serverConfig.isMutableHandlerCollection()==true ? new HandlerCollection(true) : null;
-		if (serverConfig.getHandler()!=null) {
-			if (hCollection!=null) {
-				hCollection.addHandler(serverConfig.getHandler());
-				server.setHandler(hCollection);
+		if (hCollection==null) {
+			// --- NO handler collection ----------------------------
+			if (initialHandler==null) {
+				// --- Notify about the error -----------------------
+				String error = "No handler was specified, nor mutable handler collection was configured for server '" + serverConfig.getServerName() + "'.";
+				BundleHelper.systemPrintln(this, error, true);
+				return false;
 			} else {
+				// --- Add the initial/single handler ---------------
 				server.setHandler(serverConfig.getHandler());
+			}
+		} else {
+			// --- USE Handler collection ---------------------------
+			if (initialHandler!=null) {
+				hCollection.addHandler(initialHandler);
+			}
+			server.setHandler(hCollection);
+		}
+
+		// ----------------------------------------------------------
+		// --- Check to add further handler -------------------------
+		List<AwbWebHandlerService> handlerList = this.getAwbWebRegistry().getAwbWebHandlerService(serverConfig.getServerName());
+		if (handlerList.size()>0) {
+			for (int i = 0; i < handlerList.size(); i++) {
+				AwbWebHandlerService handlerService = handlerList.get(i);
+				hCollection.addHandler(handlerService.getHandler());
 			}
 		}
 		
+		// ----------------------------------------------------------
 		// --- Execute the start of the server ----------------------
 		boolean isStarted = this.startConfiguredServer(server, serverConfig.getServerName());
 		if (isStarted==true) {
@@ -236,117 +374,10 @@ public class JettyServerManager {
 	}
 	
 	
-	// ----------------------------------------------------
-	// --- From here, methods to act on Handler -----------
-	// ----------------------------------------------------
-	/**
-	 * If possible, adds the specified handler to the server specified its name.
-	 *
-	 * @param serverName the server name
-	 * @param handler the handler
-	 */
-	public void addHandler(String serverName, Handler handler) {
-		
-		// --- Check for parameter errors ---------------------------
-		if (handler==null) {
-			BundleHelper.systemPrintln(this, "No Handler was specified to add to any server.", true);
-			return;
-		}
-		if (serverName==null) {
-			BundleHelper.systemPrintln(this, "No server name was specified to add handler '" + handler.getClass().getSimpleName() + "'", true);
-			return;
-		}
-		
-		// --- Get the HandlerCollection of the server --------------
-		HandlerCollection hCollection = this.getHandlerCollection(serverName);
-		if (hCollection==null) {
-			BundleHelper.systemPrintln(this, "No HandlerCollection could be found for server '" + serverName + "'! Thus, could not add specified Handler '" + handler.getClass().getName() + "'.", true);
-			return;
-		}
-		
-		// --- Add the new handler to the HandlerCollection ---------
-		try {
-			hCollection.addHandler(handler);
-			handler.start();
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-	
-	
-	
-	// --------------------------------------------------------------
-	// --- From here, methods for the AwbWebService handling --------
-	// --------------------------------------------------------------
-	private AwbWebRegistry awbWebRegistry;
-	/**
-	 * Returns the local/current {@link AwbWebRegistry}.
-	 * @return the AwbWebRegistry
-	 */
-	public AwbWebRegistry getAwbWebRegistry() {
-		if (awbWebRegistry==null) {
-			awbWebRegistry = new AwbWebRegistry();
-		}
-		return awbWebRegistry;
-	}
-	/**
-	 * Adds the specified {@link AwbWebServerService} to the running servers.
-	 * @param newServer the new server to start
-	 */
-	public void addAwbWebServerService(AwbWebServerService newServer) {
-		// --- Add to local registry ----------------------
-		boolean added = this.getAwbWebRegistry().addAwbWebServerService(newServer);
-		if (added==true && this.startOn!=null) {
-			// --- Start that server? ---------------------   
-			JettyConfiguration config = newServer.getJettyConfiguration();
-			if (config.getStartOn().ordinal()<=this.startOn.ordinal()) {
-				// --- Start the server -------------------
-				this.startServer(config);
-			}
-		}
-	}
-	/**
-	 * Removes the specified {@link AwbWebServerService} to the running servers.
-	 * @param serverToRemove the server to remove
-	 */
-	public void removeAwbWebServerService(AwbWebServerService serverToRemove) {
-		// --- Remove from local registry -----------------
-		boolean removed = this.getAwbWebRegistry().removeAwbWebServerService(serverToRemove);
-		if (removed==true) {
-			// --- Stop if server is running --------------
-			JettyConfiguration config = serverToRemove.getJettyConfiguration();
-			Server server = this.getServer(config.getServerName());
-			if (server!=null) {
-				this.stopServer(config.getServerName());
-			}
-		}
-	}
-	
-	
-	/**
-	 * Adds the specified {@link AwbWebHandlerService} to the running servers.
-	 * @param newHandler the new handler
-	 */
-	public void addAwbWebHandlerService(AwbWebHandlerService newHandler) {
-		// TODO
-		BundleHelper.systemPrintln(this, "Add AwbWebHandlerService " + newHandler.getClass().getName(), false);
-	}
-	/**
-	 * Removes the specified {@link AwbWebHandlerService} to the running servers.
-	 * @param newHandler the new handler
-	 */
-	public void removeAwbWebHandlerService(AwbWebHandlerService newHandler) {
-		// TODO
-		BundleHelper.systemPrintln(this, "Remove AwbWebHandlerService " + newHandler.getClass().getName(), false);
-	}
-	
-	
-	// --------------------------------------------------------------
-	// --- From here, methods to start/stop the configured server ---
-	// --------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
+	// --- From here, methods to start/stop the configured server based on AWB - ApplicationEvents ----------
+	// ------------------------------------------------------------------------------------------------------
 	private StartOn startOn;
-	
 	/**
 	 * Returns the current local {@link StartOn} value.
 	 * @param startOn the new start on
@@ -363,6 +394,7 @@ public class JettyServerManager {
 	
 	/**
 	 * Does the server start for all servers that are using the specified {@link StartOn} option.
+	 * 
 	 * @param startOn the start on option
 	 */
 	public void doServerStart(StartOn startOn) {

@@ -79,6 +79,9 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	 * @param useMutableHandlerCollection the indicator to use a mutable handler collection thats allows to dynamically add {@link Handler} during server runtime
 	 */
 	public JettyConfiguration(String serverName, StartOn startOn, Handler handler, boolean useMutableHandlerCollection) {
+		if (handler==null && useMutableHandlerCollection==false) {
+			throw new IllegalArgumentException("No Handler was specified for the server, but the option for a mutable handler collection was set to 'false'!");
+		}
 		this.setServerName(serverName);
 		this.setStartOn(startOn);
 		this.setHandler(handler);
