@@ -285,6 +285,24 @@ public class JettyServerManager {
 		}
 		
 		// ----------------------------------------------------------
+		// --- Check for a customizer -------------------------------
+		if (serverConfig.getJettyCustomizer()!=null) {
+			try {
+				Server customServer = serverConfig.getJettyCustomizer().customizeConfiguration(server, hCollection);
+				if (customServer!=null) {
+					server = customServer;
+				}
+				
+			} catch (Exception ex) {
+				String errorMsg = "Error while customizing server instance of server '" + serverConfig.getServerName() + "' - use standard configuration!";
+				BundleHelper.systemPrintln(this, errorMsg, false);
+				ex.printStackTrace();
+			}
+		}
+		
+		
+		
+		// ----------------------------------------------------------
 		// --- Execute the start of the server ----------------------
 		boolean isStarted = this.startConfiguredServer(server, serverConfig.getServerName());
 		if (isStarted==true) {

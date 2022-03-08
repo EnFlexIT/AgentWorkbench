@@ -4,6 +4,7 @@ import java.util.TreeMap;
 
 import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
 
 /**
  * A ServerConfiguration describes the configuration of a Jetty Server
@@ -60,6 +61,7 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	private Handler handler;
 	private boolean mutableHandlerCollection;
 	
+	private JettyCustomizer jettyCustomizer;
 	
 	/**
 	 * Instantiates a new jetty configuration.
@@ -151,6 +153,28 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	public boolean isMutableHandlerCollection() {
 		return mutableHandlerCollection;
 	}
+	
+	
+	/**
+	 * Sets the {@link JettyCustomizer} that can be used to programmatically 
+	 * customize the {@link Server} instance before it is started.
+	 * 
+	 * @param jettyCustomizer the new jetty customizer
+	 */
+	public void setJettyCustomizer(JettyCustomizer jettyCustomizer) {
+		this.jettyCustomizer = jettyCustomizer;
+	}
+	/**
+	 * Returns the {@link JettyCustomizer} that can be used to programmatically 
+	 * customize the {@link Server} instance before it is started..
+	 * @return the jetty customizer or <code>null</code>, if not specified
+	 */
+	public JettyCustomizer getJettyCustomizer() {
+		return jettyCustomizer;
+	}
+	
+	
+	
 	
 	/**
 	 * Sets the default configuration.
