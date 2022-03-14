@@ -3,6 +3,8 @@ package de.enflexit.awb.ws.core;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
@@ -250,6 +252,12 @@ public class JettyServerManager {
 				server.setAttribute(key, attribute.getValue());	
 			}
 		}
+		
+		// ----------------------------------------------------------
+		// --- Secure the server ------------------------------------
+//		HashLoginService  loginService = new HashLoginService();
+//		loginService.setConfig("ToDo");
+//		server.addBean(loginService);
 		
 		// ----------------------------------------------------------
 		// --- Set the Handler according to the configuration -------

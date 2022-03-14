@@ -2,7 +2,6 @@ package de.enflexit.awb.ws.core;
 
 import java.util.TreeMap;
 
-import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
