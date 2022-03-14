@@ -49,7 +49,7 @@ public class DefaultAwbServer implements AwbWebServerService, JettyCustomizer {
 		// TODO Not finalized yet
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
-			return StartOn.ManualStart;
+			return StartOn.AwbStart;
 			
 		case SERVER:
 		case SERVER_MASTER:

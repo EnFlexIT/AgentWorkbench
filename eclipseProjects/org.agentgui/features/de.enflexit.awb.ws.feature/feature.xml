@@ -32,13 +32,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.jetty.jmx"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.jetty.security"
          download-size="0"
          install-size="0"
@@ -60,13 +53,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.jetty.servlet-api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.jetty.util.ajax"
          download-size="0"
          install-size="0"
@@ -82,13 +68,6 @@
 
    <plugin
          id="org.eclipse.jetty.io"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.slf4j.api"
          download-size="0"
          install-size="0"
          version="0.0.0"

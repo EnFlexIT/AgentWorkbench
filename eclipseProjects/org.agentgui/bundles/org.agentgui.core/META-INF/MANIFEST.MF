@@ -11,6 +11,8 @@ Service-Component: OSGI-INF/classLoadService.xml,
  OSGI-INF/dbStateVisualService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0",
+ javax.xml.bind,
+ javax.xml.bind.annotation,
  org.slf4j;version="1.7.10"
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
@@ -18,7 +20,6 @@ Require-Bundle: de.enflexit.api,
  de.enflexit.oshi,
  de.enflexit.db.hibernate,
  de.enflexit.db.mySQL,
- de.enflexit.jaxb,
  javax.annotation,
  org.agentgui.lib.scimark,
  org.agentgui.lib.jade,

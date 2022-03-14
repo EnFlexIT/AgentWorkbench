@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="jadeMisc.jar" sourcepath="/jade.misc"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry exported="true" kind="lib" path="jade.jar" sourcepath="/jade/src"/>
+	<classpathentry exported="true" kind="lib" path="jade.jar" sourcepath="/Jade"/>
 	<classpathentry exported="true" kind="lib" path="XMLCodec.jar"/>
 	<classpathentry exported="true" kind="lib" path="migration.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-codec/commons-codec-1.3.jar" sourcepath="C:/Users/Christian/.m2/repository/net/sf/ingenias/common-codec/1.3/common-codec-1.3-sources.jar"/>

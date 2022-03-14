@@ -35,10 +35,11 @@ Export-Package: org.awb.env.networkModel,
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.geography,
- de.enflexit.jaxb,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.eclipse.core.runtime,
  org.eclipse.osgi.services
 Bundle-ActivationPolicy: lazy
+Import-Package: javax.xml.bind;version="2.3.3",
+ javax.xml.bind.annotation;version="2.3.3"

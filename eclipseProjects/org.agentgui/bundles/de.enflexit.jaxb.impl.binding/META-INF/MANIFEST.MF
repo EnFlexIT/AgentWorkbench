@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JAXB Impl Binding
+Bundle-SymbolicName: de.enflexit.jaxb.impl.binding
+Bundle-Version: 2.3.3
+Bundle-Vendor: EnFlex.IT
+Fragment-Host: jakarta.xml.bind-api;bundle-version="2.3.3"
+Automatic-Module-Name: jaxb.impl.binding
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: com.sun.xml.bind.v2
