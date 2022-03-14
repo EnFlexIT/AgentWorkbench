@@ -49,10 +49,23 @@
 	</location>
 	<location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
+			<!-- JAXB implementation -->
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
 				<version>2.3.6</version>
+			</dependency>
+
+			<!-- JERSEY bunlde -->
+			<dependency>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-servlet</artifactId>
+				<version>2.35</version>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.core</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>2.35</version>
 			</dependency>
 		</dependencies>
 	</location>
