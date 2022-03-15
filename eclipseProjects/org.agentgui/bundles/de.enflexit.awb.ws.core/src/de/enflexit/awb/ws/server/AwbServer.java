@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.defaultServer;
+package de.enflexit.awb.ws.server;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -6,6 +6,10 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
+import org.glassfish.jersey.servlet.ServletProperties;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -20,7 +24,7 @@ import de.enflexit.awb.ws.core.JettyCustomizer;
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DefaultAwbServer implements AwbWebServerService, JettyCustomizer {
+public class AwbServer implements AwbWebServerService, JettyCustomizer {
 
 	public static final String DEFAULT_AWB_SERVER_NAME = "AWB-WebServer";
 	public static final String AWB_SERVER_ROOT_PATH = "awbAdmin";
@@ -70,25 +74,38 @@ public class DefaultAwbServer implements AwbWebServerService, JettyCustomizer {
 	public Server customizeConfiguration(Server server, HandlerCollection handlerCollection) {
 
 		// --- Define ResourceHandler for static content ------------
-		ResourceHandler resH = new ResourceHandler();
-        resH.setDirectoriesListed(true);
-        resH.setWelcomeFiles(new String[]{ "index.html" });
-        resH.setResourceBase(BundleHelper.getWebRootDirectory(true).getAbsolutePath());
+		ResourceHandler resHandler = new ResourceHandler();
+        resHandler.setDirectoriesListed(true);
+        resHandler.setWelcomeFiles(new String[]{ "index.html" });
+        resHandler.setResourceBase(BundleHelper.getWebRootDirectory(true).getAbsolutePath());
         
         // --- Wrap ResourceHandler into ContextHandler -------------
         ContextHandler ctxHandler = new ContextHandler();
-        ctxHandler.setHandler(resH);
+        ctxHandler.setHandler(resHandler);
         
         // --- Define a ContextHandlerCollection --------------------
-        ContextHandlerCollection newHandlerCollection = new ContextHandlerCollection(ctxHandler);
+        ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection(ctxHandler);
         Handler[] handlerArray = handlerCollection.getHandlers();
         if (handlerArray!=null) {
         	for (int i = 0; i < handlerArray.length; i++) {
-        		newHandlerCollection.addHandler(handlerArray[i]);
+        		contextHandlerCollection.addHandler(handlerArray[i]);
         	} 
         }
-        server.setHandler(newHandlerCollection);
+        server.setHandler(contextHandlerCollection);
 		
+        
+        // --- 
+        ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        servletContextHandler.setContextPath("/");
+        
+        ServletHolder jersey = servletContextHandler.addServlet(ServletContainer.class, "/api/*");
+        jersey.setInitOrder(1);
+        
+        jersey.setInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, AwbRestApplication.class.getName());
+//        jersey.setInitParameter("jersey.config.server.provider.packages", "de.enflexit.awb.ws.restapi;io.swagger.v3.jaxrs2.integration.resources");
+
+        contextHandlerCollection.addHandler(servletContextHandler);// Setup API resources to be intercepted by Jersey
+        
 		return server;
 	}
 	

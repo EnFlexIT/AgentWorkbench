@@ -2,7 +2,7 @@ package de.enflexit.awb.ws;
 
 import org.eclipse.jetty.server.Handler;
 
-import de.enflexit.awb.ws.defaultServer.DefaultAwbServer;
+import de.enflexit.awb.ws.server.AwbServer;
 
 /**
  * The interface AwbWebHandlerService describes the information to be provided 
@@ -17,8 +17,8 @@ public interface AwbWebHandlerService {
 	 * If this method return <code>null</code>, the default AWB server will be used to add the specified Handler.
 	 * 
 	 * @return the server name
-	 * @see DefaultAwbServer
-	 * @see DefaultAwbServer#DEFAULT_AWB_SERVER_NAME
+	 * @see AwbServer
+	 * @see AwbServer#DEFAULT_AWB_SERVER_NAME
 	 */
 	public String getServerName();
 	
@@ -27,7 +27,7 @@ public interface AwbWebHandlerService {
 	 * @return the server name not null
 	 */
 	public default String getServerNameNotNull() {
-		return this.getServerName()==null ? DefaultAwbServer.DEFAULT_AWB_SERVER_NAME : this.getServerName();
+		return this.getServerName()==null ? AwbServer.DEFAULT_AWB_SERVER_NAME : this.getServerName();
 		
 	}
 	

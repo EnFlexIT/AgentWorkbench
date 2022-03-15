@@ -11,7 +11,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import agentgui.core.application.Application;
-import de.enflexit.awb.ws.defaultServer.DefaultAwbServer;
+import de.enflexit.awb.ws.server.AwbServer;
 
 /**
  * The Class BunldeHelper provides static help methods.
@@ -91,7 +91,7 @@ private static final String imagePackage = "/icons/";
 				
 				// --- Add the AWB_SERVER_ROOT_PATH -----------------
 				String webRootPath = bLocationFile.getAbsolutePath();
-				webRootPath += webRootPath.endsWith(File.separator) ? DefaultAwbServer.AWB_SERVER_ROOT_PATH : File.separator + DefaultAwbServer.AWB_SERVER_ROOT_PATH; 
+				webRootPath += webRootPath.endsWith(File.separator) ? AwbServer.AWB_SERVER_ROOT_PATH : File.separator + AwbServer.AWB_SERVER_ROOT_PATH; 
 				webRootDir = new File(webRootPath);
 				
 			} catch (MalformedURLException | URISyntaxException ex) {
@@ -104,7 +104,7 @@ private static final String imagePackage = "/icons/";
 			// --- For the product runtime environment --------------
 			// ------------------------------------------------------
 			String webRootPath = Application.getGlobalInfo().getPathBaseDir();
-			webRootPath += webRootPath.endsWith(File.separator) ? DefaultAwbServer.AWB_SERVER_ROOT_PATH : File.separator + DefaultAwbServer.AWB_SERVER_ROOT_PATH;
+			webRootPath += webRootPath.endsWith(File.separator) ? AwbServer.AWB_SERVER_ROOT_PATH : File.separator + AwbServer.AWB_SERVER_ROOT_PATH;
 			webRootDir = new File(webRootPath);
 			break;
 		}
