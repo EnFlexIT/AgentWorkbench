@@ -6,8 +6,9 @@
 		<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
 		<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 		<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/releases/2021-12/"/>
+		<repository location="https://download.eclipse.org/releases/2022-03/"/>
 		<!--  Space for older versions (as reminder) 
+		<repository location="https://download.eclipse.org/releases/2021-12/"/>
 		<repository location="https://download.eclipse.org/releases/2021-09/"/>
 		<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java8 
 		<repository location="https://download.eclipse.org/releases/2020-03/"/>
@@ -21,20 +22,23 @@
 		-->
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-		<unit id="ch.qos.logback.classic" version="0.0.0"/>
-		<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
-		<unit id="ch.qos.logback.core" version="0.0.0"/>
-		<unit id="ch.qos.logback.core.source" version="0.0.0"/>
-		<unit id="ch.qos.logback.slf4j" version="0.0.0"/>
-		<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
-		<unit id="org.slf4j.api" version="0.0.0"/>
-		<unit id="org.slf4j.api.source" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcpkix" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcpkix.source" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
+		<unit id="ch.qos.logback.classic" version="1.2.3.v20200428-2012"/>
+		<unit id="ch.qos.logback.classic.source" version="1.2.3.v20200428-2012"/>
+		<unit id="ch.qos.logback.core" version="1.2.3.v20200428-2012"/>
+		<unit id="ch.qos.logback.core.source" version="1.2.3.v20200428-2012"/>
+		<unit id="ch.qos.logback.slf4j" version="1.2.3.v20200428-2012"/>
+		<unit id="ch.qos.logback.slf4j.source" version="1.2.3.v20200428-2012"/>
+		<unit id="org.slf4j.api" version="1.7.30.v20200204-2150"/>
+		<unit id="org.slf4j.api.source" version="1.7.30.v20200204-2150"/>
+		<unit id="org.bouncycastle.bcpkix" version="1.70.0.v20220105-1522"/>
+		<unit id="org.bouncycastle.bcpkix.source" version="1.70.0.v20220105-1522"/>
+		<unit id="org.bouncycastle.bcprov" version="1.70.0.v20220105-1522"/>
+		<unit id="org.bouncycastle.bcprov.source" version="1.70.0.v20220105-1522"/>
+		<unit id="com.google.gson" version="2.8.9.v20220111-1409"/>
+		<unit id="com.google.gson.source" version="2.8.9.v20220111-1409"/>
+		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
 		<!--  Space for older versions (as reminder)
+		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20210825222808/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository"/> <= Last for Java8
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
@@ -47,44 +51,16 @@
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
 		-->
 	</location>
-	<location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
+	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
-			<!-- JAXB implementation -->
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
 				<version>2.3.6</version>
+				<type>jar</type>
 			</dependency>
-
-			<!-- JERSEY bundle 
-			<dependency>
-				<groupId>org.glassfish.jersey.containers</groupId>
-				<artifactId>jersey-container-servlet</artifactId>
-				<version>2.35</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.core</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>2.35</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.inject</groupId>
-				<artifactId>jersey-hk2</artifactId>
-				<version>2.35</version>
-			</dependency> 
-			-->
-			
-			<!-- Swagger 
-			<dependency>
-				<groupId>io.swagger</groupId>
-    			<artifactId>swagger-jaxrs</artifactId>
-    			<version>1.6.5</version>
-			</dependency>
-  			-->
-  			
 		</dependencies>
 	</location>
-	
 </locations>
 
 </target>
