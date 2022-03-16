@@ -9,19 +9,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Activator: de.enflexit.awb.ws.AwbWsActivator
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbWebServerService.xml 
-Import-Package: javax.servlet;version="4.0.0",
- javax.servlet.annotation;version="4.0.0",
- javax.servlet.descriptor;version="4.0.0",
- javax.servlet.http;version="4.0.0"
 Require-Bundle: org.eclipse.osgi,
  org.agentgui.core,
- org.eclipse.jetty.http,
  org.eclipse.jetty.security,
  org.eclipse.jetty.server,
  org.eclipse.jetty.servlet,
- org.eclipse.jetty.util,
- de.enflexit.awb.ws.jersey
+ org.eclipse.jetty.util
 Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core,
- de.enflexit.awb.ws.restapi,
  de.enflexit.awb.ws.server

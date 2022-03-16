@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.restapi;
+package de.enflexit.awb.ws.restapi.endPoints;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

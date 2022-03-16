@@ -6,10 +6,6 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
-import org.glassfish.jersey.servlet.ServletProperties;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -26,7 +22,7 @@ import de.enflexit.awb.ws.core.JettyCustomizer;
  */
 public class AwbServer implements AwbWebServerService, JettyCustomizer {
 
-	public static final String DEFAULT_AWB_SERVER_NAME = "AWB-WebServer";
+	public static final String NAME = "AWB-WebServer";
 	public static final String AWB_SERVER_ROOT_PATH = "awbAdmin";
 	
 	private JettyConfiguration jettyConfiguration;
@@ -38,7 +34,7 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 	@Override
 	public JettyConfiguration getJettyConfiguration() {
 		if (jettyConfiguration==null) {
-			jettyConfiguration = new JettyConfiguration(DEFAULT_AWB_SERVER_NAME, this.getStartOn(), null, true);
+			jettyConfiguration = new JettyConfiguration(NAME, this.getStartOn(), null, true);
 			jettyConfiguration.setJettyCustomizer(this);
 		}
 		return jettyConfiguration;
@@ -92,19 +88,6 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         	} 
         }
         server.setHandler(contextHandlerCollection);
-		
-        
-        // --- 
-        ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContextHandler.setContextPath("/");
-        
-        ServletHolder jersey = servletContextHandler.addServlet(ServletContainer.class, "/api/*");
-        jersey.setInitOrder(1);
-        
-        jersey.setInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, AwbRestApplication.class.getName());
-//        jersey.setInitParameter("jersey.config.server.provider.packages", "de.enflexit.awb.ws.restapi;io.swagger.v3.jaxrs2.integration.resources");
-
-        contextHandlerCollection.addHandler(servletContextHandler);// Setup API resources to be intercepted by Jersey
         
 		return server;
 	}

@@ -1,11 +1,11 @@
-package de.enflexit.awb.ws.server;
+package de.enflexit.awb.ws.restapi;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
-import de.enflexit.awb.ws.restapi.JerseyHelloWorld;
+import de.enflexit.awb.ws.restapi.endPoints.JerseyHelloWorld;
 
 /**
  * The Class AwbRestApplication describes the JERSEY application to start on the {@link DefaultAwbServer}.

@@ -18,7 +18,7 @@ public interface AwbWebHandlerService {
 	 * 
 	 * @return the server name
 	 * @see AwbServer
-	 * @see AwbServer#DEFAULT_AWB_SERVER_NAME
+	 * @see AwbServer#NAME
 	 */
 	public String getServerName();
 	
@@ -27,7 +27,7 @@ public interface AwbWebHandlerService {
 	 * @return the server name not null
 	 */
 	public default String getServerNameNotNull() {
-		return this.getServerName()==null ? AwbServer.DEFAULT_AWB_SERVER_NAME : this.getServerName();
+		return this.getServerName()==null ? AwbServer.NAME : this.getServerName();
 		
 	}
 	

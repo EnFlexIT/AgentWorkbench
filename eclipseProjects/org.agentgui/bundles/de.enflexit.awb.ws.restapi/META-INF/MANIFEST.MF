@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AWB WS-Rest API Bundle
+Bundle-SymbolicName: de.enflexit.awb.ws.restapi
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: de.enflexit.awb.ws.restapi
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-Vendor: EnFlex.IT
+Service-Component: OSGI-INF/awbWebServerApiService.xml 
+Require-Bundle: jakarta.servlet-api,
+ org.eclipse.jetty.server,
+ de.enflexit.awb.ws.core,
+ de.enflexit.awb.ws.jersey,
+ com.google.gson,
+ org.eclipse.jetty.servlet
+Export-Package: de.enflexit.awb.ws.restapi,
+ de.enflexit.awb.ws.restapi.endPoints
+Bundle-ActivationPolicy: lazy
