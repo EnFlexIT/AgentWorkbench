@@ -3,8 +3,6 @@ package de.enflexit.awb.ws.restapi;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
-import org.glassfish.jersey.servlet.ServletProperties;
 
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.server.AwbServer;
@@ -23,7 +21,7 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 	 */
 	@Override
 	public String getServerName() {
-		return null; // null equal 
+		return null; // null equals default AWB server 
 	}
 
 	/* (non-Javadoc)
@@ -34,9 +32,10 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 		if (servletContextHandler==null) {
 			servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 			servletContextHandler.setContextPath("/");
-			ServletHolder jersey = servletContextHandler.addServlet(ServletContainer.class, "/api/*");
+			
+			ServletHolder jersey = servletContextHandler.addServlet(JereseyServletContainer.class, "/" + JerseyResourceConfig.APPLICATION_CONTEXT_PATH + "/*");
 			jersey.setInitOrder(1);
-			jersey.setInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, AwbRestApplication.class.getName());
+//			jersey.setInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, JerseyResourceConfig.class.getName());
 //			jersey.setInitParameter("jersey.config.server.provider.packages", "de.enflexit.awb.ws.restapi;io.swagger.v3.jaxrs2.integration.resources");
 		}
 		return servletContextHandler;

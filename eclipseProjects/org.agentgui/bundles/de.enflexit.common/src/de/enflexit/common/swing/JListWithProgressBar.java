@@ -162,8 +162,13 @@ public class JListWithProgressBar<E> extends JPanel {
 	public void setBusy(boolean busy) {
 		this.getJProgressBarLoading().setVisible(busy);
 		if (this.isVisible()==true) {
-			this.validate();
-			this.repaint();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JListWithProgressBar.this.validate();
+					JListWithProgressBar.this.repaint();
+				}
+			});
 		}
 	}
 	

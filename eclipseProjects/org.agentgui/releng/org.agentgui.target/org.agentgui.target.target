@@ -22,20 +22,34 @@
 		-->
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-		<unit id="ch.qos.logback.classic" version="1.2.3.v20200428-2012"/>
-		<unit id="ch.qos.logback.classic.source" version="1.2.3.v20200428-2012"/>
-		<unit id="ch.qos.logback.core" version="1.2.3.v20200428-2012"/>
-		<unit id="ch.qos.logback.core.source" version="1.2.3.v20200428-2012"/>
-		<unit id="ch.qos.logback.slf4j" version="1.2.3.v20200428-2012"/>
-		<unit id="ch.qos.logback.slf4j.source" version="1.2.3.v20200428-2012"/>
-		<unit id="org.slf4j.api" version="1.7.30.v20200204-2150"/>
-		<unit id="org.slf4j.api.source" version="1.7.30.v20200204-2150"/>
-		<unit id="org.bouncycastle.bcpkix" version="1.70.0.v20220105-1522"/>
-		<unit id="org.bouncycastle.bcpkix.source" version="1.70.0.v20220105-1522"/>
-		<unit id="org.bouncycastle.bcprov" version="1.70.0.v20220105-1522"/>
-		<unit id="org.bouncycastle.bcprov.source" version="1.70.0.v20220105-1522"/>
-		<unit id="com.google.gson" version="2.8.9.v20220111-1409"/>
-		<unit id="com.google.gson.source" version="2.8.9.v20220111-1409"/>
+		<unit id="ch.qos.logback.classic" version="0.0.0"/>
+		<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
+		<unit id="ch.qos.logback.core" version="0.0.0"/>
+		<unit id="ch.qos.logback.core.source" version="0.0.0"/>
+		<unit id="ch.qos.logback.slf4j" version="0.0.0"/>
+		<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
+		<unit id="org.slf4j.api" version="0.0.0"/>
+		<unit id="org.slf4j.api.source" version="0.0.0"/>
+		<unit id="org.bouncycastle.bcpkix" version="0.0.0"/>
+		<unit id="org.bouncycastle.bcpkix.source" version="0.0.0"/>
+		<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
+		<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
+		<unit id="com.google.gson" version="0.0.0"/>
+		<unit id="com.google.gson.source" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.core.jersey-server" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.core.jersey-server.source" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.containers.servlet" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.containers.servlet.source" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.core.jersey-client" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.core.jersey-client.source" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.core.jersey-common" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.core.jersey-common.source" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.ext.entityfiltering" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.ext.entityfiltering.source" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.inject.jersey-hk2" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.inject.jersey-hk2.source" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.media.jersey-media-json-jackson" version="0.0.0"/>
+		<unit id="org.glassfish.jersey.media.jersey-media-json-jackson.source" version="0.0.0"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
 		<!--  Space for older versions (as reminder)
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
@@ -58,6 +72,11 @@
 				<artifactId>jaxb-impl</artifactId>
 				<version>2.3.6</version>
 				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.ext</groupId>
+				<artifactId>jersey-bean-validation</artifactId>
+    			<version>2.30.1</version>
 			</dependency>
 		</dependencies>
 	</location>
