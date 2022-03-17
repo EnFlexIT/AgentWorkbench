@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws;
+package de.enflexit.awb.ws.core;
 
 import java.io.IOException;
 
@@ -10,8 +10,13 @@ import javax.servlet.ServletResponse;
 
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import de.enflexit.awb.ws.AwbWebHandlerService;
+
 /**
- * The Class AbstractJerseyServletWrapper.
+ * The Class AbstractJerseyServletWrapper enables to integrate and start a Jersey {@link ServletContainer}
+ * within an {@link AwbWebHandlerService}. The original idea was provided by an article by 
+ * <a href="https://dzone.com/articles/setting-up-jax-rs-for-equinox-osgi">Kees Pieters on DZone</a>.<br><br>
+ * The usage of this class can be seen in the AWB Rest API bundle (see bundle 'de.enflexit.awb.ws.restapi')
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */

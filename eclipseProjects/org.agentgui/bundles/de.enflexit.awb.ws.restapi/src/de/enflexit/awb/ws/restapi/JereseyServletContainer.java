@@ -1,7 +1,8 @@
 package de.enflexit.awb.ws.restapi;
 
 import org.glassfish.jersey.servlet.ServletContainer;
-import de.enflexit.awb.ws.AbstractJerseyServletWrapper;
+
+import de.enflexit.awb.ws.core.AbstractJerseyServletWrapper;
 
 
 /**

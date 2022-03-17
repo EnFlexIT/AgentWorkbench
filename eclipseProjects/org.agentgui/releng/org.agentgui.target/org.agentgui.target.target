@@ -21,6 +21,7 @@
 		<repository location="https://download.eclipse.org/eclipse/updates/4.8"/>
 		-->
 	</location>
+	
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="ch.qos.logback.classic" version="0.0.0"/>
 		<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
@@ -36,6 +37,7 @@
 		<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
 		<unit id="com.google.gson" version="0.0.0"/>
 		<unit id="com.google.gson.source" version="0.0.0"/>
+		
 		<unit id="org.glassfish.jersey.core.jersey-server" version="0.0.0"/>
 		<unit id="org.glassfish.jersey.core.jersey-server.source" version="0.0.0"/>
 		<unit id="org.glassfish.jersey.containers.servlet" version="0.0.0"/>
@@ -73,11 +75,14 @@
 				<version>2.3.6</version>
 				<type>jar</type>
 			</dependency>
+			
+			<!-- With an AWB adjustment/release: Check Orbit version of 'org.glassfish.jersey.containers.servlet' and place version in here!!! -->
 			<dependency>
 				<groupId>org.glassfish.jersey.ext</groupId>
 				<artifactId>jersey-bean-validation</artifactId>
     			<version>2.30.1</version>
 			</dependency>
+			-->
 		</dependencies>
 	</location>
 </locations>
