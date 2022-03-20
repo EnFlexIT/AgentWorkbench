@@ -5,6 +5,8 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import de.enflexit.awb.ws.restapi.endPoints.HelloWorld;
+import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 
 /**
  * The Class AwbRestApplication describes the JERSEY application to start on the {@link DefaultAwbServer}.
@@ -20,15 +22,22 @@ public class JerseyResourceConfig extends ResourceConfig {
 	 * Instantiates a AwbRestApplication.
 	 */
 	public JerseyResourceConfig() { 
-		this.initialize();
+		super();
+		this.setApplicationName(APPLICATION_NAME);
+		this.configureEndpoints();
+		this.configureSwagger();
 	}
 	/**
-	 * Initializes the AWB - Rest API.
+	 * Configure REST end points.
 	 */
-	private void initialize() {
-		this.setApplicationName(APPLICATION_NAME);
+	private void configureEndpoints() {
 		this.register(GsonProvider.class);
 		this.register(HelloWorld.class);
 	}
-	
+	/**
+	 * Configure swagger.
+	 */
+	private void configureSwagger() {
+		this.registerClasses(OpenApiResource.class, AcceptHeaderOpenApiResource.class);
+	}
 }

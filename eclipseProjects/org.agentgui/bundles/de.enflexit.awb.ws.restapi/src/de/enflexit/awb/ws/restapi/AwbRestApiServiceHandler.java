@@ -35,8 +35,6 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 			
 			ServletHolder jersey = servletContextHandler.addServlet(JereseyServletContainer.class, "/" + JerseyResourceConfig.APPLICATION_CONTEXT_PATH + "/*");
 			jersey.setInitOrder(1);
-//			jersey.setInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, JerseyResourceConfig.class.getName());
-//			jersey.setInitParameter("jersey.config.server.provider.packages", "de.enflexit.awb.ws.restapi;io.swagger.v3.jaxrs2.integration.resources");
 		}
 		return servletContextHandler;
 	}

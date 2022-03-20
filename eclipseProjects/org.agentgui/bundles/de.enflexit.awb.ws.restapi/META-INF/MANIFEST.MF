@@ -6,10 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.restapi
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
-Service-Component: OSGI-INF/awbWebServerApiService.xml 
+Service-Component: OSGI-INF/awbWebServerApiService.xml
 Require-Bundle: jakarta.servlet-api,
  de.enflexit.awb.ws.core,
- com.google.gson
+ com.google.gson,
+ io.swagger.core.v3.swagger-annotations,
+ io.swagger.core.v3.swagger-jaxrs2
 Export-Package: de.enflexit.awb.ws.restapi,
  de.enflexit.awb.ws.restapi.endPoints
 Bundle-ActivationPolicy: lazy

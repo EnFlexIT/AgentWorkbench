@@ -69,20 +69,26 @@
 	</location>
 	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
+			<!-- JAXB integration as bundle -->
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
 				<version>2.3.6</version>
 				<type>jar</type>
 			</dependency>
-			
 			<!-- With an AWB adjustment/release: Check Orbit version of 'org.glassfish.jersey.containers.servlet' and place version in here!!! -->
 			<dependency>
 				<groupId>org.glassfish.jersey.ext</groupId>
 				<artifactId>jersey-bean-validation</artifactId>
     			<version>2.30.1</version>
 			</dependency>
-			-->
+			<!-- Integration of Swagger / OpenAI for Rest srevices  -->
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-jaxrs2</artifactId>
+				<version>2.1.13</version>
+			</dependency>
+			
 		</dependencies>
 	</location>
 </locations>
