@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.feature"
       label="Agent.Workbench WS-Feature"
-      version="0.0.1.qualifier"
+      version="0.9.0.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.awb.ws.core"
       os="linux,macosx,win32"
