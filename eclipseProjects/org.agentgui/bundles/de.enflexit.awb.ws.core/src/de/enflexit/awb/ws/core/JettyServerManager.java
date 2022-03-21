@@ -3,8 +3,6 @@ package de.enflexit.awb.ws.core;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.eclipse.jetty.security.HashLoginService;
-import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;

@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.common.feature"
       label="Agent.Workbench Common-Feature"
-      version="2.1.8.qualifier"
+      version="2.1.9.qualifier"
       provider-name="EnFlex.IT"
       os="linux,macosx,win32"
       arch="x86,x86_64">
