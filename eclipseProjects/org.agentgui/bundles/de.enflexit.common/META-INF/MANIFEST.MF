@@ -13,6 +13,7 @@ Bundle-ClassPath: .,
  lib/commons-lang/commons-lang3-3.8.1.jar,
  lib/commons-text/commons-text-1.6.jar
 Require-Bundle: de.enflexit.api,
+ com.sun.xml.bind.jaxb-impl,
  org.eclipse.osgi.services,
  org.eclipse.core.runtime,
  org.agentgui.lib.jade,
