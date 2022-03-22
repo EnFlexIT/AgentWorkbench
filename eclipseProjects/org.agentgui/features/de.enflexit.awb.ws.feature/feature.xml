@@ -24,6 +24,23 @@
       <update label="Enflex.IT Update Site" url="https://p2.enflex.it/awb/latest/"/>
    </url>
 
+   <includes
+         id="de.enflexit.awb.ws.jersey.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.enflexit.awb.ws.swagger.feature"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.agentgui.core"/>
+      <import plugin="jakarta.servlet-api"/>
+      <import plugin="jakarta.validation.jakarta.validation-api"/>
+      <import plugin="org.glassfish.jersey.core.jersey-server"/>
+      <import plugin="org.glassfish.jersey.containers.servlet.core"/>
+   </requires>
+
    <plugin
          id="org.eclipse.jetty.server"
          download-size="0"
@@ -75,13 +92,6 @@
 
    <plugin
          id="de.enflexit.awb.ws.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.enflexit.awb.ws.restapi"
          download-size="0"
          install-size="0"
          version="0.0.0"

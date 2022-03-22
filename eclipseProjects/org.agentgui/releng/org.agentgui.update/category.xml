@@ -12,11 +12,22 @@
    <feature id="de.enflexit.common.feature.source" version="0.0.0">
       <category name="org.agentgui"/>
    </feature>
+   
    <feature id="de.enflexit.awb.ws.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
-	   <category name="org.agentgui"/>
+      <category name="de.enflexit.awb.ws"/>
    </feature>
    <feature id="de.enflexit.awb.ws.feature.source">
-	   <category name="org.agentgui"/>
+      <category name="de.enflexit.awb.ws"/>
    </feature>
+   <feature id="de.enflexit.awb.ws.restapi.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
+      <category name="de.enflexit.awb.ws"/>
+   </feature>
+   <feature id="de.enflexit.awb.ws.restapi.feature.source">
+      <category name="de.enflexit.awb.ws"/>
+   </feature>
+
    <category-def name="org.agentgui" label="Agent.Workbench"/>
+   <category-def name="de.enflexit.awb.ws" label="Agent.Workbench - WS">
+      <category name="org.agentgui"/>
+   </category-def>
 </site>
