@@ -5,8 +5,8 @@ import org.osgi.framework.BundleContext;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
-import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.JettyServerManager;
 
 /**
  * The Class WsActivator.
@@ -19,6 +19,7 @@ public class AwbWsActivator implements BundleActivator, ApplicationListener {
 	
 	private AwbWebServerServiceTracker webServerServiceTracker;
 	private AwbWebHandlerServiceTracker webHandlerServiceTracker;
+	
 	
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)

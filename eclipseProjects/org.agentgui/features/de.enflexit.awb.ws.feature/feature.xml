@@ -37,8 +37,6 @@
       <import plugin="org.agentgui.core"/>
       <import plugin="jakarta.servlet-api"/>
       <import plugin="jakarta.validation.jakarta.validation-api"/>
-      <import plugin="org.glassfish.jersey.core.jersey-server"/>
-      <import plugin="org.glassfish.jersey.containers.servlet.core"/>
    </requires>
 
    <plugin
