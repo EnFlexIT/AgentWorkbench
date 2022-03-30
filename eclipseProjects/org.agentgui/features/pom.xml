@@ -29,13 +29,10 @@
 				<version>${tycho-extras-version}</version>
 				<configuration>
 					<excludes>
-						<plugin id="de.enflexit.jaxb" />
 						<plugin id="de.enflexit.oidc.libs" />
 						<plugin id="org.agentgui.lib.jFreeChart" />
 						<plugin id="org.agentgui.lib.jade" />
-						<plugin id="org.agentgui.lib.jep" />
 						<plugin id="org.agentgui.lib.jung" />
-						<plugin id="org.agentgui.lib.scimark" />
 						<feature id="org.eclipse.rcp" />
 						<feature id="org.eclipse.e4.rcp" />
 						<feature id="org.eclipse.emf.ecore" />

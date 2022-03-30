@@ -42,7 +42,7 @@ import org.agentgui.gui.UiBridge;
 
 import jnt.scimark2.Constants;
 import jnt.scimark2.Random;
-import jnt.scimark2.kernel;
+import jnt.scimark2.Kernel;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
@@ -121,23 +121,23 @@ public class BenchmarkMeasurement extends Thread {
 			Random R = new Random(Constants.RANDOM_SEED);
 
 			this.setBenchmarkProgress(1);
-			res[1] = kernel.measureFFT(FFT_size, min_time, R);
+			res[1] = Kernel.measureFFT(FFT_size, min_time, R);
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(2);
-			res[2] = kernel.measureSOR(SOR_size, min_time, R);
+			res[2] = Kernel.measureSOR(SOR_size, min_time, R);
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(3);
-			res[3] = kernel.measureMonteCarlo(min_time, R);
+			res[3] = Kernel.measureMonteCarlo(min_time, R);
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(4);
-			res[4] = kernel.measureSparseMatmult(Sparse_size_M, Sparse_size_nz, min_time, R);
+			res[4] = Kernel.measureSparseMatmult(Sparse_size_M, Sparse_size_nz, min_time, R);
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(5);
-			res[5] = kernel.measureLU(LU_size, min_time, R);
+			res[5] = Kernel.measureLU(LU_size, min_time, R);
 			if (this.isSkipAction()) return;
 
 			this.setBenchmarkProgress(6);

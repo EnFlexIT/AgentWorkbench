@@ -51,6 +51,9 @@
 		-->
 	</location>
 
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- From here, dependencies for the AWB-Core                -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- JAXB integration as bundle -->
 	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
@@ -63,6 +66,20 @@
 		</dependencies>
 	</location>
 	
+	<!-- SciMark -->
+	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+		<dependencies>
+			<dependency>
+				<groupId>es.urjc.etsii.grafo</groupId>
+				<artifactId>scimark</artifactId>
+				<version>2.1.1</version>
+			</dependency>
+		</dependencies>
+	</location>
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- From here, dependencies for the AWB-WS part             -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- Integration of latest Jersey version comptible to Jetty -->
 	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
