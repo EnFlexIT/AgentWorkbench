@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.Vector;
 
-import com.mysql.jdbc.Driver;
+import com.mysql.cj.jdbc.Driver;
 
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;

@@ -32,9 +32,11 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -43,8 +45,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.Statement;
+//import com.mysql.jdbc.Connection;
+//import com.mysql.jdbc.Statement;
 
 /**
  * This class is used within the execution mode as server.master for the

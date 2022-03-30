@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.mysql.jdbc.Driver;
+import com.mysql.cj.jdbc.Driver;
 
 import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
 
