@@ -3,7 +3,7 @@ Automatic-Module-Name: de.enflexit.db.hibernate
 Bundle-ManifestVersion: 2
 Bundle-Name: Hibernate
 Bundle-SymbolicName: de.enflexit.db.hibernate
-Bundle-Version: 5.5.9.qualifier
+Bundle-Version: 5.6.7.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
