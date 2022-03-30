@@ -54,28 +54,32 @@
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- From here, dependencies for the AWB-Core                -->
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!-- JAXB integration as bundle -->
 	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
+			<!-- JAXB integration as bundle -->
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
 				<version>2.3.6</version>
 				<type>jar</type>
 			</dependency>
-		</dependencies>
-	</location>
-	
-	<!-- SciMark -->
-	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-		<dependencies>
+			<!-- SciMark -->
 			<dependency>
 				<groupId>es.urjc.etsii.grafo</groupId>
 				<artifactId>scimark</artifactId>
 				<version>2.1.1</version>
+				<type>jar</type>
+			</dependency>
+			<!-- JFreeChart -->
+			<dependency>
+				<groupId>org.jfree</groupId>
+				<artifactId>jfreechart</artifactId>
+				<version>1.5.3</version>
+				<type>jar</type>
 			</dependency>
 		</dependencies>
 	</location>
+		
 	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- From here, dependencies for the AWB-WS part             -->
@@ -84,31 +88,34 @@
 	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
 			<dependency>
-			    <groupId>org.glassfish.jersey.containers</groupId>
-			    <artifactId>jersey-container-servlet</artifactId>
-			    <version>2.35</version>
-			    <scope>provided</scope>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.9.0</version>
+				<type>jar</type>
 			</dependency>
 			<dependency>
-			    <groupId>org.glassfish.jersey.inject</groupId>
-			    <artifactId>jersey-hk2</artifactId>
-			    <version>2.35</version>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-servlet</artifactId>
+				<version>2.35</version>
+				<type>jar</type>
 			</dependency>
 			<dependency>
-			    <groupId>com.google.code.gson</groupId>
-			    <artifactId>gson</artifactId>
-			    <version>2.9.0</version>
+				<groupId>org.glassfish.jersey.inject</groupId>
+				<artifactId>jersey-hk2</artifactId>
+				<version>2.35</version>
+				<type>jar</type>
 			</dependency>
 		</dependencies>
 	</location>
 			
-	<!-- Integration of Swagger / OpenAI for Rest srevices  -->
+	<!-- Integration of Swagger / OpenAPI for Rest srevices  -->
 	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
 			<dependency>
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-jaxrs2</artifactId>
 				<version>2.1.13</version>
+				<type>jar</type>
 			</dependency>
 		</dependencies>
 	</location>

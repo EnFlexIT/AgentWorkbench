@@ -27,10 +27,8 @@
 		<module>de.enflexit.oshi</module>
 		<module>org.agentgui.core</module>
 		<module>org.agentgui.help</module>
-		<module>org.agentgui.lib.jFreeChart</module>
 		<module>org.agentgui.lib.jade</module>
 		<module>org.agentgui.lib.jung</module>
-		<module>org.agentgui.lib.scimark</module>
 		<module>org.awb.env.maps</module>
 		<module>org.awb.env.networkModel</module>
 	</modules>

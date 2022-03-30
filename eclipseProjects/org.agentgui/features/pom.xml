@@ -30,7 +30,6 @@
 				<configuration>
 					<excludes>
 						<plugin id="de.enflexit.oidc.libs" />
-						<plugin id="org.agentgui.lib.jFreeChart" />
 						<plugin id="org.agentgui.lib.jade" />
 						<plugin id="org.agentgui.lib.jung" />
 						<feature id="org.eclipse.rcp" />
