@@ -22,6 +22,11 @@
 			<version>${hibernate-version}</version>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>${hibernate-version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
