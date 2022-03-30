@@ -467,6 +467,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 				try {
 
+					boolean isApplication = Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION;
+
 					// --- Register agents that have to be started with the environment -----------
 					GraphEnvironmentController.this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
 					GraphEnvironmentController.this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
@@ -483,37 +485,36 @@ public class GraphEnvironmentController extends EnvironmentController {
 					}
 					
 					// --- 0. Define a new NetworkModel -------------------------------------------
-					NetworkModel netModel = new NetworkModel();
+					NetworkModel networkModel = new NetworkModel();
 					// --- => Set the NetworkModel instance to the GraphNodePositionFactory -------
-					GraphNodePositionFactory.setLoadingNetworkModel(netModel);
+					GraphNodePositionFactory.setLoadingNetworkModel(networkModel);
 					
 					// --- 1. Load component type settings from file ------------------------------
 					GeneralGraphSettings4MAS ggs4MAS = GraphEnvironmentController.this.loadGeneralGraphSettings();
-					netModel.setGeneralGraphSettings4MAS(ggs4MAS);
+					networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
 					// --- 2. Remind the list of custom toolbar elements --------------------------
 					if (ggs4MAS!=null && GraphEnvironmentController.this.getNetworkModel()!=null && GraphEnvironmentController.this.getGeneralGraphSettings4MAS()!=null) {
 						ggs4MAS.setCustomToolbarComponentDescriptions(GraphEnvironmentController.this.getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions());
 					}
 					
 					// --- 3. Load the component definitions and other from the component file ----
-					netModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
+					networkModel.loadComponentsFile(GraphEnvironmentController.this.getFileXML());
 
 					// --- 4. Load the graph topology from the graph file -------------------------
-					netModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
+					networkModel.loadGraphFile(GraphEnvironmentController.this.getFileGraphML());
 					
 					// --- 5. Refresh the graph elements in the NetworkModel ----------------------
-					netModel.refreshGraphElements();
+					networkModel.refreshGraphElements();
 					
 					// --- 6. Load individual data models of components ---------------------------
-					boolean isApplication = Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION;
-					GraphEnvironmentController.this.loadDataModelNetworkElements(netModel, GraphEnvironmentController.this.getSetupName(), isApplication, null, null);
+					GraphEnvironmentController.this.loadDataModelNetworkElements(networkModel, GraphEnvironmentController.this.getSetupName(), isApplication, null, null);
 					
 					// --- Use case 'Application' ? -----------------------------------------------
-					if (isApplication==true) {
+					if (isApplication==false) {
 						// ------------------------------------------------------------------------
 						// --- Directly assign NetworkModel to graph controller -------------------
 						// ------------------------------------------------------------------------
-						GraphEnvironmentController.this.setDisplayEnvironmentModel(netModel);
+						GraphEnvironmentController.this.setDisplayEnvironmentModel(networkModel);
 						
 					} else {
 						// ------------------------------------------------------------------------
@@ -528,7 +529,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 						}	
 						
 						// --- Assign NetworkMoldel to visualization ------------------------------
-						final NetworkModel netModelFinal = netModel;
+						final NetworkModel netModelFinal = networkModel;
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
 							public void run() {
