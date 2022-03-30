@@ -29,7 +29,6 @@
 				<version>${tycho-extras-version}</version>
 				<configuration>
 					<excludes>
-						<plugin id="de.enflexit.oidc.libs" />
 						<plugin id="org.agentgui.lib.jade" />
 						<plugin id="org.agentgui.lib.jung" />
 						<feature id="org.eclipse.rcp" />

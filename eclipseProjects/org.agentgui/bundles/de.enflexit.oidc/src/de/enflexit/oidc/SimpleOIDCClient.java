@@ -64,6 +64,7 @@ import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
 import com.nimbusds.oauth2.sdk.auth.Secret;
 import com.nimbusds.oauth2.sdk.client.ClientRegistrationErrorResponse;
 import com.nimbusds.oauth2.sdk.client.ClientRegistrationResponse;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
@@ -305,13 +306,17 @@ public class SimpleOIDCClient {
 	 */
 	public void registerClient(BearerAccessToken initialAccessToken) throws SerializeException, IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 
-//		System.out.println("Client metadata");
-//		System.out.println(metadata.toJSONObject());
-
 		// Make registration request
 		OIDCClientRegistrationRequest registrationRequest = new OIDCClientRegistrationRequest(providerMetadata.getRegistrationEndpointURI(), clientMetadata, initialAccessToken);
-		HTTPResponse regHTTPResponse = registrationRequest.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
 
+		// --- Old style ----------
+//		HTTPResponse regHTTPResponse = registrationRequest.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
+		// --- New style ----------
+		HTTPRequest request = registrationRequest.toHTTPRequest();
+		request.setHostnameVerifier(null);
+		request.setSSLSocketFactory(Trust.getSocketFactory(trustStoreFile));
+		HTTPResponse regHTTPResponse = request.send();
+		
 		// Parse and check response
 		ClientRegistrationResponse registrationResponse = OIDCClientRegistrationResponseParser.parse(regHTTPResponse);
 
@@ -506,7 +511,14 @@ public class SimpleOIDCClient {
 		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant);
 		HTTPResponse tokenHTTPResp = null;
 		try {
-			tokenHTTPResp = tokenReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
+			// --- Old style ----------
+//			tokenHTTPResp = tokenReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
+			// --- New style ----------
+			HTTPRequest request = tokenReq.toHTTPRequest();
+			request.setHostnameVerifier(null);
+			request.setSSLSocketFactory(Trust.getSocketFactory(trustStoreFile));
+			tokenHTTPResp = request.send();
+			
 		} catch (SerializeException | IOException e) {
 			e.printStackTrace();
 		}
@@ -584,9 +596,15 @@ public class SimpleOIDCClient {
 				userInfoEndpointURI,
 				(BearerAccessToken) accessToken);
 
-		HTTPResponse userInfoHTTPResp = null;
-		userInfoHTTPResp = userInfoReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
-
+		// --- Old style ----------
+//		HTTPResponse userInfoHTTPResp = userInfoReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
+		// --- New style ----------
+		HTTPRequest request = userInfoReq.toHTTPRequest();
+		request.setHostnameVerifier(null);
+		request.setSSLSocketFactory(Trust.getSocketFactory(trustStoreFile));
+		HTTPResponse userInfoHTTPResp = request.send();
+		
+		
 		UserInfoResponse userInfoResponse = null;
 		userInfoResponse = UserInfoResponse.parse(userInfoHTTPResp);
 

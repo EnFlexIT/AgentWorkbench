@@ -29,7 +29,6 @@
 
 package agentgui.simulationService.load;
 
-import de.enflexit.oshi.SystemInfoTest;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
@@ -45,7 +44,7 @@ import oshi.hardware.GlobalMemory;
 public class LoadMeasureOSHI implements Cloneable {
 	
 	private boolean debug = false;
-	private boolean debugOshiSystemInfoTest = false;
+	private boolean debugOshiSystemInfoTest = true;
 	
 	private SystemInfo systemInfo;
 	
@@ -92,7 +91,7 @@ public class LoadMeasureOSHI implements Cloneable {
         try {
         	// --- Print OSHI example --------------------- 
         	if (this.debugOshiSystemInfoTest)  {
-        		SystemInfoTest.main(null);
+        		_OSHI.test(null);
         	}
         	
      		// --- Get CPU information ---------------------

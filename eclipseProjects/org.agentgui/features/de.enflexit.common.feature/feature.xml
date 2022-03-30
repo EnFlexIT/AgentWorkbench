@@ -62,19 +62,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.oidc.libs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.enflexit.oshi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.slf4j.api"
          download-size="0"
          install-size="0"
@@ -118,6 +105,13 @@
 
    <plugin
          id="com.sun.xml.bind.jaxb-impl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.github.oshi.oshi-core"
          download-size="0"
          install-size="0"
          version="0.0.0"

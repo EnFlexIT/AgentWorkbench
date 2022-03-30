@@ -12,7 +12,5 @@ Require-Bundle: de.enflexit.api,
  org.awb.env.networkModel,
  de.enflexit.db.hibernate,
  de.enflexit.db.mySQL,
- de.enflexit.oidc,
- de.enflexit.oidc.libs,
- de.enflexit.oshi
+ de.enflexit.oidc 
 Bundle-Vendor: EnFlex.IT

@@ -23,8 +23,6 @@
 		<module>de.enflexit.geography</module>
 		<module>de.enflexit.jaxb.impl.binding</module>
 		<module>de.enflexit.oidc</module>
-		<module>de.enflexit.oidc.libs</module>
-		<module>de.enflexit.oshi</module>
 		<module>org.agentgui.core</module>
 		<module>org.agentgui.help</module>
 		<module>org.agentgui.lib.jade</module>
