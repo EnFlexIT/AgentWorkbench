@@ -128,7 +128,11 @@ public class DatabaseSettingsPanel extends JPanel {
 				@Override
 				public void itemStateChanged(ItemEvent ie) {
 					if (ie.getStateChange()==ItemEvent.SELECTED) {
-						setDatabaseSystem(getDatabaseSystem());
+						// --- Get new selection and update UI ----------------
+						String newDatavabeSystem = String.valueOf(DatabaseSettingsPanel.this.getJComboBoxDbType().getSelectedItem());
+						if (newDatavabeSystem.isBlank()==false) {
+							DatabaseSettingsPanel.this.setDatabaseSystem(newDatavabeSystem, false);
+						}
 					}
 				}
 			});
@@ -227,13 +231,22 @@ public class DatabaseSettingsPanel extends JPanel {
 	 * @param newDatabaseSystem the new database system
 	 */
 	private void setDatabaseSystem(String newDatabaseSystem) {
+		this.setDatabaseSystem(newDatabaseSystem, true);
+	}
+	/**
+	 * Sets the database system.
+	 *
+	 * @param newDatabaseSystem the new database system
+	 * @param isUpdateComboBox the indicator to update the local combo box for selection
+	 */
+	private void setDatabaseSystem(String newDatabaseSystem, boolean isUpdateComboBox) {
 		if (this.databaseSystem==null || this.databaseSystem.equals(newDatabaseSystem)==false) {
 			this.databaseSystem = newDatabaseSystem;
-			this.getJComboBoxDbType().setSelectedItem(newDatabaseSystem);
+			if (isUpdateComboBox) this.getJComboBoxDbType().setSelectedItem(newDatabaseSystem);
 			this.setDatabaseSettingPanel(newDatabaseSystem);
 		}
 	}
-	
+
 	/**
 	 * Sets the database setting panel according to the specified database system.
 	 * @param dbSystem the database system to use

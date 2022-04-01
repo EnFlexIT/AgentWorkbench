@@ -83,12 +83,6 @@
 				<artifactId>oshi-core</artifactId>
 				<version>6.1.5</version>
 			</dependency>
-			<!-- MySQL - Connector -->
-			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>8.0.28</version>
-			</dependency>
 			<!-- OAuth 2 -->
 			<dependency>
 				<groupId>com.nimbusds</groupId>
@@ -97,6 +91,31 @@
 			</dependency>
 		</dependencies>
 	</location>
+
+	<!-- Supported JDBC Driver -->
+	<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+		<dependencies>
+			<!-- MariaDB-connector -->
+			<dependency>
+			    <groupId>org.mariadb.jdbc</groupId>
+			    <artifactId>mariadb-java-client</artifactId>
+			    <version>3.0.4</version>
+			</dependency>
+			<!-- MySQL-connector -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>8.0.28</version>
+			</dependency>
+			<!-- PostGreSQL-connector -->
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>42.3.3</version>
+			</dependency>
+		</dependencies>
+	</location>
+	
 	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- From here, dependencies for the AWB-WS part             -->

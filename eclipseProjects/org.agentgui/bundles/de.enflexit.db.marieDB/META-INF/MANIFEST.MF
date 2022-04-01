@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: de.enflexit.db.mariaDB
+Bundle-ManifestVersion: 2
+Bundle-Name: MariaDB - JDBC Connector
+Bundle-SymbolicName: de.enflexit.db.mariaDB
+Bundle-Version: 3.0.4.qualifier
+Bundle-Vendor: EnFlex.IT
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/dbService.xml
+Export-Package: de.enflexit.db.maria
+Require-Bundle: de.enflexit.db.hibernate,
+ mariadb-java-client;bundle-version="3.0.4"

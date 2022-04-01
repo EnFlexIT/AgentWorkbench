@@ -298,7 +298,9 @@ public class MySQLSettingsPanel extends AbstractDatabaseSettingsPanel {
 		String urlProperty = properties.getProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_URL, "");
 
 		// --- Remove the prefix of the URL ---------------
-		urlProperty = urlProperty.replace("jdbc:mysql://", "");
+		String searchString = "//";
+		int cutAt = urlProperty.indexOf(searchString);
+		urlProperty = urlProperty.substring(cutAt + searchString.length());
 		
 		// --- Extract the additional parameter first -----
 		String addParams = null;
