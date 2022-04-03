@@ -39,7 +39,8 @@ Require-Bundle: de.enflexit.api,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.eclipse.core.runtime,
- org.eclipse.osgi.services
+ org.eclipse.osgi.services,
+ org.apache.commons.commons-text
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.xml.bind;version="2.3.3",
  javax.xml.bind.annotation;version="2.3.3"

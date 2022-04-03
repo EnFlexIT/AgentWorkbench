@@ -464,10 +464,17 @@ public class HibernateUtilities {
 					ServiceReference<?>[] serviceRefs = context.getAllServiceReferences(HibernateDatabaseService.class.getName(), null);
 					if (serviceRefs!=null) {
 						for (int i = 0; i < serviceRefs.length; i++) {
-							HibernateDatabaseService dbService = (HibernateDatabaseService) context.getService(serviceRefs[i]);
-							HibernateDatabaseService dbServiceAvailable = databaseServices.get(dbService.getDatabaseSystemName());
-							if (dbServiceAvailable==null) {
-								databaseServices.put(dbService.getDatabaseSystemName(), dbService);
+							// --- Remind service -------------------
+							try {
+								HibernateDatabaseService dbService = (HibernateDatabaseService) context.getService(serviceRefs[i]);
+								HibernateDatabaseService dbServiceAvailable = databaseServices.get(dbService.getDatabaseSystemName());
+								if (dbServiceAvailable==null) {
+									databaseServices.put(dbService.getDatabaseSystemName(), dbService);
+								}
+								
+							} catch (Exception ex) {
+								System.err.println("[" + HibernateUtilities.class.getSimpleName() + "] Error while register DB-Service '" + serviceRefs[i].toString() + "':");
+								ex.printStackTrace();
 							}
 						}
 					}	

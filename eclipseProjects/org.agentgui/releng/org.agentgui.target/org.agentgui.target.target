@@ -56,6 +56,18 @@
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 		<dependencies>
+			<!-- Apache commons-compress -->
+			<dependency>
+			    <groupId>org.apache.commons</groupId>
+			    <artifactId>commons-compress</artifactId>
+			    <version>1.21</version>
+			</dependency>
+			<!-- Apache commons-text -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>1.9</version>
+			</dependency>
 			<!-- JAXB integration as bundle -->
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>

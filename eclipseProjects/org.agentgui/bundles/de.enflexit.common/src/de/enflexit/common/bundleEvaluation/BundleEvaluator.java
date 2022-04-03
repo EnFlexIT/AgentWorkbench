@@ -123,32 +123,72 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("ch.qos.logback.core");
 			bundleExcludeHashSet.add("ch.qos.logback.classic");
 			bundleExcludeHashSet.add("ch.qos.logback.slf4j");
+			
 			bundleExcludeHashSet.add("com.ibm.icu");
+			bundleExcludeHashSet.add("com.github.luben");
+			bundleExcludeHashSet.add("com.github.oshi");
+			
+			bundleExcludeHashSet.add("com.google.gson");
+			bundleExcludeHashSet.add("com.google.guava");
+			bundleExcludeHashSet.add("com.google.protobuf");
+			bundleExcludeHashSet.add("com.jcraft.jsch");
+			bundleExcludeHashSet.add("com.mysql.cj");
+			bundleExcludeHashSet.add("com.nimbusds");
+			bundleExcludeHashSet.add("com.sun.jna");
+			bundleExcludeHashSet.add("com.sun.xml");
+			
+			bundleExcludeHashSet.add("jakarta.activation-api");
+			bundleExcludeHashSet.add("jakarta.annotation");
+			bundleExcludeHashSet.add("jakarta.annotation-api");
+			bundleExcludeHashSet.add("jakarta.inject");
+			bundleExcludeHashSet.add("jakarta.servlet");
+			bundleExcludeHashSet.add("jakarta.servlet-api");
+			bundleExcludeHashSet.add("jakarta.validation");
+			bundleExcludeHashSet.add("jakarta.xml");
+			
 			bundleExcludeHashSet.add("javax.annotation");
 			bundleExcludeHashSet.add("javax.inject");
 			bundleExcludeHashSet.add("javax.servlet");
 			bundleExcludeHashSet.add("javax.xml");
+			
+			bundleExcludeHashSet.add("lang-tag");
+			bundleExcludeHashSet.add("javassist");
+			bundleExcludeHashSet.add("joda-time");
+			bundleExcludeHashSet.add("mariadb-java-client");
+			bundleExcludeHashSet.add("net.minidev");
+			bundleExcludeHashSet.add("oauth2-oidc-sdk");
+			
 			bundleExcludeHashSet.add("org.apache");
+			bundleExcludeHashSet.add("org.bouncycastle");
+			bundleExcludeHashSet.add("org.brotli.dec");
+			bundleExcludeHashSet.add("org.cryptacular");
 			bundleExcludeHashSet.add("org.eclipse");
+			bundleExcludeHashSet.add("org.glassfish.hk2");
+			bundleExcludeHashSet.add("org.hamcrest.core");
+			bundleExcludeHashSet.add("org.jsr-305");
+			bundleExcludeHashSet.add("org.junit");
+			bundleExcludeHashSet.add("org.jvnet");
+			bundleExcludeHashSet.add("org.objectweb.asm");
+			bundleExcludeHashSet.add("org.opentest4j");
+			bundleExcludeHashSet.add("org.postgresql.jdbc");
 			bundleExcludeHashSet.add("org.sat4j");
 			bundleExcludeHashSet.add("org.slf4j.api");
 			bundleExcludeHashSet.add("org.tukaani");
 			bundleExcludeHashSet.add("org.w3c");
+
+			bundleExcludeHashSet.add("slf4j.api");
+			
+			bundleExcludeHashSet.add("wrapped");
 			
 			bundleExcludeHashSet.add("de.enflexit.api");
 			bundleExcludeHashSet.add("de.enflexit.common");
 			bundleExcludeHashSet.add("de.enflexit.db.hibernate");
+			bundleExcludeHashSet.add("de.enflexit.db.mariaDB");
 			bundleExcludeHashSet.add("de.enflexit.db.mySQL");
-			bundleExcludeHashSet.add("de.enflexit.jaxb");
+			bundleExcludeHashSet.add("de.enflexit.db.postgres");
 			bundleExcludeHashSet.add("de.enflexit.oidc");
-			bundleExcludeHashSet.add("de.enflexit.oidc.libs");
 			bundleExcludeHashSet.add("de.enflexit.oshi");
 			
-			bundleExcludeHashSet.add("org.agentgui.lib.bouncyCastle");
-			bundleExcludeHashSet.add("org.agentgui.lib.googleTranslate");
-			bundleExcludeHashSet.add("org.agentgui.lib.hypericSigar");
-			bundleExcludeHashSet.add("org.agentgui.lib.jep");
-			bundleExcludeHashSet.add("org.agentgui.lib.jFreeChart");
 			bundleExcludeHashSet.add("org.agentgui.lib.jung");
 			bundleExcludeHashSet.add("org.agentgui.lib.scimark");
 			

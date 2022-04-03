@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.enflexit.db.feature"
+      label="Agent.Workbench Database-Feature"
+      version="5.6.7.qualifier"
+      provider-name="EnFlex.IT"
+      os="linux,macosx,win32"
+      arch="x86,x86_64">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="Enflex.IT Update Site" url="https://p2.enflex.it/awb/latest/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="slf4j.api"/>
+      <import plugin="mariadb-java-client" version="3.0.4" match="greaterOrEqual"/>
+      <import plugin="com.mysql.cj"/>
+      <import plugin="org.postgresql.jdbc"/>
+   </requires>
+
+   <plugin
+         id="de.enflexit.db.hibernate"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.db.mariaDB"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.db.mySQL"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.db.postgres"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

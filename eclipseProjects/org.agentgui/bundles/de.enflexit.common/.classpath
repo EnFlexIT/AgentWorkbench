@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/commons-lang/commons-lang3-3.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-text/commons-text-1.6.jar" sourcepath="C:/Users/Christian/.m2/repository/org/apache/commons/commons-text/1.6/commons-text-1.6-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-compress/commons-compress-1.18.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

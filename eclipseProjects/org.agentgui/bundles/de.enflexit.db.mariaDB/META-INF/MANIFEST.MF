@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: de.enflexit.db.mariaDB
 Bundle-ManifestVersion: 2
-Bundle-Name: MariaDB - JDBC Connector
+Bundle-Name: MariaDB - Integration
 Bundle-SymbolicName: de.enflexit.db.mariaDB
 Bundle-Version: 3.0.4.qualifier
 Bundle-Vendor: EnFlex.IT

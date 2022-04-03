@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: de.enflexit.db.mySQL
 Bundle-ManifestVersion: 2
-Bundle-Name: MySQL - JDBC Connector
+Bundle-Name: MySQL - Integration
 Bundle-SymbolicName: de.enflexit.db.mySQL
 Bundle-Version: 8.0.28.qualifier
 Bundle-Vendor: EnFlex.IT
