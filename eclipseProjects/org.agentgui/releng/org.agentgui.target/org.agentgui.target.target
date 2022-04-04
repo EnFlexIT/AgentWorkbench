@@ -60,13 +60,15 @@
 			<dependency>
 			    <groupId>org.apache.commons</groupId>
 			    <artifactId>commons-compress</artifactId>
-			    <version>1.21</version>
+			    <version>1.18</version>
+			    <type>jar</type>
 			</dependency>
 			<!-- Apache commons-text -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-text</artifactId>
 				<version>1.9</version>
+				<type>jar</type>
 			</dependency>
 			<!-- JAXB integration as bundle -->
 			<dependency>
@@ -94,12 +96,14 @@
 				<groupId>com.github.oshi</groupId>
 				<artifactId>oshi-core</artifactId>
 				<version>6.1.5</version>
+				<type>jar</type>
 			</dependency>
 			<!-- OAuth 2 -->
 			<dependency>
 				<groupId>com.nimbusds</groupId>
 				<artifactId>oauth2-oidc-sdk</artifactId>
 				<version>9.32</version>
+				<type>jar</type>
 			</dependency>
 		</dependencies>
 	</location>
@@ -112,18 +116,21 @@
 			    <groupId>org.mariadb.jdbc</groupId>
 			    <artifactId>mariadb-java-client</artifactId>
 			    <version>3.0.4</version>
+			    <type>jar</type>
 			</dependency>
 			<!-- MySQL-connector -->
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>8.0.28</version>
+				<type>jar</type>
 			</dependency>
 			<!-- PostGreSQL-connector -->
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>42.3.3</version>
+				<type>jar</type>
 			</dependency>
 		</dependencies>
 	</location>
