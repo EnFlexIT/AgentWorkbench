@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.restapi.feature"
       label="Agent.Workbench REST-API Feature"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="EnFlex.IT">
 
    <description url="http://www.example.com/description">
