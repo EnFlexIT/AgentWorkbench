@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
 <target includeMode="feature" name="org.agentgui.target" sequenceNumber="70">
-<locations>
-	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-		<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
-		<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-		<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/releases/2022-03/"/>
-		<!--  Space for older versions (as reminder) 
+	<locations>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
+			<repository location="https://download.eclipse.org/releases/2022-03/"/>
+			<!--  Space for older versions (as reminder) 
 		<repository location="https://download.eclipse.org/releases/2021-12/"/>
 		<repository location="https://download.eclipse.org/releases/2021-09/"/>
 		<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java8 
@@ -20,23 +20,23 @@
 		<repository location="https://download.eclipse.org/releases/2018-09/"/>
 		<repository location="https://download.eclipse.org/eclipse/updates/4.8"/>
 		-->
-	</location>
-	
-	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-		<unit id="ch.qos.logback.classic" version="0.0.0"/>
-		<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
-		<unit id="ch.qos.logback.core" version="0.0.0"/>
-		<unit id="ch.qos.logback.core.source" version="0.0.0"/>
-		<unit id="ch.qos.logback.slf4j" version="0.0.0"/>
-		<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
-		<unit id="org.slf4j.api" version="0.0.0"/>
-		<unit id="org.slf4j.api.source" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcpkix" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcpkix.source" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
-		<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
-		<!--  Space for older versions (as reminder)
+		</location>
+
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="ch.qos.logback.classic" version="0.0.0"/>
+			<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
+			<unit id="ch.qos.logback.core" version="0.0.0"/>
+			<unit id="ch.qos.logback.core.source" version="0.0.0"/>
+			<unit id="ch.qos.logback.slf4j" version="0.0.0"/>
+			<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
+			<unit id="org.slf4j.api" version="0.0.0"/>
+			<unit id="org.slf4j.api.source" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcpkix" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcpkix.source" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
+			<!--  Space for older versions (as reminder)
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20210825222808/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository"/> <= Last for Java8
@@ -49,131 +49,151 @@
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository"/>
 		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
 		-->
-	</location>
+		</location>
 
-	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!-- From here, dependencies for the AWB-Core                -->
-	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-		<dependencies>
-			<!-- Apache commons-compress -->
-			<dependency>
-			    <groupId>org.apache.commons</groupId>
-			    <artifactId>commons-compress</artifactId>
-			    <version>1.18</version>
-			    <type>jar</type>
-			</dependency>
-			<!-- Apache commons-text -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-text</artifactId>
-				<version>1.9</version>
-				<type>jar</type>
-			</dependency>
-			<!-- JAXB integration as bundle -->
-			<dependency>
-				<groupId>com.sun.xml.bind</groupId>
-				<artifactId>jaxb-impl</artifactId>
-				<version>2.3.6</version>
-				<type>jar</type>
-			</dependency>
-			<!-- SciMark -->
-			<dependency>
-				<groupId>es.urjc.etsii.grafo</groupId>
-				<artifactId>scimark</artifactId>
-				<version>2.1.1</version>
-				<type>jar</type>
-			</dependency>
-			<!-- JFreeChart -->
-			<dependency>
-				<groupId>org.jfree</groupId>
-				<artifactId>jfreechart</artifactId>
-				<version>1.5.3</version>
-				<type>jar</type>
-			</dependency>
-			<!-- OSHI -->
-			<dependency>
-				<groupId>com.github.oshi</groupId>
-				<artifactId>oshi-core</artifactId>
-				<version>6.1.5</version>
-				<type>jar</type>
-			</dependency>
-			<!-- OAuth 2 -->
-			<dependency>
-				<groupId>com.nimbusds</groupId>
-				<artifactId>oauth2-oidc-sdk</artifactId>
-				<version>9.32</version>
-				<type>jar</type>
-			</dependency>
-		</dependencies>
-	</location>
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, dependencies for the AWB-Core                -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<!-- Apache commons-compress -->
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-compress</artifactId>
+					<version>1.18</version>
+					<type>jar</type>
+				</dependency>
+				<!-- Apache commons-text -->
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-text</artifactId>
+					<version>1.9</version>
+					<type>jar</type>
+				</dependency>
+				<!-- JAXB integration as bundle -->
+				<dependency>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+					<version>2.3.6</version>
+					<type>jar</type>
+				</dependency>
+				<!-- SciMark -->
+				<dependency>
+					<groupId>es.urjc.etsii.grafo</groupId>
+					<artifactId>scimark</artifactId>
+					<version>2.1.1</version>
+					<type>jar</type>
+				</dependency>
+				<!-- JFreeChart -->
+				<dependency>
+					<groupId>org.jfree</groupId>
+					<artifactId>jfreechart</artifactId>
+					<version>1.5.3</version>
+					<type>jar</type>
+				</dependency>
+				<!-- OSHI -->
+				<dependency>
+					<groupId>com.github.oshi</groupId>
+					<artifactId>oshi-core</artifactId>
+					<version>6.1.5</version>
+					<type>jar</type>
+				</dependency>
+				<!-- OAuth 2 -->
+				<dependency>
+					<groupId>com.nimbusds</groupId>
+					<artifactId>oauth2-oidc-sdk</artifactId>
+					<version>9.32</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
 
-	<!-- Supported JDBC Driver -->
-	<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-		<dependencies>
-			<!-- MariaDB-connector -->
-			<dependency>
-			    <groupId>org.mariadb.jdbc</groupId>
-			    <artifactId>mariadb-java-client</artifactId>
-			    <version>3.0.4</version>
-			    <type>jar</type>
-			</dependency>
-			<!-- MySQL-connector -->
-			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>8.0.28</version>
-				<type>jar</type>
-			</dependency>
-			<!-- PostGreSQL-connector -->
-			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>42.3.3</version>
-				<type>jar</type>
-			</dependency>
-		</dependencies>
-	</location>
-	
-	
-	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!-- From here, dependencies for the AWB-WS part             -->
-	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!-- Integration of latest Jersey version comptible to Jetty -->
-	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-		<dependencies>
-			<dependency>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-				<version>2.9.0</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.containers</groupId>
-				<artifactId>jersey-container-servlet</artifactId>
-				<version>2.35</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.inject</groupId>
-				<artifactId>jersey-hk2</artifactId>
-				<version>2.35</version>
-				<type>jar</type>
-			</dependency>
-		</dependencies>
-	</location>
-			
-	<!-- Integration of Swagger / OpenAPI for Rest srevices  -->
-	<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-		<dependencies>
-			<dependency>
-				<groupId>io.swagger.core.v3</groupId>
-				<artifactId>swagger-jaxrs2</artifactId>
-				<version>2.1.13</version>
-				<type>jar</type>
-			</dependency>
-		</dependencies>
-	</location>
-</locations>
+		<!-- Supported JDBC Driver -->
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<!-- MariaDB-connector -->
+				<dependency>
+					<groupId>org.mariadb.jdbc</groupId>
+					<artifactId>mariadb-java-client</artifactId>
+					<version>3.0.4</version>
+					<type>jar</type>
+				</dependency>
+				<!-- MySQL-connector -->
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>8.0.28</version>
+					<type>jar</type>
+				</dependency>
+				<!-- PostGreSQL-connector -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>42.3.3</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+
+
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, dependencies for the AWB-WS part             -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- Integration of latest Jersey version comptible to Jetty -->
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+					<version>2.9.0</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.containers</groupId>
+					<artifactId>jersey-container-servlet</artifactId>
+					<version>2.35</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.media</groupId>
+					<artifactId>jersey-media-json-jackson</artifactId>
+					<version>2.35</version>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.media</groupId>
+					<artifactId>jersey-media-multipart</artifactId>
+					<version>2.35</version>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.inject</groupId>
+					<artifactId>jersey-hk2</artifactId>
+					<version>2.35</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<artifactId>jackson-datatype-jsr310</artifactId>
+					<version>2.12.2</version>
+				</dependency>
+				<dependency>
+					<groupId>com.brsanthu</groupId>
+					<artifactId>migbase64</artifactId>
+					<version>2.2</version>
+				</dependency>
+			</dependencies>
+		</location>
+
+		<!-- Integration of Swagger / OpenAPI for Rest srevices  -->
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>io.swagger.core.v3</groupId>
+					<artifactId>swagger-jaxrs2</artifactId>
+					<version>2.1.13</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+	</locations>
 
 </target>

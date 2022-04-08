@@ -1,0 +1,123 @@
+---
+openapi: 3.0.0
+info:
+  title: Agent.Workbench REST - API
+  description: This is the REST-API for Agent.Workbench in an embbedded system mode.
+  contact:
+    name: EnFlex.IT
+    url: https://www.enflex.it
+    email: admin@enflex.it
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/EnFlex.IT/AWB-Rest/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://localhost:8080/api
+  description: AWB-Embedded System
+security:
+- AwbApiKey: []
+tags:
+- name: admins
+  description: Secured Admin-only calls
+paths:
+  /info:
+    get:
+      tags:
+      - admins
+      summary: Returns system information
+      description: |
+        Returns Hardware and system  inforamtion.
+      externalDocs:
+        description: See description on GitBook
+        url: https://www.gitbook.io
+      responses:
+        "200":
+          description: AWB-State
+          content:
+            applicaion/json:
+              schema:
+                $ref: '#/components/schemas/SystemInformation'
+  /state:
+    get:
+      tags:
+      - admins
+      summary: Returns the current AWB state
+      description: |
+        Returns the current state of Agent.Workbench consisiting information  about the execution mode, the currently open project and other.
+      externalDocs:
+        description: See description on GitBook
+        url: https://www.gitbook.io
+      responses:
+        "200":
+          description: AWB-State
+          content:
+            applicaion/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionState'
+  /load:
+    get:
+      tags:
+      - admins
+      summary: Returns the current System load
+      description: |
+        Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes
+      responses:
+        "200":
+          description: System Load
+          content:
+            applicaion/json:
+              schema:
+                $ref: '#/components/schemas/SysytemLoad'
+components:
+  schemas:
+    SystemInformation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+      description: The system information consisting of Hardware and OS information
+    ExecutionState:
+      type: object
+      properties:
+        executionMode:
+          type: string
+          description: |
+            * 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects
+          enum:
+          - APPLICATION
+          - SERVER
+          - SERVER_MASTER
+          - SERVER_SLAVE
+          - DEVICE_SYSTEM
+        deviceSystemExecutionMode:
+          type: string
+          description: |
+            * 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project
+          enum:
+          - SETUP
+          - AGENT
+      description: The Agent.Workbench execution state
+    SysytemLoad:
+      type: object
+      properties:
+        cpuUsage:
+          type: number
+          description: The CPU usage in percent
+          format: float
+        memUsage:
+          type: number
+          description: The memory usage in percent
+          format: float
+        heapUsage:
+          type: number
+          description: The Heap usage in percen
+          format: float
+      description: The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.
+  securitySchemes:
+    AwbApiKey:
+      type: apiKey
+      name: X-API-KEY
+      in: header

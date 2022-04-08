@@ -32,11 +32,17 @@
          id="de.enflexit.awb.ws.swagger.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.enflexit.awb.ws.jackson.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.agentgui.core"/>
       <import plugin="jakarta.servlet-api"/>
       <import plugin="jakarta.validation.jakarta.validation-api"/>
+      <import plugin="org.glassfish.jersey.core.jersey-server"/>
+      <import plugin="org.glassfish.jersey.containers.jersey-container-servlet-core"/>
    </requires>
 
    <plugin

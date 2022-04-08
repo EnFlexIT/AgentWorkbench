@@ -14,6 +14,7 @@
 
 	<modules>
 		<module>de.enflexit.awb.ws.feature</module>
+		<module>de.enflexit.awb.ws.jackson.feature</module>
 		<module>de.enflexit.awb.ws.jersey.feature</module>
 		<module>de.enflexit.awb.ws.restapi.feature</module>
 		<module>de.enflexit.awb.ws.swagger.feature</module>
