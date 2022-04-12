@@ -6,8 +6,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<yamlFile>RestApi.yaml</yamlFile>
-		<srcBasePackage>de.enflexit.awb.ws.restapi</srcBasePackage>
+		<yamlFile>RestApi.json</yamlFile>
+		<srcBasePackage>de.enflexit.awb.ws.restapi.gen</srcBasePackage>
 		
 		<srcDirMainTarget>/target/generated-sources/swagger/src/main/java/</srcDirMainTarget>
 		<srcDirGenTarget>/target/generated-sources/swagger/src/gen/java/</srcDirGenTarget>
@@ -22,9 +22,9 @@
 		<plugins>
 		
 			<plugin>
-				<groupId>io.swagger.codegen.v3</groupId>
-				<artifactId>swagger-codegen-maven-plugin</artifactId>
-				<version>${swaggerCodegenVersion}</version>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>5.4.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -35,11 +35,12 @@
 							<!-- For client code -->
 							<!-- <language>java</language> --> 
 
-							 <!-- For server code -->
-							<language>jaxrs-jersey</language>
+							 <!-- For server code -->	
+							<!--<generatorName>jaxrs-spec</generatorName>-->
+							<generatorName>jaxrs-jersey</generatorName>
 							<library>jersey2</library>
 							
-							<apiPackage>${srcBasePackage}.api</apiPackage>
+							<apiPackage>${srcBasePackage}</apiPackage>
 							<modelPackage>${srcBasePackage}.model</modelPackage>
 							<invokerPackage>${srcBasePackage}.handler</invokerPackage>
 							
