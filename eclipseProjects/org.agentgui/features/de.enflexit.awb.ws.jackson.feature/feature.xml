@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.jackson.feature"
       label="Agent.Workbench Jackson-Feature"
-      version="2.12.1.qualifier"
+      version="2.12.2.qualifier"
       provider-name="Enflex.IT">
 
    <description url="http://www.example.com/description">

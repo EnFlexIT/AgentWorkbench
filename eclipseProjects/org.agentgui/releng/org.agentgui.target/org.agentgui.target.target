@@ -170,11 +170,28 @@
 					<version>2.35</version>
 					<type>jar</type>
 				</dependency>
+				
 				<dependency>
 					<groupId>com.fasterxml.jackson.datatype</groupId>
 					<artifactId>jackson-datatype-jsr310</artifactId>
 					<version>2.12.2</version>
+				</dependency>^
+				<dependency>
+					<groupId>com.fasterxml.jackson.jaxrs</groupId>
+					<artifactId>jackson-jaxrs-json-provider</artifactId>
+					<version>2.12.2</version>
 				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.dataformat</groupId>
+					<artifactId>jackson-dataformat-yaml</artifactId>
+					<version>2.12.2</version>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jaxb-annotations</artifactId>
+					<version>2.12.2</version>
+				</dependency>
+
 				<dependency>
 					<groupId>com.brsanthu</groupId>
 					<artifactId>migbase64</artifactId>
@@ -182,18 +199,7 @@
 				</dependency>
 			</dependencies>
 		</location>
-
-		<!-- Integration of Swagger / OpenAPI for Rest srevices  -->
-		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-			<dependencies>
-				<dependency>
-					<groupId>io.swagger.core.v3</groupId>
-					<artifactId>swagger-jaxrs2</artifactId>
-					<version>2.1.13</version>
-					<type>jar</type>
-				</dependency>
-			</dependencies>
-		</location>
+		
 	</locations>
 
 </target>

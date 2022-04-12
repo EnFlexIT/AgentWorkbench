@@ -17,6 +17,8 @@
 		<module>de.enflexit.api</module>
 		<module>de.enflexit.awb.ws.core</module>
 		<module>de.enflexit.awb.ws.restapi</module>
+		<module>de.enflexit.awb.ws.swagger1x</module>
+		<module>de.enflexit.awb.ws.swagger2x</module>
 		<module>de.enflexit.common</module>
 		<module>de.enflexit.db.hibernate</module>
 		<module>de.enflexit.db.mariaDB</module>

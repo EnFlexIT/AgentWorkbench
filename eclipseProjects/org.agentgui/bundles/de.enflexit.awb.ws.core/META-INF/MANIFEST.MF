@@ -19,6 +19,5 @@ Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core,
  de.enflexit.awb.ws.server
 Import-Package: javax.servlet;version="4.0.0",
- javax.validation;version="1.1.0",
  org.glassfish.jersey.server.spi;version="2.35.0",
  org.glassfish.jersey.servlet;version="2.35.0"
