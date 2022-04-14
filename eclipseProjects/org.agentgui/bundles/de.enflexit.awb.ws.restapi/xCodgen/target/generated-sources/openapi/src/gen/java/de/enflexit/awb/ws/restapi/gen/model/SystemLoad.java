@@ -31,7 +31,7 @@ import javax.validation.Valid;
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T14:26:32.246562+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T15:57:37.291147100+02:00[Europe/Berlin]")
 public class SystemLoad   {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
