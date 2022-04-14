@@ -55,7 +55,7 @@ public class _OSHI { // NOSONAR squid:S5786
      */
     public static void test(String[] args) {
 
-        logger.info("Initializing System...");
+        logger.debug("Initializing System...");
         SystemInfo si = new SystemInfo();
 
         HardwareAbstractionLayer hal = si.getHardware();
@@ -63,55 +63,55 @@ public class _OSHI { // NOSONAR squid:S5786
 
         printOperatingSystem(os);
 
-        logger.info("Checking computer system...");
+        logger.debug("Checking computer system...");
         printComputerSystem(hal.getComputerSystem());
 
-        logger.info("Checking Processor...");
+        logger.debug("Checking Processor...");
         printProcessor(hal.getProcessor());
 
-        logger.info("Checking Memory...");
+        logger.debug("Checking Memory...");
         printMemory(hal.getMemory());
 
-        logger.info("Checking CPU...");
+        logger.debug("Checking CPU...");
         printCpu(hal.getProcessor());
 
-        logger.info("Checking Processes...");
+        logger.debug("Checking Processes...");
         printProcesses(os, hal.getMemory());
 
-        logger.info("Checking Services...");
+        logger.debug("Checking Services...");
         printServices(os);
 
-        logger.info("Checking Sensors...");
+        logger.debug("Checking Sensors...");
         printSensors(hal.getSensors());
 
-        logger.info("Checking Power sources...");
+        logger.debug("Checking Power sources...");
         printPowerSources(hal.getPowerSources());
 
-        logger.info("Checking Disks...");
+        logger.debug("Checking Disks...");
         printDisks(hal.getDiskStores());
 
-        logger.info("Checking File System...");
+        logger.debug("Checking File System...");
         printFileSystem(os.getFileSystem());
 
-        logger.info("Checking Network interfaces...");
+        logger.debug("Checking Network interfaces...");
         printNetworkInterfaces(hal.getNetworkIFs());
 
-        logger.info("Checking Network parameters...");
+        logger.debug("Checking Network parameters...");
         printNetworkParameters(os.getNetworkParams());
 
-        logger.info("Checking IP statistics...");
+        logger.debug("Checking IP statistics...");
         printInternetProtocolStats(os.getInternetProtocolStats());
 
-        logger.info("Checking Displays...");
+        logger.debug("Checking Displays...");
         printDisplays(hal.getDisplays());
 
-        logger.info("Checking USB Devices...");
+        logger.debug("Checking USB Devices...");
         printUsbDevices(hal.getUsbDevices(true));
 
-        logger.info("Checking Sound Cards...");
+        logger.debug("Checking Sound Cards...");
         printSoundCards(hal.getSoundCards());
 
-        logger.info("Checking Graphics Cards...");
+        logger.debug("Checking Graphics Cards...");
         printGraphicsCards(hal.getGraphicsCards());
 
         StringBuilder output = new StringBuilder();
@@ -121,7 +121,7 @@ public class _OSHI { // NOSONAR squid:S5786
                 output.append('\n');
             }
         }
-        logger.info("Printing Operating System and Hardware Info:{}{}", '\n', output);
+        logger.debug("Printing Operating System and Hardware Info:{}{}", '\n', output);
     }
 
     private static void printOperatingSystem(final OperatingSystem os) {

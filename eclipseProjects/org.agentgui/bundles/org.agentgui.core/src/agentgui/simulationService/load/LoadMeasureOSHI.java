@@ -44,7 +44,7 @@ import oshi.hardware.GlobalMemory;
 public class LoadMeasureOSHI implements Cloneable {
 	
 	private boolean debug = false;
-	private boolean debugOshiSystemInfoTest = true;
+	private boolean debugOshiSystemInfoTest = false;
 	
 	private SystemInfo systemInfo;
 	

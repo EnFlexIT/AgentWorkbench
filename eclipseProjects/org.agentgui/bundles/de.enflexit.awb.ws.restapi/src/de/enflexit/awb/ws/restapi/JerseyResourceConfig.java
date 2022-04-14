@@ -36,11 +36,12 @@ public class JerseyResourceConfig extends ResourceConfig {
 	 */
 	private void configureEndpoints() {
 		this.register(JacksonJsonProvider.class);
+	
 		this.register(InfoApi.class);
 		this.register(LoadApi.class);
 		this.register(StateApi.class);
-		
 	}
+	
 	/**
 	 * Configure swagger.
 	 */
@@ -51,13 +52,19 @@ public class JerseyResourceConfig extends ResourceConfig {
 		this.register(SwaggerSerializers.class);
 
 		BeanConfig config = new BeanConfig();
-		config.setConfigId("de.enflexit.awb.ws.restapi");
 		config.setTitle(APPLICATION_NAME);
-		config.setVersion("v1");
-		config.setBasePath("/");
+
+		config.setVersion("1.0.0");
+		config.setSchemes(new String[] {"http", "https"});
+		config.setHost("localhost:8080");
+		config.setBasePath("/api");
+
+		config.setConfigId("de.enflexit.awb.ws.restapi");
+
 		config.setResourcePackage("de.enflexit.awb.ws.restapi.gen");
-		config.setPrettyPrint(true);
 		config.setScan(true);
+		config.setPrettyPrint(true);
+		
 		
 	}
 }

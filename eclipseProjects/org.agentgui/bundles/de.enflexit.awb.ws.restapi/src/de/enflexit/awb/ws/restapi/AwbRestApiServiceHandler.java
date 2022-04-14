@@ -26,7 +26,7 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 	 */
 	@Override
 	public String getServerName() {
-		return null; // null equals default AWB server 
+		return null; // null is equals to default AWB server 
 	}
 
 	/* (non-Javadoc)
@@ -39,6 +39,7 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 			servletContextHandler.setContextPath("/" + JerseyResourceConfig.APPLICATION_CONTEXT_PATH + "/");
 			
 			ServletHolder jersey = servletContextHandler.addServlet(JereseyServletContainer.class, "/*");
+			jersey.setInitParameters(new ServletInitParameter());
 			jersey.setInitOrder(1);
 			
 			servletContextHandler.addFilter(ApiOriginFilter.class, "/*", EnumSet.of(DispatcherType.INCLUDE, DispatcherType.REQUEST));

@@ -6,13 +6,13 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<yamlFile>RestApi.json</yamlFile>
+		<yamlFile>RestApi.yaml</yamlFile>
 		<srcBasePackage>de.enflexit.awb.ws.restapi.gen</srcBasePackage>
 		
 		<srcDirMainTarget>/target/generated-sources/swagger/src/main/java/</srcDirMainTarget>
 		<srcDirGenTarget>/target/generated-sources/swagger/src/gen/java/</srcDirGenTarget>
 		
-		<swaggerCodegenVersion>3.0.33</swaggerCodegenVersion>
+		<openApiGeneratorVersion>5.4.0</openApiGeneratorVersion>
 		<builderHelperVersion>3.3.0</builderHelperVersion>
 		<antRunVersion>3.0.0</antRunVersion>
 		<mavenResourcespluginVersion>3.2.0</mavenResourcespluginVersion>
@@ -24,19 +24,18 @@
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>5.4.0</version>
+				<version>${openApiGeneratorVersion}</version>
 				<executions>
 					<execution>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<inputSpec>${project.basedir}/RestApi.json</inputSpec>
+							<inputSpec>${project.basedir}/${yamlFile}</inputSpec>
 							<!-- For client code -->
 							<!-- <language>java</language> --> 
 
-							 <!-- For server code -->	
-							<!--<generatorName>jaxrs-spec</generatorName>-->
+							<!-- For server code -->	
 							<generatorName>jaxrs-jersey</generatorName>
 							<library>jersey2</library>
 							

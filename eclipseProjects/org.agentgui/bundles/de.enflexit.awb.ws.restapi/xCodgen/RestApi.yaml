@@ -1,5 +1,6 @@
 ---
 openapi: 3.0.0
+# General Information
 info:
   title: Agent.Workbench REST - API
   description: This is the REST-API for Agent.Workbench in an embbedded system mode.
@@ -11,16 +12,24 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
+
+# Servers
 servers:
 - url: https://virtserver.swaggerhub.com/EnFlex.IT/AWB-Rest/1.0.0
   description: SwaggerHub API Auto Mocking
 - url: https://localhost:8080/api
   description: AWB-Embedded System
+
+# Security
 security:
 - AwbApiKey: []
+
+# Tags to classifiy / organize paths 
 tags:
 - name: admins
   description: Secured Admin-only calls
+  
+# The paths of a REST-API
 paths:
   /info:
     get:
@@ -39,6 +48,7 @@ paths:
             applicaion/json:
               schema:
                 $ref: '#/components/schemas/SystemInformation'
+      
   /state:
     get:
       tags:
@@ -70,8 +80,11 @@ paths:
             applicaion/json:
               schema:
                 $ref: '#/components/schemas/SysytemLoad'
+
+# Component definition such as schemas, securitySchemes and so on
 components:
   schemas:
+    # Type SystemInformation
     SystemInformation:
       type: object
       properties:
@@ -79,6 +92,7 @@ components:
           type: integer
           format: int64
       description: The system information consisting of Hardware and OS information
+    # Type ExecutionState 
     ExecutionState:
       type: object
       properties:
@@ -100,6 +114,7 @@ components:
           - SETUP
           - AGENT
       description: The Agent.Workbench execution state
+    # Type SystemLoad
     SysytemLoad:
       type: object
       properties:
@@ -116,8 +131,10 @@ components:
           description: The Heap usage in percen
           format: float
       description: The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.
+  
   securitySchemes:
     AwbApiKey:
       type: apiKey
       name: X-API-KEY
       in: header
+  
