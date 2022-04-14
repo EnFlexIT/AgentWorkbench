@@ -12,7 +12,7 @@ import de.enflexit.awb.ws.core.AbstractJerseyServletWrapper;
 public class JereseyServletContainer extends AbstractJerseyServletWrapper {
 
 	public JereseyServletContainer() {
-		super(JerseyResourceConfig.APPLICATION_CONTEXT_PATH);
+		super(RestApiConfiguration.APPLICATION_CONTEXT_PATH);
 	}
 
 	/* (non-Javadoc)
@@ -20,7 +20,7 @@ public class JereseyServletContainer extends AbstractJerseyServletWrapper {
 	 */
 	@Override
 	public ServletContainer createServletContainer(String contextPath) {
-		return new ServletContainer(new JerseyResourceConfig());
+		return new ServletContainer(new RestApiConfiguration());
 	}
 
 }

@@ -27,12 +27,12 @@ import javax.validation.Valid;
  */
 @ApiModel(description = "The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.")
 @JsonPropertyOrder({
-  SysytemLoad.JSON_PROPERTY_CPU_USAGE,
-  SysytemLoad.JSON_PROPERTY_MEM_USAGE,
-  SysytemLoad.JSON_PROPERTY_HEAP_USAGE
+  SystemLoad.JSON_PROPERTY_CPU_USAGE,
+  SystemLoad.JSON_PROPERTY_MEM_USAGE,
+  SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T13:04:25.773722100+02:00[Europe/Berlin]")
-public class SysytemLoad   {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T14:26:32.246562+02:00[Europe/Berlin]")
+public class SystemLoad   {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
   private Float cpuUsage;
@@ -45,7 +45,7 @@ public class SysytemLoad   {
   @JsonProperty(JSON_PROPERTY_HEAP_USAGE)
   private Float heapUsage;
 
-  public SysytemLoad cpuUsage(Float cpuUsage) {
+  public SystemLoad cpuUsage(Float cpuUsage) {
     this.cpuUsage = cpuUsage;
     return this;
   }
@@ -65,7 +65,7 @@ public class SysytemLoad   {
     this.cpuUsage = cpuUsage;
   }
 
-  public SysytemLoad memUsage(Float memUsage) {
+  public SystemLoad memUsage(Float memUsage) {
     this.memUsage = memUsage;
     return this;
   }
@@ -85,7 +85,7 @@ public class SysytemLoad   {
     this.memUsage = memUsage;
   }
 
-  public SysytemLoad heapUsage(Float heapUsage) {
+  public SystemLoad heapUsage(Float heapUsage) {
     this.heapUsage = heapUsage;
     return this;
   }
@@ -114,10 +114,10 @@ public class SysytemLoad   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SysytemLoad sysytemLoad = (SysytemLoad) o;
-    return Objects.equals(this.cpuUsage, sysytemLoad.cpuUsage) &&
-        Objects.equals(this.memUsage, sysytemLoad.memUsage) &&
-        Objects.equals(this.heapUsage, sysytemLoad.heapUsage);
+    SystemLoad systemLoad = (SystemLoad) o;
+    return Objects.equals(this.cpuUsage, systemLoad.cpuUsage) &&
+        Objects.equals(this.memUsage, systemLoad.memUsage) &&
+        Objects.equals(this.heapUsage, systemLoad.heapUsage);
   }
 
   @Override
@@ -129,7 +129,7 @@ public class SysytemLoad   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SysytemLoad {\n");
+    sb.append("class SystemLoad {\n");
     
     sb.append("    cpuUsage: ").append(toIndentedString(cpuUsage)).append("\n");
     sb.append("    memUsage: ").append(toIndentedString(memUsage)).append("\n");

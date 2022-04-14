@@ -262,7 +262,7 @@ public class LoadMeasureThread extends Thread {
 		long tempTotalMemoryCombined = getAvgLoadMeasureOSHI().getTotalMemory();
 		long tempUseMemoryCombined = getAvgLoadMeasureOSHI().getUsedMemory();
 		double tempMemoSystem = (double)Math.round(((double)tempUseMemoryCombined / tempTotalMemoryCombined) * 10000)/100;
-		loadRAM = (float) tempMemoSystem;
+		LoadMeasureThread.setLoadRAM((float) tempMemoSystem);
 		
 		// --- Current percentage "Memory used in the JVM" 
 		double tempMemoJVM = (double)Math.round(((double)getAvgLoadMeassureJVM().getJvmHeapUsed() / (double)getAvgLoadMeassureJVM().getJvmHeapMax()) * 10000)/100;

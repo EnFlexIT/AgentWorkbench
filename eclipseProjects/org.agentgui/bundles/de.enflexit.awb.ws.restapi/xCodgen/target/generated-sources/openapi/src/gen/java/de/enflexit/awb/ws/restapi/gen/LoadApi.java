@@ -7,7 +7,7 @@ import de.enflexit.awb.ws.restapi.gen.factories.LoadApiServiceFactory;
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
-import de.enflexit.awb.ws.restapi.gen.model.SysytemLoad;
+import de.enflexit.awb.ws.restapi.gen.model.SystemLoad;
 
 import java.util.Map;
 import java.util.List;
@@ -30,7 +30,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the load API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T13:04:25.773722100+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T14:26:32.246562+02:00[Europe/Berlin]")
 public class LoadApi  {
    private final LoadApiService delegate;
 
@@ -59,11 +59,11 @@ public class LoadApi  {
     
     
     @Produces({ "applicaion/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns the current System load", notes = "Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes ", response = SysytemLoad.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Returns the current System load", notes = "Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes ", response = SystemLoad.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "AwbApiKey")
     }, tags={ "admins", })
     @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "System Load", response = SysytemLoad.class)
+        @io.swagger.annotations.ApiResponse(code = 200, message = "System Load", response = SystemLoad.class)
     })
     public Response loadGet(@Context SecurityContext securityContext)
     throws NotFoundException {

@@ -79,7 +79,7 @@ paths:
           content:
             applicaion/json:
               schema:
-                $ref: '#/components/schemas/SysytemLoad'
+                $ref: '#/components/schemas/SystemLoad'
 
 # Component definition such as schemas, securitySchemes and so on
 components:
@@ -115,7 +115,7 @@ components:
           - AGENT
       description: The Agent.Workbench execution state
     # Type SystemLoad
-    SysytemLoad:
+    SystemLoad:
       type: object
       properties:
         cpuUsage:

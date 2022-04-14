@@ -1,6 +1,11 @@
 package de.enflexit.awb.ws.restapi;
 
+import java.util.Locale;
+
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Variant;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -13,19 +18,25 @@ import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 
 /**
- * The Class AwbRestApplication describes the JERSEY application to start on the {@link DefaultAwbServer}.
+ * The Class AwbRestApplication describes the JERSEY application to start on the configured AWB-Server.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-@ApplicationPath("/" + JerseyResourceConfig.APPLICATION_CONTEXT_PATH)
-public class JerseyResourceConfig extends ResourceConfig {
+@ApplicationPath("/" + RestApiConfiguration.APPLICATION_CONTEXT_PATH)
+public class RestApiConfiguration extends ResourceConfig {
 
 	public static final String APPLICATION_NAME = "AWB - Rest API";
 	public static final String APPLICATION_CONTEXT_PATH = "api";
 	
+	public static final String RESPONSE_ENCODING = "UTF-8";
+	public static final Locale RESPONSE_LOCALE= Locale.ENGLISH;
+	public static final MediaType RESPONSE_MEDIA_TYPE = MediaType.APPLICATION_JSON_TYPE;
+	
+	
 	/**
 	 * Instantiates a AwbRestApplication.
 	 */
-	public JerseyResourceConfig() { 
+	public RestApiConfiguration() { 
 		super();
 		this.setApplicationName(APPLICATION_NAME);
 		this.configureEndpoints();
@@ -64,7 +75,15 @@ public class JerseyResourceConfig extends ResourceConfig {
 		config.setResourcePackage("de.enflexit.awb.ws.restapi.gen");
 		config.setScan(true);
 		config.setPrettyPrint(true);
-		
-		
 	}
+	
+	
+	/**
+	 * Return the {@link Variant} for a {@link Response} of a service end point.
+	 * @return the response variant
+	 */
+	public static Variant getResponseVariant() {
+		return new Variant(RESPONSE_MEDIA_TYPE, RESPONSE_LOCALE, RESPONSE_ENCODING);
+	}
+	
 }

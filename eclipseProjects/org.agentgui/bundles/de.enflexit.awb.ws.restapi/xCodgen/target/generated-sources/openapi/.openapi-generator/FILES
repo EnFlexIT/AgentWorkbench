@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 README.md
 pom.xml
 src/gen/java/de/enflexit/awb/ws/restapi/gen/ApiException.java
@@ -18,7 +17,7 @@ src/gen/java/de/enflexit/awb/ws/restapi/gen/StateApiService.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/StringUtil.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/ExecutionState.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SystemInformation.java
-src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SysytemLoad.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SystemLoad.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/Bootstrap.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/InfoApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/LoadApiServiceFactory.java
