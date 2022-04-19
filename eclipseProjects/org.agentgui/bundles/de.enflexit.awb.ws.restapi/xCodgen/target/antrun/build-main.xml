@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="maven-antrun-" default="main">
-  <target name="main">
-    <echo>Source base package: 'de.enflexit.awb.ws.restapi.gen' to path '${scrBaseDir}'</echo>
-    <echo>Copy files from D:\20_GIT\01_AWB\eclipseProjects\org.agentgui\bundles\de.enflexit.awb.ws.restapi\xCodgen${srcDirTarget}${scrBaseDir}</echo>
-    <echo>to D:\20_GIT\01_AWB\eclipseProjects\org.agentgui\bundles\de.enflexit.awb.ws.restapi\xCodgen/../src/${scrBaseDir}/</echo>
-  </target>
-</project>

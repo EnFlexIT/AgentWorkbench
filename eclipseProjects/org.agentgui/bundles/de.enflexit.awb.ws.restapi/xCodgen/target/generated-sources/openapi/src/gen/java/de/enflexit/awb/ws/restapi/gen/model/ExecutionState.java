@@ -31,7 +31,7 @@ import javax.validation.Valid;
   ExecutionState.JSON_PROPERTY_EXECUTION_MODE,
   ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T15:57:37.291147100+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T13:11:39.498706900+02:00[Europe/Berlin]")
 public class ExecutionState   {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 

@@ -27,32 +27,282 @@ import javax.validation.Valid;
  */
 @ApiModel(description = "The system information consisting of Hardware and OS information")
 @JsonPropertyOrder({
-  SystemInformation.JSON_PROPERTY_ID
+  SystemInformation.JSON_PROPERTY_OS_DESCRIPTION,
+  SystemInformation.JSON_PROPERTY_OS_MANUFACTURER,
+  SystemInformation.JSON_PROPERTY_OS_FAMILLY,
+  SystemInformation.JSON_PROPERTY_OS_VERSION,
+  SystemInformation.JSON_PROPERTY_PROCESSOR_NAME,
+  SystemInformation.JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ,
+  SystemInformation.JSON_PROPERTY_PROCESSOR_NO_PHYSICAL,
+  SystemInformation.JSON_PROPERTY_PROCESSOR_NO_LOGICAL,
+  SystemInformation.JSON_PROPERTY_MEMORY_TOTAL_IN_G_B,
+  SystemInformation.JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B,
+  SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T15:57:37.291147100+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T13:11:39.498706900+02:00[Europe/Berlin]")
 public class SystemInformation   {
-  public static final String JSON_PROPERTY_ID = "id";
-  @JsonProperty(JSON_PROPERTY_ID)
-  private Long id;
+  public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
+  @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
+  private String osDescription;
 
-  public SystemInformation id(Long id) {
-    this.id = id;
+  public static final String JSON_PROPERTY_OS_MANUFACTURER = "osManufacturer";
+  @JsonProperty(JSON_PROPERTY_OS_MANUFACTURER)
+  private String osManufacturer;
+
+  public static final String JSON_PROPERTY_OS_FAMILLY = "osFamilly";
+  @JsonProperty(JSON_PROPERTY_OS_FAMILLY)
+  private String osFamilly;
+
+  public static final String JSON_PROPERTY_OS_VERSION = "osVersion";
+  @JsonProperty(JSON_PROPERTY_OS_VERSION)
+  private String osVersion;
+
+  public static final String JSON_PROPERTY_PROCESSOR_NAME = "processorName";
+  @JsonProperty(JSON_PROPERTY_PROCESSOR_NAME)
+  private String processorName;
+
+  public static final String JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ = "processorFrequenceInMhz";
+  @JsonProperty(JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ)
+  private Double processorFrequenceInMhz;
+
+  public static final String JSON_PROPERTY_PROCESSOR_NO_PHYSICAL = "processorNoPhysical";
+  @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_PHYSICAL)
+  private Integer processorNoPhysical;
+
+  public static final String JSON_PROPERTY_PROCESSOR_NO_LOGICAL = "processorNoLogical";
+  @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_LOGICAL)
+  private Integer processorNoLogical;
+
+  public static final String JSON_PROPERTY_MEMORY_TOTAL_IN_G_B = "memoryTotalInGB";
+  @JsonProperty(JSON_PROPERTY_MEMORY_TOTAL_IN_G_B)
+  private Double memoryTotalInGB;
+
+  public static final String JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B = "swapMemoryTotalInGB";
+  @JsonProperty(JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B)
+  private Double swapMemoryTotalInGB;
+
+  public static final String JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B = "heapMemoryMaxInGB";
+  @JsonProperty(JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B)
+  private Double heapMemoryMaxInGB;
+
+  public SystemInformation osDescription(String osDescription) {
+    this.osDescription = osDescription;
     return this;
   }
 
   /**
-   * Get id
-   * @return id
+   * Get osDescription
+   * @return osDescription
    **/
-  @JsonProperty(value = "id")
+  @JsonProperty(value = "osDescription")
   @ApiModelProperty(value = "")
   
-  public Long getId() {
-    return id;
+  public String getOsDescription() {
+    return osDescription;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setOsDescription(String osDescription) {
+    this.osDescription = osDescription;
+  }
+
+  public SystemInformation osManufacturer(String osManufacturer) {
+    this.osManufacturer = osManufacturer;
+    return this;
+  }
+
+  /**
+   * Get osManufacturer
+   * @return osManufacturer
+   **/
+  @JsonProperty(value = "osManufacturer")
+  @ApiModelProperty(value = "")
+  
+  public String getOsManufacturer() {
+    return osManufacturer;
+  }
+
+  public void setOsManufacturer(String osManufacturer) {
+    this.osManufacturer = osManufacturer;
+  }
+
+  public SystemInformation osFamilly(String osFamilly) {
+    this.osFamilly = osFamilly;
+    return this;
+  }
+
+  /**
+   * Get osFamilly
+   * @return osFamilly
+   **/
+  @JsonProperty(value = "osFamilly")
+  @ApiModelProperty(value = "")
+  
+  public String getOsFamilly() {
+    return osFamilly;
+  }
+
+  public void setOsFamilly(String osFamilly) {
+    this.osFamilly = osFamilly;
+  }
+
+  public SystemInformation osVersion(String osVersion) {
+    this.osVersion = osVersion;
+    return this;
+  }
+
+  /**
+   * Get osVersion
+   * @return osVersion
+   **/
+  @JsonProperty(value = "osVersion")
+  @ApiModelProperty(value = "")
+  
+  public String getOsVersion() {
+    return osVersion;
+  }
+
+  public void setOsVersion(String osVersion) {
+    this.osVersion = osVersion;
+  }
+
+  public SystemInformation processorName(String processorName) {
+    this.processorName = processorName;
+    return this;
+  }
+
+  /**
+   * Get processorName
+   * @return processorName
+   **/
+  @JsonProperty(value = "processorName")
+  @ApiModelProperty(value = "")
+  
+  public String getProcessorName() {
+    return processorName;
+  }
+
+  public void setProcessorName(String processorName) {
+    this.processorName = processorName;
+  }
+
+  public SystemInformation processorFrequenceInMhz(Double processorFrequenceInMhz) {
+    this.processorFrequenceInMhz = processorFrequenceInMhz;
+    return this;
+  }
+
+  /**
+   * Get processorFrequenceInMhz
+   * @return processorFrequenceInMhz
+   **/
+  @JsonProperty(value = "processorFrequenceInMhz")
+  @ApiModelProperty(value = "")
+  
+  public Double getProcessorFrequenceInMhz() {
+    return processorFrequenceInMhz;
+  }
+
+  public void setProcessorFrequenceInMhz(Double processorFrequenceInMhz) {
+    this.processorFrequenceInMhz = processorFrequenceInMhz;
+  }
+
+  public SystemInformation processorNoPhysical(Integer processorNoPhysical) {
+    this.processorNoPhysical = processorNoPhysical;
+    return this;
+  }
+
+  /**
+   * Get processorNoPhysical
+   * @return processorNoPhysical
+   **/
+  @JsonProperty(value = "processorNoPhysical")
+  @ApiModelProperty(value = "")
+  
+  public Integer getProcessorNoPhysical() {
+    return processorNoPhysical;
+  }
+
+  public void setProcessorNoPhysical(Integer processorNoPhysical) {
+    this.processorNoPhysical = processorNoPhysical;
+  }
+
+  public SystemInformation processorNoLogical(Integer processorNoLogical) {
+    this.processorNoLogical = processorNoLogical;
+    return this;
+  }
+
+  /**
+   * Get processorNoLogical
+   * @return processorNoLogical
+   **/
+  @JsonProperty(value = "processorNoLogical")
+  @ApiModelProperty(value = "")
+  
+  public Integer getProcessorNoLogical() {
+    return processorNoLogical;
+  }
+
+  public void setProcessorNoLogical(Integer processorNoLogical) {
+    this.processorNoLogical = processorNoLogical;
+  }
+
+  public SystemInformation memoryTotalInGB(Double memoryTotalInGB) {
+    this.memoryTotalInGB = memoryTotalInGB;
+    return this;
+  }
+
+  /**
+   * Get memoryTotalInGB
+   * @return memoryTotalInGB
+   **/
+  @JsonProperty(value = "memoryTotalInGB")
+  @ApiModelProperty(value = "")
+  
+  public Double getMemoryTotalInGB() {
+    return memoryTotalInGB;
+  }
+
+  public void setMemoryTotalInGB(Double memoryTotalInGB) {
+    this.memoryTotalInGB = memoryTotalInGB;
+  }
+
+  public SystemInformation swapMemoryTotalInGB(Double swapMemoryTotalInGB) {
+    this.swapMemoryTotalInGB = swapMemoryTotalInGB;
+    return this;
+  }
+
+  /**
+   * Get swapMemoryTotalInGB
+   * @return swapMemoryTotalInGB
+   **/
+  @JsonProperty(value = "swapMemoryTotalInGB")
+  @ApiModelProperty(value = "")
+  
+  public Double getSwapMemoryTotalInGB() {
+    return swapMemoryTotalInGB;
+  }
+
+  public void setSwapMemoryTotalInGB(Double swapMemoryTotalInGB) {
+    this.swapMemoryTotalInGB = swapMemoryTotalInGB;
+  }
+
+  public SystemInformation heapMemoryMaxInGB(Double heapMemoryMaxInGB) {
+    this.heapMemoryMaxInGB = heapMemoryMaxInGB;
+    return this;
+  }
+
+  /**
+   * Get heapMemoryMaxInGB
+   * @return heapMemoryMaxInGB
+   **/
+  @JsonProperty(value = "heapMemoryMaxInGB")
+  @ApiModelProperty(value = "")
+  
+  public Double getHeapMemoryMaxInGB() {
+    return heapMemoryMaxInGB;
+  }
+
+  public void setHeapMemoryMaxInGB(Double heapMemoryMaxInGB) {
+    this.heapMemoryMaxInGB = heapMemoryMaxInGB;
   }
 
 
@@ -65,12 +315,22 @@ public class SystemInformation   {
       return false;
     }
     SystemInformation systemInformation = (SystemInformation) o;
-    return Objects.equals(this.id, systemInformation.id);
+    return Objects.equals(this.osDescription, systemInformation.osDescription) &&
+        Objects.equals(this.osManufacturer, systemInformation.osManufacturer) &&
+        Objects.equals(this.osFamilly, systemInformation.osFamilly) &&
+        Objects.equals(this.osVersion, systemInformation.osVersion) &&
+        Objects.equals(this.processorName, systemInformation.processorName) &&
+        Objects.equals(this.processorFrequenceInMhz, systemInformation.processorFrequenceInMhz) &&
+        Objects.equals(this.processorNoPhysical, systemInformation.processorNoPhysical) &&
+        Objects.equals(this.processorNoLogical, systemInformation.processorNoLogical) &&
+        Objects.equals(this.memoryTotalInGB, systemInformation.memoryTotalInGB) &&
+        Objects.equals(this.swapMemoryTotalInGB, systemInformation.swapMemoryTotalInGB) &&
+        Objects.equals(this.heapMemoryMaxInGB, systemInformation.heapMemoryMaxInGB);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return Objects.hash(osDescription, osManufacturer, osFamilly, osVersion, processorName, processorFrequenceInMhz, processorNoPhysical, processorNoLogical, memoryTotalInGB, swapMemoryTotalInGB, heapMemoryMaxInGB);
   }
 
 
@@ -79,7 +339,17 @@ public class SystemInformation   {
     StringBuilder sb = new StringBuilder();
     sb.append("class SystemInformation {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    osDescription: ").append(toIndentedString(osDescription)).append("\n");
+    sb.append("    osManufacturer: ").append(toIndentedString(osManufacturer)).append("\n");
+    sb.append("    osFamilly: ").append(toIndentedString(osFamilly)).append("\n");
+    sb.append("    osVersion: ").append(toIndentedString(osVersion)).append("\n");
+    sb.append("    processorName: ").append(toIndentedString(processorName)).append("\n");
+    sb.append("    processorFrequenceInMhz: ").append(toIndentedString(processorFrequenceInMhz)).append("\n");
+    sb.append("    processorNoPhysical: ").append(toIndentedString(processorNoPhysical)).append("\n");
+    sb.append("    processorNoLogical: ").append(toIndentedString(processorNoLogical)).append("\n");
+    sb.append("    memoryTotalInGB: ").append(toIndentedString(memoryTotalInGB)).append("\n");
+    sb.append("    swapMemoryTotalInGB: ").append(toIndentedString(swapMemoryTotalInGB)).append("\n");
+    sb.append("    heapMemoryMaxInGB: ").append(toIndentedString(heapMemoryMaxInGB)).append("\n");
     sb.append("}");
     return sb.toString();
   }

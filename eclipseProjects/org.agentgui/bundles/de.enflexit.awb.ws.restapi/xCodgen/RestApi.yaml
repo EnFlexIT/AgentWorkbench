@@ -88,10 +88,36 @@ components:
     SystemInformation:
       type: object
       properties:
-        id:
+        osDescription:
+          type: string
+        osManufacturer:
+          type: string
+        osFamilly:
+          type: string
+        osVersion:
+          type: string
+        processorName:
+          type: string
+        processorFrequenceInMhz:
+          type: number 
+          format: double
+        processorNoPhysical:
           type: integer
-          format: int64
+          format: int32        
+        processorNoLogical:
+          type: integer 
+          format: int32
+        memoryTotalInGB:
+          type: number
+          format: double
+        swapMemoryTotalInGB:
+          type: number
+          format: double
+        heapMemoryMaxInGB:
+          type: number
+          format: double  
       description: The system information consisting of Hardware and OS information
+    
     # Type ExecutionState 
     ExecutionState:
       type: object
@@ -114,22 +140,23 @@ components:
           - SETUP
           - AGENT
       description: The Agent.Workbench execution state
+    
     # Type SystemLoad
     SystemLoad:
       type: object
       properties:
         cpuUsage:
           type: number
-          description: The CPU usage in percent
           format: float
+          description: The CPU usage in percent
         memUsage:
           type: number
-          description: The memory usage in percent
           format: float
+          description: The memory usage in percent
         heapUsage:
           type: number
-          description: The Heap usage in percen
           format: float
+          description: The Heap usage in percen
       description: The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.
   
   securitySchemes:

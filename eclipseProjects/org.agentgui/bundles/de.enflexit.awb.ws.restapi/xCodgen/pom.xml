@@ -6,21 +6,13 @@
 	<packaging>pom</packaging>
 
 	<properties>
+		<openApiGeneratorVersion>5.4.0</openApiGeneratorVersion>
 		<yamlFile>RestApi.yaml</yamlFile>
 		<srcBasePackage>de.enflexit.awb.ws.restapi.gen</srcBasePackage>
-		
-		<srcDirMainTarget>/target/generated-sources/swagger/src/main/java/</srcDirMainTarget>
-		<srcDirGenTarget>/target/generated-sources/swagger/src/gen/java/</srcDirGenTarget>
-		
-		<openApiGeneratorVersion>5.4.0</openApiGeneratorVersion>
-		<builderHelperVersion>3.3.0</builderHelperVersion>
-		<antRunVersion>3.0.0</antRunVersion>
-		<mavenResourcespluginVersion>3.2.0</mavenResourcespluginVersion>
 	</properties>
 	
 	<build>
 		<plugins>
-		
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
@@ -56,100 +48,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>${builderHelperVersion}</version>
-				<executions>
-					<execution>
-						<id>regex-property</id>
-						<goals>
-							<goal>regex-property</goal>
-						</goals>
-						<configuration>
-							<name>scrBaseDir</name>
-							<value>${srcBasePackage}</value>
-							<regex>\.</regex>
-							<replacement>/</replacement>
-							<failIfNoMatch>false</failIfNoMatch>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>${antRunVersion}</version>
-				<executions>
-					<execution>
-						<id>echo-property</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<echo>Source base package: '${srcBasePackage}' to path '${scrBaseDir}'</echo>
-								<echo>Copy files from ${project.basedir}${srcDirTarget}${scrBaseDir}</echo>
-								<echo>to ${project.basedir}/../src/${scrBaseDir}/</echo>
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${mavenResourcespluginVersion}</version>
-				<executions>
-					<execution>
-						<id>copy-gen</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<encoding>UTF-8</encoding>
-							<outputDirectory>${project.basedir}/../src/${scrBaseDir}/</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.basedir}${srcDirGenTarget}${scrBaseDir}</directory>
-									<!-- 
-									<includes>
-										<include>*.java</include>
-									</includes>
-									-->
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-main</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<encoding>UTF-8</encoding>
-							<outputDirectory>${project.basedir}/../src/${scrBaseDir}/</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.basedir}${srcDirMainTarget}${scrBaseDir}</directory>
-									<!-- 
-									<includes>
-										<include>*.java</include>
-									</includes>
-									-->
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
 		</plugins>
 	</build>
 

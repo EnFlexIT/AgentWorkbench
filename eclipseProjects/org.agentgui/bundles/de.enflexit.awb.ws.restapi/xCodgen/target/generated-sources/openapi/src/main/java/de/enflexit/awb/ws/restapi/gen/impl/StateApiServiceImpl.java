@@ -15,7 +15,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.validation.constraints.*;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-14T15:57:37.291147100+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T13:11:39.498706900+02:00[Europe/Berlin]")
 public class StateApiServiceImpl extends StateApiService {
     @Override
     public Response stateGet(SecurityContext securityContext) throws NotFoundException {
