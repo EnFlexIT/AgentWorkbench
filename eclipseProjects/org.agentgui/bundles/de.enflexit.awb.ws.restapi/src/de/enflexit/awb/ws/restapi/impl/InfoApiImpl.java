@@ -1,5 +1,10 @@
 package de.enflexit.awb.ws.restapi.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
@@ -8,11 +13,13 @@ import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.InfoApi;
 import de.enflexit.awb.ws.restapi.gen.InfoApiService;
 import de.enflexit.awb.ws.restapi.gen.NotFoundException;
+import de.enflexit.awb.ws.restapi.gen.model.NetworkConnection;
 import de.enflexit.awb.ws.restapi.gen.model.SystemInformation;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.NetworkIF;
 import oshi.software.os.OperatingSystem;
 
 /**
@@ -39,6 +46,7 @@ public class InfoApiImpl extends InfoApiService {
 		this.setOperatingSystemInfo(sysInfo, os);
 		this.setProcessorInfo(sysInfo, hw);
 		this.setMemoryInfo(sysInfo, hw);
+		this.setNetworkConnectionInfo(sysInfo, hw);
 
 		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(sysInfo).build();
 	}
@@ -95,6 +103,46 @@ public class InfoApiImpl extends InfoApiService {
     	sysInfo.setSwapMemoryTotalInGB(this.round(LoadUnits.bytes2(virtMemoryTotal, LoadUnits.CONVERT2_GIGA_BYTE)));
     	sysInfo.setHeapMemoryMaxInGB(this.round(LoadUnits.bytes2(jvmHeapMemoryMax, LoadUnits.CONVERT2_GIGA_BYTE)));
     }
+    
+    /**
+     * Will sets the network connections info.
+     *
+     * @param sysInfo the SystemInformation to fill
+     * @param hw the  hardware info of OSHI
+     */
+    private void setNetworkConnectionInfo(SystemInformation sysInfo, HardwareAbstractionLayer hw) {
+    	
+    	ArrayList<NetworkConnection> netConnList = new ArrayList<>();
+    	List<NetworkIF> networkIFList = hw.getNetworkIFs();
+    	for (int i = 0; i < networkIFList.size(); i++) {
+    		// --- Get the single OSHI instance ---------------------
+    		NetworkIF netInt = networkIFList.get(i);
+    		
+    		// --- Fill the object ----------------------------------
+    		NetworkConnection netConn = new NetworkConnection();
+    		netConn.setName(netInt.getName() + " [" + netInt.getIfAlias() + "]");
+    		netConn.setDisplayName(netInt.getDisplayName());
+    		netConn.setMacAddress(netInt.getMacaddr());
+    		netConn.setIp4Addresses(String.join(",", netInt.getIPv4addr()));
+    		netConn.setIp6Addresses(String.join(",", netInt.getIPv6addr()));
+    		netConn.setTrafficReceivedInMB(this.round(LoadUnits.bytes2(netInt.getBytesRecv(), LoadUnits.CONVERT2_MEGA_BYTE)));
+    		netConn.setTrafficSendInMB(this.round(LoadUnits.bytes2(netInt.getBytesSent(), LoadUnits.CONVERT2_MEGA_BYTE)));
+    		// --- Add to list --------------------------------------
+    		netConnList.add(netConn);
+		}
+    	
+    	// --- Sort result list -------------------------------------
+    	Collections.sort(netConnList, new Comparator<NetworkConnection>() {
+			@Override
+			public int compare(NetworkConnection nc1, NetworkConnection nc2) {
+				return nc1.getName().compareTo(nc2.getName());
+			}
+		});
+
+    	// --- Set to SystemInformation -----------------------------
+    	sysInfo.setNetworkConnections(netConnList);
+    }
+    
     
     
     /**

@@ -115,9 +115,35 @@ components:
           format: double
         heapMemoryMaxInGB:
           type: number
-          format: double  
+          format: double
+        networkConnections:
+          type: array
+          items:
+            $ref: "#/components/schemas/NetworkConnection"  
       description: The system information consisting of Hardware and OS information
     
+    # NetworkConnection
+    NetworkConnection:
+      type: object
+      description: Describes a single network connection.
+      properties:
+          name:
+            type: string
+          displayName:
+            type: string
+          macAddress:
+            type: string
+          ip4Addresses:
+            type: string
+          ip6Addresses:
+            type: string
+          trafficSendInMB:
+            type: number
+            format: double
+          trafficReceivedInMB:
+            type: number
+            format: double
+            
     # Type ExecutionState 
     ExecutionState:
       type: object

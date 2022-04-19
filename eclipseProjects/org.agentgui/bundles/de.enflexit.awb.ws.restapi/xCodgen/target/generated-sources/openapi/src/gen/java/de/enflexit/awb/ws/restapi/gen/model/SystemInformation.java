@@ -16,8 +16,11 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.enflexit.awb.ws.restapi.gen.model.NetworkConnection;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -37,9 +40,10 @@ import javax.validation.Valid;
   SystemInformation.JSON_PROPERTY_PROCESSOR_NO_LOGICAL,
   SystemInformation.JSON_PROPERTY_MEMORY_TOTAL_IN_G_B,
   SystemInformation.JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B,
-  SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B
+  SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
+  SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T13:11:39.498706900+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T14:42:04.744880100+02:00[Europe/Berlin]")
 public class SystemInformation   {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
@@ -84,6 +88,10 @@ public class SystemInformation   {
   public static final String JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B = "heapMemoryMaxInGB";
   @JsonProperty(JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B)
   private Double heapMemoryMaxInGB;
+
+  public static final String JSON_PROPERTY_NETWORK_CONNECTIONS = "networkConnections";
+  @JsonProperty(JSON_PROPERTY_NETWORK_CONNECTIONS)
+  private List<NetworkConnection> networkConnections = null;
 
   public SystemInformation osDescription(String osDescription) {
     this.osDescription = osDescription;
@@ -305,6 +313,34 @@ public class SystemInformation   {
     this.heapMemoryMaxInGB = heapMemoryMaxInGB;
   }
 
+  public SystemInformation networkConnections(List<NetworkConnection> networkConnections) {
+    this.networkConnections = networkConnections;
+    return this;
+  }
+
+  public SystemInformation addNetworkConnectionsItem(NetworkConnection networkConnectionsItem) {
+    if (this.networkConnections == null) {
+      this.networkConnections = new ArrayList<>();
+    }
+    this.networkConnections.add(networkConnectionsItem);
+    return this;
+  }
+
+  /**
+   * Get networkConnections
+   * @return networkConnections
+   **/
+  @JsonProperty(value = "networkConnections")
+  @ApiModelProperty(value = "")
+  @Valid 
+  public List<NetworkConnection> getNetworkConnections() {
+    return networkConnections;
+  }
+
+  public void setNetworkConnections(List<NetworkConnection> networkConnections) {
+    this.networkConnections = networkConnections;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -325,12 +361,13 @@ public class SystemInformation   {
         Objects.equals(this.processorNoLogical, systemInformation.processorNoLogical) &&
         Objects.equals(this.memoryTotalInGB, systemInformation.memoryTotalInGB) &&
         Objects.equals(this.swapMemoryTotalInGB, systemInformation.swapMemoryTotalInGB) &&
-        Objects.equals(this.heapMemoryMaxInGB, systemInformation.heapMemoryMaxInGB);
+        Objects.equals(this.heapMemoryMaxInGB, systemInformation.heapMemoryMaxInGB) &&
+        Objects.equals(this.networkConnections, systemInformation.networkConnections);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(osDescription, osManufacturer, osFamilly, osVersion, processorName, processorFrequenceInMhz, processorNoPhysical, processorNoLogical, memoryTotalInGB, swapMemoryTotalInGB, heapMemoryMaxInGB);
+    return Objects.hash(osDescription, osManufacturer, osFamilly, osVersion, processorName, processorFrequenceInMhz, processorNoPhysical, processorNoLogical, memoryTotalInGB, swapMemoryTotalInGB, heapMemoryMaxInGB, networkConnections);
   }
 
 
@@ -350,6 +387,7 @@ public class SystemInformation   {
     sb.append("    memoryTotalInGB: ").append(toIndentedString(memoryTotalInGB)).append("\n");
     sb.append("    swapMemoryTotalInGB: ").append(toIndentedString(swapMemoryTotalInGB)).append("\n");
     sb.append("    heapMemoryMaxInGB: ").append(toIndentedString(heapMemoryMaxInGB)).append("\n");
+    sb.append("    networkConnections: ").append(toIndentedString(networkConnections)).append("\n");
     sb.append("}");
     return sb.toString();
   }
