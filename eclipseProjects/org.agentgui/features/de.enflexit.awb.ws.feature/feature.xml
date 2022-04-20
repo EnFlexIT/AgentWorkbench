@@ -37,12 +37,12 @@
          version="0.0.0"/>
 
    <requires>
+      <import plugin="jakarta.annotation-api" version="1.3.5" match="greaterOrEqual"/>
+      <import plugin="jakarta.servlet-api"/>
+      <import plugin="jakarta.validation.jakarta.validation-api" version="2.0.2" match="greaterOrEqual"/>
+      <import plugin="jakarta.ws.rs-api" version="2.1.6" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.agentgui.core"/>
-      <import plugin="jakarta.servlet-api"/>
-      <import plugin="jakarta.validation.jakarta.validation-api"/>
-      <import plugin="org.glassfish.jersey.core.jersey-server"/>
-      <import plugin="org.glassfish.jersey.containers.jersey-container-servlet-core"/>
    </requires>
 
    <plugin

@@ -71,7 +71,6 @@
    <requires>
       <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.oshi" version="3.4.4" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.mySQL" version="5.0.8" match="greaterOrEqual"/>
       <import plugin="de.enflexit.geography"/>

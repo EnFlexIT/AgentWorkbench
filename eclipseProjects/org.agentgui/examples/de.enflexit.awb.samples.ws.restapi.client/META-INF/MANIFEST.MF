@@ -7,10 +7,7 @@ Automatic-Module-Name: de.enflexit.awb.samples.ws.restapi.client
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbClassLoadService.xml
-Require-Bundle: org.jsr-305;bundle-version="3.0.2",
- jakarta.annotation-api;bundle-version="1.3.5",
- jakarta.validation.jakarta.validation-api;bundle-version="2.0.2",
- jakarta.ws.rs-api;bundle-version="2.1.6",
+Require-Bundle: jakarta.ws.rs-api;bundle-version="2.1.6",
  org.glassfish.jersey.core.jersey-client;bundle-version="2.35.0",
  org.glassfish.jersey.core.jersey-common;bundle-version="2.35.0",
  org.glassfish.jersey.media.jersey-media-multipart;bundle-version="2.35.0",
@@ -27,3 +24,10 @@ Require-Bundle: org.jsr-305;bundle-version="3.0.2",
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/javax.annotation-api-1.3.2.jar
+Export-Package: de.enflexit.awb.samples.ws.restapi.client,
+ de.enflexit.awb.samples.ws.restapi.client.classLoadService,
+ de.enflexit.awb.samples.ws.restapi.client.gen,
+ de.enflexit.awb.samples.ws.restapi.client.gen.handler,
+ de.enflexit.awb.samples.ws.restapi.client.gen.handler.auth,
+ de.enflexit.awb.samples.ws.restapi.client.gen.model
+Import-Package: javax.annotation
