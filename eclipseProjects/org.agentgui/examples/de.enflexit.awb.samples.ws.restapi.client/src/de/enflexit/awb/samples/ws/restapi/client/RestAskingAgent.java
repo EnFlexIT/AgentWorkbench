@@ -1,7 +1,6 @@
 package de.enflexit.awb.samples.ws.restapi.client;
 
 import de.enflexit.awb.samples.ws.restapi.client.gen.AdminsApi;
-import de.enflexit.awb.samples.ws.restapi.client.gen.handler.ApiClient;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.ExecutionState;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemInformation;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemLoad;
@@ -30,7 +29,10 @@ public class RestAskingAgent extends Agent {
 			SystemLoad sysLoad = api.loadGet();
 			ExecutionState execState =  api.stateGet();
 			
-			System.out.println("Nice ;-)");
+			System.out.println("Info from agent " + this.getLocalName() + ": Nice ;-):");
+			System.out.println(sysInfo);
+			System.out.println(sysLoad);
+			System.out.println(execState);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
