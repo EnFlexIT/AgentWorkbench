@@ -377,7 +377,7 @@ public class GraphNodePositionFactory {
     /**
      * Returns the coordinate type for the specified position.
      *
-     * @param graphNode the graph node
+     * @param coordinate the {@link Point2D} coordinate
      * @return the coordinate type or <code>null</code>
      */
     public static CoordinateType getCoordinateType(Point2D coordinate) {

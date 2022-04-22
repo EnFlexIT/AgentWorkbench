@@ -37,7 +37,7 @@ public class NeighborhoodSearch {
 	 * Instantiates a new NeighborhoodSearch.
 	 *
 	 * @param networkModel the network model
-	 * @param sourceComponentID the source component ID
+	 * @param srcNetComp the source {@link NetworkComponent} for the search
 	 */
 	public NeighborhoodSearch(NetworkModel networkModel, NetworkComponent srcNetComp) {
 		if (networkModel==null) {

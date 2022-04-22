@@ -37,7 +37,7 @@ import agentgui.logging.logfile.PrintStreamListener.PrintStreamListenerType;
  * This Class can be used in order to listen to the output that will be generated 
  * through the console by using System.out and System.err - commands.<br>
  * <br>
- * The received output will be stored in the local Vector<String> outputStack 
+ * The received output will be stored in the local Vector&lt;String&gt; outputStack 
  * that can be accessed by the synchronised method {@link #getStack()}.   
  * 
  * @see PrintStreamListener

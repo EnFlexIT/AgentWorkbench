@@ -51,10 +51,8 @@ import javax.swing.event.TreeModelListener;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 
 /**
- * The Class ThreadMonitorDetailTreeTab.
- * 
- * Displays detailed information about thread/agent load.
- * Builds a Tree view Cluster->Machines->JCM->Container
+ * The Class ThreadMonitorDetailTreeTab displays detailed information about thread/agent load.<br>
+ * Builds a Tree view Cluster -&gt; Machines -&gt; JCM -&gt; Container
  * Filter for agents applicable.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen

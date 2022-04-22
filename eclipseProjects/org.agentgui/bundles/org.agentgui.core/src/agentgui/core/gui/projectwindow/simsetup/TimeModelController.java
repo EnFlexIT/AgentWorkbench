@@ -73,6 +73,7 @@ public class TimeModelController implements Observer {
 	
 	/**
 	 * Instantiates a new time model controller.
+	 * @param project the current project
 	 */
 	public TimeModelController(Project project) {
 		this.currProject = project;

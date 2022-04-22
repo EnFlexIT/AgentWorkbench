@@ -77,11 +77,17 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 	
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 *
+	 * @param owner the owner
+	 * @param title the title
+	 * @param modal the modal
+	 * @param currPort the current port
+	 * @param position the position
 	 */
-	public JadeSetupNewPort(Frame owner, String titel, boolean modal, int currPort, Point position) {
-		super(owner, titel, modal);
-		this.currPort =currPort;
+	public JadeSetupNewPort(Frame owner, String title, boolean modal, int currPort, Point position) {
+		super(owner, title, modal);
+		this.currPort = currPort;
 		this.currPosition = position;
 		
 		this.initialize();

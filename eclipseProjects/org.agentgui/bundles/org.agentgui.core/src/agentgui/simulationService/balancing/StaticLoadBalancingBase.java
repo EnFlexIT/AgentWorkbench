@@ -68,6 +68,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 
 	/**
 	 * Instantiates a new static load balancing base.
+	 * @param agent the agent that organizes the current load balancing action
 	 */
 	public StaticLoadBalancingBase(LoadExecutionAgent agent) {
 		super(agent);

@@ -135,7 +135,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	}
 	/**
 	 * Sets that the user request for download and installation is required.
-	 * @param userRequestForInstallation the new user request for download
+	 * @param userRequestForDownload the new user request for download
 	 */
 	public void setUserRequestForDownloadAndInstallation(boolean userRequestForDownload) {
 		this.userRequestForDownloadAndInstallation = userRequestForDownload;
@@ -611,7 +611,9 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @param sourceDirectoryOrWebReference the source directory or web reference (without any file)
 	 * @param updateRepositoryEntry the update repository entry
 	 * @param destinationFileName the destination file name
+	 * @param webResAuth the WebResourcesAuthorization
 	 * @return true, if successful
+	 * @throws ProjectRepositoryUpdateException the project repository update exception
 	 */
 	public boolean downloadOrCopyProjectArchiveFromRepository(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry, String destinationFileName, WebResourcesAuthorization webResAuth) throws ProjectRepositoryUpdateException {
 		
@@ -668,8 +670,10 @@ public class ProjectRepositoryUpdate extends Thread {
 	}
 	
 	/**
-	 * Returns the project repository from the projects update site.
-	 * @return the project repository
+	 * Returns the {@link ProjectRepository} from the projects update site.
+	 *
+	 * @return the ProjectRepository
+	 * @throws ProjectRepositoryUpdateException the project repository update exception
 	 */
 	public ProjectRepository getProjectRepository() throws ProjectRepositoryUpdateException {
 		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {

@@ -53,7 +53,7 @@ import agentgui.core.gui.options.https.HttpsConfigWindow;
  * The Class JPanelMTPConfig is used to set the Message Transport Protocol. The
  * user has the possibility to start JADE with the HTTP MTP or HTTPS MTP.
  * 
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI, mohamedamine_jedidi@outlook.com
  * @version 1.0
  * @since 14-04-2016
  */

@@ -89,7 +89,7 @@ public class BenchmarkMeasurement extends Thread {
 		this.forceBenchmark = forceBenchmark;	
 	}
 	/**
-	 * Depending on the FileProperties this will measure the ability> of this computer to crunch numbers.<br>
+	 * Depending on the FileProperties this will measure the ability of this computer to crunch numbers.<br>
 	 * The results will be given in Mflops (Millions of floating point operations per second)  
 	 */
 	@Override

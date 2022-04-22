@@ -71,11 +71,13 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 	public TimeModelDiscrete(long stepInTime) {
 		this.step = stepInTime;
 	}
+	
 	/**
 	 * Instantiates a new time model discrete.
 	 *
-	 * @param stepInTime the step width in time
 	 * @param startTime the start time
+	 * @param stopTime the stop time
+	 * @param stepInTime the step width in time
 	 */
 	public TimeModelDiscrete(long startTime, long stopTime, long stepInTime) {
 		this.timeStart = startTime;

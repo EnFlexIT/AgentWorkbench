@@ -197,7 +197,7 @@ public class LoadAgentMap implements Serializable {
 	// --- Sub-Class AID_Container_List --- S T A R T -----------
 	// ----------------------------------------------------------
 	/**
-	 * The Class AID_Container_List is an extended <code>Hashtable<String, AID_Container></code>.
+	 * The Class AID_Container_List is an extended <code>Hashtable&lt;String, AID_Container&gt;</code>.
 	 */
 	public class AID_Container_List extends Hashtable<String, AID_Container> implements Serializable {
 		

@@ -462,7 +462,6 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     
     /**
      * Returns the network component list that will be used for displaying network components.
-     * @param forceRebuild if true, an existing list will be discarded and rebuilt
      * @return the network component list
      */
     public List<NetworkComponent> getNetworkComponentList() {

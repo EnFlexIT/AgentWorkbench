@@ -67,7 +67,9 @@ public class MaximizedTab extends JInternalFrame {
 	
 	/**
 	 * Instantiates a new maximized tab.
-	 * @param title the title
+	 *
+	 * @param projectWindow the current {@link ProjectWindow} instance
+	 * @param title the title of the tab
 	 */
 	public MaximizedTab(ProjectWindow projectWindow, String title) {
 		super(title);

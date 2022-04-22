@@ -26,7 +26,6 @@ public class EvaluateContributionsHandler {
 	
 	/**
 	 * Execute.
-	 * @param registry the registry
 	 */
 	@Execute
     public void execute() {

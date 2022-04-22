@@ -79,8 +79,9 @@ public class LogFileWriter {
 	
 	/**
 	 * Returns the logging path and file name as string.
-	 * @return the logging path and file name 
-	 * @throws IOException 
+	 *
+	 * @param timeStamp the time stamp
+	 * @return the logging path and file name
 	 */
 	public String getLoggingFileName(long timeStamp) {
 
@@ -116,9 +117,9 @@ public class LogFileWriter {
 			this.bufferedWriter = new BufferedWriter(this.fileWriter);
 		}
 	}
+	
 	/**
 	 * Stop the log file writer.
-	 * @throws IOException 
 	 */
 	public void stopFileWriter() {
 		if (this.fileWriter!=null && this.bufferedWriter!=null) {

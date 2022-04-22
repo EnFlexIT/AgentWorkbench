@@ -12,6 +12,7 @@ import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.graph.Graph;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class GraphRectangle2D provides some help methods to investigate 
  * the size and the position of a {@link Graph} or a set of {@link GraphNode}s.
@@ -28,12 +29,12 @@ public class GraphRectangle2D extends Rectangle2D.Double {
 	public static final int BOTTOM_RIGHT = 4;
 
 	
+	/** The graph node array. */
 	private GraphNode[] graphNodeArray;
 	
 	
 	/**
 	 * Instantiates a new 2D graph rectangle.
-	 * @param graph the graph with it GraphNodes that define the rectangle
 	 */
 	public GraphRectangle2D() { }
 	/**
@@ -50,9 +51,10 @@ public class GraphRectangle2D extends Rectangle2D.Double {
 	public GraphRectangle2D(Collection<GraphNode> graphNodeCollection) {
 		this.setGraphNodeArray(graphNodeCollection);
 	}
+	
 	/**
 	 * Instantiates a new 2D graph rectangle.
-	 * @param graph the graph with it GraphNodes that define the rectangle
+	 * @param graphNodes the array of graph nodes 
 	 */
 	public GraphRectangle2D(GraphNode[] graphNodes) {
 		this.setGraphNodeArray(graphNodes);

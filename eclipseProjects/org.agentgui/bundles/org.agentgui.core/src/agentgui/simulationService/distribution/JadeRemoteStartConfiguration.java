@@ -113,15 +113,20 @@ public class JadeRemoteStartConfiguration implements Serializable {
 	public static File getDefaultConfigurationFile() {
 		return new File(Application.getGlobalInfo().getPathProjects() + DEFAULT_CONFIGURATION_FILE_NAME);
 	}
+	
 	/**
 	 * Deletes the default remote start configuration file.
+	 * @return true, if successfully deleted
 	 */
 	public static boolean deleteRemoteStartConfiguration() {
 		return deleteRemoteStartConfiguration(getDefaultConfigurationFile());
 	}
+	
 	/**
 	 * Deletes the specified remote start configuration file.
+	 *
 	 * @param configurationFile the configuration file
+	 * @return true, if successfully deleted
 	 */
 	public static boolean deleteRemoteStartConfiguration(File configurationFile) {
 		if (configurationFile.exists()==true) {

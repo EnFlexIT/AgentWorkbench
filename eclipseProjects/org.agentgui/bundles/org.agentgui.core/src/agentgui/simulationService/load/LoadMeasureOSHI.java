@@ -140,7 +140,6 @@ public class LoadMeasureOSHI implements Cloneable {
 
 	/**
 	 * Will set up the CPU information.
-	 * @throws SigarException 
 	 */
 	public void setProcessorInformation() {
 		CentralProcessor proc = this.getSystemInfo().getHardware().getProcessor();

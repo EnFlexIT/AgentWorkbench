@@ -55,40 +55,30 @@ public class ThreadProtocol implements Serializable {
 	
 	private static final long serialVersionUID = 7906666593362238059L;
 	
-	/** The time stamp. */
 	private long timestamp;
 	
-	/** The load CPU. */
 	private float loadCPU;
-	
-	/** The MFLOPS. */
 	private double mflops;
 	
-	/** The process id. */
 	private String processID;
-	
-	/** The container name. */
+
 	private String containerName;
-	
-	/** The JVM name. */
 	private String jvmName;
-	
-	/** The machine name. */
 	private String machineName;
 	
-	/** The thread details. */
 	private Vector<ThreadDetail> threadDetails;
 	
 	
 	/**
 	 * Instantiates a new thread protocol.
 	 */
-	public ThreadProtocol() {
-	}
+	public ThreadProtocol() { }
 	
 	/**
 	 * Instantiates a new thread protocol.
+	 *
 	 * @param timestamp the time stamp
+	 * @param loadCPU the load CPU
 	 */
 	public ThreadProtocol(long timestamp, float loadCPU) {
 		this.setTimestamp(timestamp);
@@ -101,6 +91,7 @@ public class ThreadProtocol implements Serializable {
 	 * @param timestamp the time stamp
 	 * @param processID the process id
 	 * @param containerName the container name
+	 * @param loadCPU the load CPU
 	 * @param threadDetails the thread details
 	 */
 	public ThreadProtocol(long timestamp, String processID, String containerName, float loadCPU, Vector<ThreadDetail> threadDetails) {

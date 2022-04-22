@@ -227,6 +227,8 @@ public interface LoadServiceSlice extends Service.Slice {
 	
 	/**
 	 * Requests the thread measurement from the contacted container.
+	 *
+	 * @param timestamp the timestamp
 	 * @throws IMTPException the IMTP exception
 	 */
 	public void requestThreadMeasurement(long timestamp) throws IMTPException;

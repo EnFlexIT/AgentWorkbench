@@ -83,11 +83,13 @@ public class TimeFormatSelection extends JPanelForActions {
 	public TimeFormatSelection(boolean showFormatLabel) {
 		this(showFormatLabel, null, null);
 	}
+	
 	/**
 	 * Instantiates a new time format selection.
 	 *
 	 * @param showFormatLabel the show format label
 	 * @param horizontalVerticalGap the horizontal or vertical gap between the elements
+	 * @param font the font to use as the base for the graphical representation
 	 */
 	public TimeFormatSelection(boolean showFormatLabel, Integer horizontalVerticalGap, Font font) {
 		super();

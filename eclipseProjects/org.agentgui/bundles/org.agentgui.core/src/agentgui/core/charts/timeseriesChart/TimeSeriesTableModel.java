@@ -623,10 +623,13 @@ public class TimeSeriesTableModel extends TableModel {
 			throw new NoSuchSeriesException();
 		}
 	}
+	
 	/**
 	 * Edits the data series by remove data.
+	 *
 	 * @param series the series
 	 * @param targetDataSeriesIndex the target data series index
+	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 

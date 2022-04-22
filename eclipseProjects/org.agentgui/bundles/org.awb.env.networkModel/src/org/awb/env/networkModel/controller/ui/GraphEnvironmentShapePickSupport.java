@@ -31,7 +31,7 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 
 	/**
 	 * Instantiates a new graph environment shape pick support.
-	 * @param basicGraphGui the current {@link BasicGraphGui}
+	 * @param visViewer the current {@link BasicGraphGuiVisViewer}
 	 */
 	public GraphEnvironmentShapePickSupport(BasicGraphGuiVisViewer<GraphNode,GraphEdge> visViewer) {
 		super(visViewer);
@@ -39,7 +39,7 @@ public class GraphEnvironmentShapePickSupport extends ShapePickSupport<GraphNode
 	/**
 	 * Instantiates a new graph environment shape pick support.
 	 *
-	 * @param basicGraphGui the current {@link BasicGraphGui}
+	 * @param visViewer the current {@link BasicGraphGuiVisViewer}
 	 * @param pickSize the pick size
 	 */
 	public GraphEnvironmentShapePickSupport(BasicGraphGuiVisViewer<GraphNode,GraphEdge> visViewer, float pickSize) {

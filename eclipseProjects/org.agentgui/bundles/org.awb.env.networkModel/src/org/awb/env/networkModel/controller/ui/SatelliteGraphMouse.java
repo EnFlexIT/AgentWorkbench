@@ -47,7 +47,7 @@ public class SatelliteGraphMouse extends ModalSatelliteGraphMouse {
 	
     /**
      * Instantiates a new satellite graph mouse.
-     * @param scalingControl the scaling control
+     * @param basicGraphGui the current {@link BasicGraphGui}
      */
     public SatelliteGraphMouse(BasicGraphGui basicGraphGui) {
         

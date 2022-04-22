@@ -50,8 +50,7 @@ public abstract class TimeModel implements Serializable {
 	/**
 	 * Instantiates a new time model.
 	 */
-	public TimeModel(){
-	}
+	public TimeModel() { }
 
 	/**
 	 * Steps the TimeModel.
@@ -87,8 +86,8 @@ public abstract class TimeModel implements Serializable {
 	public abstract TimeModel getCopy();
 	
 	/**
-	 * Sets the setup configuration as HashSet<String, String> (property, value) to the TimeModel.
-	 * @param timeModelSettings the time model setup configuration as HashSet<String, String> (property, value)
+	 * Sets the setup configuration as HashSet&lt;String, String&gt; (property, value) to the TimeModel.
+	 * @param timeModelSettings the time model setup configuration as HashSet&lt;String, String&gt; (property, value)
 	 */
 	public abstract void setTimeModelSettings(HashMap<String, String> timeModelSettings);
 	

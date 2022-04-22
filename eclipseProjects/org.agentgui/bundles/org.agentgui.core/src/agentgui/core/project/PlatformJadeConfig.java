@@ -60,7 +60,7 @@ import jade.mtp.http.ProxiedHTTPS;
  * which returns a new Instance of 'jade.core.Profile'. This can be used to 
  * create a new JADE-Container.<br>
  * <br>
- * EXAMPLE:<br><br
+ * EXAMPLE:<br>
  * <blockquote><code>
  *  PlatformJadeConfig pjc = new PlatformJadeConfig();<br>
  *	pjc.setLocalPort(1099);<br>

@@ -52,8 +52,8 @@ public interface AwbConsole {
 
 	
 	/**
-	 * Appends a Vector<String> of lines to this console  .
-	 * @param lines2transfer the lines to print
+	 * Appends a Vector&lt;String&gt; of lines to this console  .
+	 * @param linesToPrint the lines to print
 	 */
 	public void appendText(Vector<String> linesToPrint);
 	

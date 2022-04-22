@@ -47,8 +47,9 @@ public class AwbProgressBarPainter implements Painter<JProgressBar> {
 	/**
 	 * Instantiates a new progress painter.
 	 *
-	 * @param light the light
-	 * @param dark the dark
+	 * @param light the light color
+	 * @param dark the dark color
+	 * @param border the border color
 	 */
 	public AwbProgressBarPainter(Color light, Color dark, Color border) {
 		this.light = light;

@@ -817,6 +817,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 	/**
 	 * Loads the general graph settings from the usual location on disc.
+	 * @return the GeneralGraphSettings4MAS
 	 */
 	public GeneralGraphSettings4MAS loadGeneralGraphSettings() {
 		File componentFile = new File(this.getEnvFolderPath() + GeneralGraphSettings4MASFile + ".xml");

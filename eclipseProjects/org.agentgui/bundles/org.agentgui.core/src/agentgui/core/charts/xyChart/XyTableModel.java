@@ -665,7 +665,7 @@ public class XyTableModel extends TableModel {
 	 * Moves the currently selected row according to the direction.
 	 *
 	 * @param jTable the JTtable
-	 * @param direction the direction to move (> 0 or < 0) 
+	 * @param direction the direction to move (&gt; 0 or &lt; 0) 
 	 */
 	public void move(JTable jTable, int direction) {
 		

@@ -31,13 +31,7 @@ package agentgui.core.update;
 import agentgui.core.update.MirrorTool.MirrorToolsJob;
 
 /**
- * The listener interface for receiving mirror events.
- * The class that is interested in processing a mirror
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addMirrorListener<code> method. When
- * the mirror event occurs, that object's appropriate
- * method is invoked.
+ * The listener interface for receiving information that the mirroring process is finalized.
  *
  * @see MirrorTool
  */

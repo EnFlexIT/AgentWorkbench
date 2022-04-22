@@ -697,7 +697,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	/**
 	 * This method will return the path to the project folder ('./projects').
 	 *
-	 * @param absolute set true if you want to get the full path to this
 	 * @param forcePathCreation if true, the path will be created if it not already exists
 	 * @return the path to the project folder
 	 */

@@ -99,6 +99,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	
 	/**
 	 * Instantiates a new base load balancing.
+	 * @param agent the agent thats organizes the current load balancing
 	 */
 	public BaseLoadBalancing(Agent agent) {
 		super(agent);

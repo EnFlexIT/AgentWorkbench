@@ -107,7 +107,7 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 
 	/**
 	 * Create contents of the editor part.
-	 * @param parent
+	 * @param parent the parent composite instance
 	 */
 	@Override
 	@PostConstruct

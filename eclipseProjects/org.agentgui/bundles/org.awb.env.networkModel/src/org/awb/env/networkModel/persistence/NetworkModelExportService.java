@@ -28,9 +28,8 @@ public interface NetworkModelExportService {
 	public List<FileFilter> getFileFilters();
 	
 	/**
-	 * Has to perform the actual network model export to the specified file 
+	 * Has to perform the actual network model export to the specified file .
 	 * @param file the file to export to
-	 * @return the imported network model
 	 */
 	public void exportNetworkModelToFile(File file);
 	

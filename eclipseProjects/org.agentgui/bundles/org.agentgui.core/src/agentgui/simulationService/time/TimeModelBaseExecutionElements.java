@@ -114,7 +114,7 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	
 	/**
 	 * Adds the custom toolbar elements.
-	 * @param jToolBar2AddElements 
+	 * @param jToolBar2AddElements the JToolBar to which elements should be added 
 	 */
 	public void addToolbarElements(JToolBar jToolBar2AddElements) {
 		this.jToolBar4Elements = jToolBar2AddElements;

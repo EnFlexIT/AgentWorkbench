@@ -82,9 +82,7 @@ public class GraphEnvironmentEdgeRenderer extends BasicEdgeRenderer<GraphNode, G
 	
 	/**
 	 * Instantiates a new graph environment edge renderer.
-	 *
-	 * @param graphController the current GraphEnvironmentController
-	 * @param basicGraphGui the current {@link BasicGraphGui}
+	 * @param visViewer the current BasicGraphGuiVisViewer
 	 */
 	public GraphEnvironmentEdgeRenderer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
 		this.visViewer = visViewer;

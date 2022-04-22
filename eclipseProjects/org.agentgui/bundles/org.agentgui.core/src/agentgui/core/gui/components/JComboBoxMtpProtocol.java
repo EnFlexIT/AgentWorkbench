@@ -37,7 +37,7 @@ import agentgui.core.config.GlobalInfo.MtpProtocol;
  * The Class JComboBoxMtpProtocol is a JcomboBox 
  * that is used to select a MTP protocol.
  * 
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI, mohamedamine_jedidi@outlook.com
  * @version 1.0
  * @since 29-04-2016
  */

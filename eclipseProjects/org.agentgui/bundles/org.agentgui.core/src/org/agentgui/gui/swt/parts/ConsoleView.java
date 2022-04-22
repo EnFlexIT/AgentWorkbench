@@ -19,6 +19,7 @@ public class ConsoleView {
 
 	/**
 	 * Create contents of the view part.
+	 * @param parent the parent
 	 */
 	@PostConstruct
 	public void createControls(Composite parent) {

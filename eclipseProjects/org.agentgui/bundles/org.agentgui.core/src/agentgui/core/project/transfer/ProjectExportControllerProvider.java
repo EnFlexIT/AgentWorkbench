@@ -60,9 +60,7 @@ public class ProjectExportControllerProvider {
 	 * Gets the project export controller. If a specialized subclass is set, an instance of that class
 	 * will be returned, otherwise an instance of {@link DefaultProjectExportController} 
 	 *
-	 * @param project the project
 	 * @return the project export controller
-	 * @throws Exception the exception
 	 */
 	public static ProjectExportController getProjectExportController() {
 		

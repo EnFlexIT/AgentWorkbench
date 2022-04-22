@@ -245,9 +245,10 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 			csvFilePreview = new CSV_FilePreview(owner, this.getCsvDataController());
 		}
 	}
+	
 	/**
-	 * Return the current CSV_FilePreview (if open)  
-	 * @return
+	 * Return the current CSV_FilePreview (if open)  .
+	 * @return the CSV file preview dialog
 	 */
 	public CSV_FilePreview getCSVFilePreviewDialog() {
 		return csvFilePreview;

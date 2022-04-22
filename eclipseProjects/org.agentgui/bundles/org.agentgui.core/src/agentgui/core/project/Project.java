@@ -1126,8 +1126,11 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * This method loads a single PlugIn, given by its class reference
-	 * @param pluginReference
+	 * This method loads a single PlugIn, given by its class reference.
+	 *
+	 * @param pluginReference the plugin reference
+	 * @param add2PlugInReferenceVector the add 2 plug in reference vector
+	 * @return true, if successful
 	 */
 	public boolean plugInLoad(String pluginReference, boolean add2PlugInReferenceVector) {
 
@@ -1161,9 +1164,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	 * This method will unload and remove a single PlugIn. If removeFromProjectReferenceVector is set
 	 * to true, the PlugIn-reference will be also removed from the list of PlugIns', which has to be 
 	 * loaded with the project.
-	 * 
+	 *
 	 * @param plugIn The PlugIn instance to be removed
-	 * @param removeFromProjectReferenceVector
+	 * @param removeFromProjectReferenceVector the indicator to remove the references also from project reference vector
 	 */
 	public void plugInRemove(PlugIn plugIn, boolean removeFromProjectReferenceVector) {
 		this.getPlugInsLoaded().removePlugIn(plugIn);
@@ -1174,7 +1177,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Sets PlugInsLoaded, a Vector<PlugIn> that describes, which PlugIn's has to loaded.
+	 * Sets PlugInsLoaded, a <code>Vector&lt;PlugIn&gt;</code> that describes, which PlugIn's has to loaded.
 	 * @param plugInsLoaded the PlugInsLoaded
 	 */
 	public void setPlugInsLoaded(PlugInsLoaded plugInsLoaded) {
@@ -1182,7 +1185,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Returns PlugInsLoaded, a Vector<PlugIn> that describes, which PlugIn's were loaded.
+	 * Returns PlugInsLoaded, a <code>Vector&lt;PlugIn&gt;</code> that describes, which PlugIn's were loaded.
 	 * @return the PlugInsLoaded
 	 */
 	@XmlTransient
@@ -1271,7 +1274,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 	/**
 	 * Allow change notifications within the observer pattern without necessarily saving such changes
-	 * @param reason
+	 * @param reason the notification reason object
 	 */
 	public void setNotChangedButNotify(Object reason) {
 		this.setChanged();
@@ -1280,7 +1283,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 
 	/**
 	 * To prevent the closing of the project without saving
-	 * @param reason
+	 * @param reason the notification reason object
 	 */
 	public void setChangedAndNotify(Object reason) {
 		this.setUnsaved(true);
@@ -1289,7 +1292,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Moves the requested Project-Window to the front
+	 * Moves the requested Project-Window to the front.
+	 * @param forceClassPathReload the indicator to force a reload resources
 	 */
 	public void setFocus(boolean forceClassPathReload) {
 
@@ -1445,8 +1449,6 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 	/**
 	 * Returns the project agent working folder as full path. If the directory does not exists yet, it will be created.
-	 *
-	 * @param createDirIfNotExists set true if the directory should be created if not already done 
 	 * @return the project agent working folder full path
 	 */
 	public String getProjectAgentWorkingFolderFullPath() {
@@ -1871,6 +1873,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
+	 * Returns the sub folder for setups.
+	 *
+	 * @param fullPath the indicator to return the full path information
 	 * @return the defaultSubFolderSetups
 	 */
 	public String getSubFolder4Setups(boolean fullPath) {
@@ -1905,10 +1910,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	public Vector<String> getSubOntologies() {
 		return subOntologies;
 	}
-
 	/**
-	 * Adds a new sub ontology to the current project
-	 * @param newSubOntology
+	 * Adds a new sub ontology to the current project.
+	 * @param newSubOntology the new sub ontology
 	 */
 	public void subOntologyAdd(String newSubOntology) {
 		if (this.getSubOntologies().contains(newSubOntology) == false) {
@@ -1919,10 +1923,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 			}
 		}
 	}
-
 	/**
-	 * Removes a new sub ontology from the current project ontology
-	 * @param subOntology2Remove
+	 * Removes a new sub ontology from the current project ontology.
+	 * @param subOntology2Remove the sub ontology to remove
 	 */
 	public void subOntologyRemove(String subOntology2Remove) {
 		this.getSubOntologies().remove(subOntology2Remove);
@@ -1933,7 +1936,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	}
 
 	/**
-	 * Returns the ontology visualisation helper for this project.
+	 * Returns the ontology visualization helper for this project.
 	 * @return the OntologyVisualisationHelper
 	 */
 	public OntologyVisualizationHelper getOntologyVisualisationHelper() {

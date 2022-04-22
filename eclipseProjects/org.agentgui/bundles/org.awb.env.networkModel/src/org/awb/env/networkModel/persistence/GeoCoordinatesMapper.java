@@ -2,12 +2,13 @@ package org.awb.env.networkModel.persistence;
 
 import java.awt.geom.Point2D;
 
-// TODO: Auto-generated Javadoc
 /**
- * This class provides mapping functionality from geo coordinates to display coordinates (0:0-<upperBOund>) 
+ * This class provides mapping functionality from geo coordinates to display coordinates.
+ *  
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
 public class GeoCoordinatesMapper {
+	
 	// --- The range of geo coordinates that should be mapped -------
 	private double geoCoordinateMinX;
 	private double geoCoordinateMaxX;

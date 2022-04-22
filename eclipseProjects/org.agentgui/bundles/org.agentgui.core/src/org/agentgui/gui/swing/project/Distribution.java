@@ -185,7 +185,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * @param project the current project
 	 */
 	public Distribution(Project project) {
 		super();

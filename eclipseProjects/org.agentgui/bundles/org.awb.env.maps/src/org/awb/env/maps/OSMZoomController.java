@@ -53,7 +53,7 @@ public class OSMZoomController extends BasicGraphGuiZoomController {
 	}
 	/**
 	 * Sets the zoom level.
-	 * @param newZoomLevel the new zoom level
+	 * @param zoomLevel the new zoom level
 	 */
 	public void setZoomLevel(ZoomLevel zoomLevel) {
 		this.setZoomLevel(zoomLevel, null);

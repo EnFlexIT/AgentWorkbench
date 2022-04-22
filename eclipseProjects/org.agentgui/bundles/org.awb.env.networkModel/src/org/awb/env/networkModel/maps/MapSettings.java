@@ -207,8 +207,6 @@ public class MapSettings implements Serializable, Cloneable {
 	 * Returns the MapService names as sorted list, where the first element is the indicator
 	 * for not using a MapService.
 	 *
-	 * @param isSortList the indicator to sort the list
-	 * @param insertNoMapServiceIndicator the insert no map service indicator
 	 * @return the map service name list
 	 */
 	public static List<String> getMapServiceNameList() {

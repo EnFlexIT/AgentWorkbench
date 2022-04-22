@@ -29,15 +29,10 @@
 package agentgui.core.update;
 
 /**
- * The listener interface for receiving projectRepositoryExplorerPanel events.
- * The class that is interested in processing a projectRepositoryExplorerPanel
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addProjectRepositoryExplorerPanelListener<code> method. When
- * the projectRepositoryExplorerPanel event occurs, that object's appropriate
- * method is invoked.
+ * The listener interface for receiving information to close the current dialog or window that 
+ * displays the ProjectRepositoryExplorerPanelEvent.
  *
- * @see ProjectRepositoryExplorerPanelEvent
+ * @see ProjectRepositoryExplorerPanel
  */
 public interface ProjectRepositoryExplorerPanelListener {
 

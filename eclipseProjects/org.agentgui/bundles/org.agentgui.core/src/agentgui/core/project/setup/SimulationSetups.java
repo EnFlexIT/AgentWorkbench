@@ -439,7 +439,6 @@ public class SimulationSetups extends TreeMap<String, String> {
 	 * Returns the list of files that belong to the current setup. This also 
 	 * includes files that are managed by the current {@link EnvironmentController}. 
 	 *
-	 * @param project the project
 	 * @param setupName the setup name
 	 * @return the list of files that belong to the specified setup
 	 */

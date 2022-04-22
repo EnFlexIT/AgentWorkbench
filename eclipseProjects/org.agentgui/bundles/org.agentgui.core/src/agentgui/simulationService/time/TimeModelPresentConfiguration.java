@@ -50,7 +50,9 @@ public class TimeModelPresentConfiguration extends TimeModelContinuousConfigurat
     
     /**
      * Instantiates a new time model present configuration.
+     *
      * @param project the project
+     * @param timeModelController the current {@link TimeModelController}
      */
     public TimeModelPresentConfiguration(Project project, TimeModelController timeModelController) {
         super(project, timeModelController);

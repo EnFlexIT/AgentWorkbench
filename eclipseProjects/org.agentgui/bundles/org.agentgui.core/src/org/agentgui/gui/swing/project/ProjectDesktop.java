@@ -49,7 +49,8 @@ public class ProjectDesktop extends JDesktopPane {
 	private Project currProject;
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * @param project the current project
 	 */
 	public ProjectDesktop(Project project) {
 		super();

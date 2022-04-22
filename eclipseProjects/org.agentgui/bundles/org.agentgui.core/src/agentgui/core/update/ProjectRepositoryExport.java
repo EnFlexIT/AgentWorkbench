@@ -60,11 +60,13 @@ public class ProjectRepositoryExport extends Thread {
 	private boolean showUserDialogs;
 	
 	/**
-	 * Instantiates a new project updater.
-	 * @param projectToUpdate the project to update
+	 * Instantiates a new ProjectRepositoryExport.
+	 *
+	 * @param project the current project
+	 * @param projectExportController the current project export controller
 	 */
-	public ProjectRepositoryExport(Project projectToUpdate, ProjectExportController projectExportController) {
-		this.currProject = projectToUpdate;
+	public ProjectRepositoryExport(Project project, ProjectExportController projectExportController) {
+		this.currProject = project;
 		this.projectExportController = projectExportController;
 		this.setName(this.getClass().getSimpleName() + " " + this.currProject.getProjectName());
 	}

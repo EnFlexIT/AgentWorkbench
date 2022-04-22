@@ -51,6 +51,9 @@ public class TimeUnit implements Serializable {
 	 *
 	 * @param unit the unit
 	 * @param numberOfDigits the number of digits
+	 * @param minValue the min value
+	 * @param maxValue the max value
+	 * @param factorToMilliseconds the factor to milliseconds
 	 */
 	public TimeUnit(String unit, int numberOfDigits, int minValue, int maxValue, long factorToMilliseconds) {
 		this.unit = unit;

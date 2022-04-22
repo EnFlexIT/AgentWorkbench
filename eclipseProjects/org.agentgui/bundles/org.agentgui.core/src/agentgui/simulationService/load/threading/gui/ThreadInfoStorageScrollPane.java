@@ -102,106 +102,63 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
     
 	private static final long serialVersionUID = 1L;
 	
-	/** The plot. */
+	private ChartPanel jFreeChartPanel;
+	private JFreeChart chart;
+
 	private XYPlot plot;
 	
-	/** The j free chart panel. */
-	private ChartPanel jFreeChartPanel;
-	
-	/** The delta collection. */
 	private XYSeriesCollection deltaCollection;
-	
-	/** The total collection. */
 	private XYSeriesCollection totalCollection;
-	
-	/** The load collection. */
 	private XYSeriesCollection loadCollection;
-	
-	/** The extra object as additional parameter. */
-	private Object extraObject;
-	
-	/** The J panel filter. */
-	private JPanel JPanelFilter;
-	
-	/** The chart. */
-	private JFreeChart chart;
-	
-	/** The file chooser. */
-	private JFileChooser fileChooser;
-	
-	/** The j check box user time. */
-	private JCheckBox jCheckBoxUserTime;
-	
-	/** The j check box system time. */
-	private JCheckBox jCheckBoxSystemTime;
-	
-	/** The j check box delta. */
-	private JCheckBox jCheckBoxDelta;
-	
-	/** The j check box total. */
-	private JCheckBox jCheckBoxTotal;
-	
-	/** The J check box legend. */
-	private JCheckBox JCheckBoxLegend;
-	
-	/** The renderer total. */
+
 	private XYLineAndShapeRenderer rendererTotal;
-	
-	/** The renderer delta. */
 	private XYLineAndShapeRenderer rendererDelta;
-	
-	/** The renderer load. */
 	private XYLineAndShapeRenderer rendererLoad;
 	
-	/** The axis delta. */
 	private NumberAxis axisDelta;
-	
-	/** The axis total. */
 	private NumberAxis axisTotal;
-	
-	/** The axis load. */
 	private NumberAxis axisLoad;
 	
-	/** The avg cpu load. */
+	private BasicStroke stroke;
 	private ValueMarker avgCPULoad;
+	
+	private JFileChooser fileChooser;
+	
+	private JPanel JPanelFilter;
+	private JCheckBox jCheckBoxUserTime;
+	private JCheckBox jCheckBoxSystemTime;
+	private JCheckBox jCheckBoxDelta;
+	private JCheckBox jCheckBoxTotal;
+	private JCheckBox JCheckBoxLegend;
 
-	/** Display setting.Set true to show delta. */
-	private boolean showDelta;
-	/** Display setting.Set true to show total. */
-	private boolean showTotal;
-	/** Display setting. Set to true to show the system-time */
-	private boolean showSystemTime;
-	/** Display setting. Set to true to show the user-time */
-	private boolean showUserTime;
-	/** Display charts in a new window if true */
-	private boolean popup;
-	/** Display legend if true */
-	private boolean showLegend;
-	/** The frame title. */
+	private Object extraObject;
+	
 	private String frameTitle;
 
-	/** The pattern. */
+	private boolean showDelta;
+	private boolean showTotal;
+	private boolean showSystemTime;
+	private boolean showUserTime;
+	private boolean popup;
+	private boolean showLegend;
+
 	private float[][] pattern;
 	
-	/** The stroke. */
-	private BasicStroke stroke;
-	
-	/** The lbl curve type. */
 	private JLabel lblCurveType;
-	
-	/** The lbl thread time. */
 	private JLabel lblThreadTime;
-	
-	/** The btn export csv. */
+
 	private JButton btnExportCSV;
+	
 	
 	/**
 	 * Instantiates a new thread info scroll pane.
 	 *
 	 * @param deltaCollection the delta collection
 	 * @param totalCollection the total collection
-	 * @param popup the popup
+	 * @param loadCollection the load collection
+	 * @param popup the indicator to work as pop-up
 	 * @param frameTitle the frame title
+	 * @param extraObject the extra object
 	 */
 	public ThreadInfoStorageScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle, Object extraObject) {		
 		super();

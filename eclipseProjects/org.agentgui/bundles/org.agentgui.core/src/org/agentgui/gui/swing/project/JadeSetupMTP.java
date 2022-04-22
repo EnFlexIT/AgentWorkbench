@@ -117,10 +117,11 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JCheckBox jCheckBoxSkipUserRequestForJadeStart;
 	private JButton jButtonDeleteSecurityStores;
 	private JLabel jLabeSecurityPathInfo;
+
 	
 	/**
-	 * Constructor of this class
-	 * @param project
+	 * Constructor of this class.
+	 * @param project the project
 	 */
 	public JadeSetupMTP(Project project) {
 		super();

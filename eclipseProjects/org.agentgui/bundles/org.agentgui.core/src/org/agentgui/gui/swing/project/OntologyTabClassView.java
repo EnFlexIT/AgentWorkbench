@@ -67,7 +67,8 @@ public class OntologyTabClassView extends JPanel {
 
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * @param Node the current ontology node to visualize
 	 */
 	public OntologyTabClassView(DefaultMutableTreeNode Node) {
 		super();

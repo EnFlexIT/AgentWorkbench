@@ -66,7 +66,7 @@ import de.enflexit.common.crypto.KeyStoreController;
  * He can Create or edit the KeyStore and TrustStore which are necessary to run
  * the HTTPS protocol.
  * 
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI, mohamedamine_jedidi@outlook.com
  * @version 1.0
  * @since 05-04-2016
  */

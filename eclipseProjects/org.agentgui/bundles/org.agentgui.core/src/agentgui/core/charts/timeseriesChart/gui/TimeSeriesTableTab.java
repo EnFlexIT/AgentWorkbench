@@ -63,6 +63,9 @@ public class TimeSeriesTableTab extends TableTab {
 
 	/**
 	 * Create the TimeSeriesTableTab.
+	 *
+	 * @param model the TimeSeriesDataModel
+	 * @param parentChartEditor the parent chart editor
 	 */
 	public TimeSeriesTableTab(TimeSeriesDataModel model, ChartEditorJPanel parentChartEditor) {
 		super(parentChartEditor);

@@ -45,20 +45,23 @@ public interface ProjectExportController {
 	
 	/**
 	 * Gets the project export settings.
+	 *
+	 * @param project the current project to work on
 	 * @return the project export settings
 	 */
 	public ProjectExportSettings getProjectExportSettings(Project project);
 	
 	/**
-	 * Export project.
-	 * @param project the project
+	 * Method to export the specified project.
+	 * 
+	 * @param project the project to be exported
 	 * @param projectExportSettings the project export settings
 	 */
 	public void exportProject(Project project, ProjectExportSettings projectExportSettings);
 	
 	/**
 	 * Exports the current project using the provided {@link ProjectExportSettings}.
-	 * @param the project to be exported
+	 * @param project the project to be exported
 	 * @param exportSettings The {@link ProjectExportSettings}
 	 * @param showUserDialogs specifies if user dialogs are shown
 	 * @param useConcurrentThread specifies if the project should be exported in a concurrent thread

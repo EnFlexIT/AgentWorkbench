@@ -41,7 +41,7 @@ import agentgui.logging.DebugService;
  * This Class can be used in order to listen to the output which will be generated<br> 
  * through the console by using System.out and System.err - commands.<br>
  * <br>
- * The received output will be received in the local <code>Vector<String></code> outputStack., which<br>
+ * The received output will be received in the local <code>Vector&lt;String&gt;</code> outputStack., which<br>
  * can be accessed by the getStack()-method in a synchronized way.<br>   
  * 
  * @see SysOutBoard

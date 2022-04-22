@@ -68,10 +68,9 @@ import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachin
 /**
  * The Class ThreadInfoStorageTree.
  * 
- * Builds up a tree: cluster->machine->JVM->Container
- * Each clickable node displays details about
- * CPU utilization an thread times.
- * Filter for agents applicable.
+ * Builds up a tree: cluster -&gt; machine -&gt; JVM -&gt; Container.<br>
+ * Each clickable node displays details about CPU utilization an thread times.
+ * Filter for agents are applicable.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -321,6 +320,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	
 	/**
 	 * Apply text filter.
+	 * @param filterText the filter text
 	 */
 	public void applyTextFilter(String filterText){
 				

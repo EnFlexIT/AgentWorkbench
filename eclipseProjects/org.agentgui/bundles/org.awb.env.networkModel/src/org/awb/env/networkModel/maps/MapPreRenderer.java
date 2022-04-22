@@ -52,8 +52,6 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
  * The Class MapPreRenderer is used to prepare the painting of the graph by downloading maps.
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
- * @param <V> the value type
- * @param <E> the element type
  */
 public class MapPreRenderer implements VisualizationViewer.Paintable {
 
@@ -158,9 +156,9 @@ public class MapPreRenderer implements VisualizationViewer.Paintable {
         	}
         }
 	}
+	
 	/**
 	 * Will update the current geographical center location of the map visualization.
-	 * @param mr the current {@link MapRenderer}
 	 */
 	public void updateCenterGeoLocation() {
 		

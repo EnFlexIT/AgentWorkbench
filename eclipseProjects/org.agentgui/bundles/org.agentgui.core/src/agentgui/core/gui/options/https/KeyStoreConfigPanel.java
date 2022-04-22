@@ -61,7 +61,7 @@ import de.enflexit.common.crypto.KeyStoreController;
  * 2- update his KeyStore informations 
  * 3- generate certificate from the KeyStore.
  *
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI, mohamedamine_jedidi@outlook.com
  * @version 1.0
  * @see HttpsConfigWindow
  * @since 05-04-2016

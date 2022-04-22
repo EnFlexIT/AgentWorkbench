@@ -125,7 +125,7 @@ public class OSMZoomLevels {
 	 * Returns the closest {@link ZoomLevel} for the specified Jung scaling.
 	 *
 	 * @param scaling the scaling
-	 * @@param latitude the current latitude area
+	 * @param latitude the current latitude area
 	 * @return the closest zoom level of jung scaling
 	 */
 	public ZoomLevel getClosestZoomLevelOfJungScaling(double scaling, double latitude) {

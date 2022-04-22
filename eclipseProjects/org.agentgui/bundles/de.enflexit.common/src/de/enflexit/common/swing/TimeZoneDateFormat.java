@@ -41,9 +41,7 @@ public class TimeZoneDateFormat extends SimpleDateFormat {
      * <b>Note:</b> This constructor may not support all locales.
      * For full coverage, use the factory methods in the {@link DateFormat}
      * class.
-     * <p>This is equivalent to calling
-     * {@link #SimpleDateFormat(String, Locale)
-     *     SimpleDateFormat(pattern, Locale.getDefault(Locale.Category.FORMAT))}.
+     * <p>This is equivalent to calling or use a {@link SimpleDateFormat}
      *
      * @see java.util.Locale#getDefault(java.util.Locale.Category)
      * @see java.util.Locale.Category#FORMAT

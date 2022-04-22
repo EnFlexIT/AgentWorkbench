@@ -112,7 +112,6 @@ public class TransformerForGraphNodePosition implements Function<GraphNode, Poin
 	 * Return the list of JUNG coordinates from the list of GraphNode positions.
 	 *
 	 * @param graphPosList the GraphNode position list
-	 * @param transformer the transformer
 	 * @return the position list in JUNG coordinates
 	 */
 	public List<Point2D> getJungPositionList(List<Point2D> graphPosList) {

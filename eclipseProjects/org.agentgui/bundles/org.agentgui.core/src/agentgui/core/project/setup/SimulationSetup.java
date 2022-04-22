@@ -287,7 +287,9 @@ public class SimulationSetup {
 	
 	/**
 	 * Loads a {@link SimulationSetup} from the specified XML file.
+	 *
 	 * @param setupXmlFile the setup xml file
+	 * @param loadUserRuntimeObject the indicator to also load user runtime object
 	 * @return the simulation setup, or null if loading failed
 	 */
 	public static SimulationSetup load(File setupXmlFile, boolean loadUserRuntimeObject) {
@@ -508,8 +510,8 @@ public class SimulationSetup {
 	
 	/**
 	 * This method will create all DefaultListModels which will be used within the visible application<br> 
-	 * as for example for the manual agent configuration (tab 'Simulation-Setup' => 'Agent-Start')<br>
-	 * or the configuration of the environment model (tab 'Simulation-Setup' => 'Simulation Environment').<br>
+	 * as for example for the manual agent configuration (tab 'Simulation-Setup' =&gt; 'Agent-Start')<br>
+	 * or the configuration of the environment model (tab 'Simulation-Setup' =&gt; 'Simulation Environment').<br>
 	 * The resulting ListModels can be get by using {@link #getAgentDefaultListModel(String)}
 	 */
 	public void createHashMap4AgentDefaulListModelsFromAgentList() {

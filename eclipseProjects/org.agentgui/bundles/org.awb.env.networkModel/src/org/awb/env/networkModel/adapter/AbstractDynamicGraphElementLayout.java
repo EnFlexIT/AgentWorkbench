@@ -13,9 +13,9 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 /**
  * The Class AbstractDynamicGraphElementLayout enables to visualize a {@link NetworkComponent}
  * or a {@link GraphNode} based on its data properties. It can be introduced with the definition
- * of a {@link NetworkComponentAdapter} by overriding the method {@link NetworkComponentAdapter#getDynamicGraphElementLayout()}.
+ * of a {@link NetworkComponentAdapter} by overriding the method {@link NetworkComponentAdapter#getDynamicGraphElementLayout(GraphElement)}.
  * 
- * @see NetworkComponentAdapter#getDynamicGraphElementLayout()
+ * @see NetworkComponentAdapter#getDynamicGraphElementLayout(GraphElement)
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */

@@ -70,11 +70,13 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	/**
 	 * Instantiates a new continuous TimeModel .
 	 */
-	public TimeModelContinuous() {
-	}
+	public TimeModelContinuous() { }
+	
 	/**
 	 * Instantiates a new continuous TimeModel ..
+	 *
 	 * @param startTime the start time for the time model
+	 * @param stopTime the stop time for the time model
 	 */
 	public TimeModelContinuous(Long startTime, Long stopTime) {
 		this.setTimeStart(startTime);

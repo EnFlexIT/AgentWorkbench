@@ -63,7 +63,7 @@ import de.enflexit.common.crypto.TrustStoreController;
  * 2- update his TrustStore informations 
  * 3- add or delete certificates from TrustStore.
  *
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI, mohamedamine_jedidi@outlook.com
  * @version 1.0
  * @see HttpsConfigWindow
  * @since 05-04-2016

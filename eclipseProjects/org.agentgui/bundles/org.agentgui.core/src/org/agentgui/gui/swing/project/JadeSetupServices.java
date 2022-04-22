@@ -82,8 +82,8 @@ public class JadeSetupServices extends JPanel implements ActionListener, Observe
 	private JLabel jLabelDummyServices = null;
 	
 	/**
-	 * Constructor of this class
-	 * @param project
+	 * Constructor of this class.
+	 * @param project the current project
 	 */
 	public JadeSetupServices(Project project) {
 		super();

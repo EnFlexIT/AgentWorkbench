@@ -42,7 +42,6 @@ import agentgui.core.project.Project;
  */
 public class JPanel4Visualization extends JPanel {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2070782580889468458L;
 
 	private String tabName = null;

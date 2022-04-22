@@ -152,10 +152,13 @@ public class ProjectRepository implements Serializable {
 		if (project==null) return null;
 		return this.getProjectUpdate(project.getProjectFolder(), project.getVersionTag(), project.getVersion().toString());
 	}
+	
 	/**
 	 * Return the project update, if such an update can be found.
 	 *
 	 * @param projectID the project ID
+	 * @param versionTag the version tag
+	 * @param version the version
 	 * @return the project update
 	 */
 	public RepositoryEntry getProjectUpdate(String projectID, String versionTag, String version) {
@@ -360,12 +363,12 @@ public class ProjectRepository implements Serializable {
 	 * Open http connection to update site.
 	 *
 	 * @param sourceURL the source URL
-	 * @param auth authorization details 
+	 * @param auth authorization details
 	 * @return the http URL connection
 	 * @throws ProjectRepositoryUpdateException the project repository update exception
-	 * @throws MalformedURLException the malformed URL exception
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException 
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public static HttpURLConnection openConnectionToUpdateSite(String sourceURL, WebResourcesAuthorization auth) throws ProjectRepositoryUpdateException,  IOException, IllegalArgumentException, URISyntaxException{
 		String sourceURLPath = getLocationPathIncludingRepositoryFile(sourceURL, true);

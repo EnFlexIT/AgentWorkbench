@@ -121,7 +121,9 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	
 	/**
 	 * Instantiates a new project export dialog.
-	 * @param project the project
+	 *
+	 * @param project the current project to handle
+	 * @param projectExportController the current project export controller
 	 */
 	public ProjectExportDialog(Project project, ProjectExportController projectExportController) {
 		this.project = project;

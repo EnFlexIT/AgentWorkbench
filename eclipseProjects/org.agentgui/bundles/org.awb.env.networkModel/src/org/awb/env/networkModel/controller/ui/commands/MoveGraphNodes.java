@@ -78,7 +78,7 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 	 * Instantiates a new UndoableEdit for the movements of GraphNode's.
 	 *
 	 * @param graphController the graph controller
-	 * @param visViewer the vis viewer
+	 * @param basicGraphGui the current {@link BasicGraphGui}
 	 * @param nodesMovedOldCoordinates the nodes moved old positions
 	 * @param polylinesMovedOldPositions the polylines moved old positions
 	 */

@@ -194,10 +194,13 @@ public class LoadInformation  {
 		}
 		this.cycleTimeStart = cycleTimeNow;
 	}
+	
 	/**
 	 * Method to get the current cycle-frequency in average. The average will be calculated 
-	 * out of 500 single values in maximum. If a further cycle time occurs, the first measurment
-	 * will be removed and so on. 
+	 * out of 500 single values in maximum. If a further cycle time occurs, the first measurement
+	 * will be removed and so on.
+	 *
+	 * @return the average cycle time
 	 */
 	public double getAvgCycleTime() {
 		

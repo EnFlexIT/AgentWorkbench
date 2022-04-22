@@ -155,6 +155,8 @@ public class EnvironmentNotification implements Serializable {
 	 * Sets the notification to be moved to the last position of the notification queue.
 	 * In case that this is already the last notification, the notification will
 	 * be block for a certain amount of time in milliseconds.
+	 *
+	 * @param period the time period in millisecond to block this {@link EnvironmentNotification}
 	 */
 	public void moveLastOrBlock(long period) {
 		this.getProcessingInstruction().setDelete(false);

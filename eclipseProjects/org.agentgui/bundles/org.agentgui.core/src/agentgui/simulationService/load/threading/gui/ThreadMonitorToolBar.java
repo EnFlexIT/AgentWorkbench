@@ -63,6 +63,7 @@ public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 	
 	/**
 	 * Instantiates a new thread measure tool bar.
+	 * @param agent the current {@link LoadMeasureAgent} 
 	 */
 	public ThreadMonitorToolBar(LoadMeasureAgent agent) {
 		this.myAgent = agent;

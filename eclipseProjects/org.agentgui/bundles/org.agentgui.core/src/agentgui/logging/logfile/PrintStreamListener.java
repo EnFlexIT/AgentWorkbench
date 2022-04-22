@@ -32,13 +32,10 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
- * The listener interface for receiving printStream events.
- * The class that is interested in processing a printStream
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addPrintStreamListener<code> method. When
- * the printStream event occurs, that object's appropriate
- * method is invoked.
+ * The listener class to listen to the console output of a specified type.
+ * Used in the {@link SysOutScanner}.
+ * 
+ * @see PrintStreamListenerType
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

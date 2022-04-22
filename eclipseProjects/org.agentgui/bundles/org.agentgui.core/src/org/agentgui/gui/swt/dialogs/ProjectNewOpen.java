@@ -104,7 +104,7 @@ public class ProjectNewOpen extends Dialog implements AwbProjectNewOpenDialog {
 	 * Instantiates a new project new open dialog.
 	 *
 	 * @param parentShell the parent shell
-	 * @param titel the title of this dialog
+	 * @param title the title of this dialog
 	 * @param currentAction the current {@link ProjectAction}
 	 */
 	public ProjectNewOpen(Shell parentShell, String title, ProjectAction currentAction) {

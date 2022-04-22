@@ -41,10 +41,11 @@ public class PrintStreamListener extends PrintStream {
 	
 	
 	/**
-	 * Constructor for remote outputs
-	 * @param outputStream
-	 * @param scanner
-	 * @param prefix
+	 * Constructor for remote outputs.
+	 *
+	 * @param outputStream the output stream
+	 * @param scanner the scanner
+	 * @param prefix the prefix
 	 */
 	public PrintStreamListener(OutputStream outputStream, SysOutScanner scanner, String prefix) {
 		super(outputStream);

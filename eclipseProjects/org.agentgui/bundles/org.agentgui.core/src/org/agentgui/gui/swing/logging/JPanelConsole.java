@@ -81,9 +81,10 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 		super();
 		this.initialize();
 	}
+	
 	/**
-	 * Constructor in case, that this Panel is used for the local output
-	 * @param isLocalConsole
+	 * Constructor in case, that this Panel is used for the local output.
+	 * @param isLocalConsole the indicator if this is a local console
 	 */
 	public JPanelConsole(boolean isLocalConsole) {
 		super();

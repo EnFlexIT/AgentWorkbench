@@ -115,7 +115,8 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	private JButton jButtonRename;
 	
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * @param project the current project
 	 */
 	public BaseAgents(Project project) {
 		super();

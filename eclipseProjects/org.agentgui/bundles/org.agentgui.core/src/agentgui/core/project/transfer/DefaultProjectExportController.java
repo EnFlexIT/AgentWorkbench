@@ -161,7 +161,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 	/**
 	 * Exports the current project using the provided {@link ProjectExportSettings},
 	 * and showing the user dialogs if necessary.
-	 * @param the project to be exported
+	 * @param project the project to be exported
 	 * @param exportSettings The {@link ProjectExportSettings}
 	 */
 	public void exportProject(Project project, ProjectExportSettings exportSettings) {
@@ -170,7 +170,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 	/**
 	 * Exports the current project using the provided {@link ProjectExportSettings}.
-	 * @param the project to be exported
+	 * @param project the project to be exported
 	 * @param exportSettings The {@link ProjectExportSettings}
 	 * @param showUserDialogs specifies if user dialogs are shown
 	 * @param useConcurrentThread specifies if the project should be exported in a concurrent thread
@@ -190,7 +190,9 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 
 	/**
-	 * Creates and initialized a {@link JFileChooser} for selecting the export target
+	 * Creates and initialized a {@link JFileChooser} for selecting the export target.
+	 *
+	 * @param project the project to handle
 	 * @return the {@link JFileChooser}
 	 */
 	public JFileChooser getJFileChooser(Project project) {
@@ -226,6 +228,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 	/**
 	 * Provides a default file name for the export target.
+	 * @param project the project to be handled
 	 * @return the default file name
 	 */
 	protected String getProposedFileName(Project project) {
@@ -414,6 +417,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 
 	/**
 	 * This is called after exporting the project. In can be overridden by subclasses to provide specific success/failure messages.
+	 * @param success the indicator, if a success message is to be shown
 	 */
 	protected void showResultMessage(boolean success) {
 		// --- Show a feedback message to the user --------------------
@@ -664,8 +668,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 	}
 	
 	/**
-	 * Allows to disable the confirmation dialog independent of the progress monitor 
-	 * @param confirmationDialogEnabled
+	 * Allows to disable the confirmation dialog independent of the progress monitor .
+	 * @param confirmationDialogEnabled the indicator to enable / disable the confirmation dialog 
 	 */
 	public void setConfirmationDialogDisabled(boolean confirmationDialogEnabled) {
 		this.confirmationDialogDisabled = confirmationDialogEnabled;
