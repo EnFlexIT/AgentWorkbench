@@ -54,14 +54,18 @@
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, dependencies for the AWB-Core                -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-			<dependencies>
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 				<!-- javax.activation -->
 				<dependency>
 					<groupId>com.sun.activation</groupId>
 					<artifactId>javax.activation</artifactId>
 					<version>1.2.0</version>
+					<type>jar</type>
 				</dependency>
+		</location>
+		
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
 				<!-- Apache commons-compress -->
 				<dependency>
 					<groupId>org.apache.commons</groupId>
