@@ -8,18 +8,18 @@
 			<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
 			<repository location="https://download.eclipse.org/releases/2022-03/"/>
 			<!--  Space for older versions (as reminder) 
-		<repository location="https://download.eclipse.org/releases/2021-12/"/>
-		<repository location="https://download.eclipse.org/releases/2021-09/"/>
-		<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java8 
-		<repository location="https://download.eclipse.org/releases/2020-03/"/>
-		<repository location="https://download.eclipse.org/releases/2019-12/"/>
-		<repository location="https://download.eclipse.org/releases/2019-09/"/>
-		<repository location="https://download.eclipse.org/releases/2019-06/"/>
-		<repository location="https://download.eclipse.org/releases/2019-03/"/>
-		<repository location="https://download.eclipse.org/releases/2018-12/"/>
-		<repository location="https://download.eclipse.org/releases/2018-09/"/>
-		<repository location="https://download.eclipse.org/eclipse/updates/4.8"/>
-		-->
+			<repository location="https://download.eclipse.org/releases/2021-12/"/>
+			<repository location="https://download.eclipse.org/releases/2021-09/"/>
+			<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java8 
+			<repository location="https://download.eclipse.org/releases/2020-03/"/>
+			<repository location="https://download.eclipse.org/releases/2019-12/"/>
+			<repository location="https://download.eclipse.org/releases/2019-09/"/>
+			<repository location="https://download.eclipse.org/releases/2019-06/"/>
+			<repository location="https://download.eclipse.org/releases/2019-03/"/>
+			<repository location="https://download.eclipse.org/releases/2018-12/"/>
+			<repository location="https://download.eclipse.org/releases/2018-09/"/>
+			<repository location="https://download.eclipse.org/eclipse/updates/4.8"/>
+			-->
 		</location>
 
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
@@ -37,17 +37,17 @@
 			<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
 			<!--  Space for older versions (as reminder)
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20210825222808/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository"/> <= Last for Java8
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20181128170323/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository"/>
-		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20210825222808/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository"/> <= Last for Java8
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20181128170323/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
 		-->
 		</location>
 
@@ -56,6 +56,12 @@
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
+				<!-- javax.activation -->
+				<dependency>
+					<groupId>com.sun.activation</groupId>
+					<artifactId>javax.activation</artifactId>
+					<version>1.2.0</version>
+				</dependency>
 				<!-- Apache commons-compress -->
 				<dependency>
 					<groupId>org.apache.commons</groupId>
