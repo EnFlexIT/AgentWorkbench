@@ -55,6 +55,7 @@
 		<!-- From here, dependencies for the AWB-Core                -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
 				<!-- javax.activation -->
 				<dependency>
 					<groupId>com.sun.activation</groupId>
@@ -62,6 +63,7 @@
 					<version>1.2.0</version>
 					<type>jar</type>
 				</dependency>
+			</dependencies>
 		</location>
 		
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
