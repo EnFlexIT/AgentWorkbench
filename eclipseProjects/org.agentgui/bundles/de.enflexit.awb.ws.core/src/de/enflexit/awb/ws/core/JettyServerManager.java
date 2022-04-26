@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.AwbWebRegistry;
 import de.enflexit.awb.ws.AwbWebServerService;
+import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 
@@ -59,10 +60,10 @@ public class JettyServerManager {
 	 */
 	public void addAwbWebServerService(AwbWebServerService newServer) {
 		// --- Add to local registry ----------------------
-		boolean added = this.getAwbWebRegistry().addAwbWebServerService(newServer);
-		if (added==true && this.startOn!=null) {
+		AwbWebServerServiceWrapper serviceWrapper = this.getAwbWebRegistry().addAwbWebServerService(newServer);
+		if (serviceWrapper!=null && this.startOn!=null) {
 			// --- Start that server? ---------------------   
-			JettyConfiguration config = newServer.getJettyConfiguration();
+			JettyConfiguration config = serviceWrapper.getJettyConfiguration();
 			if (config.getStartOn().ordinal()<=this.startOn.ordinal()) {
 				// --- Start the server -------------------
 				this.startServer(config);
@@ -70,7 +71,7 @@ public class JettyServerManager {
 		}
 	}
 	/**
-	 * Removes the specified {@link AwbWebServerService} to the running servers.
+	 * Removes the specified {@link AwbWebServerService} from the running servers.
 	 * @param serverToRemove the server to remove
 	 */
 	public void removeAwbWebServerService(AwbWebServerService serverToRemove) {
@@ -78,10 +79,10 @@ public class JettyServerManager {
 		boolean removed = this.getAwbWebRegistry().removeAwbWebServerService(serverToRemove);
 		if (removed==true) {
 			// --- Stop if server is running --------------
-			JettyConfiguration config = serverToRemove.getJettyConfiguration();
-			Server server = this.getServer(config.getServerName());
+			String serverName = serverToRemove.getJettyConfiguration().getServerName();
+			Server server = this.getServer(serverName);
 			if (server!=null) {
-				this.stopServer(config.getServerName());
+				this.stopServer(serverName);
 			}
 		}
 	}
@@ -427,12 +428,12 @@ public class JettyServerManager {
 		this.setStartOn(startOn);
 		
 		// --- Get the server to be started ---------------
-		List<AwbWebServerService> serverServices = this.getAwbWebRegistry().getAwbWebServerService(startOn);
-		for (int i = 0; i < serverServices.size(); i++) {
-			// --- Get the server service -----------------
-			AwbWebServerService serverToStart = serverServices.get(i);
+		List<AwbWebServerServiceWrapper> serverServicesWrapped = this.getAwbWebRegistry().getAwbWebServerService(startOn);
+		for (int i = 0; i < serverServicesWrapped.size(); i++) {
+			// --- Get the wrapped server service ---------
+			AwbWebServerServiceWrapper serverToStartWrapped = serverServicesWrapped.get(i);
 			// --- Get the configuration ------------------
-			JettyConfiguration config = serverToStart.getJettyConfiguration();
+			JettyConfiguration config = serverToStartWrapped.getJettyConfiguration();
 			// --- Check if server is running -------------
 			Server server = this.getServer(config.getServerName());
 			if (server==null) {
@@ -453,12 +454,12 @@ public class JettyServerManager {
 	public void doServerStop(StartOn startOn) {
 		
 		// --- Get the server to be started ---------------
-		List<AwbWebServerService> serverServices = this.getAwbWebRegistry().getAwbWebServerService(startOn);
-		for (int i = 0; i < serverServices.size(); i++) {
+		List<AwbWebServerServiceWrapper> serverServicesWrapped = this.getAwbWebRegistry().getAwbWebServerService(startOn);
+		for (int i = 0; i < serverServicesWrapped.size(); i++) {
 			// --- Get the server service -----------------
-			AwbWebServerService serverToStart = serverServices.get(i);
+			AwbWebServerServiceWrapper serverToStartWrapped = serverServicesWrapped.get(i);
 			// --- Get the configuration ------------------
-			JettyConfiguration config = serverToStart.getJettyConfiguration();
+			JettyConfiguration config = serverToStartWrapped.getJettyConfiguration();
 			// --- Check if server is running -------------
 			Server server = this.getServer(config.getServerName());
 			if (server!=null) {

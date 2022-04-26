@@ -1,20 +1,49 @@
 package de.enflexit.awb.ws.core;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.Set;
 import java.util.TreeMap;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
+import agentgui.core.application.Application;
+import agentgui.core.common.AbstractUserObject;
+
 /**
- * A ServerConfiguration describes the configuration of a Jetty Server
+ * A JettyConfiguration describes the configuration of a Jetty Server
  * to be started with Agent.Workbench.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "JettyConfiguration", propOrder = {
+    "serverName",
+    "startOn",
+    "mutableHandlerCollection",
+    "jettySettings"
+})
+public class JettyConfiguration implements Serializable {
 
 	private static final long serialVersionUID = -425703333358456038L;
-
+	private static final String FILE_ENCODING = "UTF-8";
+	
 	public enum StartOn {
 		AwbStart,
 		ProjectLoaded,
@@ -55,13 +84,22 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	private static final Boolean[] valueRangeBoolean = new Boolean[] {true, false};
 	
 	
-	private StartOn startOn;
 	private String serverName;
-	private Handler handler;
+	private StartOn startOn;
 	private boolean mutableHandlerCollection;
+
+	private TreeMap<String, JettyAttribute<?>> jettySettings;
 	
-	private JettyCustomizer jettyCustomizer;
+	private transient Handler handler;
+	private transient JettyCustomizer jettyCustomizer;
 	
+	
+	/**
+	 * <b>Do not use ! - Only for the file loading of JAXB.</b><br>
+	 * Instantiates a new jetty configuration.
+	 */
+	@Deprecated
+	public JettyConfiguration() { }
 	/**
 	 * Instantiates a new jetty configuration.
 	 *
@@ -85,9 +123,24 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 		}
 		this.setServerName(serverName);
 		this.setStartOn(startOn);
-		this.setHandler(handler);
 		this.setMutableHandlerCollection(useMutableHandlerCollection);
+		this.setHandler(handler);
 		this.setDefaultConfiguration();
+	}
+	
+	/**
+	 * Returns the server name.
+	 * @return the server name
+	 */
+	public String getServerName() {
+		return serverName;
+	}
+	/**
+	 * Sets the server name.
+	 * @param serverName the new server name
+	 */
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
 	}
 	
 	/**
@@ -109,19 +162,59 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	}
 	
 	/**
-	 * Returns the server name.
-	 * @return the server name
+	 * Sets to use a mutable handler collection or not.
+	 * @param mutableHandlerCollection the new mutable handler collection
 	 */
-	public String getServerName() {
-		return serverName;
+	public void setMutableHandlerCollection(boolean mutableHandlerCollection) {
+		this.mutableHandlerCollection = mutableHandlerCollection;
 	}
 	/**
-	 * Sets the server name.
-	 * @param serverName the new server name
+	 * Checks if is mutable handler collection.
+	 * @return true, if is mutable handler collection
 	 */
-	public void setServerName(String serverName) {
-		this.serverName = serverName;
+	public boolean isMutableHandlerCollection() {
+		return mutableHandlerCollection;
 	}
+	
+	
+	/**
+	 * Returns the jetty settings.
+	 * @return the jetty settings
+	 */
+	public TreeMap<String, JettyAttribute<?>> getJettySettings() {
+		if (jettySettings==null) {
+			jettySettings = new TreeMap<String, JettyAttribute<?>>();
+		}
+		return jettySettings;
+	}
+	/**
+	 * Puts the specified JettyAttribute to the local settings.
+	 *
+	 * @param key the key
+	 * @param attribute the attribute
+	 */
+	public void put(String key, JettyAttribute<?> attribute) {
+		this.getJettySettings().put(key, attribute);
+		
+	}
+	/**
+	 * Returns the stored value for the specified key.
+	 *
+	 * @param key the key
+	 * @return the jetty attribute
+	 */
+	public JettyAttribute<?> get(String key) {
+		return this.getJettySettings().get(key);
+	}
+	/**
+	 * Returns the key set.
+	 *
+	 * @return the list
+	 */
+	public Set<String> keySet() {
+		return this.getJettySettings().keySet();
+	}
+	
 	
 	/**
 	 * Sets the handler.
@@ -137,22 +230,6 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	public Handler getHandler() {
 		return handler;
 	}
-	
-	/**
-	 * Sets to use a mutable handler collection or not.
-	 * @param mutableHandlerCollection the new mutable handler collection
-	 */
-	public void setMutableHandlerCollection(boolean mutableHandlerCollection) {
-		this.mutableHandlerCollection = mutableHandlerCollection;
-	}
-	/**
-	 * Checks if is mutable handler collection.
-	 * @return true, if is mutable handler collection
-	 */
-	public boolean isMutableHandlerCollection() {
-		return mutableHandlerCollection;
-	}
-	
 	
 	/**
 	 * Sets the {@link JettyCustomizer} that can be used to programmatically 
@@ -219,6 +296,7 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 	}
 	
 	
+
 	/**
 	 * Returns the HTTP port to be used by the Jetty server.
 	 * @return the HTTP port
@@ -235,4 +313,125 @@ public class JettyConfiguration extends TreeMap<String, JettyAttribute<?>> {
 		}
 		return port;
 	}
+	
+	
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here methods to save or load a JettyConfiguration -----------------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Returns the file instance for the specified {@link JettyConfiguration}.
+	 *
+	 * @param jConfig the JettyConfiguration
+	 * @return the file for the JettyConfiguration
+	 */
+	public static File getFile(JettyConfiguration jConfig) {
+		
+		if (jConfig==null || jConfig.getServerName()==null || jConfig.getServerName().isBlank()) {
+			throw new NullPointerException("Either, JettyConfiguration is null or the server name was not set!");
+		}
+		
+		String fileName = jConfig.getServerName() + ".xml";
+		String propPathAbs = Application.getGlobalInfo().getPathProperty(true);
+		propPathAbs += propPathAbs.endsWith(File.separator)==false ? File.separator : ""; 
+		return new File(propPathAbs + fileName);
+	}
+	
+	/**
+	 * Saves the current configuration.
+	 * @return true, if successful
+	 */
+	public boolean save() {
+		return save(this);
+	}
+	/**
+	 * Saves the specified JettyConfiguration to the specified file.
+	 *
+	 * @param config the config
+	 * @param file the file
+	 * @return true, if successful
+	 */
+	public static boolean save(JettyConfiguration config) {
+		
+		boolean success = true;
+		
+		// --- Check the JettyConfiguration instance ------
+		if (config==null) {
+			System.err.println("[" + JettyConfiguration.class.getSimpleName() + "] No JettyConfiguration instance was specified to be saved!");
+			return false;
+		} 
+
+		// --- Where to save? -----------------------------
+		File file = getFile(config);
+		if (file==null) {
+			System.err.println("[" + JettyConfiguration.class.getSimpleName() + "] The path for saving a configuration as XML file is not allowed to be null!");
+			return false;
+		}
+		
+			
+		FileWriter fileWriter = null;
+		try {
+			// --- Define the JAXB context ------------
+			JAXBContext pc = JAXBContext.newInstance(JettyConfiguration.class);
+			Marshaller pm = pc.createMarshaller();
+			pm.setProperty(Marshaller.JAXB_ENCODING, FILE_ENCODING);
+			pm.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+			// --- Write instance to xml-File ---------
+			fileWriter = new FileWriter(file);
+			pm.marshal(config, fileWriter);
+			success = true;
+			
+		} catch (Exception ex) {
+			System.err.println("[" + JettyConfiguration.class.getSimpleName() + "] Error while saving the user object as XML file:");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (fileWriter!=null) fileWriter.close();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}				
+		}
+		return success;
+	}
+	/**
+	 * Loads a JettyConfiguration from the specified file.
+	 *
+	 * @param file the file
+	 * @return the jetty configuration
+	 */
+	public static JettyConfiguration load(File file) {
+		
+		if (file==null || file.exists()==false) return null;
+		
+		JettyConfiguration jConfig = null;
+		InputStream inputStream = null;
+		InputStreamReader isReader = null;
+		try {
+			
+			JAXBContext context = JAXBContext.newInstance(JettyConfiguration.class);
+			Unmarshaller unMarsh = context.createUnmarshaller();
+			
+			inputStream = new FileInputStream(file);
+			isReader  = new InputStreamReader(inputStream, FILE_ENCODING);
+			
+			Object jaxbObject = unMarsh.unmarshal(isReader);
+			if (jaxbObject!=null && jaxbObject instanceof JettyConfiguration) {
+				jConfig = (JettyConfiguration)jaxbObject;
+			}
+			
+		} catch (Exception ex) {
+			System.out.println("[" + AbstractUserObject.class.getSimpleName() + "] Error while loading the user object from XML file:");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (isReader!=null) isReader.close();
+				if (inputStream!=null) inputStream.close();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}	
+		}
+		return jConfig;
+	}
+
 }

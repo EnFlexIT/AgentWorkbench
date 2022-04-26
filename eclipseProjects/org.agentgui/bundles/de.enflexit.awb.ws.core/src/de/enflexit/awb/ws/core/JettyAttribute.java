@@ -1,15 +1,29 @@
 package de.enflexit.awb.ws.core;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * The Class JettyAttribute.
  * @param <T> the generic type
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "JettyAttribute", propOrder = {
+    "key",
+    "value"
+})
 public class JettyAttribute<T> {
 	
 	private String key;
 	private T value;
-	private T[] possibleValues;
+	private transient T[] possibleValues;
 	
+	
+	/**
+	 * Empty default constructor for a JettyAttribute.
+	 */
+	public JettyAttribute() { }
 	/**
 	 * Instantiates a new jetty parameter value.
 	 *
