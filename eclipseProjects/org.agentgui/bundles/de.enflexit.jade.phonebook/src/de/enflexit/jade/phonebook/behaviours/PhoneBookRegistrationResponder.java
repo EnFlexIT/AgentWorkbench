@@ -3,6 +3,7 @@ package de.enflexit.jade.phonebook.behaviours;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
 import jade.core.Agent;
+import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
@@ -16,8 +17,14 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 	
 	private PhoneBook<T> localPhoneBook;
 
-	public PhoneBookRegistrationResponder(Agent a, MessageTemplate mt, PhoneBook<T> localPhoneBook) {
-		super(a, mt);
+	/**
+	 * Instantiates a new phone book registration responder.
+	 * @param agent the agent
+	 * @param messageTemplate the message template
+	 * @param localPhoneBook the local phone book
+	 */
+	public PhoneBookRegistrationResponder(Agent agent, MessageTemplate messageTemplate, PhoneBook<T> localPhoneBook) {
+		super(agent, messageTemplate);
 		this.localPhoneBook = localPhoneBook;
 	}
 	
@@ -28,16 +35,20 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 	protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
 		Object contentObject = null;
 		
+		System.out.println("[" + this.myAgent.getLocalName() + "] Received registration request from " + request.getSender().getLocalName());
+		
 		try {
 			contentObject = request.getContentObject();
 		} catch (UnreadableException e) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error extracting content object");
 			e.printStackTrace();
 		}
-		if (contentObject instanceof AbstractPhoneBookEntry) {
+		if (contentObject != null && contentObject instanceof AbstractPhoneBookEntry) {
 			@SuppressWarnings("unchecked")
 			T phoneBookEntry = (T) contentObject;
-			this.localPhoneBook.addEntry(phoneBookEntry.getUniqueIdentifier(), phoneBookEntry);
+			this.localPhoneBook.addEntry(phoneBookEntry);
+			
+			System.out.println("[" + this.myAgent.getLocalName() + "] PhoneBookEntry successfully added ");
 		}
 		
 		return super.handleRequest(request);
@@ -48,9 +59,17 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 	 */
 	@Override
 	protected ACLMessage prepareResponse(ACLMessage request) throws NotUnderstoodException, RefuseException {
-		ACLMessage response = request.createReply();
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see jade.proto.AchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
+	 */
+	@Override
+	protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
 		response.setPerformative(ACLMessage.CONFIRM);
 		return response;
 	}
 
+	
 }

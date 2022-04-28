@@ -35,7 +35,7 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends A
 					
 					for (int i=0; i<results.size(); i++) {
 						T result = results.get(i);
-						this.localPhoneBook.addEntry(result.getUniqueIdentifier(), result);
+						this.localPhoneBook.addEntry(result);
 					}
 				}
 			} catch (UnreadableException e) {
