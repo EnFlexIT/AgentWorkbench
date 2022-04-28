@@ -16,7 +16,7 @@ import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
  */
 public class AwbWebRegistry {
 
-	private List<AwbWebServerService> registeredWebServer;
+	private List<AwbWebServerServiceWrapper> registeredWebServer;
 	private List<AwbWebHandlerService> registeredHandler;
 
 	// ------------------------------------------------------------------------
@@ -26,23 +26,27 @@ public class AwbWebRegistry {
 	 * Returns the registered web server by server name.
 	 * @return the registered web server
 	 */
-	public List<AwbWebServerService> getRegisteredWebServer() {
+	public List<AwbWebServerServiceWrapper> getRegisteredWebServer() {
 		if (registeredWebServer==null) {
-			registeredWebServer = new ArrayList<AwbWebServerService>();
+			registeredWebServer = new ArrayList<>();
 		}
 		return registeredWebServer;
 	}
+	
 	/**
 	 * Adds the specified {@link AwbWebServerService} to the registry.
 	 *
-	 * @param newServer the new server to register
-	 * @return true, if successful
+	 * @param newServerService the new server service to register
+	 * @return the AwbWebServerServiceWrapper in case that the service was added, or <code>null</code>
 	 */
-	public boolean addAwbWebServerService(AwbWebServerService newServer) {
-		if (this.getRegisteredWebServer().contains(newServer)==false) {
-			this.getRegisteredWebServer().add(newServer);
+	public AwbWebServerServiceWrapper addAwbWebServerService(AwbWebServerService newServerService) {
+		AwbWebServerServiceWrapper serverWrapper = new AwbWebServerServiceWrapper(newServerService);
+		if (this.getRegisteredWebServer().contains(serverWrapper)==false) {
+			this.getRegisteredWebServer().add(serverWrapper);
+		} else {
+			serverWrapper = null;
 		}
-		return true;
+		return serverWrapper;
 	}
 	/**
 	 * Removes the specified {@link AwbWebServerService} from the registry.
@@ -51,7 +55,8 @@ public class AwbWebRegistry {
 	 * @return true, if successful
 	 */
 	public boolean removeAwbWebServerService(AwbWebServerService serviceToRemove) {
-		return this.getRegisteredWebServer().remove(serviceToRemove);
+		AwbWebServerServiceWrapper serviceToRemoveWrapper = new AwbWebServerServiceWrapper(serviceToRemove);
+		return this.getRegisteredWebServer().remove(serviceToRemoveWrapper);
 	}
 	
 	/**
@@ -60,9 +65,9 @@ public class AwbWebRegistry {
 	 * @param startOn the {@link StartOn} to search for
 	 * @return the list of AwbWebServerService
 	 */
-	public List<AwbWebServerService> getAwbWebServerService(StartOn startOn) {
-		List<AwbWebServerService> serverServiceList = new ArrayList<AwbWebServerService>();
-		for (AwbWebServerService serverService : this.getRegisteredWebServer()) {
+	public List<AwbWebServerServiceWrapper> getAwbWebServerService(StartOn startOn) {
+		List<AwbWebServerServiceWrapper> serverServiceList = new ArrayList<>();
+		for (AwbWebServerServiceWrapper serverService : this.getRegisteredWebServer()) {
 			// --- Check if server definition is valid --------------
 			if (this.isValidAwbWebServerService(serverService, true)==null) {
 				// --- Add to result list? ---------------------------
@@ -80,33 +85,34 @@ public class AwbWebRegistry {
 	 * @param serviceToCheck the service to check
 	 * @return Null, if the service is valid, otherwise an error message
 	 */
-	public String isValidAwbWebServerService(AwbWebServerService serviceToCheck) {
+	public String isValidAwbWebServerService(AwbWebServerServiceWrapper serviceToCheck) {
 		return this.isValidAwbWebServerService(serviceToCheck, false);
 	}
 	/**
 	 * Checks if the specified AwbWebServerService is valid.
 	 *
-	 * @param serviceToCheck the service to check
+	 * @param serviceToCheckWrapped the wrapped service to check
 	 * @param printToConsole the indicator to print to console, if an error was found 
 	 * @return Null, if the service is valid, otherwise an error message
 	 */
-	public String isValidAwbWebServerService(AwbWebServerService serviceToCheck, boolean printToConsole) {
+	public String isValidAwbWebServerService(AwbWebServerServiceWrapper serviceToCheckWrapped, boolean printToConsole) {
 		
 		String error = null;
 		
 		// --- Check for an error in the service ----------
-		JettyConfiguration config = serviceToCheck.getJettyConfiguration();
+		String serviceClassName = serviceToCheckWrapped.getWebServerService().getClass().getName();
+		JettyConfiguration config = serviceToCheckWrapped.getJettyConfiguration();
 		if (config==null) {
-			error = "No JettyConfiguration was provided by the service implementation '" + serviceToCheck.getClass().getName() + "'.";
+			error = "No JettyConfiguration was provided by the service implementation '" + serviceClassName + "'.";
 		}
 
 		String serverName = config.getServerName();
 		if (error==null && (serverName==null || serverName.isBlank())) {
-			error =  "No server name was specified by the service implementation '" + serviceToCheck.getClass().getName() + "'.";
+			error =  "No server name was specified by the service implementation '" + serviceClassName + "'.";
 		}
 
 		if (error==null && (config.getHandler()==null && config.isMutableHandlerCollection()==false)) {
-			error = "No Handler was specified for server '" + serverName + "', but the option for a mutable handler collection was set to 'false' by the service implementation '" + serviceToCheck.getClass().getName() + "'.";
+			error = "No Handler was specified for server '" + serverName + "', but the option for a mutable handler collection was set to 'false' by the service implementation '" + serviceClassName + "'.";
 		}
 		
 		// --- Print to console? --------------------------
