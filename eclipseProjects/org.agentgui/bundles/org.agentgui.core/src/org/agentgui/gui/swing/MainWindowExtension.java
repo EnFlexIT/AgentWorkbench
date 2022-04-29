@@ -28,6 +28,8 @@
  */
 package org.agentgui.gui.swing;
 
+import java.awt.MenuItem;
+import java.awt.TrayIcon;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -54,6 +56,8 @@ public abstract class MainWindowExtension {
 	private Vector<MainWindowMenu> mainWindowMenuVector;
 	private Vector<MainWindowMenuItem> mainWindowMenuItemVector;
 	private Vector<MainWindowToolbarComponent> mainWindowToolBarComponentVector;
+	
+	private Vector<TrayIconMenuItem> trayIconMenuItemVector;
 	
 	/**
 	 * Initializes the extension. Use this method to add your individual 
@@ -96,7 +100,6 @@ public abstract class MainWindowExtension {
 		}
 		return mainWindowMenuItemVector;
 	}
-	
 	/**
 	 * Adds the specified JMenuItem to the specified workbench window at the given index position.
 	 *
@@ -139,7 +142,34 @@ public abstract class MainWindowExtension {
 		this.getMainWindowToolBarComponentVector().addElement(new MainWindowToolbarComponent(toolbarComponentToAdd, indexPosition, separatorPosition));
 	}
 	
+	/**
+	 * Returns the tray icon menu item vector.
+	 * @return the tray icon menu item vector
+	 */
+	public Vector<TrayIconMenuItem> getTrayIconMenuItemVector() {
+		if (trayIconMenuItemVector==null) {
+			trayIconMenuItemVector = new Vector<>();
+		}
+		return trayIconMenuItemVector;
+	}
+	/**
+	 * Adds the specified AWT tray icon {@link MenuItem}.
+	 *
+	 * @param tryIconMenuItemToAdd the tray icon menu item to add
+	 * @param indexPosition the index position (may be <code>null</code> also)
+	 * @param separatorPosition the separator position  (may be <code>null</code> also)
+	 */
+	protected void addTrayIconMenuItem(MenuItem tryIconMenuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {
+		if (tryIconMenuItemToAdd==null) {
+			throw new NullPointerException("The menu item to be added is null.");
+		}
+		this.getTrayIconMenuItemVector().addElement(new TrayIconMenuItem(tryIconMenuItemToAdd, indexPosition, separatorPosition));
+	}
 	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, sub classes are defined ---------------------------------
+	// ------------------------------------------------------------------------
 	/**
 	 * The Class MainWindowMenu describes the JMenu and it index position that is
 	 * to be added to the {@link MainWindow} of Agent.Workbench.
@@ -168,6 +198,7 @@ public abstract class MainWindowExtension {
 			this.indexPosition = indexPosition;
 		}
 	}
+	
 	/**
 	 * The Class MainWindowMenuItem describes single menu items that are to 
 	 * be added to MainWindow of Agent.Workbench.
@@ -214,7 +245,7 @@ public abstract class MainWindowExtension {
 			this.separatorPosition = separatorPosition;
 		}
 	}
-	
+
 	/**
 	 * The Class MainWindowToolbarComponent describes single components that 
 	 * are to be added to the main tool bar of Agent.Workbench.
@@ -252,6 +283,42 @@ public abstract class MainWindowExtension {
 			this.separatorPosition = separatorPosition;
 		}
 	}
-
 	
+	/**
+	 * The Class TrayIconMenuItem describes a single menu item 
+	 * that are to be added to the AWB {@link TrayIcon}.
+	 */
+	public class TrayIconMenuItem {
+		
+		private MenuItem menuItem;
+		private Integer indexPosition;
+		private SeparatorPosition separatorPosition;
+		
+		public TrayIconMenuItem(MenuItem menuItem, Integer indexPosition, SeparatorPosition separatorPosition) {
+			this.setMenuItem(menuItem);
+			this.setIndexPosition(indexPosition);
+			this.setSeparatorPosition(separatorPosition);
+		}
+
+		public MenuItem getMenuItem() {
+			return menuItem;
+		}
+		public void setMenuItem(MenuItem menuItem) {
+			this.menuItem = menuItem;
+		}
+
+		public Integer getIndexPosition() {
+			return indexPosition;
+		}
+		public void setIndexPosition(Integer indexPosition) {
+			this.indexPosition = indexPosition;
+		}
+
+		public SeparatorPosition getSeparatorPosition() {
+			return separatorPosition;
+		}
+		public void setSeparatorPosition(SeparatorPosition separatorPosition) {
+			this.separatorPosition = separatorPosition;
+		}
+	}
 }

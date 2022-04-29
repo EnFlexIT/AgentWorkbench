@@ -177,7 +177,7 @@ public class Platform {
 	 * @param containerProfile the actual container Profile
 	 * @return true, if successful
 	 */
-	public boolean start(boolean showRMA, final Profile containerProfile) {
+	public boolean start(boolean showRMA, Profile containerProfile) {
 		return start(showRMA, containerProfile, false);
 	}
 	
@@ -195,7 +195,7 @@ public class Platform {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					Platform.this.start();
+					Platform.this.doStart(showRMA, containerProfile);
 				}
 			}, "JADE-Starter Thread").start();
 			return true;
@@ -230,6 +230,7 @@ public class Platform {
 				if (this.hasValidPreconditionsInPlugins()==false) return false;
 				// --- Notify about JADE start ----------------------
 				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.JADE_START));
+				
 				// --- Start Platform -------------------------------
 				Runtime jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {

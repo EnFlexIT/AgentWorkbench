@@ -72,6 +72,7 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
@@ -122,6 +123,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
+		DeviceSystemExecutionMode devExecMode = Application.getGlobalInfo().getDeviceServiceExecutionMode();
 		if (Application.isRunningAsServer()==true ||  execMode==ExecutionMode.DEVICE_SYSTEM) {
 			if (Application.getGlobalInfo().getAppLookAndFeelClassName()!=null) {
 				this.setLookAndFeel();
@@ -141,7 +143,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    this.addOptionTab(this.getOIDCOptions(), null);
 	    this.addOptionTab(this.getLogFileOptions(), null);
 	    
-	    if (Application.isRunningAsServer()==true || execMode==ExecutionMode.DEVICE_SYSTEM) {
+	    if (Application.isRunningAsServer()==true || (execMode==ExecutionMode.DEVICE_SYSTEM && devExecMode==DeviceSystemExecutionMode.AGENT)) {
 	    	String tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, (JPanel)Application.getConsole(), tabTitle);	
 	    }

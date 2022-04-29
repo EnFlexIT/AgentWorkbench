@@ -306,16 +306,6 @@ public class ServerClientAgent extends Agent {
 		
 	}
 	
-	/**
-	 * Forwards a remote container request to the ServerMasterAgent, which comes from
-	 * the local SimulationService.
-	 *
-	 * @param agentAction the agent action
-	 */
-	private void forwardAvailableMachinesRequest(Concept agentAction) {
-		ClientAvailableMachinesRequest req = (ClientAvailableMachinesRequest) agentAction;
-		this.sendMessage2MainServer(req);
-	}
 	
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaviour --- S T A R T ---------
@@ -357,7 +347,7 @@ public class ServerClientAgent extends Agent {
 						// --- Server.Master not reachable ? ------------
 						String msgContent = msg.getContent();
 						if (msgContent.contains("server.master")) {
-							if (sendNotReachable<sendNotReachableMax) {
+							if (sendNotReachable < sendNotReachableMax) {
 								System.out.println( "Server.Master not reachable! Try to reconnect in " + (triggerTime4Reconnection/1000) + " seconds ..." );
 								sendNotReachable++;
 								if (sendNotReachable>=sendNotReachableMax) {
@@ -431,10 +421,10 @@ public class ServerClientAgent extends Agent {
 							e.printStackTrace();
 						}
 
-						
 					} else if (agentAction instanceof ClientAvailableMachinesRequest) {
-						// --- Forward to Server.Master -----------------------
-						forwardAvailableMachinesRequest(agentAction);
+						// --- Forwards a remote container request to the -----
+						// --- Server.Master (received from SimulationService -
+						ServerClientAgent.this.sendMessage2MainServer(agentAction);
 						
 					} else if (agentAction instanceof ClientAvailableMachinesReply) {
 						// --- Received information about available machines --
@@ -537,7 +527,7 @@ public class ServerClientAgent extends Agent {
 		}
 	}
 	// -----------------------------------------------------
-	// --- Trigger-Behaviour --- S T A R T -----------------
+	// --- Trigger-Behaviour --- E N D ---------------------
 	// -----------------------------------------------------
 	
 

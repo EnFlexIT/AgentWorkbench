@@ -1,0 +1,161 @@
+package de.enflexit.awb.ws.ui;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
+
+import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import javax.swing.JButton;
+
+/**
+ * The Class JDialogWsConfiguration enables to configure WS server and clients.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class JDialogWsConfiguration extends JDialog implements ActionListener {
+
+	private static final long serialVersionUID = 5524799981049258706L;
+	
+	private JTabbedPane jTabbedPane;
+	private JPanelServerConfiguration panelServerConfiguration;
+	private JPanelClientConfiguration panelClientConfiguration;
+	private JButton jButtonClose;
+
+	/**
+	 * Instantiates a new dialog for the WS-configuration.
+	 */
+	public JDialogWsConfiguration() {
+		this(null);
+	}
+	/**
+	 * Instantiates a new dialog for the WS-configuration.
+	 * @param ownerWindow the owner window
+	 */
+	public JDialogWsConfiguration(Window ownerWindow) {
+		super(ownerWindow);
+		this.initialize();
+	}
+	/**
+	 * Initialize.
+	 */
+	private void initialize() {
+		
+		this.setModal(true);
+		this.setAlwaysOnTop(true);
+
+		this.setTitle("WS - Configuration");
+		this.setIconImage(BundleHelper.getImageIcon("awbWeb16.png").getImage());
+		
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		
+		this.registerEscapeKeyStroke();
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				setVisible(false);
+			}
+		});
+		
+		// --- Size and center dialog -------------------------------
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		this.setSize((int) (screenSize.getWidth() * 0.6), (int)(screenSize.getHeight()*0.6));
+		
+		int top = (screenSize.height - this.getHeight()) / 2; 
+	    int left = (screenSize.width - this.getWidth()) / 2; 
+	    this.setLocation(left, top);	
+		
+	    
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		getContentPane().setLayout(gridBagLayout);
+		
+		GridBagConstraints gbc_jTabbedPane = new GridBagConstraints();
+		gbc_jTabbedPane.insets = new Insets(10, 10, 10, 10);
+		gbc_jTabbedPane.fill = GridBagConstraints.BOTH;
+		gbc_jTabbedPane.gridx = 0;
+		gbc_jTabbedPane.gridy = 0;
+		this.getContentPane().add(this.getJTabbedPane(), gbc_jTabbedPane);
+		GridBagConstraints gbc_jButtonClose = new GridBagConstraints();
+		gbc_jButtonClose.insets = new Insets(0, 10, 15, 10);
+		gbc_jButtonClose.gridx = 0;
+		gbc_jButtonClose.gridy = 1;
+		getContentPane().add(getJButtonClose(), gbc_jButtonClose);
+		
+	}
+	 /**
+     * Registers the escape key stroke in order to close this dialog.
+     */
+    private void registerEscapeKeyStroke() {
+    	final ActionListener listener = new ActionListener() {
+            public final void actionPerformed(final ActionEvent e) {
+            	setVisible(false);
+            }
+        };
+        final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
+        this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+    
+	private JTabbedPane getJTabbedPane() {
+		if (jTabbedPane == null) {
+			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
+			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
+			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
+			jTabbedPane.addTab(" WS - Server ", null, getPanelServerConfiguration(), null);
+			jTabbedPane.addTab(" WS - Clients ", null, getPanelClientConfiguration(), null);
+		}
+		return jTabbedPane;
+	}
+	private JPanelServerConfiguration getPanelServerConfiguration() {
+		if (panelServerConfiguration == null) {
+			panelServerConfiguration = new JPanelServerConfiguration();
+		}
+		return panelServerConfiguration;
+	}
+	private JPanelClientConfiguration getPanelClientConfiguration() {
+		if (panelClientConfiguration == null) {
+			panelClientConfiguration = new JPanelClientConfiguration();
+		}
+		return panelClientConfiguration;
+	}
+	private JButton getJButtonClose() {
+		if (jButtonClose == null) {
+			jButtonClose = new JButton("Close");
+			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonClose.setForeground(new Color(0, 0, 153));
+			jButtonClose.setPreferredSize(new Dimension(100, 26));
+			jButtonClose.addActionListener(this);
+		}
+		return jButtonClose;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if (ae.getSource()==this.getJButtonClose()) {
+			this.setVisible(false);
+		}
+	}
+
+}
