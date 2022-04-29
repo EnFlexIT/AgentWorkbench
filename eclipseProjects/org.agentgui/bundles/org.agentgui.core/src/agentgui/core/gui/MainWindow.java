@@ -103,7 +103,7 @@ public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String MAIN_WINDOW_EXTENSION_ID = "org.awb.swing.mainWindowExtension";
+	public static final String MAIN_WINDOW_EXTENSION_ID = "org.awb.swing.mainWindowExtension";
 
 	public enum WorkbenchMenu {
 		MenuProject,

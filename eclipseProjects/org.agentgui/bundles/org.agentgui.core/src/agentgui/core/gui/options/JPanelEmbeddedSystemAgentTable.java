@@ -307,13 +307,9 @@ public class JPanelEmbeddedSystemAgentTable extends JPanel implements ActionList
 	private ClassSelectionDialog getClassSelector4ProjectAgents(Project project) {
 
 		String currAgentClass = this.getSelectedAgentClass();
-		if (project==null) {
-			this.esaClassSelector = null;
-			this.esaProject = project;
-		} else if (this.esaClassSelector==null || project!=this.esaProject) {
-			JListClassSearcher jListClassSearcher = new JListClassSearcher(Agent.class, project.getBundleNames());
-			this.esaClassSelector = new ClassSelectionDialog(this.optionDialog, jListClassSearcher, currAgentClass, null, Language.translate("Bitte wählen Sie den Agenten aus, der gestartet werden soll"), false);
-			this.esaProject = project;
+		this.esaProject = project;
+		if (this.esaClassSelector==null ) {
+			this.esaClassSelector = new ClassSelectionDialog(this.optionDialog, new JListClassSearcher(Agent.class), currAgentClass, null, Language.translate("Bitte wählen Sie den Agenten aus, der gestartet werden soll"), false);
 		}
 		if (this.esaClassSelector!=null && currAgentClass!=null) {
 			this.esaClassSelector.setClass2Search4CurrentValue(currAgentClass);

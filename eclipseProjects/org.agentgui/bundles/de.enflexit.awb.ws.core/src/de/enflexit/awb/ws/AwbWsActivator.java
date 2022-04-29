@@ -69,6 +69,7 @@ public class AwbWsActivator implements BundleActivator, ApplicationListener {
 		
 		switch (event.getApplicationEvent()) {
 		case ApplicationEvent.AWB_START:
+			// --- Check to integrate the WS UI into Agent.Workbench ----------
 			JettyServerManager.getInstance().doServerStart(StartOn.AwbStart);
 			break;
 		case ApplicationEvent.AWB_STOP:

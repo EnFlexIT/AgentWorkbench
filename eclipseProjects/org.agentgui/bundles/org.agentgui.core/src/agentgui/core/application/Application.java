@@ -715,13 +715,14 @@ public class Application {
 						doBenchmark(false);
 						waitForBenchmark();
 					
-						// --- Execute the simulation setup -----------------------------
-						SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								// --- Open the specified project -----------------------
-								Project projectOpened = getProjectsLoaded().add(projectFolder);
-								if (projectOpened!=null) {
+						// --- Open the specified project -------------------------------
+						Application.setStatusBarMessage(Language.translate("Öffne Projekt") + " '" + projectFolder + "'...");
+						final Project projectOpened = getProjectsLoaded().add(projectFolder);
+						if (projectOpened!=null) {
+							// --- Execute the simulation setup -------------------------
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
 									// --- Select the specified simulation setup --------
 									boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
 									if (setupLoaded==true) {
@@ -732,11 +733,11 @@ public class Application {
 											getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
 										}
 									}
-								}
-							} // end run method
-						});// end runnable
-					}
-				});
+								} // end run method
+							});// end Runnable 2
+						}// end project opened
+					}// end run 
+				});// end Runnable 1
 				break;
 
 			case AGENT:
