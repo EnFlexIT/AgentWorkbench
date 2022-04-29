@@ -3,9 +3,13 @@ package de.enflexit.jade.phonebook;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import agentgui.core.common.AbstractUserObject;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchFilter;
 
-public class PhoneBook<T extends AbstractPhoneBookEntry> {
+public class PhoneBook<T extends AbstractPhoneBookEntry> extends AbstractUserObject{
+	
+	private static final long serialVersionUID = 3872174728290868982L;
+	
 	TreeMap<String, T> phoneBookContent;
 	
 	/**

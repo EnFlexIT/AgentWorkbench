@@ -16,4 +16,11 @@ public abstract class AbstractPhoneBookEntry implements Serializable{
 	 */
 	public abstract String getUniqueIdentifier();
 	
+	/**
+	 * This method allows to implement validity checks.
+	 * If you don't want to perform checks, just return true.
+	 * @return true, if is valid
+	 */
+	public abstract boolean isValid();
+	
 }

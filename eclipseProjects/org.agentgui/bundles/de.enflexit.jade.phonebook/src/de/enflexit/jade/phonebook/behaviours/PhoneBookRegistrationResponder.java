@@ -9,67 +9,81 @@ import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.AchieveREResponder;
+import jade.proto.SimpleAchieveREResponder;
 
-public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> extends AchieveREResponder {
+public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder {
 
 	private static final long serialVersionUID = -9126496583768678087L;
 	
 	private PhoneBook<T> localPhoneBook;
-
+	
 	/**
 	 * Instantiates a new phone book registration responder.
 	 * @param agent the agent
-	 * @param messageTemplate the message template
 	 * @param localPhoneBook the local phone book
 	 */
-	public PhoneBookRegistrationResponder(Agent agent, MessageTemplate messageTemplate, PhoneBook<T> localPhoneBook) {
-		super(agent, messageTemplate);
+	public PhoneBookRegistrationResponder(Agent agent, PhoneBook<T> localPhoneBook) {
+		super(agent, createMessageTemplate());
 		this.localPhoneBook = localPhoneBook;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jade.proto.AchieveREResponder#handleRequest(jade.lang.acl.ACLMessage)
+
+	/**
+	 * Creates the message template for this protocol responder.
+	 * @return the message template
 	 */
-	@Override
-	protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
-		Object contentObject = null;
-		
-		System.out.println("[" + this.myAgent.getLocalName() + "] Received registration request from " + request.getSender().getLocalName());
-		
-		try {
-			contentObject = request.getContentObject();
-		} catch (UnreadableException e) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Error extracting content object");
-			e.printStackTrace();
-		}
-		if (contentObject != null && contentObject instanceof AbstractPhoneBookEntry) {
-			@SuppressWarnings("unchecked")
-			T phoneBookEntry = (T) contentObject;
-			this.localPhoneBook.addEntry(phoneBookEntry);
-			
-			System.out.println("[" + this.myAgent.getLocalName() + "] PhoneBookEntry successfully added ");
-		}
-		
-		return super.handleRequest(request);
+	private static MessageTemplate createMessageTemplate() {
+		MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(FIPA_REQUEST);
+		MessageTemplate matchConversationID = MessageTemplate.MatchConversationId(ConversationID.PHONEBOOK_REGISTRATION.toString());
+		return MessageTemplate.and(matchProtocol, matchConversationID);
 	}
 	
 	/* (non-Javadoc)
-	 * @see jade.proto.AchieveREResponder#prepareResponse(jade.lang.acl.ACLMessage)
+	 * @see jade.proto.SimpleAchieveREResponder#prepareResponse(jade.lang.acl.ACLMessage)
 	 */
 	@Override
 	protected ACLMessage prepareResponse(ACLMessage request) throws NotUnderstoodException, RefuseException {
+		// --- Method not needed, just overridden to suppress the console output from the superclass method
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see jade.proto.AchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
+	 * @see jade.proto.SimpleAchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
 	 */
 	@Override
 	protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-		response.setPerformative(ACLMessage.CONFIRM);
-		return response;
+		ACLMessage resultNotification = request.createReply();
+		String errorMessage = null;
+		
+		try {
+			// --- Extract message content ----------------
+			Object contentObject = request.getContentObject();
+			if (contentObject!=null && contentObject instanceof AbstractPhoneBookEntry) {
+				@SuppressWarnings("unchecked")
+				T phoneBookEntry = (T) contentObject;
+				this.localPhoneBook.addEntry(phoneBookEntry);
+				resultNotification.setPerformative(ACLMessage.CONFIRM);
+			}
+		} catch (UnreadableException e) {
+			// --- Handle errors --------------------------
+			errorMessage = "Unable to extract message content";
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error processing phone book registration request from " + request.getSender().getLocalName() + ": " + errorMessage);
+			e.printStackTrace();
+		} catch (ClassCastException e) {
+			errorMessage = "Unexpected content object class";
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error processing phone book registration request from " + request.getSender().getLocalName() + ": " + errorMessage);
+			e.printStackTrace();
+		}
+		
+		// --- Prepare the result notification message ----
+		if (errorMessage==null) {
+			resultNotification.setPerformative(ACLMessage.INFORM);
+		} else {
+			resultNotification.setPerformative(ACLMessage.FAILURE);
+			resultNotification.setContent(errorMessage);
+		}
+		
+		return resultNotification;
 	}
-
+	
 	
 }
