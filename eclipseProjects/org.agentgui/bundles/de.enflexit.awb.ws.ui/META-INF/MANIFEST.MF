@@ -8,5 +8,6 @@ Automatic-Module-Name: de.enflexit.awb.ws.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.agentgui.core,
- de.enflexit.awb.ws.core
+ de.enflexit.awb.ws.core,
+ de.enflexit.common
 Export-Package: de.enflexit.awb.ws.ui

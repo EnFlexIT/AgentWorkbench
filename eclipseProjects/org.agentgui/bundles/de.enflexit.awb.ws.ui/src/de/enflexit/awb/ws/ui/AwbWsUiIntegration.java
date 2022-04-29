@@ -33,6 +33,7 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 
 	private MenuItem tryIconMenuItemConfiguration;
 	
+	
 	/* (non-Javadoc)
 	 * @see org.agentgui.gui.swing.MainWindowExtension#initialize()
 	 */
@@ -152,7 +153,13 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 
 		if (ae.getSource()==this.getToolBarButtonWsConfiguration() || ae.getSource()==this.getJMenuItemWsConfiguration() || ae.getSource()==this.getTrayIconMenuItemWsConfiguration()) {
 			
-			System.out.println("Open WS - Configuration");
+			JDialogWsConfiguration configDialog = new JDialogWsConfiguration(Application.getMainWindow());
+			configDialog.setVisible(true);
+			// - - - - - - - - - - - - - - - - - - - -
+//			if (configDialog!=null) {
+//				configDialog.dispose();
+//			}
+			
 			
 		}
 	}
