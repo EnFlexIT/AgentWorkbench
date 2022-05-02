@@ -21,6 +21,8 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
+import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import javax.swing.JButton;
 

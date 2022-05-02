@@ -194,7 +194,7 @@ public class JettyServerManager {
 	 * @param serverName the server name
 	 * @return the managed Jetty server instances
 	 */
-	private JettyServerInstances getServerInstances(String serverName) {
+	public JettyServerInstances getServerInstances(String serverName) {
 		return this.getJettyServerInstaceHash().get(serverName);
 	}
 	

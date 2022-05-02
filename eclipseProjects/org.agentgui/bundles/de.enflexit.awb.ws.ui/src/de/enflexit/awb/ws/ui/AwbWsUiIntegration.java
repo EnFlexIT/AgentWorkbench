@@ -144,7 +144,6 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 		return tryIconMenuItemConfiguration;
 	}
 	
-	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -152,15 +151,9 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 	public void actionPerformed(ActionEvent ae) {
 
 		if (ae.getSource()==this.getToolBarButtonWsConfiguration() || ae.getSource()==this.getJMenuItemWsConfiguration() || ae.getSource()==this.getTrayIconMenuItemWsConfiguration()) {
-			
+			// --- Open the modal JDialogWsConfiguration ------------ 
 			JDialogWsConfiguration configDialog = new JDialogWsConfiguration(Application.getMainWindow());
 			configDialog.setVisible(true);
-			// - - - - - - - - - - - - - - - - - - - -
-//			if (configDialog!=null) {
-//				configDialog.dispose();
-//			}
-			
-			
 		}
 	}
 	
