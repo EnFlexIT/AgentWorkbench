@@ -15,7 +15,9 @@ import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 
 /**
- * The Singleton ServerManager .
+ * The Singleton <i>JettyServerManager</i> is used to control the start of {@link Server} instances
+ * with respect to the registered instances of {@link AwbWebServerService} and {@link AwbWebHandlerService}.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class JettyServerManager {
@@ -194,7 +196,7 @@ public class JettyServerManager {
 	 * @param serverName the server name
 	 * @return the managed Jetty server instances
 	 */
-	private JettyServerInstances getServerInstances(String serverName) {
+	public JettyServerInstances getServerInstances(String serverName) {
 		return this.getJettyServerInstaceHash().get(serverName);
 	}
 	
@@ -224,7 +226,6 @@ public class JettyServerManager {
 		if (sInst!=null) return sInst.getHandlerCollection();
 		return null;
 	}
-	
 	
 	// ----------------------------------------------------
 	// --- From here, start and stop methods for Server ---

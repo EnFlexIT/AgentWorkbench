@@ -1,12 +1,15 @@
 package de.enflexit.awb.ws;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jetty.server.Handler;
 
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.model.HandlerHelper;
 
 /**
  * The Class AwbWebRegistry stores all OSGI registered {@link AwbWebServerService}s and {@link AwbWebHandlerService}s
@@ -23,7 +26,7 @@ public class AwbWebRegistry {
 	// --- From here, methods for web server ----------------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * Returns the registered web server by server name.
+	 * Returns the list of registered web server services.
 	 * @return the registered web server
 	 */
 	public List<AwbWebServerServiceWrapper> getRegisteredWebServer() {
@@ -32,7 +35,20 @@ public class AwbWebRegistry {
 		}
 		return registeredWebServer;
 	}
-	
+	/**
+	 * Returns the registered web server services, sorted by their name.
+	 * @return the registered web server
+	 */
+	public List<AwbWebServerServiceWrapper> getRegisteredWebServerSorted() {
+		List<AwbWebServerServiceWrapper> serverServices = this.getRegisteredWebServer();
+		Collections.sort(serverServices, new Comparator<AwbWebServerServiceWrapper>() {
+			@Override
+			public int compare(AwbWebServerServiceWrapper serverService1, AwbWebServerServiceWrapper serverService2) {
+				return serverService1.getJettyConfiguration().getServerName().compareTo(serverService2.getJettyConfiguration().getServerName());
+			}
+		});
+		return serverServices;
+	}
 	/**
 	 * Adds the specified {@link AwbWebServerService} to the registry.
 	 *
@@ -159,7 +175,8 @@ public class AwbWebRegistry {
 	}
 
 	/**
-	 * Return the list of AwbWebHandlerService that belong to the server, specified by its name.
+	 * Return the list of AwbWebHandlerService that belong to the server specified by its name.
+	 * The list returned is sorted in the order as registered.
 	 *
 	 * @param serverName the server name
 	 * @return the list of AwbWebServerService
@@ -174,6 +191,25 @@ public class AwbWebRegistry {
 		}
 		return handlerServiceList;
 	}
+	/**
+	 * Return the list of AwbWebHandlerService that belong to the server, specified by its name.
+ 	 * The list returned is sorted by the contexPath of the corresponding handler.
+	 * @param serverName the server name
+	 * @return the list of AwbWebServerService
+	 */
+	public List<AwbWebHandlerService> getAwbWebHandlerServiceSorted(String serverName) {
+		List<AwbWebHandlerService> handlerServiceList = this.getAwbWebHandlerService(serverName);
+		Collections.sort(handlerServiceList, new Comparator<AwbWebHandlerService>() {
+			@Override
+			public int compare(AwbWebHandlerService handlerService1, AwbWebHandlerService handlerService2) {
+				String contextPath1 = HandlerHelper.getContextPath(handlerService1.getHandler());
+				String contextPath2 = HandlerHelper.getContextPath(handlerService2.getHandler());
+				return contextPath1.compareTo(contextPath2);
+			}
+		});
+		return handlerServiceList;
+	}
+	
 	/**
 	 * Checks if the specified AwbWebHandlerService is valid.
 	 *
