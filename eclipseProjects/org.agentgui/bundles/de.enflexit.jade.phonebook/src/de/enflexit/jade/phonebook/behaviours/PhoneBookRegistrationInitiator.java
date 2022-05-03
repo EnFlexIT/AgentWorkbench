@@ -59,14 +59,6 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	}
 	
 	/* (non-Javadoc)
-	 * @see jade.proto.SimpleAchieveREInitiator#handleInform(jade.lang.acl.ACLMessage)
-	 */
-	@Override
-	protected void handleInform(ACLMessage msg) {
-		System.out.println("[" + this.myAgent.getLocalName() + "] Registration successful");
-	}
-	
-	/* (non-Javadoc)
 	 * @see jade.proto.SimpleAchieveREInitiator#handleFailure(jade.lang.acl.ACLMessage)
 	 */
 	@Override
@@ -79,15 +71,20 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	}
 	
 	/**
-	 * The Class RetryOnFailureBehaviour.
+	 * This class implements a WakerBehaviour that reschedules the registration after a fixed timeout. 
 	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
 	 */
 	private class RetryOnFailureBehaviour extends WakerBehaviour{
 
 		private static final long serialVersionUID = 6546607375571793796L;
 
-		public RetryOnFailureBehaviour(Agent a, long timeout) {
-			super(a, timeout);
+		/**
+		 * Instantiates a new retry on failure behaviour.
+		 * @param agent the agent performing the behaviour.
+		 * @param timeout the retry timeout
+		 */
+		public RetryOnFailureBehaviour(Agent agent, long timeout) {
+			super(agent, timeout);
 		}
 
 		/* (non-Javadoc)
@@ -95,6 +92,7 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 		 */
 		@Override
 		protected void onWake() {
+			// --- Trigger a new registration attempt -----
 			this.myAgent.addBehaviour(new PhoneBookRegistrationInitiator(this.myAgent, myPhoneBookEntry, phoneBookMaintainer, retryOnFailure));
 		}
 		
