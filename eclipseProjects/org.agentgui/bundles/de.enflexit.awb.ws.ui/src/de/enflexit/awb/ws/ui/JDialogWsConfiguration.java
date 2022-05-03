@@ -60,7 +60,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 	private void initialize() {
 		
 		this.setModal(true);
-		this.setAlwaysOnTop(true);
+		this.setAlwaysOnTop(false);
 
 		this.setTitle("WS - Configuration");
 		this.setIconImage(BundleHelper.getImageIcon("awbWeb16.png").getImage());

@@ -8,6 +8,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 
+import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
+
 /**
  * The Class ServerTreeCellRenderer.
  *
@@ -24,7 +26,7 @@ public class ServerTreeCellRenderer implements TreeCellRenderer {
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-		ServerTreeNodeObject stno = (ServerTreeNodeObject) node.getUserObject();
+		AbstractServerTreeNodeObject stno = (AbstractServerTreeNodeObject) node.getUserObject();
 		
 		this.getJLabelDisplay().setText(stno.toString());
 		this.getJLabelDisplay().setToolTipText(stno.getToolTipText());

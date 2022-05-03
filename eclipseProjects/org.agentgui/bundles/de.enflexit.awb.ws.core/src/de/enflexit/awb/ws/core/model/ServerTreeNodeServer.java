@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.ui.server;
+package de.enflexit.awb.ws.core.model;
 
 import javax.swing.Icon;
 
@@ -10,11 +10,11 @@ import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyServerInstances;
 
 /**
- * The Class ServerTreeNodeServerService.
+ * The Class ServerTreeNodeServer.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class ServerTreeNodeServerService extends ServerTreeNodeObject {
+public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 
 	private AwbWebServerServiceWrapper serverServiceWrapper;
 	private JettyServerInstances jettyServerInstances;
@@ -25,7 +25,7 @@ public class ServerTreeNodeServerService extends ServerTreeNodeObject {
 	 * @param serverServiceWrapper the server service wrapper
 	 * @param jettyServerInstances the jetty server instances
 	 */
-	public ServerTreeNodeServerService(AwbWebServerServiceWrapper serverServiceWrapper, JettyServerInstances jettyServerInstances) {
+	public ServerTreeNodeServer(AwbWebServerServiceWrapper serverServiceWrapper, JettyServerInstances jettyServerInstances) {
 		this.serverServiceWrapper = serverServiceWrapper;
 		this.jettyServerInstances = jettyServerInstances;
 	}
@@ -42,7 +42,7 @@ public class ServerTreeNodeServerService extends ServerTreeNodeObject {
 	 * @see de.enflexit.awb.ws.ui.server.ServerTreeNodeObject#getToolTipText()
 	 */
 	@Override
-	protected String getToolTipText() {
+	public String getToolTipText() {
 		return "<html><b>" + this.getRunningServerDescription() + ":</b> [" + this.getSourceBundle().getSymbolicName() + "] " + this.serverServiceWrapper.getWebServerService().getClass().getName() + "</html>";
 	}
 
@@ -50,7 +50,7 @@ public class ServerTreeNodeServerService extends ServerTreeNodeObject {
 	 * @see de.enflexit.awb.ws.ui.server.ServerTreeNodeObject#getNodeIcon()
 	 */
 	@Override
-	protected Icon getNodeIcon() {
+	public Icon getNodeIcon() {
 		if (this.isRunningServer()==true) {
 			return BundleHelper.getImageIcon("awbWeb16Green.png");
 		}

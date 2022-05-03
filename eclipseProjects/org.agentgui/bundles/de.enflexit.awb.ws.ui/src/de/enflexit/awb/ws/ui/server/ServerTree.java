@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.ui.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTree;
@@ -12,12 +11,21 @@ import javax.swing.tree.TreeSelectionModel;
 
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.AwbWebRegistry;
+import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.core.JettyServerInstances;
 import de.enflexit.awb.ws.core.JettyServerManager;
+import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
+import de.enflexit.awb.ws.core.model.HandlerHelper;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeRoot;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 
 /**
- * The Class ServerTree.
+ * The Class ServerTree is used in {@link JPanelServerConfiguration} to show the
+ * composition of all AWB-registered server.
+ * 
+ * @see AwbWebServerService
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -43,7 +51,7 @@ public class ServerTree extends JTree {
 	
 	private DefaultMutableTreeNode getRootTreeNode() {
 		if (rootTreeNode==null) {
-			rootTreeNode = this.createTreeNode(new ServerTreeNodeRoot());
+			rootTreeNode = new DefaultMutableTreeNode(new ServerTreeNodeRoot());
 		}
 		return rootTreeNode;
 	}
@@ -100,10 +108,11 @@ public class ServerTree extends JTree {
 			List<AwbWebHandlerService> handlerServices = this.getAwbWebRegistry().getAwbWebHandlerServiceSorted(serverName);
 			// --- If started, get all relevant server instances ----
 			JettyServerInstances serverInstances = this.getServerManager().getServerInstances(serverName);
+			
 			// --- Add to tree model --------------------------------
 			this.addServerToTreeModel(serverService, handlerServices, serverInstances);
 		}
-		this.expandAll();
+		this.expandToContextPath();
 		this.setRootVisible(false);
 		this.setShowsRootHandles(true);
 	}
@@ -116,22 +125,20 @@ public class ServerTree extends JTree {
 	 */
 	private void addServerToTreeModel(AwbWebServerServiceWrapper serverService, List<AwbWebHandlerService> handlerServiceList, JettyServerInstances serverInstances) {
 		
-		// --- Add a server node ----------------------------
-		DefaultMutableTreeNode serverNode = this.createTreeNode(new ServerTreeNodeServerService(serverService, serverInstances)); 
+		// --- Add a server node --------------------------
+		DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(new ServerTreeNodeServer(serverService, serverInstances)); 
 		this.getRootTreeNode().add(serverNode);
 		
-		// --- Add the Handler to the server node -----------
-		for (int i = 0; i < handlerServiceList.size(); i++) {
-			AwbWebHandlerService handlerService = handlerServiceList.get(i);
-			serverNode.add(this.createTreeNode(new ServerTreeNodeHandlerService(handlerService)));
+		// --- Join the list of services and handler ------ 
+		List<DefaultMutableTreeNode> handlerNodes = HandlerHelper.getHandlerTrees(serverInstances, handlerServiceList);
+		for (DefaultMutableTreeNode handlerNode : handlerNodes) {
+			serverNode.add(handlerNode);
 		}
 	}
-	private DefaultMutableTreeNode createTreeNode(ServerTreeNodeObject nodeObject) {
-		return new DefaultMutableTreeNode(nodeObject);
-	}
+	
 	
 	/**
-	 * Expand all nodes.
+	 * Expands all tree nodes.
 	 */
 	private void expandAll() {
 		for (int i = 0; i < this.getRowCount(); i++) {
@@ -139,37 +146,28 @@ public class ServerTree extends JTree {
 		}
 	}
 	/**
-	 * Expand.
-	 *
-	 * @param node the node
-	 * @param childLevels the child levels
+	 * Expand to context path.
 	 */
-	private void expand(DefaultMutableTreeNode node, int childLevels) {
-        this.expandAll();
-        if (childLevels == 0) return;
-        if (childLevels != -1) childLevels--;
-        for (int x = 0; x < this.getTreeModelServer().getChildCount(node); x++) {
-        	DefaultMutableTreeNode child = (DefaultMutableTreeNode) this.getTreeModelServer().getChild(node, x);
-            this.expand(child, childLevels);
-        }
-    }
-	/**
-	 * Returns a TreePath for the specified node.
-	 * @param nodeToSelect the node to select
-	 * @return the tree path to node or null
-	 */
-	private TreePath getTreePathToNode(DefaultMutableTreeNode nodeToSelect) {
+	private void expandToContextPath() {
 
-		if (nodeToSelect==null) return null;
+		// --- Expand all nodes -------------------------------------
+		this.expandAll();
 		
-		ArrayList<DefaultMutableTreeNode> list = new ArrayList<DefaultMutableTreeNode>();
-		DefaultMutableTreeNode nodeWork = nodeToSelect;
-		while (nodeWork!=this.getRootTreeNode()) {
-			list.add(0, nodeWork);
-			nodeWork = (DefaultMutableTreeNode) nodeWork.getParent();
+		// --- Check if current node has a context path -------------
+		for (int i=this.getRowCount()-1; i>=0; i--) {
+			TreePath treePath = this.getPathForRow(i);
+			// --- Get node instance and user object ---------------- 
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+			AbstractServerTreeNodeObject nodeObject = (AbstractServerTreeNodeObject) treeNode.getUserObject();
+			if (nodeObject instanceof ServerTreeNodeHandler) {
+				ServerTreeNodeHandler stnHandler = (ServerTreeNodeHandler) nodeObject;
+				// --- Check to collapse the current tree path ------
+				if (stnHandler.getContextPath().isEmpty()==false ) {
+					this.collapsePath(treePath);
+				}
+			}
 		}
-		list.add(0, nodeWork);
-		return new TreePath(list.toArray());
 	}
+	
 	
 }

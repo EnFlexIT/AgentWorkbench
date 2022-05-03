@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.eclipse.jetty.server.Handler;
 
-import de.enflexit.awb.ws.core.HandlerHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.model.HandlerHelper;
 
 /**
  * The Class AwbWebRegistry stores all OSGI registered {@link AwbWebServerService}s and {@link AwbWebHandlerService}s

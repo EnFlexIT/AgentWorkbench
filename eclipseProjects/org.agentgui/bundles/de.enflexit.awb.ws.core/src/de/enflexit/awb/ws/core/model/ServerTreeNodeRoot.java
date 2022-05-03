@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.ui.server;
+package de.enflexit.awb.ws.core.model;
 
 import javax.swing.Icon;
 
@@ -7,15 +7,15 @@ import javax.swing.Icon;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class ServerTreeNodeRoot extends ServerTreeNodeObject {
+public class ServerTreeNodeRoot extends AbstractServerTreeNodeObject {
 
 	@Override
-	protected String getToolTipText() {
+	public String getToolTipText() {
 		return "Registered Server & Handler";
 	}
 
 	@Override
-	protected Icon getNodeIcon() {
+	public Icon getNodeIcon() {
 		return null;
 	}
 
