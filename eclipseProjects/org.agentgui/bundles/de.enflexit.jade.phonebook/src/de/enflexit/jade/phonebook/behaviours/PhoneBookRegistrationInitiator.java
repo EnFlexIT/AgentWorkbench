@@ -59,14 +59,6 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	}
 	
 	/* (non-Javadoc)
-	 * @see jade.proto.SimpleAchieveREInitiator#handleInform(jade.lang.acl.ACLMessage)
-	 */
-	@Override
-	protected void handleInform(ACLMessage msg) {
-		System.out.println("[" + this.myAgent.getLocalName() + "] Registration successful");
-	}
-	
-	/* (non-Javadoc)
 	 * @see jade.proto.SimpleAchieveREInitiator#handleFailure(jade.lang.acl.ACLMessage)
 	 */
 	@Override

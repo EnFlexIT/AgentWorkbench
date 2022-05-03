@@ -80,7 +80,6 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 	 */
 	@Override
 	protected void handleInform(ACLMessage msg) {
-		System.out.println("[" + this.myAgent.getClass().getSimpleName() + " " + this.myAgent.getLocalName() + ": Received inform message");
 		try {
 			// --- Extract contents -----------------------
 			Object contentObject = msg.getContentObject();
