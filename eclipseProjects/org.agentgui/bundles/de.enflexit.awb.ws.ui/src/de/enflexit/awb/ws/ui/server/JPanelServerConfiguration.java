@@ -1,13 +1,23 @@
 package de.enflexit.awb.ws.ui.server;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+
+import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 
 /**
  * The Class JPanelServerConfiguration.
@@ -20,10 +30,12 @@ public class JPanelServerConfiguration extends JPanel {
 	
 	private JSplitPane splitPane;
 	private JScrollPane jScrollPaneLeft;
-	private JScrollPane jScrollPaneRight;
-	
 	private ServerTree jTreeServer;
+	private TreeSelectionListener  treeSelectionListener;
 	
+	private JScrollPane jScrollPaneRight;
+	private JPanelSettingsServer jPanelSettingsServer;
+	private JPanelSettingsHandler jPanelSettingsHandler;	
 	
 	/**
 	 * Instantiates a new j panel server configuration.
@@ -68,18 +80,113 @@ public class JPanelServerConfiguration extends JPanel {
 		}
 		return jScrollPaneLeft;
 	}
+	
+	private ServerTree getJTreeServer() {
+		if (jTreeServer == null) {
+			jTreeServer = new ServerTree();
+			jTreeServer.addTreeSelectionListener(this.getTreeSelectionListener());
+		}
+		return jTreeServer;
+	}
+	/**
+	 * Returns the tree selection listener for the local {@link ServerTree}.
+	 * @return the tree selection listener
+	 */
+	private TreeSelectionListener getTreeSelectionListener() {
+		if (treeSelectionListener==null) {
+			treeSelectionListener = new TreeSelectionListener() {
+				
+				private boolean isDisabledTreeSelectionListener;
+				
+				/* (non-Javadoc)
+				 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
+				 */
+				@Override
+				public void valueChanged(TreeSelectionEvent tse) {
+					
+					if (this.isDisabledTreeSelectionListener==true) return;
+					
+					// --- Check to save the changes in the current view ------
+					Component currView = JPanelServerConfiguration.this.getJScrollPaneRight().getViewport().getView();
+					if (currView instanceof AbstractJPanelSettings<?>) {
+						// --- Check if is unsaved ----------------------------
+						AbstractJPanelSettings<?> jPanelSettings = (AbstractJPanelSettings<?>) currView;
+						if (jPanelSettings.isUnsaved()==true) {
+							// --- Ask the user to save or discard settings --- 
+							String title = "Save changes?";
+							String message = "Would you like to save the current changes?";
+							int userAnswer = JOptionPane.showConfirmDialog(JPanelServerConfiguration.this.getParent(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+							if (userAnswer==JOptionPane.YES_OPTION) {
+								// --- Save the changes -----------------------
+								System.out.println("Save changes !");
+								// TODO
+								
+							} else if (userAnswer==JOptionPane.CANCEL_OPTION) {
+								// --- Return to previous selection -----------
+								this.isDisabledTreeSelectionListener = true;
+								JPanelServerConfiguration.this.getJTreeServer().setSelectionPath(tse.getOldLeadSelectionPath());
+								this.isDisabledTreeSelectionListener = false;
+								return;
+							}
+						}
+					} 
+					
+					// --- Set view to new selection--------------------------- 
+					AbstractServerTreeNodeObject stnSelectionNew = JPanelServerConfiguration.this.getServerTreeNode(tse.getNewLeadSelectionPath());
+					JPanelServerConfiguration.this.setViewToTreeNodeSelection(stnSelectionNew);
+				}
+			};
+		}
+		return treeSelectionListener;
+	}
+	/**
+	 * Returns the server tree node.
+	 *
+	 * @param path the TreePath
+	 * @return the server tree node
+	 */
+	private AbstractServerTreeNodeObject getServerTreeNode(TreePath path) {
+		if (path==null) return null;
+		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+		return (AbstractServerTreeNodeObject) treeNode.getUserObject();
+	}
+
+	/**
+	 * Sets the view to the specified tree node selection.
+	 * @param serverTreeNodeObject the new view to tree node selection
+	 */
+	private void setViewToTreeNodeSelection(AbstractServerTreeNodeObject serverTreeNodeObject) {
+		
+		// --- Set the view to the new selection ------------------------------ 
+		AbstractJPanelSettings<?> settingsPanel = null;
+		if (serverTreeNodeObject instanceof ServerTreeNodeServer) {
+			settingsPanel = this.getJPanelSettingsServer();
+			this.getJPanelSettingsServer().setDataModel((ServerTreeNodeServer) serverTreeNodeObject);
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeHandler) {
+			settingsPanel = this.getJPanelSettingsHandler();
+			this.getJPanelSettingsHandler().setDataModel((ServerTreeNodeHandler) serverTreeNodeObject);
+		}
+		this.getJScrollPaneRight().setViewportView(settingsPanel);
+		
+	}
+	
 	private JScrollPane getJScrollPaneRight() {
 		if (jScrollPaneRight == null) {
 			jScrollPaneRight = new JScrollPane();
 		}
 		return jScrollPaneRight;
 	}
-	private ServerTree getJTreeServer() {
-		if (jTreeServer == null) {
-			jTreeServer = new ServerTree();
+	private JPanelSettingsServer getJPanelSettingsServer() {
+		if (jPanelSettingsServer==null) {
+			jPanelSettingsServer = new JPanelSettingsServer();
 		}
-		return jTreeServer;
+		return jPanelSettingsServer;
 	}
-	
+	private JPanelSettingsHandler getJPanelSettingsHandler() {
+		if (jPanelSettingsHandler==null) {
+			jPanelSettingsHandler = new JPanelSettingsHandler();
+		}
+		return jPanelSettingsHandler;
+	}
 	
 }

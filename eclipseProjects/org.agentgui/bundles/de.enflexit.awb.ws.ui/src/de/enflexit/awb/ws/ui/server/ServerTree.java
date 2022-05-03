@@ -38,6 +38,7 @@ public class ServerTree extends JTree {
 	
 	private ServerTreeCellRenderer serverTreeCellRenderer;
 	
+	
 	/**
 	 * Instantiates a new server tree.
 	 */
