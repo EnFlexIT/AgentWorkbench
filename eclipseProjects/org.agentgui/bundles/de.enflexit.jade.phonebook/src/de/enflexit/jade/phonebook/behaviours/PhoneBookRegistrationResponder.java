@@ -11,6 +11,11 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.SimpleAchieveREResponder;
 
+/**
+ * This class implements the Responder role of a FIPA request protocol for phone book registrations. 
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ * @param <T> the generic type
+ */
 public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder {
 
 	private static final long serialVersionUID = -9126496583768678087L;

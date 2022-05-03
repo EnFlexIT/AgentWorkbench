@@ -65,6 +65,7 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 		String errorMessage = null;
 		ACLMessage resultMessage = requestMessage.createReply();
 		try {
+			// --- Extract and process the query ---------- 
 			PhoneBookSearchFilter<T> searchFilter = (PhoneBookSearchFilter<T>) requestMessage.getContentObject();
 			List<T> searchResults = this.localPhoneBook.searchEntries(searchFilter);
 			
@@ -74,6 +75,7 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 			resultMessage.setContentObject(queryResponse);
 			
 		} catch (UnreadableException e) {
+			// --- Handle errors --------------------------
 			errorMessage = "Error extracting content object from the query message";
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + errorMessage);
 			e.printStackTrace();
@@ -83,6 +85,7 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 			e.printStackTrace();
 		}
 		
+		// --- Finalize result message --------------------
 		if (errorMessage==null) {
 			resultMessage.setPerformative(ACLMessage.INFORM);
 		} else {
