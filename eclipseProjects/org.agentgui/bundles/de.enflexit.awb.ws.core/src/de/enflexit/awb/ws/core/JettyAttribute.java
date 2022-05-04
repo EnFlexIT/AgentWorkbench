@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -13,8 +15,10 @@ import javax.xml.bind.annotation.XmlType;
     "key",
     "value"
 })
-public class JettyAttribute<T> {
+public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribute<T>> {
 	
+	private static final long serialVersionUID = -4251350036140530195L;
+
 	private String key;
 	private T value;
 	private transient T[] possibleValues;
@@ -24,6 +28,19 @@ public class JettyAttribute<T> {
 	 * Empty default constructor for a JettyAttribute.
 	 */
 	public JettyAttribute() { }
+	
+	/**
+	 * Instantiates a new jetty parameter value.
+	 *
+	 * @param jettyConstant the jetty constant
+	 * @param value the value
+	 * @param possibleValues the possible values
+	 */
+	public JettyAttribute(JettyConstants jettyConstant, T value, T[] possibleValues) {
+		this.setKey(jettyConstant.getJettyKey());
+		this.setValue(value);
+		this.setPossibleValues(possibleValues);
+	}
 	/**
 	 * Instantiates a new jetty parameter value.
 	 *
@@ -51,14 +68,12 @@ public class JettyAttribute<T> {
 	public String getKey() {
 		return key;
 	}
-	
 	/**
-	 * Return the parameter class.
-	 * @return the parameter class
+	 * Returns the {@link JettyConstants} of the current key.
+	 * @return the jetty constant
 	 */
-	public Class<?> getType() {
-		if (value==null) return null;
-		return value.getClass();
+	public JettyConstants getJettyConstant() {
+		return JettyConstants.valueofJettyKey(this.getKey());
 	}
 	
 	/**
@@ -96,7 +111,46 @@ public class JettyAttribute<T> {
 	 */
 	@Override
 	public String toString() {
-		return this.getValue().toString();
+		return this.getKey() + " = " + this.getValue().toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (compObj==null || (! (compObj instanceof JettyAttribute<?>))) return false;
+		if (compObj==this) return true;
+
+		JettyAttribute<?> jaComp = (JettyAttribute<?>) compObj;
+		JettyConstants jConst = JettyConstants.valueofJettyKey(this.getKey());
+		if (jConst.getTypeClass().equals(Boolean.class)) {
+			boolean boolComp = (Boolean) jaComp.getValue();
+			boolean boolThis = (Boolean) this.getValue();
+			if (boolComp!=boolThis) return false;
+			
+		} else if (jConst.getTypeClass().equals(Integer.class)) {
+			Integer intComp = (Integer) jaComp.getValue();
+			Integer intThis = (Integer) this.getValue();
+			if (intComp.equals(intThis)==false) return false;
+			
+		} else if (jConst.getTypeClass().equals(String.class)) {
+			String stringComp = (String) jaComp.getValue();
+			String stringThis = (String) this.getValue();
+			if (stringComp.equals(stringThis)==false) return false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(JettyAttribute<T> ja2) {
+		Integer ja1OrderPos = this.getJettyConstant().getOrderPos();
+		Integer ja2OrderPos = ja2.getJettyConstant().getOrderPos();
+		return ja1OrderPos.compareTo(ja2OrderPos);
 	}
 	
 }

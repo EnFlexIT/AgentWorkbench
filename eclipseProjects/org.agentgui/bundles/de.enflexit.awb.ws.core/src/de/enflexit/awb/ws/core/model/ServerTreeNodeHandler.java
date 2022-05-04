@@ -83,7 +83,16 @@ public class ServerTreeNodeHandler extends AbstractServerTreeNodeObject {
 		}
 		return FrameworkUtil.getBundle(this.handlerService.getClass());
 	}
-	
+	/**
+	 * Returns the service class name.
+	 * @return the service class name
+	 */
+	public String getServiceClassName() {
+		if (this.handlerService==null) {
+			return this.handler.getClass().getName();
+		}
+		return this.handlerService.getClass().getName();
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.ServerTreeNodeObject#toString()

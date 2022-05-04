@@ -125,16 +125,11 @@ public class ServerTree extends JTree {
 	 * @param serverInstances the server instances
 	 */
 	private void addServerToTreeModel(AwbWebServerServiceWrapper serverService, List<AwbWebHandlerService> handlerServiceList, JettyServerInstances serverInstances) {
-		
 		// --- Add a server node --------------------------
 		DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(new ServerTreeNodeServer(serverService, serverInstances)); 
 		this.getRootTreeNode().add(serverNode);
-		
-		// --- Join the list of services and handler ------ 
-		List<DefaultMutableTreeNode> handlerNodes = HandlerHelper.getHandlerTrees(serverInstances, handlerServiceList);
-		for (DefaultMutableTreeNode handlerNode : handlerNodes) {
-			serverNode.add(handlerNode);
-		}
+		// --- Add the handler to the server node --------- 
+		HandlerHelper.getHandlerTrees(serverInstances, handlerServiceList).forEach((DefaultMutableTreeNode treeNode) -> serverNode.add(treeNode));
 	}
 	
 	

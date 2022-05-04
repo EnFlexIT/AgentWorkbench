@@ -53,6 +53,14 @@ public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 		return FrameworkUtil.getBundle(this.serverServiceWrapper.getWebServerService().getClass());
 	}
 	/**
+	 * Returns the service class name.
+	 * @return the service class name
+	 */
+	public String getServiceClassName() {
+		return this.serverServiceWrapper.getWebServerService().getClass().getName();
+	}
+	
+	/**
 	 * Checks if the current server is running.
 	 * @return true, if the server is running
 	 */
@@ -84,7 +92,7 @@ public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public String getToolTipText() {
-		return "<html><b>" + this.getRunningServerDescription() + ":</b> [" + this.getSourceBundle().getSymbolicName() + "] " + this.serverServiceWrapper.getWebServerService().getClass().getName() + "</html>";
+		return "<html><b>" + this.getRunningServerDescription() + ":</b> [" + this.getSourceBundle().getSymbolicName() + "] " + this.getServiceClassName() + "</html>";
 	}
 
 	/* (non-Javadoc)
