@@ -26,6 +26,7 @@
 		<module>de.enflexit.db.mySQL</module>
 		<module>de.enflexit.db.postgres</module>
 		<module>de.enflexit.geography</module>
+		<module>de.enflexit.jade.phonebook</module>
 		<module>de.enflexit.jaxb.impl.binding</module>
 		<module>de.enflexit.oidc</module>
 		<module>org.agentgui.core</module>
