@@ -30,6 +30,47 @@ public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 		this.jettyServerInstances = jettyServerInstances;
 	}
 
+	/**
+	 * Returns the {@link AwbWebServerServiceWrapper}.
+	 * @return the server service wrapper
+	 */
+	public AwbWebServerServiceWrapper getAwbWebServerServiceWrapper() {
+		return serverServiceWrapper;
+	}
+	/**
+	 * Returns the {@link JettyServerInstances}.
+	 * @return the jetty server instances (will be null, if the server was not started)
+	 */
+	public JettyServerInstances getJettyServerInstances() {
+		return jettyServerInstances;
+	}
+	
+	/**
+	 * Returns the source bundle of the service.
+	 * @return the source bundle
+	 */
+	public Bundle getSourceBundle() {
+		return FrameworkUtil.getBundle(this.serverServiceWrapper.getWebServerService().getClass());
+	}
+	/**
+	 * Checks if the current server is running.
+	 * @return true, if the server is running
+	 */
+	public boolean isRunningServer() {
+		return this.jettyServerInstances!=null && this.jettyServerInstances.getServer()!=null && this.jettyServerInstances.getServer().isStarted()==true;
+	}
+	/**
+	 * Returns the running server description.
+	 * @return the running server description
+	 */
+	public String getRunningServerDescription() {
+		if (this.isRunningServer()==true) {
+			return "Started";
+		}
+		return "Stopped";
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.ServerTreeNodeObject#toString()
 	 */
@@ -57,30 +98,4 @@ public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 		return BundleHelper.getImageIcon("awbWeb16Red.png");
 	}
 
-	
-	/**
-	 * Returns the source bundle of the service.
-	 * @return the source bundle
-	 */
-	private Bundle getSourceBundle() {
-		return FrameworkUtil.getBundle(this.serverServiceWrapper.getWebServerService().getClass());
-	}
-	/**
-	 * Checks if the current server is running.
-	 * @return true, if the server is running
-	 */
-	private boolean isRunningServer() {
-		return this.jettyServerInstances!=null && this.jettyServerInstances.getServer()!=null && this.jettyServerInstances.getServer().isStarted()==true;
-	}
-	/**
-	 * Returns the running server description.
-	 * @return the running server description
-	 */
-	private String getRunningServerDescription() {
-		if (this.isRunningServer()==true) {
-			return "Started";
-		}
-		return "Stopped";
-	}
-	
 }

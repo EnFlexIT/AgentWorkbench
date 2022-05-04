@@ -41,20 +41,28 @@ public class ServerTreeNodeHandler extends AbstractServerTreeNodeObject {
 	}
 	
 	/**
+	 * Returns the {@link AwbWebHandlerService}
+	 * @return the handler service
+	 */
+	public AwbWebHandlerService getAwbWebHandlerService() {
+		return handlerService;
+	}
+	/**
 	 * Returns the current handler.
 	 * @return the handler
 	 */
-	private Handler getHandler() {
+	public Handler getHandler() {
 		if (handler==null) {
 			handler = this.handlerService.getHandler(); 
 		}
 		return handler;
 	}
+	
 	/**
 	 * Checks if the current server is running.
 	 * @return true, if the server is running
 	 */
-	private boolean isRunningHandler() {
+	public boolean isRunningHandler() {
 		return this.getHandler().isRunning()==true;
 	}
 	/**
@@ -69,7 +77,7 @@ public class ServerTreeNodeHandler extends AbstractServerTreeNodeObject {
 	 * Returns the source bundle of the service.
 	 * @return the source bundle
 	 */
-	private Bundle getSourceBundle() {
+	public Bundle getSourceBundle() {
 		if (this.handlerService==null) {
 			return FrameworkUtil.getBundle(this.handler.getClass());
 		}
