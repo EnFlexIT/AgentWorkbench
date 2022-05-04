@@ -2,7 +2,6 @@ package de.enflexit.jade.phonebook.behaviours;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchResults;
@@ -24,13 +23,13 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 
 	private static final long serialVersionUID = 1214570247786648424L;
 	
-	private static final long RETRY_TIMEOUT_MS = 5000;
-	
 	private PhoneBook<T> localPhoneBook;
 	private PhoneBookSearchFilter<T> searchFilter;
 	
 	private AID phoneBookMaintainer;
 	private boolean retryOnFailure;
+	
+	private IncreasingRetryIntervalsHelper intervalsHelper;
 	
 	/**
 	 * Instantiates a new phone book query initiator.
@@ -110,10 +109,29 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 	@Override
 	protected void handleFailure(ACLMessage msg) {
 		if (this.retryOnFailure==true) {
-			this.myAgent.addBehaviour(new RetryOnFailureBehaviour(this.myAgent, RETRY_TIMEOUT_MS));
+			this.myAgent.addBehaviour(new RetryOnFailureBehaviour(this.myAgent, this.getIntervalsHelper()));
 		}
 	}
 	
+	/**
+	 * Gets the intervals helper.
+	 * @return the intervals helper
+	 */
+	private IncreasingRetryIntervalsHelper getIntervalsHelper() {
+		if (intervalsHelper==null) {
+			intervalsHelper = new IncreasingRetryIntervalsHelper();
+		}
+		return intervalsHelper;
+	}
+
+	/**
+	 * Sets the intervals helper.
+	 * @param intervalsHelper the new intervals helper
+	 */
+	private void setIntervalsHelper(IncreasingRetryIntervalsHelper intervalsHelper) {
+		this.intervalsHelper = intervalsHelper;
+	}
+
 	/**
 	 * This behaviour can be used to reschedule the query after a certain timeout. 
 	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
@@ -121,14 +139,17 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 	private class RetryOnFailureBehaviour extends WakerBehaviour{
 
 		private static final long serialVersionUID = 5524418573211565835L;
+		
+		private IncreasingRetryIntervalsHelper intervalsHelper;
 
 		/**
 		 * Instantiates a new retry on failure behaviour.
 		 * @param agent the agent
 		 * @param timeout the timeout
 		 */
-		public RetryOnFailureBehaviour(Agent agent, long timeout) {
-			super(agent, timeout);
+		public RetryOnFailureBehaviour(Agent agent, IncreasingRetryIntervalsHelper intervalsHelper) {
+			super(agent, intervalsHelper.getCurrentRetryInterval());
+			this.intervalsHelper = intervalsHelper;
 		}
 		
 		/* (non-Javadoc)
@@ -136,7 +157,9 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 		 */
 		@Override
 		protected void onWake() {
-			this.myAgent.addBehaviour(new PhoneBookQueryInitiator<>(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure));
+			PhoneBookQueryInitiator<T> nextTry = new PhoneBookQueryInitiator<>(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure);
+			nextTry.setIntervalsHelper(intervalsHelper);
+			this.myAgent.addBehaviour(nextTry);
 		}
 		
 	}

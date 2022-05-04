@@ -18,12 +18,11 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 
 	private static final long serialVersionUID = -6099020571543668933L;
 	
-	private static final long RETRY_TIMEOUT = 5000;
-	
 	private AbstractPhoneBookEntry myPhoneBookEntry;
 	private AID phoneBookMaintainer;
 	
 	private boolean retryOnFailure;
+	private IncreasingRetryIntervalsHelper intervalsHelper;
 	
 	/**
 	 * Instantiates a new phone book registration initiator.
@@ -65,9 +64,27 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	protected void handleFailure(ACLMessage msg) {
 		System.out.println("[" + this.myAgent.getLocalName() + "] Registration failed");
 		if (this.retryOnFailure==true) {
-			System.out.println("Trying again after " + RETRY_TIMEOUT/1000 + " s");
-			this.myAgent.addBehaviour(new RetryOnFailureBehaviour(this.myAgent, RETRY_TIMEOUT));
+			this.myAgent.addBehaviour(new RetryOnFailureBehaviour(this.myAgent, this.getIntervalsHelper()));
 		}
+	}
+	
+	/**
+	 * Gets the intervals helper.
+	 * @return the intervals helper
+	 */
+	private IncreasingRetryIntervalsHelper getIntervalsHelper() {
+		if (intervalsHelper==null) {
+			intervalsHelper = new IncreasingRetryIntervalsHelper();
+		}
+		return intervalsHelper;
+	}
+
+	/**
+	 * Sets the intervals helper.
+	 * @param intervalsHelper the new intervals helper
+	 */
+	private void setIntervalsHelper(IncreasingRetryIntervalsHelper intervalsHelper) {
+		this.intervalsHelper = intervalsHelper;
 	}
 	
 	/**
@@ -77,14 +94,16 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	private class RetryOnFailureBehaviour extends WakerBehaviour{
 
 		private static final long serialVersionUID = 6546607375571793796L;
+		private IncreasingRetryIntervalsHelper intervalsHelper;
 
 		/**
 		 * Instantiates a new retry on failure behaviour.
 		 * @param agent the agent performing the behaviour.
 		 * @param timeout the retry timeout
 		 */
-		public RetryOnFailureBehaviour(Agent agent, long timeout) {
-			super(agent, timeout);
+		public RetryOnFailureBehaviour(Agent agent, IncreasingRetryIntervalsHelper intervalsHelper) {
+			super(agent, intervalsHelper.getCurrentRetryInterval());
+			this.intervalsHelper = intervalsHelper;
 		}
 
 		/* (non-Javadoc)
@@ -93,7 +112,9 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 		@Override
 		protected void onWake() {
 			// --- Trigger a new registration attempt -----
-			this.myAgent.addBehaviour(new PhoneBookRegistrationInitiator(this.myAgent, myPhoneBookEntry, phoneBookMaintainer, retryOnFailure));
+			PhoneBookRegistrationInitiator nextTry = new PhoneBookRegistrationInitiator(this.myAgent, myPhoneBookEntry, phoneBookMaintainer, retryOnFailure);
+			nextTry.setIntervalsHelper(this.intervalsHelper);
+			this.myAgent.addBehaviour(nextTry);
 		}
 		
 	}
