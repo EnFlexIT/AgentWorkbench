@@ -132,6 +132,82 @@ public class ServerTree extends JTree {
 		HandlerHelper.getHandlerTrees(serverInstances, handlerServiceList).forEach((DefaultMutableTreeNode treeNode) -> serverNode.add(treeNode));
 	}
 	
+	// --------------------------------------------------------------
+	// --- From here some helper methods ----------------------------
+	// --------------------------------------------------------------	
+	/**
+	 * Returns the server tree node object for the specified TreePath.
+	 *
+	 * @param path the TreePath
+	 * @return the server tree node object {@link AbstractServerTreeNodeObject}
+	 */
+	public AbstractServerTreeNodeObject getServerTreeNodeObject(TreePath path) {
+		if (path==null) return null;
+		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+		return (AbstractServerTreeNodeObject) treeNode.getUserObject();
+	}
+	/**
+	 * Returns the TreePath for the specified tree node object (see {@link AbstractServerTreeNodeObject}).
+	 *
+	 * @param stnoSearch the server tree node object to search for
+	 * @return the tree path for server tree node object
+	 */
+	public TreePath getTreePathForServerTreeNodeObject(AbstractServerTreeNodeObject stnoSearch) {
+		
+		for (int i = 0; i < this.getRowCount(); i++) {
+			TreePath treePath = this.getPathForRow(i);
+			AbstractServerTreeNodeObject nodeObject = this.getServerTreeNodeObject(treePath);
+			if (nodeObject==stnoSearch) {
+				return treePath;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the parent server node for the specified ServerTreeNodeHandler.
+	 *
+	 * @param serverTreeNodeHandler the server tree node handler
+	 * @return the parent server node
+	 */
+	public ServerTreeNodeServer getParentServerNode(ServerTreeNodeHandler serverTreeNodeHandler) {
+		
+		TreePath treePathNode = this.getTreePathForServerTreeNodeObject(serverTreeNodeHandler);
+		while (treePathNode!=null && (! (this.getServerTreeNodeObject(treePathNode) instanceof ServerTreeNodeServer))) {
+			treePathNode = treePathNode.getParentPath();
+		}
+		if (treePathNode!=null) {
+			return (ServerTreeNodeServer) this.getServerTreeNodeObject(treePathNode);
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * Select first server node.
+	 */
+	public void selectFirstServerNode() {
+		TreePath fsnServer = this.getFirstServerNode();
+		if (fsnServer!=null) {
+			this.setSelectionPath(fsnServer);
+		}
+	}
+	/**
+	 * Returns the first server node.
+	 * @return the first server node
+	 */
+	public TreePath getFirstServerNode() {
+		TreePath fsnServerTreePath = null;
+		for (int i = 0; i < this.getRowCount(); i++) {
+			TreePath treePath = this.getPathForRow(i);
+			AbstractServerTreeNodeObject nodeObject = this.getServerTreeNodeObject(treePath);
+			if (nodeObject instanceof ServerTreeNodeServer) {
+				fsnServerTreePath = treePath;
+				break;
+			}
+		}
+		return fsnServerTreePath;
+	}
+	
 	
 	/**
 	 * Expands all tree nodes.
@@ -164,6 +240,5 @@ public class ServerTree extends JTree {
 			}
 		}
 	}
-	
-	
+
 }

@@ -36,8 +36,8 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 5524799981049258706L;
 	
 	private JTabbedPane jTabbedPane;
-	private JPanelServerConfiguration panelServerConfiguration;
-	private JPanelClientConfiguration panelClientConfiguration;
+	private JPanelServerConfiguration jPanelServerConfiguration;
+	private JPanelClientConfiguration jPanelClientConfiguration;
 	private JButton jButtonClose;
 
 	/**
@@ -70,7 +70,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		this.registerEscapeKeyStroke();
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
-				setVisible(false);
+				JDialogWsConfiguration.this.doCloseAskUser();
 			}
 		});
 		
@@ -109,7 +109,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
     private void registerEscapeKeyStroke() {
     	final ActionListener listener = new ActionListener() {
             public final void actionPerformed(final ActionEvent e) {
-            	setVisible(false);
+            	JDialogWsConfiguration.this.doCloseAskUser();
             }
         };
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
@@ -122,22 +122,22 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
-			jTabbedPane.addTab(" WS - Server ", null, getPanelServerConfiguration(), null);
-			jTabbedPane.addTab(" WS - Clients ", null, getPanelClientConfiguration(), null);
+			jTabbedPane.addTab(" WS - Server ",  null, this.getJPanelServerConfiguration(), null);
+			jTabbedPane.addTab(" WS - Clients ", null, this.getJPanelClientConfiguration(), null);
 		}
 		return jTabbedPane;
 	}
-	private JPanelServerConfiguration getPanelServerConfiguration() {
-		if (panelServerConfiguration == null) {
-			panelServerConfiguration = new JPanelServerConfiguration();
+	private JPanelServerConfiguration getJPanelServerConfiguration() {
+		if (jPanelServerConfiguration == null) {
+			jPanelServerConfiguration = new JPanelServerConfiguration();
 		}
-		return panelServerConfiguration;
+		return jPanelServerConfiguration;
 	}
-	private JPanelClientConfiguration getPanelClientConfiguration() {
-		if (panelClientConfiguration == null) {
-			panelClientConfiguration = new JPanelClientConfiguration();
+	private JPanelClientConfiguration getJPanelClientConfiguration() {
+		if (jPanelClientConfiguration == null) {
+			jPanelClientConfiguration = new JPanelClientConfiguration();
 		}
-		return panelClientConfiguration;
+		return jPanelClientConfiguration;
 	}
 	private JButton getJButtonClose() {
 		if (jButtonClose == null) {
@@ -156,8 +156,27 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonClose()) {
-			this.setVisible(false);
+			this.doCloseAskUser();
 		}
 	}
 
+	/**
+	 * Will close the dialog if no unsaved changes occur in the settings.
+	 */
+	private void doCloseAskUser() {
+		
+		// --- Check server configuration ---------------------------
+		if (this.getJPanelServerConfiguration().hasUnsavedChanges()==true) {
+			this.getJTabbedPane().setSelectedIndex(0);
+			if (this.getJPanelServerConfiguration().userConfirmedToChangeView()==false) return;
+		}
+		// --- Check client configuration ---------------------------
+		if (this.getJPanelClientConfiguration().hasUnsavedChanges()==true) {
+			this.getJTabbedPane().setSelectedIndex(0);
+			if (this.getJPanelClientConfiguration().userConfirmedToChangeView()==false) return;
+		}
+		// --- Done - close dialog ----------------------------------		
+		this.setVisible(false);
+	}
+	
 }

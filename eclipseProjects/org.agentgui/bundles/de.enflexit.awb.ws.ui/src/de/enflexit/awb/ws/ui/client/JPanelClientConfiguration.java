@@ -5,6 +5,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -14,9 +17,8 @@ import java.awt.Insets;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelClientConfiguration extends JPanel {
+public class JPanelClientConfiguration extends JPanel implements WsConfigurationInterface {
 	
-
 	private static final long serialVersionUID = 7987858783733542296L;
 
 	private JSplitPane splitPane;
@@ -79,6 +81,23 @@ public class JPanelClientConfiguration extends JPanel {
 			jListClients = new JList();
 		}
 		return jListClients;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
+	 */
+	@Override
+	public boolean hasUnsavedChanges() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
+	 */
+	@Override
+	public boolean userConfirmedToChangeView() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

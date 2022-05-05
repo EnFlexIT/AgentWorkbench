@@ -1,37 +1,45 @@
 package de.enflexit.awb.ws.ui.server;
 
-import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
 /**
  * The Class JPanelServerConfiguration.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelServerConfiguration extends JPanel {
+public class JPanelServerConfiguration extends JPanel implements WsConfigurationInterface, TreeSelectionListener {
 
 	private static final long serialVersionUID = -1935493940628529036L;
 	
+	private ServerTreeNodeServer editServerTreeNodeServer;
+	
 	private JSplitPane splitPane;
+	
 	private JScrollPane jScrollPaneLeft;
 	private ServerTree jTreeServer;
-	private TreeSelectionListener  treeSelectionListener;
+	private boolean isDisabledTreeSelectionListener;
+	
+	
+	private JPanel jPanelRightBase;
+	private JToolBarServer jToolBarServer;
 	
 	private JScrollPane jScrollPaneRight;
 	private JPanelSettingsServer jPanelSettingsServer;
@@ -52,14 +60,18 @@ public class JPanelServerConfiguration extends JPanel {
 		gridBagLayout.rowHeights = new int[]{0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_splitPane = new GridBagConstraints();
 		gbc_splitPane.insets = new Insets(10, 10, 10, 10);
 		gbc_splitPane.fill = GridBagConstraints.BOTH;
 		gbc_splitPane.gridx = 0;
 		gbc_splitPane.gridy = 0;
-		add(getSplitPane(), gbc_splitPane);
+		this.add(this.getSplitPane(), gbc_splitPane);
+		
+		// --- Select first server node ----------------------
+		this.getJTreeServer().selectFirstServerNode();
+		
 	}
 	
 	private JSplitPane getSplitPane() {
@@ -69,10 +81,14 @@ public class JPanelServerConfiguration extends JPanel {
 			splitPane.setResizeWeight(0.5);
 			splitPane.setBorder(BorderFactory.createEmptyBorder());
 			splitPane.setLeftComponent(this.getJScrollPaneLeft());
-			splitPane.setRightComponent(this.getJScrollPaneRight());
+			splitPane.setRightComponent(this.getjPanelRightBase());
 		}
 		return splitPane;
 	}
+	
+	// ------------------------------------------------------------------------
+	// --- From here, left part of the server configuration UI ----------------
+	// ------------------------------------------------------------------------	
 	private JScrollPane getJScrollPaneLeft() {
 		if (jScrollPaneLeft == null) {
 			jScrollPaneLeft = new JScrollPane();
@@ -84,95 +100,132 @@ public class JPanelServerConfiguration extends JPanel {
 	private ServerTree getJTreeServer() {
 		if (jTreeServer == null) {
 			jTreeServer = new ServerTree();
-			jTreeServer.addTreeSelectionListener(this.getTreeSelectionListener());
+			jTreeServer.addTreeSelectionListener(this);
 		}
 		return jTreeServer;
 	}
-	/**
-	 * Returns the tree selection listener for the local {@link ServerTree}.
-	 * @return the tree selection listener
+	/* (non-Javadoc)
+	 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
 	 */
-	private TreeSelectionListener getTreeSelectionListener() {
-		if (treeSelectionListener==null) {
-			treeSelectionListener = new TreeSelectionListener() {
-				
-				private boolean isDisabledTreeSelectionListener;
-				
-				/* (non-Javadoc)
-				 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
-				 */
-				@Override
-				public void valueChanged(TreeSelectionEvent tse) {
-					
-					if (this.isDisabledTreeSelectionListener==true) return;
-					
-					// --- Check to save the changes in the current view ------
-					Component currView = JPanelServerConfiguration.this.getJScrollPaneRight().getViewport().getView();
-					if (currView instanceof AbstractJPanelSettings<?>) {
-						// --- Check if is unsaved ----------------------------
-						AbstractJPanelSettings<?> jPanelSettings = (AbstractJPanelSettings<?>) currView;
-						if (jPanelSettings.isUnsaved()==true) {
-							// --- Ask the user to save or discard settings --- 
-							String title = "Save changes?";
-							String message = "Would you like to save the current changes?";
-							int userAnswer = JOptionPane.showConfirmDialog(JPanelServerConfiguration.this.getParent(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
-							if (userAnswer==JOptionPane.YES_OPTION) {
-								// --- Save the changes -----------------------
-								System.out.println("Save changes !");
-								// TODO
-								
-							} else if (userAnswer==JOptionPane.CANCEL_OPTION) {
-								// --- Return to previous selection -----------
-								this.isDisabledTreeSelectionListener = true;
-								JPanelServerConfiguration.this.getJTreeServer().setSelectionPath(tse.getOldLeadSelectionPath());
-								this.isDisabledTreeSelectionListener = false;
-								return;
-							}
-						}
-					} 
-					
-					// --- Set view to new selection--------------------------- 
-					AbstractServerTreeNodeObject stnSelectionNew = JPanelServerConfiguration.this.getServerTreeNode(tse.getNewLeadSelectionPath());
-					JPanelServerConfiguration.this.setViewToTreeNodeSelection(stnSelectionNew);
-				}
-			};
-		}
-		return treeSelectionListener;
+	@Override
+	public void valueChanged(TreeSelectionEvent tse) {
+		
+		if (this.isDisabledTreeSelectionListener==true) return;
+		
+		// --- Set view to new selection--------------------------- 
+		AbstractServerTreeNodeObject stnSelectionNew = this.getJTreeServer().getServerTreeNodeObject(tse.getNewLeadSelectionPath());
+		this.setViewToTreeNodeSelection(stnSelectionNew, tse.getOldLeadSelectionPath());
 	}
-	/**
-	 * Returns the server tree node.
-	 *
-	 * @param path the TreePath
-	 * @return the server tree node
-	 */
-	private AbstractServerTreeNodeObject getServerTreeNode(TreePath path) {
-		if (path==null) return null;
-		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-		return (AbstractServerTreeNodeObject) treeNode.getUserObject();
-	}
-
 	/**
 	 * Sets the view to the specified tree node selection.
 	 * @param serverTreeNodeObject the new view to tree node selection
 	 */
-	private void setViewToTreeNodeSelection(AbstractServerTreeNodeObject serverTreeNodeObject) {
+	private void setViewToTreeNodeSelection(AbstractServerTreeNodeObject serverTreeNodeObject, TreePath oldSelectionPath) {
 		
-		// --- Set the view to the new selection ------------------------------ 
-		AbstractJPanelSettings<?> settingsPanel = null;
+		// --------------------------------------------------------------------
+		// --- Get current or parent server node ------------------------------
+		// --------------------------------------------------------------------
+		ServerTreeNodeServer newServerTreeNodeServer = null;
 		if (serverTreeNodeObject instanceof ServerTreeNodeServer) {
-			settingsPanel = this.getJPanelSettingsServer();
-			this.getJPanelSettingsServer().setDataModel((ServerTreeNodeServer) serverTreeNodeObject);
+			newServerTreeNodeServer = (ServerTreeNodeServer) serverTreeNodeObject;
 		} else if (serverTreeNodeObject instanceof ServerTreeNodeHandler) {
+			// --- Show handler panel ----------------------------------------- 
+			newServerTreeNodeServer = this.getJTreeServer().getParentServerNode((ServerTreeNodeHandler) serverTreeNodeObject);
+		}
+
+		// --------------------------------------------------------------------
+		// --- Check for server change and setting changes --------------------
+		// --------------------------------------------------------------------
+		if (this.editServerTreeNodeServer!=null && newServerTreeNodeServer!=this.editServerTreeNodeServer && this.editServerTreeNodeServer.hasChangedJettySettings()==true) {
+			// --- Ask the user to save or discard settings -------------------
+			if (this.userConfirmedToChangeView()==false) {
+				// --- Return to previous selection ---------------------------
+				this.isDisabledTreeSelectionListener = true;
+				JPanelServerConfiguration.this.getJTreeServer().setSelectionPath(oldSelectionPath);
+				this.isDisabledTreeSelectionListener = false;
+				return;
+			}
+		}
+		// --- Set as current server to edit ----------------------------------
+		this.editServerTreeNodeServer = newServerTreeNodeServer;
+
+		// --------------------------------------------------------------------
+		// --- Set the view to the new selection ------------------------------
+		// --------------------------------------------------------------------
+		JettyConfigurationInterface<?> settingsPanel = null;
+		if (serverTreeNodeObject instanceof ServerTreeNodeServer) {
+			// --- Show server panel ------------
+			settingsPanel = this.getJPanelSettingsServer();
+			this.getJPanelSettingsServer().setDataModel(newServerTreeNodeServer);
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeHandler) {
+			// --- Show handler panel ----------- 
 			settingsPanel = this.getJPanelSettingsHandler();
 			this.getJPanelSettingsHandler().setDataModel((ServerTreeNodeHandler) serverTreeNodeObject);
 		}
-		this.getJScrollPaneRight().setViewportView(settingsPanel);
-		
+		this.getJToolBarServer().setServerTreeNode(newServerTreeNodeServer);
+		this.getJScrollPaneRight().setViewportView((JComponent)settingsPanel);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
+	 */
+	@Override
+	public boolean hasUnsavedChanges() {
+		if (this.editServerTreeNodeServer!=null && this.editServerTreeNodeServer.hasChangedJettySettings()==true) {
+			return true;
+		}
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
+	 */
+	@Override
+	public boolean userConfirmedToChangeView() {
+
+		if (this.hasUnsavedChanges()==false) return true;
+		
+		String title = "Save server settings?";
+		String message = "Would you like to save the changes in the server settings for server '" + this.editServerTreeNodeServer.getJettyConfiguration().getServerName() + "'?";
+		int userAnswer = JOptionPane.showConfirmDialog(JPanelServerConfiguration.this.getParent(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+		if (userAnswer==JOptionPane.YES_OPTION) {
+			// --- Save the changes ---------------------------------------
+			this.editServerTreeNodeServer.save();
+			
+		} else if (userAnswer==JOptionPane.NO_OPTION) {
+			// --- Revert to last saved settings --------------------------
+			this.editServerTreeNodeServer.revertJettyConfigurationToPropertiesFile();
+			// --- TODO Reload view ???
+			
+		} else if (userAnswer==JOptionPane.CANCEL_OPTION) {
+			// --- Return to previous selection ---------------------------
+			return false;
+		}
+		return true;
+	}
+	
+	// ------------------------------------------------------------------------
+	// --- From here, right part of the server configuration UI ---------------
+	// ------------------------------------------------------------------------	
+	public JPanel getjPanelRightBase() {
+		if (jPanelRightBase==null) {
+			jPanelRightBase = new JPanel();
+			jPanelRightBase.setBorder(BorderFactory.createEmptyBorder());
+			jPanelRightBase.setLayout(new BorderLayout());
+			jPanelRightBase.add(this.getJToolBarServer(), BorderLayout.NORTH);
+			jPanelRightBase.add(this.getJScrollPaneRight(), BorderLayout.CENTER);
+		}
+		return jPanelRightBase;
+	}
+	public JToolBarServer getJToolBarServer() {
+		if (jToolBarServer==null) {
+			jToolBarServer = new JToolBarServer();
+		}
+		return jToolBarServer;
+	}
 	private JScrollPane getJScrollPaneRight() {
 		if (jScrollPaneRight == null) {
 			jScrollPaneRight = new JScrollPane();
+			jScrollPaneRight.setBorder(BorderFactory.createEmptyBorder());
 		}
 		return jScrollPaneRight;
 	}

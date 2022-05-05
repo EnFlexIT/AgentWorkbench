@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.ui.server;
 
+import javax.swing.JPanel;
+
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 
 /**
@@ -7,12 +9,11 @@ import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelSettingsHandler extends AbstractJPanelSettings<ServerTreeNodeHandler> {
+public class JPanelSettingsHandler extends JPanel implements JettyConfigurationInterface<ServerTreeNodeHandler> {
 
 	private static final long serialVersionUID = -4985161964727450005L;
 
 	private ServerTreeNodeHandler serverTreeNodeHandler;
-	private boolean unsaved;
 	
 	/**
 	 * Instantiates a new JPanel for the server settings.
@@ -33,24 +34,7 @@ public class JPanelSettingsHandler extends AbstractJPanelSettings<ServerTreeNode
 	@Override
 	public void setDataModel(ServerTreeNodeHandler dataModel) {
 		this.serverTreeNodeHandler = dataModel;
-		this.unsaved = false;
 		// TODO
-	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#getDataModel()
-	 */
-	@Override
-	public ServerTreeNodeHandler getDataModel() {
-		// TODO Auto-generated method stub
-		return this.serverTreeNodeHandler;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#isUnsaved()
-	 */
-	@Override
-	public boolean isUnsaved() {
-		return unsaved;
 	}
 	
 }

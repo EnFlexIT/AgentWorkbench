@@ -7,6 +7,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyServerInstances;
 
 /**
@@ -18,6 +19,7 @@ public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 
 	private AwbWebServerServiceWrapper serverServiceWrapper;
 	private JettyServerInstances jettyServerInstances;
+	
 	
 	/**
 	 * Instantiates a new server tree node object for server services.
@@ -105,5 +107,46 @@ public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 		}
 		return BundleHelper.getImageIcon("awbWeb16Red.png");
 	}
+
+	/**
+	 * Returns the {@link JettyConfiguration} that can be used to edit the JettySettings 
+	 * before they are stored in the properties file within the AWB-properties directory.
+	 * .
+	 * @return a copy of the JettyConfiguration as stored in the corresponding properties file
+	 */
+	public JettyConfiguration getJettyConfiguration() {
+		return this.serverServiceWrapper.getJettyConfiguration();
+	}
+	/**
+	 * Reverts the JettyConfiguration to the last stored file version.<br>
+	 * Use {@link #getJettyConfiguration()} to get the revised version of the configuration
+	 */
+	public void revertJettyConfigurationToPropertiesFile() {
+		this.serverServiceWrapper.revertJettyConfigurationToPropertiesFile();
+	}
+	/**
+	 * Reverts the JettyConfiguration to the initial service defined configuration.
+	 * Use {@link #getJettyConfiguration()} to get the revised version of the configuration
+	 */
+	public void revertJettyConfigurationToServiceDefinition() {
+		this.serverServiceWrapper.revertJettyConfigurationToServiceDefinition();
+	}
+	
+	/**
+	 * Saves the currently edited JettySettings.
+	 * @return true, if successful
+	 */
+	public boolean save() {
+		return this.serverServiceWrapper.save();
+	}
+	/**
+	 * Checks for changed settings.
+	 * @return true, if settings have changed
+	 */
+	public boolean hasChangedJettySettings() {
+		return this.serverServiceWrapper.hasChangedJettySettings();
+	}
+
+	
 
 }

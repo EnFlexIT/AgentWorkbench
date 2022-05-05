@@ -12,6 +12,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import de.enflexit.awb.ws.core.JettyConfiguration;
@@ -23,12 +24,11 @@ import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeServer> {
+public class JPanelSettingsServer extends JPanel implements JettyConfigurationInterface<ServerTreeNodeServer> {
 
 	private static final long serialVersionUID = -4985161964727450005L;
 
 	private ServerTreeNodeServer serverTreeNodeServer;
-	private JettyConfiguration editJettyConfiguration;
 
 	
 	private JLabel jLabelHeader;
@@ -168,7 +168,7 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		this.add(getJLabelJettyConfiguration(), gbc_jLabelJettyConfiguration);
 		
 		GridBagConstraints gbc_jScrollPaneJettyConfiguration = new GridBagConstraints();
-		gbc_jScrollPaneJettyConfiguration.insets = new Insets(5, 10, 5, 10);
+		gbc_jScrollPaneJettyConfiguration.insets = new Insets(5, 10, 0, 10);
 		gbc_jScrollPaneJettyConfiguration.gridwidth = 5;
 		gbc_jScrollPaneJettyConfiguration.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneJettyConfiguration.gridx = 0;
@@ -203,7 +203,7 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					StartOn startOnNew = (StartOn) JPanelSettingsServer.this.getJComboBoxStartOn().getSelectedItem();
-					editJettyConfiguration.setStartOn(startOnNew);
+					JPanelSettingsServer.this.getJettyConfiguration().setStartOn(startOnNew);
 				}
 			});
 		}
@@ -346,6 +346,12 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 	}
 	
 	
+	private void setServerTreeNodeServer(ServerTreeNodeServer serverTreeNodeServer) {
+		this.serverTreeNodeServer = serverTreeNodeServer;
+	}
+	private JettyConfiguration getJettyConfiguration() {
+		return this.serverTreeNodeServer.getJettyConfiguration();
+	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#setDataModel(de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject)
@@ -354,7 +360,7 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 	public void setDataModel(ServerTreeNodeServer serverNodeModel) {
 
 		// --- Remind current setting -------------------------------
-		this.serverTreeNodeServer = serverNodeModel;
+		this.setServerTreeNodeServer(serverNodeModel);
 
 		// --- Get information from ServerTreeNodeServer ------------
 		this.setStateDescription(serverNodeModel);
@@ -362,39 +368,17 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		this.getJLabelServiceClassDescription().setText("Class: " + serverNodeModel.getServiceClassName());
 		
 		// --- Get working copy of JettyConfiguration --------------- 
-		this.editJettyConfiguration = this.serverTreeNodeServer.getAwbWebServerServiceWrapper().getJettyConfiguration().getCopy();
+		this.setServerName(this.getJettyConfiguration().getServerName());
 		
-		this.setServerName(this.editJettyConfiguration.getServerName());
-		
-		this.getJComboBoxStartOn().setSelectedItem(this.editJettyConfiguration.getStartOn());
-		this.getJCheckBoxMutable().setSelected(this.editJettyConfiguration.isMutableHandlerCollection());
+		this.getJComboBoxStartOn().setSelectedItem(this.getJettyConfiguration().getStartOn());
+		this.getJCheckBoxMutable().setSelected(this.getJettyConfiguration().isMutableHandlerCollection());
 
-		boolean usesCustomizer = (this.editJettyConfiguration.getJettyCustomizer()!=null);
-		String customizerClass = usesCustomizer==true ? "Class: " + this.editJettyConfiguration.getJettyCustomizer().getClass().getName() : "";
+		boolean usesCustomizer = (this.getJettyConfiguration().getJettyCustomizer()!=null);
+		String customizerClass = usesCustomizer==true ? "Class: " + this.getJettyConfiguration().getJettyCustomizer().getClass().getName() : "";
 		this.getJCheckBoxCustomizer().setSelected(usesCustomizer);
 		this.getJCheckBoxCustomizer().setText(customizerClass);
 
-		this.getJTableSettingsServer().setJettyConfiguration(this.editJettyConfiguration);
-		
-	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#getDataModel()
-	 */
-	@Override
-	public ServerTreeNodeServer getDataModel() {
-
-		// TODO Auto-generated method stub
-		
-		
-		return this.serverTreeNodeServer;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#isUnsaved()
-	 */
-	@Override
-	public boolean isUnsaved() {
-		return this.editJettyConfiguration.equals(this.serverTreeNodeServer.getAwbWebServerServiceWrapper().getJettyConfiguration())==false;
+		this.getJTableSettingsServer().setJettyConfiguration(this.getJettyConfiguration());
 	}
 	
 }

@@ -11,7 +11,9 @@ import de.enflexit.awb.ws.core.JettyConfiguration;
 public class AwbWebServerServiceWrapper {
 
 	private AwbWebServerService webServerService;
-	private JettyConfiguration jettyConfiguration;
+	private JettyConfiguration jettyConfigurationFromFile;
+	private JettyConfiguration jettyConfigurationForEditing;
+
 	
 	/**
 	 * Instantiates a new wrapper for an {@link AwbWebServerService}.
@@ -36,26 +38,88 @@ public class AwbWebServerServiceWrapper {
 		return webServerService;
 	}
 
+	
 	/**
 	 * Returns the {@link JettyConfiguration} of the registered {@link AwbWebServerService}.
-	 * @return the jetty configuration
+	 * @return the JettyConfiguration defined in the corresponding service
 	 */
-	public JettyConfiguration getJettyConfiguration() {
-		if (jettyConfiguration==null) {
-			jettyConfiguration = this.getWebServerService().getJettyConfiguration();
+	public JettyConfiguration getJettyConfigurationFromServiceDefinition() {
+		return this.getWebServerService().getJettyConfiguration();
+	}
+	
+	/**
+	 * Returns the {@link JettyConfiguration}, stored in the file within the AWB-properties directory.
+	 * If not available yet, the service configures {@link JettyConfiguration} will be taken and initially 
+	 * stored to a file (named as [server name].xml).
+	 * .
+	 * @return the JettyConfiguration as stored in the properties file
+	 */
+	public JettyConfiguration getJettyConfigurationFromPropertiesFile() {
+		if (jettyConfigurationFromFile==null) {
+			jettyConfigurationFromFile = this.getJettyConfigurationFromServiceDefinition();
 			// --- Additionally, try to load the configuration from file ------
-			JettyConfiguration jettyConfigurationFromFile = JettyConfiguration.load(JettyConfiguration.getFile(this.jettyConfiguration));
-			if (jettyConfigurationFromFile==null) {
+			JettyConfiguration jcFileRead = JettyConfiguration.load(JettyConfiguration.getFile(this.jettyConfigurationFromFile));
+			if (jcFileRead==null) {
 				// --- Save current settings ----------------------------------
-				JettyConfiguration.save(this.jettyConfiguration);
+				JettyConfiguration.save(this.jettyConfigurationFromFile);
 			} else {
 				// --- Set handler and customizer to file settings ------------
-				jettyConfigurationFromFile.setHandler(this.jettyConfiguration.getHandler());
-				jettyConfigurationFromFile.setJettyCustomizer(this.jettyConfiguration.getJettyCustomizer());
-				jettyConfiguration = jettyConfigurationFromFile;
+				jcFileRead.setHandler(this.jettyConfigurationFromFile.getHandler());
+				jcFileRead.setJettyCustomizer(this.jettyConfigurationFromFile.getJettyCustomizer());
+				jettyConfigurationFromFile = jcFileRead;
 			}
 		}
-		return jettyConfiguration;
+		return jettyConfigurationFromFile;
+	}
+	
+	/**
+	 * Returns the {@link JettyConfiguration} that can be used to edit the JettySettings 
+	 * before they are stored in the properties file within the AWB-properties directory.
+	 * .
+	 * @return a copy of the JettyConfiguration as stored in the corresponding properties file
+	 */
+	public JettyConfiguration getJettyConfiguration() {
+		if (jettyConfigurationForEditing==null) {
+			jettyConfigurationForEditing = this.getJettyConfigurationFromPropertiesFile().getCopy();
+		}
+		return jettyConfigurationForEditing;
+	}
+	
+	
+	/**
+	 * Reverts the JettyConfiguration to the last stored file version.<br>
+	 * Use {@link #getJettyConfiguration()} to get the revised version of the configuration
+	 */
+	public void revertJettyConfigurationToPropertiesFile() {
+		this.jettyConfigurationForEditing = null;
+	}
+	/**
+	 * Reverts the JettyConfiguration to the initial service defined configuration.
+	 * Use {@link #getJettyConfiguration()} to get the revised version of the configuration
+	 */
+	public void revertJettyConfigurationToServiceDefinition() {
+		this.jettyConfigurationForEditing = null;
+		this.jettyConfigurationFromFile = null;
+	}
+	
+	
+	/**
+	 * Saves the currently edited JettySettings.
+	 * @return true, if successful
+	 */
+	public boolean save() {
+		if (this.hasChangedJettySettings()==true) {
+			this.jettyConfigurationFromFile = this.jettyConfigurationForEditing.getCopy();
+			return this.getJettyConfigurationFromPropertiesFile().save();
+		}
+		return true;
+	}
+	/**
+	 * Checks if the current JettySettings have changed.
+	 * @return true, if the settings have changed
+	 */
+	public boolean hasChangedJettySettings() {
+		return ! this.getJettyConfiguration().equals(this.getJettyConfigurationFromPropertiesFile());
 	}
 	
 	
@@ -76,5 +140,10 @@ public class AwbWebServerServiceWrapper {
 		}
 		return false;
 	}
+
+	
+	
+	
+	
 	
 }
