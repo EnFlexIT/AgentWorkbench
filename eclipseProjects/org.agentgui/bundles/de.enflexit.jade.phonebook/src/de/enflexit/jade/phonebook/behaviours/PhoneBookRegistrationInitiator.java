@@ -24,6 +24,8 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	private boolean retryOnFailure;
 	private IncreasingRetryIntervalsHelper intervalsHelper;
 	
+	private boolean debug = false;
+	
 	/**
 	 * Instantiates a new phone book registration initiator.
 	 * @param agent the agent
@@ -58,12 +60,27 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	}
 	
 	/* (non-Javadoc)
+	 * @see jade.proto.SimpleAchieveREInitiator#handleInform(jade.lang.acl.ACLMessage)
+	 */
+	@Override
+	protected void handleInform(ACLMessage msg) {
+		if (debug==true) {
+			System.out.println("[" + this.myAgent.getLocalName() + "] Phonebook registration successful");
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see jade.proto.SimpleAchieveREInitiator#handleFailure(jade.lang.acl.ACLMessage)
 	 */
 	@Override
 	protected void handleFailure(ACLMessage msg) {
-		System.out.println("[" + this.myAgent.getLocalName() + "] Registration failed");
+		if (debug==true) {
+			System.out.println("[" + this.myAgent.getLocalName() + "] Phonebook registration failed");
+		}
 		if (this.retryOnFailure==true) {
+			if (debug==true) {
+				System.out.println("[" + this.myAgent.getLocalName() + "] Trying again after " + this.getIntervalsHelper().getCurrentIntervalWithoutIncrease()/1000 + " s");
+			}
 			this.myAgent.addBehaviour(new RetryOnFailureBehaviour(this.myAgent, this.getIntervalsHelper()));
 		}
 	}
