@@ -13,3 +13,4 @@ Import-Package: javax.xml.bind,
 Export-Package: de.enflexit.jade.phonebook,
  de.enflexit.jade.phonebook.behaviours,
  de.enflexit.jade.phonebook.search
+Bundle-Vendor: EnFlex.IT
