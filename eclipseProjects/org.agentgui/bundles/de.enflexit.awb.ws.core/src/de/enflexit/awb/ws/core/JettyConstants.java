@@ -1,129 +1,72 @@
 package de.enflexit.awb.ws.core;
 
 /**
- * <p>
  * Provides configuration constants for use with JettyConfigurator.
- * </p>
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface JettyConstants {
-
+public enum JettyConstants {
 	
-	/**
-	 * name="http.enabled" type="Boolean" (default: true)
-	 */
-	public static final String HTTP_ENABLED = "http.enabled"; //$NON-NLS-1$
-
-	/**
-	 * name="http.port" type="Integer" (default: 0 -- first available port)
-	 */
-	public static final String HTTP_PORT = "http.port"; //$NON-NLS-1$
-
-	/**
-	 * name="http.host" type="String" (default: 0.0.0.0 -- all network adapters)
-	 */
-	public static final String HTTP_HOST = "http.host"; //$NON-NLS-1$
-
-	/**
-	 * name="http.nio" type="Boolean" (default: true, with some exceptions for JREs
-	 * with known NIO problems)
-	 */
-	public static final String HTTP_NIO = "http.nio"; //$NON-NLS-1$
-
+	HTTP_ENABLED("http.enabled", 1, Boolean.class, true),
+	HTTP_HOST("http.host", 2, String.class, "0.0.0.0"),
+	HTTP_PORT("http.port", 3, Integer.class, 0),
+	HTTP_NIO("http.nio", 4, Boolean.class, true),
 	
-	/**
-	 * name="https.enabled" type="Boolean" (default: false)
-	 */
-	public static final String HTTPS_ENABLED = "https.enabled"; //$NON-NLS-1$
-
-	/**
-	 * name="https.host" type="String" (default: 0.0.0.0 -- all network adapters)
-	 */
-	public static final String HTTPS_HOST = "https.host"; //$NON-NLS-1$
-
-	/**
-	 * name="https.port" type="Integer" (default: 0 -- first available port)
-	 */
-	public static final String HTTPS_PORT = "https.port"; //$NON-NLS-1$
-
+	HTTPS_ENABLED("https.enabled", 5, Boolean.class, false),
+	HTTPS_HOST("https.host", 6, String.class, "0.0.0.0"),
+	HTTPS_PORT("https.port", 7, Integer.class, 0),
 	
-	/**
-	 * name="http.minThreads" type="Integer" (default: 8 -- max number of threads)
-	 */
-	public static final String HTTP_MINTHREADS = "http.minThreads"; //$NON-NLS-1$
+	HTTP_MINTHREADS("http.minThreads", 8, Integer.class, 8),
+	HTTP_MAXTHREADS("http.maxThreads", 9, Integer.class, 200),
 	
-	/**
-	 * name="http.maxThreads" type="Integer" (default: 200 -- max number of threads)
-	 */
-	public static final String HTTP_MAXTHREADS = "http.maxThreads"; //$NON-NLS-1$
-
+	SSL_KEYSTORE("ssl.keystore", 10, String.class, null),
+	SSL_PASSWORD("ssl.password", 11, String.class, null),
+	SSL_KEYPASSWORD("ssl.keypassword", 12, String.class, null),
 	
+	SSL_NEEDCLIENTAUTH("ssl.needclientauth", 13, Boolean.class, false),
+	SSL_WANTCLIENTAUTH("ssl.wantclientauth", 14, Boolean.class, false),
 
-	/**
-	 * name="ssl.keystore" type="String"
-	 */
-	public static final String SSL_KEYSTORE = "ssl.keystore"; //$NON-NLS-1$
-
-	/**
-	 * name="ssl.password" type="String"
-	 */
-	public static final String SSL_PASSWORD = "ssl.password"; //$NON-NLS-1$
-
-	/**
-	 * name="ssl.keypassword" type="String"
-	 */
-	public static final String SSL_KEYPASSWORD = "ssl.keypassword"; //$NON-NLS-1$
-
-	/**
-	 * name="ssl.needclientauth" type="Boolean"
-	 */
-	public static final String SSL_NEEDCLIENTAUTH = "ssl.needclientauth"; //$NON-NLS-1$
-
-	/**
-	 * name="ssl.wantclientauth" type="Boolean"
-	 */
-	public static final String SSL_WANTCLIENTAUTH = "ssl.wantclientauth"; //$NON-NLS-1$
-
-	/**
-	 * name="ssl.protocol" type="String"
-	 */
-	public static final String SSL_PROTOCOL = "ssl.protocol"; //$NON-NLS-1$
-
-	/**
-	 * name="ssl.algorithm" type="String"
-	 */
-	public static final String SSL_ALGORITHM = "ssl.algorithm"; //$NON-NLS-1$
-
-	/**
-	 * name="ssl.keystoretype" type="String"
-	 */
-	public static final String SSL_KEYSTORETYPE = "ssl.keystoretype"; //$NON-NLS-1$
-
+	SSL_PROTOCOL("ssl.protocol", 15, String.class, null),
+	SSL_ALGORITHM("ssl.algorithm", 16, String.class, null),
+	SSL_KEYSTORETYPE("ssl.keystoretype", 17, String.class, false),
 	
-	/**
-	 * name="context.path" type="String"
-	 */
-	public static final String CONTEXT_PATH = "context.path"; //$NON-NLS-1$
-
-	/**
-	 * name="context.sessioninactiveinterval" type="Integer"
-	 */
-	public static final String CONTEXT_SESSIONINACTIVEINTERVAL = "context.sessioninactiveinterval"; //$NON-NLS-1$
-
-	/**
-	 * name="housekeeper.interval" type="Integer"
-	 * 
-	 * @since 1.5
-	 */
-	public static final String HOUSEKEEPER_INTERVAL = "housekeeper.interval"; //$NON-NLS-1$
-
-
-	/**
-	 * name="other.info" type="String"
-	 */
-	public static final String OTHER_INFO = "other.info"; //$NON-NLS-1$
-
+	CONTEXT_PATH("context.path", 18, String.class, null),
+	CONTEXT_SESSIONINACTIVEINTERVAL("context.sessioninactiveinterval", 19, Integer.class, null),
+	
+	HOUSEKEEPER_INTERVAL("housekeeper.interval", 20, Integer.class, null);
+	
+	
+	private String jettyKey;
+	private Integer orderPos;
+	private Class<?> typeClass;
+	private Object defaultValue;
+	
+	private JettyConstants(final String jettyKey, Integer orderPos, Class<?> type, Object defaultValue) {
+		this.jettyKey = jettyKey;
+		this.orderPos = orderPos;
+		this.typeClass = type;
+		this.defaultValue = defaultValue;
+	}
+	
+	public String getJettyKey() {
+		return jettyKey;
+	}
+	public int getOrderPos() {
+		return orderPos;
+	}
+	public Class<?> getTypeClass() {
+		return typeClass;
+	}
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
+	public static JettyConstants valueofJettyKey(String jettyKey) {
+		for (JettyConstants jc : JettyConstants.values()) {
+			if (jc.getJettyKey().equals(jettyKey)==true) {
+				return jc;
+			}
+		}
+		return null;
+	}
 
 }

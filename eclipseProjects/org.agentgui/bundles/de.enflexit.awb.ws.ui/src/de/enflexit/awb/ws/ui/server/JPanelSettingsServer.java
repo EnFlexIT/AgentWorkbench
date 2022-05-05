@@ -1,20 +1,22 @@
 package de.enflexit.awb.ws.ui.server;
 
-import de.enflexit.awb.ws.core.JettyConfiguration;
-import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
-import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
+import java.awt.Color;
 import java.awt.Font;
-import javax.swing.JComboBox;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+
+import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 
 /**
  * The Class JPanelSettingsServer.
@@ -26,8 +28,8 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 	private static final long serialVersionUID = -4985161964727450005L;
 
 	private ServerTreeNodeServer serverTreeNodeServer;
-	private boolean unsaved;
-	
+	private JettyConfiguration editJettyConfiguration;
+
 	
 	private JLabel jLabelHeader;
 	
@@ -43,6 +45,14 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 
 	private JLabel jLabelJettyConfiguration;
 	private JScrollPane jScrollPaneJettyConfiguration;
+	private JTableSettingsServer jTableSettingsServer;
+	
+	private JLabel jLabelState;
+	private JLabel jLabelStateDescription;
+	private JLabel jLabelSourceBundle;
+	private JLabel jLabelSourceBundleDescription;
+	private JLabel jLabelServiceClass;
+	private JLabel jLabelServiceClassDescription;
 	
 	/**
 	 * Instantiates a new JPanel for the server settings.
@@ -53,15 +63,15 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 300, 0, 300, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.insets = new Insets(10, 10, 0, 10);
-		gbc_jLabelHeader.gridwidth = 2;
+		gbc_jLabelHeader.gridwidth = 4;
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
 		gbc_jLabelHeader.gridx = 0;
 		gbc_jLabelHeader.gridy = 0;
@@ -81,6 +91,20 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		gbc_jComboBoxStartOn.gridy = 1;
 		this.add(getJComboBoxStartOn(), gbc_jComboBoxStartOn);
 		
+		GridBagConstraints gbc_jLabelState = new GridBagConstraints();
+		gbc_jLabelState.anchor = GridBagConstraints.WEST;
+		gbc_jLabelState.insets = new Insets(10, 10, 0, 0);
+		gbc_jLabelState.gridx = 2;
+		gbc_jLabelState.gridy = 1;
+		this.add(getJLabelState(), gbc_jLabelState);
+		
+		GridBagConstraints gbc_jLabelStateDescription = new GridBagConstraints();
+		gbc_jLabelStateDescription.anchor = GridBagConstraints.WEST;
+		gbc_jLabelStateDescription.insets = new Insets(10, 5, 0, 10);
+		gbc_jLabelStateDescription.gridx = 3;
+		gbc_jLabelStateDescription.gridy = 1;
+		this.add(getJLabelStateDescription(), gbc_jLabelStateDescription);
+		
 		GridBagConstraints gbc_jLabelMutable = new GridBagConstraints();
 		gbc_jLabelMutable.anchor = GridBagConstraints.WEST;
 		gbc_jLabelMutable.insets = new Insets(7, 10, 0, 0);
@@ -89,11 +113,25 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		this.add(getJLabelMutable(), gbc_jLabelMutable);
 		
 		GridBagConstraints gbc_jCheckBoxMutable = new GridBagConstraints();
-		gbc_jCheckBoxMutable.anchor = GridBagConstraints.WEST;
+		gbc_jCheckBoxMutable.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jCheckBoxMutable.insets = new Insets(7, 5, 0, 0);
 		gbc_jCheckBoxMutable.gridx = 1;
 		gbc_jCheckBoxMutable.gridy = 2;
 		this.add(getJCheckBoxMutable(), gbc_jCheckBoxMutable);
+		
+		GridBagConstraints gbc_jLabelSourceBundle = new GridBagConstraints();
+		gbc_jLabelSourceBundle.insets = new Insets(7, 10, 0, 0);
+		gbc_jLabelSourceBundle.anchor = GridBagConstraints.WEST;
+		gbc_jLabelSourceBundle.gridx = 2;
+		gbc_jLabelSourceBundle.gridy = 2;
+		this.add(getJLabelSourceBundle(), gbc_jLabelSourceBundle);
+
+		GridBagConstraints gbc_jLabelSourceBundleDescription = new GridBagConstraints();
+		gbc_jLabelSourceBundleDescription.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jLabelSourceBundleDescription.insets = new Insets(7, 5, 0, 10);
+		gbc_jLabelSourceBundleDescription.gridx = 3;
+		gbc_jLabelSourceBundleDescription.gridy = 2;
+		this.add(getJLabelSourceBundleDescription(), gbc_jLabelSourceBundleDescription);
 		
 		GridBagConstraints gbc_jLabelCustomizer = new GridBagConstraints();
 		gbc_jLabelCustomizer.anchor = GridBagConstraints.WEST;
@@ -103,14 +141,27 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		this.add(getJLabelCustomizer(), gbc_jLabelCustomizer);
 		
 		GridBagConstraints gbc_jCheckBoxCustomizer = new GridBagConstraints();
-		gbc_jCheckBoxCustomizer.anchor = GridBagConstraints.WEST;
+		gbc_jCheckBoxCustomizer.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jCheckBoxCustomizer.insets = new Insets(10, 5, 0, 0);
 		gbc_jCheckBoxCustomizer.gridx = 1;
 		gbc_jCheckBoxCustomizer.gridy = 3;
 		this.add(getJCheckBoxCustomizer(), gbc_jCheckBoxCustomizer);
 		
+		GridBagConstraints gbc_jLabelServiceClass = new GridBagConstraints();
+		gbc_jLabelServiceClass.insets = new Insets(10, 10, 0, 0);
+		gbc_jLabelServiceClass.gridx = 2;
+		gbc_jLabelServiceClass.gridy = 3;
+		this.add(getJLabelServiceClass(), gbc_jLabelServiceClass);
+		
+		GridBagConstraints gbc_jLabelServiceClassDescription = new GridBagConstraints();
+		gbc_jLabelServiceClassDescription.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jLabelServiceClassDescription.insets = new Insets(10, 5, 0, 10);
+		gbc_jLabelServiceClassDescription.gridx = 3;
+		gbc_jLabelServiceClassDescription.gridy = 3;
+		this.add(getJLabelServiceClassDescription(), gbc_jLabelServiceClassDescription);
+		
 		GridBagConstraints gbc_jLabelJettyConfiguration = new GridBagConstraints();
-		gbc_jLabelJettyConfiguration.insets = new Insets(10, 10, 0, 0);
+		gbc_jLabelJettyConfiguration.insets = new Insets(12, 10, 0, 0);
 		gbc_jLabelJettyConfiguration.anchor = GridBagConstraints.WEST;
 		gbc_jLabelJettyConfiguration.gridx = 0;
 		gbc_jLabelJettyConfiguration.gridy = 4;
@@ -118,7 +169,7 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		
 		GridBagConstraints gbc_jScrollPaneJettyConfiguration = new GridBagConstraints();
 		gbc_jScrollPaneJettyConfiguration.insets = new Insets(5, 10, 5, 10);
-		gbc_jScrollPaneJettyConfiguration.gridwidth = 2;
+		gbc_jScrollPaneJettyConfiguration.gridwidth = 5;
 		gbc_jScrollPaneJettyConfiguration.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneJettyConfiguration.gridx = 0;
 		gbc_jScrollPaneJettyConfiguration.gridy = 5;
@@ -135,6 +186,7 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 	private void setServerName(String serverName) {
 		this.getJLabelHeader().setText("Settings for Server '" + serverName + "'");
 	}
+	
 	private JLabel getJLabelStartOn() {
 		if (jLabelStartOn == null) {
 			jLabelStartOn = new JLabel("Start On:");
@@ -147,6 +199,13 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 			jComboBoxStartOn = new JComboBox<>();
 			jComboBoxStartOn.setModel(this.getComboBoxModel());
 			jComboBoxStartOn.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxStartOn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					StartOn startOnNew = (StartOn) JPanelSettingsServer.this.getJComboBoxStartOn().getSelectedItem();
+					editJettyConfiguration.setStartOn(startOnNew);
+				}
+			});
 		}
 		return jComboBoxStartOn;
 	}
@@ -161,9 +220,36 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		return comboBoxModel;
 	}
 	
+	private JLabel getJLabelState() {
+		if (jLabelState == null) {
+			jLabelState = new JLabel("State:");
+			jLabelState.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelState;
+	}
+	private JLabel getJLabelStateDescription() {
+		if (jLabelStateDescription == null) {
+			jLabelStateDescription = new JLabel("Stopped");
+			jLabelStateDescription.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelStateDescription;
+	}
+	private void setStateDescription(ServerTreeNodeServer serverNodeModel) {
+		String display = serverNodeModel.getRunningServerDescription();
+		Color color = null; 
+		if (serverNodeModel.isRunningServer()==true) {
+			color = new Color(0, 153, 0);
+		} else {
+			color = new Color(153, 0, 0);
+		}
+		this.getJLabelStateDescription().setText(display);
+		this.getJLabelStateDescription().setForeground(color);
+	}
+	
+	
 	private JLabel getJLabelMutable() {
 		if (jLabelMutable == null) {
-			jLabelMutable = new JLabel("Mutable Handler Collection");
+			jLabelMutable = new JLabel("Mutable Handler Collection:");
 			jLabelMutable.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelMutable;
@@ -183,9 +269,25 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		}
 		return jCheckBoxMutable;
 	}
+	
+	private JLabel getJLabelSourceBundle() {
+		if (jLabelSourceBundle == null) {
+			jLabelSourceBundle = new JLabel("Bundle:");
+			jLabelSourceBundle.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelSourceBundle;
+	}
+	private JLabel getJLabelSourceBundleDescription() {
+		if (jLabelSourceBundleDescription == null) {
+			jLabelSourceBundleDescription = new JLabel("my.bundle.name");
+			jLabelSourceBundleDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelSourceBundleDescription;
+	}
+	
 	private JLabel getJLabelCustomizer() {
 		if (jLabelCustomizer == null) {
-			jLabelCustomizer = new JLabel("Uses Customizer");
+			jLabelCustomizer = new JLabel("Uses Customizer:");
 			jLabelCustomizer.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelCustomizer;
@@ -205,18 +307,42 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 		}
 		return jCheckBoxCustomizer;
 	}
-	private JScrollPane getJScrollPaneJettyConfiguration() {
-		if (jScrollPaneJettyConfiguration == null) {
-			jScrollPaneJettyConfiguration = new JScrollPane();
+	
+	private JLabel getJLabelServiceClass() {
+		if (jLabelServiceClass == null) {
+			jLabelServiceClass = new JLabel("Service:");
+			jLabelServiceClass.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return jScrollPaneJettyConfiguration;
+		return jLabelServiceClass;
 	}
+	private JLabel getJLabelServiceClassDescription() {
+		if (jLabelServiceClassDescription == null) {
+			jLabelServiceClassDescription = new JLabel("Class.Name");
+			jLabelServiceClassDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelServiceClassDescription;
+	}
+	
 	private JLabel getJLabelJettyConfiguration() {
 		if (jLabelJettyConfiguration == null) {
-			jLabelJettyConfiguration = new JLabel("Jetty Configuration");
+			jLabelJettyConfiguration = new JLabel("Jetty Configuration:");
 			jLabelJettyConfiguration.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelJettyConfiguration;
+	}
+	private JScrollPane getJScrollPaneJettyConfiguration() {
+		if (jScrollPaneJettyConfiguration == null) {
+			jScrollPaneJettyConfiguration = new JScrollPane();
+			jScrollPaneJettyConfiguration.setViewportView(this.getJTableSettingsServer());
+		}
+		return jScrollPaneJettyConfiguration;
+	}
+	
+	private JTableSettingsServer getJTableSettingsServer() {
+		if (jTableSettingsServer==null) {
+			jTableSettingsServer = new JTableSettingsServer();
+		}
+		return jTableSettingsServer;
 	}
 	
 	
@@ -225,33 +351,40 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#setDataModel(de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject)
 	 */
 	@Override
-	public void setDataModel(ServerTreeNodeServer dataModel) {
-		
-		this.serverTreeNodeServer = dataModel;
-		this.unsaved = false;
+	public void setDataModel(ServerTreeNodeServer serverNodeModel) {
 
-		JettyConfiguration jettyConfig = this.serverTreeNodeServer.getAwbWebServerServiceWrapper().getJettyConfiguration();
-		
-		this.setServerName(jettyConfig.getServerName());
-		
-		this.getJComboBoxStartOn().setSelectedItem(jettyConfig.getStartOn());
-		this.getJCheckBoxMutable().setSelected(jettyConfig.isMutableHandlerCollection());
+		// --- Remind current setting -------------------------------
+		this.serverTreeNodeServer = serverNodeModel;
 
-		boolean usesCustomizer = (jettyConfig.getJettyCustomizer()!=null);
-		String customizerClass = usesCustomizer==true ? "Class: " + jettyConfig.getJettyCustomizer().getClass().getName() : "";
+		// --- Get information from ServerTreeNodeServer ------------
+		this.setStateDescription(serverNodeModel);
+		this.getJLabelSourceBundleDescription().setText(serverNodeModel.getSourceBundle().getSymbolicName());
+		this.getJLabelServiceClassDescription().setText("Class: " + serverNodeModel.getServiceClassName());
+		
+		// --- Get working copy of JettyConfiguration --------------- 
+		this.editJettyConfiguration = this.serverTreeNodeServer.getAwbWebServerServiceWrapper().getJettyConfiguration().getCopy();
+		
+		this.setServerName(this.editJettyConfiguration.getServerName());
+		
+		this.getJComboBoxStartOn().setSelectedItem(this.editJettyConfiguration.getStartOn());
+		this.getJCheckBoxMutable().setSelected(this.editJettyConfiguration.isMutableHandlerCollection());
+
+		boolean usesCustomizer = (this.editJettyConfiguration.getJettyCustomizer()!=null);
+		String customizerClass = usesCustomizer==true ? "Class: " + this.editJettyConfiguration.getJettyCustomizer().getClass().getName() : "";
 		this.getJCheckBoxCustomizer().setSelected(usesCustomizer);
 		this.getJCheckBoxCustomizer().setText(customizerClass);
 
+		this.getJTableSettingsServer().setJettyConfiguration(this.editJettyConfiguration);
 		
-		
-		// TODO
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#getDataModel()
 	 */
 	@Override
 	public ServerTreeNodeServer getDataModel() {
+
 		// TODO Auto-generated method stub
+		
 		
 		return this.serverTreeNodeServer;
 	}
@@ -261,8 +394,7 @@ public class JPanelSettingsServer extends AbstractJPanelSettings<ServerTreeNodeS
 	 */
 	@Override
 	public boolean isUnsaved() {
-		return unsaved;
+		return this.editJettyConfiguration.equals(this.serverTreeNodeServer.getAwbWebServerServiceWrapper().getJettyConfiguration())==false;
 	}
 	
-
 }

@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -23,6 +26,7 @@ import org.eclipse.jetty.server.Server;
 
 import agentgui.core.application.Application;
 import agentgui.core.common.AbstractUserObject;
+import de.enflexit.common.SerialClone;
 
 /**
  * A JettyConfiguration describes the configuration of a Jetty Server
@@ -178,6 +182,17 @@ public class JettyConfiguration implements Serializable {
 	
 	
 	/**
+	 * Returns the jetty settings as sorted list.
+	 * The preferred order is adjusted within the enumeration {@link JettyConstants}.  
+	 * @return the jetty settings sorted
+	 */
+	public List<JettyAttribute<?>> getJettySettingsSorted() {
+		ArrayList<JettyAttribute<?>> settings = new ArrayList<>(this.getJettySettings().values());
+		Collections.sort(settings);
+		return settings;
+	}
+	
+	/**
 	 * Returns the jetty settings.
 	 * @return the jetty settings
 	 */
@@ -196,6 +211,15 @@ public class JettyConfiguration implements Serializable {
 	public void put(String key, JettyAttribute<?> attribute) {
 		this.getJettySettings().put(key, attribute);
 		
+	}
+	/**
+	 * Returns the stored value for the specified key.
+	 *
+	 * @param jettyConstant the jetty constant
+	 * @return the jetty attribute
+	 */
+	public JettyAttribute<?> get(JettyConstants jettyConstant) {
+		return this.getJettySettings().get(jettyConstant.getJettyKey());
 	}
 	/**
 	 * Returns the stored value for the specified key.
@@ -284,8 +308,6 @@ public class JettyConfiguration implements Serializable {
 		
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CONTEXT_PATH, "", null));
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL, 300, null));	
-		
-		// TODO: JettyConstants.CUSTOMIZER_CLASS
 	}
 	/**
 	 * Sets the specified {@link JettyAttribute} to the configuration of a Jetty server.
@@ -314,6 +336,43 @@ public class JettyConfiguration implements Serializable {
 		return port;
 	}
 	
+	
+	/**
+	 * Returns a copy of the current instance, while the Handler (see {@link #getHandler()}) and 
+	 * the JettyCustomizer (see {@link #getJettyCustomizer()}) will be the same instances.
+	 * 
+	 * @return the copy of the current JettyConfiguration
+	 */
+	public JettyConfiguration getCopy(){
+		JettyConfiguration jc = SerialClone.clone(this);
+		jc.setHandler(this.getHandler());
+		jc.setJettyCustomizer(this.getJettyCustomizer());
+		return jc;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+
+		if (compObj==null || (! (compObj instanceof JettyConfiguration))) return false;
+		if (compObj==this) return true;
+
+		
+		JettyConfiguration jcComp = (JettyConfiguration) compObj;
+		
+		if (jcComp.getServerName().equals(this.getServerName())==false) return false;
+		if (jcComp.getStartOn()!=this.getStartOn()) return false;
+		if (jcComp.isMutableHandlerCollection()!=this.isMutableHandlerCollection()) return false;
+
+		if (jcComp.getJettySettings().equals(this.getJettySettings())==false) return false;
+
+		if (jcComp.getHandler()!=this.getHandler()) return false;
+		if (jcComp.getJettyCustomizer()!=this.getJettyCustomizer()) return false;
+		
+		return true;
+	}
 	
 	
 	// ----------------------------------------------------------------------------------
