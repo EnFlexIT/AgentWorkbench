@@ -29,9 +29,6 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 	private static final long serialVersionUID = -4985161964727450005L;
 
 	private ServerTreeNodeServer serverTreeNodeServer;
-
-	
-	private JLabel jLabelHeader;
 	
 	private JLabel jLabelStartOn;
 	private JComboBox<StartOn> jComboBoxStartOn;
@@ -63,128 +60,109 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 300, 0, 300, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 200, 0, 200, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
-		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
-		gbc_jLabelHeader.insets = new Insets(10, 10, 0, 10);
-		gbc_jLabelHeader.gridwidth = 4;
-		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHeader.gridx = 0;
-		gbc_jLabelHeader.gridy = 0;
-		this.add(getJLabelHeader(), gbc_jLabelHeader);
-		
 		GridBagConstraints gbc_jLabelStartOn = new GridBagConstraints();
-		gbc_jLabelStartOn.insets = new Insets(10, 10, 0, 0);
+		gbc_jLabelStartOn.insets = new Insets(0, 10, 0, 0);
 		gbc_jLabelStartOn.anchor = GridBagConstraints.WEST;
 		gbc_jLabelStartOn.gridx = 0;
-		gbc_jLabelStartOn.gridy = 1;
+		gbc_jLabelStartOn.gridy = 0;
 		this.add(getJLabelStartOn(), gbc_jLabelStartOn);
 		
 		GridBagConstraints gbc_jComboBoxStartOn = new GridBagConstraints();
 		gbc_jComboBoxStartOn.anchor = GridBagConstraints.WEST;
-		gbc_jComboBoxStartOn.insets = new Insets(10, 5, 0, 10);
+		gbc_jComboBoxStartOn.insets = new Insets(0, 5, 0, 10);
 		gbc_jComboBoxStartOn.gridx = 1;
-		gbc_jComboBoxStartOn.gridy = 1;
+		gbc_jComboBoxStartOn.gridy = 0;
 		this.add(getJComboBoxStartOn(), gbc_jComboBoxStartOn);
 		
 		GridBagConstraints gbc_jLabelState = new GridBagConstraints();
 		gbc_jLabelState.anchor = GridBagConstraints.WEST;
-		gbc_jLabelState.insets = new Insets(10, 10, 0, 0);
+		gbc_jLabelState.insets = new Insets(0, 10, 0, 0);
 		gbc_jLabelState.gridx = 2;
-		gbc_jLabelState.gridy = 1;
+		gbc_jLabelState.gridy = 0;
 		this.add(getJLabelState(), gbc_jLabelState);
 		
 		GridBagConstraints gbc_jLabelStateDescription = new GridBagConstraints();
 		gbc_jLabelStateDescription.anchor = GridBagConstraints.WEST;
-		gbc_jLabelStateDescription.insets = new Insets(10, 5, 0, 10);
+		gbc_jLabelStateDescription.insets = new Insets(0, 5, 0, 10);
 		gbc_jLabelStateDescription.gridx = 3;
-		gbc_jLabelStateDescription.gridy = 1;
+		gbc_jLabelStateDescription.gridy = 0;
 		this.add(getJLabelStateDescription(), gbc_jLabelStateDescription);
 		
 		GridBagConstraints gbc_jLabelMutable = new GridBagConstraints();
 		gbc_jLabelMutable.anchor = GridBagConstraints.WEST;
 		gbc_jLabelMutable.insets = new Insets(7, 10, 0, 0);
 		gbc_jLabelMutable.gridx = 0;
-		gbc_jLabelMutable.gridy = 2;
+		gbc_jLabelMutable.gridy = 1;
 		this.add(getJLabelMutable(), gbc_jLabelMutable);
 		
 		GridBagConstraints gbc_jCheckBoxMutable = new GridBagConstraints();
 		gbc_jCheckBoxMutable.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jCheckBoxMutable.insets = new Insets(7, 5, 0, 0);
 		gbc_jCheckBoxMutable.gridx = 1;
-		gbc_jCheckBoxMutable.gridy = 2;
+		gbc_jCheckBoxMutable.gridy = 1;
 		this.add(getJCheckBoxMutable(), gbc_jCheckBoxMutable);
 		
 		GridBagConstraints gbc_jLabelSourceBundle = new GridBagConstraints();
 		gbc_jLabelSourceBundle.insets = new Insets(7, 10, 0, 0);
 		gbc_jLabelSourceBundle.anchor = GridBagConstraints.WEST;
 		gbc_jLabelSourceBundle.gridx = 2;
-		gbc_jLabelSourceBundle.gridy = 2;
+		gbc_jLabelSourceBundle.gridy = 1;
 		this.add(getJLabelSourceBundle(), gbc_jLabelSourceBundle);
 
 		GridBagConstraints gbc_jLabelSourceBundleDescription = new GridBagConstraints();
 		gbc_jLabelSourceBundleDescription.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jLabelSourceBundleDescription.insets = new Insets(7, 5, 0, 10);
 		gbc_jLabelSourceBundleDescription.gridx = 3;
-		gbc_jLabelSourceBundleDescription.gridy = 2;
+		gbc_jLabelSourceBundleDescription.gridy = 1;
 		this.add(getJLabelSourceBundleDescription(), gbc_jLabelSourceBundleDescription);
 		
 		GridBagConstraints gbc_jLabelCustomizer = new GridBagConstraints();
 		gbc_jLabelCustomizer.anchor = GridBagConstraints.WEST;
 		gbc_jLabelCustomizer.insets = new Insets(10, 10, 0, 0);
 		gbc_jLabelCustomizer.gridx = 0;
-		gbc_jLabelCustomizer.gridy = 3;
+		gbc_jLabelCustomizer.gridy = 2;
 		this.add(getJLabelCustomizer(), gbc_jLabelCustomizer);
 		
 		GridBagConstraints gbc_jCheckBoxCustomizer = new GridBagConstraints();
 		gbc_jCheckBoxCustomizer.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jCheckBoxCustomizer.insets = new Insets(10, 5, 0, 0);
 		gbc_jCheckBoxCustomizer.gridx = 1;
-		gbc_jCheckBoxCustomizer.gridy = 3;
+		gbc_jCheckBoxCustomizer.gridy = 2;
 		this.add(getJCheckBoxCustomizer(), gbc_jCheckBoxCustomizer);
 		
 		GridBagConstraints gbc_jLabelServiceClass = new GridBagConstraints();
 		gbc_jLabelServiceClass.insets = new Insets(10, 10, 0, 0);
 		gbc_jLabelServiceClass.gridx = 2;
-		gbc_jLabelServiceClass.gridy = 3;
+		gbc_jLabelServiceClass.gridy = 2;
 		this.add(getJLabelServiceClass(), gbc_jLabelServiceClass);
 		
 		GridBagConstraints gbc_jLabelServiceClassDescription = new GridBagConstraints();
 		gbc_jLabelServiceClassDescription.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jLabelServiceClassDescription.insets = new Insets(10, 5, 0, 10);
 		gbc_jLabelServiceClassDescription.gridx = 3;
-		gbc_jLabelServiceClassDescription.gridy = 3;
+		gbc_jLabelServiceClassDescription.gridy = 2;
 		this.add(getJLabelServiceClassDescription(), gbc_jLabelServiceClassDescription);
 		
 		GridBagConstraints gbc_jLabelJettyConfiguration = new GridBagConstraints();
 		gbc_jLabelJettyConfiguration.insets = new Insets(12, 10, 0, 0);
 		gbc_jLabelJettyConfiguration.anchor = GridBagConstraints.WEST;
 		gbc_jLabelJettyConfiguration.gridx = 0;
-		gbc_jLabelJettyConfiguration.gridy = 4;
+		gbc_jLabelJettyConfiguration.gridy = 3;
 		this.add(getJLabelJettyConfiguration(), gbc_jLabelJettyConfiguration);
 		
 		GridBagConstraints gbc_jScrollPaneJettyConfiguration = new GridBagConstraints();
 		gbc_jScrollPaneJettyConfiguration.insets = new Insets(5, 10, 0, 10);
-		gbc_jScrollPaneJettyConfiguration.gridwidth = 5;
+		gbc_jScrollPaneJettyConfiguration.gridwidth = 4;
 		gbc_jScrollPaneJettyConfiguration.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneJettyConfiguration.gridx = 0;
-		gbc_jScrollPaneJettyConfiguration.gridy = 5;
+		gbc_jScrollPaneJettyConfiguration.gridy = 4;
 		this.add(getJScrollPaneJettyConfiguration(), gbc_jScrollPaneJettyConfiguration);
-	}
-	
-	private JLabel getJLabelHeader() {
-		if (jLabelHeader == null) {
-			jLabelHeader = new JLabel("Settings for Server");
-			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
-		}
-		return jLabelHeader;
-	}
-	private void setServerName(String serverName) {
-		this.getJLabelHeader().setText("Settings for Server '" + serverName + "'");
 	}
 	
 	private JLabel getJLabelStartOn() {
@@ -249,7 +227,7 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 	
 	private JLabel getJLabelMutable() {
 		if (jLabelMutable == null) {
-			jLabelMutable = new JLabel("Mutable Handler Collection:");
+			jLabelMutable = new JLabel("Handler Collection:");
 			jLabelMutable.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelMutable;
@@ -368,8 +346,6 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 		this.getJLabelServiceClassDescription().setText("Class: " + serverNodeModel.getServiceClassName());
 		
 		// --- Get working copy of JettyConfiguration --------------- 
-		this.setServerName(this.getJettyConfiguration().getServerName());
-		
 		this.getJComboBoxStartOn().setSelectedItem(this.getJettyConfiguration().getStartOn());
 		this.getJCheckBoxMutable().setSelected(this.getJettyConfiguration().isMutableHandlerCollection());
 

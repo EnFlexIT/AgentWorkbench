@@ -1,12 +1,15 @@
 package de.enflexit.awb.ws.ui.server;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,14 +40,14 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 	private ServerTree jTreeServer;
 	private boolean isDisabledTreeSelectionListener;
 	
-	
 	private JPanel jPanelRightBase;
-	private JToolBarServer jToolBarServer;
-	
-	private JScrollPane jScrollPaneRight;
-	private JPanelSettingsServer jPanelSettingsServer;
-	private JPanelSettingsHandler jPanelSettingsHandler;	
-	
+		private JPanel jPanelRightTop;
+			private JLabel jLabelServerName;
+			private JToolBarServer jToolBarServer;
+		
+		private JPanelSettingsServer jPanelSettingsServer;
+		private JPanelSettingsHandler jPanelSettingsHandler;	
+		
 	/**
 	 * Instantiates a new j panel server configuration.
 	 */
@@ -77,7 +80,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 	private JSplitPane getSplitPane() {
 		if (splitPane == null) {
 			splitPane = new JSplitPane();
-			splitPane.setDividerLocation(320);
+			splitPane.setDividerLocation(300);
 			splitPane.setResizeWeight(0.5);
 			splitPane.setBorder(BorderFactory.createEmptyBorder());
 			splitPane.setLeftComponent(this.getJScrollPaneLeft());
@@ -148,7 +151,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		}
 		// --- Set as current server to edit ----------------------------------
 		this.editServerTreeNodeServer = newServerTreeNodeServer;
-
+		
 		// --------------------------------------------------------------------
 		// --- Set the view to the new selection ------------------------------
 		// --------------------------------------------------------------------
@@ -162,8 +165,9 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			settingsPanel = this.getJPanelSettingsHandler();
 			this.getJPanelSettingsHandler().setDataModel((ServerTreeNodeHandler) serverTreeNodeObject);
 		}
-		this.getJToolBarServer().setServerTreeNode(newServerTreeNodeServer);
-		this.getJScrollPaneRight().setViewportView((JComponent)settingsPanel);
+		this.getJLabelServerName().setText(this.editServerTreeNodeServer.getJettyConfiguration().getServerName());
+		this.getJToolBarServer().setServerTreeNode(this.editServerTreeNodeServer);
+		this.exchangeRightCenterComponent((JComponent) settingsPanel);
 	}
 	
 	/* (non-Javadoc)
@@ -206,29 +210,56 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 	// ------------------------------------------------------------------------
 	// --- From here, right part of the server configuration UI ---------------
 	// ------------------------------------------------------------------------	
-	public JPanel getjPanelRightBase() {
+	private JPanel getjPanelRightBase() {
 		if (jPanelRightBase==null) {
 			jPanelRightBase = new JPanel();
 			jPanelRightBase.setBorder(BorderFactory.createEmptyBorder());
 			jPanelRightBase.setLayout(new BorderLayout());
-			jPanelRightBase.add(this.getJToolBarServer(), BorderLayout.NORTH);
-			jPanelRightBase.add(this.getJScrollPaneRight(), BorderLayout.CENTER);
+			jPanelRightBase.add(this.getjPanelRightTop(), BorderLayout.NORTH);
+			jPanelRightBase.add(new JPanel(), BorderLayout.CENTER);
 		}
 		return jPanelRightBase;
 	}
-	public JToolBarServer getJToolBarServer() {
+	private JPanel getjPanelRightTop() {
+		if (jPanelRightTop==null) {
+			jPanelRightTop = new JPanel();
+			
+			GridBagLayout gbl_jPanelRightTop = new GridBagLayout();
+			gbl_jPanelRightTop.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelRightTop.rowHeights = new int[]{28, 0};
+			gbl_jPanelRightTop.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelRightTop.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelRightTop.setLayout(gbl_jPanelRightTop);
+			
+			GridBagConstraints gbc_jLabelServerName = new GridBagConstraints();
+			gbc_jLabelServerName.insets = new Insets(0, 10, 0, 0);
+			gbc_jLabelServerName.anchor = GridBagConstraints.WEST;
+			gbc_jLabelServerName.gridx = 0;
+			gbc_jLabelServerName.gridy = 0;
+			jPanelRightTop.add(this.getJLabelServerName(), gbc_jLabelServerName);
+			
+			GridBagConstraints gbc_jToolBarServer = new GridBagConstraints();
+			gbc_jToolBarServer.anchor = GridBagConstraints.EAST;
+			gbc_jToolBarServer.gridx = 1;
+			gbc_jToolBarServer.gridy = 0;
+			jPanelRightTop.add(this.getJToolBarServer(), gbc_jToolBarServer);
+		}
+		return jPanelRightTop;
+	}
+	private JLabel getJLabelServerName() {
+		if (jLabelServerName==null) {
+			jLabelServerName = new JLabel("Server Name");
+			jLabelServerName.setFont(new Font("Dialog", Font.BOLD, 14));
+		}
+		return jLabelServerName;
+	}
+	private JToolBarServer getJToolBarServer() {
 		if (jToolBarServer==null) {
 			jToolBarServer = new JToolBarServer();
 		}
 		return jToolBarServer;
-	}
-	private JScrollPane getJScrollPaneRight() {
-		if (jScrollPaneRight == null) {
-			jScrollPaneRight = new JScrollPane();
-			jScrollPaneRight.setBorder(BorderFactory.createEmptyBorder());
-		}
-		return jScrollPaneRight;
-	}
+	}	
+	
 	private JPanelSettingsServer getJPanelSettingsServer() {
 		if (jPanelSettingsServer==null) {
 			jPanelSettingsServer = new JPanelSettingsServer();
@@ -241,5 +272,23 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		}
 		return jPanelSettingsHandler;
 	}
-	
+	private void exchangeRightCenterComponent(JComponent configUINew) {
+		
+		BorderLayout bLayout = (BorderLayout) this.getjPanelRightBase().getLayout();
+		Component configUIOld = bLayout.getLayoutComponent(BorderLayout.CENTER);
+		if (configUIOld==null) {
+			this.getjPanelRightBase().add(configUINew, BorderLayout.CENTER);
+			this.getjPanelRightBase().validate();
+			this.getjPanelRightBase().repaint();
+			
+		} else {
+			// --- Same type of component? ----------------
+			if (configUINew!=configUIOld) {
+				this.getjPanelRightBase().remove(configUIOld);
+				this.getjPanelRightBase().add(configUINew, BorderLayout.CENTER);
+				this.getjPanelRightBase().validate();
+				this.getjPanelRightBase().repaint();
+			}
+		}
+	}	
 }

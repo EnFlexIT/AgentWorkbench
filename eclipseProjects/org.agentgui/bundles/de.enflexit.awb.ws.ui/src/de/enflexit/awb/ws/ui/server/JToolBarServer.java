@@ -1,12 +1,11 @@
 package de.enflexit.awb.ws.ui.server;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JToolBar;
 
 import de.enflexit.awb.ws.BundleHelper;
@@ -22,8 +21,6 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 	private static final long serialVersionUID = 935898280006480662L;
 
 	private static final Dimension buttonSize = new Dimension(26, 26);
-	
-	private JLabel jLabelTitle;
 	
 	private JButton jButtonSave;
 	private JButton jButtonResetToSavedSettings;
@@ -43,8 +40,7 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		
 		this.setFloatable(false);
 		this.setRollover(true);
-		
-		this.add(this.getJLabelTitle());
+		this.setBorder(BorderFactory.createEmptyBorder());
 		
 		this.add(this.getJButtonSave());
 		this.addSeparator();
@@ -58,13 +54,6 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		this.addSeparator();
 	}
 	
-	public JLabel getJLabelTitle() {
-		if (jLabelTitle==null) {
-			jLabelTitle = new JLabel("Server Name: ");
-			jLabelTitle.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelTitle;
-	}
 
 	public JButton getJButtonSave() {
 		if (jButtonSave==null) {
@@ -136,7 +125,7 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		
 		if (ae.getSource()==this.getJButtonSave()) {
-			
+			// TODO
 		} else if (ae.getSource()==this.getJButtonResetToSavedSettings()) {
 		
 		} else if (ae.getSource()==this.getJButtonResetToServiceSettings()) {
