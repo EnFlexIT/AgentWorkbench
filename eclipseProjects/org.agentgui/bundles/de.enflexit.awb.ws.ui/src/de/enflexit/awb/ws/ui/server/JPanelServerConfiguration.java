@@ -115,6 +115,9 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		
 		if (this.isDisabledTreeSelectionListener==true) return;
 		
+		// --- Check for empty tree selection ---------------------
+		if (tse.getNewLeadSelectionPath()==null) return;
+		
 		// --- Set view to new selection--------------------------- 
 		AbstractServerTreeNodeObject stnSelectionNew = this.getJTreeServer().getServerTreeNodeObject(tse.getNewLeadSelectionPath());
 		this.setViewToTreeNodeSelection(stnSelectionNew, tse.getOldLeadSelectionPath());
@@ -170,6 +173,33 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		this.exchangeRightCenterComponent((JComponent) settingsPanel);
 	}
 	
+	/**
+	 * Reloads the current view.
+	 */
+	public void reloadView() {
+		
+		// --- Get current selections ---------------------
+		ServerTreeNodeServer stnServer = null;
+		ServerTreeNodeHandler stnHandler = null;
+		AbstractServerTreeNodeObject stnoSelected = this.getJTreeServer().getServerTreeNodeObjectSelected();
+		if (stnoSelected instanceof ServerTreeNodeServer) {
+			stnServer = (ServerTreeNodeServer) stnoSelected;
+		} else if (stnoSelected instanceof ServerTreeNodeHandler) {
+			stnHandler = (ServerTreeNodeHandler) stnoSelected;
+			stnServer = this.getJTreeServer().getParentServerNode(stnHandler);
+		}
+
+		// --- Reload tree --------------------------------
+		this.getJTreeServer().refreshTreeModel();
+		
+		// --- Reset to previous selection ----------------
+		this.getJTreeServer().selectServerNode(stnServer.getJettyConfiguration().getServerName());
+		if (stnHandler!=null) {
+			// --- Set to previous handler ----------------
+			this.getJTreeServer().selectHandlerNode(stnHandler.getServiceClassName());
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
 	 */
@@ -198,7 +228,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		} else if (userAnswer==JOptionPane.NO_OPTION) {
 			// --- Revert to last saved settings --------------------------
 			this.editServerTreeNodeServer.revertJettyConfigurationToPropertiesFile();
-			// --- TODO Reload view ???
+			this.reloadView();
 			
 		} else if (userAnswer==JOptionPane.CANCEL_OPTION) {
 			// --- Return to previous selection ---------------------------
@@ -255,7 +285,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 	}
 	private JToolBarServer getJToolBarServer() {
 		if (jToolBarServer==null) {
-			jToolBarServer = new JToolBarServer();
+			jToolBarServer = new JToolBarServer(this);
 		}
 		return jToolBarServer;
 	}	

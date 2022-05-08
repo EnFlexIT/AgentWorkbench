@@ -378,10 +378,11 @@ public class JettyServerManager {
 	private boolean stopServer(Server server) {
 		
 		if (server==null) return false;
-			
+		
 		// --- Stop the server ----------------------------
 		try {
 			server.stop();
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

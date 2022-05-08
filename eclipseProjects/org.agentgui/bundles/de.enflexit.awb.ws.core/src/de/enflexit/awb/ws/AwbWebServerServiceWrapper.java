@@ -100,6 +100,7 @@ public class AwbWebServerServiceWrapper {
 	public void revertJettyConfigurationToServiceDefinition() {
 		this.jettyConfigurationForEditing = null;
 		this.jettyConfigurationFromFile = null;
+		this.getJettyConfigurationFromServiceDefinition().save();
 	}
 	
 	
@@ -141,9 +142,4 @@ public class AwbWebServerServiceWrapper {
 		return false;
 	}
 
-	
-	
-	
-	
-	
 }

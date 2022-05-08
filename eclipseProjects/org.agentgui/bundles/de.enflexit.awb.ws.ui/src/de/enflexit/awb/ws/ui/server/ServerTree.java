@@ -90,8 +90,10 @@ public class ServerTree extends JTree {
 	/**
 	 * Will refresh / rebuild the current TreeModel.
 	 */
-	private void refreshTreeModel() {
+	public void refreshTreeModel() {
+		this.clearSelection();
 		this.getRootTreeNode().removeAllChildren();
+		this.getTreeModelServer().reload();
 		this.fillTreeModel();
 	}
 	/**
@@ -99,6 +101,9 @@ public class ServerTree extends JTree {
 	 */
 	private void fillTreeModel() {
 
+		// --- Initially show root node -----------------------------
+		this.setRootVisible(true);
+		
 		// --- Get all registered server services, sorted by name ---
 		List<AwbWebServerServiceWrapper> serverServices = this.getAwbWebRegistry().getRegisteredWebServerSorted();
 		for (int i = 0; i < serverServices.size(); i++) {
@@ -114,8 +119,9 @@ public class ServerTree extends JTree {
 			this.addServerToTreeModel(serverService, handlerServices, serverInstances);
 		}
 		this.expandToContextPath();
+		
+		// --- Hide root node ---------------------------------------
 		this.setRootVisible(false);
-		this.setShowsRootHandles(true);
 	}
 	/**
 	 * Adds the specified server elements to the tree model.
@@ -127,14 +133,21 @@ public class ServerTree extends JTree {
 	private void addServerToTreeModel(AwbWebServerServiceWrapper serverService, List<AwbWebHandlerService> handlerServiceList, JettyServerInstances serverInstances) {
 		// --- Add a server node --------------------------
 		DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(new ServerTreeNodeServer(serverService, serverInstances)); 
-		this.getRootTreeNode().add(serverNode);
+		this.getTreeModelServer().insertNodeInto(serverNode, this.getRootTreeNode(), this.getRootTreeNode().getChildCount());
 		// --- Add the handler to the server node --------- 
 		HandlerHelper.getHandlerTrees(serverInstances, handlerServiceList).forEach((DefaultMutableTreeNode treeNode) -> serverNode.add(treeNode));
 	}
 	
 	// --------------------------------------------------------------
 	// --- From here some helper methods ----------------------------
-	// --------------------------------------------------------------	
+	// --------------------------------------------------------------
+	/**
+	 * Returns the currently selected server tree node object.
+	 * @return the server tree node object {@link AbstractServerTreeNodeObject}
+	 */
+	public AbstractServerTreeNodeObject getServerTreeNodeObjectSelected() {
+		return this.getServerTreeNodeObject(this.getSelectionPath());
+	}
 	/**
 	 * Returns the server tree node object for the specified TreePath.
 	 *
@@ -192,6 +205,30 @@ public class ServerTree extends JTree {
 		}
 	}
 	/**
+	 * Selects the specified server node.
+	 * @param serverName the server name
+	 */
+	public void selectServerNode(String serverName) {
+		if (serverName==null) return;
+		TreePath fsnServer = this.getServerNode(serverName);
+		if (fsnServer!=null) {
+			this.setSelectionPath(fsnServer);
+		}
+	}
+	/**
+	 * Selects the specified handler, specified by the service class name.
+	 * @param serviceClassName the service class name
+	 */
+	public void selectHandlerNode(String serviceClassName) {
+		if (serviceClassName==null) return;
+		TreePath fsnServer = this.getHandlerNode(serviceClassName);
+		if (fsnServer!=null) {
+			this.setSelectionPath(fsnServer);
+		}
+	}
+	
+	
+	/**
 	 * Returns the first server node.
 	 * @return the first server node
 	 */
@@ -207,7 +244,45 @@ public class ServerTree extends JTree {
 		}
 		return fsnServerTreePath;
 	}
-	
+	/**
+	 * Returns the TreePath of the specified server.
+	 * @return the first server node
+	 */
+	public TreePath getServerNode(String serverName) {
+		TreePath fsnServerTreePath = null;
+		for (int i = 0; i < this.getRowCount(); i++) {
+			TreePath treePath = this.getPathForRow(i);
+			AbstractServerTreeNodeObject nodeObject = this.getServerTreeNodeObject(treePath);
+			if (nodeObject instanceof ServerTreeNodeServer) {
+				ServerTreeNodeServer stnServer = (ServerTreeNodeServer) nodeObject;
+				if (stnServer.getJettyConfiguration().getServerName().equals(serverName)==true) {
+					fsnServerTreePath = treePath;
+					break;
+				}
+			}
+		}
+		return fsnServerTreePath;
+	}
+	/**
+	 * Returns the TreePath of the specified server.
+	 * @return the first server node
+	 */
+	public TreePath getHandlerNode(String serviceClassName) {
+		TreePath fsnServerTreePath = null;
+		for (int i = 0; i < this.getRowCount(); i++) {
+			TreePath treePath = this.getPathForRow(i);
+			AbstractServerTreeNodeObject nodeObject = this.getServerTreeNodeObject(treePath);
+			if (nodeObject instanceof ServerTreeNodeHandler) {
+				ServerTreeNodeHandler stnServer = (ServerTreeNodeHandler) nodeObject;
+				if (stnServer.getServiceClassName().equals(serviceClassName)==true) {
+					fsnServerTreePath = treePath;
+					break;
+				}
+			}
+		}
+		return fsnServerTreePath;
+	}
+
 	
 	/**
 	 * Expands all tree nodes.
@@ -240,5 +315,6 @@ public class ServerTree extends JTree {
 			}
 		}
 	}
+
 
 }
