@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
-import agentgui.core.application.Application;
 import agentgui.core.common.AbstractUserObject;
+import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.common.SerialClone;
 
 /**
@@ -287,24 +287,24 @@ public class JettyConfiguration implements Serializable {
 		
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_NIO, true, valueRangeBoolean));
 		
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS, 8, null));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS, 200, null));
-		
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTPS_ENABLED, false, valueRangeBoolean));
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTPS_PORT, 8443, null));
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTPS_HOST, "0.0.0.0", null));
 		
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORE, "", null));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE, "jks", new String[] {"pkcs12", "jceks", "jks"}));
+
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PASSWORD, "", null));
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYPASSWORD, "", null));
+		
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PROTOCOL, "TLS", null));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_ALGORITHM, "", null));
 		
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_NEEDCLIENTAUTH, false, valueRangeBoolean));
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_WANTCLIENTAUTH, false, valueRangeBoolean));
 		
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PROTOCOL, "", null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_ALGORITHM, "", null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE, "", null));
-		
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS, 8, null));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS, 200, null));
 		
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CONTEXT_PATH, "", null));
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL, 300, null));	
@@ -389,11 +389,7 @@ public class JettyConfiguration implements Serializable {
 		if (jConfig==null || jConfig.getServerName()==null || jConfig.getServerName().isBlank()) {
 			throw new NullPointerException("Either, JettyConfiguration is null or the server name was not set!");
 		}
-		
-		String fileName = jConfig.getServerName() + ".xml";
-		String propPathAbs = Application.getGlobalInfo().getPathProperty(true);
-		propPathAbs += propPathAbs.endsWith(File.separator)==false ? File.separator : ""; 
-		return new File(propPathAbs + fileName);
+		return new File(BundleHelper.getPathProperties() + jConfig.getServerName() + ".xml");
 	}
 	
 	/**

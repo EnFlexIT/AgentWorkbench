@@ -49,6 +49,16 @@ private static final String imagePackage = "/icons/";
 
 	
 	/**
+	 * Returns the path to the AWB property directory with an ending file separator.
+	 * @return the path reference to the property folder with an ending file separator
+	 */
+	public static String getPathProperties() {
+		String propPathAbs = Application.getGlobalInfo().getPathProperty(true);
+		propPathAbs += propPathAbs.endsWith(File.separator)==false ? File.separator : ""; 
+		return propPathAbs;
+	}
+	
+	/**
 	 * Returns the 'awbHome' web root directory.
 	 * @return the web root directory
 	 */

@@ -16,19 +16,19 @@ public enum JettyConstants {
 	HTTPS_HOST("https.host", 6, String.class, "0.0.0.0"),
 	HTTPS_PORT("https.port", 7, Integer.class, 0),
 	
-	HTTP_MINTHREADS("http.minThreads", 8, Integer.class, 8),
-	HTTP_MAXTHREADS("http.maxThreads", 9, Integer.class, 200),
+	SSL_KEYSTORE("ssl.keystore", 8, String.class, null),
+	SSL_KEYSTORETYPE("ssl.keystoretype", 9, String.class, "jks"),
+	SSL_PASSWORD("ssl.password", 10, String.class, null),
+	SSL_KEYPASSWORD("ssl.keypassword", 11, String.class, null),
 	
-	SSL_KEYSTORE("ssl.keystore", 10, String.class, null),
-	SSL_PASSWORD("ssl.password", 11, String.class, null),
-	SSL_KEYPASSWORD("ssl.keypassword", 12, String.class, null),
-	
-	SSL_NEEDCLIENTAUTH("ssl.needclientauth", 13, Boolean.class, false),
-	SSL_WANTCLIENTAUTH("ssl.wantclientauth", 14, Boolean.class, false),
+	SSL_PROTOCOL("ssl.protocol", 12, String.class, null),
+	SSL_ALGORITHM("ssl.algorithm", 13, String.class, null),
 
-	SSL_PROTOCOL("ssl.protocol", 15, String.class, null),
-	SSL_ALGORITHM("ssl.algorithm", 16, String.class, null),
-	SSL_KEYSTORETYPE("ssl.keystoretype", 17, String.class, false),
+	SSL_NEEDCLIENTAUTH("ssl.needclientauth", 14, Boolean.class, false),
+	SSL_WANTCLIENTAUTH("ssl.wantclientauth", 15, Boolean.class, false),
+
+	HTTP_MINTHREADS("http.minThreads", 16, Integer.class, 8),
+	HTTP_MAXTHREADS("http.maxThreads", 17, Integer.class, 200),
 	
 	CONTEXT_PATH("context.path", 18, String.class, null),
 	CONTEXT_SESSIONINACTIVEINTERVAL("context.sessioninactiveinterval", 19, Integer.class, null),

@@ -1,11 +1,24 @@
 package de.enflexit.awb.ws.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.util.component.AttributeContainerMap;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.AwbWebRegistry;
@@ -240,9 +253,9 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Create new server instance ---------------------------
-		Server server = new Server(serverConfig.getHttpPort());
-
-		// ---------------------------------------------------------- 
+		Server server = new Server(this.getThreadPool(serverConfig));
+		
+		// ----------------------------------------------------------
 		// --- Read & set server configuration ----------------------
 		String[] keyArray = serverConfig.keySet().toArray(new String[serverConfig.keySet().size()]);
 		for (int i = 0; i < keyArray.length; i++) {
@@ -252,6 +265,20 @@ public class JettyServerManager {
 				server.setAttribute(key, attribute.getValue());	
 			}
 		}
+
+		// ----------------------------------------------------------
+		// --- Add HTTP / HTTPS connectors to server? ---------------
+		boolean isStartHTTP  = (boolean) server.getAttribute(JettyConstants.HTTP_ENABLED.getJettyKey());
+		boolean isStartHTTPS = (boolean) server.getAttribute(JettyConstants.HTTPS_ENABLED.getJettyKey());
+		if (isStartHTTP==false && isStartHTTPS==false) {
+			String errorMsg = "Error in configuration for server '" + serverConfig.getServerName() + "'!";
+			BundleHelper.systemPrintln(this, errorMsg, true);
+			throw new IllegalArgumentException("Neither HTTP nor HTTPS connections are enabled for the server!");
+		}
+		
+		if (isStartHTTP==true)  this.configureHTTP(server);
+		if (isStartHTTPS==true) this.configureHTTPS(server, serverConfig.getServerName());
+		
 		
 		// ----------------------------------------------------------
 		// --- Secure the server ------------------------------------
@@ -308,8 +335,6 @@ public class JettyServerManager {
 			}
 		}
 		
-		
-		
 		// ----------------------------------------------------------
 		// --- Execute the start of the server ----------------------
 		boolean isStarted = this.startConfiguredServer(server, serverConfig.getServerName());
@@ -319,6 +344,114 @@ public class JettyServerManager {
 		}
 		return isStarted;
 	}
+	
+	/**
+	 * Return the thread pool for the current server.
+	 *
+	 * @param jettyConfiguration the jetty configuration
+	 * @return the thread pool
+	 */
+	private ThreadPool getThreadPool(JettyConfiguration jettyConfiguration) {
+		int minThreads = (int)jettyConfiguration.get(JettyConstants.HTTP_MINTHREADS).getValue();
+		int maxThreads = (int)jettyConfiguration.get(JettyConstants.HTTP_MAXTHREADS).getValue();
+		return new QueuedThreadPool(maxThreads, minThreads);
+	}
+	
+	/**
+	 * Configures the HTTP part of the server.
+	 * @param server the server to configure
+	 */
+	private void configureHTTP(Server server) {
+		
+		boolean isStartHTTP = (boolean) server.getAttribute(JettyConstants.HTTP_ENABLED.getJettyKey());
+		int port = (int)server.getAttribute(JettyConstants.HTTP_PORT.getJettyKey());
+		String host = (String) server.getAttribute(JettyConstants.HTTP_HOST.getJettyKey());
+		if (isStartHTTP==false) return;
+		
+		try {
+			// --- Add HTTP connector -------------------------------
+			ServerConnector connector = new ServerConnector(server);
+			connector.setHost(host);
+			connector.setPort(port);
+			server.setConnectors(new Connector[]{connector});
+			server.addBean(new AttributeContainerMap());
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Configures the HTTP part of the server.
+	 *
+	 * @param server the server to configure
+	 * @param serverName the server name
+	 */
+	private void configureHTTPS(Server server, String serverName) {
+		
+		boolean isStartHTTPS = (boolean) server.getAttribute(JettyConstants.HTTPS_ENABLED.getJettyKey());
+		int securePort = (int) server.getAttribute(JettyConstants.HTTPS_PORT.getJettyKey());
+		String secureHost = (String) server.getAttribute(JettyConstants.HTTPS_HOST.getJettyKey());
+		if (isStartHTTPS==false) return;
+
+		String keyStore = (String) server.getAttribute(JettyConstants.SSL_KEYSTORE.getJettyKey());
+		String keyStoreType = (String) server.getAttribute(JettyConstants.SSL_KEYSTORETYPE.getJettyKey());
+
+		String sslPassword  = (String) server.getAttribute(JettyConstants.SSL_PASSWORD.getJettyKey());
+		String sslKeyPassword  = (String) server.getAttribute(JettyConstants.SSL_KEYPASSWORD.getJettyKey());
+		
+		String sslProtocol  = (String) server.getAttribute(JettyConstants.SSL_PROTOCOL.getJettyKey());
+		String sslAlgorithm = (String) server.getAttribute(JettyConstants.SSL_ALGORITHM.getJettyKey());
+		
+		boolean isNeedClientAuth = (boolean) server.getAttribute(JettyConstants.SSL_NEEDCLIENTAUTH.getJettyKey());
+		boolean isWantClientAuth = (boolean) server.getAttribute(JettyConstants.SSL_WANTCLIENTAUTH.getJettyKey());
+		
+		try {
+			
+			File keyStoreFile = new File(BundleHelper.getPathProperties() + serverName + ".jks");
+			if (keyStoreFile.exists()==false) {
+				throw new FileNotFoundException(keyStoreFile.toString());
+			}
+			
+			String keyStorePath = keyStoreFile.getAbsolutePath();
+			
+			SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+			sslContextFactory.setKeyStorePath(keyStorePath);
+			sslContextFactory.setKeyStoreType(keyStoreType);
+
+			sslContextFactory.setKeyStorePassword(sslPassword);
+			sslContextFactory.setKeyManagerPassword(sslKeyPassword);
+			
+			sslContextFactory.setTrustStorePath(keyStorePath);
+			sslContextFactory.setTrustStorePassword(sslPassword);
+			
+			sslContextFactory.setProtocol(sslProtocol);
+			
+			
+			sslContextFactory.setNeedClientAuth(isNeedClientAuth);
+			sslContextFactory.setWantClientAuth(isWantClientAuth);
+			
+			
+			// SSL HTTP Configuration
+			HttpConfiguration httpsConfig = new HttpConfiguration();
+			httpsConfig.setSecurePort(securePort);
+			
+			SecureRequestCustomizer secReqCustom= new SecureRequestCustomizer();
+			secReqCustom.setSniHostCheck(false);
+			httpsConfig.addCustomizer(secReqCustom);
+			
+			// SSL Connector
+			ServerConnector sslConnector = new ServerConnector(server, 
+					new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+					new HttpConnectionFactory(httpsConfig));
+			sslConnector.setHost(secureHost);
+			sslConnector.setPort(securePort);
+			server.addConnector(sslConnector);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Start configured server.
 	 *
@@ -333,8 +466,10 @@ public class JettyServerManager {
 			@Override
 			public void run() {
 				try {
+					server.setServer(server);
 					server.setStopAtShutdown(true);
 					server.start();
+					
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
