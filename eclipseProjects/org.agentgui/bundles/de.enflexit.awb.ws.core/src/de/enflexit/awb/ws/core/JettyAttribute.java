@@ -80,8 +80,9 @@ public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribut
 	 * Sets the value.
 	 * @param value the new value
 	 */
-	public void setValue(T value) {
-		this.value = value;
+	@SuppressWarnings("unchecked")
+	public void setValue(Object value) {
+		this.value = (T) value;
 	}
 	/**
 	 * Gets the value.

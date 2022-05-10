@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AWB - WS User Configuration Interface
-Bundle-SymbolicName: de.enflexit.awb.ws.ui;singleton:=true
+Bundle-SymbolicName: de.enflexit.awb.ws.core.ui;singleton:=true
+Automatic-Module-Name: de.enflexit.awb.ws.core.ui
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
-Automatic-Module-Name: de.enflexit.awb.ws.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.common,

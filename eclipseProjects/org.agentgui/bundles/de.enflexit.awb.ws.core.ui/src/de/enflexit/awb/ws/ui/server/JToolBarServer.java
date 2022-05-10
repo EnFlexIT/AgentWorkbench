@@ -6,11 +6,16 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JToolBar;
 
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyServerManager;
+import de.enflexit.awb.ws.core.SSLJettyConfiguration;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 
 /**
@@ -28,8 +33,11 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 	private ServerTreeNodeServer serverTreeNodeServer;
 	
 	private JButton jButtonSave;
+	
 	private JButton jButtonResetToSavedSettings;
 	private JButton jButtonResetToServiceSettings;
+	
+	private JButton jButtonSetDefaultSslKeyStore;
 	
 	private JButton jButtonStopServer;
 	private JButton jButtonRestartServer;
@@ -56,6 +64,9 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		this.add(this.getJButtonResetToServiceSettings());
 		this.addSeparator();
 		
+		this.add(this.getJButtonSetDefaultSslKeyStore());
+		this.addSeparator();
+		
 		this.add(this.getJButtonStartServer());
 		this.add(this.getJButtonRestartServer());
 		this.add(this.getJButtonStopServer());
@@ -73,6 +84,7 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		}
 		return jButtonSave;
 	}
+	
 	public JButton getJButtonResetToSavedSettings() {
 		if (jButtonResetToSavedSettings==null) {
 			jButtonResetToSavedSettings = new JButton();
@@ -94,6 +106,16 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		return jButtonResetToServiceSettings;
 	}
 	
+	public JButton getJButtonSetDefaultSslKeyStore() {
+		if (jButtonSetDefaultSslKeyStore==null) {
+			jButtonSetDefaultSslKeyStore = new JButton();
+			jButtonSetDefaultSslKeyStore.setToolTipText("Set default SSL-KeyStore for test purposes...");
+			jButtonSetDefaultSslKeyStore.setPreferredSize(buttonSize);
+			jButtonSetDefaultSslKeyStore.setIcon(BundleHelper.getImageIcon("MBstart.png"));
+			jButtonSetDefaultSslKeyStore.addActionListener(this);
+		}
+		return jButtonSetDefaultSslKeyStore;
+	}
 	
 	public JButton getJButtonStartServer() {
 		if (jButtonStartServer==null) {
@@ -163,6 +185,16 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 			this.serverTreeNodeServer.revertJettyConfigurationToServiceDefinition();
 			this.jPanelServerConfiguration.reloadView();
 		
+		} else if (ae.getSource()==this.getJButtonSetDefaultSslKeyStore()) {
+			// --- Ask user for the password ------------------------
+			char[] password = this.getPasswordFromUser();
+			if (password!=null) {
+				if (SSLJettyConfiguration.createDefaultSettingsForSSL(this.serverTreeNodeServer.getJettyConfiguration(), password)==true) {
+					this.serverTreeNodeServer.save();
+					this.jPanelServerConfiguration.reloadView();
+				}
+			}
+			
 		} else if (ae.getSource()==this.getJButtonStartServer()) {
 			JettyServerManager.getInstance().startServer(this.getJettyConfiguration());
 			this.jPanelServerConfiguration.reloadView();
@@ -176,6 +208,29 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 			JettyServerManager.getInstance().stopServer(this.getJettyConfiguration().getServerName());
 			this.jPanelServerConfiguration.reloadView();
 		}
+	}
+	/**
+	 * Returns the password entry from user.
+	 * @return the password from user
+	 */
+	private char[] getPasswordFromUser() {
+		
+		char[] password = null;
+
+		String title =   "Enter KeyStore Password";
+		String message = "Please, enter a password for the default SSL-KeyStore: ";
+
+		JPasswordField pass = new JPasswordField(20);
+
+		JPanel panel = new JPanel();
+		panel.add(new JLabel(message));
+		panel.add(pass);
+		
+		int option = JOptionPane.showOptionDialog(null, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+		if(option == JOptionPane.OK_OPTION) {
+		    password = pass.getPassword();
+		}
+		return password;
 	}
 	
 }

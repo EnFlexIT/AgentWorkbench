@@ -407,7 +407,7 @@ public class JettyServerManager {
 		
 		try {
 			
-			File keyStoreFile = new File(BundleHelper.getPathProperties() + serverName + ".jks");
+			File keyStoreFile = new File(keyStore);
 			if (keyStoreFile.exists()==false) {
 				throw new FileNotFoundException(keyStoreFile.toString());
 			}

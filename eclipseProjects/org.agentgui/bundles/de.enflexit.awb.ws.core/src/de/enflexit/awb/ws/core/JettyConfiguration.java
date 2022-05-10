@@ -292,7 +292,7 @@ public class JettyConfiguration implements Serializable {
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTPS_HOST, "0.0.0.0", null));
 		
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORE, "", null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE, "jks", new String[] {"pkcs12", "jceks", "jks"}));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE, "pkcs12", new String[] {"pkcs12", "jceks", "jks"}));
 
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PASSWORD, "", null));
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYPASSWORD, "", null));

@@ -21,7 +21,7 @@ public enum JettyConstants {
 	SSL_PASSWORD("ssl.password", 10, String.class, null),
 	SSL_KEYPASSWORD("ssl.keypassword", 11, String.class, null),
 	
-	SSL_PROTOCOL("ssl.protocol", 12, String.class, null),
+	SSL_PROTOCOL("ssl.protocol", 12, String.class, "TLS"),
 	SSL_ALGORITHM("ssl.algorithm", 13, String.class, null),
 
 	SSL_NEEDCLIENTAUTH("ssl.needclientauth", 14, Boolean.class, false),

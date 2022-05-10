@@ -15,7 +15,9 @@ Require-Bundle: org.eclipse.osgi,
  org.eclipse.jetty.server,
  org.eclipse.jetty.servlet,
  org.eclipse.jetty.util,
- org.eclipse.jetty.http
+ org.eclipse.jetty.http,
+ org.bouncycastle.bcpkix,
+ org.bouncycastle.bcprov
 Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core,
  de.enflexit.awb.ws.core.model,

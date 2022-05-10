@@ -102,7 +102,7 @@
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.awb.ws.ui"
+         id="de.enflexit.awb.ws.core.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
