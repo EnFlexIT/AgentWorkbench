@@ -21,37 +21,30 @@ public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribut
 
 	private String key;
 	private T value;
-	private transient T[] possibleValues;
 	
 	
 	/**
 	 * Empty default constructor for a JettyAttribute.
 	 */
 	public JettyAttribute() { }
+
 	
+	/**
+	 * Instantiates a new jetty parameter with a default value.
+	 * @param jettyConstant the jetty constant
+	 */
+	public JettyAttribute(JettyConstants jettyConstant) {
+		this(jettyConstant, jettyConstant.getDefaultValue());
+	}
 	/**
 	 * Instantiates a new jetty parameter value.
 	 *
 	 * @param jettyConstant the jetty constant
 	 * @param value the value
-	 * @param possibleValues the possible values
 	 */
-	public JettyAttribute(JettyConstants jettyConstant, T value, T[] possibleValues) {
+	public JettyAttribute(JettyConstants jettyConstant, Object value) {
 		this.setKey(jettyConstant.getJettyKey());
 		this.setValue(value);
-		this.setPossibleValues(possibleValues);
-	}
-	/**
-	 * Instantiates a new jetty parameter value.
-	 *
-	 * @param parameterKey the parameter key
-	 * @param value the value
-	 * @param possibleValues the possible values
-	 */
-	public JettyAttribute(String parameterKey, T value, T[] possibleValues) {
-		this.setKey(parameterKey);
-		this.setValue(value);
-		this.setPossibleValues(possibleValues);
 	}
 	
 	/**
@@ -91,20 +84,13 @@ public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribut
 	public T getValue() {
 		return value;
 	}
-
-	/**
-	 * Sets the possible values.
-	 * @param possibleValues the new possible value
-	 */
-	public void setPossibleValues(T[] possibleValue) {
-		this.possibleValues = possibleValue;
-	}
+	
 	/**
 	 * Returns the possible value or null.
 	 * @return the possible value
 	 */
-	public T[] getPossibleValues() {
-		return possibleValues;
+	public Object[] getPossibleValues() {
+		return this.getJettyConstant().getPossibleValues();
 	}
 	
 	/* (non-Javadoc)
@@ -125,6 +111,8 @@ public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribut
 		if (compObj==this) return true;
 
 		JettyAttribute<?> jaComp = (JettyAttribute<?>) compObj;
+		if (jaComp.getValue()==null && this.getValue()==null) return true;
+		
 		JettyConstants jConst = JettyConstants.valueofJettyKey(this.getKey());
 		if (jConst.getTypeClass().equals(Boolean.class)) {
 			boolean boolComp = (Boolean) jaComp.getValue();

@@ -3,6 +3,7 @@ package de.enflexit.awb.ws.ui.server;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -14,6 +15,7 @@ import javax.swing.JToolBar;
 
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettyConstants;
 import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.SSLJettyConfiguration;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
@@ -111,7 +113,7 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 			jButtonSetDefaultSslKeyStore = new JButton();
 			jButtonSetDefaultSslKeyStore.setToolTipText("Set default SSL-KeyStore for test purposes...");
 			jButtonSetDefaultSslKeyStore.setPreferredSize(buttonSize);
-			jButtonSetDefaultSslKeyStore.setIcon(BundleHelper.getImageIcon("MBstart.png"));
+			jButtonSetDefaultSslKeyStore.setIcon(BundleHelper.getImageIcon("LockOpen.png"));
 			jButtonSetDefaultSslKeyStore.addActionListener(this);
 		}
 		return jButtonSetDefaultSslKeyStore;
@@ -159,13 +161,24 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 	private JettyConfiguration getJettyConfiguration() {
 		return this.serverTreeNodeServer.getJettyConfiguration();
 	}
+	
+	/**
+	 * Updates the view to the toolbar elements.
+	 */
 	private void updateView() {
 	
 		boolean isRunningServer = this.serverTreeNodeServer.isRunningServer();
+		boolean isUsingSSL = (boolean) this.getJettyConfiguration().get(JettyConstants.HTTPS_ENABLED).getValue();
+		
 		this.getJButtonStartServer().setEnabled(!isRunningServer);
 		this.getJButtonRestartServer().setEnabled(isRunningServer);
 		this.getJButtonStopServer().setEnabled(isRunningServer);
 
+		if (isUsingSSL==true) {
+			this.getJButtonSetDefaultSslKeyStore().setIcon(BundleHelper.getImageIcon("LockClosed.png"));
+		} else {
+			this.getJButtonSetDefaultSslKeyStore().setIcon(BundleHelper.getImageIcon("LockOpen.png"));
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -176,22 +189,37 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		
 		if (ae.getSource()==this.getJButtonSave()) {
 			this.serverTreeNodeServer.save();
+			this.updateView();
 			
 		} else if (ae.getSource()==this.getJButtonResetToSavedSettings()) {
 			this.serverTreeNodeServer.revertJettyConfigurationToPropertiesFile();
 			this.jPanelServerConfiguration.reloadView();
+			this.updateView();
 			
 		} else if (ae.getSource()==this.getJButtonResetToServiceSettings()) {
+			String title = "Reset to service settings?";
+			String message = "Are you sure to reset the current settings to the initial service settings?\n(Can not be undone)";
+			if (JOptionPane.showConfirmDialog(this.jPanelServerConfiguration.getParent(), message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION) return;
+			
 			this.serverTreeNodeServer.revertJettyConfigurationToServiceDefinition();
 			this.jPanelServerConfiguration.reloadView();
+			this.updateView();
 		
 		} else if (ae.getSource()==this.getJButtonSetDefaultSslKeyStore()) {
+			String keyStoreFile = (String) this.getJettyConfiguration().get(JettyConstants.SSL_KEYSTORE).getValue();
+			if (keyStoreFile!=null && keyStoreFile.isBlank()==false && new File(keyStoreFile).exists()==true) {
+				// --- Ask the user to overwrite settings -----------
+				String title = "Overwrite SSL settings?";
+				String message = "Are you sure to overwrite the current SSL settings and the corresponding keystore?\n(Can not be undone)";
+				if (JOptionPane.showConfirmDialog(this.jPanelServerConfiguration.getParent(), message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION) return;
+			}
 			// --- Ask user for the password ------------------------
 			char[] password = this.getPasswordFromUser();
 			if (password!=null) {
 				if (SSLJettyConfiguration.createDefaultSettingsForSSL(this.serverTreeNodeServer.getJettyConfiguration(), password)==true) {
 					this.serverTreeNodeServer.save();
 					this.jPanelServerConfiguration.reloadView();
+					this.updateView();
 				}
 			}
 			
@@ -226,7 +254,7 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		panel.add(new JLabel(message));
 		panel.add(pass);
 		
-		int option = JOptionPane.showOptionDialog(null, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+		int option = JOptionPane.showOptionDialog(this.jPanelServerConfiguration.getParent(), panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
 		if(option == JOptionPane.OK_OPTION) {
 		    password = pass.getPassword();
 		}

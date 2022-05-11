@@ -85,9 +85,6 @@ public class JettyConfiguration implements Serializable {
 		}
 	}
 	
-	private static final Boolean[] valueRangeBoolean = new Boolean[] {true, false};
-	
-	
 	private String serverName;
 	private StartOn startOn;
 	private boolean mutableHandlerCollection;
@@ -281,34 +278,35 @@ public class JettyConfiguration implements Serializable {
 	 */
 	private void setDefaultConfiguration() {
 		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_ENABLED, true, valueRangeBoolean));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_PORT, 8080, null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_HOST, "0.0.0.0", null));
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_ENABLED));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_PORT));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_HOST));
 		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_NIO, true, valueRangeBoolean));
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_NIO));
 		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTPS_ENABLED, false, valueRangeBoolean));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTPS_PORT, 8443, null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTPS_HOST, "0.0.0.0", null));
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTPS_ENABLED));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTPS_PORT));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTPS_HOST));
 		
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORE, "", null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE, "pkcs12", new String[] {"pkcs12", "jceks", "jks"}));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORE));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE));
 
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PASSWORD, "", null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYPASSWORD, "", null));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PASSWORD));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYPASSWORD));
 		
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PROTOCOL, "TLS", null));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_ALGORITHM, "", null));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PROTOCOL));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_ALGORITHM));
 		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_NEEDCLIENTAUTH, false, valueRangeBoolean));
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_WANTCLIENTAUTH, false, valueRangeBoolean));
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_NEEDCLIENTAUTH));
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_WANTCLIENTAUTH));
 		
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS, 8, null));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS, 200, null));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS));
 		
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CONTEXT_PATH, "", null));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL, 300, null));	
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CONTEXT_PATH));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL));	
 	}
+	
 	/**
 	 * Sets the specified {@link JettyAttribute} to the configuration of a Jetty server.
 	 * @param attribute the new jetty attribute

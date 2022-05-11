@@ -205,10 +205,8 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 	 */
 	@Override
 	public boolean hasUnsavedChanges() {
-		if (this.editServerTreeNodeServer!=null && this.editServerTreeNodeServer.hasChangedJettySettings()==true) {
-			return true;
-		}
-		return false;
+		if (this.editServerTreeNodeServer==null) return false;
+		return this.editServerTreeNodeServer.hasChangedJettySettings();
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()

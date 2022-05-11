@@ -4,12 +4,16 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -52,21 +56,24 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		
 		// --- Check for special editor types first ----------------- 
 		switch (jettyConstant) {
+		case SSL_KEYSTORE:
+			String keyStorePath = (String) jettyAttribute.getValue();
+			if (keyStorePath!=null && keyStorePath.isBlank()==false) {
+				// --- File in properties directory -----------------
+				File keyStoreFile = new File(keyStorePath);
+				int cutAt = keyStoreFile.getParentFile().getParentFile().getAbsolutePath().length();
+				String keyStorePathShort = "." + keyStorePath.substring(cutAt);
+				comp = this.getJLabel(keyStorePathShort, keyStorePath);
+			}
+			break;
+			
 		case SSL_PASSWORD:
 		case SSL_KEYPASSWORD:
-			// TODO
-			break;
-			
-		case SSL_PROTOCOL:
-			// TODO
-			break;
-			
-		case SSL_KEYSTORETYPE:
-			// TODO
-			break;
-
-		case SSL_KEYSTORE:
-			// TODO
+			String password = (String)jettyAttribute.getValue();
+			if (password!=null && password.isBlank()==false) {
+				password = "*************";
+			}
+			comp = this.getJLabel(password);
 			break;
 			
 		default:
@@ -99,10 +106,16 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 	}
 	
 	private JLabel getJLabel(String text) {
+		return this.getJLabel(text, null);
+	}
+	private JLabel getJLabel(String text, String toolTipText) {
 		if (jLabel==null) {
 			jLabel = new JLabel();
 		}
 		jLabel.setText(text);
+		if (toolTipText!=null && toolTipText.isBlank()==false) {
+			jLabel.setToolTipText(toolTipText);
+		}
 		return jLabel;
 	}
 	
@@ -129,22 +142,24 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 
 		// --- Check for special editor types first ----------------- 
 		switch (jettyConstant) {
-		case SSL_PASSWORD:
-		case SSL_KEYPASSWORD:
-			// TODO
-			break;
-			
-		case SSL_PROTOCOL:
-			// TODO
-			break;
-			
-		case SSL_KEYSTORETYPE:
-			// TODO
-			break;
-
 		case SSL_KEYSTORE:
 			// TODO
 			break;
+
+		case SSL_KEYSTORETYPE:
+			comp = this.createEditorJComboBox(this.editorJettyAttribute);
+			break;
+
+		case SSL_PASSWORD:
+		case SSL_KEYPASSWORD:
+			comp = this.createEditorJPasswordFiled((String) this.editorJettyAttribute.getValue());
+			break;
+			
+		case SSL_PROTOCOL:
+			// TODO 
+			break;
+			
+
 			
 		default:
 			break;
@@ -217,7 +232,6 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 				this.updateJettyAttribute(de);
 			}
 			private void updateJettyAttribute(DocumentEvent de) {
-				
 				String newValue = JTableSettingsServerCellRenderEditor.this.getText(de.getDocument());
 				@SuppressWarnings("unchecked")
 				JettyAttribute<String> jaString = (JettyAttribute<String>) JTableSettingsServerCellRenderEditor.this.editorJettyAttribute;
@@ -225,6 +239,33 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 			}
 		});
 		return jTextFieldString;
+	}
+	
+	private JPasswordField createEditorJPasswordFiled(String password) {
+		JPasswordField jPasswordField = new JPasswordField();
+		jPasswordField.setText(password);
+		jPasswordField.setBorder(BorderFactory.createEmptyBorder());
+		jPasswordField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent de) {
+				this.updateJettyAttribute(de);
+			}
+			@Override
+			public void insertUpdate(DocumentEvent de) {
+				this.updateJettyAttribute(de);
+			}
+			@Override
+			public void changedUpdate(DocumentEvent de) {
+				this.updateJettyAttribute(de);
+			}
+			private void updateJettyAttribute(DocumentEvent de) {
+				String newValue = JTableSettingsServerCellRenderEditor.this.getText(de.getDocument());
+				@SuppressWarnings("unchecked")
+				JettyAttribute<String> jaString = (JettyAttribute<String>) JTableSettingsServerCellRenderEditor.this.editorJettyAttribute;
+				jaString.setValue(newValue==null ? null : newValue.trim());
+			}
+		});
+		return jPasswordField;
 	}
 	
 	private JTextField createEditorJTextFieldInteger(Integer number) {
@@ -273,4 +314,32 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		return txt;
 	}
 
+	private JComboBox<String> createEditorJComboBox(JettyAttribute<?> jettyAttribute) {
+		
+		Object [] optionArray = jettyAttribute.getJettyConstant().getPossibleValues();
+		String currentSelection = jettyAttribute.getValue()==null ? jettyAttribute.getJettyConstant().getDefaultValue().toString() : jettyAttribute.getValue().toString(); 
+		
+		DefaultComboBoxModel<String> comboModel = new DefaultComboBoxModel<>();
+		for (Object option : optionArray) {
+			comboModel.addElement(option.toString());
+		}
+		
+		JComboBox<String> jComboBox = new JComboBox<>(comboModel);
+		jComboBox.setSelectedItem(currentSelection);
+		jComboBox.setBorder(BorderFactory.createEmptyBorder());
+		jComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				JComboBox<?> comboBox = (JComboBox<?>) ae.getSource();
+				String newValue = (String) comboBox.getSelectedItem();
+				@SuppressWarnings("unchecked")
+				JettyAttribute<String> jaBoolean = (JettyAttribute<String>) JTableSettingsServerCellRenderEditor.this.editorJettyAttribute;
+				jaBoolean.setValue(newValue);
+				fireEditingStopped();
+			}
+		});
+		return jComboBox;
+	}
+	
+	
 }
