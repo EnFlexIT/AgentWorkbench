@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core;
 
+import de.enflexit.common.crypto.KeyStoreType;
+
 /**
  * Provides configuration constants for use with JettyConfigurator.
  *
@@ -17,7 +19,7 @@ public enum JettyConstants {
 	HTTPS_PORT("https.port", 7, Integer.class, 8443, null),
 	
 	SSL_KEYSTORE("ssl.keystore", 8, String.class, null, null),
-	SSL_KEYSTORETYPE("ssl.keystoretype", 9, String.class, "pkcs12", new String[] {"pkcs12", "jceks", "jks"}),
+	SSL_KEYSTORETYPE("ssl.keystoretype", 9, String.class, KeyStoreType.PKCS12.getType(), KeyStoreType.getAllFileExtensions()),
 	SSL_PASSWORD("ssl.password", 10, String.class, null, null),
 	SSL_KEYPASSWORD("ssl.keypassword", 11, String.class, null, null),
 	

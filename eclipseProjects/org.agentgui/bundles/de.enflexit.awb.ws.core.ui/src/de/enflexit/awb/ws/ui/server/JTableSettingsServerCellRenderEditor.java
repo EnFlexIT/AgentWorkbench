@@ -2,6 +2,7 @@ package de.enflexit.awb.ws.ui.server;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -12,19 +13,26 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
+import agentgui.core.application.Application;
+import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConstants;
+import de.enflexit.common.crypto.KeyStoreType;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
@@ -36,6 +44,7 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 
 	private static final long serialVersionUID = -2718291658390367180L;
 
+	private JTable editorJTable;
 	private JettyAttribute<?> editorJettyAttribute;
 	
 	private JCheckBox jCheckBox;
@@ -135,6 +144,7 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		
+		this.editorJTable = table;
 		this.editorJettyAttribute = (JettyAttribute<?>) value;
 		JettyConstants jettyConstant = this.editorJettyAttribute.getJettyConstant();
 		
@@ -143,7 +153,14 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		// --- Check for special editor types first ----------------- 
 		switch (jettyConstant) {
 		case SSL_KEYSTORE:
-			// TODO
+			this.editKeyStoreFile(this.editorJettyAttribute, table.getParent().getParent());
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JTableSettingsServerCellRenderEditor.this.fireEditingStopped();
+					JTableSettingsServerCellRenderEditor.this.editorJTable.repaint();
+				}
+			});
 			break;
 
 		case SSL_KEYSTORETYPE:
@@ -158,8 +175,6 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		case SSL_PROTOCOL:
 			// TODO 
 			break;
-			
-
 			
 		default:
 			break;
@@ -195,6 +210,86 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 	public Object getCellEditorValue() {
 		return this.editorJettyAttribute;
 	}
+	
+	/**
+	 * Edit the keystore file attribute.
+	 *
+	 * @param jettyAttribute the jetty attribute
+	 * @param parentContainer the parent container
+	 */
+	private void editKeyStoreFile(JettyAttribute<?> jettyAttribute, Container parentContainer) {
+		
+		if (jettyAttribute.getJettyConstant()!=JettyConstants.SSL_KEYSTORE) return;
+		
+		// --- Get properties directory -----------------------------
+		String propertiesPath = BundleHelper.getPathProperties();
+		File propertiesDir = new File(propertiesPath); 
+		
+		// --- Get keystore file ------------------------------------
+		String keyStorePath = (String) jettyAttribute.getValue();
+		File keyStoreFile = (keyStorePath==null || keyStorePath.isBlank()) ? null : new File(keyStorePath); 
+		
+		// --- Prepare file description -----------------------------
+		String[] fileExtenArray = KeyStoreType.getAllFileExtensions();
+		String fileDescription  = "Keystore File (*." + String.join("*., ", fileExtenArray) + ")";
+		
+		JFileChooser jFileChooserKeyStoreFile = new JFileChooser(keyStoreFile);
+		jFileChooserKeyStoreFile.setDialogTitle("Please, select the keystore file to use.");
+		jFileChooserKeyStoreFile.setFileFilter(new FileNameExtensionFilter(fileDescription, KeyStoreType.getAllFileExtensions()));
+		jFileChooserKeyStoreFile.setCurrentDirectory(propertiesDir);
+
+		// --- Let the user select the keystore file ----------------  
+		if (jFileChooserKeyStoreFile.showOpenDialog(parentContainer) == JFileChooser.APPROVE_OPTION) {
+			// --- Check the selected file --------------------------
+			keyStoreFile = jFileChooserKeyStoreFile.getSelectedFile();
+			if (keyStoreFile!=null) {
+				String title = "Wrong selection of Keystore file!";
+				String message = "";
+				if (keyStoreFile.exists()==false) {
+					// --- Does the file exists? --------------------
+					message = "The selected Keystore file does not exists!";
+					JOptionPane.showMessageDialog(parentContainer, message, title, JOptionPane.ERROR_MESSAGE);
+					
+				} else if (keyStoreFile.getParentFile().equals(propertiesDir)==false) {
+					// --- File within properties folder? -----------
+					message = "The selected Keystore is not located in the " + Application.getApplicationTitle() + " properties directory\n";
+					message+= "Please, select the Keystore out of that directory!";
+					JOptionPane.showMessageDialog(parentContainer, message, title, JOptionPane.ERROR_MESSAGE);
+					
+				} else {
+					// --- Save keystore file -----------------------
+					jettyAttribute.setValue(keyStoreFile.getAbsolutePath());
+					// --- Check the file extension -----------------
+					String fileName = keyStoreFile.getName();
+					String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
+					KeyStoreType keyStoreType = KeyStoreType.getKeyStoreTypeByFileExtension(fileExtension);
+
+					// --- Check current keystore type in table ----- 
+					JettyAttribute<?> jaKeyStoreType = this.getJettyAttributeFromTable(JettyConstants.SSL_KEYSTORETYPE);
+					if (jaKeyStoreType.getValue()==null || jaKeyStoreType.getValue().equals(keyStoreType.getType())==false) {
+						jaKeyStoreType.setValue(keyStoreType.getType());
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Searches in the table for the specified JettyAttribute.
+	 *
+	 * @param jcSearch the jetty constants
+	 * @return the jetty attribute
+	 */
+	private JettyAttribute<?> getJettyAttributeFromTable(JettyConstants jcSearch) {
+		if (jcSearch==null) return null;
+		for (int i = 0; i < this.editorJTable.getRowCount(); i++) {
+			JettyAttribute<?> jaTabel = (JettyAttribute<?>) this.editorJTable.getValueAt(i, 1);
+			if (jaTabel.getJettyConstant()==jcSearch) return jaTabel;
+		}
+		return null;
+	}
+	
+	
 	
 	private JCheckBox createEditorJCheckBox(boolean isSelected) {
 		

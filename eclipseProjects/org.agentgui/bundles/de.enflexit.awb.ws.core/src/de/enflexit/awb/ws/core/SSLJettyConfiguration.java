@@ -35,6 +35,7 @@ import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.common.crypto.KeyStoreType;
 
 /**
  * The Class SSLJettyConfiguration creates all necessary artifacts and entries
@@ -52,9 +53,7 @@ import de.enflexit.awb.ws.BundleHelper;
  */
 public class SSLJettyConfiguration {
 
-	private static final String DEFAULT_KEYSTORE_TYPE = "pkcs12";
-	private static final String DEFAULT_KEYSTORE_FILE_PREFIX = "pfx";
-
+	private static final KeyStoreType DEFAULT_KEYSTORE_TYPE = KeyStoreType.PKCS12;
 	private static final String DEFAULT_SSL_PROTOCOL = (String) JettyConstants.SSL_PROTOCOL.getDefaultValue();
 	
 	private static final String DEFAULT_DOMAIN  = "localhost";
@@ -89,7 +88,7 @@ public class SSLJettyConfiguration {
 	 * @return the default key store file
 	 */
 	public static File getDefaultKeyStoreFile(String serverName) {
-		return new File(BundleHelper.getPathProperties() + serverName + "." + DEFAULT_KEYSTORE_FILE_PREFIX);
+		return new File(BundleHelper.getPathProperties() + serverName + "." + DEFAULT_KEYSTORE_TYPE.getFileExtension());
 	}
 	
 	/**
@@ -122,7 +121,7 @@ public class SSLJettyConfiguration {
 	 */
 	private static File createKeyStore(String serverName, char[] password) {
 		
-		File keyStoreFile = null;;
+		File keyStoreFile = null;
 		try {
 			// --- Create self signed certificate -----------------------------
 			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -136,7 +135,7 @@ public class SSLJettyConfiguration {
 			if (keyStoreFile.exists()==true) keyStoreFile.delete();
 
 			// --- Create the KeyStore ----------------------------------------
-			KeyStore keyStore = KeyStore.getInstance(DEFAULT_KEYSTORE_TYPE);
+			KeyStore keyStore = KeyStore.getInstance(DEFAULT_KEYSTORE_TYPE.getType());
 			keyStore.load(null, password);
 			keyStore.setKeyEntry(DEFAULT_DOMAIN, keyPair.getPrivate(), password, certArray);
 			keyStore.store(new FileOutputStream(keyStoreFile), password);
