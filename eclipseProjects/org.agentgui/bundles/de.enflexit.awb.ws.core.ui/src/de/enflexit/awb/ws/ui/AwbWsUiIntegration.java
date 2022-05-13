@@ -4,6 +4,7 @@ import java.awt.MenuItem;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -12,7 +13,11 @@ import javax.swing.JMenuItem;
 import org.agentgui.gui.swing.MainWindowExtension;
 
 import agentgui.core.application.Application;
+import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.awb.ws.core.JettyServerManager;
+import de.enflexit.common.swing.JMenuItemDynamicEnabled;
+import de.enflexit.common.swing.JMenuItemDynamicEnabled.EnablementCheck;
 
 /**
  * The AwbWsUiIntegration class for the WS-Feature.
@@ -31,7 +36,7 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 	private JMenuItem jMenuItemConfiguration;
 	private JButton jButtonWsConfiguration;
 
-	private MenuItem tryIconMenuItemConfiguration;
+	private MenuItem trayIconMenuItemConfiguration;
 	
 	private static JDialogWsConfiguration configDialog;
 	
@@ -104,10 +109,59 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 	private JMenu getJMenuWS() {
 		if (jMenuWS==null) {
 			jMenuWS = new JMenu("Web-Server");
+			this.addServerMenuItems();
+			jMenuWS.addSeparator();
 			jMenuWS.add(this.getJMenuItemWsConfiguration());
 		}
 		return jMenuWS;
 	}
+	/**
+	 * Adds the server menu items.
+	 */
+	private void addServerMenuItems() {
+		
+		List<AwbWebServerServiceWrapper> serverList = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerSorted();
+		for (AwbWebServerServiceWrapper serverWrapper : serverList) {
+
+			// --- Define check if a menu item is enabled or not ----  
+			final String serverName = serverWrapper.getJettyConfiguration().getServerName();
+			EnablementCheck checkStartServer = new EnablementCheck() {
+				@Override
+				public boolean isEnabled() { return JettyServerManager.getInstance().getServerInstances(serverName)==null; }
+			};
+			EnablementCheck checkStopRestartServer = new EnablementCheck() {
+				@Override
+				public boolean isEnabled() { return JettyServerManager.getInstance().getServerInstances(serverName)!=null; }
+			};
+			
+			// --- Define the menu items ----------------------------
+			JMenuItemDynamicEnabled miStart = new JMenuItemDynamicEnabled("Start Server");
+			miStart.setIcon(BundleHelper.getImageIcon("MBstart.png"));
+			miStart.setActionCommand(serverName + "@start");
+			miStart.setEnablementCheck(checkStartServer);
+			miStart.addActionListener(this);
+			
+			JMenuItemDynamicEnabled miRestart = new JMenuItemDynamicEnabled("Restart Server");
+			miRestart.setIcon(BundleHelper.getImageIcon("MBrestart.png"));
+			miRestart.setActionCommand(serverName + "@restart");
+			miRestart.setEnablementCheck(checkStopRestartServer);
+			miRestart.addActionListener(this);
+			
+			JMenuItemDynamicEnabled miStop = new JMenuItemDynamicEnabled("Stop Server");
+			miStop.setIcon(BundleHelper.getImageIcon("MBstop.png"));
+			miStop.setActionCommand(serverName + "@stop");
+			miStop.setEnablementCheck(checkStopRestartServer);
+			miStop.addActionListener(this);
+			
+			// --- Define the server menu ---------------------------
+			JMenu jMenu = new JMenu(serverName);
+			jMenu.add(miStart);
+			jMenu.add(miRestart);
+			jMenu.add(miStop);
+			this.getJMenuWS().add(jMenu);
+		}
+	}
+	
 	/**
 	 * Returns the JMenuItem for the WS configuration.
 	 * @return the JMenuItem for the WS configuration
@@ -139,11 +193,11 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 	 * @return the MenuItem for the WS configuration
 	 */
 	private MenuItem getTrayIconMenuItemWsConfiguration() {
-		if (tryIconMenuItemConfiguration==null) {
-			tryIconMenuItemConfiguration = new MenuItem("WS-Configuration");
-			tryIconMenuItemConfiguration.addActionListener(this);
+		if (trayIconMenuItemConfiguration==null) {
+			trayIconMenuItemConfiguration = new MenuItem("WS-Configuration");
+			trayIconMenuItemConfiguration.addActionListener(this);
 		}
-		return tryIconMenuItemConfiguration;
+		return trayIconMenuItemConfiguration;
 	}
 	
 	/* (non-Javadoc)
@@ -152,7 +206,9 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
-		if (ae.getSource()==this.getToolBarButtonWsConfiguration() || ae.getSource()==this.getJMenuItemWsConfiguration() || ae.getSource()==this.getTrayIconMenuItemWsConfiguration()) {
+		if (ae.getSource()==this.getToolBarButtonWsConfiguration() || 
+			ae.getSource()==this.getJMenuItemWsConfiguration() || 
+			ae.getSource()==this.getTrayIconMenuItemWsConfiguration()) {
 			// --- Open the modal JDialogWsConfiguration ------------ 
 			if (configDialog==null) {
 				configDialog = new JDialogWsConfiguration(Application.getMainWindow());
@@ -165,6 +221,24 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 				configDialog.requestFocus();
 			}
 			
+		} else if (ae.getSource() instanceof JMenuItem && ae.getActionCommand()!=null) {
+			// --- Server control action ----------------------------
+			String[] serverControl = ae.getActionCommand().split("@");
+			String serverName = serverControl[0];
+			String action = serverControl[1];
+			
+			switch (action) {
+			case "start":
+				JettyServerManager.getInstance().startServer(serverName);
+				break;
+			case "restart":
+				JettyServerManager.getInstance().stopServer(serverName);
+				JettyServerManager.getInstance().startServer(serverName);
+				break;
+			case "stop":
+				JettyServerManager.getInstance().stopServer(serverName);
+				break;
+			}
 		}
 	}
 	

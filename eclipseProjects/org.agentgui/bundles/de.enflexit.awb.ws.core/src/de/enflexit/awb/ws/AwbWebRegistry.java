@@ -76,6 +76,20 @@ public class AwbWebRegistry {
 	}
 	
 	/**
+	 * Returns the wrapped server service that corresponds to the server name.
+	 *
+	 * @param serverName the server name
+	 * @return the server service
+	 */
+	public AwbWebServerServiceWrapper getRegisteredWebServerService(String serverName) {
+		if (serverName!=null) {
+			for (AwbWebServerServiceWrapper serverService : getRegisteredWebServer()) {
+				if (serverService.getJettyConfiguration().getServerName().equals(serverName)==true) return serverService;
+			}
+		}
+		return null;
+	}
+	/**
 	 * Return the list of AwbWebServerService that have the specified {@link StartOn} configuration.
 	 *
 	 * @param startOn the {@link StartOn} to search for

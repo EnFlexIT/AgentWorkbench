@@ -244,12 +244,29 @@ public class JettyServerManager {
 	// --- From here, start and stop methods for Server ---
 	// ----------------------------------------------------
 	/**
-	 * Start server.
+	 * Starts the specified server.
+	 *
+	 * @param serverName the server name
+	 * @return true, if successful
+	 */
+	public boolean startServer(String serverName) {
+		AwbWebServerServiceWrapper serviceWrapped = this.getAwbWebRegistry().getRegisteredWebServerService(serverName);
+		if (serviceWrapped!=null && this.getServerInstances(serverName)==null) {
+			return this.startServer(serviceWrapped.getJettyConfiguration());
+		}
+		return false;
+	}
+	/**
+	 * Starts the server as specified by the {@link JettyConfiguration}.
 	 *
 	 * @param serverConfig the server configuration
 	 * @return true, if successful
 	 */
 	public boolean startServer(JettyConfiguration serverConfig) {
+		
+		// ----------------------------------------------------------
+		// --- Check if the server is already running ---------------
+		if (this.getServerInstances(serverConfig.getServerName())!=null) return false;
 		
 		// ----------------------------------------------------------
 		// --- Create new server instance ---------------------------
