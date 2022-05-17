@@ -63,45 +63,49 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		JComponent comp = null;
 		JComponent compColumn1 = (JComponent) table.getCellRenderer(row, 0);
 		
-		// --- Check for special editor types first ----------------- 
-		switch (jettyConstant) {
-		case SSL_KEYSTORE:
-			String keyStorePath = (String) jettyAttribute.getValue();
-			if (keyStorePath!=null && keyStorePath.isBlank()==false) {
-				// --- File in properties directory -----------------
-				File keyStoreFile = new File(keyStorePath);
-				int cutAt = keyStoreFile.getParentFile().getParentFile().getAbsolutePath().length();
-				String keyStorePathShort = "." + keyStorePath.substring(cutAt);
-				comp = this.getJLabel(keyStorePathShort, keyStorePath);
+		if (jettyConstant!=null) {
+			// --- Check for special editor types first ------------- 
+			switch (jettyConstant) {
+			case SSL_KEYSTORE:
+				String keyStorePath = (String) jettyAttribute.getValue();
+				if (keyStorePath!=null && keyStorePath.isBlank()==false) {
+					// --- File in properties directory -------------
+					File keyStoreFile = new File(keyStorePath);
+					int cutAt = keyStoreFile.getParentFile().getParentFile().getAbsolutePath().length();
+					String keyStorePathShort = "." + keyStorePath.substring(cutAt);
+					comp = this.getJLabel(keyStorePathShort, keyStorePath);
+				}
+				break;
+				
+			case SSL_PASSWORD:
+			case SSL_KEYPASSWORD:
+				String password = (String)jettyAttribute.getValue();
+				if (password!=null && password.isBlank()==false) {
+					password = "*************";
+				}
+				comp = this.getJLabel(password);
+				break;
+				
+			default:
+				break;
 			}
-			break;
 			
-		case SSL_PASSWORD:
-		case SSL_KEYPASSWORD:
-			String password = (String)jettyAttribute.getValue();
-			if (password!=null && password.isBlank()==false) {
-				password = "*************";
+			// --- Check for type in jetty constants ----------------
+			if (comp==null) {
+				if (jettyConstant.getTypeClass().equals(Boolean.class)) {
+					comp = this.getJCheckBox((boolean) jettyAttribute.getValue());
+				} else if (jettyConstant.getTypeClass().equals(Integer.class)) {
+					comp = this.getJLabel(((Integer) jettyAttribute.getValue()) + "");
+				} else if (jettyConstant.getTypeClass().equals(String.class)) {
+					comp = this.getJLabel((String) jettyAttribute.getValue());
+				}
 			}
-			comp = this.getJLabel(password);
-			break;
-			
-		default:
-			break;
 		}
 		
-		// --- Check for type in jetty constants --------------------
+		
+		// --- Still no component defined? --------------------------
 		if (comp==null) {
-			if (jettyConstant.getTypeClass().equals(Boolean.class)) {
-				comp = this.getJCheckBox((boolean) jettyAttribute.getValue());
-			} else if (jettyConstant.getTypeClass().equals(Integer.class)) {
-				comp = this.getJLabel(((Integer) jettyAttribute.getValue()) + "");
-			} else if (jettyConstant.getTypeClass().equals(String.class)) {
-				comp = this.getJLabel((String) jettyAttribute.getValue());
-			}
-			// --- Still no component? ------------------------------
-			if (comp==null) {
-				comp = this.getJLabel(jettyAttribute.getValue().toString());
-			}
+			comp = this.getJLabel(jettyAttribute.getValue().toString());
 		}
 
 		// --- Set colors -------------------------------------------
@@ -171,11 +175,7 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		case SSL_KEYPASSWORD:
 			comp = this.createEditorJPasswordFiled((String) this.editorJettyAttribute.getValue());
 			break;
-			
-		case SSL_PROTOCOL:
-			// TODO 
-			break;
-			
+		
 		default:
 			break;
 		}

@@ -288,13 +288,12 @@ public class JettyServerManager {
 		boolean isStartHTTP  = (boolean) server.getAttribute(JettyConstants.HTTP_ENABLED.getJettyKey());
 		boolean isStartHTTPS = (boolean) server.getAttribute(JettyConstants.HTTPS_ENABLED.getJettyKey());
 		if (isStartHTTP==false && isStartHTTPS==false) {
-			String errorMsg = "Error in configuration for server '" + serverConfig.getServerName() + "'!";
+			String errorMsg = "Error in the configuration for server '" + serverConfig.getServerName() + "'!";
 			BundleHelper.systemPrintln(this, errorMsg, true);
 			throw new IllegalArgumentException("Neither HTTP nor HTTPS connections are enabled for the server!");
 		}
-		
 		if (isStartHTTP==true)  this.configureHTTP(server);
-		if (isStartHTTPS==true) this.configureHTTPS(server, serverConfig.getServerName());
+		if (isStartHTTPS==true) this.configureHTTPS(server);
 		
 		
 		// ----------------------------------------------------------
@@ -399,25 +398,23 @@ public class JettyServerManager {
 	}
 	/**
 	 * Configures the HTTP part of the server.
-	 *
 	 * @param server the server to configure
-	 * @param serverName the server name
 	 */
-	private void configureHTTPS(Server server, String serverName) {
+	private void configureHTTPS(Server server) {
 		
 		boolean isStartHTTPS = (boolean) server.getAttribute(JettyConstants.HTTPS_ENABLED.getJettyKey());
-		int securePort = (int) server.getAttribute(JettyConstants.HTTPS_PORT.getJettyKey());
-		String secureHost = (String) server.getAttribute(JettyConstants.HTTPS_HOST.getJettyKey());
 		if (isStartHTTPS==false) return;
 
+		int securePort = (int) server.getAttribute(JettyConstants.HTTPS_PORT.getJettyKey());
+		String secureHost = (String) server.getAttribute(JettyConstants.HTTPS_HOST.getJettyKey());
+		
 		String keyStore = (String) server.getAttribute(JettyConstants.SSL_KEYSTORE.getJettyKey());
 		String keyStoreType = (String) server.getAttribute(JettyConstants.SSL_KEYSTORETYPE.getJettyKey());
-
 		String sslPassword  = (String) server.getAttribute(JettyConstants.SSL_PASSWORD.getJettyKey());
 		String sslKeyPassword  = (String) server.getAttribute(JettyConstants.SSL_KEYPASSWORD.getJettyKey());
 		
 		String sslProtocol  = (String) server.getAttribute(JettyConstants.SSL_PROTOCOL.getJettyKey());
-		String sslAlgorithm = (String) server.getAttribute(JettyConstants.SSL_ALGORITHM.getJettyKey());
+//		String sslAlgorithm = (String) server.getAttribute(JettyConstants.SSL_ALGORITHM.getJettyKey());
 		
 		boolean isNeedClientAuth = (boolean) server.getAttribute(JettyConstants.SSL_NEEDCLIENTAUTH.getJettyKey());
 		boolean isWantClientAuth = (boolean) server.getAttribute(JettyConstants.SSL_WANTCLIENTAUTH.getJettyKey());
@@ -428,13 +425,12 @@ public class JettyServerManager {
 			if (keyStoreFile.exists()==false) {
 				throw new FileNotFoundException(keyStoreFile.toString());
 			}
-			
 			String keyStorePath = keyStoreFile.getAbsolutePath();
+			
 			
 			SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
 			sslContextFactory.setKeyStorePath(keyStorePath);
 			sslContextFactory.setKeyStoreType(keyStoreType);
-
 			sslContextFactory.setKeyStorePassword(sslPassword);
 			sslContextFactory.setKeyManagerPassword(sslKeyPassword);
 			
@@ -442,7 +438,6 @@ public class JettyServerManager {
 			sslContextFactory.setTrustStorePassword(sslPassword);
 			
 			sslContextFactory.setProtocol(sslProtocol);
-			
 			
 			sslContextFactory.setNeedClientAuth(isNeedClientAuth);
 			sslContextFactory.setWantClientAuth(isWantClientAuth);

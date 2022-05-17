@@ -24,18 +24,18 @@ public enum JettyConstants {
 	SSL_KEYPASSWORD("ssl.keypassword", 11, String.class, null, null),
 	
 	SSL_PROTOCOL("ssl.protocol", 12, String.class, "TLS", null),
-	SSL_ALGORITHM("ssl.algorithm", 13, String.class, null, null),
+//	SSL_ALGORITHM("ssl.algorithm", 13, String.class, null, null),
 
 	SSL_NEEDCLIENTAUTH("ssl.needclientauth", 14, Boolean.class, false, new Boolean[] {true, false}),
 	SSL_WANTCLIENTAUTH("ssl.wantclientauth", 15, Boolean.class, false, new Boolean[] {true, false}),
 
 	HTTP_MINTHREADS("http.minThreads", 16, Integer.class, 8  , null),
-	HTTP_MAXTHREADS("http.maxThreads", 17, Integer.class, 200, null),
+	HTTP_MAXTHREADS("http.maxThreads", 17, Integer.class, 200, null);
 	
-	CONTEXT_PATH("context.path", 18, String.class, null, null),
-	CONTEXT_SESSIONINACTIVEINTERVAL("context.sessioninactiveinterval", 19, Integer.class, 300, null),
+//	CONTEXT_PATH("context.path", 18, String.class, null, null),
+//	CONTEXT_SESSIONINACTIVEINTERVAL("context.sessioninactiveinterval", 19, Integer.class, 300, null),
 	
-	HOUSEKEEPER_INTERVAL("housekeeper.interval", 20, Integer.class, null, null);
+//	HOUSEKEEPER_INTERVAL("housekeeper.interval", 20, Integer.class, null, null);
 	
 	
 	private String jettyKey;

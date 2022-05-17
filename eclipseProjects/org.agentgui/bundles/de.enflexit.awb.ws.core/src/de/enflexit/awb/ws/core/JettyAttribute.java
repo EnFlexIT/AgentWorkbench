@@ -136,9 +136,20 @@ public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribut
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(JettyAttribute<T> ja2) {
-		Integer ja1OrderPos = this.getJettyConstant().getOrderPos();
-		Integer ja2OrderPos = ja2.getJettyConstant().getOrderPos();
+	public int compareTo(JettyAttribute<T> jaComp) {
+		
+		JettyConstants jcThis = this.getJettyConstant();
+		JettyConstants jcComp = jaComp.getJettyConstant(); 
+		if (jcThis==null && jcComp==null) {
+			return 0;
+		} else if (jcThis==null) {
+			return -1;
+		} else if (jcComp==null) {
+			return 1;
+		}
+		
+		Integer ja1OrderPos = jcThis.getOrderPos();
+		Integer ja2OrderPos = jcComp.getOrderPos();
 		return ja1OrderPos.compareTo(ja2OrderPos);
 	}
 	

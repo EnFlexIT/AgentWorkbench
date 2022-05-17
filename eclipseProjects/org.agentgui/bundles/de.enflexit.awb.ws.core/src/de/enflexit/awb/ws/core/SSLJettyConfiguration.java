@@ -103,13 +103,13 @@ public class SSLJettyConfiguration {
 		jettyConfig.get(JettyConstants.HTTPS_ENABLED).setValue(true);
 		
 		jettyConfig.get(JettyConstants.SSL_KEYSTORE).setValue(keyStoreFile.getAbsolutePath());
-		jettyConfig.get(JettyConstants.SSL_KEYSTORETYPE).setValue(DEFAULT_KEYSTORE_TYPE);
+		jettyConfig.get(JettyConstants.SSL_KEYSTORETYPE).setValue(DEFAULT_KEYSTORE_TYPE.getType());
 		
 		jettyConfig.get(JettyConstants.SSL_PASSWORD).setValue(new String(password));
 		jettyConfig.get(JettyConstants.SSL_KEYPASSWORD).setValue(new String(password));
 		
 		jettyConfig.get(JettyConstants.SSL_PROTOCOL).setValue(DEFAULT_SSL_PROTOCOL);
-		jettyConfig.get(JettyConstants.SSL_ALGORITHM).setValue("");
+//		jettyConfig.get(JettyConstants.SSL_ALGORITHM).setValue("");
 	}
 
 	/**
