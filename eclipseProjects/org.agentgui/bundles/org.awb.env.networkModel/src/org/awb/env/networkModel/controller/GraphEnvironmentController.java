@@ -362,6 +362,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 		case SIMULATION_SETUP_LOAD:
 		case SIMULATION_SETUP_SAVED:
+		case SIMULATION_SETUP_AGENT_ADDED:
+		case SIMULATION_SETUP_AGENT_REMOVED:
+		case SIMULATION_SETUP_AGENT_RENAMED:
 			// --- Nothing to do here ---------------------
 			break;
 		}
@@ -1008,17 +1011,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @param newCompID the new NetworkComponentID
 	 */
 	public void renameAgent(String oldCompID, String newCompID) {
-
-		// Renaming the agent in the agent start list of the simulation setup
-		int i = 0;
-		for (i = 0; i < getAgents2Start().size(); i++) {
-			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getAgents2Start().get(i);
-			if (ac4s.getStartAsName().equals(oldCompID)) {
-				ac4s.setStartAsName(newCompID);
-				break;
-			}
+		if (this.getCurrentSimulationSetup()!=null) {
+			this.getCurrentSimulationSetup().renameAgent(oldCompID, newCompID);
 		}
-
 	}
 
 	/**

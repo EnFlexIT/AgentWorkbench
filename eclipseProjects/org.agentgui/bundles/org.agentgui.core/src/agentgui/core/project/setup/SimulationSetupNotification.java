@@ -50,18 +50,37 @@ public class SimulationSetupNotification {
 		SIMULATION_SETUP_REMOVE,
 		SIMULATION_SETUP_RENAME,
 		SIMULATION_SETUP_PREPARE_SAVING,
-		SIMULATION_SETUP_SAVED
+		SIMULATION_SETUP_SAVED,
+		
+		SIMULATION_SETUP_AGENT_ADDED,
+		SIMULATION_SETUP_AGENT_REMOVED,
+		SIMULATION_SETUP_AGENT_RENAMED
 	}
 	
+	
 	private SimNoteReason updateReason;
+	private Object notificationObject;
+	
 	
 	/**
 	 * Instantiates a new simulation setups change notification.
 	 * @param reason the reason
 	 */
 	public SimulationSetupNotification(SimNoteReason reason) {
-		updateReason = reason;
+		this(reason, null);
 	}
+	/**
+	 * Instantiates a new simulation setups change notification.
+	 *
+	 * @param reason the reason
+	 * @param notificationObject the notification object that corresponds to the current reason
+	 */
+	public SimulationSetupNotification(SimNoteReason reason, Object notificationObject) {
+		this.setUpdateReason(reason);
+		this.setNotificationObject(notificationObject);
+	}
+	
+	
 	/**
 	 * Sets the update reason.
 	 * @param updateReason the new update reason
@@ -76,6 +95,23 @@ public class SimulationSetupNotification {
 	public SimNoteReason getUpdateReason() {
 		return updateReason;
 	}
+	
+	
+	/**
+	 * Sets the notification object that corresponds to the current reason.
+	 * @param notificationObject the new notification object
+	 */
+	public void setNotificationObject(Object notificationObject) {
+		this.notificationObject = notificationObject;
+	}
+	/**
+	 * Returns the notification object that corresponds to the current reason.
+	 * @return the notification object
+	 */
+	public Object getNotificationObject() {
+		return notificationObject;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
