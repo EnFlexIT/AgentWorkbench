@@ -104,7 +104,7 @@ public class SimulationSetup {
 	/** The list data listener for agent default list models. */
 	@XmlTransient
 	private ListDataListener listDataListener4AgentDefaulListModels;
-	private transient boolean isDebugListDataListener = true;
+	private transient boolean isDebugListDataListener = false;
 	private transient boolean isPauseListDataListener;
 
 	/** The agent list to save. */

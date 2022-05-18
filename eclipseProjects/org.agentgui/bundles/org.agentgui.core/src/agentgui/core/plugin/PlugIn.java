@@ -29,6 +29,9 @@
 package agentgui.core.plugin;
 
 import java.awt.Container;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -39,6 +42,7 @@ import org.agentgui.gui.swing.project.ProjectWindowTab;
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import de.enflexit.common.Observable;
@@ -376,6 +380,24 @@ public abstract class PlugIn implements Observer {
 				case SIMULATION_SETUP_SAVED:
 					this.onSimSetupSaved(simSetup);
 					break;
+					
+				case SIMULATION_SETUP_AGENT_ADDED:
+					@SuppressWarnings("unchecked") 
+					ArrayList<AgentClassElement4SimStart> agentAdded = (ArrayList<AgentClassElement4SimStart>) sscn.getNotificationObject();
+					this.onSimSetupAgentAdded(simSetup, agentAdded);
+					break;
+				case SIMULATION_SETUP_AGENT_REMOVED:
+					@SuppressWarnings("unchecked")
+					ArrayList<AgentClassElement4SimStart> agentRemoved = (ArrayList<AgentClassElement4SimStart>) sscn.getNotificationObject();
+					this.onSimSetupAgentRemoved(simSetup, agentRemoved);
+					break;
+				case SIMULATION_SETUP_AGENT_RENAMED:
+					@SuppressWarnings("unchecked")
+					HashMap<String, String> renamedHM = (HashMap<String, String>) sscn.getNotificationObject();
+					String oldAgentName = renamedHM.get("oldAgentName");
+					String newAgentName = renamedHM.get("newAgentName");
+					this.onSimSetupAgentRenamed(simSetup, oldAgentName, newAgentName);
+					break;
 				}
 			
 			// ----------------------------------------------------------
@@ -500,7 +522,28 @@ public abstract class PlugIn implements Observer {
 	 * @param simSetup the current {@link SimulationSetup}
 	 */
 	protected void onSimSetupSaved(SimulationSetup simSetup) { }
-
+	
+	/**
+	 * Will be invoked, if an agent was added to a start list of a {@link SimulationSetup}.
+	 * @param simSetSetup the {@link SimulationSetup}
+	 * @param agentsAdded the agents added
+	 */
+	protected void onSimSetupAgentAdded(SimulationSetup simSetSetup, List<AgentClassElement4SimStart> agentsAdded) { };
+	/**
+	 * Will be invoked, if an agent was removed from a start list of a {@link SimulationSetup}.
+	 * @param simsetSetup the {@link SimulationSetup}
+	 * @param agentsRemoved the list of agents removed
+	 */
+	protected void onSimSetupAgentRemoved(SimulationSetup simsetSetup, List<AgentClassElement4SimStart> agentsRemoved) { };
+	/**
+	 * Will be invoked, if an agent was renamed in a start list of a {@link SimulationSetup}.
+	 * @param simsetSetup the {@link SimulationSetup}
+	 * @param oldAgentName the old agent name
+	 * @param newAgentName the new agent name
+	 */
+	protected void onSimSetupAgentRenamed(SimulationSetup simsetSetup, String oldAgentName, String newAgentName) { };
+	
+	
 	// --- Changes with the PlugIns --------------------------------------
 	/**
 	 * On plug in removed.
