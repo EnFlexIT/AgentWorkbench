@@ -21,11 +21,13 @@ Require-Bundle: org.eclipse.osgi,
 Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core,
  de.enflexit.awb.ws.core.model,
+ de.enflexit.awb.ws.core.security,
  de.enflexit.awb.ws.server
 Import-Package: de.enflexit.common,
  de.enflexit.common.crypto,
  javax.servlet;version="4.0.0",
  javax.xml.bind,
  javax.xml.bind.annotation,
+ org.apache.commons.lang3,
  org.glassfish.jersey.server.spi;version="2.35.0",
  org.glassfish.jersey.servlet;version="2.35.0"
