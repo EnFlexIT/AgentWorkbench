@@ -1081,10 +1081,20 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ------------------------------------------------------
 			// --- Edit geographical coordinates --------------------			
 			// ------------------------------------------------------
-			AbstractGeoCoordinate olgGeoCoordinate = (AbstractGeoCoordinate) oldCoordinate;
+			
+			// --- Initialize the coordinate to display -------------
+			AbstractGeoCoordinate olgGeoCoordinate = null;
+			if (oldCoordinate instanceof AbstractGeoCoordinate) {
+				// --- Use previously defined geo coordinate --------
+				olgGeoCoordinate = (AbstractGeoCoordinate) oldCoordinate;
+			} else {
+				// --- If not available, use a new instance ---------
+				olgGeoCoordinate = new WGS84LatLngCoordinate();
+			}
+			
+			// --- Show the dialog, wait for the user's input -------
 			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
 			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, olgGeoCoordinate);
-			// - - - - Wait for user - - - - -
 			if (geoDialog.isCanceled()==true) return;
 			
 			// --- Get UTM coordinates to set the new position ------
