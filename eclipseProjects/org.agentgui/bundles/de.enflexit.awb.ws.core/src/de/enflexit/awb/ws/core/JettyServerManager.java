@@ -5,7 +5,13 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.UserStore;
+import org.eclipse.jetty.security.authentication.FormAuthenticator;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -15,7 +21,12 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
+import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.component.AttributeContainerMap;
+import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.security.Password;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -26,6 +37,7 @@ import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.security.SingleUserSecurityHandler;
 
 /**
  * The Singleton <i>JettyServerManager</i> is used to control the start of {@link Server} instances
@@ -35,6 +47,14 @@ import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
  */
 public class JettyServerManager {
 
+	private static final String AWB_SECURED = "AWB_SECURED";
+	
+	private AwbWebRegistry awbWebRegistry;
+	private TreeMap<String, JettyServerInstances> jettyServerInstanceHash;
+	
+	private StartOn startOn;
+	
+	
 	// ----------------------------------------------------
 	// --- The singleton create / access area -------------
 	// ----------------------------------------------------
@@ -58,7 +78,6 @@ public class JettyServerManager {
 	// --------------------------------------------------------------
 	// --- From here, methods for the AwbWebService handling --------
 	// --------------------------------------------------------------
-	private AwbWebRegistry awbWebRegistry;
 	/**
 	 * Returns the local/current {@link AwbWebRegistry}.
 	 * @return the AwbWebRegistry
@@ -170,17 +189,15 @@ public class JettyServerManager {
 	// ----------------------------------------------------
 	// --- From here, instance handling -------------------
 	// ----------------------------------------------------
-	private TreeMap<String, JettyServerInstances> jettyServerHash;
-	
 	/**
 	 * Returns the jetty server instance hash.
 	 * @return the jetty server instance hash
 	 */
-	private TreeMap<String, JettyServerInstances> getJettyServerInstaceHash() {
-		if (jettyServerHash==null) {
-			jettyServerHash = new TreeMap<String, JettyServerInstances>();
+	private TreeMap<String, JettyServerInstances> getJettyServerInstanceHash() {
+		if (jettyServerInstanceHash==null) {
+			jettyServerInstanceHash = new TreeMap<String, JettyServerInstances>();
 		}
-		return jettyServerHash;
+		return jettyServerInstanceHash;
 	}
 	
 	/**
@@ -192,7 +209,7 @@ public class JettyServerManager {
 	 * @return the jetty server instances
 	 */
 	private JettyServerInstances registerServerInstances(String serverName, JettyServerInstances serverInstances) {
-		return this.getJettyServerInstaceHash().put(serverName, serverInstances);
+		return this.getJettyServerInstanceHash().put(serverName, serverInstances);
 	}
 	/**
 	 * Removes the server instances for the specified server name.
@@ -201,7 +218,7 @@ public class JettyServerManager {
 	 * @return the server removed from the JettyServerManager
 	 */
 	private JettyServerInstances unregisterServerInstances(String serverName) {
-		return this.getJettyServerInstaceHash().remove(serverName);
+		return this.getJettyServerInstanceHash().remove(serverName);
 	}
 	/**
 	 * Returns the server instances with the specified server name.
@@ -210,7 +227,7 @@ public class JettyServerManager {
 	 * @return the managed Jetty server instances
 	 */
 	public JettyServerInstances getServerInstances(String serverName) {
-		return this.getJettyServerInstaceHash().get(serverName);
+		return this.getJettyServerInstanceHash().get(serverName);
 	}
 	
 	
@@ -235,7 +252,7 @@ public class JettyServerManager {
 	 * @return the handler collection
 	 */
 	public HandlerCollection getHandlerCollection(String serverName) {
-		JettyServerInstances sInst = this.getJettyServerInstaceHash().get(serverName);
+		JettyServerInstances sInst = this.getJettyServerInstanceHash().get(serverName);
 		if (sInst!=null) return sInst.getHandlerCollection();
 		return null;
 	}
@@ -268,6 +285,7 @@ public class JettyServerManager {
 		// --- Check if the server is already running ---------------
 		if (this.getServerInstances(serverConfig.getServerName())!=null) return false;
 		
+		
 		// ----------------------------------------------------------
 		// --- Create new server instance ---------------------------
 		Server server = new Server(this.getThreadPool(serverConfig));
@@ -294,13 +312,6 @@ public class JettyServerManager {
 		}
 		if (isStartHTTP==true)  this.configureHTTP(server);
 		if (isStartHTTPS==true) this.configureHTTPS(server);
-		
-		
-		// ----------------------------------------------------------
-		// --- Secure the server ------------------------------------
-//		HashLoginService  loginService = new HashLoginService();
-//		loginService.setConfig("ToDo");
-//		server.addBean(loginService);
 		
 		// ----------------------------------------------------------
 		// --- Set the Handler according to the configuration -------
@@ -352,6 +363,24 @@ public class JettyServerManager {
 		}
 		
 		// ----------------------------------------------------------
+		// --- Secure the server ------------------------------------
+		if (hCollection==null) {
+			this.secureHandler(initialHandler);
+		} else {
+			this.secureHandler(hCollection);
+		}
+
+		// ----------------------------------------------------------
+		// --- Always redirect HTTP to HTTPS? -----------------------
+		boolean isRedirectToHTTPS = (boolean) server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());;
+		if (isStartHTTPS==true && isRedirectToHTTPS==true) {
+			SecuredRedirectHandler secRedirHandler = new SecuredRedirectHandler();
+			secRedirHandler.setHandler(server.getHandler());
+			server.setHandler(secRedirHandler);
+		}
+		
+		
+		// ----------------------------------------------------------
 		// --- Execute the start of the server ----------------------
 		boolean isStarted = this.startConfiguredServer(server, serverConfig.getServerName());
 		if (isStarted==true) {
@@ -381,14 +410,24 @@ public class JettyServerManager {
 		
 		boolean isStartHTTP = (boolean) server.getAttribute(JettyConstants.HTTP_ENABLED.getJettyKey());
 		int port = (int)server.getAttribute(JettyConstants.HTTP_PORT.getJettyKey());
+		int securePort = (int) server.getAttribute(JettyConstants.HTTPS_PORT.getJettyKey());
 		String host = (String) server.getAttribute(JettyConstants.HTTP_HOST.getJettyKey());
 		if (isStartHTTP==false) return;
 		
 		try {
-			// --- Add HTTP connector -------------------------------
+			// --- Define HTTP configuration ------------------------
+			HttpConfiguration httpConfig = new HttpConfiguration();
+			httpConfig.addCustomizer(new SecureRequestCustomizer());
+			httpConfig.setSecureScheme(HttpScheme.HTTPS.asString());
+			httpConfig.setSecurePort(securePort);
+			
+			// --- Define the HTTP connector ------------------------
 			ServerConnector connector = new ServerConnector(server);
 			connector.setHost(host);
 			connector.setPort(port);
+			connector.addConnectionFactory(new HttpConnectionFactory(httpConfig));
+
+			// --- Add the connector to the server ------------------
 			server.setConnectors(new Connector[]{connector});
 			server.addBean(new AttributeContainerMap());
 			
@@ -420,7 +459,7 @@ public class JettyServerManager {
 		boolean isWantClientAuth = (boolean) server.getAttribute(JettyConstants.SSL_WANTCLIENTAUTH.getJettyKey());
 		
 		try {
-			
+			// --- Get the Key-/ Trust-Store file for SSL -----------
 			File keyStoreFile = new File(keyStore);
 			if (keyStoreFile.exists()==false) {
 				throw new FileNotFoundException(keyStoreFile.toString());
@@ -428,6 +467,7 @@ public class JettyServerManager {
 			String keyStorePath = keyStoreFile.getAbsolutePath();
 			
 			
+			// --- Define the SslContextFactory for the server ------ 
 			SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
 			sslContextFactory.setKeyStorePath(keyStorePath);
 			sslContextFactory.setKeyStoreType(keyStoreType);
@@ -442,26 +482,79 @@ public class JettyServerManager {
 			sslContextFactory.setNeedClientAuth(isNeedClientAuth);
 			sslContextFactory.setWantClientAuth(isWantClientAuth);
 			
-			
-			// SSL HTTP Configuration
+			// --- Adjust SecureRequestCustomizer -------------------
+			SecureRequestCustomizer secReqCustom = new SecureRequestCustomizer();
+			secReqCustom.setSniHostCheck(false);
+
+			// --- Define HTTPS Configuration -----------------------
 			HttpConfiguration httpsConfig = new HttpConfiguration();
+			httpsConfig.addCustomizer(secReqCustom);
 			httpsConfig.setSecurePort(securePort);
 			
-			SecureRequestCustomizer secReqCustom= new SecureRequestCustomizer();
-			secReqCustom.setSniHostCheck(false);
-			httpsConfig.addCustomizer(secReqCustom);
-			
-			// SSL Connector
-			ServerConnector sslConnector = new ServerConnector(server, 
-					new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
-					new HttpConnectionFactory(httpsConfig));
+			// --- Create the SSL Connector -------------------------
+			ServerConnector sslConnector = new ServerConnector(server,  new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()), new HttpConnectionFactory(httpsConfig));
 			sslConnector.setHost(secureHost);
 			sslConnector.setPort(securePort);
+			
+			// --- Add the connector to the server ------------------
 			server.addConnector(sslConnector);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Secure the specified handler collection.
+	 * @param hCollection the h collection
+	 */
+	private void secureHandler(HandlerCollection hCollection) {
+		Handler[] handlerArray = hCollection.getHandlers();
+		for (int i = 0; i < handlerArray.length; i++) {
+			this.secureHandler(handlerArray[i]);
+		}
+	}
+	/**
+	 * Secures the specified handler.
+	 * @param handler the handler
+	 */
+	private void secureHandler(Handler handler) {
+
+		if (handler==null) return;
+		if (! (handler instanceof ServletContextHandler)) return;
+		
+		// --- 
+		
+		Constraint constraint = new Constraint();
+		constraint.setName(Constraint.__FORM_AUTH);
+		constraint.setRoles(new String[]{"user","admin","moderator"});
+		constraint.setAuthenticate(true);
+		
+		ConstraintMapping constraintMapping = new ConstraintMapping();
+		constraintMapping.setConstraint(constraint);
+		constraintMapping.setPathSpec("/*");
+
+		
+		ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
+		securityHandler.addConstraintMapping(constraintMapping);
+		
+		UserStore userStore = new UserStore();
+		userStore.addUser("username", new Password("password"), new String[] {"user"});
+		
+		HashLoginService loginService = new HashLoginService();
+		loginService.setUserStore(userStore);
+		securityHandler.setLoginService(loginService);
+		
+		FormAuthenticator authenticator = new FormAuthenticator("/login", "/login", false);
+		securityHandler.setAuthenticator(authenticator);
+		
+		
+		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
+		serCtxHandler.setSecurityHandler(securityHandler);
+		serCtxHandler.setSecurityHandler(new SingleUserSecurityHandler("abc", "abc"));
+		
+		serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
+		
 	}
 	
 	/**
@@ -526,9 +619,11 @@ public class JettyServerManager {
 		
 		if (server==null) return false;
 		
-		// --- Stop the server ----------------------------
 		try {
+			// --- Stop the server -----------------------
 			server.stop();
+			// --- Remove security handler ---------------
+			this.removeSecurityHandler(server.getHandlers());
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -547,11 +642,43 @@ public class JettyServerManager {
 		return server.isStopped();
 	}
 	
+	/**
+	 * Removes the security handler from the specified handler array.
+	 * @param handlerArray the handler array
+	 */
+	private void removeSecurityHandler(Handler[] handlerArray) {
+		if (handlerArray==null) return;
+		for (int i = 0; i < handlerArray.length; i++) {
+			this.removeSecurityHandler(handlerArray[i]);
+		}
+	}
+	/**
+	 * Removes the security handler.
+	 * @param handler the handler
+	 */
+	private void removeSecurityHandler(Handler handler) {
+
+		if (handler instanceof ServletContextHandler) {
+			ServletContextHandler servletContextHandler = (ServletContextHandler) handler;
+			if (servletContextHandler.getInitParameter(AWB_SECURED)!=null) {
+				servletContextHandler.setSecurityHandler(new SingleUserSecurityHandler());
+				servletContextHandler.getInitParams().remove(AWB_SECURED);
+			}
+			
+		} else if (handler instanceof HandlerWrapper) {
+			HandlerWrapper handlerWrapper = (HandlerWrapper) handler;
+			this.removeSecurityHandler(handlerWrapper.getHandlers());
+			
+		} else if (handler instanceof HandlerCollection) {
+			HandlerCollection handlerCollection = (HandlerCollection) handler;
+			this.removeSecurityHandler(handlerCollection.getHandlers());
+		}
+	}
+	
 	
 	// ------------------------------------------------------------------------------------------------------
 	// --- From here, methods to start/stop the configured server based on AWB - ApplicationEvents ----------
 	// ------------------------------------------------------------------------------------------------------
-	private StartOn startOn;
 	/**
 	 * Returns the current local {@link StartOn} value.
 	 * @param startOn the new start on
@@ -565,10 +692,8 @@ public class JettyServerManager {
 	private void decreaseStartOnValue() {
 		this.startOn = StartOn.decrease(this.startOn);
 	}
-	
 	/**
 	 * Does the server start for all servers that are using the specified {@link StartOn} option.
-	 * 
 	 * @param startOn the start on option
 	 */
 	public void doServerStart(StartOn startOn) {
@@ -594,10 +719,8 @@ public class JettyServerManager {
 			}
 		}
 	}
-	
 	/**
 	 * Does the server stop for all servers that are using the specified {@link StartOn} option.
-	 *
 	 * @param startOn the start on
 	 */
 	public void doServerStop(StartOn startOn) {

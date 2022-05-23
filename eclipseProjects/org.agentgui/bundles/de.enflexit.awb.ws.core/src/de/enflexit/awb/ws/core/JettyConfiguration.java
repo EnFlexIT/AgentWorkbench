@@ -281,8 +281,7 @@ public class JettyConfiguration implements Serializable {
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_ENABLED));
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_PORT));
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_HOST));
-		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_NIO));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_TO_HTTPS));
 		
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTPS_ENABLED));
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTPS_PORT));
@@ -295,7 +294,6 @@ public class JettyConfiguration implements Serializable {
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYPASSWORD));
 		
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PROTOCOL));
-//		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_ALGORITHM));
 		
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_NEEDCLIENTAUTH));
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_WANTCLIENTAUTH));
@@ -303,8 +301,6 @@ public class JettyConfiguration implements Serializable {
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS));
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS));
 		
-//		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CONTEXT_PATH));
-//		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL));	
 	}
 	
 	/**
