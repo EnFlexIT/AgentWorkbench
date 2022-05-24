@@ -7,11 +7,6 @@ import java.util.TreeMap;
 
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpVersion;
-import org.eclipse.jetty.security.ConstraintMapping;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
-import org.eclipse.jetty.security.HashLoginService;
-import org.eclipse.jetty.security.UserStore;
-import org.eclipse.jetty.security.authentication.FormAuthenticator;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -25,8 +20,6 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.component.AttributeContainerMap;
-import org.eclipse.jetty.util.security.Constraint;
-import org.eclipse.jetty.util.security.Password;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -37,6 +30,7 @@ import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.security.SingleApiKeySecurityHandler;
 import de.enflexit.awb.ws.core.security.SingleUserSecurityHandler;
 
 /**
@@ -523,37 +517,11 @@ public class JettyServerManager {
 		if (handler==null) return;
 		if (! (handler instanceof ServletContextHandler)) return;
 		
-		// --- 
-		
-		Constraint constraint = new Constraint();
-		constraint.setName(Constraint.__FORM_AUTH);
-		constraint.setRoles(new String[]{"user","admin","moderator"});
-		constraint.setAuthenticate(true);
-		
-		ConstraintMapping constraintMapping = new ConstraintMapping();
-		constraintMapping.setConstraint(constraint);
-		constraintMapping.setPathSpec("/*");
-
-		
-		ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
-		securityHandler.addConstraintMapping(constraintMapping);
-		
-		UserStore userStore = new UserStore();
-		userStore.addUser("username", new Password("password"), new String[] {"user"});
-		
-		HashLoginService loginService = new HashLoginService();
-		loginService.setUserStore(userStore);
-		securityHandler.setLoginService(loginService);
-		
-		FormAuthenticator authenticator = new FormAuthenticator("/login", "/login", false);
-		securityHandler.setAuthenticator(authenticator);
-		
-		
 		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
-		serCtxHandler.setSecurityHandler(securityHandler);
-		serCtxHandler.setSecurityHandler(new SingleUserSecurityHandler("abc", "abc"));
-		
 		serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
+
+		// --- TODO: Check witch security handler to use --
+		serCtxHandler.setSecurityHandler(new SingleApiKeySecurityHandler("apiKey", "12345678901234567890"));
 		
 	}
 	

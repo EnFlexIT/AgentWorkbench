@@ -66,6 +66,17 @@ public class ServerTreeNodeHandler extends AbstractServerTreeNodeObject {
 		return this.getHandler().isRunning()==true;
 	}
 	/**
+	 * Returns the running server description.
+	 * @return the running server description
+	 */
+	public String getRunningHandlerDescription() {
+		if (this.isRunningHandler()==true) {
+			return "Started";
+		}
+		return "Stopped";
+	}
+	
+	/**
 	 * If available, returns the context path for the current handler.
 	 * @return the context path
 	 */
@@ -89,10 +100,18 @@ public class ServerTreeNodeHandler extends AbstractServerTreeNodeObject {
 	 */
 	public String getServiceClassName() {
 		if (this.handlerService==null) {
-			return this.handler.getClass().getName();
+			return null;
 		}
 		return this.handlerService.getClass().getName();
 	}
+	/**
+	 * Returns the handler class name.
+	 * @return the handler class name
+	 */
+	public String getHandlerClassName() {
+		return this.getHandler().getClass().getName();
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.ServerTreeNodeObject#toString()

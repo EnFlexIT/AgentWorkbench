@@ -36,7 +36,7 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 	 * @param login the login
 	 * @param password the password
 	 */
-	public SingleUserSecurityHandler(final String login, String password) {
+	public SingleUserSecurityHandler(String login, String password) {
 		this.login = login;
 		this.password = password;
 		
@@ -56,6 +56,14 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.jetty.security.SecurityHandler#prepareConstraintInfo(java.lang.String, org.eclipse.jetty.server.Request)
+	 */
+	@Override
+	protected RoleInfo prepareConstraintInfo(String pathInContext, Request request) {
+		return null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.jetty.security.SecurityHandler#checkUserDataPermissions(java.lang.String, org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, org.eclipse.jetty.security.RoleInfo)
 	 */
 	@Override
@@ -69,14 +77,6 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 	@Override
 	protected boolean isAuthMandatory(Request baseRequest, Response base_response, Object constraintInfo) {
 		return this.isSecured();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#prepareConstraintInfo(java.lang.String, org.eclipse.jetty.server.Request)
-	 */
-	@Override
-	protected RoleInfo prepareConstraintInfo(String pathInContext, Request request) {
-		return null;
 	}
 	
 	/* (non-Javadoc)
