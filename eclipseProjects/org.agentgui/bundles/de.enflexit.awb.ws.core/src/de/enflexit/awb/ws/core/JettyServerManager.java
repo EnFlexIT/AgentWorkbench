@@ -30,6 +30,7 @@ import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.security.OpenIDSecurityHandler;
 import de.enflexit.awb.ws.core.security.SingleApiKeySecurityHandler;
 import de.enflexit.awb.ws.core.security.SingleUserSecurityHandler;
 
@@ -441,7 +442,7 @@ public class JettyServerManager {
 		int securePort = (int) server.getAttribute(JettyConstants.HTTPS_PORT.getJettyKey());
 		String secureHost = (String) server.getAttribute(JettyConstants.HTTPS_HOST.getJettyKey());
 		
-		String keyStore = (String) server.getAttribute(JettyConstants.SSL_KEYSTORE.getJettyKey());
+		String keyStoreRelativePath = (String) server.getAttribute(JettyConstants.SSL_KEYSTORE.getJettyKey());
 		String keyStoreType = (String) server.getAttribute(JettyConstants.SSL_KEYSTORETYPE.getJettyKey());
 		String sslPassword  = (String) server.getAttribute(JettyConstants.SSL_PASSWORD.getJettyKey());
 		String sslKeyPassword  = (String) server.getAttribute(JettyConstants.SSL_KEYPASSWORD.getJettyKey());
@@ -454,7 +455,7 @@ public class JettyServerManager {
 		
 		try {
 			// --- Get the Key-/ Trust-Store file for SSL -----------
-			File keyStoreFile = new File(keyStore);
+			File keyStoreFile = SSLJettyConfiguration.getKeyStoreFileFromRelativePath(keyStoreRelativePath);
 			if (keyStoreFile.exists()==false) {
 				throw new FileNotFoundException(keyStoreFile.toString());
 			}
@@ -521,8 +522,15 @@ public class JettyServerManager {
 		serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
 
 		// --- TODO: Check witch security handler to use --
-		serCtxHandler.setSecurityHandler(new SingleApiKeySecurityHandler("apiKey", "12345678901234567890"));
 		
+		String issuer = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
+		String clientId = "testclient";
+		String clientSecret = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
+		
+//		serCtxHandler.setSecurityHandler(new OpenIDSecurityHandler(issuer, clientId, clientSecret, true));
+		
+//		serCtxHandler.setSecurityHandler(new SingleApiKeySecurityHandler("apiKey", "12345678901234567890"));
+//		serCtxHandler.setSecurityHandler(new SingleUserSecurityHandler("test", "test"));
 	}
 	
 	/**
@@ -629,7 +637,7 @@ public class JettyServerManager {
 		if (handler instanceof ServletContextHandler) {
 			ServletContextHandler servletContextHandler = (ServletContextHandler) handler;
 			if (servletContextHandler.getInitParameter(AWB_SECURED)!=null) {
-				servletContextHandler.setSecurityHandler(new SingleUserSecurityHandler());
+				servletContextHandler.setSecurityHandler(new SingleApiKeySecurityHandler());
 				servletContextHandler.getInitParams().remove(AWB_SECURED);
 			}
 			

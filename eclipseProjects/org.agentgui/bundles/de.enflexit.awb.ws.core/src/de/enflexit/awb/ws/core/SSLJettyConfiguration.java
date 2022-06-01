@@ -92,6 +92,25 @@ public class SSLJettyConfiguration {
 	}
 	
 	/**
+	 * Returns the key store file as relative path based on the AWB properties directory.
+	 *
+	 * @param keyStoreFile the key store file
+	 * @return the default key store relative path
+	 */
+	public static String getKeyStoreRelativePath(File keyStoreFile) {
+		return keyStoreFile.getAbsolutePath().substring(BundleHelper.getPathProperties().length());
+	}
+	/**
+	 * Returns the key store file from relative path.
+	 *
+	 * @param keyStoreRelativePath the key store relative path
+	 * @return the default key store file from relative path
+	 */
+	public static File getKeyStoreFileFromRelativePath(String keyStoreRelativePath) {
+		return new File(BundleHelper.getPathProperties() + keyStoreRelativePath);
+	}
+	
+	/**
 	 * Will adjust the specified jetty configuration after the KeyStore was successfully created.
 	 *
 	 * @param jettyConfig the jetty configuration
@@ -102,7 +121,7 @@ public class SSLJettyConfiguration {
 		
 		jettyConfig.get(JettyConstants.HTTPS_ENABLED).setValue(true);
 		
-		jettyConfig.get(JettyConstants.SSL_KEYSTORE).setValue(keyStoreFile.getAbsolutePath());
+		jettyConfig.get(JettyConstants.SSL_KEYSTORE).setValue(SSLJettyConfiguration.getKeyStoreRelativePath(keyStoreFile));
 		jettyConfig.get(JettyConstants.SSL_KEYSTORETYPE).setValue(DEFAULT_KEYSTORE_TYPE.getType());
 		
 		jettyConfig.get(JettyConstants.SSL_PASSWORD).setValue(new String(password));

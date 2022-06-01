@@ -3,7 +3,6 @@ package de.enflexit.awb.ws.ui.server;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -206,8 +205,8 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 			this.updateView();
 		
 		} else if (ae.getSource()==this.getJButtonSetDefaultSslKeyStore()) {
-			String keyStoreFile = (String) this.getJettyConfiguration().get(JettyConstants.SSL_KEYSTORE).getValue();
-			if (keyStoreFile!=null && keyStoreFile.isBlank()==false && new File(keyStoreFile).exists()==true) {
+			String keyStoreFileRelativePath = (String) this.getJettyConfiguration().get(JettyConstants.SSL_KEYSTORE).getValue();
+			if (keyStoreFileRelativePath!=null && keyStoreFileRelativePath.isBlank()==false && SSLJettyConfiguration.getKeyStoreFileFromRelativePath(keyStoreFileRelativePath).exists()==true) {
 				// --- Ask the user to overwrite settings -----------
 				String title = "Overwrite SSL settings?";
 				String message = "Are you sure to overwrite the current SSL settings and the corresponding keystore?\n(Can not be undone)";

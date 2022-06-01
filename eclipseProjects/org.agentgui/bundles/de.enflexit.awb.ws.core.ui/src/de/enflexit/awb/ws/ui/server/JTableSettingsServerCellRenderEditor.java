@@ -32,6 +32,7 @@ import agentgui.core.application.Application;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConstants;
+import de.enflexit.awb.ws.core.SSLJettyConfiguration;
 import de.enflexit.common.crypto.KeyStoreType;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 
@@ -67,13 +68,13 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 			// --- Check for special editor types first ------------- 
 			switch (jettyConstant) {
 			case SSL_KEYSTORE:
-				String keyStorePath = (String) jettyAttribute.getValue();
-				if (keyStorePath!=null && keyStorePath.isBlank()==false) {
+				String keyStoreRelativePath = (String) jettyAttribute.getValue();
+				if (keyStoreRelativePath!=null && keyStoreRelativePath.isBlank()==false) {
 					// --- File in properties directory -------------
-					File keyStoreFile = new File(keyStorePath);
+					File keyStoreFile = SSLJettyConfiguration.getKeyStoreFileFromRelativePath(keyStoreRelativePath);
 					int cutAt = keyStoreFile.getParentFile().getParentFile().getAbsolutePath().length();
-					String keyStorePathShort = "." + keyStorePath.substring(cutAt);
-					comp = this.getJLabel(keyStorePathShort, keyStorePath);
+					String keyStorePathShort = "." + keyStoreFile.getAbsolutePath().substring(cutAt);
+					comp = this.getJLabel(keyStorePathShort, keyStoreRelativePath);
 				}
 				break;
 				
@@ -226,8 +227,8 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		File propertiesDir = new File(propertiesPath); 
 		
 		// --- Get keystore file ------------------------------------
-		String keyStorePath = (String) jettyAttribute.getValue();
-		File keyStoreFile = (keyStorePath==null || keyStorePath.isBlank()) ? null : new File(keyStorePath); 
+		String keyStoreRelativePath = (String) jettyAttribute.getValue();
+		File keyStoreFile = (keyStoreRelativePath==null || keyStoreRelativePath.isBlank()) ? null : SSLJettyConfiguration.getKeyStoreFileFromRelativePath(keyStoreRelativePath); 
 		
 		// --- Prepare file description -----------------------------
 		String[] fileExtenArray = KeyStoreType.getAllFileExtensions();
@@ -258,7 +259,7 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 					
 				} else {
 					// --- Save keystore file -----------------------
-					jettyAttribute.setValue(keyStoreFile.getAbsolutePath());
+					jettyAttribute.setValue(SSLJettyConfiguration.getKeyStoreRelativePath(keyStoreFile));
 					// --- Check the file extension -----------------
 					String fileName = keyStoreFile.getName();
 					String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);

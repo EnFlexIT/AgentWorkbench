@@ -78,7 +78,7 @@
             <key>ssl.keystore</key>
             <value>
                 <key>ssl.keystore</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\20_GIT\01_AWB\eclipseProjects\org.agentgui\bundles\org.agentgui.core\properties\AWB-WebServer.pfx</value>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">AWB-WebServer.pfx</value>
             </value>
         </entry>
         <entry>
