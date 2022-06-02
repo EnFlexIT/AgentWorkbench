@@ -8,8 +8,10 @@ import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 
 /**
  * The Class JPanelSettingsHandler.
@@ -32,6 +34,8 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 	private JLabel jLabelServiceClassDescription;
 	private JLabel jLabelHandlerClass;
 	private JLabel jLabelHandlerClassValue;
+	private JSeparator separator;
+	private JPanelSettingsSecurity jPanelSettingsSecurity;
 	
 	/**
 	 * Instantiates a new JPanel for the server settings.
@@ -44,9 +48,9 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 200, 0, 200, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelContextPath = new GridBagConstraints();
@@ -118,6 +122,21 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 		gbc_jLabelServiceClassDescription.gridx = 3;
 		gbc_jLabelServiceClassDescription.gridy = 2;
 		this.add(getJLabelServiceClassDescription(), gbc_jLabelServiceClassDescription);
+		
+		GridBagConstraints gbc_separator = new GridBagConstraints();
+		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
+		gbc_separator.insets = new Insets(10, 10, 0, 10);
+		gbc_separator.gridwidth = 4;
+		gbc_separator.gridx = 0;
+		gbc_separator.gridy = 3;
+		this.add(getSeparator(), gbc_separator);
+		GridBagConstraints gbc_jPanelSettingsSecurity = new GridBagConstraints();
+		gbc_jPanelSettingsSecurity.insets = new Insets(5, 0, 0, 0);
+		gbc_jPanelSettingsSecurity.gridwidth = 4;
+		gbc_jPanelSettingsSecurity.fill = GridBagConstraints.BOTH;
+		gbc_jPanelSettingsSecurity.gridx = 0;
+		gbc_jPanelSettingsSecurity.gridy = 4;
+		add(getJPanelSettingsSecurity(), gbc_jPanelSettingsSecurity);
 	}
 	
 	
@@ -203,6 +222,26 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 		}
 		return jLabelHandlerClassValue;
 	}
+	private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+		}
+		return separator;
+	}
+	private JPanelSettingsSecurity getJPanelSettingsSecurity() {
+		if (jPanelSettingsSecurity == null) {
+			jPanelSettingsSecurity = new JPanelSettingsSecurity();
+		}
+		return jPanelSettingsSecurity;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.server.JettyConfigurationInterface#setServerTreeNodeServer(de.enflexit.awb.ws.core.model.ServerTreeNodeServer)
+	 */
+	@Override
+	public void setServerTreeNodeServer(ServerTreeNodeServer serverTreeNodeServer) {
+		this.getJPanelSettingsSecurity().setServerTreeNodeServer(serverTreeNodeServer);
+	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.AbstractJPanelSettings#setDataModel(de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject)
@@ -218,6 +257,9 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 		this.setStateDescription(this.serverTreeNodeHandler);
 		this.getJLabelSourceBundleDescription().setText(this.serverTreeNodeHandler.getSourceBundle().getSymbolicName());
 		this.getJLabelServiceClassDescription().setText(this.serverTreeNodeHandler.getServiceClassName()==null ? "-" : "Class: " + this.serverTreeNodeHandler.getServiceClassName());
+
+		this.getJPanelSettingsSecurity().setServerTreeNodeHandler(dataModel);
 				
 	}
+	
 }

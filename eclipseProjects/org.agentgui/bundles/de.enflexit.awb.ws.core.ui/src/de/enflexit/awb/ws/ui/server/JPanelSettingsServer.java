@@ -323,8 +323,11 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 		return jTableSettingsServer;
 	}
 	
-	
-	private void setServerTreeNodeServer(ServerTreeNodeServer serverTreeNodeServer) {
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.server.JettyConfigurationInterface#setServerTreeNodeServer(de.enflexit.awb.ws.core.model.ServerTreeNodeServer)
+	 */
+	@Override
+	public void setServerTreeNodeServer(ServerTreeNodeServer serverTreeNodeServer) {
 		this.serverTreeNodeServer = serverTreeNodeServer;
 	}
 	private JettyConfiguration getJettyConfiguration() {

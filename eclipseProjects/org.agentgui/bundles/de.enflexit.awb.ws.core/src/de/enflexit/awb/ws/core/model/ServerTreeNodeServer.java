@@ -111,8 +111,8 @@ public class ServerTreeNodeServer extends AbstractServerTreeNodeObject {
 	/**
 	 * Returns the {@link JettyConfiguration} that can be used to edit the JettySettings 
 	 * before they are stored in the properties file within the AWB-properties directory.
-	 * .
-	 * @return a copy of the JettyConfiguration as stored in the corresponding properties file
+	 * 
+	 * @return the current working copy of the JettyConfiguration as stored in the corresponding properties file
 	 */
 	public JettyConfiguration getJettyConfiguration() {
 		return this.serverServiceWrapper.getJettyConfiguration();

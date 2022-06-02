@@ -41,7 +41,8 @@ import de.enflexit.common.SerialClone;
     "serverName",
     "startOn",
     "mutableHandlerCollection",
-    "jettySettings"
+    "jettySettings",
+    "securitySettings"
 })
 public class JettyConfiguration implements Serializable {
 
@@ -91,6 +92,8 @@ public class JettyConfiguration implements Serializable {
 
 	private TreeMap<String, JettyAttribute<?>> jettySettings;
 	
+	private JettySecuritySettings securitySettings;
+	
 	private transient Handler handler;
 	private transient JettyCustomizer jettyCustomizer;
 	
@@ -127,6 +130,34 @@ public class JettyConfiguration implements Serializable {
 		this.setMutableHandlerCollection(useMutableHandlerCollection);
 		this.setHandler(handler);
 		this.setDefaultConfiguration();
+	}
+	/**
+	 * Sets the default configuration.
+	 */
+	private void setDefaultConfiguration() {
+		
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_ENABLED));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_PORT));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_HOST));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_TO_HTTPS));
+		
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTPS_ENABLED));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTPS_PORT));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTPS_HOST));
+		
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORE));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE));
+
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PASSWORD));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYPASSWORD));
+		
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PROTOCOL));
+		
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_NEEDCLIENTAUTH));
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_WANTCLIENTAUTH));
+		
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS));
 	}
 	
 	/**
@@ -228,14 +259,38 @@ public class JettyConfiguration implements Serializable {
 		return this.getJettySettings().get(key);
 	}
 	/**
-	 * Returns the key set.
-	 *
+	 * Sets the specified {@link JettyAttribute} to the configuration of a Jetty server.
+	 * @param attribute the new jetty attribute
+	 */
+	public void setJettyAttribute(JettyAttribute<?> attribute) {
+		this.put(attribute.getKey(), attribute);
+	}
+	
+	/**
+	 * Returns the key set of the jetty settings.
 	 * @return the list
 	 */
 	public Set<String> keySet() {
 		return this.getJettySettings().keySet();
 	}
 	
+	/**
+	 * Returns the security settings.
+	 * @return the security settings
+	 */
+	public JettySecuritySettings getSecuritySettings() {
+		if (securitySettings==null) {
+			securitySettings = new JettySecuritySettings();
+		}
+		return securitySettings;
+	}
+	/**
+	 * Sets the security settings.
+	 * @param securitySettings the new jetty security settings
+	 */
+	public void setSecuritySettings(JettySecuritySettings jettySecuritySettings) {
+		this.securitySettings = jettySecuritySettings;
+	}
 	
 	/**
 	 * Sets the handler.
@@ -270,46 +325,6 @@ public class JettyConfiguration implements Serializable {
 		return jettyCustomizer;
 	}
 	
-	
-	
-	
-	/**
-	 * Sets the default configuration.
-	 */
-	private void setDefaultConfiguration() {
-		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTP_ENABLED));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_PORT));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_HOST));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTP_TO_HTTPS));
-		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.HTTPS_ENABLED));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTPS_PORT));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.HTTPS_HOST));
-		
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORE));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYSTORETYPE));
-
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PASSWORD));
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_KEYPASSWORD));
-		
-		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.SSL_PROTOCOL));
-		
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_NEEDCLIENTAUTH));
-		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.SSL_WANTCLIENTAUTH));
-		
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS));
-		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS));
-		
-	}
-	
-	/**
-	 * Sets the specified {@link JettyAttribute} to the configuration of a Jetty server.
-	 * @param attribute the new jetty attribute
-	 */
-	public void setJettyAttribute(JettyAttribute<?> attribute) {
-		this.put(attribute.getKey(), attribute);
-	}
 	
 	
 
@@ -353,7 +368,6 @@ public class JettyConfiguration implements Serializable {
 		if (compObj==null || (! (compObj instanceof JettyConfiguration))) return false;
 		if (compObj==this) return true;
 
-		
 		JettyConfiguration jcComp = (JettyConfiguration) compObj;
 		
 		if (jcComp.getServerName().equals(this.getServerName())==false) return false;
@@ -361,7 +375,8 @@ public class JettyConfiguration implements Serializable {
 		if (jcComp.isMutableHandlerCollection()!=this.isMutableHandlerCollection()) return false;
 
 		if (jcComp.getJettySettings().equals(this.getJettySettings())==false) return false;
-
+		if (jcComp.getSecuritySettings().equals(this.getSecuritySettings())==false) return false;
+		
 		if (jcComp.getHandler()!=this.getHandler()) return false;
 		if (jcComp.getJettyCustomizer()!=this.getJettyCustomizer()) return false;
 		

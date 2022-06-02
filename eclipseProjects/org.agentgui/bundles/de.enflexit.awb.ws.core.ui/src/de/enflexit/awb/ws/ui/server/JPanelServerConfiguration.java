@@ -21,6 +21,7 @@ import javax.swing.tree.TreePath;
 import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
 /**
@@ -46,6 +47,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			private JToolBarServer jToolBarServer;
 		
 		private JPanelSettingsServer jPanelSettingsServer;
+		private JPanelSettingsSecurity jPanelSettingsSecurity;
 		private JPanelSettingsHandler jPanelSettingsHandler;	
 		
 	/**
@@ -137,6 +139,9 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		} else if (serverTreeNodeObject instanceof ServerTreeNodeHandler) {
 			// --- Show handler panel ----------------------------------------- 
 			newServerTreeNodeServer = this.getJTreeServer().getParentServerNode((ServerTreeNodeHandler) serverTreeNodeObject);
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeServerSecurity) {
+			// --- Show security panel ---------------------------------------- 
+			newServerTreeNodeServer = this.getJTreeServer().getParentServerNode((ServerTreeNodeServerSecurity) serverTreeNodeObject);
 		}
 
 		// --------------------------------------------------------------------
@@ -162,11 +167,21 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		if (serverTreeNodeObject instanceof ServerTreeNodeServer) {
 			// --- Show server panel ------------
 			settingsPanel = this.getJPanelSettingsServer();
+			settingsPanel.setServerTreeNodeServer(this.editServerTreeNodeServer);
 			this.getJPanelSettingsServer().setDataModel(newServerTreeNodeServer);
+			
 		} else if (serverTreeNodeObject instanceof ServerTreeNodeHandler) {
 			// --- Show handler panel ----------- 
 			settingsPanel = this.getJPanelSettingsHandler();
+			settingsPanel.setServerTreeNodeServer(this.editServerTreeNodeServer);
 			this.getJPanelSettingsHandler().setDataModel((ServerTreeNodeHandler) serverTreeNodeObject);
+			
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeServerSecurity) {
+			// --- Show security panel ----------
+			settingsPanel = this.getJPanelSettingsSecurity();
+			settingsPanel.setServerTreeNodeServer(this.editServerTreeNodeServer);
+			this.getJPanelSettingsSecurity().setDataModel((ServerTreeNodeServerSecurity) serverTreeNodeObject);
+			
 		}
 		this.getJLabelServerName().setText(this.editServerTreeNodeServer.getJettyConfiguration().getServerName());
 		this.getJToolBarServer().setServerTreeNode(this.editServerTreeNodeServer);
@@ -181,12 +196,17 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		// --- Get current selections ---------------------
 		ServerTreeNodeServer stnServer = null;
 		ServerTreeNodeHandler stnHandler = null;
+		ServerTreeNodeServerSecurity stnSecurity = null;
+		
 		AbstractServerTreeNodeObject stnoSelected = this.getJTreeServer().getServerTreeNodeObjectSelected();
 		if (stnoSelected instanceof ServerTreeNodeServer) {
 			stnServer = (ServerTreeNodeServer) stnoSelected;
 		} else if (stnoSelected instanceof ServerTreeNodeHandler) {
 			stnHandler = (ServerTreeNodeHandler) stnoSelected;
 			stnServer = this.getJTreeServer().getParentServerNode(stnHandler);
+		} else if (stnoSelected instanceof ServerTreeNodeServerSecurity) {
+			stnSecurity = (ServerTreeNodeServerSecurity) stnoSelected;
+			stnServer = this.getJTreeServer().getParentServerNode(stnSecurity);
 		}
 
 		// --- Reload tree --------------------------------
@@ -194,10 +214,9 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		
 		// --- Reset to previous selection ----------------
 		this.getJTreeServer().selectServerNode(stnServer.getJettyConfiguration().getServerName());
-		if (stnHandler!=null) {
-			// --- Set to previous handler ----------------
-			this.getJTreeServer().selectHandlerNode(stnHandler.getServiceClassName());
-		}
+		if (stnHandler!=null)  this.getJTreeServer().selectHandlerNode(stnHandler.getServiceClassName());
+		if (stnSecurity!=null) this.getJTreeServer().selectSecurityNode(stnServer.getJettyConfiguration().getServerName());
+		
 	}
 	
 	/* (non-Javadoc)
@@ -293,6 +312,12 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			jPanelSettingsServer = new JPanelSettingsServer();
 		}
 		return jPanelSettingsServer;
+	}
+	private JPanelSettingsSecurity getJPanelSettingsSecurity() {
+		if (jPanelSettingsSecurity==null) {
+			jPanelSettingsSecurity = new JPanelSettingsSecurity();
+		}
+		return jPanelSettingsSecurity;
 	}
 	private JPanelSettingsHandler getJPanelSettingsHandler() {
 		if (jPanelSettingsHandler==null) {

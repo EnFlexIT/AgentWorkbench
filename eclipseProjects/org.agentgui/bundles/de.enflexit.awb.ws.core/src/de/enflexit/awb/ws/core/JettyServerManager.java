@@ -530,7 +530,7 @@ public class JettyServerManager {
 //		serCtxHandler.setSecurityHandler(new OpenIDSecurityHandler(issuer, clientId, clientSecret, true));
 		
 //		serCtxHandler.setSecurityHandler(new SingleApiKeySecurityHandler("apiKey", "12345678901234567890"));
-//		serCtxHandler.setSecurityHandler(new SingleUserSecurityHandler("test", "test"));
+		serCtxHandler.setSecurityHandler(new SingleUserSecurityHandler("test", "test"));
 	}
 	
 	/**

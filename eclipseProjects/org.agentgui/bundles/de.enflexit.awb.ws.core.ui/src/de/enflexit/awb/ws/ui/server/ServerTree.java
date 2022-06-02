@@ -20,6 +20,7 @@ import de.enflexit.awb.ws.core.model.HandlerHelper;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeRoot;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
 
 /**
  * The Class ServerTree is used in {@link JPanelServerConfiguration} to show the
@@ -132,8 +133,11 @@ public class ServerTree extends JTree {
 	 */
 	private void addServerToTreeModel(AwbWebServerServiceWrapper serverService, List<AwbWebHandlerService> handlerServiceList, JettyServerInstances serverInstances) {
 		// --- Add a server node --------------------------
-		DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(new ServerTreeNodeServer(serverService, serverInstances)); 
+		ServerTreeNodeServer stnServer = new ServerTreeNodeServer(serverService, serverInstances);
+		DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(stnServer); 
 		this.getTreeModelServer().insertNodeInto(serverNode, this.getRootTreeNode(), this.getRootTreeNode().getChildCount());
+		// --- Add server security node -------------------
+		serverNode.add(new DefaultMutableTreeNode(new ServerTreeNodeServerSecurity(stnServer)));
 		// --- Add the handler to the server node --------- 
 		HandlerHelper.getHandlerTrees(serverInstances, handlerServiceList).forEach((DefaultMutableTreeNode treeNode) -> serverNode.add(treeNode));
 	}
@@ -193,7 +197,23 @@ public class ServerTree extends JTree {
 		}
 		return null;
 	}
-	
+	/**
+	 * Returns the parent server node for the specified ServerTreeNodeServerSecurity.
+	 *
+	 * @param serverTreeNodeServerSecurity the server tree node server security
+	 * @return the parent server node
+	 */
+	public ServerTreeNodeServer getParentServerNode(ServerTreeNodeServerSecurity serverTreeNodeServerSecurity) {
+		
+		TreePath treePathNode = this.getTreePathForServerTreeNodeObject(serverTreeNodeServerSecurity);
+		while (treePathNode!=null && (! (this.getServerTreeNodeObject(treePathNode) instanceof ServerTreeNodeServer))) {
+			treePathNode = treePathNode.getParentPath();
+		}
+		if (treePathNode!=null) {
+			return (ServerTreeNodeServer) this.getServerTreeNodeObject(treePathNode);
+		}
+		return null;
+	}
 	
 	/**
 	 * Select first server node.
@@ -226,7 +246,17 @@ public class ServerTree extends JTree {
 			this.setSelectionPath(fsnServer);
 		}
 	}
-	
+	/**
+	 * Select security node that belongs to the specified server.
+	 * @param serverName the server name
+	 */
+	public void selectSecurityNode(String serverName) {
+		if (serverName==null) return;
+		TreePath fsnServer = this.getSecurityNode(serverName);
+		if (fsnServer!=null) {
+			this.setSelectionPath(fsnServer);
+		}
+	}
 	
 	/**
 	 * Returns the first server node.
@@ -246,7 +276,9 @@ public class ServerTree extends JTree {
 	}
 	/**
 	 * Returns the TreePath of the specified server.
-	 * @return the first server node
+	 *
+	 * @param serverName the server name
+	 * @return the server node
 	 */
 	public TreePath getServerNode(String serverName) {
 		TreePath fsnServerTreePath = null;
@@ -264,8 +296,10 @@ public class ServerTree extends JTree {
 		return fsnServerTreePath;
 	}
 	/**
-	 * Returns the TreePath of the specified server.
-	 * @return the first server node
+	 * Returns the TreePath of the specified handler.
+	 *
+	 * @param serviceClassName the service class name
+	 * @return the handler node
 	 */
 	public TreePath getHandlerNode(String serviceClassName) {
 		TreePath fsnServerTreePath = null;
@@ -282,7 +316,28 @@ public class ServerTree extends JTree {
 		}
 		return fsnServerTreePath;
 	}
-
+	/**
+	 * Returns the TreePath of the security node of the specified server.
+	 *
+	 * @param serverName the server name
+	 * @return the security node
+	 */
+	public TreePath getSecurityNode(String serverName) {
+		
+		TreePath fsnServerTreePath = this.getServerNode(serverName);
+		if (fsnServerTreePath!=null) {
+			// --- Check child nodes of server node -------
+			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) fsnServerTreePath.getLastPathComponent();
+			for (int i = 0; i < serverNode.getChildCount(); i++) {
+				DefaultMutableTreeNode serverChild = (DefaultMutableTreeNode) serverNode.getChildAt(i);
+				if (serverChild.getUserObject() instanceof ServerTreeNodeServerSecurity) {
+					return this.getTreePathForServerTreeNodeObject((AbstractServerTreeNodeObject) serverChild.getUserObject());
+				}
+			}
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Expands all tree nodes.
@@ -315,6 +370,5 @@ public class ServerTree extends JTree {
 			}
 		}
 	}
-
 
 }
