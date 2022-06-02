@@ -117,4 +117,7 @@
             </value>
         </entry>
     </jettySettings>
+    <securitySettings>
+        <securityConfigurationTreeMap/>
+    </securitySettings>
 </jettyConfiguration>

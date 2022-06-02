@@ -21,8 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
-import de.enflexit.awb.ws.core.JettySecuritySettings.SecurtiyConfiguration;
-import de.enflexit.awb.ws.core.model.HandlerHelper;
+import de.enflexit.awb.ws.core.SecurtiyConfiguration;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
@@ -315,7 +314,7 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	 */
 	private SecurtiyConfiguration getSecurityConfiguration() {
 		if (securityConfiguration==null) {
-			securityConfiguration = this.getSecuritySettings().new SecurtiyConfiguration();
+			securityConfiguration = new SecurtiyConfiguration();
 			// --- Save to JettyConfiguration ----
 			this.getSecuritySettings().setSecurityConfiguration(this.getServletHandlerID(), this.securityConfiguration);
 		}
