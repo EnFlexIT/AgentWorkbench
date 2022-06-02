@@ -14,25 +14,25 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "JettySecuritySettings", propOrder = {
-    "securityConfigurationTreeMap"
+    "securityConfigurations"
 })
 public class JettySecuritySettings implements Serializable {
 
 	private static final long serialVersionUID = -7243999870329375788L;
 
-	public static final String ID_SERVER_SECURITY = "_Server_Security";
+	public static final String ID_SERVER_SECURITY = "_ServerWideSecurityConfiguration";
 	
-	private TreeMap<String, SecurtiyConfiguration> securityConfigurationTreeMap;
+	private TreeMap<String, SecurityConfiguration> securityConfigurations;
 	
 	/**
 	 * Returns the security configuration tree map.
 	 * @return the security configuration tree map
 	 */
-	private TreeMap<String, SecurtiyConfiguration> getSecurityConfigurationTreeMap() {
-		if (securityConfigurationTreeMap==null) {
-			securityConfigurationTreeMap = new TreeMap<>();
+	private TreeMap<String, SecurityConfiguration> getSecurityConfigurationTreeMap() {
+		if (securityConfigurations==null) {
+			securityConfigurations = new TreeMap<>();
 		}
-		return securityConfigurationTreeMap;
+		return securityConfigurations;
 	}
 	/**
 	 * Returns the security configuration for the specified handler.
@@ -40,7 +40,7 @@ public class JettySecuritySettings implements Serializable {
 	 * @param servletHandlerID the servlet handler ID
 	 * @return the security configuration or <code>null</code>
 	 */
-	public SecurtiyConfiguration getSecurityConfiguration(String servletHandlerID) {
+	public SecurityConfiguration getSecurityConfiguration(String servletHandlerID) {
 		if (servletHandlerID==null || servletHandlerID.isBlank()==true) return null;
 		return this.getSecurityConfigurationTreeMap().get(servletHandlerID);
 	}
@@ -51,7 +51,7 @@ public class JettySecuritySettings implements Serializable {
 	 * @param securityConfig the security configuration
 	 * @return the previous SecurityConfiguration or <code>null</code>
 	 */
-	public SecurtiyConfiguration setSecurityConfiguration(String servletHandlerID, SecurtiyConfiguration securityConfig) {
+	public SecurityConfiguration setSecurityConfiguration(String servletHandlerID, SecurityConfiguration securityConfig) {
 		if (securityConfig==null || servletHandlerID==null || servletHandlerID.isBlank()==true) return null;
 		return this.getSecurityConfigurationTreeMap().put(servletHandlerID, securityConfig);
 	}
@@ -61,7 +61,7 @@ public class JettySecuritySettings implements Serializable {
 	 * @param servletHandlerID the servlet handler ID
 	 * @return the removed SecurityConfiguration
 	 */
-	public SecurtiyConfiguration removeSecurityConfiguration(String servletHandlerID) {
+	public SecurityConfiguration removeSecurityConfiguration(String servletHandlerID) {
 		return this.getSecurityConfigurationTreeMap().remove(servletHandlerID);
 	}
 	

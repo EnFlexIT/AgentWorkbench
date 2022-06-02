@@ -8,25 +8,25 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * The Class SecurtiyConfiguration.
+ * The Class SecurityConfiguration.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SecurtiyConfiguration", propOrder = {
+@XmlType(name = "SecurityConfiguration", propOrder = {
     "servletHandlerID",
 	"securityHandlerName", 
 	"securityHandlerActivated",
-	"securtyHandlerConfiguration" 
+	"securityHandlerConfiguration" 
 })
-public class SecurtiyConfiguration implements Serializable {
+public class SecurityConfiguration implements Serializable {
 	
 	private static final long serialVersionUID = -8676645162096989674L;
 	
 	private String servletHandlerID;
 	private String securityHandlerName; 
 	private boolean securityHandlerActivated;
-	private TreeMap<String, String> securtyHandlerConfiguration; 
+	private TreeMap<String, String> securityHandlerConfiguration; 
 	
 	
 	/**
@@ -79,17 +79,17 @@ public class SecurtiyConfiguration implements Serializable {
 	 * @return the security handler configuration
 	 */
 	public TreeMap<String, String> getSecurityHandlerConfiguration() {
-		if (securtyHandlerConfiguration==null) {
-			securtyHandlerConfiguration = new TreeMap<>();
+		if (securityHandlerConfiguration==null) {
+			securityHandlerConfiguration = new TreeMap<>();
 		}
-		return securtyHandlerConfiguration;
+		return securityHandlerConfiguration;
 	}
 	/**
 	 * Sets the security handler configuration.
-	 * @param securtyHandlerConfiguration the security handler configuration
+	 * @param securityHandlerConfiguration the security handler configuration
 	 */
 	public void setSecurityHandlerConfiguration(TreeMap<String, String> securityHandlerConfiguration) {
-		this.securtyHandlerConfiguration = securityHandlerConfiguration;
+		this.securityHandlerConfiguration = securityHandlerConfiguration;
 	}
 	
 	/* (non-Javadoc)
@@ -98,10 +98,10 @@ public class SecurtiyConfiguration implements Serializable {
 	@Override
 	public boolean equals(Object compObj) {
 		
-		if (compObj==null || (! (compObj instanceof SecurtiyConfiguration))) return false;
+		if (compObj==null || (! (compObj instanceof SecurityConfiguration))) return false;
 		if (compObj==this) return true;
 
-		SecurtiyConfiguration scComp = (SecurtiyConfiguration) compObj;
+		SecurityConfiguration scComp = (SecurityConfiguration) compObj;
 		
 		if (scComp.getServletHandlerID().equals(this.getServletHandlerID())==false) return false;
 		if (scComp.getSecurityHandlerName().equals(this.getSecurityHandlerName())==false) return false;

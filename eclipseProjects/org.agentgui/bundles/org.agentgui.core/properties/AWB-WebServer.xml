@@ -118,6 +118,23 @@
         </entry>
     </jettySettings>
     <securitySettings>
-        <securityConfigurationTreeMap/>
+        <securityConfigurations>
+            <entry>
+                <key>_ServerWideSecurityConfiguration</key>
+                <value>
+                    <servletHandlerID>_ServerWideSecurityConfiguration</servletHandlerID>
+                    <securityHandlerName>SingleApiKeySecurityHandler</securityHandlerName>
+                    <securityHandlerActivated>false</securityHandlerActivated>
+                    <securityHandlerConfiguration>
+                        <entry>
+                            <key>API-Key Name</key>
+                        </entry>
+                        <entry>
+                            <key>API-Key Value</key>
+                        </entry>
+                    </securityHandlerConfiguration>
+                </value>
+            </entry>
+        </securityConfigurations>
     </securitySettings>
 </jettyConfiguration>

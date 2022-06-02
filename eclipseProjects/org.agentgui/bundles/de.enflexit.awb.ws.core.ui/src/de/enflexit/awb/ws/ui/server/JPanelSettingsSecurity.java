@@ -21,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
-import de.enflexit.awb.ws.core.SecurtiyConfiguration;
+import de.enflexit.awb.ws.core.SecurityConfiguration;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
@@ -40,7 +40,7 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	private ServerTreeNodeServerSecurity serverTreeNodeServerSecurity; 	// --- Used only for server wide settings ---
 	private ServerTreeNodeHandler serverTreeNodeHandler;				// --- Used only for handler settings -------
 	
-	private SecurtiyConfiguration securityConfiguration;
+	private SecurityConfiguration securityConfiguration;
 	
 	private JLabel jLabelSecurityHandler;
 	private DefaultComboBoxModel<String>  comboBoxModelSecurityHandler;
@@ -286,15 +286,15 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	}
 
 	// ----------------------------------------------------------------------------------
-	// --- From here, method to work on the current SecurtiyConfiguration ---------------
+	// --- From here, method to work on the current SecurityConfiguration ---------------
 	// ----------------------------------------------------------------------------------
 	/**
 	 * Sets the security configuration to work on.
-	 * @param securtiyConfiguration the security configuration
+	 * @param securityConfiguration the security configuration
 	 */
-	private void setSecurityConfiguration(SecurtiyConfiguration securtiyConfiguration) {
+	private void setSecurityConfiguration(SecurityConfiguration securityConfiguration) {
 		
-		this.securityConfiguration = securtiyConfiguration;
+		this.securityConfiguration = securityConfiguration;
 		if (this.securityConfiguration==null) {
 			this.getComboBoxModelSecurityHandler().setSelectedItem(SecurityHandlerService.NO_SECURITY_HANDLER_INDICATOR);
 			this.getJCheckBoxActivated().setSelected(false);
@@ -312,9 +312,9 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	 * Return the security configuration for the current node.
 	 * @return the security configuration
 	 */
-	private SecurtiyConfiguration getSecurityConfiguration() {
+	private SecurityConfiguration getSecurityConfiguration() {
 		if (securityConfiguration==null) {
-			securityConfiguration = new SecurtiyConfiguration();
+			securityConfiguration = new SecurityConfiguration();
 			// --- Save to JettyConfiguration ----
 			this.getSecuritySettings().setSecurityConfiguration(this.getServletHandlerID(), this.securityConfiguration);
 		}
