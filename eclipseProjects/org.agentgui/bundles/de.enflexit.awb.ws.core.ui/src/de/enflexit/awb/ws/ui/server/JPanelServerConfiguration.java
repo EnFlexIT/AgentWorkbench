@@ -343,5 +343,15 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 				this.getjPanelRightBase().repaint();
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * Stops the edit action in the current view (e.g. in table cells).
+	 */
+	public void stopEditing() {
+		this.getJPanelSettingsServer().stopEditing();
+		this.getJPanelSettingsHandler().stopEditing();
+		this.getJPanelSettingsSecurity().stopEditing();
+	}
+	
 }

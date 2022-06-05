@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
+import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.common.ServiceFinder;
 
 /**
@@ -16,23 +17,8 @@ import de.enflexit.common.ServiceFinder;
  */
 public class SecurityHandlerService {
 	
-	public static final String NO_SECURITY_HANDLER_INDICATOR = "NONE";
-	
 	private static List<AwbSecurityHandlerService> localAwbSecurityHandlerServiceList; 
 	
-	
-	/**
-	 * Returns the list of local available and OSGI-registered {@link AwbSecurityHandlerService}s.
-	 * @return the list of {@link AwbSecurityHandlerService}
-	 */
-	public static List<AwbSecurityHandlerService> getAwbSecurityHandlerServiceList() {
-		
-		// --- Get list of services registered over OSGI ------------ 
-		List<AwbSecurityHandlerService> serviceList = ServiceFinder.findServices(AwbSecurityHandlerService.class);
-		// --- Add local available services -------------------------
-		serviceList.addAll(getLocalAwbSecurityHandlerServiceList());
-		return serviceList;
-	}
 	/**
 	 * Returns the list of available {@link AwbSecurityHandlerService}s provided by the current bundle.
 	 * @return the list of local {@link AwbSecurityHandlerService}
@@ -46,6 +32,18 @@ public class SecurityHandlerService {
 		return localAwbSecurityHandlerServiceList;
 	}
 	
+	/**
+	 * Returns the list of local available and OSGI-registered {@link AwbSecurityHandlerService}s.
+	 * @return the list of {@link AwbSecurityHandlerService}
+	 */
+	public static List<AwbSecurityHandlerService> getAwbSecurityHandlerServiceList() {
+		
+		// --- Get list of services registered over OSGI ------------ 
+		List<AwbSecurityHandlerService> serviceList = ServiceFinder.findServices(AwbSecurityHandlerService.class);
+		// --- Add local available services -------------------------
+		serviceList.addAll(SecurityHandlerService.getLocalAwbSecurityHandlerServiceList());
+		return serviceList;
+	}
 	/**
 	 * Returns the list of local available and OSGI-registered {@link AwbSecurityHandlerService}s sorted by the security handler name.
 	 * @return the list of {@link AwbSecurityHandlerService}
@@ -70,7 +68,7 @@ public class SecurityHandlerService {
 	 */
 	public static AwbSecurityHandlerService getAwbSecurityHandlerService(String securityHandlerName) {
 
-		if (securityHandlerName.contentEquals(NO_SECURITY_HANDLER_INDICATOR)) return null;
+		if (securityHandlerName.contentEquals(JettySecuritySettings.ID_NO_SECURITY_HANDLER)) return null;
 		for (AwbSecurityHandlerService shService : getAwbSecurityHandlerServiceList()) {
 			if (shService.getSecurityHandlerName().equals(securityHandlerName)) return shService;
 		}

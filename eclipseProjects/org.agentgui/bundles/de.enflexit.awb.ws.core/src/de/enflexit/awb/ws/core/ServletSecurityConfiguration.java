@@ -8,40 +8,40 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * The Class SecurityConfiguration.
+ * The Class ServletSecurityConfiguration.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SecurityConfiguration", propOrder = {
-    "servletHandlerID",
+@XmlType(name = "ServletSecurityConfiguration", propOrder = {
+    "contextPath",
 	"securityHandlerName", 
 	"securityHandlerActivated",
 	"securityHandlerConfiguration" 
 })
-public class SecurityConfiguration implements Serializable {
+public class ServletSecurityConfiguration implements Serializable {
 	
 	private static final long serialVersionUID = -8676645162096989674L;
 	
-	private String servletHandlerID;
+	private String contextPath;
 	private String securityHandlerName; 
 	private boolean securityHandlerActivated;
 	private TreeMap<String, String> securityHandlerConfiguration; 
 	
 	
 	/**
-	 * Returns the servlet handler ID.
-	 * @return the servlet handler ID
+	 * Returns the context path that is secured with the current settings.
+	 * @return the context path
 	 */
-	public String getServletHandlerID() {
-		return servletHandlerID;
+	public String getContextPath() {
+		return contextPath;
 	}
 	/**
-	 * Sets the servlet handler ID.
-	 * @param servletHandlerID the new servlet handler ID
+	 * Sets the context path that is secured with the current settings.
+	 * @param contextPath the contextPath to secure
 	 */
-	public void setServletHandlerID(String servletHandlerID) {
-		this.servletHandlerID = servletHandlerID;
+	public void setContextPath(String servletHandlerID) {
+		this.contextPath = servletHandlerID;
 	}
 	
 	/**
@@ -98,12 +98,12 @@ public class SecurityConfiguration implements Serializable {
 	@Override
 	public boolean equals(Object compObj) {
 		
-		if (compObj==null || (! (compObj instanceof SecurityConfiguration))) return false;
+		if (compObj==null || (! (compObj instanceof ServletSecurityConfiguration))) return false;
 		if (compObj==this) return true;
 
-		SecurityConfiguration scComp = (SecurityConfiguration) compObj;
+		ServletSecurityConfiguration scComp = (ServletSecurityConfiguration) compObj;
 		
-		if (scComp.getServletHandlerID().equals(this.getServletHandlerID())==false) return false;
+		if (scComp.getContextPath().equals(this.getContextPath())==false) return false;
 		if (scComp.getSecurityHandlerName().equals(this.getSecurityHandlerName())==false) return false;
 		if (scComp.isSecurityHandlerActivated()!=this.isSecurityHandlerActivated()) return false;
 		if (scComp.getSecurityHandlerConfiguration().equals(this.getSecurityHandlerConfiguration())==false) return false;

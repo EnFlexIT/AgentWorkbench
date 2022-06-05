@@ -14,56 +14,81 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "JettySecuritySettings", propOrder = {
-    "securityConfigurations"
+    "servletSecurityConfigurations"
 })
 public class JettySecuritySettings implements Serializable {
 
 	private static final long serialVersionUID = -7243999870329375788L;
 
 	public static final String ID_SERVER_SECURITY = "_ServerWideSecurityConfiguration";
+	public static final String ID_NO_SECURITY_HANDLER = "NONE";
 	
-	private TreeMap<String, SecurityConfiguration> securityConfigurations;
+	private TreeMap<String, ServletSecurityConfiguration> servletSecurityConfigurations;
 	
 	/**
 	 * Returns the security configuration tree map.
 	 * @return the security configuration tree map
 	 */
-	private TreeMap<String, SecurityConfiguration> getSecurityConfigurationTreeMap() {
-		if (securityConfigurations==null) {
-			securityConfigurations = new TreeMap<>();
+	private TreeMap<String, ServletSecurityConfiguration> getSecurityConfigurationTreeMap() {
+		if (servletSecurityConfigurations==null) {
+			servletSecurityConfigurations = new TreeMap<>();
 		}
-		return securityConfigurations;
+		return servletSecurityConfigurations;
 	}
 	/**
 	 * Returns the security configuration for the specified handler.
 	 *
-	 * @param servletHandlerID the servlet handler ID
+	 * @param contextPath the context path to secure
 	 * @return the security configuration or <code>null</code>
 	 */
-	public SecurityConfiguration getSecurityConfiguration(String servletHandlerID) {
-		if (servletHandlerID==null || servletHandlerID.isBlank()==true) return null;
-		return this.getSecurityConfigurationTreeMap().get(servletHandlerID);
+	public ServletSecurityConfiguration getSecurityConfiguration(String contextPath) {
+		if (contextPath==null || contextPath.isBlank()==true) return null;
+		return this.getSecurityConfigurationTreeMap().get(contextPath);
 	}
 	/**
 	 * Sets the security configuration for the specified servlet handler.
 	 *
-	 * @param servletHandlerID the servlet handler ID
+	 * @param contextPath the context path to secure
 	 * @param securityConfig the security configuration
-	 * @return the previous SecurityConfiguration or <code>null</code>
+	 * @return the previous ServletSecurityConfiguration or <code>null</code>
 	 */
-	public SecurityConfiguration setSecurityConfiguration(String servletHandlerID, SecurityConfiguration securityConfig) {
-		if (securityConfig==null || servletHandlerID==null || servletHandlerID.isBlank()==true) return null;
-		return this.getSecurityConfigurationTreeMap().put(servletHandlerID, securityConfig);
+	public ServletSecurityConfiguration setSecurityConfiguration(String contextPath, ServletSecurityConfiguration securityConfig) {
+		if (securityConfig==null || contextPath==null || contextPath.isBlank()==true) return null;
+		return this.getSecurityConfigurationTreeMap().put(contextPath, securityConfig);
 	}
 	/**
 	 * Removes the security configuration for the specified servlet handler.
 	 *
-	 * @param servletHandlerID the servlet handler ID
-	 * @return the removed SecurityConfiguration
+	 * @param contextPath the context path to secure
+	 * @return the removed ServletSecurityConfiguration
 	 */
-	public SecurityConfiguration removeSecurityConfiguration(String servletHandlerID) {
-		return this.getSecurityConfigurationTreeMap().remove(servletHandlerID);
+	public ServletSecurityConfiguration removeSecurityConfiguration(String contextPath) {
+		return this.getSecurityConfigurationTreeMap().remove(contextPath);
 	}
+	
+	
+	/**
+	 * Return the activated {@link ServletSecurityConfiguration} that is to be used for the specified context path.
+	 *
+	 * @param contextPath the context path to secure 
+	 * @return the active servlet security configuration
+	 */
+	public ServletSecurityConfiguration getActivedServletSecurityConfiguration(String contextPath) {
+
+		// --- Check to use the security handler configured for the context path -------- 
+		ServletSecurityConfiguration ssc = this.getSecurityConfiguration(contextPath);
+		if (ssc!=null && ssc.isSecurityHandlerActivated()==true) {
+			return ssc;
+		}
+		// --- Check the server-wide configuration --------------------------------------
+		ssc = this.getSecurityConfiguration(ID_SERVER_SECURITY);
+		if (ssc!=null && ssc.isSecurityHandlerActivated()==true) {
+			return ssc;
+		}
+		return null;
+	}
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -79,5 +104,6 @@ public class JettySecuritySettings implements Serializable {
 		
 		return true;
 	}
+
 	
 }

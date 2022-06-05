@@ -7,6 +7,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
@@ -19,13 +22,16 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
-import de.enflexit.awb.ws.core.SecurityConfiguration;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
+import de.enflexit.common.swing.TableCellListener;
 
 /**
  * The Class JPanelSettingsHandler.
@@ -40,7 +46,8 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	private ServerTreeNodeServerSecurity serverTreeNodeServerSecurity; 	// --- Used only for server wide settings ---
 	private ServerTreeNodeHandler serverTreeNodeHandler;				// --- Used only for handler settings -------
 	
-	private SecurityConfiguration securityConfiguration;
+	private ServletSecurityConfiguration servletSecurityConfiguration;
+	private boolean isPauseActionListener;
 	
 	private JLabel jLabelSecurityHandler;
 	private DefaultComboBoxModel<String>  comboBoxModelSecurityHandler;
@@ -127,7 +134,7 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		if (comboBoxModelSecurityHandler==null) {
 			// --- Prepare data vector ------------------------------
 			Vector<String> securityHandlerNameVector = new Vector<>();
-			securityHandlerNameVector.add(SecurityHandlerService.NO_SECURITY_HANDLER_INDICATOR);
+			securityHandlerNameVector.add(JettySecuritySettings.ID_NO_SECURITY_HANDLER);
 			SecurityHandlerService.getAwbSecurityHandlerServiceListSorted().forEach((AwbSecurityHandlerService shService) -> securityHandlerNameVector.add(shService.getSecurityHandlerName()));
 			comboBoxModelSecurityHandler = new DefaultComboBoxModel<String>(securityHandlerNameVector);
 			
@@ -212,9 +219,33 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 			jTableConfiguration.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableConfiguration.getTableHeader().setReorderingAllowed(false);
 			jTableConfiguration.setAutoCreateRowSorter(true);
-			
+			// --- Create TableCellListener ---------------
+			new TableCellListener(jTableConfiguration, this);
 		}
 		return jTableConfiguration;
+	}
+	
+	/**
+	 * Fills the table model.
+	 */
+	private void fillTableModel(TreeMap<String, String> secHandlerConfig) {
+
+		// --- Clear table model --------------------------
+		this.stopEditing();
+		this.getTableModelConfiguration().setRowCount(0);
+		
+		// --- Early exit ? -------------------------------
+		if (secHandlerConfig==null || secHandlerConfig.size()==0) return;
+		
+		// --- Fill each list element into table model ----
+		List<String> configKeys = new ArrayList<>(secHandlerConfig.keySet());
+		for (String configKey : configKeys) {
+			// --- Add data model row ---------------------
+			Vector<Object> row = new Vector<>();
+			row.add(configKey);
+			row.add(secHandlerConfig.get(configKey));
+			this.getTableModelConfiguration().addRow(row);
+		}
 	}
 	
 	// ----------------------------------------------------------------------------------
@@ -249,7 +280,7 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		this.serverTreeNodeServerSecurity = dataModel;
 		this.serverTreeNodeHandler = null;
 		
-		this.setSecurityConfiguration(this.getSecuritySettings().getSecurityConfiguration(this.getServletHandlerID()));
+		this.setSecurityConfiguration(this.getSecuritySettings().getSecurityConfiguration(this.getServletContextPath()));
 	}
 	/**
 	 * Sets the server tree node handler.
@@ -266,59 +297,59 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		if (this.serverTreeNodeHandler.getAwbWebHandlerService()==null) {
 			// --- No Service, no security settings required ------------------
 			this.setVisible(false);
+			this.setSecurityConfiguration(null);
 			
 		} else {
 			// --- Get the current security settings -------------------------- 
 			this.setVisible(true);
-			this.setSecurityConfiguration(this.getSecuritySettings().getSecurityConfiguration(this.getServletHandlerID()));
+			this.setSecurityConfiguration(this.getSecuritySettings().getSecurityConfiguration(this.getServletContextPath()));
 		}
 	}
 	
 	/**
-	 * Returns the servlet handler ID for the security settings.
-	 * @return the servlet handler ID
+	 * Returns the servlet context path for the security settings.
+	 * @return the servlet context path
 	 */
-	private String getServletHandlerID() {
+	private String getServletContextPath() {
 		if (this.serverTreeNodeServerSecurity!=null) {
 			return JettySecuritySettings.ID_SERVER_SECURITY;
 		}
-		return this.serverTreeNodeHandler.getServiceClassName();
+		return this.serverTreeNodeHandler.getContextPath();
 	}
 
 	// ----------------------------------------------------------------------------------
-	// --- From here, method to work on the current SecurityConfiguration ---------------
+	// --- From here, method to work on the current ServletSecurityConfiguration ---------------
 	// ----------------------------------------------------------------------------------
 	/**
 	 * Sets the security configuration to work on.
-	 * @param securityConfiguration the security configuration
+	 * @param servletSecurityConfiguration the security configuration
 	 */
-	private void setSecurityConfiguration(SecurityConfiguration securityConfiguration) {
+	private void setSecurityConfiguration(ServletSecurityConfiguration servletSecurityConfiguration) {
 		
-		this.securityConfiguration = securityConfiguration;
-		if (this.securityConfiguration==null) {
-			this.getComboBoxModelSecurityHandler().setSelectedItem(SecurityHandlerService.NO_SECURITY_HANDLER_INDICATOR);
+		this.servletSecurityConfiguration = servletSecurityConfiguration;
+		this.isPauseActionListener = true;
+		if (this.servletSecurityConfiguration==null) {
+			this.getComboBoxModelSecurityHandler().setSelectedItem(JettySecuritySettings.ID_NO_SECURITY_HANDLER);
 			this.getJCheckBoxActivated().setSelected(false);
-			// --- TODO ---
-			
+			this.fillTableModel(null);
 		} else {
-			this.getComboBoxModelSecurityHandler().setSelectedItem(this.securityConfiguration.getSecurityHandlerName());
-			this.getJCheckBoxActivated().setSelected(this.securityConfiguration.isSecurityHandlerActivated());
-			// --- TODO ---
-			// TODO fill table
+			this.getComboBoxModelSecurityHandler().setSelectedItem(this.servletSecurityConfiguration.getSecurityHandlerName());
+			this.getJCheckBoxActivated().setSelected(this.servletSecurityConfiguration.isSecurityHandlerActivated());
+			this.fillTableModel(this.servletSecurityConfiguration.getSecurityHandlerConfiguration());
 		}
-		
+		this.isPauseActionListener = false;
 	}
 	/**
 	 * Return the security configuration for the current node.
 	 * @return the security configuration
 	 */
-	private SecurityConfiguration getSecurityConfiguration() {
-		if (securityConfiguration==null) {
-			securityConfiguration = new SecurityConfiguration();
+	private ServletSecurityConfiguration getSecurityConfiguration() {
+		if (servletSecurityConfiguration==null) {
+			servletSecurityConfiguration = new ServletSecurityConfiguration();
 			// --- Save to JettyConfiguration ----
-			this.getSecuritySettings().setSecurityConfiguration(this.getServletHandlerID(), this.securityConfiguration);
+			this.getSecuritySettings().setSecurityConfiguration(this.getServletContextPath(), this.servletSecurityConfiguration);
 		}
-		return this.securityConfiguration;
+		return this.servletSecurityConfiguration;
 	}
 
 	/**
@@ -331,15 +362,16 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		AwbSecurityHandlerService shService = SecurityHandlerService.getAwbSecurityHandlerService(securityHandlerName);
 		if (shService==null) {
 			// --- Remove the currently configured security handler ---------------------
-			this.getSecuritySettings().removeSecurityConfiguration(this.getServletHandlerID());
+			this.getSecuritySettings().removeSecurityConfiguration(this.getServletContextPath());
 			this.setSecurityConfiguration(null);
 			
 		} else {
 			String oldSecurityHandlerName = this.getSecurityConfiguration().getSecurityHandlerName(); 
 			if (oldSecurityHandlerName==null || oldSecurityHandlerName.equals(securityHandlerName)==false) {
-				// --- Configure current SecurityConfiguration --------------------------
+				// --- Configure current ServletSecurityConfiguration --------------------------
+				this.getSecurityConfiguration().setContextPath(this.getServletContextPath());
 				this.getSecurityConfiguration().setSecurityHandlerName(securityHandlerName);
-				this.getSecurityConfiguration().setServletHandlerID(this.getServletHandlerID());
+				this.getSecurityConfiguration().setSecurityHandlerActivated(true);
 				this.getSecurityConfiguration().getSecurityHandlerConfiguration().clear();
 				for (String configKey : shService.getConfigurationKeys()) {
 					this.getSecurityConfiguration().getSecurityHandlerConfiguration().put(configKey, null);
@@ -357,6 +389,8 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
+		if (this.isPauseActionListener==true) return;
+		
 		if (ae.getSource()==this.getJComboBoxSecurityHandler()) {
 			// --- Set the selected security handler to visualization ---------
 			this.setSecurityHandler((String)this.getJComboBoxSecurityHandler().getSelectedItem());
@@ -364,8 +398,31 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		} else if (ae.getSource()==this.getJCheckBoxActivated()) {
 			// --- Activate / deactivate current security handler -------------
 			this.getSecurityConfiguration().setSecurityHandlerActivated(this.getJCheckBoxActivated().isSelected());
-		}
 		
+		} else if (ae.getSource() instanceof TableCellListener) {
+			// --- React on table cell changes --------------------------------
+			TableCellListener tcl = (TableCellListener) ae.getSource();
+			int row = tcl.getRow();
+			String oldValue = (String) tcl.getOldValue();
+			String newValue = (String) tcl.getNewValue();
+			if (newValue!=null && newValue.isBlank()==true) newValue = null;
+			
+			if (StringUtils.equals(newValue, oldValue)==false) {
+				// --- Adjust in security configuration -----------------------
+				String configKey = (String) this.getJTableConfiguration().getValueAt(row, 0);
+				this.getSecurityConfiguration().getSecurityHandlerConfiguration().put(configKey, newValue);
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.server.JettyConfigurationInterface#stopEditing()
+	 */
+	@Override
+	public void stopEditing() {
+		if (this.getJTableConfiguration().isEditing()==true) {
+			this.getJTableConfiguration().getCellEditor().stopCellEditing();
+		}
 	}
 	
 }

@@ -186,6 +186,10 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
+		// --- Stop all editing actions first (e.g. in table cells) ----------- 
+		this.jPanelServerConfiguration.stopEditing();
+		
+		// --- React on the button actions ------------------------------------
 		if (ae.getSource()==this.getJButtonSave()) {
 			this.serverTreeNodeServer.save();
 			this.updateView();

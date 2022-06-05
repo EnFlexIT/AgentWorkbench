@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -24,15 +25,16 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.AwbWebRegistry;
 import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.security.NoSecurityHandler;
 import de.enflexit.awb.ws.core.security.OpenIDSecurityHandler;
-import de.enflexit.awb.ws.core.security.SingleApiKeySecurityHandler;
-import de.enflexit.awb.ws.core.security.SingleUserSecurityHandler;
+import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 
 /**
  * The Singleton <i>JettyServerManager</i> is used to control the start of {@link Server} instances
@@ -359,10 +361,11 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Secure the server ------------------------------------
+		JettySecuritySettings securitySettings = serverConfig.getSecuritySettings();
 		if (hCollection==null) {
-			this.secureHandler(initialHandler);
+			this.secureHandler(initialHandler, securitySettings);
 		} else {
-			this.secureHandler(hCollection);
+			this.secureHandler(hCollection, securitySettings);
 		}
 
 		// ----------------------------------------------------------
@@ -501,36 +504,61 @@ public class JettyServerManager {
 	
 	/**
 	 * Secure the specified handler collection.
-	 * @param hCollection the h collection
+	 *
+	 * @param hCollection the handler collection to secure
+	 * @param securitySettings the security settings
 	 */
-	private void secureHandler(HandlerCollection hCollection) {
+	private void secureHandler(HandlerCollection hCollection, JettySecuritySettings securitySettings) {
 		Handler[] handlerArray = hCollection.getHandlers();
 		for (int i = 0; i < handlerArray.length; i++) {
-			this.secureHandler(handlerArray[i]);
+			this.secureHandler(handlerArray[i], securitySettings);
 		}
 	}
 	/**
 	 * Secures the specified handler.
+	 *
 	 * @param handler the handler
+	 * @param securitySettings the security settings
 	 */
-	private void secureHandler(Handler handler) {
+	private void secureHandler(Handler handler, JettySecuritySettings securitySettings) {
 
 		if (handler==null) return;
 		if (! (handler instanceof ServletContextHandler)) return;
 		
+		// --- Get the servlet context handler to secure ----------------------
 		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
-		serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
+		String contextPath = serCtxHandler.getContextPath();
+		
+		// --- Get the activated security configuration -----------------------
+		ServletSecurityConfiguration ssc = securitySettings.getActivedServletSecurityConfiguration(contextPath);
+		if (ssc==null) return;
 
-		// --- TODO: Check witch security handler to use --
+		// --- Get the corresponding security handler service ----------------- 
+		AwbSecurityHandlerService securityService = SecurityHandlerService.getAwbSecurityHandlerService(ssc.getSecurityHandlerName());
+		if (securityService==null) return;
 		
-		String issuer = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
-		String clientId = "testclient";
-		String clientSecret = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
-		
-//		serCtxHandler.setSecurityHandler(new OpenIDSecurityHandler(issuer, clientId, clientSecret, true));
-		
-//		serCtxHandler.setSecurityHandler(new SingleApiKeySecurityHandler("apiKey", "12345678901234567890"));
-		serCtxHandler.setSecurityHandler(new SingleUserSecurityHandler("test", "test"));
+		// --- Initiate the security handler ----------------------------------
+		try {
+
+			boolean isDevelopment = false;
+			if (isDevelopment==false) {
+				// --- Get handler from specified service ---------------------
+				SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(ssc.getSecurityHandlerConfiguration());
+				serCtxHandler.setSecurityHandler(securtiyHandler);
+				serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
+				
+			} else {
+				// --- TODO: Improve OpenIDSecurityHandler --------------------
+				String issuer = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
+				String clientId = "testclient";
+				String clientSecret = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
+				serCtxHandler.setSecurityHandler(new OpenIDSecurityHandler(issuer, clientId, clientSecret, true));
+			}
+			
+		} catch (Exception ex) {
+			BundleHelper.systemPrintln(this, "Error while trying to secure servlet for context path '" + contextPath+ "':", true);
+			ex.printStackTrace() ;
+		}
 	}
 	
 	/**
@@ -637,7 +665,7 @@ public class JettyServerManager {
 		if (handler instanceof ServletContextHandler) {
 			ServletContextHandler servletContextHandler = (ServletContextHandler) handler;
 			if (servletContextHandler.getInitParameter(AWB_SECURED)!=null) {
-				servletContextHandler.setSecurityHandler(new SingleApiKeySecurityHandler());
+				servletContextHandler.setSecurityHandler(new NoSecurityHandler());
 				servletContextHandler.getInitParams().remove(AWB_SECURED);
 			}
 			

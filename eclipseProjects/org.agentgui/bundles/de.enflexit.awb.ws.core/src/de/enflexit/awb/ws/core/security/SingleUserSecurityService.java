@@ -14,7 +14,7 @@ import de.enflexit.awb.ws.AwbSecurityHandlerService;
  */
 public class SingleUserSecurityService implements AwbSecurityHandlerService {
 
-	private final String[] configParameterKeys = new String[]{"User Name", "Password"};
+	private final String[] configParameterKeys = new String[]{"User Name", "User Password"};
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#getSecurityHandlerName()

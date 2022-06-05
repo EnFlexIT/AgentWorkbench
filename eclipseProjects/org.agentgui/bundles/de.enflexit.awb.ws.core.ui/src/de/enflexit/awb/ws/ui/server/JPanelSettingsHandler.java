@@ -261,5 +261,13 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 		this.getJPanelSettingsSecurity().setServerTreeNodeHandler(dataModel);
 				
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.server.JettyConfigurationInterface#stopEditing()
+	 */
+	@Override
+	public void stopEditing() {
+		this.getJPanelSettingsSecurity().stopEditing();
+	}
 	
 }

@@ -323,6 +323,7 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 		return jTableSettingsServer;
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.JettyConfigurationInterface#setServerTreeNodeServer(de.enflexit.awb.ws.core.model.ServerTreeNodeServer)
 	 */
@@ -358,6 +359,16 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 		this.getJCheckBoxCustomizer().setText(customizerClass);
 
 		this.getJTableSettingsServer().setJettyConfiguration(this.getJettyConfiguration());
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.server.JettyConfigurationInterface#stopEditing()
+	 */
+	@Override
+	public void stopEditing() {
+		if (this.getJTableSettingsServer().isEditing()==true) {
+			this.getJTableSettingsServer().getCellEditor().stopCellEditing();
+		}
 	}
 	
 }

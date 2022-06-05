@@ -6,6 +6,7 @@ import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.awb.ws.core.JettyServerInstances;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 
 /**
  * The Class ServerTreeNodeServer.
@@ -82,10 +83,11 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public Icon getNodeIcon() {
-		if (this.isRunningServer()==true) {
-			return BundleHelper.getImageIcon("awbWeb16Green.png");
+		ServletSecurityConfiguration securityConfig = this.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+		if (securityConfig==null || securityConfig.isSecurityHandlerActivated()==false) {
+			return BundleHelper.getImageIcon("LockOpen.png");
 		}
-		return BundleHelper.getImageIcon("awbWeb16Red.png");
+		return BundleHelper.getImageIcon("LockClosed.png");
 	}
 
 	/**

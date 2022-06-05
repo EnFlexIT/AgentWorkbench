@@ -308,7 +308,7 @@ public class ServerTree extends JTree {
 			AbstractServerTreeNodeObject nodeObject = this.getServerTreeNodeObject(treePath);
 			if (nodeObject instanceof ServerTreeNodeHandler) {
 				ServerTreeNodeHandler stnServer = (ServerTreeNodeHandler) nodeObject;
-				if (stnServer.getServiceClassName().equals(serviceClassName)==true) {
+				if (stnServer.getServiceClassName()!=null && stnServer.getServiceClassName().equals(serviceClassName)==true) {
 					fsnServerTreePath = treePath;
 					break;
 				}
