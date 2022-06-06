@@ -41,12 +41,11 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 	}
 	
 	/**
-	 * Depending on the {@link ExecutionMode} of AWB, this method returns the argument when the default server has to be started.
+	 * Depending on the {@link ExecutionMode} of AWB, this method returns the default argument for when the default server has to be started.
 	 * @return the StartOn parameter for the DefaultAwbServer 
 	 */
 	private StartOn getStartOn() {
 		
-		// TODO Not finalized yet
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			return StartOn.AwbStart;

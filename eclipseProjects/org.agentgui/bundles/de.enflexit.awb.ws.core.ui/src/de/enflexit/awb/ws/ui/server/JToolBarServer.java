@@ -174,10 +174,12 @@ public class JToolBarServer extends JToolBar implements ActionListener {
 		this.getJButtonStopServer().setEnabled(isRunningServer);
 
 		if (isUsingSSL==true) {
-			this.getJButtonSetDefaultSslKeyStore().setIcon(BundleHelper.getImageIcon("LockClosed.png"));
+			this.getJButtonSetDefaultSslKeyStore().setIcon(BundleHelper.getImageIcon("LockClosedSSL.png"));
 		} else {
 			this.getJButtonSetDefaultSslKeyStore().setIcon(BundleHelper.getImageIcon("LockOpen.png"));
 		}
+		
+		this.jPanelServerConfiguration.repaint();
 	}
 	
 	/* (non-Javadoc)

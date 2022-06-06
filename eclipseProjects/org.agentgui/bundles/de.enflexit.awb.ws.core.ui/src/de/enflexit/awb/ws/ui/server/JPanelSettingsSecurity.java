@@ -56,9 +56,11 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	private JCheckBox jCheckBoxActivated;
 	
 	private JLabel jLabelSecurityHandlerConfiguration;
-	private JScrollPane scrollPane;
+	private JScrollPane jScrollPaneConfiguration;
 	private DefaultTableModel tableModelConfiguration;
 	private JTable jTableConfiguration;
+	private JPanel jPanelLeft;
+	private JPanel jPanelRight;
 
 	
 	/**
@@ -70,58 +72,66 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 200, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
-		GridBagConstraints gbc_jLabelSecurityHandler = new GridBagConstraints();
-		gbc_jLabelSecurityHandler.anchor = GridBagConstraints.WEST;
-		gbc_jLabelSecurityHandler.insets = new Insets(5, 10, 0, 0);
-		gbc_jLabelSecurityHandler.gridx = 0;
-		gbc_jLabelSecurityHandler.gridy = 0;
-		this.add(getJLabelSecurityHandler(), gbc_jLabelSecurityHandler);
+		GridBagConstraints gbc_jPanelLeft = new GridBagConstraints();
+		gbc_jPanelLeft.insets = new Insets(5, 10, 0, 5);
+		gbc_jPanelLeft.fill = GridBagConstraints.BOTH;
+		gbc_jPanelLeft.gridx = 0;
+		gbc_jPanelLeft.gridy = 0;
+		this.add(this.getJPanelLeft(), gbc_jPanelLeft);
 		
-		GridBagConstraints gbc_jComboBoxSecurityHandler = new GridBagConstraints();
-		gbc_jComboBoxSecurityHandler.insets = new Insets(5, 5, 0, 0);
-		gbc_jComboBoxSecurityHandler.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jComboBoxSecurityHandler.gridx = 1;
-		gbc_jComboBoxSecurityHandler.gridy = 0;
-		this.add(getJComboBoxSecurityHandler(), gbc_jComboBoxSecurityHandler);
+		GridBagConstraints gbc_jPanelRight = new GridBagConstraints();
+		gbc_jPanelRight.insets = new Insets(5, 5, 0, 10);
+		gbc_jPanelRight.fill = GridBagConstraints.BOTH;
+		gbc_jPanelRight.gridx = 1;
+		gbc_jPanelRight.gridy = 0;
+		this.add(this.getJPanelRight(), gbc_jPanelRight);
 		
-		GridBagConstraints gbc_jLabelActivated = new GridBagConstraints();
-		gbc_jLabelActivated.anchor = GridBagConstraints.WEST;
-		gbc_jLabelActivated.insets = new Insets(5, 10, 0, 0);
-		gbc_jLabelActivated.gridx = 2;
-		gbc_jLabelActivated.gridy = 0;
-		this.add(getJLabelActivated(), gbc_jLabelActivated);
-		
-		GridBagConstraints gbc_jComboBoxActivated = new GridBagConstraints();
-		gbc_jComboBoxActivated.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jComboBoxActivated.insets = new Insets(5, 5, 0, 10);
-		gbc_jComboBoxActivated.gridx = 3;
-		gbc_jComboBoxActivated.gridy = 0;
-		this.add(getJCheckBoxActivated(), gbc_jComboBoxActivated);
-		
-		GridBagConstraints gbc_jLabelSecurityHandlerConfiguration = new GridBagConstraints();
-		gbc_jLabelSecurityHandlerConfiguration.gridwidth = 2;
-		gbc_jLabelSecurityHandlerConfiguration.anchor = GridBagConstraints.WEST;
-		gbc_jLabelSecurityHandlerConfiguration.insets = new Insets(10, 10, 0, 0);
-		gbc_jLabelSecurityHandlerConfiguration.gridx = 0;
-		gbc_jLabelSecurityHandlerConfiguration.gridy = 1;
-		this.add(getJLabelSecurityHandlerConfiguration(), gbc_jLabelSecurityHandlerConfiguration);
-		
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.insets = new Insets(5, 10, 0, 10);
-		gbc_scrollPane.gridwidth = 4;
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridx = 0;
-		gbc_scrollPane.gridy = 2;
-		this.add(getScrollPane(), gbc_scrollPane);
+		GridBagConstraints gbc_jScrollPaneConfiguration = new GridBagConstraints();
+		gbc_jScrollPaneConfiguration.insets = new Insets(5, 10, 0, 10);
+		gbc_jScrollPaneConfiguration.gridwidth = 2;
+		gbc_jScrollPaneConfiguration.fill = GridBagConstraints.BOTH;
+		gbc_jScrollPaneConfiguration.gridx = 0;
+		gbc_jScrollPaneConfiguration.gridy = 1;
+		this.add(this.getJScrollPaneConfiguration(), gbc_jScrollPaneConfiguration);
 	}
 	
-	
+	private JPanel getJPanelLeft() {
+		if (jPanelLeft == null) {
+			jPanelLeft = new JPanel();
+			jPanelLeft.setPreferredSize(new Dimension(200, 50));
+			GridBagLayout gbl_jPanelLeft = new GridBagLayout();
+			gbl_jPanelLeft.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelLeft.rowHeights = new int[]{0, 0, 0};
+			gbl_jPanelLeft.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelLeft.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			jPanelLeft.setLayout(gbl_jPanelLeft);
+			GridBagConstraints gbc_jLabelSecurityHandler = new GridBagConstraints();
+			gbc_jLabelSecurityHandler.anchor = GridBagConstraints.WEST;
+			gbc_jLabelSecurityHandler.gridx = 0;
+			gbc_jLabelSecurityHandler.gridy = 0;
+			jPanelLeft.add(getJLabelSecurityHandler(), gbc_jLabelSecurityHandler);
+			GridBagConstraints gbc_jComboBoxSecurityHandler = new GridBagConstraints();
+			gbc_jComboBoxSecurityHandler.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jComboBoxSecurityHandler.insets = new Insets(0, 5, 0, 0);
+			gbc_jComboBoxSecurityHandler.gridx = 1;
+			gbc_jComboBoxSecurityHandler.gridy = 0;
+			jPanelLeft.add(getJComboBoxSecurityHandler(), gbc_jComboBoxSecurityHandler);
+			GridBagConstraints gbc_jLabelSecurityHandlerConfiguration = new GridBagConstraints();
+			gbc_jLabelSecurityHandlerConfiguration.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jLabelSecurityHandlerConfiguration.gridwidth = 2;
+			gbc_jLabelSecurityHandlerConfiguration.insets = new Insets(10, 0, 0, 0);
+			gbc_jLabelSecurityHandlerConfiguration.gridx = 0;
+			gbc_jLabelSecurityHandlerConfiguration.gridy = 1;
+			jPanelLeft.add(getJLabelSecurityHandlerConfiguration(), gbc_jLabelSecurityHandlerConfiguration);
+		}
+		return jPanelLeft;
+	}
 	private JLabel getJLabelSecurityHandler() {
 		if (jLabelSecurityHandler == null) {
 			jLabelSecurityHandler = new JLabel("Security Handler:");
@@ -129,7 +139,6 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		}
 		return jLabelSecurityHandler;
 	}
-	
 	private DefaultComboBoxModel<String> getComboBoxModelSecurityHandler() {
 		if (comboBoxModelSecurityHandler==null) {
 			// --- Prepare data vector ------------------------------
@@ -145,10 +154,34 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		if (jComboBoxSecurityHandler == null) {
 			jComboBoxSecurityHandler = new JComboBox<>(this.getComboBoxModelSecurityHandler());
 			jComboBoxSecurityHandler.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jComboBoxSecurityHandler.setPreferredSize(new Dimension(200, 26));
 			jComboBoxSecurityHandler.addActionListener(this);
 		}
 		return jComboBoxSecurityHandler;
+	}
+	
+	private JPanel getJPanelRight() {
+		if (jPanelRight == null) {
+			jPanelRight = new JPanel();
+			jPanelRight.setPreferredSize(new Dimension(200, 50));
+			
+			GridBagLayout gbl_jPanelRight = new GridBagLayout();
+			gbl_jPanelRight.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelRight.rowHeights = new int[]{0, 0};
+			gbl_jPanelRight.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelRight.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelRight.setLayout(gbl_jPanelRight);
+			GridBagConstraints gbc_jLabelActivated = new GridBagConstraints();
+			gbc_jLabelActivated.gridx = 0;
+			gbc_jLabelActivated.gridy = 0;
+			jPanelRight.add(getJLabelActivated(), gbc_jLabelActivated);
+			GridBagConstraints gbc_jCheckBoxActivated = new GridBagConstraints();
+			gbc_jCheckBoxActivated.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jCheckBoxActivated.insets = new Insets(0, 5, 0, 0);
+			gbc_jCheckBoxActivated.gridx = 1;
+			gbc_jCheckBoxActivated.gridy = 0;
+			jPanelRight.add(getJCheckBoxActivated(), gbc_jCheckBoxActivated);
+		}
+		return jPanelRight;
 	}
 	private JLabel getJLabelActivated() {
 		if (jLabelActivated == null) {
@@ -173,12 +206,12 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		}
 		return jLabelSecurityHandlerConfiguration;
 	}
-	private JScrollPane getScrollPane() {
-		if (scrollPane == null) {
-			scrollPane = new JScrollPane();
-			scrollPane.setViewportView(getJTableConfiguration());
+	private JScrollPane getJScrollPaneConfiguration() {
+		if (jScrollPaneConfiguration == null) {
+			jScrollPaneConfiguration = new JScrollPane();
+			jScrollPaneConfiguration.setViewportView(getJTableConfiguration());
 		}
-		return scrollPane;
+		return jScrollPaneConfiguration;
 	}
 	
 	private DefaultTableModel getTableModelConfiguration() {

@@ -1,6 +1,7 @@
 package de.enflexit.awb.ws.ui.server;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,6 +37,8 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 	private JLabel jLabelHandlerClassValue;
 	private JSeparator separator;
 	private JPanelSettingsSecurity jPanelSettingsSecurity;
+	private JPanel jPanelLeft;
+	private JPanel jPanelRight;
 	
 	/**
 	 * Instantiates a new JPanel for the server settings.
@@ -47,99 +50,80 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 200, 0, 200, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
-		GridBagConstraints gbc_jLabelContextPath = new GridBagConstraints();
-		gbc_jLabelContextPath.anchor = GridBagConstraints.WEST;
-		gbc_jLabelContextPath.insets = new Insets(5, 10, 0, 0);
-		gbc_jLabelContextPath.gridx = 0;
-		gbc_jLabelContextPath.gridy = 0;
-		this.add(getJLabelContextPath(), gbc_jLabelContextPath);
+		GridBagConstraints gbc_jPanelLeft = new GridBagConstraints();
+		gbc_jPanelLeft.insets = new Insets(5, 10, 0, 5);
+		gbc_jPanelLeft.fill = GridBagConstraints.BOTH;
+		gbc_jPanelLeft.gridx = 0;
+		gbc_jPanelLeft.gridy = 0;
+		this.add(this.getJPanelLeft(), gbc_jPanelLeft);
 		
-		GridBagConstraints gbc_jLabelContextPathValue = new GridBagConstraints();
-		gbc_jLabelContextPathValue.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jLabelContextPathValue.insets = new Insets(5, 5, 0, 0);
-		gbc_jLabelContextPathValue.gridx = 1;
-		gbc_jLabelContextPathValue.gridy = 0;
-		this.add(getJLabelContextPathValue(), gbc_jLabelContextPathValue);
-		
-		GridBagConstraints gbc_jLabelState = new GridBagConstraints();
-		gbc_jLabelState.anchor = GridBagConstraints.WEST;
-		gbc_jLabelState.insets = new Insets(5, 10, 0, 0);
-		gbc_jLabelState.gridx = 2;
-		gbc_jLabelState.gridy = 0;
-		this.add(getJLabelState(), gbc_jLabelState);
-		
-		GridBagConstraints gbc_jLabelStateDescription = new GridBagConstraints();
-		gbc_jLabelStateDescription.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jLabelStateDescription.insets = new Insets(5, 5, 0, 10);
-		gbc_jLabelStateDescription.gridx = 3;
-		gbc_jLabelStateDescription.gridy = 0;
-		this.add(getJLabelStateDescription(), gbc_jLabelStateDescription);
-		
-		GridBagConstraints gbc_jLabelHandlerClass = new GridBagConstraints();
-		gbc_jLabelHandlerClass.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHandlerClass.insets = new Insets(10, 10, 0, 0);
-		gbc_jLabelHandlerClass.gridx = 0;
-		gbc_jLabelHandlerClass.gridy = 1;
-		this.add(getJLabelHandlerClass(), gbc_jLabelHandlerClass);
-		
-		GridBagConstraints gbc_jLabelHandlerClassValue = new GridBagConstraints();
-		gbc_jLabelHandlerClassValue.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jLabelHandlerClassValue.insets = new Insets(10, 5, 0, 0);
-		gbc_jLabelHandlerClassValue.gridx = 1;
-		gbc_jLabelHandlerClassValue.gridy = 1;
-		this.add(getJLabelHandlerClassValue(), gbc_jLabelHandlerClassValue);
-		
-		GridBagConstraints gbc_jLabelSourceBundle = new GridBagConstraints();
-		gbc_jLabelSourceBundle.insets = new Insets(10, 10, 0, 0);
-		gbc_jLabelSourceBundle.anchor = GridBagConstraints.WEST;
-		gbc_jLabelSourceBundle.gridx = 2;
-		gbc_jLabelSourceBundle.gridy = 1;
-		this.add(getJLabelSourceBundle(), gbc_jLabelSourceBundle);
-		
-		GridBagConstraints gbc_jLabelSourceBundleDescription = new GridBagConstraints();
-		gbc_jLabelSourceBundleDescription.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jLabelSourceBundleDescription.insets = new Insets(10, 5, 0, 10);
-		gbc_jLabelSourceBundleDescription.gridx = 3;
-		gbc_jLabelSourceBundleDescription.gridy = 1;
-		this.add(getJLabelSourceBundleDescription(), gbc_jLabelSourceBundleDescription);
-		
-		GridBagConstraints gbc_jLabelServiceClass = new GridBagConstraints();
-		gbc_jLabelServiceClass.insets = new Insets(10, 10, 0, 0);
-		gbc_jLabelServiceClass.anchor = GridBagConstraints.WEST;
-		gbc_jLabelServiceClass.gridx = 2;
-		gbc_jLabelServiceClass.gridy = 2;
-		this.add(getJLabelServiceClass(), gbc_jLabelServiceClass);
-		
-		GridBagConstraints gbc_jLabelServiceClassDescription = new GridBagConstraints();
-		gbc_jLabelServiceClassDescription.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jLabelServiceClassDescription.insets = new Insets(10, 5, 0, 10);
-		gbc_jLabelServiceClassDescription.gridx = 3;
-		gbc_jLabelServiceClassDescription.gridy = 2;
-		this.add(getJLabelServiceClassDescription(), gbc_jLabelServiceClassDescription);
+		GridBagConstraints gbc_jPanelRight = new GridBagConstraints();
+		gbc_jPanelRight.insets = new Insets(5, 5, 0, 10);
+		gbc_jPanelRight.fill = GridBagConstraints.BOTH;
+		gbc_jPanelRight.gridx = 1;
+		gbc_jPanelRight.gridy = 0;
+		this.add(this.getJPanelRight(), gbc_jPanelRight);
 		
 		GridBagConstraints gbc_separator = new GridBagConstraints();
 		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
 		gbc_separator.insets = new Insets(10, 10, 0, 10);
-		gbc_separator.gridwidth = 4;
+		gbc_separator.gridwidth = 2;
 		gbc_separator.gridx = 0;
-		gbc_separator.gridy = 3;
-		this.add(getSeparator(), gbc_separator);
+		gbc_separator.gridy = 4;
+		this.add(this.getSeparator(), gbc_separator);
+		
 		GridBagConstraints gbc_jPanelSettingsSecurity = new GridBagConstraints();
 		gbc_jPanelSettingsSecurity.insets = new Insets(5, 0, 0, 0);
-		gbc_jPanelSettingsSecurity.gridwidth = 4;
+		gbc_jPanelSettingsSecurity.gridwidth = 2;
 		gbc_jPanelSettingsSecurity.fill = GridBagConstraints.BOTH;
 		gbc_jPanelSettingsSecurity.gridx = 0;
-		gbc_jPanelSettingsSecurity.gridy = 4;
+		gbc_jPanelSettingsSecurity.gridy = 5;
 		add(getJPanelSettingsSecurity(), gbc_jPanelSettingsSecurity);
 	}
 	
-	
+	private JPanel getJPanelLeft() {
+		if (jPanelLeft == null) {
+			jPanelLeft = new JPanel();
+			jPanelLeft.setPreferredSize(new Dimension(200, 80));
+			
+			GridBagLayout gbl_jPanelLeft = new GridBagLayout();
+			gbl_jPanelLeft.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelLeft.rowHeights = new int[]{0, 0, 0};
+			gbl_jPanelLeft.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelLeft.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			jPanelLeft.setLayout(gbl_jPanelLeft);
+			GridBagConstraints gbc_jLabelContextPath = new GridBagConstraints();
+			gbc_jLabelContextPath.anchor = GridBagConstraints.WEST;
+			gbc_jLabelContextPath.gridx = 0;
+			gbc_jLabelContextPath.gridy = 0;
+			jPanelLeft.add(getJLabelContextPath(), gbc_jLabelContextPath);
+			GridBagConstraints gbc_jLabelContextPathValue = new GridBagConstraints();
+			gbc_jLabelContextPathValue.insets = new Insets(0, 5, 0, 0);
+			gbc_jLabelContextPathValue.anchor = GridBagConstraints.WEST;
+			gbc_jLabelContextPathValue.gridx = 1;
+			gbc_jLabelContextPathValue.gridy = 0;
+			jPanelLeft.add(getJLabelContextPathValue(), gbc_jLabelContextPathValue);
+			GridBagConstraints gbc_jLabelHandlerClass = new GridBagConstraints();
+			gbc_jLabelHandlerClass.insets = new Insets(10, 0, 0, 0);
+			gbc_jLabelHandlerClass.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHandlerClass.gridx = 0;
+			gbc_jLabelHandlerClass.gridy = 1;
+			jPanelLeft.add(getJLabelHandlerClass(), gbc_jLabelHandlerClass);
+			GridBagConstraints gbc_jLabelHandlerClassValue = new GridBagConstraints();
+			gbc_jLabelHandlerClassValue.insets = new Insets(10, 5, 0, 0);
+			gbc_jLabelHandlerClassValue.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHandlerClassValue.gridx = 1;
+			gbc_jLabelHandlerClassValue.gridy = 1;
+			jPanelLeft.add(getJLabelHandlerClassValue(), gbc_jLabelHandlerClassValue);
+		}
+		return jPanelLeft;
+	}
 	private JLabel getJLabelContextPath() {
 		if (jLabelContextPath == null) {
 			jLabelContextPath = new JLabel("Context Path:");
@@ -153,6 +137,56 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 			jLabelContextPathValue.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelContextPathValue;
+	}
+	
+	private JPanel getJPanelRight() {
+		if (jPanelRight == null) {
+			jPanelRight = new JPanel();
+			jPanelRight.setPreferredSize(new Dimension(200, 80));
+			
+			GridBagLayout gbl_jPanelRight = new GridBagLayout();
+			gbl_jPanelRight.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelRight.rowHeights = new int[]{0, 0, 0, 0};
+			gbl_jPanelRight.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			jPanelRight.setLayout(gbl_jPanelRight);
+			GridBagConstraints gbc_jLabelState = new GridBagConstraints();
+			gbc_jLabelState.anchor = GridBagConstraints.WEST;
+			gbc_jLabelState.gridx = 0;
+			gbc_jLabelState.gridy = 0;
+			jPanelRight.add(getJLabelState(), gbc_jLabelState);
+			GridBagConstraints gbc_jLabelStateDescription = new GridBagConstraints();
+			gbc_jLabelStateDescription.insets = new Insets(0, 5, 0, 0);
+			gbc_jLabelStateDescription.anchor = GridBagConstraints.WEST;
+			gbc_jLabelStateDescription.gridx = 1;
+			gbc_jLabelStateDescription.gridy = 0;
+			jPanelRight.add(getJLabelStateDescription(), gbc_jLabelStateDescription);
+			GridBagConstraints gbc_jLabelSourceBundle = new GridBagConstraints();
+			gbc_jLabelSourceBundle.insets = new Insets(10, 0, 0, 0);
+			gbc_jLabelSourceBundle.anchor = GridBagConstraints.WEST;
+			gbc_jLabelSourceBundle.gridx = 0;
+			gbc_jLabelSourceBundle.gridy = 1;
+			jPanelRight.add(getJLabelSourceBundle(), gbc_jLabelSourceBundle);
+			GridBagConstraints gbc_jLabelSourceBundleDescription = new GridBagConstraints();
+			gbc_jLabelSourceBundleDescription.insets = new Insets(10, 5, 0, 0);
+			gbc_jLabelSourceBundleDescription.anchor = GridBagConstraints.WEST;
+			gbc_jLabelSourceBundleDescription.gridx = 1;
+			gbc_jLabelSourceBundleDescription.gridy = 1;
+			jPanelRight.add(getJLabelSourceBundleDescription(), gbc_jLabelSourceBundleDescription);
+			GridBagConstraints gbc_jLabelServiceClass = new GridBagConstraints();
+			gbc_jLabelServiceClass.insets = new Insets(10, 0, 0, 0);
+			gbc_jLabelServiceClass.anchor = GridBagConstraints.WEST;
+			gbc_jLabelServiceClass.gridx = 0;
+			gbc_jLabelServiceClass.gridy = 2;
+			jPanelRight.add(getJLabelServiceClass(), gbc_jLabelServiceClass);
+			GridBagConstraints gbc_jLabelServiceClassDescription = new GridBagConstraints();
+			gbc_jLabelServiceClassDescription.insets = new Insets(10, 5, 0, 0);
+			gbc_jLabelServiceClassDescription.anchor = GridBagConstraints.WEST;
+			gbc_jLabelServiceClassDescription.gridx = 1;
+			gbc_jLabelServiceClassDescription.gridy = 2;
+			jPanelRight.add(getJLabelServiceClassDescription(), gbc_jLabelServiceClassDescription);
+		}
+		return jPanelRight;
 	}
 	private JLabel getJLabelState() {
 		if (jLabelState == null) {
@@ -269,5 +303,4 @@ public class JPanelSettingsHandler extends JPanel implements JettyConfigurationI
 	public void stopEditing() {
 		this.getJPanelSettingsSecurity().stopEditing();
 	}
-	
 }

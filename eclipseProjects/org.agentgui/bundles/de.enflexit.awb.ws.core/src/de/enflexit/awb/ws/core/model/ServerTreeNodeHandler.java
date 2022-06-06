@@ -1,13 +1,19 @@
 package de.enflexit.awb.ws.core.model;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.eclipse.jetty.server.Handler;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import de.enflexit.awb.ws.AwbWebHandlerService;
+import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.awb.ws.core.JettySecuritySettings;
+import de.enflexit.awb.ws.core.JettyServerManager;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
+import de.enflexit.common.swing.LayeredIcon;
 
 /**
  * The Class ServerTreeNodeServer.
@@ -153,10 +159,34 @@ public class ServerTreeNodeHandler extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public Icon getNodeIcon() {
+		
+		// --- Get the base Icon first ----------------------------------------
+		ImageIcon baseIcon = null; 
 		if (this.isRunningHandler()==true) {
-			return BundleHelper.getImageIcon("GearGreen16.png");
+			baseIcon = BundleHelper.getImageIcon("GearGreen16.png");
+		} else {
+			baseIcon = BundleHelper.getImageIcon("GearRed16.png");
 		}
-		return BundleHelper.getImageIcon("GearRed16.png");
+
+		// --- Create a LayeredIcon -------------------------------------------
+		LayeredIcon layeredIcon = new LayeredIcon(baseIcon.getImage());
+		
+		// --- Check the current security settings ----------------------------
+		if (this.getAwbWebHandlerService()!=null) {
+			// --- Get the server name ----------------------------------------
+			String serverName = this.getAwbWebHandlerService().getServerNameNotNull();
+			AwbWebServerServiceWrapper serverService = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(serverName);
+			// --- Get security configuration from JettyConfiguration ---------
+			ServletSecurityConfiguration securityConfiguration = serverService.getJettyConfiguration().getSecuritySettings().getSecurityConfiguration(this.getContextPath());
+			if (securityConfiguration==null || securityConfiguration.getSecurityHandlerName().equals(JettySecuritySettings.ID_NO_SECURITY_HANDLER) || securityConfiguration.isSecurityHandlerActivated()==false) {
+				// --- Put UNLOCK layer on icon -------------------------------
+				layeredIcon.add(BundleHelper.getImageIcon("LockOpenSmall.png"));	
+			} else {
+				// --- Put LOCK layer on icon ---------------------------------
+				layeredIcon.add(BundleHelper.getImageIcon("LockClosedSmall.png"));
+			}
+		}
+		return layeredIcon;
 	}
 
 }

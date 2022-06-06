@@ -118,25 +118,6 @@
         </entry>
     </jettySettings>
     <securitySettings>
-        <servletSecurityConfigurations>
-            <entry>
-                <key>_ServerWideSecurityConfiguration</key>
-                <value>
-                    <contextPath>_ServerWideSecurityConfiguration</contextPath>
-                    <securityHandlerName>SingleUserSecurityHandler</securityHandlerName>
-                    <securityHandlerActivated>false</securityHandlerActivated>
-                    <securityHandlerConfiguration>
-                        <entry>
-                            <key>User Name</key>
-                            <value>user</value>
-                        </entry>
-                        <entry>
-                            <key>User Password</key>
-                            <value>0123456789</value>
-                        </entry>
-                    </securityHandlerConfiguration>
-                </value>
-            </entry>
-        </servletSecurityConfigurations>
+        <servletSecurityConfigurations/>
     </securitySettings>
 </jettyConfiguration>

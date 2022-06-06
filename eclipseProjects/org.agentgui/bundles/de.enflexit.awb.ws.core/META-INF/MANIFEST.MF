@@ -31,6 +31,7 @@ Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.server
 Import-Package: de.enflexit.common,
  de.enflexit.common.crypto,
+ de.enflexit.common.swing,
  javax.servlet;version="4.0.0",
  javax.xml.bind,
  javax.xml.bind.annotation,
