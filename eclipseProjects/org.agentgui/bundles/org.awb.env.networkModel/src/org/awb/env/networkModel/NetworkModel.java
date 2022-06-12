@@ -320,9 +320,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 	
 	/**
-	 * Returns the {@link MapSettings} if the current layout is a geographical layout, otherwise
-	 * the method returns <code>null</code>.
-	 * @return the layout-dependent MapSettings
+	 * Returns the {@link MapSettings} if the current layout is a geographical layout, otherwise the method returns <code>null</code>.
+	 * 
+	 * @return the layout-dependent MapSettings or <code>null</code>
 	 * @see #getLayoutSettings()
 	 * @see LayoutSettings#isGeographicalLayout()
 	 */

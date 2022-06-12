@@ -1371,8 +1371,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private void setMapPreRendering() {
 		
 		// --- Get old / current instances ------------------------------------
-		MapService mapServiceOld = this.getVisualizationViewer().getMapService();
-		BasicGraphGuiStaticLayout staticLayoutOld = this.getBasicGraphGuiStaticLayout();
+		MapService currMapService = this.getVisualizationViewer().getMapService();
+		BasicGraphGuiStaticLayout currStaticLayout = this.getBasicGraphGuiStaticLayout();
 		
 		// --- Check how to configure -----------------------------------------
 		boolean isDoMapPreRendering = this.isDoMapPreRendering();
@@ -1385,29 +1385,29 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.getZoomController();
 			} else {
 				this.getVisualizationViewer().setMapService(null);
-				if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
+				if (currMapService!=null) currMapService.destroyMapServiceInstances();
 			}
 			
 			// --- Prepare visualization viewer ------------------------------- 
 			this.getVisualizationViewer().setDoMapPreRendering(isDoMapPreRendering);
 			
 			// --- Renew static graph layout ? --------------------------------
-			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticGeoLayout.class.getName())==false) {
+			if (currStaticLayout.getClass().getName().equals(BasicGraphGuiStaticGeoLayout.class.getName())==false) {
 				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 			} else {
-				staticLayoutOld.refreshGraphNodePosition();
+				currStaticLayout.refreshGraphNodePosition();
 			}
 			
 		} else {
 			// --- For normal / non-geographical layouts ----------------------
 			this.getVisualizationViewer().setMapService(null);
-			if (mapServiceOld!=null) mapServiceOld.destroyMapServiceInstances();
+			if (currMapService!=null) currMapService.destroyMapServiceInstances();
 			
 			// --- Prepare visualization viewer -------------------------------
 			this.getVisualizationViewer().setDoMapPreRendering(false);
 			
 			// --- Renew static graph layout ? --------------------------------
-			if (staticLayoutOld.getClass().getName().equals(BasicGraphGuiStaticLayout.class.getName())==false) {
+			if (currStaticLayout.getClass().getName().equals(BasicGraphGuiStaticLayout.class.getName())==false) {
 				this.getVisualizationViewer().setGraphLayout(this.getNewGraphLayout());
 			}
 			

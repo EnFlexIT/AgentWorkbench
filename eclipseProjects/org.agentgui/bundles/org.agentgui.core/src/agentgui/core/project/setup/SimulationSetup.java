@@ -742,10 +742,8 @@ public class SimulationSetup {
 			// --- Pause local ListDataListener -------------------------------
 			this.isPauseListDataListener = true;
 			
-			// --- Remind for later change evaluation -------------------------
-			this.agentListBeforeChanges = this.getAgentList();
 			// --- Run through the list of all configured agents --------------
-			ArrayList<AgentClassElement4SimStart> agentList = this.agentListBeforeChanges;
+			ArrayList<AgentClassElement4SimStart> agentList = this.getAgentListBeforeChanges();
 			for (int i = 0; i < agentList.size(); i++) {
 				
 				AgentClassElement4SimStart ace4ss = agentList.get(i);
@@ -817,7 +815,7 @@ public class SimulationSetup {
 		ArrayList<AgentClassElement4SimStart> newAgentList = this.getAgentList();
 		
 		ArrayList<AgentClassElement4SimStart> newAgentListWork = new ArrayList<>(newAgentList);
-		ArrayList<AgentClassElement4SimStart> oldAgentListWork = new ArrayList<>(this.agentListBeforeChanges);
+		ArrayList<AgentClassElement4SimStart> oldAgentListWork = new ArrayList<>(this.getAgentListBeforeChanges());
 		switch (simSetupNotification.getUpdateReason()) {
 		case SIMULATION_SETUP_AGENT_ADDED:
 			// --- Find the elements added --------------------------
@@ -837,7 +835,7 @@ public class SimulationSetup {
 			break;
 		}
 		// --- Remind new state for later changes -----------------
-		this.agentListBeforeChanges = newAgentList;
+		this.setAgentListBeforeChanges(newAgentList);
 	}
 	
 	/**
@@ -1005,6 +1003,25 @@ public class SimulationSetup {
 			return true;
 		}
 		return false;
+	}
+
+	
+	/**
+	 * Returns the agent list before changes (serves as reminder for class internal actions).
+	 * @return the agent list before changes
+	 */
+	private ArrayList<AgentClassElement4SimStart> getAgentListBeforeChanges() {
+		if (agentListBeforeChanges==null) {
+			agentListBeforeChanges = new ArrayList<AgentClassElement4SimStart>(this.getAgentList());
+		}
+		return agentListBeforeChanges;
+	}
+	/**
+	 * Sets the agent list before changes.
+	 * @param newReminderList the new agent list before changes reminder
+	 */
+	private void setAgentListBeforeChanges(ArrayList<AgentClassElement4SimStart> newReminderList) {
+		this.agentListBeforeChanges = newReminderList;
 	}
 	
 }

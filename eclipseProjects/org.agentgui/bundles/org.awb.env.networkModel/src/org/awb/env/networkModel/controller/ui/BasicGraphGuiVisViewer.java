@@ -225,13 +225,22 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 * Can be used to explicitly render the graph.
 	 */
 	public void paintComponentRenderGraph() {
-		
 		if (this.isDoubleBuffered()==true) {
-			super.paintComponent(this.offscreenG2d);
+			super.paintComponent(this.getOffScreenGraphicsNotNull());
 		} else {
 			super.paintComponent(this.getGraphics());
 		}
 		this.getParent().repaint();
+	}
+	/**
+	 * Returns the current off screen graphics. If this instance is currently null, the original graphics object will be returned.
+	 * @return the off screen graphics not null
+	 */
+	private Graphics getOffScreenGraphicsNotNull() {
+		if (this.offscreenG2d==null) {
+			return this.getGraphics();
+		}
+		return this.offscreenG2d;
 	}
 	
 	/* (non-Javadoc)
