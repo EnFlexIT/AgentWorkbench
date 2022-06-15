@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AWB WS-Core Bundle
+Bundle-SymbolicName: de.enflexit.awb.ws.client
+Bundle-Version: 0.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: de.enflexit.ws.client
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.osgi,
+ org.agentgui.core,
+ com.google.gson,
+ de.enflexit.common
+Import-Package: javax.xml.bind,
+ javax.xml.bind.annotation
+Export-Package: de.enflexit.awb.ws.client
