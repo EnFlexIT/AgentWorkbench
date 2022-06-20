@@ -1,8 +1,9 @@
 package de.enflexit.awb.ws.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import de.enflexit.awb.ws.credential.Credential;
+import de.enflexit.awb.ws.credential.WsApiCredentialService;
 import de.enflexit.common.ServiceFinder;
 
 public class WsCredentialStore {
@@ -18,16 +19,17 @@ public class WsCredentialStore {
 		return instance;
 	}
 	
-	public Credential getCredentials(String Bundlename) {
-	WsApiCredentialService clientService=null;
+	public List<WsApiCredentialService> getCredentials(String bundleName, String serverName,String functionalityID) {
+	String serviceID=bundleName+serverName+functionalityID;
+	List<WsApiCredentialService> clientServiceList=new ArrayList<WsApiCredentialService>();
 	List<WsApiCredentialService> serviceList = ServiceFinder.findServices(WsApiCredentialService.class);
 	for (WsApiCredentialService wsApiCredentialService : serviceList) {
-		if(wsApiCredentialService.getCredentialID().equals(Bundlename)) {
-			clientService=wsApiCredentialService;
+		if(wsApiCredentialService.getCredentialID().equals(serviceID)) {
+			clientServiceList.add(wsApiCredentialService);
 			break;
 		}
 	}
-	 return null;	
+	 return clientServiceList;	
 	}
 
 }

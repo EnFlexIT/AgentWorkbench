@@ -1,12 +1,19 @@
 package de.enflexit.awb.ws.credential;
 
-public class ApiKeyCredential implements Credential{
+import org.osgi.framework.FrameworkUtil;
+
+public class ApiKeyCredential implements WsApiCredentialService{
 	
 	private CredentialType credType = CredentialType.API_KEY;	
 	private ApiKey apiKey;
+	private String serverUrl;
+	private String serverName;
+	private String functionalityID;
 
-	public ApiKeyCredential(ApiKey apiKey) {
+	public ApiKeyCredential(ApiKey apiKey,String serverUrl,String serverName, String functionalityID) {
 		 this.apiKey=apiKey;
+		 this.serverUrl=serverUrl;
+		 this.serverName=serverName;
 	}
 	@Override
 	public CredentialType getCredentialType() {
@@ -16,6 +23,26 @@ public class ApiKeyCredential implements Credential{
 	@Override
 	public Object getCredentialValues() {
 		return apiKey;
+	}
+	
+	@Override
+	public String getServerUrl() {
+		return serverUrl;
+	}
+	
+	@Override
+	public String getCredentialID() {
+		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName()+serverName+functionalityID;
+	}
+    
+	@Override
+	public String getServerName() {
+		return serverName;
+	}
+	
+	@Override
+	public String getFunctionalityID() {
+		return functionalityID;
 	}
 	
 	//-------------------------------------------------------
@@ -48,5 +75,4 @@ public class ApiKeyCredential implements Credential{
 			return location;
 		}
 	}
-    
 }

@@ -1,13 +1,19 @@
 package de.enflexit.awb.ws.credential;
 
-public class BearerToken implements Credential {
+import org.osgi.framework.FrameworkUtil;
+
+public class BearerToken implements WsApiCredentialService {
 	
 	private static final CredentialType type= CredentialType.BEARER_TOKEN;
 	
 	JwtToken jwtTokeN;
+	String serverUrl;
+	String serverName;
+	String functionToAccessID;
 	
-	public BearerToken(String jwtToken) {
+	public BearerToken(String jwtToken,String serverUrl) {
 	   this.jwtTokeN=new JwtToken(jwtToken);
+	   this.serverUrl=serverUrl;
 	}
 
 	@Override
@@ -18,6 +24,26 @@ public class BearerToken implements Credential {
 	@Override
 	public Object getCredentialValues() {
 		return jwtTokeN;
+	}
+
+	@Override
+	public String getCredentialID() {
+		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName()+getServerName()+getFunctionalityID();
+	}
+
+	@Override
+	public String getServerUrl() {
+		return serverUrl;
+	}
+
+	@Override
+	public String getServerName() {
+		return serverName;
+	}
+
+	@Override
+	public String getFunctionalityID() {
+		return functionToAccessID;
 	}
 
 }
