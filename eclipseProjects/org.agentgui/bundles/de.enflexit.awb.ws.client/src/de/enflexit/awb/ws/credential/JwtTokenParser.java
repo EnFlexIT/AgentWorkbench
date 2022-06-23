@@ -13,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 public class JwtTokenParser {
 
 	public JwtToken parseJwtToken(String token) {
+		
 		String[] splitted = token.split(".");
 		String header = null;
 		String body = null;

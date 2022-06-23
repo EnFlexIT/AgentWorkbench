@@ -1,56 +1,46 @@
 package de.enflexit.awb.ws.credential;
 
-import java.net.PasswordAuthentication;
-
-import org.osgi.framework.FrameworkUtil;
-
-public class PasswordAuthenticationCredential implements WsApiCredentialService {
+/**
+ * The Class PasswordAuthenticationCredential.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class PasswordAuthenticationCredential extends AbstractCredential {
 	
-	private final CredentialType credType=CredentialType.USERNAME_PLUS_PASSWORD;	
-	private PasswordAuthentication passwordAuth;
-	private String serverUrl;
-	private String serverName;
-	private String functionID;
+	private static final long serialVersionUID = -4205649257056012094L;
 	
-	public PasswordAuthenticationCredential(PasswordAuthentication passwordAuth,String serverUrl,String serverName,String functionID) {
-		this.passwordAuth=passwordAuth;
-		this.serverUrl=serverUrl;
-		this.serverName=serverName;
-		this.functionID=functionID;
+	private String userName;
+	private String password;
+	
+	
+	/**
+	 * Gets the user name.
+	 * @return the user name
+	 */
+	public String getUserName() {
+		return userName;
 	}
-    
-	@Override
-	public CredentialType getCredentialType() {
-		return credType;
+	/**
+	 * Sets the user name.
+	 * @param userName the new user name
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
-
-
-	@Override
-	public PasswordAuthentication getCredentialValues() {
-		return passwordAuth;
+	
+	/**
+	 * Gets the password.
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
 	}
-
-
-	@Override
-	public String getClientBundleName() {
-		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName();
-	}
-
-	@Override
-	public String getServerUrl() {
-		return serverUrl;
-	}
-
-
-	@Override
-	public String getServerName() {
-		return serverName;
-	}
-
-
-	@Override
-	public String getFunctionalityID() {
-		return functionID;
+	/**
+	 * Sets the password.
+	 * @param password the new password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

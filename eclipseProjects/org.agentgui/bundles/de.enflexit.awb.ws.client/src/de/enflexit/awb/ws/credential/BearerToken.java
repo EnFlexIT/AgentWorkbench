@@ -1,49 +1,30 @@
 package de.enflexit.awb.ws.credential;
 
-import org.osgi.framework.FrameworkUtil;
-
-public class BearerToken implements WsApiCredentialService {
+/**
+ * The Class BearerToken.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class BearerToken extends AbstractCredential {
 	
-	private static final CredentialType type= CredentialType.BEARER_TOKEN;
+	private static final long serialVersionUID = 5553518664784944192L;
 	
-	JwtToken jwtTokeN;
-	String serverUrl;
-	String serverName;
-	String functionToAccessID;
-	
-	public BearerToken(String jwtToken,String serverUrl) {
-	   this.jwtTokeN=new JwtToken(jwtToken);
-	   this.serverUrl=serverUrl;
-	}
+	private JwtToken jwtToken;
 
-	@Override
-	public CredentialType getCredentialType() {
-		return type;
-	}
 
-	@Override
-	public Object getCredentialValues() {
-		return jwtTokeN;
+	/**
+	 * Gets the {@link JwtToken}.
+	 * @return the jwt token
+	 */
+	public JwtToken getJwtToken() {
+		return jwtToken;
 	}
-
-	@Override
-	public String getClientBundleName() {
-		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName();
+	/**
+	 * Sets the {@link JwtToken}.
+	 * @param jwtToken the new jwt token
+	 */
+	public void setJwtToken(JwtToken jwtToken) {
+		this.jwtToken = jwtToken;
 	}
 	
-	@Override
-	public String getServerUrl() {
-		return serverUrl;
-	}
-
-	@Override
-	public String getServerName() {
-		return serverName;
-	}
-
-	@Override
-	public String getFunctionalityID() {
-		return functionToAccessID;
-	}
-
 }

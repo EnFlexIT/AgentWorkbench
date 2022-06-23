@@ -1,9 +1,12 @@
 package de.enflexit.awb.ws.credential;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class JwtToken {
+public class JwtToken implements Serializable {
 
+	private static final long serialVersionUID = 5587910146851984549L;
+	
 	private String jwtToken;
 	private Map<String, String> header;
 	private Map<String, String> body;
@@ -28,7 +31,6 @@ public class JwtToken {
 	public String getJwtToken() {
 		return jwtToken;
 	}
-
 	public void setJwtToken(String jwtToken) {
 		this.jwtToken = jwtToken;
 	}
@@ -36,7 +38,6 @@ public class JwtToken {
 	public Map<String, String> getHeader() {
 		return header;
 	}
-
 	public void setHeader(Map<String, String> header) {
 		this.header = header;
 	}
@@ -44,7 +45,6 @@ public class JwtToken {
 	public Map<String, String> getBody() {
 		return body;
 	}
-
 	public void setBody(Map<String, String> body) {
 		this.body = body;
 	}
@@ -52,8 +52,8 @@ public class JwtToken {
 	public String getCryptographicSignature() {
 		return cryptographicSignature;
 	}
-
 	public void setCryptographicSignature(String cryptographicSignature) {
 		this.cryptographicSignature = cryptographicSignature;
 	}
+	
 }

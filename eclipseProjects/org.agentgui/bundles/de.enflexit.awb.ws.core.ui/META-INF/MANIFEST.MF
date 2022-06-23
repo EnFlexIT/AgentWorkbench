@@ -9,6 +9,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.common,
  org.agentgui.core,
+ de.enflexit.awb.ws.client,
  de.enflexit.awb.ws.core,
  org.eclipse.jetty.server,
  org.eclipse.jetty.util,

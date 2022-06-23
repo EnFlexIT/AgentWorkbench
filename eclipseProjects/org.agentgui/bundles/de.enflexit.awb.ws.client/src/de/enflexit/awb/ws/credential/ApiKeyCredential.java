@@ -1,78 +1,46 @@
 package de.enflexit.awb.ws.credential;
 
-import org.osgi.framework.FrameworkUtil;
+/**
+ * The Class ApiKeyCredential.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class ApiKeyCredential extends AbstractCredential {
 
-public class ApiKeyCredential implements WsApiCredentialService{
+	private static final long serialVersionUID = -7248358188757558331L;
 	
-	private CredentialType credType = CredentialType.API_KEY;	
-	private ApiKey apiKey;
-	private String serverUrl;
-	private String serverName;
-	private String functionalityID;
+	private String apiKeyName;
+	private String apiKeyValue;
+	
 
-	public ApiKeyCredential(ApiKey apiKey,String serverUrl,String serverName, String functionalityID) {
-		 this.apiKey=apiKey;
-		 this.serverUrl=serverUrl;
-		 this.serverName=serverName;
+	/**
+	 * Sets the api key name.
+	 * @param apiKeyName the new api key name
+	 */
+	public void setApiKeyName(String apiKeyName) {
+		this.apiKeyName = apiKeyName;
 	}
-	@Override
-	public CredentialType getCredentialType() {
-		return credType;
+	/**
+	 * Sets the api key value.
+	 * @param apiKeyValue the new api key value
+	 */
+	public void setApiKeyValue(String apiKeyValue) {
+		this.apiKeyValue = apiKeyValue;
 	}
 
-	@Override
-	public Object getCredentialValues() {
-		return apiKey;
+	/**
+	 * Gets the api key value.
+	 * @return the api key value
+	 */
+	public String getApiKeyValue() {
+		return apiKeyValue;
 	}
-	
-	@Override
-	public String getServerUrl() {
-		return serverUrl;
-	}
-	
-	@Override
-	public String getServerName() {
-		return serverName;
-	}
-	
-	@Override
-	public String getFunctionalityID() {
-		return functionalityID;
-	}
-	
-	@Override
-	public String getClientBundleName() {
-		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName();
+	/**
+	 * Gets the api key name.
+	 * @return the api key name
+	 */
+	public String getApiKeyName() {
+		return apiKeyName;
 	}
 	
-	//-------------------------------------------------------
-	//Class to handle an APIKey and save its values
-	//-------------------------------------------------------
-	
-	public class ApiKey {
-
-		private String apiKey;
-		private LocationInRequest location;
-
-		public ApiKey(String apiKey, LocationInRequest location) {
-			this.apiKey = apiKey;
-			this.location = location;
-		}
-
-		public String getApiKey() {
-			return apiKey;
-		}
-
-		public void setApiKey(String apiKey) {
-			this.apiKey = apiKey;
-		}
-
-		public void setLocationInRequest(LocationInRequest location) {
-			this.location = location;
-		}
-
-		public LocationInRequest getLocationInRequest() {
-			return location;
-		}
-	}
 }
