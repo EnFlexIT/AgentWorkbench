@@ -19,12 +19,11 @@ public class WsCredentialStore {
 		return instance;
 	}
 	
-	public List<WsApiCredentialService> getCredentials(String bundleName, String serverName,String functionalityID) {
-	String serviceID=bundleName+serverName+functionalityID;
+	public List<WsApiCredentialService> getCredentials(String bundleName, String serverUrl) {
 	List<WsApiCredentialService> clientServiceList=new ArrayList<WsApiCredentialService>();
 	List<WsApiCredentialService> serviceList = ServiceFinder.findServices(WsApiCredentialService.class);
 	for (WsApiCredentialService wsApiCredentialService : serviceList) {
-		if(wsApiCredentialService.getCredentialID().equals(serviceID)) {
+		if(wsApiCredentialService.getServerUrl().equals(serverUrl)) {
 			clientServiceList.add(wsApiCredentialService);
 			break;
 		}

@@ -31,11 +31,6 @@ public class ApiKeyCredential implements WsApiCredentialService{
 	}
 	
 	@Override
-	public String getCredentialID() {
-		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName()+serverName+functionalityID;
-	}
-    
-	@Override
 	public String getServerName() {
 		return serverName;
 	}
@@ -43,6 +38,11 @@ public class ApiKeyCredential implements WsApiCredentialService{
 	@Override
 	public String getFunctionalityID() {
 		return functionalityID;
+	}
+	
+	@Override
+	public String getClientBundleName() {
+		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName();
 	}
 	
 	//-------------------------------------------------------

@@ -32,10 +32,9 @@ public class PasswordAuthenticationCredential implements WsApiCredentialService 
 
 
 	@Override
-	public String getCredentialID() {
-		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName()+getServerName()+getFunctionalityID();
+	public String getClientBundleName() {
+		return FrameworkUtil.getBundle(this.getClass()).getSymbolicName();
 	}
-
 
 	@Override
 	public String getServerUrl() {

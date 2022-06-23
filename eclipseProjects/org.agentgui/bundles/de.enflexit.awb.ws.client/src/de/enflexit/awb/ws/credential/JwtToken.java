@@ -4,25 +4,25 @@ import java.util.Map;
 
 public class JwtToken {
 
-	String jwtToken;
-	Map<String,String> header;
-	Map<String,String> body;
-	String cryptographicSignature;
+	private String jwtToken;
+	private Map<String, String> header;
+	private Map<String, String> body;
+	private String cryptographicSignature;
 
-	public JwtToken(String jwtToken, Map<String,String> header, Map<String,String> body, String cryptographicSignature) {
+	public JwtToken(String jwtToken, Map<String, String> header, Map<String, String> body,String cryptographicSignature) {
 		this.jwtToken = jwtToken;
 		this.header = header;
 		this.body = body;
 		this.cryptographicSignature = cryptographicSignature;
 	}
-	
+
 	public JwtToken(String jwtToken) {
-		this.jwtToken=jwtToken;
-	  JwtTokenParser parser= new JwtTokenParser();
-	  JwtToken token=parser.parseJwtToken(jwtToken);
-	   this.header=token.getHeader();
-	   this.body=token.getBody();
-	   this.cryptographicSignature=token.getCryptographicSignature();
+		this.jwtToken = jwtToken;
+		JwtTokenParser parser = new JwtTokenParser();
+		JwtToken token = parser.parseJwtToken(jwtToken);
+		this.header = token.getHeader();
+		this.body = token.getBody();
+		this.cryptographicSignature = token.getCryptographicSignature();
 	}
 
 	public String getJwtToken() {

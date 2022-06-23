@@ -1,13 +1,12 @@
 package de.enflexit.awb.ws.credential;
 
 public interface WsApiCredentialService {
+	public String getClientBundleName();
 	
 	public CredentialType getCredentialType();
 	
 	public Object getCredentialValues();
-	
-	public String getCredentialID();
-	
+		
 	public String getServerUrl();
 	
 	public String getServerName();
