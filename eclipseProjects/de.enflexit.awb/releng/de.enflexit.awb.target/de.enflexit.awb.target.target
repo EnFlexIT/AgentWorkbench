@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target includeMode="feature" name="de.enflexit.awb.target" sequenceNumber="70">
+	<locations>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
+			<repository location="https://download.eclipse.org/releases/2022-06/"/>
+			<!--  Space for older versions (as reminder) ^
+			<repository location="https://download.eclipse.org/releases/2022-03/"/>
+			<repository location="https://download.eclipse.org/releases/2021-12/"/>
+			<repository location="https://download.eclipse.org/releases/2021-09/"/>
+			<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java8 
+			<repository location="https://download.eclipse.org/releases/2020-03/"/>
+			<repository location="https://download.eclipse.org/releases/2019-12/"/>
+			<repository location="https://download.eclipse.org/releases/2019-09/"/>
+			<repository location="https://download.eclipse.org/releases/2019-06/"/>
+			<repository location="https://download.eclipse.org/releases/2019-03/"/>
+			<repository location="https://download.eclipse.org/releases/2018-12/"/>
+			<repository location="https://download.eclipse.org/releases/2018-09/"/>
+			<repository location="https://download.eclipse.org/eclipse/updates/4.8"/>
+			-->
+		</location>
+
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="ch.qos.logback.classic" version="0.0.0"/>
+			<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
+			<unit id="ch.qos.logback.core" version="0.0.0"/>
+			<unit id="ch.qos.logback.core.source" version="0.0.0"/>
+			<unit id="ch.qos.logback.slf4j" version="0.0.0"/>
+			<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
+			<unit id="org.slf4j.api" version="0.0.0"/>
+			<unit id="org.slf4j.api.source" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcpkix" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcpkix.source" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
+			<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220531185310/repository"/>
+			<!--  Space for older versions (as reminder)
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20210825222808/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository"/> <= Last for Java8
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20181128170323/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
+		-->
+		</location>
+
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, dependencies for the AWB-Core                -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<!-- javax.activation -->
+				<dependency>
+					<groupId>com.sun.activation</groupId>
+					<artifactId>javax.activation</artifactId>
+					<version>1.2.0</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+		
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<!-- Apache commons-compress -->
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-compress</artifactId>
+					<version>1.21</version>
+					<type>jar</type>
+				</dependency>
+				<!-- Apache commons-text -->
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-text</artifactId>
+					<version>1.9</version>
+					<type>jar</type>
+				</dependency>
+				<!-- JAXB integration as bundle -->
+				<dependency>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+					<version>2.3.6</version>
+					<type>jar</type>
+				</dependency>
+				<!-- SciMark -->
+				<dependency>
+					<groupId>es.urjc.etsii.grafo</groupId>
+					<artifactId>scimark</artifactId>
+					<version>2.1.1</version>
+					<type>jar</type>
+				</dependency>
+				<!-- JFreeChart -->
+				<dependency>
+					<groupId>org.jfree</groupId>
+					<artifactId>jfreechart</artifactId>
+					<version>1.5.3</version>
+					<type>jar</type>
+				</dependency>
+				<!-- OSHI -->
+				<dependency>
+					<groupId>com.github.oshi</groupId>
+					<artifactId>oshi-core</artifactId>
+					<version>6.1.6</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+
+		<location includeDependencyDepth="direct" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<!-- OAuth 2 -->
+				<dependency>
+					<groupId>com.nimbusds</groupId>
+					<artifactId>oauth2-oidc-sdk</artifactId>
+					<version>9.37.2</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>net.minidev</groupId>
+					<artifactId>json-smart</artifactId>
+					<version>2.4.8</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+
+		<!-- Supported JDBC Driver -->
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<!-- MariaDB-connector -->
+				<dependency>
+					<groupId>org.mariadb.jdbc</groupId>
+					<artifactId>mariadb-java-client</artifactId>
+					<version>3.0.5</version>
+					<type>jar</type>
+				</dependency>
+				<!-- MySQL-connector -->
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>8.0.29</version>
+					<type>jar</type>
+				</dependency>
+				<!-- PostGreSQL-connector -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>42.4.0</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+
+
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, dependencies for the AWB-WS part             -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- Integration of latest Jersey version comptible to Jetty -->
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-openid</artifactId>
+					<version>10.0.9</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.aries.spifly</groupId>
+					<artifactId>org.apache.aries.spifly.dynamic.bundle</artifactId>
+					<version>1.3.5</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.aries</groupId>
+					<artifactId>org.apache.aries.util</artifactId>
+					<version>1.1.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm</artifactId>
+					<version>9.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-commons</artifactId>
+					<version>9.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-util</artifactId>
+					<version>9.3</version>
+					<type>jar</type>
+				</dependency>
+				
+				<dependency>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+					<version>2.9.0</version>
+					<type>jar</type>
+				</dependency>
+				
+				<dependency>
+					<groupId>org.glassfish.jersey.containers</groupId>
+					<artifactId>jersey-container-servlet</artifactId>
+					<version>2.36</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.media</groupId>
+					<artifactId>jersey-media-json-jackson</artifactId>
+					<version>2.36</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.media</groupId>
+					<artifactId>jersey-media-multipart</artifactId>
+					<version>2.36</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.inject</groupId>
+					<artifactId>jersey-hk2</artifactId>
+					<version>2.36</version>
+					<type>jar</type>
+				</dependency>
+				
+				<dependency>
+					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<artifactId>jackson-datatype-jsr310</artifactId>
+					<version>2.13.3</version>
+					<type>jar</type>
+				</dependency>^
+				<dependency>
+					<groupId>com.fasterxml.jackson.jaxrs</groupId>
+					<artifactId>jackson-jaxrs-json-provider</artifactId>
+					<version>2.13.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.dataformat</groupId>
+					<artifactId>jackson-dataformat-yaml</artifactId>
+					<version>2.13.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jaxb-annotations</artifactId>
+					<version>2.13.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.openapitools</groupId>
+					<artifactId>jackson-databind-nullable</artifactId>
+					<version>0.2.2</version>
+					<type>jar</type>
+				</dependency>
+
+				<dependency>
+					<groupId>com.brsanthu</groupId>
+					<artifactId>migbase64</artifactId>
+					<version>2.2</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+		
+	</locations>
+
+</target>
