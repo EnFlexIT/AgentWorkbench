@@ -1,4 +1,4 @@
-Automatic-Module-Name: org.agentgui.help
+Automatic-Module-Name: de.enflexit.awb.help
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - API Help
