@@ -493,8 +493,8 @@ public abstract class AbstractClassLoadServiceUtilityImpl<T extends BaseClassLoa
 	 * @param compFactory the component factory
 	 * @return the class load service instance from component factory
 	 */
-	@SuppressWarnings("unchecked")
-	private T getClassLoadServiceInstanceFromComponentFactory(ComponentFactory<?> compFactory) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private T getClassLoadServiceInstanceFromComponentFactory(ComponentFactory compFactory) {
 		
 		if (compFactory==null) return null;
 		
