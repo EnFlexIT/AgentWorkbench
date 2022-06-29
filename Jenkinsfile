@@ -13,7 +13,7 @@ pipeline {
     stage('Extract Products') {
       steps {
         echo 'Start extracting AWB Products ...'
-        archiveArtifacts 'eclipseProjects/org.agentgui/releng/org.agentgui.product/target/products/org.agentgui-*'
+        archiveArtifacts 'eclipseProjects/de.enflexit.awb/releng/de.enflexit.awb.product/target/products/de.enflexit.awb-*'
       }
     }
 
