@@ -8,9 +8,9 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import de.enflexit.awb.ws.credential.BearerToken;
+import de.enflexit.awb.ws.credential.BearerTokenCredential;
 
-public class JPanelBearerTokenCredential extends AbstractCredentialPanel<BearerToken> {
+public class JPanelBearerTokenCredential extends AbstractCredentialPanel<BearerTokenCredential> {
 	public JPanelBearerTokenCredential() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};

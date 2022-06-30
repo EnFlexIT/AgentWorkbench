@@ -1,9 +1,13 @@
 package de.enflexit.awb.samples.ws.restapi.client;
 
 import de.enflexit.awb.samples.ws.restapi.client.gen.AdminsApi;
+import de.enflexit.awb.samples.ws.restapi.client.gen.handler.ApiClient;
+import de.enflexit.awb.samples.ws.restapi.client.gen.handler.ServerConfiguration;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.ExecutionState;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemInformation;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemLoad;
+import de.enflexit.awb.ws.client.WsCredentialStore;
+import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import jade.core.Agent;
 
 /**
@@ -23,7 +27,21 @@ public class RestAskingAgent extends Agent {
 
 		try {
 
+			ApiKeyCredential apiKeyCredential = WsCredentialStore.getInstance().getCredential(new ApiKeyCredential(), ApiRegistrationService.class);
+//			apiKeyCredential = WsCredentialStore.getInstance().getCredential(new ApiKeyCredential(), "de.enflexit.awb.samples.ws.restapi.client", );
+			
 			AdminsApi api = new AdminsApi();
+			ApiClient apiClient = api.getApiClient();
+			apiClient.setApiKeyPrefix(apiKeyCredential.getApiKeyName());
+			apiClient.setApiKey(apiKeyCredential.getApiKeyValue());
+			
+			
+			ServerConfiguration newServerConfig = new ServerConfiguration("https://schlagmichtod.de/api", null, null);
+			
+			int serversSize = apiClient.getServers().size(); 
+			apiClient.getServers().add(newServerConfig);
+			apiClient.setServerIndex(serversSize);
+			
 			
 			SystemInformation sysInfo = api.infoGet();
 			SystemLoad sysLoad = api.loadGet();

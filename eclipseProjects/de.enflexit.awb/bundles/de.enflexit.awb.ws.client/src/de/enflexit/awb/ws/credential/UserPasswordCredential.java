@@ -1,11 +1,11 @@
 package de.enflexit.awb.ws.credential;
 
 /**
- * The Class PasswordAuthenticationCredential.
+ * The Class UserPasswordCredential.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class PasswordAuthenticationCredential extends AbstractCredential {
+public class UserPasswordCredential extends AbstractCredential {
 	
 	private static final long serialVersionUID = -4205649257056012094L;
 	

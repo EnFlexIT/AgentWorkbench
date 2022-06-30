@@ -6,7 +6,8 @@ Bundle-Version: 0.3.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.samples.ws.restapi.client
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
-Service-Component: OSGI-INF/awbClassLoadService.xml
+Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/apiRegistrationService.xml
 Require-Bundle: jakarta.ws.rs-api;bundle-version="2.1.6",
  org.glassfish.jersey.core.jersey-client;bundle-version="2.35.0",
  org.glassfish.jersey.core.jersey-common;bundle-version="2.35.0",
@@ -20,7 +21,9 @@ Require-Bundle: jakarta.ws.rs-api;bundle-version="2.1.6",
  de.enflexit.awb.ws.swagger1x;bundle-version="1.6.6",
  de.enflexit.common;bundle-version="1.2.8",
  org.agentgui.core;bundle-version="2.2.4",
- org.agentgui.lib.jade;bundle-version="4.5.1"
+ org.agentgui.lib.jade;bundle-version="4.5.1",
+ de.enflexit.awb.ws.client,
+ org.eclipse.osgi
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/jsr305-3.0.2.jar

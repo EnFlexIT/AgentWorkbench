@@ -8,9 +8,9 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import de.enflexit.awb.ws.credential.PasswordAuthenticationCredential;
+import de.enflexit.awb.ws.credential.UserPasswordCredential;
 
-public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialPanel<PasswordAuthenticationCredential> {
+public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialPanel<UserPasswordCredential> {
 
 	private static final long serialVersionUID = -7913504913322598414L;
 	private JLabel jLablePasswordAuthenticationValues;

@@ -1,11 +1,11 @@
 package de.enflexit.awb.ws.credential;
 
 /**
- * The Class BearerToken.
+ * The Class BearerTokenCredential.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class BearerToken extends AbstractCredential {
+public class BearerTokenCredential extends AbstractCredential {
 	
 	private static final long serialVersionUID = 5553518664784944192L;
 	
