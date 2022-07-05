@@ -563,7 +563,7 @@ public class HibernateUtilities {
 	 * @return the database service
 	 */
 	public static HibernateDatabaseService getDatabaseService(String databaseSystemName) {
-		if (databaseSystemName!=null) {
+		if (databaseSystemName!=null && databaseSystemName.isBlank()==false) {
 			return getDatabaseServices().get(databaseSystemName);
 		}
 		return null;

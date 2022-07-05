@@ -234,13 +234,27 @@ public class DatabaseSettingsPanel extends JPanel {
 		this.setDatabaseSystem(newDatabaseSystem, true);
 	}
 	/**
-	 * Sets the database system.
+	 * Sets the database system to be used with the current configuration.
 	 *
 	 * @param newDatabaseSystem the new database system
 	 * @param isUpdateComboBox the indicator to update the local combo box for selection
 	 */
 	private void setDatabaseSystem(String newDatabaseSystem, boolean isUpdateComboBox) {
 		if (this.databaseSystem==null || this.databaseSystem.equals(newDatabaseSystem)==false) {
+			// --- Check if the DB system connector is available --------------
+			HibernateDatabaseService dbService = HibernateUtilities.getDatabaseService(newDatabaseSystem);
+			if (dbService==null) {
+				// --- No corresponding service found -------------------------
+				String newDatabaseSystemFallback = HibernateUtilities.getDatabaseSystemList().get(0);
+				if (newDatabaseSystemFallback==null || newDatabaseSystemFallback.equals(HibernateUtilities.DB_SERVICE_REGISTRATION_ERROR)) {
+					System.err.println("Not a single HibernateDatabaseService could be found. - Please, make sure to load and start the database connection bundles!");
+					return;
+				} else {
+					System.err.println("No HibernateDatabaseService could be found for the database system '" + newDatabaseSystem + "'. Please check, if the corresponding database bundle was loaded.");
+					newDatabaseSystem = newDatabaseSystemFallback;
+				}
+			}
+			// --- Set the database system selection --------------------------
 			this.databaseSystem = newDatabaseSystem;
 			if (isUpdateComboBox) this.getJComboBoxDbType().setSelectedItem(newDatabaseSystem);
 			this.setDatabaseSettingPanel(newDatabaseSystem);

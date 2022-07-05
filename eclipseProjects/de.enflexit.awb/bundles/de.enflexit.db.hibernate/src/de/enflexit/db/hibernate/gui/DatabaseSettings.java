@@ -115,8 +115,16 @@ public class DatabaseSettings implements Serializable {
 			
 			// --- Compare the database system name -------------------------------------
 			if (compareSettings.getDatabaseSystemName().equals(this.getDatabaseSystemName())==false) return false;
-			if (compareSettings.getHibernateDatabaseSettings().size()!=this.getHibernateDatabaseSettings().size()) return false;
 			
+			// --- Compare the hibernate database settings ------------------------------
+			Properties propertiesCompare = compareSettings.getHibernateDatabaseSettings();
+			Properties propertiesLocal = this.getHibernateDatabaseSettings();
+			if (propertiesCompare==null && propertiesLocal==null) return true;
+				
+			if ((propertiesCompare==null && propertiesLocal!=null) || (propertiesCompare!=null && propertiesLocal==null)) return false;
+			if (compareSettings.getHibernateDatabaseSettings().size()!=this.getHibernateDatabaseSettings().size()) return false;
+
+			// --- Compare each property and value --------------------------------------
 			ArrayList<?> propKeys = new ArrayList<>(compareSettings.getHibernateDatabaseSettings().keySet());
 			for (int i = 0; i < propKeys.size(); i++) {
 				String comparePropKey = (String) propKeys.get(i);
@@ -126,8 +134,8 @@ public class DatabaseSettings implements Serializable {
 					return false;
 				}
 			}
-			return true;
-			
+			return true;	
+
 		}
 		return false;
 	}
