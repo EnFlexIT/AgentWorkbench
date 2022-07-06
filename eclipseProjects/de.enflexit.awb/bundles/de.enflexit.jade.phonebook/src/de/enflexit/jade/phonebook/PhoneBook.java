@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -40,6 +41,8 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	
 	@XmlElementWrapper(name = "phoneBookEntries")
 	TreeMap<String, T> phoneBookContent;
+	
+	private Vector<PhoneBookListener> listeners;
 	
 	/**
 	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
@@ -94,6 +97,7 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 			if (persist==true) {
 				this.save();
 			}
+			this.notifyAdded(entry);
 			return true;
 		} else {
 			return false;
@@ -153,6 +157,8 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 		if (persist==true) {
 			this.save();
 		}
+		
+		this.notifyRemoved(entry);
 	}
 	
 	/**
@@ -308,5 +314,56 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 				
 		}
 		return pb;
+	}
+	
+	/**
+	 * Gets the listeners.
+	 * @return the listeners
+	 */
+	private Vector<PhoneBookListener> getListeners() {
+		if (listeners==null) {
+			listeners = new Vector<>();
+		}
+		return listeners;
+	}
+	
+	/**
+	 * Notifies the registered listeners about an added phone book entry.
+	 * @param addedEntry the added entry
+	 */
+	private void notifyAdded(AbstractPhoneBookEntry addedEntry) {
+		for (PhoneBookListener listener : this.getListeners()) {
+			listener.phoneBookEntryAdded(addedEntry);
+		}
+	}
+	
+	/**
+	 * Notifies the registered listeners about a removed phone book entry.
+	 * @param removedEntry the removed entry
+	 */
+	private void notifyRemoved(AbstractPhoneBookEntry removedEntry) {
+		for (PhoneBookListener listener : this.getListeners()) {
+			listener.phoneBookEntryRemoved(removedEntry);
+		}
+	}
+	
+	/**
+	 * Adds a phone book listener.
+	 * @param listener the listener
+	 */
+	public void addPhoneBookListener(PhoneBookListener listener) {
+		if (this.getListeners().contains(listener)==false) {
+			this.getListeners().add(listener);
+		}
+	}
+	
+	/**
+	 * Removes a phone book listener.
+	 * @param listener the listener
+	 */
+	public void removePhoneBookListener(PhoneBookListener listener) {
+		if (this.getListeners().contains(listener)==true) {
+			this.getListeners().remove(listener);
+		}
 	}
 }
