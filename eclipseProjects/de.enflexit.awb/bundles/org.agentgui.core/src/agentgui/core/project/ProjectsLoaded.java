@@ -246,7 +246,9 @@ public class ProjectsLoaded {
 			Application.setStatusBarMessageReady();
 			
 			// --- Make sure the start simulation button is enabled ---------------
-			Application.getMainWindow().setEnableSimStart(true);
+			if (Application.getJadePlatform().isMainContainerRunning()==false) {
+				Application.getMainWindow().setEnableSimStart(true);
+			}
 		}
 
 		// --- Inform ApplicationListener that the project was loaded ---------
