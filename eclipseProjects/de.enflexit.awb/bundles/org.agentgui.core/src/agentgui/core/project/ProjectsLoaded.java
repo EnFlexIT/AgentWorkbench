@@ -244,6 +244,9 @@ public class ProjectsLoaded {
 			newProject.plugInVectorInformSetupLoaded();
 			Application.setTitleAddition(newProject.getProjectName());
 			Application.setStatusBarMessageReady();
+			
+			// --- Make sure the start simulation button is enabled ---------------
+			Application.getMainWindow().setEnableSimStart(true);
 		}
 
 		// --- Inform ApplicationListener that the project was loaded ---------
