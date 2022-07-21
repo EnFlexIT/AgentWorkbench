@@ -8,7 +8,10 @@
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>0</updateDateLastChecked>
+    <updateDateLastChecked>1657471665324</updateDateLastChecked>
+    <updateAuthorization>
+        <authorizationType>NONE</authorizationType>
+    </updateAuthorization>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures/>
     <plugins>

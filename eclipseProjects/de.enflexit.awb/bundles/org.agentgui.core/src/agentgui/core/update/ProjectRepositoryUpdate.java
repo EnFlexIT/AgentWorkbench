@@ -414,9 +414,11 @@ public class ProjectRepositoryUpdate extends Thread {
 				
 			} else {
 				// --- Update last date checked -------------------------
+				boolean isUnsavedProject = this.currProject.isUnsaved();
 				this.currProject.setUpdateDateLastChecked(this.currTimeStamp);
-				if (this.isExecutedByUser()==false) {
-					this.currProject.save();	
+				if (this.isExecutedByUser()==false && isUnsavedProject==false) {
+					this.currProject.saveProjectFile();
+					this.currProject.setUnsaved(false);
 				}
 				
 				// --- No Update found ----------------------------------
@@ -429,6 +431,7 @@ public class ProjectRepositoryUpdate extends Thread {
 					this.printSystemOutput(updateMessage, false);
 				}
 			}
+			
 		} catch(ProjectRepositoryUpdateException | IllegalArgumentException ex) {
 			updateTitle = Language.translate("Update failed", Language.EN);
 			updateMessage = ex.getLocalizedMessage();

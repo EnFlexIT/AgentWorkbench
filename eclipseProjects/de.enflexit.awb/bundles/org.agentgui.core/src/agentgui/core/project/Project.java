@@ -586,16 +586,8 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		try {
 			
 			// --------------------------------------------
-			// --- Prepare Context and Marshaller ---------
-			JAXBContext pc = JAXBContext.newInstance(this.getClass());
-			Marshaller pm = pc.createMarshaller();
-			pm.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-			pm.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			
-			// --- Write values to xml-File ---------------
-			Writer pw = new FileWriter(projectPath + File.separator + Application.getGlobalInfo().getFileNameProject());
-			pm.marshal(this, pw);
-			pw.close();
+			// --- Save main project file -----------------
+			this.saveProjectFile(projectPath);
 			
 			// --------------------------------------------
 			// --- Save the userRuntimeObject -------------
@@ -640,6 +632,38 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		return successful;
 	}
 
+	/**
+	 * Just saves the main project file (agentgui.xml) of the current Project.
+	 */
+	public void saveProjectFile() {
+		try {
+			this.saveProjectFile(new File(this.getProjectFolderFullPath()));
+		} catch (JAXBException | IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Saves the main project file (agentgui.xml).
+	 *
+	 * @param projectPath the actual projects path
+	 * @throws JAXBException the JAXB exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public void saveProjectFile(File projectPath) throws JAXBException, IOException {
+					
+		// --- Prepare Context and Marshaller ---------
+		JAXBContext pc = JAXBContext.newInstance(this.getClass());
+		Marshaller pm = pc.createMarshaller();
+		pm.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		pm.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		
+		// --- Write values to xml-File ---------------
+		Writer pw = new FileWriter(projectPath + File.separator + Application.getGlobalInfo().getFileNameProject());
+		pm.marshal(this, pw);
+		pw.close();
+	}
+	
+	
 	/**
 	 * Saves the current user object as XML file.
 	 *

@@ -3,10 +3,16 @@
     <projectName>Game of Life</projectName>
     <projectStartTab>2|2</projectStartTab>
     <projectView>Developer</projectView>
+    <projectTreeVisible>true</projectTreeVisible>
+    <projectTabHeaderVisible>true</projectTabHeaderVisible>
+    <version>2.2.0.20220708-1000</version>
     <versionTag>Complete Project</versionTag>
-    <updateSite>http://update.agentgui.org</updateSite>
+    <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>0</updateDateLastChecked>
+    <updateDateLastChecked>1657268047371</updateDateLastChecked>
+    <updateAuthorization>
+        <authorizationType>NONE</authorizationType>
+    </updateAuthorization>
     <environmentModel>Squared</environmentModel>
     <projectFeatures/>
     <plugins/>
@@ -31,10 +37,6 @@
         <mtpCreation>ConfiguredByIPandPort</mtpCreation>
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
-        <keyStoreFile>D:\10 Java Projects\AgentGUI\resources\security\Agent-HyGridKeyStore.jks</keyStoreFile>
-        <keyStorePassword>MTIzNDU2</keyStorePassword>
-        <trustStoreFile>D:\10 Java Projects\AgentGUI\resources\security\Agent-HyGridTrustStore.jks</trustStoreFile>
-        <trustStorePassword>MTIzNDU2</trustStorePassword>
         <serviceList>
             <service>agentgui.logging.DebugService</service>
             <service>agentgui.simulationService.LoadService</service>
@@ -94,7 +96,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>1250 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>4050 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
     <simulationSetups>
         <entry>
