@@ -885,6 +885,8 @@ public class Platform {
 				String msgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
 				String msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
 				JOptionPane.showMessageDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.OK_OPTION);
+				// --- Since the simulation was not started, enable the start button again
+				Application.getMainWindow().setEnableSimStart(true);
 				return;	
 			} else {
 				Application.getProjectFocused().save();

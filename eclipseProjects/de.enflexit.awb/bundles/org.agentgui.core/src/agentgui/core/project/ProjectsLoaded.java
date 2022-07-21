@@ -244,6 +244,7 @@ public class ProjectsLoaded {
 			newProject.plugInVectorInformSetupLoaded();
 			Application.setTitleAddition(newProject.getProjectName());
 			Application.setStatusBarMessageReady();
+			
 		}
 
 		// --- Inform ApplicationListener that the project was loaded ---------
