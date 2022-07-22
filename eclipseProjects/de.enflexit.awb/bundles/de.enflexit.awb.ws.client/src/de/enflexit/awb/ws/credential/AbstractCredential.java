@@ -35,6 +35,7 @@ public abstract class AbstractCredential implements Serializable {
 	public String getName() {
 		return name;
 	}
+	
 	/**
 	 * Sets the name.
 	 * @param name the new name
@@ -43,4 +44,41 @@ public abstract class AbstractCredential implements Serializable {
 		this.name = name;
 	}
 	
+
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
+	public boolean isEmpty(){	
+		if(name!=null) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		boolean equals = true;
+		if (obj instanceof AbstractCredential) {
+			AbstractCredential abstCred = (AbstractCredential) obj;
+			if (abstCred.getID() != this.getID()) {
+				equals = false;
+			}
+
+			if (!abstCred.getName().equals(this.getName())) {
+				equals = false;
+			}
+		} else {
+			equals = false;
+		}
+
+		return equals;
+	}
 }

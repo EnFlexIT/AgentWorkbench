@@ -43,4 +43,36 @@ public class ApiKeyCredential extends AbstractCredential {
 		return apiKeyName;
 	}
 	
+	@Override
+	public boolean isEmpty() {
+		boolean empty=true;
+		empty=super.isEmpty();
+        if(!apiKeyName.isBlank()) {
+		empty=false;
+		}
+		
+        if(!apiKeyValue.isBlank()) {
+        empty=false;	
+		}		
+		return empty;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		boolean equals=super.equals(obj);
+		if(obj instanceof ApiKeyCredential) {
+			ApiKeyCredential cred=(ApiKeyCredential) obj;
+			if(!this.getApiKeyValue().equals(cred.getApiKeyValue())) {
+				equals=false;
+			}
+			
+			if(!this.getApiKeyName().equals(cred.getApiKeyName())) {
+				equals=false;
+			}
+		}else {
+			equals=false;
+		}
+		return equals;
+	}
+	
 }

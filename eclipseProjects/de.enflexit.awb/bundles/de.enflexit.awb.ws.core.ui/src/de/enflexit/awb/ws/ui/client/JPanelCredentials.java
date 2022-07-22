@@ -4,28 +4,36 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 
+import de.enflexit.awb.ws.client.WsCredentialStore;
+import de.enflexit.awb.ws.credential.AbstractCredential;
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 import de.enflexit.awb.ws.ui.client.credentials.JPanelApiKeyCredentials;
 
-public class JPanelCredentials extends JPanel {
+public class JPanelCredentials extends JPanel implements WsConfigurationInterface{
 	
 	private static final long serialVersionUID = -1252151357398930115L;
 	
 	private JLabel jLabelCredentialList;
 	private JScrollPane jScrollPaneCredentialList;
-	private JList jListCredentials;
+	private JList<AbstractCredential> jListCredentials;
 	private JPanelApiKeyCredentials jPanelApiKeyCredentials;
 	private GridBagConstraints gbc_jPanelApiKeyCredentials;
-	
-	
+
 	public JPanelCredentials() {
-		initialize();
+	initialize();
 	}
+	
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
@@ -66,9 +74,10 @@ public class JPanelCredentials extends JPanel {
 		}
 		return jScrollPaneCredentialList;
 	}
-	private JList getJListCredentials() {
+	public JList<AbstractCredential> getJListCredentials() {
 		if (jListCredentials == null) {
-			jListCredentials = new JList();
+			jListCredentials = new JList<AbstractCredential>();
+			jListCredentials.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		}
 		return jListCredentials;
 	}
@@ -77,5 +86,47 @@ public class JPanelCredentials extends JPanel {
 			jPanelApiKeyCredentials = new JPanelApiKeyCredentials();
 		}
 		return jPanelApiKeyCredentials;
+	}
+	
+    //---------------------------------------------------------------
+	//----------From here Methods to fill/control Components---------
+	//---------------------------------------------------------------
+	
+	public void fillCredentialJList() {
+		List<AbstractCredential> credentials=WsCredentialStore.getInstance().getCredentialList();
+		DefaultListModel<AbstractCredential> listModelRegisteredApis=new DefaultListModel<AbstractCredential>();
+		listModelRegisteredApis.addAll(credentials);
+		jListCredentials.setModel(listModelRegisteredApis);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
+	 */
+	@Override
+	public boolean hasUnsavedChanges() {
+		if (this.jListCredentials == null)
+			return false;
+
+		List<AbstractCredential> credentialList = WsCredentialStore.getInstance().getCredentialList();
+
+		ArrayList<AbstractCredential> credArrayList = new ArrayList<AbstractCredential>();
+
+		ListModel<AbstractCredential> credModel = jListCredentials.getModel();
+		for (int i = 0; i < credModel.getSize(); i++) {
+			AbstractCredential cred = credModel.getElementAt(i);
+			credArrayList.add(cred);
+		}
+
+		boolean sameList = credArrayList.equals(credentialList);
+		return sameList;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
+	 */
+	@Override
+	public boolean userConfirmedToChangeView() {
+		return hasUnsavedChanges();
 	}
 }

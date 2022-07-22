@@ -227,6 +227,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		if (this.editServerTreeNodeServer==null) return false;
 		return this.editServerTreeNodeServer.hasChangedJettySettings();
 	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
 	 */

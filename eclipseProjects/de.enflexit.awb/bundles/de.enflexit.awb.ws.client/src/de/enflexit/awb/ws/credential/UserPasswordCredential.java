@@ -11,8 +11,7 @@ public class UserPasswordCredential extends AbstractCredential {
 	
 	private String userName;
 	private String password;
-	
-	
+		
 	/**
 	 * Gets the user name.
 	 * @return the user name
@@ -41,6 +40,24 @@ public class UserPasswordCredential extends AbstractCredential {
 	 */
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		boolean equals=super.equals(obj);
+		if(obj instanceof UserPasswordCredential) {
+			UserPasswordCredential cred=(UserPasswordCredential) obj;
+			if(!this.getUserName().equals(cred.getUserName())) {
+				equals=false;
+			}
+			
+			if(!this.getPassword().equals(cred.getPassword())) {
+				equals=false;
+			}
+		}else {
+			equals=false;
+		}
+		return equals;
 	}
 
 }
