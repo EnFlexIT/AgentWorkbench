@@ -14,6 +14,8 @@ de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br>Please, sele
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
+de;AWB auf GitBook;AWB on GitBook;;;
+de;AWB auf GitHub;AWB on GitHub;;;
 de;AWB-Standard verwenden;Use AWB defaults;;;
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No open project!;;;

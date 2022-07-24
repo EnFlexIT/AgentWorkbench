@@ -29,8 +29,10 @@
 package agentgui.core.application;
 
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -60,7 +62,6 @@ import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
-import agentgui.core.gui.ChangeDialog;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.gui.Translation;
@@ -1062,20 +1063,18 @@ public class Application {
 	}
 
 	/**
-	 * Will show the ChangeDialog that displays the latest changes.
+	 * Will try to browse to the URI specified by the string (e.g. https://www.enflex.it).
+	 * @param uri the URI as String
 	 */
-	public static void showChangeDialog() {
-		ChangeDialog cd = null;
-		if (isRunningAsServer()==true) {
-			cd = new ChangeDialog(null);	
-		} else {
-			cd = new ChangeDialog(getMainWindow());
+	public static void browseURI(String uri) {
+		try {
+			URI linkURI = new URI(uri);
+			Desktop.getDesktop().browse(linkURI);
+		} catch (URISyntaxException | IOException ex) {
+			ex.printStackTrace();
 		}
-		cd.setVisible(true);
-		// - - - Wait for user - - - - - - - - -
-		cd.dispose();
 	}
-	
+
 	/**
 	 * Shows the eclipse workbench.
 	 */

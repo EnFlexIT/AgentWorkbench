@@ -1062,9 +1062,12 @@ public class MainWindow extends JFrame {
 			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
 			jMenuMainHelp.add(new CWMenuItem("HelpAbout", Language.translate("Über..."), "awb16.png"));
-			jMenuMainHelp.add(new CWMenuItem("HelpChanges", Language.translate("Letzte Änderungen"), null));
 			jMenuMainHelp.addSeparator();
-			jMenuMainHelp.add(new CWMenuItem("HelpUpdate", Language.translate("Nach Update suchen") + " !", null));
+			jMenuMainHelp.add(new CWMenuItem("HelpAWB-GitHub", Language.translate("AWB auf GitHub"), "GitHub.png"));
+			jMenuMainHelp.add(new CWMenuItem("HelpAWB-GitBook", Language.translate("AWB auf GitBook"), "GitBook.png"));
+			jMenuMainHelp.addSeparator();
+			jMenuMainHelp.add(new CWMenuItem("HelpUpdate", Language.translate("Nach Update suchen") + " !", "Update.png"));
+			jMenuMainHelp.add(new CWMenuItem("HelpAWBChanges", Language.translate("Letzte Änderungen"), null));
 			jMenuMainHelp.addSeparator();
 			jMenuMainHelp.add(new CWMenuItem("EclipseWindow", "Eclipse Window", "eclipse.png"));
 		}
@@ -1149,15 +1152,14 @@ public class MainWindow extends JFrame {
 			this.setActionCommand(actionCommand);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(ActionEvent ae) {
 			String actionCMD = ae.getActionCommand();
 
-			// --- Menu Projekt -------------------------------
+			// --- Menu Project -------------------------------------
 			if (actionCMD.equalsIgnoreCase("ProjectNew")) {
 				Application.getProjectsLoaded().add(true);
 
@@ -1190,14 +1192,14 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("ApplicationQuit")) {
 				Application.stop();
 
-				// --- Menu View ---------------------------------
+			// --- Menu View ----------------------------------------
 			} else if (actionCMD.equalsIgnoreCase("ViewConsole")) {
 				Application.getMainWindow().doSwitchConsole();
 
 			} else if (actionCMD.equalsIgnoreCase("ViewHeapMonitor")) {
 				Application.getMainWindow().getStatusBar().doSwitchHeapMonitorVisibility();
 				
-				// --- Menu Jade ----------------------------------
+			// --- Menu Jade ----------------------------------------
 			} else if (actionCMD.equalsIgnoreCase("JadeStart")) {
 				Application.getJadePlatform().doStartInDedicatedThread();
 
@@ -1225,7 +1227,7 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("PopLog")) {
 				Application.getJadePlatform().startSystemAgent(SystemAgent.Log, null);
 
-				// --- Menu Simulation ----------------------------
+			// --- Menu Simulation ----------------------------------
 			} else if (actionCMD.equalsIgnoreCase("SimulationStart")) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
@@ -1260,15 +1262,21 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("Authentication")) {
 				Application.showAuthenticationDialog();
 
-				// --- Menu Hilfe ---------------------------------
-			} else if (actionCMD.equalsIgnoreCase("HelpUpdate")) {
-				new AWBUpdater(true).start();
-
-			} else if (actionCMD.equalsIgnoreCase("HelpChanges")) {
-				Application.showChangeDialog();
-
+			// --- Help Menu ----------------------------------------
 			} else if (actionCMD.equalsIgnoreCase("HelpAbout")) {
 				Application.showAboutDialog();
+				
+			} else if (actionCMD.equalsIgnoreCase("HelpAWB-GitHub")) {
+				Application.browseURI("https://github.com/EnFlexIT/AgentWorkbench");
+
+			} else if (actionCMD.equalsIgnoreCase("HelpAWB-GitBook")) {
+				Application.browseURI("https://enflexit.gitbook.io/agent-workbench/");
+
+			} else if (actionCMD.equalsIgnoreCase("HelpAWBChanges")) {
+				Application.browseURI("https://github.com/EnFlexIT/AgentWorkbench/releases");
+				
+			} else if (actionCMD.equalsIgnoreCase("HelpUpdate")) {
+				new AWBUpdater(true).start();
 
 			} else if (actionCMD.equalsIgnoreCase("EclipseWindow")) {
 				Application.showEclipseWorkbench();
@@ -1576,7 +1584,7 @@ public class MainWindow extends JFrame {
 			} else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 			}
-			;
+			
 
 		};
 	};
