@@ -112,6 +112,7 @@ public class Application {
 	
 	/** This attribute holds the current state of the configurable runtime informations */
 	private static GlobalInfo globalInfo;
+	private static Object globalInfoSynchronizerForInitialization = new Object();
 	/** Here the tray icon of the application can be accessed */
 	private static AwbTrayIcon trayIcon;
 	/** This is the instance of the main application window */
@@ -275,10 +276,15 @@ public class Application {
 	 */
 	public static GlobalInfo getGlobalInfo() {
 		if (Application.globalInfo==null) {
-			Application.globalInfo = new GlobalInfo();
-			Application.globalInfo.initialize();
-			if (Application.globalInfo.isLoggingEnabled()==true) {
-				startLogFileWriter();
+			// --- Avoid double initialization ----------------------
+			synchronized (globalInfoSynchronizerForInitialization) {
+				if (Application.globalInfo==null) {
+					Application.globalInfo = new GlobalInfo();
+					Application.globalInfo.initialize();
+					if (Application.globalInfo.isLoggingEnabled()==true) {
+						startLogFileWriter();
+					}
+				}
 			}
 		}
 		return Application.globalInfo;
@@ -396,6 +402,7 @@ public class Application {
 			// ------------------------------------------------------
 			getConsole();
 			getGlobalInfo();
+			startBundleEvaluation();
 			
 			new LoadMeasureThread().start();  
 			startAgentWorkbench();
@@ -603,9 +610,6 @@ public class Application {
 			getTrayIcon(); 
 			getProjectsLoaded();
 
-			// --- Define filter for bundle class search ------------
-			BundleClassFilterCollector.collectAndDefineSetOfBundleClassFilter();
-			
 			startMainWindow(new Runnable() {
 				@Override
 				public void run() {
@@ -625,9 +629,6 @@ public class Application {
 					
 					// --- Open project? ----------------------------
 					proceedStartArgumentOpenProject();
-					
-					// --- Start the bundle evaluation process ------
-					startBundleEvaluation();
 					
 				}
 			});
@@ -1243,16 +1244,21 @@ public class Application {
 	}
 	
 	/**
-	 * Starts the bundle evaluation for specific classes.
+	 * Starts the bundle evaluation for specific classes if required.
 	 */
 	private static void startBundleEvaluation() {
 		
-		// -- Create a new thread that waits for the end of the benchmark before starting the evaluation threads ----
+		// --- Check if to start the BundleEvaluator ---------------- 
+		if (Application.getGlobalInfo().isStartBundleEvaluator()==false) return;
+		
+		// -- Create a new thread that starts the evaluations -------
 		Thread evaluatorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// --- Wait for the SessionFactory creation --------- 
 				HibernateUtilities.waitForSessionFactoryCreation();
+				// --- Define filter for bundle class search --------
+				BundleClassFilterCollector.collectAndDefineSetOfBundleClassFilter();
 				// --- Evaluate the already loaded bundles ----------
 				BundleEvaluator.getInstance().evaluateAllBundles();
 				// --- Evaluate the features ------------------------

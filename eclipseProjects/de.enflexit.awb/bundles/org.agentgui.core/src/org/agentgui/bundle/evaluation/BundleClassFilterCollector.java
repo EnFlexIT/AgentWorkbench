@@ -28,14 +28,10 @@
  */
 package org.agentgui.bundle.evaluation;
 
+import java.util.List;
 import java.util.Vector;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
@@ -71,7 +67,7 @@ public class BundleClassFilterCollector {
 		// ----------------------------------------------------------
 		// --- Check for filter services ----------------------------
 		// ----------------------------------------------------------
-		Vector<BundleClassFilterService> filterServices = getBundleClassFilterServices();
+		List<BundleClassFilterService> filterServices = ServiceFinder.findServices(BundleClassFilterService.class);
 		for (int i=0; i<filterServices.size(); i++) {
 			
 			BundleClassFilterService bcfService = filterServices.get(i);
@@ -86,37 +82,6 @@ public class BundleClassFilterCollector {
 			}
 		}
 		
-	}
-	
-	/**
-	 * Returns the available bundle class filter services.
-	 * @return the bundle class filter services
-	 */
-	private static Vector<BundleClassFilterService> getBundleClassFilterServices() {
-		
-		Vector<BundleClassFilterService> bcfServices = new Vector<>();
-		
-		// --- Dynamically check for corresponding OSGI services ----
-		Bundle bundle = FrameworkUtil.getBundle(BundleClassFilterCollector.class);
-		if (bundle!=null) {
-			try {
-				// --- Get context and services ---------------------
-				BundleContext context =  bundle.getBundleContext();
-				if (context!=null) {
-					ServiceReference<?>[] serviceRefs = context.getAllServiceReferences(BundleClassFilterService.class.getName(), null);
-					if (serviceRefs!=null) {
-						for (int i = 0; i < serviceRefs.length; i++) {
-							BundleClassFilterService bcfService = (BundleClassFilterService) context.getService(serviceRefs[i]);
-							bcfServices.add(bcfService);
-						}
-					}	
-				}
-				
-			} catch (InvalidSyntaxException isEx) {
-				isEx.printStackTrace();
-			}
-		}		
-		return bcfServices;
 	}
 	
 }

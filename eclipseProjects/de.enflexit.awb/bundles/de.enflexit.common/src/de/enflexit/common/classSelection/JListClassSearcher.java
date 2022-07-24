@@ -53,7 +53,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	private Vector<String> exclusiveBundleNames;
 
 	private AbstractBundleClassFilter bundleClassFilter;
-	private SortedListModel<ClassElement2Display> currListModel;
+	private SortedListModel<ClassElement2Display> listModel;
 	
 	private ArrayList<JListClassSearcherListener> listenerList;
 	
@@ -62,13 +62,12 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	
 	
 	/**
-	 * This constructor was only build to enable the use of the Visual Editor  
+	 * This constructor is only used by the WindowBBuilder  
 	 */
 	@Deprecated
 	public JListClassSearcher() {
 		super();
 	}
-	
 	/**
 	 * Instantiates a new JList that presents or searches for specific classes.
 	 * @param classToSearchFor the class to search for
@@ -85,7 +84,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	public JListClassSearcher(Class<?> classToSearchFor, Vector<String> exclusiveBundleNames) {
 		super();
 		this.class2Search4 = classToSearchFor;
-		this.exclusiveBundleNames = exclusiveBundleNames;
+		this.setExclusiveBundleNames(exclusiveBundleNames);
 		this.setModel(this.getListModel());
 	}
 	
@@ -101,11 +100,19 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * Returns the exclusive bundle names, if any.
 	 * @return the exclusive bundle names
 	 */
-	private Vector<String> getExclusiveBundleNames() {
+	public Vector<String> getExclusiveBundleNames() {
 		if (exclusiveBundleNames==null) {
 			exclusiveBundleNames = new Vector<>();
 		}
 		return exclusiveBundleNames;
+	}
+	/**
+	 * Sets the exclusive bundle names.
+	 * @param exclusiveBundleNames the new exclusive bundle names of <code>null</code>
+	 */
+	public void setExclusiveBundleNames(Vector<String> exclusiveBundleNames) {
+		this.exclusiveBundleNames = exclusiveBundleNames;
+		this.setModelFiltered(textSearchFor, textExcludePackage);
 	}
 	
 	/**
@@ -145,11 +152,11 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * @return the list model of {@link ClassElement2Display}
 	 */
 	public synchronized SortedListModel<ClassElement2Display> getListModel() {
-		if (currListModel==null) {
-			currListModel = new SortedListModel<>();
+		if (listModel==null) {
+			listModel = new SortedListModel<>();
 			this.getBundleClassFilter().addBundleClassFilterListener(this);			
 		}
-		return currListModel;
+		return listModel;
 	}
 	/**
 	 * Adds the specified element to the list model considering the Swing environment.
@@ -159,9 +166,9 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				getListModel().add(ce2d);
+				JListClassSearcher.this.getListModel().add(ce2d);
 				if (textSearchFor!=null || textExcludePackage!=null) {
-					setModelFiltered(textSearchFor, textExcludePackage);
+					JListClassSearcher.this.setModelFiltered(textSearchFor, textExcludePackage);
 				}
 			}
 		});
@@ -174,41 +181,24 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				getListModel().removeElement(ce2d);
+				JListClassSearcher.this.getListModel().removeElement(ce2d);
+				if (textSearchFor!=null || textExcludePackage!=null) {
+					JListClassSearcher.this.setModelFiltered(textSearchFor, textExcludePackage);
+				}
 			}
 		});
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.bundleEvaluation.BundleClassFilterListener#addClassFound(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void addClassFound(String className, String symbolicBundleName) {
-		
 		ClassElement2Display ce2d = new ClassElement2Display(className, symbolicBundleName);
-		boolean isInformListener = false;
-		
-		if (this.getExclusiveBundleNames().size()==0) {
-			// --- Simply add the class found in the list model ----- 
-			this.addToListModel(ce2d);
-			isInformListener = true;
-		} else {
-			// --- Check, if the class is out of the exclusive bundle -------
-			for (int i = 0; i < this.getExclusiveBundleNames().size(); i++) {
-				String exBundleName = this.getExclusiveBundleNames().get(i);
-				if (exBundleName!=null && exBundleName.trim().equals("")==false) {
-					if (symbolicBundleName.equals(exBundleName)) {
-						this.addToListModel(ce2d);
-						isInformListener = true;
-					}
-				}
-			}
-		}
-		// --- Inform listener --------------------------------------
-		if (isInformListener==true) {
-			for (JListClassSearcherListener listener : this.getListenerList()) {
-				listener.addClassFound(ce2d);
-			}
+		this.addToListModel(ce2d);
+		for (JListClassSearcherListener listener : this.getListenerList()) {
+			listener.addClassFound(ce2d);
 		}
 	}
 	/* (non-Javadoc)
@@ -254,7 +244,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 		}
 		
 		// --- Set required list model -------------------- 
-		if (this.textSearchFor==null && this.textExcludePackage==null) {
+		if (this.textSearchFor==null && this.textExcludePackage==null && this.getExclusiveBundleNames().size()==0) {
 			// --- No filter => use full list -------------
 			this.setModel(this.getListModel());
 		
@@ -263,24 +253,27 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 			SortedListModel<ClassElement2Display> tmpListModel = new SortedListModel<ClassElement2Display>();
 			for (int i =0; i<this.getListModel().getSize();i++) {
 				
+				boolean addToTmpList = true;
 				ClassElement2Display ce2d = this.getListModel().get(i);
 				String compareString = ce2d.toString().toLowerCase();
-				boolean addForClassDescription = true;
-				if (this.textSearchFor!=null) {
-					addForClassDescription = compareString.contains(this.textSearchFor.toLowerCase());
+				String bundleName = ce2d.getBundleName();
+				
+				// --- Check for 'textSearchFor' --------------------
+				if (this.textSearchFor!=null && this.textSearchFor.isBlank()==false) {
+					addToTmpList = compareString.contains(this.textSearchFor.toLowerCase());
+				}
+				// --- Check for 'textExcludePackage' ---------------
+				if (addToTmpList==true && this.textExcludePackage!=null && this.textExcludePackage.isBlank()==false) {
+					addToTmpList = (ce2d.getClassElement().toLowerCase().startsWith(this.textExcludePackage.toLowerCase())==false);
+				}
+				// --- Check to exclude bundles ---------------------
+				if (addToTmpList==true && this.getExclusiveBundleNames().size()>0) {
+					addToTmpList = this.getExclusiveBundleNames().contains(bundleName);
 				}
 				
-				if (this.textExcludePackage==null) {
-					if (addForClassDescription==true) {
-						tmpListModel.addElement(ce2d);
-					}
-					
-				} else {
-					boolean addForPackageExclude = ce2d.getClassElement().startsWith(this.textExcludePackage.toLowerCase())==false;
-					if (addForClassDescription==true && addForPackageExclude==true) {
-						tmpListModel.addElement(ce2d);
-					}
-					
+				// --- Finally: add to tmp list model --------------- 
+				if (addToTmpList==true) {
+					tmpListModel.addElement(ce2d);
 				}
 				
 			}

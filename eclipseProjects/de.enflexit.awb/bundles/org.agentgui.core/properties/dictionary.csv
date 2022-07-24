@@ -10,7 +10,7 @@ de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing se
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please, choose a different name for the setup.;;;
-de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br>Please, select a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
@@ -80,6 +80,7 @@ de;Arbeitsspeicher;Memory
 de;Argument;argument
 de;Art der Darstellung;Type of display;;;
 de;Auktualisierung der Projekt-MANIFEST.MF;Updating the project MANIFEST.MF;;;
+de;Aus allen Bundeln;From all bundles;;;
 de;Ausführen als;Run as;;;
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
@@ -113,7 +114,7 @@ de;Beschriftungen anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
-de;Bitte geben Sie einen Agenten-Namen an;;;;
+de;Bitte geben Sie einen Agenten-Namen an;Please, specify an agent name;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte geben Sie einen Projektnamen an!<br><br>Zulässig sind beliebige Zeichen <br>sowie Leerzeichen.;Please, enter a project name! <br> <br>All Characters and spaces are allowed.;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
@@ -257,7 +258,7 @@ de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Date
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
-de;Fehlender Agent Name!;;;;
+de;Fehlender Agent Name!;Missing agent name!;;;
 de;Fehlender Agent!;Missing Agent!;;;
 de;Fehlender Benutzer;Missing user name;;;
 de;Fehlendes Passwort;Missing password;;;
@@ -490,7 +491,7 @@ de;Netzwerk-Komponenten;Network Components;;;
 de;Netzwerkkomponente umbenennen;Rename network component;;;
 de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
-de;Netzwerkmodell exportieren;;;;
+de;Netzwerkmodell exportieren;Export network model;;;
 de;Netzwerkmodell importieren;Import network model ;;;
 de;Netzwerkmodell leeren;Clear network model;;;
 de;Neu laden;Reload;;;
@@ -510,6 +511,7 @@ de;Neustart;Restart;;;
 de;Nicht definiert;Not defined
 de;Nicht eindeutige Komponentenauswahl !;Non-unique component selection !;;;
 de;Nur Nicht-JADE-Ontologien;Only non-JADE ontologies
+de;Nur aus Projekt-Bundeln;Only from project bundles;;;
 de;Nächste Datenreihe;Next Data Series;;;
 de;Nächster Datensatz (STRG+DOWN);Next Record (CTRL + DOWN)
 de;OK;OK
@@ -669,6 +671,7 @@ de;Stop;Stop
 de;Stunde;Hour;;;
 de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
+de;Suche Agenten;Search Agent;;;
 de;Suche löschen;Clear Search;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach Updates;Looking for updates;;;
@@ -767,6 +770,7 @@ de;X Wert;X value;;;
 de;X-Duplikate zulassen;Allow duplicate X-Values;;;
 de;XML-Dateien;XML files
 de;XML;XML
+de;Zeige Agenten;Show Agents;;;
 de;Zeile entfernen;Remove Row;;;
 de;Zeile hinzufügen;Add Row;;;
 de;Zeit-Format;Time format;;;

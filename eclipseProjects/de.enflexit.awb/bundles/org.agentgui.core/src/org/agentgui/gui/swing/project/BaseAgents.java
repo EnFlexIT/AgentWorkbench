@@ -35,11 +35,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -71,6 +74,7 @@ import de.enflexit.common.ontology.AgentStartArgument;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
 import de.enflexit.common.ontology.gui.OntologyInstanceDialog;
 import jade.core.Agent;
+import javax.swing.JRadioButton;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Agents'
@@ -87,12 +91,13 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	private String agentReference;
 	private String ontoReference;
 	
-	private JLabel jLabelAgent;
-	private JTextField jTextAgent;
+	private JLabel jLabelSearchAgent;
+	private JTextField jTextAgentSearch;
 	private JLabel jLabelStart;
 	private JTextField jTextAgentStartAs;
 	private JButton jButtonStartAgent;
-	private JListClassSearcher jAgentList;
+	private JListClassSearcher jListAgentFound;
+	
 	private JPanel jPanelReferences;
 	private JScrollPane jScrollReferences;
 	private JList<AgentStartArgument> jListReferences;
@@ -113,6 +118,10 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	private JPanel jPanelEast;
 	private JPanel jPanelEastTop;
 	private JButton jButtonRename;
+	private JPanel jPanelListSeelction;
+	private JLabel jLabelBundleSelection;
+	private JRadioButton jRadioButtonAgentsShowAll;
+	private JRadioButton jRadioButtonAgentsShowFromProjectBundle;
 	
 	/**
 	 * This is the default constructor.
@@ -125,18 +134,22 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		this.initialize();	
 		
 		// --- Translate text modules ---------------------
-		jLabelAgent.setText(Language.translate("Agent:"));
-		jLabelStart.setText(Language.translate("Starten als:"));
+		jLabelSearchAgent.setText(Language.translate("Suche Agenten") + ":");
+		jLabelStart.setText(Language.translate("Starten als:")); 
 		jLabelRecerence.setText(Language.translate("Start-Objekte aus Projekt-Ontologie"));
 		jLabelOntologie.setText(Language.translate("Projekt-Ontologie"));
+
+		this.getJLabelBundleSelection().setText(Language.translate("Zeige Agenten") + ":");
+		this.getJRadioButtonAgentsShowAll().setText(Language.translate("Aus allen Bundeln"));
+		this.getJRadioButtonAgentsShowFromProjectBundle().setText(Language.translate("Nur aus Projekt-Bundeln"));
 		
-		jButtonStartAgent.setToolTipText(Language.translate("Agent starten..."));
-		jButtonMoveUp.setToolTipText(Language.translate("Objekt nach oben"));
-		jButtonMoveDown.setToolTipText(Language.translate("Objekt nach unten"));
-		jButtonRename.setToolTipText(Language.translate("Ontologie Referenz benennen"));
-		jButtonRemoveAll.setToolTipText(Language.translate("Alle Objekte löschen"));
-		jButtonReferencesAdd.setToolTipText(Language.translate("Objekt hinzufügen"));
-		jButtonReferencesRemove.setToolTipText(Language.translate("Objekt entfernen"));
+		this.getJButtonStartAgent().setToolTipText(Language.translate("Agent starten..."));
+		this.getJButtonMoveUp().setToolTipText(Language.translate("Objekt nach oben"));
+		this.getJButtonMoveDown().setToolTipText(Language.translate("Objekt nach unten"));
+		this.getJButtonRename().setToolTipText(Language.translate("Ontologie Referenz benennen"));
+		this.getJButtonRemoveAll().setToolTipText(Language.translate("Alle Objekte löschen"));
+		this.getJButtonReferencesAdd().setToolTipText(Language.translate("Objekt hinzufügen"));
+		this.getJButtonReferencesRemove().setToolTipText(Language.translate("Objekt entfernen"));
 		
 		this.OntoTreeExpand2Level(3, true);
 	}
@@ -146,13 +159,6 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	 * @return void
 	 */
 	private void initialize() {
-		jLabelAgent = new JLabel();
-		jLabelAgent.setText("Agent:");
-		jLabelAgent.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelStart = new JLabel();
-		jLabelStart.setText("Starten als:");
-		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 12));
-
 		
 		this.setOneTouchExpandable(false);
 		this.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
@@ -161,6 +167,14 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		this.setSize(new Dimension(1003, 568));
 		this.setLeftComponent(this.getJPanelWest());
 		this.setRightComponent(this.getJPanelEast());
+		
+		// --- Disable radio buttons? -------------------------------
+		if (this.currProject.getBundles().size()==0) {
+			this.getJLabelBundleSelection().setEnabled(false);
+			this.getJRadioButtonAgentsShowAll().setEnabled(false);
+			this.getJRadioButtonAgentsShowFromProjectBundle().setEnabled(false);
+		}
+		
 	}
 	/**
 	 * This method initializes jPanelEast	
@@ -191,37 +205,111 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	 */
 	private JPanel getJPanelWest() {
 		if (jPanelWest == null) {
-			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-			gridBagConstraints18.fill = GridBagConstraints.BOTH;
-			gridBagConstraints18.gridy = 1;
-			gridBagConstraints18.weightx = 1.0;
-			gridBagConstraints18.weighty = 1.0;
-			gridBagConstraints18.gridwidth = 2;
-			gridBagConstraints18.insets = new Insets(0, 10, 0, 5);
-			gridBagConstraints18.ipady = 0;
-			gridBagConstraints18.gridx = 0;
 			
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.gridwidth = 1;
-			gridBagConstraints.gridx = 1;
-			gridBagConstraints.gridy = 0;
-			gridBagConstraints.weightx = 0.0;
-			gridBagConstraints.insets = new Insets(10, 0, 10, 5);
+			jLabelSearchAgent = new JLabel();
+			jLabelSearchAgent.setText("Suche Agenten:");
+			jLabelSearchAgent.setFont(new Font("Dialog", Font.BOLD, 12));
 			
-			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.insets = new Insets(10, 10, 10, 5);
-			gridBagConstraints9.gridy = 0;
-			gridBagConstraints9.gridx = 0;
+			ButtonGroup bgBundleSelection = new ButtonGroup();  
+			bgBundleSelection.add(this.getJRadioButtonAgentsShowAll());
+			bgBundleSelection.add(this.getJRadioButtonAgentsShowFromProjectBundle());
+			
+			GridBagLayout gbl_jPanelWest = new GridBagLayout();
+			gbl_jPanelWest.rowWeights = new double[]{0.0, 0.0, 0.0};
+			gbl_jPanelWest.columnWeights = new double[]{0.0, 0.0};
+			
+			GridBagConstraints gbc_JLabelAgentSearch = new GridBagConstraints();
+			gbc_JLabelAgentSearch.insets = new Insets(10, 10, 0, 5);
+			gbc_JLabelAgentSearch.gridx = 0;
+			gbc_JLabelAgentSearch.gridy = 0;
+			
+			GridBagConstraints gbc_jTextAgentSearch = new GridBagConstraints();
+			gbc_jTextAgentSearch.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextAgentSearch.gridwidth = 1;
+			gbc_jTextAgentSearch.insets = new Insets(10, 0, 0, 5);
+			gbc_jTextAgentSearch.weightx = 0.0;
+			gbc_jTextAgentSearch.gridx = 1;
+			gbc_jTextAgentSearch.gridy = 0;
+			
+			GridBagConstraints gbc_jPanelListSeelction = new GridBagConstraints();
+			gbc_jPanelListSeelction.insets = new Insets(10, 10, 0, 5);
+			gbc_jPanelListSeelction.gridwidth = 2;
+			gbc_jPanelListSeelction.fill = GridBagConstraints.BOTH;
+			gbc_jPanelListSeelction.gridx = 0;
+			gbc_jPanelListSeelction.gridy = 1;
+			
+			GridBagConstraints gbc_JListAgentsFound = new GridBagConstraints();
+			gbc_JListAgentsFound.fill = GridBagConstraints.BOTH;
+			gbc_JListAgentsFound.weightx = 1.0;
+			gbc_JListAgentsFound.weighty = 1.0;
+			gbc_JListAgentsFound.gridwidth = 2;
+			gbc_JListAgentsFound.insets = new Insets(10, 10, 0, 5);
+			gbc_JListAgentsFound.ipady = 0;
+			gbc_JListAgentsFound.gridx = 0;
+			gbc_JListAgentsFound.gridy = 2;
 			
 			jPanelWest = new JPanel();
-			jPanelWest.setLayout(new GridBagLayout());
-			jPanelWest.add(getJAgentList(), gridBagConstraints18);
-			jPanelWest.add(jLabelAgent, gridBagConstraints9);
-			jPanelWest.add(getJTextAgent(), gridBagConstraints);
+			jPanelWest.setLayout(gbl_jPanelWest);
+			jPanelWest.add(jLabelSearchAgent, gbc_JLabelAgentSearch);
+			jPanelWest.add(getJPanelListSeelction(), gbc_jPanelListSeelction);
+			jPanelWest.add(getJListAgentsFound(), gbc_JListAgentsFound);
+			jPanelWest.add(getJTextAgentSearch(), gbc_jTextAgentSearch);
 		}
 		return jPanelWest;
 	}
+	
+	private JPanel getJPanelListSeelction() {
+		if (jPanelListSeelction == null) {
+			jPanelListSeelction = new JPanel();
+			GridBagLayout gbl_jPanelListSeelction = new GridBagLayout();
+			gbl_jPanelListSeelction.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelListSeelction.rowHeights = new int[]{0, 0};
+			gbl_jPanelListSeelction.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelListSeelction.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelListSeelction.setLayout(gbl_jPanelListSeelction);
+			GridBagConstraints gbc_jLabelListSeledctionCaption = new GridBagConstraints();
+			gbc_jLabelListSeledctionCaption.gridx = 0;
+			gbc_jLabelListSeledctionCaption.gridy = 0;
+			jPanelListSeelction.add(getJLabelBundleSelection(), gbc_jLabelListSeledctionCaption);
+			GridBagConstraints gbc_jRadioButtonAgentsShowAll = new GridBagConstraints();
+			gbc_jRadioButtonAgentsShowAll.insets = new Insets(0, 10, 0, 0);
+			gbc_jRadioButtonAgentsShowAll.gridx = 1;
+			gbc_jRadioButtonAgentsShowAll.gridy = 0;
+			jPanelListSeelction.add(getJRadioButtonAgentsShowAll(), gbc_jRadioButtonAgentsShowAll);
+			GridBagConstraints gbc_jRadioButtonAgentsShowFromProjectBundle = new GridBagConstraints();
+			gbc_jRadioButtonAgentsShowFromProjectBundle.insets = new Insets(0, 10, 0, 0);
+			gbc_jRadioButtonAgentsShowFromProjectBundle.gridx = 2;
+			gbc_jRadioButtonAgentsShowFromProjectBundle.gridy = 0;
+			jPanelListSeelction.add(getJRadioButtonAgentsShowFromProjectBundle(), gbc_jRadioButtonAgentsShowFromProjectBundle);
+		}
+		return jPanelListSeelction;
+	}
+	private JLabel getJLabelBundleSelection() {
+		if (jLabelBundleSelection == null) {
+			jLabelBundleSelection = new JLabel("Zeige Agenten:");
+			jLabelBundleSelection.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelBundleSelection;
+	}
+	private JRadioButton getJRadioButtonAgentsShowAll() {
+		if (jRadioButtonAgentsShowAll == null) {
+			jRadioButtonAgentsShowAll = new JRadioButton("Aus allen Bundeln");
+			jRadioButtonAgentsShowAll.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonAgentsShowAll.setSelected(true);
+			jRadioButtonAgentsShowAll.addActionListener(this);
+		}
+		return jRadioButtonAgentsShowAll;
+	}
+	private JRadioButton getJRadioButtonAgentsShowFromProjectBundle() {
+		if (jRadioButtonAgentsShowFromProjectBundle == null) {
+			jRadioButtonAgentsShowFromProjectBundle = new JRadioButton("Nur aus Projekt-Bundeln");
+			jRadioButtonAgentsShowFromProjectBundle.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonAgentsShowFromProjectBundle.setSelected(true);
+			jRadioButtonAgentsShowFromProjectBundle.addActionListener(this);
+		}
+		return jRadioButtonAgentsShowFromProjectBundle;
+	}
+	
 	/**
 	 * This method initializes jPanelEastTop	
 	 * @return javax.swing.JPanel	
@@ -229,26 +317,33 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	private JPanel getJPanelEastTop() {
 		if (jPanelEastTop == null) {
 			
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.fill = GridBagConstraints.NONE;
-			gridBagConstraints3.gridx = -1;
-			gridBagConstraints3.gridy = -1;
-			gridBagConstraints3.insets = new Insets(0, 0, 0, 10);
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints2.gridx = -1;
-			gridBagConstraints2.gridy = -1;
-			gridBagConstraints2.weightx = 0.1;
-			gridBagConstraints2.insets = new Insets(10, 0, 10, 5);
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.insets = new Insets(10, 5, 10, 5);
-			gridBagConstraints1.gridy = -1;
-			gridBagConstraints1.gridx = -1;
+			jLabelStart = new JLabel();
+			jLabelStart.setText("Starten als:");
+			jLabelStart.setFont(new Font("Dialog", Font.BOLD, 12));
+			
+			GridBagConstraints gbc_JLabelStart = new GridBagConstraints();
+			gbc_JLabelStart.insets = new Insets(10, 5, 10, 5);
+			gbc_JLabelStart.gridy = -1;
+			gbc_JLabelStart.gridx = -1;
+
+			GridBagConstraints gbc_JButtonStartAgent = new GridBagConstraints();
+			gbc_JButtonStartAgent.fill = GridBagConstraints.NONE;
+			gbc_JButtonStartAgent.gridx = -1;
+			gbc_JButtonStartAgent.gridy = -1;
+			gbc_JButtonStartAgent.insets = new Insets(0, 0, 0, 10);
+			
+			GridBagConstraints gbc_JTextAgentStartAs = new GridBagConstraints();
+			gbc_JTextAgentStartAs.fill = GridBagConstraints.HORIZONTAL;
+			gbc_JTextAgentStartAs.gridx = -1;
+			gbc_JTextAgentStartAs.gridy = -1;
+			gbc_JTextAgentStartAs.weightx = 0.1;
+			gbc_JTextAgentStartAs.insets = new Insets(10, 0, 10, 5);
+			
 			jPanelEastTop = new JPanel();
 			jPanelEastTop.setLayout(new GridBagLayout());
-			jPanelEastTop.add(jLabelStart, gridBagConstraints1);
-			jPanelEastTop.add(getJTextAgentStartAs(), gridBagConstraints2);
-			jPanelEastTop.add(getJButtonStartAgent(), gridBagConstraints3);
+			jPanelEastTop.add(jLabelStart, gbc_JLabelStart);
+			jPanelEastTop.add(getJTextAgentStartAs(), gbc_JTextAgentStartAs);
+			jPanelEastTop.add(getJButtonStartAgent(), gbc_JButtonStartAgent);
 		}
 		return jPanelEastTop;
 	}
@@ -328,14 +423,19 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	 * This method initializes jTextAgent	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getJTextAgent() {
-		if (jTextAgent == null) {
-			jTextAgent = new JTextField();
-			jTextAgent.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextAgent.setEditable(false);
-			jTextAgent.setPreferredSize(new Dimension(200, 26));
+	private JTextField getJTextAgentSearch() {
+		if (jTextAgentSearch == null) {
+			jTextAgentSearch = new JTextField();
+			jTextAgentSearch.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextAgentSearch.setPreferredSize(new Dimension(200, 26));
+			jTextAgentSearch.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent ke) {
+					BaseAgents.this.getJListAgentsFound().setModelFiltered(BaseAgents.this.getJTextAgentSearch().getText());
+				}
+			});
 		}
-		return jTextAgent;
+		return jTextAgentSearch;
 	}
 	/**
 	 * This method initializes jTextAgentStartAs	
@@ -413,7 +513,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = GridBagConstraints.BOTH;
 			gridBagConstraints6.weighty = 1.0;
-			gridBagConstraints6.insets = new Insets(0, 5, 5, 5);
+			gridBagConstraints6.insets = new Insets(10, 5, 5, 5);
 			gridBagConstraints6.gridheight = 3;
 			gridBagConstraints6.gridwidth = 3;
 			gridBagConstraints6.gridy = 1;
@@ -649,19 +749,19 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
     }
     
 	/**
-	 * This method initializes jAgentList	
-	 * @return javax.swing.JListClassSearcher
+	 * Return the JList of the agents found.
+	 * @return the JList to show the agents found
 	 */
-	private JListClassSearcher getJAgentList() {
-		if (jAgentList == null) {
-			jAgentList = new JListClassSearcher(Agent.class, this.currProject.getBundleNames());
-			jAgentList.setToolTipText(Language.translate("Agenten in diesem Projekt"));
-			jAgentList.setPreferredSize(new Dimension(333, 300));
-			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			jAgentList.addListSelectionListener(new ListSelectionListener() {
+	private JListClassSearcher getJListAgentsFound() {
+		if (jListAgentFound == null) {
+			jListAgentFound = new JListClassSearcher(Agent.class, this.currProject.getBundleNames());
+			jListAgentFound.setToolTipText(Language.translate("Agenten in diesem Projekt"));
+			jListAgentFound.setPreferredSize(new Dimension(333, 300));
+			jListAgentFound.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jListAgentFound.addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent se) {
 
-					if (se.getValueIsAdjusting()==true && jAgentList.getSelectedValue()!=null) {
+					if (se.getValueIsAdjusting()==true && jListAgentFound.getSelectedValue()!=null) {
 						
 						updateView4AgentConfig();
 						
@@ -673,12 +773,12 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 							String toDisplayEnd   = agentReference.substring(agentReference.length() - maxLenght );
 							agentReference = toDisplayStart + "..." + toDisplayEnd;
 						}
-						getJTextAgent().setText(agentReference);
+						getJTextAgentSearch().setText(agentReference);
 						
 						
 						// -----------------------------------------------------
 						// --- Propose name for the agent ----------------------
-						String startAs = jAgentList.getSelectedValue().toString();
+						String startAs = jListAgentFound.getSelectedValue().toString();
 						startAs = startAs.substring(startAs.lastIndexOf(".")+1);
 						// --- Filter capital letters --------------------------
 						String regExp = "[A-Z]";	
@@ -716,7 +816,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 				}
 			});
 		}
-		return jAgentList;
+		return jListAgentFound;
 	}
 	
 	/* (non-Javadoc)
@@ -728,11 +828,19 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		String ActCMD = ae.getActionCommand();
 		Object trigger = ae.getSource();
 
-		if (trigger==jButtonStartAgent) {
+		if (trigger==this.getJRadioButtonAgentsShowAll()) {
+			// --- Show agents from all Bundles available -----------
+			this.getJListAgentsFound().setExclusiveBundleNames(null);
+			
+		} else if (trigger==this.getJRadioButtonAgentsShowFromProjectBundle()) {
+			// --- Show agents from project Bundles only ------------
+			this.getJListAgentsFound().setExclusiveBundleNames(this.currProject.getBundleNames());
+			
+		} else if (trigger==this.getJButtonStartAgent()) {
 			// ------------------------------------------------------
 			// --- Start the selected agent -------------------------
 			// ------------------------------------------------------
-			ClassElement2Display selection = (ClassElement2Display)jAgentList.getSelectedValue();
+			ClassElement2Display selection = (ClassElement2Display)this.getJListAgentsFound().getSelectedValue();
 			if (selection==null) {
 				String head = Language.translate("Agent auswählen!");
 				String msg  = Language.translate("Bitte wählen Sie den Agenten aus, den Sie starten wollen.");
@@ -760,12 +868,12 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 				
 				// --- Start the Agent now --------------------------
 				Application.getJadePlatform().startAgent(agentName, agentClassName, startArgs, currProject.getProjectFolder());	
-				jTextAgent.setText(null);
+				jTextAgentSearch.setText(null);
 				jTextAgentStartAs.setText(null);
-				jAgentList.clearSelection();
+				this.getJListAgentsFound().clearSelection();
 			}
 			
-		} else if (trigger == jButtonReferencesAdd ) {
+		} else if (trigger == this.getJButtonReferencesAdd()) {
 			// --- Add start argument ---------------------
 			this.readSelectionFromForm();
 			if (agentReference==null || ontoReference==null) {
@@ -780,7 +888,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 				this.getJListReferences().setSelectedIndex(newPos);
 			}
 			
-		} else if (trigger == jButtonReferencesRemove ) {
+		} else if (trigger == this.getJButtonReferencesRemove()) {
 			// --- Remove start argument ------------------
 			this.readSelectionFromForm();
 			int newPos = this.currProject.getAgentStartConfiguration().removeReference(this.agentReference, this.getJListReferences().getSelectedIndex());
@@ -789,13 +897,13 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 				this.getJListReferences().setSelectedIndex(newPos);
 			}
 		
-		} else if (trigger == jButtonRemoveAll) {
+		} else if (trigger == this.getJButtonRemoveAll()) {
 			// --- Remove start arguments completely ------
 			this.readSelectionFromForm();
 			this.currProject.getAgentStartConfiguration().removeAllReferences(agentReference);
 			this.currProject.setAgentStartConfigurationUpdated();
 					
-		} else if (trigger == jButtonMoveUp ) {
+		} else if (trigger == this.getJButtonMoveUp()) {
 			// --- Move start argument up -----------------
 			this.readSelectionFromForm();
 			int newPos = this.currProject.getAgentStartConfiguration().movePosition(agentReference, jListReferences.getSelectedIndex(), -1); 
@@ -804,7 +912,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 				this.jListReferences.setSelectedIndex(newPos);
 			}
 			
-		} else if (trigger == jButtonMoveDown ) {
+		} else if (trigger == this.getJButtonMoveDown()) {
 			// --- Move start argument down ---------------
 			this.readSelectionFromForm();
 			int newPos = this.currProject.getAgentStartConfiguration().movePosition(agentReference, jListReferences.getSelectedIndex(), 1); 
@@ -813,7 +921,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 				this.jListReferences.setSelectedIndex(newPos);
 			}
 			
-		} else if (trigger == jButtonRename) {
+		} else if (trigger == this.getJButtonRename()) {
 			// --- mask ontology-reference ----------------
 			String input = null;
 			String head  = null;
@@ -851,7 +959,7 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 			
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);	
-		};
+		}
 		this.repaint();
 	}
 	
@@ -898,10 +1006,10 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 	 */
 	private void readSelectionFromForm() {
 		// -- configure Var. agentReference -------------------------
-		if (jAgentList.getSelectedValue()==null) {
+		if (this.getJListAgentsFound().getSelectedValue()==null) {
 			this.agentReference = null;
 		} else {
-			ClassElement2Display selection = (ClassElement2Display) this.getJAgentList().getSelectedValue();
+			ClassElement2Display selection = (ClassElement2Display) this.getJListAgentsFound().getSelectedValue();
 			this.agentReference = selection.getClassElement();
 		}
 		// -- configure Var. ontoReference --------------------------		
@@ -916,4 +1024,4 @@ public class BaseAgents extends JSplitPane implements Observer, ActionListener {
 		}
 	}
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 

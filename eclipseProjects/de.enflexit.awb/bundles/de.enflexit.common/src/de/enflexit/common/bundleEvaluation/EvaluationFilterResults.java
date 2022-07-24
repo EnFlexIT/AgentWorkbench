@@ -50,6 +50,9 @@ class EvaluationFilterResults extends Vector<AbstractBundleClassFilter> {
 		boolean added = false;
 		if (bundleClassFilter==null) return false;
 		if (this.contains(bundleClassFilter)==false) {
+			// --- Add results from cache ----------------- 
+			this.bundleEvaluator.getCache().updateClassFilterResult(bundleClassFilter);
+			// --- Add to local list to work on -----------
 			added = super.add(bundleClassFilter);
 			if (doBundleEvaluation==true) {
 				this.bundleEvaluator.evaluateAllBundles(bundleClassFilter);
@@ -57,7 +60,7 @@ class EvaluationFilterResults extends Vector<AbstractBundleClassFilter> {
 		}
 		return added;
 	}
-
+	
 	/**
 	 * Removes the evaluation filter results of the specified bundle.
 	 * @param bundle the bundle from which the results have to be removed

@@ -80,6 +80,7 @@ import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
+import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -485,6 +486,19 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		}
 		return executionModeDescription;
 	}
+	
+	/**
+	 * Checks/Returns if the {@link BundleEvaluator} has to be started.
+	 * @return true, if the BundleEvaluator needs to started
+	 */
+	public boolean isStartBundleEvaluator() {
+		boolean isApplication = this.getExecutionMode()==ExecutionMode.APPLICATION;
+		boolean isDeviceSystem = this.getExecutionMode()==ExecutionMode.DEVICE_SYSTEM;
+		//boolean isDeviceSystemAgent = this.getDeviceServiceExecutionMode()==DeviceSystemExecutionMode.AGENT;
+		//boolean isDeviceSystemProjectSetup = this.getDeviceServiceExecutionMode()==DeviceSystemExecutionMode.SETUP;
+		return isApplication || isDeviceSystem;
+	}
+	
 	
 	/**
 	 * Returns the title/name of the application

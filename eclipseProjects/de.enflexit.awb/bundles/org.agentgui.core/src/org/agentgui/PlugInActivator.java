@@ -39,7 +39,6 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 
 import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.db.hibernate.HibernateUtilities;
 
@@ -110,19 +109,18 @@ public class PlugInActivator extends AbstractUIPlugin implements BundleListener 
 				// ----------------------------------------------------------------------
 				// --- Start search for classes with the BundleEvaluator? ---------------
 				// ----------------------------------------------------------------------
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						// --- First, wait for the Hibernate start ----------------------
-						HibernateUtilities.waitForSessionFactoryCreation();
-						// --- If Application mode ... ----------------------------------
-						boolean isApplicationMode = Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION;
-						if (isApplicationMode==true) {
+				if (Application.getGlobalInfo().isStartBundleEvaluator()==true) {
+					// --- Hand over the new bundle to the BundleEvaluator --------------
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							// --- First, wait for the Hibernate start ----------------------
+							HibernateUtilities.waitForSessionFactoryCreation();
 							// --- ... search in the new bundle -------------------------
 							BundleEvaluator.getInstance().setBundleAdded(bundle);
 						}
-					}
-				}, "BundleEvaluator Starter-Thread for " + bundle.getSymbolicName());
+					}, "BundleEvaluator Starter-Thread for " + bundle.getSymbolicName()).start();
+				}
 				break;
 				
 			case BundleEvent.STOPPED:

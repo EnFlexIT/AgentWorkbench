@@ -40,6 +40,8 @@ import java.rmi.server.UID;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -78,6 +80,7 @@ public class BundleEvaluator {
 	private long requestMaxStayTime = 1000 * 10; // 10 seconds
 	
 	private Cache cache;
+	private Object cacheSynchronizerForInitialization = new Object();
 	
 	
 	
@@ -104,10 +107,14 @@ public class BundleEvaluator {
 	 * Returns the Cache that stores the evaluation results in a configuration file.
 	 * @return the cache
 	 */
-	private Cache getCache() {
+	protected Cache getCache() {
 		if (cache==null) {
-			cache = new Cache();
-			cache.load();
+			synchronized (cacheSynchronizerForInitialization) {
+				if (cache==null) {
+					cache = new Cache();
+					cache.load();
+				}
+			}
 		}
 		return cache;
 	}
@@ -134,8 +141,11 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("com.jcraft.jsch");
 			bundleExcludeHashSet.add("com.mysql.cj");
 			bundleExcludeHashSet.add("com.nimbusds");
+			bundleExcludeHashSet.add("com.sun.activation");
 			bundleExcludeHashSet.add("com.sun.jna");
 			bundleExcludeHashSet.add("com.sun.xml");
+			
+			bundleExcludeHashSet.add("com.fasterxml");
 			
 			bundleExcludeHashSet.add("jakarta.activation-api");
 			bundleExcludeHashSet.add("jakarta.annotation");
@@ -144,6 +154,7 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("jakarta.servlet");
 			bundleExcludeHashSet.add("jakarta.servlet-api");
 			bundleExcludeHashSet.add("jakarta.validation");
+			bundleExcludeHashSet.add("jakarta.ws.rs-api");
 			bundleExcludeHashSet.add("jakarta.xml");
 			
 			bundleExcludeHashSet.add("javax.annotation");
@@ -170,22 +181,27 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("org.jvnet");
 			bundleExcludeHashSet.add("org.objectweb.asm");
 			bundleExcludeHashSet.add("org.opentest4j");
+			bundleExcludeHashSet.add("org.osgi");
 			bundleExcludeHashSet.add("org.postgresql.jdbc");
 			bundleExcludeHashSet.add("org.sat4j");
 			bundleExcludeHashSet.add("org.slf4j.api");
 			bundleExcludeHashSet.add("org.tukaani");
 			bundleExcludeHashSet.add("org.w3c");
-
+			bundleExcludeHashSet.add("org.yaml");
+			
 			bundleExcludeHashSet.add("slf4j.api");
 			
 			bundleExcludeHashSet.add("wrapped");
 			
 			bundleExcludeHashSet.add("de.enflexit.api");
+			bundleExcludeHashSet.add("de.enflexit.awb.ws.swagger1x");
+			bundleExcludeHashSet.add("de.enflexit.awb.ws.swagger2x");
 			bundleExcludeHashSet.add("de.enflexit.common");
 			bundleExcludeHashSet.add("de.enflexit.db.hibernate");
 			bundleExcludeHashSet.add("de.enflexit.db.mariaDB");
 			bundleExcludeHashSet.add("de.enflexit.db.mySQL");
 			bundleExcludeHashSet.add("de.enflexit.db.postgres");
+			bundleExcludeHashSet.add("de.enflexit.jaxb.impl.binding");
 			bundleExcludeHashSet.add("de.enflexit.oidc");
 			bundleExcludeHashSet.add("de.enflexit.oshi");
 			
@@ -203,6 +219,9 @@ public class BundleEvaluator {
 	 */
 	private boolean isExcludedBundle(String symbolicBundleName) {
 	
+		// --- Early exit, because of exclude bundle? -------------------------
+		if (this.getBundleExcludeHashSet().contains(symbolicBundleName)==true) return true;
+		
 		String[] nameParts = symbolicBundleName.split("\\.");
 		String name2Check = nameParts[0]; 
 		for (int i=0; i<nameParts.length; i++) {
@@ -368,10 +387,19 @@ public class BundleEvaluator {
 	 * @param bundleClassFilterToUse the bundle class filter to exclusively search with (<code>null</code> IS permitted).
 	 */
 	public void evaluateAllBundles(AbstractBundleClassFilter bundleClassFilterToUse) {
-		Bundle[] bundles = this.getBundles();
-		if (bundles!=null) {
-			for (int i = 0; i < bundles.length; i++) {
-				this.evaluateBundleInThread(bundles[i], bundleClassFilterToUse);
+		Bundle[] bundleArray = this.getBundles();
+		if (bundleArray!=null) {
+			// --- Create a sorted list of the array ----------------
+			List<Bundle> bundleList = Arrays.asList(bundleArray); 
+			Collections.sort(bundleList, new Comparator<Bundle>() {
+				@Override
+				public int compare(Bundle b1, Bundle b2) {
+					return b1.getSymbolicName().compareTo(b2.getSymbolicName());
+				}
+			});
+			// --- Start evaluation for each bundle -----------------
+			for (int i = 0; i < bundleList.size(); i++) {
+				this.evaluateBundleInThread(bundleList.get(i), bundleClassFilterToUse);
 			}
 		}
 	}
@@ -386,8 +414,26 @@ public class BundleEvaluator {
 	public void evaluateBundleInThread(Bundle bundle, AbstractBundleClassFilter bundleClassFilterToUse) {
 
 		if (bundle==null) return;
-		if (this.isExcludedBundle(bundle.getSymbolicName())==true) return;
-		if (bundleClassFilterToUse==null && this.getEvaluationFilterResults().size()==0) return;
+		boolean isExcludeBundleFromSearch = this.isExcludedBundle(bundle.getSymbolicName());
+		boolean isNoBundleClassFilterAndNoFilterResultDefined = (bundleClassFilterToUse==null && this.getEvaluationFilterResults().size()==0);
+
+		// ----------------------------------------------------------
+		// --- Introduction debug area ------------------------------
+		// ----------------------------------------------------------
+		boolean debugShowBundlesIncluded = true;
+		if (this.debug==true) {
+			if (debugShowBundlesIncluded==true) {
+				if (isExcludeBundleFromSearch==false) System.out.println("Included bundle " + bundle.getSymbolicName() + " - isNoBundleClassFilterAndNoFilterResultDefined=" + isNoBundleClassFilterAndNoFilterResultDefined);
+			} else {
+				if (isExcludeBundleFromSearch==true ) System.out.println("Excluded bundle " + bundle.getSymbolicName()  + " - isNoBundleClassFilterAndNoFilterResultDefined=" + isNoBundleClassFilterAndNoFilterResultDefined);
+			}
+		}
+		// ----------------------------------------------------------
+		
+		
+		// --- Check for exit search for bundle ---------------------
+		if (isExcludeBundleFromSearch==true) return;
+		if (isNoBundleClassFilterAndNoFilterResultDefined==true) return;
 		
 		// --- Evaluate bundle details ------------------------------
 		String classFilterDescription = "Null";

@@ -13,6 +13,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
@@ -29,6 +30,8 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
+
+import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 
 /**
  * The Class Cache represents the persistable cache for previous search results
@@ -227,6 +230,67 @@ public class Cache {
 			this.getBundleResultTreeMap().put(bundle.getSymbolicName(), bd);
 		}
 		return bd;
+	}
+	
+	/**
+	 * Based on the local information, updates the result of the specified bundle class filter.
+	 * @param bundleClassFilter the bundle class filter
+	 */
+	public void updateClassFilterResult(AbstractBundleClassFilter bundleClassFilter) {
+		
+		if (bundleClassFilter==null) return;
+		
+		// --- Get the currently installed bundles ------------------ 
+		Bundle[] bundleArray = BundleEvaluator.getInstance().getBundles();
+		
+		// --- Get the current state of the Cache as list -----------
+		List<CacheBundleResult> cacheBundleResultList = new ArrayList<>(this.getBundleResultTreeMap().values());
+		for (int i = 0; i < cacheBundleResultList.size(); i++) {
+			
+			// --- Get the single CacheBundleResult ----------------- 
+			CacheBundleResult bundleResult = cacheBundleResultList.get(i);
+			// --- Check if the bundle is at least installed --------
+			if (this.getBundle(bundleArray,  bundleResult.getSymbolicBundleName())!=null) {
+
+				// --- Get the specific filter result ---------------
+				CacheClassFilterResult filterResult = bundleResult.getClassFilterResult(bundleClassFilter.getFilterScope());
+				if (filterResult!=null) {
+					// --- Get list of filtered classes -------------
+					List<String> filterResultClassList = filterResult.getFilteredClassesNotNull();
+					for (int j = 0; j < filterResultClassList.size(); j++) {
+				
+						// --- Check if the class can be resolved ---
+						try {
+							String classNameFound = filterResultClassList.get(j);
+							Class<?> classFound = BaseClassLoadServiceUtility.forName(classNameFound);
+							if (classFound!=null) {
+								bundleClassFilter.addClassFound(classNameFound, bundleResult.getSymbolicBundleName());
+							}
+							
+						} catch (ClassNotFoundException | NoClassDefFoundError ex) {
+							// ex.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Returns the bundle with the specified bundle name or <code>null</code>.
+	 *
+	 * @param bundleArray the bundle array to check
+	 * @param symbolicBundleName the symbolic bundle name
+	 * @return the bundle
+	 */
+	private Bundle getBundle(Bundle[] bundleArray, String symbolicBundleName) {
+		if (bundleArray!=null) {
+			for (int i = 0; i < bundleArray.length; i++) {
+				if (bundleArray[i].getSymbolicName().equals(symbolicBundleName)) {
+					return bundleArray[i];
+				}
+			}
+		}
+		return null;
 	}
 	
 	

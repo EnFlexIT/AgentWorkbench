@@ -37,7 +37,7 @@ public class BundleEvaluatorThread extends Thread {
 	public BundleEvaluatorThread(Bundle bundleToSearchIn, AbstractBundleClassFilter bundleClassFilter) {
 		super();
 		if (bundleToSearchIn==null) {
-			throw new NullPointerException("The bundle in which the search has to be executed is not allowed to null!");
+			throw new NullPointerException("The bundle in which the search has to be executed is not allowed to be null!");
 		}
 		this.setBundle(bundleToSearchIn);
 		this.setBundleClassFilter(bundleClassFilter);
