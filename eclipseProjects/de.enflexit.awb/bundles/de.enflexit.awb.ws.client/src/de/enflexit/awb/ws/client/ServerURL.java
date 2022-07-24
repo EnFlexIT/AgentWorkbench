@@ -14,6 +14,7 @@ public class ServerURL implements Serializable {
 	 * Instantiates a new server URL.
 	 */
 	public ServerURL() {}
+	
 	/**
 	 * Instantiates a new server URL.
 	 * @param serverURL the server URL
@@ -21,8 +22,7 @@ public class ServerURL implements Serializable {
 	public ServerURL(String serverURL) {
 		this.setServerURL(serverURL);
 	}
-	
-	
+		
 	/**
 	 * Returns the id of a credential.
 	 * @return the credential id
@@ -36,7 +36,6 @@ public class ServerURL implements Serializable {
 		}
 		return id;
 	}
-	
 	
 	/**
 	 * Gets the server URL.
@@ -53,4 +52,22 @@ public class ServerURL implements Serializable {
 		this.serverURL = serverURL;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		boolean equals = super.equals(obj);
+		if (obj instanceof ServerURL) {
+			ServerURL url = (ServerURL) obj;
+			
+			if (!this.getID().equals(url.getID())) {
+				equals = false;
+			}
+			
+			if (!this.getServerURL().equals(url.getServerURL())) {
+				equals = false;
+			}
+		} else {
+			equals = false;
+		}
+		return equals;
+	}
 }

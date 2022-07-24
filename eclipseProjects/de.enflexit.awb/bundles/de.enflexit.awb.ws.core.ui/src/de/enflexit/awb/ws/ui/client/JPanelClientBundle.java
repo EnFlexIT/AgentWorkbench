@@ -4,6 +4,9 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -11,22 +14,30 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import de.enflexit.awb.ws.client.ApiRegistration;
 import de.enflexit.awb.ws.client.AwbApiRegistrationService;
+import de.enflexit.awb.ws.client.WsCredentialStore;
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
+import de.enflexit.common.ServiceFinder;
 
 /**
  * The Class JPanelClientConfiguration.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelClientBundle extends JPanel {
+public class JPanelClientBundle extends JPanel implements WsConfigurationInterface{
 	
 	private static final long serialVersionUID = 7987858783733542296L;
 	
 	private JLabel jLabelBundleList;
 	private JScrollPane jScrollPaneBundleList;
-	private JList<AwbApiRegistrationService> jListBundles;
-	private DefaultListModel<AwbApiRegistrationService> listModelRegisteredApis;
+	private JList<ApiRegistration> jListBundles;
+	private DefaultListModel<ApiRegistration> listModelRegisteredApis;
 	
 	private JPanel jPanelInfo;
 		private JLabel jLabelCredentialType;
@@ -50,6 +61,7 @@ public class JPanelClientBundle extends JPanel {
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelBundleList = new GridBagConstraints();
+		gbc_jLabelBundleList.insets = new Insets(5, 0, 0, 0);
 		gbc_jLabelBundleList.anchor = GridBagConstraints.WEST;
 		gbc_jLabelBundleList.gridx = 0;
 		gbc_jLabelBundleList.gridy = 0;
@@ -68,7 +80,7 @@ public class JPanelClientBundle extends JPanel {
 		add(getJPanelInfo(), gbc_jPanelInfo);
 	}
 	
-	private JLabel getJLabelBundleList() {
+	public JLabel getJLabelBundleList() {
 		if (jLabelBundleList == null) {
 			jLabelBundleList = new JLabel("Server - API / Client Bundle");
 			jLabelBundleList.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -83,18 +95,34 @@ public class JPanelClientBundle extends JPanel {
 		return jScrollPaneBundleList;
 	}
 	
-	private DefaultListModel<AwbApiRegistrationService> getListModelRegisteredApis() {
+	public DefaultListModel<ApiRegistration> getListModelRegisteredApis() {
 		if (listModelRegisteredApis==null) {
-			listModelRegisteredApis = new DefaultListModel<AwbApiRegistrationService>();
+			listModelRegisteredApis = new DefaultListModel<ApiRegistration>();
 			// --- Fill the list model ------------------------------
-			// TODO Guck mal
+			
+			List<AwbApiRegistrationService> registeredServiceList = ServiceFinder.findServices(AwbApiRegistrationService.class);
+			for (Iterator<AwbApiRegistrationService> iterator = registeredServiceList.iterator(); iterator.hasNext();) {
+				AwbApiRegistrationService awbApiRegistrationService = (AwbApiRegistrationService) iterator.next();
+				WsCredentialStore.getInstance().putInApiRegistrationList(awbApiRegistrationService);
+			}		
+			listModelRegisteredApis.addAll(WsCredentialStore.getInstance().getApiRegistrationServiceList());
 		}
 		return listModelRegisteredApis;
 	}
-	private JList<AwbApiRegistrationService> getJListBundles() {
+	public JList<ApiRegistration> getJListBundles() {
 		if (jListBundles == null) {
-			jListBundles = new JList<>(this.getListModelRegisteredApis());
+			jListBundles = new JList<ApiRegistration>(this.getListModelRegisteredApis());
+			jListBundles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jListBundles.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jListBundles.addListSelectionListener(new ListSelectionListener() {
+				
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					ApiRegistration apiReg=jListBundles.getSelectedValue();
+					jLabelCredentialTypeDefined.setText(" "+apiReg.getCredentialType().toString());
+				    jTextAreaDescription.setText(apiReg.getDescription());					
+				}
+			});
 		}
 		return jListBundles;
 	}
@@ -154,7 +182,7 @@ public class JPanelClientBundle extends JPanel {
 		}
 		return jLabelDescription;
 	}
-	private JLabel getJLabelCredentialTypeDefined() {
+	public JLabel getJLabelCredentialTypeDefined() {
 		if (jLabelCredentialTypeDefined == null) {
 			jLabelCredentialTypeDefined = new JLabel("-");
 			jLabelCredentialTypeDefined.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -169,11 +197,80 @@ public class JPanelClientBundle extends JPanel {
 		}
 		return jScrollPaneDescription;
 	}
-	private JTextArea getJTextAreaDescription() {
+	public JTextArea getJTextAreaDescription() {
 		if (jTextAreaDescription == null) {
 			jTextAreaDescription = new JTextArea();
 			jTextAreaDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jTextAreaDescription;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
+	 */
+	@Override
+	public boolean hasUnsavedChanges() {
+		if (this.getJListBundles() == null)
+			return false;
+		
+		// Get actual ApiRegistrationList
+		List<AwbApiRegistrationService> apiRegList = ServiceFinder.findServices(AwbApiRegistrationService.class);
+
+		// Get old List
+		ArrayList<ApiRegistration> credArrayList = new ArrayList<ApiRegistration>();
+		ListModel<ApiRegistration> credModel = getJListBundles().getModel();
+		for (int i = 0; i < credModel.getSize(); i++) {
+			ApiRegistration cred = credModel.getElementAt(i);
+			credArrayList.add(cred);
+		}
+		if (credArrayList.size() != apiRegList.size()) {
+			return true;
+		} else {
+			return !compareTwoLists(credArrayList,apiRegList);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
+	 */
+	@Override
+	public boolean userConfirmedToChangeView() {
+		return hasUnsavedChanges();
+	}
+	
+	//--------------------------------------------------
+	//------------Helping Methods to reduce Code------------
+	//--------------------------------------------------
+	
+	/**
+	 * 
+	 * @param apiRegList
+	 * @param credArrayList ArrayList filled with Instance of 
+	 * @return false, if the two Lists are not the same
+	 */
+	private boolean compareTwoLists(List<ApiRegistration> apiRegList, List<AwbApiRegistrationService> credArrayList) {
+		boolean sameObject = false;
+		for (int i = 0; i < credArrayList.size(); i++) {
+			ApiRegistration apiReg = apiRegList.get(i);
+			AwbApiRegistrationService apiRegService = credArrayList.get(i);
+			if (apiReg.getClientBundleName().equals(apiRegService.getClientBundleName())) {
+				if (apiReg.getCredentialType().equals(apiRegService.getCredentialType())) {
+					if (apiReg.getDefaultCredentialName().equals(apiRegService.getDefaultCredentialName())) {
+						if (apiReg.getDescription().equals(apiRegService.getDescription())) {
+							if (apiReg.getServerURL().equals(apiRegService.getDefaultURL())) {
+								sameObject = true;
+							}
+						}
+					}
+
+				}
+			}
+			if(!sameObject) {
+				break;
+			}
+		}
+		return sameObject;
 	}
 }

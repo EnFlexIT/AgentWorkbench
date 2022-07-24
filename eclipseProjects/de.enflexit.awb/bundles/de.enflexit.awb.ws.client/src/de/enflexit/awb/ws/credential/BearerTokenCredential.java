@@ -27,4 +27,18 @@ public class BearerTokenCredential extends AbstractCredential {
 		this.jwtToken = jwtToken;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		boolean equals=super.equals(obj);
+		if(obj instanceof BearerTokenCredential) {
+			BearerTokenCredential cred=(BearerTokenCredential) obj;
+			if(!this.getJwtToken().equals(cred.getJwtToken())) {
+				equals=false;
+			}
+		}else {
+			equals=false;
+		}
+		return equals;
+	}
+	
 }

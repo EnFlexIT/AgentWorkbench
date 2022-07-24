@@ -1,6 +1,7 @@
 package de.enflexit.awb.ws.client;
 
 import java.io.Serializable;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * The Class ApiRegistration is used as storable container to locally save API registrations.
@@ -10,18 +11,36 @@ import java.io.Serializable;
 public class ApiRegistration implements Serializable {
 
 	private static final long serialVersionUID = -4136490503086202993L;
+	
 
 	private String clientBundleName;
 	private String description;
 	private String serverURL;
 	private CredentialType credentialType;
 	private String defaultCredentialName;
+	private Integer id;
 	
 	
 	/**
 	 * Empty default constructor for a new ApiRegistration.
 	 */
 	public ApiRegistration() { }
+	
+	
+	/**
+	 * Returns the id of a credential.
+	 * @return the credential id
+	 */
+	public Integer getID() {
+		if (id==null) {
+			// --- Randomize an ID ------------------
+			int min = 1000000;
+			int max = Integer.MAX_VALUE;
+			id = ThreadLocalRandom.current().nextInt(min, max);
+		}
+		return id;
+	}
+	
 	
 	/**
 	 * Instantiates a new  ApiRegistration.
@@ -37,6 +56,7 @@ public class ApiRegistration implements Serializable {
 		this.setServerURL(serverURL);
 		this.setCredentialType(credentialType);
 	}
+	
 	/**
 	 * Instantiates a new  ApiRegistration.
 	 * @param apiRegistrationService the api registration service
@@ -63,7 +83,6 @@ public class ApiRegistration implements Serializable {
 		this.clientBundleName = clientBundleName;
 	}
 	
-	
 	/**
 	 * Gets the description.
 	 * @return the description
@@ -71,6 +90,7 @@ public class ApiRegistration implements Serializable {
 	public String getDescription() {
 		return description;
 	}
+	
 	/**
 	 * Sets the description.
 	 * @param description the new description
@@ -78,7 +98,6 @@ public class ApiRegistration implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
 	
 	/**
 	 * Returns the server URL.
@@ -95,7 +114,6 @@ public class ApiRegistration implements Serializable {
 		this.serverURL = serverURL;
 	}
 	
-	
 	/**
 	 * Gets the credential type.
 	 * @return the credential type
@@ -111,7 +129,6 @@ public class ApiRegistration implements Serializable {
 		this.credentialType = credentialType;
 	}
 	
-	
 	/**
 	 * Returns the default credential name.
 	 * @return the default credential name
@@ -125,6 +142,42 @@ public class ApiRegistration implements Serializable {
 	 */
 	public void setDefaultCredentialName(String defaultCredentialName) {
 		this.defaultCredentialName = defaultCredentialName;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		boolean equals = super.equals(obj);
+		if (obj instanceof ApiRegistration) {
+			ApiRegistration apiRegistration = (ApiRegistration) obj;
+
+			if (!apiRegistration.getClientBundleName().equals(this.getClientBundleName())) {
+				equals = false;
+			}
+
+			if (!apiRegistration.getDescription().equals(this.getDescription())) {
+				equals = false;
+			}
+
+			if (!apiRegistration.getServerURL().equals(this.getServerURL())) {
+				equals = false;
+			}
+
+			if (!apiRegistration.getCredentialType().equals(this.getCredentialType())) {
+				equals = false;
+			}
+
+			if (!apiRegistration.getDefaultCredentialName().equals(this.getDefaultCredentialName())) {
+				equals = false;
+			}
+
+			if (!apiRegistration.getID().equals(this.getID())) {
+				equals = true;
+			}
+		} else {
+			equals = false;
+		}
+
+		return equals;
 	}
 	
 }
