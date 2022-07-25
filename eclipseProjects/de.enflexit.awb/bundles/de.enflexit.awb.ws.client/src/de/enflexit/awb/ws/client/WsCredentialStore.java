@@ -392,6 +392,10 @@ public class WsCredentialStore implements Serializable {
 	 */
 	public boolean containedInApiRegistrationList(AwbApiRegistrationService awbApiRegService) {
 		boolean contains = false;
+		if(apiRegistrationServiceList==null) {
+			getApiRegistrationServiceList();
+		}
+		
 		for (int i = 0; i < apiRegistrationServiceList.size(); i++) {
 			ApiRegistration apiReg = apiRegistrationServiceList.get(i);
 			if (apiReg.getClientBundleName().equals(awbApiRegService.getClientBundleName())) {
