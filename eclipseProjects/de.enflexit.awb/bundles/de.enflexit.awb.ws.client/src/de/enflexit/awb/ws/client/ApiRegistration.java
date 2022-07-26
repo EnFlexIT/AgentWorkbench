@@ -63,6 +63,7 @@ public class ApiRegistration implements Serializable {
 	 */
 	public ApiRegistration(AwbApiRegistrationService apiRegistrationService) {
 		this.setClientBundleName(apiRegistrationService.getClientBundleName());
+		this.setDefaultCredentialName(apiRegistrationService.getDefaultCredentialName());
 		this.setDescription(apiRegistrationService.getDescription());
 		this.setCredentialType(apiRegistrationService.getCredentialType());
 		this.setServerURL(apiRegistrationService.getDefaultURL());

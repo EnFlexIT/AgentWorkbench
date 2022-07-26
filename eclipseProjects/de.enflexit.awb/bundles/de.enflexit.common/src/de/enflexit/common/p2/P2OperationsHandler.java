@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -33,7 +34,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
-
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
 /**
@@ -41,6 +42,7 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
+@SuppressWarnings("restriction")
 public class P2OperationsHandler {
 
 	private boolean isDevelopmentMode = false;
@@ -78,7 +80,9 @@ public class P2OperationsHandler {
 		if (this.isDevelopmentMode==true && (this.p2Directory==null || this.p2Directory.exists()==false || p2Directory.isDirectory()==false) ) {
 			this.isDevelopmentMode = false;
 			this.p2Directory = null;
+			
 		}
+		
 	}
 	
 	/**
@@ -106,7 +110,7 @@ public class P2OperationsHandler {
 				// --- This should provide the agent for developments -----
 				BundleContext bc = BundleEvaluator.getInstance().getBundleContext();
 				ServiceReference<?> sr = bc.getServiceReference(IProvisioningAgentProvider.SERVICE_NAME);
-				if (sr!=null)  {
+				if (sr!=null) {
 					IProvisioningAgentProvider agentProvider = (IProvisioningAgentProvider) bc.getService(sr);
 					try {
 						provisioningAgent = agentProvider.createAgent(this.p2Directory.toURI());
@@ -311,6 +315,14 @@ public class P2OperationsHandler {
 	 * @return the result status
 	 */
 	public IStatus installAvailableUpdates() {
+		
+		// --- Set policy to always accept unsigned IUs if operating headless -----------
+		if (SystemEnvironmentHelper.isHeadlessOperation()==true) {
+			//TODO Remove when proper signing of bundles is implemented!
+			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
+		}
+			
+		
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
 		if (provisioningJob == null) {
 			System.err.println("Trying to update from the Eclipse IDE? This won't work!");
@@ -443,4 +455,5 @@ public class P2OperationsHandler {
 		}
 		return newest;
 	}
+	
 }
