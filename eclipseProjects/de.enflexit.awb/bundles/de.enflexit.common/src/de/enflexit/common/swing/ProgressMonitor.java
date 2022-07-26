@@ -18,7 +18,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -141,7 +140,7 @@ public class ProgressMonitor implements ActionListener {
 					jDialog.setIconImage(this.iconImage.getImage());	
 				}
 				jDialog.setContentPane(this.getJContentPane());
-				jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				jDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 				
 				this.progressMonitorContainer = jDialog; 
 				this.setLookAndFeel();	
@@ -155,7 +154,7 @@ public class ProgressMonitor implements ActionListener {
 					jInternalFrame.setFrameIcon(this.iconImage);	
 				}
 				jInternalFrame.setContentPane(this.getJContentPane());
-				jInternalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				jInternalFrame.setDefaultCloseOperation(JInternalFrame.DO_NOTHING_ON_CLOSE);
 				
 				this.progressMonitorContainer = jInternalFrame;
 			}

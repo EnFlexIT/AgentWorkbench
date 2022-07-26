@@ -34,6 +34,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -92,6 +94,7 @@ import agentgui.core.update.AWBUpdater;
 import agentgui.core.update.ProjectRepositoryExplorerDialog;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import de.enflexit.common.swing.JFrameSizeAndPostionController;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
 
 /**
@@ -118,6 +121,8 @@ public class MainWindow extends JFrame {
 	private final ImageIcon iconClose = GlobalInfo.getInternalImageIcon("MBclose.png");
 	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 
+	private JFrameSizeAndPostionController windowController;
+	
 	private MainWindowStatusBar jPanelStatusBar;
 
 	private JSplitPane jSplitPane4ProjectDesktop;
@@ -197,11 +202,10 @@ public class MainWindow extends JFrame {
 		
 		this.pack();
 		this.setVisible(true);
-
 	}
 
 	/**
-	 * Inits the components.
+	 * Initializes the local components.
 	 */
 	private void initComponents() {
 
@@ -256,11 +260,41 @@ public class MainWindow extends JFrame {
 			}
 		});
 
+		// --- Start the local Window controller ----------
+		this.getWindowSizeAndPostionController();
+		
 		// --- Set button for simulation control ----------
 		this.setSimulationReady2Start();
-
 	}
 
+	/**
+	 * Returns the JFrameSizeAndPostionController used for the MainWindow.
+	 */
+	private JFrameSizeAndPostionController getWindowSizeAndPostionController() {
+		if (windowController==null) {
+			windowController = new JFrameSizeAndPostionController(this);
+		}
+		return windowController;
+	}
+	/**
+	 * Return the size in relation (scaled) to the screen size.
+	 */
+	private Dimension getSizeRelatedToScreenSize() {
+
+		// --- Scale relative to screen ---------
+		double scale = 0.9;
+		
+		GraphicsDevice gd = this.getGraphicsConfiguration().getDevice();
+		if (gd==null) {
+			gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		}
+		int frameWidth  = (int) (gd.getDisplayMode().getWidth()  * scale);
+		int frameHeight = (int) (gd.getDisplayMode().getHeight() * scale);
+
+		return new Dimension(frameWidth, frameHeight);
+	}
+
+	
 	/**
 	 * Proceeds the main window extensions that are defines 
 	 * by the corresponding extension point.
@@ -282,7 +316,6 @@ public class MainWindow extends JFrame {
             System.err.println(ex.getMessage());
         }
 	}
-	
 	/**
 	 * Proceeds a single {@link MainWindowExtension} that was registered as extension.
 	 * @param mwExtension the MainWindowExtension to proceed
@@ -423,23 +456,6 @@ public class MainWindow extends JFrame {
 		return jMenuWorkbench;
 	}
 	
-	/**
-	 * Return the size in relation (scaled) to the screen size.
-	 */
-	private Dimension getSizeRelatedToScreenSize() {
-		// --- Default size ---------------------
-		Dimension frameSize = new Dimension(1150, 640);
-
-		// --- Scale relative to screen ---------
-		double scale = 0.9;
-		Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-		int frameWidth = (int) (screenDimension.getWidth() * scale);
-		int frameHeight = (int) (screenDimension.getHeight() * scale);
-		frameSize.setSize(frameWidth, frameHeight);
-
-		return frameSize;
-	}
-
 	/**
 	 * Gets the status bar.
 	 * @return the status bar
