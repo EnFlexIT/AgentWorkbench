@@ -24,7 +24,6 @@ class EvaluationFilterResults extends Vector<AbstractBundleClassFilter> {
 		this.bundleEvaluator = bundleEvaluator;
 	}
 	
-	
 	/* (non-Javadoc)
 	 * @see java.util.Vector#addElement(java.lang.Object)
 	 */
@@ -128,6 +127,5 @@ class EvaluationFilterResults extends Vector<AbstractBundleClassFilter> {
 		}
 		return classLocation;
 	}
-	
 	
 }

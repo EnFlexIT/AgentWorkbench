@@ -65,7 +65,6 @@ import jade.core.Agent;
  */
 public class AgentSelector extends JDialog implements ActionListener {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
 	/** The selected agent classes. */

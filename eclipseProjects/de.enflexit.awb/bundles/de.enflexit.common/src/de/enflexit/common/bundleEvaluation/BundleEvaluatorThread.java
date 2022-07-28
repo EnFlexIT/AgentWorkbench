@@ -64,13 +64,8 @@ public class BundleEvaluatorThread extends Thread {
 	 */
 	@Override
 	public void run() {
+		
 		super.run();
-		
-		if (this.getBundle()==null) {
-			System.err.println("[" + this.getClass().getName() + "] No bundle was specified for the evaluation of the bundle - terminate thread!");
-			return;
-		}
-		
 		try {
 			// --- priority of the thread ---------------------------
 			this.setPriority(THREAD_PRIORITY);
@@ -79,7 +74,7 @@ public class BundleEvaluatorThread extends Thread {
 			BundleEvaluator.getInstance().evaluateBundle(this.getBundle(), this.getBundleClassFilter());
 			
 		} catch (Exception ex) {
-			System.err.println(Thread.currentThread().getName() + ": " + ex.getMessage());
+			System.err.println("Error in " + this.getClass().getSimpleName() + " '" + Thread.currentThread().getName() + "': " + ex.getMessage());
 			ex.printStackTrace();
 		} finally {
 			// --- Unregister as search thread ----------------------

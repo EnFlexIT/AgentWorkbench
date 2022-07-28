@@ -320,12 +320,13 @@ public class Cache {
 	}
 	
 	/**
-	 * Loads the cached bundle evaluation results.
+	 * Loads the cached bundle evaluation results and returns the current instance of this Cache.
+	 * @return the loaded instance of the cache or <code>null</code>, if the load process failed 
 	 */
-	public void load() {
+	public Cache load() {
 
 		File cacheFile = this.getCacheFile();
-		if (cacheFile==null || cacheFile.exists()==false) return;
+		if (cacheFile==null || cacheFile.exists()==false) return null;
 		
 		Cache  cache = null;
 		InputStream inputStream = null;
@@ -361,6 +362,7 @@ public class Cache {
 				ioEx.printStackTrace();
 			}	
 		}
+		return this;
 	}
 
 	/**
@@ -400,7 +402,6 @@ public class Cache {
 			pm.marshal(this, fileWriter);
 			// --- Clear the temporary the ArrayList ------- 
 			this.setBundleResultList(null);
-			
 			
 		} catch (Exception ex) {
 			System.out.println("[" + this.getClass().getSimpleName() + "] Error while saving cache as XML file:");

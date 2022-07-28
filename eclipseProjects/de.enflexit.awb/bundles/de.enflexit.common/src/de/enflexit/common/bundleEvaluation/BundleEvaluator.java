@@ -74,7 +74,8 @@ public class BundleEvaluator {
 	private EvaluationFilterResults evaluationFilterResults;
 
 	private int maxSearchThreads = 5;
-	private Vector<BundleEvaluatorThread> bundleEvaluatorThreadVector;
+	private Vector<BundleEvaluatorThread> bundleEvaluatorThreadVectorWaiting;
+	private Vector<BundleEvaluatorThread> bundleEvaluatorThreadVectorRunning;
 	
 	private HashMap<String, ClassRequest> classRequestHash;
 	private long requestMaxStayTime = 1000 * 10; // 10 seconds
@@ -90,6 +91,7 @@ public class BundleEvaluator {
 	 * Private, singleton constructor. 
 	 */
 	private BundleEvaluator() {
+		this.getBundleExcludeHashSet();
 	}
 	/**
 	 * Gets the single instance of BundleEvaluator.
@@ -111,8 +113,7 @@ public class BundleEvaluator {
 		if (cache==null) {
 			synchronized (cacheSynchronizerForInitialization) {
 				if (cache==null) {
-					cache = new Cache();
-					cache.load();
+					cache = new Cache().load();
 				}
 			}
 		}
@@ -174,6 +175,7 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("org.brotli.dec");
 			bundleExcludeHashSet.add("org.cryptacular");
 			bundleExcludeHashSet.add("org.eclipse");
+			bundleExcludeHashSet.add("org.glassfish.jersey");
 			bundleExcludeHashSet.add("org.glassfish.hk2");
 			bundleExcludeHashSet.add("org.hamcrest.core");
 			bundleExcludeHashSet.add("org.jsr-305");
@@ -331,8 +333,10 @@ public class BundleEvaluator {
 	 * @param busyMarker the busy marker
 	 */
 	public void addBusyMarkerToAllFilter(UID busyMarker) {
-		for (AbstractBundleClassFilter filter : this.getEvaluationFilterResults()) {
-			filter.addBusyMarker(busyMarker);
+		synchronized (this.getEvaluationFilterResults()) {
+			for (AbstractBundleClassFilter filter : this.getEvaluationFilterResults()) {
+				filter.addBusyMarker(busyMarker);
+			}
 		}
 	}
 	/**
@@ -340,8 +344,10 @@ public class BundleEvaluator {
 	 * @param busyMarker the busy marker
 	 */
 	public void removeBusyMarkerFromAllFilter(UID busyMarker) {
-		for (AbstractBundleClassFilter filter : this.getEvaluationFilterResults()) {
-			filter.removeBusyMarker(busyMarker);
+		synchronized (this.getEvaluationFilterResults()) {
+			for (AbstractBundleClassFilter filter : this.getEvaluationFilterResults()) {
+				filter.removeBusyMarker(busyMarker);
+			}
 		}
 	}
 	// --------------------------------------------------------------
@@ -420,8 +426,9 @@ public class BundleEvaluator {
 		// ----------------------------------------------------------
 		// --- Introduction debug area ------------------------------
 		// ----------------------------------------------------------
+		boolean debugShowBundleSelection = false;
 		boolean debugShowBundlesIncluded = true;
-		if (this.debug==true) {
+		if (this.debug==true && debugShowBundleSelection==true) {
 			if (debugShowBundlesIncluded==true) {
 				if (isExcludeBundleFromSearch==false) System.out.println("Included bundle " + bundle.getSymbolicName() + " - isNoBundleClassFilterAndNoFilterResultDefined=" + isNoBundleClassFilterAndNoFilterResultDefined);
 			} else {
@@ -464,15 +471,26 @@ public class BundleEvaluator {
 		}
 	}
 	/**
-	 * Gets the vector of bundle evaluator threads.
+	 * Returns the vector of bundle evaluator threads waiting for execution.
 	 * @return the vector of bundle evaluator threads
 	 */
-	private Vector<BundleEvaluatorThread> getVectorOfBundleEvaluatorThreads() {
-		if (bundleEvaluatorThreadVector==null) {
-			bundleEvaluatorThreadVector = new Vector<>();
+	private Vector<BundleEvaluatorThread> getVectorOfBundleEvaluatorThreadsWaiting() {
+		if (bundleEvaluatorThreadVectorWaiting==null) {
+			bundleEvaluatorThreadVectorWaiting = new Vector<>();
 		}
-		return bundleEvaluatorThreadVector;
+		return bundleEvaluatorThreadVectorWaiting;
 	}
+	/**
+	 * Returns the vector of bundle evaluator threads that are currently running.
+	 * @return the vector of bundle evaluator threads
+	 */
+	private Vector<BundleEvaluatorThread> getVectorOfBundleEvaluatorThreadsRunning() {
+		if (bundleEvaluatorThreadVectorRunning==null) {
+			bundleEvaluatorThreadVectorRunning= new Vector<>();
+		}
+		return bundleEvaluatorThreadVectorRunning;
+	}
+	
 	/**
 	 * Registers the specified BundleEvaluatorThread.
 	 *
@@ -480,8 +498,8 @@ public class BundleEvaluator {
 	 * @return true, if successful
 	 */
 	public boolean registerSearchThread(BundleEvaluatorThread bundleEvaluatorThread) {
-		if (this.getVectorOfBundleEvaluatorThreads().contains(bundleEvaluatorThread)==false) {
-			this.getVectorOfBundleEvaluatorThreads().addElement(bundleEvaluatorThread);
+		if (this.getVectorOfBundleEvaluatorThreadsWaiting().contains(bundleEvaluatorThread)==false) {
+			this.getVectorOfBundleEvaluatorThreadsWaiting().addElement(bundleEvaluatorThread);
 			return true;
 		}
 		return false;
@@ -491,24 +509,35 @@ public class BundleEvaluator {
 	 * @param bundleEvaluatorThread the bundle evaluator thread
 	 */
 	public void unregisterSearchThread(BundleEvaluatorThread bundleEvaluatorThread) {
-		this.getVectorOfBundleEvaluatorThreads().remove(bundleEvaluatorThread);
+		this.getVectorOfBundleEvaluatorThreadsWaiting().remove(bundleEvaluatorThread);
+		this.getVectorOfBundleEvaluatorThreadsRunning().remove(bundleEvaluatorThread);
 		this.executeWaitingSearchThreads();
 	}
+	
 	/**
 	 * Execute waiting search threads.
 	 */
-	private void executeWaitingSearchThreads() {
+	private synchronized void executeWaitingSearchThreads() {
 		
 		// --- If no further thread is waiting for execution, save cache ------
-		if (this.getVectorOfBundleEvaluatorThreads().size()==0) {
+		if (this.getVectorOfBundleEvaluatorThreadsWaiting().size()==0) {
 			this.getCache().save();
 		}
+		
+		// --- Check how many thread are currently running --------------------
+		int noOfRunningThreads = this.getVectorOfBundleEvaluatorThreadsRunning().size();
+
+		boolean isShowNoOfRunningThreads = false;
+		if (this.debug==true && isShowNoOfRunningThreads==true) System.out.println("# Number of executed search threads: " + noOfRunningThreads);
+		if (noOfRunningThreads>=this.maxSearchThreads) return;
+		
 		// --- Execute one of the waiting threads -----------------------------
-		for (int i=0; i < getVectorOfBundleEvaluatorThreads().size(); i++) {
-			BundleEvaluatorThread searchThread = this.getVectorOfBundleEvaluatorThreads().get(i);
+		for (int i=0; i < this.getVectorOfBundleEvaluatorThreadsWaiting().size(); i++) {
+			BundleEvaluatorThread searchThread = this.getVectorOfBundleEvaluatorThreadsWaiting().get(i);
 			synchronized (searchThread) {
 				if (searchThread.getState()==State.NEW) {
 					try {
+						this.getVectorOfBundleEvaluatorThreadsRunning().add(searchThread);
 						searchThread.start();
 					} catch (Exception ex) {
 						System.err.println("[" + this.getClass().getSimpleName() + "] Error with BundleEvaluatorThread '" + searchThread.getName() + "', State: " + searchThread.getState() + ":");
@@ -516,7 +545,7 @@ public class BundleEvaluator {
 					}
 				}
 			}
-			if ((i+1)>this.maxSearchThreads) break;
+			if (this.getVectorOfBundleEvaluatorThreadsRunning().size()>=this.maxSearchThreads) return;
 		}
 	}
 	
@@ -554,7 +583,8 @@ public class BundleEvaluator {
 		// ----------------------------------------------------------
 		// --- Debug area for the search start ----------------------
 		// ----------------------------------------------------------
-		if (this.debug==true) {
+		boolean debugSearchStart = false;
+		if (this.debug==true && debugSearchStart==true) {
 			String sbn = bundle.getSymbolicName();
 			String classFilterDescription = "";
 			if (bundleClassFilterToUse!=null) {
