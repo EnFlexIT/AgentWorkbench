@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -24,9 +25,9 @@ import javax.swing.Timer;
 public class JFrameSizeAndPostionController extends ComponentAdapter {
 
 	private final int delayOfTimer = 300;
-	private final int badPostionDistance = 30; 
+	private final int badPostionDistance = 10; 
 	
-	private boolean isDebug = false;
+	private boolean isDebug = true;
 	
 	private JFrame frameObserved;
 	
@@ -39,7 +40,7 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 	 */
 	public JFrameSizeAndPostionController(JFrame frameObserved) {
 		if (frameObserved==null) {
-			throw new NullPointerException("No winodw was specified for the " + this.getClass().getSimpleName() + "!");
+			throw new NullPointerException("No JFrame was specified for the " + this.getClass().getSimpleName() + "!");
 		}
 		// --- Set local instances ------------------------
 		this.frameObserved = frameObserved;
@@ -113,7 +114,7 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 			Point screenPositionBR = this.getScreenPosition(this.getFramePositionBottomRight());
 			Rectangle screenBounds = this.getDeviceBounds(this.getGraphicsDevice());
 
-			System.out.println("Check screen position: Screen-TL " + this.getPointAsString(screenPositionTL) + ", Screen-BR " + this.getPointAsString(screenPositionBR) + ", Device Bounds (" + this.getGraphicsDeviceID() + "): " + this.getSizeAsString(screenBounds));
+			System.out.println("[" + this.getClass().getSimpleName() + "] Location: " + this.getPointAsString(this.getFramePositionTopLeft()) + ", Screen-TL " + this.getPointAsString(screenPositionTL) + ", Screen-BR " + this.getPointAsString(screenPositionBR) + ", Device Bounds (" + this.getGraphicsDeviceID() + "): " + this.getSizeAsString(screenBounds));
 		}
 
 		// --- Check the current GraphicsDevice used -------------------------- 
@@ -127,15 +128,34 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 		if (yMovement>0 || newSize!=null) {
 			// --- Correct size and/or position of the frame ------------------
 			if (newSize!=null) this.frameObserved.setSize(newSize);
-			if (yMovement>0) {
+			if (yMovement!=0 || xMovement!=0) {
 				int newXPos = this.frameObserved.getX() + xMovement;
 				int newYPos = this.frameObserved.getY() + yMovement;
-				
 				this.frameObserved.setLocation(newXPos, newYPos);
 			}
 		}
+		
+		// --- Execute code in test area? -------------------------------------
+		boolean isExecuteTestArea = false;
+		if (isExecuteTestArea==true) {
+			this.executeTestArea();
+		}
+	}
+	/**
+	 * Executes this test area.
+	 */
+	private void executeTestArea() {
+		
+		GraphicsConfiguration gc = this.getGraphicsDevice().getDefaultConfiguration();
+		AffineTransform tx = gc.getDefaultTransform();
+        double scaleX = tx.getScaleX();
+        double scaleY = tx.getScaleY();
+        System.out.printf("scaleX: %f, scaleY: %f\n", scaleX, scaleY); 
 	}
 	
+	// ------------------------------------------------------------------------
+	// --- From here, methods to determine necessary corrections -------------- 
+	// ------------------------------------------------------------------------
 	/**
 	 * Return the x-value correction.
 	 * @return the c correction
@@ -147,7 +167,6 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 		}
 		return 0;
 	}
-	
 	/**
 	 * Return the y-value correction.
 	 * @return the y correction
@@ -171,7 +190,6 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 		if (this.isFrameMaximized()==false && ( windowBounds.width > screenBounds.width || windowBounds.height > screenBounds.height)) {
 			correctionSize = new Dimension((int)(screenBounds.getWidth() * 0.95), (int) (screenBounds.getHeight() * 0.9));
 		}
-
 		
 		// --- Local debug area -----------------------------------------------
 		if (this.isDebug==true) {
@@ -180,9 +198,11 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 		return correctionSize;
 	}
 	
-	
+	// ------------------------------------------------------------------------
+	// --- From here, methods to get necessary information -------------------- 
+	// ------------------------------------------------------------------------
 	/**
-	 * Return the GraphicsDevice currently used by the local frame .
+	 * Returns the GraphicsDevice currently used by the local frame.
 	 * @return the graphics device
 	 */
 	private GraphicsDevice getGraphicsDevice() {
@@ -194,11 +214,12 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 	 * @return the device bounds
 	 */
 	private Rectangle getDeviceBounds(GraphicsDevice device) {
-		GraphicsConfiguration gc = device.getDefaultConfiguration();
-		Rectangle bounds = gc.getBounds();
-		return bounds;
+		return device.getDefaultConfiguration().getBounds();
 	}
-	
+
+	// ------------------------------------------------------------------------
+	// --- From here, methods to get information about the current frame ------ 
+	// ------------------------------------------------------------------------
 	/**
 	 * Returns the top-left frame position relative to the main graphics device.
 	 * @return the frame position
@@ -254,6 +275,9 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 		return screenPosition;
 	}
 	
+	// ------------------------------------------------------------------------
+	// --- From here, methods for debug printing ------------------------------ 
+	// ------------------------------------------------------------------------
 	/**
 	 * Returns the specified point as string.
 	 * @param point the point

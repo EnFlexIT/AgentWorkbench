@@ -28,7 +28,6 @@
  */
 package agentgui.core.gui;
 
-
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -37,7 +36,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -64,6 +62,8 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.JHyperLink;
 
 /**
@@ -103,9 +103,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 	 * Instantiates a new about dialog.
 	 */
 	public AboutDialog() {
-		this.initialize();
+		this(null);
 	}
-	
 	/**
 	 * Instantiates a new about dialog.
 	 * @param owner the owner
@@ -133,7 +132,6 @@ public class AboutDialog extends JDialog implements ActionListener{
 					"Mohamed Amine Jedidi" +
 					"</CENTER></HTML></BODY>";
 
-		this.setSize(550, 480);
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		
 		this.setModal(true);
@@ -155,14 +153,13 @@ public class AboutDialog extends JDialog implements ActionListener{
 		jLabelVersion.setText("Version: " +  Application.getGlobalInfo().getVersionInfo().getFullVersionInfo(false, " "));
 		jLabelCopyright3.setText(Language.translate("Alle Rechte vorbehalten."));
 		
-		// --- Set Dialog position ----------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);			
+		this.pack();
 		
+		// --- Set Dialog size position -----------------------------
+		this.setSize(550, 480);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
-
+	
 	/**
      * Registers the escape key stroke in order to close this dialog.
      */
