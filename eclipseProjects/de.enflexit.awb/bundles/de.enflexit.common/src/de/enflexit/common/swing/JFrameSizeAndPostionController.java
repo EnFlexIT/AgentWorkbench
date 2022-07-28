@@ -27,7 +27,7 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 	private final int delayOfTimer = 300;
 	private final int badPostionDistance = 10; 
 	
-	private boolean isDebug = true;
+	private boolean isDebug = false;
 	
 	private JFrame frameObserved;
 	

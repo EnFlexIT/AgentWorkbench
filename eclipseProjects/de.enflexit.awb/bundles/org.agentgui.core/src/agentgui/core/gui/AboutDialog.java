@@ -153,9 +153,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 		jLabelVersion.setText("Version: " +  Application.getGlobalInfo().getVersionInfo().getFullVersionInfo(false, " "));
 		jLabelCopyright3.setText(Language.translate("Alle Rechte vorbehalten."));
 		
-		this.pack();
-		
-		// --- Set Dialog size position -----------------------------
+		// --- Set Dialog size and position -------------------------
 		this.setSize(550, 480);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}

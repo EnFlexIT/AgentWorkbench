@@ -1,11 +1,14 @@
 package de.enflexit.common.swing;
 
-import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
+import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.Rectangle;
+import java.awt.Window;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -32,7 +35,7 @@ public class JDialogSizeAndPostionController {
 		ScreenCenter
 	}
 	
-	private static boolean isDebug = true;
+	private static boolean isDebug = false;
 	
 	
 	// ------------------------------------------------------------------------
@@ -68,8 +71,8 @@ public class JDialogSizeAndPostionController {
 			jDialog.setSize((int)(width*scaleX), (int)(height*scaleY));
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			// --- As ultima ratio backup solution ----------------------------
+			if (isDebug==true) ex.printStackTrace();
+			// --- As backup solution -----------------------------------------
 			jDialog.setSize(width, height);
 		}
 	}
@@ -82,21 +85,26 @@ public class JDialogSizeAndPostionController {
 	 * Sets the specified JDialog to the specified position on the current screen.
 	 *
 	 * @param jDialog the JDialog to place
-	 * @param position the position indicator
+	 * @param destinationPosition the destination position indicator
 	 */
-	public static void setJDialogPositionOnScreen(JDialog jDialog, JDialogPosition position) {
+	public static void setJDialogPositionOnScreen(JDialog jDialog, JDialogPosition destinationPosition) {
 
-		if (jDialog==null || position==null) return;
+		// --- Shorten tasks of this method? ----------------------------------
+		if (jDialog==null) return;
+		if (destinationPosition==null) {
+			jDialog.setLocationRelativeTo(null);
+			return;
+		}
 		
 		try {
-			// --- Which location to use? -------------------------------
-			switch (position) {
+			// --- Which location to use? -------------------------------------
+			switch (destinationPosition) {
 			case ParentTopLeft:
 			case ParentTopRight:
 			case ParentBottomLeft:
 			case ParentBottomRight:
 			case ParentCenter:
-				setJDialogPositionRelativeToParent(jDialog, position);
+				setJDialogPositionRelativeToParent(jDialog, destinationPosition);
 				break;
 				
 			case ScreenTopLeft:
@@ -104,25 +112,27 @@ public class JDialogSizeAndPostionController {
 			case ScreenBottomLeft:
 			case ScreenTopRight:
 			case ScreenCenter:
-				setJDialogPositionRelativeToScreen(jDialog, position);
+				setJDialogPositionRelativeToScreen(jDialog, destinationPosition);
 				break;
 			}
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			if (isDebug==true) ex.printStackTrace();
+			// --- As backup solution -----------------------------------------
+			jDialog.setLocationRelativeTo(null);
 		}
 	}
 	
 	/**
 	 * Returns the backup dialog position if no parent is found.
 	 *
-	 * @param position the position
+	 * @param destinationPosition the destination position
 	 * @return the backup dialog position if no parent is found
 	 */
-	private static JDialogPosition getBackupDialogPositionIfNoParentWasFound(JDialogPosition position) {
+	private static JDialogPosition getBackupDialogPositionIfNoParentWasFound(JDialogPosition destinationPosition) {
 		
 		JDialogPosition backupPosition = JDialogPosition.ScreenCenter;
-		switch (position) {
+		switch (destinationPosition) {
 		case ParentTopLeft:
 			backupPosition = JDialogPosition.ScreenTopLeft;
 			break;
@@ -149,57 +159,119 @@ public class JDialogSizeAndPostionController {
 	 * Sets the JDialog position relative to parent and according to the specified position.
 	 *
 	 * @param jDialog the JDialog to place
-	 * @param position the JDialogPosition to apply
+	 * @param destinationPosition the JDialogPosition to apply
 	 */
-	private static void setJDialogPositionRelativeToParent(JDialog jDialog, JDialogPosition position) {
+	private static void setJDialogPositionRelativeToParent(JDialog jDialog, JDialogPosition destinationPosition) {
 		
-		// --- Check if the JDialog has a parent dialog -----------------------
-		Container parentContainer = jDialog.getParent();
-		if (parentContainer==null) {
+		// --- Check if the JDialog has an owner Window -----------------------
+		Window ownerWindow = getValidOwnerWindow(jDialog);
+		if (ownerWindow==null) {
 			// --- Get the backup position and set relative to screen ---------
-			JDialogPosition backupPosition  = getBackupDialogPositionIfNoParentWasFound(position);
+			JDialogPosition backupPosition  = getBackupDialogPositionIfNoParentWasFound(destinationPosition);
 			setJDialogPositionRelativeToScreen(jDialog, backupPosition);
 			return;
 		}
 		
-		// --------------------------------------------------------------------
-		// --- Continue as intended -------------------------------------------
-		// --------------------------------------------------------------------
+		// --- Get required information ---------------------------------------
+		Point parentLocation = ownerWindow.getLocation();
+		Rectangle parentRectangle = ownerWindow.getBounds();
+
+		// --- Set position ---------------------------------------------------
+		setJDialogPositionRelativeToScreen(jDialog, destinationPosition, parentLocation, parentRectangle);
+	}
+	
+	
+	/**
+	 * Sets the JDialog position relative to the current screen and according to the specified position.
+	 *
+	 * @param jDialog the JDialog to place
+	 * @param destinationPosition the JDialogPosition to apply
+	 */
+	private static void setJDialogPositionRelativeToScreen(JDialog jDialog, JDialogPosition destinationPosition) {
 		
-		// --- Get information about current state ----------------------------
+		// --- Define required information ------------------------------------
+		Window ownerWindow = getValidOwnerWindow(jDialog);
+		Point parentLocation = null;
+		Rectangle parentRectangle = null;
+		
+		// --- Determine required information ---------------------------------  
+		GraphicsDevice graphicsDevice = jDialog.getGraphicsConfiguration().getDevice();
+		if (isDebug==true) {
+			System.out.println("=> Positioning on Screen " + graphicsDevice.getIDstring());
+		}
+		
+		// --- Do we have an owner window? ------------------------------------
+		if (ownerWindow==null) {
+			// --- No owner frame => Get pointer information of the mouse ----- 
+			PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+			if (pointerInfo!=null) {
+				// --- Consider mouse position for the positioning ------------
+				graphicsDevice = pointerInfo.getDevice();
+				Point mouseLocation = pointerInfo.getLocation();
+				Point mouseLocationOnScreen = getScreenPosition(graphicsDevice, mouseLocation);
+				parentLocation = new Point(mouseLocation.x - mouseLocationOnScreen.x, mouseLocation.y - mouseLocationOnScreen.y);
+			} else {
+				parentLocation = getDialogPosition(graphicsDevice, new Point(0,0));
+			}
+			
+		} else {
+			// --- Find position based on owner frame -------------------------
+			Point ownerLocation = ownerWindow.getLocation();
+			Point ownerLocationOnScreen = getScreenPosition(graphicsDevice, ownerLocation);
+			parentLocation = new Point(ownerLocation.x - ownerLocationOnScreen.x, ownerLocation.y - ownerLocationOnScreen.y);
+			
+		}
+		
+		// --- Define the parent rectangle based on current device ------------
+		parentRectangle = graphicsDevice.getDefaultConfiguration().getBounds();
+		
+		// --- Set position ---------------------------------------------------
+		setJDialogPositionRelativeToScreen(jDialog, destinationPosition, parentLocation, parentRectangle);
+		
+	}
+	
+	/**
+	 * The actual doing method for setting the JDialog position relative to the current screen and according to the specified position.
+	 *
+	 * @param jDialog the JDialog to place
+	 * @param destinationPosition the JDialogPosition to apply
+	 * @param parentLocation the parent location
+	 * @param parentRectangle the parent rectangle
+	 */
+	private static void setJDialogPositionRelativeToScreen(JDialog jDialog, JDialogPosition destinationPosition, Point parentLocation, Rectangle parentRectangle) {
+		
 		Dimension dialogSize = jDialog.getSize();
-		Point parentLocation = parentContainer.getLocation();
-		Rectangle parentRectangle = parentContainer.getBounds();
+		int dialogWidth  = dialogSize.width;
+		int dialogHeight = dialogSize.height;
 		
-		int dialogWidth  = (int) (dialogSize.width);
-		int dialogHeight = (int) (dialogSize.height);
-		
-		int parentWidth  = (int) (parentRectangle.width);
-		int parentHeight = (int) (parentRectangle.height);
+		int parentWidth  = parentRectangle.width;
+		int parentHeight = parentRectangle.height;
 		
 		int newX = parentLocation.x;
 		int newY = parentLocation.y;
 		
-		switch (position) {
+		switch (destinationPosition) {
 		case ParentTopLeft:
+		case ScreenTopLeft:
 			// --- Nothing to do ------
 			break;
 		case ParentTopRight:
+		case ScreenTopRight:
 			newX = newX + parentWidth - dialogWidth;
 			break;
 		case ParentBottomLeft:
+		case ScreenBottomLeft:
 			newY = newY + parentHeight - dialogHeight;
 			break;
 		case ParentBottomRight:
+		case ScreenBottomRight:
 			newX = newX + parentWidth - dialogWidth;
 			newY = newY + parentHeight - dialogHeight;
 			break;
 		case ParentCenter:
+		case ScreenCenter:
 			newX = newX + parentWidth/2  - dialogWidth/2;
 			newY = newY + parentHeight/2 - dialogHeight/2;
-			break;
-
-		default:
 			break;
 		}
 		
@@ -216,21 +288,29 @@ public class JDialogSizeAndPostionController {
 			System.out.println();
 		}
 		
-		
 		// --- Finally set the new location -----------------------------------
 		jDialog.setLocation(newX, newY);
 	}
+	
 	/**
-	 * Sets the JDialog position relative to the current screen and according to the specified position.
+	 * Return the valid owner window of the specified JDialog.
 	 *
-	 * @param jDialog the JDialog to place
-	 * @param position the JDialogPosition to apply
+	 * @param jDialog the JDialog
+	 * @return the valid owner window or <code>null</code>
 	 */
-	private static void setJDialogPositionRelativeToScreen(JDialog jDialog, JDialogPosition position) {
+	private static Window getValidOwnerWindow(JDialog jDialog) {
 		
-//		TODO
-		
+		Window ownerWindow = jDialog.getOwner();
+		if (ownerWindow==null || (ownerWindow instanceof Frame && ownerWindow.isValid()==false && ownerWindow.isVisible()==false)) {
+			// --- Most probably, we have the SwingUtilities.SharedOwnerFrame owner ---------------
+			// --- => Possibly check all available windows by using "Window.getWindows()" ?? ------
+			return null;
+		}
+		return ownerWindow;
 	}
+	
+	
+	
 	
 	/**
 	 * Returns the screen position for the specified frame position 
