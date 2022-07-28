@@ -33,7 +33,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -52,6 +51,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.common.Language;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 
 /**
@@ -500,10 +501,8 @@ public class DynTableJPanel extends JPanel {
 			
 			// --- Center, if dialog --------------------------------
 			if (this.getContainerMainFrame() instanceof JDialog) {
-				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-				int top = (screenSize.height - this.getContainerMainFrame().getHeight()) / 2; 
-			    int left = (screenSize.width - this.getContainerMainFrame().getWidth()) / 2; 
-			    this.getContainerMainFrame().setLocation(left, top);	
+				JDialog jDialog = (JDialog) this.getContainerMainFrame(); 
+				JDialogSizeAndPostionController.setJDialogPositionOnScreen(jDialog, JDialogPosition.ParentCenter);
 			}
 
 		}

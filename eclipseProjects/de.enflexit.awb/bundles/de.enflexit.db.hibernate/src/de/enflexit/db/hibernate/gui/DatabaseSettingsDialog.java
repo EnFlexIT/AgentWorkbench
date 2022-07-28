@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 
@@ -74,11 +75,7 @@ public class DatabaseSettingsDialog extends JDialog implements ActionListener {
 		});
 		
 		// --- Set Dialog position ----------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);			
-	    
+	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};

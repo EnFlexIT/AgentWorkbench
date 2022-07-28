@@ -60,6 +60,8 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.crypto.CertificateProperties;
 import de.enflexit.common.crypto.KeyStoreController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * This class allows the user to configure the HTTPS Message Transport protocol.
@@ -144,8 +146,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("HTTPS Configuration", Language.EN));
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		
-		this.setBounds(100, 100, 820, 590);
-		this.setLocationRelativeTo(null);
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
@@ -156,18 +156,28 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			}
 		});
 		
+		this.setContentElements();
+		this.setSize(820, 590);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		
+	}
+	
+	private void setContentElements() {
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
+
 		GridBagConstraints gbc_jPanelKeystoreControl = new GridBagConstraints();
 		gbc_jPanelKeystoreControl.insets = new Insets(10, 10, 15, 5);
 		gbc_jPanelKeystoreControl.fill = GridBagConstraints.BOTH;
 		gbc_jPanelKeystoreControl.gridx = 0;
 		gbc_jPanelKeystoreControl.gridy = 0;
 		getContentPane().add(getJPanelKeystoreControl(), gbc_jPanelKeystoreControl);
+		
 		GridBagConstraints gbc_jPanelTrustStoreControl = new GridBagConstraints();
 		gbc_jPanelTrustStoreControl.insets = new Insets(10, 5, 15, 10);
 		gbc_jPanelTrustStoreControl.fill = GridBagConstraints.BOTH;
@@ -175,6 +185,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		gbc_jPanelTrustStoreControl.gridy = 0;
 		getContentPane().add(getJPanelTrustStoreControl(), gbc_jPanelTrustStoreControl);
 	}
+	
 	private JPanel getJPanelKeystoreControl() {
 		if (jPanelKeystoreControl == null) {
 			jPanelKeystoreControl = new JPanel();

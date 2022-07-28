@@ -33,7 +33,8 @@ Bundle-ClassPath: .,
  lib/org.osgi.core-6.0.0.jar,
  lib/stax-ex-1.8.jar,
  lib/txw2-2.3.1.jar
-Import-Package: org.slf4j
+Import-Package: de.enflexit.common.swing,
+ org.slf4j
 Require-Bundle: org.eclipse.osgi
 Service-Component: OSGI-INF/dbServiceConsumer.xml
 Export-Package: com.mchange.v2.c3p0,

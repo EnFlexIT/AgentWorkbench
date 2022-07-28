@@ -31,22 +31,25 @@ package org.agentgui.gui.swing.dialogs;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
-
-import javax.swing.JDialog;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -56,15 +59,10 @@ import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.AgentSelector;
 import de.enflexit.common.classSelection.ClassElement2Display;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.ControllerException;
-
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import java.awt.Font;
-import javax.swing.JPanel;
 
 
 /**
@@ -133,7 +131,14 @@ public class StartAgentDialog extends JDialog implements ActionListener {
 		this.setTitle("Start an Agent");
 		this.setModal(true);
 		this.registerEscapeKeyStroke();
+		
+		this.setContentElements();
+		
 		this.setSize(600, 230);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+	}
+
+	private void setContentElements() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
@@ -203,15 +208,8 @@ public class StartAgentDialog extends JDialog implements ActionListener {
 		gbc_jPanelButtons.gridx = 0;
 		gbc_jPanelButtons.gridy = 4;
 		getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
-		
-		// --- Set Dialog position ----------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);		
-		
 	}
-
+	
     private void registerEscapeKeyStroke() {
     	final ActionListener listener = new ActionListener() {
             public final void actionPerformed(final ActionEvent e) {

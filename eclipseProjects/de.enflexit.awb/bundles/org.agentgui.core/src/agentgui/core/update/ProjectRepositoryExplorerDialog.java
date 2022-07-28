@@ -42,6 +42,8 @@ import javax.swing.KeyStroke;
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.http.WebResourcesAuthorization;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 import java.awt.Insets;
 
@@ -69,6 +71,21 @@ public class ProjectRepositoryExplorerDialog extends JDialog implements ProjectR
 	 */
 	private void initialize() {
 		
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
+		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Project-Repository Explorer");
+		this.registerEscapeKeyStroke();
+		this.setModal(true);
+
+		this.setContentElements();
+		
+		this.setSize(1200, 750);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		
+		this.setVisible(true);
+	}
+	
+	private void setContentElements() {
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0};
@@ -82,15 +99,6 @@ public class ProjectRepositoryExplorerDialog extends JDialog implements ProjectR
 		gbc_ExplorerPanel.gridx = 0;
 		gbc_ExplorerPanel.gridy = 0;
 		this.getContentPane().add(this.getProjectRepositoryExplorerPanel(), gbc_ExplorerPanel);
-		
-		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
-		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Project-Repository Explorer");
-		this.setSize(1200, 750);
-		this.setLocationRelativeTo(null);
-		this.registerEscapeKeyStroke();
-		this.setModal(true);
-		this.setVisible(true);
-		
 	}
 	
 	/**

@@ -11,3 +11,4 @@ Require-Bundle: de.enflexit.api,
  net.minidev.json-smart
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc
+Import-Package: de.enflexit.common.swing

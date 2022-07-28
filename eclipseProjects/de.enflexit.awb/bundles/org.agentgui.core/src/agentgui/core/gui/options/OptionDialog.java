@@ -36,7 +36,7 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -75,6 +75,8 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * This JDialog represents the option dialog, where the 
@@ -174,14 +176,10 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 		});
 
-		// --- Size and centre dialog -------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		
+		// --- Size and center dialog -------------------------------
+		Rectangle screenSize = this.getGraphicsConfiguration().getBounds();
 		this.setSize((int) (screenSize.getWidth()*0.7), (int)(screenSize.getHeight()*0.8));
-		
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
 	}
 

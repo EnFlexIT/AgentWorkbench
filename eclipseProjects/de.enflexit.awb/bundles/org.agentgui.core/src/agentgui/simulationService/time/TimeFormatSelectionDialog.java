@@ -51,6 +51,8 @@ import javax.swing.WindowConstants;
 
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class TimeFormatSelectionDialog enables to configure the blueprint for 
@@ -94,7 +96,7 @@ public class TimeFormatSelectionDialog extends JDialog implements ActionListener
 			}
 		});
 		this.setSize(490, 160);
-		
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};

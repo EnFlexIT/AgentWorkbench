@@ -41,6 +41,8 @@ import javax.swing.event.ListDataListener;
 import agentgui.core.application.Language;
 import de.enflexit.common.classSelection.ClassElement2Display;
 import de.enflexit.common.classSelection.JListClassSearcher;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * This GUI allows the selection of a class, which extend the 'jade.content.onto.Ontology'
@@ -85,10 +87,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		this.filterOntology();
 		
 		// --- Center Dialog ------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
 		// --- Translate ----------------------------------
 		this.setTitle(Language.translate("Auswahl - Ontologien"));

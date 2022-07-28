@@ -36,7 +36,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -79,6 +78,8 @@ import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.ExceptionHandling;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * The Dialog TimeFormatImportConfiguration is used to set the 
@@ -188,11 +189,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		this.setExampleParse();
 		
 		// --- Center dialog ----------------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);			
-		
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	}
 	/**

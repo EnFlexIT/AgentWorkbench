@@ -30,11 +30,9 @@ package agentgui.core.charts.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -45,6 +43,8 @@ import javax.swing.JPanel;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.ontology.gui.DynForm;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 /**
  * Abstract super class for dialogs for chart viewing and editing. 
  * ChartEditorDialogs are containers for ChartEditorJPanel implementations for 
@@ -87,16 +87,11 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 		this.setIconImage(imageAgentGUI);
 		this.setTitle(Language.translate("Edit Chart", Language.EN));
 		
-		// --- center dialog --------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
-
-
-	    this.setContentPane(this.getContentPane());
+		this.setContentPane(this.getContentPane());
 		this.getContentPane().add(getButtonPane(), BorderLayout.SOUTH);
 
+		// --- Center dialog --------------------
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);	
 	}
 	
 	protected JPanel getButtonPane(){

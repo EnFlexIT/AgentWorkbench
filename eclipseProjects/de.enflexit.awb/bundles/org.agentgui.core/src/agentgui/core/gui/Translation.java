@@ -39,7 +39,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -87,6 +86,8 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.PropertyContentProvider.FileToProvide;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * The JDialog is used in order to allow the translations between all defined languages
@@ -227,12 +228,9 @@ private static final long serialVersionUID = 1L;
 		// --- Listen to keyboard events ----------------------------
 		this.setKeyListenEvents();
 		
-		// --- Position festlegen -----------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
-	 
+		// --- Center dialog ----------------------------------------
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		
 	    // --- Translate --------------------------------------------
 		this.setTitle(appName + ": " + Language.translate("Wörterbuch"));
 		jTabbedPane.setTitleAt(0, Language.translate("Wörterbuch"));

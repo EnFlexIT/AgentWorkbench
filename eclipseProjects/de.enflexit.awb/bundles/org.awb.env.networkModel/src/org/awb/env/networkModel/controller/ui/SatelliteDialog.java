@@ -44,6 +44,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 
 /**
@@ -94,7 +96,6 @@ public class SatelliteDialog extends JDialog implements ActionListener {
 		this.setTitle(Language.translate("Übersicht"));
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 
-		this.setSize(200, 150);
 		this.add(basicGraphGui.getSatelliteVisualizationViewer());
 		
 		this.addWindowListener(new WindowAdapter() {
@@ -113,6 +114,10 @@ public class SatelliteDialog extends JDialog implements ActionListener {
 				}
 			}
 		});
+		
+		this.setSize(200, 150);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenTopLeft);
+		
 	}
 	
 	/**

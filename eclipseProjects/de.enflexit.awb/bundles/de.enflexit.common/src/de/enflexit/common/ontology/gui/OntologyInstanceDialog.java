@@ -35,7 +35,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -52,6 +51,8 @@ import de.enflexit.common.Language;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -135,7 +136,6 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 */
 	private void initialize() {
 		
-		this.setSize(600, 500);
 		this.setModal(true);
 		this.setTitle(Language.translate("Ontologie-Klassen initialisieren"));
 		this.setContentPane(getJContentPane());
@@ -152,10 +152,8 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		if (OntologyVisualisationConfiguration.getApplicationIconImage()!=null) this.setIconImage(OntologyVisualisationConfiguration.getApplicationIconImage());
 		
 		// --- Dialog zentrieren ------------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
+		this.setSize(600, 500);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	}
 

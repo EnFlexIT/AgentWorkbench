@@ -6,7 +6,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JTabbedPane;
@@ -24,7 +25,8 @@ import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
 import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import javax.swing.JButton;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class JDialogWsConfiguration enables to configure WS server and clients.
@@ -75,13 +77,9 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		});
 		
 		// --- Size and center dialog -------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		Rectangle screenSize = this.getGraphicsConfiguration().getBounds(); 
 		this.setSize((int) (screenSize.getWidth() * 0.6), (int)(screenSize.getHeight()*0.6));
-		
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
-		
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};

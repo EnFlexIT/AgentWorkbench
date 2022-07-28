@@ -23,6 +23,9 @@ import javax.swing.WindowConstants;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -83,8 +86,8 @@ public class NetworkComponentSelectionDialog extends JDialog implements ActionLi
 		
 		this.setTitle("Network Component Selection");
 		this.setModal(true);
-		this.setSize(new Dimension(450, 500));
-		this.setLocationRelativeTo(null);
+		this.setSize(450, 500);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.registerEscapeKeyStroke();
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

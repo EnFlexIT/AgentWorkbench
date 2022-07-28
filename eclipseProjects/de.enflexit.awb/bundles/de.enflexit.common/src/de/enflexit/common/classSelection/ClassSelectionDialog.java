@@ -29,9 +29,7 @@
 package de.enflexit.common.classSelection;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -43,6 +41,9 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
+
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * This extended JDialog uses the {@link ClassSelectionPanel} in order to allow 
@@ -140,10 +141,7 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 			}
 		});
 		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);
+	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	}
 	/**

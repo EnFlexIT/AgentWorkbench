@@ -29,7 +29,6 @@
 package agentgui.core.gui;
 
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -39,9 +38,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Calendar;
 
 import javax.swing.BorderFactory;
@@ -88,9 +84,9 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private JLabel jLabelCopyright2;
 	private JLabel jLabelCopyright3;
 	
-	private JHyperLink jLabelLinkAWB;
-	private JHyperLink jLabelLinkAgentGui;
-	private JHyperLink jLabelLinkDAWIS;
+	private JHyperLink jLabelLinkGitHub;
+	private JHyperLink jLabelLinkGitBook;
+	private JHyperLink jLabelLinkSOFTEC;
 	private JLabel jLabelDummy;
 	
 	private JLabel jLabelMembership;
@@ -352,25 +348,25 @@ public class AboutDialog extends JDialog implements ActionListener{
 						
 			jLabelCopyright1 = new JLabel();
 			int year = Calendar.getInstance().get(Calendar.YEAR);
-			jLabelCopyright1.setText("Copyright \u00A9 2009-" + year + " by Christian Derksen");
+			jLabelCopyright1.setText("Copyright \u00A9 2009-" + year + " by Christian Derksen,");
 			jLabelCopyright1.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jLabelCopyright2 = new JLabel();
-			jLabelCopyright2.setText("& DAWIS @ ICB - University of Duisburg-Essen");
+			jLabelCopyright2.setText("SOFTEC / DAWIS @ ICB - University of Duisburg-Essen");
 			jLabelCopyright2.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jLabelCopyright3 = new JLabel();
 			jLabelCopyright3.setText("Alle Rechte vorbehalten.");
 			jLabelCopyright3.setToolTipText("");
 			jLabelCopyright3.setFont(new Font("Dialog", Font.PLAIN, 12));
 			
-			jLabelLinkAWB = new JHyperLink();
-			jLabelLinkAWB.setText("https://github.com/EnFlexIT/AgentWorkbench");
-			jLabelLinkAWB.addActionListener(this);
-			jLabelLinkAgentGui = new JHyperLink();
-			jLabelLinkAgentGui.setText("http://www.agentgui.org");
-			jLabelLinkAgentGui.addActionListener(this);
-			jLabelLinkDAWIS = new JHyperLink();
-			jLabelLinkDAWIS.setText("http://dawis.wiwi.uni-due.de");
-			jLabelLinkDAWIS.addActionListener(this);
+			jLabelLinkGitHub = new JHyperLink();
+			jLabelLinkGitHub.setText("https://github.com/EnFlexIT/AgentWorkbench");
+			jLabelLinkGitHub.addActionListener(this);
+			jLabelLinkGitBook = new JHyperLink();
+			jLabelLinkGitBook.setText("https://enflexit.gitbook.io/agent-workbench/");
+			jLabelLinkGitBook.addActionListener(this);
+			jLabelLinkSOFTEC = new JHyperLink();
+			jLabelLinkSOFTEC.setText("http://www.softec.wiwi.uni-due.de");
+			jLabelLinkSOFTEC.addActionListener(this);
 			
 			jLabelDummy = new JLabel();
 			jLabelDummy.setText(" ");
@@ -381,9 +377,9 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jPanelGeneral.add(jLabelCopyright1, gridBagConstraintsCopyRight1);
 			jPanelGeneral.add(jLabelCopyright2, gridBagConstraintsCopsRight2);
 			jPanelGeneral.add(jLabelCopyright3, gridBagConstraintsCopyRight3);
-			jPanelGeneral.add(jLabelLinkAWB, gridBagConstraintsLinkAWB);
-			jPanelGeneral.add(jLabelLinkAgentGui, gridBagConstraintsLinkAgentGui);
-			jPanelGeneral.add(jLabelLinkDAWIS, gridBagConstraintsLinkDAWIS);
+			jPanelGeneral.add(jLabelLinkGitHub, gridBagConstraintsLinkAWB);
+			jPanelGeneral.add(jLabelLinkGitBook, gridBagConstraintsLinkAgentGui);
+			jPanelGeneral.add(jLabelLinkSOFTEC, gridBagConstraintsLinkDAWIS);
 			jPanelGeneral.add(jLabelDummy, gridBagConstraintsDummy);
 		}
 		return jPanelGeneral;
@@ -425,7 +421,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 	public void actionPerformed(ActionEvent ae) {
 		
 		String actCMD = ae.getActionCommand();
-		if (ae.getSource()==jLabelLinkAWB || ae.getSource()==jLabelLinkAgentGui || ae.getSource()==jLabelLinkDAWIS) {
+		if (ae.getSource()==jLabelLinkGitHub || ae.getSource()==jLabelLinkGitBook || ae.getSource()==jLabelLinkSOFTEC) {
 			this.followHyperlink(actCMD);
 		
 		} else if (ae.getSource()==this.getJButtonOk()) {
@@ -438,22 +434,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 	 * @param uriString the URI string
 	 */
 	private void followHyperlink(String uriString) {
-		try {
-			this.followHyperlink(new URI(uriString));
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-	}
-	/**
-	 * Follows the specified hyperlink.
-	 * @param uri the URI
-	 */
-	private void followHyperlink(URI uri) {
-		try {
-			Desktop.getDesktop().browse(uri);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Application.browseURI(uriString);
 	}
 	
 }

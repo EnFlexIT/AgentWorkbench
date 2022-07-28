@@ -1,10 +1,9 @@
 package de.enflexit.common.csv;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -15,6 +14,8 @@ import javax.swing.JTable;
 import javax.swing.WindowConstants;
 
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class CSV_FilePreview represents a dialog that is used for debugging /
@@ -60,7 +61,10 @@ public class CSV_FilePreview extends JDialog {
      */
     private void initialize() {
 
-		this.getContentPane().add(this.getJTabbedPaneImport(), BorderLayout.CENTER);
+    	this.setTitle("Debug: CSV - Data Import");
+    	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+    	this.getContentPane().add(this.getJTabbedPaneImport(), BorderLayout.CENTER);
 		if (this.csvDataController.size() > 0) {
 
 			for (String fileName : this.csvDataController.keySet()) {
@@ -76,16 +80,10 @@ public class CSV_FilePreview extends JDialog {
 		}
 
 		// --- Size and center dialog -------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
+		Rectangle screenSize = this.getGraphicsConfiguration().getBounds();
 		this.setSize((int) (screenSize.getWidth() * 0.5), (int) (screenSize.getHeight() * 0.7));
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
-		int top = (screenSize.height - this.getHeight()) / 2;
-		int left = (screenSize.width - this.getWidth()) / 2;
-		this.setLocation(left, top);
-
-		this.setTitle("Debug: CSV - Data Import");
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
 	}
 

@@ -35,7 +35,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -58,7 +57,8 @@ import de.enflexit.api.Translator.SourceLanguage;
 import de.enflexit.common.Language;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
-
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class AuthenticatationDialog.
@@ -116,15 +116,10 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 		
 		this.setTitle(Language.translate("Authentisierungs-Einstellungen"));
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
-		
-		this.setSize(new Dimension(580, 240));
-		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
-		
-	    this.setModal(true);
+		this.setModal(true);
+
+		this.setSize(580, 240);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	    this.initialize();
 		if (authorization != null && authorization.getType() == AuthorizationType.BASIC) {

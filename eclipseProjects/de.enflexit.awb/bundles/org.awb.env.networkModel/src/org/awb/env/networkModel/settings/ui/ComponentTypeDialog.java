@@ -34,6 +34,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -72,6 +73,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.imageFileSelection.MissingIcon;
 import jade.core.Agent;
 
@@ -154,12 +157,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 		});
 		this.registerEscapeKeyStroke();
 		
-		this.setSize(800, 600);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		Rectangle screenSize = this.getGraphicsConfiguration().getBounds(); 
 	    int width  = (int) (screenSize.getWidth() * 0.7);
 	    int height = (int) (screenSize.getHeight() * 0.7);
 	    this.setSize(width, height);
-	    this.setLocationRelativeTo(null);
+	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	    this.setContentPane(this.getJContentPane());
 	    this.setGeneralConfiguration();

@@ -32,7 +32,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -42,6 +41,8 @@ import javax.swing.JPanel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * This JDialog is a reserve dialog in case that tray icons are not supported
@@ -78,17 +79,14 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 	 */
 	private void initialize() {
 		
-		this.setSize(279, 66);
+		this.setSize(280, 70);
 		this.add(getJContentPane());
 		this.setUndecorated(true);
 		this.addMouseListener(this);
 		this.add(trayIconPopUp);
 		this.setAlwaysOnTop(true);
 		
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		int newX = (int) (screen.getWidth() - this.getWidth());
-		int newY = (int) (screen.getHeight()- 1.5*this.getHeight());
-		this.setLocation( newX, newY );
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
 		
 		String viewTitle = Application.getGlobalInfo().getApplicationTitle();
 		jContentPane.setToolTipText(viewTitle);

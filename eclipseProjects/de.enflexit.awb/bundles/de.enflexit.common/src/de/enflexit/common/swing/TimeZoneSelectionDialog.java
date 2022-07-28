@@ -44,6 +44,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+
 /**
  * The Class TimeZoneSelectionDialog can be used to select a {@link ZoneId} of a time zone.
  *
@@ -98,7 +100,7 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 		this.setTitle("Time Zone Selection");
 		this.setModal(true);
 		this.setSize(new Dimension(500, 500));
-		this.setLocationRelativeTo(null);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.registerEscapeKeyStroke();
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

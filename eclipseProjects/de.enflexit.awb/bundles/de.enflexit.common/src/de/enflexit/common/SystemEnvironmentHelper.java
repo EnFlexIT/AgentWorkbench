@@ -61,9 +61,7 @@ public class SystemEnvironmentHelper {
 	 * @return true, if is headless operation
 	 */
 	public static boolean isHeadlessOperation() {
-		boolean headlessOperation = GraphicsEnvironment.isHeadless();
-//		headlessOperation = GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadlessInstance();
-		return headlessOperation;
+		return GraphicsEnvironment.isHeadless();
 	}
 	
 }

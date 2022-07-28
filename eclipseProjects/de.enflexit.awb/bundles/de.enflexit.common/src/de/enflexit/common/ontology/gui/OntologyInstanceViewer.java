@@ -34,7 +34,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
@@ -56,6 +56,8 @@ import de.enflexit.common.images.ImageProvider.ImageFile;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -315,15 +317,11 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		dialog.setContentPane(getJContentPane());
 		
 		// --- Size and center the dialog -----------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Rectangle screenSize = this.getGraphicsConfiguration().getBounds();
 		int diaWidth = (int) (screenSize.width*0.8);
 		int diaHeight = (int) (screenSize.height * 0.9);
-
-		int left = (screenSize.width - diaWidth) / 2;
-		int top = (screenSize.height - diaHeight) / 2; 
-
 		dialog.setSize(new Dimension(diaWidth, diaHeight));
-	    dialog.setLocation(left, top);	
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(dialog, JDialogPosition.ParentCenter);	
 		
 	    // --- Remind and remove THIS from the parent -----
 	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(null);

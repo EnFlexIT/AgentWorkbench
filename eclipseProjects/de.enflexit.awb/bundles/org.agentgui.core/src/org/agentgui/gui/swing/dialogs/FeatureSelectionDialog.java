@@ -73,6 +73,8 @@ import org.eclipse.equinox.p2.metadata.IRequirement;
 import agentgui.core.application.Language;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class FeatureSelectionDialog.
@@ -155,8 +157,8 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 		this.setTitle(Language.translate("Features auswählen"));
 		this.setSize(800, 450);
 		this.setModal(true);
-		this.setLocationRelativeTo(null);
 		this.registerEscapeKeyStroke();
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.setVisible(true);
 	}
 

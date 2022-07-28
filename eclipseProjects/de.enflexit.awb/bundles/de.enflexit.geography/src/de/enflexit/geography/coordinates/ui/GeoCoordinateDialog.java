@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,21 +14,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.SerialClone;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.OSGBCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
-
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 /**
  * The Class GeoCoordinateDialog can be used in order to configure an geographical coordinate.
@@ -97,7 +97,6 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 	private void initialize() {
 
 		this.setTitle("Geographical Location");
-		this.setSize(450, 350);
 		this.setModal(true);
 		this.getContentPane().add(this.getJPanelGeoCoordinate(), BorderLayout.CENTER);
 		this.getContentPane().add(this.getJPanelOkCancel(), BorderLayout.SOUTH);
@@ -112,10 +111,8 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 		});
 		
 		// --- Set Dialog position ----------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);		
+		this.setSize(450, 350);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.setVisible(true);
 	}
