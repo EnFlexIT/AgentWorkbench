@@ -34,7 +34,6 @@ import org.agentgui.gui.AwbProgressMonitor;
 import org.agentgui.gui.UiBridge;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -53,7 +52,7 @@ import de.enflexit.common.p2.P2OperationsHandler;
 public class AWBUpdater extends Thread {
 
 	public static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
-
+	
 	// --- For the debugging of this class set true -------------
 	private boolean debuggingInIDE = false;
 	private boolean debug = false;
@@ -69,6 +68,8 @@ public class AWBUpdater extends Thread {
 	private boolean enforceUpdate = false;
 	private boolean doUpdateProcedure = true;
 	private boolean askBeforeDownload = false;
+	
+	private boolean doUpdateCheckOnly = false;
 	
 	private Object synchronizationObject;
 	private AwbProgressMonitor progressMonitor;
@@ -96,6 +97,7 @@ public class AWBUpdater extends Thread {
 	public AWBUpdater(boolean userExecuted, boolean enforceUpdate) {
 		this.manualyExecutedByUser = userExecuted;
 		this.enforceUpdate = enforceUpdate;
+		
 		this.initialize();
 	}
 	
@@ -179,7 +181,9 @@ public class AWBUpdater extends Thread {
 		if (this.globalInfo.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			this.askBeforeDownload = true;
 			this.doUpdateProcedure = false; // set to 'true' for further developments of the AgentGuiUpdater class
-			System.out.println("[" + this.getClass().getSimpleName() + "] No updates in the IDE environment available.");
+			this.doUpdateCheckOnly = true;
+			System.out.println("[" + this.getClass().getSimpleName() + "] P2 updates are not possible when starting from the IDE.");
+			
 		}
 
 		// ------------------------------------------------
@@ -201,15 +205,23 @@ public class AWBUpdater extends Thread {
 		synchronized (this.getSynchronizationObject()) {
 			
 			if (this.doUpdateProcedure==true) {
-			
-				// --- Wait for the end of the benchmark -----------
+
+				this.debugPrint("Doing full update procedure");
+				// --- Wait for the end of the benchmark ------------
 				this.waitForTheEndOfBenchmark();
-				// --- Perform the update --------------------------
+				// --- Perform the update ---------------------------
 				this.startP2Updates();
 				
+			} else if (this.doUpdateCheckOnly==true) {
+
+				this.debugPrint("Doing update check only");
+				// --- Wait for the end of the benchmark ------------
+				this.waitForTheEndOfBenchmark();
+				// --- Check the repo for newer versions ------------
+//				this.checkForUpdates();	// Disabled due to strange results
 			}
 			
-			// --- Notify waiting threads ----------------------
+			// --- Notify waiting threads ---------------------------
 			this.debugPrint("Update done, notifying");
 			this.updateDone = true;
 			this.getSynchronizationObject().notify();
@@ -264,7 +276,7 @@ public class AWBUpdater extends Thread {
 				}
 
 			} else {
-
+				
 				// --- Ask for user confirmation if specified in the settings -------
 				boolean installUpdates = true;
 				if (this.askBeforeDownload==true) {
@@ -362,6 +374,25 @@ public class AWBUpdater extends Thread {
 			this.debugPrint("Update already done, no need to wait");
 		}
 	}
+	
+	
+	/**
+	 * Check for updates.
+	 */
+//	private void checkForUpdates() {
+//		P2OperationsHandler.getInstance().checkMetadataRepos();
+//		
+//		IStatus status = P2OperationsHandler.getInstance().checkForUpdates();
+//		if (status.getSeverity()!=IStatus.ERROR) {
+//			if (status.getCode()==UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
+//				System.out.println("[" + this.getClass().getSimpleName() + "] All installed features are up to date.");
+//			} else {
+//				JOptionPane.showMessageDialog(null, "Newer Versions of installed features are available, please update your target platform!", "Updates available", JOptionPane.WARNING_MESSAGE);
+//				System.out.println("[" + this.getClass().getSimpleName() + "] Newer Versions of installed features are available, please update your target platform!");
+//			}
+//		}
+//		
+//	}
 	
 	/**
 	 * Gets the synchronization object.

@@ -21,7 +21,8 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.equinox.p2.engine,
  org.eclipse.equinox.p2.metadata,
  org.eclipse.equinox.p2.operations,
- org.eclipse.equinox.p2.repository
+ org.eclipse.equinox.p2.repository,
+ org.eclipse.equinox.p2.transport.ecf
 Export-Package: de.enflexit.common,
  de.enflexit.common.bundleEvaluation,
  de.enflexit.common.classLoadService,

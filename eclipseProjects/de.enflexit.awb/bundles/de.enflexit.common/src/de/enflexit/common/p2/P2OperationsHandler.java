@@ -2,10 +2,13 @@ package de.enflexit.common.p2;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +31,7 @@ import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
@@ -44,10 +48,11 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
  */
 @SuppressWarnings("restriction")
 public class P2OperationsHandler {
-
+	
+	private static final String DEFAULT_REPO_URI = "https://p2.enflex.it/awb/latest/";
+	
 	private boolean isDevelopmentMode = false;
 	private File p2Directory = null;
-//	private File p2Directory = new File("D:/AgentWorkbench/p2/");
 
 	private ProvisioningSession provisioningSession;
 	private IProvisioningAgent provisioningAgent;
@@ -82,7 +87,6 @@ public class P2OperationsHandler {
 			this.p2Directory = null;
 			
 		}
-		
 	}
 	
 	/**
@@ -130,7 +134,7 @@ public class P2OperationsHandler {
 				ServiceReference<?> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.SERVICE_NAME);
 				if (serviceReference!=null) {
 					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
-				}	
+				}
 			}
 			
 		}
@@ -225,6 +229,20 @@ public class P2OperationsHandler {
 			this.getMetadataRepositoryManager().setRepositoryProperty(repositoryURI, IRepository.PROP_NICKNAME, repositoryName);
 		}
 	}
+	
+	/**
+	 * Checks if there are configured p2 metadata repositories, adds the default repository if not.
+	 */
+	public void checkMetadataRepos() {
+		if (this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL).length==0) {
+			try {
+				this.getMetadataRepositoryManager().addRepository(new URI(DEFAULT_REPO_URI));
+			} catch (URISyntaxException e) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Invalid repository URI " +  DEFAULT_REPO_URI);
+				e.printStackTrace();
+			}
+		}
+	}
 	/**
 	 * Checks if the specified repository is already known.
 	 *
@@ -286,12 +304,17 @@ public class P2OperationsHandler {
 	 * @return the result status
 	 */
 	private IStatus performOperation(ProfileChangeOperation operation) {
+		this.checkMetadataRepos();
 		IStatus status = operation.resolveModal(this.getProgressMonitor());
 		if (status.isOK()) {
 			ProvisioningJob provisioningJob = operation.getProvisioningJob(this.getProgressMonitor());
 
 			if (provisioningJob == null) {
-				System.err.println("Trying to install from the Eclipse IDE? This won't work!");
+//				System.err.println("Trying to install from the Eclipse IDE? This won't work!");
+				
+				JOptionPane.showMessageDialog(null, "Newer Versions of installed features are available, please update your target platform!", "Updates available", JOptionPane.WARNING_MESSAGE);
+				System.out.println("[" + this.getClass().getSimpleName() + "] Newer Versions of installed features are available, please update your target platform!");
+				
 				return Status.CANCEL_STATUS;
 			}
 
@@ -302,7 +325,6 @@ public class P2OperationsHandler {
 
 	/**
 	 * Checks for updates.
-	 * 
 	 * @return the result status
 	 */
 	public IStatus checkForUpdates() {
