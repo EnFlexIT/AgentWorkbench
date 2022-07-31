@@ -40,6 +40,8 @@ public class HibernateUtilities {
 	private static ConcurrentHashMap<String, SessionFactoryMonitor> sessionFactoryMonitorHashMap;
 	private static HashMap<String, SessionFactory> sessionFactoryHashMap;
 	
+	private static boolean isDebug = false;
+	
 	
 	/**
 	 * Returns the session factory monitor hash map.
@@ -51,6 +53,16 @@ public class HibernateUtilities {
 		}
 		return sessionFactoryMonitorHashMap;
 	}
+	/**
+	 * Returns the list of all known session factory ID.
+	 * @return the session factory ID list
+	 */
+	public static List<String> getSessionFactoryIDList() {
+		List<String> fidList = new ArrayList<>(getSessionFactoryMonitorHashMap().keySet());
+		Collections.sort(fidList);
+		return fidList;
+	}
+	
 	/**
 	 * Returns the session factory monitor for the specified factory defined by its ID.
 	 * @param factoryID the factory ID (<code>null</code> will use the default factory)
@@ -66,6 +78,7 @@ public class HibernateUtilities {
 			// --- Put monitor instance into the local hash map -----
 			monitor = new SessionFactoryMonitor(idFactory);
 			getSessionFactoryMonitorHashMap().put(idFactory, monitor);
+			if (isDebug==true) System.out.println("[" + HibernateUtilities.class.getSimpleName() + "] Create SessionFactoryMonitor for '" + factoryID + "'");
 		}
 		return monitor;
 	}
@@ -168,7 +181,6 @@ public class HibernateUtilities {
 		}
 		return sessionFactoryHashMap;
 	}
-	
 	
 	/**
 	 * Will return the default session factory.
@@ -308,8 +320,6 @@ public class HibernateUtilities {
 			factory = getSessionFactoryHashMap().get(idFactory);
 			break;
 		}
-		
-	
 		return factory;
 	}
 	/**
@@ -321,7 +331,6 @@ public class HibernateUtilities {
 			synchronized (monitor) {
 				monitor.wait();
 			}
-			
 		} catch (IllegalMonitorStateException | InterruptedException imse) {
 			// imse.printStackTrace();
 		}
@@ -394,7 +403,9 @@ public class HibernateUtilities {
 		}
 	}
 
-	
+	// ------------------------------------------------------------------------
+	// --- From here, methods for the handling of database services ----------- 
+	// ------------------------------------------------------------------------
 	/**
 	 * Checks if the configured database connection is available.
 	 *
@@ -574,7 +585,7 @@ public class HibernateUtilities {
 	 * @param driverClaName the driver cla name
 	 * @return the database service by driver class name
 	 */
-	private static HibernateDatabaseService getDatabaseServiceByDriverClassName(String driverClaName) {
+	public static HibernateDatabaseService getDatabaseServiceByDriverClassName(String driverClaName) {
 		Vector<HibernateDatabaseService> dbServices = new Vector<>(getDatabaseServices().values()); 
 		for (int i = 0; i < dbServices.size(); i++) {
 			if (dbServices.get(i).getDriverClassName().equals(driverClaName)) {
@@ -584,4 +595,35 @@ public class HibernateUtilities {
 		return null;
 	}
 	
+	/**
+	 * Returns the database system name out of the hibernate configuration and the driver specified.
+	 *
+	 * @param hibernateConfig the Hibernate configuration
+	 * @return the database system name by hibernate configuration
+	 */
+	public static String getDatabaseSystemNameByHibernateConfiguration(Configuration hibernateConfig) {
+		
+		String driverClass = hibernateConfig.getProperty("hibernate.connection.driver_class");
+		if (driverClass!=null && driverClass.isBlank()==false) {
+			return getDatabaseSystemNameByDriverClassName(driverClass);
+		}
+		return null;
+	}
+	/**
+	 * Returns the database system name derived by the driver class name.
+	 *
+	 * @param hibernateConfig the Hibernate configuration
+	 * @return the database system name by hibernate configuration
+	 */
+	public static String getDatabaseSystemNameByDriverClassName(String driverClassName) {
+		
+		if (driverClassName!=null && driverClassName.isBlank()==false) {
+			// --- Get the database service ---------------
+			HibernateDatabaseService dbService = getDatabaseServiceByDriverClassName(driverClassName);
+			if (dbService!=null) {
+				return dbService.getDatabaseSystemName();
+			}
+		}
+		return null;
+	}
 }

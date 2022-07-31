@@ -83,6 +83,7 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.gui.DatabaseDialog;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 import de.enflexit.oidc.OIDCPanel;
@@ -123,12 +124,14 @@ public class Application {
 	/** In case of headless operation */
 	private static ShutdownThread shutdownThread;
 	/** The About dialog of the main application window. */
-	private static AboutDialog about;
+	private static AboutDialog aboutDialog;
+	/** The Database dialog for the main application window */
+	private static DatabaseDialog databaseDialog;
 	/** The About dialog of the application.*/
-	private static OptionDialog options;
+	private static OptionDialog optionDialog;
 	/** With this attribute/class the agent platform (JADE) will be controlled. */
 	private static Platform jadePlatform;
-	/** The ODBC connection to the database */
+	/** The ODBC connection to the database //TODO */
 	private static DBConnection dbConnection;
 	
 
@@ -326,7 +329,7 @@ public class Application {
 	 * @return the main window
 	 */
 	public static MainWindow getMainWindow() {
-		return getIApplication().getSwingMainWindow();
+		return getIApplication()==null ? null : getIApplication().getSwingMainWindow();
 	}
 	/**
 	 * Starts the main application window (JFrame).
@@ -1016,32 +1019,32 @@ public class Application {
 	 */
 	public static void showOptionDialog(String focusOnTab) {
 		
-		if (options!=null) {
-			if (options.isVisible()==true) {
+		if (optionDialog!=null) {
+			if (optionDialog.isVisible()==true) {
 				// --- Set focus again ----------
-				options.requestFocus();
+				optionDialog.requestFocus();
 				return;
 			} else {
 				// --- dispose it first --------- 
-				options.dispose();
-				options = null;
+				optionDialog.dispose();
+				optionDialog = null;
 			}
 		}
 		
 		if (isRunningAsServer()==true) {
-			options = new OptionDialog(null);
+			optionDialog = new OptionDialog(null);
 		} else {
-			options = new OptionDialog(getMainWindow());
+			optionDialog = new OptionDialog(getMainWindow());
 		}
 		if (focusOnTab!=null) {
-			options.setFocusOnTab(focusOnTab);
+			optionDialog.setFocusOnTab(focusOnTab);
 		}
-		options.setVisible(true);
+		optionDialog.setVisible(true);
 		// - - - - - - - - - - - - - - - - - - - -
-		if (options!=null) {
-			options.dispose();
+		if (optionDialog!=null) {
+			optionDialog.dispose();
 		}
-		options = null;
+		optionDialog = null;
 		
 	}
 
@@ -1050,18 +1053,36 @@ public class Application {
 	 */
 	public static void showAboutDialog() {
 		
-		if (about!=null) return;
+		if (aboutDialog!=null) return;
 		if (isRunningAsServer()==true) {
-			about = new AboutDialog(null);
+			aboutDialog = new AboutDialog(null);
 		} else {
-			about = new AboutDialog(getMainWindow());
+			aboutDialog = new AboutDialog(getMainWindow());
 		}
-		about.setVisible(true);
+		aboutDialog.setVisible(true);
 		// - - - Wait for user - - - - - - - - -  
-		about.dispose();
-		about = null;		
+		aboutDialog.dispose();
+		aboutDialog = null;		
 	}
-
+	
+	/**
+	 * Opens the central {@link DatabaseDialog} of the application with a specified factoryID.
+	 * @param factoryID the factory ID to configure or <code>null</code>
+	 */
+	public static void showDatabaseDialog(String factoryID) {
+		
+		if (databaseDialog!=null) return;
+		if (isRunningAsServer()==true) {
+			databaseDialog = new DatabaseDialog(null, factoryID);
+		} else {
+			databaseDialog = new DatabaseDialog(getMainWindow(), factoryID);
+		}
+		databaseDialog.setVisible(true);
+		// - - - Wait for user - - - - - - - - -  
+		databaseDialog.dispose();
+		databaseDialog = null;
+	}
+	
 	/**
 	 * Will try to browse to the URI specified by the string (e.g. https://www.enflex.it).
 	 * @param uri the URI as String
@@ -1378,8 +1399,8 @@ public class Application {
 		}
 	}
 	/**
-	 * Informs all registered listener about the specified event.
-	 * @param event the actual {@link ApplicationEvent} to inform about
+	 * Informs all registered listener aboutDialog the specified event.
+	 * @param event the actual {@link ApplicationEvent} to inform aboutDialog
 	 */
 	public static void informApplicationListener(ApplicationEvent event) {
 		if (event==null) return;

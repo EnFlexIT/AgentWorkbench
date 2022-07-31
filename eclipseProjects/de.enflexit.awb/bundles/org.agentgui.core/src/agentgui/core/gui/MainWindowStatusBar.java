@@ -28,6 +28,7 @@
  */
 package agentgui.core.gui;
 
+import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -111,7 +112,7 @@ public class MainWindowStatusBar extends JPanel {
 	 */
 	private void initialize() {
 		
-		this.setPreferredSize(new Dimension(1071, 22));
+		this.setPreferredSize(new Dimension(1000, 22));
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{300, 0, 300, 200, 0};
@@ -346,6 +347,21 @@ public class MainWindowStatusBar extends JPanel {
 		return jToolBarCenter;
 	}
 	/**
+	 * Adds the specified component to the local center toolbar (thread safe for AWT-Thread).
+	 * @param newComp the new component to add
+	 */
+	private void addComponentToCenterToolbar(final Component newComp) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				MainWindowStatusBar.this.getJToolBarCenter().add(newComp);
+				MainWindowStatusBar.this.getJToolBarCenter().validate();
+				MainWindowStatusBar.this.getJToolBarCenter().repaint();
+			}
+		});
+	}
+	
+	/**
 	 * Sets the specified session factory state to the status bar.
 	 *
 	 * @param factoryID the factory ID
@@ -372,15 +388,30 @@ public class MainWindowStatusBar extends JPanel {
 	 * @return the JLabel to display the database state
 	 */
 	private JLabel getJLabelDatabaseState(String factoryID) {
+		
 		JLabel dbStateLabel = this.getDatabaseStateHashMap().get(factoryID);
 		if (dbStateLabel==null) {
+			// --- Create visualization component for DB connection -
 			dbStateLabel = new JLabel();
+			dbStateLabel.putClientProperty("factoryID", factoryID);
 			dbStateLabel.setPreferredSize(new Dimension(16, 16));
+			dbStateLabel.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent me) {
+					if (SwingUtilities.isLeftMouseButton(me) && me.getClickCount()==2) {
+						JLabel jLabelClicked = (JLabel) me.getSource();
+						String factoryID = (String) jLabelClicked.getClientProperty("factoryID");
+						Application.showDatabaseDialog(factoryID);
+					} 
+				}
+			});
+			// --- Remind this visualization and place on toolbar ---
 			this.getDatabaseStateHashMap().put(factoryID, dbStateLabel);
-			this.getJToolBarCenter().add(dbStateLabel);
+			this.addComponentToCenterToolbar(dbStateLabel);
 		}
 		return dbStateLabel;
 	}
+	
 	
 	/**
 	 * Returns the RIGHT JLabel for the Jade state.

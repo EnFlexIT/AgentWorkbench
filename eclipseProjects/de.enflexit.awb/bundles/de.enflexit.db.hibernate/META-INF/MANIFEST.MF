@@ -7,7 +7,7 @@ Bundle-Version: 5.6.7.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.hibernate.osgi.HibernateBundleActivator
+Bundle-Activator: de.enflexit.db.hibernate.HibernateBundleActivator
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: .,
  lib/antlr-2.7.7.jar,
@@ -33,7 +33,9 @@ Bundle-ClassPath: .,
  lib/org.osgi.core-6.0.0.jar,
  lib/stax-ex-1.8.jar,
  lib/txw2-2.3.1.jar
-Import-Package: de.enflexit.common.swing,
+Import-Package: de.enflexit.common,
+ de.enflexit.common.swing,
+ org.eclipse.core.runtime.preferences;version="3.5.0",
  org.slf4j
 Require-Bundle: org.eclipse.osgi
 Service-Component: OSGI-INF/dbServiceConsumer.xml
@@ -52,8 +54,8 @@ Export-Package: com.mchange.v2.c3p0,
  com.mchange.v2.c3p0.test,
  com.mchange.v2.c3p0.util,
  de.enflexit.db.hibernate,
+ de.enflexit.db.hibernate.connection,
  de.enflexit.db.hibernate.gui,
- de.enflexit.db.hibernate.gui.img,
  javax.interceptor,
  javax.persistence,
  javax.persistence.criteria,

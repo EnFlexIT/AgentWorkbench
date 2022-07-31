@@ -34,7 +34,7 @@ import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
  * The Class AbstractMonitoringTask can be used to extend specific tasks 
- * that re used to control process within the JVM. In case of malfunction,
+ * that are used to control processes within the JVM. In case of malfunction,
  * a task can define a countermeasure to solve specific problems.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen

@@ -6,8 +6,9 @@ import java.util.Vector;
 import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
 
 /**
- * The Interface HibernateDatabaseService describes the requires methods
- * to configure, test and interact with a database system.
+ * The Interface HibernateDatabaseService describes the required methods
+ * to configure, test and interact with a database system. It can bes used 
+ * to add a new database system to AWB and its hibernate bundle. 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */

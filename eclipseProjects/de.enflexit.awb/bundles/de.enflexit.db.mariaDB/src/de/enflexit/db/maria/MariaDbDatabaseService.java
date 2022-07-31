@@ -78,7 +78,7 @@ public class MariaDbDatabaseService implements HibernateDatabaseService {
 
 		String message = null;
 		if (hibernateProperties==null) {
-			message = "[MySQL connection check] no properties were specified for the connection test!";
+			message = "[MariaDB connection check] no properties were specified for the connection test!";
 			userMessageVector.addElement(message);
 			if (isPrintToConole) System.err.println(message);
 			return false;

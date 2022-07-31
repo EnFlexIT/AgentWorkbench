@@ -20,7 +20,7 @@ import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
  */
 public class HibernateStateVisualizer {
 
-	private static final String imagePackage = "/de/enflexit/db/hibernate/gui/img/";
+	private static final String imagePackage = "/icons/";
 
 	private static Vector<HibernateStateVisualizationService> visServices;
 	
