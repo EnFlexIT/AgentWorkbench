@@ -7,7 +7,7 @@ Bundle-Version: 5.6.7.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: de.enflexit.db.hibernate.HibernateBundleActivator
+Bundle-Activator: org.hibernate.osgi.HibernateBundleActivator
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: .,
  lib/antlr-2.7.7.jar,

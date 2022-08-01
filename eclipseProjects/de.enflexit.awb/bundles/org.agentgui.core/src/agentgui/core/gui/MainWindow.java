@@ -921,6 +921,7 @@ public class MainWindow extends JFrame {
 
 			jMenuExtra.addSeparator();
 			jMenuExtra.add(new CWMenuItem("ExtraOptions", Language.translate("Optionen"), null));
+			jMenuExtra.add(new CWMenuItem("DatabaseConnections", Language.translate("Datenbank Verbindungen"), "DB_State_Blue.png"));
 			jMenuExtra.add(new CWMenuItem("Authentication", Language.translate("Web Service Authentifizierung"), null));
 
 		}
@@ -1275,6 +1276,9 @@ public class MainWindow extends JFrame {
 			} else if (actionCMD.equalsIgnoreCase("ExtraOptions")) {
 				Application.showOptionDialog();
 
+			} else if (actionCMD.equalsIgnoreCase("DatabaseConnections")) {
+				Application.showDatabaseDialog(null);
+				
 			} else if (actionCMD.equalsIgnoreCase("Authentication")) {
 				Application.showAuthenticationDialog();
 
@@ -1344,6 +1348,9 @@ public class MainWindow extends JFrame {
 			jToolBarApplication.add(this.getJButtonProjectTree());
 			jToolBarApplication.addSeparator();
 
+			jToolBarApplication.add(new JToolBarButton("DatabaseConnections", Language.translate("Datenbank Verbindungen"), null, "DB_State_Blue.png"));
+			jToolBarApplication.addSeparator();
+			
 			jToolBarApplication.add(new JToolBarButton("JadeStart", Language.translate("JADE starten"), null, "MBJadeOn.png"));
 			jToolBarApplication.add(new JToolBarButton("JadeStop", Language.translate("JADE stoppen"), null, "MBJadeOff.png"));
 			jToolBarApplication.addSeparator();
@@ -1555,11 +1562,15 @@ public class MainWindow extends JFrame {
 				Project currentProject = Application.getProjectFocused();
 				if (currentProject!=null) currentProject.save();
 
-				// ------------------------------------------------
+			// ------------------------------------------------
 			} else if (actCMD.equalsIgnoreCase("ViewConsole")) {
 				Application.getMainWindow().doSwitchConsole();
 
-				// ------------------------------------------------
+			// ------------------------------------------------
+			} else if (actCMD.equalsIgnoreCase("DatabaseConnections")) {
+				Application.showDatabaseDialog(null);
+				
+			// ------------------------------------------------
 			} else if (actCMD.equalsIgnoreCase("JadeStart")) {
 				Application.getJadePlatform().doStartInDedicatedThread();
 

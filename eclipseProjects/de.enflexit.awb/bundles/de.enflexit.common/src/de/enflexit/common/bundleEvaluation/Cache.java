@@ -326,7 +326,7 @@ public class Cache {
 	public Cache load() {
 
 		File cacheFile = this.getCacheFile();
-		if (cacheFile==null || cacheFile.exists()==false) return null;
+		if (cacheFile==null || cacheFile.exists()==false) return this;
 		
 		Cache  cache = null;
 		InputStream inputStream = null;

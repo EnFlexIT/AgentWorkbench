@@ -83,7 +83,7 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.db.hibernate.HibernateUtilities;
-import de.enflexit.db.hibernate.gui.DatabaseDialog;
+import de.enflexit.db.hibernate.gui.AwbDatabaseDialog;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 import de.enflexit.oidc.OIDCPanel;
@@ -126,7 +126,7 @@ public class Application {
 	/** The About dialog of the main application window. */
 	private static AboutDialog aboutDialog;
 	/** The Database dialog for the main application window */
-	private static DatabaseDialog databaseDialog;
+	private static AwbDatabaseDialog awbDatabaseDialog;
 	/** The About dialog of the application.*/
 	private static OptionDialog optionDialog;
 	/** With this attribute/class the agent platform (JADE) will be controlled. */
@@ -398,6 +398,10 @@ public class Application {
 		
 		// --- Start log file writer, if needed ---------------------
 		if (isOperatingHeadless()==true) startLogFileWriter();
+		
+		// --- Start the HibernateUtilities -------------------------
+		HibernateUtilities.start();
+		
 		
 		// --- Case separation Agent.Workbench / JADE execution -----
 		if (Application.justStartJade==false) {
@@ -1066,21 +1070,21 @@ public class Application {
 	}
 	
 	/**
-	 * Opens the central {@link DatabaseDialog} of the application with a specified factoryID.
+	 * Opens the central {@link AwbDatabaseDialog} of the application with a specified factoryID.
 	 * @param factoryID the factory ID to configure or <code>null</code>
 	 */
 	public static void showDatabaseDialog(String factoryID) {
 		
-		if (databaseDialog!=null) return;
+		if (awbDatabaseDialog!=null) return;
 		if (isRunningAsServer()==true) {
-			databaseDialog = new DatabaseDialog(null, factoryID);
+			awbDatabaseDialog = new AwbDatabaseDialog(null, factoryID);
 		} else {
-			databaseDialog = new DatabaseDialog(getMainWindow(), factoryID);
+			awbDatabaseDialog = new AwbDatabaseDialog(getMainWindow(), factoryID);
 		}
-		databaseDialog.setVisible(true);
+		awbDatabaseDialog.setVisible(true);
 		// - - - Wait for user - - - - - - - - -  
-		databaseDialog.dispose();
-		databaseDialog = null;
+		awbDatabaseDialog.dispose();
+		awbDatabaseDialog = null;
 	}
 	
 	/**

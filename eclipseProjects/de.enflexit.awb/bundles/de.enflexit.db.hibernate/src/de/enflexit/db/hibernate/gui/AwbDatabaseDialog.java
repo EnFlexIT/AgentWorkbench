@@ -1,5 +1,6 @@
 package de.enflexit.db.hibernate.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -22,6 +23,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
@@ -39,9 +41,11 @@ import javax.swing.JSeparator;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class DatabaseDialog extends JDialog implements ActionListener {
+public class AwbDatabaseDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -5778880894988052682L;
+	
+	private String currentFactoryID;
 	
 	private JLabel jLabelHeader;
 	private JLabel jLabelFactoryID;
@@ -49,14 +53,14 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 	private JComboBox<String> jComboBoxFactoryID;
 	private JSeparator separator;
 
+	private JPanel JPanelNoDatabaseConnections;
 	private DatabaseSettingsPanel jPanelDbSettings;
 
 	private JPanel jPanelButtons;
 	private JButton jButtonSave;
 	private JButton jButtonTestConnection;
-	private JButton jButtonCancel;
+	private JButton jButtonClose;
 
-	private boolean canceled;
 	private Vector<String> userMessages;
 	
 	
@@ -66,11 +70,17 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 	 * @param owner the owner
 	 * @param factoryID the factory ID
 	 */
-	public DatabaseDialog(Window owner, String factoryID) {
+	public AwbDatabaseDialog(Window owner, String factoryID) {
 		super(owner);
 		this.initialize();
 		if (factoryID!=null && factoryID.isBlank()==false) {
+			// --- Set selection to argument factoryID ----
 			this.getJComboBoxFactoryID().setSelectedItem(factoryID);
+		} else {
+			if (this.getComboBoxModelFactoryID().getSize()>0) {
+				// --- Reset current selection ------------
+				this.getJComboBoxFactoryID().setSelectedItem(this.getFactoryIdSelected());
+			}
 		}
 	}
 	/**
@@ -86,13 +96,14 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
-				canceled = true;
-				setVisible(false);
+				if (AwbDatabaseDialog.this.isDoClose()==false) return;
+				AwbDatabaseDialog.this.setVisible(false);
 			}
 		});
 		
 		// --- Set Dialog position ----------------------------------
 	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+	    
 	    
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
@@ -100,54 +111,66 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.gridwidth = 2;
 		gbc_jLabelHeader.insets = new Insets(10, 10, 0, 10);
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
 		gbc_jLabelHeader.gridx = 0;
 		gbc_jLabelHeader.gridy = 0;
-		getContentPane().add(getJLabelHeader(), gbc_jLabelHeader);
+		this.getContentPane().add(getJLabelHeader(), gbc_jLabelHeader);
+		
 		GridBagConstraints gbc_jLabelFactoryID = new GridBagConstraints();
 		gbc_jLabelFactoryID.insets = new Insets(10, 10, 0, 0);
 		gbc_jLabelFactoryID.anchor = GridBagConstraints.EAST;
 		gbc_jLabelFactoryID.gridx = 0;
 		gbc_jLabelFactoryID.gridy = 1;
-		getContentPane().add(getJLabelFactoryID(), gbc_jLabelFactoryID);
+		this.getContentPane().add(getJLabelFactoryID(), gbc_jLabelFactoryID);
+		
 		GridBagConstraints gbc_jComboBoxFactoryID = new GridBagConstraints();
 		gbc_jComboBoxFactoryID.anchor = GridBagConstraints.WEST;
 		gbc_jComboBoxFactoryID.insets = new Insets(10, 10, 0, 10);
 		gbc_jComboBoxFactoryID.gridx = 1;
 		gbc_jComboBoxFactoryID.gridy = 1;
-		getContentPane().add(getJComboBoxFactoryID(), gbc_jComboBoxFactoryID);
+		this.getContentPane().add(getJComboBoxFactoryID(), gbc_jComboBoxFactoryID);
+		
 		GridBagConstraints gbc_separator = new GridBagConstraints();
 		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
 		gbc_separator.insets = new Insets(10, 10, 0, 10);
 		gbc_separator.gridwidth = 2;
 		gbc_separator.gridx = 0;
 		gbc_separator.gridy = 2;
-		getContentPane().add(getSeparator(), gbc_separator);
+		this.getContentPane().add(getSeparator(), gbc_separator);
+		
 		GridBagConstraints gbc_jPanelDbSettings = new GridBagConstraints();
 		gbc_jPanelDbSettings.gridwidth = 2;
 		gbc_jPanelDbSettings.insets = new Insets(0, 0, 5, 0);
 		gbc_jPanelDbSettings.fill = GridBagConstraints.BOTH;
 		gbc_jPanelDbSettings.gridx = 0;
 		gbc_jPanelDbSettings.gridy = 3;
-		getContentPane().add(getJPanelDbSettings(), gbc_jPanelDbSettings);
-		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
-		gbc_jPanelButtons.gridwidth = 2;
-		gbc_jPanelButtons.fill = GridBagConstraints.VERTICAL;
-		gbc_jPanelButtons.insets = new Insets(10, 10, 20, 10);
-		gbc_jPanelButtons.gridx = 0;
-		gbc_jPanelButtons.gridy = 4;
-		getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
+		if (this.getComboBoxModelFactoryID().getSize()==0) {
+			this.getContentPane().add(this.getJPanelNoDatabaseConnections(), gbc_jPanelDbSettings);
+		} else {
+			this.getContentPane().add(this.getJPanelDbSettings(), gbc_jPanelDbSettings);
+		}
+		
+		if (this.getComboBoxModelFactoryID().getSize()>0) {
+			GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
+			gbc_jPanelButtons.gridwidth = 2;
+			gbc_jPanelButtons.fill = GridBagConstraints.VERTICAL;
+			gbc_jPanelButtons.insets = new Insets(10, 10, 20, 10);
+			gbc_jPanelButtons.gridx = 0;
+			gbc_jPanelButtons.gridy = 4;
+			this.getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
+		}
 		
 	}
 	
     private void registerEscapeKeyStroke() {
     	final ActionListener listener = new ActionListener() {
             public final void actionPerformed(final ActionEvent e) {
-    			setCanceled(true);
-            	setVisible(false);
+            	if (AwbDatabaseDialog.this.isDoClose()==false) return;
+            	AwbDatabaseDialog.this.setVisible(false);
             }
         };
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
@@ -197,6 +220,17 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 		return separator;
 	}
     
+	private JPanel getJPanelNoDatabaseConnections() {
+		if (JPanelNoDatabaseConnections==null) {
+			JPanelNoDatabaseConnections = new JPanel();
+			JPanelNoDatabaseConnections.setLayout(new BorderLayout());
+			JLabel jLabelFactoryID = new JLabel("No database connection services could be found!");
+			jLabelFactoryID.setFont(new Font("Dialog", Font.BOLD, 14));
+			jLabelFactoryID.setHorizontalAlignment(JLabel.CENTER);
+			JPanelNoDatabaseConnections.add(jLabelFactoryID, BorderLayout.CENTER);
+		}
+		return JPanelNoDatabaseConnections;
+	}
 	
     private DatabaseSettingsPanel getJPanelDbSettings() {
 		if (jPanelDbSettings == null) {
@@ -217,14 +251,14 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 	 * Returns the current database settings.
 	 * @return the database settings
 	 */
-	public DatabaseSettings getDatabaseSettings() {
+	private DatabaseSettings getDatabaseSettings() {
 		return this.getJPanelDbSettings().getDatabaseSettings();
 	}
 	/**
 	 * Sets the database settings to work on.
 	 * @param databaseSettings the new database settings
 	 */
-	public void setDatabaseSettings(DatabaseSettings databaseSettings) {
+	private void setDatabaseSettings(DatabaseSettings databaseSettings) {
 		this.getJPanelDbSettings().setDatabaseSettings(databaseSettings);
 	}
 	
@@ -252,7 +286,7 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 			gbc_jButtonCancel.insets = new Insets(0, 60, 0, 0);
 			gbc_jButtonCancel.gridx = 2;
 			gbc_jButtonCancel.gridy = 0;
-			jPanelButtons.add(getJButtonCancel(), gbc_jButtonCancel);
+			jPanelButtons.add(getJButtonClose(), gbc_jButtonCancel);
 		}
 		return jPanelButtons;
 	}
@@ -274,43 +308,92 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 		}
 		return jButtonTestConnection;
 	}
-	private JButton getJButtonCancel() {
-		if (jButtonCancel == null) {
-			jButtonCancel = new JButton("Cancel");
-			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
-			jButtonCancel.setPreferredSize(new Dimension(80, 26));
-			jButtonCancel.addActionListener(this);
+	private JButton getJButtonClose() {
+		if (jButtonClose == null) {
+			jButtonClose = new JButton("Close");
+			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonClose.setForeground(new Color(153, 0, 0));
+			jButtonClose.setPreferredSize(new Dimension(80, 26));
+			jButtonClose.addActionListener(this);
 		}
-		return jButtonCancel;
+		return jButtonClose;
 	}
 	
-	/**
-	 * Checks if the dialog action was canceled.
-	 * @return true, if is canceled
-	 */
-	public boolean isCanceled() {
-		return canceled;
-	}
-	/**
-	 * Sets the canceled.
-	 * @param canceled the new canceled
-	 */
-	public void setCanceled(boolean canceled) {
-		this.canceled = canceled;
-	}
 	
+	// --------------------------------------------------------------	
+	// --- From here some handling and modification classes ---------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the currently selected factory ID.
+	 * @return the currently selected factory ID
+	 */
+	private String getFactoryIdSelected() {
+		return (String) this.getJComboBoxFactoryID().getSelectedItem();
+	}
+	/**
+	 * Returns the DatabaseSettings for the specified factory ID.
+	 *
+	 * @param factoryID the factory ID
+	 * @return the database settings for factory ID
+	 */
+	private DatabaseSettings getDatabaseSettings(String factoryID) {
+		return DatabaseConnectionManager.getInstance().getDatabaseSettings(factoryID);
+	}
 	/**
 	 * Loads the database settings for the specified factory.
 	 * @param factoryID the factory ID
 	 */
 	private void loadDatabaseSettings(String factoryID) {
 		// --- Get settings from connection manager -------
-		DatabaseSettings databaseSettings = DatabaseConnectionManager.getInstance().getDatabaseSettings(factoryID);
-		this.setDatabaseSettings(databaseSettings);
+		this.setDatabaseSettings(this.getDatabaseSettings(factoryID));
 		this.setHeaderInJPanelDbSettings("Database Settings for connection '" + factoryID + "'");
+		this.currentFactoryID = factoryID;
 	}
-	
+	/**
+	 * Save the database settings for the current database connection / factoryID.
+	 *
+	 * @param factoryID the factory ID
+	 * @return true, if successful
+	 */
+	private boolean saveDatabaseSettings(String factoryID) {
+		if (factoryID==null) return false;
+		return DatabaseConnectionManager.getInstance().saveDatabaseConfigurationProperties(factoryID, this.getDatabaseSettings().getHibernateDatabaseSettings());
+	}
+	/**
+	 * Checks if the database settings have changed.
+	 * @return true, if is changed database settings
+	 */
+	private boolean isSaveChangedDatabaseSettings(String factoryID) {
+		
+		if (factoryID==null) return false;
+		
+		DatabaseSettings dbSettingsNew = this.getDatabaseSettings();
+		DatabaseSettings dbSettingsOld = this.getDatabaseSettings(factoryID);
+		if (dbSettingsNew.equals(dbSettingsOld)==false) {
+			// --- Save changes? --------------------------
+			String title = "Save Changes?";
+			String message = "Would you like to save the changes for the \ndatabase connection of '" + factoryID + "'?";
+			int userAnswer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (userAnswer==JOptionPane.YES_OPTION) {
+				// --- Save the current settings ------
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	/**
+	 * Checks if the current factory ID has changed.
+	 *
+	 * @param newFactoryID the new factory ID
+	 * @return true, if is changed factory ID
+	 */
+	private boolean isChangedFactoryID(String newFactoryID) {
+		if (this.currentFactoryID==null || newFactoryID.equals(newFactoryID)) {
+			return true;
+		}
+		return false;
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -319,18 +402,33 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		
 		if (ae.getSource()==this.getJComboBoxFactoryID()) {
-			// --- A new factory was selected -------------
-			this.loadDatabaseSettings((String) this.getJComboBoxFactoryID().getSelectedItem());
-			
-		} else if (ae.getSource()==this.getJButtonCancel()) {
-			// --- Cancel editing -------------------------
-			this.setCanceled(true);
+			// --- Selection of new FactoryID -----------------------
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					// --- A new factory was selected? --------------
+					if (AwbDatabaseDialog.this.isChangedFactoryID(AwbDatabaseDialog.this.getFactoryIdSelected())==false) return;
+					// --- Save changed database settings? ----------
+					if (AwbDatabaseDialog.this.isSaveChangedDatabaseSettings(AwbDatabaseDialog.this.currentFactoryID)==true) {
+						AwbDatabaseDialog.this.saveDatabaseSettings(AwbDatabaseDialog.this.currentFactoryID);
+					}
+					// --- Change to selected factory ---------------
+					AwbDatabaseDialog.this.loadDatabaseSettings(AwbDatabaseDialog.this.getFactoryIdSelected());
+				}
+			});
+
+		} else if (ae.getSource()==this.getJButtonSave()) {
+			// --- Save the current settings ------------------------
+			this.saveDatabaseSettings(this.getFactoryIdSelected());
+
+		} else if (ae.getSource()==this.getJButtonClose()) {
+			// --- Close editing ------------------------------------
+			if (this.isDoClose()==false) return;
 			this.setVisible(false);
 			
 		} else if (ae.getSource()==this.getJButtonTestConnection()) {
-			// --- Test connection ------------------------
+			// --- Test connection ----------------------------------
 			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
-			
 			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
 			if (hds!=null) {
 				Properties props = dbSettings.getHibernateDatabaseSettings();
@@ -348,14 +446,25 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 					JOptionPane.showMessageDialog(this, message, "Connection Test", JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			
-		} else if (ae.getSource()==this.getJButtonSave()) {
-			// --- Save the current settings --------------
-			this.setCanceled(false);
-			this.setVisible(false);
-			
 		}
+		
 	}
+	
+	/**
+	 * Checks if the current dialog can be closed.
+	 * @return true, if is do close
+	 */
+	private boolean isDoClose() {
+		
+		if (this.isSaveChangedDatabaseSettings(this.getFactoryIdSelected())==true) {
+			if (this.saveDatabaseSettings(this.getFactoryIdSelected())==false) {
+				// --- An error occurred, exit here -------------
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	
 	/**
 	 * Returns a message vector that can be used to inform the user about 
@@ -397,6 +506,5 @@ public class DatabaseDialog extends JDialog implements ActionListener {
 	protected void clearUserMessages() {
 		this.getUserMessages().clear();
 	}
-	
 	
 }

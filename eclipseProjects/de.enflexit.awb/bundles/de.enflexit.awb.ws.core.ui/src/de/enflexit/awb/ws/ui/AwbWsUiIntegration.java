@@ -50,7 +50,7 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 		switch (this.getWsUiIntegrationType()) {
 		case Application:
 			this.addJMenu(this.getJMenuWS(), 5);
-			this.addToolbarComponent(this.getToolBarButtonWsConfiguration(), 7, SeparatorPosition.SeparatorAfter);
+			this.addToolbarComponent(this.getToolBarButtonWsConfiguration(), 8, SeparatorPosition.NoSeparator);
 			this.addTrayIconMenuItem(this.getTrayIconMenuItemWsConfiguration(), 4, SeparatorPosition.SeparatorInFrontOf);
 			break;
 			

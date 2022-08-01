@@ -20,6 +20,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
+import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
+import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
 
 /**
  * The class HibernateUtilities provides static access to Hibernate SessionFactories
@@ -42,6 +44,14 @@ public class HibernateUtilities {
 	
 	private static boolean isDebug = false;
 	
+	/**
+	 * Starts the HibernateUtilities by means starting the HibernateDatabaseConnectionServiceTracker 
+	 * and to initialize the registered {@link HibernateDatabaseConnectionService}s.
+	 */
+	public static void start() {
+		// --- Initiate DatabaseConnectionManager ---------
+		DatabaseConnectionManager.getInstance();
+	}
 	
 	/**
 	 * Returns the session factory monitor hash map.
