@@ -622,7 +622,7 @@ public class HibernateUtilities {
 	/**
 	 * Returns the database system name derived by the driver class name.
 	 *
-	 * @param hibernateConfig the Hibernate configuration
+	 * @param driverClassName the driver class name
 	 * @return the database system name by hibernate configuration
 	 */
 	public static String getDatabaseSystemNameByDriverClassName(String driverClassName) {

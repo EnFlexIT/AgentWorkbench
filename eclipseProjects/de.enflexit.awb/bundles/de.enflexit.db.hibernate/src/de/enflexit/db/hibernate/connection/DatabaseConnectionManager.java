@@ -165,6 +165,8 @@ public class DatabaseConnectionManager {
 	
 	/**
 	 * Returns the eclipse preferences.
+	 *
+	 * @param factoryID the factory ID
 	 * @return the eclipse preferences
 	 */
 	public IEclipsePreferences getEclipsePreferences(String factoryID) {
