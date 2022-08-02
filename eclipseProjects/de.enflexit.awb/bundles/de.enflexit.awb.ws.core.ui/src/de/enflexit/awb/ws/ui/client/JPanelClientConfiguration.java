@@ -70,8 +70,10 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 			jPanelCredentials = new JPanelCredentials();
 			jPanelCredentials.getJListCredentials().addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
-					AbstractCredential cred=jPanelCredentials.getJListCredentials().getSelectedValue();
-					getJPanelAssignCredential_1().getJtextFieldCredential().setText(cred.toString());
+					AbstractCredential cred = jPanelCredentials.getJListCredentials().getSelectedValue();
+					if (cred!=null) {
+						getJPanelAssignCredential_1().getJtextFieldCredential().setText(cred.toString());
+					}
 				}
 			});
 		}		

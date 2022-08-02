@@ -392,15 +392,16 @@ public class WsCredentialStore implements Serializable,Observer {
 	 * @return File of WsCredentialStoree
 	 */
 	public static File getWsCredentialStoreFile() {
-		String project = Application.getProjectFocused().toString();
-		File wsCredentialFile = null;
 
-		if (project != null && !project.isBlank()) {
-			wsCredentialFile = new File(BundleHelper.getPathProperties() + File.separator + project + File.separator+ WS_CREDENTIAL_STORE_FILE);
+		File wsCredentialFile = null;
+		Project project = Application.getProjectFocused();
+		if (project!=null) {
+			// --- File in currently opened Project -------
+			wsCredentialFile = new File(project.getProjectFolderFullPath() + WS_CREDENTIAL_STORE_FILE);
 		} else {
-			throw new NullPointerException("Either, JettyConfiguration is null or the server name was not set!");
+			// --- File in AWB property folder ------------
+			wsCredentialFile = new File(BundleHelper.getPathProperties() + WS_CREDENTIAL_STORE_FILE);
 		}
-		
 		return wsCredentialFile;
 	}
 

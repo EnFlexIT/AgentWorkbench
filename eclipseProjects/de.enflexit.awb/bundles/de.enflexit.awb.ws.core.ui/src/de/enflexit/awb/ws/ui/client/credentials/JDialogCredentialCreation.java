@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -22,6 +23,8 @@ import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import de.enflexit.awb.ws.credential.BearerTokenCredential;
 import de.enflexit.awb.ws.credential.JwtToken;
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
 public class JDialogCredentialCreation extends JDialog {
 	
@@ -32,15 +35,27 @@ public class JDialogCredentialCreation extends JDialog {
 	private JPanelPasswordAuthenticationCredentials jPanelPasswordAuthenticationCredentials;
 	private JButton jButtonCreateAndSaveCredential;
 	
-	public JDialogCredentialCreation() {
+	public JDialogCredentialCreation(Window owner) {
+		super(owner);
+		
+		this.setTitle("Hi Timo");
 		this.setModal(true);
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setSize(500, 300);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		
+		this.inialize();
+	}
+
+	private void inialize() {
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{351, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(5, 5, 10, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -48,6 +63,7 @@ public class JDialogCredentialCreation extends JDialog {
 		gbc_comboBox.gridy = 0;
 		add(getComboBox(), gbc_comboBox);
 		addCredentialPanel(getJPanelApiKeyCredentials());
+		
 		GridBagConstraints gbc_jButtonCreateAndSaveCredential = new GridBagConstraints();
 		gbc_jButtonCreateAndSaveCredential.insets = new Insets(0, 5, 5, 5);
 		gbc_jButtonCreateAndSaveCredential.anchor = GridBagConstraints.WEST;
@@ -55,7 +71,7 @@ public class JDialogCredentialCreation extends JDialog {
 		gbc_jButtonCreateAndSaveCredential.gridy = 2;
 		add(getJButtonCreateAndSaveCredential(), gbc_jButtonCreateAndSaveCredential);
 	}
-
+	
 	private void addCredentialPanel(JPanel credPanel) {
 		GridBagConstraints gbc_panelApiKeyCredentials = new GridBagConstraints();
 		gbc_panelApiKeyCredentials.insets = new Insets(0, 5, 5, 5);

@@ -1,10 +1,10 @@
 package de.enflexit.awb.ws.ui.client;
 
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -23,13 +22,14 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
+import agentgui.core.application.Application;
 import de.enflexit.awb.ws.client.CredentialType;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 import de.enflexit.awb.ws.ui.client.credentials.JDialogCredentialCreation;
 
-public class JPanelCredentials extends JPanel implements WsConfigurationInterface{
+public class JPanelCredentials extends JPanel implements ActionListener, WsConfigurationInterface {
 	
 	private static final long serialVersionUID = -1252151357398930115L;
 	
@@ -40,7 +40,7 @@ public class JPanelCredentials extends JPanel implements WsConfigurationInterfac
 	private JButton jButtonNewCredentials;
 	
 	public JPanelCredentials() {
-	initialize();
+		initialize();
 	}
 	
 	private void initialize() {
@@ -101,50 +101,14 @@ public class JPanelCredentials extends JPanel implements WsConfigurationInterfac
 			jButtonNewCredentials = new JButton("New Credential");
 			jButtonNewCredentials.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonNewCredentials.setHorizontalAlignment(SwingConstants.LEFT);
-			addListenerToJButtonNewCredentials();
+			jButtonNewCredentials.addActionListener(this);
 		}
-		;
 		return jButtonNewCredentials;
 	}
 	
     //---------------------------------------------------------------
 	//----------From here Methods to fill/control Components---------
 	//---------------------------------------------------------------
-	
-	private void addListenerToJButtonNewCredentials() {
-		
-		this.getJButtonNewCredentials().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-			
-				EventQueue.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						JDialogCredentialCreation credCreate = new JDialogCredentialCreation();
-						credCreate.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-						credCreate.pack();
-						credCreate.setFocusable(true);
-						credCreate.setFocusableWindowState(true);
-						credCreate.setVisible(true);
-						credCreate.toFront();
-						credCreate.requestFocus();
-						credCreate.addWindowListener(new WindowAdapter() {
-							@Override
-							public void windowClosing(WindowEvent e) {
-								fillCredentialJListAndRepaint();
-							}
-							
-							@Override
-							public void windowClosed(WindowEvent e) {
-								fillCredentialJListAndRepaint();
-							}
-						});
-					}
-				});
-			}
-		});
-	}
-	
 	
 	/**
 	 * Fill the list with credential of a given type
@@ -186,8 +150,8 @@ public class JPanelCredentials extends JPanel implements WsConfigurationInterfac
 	 */
 	@Override
 	public boolean hasUnsavedChanges() {
-		if (this.jListCredentials == null)
-			return false;
+		
+		if (this.jListCredentials == null) return false;
 
 		List<AbstractCredential> credentialList = WsCredentialStore.getInstance().getCredentialList();
 
@@ -210,4 +174,38 @@ public class JPanelCredentials extends JPanel implements WsConfigurationInterfac
 	public boolean userConfirmedToChangeView() {
 		return hasUnsavedChanges();
 	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if (ae.getSource()==this.getJButtonNewCredentials()) {
+			this.openJDialogCredentialCreation();
+		}
+	}
+	
+	/**
+	 * Opens JDialog credential creation.
+	 */
+	private void openJDialogCredentialCreation() {
+		
+		Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+		JDialogCredentialCreation credCreate = new JDialogCredentialCreation(owner);
+		credCreate.setVisible(true);
+		credCreate.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				fillCredentialJListAndRepaint();
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				fillCredentialJListAndRepaint();
+			}
+		});
+		
+	}
+	
 }
