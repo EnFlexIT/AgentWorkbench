@@ -9,15 +9,16 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
-public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialPanel<UserPasswordCredential> {
+public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialPanel<UserPasswordCredential> implements WsConfigurationInterface {
 
 	private static final long serialVersionUID = -7913504913322598414L;
 	private JLabel jLablePasswordAuthenticationValues;
 	private JLabel jLableUsernameValue;
 	private JLabel jLablePasswordValue;
 	private JTextField jTextFieldUsername;
-	private JTextField textField_1;
+	private JTextField jTextFieldPassword;
 	
 	public JPanelPasswordAuthenticationCredentials() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -54,7 +55,7 @@ public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialP
 		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_1.gridx = 1;
 		gbc_textField_1.gridy = 2;
-		add(getTextField_1(), gbc_textField_1);
+		add(getJTextFieldPassword(), gbc_textField_1);
 	}
 
 	private JLabel getLabel_1() {
@@ -78,7 +79,7 @@ public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialP
 		}
 		return jLablePasswordValue;
 	}
-	private JTextField getJTextFieldUsername() {
+	protected JTextField getJTextFieldUsername() {
 		if (jTextFieldUsername == null) {
 			jTextFieldUsername = new JTextField();
 			jTextFieldUsername.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -86,13 +87,31 @@ public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialP
 		}
 		return jTextFieldUsername;
 	}
-	private JTextField getTextField_1() {
-		if (textField_1 == null) {
-			textField_1 = new JTextField();
-			textField_1.setFont(new Font("Dialog", Font.BOLD, 12));
-			textField_1.setColumns(10);
+	protected JTextField getJTextFieldPassword() {
+		if (jTextFieldPassword == null) {
+			jTextFieldPassword = new JTextField();
+			jTextFieldPassword.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTextFieldPassword.setColumns(10);
 		}
-		return textField_1;
+		return jTextFieldPassword;
+	}
+
+	@Override
+	public boolean hasUnsavedChanges() {
+		boolean unsavedChanges=false;
+		if(!jTextFieldPassword.getText().isBlank()) {
+			unsavedChanges=true;
+		}
+		
+        if(!jTextFieldUsername.getText().isBlank()) {
+        	unsavedChanges=true;
+		}
+		return unsavedChanges;
+	}
+
+	@Override
+	public boolean userConfirmedToChangeView() {
+		return hasUnsavedChanges();
 	}
 	
 }

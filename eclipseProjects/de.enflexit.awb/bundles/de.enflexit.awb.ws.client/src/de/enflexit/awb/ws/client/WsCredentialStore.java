@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -22,10 +23,14 @@ import javax.xml.bind.annotation.XmlType;
 import agentgui.core.application.Application;
 import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import de.enflexit.awb.ws.credential.BearerTokenCredential;
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.ServiceFinder;
 
 /**
@@ -37,12 +42,11 @@ import de.enflexit.common.ServiceFinder;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "JettyConfiguration", propOrder = {
 		"credentialAssignmentList",
-	    "apiRegistrationServiceList",
 	    "serverURLList",
 	    "credentialList"
 	})
 
-public class WsCredentialStore implements Serializable {
+public class WsCredentialStore implements Serializable,Observer {
 	
 	private static final long serialVersionUID = -2711360698936471113L;
 	private static final String FILE_ENCODING = "UTF-8";
@@ -60,7 +64,7 @@ public class WsCredentialStore implements Serializable {
 	 */
 	public static synchronized WsCredentialStore getInstance() {
 		if (instance==null) {
-			WsCredentialStore.load(WsCredentialStore.getWsCredentialStoreFile(Application.getProjectFocused()));
+			WsCredentialStore.load(WsCredentialStore.getWsCredentialStoreFile());
 			if(instance==null) {
 				instance= new WsCredentialStore();
 			}
@@ -71,42 +75,41 @@ public class WsCredentialStore implements Serializable {
 	// ----------------------------------------------------
 	// --- From here attributes and access methods --------
 	// ----------------------------------------------------
-	private List<ApiRegistration> apiRegistrationServiceList;
 	private List<ServerURL> serverURLList;
 	private List<AbstractCredential> credentialList;
 	private List<CredentialAssignment> credentialAssignmentList;
 	
+	@XmlTransient
+	private List<AwbApiRegistrationService> apiRegistrationServiceList;
+	
 	/**
 	 * Returns the api registration service list.
+	 * 
 	 * @return the api registration service list
 	 */
-	public List<ApiRegistration> getApiRegistrationServiceList() {
-		if (apiRegistrationServiceList==null) {
+	public List<AwbApiRegistrationService> getApiRegistrationServiceList() {
+		if (apiRegistrationServiceList == null) {
 			apiRegistrationServiceList = new ArrayList<>();
-			// --- Fill the list ------------------------------------
-			List<AwbApiRegistrationService> registeredServiceList = ServiceFinder.findServices(AwbApiRegistrationService.class);
-			for (int i = 0; i < registeredServiceList.size(); i++) {
-				apiRegistrationServiceList.add(new ApiRegistration(registeredServiceList.get(i)));
-			}
+		}
+		apiRegistrationServiceList.clear();
+		// --- Fill the list ------------------------------------
+		List<AwbApiRegistrationService> registeredServiceList = ServiceFinder
+				.findServices(AwbApiRegistrationService.class);
+		for (int i = 0; i < registeredServiceList.size(); i++) {
+			apiRegistrationServiceList.add(registeredServiceList.get(i));
 		}
 		return apiRegistrationServiceList;
 	}
-	/**
-	 * Sets the api registration service list.
-	 * @param apiRegistrationServiceList the new api registration service list
-	 */
-	public void setApiRegistrationServiceList(List<ApiRegistration> apiRegistrationServiceList) {
-		this.apiRegistrationServiceList = apiRegistrationServiceList;
-	}
+
 	/**
 	 * Returns the api registration.
 	 *
 	 * @param bundleName the bundle name
 	 * @return the api registration
 	 */
-	public ApiRegistration getApiRegistration(String bundleName) {
+	public AwbApiRegistrationService getApiRegistration(String bundleName) {
 		if (bundleName==null || bundleName.isBlank()==true) return null;
-		for (ApiRegistration apiReg : this.getApiRegistrationServiceList()) {
+		for (AwbApiRegistrationService apiReg : this.getApiRegistrationServiceList()) {
 			if (apiReg.getClientBundleName().equals(bundleName)) {
 				return apiReg;
 			}
@@ -265,26 +268,7 @@ public class WsCredentialStore implements Serializable {
 		}	
 		return cred;
 	}
-	
-	private <T> ApiRegistration createNewApiRegistration(T type, String clientBundleName, String defaultURL) {
-		ApiRegistration apiRegistration = new ApiRegistration();
-		if(type.getClass().equals(ApiKeyCredential.class)) {
-		apiRegistration= new ApiRegistration(clientBundleName, "client for Server-API with following URL: "  + defaultURL,CredentialType.API_KEY, defaultURL);						
-		}
 		
-		if(type.getClass().equals(BearerTokenCredential.class)) {
-		apiRegistration= new ApiRegistration(clientBundleName, "client for Server-API with following URL: "  + defaultURL, CredentialType.BEARER_TOKEN, defaultURL);
-		}
-		
-		if(type.getClass().equals(UserPasswordCredential.class)) {
-		apiRegistration= new ApiRegistration(clientBundleName, "client for Server-API with following URL: "  + defaultURL, CredentialType.USERNAME_PASSWORD, defaultURL);
-		}
-		
-		return apiRegistration;
-	}
-	
-	
-	
 	/**
 	 * Returns the credential.
 	 *
@@ -297,7 +281,7 @@ public class WsCredentialStore implements Serializable {
 
 		AbstractCredential credentiaLFound = this.getCredential(defaultCredentialName);
 		if (credentiaLFound == null) {
-			ApiRegistration apiRegistration = this.getApiRegistration(clientBundleName);
+			AwbApiRegistrationService apiRegistration = this.getApiRegistration(clientBundleName);
 			ServerURL serverURL = this.getServerURL(defaultURL);
 
 			// --- Define the server URL
@@ -308,28 +292,22 @@ public class WsCredentialStore implements Serializable {
 				}
 			}
 
-			// --- Define the Server api and registrate it
-			if (apiRegistration == null) {
-				apiRegistration = createNewApiRegistration(type, clientBundleName, serverURL.getServerURL());
-				if (this.getApiRegistrationServiceList().contains(apiRegistration) == false) {
-					this.getApiRegistrationServiceList().add(apiRegistration);
-				}
-			}
-
-			// --- Define a empty credential of the same type, which can be filled by the
-			// user
+			// --- Define a empty credential of the same type, which can be filled by the user
 			credentiaLFound = createCredential(type, clientBundleName, defaultURL);
 			if (this.getCredentialList().contains(credentiaLFound) == false) {
 				this.getCredentialList().add(credentiaLFound);
 			}
 
 			// --- Define the credential assignment for a clear hierarchy
-			CredentialAssignment credAssgn = new CredentialAssignment();
-			credAssgn.setIdServerURL(serverURL.getID());
-			credAssgn.setIdApiRegistration(apiRegistration.getID());
-			credAssgn.setIdCredential(credentiaLFound.getID());
-			this.getCredentialAssignmentList().add(credAssgn);
-
+			if(apiRegistration!=null && serverURL!=null && credentiaLFound!=null) {
+				CredentialAssignment credAssgn = new CredentialAssignment();
+				credAssgn.setIdServerURL(serverURL.getID());
+				credAssgn.setIdApiRegistrationDefaultBundleName(apiRegistration.getClientBundleName());
+				credAssgn.setIdCredential(credentiaLFound.getID());
+				this.getCredentialAssignmentList().add(credAssgn);
+			}else {
+				credentiaLFound=null;
+			}
 		}
 		return credentiaLFound;
 	}
@@ -345,6 +323,34 @@ public class WsCredentialStore implements Serializable {
         }
 	}
 	
+	/**
+	 * Checks if credentials with the given {@link CredentialType} are in the
+	 * CredentialList If not the credential will be added to the list
+	 * 
+	 * @param credType corresponding {@link CredentialType}
+	 */
+	public List<AbstractCredential> getAllCredentialsOfaType(CredentialType credType) {
+		List<AbstractCredential> credList = getCredentialList();
+		List<AbstractCredential> credListSameType = new ArrayList<AbstractCredential>();
+		for (Iterator<AbstractCredential> iterator = credList.iterator(); iterator.hasNext();) {
+			AbstractCredential abstrCred = (AbstractCredential) iterator.next();
+			if (abstrCred instanceof ApiKeyCredential) {
+				if (credType.equals(CredentialType.API_KEY)) {
+					credListSameType.add(abstrCred);
+				}
+			} else if (abstrCred instanceof BearerTokenCredential) {
+				if (credType.equals(CredentialType.BEARER_TOKEN)) {
+					credListSameType.add(abstrCred);
+				}
+			} else if (abstrCred instanceof UserPasswordCredential) {
+				if (credType.equals(CredentialType.USERNAME_PASSWORD)) {
+					credListSameType.add(abstrCred);
+				}
+			}
+		}
+		return credListSameType;
+	}
+	
 	// ------------------------------------------------------------
 	// --- From here access methods for AwbApiRegistration --------
 	// ------------------------------------------------------------
@@ -354,15 +360,15 @@ public class WsCredentialStore implements Serializable {
 	 * @param awbApiRegService
 	 * @return <code>null</code> if there is no {@link ApiRegistration} representation of given {@link AwbApiRegistrationService else the corresponding ApiRegistration instance
 	 */
-	public ApiRegistration getApiRegistrationFromService(AwbApiRegistrationService awbApiRegService) {
+	public ApiRegistration getApiRegistrationFromService(ApiRegistration apiReg) {
 		ApiRegistration sameObject = null;
 		for (int i = 0; i < apiRegistrationServiceList.size(); i++) {
-			ApiRegistration apiReg = apiRegistrationServiceList.get(i);
+			AwbApiRegistrationService awbApiRegService = apiRegistrationServiceList.get(i);
 			if (apiReg.getClientBundleName().equals(awbApiRegService.getClientBundleName())) {
 				if (apiReg.getCredentialType().equals(awbApiRegService.getCredentialType())) {
 					if (apiReg.getDefaultCredentialName().equals(awbApiRegService.getDefaultCredentialName())) {
 						if (apiReg.getDescription().equals(awbApiRegService.getDescription())) {
-							if (apiReg.getServerURL().equals(awbApiRegService.getDefaultURL())) {
+							if (apiReg.getDefaultURL().equals(awbApiRegService.getDefaultURL())) {
 								sameObject = apiReg;
 								break;
 							}
@@ -374,77 +380,30 @@ public class WsCredentialStore implements Serializable {
 		return sameObject;
 	}
 	
-	/**
-	 * Checks if the given {@link AwbApiRegistrationService} is in the ApiRegistrationList
-	 * If not the service will be added to the list
-	 * @param awbApiRegService corresponding {@link AwbApiRegistrationService}
-	 */
-	public void putInApiRegistrationList(AwbApiRegistrationService awbApiRegService) {
-        if(!containedInApiRegistrationList(awbApiRegService)) {
-        	apiRegistrationServiceList.add(new ApiRegistration(awbApiRegService));
-        }
-	}
-	
-	/**
-	 * Checks if a {@link AwbApiRegistrationService} is represented by a {@link ApiRegistration} class in the ApiRegistrationList
-	 * @param awbApiRegService the {@link AwbApiRegistrationService} to check
-	 * @return true if the given awbApiRegService is contained in the ApiRegistrationList
-	 */
-	public boolean containedInApiRegistrationList(AwbApiRegistrationService awbApiRegService) {
-		boolean contains = false;
-		if(apiRegistrationServiceList==null) {
-			getApiRegistrationServiceList();
-		}
-		
-		for (int i = 0; i < apiRegistrationServiceList.size(); i++) {
-			ApiRegistration apiReg = apiRegistrationServiceList.get(i);
-			if (apiReg.getClientBundleName().equals(awbApiRegService.getClientBundleName())) {
-				if (apiReg.getCredentialType().equals(awbApiRegService.getCredentialType())) {
-					if (apiReg.getDefaultCredentialName().equals(awbApiRegService.getDefaultCredentialName())) {
-						if (apiReg.getDescription().equals(awbApiRegService.getDescription())) {
-							if (apiReg.getServerURL().equals(awbApiRegService.getDefaultURL())) {
-								contains = true;
-								break;
-							}
-						}
-					}
-
-				}
-			}
-		}
-		return contains;
-	}
-	
 	// ----------------------------------------------------------------------------------
 	// --- From here methods to save or load a WsCredentialStore -----------------------
 	// ----------------------------------------------------------------------------------
 	
+	
 	/**
 	 * Gets the WsCredentialStore-File
+	 * 
 	 * @param project the current project
 	 * @return File of WsCredentialStoree
 	 */
-	public static File getWsCredentialStoreFile(Project project) {	
-		String awbSetup=null;
-		File wsCredentialFile=null;
-		
-	    if(Application.getProjectFocused()!=null) {
-		awbSetup = Application.getProjectFocused().getSimulationSetupCurrent();
-		wsCredentialFile = new File (Application.getProjectFocused().getProjectFolderFullPath() + File.separator + "Client" + File.separator +  awbSetup + File.separator + WS_CREDENTIAL_STORE_FILE);	
-	    }else {
-	    if (project==null) return null;
-	    awbSetup=project.getSimulationSetupCurrent();
-	    wsCredentialFile = new File (project.getProjectFolderFullPath() + File.separator + "Client" + File.separator +  awbSetup + File.separator + WS_CREDENTIAL_STORE_FILE);		
-	    }			
-		//if parent directory does not exist create it
-		File parentFile=wsCredentialFile.getParentFile();
-		if(!parentFile.exists()) {
-			parentFile.mkdirs();
+	public static File getWsCredentialStoreFile() {
+		String project = Application.getProjectFocused().toString();
+		File wsCredentialFile = null;
+
+		if (project != null && !project.isBlank()) {
+			wsCredentialFile = new File(BundleHelper.getPathProperties() + File.separator + project + File.separator+ WS_CREDENTIAL_STORE_FILE);
+		} else {
+			throw new NullPointerException("Either, JettyConfiguration is null or the server name was not set!");
 		}
 		
 		return wsCredentialFile;
 	}
-	
+
 	/**
 	 * Saves the current configuration.
 	 * 
@@ -473,7 +432,7 @@ public class WsCredentialStore implements Serializable {
 		}
 
 		// --- Where to save? -----------------------------
-		File file = getWsCredentialStoreFile(Application.getProjectFocused());
+		File file = getWsCredentialStoreFile();
 		if (file == null) {
 			System.err.println("[" + WsCredentialStore.class.getSimpleName()
 					+ "] The path for saving a configuration as XML file is not allowed to be null!");
@@ -546,5 +505,59 @@ public class WsCredentialStore implements Serializable {
 			}	
 		}
 		return wsCredStore;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.enflexit.common.Observer#update(de.enflexit.common.Observable,
+	 * java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object updateObject) {
+
+		if (!(observable instanceof Project)) return;
+		
+		if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
+			save(this);
+		} else if (updateObject instanceof SimulationSetupNotification) {
+
+			SimulationSetupNotification sscn = (SimulationSetupNotification) updateObject;
+			switch (sscn.getUpdateReason()) {
+			case SIMULATION_SETUP_ADD_NEW:
+
+				break;
+			case SIMULATION_SETUP_COPY:
+
+				break;
+			case SIMULATION_SETUP_LOAD:
+
+				break;
+			case SIMULATION_SETUP_PREPARE_SAVING:
+				save(this);
+				break;
+			case SIMULATION_SETUP_REMOVE:
+				File credentialStoreFile = getWsCredentialStoreFile();
+			    boolean deleted=false;
+				deleted=credentialStoreFile.delete();
+				deleted=credentialStoreFile.getParentFile().delete();
+				if(deleted==true) {
+				System.out.println("Delete of credential store file was not successfull");
+				}
+				break;
+			case SIMULATION_SETUP_RENAME:
+				//TODO: Check what to do here
+				break;
+			case SIMULATION_SETUP_SAVED:
+
+				break;
+			case SIMULATION_SETUP_AGENT_ADDED:
+				break;
+			case SIMULATION_SETUP_AGENT_REMOVED:
+				break;
+			case SIMULATION_SETUP_AGENT_RENAMED:
+				break;
+			}
+		}
 	}
 }

@@ -10,7 +10,8 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.osgi,
  org.agentgui.core,
  com.google.gson,
- de.enflexit.common
+ de.enflexit.common,
+ de.enflexit.awb.ws.core
 Import-Package: javax.xml.bind,
  javax.xml.bind.annotation
 Export-Package: de.enflexit.awb.ws.client,

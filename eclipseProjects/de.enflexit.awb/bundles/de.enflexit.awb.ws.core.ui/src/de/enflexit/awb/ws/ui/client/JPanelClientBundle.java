@@ -5,7 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -36,7 +35,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	
 	private JLabel jLabelBundleList;
 	private JScrollPane jScrollPaneBundleList;
-	private JList<ApiRegistration> jListBundles;
+	private JList<ApiRegistration> jListApiRegistration;
 	private DefaultListModel<ApiRegistration> listModelRegisteredApis;
 	
 	private JPanel jPanelInfo;
@@ -90,7 +89,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	private JScrollPane getJScrollPaneBundleList() {
 		if (jScrollPaneBundleList == null) {
 			jScrollPaneBundleList = new JScrollPane();
-			jScrollPaneBundleList.setViewportView(getJListBundles());
+			jScrollPaneBundleList.setViewportView(getJListApiRegistration());
 		}
 		return jScrollPaneBundleList;
 	}
@@ -98,33 +97,32 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	public DefaultListModel<ApiRegistration> getListModelRegisteredApis() {
 		if (listModelRegisteredApis==null) {
 			listModelRegisteredApis = new DefaultListModel<ApiRegistration>();
-			// --- Fill the list model ------------------------------
-			
-			List<AwbApiRegistrationService> registeredServiceList = ServiceFinder.findServices(AwbApiRegistrationService.class);
-			for (Iterator<AwbApiRegistrationService> iterator = registeredServiceList.iterator(); iterator.hasNext();) {
-				AwbApiRegistrationService awbApiRegistrationService = (AwbApiRegistrationService) iterator.next();
-				WsCredentialStore.getInstance().putInApiRegistrationList(awbApiRegistrationService);
-			}		
-			listModelRegisteredApis.addAll(WsCredentialStore.getInstance().getApiRegistrationServiceList());
+			List<AwbApiRegistrationService> apiRegServiceList=WsCredentialStore.getInstance().getApiRegistrationServiceList();
+			List<ApiRegistration> apiRegList=new ArrayList<>();
+			for (AwbApiRegistrationService awbApiRegistrationService : apiRegServiceList) {
+				apiRegList.add(new ApiRegistration(awbApiRegistrationService));
+			}
+			listModelRegisteredApis.addAll(apiRegList);
 		}
 		return listModelRegisteredApis;
 	}
-	public JList<ApiRegistration> getJListBundles() {
-		if (jListBundles == null) {
-			jListBundles = new JList<ApiRegistration>(this.getListModelRegisteredApis());
-			jListBundles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			jListBundles.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jListBundles.addListSelectionListener(new ListSelectionListener() {
+	
+	public JList<ApiRegistration> getJListApiRegistration() {
+		if (jListApiRegistration == null) {
+			jListApiRegistration = new JList<ApiRegistration>(this.getListModelRegisteredApis());
+			jListApiRegistration.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jListApiRegistration.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jListApiRegistration.addListSelectionListener(new ListSelectionListener() {
 				
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					ApiRegistration apiReg=jListBundles.getSelectedValue();
-					jLabelCredentialTypeDefined.setText(" "+apiReg.getCredentialType().toString());
-				    jTextAreaDescription.setText(apiReg.getDescription());					
+					ApiRegistration apiReg=jListApiRegistration.getSelectedValue();
+					getJLabelCredentialTypeDefined().setText(" "+apiReg.getCredentialType().toString());
+				    getJTextAreaDescription().setText(apiReg.getDescription());					
 				}
 			});
 		}
-		return jListBundles;
+		return jListApiRegistration;
 	}
 	
 	
@@ -212,7 +210,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	 */
 	@Override
 	public boolean hasUnsavedChanges() {
-		if (this.getJListBundles() == null)
+		if (this.getJListApiRegistration() == null)
 			return false;
 		
 		// Get actual ApiRegistrationList
@@ -220,7 +218,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 
 		// Get old List
 		ArrayList<ApiRegistration> credArrayList = new ArrayList<ApiRegistration>();
-		ListModel<ApiRegistration> credModel = getJListBundles().getModel();
+		ListModel<ApiRegistration> credModel = getJListApiRegistration().getModel();
 		for (int i = 0; i < credModel.getSize(); i++) {
 			ApiRegistration cred = credModel.getElementAt(i);
 			credArrayList.add(cred);
@@ -259,7 +257,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 				if (apiReg.getCredentialType().equals(apiRegService.getCredentialType())) {
 					if (apiReg.getDefaultCredentialName().equals(apiRegService.getDefaultCredentialName())) {
 						if (apiReg.getDescription().equals(apiRegService.getDescription())) {
-							if (apiReg.getServerURL().equals(apiRegService.getDefaultURL())) {
+							if (apiReg.getDefaultURL().equals(apiRegService.getDefaultURL())) {
 								sameObject = true;
 							}
 						}

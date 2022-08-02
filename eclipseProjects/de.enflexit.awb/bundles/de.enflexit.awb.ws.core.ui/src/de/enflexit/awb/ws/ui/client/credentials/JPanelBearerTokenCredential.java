@@ -9,8 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import de.enflexit.awb.ws.credential.BearerTokenCredential;
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
-public class JPanelBearerTokenCredential extends AbstractCredentialPanel<BearerTokenCredential> {
+public class JPanelBearerTokenCredential extends AbstractCredentialPanel<BearerTokenCredential> implements WsConfigurationInterface {
 	public JPanelBearerTokenCredential() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
@@ -40,7 +41,7 @@ public class JPanelBearerTokenCredential extends AbstractCredentialPanel<BearerT
 	private static final long serialVersionUID = -3032240795807467171L;
 	private JLabel jLableBearerToken;
 	private JLabel lblNewLabel;
-	private JTextField JTextFieldTokenValue;
+	private JTextField jTextFieldTokenValue;
 
 
 	private JLabel getJLableBearerToken() {
@@ -57,12 +58,24 @@ public class JPanelBearerTokenCredential extends AbstractCredentialPanel<BearerT
 		}
 		return lblNewLabel;
 	}
-	private JTextField getJTextFieldTokenValue() {
-		if (JTextFieldTokenValue == null) {
-			JTextFieldTokenValue = new JTextField();
-			JTextFieldTokenValue.setFont(new Font("Dialog", Font.BOLD, 12));
-			JTextFieldTokenValue.setColumns(10);
+	protected JTextField getJTextFieldTokenValue() {
+		if (jTextFieldTokenValue == null) {
+			jTextFieldTokenValue = new JTextField();
+			jTextFieldTokenValue.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTextFieldTokenValue.setColumns(10);
 		}
-		return JTextFieldTokenValue;
+		return jTextFieldTokenValue;
+	}
+	@Override
+	public boolean hasUnsavedChanges() {
+		boolean unsavedChanges=true;
+		if(!jTextFieldTokenValue.getText().isBlank()) {
+			unsavedChanges=true;
+		}
+		return unsavedChanges;
+	}
+	@Override
+	public boolean userConfirmedToChangeView() {
+		return hasUnsavedChanges();
 	}
 }

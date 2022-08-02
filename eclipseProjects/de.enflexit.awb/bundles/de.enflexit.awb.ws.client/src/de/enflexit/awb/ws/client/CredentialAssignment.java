@@ -13,7 +13,7 @@ public class CredentialAssignment implements Serializable {
 	
 	private Integer id;
 	private int idServerURL;
-	private int idApiRegistration;
+	private String idApiRegistrationDefaultBundleName;
 	private int idCredential;
 	
 	/**
@@ -56,8 +56,8 @@ public class CredentialAssignment implements Serializable {
 	 *
 	 * @return the id of the api registration
 	 */
-	public int getIdApiRegistration() {
-		return idApiRegistration;
+	public String getIdApiRegistrationDefaultBundleName() {
+		return idApiRegistrationDefaultBundleName;
 	}
 
 
@@ -66,8 +66,8 @@ public class CredentialAssignment implements Serializable {
 	 *
 	 * @param idApiRegistration the new id of the api registration
 	 */
-	public void setIdApiRegistration(int idApiRegistration) {
-		this.idApiRegistration = idApiRegistration;
+	public void setIdApiRegistrationDefaultBundleName(String idApiRegistration) {
+		this.idApiRegistrationDefaultBundleName = idApiRegistration;
 	}
 
 
@@ -117,7 +117,7 @@ public class CredentialAssignment implements Serializable {
 				equals = false;
 			}
 
-			if (this.getIdApiRegistration() != credAssg.getIdApiRegistration()) {
+			if (this.getIdApiRegistrationDefaultBundleName() != credAssg.getIdApiRegistrationDefaultBundleName()) {
 				equals = false;
 			}
 

@@ -76,8 +76,8 @@ public class JPanelAssignedCredentials extends JPanel {
 
 		for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
 			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
-			int apiId = credentialAssignment.getIdApiRegistration();
-			if (awbRegService.getID() == apiId) {
+			String apiId = credentialAssignment.getIdApiRegistrationDefaultBundleName();
+			if (awbRegService.getClientBundleName() == apiId) {
 				credAssgnOfSelectedApi.add(credentialAssignment);
 				AbstractCredential abstractCred = WsCredentialStore.getInstance().getCredential(credentialAssignment.getIdCredential());
 				assgnCredentials.add(abstractCred);

@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -21,10 +22,13 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 	
 	private static final long serialVersionUID = 7987858783733542296L;
 	
-	private JPanelClientBundle panelClientBundle;
-	private JPanelCredentials panelCredentials;
-	private JPanelAssignCredential panelAssignCredential;
-	private JPanelAssignedCredentials panelAssignedCredentials;
+	private JPanelClientBundle jPanelClientBundle;
+	private JPanelCredentials jPanelCredentials;
+	private JPanelAssignCredential jPanelAssignCredential;
+	private JPanelAssignedCredentials jPanelAssignedCredentials;
+	private JSplitPane jSplitPaneLeft;
+	private JSplitPane jSplitPaneMiddleRight;
+	private JPanel jPanelMiddle;
 	
 	/**
 	 * Instantiates a new j panel client configuration.
@@ -34,66 +38,57 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 	}
 	
 	private void initialize() {
-		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{230, 224, 230, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{230, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		
-		GridBagConstraints gbc_panelClientBundle = new GridBagConstraints();
-		gbc_panelClientBundle.gridheight = 2;
-		gbc_panelClientBundle.insets = new Insets(10, 20, 10, 5);
-		gbc_panelClientBundle.fill = GridBagConstraints.BOTH;
-		gbc_panelClientBundle.gridx = 0;
-		gbc_panelClientBundle.gridy = 0;
-		add(getPanelClientBundle(), gbc_panelClientBundle);
-		GridBagConstraints gbc_panelAssignCredential = new GridBagConstraints();
-		gbc_panelAssignCredential.insets = new Insets(10, 0, 5, 5);
-		gbc_panelAssignCredential.fill = GridBagConstraints.BOTH;
-		gbc_panelAssignCredential.gridx = 1;
-		gbc_panelAssignCredential.gridy = 0;
-		add(getPanelAssignCredential_1(), gbc_panelAssignCredential);
-		GridBagConstraints gbc_panelCredentials = new GridBagConstraints();
-		gbc_panelCredentials.gridheight = 2;
-		gbc_panelCredentials.insets = new Insets(10, 0, 10, 20);
-		gbc_panelCredentials.fill = GridBagConstraints.BOTH;
-		gbc_panelCredentials.gridx = 2;
-		gbc_panelCredentials.gridy = 0;
-		add(getPanelCredentials(), gbc_panelCredentials);
-		GridBagConstraints gbc_panelAssignedCredentials = new GridBagConstraints();
-		gbc_panelAssignedCredentials.insets = new Insets(0, 0, 5, 5);
-		gbc_panelAssignedCredentials.fill = GridBagConstraints.BOTH;
-		gbc_panelAssignedCredentials.gridx = 1;
-		gbc_panelAssignedCredentials.gridy = 1;
-		add(getPanelAssignedCredentials(), gbc_panelAssignedCredentials);
+		GridBagConstraints gbc_jSplitPaneLeft = new GridBagConstraints();
+		gbc_jSplitPaneLeft.insets = new Insets(10, 10, 10, 10);
+		gbc_jSplitPaneLeft.fill = GridBagConstraints.BOTH;
+		gbc_jSplitPaneLeft.gridx = 0;
+		gbc_jSplitPaneLeft.gridy = 0;
+		add(getJSplitPaneLeft(), gbc_jSplitPaneLeft);
 	}
 	
-	public JPanelClientBundle getPanelClientBundle() {
-		if (panelClientBundle == null) {
-			panelClientBundle = new JPanelClientBundle();
-			panelClientBundle.getJListBundles().addListSelectionListener(new ListSelectionListener() {
+	public JPanelClientBundle getJPanelClientBundle() {
+		if (jPanelClientBundle == null) {
+			jPanelClientBundle = new JPanelClientBundle();
+			jPanelClientBundle.getJListApiRegistration().addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
-					ApiRegistration awbServices=panelClientBundle.getJListBundles().getSelectedValue();
-					panelAssignCredential.getJtextFieldClientBundle().setText(awbServices.getClientBundleName());;
+					ApiRegistration awbServices=jPanelClientBundle.getJListApiRegistration().getSelectedValue();
+					jPanelAssignCredential.getJtextFieldClientBundle().setText(awbServices.getClientBundleName());;
 				}
 			});
 		}
-		return panelClientBundle;
+		return jPanelClientBundle;
 	}
 
-	public JPanelCredentials getPanelCredentials() {
-		if (panelCredentials == null) {
-			panelCredentials = new JPanelCredentials();
-			panelCredentials.getJListCredentials().addListSelectionListener(new ListSelectionListener() {
+	public JPanelCredentials getJPanelCredentials() {
+		if (jPanelCredentials == null) {
+			jPanelCredentials = new JPanelCredentials();
+			jPanelCredentials.getJListCredentials().addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
-					AbstractCredential cred=panelCredentials.getJListCredentials().getSelectedValue();
-					panelAssignCredential.getJtextFieldClientBundle().setText(cred.getName());;
+					AbstractCredential cred=jPanelCredentials.getJListCredentials().getSelectedValue();
+					getJPanelAssignCredential_1().getJtextFieldCredential().setText(cred.toString());
 				}
 			});
 		}		
-		return panelCredentials;
+		return jPanelCredentials;
+	}
+
+	private JPanelAssignCredential getJPanelAssignCredential_1() {
+		if (jPanelAssignCredential == null) {
+			jPanelAssignCredential = new JPanelAssignCredential();
+		}
+		return jPanelAssignCredential;
+	}
+	private JPanelAssignedCredentials getJPanelAssignedCredentials() {
+		if (jPanelAssignedCredentials == null) {
+			jPanelAssignedCredentials = new JPanelAssignedCredentials();
+		}
+		return jPanelAssignedCredentials;
 	}
 	
 	/* (non-Javadoc)
@@ -111,21 +106,46 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 	public boolean userConfirmedToChangeView() {
 		return false;
 	}
-	private JPanelAssignCredential getPanelAssignCredential_1() {
-		if (panelAssignCredential == null) {
-			panelAssignCredential = new JPanelAssignCredential();
-			GridBagLayout gridBagLayout = (GridBagLayout) panelAssignCredential.getLayout();
-			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0};
-			gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
-			gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0};
-			gridBagLayout.columnWidths = new int[]{0, 0, 0};
+	private JSplitPane getJSplitPaneLeft() {
+		if (jSplitPaneLeft == null) {
+			jSplitPaneLeft = new JSplitPane();
+			jSplitPaneLeft.setResizeWeight(0.3);
+			jSplitPaneLeft.setLeftComponent(this.getJPanelClientBundle());
+			jSplitPaneLeft.setRightComponent(getJSplitPaneMiddleRight());
 		}
-		return panelAssignCredential;
+		return jSplitPaneLeft;
 	}
-	private JPanelAssignedCredentials getPanelAssignedCredentials() {
-		if (panelAssignedCredentials == null) {
-			panelAssignedCredentials = new JPanelAssignedCredentials();
+
+	private JSplitPane getJSplitPaneMiddleRight() {
+		if (jSplitPaneMiddleRight == null) {
+			jSplitPaneMiddleRight = new JSplitPane();
+			jSplitPaneMiddleRight.setResizeWeight(0.5);
+			jSplitPaneMiddleRight.setRightComponent(this.getJPanelCredentials());
+			jSplitPaneMiddleRight.setLeftComponent(getJPanelMiddle());
 		}
-		return panelAssignedCredentials;
+		return jSplitPaneMiddleRight;
+	}
+	private JPanel getJPanelMiddle() {
+		if (jPanelMiddle == null) {
+			jPanelMiddle = new JPanel();
+			GridBagLayout gbl_jPanelMiddle = new GridBagLayout();
+			gbl_jPanelMiddle.columnWidths = new int[]{0, 0};
+			gbl_jPanelMiddle.rowHeights = new int[]{0, 0, 0};
+			gbl_jPanelMiddle.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gbl_jPanelMiddle.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			jPanelMiddle.setLayout(gbl_jPanelMiddle);
+			GridBagConstraints gbc_panelAssignCredential = new GridBagConstraints();
+			gbc_panelAssignCredential.fill = GridBagConstraints.HORIZONTAL;
+			gbc_panelAssignCredential.insets = new Insets(0, 0, 5, 0);
+			gbc_panelAssignCredential.gridx = 0;
+			gbc_panelAssignCredential.gridy = 0;
+			jPanelMiddle.add(getJPanelAssignCredential_1(), gbc_panelAssignCredential);
+			GridBagConstraints gbc_panelAssignedCredentials = new GridBagConstraints();
+			gbc_panelAssignedCredentials.fill = GridBagConstraints.HORIZONTAL;
+			gbc_panelAssignedCredentials.gridx = 0;
+			gbc_panelAssignedCredentials.gridy = 1;
+			jPanelMiddle.add(getJPanelAssignedCredentials(), gbc_panelAssignedCredentials);
+		}
+		return jPanelMiddle;
 	}
 }
