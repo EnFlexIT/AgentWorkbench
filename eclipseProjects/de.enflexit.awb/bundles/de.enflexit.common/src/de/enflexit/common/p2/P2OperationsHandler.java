@@ -5,10 +5,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.JOptionPane;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -16,12 +16,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
+import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.operations.InstallOperation;
 import org.eclipse.equinox.p2.operations.ProfileChangeOperation;
 import org.eclipse.equinox.p2.operations.ProvisioningJob;
@@ -35,6 +37,7 @@ import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -65,7 +68,13 @@ public class P2OperationsHandler {
 	private IArtifactRepositoryManager artifactRepositoryManager;
 
 	private  List<IInstallableUnit> iuList;
-
+	
+	private boolean debug = false;
+	
+	private Vector<String> updateRelevantBundleNames;
+	private Vector<Bundle> installedBundles;
+	
+	private HashMap<URI, IMetadataRepository> metadataRepositories;
 	
 	private static P2OperationsHandler thisInstance;
 	/**
@@ -231,28 +240,14 @@ public class P2OperationsHandler {
 	}
 	
 	/**
-	 * Checks if there are configured p2 metadata repositories, adds the default repository if not.
-	 */
-	public void checkMetadataRepos() {
-		if (this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL).length==0) {
-			try {
-				this.getMetadataRepositoryManager().addRepository(new URI(DEFAULT_REPO_URI));
-			} catch (URISyntaxException e) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Invalid repository URI " +  DEFAULT_REPO_URI);
-				e.printStackTrace();
-			}
-		}
-	}
-	/**
 	 * Checks if the specified repository is already known.
 	 *
 	 * @param repositoryURI the repository URI
 	 * @return true, if is known repository
 	 */
 	public boolean isKnownRepository(URI repositoryURI) {
-		return this.getMetadataRepositoryManager().contains(repositoryURI) & this.getArtifactRepositoryManager().contains(repositoryURI);
+		return this.getMetadataRepositoryManager().contains(repositoryURI) && this.getArtifactRepositoryManager().contains(repositoryURI);
 	}
-
 	
 	/**
 	 * Installs an {@link IInstallableUnit} from a p2 repository.
@@ -262,7 +257,7 @@ public class P2OperationsHandler {
 	 * @return true if successful
 	 */
 	public boolean installIU(String installableUnitID, URI repositoryURI) {
-
+		
 		// --- Make sure the repository is known and enabled ------------------
 		this.addRepository(repositoryURI);
 
@@ -304,17 +299,12 @@ public class P2OperationsHandler {
 	 * @return the result status
 	 */
 	private IStatus performOperation(ProfileChangeOperation operation) {
-		this.checkMetadataRepos();
 		IStatus status = operation.resolveModal(this.getProgressMonitor());
 		if (status.isOK()) {
 			ProvisioningJob provisioningJob = operation.getProvisioningJob(this.getProgressMonitor());
 
 			if (provisioningJob == null) {
-//				System.err.println("Trying to install from the Eclipse IDE? This won't work!");
-				
-				JOptionPane.showMessageDialog(null, "Newer Versions of installed features are available, please update your target platform!", "Updates available", JOptionPane.WARNING_MESSAGE);
-				System.out.println("[" + this.getClass().getSimpleName() + "] Newer Versions of installed features are available, please update your target platform!");
-				
+				System.err.println("Trying to install from the Eclipse IDE? This won't work!");
 				return Status.CANCEL_STATUS;
 			}
 
@@ -343,7 +333,6 @@ public class P2OperationsHandler {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
 		}
-			
 		
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
 		if (provisioningJob == null) {
@@ -477,5 +466,155 @@ public class P2OperationsHandler {
 		}
 		return newest;
 	}
+	
+	/**
+	 * Checks if newer versions of installed bundles or features are available in the p2 repository.
+	 * @return true, if there is at least one newer version available
+	 */
+	public boolean checkForNewerBundles() {
+		
+		// --- Check if the default repository is configured, add if not
+		try {
+			URI defaultRepo = new URI(DEFAULT_REPO_URI);
+			if (this.isKnownRepository(defaultRepo)==false) {
+				this.addRepository(defaultRepo);
+			}
+		} catch (URISyntaxException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + DEFAULT_REPO_URI);
+			e.printStackTrace();
+		}
+		
+		URI[] knownRepos = this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
+
+		for (int i=0; i<this.getInstalledBundles().size(); i++) {
+			Bundle bundle = this.getInstalledBundles().get(i);
+			
+			if (this.getUpdateRelevantBundleNames().contains(bundle.getSymbolicName())) {
+				for (int j=0; j<knownRepos.length; j++) {
+					IMetadataRepository repo = this.getMetadataRepository(knownRepos[j]);
+					if (repo!=null) {
+						boolean updateAvailable = this.queryRepoForNewerVersion(bundle, repo);
+						if (updateAvailable==true) {
+							if (this.debug==true) {
+								System.out.println("[" + this.getClass().getSimpleName() + "] Update found for bundle " + bundle.getSymbolicName());
+							}
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		// --- If not returned yet, no newer versions are available -------
+		if (this.debug==true) {
+			System.out.println("[" + this.getClass().getSimpleName() + "] Your target platform is up to date!");
+		}
+		return false;
+	}
+	
+	/**
+	 * Gets the list of installed bundles.
+	 * @return the installed bundles
+	 */
+	private Vector<Bundle> getInstalledBundles(){
+		if (installedBundles==null) {
+			Bundle[] bundlesArray = FrameworkUtil.getBundle(this.getClass()).getBundleContext().getBundles();
+			installedBundles = this.removeOlderVersions(bundlesArray);
+		}
+		return installedBundles;
+	}
+	
+	/**
+	 * Gets the list of update relevant bundle names, i.e. the names of 
+	 * those bundles that should be considered when checking for updates.
+	 *
+	 * @return the update relevant bundle names
+	 */
+	private Vector<String> getUpdateRelevantBundleNames() {
+		if (updateRelevantBundleNames==null) {
+			updateRelevantBundleNames = new Vector<>();
+			updateRelevantBundleNames.add("org.agentgui.core");
+			updateRelevantBundleNames.add("org.agentgui.lib.jade");
+			updateRelevantBundleNames.add("org.agentgui.lib.jung");
+			updateRelevantBundleNames.add("org.awb.env.maps");
+			updateRelevantBundleNames.add("org.awb.env.networkModel");
+			updateRelevantBundleNames.add("de.enflexit.jade.phonebook");
+			updateRelevantBundleNames.add("de.enflexit.api");
+			updateRelevantBundleNames.add("de.enflexit.common");
+			updateRelevantBundleNames.add("de.enflexit.geography");
+			updateRelevantBundleNames.add("de.enflexit.oidc");
+			updateRelevantBundleNames.add("de.enflexit.db.hibernate");
+			updateRelevantBundleNames.add("de.enflexit.db.mariaDB");
+			updateRelevantBundleNames.add("de.enflexit.db.mySQL");
+			updateRelevantBundleNames.add("de.enflexit.db.postgres");
+		}
+		return updateRelevantBundleNames;
+	}
+	
+	/**
+	 * Query repo for newer version.
+	 *
+	 * @param bundle the bundle
+	 * @param repo the repo
+	 * @return true, if successful
+	 */
+	private boolean queryRepoForNewerVersion(Bundle bundle, IMetadataRepository repo) {
+		org.osgi.framework.Version bv = bundle.getVersion();
+		Version bundleVersion = new OSGiVersion(bv.getMajor(), bv.getMinor(), bv.getMicro(), bv.getQualifier());
+		
+		IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(bundle.getSymbolicName());
+		IQueryResult<IInstallableUnit> result = repo.query(query, new NullProgressMonitor());
+		
+		if (result.isEmpty()==false) {
+			IInstallableUnit iu = this.getNewestUnit(result.toSet());
+			if (iu.getVersion().compareTo(bundleVersion)>0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashMap<URI, IMetadataRepository> getMetadataRepositories() {
+		if (metadataRepositories==null) {
+			metadataRepositories = new HashMap<>();
+		}
+		return metadataRepositories;
+	}
+	
+	private IMetadataRepository getMetadataRepository(URI uri) {
+		IMetadataRepository metadataRepository = this.getMetadataRepositories().get(uri);
+		if (metadataRepository==null) {
+			try {
+				metadataRepository = this.getMetadataRepositoryManager().loadRepository(uri, new NullProgressMonitor());
+				this.getMetadataRepositories().put(uri, metadataRepository);
+			} catch (ProvisionException | OperationCanceledException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return metadataRepository;
+	}
+	
+	/**
+	 * Removes older versions of the same bundle from the provided array of bundles.  
+	 * @param bundleList the bundle list
+	 * @return the vector
+	 */
+	private Vector<Bundle> removeOlderVersions(Bundle[] bundleList){
+		
+		HashMap<String, Bundle> bundlesBySymbolicName = new HashMap<>();
+		
+		for(int i=0; i<bundleList.length; i++) {
+			Bundle bundleFromList = bundleList[i];
+			Bundle bundleFromHash = bundlesBySymbolicName.get(bundleFromList.getSymbolicName());
+			if (bundleFromHash==null || bundleFromList.getVersion().compareTo(bundleFromHash.getVersion())>0) {
+				bundlesBySymbolicName.put(bundleFromList.getSymbolicName(), bundleFromList);
+			}
+		}
+		
+		return new Vector<>(bundlesBySymbolicName.values());
+	}
+	
 	
 }

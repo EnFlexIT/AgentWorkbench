@@ -218,7 +218,7 @@ public class AWBUpdater extends Thread {
 				// --- Wait for the end of the benchmark ------------
 				this.waitForTheEndOfBenchmark();
 				// --- Check the repo for newer versions ------------
-//				this.checkForUpdates();	// Disabled due to strange results
+				this.checkForAvailableUpdates();	// Disabled due to strange results
 			}
 			
 			// --- Notify waiting threads ---------------------------
@@ -227,7 +227,25 @@ public class AWBUpdater extends Thread {
 			this.getSynchronizationObject().notify();
 		}
 	}
-
+	
+	/**
+	 * Checks if updates for the locally installed software components are available.
+	 */
+	private void checkForAvailableUpdates() {
+		
+		String infoString = "Newer versions of local software components are available, please update your Target Platform!";
+		boolean updatesAvailable = P2OperationsHandler.getInstance().checkForNewerBundles();
+		
+		if (updatesAvailable==true) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
+			
+			//TODO Activate when sure everything works
+//			if (Application.isOperatingHeadless()==false) {
+//				JOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "Updates available!", JOptionPane.WARNING_MESSAGE);
+//			}
+		}
+		
+	}
 	/**
 	 * Wait for the end of the benchmark.
 	 */
